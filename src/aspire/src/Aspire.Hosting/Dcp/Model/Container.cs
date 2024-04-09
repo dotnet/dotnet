@@ -220,9 +220,6 @@ internal static class ContainerState
 
 internal sealed class Container : CustomResource<ContainerSpec, ContainerStatus>
 {
-    public const string ResourceNameAnnotation = "resource-name";
-    public const string OtelServiceNameAnnotation = "otel-service-name";
-
     [JsonConstructor]
     public Container(ContainerSpec spec) : base(spec) { }
 
@@ -237,5 +234,11 @@ internal sealed class Container : CustomResource<ContainerSpec, ContainerStatus>
 
         return c;
     }
+
+    public bool LogsAvailable =>
+        this.Status?.State == ContainerState.Running
+        || this.Status?.State == ContainerState.Paused
+        || this.Status?.State == ContainerState.Exited
+        || (this.Status?.State == ContainerState.FailedToStart && this.Status?.ContainerId is not null);
 }
 

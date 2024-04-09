@@ -1,15 +1,24 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Collections.Concurrent;
+using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Net.Sockets;
+using System.Text.Json;
+using System.Threading.Channels;
+using Aspire.Dashboard.Model;
 using Aspire.Hosting.ApplicationModel;
+using Aspire.Hosting.Dashboard;
 using Aspire.Hosting.Dcp.Model;
 using Aspire.Hosting.Lifecycle;
-using Aspire.Hosting.Utils;
 using k8s;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Polly;
+using Polly.Retry;
+using Polly.Timeout;
 
 namespace Aspire.Hosting.Dcp;
 
@@ -52,199 +61,684 @@ internal sealed class ServiceAppResource : AppResource
 internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
                                           ILogger<DistributedApplication> distributedApplicationLogger,
                                           DistributedApplicationModel model,
-                                          DistributedApplicationOptions distributedApplicationOptions,
                                           IKubernetesService kubernetesService,
                                           IEnumerable<IDistributedApplicationLifecycleHook> lifecycleHooks,
                                           IConfiguration configuration,
                                           IOptions<DcpOptions> options,
-                                          IDashboardEndpointProvider dashboardEndpointProvider,
-                                          IDashboardAvailability dashboardAvailability,
-                                          DistributedApplicationExecutionContext executionContext)
+                                          DistributedApplicationExecutionContext executionContext,
+                                          ResourceNotificationService notificationService,
+                                          ResourceLoggerService loggerService,
+                                          IDcpDependencyCheckService dcpDependencyCheckService)
 {
     private const string DebugSessionPortVar = "DEBUG_SESSION_PORT";
 
     private readonly ILogger<ApplicationExecutor> _logger = logger;
     private readonly DistributedApplicationModel _model = model;
+    private readonly Dictionary<string, IResource> _applicationModel = model.Resources.ToDictionary(r => r.Name);
+    private readonly ILookup<IResource?, IResourceWithParent> _parentChildLookup = GetParentChildLookup(model);
     private readonly IDistributedApplicationLifecycleHook[] _lifecycleHooks = lifecycleHooks.ToArray();
     private readonly IOptions<DcpOptions> _options = options;
-    private readonly IDashboardEndpointProvider _dashboardEndpointProvider = dashboardEndpointProvider;
-    private readonly IDashboardAvailability _dashboardAvailability = dashboardAvailability;
     private readonly DistributedApplicationExecutionContext _executionContext = executionContext;
     private readonly List<AppResource> _appResources = [];
+
+    private readonly ConcurrentDictionary<string, Container> _containersMap = [];
+    private readonly ConcurrentDictionary<string, Executable> _executablesMap = [];
+    private readonly ConcurrentDictionary<string, Service> _servicesMap = [];
+    private readonly ConcurrentDictionary<string, Endpoint> _endpointsMap = [];
+    private readonly ConcurrentDictionary<(string, string), List<string>> _resourceAssociatedServicesMap = [];
+    private readonly ConcurrentDictionary<string, CancellationTokenSource> _logStreams = new();
+    private readonly ConcurrentDictionary<IResource, bool> _hiddenResources = new();
+    private DcpInfo? _dcpInfo;
+
+    private readonly record struct LogInformationEntry(string ResourceName, bool? LogsAvailable, bool? HasSubscribers);
+    private readonly Channel<LogInformationEntry> _logInformationChannel = Channel.CreateUnbounded<LogInformationEntry>(
+        new UnboundedChannelOptions { SingleReader = true });
+
+    private string DefaultContainerHostName => configuration["AppHost:ContainerHostname"] ?? _dcpInfo?.Containers?.ContainerHostName ?? "host.docker.internal";
 
     public async Task RunApplicationAsync(CancellationToken cancellationToken = default)
     {
         AspireEventSource.Instance.DcpModelCreationStart();
+
+        _dcpInfo = await dcpDependencyCheckService.GetDcpInfoAsync(cancellationToken).ConfigureAwait(false);
+
+        Debug.Assert(_dcpInfo is not null, "DCP info should not be null at this point");
+
         try
         {
-            if (!distributedApplicationOptions.DisableDashboard)
-            {
-                if (_model.Resources.SingleOrDefault(r => StringComparers.ResourceName.Equals(r.Name, KnownResourceNames.AspireDashboard)) is not { } dashboardResource)
-                {
-                    // No dashboard is specified, so start one.
-                    // TODO validate that the dashboard has not been suppressed
-                    await StartDashboardAsDcpExecutableAsync(cancellationToken).ConfigureAwait(false);
-                }
-                else
-                {
-                    await ConfigureAspireDashboardResource(dashboardResource, cancellationToken).ConfigureAwait(false);
-                }
-            }
-
             PrepareServices();
             PrepareContainers();
             PrepareExecutables();
 
+            await PublishResourcesWithInitialStateAsync().ConfigureAwait(false);
+
+            // Watch for changes to the resource state.
+            WatchResourceChanges(cancellationToken);
+
             await CreateServicesAsync(cancellationToken).ConfigureAwait(false);
 
             await CreateContainersAndExecutablesAsync(cancellationToken).ConfigureAwait(false);
+
+            foreach (var lifecycleHook in _lifecycleHooks)
+            {
+                await lifecycleHook.AfterResourcesCreatedAsync(_model, cancellationToken).ConfigureAwait(false);
+            }
         }
         finally
         {
             AspireEventSource.Instance.DcpModelCreationStop();
         }
     }
-
-    private async Task ConfigureAspireDashboardResource(IResource dashboardResource, CancellationToken cancellationToken)
+    private static ILookup<IResource?, IResourceWithParent> GetParentChildLookup(DistributedApplicationModel model)
     {
-        // Don't publish the resource to the manifest.
-        dashboardResource.Annotations.Add(ManifestPublishingCallbackAnnotation.Ignore);
-
-        // Remove endpoint annotations because we are directly configuring
-        // the dashboard app (it doesn't go through the proxy!).
-        var endpointAnnotations = dashboardResource.Annotations.OfType<EndpointAnnotation>().ToList();
-        foreach (var endpointAnnotation in endpointAnnotations)
+        static IResource? SelectParentContainerResource(IResource resource) => resource switch
         {
-            dashboardResource.Annotations.Remove(endpointAnnotation);
-        }
-
-        // Get resource endpoint URL.
-        var grpcEndpointUrl = await _dashboardEndpointProvider.GetResourceServiceUriAsync(cancellationToken).ConfigureAwait(false);
-
-        dashboardResource.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
-        {
-            if (configuration["ASPNETCORE_URLS"] is not { } appHostApplicationUrl)
-            {
-                throw new DistributedApplicationException("Failed to configure dashboard resource because ASPNETCORE_URLS environment variable was not set.");
-            }
-
-            if (configuration["DOTNET_DASHBOARD_OTLP_ENDPOINT_URL"] is not { } otlpEndpointUrl)
-            {
-                throw new DistributedApplicationException("Failed to configure dashboard resource because DOTNET_DASHBOARD_OTLP_ENDPOINT_URL environment variable was not set.");
-            }
-
-            // Grab the resource service URL. We need to inject this into the resource.
-
-            context.EnvironmentVariables["ASPNETCORE_URLS"] = appHostApplicationUrl;
-            context.EnvironmentVariables["DOTNET_RESOURCE_SERVICE_ENDPOINT_URL"] = grpcEndpointUrl;
-            context.EnvironmentVariables["DOTNET_DASHBOARD_OTLP_ENDPOINT_URL"] = otlpEndpointUrl;
-        }));
-    }
-
-    private async Task StartDashboardAsDcpExecutableAsync(CancellationToken cancellationToken = default)
-    {
-        if (!distributedApplicationOptions.DashboardEnabled)
-        {
-            // The dashboard is disabled. Do nothing.
-            return;
-        }
-
-        if (_options.Value.DashboardPath is not { } dashboardPath)
-        {
-            throw new DistributedApplicationException("Dashboard path empty or file does not exist.");
-        }
-
-        var fullyQualifiedDashboardPath = Path.GetFullPath(dashboardPath);
-        var dashboardWorkingDirectory = Path.GetDirectoryName(fullyQualifiedDashboardPath);
-
-        var dashboardExecutableSpec = new ExecutableSpec
-        {
-            ExecutionType = ExecutionType.Process,
-            WorkingDirectory = dashboardWorkingDirectory
+            IResourceWithParent rp => SelectParentContainerResource(rp.Parent),
+            IResource r when r.IsContainer() => r,
+            _ => null
         };
 
-        if (string.Equals(".dll", Path.GetExtension(fullyQualifiedDashboardPath), StringComparison.OrdinalIgnoreCase))
-        {
-            // The dashboard path is a DLL, so run it with `dotnet <dll>`
-            dashboardExecutableSpec.ExecutablePath = "dotnet";
-            dashboardExecutableSpec.Args = [fullyQualifiedDashboardPath];
-        }
-        else
-        {
-            // Assume the dashboard path is directly executable
-            dashboardExecutableSpec.ExecutablePath = fullyQualifiedDashboardPath;
-        }
-
-        var grpcEndpointUrl = await _dashboardEndpointProvider.GetResourceServiceUriAsync(cancellationToken).ConfigureAwait(false);
-
-        // Matches DashboardWebApplication.DashboardUrlDefaultValue
-        const string defaultDashboardUrl = "http://localhost:18888";
-
-        var otlpEndpointUrl = configuration["DOTNET_DASHBOARD_OTLP_ENDPOINT_URL"];
-        var dashboardUrls = configuration["ASPNETCORE_URLS"] ?? defaultDashboardUrl;
-        var aspnetcoreEnvironment = configuration["ASPNETCORE_ENVIRONMENT"];
-
-        dashboardExecutableSpec.Env =
-        [
-            new()
-            {
-                Name = "DOTNET_RESOURCE_SERVICE_ENDPOINT_URL",
-                Value = grpcEndpointUrl
-            },
-            new()
-            {
-                Name = "ASPNETCORE_URLS",
-                Value = dashboardUrls
-            },
-            new()
-            {
-                Name = "DOTNET_DASHBOARD_OTLP_ENDPOINT_URL",
-                Value = otlpEndpointUrl
-            },
-            new()
-            {
-                Name = "ASPNETCORE_ENVIRONMENT",
-                Value = aspnetcoreEnvironment
-            }
-        ];
-
-        var dashboardExecutable = new Executable(dashboardExecutableSpec)
-        {
-            Metadata = { Name = KnownResourceNames.AspireDashboard }
-        };
-
-        await kubernetesService.CreateAsync(dashboardExecutable, cancellationToken).ConfigureAwait(false);
-        await CheckDashboardAvailabilityAsync(dashboardUrls, cancellationToken).ConfigureAwait(false);
+        // parent -> children lookup
+        return model.Resources.OfType<IResourceWithParent>()
+                              .Select(x => (Child: x, Root: SelectParentContainerResource(x.Parent)))
+                              .Where(x => x.Root is not null)
+                              .ToLookup(x => x.Root, x => x.Child);
     }
 
-    private TimeSpan DashboardAvailabilityTimeoutDuration
+    // Sets the state of the resource's children
+    async Task SetChildResourceStateAsync(IResource resource, string state)
     {
-        get
+        foreach (var child in _parentChildLookup[resource])
         {
-            if (configuration["DOTNET_ASPIRE_DASHBOARD_TIMEOUT_SECONDS"] is { } timeoutString && int.TryParse(timeoutString, out var timeoutInSeconds))
+            await notificationService.PublishUpdateAsync(child, s => s with
             {
-                return TimeSpan.FromSeconds(timeoutInSeconds);
+                State = state
+            })
+            .ConfigureAwait(false);
+        }
+    }
+
+    private async Task PublishResourcesWithInitialStateAsync()
+    {
+        // Publish the initial state of the resources that have a snapshot annotation.
+        foreach (var resource in _model.Resources)
+        {
+            await notificationService.PublishUpdateAsync(resource, s => s).ConfigureAwait(false);
+        }
+    }
+
+    private void WatchResourceChanges(CancellationToken cancellationToken)
+    {
+        var semaphore = new SemaphoreSlim(1);
+
+        Task.Run(
+            async () =>
+            {
+                using (semaphore)
+                {
+                    await Task.WhenAll(
+                        Task.Run(() => WatchKubernetesResource<Executable>((t, r) => ProcessResourceChange(t, r, _executablesMap, "Executable", ToSnapshot)), cancellationToken),
+                        Task.Run(() => WatchKubernetesResource<Container>((t, r) => ProcessResourceChange(t, r, _containersMap, "Container", ToSnapshot)), cancellationToken),
+                        Task.Run(() => WatchKubernetesResource<Service>(ProcessServiceChange), cancellationToken),
+                        Task.Run(() => WatchKubernetesResource<Endpoint>(ProcessEndpointChange), cancellationToken)).ConfigureAwait(false);
+                }
+            },
+            cancellationToken);
+
+        Task.Run(async () =>
+        {
+            await foreach (var subscribers in loggerService.WatchAnySubscribersAsync().ConfigureAwait(false))
+            {
+                _logInformationChannel.Writer.TryWrite(new(subscribers.Name, LogsAvailable: null, subscribers.AnySubscribers));
+            }
+        },
+        cancellationToken);
+
+        // Listen to the "log information channel" - which contains updates when resources have logs available and when they have subscribers.
+        // A resource needs both logs available and subscribers before it starts streaming its logs.
+        // We only want to start the log stream for resources when they have subscribers.
+        // And when there are no more subscribers, we want to stop the stream.
+        Task.Run(async () =>
+        {
+            var resourceLogState = new Dictionary<string, (bool logsAvailable, bool hasSubscribers)>();
+
+            await foreach (var entry in _logInformationChannel.Reader.ReadAllAsync(cancellationToken).ConfigureAwait(false))
+            {
+                var logsAvailable = false;
+                var hasSubscribers = false;
+                if (resourceLogState.TryGetValue(entry.ResourceName, out (bool, bool) stateEntry))
+                {
+                    (logsAvailable, hasSubscribers) = stateEntry;
+                }
+
+                // LogsAvailable can only go from false => true. Once it is true, it can never go back to false.
+                Debug.Assert(!entry.LogsAvailable.HasValue || entry.LogsAvailable.Value, "entry.LogsAvailable should never be 'false'");
+
+                logsAvailable = entry.LogsAvailable ?? logsAvailable;
+                hasSubscribers = entry.HasSubscribers ?? hasSubscribers;
+
+                if (logsAvailable)
+                {
+                    if (hasSubscribers)
+                    {
+                        if (_containersMap.TryGetValue(entry.ResourceName, out var container))
+                        {
+                            StartLogStream(container);
+                        }
+                        else if (_executablesMap.TryGetValue(entry.ResourceName, out var executable))
+                        {
+                            StartLogStream(executable);
+                        }
+                    }
+                    else
+                    {
+                        if (_logStreams.TryRemove(entry.ResourceName, out var cts))
+                        {
+                            cts.Cancel();
+                        }
+
+                        if (_containersMap.TryGetValue(entry.ResourceName, out var _) ||
+                            _executablesMap.TryGetValue(entry.ResourceName, out var _))
+                        {
+                            // Clear out the backlog for containers and executables after the last subscriber leaves.
+                            // When a new subscriber is added, the full log will be replayed.
+                            loggerService.ClearBacklog(entry.ResourceName);
+                        }
+                    }
+                }
+
+                resourceLogState[entry.ResourceName] = (logsAvailable, hasSubscribers);
+            }
+        },
+        cancellationToken);
+
+        async Task WatchKubernetesResource<T>(Func<WatchEventType, T, Task> handler) where T : CustomResource
+        {
+            var retryUntilCancelled = new RetryStrategyOptions()
+            {
+                ShouldHandle = new PredicateBuilder().HandleInner<EndOfStreamException>(),
+                BackoffType = DelayBackoffType.Exponential,
+                MaxRetryAttempts = int.MaxValue,
+                UseJitter = true,
+                MaxDelay = TimeSpan.FromSeconds(30),
+                OnRetry = (retry) =>
+                {
+                    _logger.LogDebug(
+                        retry.Outcome.Exception,
+                        "Long poll watch operation was ended by server after {LongPollDurationInMs} milliseconds (iteration {Iteration}).",
+                        retry.Duration.TotalMilliseconds,
+                        retry.AttemptNumber
+                        );
+                    return ValueTask.CompletedTask;
+                }
+            };
+
+            var pipeline = new ResiliencePipelineBuilder().AddRetry(retryUntilCancelled).Build();
+
+            try
+            {
+                await pipeline.ExecuteAsync(async (pipelineCancellationToken) =>
+                {
+                    _logger.LogDebug("Starting watch over DCP {ResourceType} resources", typeof(T).Name);
+
+                    await foreach (var (eventType, resource) in kubernetesService.WatchAsync<T>(cancellationToken: pipelineCancellationToken).ConfigureAwait(true)) // Setting ConfigureAwait to silence analyzer. Consider calling ConfigureAwait(false)
+                    {
+                        await semaphore.WaitAsync(pipelineCancellationToken).ConfigureAwait(false);
+
+                        try
+                        {
+                            await handler(eventType, resource).ConfigureAwait(false);
+                        }
+                        finally
+                        {
+                            semaphore.Release();
+                        }
+                    }
+                }, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                _logger.LogCritical(ex, "Watch task over kubernetes {ResourceType} resources terminated unexpectedly. Check to ensure dcpd process is running.", typeof(T).Name);
+            }
+        }
+    }
+
+    private async Task ProcessResourceChange<T>(WatchEventType watchEventType, T resource, ConcurrentDictionary<string, T> resourceByName, string resourceKind, Func<T, CustomResourceSnapshot, CustomResourceSnapshot> snapshotFactory) where T : CustomResource
+    {
+        if (ProcessResourceChange(resourceByName, watchEventType, resource))
+        {
+            UpdateAssociatedServicesMap();
+
+            var changeType = watchEventType switch
+            {
+                WatchEventType.Added or WatchEventType.Modified => ResourceSnapshotChangeType.Upsert,
+                WatchEventType.Deleted => ResourceSnapshotChangeType.Delete,
+                _ => throw new System.ComponentModel.InvalidEnumArgumentException($"Cannot convert {nameof(WatchEventType)} with value {watchEventType} into enum of type {nameof(ResourceSnapshotChangeType)}.")
+            };
+
+            // Find the associated application model resource and update it.
+            var resourceName = resource.AppModelResourceName;
+
+            if (resourceName is not null &&
+                _applicationModel.TryGetValue(resourceName, out var appModelResource))
+            {
+                if (changeType == ResourceSnapshotChangeType.Delete)
+                {
+                    // Stop the log stream for the resource
+                    if (_logStreams.TryRemove(resource.Metadata.Name, out var cts))
+                    {
+                        cts.Cancel();
+                    }
+
+                    // Complete the log stream
+                    loggerService.Complete(resource.Metadata.Name);
+
+                    // TODO: Handle resource deletion
+                    if (_logger.IsEnabled(LogLevel.Trace))
+                    {
+                        _logger.LogTrace("Deleting application model resource {ResourceName} with {ResourceKind} resource {ResourceName}", appModelResource.Name, resourceKind, resource.Metadata.Name);
+                    }
+                }
+                else
+                {
+                    if (_logger.IsEnabled(LogLevel.Trace))
+                    {
+                        _logger.LogTrace("Updating application model resource {ResourceName} with {ResourceKind} resource {ResourceName}", appModelResource.Name, resourceKind, resource.Metadata.Name);
+                    }
+
+                    if (_hiddenResources.TryAdd(appModelResource, true))
+                    {
+                        // Hide the application model resource because we have the DCP resource
+                        await notificationService.PublishUpdateAsync(appModelResource, s => s with { State = "Hidden" }).ConfigureAwait(false);
+                    }
+
+                    // Notifications are associated with the application model resource, so we need to update with that context
+                    await notificationService.PublishUpdateAsync(appModelResource, resource.Metadata.Name, s => snapshotFactory(resource, s)).ConfigureAwait(false);
+
+                    if (resource is Container { LogsAvailable: true } ||
+                        resource is Executable { LogsAvailable: true })
+                    {
+                        _logInformationChannel.Writer.TryWrite(new(resource.Metadata.Name, LogsAvailable: true, HasSubscribers: null));
+                    }
+                }
+
+                // Update all child resources of containers
+                if (resource is Container c && c.Status?.State is string state)
+                {
+                    await SetChildResourceStateAsync(appModelResource, state).ConfigureAwait(false);
+                }
             }
             else
             {
-                return TimeSpan.FromSeconds(DefaultDashboardAvailabilityTimeoutDurationInSeconds);
+                // No application model resource found for the DCP resource.
+                if (_logger.IsEnabled(LogLevel.Trace))
+                {
+                    _logger.LogTrace("No application model resource found for {ResourceKind} resource {ResourceName}", resourceKind, resource.Metadata.Name);
+                }
+            }
+        }
+
+        void UpdateAssociatedServicesMap()
+        {
+            // We keep track of associated services for the resource
+            // So whenever we get the service we can figure out if the service can generate endpoint for the resource
+            if (watchEventType == WatchEventType.Deleted)
+            {
+                _resourceAssociatedServicesMap.Remove((resourceKind, resource.Metadata.Name), out _);
+            }
+            else if (resource.Metadata.Annotations?.TryGetValue(CustomResource.ServiceProducerAnnotation, out var servicesProducedAnnotationJson) == true)
+            {
+                var serviceProducerAnnotations = JsonSerializer.Deserialize<ServiceProducerAnnotation[]>(servicesProducedAnnotationJson);
+                if (serviceProducerAnnotations is not null)
+                {
+                    _resourceAssociatedServicesMap[(resourceKind, resource.Metadata.Name)]
+                        = serviceProducerAnnotations.Select(e => e.ServiceName).ToList();
+                }
             }
         }
     }
 
-    private const int DefaultDashboardAvailabilityTimeoutDurationInSeconds = 60;
-
-    private async Task CheckDashboardAvailabilityAsync(string delimitedUrlList, CancellationToken cancellationToken)
+    private void StartLogStream<T>(T resource) where T : CustomResource
     {
-        if (StringUtils.TryGetUriFromDelimitedString(delimitedUrlList, ";", out var firstDashboardUrl))
+        IAsyncEnumerable<IReadOnlyList<(string, bool)>>? enumerable = resource switch
         {
-            await _dashboardAvailability.WaitForDashboardAvailabilityAsync(firstDashboardUrl, DashboardAvailabilityTimeoutDuration, cancellationToken).ConfigureAwait(false);
-            distributedApplicationLogger.LogInformation("Now listening on: {DashboardUrl}", firstDashboardUrl.ToString().TrimEnd('/'));
-        }
-        else
+            Container c when c.LogsAvailable => new ResourceLogSource<T>(_logger, kubernetesService, resource),
+            Executable e when e.LogsAvailable => new ResourceLogSource<T>(_logger, kubernetesService, resource),
+            _ => null
+        };
+
+        // No way to get logs for this resource as yet
+        if (enumerable is null)
         {
-            _logger.LogWarning("Skipping dashboard availability check because ASPNETCORE_URLS environment variable could not be parsed.");
+            return;
         }
+
+        // This does not run concurrently for the same resource so we can safely use GetOrAdd without
+        // creating multiple log streams.
+        _logStreams.GetOrAdd(resource.Metadata.Name, (_) =>
+        {
+            var cts = new CancellationTokenSource();
+
+            var task = Task.Run(async () =>
+            {
+                try
+                {
+                    if (_logger.IsEnabled(LogLevel.Debug))
+                    {
+                        _logger.LogDebug("Starting log streaming for {ResourceName}", resource.Metadata.Name);
+                    }
+
+                    // Pump the logs from the enumerable into the logger
+                    var logger = loggerService.GetLogger(resource.Metadata.Name);
+
+                    await foreach (var batch in enumerable.WithCancellation(cts.Token).ConfigureAwait(false))
+                    {
+                        foreach (var (content, isError) in batch)
+                        {
+                            var level = isError ? LogLevel.Error : LogLevel.Information;
+                            logger.Log(level, 0, content, null, (s, _) => s);
+                        }
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    // Ignore
+                    _logger.LogDebug("Log streaming for {ResourceName} was cancelled", resource.Metadata.Name);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error streaming logs for {ResourceName}", resource.Metadata.Name);
+                }
+            },
+            cts.Token);
+
+            return cts;
+        });
+    }
+
+    private async Task ProcessEndpointChange(WatchEventType watchEventType, Endpoint endpoint)
+    {
+        if (!ProcessResourceChange(_endpointsMap, watchEventType, endpoint))
+        {
+            return;
+        }
+
+        if (endpoint.Metadata.OwnerReferences is null)
+        {
+            return;
+        }
+
+        foreach (var ownerReference in endpoint.Metadata.OwnerReferences)
+        {
+            await TryRefreshResource(ownerReference.Kind, ownerReference.Name).ConfigureAwait(false);
+        }
+    }
+
+    private async Task ProcessServiceChange(WatchEventType watchEventType, Service service)
+    {
+        if (!ProcessResourceChange(_servicesMap, watchEventType, service))
+        {
+            return;
+        }
+
+        foreach (var ((resourceKind, resourceName), _) in _resourceAssociatedServicesMap.Where(e => e.Value.Contains(service.Metadata.Name)))
+        {
+            await TryRefreshResource(resourceKind, resourceName).ConfigureAwait(false);
+        }
+    }
+
+    private async ValueTask TryRefreshResource(string resourceKind, string resourceName)
+    {
+        CustomResource? cr = resourceKind switch
+        {
+            "Container" => _containersMap.TryGetValue(resourceName, out var container) ? container : null,
+            "Executable" => _executablesMap.TryGetValue(resourceName, out var executable) ? executable : null,
+            _ => null
+        };
+
+        if (cr is not null)
+        {
+            var appModelResourceName = cr.AppModelResourceName;
+
+            if (appModelResourceName is not null &&
+                _applicationModel.TryGetValue(appModelResourceName, out var appModelResource))
+            {
+                await notificationService.PublishUpdateAsync(appModelResource, cr.Metadata.Name, s =>
+                {
+                    if (cr is Container container)
+                    {
+                        return ToSnapshot(container, s);
+                    }
+                    else if (cr is Executable exe)
+                    {
+                        return ToSnapshot(exe, s);
+                    }
+                    return s;
+                })
+                .ConfigureAwait(false);
+            }
+        }
+    }
+
+    private CustomResourceSnapshot ToSnapshot(Container container, CustomResourceSnapshot previous)
+    {
+        var containerId = container.Status?.ContainerId;
+        var urls = GetUrls(container);
+
+        var environment = GetEnvironmentVariables(container.Status?.EffectiveEnv ?? container.Spec.Env, container.Spec.Env);
+        var state = container.AppModelInitialState == KnownResourceStates.Hidden ? KnownResourceStates.Hidden : container.Status?.State;
+
+        return previous with
+        {
+            ResourceType = KnownResourceTypes.Container,
+            State = state,
+            // Map a container exit code of -1 (unknown) to null
+            ExitCode = container.Status?.ExitCode is null or Conventions.UnknownExitCode ? null : container.Status.ExitCode,
+            Properties = [
+                new(KnownProperties.Container.Image, container.Spec.Image),
+                new(KnownProperties.Container.Id, containerId),
+                new(KnownProperties.Container.Command, container.Spec.Command),
+                new(KnownProperties.Container.Args, container.Status?.EffectiveArgs ?? []),
+                new(KnownProperties.Container.Ports, GetPorts()),
+            ],
+            EnvironmentVariables = environment,
+            CreationTimeStamp = container.Metadata.CreationTimestamp?.ToLocalTime(),
+            Urls = urls
+        };
+
+        ImmutableArray<int> GetPorts()
+        {
+            if (container.Spec.Ports is null)
+            {
+                return [];
+            }
+
+            var ports = ImmutableArray.CreateBuilder<int>();
+            foreach (var port in container.Spec.Ports)
+            {
+                if (port.ContainerPort != null)
+                {
+                    ports.Add(port.ContainerPort.Value);
+                }
+            }
+            return ports.ToImmutable();
+        }
+    }
+
+    private CustomResourceSnapshot ToSnapshot(Executable executable, CustomResourceSnapshot previous)
+    {
+        string? projectPath = null;
+
+        if (executable.AppModelResourceName is not null &&
+            _applicationModel.TryGetValue(executable.AppModelResourceName, out var appModelResource))
+        {
+            projectPath = appModelResource is ProjectResource p ? p.GetProjectMetadata().ProjectPath : null;
+        }
+
+        var state = executable.AppModelInitialState is "Hidden" ? "Hidden" : executable.Status?.State;
+
+        var urls = GetUrls(executable);
+
+        var environment = GetEnvironmentVariables(executable.Status?.EffectiveEnv, executable.Spec.Env);
+
+        if (projectPath is not null)
+        {
+            return previous with
+            {
+                ResourceType = KnownResourceTypes.Project,
+                State = state,
+                ExitCode = executable.Status?.ExitCode,
+                Properties = [
+                    new(KnownProperties.Executable.Path, executable.Spec.ExecutablePath),
+                    new(KnownProperties.Executable.WorkDir, executable.Spec.WorkingDirectory),
+                    new(KnownProperties.Executable.Args, executable.Status?.EffectiveArgs ?? []),
+                    new(KnownProperties.Executable.Pid, executable.Status?.ProcessId),
+                    new(KnownProperties.Project.Path, projectPath)
+                ],
+                EnvironmentVariables = environment,
+                CreationTimeStamp = executable.Metadata.CreationTimestamp?.ToLocalTime(),
+                Urls = urls
+            };
+        }
+
+        return previous with
+        {
+            ResourceType = KnownResourceTypes.Executable,
+            State = state,
+            ExitCode = executable.Status?.ExitCode,
+            Properties = [
+                new(KnownProperties.Executable.Path, executable.Spec.ExecutablePath),
+                new(KnownProperties.Executable.WorkDir, executable.Spec.WorkingDirectory),
+                new(KnownProperties.Executable.Args, executable.Status?.EffectiveArgs ?? []),
+                new(KnownProperties.Executable.Pid, executable.Status?.ProcessId)
+            ],
+            EnvironmentVariables = environment,
+            CreationTimeStamp = executable.Metadata.CreationTimestamp?.ToLocalTime(),
+            Urls = urls
+        };
+    }
+
+    private ImmutableArray<UrlSnapshot> GetUrls(CustomResource resource)
+    {
+        var name = resource.Metadata.Name;
+
+        var urls = ImmutableArray.CreateBuilder<UrlSnapshot>();
+
+        foreach (var (_, endpoint) in _endpointsMap)
+        {
+            if (endpoint.Metadata.OwnerReferences?.Any(or => or.Kind == resource.Kind && or.Name == name) != true)
+            {
+                continue;
+            }
+
+            if (endpoint.Spec.ServiceName is not null &&
+                _servicesMap.TryGetValue(endpoint.Spec.ServiceName, out var service) &&
+                service.AppModelResourceName is string resourceName &&
+                _applicationModel.TryGetValue(resourceName, out var appModelResource) &&
+                appModelResource is IResourceWithEndpoints resourceWithEndpoints &&
+                service.EndpointName is string endpointName)
+            {
+                var ep = resourceWithEndpoints.GetEndpoint(endpointName);
+
+                if (ep.EndpointAnnotation.FromLaunchProfile &&
+                    appModelResource is ProjectResource p &&
+                    p.GetEffectiveLaunchProfile() is LaunchProfile profile &&
+                    profile.LaunchUrl is string launchUrl)
+                {
+                    // Concat the launch url from the launch profile to the urls with IsFromLaunchProfile set to true
+
+                    string CombineUrls(string url, string launchUrl)
+                    {
+                        if (!launchUrl.Contains("://"))
+                        {
+                            // This is relative URL
+                            url += $"/{launchUrl}";
+                        }
+                        else
+                        {
+                            // For absolute URL we need to update the port value if possible
+                            if (profile.ApplicationUrl is string applicationUrl
+                                && launchUrl.StartsWith(applicationUrl))
+                            {
+                                url = launchUrl.Replace(applicationUrl, url);
+                            }
+                        }
+
+                        return url;
+                    }
+
+                    if (ep.IsAllocated)
+                    {
+                        var url = CombineUrls(ep.Url, launchUrl);
+
+                        urls.Add(new(Name: ep.EndpointName, Url: url, IsInternal: false));
+                    }
+                }
+                else
+                {
+                    if (ep.IsAllocated)
+                    {
+                        urls.Add(new(Name: ep.EndpointName, Url: ep.Url, IsInternal: false));
+                    }
+                }
+
+                if (ep.EndpointAnnotation.IsProxied)
+                {
+                    var endpointString = $"{ep.Scheme}://{endpoint.Spec.Address}:{endpoint.Spec.Port}";
+                    urls.Add(new(Name: $"{ep.EndpointName} target port", Url: endpointString, IsInternal: true));
+                }
+            }
+        }
+
+        return urls.ToImmutable();
+    }
+
+    private static ImmutableArray<EnvironmentVariableSnapshot> GetEnvironmentVariables(List<EnvVar>? effectiveSource, List<EnvVar>? specSource)
+    {
+        if (effectiveSource is null or { Count: 0 })
+        {
+            return [];
+        }
+
+        var environment = ImmutableArray.CreateBuilder<EnvironmentVariableSnapshot>(effectiveSource.Count);
+
+        foreach (var env in effectiveSource)
+        {
+            if (env.Name is not null)
+            {
+                var isFromSpec = specSource?.Any(e => string.Equals(e.Name, env.Name, StringComparison.Ordinal)) is true or null;
+
+                environment.Add(new(env.Name, env.Value ?? "", isFromSpec));
+            }
+        }
+
+        environment.Sort((v1, v2) => string.Compare(v1.Name, v2.Name, StringComparison.Ordinal));
+
+        return environment.ToImmutable();
+    }
+
+    private static bool ProcessResourceChange<T>(ConcurrentDictionary<string, T> map, WatchEventType watchEventType, T resource)
+            where T : CustomResource
+    {
+        switch (watchEventType)
+        {
+            case WatchEventType.Added:
+                map.TryAdd(resource.Metadata.Name, resource);
+                break;
+
+            case WatchEventType.Modified:
+                map[resource.Metadata.Name] = resource;
+                break;
+
+            case WatchEventType.Deleted:
+                map.Remove(resource.Metadata.Name, out _);
+                break;
+
+            default:
+                return false;
+        }
+
+        return true;
     }
 
     private async Task CreateServicesAsync(CancellationToken cancellationToken = default)
@@ -253,7 +747,9 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
         {
             AspireEventSource.Instance.DcpServicesCreationStart();
 
-            var needAddressAllocated = _appResources.OfType<ServiceAppResource>().Where(sr => !sr.Service.HasCompleteAddress).ToList();
+            var needAddressAllocated = _appResources.OfType<ServiceAppResource>()
+                .Where(sr => !sr.Service.HasCompleteAddress && sr.Service.Spec.AddressAllocationMode != AddressAllocationModes.Proxyless)
+                .ToList();
 
             await CreateResourcesAsync<Service>(cancellationToken).ConfigureAwait(false);
 
@@ -263,26 +759,69 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
                 return;
             }
 
-            // We do not specify the initial list version, so the watcher will give us all updates to Service objects.
-            IAsyncEnumerable<(WatchEventType, Service)> serviceChangeEnumerator = kubernetesService.WatchAsync<Service>(cancellationToken: cancellationToken);
-            await foreach (var (evt, updated) in serviceChangeEnumerator.ConfigureAwait(true)) // Setting ConfigureAwait to silence analyzer. Consider calling ConfigureAwait(false)
+            var withTimeout = new TimeoutStrategyOptions()
             {
-                if (evt == WatchEventType.Bookmark) { continue; } // Bookmarks do not contain any data.
+                Timeout = _options.Value.ServiceStartupWatchTimeout
+            };
 
-                var srvResource = needAddressAllocated.Where(sr => sr.Service.Metadata.Name == updated.Metadata.Name).FirstOrDefault();
-                if (srvResource == null) { continue; } // This service most likely already has full address information, so it is not on needAddressAllocated list.
-
-                if (updated.HasCompleteAddress || updated.Spec.AddressAllocationMode == AddressAllocationModes.Proxyless)
+            var tryTwice = new RetryStrategyOptions()
+            {
+                BackoffType = DelayBackoffType.Constant,
+                MaxDelay = TimeSpan.FromSeconds(1),
+                UseJitter = true,
+                MaxRetryAttempts = 1,
+                ShouldHandle = new PredicateBuilder().Handle<Exception>(),
+                OnRetry = (retry) =>
                 {
-                    srvResource.Service.ApplyAddressInfoFrom(updated);
-                    needAddressAllocated.Remove(srvResource);
+                    _logger.LogDebug(
+                        retry.Outcome.Exception,
+                        "Watching for service port allocation ended with an error after {WatchDurationMs} (iteration {Iteration})",
+                        retry.Duration.TotalMilliseconds,
+                        retry.AttemptNumber
+                    );
+                    return ValueTask.CompletedTask;
                 }
+            };
 
-                if (needAddressAllocated.Count == 0)
+            var execution = new ResiliencePipelineBuilder().AddRetry(tryTwice).AddTimeout(withTimeout).Build();
+
+            await execution.ExecuteAsync(async (attemptCancellationToken) =>
+            {
+                IAsyncEnumerable<(WatchEventType, Service)> serviceChangeEnumerator = kubernetesService.WatchAsync<Service>(cancellationToken: attemptCancellationToken);
+                await foreach (var (evt, updated) in serviceChangeEnumerator.ConfigureAwait(false))
                 {
-                    return; // We are done
+                    if (evt == WatchEventType.Bookmark) { continue; } // Bookmarks do not contain any data.
+
+                    var srvResource = needAddressAllocated.FirstOrDefault(sr => sr.Service.Metadata.Name == updated.Metadata.Name);
+                    if (srvResource == null) { continue; } // This service most likely already has full address information, so it is not on needAddressAllocated list.
+
+                    if (updated.HasCompleteAddress)
+                    {
+                        srvResource.Service.ApplyAddressInfoFrom(updated);
+                        needAddressAllocated.Remove(srvResource);
+                    }
+
+                    if (needAddressAllocated.Count == 0)
+                    {
+                        return; // We are done
+                    }
+                }
+            }, cancellationToken).ConfigureAwait(false);
+
+            // If there are still services that need address allocated, try a final direct query in case the watch missed some updates.
+            foreach (var sar in needAddressAllocated)
+            {
+                var dcpSvc = await kubernetesService.GetAsync<Service>(sar.Service.Metadata.Name, cancellationToken: cancellationToken).ConfigureAwait(false);
+                if (dcpSvc.HasCompleteAddress)
+                {
+                    sar.Service.ApplyAddressInfoFrom(dcpSvc);
+                }
+                else
+                {
+                    distributedApplicationLogger.LogWarning("Unable to allocate a network port for service '{ServiceName}'; service may be unreachable and its clients may not work properly.", sar.Service.Metadata.Name);
                 }
             }
+
         }
         finally
         {
@@ -300,12 +839,16 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
             await lifecycleHook.AfterEndpointsAllocatedAsync(_model, cancellationToken).ConfigureAwait(false);
         }
 
-        await CreateContainersAsync(toCreate.Where(ar => ar.DcpResource is Container), cancellationToken).ConfigureAwait(false);
-        await CreateExecutablesAsync(toCreate.Where(ar => ar.DcpResource is Executable || ar.DcpResource is ExecutableReplicaSet), cancellationToken).ConfigureAwait(false);
+        var containersTask = CreateContainersAsync(toCreate.Where(ar => ar.DcpResource is Container), cancellationToken);
+        var executablesTask = CreateExecutablesAsync(toCreate.Where(ar => ar.DcpResource is Executable || ar.DcpResource is ExecutableReplicaSet), cancellationToken);
+
+        await Task.WhenAll(containersTask, executablesTask).ConfigureAwait(false);
     }
 
-    private static void AddAllocatedEndpointInfo(IEnumerable<AppResource> resources)
+    private void AddAllocatedEndpointInfo(IEnumerable<AppResource> resources)
     {
+        var containerHost = DefaultContainerHostName;
+
         foreach (var appResource in resources)
         {
             foreach (var sp in appResource.ServicesProduced)
@@ -323,15 +866,12 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
                     throw new InvalidOperationException($"Service '{svc.Metadata.Name}' needs to specify a port for endpoint '{sp.EndpointAnnotation.Name}' since it isn't using a proxy.");
                 }
 
-                var a = new AllocatedEndpointAnnotation(
-                    sp.EndpointAnnotation.Name,
-                    PortProtocol.ToProtocolType(svc.Spec.Protocol),
+                sp.EndpointAnnotation.AllocatedEndpoint = new AllocatedEndpoint(
+                    sp.EndpointAnnotation,
                     sp.EndpointAnnotation.IsProxied ? svc.AllocatedAddress! : "localhost",
                     (int)svc.AllocatedPort!,
-                    sp.EndpointAnnotation.UriScheme
-                    );
-
-                appResource.ModelResource.Annotations.Add(a);
+                    containerHostAddress: appResource.ModelResource.IsContainer() ? containerHost : null,
+                    targetPortExpression: $$$"""{{- portForServing "{{{svc.Metadata.Name}}}" -}}""");
             }
         }
     }
@@ -339,35 +879,36 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
     private void PrepareServices()
     {
         var serviceProducers = _model.Resources
-            .Select(r => (ModelResource: r, SBAnnotations: r.Annotations.OfType<EndpointAnnotation>()))
-            .Where(sp => sp.SBAnnotations.Any());
+            .Select(r => (ModelResource: r, Endpoints: r.Annotations.OfType<EndpointAnnotation>()))
+            .Where(sp => sp.Endpoints.Any());
 
         // We need to ensure that Services have unique names (otherwise we cannot really distinguish between
         // services produced by different resources).
         HashSet<string> serviceNames = [];
 
-        void addServiceAppResource(Service svc, IResource producingResource, EndpointAnnotation sba)
-        {
-            svc.Spec.Protocol = PortProtocol.FromProtocolType(sba.Protocol);
-            svc.Annotate(CustomResource.UriSchemeAnnotation, sba.UriScheme);
-            svc.Spec.AddressAllocationMode = sba.IsProxied ? AddressAllocationModes.Localhost : AddressAllocationModes.Proxyless;
-            _appResources.Add(new ServiceAppResource(producingResource, svc, sba));
-        }
-
         foreach (var sp in serviceProducers)
         {
-            var sbAnnotations = sp.SBAnnotations.ToArray();
+            var endpoints = sp.Endpoints.ToArray();
 
-            foreach (var sba in sbAnnotations)
+            foreach (var endpoint in endpoints)
             {
-                var candidateServiceName = sbAnnotations.Length == 1 ?
-                    GetObjectNameForResource(sp.ModelResource) : GetObjectNameForResource(sp.ModelResource, sba.Name);
+                var candidateServiceName = endpoints.Length == 1
+                    ? GetObjectNameForResource(sp.ModelResource)
+                    : GetObjectNameForResource(sp.ModelResource, endpoint.Name);
+
                 var uniqueServiceName = GenerateUniqueServiceName(serviceNames, candidateServiceName);
                 var svc = Service.Create(uniqueServiceName);
 
-                svc.Spec.Port = sba.Port;
+                var port = _options.Value.RandomizePorts && endpoint.IsProxied ? null : endpoint.Port;
+                svc.Spec.Port = port;
+                svc.Spec.Protocol = PortProtocol.FromProtocolType(endpoint.Protocol);
+                svc.Spec.AddressAllocationMode = endpoint.IsProxied ? AddressAllocationModes.Localhost : AddressAllocationModes.Proxyless;
 
-                addServiceAppResource(svc, sp.ModelResource, sba);
+                // So we can associate the service with the resource that produced it and the endpoint it represents.
+                svc.Annotate(CustomResource.ResourceNameAnnotation, sp.ModelResource.Name);
+                svc.Annotate(CustomResource.EndpointNameAnnotation, endpoint.Name);
+
+                _appResources.Add(new ServiceAppResource(sp.ModelResource, svc, endpoint));
             }
         }
     }
@@ -390,10 +931,10 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
 
             // The working directory is always relative to the app host project directory (if it exists).
             exe.Spec.WorkingDirectory = executable.WorkingDirectory;
-            exe.Spec.Args = executable.Args?.ToList();
             exe.Spec.ExecutionType = ExecutionType.Process;
-            exe.Annotate(Executable.OtelServiceNameAnnotation, exe.Metadata.Name);
-            exe.Annotate(Executable.ResourceNameAnnotation, executable.Name);
+            exe.Annotate(CustomResource.OtelServiceNameAnnotation, exe.Metadata.Name);
+            exe.Annotate(CustomResource.ResourceNameAnnotation, executable.Name);
+            SetInitialResourceState(executable, exe);
 
             var exeAppResource = new AppResource(executable, exe);
             AddServicesProducedInfo(executable, exe, exeAppResource);
@@ -416,26 +957,44 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
 
             var ers = ExecutableReplicaSet.Create(GetObjectNameForResource(project), replicas, "dotnet");
             var exeSpec = ers.Spec.Template.Spec;
-            IAnnotationHolder annotationHolder = ers.Spec.Template;
-
             exeSpec.WorkingDirectory = Path.GetDirectoryName(projectMetadata.ProjectPath);
 
-            annotationHolder.Annotate(Executable.CSharpProjectPathAnnotation, projectMetadata.ProjectPath);
-            annotationHolder.Annotate(Executable.OtelServiceNameAnnotation, ers.Metadata.Name);
-            annotationHolder.Annotate(Executable.ResourceNameAnnotation, project.Name);
+            IAnnotationHolder annotationHolder = ers.Spec.Template;
+            annotationHolder.Annotate(CustomResource.OtelServiceNameAnnotation, ers.Metadata.Name);
+            annotationHolder.Annotate(CustomResource.ResourceNameAnnotation, project.Name);
+
+            SetInitialResourceState(project, annotationHolder);
+
+            var projectLaunchConfiguration = new ProjectLaunchConfiguration();
+            projectLaunchConfiguration.ProjectPath = projectMetadata.ProjectPath;
 
             if (!string.IsNullOrEmpty(configuration[DebugSessionPortVar]))
             {
                 exeSpec.ExecutionType = ExecutionType.IDE;
 
-                // ExcludeLaunchProfileAnnotation takes precedence over LaunchProfileAnnotation.
-                if (project.TryGetLastAnnotation<ExcludeLaunchProfileAnnotation>(out _))
+                if (_dcpInfo?.Version?.CompareTo(DcpVersion.MinimumVersionIdeProtocolV1) >= 0)
                 {
-                    annotationHolder.Annotate(Executable.CSharpDisableLaunchProfileAnnotation, "true");
+                    projectLaunchConfiguration.DisableLaunchProfile = project.TryGetLastAnnotation<ExcludeLaunchProfileAnnotation>(out _);
+                    if (!projectLaunchConfiguration.DisableLaunchProfile && project.TryGetLastAnnotation<LaunchProfileAnnotation>(out var lpa))
+                    {
+                        projectLaunchConfiguration.LaunchProfile = lpa.LaunchProfileName;
+                    }
                 }
-                else if (project.TryGetLastAnnotation<LaunchProfileAnnotation>(out var lpa))
+                else
                 {
-                    annotationHolder.Annotate(Executable.CSharpLaunchProfileAnnotation, lpa.LaunchProfileName);
+#pragma warning disable CS0612 // These annotations are obsolete; remove after Aspire GA
+                    annotationHolder.Annotate(Executable.CSharpProjectPathAnnotation, projectMetadata.ProjectPath);
+
+                    // ExcludeLaunchProfileAnnotation takes precedence over LaunchProfileAnnotation.
+                    if (project.TryGetLastAnnotation<ExcludeLaunchProfileAnnotation>(out _))
+                    {
+                        annotationHolder.Annotate(Executable.CSharpDisableLaunchProfileAnnotation, "true");
+                    }
+                    else if (project.TryGetLastAnnotation<LaunchProfileAnnotation>(out var lpa))
+                    {
+                        annotationHolder.Annotate(Executable.CSharpLaunchProfileAnnotation, lpa.LaunchProfileName);
+                    }
+#pragma warning restore CS0612
                 }
             }
             else
@@ -469,21 +1028,20 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
                 // and the environment variables/application URLs inside CreateExecutableAsync().
                 exeSpec.Args.Add("--no-launch-profile");
 
-                var launchProfileName = project.SelectLaunchProfileName();
-                if (!string.IsNullOrEmpty(launchProfileName))
+                var launchProfile = project.GetEffectiveLaunchProfile();
+                if (launchProfile is not null && !string.IsNullOrWhiteSpace(launchProfile.CommandLineArgs))
                 {
-                    var launchProfile = project.GetEffectiveLaunchProfile();
-                    if (launchProfile is not null && !string.IsNullOrWhiteSpace(launchProfile.CommandLineArgs))
+                    var cmdArgs = launchProfile.CommandLineArgs.Split((string?)null, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                    if (cmdArgs is not null && cmdArgs.Length > 0)
                     {
-                        var cmdArgs = launchProfile.CommandLineArgs.Split((string?)null, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-                        if (cmdArgs is not null && cmdArgs.Length > 0)
-                        {
-                            exeSpec.Args.Add("--");
-                            exeSpec.Args.AddRange(cmdArgs);
-                        }
+                        exeSpec.Args.Add("--");
+                        exeSpec.Args.AddRange(cmdArgs);
                     }
                 }
             }
+
+            // We want this annotation even if we are not using IDE execution; see ToSnapshot() for details.
+            annotationHolder.AnnotateAsObjectList(Executable.LaunchConfigurationsAnnotation, projectLaunchConfiguration);
 
             var exeAppResource = new AppResource(project, ers);
             AddServicesProducedInfo(project, annotationHolder, exeAppResource);
@@ -491,114 +1049,60 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
         }
     }
 
-    private async Task CreateExecutablesAsync(IEnumerable<AppResource> executableResources, CancellationToken cancellationToken)
+    private static void SetInitialResourceState(IResource resource, IAnnotationHolder annotationHolder)
+    {
+        // Store the initial state of the resource
+        if (resource.TryGetLastAnnotation<ResourceSnapshotAnnotation>(out var initial) &&
+            initial.InitialSnapshot.State?.Text is string state && !string.IsNullOrEmpty(state))
+        {
+            annotationHolder.Annotate(CustomResource.ResourceStateAnnotation, state);
+        }
+    }
+
+    private Task CreateExecutablesAsync(IEnumerable<AppResource> executableResources, CancellationToken cancellationToken)
     {
         try
         {
             AspireEventSource.Instance.DcpExecutablesCreateStart();
 
-            // Hoisting the aspire-dashboard resource if it exists to the top of
-            // the list so we start it first.
-            var sortedExecutableResources = executableResources.ToList();
-            var (dashboardIndex, dashboardAppResource) = sortedExecutableResources.IndexOf(static r => StringComparers.ResourceName.Equals(r.ModelResource.Name, KnownResourceNames.AspireDashboard));
-
-            if (dashboardIndex > 0)
+            async Task CreateExecutableAsyncCore(AppResource cr, CancellationToken cancellationToken)
             {
-                sortedExecutableResources.RemoveAt(dashboardIndex);
-                sortedExecutableResources.Insert(0, dashboardAppResource);
+                var logger = loggerService.GetLogger(cr.ModelResource);
+
+                await notificationService.PublishUpdateAsync(cr.ModelResource, s => s with
+                {
+                    ResourceType = cr.ModelResource is ProjectResource ? KnownResourceTypes.Project : KnownResourceTypes.Executable,
+                    Properties = [],
+                    State = "Starting"
+                })
+                .ConfigureAwait(false);
+
+                try
+                {
+                    await CreateExecutableAsync(cr, logger, cancellationToken).ConfigureAwait(false);
+                }
+                catch (FailedToApplyEnvironmentException)
+                {
+                    // For this exception we don't want the noise of the stack trace, we've already
+                    // provided more detail where we detected the issue (e.g. envvar name). To get
+                    // more diagnostic information reduce logging level for DCP log category to Debug.
+                    await notificationService.PublishUpdateAsync(cr.ModelResource, s => s with { State = "FailedToStart" }).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Failed to create resource {ResourceName}", cr.ModelResource.Name);
+
+                    await notificationService.PublishUpdateAsync(cr.ModelResource, s => s with { State = "FailedToStart" }).ConfigureAwait(false);
+                }
             }
 
-            foreach (var er in sortedExecutableResources)
+            var tasks = new List<Task>();
+            foreach (var er in executableResources)
             {
-                ExecutableSpec spec;
-                Func<Task<CustomResource>> createResource;
-
-                switch (er.DcpResource)
-                {
-                    case Executable exe:
-                        spec = exe.Spec;
-                        createResource = async () => await kubernetesService.CreateAsync(exe, cancellationToken).ConfigureAwait(false);
-                        break;
-                    case ExecutableReplicaSet ers:
-                        spec = ers.Spec.Template.Spec;
-                        createResource = async () => await kubernetesService.CreateAsync(ers, cancellationToken).ConfigureAwait(false);
-                        break;
-                    default:
-                        throw new InvalidOperationException($"Expected an Executable-like resource, but got {er.DcpResource.Kind} instead");
-                }
-
-                spec.Args ??= new();
-
-                if (er.ModelResource.TryGetAnnotationsOfType<ExecutableArgsCallbackAnnotation>(out var exeArgsCallbacks))
-                {
-                    foreach (var exeArgsCallback in exeArgsCallbacks)
-                    {
-                        exeArgsCallback.Callback(spec.Args);
-                    }
-                }
-
-                var config = new Dictionary<string, string>();
-                var context = new EnvironmentCallbackContext(_executionContext, config);
-
-                // Need to apply configuration settings manually; see PrepareExecutables() for details.
-                if (er.ModelResource is ProjectResource project && project.SelectLaunchProfileName() is { } launchProfileName && project.GetLaunchSettings() is { } launchSettings)
-                {
-                    ApplyLaunchProfile(er, config, launchProfileName, launchSettings);
-                }
-                else
-                {
-                    if (er.ServicesProduced.Count > 0)
-                    {
-                        if (er.ModelResource is ProjectResource)
-                        {
-                            var urls = er.ServicesProduced.Where(IsUnspecifiedHttpService).Select(sar =>
-                            {
-                                var url = sar.EndpointAnnotation.UriScheme + "://localhost:{{- portForServing \"" + sar.Service.Metadata.Name + "\" -}}";
-                                return url;
-                            });
-
-                            // REVIEW: Should we assume ASP.NET Core?
-                            // We're going to use http and https urls as ASPNETCORE_URLS
-                            config["ASPNETCORE_URLS"] = string.Join(";", urls);
-                        }
-
-                        InjectPortEnvVars(er, config);
-                    }
-                }
-
-                if (er.ModelResource.TryGetEnvironmentVariables(out var envVarAnnotations))
-                {
-                    foreach (var ann in envVarAnnotations)
-                    {
-                        ann.Callback(context);
-                    }
-                }
-
-                spec.Env = new();
-                foreach (var c in config)
-                {
-                    spec.Env.Add(new EnvVar { Name = c.Key, Value = c.Value });
-                }
-
-                await createResource().ConfigureAwait(false);
-
-                // NOTE: This check is only necessary for the inner loop in the dotnet/aspire repo. When
-                //       running in the dotnet/aspire repo we will normally launch the dashboard via
-                //       AddProject<T>. When doing this we make sure that the dashboard is running.
-                if (!distributedApplicationOptions.DisableDashboard && er.ModelResource.Name.Equals(KnownResourceNames.AspireDashboard, StringComparisons.ResourceName))
-                {
-                    // We just check the HTTP endpoint because this will prove that the
-                    // dashboard is listening and is ready to process requests.
-                    if (configuration["ASPNETCORE_URLS"] is not { } dashboardUrls)
-                    {
-                        throw new DistributedApplicationException("Cannot check dashboard availability since ASPNETCORE_URLS environment variable not set.");
-                    }
-
-                    await CheckDashboardAvailabilityAsync(dashboardUrls, cancellationToken).ConfigureAwait(false);
-                }
-
+                tasks.Add(CreateExecutableAsyncCore(er, cancellationToken));
             }
 
+            return Task.WhenAll(tasks);
         }
         finally
         {
@@ -606,70 +1110,156 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
         }
     }
 
-    private static void ApplyLaunchProfile(AppResource executableResource, Dictionary<string, string> config, string launchProfileName, LaunchSettings launchSettings)
+    private async Task CreateExecutableAsync(AppResource er, ILogger resourceLogger, CancellationToken cancellationToken)
     {
-        // Populate DOTNET_LAUNCH_PROFILE environment variable for consistency with "dotnet run" and "dotnet watch".
-        config.Add("DOTNET_LAUNCH_PROFILE", launchProfileName);
+        ExecutableSpec spec;
+        Func<Task<CustomResource>> createResource;
 
-        var launchProfile = launchSettings.Profiles[launchProfileName];
-        if (!string.IsNullOrWhiteSpace(launchProfile.ApplicationUrl))
+        switch (er.DcpResource)
         {
-            if (executableResource.DcpResource is ExecutableReplicaSet)
-            {
-                var urls = executableResource.ServicesProduced.Where(IsUnspecifiedHttpService).Select(sar =>
-                {
-                    var url = sar.EndpointAnnotation.UriScheme + "://localhost:{{- portForServing \"" + sar.Service.Metadata.Name + "\" -}}";
-                    return url;
-                });
+            case Executable exe:
+                spec = exe.Spec;
+                createResource = async () => await kubernetesService.CreateAsync(exe, cancellationToken).ConfigureAwait(false);
+                break;
+            case ExecutableReplicaSet ers:
+                spec = ers.Spec.Template.Spec;
+                createResource = async () => await kubernetesService.CreateAsync(ers, cancellationToken).ConfigureAwait(false);
+                break;
+            default:
+                throw new InvalidOperationException($"Expected an Executable-like resource, but got {er.DcpResource.Kind} instead");
+        }
 
-                config.Add("ASPNETCORE_URLS", string.Join(";", urls));
+        bool failedToApplyArgs = false;
+        spec.Args ??= [];
+
+        if (er.ModelResource.TryGetAnnotationsOfType<CommandLineArgsCallbackAnnotation>(out var exeArgsCallbacks))
+        {
+            var args = new List<object>();
+            var commandLineContext = new CommandLineArgsCallbackContext(args, cancellationToken);
+
+            foreach (var exeArgsCallback in exeArgsCallbacks)
+            {
+                await exeArgsCallback.Callback(commandLineContext).ConfigureAwait(false);
+            }
+
+            foreach (var arg in args)
+            {
+                try
+                {
+                    var value = arg switch
+                    {
+                        string s => s,
+                        IValueProvider valueProvider => await GetValue(key: null, valueProvider, resourceLogger, isContainer: false, cancellationToken).ConfigureAwait(false),
+                        null => null,
+                        _ => throw new InvalidOperationException($"Unexpected value for {arg}")
+                    };
+
+                    if (value is not null)
+                    {
+                        spec.Args.Add(value);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    resourceLogger.LogCritical("Failed to apply arguments. A dependency may have failed to start.");
+                    _logger.LogDebug(ex, "Failed to apply arguments. A dependency may have failed to start.");
+                    failedToApplyArgs = true;
+                }
+            }
+        }
+
+        var config = new Dictionary<string, object>();
+        var context = new EnvironmentCallbackContext(_executionContext, config, cancellationToken)
+        {
+            Logger = resourceLogger
+        };
+
+        if (er.ModelResource.TryGetEnvironmentVariables(out var envVarAnnotations))
+        {
+            foreach (var ann in envVarAnnotations)
+            {
+                await ann.Callback(context).ConfigureAwait(false);
+            }
+        }
+
+        bool failedToApplyConfiguration = false;
+        spec.Env = [];
+        foreach (var c in config)
+        {
+            try
+            {
+                var value = c.Value switch
+                {
+                    string s => s,
+                    IValueProvider valueProvider => await GetValue(c.Key, valueProvider, resourceLogger, isContainer: false, cancellationToken).ConfigureAwait(false),
+                    null => null,
+                    _ => throw new InvalidOperationException($"Unexpected value for environment variable \"{c.Key}\".")
+                };
+
+                if (value is not null)
+                {
+                    spec.Env.Add(new EnvVar { Name = c.Key, Value = value });
+                }
+            }
+            catch (Exception ex)
+            {
+                resourceLogger.LogCritical("Failed to apply configuration value '{ConfigKey}'. A dependency may have failed to start.", c.Key);
+                _logger.LogDebug(ex, "Failed to apply configuration value '{ConfigKey}'. A dependency may have failed to start.", c.Key);
+                failedToApplyConfiguration = true;
+            }
+        }
+
+        if (failedToApplyConfiguration || failedToApplyArgs)
+        {
+            throw new FailedToApplyEnvironmentException();
+        }
+
+        await createResource().ConfigureAwait(false);
+    }
+
+    private async Task<string?> GetValue(string? key, IValueProvider valueProvider, ILogger logger, bool isContainer, CancellationToken cancellationToken)
+    {
+        var task = valueProvider.GetValueAsync(cancellationToken);
+
+        if (!task.IsCompleted)
+        {
+            if (valueProvider is IResource resource)
+            {
+                if (key is null)
+                {
+                    logger.LogInformation("Waiting for value from resource '{ResourceName}'", resource.Name);
+                }
+                else
+                {
+                    logger.LogInformation("Waiting for value for environment variable value '{Name}' from resource '{ResourceName}'", key, resource.Name);
+                }
+            }
+            else if (valueProvider is ConnectionStringReference { Resource: var cs })
+            {
+                logger.LogInformation("Waiting for value for connection string from resource '{ResourceName}'", cs.Name);
             }
             else
             {
-                config.Add("ASPNETCORE_URLS", launchProfile.ApplicationUrl);
+                if (key is null)
+                {
+                    logger.LogInformation("Waiting for value from {ValueProvider}.", valueProvider.ToString());
+                }
+                else
+                {
+                    logger.LogInformation("Waiting for value for environment variable value '{Name}' from {ValueProvider}.", key, valueProvider.ToString());
+                }
             }
-
-            InjectPortEnvVars(executableResource, config);
         }
 
-        foreach (var envVar in launchProfile.EnvironmentVariables)
+        var value = await task.ConfigureAwait(false);
+
+        if (value is not null && isContainer && valueProvider is ConnectionStringReference or EndpointReference or HostUrl)
         {
-            string value = Environment.ExpandEnvironmentVariables(envVar.Value);
-            config[envVar.Key] = value;
-        }
-    }
-
-    private static void InjectPortEnvVars(AppResource executableResource, Dictionary<string, string> config)
-    {
-        ServiceAppResource? httpsServiceAppResource = null;
-        // Inject environment variables for services produced by this executable.
-        foreach (var serviceProduced in executableResource.ServicesProduced)
-        {
-            var name = serviceProduced.Service.Metadata.Name;
-            var envVar = serviceProduced.EndpointAnnotation.EnvironmentVariable;
-
-            if (envVar is not null)
-            {
-                config.Add(envVar, $"{{{{- portForServing \"{name}\" }}}}");
-            }
-
-            if (httpsServiceAppResource is null && serviceProduced.EndpointAnnotation.UriScheme == "https")
-            {
-                httpsServiceAppResource = serviceProduced;
-            }
+            // If the value is a connection string or endpoint reference, we need to replace localhost with the container host.
+            return ReplaceLocalhostWithContainerHost(value);
         }
 
-        // REVIEW: If you run as an executable, we don't know that you're an ASP.NET Core application so we don't want to
-        // inject ASPNETCORE_HTTPS_PORT.
-        if (executableResource.ModelResource is ProjectResource)
-        {
-            // Add the environment variable for the HTTPS port if we have an HTTPS service. This will make sure the
-            // HTTPS redirection middleware avoids redirecting to the internal port.
-            if (httpsServiceAppResource is not null)
-            {
-                config.Add("ASPNETCORE_HTTPS_PORT", $"{{{{- portFor \"{httpsServiceAppResource.Service.Metadata.Name}\" }}}}");
-            }
-        }
+        return value;
     }
 
     private void PrepareContainers()
@@ -686,20 +1276,21 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
                 throw new InvalidOperationException();
             }
 
-            var ctr = Container.Create(container.Name, containerImageName);
+            var ctr = Container.Create(GetObjectNameForResource(container), containerImageName);
 
-            ctr.Annotate(Container.ResourceNameAnnotation, container.Name);
-            ctr.Annotate(Container.OtelServiceNameAnnotation, container.Name);
+            ctr.Annotate(CustomResource.ResourceNameAnnotation, container.Name);
+            ctr.Annotate(CustomResource.OtelServiceNameAnnotation, container.Name);
+            SetInitialResourceState(container, ctr);
 
             if (container.TryGetContainerMounts(out var containerMounts))
             {
-                ctr.Spec.VolumeMounts = new();
+                ctr.Spec.VolumeMounts = [];
 
                 foreach (var mount in containerMounts)
                 {
-                    var isBound = mount.Type == ContainerMountType.Bind;
+                    var isBindMount = mount.Type == ContainerMountType.BindMount;
                     var resolvedSource = mount.Source;
-                    if (isBound)
+                    if (isBindMount)
                     {
                         // Source is only optional for creating anonymous volume mounts.
                         if (mount.Source == null)
@@ -717,7 +1308,7 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
                     {
                         Source = resolvedSource,
                         Target = mount.Target,
-                        Type = isBound ? VolumeMountType.Bind : VolumeMountType.Volume,
+                        Type = isBindMount ? VolumeMountType.Bind : VolumeMountType.Volume,
                         IsReadOnly = mount.IsReadOnly
                     };
                     ctr.Spec.VolumeMounts.Add(volumeSpec);
@@ -730,99 +1321,193 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
         }
     }
 
-    private async Task CreateContainersAsync(IEnumerable<AppResource> containerResources, CancellationToken cancellationToken)
+    private Task CreateContainersAsync(IEnumerable<AppResource> containerResources, CancellationToken cancellationToken)
     {
         try
         {
             AspireEventSource.Instance.DcpContainersCreateStart();
 
+            async Task CreateContainerAsyncCore(AppResource cr, CancellationToken cancellationToken)
+            {
+                var logger = loggerService.GetLogger(cr.ModelResource);
+
+                await notificationService.PublishUpdateAsync(cr.ModelResource, s => s with
+                {
+                    State = "Starting",
+                    Properties = [
+                        new(KnownProperties.Container.Image, cr.ModelResource.TryGetContainerImageName(out var imageName) ? imageName : ""),
+                   ],
+                    ResourceType = KnownResourceTypes.Container
+                })
+                .ConfigureAwait(false);
+
+                await SetChildResourceStateAsync(cr.ModelResource, "Starting").ConfigureAwait(false);
+
+                try
+                {
+                    await CreateContainerAsync(cr, logger, cancellationToken).ConfigureAwait(false);
+                }
+                catch (FailedToApplyEnvironmentException)
+                {
+                    // For this exception we don't want the noise of the stack trace, we've already
+                    // provided more detail where we detected the issue (e.g. envvar name). To get
+                    // more diagnostic information reduce logging level for DCP log category to Debug.
+                    await notificationService.PublishUpdateAsync(cr.ModelResource, s => s with { State = "FailedToStart" }).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Failed to create container resource {ResourceName}", cr.ModelResource.Name);
+
+                    await notificationService.PublishUpdateAsync(cr.ModelResource, s => s with { State = "FailedToStart" }).ConfigureAwait(false);
+
+                    await SetChildResourceStateAsync(cr.ModelResource, "FailedToStart").ConfigureAwait(false);
+                }
+            }
+
+            var tasks = new List<Task>();
             foreach (var cr in containerResources)
             {
-                var dcpContainerResource = (Container)cr.DcpResource;
-                var modelContainerResource = cr.ModelResource;
-
-                var config = new Dictionary<string, string>();
-
-                dcpContainerResource.Spec.Env = new();
-
-                if (cr.ServicesProduced.Count > 0)
-                {
-                    dcpContainerResource.Spec.Ports = new();
-
-                    foreach (var sp in cr.ServicesProduced)
-                    {
-                        var portSpec = new ContainerPortSpec()
-                        {
-                            ContainerPort = sp.DcpServiceProducerAnnotation.Port,
-                        };
-
-                        if (!sp.EndpointAnnotation.IsProxied)
-                        {
-                            // When DCP isn't proxying the container we need to set the host port that the containers internal port will be mapped to
-                            portSpec.HostPort = sp.EndpointAnnotation.Port;
-                        }
-
-                        if (!string.IsNullOrEmpty(sp.DcpServiceProducerAnnotation.Address))
-                        {
-                            portSpec.HostIP = sp.DcpServiceProducerAnnotation.Address;
-                        }
-
-                        switch (sp.EndpointAnnotation.Protocol)
-                        {
-                            case ProtocolType.Tcp:
-                                portSpec.Protocol = PortProtocol.TCP; break;
-                            case ProtocolType.Udp:
-                                portSpec.Protocol = PortProtocol.UDP; break;
-                        }
-
-                        dcpContainerResource.Spec.Ports.Add(portSpec);
-
-                        var name = sp.Service.Metadata.Name;
-                        var envVar = sp.EndpointAnnotation.EnvironmentVariable;
-
-                        if (envVar is not null)
-                        {
-                            config.Add(envVar, $"{{{{- portForServing \"{name}\" }}}}");
-                        }
-                    }
-                }
-
-                if (modelContainerResource.TryGetEnvironmentVariables(out var containerEnvironmentVariables))
-                {
-                    var context = new EnvironmentCallbackContext(_executionContext, config);
-
-                    foreach (var v in containerEnvironmentVariables)
-                    {
-                        v.Callback(context);
-                    }
-                }
-
-                foreach (var kvp in config)
-                {
-                    dcpContainerResource.Spec.Env.Add(new EnvVar { Name = kvp.Key, Value = kvp.Value });
-                }
-
-                if (modelContainerResource.TryGetAnnotationsOfType<ExecutableArgsCallbackAnnotation>(out var argsCallback))
-                {
-                    dcpContainerResource.Spec.Args ??= [];
-                    foreach (var callback in argsCallback)
-                    {
-                        callback.Callback(dcpContainerResource.Spec.Args);
-                    }
-                }
-
-                if (modelContainerResource is ContainerResource containerResource)
-                {
-                    dcpContainerResource.Spec.Command = containerResource.Entrypoint;
-                }
-
-                await kubernetesService.CreateAsync(dcpContainerResource, cancellationToken).ConfigureAwait(false);
+                tasks.Add(CreateContainerAsyncCore(cr, cancellationToken));
             }
+
+            return Task.WhenAll(tasks);
         }
         finally
         {
             AspireEventSource.Instance.DcpContainersCreateStop();
         }
+    }
+
+    private async Task CreateContainerAsync(AppResource cr, ILogger resourceLogger, CancellationToken cancellationToken)
+    {
+        var dcpContainerResource = (Container)cr.DcpResource;
+        var modelContainerResource = cr.ModelResource;
+
+        var config = new Dictionary<string, object>();
+
+        dcpContainerResource.Spec.Env = [];
+
+        if (cr.ServicesProduced.Count > 0)
+        {
+            dcpContainerResource.Spec.Ports = new();
+
+            foreach (var sp in cr.ServicesProduced)
+            {
+                var portSpec = new ContainerPortSpec()
+                {
+                    ContainerPort = sp.DcpServiceProducerAnnotation.Port,
+                };
+
+                if (!sp.EndpointAnnotation.IsProxied)
+                {
+                    // When DCP isn't proxying the container we need to set the host port that the containers internal port will be mapped to
+                    portSpec.HostPort = sp.EndpointAnnotation.Port;
+                }
+
+                if (!string.IsNullOrEmpty(sp.DcpServiceProducerAnnotation.Address))
+                {
+                    portSpec.HostIP = sp.DcpServiceProducerAnnotation.Address;
+                }
+
+                switch (sp.EndpointAnnotation.Protocol)
+                {
+                    case ProtocolType.Tcp:
+                        portSpec.Protocol = PortProtocol.TCP; break;
+                    case ProtocolType.Udp:
+                        portSpec.Protocol = PortProtocol.UDP; break;
+                }
+
+                dcpContainerResource.Spec.Ports.Add(portSpec);
+            }
+        }
+
+        if (modelContainerResource.TryGetEnvironmentVariables(out var containerEnvironmentVariables))
+        {
+            var context = new EnvironmentCallbackContext(_executionContext, config, cancellationToken);
+
+            foreach (var v in containerEnvironmentVariables)
+            {
+                await v.Callback(context).ConfigureAwait(false);
+            }
+        }
+
+        bool failedToApplyConfiguration = false;
+        foreach (var kvp in config)
+        {
+            try
+            {
+                var value = kvp.Value switch
+                {
+                    string s => s,
+                    IValueProvider valueProvider => await GetValue(kvp.Key, valueProvider, resourceLogger, isContainer: true, cancellationToken).ConfigureAwait(false),
+                    null => null,
+                    _ => throw new InvalidOperationException($"Unexpected value for environment variable \"{kvp.Key}\".")
+                };
+
+                if (value is not null)
+                {
+                    dcpContainerResource.Spec.Env.Add(new EnvVar { Name = kvp.Key, Value = value });
+                }
+            }
+            catch (Exception ex)
+            {
+                resourceLogger.LogCritical("Failed to apply configuration value '{ConfigKey}'. A dependency may have failed to start.", kvp.Key);
+                _logger.LogDebug(ex, "Failed to apply configuration value '{ConfigKey}'. A dependency may have failed to start.", kvp.Key);
+                failedToApplyConfiguration = true;
+            }
+        }
+
+        var failedToApplyArgs = false;
+        if (modelContainerResource.TryGetAnnotationsOfType<CommandLineArgsCallbackAnnotation>(out var argsCallback))
+        {
+            dcpContainerResource.Spec.Args ??= [];
+
+            var args = new List<object>();
+
+            var commandLineArgsContext = new CommandLineArgsCallbackContext(args, cancellationToken);
+
+            foreach (var callback in argsCallback)
+            {
+                await callback.Callback(commandLineArgsContext).ConfigureAwait(false);
+            }
+
+            foreach (var arg in args)
+            {
+                try
+                {
+                    var value = arg switch
+                    {
+                        string s => s,
+                        IValueProvider valueProvider => await GetValue(key: null, valueProvider, resourceLogger, isContainer: true, cancellationToken).ConfigureAwait(false),
+                        null => null,
+                        _ => throw new InvalidOperationException($"Unexpected value for {arg}")
+                    };
+
+                    if (value is not null)
+                    {
+                        dcpContainerResource.Spec.Args.Add(value);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    resourceLogger.LogCritical("Failed to apply container arguments '{ConfigKey}'. A dependency may have failed to start.", arg);
+                    _logger.LogDebug(ex, "Failed to apply container arguments '{ConfigKey}'. A dependency may have failed to start.", arg);
+                    failedToApplyArgs = true;
+                }
+            }
+        }
+
+        if (modelContainerResource is ContainerResource containerResource)
+        {
+            dcpContainerResource.Spec.Command = containerResource.Entrypoint;
+        }
+
+        if (failedToApplyArgs || failedToApplyConfiguration)
+        {
+            throw new FailedToApplyEnvironmentException();
+        }
+
+        await kubernetesService.CreateAsync(dcpContainerResource, cancellationToken).ConfigureAwait(false);
     }
 
     private void AddServicesProducedInfo(IResource modelResource, IAnnotationHolder dcpResource, AppResource appResource)
@@ -843,12 +1528,12 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
 
             if (modelResource.IsContainer())
             {
-                if (sp.EndpointAnnotation.ContainerPort is null)
+                if (sp.EndpointAnnotation.TargetPort is null)
                 {
-                    throw new InvalidOperationException($"The endpoint for container resource {modelResourceName} must specify the ContainerPort");
+                    throw new InvalidOperationException($"The endpoint for container resource '{modelResourceName}' must specify the TargetPort");
                 }
 
-                sp.DcpServiceProducerAnnotation.Port = sp.EndpointAnnotation.ContainerPort;
+                sp.DcpServiceProducerAnnotation.Port = sp.EndpointAnnotation.TargetPort;
             }
             else if (!sp.EndpointAnnotation.IsProxied)
             {
@@ -860,6 +1545,17 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
                 // DCP will not allocate a port for this proxyless service
                 // so we need to specify what the port is so DCP is aware of it.
                 sp.DcpServiceProducerAnnotation.Port = sp.EndpointAnnotation.Port;
+            }
+            else
+            {
+                Debug.Assert(sp.EndpointAnnotation.IsProxied);
+
+                var ep = sp.EndpointAnnotation;
+                if (ep.TargetPort is int && ep.Port is int && ep.TargetPort == ep.Port)
+                {
+                    throw new InvalidOperationException(
+                        $"The endpoint for non-container resource '{modelResourceName}' requested a proxy ({nameof(ep.IsProxied)} is true). Non-container resources cannot be proxied when both {nameof(ep.TargetPort)} and {nameof(ep.Port)} are specified with the same value.");
+                }
             }
 
             dcpResource.AnnotateAsObjectList(CustomResource.ServiceProducerAnnotation, sp.DcpServiceProducerAnnotation);
@@ -891,10 +1587,17 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
         }
     }
 
-    private static string GetObjectNameForResource(IResource resource, string suffix = "")
+    private string GetObjectNameForResource(IResource resource, string suffix = "")
     {
-        string maybeWithSuffix(string s) => string.IsNullOrWhiteSpace(suffix) ? s : $"{s}_{suffix}";
-        return maybeWithSuffix(resource.Name);
+        static string maybeWithSuffix(string s, string localSuffix, string? globalSuffix)
+            => (string.IsNullOrWhiteSpace(localSuffix), string.IsNullOrWhiteSpace(globalSuffix)) switch
+            {
+                (true, true) => s,
+                (false, true) => $"{s}_{localSuffix}",
+                (true, false) => $"{s}_{globalSuffix}",
+                (false, false) => $"{s}_{localSuffix}_{globalSuffix}"
+            };
+        return maybeWithSuffix(resource.Name, suffix, _options.Value.ResourceNameSuffix);
     }
 
     private static string GenerateUniqueServiceName(HashSet<string> serviceNames, string candidateName)
@@ -916,14 +1619,53 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
         return uniqueName;
     }
 
-    // Returns true if this resource represents an HTTP service endpoint which does not specify an environment variable for the endpoint.
-    // This is used to decide whether the endpoint should be propagated via the ASPNETCORE_URLS environment variable.
-    private static bool IsUnspecifiedHttpService(ServiceAppResource serviceAppResource)
+    public async Task DeleteResourcesAsync(CancellationToken cancellationToken = default)
     {
-        return serviceAppResource.EndpointAnnotation is
+        try
         {
-            UriScheme: "http" or "https",
-            EnvironmentVariable: null or { Length: 0 }
-        };
+            AspireEventSource.Instance.DcpModelCleanupStart();
+            await DeleteResourcesAsync<ExecutableReplicaSet>("project", cancellationToken).ConfigureAwait(false);
+            await DeleteResourcesAsync<Executable>("project", cancellationToken).ConfigureAwait(false);
+            await DeleteResourcesAsync<Container>("container", cancellationToken).ConfigureAwait(false);
+            await DeleteResourcesAsync<Service>("service", cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            AspireEventSource.Instance.DcpModelCleanupStop();
+            _appResources.Clear();
+        }
+    }
+
+    private async Task DeleteResourcesAsync<RT>(string resourceType, CancellationToken cancellationToken) where RT : CustomResource
+    {
+        var resourcesToDelete = _appResources.Select(r => r.DcpResource).OfType<RT>();
+        if (!resourcesToDelete.Any())
+        {
+            return;
+        }
+
+        foreach (var res in resourcesToDelete)
+        {
+            try
+            {
+                await kubernetesService.DeleteAsync<RT>(res.Metadata.Name, res.Metadata.NamespaceProperty, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, "Could not stop {ResourceType} '{ResourceName}'.", resourceType, res.Metadata.Name);
+            }
+        }
+    }
+
+    private string ReplaceLocalhostWithContainerHost(string value)
+    {
+        // https://stackoverflow.com/a/43541732/45091
+
+        // This configuration value is a workaround for the fact that host.docker.internal is not available on Linux by default.
+        var hostName = DefaultContainerHostName;
+
+        return value.Replace("localhost", hostName, StringComparison.OrdinalIgnoreCase)
+                    .Replace("127.0.0.1", hostName)
+                    .Replace("[::1]", hostName);
     }
 }

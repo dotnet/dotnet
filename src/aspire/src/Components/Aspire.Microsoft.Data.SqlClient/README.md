@@ -1,6 +1,6 @@
 # Aspire.Microsoft.Data.SqlClient library
 
-Registers 'Scoped' [Microsoft.Data.SqlClient.SqlConnection](https://learn.microsoft.com/dotnet/api/microsoft.data.sqlclient.sqlconnection) factory in the DI container for connecting Azure SQL, MS SQL database. Enables health check, metrics and telemetry.
+Registers 'Scoped' [Microsoft.Data.SqlClient.SqlConnection](https://learn.microsoft.com/dotnet/api/microsoft.data.sqlclient.sqlconnection) factory in the DI container for connecting Azure SQL, MS SQL database. Enables health check and telemetry.
 
 ## Getting started
 
@@ -69,8 +69,7 @@ The .NET Aspire SqlClient component supports [Microsoft.Extensions.Configuration
     "Microsoft": {
       "Data": {
         "SqlClient": {
-          "HealthChecks": true,
-          "Metrics": false
+          "HealthChecks": true
         }
       }
     }
@@ -83,12 +82,18 @@ The .NET Aspire SqlClient component supports [Microsoft.Extensions.Configuration
 Also you can pass the `Action<MicrosoftDataSqlClientSettings> configureSettings` delegate to set up some or all the options inline, for example to disable health checks from code:
 
 ```csharp
-    builder.AddSqlServerClient("sqldata", settings => settings.HealthChecks = false);
+builder.AddSqlServerClient("sqldata", settings => settings.HealthChecks = false);
 ```
 
 ## AppHost extensions
 
-In your AppHost project, register a SqlServer database and consume the connection using the following methods:
+In your AppHost project, install the `Aspire.Hosting.SqlServer` library with [NuGet](https://www.nuget.org):
+
+```dotnetcli
+dotnet add package Aspire.Hosting.SqlServer
+```
+
+Then, in the _Program.cs_ file of `AppHost`, register a SqlServer database and consume the connection using the following methods:
 
 ```csharp
 var sql = builder.AddSqlServer("sql").AddDatabase("sqldata");

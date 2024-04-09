@@ -3,8 +3,6 @@
 
 using System.Runtime.CompilerServices;
 using Aspire.Hosting.ApplicationModel;
-using Aspire.Hosting.Dcp;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Aspire.Hosting.Dashboard;
@@ -17,18 +15,59 @@ internal sealed class DashboardServiceData : IAsyncDisposable
 {
     private readonly CancellationTokenSource _cts = new();
     private readonly ResourcePublisher _resourcePublisher;
-    private readonly ConsoleLogPublisher _consoleLogPublisher;
+    private readonly ResourceLoggerService _resourceLoggerService;
 
     public DashboardServiceData(
-        DistributedApplicationModel applicationModel,
-        IKubernetesService kubernetesService,
-        IConfiguration configuration,
-        ILoggerFactory loggerFactory)
+        ResourceNotificationService resourceNotificationService,
+        ResourceLoggerService resourceLoggerService,
+        ILogger<DashboardServiceData> logger)
     {
+        _resourceLoggerService = resourceLoggerService;
         _resourcePublisher = new ResourcePublisher(_cts.Token);
-        _consoleLogPublisher = new ConsoleLogPublisher(_resourcePublisher);
 
-        _ = new DcpDataSource(kubernetesService, applicationModel, configuration, loggerFactory, _resourcePublisher.IntegrateAsync, _cts.Token);
+        var cancellationToken = _cts.Token;
+
+        Task.Run(async () =>
+        {
+            static GenericResourceSnapshot CreateResourceSnapshot(IResource resource, string resourceId, DateTime creationTimestamp, CustomResourceSnapshot snapshot)
+            {
+                return new GenericResourceSnapshot(snapshot)
+                {
+                    Uid = resourceId,
+                    CreationTimeStamp = snapshot.CreationTimeStamp ?? creationTimestamp,
+                    Name = resourceId,
+                    DisplayName = resource.Name,
+                    Urls = snapshot.Urls,
+                    Environment = snapshot.EnvironmentVariables,
+                    ExitCode = snapshot.ExitCode,
+                    State = snapshot.State?.Text,
+                    StateStyle = snapshot.State?.Style,
+                };
+            }
+
+            var timestamp = DateTime.UtcNow;
+
+            await foreach (var @event in resourceNotificationService.WatchAsync().WithCancellation(cancellationToken).ConfigureAwait(false))
+            {
+                try
+                {
+                    var snapshot = CreateResourceSnapshot(@event.Resource, @event.ResourceId, timestamp, @event.Snapshot);
+
+                    if (logger.IsEnabled(LogLevel.Debug))
+                    {
+                        logger.LogDebug("Updating resource snapshot for {Name}/{DisplayName}: {State}", snapshot.Name, snapshot.DisplayName, snapshot.State);
+                    }
+
+                    await _resourcePublisher.IntegrateAsync(snapshot, ResourceSnapshotChangeType.Upsert)
+                            .ConfigureAwait(false);
+                }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    logger.LogError(ex, "Error updating resource snapshot for {Name}", @event.Resource.Name);
+                }
+            }
+        },
+        cancellationToken);
     }
 
     public async ValueTask DisposeAsync()
@@ -43,17 +82,17 @@ internal sealed class DashboardServiceData : IAsyncDisposable
         return _resourcePublisher.Subscribe();
     }
 
-    internal IAsyncEnumerable<IReadOnlyList<(string Content, bool IsErrorMessage)>>? SubscribeConsoleLogs(string resourceName)
+    internal IAsyncEnumerable<IReadOnlyList<LogLine>>? SubscribeConsoleLogs(string resourceName)
     {
-        var sequence = _consoleLogPublisher.Subscribe(resourceName);
+        var sequence = _resourceLoggerService.WatchAsync(resourceName);
 
         return sequence is null ? null : Enumerate();
 
-        async IAsyncEnumerable<IReadOnlyList<(string Content, bool IsErrorMessage)>> Enumerate([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        async IAsyncEnumerable<IReadOnlyList<LogLine>> Enumerate([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             using var linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _cts.Token);
 
-            await foreach (var item in sequence.WithCancellation(linked.Token))
+            await foreach (var item in sequence.WithCancellation(linked.Token).ConfigureAwait(false))
             {
                 yield return item;
             }

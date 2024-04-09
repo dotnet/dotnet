@@ -25,14 +25,14 @@ public class AspireBlobStorageExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureBlobService("blob");
+            builder.AddKeyedAzureBlobClient("blob");
         }
         else
         {
-            builder.AddAzureBlobService("blob");
+            builder.AddAzureBlobClient("blob");
         }
 
-        var host = builder.Build();
+        using var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<BlobServiceClient>("blob") :
             host.Services.GetRequiredService<BlobServiceClient>();
@@ -52,14 +52,14 @@ public class AspireBlobStorageExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureBlobService("blob", settings => settings.ConnectionString = ConnectionString);
+            builder.AddKeyedAzureBlobClient("blob", settings => settings.ConnectionString = ConnectionString);
         }
         else
         {
-            builder.AddAzureBlobService("blob", settings => settings.ConnectionString = ConnectionString);
+            builder.AddAzureBlobClient("blob", settings => settings.ConnectionString = ConnectionString);
         }
 
-        var host = builder.Build();
+        using var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<BlobServiceClient>("blob") :
             host.Services.GetRequiredService<BlobServiceClient>();
@@ -82,14 +82,14 @@ public class AspireBlobStorageExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureBlobService("blob");
+            builder.AddKeyedAzureBlobClient("blob");
         }
         else
         {
-            builder.AddAzureBlobService("blob");
+            builder.AddAzureBlobClient("blob");
         }
 
-        var host = builder.Build();
+        using var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<BlobServiceClient>("blob") :
             host.Services.GetRequiredService<BlobServiceClient>();
@@ -110,14 +110,14 @@ public class AspireBlobStorageExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureBlobService("blob");
+            builder.AddKeyedAzureBlobClient("blob");
         }
         else
         {
-            builder.AddAzureBlobService("blob");
+            builder.AddAzureBlobClient("blob");
         }
 
-        var host = builder.Build();
+        using var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<BlobServiceClient>("blob") :
             host.Services.GetRequiredService<BlobServiceClient>();

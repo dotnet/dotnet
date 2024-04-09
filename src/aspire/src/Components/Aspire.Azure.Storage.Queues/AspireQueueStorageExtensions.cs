@@ -32,7 +32,7 @@ public static class AspireQueueStorageExtensions
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{TClient, TOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Storage:Queues" section.</remarks>
     /// <exception cref="InvalidOperationException">Thrown when neither <see cref="AzureStorageQueuesSettings.ConnectionString"/> nor <see cref="AzureStorageQueuesSettings.ServiceUri"/> is provided.</exception>
-    public static void AddAzureQueueService(
+    public static void AddAzureQueueClient(
         this IHostApplicationBuilder builder,
         string connectionName,
         Action<AzureStorageQueuesSettings>? configureSettings = null,
@@ -51,7 +51,7 @@ public static class AspireQueueStorageExtensions
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{TClient, TOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Storage:Queues:{name}" section.</remarks>
     /// <exception cref="InvalidOperationException">Thrown when neither <see cref="AzureStorageQueuesSettings.ConnectionString"/> nor <see cref="AzureStorageQueuesSettings.ServiceUri"/> is provided.</exception>
-    public static void AddKeyedAzureQueueService(
+    public static void AddKeyedAzureQueueClient(
         this IHostApplicationBuilder builder,
         string name,
         Action<AzureStorageQueuesSettings>? configureSettings = null,

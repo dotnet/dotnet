@@ -78,9 +78,7 @@ The .NET Aspire Oracle EntityFrameworkCore component supports [Microsoft.Extensi
   "Aspire": {
     "Oracle": {
       "EntityFrameworkCore": {
-        "HealthChecks": false,
-        "Tracing": false,
-        "Metrics": true
+        "HealthChecks": false
       }
     }
   }
@@ -102,11 +100,17 @@ or
 ```
 
 ## AppHost extensions 
-  
- In your AppHost project, register an Oracle container and consume the connection using the following methods: 
+
+In your AppHost project, install the `Aspire.Hosting.Oracle` library with [NuGet](https://www.nuget.org):
+
+```dotnetcli
+dotnet add package Aspire.Hosting.Oracle
+```
+
+Then, in the _Program.cs_ file of `AppHost`, register an Oracle container and consume the connection using the following methods: 
   
  ```csharp 
- var freepdb1 = builder.AddOracleDatabase("oracle").AddDatabase("freepdb1");
+ var freepdb1 = builder.AddOracle("oracle").AddDatabase("freepdb1");
   
  var myService = builder.AddProject<Projects.MyService>() 
                         .WithReference(freepdb1); 

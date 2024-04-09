@@ -31,7 +31,7 @@ public static class AspireBlobStorageExtensions
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{TClient, TOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Storage:Blobs" section.</remarks>
     /// <exception cref="InvalidOperationException">Thrown when neither <see cref="AzureStorageBlobsSettings.ConnectionString"/> nor <see cref="AzureStorageBlobsSettings.ServiceUri"/> is provided.</exception>
-    public static void AddAzureBlobService(
+    public static void AddAzureBlobClient(
         this IHostApplicationBuilder builder,
         string connectionName,
         Action<AzureStorageBlobsSettings>? configureSettings = null,
@@ -50,7 +50,7 @@ public static class AspireBlobStorageExtensions
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{TClient, TOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Storage:Blobs:{name}" section.</remarks>
     /// <exception cref="InvalidOperationException">Thrown when neither <see cref="AzureStorageBlobsSettings.ConnectionString"/> nor <see cref="AzureStorageBlobsSettings.ServiceUri"/> is provided.</exception>
-    public static void AddKeyedAzureBlobService(
+    public static void AddKeyedAzureBlobClient(
         this IHostApplicationBuilder builder,
         string name,
         Action<AzureStorageBlobsSettings>? configureSettings = null,

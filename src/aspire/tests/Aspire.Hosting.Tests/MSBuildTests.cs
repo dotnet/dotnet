@@ -56,7 +56,7 @@ public class Class1
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="{repoRoot}\src\Aspire.Hosting\Aspire.Hosting.csproj" IsAspireProjectResource="false" />
+    <ProjectReference Include="{repoRoot}\src\Aspire.Hosting.AppHost\Aspire.Hosting.AppHost.csproj" IsAspireProjectResource="false" />
 
     <ProjectReference Include="..\Library\Library.csproj" />
   </ItemGroup>
@@ -74,12 +74,12 @@ builder.Build().Run();
     <SkipAspireWorkloadManifest>true</SkipAspireWorkloadManifest>
   </PropertyGroup>
 
-  <Import Project="{repoRoot}\src\Aspire.Hosting\build\Aspire.Hosting.props" />
+  <Import Project="{repoRoot}\src\Aspire.Hosting.AppHost\build\Aspire.Hosting.AppHost.props" />
 </Project>
 """);
             File.WriteAllText(Path.Combine(appHostDirectory, "Directory.Build.targets"), $"""
 <Project>
-  <Import Project="{repoRoot}\src\Aspire.Hosting\build\Aspire.Hosting.targets" />
+  <Import Project="{repoRoot}\src\Aspire.Hosting.AppHost\build\Aspire.Hosting.AppHost.targets" />
   <Import Project="{repoRoot}\src\Aspire.Hosting.Sdk\SDK\Sdk.targets" />
 </Project>
 """);
@@ -127,7 +127,8 @@ builder.Build().Run();
     {
         string directory = AppContext.BaseDirectory;
 
-        while (directory != null && !Directory.Exists(Path.Combine(directory, ".git")))
+        // To support git worktrees, check for either a directory or a file named ".git"
+        while (directory != null && !Directory.Exists(Path.Combine(directory, ".git")) && !File.Exists(Path.Combine(directory, ".git")))
         {
             directory = Directory.GetParent(directory)!.FullName;
         }

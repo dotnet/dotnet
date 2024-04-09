@@ -27,7 +27,7 @@ public static class AspireAzureCosmosDBExtensions
     /// <param name="configureClientOptions">An optional method that can be used for customizing the <see cref="CosmosClientOptions"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Microsoft:Azure:Cosmos" section.</remarks>
     /// <exception cref="InvalidOperationException">If required ConnectionString is not provided in configuration section</exception>
-    public static void AddAzureCosmosDB(
+    public static void AddAzureCosmosDBClient(
         this IHostApplicationBuilder builder,
         string connectionName,
         Action<AzureCosmosDBSettings>? configureSettings = null,
@@ -46,7 +46,7 @@ public static class AspireAzureCosmosDBExtensions
     /// <param name="configureClientOptions">An optional method that can be used for customizing the <see cref="CosmosClientOptions"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Microsoft:Azure:Cosmos:{name}" section.</remarks>
     /// <exception cref="InvalidOperationException">If required ConnectionString is not provided in configuration section</exception>
-    public static void AddKeyedAzureCosmosDB(
+    public static void AddKeyedAzureCosmosDbClient(
         this IHostApplicationBuilder builder,
         string name,
         Action<AzureCosmosDBSettings>? configureSettings = null,
