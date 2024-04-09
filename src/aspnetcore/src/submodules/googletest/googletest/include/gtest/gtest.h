@@ -60,16 +60,16 @@
 #include <type_traits>
 #include <vector>
 
-#include "gtest/gtest-assertion-result.h"
-#include "gtest/gtest-death-test.h"
-#include "gtest/gtest-matchers.h"
-#include "gtest/gtest-message.h"
-#include "gtest/gtest-param-test.h"
-#include "gtest/gtest-printers.h"
-#include "gtest/gtest-test-part.h"
-#include "gtest/gtest-typed-test.h"
-#include "gtest/gtest_pred_impl.h"
-#include "gtest/gtest_prod.h"
+#include "gtest/gtest-assertion-result.h"  // IWYU pragma: export
+#include "gtest/gtest-death-test.h"  // IWYU pragma: export
+#include "gtest/gtest-matchers.h"  // IWYU pragma: export
+#include "gtest/gtest-message.h"  // IWYU pragma: export
+#include "gtest/gtest-param-test.h"  // IWYU pragma: export
+#include "gtest/gtest-printers.h"  // IWYU pragma: export
+#include "gtest/gtest-test-part.h"  // IWYU pragma: export
+#include "gtest/gtest-typed-test.h"  // IWYU pragma: export
+#include "gtest/gtest_pred_impl.h"  // IWYU pragma: export
+#include "gtest/gtest_prod.h"  // IWYU pragma: export
 #include "gtest/internal/gtest-internal.h"
 #include "gtest/internal/gtest-string.h"
 
@@ -1262,6 +1262,20 @@ class GTEST_API_ UnitTest {
   // total_test_suite_count() - 1. If i is not in that range, returns NULL.
   TestSuite* GetMutableTestSuite(int i);
 
+  // Invokes OsStackTrackGetterInterface::UponLeavingGTest. UponLeavingGTest()
+  // should be called immediately before Google Test calls user code. It saves
+  // some information about the current stack that CurrentStackTrace() will use
+  // to find and hide Google Test stack frames.
+  void UponLeavingGTest();
+
+  // Sets the TestSuite object for the test that's currently running.
+  void set_current_test_suite(TestSuite* a_current_test_suite)
+      GTEST_LOCK_EXCLUDED_(mutex_);
+
+  // Sets the TestInfo object for the test that's currently running.
+  void set_current_test_info(TestInfo* a_current_test_info)
+      GTEST_LOCK_EXCLUDED_(mutex_);
+
   // Accessors for the implementation object.
   internal::UnitTestImpl* impl() { return impl_; }
   const internal::UnitTestImpl* impl() const { return impl_; }
@@ -1270,6 +1284,8 @@ class GTEST_API_ UnitTest {
   // members of UnitTest.
   friend class ScopedTrace;
   friend class Test;
+  friend class TestInfo;
+  friend class TestSuite;
   friend class internal::AssertHelper;
   friend class internal::StreamingListenerTest;
   friend class internal::UnitTestRecordPropertyTestHelper;
@@ -2308,7 +2324,8 @@ TestInfo* RegisterTest(const char* test_suite_name, const char* test_name,
 // tests are successful, or 1 otherwise.
 //
 // RUN_ALL_TESTS() should be invoked after the command line has been
-// parsed by InitGoogleTest().
+// parsed by InitGoogleTest(). RUN_ALL_TESTS will tear down and delete any
+// installed environments and should only be called once per binary.
 //
 // This function was formerly a macro; thus, it is in the global
 // namespace and has an all-caps name.
