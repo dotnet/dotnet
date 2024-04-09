@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Aspire.Components.Common.Tests;
 using Aspire.Components.ConformanceTests;
 using Microsoft.DotNet.XUnitExtensions;
 using Microsoft.Extensions.Configuration;
@@ -63,7 +64,7 @@ public class ConformanceTests : ConformanceTests<IConnection, RabbitMQClientSett
             ("""{"Aspire": { "RabbitMQ": { "Client":{ "ConnectionFactory": { "AmqpUriSslProtocols": "Fast"}}}}}""", "Value should match one of the values specified by the enum"),
             ("""{"Aspire": { "RabbitMQ": { "Client":{ "ConnectionFactory": { "Ssl":{ "AcceptablePolicyErrors": "Fast"}}}}}}""", "Value should match one of the values specified by the enum"),
             ("""{"Aspire": { "RabbitMQ": { "Client":{ "ConnectionFactory": { "Ssl":{ "Version": "Fast"}}}}}}""", "Value should match one of the values specified by the enum"),
-            ("""{"Aspire": { "RabbitMQ": { "Client":{ "ConnectionFactory": { "RequestedConnectionTimeout": "3S"}}}}}""", "Value does not match format \"duration\"")
+            ("""{"Aspire": { "RabbitMQ": { "Client":{ "ConnectionFactory": { "RequestedConnectionTimeout": "3S"}}}}}""", "The string value is not a match for the indicated regular expression")
         };
 
     protected override void PopulateConfiguration(ConfigurationManager configuration, string? key = null)
@@ -81,11 +82,11 @@ public class ConformanceTests : ConformanceTests<IConnection, RabbitMQClientSett
     {
         if (key is null)
         {
-            builder.AddRabbitMQ("rabbit", configure);
+            builder.AddRabbitMQClient("rabbit", configure);
         }
         else
         {
-            builder.AddKeyedRabbitMQ(key, configure);
+            builder.AddKeyedRabbitMQClient(key, configure);
         }
     }
 

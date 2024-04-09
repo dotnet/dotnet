@@ -25,14 +25,14 @@ public class AspireAzureAIOpenAIExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureOpenAI("openai");
+            builder.AddKeyedAzureOpenAIClient("openai");
         }
         else
         {
-            builder.AddAzureOpenAI("openai");
+            builder.AddAzureOpenAIClient("openai");
         }
 
-        var host = builder.Build();
+        using var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<OpenAIClient>("openai") :
             host.Services.GetRequiredService<OpenAIClient>();
@@ -51,18 +51,39 @@ public class AspireAzureAIOpenAIExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureOpenAI("openai", settings => { settings.Endpoint = uri; settings.Key = key; });
+            builder.AddKeyedAzureOpenAIClient("openai", settings => { settings.Endpoint = uri; settings.Key = key; });
         }
         else
         {
-            builder.AddAzureOpenAI("openai", settings => { settings.Endpoint = uri; settings.Key = key; });
+            builder.AddAzureOpenAIClient("openai", settings => { settings.Endpoint = uri; settings.Key = key; });
         }
 
-        var host = builder.Build();
+        using var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<OpenAIClient>("openai") :
             host.Services.GetRequiredService<OpenAIClient>();
 
         Assert.NotNull(client);
     }
+
+    [Theory]
+    [InlineData("https://yourservice.openai.azure.com/")]
+    [InlineData("http://domain:12345")]
+    [InlineData("Endpoint=http://domain.com:12345;Key=abc123")]
+    [InlineData("Endpoint=http://domain.com:12345")]
+    public void ReadsFromConnectionStringsFormats(string connectionString)
+    {
+        var builder = Host.CreateEmptyApplicationBuilder(null);
+        builder.Configuration.AddInMemoryCollection([
+            new KeyValuePair<string, string?>("ConnectionStrings:openai", connectionString)
+        ]);
+
+        builder.AddAzureOpenAIClient("openai");
+
+        using var host = builder.Build();
+        var client = host.Services.GetRequiredService<OpenAIClient>();
+
+        Assert.NotNull(client);
+    }
+
 }

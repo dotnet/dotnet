@@ -5,12 +5,17 @@ using System.Diagnostics.CodeAnalysis;
 using Aspire;
 using Aspire.Pomelo.EntityFrameworkCore.MySql;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MySqlConnector;
 using MySqlConnector.Logging;
-using OpenTelemetry.Metrics;
+using Polly;
+using Polly.Registry;
+using Polly.Retry;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure.Internal;
+using Pomelo.EntityFrameworkCore.MySql.Storage.Internal;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -49,6 +54,8 @@ public static partial class AspireEFMySqlExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
+        builder.EnsureDbContextNotRegistered<TContext>();
+
         var settings = builder.GetDbContextSettings<TContext, PomeloEntityFrameworkCoreMySqlSettings>(
             DefaultConfigSectionName,
             (settings, section) => section.Bind(settings)
@@ -62,6 +69,22 @@ public static partial class AspireEFMySqlExtensions
         configureSettings?.Invoke(settings);
 
         builder.Services.AddDbContextPool<TContext>(ConfigureDbContext);
+
+        const string resilienceKey = "Microsoft.Extensions.Hosting.AspireEFMySqlExtensions.ServerVersion";
+        builder.Services.AddResiliencePipeline(resilienceKey, static builder =>
+        {
+            // Values are taken from MySqlRetryingExecutionStrategy.MaxRetryCount and MaxRetryDelay.
+            builder.AddRetry(new RetryStrategyOptions
+            {
+                ShouldHandle = static args => args.Outcome is { Exception: MySqlException { IsTransient: true } }
+                    ? PredicateResult.True()
+                    : PredicateResult.False(),
+                BackoffType = DelayBackoffType.Exponential,
+                MaxRetryAttempts = 6,
+                Delay = TimeSpan.FromSeconds(1),
+                MaxDelay = TimeSpan.FromSeconds(30),
+            });
+        });
 
         ConfigureInstrumentation<TContext>(builder, settings);
 
@@ -79,7 +102,10 @@ public static partial class AspireEFMySqlExtensions
             if (settings.ServerVersion is null)
             {
                 ConnectionStringValidation.ValidateConnectionString(settings.ConnectionString, connectionName, DefaultConfigSectionName, $"{DefaultConfigSectionName}:{typeof(TContext).Name}", isEfDesignTime: EF.IsDesignTime);
-                serverVersion = ServerVersion.AutoDetect(connectionString);
+
+                var resiliencePipelineProvider = serviceProvider.GetRequiredService<ResiliencePipelineProvider<string>>();
+                var resiliencePipeline = resiliencePipelineProvider.GetPipeline(resilienceKey);
+                serverVersion = resiliencePipeline.Execute(static cs => ServerVersion.AutoDetect(cs), connectionString);
             }
             else
             {
@@ -96,6 +122,10 @@ public static partial class AspireEFMySqlExtensions
                 if (settings.Retry)
                 {
                     builder.EnableRetryOnFailure();
+                }
+                if (settings.CommandTimeout.HasValue)
+                {
+                    builder.CommandTimeout(settings.CommandTimeout);
                 }
             });
 
@@ -127,23 +157,66 @@ public static partial class AspireEFMySqlExtensions
 
         void ConfigureRetry()
         {
-            if (!settings.Retry)
-            {
-                return;
-            }
-
-            builder.PatchServiceDescriptor<TContext>(optionsBuilder =>
-            {
 #pragma warning disable EF1001 // Internal EF Core API usage.
-                if (optionsBuilder.Options.FindExtension<MySqlOptionsExtension>() is not MySqlOptionsExtension extension
-                   || extension.ServerVersion is not ServerVersion serverVersion)
+            if (settings.Retry || settings.CommandTimeout.HasValue)
+            {
+                builder.PatchServiceDescriptor<TContext>(optionsBuilder =>
                 {
-                    throw new InvalidOperationException($"A DbContextOptions<{typeof(TContext).Name}> was not found. Please ensure 'ServerVersion' was configured.");
-                }
-#pragma warning restore EF1001 // Internal EF Core API usage.
+                    if (optionsBuilder.Options.FindExtension<MySqlOptionsExtension>() is not MySqlOptionsExtension extension ||
+                        extension.ServerVersion is not ServerVersion serverVersion)
+                    {
+                        throw new InvalidOperationException($"A DbContextOptions<{typeof(TContext).Name}> was not found. Please ensure 'ServerVersion' was configured.");
+                    }
 
-                optionsBuilder.UseMySql(serverVersion, options => options.EnableRetryOnFailure());
-            });
+                    optionsBuilder.UseMySql(serverVersion, options =>
+                    {
+                        var extension = optionsBuilder.Options.FindExtension<MySqlOptionsExtension>();
+
+                        if (settings.Retry)
+                        {
+                            var executionStrategy = extension?.ExecutionStrategyFactory?.Invoke(new ExecutionStrategyDependencies(null!, optionsBuilder.Options, null!));
+
+                            if (executionStrategy != null)
+                            {
+                                if (executionStrategy is MySqlRetryingExecutionStrategy)
+                                {
+                                    // Keep custom Retry strategy.
+                                    // Any sub-class of MySqlRetryingExecutionStrategy is a valid retry strategy
+                                    // which shouldn't be replaced even with Retry == true
+                                }
+                                else if (executionStrategy.GetType() != typeof(MySqlExecutionStrategy))
+                                {
+                                    // Check MySqlExecutionStrategy specifically (no 'is'), any sub-class is treated as a custom strategy.
+
+                                    throw new InvalidOperationException($"{nameof(PomeloEntityFrameworkCoreMySqlSettings)}.Retry can't be set when a custom Execution Strategy is configured.");
+                                }
+                                else
+                                {
+                                    options.EnableRetryOnFailure();
+                                }
+                            }
+                            else
+                            {
+                                options.EnableRetryOnFailure();
+                            }
+                        }
+
+                        if (settings.CommandTimeout.HasValue)
+                        {
+                            if (extension != null &&
+                                extension.CommandTimeout.HasValue &&
+                                extension.CommandTimeout != settings.CommandTimeout)
+                            {
+                                throw new InvalidOperationException($"Conflicting values for 'CommandTimeout' were found in {nameof(PomeloEntityFrameworkCoreMySqlSettings)} and set in DbContextOptions<{typeof(TContext).Name}>.");
+                            }
+
+                            options.CommandTimeout(settings.CommandTimeout);
+                        }
+
+                    });
+                });
+            }
+#pragma warning restore EF1001 // Internal EF Core API usage.
         }
     }
 
@@ -172,15 +245,6 @@ public static partial class AspireEFMySqlExtensions
             builder.Services.AddOpenTelemetry()
                 .WithMetrics(meterProviderBuilder =>
                 {
-                    // Currently EF provides only Event Counters:
-                    // https://learn.microsoft.com/ef/core/logging-events-diagnostics/event-counters?tabs=windows#counters-and-their-meaning
-                    meterProviderBuilder.AddEventCountersInstrumentation(eventCountersInstrumentationOptions =>
-                    {
-                        // The magic strings come from:
-                        // https://github.com/dotnet/efcore/blob/a1cd4f45aa18314bc91d2b9ea1f71a3b7d5bf636/src/EFCore/Infrastructure/EntityFrameworkEventSource.cs#L45
-                        eventCountersInstrumentationOptions.AddEventSources("Microsoft.EntityFrameworkCore");
-                    });
-
                     // add metrics from the underlying MySqlConnector ADO.NET library
                     meterProviderBuilder.AddMeter("MySqlConnector");
                 });

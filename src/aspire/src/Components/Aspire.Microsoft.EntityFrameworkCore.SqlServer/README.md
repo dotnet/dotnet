@@ -80,8 +80,7 @@ The .NET Aspire SQL Server EntityFrameworkCore SqlClient component supports [Mic
       "EntityFrameworkCore": {
         "SqlServer": {
           "HealthChecks": false,
-          "Tracing": false,
-          "Metrics": true
+          "Tracing": false
         }
       }
     }
@@ -105,7 +104,13 @@ or
 
 ## AppHost extensions
 
-In your AppHost project, register a SqlServer database and consume the connection using the following methods:
+In your AppHost project, install the `Aspire.Hosting.SqlServer` library with [NuGet](https://www.nuget.org):
+
+```dotnetcli
+dotnet add package Aspire.Hosting.SqlServer
+```
+
+Then, in the _Program.cs_ file of `AppHost`, register a SqlServer database and consume the connection using the following methods:
 
 ```csharp
 var sql = builder.AddSqlServer("sql").AddDatabase("sqldata");

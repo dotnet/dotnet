@@ -25,14 +25,14 @@ public class AspireQueueStorageExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureQueueService("queue");
+            builder.AddKeyedAzureQueueClient("queue");
         }
         else
         {
-            builder.AddAzureQueueService("queue");
+            builder.AddAzureQueueClient("queue");
         }
 
-        var host = builder.Build();
+        using var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<QueueServiceClient>("queue") :
             host.Services.GetRequiredService<QueueServiceClient>();
@@ -52,14 +52,14 @@ public class AspireQueueStorageExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureQueueService("queue", settings => settings.ConnectionString = ConnectionString);
+            builder.AddKeyedAzureQueueClient("queue", settings => settings.ConnectionString = ConnectionString);
         }
         else
         {
-            builder.AddAzureQueueService("queue", settings => settings.ConnectionString = ConnectionString);
+            builder.AddAzureQueueClient("queue", settings => settings.ConnectionString = ConnectionString);
         }
 
-        var host = builder.Build();
+        using var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<QueueServiceClient>("queue") :
             host.Services.GetRequiredService<QueueServiceClient>();
@@ -82,14 +82,14 @@ public class AspireQueueStorageExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureQueueService("queue");
+            builder.AddKeyedAzureQueueClient("queue");
         }
         else
         {
-            builder.AddAzureQueueService("queue");
+            builder.AddAzureQueueClient("queue");
         }
 
-        var host = builder.Build();
+        using var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<QueueServiceClient>("queue") :
             host.Services.GetRequiredService<QueueServiceClient>();
@@ -110,14 +110,14 @@ public class AspireQueueStorageExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureQueueService("queue");
+            builder.AddKeyedAzureQueueClient("queue");
         }
         else
         {
-            builder.AddAzureQueueService("queue");
+            builder.AddAzureQueueClient("queue");
         }
 
-        var host = builder.Build();
+        using var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<QueueServiceClient>("queue") :
             host.Services.GetRequiredService<QueueServiceClient>();

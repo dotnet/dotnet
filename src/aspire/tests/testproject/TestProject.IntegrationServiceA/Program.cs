@@ -1,23 +1,77 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-var builder = WebApplication.CreateBuilder(args);
-builder.AddSqlServerClient("tempdb");
-builder.AddMySqlDataSource("mysqldb");
-builder.AddMySqlDbContext<PomeloDbContext>("mysqldb", settings => settings.ServerVersion = "8.2.0-mysql");
-builder.AddRedis("redis");
-builder.AddNpgsqlDataSource("postgresdb");
-builder.AddRabbitMQ("rabbitmq");
-builder.AddMongoDBClient("mymongodb");
-builder.AddOracleDatabaseDbContext<MyDbContext>("freepdb1");
-builder.AddKafkaProducer<string, string>("kafka");
-builder.AddKafkaConsumer<string, string>("kafka", consumerBuilder =>
-{
-    consumerBuilder.Config.GroupId = "aspire-consumer-group";
-    consumerBuilder.Config.AutoOffsetReset = AutoOffsetReset.Earliest;
-});
+using Aspire.TestProject;
 
-builder.AddAzureCosmosDB("cosmos");
+var builder = WebApplication.CreateBuilder(args);
+string? skipResourcesValue = Environment.GetEnvironmentVariable("SKIP_RESOURCES");
+var resourcesToSkip = !string.IsNullOrEmpty(skipResourcesValue)
+                        ? TestResourceNamesExtensions.Parse(skipResourcesValue.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                        : TestResourceNames.None;
+
+if (!resourcesToSkip.HasFlag(TestResourceNames.sqlserver))
+{
+    builder.AddSqlServerClient("tempdb");
+}
+if (!resourcesToSkip.HasFlag(TestResourceNames.mysql) || !resourcesToSkip.HasFlag(TestResourceNames.efmysql))
+{
+    builder.AddMySqlDataSource("mysqldb", settings =>
+    {
+        // add the connection string options required by Pomelo EF Core MySQL
+        var connectionStringBuilder = new MySqlConnector.MySqlConnectionStringBuilder(settings.ConnectionString!)
+        {
+            AllowUserVariables = true,
+            UseAffectedRows = false,
+        };
+        settings.ConnectionString = connectionStringBuilder.ConnectionString;
+    });
+}
+if (!resourcesToSkip.HasFlag(TestResourceNames.efmysql))
+{
+    builder.AddMySqlDbContext<PomeloMySqlDbContext>("mysqldb", settings => settings.ServerVersion = "8.2.0-mysql");
+}
+if (!resourcesToSkip.HasFlag(TestResourceNames.redis))
+{
+    builder.AddRedisClient("redis");
+}
+if (!resourcesToSkip.HasFlag(TestResourceNames.postgres) || !resourcesToSkip.HasFlag(TestResourceNames.efnpgsql))
+{
+    builder.AddNpgsqlDataSource("postgresdb");
+}
+if (!resourcesToSkip.HasFlag(TestResourceNames.efnpgsql))
+{
+    builder.AddNpgsqlDbContext<NpgsqlDbContext>("postgresdb");
+}
+if (!resourcesToSkip.HasFlag(TestResourceNames.rabbitmq))
+{
+    builder.AddRabbitMQClient("rabbitmq");
+}
+if (!resourcesToSkip.HasFlag(TestResourceNames.mongodb))
+{
+    builder.AddMongoDBClient("mymongodb");
+}
+if (!resourcesToSkip.HasFlag(TestResourceNames.oracledatabase))
+{
+    builder.AddOracleDatabaseDbContext<MyDbContext>("freepdb1");
+}
+if (!resourcesToSkip.HasFlag(TestResourceNames.kafka))
+{
+    builder.AddKafkaProducer<string, string>("kafka");
+    builder.AddKafkaConsumer<string, string>("kafka", consumerBuilder =>
+    {
+        consumerBuilder.Config.GroupId = "aspire-consumer-group";
+        consumerBuilder.Config.AutoOffsetReset = AutoOffsetReset.Earliest;
+    });
+}
+
+if (!resourcesToSkip.HasFlag(TestResourceNames.cosmos))
+{
+    builder.AddAzureCosmosDBClient("cosmos");
+}
+
+// Ensure healthChecks are added. Some components like Cosmos
+// don't add this
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -27,24 +81,58 @@ app.MapGet("/", () => "Hello World!");
 
 app.MapGet("/pid", () => Environment.ProcessId);
 
-app.MapRedisApi();
+if (!resourcesToSkip.HasFlag(TestResourceNames.redis))
+{
+    app.MapRedisApi();
+}
 
-app.MapMongoDBApi();
+if (!resourcesToSkip.HasFlag(TestResourceNames.mongodb))
+{
+    app.MapMongoDBApi();
+}
 
-app.MapMySqlApi();
+if (!resourcesToSkip.HasFlag(TestResourceNames.mysql))
+{
+    app.MapMySqlApi();
+}
 
-app.MapPomeloEFCoreMySqlApi();
+if (!resourcesToSkip.HasFlag(TestResourceNames.efmysql))
+{
+    app.MapPomeloEFCoreMySqlApi();
+}
 
-app.MapPostgresApi();
+if (!resourcesToSkip.HasFlag(TestResourceNames.postgres))
+{
+    app.MapPostgresApi();
+}
+if (!resourcesToSkip.HasFlag(TestResourceNames.efnpgsql))
+{
+    app.MapNpgsqlEFCoreApi();
+}
 
-app.MapSqlServerApi();
+if (!resourcesToSkip.HasFlag(TestResourceNames.sqlserver))
+{
+    app.MapSqlServerApi();
+}
 
-app.MapRabbitMQApi();
+if (!resourcesToSkip.HasFlag(TestResourceNames.rabbitmq))
+{
+    app.MapRabbitMQApi();
+}
 
-app.MapOracleDatabaseApi();
+if (!resourcesToSkip.HasFlag(TestResourceNames.oracledatabase))
+{
+    app.MapOracleDatabaseApi();
+}
 
-app.MapKafkaApi();
+if (!resourcesToSkip.HasFlag(TestResourceNames.kafka))
+{
+    app.MapKafkaApi();
+}
 
-app.MapCosmosApi();
+if (!resourcesToSkip.HasFlag(TestResourceNames.cosmos))
+{
+    app.MapCosmosApi();
+}
 
 app.Run();

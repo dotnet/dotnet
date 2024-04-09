@@ -5,23 +5,40 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Aspire.Hosting.Lifecycle;
+using Aspire.TestProject;
 
 public class TestProgram : IDisposable
 {
-    private TestProgram(string[] args, Assembly assembly, bool includeIntegrationServices, bool includeNodeApp, bool disableDashboard)
+    private TestProgram(string[] args, Assembly assembly, bool includeIntegrationServices, bool includeNodeApp, bool disableDashboard, bool allowUnsecuredTransport)
     {
-        if (args.Contains("--disable-dashboard"))
+        TestResourceNames resourcesToSkip = TestResourceNames.None;
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i].StartsWith("--skip-resources", StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (args.Length > i + 1)
+                {
+                    resourcesToSkip = TestResourceNamesExtensions.Parse(args[i + 1].Split(','));
+                    break;
+                }
+                else
+                {
+                    throw new ArgumentException("Missing argument to --skip-resources option.");
+                }
+            }
+        }
+        if (resourcesToSkip.HasFlag(TestResourceNames.dashboard))
         {
             disableDashboard = true;
         }
 
-        AppBuilder = DistributedApplication.CreateBuilder(new DistributedApplicationOptions { Args = args, DisableDashboard = disableDashboard, AssemblyName = assembly.FullName });
+        AppBuilder = DistributedApplication.CreateBuilder(new DistributedApplicationOptions { Args = args, DisableDashboard = disableDashboard, AssemblyName = assembly.FullName, AllowUnsecuredTransport = allowUnsecuredTransport });
 
         var serviceAPath = Path.Combine(Projects.TestProject_AppHost.ProjectPath, @"..\TestProject.ServiceA\TestProject.ServiceA.csproj");
 
-        ServiceABuilder = AppBuilder.AddProject("servicea", serviceAPath);
-        ServiceBBuilder = AppBuilder.AddProject<Projects.ServiceB>("serviceb");
-        ServiceCBuilder = AppBuilder.AddProject<Projects.ServiceC>("servicec");
+        ServiceABuilder = AppBuilder.AddProject("servicea", serviceAPath, launchProfileName: "http");
+        ServiceBBuilder = AppBuilder.AddProject<Projects.ServiceB>("serviceb", launchProfileName: "http");
+        ServiceCBuilder = AppBuilder.AddProject<Projects.ServiceC>("servicec", launchProfileName: "http");
         WorkerABuilder = AppBuilder.AddProject<Projects.WorkerA>("workera");
 
         if (includeNodeApp)
@@ -32,54 +49,81 @@ public class TestProgram : IDisposable
             var scriptPath = Path.Combine(path, "app.js");
 
             NodeAppBuilder = AppBuilder.AddNodeApp("nodeapp", scriptPath)
-                .WithHttpEndpoint(hostPort: 5031, env: "PORT");
+                .WithHttpEndpoint(port: 5031, env: "PORT");
 
             NpmAppBuilder = AppBuilder.AddNpmApp("npmapp", path)
-                .WithHttpEndpoint(hostPort: 5032, env: "PORT");
+                .WithHttpEndpoint(port: 5032, env: "PORT");
         }
 
         if (includeIntegrationServices)
         {
-            var sqlserverDbName = "tempdb";
-            var mysqlDbName = "mysqldb";
-            var postgresDbName = "postgresdb";
-            var mongoDbName = "mymongodb";
-            var oracleDbName = "freepdb1";
+            IntegrationServiceABuilder = AppBuilder.AddProject<Projects.IntegrationServiceA>("integrationservicea");
+            IntegrationServiceABuilder = IntegrationServiceABuilder.WithEnvironment("SKIP_RESOURCES", string.Join(',', resourcesToSkip));
 
-            var sqlserver = AppBuilder.AddSqlServer("sqlserver")
-                .AddDatabase(sqlserverDbName);
-            var mysql = AppBuilder.AddMySql("mysql")
-                .WithEnvironment("MYSQL_DATABASE", mysqlDbName)
-                .AddDatabase(mysqlDbName);
-            var redis = AppBuilder.AddRedis("redis");
-            var postgres = AppBuilder.AddPostgres("postgres")
-                .WithEnvironment("POSTGRES_DB", postgresDbName)
-                .AddDatabase(postgresDbName);
-            var rabbitmq = AppBuilder.AddRabbitMQ("rabbitmq");
-            var mongodb = AppBuilder.AddMongoDB("mongodb")
-                .AddDatabase(mongoDbName);
-            var oracleDatabase = AppBuilder.AddOracleDatabase("oracledatabase")
-                .AddDatabase(oracleDbName);
-            var kafka = AppBuilder.AddKafka("kafka");
-            var cosmos = AppBuilder.AddAzureCosmosDB("cosmos").RunAsEmulator();
-
-            IntegrationServiceABuilder = AppBuilder.AddProject<Projects.IntegrationServiceA>("integrationservicea")
-                .WithReference(sqlserver)
-                .WithReference(mysql)
-                .WithReference(redis)
-                .WithReference(postgres)
-                .WithReference(rabbitmq)
-                .WithReference(mongodb)
-                .WithReference(oracleDatabase)
-                .WithReference(kafka)
-                .WithReference(cosmos);
+            if (!resourcesToSkip.HasFlag(TestResourceNames.sqlserver))
+            {
+                var sqlserverDbName = "tempdb";
+                var sqlserver = AppBuilder.AddSqlServer("sqlserver")
+                    .AddDatabase(sqlserverDbName);
+                IntegrationServiceABuilder = IntegrationServiceABuilder.WithReference(sqlserver);
+            }
+            if (!resourcesToSkip.HasFlag(TestResourceNames.mysql) || !resourcesToSkip.HasFlag(TestResourceNames.efmysql))
+            {
+                var mysqlDbName = "mysqldb";
+                var mysql = AppBuilder.AddMySql("mysql")
+                    .WithEnvironment("MYSQL_DATABASE", mysqlDbName)
+                    .AddDatabase(mysqlDbName);
+                IntegrationServiceABuilder = IntegrationServiceABuilder.WithReference(mysql);
+            }
+            if (!resourcesToSkip.HasFlag(TestResourceNames.redis))
+            {
+                var redis = AppBuilder.AddRedis("redis");
+                IntegrationServiceABuilder = IntegrationServiceABuilder.WithReference(redis);
+            }
+            if (!resourcesToSkip.HasFlag(TestResourceNames.postgres) || !resourcesToSkip.HasFlag(TestResourceNames.efnpgsql))
+            {
+                var postgresDbName = "postgresdb";
+                var postgres = AppBuilder.AddPostgres("postgres")
+                    .WithEnvironment("POSTGRES_DB", postgresDbName)
+                    .AddDatabase(postgresDbName);
+                IntegrationServiceABuilder = IntegrationServiceABuilder.WithReference(postgres);
+            }
+            if (!resourcesToSkip.HasFlag(TestResourceNames.rabbitmq))
+            {
+                var rabbitmq = AppBuilder.AddRabbitMQ("rabbitmq");
+                IntegrationServiceABuilder = IntegrationServiceABuilder.WithReference(rabbitmq);
+            }
+            if (!resourcesToSkip.HasFlag(TestResourceNames.mongodb))
+            {
+                var mongoDbName = "mymongodb";
+                var mongodb = AppBuilder.AddMongoDB("mongodb")
+                    .AddDatabase(mongoDbName);
+                IntegrationServiceABuilder = IntegrationServiceABuilder.WithReference(mongodb);
+            }
+            if (!resourcesToSkip.HasFlag(TestResourceNames.oracledatabase))
+            {
+                var oracleDbName = "freepdb1";
+                var oracleDatabase = AppBuilder.AddOracle("oracledatabase")
+                    .AddDatabase(oracleDbName);
+                IntegrationServiceABuilder = IntegrationServiceABuilder.WithReference(oracleDatabase);
+            }
+            if (!resourcesToSkip.HasFlag(TestResourceNames.kafka))
+            {
+                var kafka = AppBuilder.AddKafka("kafka");
+                IntegrationServiceABuilder = IntegrationServiceABuilder.WithReference(kafka);
+            }
+            if (!resourcesToSkip.HasFlag(TestResourceNames.cosmos))
+            {
+                var cosmos = AppBuilder.AddAzureCosmosDB("cosmos").RunAsEmulator();
+                IntegrationServiceABuilder = IntegrationServiceABuilder.WithReference(cosmos);
+            }
         }
 
         AppBuilder.Services.AddLifecycleHook<EndPointWriterHook>();
     }
 
-    public static TestProgram Create<T>(string[]? args = null, bool includeIntegrationServices = false, bool includeNodeApp = false, bool disableDashboard = true) =>
-        new TestProgram(args ?? [], typeof(T).Assembly, includeIntegrationServices, includeNodeApp, disableDashboard);
+    public static TestProgram Create<T>(string[]? args = null, bool includeIntegrationServices = false, bool includeNodeApp = false, bool disableDashboard = true, bool allowUnsecuredTransport = true) =>
+        new TestProgram(args ?? [], typeof(T).Assembly, includeIntegrationServices, includeNodeApp, disableDashboard, allowUnsecuredTransport);
 
     public IDistributedApplicationBuilder AppBuilder { get; private set; }
     public IResourceBuilder<ProjectResource> ServiceABuilder { get; private set; }
@@ -129,11 +173,19 @@ public class TestProgram : IDisposable
                 var endpointsJsonArray = new JsonArray();
                 projectJson["Endpoints"] = endpointsJsonArray;
 
-                foreach (var endpoint in project.Annotations.OfType<AllocatedEndpointAnnotation>())
+                foreach (var endpoint in project.Annotations.OfType<EndpointAnnotation>())
                 {
-                    var endpointJsonObject = new JsonObject();
-                    endpointJsonObject["Name"] = endpoint.Name;
-                    endpointJsonObject["Uri"] = endpoint.UriString;
+                    var allocatedEndpoint = endpoint.AllocatedEndpoint;
+                    if (allocatedEndpoint is null)
+                    {
+                        continue;
+                    }
+
+                    var endpointJsonObject = new JsonObject
+                    {
+                        ["Name"] = endpoint.Name,
+                        ["Uri"] = allocatedEndpoint.UriString
+                    };
                     endpointsJsonArray.Add(endpointJsonObject);
                 }
             }

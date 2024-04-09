@@ -22,6 +22,7 @@ namespace Microsoft.Extensions.Hosting;
 public static class AspireAzureSearchExtensions
 {
     private const string DefaultConfigSectionName = "Aspire:Azure:Search:Documents";
+
     /// <summary>
     /// Registers <see cref="SearchIndexClient"/> as a singleton in the services provided by the <paramref name="builder"/>.
     /// </summary>
@@ -30,7 +31,7 @@ public static class AspireAzureSearchExtensions
     /// <param name="configureSettings">An optional method that can be used for customizing the <see cref="AzureSearchSettings"/>. It's invoked after the settings are read from the configuration.</param>
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{SearchIndexClient, SearchClientOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Search:Documents" section.</remarks>
-    public static void AddAzureSearch(
+    public static void AddAzureSearchClient(
         this IHostApplicationBuilder builder,
         string connectionName,
         Action<AzureSearchSettings>? configureSettings = null,
@@ -47,7 +48,7 @@ public static class AspireAzureSearchExtensions
     /// <param name="configureSettings">An optional method that can be used for customizing the <see cref="AzureSearchSettings"/>. It's invoked after the settings are read from the configuration.</param>
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{SearchIndexClient, SearchClientOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Search:Documents:{name}" section.</remarks>
-    public static void AddKeyedAzureSearch(
+    public static void AddKeyedAzureSearchClient(
         this IHostApplicationBuilder builder,
         string name,
         Action<AzureSearchSettings>? configureSettings = null,

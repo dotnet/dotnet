@@ -11,6 +11,8 @@
 
     <GlobalJsonContent>$([System.IO.File]::ReadAllText('$(RepoRoot)global.json'))</GlobalJsonContent>
     <DotNetCliVersion>$([System.Text.RegularExpressions.Regex]::Match($(GlobalJsonContent), '(%3F&lt;="dotnet": ").*(%3F=")'))</DotNetCliVersion>
+
+    <BuildHelixWorkItemsDependsOn>BuildHelixWorkItemsForDefaultTests</BuildHelixWorkItemsDependsOn>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -21,27 +23,36 @@
     <_HelixCorrelationPayloadEnvVar Condition="'$(OS)' != 'Windows_NT'">$HELIX_CORRELATION_PAYLOAD</_HelixCorrelationPayloadEnvVar>
     <_HelixCorrelationPayloadEnvVar Condition="'$(OS)' == 'Windows_NT'">%HELIX_CORRELATION_PAYLOAD%</_HelixCorrelationPayloadEnvVar>
 
-    <_TestNameEnvVar Condition="'$(OS)' != 'Windows_NT'">$TEST_NAME</_TestNameEnvVar>
+    <_TestNameEnvVar Condition="'$(OS)' != 'Windows_NT'">${TEST_NAME}</_TestNameEnvVar>
     <_TestNameEnvVar Condition="'$(OS)' == 'Windows_NT'">%TEST_NAME%</_TestNameEnvVar>
+
+    <_CodeCoverageReportFileNameSuffixEnvVar Condition="'$(OS)' != 'Windows_NT'">${CODE_COV_FILE_SUFFIX}</_CodeCoverageReportFileNameSuffixEnvVar>
+    <_CodeCoverageReportFileNameSuffixEnvVar Condition="'$(OS)' == 'Windows_NT'">%CODE_COV_FILE_SUFFIX%</_CodeCoverageReportFileNameSuffixEnvVar>
   </PropertyGroup>
 
   <ItemGroup>
     <_TestCoverageCommand Include="$(_HelixCorrelationPayloadEnvVar)/dotnet-coverage/dotnet-coverage collect" />
     <_TestCoverageCommand Include="--settings $(_HelixCorrelationPayloadEnvVar)/support-data/CodeCoverage.config" />
-    <_TestCoverageCommand Include="--output $(_HelixLogsPath)/$(_TestNameEnvVar).cobertura.xml" />
+    <_TestCoverageCommand Include="--output $(_HelixLogsPath)/$(_TestNameEnvVar)$(_CodeCoverageReportFileNameSuffixEnvVar).cobertura.xml" />
 
     <_TestRunCommandArguments Include="dotnet test" />
     <_TestRunCommandArguments Include="-s .runsettings" />
     <_TestRunCommandArguments Include="$(_TestNameEnvVar).dll" />
     <_TestRunCommandArguments Include="--ResultsDirectory:$(_HelixLogsPath)" />
+    <_TestRunCommandArguments Include="--blame-hang" />
+    <_TestRunCommandArguments Include="--blame-hang-dump-type" />
+    <_TestRunCommandArguments Include="full" />
+    <_TestRunCommandArguments Include="--blame-hang-timeout" />
+    <_TestRunCommandArguments Include="10m" />
+    <_TestRunCommandArguments Include="--blame-crash" />
+    <_TestRunCommandArguments Include="--blame-crash-dump-type" />
+    <_TestRunCommandArguments Include="full" />
   </ItemGroup>
 
-  <Target Name="BuildHelixWorkItems" DependsOnTargets="_StageDependenciesForHelix">
-    <Error Condition="'$(RepoTestResultsPath)' == ''" Text="%24(RepoTestResultsPath) is unset" />
+  <Import Project="$(MSBuildThisFileDirectory)send-to-helix-workload-tests.targets" />
 
+  <Target Name="BuildHelixWorkItemsForDefaultTests" DependsOnTargets="_StageDependenciesForHelix">
     <PropertyGroup>
-      <HelixResultsDestinationDir>$(RepoTestResultsPath)</HelixResultsDestinationDir>
-
       <_TestRunCommand Condition="'$(RunWithCodeCoverage)' == 'true'">@(_TestCoverageCommand, ' ') &quot;@(_TestRunCommandArguments, ' ')&quot;</_TestRunCommand>
       <_TestRunCommand Condition="'$(RunWithCodeCoverage)' != 'true'">@(_TestRunCommandArguments, ' ')</_TestRunCommand>
     </PropertyGroup>
@@ -64,10 +75,8 @@
       </HelixWorkItem>
     </ItemGroup>
 
-    <Message Text="HelixCorrelationPayload: %(HelixCorrelationPayload.Identity)" Condition="'$(HelixDryRun)' == 'true'" Importance="High" />
-    <Message Text="HelixWorkItem: %(HelixWorkItem.Identity), Command: %(HelixWorkItem.Command), PreCommands: %(HelixWorkItem.PreCommands) with PayloadArchive: %(HelixWorkItem.PayloadArchive)" Condition="'$(HelixDryRun)' == 'true'" Importance="High" />
-
-    <Error Text="Stopping the build for dry run" Condition="'$(HelixDryRun)' == 'true'" />
+    <Message Text="HelixCorrelationPayload: %(HelixCorrelationPayload.Identity)" Condition="'$(HelixDryRun)' == 'true' and @(HelixWorkItem->Count()) > 0" Importance="High" />
+    <Message Text="HelixWorkItem: %(HelixWorkItem.Identity), Command: %(HelixWorkItem.Command), PreCommands: %(HelixWorkItem.PreCommands) with PayloadArchive: %(HelixWorkItem.PayloadArchive)" Condition="'$(HelixDryRun)' == 'true' and @(HelixWorkItem->Count()) > 0" Importance="High" />
   </Target>
 
   <Target Name="_StageDependenciesForHelix">
@@ -97,5 +106,11 @@
       <HelixCorrelationPayload Include="$(_DotNetCoverageToolPath)" Destination="dotnet-coverage" />
       <HelixCorrelationPayload Include="$(_SupportDataStagingDir)" Destination="support-data" />
     </ItemGroup>
+  </Target>
+
+  <Target Name="BuildHelixWorkItems" DependsOnTargets="$(BuildHelixWorkItemsDependsOn)">
+    <Message Text="HelixCorrelationPayload: %(HelixCorrelationPayload.Identity)" Condition="'$(HelixDryRun)' == 'true' and @(HelixWorkItem->Count()) > 0" Importance="High" />
+    <Message Text="HelixWorkItem: %(HelixWorkItem.Identity), Command: %(HelixWorkItem.Command), PreCommands: %(HelixWorkItem.PreCommands) with PayloadArchive: %(HelixWorkItem.PayloadArchive)" Condition="'$(HelixDryRun)' == 'true' and @(HelixWorkItem->Count()) > 0" Importance="High" />
+    <Error Text="Stopping the build for dry run" Condition="'$(HelixDryRun)' == 'true'" />
   </Target>
 </Project>
