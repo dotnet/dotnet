@@ -389,12 +389,15 @@ jobs:
 
         CopyWithRelativeFolders "artifacts/log/"             $targetFolder "*.binlog"
         CopyWithRelativeFolders "artifacts/log/"             $targetFolder "*.log"
-        CopyWithRelativeFolders "artifacts/TestResults/"     $targetFolder "*.binlog"
-        CopyWithRelativeFolders "artifacts/TestResults/"     $targetFolder "*.diff"
-        CopyWithRelativeFolders "artifacts/TestResults/"     $targetFolder "Updated*.txt"
-        CopyWithRelativeFolders "artifacts/TestResults/"     $targetFolder "*.trx"
         CopyWithRelativeFolders "src/"                       $targetFolder "*.binlog"
         CopyWithRelativeFolders "src/"                       $targetFolder "*.log"
+
+        if (Test-Path "artifacts/TestResults/*") {
+            CopyWithRelativeFolders "artifacts/TestResults/"     $targetFolder "*.binlog"
+            CopyWithRelativeFolders "artifacts/TestResults/"     $targetFolder "*.diff"
+            CopyWithRelativeFolders "artifacts/TestResults/"     $targetFolder "Updated*.txt"
+            CopyWithRelativeFolders "artifacts/TestResults/"     $targetFolder "*.trx"
+        }
 
         # check if we have assets to publish
         if (Test-Path "artifacts/assets/Release/*") {
