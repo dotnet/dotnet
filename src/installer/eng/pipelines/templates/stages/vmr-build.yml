@@ -755,6 +755,28 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
+            buildName: OSX_ShortStack_NativeAOT
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            pool: ${{ parameters.pool_Mac }}
+            targetOS: osx
+            targetArchitecture: x64
+            extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: OSX_ShortStack_NativeAOT
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm64
+            pool: ${{ parameters.pool_Mac }}
+            targetOS: osx
+            targetArchitecture: arm64
+            extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
             buildName: Windows
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
