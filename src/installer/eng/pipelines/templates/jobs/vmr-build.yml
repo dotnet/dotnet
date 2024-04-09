@@ -241,6 +241,11 @@ jobs:
         call $(sourcesPath)\build.cmd -ci -cleanWhileBuilding -prepareMachine /p:TargetOS=${{ parameters.targetOS }} /p:TargetArchitecture=${{ parameters.targetArchitecture }} ${{ parameters.extraProperties }}
       displayName: Build
 
+    - ${{ if eq(parameters.runTests, 'True') }}:
+      - script: |
+          call $(sourcesPath)\build.cmd -ci -prepareMachine -test ${{ parameters.extraProperties }}
+        displayName: Run Tests
+
   - ${{ else }}:
     - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
       - script: |
@@ -356,14 +361,13 @@ jobs:
         set -ex
 
         dockerVolumeArgs="-v $(sourcesPath):/vmr"
-        dockerEnvArgs="-e SMOKE_TESTS_EXCLUDE_OMNISHARP=${{ parameters.excludeOmniSharpTests }} -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=true -e SMOKE_TESTS_RUNNING_IN_CI=true"
         poisonArg=''
 
         if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
           poisonArg='--poison'
         fi
 
-        docker run --rm $dockerVolumeArgs -w /vmr $dockerEnvArgs ${{ parameters.container }} ./build.sh --source-only $poisonArg --test $(additionalBuildArgs) /p:SmokeTestConsoleVerbosity=detailed
+        docker run --rm $dockerVolumeArgs -w /vmr ${{ parameters.container }} ./build.sh /bl:artifacts/log/Release/Test.binlog --source-only --test $poisonArg $(additionalBuildArgs) /p:SmokeTestsWarnOnSdkContentDiffs=true /p:SmokeTestsExcludeOmniSharpTests=${{ parameters.excludeOmniSharpTests }}
       displayName: Run Tests
 
   - ${{ if eq(parameters.targetOS, 'windows') }}:
@@ -383,14 +387,14 @@ jobs:
 
         cd "$(sourcesPath)"
 
-        CopyWithRelativeFolders "artifacts/"                 $targetFolder "*.binlog"
-        CopyWithRelativeFolders "artifacts/"                 $targetFolder "*.log"
-        CopyWithRelativeFolders "artifacts/"                 $targetFolder "*.diff"
+        CopyWithRelativeFolders "artifacts/log/"             $targetFolder "*.binlog"
+        CopyWithRelativeFolders "artifacts/log/"             $targetFolder "*.log"
+        CopyWithRelativeFolders "artifacts/TestResults/"     $targetFolder "*.binlog"
+        CopyWithRelativeFolders "artifacts/TestResults/"     $targetFolder "*.diff"
+        CopyWithRelativeFolders "artifacts/TestResults/"     $targetFolder "Updated*.txt"
+        CopyWithRelativeFolders "artifacts/TestResults/"     $targetFolder "*.trx"
         CopyWithRelativeFolders "src/"                       $targetFolder "*.binlog"
         CopyWithRelativeFolders "src/"                       $targetFolder "*.log"
-        CopyWithRelativeFolders "test/"                      $targetFolder "*.binlog"
-        CopyWithRelativeFolders "test/"                      $targetFolder "Updated*.diff"
-        CopyWithRelativeFolders "test/"                      $targetFolder "Updated*.txt"
 
         # check if we have assets to publish
         if (Test-Path "artifacts/assets/Release/*") {
@@ -410,18 +414,20 @@ jobs:
         mkdir -p ${targetFolder}
 
         cd "$(sourcesPath)"
-        find artifacts/ -type f -name "*.binlog" -exec rsync -R {} -t ${targetFolder} \;
-        find artifacts/ -type f -name "*.log" -exec rsync -R {} -t ${targetFolder} \;
-        find artifacts/ -type f -name "*.diff" -exec rsync -R {} -t ${targetFolder} \;
+        find artifacts/log/ -type f -name "*.binlog" -exec rsync -R {} -t ${targetFolder} \;
+        find artifacts/log/ -type f -name "*.log" -exec rsync -R {} -t ${targetFolder} \;
+        find artifacts/TestResults/ -type f -name "*.binlog" -exec rsync -R {} -t ${targetFolder} \;
+        find artifacts/TestResults/ -type f -name "*.diff" -exec rsync -R {} -t ${targetFolder} \;
+        find artifacts/TestResults/ -type f -name "Updated*.txt" -exec rsync -R {} -t ${targetFolder} \;
+        find artifacts/TestResults/ -type f -name "*.trx" -exec rsync -R {} -t ${targetFolder} \;
+
         if [[ "${{ parameters.buildSourceOnly }}" == "True" ]]; then
           find artifacts/prebuilt-report/ -exec rsync -R {} -t ${targetFolder} \;
           find artifacts/log/binary-report/ -exec rsync -R {} -t ${targetFolder} \;
         fi
+
         find src/ -type f -name "*.binlog" -exec rsync -R {} -t ${targetFolder} \;
         find src/ -type f -name "*.log" -exec rsync -R {} -t ${targetFolder} \;
-        find test/ -type f -name "*.binlog" -exec rsync -R {} -t ${targetFolder} \;
-        find test/ -type f -name "Updated*.diff" -exec rsync -R {} -t ${targetFolder} \;
-        find test/ -type f -name "Updated*.txt" -exec rsync -R {} -t ${targetFolder} \;
 
         # check if we have assets to publish
         if [ -n "$(ls -A 'artifacts/assets/Release/')" ]; then
@@ -446,11 +452,11 @@ jobs:
       continueOnError: true
       inputs:
         testRunner: vSTest
-        testResultsFiles: 'test/**/*.trx'
+        testResultsFiles: 'artifacts/TestResults/Release/*.trx'
         searchFolder: $(sourcesPath)
         mergeTestResults: true
         publishRunAttachments: true
-        testRunTitle: SourceBuild_SmokeTests_$(Agent.JobName)
+        testRunTitle: Tests_$(Agent.JobName)
 
   - task: CopyFiles@2
     inputs:
@@ -460,6 +466,7 @@ jobs:
         assets/**
       TargetFolder: $(Build.ArtifactStagingDirectory)/publishing
     displayName: Copy artifacts to Artifact Staging Directory
+    condition: succeededOrFailed()
 
   # When building from source, the Private.SourceBuilt.Artifacts archive already contains the nuget packages
   - ${{ if ne(parameters.buildSourceOnly, 'true') }}:
@@ -468,6 +475,7 @@ jobs:
         SourceFolder: $(sourcesPath)/artifacts/packages
         TargetFolder: $(Build.ArtifactStagingDirectory)/publishing/packages
       displayName: Copy packages to Artifact Staging Directory
+      condition: succeededOrFailed()
 
   - ${{ if or(ne(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'PullRequest')) }}:
     - publish: $(Build.ArtifactStagingDirectory)/publishing
