@@ -1,0 +1,52 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*
+
+pr:
+- main
+- release/*
+
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
+variables:
+  - name: TeamName
+    value: dotnet-core-acquisition
+  - name: SignType
+    value: test
+
+stages:
+- stage: Build
+  jobs:
+  # -------- Build Windows legs --------
+  # Windows x64
+  - template: /eng/jobs/windows-build-PR.yml
+    parameters:
+      name: win_x64
+      displayName: win-x64
+      targetArchitecture: x64
+      codeql: true
+
+  # Windows x86
+  - template: /eng/jobs/windows-build-PR.yml
+    parameters:
+      name: win_x86
+      displayName: win-x86
+      targetArchitecture: x86
+
+  # Windows arm64
+  - template: /eng/jobs/windows-build-PR.yml
+    parameters:
+      name: win_arm64
+      displayName: win-arm64
+      targetArchitecture: arm64
+  
+  # Source-build
+  - template: /eng/common/templates/jobs/source-build.yml
+    parameters:
+        platform:
+          name: 'Managed'
+          container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9'
