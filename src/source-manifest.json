@@ -25,10 +25,10 @@
       "commitSha": "9c8ea966df62f764523b51772763e74e71040a92"
     },
     {
-      "packageVersion": "0.1.520101",
+      "packageVersion": "0.1.520903",
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "c96672b8b84c307feb035fed6cbe9db85d5b87d3"
+      "commitSha": "963d34b1fb712c673bfb198133d7e988182c9ef4"
     },
     {
       "packageVersion": "9.0.0-preview.1.24176.3",
@@ -58,7 +58,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "7e57734d510179c34bb5b9c979d673da555fe12d"
+      "commitSha": "c970b67c095f87feff1c977357d9bfd81becad7a"
     },
     {
       "packageVersion": "17.11.0-preview-24208-03",
@@ -79,10 +79,10 @@
       "commitSha": "07e194a65a1a9f85fec3af041aace521300381b7"
     },
     {
-      "packageVersion": "4.11.0-1.24208.3",
+      "packageVersion": "4.11.0-1.24209.10",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "9eac39405465af6fdc0303ba975b5eefbf8e3124"
+      "commitSha": "d60cfabb92b1269ad24e7bc303face107eaecf00"
     },
     {
       "packageVersion": "3.11.0-beta1.24208.3",
@@ -91,10 +91,10 @@
       "commitSha": "7455f63411369a962f769361d1a979a547756ada"
     },
     {
-      "packageVersion": "9.0.0-preview.4.24209.5",
+      "packageVersion": "9.0.0-preview.4.24209.8",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "e6c1a49be165fa63247196f29384c9c60e626183"
+      "commitSha": "6b9381be09980dac0d2fc554cf478e054c005cdb"
     },
     {
       "packageVersion": "9.0.0-preview.24176.1",
@@ -103,10 +103,10 @@
       "commitSha": "ddccfec3ccd631fb8341c8b6e4e422e8cb339aa5"
     },
     {
-      "packageVersion": "9.0.100-preview.4.24209.15",
+      "packageVersion": "9.0.100-preview.4.24210.2",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "01f2e41aab1cc80e56a67102dbf1b304102b352c"
+      "commitSha": "6a719af0884316c3482aaedcb755afb9d339a416"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24201.3",
@@ -121,10 +121,10 @@
       "commitSha": "c0b5d69a1a1513528c77fffff708c7502d57c35c"
     },
     {
-      "packageVersion": "9.0.0-beta.24203.1",
+      "packageVersion": "9.0.0-beta.24208.1",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "ccd1118012ffc1a2813399a9f378ddf0b043d3ab"
+      "commitSha": "53ec303043f0338d9f2d57fb6e8076994a79b547"
     },
     {
       "packageVersion": "2.1.0-beta.24171.1",
@@ -133,10 +133,10 @@
       "commitSha": "01de94d9718fd48c511cae276437edcd41b41fa4"
     },
     {
-      "packageVersion": "9.0.100-preview.4.24202.5",
+      "packageVersion": "9.0.100-preview.4.24209.1",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "f508b3c3afbc7c748d8b052c442c7173e3c73401"
+      "commitSha": "1961e3566f686c040d1f9076e47ebf10166ddddf"
     },
     {
       "packageVersion": "1.1.0-rc.24208.1",
@@ -151,10 +151,10 @@
       "commitSha": "56d28849af08dc3143d019694aa92f186b89d2ac"
     },
     {
-      "packageVersion": "9.0.0-preview.4.24209.2",
+      "packageVersion": "9.0.0-preview.4.24209.3",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "dab80e85de425dfc80cf2bd0d8fbe10bf926c1b8"
+      "commitSha": "5a19ba179cfd04c8addc2c7c05310911e2ed8efa"
     },
     {
       "packageVersion": "9.0.0-preview.4.24208.2",
@@ -163,10 +163,10 @@
       "commitSha": "b6745a5b5075bef05415d1600a5125282410a71b"
     },
     {
-      "packageVersion": "9.0.0-preview.4.24208.1",
+      "packageVersion": "9.0.0-preview.4.24209.1",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "a81e70ad9b24f3881a59e8ed90dfcdbfc150acab"
+      "commitSha": "b4bef50fb430302099ff79d4603ff3149ebcd8df"
     },
     {
       "packageVersion": "9.0.0-preview.24204.1",
