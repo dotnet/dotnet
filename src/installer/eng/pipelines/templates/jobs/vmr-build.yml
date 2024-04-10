@@ -100,7 +100,7 @@ jobs:
   ${{ if and(parameters.isBuiltFromVmr, startswith(parameters.buildName, 'Windows'), eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     timeoutInMinutes: 720
   ${{ else }}:
-    timeoutInMinutes: 150
+    timeoutInMinutes: 240
 
   ${{ if ne(parameters.reuseBuildArtifactsFrom, '') }}:
     # Always attempt to run the bootstrap leg (e.g. even when stage 1 tests fail) in order to get a complete accessment of the build status.
