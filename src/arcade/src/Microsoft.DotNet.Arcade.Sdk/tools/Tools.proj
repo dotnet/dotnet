@@ -20,7 +20,7 @@
     NuGet.Config, NuGet.config, and nuget.config are all allowed casings according to NuGet:
     https://github.com/NuGet/NuGet.Client/blob/b83566ec2369c4e9fd07e6f95d734dfe370a1e66/src/NuGet.Core/NuGet.Configuration/Settings/Settings.cs#L34-L36
   -->
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(RestoreConfigFile)' == ''">
     <RestoreConfigFile Condition="Exists('$(RepoRoot)NuGet.config')">$(RepoRoot)NuGet.config</RestoreConfigFile>
     <RestoreConfigFile Condition="Exists('$(RepoRoot)NuGet.Config')">$(RepoRoot)NuGet.Config</RestoreConfigFile>
     <RestoreConfigFile Condition="Exists('$(RepoRoot)nuget.config')">$(RepoRoot)nuget.config</RestoreConfigFile>
