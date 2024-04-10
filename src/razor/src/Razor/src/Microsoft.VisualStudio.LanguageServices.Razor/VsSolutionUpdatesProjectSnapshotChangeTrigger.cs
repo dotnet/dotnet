@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor.Razor;
@@ -25,7 +24,6 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
     private readonly IProjectSnapshotManager _projectManager;
     private readonly IProjectWorkspaceStateGenerator _workspaceStateGenerator;
     private readonly IWorkspaceProvider _workspaceProvider;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly JoinableTaskFactory _jtf;
     private readonly JoinableTask _initializeTask;
 
@@ -41,14 +39,12 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
         IProjectSnapshotManager projectManager,
         IProjectWorkspaceStateGenerator workspaceStateGenerator,
         IWorkspaceProvider workspaceProvider,
-        ProjectSnapshotManagerDispatcher dispatcher,
         JoinableTaskContext joinableTaskContext)
     {
         _serviceProvider = serviceProvider;
         _projectManager = projectManager;
         _workspaceStateGenerator = workspaceStateGenerator;
         _workspaceProvider = workspaceProvider;
-        _dispatcher = dispatcher;
         _jtf = joinableTaskContext.Factory;
 
         _projectManager.Changed += ProjectManager_Changed;
@@ -127,29 +123,26 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
             return;
         }
 
-        await _dispatcher.RunAsync(() =>
+        if (_projectManager is null)
         {
-            if (_projectManager is null)
-            {
-                return;
-            }
+            return;
+        }
 
-            var projectKeys = _projectManager.GetAllProjectKeys(projectFilePath);
-            foreach (var projectKey in projectKeys)
+        var projectKeys = _projectManager.GetAllProjectKeys(projectFilePath);
+        foreach (var projectKey in projectKeys)
+        {
+            if (_projectManager.TryGetLoadedProject(projectKey, out var projectSnapshot))
             {
-                if (_projectManager.TryGetLoadedProject(projectKey, out var projectSnapshot))
+                var workspace = _workspaceProvider.GetWorkspace();
+                var workspaceProject = workspace.CurrentSolution.Projects.FirstOrDefault(wp => ProjectKey.From(wp) == projectSnapshot.Key);
+                if (workspaceProject is not null)
                 {
-                    var workspace = _workspaceProvider.GetWorkspace();
-                    var workspaceProject = workspace.CurrentSolution.Projects.FirstOrDefault(wp => ProjectKey.From(wp) == projectSnapshot.Key);
-                    if (workspaceProject is not null)
-                    {
-                        // Trigger a tag helper update by forcing the project manager to see the workspace Project
-                        // from the current solution.
-                        _workspaceStateGenerator.Update(workspaceProject, projectSnapshot, cancellationToken);
-                    }
+                    // Trigger a tag helper update by forcing the project manager to see the workspace Project
+                    // from the current solution.
+                    await _workspaceStateGenerator.UpdateAsync(workspaceProject, projectSnapshot, cancellationToken);
                 }
             }
-        }, cancellationToken);
+        }
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

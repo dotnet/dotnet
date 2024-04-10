@@ -8,27 +8,8 @@
 
   <Target Name="CalculateServiceHubConfigurationFiles">
     <ItemGroup>
-      <_ServicesWithSuffix Include="@(ServiceHubService)" FileSuffix="64" HostIdSuffix="" />
-      <_ServicesWithSuffix Include="@(ServiceHubService)" FileSuffix="64S" HostIdSuffix="S" />
       <_CoreServicesWithSuffix Include="@(ServiceHubService)" FileSuffix="Core64" HostIdSuffix="" />
       <_CoreServicesWithSuffix Include="@(ServiceHubService)" FileSuffix="Core64S" HostIdSuffix="S" />
-
-      <ServiceHubServiceJsonFile Include="$(IntermediateOutputPath)%(_ServicesWithSuffix.Identity)%(_ServicesWithSuffix.FileSuffix).servicehub.service.json" >
-        <Content>
-          <![CDATA[{
-  "host": "netfx.anycpu",
-  "hostId": "RoslynCodeAnalysisService%(_ServicesWithSuffix.HostIdSuffix)",
-  "hostGroupAllowed": true,
-  "entryPoint": {
-    "assemblyPath": "Microsoft.CodeAnalysis.Remote.Razor.dll",
-    "fullClassName": "%(_ServicesWithSuffix.ClassName)",
-    "appBasePath": "%VSAPPIDDIR%",
-    "configPath": "%PkgDefApplicationConfigFile%"
-  }
-}
-]]>
-        </Content>
-      </ServiceHubServiceJsonFile>
 
       <ServiceHubServiceJsonFile Include="$(IntermediateOutputPath)$(ServiceHubCoreSubPath)\%(_CoreServicesWithSuffix.Identity)%(_CoreServicesWithSuffix.FileSuffix).servicehub.service.json" >
         <Content>

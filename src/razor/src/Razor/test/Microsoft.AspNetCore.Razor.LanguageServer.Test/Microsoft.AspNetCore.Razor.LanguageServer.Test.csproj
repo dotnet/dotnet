@@ -30,15 +30,15 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'">
-    <PackageReference Include="Microsoft.WebTools.Languages.Html" Version="$(MicrosoftWebToolsLanguagesHtmlPackageVersion)" />
-    <PackageReference Include="Microsoft.WebTools.Languages.Html.Editor" Version="$(MicrosoftWebToolsLanguagesHtmlPackageVersion)" />
-    <PackageReference Include="Microsoft.WebTools.Languages.LanguageServer.Server" Version="$(MicrosoftWebToolsLanguagesLanguageServerServerPackageVersion)" />
-    <PackageReference Include="Microsoft.WebTools.Languages.Shared" Version="$(MicrosoftWebToolsLanguagesSharedPackageVersion)" />
-    <PackageReference Include="Microsoft.WebTools.Languages.Shared.Editor" Version="$(MicrosoftWebToolsLanguagesSharedEditorPackageVersion)" />
-    <PackageReference Include="Microsoft.WebTools.Languages.Shared.VS" Version="$(MicrosoftWebToolsLanguagesSharedEditorPackageVersion)" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.Framework" Version="$(MicrosoftVisualStudioShellPackagesVersion)" />
-    <PackageReference Include="Microsoft.VisualStudio.Web" Version="$(MicrosoftVisualStudioWebPackageVersion)" />
-    <PackageReference Include="Microsoft.WebTools.Shared" Version="$(MicrosoftWebToolsSharedPackageVersion)" />
+    <PackageReference Include="Microsoft.WebTools.Languages.Html" />
+    <PackageReference Include="Microsoft.WebTools.Languages.Html.Editor" />
+    <PackageReference Include="Microsoft.WebTools.Languages.LanguageServer.Server" />
+    <PackageReference Include="Microsoft.WebTools.Languages.Shared" />
+    <PackageReference Include="Microsoft.WebTools.Languages.Shared.Editor" />
+    <PackageReference Include="Microsoft.WebTools.Languages.Shared.VS" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Framework" />
+    <PackageReference Include="Microsoft.VisualStudio.Web" />
+    <PackageReference Include="Microsoft.WebTools.Shared" />
   </ItemGroup>
 
   <!-- Ensure the legacy clasp binary package is available downloaded so we can drop it in the output folder. -->

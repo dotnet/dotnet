@@ -59,7 +59,6 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
         _otherHostProject = new HostProject(TestProjectData.AnotherProject.FilePath, TestProjectData.AnotherProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, TestProjectData.AnotherProject.RootNamespace);
 
         _documentTracker = new VisualStudioDocumentTracker(
-            Dispatcher,
             JoinableTaskFactory.Context,
             _filePath,
             projectPath,
@@ -82,53 +81,53 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
     }
 
     [UIFact]
-    public async Task Subscribe_NoopsIfAlreadySubscribed()
+    public void Subscribe_NoopsIfAlreadySubscribed()
     {
         // Arrange
         var callCount = 0;
         _documentTracker.ContextChanged += (sender, args) => callCount++;
-        await RunOnDispatcherAsync(_documentTracker.Subscribe);
+        _documentTracker.Subscribe();
 
         // Act
-        await RunOnDispatcherAsync(_documentTracker.Subscribe);
+        _documentTracker.Subscribe();
 
         // Assert
         Assert.Equal(1, callCount);
     }
 
     [UIFact]
-    public async Task Unsubscribe_NoopsIfAlreadyUnsubscribed()
+    public void Unsubscribe_NoopsIfAlreadyUnsubscribed()
     {
         // Arrange
         var callCount = 0;
-        await RunOnDispatcherAsync(_documentTracker.Subscribe);
+        _documentTracker.Subscribe();
         _documentTracker.ContextChanged += (sender, args) => callCount++;
-        await RunOnDispatcherAsync(_documentTracker.Unsubscribe);
+        _documentTracker.Unsubscribe();
 
         // Act
-        await RunOnDispatcherAsync(_documentTracker.Unsubscribe);
+        _documentTracker.Unsubscribe();
 
         // Assert
         Assert.Equal(1, callCount);
     }
 
     [UIFact]
-    public async Task Unsubscribe_NoopsIfSubscribeHasBeenCalledMultipleTimes()
+    public void Unsubscribe_NoopsIfSubscribeHasBeenCalledMultipleTimes()
     {
         // Arrange
         var callCount = 0;
-        await RunOnDispatcherAsync(_documentTracker.Subscribe);
-        await RunOnDispatcherAsync(_documentTracker.Subscribe);
+        _documentTracker.Subscribe();
+        _documentTracker.Subscribe();
         _documentTracker.ContextChanged += (sender, args) => callCount++;
 
         // Act - 1
-        await RunOnDispatcherAsync(_documentTracker.Unsubscribe);
+        _documentTracker.Unsubscribe();
 
         // Assert - 1
         Assert.Equal(0, callCount);
 
         // Act - 2
-        await RunOnDispatcherAsync(_documentTracker.Unsubscribe);
+        _documentTracker.Unsubscribe();
 
         // Assert - 2
         Assert.Equal(1, callCount);
@@ -273,7 +272,7 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
     }
 
     [UIFact]
-    public async Task Import_Changed_ImportAssociatedWithDocument_TriggersContextChanged()
+    public void Import_Changed_ImportAssociatedWithDocument_TriggersContextChanged()
     {
         // Arrange
         var called = false;
@@ -286,17 +285,14 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
         var importChangedArgs = new ImportChangedEventArgs("path/to/import", FileChangeKind.Changed, [_filePath]);
 
         // Act
-        await RunOnDispatcherAsync(() =>
-        {
-            _documentTracker.Import_Changed(null!, importChangedArgs);
-        });
+        _documentTracker.Import_Changed(null!, importChangedArgs);
 
         // Assert
         Assert.True(called);
     }
 
     [UIFact]
-    public async Task Import_Changed_UnrelatedImport_DoesNothing()
+    public void Import_Changed_UnrelatedImport_DoesNothing()
     {
         // Arrange
         _documentTracker.ContextChanged += (sender, args) => throw new InvalidOperationException();
@@ -304,21 +300,18 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
         var importChangedArgs = new ImportChangedEventArgs("path/to/import", FileChangeKind.Changed, ["path/to/differentfile"]);
 
         // Act & Assert (Does not throw)
-        await RunOnDispatcherAsync(() =>
-        {
-            _documentTracker.Import_Changed(null!, importChangedArgs);
-        });
+        _documentTracker.Import_Changed(null!, importChangedArgs);
     }
 
     [UIFact]
-    public async Task Subscribe_SetsSupportedProjectAndTriggersContextChanged()
+    public void Subscribe_SetsSupportedProjectAndTriggersContextChanged()
     {
         // Arrange
         var called = false;
         _documentTracker.ContextChanged += (sender, args) => called = true;
 
         // Act
-        await RunOnDispatcherAsync(_documentTracker.Subscribe);
+        _documentTracker.Subscribe();
 
         // Assert
         Assert.True(called);
@@ -326,12 +319,12 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
     }
 
     [UIFact]
-    public async Task Unsubscribe_ResetsSupportedProjectAndTriggersContextChanged()
+    public void Unsubscribe_ResetsSupportedProjectAndTriggersContextChanged()
     {
         // Arrange
 
         // Subscribe once to set supported project
-        await RunOnDispatcherAsync(_documentTracker.Subscribe);
+        _documentTracker.Subscribe();
 
         var called = false;
         _documentTracker.ContextChanged += (sender, args) =>
@@ -341,7 +334,7 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
         };
 
         // Act
-        await RunOnDispatcherAsync(_documentTracker.Unsubscribe);
+        _documentTracker.Unsubscribe();
 
         // Assert
         Assert.False(_documentTracker.IsSupportedProject);
@@ -447,12 +440,12 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
     }
 
     [UIFact]
-    public async Task Subscribed_InitializesEphemeralProjectSnapshot()
+    public void Subscribed_InitializesEphemeralProjectSnapshot()
     {
         // Arrange
 
         // Act
-        await RunOnDispatcherAsync(_documentTracker.Subscribe);
+        _documentTracker.Subscribe();
 
         // Assert
         Assert.IsType<EphemeralProjectSnapshot>(_documentTracker.ProjectSnapshot);
@@ -468,7 +461,7 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
         });
 
         // Act
-        await RunOnDispatcherAsync(_documentTracker.Subscribe);
+        _documentTracker.Subscribe();
 
         // Assert
         Assert.IsType<ProjectSnapshot>(_documentTracker.ProjectSnapshot);
@@ -483,10 +476,7 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
             updater.ProjectAdded(_hostProject);
         });
 
-        await RunOnDispatcherAsync(() =>
-        {
-            _documentTracker.Subscribe();
-        });
+        _documentTracker.Subscribe();
 
         var args = new List<ContextChangeEventArgs>();
         _documentTracker.ContextChanged += (sender, e) => args.Add(e);
@@ -515,10 +505,7 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
             updater.ProjectAdded(_hostProject);
         });
 
-        await RunOnDispatcherAsync(() =>
-        {
-            _documentTracker.Subscribe();
-        });
+        _documentTracker.Subscribe();
 
         var args = new List<ContextChangeEventArgs>();
         _documentTracker.ContextChanged += (sender, e) => args.Add(e);

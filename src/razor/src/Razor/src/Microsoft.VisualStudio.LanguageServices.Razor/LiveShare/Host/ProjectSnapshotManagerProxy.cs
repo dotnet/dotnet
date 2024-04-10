@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Threading;
 
@@ -16,7 +15,6 @@ namespace Microsoft.VisualStudio.LiveShare.Razor.Host;
 internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, ICollaborationService, IDisposable
 {
     private readonly CollaborationSession _session;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly IProjectSnapshotManager _projectSnapshotManager;
     private readonly JoinableTaskFactory _jtf;
     private readonly AsyncSemaphore _latestStateSemaphore;
@@ -28,11 +26,9 @@ internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, IColl
     public ProjectSnapshotManagerProxy(
         CollaborationSession session,
         IProjectSnapshotManager projectSnapshotManager,
-        ProjectSnapshotManagerDispatcher dispatcher,
         JoinableTaskFactory jtf)
     {
         _session = session;
-        _dispatcher = dispatcher;
         _projectSnapshotManager = projectSnapshotManager;
         _jtf = jtf;
 
@@ -110,8 +106,6 @@ internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, IColl
 
     private void ProjectSnapshotManager_Changed(object sender, ProjectChangeEventArgs args)
     {
-        _dispatcher.AssertRunningOnDispatcher();
-
         if (_disposed)
         {
             return;

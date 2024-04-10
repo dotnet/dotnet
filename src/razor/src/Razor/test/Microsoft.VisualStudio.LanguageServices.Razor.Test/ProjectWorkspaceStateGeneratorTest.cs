@@ -61,10 +61,7 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
         // Act
         stateGenerator.Dispose();
 
-        await RunOnDispatcherAsync(() =>
-        {
-            stateGenerator.Update(_workspaceProject, _projectSnapshot, DisposalToken);
-        });
+        await stateGenerator.UpdateAsync(_workspaceProject, _projectSnapshot, DisposalToken);
 
         // Assert
         Assert.Empty(stateGenerator.Updates);
@@ -79,10 +76,7 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
         stateGenerator.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
 
         // Act
-        await RunOnDispatcherAsync(() =>
-        {
-            stateGenerator.Update(_workspaceProject, _projectSnapshot, DisposalToken);
-        });
+        await stateGenerator.UpdateAsync(_workspaceProject, _projectSnapshot, DisposalToken);
 
         // Assert
         var update = Assert.Single(stateGenerator.Updates);
@@ -97,18 +91,12 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
             _projectManager, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
         stateGenerator.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            stateGenerator.Update(_workspaceProject, _projectSnapshot, DisposalToken);
-        });
+        await stateGenerator.UpdateAsync(_workspaceProject, _projectSnapshot, DisposalToken);
 
         var initialUpdate = stateGenerator.Updates.Single().Value;
 
         // Act
-        await RunOnDispatcherAsync(() =>
-        {
-            stateGenerator.Update(_workspaceProject, _projectSnapshot, DisposalToken);
-        });
+        await stateGenerator.UpdateAsync(_workspaceProject, _projectSnapshot, DisposalToken);
 
         // Assert
         Assert.True(initialUpdate.Cts.IsCancellationRequested);
@@ -129,10 +117,7 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
         });
 
         // Act
-        await RunOnDispatcherAsync(() =>
-        {
-            stateGenerator.Update(workspaceProject: null, _projectSnapshot, DisposalToken);
-        });
+        await stateGenerator.UpdateAsync(workspaceProject: null, _projectSnapshot, DisposalToken);
 
         // Jump off the UI thread so the background work can complete.
         await Task.Run(() => stateGenerator.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));
@@ -157,10 +142,7 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
         });
 
         // Act
-        await RunOnDispatcherAsync(() =>
-        {
-            stateGenerator.Update(_workspaceProject, _projectSnapshot, DisposalToken);
-        });
+        await stateGenerator.UpdateAsync(_workspaceProject, _projectSnapshot, DisposalToken);
 
         // Jump off the UI thread so the background work can complete.
         await Task.Run(() => stateGenerator.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));

@@ -30,7 +30,7 @@ public class EditorDocumentManagerTest : VisualStudioTestBase
     public EditorDocumentManagerTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _manager = new TestEditorDocumentManager(Dispatcher, JoinableTaskFactory.Context);
+        _manager = new TestEditorDocumentManager(JoinableTaskFactory.Context);
         _projectKey1 = TestProjectData.SomeProject.Key;
         _projectKey2 = TestProjectData.AnotherProject.Key;
         _projectFile1 = TestProjectData.SomeProject.FilePath;
@@ -179,9 +179,8 @@ public class EditorDocumentManagerTest : VisualStudioTestBase
     }
 
     private class TestEditorDocumentManager(
-        ProjectSnapshotManagerDispatcher dispatcher,
         JoinableTaskContext joinableTaskContext)
-        : EditorDocumentManager(CreateFileChangeTrackerFactory(), dispatcher, joinableTaskContext)
+        : EditorDocumentManager(CreateFileChangeTrackerFactory(), joinableTaskContext)
     {
         public List<EditorDocument> Opened { get; } = new List<EditorDocument>();
 
@@ -191,10 +190,19 @@ public class EditorDocumentManagerTest : VisualStudioTestBase
 
         private static IFileChangeTrackerFactory CreateFileChangeTrackerFactory()
         {
-            var mock = new Mock<IFileChangeTrackerFactory>(MockBehavior.Strict);
+            var mock = new StrictMock<IFileChangeTrackerFactory>();
 
             mock.Setup(x => x.Create(It.IsAny<string>()))
-                .Returns((string filePath) => Mock.Of<IFileChangeTracker>(x => x.FilePath == filePath, MockBehavior.Strict));
+                .Returns((string filePath) =>
+                {
+                    var mock = new StrictMock<IFileChangeTracker>();
+                    mock.SetupGet(x => x.FilePath)
+                        .Returns(filePath);
+                    mock.Setup(x => x.StartListening());
+                    mock.Setup(x => x.StopListening());
+
+                    return mock.Object;
+                });
 
             return mock.Object;
         }

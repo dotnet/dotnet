@@ -26,8 +26,7 @@ internal sealed class VisualStudioEditorDocumentManager(
     SVsServiceProvider serviceProvider,
     IVsEditorAdaptersFactoryService editorAdaptersFactory,
     IFileChangeTrackerFactory fileChangeTrackerFactory,
-    ProjectSnapshotManagerDispatcher dispatcher,
-    JoinableTaskContext joinableTaskContext) : EditorDocumentManager(fileChangeTrackerFactory, dispatcher, joinableTaskContext)
+    JoinableTaskContext joinableTaskContext) : EditorDocumentManager(fileChangeTrackerFactory, joinableTaskContext)
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly IVsEditorAdaptersFactoryService _editorAdaptersFactory = editorAdaptersFactory;

@@ -16,7 +16,6 @@ namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 [method: ImportingConstructor]
 internal class ProjectSnapshotSynchronizationServiceFactory(
     IProjectSnapshotManager projectManager,
-    ProjectSnapshotManagerDispatcher dispatcher,
     IErrorReporter errorReporter,
     JoinableTaskContext joinableTaskContext) : ICollaborationServiceFactory
 {
@@ -32,7 +31,6 @@ internal class ProjectSnapshotSynchronizationServiceFactory(
             sessionContext,
             projectSnapshotManagerProxy,
             projectManager,
-            dispatcher,
             errorReporter,
             joinableTaskContext.Factory);
 

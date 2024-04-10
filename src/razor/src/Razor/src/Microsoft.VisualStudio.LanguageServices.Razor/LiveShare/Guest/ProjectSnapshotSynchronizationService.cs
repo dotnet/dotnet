@@ -16,7 +16,6 @@ internal class ProjectSnapshotSynchronizationService(
     CollaborationSession sessionContext,
     IProjectSnapshotManagerProxy hostProjectManagerProxy,
     IProjectSnapshotManager projectManager,
-    ProjectSnapshotManagerDispatcher dispatcher,
     IErrorReporter errorReporter,
     JoinableTaskFactory jtf) : ICollaborationService, IAsyncDisposable, System.IAsyncDisposable
 {
@@ -25,7 +24,6 @@ internal class ProjectSnapshotSynchronizationService(
     private readonly IProjectSnapshotManagerProxy _hostProjectManagerProxy = hostProjectManagerProxy;
     private readonly IProjectSnapshotManager _projectManager = projectManager;
     private readonly IErrorReporter _errorReporter = errorReporter;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
 
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
@@ -42,22 +40,27 @@ internal class ProjectSnapshotSynchronizationService(
     {
         _hostProjectManagerProxy.Changed -= HostProxyProjectManager_Changed;
 
-        await _dispatcher.Scheduler;
-
         var projects = _projectManager.GetProjects();
-        foreach (var project in projects)
-        {
-            try
+
+        await _projectManager.UpdateAsync(
+            static (updater, state) =>
             {
-                _projectManager.Update(
-                    static (updater, key) => updater.ProjectRemoved(key),
-                    state: project.Key);
-            }
-            catch (Exception ex)
-            {
-                _errorReporter.ReportError(ex, project);
-            }
-        }
+                var (projects, errorReporter) = state;
+
+                foreach (var project in projects)
+                {
+                    try
+                    {
+                        updater.ProjectRemoved(project.Key);
+                    }
+                    catch (Exception ex)
+                    {
+                        errorReporter.ReportError(ex, project);
+                    }
+                }
+            },
+            state: (projects, _errorReporter),
+            CancellationToken.None);
     }
 
     ValueTask System.IAsyncDisposable.DisposeAsync()
@@ -68,15 +71,13 @@ internal class ProjectSnapshotSynchronizationService(
     // Internal for testing
     internal async ValueTask UpdateGuestProjectManagerAsync(ProjectChangeEventProxyArgs args)
     {
-        await _dispatcher.Scheduler;
-
         if (args.Kind == ProjectProxyChangeKind.ProjectAdded)
         {
             var guestPath = ResolveGuestPath(args.ProjectFilePath);
             var guestIntermediateOutputPath = ResolveGuestPath(args.IntermediateOutputPath);
             var hostProject = new HostProject(guestPath, guestIntermediateOutputPath, args.Newer!.Configuration, args.Newer.RootNamespace);
 
-            _projectManager.Update(
+            await _projectManager.UpdateAsync(
                 static (updater, state) =>
                 {
                     updater.ProjectAdded(state.hostProject);
@@ -86,12 +87,13 @@ internal class ProjectSnapshotSynchronizationService(
                         updater.ProjectWorkspaceStateChanged(state.hostProject.Key, state.projectWorkspaceState);
                     }
                 },
-                state: (hostProject, projectWorkspaceState: args.Newer.ProjectWorkspaceState));
+                state: (hostProject, projectWorkspaceState: args.Newer.ProjectWorkspaceState),
+                CancellationToken.None);
         }
         else if (args.Kind == ProjectProxyChangeKind.ProjectRemoved)
         {
             var guestPath = ResolveGuestPath(args.ProjectFilePath);
-            _projectManager.Update(
+            await _projectManager.UpdateAsync(
                 static (updater, guestPath) =>
                 {
                     var projectKeys = updater.GetAllProjectKeys(guestPath);
@@ -100,7 +102,8 @@ internal class ProjectSnapshotSynchronizationService(
                         updater.ProjectRemoved(projectKey);
                     }
                 },
-                state: guestPath);
+                state: guestPath,
+                CancellationToken.None);
         }
         else if (args.Kind == ProjectProxyChangeKind.ProjectChanged)
         {
@@ -109,15 +112,16 @@ internal class ProjectSnapshotSynchronizationService(
                 var guestPath = ResolveGuestPath(args.Newer.FilePath);
                 var guestIntermediateOutputPath = ResolveGuestPath(args.Newer.IntermediateOutputPath);
                 var hostProject = new HostProject(guestPath, guestIntermediateOutputPath, args.Newer.Configuration, args.Newer.RootNamespace);
-                _projectManager.Update(
+                await _projectManager.UpdateAsync(
                     static (updater, hostProject) => updater.ProjectConfigurationChanged(hostProject),
-                    state: hostProject);
+                    state: hostProject,
+                    CancellationToken.None);
             }
             else if (args.Older.ProjectWorkspaceState != args.Newer.ProjectWorkspaceState ||
                 args.Older.ProjectWorkspaceState?.Equals(args.Newer.ProjectWorkspaceState) == false)
             {
                 var guestPath = ResolveGuestPath(args.Newer.FilePath);
-                _projectManager.Update(
+                await _projectManager.UpdateAsync(
                     static (updater, state) =>
                     {
                         var projectKeys = updater.GetAllProjectKeys(state.guestPath);
@@ -127,21 +131,20 @@ internal class ProjectSnapshotSynchronizationService(
                             updater.ProjectWorkspaceStateChanged(projectKey, state.projectWorkspaceState);
                         }
                     },
-                    state: (guestPath, projectWorkspaceState: args.Newer.ProjectWorkspaceState));
+                    state: (guestPath, projectWorkspaceState: args.Newer.ProjectWorkspaceState),
+                    CancellationToken.None);
             }
         }
     }
 
     private async Task InitializeGuestProjectManagerAsync(IReadOnlyList<ProjectSnapshotHandleProxy> projectHandles)
     {
-        await _dispatcher.Scheduler;
-
         foreach (var projectHandle in projectHandles)
         {
             var guestPath = ResolveGuestPath(projectHandle.FilePath);
             var guestIntermediateOutputPath = ResolveGuestPath(projectHandle.IntermediateOutputPath);
             var hostProject = new HostProject(guestPath, guestIntermediateOutputPath, projectHandle.Configuration, projectHandle.RootNamespace);
-            _projectManager.Update(
+            await _projectManager.UpdateAsync(
                 static (updater, state) =>
                 {
                     updater.ProjectAdded(state.hostProject);
@@ -151,7 +154,8 @@ internal class ProjectSnapshotSynchronizationService(
                         updater.ProjectWorkspaceStateChanged(state.hostProject.Key, state.projectWorkspaceState);
                     }
                 },
-                state: (hostProject, projectWorkspaceState: projectHandle.ProjectWorkspaceState));
+                state: (hostProject, projectWorkspaceState: projectHandle.ProjectWorkspaceState),
+                CancellationToken.None);
         }
     }
 

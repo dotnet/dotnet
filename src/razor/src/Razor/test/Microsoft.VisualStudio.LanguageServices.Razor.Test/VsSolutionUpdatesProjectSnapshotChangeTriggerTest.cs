@@ -96,7 +96,6 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
             projectManager,
             StrictMock.Of<IProjectWorkspaceStateGenerator>(),
             _workspaceProvider,
-            Dispatcher,
             JoinableTaskContext))
         {
             var testAccessor = trigger.GetTestAccessor();
@@ -136,7 +135,6 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
             projectManager,
             StrictMock.Of<IProjectWorkspaceStateGenerator>(),
             _workspaceProvider,
-            Dispatcher,
             JoinableTaskContext);
 
         var testAccessor = trigger.GetTestAccessor();
@@ -178,7 +176,6 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
             projectManager,
             workspaceStateGenerator,
             _workspaceProvider,
-            Dispatcher,
             JoinableTaskContext);
 
         var testAccessor = trigger.GetTestAccessor();
@@ -226,7 +223,6 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
             projectManager,
             workspaceStateGenerator,
             _workspaceProvider,
-            Dispatcher,
             JoinableTaskContext);
 
         var vsHierarchyMock = new StrictMock<IVsHierarchy>();
@@ -278,7 +274,6 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
             projectManager,
             workspaceStateGenerator,
             _workspaceProvider,
-            Dispatcher,
             JoinableTaskContext);
 
         var testAccessor = trigger.GetTestAccessor();
@@ -315,7 +310,6 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
             projectManager,
             workspaceStateGenerator,
             _workspaceProvider,
-            Dispatcher,
             JoinableTaskContext);
 
         var testAccessor = trigger.GetTestAccessor();

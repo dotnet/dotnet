@@ -5,10 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.VisualStudio.Editor.Razor;
@@ -22,7 +22,6 @@ namespace Microsoft.VisualStudio.LegacyEditor.Razor;
 
 internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
 {
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly JoinableTaskContext _joinableTaskContext;
     private readonly string _filePath;
     private readonly string _projectPath;
@@ -34,12 +33,12 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
     private bool _isSupportedProject;
     private IProjectSnapshot? _projectSnapshot;
+
     private int _subscribeCount;
 
     public event EventHandler<ContextChangeEventArgs>? ContextChanged;
 
     public VisualStudioDocumentTracker(
-        ProjectSnapshotManagerDispatcher dispatcher,
         JoinableTaskContext joinableTaskContext,
         string filePath,
         string projectPath,
@@ -54,7 +53,6 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
             throw new ArgumentException(SR.ArgumentCannotBeNullOrEmpty, nameof(filePath));
         }
 
-        _dispatcher = dispatcher;
         _joinableTaskContext = joinableTaskContext;
         _filePath = filePath;
         _projectPath = projectPath;
@@ -143,9 +141,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
 
     public void Subscribe()
     {
-        _dispatcher.AssertRunningOnDispatcher();
-
-        if (_subscribeCount++ > 0)
+        if (Interlocked.Increment(ref _subscribeCount) != 1)
         {
             return;
         }
@@ -164,8 +160,6 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
 
     private IProjectSnapshot GetOrCreateProject(string projectPath)
     {
-        _dispatcher.AssertRunningOnDispatcher();
-
         var projectKeys = _projectManager.GetAllProjectKeys(projectPath);
 
         if (projectKeys.Length == 0 ||
@@ -179,9 +173,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
 
     public void Unsubscribe()
     {
-        _dispatcher.AssertRunningOnDispatcher();
-
-        if (_subscribeCount == 0 || _subscribeCount-- > 1)
+        if (Interlocked.Decrement(ref _subscribeCount) != 0)
         {
             return;
         }
@@ -213,8 +205,6 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
         {
             return;
         }
-
-        _dispatcher.AssertRunningOnDispatcher();
 
         if (_projectPath is not null &&
             string.Equals(_projectPath, e.ProjectFilePath, StringComparison.OrdinalIgnoreCase))
@@ -268,8 +258,6 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
     // Internal for testing
     internal void Import_Changed(object sender, ImportChangedEventArgs args)
     {
-        _dispatcher.AssertRunningOnDispatcher();
-
         foreach (var path in args.AssociatedDocuments)
         {
             if (string.Equals(_filePath, path, StringComparison.OrdinalIgnoreCase))

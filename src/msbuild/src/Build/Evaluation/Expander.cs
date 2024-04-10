@@ -1479,7 +1479,7 @@ namespace Microsoft.Build.Evaluation
                 {
                     // The fall back is always to just convert to a string directly.
                     // Issue: https://github.com/dotnet/msbuild/issues/9757
-                    if (ChangeWaves.AreFeaturesEnabled(ChangeWaves.Wave17_10))
+                    if (ChangeWaves.AreFeaturesEnabled(ChangeWaves.Wave17_12))
                     {
                         convertedString = Convert.ToString(valueToConvert, CultureInfo.InvariantCulture);
                     }
@@ -5308,7 +5308,7 @@ namespace Microsoft.Build.Evaluation
                 }
 
                 // This could be expanded to an allow / deny list.
-                return methodName != "GetType";
+                return !string.Equals("GetType", methodName, StringComparison.OrdinalIgnoreCase);
             }
 
             /// <summary>

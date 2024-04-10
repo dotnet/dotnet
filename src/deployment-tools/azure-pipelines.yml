@@ -5,106 +5,89 @@ trigger:
     - main
     - release/*
     - internal/release/*
-
 pr:
 - main
 - release/*
 - internal/release/*
-
-
 name: $(Date:yyyyMMdd)$(Rev:.r)
-
 variables:
-  - name: TeamName
-    value: dotnet-core-acquisition
-  # Produce test-signed build for PR and Public builds
-  - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-    - name: SignType
-      value: test
-
-  # Set up non-PR build from internal project
-  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-    - name: SignType
-      value: $[ coalesce(variables.OfficialSignType, 'real') ]
-    # Values for SDLValidationParameters
-    - group: core-setup-sdl-validation
-
-stages:
-- stage: Build
-  jobs:
-  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
-    - template: /eng/common/templates/job/onelocbuild.yml
-      parameters:
-        MirrorRepo: deployment-tools
-        LclSource: lclFilesfromPackage
-        LclPackageId: 'LCL-JUNO-PROD-MAGE'
-  # -------- Build Windows legs --------
-  # Windows x64
-  - template: /eng/jobs/windows-build.yml
-    parameters:
-      name: win_x64
-      displayName: win-x64
-      targetArchitecture: x64
-      codeql: true
-
-  # Windows x86
-  - template: /eng/jobs/windows-build.yml
-    parameters:
-      name: win_x86
-      displayName: win-x86
-      targetArchitecture: x86
-
-  # Windows arm64
-  - template: /eng/jobs/windows-build.yml
-    parameters:
-      name: win_arm64
-      displayName: win-arm64
-      targetArchitecture: arm64
-  
-  # Source-build
-  - template: /eng/common/templates/jobs/source-build.yml
-    parameters:
-        platform:
-          name: 'Managed'
-          container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9'
-
-  # Publish to Build Asset Registry in order to generate the ReleaseConfigs artifact.
-  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-    - template: /eng/common/templates/job/publish-build-assets.yml
-      parameters:
-        publishUsingPipelines: true
-        publishAssetsImmediately: true
-        dependsOn:
-          - win_x64
-          - win_x86
-          - win_arm64
-          - Source_Build_Managed
-        pool:
-          name: NetCore1ESPool-Internal
-          demands: ImageOverride -equals windows.vs2022.amd64
-
-# Stages-based publishing entry point
+- template: /eng/common/templates-official/variables/pool-providers.yml@self
+- name: TeamName
+  value: dotnet-core-acquisition
+- ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+  - name: SignType
+    value: test
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-  - template: /eng/common/templates/post-build/post-build.yml
-    parameters:
-      enableSymbolValidation: false
-      enableSigningValidation: false
-      enableNugetValidation: false
-      enableSourceLinkValidation: false
-      publishAssetsImmediately: true
-      # Enable SDL validation, passing through values from the 'deployment-tools-sdl-validation' group.
-      SDLValidationParameters:
-        enable: false
-        params: >-
-          -SourceToolsList @("policheck","credscan")
-          -ArtifactToolsList @("binskim")
-          -BinskimAdditionalRunConfigParams @("IgnorePdbLoadError < True","Recurse < True","SymbolsPath < SRV*https://msdl.microsoft.com/download/symbols")
-          -TsaInstanceURL "$(TsaInstanceURL)"
-          -TsaProjectName "$(TsaProjectName)"
-          -TsaNotificationEmail "$(TsaNotificationEmail)"
-          -TsaCodebaseAdmin "$(TsaCodebaseAdmin)"
-          -TsaBugAreaPath "$(TsaBugAreaPath)"
-          -TsaIterationPath "$(TsaIterationPath)"
-          -TsaRepositoryName "$(TsaRepositoryName)"
-          -TsaCodebaseName "$(TsaCodebaseName)"
-          -TsaPublish $True
+  - name: SignType
+    value: $[ coalesce(variables.OfficialSignType, 'real') ]
+  - group: core-setup-sdl-validation
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    pool:
+      name: $(DncEngInternalBuildPool)
+      image: 1es-windows-2022-pt
+      os: windows
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - stage: Build
+      jobs:
+      - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+        - template: /eng/common/templates-official/job/onelocbuild.yml@self
+          parameters:
+            MirrorRepo: deployment-tools
+            LclSource: lclFilesfromPackage
+            LclPackageId: 'LCL-JUNO-PROD-MAGE'
+      - template: /eng/jobs/windows-build.yml@self
+        parameters:
+          name: win_x64
+          displayName: win-x64
+          targetArchitecture: x64
+          codeql: true
+      - template: /eng/jobs/windows-build.yml@self
+        parameters:
+          name: win_x86
+          displayName: win-x86
+          targetArchitecture: x86
+      - template: /eng/jobs/windows-build.yml@self
+        parameters:
+          name: win_arm64
+          displayName: win-arm64
+          targetArchitecture: arm64
+      - template: /eng/common/templates-official/jobs/source-build.yml@self
+        parameters:
+          platform:
+            name: 'Managed'
+            container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9'
+      - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+        - template: /eng/common/templates-official/job/publish-build-assets.yml@self
+          parameters:
+            publishUsingPipelines: true
+            publishAssetsImmediately: true
+            dependsOn:
+            - win_x64
+            - win_x86
+            - win_arm64
+            - Source_Build_Managed
+            pool:
+              name: $(DncEngInternalBuildPool)
+              demands: ImageOverride -equals 1es-windows-2022-pt
+    - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+      - template: /eng/common/templates-official/post-build/post-build.yml@self
+        parameters:
+          enableSymbolValidation: false
+          enableSigningValidation: false
+          enableNugetValidation: false
+          enableSourceLinkValidation: false
+          publishAssetsImmediately: true
+          SDLValidationParameters:
+            enable: false
+            params: >-
+              -SourceToolsList @("policheck","credscan") -ArtifactToolsList @("binskim") -BinskimAdditionalRunConfigParams @("IgnorePdbLoadError < True","Recurse < True","SymbolsPath < SRV*https://msdl.microsoft.com/download/symbols") -TsaInstanceURL "$(TsaInstanceURL)" -TsaProjectName "$(TsaProjectName)" -TsaNotificationEmail "$(TsaNotificationEmail)" -TsaCodebaseAdmin "$(TsaCodebaseAdmin)" -TsaBugAreaPath "$(TsaBugAreaPath)" -TsaIterationPath "$(TsaIterationPath)" -TsaRepositoryName "$(TsaRepositoryName)" -TsaCodebaseName "$(TsaCodebaseName)" -TsaPublish $True
