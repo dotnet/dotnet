@@ -76,17 +76,11 @@ public class ImportDocumentManagerIntegrationTest : VisualStudioTestBase
             .Returns(StrictMock.Of<IFileChangeTracker>());
 
         var called = false;
-        var manager = new ImportDocumentManager(Dispatcher, fileChangeTrackerFactoryMock.Object);
+        var manager = new ImportDocumentManager(fileChangeTrackerFactoryMock.Object);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            manager.OnSubscribed(tracker);
-        });
+        manager.OnSubscribed(tracker);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            manager.OnSubscribed(anotherTracker);
-        });
+        manager.OnSubscribed(anotherTracker);
 
         manager.Changed += (sender, args) =>
         {

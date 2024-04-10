@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit" Version="$(MicrosoftCodeAnalysisCSharpAnalyzerTestingXUnitPackageVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Testing.Verifiers.XUnit" Version="$(MicrosoftCodeAnalysisTestingVerifiersXUnitPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Testing.Verifiers.XUnit" />
   </ItemGroup>
 
   <ItemGroup>

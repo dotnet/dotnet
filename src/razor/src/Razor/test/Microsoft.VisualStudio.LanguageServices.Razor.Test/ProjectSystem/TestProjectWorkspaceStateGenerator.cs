@@ -2,11 +2,11 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis;
 using System.Threading;
-using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor.Test;
 
@@ -21,10 +21,12 @@ internal class TestProjectWorkspaceStateGenerator : IProjectWorkspaceStateGenera
 
     public IReadOnlyList<TestUpdate> Updates => _updates;
 
-    public void Update(Project? workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+    public Task UpdateAsync(Project? workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
         var update = new TestUpdate(workspaceProject, projectSnapshot, cancellationToken);
         _updates.Add(update);
+
+        return Task.CompletedTask;
     }
 
     public void Clear()

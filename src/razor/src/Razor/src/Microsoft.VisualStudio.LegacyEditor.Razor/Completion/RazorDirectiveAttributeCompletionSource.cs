@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.Core.Imaging;
@@ -44,17 +43,14 @@ internal class RazorDirectiveAttributeCompletionSource : IAsyncCompletionSource
     private readonly ICompletionBroker _completionBroker;
     private readonly IVisualStudioDescriptionFactory _descriptionFactory;
     private readonly JoinableTaskFactory _joinableTaskFactory;
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
 
     public RazorDirectiveAttributeCompletionSource(
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         IVisualStudioRazorParser parser,
         IRazorCompletionFactsService completionFactsService,
         ICompletionBroker completionBroker,
         IVisualStudioDescriptionFactory descriptionFactory,
         JoinableTaskFactory joinableTaskFactory)
     {
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher ?? throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
         _parser = parser ?? throw new ArgumentNullException(nameof(parser));
         _completionFactsService = completionFactsService ?? throw new ArgumentNullException(nameof(completionFactsService));
         _completionBroker = completionBroker;

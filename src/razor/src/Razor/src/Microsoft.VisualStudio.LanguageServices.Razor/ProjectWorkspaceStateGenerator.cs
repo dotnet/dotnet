@@ -46,40 +46,43 @@ internal sealed class ProjectWorkspaceStateGenerator(
     // Used in unit tests to ensure we can know when background work finishes.
     public ManualResetEventSlim? NotifyBackgroundWorkCompleted { get; set; }
 
-    public void Update(Project? workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+    public Task UpdateAsync(Project? workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
         if (projectSnapshot is null)
         {
             throw new ArgumentNullException(nameof(projectSnapshot));
         }
 
-        _dispatcher.AssertRunningOnDispatcher();
+        return _dispatcher.RunAsync(
+            () =>
+            {
+                if (_disposed)
+                {
+                    return;
+                }
 
-        if (_disposed)
-        {
-            return;
-        }
+                if (Updates.TryGetValue(projectSnapshot.Key, out var updateItem) &&
+                    !updateItem.Task.IsCompleted &&
+                    !updateItem.Cts.IsCancellationRequested)
+                {
+                    updateItem.Cts.Cancel();
+                }
 
-        if (Updates.TryGetValue(projectSnapshot.Key, out var updateItem) &&
-            !updateItem.Task.IsCompleted &&
-            !updateItem.Cts.IsCancellationRequested)
-        {
-            updateItem.Cts.Cancel();
-        }
+                if (updateItem?.Cts.IsCancellationRequested == false)
+                {
+                    updateItem?.Cts.Dispose();
+                }
 
-        if (updateItem?.Cts.IsCancellationRequested == false)
-        {
-            updateItem?.Cts.Dispose();
-        }
-
-        var lcts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        var updateTask = Task.Factory.StartNew(
-            () => UpdateWorkspaceStateAsync(workspaceProject, projectSnapshot, lcts.Token),
-            lcts.Token,
-            TaskCreationOptions.None,
-            TaskScheduler.Default).Unwrap();
-        updateItem = new UpdateItem(updateTask, lcts);
-        Updates[projectSnapshot.Key] = updateItem;
+                var lcts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                var updateTask = Task.Factory.StartNew(
+                    () => UpdateWorkspaceStateAsync(workspaceProject, projectSnapshot, lcts.Token),
+                    lcts.Token,
+                    TaskCreationOptions.None,
+                    TaskScheduler.Default).Unwrap();
+                updateItem = new UpdateItem(updateTask, lcts);
+                Updates[projectSnapshot.Key] = updateItem;
+            },
+            cancellationToken);
     }
 
     public void Dispose()

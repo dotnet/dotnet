@@ -4,9 +4,9 @@
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="$(Tooling_MicrosoftCodeAnalysisAnalyzersPackageVersion)" NoWarn="NU1608" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="$(Tooling_MicrosoftCodeAnalysisBannedApiAnalyzersPackageVersion)" PrivateAssets="all" />
-    <PackageReference Include="Roslyn.Diagnostics.Analyzers" Version="$(Tooling_RoslynDiagnosticsAnalyzersPackageVersion)" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" NoWarn="NU1608" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" PrivateAssets="all" />
+    <PackageReference Include="Roslyn.Diagnostics.Analyzers" PrivateAssets="all" />
 
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\Analyzers\Razor.Diagnostics.Analyzers\Razor.Diagnostics.Analyzers.csproj"
                       PrivateAssets="all"

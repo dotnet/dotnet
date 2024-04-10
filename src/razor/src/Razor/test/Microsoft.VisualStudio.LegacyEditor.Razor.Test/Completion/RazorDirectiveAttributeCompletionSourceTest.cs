@@ -44,7 +44,6 @@ public class RazorDirectiveAttributeCompletionSourceTest(ITestOutputHelper testO
         var descriptionFactory = StrictMock.Of<IVisualStudioDescriptionFactory>(f =>
             f.CreateClassifiedDescription(description) == expectedResult);
         var source = new RazorDirectiveAttributeCompletionSource(
-            Dispatcher,
             StrictMock.Of<IVisualStudioRazorParser>(),
             StrictMock.Of<IRazorCompletionFactsService>(),
             StrictMock.Of<ICompletionBroker>(),
@@ -234,7 +233,6 @@ public class RazorDirectiveAttributeCompletionSourceTest(ITestOutputHelper testO
     private RazorDirectiveAttributeCompletionSource CreateCompletionSource()
     {
         var source = new RazorDirectiveAttributeCompletionSource(
-            Dispatcher,
             StrictMock.Of<IVisualStudioRazorParser>(),
             StrictMock.Of<IRazorCompletionFactsService>(),
             StrictMock.Of<ICompletionBroker>(),

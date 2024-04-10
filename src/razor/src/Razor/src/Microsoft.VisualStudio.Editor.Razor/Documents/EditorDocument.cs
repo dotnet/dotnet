@@ -2,9 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Threading;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
@@ -17,7 +15,6 @@ namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 internal sealed class EditorDocument : IDisposable
 {
     private readonly IEditorDocumentManager _documentManager;
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly JoinableTaskContext _joinableTaskContext;
     private readonly IFileChangeTracker _fileTracker;
     private readonly SnapshotChangeTracker _snapshotTracker;
@@ -30,7 +27,6 @@ internal sealed class EditorDocument : IDisposable
 
     public EditorDocument(
         IEditorDocumentManager documentManager,
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         JoinableTaskContext joinableTaskContext,
         string projectFilePath,
         string documentFilePath,
@@ -43,43 +39,7 @@ internal sealed class EditorDocument : IDisposable
         EventHandler? opened,
         EventHandler? closed)
     {
-        if (documentManager is null)
-        {
-            throw new ArgumentNullException(nameof(documentManager));
-        }
-
-        if (projectSnapshotManagerDispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-        }
-
-        if (joinableTaskContext is null)
-        {
-            throw new ArgumentNullException(nameof(joinableTaskContext));
-        }
-
-        if (projectFilePath is null)
-        {
-            throw new ArgumentNullException(nameof(projectFilePath));
-        }
-
-        if (documentFilePath is null)
-        {
-            throw new ArgumentNullException(nameof(documentFilePath));
-        }
-
-        if (textLoader is null)
-        {
-            throw new ArgumentNullException(nameof(textLoader));
-        }
-
-        if (fileTracker is null)
-        {
-            throw new ArgumentNullException(nameof(fileTracker));
-        }
-
         _documentManager = documentManager;
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
         _joinableTaskContext = joinableTaskContext;
         ProjectFilePath = projectFilePath;
         DocumentFilePath = documentFilePath;
@@ -97,8 +57,7 @@ internal sealed class EditorDocument : IDisposable
         // Only one of these should be active at a time.
         if (textBuffer is null)
         {
-            _ = _projectSnapshotManagerDispatcher.RunAsync(
-                _fileTracker.StartListening, CancellationToken.None).ConfigureAwait(false);
+            _fileTracker.StartListening();
         }
         else
         {
@@ -131,8 +90,7 @@ internal sealed class EditorDocument : IDisposable
             throw new ArgumentNullException(nameof(textBuffer));
         }
 
-        _ = _projectSnapshotManagerDispatcher.RunAsync(
-            _fileTracker.StopListening, CancellationToken.None).ConfigureAwait(false);
+        _fileTracker.StopListening();
 
         _snapshotTracker.StartTracking(textBuffer);
         EditorTextBuffer = textBuffer;
@@ -152,8 +110,7 @@ internal sealed class EditorDocument : IDisposable
         EditorTextContainer = null;
         EditorTextBuffer = null;
 
-        _ = _projectSnapshotManagerDispatcher.RunAsync(
-            _fileTracker.StartListening, CancellationToken.None);
+        _fileTracker.StartListening();
     }
 
     private void ChangeTracker_Changed(object sender, FileChangeEventArgs e)
@@ -177,8 +134,7 @@ internal sealed class EditorDocument : IDisposable
         {
             _fileTracker.Changed -= ChangeTracker_Changed;
 
-            _ = _projectSnapshotManagerDispatcher.RunAsync(
-                _fileTracker.StopListening, CancellationToken.None);
+            _fileTracker.StopListening();
 
             if (EditorTextBuffer is not null)
             {

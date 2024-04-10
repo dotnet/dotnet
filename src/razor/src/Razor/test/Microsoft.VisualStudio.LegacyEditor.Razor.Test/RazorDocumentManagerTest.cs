@@ -48,7 +48,7 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
     {
         // Arrange
         var editorFactoryService = StrictMock.Of<IRazorEditorFactoryService>();
-        var documentManager = new RazorDocumentManager(editorFactoryService, Dispatcher, JoinableTaskContext);
+        var documentManager = new RazorDocumentManager(editorFactoryService, JoinableTaskContext);
         var textView = StrictMock.Of<ITextView>();
         var nonCoreTextBuffer = VsMocks.CreateTextBuffer(core: false);
 
@@ -64,7 +64,6 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
         var coreTextBuffer = VsMocks.CreateTextBuffer(core: true);
 
         IVisualStudioDocumentTracker? documentTracker = new VisualStudioDocumentTracker(
-            Dispatcher,
             JoinableTaskContext,
             FilePath,
             ProjectPath,
@@ -75,7 +74,7 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
             _importDocumentManager);
         var editorFactoryService = StrictMock.Of<IRazorEditorFactoryService>(f =>
             f.TryGetDocumentTracker(coreTextBuffer, out documentTracker) == true);
-        var documentManager = new RazorDocumentManager(editorFactoryService, Dispatcher, JoinableTaskContext);
+        var documentManager = new RazorDocumentManager(editorFactoryService, JoinableTaskContext);
 
         // Act
         await documentManager.OnTextViewOpenedAsync(textView, [coreTextBuffer]);
@@ -93,7 +92,6 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
         var nonCoreTextBuffer = VsMocks.CreateTextBuffer(core: false);
 
         IVisualStudioDocumentTracker? documentTracker = new VisualStudioDocumentTracker(
-            Dispatcher,
             JoinableTaskContext,
             FilePath,
             ProjectPath,
@@ -104,7 +102,7 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
             _importDocumentManager);
         var editorFactoryService = StrictMock.Of<IRazorEditorFactoryService>(f =>
             f.TryGetDocumentTracker(It.IsAny<ITextBuffer>(), out documentTracker) == true);
-        var documentManager = new RazorDocumentManager(editorFactoryService, Dispatcher, JoinableTaskContext);
+        var documentManager = new RazorDocumentManager(editorFactoryService, JoinableTaskContext);
 
         // Assert 1
         Assert.False(documentTracker.IsSupportedProject);
@@ -120,7 +118,7 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
     public async Task OnTextViewClosed_TextViewWithoutDocumentTracker_DoesNothing()
     {
         // Arrange
-        var documentManager = new RazorDocumentManager(StrictMock.Of<IRazorEditorFactoryService>(), Dispatcher, JoinableTaskContext);
+        var documentManager = new RazorDocumentManager(StrictMock.Of<IRazorEditorFactoryService>(), JoinableTaskContext);
         var textView = StrictMock.Of<ITextView>();
         var coreTextBuffer = VsMocks.CreateTextBuffer(core: true);
 
@@ -142,7 +140,6 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
 
         // Preload the buffer's properties with a tracker, so it's like we've already tracked this one.
         var documentTracker = new VisualStudioDocumentTracker(
-            Dispatcher,
             JoinableTaskContext,
             FilePath,
             ProjectPath,
@@ -156,14 +153,14 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
         coreTextBuffer.Properties.AddProperty(typeof(IVisualStudioDocumentTracker), documentTracker);
 
         documentTracker = new VisualStudioDocumentTracker(
-            Dispatcher, JoinableTaskContext, FilePath, ProjectPath, _projectManager, _workspaceEditorSettings,
+            JoinableTaskContext, FilePath, ProjectPath, _projectManager, _workspaceEditorSettings,
             ProjectEngineFactories.DefaultProvider, nonCoreTextBuffer, _importDocumentManager);
         documentTracker.AddTextView(textView1);
         documentTracker.AddTextView(textView2);
         nonCoreTextBuffer.Properties.AddProperty(typeof(IVisualStudioDocumentTracker), documentTracker);
 
         var editorFactoryService = StrictMock.Of<IRazorEditorFactoryService>();
-        var documentManager = new RazorDocumentManager(editorFactoryService, Dispatcher, JoinableTaskContext);
+        var documentManager = new RazorDocumentManager(editorFactoryService, JoinableTaskContext);
 
         // Act
         await documentManager.OnTextViewClosedAsync(textView2, [coreTextBuffer, nonCoreTextBuffer]);
@@ -186,7 +183,6 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
         var nonCoreTextBuffer = VsMocks.CreateTextBuffer(core: false);
 
         var documentTracker = new VisualStudioDocumentTracker(
-            Dispatcher,
             JoinableTaskContext,
             FilePath,
             ProjectPath,
@@ -198,10 +194,10 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
 
         coreTextBuffer.Properties.AddProperty(typeof(IVisualStudioDocumentTracker), documentTracker);
         var editorFactoryService = StrictMock.Of<IRazorEditorFactoryService>();
-        var documentManager = new RazorDocumentManager(editorFactoryService, Dispatcher, JoinableTaskContext);
+        var documentManager = new RazorDocumentManager(editorFactoryService, JoinableTaskContext);
 
         // Populate the text views
-        await RunOnDispatcherAsync(documentTracker.Subscribe);
+        documentTracker.Subscribe();
 
         documentTracker.AddTextView(textView1);
         documentTracker.AddTextView(textView2);

@@ -23,15 +23,12 @@ internal abstract class EditorDocumentManager : IEditorDocumentManager
 
     protected readonly object Lock;
 
-    protected ProjectSnapshotManagerDispatcher Dispatcher { get; }
     protected JoinableTaskContext JoinableTaskContext { get; }
 
     protected EditorDocumentManager(
         IFileChangeTrackerFactory fileChangeTrackerFactory,
-        ProjectSnapshotManagerDispatcher dispatcher,
         JoinableTaskContext joinableTaskContext)
     {
-        Dispatcher = dispatcher;
         JoinableTaskContext = joinableTaskContext;
         _fileChangeTrackerFactory = fileChangeTrackerFactory;
 
@@ -101,7 +98,6 @@ internal abstract class EditorDocumentManager : IEditorDocumentManager
             var textBuffer = GetTextBufferForOpenDocument(key.DocumentFilePath);
             document = new EditorDocument(
                 this,
-                Dispatcher,
                 JoinableTaskContext,
                 projectFilePath,
                 key.DocumentFilePath,

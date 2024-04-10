@@ -1,14 +1,32 @@
 ﻿steps:
   - task: NuGetAuthenticate@1
     inputs:
-      nuGetServiceConnections: 'devdiv/dotnet-core-internal-tooling'
+      nuGetServiceConnections: devdiv/dotnet-core-internal-tooling, devdiv/engineering
       forceReinstallCredentialProvider: true
 
-  - script: $(Build.SourcesDirectory)/eng/CIBuild.cmd
-            -restore
-            -projects $(Build.SourcesDirectory)/eng/common/internal/Tools.csproj
-            /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/RestoreInternal.binlog
-            /v:normal
+  # Needed for SBOM tool
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core 3.1 runtime'
+    inputs:
+      packageType: runtime
+      version: 3.1.28
+      installationPath: '$(Build.SourcesDirectory)\.dotnet'
+
+  # Needed because the build fails the NuGet Tools restore without it
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      packageType: sdk
+      useGlobalJson: true
+      workingDirectory: '$(Build.SourcesDirectory)'
+
+  # Needed to restore the Microsoft.DevDiv.Optimization.Data.PowerShell package
+  - task: NuGetCommand@2
     displayName: Restore internal tools
-    condition: and(succeeded(), ne(variables['_skipRestoreInternalTools'], 'true'))
+    inputs:
+      command: restore
+      feedsToUse: config
+      restoreSolution: 'eng\common\internal\Tools.csproj'
+      nugetConfigPath: 'NuGet.config'
+      restoreDirectory: '$(Build.SourcesDirectory)\.packages'
 

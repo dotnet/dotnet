@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.ComponentModelHost" Version="$(MicrosoftVisualStudioComponentModelHostPackageVersion)" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.Framework" Version="$(MicrosoftVisualStudioShellFrameworkPackageVersion)" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.ComponentModelHost" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Framework" PrivateAssets="all"/>
   </ItemGroup>
 
   <ItemGroup>

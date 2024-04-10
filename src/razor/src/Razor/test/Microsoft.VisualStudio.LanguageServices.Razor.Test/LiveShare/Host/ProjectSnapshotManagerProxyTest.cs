@@ -54,7 +54,6 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         using var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
             projectManager,
-            Dispatcher,
             JoinableTaskFactory);
 
         // Act
@@ -85,7 +84,6 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         using var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
             projectManager,
-            Dispatcher,
             JoinableTaskFactory);
 
         var proxyAccessor = proxy.GetTestAccessor();
@@ -134,7 +132,6 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
             projectManager,
-            Dispatcher,
             JoinableTaskFactory);
 
         var proxyAccessor = proxy.GetTestAccessor();
@@ -174,7 +171,6 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         using var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
             projectManager,
-            Dispatcher,
             JoinableTaskFactory);
 
         // Act
@@ -210,7 +206,6 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         using var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
             projectManager,
-            Dispatcher,
             JoinableTaskFactory);
 
         // Act
@@ -241,7 +236,6 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         using var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
             projectManager,
-            Dispatcher,
             JoinableTaskFactory);
 
         // Act

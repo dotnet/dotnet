@@ -192,8 +192,14 @@ public class EditorDocumentManagerListenerTest(ITestOutputHelper testOutput) : V
 
     private EditorDocument GetEditorDocument(bool isOpen = false, IEditorDocumentManager? documentManager = null)
     {
-        var fileChangeTracker = StrictMock.Of<IFileChangeTracker>(x =>
-            x.FilePath == s_hostDocument.FilePath);
+        var fileChangeTrackerMock = new StrictMock<IFileChangeTracker>();
+        fileChangeTrackerMock
+            .SetupGet(x => x.FilePath)
+            .Returns(s_hostDocument.FilePath);
+        fileChangeTrackerMock
+            .Setup(x => x.StartListening());
+        fileChangeTrackerMock
+            .Setup(x => x.StopListening());
 
         var textBuffer = isOpen
             ? new TestTextBuffer(new StringTextSnapshot("Hello"))
@@ -201,13 +207,12 @@ public class EditorDocumentManagerListenerTest(ITestOutputHelper testOutput) : V
 
         return new EditorDocument(
             documentManager ?? StrictMock.Of<IEditorDocumentManager>(),
-            Dispatcher,
             JoinableTaskContext,
             s_hostProject.FilePath,
             s_hostDocument.FilePath,
             s_hostProject.Key,
             StrictMock.Of<TextLoader>(),
-            fileChangeTracker,
+            fileChangeTrackerMock.Object,
             textBuffer,
             changedOnDisk: null,
             changedInEditor: null,

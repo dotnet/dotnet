@@ -4,9 +4,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Threading;
@@ -17,10 +15,8 @@ namespace Microsoft.VisualStudio.LegacyEditor.Razor;
 [method: ImportingConstructor]
 internal sealed class RazorDocumentManager(
     IRazorEditorFactoryService editorFactoryService,
-    ProjectSnapshotManagerDispatcher dispatcher,
     JoinableTaskContext joinableTaskContext) : IRazorDocumentManager
 {
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
     private readonly JoinableTaskFactory _jtf = joinableTaskContext.Factory;
     private readonly IRazorEditorFactoryService _editorFactoryService = editorFactoryService;
 
@@ -46,9 +42,7 @@ internal sealed class RazorDocumentManager(
 
             if (documentTracker.TextViews.Count == 1)
             {
-                // tracker.Subscribe() accesses the project snapshot manager, which needs to be run on the
-                // project snapshot manager's specialized thread.
-                await _dispatcher.RunAsync(() => tracker.Subscribe(), CancellationToken.None).ConfigureAwait(false);
+                tracker.Subscribe();
             }
         }
     }
@@ -70,9 +64,7 @@ internal sealed class RazorDocumentManager(
 
                 if (documentTracker.TextViews.Count == 0)
                 {
-                    // tracker.Unsubscribe() should be in sync with tracker.Subscribe(). The latter of needs to be run
-                    // on the project snapshot manager's specialized thread, so we run both on it.
-                    await _dispatcher.RunAsync(() => documentTracker.Unsubscribe(), CancellationToken.None).ConfigureAwait(false);
+                    documentTracker.Unsubscribe();
                 }
             }
         }

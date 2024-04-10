@@ -2,14 +2,14 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.VisualStudio.Editor.Razor.Documents;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor;
 
-internal class ImportChangedEventArgs(string filePath, FileChangeKind kind, IEnumerable<string> associatedDocuments) : EventArgs
+internal class ImportChangedEventArgs(string filePath, FileChangeKind kind, ImmutableArray<string> associatedDocuments) : EventArgs
 {
     public string FilePath => filePath;
     public FileChangeKind Kind => kind;
-    public IEnumerable<string> AssociatedDocuments => associatedDocuments;
+    public ImmutableArray<string> AssociatedDocuments => associatedDocuments;
 }

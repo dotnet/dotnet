@@ -5,7 +5,6 @@ using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LegacyEditor.Razor.Settings;
 using Microsoft.VisualStudio.Text;
@@ -16,7 +15,6 @@ namespace Microsoft.VisualStudio.LegacyEditor.Razor;
 [Export(typeof(IVisualStudioDocumentTrackerFactory))]
 [method: ImportingConstructor]
 internal sealed class VisualStudioDocumentTrackerFactory(
-    ProjectSnapshotManagerDispatcher dispatcher,
     JoinableTaskContext joinableTaskContext,
     IProjectSnapshotManager projectManager,
     IWorkspaceEditorSettings workspaceEditorSettings,
@@ -25,7 +23,6 @@ internal sealed class VisualStudioDocumentTrackerFactory(
     IImportDocumentManager importDocumentManager,
     IProjectEngineFactoryProvider projectEngineFactoryProvider) : IVisualStudioDocumentTrackerFactory
 {
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
     private readonly JoinableTaskContext _joinableTaskContext = joinableTaskContext;
     private readonly ITextDocumentFactoryService _textDocumentFactory = textDocumentFactory;
     private readonly IProjectPathProvider _projectPathProvider = projectPathProvider;
@@ -54,7 +51,7 @@ internal sealed class VisualStudioDocumentTrackerFactory(
 
         var filePath = textDocument.FilePath;
         var tracker = new VisualStudioDocumentTracker(
-            _dispatcher, _joinableTaskContext, filePath, projectPath, _projectManager, _workspaceEditorSettings, _projectEngineFactoryProvider, textBuffer, _importDocumentManager);
+            _joinableTaskContext, filePath, projectPath, _projectManager, _workspaceEditorSettings, _projectEngineFactoryProvider, textBuffer, _importDocumentManager);
 
         return tracker;
     }

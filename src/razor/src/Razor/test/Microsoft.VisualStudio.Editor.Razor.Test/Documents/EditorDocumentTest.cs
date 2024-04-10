@@ -26,13 +26,23 @@ public class EditorDocumentTest : VisualStudioTestBase
     public EditorDocumentTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _documentManager = new Mock<IEditorDocumentManager>(MockBehavior.Strict).Object;
-        Mock.Get(_documentManager).Setup(m => m.RemoveDocument(It.IsAny<EditorDocument>())).Verifiable();
+        _documentManager = StrictMock.Of<IEditorDocumentManager>();
+        Mock.Get(_documentManager)
+            .Setup(m => m.RemoveDocument(It.IsAny<EditorDocument>()))
+            .Verifiable();
+
         _projectFilePath = TestProjectData.SomeProject.FilePath;
         _projectKey = TestProjectData.SomeProject.Key;
         _documentFilePath = TestProjectData.SomeProjectFile1.FilePath;
         _textLoader = TextLoader.From(TextAndVersion.Create(SourceText.From("FILE"), VersionStamp.Default));
-        _fileChangeTracker = Mock.Of<IFileChangeTracker>(x => x.FilePath == _documentFilePath, MockBehavior.Strict);
+
+        var mock = new StrictMock<IFileChangeTracker>();
+        mock.SetupGet(x => x.FilePath)
+            .Returns(_documentFilePath);
+        mock.Setup(x => x.StartListening());
+        mock.Setup(x => x.StopListening());
+
+        _fileChangeTracker = mock.Object;
 
         _textBuffer = new TestTextBuffer(new StringTextSnapshot("Hello"));
     }
@@ -43,7 +53,6 @@ public class EditorDocumentTest : VisualStudioTestBase
         // Arrange & Act
         using var document = new EditorDocument(
             _documentManager,
-            Dispatcher,
             JoinableTaskFactory.Context,
             _projectFilePath,
             _documentFilePath,
@@ -68,7 +77,6 @@ public class EditorDocumentTest : VisualStudioTestBase
         // Arrange & Act
         using var document = new EditorDocument(
             _documentManager,
-            Dispatcher,
             JoinableTaskFactory.Context,
             _projectFilePath,
             _documentFilePath,
