@@ -26,6 +26,12 @@ variables:
   value: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-arm
 - name: marinerArm64CrossContainer
   value: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-arm64
+- name: marinerX64AlpineCrossContainer
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64-alpine
+- name: marinerArmAlpineCrossContainer
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-arm-alpine
+- name: marinerArm64AlpineCrossContainer
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-arm64-alpine
 - name: androidCrossContainer
   value: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-android-amd64
 - name: browserCrossContainer
