@@ -69,7 +69,7 @@ parameters:
 
 - name: runTests
   type: boolean
-  default: false
+  default: true
 
 # Freeform field for extra values to pass to build.sh for special build modes
 - name: extraProperties
@@ -243,7 +243,7 @@ jobs:
 
     - ${{ if eq(parameters.runTests, 'True') }}:
       - script: |
-          call $(sourcesPath)\build.cmd -ci -prepareMachine -test ${{ parameters.extraProperties }}
+          call $(sourcesPath)\build.cmd -ci -prepareMachine -test /p:TargetOS=${{ parameters.targetOS }} /p:TargetArchitecture=${{ parameters.targetArchitecture }} ${{ parameters.extraProperties }}
         displayName: Run Tests
 
   - ${{ else }}:
@@ -355,20 +355,39 @@ jobs:
         fi
       displayName: Build
 
-  # Only run tests if enabled
-  - ${{ if eq(parameters.runTests, 'True') }}:
-    - script: |
-        set -ex
+    # Only run tests if enabled
+    - ${{ if eq(parameters.runTests, 'True') }}:
+      - script: |
+          set -ex
 
-        dockerVolumeArgs="-v $(sourcesPath):/vmr"
-        poisonArg=''
+          dockerVolumeArgs="-v $(sourcesPath):/vmr"
+          sourceOnlyArgs=''
+          extraBuildProperties=''
 
-        if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
-          poisonArg='--poison'
-        fi
+          if [[ ! -z '${{ parameters.targetOS }}' ]]; then
+            extraBuildProperties="$extraBuildProperties /p:TargetOS=${{ parameters.targetOS }}"
+          fi
 
-        docker run --rm $dockerVolumeArgs -w /vmr ${{ parameters.container }} ./build.sh /bl:artifacts/log/Release/Test.binlog --source-only --test $poisonArg $(additionalBuildArgs) /p:SmokeTestsWarnOnSdkContentDiffs=true /p:SmokeTestsExcludeOmniSharpTests=${{ parameters.excludeOmniSharpTests }}
-      displayName: Run Tests
+          if [[ ! -z '${{ parameters.targetArchitecture }}' ]]; then
+            extraBuildProperties="$extraBuildProperties /p:TargetArchitecture=${{ parameters.targetArchitecture }}"
+          fi
+
+          if [[ '${{ parameters.buildSourceOnly }}' == 'True' ]]; then
+            if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
+              sourceOnlyArgs='--poison'
+            fi
+            sourceOnlyArgs="$sourceOnlyArgs --source-only /p:SmokeTestsWarnOnSdkContentDiffs=true /p:SmokeTestsExcludeOmniSharpTests=${{ parameters.excludeOmniSharpTests }}"
+          fi
+
+          # Only use Docker when a container is specified
+          if [[ -n "${{ parameters.container }}" ]]; then
+            docker run --rm $dockerVolumeArgs -w /vmr ${{ parameters.container }} ./build.sh /bl:artifacts/log/Release/Test.binlog --test $sourceOnlyArgs $extraBuildProperties $(additionalBuildArgs) 
+          else
+            cd $(sourcesPath)
+            ./build.sh /bl:artifacts/log/Release/Test.binlog --test $sourceOnlyArgs $extraBuildProperties $(additionalBuildArgs)
+          fi
+
+        displayName: Run Tests
 
   - ${{ if eq(parameters.targetOS, 'windows') }}:
 
