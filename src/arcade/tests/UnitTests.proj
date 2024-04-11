@@ -59,9 +59,9 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(HelixAccessToken)' != '' ">
-    <HelixTargetQueue Include="(Centos.8.Amd64)Ubuntu.2204.Amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8-helix"/>
+    <HelixTargetQueue Include="(AlmaLinux.8.Amd64)Ubuntu.2204.Amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-8-helix-amd64"/>
     <HelixTargetQueue Include="Windows.10.Amd64"/>
-    <HelixTargetQueue Include="(Debian.12.Amd64)ubuntu.2204.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-10-helix-amd64"/>
+    <HelixTargetQueue Include="(Debian.11.Amd64)ubuntu.2204.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-11-helix-amd64"/>
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(HelixAccessToken)' == '' ">
@@ -71,9 +71,9 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(HelixAccessToken)' == '' ">
-    <HelixTargetQueue Include="(Centos.8.Amd64.Open)Ubuntu.2204.Amd64.Open@mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8-helix"/>
+    <HelixTargetQueue Include="(AlmaLinux.8.Amd64.Open)Ubuntu.2204.Amd64.Open@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-8-helix-amd64"/>
     <HelixTargetQueue Include="Windows.10.Amd64.Open"/>
-    <HelixTargetQueue Include="(Debian.12.Amd64.Open)ubuntu.2204.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-10-helix-amd64"/>
+    <HelixTargetQueue Include="(Debian.11.Amd64.Open)ubuntu.2204.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-11-helix-amd64"/>
   </ItemGroup>
 
   <PropertyGroup Condition="!$(HelixTargetQueue.StartsWith('Windows'))">
