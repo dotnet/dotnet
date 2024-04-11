@@ -98,6 +98,8 @@ steps:
       /p:DotNetBuildRepo=true \
       /p:AssetManifestFileName=$assetManifestFileName
   displayName: Build
+  env:
+    OPENSSL_ENABLE_SHA1_SIGNATURES: 1
 
 # Upload build logs for diagnosis.
 - task: CopyFiles@2
