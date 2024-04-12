@@ -180,18 +180,6 @@ jobs:
       displayName: Export VMR sources
       workingDirectory: $(Build.StagingDirectory)
 
-  - ${{ if and(ne(variables['System.TeamProject'], 'public'), eq(parameters.runTests, 'True')) }}:
-    - script: cp "$(sourcesPath)/src/installer/NuGet.config" "$(sourcesPath)/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/online.NuGet.Config"
-      displayName: Copy Test NuGet Config
-
-    - task: Bash@3
-      displayName: Setup Private Feeds Credentials
-      inputs:
-        filePath: $(sourcesPath)/src/installer/eng/common/SetupNugetSources.sh
-        arguments: $(sourcesPath)/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/online.NuGet.Config $Token
-      env:
-        Token: $(dn-bot-dnceng-artifact-feeds-rw)
-
   - ${{ if ne(parameters.reuseBuildArtifactsFrom, '') }}:
     - download: current
       artifact: ${{ parameters.reuseBuildArtifactsFrom }}_${{ parameters.architecture }}_Artifacts
