@@ -686,6 +686,19 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
+            buildName: Mariner_x64_Cross_Pgo
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            pool: ${{ parameters.pool_Linux }}
+            container: ${{ variables.marinerX64CrossContainer }}
+            crossRootFs: '/crossrootfs/x64'
+            targetOS: linux
+            targetArchitecture: x64
+            extraProperties: /p:PgoInstrument=true
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
             buildName: Mariner_x64_Cross_Mono
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
@@ -733,6 +746,19 @@ stages:
             crossRootFs: '/crossrootfs/arm64'
             targetOS: linux
             targetArchitecture: arm64
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Mariner_x64_Cross_Pgo
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm64
+            pool: ${{ parameters.pool_Linux }}
+            container: ${{ variables.marinerArm64CrossContainer }}
+            crossRootFs: '/crossrootfs/arm64'
+            targetOS: linux
+            targetArchitecture: arm64
+            extraProperties: /p:PgoInstrument=true
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -896,4 +922,26 @@ stages:
             pool: ${{ parameters.pool_Windows }}
             targetOS: windows
             targetArchitecture: x64
+            extraProperties: /p:PgoInstrument=true
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Windows_Pgo
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x86
+            pool: ${{ parameters.pool_Windows }}
+            targetOS: windows
+            targetArchitecture: x86
+            extraProperties: /p:PgoInstrument=true
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Windows_Pgo
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm64
+            pool: ${{ parameters.pool_Windows }}
+            targetOS: windows
+            targetArchitecture: arm64
             extraProperties: /p:PgoInstrument=true
