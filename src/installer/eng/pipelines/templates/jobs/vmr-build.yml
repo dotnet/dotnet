@@ -231,7 +231,7 @@ jobs:
 
     - ${{ if eq(parameters.runTests, 'True') }}:
       - script: |
-          call $(sourcesPath)\build.cmd -ci -prepareMachine -test /p:TargetOS=${{ parameters.targetOS }} /p:TargetArchitecture=${{ parameters.targetArchitecture }} ${{ parameters.extraProperties }}
+          call $(sourcesPath)\build.cmd -ci -prepareMachine -test /bl:artifacts/log/Release/Test.binlog /p:TargetOS=${{ parameters.targetOS }} /p:TargetArchitecture=${{ parameters.targetArchitecture }} ${{ parameters.extraProperties }}
         displayName: Run Tests
 
   - ${{ else }}:
@@ -365,6 +365,10 @@ jobs:
               sourceOnlyArgs='--poison'
             fi
             sourceOnlyArgs="$sourceOnlyArgs --source-only /p:SmokeTestsWarnOnSdkContentDiffs=true /p:SmokeTestsExcludeOmniSharpTests=${{ parameters.excludeOmniSharpTests }}"
+          fi
+
+          if [[ -n "${{ parameters.extraProperties }}" ]]; then
+            extraBuildProperties="$extraBuildProperties ${{ parameters.extraProperties }}"
           fi
 
           # Only use Docker when a container is specified
