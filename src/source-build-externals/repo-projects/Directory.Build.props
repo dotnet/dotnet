@@ -77,7 +77,6 @@
     <EnvironmentVariables Include="GIT_COMMIT=$(GitCommitHash)" Condition="'$(GitCommitHash)' != ''" />
     <EnvironmentVariables Include="RepositoryType=Git" />
 
-    <EnvironmentVariables Include="DeterministicSourcePaths=false" />
     <EnvironmentVariables Include="SourceRoot=$(ProjectDirectory)" />
     
     <!-- Disable restoring transitive aspnetcore and windowsdesktop targeting packs to avoid unnecessary dependencies. -->
