@@ -277,14 +277,14 @@
       <Sha>c0b5d69a1a1513528c77fffff708c7502d57c35c</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.ScenarioTests.SdkTemplateTests" Version="9.0.0-preview.24176.1">
+    <Dependency Name="Microsoft.DotNet.ScenarioTests.SdkTemplateTests" Version="9.0.0-preview.24212.2">
       <Uri>https://github.com/dotnet/scenario-tests</Uri>
-      <Sha>ddccfec3ccd631fb8341c8b6e4e422e8cb339aa5</Sha>
+      <Sha>4e95e339e9ea1dfb6203122f3fd6b42296e95f39</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.scenario-tests" Version="9.0.0-preview.24176.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.scenario-tests" Version="9.0.0-preview.24212.2">
       <Uri>https://github.com/dotnet/scenario-tests</Uri>
-      <Sha>ddccfec3ccd631fb8341c8b6e4e422e8cb339aa5</Sha>
+      <Sha>4e95e339e9ea1dfb6203122f3fd6b42296e95f39</Sha>
       <SourceBuild RepoName="scenario-tests" ManagedOnly="true" />
     </Dependency>
     <!-- Aspire isn't really a toolset dependency. However, it only inserts a baseline manifest in installer,
