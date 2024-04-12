@@ -2,16 +2,63 @@
 
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
+  <PropertyGroup>
+    <TestRoot Condition="'$(TestRoot)' == ''">$(ArtifactsObjDir)generatedtests/</TestRoot>
+  </PropertyGroup>
+
+  <Target Name="CleanTestRoot">
+    <!-- Clean the test root to avoid dirty content from a previous run -->
+    <RemoveDir Directories="$(TestRoot)" />
+  </Target>
+
+  <Target Name="CreateDirectoryBuildFiles">
+    <!-- Define Directory.Build.* files in the scenario tests artifacts directory to prevent the test run from
+          picking up the configuration from the VMR's Directory.Build.* files. We need an isolated configuration
+          from which to test. -->
+    <WriteLinesToFile File="$(TestRoot)Directory.Build.targets"
+                      Lines="&lt;Project /&gt;"
+                      Overwrite="true" />
+    <!-- Because the VMR (https://github.com/dotnet/dotnet) is configured to use CPM (https://github.com/dotnet/installer/pull/19286), it will
+          cause the scenario tests to fail with the following error:
+            Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: ...
+          To work around this, we explicitly disable CPM. Note that this can't be solved by including a stub Directory.Packages.props file because the default
+          behavior is to automatically default ManagePackageVersionsCentrally to true when it finds such a file.
+          https://github.com/NuGet/NuGet.Client/blob/ca13cf0a281b9774dd0238a43ab98c1927056cc2/src/NuGet.Core/NuGet.Build.Tasks/NuGet.props#L25-L33 -->
+    <PropertyGroup>
+      <_DirectoryBuildPropsContent>
+&lt;Project&gt;
+  &lt;PropertyGroup&gt;
+    &lt;ManagePackageVersionsCentrally&gt;
+      false
+    &lt;/ManagePackageVersionsCentrally&gt;
+  &lt;/PropertyGroup&gt;
+&lt;/Project&gt;
+      </_DirectoryBuildPropsContent>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(TestRoot)Directory.Build.props"
+                      Lines="$(_DirectoryBuildPropsContent)"
+                      Overwrite="true" />
+  </Target>
+
   <!-- Override the test target to run the test harness as a separate executable against dotnet SDK used to run these tests. -->
-  <Target Name="Test">
+  <Target Name="Test"
+          DependsOnTargets="CleanTestRoot;CreateDirectoryBuildFiles">
     <PropertyGroup>
       <!-- Dotnet root typically ends in a \. Trim this to avoid issues with Exec -->
       <TestArgs>--dotnet-root "$(DotNetRoot.TrimEnd('\'))"</TestArgs>
       <TestArgs>$(TestArgs) --sdk-version $(NETCoreSdkVersion)</TestArgs>
-      <TestArgs>$(TestArgs) --test-root "$(ArtifactsObjDir)generatedtests"</TestArgs>
+      <TestArgs>$(TestArgs) --test-root "$(TestRoot)"</TestArgs>
+      <TestArgs>$(TestArgs) $(AdditionalTestArgs)</TestArgs>
+
+      <_MSBuildSdksDir>$(DotNetRoot)sdk/$(NETCoreSdkVersion)/Sdks</_MSBuildSdksDir>
     </PropertyGroup>
 
-    <Exec Command='"$(DotNetTool)" "$(TargetPath)" $(TestArgs)' />
+    <ItemGroup>
+      <_TestEnvVars Include="MSBuildSDKsPath=$(_MSBuildSdksDir)" />
+    </ItemGroup>
+
+    <Exec Command='"$(DotNetTool)" "$(TargetPath)" $(TestArgs)'
+          EnvironmentVariables="@(_TestEnvVars)" />
   </Target>
 
 </Project>
