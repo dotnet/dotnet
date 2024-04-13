@@ -23,9 +23,15 @@ if ($enable)
   $value = 1
 }
 
+# If the flag contains \ assume that the intention was to provide a full path, otherwise use the default for razor lsp feature flags
+if (-not $flag.Contains("\"))
+{
+  $flag = "FeatureFlags\Razor\LSP\" + $flag
+}
+
 Write-Host "Attempting to modify '$flag' to '$value'"
 
-$flagBase = "FeatureFlags\Razor\LSP"
+
 $slashIndex = $flag.LastIndexOf("\")
 
 if ($slashIndex -ge 0) {
@@ -69,8 +75,8 @@ $vsDir = $vsInfo.installationPath.TrimEnd("\")
 $vsRegEdit = Join-Path (Join-Path (Join-Path $vsDir 'Common7') 'IDE') 'VsRegEdit.exe'
 
 if ($set) {
-  &$vsRegEdit set "$vsDir" $hive HKCU $flagBase $flag dword $value
+  &$vsRegEdit set "$vsDir" $hive HKCU $flag VALUE dword $value
 }
 else {
-  &$vsRegEdit read "$vsDir" $hive HKCU $flagBase $flag dword
+  &$vsRegEdit read "$vsDir" $hive HKCU $flag VALUE dword
 }

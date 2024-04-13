@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.Remote;
+namespace Microsoft.VisualStudio.Razor.Remote;
 
 [Export(typeof(IRemoteClientProvider))]
 [method: ImportingConstructor]

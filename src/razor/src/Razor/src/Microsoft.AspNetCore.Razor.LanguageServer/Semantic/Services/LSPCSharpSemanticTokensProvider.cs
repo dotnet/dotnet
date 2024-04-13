@@ -81,15 +81,15 @@ internal class LSPCSharpSemanticTokensProvider(LanguageServerFeatureOptions lang
             // Once C# syncs up they'll send a refresh notification.
             if (csharpVersion == -1)
             {
-                _logger.LogWarning("Didn't get C# tokens because the virtual document wasn't found, or other problem. We were wanting {documentVersion} but C# could not get any version.", documentVersion);
+                _logger.LogWarning($"Didn't get C# tokens because the virtual document wasn't found, or other problem. We were wanting {documentVersion} but C# could not get any version.");
             }
             else if (csharpVersion < documentVersion)
             {
-                _logger.LogDebug("Didn't wait for Roslyn to get the C# version we were expecting. We are wanting {documentVersion} but C# is at {csharpVersion}.", documentVersion, csharpVersion);
+                _logger.LogDebug($"Didn't wait for Roslyn to get the C# version we were expecting. We are wanting {documentVersion} but C# is at {csharpVersion}.");
             }
             else
             {
-                _logger.LogWarning("We are behind the C# version which is surprising. Could be an old request that wasn't cancelled, but if not, expect most future requests to fail. We were wanting {documentVersion} but C# is at {csharpVersion}.", documentVersion, csharpVersion);
+                _logger.LogWarning($"We are behind the C# version which is surprising. Could be an old request that wasn't cancelled, but if not, expect most future requests to fail. We were wanting {documentVersion} but C# is at {csharpVersion}.");
             }
 
             return null;

@@ -9,13 +9,14 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Remote;
 
 #pragma warning disable VSTHRD110 // Observe result of async calls
 
-namespace Microsoft.CodeAnalysis.Remote.Razor;
+namespace Microsoft.VisualStudio.Razor.Remote;
 
 public partial class OutOfProcTagHelperResolverTest
 {

@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Text;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.VisualStudio.Razor.Telemetry;
 using Microsoft.VisualStudio.Telemetry;
 
 namespace Microsoft.VisualStudio.DevKit.Razor.Telemetry;

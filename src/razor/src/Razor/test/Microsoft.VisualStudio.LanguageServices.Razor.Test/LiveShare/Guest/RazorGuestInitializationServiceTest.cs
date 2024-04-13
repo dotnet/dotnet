@@ -5,11 +5,12 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.VisualStudio.LiveShare;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Guest;
 
 public class RazorGuestInitializationServiceTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {

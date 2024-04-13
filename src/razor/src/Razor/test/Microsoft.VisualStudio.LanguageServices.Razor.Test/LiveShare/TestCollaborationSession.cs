@@ -7,9 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.LiveShare;
 using Newtonsoft.Json;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Test;
+namespace Microsoft.VisualStudio.Razor.LiveShare;
 
 public class TestCollaborationSession : CollaborationSession
 {

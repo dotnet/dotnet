@@ -20,7 +20,7 @@ internal class RazorConfigurationEndpoint(RazorLSPOptionsMonitor optionsMonitor,
 
     public async Task HandleNotificationAsync(DidChangeConfigurationParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Settings changed. Updating the server.");
+        _logger.LogInformation($"Settings changed. Updating the server.");
 
         await _optionsMonitor.UpdateAsync(cancellationToken).ConfigureAwait(false);
     }

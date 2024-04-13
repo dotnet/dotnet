@@ -112,7 +112,7 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
                 End = new(codeDocument.Source.Text.Lines.Count, 0)
             }
         };
-        var documentContext = DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument);
+        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument, DisposalToken);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act

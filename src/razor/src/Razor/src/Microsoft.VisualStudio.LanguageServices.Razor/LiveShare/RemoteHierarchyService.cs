@@ -4,11 +4,12 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.LiveShare;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor;
+namespace Microsoft.VisualStudio.Razor.LiveShare;
 
 internal class RemoteHierarchyService(CollaborationSession session, JoinableTaskFactory jtf) : IRemoteHierarchyService
 {

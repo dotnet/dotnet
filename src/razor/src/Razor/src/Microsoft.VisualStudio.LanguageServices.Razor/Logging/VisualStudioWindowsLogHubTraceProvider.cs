@@ -6,11 +6,10 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceHub.Framework;
-using Microsoft.VisualStudio.Editor.Razor.Logging;
 using Microsoft.VisualStudio.RpcContracts.Logging;
 using VSShell = Microsoft.VisualStudio.Shell;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.Logging;
+namespace Microsoft.VisualStudio.Razor.Logging;
 
 [Export(typeof(RazorLogHubTraceProvider))]
 internal class VisualStudioWindowsLogHubTraceProvider : RazorLogHubTraceProvider
@@ -30,7 +29,7 @@ internal class VisualStudioWindowsLogHubTraceProvider : RazorLogHubTraceProvider
 
     public override async Task InitializeTraceAsync(string logIdentifier, int logHubSessionId, CancellationToken cancellationToken)
     {
-        if ((await TryInitializeServiceBrokerAsync(cancellationToken).ConfigureAwait(false)) is false)
+        if (await TryInitializeServiceBrokerAsync(cancellationToken).ConfigureAwait(false) is false)
         {
             return;
         }

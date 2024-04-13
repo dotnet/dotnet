@@ -5,9 +5,10 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 
-namespace Microsoft.VisualStudio.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 internal class TestProjectChangeDescription : IProjectChangeDescription
 {
@@ -64,7 +65,7 @@ internal class TestProjectChangeDescription : IProjectChangeDescription
             {
                 var x = before.Properties[key];
                 var y = after.Properties[key];
-                return object.Equals(x, y);
+                return Equals(x, y);
             });
 
             return new Diff()

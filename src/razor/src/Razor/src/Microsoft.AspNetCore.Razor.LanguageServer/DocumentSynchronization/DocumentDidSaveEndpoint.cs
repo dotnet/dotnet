@@ -26,7 +26,7 @@ internal class DocumentDidSaveEndpoint(ILoggerFactory loggerFactory)
 
     public Task HandleNotificationAsync(DidSaveTextDocumentParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Saved Document {document}", request.TextDocument.Uri.GetAbsoluteOrUNCPath());
+        _logger.LogInformation($"Saved Document {request.TextDocument.Uri.GetAbsoluteOrUNCPath()}");
 
         return Task.CompletedTask;
     }

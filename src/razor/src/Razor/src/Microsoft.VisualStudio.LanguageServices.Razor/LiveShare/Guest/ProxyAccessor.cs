@@ -5,7 +5,7 @@ using System.ComponentModel.Composition;
 using System.Threading;
 using Microsoft.VisualStudio.Threading;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Guest;
 
 [Export(typeof(IProxyAccessor))]
 [method: ImportingConstructor]

@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 
-namespace Microsoft.VisualStudio.Editor.Razor.Documents;
+namespace Microsoft.VisualStudio.Razor.Documents;
 
 [Export(typeof(IFileChangeTrackerFactory))]
 internal class VisualStudioFileChangeTrackerFactory : IFileChangeTrackerFactory

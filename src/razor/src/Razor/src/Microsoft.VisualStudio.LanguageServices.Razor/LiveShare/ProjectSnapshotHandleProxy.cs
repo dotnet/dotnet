@@ -5,7 +5,7 @@ using System;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor;
+namespace Microsoft.VisualStudio.Razor.LiveShare;
 
 // This type must be public because it is exposed by a public interface that is implemented as
 // an RPC proxy by live share. However, its properties and constructor are intentionally internal

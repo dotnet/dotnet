@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
@@ -18,14 +17,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentDidChangeName)]
 internal class DocumentDidChangeEndpoint(
-    ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
     IRazorProjectService razorProjectService,
     ILoggerFactory loggerFactory)
     : IRazorNotificationHandler<DidChangeTextDocumentParams>, ITextDocumentIdentifierHandler<DidChangeTextDocumentParams, TextDocumentIdentifier>, ICapabilitiesProvider
 {
     public bool MutatesSolutionState => true;
 
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
     private readonly IRazorProjectService _projectService = razorProjectService;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<DocumentDidChangeEndpoint>();
 
@@ -56,9 +53,9 @@ internal class DocumentDidChangeEndpoint(
         var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
         sourceText = ApplyContentChanges(request.ContentChanges, sourceText);
 
-        await _projectSnapshotManagerDispatcher.RunAsync(
-            () => _projectService.UpdateDocument(documentContext.FilePath, sourceText, request.TextDocument.Version),
-            cancellationToken).ConfigureAwait(false);
+        await _projectService
+            .UpdateDocumentAsync(documentContext.FilePath, sourceText, request.TextDocument.Version, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     // Internal for testing
@@ -84,7 +81,7 @@ internal class DocumentDidChangeEndpoint(
             var textSpan = new TextSpan(startPosition, change.RangeLength ?? endPosition - startPosition);
             var textChange = new TextChange(textSpan, change.Text);
 
-            _logger.LogInformation("Applying {textChange}", textChange);
+            _logger.LogInformation($"Applying {textChange}");
 
             // If there happens to be multiple text changes we generate a new source text for each one. Due to the
             // differences in VSCode and Roslyn's representation we can't pass in all changes simultaneously because

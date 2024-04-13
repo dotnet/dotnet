@@ -33,7 +33,7 @@ public class DefaultHtmlCodeActionResolverTest(ITestOutputHelper testOutput) : L
         var documentPath = "c:/Test.razor";
         var documentUri = new Uri(documentPath);
         var documentContextFactory = CreateDocumentContextFactory(documentUri, contents);
-        var context = documentContextFactory.TryCreate(documentUri);
+        var context = await documentContextFactory.TryCreateAsync(documentUri, DisposalToken);
         Assert.NotNull(context);
         var sourceText = await context.GetSourceTextAsync(DisposalToken);
         var remappedEdit = new WorkspaceEdit

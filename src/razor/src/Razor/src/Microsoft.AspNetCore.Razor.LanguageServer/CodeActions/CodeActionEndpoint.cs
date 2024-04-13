@@ -300,7 +300,7 @@ internal sealed class CodeActionEndpoint(
         catch (RemoteInvocationException e)
         {
             _telemetryReporter?.ReportFault(e, "Error getting code actions from delegate language server for {languageKind}", languageKind);
-            _logger.LogError(e, "Error getting code actions from delegate language server for {languageKind}", languageKind);
+            _logger.LogError(e, $"Error getting code actions from delegate language server for {languageKind}");
             return Array.Empty<RazorVSInternalCodeAction>();
         }
     }

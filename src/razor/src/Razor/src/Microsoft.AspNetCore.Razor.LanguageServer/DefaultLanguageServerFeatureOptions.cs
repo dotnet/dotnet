@@ -13,7 +13,7 @@ internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOption
 
     public override bool SupportsFileManipulation => true;
 
-    public override string ProjectConfigurationFileName => LanguageServerConstants.DefaultProjectConfigurationFile;
+    public override string ProjectConfigurationFileName => "project.razor.bin";
 
     public override string CSharpVirtualDocumentSuffix => DefaultCSharpVirtualDocumentSuffix;
 

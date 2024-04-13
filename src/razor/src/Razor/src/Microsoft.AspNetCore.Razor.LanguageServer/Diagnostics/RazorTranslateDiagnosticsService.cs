@@ -77,7 +77,7 @@ internal class RazorTranslateDiagnosticsService
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         if (codeDocument.IsUnsupported() != false)
         {
-            _logger.LogInformation("Unsupported code document.");
+            _logger.LogInformation($"Unsupported code document.");
             return Array.Empty<Diagnostic>();
         }
 
@@ -88,12 +88,12 @@ internal class RazorTranslateDiagnosticsService
             : FilterHTMLDiagnostics(diagnostics, codeDocument, sourceText, _logger);
         if (!filteredDiagnostics.Any())
         {
-            _logger.LogDebug("No diagnostics remaining after filtering.");
+            _logger.LogDebug($"No diagnostics remaining after filtering.");
 
             return Array.Empty<Diagnostic>();
         }
 
-        _logger.LogDebug("{filteredDiagnosticsLength}/{unmappedDiagnosticsLength} diagnostics remain after filtering.", filteredDiagnostics.Length, diagnostics.Length);
+        _logger.LogDebug($"{filteredDiagnostics.Length}/{diagnostics.Length} diagnostics remain after filtering.");
 
         var mappedDiagnostics = MapDiagnostics(
             diagnosticKind,
@@ -524,7 +524,7 @@ internal class RazorTranslateDiagnosticsService
             default:
                 // Unsupported owner of rude diagnostic, lets map to the entirety of the diagnostic range to be sure the diagnostic can be presented
 
-                _logger.LogInformation("Failed to remap rude edit for SyntaxTree owner '{ownerKind}'.", owner?.Kind);
+                _logger.LogInformation($"Failed to remap rude edit for SyntaxTree owner '{owner?.Kind}'.");
 
                 var startLineIndex = diagnosticRange.Start.Line;
                 if (startLineIndex >= sourceText.Lines.Count)

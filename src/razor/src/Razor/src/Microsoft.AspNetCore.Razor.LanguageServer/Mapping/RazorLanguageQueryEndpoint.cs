@@ -77,8 +77,7 @@ internal sealed class RazorLanguageQueryEndpoint(IRazorDocumentMappingService do
             }
         }
 
-        _logger.LogInformation("Language query request for ({requestPositionLine}, {requestPositionCharacter}) = {languageKind} at ({responsePositionLine}, {responsePositionCharacter})",
-            request.Position.Line, request.Position.Character, languageKind, responsePosition.Line, responsePosition.Character);
+        _logger.LogInformation($"Language query request for ({request.Position.Line}, {request.Position.Character}) = {languageKind} at ({responsePosition.Line}, {responsePosition.Character})");
 
         return new RazorLanguageQueryResponse()
         {

@@ -47,8 +47,12 @@ namespace AspNetCore
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective> Html { get; private set; } = default!;
         #nullable disable
-        public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective>)PageContext?.ViewData;
-        public TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective Model => ViewData.Model;
+        #nullable restore
+public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective>)PageContext?.ViewData!;
+#nullable disable
+        #nullable restore
+public TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective Model => ViewData.Model!;
+#nullable disable
     }
 }
 #pragma warning restore 1591

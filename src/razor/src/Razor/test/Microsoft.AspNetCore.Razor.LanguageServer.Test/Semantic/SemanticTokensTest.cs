@@ -1207,9 +1207,9 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
 
     private class TestDocumentContextFactory(VersionedDocumentContext? documentContext = null) : IDocumentContextFactory
     {
-        public DocumentContext? TryCreate(Uri documentUri, VSProjectContext? projectContext, bool versioned)
+        public Task<DocumentContext?> TryCreateAsync(Uri documentUri, VSProjectContext? projectContext, bool versioned, CancellationToken cancellationToken)
         {
-            return documentContext;
+            return Task.FromResult<DocumentContext?>(documentContext);
         }
     }
 }

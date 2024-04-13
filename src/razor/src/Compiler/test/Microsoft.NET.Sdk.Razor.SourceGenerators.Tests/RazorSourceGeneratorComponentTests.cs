@@ -785,6 +785,34 @@ public sealed class RazorSourceGeneratorComponentTests : RazorSourceGeneratorTes
         }
     }
 
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10180")]
+    public async Task TextAfterCodeBlockInMarkupTransition()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.cshtml"] = """
+                @(await Html.RenderComponentAsync<MyApp.Shared.Component1>(RenderMode.Static))
+                """,
+            ["Shared/Component1.razor"] = """
+                @{
+                    @:@{ <i>x y z </i> }
+                    <text>a b c</text>
+                }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver, out compilation);
+
+        // Assert
+        result.Diagnostics.Verify();
+        Assert.Equal(2, result.GeneratedSources.Length);
+        await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
+    }
+
     [Fact, WorkItem("https://github.com/dotnet/razor/issues/9381")]
     public async Task UnrecognizedComponentName()
     {

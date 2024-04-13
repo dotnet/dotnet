@@ -13,30 +13,19 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentDidCloseName)]
-internal class DocumentDidCloseEndpoint : IRazorNotificationHandler<DidCloseTextDocumentParams>, ITextDocumentIdentifierHandler<DidCloseTextDocumentParams, TextDocumentIdentifier>
+internal class DocumentDidCloseEndpoint(IRazorProjectService projectService) : IRazorNotificationHandler<DidCloseTextDocumentParams>, ITextDocumentIdentifierHandler<DidCloseTextDocumentParams, TextDocumentIdentifier>
 {
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
-    private readonly IRazorProjectService _projectService;
+    private readonly IRazorProjectService _projectService = projectService ?? throw new ArgumentNullException(nameof(projectService));
 
     public bool MutatesSolutionState => true;
-
-    public DocumentDidCloseEndpoint(
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-        IRazorProjectService projectService)
-    {
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher ?? throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-        _projectService = projectService ?? throw new ArgumentNullException(nameof(projectService));
-    }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(DidCloseTextDocumentParams request)
     {
         return request.TextDocument;
     }
 
-    public async Task HandleNotificationAsync(DidCloseTextDocumentParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
+    public Task HandleNotificationAsync(DidCloseTextDocumentParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        await _projectSnapshotManagerDispatcher.RunAsync(
-            () => _projectService.CloseDocument(request.TextDocument.Uri.GetAbsoluteOrUNCPath()),
-            cancellationToken).ConfigureAwait(false);
+        return _projectService.CloseDocumentAsync(request.TextDocument.Uri.GetAbsoluteOrUNCPath(), cancellationToken);
     }
 }

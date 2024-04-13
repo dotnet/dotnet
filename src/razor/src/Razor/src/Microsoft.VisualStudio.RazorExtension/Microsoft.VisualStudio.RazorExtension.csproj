@@ -137,11 +137,8 @@
     ***************************************************************************************************************************************
     -->
     <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.ObjectPool.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.Primitives.dll" />
     <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.DependencyInjection.dll" />
     <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.Configuration.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.Configuration.Abstractions.dll" />
     <RazorNgendVSIXSourceItem Include="$(OutputPath)System.IO.Pipelines.dll" />
     <RazorNgendVSIXSourceItem Include="$(OutputPath)System.Runtime.CompilerServices.Unsafe.dll" />
     <RazorNgendVSIXSourceItem Include="$(OutputPath)System.Threading.Channels.dll" />
@@ -207,12 +204,9 @@
       <!-- Disable NGEN. Core assemblies are crossgened. -->
       <Ngen>false</Ngen>
     </ProjectReference>
-
-    <ProjectReference Include="..\Microsoft.VisualStudio.Editor.Razor\Microsoft.VisualStudio.Editor.Razor.csproj" />
     <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServer.ContainedLanguage\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.csproj" />
     <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Microsoft.VisualStudio.LanguageServices.Razor.csproj" />
     <ProjectReference Include="..\Microsoft.VisualStudio.LegacyEditor.Razor\Microsoft.VisualStudio.LegacyEditor.Razor.csproj" />
-    <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServerClient.Razor\Microsoft.VisualStudio.LanguageServerClient.Razor.csproj" />
     <ProjectReference Include="..\..\..\Compiler\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj">
       <Name>Microsoft.CodeAnalysis.Razor.Compiler</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>

@@ -20,10 +20,6 @@
       <PrivateAssets>All</PrivateAssets>
       <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\Microsoft.VisualStudio.LanguageServerClient.Razor\Microsoft.VisualStudio.LanguageServerClient.Razor.csproj">
-      <PrivateAssets>All</PrivateAssets>
-      <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\RazorDeployment\RazorDeployment.csproj" Private="False" Condition="'$(BuildDependencyVsix)' == 'true'">
       <PrivateAssets>All</PrivateAssets>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

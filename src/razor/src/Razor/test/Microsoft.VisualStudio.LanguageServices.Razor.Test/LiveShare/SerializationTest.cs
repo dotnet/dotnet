@@ -6,12 +6,12 @@ using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.VisualStudio.LiveShare.Razor.Serialization;
+using Microsoft.VisualStudio.Razor.LiveShare.Serialization;
 using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor;
+namespace Microsoft.VisualStudio.Razor.LiveShare;
 
 public class SerializationTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {

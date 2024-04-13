@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Test.Utilities;
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.IntegrationTests;
@@ -17,15 +19,17 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 {
     private static readonly CSharpCompilation DefaultBaseCompilation = MvcShim.BaseCompilation.WithAssemblyName("AppCode");
 
+    private RazorConfiguration _configuration;
+
     public CodeGenerationIntegrationTest()
         : base(layer: TestProject.Layer.Compiler, generateBaselines: null, projectDirectoryHint: "Microsoft.AspNetCore.Mvc.Razor.Extensions")
     {
-        Configuration = new(RazorLanguageVersion.Latest, "MVC-3.0", Extensions: []);
+        _configuration = new(RazorLanguageVersion.Latest, "MVC-3.0", Extensions: []);
     }
 
     protected override CSharpCompilation BaseCompilation { get; set; } = DefaultBaseCompilation;
 
-    protected override RazorConfiguration Configuration { get; }
+    protected override RazorConfiguration Configuration => _configuration;
 
     #region Runtime
 
@@ -1465,4 +1469,108 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
     }
 
     #endregion
+
+    [Theory, CombinatorialData, WorkItem("https://github.com/dotnet/razor/issues/7286")]
+    public void RazorPage_NullableModel(bool nullableModel, bool nullableContextEnabled, bool designTime,
+        [CombinatorialValues("8.0", "9.0", "Latest")] string razorLangVersion)
+    {
+        // Arrange
+
+        // Construct "key" for baselines.
+        var testName = "RazorPage_With" +
+            (nullableModel ? "" : "Non") +
+            "NullableModel_Lang" +
+            (razorLangVersion == "8.0" ? "Old" : "New") +
+            "_" +
+            (designTime ? "DesignTime" : "Runtime");
+
+        _configuration = _configuration with { LanguageVersion = RazorLanguageVersion.Parse(razorLangVersion) };
+
+        BaseCompilation = BaseCompilation.WithOptions(BaseCompilation.Options.WithNullableContextOptions(
+            nullableContextEnabled ? NullableContextOptions.Enable: NullableContextOptions.Disable));
+
+        AddCSharpSyntaxTree("""
+            namespace TestNamespace;
+
+            public class TestModel
+            {
+                public string Name { get; set; } = string.Empty;
+
+                public string Address { get; set; } = string.Empty;
+            }
+            """);
+
+        // Act
+        var generated = CompileToCSharp($"""
+            @page
+            @using TestNamespace
+            @model TestModel{(nullableModel ? "?" : "")}
+
+            <h1>@Model.Name</h1>
+
+            <h2>@Model?.Address</h2>
+            """,
+            designTime: designTime);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument.GetDocumentIntermediateNode(), testName: testName);
+        AssertHtmlDocumentMatchesBaseline(generated.CodeDocument.GetHtmlDocument(), testName: testName);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument.GetCSharpDocument(), testName: testName);
+        AssertLinePragmas(generated.CodeDocument, designTime: designTime);
+        AssertSourceMappingsMatchBaseline(generated.CodeDocument, testName: testName);
+        var compiledAssembly = CompileToAssembly(generated, throwOnFailure: false);
+
+        var diagnostics = compiledAssembly.Compilation.GetDiagnostics().Where(d => d.Severity >= DiagnosticSeverity.Warning);
+
+        if (nullableModel)
+        {
+            var commonDiagnostics = new[]
+            {
+                // TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml(76,90): warning CS8669: The annotation for nullable reference types should only be used in code within a '#nullable' annotations context. Auto-generated code requires an explicit '#nullable' directive in source.
+                //         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestModel?> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestModel?>)PageContext?.ViewData;
+                Diagnostic(ErrorCode.WRN_MissingNonNullTypesContextForAnnotationInGeneratedCode, "?"),
+                // TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml(76,180): warning CS8669: The annotation for nullable reference types should only be used in code within a '#nullable' annotations context. Auto-generated code requires an explicit '#nullable' directive in source.
+                //         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestModel?> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestModel?>)PageContext?.ViewData;
+                Diagnostic(ErrorCode.WRN_MissingNonNullTypesContextForAnnotationInGeneratedCode, "?"),
+                // TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml(77,25): warning CS8669: The annotation for nullable reference types should only be used in code within a '#nullable' annotations context. Auto-generated code requires an explicit '#nullable' directive in source.
+                //         public TestModel? Model => ViewData.Model;
+                Diagnostic(ErrorCode.WRN_MissingNonNullTypesContextForAnnotationInGeneratedCode, "?")
+            };
+
+            if (nullableContextEnabled)
+            {
+                if (razorLangVersion == "8.0")
+                {
+                    diagnostics.Verify([
+                        // TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml(5,6): warning CS8602: Dereference of a possibly null reference.
+                        // Model.Name
+                        Diagnostic(ErrorCode.WRN_NullReferenceReceiver, "Model"),
+                        ..commonDiagnostics]);
+                }
+                else
+                {
+                    diagnostics.Verify(
+                        // TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml(5,6): warning CS8602: Dereference of a possibly null reference.
+                        // Model.Name
+                        Diagnostic(ErrorCode.WRN_NullReferenceReceiver, "Model"));
+                }
+            }
+            else
+            {
+                diagnostics.Verify([
+                    ..(designTime ? [
+                        // TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml(3,10): warning CS8669: The annotation for nullable reference types should only be used in code within a '#nullable' annotations context. Auto-generated code requires an explicit '#nullable' directive in source.
+                        // TestModel? __typeHelper = default!;
+                        Diagnostic(ErrorCode.WRN_MissingNonNullTypesContextForAnnotationInGeneratedCode, "?")] : DiagnosticDescription.None),
+                    // TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml(74,80): warning CS8669: The annotation for nullable reference types should only be used in code within a '#nullable' annotations context. Auto-generated code requires an explicit '#nullable' directive in source.
+                    //         public global::Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper<TestModel?> Html { get; private set; } = default!;
+                    Diagnostic(ErrorCode.WRN_MissingNonNullTypesContextForAnnotationInGeneratedCode, "?"),
+                    ..commonDiagnostics]);
+            }
+        }
+        else
+        {
+            diagnostics.Verify();
+        }
+    }
 }

@@ -9,12 +9,11 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.LiveShare.Razor.Test;
 using Microsoft.VisualStudio.Threading;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Host;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Host;
 
 public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : VisualStudioTestBase(testOutput)
 {

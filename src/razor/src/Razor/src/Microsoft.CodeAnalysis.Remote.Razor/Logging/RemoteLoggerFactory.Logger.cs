@@ -13,7 +13,7 @@ internal partial class RemoteLoggerFactory
     {
         public bool IsEnabled(LogLevel logLevel) => true;
 
-        public void Log<TState>(LogLevel logLevel, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        public void Log(LogLevel logLevel, string message, Exception? exception)
         {
             if (s_traceSource is null)
             {
@@ -21,33 +21,22 @@ internal partial class RemoteLoggerFactory
                 return;
             }
 
-            var formattedResult = formatter(state, exception);
-
             switch (logLevel)
             {
                 case LogLevel.Information:
-                    s_traceSource.TraceEvent(TraceEventType.Information, id: 0, "[{0}] {1}", categoryName, formattedResult);
+                    s_traceSource.TraceEvent(TraceEventType.Information, id: 0, "[{0}] {1}", categoryName, message);
                     break;
                 case LogLevel.Trace:
                 case LogLevel.Debug:
-                    s_traceSource.TraceEvent(TraceEventType.Verbose, id: 0, "[{0}] {1}", categoryName, formattedResult);
+                    s_traceSource.TraceEvent(TraceEventType.Verbose, id: 0, "[{0}] {1}", categoryName, message);
                     break;
                 case LogLevel.Warning:
-                    s_traceSource.TraceEvent(TraceEventType.Warning, id: 0, "[{0}] {1}", categoryName, formattedResult);
+                    s_traceSource.TraceEvent(TraceEventType.Warning, id: 0, "[{0}] {1}", categoryName, message);
                     break;
                 case LogLevel.Error:
                 case LogLevel.Critical:
-                    s_traceSource.TraceEvent(TraceEventType.Error, id: 0, "[{0}] {1} {2}", categoryName, formattedResult, exception!);
+                    s_traceSource.TraceEvent(TraceEventType.Error, id: 0, "[{0}] {1} {2}", categoryName, message, exception!);
                     break;
-            }
-        }
-
-        private class Scope : IDisposable
-        {
-            public static readonly Scope Instance = new();
-
-            public void Dispose()
-            {
             }
         }
     }

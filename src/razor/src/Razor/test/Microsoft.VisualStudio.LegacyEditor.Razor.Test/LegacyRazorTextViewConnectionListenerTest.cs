@@ -4,7 +4,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
-using Microsoft.VisualStudio.Editor.Razor;
+using Microsoft.VisualStudio.Razor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Xunit;

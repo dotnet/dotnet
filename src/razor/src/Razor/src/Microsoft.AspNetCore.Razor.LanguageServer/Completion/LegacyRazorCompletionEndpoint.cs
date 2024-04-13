@@ -95,7 +95,7 @@ internal class LegacyRazorCompletionEndpoint(
 
         var razorCompletionItems = _completionFactsService.GetCompletionItems(completionContext);
 
-        _logger.LogTrace("Resolved {razorCompletionItemsCount} completion items.", razorCompletionItems.Length);
+        _logger.LogTrace($"Resolved {razorCompletionItems.Length} completion items.");
 
         var completionList = CreateLSPCompletionList(razorCompletionItems);
         var completionCapability = _clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;

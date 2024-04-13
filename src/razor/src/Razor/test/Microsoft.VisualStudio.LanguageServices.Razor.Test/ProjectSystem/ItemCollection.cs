@@ -6,10 +6,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Xunit;
 
-namespace Microsoft.VisualStudio.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 internal class ItemCollection
 {

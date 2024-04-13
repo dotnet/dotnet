@@ -5,10 +5,11 @@ using System;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.LiveShare;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Host;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Host;
 
 [ExportCollaborationService(
     typeof(IProjectHierarchyProxy),

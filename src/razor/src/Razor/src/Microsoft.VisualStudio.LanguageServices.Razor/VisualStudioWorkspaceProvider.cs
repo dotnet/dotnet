@@ -2,14 +2,14 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.ComponentModel.Composition;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.VisualStudio.LanguageServices;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor;
+namespace Microsoft.VisualStudio.Razor;
 
 [Export(typeof(IWorkspaceProvider))]
 [method: ImportingConstructor]
 internal sealed class VisualStudioWorkspaceProvider(VisualStudioWorkspace workspace) : IWorkspaceProvider
 {
-    public Workspace GetWorkspace() => workspace;
+    public CodeAnalysis.Workspace GetWorkspace() => workspace;
 }

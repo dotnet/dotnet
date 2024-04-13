@@ -111,7 +111,6 @@ internal static class IServiceCollectionExtensions
 
     public static void AddDiagnosticServices(this IServiceCollection services)
     {
-        services.AddHandler<RazorTranslateDiagnosticsEndpoint>();
         services.AddHandlerWithCapabilities<DocumentPullDiagnosticsEndpoint>();
         services.AddHandler<WorkspacePullDiagnosticsEndpoint>();
         services.AddSingleton<RazorTranslateDiagnosticsService>();
@@ -181,7 +180,6 @@ internal static class IServiceCollectionExtensions
         services.AddHandler<DocumentDidOpenEndpoint>();
         services.AddHandler<DocumentDidSaveEndpoint>();
 
-        services.AddHandler<RazorMapToDocumentEditsEndpoint>();
         services.AddHandler<RazorMapToDocumentRangesEndpoint>();
         services.AddHandler<RazorLanguageQueryEndpoint>();
     }

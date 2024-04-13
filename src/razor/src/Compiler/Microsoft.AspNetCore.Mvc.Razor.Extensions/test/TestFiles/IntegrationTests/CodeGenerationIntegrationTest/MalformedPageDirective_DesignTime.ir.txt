@@ -50,6 +50,6 @@
             Inject - 
             Inject - 
             CSharpCode - 
-                IntermediateToken -  - CSharp - public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective>)PageContext?.ViewData;
+                IntermediateToken -  - CSharp - #nullable restore\npublic global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective>)PageContext?.ViewData!;\n#nullable disable
             CSharpCode - 
-                IntermediateToken -  - CSharp - public TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective Model => ViewData.Model;
+                IntermediateToken -  - CSharp - #nullable restore\npublic TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MalformedPageDirective Model => ViewData.Model!;\n#nullable disable

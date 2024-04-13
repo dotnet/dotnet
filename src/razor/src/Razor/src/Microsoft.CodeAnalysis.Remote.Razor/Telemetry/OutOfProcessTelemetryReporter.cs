@@ -3,6 +3,7 @@
 
 using System.Composition;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.VisualStudio.Razor.Telemetry;
 using Microsoft.VisualStudio.Telemetry;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.Telemetry;

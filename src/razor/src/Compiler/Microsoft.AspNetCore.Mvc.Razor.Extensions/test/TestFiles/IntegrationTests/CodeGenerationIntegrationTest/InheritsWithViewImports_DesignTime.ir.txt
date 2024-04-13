@@ -40,6 +40,6 @@
             Inject - 
             Inject - 
             CSharpCode - 
-                IntermediateToken -  - CSharp - public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<MyModel> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<MyModel>)PageContext?.ViewData;
+                IntermediateToken -  - CSharp - #nullable restore\npublic global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<MyModel> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<MyModel>)PageContext?.ViewData!;\n#nullable disable
             CSharpCode - 
-                IntermediateToken -  - CSharp - public MyModel Model => ViewData.Model;
+                IntermediateToken -  - CSharp - #nullable restore\npublic MyModel Model => ViewData.Model!;\n#nullable disable

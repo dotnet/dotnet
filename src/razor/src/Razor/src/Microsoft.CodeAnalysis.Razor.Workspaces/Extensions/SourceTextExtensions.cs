@@ -218,11 +218,7 @@ internal static class SourceTextExtensions
         {
             if (logger != null)
             {
-#pragma warning disable CA2254 // Template should be a static expression.
-                // This is actually static, the compiler just doesn't know it.
-                var errorMessage = SR.FormatPositionLine_Outside_Range(line, nameof(sourceText), sourceText.Lines.Count);
-                logger?.LogError(errorMessage);
-#pragma warning restore CA2254 // Template should be a static expression
+                logger?.Log(LogLevel.Error, SR.FormatPositionLine_Outside_Range(line, nameof(sourceText), sourceText.Lines.Count), exception: null);
                 Debug.Fail(SR.FormatPositionLine_Outside_Range(line, nameof(sourceText), sourceText.Lines.Count));
             }
 
@@ -242,12 +238,9 @@ internal static class SourceTextExtensions
             {
                 if (logger != null)
                 {
-#pragma warning disable CA2254 // Template should be a static expression.
-                    // This is actually static, the compiler just doesn't know it.
                     var errorMessage = SR.FormatPositionCharacter_Outside_Range(character, nameof(sourceText), lineLengthIncludingLineBreak);
-                    logger?.LogError(errorMessage);
+                    logger?.Log(LogLevel.Error, errorMessage, exception: null);
                     Debug.Fail(errorMessage);
-#pragma warning restore CA2254 // Template should be a static expression
                 }
 
                 return false;

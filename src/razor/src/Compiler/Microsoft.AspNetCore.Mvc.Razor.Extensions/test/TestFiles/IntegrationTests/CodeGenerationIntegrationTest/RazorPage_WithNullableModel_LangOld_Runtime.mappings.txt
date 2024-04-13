@@ -1,0 +1,17 @@
+﻿Source Location: (8:1,1 [21] TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml)
+|using TestNamespace
+|
+Generated Location: (971:16,0 [21] )
+|using TestNamespace
+|
+
+Source Location: (55:4,5 [10] TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml)
+|Model.Name|
+Generated Location: (2020:36,0 [10] )
+|Model.Name|
+
+Source Location: (79:6,5 [14] TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml)
+|Model?.Address|
+Generated Location: (2276:46,0 [14] )
+|Model?.Address|
+

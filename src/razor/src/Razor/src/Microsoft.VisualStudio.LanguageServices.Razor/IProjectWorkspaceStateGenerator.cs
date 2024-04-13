@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor;
+namespace Microsoft.VisualStudio.Razor;
 
 internal interface IProjectWorkspaceStateGenerator
 {

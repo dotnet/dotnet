@@ -91,8 +91,7 @@ internal class RazorProximityExpressionsEndpoint : IRazorDocumentlessRequestHand
             return null;
         }
 
-        _logger.LogTrace("Proximity expressions request for ({Line}, {Character}) yielded {expressionsCount} results.",
-            request.Position.Line, request.Position.Character, expressions.Count);
+        _logger.LogTrace($"Proximity expressions request for ({request.Position.Line}, {request.Position.Character}) yielded {expressions.Count} results.");
 
         return new RazorProximityExpressionsResponse
         {

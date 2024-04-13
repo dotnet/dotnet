@@ -67,7 +67,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         if (codeDocument.IsUnsupported())
         {
-            _logger.LogWarning("Failed to retrieve generated output for document {request.TextDocument.Uri}.", request.TextDocument.Uri);
+            _logger.LogWarning($"Failed to retrieve generated output for document {request.TextDocument.Uri}.");
             return null;
         }
 
@@ -87,7 +87,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
 
         if (languageKind is not (RazorLanguageKind.CSharp or RazorLanguageKind.Html))
         {
-            _logger.LogInformation("Unsupported language {languageKind}.", languageKind);
+            _logger.LogInformation($"Unsupported language {languageKind}.");
             return null;
         }
 

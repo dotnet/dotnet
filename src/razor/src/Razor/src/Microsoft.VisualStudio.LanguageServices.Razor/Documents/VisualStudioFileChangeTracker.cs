@@ -4,11 +4,12 @@
 using System;
 using System.IO;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.VisualStudio.Razor.Extensions;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 
-namespace Microsoft.VisualStudio.Editor.Razor.Documents;
+namespace Microsoft.VisualStudio.Razor.Documents;
 
 internal class VisualStudioFileChangeTracker : IFileChangeTracker, IVsFreeThreadedFileChangeEvents2
 {

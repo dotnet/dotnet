@@ -3,11 +3,12 @@
 
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.VisualStudio.LiveShare;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Guest;
 
 public class ProxyAccessorTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {

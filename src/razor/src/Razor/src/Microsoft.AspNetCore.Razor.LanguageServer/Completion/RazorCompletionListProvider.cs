@@ -74,7 +74,7 @@ internal class RazorCompletionListProvider(
 
         var razorCompletionItems = _completionFactsService.GetCompletionItems(razorCompletionContext);
 
-        _logger.LogTrace("Resolved {razorCompletionItemsCount} completion items.", razorCompletionItems.Length);
+        _logger.LogTrace($"Resolved {razorCompletionItems.Length} completion items.");
 
         var completionList = CreateLSPCompletionList(razorCompletionItems, clientCapabilities);
 

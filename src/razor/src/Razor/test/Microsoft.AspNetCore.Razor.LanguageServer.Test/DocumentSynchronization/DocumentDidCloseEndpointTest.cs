@@ -2,8 +2,10 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
@@ -20,10 +22,12 @@ public class DocumentDidCloseEndpointTest(ITestOutputHelper testOutput) : Langua
     {
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
-        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.CloseDocument(It.IsAny<string>()))
-            .Callback<string>((path) => Assert.Equal(documentPath, path));
-        var endpoint = new DocumentDidCloseEndpoint(Dispatcher, projectService.Object);
+        var projectService = new StrictMock<IRazorProjectService>();
+        projectService
+            .Setup(service => service.CloseDocumentAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask)
+            .Callback((string path, CancellationToken cancellationToken) => Assert.Equal(documentPath, path));
+        var endpoint = new DocumentDidCloseEndpoint(projectService.Object);
         var request = new DidCloseTextDocumentParams()
         {
             TextDocument = new TextDocumentIdentifier()

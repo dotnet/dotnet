@@ -24,11 +24,11 @@ internal class LanguageServerErrorReporter : IErrorReporter
     }
 
     public void ReportError(Exception exception)
-        => _logger.LogError(exception, "Error thrown from LanguageServer");
+        => _logger.LogError(exception, $"Error thrown from LanguageServer");
 
     public void ReportError(Exception exception, IProjectSnapshot? project)
-        => _logger.LogError(exception, "Error thrown from project {projectFilePath}", project?.FilePath);
+        => _logger.LogError(exception, $"Error thrown from project {project?.FilePath}");
 
     public void ReportError(Exception exception, Project workspaceProject)
-        => _logger.LogError(exception, "Error thrown from project {workspaceProjectFilePath}", workspaceProject.FilePath);
+        => _logger.LogError(exception, $"Error thrown from project {workspaceProject.FilePath}");
 }

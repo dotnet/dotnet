@@ -7,18 +7,18 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.VisualStudio.Editor.Razor;
-using Microsoft.VisualStudio.Editor.Razor.Documents;
-using Microsoft.VisualStudio.Editor.Razor.SyntaxVisualizer;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Extensions;
-using Microsoft.VisualStudio.LanguageServerClient.Razor;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Threading;
+using Microsoft.VisualStudio.Razor.LanguageClient;
+using Microsoft.VisualStudio.Razor.Documents;
+using Microsoft.VisualStudio.Razor.SyntaxVisualizer;
+using Microsoft.VisualStudio.Razor;
 
 namespace Microsoft.VisualStudio.RazorExtension.SyntaxVisualizer;
 

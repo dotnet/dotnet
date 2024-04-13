@@ -39,7 +39,7 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
 
         _testLogger = await TestServices.Output.SetupIntegrationTestLoggerAsync(_testOutputHelper, ControlledHangMitigatingCancellationToken);
 
-        _testLogger.LogInformation("#### Razor integration test initialize.");
+        _testLogger.LogInformation($"#### Razor integration test initialize.");
 
         VisualStudioLogging.AddCustomLoggers();
 
@@ -81,7 +81,7 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
         // Close the file we opened, just in case, so the test can start with a clean slate
         await TestServices.Editor.CloseCodeFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.IndexRazorFile, saveFile: false, ControlledHangMitigatingCancellationToken);
 
-        _testLogger.LogInformation("#### Razor integration test initialize finished.");
+        _testLogger.LogInformation($"#### Razor integration test initialize finished.");
     }
 
     private async Task<string> CreateAndOpenBlazorProjectAsync(CancellationToken cancellationToken)
@@ -132,7 +132,7 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
 
     public override async Task DisposeAsync()
     {
-        _testLogger!.LogInformation("#### Razor integration test dispose.");
+        _testLogger!.LogInformation($"#### Razor integration test dispose.");
 
         TestServices.Output.ClearIntegrationTestLogger();
 

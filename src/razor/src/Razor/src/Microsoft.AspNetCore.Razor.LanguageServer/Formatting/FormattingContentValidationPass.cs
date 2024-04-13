@@ -59,18 +59,18 @@ internal class FormattingContentValidationPass : FormattingPassBase
             // Looks like we removed some non-whitespace content as part of formatting. Oops.
             // Discard this formatting result.
 
-            _logger.LogWarning("{value}", SR.Format_operation_changed_nonwhitespace);
+            _logger.LogWarning($"{SR.Format_operation_changed_nonwhitespace}");
 
             foreach (var edit in edits)
             {
                 if (edit.NewText.Any(c => !char.IsWhiteSpace(c)))
                 {
-                    _logger.LogWarning("{value}", SR.FormatEdit_at_adds(edit.Range.ToDisplayString(), edit.NewText));
+                    _logger.LogWarning($"{SR.FormatEdit_at_adds(edit.Range.ToDisplayString(), edit.NewText)}");
                 }
                 else if (text.GetSubText(edit.Range.ToTextSpan(text)) is { } subText &&
                     subText.GetFirstNonWhitespaceOffset(span: null, out _) is not null)
                 {
-                    _logger.LogWarning("{value}", SR.FormatEdit_at_deletes(edit.Range.ToDisplayString(), subText.ToString()));
+                    _logger.LogWarning($"{SR.FormatEdit_at_deletes(edit.Range.ToDisplayString(), subText.ToString())}");
                 }
             }
 

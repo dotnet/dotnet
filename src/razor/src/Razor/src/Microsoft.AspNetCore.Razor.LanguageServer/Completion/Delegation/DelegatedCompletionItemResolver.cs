@@ -100,7 +100,7 @@ internal class DelegatedCompletionItemResolver : CompletionItemResolver
         }
 
         var identifier = context.OriginalRequestParams.Identifier.TextDocumentIdentifier;
-        var documentContext = _documentContextFactory.TryCreateForOpenDocument(identifier);
+        var documentContext = await _documentContextFactory.TryCreateForOpenDocumentAsync(identifier, cancellationToken).ConfigureAwait(false);
         if (documentContext is null)
         {
             return resolvedCompletionItem;

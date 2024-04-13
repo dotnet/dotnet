@@ -12,25 +12,17 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentDidOpenName)]
-internal class DocumentDidOpenEndpoint : IRazorNotificationHandler<DidOpenTextDocumentParams>
+internal class DocumentDidOpenEndpoint(IRazorProjectService razorProjectService) : IRazorNotificationHandler<DidOpenTextDocumentParams>
 {
     public bool MutatesSolutionState => true;
 
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
-    private readonly IRazorProjectService _projectService;
+    private readonly IRazorProjectService _projectService = razorProjectService;
 
-    public DocumentDidOpenEndpoint(ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher, IRazorProjectService razorProjectService)
-    {
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
-        _projectService = razorProjectService;
-    }
-
-    public async Task HandleNotificationAsync(DidOpenTextDocumentParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
+    public Task HandleNotificationAsync(DidOpenTextDocumentParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
         var sourceText = SourceText.From(request.TextDocument.Text);
 
-        await _projectSnapshotManagerDispatcher.RunAsync(
-            () => _projectService.OpenDocument(request.TextDocument.Uri.GetAbsoluteOrUNCPath(), sourceText, request.TextDocument.Version),
-            cancellationToken).ConfigureAwait(false);
+        return _projectService.OpenDocumentAsync(
+            request.TextDocument.Uri.GetAbsoluteOrUNCPath(), sourceText, request.TextDocument.Version, cancellationToken);
     }
 }

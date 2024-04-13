@@ -4,9 +4,9 @@
 using System;
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Host;
-using Microsoft.VisualStudio.Editor.Razor;
+using Microsoft.VisualStudio.LanguageServices;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor;
+namespace Microsoft.VisualStudio.Razor;
 
 [Export(typeof(VisualStudioHostServicesProvider))]
 internal class VisualStudioWindowsHostServicesProvider : VisualStudioHostServicesProvider

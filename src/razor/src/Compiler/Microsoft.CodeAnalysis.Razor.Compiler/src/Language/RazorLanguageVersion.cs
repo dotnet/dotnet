@@ -14,6 +14,7 @@ namespace Microsoft.AspNetCore.Razor.Language;
 public sealed record RazorLanguageVersion : IComparable<RazorLanguageVersion>
 {
     // Note: When adding a new version, be sure to update Latest and BuildKnownVersion() below!
+    // Also update RazorLanguageVersionTest (add new case and update TryParseLatest).
     public static readonly RazorLanguageVersion Version_1_0 = new(1, 0);
     public static readonly RazorLanguageVersion Version_1_1 = new(1, 1);
     public static readonly RazorLanguageVersion Version_2_0 = new(2, 0);
@@ -23,7 +24,8 @@ public sealed record RazorLanguageVersion : IComparable<RazorLanguageVersion>
     public static readonly RazorLanguageVersion Version_6_0 = new(6, 0);
     public static readonly RazorLanguageVersion Version_7_0 = new(7, 0);
     public static readonly RazorLanguageVersion Version_8_0 = new(8, 0);
-    public static readonly RazorLanguageVersion Latest = Version_8_0;
+    public static readonly RazorLanguageVersion Version_9_0 = new(9, 0);
+    public static readonly RazorLanguageVersion Latest = Version_9_0;
     public static readonly RazorLanguageVersion Experimental = new(1337, 1337);
 
     private static readonly FrozenDictionary<string, RazorLanguageVersion> s_knownVersions = BuildKnownVersions();
@@ -50,6 +52,7 @@ public sealed record RazorLanguageVersion : IComparable<RazorLanguageVersion>
             ["6.0"] = Version_6_0,
             ["7.0"] = Version_7_0,
             ["8.0"] = Version_8_0,
+            ["9.0"] = Version_9_0,
             ["latest"] = Latest,
             ["experimental"] = Experimental,
         };

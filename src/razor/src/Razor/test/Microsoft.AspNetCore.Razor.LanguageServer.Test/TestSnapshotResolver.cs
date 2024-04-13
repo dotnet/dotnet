@@ -1,9 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Immutable;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -14,36 +14,27 @@ internal class TestSnapshotResolver : ISnapshotResolver
 {
     private readonly IProjectSnapshot _miscProject = TestProjectSnapshot.Create(@"C:\temp\miscellaneous\project.csproj");
     private readonly string? _filePath;
-    private readonly IProjectSnapshot[]? _projects;
+    private readonly ImmutableArray<IProjectSnapshot> _projects;
 
     public TestSnapshotResolver()
     {
+        _projects = [];
     }
 
     public TestSnapshotResolver(string filePath, params IProjectSnapshot[] projects)
     {
         _filePath = filePath;
-        _projects = projects;
+        _projects = [.. projects];
     }
 
-    public IEnumerable<IProjectSnapshot> FindPotentialProjects(string documentFilePath)
-    {
-        if (documentFilePath == _filePath)
-        {
-            return _projects.AssumeNotNull();
-        }
+    public ImmutableArray<IProjectSnapshot> FindPotentialProjects(string documentFilePath)
+        => documentFilePath == _filePath
+            ? _projects
+            : [];
 
-        return Array.Empty<IProjectSnapshot>();
-    }
+    public Task<IProjectSnapshot> GetMiscellaneousProjectAsync(CancellationToken cancellationToken)
+        => Task.FromResult(_miscProject);
 
-    public IProjectSnapshot GetMiscellaneousProject()
-    {
-        return _miscProject;
-    }
-
-    public bool TryResolveDocumentInAnyProject(string documentFilePath, [NotNullWhen(true)] out IDocumentSnapshot? documentSnapshot)
-    {
-        documentSnapshot = null;
-        return false;
-    }
+    public Task<IDocumentSnapshot?> ResolveDocumentInAnyProjectAsync(string documentFilePath, CancellationToken cancellationToken)
+        => Task.FromResult<IDocumentSnapshot?>(null);
 }

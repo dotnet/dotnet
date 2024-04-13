@@ -91,7 +91,7 @@ internal class DefaultRazorComponentSearchEngine(
         var namespaceName = tagHelper.GetTypeNamespace();
         if (typeName == null || namespaceName == null)
         {
-            _logger.LogWarning("Could not split namespace and type for name {tagHelperName}.", tagHelper.Name);
+            _logger.LogWarning($"Could not split namespace and type for name {tagHelper.Name}.");
             return null;
         }
 
@@ -164,7 +164,7 @@ internal class DefaultRazorComponentSearchEngine(
         var namespacesMatch = namespaceNode.Content.AsSpan().Equals(namespaceName, StringComparison.Ordinal);
         if (!namespacesMatch)
         {
-            _logger.LogInformation("Namespace name {namespaceNodeContent} does not match namespace name {namespaceName}.", namespaceNode.Content, namespaceName.ToString());
+            _logger.LogInformation($"Namespace name {namespaceNode.Content} does not match namespace name {namespaceName.ToString()}.");
         }
 
         return namespacesMatch;

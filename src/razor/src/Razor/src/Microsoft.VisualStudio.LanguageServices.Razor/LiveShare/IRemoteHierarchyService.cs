@@ -4,8 +4,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.LiveShare;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor;
+namespace Microsoft.VisualStudio.Razor.LiveShare;
 
 // This type must be a public interface in order to to be implemented as an RPC proxy by live share.
 public interface IRemoteHierarchyService : ICollaborationService

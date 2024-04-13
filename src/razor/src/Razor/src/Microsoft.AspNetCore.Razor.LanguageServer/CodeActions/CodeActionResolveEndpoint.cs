@@ -68,7 +68,7 @@ internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandl
 
         if (request.Data is not JObject paramsObj)
         {
-            _logger.LogError("Invalid CodeAction Received '{requestTitle}'.", request.Title);
+            _logger.LogError($"Invalid CodeAction Received '{request.Title}'.");
             return request;
         }
 
@@ -80,7 +80,7 @@ internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandl
         }
 
         var codeActionId = GetCodeActionId(resolutionParams);
-        _logger.LogInformation("Resolving workspace edit for action {codeActionId}.", codeActionId);
+        _logger.LogInformation($"Resolving workspace edit for action {codeActionId}.");
 
         // If it's a special "edit based code action" then the edit has been pre-computed and we
         // can extract the edit details and return to the client. This is only required for VSCode
@@ -109,7 +109,7 @@ internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandl
                     resolutionParams,
                     cancellationToken).ConfigureAwait(false);
             default:
-                _logger.LogError("Invalid CodeAction.Data.Language. Received {codeActionId}.", codeActionId);
+                _logger.LogError($"Invalid CodeAction.Data.Language. Received {codeActionId}.");
                 return request;
         }
     }
@@ -123,7 +123,7 @@ internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandl
         if (!_razorCodeActionResolvers.TryGetValue(resolutionParams.Action, out var resolver))
         {
             var codeActionId = GetCodeActionId(resolutionParams);
-            _logger.LogWarning("No resolver registered for {codeActionId}", codeActionId);
+            _logger.LogWarning($"No resolver registered for {codeActionId}");
             Debug.Fail($"No resolver registered for {codeActionId}.");
             return codeAction;
         }
@@ -150,7 +150,7 @@ internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandl
     {
         if (resolutionParams.Data is not JObject csharpParamsObj)
         {
-            _logger.LogError("Invalid CodeAction Received.");
+            _logger.LogError($"Invalid CodeAction Received.");
             Debug.Fail($"Invalid CSharp CodeAction Received.");
             return codeAction;
         }
@@ -166,7 +166,7 @@ internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandl
         if (!resolvers.TryGetValue(resolutionParams.Action, out var resolver))
         {
             var codeActionId = GetCodeActionId(resolutionParams);
-            _logger.LogWarning("No resolver registered for {codeActionId}", codeActionId);
+            _logger.LogWarning($"No resolver registered for {codeActionId}");
             Debug.Fail($"No resolver registered for {codeActionId}.");
             return codeAction;
         }

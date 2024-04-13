@@ -29,22 +29,18 @@ internal class ClaspLoggingBridge : ILspLogger
     public void LogStartContext(string message, params object[] @params)
     {
         // This is a special log message formatted so that the LogHub logger can detect it, and trigger the right trace event
-        _logger.LogInformation(LogStartContextMarker + " {message}", message);
+        _logger.LogInformation($"{LogStartContextMarker} {message}");
     }
 
     public void LogEndContext(string message, params object[] @params)
     {
         // This is a special log message formatted so that the LogHub logger can detect it, and trigger the right trace event
-        _logger.LogInformation(LogEndContextMarker + " {message}", message);
+        _logger.LogInformation($"{LogEndContextMarker} {message}");
     }
 
     public void LogError(string message, params object[] @params)
     {
-#pragma warning disable CA2254 // Template should be a static expression
-        if (_logger.IsEnabled(LogLevel.Error))
-        {
-            _logger.LogError(message, @params);
-        }
+        _logger.LogError($"{message}: {string.Join(",", @params)}");
 
         if (_telemetryReporter is not null)
         {
@@ -63,36 +59,23 @@ internal class ClaspLoggingBridge : ILspLogger
 
     public void LogException(Exception exception, string? message = null, params object[] @params)
     {
-        if (_logger.IsEnabled(LogLevel.Error))
-        {
-            _logger.LogError(exception, message, @params);
-        }
+        _logger.LogError(exception, $"{message}: {string.Join(",", @params)}");
 
         _telemetryReporter?.ReportFault(exception, message, @params);
     }
 
     public void LogInformation(string message, params object[] @params)
     {
-        if (_logger.IsEnabled(LogLevel.Information))
-        {
-            _logger.LogInformation(message, @params);
-        }
+        _logger.LogInformation($"{message}: {string.Join(",", @params)}");
     }
 
     public void LogDebug(string message, params object[] @params)
     {
-        if (_logger.IsEnabled(LogLevel.Debug))
-        {
-            _logger.LogDebug(message, @params);
-        }
+        _logger.LogDebug($"{message}: {string.Join(",", @params)}");
     }
 
     public void LogWarning(string message, params object[] @params)
     {
-        if (_logger.IsEnabled(LogLevel.Warning))
-        {
-            _logger.LogWarning(message, @params);
-        }
-#pragma warning restore CA2254 // Template should be a static expression
+        _logger.LogWarning($"{message}: {string.Join(",", @params)}");
     }
 }

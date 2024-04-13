@@ -23,7 +23,7 @@ using Xunit.Abstractions;
 using Xunit.Sdk;
 using static Microsoft.VisualStudio.Razor.DynamicFiles.RazorDynamicFileInfoProvider;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : VisualStudioWorkspaceTestBase(testOutput)
 {

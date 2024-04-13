@@ -25,13 +25,13 @@ internal abstract partial class AbstractLoggerFactory
             return false;
         }
 
-        public void Log<TState>(LogLevel logLevel, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        public void Log(LogLevel logLevel, string message, Exception? exception)
         {
             foreach (var logger in _loggers)
             {
                 if (logger.IsEnabled(logLevel))
                 {
-                    logger.Log(logLevel, state, exception, formatter);
+                    logger.Log(logLevel, message, exception);
                 }
             }
         }

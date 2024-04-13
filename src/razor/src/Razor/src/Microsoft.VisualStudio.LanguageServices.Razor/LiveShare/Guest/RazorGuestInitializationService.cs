@@ -8,13 +8,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.VisualStudio.LiveShare;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Guest;
 
 [ExportCollaborationService(typeof(SessionActiveDetector), Scope = SessionScope.Guest)]
 [method: ImportingConstructor]
 internal class RazorGuestInitializationService(
-    [Import(typeof(ILiveShareSessionAccessor))] LiveShareSessionAccessor sessionAccessor) : ICollaborationServiceFactory
+[Import(typeof(ILiveShareSessionAccessor))] LiveShareSessionAccessor sessionAccessor) : ICollaborationServiceFactory
 {
     private const string ViewImportsFileName = "_ViewImports.cshtml";
     private readonly LiveShareSessionAccessor _sessionAccessor = sessionAccessor;
@@ -95,11 +96,11 @@ internal class RazorGuestInitializationService(
 
 internal class SessionActiveDetector(Action onDispose) : ICollaborationService, IDisposable
 {
-    private readonly Action _onDispose = onDispose ?? throw new ArgumentNullException(nameof(onDispose));
+private readonly Action _onDispose = onDispose ?? throw new ArgumentNullException(nameof(onDispose));
 
-    [SuppressMessage("Usage", "CA1816:Dispose methods should call SuppressFinalize", Justification = "https://github.com/dotnet/roslyn-analyzers/issues/4801")]
-    public virtual void Dispose()
-    {
-        _onDispose();
-    }
+[SuppressMessage("Usage", "CA1816:Dispose methods should call SuppressFinalize", Justification = "https://github.com/dotnet/roslyn-analyzers/issues/4801")]
+public virtual void Dispose()
+{
+    _onDispose();
+}
 }

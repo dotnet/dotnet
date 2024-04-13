@@ -56,14 +56,14 @@ internal class LinkedEditingRangeEndpoint : IRazorRequestHandler<LinkedEditingRa
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null || cancellationToken.IsCancellationRequested)
         {
-            _logger.LogWarning("Unable to resolve document for {Uri} or cancellation was requested.", request.TextDocument.Uri);
+            _logger.LogWarning($"Unable to resolve document for {request.TextDocument.Uri} or cancellation was requested.");
             return null;
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         if (codeDocument.IsUnsupported())
         {
-            _logger.LogWarning("FileKind {FileKind} is unsupported", codeDocument.GetFileKind());
+            _logger.LogWarning($"FileKind {codeDocument.GetFileKind()} is unsupported");
             return null;
         }
 
@@ -91,7 +91,7 @@ internal class LinkedEditingRangeEndpoint : IRazorRequestHandler<LinkedEditingRa
             };
         }
 
-        _logger.LogInformation("LinkedEditingRange request was null at {location} for {uri}", location, request.TextDocument.Uri);
+        _logger.LogInformation($"LinkedEditingRange request was null at {location} for {request.TextDocument.Uri}");
         return null;
 
         async Task<SourceLocation?> GetSourceLocationAsync(

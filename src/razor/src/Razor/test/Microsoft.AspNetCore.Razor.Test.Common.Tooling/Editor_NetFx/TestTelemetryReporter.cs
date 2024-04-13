@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.VisualStudio.Razor.Telemetry;
 using Microsoft.VisualStudio.Telemetry;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Test.Shared;

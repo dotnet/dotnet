@@ -7,7 +7,7 @@ namespace Microsoft.CodeAnalysis.Razor.Logging;
 
 internal interface ILogger
 {
-    void Log<TState>(LogLevel logLevel, TState state, Exception? exception, Func<TState, Exception?, string> formatter);
+    void Log(LogLevel logLevel, string message, Exception? exception);
 
     bool IsEnabled(LogLevel logLevel);
 }

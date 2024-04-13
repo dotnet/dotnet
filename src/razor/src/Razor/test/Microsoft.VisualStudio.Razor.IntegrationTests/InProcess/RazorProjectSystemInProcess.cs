@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServerClient.Razor;
 using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
 using Xunit;
+using Microsoft.VisualStudio.Razor.LanguageClient;
 
 namespace Microsoft.VisualStudio.Extensibility.Testing;
 

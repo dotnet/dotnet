@@ -16,13 +16,14 @@ using System.Xml;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Framework.XamlTypes;
+using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Microsoft.VisualStudio.ProjectSystem.References;
 using Microsoft.VisualStudio.Threading;
 using Moq;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 internal class TestProjectSystemServices : IUnconfiguredProjectCommonServices
 {

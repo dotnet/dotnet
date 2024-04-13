@@ -59,10 +59,8 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'">
     <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" />
-    <ProjectReference Include="..\..\src\Microsoft.VisualStudio.Editor.Razor\Microsoft.VisualStudio.Editor.Razor.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.VisualStudio.LanguageServer.ContainedLanguage\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.VisualStudio.LanguageServices.Razor\Microsoft.VisualStudio.LanguageServices.Razor.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.VisualStudio.LanguageServerClient.Razor\Microsoft.VisualStudio.LanguageServerClient.Razor.csproj" />
   </ItemGroup>
 
   <ItemGroup>

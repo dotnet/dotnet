@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor;
+namespace Microsoft.VisualStudio.Razor;
 
 [Export(typeof(IErrorReporter))]
 [method: ImportingConstructor]

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 internal class TestProjectConfigurationFilePathStore : ProjectConfigurationFilePathStore
 {

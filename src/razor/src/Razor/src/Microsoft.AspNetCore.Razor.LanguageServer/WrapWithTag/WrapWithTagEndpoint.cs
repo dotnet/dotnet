@@ -40,7 +40,7 @@ internal class WrapWithTagEndpoint(
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
-            _logger.LogWarning("Failed to find document {textDocumentUri}.", request.TextDocument.Uri);
+            _logger.LogWarning($"Failed to find document {request.TextDocument.Uri}.");
             return null;
         }
 
@@ -49,7 +49,7 @@ internal class WrapWithTagEndpoint(
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         if (codeDocument.IsUnsupported())
         {
-            _logger.LogWarning("Failed to retrieve generated output for document {textDocumentUri}.", request.TextDocument.Uri);
+            _logger.LogWarning($"Failed to retrieve generated output for document {request.TextDocument.Uri}.");
             return null;
         }
 
@@ -94,7 +94,7 @@ internal class WrapWithTagEndpoint(
 
         if (languageKind is not RazorLanguageKind.Html)
         {
-            _logger.LogInformation("Unsupported language {languageKind:G}.", languageKind);
+            _logger.LogInformation($"Unsupported language {languageKind:G}.");
             return null;
         }
 

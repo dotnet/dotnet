@@ -3,7 +3,7 @@
 
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor;
-using Microsoft.VisualStudio.LanguageServices.Razor;
+using Microsoft.VisualStudio.Razor;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;

@@ -3,7 +3,8 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
@@ -26,10 +27,10 @@ internal sealed class DocumentContextFactory(
     private readonly IDocumentVersionCache _documentVersionCache = documentVersionCache;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<DocumentContextFactory>();
 
-    public DocumentContext? TryCreate(Uri documentUri, VSProjectContext? projectContext, bool versioned)
+    public async Task<DocumentContext?> TryCreateAsync(Uri documentUri, VSProjectContext? projectContext, bool versioned, CancellationToken cancellationToken)
     {
         var filePath = documentUri.GetAbsoluteOrUNCPath();
-        var documentAndVersion = TryGetDocumentAndVersion(filePath, projectContext, versioned);
+        var documentAndVersion = await TryGetDocumentAndVersionAsync(filePath, projectContext, versioned, cancellationToken).ConfigureAwait(false);
 
         if (documentAndVersion is null)
         {
@@ -58,9 +59,11 @@ internal sealed class DocumentContextFactory(
         return new DocumentContext(documentUri, documentSnapshot, projectContext);
     }
 
-    private DocumentSnapshotAndVersion? TryGetDocumentAndVersion(string filePath, VSProjectContext? projectContext, bool versioned)
+    private async Task<DocumentSnapshotAndVersion?> TryGetDocumentAndVersionAsync(string filePath, VSProjectContext? projectContext, bool versioned, CancellationToken cancellationToken)
     {
-        if (TryResolveDocument(filePath, projectContext, out var documentSnapshot))
+        var documentSnapshot = await TryResolveDocumentAsync(filePath, projectContext, cancellationToken).ConfigureAwait(false);
+
+        if (documentSnapshot is not null)
         {
             if (!versioned)
             {
@@ -72,7 +75,7 @@ internal sealed class DocumentContextFactory(
                 return new DocumentSnapshotAndVersion(documentSnapshot, version.Value);
             }
 
-            _logger.LogWarning("Tried to create context for document {filePath} and project {projectContext} and a document was found, but version didn't match.", filePath, projectContext?.Id);
+            _logger.LogWarning($"Tried to create context for document {filePath} and project {projectContext?.Id} and a document was found, but version didn't match.");
         }
 
         // This is super rare, if we get here it could mean many things. Some of which:
@@ -81,38 +84,37 @@ internal sealed class DocumentContextFactory(
         //          - Took too long to run and by the time the request needed the document context the
         //            version cache has evicted the entry
         //     2. Client is misbehaving and sending requests for a document that we've never seen before.
-        _logger.LogWarning("Tried to create context for document {filePath} and project {projectContext} which was not found.", filePath, projectContext?.Id);
+        _logger.LogWarning($"Tried to create context for document {filePath} and project {projectContext?.Id} which was not found.");
         return null;
     }
 
-    private bool TryResolveDocument(string filePath, VSProjectContext? projectContext, [NotNullWhen(true)] out IDocumentSnapshot? documentSnapshot)
+    private async Task<IDocumentSnapshot?> TryResolveDocumentAsync(string filePath, VSProjectContext? projectContext, CancellationToken cancellationToken)
     {
         if (projectContext is null)
         {
-            return _snapshotResolver.TryResolveDocumentInAnyProject(filePath, out documentSnapshot);
+            return await _snapshotResolver
+                .ResolveDocumentInAnyProjectAsync(filePath, cancellationToken)
+                .ConfigureAwait(false);
         }
 
         if (_projectManager.TryGetLoadedProject(projectContext.ToProjectKey(), out var project) &&
             project.GetDocument(filePath) is { } document)
         {
-            documentSnapshot = document;
-            return true;
+            return document;
         }
 
         // Couldn't find the document in a real project. Maybe the language server doesn't yet know about the project
         // that the IDE is asking us about. In that case, we might have the document in our misc files project, and we'll
         // move it to the real project when/if we find out about it.
-        var miscellaneousProject = _snapshotResolver.GetMiscellaneousProject();
+        var miscellaneousProject = await _snapshotResolver.GetMiscellaneousProjectAsync(cancellationToken).ConfigureAwait(false);
         var normalizedDocumentPath = FilePathNormalizer.Normalize(filePath);
         if (miscellaneousProject.GetDocument(normalizedDocumentPath) is { } miscDocument)
         {
-            _logger.LogDebug("Found document {document} in the misc files project, but was asked for project context {context}", filePath, projectContext);
-            documentSnapshot = miscDocument;
-            return true;
+            _logger.LogDebug($"Found document {filePath} in the misc files project, but was asked for project context {projectContext}");
+            return miscDocument;
         }
 
-        documentSnapshot = null;
-        return false;
+        return null;
     }
 
     private record DocumentSnapshotAndVersion(IDocumentSnapshot Snapshot, int? Version);

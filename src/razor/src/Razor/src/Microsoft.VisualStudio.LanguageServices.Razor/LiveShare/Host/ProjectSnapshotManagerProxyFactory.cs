@@ -5,11 +5,12 @@ using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.LiveShare.Razor.Serialization;
+using Microsoft.VisualStudio.LiveShare;
+using Microsoft.VisualStudio.Razor.LiveShare.Serialization;
 using Microsoft.VisualStudio.Threading;
 using Newtonsoft.Json;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Host;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Host;
 
 [ExportCollaborationService(
     typeof(IProjectSnapshotManagerProxy),
