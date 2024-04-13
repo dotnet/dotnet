@@ -187,8 +187,12 @@ Model.Name
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper<NewModel> Html { get; private set; } = default!;
         #nullable disable
-        public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<NewModel> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<NewModel>)PageContext?.ViewData;
-        public NewModel Model => ViewData.Model;
+        #nullable restore
+public global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<NewModel> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<NewModel>)PageContext?.ViewData!;
+#nullable disable
+        #nullable restore
+public NewModel Model => ViewData.Model!;
+#nullable disable
     }
 }
 #pragma warning restore 1591

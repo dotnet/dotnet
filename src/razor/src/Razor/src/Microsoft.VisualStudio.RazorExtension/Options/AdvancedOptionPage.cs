@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.VisualStudio.ComponentModelHost;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.Options;
+using Microsoft.VisualStudio.Razor.LanguageClient.Options;
 using Microsoft.VisualStudio.Shell;
 
 namespace Microsoft.VisualStudio.RazorExtension.Options;

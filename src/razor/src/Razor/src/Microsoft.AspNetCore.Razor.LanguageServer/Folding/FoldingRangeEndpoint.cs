@@ -80,7 +80,7 @@ internal sealed class FoldingRangeEndpoint : IRazorRequestHandler<FoldingRangePa
             }
             catch (Exception e) when (e is not OperationCanceledException && retries < MaxRetries)
             {
-                _logger.LogWarning(e, "Try {retries} to get FoldingRange", retries);
+                _logger.LogWarning(e, $"Try {retries} to get FoldingRange");
             }
         }
 
@@ -161,7 +161,7 @@ internal sealed class FoldingRangeEndpoint : IRazorRequestHandler<FoldingRangePa
         {
             // Sometimes VS Code seems to send us wildly out-of-range folding ranges for Html, so log a warning,
             // but prevent a toast from appearing from an exception.
-            _logger.LogWarning("Got a folding range of ({StartLine}-{EndLine}) but Razor document {filePath} only has {count} lines.", range.StartLine, range.EndLine, codeDocument.Source.FilePath, sourceText.Lines.Count);
+            _logger.LogWarning($"Got a folding range of ({range.StartLine}-{range.EndLine}) but Razor document {codeDocument.Source.FilePath} only has {sourceText.Lines.Count} lines.");
             return range;
         }
 

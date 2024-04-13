@@ -20,7 +20,6 @@ public abstract partial class ToolingTestBase
             _logger = logger;
         }
 
-#pragma warning disable CA2254 // Template should be a static expression
         public void ReportError(Exception exception)
         {
             if (exception is null)
@@ -28,7 +27,7 @@ public abstract partial class ToolingTestBase
                 throw new ArgumentNullException(nameof(exception));
             }
 
-            _logger.LogError(exception, message: null);
+            _logger.LogError(exception, message: $"[null]");
         }
 
         public void ReportError(Exception exception, IProjectSnapshot? project)
@@ -38,7 +37,7 @@ public abstract partial class ToolingTestBase
                 throw new ArgumentNullException(nameof(exception));
             }
 
-            _logger.LogError(exception, message: null);
+            _logger.LogError(exception, message: $"[null]");
         }
 
         public void ReportError(Exception exception, Project workspaceProject)
@@ -48,8 +47,7 @@ public abstract partial class ToolingTestBase
                 throw new ArgumentNullException(nameof(exception));
             }
 
-            _logger.LogError(exception, message: null);
+            _logger.LogError(exception, message: $"[null]");
         }
-#pragma warning restore CA2254 // Template should be a static expression
     }
 }

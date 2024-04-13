@@ -15,13 +15,14 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Test.Common.TagHelperTestData;
 
-namespace Microsoft.CodeAnalysis.Remote.Razor;
+namespace Microsoft.VisualStudio.Razor.Remote;
 
 public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
 {

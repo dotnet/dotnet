@@ -4,7 +4,7 @@
 using System;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
-using Microsoft.VisualStudio.Editor.Razor;
+using Microsoft.VisualStudio.Razor;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using Moq;

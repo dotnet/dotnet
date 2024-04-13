@@ -3,7 +3,7 @@
 
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace Microsoft.VisualStudio.Editor.Razor.Documents;
+namespace Microsoft.VisualStudio.Razor.Documents;
 
 internal sealed class RunningDocumentTableEventSink : IVsRunningDocTableEvents3
 {

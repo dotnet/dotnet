@@ -17,7 +17,7 @@ using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Test.Common.TestProjectData;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
 {

@@ -66,17 +66,17 @@ internal static class DirectoryHelper
         }
         catch (UnauthorizedAccessException ex)
         {
-            logger?.LogWarning("UnauthorizedAccess: {exception}", ex.Message);
+            logger?.LogWarning($"UnauthorizedAccess: {ex.Message}");
             yield break;
         }
         catch (PathTooLongException ex)
         {
-            logger?.LogWarning("PathTooLong: {exception}", ex.Message);
+            logger?.LogWarning($"PathTooLong: {ex.Message}");
             yield break;
         }
         catch (IOException ex)
         {
-            logger?.LogWarning("IOException: {exception}", ex.Message);
+            logger?.LogWarning($"IOException: {ex.Message}");
             yield break;
         }
 
@@ -98,17 +98,17 @@ internal static class DirectoryHelper
         }
         catch (UnauthorizedAccessException ex)
         {
-            logger?.LogWarning("UnauthorizedAccess: {exception}", ex.Message);
+            logger?.LogWarning($"UnauthorizedAccess: {ex.Message}");
             yield break;
         }
         catch (PathTooLongException ex)
         {
-            logger?.LogWarning("PathTooLong: {exception}", ex.Message);
+            logger?.LogWarning($"PathTooLong: {ex.Message}");
             yield break;
         }
         catch (IOException ex)
         {
-            logger?.LogWarning("IOException: {exception}", ex.Message);
+            logger?.LogWarning($"IOException: {ex.Message}");
             yield break;
         }
 

@@ -22,7 +22,7 @@ namespace NuGet.Frameworks.Test
 
             table.TryGetCompatible(win81, out IEnumerable<NuGetFramework>? compatible);
 
-            var results = compatible.ToArray();
+            var results = compatible!.ToArray();
 
             Assert.Equal(3, results.Count());
             Assert.Equal(win81, results[0]);
@@ -44,7 +44,7 @@ namespace NuGet.Frameworks.Test
 
             table.TryGetCompatible(win9, out IEnumerable<NuGetFramework>? compatible);
 
-            var results = compatible.ToArray();
+            var results = compatible!.ToArray();
 
             Assert.Equal(4, results.Count());
             Assert.Equal(win7, results[0]);
@@ -67,9 +67,9 @@ namespace NuGet.Frameworks.Test
 
             table.TryGetCompatible(net40, out IEnumerable<NuGetFramework>? compatible);
 
-            Assert.Equal(2, compatible.Count());
-            Assert.Equal(net35, compatible.First());
-            Assert.Equal(net40, compatible.Skip(1).First());
+            Assert.Equal(2, compatible!.Count());
+            Assert.Equal(net35, compatible!.First());
+            Assert.Equal(net40, compatible!.Skip(1).First());
         }
 
         [Fact]
@@ -86,7 +86,7 @@ namespace NuGet.Frameworks.Test
 
             table.TryGetCompatible(wp8, out IEnumerable<NuGetFramework>? compatible);
 
-            Assert.Equal(wp8, compatible.Single());
+            Assert.Equal(wp8, compatible!.Single());
         }
 
         [Fact]

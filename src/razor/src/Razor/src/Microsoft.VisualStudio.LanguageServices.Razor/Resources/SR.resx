@@ -120,10 +120,17 @@
   <data name="ArgumentCannotBeNullOrEmpty" xml:space="preserve">
     <value>Value cannot be null or an empty string.</value>
   </data>
+  <data name="LanguageServer_Initialization_Failed" xml:space="preserve">
+    <value>{0} failed to initialize.  Please report a problem via Help -&gt; Send Feedback -&gt; Report a Problem.  Status = {1}.  Exception = {2}</value>
+    <comment>{0} is the language server name. Status is the status of the initialization. Exception is the exception encountered during initialization.</comment>
+  </data>
   <data name="ProximityExpression_Dialog_Description" xml:space="preserve">
     <value>Razor Debugger</value>
   </data>
   <data name="ProximityExpression_Dialog_Title" xml:space="preserve">
     <value>Determining proximity expressions...</value>
+  </data>
+  <data name="View Code" xml:space="preserve">
+    <value>View Code</value>
   </data>
 </root>

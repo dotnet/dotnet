@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Configuration;
@@ -16,6 +18,11 @@ namespace NuGet.Protocol
     public class HttpHandlerResourceV3Provider : ResourceProvider
     {
         private readonly IProxyCache _proxyCache;
+
+#if NETSTANDARD2_0
+        internal static Func<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool> DangerousAcceptAnyServerCertificateValidator =
+            (message, certificate, chain, policyErrors) => true;
+#endif
 
         public HttpHandlerResourceV3Provider()
             : this(ProxyCache.Instance)
@@ -55,6 +62,18 @@ namespace NuGet.Protocol
                 Proxy = proxy,
                 AutomaticDecompression = (DecompressionMethods.GZip | DecompressionMethods.Deflate),
             };
+
+#if NETSTANDARD2_0
+            if (packageSource.DisableTLSCertificateValidation)
+            {
+                clientHandler.ServerCertificateCustomValidationCallback = DangerousAcceptAnyServerCertificateValidator;
+            }
+#else
+            if (packageSource.DisableTLSCertificateValidation)
+            {
+                clientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            }
+#endif
 
 #if IS_DESKTOP
             if (packageSource.MaxHttpRequestsPerSource > 0)

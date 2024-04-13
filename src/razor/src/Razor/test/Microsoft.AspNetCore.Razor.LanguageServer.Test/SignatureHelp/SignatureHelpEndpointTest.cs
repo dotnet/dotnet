@@ -115,7 +115,7 @@ public class SignatureHelpEndpointTest(ITestOutputHelper testOutput) : SingleSer
             Context = signatureHelpContext
         };
 
-        var documentContext = DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument);
+        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument, DisposalToken);
 
         var requestContext = CreateRazorRequestContext(documentContext);
 

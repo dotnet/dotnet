@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
-    <TargetFramework Condition=" '$(IsXPlat)' == 'true' "></TargetFramework>
     <UseParallelXunit>true</UseParallelXunit>
     <Description>An end-to-end test suite for NuGet.CommandLine. Contains tests for every nuget.exe CLI command. Overlaps in tests with NuGet.CommandLine.FuncTest.</Description>
   </PropertyGroup>
@@ -21,11 +20,9 @@
                       OutputItemType="TestableCredentialProviderOutputGroup" />
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.TestPlatform.Portable" />
-    <PackageReference Include="System.Memory" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,8 +52,23 @@
     </ItemGroup>
   </Target>
   
-  <Target Name="CopyFinalNuGetExeToOutputPath">
+  <Target Name="CopyFinalNuGetExeToOutputPath"
+          AfterTargets="PrepareForRun"
+          Inputs="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe"
+          Outputs="$(OutputPath)NuGet\NuGet.exe"
+          Condition="'$(SkipILMergeOfNuGetExe)' != 'true'">
     <Copy SourceFiles="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe"
-          DestinationFolder="$(OutputPath)NuGet\" />
+          DestinationFiles="$(OutputPath)NuGet\NuGet.exe"
+          SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+          OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+          Retries="$(CopyRetryCount)"
+          RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+          UseHardlinksIfPossible="$(CreateHardLinksForCopyLocalIfPossible)"
+          UseSymboliclinksIfPossible="$(CreateSymbolicLinksForCopyLocalIfPossible)">
+      <Output TaskParameter="DestinationFiles"
+              ItemName="FileWritesShareable" />
+      <Output TaskParameter="CopiedFiles"
+              ItemName="ReferencesCopiedInThisBuild" />
+    </Copy>
   </Target>
 </Project>

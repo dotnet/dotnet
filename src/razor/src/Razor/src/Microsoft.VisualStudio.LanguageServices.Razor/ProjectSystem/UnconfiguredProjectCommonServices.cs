@@ -5,7 +5,7 @@ using System;
 using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.ProjectSystem;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 [Export(typeof(IUnconfiguredProjectCommonServices))]
 internal class UnconfiguredProjectCommonServices : IUnconfiguredProjectCommonServices

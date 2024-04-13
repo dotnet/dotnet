@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.Editor.Razor.Documents;
+using Microsoft.VisualStudio.Razor.Documents;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;

@@ -5,7 +5,7 @@ using System;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
 
-namespace Microsoft.VisualStudio.Editor.Razor.Documents;
+namespace Microsoft.VisualStudio.Razor.Documents;
 
 internal class VsTextBufferDataEventsSink : IVsTextBufferDataEvents
 {

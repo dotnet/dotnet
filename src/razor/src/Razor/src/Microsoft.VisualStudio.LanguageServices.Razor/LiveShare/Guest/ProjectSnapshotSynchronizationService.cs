@@ -7,10 +7,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.VisualStudio.LiveShare;
 using Microsoft.VisualStudio.Threading;
 using IAsyncDisposable = Microsoft.VisualStudio.Threading.IAsyncDisposable;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Guest;
 
 internal class ProjectSnapshotSynchronizationService(
     CollaborationSession sessionContext,

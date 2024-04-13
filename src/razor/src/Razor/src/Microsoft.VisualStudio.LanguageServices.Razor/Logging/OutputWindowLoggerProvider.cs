@@ -6,13 +6,13 @@ using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.VisualStudio.Editor.Razor;
-using Microsoft.VisualStudio.Editor.Razor.Settings;
+using Microsoft.VisualStudio.Razor.Extensions;
+using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.Logging;
+namespace Microsoft.VisualStudio.Razor.Logging;
 
 [Export(typeof(ILoggerProvider))]
 [method: ImportingConstructor]
@@ -54,11 +54,11 @@ internal class OutputWindowLoggerProvider(
             return logLevel >= _clientSettingsManager.GetClientSettings().AdvancedSettings.LogLevel;
         }
 
-        public void Log<TState>(LogLevel logLevel, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        public void Log(LogLevel logLevel, string message, Exception? exception)
         {
             if (IsEnabled(logLevel))
             {
-                _outputPane.WriteLine($"{DateTime.Now:h:mm:ss.fff} [{_categoryName}] {formatter(state, exception)}");
+                _outputPane.WriteLine($"{DateTime.Now:h:mm:ss.fff} [{_categoryName}] {message}");
                 if (exception is not null)
                 {
                     _outputPane.WriteLine(exception.ToString());

@@ -270,7 +270,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
 
         var uri = new Uri("file://path.razor");
         var factory = CreateDocumentContextFactory(uri, input);
-        var context = factory.TryCreate(uri);
+        var context = await factory.TryCreateAsync(uri, DisposalToken);
         Assert.NotNull(context);
         var inputSourceText = await context!.GetSourceTextAsync(DisposalToken);
 
@@ -320,7 +320,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
 
         var uri = new Uri("file://path.razor");
         var factory = CreateDocumentContextFactory(uri, input);
-        var context = factory.TryCreate(uri);
+        var context = await factory.TryCreateAsync(uri, DisposalToken);
         Assert.NotNull(context);
         var inputSourceText = await context!.GetSourceTextAsync(DisposalToken);
 
@@ -371,7 +371,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
 
         var uri = new Uri("file://path.razor");
         var factory = CreateDocumentContextFactory(uri, input);
-        var context = factory.TryCreate(uri);
+        var context = await factory.TryCreateAsync(uri, DisposalToken);
         Assert.NotNull(context);
         var inputSourceText = await context!.GetSourceTextAsync(DisposalToken);
 

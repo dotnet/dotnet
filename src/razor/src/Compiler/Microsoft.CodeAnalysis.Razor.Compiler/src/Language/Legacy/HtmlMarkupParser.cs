@@ -449,6 +449,10 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             }
         } while (!EndOfFile && CurrentToken.Kind != SyntaxKind.NewLine);
 
+        // Code block inside single-line markup transition (`@: @{ }`)
+        // does not swallow trailing whitespace.
+        Context.NullGenerateWhitespaceAndNewLine = false;
+
         if (!EndOfFile && CurrentToken.Kind == SyntaxKind.NewLine)
         {
             AcceptAndMoveNext();
@@ -1519,20 +1523,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
     private void ParseCodeTransition(in SyntaxListBuilder<RazorSyntaxNode> builder)
     {
-        if (Context.NullGenerateWhitespaceAndNewLine)
-        {
-            // Usually this is set to true when a Code block ends and there is whitespace left after it.
-            // We don't want to write it to output.
-            Context.NullGenerateWhitespaceAndNewLine = false;
-            chunkGenerator = SpanChunkGenerator.Null;
-            AcceptWhile(IsSpacingToken);
-            if (At(SyntaxKind.NewLine))
-            {
-                AcceptAndMoveNext();
-            }
-
-            builder.Add(OutputAsMarkupEphemeralLiteral());
-        }
+        NullGenerateWhitespaceAndNewLine(in builder);
 
         var lastWhitespace = AcceptWhitespaceInLines();
         if (lastWhitespace != null)
@@ -1605,20 +1596,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
     private void ParseRazorCommentWithLeadingAndTrailingWhitespace(in SyntaxListBuilder<RazorSyntaxNode> builder)
     {
-        if (Context.NullGenerateWhitespaceAndNewLine)
-        {
-            // Usually this is set to true when a Code block ends and there is whitespace left after it.
-            // We don't want to write it to output.
-            Context.NullGenerateWhitespaceAndNewLine = false;
-            chunkGenerator = SpanChunkGenerator.Null;
-            AcceptWhile(IsSpacingToken);
-            if (At(SyntaxKind.NewLine))
-            {
-                AcceptAndMoveNext();
-            }
-
-            builder.Add(OutputAsMarkupEphemeralLiteral());
-        }
+        NullGenerateWhitespaceAndNewLine(in builder);
 
         var shouldRenderWhitespace = true;
         var lastWhitespace = AcceptWhitespaceInLines();
@@ -1667,22 +1645,35 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
     private void ParseMisc(in SyntaxListBuilder<RazorSyntaxNode> builder)
     {
+        NullGenerateWhitespaceAndNewLine(in builder);
+        AcceptWhile(IsSpacingTokenIncludingNewLines);
+    }
+
+    private void NullGenerateWhitespaceAndNewLine(in SyntaxListBuilder<RazorSyntaxNode> builder)
+    {
         if (Context.NullGenerateWhitespaceAndNewLine)
         {
             // Usually this is set to true when a Code block ends and there is whitespace left after it.
             // We don't want to write it to output.
-            Context.NullGenerateWhitespaceAndNewLine = false;
-            chunkGenerator = SpanChunkGenerator.Null;
-            AcceptWhile(IsSpacingToken);
-            if (At(SyntaxKind.NewLine))
+
+            if (TokenBuilder.Count != 0)
             {
-                AcceptAndMoveNext();
+                // There should be no unprocessed tokens, only whitespace between the code block end and here.
+                Debug.Assert(false, "Unexpected tokens after NullGenerateWhitespaceAndNewLine");
             }
+            else
+            {
+                Context.NullGenerateWhitespaceAndNewLine = false;
+                chunkGenerator = SpanChunkGenerator.Null;
+                AcceptWhile(IsSpacingToken);
+                if (At(SyntaxKind.NewLine))
+                {
+                    AcceptAndMoveNext();
+                }
 
-            builder.Add(OutputAsMarkupEphemeralLiteral());
+                builder.Add(OutputAsMarkupEphemeralLiteral());
+            }
         }
-
-        AcceptWhile(IsSpacingTokenIncludingNewLines);
     }
 
     private bool ScriptTagExpectsHtml(MarkupStartTagSyntax tagBlock)

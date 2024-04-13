@@ -40,7 +40,7 @@ internal class AggregateCompletionItemResolver
             }
             catch (Exception ex) when (ex is not TaskCanceledException)
             {
-                _logger.LogError(ex, "Resolving completion item failed synchronously unexpectedly.");
+                _logger.LogError(ex, $"Resolving completion item failed synchronously unexpectedly.");
             }
         }
 
@@ -59,7 +59,7 @@ internal class AggregateCompletionItemResolver
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                _logger.LogError(ex, "Resolving completion item failed unexpectedly.");
+                _logger.LogError(ex, $"Resolving completion item failed unexpectedly.");
             }
         }
 

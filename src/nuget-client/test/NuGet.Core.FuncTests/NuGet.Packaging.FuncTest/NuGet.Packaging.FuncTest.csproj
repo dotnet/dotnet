@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworksExeForSigning)</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworksUnitTestForSigning)</TargetFrameworks>
     <UseParallelXunit>true</UseParallelXunit>
     <Description>Integration tests for the more involved NuGet.Packaging functionality, such as signing.</Description>
   </PropertyGroup>
@@ -19,16 +19,8 @@
   <ItemGroup>
     <None Remove="compiler\resources\UntrustedTimestampPackage.nupkg" />
     <None Remove="compiler\resources\TimestampInvalidGenTimePackage.nupkg" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="xunit.runner.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="xunit.runner.json"
+          CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

@@ -68,4 +68,7 @@
       <DependentUpon>VsResources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="NuGet.VisualStudio.Implementation.Test" />
+  </ItemGroup>
 </Project>

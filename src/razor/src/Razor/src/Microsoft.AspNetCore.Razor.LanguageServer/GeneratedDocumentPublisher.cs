@@ -76,7 +76,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
         var key = new DocumentKey(projectKey, filePath);
         if (!_publishedCSharpData.TryGetValue(key, out var previouslyPublishedData))
         {
-            _logger.LogDebug("New publish data created for {project} and {filePath}", projectKey, filePath);
+            _logger.LogDebug($"New publish data created for {projectKey} and {filePath}");
             previouslyPublishedData = PublishData.Default;
         }
 
@@ -93,14 +93,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
             var currentDocumentLength = sourceText.Length;
             var documentLengthDelta = sourceText.Length - previousDocumentLength;
             _logger.LogTrace(
-                "Updating C# buffer of {0} for project {1} to correspond with host document version {2}. {3} -> {4} = Change delta of {5} via {6} text changes.",
-                filePath,
-                projectKey,
-                hostDocumentVersion,
-                previousDocumentLength,
-                currentDocumentLength,
-                documentLengthDelta,
-                textChanges.Count);
+                $"Updating C# buffer of {filePath} for project {projectKey} to correspond with host document version {hostDocumentVersion}. {previousDocumentLength} -> {currentDocumentLength} = Change delta of {documentLengthDelta} via {textChanges.Count} text changes.");
         }
 
         _publishedCSharpData[key] = new PublishData(sourceText, hostDocumentVersion);
@@ -149,13 +142,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
             var currentDocumentLength = sourceText.Length;
             var documentLengthDelta = sourceText.Length - previousDocumentLength;
             _logger.LogTrace(
-                "Updating HTML buffer of {0} to correspond with host document version {1}. {2} -> {3} = Change delta of {4} via {5} text changes.",
-                filePath,
-                hostDocumentVersion,
-                previousDocumentLength,
-                currentDocumentLength,
-                documentLengthDelta,
-                textChanges.Count);
+                $"Updating HTML buffer of {filePath} to correspond with host document version {hostDocumentVersion}. {previousDocumentLength} -> {currentDocumentLength} = Change delta of {documentLengthDelta} via {textChanges.Count} text changes.");
         }
 
         _publishedHtmlData[filePath] = new PublishData(sourceText, hostDocumentVersion);
@@ -208,7 +195,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
                         var removed = _publishedCSharpData.Remove(key);
                         if (!removed)
                         {
-                            _logger.LogError("Published data should be protected by the project snapshot manager's thread and should never fail to remove.");
+                            _logger.LogError($"Published data should be protected by the project snapshot manager's thread and should never fail to remove.");
                             Debug.Fail("Published data should be protected by the project snapshot manager's thread and should never fail to remove.");
                         }
                     }
@@ -218,7 +205,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
                         var removed = _publishedHtmlData.Remove(args.DocumentFilePath);
                         if (!removed)
                         {
-                            _logger.LogError("Published data should be protected by the project snapshot manager's thread and should never fail to remove.");
+                            _logger.LogError($"Published data should be protected by the project snapshot manager's thread and should never fail to remove.");
                             Debug.Fail("Published data should be protected by the project snapshot manager's thread and should never fail to remove.");
                         }
                     }

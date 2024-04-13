@@ -440,8 +440,10 @@ NuGet.Commands.RemoveSourceRunner
 NuGet.Commands.RequestRuntimeUtility
 NuGet.Commands.ResolvedDependencyKey
 ~NuGet.Commands.ResolvedDependencyKey.Child.get -> NuGet.LibraryModel.LibraryIdentity
+NuGet.Commands.ResolvedDependencyKey.Equals(NuGet.Commands.ResolvedDependencyKey other) -> bool
 ~NuGet.Commands.ResolvedDependencyKey.Parent.get -> NuGet.LibraryModel.LibraryIdentity
 ~NuGet.Commands.ResolvedDependencyKey.Range.get -> NuGet.Versioning.VersionRange
+NuGet.Commands.ResolvedDependencyKey.ResolvedDependencyKey() -> void
 ~NuGet.Commands.ResolvedDependencyKey.ResolvedDependencyKey(NuGet.LibraryModel.LibraryIdentity parent, NuGet.Versioning.VersionRange range, NuGet.LibraryModel.LibraryIdentity child) -> void
 NuGet.Commands.ResolverConflict
 ~NuGet.Commands.ResolverConflict.Name.get -> string
@@ -946,9 +948,9 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.MSBuildRestoreUtility.FixSourcePath(string s) -> string
 ~static NuGet.Commands.MSBuildRestoreUtility.GetCentralPackageManagementSettings(NuGet.Commands.IMSBuildItem projectSpecItem, NuGet.ProjectModel.ProjectStyle projectStyle) -> (bool IsEnabled, bool IsVersionOverrideDisabled, bool IsCentralPackageTransitivePinningEnabled, bool isCentralPackageFloatingVersionsEnabled)
 ~static NuGet.Commands.MSBuildRestoreUtility.GetDependencySpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items) -> NuGet.ProjectModel.DependencyGraphSpec
+~static NuGet.Commands.MSBuildRestoreUtility.GetDependencySpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items, bool readOnly) -> NuGet.ProjectModel.DependencyGraphSpec
 ~static NuGet.Commands.MSBuildRestoreUtility.GetMessageForUnsupportedProject(string path) -> NuGet.Common.RestoreLogMessage
 ~static NuGet.Commands.MSBuildRestoreUtility.GetPackageSpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items) -> NuGet.ProjectModel.PackageSpec
-~static NuGet.Commands.MSBuildRestoreUtility.GetRestoreAuditProperties(NuGet.Commands.IMSBuildItem specItem) -> NuGet.ProjectModel.RestoreAuditProperties
 ~static NuGet.Commands.MSBuildRestoreUtility.GetWarningForUnsupportedProject(string path) -> NuGet.Common.RestoreLogMessage
 ~static NuGet.Commands.MSBuildRestoreUtility.HasInvalidClear(System.Collections.Generic.IEnumerable<string> values) -> bool
 ~static NuGet.Commands.MSBuildRestoreUtility.LogErrorForClearIfInvalid(System.Collections.Generic.IEnumerable<string> values, string projectPath, NuGet.Common.ILogger logger) -> bool
@@ -977,6 +979,8 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.RemoveClientCertRunner.Run(NuGet.Commands.RemoveClientCertArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
 ~static NuGet.Commands.RemoveSourceRunner.Run(NuGet.Commands.RemoveSourceArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
 ~static NuGet.Commands.RequestRuntimeUtility.GetDefaultRestoreRuntimes(string os, string runtimeOsName) -> System.Collections.Generic.IEnumerable<string>
+static NuGet.Commands.ResolvedDependencyKey.operator !=(NuGet.Commands.ResolvedDependencyKey left, NuGet.Commands.ResolvedDependencyKey right) -> bool
+static NuGet.Commands.ResolvedDependencyKey.operator ==(NuGet.Commands.ResolvedDependencyKey left, NuGet.Commands.ResolvedDependencyKey right) -> bool
 ~static NuGet.Commands.RestoreCommandProviders.Create(string globalFolderPath, System.Collections.Generic.IEnumerable<string> fallbackPackageFolderPaths, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sources, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Protocol.LocalPackageFileCache packageFileCache, NuGet.Common.ILogger log) -> NuGet.Commands.RestoreCommandProviders
 ~static NuGet.Commands.RestoreRunner.CommitAsync(NuGet.Commands.RestoreResultPair restoreResult, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Commands.RestoreSummary>
 ~static NuGet.Commands.RestoreRunner.GetInvalidInputErrorMessage(string input) -> string

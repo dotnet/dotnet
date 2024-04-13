@@ -1075,9 +1075,10 @@ namespace NuGet.ProjectModel
 
                     case "restoreAuditProperties":
                         string enableAudit = null, auditLevel = null, auditMode = null;
+                        HashSet<string> suppressedAdvisories = null;
+
                         jsonReader.ReadObject(auditPropertyName =>
                         {
-
                             switch (auditPropertyName)
                             {
                                 case "enableAudit":
@@ -1091,6 +1092,10 @@ namespace NuGet.ProjectModel
                                 case "auditMode":
                                     auditMode = jsonReader.ReadNextTokenAsString();
                                     break;
+
+                                case "suppressedAdvisories":
+                                    suppressedAdvisories = ReadSuppressedAdvisories(jsonReader);
+                                    break;
                             }
                         });
                         auditProperties = new RestoreAuditProperties()
@@ -1098,6 +1103,7 @@ namespace NuGet.ProjectModel
                             EnableAudit = enableAudit,
                             AuditLevel = auditLevel,
                             AuditMode = auditMode,
+                            SuppressedAdvisories = suppressedAdvisories
                         };
                         break;
 
@@ -1870,6 +1876,19 @@ namespace NuGet.ProjectModel
             }
 
             return isValid;
+        }
+
+        private static HashSet<string> ReadSuppressedAdvisories(JsonTextReader jsonReader)
+        {
+            HashSet<string> suppressedAdvisories = null;
+
+            jsonReader.ReadObject(advisoryUrl =>
+            {
+                suppressedAdvisories ??= new HashSet<string>();
+                suppressedAdvisories.Add(advisoryUrl);
+            });
+
+            return suppressedAdvisories;
         }
     }
 }

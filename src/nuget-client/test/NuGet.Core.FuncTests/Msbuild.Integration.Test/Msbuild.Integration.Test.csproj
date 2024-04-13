@@ -19,14 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks\NuGet.props"
-          CopyToOutputDirectory="Always" />
+          CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks\NuGet.targets"
-          CopyToOutputDirectory="Always" />
+          CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

@@ -58,7 +58,7 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
         workspaceDirectory = FilePathNormalizer.Normalize(workspaceDirectory);
         var existingConfigurationFiles = GetExistingConfigurationFiles(workspaceDirectory);
 
-        _logger.LogDebug("Triggering events for existing project configuration files");
+        _logger.LogDebug($"Triggering events for existing project configuration files");
         await _dispatcher.RunAsync(() =>
         {
             foreach (var configurationFilePath in existingConfigurationFiles)
@@ -81,7 +81,7 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
             // FileSystemWatcher will throw if the folder we want to watch doesn't exist yet.
             if (!Directory.Exists(workspaceDirectory))
             {
-                _logger.LogInformation("Workspace directory '{path}' does not exist yet, so Razor is going to create it.", workspaceDirectory);
+                _logger.LogInformation($"Workspace directory '{workspaceDirectory}' does not exist yet, so Razor is going to create it.");
                 Directory.CreateDirectory(workspaceDirectory);
             }
         }
@@ -92,7 +92,7 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
         catch (Exception ex)
         {
             // Directory.Exists will throw on things like long paths
-            _logger.LogError(ex, "Failed validating that file watcher would be successful for '{path}'", workspaceDirectory);
+            _logger.LogError(ex, $"Failed validating that file watcher would be successful for '{workspaceDirectory}'");
 
             // No point continuing because the FileSystemWatcher constructor would just throw too.
             return;
@@ -104,7 +104,7 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
             return;
         }
 
-        _logger.LogInformation("Starting configuration file change detector for '{workspaceDirectory}'", workspaceDirectory);
+        _logger.LogInformation($"Starting configuration file change detector for '{workspaceDirectory}'");
         _watcher = new RazorFileSystemWatcher(workspaceDirectory, _options.ProjectConfigurationFileName)
         {
             NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.CreationTime,
@@ -168,7 +168,7 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
         var args = new ProjectConfigurationFileChangeEventArgs(physicalFilePath, kind);
         foreach (var listener in _listeners)
         {
-            _logger.LogDebug("Notifying listener '{Listener}' of config file path '{PhysicalFilePath}' change with kind '{Kind}'", listener, physicalFilePath, kind);
+            _logger.LogDebug($"Notifying listener '{listener}' of config file path '{physicalFilePath}' change with kind '{kind}'");
             listener.ProjectConfigurationFileChanged(args);
         }
     }

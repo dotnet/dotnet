@@ -6,11 +6,10 @@ using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Guest;
 
 [Export(typeof(ILiveShareProjectPathProvider))]
 [method: ImportingConstructor]

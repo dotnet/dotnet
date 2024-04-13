@@ -5,7 +5,7 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 public class TestPropertyData
 {

@@ -47,4 +47,17 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="NuGet.CommandLine.Xplat.Tests" />
+    <InternalsVisibleTo Include="NuGet.Credentials.Test" />
+    <InternalsVisibleTo Include="NuGet.PackageManagement.VisualStudio.Test" />
+    <InternalsVisibleTo Include="NuGet.Protocol.FuncTest" />
+    <InternalsVisibleTo Include="NuGet.Protocol.FuncTest" />
+    <InternalsVisibleTo Include="NuGet.Protocol.Tests" />
+    <InternalsVisibleTo Include="NuGet.VisualStudio.Common.Test" />
+    <InternalsVisibleTo Include="NuGet.XPlat.FuncTest" />
+    <InternalsVisibleTo Include="Test.Utility" />
+  </ItemGroup>
 </Project>

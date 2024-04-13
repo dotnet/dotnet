@@ -129,7 +129,7 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
             return true;
         }
 
-        public void Log<TState>(LogLevel logLevel, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log(LogLevel logLevel, string message, Exception exception)
         {
         }
 

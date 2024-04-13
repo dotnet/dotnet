@@ -3,7 +3,7 @@
 
 using Microsoft.VisualStudio.ProjectSystem;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 // This defines the set of services that we frequently need for working with UnconfiguredProject.
 //

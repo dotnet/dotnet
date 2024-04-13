@@ -4,10 +4,11 @@
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.LiveShare;
 using Microsoft.VisualStudio.Threading;
 using Task = System.Threading.Tasks.Task;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor;
+namespace Microsoft.VisualStudio.Razor.LiveShare;
 
 /// <summary>
 /// In cloud scenarios a client will not have a project system which means any code running on the client needs to have the ability to

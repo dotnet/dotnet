@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor;
+namespace Microsoft.VisualStudio.Razor;
 
 [Export(typeof(IRazorStartupService))]
 internal class VisualStudioSolutionCloseChangeTrigger : IRazorStartupService, IVsSolutionEvents3, IDisposable

@@ -12,16 +12,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Editor.Razor;
-using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
-using ItemCollection = Microsoft.VisualStudio.ProjectSystem.ItemCollection;
-using ItemReference = Microsoft.CodeAnalysis.Razor.ProjectSystem.ManagedProjectSystemSchema.ItemReference;
+using ItemReference = Microsoft.VisualStudio.Razor.ProjectSystem.ManagedProjectSystemSchema.ItemReference;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 {
@@ -656,7 +655,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
             ProjectConfigurationFilePathStore projectConfigurationFilePathStore)
             : base(commonServices, serviceProvider, projectManager, projectConfigurationFilePathStore, languageServerFeatureOptions: null)
         {
-            base.SkipIntermediateOutputPathExistCheck_TestOnly = true;
+            SkipIntermediateOutputPathExistCheck_TestOnly = true;
         }
 
         public Version AssemblyVersion { get; set; }

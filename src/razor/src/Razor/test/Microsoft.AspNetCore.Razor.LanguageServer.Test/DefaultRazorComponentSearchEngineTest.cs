@@ -63,38 +63,36 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
             });
 
         var projectService = new RazorProjectService(
-            Dispatcher,
             remoteTextLoaderFactoryMock.Object,
             snapshotResolver,
             documentVersionCache,
             _projectManager,
             LoggerFactory);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            projectService.AddProject(
-                s_projectFilePath1,
-                s_intermediateOutputPath1,
-                RazorConfiguration.Default,
-                RootNamespace1,
-                displayName: "");
+        await projectService.AddProjectAsync(
+            s_projectFilePath1,
+            s_intermediateOutputPath1,
+            RazorConfiguration.Default,
+            RootNamespace1,
+            displayName: "",
+            DisposalToken);
 
-            projectService.AddDocument(s_componentFilePath1);
-            projectService.UpdateDocument(s_componentFilePath1, SourceText.From(""), version: 1);
+        await projectService.AddDocumentAsync(s_componentFilePath1, DisposalToken);
+        await projectService.UpdateDocumentAsync(s_componentFilePath1, SourceText.From(""), version: 1, DisposalToken);
 
-            projectService.AddDocument(s_componentFilePath2);
-            projectService.UpdateDocument(s_componentFilePath2, SourceText.From("@namespace Test"), version: 1);
+        await projectService.AddDocumentAsync(s_componentFilePath2, DisposalToken);
+        await projectService.UpdateDocumentAsync(s_componentFilePath2, SourceText.From("@namespace Test"), version: 1, DisposalToken);
 
-            projectService.AddProject(
-                s_projectFilePath2,
-                s_intermediateOutputPath2,
-                RazorConfiguration.Default,
-                RootNamespace2,
-                displayName: "");
+        await projectService.AddProjectAsync(
+            s_projectFilePath2,
+            s_intermediateOutputPath2,
+            RazorConfiguration.Default,
+            RootNamespace2,
+            displayName: "",
+            DisposalToken);
 
-            projectService.AddDocument(s_componentFilePath3);
-            projectService.UpdateDocument(s_componentFilePath3, SourceText.From(""), version: 1);
-        });
+        await projectService.AddDocumentAsync(s_componentFilePath3, DisposalToken);
+        await projectService.UpdateDocumentAsync(s_componentFilePath3, SourceText.From(""), version: 1, DisposalToken);
     }
 
     [Fact]

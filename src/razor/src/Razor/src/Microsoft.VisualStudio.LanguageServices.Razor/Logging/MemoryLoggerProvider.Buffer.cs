@@ -4,7 +4,7 @@
 using System;
 using System.Threading;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.Logging;
+namespace Microsoft.VisualStudio.Razor.Logging;
 
 internal partial class MemoryLoggerProvider
 {

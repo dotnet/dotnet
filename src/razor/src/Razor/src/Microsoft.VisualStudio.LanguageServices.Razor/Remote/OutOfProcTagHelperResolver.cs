@@ -12,12 +12,13 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
-namespace Microsoft.CodeAnalysis.Remote.Razor;
+namespace Microsoft.VisualStudio.Razor.Remote;
 
 [Export(typeof(ITagHelperResolver))]
 [method: ImportingConstructor]

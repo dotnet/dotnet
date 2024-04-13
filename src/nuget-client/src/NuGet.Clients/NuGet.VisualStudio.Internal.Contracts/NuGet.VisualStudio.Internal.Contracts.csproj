@@ -30,4 +30,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="NuGet.PackageManagement.VisualStudio.Test" />
+    <InternalsVisibleTo Include="NuGet.VisualStudio.Internal.Contracts.Test" />
+  </ItemGroup>
 </Project>

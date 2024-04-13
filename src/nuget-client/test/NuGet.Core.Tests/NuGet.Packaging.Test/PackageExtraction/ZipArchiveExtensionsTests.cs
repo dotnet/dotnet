@@ -63,7 +63,7 @@ namespace NuGet.Packaging.Test.PackageExtraction
                 File.Delete(tempFile);
             }
         }
-
+#if !NET8_0_OR_GREATER
         // Trying to change a file timestamp when the file is open only throws on Windows
         [PlatformFact(Platform.Windows)]
         public async Task UpdateFileTimeFromEntry_FileBusyForLongTime_Throws()
@@ -106,5 +106,6 @@ namespace NuGet.Packaging.Test.PackageExtraction
                 File.Delete(tempFile);
             }
         }
+#endif
     }
 }

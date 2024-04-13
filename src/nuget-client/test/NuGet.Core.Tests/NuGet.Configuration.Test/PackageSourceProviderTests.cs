@@ -889,6 +889,82 @@ namespace NuGet.Configuration.Test
         }
 
         [Fact]
+        public void LoadPackageSources_ReadsSourcesWithNullDisableTLSCertificateVerificationFromPackageSourceSections_LoadsDefault()
+        {
+            // Arrange
+            var settings = new Mock<ISettings>();
+            var sourceItem = new SourceItem("Source", "https://some-source.test", protocolVersion: null, allowInsecureConnections: null, disableTLSCertificateValidation: null);
+
+            settings.Setup(s => s.GetSection("packageSources"))
+                .Returns(new VirtualSettingSection("packageSources",
+                    sourceItem));
+
+            settings.Setup(s => s.GetConfigFilePaths())
+                .Returns(new List<string>());
+
+            // Act
+            List<PackageSource> values = LoadPackageSources(settings.Object);
+
+            // Assert
+            var loadedSource = values.Single();
+            Assert.Equal("Source", loadedSource.Name);
+            Assert.Equal("https://some-source.test", loadedSource.Source);
+            Assert.Equal(PackageSource.DefaultDisableTLSCertificateValidation, loadedSource.DisableTLSCertificateValidation);
+        }
+
+        [Fact]
+        public void LoadPackageSources_ReadsSourcesWithInvalidDisableTLSCertificateVerificationFromPackageSourceSections_LoadsDefault()
+        {
+            // Arrange
+            var settings = new Mock<ISettings>();
+            var sourceItem = new SourceItem("Source", "https://some-source.test", protocolVersion: null, allowInsecureConnections: null, disableTLSCertificateValidation: "invalidValue");
+
+            settings.Setup(s => s.GetSection("packageSources"))
+                .Returns(new VirtualSettingSection("packageSources",
+                    sourceItem));
+
+            settings.Setup(s => s.GetConfigFilePaths())
+                .Returns(new List<string>());
+
+            // Act
+            List<PackageSource> values = LoadPackageSources(settings.Object);
+
+            // Assert
+            var loadedSource = values.Single();
+            Assert.Equal("Source", loadedSource.Name);
+            Assert.Equal("https://some-source.test", loadedSource.Source);
+            Assert.Equal(PackageSource.DefaultDisableTLSCertificateValidation, loadedSource.DisableTLSCertificateValidation);
+        }
+
+        [Theory]
+        [InlineData("true")]
+        [InlineData("TRUE")]
+        [InlineData("false")]
+        [InlineData("fALSE")]
+        public void LoadPackageSources_ReadsSourcesWithNotNullDisableTLSCertificateVerificationFromPackageSourceSections_LoadsValue(string disableTLSCertificateValidation)
+        {
+            // Arrange
+            var settings = new Mock<ISettings>();
+            var sourceItem = new SourceItem("Source", "https://some-source.test", protocolVersion: null, allowInsecureConnections: null, disableTLSCertificateValidation: disableTLSCertificateValidation);
+
+            settings.Setup(s => s.GetSection("packageSources"))
+                .Returns(new VirtualSettingSection("packageSources",
+                    sourceItem));
+
+            settings.Setup(s => s.GetConfigFilePaths())
+                .Returns(new List<string>());
+
+            // Act
+            List<PackageSource> values = LoadPackageSources(settings.Object);
+
+            // Assert
+            var loadedSource = values.Single();
+            Assert.Equal("Source", loadedSource.Name);
+            Assert.Equal("https://some-source.test", loadedSource.Source);
+            Assert.Equal(bool.Parse(disableTLSCertificateValidation), loadedSource.DisableTLSCertificateValidation);
+        }
+
+        [Fact]
         public void DisablePackageSourceAddEntryToSettings()
         {
             // Arrange

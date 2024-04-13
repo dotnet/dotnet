@@ -105,6 +105,7 @@ NuGet.ProjectModel.HashObjectWriter.WriteArrayEnd() -> void
 ~NuGet.ProjectModel.HashObjectWriter.WriteNameValue(string name, bool value) -> void
 ~NuGet.ProjectModel.HashObjectWriter.WriteNameValue(string name, int value) -> void
 ~NuGet.ProjectModel.HashObjectWriter.WriteNameValue(string name, string value) -> void
+~NuGet.ProjectModel.HashObjectWriter.WriteNonEmptyNameArray(string name, System.Collections.Generic.IEnumerable<string> values) -> void
 NuGet.ProjectModel.HashObjectWriter.WriteObjectEnd() -> void
 NuGet.ProjectModel.HashObjectWriter.WriteObjectStart() -> void
 ~NuGet.ProjectModel.HashObjectWriter.WriteObjectStart(string name) -> void
@@ -540,6 +541,8 @@ NuGet.ProjectModel.RestoreAuditProperties.EnableAudit.get -> string?
 NuGet.ProjectModel.RestoreAuditProperties.EnableAudit.set -> void
 NuGet.ProjectModel.RestoreAuditProperties.Equals(NuGet.ProjectModel.RestoreAuditProperties? other) -> bool
 NuGet.ProjectModel.RestoreAuditProperties.RestoreAuditProperties() -> void
+NuGet.ProjectModel.RestoreAuditProperties.TryParseAuditLevel(out NuGet.Protocol.PackageVulnerabilitySeverity result) -> bool
+NuGet.ProjectModel.RestoreAuditProperties.TryParseEnableAudit(out bool result) -> bool
 NuGet.ProjectModel.RestoreLockProperties
 ~NuGet.ProjectModel.RestoreLockProperties.Clone() -> NuGet.ProjectModel.RestoreLockProperties
 ~NuGet.ProjectModel.RestoreLockProperties.Equals(NuGet.ProjectModel.RestoreLockProperties other) -> bool

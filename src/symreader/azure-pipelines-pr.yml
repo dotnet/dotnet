@@ -1,0 +1,88 @@
+#Banches that trigger builds on PR
+pr:
+  branches:
+    include:
+    - main
+    - release/*
+  paths:
+    exclude:
+    - README.md
+    - docs/*
+
+variables:
+  - template: /eng/common/templates/variables/pool-providers.yml
+  - name: _TeamName
+    value: Roslyn
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enableMicrobuild: true
+      enablePublishBuildArtifacts: true
+      enablePublishTestResults: true
+      enablePublishBuildAssets: true
+      enablePublishUsingPipelines: true
+      enableTelemetry: true
+      enableSourceBuild: true
+      helixRepo: dotnet/symreader
+      jobs:
+      - job: Windows
+        pool:
+            vmImage: 'windows-latest'
+        variables:
+          - name: _OfficialBuildArgs
+            value: ''
+        strategy:
+          matrix:
+            Debug:
+              _BuildConfig: Debug
+              _SignType: test
+              _BuildArgs: ''
+            Release:
+              _BuildConfig: Release
+              _SignType: test
+              _BuildArgs: ''
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng\common\cibuild.cmd -configuration $(_BuildConfig) -prepareMachine $(_BuildArgs)
+          displayName: Build and Test
+
+      - job: MacOS
+        displayName: 'MacOS'
+        pool:
+          vmImage: 'macOS-latest'
+        strategy:
+          matrix:
+            Debug:
+              _BuildConfig: Debug
+              _SignType: none
+            Release:
+              _BuildConfig: Release
+              _SignType: none
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng/common/cibuild.sh --configuration $(_BuildConfig) --prepareMachine
+          displayName: Build and Test
+
+      - job: Linux
+        displayName: 'Linux'
+        pool:
+          vmImage: 'ubuntu-latest'
+        strategy:
+          matrix:
+            Debug:
+              _BuildConfig: Debug
+              _SignType: none
+            Release:
+              _BuildConfig: Release
+              _SignType: none
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng/common/cibuild.sh --configuration $(_BuildConfig) --prepareMachine
+          displayName: Build and Test

@@ -2,34 +2,16 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class RazorFileSynchronizer : IRazorFileChangeListener
+internal class RazorFileSynchronizer(IRazorProjectService projectService) : IRazorFileChangeListener
 {
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
-    private readonly IRazorProjectService _projectService;
-
-    public RazorFileSynchronizer(
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-        IRazorProjectService projectService)
-    {
-        if (projectSnapshotManagerDispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-        }
-
-        if (projectService is null)
-        {
-            throw new ArgumentNullException(nameof(projectService));
-        }
-
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
-        _projectService = projectService;
-    }
+    private readonly IRazorProjectService _projectService = projectService;
 
     public void RazorFileChanged(string filePath, RazorFileChangeKind kind)
     {
@@ -38,15 +20,13 @@ internal class RazorFileSynchronizer : IRazorFileChangeListener
             throw new ArgumentNullException(nameof(filePath));
         }
 
-        _projectSnapshotManagerDispatcher.AssertRunningOnDispatcher();
-
         switch (kind)
         {
             case RazorFileChangeKind.Added:
-                _projectService.AddDocument(filePath);
+                _projectService.AddDocumentAsync(filePath, CancellationToken.None).Forget();
                 break;
             case RazorFileChangeKind.Removed:
-                _projectService.RemoveDocument(filePath);
+                _projectService.RemoveDocumentAsync(filePath, CancellationToken.None).Forget();
                 break;
         }
     }

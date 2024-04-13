@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.DependencyResolver;
 using NuGet.LibraryModel;
+using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
 using NuGet.Protocol;
@@ -30,6 +31,7 @@ namespace NuGet.Commands.Restore.Utility
 
         internal PackageVulnerabilitySeverity MinSeverity { get; }
         internal NuGetAuditMode AuditMode { get; }
+        internal Dictionary<string, bool>? SuppressedAdvisories { get; }
         internal List<string>? DirectPackagesWithAdvisory { get; private set; }
         internal List<string>? TransitivePackagesWithAdvisory { get; private set; }
         internal int Sev0DirectMatches { get; private set; }
@@ -46,6 +48,8 @@ namespace NuGet.Commands.Restore.Utility
         internal double? CheckPackagesDurationSeconds { get; private set; }
         internal double? GenerateOutputDurationSeconds { get; private set; }
         internal int SourcesWithVulnerabilityData { get; private set; }
+        internal int DistinctAdvisoriesSuppressedCount { get; private set; }
+        internal int TotalWarningsSuppressedCount { get; private set; }
 
         public AuditUtility(
             ProjectModel.RestoreAuditProperties? restoreAuditProperties,
@@ -62,6 +66,16 @@ namespace NuGet.Commands.Restore.Utility
 
             MinSeverity = ParseAuditLevel();
             AuditMode = ParseAuditMode();
+
+            if (restoreAuditProperties?.SuppressedAdvisories != null)
+            {
+                SuppressedAdvisories = new Dictionary<string, bool>(restoreAuditProperties.SuppressedAdvisories.Count);
+
+                foreach (string advisory in restoreAuditProperties.SuppressedAdvisories)
+                {
+                    SuppressedAdvisories.Add(advisory, false);
+                }
+            }
         }
 
         public async Task CheckPackageVulnerabilitiesAsync(CancellationToken cancellationToken)
@@ -269,6 +283,19 @@ namespace NuGet.Commands.Restore.Utility
                         {
                             if ((int)knownVulnerability.Severity < (int)MinSeverity && knownVulnerability.Severity != PackageVulnerabilitySeverity.Unknown)
                             {
+                                continue;
+                            }
+
+                            if (SuppressedAdvisories?.TryGetValue(knownVulnerability.Url.OriginalString, out bool advisoryUsed) == true)
+                            {
+                                TotalWarningsSuppressedCount++;
+
+                                if (!advisoryUsed)
+                                {
+                                    SuppressedAdvisories[knownVulnerability.Url.OriginalString] = true;
+                                    DistinctAdvisoriesSuppressedCount++;
+                                }
+
                                 continue;
                             }
 

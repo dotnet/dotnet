@@ -4,7 +4,7 @@
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization.Json;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Serialization;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Serialization;
 
 internal class ProjectSnapshotHandleProxyJsonConverter : ObjectJsonConverter<ProjectSnapshotHandleProxy>
 {

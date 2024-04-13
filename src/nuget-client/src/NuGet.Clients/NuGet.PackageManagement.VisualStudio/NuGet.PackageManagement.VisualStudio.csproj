@@ -54,5 +54,9 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="NuGet.PackageManagement.UI.Test" />
+    <InternalsVisibleTo Include="NuGet.PackageManagement.VisualStudio.Test" />
+  </ItemGroup>
 </Project>

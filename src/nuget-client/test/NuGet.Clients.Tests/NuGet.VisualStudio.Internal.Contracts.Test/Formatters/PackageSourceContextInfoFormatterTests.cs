@@ -19,6 +19,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
 
         public static TheoryData TestData => new TheoryData<PackageSourceContextInfo>
             {
+                { new PackageSourceContextInfo("source", "name", isEnabled: true, protocolVersion: 3, allowInsecureConnections: true, disableTLSCertificateValidation: true) },
                 { new PackageSourceContextInfo("source", "name", isEnabled: true, protocolVersion: 3, allowInsecureConnections: true) },
                 { new PackageSourceContextInfo("source", "name", isEnabled: true, protocolVersion: 3) },
                 { new PackageSourceContextInfo("source", "name", isEnabled: true) },

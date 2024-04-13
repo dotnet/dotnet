@@ -41,7 +41,7 @@
     <None Include="$(BuildCommonDirectory)NOTICES.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(IsCore)' == 'true' ">
+  <ItemGroup Condition=" '$(TargetFramework)' != '$(NETFXTargetFramework)' ">
     <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" ExcludeAssets="runtime" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" GeneratePathProperty="true" />
@@ -120,13 +120,13 @@
         /internalize ^
         /xmldocs ^
         /log:$(ILMergeResultDir)IlMergeLog.txt</IlmergeCommand>
-      <IlmergeCommand Condition="Exists($(MS_PFX_PATH))">$(IlmergeCommand) ^
+      <IlmergeCommand Condition="'$(SkipSigning)' != 'true' And Exists($(AssemblyOriginatorKeyFile))">$(IlmergeCommand) ^
         /delaysign ^
-        /keyfile:$(MS_PFX_PATH)</IlmergeCommand>
+        /keyfile:$(AssemblyOriginatorKeyFile)</IlmergeCommand>
       <IlmergeCommand>$(IlmergeCommand) ^
         $(PathToBuiltNuGetPack) ^
         @(BuildArtifacts, ' ')</IlmergeCommand>
-      <IlmergeCommand Condition=" '$(IsCore)' == 'true' ">$(IlmergeCommand) ^
+      <IlmergeCommand Condition=" '$(TargetFramework)' != '$(NETFXTargetFramework)' ">$(IlmergeCommand) ^
         /lib:$(PkgMicrosoft_Build_Utilities_Core)\lib\netstandard2.0 ^
         /lib:$(PkgMicrosoft_Build_Tasks_Core)\lib\netstandard2.0 ^
         /lib:$(PkgMicrosoft_Build_Framework)\lib\netstandard2.0
@@ -168,9 +168,9 @@
         /internalize ^
         /xmldocs ^
         /log:$(ILMergeResultDir)IlMergeLogResources.txt</IlmergeCommand>
-      <IlmergeCommand Condition="Exists($(MS_PFX_PATH))">$(IlmergeCommand) ^
+      <IlmergeCommand Condition="'$(SkipSigning)' != 'true' And Exists($(AssemblyOriginatorKeyFile))">$(IlmergeCommand) ^
         /delaysign ^
-        /keyfile:$(MS_PFX_PATH)</IlmergeCommand>
+        /keyfile:$(AssemblyOriginatorKeyFile)</IlmergeCommand>
       <IlmergeCommand>$(IlmergeCommand) ^
         $(PathToBuiltNuGetPackResource) ^
         @(ResourceArtifacts, ' ')</IlmergeCommand>

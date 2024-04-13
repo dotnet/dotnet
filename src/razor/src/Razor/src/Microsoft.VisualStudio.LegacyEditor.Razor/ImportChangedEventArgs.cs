@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Immutable;
-using Microsoft.VisualStudio.Editor.Razor.Documents;
+using Microsoft.VisualStudio.Razor.Documents;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor;
 

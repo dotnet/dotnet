@@ -92,7 +92,7 @@ public class Program
         var loggerProvider = new LoggerProvider(logLevel, clientConnection);
         loggerFactory.AddLoggerProvider(loggerProvider);
 
-        loggerFactory.GetOrCreateLogger("RZLS").LogInformation("Razor Language Server started successfully.");
+        loggerFactory.GetOrCreateLogger("RZLS").LogInformation($"Razor Language Server started successfully.");
 
         await server.WaitForExitAsync().ConfigureAwait(true);
     }

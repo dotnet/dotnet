@@ -2,9 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Immutable;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
@@ -34,7 +34,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
     }
 
     [Fact]
-    public void TryCreateAsync_CanNotResolveDocument_ReturnsNull()
+    public async Task TryCreateAsync_CanNotResolveDocument_ReturnsNull()
     {
         // Arrange
         var filePath = FilePathNormalizer.Normalize(Path.Combine(s_baseDirectory, "file.cshtml"));
@@ -43,14 +43,14 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var factory = new DocumentContextFactory(_projectManager, new TestDocumentResolver(), _documentVersionCache, LoggerFactory);
 
         // Act
-        var documentContext = factory.TryCreate(uri);
+        var documentContext = await factory.TryCreateAsync(uri, DisposalToken);
 
         // Assert
         Assert.Null(documentContext);
     }
 
     [Fact]
-    public void TryCreateForOpenDocumentAsync_CanNotResolveDocument_ReturnsNull()
+    public async Task TryCreateForOpenDocumentAsync_CanNotResolveDocument_ReturnsNull()
     {
         // Arrange
         var filePath = FilePathNormalizer.Normalize(Path.Combine(s_baseDirectory, "file.cshtml"));
@@ -59,14 +59,14 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var factory = new DocumentContextFactory(_projectManager, new TestDocumentResolver(), _documentVersionCache, LoggerFactory);
 
         // Act
-        var documentContext = factory.TryCreateForOpenDocument(uri);
+        var documentContext = await factory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
 
         // Assert
         Assert.Null(documentContext);
     }
 
     [Fact]
-    public void TryCreateForOpenDocumentAsync_CanNotResolveVersion_ReturnsNull()
+    public async Task TryCreateForOpenDocumentAsync_CanNotResolveVersion_ReturnsNull()
     {
         // Arrange
         var filePath = FilePathNormalizer.Normalize(Path.Combine(s_baseDirectory, "file.cshtml"));
@@ -77,14 +77,14 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var factory = new DocumentContextFactory(_projectManager, documentResolver, _documentVersionCache, LoggerFactory);
 
         // Act
-        var documentContext = factory.TryCreateForOpenDocument(uri);
+        var documentContext = await factory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
 
         // Assert
         Assert.Null(documentContext);
     }
 
     [Fact]
-    public void TryCreateAsync_ResolvesContent()
+    public async Task TryCreateAsync_ResolvesContent()
     {
         // Arrange
         var filePath = FilePathNormalizer.Normalize(Path.Combine(s_baseDirectory, "file.cshtml"));
@@ -97,7 +97,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var factory = new DocumentContextFactory(_projectManager, documentResolver, _documentVersionCache, LoggerFactory);
 
         // Act
-        var documentContext = factory.TryCreate(uri);
+        var documentContext = await factory.TryCreateAsync(uri, DisposalToken);
 
         // Assert
         Assert.NotNull(documentContext);
@@ -130,7 +130,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         });
 
         // Act
-        var documentContext = factory.TryCreate(uri, new VisualStudio.LanguageServer.Protocol.VSProjectContext { Id = hostProject.Key.Id });
+        var documentContext = await factory.TryCreateAsync(uri, new VisualStudio.LanguageServer.Protocol.VSProjectContext { Id = hostProject.Key.Id }, DisposalToken);
 
         // Assert
         Assert.NotNull(documentContext);
@@ -162,7 +162,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         });
 
         // Act
-        var documentContext = factory.TryCreate(uri, new VisualStudio.LanguageServer.Protocol.VSProjectContext { Id = hostProject.Key.Id });
+        var documentContext = await factory.TryCreateAsync(uri, new VisualStudio.LanguageServer.Protocol.VSProjectContext { Id = hostProject.Key.Id }, DisposalToken);
 
         // Assert
         Assert.NotNull(documentContext);
@@ -185,7 +185,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var factory = new DocumentContextFactory(_projectManager, documentResolver, _documentVersionCache, LoggerFactory);
 
         // Act
-        var documentContext = factory.TryCreateForOpenDocument(uri);
+        var documentContext = await factory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
 
         // Assert
         Assert.NotNull(documentContext);
@@ -194,39 +194,19 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         Assert.Same(documentSnapshot, documentContext.Snapshot);
     }
 
-    private class TestDocumentResolver : ISnapshotResolver
+    private class TestDocumentResolver(IDocumentSnapshot? documentSnapshot = null) : ISnapshotResolver
     {
-        private readonly IDocumentSnapshot? _documentSnapshot;
+        private readonly IDocumentSnapshot? _documentSnapshot = documentSnapshot;
 
-        public TestDocumentResolver()
-        {
-        }
+        public ImmutableArray<IProjectSnapshot> FindPotentialProjects(string documentFilePath)
+            => throw new NotImplementedException();
 
-        public TestDocumentResolver(IDocumentSnapshot documentSnapshot)
-        {
-            _documentSnapshot = documentSnapshot;
-        }
+        public Task<IProjectSnapshot> GetMiscellaneousProjectAsync(CancellationToken cancellationToken)
+            => throw new NotImplementedException();
 
-        public IEnumerable<IProjectSnapshot> FindPotentialProjects(string documentFilePath)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IProjectSnapshot GetMiscellaneousProject()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool TryResolveDocumentInAnyProject(string documentFilePath, [NotNullWhen(true)] out IDocumentSnapshot? documentSnapshot)
-        {
-            if (documentFilePath == _documentSnapshot?.FilePath)
-            {
-                documentSnapshot = _documentSnapshot;
-                return true;
-            }
-
-            documentSnapshot = null;
-            return false;
-        }
+        public Task<IDocumentSnapshot?> ResolveDocumentInAnyProjectAsync(string documentFilePath, CancellationToken cancellationToken)
+            => documentFilePath == _documentSnapshot?.FilePath
+                ? Task.FromResult<IDocumentSnapshot?>(_documentSnapshot)
+                : Task.FromResult<IDocumentSnapshot?>(null);
     }
 }

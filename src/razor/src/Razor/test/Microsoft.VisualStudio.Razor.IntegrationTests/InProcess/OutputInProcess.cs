@@ -118,7 +118,7 @@ internal partial class OutputInProcess
             return false;
         }
 
-        public void Log<TState>(LogLevel logLevel, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        public void Log(LogLevel logLevel, string message, Exception? exception)
         {
         }
     }

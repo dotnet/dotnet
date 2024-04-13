@@ -4,7 +4,7 @@
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.VisualStudio.ComponentModelHost;
-using Microsoft.VisualStudio.Editor.Razor.Settings;
+using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Shell;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor;

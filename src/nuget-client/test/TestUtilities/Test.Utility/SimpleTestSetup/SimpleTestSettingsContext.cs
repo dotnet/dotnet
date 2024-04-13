@@ -226,6 +226,13 @@ namespace NuGet.Test.Utility
             Save();
         }
 
+        public void AddSource(string sourceName, string sourceUri, string attributeName, string attributeValue)
+        {
+            var section = GetOrAddSection(XML, "packageSources");
+            AddEntry(section, sourceName, sourceUri, attributeName, attributeValue);
+            Save();
+        }
+
         public void AddPackageSourceMapping(string sourceName, params string[] patterns)
         {
             XElement packageSourceMappingSection = GetOrAddSection(XML, "packageSourceMapping");

@@ -5,8 +5,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor;
-using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LegacyEditor.Razor.Parsing;
+using Microsoft.VisualStudio.Razor;
 using Microsoft.VisualStudio.Text;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor;

@@ -438,12 +438,46 @@ public class AuditUtilityTests
         }
     }
 
+    [Fact]
+    public async Task Check_ProjectWithSuppressions_SuppressesExpectedVulnerabilities()
+    {
+        // Arrange
+        var context = new AuditTestContext();
+        string cveUrl1 = "https://cve.test/suppressed/1";
+        string cveUrl2 = "https://cve.test/suppressed/2";
+
+        context.Mode = "all";
+        context.SuppressedAdvisories = new HashSet<string> { cveUrl2 }; // suppress one of the two advisories
+
+        var vulnerabilityProvider = context.WithVulnerabilityProvider();
+        var knownVulnerabilities = vulnerabilityProvider.WithPackageVulnerability("pkga");
+        knownVulnerabilities.Add(new PackageVulnerabilityInfo(new Uri(cveUrl1), PackageVulnerabilitySeverity.Moderate, UpToV2));
+        knownVulnerabilities.Add(new PackageVulnerabilityInfo(new Uri(cveUrl2), PackageVulnerabilitySeverity.Moderate, UpToV2));
+
+        context.WithRestoreTarget().DependsOn("pkga", "1.0.0");
+        context.PackagesDependencyProvider.Package("pkga", "1.0.0");
+
+        // Act
+        var auditUtility = await context.CheckPackageVulnerabilitiesAsync(CancellationToken.None);
+
+        // Assert
+        context.Log.LogMessages.Count.Should().Be(1);
+
+        List<RestoreLogMessage> messages = new(1);
+        messages.AddRange(context.Log.LogMessages.Cast<RestoreLogMessage>());
+
+        messages.All(m => m.LibraryId == "pkga").Should().BeTrue();
+        messages.Any(m => m.Message.Contains(cveUrl1)).Should().BeTrue(); // cveUrl1 should not be suppressed
+        messages.Any(m => m.Message.Contains(cveUrl2)).Should().BeFalse(); // cveUrl2 should be suppressed
+    }
+
     private class AuditTestContext
     {
         public string ProjectFullPath { get; set; } = RuntimeEnvironmentHelper.IsWindows ? @"n:\proj\proj.csproj" : "/src/proj/proj.csproj";
         public string? Enabled { get; set; }
         public string? Level { get; set; }
         public string? Mode { get; set; }
+        public HashSet<string>? SuppressedAdvisories { get; set; }
 
         public TestLogger Log { get; } = new();
 
@@ -491,6 +525,7 @@ public class AuditUtilityTests
                 EnableAudit = Enabled,
                 AuditLevel = Level,
                 AuditMode = Mode,
+                SuppressedAdvisories = SuppressedAdvisories,
             };
 
             bool enabled = AuditUtility.ParseEnableValue(restoreAuditProperties, ProjectFullPath, Log);

@@ -4,7 +4,7 @@
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor;
+namespace Microsoft.VisualStudio.Razor;
 
 [Export(typeof(ProjectSnapshotManagerDispatcher))]
 [method: ImportingConstructor]

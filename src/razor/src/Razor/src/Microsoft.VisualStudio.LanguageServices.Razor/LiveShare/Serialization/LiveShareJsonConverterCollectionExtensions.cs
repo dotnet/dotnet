@@ -4,7 +4,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor.Serialization;
+namespace Microsoft.VisualStudio.Razor.LiveShare.Serialization;
 
 internal static class LiveShareJsonConverterCollectionExtensions
 {

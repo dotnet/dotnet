@@ -1,0 +1,38 @@
+<Project>
+  <PropertyGroup>
+    <!-- Disable IsAotCompatible on non-DefaultNetCoreTargetFrameworks even if explicitly enabled or else we'll get NETSDK1210 errors -->
+    <IsAotCompatible Condition="'$(TargetFramework)' != '$(DefaultNetCoreTargetFramework)'"></IsAotCompatible>
+    <PackageReadmeFile Condition="'$(PackageReadmeFile)' == '' and Exists('PACKAGE.md')">PACKAGE.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(PackageReadmeFile)' != ''">
+    <None Include="$(PackageReadmeFile)" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+  <Import Project="eng\testing\linker\trimmingTests.targets" Condition="'$(IsPublishedAppTestProject)' == 'true'" />
+  
+  <ItemGroup>
+    <FrameworkReference Update="Microsoft.NETCore.App"
+                        Condition="'$(TargetFramework)' == 'net9.0'"
+                        RuntimeFrameworkVersion="$(MicrosoftNETCoreAppRuntimewinx64Version)"
+                        TargetingPackVersion="$(MicrosoftNETCoreAppRefVersion)" />
+  </ItemGroup>
+
+  <Target Name="GetCustomAssemblyAttributes"
+          BeforeTargets="GetAssemblyAttributes"
+          Condition=" '$(MSBuildProjectExtension)' == '.csproj' "
+          DependsOnTargets="InitializeSourceControlInformation">
+    <ItemGroup>
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(SourceRevisionId)' != ''">
+        <_Parameter1>CommitHash</_Parameter1>
+        <_Parameter2>$(SourceRevisionId)</_Parameter2>
+      </AssemblyAttribute>
+
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(Serviceable)' == 'true'">
+        <_Parameter1>Serviceable</_Parameter1>
+        <_Parameter2>True</_Parameter2>
+      </AssemblyAttribute>
+    </ItemGroup>
+  </Target>
+</Project>

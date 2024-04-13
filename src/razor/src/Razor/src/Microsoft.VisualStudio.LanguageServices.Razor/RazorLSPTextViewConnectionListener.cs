@@ -7,10 +7,10 @@ using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor;
-using Microsoft.VisualStudio.Editor.Razor;
-using Microsoft.VisualStudio.Editor.Razor.Settings;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Razor.Extensions;
+using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -18,7 +18,7 @@ using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Utilities;
 using IServiceProvider = System.IServiceProvider;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor;
+namespace Microsoft.VisualStudio.Razor;
 
 // The entire purpose of this class is to workaround quirks in Visual Studio's core editor handling. In Razor scenarios
 // we can have a multitude of content types that represents a Razor file:
@@ -95,7 +95,7 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
         if (!_editorFeatureDetector.IsRemoteClient())
         {
             vsTextView.GetBuffer(out var vsBuffer);
-            vsBuffer.SetLanguageServiceID(RazorVisualStudioWindowsConstants.RazorLanguageServiceGuid);
+            vsBuffer.SetLanguageServiceID(RazorConstants.RazorLanguageServiceGuid);
         }
 
         RazorLSPTextViewFilter.CreateAndRegister(vsTextView);
@@ -212,7 +212,7 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
 
     private static void InitializeRazorTextViewOptions(IVsTextManager4 textManager, RazorEditorOptionsTracker optionsTracker)
     {
-        var langPrefs3 = new LANGPREFERENCES3[] { new LANGPREFERENCES3() { guidLang = RazorVisualStudioWindowsConstants.RazorLanguageServiceGuid } };
+        var langPrefs3 = new LANGPREFERENCES3[] { new LANGPREFERENCES3() { guidLang = RazorConstants.RazorLanguageServiceGuid } };
         if (VSConstants.S_OK != textManager.GetUserPreferences4(null, langPrefs3, null))
         {
             return;
@@ -258,7 +258,7 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
         var insertSpaces = true;
         var tabSize = 4;
 
-        var langPrefs3 = new LANGPREFERENCES3[] { new LANGPREFERENCES3() { guidLang = RazorVisualStudioWindowsConstants.RazorLanguageServiceGuid } };
+        var langPrefs3 = new LANGPREFERENCES3[] { new LANGPREFERENCES3() { guidLang = RazorConstants.RazorLanguageServiceGuid } };
         if (VSConstants.S_OK != textManager.GetUserPreferences4(null, langPrefs3, null))
         {
             return (new ClientSpaceSettings(IndentWithTabs: !insertSpaces, tabSize), ClientCompletionSettings.Default);

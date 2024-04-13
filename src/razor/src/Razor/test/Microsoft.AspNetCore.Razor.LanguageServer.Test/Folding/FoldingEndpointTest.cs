@@ -60,7 +60,7 @@ public class FoldingEndpointTest(ITestOutputHelper testOutput) : SingleServerDel
                 }
             }
         };
-        var documentContext = DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument);
+        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument, DisposalToken);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act

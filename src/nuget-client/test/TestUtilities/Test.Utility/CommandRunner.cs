@@ -81,39 +81,52 @@ namespace NuGet.Test.Utility
                 return new CommandRunnerResult(process, process.ExitCode, output.ToString(), error.ToString());
             }
 
-            Kill(process);
+            string extraInfo = string.Empty;
 
-            throw new TimeoutException($"{process.StartInfo.FileName} {process.StartInfo.Arguments} timed out after {TimeSpan.FromMilliseconds(timeOutInMilliseconds).TotalSeconds:N0} seconds:{Environment.NewLine}Output:{output}{Environment.NewLine}Error:{error}");
-
-            void Kill(Process process)
+            if (!TryKill(process, out Exception processException))
             {
+                extraInfo = $"Failed to kill the process: {processException}";
+            }
+
+            throw new TimeoutException($"{process.StartInfo.FileName} {process.StartInfo.Arguments} timed out after {TimeSpan.FromMilliseconds(timeOutInMilliseconds).TotalSeconds:N0} seconds:{Environment.NewLine}Output:{output}{Environment.NewLine}Error:{error}{Environment.NewLine}{extraInfo}");
+
+            bool TryKill(Process process, out Exception exception)
+            {
+                exception = null;
+
                 try
                 {
                     process.Kill();
+
+                    return true;
                 }
-                catch (InvalidOperationException)
+                catch (Exception e)
                 {
-                }
-                catch (Win32Exception)
-                {
+                    exception = e;
                 }
 
                 try
                 {
-                    if (!process.HasExited)
+                    if (process.HasExited)
                     {
-                        process.WaitForExit();
+                        return true;
                     }
+
+                    bool exited = process.WaitForExit(milliseconds: 10000);
+
+                    if (!exited)
+                    {
+                        exception = new TimeoutException("Timed out waiting for process to end after attempting to kill it.", innerException: exception);
+                    }
+
+                    return exited;
                 }
-                catch (InvalidOperationException)
+                catch (Exception e)
                 {
+                    exception = e;
                 }
-                catch (Win32Exception)
-                {
-                }
-                catch (SystemException)
-                {
-                }
+
+                return false;
             }
         }
     }

@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Configuration;
 using Moq;
 using NuGet.Configuration;
 using Xunit;

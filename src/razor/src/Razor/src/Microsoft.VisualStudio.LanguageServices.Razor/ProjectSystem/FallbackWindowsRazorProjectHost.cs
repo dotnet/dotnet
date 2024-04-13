@@ -13,15 +13,17 @@ using System.Reflection.PortableExecutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.Shell;
-using ContentItem = Microsoft.CodeAnalysis.Razor.ProjectSystem.ManagedProjectSystemSchema.ContentItem;
-using ItemReference = Microsoft.CodeAnalysis.Razor.ProjectSystem.ManagedProjectSystemSchema.ItemReference;
-using NoneItem = Microsoft.CodeAnalysis.Razor.ProjectSystem.ManagedProjectSystemSchema.NoneItem;
-using ResolvedCompilationReference = Microsoft.CodeAnalysis.Razor.ProjectSystem.ManagedProjectSystemSchema.ResolvedCompilationReference;
+using ContentItem = Microsoft.VisualStudio.Razor.ProjectSystem.ManagedProjectSystemSchema.ContentItem;
+using ItemReference = Microsoft.VisualStudio.Razor.ProjectSystem.ManagedProjectSystemSchema.ItemReference;
+using NoneItem = Microsoft.VisualStudio.Razor.ProjectSystem.ManagedProjectSystemSchema.NoneItem;
+using ResolvedCompilationReference = Microsoft.VisualStudio.Razor.ProjectSystem.ManagedProjectSystemSchema.ResolvedCompilationReference;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 // This class is responsible for initializing the Razor ProjectSnapshotManager for cases where
 // MSBuild does not provides configuration support (SDK < 2.1).

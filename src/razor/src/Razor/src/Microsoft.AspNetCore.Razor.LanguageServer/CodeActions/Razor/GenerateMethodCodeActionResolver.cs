@@ -72,7 +72,7 @@ internal class GenerateMethodCodeActionResolver : IRazorCodeActionResolver
             return null;
         }
 
-        var documentContext = _documentContextFactory.TryCreateForOpenDocument(actionParams.Uri);
+        var documentContext = await _documentContextFactory.TryCreateForOpenDocumentAsync(actionParams.Uri, cancellationToken).ConfigureAwait(false);
         if (documentContext is null)
         {
             return null;

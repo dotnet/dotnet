@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Microsoft.VisualStudio.Editor.Razor\Telemetry\TelemetryReporter.cs" Link="Telemetry\TelemetryReporter.cs" />
+    <Compile Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Telemetry\TelemetryReporter.cs" Link="Telemetry\TelemetryReporter.cs" />
   </ItemGroup>
 
   <ItemGroup>

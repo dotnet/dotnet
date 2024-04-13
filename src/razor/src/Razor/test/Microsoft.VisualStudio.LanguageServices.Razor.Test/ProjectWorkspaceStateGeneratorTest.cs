@@ -17,7 +17,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.Test;
+namespace Microsoft.VisualStudio.Razor;
 
 public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
 {

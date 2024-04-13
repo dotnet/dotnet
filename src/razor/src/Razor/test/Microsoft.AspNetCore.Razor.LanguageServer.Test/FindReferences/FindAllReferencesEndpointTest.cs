@@ -76,7 +76,7 @@ public class FindAllReferencesEndpointTest(ITestOutputHelper testOutput) : Singl
             },
             Position = new Position(line, offset)
         };
-        var documentContext = DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument);
+        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument, DisposalToken);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act

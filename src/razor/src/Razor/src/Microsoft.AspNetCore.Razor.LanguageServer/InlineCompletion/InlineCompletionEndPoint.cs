@@ -63,7 +63,7 @@ internal sealed class InlineCompletionEndpoint(
             throw new ArgumentNullException(nameof(request));
         }
 
-        _logger.LogInformation("Starting request for {textDocumentUri} at {position}.", request.TextDocument.Uri, request.Position);
+        _logger.LogInformation($"Starting request for {request.TextDocument.Uri} at {request.Position}.");
 
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
@@ -87,7 +87,7 @@ internal sealed class InlineCompletionEndpoint(
         if (languageKind != RazorLanguageKind.CSharp ||
             !_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out Position? projectedPosition, out _))
         {
-            _logger.LogInformation("Unsupported location for {textDocumentUri}.", request.TextDocument.Uri);
+            _logger.LogInformation($"Unsupported location for {request.TextDocument.Uri}.");
             return null;
         }
 
@@ -107,7 +107,7 @@ internal sealed class InlineCompletionEndpoint(
             cancellationToken).ConfigureAwait(false);
         if (list is null || !list.Items.Any())
         {
-            _logger.LogInformation("Did not get any inline completions from delegation.");
+            _logger.LogInformation($"Did not get any inline completions from delegation.");
             return null;
         }
 
@@ -119,7 +119,7 @@ internal sealed class InlineCompletionEndpoint(
 
             if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), range, out var rangeInRazorDoc))
             {
-                _logger.LogWarning("Could not remap projected range {range} to razor document", range);
+                _logger.LogWarning($"Could not remap projected range {range} to razor document");
                 continue;
             }
 
@@ -141,11 +141,11 @@ internal sealed class InlineCompletionEndpoint(
 
         if (items.Count == 0)
         {
-            _logger.LogInformation("Could not format / map the items from delegation.");
+            _logger.LogInformation($"Could not format / map the items from delegation.");
             return null;
         }
 
-        _logger.LogInformation("Returning {itemsCount} items.", items.Count);
+        _logger.LogInformation($"Returning {items.Count} items.");
         return new VSInternalInlineCompletionList
         {
             Items = items.ToArray()

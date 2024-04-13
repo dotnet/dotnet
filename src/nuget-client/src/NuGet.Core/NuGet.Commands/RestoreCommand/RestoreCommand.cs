@@ -92,6 +92,9 @@ namespace NuGet.Commands
         private const string AuditEnabled = "Audit.Enabled";
         private const string AuditLevel = "Audit.Level";
         private const string AuditMode = "Audit.Mode";
+        private const string AuditSuppressedAdvisoriesDefinedCount = "Audit.SuppressedAdvisories.Defined.Count";
+        private const string AuditSuppressedAdvisoriesTotalWarningsSuppressedCount = "Audit.SuppressedAdvisories.TotalWarningsSuppressed.Count";
+        private const string AuditSuppressedAdvisoriesDistinctAdvisoriesSuppressedCount = "Audit.SuppressedAdvisories.DistinctAdvisoriesSuppressed.Count";
         private const string AuditDataSources = "Audit.DataSources";
         private const string AuditDirectVulnerabilitiesPackages = "Audit.Vulnerability.Direct.Packages";
         private const string AuditDirectVulnerabilitiesCount = "Audit.Vulnerability.Direct.Count";
@@ -499,6 +502,9 @@ namespace NuGet.Commands
 
             telemetry.TelemetryEvent[AuditLevel] = (int)audit.MinSeverity;
             telemetry.TelemetryEvent[AuditMode] = AuditUtility.GetString(audit.AuditMode);
+            telemetry.TelemetryEvent[AuditSuppressedAdvisoriesDefinedCount] = audit.SuppressedAdvisories?.Count ?? 0;
+            telemetry.TelemetryEvent[AuditSuppressedAdvisoriesDistinctAdvisoriesSuppressedCount] = audit.DistinctAdvisoriesSuppressedCount;
+            telemetry.TelemetryEvent[AuditSuppressedAdvisoriesTotalWarningsSuppressedCount] = audit.TotalWarningsSuppressedCount;
 
             if (audit.DirectPackagesWithAdvisory is not null) { AddPackagesList(telemetry, AuditDirectVulnerabilitiesPackages, audit.DirectPackagesWithAdvisory); }
             telemetry.TelemetryEvent[AuditDirectVulnerabilitiesCount] = audit.DirectPackagesWithAdvisory?.Count ?? 0;

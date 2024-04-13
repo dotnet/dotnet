@@ -51,4 +51,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="NuGet.SolutionRestoreManager.Test" />
+  </ItemGroup>
+
 </Project>

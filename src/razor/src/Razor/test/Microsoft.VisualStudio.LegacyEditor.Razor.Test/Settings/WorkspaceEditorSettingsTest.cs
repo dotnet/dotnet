@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Accessors;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.Settings;
-using Microsoft.VisualStudio.Editor.Razor.Settings;
+using Microsoft.VisualStudio.Razor.Settings;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;

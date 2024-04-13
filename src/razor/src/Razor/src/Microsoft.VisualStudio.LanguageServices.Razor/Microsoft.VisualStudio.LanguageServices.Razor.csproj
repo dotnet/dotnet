@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Using Alias="Range" Include="Microsoft.VisualStudio.LanguageServer.Protocol.Range" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AdditionalFiles Include="$(RepoRoot)eng\BannedSymbols.MEFv2.txt" />
   </ItemGroup>
 
@@ -33,7 +37,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Microsoft.VisualStudio.Editor.Razor\Microsoft.VisualStudio.Editor.Razor.csproj" />
+    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj" />
+    <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServer.ContainedLanguage\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.csproj" />
   </ItemGroup>
 
   <ItemGroup>

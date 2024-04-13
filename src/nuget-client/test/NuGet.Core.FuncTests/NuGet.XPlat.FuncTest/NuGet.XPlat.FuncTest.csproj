@@ -1,16 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(MinimalTargetFrameworksExeSigning)</TargetFrameworks>
+    <TargetFramework>$(NETCoreTargetFramework)</TargetFramework>
     <TestProjectType>functional</TestProjectType>
     <Description>Functional tests for nuget in dotnet CLI scenarios, using the NuGet.CommandLine.XPlat assembly.</Description>
     <UseParallelXunit>true</UseParallelXunit>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Runtime" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
-    <PackageReference Include="Microsoft.Net.Compilers.Toolset" IncludeAssets="None" PrivateAssets="All" GeneratePathProperty="true" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
@@ -21,15 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+    <None Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks\NuGet.targets"
+          CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks\NuGet.targets">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <Target Name="CopyTargets" AfterTargets="AfterBuild">
-    <Copy Condition=" '$(IsCore)' == 'true' " SourceFiles="$(PkgMicrosoft_Net_Compilers_Toolset)\tasks\netcoreapp3.1\Microsoft.Managed.Core.targets;$(PkgMicrosoft_Net_Compilers_Toolset)\tasks\netcoreapp3.1\Microsoft.CSharp.Core.targets" DestinationFolder="$(MSBuildProjectDirectory)\$(OutputPath)\Roslyn\" />
-    <Copy Condition="'$(TargetFramework)' == '$(NETFXTargetFramework)'" SourceFiles="$(PkgMicrosoft_Net_Compilers_Toolset)\tasks\net472\Microsoft.Managed.Core.targets;$(PkgMicrosoft_Net_Compilers_Toolset)\tasks\net472\Microsoft.CSharp.Core.targets" DestinationFolder="$(MSBuildProjectDirectory)\$(OutputPath)\..\..\Bin\Roslyn\" />
-  </Target>
 </Project>

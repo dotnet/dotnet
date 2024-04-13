@@ -1,0 +1,75 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp2.0;net472</TargetFrameworks>
+    <Description>Entity Framework Core Command-line Tools</Description>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Microsoft.EntityFrameworkCore.Tools</RootNamespace>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\..\rulesets\EFCore.noxmldocs.ruleset</CodeAnalysisRuleSet>
+    <RollForward>Major</RollForward>
+    <ImplicitUsings>true</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\dotnet-ef\Exe.cs" />
+    <Compile Include="..\Shared\CodeAnnotations.cs" />
+    <Compile Include="..\EFCore\Infrastructure\ProductInfo.cs" />
+    <Compile Include="..\EFCore.Design\Design\IOperationReportHandler.cs" />
+    <Compile Include="..\EFCore.Design\Design\IOperationResultHandler.cs" />
+    <Compile Include="..\EFCore.Design\Design\OperationReportHandler.cs" />
+    <Compile Include="..\EFCore.Design\Design\OperationResultHandler.cs" />
+    <Compile Include="..\EFCore.Design\Design\Internal\IOperationReporter.cs" />
+    <Compile Include="..\EFCore.Design\Design\Internal\OperationReporter.cs" />
+    <Compile Include="..\EFCore.Relational\Internal\SemanticVersionComparer.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Generators\BundleProgramGenerator.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>BundleProgramGenerator.cs</LastGenOutput>
+    </None>
+    <None Update="Generators\BundleProjectGenerator.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>BundleProjectGenerator.cs</LastGenOutput>
+    </None>
+    <None Update="Properties\Resources.Designer.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Generators\BundleProgramGenerator.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BundleProgramGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Generators\BundleProjectGenerator.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BundleProjectGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.Designer.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <Target Name="BuildOtherPlatforms" AfterTargets="Build" Condition=" '$(TargetFramework)' == 'net472' And '$(Platform)' == 'AnyCPU' ">
+    <MSBuild Projects="$(MSBuildProjectFullPath)" Properties="TargetFramework=$(TargetFramework);Platform=x86;Configuration=$(Configuration)" Targets="Build" />
+    <MSBuild Projects="$(MSBuildProjectFullPath)" Properties="TargetFramework=$(TargetFramework);Platform=ARM64;Configuration=$(Configuration)" Targets="Build" />
+  </Target>
+
+</Project>

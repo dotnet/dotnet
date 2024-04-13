@@ -55,6 +55,10 @@ Invoke-BuildStep 'Installing .NET CLI' {
     Install-DotnetCLI -Force:$Force -SkipDotnetInfo:$SkipDotnetInfo
 } -ev +BuildErrors
 
+Invoke-BuildStep 'Installing .NET SDKs for functional tests' {
+    Install-DotNetSdksForTesting -Force:$Force
+} -ev +BuildErrors
+
 Invoke-BuildStep 'Cleaning package cache' {
     Clear-PackageCache
 } -skip:(-not $CleanCache) -ev +BuildErrors

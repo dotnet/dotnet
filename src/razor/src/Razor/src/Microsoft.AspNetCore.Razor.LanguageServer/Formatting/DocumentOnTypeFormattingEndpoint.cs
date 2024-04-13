@@ -52,23 +52,23 @@ internal class DocumentOnTypeFormattingEndpoint(
 
     public async Task<TextEdit[]?> HandleRequestAsync(DocumentOnTypeFormattingParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Starting OnTypeFormatting request for {requestTextDocumentUri}.", request.TextDocument.Uri);
+        _logger.LogInformation($"Starting OnTypeFormatting request for {request.TextDocument.Uri}.");
 
         if (!_optionsMonitor.CurrentValue.EnableFormatting)
         {
-            _logger.LogInformation("Formatting option disabled.");
+            _logger.LogInformation($"Formatting option disabled.");
             return null;
         }
 
         if (!_optionsMonitor.CurrentValue.FormatOnType)
         {
-            _logger.LogInformation("Formatting on type disabled.");
+            _logger.LogInformation($"Formatting on type disabled.");
             return null;
         }
 
         if (!s_allTriggerCharacters.Contains(request.Character, StringComparer.Ordinal))
         {
-            _logger.LogWarning("Unexpected trigger character '{requestCharacter}'.", request.Character);
+            _logger.LogWarning($"Unexpected trigger character '{request.Character}'.");
             return null;
         }
 
@@ -76,7 +76,7 @@ internal class DocumentOnTypeFormattingEndpoint(
 
         if (documentContext is null)
         {
-            _logger.LogWarning("Failed to find document {requestTextDocumentUri}.", request.TextDocument.Uri);
+            _logger.LogWarning($"Failed to find document {request.TextDocument.Uri}.");
             return null;
         }
 
@@ -85,7 +85,7 @@ internal class DocumentOnTypeFormattingEndpoint(
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         if (codeDocument.IsUnsupported())
         {
-            _logger.LogWarning("Failed to retrieve generated output for document {requestTextDocumentUri}.", request.TextDocument.Uri);
+            _logger.LogWarning($"Failed to retrieve generated output for document {request.TextDocument.Uri}.");
             return null;
         }
 
@@ -98,14 +98,14 @@ internal class DocumentOnTypeFormattingEndpoint(
         var triggerCharacterKind = _razorDocumentMappingService.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: false);
         if (triggerCharacterKind is not (RazorLanguageKind.CSharp or RazorLanguageKind.Html))
         {
-            _logger.LogInformation("Unsupported trigger character language {triggerCharacterKind:G}.", triggerCharacterKind);
+            _logger.LogInformation($"Unsupported trigger character language {triggerCharacterKind:G}.");
             return null;
         }
 
         if (!IsApplicableTriggerCharacter(request.Character, triggerCharacterKind))
         {
             // We were triggered but the trigger character doesn't make sense for the current cursor position. Bail.
-            _logger.LogInformation("Unsupported trigger character location.");
+            _logger.LogInformation($"Unsupported trigger character location.");
             return null;
         }
 
@@ -116,11 +116,11 @@ internal class DocumentOnTypeFormattingEndpoint(
         var formattedEdits = await _razorFormattingService.FormatOnTypeAsync(documentContext, triggerCharacterKind, Array.Empty<TextEdit>(), request.Options, hostDocumentIndex, request.Character[0], cancellationToken).ConfigureAwait(false);
         if (formattedEdits.Length == 0)
         {
-            _logger.LogInformation("No formatting changes were necessary");
+            _logger.LogInformation($"No formatting changes were necessary");
             return null;
         }
 
-        _logger.LogInformation("Returning {formattingEditsLength} final formatted results.", formattedEdits.Length);
+        _logger.LogInformation($"Returning {formattedEdits.Length} final formatted results.");
         return formattedEdits;
     }
 

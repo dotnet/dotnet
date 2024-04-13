@@ -7,6 +7,11 @@
         <target state="translated">La valeur ne peut pas être Null ni être une chaîne vide.</target>
         <note />
       </trans-unit>
+      <trans-unit id="LanguageServer_Initialization_Failed">
+        <source>{0} failed to initialize.  Please report a problem via Help -&gt; Send Feedback -&gt; Report a Problem.  Status = {1}.  Exception = {2}</source>
+        <target state="translated">{0} n’a pas pu s’initialiser.  Signalez un problème via Help -&gt; Envoyer des commentaires -&gt; signaler un problème.  État = {1}.  Exception = {2}</target>
+        <note>{0} is the language server name. Status is the status of the initialization. Exception is the exception encountered during initialization.</note>
+      </trans-unit>
       <trans-unit id="ProximityExpression_Dialog_Description">
         <source>Razor Debugger</source>
         <target state="translated">Débogueur Razor</target>
@@ -15,6 +20,11 @@
       <trans-unit id="ProximityExpression_Dialog_Title">
         <source>Determining proximity expressions...</source>
         <target state="translated">Détermination des expressions de proximité...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="View Code">
+        <source>View Code</source>
+        <target state="translated">Afficher le code</target>
         <note />
       </trans-unit>
     </body>

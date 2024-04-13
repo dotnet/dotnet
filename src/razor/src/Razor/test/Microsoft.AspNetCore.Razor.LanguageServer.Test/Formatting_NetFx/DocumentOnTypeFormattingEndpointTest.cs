@@ -207,7 +207,7 @@ public class DocumentOnTypeFormattingEndpointTest(ITestOutputHelper testOutput) 
             Position = new Position(2, 11),
             Options = new FormattingOptions { InsertSpaces = true, TabSize = 4 }
         };
-        var documentContext = documentResolver.TryCreateForOpenDocument(uri);
+        var documentContext = await documentResolver.TryCreateForOpenDocumentAsync(uri, DisposalToken);
         var requestContext = CreateRazorRequestContext(documentContext!);
 
         // Act

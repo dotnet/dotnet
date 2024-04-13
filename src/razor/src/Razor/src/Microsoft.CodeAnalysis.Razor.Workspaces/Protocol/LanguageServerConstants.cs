@@ -5,14 +5,6 @@ namespace Microsoft.CodeAnalysis.Razor.Protocol;
 
 internal static class LanguageServerConstants
 {
-    public const int VSCompletionItemKindOffset = 118115;
-
-    public const string DefaultProjectConfigurationFile = "project.razor.bin";
-
-    public const string RazorSemanticTokensLegendEndpoint = "_vs_/textDocument/semanticTokensLegend";
-
-    public const string SemanticTokensProviderName = "semanticTokensProvider";
-
     public const string RazorLanguageQueryEndpoint = "razor/languageQuery";
 
     public const string RazorBreakpointSpanEndpoint = "razor/breakpointSpan";
@@ -24,10 +16,6 @@ internal static class LanguageServerConstants
     public const string RazorMonitorProjectConfigurationFilePathEndpoint = "razor/monitorProjectConfigurationFilePath";
 
     public const string RazorMapToDocumentRangesEndpoint = "razor/mapToDocumentRanges";
-
-    public const string RazorTranslateDiagnosticsEndpoint = "razor/translateDiagnostics";
-
-    public const string RazorMapToDocumentEditsEndpoint = "razor/mapToDocumentEdits";
 
     public const string RazorCodeActionRunnerCommand = "razor/runCodeAction";
 

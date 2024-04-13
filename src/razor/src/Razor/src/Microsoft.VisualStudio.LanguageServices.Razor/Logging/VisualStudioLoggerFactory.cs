@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Logging;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.Logging;
+namespace Microsoft.VisualStudio.Razor.Logging;
 
 [Export(typeof(ILoggerFactory))]
 [method: ImportingConstructor]

@@ -94,6 +94,7 @@ namespace NuGet.PackageManagement.VisualStudio
                         && packageSource.Source.Equals(packageSourceContextInfo.Source, StringComparison.InvariantCulture)
                         && packageSource.ProtocolVersion == packageSourceContextInfo.ProtocolVersion
                         && packageSource.AllowInsecureConnections == packageSourceContextInfo.AllowInsecureConnections
+                        && packageSource.DisableTLSCertificateValidation == packageSourceContextInfo.DisableTLSCertificateValidation
                         && packageSource.IsEnabled == packageSourceContextInfo.IsEnabled)
                     {
                         newPackageSources.Add(packageSource);
@@ -113,6 +114,7 @@ namespace NuGet.PackageManagement.VisualStudio
                             Description = packageSource.Description,
                             ProtocolVersion = packageSourceContextInfo.ProtocolVersion,
                             AllowInsecureConnections = packageSourceContextInfo.AllowInsecureConnections,
+                            DisableTLSCertificateValidation = packageSourceContextInfo.DisableTLSCertificateValidation,
                             MaxHttpRequestsPerSource = packageSource.MaxHttpRequestsPerSource,
                         };
 

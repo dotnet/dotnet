@@ -20,4 +20,9 @@
     <ProjectReference Include="..\NuGet.Common\NuGet.Common.csproj" />
     <ProjectReference Include="..\NuGet.Versioning\NuGet.Versioning.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="NuGet.Commands.Test" />
+    <InternalsVisibleTo Include="NuGet.ProjectModel.Test" />
+  </ItemGroup>
 </Project>

@@ -74,6 +74,11 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="NuGet.Tools.Test" />
+  </ItemGroup>
+
   <Target Name="DetermineGenerateProductVersionAssemblyInfoOutputs">
     <ItemGroup>
       <_ProductVersionAssemblyInfoFile Include="$(IntermediateOutputPath)ProductVersion.g$(DefaultLanguageSourceExtension)">

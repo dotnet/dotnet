@@ -18,7 +18,8 @@ namespace NuGet.Configuration.Test
             {
                 Credentials = credentials,
                 ProtocolVersion = 43,
-                AllowInsecureConnections = true
+                AllowInsecureConnections = true,
+                DisableTLSCertificateValidation = true
             };
 
             // Act
@@ -32,6 +33,7 @@ namespace NuGet.Configuration.Test
             Assert.Equal(source.IsEnabled, result.IsEnabled);
             Assert.Equal(source.ProtocolVersion, result.ProtocolVersion);
             Assert.Equal(source.AllowInsecureConnections, result.AllowInsecureConnections);
+            Assert.Equal(source.DisableTLSCertificateValidation, result.DisableTLSCertificateValidation);
 
             // source credential
             result.Credentials.Should().NotBeNull();
@@ -46,11 +48,12 @@ namespace NuGet.Configuration.Test
             var source = new PackageSource("Source", "SourceName", isEnabled: false)
             {
                 ProtocolVersion = 43,
-                AllowInsecureConnections = true
+                AllowInsecureConnections = true,
+                DisableTLSCertificateValidation = true
             };
             var result = source.AsSourceItem();
 
-            var expectedItem = new SourceItem("SourceName", "Source", "43", "True");
+            var expectedItem = new SourceItem("SourceName", "Source", "43", "True", "True");
 
             SettingsTestUtils.DeepEquals(result, expectedItem).Should().BeTrue();
         }

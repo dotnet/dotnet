@@ -3,7 +3,7 @@
 
 using System;
 using Microsoft.CodeAnalysis.Razor.Settings;
-using Microsoft.VisualStudio.Editor.Razor.Settings;
+using Microsoft.VisualStudio.Razor.Settings;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor.Settings;
 

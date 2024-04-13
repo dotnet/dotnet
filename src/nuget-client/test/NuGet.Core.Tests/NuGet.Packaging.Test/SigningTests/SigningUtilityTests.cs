@@ -3,16 +3,18 @@
 
 using System;
 using System.Collections.Generic;
+#if IS_SIGNING_SUPPORTED
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-#if IS_SIGNING_SUPPORTED
 using System.Security.Cryptography.Pkcs;
 #endif
 using System.Security.Cryptography.X509Certificates;
+#if IS_SIGNING_SUPPORTED
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
+#endif
 using NuGet.Common;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
@@ -111,7 +113,7 @@ namespace NuGet.Packaging.Test
 
                 Assert.Equal(1, logger.Errors);
 
-#if !NETCORE5_0
+#if NETCOREAPP3_1
                 if (RuntimeEnvironmentHelper.IsLinux)
                 {
                     SigningTestUtility.AssertRevocationStatusUnknown(logger.LogMessages, LogLevel.Warning);
@@ -137,7 +139,7 @@ namespace NuGet.Packaging.Test
                 SigningTestUtility.AssertUntrustedRoot(logger.LogMessages, LogLevel.Warning);
 
 
-#if !NETCORE5_0
+#if NETCOREAPP3_1
                 if (RuntimeEnvironmentHelper.IsLinux)
                 {
                     SigningTestUtility.AssertRevocationStatusUnknown(logger.LogMessages, LogLevel.Warning);

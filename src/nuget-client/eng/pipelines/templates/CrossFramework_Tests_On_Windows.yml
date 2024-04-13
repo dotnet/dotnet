@@ -19,19 +19,18 @@ steps:
     arguments: "-Force -CleanCache"
 
 - task: MSBuild@1
-  displayName: "Restore for VS2019"
+  displayName: "Restore"
   inputs:
-    solution: "build\\build.proj"
+    solution: '$(Build.Repository.LocalPath)\\test\\NuGet.Core.FuncTests\\NuGet.Signing.CrossFramework.Test\\NuGet.Signing.CrossFramework.Test.csproj'
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /target:RestoreVS /property:BuildNumber=$(BuildNumber) /property:BuildRTM=false /binarylogger:$(Build.StagingDirectory)\\binlog\\01.Restore.binlog"
+    msbuildArguments: "/target:Restore /property:BuildNumber=$(BuildNumber) /binarylogger:$(Build.StagingDirectory)\\binlog\\01.Restore.binlog"
 
 - task: MSBuild@1
-  displayName: "BuildNoVSIX"
-  continueOnError: "true"
+  displayName: "Build"
   inputs:
-    solution: "build\\build.proj"
+    solution: '$(Build.Repository.LocalPath)\\test\\NuGet.Core.FuncTests\\NuGet.Signing.CrossFramework.Test\\NuGet.Signing.CrossFramework.Test.csproj'
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /target:BuildNoVSIX /property:BuildRTM=false /property:BuildNumber=$(BuildNumber) /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog"
+    msbuildArguments: "/restore:false /property:BuildNumber=$(BuildNumber) /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog"
 
 - task: DotNetCoreCLI@2
   displayName: "Run Cross Verify Tests (.NET Framework)"
@@ -41,16 +40,6 @@ steps:
     projects: '$(Build.Repository.LocalPath)\test\NuGet.Core.FuncTests\NuGet.Signing.CrossFramework.Test\NuGet.Signing.CrossFramework.Test.csproj'
     arguments: '--no-restore --no-build --framework net472 --settings:$(Build.Repository.LocalPath)\build\xunit.runsettings /noautorsp /property:Configuration=$(BuildConfiguration) "/binarylogger:$(Build.StagingDirectory)\\binlog\\03.Test-net472.binlog"'
     testRunTitle: 'NuGet.Client Cross Verify Tests On Windows (.NET Framework)'
-
-- task: DotNetCoreCLI@2
-  displayName: "Run Cross Verify Tests (.NET 7.0)"
-  continueOnError: ${{ eq(variables['IsOfficialBuild'], 'true') }}
-  inputs:
-    command: 'test'
-    projects: '$(Build.Repository.LocalPath)\test\NuGet.Core.FuncTests\NuGet.Signing.CrossFramework.Test\NuGet.Signing.CrossFramework.Test.csproj'
-    arguments: '--no-restore --no-build --framework net7.0 --settings:$(Build.Repository.LocalPath)\build\xunit.runsettings /noautorsp /property:Configuration=$(BuildConfiguration) "/binarylogger:$(Build.StagingDirectory)\\binlog\\03.Test-net7.0.binlog"'
-    testRunTitle: 'NuGet.Client Cross Verify Tests On Windows (.NET 7.0)'
-    condition: "succeededOrFailed()"
 
 - task: DotNetCoreCLI@2
   displayName: "Run Cross Verify Tests (.NET 8.0)"

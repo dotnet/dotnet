@@ -3,11 +3,10 @@
 
 using System.ComponentModel.Composition;
 using System.Threading;
-using Microsoft.VisualStudio.Editor.Razor;
-using Microsoft.VisualStudio.LiveShare.Razor.Guest;
+using Microsoft.VisualStudio.Razor.LiveShare.Guest;
 using Microsoft.VisualStudio.Threading;
 
-namespace Microsoft.VisualStudio.LiveShare.Razor;
+namespace Microsoft.VisualStudio.Razor.LiveShare;
 
 [Export(typeof(ProjectCapabilityResolver))]
 [method: ImportingConstructor]

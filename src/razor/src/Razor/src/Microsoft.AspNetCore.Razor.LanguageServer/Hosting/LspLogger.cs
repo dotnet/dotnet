@@ -29,7 +29,7 @@ internal class LspLogger : ILogger
         return logLevel >= _logLevel;
     }
 
-    public void Log<TState>(LogLevel logLevel, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+    public void Log(LogLevel logLevel, string message, Exception? exception)
     {
         if (!IsEnabled(logLevel))
         {
@@ -46,10 +46,9 @@ internal class LspLogger : ILogger
             LogLevel.Trace => MessageType.Log,
             _ => throw new NotImplementedException(),
         };
-        var message = formatter(state, exception);
-        if (message == "[null]" && exception is not null)
+        if (exception is not null)
         {
-            message = exception.ToString();
+            message += Environment.NewLine + exception.ToString();
         }
 
         var @params = new LogMessageParams

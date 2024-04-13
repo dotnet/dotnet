@@ -4,7 +4,7 @@
 using System.Collections.Immutable;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 internal partial class WindowsRazorProjectHostBase
 {

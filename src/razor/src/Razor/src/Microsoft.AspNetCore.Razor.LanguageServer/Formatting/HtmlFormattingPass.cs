@@ -73,7 +73,7 @@ internal class HtmlFormattingPass : FormattingPassBase
         var changedText = originalText;
         var changedContext = context;
 
-        _logger.LogTestOnly("Before HTML formatter:\r\n{changedText}", changedText);
+        _logger.LogTestOnly($"Before HTML formatter:\r\n{changedText}");
 
         if (htmlEdits.Length > 0)
         {
@@ -82,7 +82,7 @@ internal class HtmlFormattingPass : FormattingPassBase
             // Create a new formatting context for the changed razor document.
             changedContext = await context.WithTextAsync(changedText).ConfigureAwait(false);
 
-            _logger.LogTestOnly("After normalizedEdits:\r\n{changedText}", changedText);
+            _logger.LogTestOnly($"After normalizedEdits:\r\n{changedText}");
         }
         else if (context.IsFormatOnType)
         {
@@ -95,7 +95,7 @@ internal class HtmlFormattingPass : FormattingPassBase
         {
             // Apply the edits that adjust indentation.
             changedText = changedText.WithChanges(indentationChanges);
-            _logger.LogTestOnly("After AdjustRazorIndentation:\r\n{changedText}", changedText);
+            _logger.LogTestOnly($"After AdjustRazorIndentation:\r\n{changedText}");
         }
 
         var finalChanges = changedText.GetTextChanges(originalText);

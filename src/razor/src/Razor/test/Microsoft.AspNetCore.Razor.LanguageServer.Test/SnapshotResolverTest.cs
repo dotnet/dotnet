@@ -24,14 +24,9 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         var snapshotResolver = await CreateSnapshotResolverAsync(normalizedFilePath);
 
         // Act
-        IDocumentSnapshot? document = null;
-        var result = await RunOnDispatcherAsync(() =>
-        {
-            return snapshotResolver.TryResolveDocumentInAnyProject(documentFilePath, out document);
-        });
+        var document = await snapshotResolver.ResolveDocumentInAnyProjectAsync(documentFilePath, DisposalToken);
 
         // Assert
-        Assert.True(result);
         Assert.NotNull(document);
         Assert.Equal(normalizedFilePath, document.FilePath);
     }
@@ -45,9 +40,9 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         var projectManager = CreateProjectSnapshotManager();
         var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
-        await projectManager.UpdateAsync(updater =>
+        await projectManager.UpdateAsync(async updater =>
         {
-            var miscProject = snapshotResolver.GetMiscellaneousProject();
+            var miscProject = await snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
             var hostProject = new HostProject(miscProject.FilePath, miscProject.IntermediateOutputPath, FallbackRazorConfiguration.Latest, miscProject.RootNamespace);
             updater.DocumentAdded(
                 hostProject.Key,
@@ -56,14 +51,9 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         });
 
         // Act
-        IDocumentSnapshot? document = null;
-        var result = await RunOnDispatcherAsync(() =>
-        {
-            return snapshotResolver.TryResolveDocumentInAnyProject(documentFilePath, out document);
-        });
+        var document = await snapshotResolver.ResolveDocumentInAnyProjectAsync(documentFilePath, DisposalToken);
 
         // Assert
-        Assert.True(result);
         Assert.NotNull(document);
         Assert.Equal(normalizedFilePath, document.FilePath);
     }
@@ -77,14 +67,9 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         // Act
-        IDocumentSnapshot? document = null;
-        var result = await RunOnDispatcherAsync(() =>
-        {
-            return snapshotResolver.TryResolveDocumentInAnyProject(documentFilePath, out document);
-        });
+        var document = await snapshotResolver.ResolveDocumentInAnyProjectAsync(documentFilePath, DisposalToken);
 
         // Assert
-        Assert.False(result);
         Assert.Null(document);
     }
 
@@ -97,15 +82,9 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         // Act
-        IProjectSnapshot[]? projects = null;
-        var result = await RunOnDispatcherAsync(() =>
-        {
-            return snapshotResolver.TryResolveAllProjects(documentFilePath, out projects);
-        });
+        var projects = await snapshotResolver.TryResolveAllProjectsAsync(documentFilePath, DisposalToken);
 
         // Assert
-        Assert.False(result);
-        Assert.NotNull(projects);
         Assert.Empty(projects);
     }
 
@@ -117,21 +96,12 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         var projectManager = CreateProjectSnapshotManager();
         var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            _ = snapshotResolver.GetMiscellaneousProject();
-        });
+        await snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
 
         // Act
-        IProjectSnapshot[]? projects = null;
-        var result = await RunOnDispatcherAsync(() =>
-        {
-            return snapshotResolver.TryResolveAllProjects(documentFilePath, out projects);
-        });
+        var projects = await snapshotResolver.TryResolveAllProjectsAsync(documentFilePath, DisposalToken);
 
         // Assert
-        Assert.False(result);
-        Assert.NotNull(projects);
         Assert.Empty(projects);
     }
 
@@ -143,16 +113,11 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         var snapshotResolver = await CreateSnapshotResolverAsync(documentFilePath, addToMiscellaneous: true);
 
         // Act
-        IProjectSnapshot[]? projects = null;
-        var result = await RunOnDispatcherAsync(() =>
-        {
-            return snapshotResolver.TryResolveAllProjects(documentFilePath, out projects);
-        });
+        var projects = await snapshotResolver.TryResolveAllProjectsAsync(documentFilePath, DisposalToken);
 
         // Assert
-        Assert.True(result);
-        Assert.NotNull(projects);
-        Assert.Single(projects, snapshotResolver.GetMiscellaneousProject());
+        var miscFilesProject = await snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
+        Assert.Single(projects, miscFilesProject);
     }
 
     [Fact]
@@ -169,15 +134,9 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         });
 
         // Act
-        IProjectSnapshot[]? projects = null;
-        var result = await RunOnDispatcherAsync(() =>
-        {
-            return snapshotResolver.TryResolveAllProjects(documentFilePath, out projects);
-        });
+        var projects = await snapshotResolver.TryResolveAllProjectsAsync(documentFilePath, DisposalToken);
 
         // Assert
-        Assert.False(result);
-        Assert.NotNull(projects);
         Assert.Empty(projects);
     }
 
@@ -200,15 +159,9 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         // Act
-        IProjectSnapshot[]? projects = null;
-        var result = await RunOnDispatcherAsync(() =>
-        {
-            return snapshotResolver.TryResolveAllProjects(documentFilePath, out projects);
-        });
+        var projects = await snapshotResolver.TryResolveAllProjectsAsync(documentFilePath, DisposalToken);
 
         // Assert
-        Assert.True(result);
-        Assert.NotNull(projects);
         var project = Assert.Single(projects);
         AssertSnapshotsEqual(expectedProject, project);
     }
@@ -223,9 +176,9 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         var projectManager = CreateProjectSnapshotManager();
         var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
-        var miscProject = await projectManager.UpdateAsync(updater =>
+        var miscProject = await projectManager.UpdateAsync(async updater =>
         {
-            var miscProject = (ProjectSnapshot)snapshotResolver.GetMiscellaneousProject();
+            var miscProject = (ProjectSnapshot)await snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
             updater.CreateAndAddDocument(miscProject, documentFilePath);
             updater.CreateAndAddProject("C:/path/to/project.csproj");
 
@@ -233,15 +186,9 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         });
 
         // Act
-        IProjectSnapshot[]? projects = null;
-        var result = await RunOnDispatcherAsync(() =>
-        {
-            return snapshotResolver.TryResolveAllProjects(documentFilePath, out projects);
-        });
+        var projects = await snapshotResolver.TryResolveAllProjectsAsync(documentFilePath, DisposalToken);
 
         // Assert
-        Assert.True(result);
-        Assert.NotNull(projects);
         var project = Assert.Single(projects);
         AssertSnapshotsEqual(miscProject, project);
     }
@@ -263,15 +210,9 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         });
 
         // Act
-        IProjectSnapshot[]? projects = null;
-        var result = await RunOnDispatcherAsync(() =>
-        {
-            return snapshotResolver.TryResolveAllProjects(documentFilePath, out projects);
-        });
+        var projects = await snapshotResolver.TryResolveAllProjectsAsync(documentFilePath, DisposalToken);
 
         // Assert
-        Assert.True(result);
-        Assert.NotNull(projects);
         var project = Assert.Single(projects);
         AssertSnapshotsEqual(ownerProject, project);
     }
@@ -284,7 +225,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         // Act
-        var project = await RunOnDispatcherAsync(snapshotResolver.GetMiscellaneousProject);
+        var project = await snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
         var inManager = projectManager.GetLoadedProject(snapshotResolver.MiscellaneousHostProject.Key);
 
         // Assert
@@ -299,7 +240,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         // Act
-        var project = await RunOnDispatcherAsync(snapshotResolver.GetMiscellaneousProject);
+        var project = await snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
 
         // Assert
         Assert.Single(projectManager.GetProjects());
@@ -315,9 +256,9 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
 
         if (addToMiscellaneous)
         {
-            await projectManager.UpdateAsync(updater =>
+            await projectManager.UpdateAsync(async updater =>
             {
-                var miscProject = (ProjectSnapshot)snapshotResolver.GetMiscellaneousProject();
+                var miscProject = (ProjectSnapshot)await snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
                 updater.CreateAndAddDocument(miscProject, filePath);
             });
         }
