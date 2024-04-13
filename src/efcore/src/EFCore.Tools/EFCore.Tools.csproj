@@ -1,0 +1,67 @@
+﻿<Project>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <PackageId>Microsoft.EntityFrameworkCore.Tools</PackageId>
+    <NuspecFile>$(MSBuildThisFileDirectory)$(MSBuildProjectName).nuspec</NuspecFile>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeSource>false</IncludeSource>
+    <IncludeSymbols>true</IncludeSymbols>
+    <Description>Entity Framework Core Tools for the NuGet Package Manager Console in Visual Studio.
+
+Enables these commonly used commands:
+Add-Migration
+Bundle-Migration
+Drop-Database
+Get-DbContext
+Get-Migration
+Optimize-DbContext
+Remove-Migration
+Scaffold-DbContext
+Script-Migration
+Update-Database
+  </Description>
+    <CheckEolTargetFramework>False</CheckEolTargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ef\ef.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Templating" Version="$(MicrosoftDotNetBuildTasksTemplatingVersion)" PrivateAssets="All" IsImplicitlyDefined="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <GeneratedContent Include="*.psd1.in" />
+  </ItemGroup>
+
+  <!--
+    Workaround for insufficient support for tools packages by NuGet Pack: https://github.com/NuGet/Home/issues/6321.
+  -->
+  <Target Name="SetPackageProperties" BeforeTargets="InitializeStandardNuspecProperties" DependsOnTargets="Build">
+    <ItemGroup>
+      <NuspecProperty Include="configuration=$(Configuration)" />
+      <NuspecProperty Include="intermediateOutputPath=$(IntermediateOutputPath)" />
+    </ItemGroup>
+  </Target>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <Target Name="GenerateContent"
+    BeforeTargets="GenerateNuspec"
+    Inputs="$(MSBuildAllProjects);@(GeneratedContent)"
+    Outputs="@(GeneratedContent->'$(IntermediateOutputPath)%(FileName)'">
+    <GenerateFileFromTemplate TemplateFile="%(GeneratedContent.Identity)" Properties="VersionPrefix=$(VersionPrefix)" OutputPath="$(IntermediateOutputPath)%(FileName)" />
+  </Target>
+
+  <Target Name="Compile" />
+  <Target Name="CopyFilesToOutputDirectory" />
+
+</Project>

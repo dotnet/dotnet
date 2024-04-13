@@ -1,0 +1,99 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Entity Framework Core Tools for the .NET Command-Line Interface.
+
+Enables these commonly used dotnet-ef commands:
+dotnet ef migrations add
+dotnet ef migrations list
+dotnet ef migrations script
+dotnet ef dbcontext info
+dotnet ef dbcontext scaffold
+dotnet ef database drop
+dotnet ef database update
+    </Description>
+    <TargetFramework>$(DefaultNetCoreTargetFramework)</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <PackAsTool>true</PackAsTool>
+    <PackAsToolShimRuntimeIdentifiers>win-x64;win-x86;win-arm64</PackAsToolShimRuntimeIdentifiers>
+    <!-- Because this project uses a custom nuspec, this is necessary to ensure the generated shims are in the publish directory. -->
+    <PackagedShimOutputRootDirectory>$(OutDir)</PackagedShimOutputRootDirectory>
+    <RootNamespace>Microsoft.EntityFrameworkCore.Tools</RootNamespace>
+    <IncludeSource>false</IncludeSource>
+    <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
+    <RollForward>Major</RollForward>
+    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\..\rulesets\EFCore.noxmldocs.ruleset</CodeAnalysisRuleSet>
+    <ImplicitUsings>true</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\ef\CommandLineUtils\*.cs" Link="CommandLineUtils\%(Filename).cs" />
+    <Compile Include="..\ef\Commands\CommandBase.cs" Link="Commands\CommandBase.cs" />
+    <Compile Include="..\ef\Commands\ContextCommandBase.cs" Link="Commands\ContextCommandBase.cs" />
+    <Compile Include="..\ef\Commands\DatabaseCommand.cs" Link="Commands\DatabaseCommand.cs" />
+    <Compile Include="..\ef\Commands\DbContextCommand.cs" Link="Commands\DbContextCommand.cs" />
+    <Compile Include="..\ef\Commands\EFCommandBase.cs" Link="Commands\EFCommandBase.cs" />
+    <Compile Include="..\ef\Commands\HelpCommandBase.cs" Link="Commands\HelpCommandBase.cs" />
+    <Compile Include="..\ef\Commands\MigrationsCommand.cs" Link="Commands\MigrationsCommand.cs" />
+    <Compile Include="..\ef\Commands\RootCommand.cs" Link="Commands\Commands.cs" />
+    <Compile Include="..\ef\AnsiConsole.cs" />
+    <Compile Include="..\ef\AnsiConstants.cs" />
+    <Compile Include="..\ef\AnsiTextWriter.cs" />
+    <Compile Include="..\ef\CommandException.cs" />
+    <Compile Include="..\ef\Json.cs" />
+    <Compile Include="..\ef\Reporter.cs" />
+    <Compile Include="..\ef\Commands\**\*.Configure.cs" Link="Commands\%(RecursiveDir)%(Filename).cs" />
+    <Compile Include="..\Shared\CodeAnnotations.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ef\ef.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\EntityFrameworkCore.targets" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Resources.Designer.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.Designer.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <Target Name="SetPackageProperties" BeforeTargets="InitializeStandardNuspecProperties" DependsOnTargets="BuiltProjectOutputGroup;DebugSymbolsProjectOutputGroup">
+    <PropertyGroup>
+      <!-- Make sure we create a symbols.nupkg. -->
+      <IncludeSymbols>true</IncludeSymbols>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <NuspecProperty Include="packageType=$(PackageType)" />
+      <NuspecProperty Include="targetFramework=$(TargetFramework)" />
+
+      <NuspecProperty Include="SettingsFile=$(_ToolsSettingsFilePath)" />
+      <NuspecProperty Include="Output=$(PublishDir)**\*" />
+      <NuspecProperty Include="OutputBinary=..\..\artifacts\bin\ef\$(Configuration)\netcoreapp2.0\ef.dll" />
+      <NuspecProperty Include="OutputRuntimeConfig=..\..\artifacts\bin\ef\$(Configuration)\netcoreapp2.0\ef.runtimeconfig.json" />
+      <NuspecProperty Include="OutputSymbol=..\..\artifacts\bin\ef\$(Configuration)\netcoreapp2.0\ef.pdb" />
+      <NuspecProperty Include="OutputExe=..\..\artifacts\bin\ef\$(Configuration)\net472\ef.exe" />
+      <NuspecProperty Include="OutputExeSymbol=..\..\artifacts\bin\ef\$(Configuration)\net472\ef.pdb" />
+      <NuspecProperty Include="OutputX86Exe=..\..\artifacts\bin\ef\x86\$(Configuration)\net472\ef.exe" />
+      <NuspecProperty Include="OutputX86ExeSymbol=..\..\artifacts\bin\ef\x86\$(Configuration)\net472\ef.pdb" />
+      <NuspecProperty Include="OutputARM64Exe=..\..\artifacts\bin\ef\ARM64\$(Configuration)\net472\ef.exe" />
+      <NuspecProperty Include="OutputARM64ExeSymbol=..\..\artifacts\bin\ef\ARM64\$(Configuration)\net472\ef.pdb" />
+    </ItemGroup>
+  </Target>
+</Project>
