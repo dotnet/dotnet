@@ -52,7 +52,9 @@ namespace NuGet.ProjectModel
             _buffer = _bufferPool.Rent(bufferSize);
             _disposed = false;
             _stream = stream;
+#pragma warning disable CA2022 // Avoid inexact read
             _stream.Read(_buffer, 0, 3);
+#pragma warning restore CA2022
             if (!Utf8Bom.AsSpan().SequenceEqual(_buffer.AsSpan(0, 3)))
             {
                 _bufferUsed = 3;

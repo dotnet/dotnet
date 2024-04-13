@@ -104,7 +104,9 @@ namespace NuGet.Packaging.Signing
             var buffer = new byte[localFileHeader.UncompressedSize];
 
             reader.BaseStream.Seek(offsetToData, SeekOrigin.Begin);
+#pragma warning disable CA2022 // Avoid inexact read
             reader.BaseStream.Read(buffer, offset: 0, count: buffer.Length);
+#pragma warning restore CA2022
 
             return new MemoryStream(buffer, writable: false);
         }
