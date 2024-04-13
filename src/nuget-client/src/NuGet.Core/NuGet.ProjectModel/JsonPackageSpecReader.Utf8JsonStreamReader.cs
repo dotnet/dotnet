@@ -76,6 +76,7 @@ namespace NuGet.ProjectModel
         private static readonly byte[] EnableAuditPropertyName = Encoding.UTF8.GetBytes("enableAudit");
         private static readonly byte[] AuditLevelPropertyName = Encoding.UTF8.GetBytes("auditLevel");
         private static readonly byte[] AuditModePropertyName = Encoding.UTF8.GetBytes("auditMode");
+        private static readonly byte[] AuditSuppressionsPropertyName = Encoding.UTF8.GetBytes("suppressedAdvisories");
         private static readonly byte[] SkipContentFileWritePropertyName = Encoding.UTF8.GetBytes("skipContentFileWrite");
         private static readonly byte[] SourcesPropertyName = Encoding.UTF8.GetBytes("sources");
         private static readonly byte[] ValidateRuntimeAssetsPropertyName = Encoding.UTF8.GetBytes("validateRuntimeAssets");
@@ -1070,6 +1071,8 @@ namespace NuGet.ProjectModel
                     else if (jsonReader.ValueTextEquals(RestoreAuditPropertiesPropertyName))
                     {
                         string enableAudit = null, auditLevel = null, auditMode = null;
+                        HashSet<string> suppressedAdvisories = null;
+
                         if (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.StartObject)
                         {
                             while (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.PropertyName)
@@ -1086,6 +1089,10 @@ namespace NuGet.ProjectModel
                                 {
                                     auditMode = jsonReader.ReadNextTokenAsString();
                                 }
+                                else if (jsonReader.ValueTextEquals(AuditSuppressionsPropertyName))
+                                {
+                                    suppressedAdvisories = ReadSuppressedAdvisories(ref jsonReader);
+                                }
                                 else
                                 {
                                     jsonReader.Skip();
@@ -1097,6 +1104,7 @@ namespace NuGet.ProjectModel
                             EnableAudit = enableAudit,
                             AuditLevel = auditLevel,
                             AuditMode = auditMode,
+                            SuppressedAdvisories = suppressedAdvisories,
                         };
                     }
                     else if (jsonReader.ValueTextEquals(SkipContentFileWritePropertyName))
@@ -1820,6 +1828,26 @@ namespace NuGet.ProjectModel
 #pragma warning disable CS0612 // Type or member is obsolete
             AddTargetFramework(packageSpec, frameworkName, secondaryFramework, targetFrameworkInformation);
 #pragma warning restore CS0612 // Type or member is obsolete
+        }
+
+        private static HashSet<string> ReadSuppressedAdvisories(ref Utf8JsonStreamReader jsonReader)
+        {
+            HashSet<string> suppressedAdvisories = null;
+
+            if (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.StartObject)
+            {
+                while (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.PropertyName)
+                {
+                    var advisoryUrl = jsonReader.GetString();
+
+                    suppressedAdvisories ??= new HashSet<string>();
+                    suppressedAdvisories.Add(advisoryUrl);
+
+                    jsonReader.Skip();
+                }
+            }
+
+            return suppressedAdvisories;
         }
     }
 }

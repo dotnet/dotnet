@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworksExeForSigning)</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworksUnitTestForSigning)</TargetFrameworks>
     <TargetLatestRuntimePatch>false</TargetLatestRuntimePatch>
     <OutputType>Exe</OutputType>
     <AssemblyName>Plugin.Testable</AssemblyName>
@@ -13,7 +13,7 @@
     <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(IsCore)' == 'true'">
+  <ItemGroup Condition="'$(TargetFramework)' != '$(NETFXTargetFramework)'">
     <PackageReference Include="System.Collections" />
     <PackageReference Include="System.IO.FileSystem.Primitives" />
     <PackageReference Include="System.Resources.ResourceManager" />

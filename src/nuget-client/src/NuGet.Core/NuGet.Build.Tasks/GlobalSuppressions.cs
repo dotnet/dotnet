@@ -37,6 +37,8 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Build", "CA1819:Properties should not return arrays", Justification = "<Pending>", Scope = "member", Target = "~P:NuGet.Build.Tasks.GetRestoreDotnetCliToolsTask.RestoreSources")]
 [assembly: SuppressMessage("Build", "CA1819:Properties should not return arrays", Justification = "<Pending>", Scope = "member", Target = "~P:NuGet.Build.Tasks.GetRestoreFrameworkReferencesTask.FrameworkReferences")]
 [assembly: SuppressMessage("Build", "CA1819:Properties should not return arrays", Justification = "<Pending>", Scope = "member", Target = "~P:NuGet.Build.Tasks.GetRestoreFrameworkReferencesTask.RestoreGraphItems")]
+[assembly: SuppressMessage("Build", "CA1819:Properties should not return arrays", Justification = "<Pending>", Scope = "member", Target = "~P:NuGet.Build.Tasks.GetRestoreNuGetAuditSuppressionsTask.NuGetAuditSuppressions")]
+[assembly: SuppressMessage("Build", "CA1819:Properties should not return arrays", Justification = "<Pending>", Scope = "member", Target = "~P:NuGet.Build.Tasks.GetRestoreNuGetAuditSuppressionsTask.RestoreGraphItems")]
 [assembly: SuppressMessage("Build", "CA1819:Properties should not return arrays", Justification = "<Pending>", Scope = "member", Target = "~P:NuGet.Build.Tasks.GetRestorePackageDownloadsTask.PackageDownloads")]
 [assembly: SuppressMessage("Build", "CA1819:Properties should not return arrays", Justification = "<Pending>", Scope = "member", Target = "~P:NuGet.Build.Tasks.GetRestorePackageDownloadsTask.RestoreGraphItems")]
 [assembly: SuppressMessage("Build", "CA1819:Properties should not return arrays", Justification = "<Pending>", Scope = "member", Target = "~P:NuGet.Build.Tasks.GetRestorePackageReferencesTask.PackageReferences")]

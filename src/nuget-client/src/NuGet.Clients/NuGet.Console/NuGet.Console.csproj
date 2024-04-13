@@ -43,4 +43,10 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="NuGet.Console.TestContract" />
+    <InternalsVisibleTo Include="NuGet.PowerShellHost.Test" />
+  </ItemGroup>
+
 </Project>

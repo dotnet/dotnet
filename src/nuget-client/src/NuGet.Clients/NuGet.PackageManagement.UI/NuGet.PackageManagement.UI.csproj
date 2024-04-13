@@ -5,8 +5,7 @@
     <IncludeInVSIX>true</IncludeInVSIX>
     <AutoUnifyAssemblyReferences>true</AutoUnifyAssemblyReferences>
     <Description>Package Management UI elements for Visual Studio, Package Manager UI, Migrator, Options dialog.</Description>
-    <AssemblyOriginatorKeyFile>$(MS_PFX_PATH)</AssemblyOriginatorKeyFile>
-    <StrongNameCert>MsSharedLib72</StrongNameCert>
+    <SignWithMicrosoftKey>true</SignWithMicrosoftKey>
     <UseWpf>true</UseWpf>
     <UseWinForms>true</UseWinForms>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -102,10 +101,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Resources\PackageIconMonikers.imagemanifest">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -117,6 +112,13 @@
     <Page Update="Options\ConfigurationFilesControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="NuGet.PackageManagement.UI.Test" />
+    <InternalsVisibleTo Include="NuGet.PackageManagement.UI.TestContract" />
+    <InternalsVisibleTo Include="Test.Utility" />
   </ItemGroup>
 
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TextTemplating\Microsoft.TextTemplating.targets" Condition=" '$(MSBuildRuntimeType)' == 'Full' " />

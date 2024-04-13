@@ -244,6 +244,7 @@ namespace NuGet.Configuration
 
             packageSource.ProtocolVersion = ReadProtocolVersion(setting);
             packageSource.AllowInsecureConnections = ReadAllowInsecureConnections(setting);
+            packageSource.DisableTLSCertificateValidation = ReadDisableTLSCertificateValidation(setting);
 
             return packageSource;
         }
@@ -256,6 +257,16 @@ namespace NuGet.Configuration
             }
 
             return PackageSource.DefaultProtocolVersion;
+        }
+
+        private static bool ReadDisableTLSCertificateValidation(SourceItem setting)
+        {
+            if (bool.TryParse(setting.DisableTLSCertificateValidation, out var disableTLSCertificateValidation))
+            {
+                return disableTLSCertificateValidation;
+            }
+
+            return PackageSource.DefaultDisableTLSCertificateValidation;
         }
 
         private static bool ReadAllowInsecureConnections(SourceItem setting)

@@ -29,6 +29,7 @@ NuGet.Configuration.ClientCertificateProvider.GetClientCertificates() -> System.
 NuGet.Configuration.ClientCertificateProvider.Remove(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.ClientCertItem!>! items) -> void
 NuGet.Configuration.ConfigurationConstants
 NuGet.Configuration.ConfigurationDefaults
+NuGet.Configuration.ConfigurationDefaults.DefaultAuditSources.get -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSource!>!
 NuGet.Configuration.ConfigurationDefaults.DefaultPackageRestoreConsent.get -> string?
 NuGet.Configuration.ConfigurationDefaults.DefaultPackageSources.get -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>!
 NuGet.Configuration.ConfigurationDefaults.DefaultPushSource.get -> string?
@@ -77,6 +78,7 @@ NuGet.Configuration.IPackageSourceProvider.EnablePackageSource(string! name) -> 
 NuGet.Configuration.IPackageSourceProvider.GetPackageSourceByName(string! name) -> NuGet.Configuration.PackageSource?
 NuGet.Configuration.IPackageSourceProvider.GetPackageSourceBySource(string! source) -> NuGet.Configuration.PackageSource?
 NuGet.Configuration.IPackageSourceProvider.IsPackageSourceEnabled(string! name) -> bool
+NuGet.Configuration.IPackageSourceProvider.LoadAuditSources() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSource!>!
 NuGet.Configuration.IPackageSourceProvider.LoadPackageSources() -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>!
 NuGet.Configuration.IPackageSourceProvider.PackageSourcesChanged -> System.EventHandler?
 NuGet.Configuration.IPackageSourceProvider.RemovePackageSource(string! name) -> void
@@ -104,9 +106,12 @@ NuGet.Configuration.NuGetConfigurationException.NuGetConfigurationException(stri
 NuGet.Configuration.NuGetConstants
 NuGet.Configuration.NuGetPathContext
 NuGet.Configuration.NuGetPathContext.FallbackPackageFolders.get -> System.Collections.Generic.IReadOnlyList<string!>!
+NuGet.Configuration.NuGetPathContext.FallbackPackageFolders.init -> void
 NuGet.Configuration.NuGetPathContext.HttpCacheFolder.get -> string!
+NuGet.Configuration.NuGetPathContext.HttpCacheFolder.init -> void
 NuGet.Configuration.NuGetPathContext.NuGetPathContext() -> void
 NuGet.Configuration.NuGetPathContext.UserPackageFolder.get -> string!
+NuGet.Configuration.NuGetPathContext.UserPackageFolder.init -> void
 NuGet.Configuration.NullSettings
 NuGet.Configuration.NullSettings.AddOrUpdate(string! sectionName, NuGet.Configuration.SettingItem! item) -> void
 NuGet.Configuration.NullSettings.GetConfigFilePaths() -> System.Collections.Generic.IList<string!>!
@@ -197,8 +202,11 @@ NuGet.Configuration.PackageSourceProvider.GetPackageSourceBySource(string! sourc
 NuGet.Configuration.PackageSourceProvider.GetPackageSourceNamesMatchingNamePrefix(string! namePrefix) -> System.Collections.Generic.HashSet<string!>!
 NuGet.Configuration.PackageSourceProvider.IsPackageSourceEnabled(NuGet.Configuration.PackageSource! source) -> bool
 NuGet.Configuration.PackageSourceProvider.IsPackageSourceEnabled(string! name) -> bool
+NuGet.Configuration.PackageSourceProvider.LoadAuditSources() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSource!>!
 NuGet.Configuration.PackageSourceProvider.LoadPackageSources() -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>!
 NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings! settings) -> void
+NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings! settings, NuGet.Configuration.ConfigurationDefaults! configurationDefaults) -> void
+NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings! settings, NuGet.Configuration.ConfigurationDefaults! configurationDefaults, bool enablePackageSourcesChangedEvent) -> void
 NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings! settings, System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>! configurationDefaultSources) -> void
 NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings! settings, System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>! configurationDefaultSources, bool enablePackageSourcesChangedEvent) -> void
 NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings! settings, bool enablePackageSourcesChangedEvent) -> void
@@ -228,12 +236,14 @@ NuGet.Configuration.SettingBase.SettingBase() -> void
 NuGet.Configuration.SettingElement
 NuGet.Configuration.SettingElement.AddAttribute(string! attributeName, string! value) -> void
 NuGet.Configuration.SettingElement.AddOrUpdateAttribute(string! attributeName, string? value) -> void
+NuGet.Configuration.SettingElement.ConfigPath.get -> string?
 NuGet.Configuration.SettingElement.MutableAttributes.get -> System.Collections.Generic.Dictionary<string!, string!>!
 NuGet.Configuration.SettingElement.SettingElement() -> void
 NuGet.Configuration.SettingElement.SettingElement(System.Collections.Generic.IReadOnlyDictionary<string!, string!>? attributes) -> void
 NuGet.Configuration.SettingElementType
 NuGet.Configuration.SettingElementType.ActivePackageSource = 2 -> NuGet.Configuration.SettingElementType
 NuGet.Configuration.SettingElementType.Add = 9 -> NuGet.Configuration.SettingElementType
+NuGet.Configuration.SettingElementType.AuditSources = 20 -> NuGet.Configuration.SettingElementType
 NuGet.Configuration.SettingElementType.Author = 10 -> NuGet.Configuration.SettingElementType
 NuGet.Configuration.SettingElementType.BindingRedirects = 3 -> NuGet.Configuration.SettingElementType
 NuGet.Configuration.SettingElementType.Certificate = 11 -> NuGet.Configuration.SettingElementType
@@ -253,6 +263,7 @@ NuGet.Configuration.SettingElementType.Repository = 14 -> NuGet.Configuration.Se
 NuGet.Configuration.SettingElementType.StoreCert = 16 -> NuGet.Configuration.SettingElementType
 NuGet.Configuration.SettingElementType.Unknown = 0 -> NuGet.Configuration.SettingElementType
 NuGet.Configuration.SettingItem
+NuGet.Configuration.SettingItem.GetAttributes() -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
 NuGet.Configuration.SettingItem.SettingItem() -> void
 NuGet.Configuration.SettingItem.SettingItem(System.Collections.Generic.IReadOnlyDictionary<string!, string!>? attributes) -> void
 NuGet.Configuration.SettingSection
@@ -265,6 +276,7 @@ NuGet.Configuration.SettingText.Value.get -> string!
 NuGet.Configuration.SettingText.Value.set -> void
 NuGet.Configuration.Settings
 NuGet.Configuration.Settings.AddOrUpdate(string! sectionName, NuGet.Configuration.SettingItem! item) -> void
+NuGet.Configuration.Settings.GetAllSettingSections() -> System.Collections.Generic.IEnumerable<string!>!
 NuGet.Configuration.Settings.GetConfigFilePaths() -> System.Collections.Generic.IList<string!>!
 NuGet.Configuration.Settings.GetConfigRoots() -> System.Collections.Generic.IList<string!>!
 NuGet.Configuration.Settings.GetSection(string! sectionName) -> NuGet.Configuration.SettingSection?
@@ -276,6 +288,8 @@ NuGet.Configuration.Settings.Settings(string! root, string! fileName, bool isMac
 NuGet.Configuration.Settings.SettingsChanged -> System.EventHandler?
 NuGet.Configuration.SettingsGroup<T>
 NuGet.Configuration.SettingsGroup<T>.Children.get -> System.Collections.Generic.IList<T!>!
+NuGet.Configuration.SettingsGroup<T>.SettingsGroup(string! name) -> void
+NuGet.Configuration.SettingsGroup<T>.SettingsGroup(string! name, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? attributes, System.Collections.Generic.IEnumerable<T!>? children) -> void
 NuGet.Configuration.SettingsGroup<T>.TryGetChild(T! expectedChild, out T? currentChild) -> bool
 NuGet.Configuration.SettingsLoadingContext
 NuGet.Configuration.SettingsLoadingContext.Dispose() -> void
@@ -383,6 +397,7 @@ override NuGet.Configuration.SettingText.Clone() -> NuGet.Configuration.SettingB
 override NuGet.Configuration.SettingText.Equals(object? other) -> bool
 override NuGet.Configuration.SettingText.GetHashCode() -> int
 override NuGet.Configuration.SettingText.IsEmpty() -> bool
+override NuGet.Configuration.SettingsGroup<T>.ElementName.get -> string!
 override NuGet.Configuration.SettingsGroup<T>.IsEmpty() -> bool
 override NuGet.Configuration.SourceItem.Clone() -> NuGet.Configuration.SettingBase!
 override NuGet.Configuration.StoreClientCertItem.Clone() -> NuGet.Configuration.SettingBase!
@@ -397,6 +412,7 @@ override NuGet.Configuration.UnknownItem.IsEmpty() -> bool
 override NuGet.Configuration.VirtualSettingSection.Clone() -> NuGet.Configuration.SettingBase!
 override sealed NuGet.Configuration.AddItem.Equals(object? other) -> bool
 override sealed NuGet.Configuration.AddItem.GetHashCode() -> int
+static NuGet.Configuration.ConfigurationConstants.GetConfigKeys() -> System.Collections.Generic.IReadOnlyList<string!>!
 static NuGet.Configuration.ConfigurationDefaults.Instance.get -> NuGet.Configuration.ConfigurationDefaults!
 static NuGet.Configuration.EncryptionUtility.DecryptString(string! encryptedString) -> string!
 static NuGet.Configuration.EncryptionUtility.EncryptString(string! value) -> string!
@@ -442,6 +458,7 @@ static readonly NuGet.Configuration.ConfigurationConstants.Add -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.AllowInsecureConnections -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.AllowUntrustedRoot -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.ApiKeys -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.AuditSources -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.Author -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.BeginIgnoreMarker -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.BindingRedirectsSection -> string!

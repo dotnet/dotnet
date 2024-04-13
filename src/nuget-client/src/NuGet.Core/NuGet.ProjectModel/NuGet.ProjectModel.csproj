@@ -33,4 +33,8 @@
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="NuGet.ProjectModel.Test" />
+  </ItemGroup>
 </Project>

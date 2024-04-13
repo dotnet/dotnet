@@ -4,6 +4,7 @@
 #nullable enable
 
 using System;
+using System.Collections.Generic;
 using NuGet.Protocol;
 using NuGet.Shared;
 
@@ -27,6 +28,11 @@ namespace NuGet.ProjectModel
         /// </summary>
         /// <value>direct, all</value>
         public string? AuditMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets values indicating which advisories to suppress.
+        /// </summary>
+        public HashSet<string>? SuppressedAdvisories { get; set; }
 
         // Enum parsing and ToString are a magnitude of times slower than a naive implementation.
         public bool TryParseEnableAudit(out bool result)
@@ -90,7 +96,8 @@ namespace NuGet.ProjectModel
 
             return EnableAudit == other.EnableAudit &&
                 AuditLevel == other.AuditLevel &&
-                AuditMode == other.AuditMode;
+                AuditMode == other.AuditMode &&
+                SuppressedAdvisories.SetEqualsWithNullCheck(other.SuppressedAdvisories);
         }
 
         public override bool Equals(object? obj)
@@ -117,6 +124,7 @@ namespace NuGet.ProjectModel
             hashCodeCombiner.AddObject(EnableAudit);
             hashCodeCombiner.AddObject(AuditLevel);
             hashCodeCombiner.AddObject(AuditMode);
+            hashCodeCombiner.AddUnorderedSequence(SuppressedAdvisories);
             return hashCodeCombiner.CombinedHash;
         }
 
@@ -127,6 +135,7 @@ namespace NuGet.ProjectModel
                 EnableAudit = EnableAudit,
                 AuditLevel = AuditLevel,
                 AuditMode = AuditMode,
+                SuppressedAdvisories = SuppressedAdvisories == null ? null : new HashSet<string>(SuppressedAdvisories),
             };
             return clone;
         }

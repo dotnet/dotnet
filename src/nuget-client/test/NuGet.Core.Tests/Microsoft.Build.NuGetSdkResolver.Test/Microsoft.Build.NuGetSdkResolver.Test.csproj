@@ -1,13 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(MinimalTargetFrameworksExeSigning)</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
     <UseParallelXunit>true</UseParallelXunit>
     <Description>Unit tests for Microsoft.Build.NuGetSdkResolver.</Description>
   </PropertyGroup>
-
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Framework" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\NuGet.Core\Microsoft.Build.NuGetSdkResolver\Microsoft.Build.NuGetSdkResolver.csproj" />
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
-    <PackageReference Include="Microsoft.Build.Framework" />
   </ItemGroup>
 </Project>

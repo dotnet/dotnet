@@ -30,7 +30,7 @@ namespace NuGet.Internal.Tools.ShipPublicApis
             {
                 var path_Argument = ParseResult.GetValue<DirectoryInfo>(pathArgument);
                 var resort_Option = ParseResult.GetValue<bool>(resortOption);
-                if (path_Argument is not null && resort_Option)
+                if (path_Argument is not null)
                 {
                     await MainAsync(path_Argument, resort_Option);
                 }

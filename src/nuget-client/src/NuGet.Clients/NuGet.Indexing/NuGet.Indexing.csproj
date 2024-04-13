@@ -6,6 +6,7 @@
     <PackProject>true</PackProject>
     <Shipping>true</Shipping>
     <IncludeInVsix>true</IncludeInVsix>
+    <SignWithMicrosoftKey>true</SignWithMicrosoftKey>
   </PropertyGroup>
 
   <ItemGroup>

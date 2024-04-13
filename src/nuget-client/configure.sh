@@ -66,6 +66,41 @@ fi
 
 echo "=================================================================="
 
+NETSDK_FOR_TESTING_DIR="$(pwd)/.test/dotnet"
+
+# If the DOTNET_SDK_TEST_VERSIONS environment variable is set, use its value instead of the ones in DotNetSdkTestVersions.txt
+if [ "$DOTNET_SDK_TEST_VERSIONS" != "" ]; then
+    echo "Using environment variable DOTNET_SDK_TEST_VERSIONS instead of DotNetSdkTestVersions.txt.  Value: '$DOTNET_SDK_TEST_VERSIONS'"
+    IFS=';' read -ra array <<< "$DOTNET_SDK_TEST_VERSIONS"
+    for CliArgs in "${array[@]}";
+    do
+        echo "Installing .NET SDKs for functional tests..."
+        echo "'cli/dotnet-install.sh -InstallDir $NETSDK_FOR_TESTING_DIR -NoPath $CliArgs'"
+        
+        cli/dotnet-install.sh -InstallDir $NETSDK_FOR_TESTING_DIR -NoPath $CliArgs
+        if (( $? )); then
+            echo "The .NET SDK install failed!"
+            return 1
+        fi
+    done
+else 
+    # Get CLI Branches for testing
+    cat build/DotNetSdkTestVersions.txt | while IFS=$'\r' read -r CliArgs || [[ -n $line ]];
+    do
+        if [ "${CliArgs:0:1}" != "#" ] || [ "$CliArgs" == "" ]; then
+            echo "'cli/dotnet-install.sh -InstallDir $NETSDK_FOR_TESTING_DIR -NoPath $CliArgs'"
+
+            cli/dotnet-install.sh -InstallDir $NETSDK_FOR_TESTING_DIR -NoPath $CliArgs
+            if (( $? )); then
+                echo "The .NET SDK install failed!"
+                return 1
+            fi
+        fi
+    done
+fi
+
+echo "=================================================================="
+
 echo "Initializing submodules..."
 git submodule init
 git submodule update

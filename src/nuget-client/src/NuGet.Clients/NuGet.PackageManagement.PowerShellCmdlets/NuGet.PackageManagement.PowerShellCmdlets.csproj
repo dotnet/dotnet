@@ -59,6 +59,11 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="NuGetConsole.Host.PowerShell.Test" />
+  </ItemGroup>
+
   <Target Name="PowerShellCmdletsAfterBuild" AfterTargets="AfterBuild">
     <ItemGroup>
       <PowerShellScripts Include="$(MSBuildProjectDirectory)\Scripts\*.ps*" Exclude="$(MSBuildProjectDirectory)\Scripts\NuGet.psd1" />

@@ -55,6 +55,7 @@ NuGet.LibraryModel.LibraryDependency.IncludeType.get -> NuGet.LibraryModel.Libra
 NuGet.LibraryModel.LibraryDependency.IncludeType.set -> void
 NuGet.LibraryModel.LibraryDependency.LibraryDependency() -> void
 NuGet.LibraryModel.LibraryDependency.LibraryDependency(NuGet.LibraryModel.LibraryRange! libraryRange) -> void
+NuGet.LibraryModel.LibraryDependency.LibraryDependency(System.Collections.Generic.IList<NuGet.Common.NuGetLogCode>! noWarn) -> void
 NuGet.LibraryModel.LibraryDependency.LibraryRange.get -> NuGet.LibraryModel.LibraryRange!
 NuGet.LibraryModel.LibraryDependency.LibraryRange.set -> void
 NuGet.LibraryModel.LibraryDependency.Name.get -> string!

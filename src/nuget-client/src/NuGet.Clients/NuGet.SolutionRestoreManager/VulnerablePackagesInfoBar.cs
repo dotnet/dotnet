@@ -13,6 +13,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using NuGet.PackageManagement;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Telemetry;
 
@@ -23,14 +24,36 @@ namespace NuGet.SolutionRestoreManager
     public class VulnerablePackagesInfoBar : IVulnerabilitiesNotificationService, IVsInfoBarUIEvents
     {
         private IAsyncServiceProvider _asyncServiceProvider = AsyncServiceProvider.GlobalProvider;
-        private IVsInfoBarUIElement? _infoBarUIElement;
-        private bool _infoBarVisible = false; // InfoBar is currently being displayed in the Solution Explorer
-        private bool _wasInfoBarClosed = false; // InfoBar was closed by the user, using the 'x'(close) in the InfoBar
-        private bool _wasInfoBarHidden = false; // InfoBar was hid, this is caused because there are no more vulnerabilities to address
+        internal IVsInfoBarUIElement? _infoBarUIElement;
+        internal bool _infoBarVisible = false; // InfoBar is currently being displayed in the Solution Explorer
+        internal bool _wasInfoBarClosed = false; // InfoBar was closed by the user, using the 'x'(close) in the InfoBar
+        internal bool _wasInfoBarHidden = false; // InfoBar was hid, this is caused because there are no more vulnerabilities to address
         private uint? _eventCookie; // To hold the connection cookie
 
-        [Import]
-        private Lazy<IPackageManagerLaunchService>? PackageManagerLaunchService { get; set; }
+        private Lazy<IPackageManagerLaunchService>? PackageManagerLaunchService { get; }
+        private ISolutionManager? SolutionManager { get; }
+
+        [ImportingConstructor]
+        public VulnerablePackagesInfoBar(ISolutionManager solutionManager, Lazy<IPackageManagerLaunchService> packageManagerLaunchService)
+        {
+            SolutionManager = solutionManager;
+            PackageManagerLaunchService = packageManagerLaunchService;
+            SolutionManager.SolutionClosed += OnSolutionClosed;
+        }
+
+        private void OnSolutionClosed(object sender, EventArgs e)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (_infoBarVisible)
+            {
+                _infoBarUIElement?.Close();
+            }
+            // Reset all the state to defaults, since the solution is closed.
+            _wasInfoBarHidden = false;
+            _wasInfoBarClosed = false;
+            _infoBarVisible = false;
+        }
 
         public async Task ReportVulnerabilitiesAsync(bool hasVulnerabilitiesInSolution, CancellationToken cancellationToken)
         {

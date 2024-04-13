@@ -41,9 +41,11 @@ The [Accessibility Insights FastPass](https://accessibilityinsights.io/docs/wind
 
 #### Screen-reader Testing
 
-[Windows Narrator](https://support.microsoft.com/windows/complete-guide-to-narrator-e4397a0d-ef4f-b386-d8ae-c172f109bdb1) is the screen-reader we use for testing. 
-- Ensuring that the screen-reader is able to announce all visible controls and text is ideal. 
-- Generally, Accessibility Insights will catch potential issues, but sometimes a quick test with Narrator reveals more.
+Generally, Accessibility Insights will catch most issues, but sometimes a quick test actually using a screen-reader reveals more.
+There can be subtleties where a particular screen-reader behaves differently in the scenario and needs special treatment.
+
+The screen-readers we use for testing are [JAWS](https://www.freedomscientific.com/products/software/jaws/), [NVDA](https://www.nvaccess.org/download/), and [Windows Narrator](https://support.microsoft.com/windows/complete-guide-to-narrator-e4397a0d-ef4f-b386-d8ae-c172f109bdb1).
+Ensuring that each screen-reader is able to announce all visible controls and text is ideal. 
 
 ## Responsive Testing
 

@@ -728,6 +728,29 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Fact]
+        public void Write_RestoreAuditPropertiesWithSuppressions_RoundTrips()
+        {
+            // Arrange
+            var json = @"{
+                  ""restore"": {
+                    ""projectUniqueName"": ""projectUniqueName"",
+                    ""restoreAuditProperties"": {
+                        ""enableAudit"": ""true"",
+                        ""auditLevel"": ""moderate"",
+                        ""auditMode"": ""all"",
+                        ""suppressedAdvisories"": {
+                            ""https://github.com/advisories/example-cve-1"": null,
+                            ""https://github.com/advisories/example-cve-2"": null
+                        },
+                    }
+                  }
+                }";
+
+            // Act & Assert
+            VerifyJsonPackageSpecRoundTrip(json);
+        }
+
+        [Fact]
         public void RestoreMetadataWithMacros_RoundTrips()
         {
             // Arrange

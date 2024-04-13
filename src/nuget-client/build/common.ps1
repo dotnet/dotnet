@@ -1,6 +1,8 @@
 ### Constants ###
 $NuGetClientRoot = Split-Path -Path $PSScriptRoot -Parent
 $CLIRoot = Join-Path $NuGetClientRoot cli
+$DotNetInstall = Join-Path $CLIRoot 'dotnet-install.ps1'
+$SdkTestingRoot = Join-Path $NuGetClientRoot ".test\dotnet"
 $Artifacts = Join-Path $NuGetClientRoot artifacts
 $Nupkgs = Join-Path $Artifacts nupkgs
 $ConfigureJson = Join-Path $Artifacts configure.json
@@ -146,14 +148,11 @@ Function Update-Submodules {
     }
 }
 
-Function Install-DotnetCLI {
+Function Download-DotNetInstallScript {
     [CmdletBinding()]
     param(
-        [switch]$Force,
-        [switch]$SkipDotnetInfo
+        [switch]$Force
     )
-
-    $DotNetInstall = Join-Path $CLIRoot 'dotnet-install.ps1'
 
     #If "-force" is specified, or dotnet.exe under cli folder doesn't exist, create cli folder and download dotnet-install.ps1 into cli folder.
     if ($Force -or -not (Test-Path $DotNetExe)) {
@@ -163,6 +162,16 @@ Function Install-DotnetCLI {
 
         Download-FileWithRetry 'https://dot.net/v1/dotnet-install.ps1' -OutFile $DotNetInstall
     }
+}
+
+Function Install-DotnetCLI {
+    [CmdletBinding()]
+    param(
+        [switch]$Force,
+        [switch]$SkipDotnetInfo
+    )
+
+    Download-DotNetInstallScript -Force:$Force
 
     if (-not ([string]::IsNullOrEmpty($env:DOTNET_SDK_VERSIONS))) {
         Trace-Log "Using environment variable DOTNET_SDK_VERSIONS instead of DotNetSdkVersions.txt.  Value: '$env:DOTNET_SDK_VERSIONS'"
@@ -177,16 +186,9 @@ Function Install-DotnetCLI {
             continue
         }
 
-        if ([Environment]::Is64BitOperatingSystem) {
-            $arch = "x64";
-        }
-        else {
-            $arch = "x86";
-        }
-
-        Trace-Log "$DotNetInstall $CliBranch -InstallDir $CLIRoot -Architecture $arch -NoPath"
+        Trace-Log "$DotNetInstall $CliBranch -InstallDir $CLIRoot -NoPath"
  
-        & powershell $DotNetInstall $CliBranch -InstallDir $CLIRoot -Architecture $arch -NoPath
+        & powershell $DotNetInstall $CliBranch -InstallDir $CLIRoot -NoPath
         if ($LASTEXITCODE -ne 0)
         {
             throw "dotnet-install.ps1 exited with non-zero exit code"
@@ -215,6 +217,44 @@ Function Install-DotnetCLI {
         $env:DOTNET_MULTILEVEL_LOOKUP=0
         if (-not $env:path.Contains($CLIRoot)) {
             $env:path = $CLIRoot + ";" + $env:path
+        }
+    }
+}
+
+Function Install-DotNetSdksForTesting {
+    [CmdletBinding()]
+    param(
+        [switch]$Force
+    )
+
+    Download-DotNetInstallScript -Force:$Force
+
+    if (-not ([string]::IsNullOrEmpty($env:DOTNET_SDK_TEST_VERSIONS))) {
+        Trace-Log "Using environment variable DOTNET_SDK_TEST_VERSIONS instead of DotNetSdkTestVersions.txt.  Value: '$env:DOTNET_SDK_TEST_VERSIONS'"
+        $SdkList = $env:DOTNET_SDK_TEST_VERSIONS -Split ";"
+    } else {
+        $SdkList = (Get-Content -Path "$NuGetClientRoot\build\DotNetSdkTestVersions.txt")
+    }
+
+    ForEach ($SdkItem in $SdkList) {
+        $SdkItem = $SdkItem.trim()
+        if ($SdkItem.StartsWith("#") -or $SdkItem.Equals("")) {
+            continue
+        }
+
+        if ([Environment]::Is64BitOperatingSystem) {
+            $arch = "x64";
+        }
+        else {
+            $arch = "x86";
+        }
+
+        Trace-Log "$DotNetInstall $SdkItem -InstallDir $SdkTestingRoot -Architecture $arch -NoPath"
+ 
+        & powershell $DotNetInstall $SdkItem -InstallDir $SdkTestingRoot -Architecture $arch -NoPath
+        if ($LASTEXITCODE -ne 0)
+        {
+            throw "dotnet-install.ps1 exited with non-zero exit code"
         }
     }
 }

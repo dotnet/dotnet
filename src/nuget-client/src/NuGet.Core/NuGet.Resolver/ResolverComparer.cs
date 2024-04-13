@@ -31,7 +31,7 @@ namespace NuGet.Resolver
 
             _installedVersions = new Dictionary<string, NuGetVersion>();
 
-            if (_installedVersions != null)
+            if (_preferredVersions != null)
             {
                 foreach (var package in _preferredVersions)
                 {

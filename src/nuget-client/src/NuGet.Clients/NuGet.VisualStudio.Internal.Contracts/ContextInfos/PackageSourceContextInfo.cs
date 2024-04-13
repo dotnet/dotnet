@@ -33,6 +33,11 @@ namespace NuGet.VisualStudio.Internal.Contracts
         }
 
         public PackageSourceContextInfo(string source, string name, bool isEnabled, int protocolVersion, bool allowInsecureConnections)
+            : this(source, name, isEnabled, protocolVersion, allowInsecureConnections, disableTLSCertificateValidation: false)
+        {
+        }
+
+        public PackageSourceContextInfo(string source, string name, bool isEnabled, int protocolVersion, bool allowInsecureConnections, bool disableTLSCertificateValidation)
         {
             Assumes.NotNullOrEmpty(name);
             Assumes.NotNullOrEmpty(source);
@@ -42,12 +47,14 @@ namespace NuGet.VisualStudio.Internal.Contracts
             IsEnabled = isEnabled;
             ProtocolVersion = protocolVersion;
             AllowInsecureConnections = allowInsecureConnections;
+            DisableTLSCertificateValidation = disableTLSCertificateValidation;
 
             var hash = new HashCodeCombiner();
             hash.AddStringIgnoreCase(Name);
             hash.AddStringIgnoreCase(Source);
             hash.AddObject(ProtocolVersion);
             hash.AddObject(AllowInsecureConnections);
+            hash.AddObject(DisableTLSCertificateValidation);
             _hashCode = hash.CombinedHash;
             OriginalHashCode = _hashCode;
         }
@@ -56,6 +63,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
         public string Source { get; set; }
         public int ProtocolVersion { get; set; }
         public bool AllowInsecureConnections { get; set; }
+        public bool DisableTLSCertificateValidation { get; set; }
         public bool IsMachineWide { get; internal set; }
         public bool IsEnabled { get; set; }
         public string? Description { get; internal set; }
@@ -94,7 +102,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
 
         public PackageSourceContextInfo Clone()
         {
-            return new PackageSourceContextInfo(Source, Name, IsEnabled, ProtocolVersion, AllowInsecureConnections)
+            return new PackageSourceContextInfo(Source, Name, IsEnabled, ProtocolVersion, AllowInsecureConnections, DisableTLSCertificateValidation)
             {
                 IsMachineWide = IsMachineWide,
                 Description = Description,
@@ -104,7 +112,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
 
         public static PackageSourceContextInfo Create(PackageSource packageSource)
         {
-            return new PackageSourceContextInfo(packageSource.Source, packageSource.Name, packageSource.IsEnabled, packageSource.ProtocolVersion, packageSource.AllowInsecureConnections)
+            return new PackageSourceContextInfo(packageSource.Source, packageSource.Name, packageSource.IsEnabled, packageSource.ProtocolVersion, packageSource.AllowInsecureConnections, packageSource.DisableTLSCertificateValidation)
             {
                 IsMachineWide = packageSource.IsMachineWide,
                 Description = packageSource.Description,

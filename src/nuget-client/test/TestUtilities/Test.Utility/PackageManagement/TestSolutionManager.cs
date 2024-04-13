@@ -232,6 +232,11 @@ namespace Test.Utility
             }
         }
 
+        public void OnSolutionClosed()
+        {
+            SolutionClosed?.Invoke(this, EventArgs.Empty);
+        }
+
         public void Dispose()
         {
             var testDirectory = TestDirectory;

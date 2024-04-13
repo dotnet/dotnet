@@ -37,14 +37,11 @@ namespace NuGet.Build.Tasks.Console
         private static readonly Lazy<IMachineWideSettings> MachineWideSettingsLazy = new Lazy<IMachineWideSettings>(() => new XPlatMachineWideSetting());
 
         /// <summary>
-        /// Represents the small list of targets that must be executed in order for PackageReference, PackageDownload, and FrameworkReference items to be accurate.
+        /// Represents the small list of targets that must be executed in order for various restore input items to be accurate.
         /// </summary>
         private static readonly string[] TargetsToBuild =
         {
-            "CollectPackageReferences",
-            "CollectPackageDownloads",
-            "CollectFrameworkReferences",
-            "CollectCentralPackageVersions"
+            "_CollectRestoreInputs"
         };
 
         private readonly Lazy<ConsoleLoggingQueue> _loggingQueueLazy;
@@ -836,7 +833,7 @@ namespace NuGet.Build.Tasks.Console
 
             (bool isCentralPackageManagementEnabled, bool isCentralPackageVersionOverrideDisabled, bool isCentralPackageTransitivePinningEnabled, bool isCentralPackageFloatingVersionsEnabled) = MSBuildRestoreUtility.GetCentralPackageManagementSettings(project, projectStyle);
 
-            RestoreAuditProperties auditProperties = MSBuildRestoreUtility.GetRestoreAuditProperties(project);
+            RestoreAuditProperties auditProperties = MSBuildRestoreUtility.GetRestoreAuditProperties(project, GetAuditSuppressions(project));
 
             List<TargetFrameworkInformation> targetFrameworkInfos = GetTargetFrameworkInfos(projectsByTargetFramework, isCentralPackageManagementEnabled);
 
@@ -1009,7 +1006,7 @@ namespace NuGet.Build.Tasks.Console
                             continue;
                         }
 
-                        // If the project supports restore, queue up a build of the 3 targets needed for restore
+                        // If the project supports restore, queue up a build of the targets needed for restore
                         BuildSubmission buildSubmission = BuildManager.DefaultBuildManager.PendBuildRequest(
                             new BuildRequestData(
                                 projectInstance,
@@ -1058,6 +1055,14 @@ namespace NuGet.Build.Tasks.Console
 
                 return null;
             }
+        }
+
+        private static HashSet<string> GetAuditSuppressions(IMSBuildProject project)
+        {
+            IEnumerable<string> suppressions = GetDistinctItemsOrEmpty(project, "NuGetAuditSuppress")
+                                                    .Select(i => i.Identity);
+
+            return suppressions?.Count() > 0 ? new HashSet<string>(suppressions) : null;
         }
 
         /// <summary>

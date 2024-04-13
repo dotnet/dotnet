@@ -1577,20 +1577,20 @@ EndGlobal";
             }
         }
 
+        // https://learn.microsoft.com/dotnet/core/tools/dotnet-new-sdk-templates
         [PlatformTheory(Platform.Linux)]
-        [InlineData("worker")]
-        [InlineData("mstest")]
-        [InlineData("nunit")]
-        [InlineData("xunit")]
-        [InlineData("blazorserver")]
+        [InlineData("blazor")]
         [InlineData("blazorwasm")]
-        [InlineData("web")]
-        [InlineData("mvc")]
-        [InlineData("webapp")]
-        [InlineData("angular")]
-        [InlineData("react")]
-        [InlineData("webapi")]
         [InlineData("grpc")]
+        [InlineData("mstest")]
+        [InlineData("mvc")]
+        [InlineData("nunit")]
+        [InlineData("web")]
+        [InlineData("webapi")]
+        [InlineData("webapiaot")]
+        [InlineData("webapp")]
+        [InlineData("worker")]
+        [InlineData("xunit")]
         public void Dotnet_New_Template_Restore_Success(string template)
         {
             // Arrange

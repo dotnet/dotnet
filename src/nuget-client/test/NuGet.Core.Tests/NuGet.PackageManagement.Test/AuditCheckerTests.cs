@@ -284,7 +284,7 @@ namespace NuGet.PackageManagement.Test
 
             var packagesWithVulnerabilities = AuditChecker.FindPackagesWithKnownVulnerabilities(knownVulnerabilities, packages);
             packagesWithVulnerabilities.Should().HaveCount(1);
-            (PackageIdentity vulnerablePackage, AuditChecker.PackageAuditInfo auditInfo) = packagesWithVulnerabilities.Single();
+            (PackageIdentity vulnerablePackage, AuditChecker.PackageAuditInfo auditInfo) = packagesWithVulnerabilities!.Single();
             vulnerablePackage.Should().Be(packageIdentity);
             auditInfo.Identity.Should().Be(packageIdentity);
             auditInfo.Vulnerabilities.Should().HaveCount(2);
@@ -397,8 +397,8 @@ namespace NuGet.PackageManagement.Test
             vulnerabilityData.Should().NotBeNull();
             vulnerabilityData!.Exceptions.Should().BeNull();
             vulnerabilityData.KnownVulnerabilities.Should().HaveCount(1);
-            vulnerabilityData.KnownVulnerabilities.Single().Keys.Should().Contain("A");
-            vulnerabilityData.KnownVulnerabilities.Single().Values.Single().Should().HaveCount(1);
+            vulnerabilityData.KnownVulnerabilities!.Single().Keys.Should().Contain("A");
+            vulnerabilityData.KnownVulnerabilities!.Single().Values.Single().Should().HaveCount(1);
             count.Should().Be(1);
         }
 
@@ -438,8 +438,8 @@ namespace NuGet.PackageManagement.Test
             count.Should().Be(1);
             vulnerabilityData.Should().NotBeNull();
             vulnerabilityData!.KnownVulnerabilities.Should().HaveCount(1);
-            vulnerabilityData.KnownVulnerabilities.Single().Keys.Should().Contain("A");
-            vulnerabilityData.KnownVulnerabilities.Single().Values.Single().Should().HaveCount(1);
+            vulnerabilityData.KnownVulnerabilities!.Single().Keys.Should().Contain("A");
+            vulnerabilityData.KnownVulnerabilities!.Single().Values.Single().Should().HaveCount(1);
             vulnerabilityData.Exceptions.Should().NotBeNull();
             vulnerabilityData.Exceptions!.InnerException.Should().NotBeNull();
             vulnerabilityData.Exceptions.InnerException!.Message.Should().Be(failureMessage);
@@ -491,10 +491,10 @@ namespace NuGet.PackageManagement.Test
             (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
             vulnerabilityData.Should().NotBeNull();
             vulnerabilityData!.KnownVulnerabilities.Should().HaveCount(2);
-            vulnerabilityData.KnownVulnerabilities.First().Keys.Should().Contain("B");
-            vulnerabilityData.KnownVulnerabilities.First().Values.Single().Should().HaveCount(1);
-            vulnerabilityData.KnownVulnerabilities.Last().Keys.Should().Contain("A");
-            vulnerabilityData.KnownVulnerabilities.Last().Values.Single().Should().HaveCount(1);
+            vulnerabilityData.KnownVulnerabilities!.First().Keys.Should().Contain("B");
+            vulnerabilityData.KnownVulnerabilities!.First().Values.Single().Should().HaveCount(1);
+            vulnerabilityData.KnownVulnerabilities!.Last().Keys.Should().Contain("A");
+            vulnerabilityData.KnownVulnerabilities!.Last().Values.Single().Should().HaveCount(1);
             count.Should().Be(2);
         }
 

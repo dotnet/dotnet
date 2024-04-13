@@ -3,7 +3,9 @@
 
 using System;
 using System.IO;
+#if IS_SIGNING_SUPPORTED
 using System.IO.Compression;
+#endif
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -23,7 +25,7 @@ namespace NuGet.Commands.Test
             _fixture = fixture;
         }
 
-        [Fact]
+        [PlatformFact(Platform.Windows)]
         public async Task ExecuteCommandAsync_WithCertificateFileNotFound_RaisesErrorsOnceAsync()
         {
             using (TestContext testContext = await TestContext.CreateAsync(_fixture.GetDefaultCertificate()))

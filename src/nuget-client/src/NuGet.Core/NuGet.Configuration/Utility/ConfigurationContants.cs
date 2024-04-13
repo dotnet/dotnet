@@ -53,6 +53,8 @@ namespace NuGet.Configuration
 
         public static readonly string DisabledPackageSources = "disabledPackageSources";
 
+        public static readonly string DisableTLSCertificateValidation = "disableTLSCertificateValidation";
+
         public static readonly string DoNotShowPackageManagementSelectionKey = "disabled";
 
         public static readonly string Enabled = "enabled";

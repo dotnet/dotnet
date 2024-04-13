@@ -240,6 +240,18 @@ namespace NuGet.ProjectModel
             SetValueIfNotNull(writer, "auditLevel", auditProperties.AuditLevel);
             SetValueIfNotNull(writer, "auditMode", auditProperties.AuditMode);
 
+            if (auditProperties.SuppressedAdvisories?.Count > 0)
+            {
+                writer.WriteObjectStart("suppressedAdvisories");
+
+                foreach (string advisory in auditProperties.SuppressedAdvisories)
+                {
+                    writer.WriteNameValue(advisory, null);
+                }
+
+                writer.WriteObjectEnd();
+            }
+
             writer.WriteObjectEnd();
         }
 

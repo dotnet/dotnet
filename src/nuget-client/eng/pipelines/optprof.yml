@@ -61,6 +61,7 @@ stages:
     - name: RunSettingsURI
       value: $[dependencies.TestMachineConfiguration.outputs['SetRunSettingsURI.RunSettingsURI']]
     optOptimizationInputsDropName: $(optDropName)
+    cloudBuildResourceName: ComponentBuildUnderTest
     # Remove this parameter if you don't want LKG support
     previousOptimizationInputsDropName: $(PreviousOptimizationInputsDropName)
     testLabPoolName: VS-Platform

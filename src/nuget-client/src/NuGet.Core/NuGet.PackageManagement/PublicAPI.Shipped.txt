@@ -21,6 +21,12 @@ NuGet.PackageManagement.ActionsTelemetryEvent
 ~NuGet.PackageManagement.ActionsTelemetryEvent.ActionsTelemetryEvent(string operationId, string[] projectIds, NuGet.PackageManagement.NuGetProjectActionType operationType, System.DateTimeOffset startTime, NuGet.Common.NuGetOperationStatus status, int packageCount, System.DateTimeOffset endTime, double duration) -> void
 NuGet.PackageManagement.ActionsTelemetryEvent.OperationType.get -> NuGet.PackageManagement.NuGetProjectActionType
 NuGet.PackageManagement.AssetsFileMissingStatusChanged
+NuGet.PackageManagement.AuditCheckResult
+NuGet.PackageManagement.AuditCheckResult.AddMetricsToTelemetry(NuGet.Common.TelemetryEvent! telemetryEvent) -> void
+NuGet.PackageManagement.AuditCheckResult.Warnings.get -> System.Collections.Generic.IReadOnlyList<NuGet.Common.ILogMessage!>!
+NuGet.PackageManagement.AuditChecker
+NuGet.PackageManagement.AuditChecker.AuditChecker(System.Collections.Generic.List<NuGet.Protocol.Core.Types.SourceRepository!>! sourceRepositories, NuGet.Protocol.Core.Types.SourceCacheContext! sourceCacheContext, NuGet.Common.ILogger! logger) -> void
+NuGet.PackageManagement.AuditChecker.CheckPackageVulnerabilitiesAsync(System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData!>! packages, System.Collections.Generic.Dictionary<string!, NuGet.ProjectModel.RestoreAuditProperties!>! restoreAuditProperties, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.PackageManagement.AuditCheckResult!>!
 NuGet.PackageManagement.BuildIntegratedProjectAction
 NuGet.PackageManagement.BuildIntegratedProjectAction.BuildIntegratedProjectAction(NuGet.ProjectManagement.NuGetProject! project, NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.PackageManagement.NuGetProjectActionType nuGetProjectActionType, NuGet.ProjectModel.LockFile! originalLockFile, NuGet.Commands.RestoreResultPair! restoreResultPair, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository!>! sources, System.Collections.Generic.IReadOnlyList<NuGet.PackageManagement.NuGetProjectAction!>! originalActions, NuGet.ProjectManagement.BuildIntegratedInstallationContext! installationContext) -> void
 NuGet.PackageManagement.BuildIntegratedProjectAction.BuildIntegratedProjectAction(NuGet.ProjectManagement.NuGetProject! project, NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.PackageManagement.NuGetProjectActionType nuGetProjectActionType, NuGet.ProjectModel.LockFile! originalLockFile, NuGet.Commands.RestoreResultPair! restoreResultPair, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository!>! sources, System.Collections.Generic.IReadOnlyList<NuGet.PackageManagement.NuGetProjectAction!>! originalActions, NuGet.ProjectManagement.BuildIntegratedInstallationContext! installationContext, NuGet.Versioning.VersionRange? versionRange) -> void
@@ -264,13 +270,16 @@ NuGet.PackageManagement.PackageRestoreConsent.IsGrantedInSettings.set -> void
 ~NuGet.PackageManagement.PackageRestoreConsent.PackageRestoreConsent(NuGet.Configuration.ISettings settings, NuGet.Common.IEnvironmentVariableReader environmentReader) -> void
 ~NuGet.PackageManagement.PackageRestoreConsent.PackageRestoreConsent(NuGet.Configuration.ISettings settings, NuGet.Common.IEnvironmentVariableReader environmentReader, NuGet.Configuration.ConfigurationDefaults configurationDefaults) -> void
 NuGet.PackageManagement.PackageRestoreContext
+NuGet.PackageManagement.PackageRestoreContext.EnableNuGetAudit.get -> bool
 ~NuGet.PackageManagement.PackageRestoreContext.Logger.get -> NuGet.Common.ILogger
 NuGet.PackageManagement.PackageRestoreContext.MaxNumberOfParallelTasks.get -> int
 ~NuGet.PackageManagement.PackageRestoreContext.PackageManager.get -> NuGet.PackageManagement.NuGetPackageManager
 ~NuGet.PackageManagement.PackageRestoreContext.PackageRestoreContext(NuGet.PackageManagement.NuGetPackageManager nuGetPackageManager, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData> packages, System.Threading.CancellationToken token, System.EventHandler<NuGet.PackageManagement.PackageRestoredEventArgs> packageRestoredEvent, System.EventHandler<NuGet.PackageManagement.PackageRestoreFailedEventArgs> packageRestoreFailedEvent, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, int maxNumberOfParallelTasks, NuGet.Common.ILogger logger) -> void
+~NuGet.PackageManagement.PackageRestoreContext.PackageRestoreContext(NuGet.PackageManagement.NuGetPackageManager nuGetPackageManager, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData> packages, System.Threading.CancellationToken token, System.EventHandler<NuGet.PackageManagement.PackageRestoredEventArgs> packageRestoredEvent, System.EventHandler<NuGet.PackageManagement.PackageRestoreFailedEventArgs> packageRestoreFailedEvent, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, int maxNumberOfParallelTasks, bool enableNuGetAudit, System.Collections.Generic.Dictionary<string, NuGet.ProjectModel.RestoreAuditProperties> restoreAuditProperties, NuGet.Common.ILogger logger) -> void
 ~NuGet.PackageManagement.PackageRestoreContext.PackageRestoreFailedEvent.get -> System.EventHandler<NuGet.PackageManagement.PackageRestoreFailedEventArgs>
 ~NuGet.PackageManagement.PackageRestoreContext.PackageRestoredEvent.get -> System.EventHandler<NuGet.PackageManagement.PackageRestoredEventArgs>
 ~NuGet.PackageManagement.PackageRestoreContext.Packages.get -> System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData>
+~NuGet.PackageManagement.PackageRestoreContext.RestoreAuditProperties.get -> System.Collections.Generic.Dictionary<string, NuGet.ProjectModel.RestoreAuditProperties>
 ~NuGet.PackageManagement.PackageRestoreContext.SourceRepositories.get -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository>
 NuGet.PackageManagement.PackageRestoreContext.Token.get -> System.Threading.CancellationToken
 NuGet.PackageManagement.PackageRestoreData
@@ -293,8 +302,10 @@ NuGet.PackageManagement.PackageRestoreManager.PackageRestoreFailedEvent -> Syste
 NuGet.PackageManagement.PackageRestoreManager.PackageRestoredEvent -> System.EventHandler<NuGet.PackageManagement.PackageRestoredEventArgs>
 NuGet.PackageManagement.PackageRestoreManager.PackagesMissingStatusChanged -> System.EventHandler<NuGet.PackageManagement.PackagesMissingStatusEventArgs>
 NuGet.PackageManagement.PackageRestoreResult
-NuGet.PackageManagement.PackageRestoreResult.Restored.get -> bool
+NuGet.PackageManagement.PackageRestoreResult.AuditCheckResult.get -> NuGet.PackageManagement.AuditCheckResult?
 NuGet.PackageManagement.PackageRestoreResult.PackageRestoreResult(bool restored, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity!>! restoredPackages) -> void
+NuGet.PackageManagement.PackageRestoreResult.PackageRestoreResult(bool restored, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity!>! restoredPackages, NuGet.PackageManagement.AuditCheckResult? auditCheckResult) -> void
+NuGet.PackageManagement.PackageRestoreResult.Restored.get -> bool
 NuGet.PackageManagement.PackageRestoreResult.RestoredPackages.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity!>!
 NuGet.PackageManagement.PackageRestoredEventArgs
 ~NuGet.PackageManagement.PackageRestoredEventArgs.Package.get -> NuGet.Packaging.Core.PackageIdentity

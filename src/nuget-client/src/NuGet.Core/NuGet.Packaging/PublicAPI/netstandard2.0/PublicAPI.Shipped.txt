@@ -1256,6 +1256,7 @@ NuGet.RuntimeModel.IObjectWriter.WriteArrayEnd() -> void
 ~NuGet.RuntimeModel.IObjectWriter.WriteNameValue(string name, bool value) -> void
 ~NuGet.RuntimeModel.IObjectWriter.WriteNameValue(string name, int value) -> void
 ~NuGet.RuntimeModel.IObjectWriter.WriteNameValue(string name, string value) -> void
+~NuGet.RuntimeModel.IObjectWriter.WriteNonEmptyNameArray(string name, System.Collections.Generic.IEnumerable<string> values) -> void
 NuGet.RuntimeModel.IObjectWriter.WriteObjectEnd() -> void
 NuGet.RuntimeModel.IObjectWriter.WriteObjectStart() -> void
 ~NuGet.RuntimeModel.IObjectWriter.WriteObjectStart(string name) -> void
@@ -1268,6 +1269,7 @@ NuGet.RuntimeModel.JsonObjectWriter.WriteArrayEnd() -> void
 ~NuGet.RuntimeModel.JsonObjectWriter.WriteNameValue(string name, bool value) -> void
 ~NuGet.RuntimeModel.JsonObjectWriter.WriteNameValue(string name, int value) -> void
 ~NuGet.RuntimeModel.JsonObjectWriter.WriteNameValue(string name, string value) -> void
+~NuGet.RuntimeModel.JsonObjectWriter.WriteNonEmptyNameArray(string name, System.Collections.Generic.IEnumerable<string> values) -> void
 NuGet.RuntimeModel.JsonObjectWriter.WriteObjectEnd() -> void
 NuGet.RuntimeModel.JsonObjectWriter.WriteObjectStart() -> void
 ~NuGet.RuntimeModel.JsonObjectWriter.WriteObjectStart(string name) -> void

@@ -1,27 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0">
   <!-- Compiler flags -->
-  <PropertyGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
-    <DefineConstants>$(DefineConstants);IS_DESKTOP</DefineConstants>
-    <IsDesktop>true</IsDesktop>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp')) OR $(TargetFramework.StartsWith('netstandard')) OR $(TargetFramework.StartsWith('net6')) OR $(TargetFramework.StartsWith('net7'))  OR $(TargetFramework.StartsWith('net8')) OR $(TargetFramework.StartsWith('net9')) ">
-    <DefineConstants>$(DefineConstants);IS_CORECLR</DefineConstants>
-    <IsCore>true</IsCore>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp5.0' ">
-    <DefineConstants>$(DefineConstants);NETCORE5_0</DefineConstants>
-  </PropertyGroup>
-
   <PropertyGroup>
-    <SigningNotSupported Condition=" '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netcoreapp2.1' OR '$(TargetFramework)' == 'netstandard2.1' OR '$(TargetFramework)' == 'netcoreapp3.1'">true</SigningNotSupported>
-    <SigningNotSupported Condition=" '$(SigningNotSupported)' != 'true'">false</SigningNotSupported>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(SigningNotSupported)' != 'true' ">
-    <DefineConstants>$(DefineConstants);IS_SIGNING_SUPPORTED</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == '$(NETFXTargetFramework)'">$(DefineConstants);IS_DESKTOP</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' != '$(NETFXTargetFramework)'">$(DefineConstants);IS_CORECLR</DefineConstants>
+    <!-- Signing is only supported in net5.0+ and netframework. -->
+    <DefineConstants Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' Or ('$(TargetFrameworkIdentifier)' == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), 5.0)))">$(DefineConstants);IS_SIGNING_SUPPORTED</DefineConstants>
   </PropertyGroup>
 
   <!-- Include shared files for netcore projects -->
@@ -41,9 +25,7 @@
     </ItemGroup>
   </Target>
 
-  <ImportGroup Condition=" '$(SkipSigning)' != 'true' ">
-    <Import Project="sign.targets" />
-  </ImportGroup>
+  <Import Project="sign.targets" Condition=" '$(SkipSigning)' != 'true' "/>
 
   <PropertyGroup Condition="'$(Shipping)' == 'true'">
     <GetSigningInputsDependsOn Condition="'$(GetSigningInputsDependsOn)' == ''">GetSigningInputsDefault</GetSigningInputsDependsOn>
@@ -365,8 +347,8 @@ Condition=" ('%(Extension)' == '.dll' OR '%(Filename)' == 'NuGet.CommandLine.XPl
 
     <ItemGroup>
       <TestAssemblyPath Include="$(AbsoluteTestAssemblyPath)">
-        <IsDesktop Condition=" '$(IsDesktop)' == 'true' ">true</IsDesktop>
-        <IsCore Condition=" '$(IsDesktop)' != 'true' ">true</IsCore>
+        <IsDesktop Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">true</IsDesktop>
+        <IsCore Condition=" '$(TargetFramework)' != '$(NETFXTargetFramework)' ">true</IsCore>
       </TestAssemblyPath>
     </ItemGroup>
   </Target>
