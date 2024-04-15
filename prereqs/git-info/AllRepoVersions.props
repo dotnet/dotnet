@@ -21,7 +21,7 @@
     <emsdkOutputPackageVersion>9.0.0-preview.4.24204.9</emsdkOutputPackageVersion>
     <fsharpGitCommitHash>90a81d78e3a2780e8fc599fff60c7bfcc5ab4526</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.300-beta.24211.1</fsharpOutputPackageVersion>
-    <installerGitCommitHash>1edea027dab64fa38625032daf42c9397d1d73be</installerGitCommitHash>
+    <installerGitCommitHash>f3d6eeabad16decbb8748cbdadce736c4379b7d9</installerGitCommitHash>
     <installerOutputPackageVersion>9.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>72d49c37b5a6ece96c57521db5188825f76a9304</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.11.0-preview-24211-07</msbuildOutputPackageVersion>
@@ -31,14 +31,14 @@
     <razorOutputPackageVersion>7.0.0-preview.24210.1</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>4d72fc19879fbc78a12d3a84ed60e7d17777d8b7</roslynanalyzersGitCommitHash>
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.24212.1</roslynanalyzersOutputPackageVersion>
-    <roslynGitCommitHash>e1492de3813bc150941660241ee200bc583fea03</roslynGitCommitHash>
-    <roslynOutputPackageVersion>4.11.0-1.24211.7</roslynOutputPackageVersion>
+    <roslynGitCommitHash>cfa8c1e16a1bcd724eb5dfdaa64992862f58e595</roslynGitCommitHash>
+    <roslynOutputPackageVersion>4.11.0-1.24214.3</roslynOutputPackageVersion>
     <runtimeGitCommitHash>93010da2628bcd16aaea0288d52a7af8d4542037</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>9.0.0-preview.4.24211.4</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>4e95e339e9ea1dfb6203122f3fd6b42296e95f39</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24212.2</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>0bed958ad6cca7421189b01da4f9855132105789</sdkGitCommitHash>
-    <sdkOutputPackageVersion>9.0.100-preview.4.24213.2</sdkOutputPackageVersion>
+    <sdkGitCommitHash>b3a0d6223a47431b69838f031c450702b37315b7</sdkGitCommitHash>
+    <sdkOutputPackageVersion>9.0.100-preview.4.24214.2</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>83566118e44922c30d146654d42c7c3745cc119d</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24211.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>c0b5d69a1a1513528c77fffff708c7502d57c35c</sourcebuildreferencepackagesGitCommitHash>
