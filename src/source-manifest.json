@@ -13,10 +13,10 @@
       "commitSha": "413d3ee8cf12372ead951abef360faf5c78fab25"
     },
     {
-      "packageVersion": "9.0.0-preview.4.24212.2",
+      "packageVersion": "9.0.0-preview.4.24213.1",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "35013f76e4eed9fdbdc40dce2373ac256c216af1"
+      "commitSha": "81355450754f0e6471244b7f1f457b866e982a15"
     },
     {
       "packageVersion": "0.11.4-alpha.24168.1",
@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "ea867173130be2084ecd74af2ee70b68fdb7effd"
+      "commitSha": "1edea027dab64fa38625032daf42c9397d1d73be"
     },
     {
       "packageVersion": "17.11.0-preview-24211-07",
@@ -91,10 +91,10 @@
       "commitSha": "e1492de3813bc150941660241ee200bc583fea03"
     },
     {
-      "packageVersion": "3.11.0-beta1.24208.3",
+      "packageVersion": "3.11.0-beta1.24212.1",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "7455f63411369a962f769361d1a979a547756ada"
+      "commitSha": "4d72fc19879fbc78a12d3a84ed60e7d17777d8b7"
     },
     {
       "packageVersion": "9.0.0-preview.4.24211.4",
@@ -109,10 +109,10 @@
       "commitSha": "4e95e339e9ea1dfb6203122f3fd6b42296e95f39"
     },
     {
-      "packageVersion": "9.0.100-preview.4.24213.1",
+      "packageVersion": "9.0.100-preview.4.24213.2",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "6995ba170fea25b23988697af035483b96a66a4b"
+      "commitSha": "0bed958ad6cca7421189b01da4f9855132105789"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24211.1",
@@ -157,10 +157,10 @@
       "commitSha": "56d28849af08dc3143d019694aa92f186b89d2ac"
     },
     {
-      "packageVersion": "9.0.0-preview.4.24211.1",
+      "packageVersion": "9.0.0-preview.4.24213.1",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "511c30d4f37578d7e05f2cb1f785dd201a8ac02e"
+      "commitSha": "ab429efeedfc52f211fbe597bbc8df003706e766"
     },
     {
       "packageVersion": "9.0.0-preview.4.24209.4",
