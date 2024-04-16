@@ -174,7 +174,10 @@ internal class ProjectConfigurationStateSynchronizer : IProjectConfigurationFile
 
         async Task UpdateAfterDelayAsync(ProjectKey projectKey, CancellationToken cancellationToken)
         {
+            // ConfigureAwait(true) to make sure we are still running in ProjectSnapshotManagerDispatcher context
             await Task.Delay(EnqueueDelay).ConfigureAwait(true);
+
+            _projectSnapshotManagerDispatcher.AssertRunningOnDispatcher();
 
             var delayedProjectInfo = ProjectInfoMap[projectKey];
             await UpdateProjectAsync(projectKey, delayedProjectInfo.ProjectInfo, cancellationToken).ConfigureAwait(false);

@@ -20,12 +20,12 @@ public class ComponentRenderModeAttributeIntegrationTests : RazorIntegrationTest
     {
         var generated = CompileToCSharp($$"""
                 <{{ComponentName}} @rendermode="@Microsoft.AspNetCore.Components.Web.RenderMode.Server)" />
-                """, throwOnFailure: true);
+                """);
 
         // Assert
 
         //x:\dir\subdir\Test\TestComponent.cshtml(1, 29): Error RZ9986: Component attributes do not support complex content(mixed C# and markup). Attribute: '@rendermode', text: 'Microsoft.AspNetCore.Components.Web.RenderMode.Server)'
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ9986", diagnostic.Id);
     }
 
@@ -34,11 +34,11 @@ public class ComponentRenderModeAttributeIntegrationTests : RazorIntegrationTest
     {
         var generated = CompileToCSharp("""
                 <input @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
-                """, throwOnFailure: true);
+                """);
 
         // Assert
         //x:\dir\subdir\Test\TestComponent.cshtml(1,21): Error RZ10023: Attribute 'rendermode' is only valid when used on a component.
-        var diag = Assert.Single(generated.Diagnostics);
+        var diag = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ10023", diag.Id);
     }
 
@@ -49,12 +49,12 @@ public class ComponentRenderModeAttributeIntegrationTests : RazorIntegrationTest
                 @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.Server
 
                 <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
-                """, throwOnFailure: true);
+                """);
 
         // Assert
 
         // x:\dir\subdir\Test\TestComponent.cshtml(3,29): Error RZ10024: Cannot override render mode for component 'Test.TestComponent' as it explicitly declares one.
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ10024", diagnostic.Id);
     }
 }

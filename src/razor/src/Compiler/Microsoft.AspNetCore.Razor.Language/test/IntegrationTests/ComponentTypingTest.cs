@@ -3,10 +3,8 @@
 
 #nullable disable
 
-using System;
-using System.Linq;
+using Microsoft.CodeAnalysis;
 using Xunit;
-using Xunit.Sdk;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
@@ -61,44 +59,27 @@ namespace Test
 
         for (var i = 0; i <= text.Length; i++)
         {
-            try
-            {
-                CompileToCSharp(text.Substring(0, i), throwOnFailure: false);
-            }
-            catch (Exception ex)
-            {
-                throw new XunitException($@"
-Code generation failed on iteration {i} with source text:
-{text.Substring(0, i)}
-
-Exception:
-{ex}
-");
-            }
+            CompileToCSharp(text.Substring(0, i));
         }
     }
 
     [Fact] // Regression test for #1068
     public void Regression_1068()
     {
-        // Arrange
-
-        // Act
-        var generated = CompileToCSharp(@"
+        CompileToCSharp(@"
 <input type=""text"" bind="" />
 @functions {
     Test.ModelState ModelState { get; set; }
 }
-", throwOnFailure: false);
-
-        // Assert
+",
+            // /dir/subdir/Test/TestComponent.cshtml(3,10): error CS0234: The type or namespace name 'ModelState' does not exist in the namespace 'Test' (are you missing an assembly reference?)
+            //     Test.ModelState ModelState { get; set; }
+            Diagnostic(ErrorCode.ERR_DottedTypeNameNotFoundInNS, "ModelState").WithArguments("ModelState", "Test").WithLocation(3, 10));
     }
 
     [Fact]
     public void MalformedAttributeContent()
     {
-        // Act
-        // Arrange
         AdditionalSyntaxTrees.Add(Parse(@"
 using System;
 using Microsoft.AspNetCore.Components;
@@ -124,8 +105,6 @@ namespace Test
   <button disabled=@form.IsSubmitting type=""submit"" class=""btn btn-primary mt-3 mr-3 has-spinner @(form.IsSubmitting ? ""active"" :"""")"" onclick=@(async () => await SaveAsync(false))>
 @functions {
     Test.ModelState ModelState { get; set; }
-}", throwOnFailure: false);
-
-        // Assert - does not throw
+}");
     }
 }

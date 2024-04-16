@@ -213,7 +213,7 @@ internal abstract class Tokenizer : ITokenizer
             }
 
             var tokenContent = GetTokenContent(type);
-            Debug.Assert(string.Equals(tokenContent, Buffer.ToString(), StringComparison.Ordinal));
+            Debug.Assert(string.Equals(tokenContent, Buffer.ToString(), StringComparison.Ordinal), $"Token content mismatch: '{tokenContent}' != '{Buffer}'. Token Type: '{type}'.");
             token = CreateToken(tokenContent, type, errors);
 
             Buffer.Clear();

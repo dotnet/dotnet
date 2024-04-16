@@ -170,34 +170,19 @@
                                 Whitespace;[ ];
                             CSharpEphemeralTextLiteral - [350..351)::1 - [@] - Gen<None> - SpanEditHandler;Accepts:Any
                                 Transition;[@];
-                            CSharpStatementLiteral - [351..371)::20 - [@SomeGitHubUserName ] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+                            CSharpStatementLiteral - [351..405)::54 - [@SomeGitHubUserName <strong>@message</strong>LF    }LF] - Gen<Stmt> - SpanEditHandler;Accepts:Any
                                 Transition;[@];
                                 Identifier;[SomeGitHubUserName];
                                 Whitespace;[ ];
-                            MarkupBlock - [371..398)::27
-                                MarkupElement - [371..396)::25
-                                    MarkupStartTag - [371..379)::8 - [<strong>] - Gen<Markup> - SpanEditHandler;Accepts:None
-                                        OpenAngle;[<];
-                                        Text;[strong];
-                                        CloseAngle;[>];
-                                    MarkupTextLiteral - [379..379)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
-                                        Marker;[];
-                                    CSharpCodeBlock - [379..387)::8
-                                        CSharpImplicitExpression - [379..387)::8
-                                            CSharpTransition - [379..380)::1 - Gen<None> - SpanEditHandler;Accepts:None
-                                                Transition;[@];
-                                            CSharpImplicitExpressionBody - [380..387)::7
-                                                CSharpCodeBlock - [380..387)::7
-                                                    CSharpExpressionLiteral - [380..387)::7 - [message] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[RTD];K15
-                                                        Identifier;[message];
-                                    MarkupEndTag - [387..396)::9 - [</strong>] - Gen<Markup> - SpanEditHandler;Accepts:None
-                                        OpenAngle;[<];
-                                        ForwardSlash;[/];
-                                        Text;[strong];
-                                        CloseAngle;[>];
-                                MarkupTextLiteral - [396..398)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:None
-                                    NewLine;[LF];
-                            CSharpStatementLiteral - [398..405)::7 - [    }LF] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+                                LessThan;[<];
+                                Identifier;[strong];
+                                GreaterThan;[>];
+                                Identifier;[@message];
+                                LessThan;[<];
+                                Slash;[/];
+                                Identifier;[strong];
+                                GreaterThan;[>];
+                                NewLine;[LF];
                                 Whitespace;[    ];
                                 RightBrace;[}];
                                 NewLine;[LF];

@@ -22,7 +22,7 @@ public class ComponentDiagnosticRazorIntegrationTest : RazorIntegrationTestBase
             "Line1\nLine2\nLine3</mytag>");
 
         // Assert
-        Assert.Collection(result.Diagnostics,
+        Assert.Collection(result.RazorDiagnostics,
             item =>
             {
                 Assert.Equal("RZ9981", item.Id);
@@ -42,7 +42,7 @@ public class ComponentDiagnosticRazorIntegrationTest : RazorIntegrationTestBase
 }");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ9979", diagnostic.Id);
         Assert.NotNull(diagnostic.GetMessage(CultureInfo.CurrentCulture));
     }
@@ -70,7 +70,7 @@ namespace Test
 ");
 
         // Assert
-        Assert.Collection(result.Diagnostics,
+        Assert.Collection(result.RazorDiagnostics,
             item =>
             {
                 Assert.Equal("RZ9978", item.Id);
@@ -102,7 +102,7 @@ namespace Test
 }");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ9986", diagnostic.Id);
         Assert.Equal(
             "Component attributes do not support complex content (mixed C# and markup). Attribute: '@key', text: 'Foo @Text'",
@@ -113,14 +113,14 @@ namespace Test
     public void Component_StartsWithLowerCase_ReportsError()
     {
         // Arrange & Act
-        var generated = CompileToCSharp("lowerCase.razor", @"
+        var generated = CompileToCSharp("lowerCase.razor", cshtmlContent: @"
 <input type=""text"" @bind=""Text"" />
 @functions {
     public string Text { get; set; } = ""text"";
-}", throwOnFailure: false);
+}");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ10011", diagnostic.Id);
         Assert.Equal(
             "Component 'lowerCase' starts with a lowercase character. Component names cannot start with a lowercase character.",
@@ -141,7 +141,7 @@ namespace Test
 }", supportLocalizedComponentNames: supportLocalizedComponentNames);
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ10012", diagnostic.Id);
         Assert.Equal(RazorDiagnosticSeverity.Warning, diagnostic.Severity);
         Assert.Equal(
@@ -161,7 +161,7 @@ namespace Test
 }", supportLocalizedComponentNames: true);
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ10012", diagnostic.Id);
         Assert.Equal(RazorDiagnosticSeverity.Warning, diagnostic.Severity);
         Assert.Equal(
@@ -181,7 +181,7 @@ namespace Test
 }", supportLocalizedComponentNames: false);
 
         // Assert
-        Assert.Empty(generated.Diagnostics);
+        Assert.Empty(generated.RazorDiagnostics);
     }
 
     [Fact]
@@ -192,7 +192,7 @@ namespace Test
 <!PossibleComponent></!PossibleComponent>");
 
         // Assert
-        Assert.Empty(generated.Diagnostics);
+        Assert.Empty(generated.RazorDiagnostics);
     }
 
     [Fact]
@@ -213,7 +213,7 @@ namespace Test
 <MyComponent></mycomponent>");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ10013", diagnostic.Id);
         Assert.Equal(
             "The start tag name 'MyComponent' does not match the end tag name 'mycomponent'. Components must have matching start and end tag names (case-sensitive).",

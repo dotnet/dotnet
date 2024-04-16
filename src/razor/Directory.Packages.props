@@ -7,7 +7,7 @@
   <PropertyGroup>
     <_MicrosoftWebToolsPackageVersion>17.9.67-preview-0001</_MicrosoftWebToolsPackageVersion>
     <_MicrosoftVisualStudioShellPackagesVersion>17.9.36524</_MicrosoftVisualStudioShellPackagesVersion>
-    <_MicrosoftVisualStudioPackagesVersion>17.10.29-preview</_MicrosoftVisualStudioPackagesVersion>
+    <_MicrosoftVisualStudioPackagesVersion>17.10.72-preview</_MicrosoftVisualStudioPackagesVersion>
     <_VisualStudioLanguageServerProtocolVersion>17.10.13-preview</_VisualStudioLanguageServerProtocolVersion>
     <_MicrosoftExtensionsPackageVersion>6.0.0</_MicrosoftExtensionsPackageVersion>
     <_BenchmarkDotNetPackageVersion>0.13.5.2136</_BenchmarkDotNetPackageVersion>

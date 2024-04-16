@@ -17,5 +17,3 @@
                 Component - (0:0,0 [85] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
                     RenderMode - (28:0,28 [53] x:\dir\subdir\Test\TestComponent.cshtml)
                         LazyIntermediateToken - (28:0,28 [53] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.Server
-                HtmlContent - (85:0,85 [1] x:\dir\subdir\Test\TestComponent.cshtml)
-                    LazyIntermediateToken - (85:0,85 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Html -  

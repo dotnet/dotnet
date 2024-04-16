@@ -18,6 +18,11 @@ internal sealed class RazorProjectInfoDeserializer : IRazorProjectInfoDeserializ
     {
         using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
 
+        return DeserializeFromStream(stream);
+    }
+
+    public RazorProjectInfo? DeserializeFromStream(Stream stream)
+    {
         try
         {
             return RazorProjectInfo.DeserializeFrom(stream);

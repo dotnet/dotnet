@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using StreamJsonRpc;
 
@@ -45,7 +46,7 @@ internal sealed class RazorLanguageServerWrapper : IDisposable
         ILspServerActivationTracker? lspServerActivationTracker = null,
         TraceSource? traceSource = null)
     {
-        var jsonRpc = CreateJsonRpc(input, output);
+        var (jsonRpc, jsonSerializer) = CreateJsonRpc(input, output);
 
         // This ensures each request is a separate activity in LogHub
         jsonRpc.ActivityTracingStrategy = new CorrelationManagerTracingStrategy
@@ -55,6 +56,7 @@ internal sealed class RazorLanguageServerWrapper : IDisposable
 
         var server = new RazorLanguageServer(
             jsonRpc,
+            jsonSerializer,
             loggerFactory,
             projectSnapshotManagerDispatcher,
             featureOptions,
@@ -69,7 +71,7 @@ internal sealed class RazorLanguageServerWrapper : IDisposable
         return razorLanguageServer;
     }
 
-    private static JsonRpc CreateJsonRpc(Stream input, Stream output)
+    private static (JsonRpc, JsonSerializer) CreateJsonRpc(Stream input, Stream output)
     {
         var messageFormatter = new JsonMessageFormatter();
         messageFormatter.JsonSerializer.AddVSInternalExtensionConverters();
@@ -80,7 +82,7 @@ internal sealed class RazorLanguageServerWrapper : IDisposable
         // Get more information about exceptions that occur during RPC method invocations.
         jsonRpc.ExceptionStrategy = ExceptionProcessing.ISerializable;
 
-        return jsonRpc;
+        return (jsonRpc, messageFormatter.JsonSerializer);
     }
 
     public Task WaitForExitAsync()

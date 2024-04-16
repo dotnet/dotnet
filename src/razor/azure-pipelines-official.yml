@@ -69,7 +69,7 @@ extends:
     sdl:
       sourceAnalysisPool:
         name: NetCore1ESPool-Svc-Internal
-        image: 1es-windows-2022-pt
+        image: 1es-windows-2022
         os: windows
       sbom:
         enabled: false
@@ -349,7 +349,7 @@ extends:
           - job: Linux
             pool:
               name: $(DncEngInternalBuildPool)
-              demands: ImageOverride -equals 1es-ubuntu-2004-pt
+              demands: ImageOverride -equals 1es-ubuntu-2004
               os: linux
 
             strategy:

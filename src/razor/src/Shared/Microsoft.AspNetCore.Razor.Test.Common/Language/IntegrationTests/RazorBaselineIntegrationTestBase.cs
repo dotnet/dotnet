@@ -20,21 +20,10 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
     // UTF-8 with BOM
     private static readonly Encoding _baselineEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true);
 
-    protected RazorBaselineIntegrationTestBase(TestProject.Layer layer, bool? generateBaselines = null)
+    protected RazorBaselineIntegrationTestBase(TestProject.Layer layer)
     {
         TestProjectRoot = TestProject.GetProjectDirectory(GetType(), layer);
-
-        if (generateBaselines.HasValue)
-        {
-            GenerateBaselines = generateBaselines.Value;
-        }
     }
-
-#if GENERATE_BASELINES
-    protected bool GenerateBaselines { get; } = true;
-#else
-    protected bool GenerateBaselines { get; } = false;
-#endif
 
     protected string TestProjectRoot { get; }
 
@@ -50,18 +39,12 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
 
     protected abstract string GetDirectoryPath(string testName);
 
-    [Fact]
-    public void GenerateBaselinesMustBeFalse()
-    {
-        Assert.False(GenerateBaselines, "GenerateBaselines should be set back to false before you check in!");
-    }
-
     protected void AssertDocumentNodeMatchesBaseline(RazorCodeDocument codeDocument, [CallerMemberName]string testName = "")
     {
         var document = codeDocument.GetDocumentIntermediateNode();
         var baselineFilePath = GetBaselineFilePath(codeDocument, ".ir.txt", testName);
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFilePath);
             Directory.CreateDirectory(Path.GetDirectoryName(baselineFullPath));
@@ -96,7 +79,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
 
         var serializedMappings = SourceMappingsSerializer.Serialize(document, codeDocument.Source);
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFilePath);
             Directory.CreateDirectory(Path.GetDirectoryName(baselineFullPath));

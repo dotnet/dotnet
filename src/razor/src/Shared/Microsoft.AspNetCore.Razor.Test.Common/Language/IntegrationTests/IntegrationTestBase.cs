@@ -49,14 +49,9 @@ public abstract class IntegrationTestBase
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
     }
 
-    protected IntegrationTestBase(TestProject.Layer layer, bool? generateBaselines = null, string? projectDirectoryHint = null)
+    protected IntegrationTestBase(TestProject.Layer layer, string? projectDirectoryHint = null)
     {
         TestProjectRoot = projectDirectoryHint == null ? TestProject.GetProjectDirectory(GetType(), layer) : TestProject.GetProjectDirectory(projectDirectoryHint, layer);
-
-        if (generateBaselines.HasValue)
-        {
-            GenerateBaselines = generateBaselines.Value;
-        }
     }
 
     /// <summary>
@@ -97,12 +92,6 @@ public abstract class IntegrationTestBase
     /// characters written.
     /// </summary>
     protected virtual string LineEnding { get; } = "\r\n";
-
-#if GENERATE_BASELINES
-    protected bool GenerateBaselines { get; } = true;
-#else
-    protected bool GenerateBaselines { get; } = false;
-#endif
 
     protected string TestProjectRoot { get; }
 
@@ -338,7 +327,7 @@ public abstract class IntegrationTestBase
     {
         var baselineFileName = Path.ChangeExtension(GetTestFileName(testName), ".ir.txt");
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
             File.WriteAllText(baselineFullPath, IntermediateNodeSerializer.Serialize(document), _baselineEncoding);
@@ -359,7 +348,7 @@ public abstract class IntegrationTestBase
     {
         var baselineFileName = Path.ChangeExtension(GetTestFileName(testName), ".codegen.html");
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
             File.WriteAllText(baselineFullPath, htmlDocument.GeneratedCode, _baselineEncoding);
@@ -385,7 +374,7 @@ public abstract class IntegrationTestBase
         var baselineFileName = Path.ChangeExtension(fileName, ".codegen.cs");
         var baselineDiagnosticsFileName = Path.ChangeExtension(fileName, ".diagnostics.txt");
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
             File.WriteAllText(baselineFullPath, cSharpDocument.GeneratedCode, _baselineEncoding);
@@ -435,7 +424,7 @@ public abstract class IntegrationTestBase
         var baselineFileName = Path.ChangeExtension(GetTestFileName(testName), ".mappings.txt");
         var serializedMappings = SourceMappingsSerializer.Serialize(csharpDocument, codeDocument.Source);
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
             File.WriteAllText(baselineFullPath, serializedMappings, _baselineEncoding);
@@ -533,7 +522,7 @@ public abstract class IntegrationTestBase
         var baselineFileName = Path.ChangeExtension(GetTestFileName(testName), ".html.mappings.txt");
         var serializedMappings = SourceMappingsSerializer.Serialize(htmlDocument, codeDocument.Source);
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
             File.WriteAllText(baselineFullPath, serializedMappings, _baselineEncoding);
@@ -693,13 +682,6 @@ public abstract class IntegrationTestBase
     private static string NormalizeNewLines(string content, string lineEnding)
     {
         return Regex.Replace(content, "(?<!\r)\n", lineEnding, RegexOptions.None, TimeSpan.FromSeconds(10));
-    }
-
-    // This is to prevent you from accidentally checking in with GenerateBaselines = true
-    [Fact]
-    public void GenerateBaselinesMustBeFalse()
-    {
-        Assert.False(GenerateBaselines, "GenerateBaselines should be set back to false before you check in!");
     }
 
     private class ConfigureCodeRenderingPhase : RazorEnginePhaseBase

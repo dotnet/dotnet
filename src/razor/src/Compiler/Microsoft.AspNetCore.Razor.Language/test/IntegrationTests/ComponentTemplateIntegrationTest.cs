@@ -21,10 +21,10 @@ public class ComponentTemplateIntegrationTest : RazorIntegrationTestBase
         // Arrange
 
         // Act
-        var generated = CompileToCSharp(@"<div attr=""@<div></div>"" />", throwOnFailure: false);
+        var generated = CompileToCSharp(@"<div attr=""@<div></div>"" />");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ1005", diagnostic.Id);
     }
 
@@ -37,7 +37,7 @@ public class ComponentTemplateIntegrationTest : RazorIntegrationTestBase
         var generated = CompileToCSharp(@"<div attr=""@(@<div></div>)"" />");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ9994", diagnostic.Id);
     }
 
@@ -59,11 +59,11 @@ namespace Test
 "));
 
         // Act
-        var generated = CompileToCSharp(@"<MyComponent attr=""@<div></div>"" />", throwOnFailure: false);
+        var generated = CompileToCSharp(@"<MyComponent attr=""@<div></div>"" />");
 
         // Assert
         Assert.Collection(
-            generated.Diagnostics,
+            generated.RazorDiagnostics,
             d => Assert.Equal("RZ9986", d.Id),
             d => Assert.Equal("RZ1005", d.Id));
     }
@@ -86,7 +86,7 @@ namespace Test
         var generated = CompileToCSharp(@"<MyComponent attr=""@(@<div></div>)"" />");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ9994", diagnostic.Id);
     }
 
@@ -99,7 +99,7 @@ namespace Test
         var generated = CompileToCSharp(@"<div ref=""@(@<div></div>)"" />");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ9994", diagnostic.Id);
     }
 
@@ -113,7 +113,7 @@ namespace Test
         var generated = CompileToCSharp(@"<input type=""text"" bind=""@(@<div></div>)"" />");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ9994", diagnostic.Id);
     }
 
@@ -126,7 +126,7 @@ namespace Test
         var generated = CompileToCSharp(@"<input type=""text"" onchange=""@(@<div></div>)"" />");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ9994", diagnostic.Id);
     }
 }

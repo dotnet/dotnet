@@ -266,7 +266,8 @@ __o = reader.ReadToEnd();
 #nullable disable
 #nullable restore
 #line 97 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
-            @GitHubUserName 
+            @GitHubUserName <p>Hello!</p>
+
 
 #line default
 #line hidden

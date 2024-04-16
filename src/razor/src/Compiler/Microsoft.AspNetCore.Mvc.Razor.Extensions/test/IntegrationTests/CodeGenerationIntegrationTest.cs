@@ -22,7 +22,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
     private RazorConfiguration _configuration;
 
     public CodeGenerationIntegrationTest()
-        : base(layer: TestProject.Layer.Compiler, generateBaselines: null, projectDirectoryHint: "Microsoft.AspNetCore.Mvc.Razor.Extensions")
+        : base(layer: TestProject.Layer.Compiler, projectDirectoryHint: "Microsoft.AspNetCore.Mvc.Razor.Extensions")
     {
         _configuration = new(RazorLanguageVersion.Latest, "MVC-3.0", Extensions: []);
     }

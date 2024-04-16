@@ -23,7 +23,7 @@ public class ComponentFilePathIntegrationTest : RazorIntegrationTestBase
         var result = CompileToAssembly("Filename with spaces.cshtml", "");
 
         // Assert
-        Assert.Empty(result.Diagnostics);
+        Assert.Empty(result.CSharpDiagnostics);
 
         var type = Assert.Single(result.Assembly.GetTypes().Where(t => t.GetCustomAttributes(inherit: false).All(a => a.GetType().Name != "CompilerGeneratedAttribute")));
         Assert.Equal(DefaultRootNamespace, type.Namespace);
@@ -43,7 +43,7 @@ public class ComponentFilePathIntegrationTest : RazorIntegrationTestBase
         var result = CompileToAssembly(relativePath, "");
 
         // Assert
-        Assert.Empty(result.Diagnostics);
+        Assert.Empty(result.CSharpDiagnostics);
 
         var type = Assert.Single(result.Assembly.GetTypes().Where(t => t.GetCustomAttributes(inherit: false).All(a => a.GetType().Name != "CompilerGeneratedAttribute")));
         Assert.Equal(expectedNamespace, type.Namespace);

@@ -38,12 +38,6 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
     /// </summary>
     protected bool FixupSpans { get; set; }
 
-#if GENERATE_BASELINES
-    protected bool GenerateBaselines { get; set; } = true;
-#else
-    protected bool GenerateBaselines { get; set; } = false;
-#endif
-
     protected string TestProjectRoot { get; }
 
     protected int BaselineTestCount { get; set; }
@@ -74,7 +68,7 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
         var baselineTagHelperSpansFileName = Path.ChangeExtension(fileName, ".tspans.txt");
         BaselineTestCount++;
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             // Write syntax tree baseline
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);

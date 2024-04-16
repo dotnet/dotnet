@@ -1,0 +1,77 @@
+﻿RazorDocument - [0..110)::110 - [@code {LF    [Parameter]LF    public Func<int, int> ChildContent { get; set; } = (context) => 1 < @context;LF}]
+    MarkupBlock - [0..110)::110
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
+            Marker;[];
+        CSharpCodeBlock - [0..5)::5
+            CSharpImplicitExpression - [0..5)::5
+                CSharpTransition - [0..1)::1 - Gen<None>
+                    Transition;[@];
+                CSharpImplicitExpressionBody - [1..5)::4
+                    CSharpCodeBlock - [1..5)::4
+                        CSharpExpressionLiteral - [1..5)::4 - [code] - Gen<Expr>
+                            Identifier;[code];
+        MarkupTextLiteral - [5..41)::36 - [ {LF    [Parameter]LF    public Func] - Gen<Markup>
+            Whitespace;[ ];
+            Text;[{];
+            NewLine;[LF];
+            Whitespace;[    ];
+            LeftBracket;[[];
+            Text;[Parameter];
+            RightBracket;[]];
+            NewLine;[LF];
+            Whitespace;[    ];
+            Text;[public];
+            Whitespace;[ ];
+            Text;[Func];
+        MarkupElement - [41..110)::69
+            MarkupStartTag - [41..51)::10 - [<int, int>] - Gen<Markup>
+                OpenAngle;[<];
+                Text;[int,];
+                MarkupMinimizedAttributeBlock - [46..50)::4 - [ int]
+                    MarkupTextLiteral - [46..47)::1 - [ ] - Gen<Markup>
+                        Whitespace;[ ];
+                    MarkupTextLiteral - [47..50)::3 - [int] - Gen<Markup>
+                        Text;[int];
+                CloseAngle;[>];
+            MarkupTextLiteral - [51..96)::45 - [ ChildContent { get; set; } = (context) => 1 ] - Gen<Markup>
+                Whitespace;[ ];
+                Text;[ChildContent];
+                Whitespace;[ ];
+                Text;[{];
+                Whitespace;[ ];
+                Text;[get;];
+                Whitespace;[ ];
+                Text;[set;];
+                Whitespace;[ ];
+                Text;[}];
+                Whitespace;[ ];
+                Equals;[=];
+                Whitespace;[ ];
+                Text;[(context)];
+                Whitespace;[ ];
+                Equals;[=];
+                CloseAngle;[>];
+                Whitespace;[ ];
+                Text;[1];
+                Whitespace;[ ];
+            MarkupElement - [96..110)::14
+                MarkupStartTag - [96..110)::14 - [< @context;LF}] - Gen<Markup>
+                    OpenAngle;[<];
+                    Text;[<Missing>];
+                    MarkupMiscAttributeContent - [97..110)::13
+                        MarkupTextLiteral - [97..98)::1 - [ ] - Gen<Markup>
+                            Whitespace;[ ];
+                        CSharpCodeBlock - [98..106)::8
+                            CSharpImplicitExpression - [98..106)::8
+                                CSharpTransition - [98..99)::1 - Gen<None>
+                                    Transition;[@];
+                                CSharpImplicitExpressionBody - [99..106)::7
+                                    CSharpCodeBlock - [99..106)::7
+                                        CSharpExpressionLiteral - [99..106)::7 - [context] - Gen<Expr>
+                                            Identifier;[context];
+                        MarkupTextLiteral - [106..110)::4 - [;LF}] - Gen<Markup>
+                            Text;[;];
+                            NewLine;[LF];
+                            Text;[}];
+                    CloseAngle;[<Missing>];
+    EndOfFile;[];

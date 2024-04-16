@@ -259,14 +259,14 @@ if (true)
 #nullable disable
 
 #nullable restore
-#line (97,13)-(97,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
-@GitHubUserName 
+#line (97,13)-(99,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
+@GitHubUserName <p>Hello!</p>
+
 
 #line default
 #line hidden
 #nullable disable
 
-            WriteLiteral("<p>Hello!</p>\r\n\r\n");
 #nullable restore
 #line (99,2)-(100,5) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
 if (true) 

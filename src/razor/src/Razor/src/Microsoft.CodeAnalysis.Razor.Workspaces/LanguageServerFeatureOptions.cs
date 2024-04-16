@@ -57,4 +57,9 @@ internal abstract class LanguageServerFeatureOptions
 
     public LanguageServerFlags ToLanguageServerFlags()
         => new(ForceRuntimeCodeGeneration);
+
+    /// <summary>
+    /// When enabled, project information will be sent to the server using endpoint instead of file.
+    /// </summary>
+    public abstract bool UseProjectConfigurationEndpoint { get; }
 }

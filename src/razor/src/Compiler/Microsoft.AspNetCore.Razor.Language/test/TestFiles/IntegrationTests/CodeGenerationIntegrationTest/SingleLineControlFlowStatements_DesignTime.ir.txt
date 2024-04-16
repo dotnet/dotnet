@@ -91,14 +91,8 @@
                     LazyIntermediateToken - (2033:94,19 [4] SingleLineControlFlowStatements.cshtml) - Html - \n\n
                 CSharpCode - (2038:96,1 [10] SingleLineControlFlowStatements.cshtml)
                     LazyIntermediateToken - (2038:96,1 [10] SingleLineControlFlowStatements.cshtml) - CSharp - if (true) 
-                CSharpCode - (2049:96,12 [16] SingleLineControlFlowStatements.cshtml)
-                    LazyIntermediateToken - (2049:96,12 [16] SingleLineControlFlowStatements.cshtml) - CSharp - @GitHubUserName 
-                HtmlContent - (2065:96,28 [17] SingleLineControlFlowStatements.cshtml)
-                    LazyIntermediateToken - (2065:96,28 [2] SingleLineControlFlowStatements.cshtml) - Html - <p
-                    LazyIntermediateToken - (2067:96,30 [1] SingleLineControlFlowStatements.cshtml) - Html - >
-                    LazyIntermediateToken - (2068:96,31 [6] SingleLineControlFlowStatements.cshtml) - Html - Hello!
-                    LazyIntermediateToken - (2074:96,37 [4] SingleLineControlFlowStatements.cshtml) - Html - </p>
-                    LazyIntermediateToken - (2078:96,41 [4] SingleLineControlFlowStatements.cshtml) - Html - \n\n
+                CSharpCode - (2049:96,12 [33] SingleLineControlFlowStatements.cshtml)
+                    LazyIntermediateToken - (2049:96,12 [33] SingleLineControlFlowStatements.cshtml) - CSharp - @GitHubUserName <p>Hello!</p>\n\n
                 CSharpCode - (2083:98,1 [16] SingleLineControlFlowStatements.cshtml)
                     LazyIntermediateToken - (2083:98,1 [16] SingleLineControlFlowStatements.cshtml) - CSharp - if (true) \n    
                 HtmlContent - (2101:99,6 [16] SingleLineControlFlowStatements.cshtml)

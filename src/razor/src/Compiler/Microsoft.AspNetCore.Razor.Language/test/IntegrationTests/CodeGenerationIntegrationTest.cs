@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
 public class CodeGenerationIntegrationTest(bool designTime = false)
-    : IntegrationTestBase(layer: TestProject.Layer.Compiler, generateBaselines: null)
+    : IntegrationTestBase(layer: TestProject.Layer.Compiler)
 {
     [IntegrationTestFact]
     public void SingleLineControlFlowStatements() => RunTest();
