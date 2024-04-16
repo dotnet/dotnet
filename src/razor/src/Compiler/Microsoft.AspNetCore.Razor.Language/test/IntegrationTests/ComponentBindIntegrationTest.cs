@@ -3,9 +3,7 @@
 
 #nullable disable
 
-using System;
 using System.Globalization;
-using Microsoft.AspNetCore.Components;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
@@ -41,7 +39,7 @@ namespace Test
 }");
 
         // Assert
-        var diagnostic = Assert.Single(result.Diagnostics);
+        var diagnostic = Assert.Single(result.RazorDiagnostics);
         Assert.Equal("RZ9989", diagnostic.Id);
         Assert.Equal("""
             The attribute '@bind-value' was matched by multiple bind attributes. Duplicates:
@@ -62,7 +60,7 @@ namespace Test
 }");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ9991", diagnostic.Id);
     }
 
@@ -77,7 +75,7 @@ namespace Test
 }");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ9991", diagnostic.Id);
     }
 
@@ -91,11 +89,11 @@ namespace Test
 <input type=""text"" @bind=""@page"" />
 @functions {
     public string page { get; set; } = ""text"";
-}", throwOnFailure: false);
+}");
 
         // Assert
         Assert.Collection(
-            generated.Diagnostics,
+            generated.RazorDiagnostics,
             d => Assert.Equal("RZ2005", d.Id),
             d => Assert.Equal("RZ1011", d.Id));
     }

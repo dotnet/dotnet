@@ -93,7 +93,7 @@ namespace Test
 <GenericContext />");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Same(ComponentDiagnosticFactory.GenericComponentTypeInferenceUnderspecified.Id, diagnostic.Id);
         Assert.Equal("""
             The type of component 'GenericContext' cannot be inferred based on the values provided. Consider specifying the type arguments directly using the following attributes: 'TItem'.
@@ -112,7 +112,7 @@ namespace Test
 <MultipleGenericParameter TItem1=int />");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Same(ComponentDiagnosticFactory.GenericComponentMissingTypeArgument.Id, diagnostic.Id);
         Assert.Equal("""
             The component 'MultipleGenericParameter' is missing required type arguments. Specify the missing types using the attributes: 'TItem2', 'TItem3'.

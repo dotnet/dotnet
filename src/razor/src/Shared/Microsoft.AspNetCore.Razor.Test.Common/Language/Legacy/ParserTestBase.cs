@@ -39,12 +39,6 @@ public abstract class ParserTestBase : IParserTest
     /// </summary>
     protected bool FixupSpans { get; set; }
 
-#if GENERATE_BASELINES
-    protected bool GenerateBaselines { get; set; } = true;
-#else
-    protected bool GenerateBaselines { get; set; } = false;
-#endif
-
     protected string TestProjectRoot { get; }
 
     // Used by the test framework to set the 'base' name for test files.
@@ -86,7 +80,7 @@ public abstract class ParserTestBase : IParserTest
         var baselineTagHelperSpansFileName = Path.ChangeExtension(fileName, ".tspans.txt");
         BaselineTestCount++;
 
-        if (GenerateBaselines)
+        if (GenerateBaselines.ShouldGenerate)
         {
             // Write syntax tree baseline
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);

@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..119)::119 - [@{LF    void Foo() LF    {LF        var time = DateTime.NowLF        <strong>Hello the time is @time</strong>LF    }LF}]
+﻿RazorDocument - [0..119)::119 - [@{LF    void Foo()LF    {LF        var time = DateTime.Now;LF        <strong>Hello the time is @time</strong>LF    }LF}]
     MarkupBlock - [0..119)::119
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
@@ -10,7 +10,7 @@
                     RazorMetaCode - [1..2)::1 - Gen<None>
                         LeftBrace;[{];
                     CSharpCodeBlock - [2..118)::116
-                        CSharpStatementLiteral - [2..69)::67 - [LF    void Foo() LF    {LF        var time = DateTime.NowLF        ] - Gen<Stmt>
+                        CSharpStatementLiteral - [2..61)::59 - [LF    void Foo()LF    {LF        var time = DateTime.Now;LF] - Gen<Stmt>
                             NewLine;[LF];
                             Whitespace;[    ];
                             Keyword;[void];
@@ -18,7 +18,6 @@
                             Identifier;[Foo];
                             LeftParenthesis;[(];
                             RightParenthesis;[)];
-                            Whitespace;[ ];
                             NewLine;[LF];
                             Whitespace;[    ];
                             LeftBrace;[{];
@@ -33,9 +32,11 @@
                             Identifier;[DateTime];
                             Dot;[.];
                             Identifier;[Now];
+                            Semicolon;[;];
                             NewLine;[LF];
-                            Whitespace;[        ];
-                        MarkupBlock - [69..111)::42
+                        MarkupBlock - [61..111)::50
+                            MarkupTextLiteral - [61..69)::8 - [        ] - Gen<Markup>
+                                Whitespace;[        ];
                             MarkupElement - [69..109)::40
                                 MarkupStartTag - [69..77)::8 - [<strong>] - Gen<Markup>
                                     OpenAngle;[<];

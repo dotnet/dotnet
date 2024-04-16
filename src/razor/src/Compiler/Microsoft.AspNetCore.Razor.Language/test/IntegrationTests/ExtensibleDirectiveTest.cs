@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 public class ExtensibleDirectiveTest : IntegrationTestBase
 {
     public ExtensibleDirectiveTest()
-        : base(layer: TestProject.Layer.Compiler, generateBaselines: null)
+        : base(layer: TestProject.Layer.Compiler)
     {
     }
 

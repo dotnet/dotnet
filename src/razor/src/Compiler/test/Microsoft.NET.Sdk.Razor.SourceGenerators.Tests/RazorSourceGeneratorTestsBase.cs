@@ -466,7 +466,7 @@ internal static class Extensions
 
         // Verify actual against baseline.
         var baselineText = File.ReadAllText(baselinePath);
-        AssertEx.EqualOrDiff(baselineText, actualText);
+        AssertEx.AssertEqualToleratingWhitespaceDifferences(baselineText, actualText);
     }
 
     [Conditional("GENERATE_BASELINES")]

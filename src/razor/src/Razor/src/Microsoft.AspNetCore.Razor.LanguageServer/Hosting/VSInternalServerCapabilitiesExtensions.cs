@@ -24,16 +24,20 @@ internal static class VSInternalServerCapabilitiesExtensions
 
     public static void EnableSemanticTokens(this VSInternalServerCapabilities serverCapabilities, ISemanticTokensLegendService legend)
     {
-        serverCapabilities.SemanticTokensOptions = new SemanticTokensOptions
+        serverCapabilities.SemanticTokensOptions = new SemanticTokensOptions().EnableSemanticTokens(legend);
+    }
+
+    public static SemanticTokensOptions EnableSemanticTokens(this SemanticTokensOptions options, ISemanticTokensLegendService legend)
+    {
+        options.Full = false;
+        options.Legend = new SemanticTokensLegend
         {
-            Full = false,
-            Legend = new SemanticTokensLegend
-            {
-                TokenModifiers = legend.TokenModifiers.All,
-                TokenTypes = legend.TokenTypes.All
-            },
-            Range = true,
+            TokenModifiers = legend.TokenModifiers.All,
+            TokenTypes = legend.TokenTypes.All
         };
+        options.Range = true;
+
+        return options;
     }
 
     public static void EnableHoverProvider(this VSInternalServerCapabilities serverCapabilities)

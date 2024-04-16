@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -40,13 +39,26 @@ public class CSharpBlockTest() : ParserTestBase(layer: TestProject.Layer.Compile
     }
 
     [Fact]
-    public void LocalFunctionsWithRazor()
+    public void LocalFunctionsWithRazor_MissingSemicolon()
     {
         ParseDocumentTest(
 @"@{
     void Foo()
     {
         var time = DateTime.Now
+        <strong>Hello the time is @time</strong>
+    }
+}");
+    }
+
+    [Fact]
+    public void LocalFunctionsWithRazor()
+    {
+        ParseDocumentTest(
+@"@{
+    void Foo()
+    {
+        var time = DateTime.Now;
         <strong>Hello the time is @time</strong>
     }
 }");

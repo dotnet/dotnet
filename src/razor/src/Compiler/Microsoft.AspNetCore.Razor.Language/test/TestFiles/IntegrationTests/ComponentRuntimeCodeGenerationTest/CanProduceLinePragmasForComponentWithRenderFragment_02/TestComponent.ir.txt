@@ -39,10 +39,11 @@
                             LazyIntermediateToken - (154:5,7 [12] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ChildContent
                     CSharpCode - (180:7,0 [5] x:\dir\subdir\Test\TestComponent.cshtml)
                         LazyIntermediateToken - (180:7,0 [5] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp -   }\n
-            CSharpCode - (201:10,1 [83] x:\dir\subdir\Test\TestComponent.cshtml)
-                LazyIntermediateToken - (201:10,1 [83] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n  [Parameter]\n  public RenderFragment ChildContent { get; set; } = (context) => 
-            MarkupElement - (284:12,66 [15] x:\dir\subdir\Test\TestComponent.cshtml) - p
-                CSharpExpression - (288:12,70 [7] x:\dir\subdir\Test\TestComponent.cshtml)
-                    LazyIntermediateToken - (288:12,70 [7] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - context
-            CSharpCode - (301:13,0 [177] x:\dir\subdir\Test\TestComponent.cshtml)
-                LazyIntermediateToken - (301:13,0 [177] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp -   [Parameter]\n  public bool Collapsed { get; set; }\n  string ActionText { get => Collapsed ? "Expand" : "Collapse"; }\n  void Toggle()\n  {\n    Collapsed = !Collapsed;\n  }\n
+            CSharpCode - (201:10,1 [91] x:\dir\subdir\Test\TestComponent.cshtml)
+                LazyIntermediateToken - (201:10,1 [91] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n  [Parameter]\n  public RenderFragment<string> ChildContent { get; set; } = (context) => 
+            Template - (293:12,75 [15] x:\dir\subdir\Test\TestComponent.cshtml)
+                MarkupElement - (293:12,75 [15] x:\dir\subdir\Test\TestComponent.cshtml) - p
+                    CSharpExpression - (297:12,79 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+                        LazyIntermediateToken - (297:12,79 [7] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - context
+            CSharpCode - (308:12,90 [180] x:\dir\subdir\Test\TestComponent.cshtml)
+                LazyIntermediateToken - (308:12,90 [180] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ;\n  [Parameter]\n  public bool Collapsed { get; set; }\n  string ActionText { get => Collapsed ? "Expand" : "Collapse"; }\n  void Toggle()\n  {\n    Collapsed = !Collapsed;\n  }\n

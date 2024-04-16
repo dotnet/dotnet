@@ -14,68 +14,62 @@ namespace Test
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable
     {
-        #pragma warning disable 219
-        private void __RazorDirectiveTokenHelpers__() {
-        }
-        #pragma warning restore 219
-        #pragma warning disable 0414
-        private static object __o = null;
-        #pragma warning restore 0414
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
+            __builder.OpenElement(0, "div");
+            __builder.AddAttribute(1, "class", "row");
+            __builder.OpenElement(2, "a");
+            __builder.AddAttribute(3, "href", "#");
+            __builder.AddAttribute(4, "@onclick", "Toggle");
+            __builder.AddAttribute(5, "class", "col-12");
+            __builder.AddContent(6, 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                        __o = ActionText;
+#line (2,47)-(2,57) "x:\dir\subdir\Test\TestComponent.cshtml"
+ActionText
 
 #line default
 #line hidden
 #nullable disable
+            );
+            __builder.CloseElement();
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-   if (!Collapsed)
+#line (3,4)-(5,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+if (!Collapsed)
   {
-    
 
 #line default
 #line hidden
 #nullable disable
+
+            __builder.OpenElement(7, "div");
+            __builder.AddAttribute(8, "class", "col-12 card card-body");
+            __builder.AddContent(9, 
 #nullable restore
-#line 6 "x:\dir\subdir\Test\TestComponent.cshtml"
- __o = ChildContent;
+#line (6,8)-(6,20) "x:\dir\subdir\Test\TestComponent.cshtml"
+ChildContent
 
 #line default
 #line hidden
 #nullable disable
+            );
+            __builder.CloseElement();
 #nullable restore
-#line 7 "x:\dir\subdir\Test\TestComponent.cshtml"
-          
+#line (8,1)-(9,1) "x:\dir\subdir\Test\TestComponent.cshtml"
   }
 
 #line default
 #line hidden
 #nullable disable
+
+            __builder.CloseElement();
         }
         #pragma warning restore 1998
 #nullable restore
-#line 11 "x:\dir\subdir\Test\TestComponent.cshtml"
- 
+#line (11,2)-(21,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
   [Parameter]
-  public RenderFragment ChildContent { get; set; } = (context) => 
-
-#line default
-#line hidden
-#nullable disable
-#nullable restore
-#line 13 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                                __o = context;
-
-#line default
-#line hidden
-#nullable disable
-#nullable restore
-#line 13 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                                                 
+  public RenderFragment ChildContent { get; set; } = (context) => <p>@context</p>
   [Parameter]
   public bool Collapsed { get; set; }
   string ActionText { get => Collapsed ? "Expand" : "Collapse"; }
@@ -87,6 +81,7 @@ namespace Test
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

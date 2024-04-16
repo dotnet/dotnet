@@ -4,7 +4,6 @@
 #nullable disable
 
 using System.Globalization;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
@@ -70,7 +69,7 @@ Some Content
 </RenderChildContent>");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Same(ComponentDiagnosticFactory.ChildContentSetByAttributeAndBody.Id, diagnostic.Id);
     }
 
@@ -90,7 +89,7 @@ Some Content
 </RenderChildContent>");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Same(ComponentDiagnosticFactory.ChildContentSetByAttributeAndBody.Id, diagnostic.Id);
     }
 
@@ -109,7 +108,7 @@ Some Content
 </RenderChildContent>");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Same(ComponentDiagnosticFactory.ChildContentMixedWithExplicitChildContent.Id, diagnostic.Id);
         Assert.Equal("""
             Unrecognized child content inside component 'RenderChildContent'. The component 'RenderChildContent' accepts child content through the following top-level items: 'ChildContent'.
@@ -135,7 +134,7 @@ Some Content
 
         // Assert
         Assert.Collection(
-            generated.Diagnostics,
+            generated.RazorDiagnostics,
             d => Assert.Equal("RZ10012", d.Id),
             d => Assert.Equal("RZ9996", d.Id));
     }
@@ -156,7 +155,7 @@ Some Content
 
         // Assert
         Assert.Collection(
-            generated.Diagnostics,
+            generated.RazorDiagnostics,
             d => Assert.Equal("RZ10012", d.Id),
             d => Assert.Equal("RZ9996", d.Id));
     }
@@ -177,7 +176,7 @@ Some Content
 
         // Assert
         Assert.Collection(
-            generated.Diagnostics,
+            generated.RazorDiagnostics,
             d => Assert.Equal("RZ9996", d.Id));
     }
 
@@ -195,7 +194,7 @@ Some Content
 </RenderChildContent>");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Same(ComponentDiagnosticFactory.ChildContentHasInvalidAttribute.Id, diagnostic.Id);
     }
 
@@ -213,7 +212,7 @@ Some Content
 </RenderChildContentString>");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Same(ComponentDiagnosticFactory.ChildContentHasInvalidParameter.Id, diagnostic.Id);
     }
 
@@ -235,7 +234,7 @@ Some Content
 </RenderChildContentString>");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Same(ComponentDiagnosticFactory.ChildContentRepeatedParameterName.Id, diagnostic.Id);
         Assert.Equal("""
             The child content element 'ChildContent' of component 'RenderChildContentString' uses the same parameter name ('context') as enclosing child content element 'ChildContent' of component 'RenderChildContentString'. Specify the parameter name like: '<ChildContent Context="another_name"> to resolve the ambiguity
@@ -255,7 +254,7 @@ Some Content
 </RenderChildContentString>");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Same(ComponentDiagnosticFactory.ChildContentHasInvalidParameterOnComponent.Id, diagnostic.Id);
         Assert.Equal(
             "Invalid parameter name. The parameter name attribute 'Context' on component 'RenderChildContentString' can only include literal text.",
@@ -276,7 +275,7 @@ Some Content
 </RenderChildContentString>");
 
         // Assert
-        var diagnostic = Assert.Single(generated.Diagnostics);
+        var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Same(ComponentDiagnosticFactory.ChildContentHasInvalidAttribute.Id, diagnostic.Id);
         Assert.Equal(
             "Unrecognized attribute '@key' on child content element 'ChildContent'.",

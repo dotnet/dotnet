@@ -80,7 +80,7 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
 
         // Assert
         // Error RZ1041: The 'rendermode' directive expects an identifier or explicit razor expression.
-        var diagnostic = Assert.Single(compilationResult.Diagnostics);
+        var diagnostic = Assert.Single(compilationResult.RazorDiagnostics);
         Assert.Equal("RZ1041", diagnostic.Id);
     }
 
@@ -95,7 +95,7 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
 
         // Assert
         //Error RZ2001: The 'rendermode' directive may only occur once per document.
-        var diagnostic = Assert.Single(compilationResult.Diagnostics);
+        var diagnostic = Assert.Single(compilationResult.RazorDiagnostics);
         Assert.Equal("RZ2001", diagnostic.Id);
     }
 
@@ -106,10 +106,9 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
             @rendermode NoExist
             """);
 
-        Assert.Empty(compilationResult.Diagnostics);
+        Assert.Empty(compilationResult.RazorDiagnostics);
 
-        var assemblyResult = CompileToAssembly(compilationResult, throwOnFailure: false);
-        assemblyResult.Diagnostics.Verify(
+        CompileToAssembly(compilationResult,
             // x:\dir\subdir\Test\TestComponent.cshtml(25,101): error CS0103: The name 'NoExist' does not exist in the current context
             //             NoExist
             Diagnostic(ErrorCode.ERR_NameNotInContext, "NoExist").WithArguments("NoExist").WithLocation(25, 101)
@@ -123,10 +122,9 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
             @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.Server
             """, configuration: Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 });
 
-        Assert.Empty(compilationResult.Diagnostics);
+        Assert.Empty(compilationResult.RazorDiagnostics);
 
-        var assemblyResult = CompileToAssembly(compilationResult, throwOnFailure: false);
-        assemblyResult.Diagnostics.Verify(
+        CompileToAssembly(compilationResult,
             // x:\dir\subdir\Test\TestComponent.cshtml(1,2): error CS0103: The name 'rendermode' does not exist in the current context
             // __builder.AddContent(0, rendermode);
             Diagnostic(ErrorCode.ERR_NameNotInContext, "rendermode").WithArguments("rendermode").WithLocation(1, 2)
@@ -145,10 +143,9 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
             }
             """, configuration: Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 });
 
-        Assert.Empty(compilationResult.Diagnostics);
+        Assert.Empty(compilationResult.RazorDiagnostics);
 
-        var assemblyResult = CompileToAssembly(compilationResult, throwOnFailure: true);
-        assemblyResult.Diagnostics.Verify();
+        CompileToAssembly(compilationResult);
     }
 
     [Fact]
@@ -163,10 +160,9 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
             }
             """, configuration: Configuration with { LanguageVersion = RazorLanguageVersion.Version_8_0 });
 
-        Assert.Empty(compilationResult.Diagnostics);
+        Assert.Empty(compilationResult.RazorDiagnostics);
 
-        var assemblyResult = CompileToAssembly(compilationResult, throwOnFailure: false);
-        assemblyResult.Diagnostics.Verify(
+        CompileToAssembly(compilationResult,
             // x:\dir\subdir\Test\TestComponent.cshtml(34,101): error CS0103: The name 'Foo' does not exist in the current context
             //             Foo
             Diagnostic(ErrorCode.ERR_NameNotInContext, "Foo").WithArguments("Foo").WithLocation(34, 101),
@@ -186,12 +182,11 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
                 {
                     Microsoft.AspNetCore.Components.IComponentRenderMode myRenderMode = new Microsoft.AspNetCore.Components.Web.ServerRenderMode();
                 }
-                """, throwOnFailure: true);
+                """);
 
-        Assert.Empty(compilationResult.Diagnostics);
+        Assert.Empty(compilationResult.RazorDiagnostics);
 
-        var assemblyResult = CompileToAssembly(compilationResult, throwOnFailure: false);
-        assemblyResult.Diagnostics.Verify(
+        CompileToAssembly(compilationResult,
             // x:\dir\subdir\Test\TestComponent.cshtml(34, 101): error CS0120: An object reference is required for the non-static field, method, or property 'TestComponent.myRenderMode'
             //             myRenderMode
             Diagnostic(ErrorCode.ERR_ObjectRequired, "myRenderMode").WithArguments("Test.TestComponent.myRenderMode").WithLocation(34, 101)
@@ -207,11 +202,11 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
                 {
                     static Microsoft.AspNetCore.Components.IComponentRenderMode myRenderMode = new Microsoft.AspNetCore.Components.Web.ServerRenderMode();
                 }
-                """, throwOnFailure: true);
+                """);
 
-        Assert.Empty(compilationResult.Diagnostics);
+        Assert.Empty(compilationResult.RazorDiagnostics);
 
-        var assemblyResult = CompileToAssembly(compilationResult, throwOnFailure: true);
+        CompileToAssembly(compilationResult);
     }
 
     [Fact]
@@ -223,12 +218,11 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
                 {
                     internal static Microsoft.AspNetCore.Components.IComponentRenderMode myRenderMode = new Microsoft.AspNetCore.Components.Web.ServerRenderMode();
                 }
-                """, throwOnFailure: true);
+                """);
 
-        Assert.Empty(compilationResult.Diagnostics);
+        Assert.Empty(compilationResult.RazorDiagnostics);
 
-        var assemblyResult = CompileToAssembly(compilationResult, throwOnFailure: false);
-        assemblyResult.Diagnostics.Verify();
+        CompileToAssembly(compilationResult);
     }
 
     [Fact]

@@ -24,22 +24,10 @@ Generated Location: (1467:51,10 [5] )
 |
   }|
 
-Source Location: (201:10,1 [83] x:\dir\subdir\Test\TestComponent.cshtml)
+Source Location: (201:10,1 [277] x:\dir\subdir\Test\TestComponent.cshtml)
 |
   [Parameter]
-  public RenderFragment ChildContent { get; set; } = (context) => |
-Generated Location: (1645:61,1 [83] )
-|
-  [Parameter]
-  public RenderFragment ChildContent { get; set; } = (context) => |
-
-Source Location: (288:12,70 [7] x:\dir\subdir\Test\TestComponent.cshtml)
-|context|
-Generated Location: (1921:70,70 [7] )
-|context|
-
-Source Location: (299:12,81 [179] x:\dir\subdir\Test\TestComponent.cshtml)
-|
+  public RenderFragment ChildContent { get; set; } = (context) => <p>@context</p>
   [Parameter]
   public bool Collapsed { get; set; }
   string ActionText { get => Collapsed ? "Expand" : "Collapse"; }
@@ -48,8 +36,10 @@ Source Location: (299:12,81 [179] x:\dir\subdir\Test\TestComponent.cshtml)
     Collapsed = !Collapsed;
   }
 |
-Generated Location: (2133:77,81 [179] )
+Generated Location: (1645:61,1 [277] )
 |
+  [Parameter]
+  public RenderFragment ChildContent { get; set; } = (context) => <p>@context</p>
   [Parameter]
   public bool Collapsed { get; set; }
   string ActionText { get => Collapsed ? "Expand" : "Collapse"; }

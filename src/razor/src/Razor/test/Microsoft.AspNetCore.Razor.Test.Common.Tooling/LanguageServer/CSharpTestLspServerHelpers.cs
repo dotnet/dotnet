@@ -133,7 +133,7 @@ internal static class CSharpTestLspServerHelpers
 
         // Add document to workspace. We use an IVT method to create the DocumentInfo variable because there's
         // a special constructor in Roslyn that will help identify the document as belonging to Razor.
-        var languageServerFactory = exportProvider.GetExportedValue<IRazorLanguageServerFactoryWrapper>();
+        var languageServerFactory = exportProvider.GetExportedValue<AbstractRazorLanguageServerFactoryWrapper>();
 
         var documentCount = 0;
         foreach (var (documentUri, csharpSourceText) in files)

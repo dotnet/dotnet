@@ -76,7 +76,7 @@ namespace Test.AnotherNamespace
         // Arrange
 
         // Act
-        var result = CompileToCSharp("UniqueName.cshtml", string.Empty);
+        var result = CompileToCSharp("UniqueName.cshtml", cshtmlContent: string.Empty);
 
         // Assert
         var bindings = result.CodeDocument.GetTagHelperContext();
@@ -89,7 +89,7 @@ namespace Test.AnotherNamespace
         // Arrange
 
         // Act
-        var result = CompileToCSharp("UniqueName.cshtml", @"
+        var result = CompileToCSharp("UniqueName.cshtml", cshtmlContent: @"
 @typeparam TItem
 @functions {
     [Parameter] public TItem Item { get; set; }
@@ -106,7 +106,7 @@ namespace Test.AnotherNamespace
         // Arrange
 
         // Act
-        var result = CompileToCSharp("UniqueName.cshtml", @"
+        var result = CompileToCSharp("UniqueName.cshtml", cshtmlContent: @"
 @typeparam TItem;
 @functions {
     [Parameter] public TItem Item { get; set; }
@@ -123,7 +123,7 @@ namespace Test.AnotherNamespace
         // Arrange
 
         // Act
-        var result = CompileToCSharp("UniqueName.cshtml", @"
+        var result = CompileToCSharp("UniqueName.cshtml", cshtmlContent: @"
 @typeparam TItem1
 @typeparam TItem2
 @typeparam TItem3
@@ -142,7 +142,7 @@ namespace Test.AnotherNamespace
         // Arrange
 
         // Act
-        var result = CompileToCSharp("UniqueName.cshtml", @"
+        var result = CompileToCSharp("UniqueName.cshtml", cshtmlContent: @"
 @typeparam TItem1
 @typeparam TItem2;
 @typeparam TItem3

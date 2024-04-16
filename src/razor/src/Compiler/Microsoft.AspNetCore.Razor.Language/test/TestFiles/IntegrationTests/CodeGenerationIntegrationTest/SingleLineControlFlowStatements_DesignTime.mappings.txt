@@ -228,26 +228,30 @@ Source Location: (2038:96,1 [10] TestFiles/IntegrationTests/CodeGenerationIntegr
 Generated Location: (7616:261,1 [10] )
 |if (true) |
 
-Source Location: (2049:96,12 [16] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
-|@GitHubUserName |
-Generated Location: (7817:268,12 [16] )
-|@GitHubUserName |
+Source Location: (2049:96,12 [33] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+|@GitHubUserName <p>Hello!</p>
+
+|
+Generated Location: (7817:268,12 [33] )
+|@GitHubUserName <p>Hello!</p>
+
+|
 
 Source Location: (2083:98,1 [16] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
 |if (true) 
     |
-Generated Location: (8013:275,1 [16] )
+Generated Location: (8028:276,1 [16] )
 |if (true) 
     |
 
 Source Location: (2118:99,23 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
 |DateTime.Now|
-Generated Location: (8232:283,23 [12] )
+Generated Location: (8247:284,23 [12] )
 |DateTime.Now|
 
 Source Location: (2136:100,0 [0] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
 ||
-Generated Location: (8425:290,0 [0] )
+Generated Location: (8440:291,0 [0] )
 ||
 
 Source Location: (846:36,12 [386] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
@@ -267,7 +271,7 @@ Source Location: (846:36,12 [386] TestFiles/IntegrationTests/CodeGenerationInteg
 
         foreach (var item in new[] {"hello"})
             |
-Generated Location: (8663:298,12 [386] )
+Generated Location: (8678:299,12 [386] )
 |
     public string Foo()
     {
@@ -287,7 +291,7 @@ Generated Location: (8663:298,12 [386] )
 
 Source Location: (1233:51,13 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
 |item|
-Generated Location: (9241:320,13 [4] )
+Generated Location: (9256:321,13 [4] )
 |item|
 
 Source Location: (1237:51,17 [28] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
@@ -295,7 +299,7 @@ Source Location: (1237:51,17 [28] TestFiles/IntegrationTests/CodeGenerationInteg
 
         do
             |
-Generated Location: (9442:327,17 [28] )
+Generated Location: (9457:328,17 [28] )
 |
 
         do
@@ -303,7 +307,7 @@ Generated Location: (9442:327,17 [28] )
 
 Source Location: (1266:54,13 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
 |currentCount|
-Generated Location: (9662:337,13 [12] )
+Generated Location: (9677:338,13 [12] )
 |currentCount|
 
 Source Location: (1278:54,25 [194] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
@@ -315,7 +319,7 @@ Source Location: (1278:54,25 [194] TestFiles/IntegrationTests/CodeGenerationInte
 
         using (var reader = new System.IO.StreamReader("/something"))
             |
-Generated Location: (9879:344,25 [194] )
+Generated Location: (9894:345,25 [194] )
 |
         while (--currentCount >= 0);
 
@@ -327,7 +331,7 @@ Generated Location: (9879:344,25 [194] )
 
 Source Location: (1473:61,13 [18] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
 |reader.ReadToEnd()|
-Generated Location: (10265:358,13 [18] )
+Generated Location: (10280:359,13 [18] )
 |reader.ReadToEnd()|
 
 Source Location: (1491:61,31 [177] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
@@ -345,7 +349,7 @@ Source Location: (1491:61,31 [177] TestFiles/IntegrationTests/CodeGenerationInte
     }
 
 |
-Generated Location: (10494:365,31 [177] )
+Generated Location: (10509:366,31 [177] )
 |
 
         lock (this)

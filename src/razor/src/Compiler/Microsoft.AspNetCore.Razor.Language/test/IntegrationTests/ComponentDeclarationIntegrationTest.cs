@@ -149,16 +149,10 @@ namespace Test
 ", generated);
 
         // Act 2
-        var assembly = CompileToAssembly(generated, throwOnFailure: false);
-
-        // Assert 2
-        var diagnostic = Assert.Single(assembly.Diagnostics);
-
-        // This error should map to line 2 of the generated file, the test
-        // says 1 because Roslyn's line/column data structures are 0-based.
-        var position = diagnostic.Location.GetMappedLineSpan();
-        Assert.EndsWith(".cshtml", position.Path);
-        Assert.Equal(1, position.StartLinePosition.Line);
+        CompileToAssembly(generated,
+            // /dir/subdir/Test/TestComponent.cshtml(2,12): error CS0246: The type or namespace name 'StringBuilder' could not be found (are you missing a using directive or an assembly reference?)
+            //     public StringBuilder Builder { get; set; }
+            Diagnostic(ErrorCode.ERR_SingleTypeNameNotFound, "StringBuilder").WithArguments("StringBuilder").WithLocation(2, 12));
     }
 
     public class BaseClass : IComponent

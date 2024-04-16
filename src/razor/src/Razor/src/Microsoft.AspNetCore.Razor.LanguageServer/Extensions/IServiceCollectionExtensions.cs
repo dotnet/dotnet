@@ -212,8 +212,15 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IRazorDocumentMappingService, RazorDocumentMappingService>();
         services.AddSingleton<RazorFileChangeDetectorManager>();
 
-        // File change listeners
-        services.AddSingleton<IProjectConfigurationFileChangeListener, ProjectConfigurationStateSynchronizer>();
+        if (featureOptions.UseProjectConfigurationEndpoint)
+        {
+            services.AddSingleton<ProjectConfigurationStateManager>();
+        }
+        else 
+        {
+            services.AddSingleton<IProjectConfigurationFileChangeListener, ProjectConfigurationStateSynchronizer>();
+        }
+
         services.AddSingleton<IRazorFileChangeListener, RazorFileSynchronizer>();
 
         // If we're not monitoring the whole workspace folder for configuration changes, then we don't actually need the the file change
