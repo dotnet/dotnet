@@ -21,7 +21,7 @@
     <emsdkOutputPackageVersion>9.0.0-preview.4.24209.5</emsdkOutputPackageVersion>
     <fsharpGitCommitHash>0a35514c0940d546730303b9e4adbaeb34fc38fa</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.400-beta.24216.4</fsharpOutputPackageVersion>
-    <installerGitCommitHash>93213b2642af6c4bb03cd4864d5ec5a48ee82b8a</installerGitCommitHash>
+    <installerGitCommitHash>afe18f50b5e2ede2253afd0e9f49c7255797cc8b</installerGitCommitHash>
     <installerOutputPackageVersion>9.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>367149434a51b18724b7a92b419644fabf06604f</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.11.0-preview-24216-02</msbuildOutputPackageVersion>
