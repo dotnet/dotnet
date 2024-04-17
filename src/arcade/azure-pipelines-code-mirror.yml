@@ -13,10 +13,20 @@ resources:
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
+
     pool:
       name: $(DncEngInternalBuildPool)
       image: windows.vs2019.amd64
       os: windows
+
+    # devdiv has different agent pools
+    ${{ if eq(variables['System.TeamProject'], 'DevDiv') }}:
+      sdl:
+        sourceAnalysisPool:
+          name: AzurePipelines-EO  
+          image: 1ESPT-Windows2022
+          os: windows
+
 # Moves code from GitHub into internal repos
     stages:
     - stage: Merge_GitHub_to_Azure_DevOps
