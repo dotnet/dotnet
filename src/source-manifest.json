@@ -13,10 +13,10 @@
       "commitSha": "7f919f99dee96dd326cedeb1c6240f6352754385"
     },
     {
-      "packageVersion": "9.0.0-preview.4.24215.8",
+      "packageVersion": "9.0.0-preview.4.24216.7",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "06381390940d728866f8f0c543ee3c5547f6bad4"
+      "commitSha": "19a7642697c5da642717c0e90413cb2a4aff85a9"
     },
     {
       "packageVersion": "0.11.4-alpha.24168.1",
@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "93213b2642af6c4bb03cd4864d5ec5a48ee82b8a"
+      "commitSha": "afe18f50b5e2ede2253afd0e9f49c7255797cc8b"
     },
     {
       "packageVersion": "17.11.0-preview-24216-02",
@@ -73,10 +73,10 @@
       "commitSha": "367149434a51b18724b7a92b419644fabf06604f"
     },
     {
-      "packageVersion": "6.11.0-preview.1.22",
+      "packageVersion": "6.11.0-preview.1.23",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "95b79314dfece146ddcbac902111d9ff946cf514"
+      "commitSha": "d01e48ace560689897c1c642591659126736feb8"
     },
     {
       "packageVersion": "7.0.0-preview.24216.6",
@@ -109,10 +109,10 @@
       "commitSha": "4e95e339e9ea1dfb6203122f3fd6b42296e95f39"
     },
     {
-      "packageVersion": "9.0.100-preview.4.24216.7",
+      "packageVersion": "9.0.100-preview.4.24216.22",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "5c8c0a75bba35c1fd0db879eb821c8635c142f79"
+      "commitSha": "26854d4fe75c45af1c17e696d98ca4c8b509f170"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24215.1",
@@ -139,10 +139,10 @@
       "commitSha": "409af431ee684f9e07d34bbd4e51b9933345c1e1"
     },
     {
-      "packageVersion": "9.0.100-preview.4.24209.1",
+      "packageVersion": "9.0.100-preview.4.24216.6",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "1961e3566f686c040d1f9076e47ebf10166ddddf"
+      "commitSha": "878e6de43abbb6e988ce2134bce1100c8c911674"
     },
     {
       "packageVersion": "1.1.0-rc.24215.1",
