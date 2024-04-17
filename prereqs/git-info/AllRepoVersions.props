@@ -47,8 +47,8 @@
     <sourcelinkOutputPackageVersion>9.0.0-beta.24215.3</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>409af431ee684f9e07d34bbd4e51b9933345c1e1</symreaderGitCommitHash>
     <symreaderOutputPackageVersion>2.1.0-beta.24208.1</symreaderOutputPackageVersion>
-    <templatingGitCommitHash>1961e3566f686c040d1f9076e47ebf10166ddddf</templatingGitCommitHash>
-    <templatingOutputPackageVersion>9.0.100-preview.4.24209.1</templatingOutputPackageVersion>
+    <templatingGitCommitHash>878e6de43abbb6e988ce2134bce1100c8c911674</templatingGitCommitHash>
+    <templatingOutputPackageVersion>9.0.100-preview.4.24216.6</templatingOutputPackageVersion>
     <testtemplatesGitCommitHash>b471a5d85c03cbd41eb83fdfb6157362c2c04d9a</testtemplatesGitCommitHash>
     <testtemplatesOutputPackageVersion>1.1.0-rc.24215.1</testtemplatesOutputPackageVersion>
     <vstestGitCommitHash>56d28849af08dc3143d019694aa92f186b89d2ac</vstestGitCommitHash>
