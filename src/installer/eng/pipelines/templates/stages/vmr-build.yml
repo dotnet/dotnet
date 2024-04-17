@@ -21,9 +21,9 @@ parameters:
 
   # The following parameters aren't expected to be passed in rather they are used for encapsulation
   # -----------------------------------------------------------------------------------------------
-- name: alpine317Container
+- name: alpine319Container
   type: string
-  default: mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.17
+  default: mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.19
 - name: centOSStream8Container
   type: string
   default: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
@@ -120,7 +120,7 @@ stages:
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
         pool: ${{ parameters.pool_Linux }}
-        container: ${{ parameters.alpine317Container }}
+        container: ${{ parameters.alpine319Container }}
         buildFromArchive: false            # ✅
         enablePoison: false                # 🚫
         excludeOmniSharpTests: true        # ✅
