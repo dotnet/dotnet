@@ -29,11 +29,6 @@
       "authors": [
         "Microsoft"
       ],
-      "owners": [
-        "aspnet",
-        "EntityFramework",
-        "Microsoft"
-      ],
       "totalDownloads": 248620082,
       "verified": true,
       "packageTypes": [

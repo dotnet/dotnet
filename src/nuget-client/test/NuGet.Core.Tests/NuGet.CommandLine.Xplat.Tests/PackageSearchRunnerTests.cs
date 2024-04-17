@@ -277,11 +277,11 @@ namespace NuGet.CommandLine.Xplat.Tests
                 machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
             var expectedDefaultColorMessage =
-               "| Package ID           | Version | Owners            | Total Downloads |" +
-               "| -------------------- | ------- | ----------------- | --------------- |" +
-               "|  | 12.0.3  | James Newton-King | 531,607,259     |" +
-               "| -------------------- | ------- | ----------------- | --------------- |";
-            var expectedRedColorMessage = "Fake.Newtonsoft.Json";
+               "| Package ID      | Version | Owners | Total Downloads |" +
+               "| --------------- | ------- | ------ | --------------- |" +
+               "|  | 13.0.3  |        | N/A             |" +
+               "| --------------- | ------- | ------ | --------------- |";
+            var expectedRedColorMessage = "Newtonsoft.Json";
             PackageSearchArgs packageSearchArgs = new()
             {
                 Skip = 0,
@@ -289,7 +289,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                 Prerelease = false,
                 ExactMatch = true,
                 Logger = GetLogger(),
-                SearchTerm = "Fake.Newtonsoft.Json",
+                SearchTerm = "Newtonsoft.Json",
                 Sources = new List<string> { $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json" }
             };
 
