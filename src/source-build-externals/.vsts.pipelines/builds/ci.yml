@@ -33,7 +33,7 @@ extends:
     sdl:
       sourceAnalysisPool:
         name: $(DncEngInternalBuildPool)
-        image: 1es-windows-2022-pt
+        image: 1es-windows-2022
         os: windows
       suppression:
           suppressionFile: $(Build.SourcesDirectory)\.vsts.pipelines\guardian\.gdnsuppress
@@ -56,7 +56,7 @@ extends:
             displayName: Source-Build (Managed)
             pool:
               name: $(DncEngInternalBuildPool)
-              image: 1es-ubuntu-2204-pt
+              image: 1es-ubuntu-2204
               os: linux
             container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8'
             workspace:
