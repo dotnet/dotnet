@@ -1,10 +1,14 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.SemanticTokens;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
@@ -12,21 +16,21 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 [RazorLanguageServerEndpoint(Methods.TextDocumentSemanticTokensRangeName)]
 internal sealed class SemanticTokensRangeEndpoint(
     IRazorSemanticTokensInfoService semanticTokensInfoService,
-    RazorSemanticTokensLegendService razorSemanticTokensLegendService,
+    ISemanticTokensLegendService semanticTokensLegendService,
     RazorLSPOptionsMonitor razorLSPOptionsMonitor,
-    IClientConnection clientConnection)
+    ITelemetryReporter? telemetryReporter)
     : IRazorRequestHandler<SemanticTokensRangeParams, SemanticTokens?>, ICapabilitiesProvider
 {
     private readonly IRazorSemanticTokensInfoService _semanticTokensInfoService = semanticTokensInfoService;
-    private readonly RazorSemanticTokensLegendService _razorSemanticTokensLegendService = razorSemanticTokensLegendService;
+    private readonly ISemanticTokensLegendService _semanticTokensLegendService = semanticTokensLegendService;
     private readonly RazorLSPOptionsMonitor _razorLSPOptionsMonitor = razorLSPOptionsMonitor;
-    private readonly IClientConnection _clientConnection = clientConnection;
+    private readonly ITelemetryReporter? _telemetryReporter = telemetryReporter;
 
     public bool MutatesSolutionState { get; } = false;
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        serverCapabilities.EnableSemanticTokens(_razorSemanticTokensLegendService.Legend);
+        serverCapabilities.EnableSemanticTokens(_semanticTokensLegendService);
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(SemanticTokensRangeParams request)
@@ -39,8 +43,19 @@ internal sealed class SemanticTokensRangeEndpoint(
         var documentContext = requestContext.GetRequiredDocumentContext();
         var colorBackground = _razorLSPOptionsMonitor.CurrentValue.ColorBackground;
 
-        var semanticTokens = await _semanticTokensInfoService.GetSemanticTokensAsync(_clientConnection, request.TextDocument, request.Range, documentContext, colorBackground, cancellationToken).ConfigureAwait(false);
+        var correlationId = Guid.NewGuid();
+        using var _ = _telemetryReporter?.TrackLspRequest(Methods.TextDocumentSemanticTokensRangeName, LanguageServerConstants.RazorLanguageServerName, correlationId);
 
-        return semanticTokens;
+        var data = await _semanticTokensInfoService.GetSemanticTokensAsync(documentContext, request.Range.ToLinePositionSpan(), colorBackground, correlationId, cancellationToken).ConfigureAwait(false);
+
+        if (data is null)
+        {
+            return null;
+        }
+
+        return new SemanticTokens
+        {
+            Data = data,
+        };
     }
 }

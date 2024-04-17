@@ -2,65 +2,70 @@
 #pragma warning disable 1591
 namespace Test
 {
-    #line hidden
+    #line default
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "x:\dir\subdir\Test\UseTestComponent.cshtml"
-using Test;
+#line (1,2)-(2,1) "x:\dir\subdir\Test\UseTestComponent.cshtml"
+using Test
 
 #line default
 #line hidden
 #nullable disable
+    ;
+    #nullable restore
     public partial class UseTestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
+    #nullable disable
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             global::__Blazor.Test.UseTestComponent.TypeInference.CreateTestComponent_0(__builder, 0, 1, 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\UseTestComponent.cshtml"
-                      item1
+#line (2,23)-(2,28) "x:\dir\subdir\Test\UseTestComponent.cshtml"
+item1
 
 #line default
 #line hidden
 #nullable disable
             , 2, 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\UseTestComponent.cshtml"
-                                    items
+#line (2,37)-(2,42) "x:\dir\subdir\Test\UseTestComponent.cshtml"
+items
 
 #line default
 #line hidden
 #nullable disable
             , 3, 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\UseTestComponent.cshtml"
-                                                 item1
+#line (2,50)-(2,55) "x:\dir\subdir\Test\UseTestComponent.cshtml"
+item1
 
 #line default
 #line hidden
 #nullable disable
             , 4, (context) => (__builder2) => {
                 __builder2.OpenElement(5, "p");
+                __builder2.AddContent(6, 
 #nullable restore
-#line (3,9)-(3,16) 25 "x:\dir\subdir\Test\UseTestComponent.cshtml"
-__builder2.AddContent(6, context);
+#line (3,9)-(3,16) "x:\dir\subdir\Test\UseTestComponent.cshtml"
+context
 
 #line default
 #line hidden
 #nullable disable
+                );
                 __builder2.CloseElement();
             }
             );
         }
         #pragma warning restore 1998
 #nullable restore
-#line 6 "x:\dir\subdir\Test\UseTestComponent.cshtml"
-       
+#line (6,8)-(11,1) "x:\dir\subdir\Test\UseTestComponent.cshtml"
+
     Image item1 = new Image() { id = 1, url="https://example.com"};
     static Tag tag1 = new Tag() { description = "A description."};
     static Tag tag2 = new Tag() { description = "Another description."};
@@ -69,6 +74,7 @@ __builder2.AddContent(6, context);
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 namespace __Blazor.Test.UseTestComponent

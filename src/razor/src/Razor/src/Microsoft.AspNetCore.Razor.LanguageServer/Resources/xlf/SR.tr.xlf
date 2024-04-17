@@ -72,11 +72,6 @@
         <target state="translated">'{0}' Olay İşleyicisi Oluştur</target>
         <note />
       </trans-unit>
-      <trans-unit id="Invalid_Offset">
-        <source>Invalid offset.</source>
-        <target state="translated">Geçersiz uzaklık.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">Razor dil hizmetleri düzgün yapılandırılmadı, '{0}' dil hizmeti eksik.</target>
@@ -87,16 +82,6 @@
         <target state="translated">Şurada kullanılamaz:</target>
         <note />
       </trans-unit>
-      <trans-unit id="PositionCharacter_Outside_Range">
-        <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">'{2}' {1} aralığının dışındaki '{0}' karakteri sorgulandı. Belge güncel olmayabilir.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PositionLine_Outside_Range">
-        <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">{1} / '{2}' aralığının dışındaki '{0}' satırı sorgulandı. Belge güncel olmayabilir.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ReTrigger_Completions_Title">
         <source>"Re-trigger completions..."</source>
         <target state="translated">"Tamamlamaları yeniden tetikleyin..."</target>
@@ -104,7 +89,7 @@
       </trans-unit>
       <trans-unit id="Statement">
         <source>statement</source>
-        <target state="new">statement</target>
+        <target state="translated">deyim</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">
@@ -120,16 +105,6 @@
       <trans-unit id="Unknown_ProjectChangeKind">
         <source>Unknown ProjectChangeKind {0}</source>
         <target state="translated">Bilinmeyen ProjectChangeKind {0}</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unknown_RazorMetaCode">
-        <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
-        <target state="translated">'{' veya '} dışında bir RazorMetaCode ziyaret edilmeye çalışıldı.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unknown_mapping_behavior">
-        <source>Unknown mapping behavior</source>
-        <target state="translated">Bilinmeyen eşleme davranışı</target>
         <note />
       </trans-unit>
       <trans-unit id="Version_Should_Not_Be_Null">

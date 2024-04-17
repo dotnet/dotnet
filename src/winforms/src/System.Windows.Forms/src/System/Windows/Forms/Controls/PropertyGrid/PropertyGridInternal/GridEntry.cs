@@ -164,7 +164,7 @@ internal abstract partial class GridEntry : GridItem, ITypeDescriptorContext
     [AllowNull]
     protected GridEntryCollection ChildCollection
     {
-        get => _children ??= new GridEntryCollection();
+        get => _children ??= [];
         set
         {
             Debug.Assert(value is null || !Disposed, "Why are we putting new children in after we are disposed?");
@@ -192,7 +192,7 @@ internal abstract partial class GridEntry : GridItem, ITypeDescriptorContext
                 CreateChildren();
             }
 
-            return _children ??= new GridEntryCollection();
+            return _children ??= [];
         }
     }
 
@@ -914,7 +914,7 @@ internal abstract partial class GridEntry : GridItem, ITypeDescriptorContext
             }
             else
             {
-                _children = new GridEntryCollection();
+                _children = [];
             }
 
             return false;
@@ -963,7 +963,7 @@ internal abstract partial class GridEntry : GridItem, ITypeDescriptorContext
             }
             else
             {
-                _children = new GridEntryCollection();
+                _children = [];
             }
 
             if (InternalExpanded)
@@ -1154,7 +1154,7 @@ internal abstract partial class GridEntry : GridItem, ITypeDescriptorContext
         IComponent? component = Component;
         if (component is not null)
         {
-            return new IComponent[] { component };
+            return [component];
         }
 
         return null;
@@ -1439,15 +1439,14 @@ internal abstract partial class GridEntry : GridItem, ITypeDescriptorContext
     /// </summary>
     public virtual object[] GetPropertyValueList()
     {
-        ICollection? values = TypeConverter.GetStandardValues(this);
-        if (values is not null)
+        if (TypeConverter.GetStandardValues(this) is { } values)
         {
             object[] valueArray = new object[values.Count];
             values.CopyTo(valueArray, 0);
             return valueArray;
         }
 
-        return Array.Empty<object>();
+        return [];
     }
 
     public override int GetHashCode() => HashCode.Combine(PropertyLabel, PropertyType, GetType());
@@ -1829,7 +1828,7 @@ internal abstract partial class GridEntry : GridItem, ITypeDescriptorContext
 
         if (text.Length > MaximumLengthOfPropertyString)
         {
-            text = text.Substring(0, MaximumLengthOfPropertyString);
+            text = text[..MaximumLengthOfPropertyString];
         }
 
         int textWidth = GetValueTextWidth(text, g, GetFont(valueModified));

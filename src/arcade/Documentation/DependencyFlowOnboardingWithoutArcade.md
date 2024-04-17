@@ -4,14 +4,14 @@
 
 Dependency flow is the method by which .NET repos consume other product repo's assets.  In order to participate in dependency flow, a repo must produce a [manifest](#generate-a-manifest) of what assets / packages that repo produces and then publish that manifest to the Build Asset Registry (B.A.R.).  This document is intended to provide guidance for repos which are not using the Arcade Sdk but still need to participate in dependency flow. The end goal is that the repo is able to produce a manifest and publish that to B.A.R.
 
-To do so, a repo follows almost the same process as [normal arcade publishing](DependencyFlowOnboarding.md). The repo directly uses the [`PushToAzureDevOpsArtifacts`](https://github.com/dotnet/arcade/blob/master/src/Microsoft.DotNet.Build.Tasks.Feed/src/PushToAzureDevOpsArtifacts.cs) task in the [Microsoft.DotNet.Build.Tasks.Feed](https://github.com/dotnet/arcade/tree/master/src/Microsoft.DotNet.Build.Tasks.Feed) package (available from the dotnet-eng feed - `https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json`). This task uploads the artifacts to build storage and generates a manifest describing the build. The manifest is the used to publish the new build to the build asset registry (BAR).
+To do so, a repo follows almost the same process as [normal arcade publishing](DependencyFlowOnboarding.md). The repo directly uses the [`PushToBuildStorage`](https://github.com/dotnet/arcade/blob/master/src/Microsoft.DotNet.Build.Tasks.Feed/src/PushToBuildStorage.cs) task in the [Microsoft.DotNet.Build.Tasks.Feed](https://github.com/dotnet/arcade/tree/master/src/Microsoft.DotNet.Build.Tasks.Feed) package (available from the dotnet-eng feed - `https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json`). This task uploads the artifacts to build storage and generates a manifest describing the build. The manifest is the used to publish the new build to the build asset registry (BAR).
 
 ## Creating a manifest
 
-To create a manifest, use the PushToAzureDevOpsArtifacts, providing the feed that packages pushed to. The below target performs this task.
+To create a manifest, use the PushToBuildStorage, providing the feed that packages pushed to. The below target performs this task.
 
 ```
-<UsingTask TaskName="Microsoft.DotNet.Build.Tasks.Feed.PushToAzureDevOpsArtifacts" AssemblyFile="$(MicrosoftDotNetBuildTasksFeedFilePath)" />
+<UsingTask TaskName="Microsoft.DotNet.Build.Tasks.Feed.PushToBuildStorage" AssemblyFile="$(MicrosoftDotNetBuildTasksFeedFilePath)" />
 
 <Target Name="PublishToBuildAssetRegistry">
   <PropertyGroup>
@@ -52,7 +52,7 @@ To create a manifest, use the PushToAzureDevOpsArtifacts, providing the feed tha
     <ManifestBuildData Include="AzureDevOpsBranch=$(BUILD_SOURCEBRANCH)" />
   </ItemGroup>
 
-  <PushToAzureDevOpsArtifacts
+  <PushToBuildStorage
     ItemsToPush="@(ItemsToPush)"
     ManifestBuildData="@(ManifestBuildData)"
     ManifestRepoUri="$(BUILD_REPOSITORY_NAME)"

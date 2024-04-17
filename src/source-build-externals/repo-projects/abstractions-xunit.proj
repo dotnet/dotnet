@@ -12,7 +12,7 @@
       <PropertyGroup>
         <BuildCommandArgs>$(ProjectDirectory)/xunit.abstractions.sln</BuildCommandArgs>
         <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
-        <BuildCommandArgs>$(BuildCommandArgs) /p:PackageVersion=2.0.3</BuildCommandArgs>
+        <BuildCommandArgs>$(BuildCommandArgs) /p:PackageVersion=$(AbstractionsXunitReleaseVersion)</BuildCommandArgs>
         <BuildCommandArgs>$(BuildCommandArgs) /p:AssemblyOriginatorKeyFile=$(XunitAbstractionsKeyFilePath)</BuildCommandArgs>
         <BuildCommandArgs>$(BuildCommandArgs) /p:DelaySign=$(DelaySign)</BuildCommandArgs>
         <BuildCommandArgs>$(BuildCommandArgs) /p:SignAssembly=true</BuildCommandArgs>
@@ -38,4 +38,4 @@
     </Target>
   
   </Project>
-  
+

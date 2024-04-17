@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -60,19 +62,19 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
 
     protected override async Task InitializeAsync()
     {
-        var testProjectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
+        var testProjectManager = CreateProjectSnapshotManager();
         var hostProject = new HostProject("C:/project/project.csproj", "C:/project/obj", RazorConfiguration.Default, "TestRootNamespace");
         var sourceText = SourceText.From(string.Empty);
         var textAndVersion = TextAndVersion.Create(sourceText, VersionStamp.Default);
         var openedHostDocument = new HostDocument("C:/project/open_document.cshtml", "C:/project/open_document.cshtml");
         var closedHostDocument = new HostDocument("C:/project/closed_document.cshtml", "C:/project/closed_document.cshtml");
 
-        await RunOnDispatcherAsync(() =>
+        await testProjectManager.UpdateAsync(updater =>
         {
-            testProjectManager.ProjectAdded(hostProject);
-            testProjectManager.DocumentAdded(hostProject.Key, openedHostDocument, TextLoader.From(textAndVersion));
-            testProjectManager.DocumentOpened(hostProject.Key, openedHostDocument.FilePath, sourceText);
-            testProjectManager.DocumentAdded(hostProject.Key, closedHostDocument, TextLoader.From(textAndVersion));
+            updater.ProjectAdded(hostProject);
+            updater.DocumentAdded(hostProject.Key, openedHostDocument, TextLoader.From(textAndVersion));
+            updater.DocumentOpened(hostProject.Key, openedHostDocument.FilePath, sourceText);
+            updater.DocumentAdded(hostProject.Key, closedHostDocument, TextLoader.From(textAndVersion));
         });
 
         var openedDocument = testProjectManager.GetProjects()[0].GetDocument(openedHostDocument.FilePath);
@@ -217,7 +219,7 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
             .Returns(Task.CompletedTask);
 
         var documentContextFactory = new TestDocumentContextFactory(_openedDocument.FilePath, codeDocument);
-        var filePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
+        var filePathService = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
         var documentMappingService = new RazorDocumentMappingService(filePathService, documentContextFactory, LoggerFactory);
         var translateDiagnosticsService = new RazorTranslateDiagnosticsService(documentMappingService, LoggerFactory);
 
@@ -368,7 +370,7 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
         processedOpenDocument.With(codeDocument);
 
         var documentContextFactory = new TestDocumentContextFactory(_openedDocument.FilePath, codeDocument);
-        var filePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
+        var filePathService = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
         var documentMappingService = new RazorDocumentMappingService(filePathService, documentContextFactory, LoggerFactory);
         var translateDiagnosticsService = new RazorTranslateDiagnosticsService(documentMappingService, LoggerFactory);
 

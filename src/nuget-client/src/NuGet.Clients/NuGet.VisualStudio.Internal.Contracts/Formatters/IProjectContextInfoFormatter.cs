@@ -35,10 +35,10 @@ namespace NuGet.VisualStudio.Internal.Contracts
                         projectId = reader.ReadString();
                         break;
                     case ProjectKindPropertyName:
-                        projectKind = options.Resolver.GetFormatter<NuGetProjectKind>().Deserialize(ref reader, options);
+                        projectKind = options.Resolver.GetFormatter<NuGetProjectKind>()!.Deserialize(ref reader, options);
                         break;
                     case ProjectStylePropertyName:
-                        projectStyle = options.Resolver.GetFormatter<ProjectStyle>().Deserialize(ref reader, options);
+                        projectStyle = options.Resolver.GetFormatter<ProjectStyle>()!.Deserialize(ref reader, options);
                         break;
                     default:
                         reader.Skip();
@@ -57,9 +57,9 @@ namespace NuGet.VisualStudio.Internal.Contracts
             writer.Write(ProjectIdPropertyName);
             writer.Write(value.ProjectId);
             writer.Write(ProjectKindPropertyName);
-            options.Resolver.GetFormatter<NuGetProjectKind>().Serialize(ref writer, value.ProjectKind, options);
+            options.Resolver.GetFormatter<NuGetProjectKind>()!.Serialize(ref writer, value.ProjectKind, options);
             writer.Write(ProjectStylePropertyName);
-            options.Resolver.GetFormatter<ProjectStyle>().Serialize(ref writer, value.ProjectStyle, options);
+            options.Resolver.GetFormatter<ProjectStyle>()!.Serialize(ref writer, value.ProjectStyle, options);
         }
     }
 }

@@ -13,12 +13,13 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         {
             WriteLiteral("<html>\r\n<body>\r\n");
 #nullable restore
-#line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/OpenedIf.cshtml"
- if (true) { 
+#line (3,2)-(4,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/OpenedIf.cshtml"
+if (true) { 
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("</body>\r\n</html>");
         }
         #pragma warning restore 1998

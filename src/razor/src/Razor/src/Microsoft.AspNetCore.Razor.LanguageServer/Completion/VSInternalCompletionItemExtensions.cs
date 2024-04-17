@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -13,6 +13,8 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 internal static class VSInternalCompletionItemExtensions
 {
     private const string ResultIdKey = "_resultId";
+
+    private static readonly Dictionary<RazorCommitCharacter, VSInternalCommitCharacter> s_commitCharacterCache = [];
 
     public static bool TryGetCompletionListResultIds(this VSInternalCompletionItem completion, [NotNullWhen(true)] out IReadOnlyList<int>? resultIds)
     {
@@ -56,7 +58,8 @@ internal static class VSInternalCompletionItemExtensions
         RazorCompletionItem razorCompletionItem,
         VSInternalClientCapabilities clientCapabilities)
     {
-        if (razorCompletionItem.CommitCharacters is null || razorCompletionItem.CommitCharacters.Count == 0)
+        var razorCommitCharacters = razorCompletionItem.CommitCharacters;
+        if (razorCommitCharacters.IsEmpty)
         {
             return;
         }
@@ -64,18 +67,34 @@ internal static class VSInternalCompletionItemExtensions
         var supportsVSExtensions = clientCapabilities?.SupportsVisualStudioExtensions ?? false;
         if (supportsVSExtensions)
         {
-            var vsCommitCharacters = razorCompletionItem
-                .CommitCharacters
-                .Select(c => new VSInternalCommitCharacter() { Character = c.Character, Insert = c.Insert })
-                .ToArray();
-            completionItem.VsCommitCharacters = vsCommitCharacters;
+            using var builder = new PooledArrayBuilder<VSInternalCommitCharacter>(capacity: razorCommitCharacters.Length);
+
+            lock (s_commitCharacterCache)
+            {
+                foreach (var c in razorCommitCharacters)
+                {
+                    if (!s_commitCharacterCache.TryGetValue(c, out var commitCharacter))
+                    {
+                        commitCharacter = new() { Character = c.Character, Insert = c.Insert };
+                        s_commitCharacterCache.Add(c, commitCharacter);
+                    }
+
+                    builder.Add(commitCharacter);
+                }
+            }
+
+            completionItem.VsCommitCharacters = builder.ToArray();
         }
         else
         {
-            completionItem.CommitCharacters = razorCompletionItem
-                .CommitCharacters
-                .Select(c => c.Character)
-                .ToArray();
+            using var builder = new PooledArrayBuilder<string>(capacity: razorCommitCharacters.Length);
+
+            foreach (var c in razorCommitCharacters)
+            {
+                builder.Add(c.Character);
+            }
+
+            completionItem.CommitCharacters = builder.ToArray();
         }
     }
 }

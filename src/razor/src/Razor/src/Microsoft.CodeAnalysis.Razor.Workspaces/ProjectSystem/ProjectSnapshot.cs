@@ -26,7 +26,7 @@ internal class ProjectSnapshot : IProjectSnapshot
         State = state ?? throw new ArgumentNullException(nameof(state));
 
         _lock = new object();
-        _documents = new Dictionary<string, DocumentSnapshot>(FilePathNormalizer.Comparer);
+        _documents = new Dictionary<string, DocumentSnapshot>(FilePathNormalizingComparer.Instance);
     }
 
     public ProjectKey Key => State.HostProject.Key;

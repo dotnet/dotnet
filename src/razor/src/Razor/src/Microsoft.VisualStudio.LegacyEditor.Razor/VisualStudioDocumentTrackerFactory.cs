@@ -6,7 +6,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LegacyEditor.Razor.Settings;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
@@ -18,7 +18,7 @@ namespace Microsoft.VisualStudio.LegacyEditor.Razor;
 internal sealed class VisualStudioDocumentTrackerFactory(
     ProjectSnapshotManagerDispatcher dispatcher,
     JoinableTaskContext joinableTaskContext,
-    IProjectSnapshotManagerAccessor projectManagerAccessor,
+    IProjectSnapshotManager projectManager,
     IWorkspaceEditorSettings workspaceEditorSettings,
     IProjectPathProvider projectPathProvider,
     ITextDocumentFactoryService textDocumentFactory,
@@ -30,7 +30,7 @@ internal sealed class VisualStudioDocumentTrackerFactory(
     private readonly ITextDocumentFactoryService _textDocumentFactory = textDocumentFactory;
     private readonly IProjectPathProvider _projectPathProvider = projectPathProvider;
     private readonly IImportDocumentManager _importDocumentManager = importDocumentManager;
-    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor = projectManagerAccessor;
+    private readonly IProjectSnapshotManager _projectManager = projectManager;
     private readonly IWorkspaceEditorSettings _workspaceEditorSettings = workspaceEditorSettings;
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider = projectEngineFactoryProvider;
 
@@ -54,7 +54,7 @@ internal sealed class VisualStudioDocumentTrackerFactory(
 
         var filePath = textDocument.FilePath;
         var tracker = new VisualStudioDocumentTracker(
-            _dispatcher, _joinableTaskContext, filePath, projectPath, _projectManagerAccessor, _workspaceEditorSettings, _projectEngineFactoryProvider, textBuffer, _importDocumentManager);
+            _dispatcher, _joinableTaskContext, filePath, projectPath, _projectManager, _workspaceEditorSettings, _projectEngineFactoryProvider, textBuffer, _importDocumentManager);
 
         return tracker;
     }

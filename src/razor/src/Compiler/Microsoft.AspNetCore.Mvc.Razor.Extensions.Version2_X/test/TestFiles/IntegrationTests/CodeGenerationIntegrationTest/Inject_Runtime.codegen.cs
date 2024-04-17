@@ -5,7 +5,7 @@
 [assembly:global::Microsoft.AspNetCore.Mvc.Razor.Compilation.RazorViewAttribute(@"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inject.cshtml", typeof(AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Inject))]
 namespace AspNetCore
 {
-    #line hidden
+    #line default
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -13,6 +13,8 @@ namespace AspNetCore
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"f0ec78e6ab6def57bd9067e564edaa84059a8ecb9a3c1766a148a7df3096b7b0", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inject.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Inject : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic>
     {
@@ -22,7 +24,19 @@ namespace AspNetCore
         }
         #pragma warning restore 1998
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
-        public MyApp MyPropertyName { get; private set; }
+        public 
+#line (1,9)-(1,14) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inject.cshtml"
+MyApp
+
+#line default
+#line hidden
+         
+#line (1,15)-(1,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inject.cshtml"
+MyPropertyName
+
+#line default
+#line hidden
+         { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]

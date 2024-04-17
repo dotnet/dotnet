@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
 internal static class ProjectExtensions
 {

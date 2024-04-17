@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="Directive">
         <source>directive</source>
-        <target state="new">directive</target>
+        <target state="translated">指令</target>
         <note />
       </trans-unit>
       <trans-unit id="DirectiveSnippetDescription">
@@ -17,6 +17,31 @@
 [Tab] to navigate between elements, [Enter] to complete</source>
         <target state="translated">插入指令代码片段
 按 [Tab] 在元素之间导航，按 [Enter] 以完成</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Invalid_Offset">
+        <source>Invalid offset.</source>
+        <target state="translated">偏移无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PositionCharacter_Outside_Range">
+        <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
+        <target state="translated">查询了“{2}”的 {1} 范围外的字符“{0}”。文档可能不是最新的。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PositionLine_Outside_Range">
+        <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
+        <target state="translated">查询了 "{0}" 的 {1} 范围外的行 "{2}"。文档可能不是最新的。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unknown_RazorMetaCode">
+        <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
+        <target state="translated">尝试访问了除 "{' or '}" 之外的 RazorMetaCode。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unknown_mapping_behavior">
+        <source>Unknown mapping behavior</source>
+        <target state="translated">未知映射行为</target>
         <note />
       </trans-unit>
     </body>

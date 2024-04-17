@@ -7,7 +7,7 @@
     <Prefer32Bit Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)'">false</Prefer32Bit>
     <OutputType>Exe</OutputType>
     <IsTestProject>false</IsTestProject>
-    <RuntimeIdentifier Condition=" '$(DotNetBuildFromSource)' != 'true' ">win7-x64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(DotNetBuildSourceOnly)' != 'true'">win7-x64</RuntimeIdentifier>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
     <!--

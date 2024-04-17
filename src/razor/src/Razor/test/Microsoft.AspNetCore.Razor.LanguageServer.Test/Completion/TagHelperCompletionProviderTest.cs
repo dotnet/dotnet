@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Completion;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.Editor.Razor;
 using Xunit;
@@ -261,16 +261,49 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
         AssertTest1Test2Completions(completions);
     }
 
-    [Fact]
-    public void GetCompletionAt_AtAttributeEdge_IntAttribute_ReturnsCompletions()
+    [Theory]
+    [InlineData(
+    """
+    @addTagHelper *, TestAssembly
+    <test1 $$/>
+    """
+    )]
+    [InlineData(
+    """
+    @addTagHelper *, TestAssembly
+    <test1 int-val$$="1"/>
+    """
+    )]
+    [InlineData(
+    """
+    @addTagHelper*, TestAssembly
+    <test1 int-val$$/>
+    """
+    )]
+    [InlineData(
+    """
+    @addTagHelper *, TestAssembly
+    <test1 bool-val$$="1"/>
+    """
+    )]
+    [InlineData(
+    """
+    @addTagHelper*, TestAssembly
+    <test1 bool-val$$/>
+    """
+    )]
+    [InlineData(
+    """
+    @addTagHelper*, TestAssembly
+    <test1 @bind-$$/>
+    """
+    )]
+    public void GetCompletionAt_AtAttributeEdge_BothAttribute_ReturnsCompletions(string documentText)
     {
         // Arrange
         var service = new TagHelperCompletionProvider(RazorTagHelperCompletionService, TestRazorLSPOptionsMonitor.Create());
         var context = CreateRazorCompletionContext(
-            """
-                @addTagHelper *, TestAssembly
-                <test1 $$/>
-                """,
+            documentText,
             isRazorFile: false,
             tagHelpers: DefaultTagHelpers);
 
@@ -892,7 +925,7 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
         var tagHelperDocumentContext = codeDocument.GetTagHelperContext();
 
         var owner = syntaxTree.Root.FindInnermostNode(position, includeWhitespace: true, walkMarkersBack: true);
-        owner = RazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, position);
+        owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, position);
         return new RazorCompletionContext(position, owner, syntaxTree, tagHelperDocumentContext, Options: options);
     }
 }

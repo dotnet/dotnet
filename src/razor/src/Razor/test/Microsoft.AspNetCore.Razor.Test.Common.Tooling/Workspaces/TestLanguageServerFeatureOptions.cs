@@ -5,20 +5,12 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 
-internal class TestLanguageServerFeatureOptions : LanguageServerFeatureOptions
+internal class TestLanguageServerFeatureOptions(
+    bool includeProjectKeyInGeneratedFilePath = false,
+    bool monitorWorkspaceFolderForConfigurationFiles = true,
+    bool forceRuntimeCodeGeneration = false) : LanguageServerFeatureOptions
 {
     public static readonly LanguageServerFeatureOptions Instance = new TestLanguageServerFeatureOptions();
-
-    private readonly bool _includeProjectKeyInGeneratedFilePath;
-    private readonly bool _monitorWorkspaceFolderForConfigurationFiles;
-
-    public TestLanguageServerFeatureOptions(
-        bool includeProjectKeyInGeneratedFilePath = false,
-        bool monitorWorkspaceFolderForConfigurationFiles = true)
-    {
-        _includeProjectKeyInGeneratedFilePath = includeProjectKeyInGeneratedFilePath;
-        _monitorWorkspaceFolderForConfigurationFiles = monitorWorkspaceFolderForConfigurationFiles;
-    }
 
     public override bool SupportsFileManipulation => false;
 
@@ -42,11 +34,13 @@ internal class TestLanguageServerFeatureOptions : LanguageServerFeatureOptions
 
     public override bool UpdateBuffersForClosedDocuments => false;
 
-    public override bool IncludeProjectKeyInGeneratedFilePath => _includeProjectKeyInGeneratedFilePath;
+    public override bool IncludeProjectKeyInGeneratedFilePath => includeProjectKeyInGeneratedFilePath;
 
-    public override bool MonitorWorkspaceFolderForConfigurationFiles => _monitorWorkspaceFolderForConfigurationFiles;
+    public override bool MonitorWorkspaceFolderForConfigurationFiles => monitorWorkspaceFolderForConfigurationFiles;
 
     public override bool UseRazorCohostServer => false;
 
     public override bool DisableRazorLanguageServer => false;
+
+    public override bool ForceRuntimeCodeGeneration => forceRuntimeCodeGeneration;
 }

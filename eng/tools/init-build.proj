@@ -15,6 +15,7 @@
       UnpackTarballs;
       BuildXPlatTasks;
       BuildMSBuildSdkResolver;
+      BuildSdkArchiveDiff;
       BuildLeakDetection;
       ExtractToolPackage;
       GenerateRootFs;
@@ -49,7 +50,7 @@
       <UnpackedSourceBuildReferencePackages Include="$(PrebuiltSourceBuiltPackagesPath)SourceBuildReferencePackages/*"/>
     </ItemGroup>
 
-    <Copy SourceFiles="@(UnpackedSourceBuildReferencePackages)" DestinationFiles="$(ReferencePackagesDir)%(Filename)%(Extension)" />
+    <Move SourceFiles="@(UnpackedSourceBuildReferencePackages)" DestinationFiles="$(ReferencePackagesDir)%(Filename)%(Extension)" />
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)UnpackTarballs.complete" AlwaysCreate="true">
@@ -114,6 +115,15 @@
     <Touch Files="$(BaseIntermediateOutputPath)BuildLeakDetection.complete" AlwaysCreate="true">
       <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
     </Touch>
+  </Target>
+
+  <Target Name="BuildSdkArchiveDiff"
+          Condition="'$(ShortStack)' != 'true' and '$(PortableBuild)' == 'true' and '$(PgoInstrument)' != 'true'" >
+    <MSBuild Projects="tasks\Microsoft.DotNet.SourceBuild.Tasks.SdkArchiveDiff\Microsoft.DotNet.SourceBuild.Tasks.SdkArchiveDiff.csproj"
+             Targets="Restore"
+             Properties="MSBuildRestoreSessionId=$([System.Guid]::NewGuid())" />
+    <MSBuild Projects="tasks\Microsoft.DotNet.SourceBuild.Tasks.SdkArchiveDiff\Microsoft.DotNet.SourceBuild.Tasks.SdkArchiveDiff.csproj"
+             Targets="Build" />
   </Target>
 
   <Target Name="GenerateRootFs"

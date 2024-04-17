@@ -72,11 +72,6 @@
         <target state="translated">Generovat obslužnou rutinu události {0}</target>
         <note />
       </trans-unit>
-      <trans-unit id="Invalid_Offset">
-        <source>Invalid offset.</source>
-        <target state="translated">Neplatný posun</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">Služby jazyka Razor nejsou správně nakonfigurované, chybí služba jazyka {0}.</target>
@@ -87,16 +82,6 @@
         <target state="translated">Není k dispozici v</target>
         <note />
       </trans-unit>
-      <trans-unit id="PositionCharacter_Outside_Range">
-        <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">Proběhl dotaz na znak {0} mimo rozsah {1} v {2}. Dokument nemusí být aktuální.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PositionLine_Outside_Range">
-        <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">Proběhl dotaz na řádek {0} mimo rozsah {1} {2}. Dokument nemusí být aktuální.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ReTrigger_Completions_Title">
         <source>"Re-trigger completions..."</source>
         <target state="translated">Aktivovat znovu dokončení…</target>
@@ -104,7 +89,7 @@
       </trans-unit>
       <trans-unit id="Statement">
         <source>statement</source>
-        <target state="new">statement</target>
+        <target state="translated">příkaz</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">
@@ -120,16 +105,6 @@
       <trans-unit id="Unknown_ProjectChangeKind">
         <source>Unknown ProjectChangeKind {0}</source>
         <target state="translated">Neznámý ProjectChangeKind {0}</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unknown_RazorMetaCode">
-        <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
-        <target state="translated">Došlo k pokusu navštívit RazorMetaCode jiný než { nebo }.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unknown_mapping_behavior">
-        <source>Unknown mapping behavior</source>
-        <target state="translated">Neznámé chování mapování</target>
         <note />
       </trans-unit>
       <trans-unit id="Version_Should_Not_Be_Null">

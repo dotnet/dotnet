@@ -102,15 +102,28 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         // In each lowering piece above, namespaces were tracked. We render them here to ensure every
         // lowering action has a chance to add a source location to a namespace. Ultimately, closest wins.
         var index = 0;
+
+        UsingDirectiveIntermediateNode lastDirective = null;
         foreach (var reference in usingReferences)
         {
             var @using = new UsingDirectiveIntermediateNode()
             {
                 Content = reference.Namespace,
                 Source = reference.Source,
+                HasExplicitSemicolon = reference.HasExplicitSemicolon
             };
 
             builder.Insert(index++, @using);
+
+            lastDirective = @using;
+        }
+
+        if (lastDirective is not null)
+        {
+            // Using directives can be emitted without "#line hidden" regions between them, to allow Roslyn to add
+            // new directives as necessary, but we want to append one on the last using, so things go back to
+            // normal for whatever comes next.
+            lastDirective.AppendLineDefaultAndHidden = true;
         }
 
         PostProcessImportedDirectives(document);
@@ -236,14 +249,17 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
     private struct UsingReference : IEquatable<UsingReference>
     {
-        public UsingReference(string @namespace, SourceSpan? source)
+        public UsingReference(string @namespace, SourceSpan? source, bool hasExplicitSemicolon)
         {
             Namespace = @namespace;
             Source = source;
+            HasExplicitSemicolon = hasExplicitSemicolon;
         }
         public string Namespace { get; }
 
         public SourceSpan? Source { get; }
+
+        public bool HasExplicitSemicolon { get; }
 
         public override bool Equals(object other)
         {
@@ -349,7 +365,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 case AddImportChunkGenerator importChunkGenerator:
                     var namespaceImport = importChunkGenerator.Namespace.Trim();
                     var namespaceSpan = BuildSourceSpanFromNode(node);
-                    _usings.Add(new UsingReference(namespaceImport, namespaceSpan));
+                    _usings.Add(new UsingReference(namespaceImport, namespaceSpan, importChunkGenerator.HasExplicitSemicolon));
                     break;
                 case AddTagHelperChunkGenerator addTagHelperChunkGenerator:
                     {

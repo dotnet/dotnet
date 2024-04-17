@@ -72,11 +72,6 @@
         <target state="translated">Générer le gestionnaire d’événements '{0}'</target>
         <note />
       </trans-unit>
-      <trans-unit id="Invalid_Offset">
-        <source>Invalid offset.</source>
-        <target state="translated">Décalage non valide.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">Les services de langage Razor ne sont pas configurés correctement, le service de langage «{0}» manquant.</target>
@@ -87,16 +82,6 @@
         <target state="translated">Non disponible dans</target>
         <note />
       </trans-unit>
-      <trans-unit id="PositionCharacter_Outside_Range">
-        <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">Le caractère « {0} » en dehors de la plage {1} de « {2} » a été interrogé. Le document n’est peut-être pas à jour.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PositionLine_Outside_Range">
-        <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">La ligne «{0}» en dehors de la plage{1} de «{2}» a été interrogée. Le document n’est peut-être pas à jour.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ReTrigger_Completions_Title">
         <source>"Re-trigger completions..."</source>
         <target state="translated">« Déclencher à nouveau les complétions... »</target>
@@ -104,7 +89,7 @@
       </trans-unit>
       <trans-unit id="Statement">
         <source>statement</source>
-        <target state="new">statement</target>
+        <target state="translated">déclaration</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">
@@ -120,16 +105,6 @@
       <trans-unit id="Unknown_ProjectChangeKind">
         <source>Unknown ProjectChangeKind {0}</source>
         <target state="translated">ProjectChangeKind inconnu {0}</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unknown_RazorMetaCode">
-        <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
-        <target state="translated">Tentative de visite d’un RazorMetaCode autre que « { » ou « } ».</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unknown_mapping_behavior">
-        <source>Unknown mapping behavior</source>
-        <target state="translated">Comportement de mappage inconnu</target>
         <note />
       </trans-unit>
       <trans-unit id="Version_Should_Not_Be_Null">

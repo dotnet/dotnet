@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Remote;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Test.Common.TagHelperTestData;
@@ -33,12 +33,12 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
     private static readonly HostProject s_hostProject_For_NonSerializableConfiguration = new(
         projectFilePath: "Test.csproj",
         intermediateOutputPath: "/obj",
-        razorConfiguration: new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_2_1, "Random-0.1", []),
+        razorConfiguration: new(RazorLanguageVersion.Version_2_1, "Random-0.1", Extensions: []),
         rootNamespace: null);
 
     private readonly Project _workspaceProject;
-    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor;
-    private readonly IWorkspaceProvider _workspaceProvider;
+    private readonly TestProjectSnapshotManager _projectManager;
+    private readonly IRemoteClientProvider _remoteClientProvider;
 
     public OutOfProcTagHelperResolverTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -46,12 +46,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
         var workspace = new AdhocWorkspace();
         AddDisposable(workspace);
 
-        var workspaceProviderMock = new StrictMock<IWorkspaceProvider>();
-        workspaceProviderMock
-            .Setup(x => x.GetWorkspace())
-            .Returns(workspace);
-
-        _workspaceProvider = workspaceProviderMock.Object;
+        _remoteClientProvider = StrictMock.Of<IRemoteClientProvider>();
 
         var info = ProjectInfo.Create(ProjectId.CreateNewId("Test"), VersionStamp.Default, "Test", "Test", LanguageNames.CSharp, filePath: "Test.csproj");
         _workspaceProject = workspace.CurrentSolution.AddProject(info).GetProject(info.Id).AssumeNotNull();
@@ -63,13 +58,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
             CreateFactory("Test-2"));
 
         var projectEngineFactoryProvider = new ProjectEngineFactoryProvider(customFactories);
-        var projectManager = new TestProjectSnapshotManager(projectEngineFactoryProvider, Dispatcher);
-
-        var projectManagerAccessorMock = new StrictMock<IProjectSnapshotManagerAccessor>();
-        projectManagerAccessorMock
-            .SetupGet(x => x.Instance)
-            .Returns(projectManager);
-        _projectManagerAccessor = projectManagerAccessorMock.Object;
+        _projectManager = CreateProjectSnapshotManager(projectEngineFactoryProvider);
 
         static IProjectEngineFactory CreateFactory(string configurationName)
         {
@@ -86,16 +75,16 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
     public async Task GetTagHelpersAsync_WithSerializableCustomFactory_GoesOutOfProcess()
     {
         // Arrange
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManagerAccessor.Instance.ProjectAdded(s_hostProject_For_2_0);
+            updater.ProjectAdded(s_hostProject_For_2_0);
         });
 
-        var projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(s_hostProject_For_2_0.Key);
+        var projectSnapshot = _projectManager.GetLoadedProject(s_hostProject_For_2_0.Key);
 
         var calledOutOfProcess = false;
 
-        var resolver = new TestResolver(_workspaceProvider, ErrorReporter, NoOpTelemetryReporter.Instance)
+        var resolver = new TestResolver(_remoteClientProvider, ErrorReporter, NoOpTelemetryReporter.Instance)
         {
             OnResolveOutOfProcess = (p) =>
             {
@@ -118,16 +107,16 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
     public async Task GetTagHelpersAsync_WithNonSerializableCustomFactory_StaysInProcess()
     {
         // Arrange
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManagerAccessor.Instance.ProjectAdded(s_hostProject_For_NonSerializableConfiguration);
+            updater.ProjectAdded(s_hostProject_For_NonSerializableConfiguration);
         });
 
-        var projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(s_hostProject_For_2_0.Key);
+        var projectSnapshot = _projectManager.GetLoadedProject(s_hostProject_For_2_0.Key);
 
         var calledInProcess = false;
 
-        var resolver = new TestResolver(_workspaceProvider, ErrorReporter, NoOpTelemetryReporter.Instance)
+        var resolver = new TestResolver(_remoteClientProvider, ErrorReporter, NoOpTelemetryReporter.Instance)
         {
             OnResolveInProcess = (p) =>
             {
@@ -150,18 +139,18 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
     public async Task GetTagHelpersAsync_OperationCanceledException_DoesNotGetWrapped()
     {
         // Arrange
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManagerAccessor.Instance.ProjectAdded(s_hostProject_For_2_0);
+            updater.ProjectAdded(s_hostProject_For_2_0);
         });
 
-        var projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(s_hostProject_For_2_0.Key);
+        var projectSnapshot = _projectManager.GetLoadedProject(s_hostProject_For_2_0.Key);
 
         var calledOutOfProcess = false;
         var calledInProcess = false;
 
         var cancellationToken = new CancellationToken(canceled: true);
-        var resolver = new TestResolver(_workspaceProvider, ErrorReporter, NoOpTelemetryReporter.Instance)
+        var resolver = new TestResolver(_remoteClientProvider, ErrorReporter, NoOpTelemetryReporter.Instance)
         {
             OnResolveInProcess = (p) =>
             {
@@ -189,7 +178,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
     public void CalculateTagHelpersFromDelta_NewProject()
     {
         // Arrange
-        var resolver = new TestResolver(_workspaceProvider, ErrorReporter, NoOpTelemetryReporter.Instance);
+        var resolver = new TestResolver(_remoteClientProvider, ErrorReporter, NoOpTelemetryReporter.Instance);
         var initialDelta = new TagHelperDeltaResult(IsDelta: false, ResultId: 1, Added: Project1TagHelperChecksums, Removed: []);
 
         // Act
@@ -203,7 +192,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
     public void CalculateTagHelpersFromDelta_DeltaFailedToApplyToKnownProject()
     {
         // Arrange
-        var resolver = new TestResolver(_workspaceProvider, ErrorReporter, NoOpTelemetryReporter.Instance);
+        var resolver = new TestResolver(_remoteClientProvider, ErrorReporter, NoOpTelemetryReporter.Instance);
         var initialDelta = new TagHelperDeltaResult(IsDelta: false, ResultId: 1, Added: Project1TagHelperChecksums, Removed: []);
         resolver.PublicProduceChecksumsFromDelta(Project1Id, lastResultId: -1, initialDelta);
         var newTagHelperSet = ImmutableArray.Create(TagHelper1_Project1.Checksum);
@@ -220,7 +209,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
     public void CalculateTagHelpersFromDelta_NoopResult()
     {
         // Arrange
-        var resolver = new TestResolver(_workspaceProvider, ErrorReporter, NoOpTelemetryReporter.Instance);
+        var resolver = new TestResolver(_remoteClientProvider, ErrorReporter, NoOpTelemetryReporter.Instance);
         var initialDelta = new TagHelperDeltaResult(IsDelta: false, ResultId: 1, Added: Project1TagHelperChecksums, Removed: []);
         resolver.PublicProduceChecksumsFromDelta(Project1Id, lastResultId: -1, initialDelta);
         var noopDelta = new TagHelperDeltaResult(IsDelta: true, initialDelta.ResultId, Added: [], Removed: []);
@@ -236,7 +225,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
     public void CalculateTagHelpersFromDelta_ReplacedTagHelpers()
     {
         // Arrange
-        var resolver = new TestResolver(_workspaceProvider, ErrorReporter, NoOpTelemetryReporter.Instance);
+        var resolver = new TestResolver(_remoteClientProvider, ErrorReporter, NoOpTelemetryReporter.Instance);
         var initialDelta = new TagHelperDeltaResult(IsDelta: false, ResultId: 1, Added: Project1TagHelperChecksums, Removed: []);
         resolver.PublicProduceChecksumsFromDelta(Project1Id, lastResultId: -1, initialDelta);
         var changedDelta = new TagHelperDeltaResult(IsDelta: true, initialDelta.ResultId + 1, Added: [TagHelper2_Project2.Checksum], Removed: [TagHelper2_Project1.Checksum]);

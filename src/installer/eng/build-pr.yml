@@ -1,0 +1,261 @@
+parameters:
+  # Agent OS identifier and used as job name
+- name: agentOs
+  type: string
+
+  # Job name
+- name: jobName
+  type: string
+
+# Container to run the build in, if any
+- name: container
+  type: string
+  default: ''
+
+  # Job timeout
+- name: timeoutInMinutes
+  type: number
+  default: 180
+
+# Build configuration (Debug, Release)
+- name: buildConfiguration
+  type: string
+  values:
+  - Debug
+  - Release
+
+# Build architecture
+- name: buildArchitecture
+  type: string
+  values:
+  - arm
+  - arm64
+  - x64
+  - x86
+  
+# Linux portable. If true, passes portable switch to build
+- name: linuxPortable
+  type: boolean
+  default: false
+
+# Runtime Identifier
+- name: runtimeIdentifier
+  type: string
+  default: ''
+
+# UI lang
+- name: dotnetCLIUILanguage
+  type: string
+  default: ''
+
+# Additional parameters
+- name: additionalBuildParameters
+  type: string
+  default: ''
+
+# Run tests
+- name: runTests
+  type: boolean
+  default: true
+
+# PGO instrumentation jobs
+- name: pgoInstrument
+  type: boolean
+  default: false
+
+- name: isBuiltFromVmr
+  displayName: True when build is running from dotnet/dotnet
+  type: boolean
+  default: false
+
+jobs:
+- template: common/templates/job/job.yml
+  parameters:
+    # Set up the name of the job.
+    ${{ if parameters.pgoInstrument }}:
+      name: PGO_${{ parameters.agentOs }}_${{ parameters.jobName }}
+    ${{ if not(parameters.pgoInstrument) }}:
+      name: ${{ parameters.agentOs }}_${{ parameters.jobName }}
+    
+    ## Set up the pool/machine info to be used based on the Agent OS
+    ${{ if eq(parameters.agentOs, 'Windows_NT') }}:
+      enableMicrobuild: true
+      pool:
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          name: $(DncEngPublicBuildPool)
+          demands: ImageOverride -equals windows.vs2022.amd64.open
+        ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+          name: $(DncEngInternalBuildPool)
+          demands: ImageOverride -equals windows.vs2022.amd64
+    ${{ if eq(parameters.agentOs, 'Linux') }}:
+      pool:
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          name: $(DncEngPublicBuildPool)
+          demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+        ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+          name: $(DncEngInternalBuildPool)
+          demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
+      container: ${{ parameters.container }}
+    ${{ if eq(parameters.agentOs, 'Darwin') }}:
+      pool:
+        vmImage: 'macOS-latest'
+
+    timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
+    ${{ if parameters.isBuiltFromVmr }}:
+      enableSbom: false
+    ${{ else }}:
+      enablePublishBuildAssets: true
+      enablePublishUsingPipelines: true
+      enableTelemetry: true
+    helixRepo: dotnet/installer
+    workspace:
+      clean: all
+
+# Test parameters
+    variables:
+    - ${{ if eq(parameters.agentOs, 'Windows_NT') }}:
+      - _PackArg: '-pack'
+      - ${{ if parameters.runTests }}:
+        - _TestArg: '-test'
+      - ${{ else }}:
+        - _TestArg: ''
+    - ${{ if ne(parameters.agentOs, 'Windows_NT') }}:
+      - _PackArg: '--pack'
+      - ${{ if parameters.runTests }}:
+        - _TestArg: '--test'
+      - ${{ else }}:
+        - _TestArg: ''
+
+    - ${{ if parameters.pgoInstrument }}:
+      - _PgoInstrument: '/p:PgoInstrument=true'
+      - _PackArg: ''
+    - ${{ else }}:
+      - _PgoInstrument: ''
+
+    - ${{ if parameters.linuxPortable }}:
+      - _LinuxPortable: '--linux-portable'
+    - ${{ else }}:
+      - _LinuxPortable: ''
+
+    - ${{ if ne(parameters.runtimeIdentifier, '') }}:
+      - _RuntimeIdentifier: '--runtime-id ${{ parameters.runtimeIdentifier }}'
+    - ${{ else }}:
+      - _RuntimeIdentifier: ''
+
+    - _AgentOSName: ${{ parameters.agentOs }}
+    - _TeamName: Roslyn-Project-System
+    - _SignType: test
+    - _BuildArgs: '/p:DotNetSignType=$(_SignType) $(_PgoInstrument)'
+
+    - ${{ if parameters.isBuiltFromVmr }}:
+      - installerRoot: '$(Build.SourcesDirectory)/src/installer'
+      - _SignType: test
+      - _PushToVSFeed: false
+      - _BuildArgs: /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+                /p:TeamName=$(_TeamName)
+                /p:DotNetPublishUsingPipelines=true
+                /p:PublishToSymbolServer=false
+                $(_PgoInstrument)
+    - ${{ else }}:
+      - installerRoot: '$(Build.SourcesDirectory)'
+      - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+        - group: DotNet-HelixApi-Access
+        - _PushToVSFeed: true
+        - _SignType: real
+        - _BuildArgs: /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+                  /p:DotNetSignType=$(_SignType)
+                  /p:TeamName=$(_TeamName)
+                  /p:DotNetPublishUsingPipelines=$(_PublishUsingPipelines)
+                  $(_PgoInstrument)
+
+    - template: /eng/common/templates/variables/pool-providers.yml
+
+    steps:
+    - checkout: self
+      clean: true
+    - ${{ if eq(parameters.agentOs, 'Windows_NT') }}:
+      - ${{ if and(not(parameters.isBuiltFromVmr), ne(variables['System.TeamProject'], 'public')) }}:
+        - task: PowerShell@2
+          displayName: Setup Private Feeds Credentials
+          inputs:
+            filePath: $(installerRoot)/eng/common/SetupNugetSources.ps1
+            arguments: -ConfigFile $(installerRoot)/NuGet.config -Password $Env:Token
+          env:
+            Token: $(dn-bot-dnceng-artifact-feeds-rw)
+      - script: $(installerRoot)/build.cmd
+                  $(_TestArg) $(_PackArg)
+                  -publish -ci -sign
+                  -Configuration ${{ parameters.buildConfiguration }}
+                  -Architecture ${{ parameters.buildArchitecture }}
+                  $(_BuildArgs)
+                  ${{ parameters.additionalBuildParameters }}
+                  $(_InternalRuntimeDownloadArgs)
+        displayName: Build
+        env:
+          DOTNET_CLI_UI_LANGUAGE: ${{ parameters.dotnetCLIUILanguage }}
+
+    - ${{ if ne(parameters.agentOs, 'Windows_NT') }}:
+      - ${{ if and(not(parameters.isBuiltFromVmr), ne(variables['System.TeamProject'], 'public')) }}:
+        - task: Bash@3
+          displayName: Setup Private Feeds Credentials
+          inputs:
+            filePath: $(installerRoot)/eng/common/SetupNugetSources.sh
+            arguments: $(installerRoot)/NuGet.config $Token
+          env:
+            Token: $(dn-bot-dnceng-artifact-feeds-rw)
+    - ${{ if eq(parameters.agentOs, 'Linux') }}:
+      - script: $(installerRoot)/build.sh
+                  $(_TestArg) $(_PackArg)
+                  --publish --ci
+                  --noprettyprint
+                  --configuration ${{ parameters.buildConfiguration }}
+                  --architecture ${{ parameters.buildArchitecture }}
+                  $(_LinuxPortable)
+                  $(_RuntimeIdentifier)
+                  $(_BuildArgs)
+                  ${{ parameters.additionalBuildParameters }}
+                  $(_InternalRuntimeDownloadArgs)
+        displayName: Build
+
+    - ${{ if or(eq(parameters.agentOs, 'Darwin'), eq(parameters.agentOs, 'FreeBSD')) }}:
+      - script: $(installerRoot)/build.sh
+                  $(_TestArg)
+                  --pack --publish --ci
+                  --noprettyprint
+                  --configuration ${{ parameters.buildConfiguration }}
+                  --architecture ${{ parameters.buildArchitecture }}
+                  $(_RuntimeIdentifier)
+                  $(_BuildArgs)
+                  ${{ parameters.additionalBuildParameters }}
+                  $(_InternalRuntimeDownloadArgs)
+        displayName: Build
+
+    - task: PublishTestResults@2
+      displayName: Publish Test Results
+      inputs:
+        testRunner: XUnit
+        testResultsFiles: 'artifacts/TestResults/${{ parameters.buildConfiguration }}/*.xml'
+        testRunTitle: '$(_AgentOSName)_$(Agent.JobName)'
+        platform: '$(BuildPlatform)'
+        configuration: '${{ parameters.buildConfiguration }}'
+      condition: ne(variables['_TestArg'], '')
+
+    - task: CopyFiles@2
+      displayName: Gather Logs
+      inputs:
+        SourceFolder: '$(installerRoot)/artifacts'
+        Contents: |
+         log/${{ parameters.buildConfiguration }}/**/*
+         TestResults/${{ parameters.buildConfiguration }}/**/*
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      continueOnError: true
+      condition: always()
+
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Logs to VSTS
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: '$(_AgentOSName)_$(Agent.JobName)_$(Build.BuildNumber)'
+        publishLocation: Container
+      continueOnError: true
+      condition: always()

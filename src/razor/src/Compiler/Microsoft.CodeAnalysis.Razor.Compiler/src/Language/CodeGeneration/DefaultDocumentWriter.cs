@@ -4,7 +4,6 @@
 #nullable disable
 
 using System;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -136,9 +135,20 @@ internal class DefaultDocumentWriter : DocumentWriter
 
         public override void VisitNamespaceDeclaration(NamespaceDeclarationIntermediateNode node)
         {
-            using (Context.CodeWriter.BuildNamespace(node.Content))
+            using (Context.CodeWriter.BuildNamespace(node.Content, node.Source, Context))
             {
-                Context.CodeWriter.WriteLine("#line hidden");
+                if (node.Children.OfType<UsingDirectiveIntermediateNode>().Any())
+                {
+                    // Tooling needs at least one line directive before using directives, otherwise Roslyn will
+                    // not offer to create a new one. The last using in the group will output a hidden line
+                    // directive after itself.
+                    Context.CodeWriter.WriteLine("#line default");
+                }
+                else
+                {
+                    // If there are no using directives, we output the hidden directive here.
+                    Context.CodeWriter.WriteLine("#line hidden");
+                }
                 VisitDefault(node);
             }
         }

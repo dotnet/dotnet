@@ -62,6 +62,16 @@
         <target state="translated">自动插入属性引号</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
+        <source>Forces the open brace after an @code or @functions directive to be on the following line</source>
+        <target state="translated">强制 @代码 或 @函数指令后的左大括号位于下一行</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
+        <source>Code/Functions block open brace on next line</source>
+        <target state="translated">代码/函数块左大括号在下一行</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">
         <source>If true, gives C# code in Razor files a background color</source>
         <target state="translated">如果为 true，则为 Razor 文件中的 C# 代码提供背景色</target>

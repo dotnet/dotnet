@@ -9,10 +9,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
-using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -23,13 +23,13 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
 {
     private readonly IRazorDocumentMappingService _razorDocumentMappingService;
     private readonly IClientConnection _clientConnection;
-    private readonly FilePathService _filePathService;
+    private readonly IFilePathService _filePathService;
     private readonly ILogger _logger;
 
     protected AbstractTextDocumentPresentationEndpointBase(
         IRazorDocumentMappingService razorDocumentMappingService,
         IClientConnection clientConnection,
-        FilePathService filePathService,
+        IFilePathService filePathService,
         ILogger logger)
     {
         _razorDocumentMappingService = razorDocumentMappingService ?? throw new ArgumentNullException(nameof(razorDocumentMappingService));

@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -26,7 +25,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
     }
 
     private static readonly RazorProjectEngine LeadingDirectiveParsingEngine = RazorProjectEngine.Create(
-        RazorConfiguration.Create(RazorLanguageVersion.Version_3_0, "leading-directive-parser", Array.Empty<RazorExtension>()),
+        new(RazorLanguageVersion.Version_3_0, "leading-directive-parser", []),
         RazorProjectFileSystem.Create("/"),
         builder =>
         {
@@ -126,6 +125,8 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
         {
             Key = RouteTemplateKey,
             Value = pageDirective.RouteTemplate,
+            Source = pageDirective.Source,
+            ValueStringSyntax = "Route"
         };
         // Metadata attributes need to be inserted right before the class declaration.
         @namespace.Children.Insert(classIndex, metadataAttributeNode);

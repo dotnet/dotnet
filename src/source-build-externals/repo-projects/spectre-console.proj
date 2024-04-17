@@ -3,7 +3,6 @@
   
     <PropertyGroup>
       <PackagesOutput>$(ProjectDirectory)/src/Spectre.Console/bin/$(Configuration)/</PackagesOutput>
-      <SpectreConsolePackageVersion>0.48.0</SpectreConsolePackageVersion>
 
       <!-- Defining this ensures global.json gets rewritten to target the current SDK version -->
       <GlobalJsonFile>$(ProjectDirectory)/global.json</GlobalJsonFile>
@@ -17,7 +16,7 @@
         <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
         <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
         <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
-        <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(SpectreConsolePackageVersion)</BuildCommandArgs>
+        <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(SpectreConsoleReleaseVersion)</BuildCommandArgs>
         <BuildCommandArgs>$(BuildCommandArgs) /p:TargetFrameworks=$(NetCurrent)</BuildCommandArgs>
       </PropertyGroup>
   
@@ -38,4 +37,4 @@
     </Target>
   
   </Project>
-  
+

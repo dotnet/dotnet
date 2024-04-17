@@ -2,10 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Composition;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
@@ -17,16 +15,14 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-[Export(typeof(IDocumentContextFactory)), Shared]
-[method: ImportingConstructor]
 internal sealed class DocumentContextFactory(
-    IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+    IProjectSnapshotManager projectManager,
     ISnapshotResolver snapshotResolver,
     IDocumentVersionCache documentVersionCache,
     IRazorLoggerFactory loggerFactory)
     : IDocumentContextFactory
 {
-    private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
+    private readonly IProjectSnapshotManager _projectManager = projectManager;
     private readonly ISnapshotResolver _snapshotResolver = snapshotResolver;
     private readonly IDocumentVersionCache _documentVersionCache = documentVersionCache;
     private readonly ILogger _logger = loggerFactory.CreateLogger<DocumentContextFactory>();
@@ -97,7 +93,7 @@ internal sealed class DocumentContextFactory(
             return _snapshotResolver.TryResolveDocumentInAnyProject(filePath, out documentSnapshot);
         }
 
-        if (_projectSnapshotManagerAccessor.Instance.TryGetLoadedProject(projectContext.ToProjectKey(), out var project) &&
+        if (_projectManager.TryGetLoadedProject(projectContext.ToProjectKey(), out var project) &&
             project.GetDocument(filePath) is { } document)
         {
             documentSnapshot = document;

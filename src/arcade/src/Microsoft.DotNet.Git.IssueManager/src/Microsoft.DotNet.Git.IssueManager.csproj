@@ -4,7 +4,6 @@
     <TargetFrameworks>$(NetMinimum);$(NetFrameworkMinimum)</TargetFrameworks>
     <SignAssembly>false</SignAssembly>
     <IsPackable>true</IsPackable>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
   </PropertyGroup>
 

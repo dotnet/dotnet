@@ -18,8 +18,8 @@ public class BackgroundCodeGenerationBenchmark : ProjectSnapshotManagerBenchmark
     {
         ProjectManager = CreateProjectSnapshotManager();
 
-        await Dispatcher.RunAsync(
-            () => ProjectManager.ProjectAdded(HostProject),
+        await ProjectManager.UpdateAsync(
+            updater => updater.ProjectAdded(HostProject),
             CancellationToken.None);
 
         ProjectManager.Changed += SnapshotManager_Changed;
@@ -35,17 +35,17 @@ public class BackgroundCodeGenerationBenchmark : ProjectSnapshotManagerBenchmark
 
     private List<Task> Tasks { get; } = new List<Task>();
 
-    private DefaultProjectSnapshotManager ProjectManager { get; set; }
+    private ProjectSnapshotManager ProjectManager { get; set; }
 
     [Benchmark(Description = "Generates the code for 100 files", OperationsPerInvoke = 100)]
     public async Task BackgroundCodeGeneration_Generate100FilesAsync()
     {
-        await Dispatcher.RunAsync(
-            () =>
+        await ProjectManager.UpdateAsync(
+            updater =>
             {
                 for (var i = 0; i < Documents.Length; i++)
                 {
-                    ProjectManager.DocumentAdded(HostProject.Key, Documents[i], TextLoaders[i % 4]);
+                    updater.DocumentAdded(HostProject.Key, Documents[i], TextLoaders[i % 4]);
                 }
             },
             CancellationToken.None);

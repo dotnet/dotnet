@@ -14,6 +14,7 @@ internal static class SettingsNames
     public static readonly Setting AutoClosingTags = new("AutoClosingTags", UnifiedCollection + ".autoClosingTags");
     public static readonly Setting AutoInsertAttributeQuotes = new("AutoInsertAttributeQuotes", UnifiedCollection + ".autoInsertAttributeQuotes");
     public static readonly Setting ColorBackground = new("ColorBackground", UnifiedCollection + ".colorBackground");
+    public static readonly Setting CodeBlockBraceOnNextLine = new("CodeBlockBraceOnNextLine", UnifiedCollection + ".codeBlockBraceOnNextLine");
     public static readonly Setting CommitElementsWithSpace = new("CommitElementsWithSpace", UnifiedCollection + ".commitCharactersWithSpace");
     public static readonly Setting Snippets = new("Snippets", UnifiedCollection + ".snippets");
     public static readonly Setting LogLevel = new("LogLevel", UnifiedCollection + ".logLevel");
@@ -24,6 +25,7 @@ internal static class SettingsNames
         AutoClosingTags,
         AutoInsertAttributeQuotes,
         ColorBackground,
+        CodeBlockBraceOnNextLine,
         CommitElementsWithSpace,
         Snippets,
         LogLevel,

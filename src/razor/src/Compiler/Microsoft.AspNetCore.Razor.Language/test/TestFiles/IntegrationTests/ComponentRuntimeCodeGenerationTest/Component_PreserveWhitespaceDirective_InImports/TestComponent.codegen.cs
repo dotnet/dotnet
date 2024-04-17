@@ -2,13 +2,17 @@
 #pragma warning disable 1591
 namespace Test
 {
-    #line hidden
+    #line default
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
+    #line default
+    #line hidden
+    #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
+    #nullable disable
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -17,13 +21,15 @@ namespace Test
             __builder.AddMarkupContent(1, "\r\n    ");
             __builder.OpenElement(2, "child");
             __builder.AddContent(3, " ");
+            __builder.AddContent(4, 
 #nullable restore
-#line (2,14)-(2,26) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder.AddContent(4, DateTime.Now);
+#line (2,14)-(2,26) "x:\dir\subdir\Test\TestComponent.cshtml"
+DateTime.Now
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.AddContent(5, " ");
             __builder.CloseElement();
             __builder.AddMarkupContent(6, "\r\n");

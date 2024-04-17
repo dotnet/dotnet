@@ -5,7 +5,7 @@
 [assembly:global::Microsoft.AspNetCore.Mvc.Razor.Compilation.RazorViewAttribute(@"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithModel.cshtml", typeof(AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_InjectWithModel))]
 namespace AspNetCore
 {
-    #line hidden
+    #line default
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -13,6 +13,8 @@ namespace AspNetCore
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"319d5fa6f848e64d19bf7eab2f5e3339cdfc75b02a9bc6f2773eed1a40f5e9d0", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithModel.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_InjectWithModel : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<MyModel>
     {
@@ -22,9 +24,33 @@ namespace AspNetCore
         }
         #pragma warning restore 1998
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
-        public MyService<MyModel> Html { get; private set; }
+        public 
+#line (3,9)-(3,18) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithModel.cshtml"
+MyService<MyModel>
+
+#line default
+#line hidden
+         
+#line (3,27)-(3,31) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithModel.cshtml"
+Html
+
+#line default
+#line hidden
+         { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
-        public MyApp MyPropertyName { get; private set; }
+        public 
+#line (2,9)-(2,14) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithModel.cshtml"
+MyApp
+
+#line default
+#line hidden
+         
+#line (2,15)-(2,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithModel.cshtml"
+MyPropertyName
+
+#line default
+#line hidden
+         { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]

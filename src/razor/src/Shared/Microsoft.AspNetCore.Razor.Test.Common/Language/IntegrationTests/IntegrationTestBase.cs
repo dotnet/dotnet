@@ -308,6 +308,8 @@ public abstract class IntegrationTestBase
         {
             b.Phases.Insert(0, new ConfigureCodeRenderingPhase(LineEnding));
 
+            b.RegisterExtensions();
+
             configure?.Invoke(b);
 
             // Allow the test to do custom things with tag helpers, but do the default thing most of the time.
@@ -482,6 +484,14 @@ public abstract class IntegrationTestBase
             {
                 // For now we don't verify an escaped transition. In some cases one of the @ tokens in @@foo
                 // will be mapped as C# but will not be present in the output buffer because it's not actually C#.
+                continue;
+            }
+
+            // See https://github.com/dotnet/razor/issues/10062
+            if (expectedSpan.Contains("<TModel>") || span.FirstAncestorOrSelf<RazorDirectiveSyntax>()?.DirectiveDescriptor?.Directive == "model")
+            {
+                // Inject directives in MVC replace the TModel with a user defined model type, so we aren't able to find
+                // the matching text in the generated document
                 continue;
             }
 

@@ -4,11 +4,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.VisualStudio.Razor.DynamicFiles;
 using StreamJsonRpc;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
@@ -23,11 +23,11 @@ internal partial class RazorCustomMessageTarget
         // as the generated file will only be in one project, so we can just use our own ProjectContexts. This makes other things much
         // easier because we're not trying to understand Roslyn concepts.
 
-        var projects = _projectSnapshotManagerAccessor.Instance.GetProjects();
+        var projects = _projectManager.GetProjects();
 
         using var projectContexts = new PooledArrayBuilder<VSProjectContext>(capacity: projects.Length);
 
-        var documentFilePath = FilePathService.GetProjectSystemFilePath(request.Uri);
+        var documentFilePath = RazorDynamicFileInfoProvider.GetProjectSystemFilePath(request.Uri);
 
         foreach (var project in projects)
         {

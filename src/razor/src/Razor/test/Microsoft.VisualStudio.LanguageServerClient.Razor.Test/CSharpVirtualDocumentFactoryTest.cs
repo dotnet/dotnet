@@ -5,10 +5,12 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
@@ -25,7 +27,7 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
     private readonly IContentTypeRegistryService _contentTypeRegistryService;
     private readonly ITextBufferFactoryService _textBufferFactoryService;
     private readonly ITextDocumentFactoryService _textDocumentFactoryService;
-    private readonly FilePathService _filePathService;
+    private readonly IFilePathService _filePathService;
 
     public CSharpVirtualDocumentFactoryTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -61,7 +63,7 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
         _razorLSPBuffer = VsMocks.CreateTextBuffer(VsMocks.ContentTypes.RazorLSP);
         _nonRazorLSPBuffer = VsMocks.CreateTextBuffer(VsMocks.ContentTypes.NonRazor);
 
-        _filePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
+        _filePathService = new VisualStudioFilePathService(TestLanguageServerFeatureOptions.Instance);
     }
 
     [Fact]
@@ -78,7 +80,34 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
             _textDocumentFactoryService,
             uriProvider,
             _filePathService,
-            StrictMock.Of<IProjectSnapshotManagerAccessor>(),
+            StrictMock.Of<IProjectSnapshotManager>(),
+            TestLanguageServerFeatureOptions.Instance,
+            LoggerFactory,
+            telemetryReporter: null!);
+
+        // Act
+        var result = factory.TryCreateMultipleFor(_nonRazorLSPBuffer, out var virtualDocuments);
+
+        // Assert
+        Assert.False(result);
+        Assert.Null(virtualDocuments);
+    }
+
+    [Fact]
+    public void TryCreateMultipleFor_NoProjectSnapshotManager_ReturnsFalse()
+    {
+        // Arrange
+        var uri = new Uri("C:/path/to/file.razor");
+        var uriProvider = StrictMock.Of<FileUriProvider>(x =>
+            x.GetOrCreate(It.IsAny<ITextBuffer>()) == uri);
+
+        var factory = new CSharpVirtualDocumentFactory(
+            _contentTypeRegistryService,
+            _textBufferFactoryService,
+            _textDocumentFactoryService,
+            uriProvider,
+            _filePathService,
+            StrictMock.Of<IProjectSnapshotManager>(),
             TestLanguageServerFeatureOptions.Instance,
             LoggerFactory,
             telemetryReporter: null!);
@@ -102,16 +131,13 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
             .Setup(x => x.AddOrUpdate(It.IsAny<ITextBuffer>(), It.IsAny<Uri>()))
             .Verifiable();
 
-        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
+        var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            var project = projectManager.CreateAndAddProject(@"C:\path\to\project.csproj");
-            projectManager.CreateAndAddDocument(project, @"C:\path\to\file.razor");
+            var project = updater.CreateAndAddProject(@"C:\path\to\project.csproj");
+            updater.CreateAndAddDocument(project, @"C:\path\to\file.razor");
         });
-
-        var projectManagerAccessor = StrictMock.Of<IProjectSnapshotManagerAccessor>(a =>
-            a.Instance == projectManager);
 
         var factory = new CSharpVirtualDocumentFactory(
             _contentTypeRegistryService,
@@ -119,7 +145,7 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
             _textDocumentFactoryService,
             uriProvider,
             _filePathService,
-            projectManagerAccessor,
+            projectManager,
             TestLanguageServerFeatureOptions.Instance,
             LoggerFactory,
             telemetryReporter: null!);
@@ -143,9 +169,9 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
             .Setup(x => x.AddOrUpdate(It.IsAny<ITextBuffer>(), It.IsAny<Uri>()))
             .Verifiable();
 
-        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
+        var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
             var project1 = TestProjectSnapshot.Create(
                 @"C:\path\to\project1.csproj",
@@ -153,8 +179,8 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
                 documentFilePaths: [],
                 RazorConfiguration.Default,
                 projectWorkspaceState: null);
-            projectManager.ProjectAdded(project1.HostProject);
-            projectManager.CreateAndAddDocument(project1, @"C:\path\to\file.razor");
+            updater.ProjectAdded(project1.HostProject);
+            updater.CreateAndAddDocument(project1, @"C:\path\to\file.razor");
 
             var project2 = TestProjectSnapshot.Create(
                 @"C:\path\to\project2.csproj",
@@ -162,22 +188,19 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
                 documentFilePaths: [],
                 RazorConfiguration.Default,
                 projectWorkspaceState: null);
-            projectManager.ProjectAdded(project2.HostProject);
-            projectManager.CreateAndAddDocument(project2, @"C:\path\to\file.razor");
+            updater.ProjectAdded(project2.HostProject);
+            updater.CreateAndAddDocument(project2, @"C:\path\to\file.razor");
         });
 
-        var projectManagerAccessor = StrictMock.Of<IProjectSnapshotManagerAccessor>(a =>
-            a.Instance == projectManager);
-
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);
-        var filePathService = new FilePathService(languageServerFeatureOptions);
+        var filePathService = new VisualStudioFilePathService(languageServerFeatureOptions);
         var factory = new CSharpVirtualDocumentFactory(
             _contentTypeRegistryService,
             _textBufferFactoryService,
             _textDocumentFactoryService,
             uriProvider,
             filePathService,
-            projectManagerAccessor,
+            projectManager,
             languageServerFeatureOptions,
             LoggerFactory,
             telemetryReporter: null!);

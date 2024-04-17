@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Microsoft.VisualStudio.Threading;
@@ -21,11 +21,10 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
 {
     private static readonly DataflowLinkOptions s_dataflowLinkOptions = new DataflowLinkOptions() { PropagateCompletion = true };
 
-    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IProjectSnapshotManager _projectManager;
     private readonly AsyncSemaphore _lock;
 
-    private ProjectSnapshotManagerBase? _projectManager;
     private readonly Dictionary<ProjectConfigurationSlice, IDisposable> _projectSubscriptions = new();
     private readonly List<IDisposable> _disposables = new();
     protected readonly ProjectConfigurationFilePathStore ProjectConfigurationFilePathStore;
@@ -42,29 +41,14 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
 
     protected WindowsRazorProjectHostBase(
         IUnconfiguredProjectCommonServices commonServices,
-        IProjectSnapshotManagerAccessor projectManagerAccessor,
-        ProjectSnapshotManagerDispatcher dispatcher,
+        IServiceProvider serviceProvider,
+        IProjectSnapshotManager projectManager,
         ProjectConfigurationFilePathStore projectConfigurationFilePathStore)
         : base(commonServices.ThreadingService.JoinableTaskContext)
     {
-        if (commonServices is null)
-        {
-            throw new ArgumentNullException(nameof(commonServices));
-        }
-
-        if (dispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(dispatcher));
-        }
-
-        if (projectConfigurationFilePathStore is null)
-        {
-            throw new ArgumentNullException(nameof(projectConfigurationFilePathStore));
-        }
-
         CommonServices = commonServices;
-        _projectManagerAccessor = projectManagerAccessor;
-        _dispatcher = dispatcher;
+        _serviceProvider = serviceProvider;
+        _projectManager = projectManager;
 
         _lock = new AsyncSemaphore(initialCount: 1);
         ProjectConfigurationFilePathStore = projectConfigurationFilePathStore;
@@ -193,15 +177,18 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
             // If we haven't been initialized, lets not start now
             if (_projectManager is not null)
             {
-                await ExecuteWithLockAsync(() => UpdateAsync(() =>
+                await ExecuteWithLockAsync(
+                    () => UpdateAsync(updater =>
                     {
                         // The Projects property creates a copy, so its okay to iterate through this
-                        var projects = _projectManager.GetProjects();
+                        var projects = updater.GetProjects();
                         foreach (var project in projects)
                         {
-                            UninitializeProjectUnsafe(project.Key);
+                            RemoveProject(updater, project.Key);
                         }
-                    }, CancellationToken.None)).ConfigureAwait(false);
+                    },
+                    CancellationToken.None))
+                    .ConfigureAwait(false);
             }
 
             foreach (var (slice, subscription) in _projectSubscriptions)
@@ -224,19 +211,17 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
         // However, the project snapshot manager uses the project Fullpath as the key. We want to just
         // reinitialize the HostProject with the same configuration and settings here, but the updated
         // FilePath.
-        return ExecuteWithLockAsync(() => UpdateAsync(() =>
+        return ExecuteWithLockAsync(() => UpdateAsync(updater =>
         {
-            var projectManager = GetProjectManager();
-
-            var projectKeys = projectManager.GetAllProjectKeys(oldProjectFilePath);
+            var projectKeys = updater.GetAllProjectKeys(oldProjectFilePath);
             foreach (var projectKey in projectKeys)
             {
-                if (projectManager.TryGetLoadedProject(projectKey, out var current))
+                if (updater.TryGetLoadedProject(projectKey, out var current))
                 {
-                    UninitializeProjectUnsafe(projectKey);
+                    RemoveProject(updater, projectKey);
 
                     var hostProject = new HostProject(newProjectFilePath, current.IntermediateOutputPath, current.Configuration, current.RootNamespace);
-                    UpdateProjectUnsafe(hostProject);
+                    UpdateProject(updater, hostProject);
 
                     // This should no-op in the common case, just putting it here for insurance.
                     foreach (var documentFilePath in current.DocumentFilePaths)
@@ -244,65 +229,59 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
                         var documentSnapshot = current.GetDocument(documentFilePath);
                         Assumes.NotNull(documentSnapshot);
                         // TODO: The creation of the HostProject here is silly
-                        var hostDocument = new HostDocument(documentSnapshot.FilePath.AssumeNotNull(), documentSnapshot.TargetPath.AssumeNotNull(), documentSnapshot.FileKind);
-                        AddDocumentUnsafe(hostProject.Key, hostDocument);
+                        var hostDocument = new HostDocument(
+                            documentSnapshot.FilePath.AssumeNotNull(),
+                            documentSnapshot.TargetPath.AssumeNotNull(),
+                            documentSnapshot.FileKind);
+                        updater.DocumentAdded(projectKey, hostDocument, new FileTextLoader(hostDocument.FilePath, null));
                     }
                 }
             }
         }, CancellationToken.None));
     }
 
-    // Should only be called from the project snapshot manager's specialized thread.
-    [MemberNotNull(nameof(_projectManager))]
-    protected ProjectSnapshotManagerBase GetProjectManager()
+    protected ImmutableArray<ProjectKey> GetAllProjectKeys(string projectFilePath)
     {
-        _dispatcher.AssertRunningOnDispatcher();
-
-        return _projectManager ??= _projectManagerAccessor.Instance;
+        return _projectManager.GetAllProjectKeys(projectFilePath);
     }
 
-    protected Task UpdateAsync(Action action, CancellationToken cancellationToken)
-        => _dispatcher.RunAsync(action, cancellationToken);
-
-    protected void UninitializeProjectUnsafe(ProjectKey projectKey)
+    protected Task UpdateAsync(Action<ProjectSnapshotManager.Updater> action, CancellationToken cancellationToken)
     {
-        var projectManager = GetProjectManager();
-        if (projectManager.TryGetLoadedProject(projectKey, out _))
-        {
-            projectManager.ProjectRemoved(projectKey);
-            ProjectConfigurationFilePathStore.Remove(projectKey);
-        }
+        return _projectManager.UpdateAsync(
+            static (updater, state) =>
+            {
+                var (action, serviceProvider) = state;
+
+                // This is a potential entry point for Razor start up when a project is opened with no open editors.
+                // We need to ensure that any Razor start up services are initialized before the project manager is updated.
+                RazorStartupInitializer.Initialize(serviceProvider);
+
+                action(updater);
+            },
+            state: (action, _serviceProvider),
+            cancellationToken);
     }
 
-    protected void UpdateProjectUnsafe(HostProject project)
+    protected static void UpdateProject(ProjectSnapshotManager.Updater updater, HostProject project)
     {
-        var projectManager = GetProjectManager();
-
-        if (!projectManager.TryGetLoadedProject(project.Key, out _))
+        if (!updater.TryGetLoadedProject(project.Key, out _))
         {
             // Just in case we somehow got in a state where VS didn't tell us that solution close was finished, lets just
             // ensure we're going to actually do something with the new project that we've just been told about.
             // If VS did tell us, then this is a no-op.
-            projectManager.SolutionOpened();
-
-            projectManager.ProjectAdded(project);
+            updater.SolutionOpened();
+            updater.ProjectAdded(project);
         }
         else
         {
-            projectManager.ProjectConfigurationChanged(project);
+            updater.ProjectConfigurationChanged(project);
         }
     }
 
-    protected void AddDocumentUnsafe(ProjectKey projectKey, HostDocument document)
+    protected void RemoveProject(ProjectSnapshotManager.Updater updater, ProjectKey projectKey)
     {
-        var projectManager = GetProjectManager();
-        projectManager.DocumentAdded(projectKey, document, new FileTextLoader(document.FilePath, null));
-    }
-
-    protected void RemoveDocumentUnsafe(ProjectKey projectKey, HostDocument document)
-    {
-        var projectManager = GetProjectManager();
-        projectManager.DocumentRemoved(projectKey, document);
+        updater.ProjectRemoved(projectKey);
+        ProjectConfigurationFilePathStore.Remove(projectKey);
     }
 
     private async Task ExecuteWithLockAsync(Func<Task> func)

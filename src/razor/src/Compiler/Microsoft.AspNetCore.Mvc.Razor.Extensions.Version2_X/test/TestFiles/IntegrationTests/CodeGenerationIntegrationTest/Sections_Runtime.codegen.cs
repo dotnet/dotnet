@@ -5,7 +5,7 @@
 [assembly:global::Microsoft.AspNetCore.Mvc.Razor.Compilation.RazorViewAttribute(@"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml", typeof(AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Sections))]
 namespace AspNetCore
 {
-    #line hidden
+    #line default
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -13,6 +13,8 @@ namespace AspNetCore
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"1ed96a957fe000fd0c80cc511def19ab692563eb64f3349a4c87c524e2ecbd60", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Sections : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<DateTime>
     {
@@ -46,12 +48,13 @@ namespace AspNetCore
             BeginContext(64, 2, true);
             WriteLiteral("\r\n");
             EndContext();
-#line 5 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
-   
+#line (5,3)-(7,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
+ 
     Layout = "_SectionTestLayout.cshtml";
 
 #line default
 #line hidden
+
             BeginContext(117, 26, true);
             WriteLiteral("\r\n<div>Some body</div>\r\n\r\n");
             EndContext();
@@ -65,11 +68,13 @@ namespace AspNetCore
                 );
                 __InputTestTagHelper = CreateTagHelper<global::InputTestTagHelper>();
                 __tagHelperExecutionContext.Add(__InputTestTagHelper);
-#line 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
-__InputTestTagHelper.For = ModelExpressionProvider.CreateModelExpression(ViewData, __model => __model.Date);
+                __InputTestTagHelper.For = ModelExpressionProvider.CreateModelExpression(ViewData, __model => __model.
+#line (13,22)-(13,26) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
+Date
 
 #line default
 #line hidden
+                );
                 __tagHelperExecutionContext.AddTagHelperAttribute("for", __InputTestTagHelper.For, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
                 await __tagHelperRunner.RunAsync(__tagHelperExecutionContext);
                 if (!__tagHelperExecutionContext.Output.IsContentModified)

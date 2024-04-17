@@ -67,6 +67,42 @@ public class DesignTimeNodeWriterTest : RazorProjectEngineTestBase
 #line 1 ""test.cshtml""
 using System;
 
+#nullable disable
+",
+            csharp,
+            ignoreLineEndingDifferences: true);
+    }
+
+    [Fact]
+    public void WriteUsingDirective_WithSourceAndLineDirectives_WritesContentWithLinePragmaAndMapping()
+    {
+        // Arrange
+        var writer = new DesignTimeNodeWriter();
+        using var context = TestCodeRenderingContext.CreateDesignTime();
+
+        var originalSpan = new SourceSpan("test.cshtml", 0, 0, 0, 6);
+        var generatedSpan = new SourceSpan(null, 38 + Environment.NewLine.Length * 3, 3, 0, 6);
+        var expectedSourceMapping = new SourceMapping(originalSpan, generatedSpan);
+        var node = new UsingDirectiveIntermediateNode()
+        {
+            Content = "System",
+            Source = originalSpan,
+            AppendLineDefaultAndHidden = true
+        };
+
+        // Act
+        writer.WriteUsingDirective(context, node);
+
+        // Assert
+        var mapping = Assert.Single(((DefaultCodeRenderingContext)context).SourceMappings);
+        Assert.Equal(expectedSourceMapping, mapping);
+        var csharp = context.CodeWriter.GenerateCode();
+        Assert.Equal(
+@"
+#nullable restore
+#line 1 ""test.cshtml""
+using System;
+
 #line default
 #line hidden
 #nullable disable
@@ -522,16 +558,14 @@ Render Children
         Assert.True(context.Options.RemapLinePragmaPathsOnWindows);
         Assert.True(context.Options.UseEnhancedLinePragma);
 
-        var node = new CSharpExpressionIntermediateNode()
-        {
-            // Create a fake source span, so we can check it correctly maps in the #line below
-            Source = new SourceSpan(fileName, 0, 2, 3, 6, 1, 2),
-        };
+        var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
         builder.Add(new IntermediateToken()
         {
             Content = "i++",
             Kind = TokenKind.CSharp,
+            // Create a fake source span, so we can check it correctly maps in the #line below
+            Source = new SourceSpan(fileName, 0, 2, 3, 6, 1, 2),
         });
 
         writer.WriteCSharpExpression(context, node);
@@ -539,14 +573,15 @@ Render Children
         var csharp = context.CodeWriter.GenerateCode();
         Assert.Equal(
             $"""
-
+            Write(
             #nullable restore
-            #line (3,4)-(4,3) 6 "{expectedFileName}"
-            Write(i++);
+            #line (3,4)-(4,3) "{expectedFileName}"
+            i++
 
             #line default
             #line hidden
             #nullable disable
+            );
 
             """,
             csharp,

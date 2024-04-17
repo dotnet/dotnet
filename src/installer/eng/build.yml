@@ -1,9 +1,9 @@
 parameters:
-  # Agent OS identifier and used as job name
+# Agent OS identifier and used as job name
 - name: agentOs
   type: string
 
-  # Job name
+# Job name
 - name: jobName
   type: string
 
@@ -12,7 +12,7 @@ parameters:
   type: string
   default: ''
 
-  # Job timeout
+# Job timeout
 - name: timeoutInMinutes
   type: number
   default: 180
@@ -32,7 +32,7 @@ parameters:
   - arm64
   - x64
   - x86
-  
+
 # Linux portable. If true, passes portable switch to build
 - name: linuxPortable
   type: boolean
@@ -69,36 +69,42 @@ parameters:
   default: false
 
 jobs:
-- template: common/templates/job/job.yml
+- template: common/templates-official/job/job.yml
   parameters:
     # Set up the name of the job.
     ${{ if parameters.pgoInstrument }}:
       name: PGO_${{ parameters.agentOs }}_${{ parameters.jobName }}
     ${{ if not(parameters.pgoInstrument) }}:
       name: ${{ parameters.agentOs }}_${{ parameters.jobName }}
-    
-    ## Set up the pool/machine info to be used based on the Agent OS
+
+    # Set up the pool/machine info to be used based on the Agent OS
     ${{ if eq(parameters.agentOs, 'Windows_NT') }}:
       enableMicrobuild: true
       pool:
         ${{ if eq(variables['System.TeamProject'], 'public') }}:
           name: $(DncEngPublicBuildPool)
-          demands: ImageOverride -equals windows.vs2022.amd64.open
+          image: 1es-windows-2022-open
+          os: windows
         ${{ if eq(variables['System.TeamProject'], 'internal') }}:
           name: $(DncEngInternalBuildPool)
-          demands: ImageOverride -equals windows.vs2022.amd64
+          image: 1es-windows-2022
+          os: windows
     ${{ if eq(parameters.agentOs, 'Linux') }}:
       pool:
         ${{ if eq(variables['System.TeamProject'], 'public') }}:
           name: $(DncEngPublicBuildPool)
-          demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+          image: 1es-ubuntu-2004-open
+          os: linux
         ${{ if eq(variables['System.TeamProject'], 'internal') }}:
           name: $(DncEngInternalBuildPool)
-          demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
+          image: 1es-ubuntu-2204
+          os: linux
       container: ${{ parameters.container }}
     ${{ if eq(parameters.agentOs, 'Darwin') }}:
       pool:
-        vmImage: 'macOS-latest'
+        name: Azure Pipelines
+        image: macOS-latest
+        os: macOS
 
     timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
     ${{ if parameters.isBuiltFromVmr }}:
@@ -111,8 +117,8 @@ jobs:
     workspace:
       clean: all
 
-# Test parameters
     variables:
+    # Test variables
     - ${{ if eq(parameters.agentOs, 'Windows_NT') }}:
       - _PackArg: '-pack'
       - ${{ if parameters.runTests }}:
@@ -168,7 +174,7 @@ jobs:
                   /p:DotNetPublishUsingPipelines=$(_PublishUsingPipelines)
                   $(_PgoInstrument)
 
-    - template: /eng/common/templates/variables/pool-providers.yml
+    - template: /eng/common/templates-official/variables/pool-providers.yml
 
     steps:
     - checkout: self
@@ -245,13 +251,13 @@ jobs:
       inputs:
         SourceFolder: '$(installerRoot)/artifacts'
         Contents: |
-         log/${{ parameters.buildConfiguration }}/**/*
-         TestResults/${{ parameters.buildConfiguration }}/**/*
+          log/${{ parameters.buildConfiguration }}/**/*
+          TestResults/${{ parameters.buildConfiguration }}/**/*
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
       continueOnError: true
       condition: always()
 
-    - task: PublishBuildArtifacts@1
+    - task: 1ES.PublishBuildArtifacts@1
       displayName: Publish Logs to VSTS
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'

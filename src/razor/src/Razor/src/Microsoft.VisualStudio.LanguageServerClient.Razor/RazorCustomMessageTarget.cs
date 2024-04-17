@@ -7,13 +7,12 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
-using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor.Settings;
 using Microsoft.VisualStudio.Editor.Razor.Snippets;
@@ -35,7 +34,7 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
     private readonly LSPRequestInvoker _requestInvoker;
     private readonly ITelemetryReporter _telemetryReporter;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
+    private readonly IProjectSnapshotManager _projectManager;
     private readonly SnippetCache _snippetCache;
     private readonly FormattingOptionsProvider _formattingOptionsProvider;
     private readonly IClientSettingsManager _editorSettingsManager;
@@ -54,7 +53,7 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
         CSharpVirtualDocumentAddListener csharpVirtualDocumentAddListener,
         ITelemetryReporter telemetryReporter,
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+        IProjectSnapshotManager projectManager,
         SnippetCache snippetCache,
         IRazorLoggerFactory loggerFactory)
     {
@@ -83,7 +82,7 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
         _csharpVirtualDocumentAddListener = csharpVirtualDocumentAddListener ?? throw new ArgumentNullException(nameof(csharpVirtualDocumentAddListener));
         _telemetryReporter = telemetryReporter ?? throw new ArgumentNullException(nameof(telemetryReporter));
         _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-        _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor ?? throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
+        _projectManager = projectManager ?? throw new ArgumentNullException(nameof(projectManager));
         _snippetCache = snippetCache ?? throw new ArgumentNullException(nameof(snippetCache));
         _logger = loggerFactory.CreateLogger<RazorCustomMessageTarget>();
     }

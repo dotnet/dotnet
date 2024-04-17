@@ -1,23 +1,23 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
-using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Workspaces.InlayHints;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.InlayHints;
 
-[Export(typeof(IInlayHintService))]
-[method: ImportingConstructor]
 internal sealed class InlayHintService(IRazorDocumentMappingService documentMappingService) : IInlayHintService
 {
     private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
@@ -27,11 +27,13 @@ internal sealed class InlayHintService(IRazorDocumentMappingService documentMapp
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var csharpDocument = codeDocument.GetCSharpDocument();
 
+        var span = range.ToLinePositionSpan();
+
         // We are given a range by the client, but our mapping only succeeds if the start and end of the range can both be mapped
         // to C#. Since that doesn't logically match what we want from inlay hints, we instead get the minimum range of mappable
         // C# to get hints for. We'll filter that later, to remove the sections that can't be mapped back.
-        if (!_documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, range, out var projectedRange) &&
-            !codeDocument.TryGetMinimalCSharpRange(range, out projectedRange))
+        if (!_documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, span, out var projectedLinePositionSpan) &&
+            !codeDocument.TryGetMinimalCSharpRange(span, out projectedLinePositionSpan))
         {
             // There's no C# in the range.
             return null;
@@ -41,7 +43,7 @@ internal sealed class InlayHintService(IRazorDocumentMappingService documentMapp
         // the results, much like folding ranges.
         var delegatedRequest = new DelegatedInlayHintParams(
             Identifier: documentContext.Identifier,
-            ProjectedRange: projectedRange,
+            ProjectedRange: projectedLinePositionSpan.ToRange(),
             ProjectedKind: RazorLanguageKind.CSharp
         );
 
@@ -60,8 +62,15 @@ internal sealed class InlayHintService(IRazorDocumentMappingService documentMapp
         foreach (var hint in inlayHints)
         {
             if (hint.Position.TryGetAbsoluteIndex(csharpSourceText, null, out var absoluteIndex) &&
-                _documentMappingService.TryMapToHostDocumentPosition(csharpDocument, absoluteIndex, out Position? hostDocumentPosition, out _))
+                _documentMappingService.TryMapToHostDocumentPosition(csharpDocument, absoluteIndex, out Position? hostDocumentPosition, out var hostDocumentIndex))
             {
+                // We know this C# maps to Razor, but does it map to Razor that we like?
+                var node = await documentContext.GetSyntaxNodeAsync(hostDocumentIndex, cancellationToken).ConfigureAwait(false);
+                if (node?.FirstAncestorOrSelf<MarkupTagHelperAttributeValueSyntax>() is not null)
+                {
+                    continue;
+                }
+
                 if (hint.TextEdits is not null)
                 {
                     hint.TextEdits = _documentMappingService.GetHostDocumentEdits(csharpDocument, hint.TextEdits);

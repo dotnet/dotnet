@@ -2,20 +2,22 @@
 #pragma warning disable 1591
 namespace Test
 {
-    #line hidden
+    #line default
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Microsoft.AspNetCore.Components.Rendering;
 
 #line default
 #line hidden
 #nullable disable
+    #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
+    #nullable disable
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -23,8 +25,8 @@ using Microsoft.AspNetCore.Components.Rendering;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (3,8)-(9,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     void RenderChildComponent(RenderTreeBuilder __builder)
     {
         var output = string.Empty;
@@ -34,23 +36,27 @@ using Microsoft.AspNetCore.Components.Rendering;
 #line default
 #line hidden
 #nullable disable
+
         __builder.OpenElement(0, "p");
         __builder.AddContent(1, "Output: ");
+        __builder.AddContent(2, 
 #nullable restore
-#line (9,21)-(9,27) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder.AddContent(2, output);
+#line (9,21)-(9,27) "x:\dir\subdir\Test\TestComponent.cshtml"
+output
 
 #line default
 #line hidden
 #nullable disable
+        );
         __builder.CloseElement();
 #nullable restore
-#line 10 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (10,1)-(11,1) "x:\dir\subdir\Test\TestComponent.cshtml"
     }
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

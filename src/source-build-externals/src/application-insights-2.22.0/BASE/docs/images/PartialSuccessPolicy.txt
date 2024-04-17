@@ -1,0 +1,26 @@
+Image was created using http://flowchart.js.org/
+Metadata: 
+
+st=>start: Transmission sending finished
+e=>end: Finish
+
+cond1=>condition: No Exception, No Response
+cond2=>condition: StatusCode 206 and 
+Response has list of errors 
+
+op1=>operation: Number of errors = 0 (used to 
+calculate exp. backoff)
+op2=>operation: Buffer and sender capacity = 0
+op3=>operation: Set timver to restore capacity. Interval 
+either from Retry-After or exponential backoff
+op4=>operation: Number of errors +1 (used to 
+calculate exp. backoff) if it was not 
+updated in the last 10sec
+op5=>operation: Enqueue new transaction 
+created from errors list
+
+st->cond1
+cond1(yes)->cond2
+cond1(no)->op1->e
+cond2(yes, bottom)->op2->op3->op4->op5->e
+cond2(no)->op1->e

@@ -62,6 +62,16 @@
         <target state="translated">属性引用符の自動挿入</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
+        <source>Forces the open brace after an @code or @functions directive to be on the following line</source>
+        <target state="translated">@code または @functions ディレクティブの後の始め中かっこを強制的に次の行にする</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
+        <source>Code/Functions block open brace on next line</source>
+        <target state="translated">コード/関数は、次の行で始め中かっこをブロックします</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">
         <source>If true, gives C# code in Razor files a background color</source>
         <target state="translated">true の場合、Razor ファイルの C# コードに背景色を表示します</target>

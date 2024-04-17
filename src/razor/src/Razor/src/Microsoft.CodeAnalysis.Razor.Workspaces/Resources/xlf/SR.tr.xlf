@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="Directive">
         <source>directive</source>
-        <target state="new">directive</target>
+        <target state="translated">yönerge</target>
         <note />
       </trans-unit>
       <trans-unit id="DirectiveSnippetDescription">
@@ -17,6 +17,31 @@
 [Tab] to navigate between elements, [Enter] to complete</source>
         <target state="translated">Yönerge kod parçacığı ekle
 öğeler arasında gezinmek için [Tab], tamamlamak için [Enter] seçeneğini belirleyin</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Invalid_Offset">
+        <source>Invalid offset.</source>
+        <target state="translated">Geçersiz uzaklık.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PositionCharacter_Outside_Range">
+        <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
+        <target state="translated">'{2}' {1} aralığının dışındaki '{0}' karakteri sorgulandı. Belge güncel olmayabilir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PositionLine_Outside_Range">
+        <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
+        <target state="translated">{1} / '{2}' aralığının dışındaki '{0}' satırı sorgulandı. Belge güncel olmayabilir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unknown_RazorMetaCode">
+        <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
+        <target state="new">Attempted to visit a RazorMetaCode other than '{' or '}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unknown_mapping_behavior">
+        <source>Unknown mapping behavior</source>
+        <target state="translated">Bilinmeyen eşleme davranışı</target>
         <note />
       </trans-unit>
     </body>

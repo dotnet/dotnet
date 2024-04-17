@@ -11,9 +11,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
+using Microsoft.VisualStudio.Shell;
 using Item = System.Collections.Generic.KeyValuePair<string, System.Collections.Immutable.IImmutableDictionary<string, string>>;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -34,16 +36,16 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
             Rules.RazorGenerateWithTargetPath.SchemaName,
             ConfigurationGeneralSchemaName,
         });
-    private readonly LanguageServerFeatureOptions? _languageServerFeatureOptions;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
 
     [ImportingConstructor]
     public DefaultWindowsRazorProjectHost(
         IUnconfiguredProjectCommonServices commonServices,
-        IProjectSnapshotManagerAccessor projectManagerAccessor,
-        ProjectSnapshotManagerDispatcher dispatcher,
+        [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
+        IProjectSnapshotManager projectManager,
         ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
-        LanguageServerFeatureOptions? languageServerFeatureOptions)
-        : base(commonServices, projectManagerAccessor, dispatcher, projectConfigurationFilePathStore)
+        LanguageServerFeatureOptions languageServerFeatureOptions)
+        : base(commonServices, serviceProvider, projectManager, projectConfigurationFilePathStore)
     {
         _languageServerFeatureOptions = languageServerFeatureOptions;
     }
@@ -52,7 +54,7 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
 
     protected override async Task HandleProjectChangeAsync(string sliceDimensions, IProjectVersionedValue<IProjectSubscriptionUpdate> update)
     {
-        if (TryGetConfiguration(update.Value.CurrentState, out var configuration) &&
+        if (TryGetConfiguration(update.Value.CurrentState, _languageServerFeatureOptions.ForceRuntimeCodeGeneration, out var configuration) &&
             TryGetIntermediateOutputPath(update.Value.CurrentState, out var intermediatePath))
         {
             TryGetRootNamespace(update.Value.CurrentState, out var rootNamespace);
@@ -62,11 +64,14 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
             {
                 // If the intermediate output path is in the ProjectChanges, then we know that it has changed, so we want to ensure we remove the old one,
                 // otherwise this would be seen as an Add, and we'd end up with two active projects
-                await UpdateAsync(() =>
-                {
-                    var beforeProjectKey = ProjectKey.FromString(beforeIntermediateOutputPath);
-                    UninitializeProjectUnsafe(beforeProjectKey);
-                }, CancellationToken.None).ConfigureAwait(false);
+                await UpdateAsync(
+                    updater =>
+                    {
+                        var beforeProjectKey = ProjectKey.FromString(beforeIntermediateOutputPath);
+                        updater.ProjectRemoved(beforeProjectKey);
+                    },
+                    CancellationToken.None)
+                    .ConfigureAwait(false);
             }
 
             // We need to deal with the case where the project was uninitialized, but now
@@ -79,46 +84,49 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
             var documents = GetCurrentDocuments(update.Value);
             var changedDocuments = GetChangedAndRemovedDocuments(update.Value);
 
-            await UpdateAsync(() =>
-            {
-                var projectFileName = Path.GetFileNameWithoutExtension(CommonServices.UnconfiguredProject.FullPath);
-                var displayName = sliceDimensions is { Length: > 0 }
-                    ? $"{projectFileName} ({sliceDimensions})"
-                    : projectFileName;
-
-                var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace, displayName);
-
-                if (_languageServerFeatureOptions is not null)
+            await UpdateAsync(
+                updater =>
                 {
-                    var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
-                    ProjectConfigurationFilePathStore.Set(hostProject.Key, projectConfigurationFile);
-                }
+                    var projectFileName = Path.GetFileNameWithoutExtension(CommonServices.UnconfiguredProject.FullPath);
+                    var displayName = sliceDimensions is { Length: > 0 }
+                        ? $"{projectFileName} ({sliceDimensions})"
+                        : projectFileName;
 
-                UpdateProjectUnsafe(hostProject);
+                    var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace, displayName);
 
-                for (var i = 0; i < changedDocuments.Length; i++)
-                {
-                    RemoveDocumentUnsafe(hostProject.Key, changedDocuments[i]);
-                }
+                var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
+                ProjectConfigurationFilePathStore.Set(hostProject.Key, projectConfigurationFile);
 
-                for (var i = 0; i < documents.Length; i++)
-                {
-                    AddDocumentUnsafe(hostProject.Key, documents[i]);
-                }
-            }, CancellationToken.None).ConfigureAwait(false);
+                    UpdateProject(updater, hostProject);
+
+                    for (var i = 0; i < changedDocuments.Length; i++)
+                    {
+                        updater.DocumentRemoved(hostProject.Key, changedDocuments[i]);
+                    }
+
+                    for (var i = 0; i < documents.Length; i++)
+                    {
+                        var document = documents[i];
+                        updater.DocumentAdded(hostProject.Key, document, new FileTextLoader(document.FilePath, null));
+                    }
+                },
+                CancellationToken.None)
+                .ConfigureAwait(false);
         }
         else
         {
             // Ok we can't find a configuration. Let's assume this project isn't using Razor then.
-            await UpdateAsync(() =>
-            {
-                var projectManager = GetProjectManager();
-                var projectKeys = projectManager.GetAllProjectKeys(CommonServices.UnconfiguredProject.FullPath);
-                foreach (var projectKey in projectKeys)
+            await UpdateAsync(
+                updater =>
                 {
-                    UninitializeProjectUnsafe(projectKey);
-                }
-            }, CancellationToken.None).ConfigureAwait(false);
+                    var projectKeys = GetAllProjectKeys(CommonServices.UnconfiguredProject.FullPath);
+                    foreach (var projectKey in projectKeys)
+                    {
+                        RemoveProject(updater, projectKey);
+                    }
+                },
+                CancellationToken.None)
+                .ConfigureAwait(false);
         }
     }
 
@@ -126,6 +134,7 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
     // Internal for testing
     internal static bool TryGetConfiguration(
         IImmutableDictionary<string, IProjectRuleSnapshot> state,
+        bool forceRuntimeCodeGeneration,
         [NotNullWhen(returnValue: true)] out RazorConfiguration? configuration)
     {
         if (!TryGetDefaultConfiguration(state, out var defaultConfiguration))
@@ -153,7 +162,7 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
             return false;
         }
 
-        configuration = new ProjectSystemRazorConfiguration(languageVersion, configurationItem.Key, extensions);
+        configuration = new(languageVersion, configurationItem.Key, extensions, ForceRuntimeCodeGeneration: forceRuntimeCodeGeneration);
         return true;
     }
 
@@ -257,23 +266,24 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
     internal static bool TryGetExtensions(
         string[] extensionNames,
         IImmutableDictionary<string, IProjectRuleSnapshot> state,
-        out ProjectSystemRazorExtension[] extensions)
+        out ImmutableArray<RazorExtension> extensions)
     {
         // The list of extensions might not be present, because the configuration may not have any.
         state.TryGetValue(Rules.RazorExtension.PrimaryDataSourceItemType, out var rule);
 
         var items = rule?.Items ?? ImmutableDictionary<string, IImmutableDictionary<string, string>>.Empty;
-        var extensionList = new List<ProjectSystemRazorExtension>();
+
+        using var builder = new PooledArrayBuilder<RazorExtension>();
         foreach (var item in items)
         {
             var extensionName = item.Key;
             if (extensionNames.Contains(extensionName))
             {
-                extensionList.Add(new ProjectSystemRazorExtension(extensionName));
+                builder.Add(new(extensionName));
             }
         }
 
-        extensions = extensionList.ToArray();
+        extensions = builder.DrainToImmutable();
         return true;
     }
 

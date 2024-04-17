@@ -72,11 +72,6 @@
         <target state="translated">Создать обработчик событий "{0}"</target>
         <note />
       </trans-unit>
-      <trans-unit id="Invalid_Offset">
-        <source>Invalid offset.</source>
-        <target state="translated">Недопустимое смещение.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">Языковые службы Razor настроены неправильно, отсутствует языковая служба "{0}".</target>
@@ -87,16 +82,6 @@
         <target state="translated">Недоступно в</target>
         <note />
       </trans-unit>
-      <trans-unit id="PositionCharacter_Outside_Range">
-        <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">Запрошен символ "{0}" за пределами диапазона {1} "{2}". Возможно, документ не обновлен.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PositionLine_Outside_Range">
-        <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">Запрошена строка "{0}" за пределами диапазона {1} "{2}". Возможно, документ не обновлен.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ReTrigger_Completions_Title">
         <source>"Re-trigger completions..."</source>
         <target state="translated">"Повторный запуск завершений..."</target>
@@ -104,7 +89,7 @@
       </trans-unit>
       <trans-unit id="Statement">
         <source>statement</source>
-        <target state="new">statement</target>
+        <target state="translated">инструкция</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">
@@ -120,16 +105,6 @@
       <trans-unit id="Unknown_ProjectChangeKind">
         <source>Unknown ProjectChangeKind {0}</source>
         <target state="translated">Неизвестный ProjectChangeKind {0}</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unknown_RazorMetaCode">
-        <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
-        <target state="translated">Предпринята попытка посетить RazorMetaCode, отличный от "{" или "}".</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unknown_mapping_behavior">
-        <source>Unknown mapping behavior</source>
-        <target state="translated">Неизвестное поведение сопоставления</target>
         <note />
       </trans-unit>
       <trans-unit id="Version_Should_Not_Be_Null">

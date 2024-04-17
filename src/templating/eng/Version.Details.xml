@@ -2,24 +2,24 @@
 <Dependencies>
   <ProductDependencies>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="9.0.0-alpha.1.24151.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="9.0.0-alpha.1.24168.3">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>7fbf7ef59ca7ddcfa92269ef84e3fcb7544f8699</Sha>
+      <Sha>b46b7e6859f4094cd7f3e00dc0471d62f5d8d051</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.24127.3">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.24162.2">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>d1c092f24a18f5ed76631fc6c865f706aca5d90f</Sha>
+      <Sha>c0b5d69a1a1513528c77fffff708c7502d57c35c</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App.Runtime.win-x64" Version="9.0.0-preview.3.24154.2">
+    <Dependency Name="Microsoft.NETCore.App.Runtime.win-x64" Version="9.0.0-preview.3.24165.13">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>23b4030b75b43f56300a94083441bcdfb4cd6300</Sha>
+      <Sha>c52c808300dee381369b6301b876ee177765ce31</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App.Ref" Version="9.0.0-preview.3.24154.2">
+    <Dependency Name="Microsoft.NETCore.App.Ref" Version="9.0.0-preview.3.24165.13">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>23b4030b75b43f56300a94083441bcdfb4cd6300</Sha>
+      <Sha>c52c808300dee381369b6301b876ee177765ce31</Sha>
     </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.0-beta4.24126.1">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
@@ -27,18 +27,18 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24151.5">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24170.7">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>87d89025bdd8827c016e4083660d31f497670e5c</Sha>
+      <Sha>117337a1e7024e31b321d44d8b71a821e69c3967</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.24151.5">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.24170.7">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>87d89025bdd8827c016e4083660d31f497670e5c</Sha>
+      <Sha>117337a1e7024e31b321d44d8b71a821e69c3967</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24151.5">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24170.7">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>87d89025bdd8827c016e4083660d31f497670e5c</Sha>
+      <Sha>117337a1e7024e31b321d44d8b71a821e69c3967</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
   </ToolsetDependencies>

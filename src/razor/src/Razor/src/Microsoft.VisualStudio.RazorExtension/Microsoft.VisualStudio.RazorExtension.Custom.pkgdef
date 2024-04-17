@@ -74,3 +74,9 @@
 "Value"=dword:00000000
 "Title"="Disable Razor Language Server (requires restart)"
 "PreviewPaneChannels"="IntPreview,int.main"
+
+[$RootKey$\FeatureFlags\Razor\LSP\ForceRuntimeCodeGeneration]
+"Description"="Enable combined design time/runtime code generation for Razor files"
+"Value"=dword:00000000
+"Title"="Force use of runtime code generation for Razor (requires restart)"
+"PreviewPaneChannels"="IntPreview,int.main"

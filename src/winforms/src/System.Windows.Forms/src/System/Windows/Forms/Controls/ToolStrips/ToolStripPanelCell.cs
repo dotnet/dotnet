@@ -13,7 +13,7 @@ namespace System.Windows.Forms;
 ///  affect the underlying toolstrip's properties.... so if its
 ///  removed from a rafting container its still got its defaults
 ///  set up for it.
-internal class ToolStripPanelCell : ArrangedElement
+internal sealed class ToolStripPanelCell : ArrangedElement
 {
     private ToolStrip _wrappedToolStrip;
     private ToolStripPanelRow? _parent;
@@ -82,12 +82,12 @@ internal class ToolStripPanelCell : ArrangedElement
 
     public IArrangedElement InnerElement
     {
-        get { return _wrappedToolStrip as IArrangedElement; }
+        get { return _wrappedToolStrip; }
     }
 
     public ISupportToolStripPanel DraggedControl
     {
-        get { return _wrappedToolStrip as ISupportToolStripPanel; }
+        get { return _wrappedToolStrip; }
     }
 
     public ToolStripPanelRow? ToolStripPanelRow
@@ -343,28 +343,6 @@ internal class ToolStripPanelCell : ArrangedElement
         {
             _currentlySizing = false;
         }
-    }
-
-    public int Shrink(int shrinkBy)
-    {
-        if (ToolStripPanelRow is not null && ToolStripPanelRow.Orientation == Orientation.Vertical)
-        {
-            return ShrinkVertical(shrinkBy);
-        }
-        else
-        {
-            return ShrinkHorizontal(shrinkBy);
-        }
-    }
-
-    private static int ShrinkHorizontal(int shrinkBy)
-    {
-        return 0;
-    }
-
-    private static int ShrinkVertical(int shrinkBy)
-    {
-        return 0;
     }
 
     /// <summary>

@@ -2,63 +2,70 @@
 #pragma warning disable 1591
 namespace Test
 {
-    #line hidden
+    #line default
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-using N;
+#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+using N
 
 #line default
 #line hidden
 #nullable disable
+    ;
+    #nullable restore
     public partial class TestComponent<
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (2,12)-(2,18) "x:\dir\subdir\Test\TestComponent.cshtml"
 TParam
 
 #line default
 #line hidden
 #nullable disable
     > : global::Microsoft.AspNetCore.Components.ComponentBase
+    #nullable disable
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             global::__Blazor.Test.TestComponent.TypeInference.CreateTestComponent_0(__builder, 0, 1, 
 #nullable restore
-#line 12 "x:\dir\subdir\Test\TestComponent.cshtml"
-                           1
+#line (12,28)-(12,29) "x:\dir\subdir\Test\TestComponent.cshtml"
+1
 
 #line default
 #line hidden
 #nullable disable
             , 2, (context) => (__builder2) => {
+                __builder2.AddContent(3, 
 #nullable restore
-#line (14,10)-(14,30) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder2.AddContent(3, context.I1.MyClassId);
+#line (14,10)-(14,30) "x:\dir\subdir\Test\TestComponent.cshtml"
+context.I1.MyClassId
 
 #line default
 #line hidden
 #nullable disable
+                );
                 __builder2.AddContent(4, " - ");
+                __builder2.AddContent(5, 
 #nullable restore
-#line (14,34)-(14,55) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder2.AddContent(5, context.I2.MyStructId);
+#line (14,34)-(14,55) "x:\dir\subdir\Test\TestComponent.cshtml"
+context.I2.MyStructId
 
 #line default
 #line hidden
 #nullable disable
+                );
             }
             );
         }
         #pragma warning restore 1998
 #nullable restore
-#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (4,8)-(10,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     [Parameter]
     public TParam InferParam { get; set; }
 
@@ -68,6 +75,7 @@ __builder2.AddContent(5, context.I2.MyStructId);
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 namespace __Blazor.Test.TestComponent

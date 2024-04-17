@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Editor.Razor.Documents;
 using Microsoft.VisualStudio.Editor.Razor.Settings;
@@ -30,7 +29,7 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
     private readonly HostProject _hostProject;
     private readonly HostProject _updatedHostProject;
     private readonly HostProject _otherHostProject;
-    private readonly ProjectSnapshotManagerBase _projectManager;
+    private readonly TestProjectSnapshotManager _projectManager;
     private readonly VisualStudioDocumentTracker _documentTracker;
 
     public VisualStudioDocumentTrackerTest(ITestOutputHelper testOutput)
@@ -53,12 +52,7 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
 
         var workspaceEditorSettings = new WorkspaceEditorSettings(StrictMock.Of<IClientSettingsManager>());
 
-        _projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher) { AllowNotifyListeners = true };
-
-        var projectManagerAccessorMock = new StrictMock<IProjectSnapshotManagerAccessor>();
-        projectManagerAccessorMock
-            .SetupGet(x => x.Instance)
-            .Returns(_projectManager);
+        _projectManager = CreateProjectSnapshotManager();
 
         _hostProject = new HostProject(projectPath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_1, rootNamespace);
         _updatedHostProject = new HostProject(projectPath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, rootNamespace);
@@ -69,7 +63,7 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
             JoinableTaskFactory.Context,
             _filePath,
             projectPath,
-            projectManagerAccessorMock.Object,
+            _projectManager,
             workspaceEditorSettings,
             ProjectEngineFactoryProvider,
             _textBuffer,
@@ -163,9 +157,9 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
     public async Task ProjectManager_Changed_ProjectAdded_TriggersContextChanged()
     {
         // Arrange
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(_hostProject);
+            updater.ProjectAdded(_hostProject);
         });
 
         var e = new ProjectChangeEventArgs(null!, _projectManager.GetLoadedProject(_hostProject.Key), ProjectChangeKind.ProjectAdded);
@@ -192,9 +186,9 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
     public async Task ProjectManager_Changed_ProjectChanged_TriggersContextChanged()
     {
         // Arrange
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(_hostProject);
+            updater.ProjectAdded(_hostProject);
         });
 
         var e = new ProjectChangeEventArgs(null!, _projectManager.GetLoadedProject(_hostProject.Key), ProjectChangeKind.ProjectChanged);
@@ -221,16 +215,16 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
     public async Task ProjectManager_Changed_ProjectRemoved_TriggersContextChanged_WithEphemeralProject()
     {
         // Arrange
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(_hostProject);
+            updater.ProjectAdded(_hostProject);
         });
 
         var project = _projectManager.GetLoadedProject(_hostProject.Key);
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectRemoved(_hostProject.Key);
+            updater.ProjectRemoved(_hostProject.Key);
         });
 
         var e = new ProjectChangeEventArgs(project!, null!, ProjectChangeKind.ProjectRemoved);
@@ -258,9 +252,9 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
     public async Task ProjectManager_Changed_IgnoresUnknownProject()
     {
         // Arrange
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(_otherHostProject);
+            updater.ProjectAdded(_otherHostProject);
         });
 
         var e = new ProjectChangeEventArgs(null!, _projectManager.GetLoadedProject(_otherHostProject.Key), ProjectChangeKind.ProjectChanged);
@@ -468,9 +462,9 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
     public async Task Subscribed_InitializesRealProjectSnapshot()
     {
         // Arrange
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(_hostProject);
+            updater.ProjectAdded(_hostProject);
         });
 
         // Act
@@ -484,10 +478,13 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
     public async Task Subscribed_ListensToProjectChanges()
     {
         // Arrange
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectAdded(_hostProject);
+        });
+
         await RunOnDispatcherAsync(() =>
         {
-            _projectManager.ProjectAdded(_hostProject);
-
             _documentTracker.Subscribe();
         });
 
@@ -495,9 +492,9 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
         _documentTracker.ContextChanged += (sender, e) => args.Add(e);
 
         // Act
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectConfigurationChanged(_updatedHostProject);
+            updater.ProjectConfigurationChanged(_updatedHostProject);
         });
 
         // Assert
@@ -513,10 +510,13 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
     public async Task Subscribed_ListensToProjectRemoval()
     {
         // Arrange
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectAdded(_hostProject);
+        });
+
         await RunOnDispatcherAsync(() =>
         {
-            _projectManager.ProjectAdded(_hostProject);
-
             _documentTracker.Subscribe();
         });
 
@@ -524,9 +524,9 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
         _documentTracker.ContextChanged += (sender, e) => args.Add(e);
 
         // Act
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectRemoved(_hostProject.Key);
+            updater.ProjectRemoved(_hostProject.Key);
         });
 
         // Assert

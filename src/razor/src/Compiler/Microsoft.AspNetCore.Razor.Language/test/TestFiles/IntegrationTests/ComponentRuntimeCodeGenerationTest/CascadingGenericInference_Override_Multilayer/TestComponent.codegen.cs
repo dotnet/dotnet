@@ -2,13 +2,17 @@
 #pragma warning disable 1591
 namespace Test
 {
-    #line hidden
+    #line default
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
+    #line default
+    #line hidden
+    #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
+    #nullable disable
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -16,8 +20,8 @@ namespace Test
             {
                 global::__Blazor.Test.TestComponent.TypeInference.CreateTreeNode_0_CaptureParameters(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                 DateTime.Now
+#line (1,18)-(1,30) "x:\dir\subdir\Test\TestComponent.cshtml"
+DateTime.Now
 
 #line default
 #line hidden
@@ -27,8 +31,8 @@ namespace Test
                     {
                         global::__Blazor.Test.TestComponent.TypeInference.CreateTreeNode_1_CaptureParameters(
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                     System.Threading.Thread.CurrentThread
+#line (2,22)-(2,59) "x:\dir\subdir\Test\TestComponent.cshtml"
+System.Threading.Thread.CurrentThread
 
 #line default
 #line hidden

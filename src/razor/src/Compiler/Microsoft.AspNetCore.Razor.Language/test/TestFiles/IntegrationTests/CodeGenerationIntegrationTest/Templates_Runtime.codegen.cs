@@ -13,205 +13,278 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         {
             WriteLiteral("\r\n");
 #nullable restore
-#line 11 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-  
+#line (11,3)-(12,33) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+
     Func<dynamic, object> foo = 
 
 #line default
 #line hidden
 #nullable disable
+
             item => new Template(async(__razor_template_writer) => {
                 PushWriter(__razor_template_writer);
                 WriteLiteral("This works ");
+                Write(
 #nullable restore
-#line (12,52)-(12,56) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-Write(item);
+#line (12,52)-(12,56) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+item
 
 #line default
 #line hidden
 #nullable disable
+                );
                 WriteLiteral("!");
                 PopWriter();
             }
             )
 #nullable restore
-#line 12 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-                                                               ;
+#line (12,64)-(13,5) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+;
     
 
 #line default
 #line hidden
 #nullable disable
+
+            Write(
 #nullable restore
-#line (13,6)-(13,13) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-Write(foo(""));
+#line (13,6)-(13,13) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+foo("")
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\r\n");
 #nullable restore
-#line 16 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-   
+#line (16,3)-(17,33) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+ 
     Func<dynamic, object> bar = 
 
 #line default
 #line hidden
 #nullable disable
+
             item => new Template(async(__razor_template_writer) => {
                 PushWriter(__razor_template_writer);
                 WriteLiteral("<p");
                 BeginWriteAttribute("class", " class=\"", 411, "\"", 424, 1);
+                WriteAttributeValue("", 419, 
 #nullable restore
-#line (17,44)-(17,49) 29 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-WriteAttributeValue("", 419, item, 419, 5, false);
+#line (17,45)-(17,49) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+item
 
 #line default
 #line hidden
 #nullable disable
+                , 419, 5, false);
                 EndWriteAttribute();
                 WriteLiteral(">Hello</p>");
                 PopWriter();
             }
             )
 #nullable restore
-#line 17 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-                                                           ;
+#line (17,60)-(18,5) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+;
     
 
 #line default
 #line hidden
 #nullable disable
+
+            Write(
 #nullable restore
-#line (18,6)-(18,20) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-Write(bar("myclass"));
+#line (18,6)-(18,20) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+bar("myclass")
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\r\n<ul>\r\n");
+            Write(
 #nullable restore
-#line (22,3)-(22,14) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-Write(Repeat(10, item => new Template(async(__razor_template_writer) => {
-    PushWriter(__razor_template_writer);
-    WriteLiteral("<li>Item #");
-#nullable restore
-#line (22,26)-(22,30) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-Write(item);
+#line (22,3)-(22,14) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+Repeat(10, 
 
 #line default
 #line hidden
 #nullable disable
-    WriteLiteral("</li>");
-    PopWriter();
-}
-)));
+            item => new Template(async(__razor_template_writer) => {
+                PushWriter(__razor_template_writer);
+                WriteLiteral("<li>Item #");
+                Write(
+#nullable restore
+#line (22,26)-(22,30) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+item
 
 #line default
 #line hidden
 #nullable disable
+                );
+                WriteLiteral("</li>");
+                PopWriter();
+            }
+            )
+#nullable restore
+#line (22,35)-(22,36) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+)
+
+#line default
+#line hidden
+#nullable disable
+            );
             WriteLiteral("\r\n</ul>\r\n\r\n<p>\r\n");
+            Write(
 #nullable restore
-#line (26,2)-(27,5) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-Write(Repeat(10,
-    item => new Template(async(__razor_template_writer) => {
-    PushWriter(__razor_template_writer);
-    WriteLiteral(" This is line#");
-#nullable restore
-#line (27,22)-(27,26) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-Write(item);
+#line (26,2)-(27,5) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+Repeat(10,
+    
 
 #line default
 #line hidden
 #nullable disable
-    WriteLiteral(" of markup<br/>\r\n");
-    PopWriter();
-}
-)));
+            item => new Template(async(__razor_template_writer) => {
+                PushWriter(__razor_template_writer);
+                WriteLiteral(" This is line#");
+                Write(
+#nullable restore
+#line (27,22)-(27,26) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+item
 
 #line default
 #line hidden
 #nullable disable
+                );
+                WriteLiteral(" of markup<br/>\r\n");
+                PopWriter();
+            }
+            )
+#nullable restore
+#line (28,1)-(28,2) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+)
+
+#line default
+#line hidden
+#nullable disable
+            );
             WriteLiteral("\r\n</p>\r\n\r\n<p>\r\n");
+            Write(
 #nullable restore
-#line (32,2)-(33,5) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-Write(Repeat(10,
-    item => new Template(async(__razor_template_writer) => {
-    PushWriter(__razor_template_writer);
-    WriteLiteral(": This is line#");
-#nullable restore
-#line (33,23)-(33,27) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-Write(item);
+#line (32,2)-(33,5) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+Repeat(10,
+    
 
 #line default
 #line hidden
 #nullable disable
-    WriteLiteral(" of markup<br />\r\n");
-    PopWriter();
-}
-)));
+            item => new Template(async(__razor_template_writer) => {
+                PushWriter(__razor_template_writer);
+                WriteLiteral(": This is line#");
+                Write(
+#nullable restore
+#line (33,23)-(33,27) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+item
 
 #line default
 #line hidden
 #nullable disable
+                );
+                WriteLiteral(" of markup<br />\r\n");
+                PopWriter();
+            }
+            )
+#nullable restore
+#line (34,1)-(34,2) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+)
+
+#line default
+#line hidden
+#nullable disable
+            );
             WriteLiteral("\r\n</p>\r\n\r\n<p>\r\n");
+            Write(
 #nullable restore
-#line (38,2)-(39,5) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-Write(Repeat(10,
-    item => new Template(async(__razor_template_writer) => {
-    PushWriter(__razor_template_writer);
-    WriteLiteral(":: This is line#");
-#nullable restore
-#line (39,24)-(39,28) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-Write(item);
+#line (38,2)-(39,5) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+Repeat(10,
+    
 
 #line default
 #line hidden
 #nullable disable
-    WriteLiteral(" of markup<br />\r\n");
-    PopWriter();
-}
-)));
+            item => new Template(async(__razor_template_writer) => {
+                PushWriter(__razor_template_writer);
+                WriteLiteral(":: This is line#");
+                Write(
+#nullable restore
+#line (39,24)-(39,28) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+item
 
 #line default
 #line hidden
 #nullable disable
+                );
+                WriteLiteral(" of markup<br />\r\n");
+                PopWriter();
+            }
+            )
+#nullable restore
+#line (40,1)-(40,2) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+)
+
+#line default
+#line hidden
+#nullable disable
+            );
             WriteLiteral("\r\n</p>\r\n\r\n\r\n<ul>\r\n    ");
+            Write(
 #nullable restore
-#line (45,6)-(45,17) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-Write(Repeat(10, item => new Template(async(__razor_template_writer) => {
-    PushWriter(__razor_template_writer);
-    WriteLiteral("<li>\r\n        Item #");
-#nullable restore
-#line (46,16)-(46,20) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-Write(item);
+#line (45,6)-(45,17) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+Repeat(10, 
 
 #line default
 #line hidden
 #nullable disable
-    WriteLiteral("\r\n");
+            item => new Template(async(__razor_template_writer) => {
+                PushWriter(__razor_template_writer);
+                WriteLiteral("<li>\r\n        Item #");
+                Write(
 #nullable restore
-#line 47 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-          var parent = item;
+#line (46,16)-(46,20) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+item
 
 #line default
 #line hidden
 #nullable disable
-    WriteLiteral("        <ul>\r\n            <li>Child Items... ?</li>\r\n");
-    WriteLiteral("        </ul>\r\n    </li>");
-    PopWriter();
-}
-)));
+                );
+                WriteLiteral("\r\n");
+#nullable restore
+#line (47,11)-(47,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+var parent = item;
 
 #line default
 #line hidden
 #nullable disable
+
+                WriteLiteral("        <ul>\r\n            <li>Child Items... ?</li>\r\n");
+                WriteLiteral("        </ul>\r\n    </li>");
+                PopWriter();
+            }
+            )
+#nullable restore
+#line (52,10)-(52,11) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+)
+
+#line default
+#line hidden
+#nullable disable
+            );
             WriteLiteral("\r\n</ul> ");
         }
         #pragma warning restore 1998
 #nullable restore
-#line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
-            
+#line (1,13)-(9,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+
     public HelperResult Repeat(int times, Func<int, object> template) {
         return new HelperResult((writer) => {
             for(int i = 0; i < times; i++) {
@@ -223,6 +296,7 @@ Write(item);
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

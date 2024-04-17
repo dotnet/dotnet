@@ -2,13 +2,17 @@
 #pragma warning disable 1591
 namespace Test
 {
-    #line hidden
+    #line default
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
+    #line default
+    #line hidden
+    #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
+    #nullable disable
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -16,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.MyComponent<IComposedInterface, string>>(0);
             __builder.AddComponentParameter(1, "Value", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                                      _componentValue
+#line (1,71)-(1,86) "x:\dir\subdir\Test\TestComponent.cshtml"
+_componentValue
 
 #line default
 #line hidden
@@ -29,8 +33,8 @@ namespace Test
             __builder.OpenComponent<global::Test.MyComponent<IComposedInterface, string>>(4);
             __builder.AddComponentParameter(5, "Value", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>(
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                                      _componentValue
+#line (2,71)-(2,86) "x:\dir\subdir\Test\TestComponent.cshtml"
+_componentValue
 
 #line default
 #line hidden
@@ -41,13 +45,14 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (4,8)-(6,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     string _componentValue = string.Empty;
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

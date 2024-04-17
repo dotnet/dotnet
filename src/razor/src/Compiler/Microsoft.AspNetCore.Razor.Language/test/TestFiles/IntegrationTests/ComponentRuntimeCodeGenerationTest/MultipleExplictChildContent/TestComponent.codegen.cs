@@ -2,13 +2,17 @@
 #pragma warning disable 1591
 namespace Test
 {
-    #line hidden
+    #line default
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
+    #line default
+    #line hidden
+    #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
+    #nullable disable
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -19,13 +23,15 @@ namespace Test
             }
             ));
             __builder.AddAttribute(3, "Footer", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
+                __builder2.AddContent(4, 
 #nullable restore
-#line (3,15)-(3,21) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder2.AddContent(4, "bye!");
+#line (3,15)-(3,21) "x:\dir\subdir\Test\TestComponent.cshtml"
+"bye!"
 
 #line default
 #line hidden
 #nullable disable
+                );
             }
             ));
             __builder.CloseComponent();

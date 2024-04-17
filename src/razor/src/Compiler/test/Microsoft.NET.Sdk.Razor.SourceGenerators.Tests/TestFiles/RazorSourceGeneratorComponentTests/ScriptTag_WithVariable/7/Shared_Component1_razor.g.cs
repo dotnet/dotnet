@@ -3,46 +3,55 @@
 #pragma warning disable 1591
 namespace MyApp.Shared
 {
-    #line hidden
+    #line default
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
+    #line default
+    #line hidden
+    #nullable restore
     public partial class Component1 : global::Microsoft.AspNetCore.Components.ComponentBase
+    #nullable disable
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.AddMarkupContent(0, "Component:\r\n");
 #nullable restore
-#line 2 "Shared/Component1.razor"
-   var msg = "What's up"; 
+#line (2,3)-(2,27) "Shared/Component1.razor"
+ var msg = "What's up"; 
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.OpenElement(1, "script");
             __builder.AddContent(2, "console.log(\'");
+            __builder.AddContent(3, 
 #nullable restore
-#line (3,23)-(3,26) 24 "Shared/Component1.razor"
-__builder.AddContent(3, msg);
+#line (3,23)-(3,26) "Shared/Component1.razor"
+msg
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.AddContent(4, "\');");
             __builder.CloseElement();
             __builder.AddMarkupContent(5, "\r\n");
             __builder.OpenElement(6, "div");
             __builder.AddContent(7, "console.log(\'");
+            __builder.AddContent(8, 
 #nullable restore
-#line (4,20)-(4,23) 24 "Shared/Component1.razor"
-__builder.AddContent(8, msg);
+#line (4,20)-(4,23) "Shared/Component1.razor"
+msg
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.AddContent(9, "\');");
             __builder.CloseElement();
             __builder.AddMarkupContent(10, "\r\n");
@@ -53,25 +62,29 @@ __builder.AddContent(8, msg);
             __builder.AddMarkupContent(14, "<div>console.log(\'No variable\');</div>\r\n");
             __builder.OpenElement(15, "script");
             __builder.AddMarkupContent(16, "\r\n    console.log(\'");
+            __builder.AddContent(17, 
 #nullable restore
-#line (8,19)-(8,22) 25 "Shared/Component1.razor"
-__builder.AddContent(17, msg);
+#line (8,19)-(8,22) "Shared/Component1.razor"
+msg
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.AddMarkupContent(18, "\');\r\n");
             __builder.CloseElement();
             __builder.AddMarkupContent(19, "\r\n");
             __builder.OpenElement(20, "div");
             __builder.AddMarkupContent(21, "\r\n    console.log(\'");
+            __builder.AddContent(22, 
 #nullable restore
-#line (11,19)-(11,22) 25 "Shared/Component1.razor"
-__builder.AddContent(22, msg);
+#line (11,19)-(11,22) "Shared/Component1.razor"
+msg
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.AddMarkupContent(23, "\');\r\n");
             __builder.CloseElement();
             __builder.AddMarkupContent(24, "\r\n");

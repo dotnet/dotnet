@@ -3,14 +3,12 @@
 
 #nullable disable
 
-using System;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 using Mvc1_X = Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X;
@@ -41,31 +39,31 @@ public class DefaultProjectSnapshotProjectEngineFactoryTest : ToolingTestBase
 
         var hostProject_For_2_1 = new HostProject(
             projectFilePath, intermediateOutputPath,
-            new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_2_1, "MVC-2.1", Array.Empty<RazorExtension>()), "Test");
+            new(RazorLanguageVersion.Version_2_1, "MVC-2.1", Extensions: [], ForceRuntimeCodeGeneration: false), "Test");
 
         var hostProject_For_3_0 = new HostProject(
             projectFilePath, intermediateOutputPath,
-            new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_3_0, "MVC-3.0", Array.Empty<RazorExtension>()), "Test");
+            new(RazorLanguageVersion.Version_3_0, "MVC-3.0", Extensions: [], ForceRuntimeCodeGeneration: false), "Test");
 
         var hostProject_For_UnknownConfiguration = new HostProject(
             projectFilePath, intermediateOutputPath,
-            new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_2_1, "Random-0.1", Array.Empty<RazorExtension>()), rootNamespace: null);
+            new(RazorLanguageVersion.Version_2_1, "Random-0.1", Extensions: [], ForceRuntimeCodeGeneration: false), rootNamespace: null);
 
-        var projectEngineFactoryProvider = Mock.Of<IProjectEngineFactoryProvider>(MockBehavior.Strict);
+        _snapshot_For_1_0 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject_For_1_0, ProjectWorkspaceState.Default));
+        _snapshot_For_1_1 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject_For_1_1, ProjectWorkspaceState.Default));
+        _snapshot_For_2_0 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject_For_2_0, ProjectWorkspaceState.Default));
+        _snapshot_For_2_1 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject_For_2_1, ProjectWorkspaceState.Default));
+        _snapshot_For_3_0 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject_For_3_0, ProjectWorkspaceState.Default));
+        _snapshot_For_UnknownConfiguration = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject_For_UnknownConfiguration, ProjectWorkspaceState.Default));
 
-        _snapshot_For_1_0 = new ProjectSnapshot(ProjectState.Create(projectEngineFactoryProvider, hostProject_For_1_0, ProjectWorkspaceState.Default));
-        _snapshot_For_1_1 = new ProjectSnapshot(ProjectState.Create(projectEngineFactoryProvider, hostProject_For_1_1, ProjectWorkspaceState.Default));
-        _snapshot_For_2_0 = new ProjectSnapshot(ProjectState.Create(projectEngineFactoryProvider, hostProject_For_2_0, ProjectWorkspaceState.Default));
-        _snapshot_For_2_1 = new ProjectSnapshot(ProjectState.Create(projectEngineFactoryProvider, hostProject_For_2_1, ProjectWorkspaceState.Default));
-        _snapshot_For_3_0 = new ProjectSnapshot(ProjectState.Create(projectEngineFactoryProvider, hostProject_For_3_0, ProjectWorkspaceState.Default));
-        _snapshot_For_UnknownConfiguration = new ProjectSnapshot(ProjectState.Create(projectEngineFactoryProvider, hostProject_For_UnknownConfiguration, ProjectWorkspaceState.Default));
-
-        _customFactories = ImmutableArray.Create(
+        _customFactories =
+        [
             ProjectEngineFactories.MVC_1_0,
             ProjectEngineFactories.MVC_1_1,
             ProjectEngineFactories.MVC_2_0,
             ProjectEngineFactories.MVC_2_1,
-            ProjectEngineFactories.MVC_3_0);
+            ProjectEngineFactories.MVC_3_0,
+        ];
     }
 
     [Fact]

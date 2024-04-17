@@ -1,0 +1,161 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29424.173
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.ApplicationInsights", "..\BASE\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj", "{E3D160E8-7F8C-416F-946F-6FDFC6787461}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelemetryChannel", "..\BASE\src\ServerTelemetryChannel\TelemetryChannel.csproj", "{C30A7EB8-A86C-49EE-927E-7D9E03572E82}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyCollector", "..\WEB\Src\DependencyCollector\DependencyCollector\DependencyCollector.csproj", "{96A6E04E-CEDA-4C30-8ECA-48113382AFBA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventCounterCollector", "..\WEB\Src\EventCounterCollector\EventCounterCollector\EventCounterCollector.csproj", "{13335EB8-3936-407A-9363-1C428318BEA8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Perf", "..\WEB\Src\PerformanceCollector\PerformanceCollector\Perf.csproj", "{9DC5C5E5-FC37-4E54-81FD-AA42BB934E9B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsServer", "..\WEB\Src\WindowsServer\WindowsServer\WindowsServer.csproj", "{7B5D95EE-50EE-4222-A03C-FAE5905B3DFD}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.Web", "..\WEB\Src\Common\Common.Web.shproj", "{CCAB7A34-8DC5-4A6F-B637-46CEBA93C687}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.Logging", "..\LOGGING\src\CommonShared\Common.Logging.shproj", "{587B624B-8C64-498E-93D7-A2D2ABC17EAB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiagnosticSourceListener", "..\LOGGING\src\DiagnosticSourceListener\DiagnosticSourceListener.csproj", "{2E283031-425B-421F-9E81-34ABFEFAB618}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EtwCollector", "..\LOGGING\src\EtwCollector\EtwCollector.csproj", "{1B0F54BF-078A-421C-9708-2D817D4BCE30}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventSourceListener", "..\LOGGING\src\EventSourceListener\EventSourceListener.csproj", "{52B3C054-C686-4BB8-A4B7-9E8D6C49491F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ILogger", "..\LOGGING\src\ILogger\ILogger.csproj", "{67291093-4B5F-4CA5-A811-B8A1DCBE3F1F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Log4NetAppender", "..\LOGGING\src\Log4NetAppender\Log4NetAppender.csproj", "{3774003C-91FD-4D79-99C7-9BEAC5B9A48E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NLogTarget", "..\LOGGING\src\NLogTarget\NLogTarget.csproj", "{63B8FDA7-2FF5-4A20-8DE7-EBB036012A54}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TraceListener", "..\LOGGING\src\TraceListener\TraceListener.csproj", "{2612AC44-5FF3-4533-B5A5-E5DBF96F5C83}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.Logging.EventSource", "..\LOGGING\src\EventSource.Shared\EventSource.Shared\Common.Logging.EventSource.shproj", "{A964DE6D-9750-4013-8BE2-79C2AFC056E5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.ApplicationInsights.AspNetCore", "..\NETCORE\src\Microsoft.ApplicationInsights.AspNetCore\Microsoft.ApplicationInsights.AspNetCore.csproj", "{AC399F09-B465-4CFD-8D82-F1D1C5C9347E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.ApplicationInsights.WorkerService", "..\NETCORE\src\Microsoft.ApplicationInsights.WorkerService\Microsoft.ApplicationInsights.WorkerService.csproj", "{3CAB7F66-3CC4-4B46-9B0D-765C460FE2BF}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.NetCore", "..\NETCORE\src\Shared\Common.NetCore.shproj", "{D56F2979-D6BC-4EF2-BB9B-4077B3290599}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Perf.Shared.NetFull", "..\WEB\Src\PerformanceCollector\Perf.Shared.NetFull\Perf.Shared.NetFull.shproj", "{0196259C-3582-4F4E-A01F-A8F9AE83B0F3}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Perf.Shared.NetStandard", "..\WEB\Src\PerformanceCollector\Perf.Shared.NetStandard\Perf.Shared.NetStandard.shproj", "{D13C3EC7-B300-4158-9054-216156B203BE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "..\WEB\Src\Web\Web\Web.csproj", "{6062A897-6E55-44C9-BA7A-E1C42946EE51}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SDKs", "SDKs", "{C5024E50-3350-479B-8628-620B299B9061}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreWebApp", "AspNetCoreWebApp\AspNetCoreWebApp.csproj", "{5DB76934-58D9-45BD-91A9-E1D78F4AE17D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackgroundTasksWithHostedService", "BackgroundTasksWithHostedService\BackgroundTasksWithHostedService.csproj", "{9E35EFBE-F478-4DEB-9327-C712272B77CA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{DD21C077-1345-459C-8704-9BCD6F312029}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService", "WorkerService\WorkerService.csproj", "{3DA486F4-10E3-432D-9916-2C1EE15029C7}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\WEB\Src\PerformanceCollector\Perf.Shared.NetFull\Perf.Shared.NetFull.projitems*{0196259c-3582-4f4e-a01f-a8f9ae83b0f3}*SharedItemsImports = 13
+		..\WEB\Src\Common\Common.projitems*{13335eb8-3936-407a-9363-1c428318bea8}*SharedItemsImports = 5
+		..\LOGGING\src\CommonShared\CommonShared.projitems*{1b0f54bf-078a-421c-9708-2d817d4bce30}*SharedItemsImports = 5
+		..\LOGGING\src\EventSource.Shared\EventSource.Shared\EventSource.Shared.projitems*{1b0f54bf-078a-421c-9708-2d817d4bce30}*SharedItemsImports = 5
+		..\LOGGING\src\CommonShared\CommonShared.projitems*{2612ac44-5ff3-4533-b5a5-e5dbf96f5c83}*SharedItemsImports = 5
+		..\LOGGING\src\CommonShared\CommonShared.projitems*{2e283031-425b-421f-9e81-34abfefab618}*SharedItemsImports = 5
+		..\LOGGING\src\CommonShared\CommonShared.projitems*{3774003c-91fd-4d79-99c7-9beac5b9a48e}*SharedItemsImports = 5
+		..\NETCORE\src\Shared\Shared.projitems*{3cab7f66-3cc4-4b46-9b0d-765c460fe2bf}*SharedItemsImports = 5
+		..\LOGGING\src\CommonShared\CommonShared.projitems*{52b3c054-c686-4bb8-a4b7-9e8d6c49491f}*SharedItemsImports = 5
+		..\LOGGING\src\EventSource.Shared\EventSource.Shared\EventSource.Shared.projitems*{52b3c054-c686-4bb8-a4b7-9e8d6c49491f}*SharedItemsImports = 5
+		..\LOGGING\src\CommonShared\CommonShared.projitems*{587b624b-8c64-498e-93d7-a2d2abc17eab}*SharedItemsImports = 13
+		..\WEB\Src\Common\Common.projitems*{6062a897-6e55-44c9-ba7a-e1c42946ee51}*SharedItemsImports = 5
+		..\LOGGING\src\CommonShared\CommonShared.projitems*{63b8fda7-2ff5-4a20-8de7-ebb036012a54}*SharedItemsImports = 5
+		..\LOGGING\src\CommonShared\CommonShared.projitems*{67291093-4b5f-4ca5-a811-b8a1dcbe3f1f}*SharedItemsImports = 5
+		..\WEB\Src\Common\Common.projitems*{7b5d95ee-50ee-4222-a03c-fae5905b3dfd}*SharedItemsImports = 5
+		..\WEB\Src\Common\Common.projitems*{96a6e04e-ceda-4c30-8eca-48113382afba}*SharedItemsImports = 5
+		..\WEB\Src\Common\Common.projitems*{9dc5c5e5-fc37-4e54-81fd-aa42bb934e9b}*SharedItemsImports = 5
+		..\WEB\Src\PerformanceCollector\Perf.Shared.NetFull\Perf.Shared.NetFull.projitems*{9dc5c5e5-fc37-4e54-81fd-aa42bb934e9b}*SharedItemsImports = 5
+		..\LOGGING\src\EventSource.Shared\EventSource.Shared\EventSource.Shared.projitems*{a964de6d-9750-4013-8be2-79c2afc056e5}*SharedItemsImports = 13
+		..\NETCORE\src\Shared\Shared.projitems*{ac399f09-b465-4cfd-8d82-f1d1c5c9347e}*SharedItemsImports = 5
+		..\WEB\Src\Common\Common.projitems*{ccab7a34-8dc5-4a6f-b637-46ceba93c687}*SharedItemsImports = 13
+		..\WEB\Src\PerformanceCollector\Perf.Shared.NetStandard\Perf.Shared.NetStandard.projitems*{d13c3ec7-b300-4158-9054-216156b203be}*SharedItemsImports = 13
+		..\NETCORE\src\Shared\Shared.projitems*{d56f2979-d6bc-4ef2-bb9b-4077b3290599}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E3D160E8-7F8C-416F-946F-6FDFC6787461}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3D160E8-7F8C-416F-946F-6FDFC6787461}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C30A7EB8-A86C-49EE-927E-7D9E03572E82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C30A7EB8-A86C-49EE-927E-7D9E03572E82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96A6E04E-CEDA-4C30-8ECA-48113382AFBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96A6E04E-CEDA-4C30-8ECA-48113382AFBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13335EB8-3936-407A-9363-1C428318BEA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13335EB8-3936-407A-9363-1C428318BEA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DC5C5E5-FC37-4E54-81FD-AA42BB934E9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DC5C5E5-FC37-4E54-81FD-AA42BB934E9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B5D95EE-50EE-4222-A03C-FAE5905B3DFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B5D95EE-50EE-4222-A03C-FAE5905B3DFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E283031-425B-421F-9E81-34ABFEFAB618}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E283031-425B-421F-9E81-34ABFEFAB618}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B0F54BF-078A-421C-9708-2D817D4BCE30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B0F54BF-078A-421C-9708-2D817D4BCE30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52B3C054-C686-4BB8-A4B7-9E8D6C49491F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52B3C054-C686-4BB8-A4B7-9E8D6C49491F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67291093-4B5F-4CA5-A811-B8A1DCBE3F1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67291093-4B5F-4CA5-A811-B8A1DCBE3F1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3774003C-91FD-4D79-99C7-9BEAC5B9A48E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3774003C-91FD-4D79-99C7-9BEAC5B9A48E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63B8FDA7-2FF5-4A20-8DE7-EBB036012A54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63B8FDA7-2FF5-4A20-8DE7-EBB036012A54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2612AC44-5FF3-4533-B5A5-E5DBF96F5C83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2612AC44-5FF3-4533-B5A5-E5DBF96F5C83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC399F09-B465-4CFD-8D82-F1D1C5C9347E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC399F09-B465-4CFD-8D82-F1D1C5C9347E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CAB7F66-3CC4-4B46-9B0D-765C460FE2BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CAB7F66-3CC4-4B46-9B0D-765C460FE2BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6062A897-6E55-44C9-BA7A-E1C42946EE51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6062A897-6E55-44C9-BA7A-E1C42946EE51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DB76934-58D9-45BD-91A9-E1D78F4AE17D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DB76934-58D9-45BD-91A9-E1D78F4AE17D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E35EFBE-F478-4DEB-9327-C712272B77CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E35EFBE-F478-4DEB-9327-C712272B77CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD21C077-1345-459C-8704-9BCD6F312029}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD21C077-1345-459C-8704-9BCD6F312029}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DA486F4-10E3-432D-9916-2C1EE15029C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DA486F4-10E3-432D-9916-2C1EE15029C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E3D160E8-7F8C-416F-946F-6FDFC6787461} = {C5024E50-3350-479B-8628-620B299B9061}
+		{C30A7EB8-A86C-49EE-927E-7D9E03572E82} = {C5024E50-3350-479B-8628-620B299B9061}
+		{96A6E04E-CEDA-4C30-8ECA-48113382AFBA} = {C5024E50-3350-479B-8628-620B299B9061}
+		{13335EB8-3936-407A-9363-1C428318BEA8} = {C5024E50-3350-479B-8628-620B299B9061}
+		{9DC5C5E5-FC37-4E54-81FD-AA42BB934E9B} = {C5024E50-3350-479B-8628-620B299B9061}
+		{7B5D95EE-50EE-4222-A03C-FAE5905B3DFD} = {C5024E50-3350-479B-8628-620B299B9061}
+		{CCAB7A34-8DC5-4A6F-B637-46CEBA93C687} = {C5024E50-3350-479B-8628-620B299B9061}
+		{587B624B-8C64-498E-93D7-A2D2ABC17EAB} = {C5024E50-3350-479B-8628-620B299B9061}
+		{2E283031-425B-421F-9E81-34ABFEFAB618} = {C5024E50-3350-479B-8628-620B299B9061}
+		{1B0F54BF-078A-421C-9708-2D817D4BCE30} = {C5024E50-3350-479B-8628-620B299B9061}
+		{52B3C054-C686-4BB8-A4B7-9E8D6C49491F} = {C5024E50-3350-479B-8628-620B299B9061}
+		{67291093-4B5F-4CA5-A811-B8A1DCBE3F1F} = {C5024E50-3350-479B-8628-620B299B9061}
+		{3774003C-91FD-4D79-99C7-9BEAC5B9A48E} = {C5024E50-3350-479B-8628-620B299B9061}
+		{63B8FDA7-2FF5-4A20-8DE7-EBB036012A54} = {C5024E50-3350-479B-8628-620B299B9061}
+		{2612AC44-5FF3-4533-B5A5-E5DBF96F5C83} = {C5024E50-3350-479B-8628-620B299B9061}
+		{A964DE6D-9750-4013-8BE2-79C2AFC056E5} = {C5024E50-3350-479B-8628-620B299B9061}
+		{AC399F09-B465-4CFD-8D82-F1D1C5C9347E} = {C5024E50-3350-479B-8628-620B299B9061}
+		{3CAB7F66-3CC4-4B46-9B0D-765C460FE2BF} = {C5024E50-3350-479B-8628-620B299B9061}
+		{D56F2979-D6BC-4EF2-BB9B-4077B3290599} = {C5024E50-3350-479B-8628-620B299B9061}
+		{0196259C-3582-4F4E-A01F-A8F9AE83B0F3} = {C5024E50-3350-479B-8628-620B299B9061}
+		{D13C3EC7-B300-4158-9054-216156B203BE} = {C5024E50-3350-479B-8628-620B299B9061}
+		{6062A897-6E55-44C9-BA7A-E1C42946EE51} = {C5024E50-3350-479B-8628-620B299B9061}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0E0415AF-37CC-4999-8E5B-DD36F75BFD4D}
+	EndGlobalSection
+EndGlobal

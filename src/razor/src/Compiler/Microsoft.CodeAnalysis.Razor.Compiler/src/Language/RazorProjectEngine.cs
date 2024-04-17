@@ -109,7 +109,9 @@ public class RazorProjectEngine
             throw new ArgumentNullException(nameof(projectItem));
         }
 
-        var codeDocument = CreateCodeDocumentDesignTimeCore(projectItem);
+        var codeDocument = Configuration.ForceRuntimeCodeGeneration
+            ? CreateCodeDocumentCore(projectItem)
+            : CreateCodeDocumentDesignTimeCore(projectItem);
         ProcessCore(codeDocument);
         return codeDocument;
     }
@@ -125,7 +127,9 @@ public class RazorProjectEngine
             throw new ArgumentNullException(nameof(source));
         }
 
-        var codeDocument = CreateCodeDocumentDesignTimeCore(source, fileKind, importSources, tagHelpers, configureParser: null, configureCodeGeneration: null);
+        var codeDocument = Configuration.ForceRuntimeCodeGeneration
+            ? CreateCodeDocumentCore(source, fileKind, importSources, tagHelpers, configureParser: null, configureCodeGeneration: null)
+            : CreateCodeDocumentDesignTimeCore(source, fileKind, importSources, tagHelpers, configureParser: null, configureCodeGeneration: null);
         ProcessCore(codeDocument);
         return codeDocument;
     }
@@ -346,12 +350,12 @@ public class RazorProjectEngine
         AddDefaultPhases(builder.Phases);
         AddDefaultFeatures(builder.Features);
 
-        if (configuration.LanguageVersion.CompareTo(RazorLanguageVersion.Version_5_0) >= 0)
+        if (configuration.LanguageVersion >= RazorLanguageVersion.Version_5_0)
         {
             builder.Features.Add(new ViewCssScopePass());
         }
 
-        if (configuration.LanguageVersion.CompareTo(RazorLanguageVersion.Version_3_0) >= 0)
+        if (configuration.LanguageVersion >= RazorLanguageVersion.Version_3_0)
         {
             FunctionsDirective.Register(builder);
             ImplementsDirective.Register(builder);
@@ -361,8 +365,6 @@ public class RazorProjectEngine
 
             AddComponentFeatures(builder, configuration.LanguageVersion);
         }
-
-        LoadExtensions(builder, configuration.Extensions);
 
         configure?.Invoke(builder);
 
@@ -457,7 +459,7 @@ public class RazorProjectEngine
         ComponentLayoutDirective.Register(builder);
         ComponentPageDirective.Register(builder);
 
-        if (razorLanguageVersion.CompareTo(RazorLanguageVersion.Version_6_0) >= 0)
+        if (razorLanguageVersion >= RazorLanguageVersion.Version_6_0)
         {
             ComponentConstrainedTypeParamDirective.Register(builder);
         }
@@ -466,12 +468,12 @@ public class RazorProjectEngine
             ComponentTypeParamDirective.Register(builder);
         }
 
-        if (razorLanguageVersion.CompareTo(RazorLanguageVersion.Version_5_0) >= 0)
+        if (razorLanguageVersion >= RazorLanguageVersion.Version_5_0)
         {
             ComponentPreserveWhitespaceDirective.Register(builder);
         }
 
-        if (razorLanguageVersion.CompareTo(RazorLanguageVersion.Version_8_0) >= 0)
+        if (razorLanguageVersion >= RazorLanguageVersion.Version_8_0)
         {
             ComponentRenderModeDirective.Register(builder);
         }
@@ -490,7 +492,7 @@ public class RazorProjectEngine
         builder.Features.Add(new ComponentReferenceCaptureLoweringPass());
         builder.Features.Add(new ComponentSplatLoweringPass());
         builder.Features.Add(new ComponentFormNameLoweringPass());
-        builder.Features.Add(new ComponentBindLoweringPass(razorLanguageVersion.CompareTo(RazorLanguageVersion.Version_7_0) >= 0));
+        builder.Features.Add(new ComponentBindLoweringPass(razorLanguageVersion >= RazorLanguageVersion.Version_7_0));
         builder.Features.Add(new ComponentRenderModeLoweringPass());
         builder.Features.Add(new ComponentCssScopePass());
         builder.Features.Add(new ComponentTemplateDiagnosticPass());
@@ -499,21 +501,6 @@ public class RazorProjectEngine
         builder.Features.Add(new ComponentMarkupDiagnosticPass());
         builder.Features.Add(new ComponentMarkupBlockPass(razorLanguageVersion));
         builder.Features.Add(new ComponentMarkupEncodingPass(razorLanguageVersion));
-    }
-
-    private static void LoadExtensions(RazorProjectEngineBuilder builder, IReadOnlyList<RazorExtension> extensions)
-    {
-        for (var i = 0; i < extensions.Count; i++)
-        {
-            // For now we only handle AssemblyExtension - which is not user-constructable. We're keeping a tight
-            // lid on how things work until we add official support for extensibility everywhere. So, this is
-            // intentionally inflexible for the time being.
-            if (extensions[i] is AssemblyExtension extension)
-            {
-                var initializer = extension.CreateInitializer();
-                initializer?.Initialize(builder);
-            }
-        }
     }
 
     // Internal for testing

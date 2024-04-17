@@ -2,26 +2,28 @@
 #pragma warning disable 1591
 namespace Test
 {
-    #line hidden
+    #line default
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-using System.Threading.Tasks;
+#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+using System.Threading.Tasks
 
-#line default
-#line hidden
 #nullable disable
+    ;
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-using Microsoft.AspNetCore.Components.Web;
+#line (2,2)-(3,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+using Microsoft.AspNetCore.Components.Web
 
 #line default
 #line hidden
 #nullable disable
+    ;
+    #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
+    #nullable disable
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -29,8 +31,8 @@ using Microsoft.AspNetCore.Components.Web;
             __builder.OpenElement(0, "input");
             __builder.AddAttribute(1, "onclick", global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::Microsoft.AspNetCore.Components.Web.MouseEventArgs>(this, 
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-                   async (e) => await Task.Delay(10)
+#line (3,20)-(3,53) "x:\dir\subdir\Test\TestComponent.cshtml"
+async (e) => await Task.Delay(10)
 
 #line default
 #line hidden

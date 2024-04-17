@@ -149,7 +149,7 @@ public partial class TabPage : Panel
 
     private protected override IList<Rectangle> GetNeighboringToolsRectangles()
     {
-        List<Rectangle> neighbors = new();
+        List<Rectangle> neighbors = [];
 
         if (ParentInternal is not TabControl tabControl)
         {
@@ -474,7 +474,7 @@ public partial class TabPage : Panel
     /// </summary>
     internal override void AssignParent(Control? value)
     {
-        if (value is not null && value is not TabControl)
+        if (value is not null and not TabControl)
         {
             throw new ArgumentException(string.Format(SR.TabControlTabPageNotOnTabControl, value.GetType().FullName));
         }
@@ -494,7 +494,7 @@ public partial class TabPage : Panel
             return null;
         }
 
-        while (c is not null && c is not TabPage)
+        while (c is not null and not TabPage)
         {
             c = c.ParentInternal;
         }
@@ -683,7 +683,7 @@ public partial class TabPage : Panel
         // In this case, the keyboard toolTip will show the text of the latest toolTip instance that was set.
         if (_associatedToolTips is null)
         {
-            _associatedToolTips = new List<ToolTip>() { _externalToolTip, toolTip };
+            _associatedToolTips = [_externalToolTip, toolTip];
             return;
         }
 

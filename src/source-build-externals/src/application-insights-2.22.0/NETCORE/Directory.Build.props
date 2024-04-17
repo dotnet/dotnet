@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <!-- SourceRoot is used to reference project dependencies (ex: *.props). -->
+    <SourceRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'SourceRoot.marker'))</SourceRoot>
+
+    <RelativeOutputPathBase>$(MSBuildProjectDirectory.Substring($(SourceRoot.Length)))</RelativeOutputPathBase>
+
+    <AppxPackageDir>$(OutputPath)</AppxPackageDir>
+
+  </PropertyGroup>
+
+</Project>

@@ -62,6 +62,16 @@
         <target state="translated">Insertar automáticamente comillas de atributo</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
+        <source>Forces the open brace after an @code or @functions directive to be on the following line</source>
+        <target state="translated">Fuerza la llave de apertura después de una directiva @code o @functions a estar en la línea siguiente</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
+        <source>Code/Functions block open brace on next line</source>
+        <target state="translated">Bloquear llave de apertura de código o funciones en la línea siguiente</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">
         <source>If true, gives C# code in Razor files a background color</source>
         <target state="translated">Si es true, da un color de fondo al código de C# de los archivos de Razor.</target>

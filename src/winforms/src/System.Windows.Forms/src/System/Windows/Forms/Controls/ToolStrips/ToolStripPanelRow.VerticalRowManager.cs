@@ -94,7 +94,6 @@ public partial class ToolStripPanelRow
                 return totalSize.Height < DisplayRectangle.Height;
             }
 
-            ToolStripPanelRow.s_toolStripPanelRowCreationDebug.TraceVerbose("VerticalRM.CanMove returns false - not enough room");
             return false;
         }
 
@@ -132,13 +131,8 @@ public partial class ToolStripPanelRow
 
                 lastCellOnRow.Margin = cellMargin;
 
-                // start moving the toolstrips before this guy.
+                // Start moving the toolstrips before this guy.
                 spaceToFree -= MoveUp(Row.Cells.Count - 1, spaceToFree);
-
-                if (spaceToFree > 0)
-                {
-                    spaceToFree -= lastCellOnRow.Shrink(spaceToFree);
-                }
             }
 
             return requiredSpace - Math.Max(0, spaceToFree);
@@ -329,7 +323,6 @@ public partial class ToolStripPanelRow
                     }
 
                     int requiredSpace = spaceToFree - freedSpace;
-                    freedSpace += cell.Shrink(requiredSpace);
 
                     if (spaceToFree >= freedSpace)
                     {
@@ -398,9 +391,7 @@ public partial class ToolStripPanelRow
                             lastCellOnRow.Margin = cellMargin;
                         }
 
-                        spaceToFree -= lastCellOnRow.Shrink(spaceToFree);
-
-                        // start moving the toolstrips before this guy.
+                        // Start moving the toolstrips before this guy.
                         MoveUp(Row.Cells.Count - 1, spaceToFree);
                     }
                 }

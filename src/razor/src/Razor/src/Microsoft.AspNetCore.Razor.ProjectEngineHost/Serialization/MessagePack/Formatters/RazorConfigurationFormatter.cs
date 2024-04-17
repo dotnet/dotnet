@@ -19,33 +19,34 @@ internal sealed class RazorConfigurationFormatter : ValueFormatter<RazorConfigur
     {
         var count = reader.ReadArrayHeader();
 
-        var configurationName = CachedStringFormatter.Instance.Deserialize(ref reader, options);
-        var languageVersionText = CachedStringFormatter.Instance.Deserialize(ref reader, options);
+        var configurationName = CachedStringFormatter.Instance.Deserialize(ref reader, options) ?? string.Empty;
+        var languageVersionText = CachedStringFormatter.Instance.Deserialize(ref reader, options) ?? string.Empty;
+        var forceRuntimeCodeGeneration = reader.ReadBoolean();
 
-        count -= 2;
+        count -= 3;
 
         using var builder = new PooledArrayBuilder<RazorExtension>();
 
         for (var i = 0; i < count; i++)
         {
             var extensionName = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
-            builder.Add(new SerializedRazorExtension(extensionName));
+            builder.Add(new RazorExtension(extensionName));
         }
 
-        var extensions = builder.ToArray();
+        var extensions = builder.DrainToImmutable();
 
         var languageVersion = RazorLanguageVersion.TryParse(languageVersionText, out var version)
             ? version
             : RazorLanguageVersion.Version_2_1;
 
-        return RazorConfiguration.Create(languageVersion, configurationName, extensions);
+        return new(languageVersion, configurationName, extensions, ForceRuntimeCodeGeneration: forceRuntimeCodeGeneration);
     }
 
     public override void Serialize(ref MessagePackWriter writer, RazorConfiguration value, SerializerCachingOptions options)
     {
         // Write two values + one value per extension.
         var extensions = value.Extensions;
-        var count = extensions.Count + 2;
+        var count = extensions.Length + 3;
 
         writer.WriteArrayHeader(count);
 
@@ -60,7 +61,9 @@ internal sealed class RazorConfigurationFormatter : ValueFormatter<RazorConfigur
             CachedStringFormatter.Instance.Serialize(ref writer, value.LanguageVersion.ToString(), options);
         }
 
-        count -= 2;
+        writer.Write(value.ForceRuntimeCodeGeneration);
+
+        count -= 3;
 
         for (var i = 0; i < count; i++)
         {

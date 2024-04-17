@@ -62,7 +62,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
         ClassDeclarationIntermediateNode @class,
         MethodDeclarationIntermediateNode method)
     {
-        if (!codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var computedNamespace) ||
+        if (!codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var computedNamespace, out var computedNamespaceSpan) ||
             !TryComputeClassName(codeDocument, out var computedClass))
         {
             // If we can't compute a nice namespace (no relative path) then just generate something
@@ -85,7 +85,10 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
             computedClass = ComponentMetadata.MangleClassName(computedClass);
         }
 
+        @class.Annotations[CommonAnnotations.NullableContext] = CommonAnnotations.NullableContext;
+
         @namespace.Content = computedNamespace;
+        @namespace.Source = computedNamespaceSpan;
         @class.ClassName = computedClass;
         @class.Modifiers.Clear();
         @class.Modifiers.Add("public");
@@ -110,7 +113,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
 
             // Constrained type parameters are only supported in Razor language versions v6.0
             var razorLanguageVersion = codeDocument.GetParserOptions()?.Version ?? RazorLanguageVersion.Latest;
-            var directiveType = razorLanguageVersion.CompareTo(RazorLanguageVersion.Version_6_0) >= 0
+            var directiveType = razorLanguageVersion >= RazorLanguageVersion.Version_6_0
                 ? ComponentConstrainedTypeParamDirective.Directive
                 : ComponentTypeParamDirective.Directive;
             var typeParamReferences = documentNode.FindDirectiveReferences(directiveType);

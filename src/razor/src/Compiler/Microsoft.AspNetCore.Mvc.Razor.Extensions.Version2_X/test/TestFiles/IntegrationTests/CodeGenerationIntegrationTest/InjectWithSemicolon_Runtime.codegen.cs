@@ -5,7 +5,7 @@
 [assembly:global::Microsoft.AspNetCore.Mvc.Razor.Compilation.RazorViewAttribute(@"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml", typeof(AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_InjectWithSemicolon))]
 namespace AspNetCore
 {
-    #line hidden
+    #line default
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -13,6 +13,8 @@ namespace AspNetCore
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"771acb56660727ab6e4ca50e95bde0cf2a72af8de3e9ec1cd4b72969645cb9af", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_InjectWithSemicolon : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<MyModel>
     {
@@ -22,13 +24,61 @@ namespace AspNetCore
         }
         #pragma warning restore 1998
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
-        public MyService<MyModel> Html2 { get; private set; }
+        public 
+#line (5,9)-(5,18) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
+MyService<MyModel>
+
+#line default
+#line hidden
+         
+#line (5,27)-(5,32) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
+Html2
+
+#line default
+#line hidden
+         { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
-        public MyApp MyPropertyName2 { get; private set; }
+        public 
+#line (4,9)-(4,14) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
+MyApp
+
+#line default
+#line hidden
+         
+#line (4,15)-(4,30) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
+MyPropertyName2
+
+#line default
+#line hidden
+         { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
-        public MyService<MyModel> Html { get; private set; }
+        public 
+#line (3,9)-(3,18) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
+MyService<MyModel>
+
+#line default
+#line hidden
+         
+#line (3,27)-(3,31) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
+Html
+
+#line default
+#line hidden
+         { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
-        public MyApp MyPropertyName { get; private set; }
+        public 
+#line (2,9)-(2,14) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
+MyApp
+
+#line default
+#line hidden
+         
+#line (2,15)-(2,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
+MyPropertyName
+
+#line default
+#line hidden
+         { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]

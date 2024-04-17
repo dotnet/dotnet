@@ -5,7 +5,7 @@
 [assembly:global::Microsoft.AspNetCore.Mvc.Razor.Compilation.RazorViewAttribute(@"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/_ViewImports.cshtml", typeof(AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest__ViewImports))]
 namespace AspNetCore
 {
-    #line hidden
+    #line default
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -13,6 +13,8 @@ namespace AspNetCore
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"d62f98eaaf5b78af8d93afeee3b564ac056a55d715d72361969351a6dd2ca3b2", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/_ViewImports.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest__ViewImports : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic>
     {
@@ -22,7 +24,19 @@ namespace AspNetCore
         }
         #pragma warning restore 1998
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
-        public IHtmlHelper<dynamic> Helper { get; private set; }
+        public 
+#line (1,9)-(1,20) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/_ViewImports.cshtml"
+IHtmlHelper<dynamic>
+
+#line default
+#line hidden
+         
+#line (1,29)-(1,35) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/_ViewImports.cshtml"
+Helper
+
+#line default
+#line hidden
+         { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]

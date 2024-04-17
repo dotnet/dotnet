@@ -10,11 +10,50 @@ using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using RazorExtensionsV1_X = Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X.RazorExtensions;
+using RazorExtensionsV2_X = Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X.RazorExtensions;
+using RazorExtensionsV3 = Microsoft.AspNetCore.Mvc.Razor.Extensions.RazorExtensions;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 public static class RazorProjectEngineBuilderExtensions
 {
+    private static readonly ReadOnlyMemory<char> s_prefix = "MVC-".ToCharArray();
+
+    public static void RegisterExtensions(this RazorProjectEngineBuilder builder)
+    {
+        var configurationName = builder.Configuration.ConfigurationName.AsSpanOrDefault();
+
+        if (!configurationName.StartsWith(s_prefix.Span))
+        {
+            return;
+        }
+
+        configurationName = configurationName[s_prefix.Length..];
+
+        switch (configurationName)
+        {
+            case ['1', '.', '0' or '1']: // 1.0 or 1.1
+                RazorExtensionsV1_X.Register(builder);
+
+                if (configurationName[^1] == '1') // 1.1.
+                {
+                    RazorExtensionsV1_X.RegisterViewComponentTagHelpers(builder);
+                }
+
+                break;
+
+            case ['2', '.', '0' or '1']: // 2.0 or 2.1
+                RazorExtensionsV2_X.Register(builder);
+                break;
+
+            case ['3', '.', '0']: // 3.0
+                RazorExtensionsV3.Register(builder);
+                break;
+        }
+    }
+
+
     /// <summary>
     /// Registers a class configuration delegate that gets invoked during code generation.
     /// </summary>

@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
@@ -29,7 +31,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 public abstract class LanguageServerTestBase : ToolingTestBase
 {
     private protected IRazorSpanMappingService SpanMappingService { get; }
-    private protected FilePathService FilePathService { get; }
+    private protected IFilePathService FilePathService { get; }
 
     protected JsonSerializer Serializer { get; }
 
@@ -42,7 +44,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         Serializer.AddVSInternalExtensionConverters();
         Serializer.AddVSExtensionConverters();
 
-        FilePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
+        FilePathService = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
     }
 
     private protected override ProjectSnapshotManagerDispatcher CreateDispatcher()
@@ -52,6 +54,11 @@ public abstract class LanguageServerTestBase : ToolingTestBase
 
         return dispatcher;
     }
+    private protected TestProjectSnapshotManager CreateProjectSnapshotManager()
+        => CreateProjectSnapshotManager(ProjectEngineFactories.DefaultProvider);
+
+    private protected TestProjectSnapshotManager CreateProjectSnapshotManager(IProjectEngineFactoryProvider projectEngineFactoryProvider)
+        => new(projectEngineFactoryProvider, Dispatcher, DisposalToken);
 
     internal RazorRequestContext CreateRazorRequestContext(VersionedDocumentContext? documentContext, ILspServices? lspServices = null)
     {
@@ -85,6 +92,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
                 @using System;
                 @using Microsoft.AspNetCore.Components
                 @using Microsoft.AspNetCore.Components.Authorization
+                @using Microsoft.AspNetCore.Components.Forms
                 @using Microsoft.AspNetCore.Components.Routing
                 @using Microsoft.AspNetCore.Components.Web
                 """,
@@ -121,10 +129,10 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         return new VersionedDocumentContext(uri, snapshot, projectContext: null, version: 0);
     }
 
-    internal static IOptionsMonitor<RazorLSPOptions> GetOptionsMonitor(bool enableFormatting = true, bool autoShowCompletion = true, bool autoListParams = true, bool formatOnType = true, bool autoInsertAttributeQuotes = true, bool colorBackground = false, bool commitElementsWithSpace = true)
+    internal static IOptionsMonitor<RazorLSPOptions> GetOptionsMonitor(bool enableFormatting = true, bool autoShowCompletion = true, bool autoListParams = true, bool formatOnType = true, bool autoInsertAttributeQuotes = true, bool colorBackground = false, bool codeBlockBraceOnNextLine = false, bool commitElementsWithSpace = true)
     {
         var monitor = new Mock<IOptionsMonitor<RazorLSPOptions>>(MockBehavior.Strict);
-        monitor.SetupGet(m => m.CurrentValue).Returns(new RazorLSPOptions(enableFormatting, true, InsertSpaces: true, TabSize: 4, autoShowCompletion, autoListParams, formatOnType, autoInsertAttributeQuotes, colorBackground, commitElementsWithSpace));
+        monitor.SetupGet(m => m.CurrentValue).Returns(new RazorLSPOptions(enableFormatting, true, InsertSpaces: true, TabSize: 4, autoShowCompletion, autoListParams, formatOnType, autoInsertAttributeQuotes, colorBackground, codeBlockBraceOnNextLine, commitElementsWithSpace));
         return monitor.Object;
     }
 

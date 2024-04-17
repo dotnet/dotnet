@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Ella Hathaway <67609881+ellahathaway@users.noreply.github.com>
+Date: Mon, 4 Mar 2024 19:12:01 +0000
+Subject: [PATCH] Eliminate prebuilts
+
+---
+ .props/Product.props | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/.props/Product.props b/.props/Product.props
+index e97b6eff..b33ceca5 100644
+--- a/.props/Product.props
++++ b/.props/Product.props
+@@ -28,10 +28,6 @@
+     </PackageReference>
+   </ItemGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+-  </ItemGroup>
+-
+   <PropertyGroup>
+     <!-- Enable all the latest CA rules from 'Microsoft.CodeAnalysis.NetAnalyzers' as build warnings by default -->
+ 

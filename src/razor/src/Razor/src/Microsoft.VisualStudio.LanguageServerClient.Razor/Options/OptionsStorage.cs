@@ -53,6 +53,12 @@ internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
         set => SetBool(SettingsNames.ColorBackground.LegacyName, value);
     }
 
+    public bool CodeBlockBraceOnNextLine
+    {
+        get => GetBool(SettingsNames.CodeBlockBraceOnNextLine.LegacyName, defaultValue: false);
+        set => SetBool(SettingsNames.CodeBlockBraceOnNextLine.LegacyName, value);
+    }
+
     public bool CommitElementsWithSpace
     {
         get => GetBool(SettingsNames.CommitElementsWithSpace.LegacyName, defaultValue: true);
@@ -101,7 +107,7 @@ internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
 
     private EventHandler<ClientAdvancedSettingsChangedEventArgs>? _changed;
 
-    public ClientAdvancedSettings GetAdvancedSettings() => new(FormatOnType, AutoClosingTags, AutoInsertAttributeQuotes, ColorBackground, CommitElementsWithSpace, Snippets, LogLevel);
+    public ClientAdvancedSettings GetAdvancedSettings() => new(FormatOnType, AutoClosingTags, AutoInsertAttributeQuotes, ColorBackground, CodeBlockBraceOnNextLine, CommitElementsWithSpace, Snippets, LogLevel);
 
     public bool GetBool(string name, bool defaultValue)
     {

@@ -1,16 +1,19 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.SemanticTokens;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.Editor.Razor.Settings;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
 
@@ -22,15 +25,15 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Cohost;
 [Export(typeof(ICapabilitiesProvider))]
 [method: ImportingConstructor]
 internal sealed class CohostSemanticTokensRangeEndpoint(
-    IRazorSemanticTokensInfoService semanticTokensInfoService,
-    RazorSemanticTokensLegendService razorSemanticTokensLegendService,
-    IClientSettingsManager clientSettingsManager,
+    IOutOfProcSemanticTokensService semanticTokensInfoService,
+    ISemanticTokensLegendService semanticTokensLegendService,
+    ITelemetryReporter telemetryReporter,
     IRazorLoggerFactory loggerFactory)
     : AbstractRazorCohostDocumentRequestHandler<SemanticTokensRangeParams, SemanticTokens?>, ICapabilitiesProvider
 {
-    private readonly IRazorSemanticTokensInfoService _semanticTokensInfoService = semanticTokensInfoService;
-    private readonly RazorSemanticTokensLegendService _razorSemanticTokensLegendService = razorSemanticTokensLegendService;
-    private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
+    private readonly IOutOfProcSemanticTokensService _semanticTokensInfoService = semanticTokensInfoService;
+    private readonly ISemanticTokensLegendService _semanticTokensLegendService = semanticTokensLegendService;
+    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
     private readonly ILogger _logger = loggerFactory.CreateLogger<CohostSemanticTokensRangeEndpoint>();
 
     protected override bool MutatesSolutionState => false;
@@ -41,20 +44,24 @@ internal sealed class CohostSemanticTokensRangeEndpoint(
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        serverCapabilities.EnableSemanticTokens(_razorSemanticTokensLegendService.Legend);
+        serverCapabilities.EnableSemanticTokens(_semanticTokensLegendService);
     }
 
-    protected override Task<SemanticTokens?> HandleRequestAsync(SemanticTokensRangeParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
+    protected override async Task<SemanticTokens?> HandleRequestAsync(SemanticTokensRangeParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
     {
-        var documentContext = context.GetRequiredDocumentContext();
+        var correlationId = Guid.NewGuid();
+        using var _ = _telemetryReporter.TrackLspRequest(Methods.TextDocumentSemanticTokensRangeName, RazorLSPConstants.CohostLanguageServerName, correlationId);
 
-        _logger.LogDebug("[Cohost] Received semantic range request for {requestPath} and got document {documentPath}", request.TextDocument.Uri, documentContext.FilePath);
-        var clientConnection = context.GetClientConnection();
+        var data = await _semanticTokensInfoService.GetSemanticTokensDataAsync(context.TextDocument.AssumeNotNull(), request.Range.ToLinePositionSpan(), correlationId, cancellationToken);
 
-        // TODO: This is currently using the "VS" client settings manager, since that's where we are running. In future
-        //       we should create a hook into Roslyn's LSP options infra so we get the option values from the LSP client
-        var colorBackground = _clientSettingsManager.GetClientSettings().AdvancedSettings.ColorBackground;
+        if (data is null)
+        {
+            return null;
+        }
 
-        return _semanticTokensInfoService.GetSemanticTokensAsync(clientConnection, request.TextDocument, request.Range, documentContext, colorBackground, cancellationToken);
+        return new SemanticTokens
+        {
+            Data = data
+        };
     }
 }

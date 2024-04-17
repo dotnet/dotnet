@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.VisualStudio.Razor.DynamicFiles;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 
@@ -32,8 +34,8 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
 
     private static IContentType? s_csharpContentType;
     private readonly FileUriProvider _fileUriProvider;
-    private readonly FilePathService _filePathService;
-    private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
+    private readonly IFilePathService _filePathService;
+    private readonly IProjectSnapshotManager _projectManager;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly ILogger _logger;
     private readonly ITelemetryReporter _telemetryReporter;
@@ -44,8 +46,8 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
         ITextBufferFactoryService textBufferFactory,
         ITextDocumentFactoryService textDocumentFactory,
         FileUriProvider fileUriProvider,
-        FilePathService filePathService,
-        IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+        IFilePathService filePathService,
+        IProjectSnapshotManager projectManager,
         LanguageServerFeatureOptions languageServerFeatureOptions,
         IRazorLoggerFactory loggerFactory,
         ITelemetryReporter telemetryReporter)
@@ -53,7 +55,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
     {
         _fileUriProvider = fileUriProvider;
         _filePathService = filePathService;
-        _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
+        _projectManager = projectManager;
         _languageServerFeatureOptions = languageServerFeatureOptions;
         _logger = loggerFactory.CreateLogger<CSharpVirtualDocumentFactory>();
         _telemetryReporter = telemetryReporter;
@@ -192,10 +194,10 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
             yield break;
         }
 
-        var projects = _projectSnapshotManagerAccessor.Instance.GetProjects();
+        var projects = _projectManager.GetProjects();
 
         var inAny = false;
-        var normalizedDocumentPath = FilePathService.GetProjectSystemFilePath(hostDocumentUri);
+        var normalizedDocumentPath = RazorDynamicFileInfoProvider.GetProjectSystemFilePath(hostDocumentUri);
         foreach (var projectSnapshot in projects)
         {
             if (projectSnapshot.GetDocument(normalizedDocumentPath) is not null)

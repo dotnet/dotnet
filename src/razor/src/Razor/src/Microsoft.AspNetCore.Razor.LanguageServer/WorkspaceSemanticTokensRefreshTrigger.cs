@@ -2,25 +2,29 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 /// <summary>
 /// Sends a 'workspace\semanticTokens\refresh' request each time the project changes.
 /// </summary>
-internal class WorkspaceSemanticTokensRefreshTrigger(IWorkspaceSemanticTokensRefreshPublisher workspaceSemanticTokensRefreshPublisher) : IProjectSnapshotChangeTrigger
+internal class WorkspaceSemanticTokensRefreshTrigger : IRazorStartupService
 {
-    private readonly IWorkspaceSemanticTokensRefreshPublisher _publisher = workspaceSemanticTokensRefreshPublisher;
-    private ProjectSnapshotManagerBase? _projectSnapshotManager;
+    private readonly IWorkspaceSemanticTokensRefreshPublisher _publisher;
+    private readonly IProjectSnapshotManager _projectManager;
 
-    public void Initialize(ProjectSnapshotManagerBase projectManager)
+    public WorkspaceSemanticTokensRefreshTrigger(
+        IWorkspaceSemanticTokensRefreshPublisher publisher,
+        IProjectSnapshotManager projectManager)
     {
-        _projectSnapshotManager = projectManager;
-        _projectSnapshotManager.Changed += ProjectSnapshotManager_Changed;
+        _publisher = publisher;
+        _projectManager = projectManager;
+        _projectManager.Changed += ProjectManager_Changed;
     }
 
     // Does not handle C# files
-    private void ProjectSnapshotManager_Changed(object? sender, ProjectChangeEventArgs args)
+    private void ProjectManager_Changed(object? sender, ProjectChangeEventArgs args)
     {
         // Don't send for a simple Document edit. The platform should re-request any range that
         // is edited and if a parameter or type change is made it should be reflected as a ProjectChanged.

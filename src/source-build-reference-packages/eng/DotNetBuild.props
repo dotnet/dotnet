@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <Target Name="TriggerBuildDependencyPackageProjects"
-          Condition="'$(ArcadeInnerBuildFromSource)' == 'true'"
+          Condition="'$(DotNetBuildInnerRepo)' == 'true'"
           BeforeTargets="Execute">
     <PropertyGroup>
       <LocalNuGetPackageCacheDirectory Condition="'$(LocalNuGetPackageCacheDirectory)' == ''">$(CurrentRepoSourceBuiltNupkgCacheDir)</LocalNuGetPackageCacheDirectory>
@@ -21,8 +21,12 @@
 
     <!-- 'SourceBuildOutputDir' must be included as a build parameter in order to correct new SBRPs referencing online feeds when dependent on DependencyPackageProjects. -->
     <!-- See https://github.com/dotnet/source-build-reference-packages/pull/858 -->
+    <!-- This command purposefully does not pass DotNetBuildRepo or DotNetBuildOrchestrator, even though that would be the typical pattern for
+         inner command args. The issue is that if they are passed, this file will re-imported on the dependency package project invocation,
+         and because this target executes before Execute, the build will infinitely recurse. This probably could be fixed in other ways, but
+         given that SBRP is slated at some point to get proper support for project refs as a replacement for this invocation, this isn't really worth doing. -->
     <Exec
-      Command="./build.sh --configuration $(Configuration) /bl:$(ArtifactsDir)sourcebuild-dependency-projects.binlog /p:LocalNuGetPackageCacheDirectory=$(LocalNuGetPackageCacheDirectory) /p:SourceBuildOutputDir=$(SourceBuildOutputDir) /p:BuildDependencyPackageProjects=true /p:SetUpSourceBuildIntermediateNupkgCache=true /p:DotNetBuildFromSource=true /p:ArcadeInnerBuildFromSource=true /p:MicrosoftNetCoreIlasmPackageRuntimeId=$(MicrosoftNetCoreIlasmPackageRuntimeId) $(_AdditionalDependencyProjectsBuildArgs)"
+      Command="./build.sh --configuration $(Configuration) /bl:$(ArtifactsDir)sourcebuild-dependency-projects.binlog /p:LocalNuGetPackageCacheDirectory=$(LocalNuGetPackageCacheDirectory) /p:SourceBuildOutputDir=$(SourceBuildOutputDir) /p:BuildDependencyPackageProjects=true /p:SetUpSourceBuildIntermediateNupkgCache=true /p:DotNetBuildSourceOnly=true /p:DotNetBuildInnerRepo=true /p:MicrosoftNetCoreIlasmPackageRuntimeId=$(MicrosoftNetCoreIlasmPackageRuntimeId) $(_AdditionalDependencyProjectsBuildArgs)"
       WorkingDirectory="$(InnerSourceBuildRepoRoot)"
       EnvironmentVariables="@(InnerBuildEnv)" />
   </Target>

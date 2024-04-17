@@ -1,0 +1,5 @@
+﻿Source Location: (21:0,21 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+|1|
+Generated Location: (962:23,0 [1] )
+|1|
+

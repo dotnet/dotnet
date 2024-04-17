@@ -5,8 +5,8 @@
         UsingDirective - (69:3,1 [27] ) - global::System.Linq
         UsingDirective - (97:4,1 [38] ) - global::System.Threading.Tasks
         UsingDirective - (136:5,1 [47] ) - global::Microsoft.AspNetCore.Components
-        RouteAttributeExtensionNode -  - /MyPage
-        RouteAttributeExtensionNode -  - /AnotherRoute/{id}
+        RouteAttributeExtensionNode - (6:0,6 [9] x:\dir\subdir\Test\TestComponent.cshtml) - "/MyPage"
+        RouteAttributeExtensionNode - (23:1,6 [20] x:\dir\subdir\Test\TestComponent.cshtml) - "/AnotherRoute/{id}"
         ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase - 
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (45:2,0 [15] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent

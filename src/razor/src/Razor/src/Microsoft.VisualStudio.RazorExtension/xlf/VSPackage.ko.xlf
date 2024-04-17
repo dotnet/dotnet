@@ -62,6 +62,16 @@
         <target state="translated">특성 따옴표 자동 삽입</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
+        <source>Forces the open brace after an @code or @functions directive to be on the following line</source>
+        <target state="translated">@code 또는 @functions 지시문 뒤에 여는 중괄호를 강제로 다음 줄에 표시함</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
+        <source>Code/Functions block open brace on next line</source>
+        <target state="translated">코드/함수는 다음 줄에서 여는 중괄호 차단함</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">
         <source>If true, gives C# code in Razor files a background color</source>
         <target state="translated">true이면 Razor 파일의 C# 코드에 배경색을 지정합니다.</target>

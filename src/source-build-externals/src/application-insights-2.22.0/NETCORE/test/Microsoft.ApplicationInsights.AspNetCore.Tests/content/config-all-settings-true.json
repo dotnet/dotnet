@@ -1,0 +1,32 @@
+﻿{
+  "ApplicationInsights": {
+    "InstrumentationKey": "22222222-2222-3333-4444-555555555555",
+    "ConnectionString": "InstrumentationKey=22222222-2222-3333-4444-555555555555;IngestionEndpoint=http://testendpoint",
+    "EnableAdaptiveSampling": true,
+    "EnablePerformanceCounterCollectionModule": true,
+    "EnableAzureInstanceMetadataTelemetryModule": true,
+    "EnableRequestTrackingTelemetryModule": true,
+    "EnableDependencyTrackingTelemetryModule": true,
+    "EnableAppServicesHeartbeatTelemetryModule": true,
+    "EnableEventCounterCollectionModule": true,
+    "AddAutoCollectedMetricExtractor": true,
+    "EnableQuickPulseMetricStream": true,
+    "EnableDebugLogger": true,
+    "EnableHeartbeat": true,
+    "EnableAuthenticationTrackingJavaScript": true,
+    "EnableDiagnosticsTelemetryModule": true,
+    "EnableActiveTelemetryConfigurationSetup": true,
+    "RequestCollectionOptions": {
+      "InjectResponseHeaders": true,
+      "TrackExceptions": true,
+      "EnableW3CDistributedTracing": true
+    },
+    "DependencyCollectionOptions": {
+      "EnableLegacyCorrelationHeadersInjection": true
+    },
+    "TelemetryChannel": {
+      "EndpointAddress": "http://testendpoint/v2/track",
+      "DeveloperMode": true
+    }
+  }
+}

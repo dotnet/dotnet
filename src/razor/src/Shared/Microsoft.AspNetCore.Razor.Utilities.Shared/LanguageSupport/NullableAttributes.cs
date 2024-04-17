@@ -1,6 +1,34 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+#if NETCOREAPP3_0_OR_GREATER
+
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+
+#pragma warning disable RS0016 // Add public types and members to the declared API (this is a supporting forwarder for an internal polyfill API)
+[assembly: TypeForwardedTo(typeof(AllowNullAttribute))]
+[assembly: TypeForwardedTo(typeof(DisallowNullAttribute))]
+[assembly: TypeForwardedTo(typeof(MaybeNullAttribute))]
+[assembly: TypeForwardedTo(typeof(NotNullAttribute))]
+[assembly: TypeForwardedTo(typeof(MaybeNullWhenAttribute))]
+[assembly: TypeForwardedTo(typeof(NotNullWhenAttribute))]
+[assembly: TypeForwardedTo(typeof(NotNullIfNotNullAttribute))]
+[assembly: TypeForwardedTo(typeof(DoesNotReturnAttribute))]
+[assembly: TypeForwardedTo(typeof(DoesNotReturnIfAttribute))]
+#pragma warning restore RS0016 // Add public types and members to the declared API
+
+#endif
+
+#if NET5_0_OR_GREATER
+
+#pragma warning disable RS0016 // Add public types and members to the declared API (this is a supporting forwarder for an internal polyfill API)
+[assembly: TypeForwardedTo(typeof(MemberNotNullAttribute))]
+[assembly: TypeForwardedTo(typeof(MemberNotNullWhenAttribute))]
+#pragma warning restore RS0016 // Add public types and members to the declared API
+
+#endif
+
 namespace System.Diagnostics.CodeAnalysis;
 
 // Copied from https://github.com/dotnet/runtime

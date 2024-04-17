@@ -15,13 +15,14 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Implements.cshtml"
-            
+#line (3,13)-(5,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Implements.cshtml"
+
     void IDisposable.Dispose() { }
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

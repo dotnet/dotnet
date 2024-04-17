@@ -159,20 +159,11 @@
   <data name="Generate_Event_Handler_Title" xml:space="preserve">
     <value>Generate Event Handler '{0}'</value>
   </data>
-  <data name="Invalid_Offset" xml:space="preserve">
-    <value>Invalid offset.</value>
-  </data>
   <data name="Language_Services_Missing_Service" xml:space="preserve">
     <value>Razor language services not configured properly, missing language service '{0}'.</value>
   </data>
   <data name="Not_Available_In" xml:space="preserve">
     <value>Not available in</value>
-  </data>
-  <data name="PositionLine_Outside_Range" xml:space="preserve">
-    <value>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</value>
-  </data>
-  <data name="PositionCharacter_Outside_Range" xml:space="preserve">
-    <value>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</value>
   </data>
   <data name="ReTrigger_Completions_Title" xml:space="preserve">
     <value>"Re-trigger completions..."</value>
@@ -183,14 +174,8 @@
   <data name="TagHelper_Element_Glyph" xml:space="preserve">
     <value>Razor TagHelper Element Glyph</value>
   </data>
-  <data name="Unknown_mapping_behavior" xml:space="preserve">
-    <value>Unknown mapping behavior</value>
-  </data>
   <data name="Unknown_ProjectChangeKind" xml:space="preserve">
     <value>Unknown ProjectChangeKind {0}</value>
-  </data>
-  <data name="Unknown_RazorMetaCode" xml:space="preserve">
-    <value>Attempted to visit a RazorMetaCode other than '{' or '}'.</value>
   </data>
   <data name="Version_Should_Not_Be_Null" xml:space="preserve">
     <value>Provided version should not be null.</value>

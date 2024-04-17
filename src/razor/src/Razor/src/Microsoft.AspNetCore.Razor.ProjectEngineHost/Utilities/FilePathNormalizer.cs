@@ -3,8 +3,6 @@
 
 using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.CodeAnalysis.Razor;
@@ -14,15 +12,9 @@ namespace Microsoft.AspNetCore.Razor.Utilities;
 
 internal static class FilePathNormalizer
 {
-    private static Lazy<IEqualityComparer<string>> _lazyComparer = new Lazy<IEqualityComparer<string>>(() => new FilePathNormalizingComparer());
-    public static IEqualityComparer<string> Comparer => _lazyComparer.Value;
-
-    private class FilePathNormalizingComparer : IEqualityComparer<string>
-    {
-        public bool Equals(string? x, string? y) => FilePathNormalizer.FilePathsEquivalent(x, y);
-
-        public int GetHashCode([DisallowNull] string obj) => FilePathNormalizer.GetHashCode(obj);
-    }
+    private static readonly Func<char, char> s_charConverter = RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+        ? c => c
+        : char.ToLowerInvariant;
 
     public static string NormalizeDirectory(string? directoryFilePath)
     {
@@ -92,13 +84,7 @@ internal static class FilePathNormalizer
         var filePathSpan = filePath.AsSpan();
 
         using var _1 = ArrayPool<char>.Shared.GetPooledArray(filePathSpan.Length, out var array);
-        var normalizedSpan = NormalizeCoreAndGetSpan(filePathSpan, array);
-
-        var lastSlashIndex = normalizedSpan.LastIndexOf('/');
-
-        var directoryNameSpan = lastSlashIndex >= 0
-            ? normalizedSpan[..(lastSlashIndex + 1)] // Include trailing slash
-            : normalizedSpan;
+        var directoryNameSpan = NormalizeDirectoryNameCore(filePathSpan, array);
 
         if (filePathSpan.Equals(directoryNameSpan, StringComparison.Ordinal))
         {
@@ -108,7 +94,30 @@ internal static class FilePathNormalizer
         return CreateString(directoryNameSpan);
     }
 
-    public static bool FilePathsEquivalent(string? filePath1, string? filePath2)
+    public static bool AreDirectoryPathsEquivalent(string? filePath1, string? filePath2)
+    {
+        var filePathSpan1 = filePath1.AsSpanOrDefault();
+        var filePathSpan2 = filePath2.AsSpanOrDefault();
+
+        if (filePathSpan1.IsEmpty)
+        {
+            return filePathSpan2.IsEmpty;
+        }
+        else if (filePathSpan2.IsEmpty)
+        {
+            return false;
+        }
+
+        using var _1 = ArrayPool<char>.Shared.GetPooledArray(filePathSpan1.Length, out var array1);
+        var normalizedSpan1 = NormalizeDirectoryNameCore(filePathSpan1, array1);
+
+        using var _2 = ArrayPool<char>.Shared.GetPooledArray(filePathSpan2.Length, out var array2);
+        var normalizedSpan2 = NormalizeDirectoryNameCore(filePathSpan2, array2);
+
+        return normalizedSpan1.Equals(normalizedSpan2, FilePathComparison.Instance);
+    }
+
+    public static bool AreFilePathsEquivalent(string? filePath1, string? filePath2)
     {
         var filePathSpan1 = filePath1.AsSpanOrDefault();
         var filePathSpan2 = filePath2.AsSpanOrDefault();
@@ -147,7 +156,7 @@ internal static class FilePathNormalizer
 
         foreach (var ch in normalizedSpan)
         {
-            hashCombiner.Add(ch);
+            hashCombiner.Add(s_charConverter(ch));
         }
 
         return hashCombiner.CombinedHash;
@@ -157,6 +166,17 @@ internal static class FilePathNormalizer
     {
         var (start, length) = NormalizeCore(source, destination);
         return destination.Slice(start, length);
+    }
+
+    private static ReadOnlySpan<char> NormalizeDirectoryNameCore(ReadOnlySpan<char> source, Span<char> destination)
+    {
+        var normalizedSpan = NormalizeCoreAndGetSpan(source, destination);
+
+        var lastSlashIndex = normalizedSpan.LastIndexOf('/');
+
+        return lastSlashIndex >= 0
+            ? normalizedSpan[..(lastSlashIndex + 1)] // Include trailing slash
+            : normalizedSpan;
     }
 
     /// <summary>

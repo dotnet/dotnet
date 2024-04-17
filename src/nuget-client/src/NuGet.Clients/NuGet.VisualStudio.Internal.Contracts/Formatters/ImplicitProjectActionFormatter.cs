@@ -42,7 +42,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                         break;
 
                     case ProjectActionTypePropertyName:
-                        projectActionType = options.Resolver.GetFormatter<NuGetProjectActionType>().Deserialize(ref reader, options);
+                        projectActionType = options.Resolver.GetFormatter<NuGetProjectActionType>()!.Deserialize(ref reader, options);
                         break;
 
                     default:
@@ -66,7 +66,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             writer.Write(PackageIdentityPropertyName);
             PackageIdentityFormatter.Instance.Serialize(ref writer, value.PackageIdentity, options);
             writer.Write(ProjectActionTypePropertyName);
-            options.Resolver.GetFormatter<NuGetProjectActionType>().Serialize(ref writer, value.ProjectActionType, options);
+            options.Resolver.GetFormatter<NuGetProjectActionType>()!.Serialize(ref writer, value.ProjectActionType, options);
         }
     }
 }

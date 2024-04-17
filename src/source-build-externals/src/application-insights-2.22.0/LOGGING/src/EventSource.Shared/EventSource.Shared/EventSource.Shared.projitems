@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>a964de6d-9750-4013-8be2-79c2afc056e5</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>EventSource.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\EventSourceListenerEventSource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\ActivityPathDecoder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\StringBuilderCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\TplActivities.cs" />
+  </ItemGroup>
+</Project>

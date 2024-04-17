@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using NuGet.Common;
@@ -48,11 +50,37 @@ namespace NuGet.Commands
             ILogger log,
             bool updateLastAccess)
         {
-            var isFallbackFolder = false;
+            NuGetv3LocalRepository globalPackages = CreateGlobalPackagedRepository(globalPackagesPath, updateLastAccess);
+            List<NuGetv3LocalRepository> fallbackFolders = GetFallbackFolderRepositories(fallbackPackagesPaths);
+            List<IRemoteDependencyProvider> localProviders = CreateLocalProviders(globalPackagesPath, fallbackPackagesPaths, cacheContext, log);
+            List<IRemoteDependencyProvider> remoteProviders = CreateRemoveProviders(sources, cacheContext, log);
+            List<IVulnerabilityInformationProvider> vulnerabilityInformationProviders = CreateVulnerabilityProviders(sources, log);
 
+            return new RestoreCommandProviders(globalPackages, fallbackFolders, localProviders, remoteProviders, _fileCache, vulnerabilityInformationProviders);
+        }
+
+        private NuGetv3LocalRepository CreateGlobalPackagedRepository(string globalPackagesPath, bool updateLastAccess)
+        {
             NuGetv3LocalRepository globalCache = _globalCache.GetOrAdd(globalPackagesPath,
-                                                    (path) => new NuGetv3LocalRepository(path, _fileCache, isFallbackFolder, updateLastAccess));
+                (path) => new NuGetv3LocalRepository(path, _fileCache, isFallbackFolder: false, updateLastAccess));
+            return globalCache;
+        }
 
+        private List<NuGetv3LocalRepository> GetFallbackFolderRepositories(IReadOnlyList<string> fallbackPackagesPaths)
+        {
+            var fallbackFolders = new List<NuGetv3LocalRepository>();
+            for (int i = 0; i < fallbackPackagesPaths.Count; i++)
+            {
+                var fallbackPath = fallbackPackagesPaths[i];
+                var cache = _globalCache.GetOrAdd(fallbackPath, (path) => new NuGetv3LocalRepository(path, _fileCache, isFallbackFolder: true, updateLastAccessTime: false));
+                fallbackFolders.Add(cache);
+            }
+
+            return fallbackFolders;
+        }
+
+        private List<IRemoteDependencyProvider> CreateLocalProviders(string globalPackagesPath, IReadOnlyList<string> fallbackPackagesPaths, SourceCacheContext cacheContext, ILogger log)
+        {
             var local = _localProvider.GetOrAdd(globalPackagesPath, (path) =>
             {
                 // Create a v3 file system source
@@ -66,20 +94,14 @@ namespace NuGet.Commands
                     ignoreFailedSources: true,
                     ignoreWarning: true,
                     fileCache: _fileCache,
-                    isFallbackFolderSource: isFallbackFolder);
+                    isFallbackFolderSource: false);
             });
 
-            var localProviders = new List<IRemoteDependencyProvider>() { local };
-            var fallbackFolders = new List<NuGetv3LocalRepository>();
+            var localProviders = new List<IRemoteDependencyProvider>(fallbackPackagesPaths.Count + 1) { local };
 
-            isFallbackFolder = true;
-            updateLastAccess = false;
-
-            foreach (var fallbackPath in fallbackPackagesPaths)
+            for (int i = 0; i < fallbackPackagesPaths.Count; i++)
             {
-                var cache = _globalCache.GetOrAdd(fallbackPath, (path) => new NuGetv3LocalRepository(path, _fileCache, isFallbackFolder, updateLastAccess));
-                fallbackFolders.Add(cache);
-
+                var fallbackPath = fallbackPackagesPaths[i];
                 var localProvider = _localProvider.GetOrAdd(fallbackPath, (path) =>
                 {
                     // Create a v3 file system source
@@ -93,15 +115,18 @@ namespace NuGet.Commands
                         ignoreFailedSources: false,
                         ignoreWarning: false,
                         fileCache: _fileCache,
-                        isFallbackFolderSource: isFallbackFolder);
+                        isFallbackFolderSource: true);
                 });
 
                 localProviders.Add(localProvider);
             }
 
-            var remoteProviders = new List<IRemoteDependencyProvider>(sources.Count);
+            return localProviders;
+        }
 
-            isFallbackFolder = false;
+        private List<IRemoteDependencyProvider> CreateRemoveProviders(IReadOnlyList<SourceRepository> sources, SourceCacheContext cacheContext, ILogger log)
+        {
+            var remoteProviders = new List<IRemoteDependencyProvider>(sources.Count);
 
             foreach (var source in sources)
             {
@@ -112,11 +137,16 @@ namespace NuGet.Commands
                     cacheContext.IgnoreFailedSources,
                     ignoreWarning: false,
                     fileCache: _fileCache,
-                    isFallbackFolderSource: isFallbackFolder));
+                    isFallbackFolderSource: false));
 
                 remoteProviders.Add(remoteProvider);
             }
 
+            return remoteProviders;
+        }
+
+        private List<IVulnerabilityInformationProvider> CreateVulnerabilityProviders(IReadOnlyList<SourceRepository> sources, ILogger log)
+        {
             var vulnerabilityInformationProviders = new List<IVulnerabilityInformationProvider>(sources.Count);
             foreach (SourceRepository source in sources)
             {
@@ -124,7 +154,7 @@ namespace NuGet.Commands
                 vulnerabilityInformationProviders.Add(provider);
             }
 
-            return new RestoreCommandProviders(globalCache, fallbackFolders, localProviders, remoteProviders, _fileCache, vulnerabilityInformationProviders);
+            return vulnerabilityInformationProviders;
         }
     }
 }

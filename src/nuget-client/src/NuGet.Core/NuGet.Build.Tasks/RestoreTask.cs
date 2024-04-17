@@ -137,7 +137,7 @@ namespace NuGet.Build.Tasks
             // Convert to the internal wrapper
             var wrappedItems = RestoreGraphItems.Select(MSBuildUtility.WrapMSBuildItem);
 
-            var dgFile = MSBuildRestoreUtility.GetDependencySpec(wrappedItems);
+            var dgFile = MSBuildRestoreUtility.GetDependencySpec(wrappedItems, readOnly: true);
 
             EmbedInBinlog = GetFilesToEmbedInBinlog(dgFile);
 

@@ -1,0 +1,104 @@
+Microsoft.ApplicationInsights.Common.ConditionalWeakTableExtensions
+Microsoft.ApplicationInsights.Web.AccountIdTelemetryInitializer
+Microsoft.ApplicationInsights.Web.AccountIdTelemetryInitializer.AccountIdTelemetryInitializer() -> void
+Microsoft.ApplicationInsights.Web.ApplicationInsightsHttpModule
+Microsoft.ApplicationInsights.Web.ApplicationInsightsHttpModule.ApplicationInsightsHttpModule() -> void
+Microsoft.ApplicationInsights.Web.ApplicationInsightsHttpModule.Dispose() -> void
+Microsoft.ApplicationInsights.Web.ApplicationInsightsHttpModule.Init(System.Web.HttpApplication context) -> void
+Microsoft.ApplicationInsights.Web.AspNetDiagnosticTelemetryModule
+Microsoft.ApplicationInsights.Web.AspNetDiagnosticTelemetryModule.AspNetDiagnosticTelemetryModule() -> void
+Microsoft.ApplicationInsights.Web.AspNetDiagnosticTelemetryModule.Dispose() -> void
+Microsoft.ApplicationInsights.Web.AspNetDiagnosticTelemetryModule.Initialize(Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration) -> void
+Microsoft.ApplicationInsights.Web.AspNetDiagnosticTelemetryModule.OnCompleted() -> void
+Microsoft.ApplicationInsights.Web.AspNetDiagnosticTelemetryModule.OnError(System.Exception error) -> void
+Microsoft.ApplicationInsights.Web.AspNetDiagnosticTelemetryModule.OnNext(System.Diagnostics.DiagnosticListener value) -> void
+Microsoft.ApplicationInsights.Web.AuthenticatedUserIdTelemetryInitializer
+Microsoft.ApplicationInsights.Web.AuthenticatedUserIdTelemetryInitializer.AuthenticatedUserIdTelemetryInitializer() -> void
+Microsoft.ApplicationInsights.Web.AzureAppServiceRoleNameFromHostNameHeaderInitializer
+Microsoft.ApplicationInsights.Web.AzureAppServiceRoleNameFromHostNameHeaderInitializer.AzureAppServiceRoleNameFromHostNameHeaderInitializer() -> void
+Microsoft.ApplicationInsights.Web.AzureAppServiceRoleNameFromHostNameHeaderInitializer.AzureAppServiceRoleNameFromHostNameHeaderInitializer(string webAppSuffix) -> void
+Microsoft.ApplicationInsights.Web.AzureAppServiceRoleNameFromHostNameHeaderInitializer.Initialize(Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+Microsoft.ApplicationInsights.Web.AzureAppServiceRoleNameFromHostNameHeaderInitializer.WebAppSuffix.get -> string
+Microsoft.ApplicationInsights.Web.AzureAppServiceRoleNameFromHostNameHeaderInitializer.WebAppSuffix.set -> void
+Microsoft.ApplicationInsights.Web.ClientIpHeaderTelemetryInitializer
+Microsoft.ApplicationInsights.Web.ClientIpHeaderTelemetryInitializer.ClientIpHeaderTelemetryInitializer() -> void
+Microsoft.ApplicationInsights.Web.ClientIpHeaderTelemetryInitializer.HeaderNames.get -> System.Collections.Generic.ICollection<string>
+Microsoft.ApplicationInsights.Web.ClientIpHeaderTelemetryInitializer.HeaderValueSeparators.get -> string
+Microsoft.ApplicationInsights.Web.ClientIpHeaderTelemetryInitializer.HeaderValueSeparators.set -> void
+Microsoft.ApplicationInsights.Web.ClientIpHeaderTelemetryInitializer.UseFirstIp.get -> bool
+Microsoft.ApplicationInsights.Web.ClientIpHeaderTelemetryInitializer.UseFirstIp.set -> void
+Microsoft.ApplicationInsights.Web.ExceptionTrackingTelemetryModule
+Microsoft.ApplicationInsights.Web.ExceptionTrackingTelemetryModule.Dispose() -> void
+Microsoft.ApplicationInsights.Web.ExceptionTrackingTelemetryModule.EnableMvcAndWebApiExceptionAutoTracking.get -> bool
+Microsoft.ApplicationInsights.Web.ExceptionTrackingTelemetryModule.EnableMvcAndWebApiExceptionAutoTracking.set -> void
+Microsoft.ApplicationInsights.Web.ExceptionTrackingTelemetryModule.ExceptionTrackingTelemetryModule() -> void
+Microsoft.ApplicationInsights.Web.ExceptionTrackingTelemetryModule.Initialize(Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration) -> void
+Microsoft.ApplicationInsights.Web.ExceptionTrackingTelemetryModule.OnError(System.Web.HttpContext context) -> void
+Microsoft.ApplicationInsights.Web.Implementation.SyntheticUserAgentFilter
+Microsoft.ApplicationInsights.Web.Implementation.SyntheticUserAgentFilter.Pattern.get -> string
+Microsoft.ApplicationInsights.Web.Implementation.SyntheticUserAgentFilter.Pattern.set -> void
+Microsoft.ApplicationInsights.Web.Implementation.SyntheticUserAgentFilter.SourceName.get -> string
+Microsoft.ApplicationInsights.Web.Implementation.SyntheticUserAgentFilter.SourceName.set -> void
+Microsoft.ApplicationInsights.Web.Implementation.SyntheticUserAgentFilter.SyntheticUserAgentFilter() -> void
+Microsoft.ApplicationInsights.Web.Implementation.WebTelemetryInitializerBase
+Microsoft.ApplicationInsights.Web.Implementation.WebTelemetryInitializerBase.Initialize(Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+Microsoft.ApplicationInsights.Web.Implementation.WebTelemetryModuleBase
+Microsoft.ApplicationInsights.Web.Implementation.WebTelemetryModuleBase.WebTelemetryModuleBase() -> void
+Microsoft.ApplicationInsights.Web.OperationCorrelationTelemetryInitializer
+Microsoft.ApplicationInsights.Web.OperationCorrelationTelemetryInitializer.OperationCorrelationTelemetryInitializer() -> void
+Microsoft.ApplicationInsights.Web.OperationCorrelationTelemetryInitializer.ParentOperationIdHeaderName.get -> string
+Microsoft.ApplicationInsights.Web.OperationCorrelationTelemetryInitializer.ParentOperationIdHeaderName.set -> void
+Microsoft.ApplicationInsights.Web.OperationCorrelationTelemetryInitializer.RootOperationIdHeaderName.get -> string
+Microsoft.ApplicationInsights.Web.OperationCorrelationTelemetryInitializer.RootOperationIdHeaderName.set -> void
+Microsoft.ApplicationInsights.Web.OperationNameTelemetryInitializer
+Microsoft.ApplicationInsights.Web.OperationNameTelemetryInitializer.OperationNameTelemetryInitializer() -> void
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.AddTargetHashForResponseHeader(System.Web.HttpContext context) -> void
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.ChildRequestTrackingInternalDictionarySize.get -> int
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.ChildRequestTrackingInternalDictionarySize.set -> void
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.EnableAccessControlExposeHeader.get -> bool
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.EnableAccessControlExposeHeader.set -> void
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.EnableChildRequestTrackingSuppression.get -> bool
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.EnableChildRequestTrackingSuppression.set -> void
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.EnableW3CHeadersExtraction.get -> bool
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.EnableW3CHeadersExtraction.set -> void
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.Handlers.get -> System.Collections.Generic.IList<string>
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.Initialize(Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration) -> void
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.OnBeginRequest(System.Web.HttpContext context) -> void
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.OnEndRequest(System.Web.HttpContext context) -> void
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.ProfileQueryEndpoint.get -> string
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.ProfileQueryEndpoint.set -> void
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.RequestTrackingTelemetryModule() -> void
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.SetComponentCorrelationHttpHeaders.get -> bool
+Microsoft.ApplicationInsights.Web.RequestTrackingTelemetryModule.SetComponentCorrelationHttpHeaders.set -> void
+Microsoft.ApplicationInsights.Web.SessionTelemetryInitializer
+Microsoft.ApplicationInsights.Web.SessionTelemetryInitializer.SessionTelemetryInitializer() -> void
+Microsoft.ApplicationInsights.Web.SyntheticUserAgentTelemetryInitializer
+Microsoft.ApplicationInsights.Web.SyntheticUserAgentTelemetryInitializer.Filters.get -> string
+Microsoft.ApplicationInsights.Web.SyntheticUserAgentTelemetryInitializer.Filters.set -> void
+Microsoft.ApplicationInsights.Web.SyntheticUserAgentTelemetryInitializer.SyntheticUserAgentTelemetryInitializer() -> void
+Microsoft.ApplicationInsights.Web.UserTelemetryInitializer
+Microsoft.ApplicationInsights.Web.UserTelemetryInitializer.UserTelemetryInitializer() -> void
+Microsoft.ApplicationInsights.Web.WebTestTelemetryInitializer
+Microsoft.ApplicationInsights.Web.WebTestTelemetryInitializer.WebTestTelemetryInitializer() -> void
+override Microsoft.ApplicationInsights.Web.AccountIdTelemetryInitializer.OnInitializeTelemetry(System.Web.HttpContext platformContext, Microsoft.ApplicationInsights.DataContracts.RequestTelemetry requestTelemetry, Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+override Microsoft.ApplicationInsights.Web.AuthenticatedUserIdTelemetryInitializer.OnInitializeTelemetry(System.Web.HttpContext platformContext, Microsoft.ApplicationInsights.DataContracts.RequestTelemetry requestTelemetry, Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+override Microsoft.ApplicationInsights.Web.ClientIpHeaderTelemetryInitializer.OnInitializeTelemetry(System.Web.HttpContext platformContext, Microsoft.ApplicationInsights.DataContracts.RequestTelemetry requestTelemetry, Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+override Microsoft.ApplicationInsights.Web.OperationCorrelationTelemetryInitializer.OnInitializeTelemetry(System.Web.HttpContext platformContext, Microsoft.ApplicationInsights.DataContracts.RequestTelemetry requestTelemetry, Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+override Microsoft.ApplicationInsights.Web.OperationNameTelemetryInitializer.OnInitializeTelemetry(System.Web.HttpContext platformContext, Microsoft.ApplicationInsights.DataContracts.RequestTelemetry rootRequestTelemetry, Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+override Microsoft.ApplicationInsights.Web.SessionTelemetryInitializer.OnInitializeTelemetry(System.Web.HttpContext platformContext, Microsoft.ApplicationInsights.DataContracts.RequestTelemetry requestTelemetry, Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+override Microsoft.ApplicationInsights.Web.SyntheticUserAgentTelemetryInitializer.OnInitializeTelemetry(System.Web.HttpContext platformContext, Microsoft.ApplicationInsights.DataContracts.RequestTelemetry requestTelemetry, Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+override Microsoft.ApplicationInsights.Web.UserTelemetryInitializer.OnInitializeTelemetry(System.Web.HttpContext platformContext, Microsoft.ApplicationInsights.DataContracts.RequestTelemetry requestTelemetry, Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+override Microsoft.ApplicationInsights.Web.WebTestTelemetryInitializer.OnInitializeTelemetry(System.Web.HttpContext platformContext, Microsoft.ApplicationInsights.DataContracts.RequestTelemetry requestTelemetry, Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+static Microsoft.ApplicationInsights.Common.ConditionalWeakTableExtensions.AddIfNotExists<TKey, TValue>(this System.Runtime.CompilerServices.ConditionalWeakTable<TKey, TValue> conditionalWeakTable, TKey key, TValue value) -> void
+static System.Web.HttpContextBaseExtension.GetRequestTelemetry(this System.Web.HttpContextBase context) -> Microsoft.ApplicationInsights.DataContracts.RequestTelemetry
+static System.Web.HttpContextExtension.GetRequestTelemetry(this System.Web.HttpContext context) -> Microsoft.ApplicationInsights.DataContracts.RequestTelemetry
+System.Web.HttpContextBaseExtension
+System.Web.HttpContextExtension
+virtual Microsoft.ApplicationInsights.Web.AspNetDiagnosticTelemetryModule.Dispose(bool dispose) -> void
+virtual Microsoft.ApplicationInsights.Web.AzureAppServiceRoleNameFromHostNameHeaderInitializer.GetRequestFromContext(System.Web.HttpContext context) -> Microsoft.ApplicationInsights.DataContracts.RequestTelemetry
+virtual Microsoft.ApplicationInsights.Web.AzureAppServiceRoleNameFromHostNameHeaderInitializer.ResolvePlatformContext() -> System.Web.HttpContext
+virtual Microsoft.ApplicationInsights.Web.ExceptionTrackingTelemetryModule.Dispose(bool disposing) -> void
+virtual Microsoft.ApplicationInsights.Web.Implementation.WebTelemetryModuleBase.OnBeginRequest(Microsoft.ApplicationInsights.DataContracts.RequestTelemetry requestTelemetry, System.Web.HttpContext platformContext) -> void
+virtual Microsoft.ApplicationInsights.Web.Implementation.WebTelemetryModuleBase.OnEndRequest(Microsoft.ApplicationInsights.DataContracts.RequestTelemetry requestTelemetry, System.Web.HttpContext platformContext) -> void
+virtual Microsoft.ApplicationInsights.Web.Implementation.WebTelemetryModuleBase.OnError(Microsoft.ApplicationInsights.DataContracts.RequestTelemetry requestTelemetry, System.Web.HttpContext platformContext) -> void

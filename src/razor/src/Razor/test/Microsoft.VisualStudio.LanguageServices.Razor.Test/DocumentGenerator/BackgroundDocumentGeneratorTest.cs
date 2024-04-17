@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.DynamicFiles;
@@ -48,11 +47,11 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     public async Task ProcessDocument_LongDocumentParse_DoesNotUpdateAfterSuppress()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher);
+        var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_hostProject1);
+            updater.ProjectAdded(s_hostProject1);
         });
 
         // We utilize a task completion source here so we can "fake" a document parse taking a significant amount of time
@@ -64,29 +63,26 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         var hostDocument = s_documents[0];
 
         var project = projectManager.GetLoadedProject(s_hostProject1.Key);
-        var queue = new BackgroundDocumentGenerator(Dispatcher, _dynamicFileInfoProvider)
+        var queue = new BackgroundDocumentGenerator(projectManager, Dispatcher, _dynamicFileInfoProvider, ErrorReporter)
         {
             Delay = TimeSpan.FromMilliseconds(1),
             NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false),
             NotifyBackgroundCapturedWorkload = new ManualResetEventSlim(initialState: false),
         };
 
-        queue.Initialize(projectManager);
-
         // We trigger enqueued notifications via adding/opening to the project manager
-        projectManager.AllowNotifyListeners = true;
 
         // Act & Assert
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentAdded(s_hostProject1.Key, hostDocument, textLoader.Object);
+            updater.DocumentAdded(s_hostProject1.Key, hostDocument, textLoader.Object);
         });
 
         queue.NotifyBackgroundCapturedWorkload.Wait();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentOpened(s_hostProject1.Key, hostDocument.FilePath, SourceText.From(string.Empty));
+            updater.DocumentOpened(s_hostProject1.Key, hostDocument.FilePath, SourceText.From(string.Empty));
         });
 
         // Verify document was suppressed because it was opened
@@ -105,11 +101,11 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     public async Task ProcessDocument_SwallowsIOExceptions()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher);
+        var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_hostProject1);
+            updater.ProjectAdded(s_hostProject1);
         });
 
         var textLoader = new StrictMock<TextLoader>();
@@ -117,21 +113,19 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             .Setup(loader => loader.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()))
             .Throws<FileNotFoundException>();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentAdded(s_hostProject1.Key, s_documents[0], textLoader.Object);
+            updater.DocumentAdded(s_hostProject1.Key, s_documents[0], textLoader.Object);
         });
 
         var project = projectManager.GetLoadedProject(s_hostProject1.Key);
 
-        var queue = new BackgroundDocumentGenerator(Dispatcher, _dynamicFileInfoProvider)
+        var queue = new BackgroundDocumentGenerator(projectManager, Dispatcher, _dynamicFileInfoProvider, ErrorReporter)
         {
             Delay = TimeSpan.FromMilliseconds(1),
             NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false),
             NotifyErrorBeingReported = new ManualResetEventSlim(initialState: false),
         };
-
-        queue.Initialize(projectManager);
 
         // Act & Assert
         await RunOnDispatcherAsync(() =>
@@ -148,11 +142,11 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     public async Task ProcessDocument_SwallowsUnauthorizedAccessExceptions()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher);
+        var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_hostProject1);
+            updater.ProjectAdded(s_hostProject1);
         });
 
         var textLoader = new StrictMock<TextLoader>();
@@ -160,21 +154,19 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             .Setup(loader => loader.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()))
             .Throws<UnauthorizedAccessException>();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentAdded(s_hostProject1.Key, s_documents[0], textLoader.Object);
+            updater.DocumentAdded(s_hostProject1.Key, s_documents[0], textLoader.Object);
         });
 
         var project = projectManager.GetLoadedProject(s_hostProject1.Key);
 
-        var queue = new BackgroundDocumentGenerator(Dispatcher, _dynamicFileInfoProvider)
+        var queue = new BackgroundDocumentGenerator(projectManager, Dispatcher, _dynamicFileInfoProvider, ErrorReporter)
         {
             Delay = TimeSpan.FromMilliseconds(1),
             NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false),
             NotifyErrorBeingReported = new ManualResetEventSlim(initialState: false),
         };
-
-        queue.Initialize(projectManager);
 
         // Act & Assert
         await RunOnDispatcherAsync(() =>
@@ -191,19 +183,19 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     public async Task Queue_ProcessesNotifications_AndGoesBackToSleep()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher);
+        var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_hostProject1);
-            projectManager.ProjectAdded(s_hostProject2);
-            projectManager.DocumentAdded(s_hostProject1.Key, s_documents[0], null!);
-            projectManager.DocumentAdded(s_hostProject1.Key, s_documents[1], null!);
+            updater.ProjectAdded(s_hostProject1);
+            updater.ProjectAdded(s_hostProject2);
+            updater.DocumentAdded(s_hostProject1.Key, s_documents[0], null!);
+            updater.DocumentAdded(s_hostProject1.Key, s_documents[1], null!);
         });
 
         var project = projectManager.GetLoadedProject(s_hostProject1.Key);
 
-        var queue = new BackgroundDocumentGenerator(Dispatcher, _dynamicFileInfoProvider)
+        var queue = new BackgroundDocumentGenerator(projectManager, Dispatcher, _dynamicFileInfoProvider, ErrorReporter)
         {
             Delay = TimeSpan.FromMilliseconds(1),
             BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false),
@@ -211,8 +203,6 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             BlockBackgroundWorkCompleting = new ManualResetEventSlim(initialState: false),
             NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false),
         };
-
-        queue.Initialize(projectManager);
 
         // Act & Assert
         await RunOnDispatcherAsync(() =>
@@ -237,19 +227,19 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     public async Task Queue_ProcessesNotifications_AndRestarts()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher);
+        var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_hostProject1);
-            projectManager.ProjectAdded(s_hostProject2);
-            projectManager.DocumentAdded(s_hostProject1.Key, s_documents[0], null!);
-            projectManager.DocumentAdded(s_hostProject1.Key, s_documents[1], null!);
+            updater.ProjectAdded(s_hostProject1);
+            updater.ProjectAdded(s_hostProject2);
+            updater.DocumentAdded(s_hostProject1.Key, s_documents[0], null!);
+            updater.DocumentAdded(s_hostProject1.Key, s_documents[1], null!);
         });
 
         var project = projectManager.GetLoadedProject(s_hostProject1.Key);
 
-        var queue = new BackgroundDocumentGenerator(Dispatcher, _dynamicFileInfoProvider)
+        var queue = new BackgroundDocumentGenerator(projectManager, Dispatcher, _dynamicFileInfoProvider, ErrorReporter)
         {
             Delay = TimeSpan.FromMilliseconds(1),
             BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false),
@@ -258,8 +248,6 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             BlockBackgroundWorkCompleting = new ManualResetEventSlim(initialState: false),
             NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false),
         };
-
-        queue.Initialize(projectManager);
 
         // Act & Assert
         await RunOnDispatcherAsync(() =>
@@ -311,26 +299,24 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     public async Task DocumentChanged_ReparsesRelatedFiles()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher)
-        {
-            AllowNotifyListeners = true,
-        };
+        var projectManager = CreateProjectSnapshotManager();
+
         var documents = new[]
         {
             TestProjectData.SomeProjectComponentFile1,
             TestProjectData.SomeProjectImportFile
         };
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_hostProject1);
+            updater.ProjectAdded(s_hostProject1);
             for (var i = 0; i < documents.Length; i++)
             {
-                projectManager.DocumentAdded(s_hostProject1.Key, documents[i], null!);
+                updater.DocumentAdded(s_hostProject1.Key, documents[i], null!);
             }
         });
 
-        var queue = new BackgroundDocumentGenerator(Dispatcher, _dynamicFileInfoProvider)
+        var queue = new BackgroundDocumentGenerator(projectManager, Dispatcher, _dynamicFileInfoProvider, ErrorReporter)
         {
             Delay = TimeSpan.FromMilliseconds(1),
             BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false),
@@ -341,12 +327,11 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         };
 
         var changedSourceText = SourceText.From("@inject DateTime Time");
-        queue.Initialize(projectManager);
 
         // Act & Assert
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentChanged(s_hostProject1.Key, TestProjectData.SomeProjectImportFile.FilePath, changedSourceText);
+            updater.DocumentChanged(s_hostProject1.Key, TestProjectData.SomeProjectImportFile.FilePath, changedSourceText);
         });
 
         Assert.True(queue.IsScheduledOrRunning, "Queue should be scheduled during Enqueue");
@@ -381,19 +366,16 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     public async Task DocumentRemoved_ReparsesRelatedFiles()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher)
-        {
-            AllowNotifyListeners = true,
-        };
+        var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_hostProject1);
-            projectManager.DocumentAdded(s_hostProject1.Key, TestProjectData.SomeProjectComponentFile1, null!);
-            projectManager.DocumentAdded(s_hostProject1.Key, TestProjectData.SomeProjectImportFile, null!);
+            updater.ProjectAdded(s_hostProject1);
+            updater.DocumentAdded(s_hostProject1.Key, TestProjectData.SomeProjectComponentFile1, null!);
+            updater.DocumentAdded(s_hostProject1.Key, TestProjectData.SomeProjectImportFile, null!);
         });
 
-        var queue = new BackgroundDocumentGenerator(Dispatcher, _dynamicFileInfoProvider)
+        var queue = new BackgroundDocumentGenerator(projectManager, Dispatcher, _dynamicFileInfoProvider, ErrorReporter)
         {
             Delay = TimeSpan.FromMilliseconds(1),
             BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false),
@@ -403,12 +385,10 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false),
         };
 
-        queue.Initialize(projectManager);
-
         // Act & Assert
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentRemoved(s_hostProject1.Key, TestProjectData.SomeProjectImportFile);
+            updater.DocumentRemoved(s_hostProject1.Key, TestProjectData.SomeProjectImportFile);
         });
 
         Assert.True(queue.IsScheduledOrRunning, "Queue should be scheduled during Enqueue");

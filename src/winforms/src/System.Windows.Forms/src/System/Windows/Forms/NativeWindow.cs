@@ -14,11 +14,11 @@ namespace System.Windows.Forms;
 public unsafe partial class NativeWindow : MarshalByRefObject, IWin32Window, IHandle<HWND>
 {
 #if DEBUG
-    private static readonly BooleanSwitch AlwaysUseNormalWndProc
+    private static BooleanSwitch AlwaysUseNormalWndProc { get; }
         = new("AlwaysUseNormalWndProc", "Skips checking for the debugger when choosing the debuggable WndProc handler");
 #endif
 
-    private static readonly TraceSwitch WndProcChoice = new("WndProcChoice", "Info about choice of WndProc");
+    private static TraceSwitch WndProcChoice { get; } = new("WndProcChoice", "Info about choice of WndProc");
 
     private const int InitializedFlags = 0x01;
     private const int UseDebuggableWndProc = 0x04;
@@ -37,8 +37,8 @@ public unsafe partial class NativeWindow : MarshalByRefObject, IWin32Window, IHa
 
     // Need to Store Table of Ids and Handles
     private static short s_globalID = 1;
-    private static readonly Dictionary<HWND, GCHandle> s_windowHandles = new();
-    private static readonly Dictionary<short, HWND> s_windowIds = new();
+    private static readonly Dictionary<HWND, GCHandle> s_windowHandles = [];
+    private static readonly Dictionary<short, HWND> s_windowIds = [];
     private static readonly object s_internalSyncObject = new();
     private static readonly object s_createWindowSyncObject = new();
 
@@ -453,7 +453,7 @@ public unsafe partial class NativeWindow : MarshalByRefObject, IWin32Window, IHa
                             // If it exceeds the max, we should take the substring....
                             if (cp.Caption is not null && cp.Caption.Length > short.MaxValue)
                             {
-                                cp.Caption = cp.Caption.Substring(0, short.MaxValue);
+                                cp.Caption = cp.Caption[..short.MaxValue];
                             }
 
                             createResult = PInvoke.CreateWindowEx(

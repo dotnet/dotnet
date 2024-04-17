@@ -11,7 +11,11 @@ public sealed class UsingDirectiveIntermediateNode : IntermediateNode
 {
     public override IntermediateNodeCollection Children => IntermediateNodeCollection.ReadOnly;
 
+    public bool AppendLineDefaultAndHidden { get; set; }
+
     public string Content { get; set; }
+
+    public bool HasExplicitSemicolon { get; set; }
 
     public override void Accept(IntermediateNodeVisitor visitor)
     {

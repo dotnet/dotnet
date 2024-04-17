@@ -4,7 +4,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <IsPackable Condition=" '$(DotNetBuildFromSource)' != 'true' ">true</IsPackable>
+    <IsPackable Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</IsPackable>
     <!-- This is an internal package not meant to be published outside -->
     <IsShippingPackage>false</IsShippingPackage>
     <NuspecFile>Microsoft.TestPlatform.Internal.Uwp.nuspec</NuspecFile>

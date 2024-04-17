@@ -6,11 +6,26 @@
     <OutputType>Exe</OutputType>
     <Description>Razor is a markup syntax for adding server-side logic to web pages. This package contains a Razor language server.</Description>
     <EnableApiCheck>false</EnableApiCheck>
-    <RuntimeIdentifiers Condition="$([MSBuild]::IsOSPlatform('Windows'))">win-x64;win-x86;win-arm64</RuntimeIdentifiers>
-    <RuntimeIdentifiers Condition="$([MSBuild]::IsOSPlatform('Linux'))">linux-x64;linux-musl-x64;linux-arm64;linux-musl-arm64</RuntimeIdentifiers>
-    <RuntimeIdentifiers Condition="$([MSBuild]::IsOSPlatform('OSX'))">osx-x64;osx-arm64</RuntimeIdentifiers>
     <IsShippingPackage>false</IsShippingPackage>
     <RemoveDevicePlatformSupport>true</RemoveDevicePlatformSupport>
+  </PropertyGroup>
+
+  <!--
+    In a vertical build, we'll only publish for the RID of the vertical.
+    In a non-vertical build, we'll publish for all RIDs of the OS we are building on (to reduce the number of CI jobs).
+  -->
+  <PropertyGroup Condition="'$(DotNetBuild)' != 'true'">
+    <RuntimeIdentifiers Condition="$([MSBuild]::IsOSPlatform('Windows'))">win-x64;win-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifiers Condition="$([MSBuild]::IsOSPlatform('Linux'))">linux-x64;linux-musl-x64;linux-arm64;linux-musl-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifiers Condition="$([MSBuild]::IsOSPlatform('OSX'))">osx-x64;osx-arm64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DotNetBuild)' == 'true'">
+    <RuntimeIdentifiers>$(TargetRid)</RuntimeIdentifiers>
+    <RuntimeIdentifier>$(TargetRid)</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <RidSpecificPublishNoBuildProperty>NoBuild=true</RidSpecificPublishNoBuildProperty>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,10 +46,7 @@
   -->
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-
-    <!-- Enable roll-forward to latest patch.  This allows one restore operation
-        to apply to all of the self-contained publish operations. -->
-    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+    <RollForward>LatestMajor</RollForward>
     <RidsPublishDir>$(ArtifactsDir)LanguageServer\$(Configuration)\</RidsPublishDir>
   </PropertyGroup>
 
@@ -50,11 +62,11 @@
 
       <!-- Transform RuntimeIdentifierForPublish items to project items to pass to MSBuild task -->
       <ProjectToPublish Include="@(RuntimeIdentifierForPublish->'$(MSBuildProjectFullPath)')">
-        <AdditionalProperties>RuntimeIdentifier=%(RuntimeIdentifierForPublish.Identity);PublishDir=$(RidsPublishDir)%(RuntimeIdentifierForPublish.Identity)\;TargetFramework=$(PublishTargetFramework);SelfContained=false</AdditionalProperties>
+        <AdditionalProperties>_IsPublishing=true;$(RidSpecificPublishNoBuildProperty);RuntimeIdentifier=%(RuntimeIdentifierForPublish.Identity);PublishDir=$(RidsPublishDir)%(RuntimeIdentifierForPublish.Identity)\;TargetFramework=$(PublishTargetFramework);SelfContained=false</AdditionalProperties>
       </ProjectToPublish>
 
       <ProjectToPublish_PlatformAgnostic Include="$(MSBuildProjectFullPath)">
-        <AdditionalProperties>PublishDir=$(RidsPublishDir)\PlatformAgnostic\;UseAppHost=false;TargetFramework=$(PublishTargetFramework);SelfContained=false</AdditionalProperties>
+        <AdditionalProperties>_IsPublishing=true;NoBuild=true;PublishDir=$(RidsPublishDir)\PlatformAgnostic\;UseAppHost=false;TargetFramework=$(PublishTargetFramework);SelfContained=false</AdditionalProperties>
       </ProjectToPublish_PlatformAgnostic>
     </ItemGroup>
 

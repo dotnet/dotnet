@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="Info_TestProps"  BeforeTargets="Build" Condition=" $(Internal_Logging) == 'true' ">
+    <Message Text="Info: Test.props imported by $(MSBuildProjectName)." Importance="high"/>
+  </Target>
+
+  <Import Project=".\_Common.props" />
+
+  <PropertyGroup>
+    <!-- Our test matrix includes every currently supported version of .NET
+          - net4.5.2 (EoL April 2022)
+          - net4.6.0 (EoL April 2022)
+          - net4.6.1 (EoL April 2022)
+          - net4.6.2
+          - net4.7.2
+          - net4.8.0
+          - netcoreapp3.1 (EoL Dec 2022)
+          - net6.0 (EoL Nov 2024)
+          - net7.0 (GA Nov 2022)
+    -->
+
+    <SupportedFrameworks_NetCore>net8.0;net7.0;net6.0;netcoreapp3.1;</SupportedFrameworks_NetCore>
+    <SupportedFrameworks_NetFx Condition="$(OS) == 'Windows_NT'">net481;net480;net472;net462;</SupportedFrameworks_NetFx>
+    <LegacyFrameworks_NetFx Condition="$(OS) == 'Windows_NT'">net46;net452;</LegacyFrameworks_NetFx>
+    
+    <TargetFrameworks>$(SupportedFrameworks_NetCore)$(SupportedFrameworks_NetFx)</TargetFrameworks>
+    <TargetFrameworks_WithLegacy>$(SupportedFrameworks_NetCore)$(SupportedFrameworks_NetFx)$(LegacyFrameworks_NetFx)</TargetFrameworks_WithLegacy>
+    <TargetFrameworks_NetCoreOnly>$(SupportedFrameworks_NetCore)</TargetFrameworks_NetCoreOnly>
+    <TargetFrameworks_NetFrameworkOnly>$(SupportedFrameworks_NetFx)$(LegacyFrameworks_NetFx)</TargetFrameworks_NetFrameworkOnly>
+    
+    <TargetFrameworks_LatestNetFramework>net481</TargetFrameworks_LatestNetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+
+    <!-- 
+      We have a significant backlog of analyzer issues in the Test projects. Turning these off for now. 
+      https://docs.microsoft.com/en-us/visualstudio/code-quality/disable-code-analysis?view=vs-2022#net-framework-projects
+      https://docs.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#analysismode
+    -->
+    <AnalysisMode>None</AnalysisMode>
+    <RunAnalyzers>false</RunAnalyzers>
+  </PropertyGroup>
+
+  <PropertyGroup>
+        <NoWarn>$(NoWarn),CS0618</NoWarn> <!-- Instrumentation Key based APIs have been marked Obsolete. No plans to update the tests at this time. -->
+  </PropertyGroup>
+
+</Project>

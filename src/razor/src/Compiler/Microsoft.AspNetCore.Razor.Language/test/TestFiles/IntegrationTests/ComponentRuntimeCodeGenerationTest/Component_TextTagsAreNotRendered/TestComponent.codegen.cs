@@ -2,13 +2,17 @@
 #pragma warning disable 1591
 namespace Test
 {
-    #line hidden
+    #line default
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
+    #line default
+    #line hidden
+    #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
+    #nullable disable
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -16,23 +20,25 @@ namespace Test
             __builder.OpenComponent<global::Test.Counter>(0);
             __builder.CloseComponent();
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
- if (true)
+#line (2,2)-(4,5) "x:\dir\subdir\Test\TestComponent.cshtml"
+if (true)
 {
     
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.AddContent(1, "This text is rendered");
 #nullable restore
-#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                      
+#line (4,39)-(6,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
 }
 
 #line default
 #line hidden
 #nullable disable
+
         }
         #pragma warning restore 1998
     }

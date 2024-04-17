@@ -1,0 +1,24 @@
+﻿<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <!--
+  Complex workaround to make sure configSections is the first child of configuration (otherwise it throws)
+  see http://stackoverflow.com/questions/18737022/xdt-transform-insertbefore-locator-condition-is-ignored for details
+  -->
+  <configSections xdt:Transform="InsertBefore(/configuration/*[1])" />
+  <configSections xdt:Locator="XPath(/configuration/configSections[last()])">
+    <section name="nlog" type="NLog.Config.ConfigSectionHandler, NLog" xdt:Transform="InsertIfMissing" xdt:Locator="Match(name)"/>
+  </configSections>
+  <configSections xdt:Transform="RemoveAll" xdt:Locator="Condition(count(*)=0)" />
+  
+  <nlog xdt:Transform="InsertIfMissing">
+    <extensions xdt:Transform="InsertIfMissing">
+      <add assembly="Microsoft.ApplicationInsights.NLogTarget" xdt:Transform="InsertIfMissing" xdt:Locator="Match(assembly)" />
+    </extensions>
+    <targets xdt:Transform="InsertIfMissing">
+      <target type="ApplicationInsightsTarget" name="aiTarget" xdt:Transform="InsertIfMissing" xdt:Locator="Match(name)" />
+    </targets>
+    <rules xdt:Transform="InsertIfMissing">
+      <logger name="*" minlevel="Trace" writeTo="aiTarget" xdt:Transform="InsertIfMissing" xdt:Locator="Match(writeTo)"/>
+    </rules>
+  </nlog>
+</configuration>

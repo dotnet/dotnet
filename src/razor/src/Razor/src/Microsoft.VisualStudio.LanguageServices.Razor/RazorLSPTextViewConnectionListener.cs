@@ -16,6 +16,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Utilities;
+using IServiceProvider = System.IServiceProvider;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
@@ -37,6 +38,7 @@ namespace Microsoft.VisualStudio.LanguageServices.Razor;
 [ContentType(RazorConstants.RazorLSPContentTypeName)]
 internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
 {
+    private readonly IServiceProvider _serviceProvider;
     private readonly IVsEditorAdaptersFactoryService _editorAdaptersFactory;
     private readonly LSPEditorFeatureDetector _editorFeatureDetector;
     private readonly IEditorOptionsFactoryService _editorOptionsFactory;
@@ -57,37 +59,13 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
 
     [ImportingConstructor]
     public RazorLSPTextViewConnectionListener(
+        [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
         IVsEditorAdaptersFactoryService editorAdaptersFactory,
         LSPEditorFeatureDetector editorFeatureDetector,
         IEditorOptionsFactoryService editorOptionsFactory,
-        IClientSettingsManager editorSettingsManager,
-        SVsServiceProvider serviceProvider)
+        IClientSettingsManager editorSettingsManager)
     {
-        if (editorAdaptersFactory is null)
-        {
-            throw new ArgumentNullException(nameof(editorAdaptersFactory));
-        }
-
-        if (editorFeatureDetector is null)
-        {
-            throw new ArgumentNullException(nameof(editorFeatureDetector));
-        }
-
-        if (editorOptionsFactory is null)
-        {
-            throw new ArgumentNullException(nameof(editorOptionsFactory));
-        }
-
-        if (editorSettingsManager is null)
-        {
-            throw new ArgumentNullException(nameof(editorSettingsManager));
-        }
-
-        if (serviceProvider is null)
-        {
-            throw new ArgumentNullException(nameof(serviceProvider));
-        }
-
+        _serviceProvider = serviceProvider;
         _editorAdaptersFactory = editorAdaptersFactory;
         _editorFeatureDetector = editorFeatureDetector;
         _editorOptionsFactory = editorOptionsFactory;
@@ -104,12 +82,16 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
             throw new ArgumentNullException(nameof(textView));
         }
 
+        // This is a potential entry point for Razor start up, if a project is loaded with an editor already opened.
+        // So, we need to ensure that any Razor start up services are initialized.
+        RazorStartupInitializer.Initialize(_serviceProvider);
+
         var vsTextView = _editorAdaptersFactory.GetViewAdapter(textView);
 
         Assumes.NotNull(vsTextView);
 
         // In remote client scenarios there's a custom language service applied to buffers in order to enable delegation of interactions.
-        // Because of this we don't want to break that experience so we ensure not to "set" a langauge service for remote clients.
+        // Because of this we don't want to break that experience so we ensure not to "set" a language service for remote clients.
         if (!_editorFeatureDetector.IsRemoteClient())
         {
             vsTextView.GetBuffer(out var vsBuffer);

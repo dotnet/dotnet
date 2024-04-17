@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetToolCurrent)</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Moq" />
+    <PackageReference Include="FluentAssertions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.DotNet.VersionTools\Microsoft.DotNet.VersionTools.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="BuildManifest\VersionIdentifierTestsAssets.csv"
+          CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+</Project>

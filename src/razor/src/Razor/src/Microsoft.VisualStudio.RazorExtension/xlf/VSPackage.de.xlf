@@ -62,6 +62,16 @@
         <target state="translated">Anführungszeichen für Attribute automatisch einfügen</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
+        <source>Forces the open brace after an @code or @functions directive to be on the following line</source>
+        <target state="translated">Erzwingt, dass die öffnende geschweifte Klammer nach einer @code- oder @functions-Anweisung in der folgenden Zeile steht</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
+        <source>Code/Functions block open brace on next line</source>
+        <target state="translated">Code/Funktionen blockieren öffnende Klammer in nächster Zeile</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">
         <source>If true, gives C# code in Razor files a background color</source>
         <target state="translated">Bei „true“ erhält C#-Code in Razor-Dateien eine Hintergrundfarbe.</target>

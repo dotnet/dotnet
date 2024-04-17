@@ -100,31 +100,31 @@
     <ProjectReference Include="..\..\NuGet.Core\NuGet.Common\NuGet.Common.csproj">
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\..\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj">
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\..\NuGet.Core\NuGet.DependencyResolver.Core\NuGet.DependencyResolver.Core.csproj">
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\..\NuGet.Core\NuGet.Frameworks\NuGet.Frameworks.csproj">
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\..\NuGet.Core\NuGet.LibraryModel\NuGet.LibraryModel.csproj">
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj">
@@ -133,32 +133,32 @@
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\..\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj">
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\..\NuGet.Core\NuGet.ProjectModel\NuGet.ProjectModel.csproj">
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\..\NuGet.Core\NuGet.Protocol\NuGet.Protocol.csproj">
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\..\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj" />
     <ProjectReference Include="..\..\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj">
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\NuGet.Tools\NuGet.Tools.csproj">
@@ -175,7 +175,7 @@
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\..\NuGet.Core\NuGet.Credentials\NuGet.Credentials.csproj">
@@ -188,7 +188,7 @@
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\NuGet.VisualStudio.Contracts\NuGet.VisualStudio.Contracts.csproj" />
@@ -198,7 +198,7 @@
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\NuGet.PackageManagement.PowerShellCmdlets\NuGet.PackageManagement.PowerShellCmdlets.csproj">
@@ -217,7 +217,7 @@
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\NuGet.VisualStudio.Internal.Contracts\NuGet.VisualStudio.Internal.Contracts.csproj">
@@ -234,7 +234,7 @@
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\NuGet.VisualStudio\NuGet.VisualStudio.csproj">
@@ -242,7 +242,7 @@
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
-      <NgenArchitecture>All</NgenArchitecture>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\NuGet.Console\NuGet.Console.csproj">
@@ -305,7 +305,7 @@
     </ItemGroup>
   </Target>
 
-  <!-- 
+  <!--
     Read the .vsixignore file and generate an IgnoreVsixFilesList item per line
   -->
   <Target Name="ReadVsixIgnoreListFromFile">
@@ -317,7 +317,7 @@
     </ItemGroup>
   </Target>
 
-  <!-- 
+  <!--
     The VSSDK creates a VsixSourceItems item for each file to be copied into the VSIX. In this target, we remove all
     the files listed in our .vsixignore file, and error if any file listed in .vsixinclude is missing from the vsix.
   -->
@@ -384,7 +384,7 @@
       <ThirdPartyAssembly Include="$(PkgLucene_Net)\lib\NET40\Lucene.Net.dll"
                           DestinationDir="$(IntermediateOutputPath)"
                           TargetPath="$(IntermediateOutputPath)Lucene.Net.dll" />
-      
+
       <ThirdPartyAssembly Include="$(PkgNewtonsoft_Json)\lib\net45\Newtonsoft.Json.dll"
                           DestinationDir="$(IntermediateOutputPath)"
                           TargetPath="$(IntermediateOutputPath)Newtonsoft.Json.dll" />

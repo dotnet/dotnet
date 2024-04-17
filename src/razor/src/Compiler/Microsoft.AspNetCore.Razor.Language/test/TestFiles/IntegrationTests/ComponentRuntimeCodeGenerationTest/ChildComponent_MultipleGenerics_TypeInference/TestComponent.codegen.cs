@@ -2,52 +2,60 @@
 #pragma warning disable 1591
 namespace Test
 {
-    #line hidden
+    #line default
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
+    #line default
+    #line hidden
+    #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
+    #nullable disable
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_0(__builder, 0, 1, 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                     "hi"
+#line (1,22)-(1,26) "x:\dir\subdir\Test\TestComponent.cshtml"
+"hi"
 
 #line default
 #line hidden
 #nullable disable
             , 2, 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                    new List<long>()
+#line (1,37)-(1,53) "x:\dir\subdir\Test\TestComponent.cshtml"
+new List<long>()
 
 #line default
 #line hidden
 #nullable disable
             , 3, (context) => (__builder2) => {
                 __builder2.OpenElement(4, "div");
+                __builder2.AddContent(5, 
 #nullable restore
-#line (2,23)-(2,40) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder2.AddContent(5, context.ToLower());
+#line (2,23)-(2,40) "x:\dir\subdir\Test\TestComponent.cshtml"
+context.ToLower()
 
 #line default
 #line hidden
 #nullable disable
+                );
                 __builder2.CloseElement();
             }
             , 6, (item) => (__builder2) => {
+                __builder2.AddContent(7, 
 #nullable restore
-#line (4,4)-(4,33) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder2.AddContent(7, System.Math.Max(0, item.Item));
+#line (4,4)-(4,33) "x:\dir\subdir\Test\TestComponent.cshtml"
+System.Math.Max(0, item.Item)
 
 #line default
 #line hidden
 #nullable disable
+                );
                 __builder2.AddMarkupContent(8, ";\r\n");
             }
             );

@@ -5,7 +5,7 @@
 
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.IntegrationTests;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -235,7 +235,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
         var result = CompileToCSharp(content, throwOnFailure: false);
         var syntaxTree = result.CodeDocument.GetSyntaxTree();
         var owner = syntaxTree.Root.FindInnermostNode(index, includeWhitespace: true, walkMarkersBack: true);
-        owner = RazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, index);
+        owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, index);
 
         return owner;
     }

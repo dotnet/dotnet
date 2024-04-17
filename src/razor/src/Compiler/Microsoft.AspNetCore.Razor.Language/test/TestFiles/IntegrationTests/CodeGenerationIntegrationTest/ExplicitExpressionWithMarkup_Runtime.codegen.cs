@@ -12,18 +12,20 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
             WriteLiteral("<div>");
+            Write(
+            item => new Template(async(__razor_template_writer) => {
+                PushWriter(__razor_template_writer);
+                WriteLiteral("</div>");
+                PopWriter();
+            }
+            )
 #nullable restore
-#line (1,9)-(1,15) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpressionWithMarkup.cshtml"
-Write(item => new Template(async(__razor_template_writer) => {
-    PushWriter(__razor_template_writer);
-    WriteLiteral("</div>");
-    PopWriter();
-}
-));
+#line (1,15)-(1,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpressionWithMarkup.cshtml"
 
 #line default
 #line hidden
 #nullable disable
+            );
         }
         #pragma warning restore 1998
     }

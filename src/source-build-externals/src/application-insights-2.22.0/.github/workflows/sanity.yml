@@ -1,0 +1,47 @@
+# Syntax: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
+# .NET CLI: https://docs.microsoft.com/dotnet/core/tools/
+# Description: The purpose of this workflow is to verify that every solution in the repo successfully compiles.
+
+name: Sanity Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  sanity-build:
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        solution: [
+          ./NETCORE/ApplicationInsights.AspNetCore.sln,
+          ./Everything.sln,
+          ./ProjectsForSigning.sln,
+          ./examples/Examples.sln,
+          ./LOGGING/Logging.sln,
+          ./BASE/Microsoft.ApplicationInsights.sln,
+          ./WEB/Src/Microsoft.ApplicationInsights.Web.sln]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v3.1.0
+      with:
+        dotnet-version: |
+            3.1.x
+            6.0.x
+            7.0.x
+            8.0.x
+
+    - name: Restore
+      run: dotnet restore ${{ matrix.solution }}
+
+    - name: Build
+      run: dotnet build ${{ matrix.solution }}

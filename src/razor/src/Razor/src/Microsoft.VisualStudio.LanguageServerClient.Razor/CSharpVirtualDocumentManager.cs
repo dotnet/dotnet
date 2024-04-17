@@ -3,18 +3,22 @@
 
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
-[Export(typeof(IProjectSnapshotChangeTrigger))]
-[method: ImportingConstructor]
-internal class CSharpVirtualDocumentManager(LSPDocumentManager lspDocumentManager) : IProjectSnapshotChangeTrigger
+[Export(typeof(IRazorStartupService))]
+internal class CSharpVirtualDocumentManager : IRazorStartupService
 {
-    private readonly LSPDocumentManager _lspDocumentManager = lspDocumentManager;
+    private readonly LSPDocumentManager _lspDocumentManager;
 
-    public void Initialize(ProjectSnapshotManagerBase projectManager)
+    [ImportingConstructor]
+    public CSharpVirtualDocumentManager(
+        LSPDocumentManager lspDocumentManager,
+        IProjectSnapshotManager projectManager)
     {
+        _lspDocumentManager = lspDocumentManager;
         projectManager.Changed += ProjectManager_Changed;
     }
 

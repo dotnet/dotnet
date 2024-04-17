@@ -12,13 +12,15 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
             WriteLiteral("\r\n");
+            Write(
 #nullable restore
-#line (3,2)-(3,7) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml"
-Write(foo());
+#line (3,2)-(3,7) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml"
+foo()
 
 #line default
 #line hidden
 #nullable disable
+            );
         }
         #pragma warning restore 1998
     }

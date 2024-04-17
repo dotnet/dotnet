@@ -1,0 +1,57 @@
+# Syntax: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
+# .NET CLI: https://docs.microsoft.com/dotnet/core/tools/
+# Description: The purpose of this workflow is to compile and run unit tests.
+
+name: Build And Test, BASE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test-BASE:
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      SOLUTION: ./BASE/Microsoft.ApplicationInsights.sln
+      TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/TestResults
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        framework: [net452, net462, net472, net480, net481, netcoreapp3.1, net6.0, net7.0, net8.0]
+        include: 
+          - os: ubuntu-latest
+            args: "--filter TestCategory!=WindowsOnly"
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v3.1.0
+      with:
+        dotnet-version: |
+            3.1.x
+            6.0.x
+            7.0.x
+            8.0.x
+
+    - name: Restore
+      run: dotnet restore ${{ env.SOLUTION }}
+
+    - name: Build
+      run: dotnet build ${{ env.SOLUTION }} --configuration Release --no-restore
+
+    - name: Test
+      id: test1
+      continue-on-error: true
+      run: dotnet test ${{ env.SOLUTION }} --framework ${{ matrix.framework }} --configuration Release --no-build --results-directory ${{ env.TEST_RESULTS_DIRECTORY }} --logger:"console;verbosity=detailed" --logger:"trx;logfileprefix=testResults_" ${{ matrix.args }}
+
+    - name: Retry tests
+      if: steps.test1.outcome=='failure'
+      run: pwsh -f ./.scripts/build_RetryTests.ps1 -TestResultsDirectory ${{ env.TEST_RESULTS_DIRECTORY }} -WorkingDirectory ${{ github.workspace }}

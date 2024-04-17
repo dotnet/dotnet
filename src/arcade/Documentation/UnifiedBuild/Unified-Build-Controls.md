@@ -44,12 +44,6 @@ The following is an attempt to document how the current switches work, their cur
   - **Values and their intended purposes**
     - **True** – The inner repo build is executing. This switch is not intended for product repos to use to control anything but their build behavior. Typically, this is used to activate or deactivate behavior that should only be executed on an inner build and nowhere else. This switch is also only present when building repos that use arcade.
     - **False/Empty** – Not executing in the inner build, or not a repo that uses arcade based infra.
-- **ArcadeBuildVertical (true/false/empty)** – PoC switch
-  - **Phases** – Outer Repo Build, Inner Repo Build
-  - **Infrastructure or Product Use** – Infrastructure
-  - **Values and their intended purposes**
-    - **True** – This is essentially "ArcadeBuildFromSource" but without activating much of the Linux distro partner build behavior. For instance, prebuilts are checked but not reported, DotNetBuildVertical is passed to the inner build, DotNetBuildOffline is not passed, etc. Basically, this is "build using the source-build infrastructure, but without strict behavior).
-  - **False/Empty** – The outer or inner repo build is not executing.
 - **DotNetBuildFromSource** (true/false/empty)
   - **Phases** - Orchestrator, Inner Repo Build
   - **Infrastructure or Product Use?** - Both
@@ -62,12 +56,6 @@ The following is an attempt to document how the current switches work, their cur
   - **Infrastructure or Product Use?** – Infrastructure
   - Values and their intended purposes 
     - False/Empty – Removes online sources from the repo’s NuGet.config files.
-- **DotNetBuildVertical**
-  - **Phases** - Inner Repo, Outer Repo Build, Orchestrator
-  - **Infrastructure or Product Use?** - Product and Infrastructure
-  - Values and their intended purposes
-    - **True** – Building the product in vertical PoC mode. Automatically excludes test and test utility projects from being built, excludes restoring and building projects that have the "ExcludeFromVerticalBuild" property set.
-    - **False** – Not building in vertical PoC mode.
 - **DotNetBuildFromSourceFlavor**
   - **Phases** – Outer Repo Build, Inner Repo Build
   - **Infrastructure or Product Use?** – Product and Infrastructure
@@ -79,12 +67,6 @@ The following is an attempt to document how the current switches work, their cur
   - **Infrastructure or Product Use?** - Product
   - **Values and their intended purposes.**
     - **True** – If true and DotNetBuildFromSource is true, no targets should be executed for the project. Causes the standard Arcade empty targets to be imported. No restore, no build. Standard test projects set this implicitly.
-    - **False/Empty** – Default behavior is used.
-- **ExcludeFromVerticalBuild**
-  - **Phases** - Inner Repo Build
-  - **Infrastructure or Product Use?** - Product
-  - **Values and their intended purposes.**
-    - **True** – If true and DotNetBuildVertical is true, no targets should be executed for the project. Causes the standard Arcade empty targets to be imported. No restore, no build. Standard test projects set this implicitly.
     - **False/Empty** – Default behavior is used.
 - **OfficialBuilder**
   - **Phases** – Inner Repo Build
@@ -143,7 +125,7 @@ The following context controls will be implemented. These controls should be use
 | -------- | -------- | -------- | -------- |
 | DotNetBuildInnerRepo | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the inner repo build. This is equivalent to `ArcadeInnerBuildFromSource``. |
 | DotNetBuildOrchestrator | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the orchestrator, outer repo build, and inner repo build.<br/>This is roughly equivalent to `DotNetBuildFromSourceFlavor` as `Product`` in the current control set. |
-| DotNetBuildRepo | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within outer repo build or inner repo build phases.<br/>This is essentially `ArcadeBuildFromSource` or `ArcadeBuildVertical.` |
+| DotNetBuildRepo | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within outer repo build or inner repo build phases.<br/>This is essentially the same as the legacy `ArcadeBuildFromSource`. |
 
 ### Resource Controls
 
@@ -162,14 +144,18 @@ In addition to these default high level controls, there may be additional compon
 
 | **Name** | **Values** | **Default** | **Description** |
 | -------- | -------- | -------- | -------- |
-| BuildOS | "linux", "osx", "freebsd", "netbsd", "illumos", "solaris", "haiku", "windows", ... | Defaults to the OS of the build environment | The operating system of the machine that is built on. Lower-case string. |
-| HostOS | Same as `BuildOS` | Defaults to `BuildOS` | The operating system of the machine that will run the produced tool (i.e. compiler) to generate the binary for the target operating system. |
-| TargetOS | Same as `BuildOS` | Defaults to `BuildOS` | The operating system of the machine that will run the binary -> the end user’s machine. |
-| BuildArchitecture | "x64", "x86", "arm", "arm64", ... | Defaults to the architecture of the build environment | The architecture of the machine that is built on. Lower-case string. |
-| TargetArchitecture | Same as `BuildArchitecture` | Defaults to `BuildArchitecture` | The architecture of the machine that will run the binary -> the end user's machine. |
-| HostArchitecture | Same as `BuildArchitecture` | Defaults to `TargetArchitecture` | The architecture of the machine that will run the produced tool (i.e. compiler) to generate the binary for the target architecture |
-| Configuration | Debug, Release | Release | Defaults on producing a shipping product. |
+| BuildOS | "linux", "osx", "freebsd", "netbsd", "illumos", "solaris", "haiku", "windows", ... | OS of the build environment | The operating system of the machine that is built on. Lower-case string. |
+| TargetOS | Same as `BuildOS` | `BuildOS` | The operating system of the machine that will run the binary -> the end user’s machine. |
+| HostOS | Same as `BuildOS` | `TargetOS` | The operating system of the machine that will run the produced tool (i.e. compiler) to generate the binary for the target operating system. |
+| BuildRid | Valid RIDs | RID of the the currently executing runtime | The RID of the runtime that is running the build |
+| TargetRid | Valid RIDs | When building non-portable, the OS of build Rid + TargetArchitecture. When building portable, `TargetOS-TargetArchitecture`. | The RID of the runtime that will run the binary -> the end user’s machine. |
+| HostRid | Valid RIDs | `TargetRid` | The RID of the runtime that will run the produced tool (i.e. compiler) to generate the binary for the target operating system. |
+| BuildArchitecture | "x64", "x86", "arm", "arm64", ... | The architecture of the build environment | The architecture of the machine that is built on. Lower-case string. |
+| TargetArchitecture | Same as `BuildArchitecture` | `BuildArchitecture` | The architecture of the machine that will run the binary -> the end user's machine. |
+| HostArchitecture | Same as `BuildArchitecture` | `TargetArchitecture` | The architecture of the machine that will run the produced tool (i.e. compiler) to generate the binary for the target architecture |
+| Configuration | Debug, Release | Release | Defaults produces a shipping product. |
 | DotNetBuildTests | "true", "false", "" | "" is the default. | When "true", the build should include test projects.<br/>Not "true" is essentially the default behavior for source build today. This is essentially equivalent to ExcludeFromBuild being set to true when `DotNetBuildTests` == false and Arcade’s `IsTestProject` or `IsTestUtilityProject`` is true. |
+| ShortStack | "true", "false", "" | "" | If true, the build is a 'short stack' (runtime and its dependencies only). Other repo builds are skipped. |
 | ExcludeFromDotNetBuild | "true", "false", "" | "" | When "true" and `DotNetBuild` == "true", the project is not built.<br/>This is equivalent to `ExcludeFromBuild` being set to true when `DotNetBuild` == "true".<br/>This control applies to project properties. |
 | ExcludeFromSourceOnlyBuild | "true", "false", "" | "" | When "true" and `DotNetBuild` == "true" and `DotNetBuildSourceOnly` == "true" the project is not built.<br/>This is equivalent to `ExcludeFromBuild` being set to true when `DotNetBuild` == "true". Same as `ExcludeFromSourceBuild` today.<br/>This control applies to project properties. |
 

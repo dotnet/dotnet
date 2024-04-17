@@ -11,17 +11,12 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-internal abstract class ProjectSnapshotManagerDispatcher : IDisposable
+internal abstract class ProjectSnapshotManagerDispatcher(IErrorReporter errorReporter) : IDisposable
 {
-    private readonly CustomScheduler _scheduler;
+    private readonly CustomScheduler _scheduler = new(errorReporter);
 
     public TaskScheduler Scheduler => _scheduler;
     public bool IsRunningOnDispatcher => TaskScheduler.Current == _scheduler;
-
-    protected ProjectSnapshotManagerDispatcher(IErrorReporter errorReporter)
-    {
-        _scheduler = new CustomScheduler(errorReporter);
-    }
 
     public void Dispose()
     {
@@ -29,13 +24,48 @@ internal abstract class ProjectSnapshotManagerDispatcher : IDisposable
     }
 
     public Task RunAsync(Action action, CancellationToken cancellationToken)
-        => Task.Factory.StartNew(action, cancellationToken, TaskCreationOptions.None, Scheduler);
+    {
+        if (IsRunningOnDispatcher)
+        {
+            action();
+            return Task.CompletedTask;
+        }
 
-    public Task RunAsync<TArg>(Action<TArg, CancellationToken> action, TArg arg, CancellationToken cancellationToken)
-        => Task.Factory.StartNew(() => action(arg, cancellationToken), cancellationToken, TaskCreationOptions.None, Scheduler);
+        return Task.Factory.StartNew(action, cancellationToken, TaskCreationOptions.None, Scheduler);
+    }
 
-    public Task<TResult> RunAsync<TResult>(Func<TResult> action, CancellationToken cancellationToken)
-        => Task.Factory.StartNew(action, cancellationToken, TaskCreationOptions.None, Scheduler);
+    public Task RunAsync<TState>(Action<TState> action, TState state, CancellationToken cancellationToken)
+    {
+        if (IsRunningOnDispatcher)
+        {
+            action(state);
+            return Task.CompletedTask;
+        }
+
+        return Task.Factory.StartNew(() => action(state), cancellationToken, TaskCreationOptions.None, Scheduler);
+    }
+
+    public Task<TResult> RunAsync<TResult>(Func<TResult> func, CancellationToken cancellationToken)
+    {
+        if (IsRunningOnDispatcher)
+        {
+            var result = func();
+            return Task.FromResult(result);
+        }
+
+        return Task.Factory.StartNew(func, cancellationToken, TaskCreationOptions.None, Scheduler);
+    }
+
+    public Task<TResult> RunAsync<TState, TResult>(Func<TState, TResult> func, TState state, CancellationToken cancellationToken)
+    {
+        if (IsRunningOnDispatcher)
+        {
+            var result = func(state);
+            return Task.FromResult(result);
+        }
+
+        return Task.Factory.StartNew(() => func(state), cancellationToken, TaskCreationOptions.None, Scheduler);
+    }
 
     public void AssertRunningOnDispatcher([CallerMemberName] string? caller = null)
     {

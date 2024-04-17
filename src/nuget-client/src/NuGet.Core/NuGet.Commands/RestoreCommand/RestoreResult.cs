@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -162,27 +163,35 @@ namespace NuGet.Commands
             var isTool = ProjectStyle == ProjectStyle.DotnetCliTool;
 
             // Commit the assets file to disk.
+            if (NuGetEventSource.IsEnabled) TraceEvents.WriteAssetsFileStart(LockFilePath);
             await CommitAssetsFileAsync(
                 lockFileFormat,
                 result: this,
                 log: log,
                 toolCommit: isTool,
                 token: token);
+            if (NuGetEventSource.IsEnabled) TraceEvents.WriteAssetsFileStop(LockFilePath);
 
             //Commit the cache file to disk
+            if (NuGetEventSource.IsEnabled) TraceEvents.WriteCacheFileStart(CacheFilePath);
             await CommitCacheFileAsync(
                 log: log,
                 toolCommit: isTool);
+            if (NuGetEventSource.IsEnabled) TraceEvents.WriteCacheFileStop(CacheFilePath);
 
             // Commit the lock file to disk
+            if (NuGetEventSource.IsEnabled) TraceEvents.WritePackagesLockFileStart(_newPackagesLockFilePath);
             await CommitLockFileAsync(
                 log: log,
                 toolCommit: isTool);
+            if (NuGetEventSource.IsEnabled) TraceEvents.WritePackagesLockFileStop(_newPackagesLockFilePath);
 
             // Commit the dg spec file to disk
+            if (NuGetEventSource.IsEnabled) TraceEvents.WriteDgSpecFileStart(_dependencyGraphSpecFilePath);
             await CommitDgSpecFileAsync(
                 log: log,
                 toolCommit: isTool);
+            if (NuGetEventSource.IsEnabled) TraceEvents.WriteDgSpecFileStop(_dependencyGraphSpecFilePath);
         }
 
         private async Task CommitAssetsFileAsync(
@@ -299,6 +308,110 @@ namespace NuGet.Commands
                 await FileUtility.ReplaceWithLock(
                     (outputPath) => _dependencyGraphSpec.Save(outputPath),
                     _dependencyGraphSpecFilePath);
+            }
+        }
+
+        private static class TraceEvents
+        {
+            private const string EventNameWriteAssetsFile = "RestoreResult/WriteAssetsFile";
+            private const string EventNameWriteCacheFile = "RestoreResult/WriteCacheFile";
+            private const string EventNameWritePackagesLockFile = "RestoreResult/WritePackagesLockFile";
+            private const string EventNameWriteDgSpecFile = "RestoreResult/WriteDgSpecFile";
+
+            public static void WriteAssetsFileStart(string filePath)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    Keywords = NuGetEventSource.Keywords.Performance |
+                                NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Start
+                };
+
+                NuGetEventSource.Instance.Write(EventNameWriteAssetsFile, eventOptions, new { FilePath = filePath });
+            }
+
+            public static void WriteAssetsFileStop(string filePath)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    Keywords = NuGetEventSource.Keywords.Performance |
+                                NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Stop
+                };
+
+                NuGetEventSource.Instance.Write(EventNameWriteAssetsFile, eventOptions, new { FilePath = filePath });
+            }
+
+            public static void WriteCacheFileStart(string filePath)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    Keywords = NuGetEventSource.Keywords.Performance |
+                                NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Start
+                };
+
+                NuGetEventSource.Instance.Write(EventNameWriteCacheFile, eventOptions, new { FilePath = filePath });
+            }
+
+            public static void WriteCacheFileStop(string filePath)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    Keywords = NuGetEventSource.Keywords.Performance |
+                                NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Stop
+                };
+
+                NuGetEventSource.Instance.Write(EventNameWriteCacheFile, eventOptions, new { FilePath = filePath });
+            }
+
+            public static void WritePackagesLockFileStart(string filePath)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    Keywords = NuGetEventSource.Keywords.Performance |
+                                NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Start
+                };
+
+                NuGetEventSource.Instance.Write(EventNameWritePackagesLockFile, eventOptions, new { FilePath = filePath });
+            }
+
+            public static void WritePackagesLockFileStop(string filePath)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    Keywords = NuGetEventSource.Keywords.Performance |
+                                NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Stop
+                };
+
+                NuGetEventSource.Instance.Write(EventNameWritePackagesLockFile, eventOptions, new { FilePath = filePath });
+            }
+
+            public static void WriteDgSpecFileStart(string filePath)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    Keywords = NuGetEventSource.Keywords.Performance |
+                                NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Start
+                };
+
+                NuGetEventSource.Instance.Write(EventNameWriteDgSpecFile, eventOptions, new { FilePath = filePath });
+            }
+
+            public static void WriteDgSpecFileStop(string filePath)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    Keywords = NuGetEventSource.Keywords.Performance |
+                                NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Stop
+                };
+
+                NuGetEventSource.Instance.Write(EventNameWriteDgSpecFile, eventOptions, new { FilePath = filePath });
             }
         }
     }

@@ -31,12 +31,6 @@ public partial class ToolStripPanelRow : Component, IArrangedElement
     private static readonly int s_propControlsCollection = PropertyStore.CreateKey();
 
 #if DEBUG
-    internal static TraceSwitch s_toolStripPanelRowCreationDebug = new("ToolStripPanelRowCreationDebug", "Debug code for rafting row creation");
-#else
-    internal static TraceSwitch? s_toolStripPanelRowCreationDebug;
-#endif
-
-#if DEBUG
     private static int s_rowCreationCount;
     private readonly int _thisRowID;
 #endif
@@ -59,13 +53,9 @@ public partial class ToolStripPanelRow : Component, IArrangedElement
         _state[s_stateVisible] = visible;
         _state[s_stateDisposing | s_stateLocked | s_stateInitialized] = false;
 
-        s_toolStripPanelRowCreationDebug.TraceVerbose("Created new ToolStripPanelRow");
-
-        using (LayoutTransaction lt = new(parent, this, null))
-        {
-            Margin = DefaultMargin;
-            CommonProperties.SetAutoSize(this, true);
-        }
+        using LayoutTransaction lt = new(parent, this, null);
+        Margin = DefaultMargin;
+        CommonProperties.SetAutoSize(this, true);
     }
 
     public Rectangle Bounds
@@ -303,7 +293,6 @@ public partial class ToolStripPanelRow : Component, IArrangedElement
         {
             if (disposing)
             {
-                s_toolStripPanelRowCreationDebug.TraceVerbose("Disposed ToolStripPanelRow");
                 _state[s_stateDisposing] = true;
                 ControlsInternal.Clear();
             }
@@ -317,7 +306,7 @@ public partial class ToolStripPanelRow : Component, IArrangedElement
 
     protected internal virtual void OnControlAdded(Control control, int index)
     {
-        // if previously added - remove.
+        // If previously added - remove.
 
         if (control is ISupportToolStripPanel controlToBeDragged)
         {
@@ -334,7 +323,7 @@ public partial class ToolStripPanelRow : Component, IArrangedElement
 
     protected void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
     {
-        ((IArrangedElement)this).PerformLayout((IArrangedElement)this, PropertyNames.Size);
+        ((IArrangedElement)this).PerformLayout(this, PropertyNames.Size);
 
         RowManager.OnBoundsChanged(oldBounds, newBounds);
     }
@@ -378,7 +367,7 @@ public partial class ToolStripPanelRow : Component, IArrangedElement
     {
         for (int i = 0; i < Cells.Count; i++)
         {
-            IArrangedElement element = Cells[i] as IArrangedElement;
+            IArrangedElement element = Cells[i];
             if (element.ParticipatesInLayout)
             {
                 ToolStripPanelCell cell = (ToolStripPanelCell)element;
@@ -624,11 +613,11 @@ public partial class ToolStripPanelRow : Component, IArrangedElement
 
     private void SetBounds(Rectangle bounds)
     {
-        if (bounds != this._bounds)
+        if (bounds != _bounds)
         {
-            Rectangle oldBounds = this._bounds;
+            Rectangle oldBounds = _bounds;
 
-            this._bounds = bounds;
+            _bounds = bounds;
             OnBoundsChanged(oldBounds, bounds);
         }
     }
@@ -727,9 +716,9 @@ public partial class ToolStripPanelRow : Component, IArrangedElement
     #region MouseStuff
 
 #if DEBUG
-    internal static readonly TraceSwitch ToolStripPanelMouseDebug = new("ToolStripPanelMouse", "Debug ToolStrip WM_MOUSEACTIVATE code");
+    internal static TraceSwitch ToolStripPanelMouseDebug { get; } = new("ToolStripPanelMouse", "Debug ToolStrip WM_MOUSEACTIVATE code");
 #else
-    internal static readonly TraceSwitch? ToolStripPanelMouseDebug;
+    internal static TraceSwitch? ToolStripPanelMouseDebug { get; }
 #endif
 
     internal Rectangle DragBounds

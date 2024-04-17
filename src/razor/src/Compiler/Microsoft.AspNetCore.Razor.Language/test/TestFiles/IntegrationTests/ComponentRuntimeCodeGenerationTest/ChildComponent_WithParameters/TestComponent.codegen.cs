@@ -2,13 +2,17 @@
 #pragma warning disable 1591
 namespace Test
 {
-    #line hidden
+    #line default
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
+    #line default
+    #line hidden
+    #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
+    #nullable disable
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -16,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.MyComponent>(0);
             __builder.AddComponentParameter(1, "IntProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Int32>(
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                 123
+#line (2,18)-(2,21) "x:\dir\subdir\Test\TestComponent.cshtml"
+123
 
 #line default
 #line hidden
@@ -25,8 +29,8 @@ namespace Test
             ));
             __builder.AddComponentParameter(2, "BoolProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Boolean>(
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-                  true
+#line (3,19)-(3,23) "x:\dir\subdir\Test\TestComponent.cshtml"
+true
 
 #line default
 #line hidden
@@ -35,8 +39,8 @@ namespace Test
             __builder.AddComponentParameter(3, "StringProperty", "My string");
             __builder.AddComponentParameter(4, "ObjectProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Test.SomeType>(
 #nullable restore
-#line 5 "x:\dir\subdir\Test\TestComponent.cshtml"
-                    new SomeType()
+#line (5,21)-(5,35) "x:\dir\subdir\Test\TestComponent.cshtml"
+new SomeType()
 
 #line default
 #line hidden

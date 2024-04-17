@@ -4,7 +4,7 @@
 [assembly: global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemAttribute(typeof(AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_test), @"mvc.1.0.razor-page", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/test.cshtml")]
 namespace AspNetCore
 {
-    #line hidden
+    #line default
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
@@ -12,6 +12,8 @@ namespace AspNetCore
     using global::Microsoft.AspNetCore.Mvc;
     using global::Microsoft.AspNetCore.Mvc.Rendering;
     using global::Microsoft.AspNetCore.Mvc.ViewFeatures;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"277fbcbf5d1dfc2066aea1070e6dd8b1890ff5da41edddab19b860e37725bd8a", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/test.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("Identifier", "/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/test.cshtml")]
     [global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdateAttribute]
@@ -48,13 +50,14 @@ namespace AspNetCore
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
 #nullable restore
-#line 3 "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
-  
+#line (3,3)-(5,1) "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
+
     ViewData["Title"] = "Home page";
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("<div TestCssScope class=\"text-center\">\r\n    <h1 TestCssScope class=\"display-4\">Welcome</h1>\r\n    <p TestCssScope>Learn about<a TestCssScope href= \"https://docs.microsoft.com/aspnet/core\" > building Web apps with ASP.NET Core</a>.</p>\r\n</div>\r\n");
             __tagHelperExecutionContext = __tagHelperScopeManager.Begin("all", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
             }

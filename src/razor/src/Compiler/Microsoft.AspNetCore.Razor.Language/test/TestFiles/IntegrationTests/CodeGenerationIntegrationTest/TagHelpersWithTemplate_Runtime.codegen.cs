@@ -41,8 +41,8 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
             __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
                 WriteLiteral("\r\n");
 #nullable restore
-#line 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml"
-      
+#line (13,7)-(16,13) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml"
+
         RenderTemplate(
             "Template: ",
             
@@ -50,17 +50,20 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #line default
 #line hidden
 #nullable disable
+
                 item => new Template(async(__razor_template_writer) => {
                     PushWriter(__razor_template_writer);
                     __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
                         WriteLiteral("<h3>");
+                        Write(
 #nullable restore
-#line (16,41)-(16,45) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml"
-Write(item);
+#line (16,41)-(16,45) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml"
+item
 
 #line default
 #line hidden
 #nullable disable
+                        );
                         WriteLiteral("</h3>");
                         __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
                         }
@@ -92,13 +95,14 @@ Write(item);
                 }
                 )
 #nullable restore
-#line 16 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml"
-                                                                                               );
+#line (16,96)-(17,5) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml"
+);
     
 
 #line default
 #line hidden
 #nullable disable
+
             }
             );
             __DivTagHelper = CreateTagHelper<global::DivTagHelper>();
@@ -114,8 +118,8 @@ Write(item);
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml"
-            
+#line (3,13)-(10,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml"
+
     public void RenderTemplate(string title, Func<string, HelperResult> template)
     {
         Output.WriteLine("<br /><p><em>Rendering Template:</em></p>");
@@ -126,6 +130,7 @@ Write(item);
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

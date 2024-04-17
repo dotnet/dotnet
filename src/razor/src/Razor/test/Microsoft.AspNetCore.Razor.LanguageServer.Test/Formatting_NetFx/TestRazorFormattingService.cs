@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor;
@@ -28,10 +29,11 @@ internal static class TestRazorFormattingService
     {
         codeDocument ??= TestRazorCodeDocument.CreateEmpty();
 
-        var filePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
+        var filePathService = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
         var mappingService = new RazorDocumentMappingService(filePathService, new TestDocumentContextFactory(), loggerFactory);
 
-        var versionCache = new DocumentVersionCache();
+        var projectManager = StrictMock.Of<IProjectSnapshotManager>();
+        var versionCache = new DocumentVersionCache(projectManager);
         if (documentSnapshot is not null)
         {
             await dispatcher.RunAsync(() =>
@@ -64,7 +66,7 @@ internal static class TestRazorFormattingService
             new HtmlFormattingPass(mappingService, client, versionCache, optionsMonitor, loggerFactory),
             new CSharpFormattingPass(mappingService, client, loggerFactory),
             new CSharpOnTypeFormattingPass(mappingService, client, optionsMonitor, loggerFactory),
-            new RazorFormattingPass(mappingService, client, loggerFactory),
+            new RazorFormattingPass(mappingService, client, optionsMonitor,  loggerFactory),
             new FormattingDiagnosticValidationPass(mappingService, client, loggerFactory),
             new FormattingContentValidationPass(mappingService, client, loggerFactory),
         };

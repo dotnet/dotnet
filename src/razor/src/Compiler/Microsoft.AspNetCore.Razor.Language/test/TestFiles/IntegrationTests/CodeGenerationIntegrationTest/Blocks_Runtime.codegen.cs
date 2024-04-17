@@ -12,161 +12,184 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
 #nullable restore
-#line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
-  
+#line (1,3)-(3,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+
     int i = 1;
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("\r\n");
 #nullable restore
-#line 5 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
- while(i <= 10) {
+#line (5,2)-(6,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+while(i <= 10) {
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("    <p>Hello from C#, #");
+            Write(
 #nullable restore
-#line (6,26)-(6,27) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
-Write(i);
+#line (6,26)-(6,27) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+i
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</p>\r\n");
 #nullable restore
-#line 7 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+#line (7,1)-(9,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
     i += 1;
 }
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("\r\n");
 #nullable restore
-#line 10 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
- if(i == 11) {
+#line (10,2)-(11,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+if(i == 11) {
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("    <p>We wrote 10 lines!</p>\r\n");
 #nullable restore
-#line 12 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+#line (12,1)-(13,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
 }
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("\r\n");
 #nullable restore
-#line 14 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
- switch(i) {
+#line (14,2)-(16,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+switch(i) {
     case 11:
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("        <p>No really, we wrote 10 lines!</p>\r\n");
 #nullable restore
-#line 17 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+#line (17,1)-(19,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
         break;
     default:
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("        <p>Actually, we didn\'t...</p>\r\n");
 #nullable restore
-#line 20 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+#line (20,1)-(22,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
         break;
 }
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("\r\n");
 #nullable restore
-#line 23 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
- for(int j = 1; j <= 10; j += 2) {
+#line (23,2)-(24,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+for(int j = 1; j <= 10; j += 2) {
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("    <p>Hello again from C#, #");
+            Write(
 #nullable restore
-#line (24,32)-(24,33) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
-Write(j);
+#line (24,32)-(24,33) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+j
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</p>\r\n");
 #nullable restore
-#line 25 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+#line (25,1)-(26,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
 }
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("\r\n");
 #nullable restore
-#line 27 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
- try {
+#line (27,2)-(28,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+try {
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("    <p>That time, we wrote 5 lines!</p>\r\n");
 #nullable restore
-#line 29 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+#line (29,1)-(30,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
 } catch(Exception ex) {
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("    <p>Oh no! An error occurred: ");
+            Write(
 #nullable restore
-#line (30,36)-(30,46) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
-Write(ex.Message);
+#line (30,36)-(30,46) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+ex.Message
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</p>\r\n");
 #nullable restore
-#line 31 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+#line (31,1)-(32,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
 }
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("\r\n<p>i is now ");
+            Write(
 #nullable restore
-#line (33,14)-(33,15) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
-Write(i);
+#line (33,14)-(33,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+i
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</p>\r\n\r\n");
 #nullable restore
-#line 35 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
- lock(new object()) {
+#line (35,2)-(36,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+lock(new object()) {
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("    <p>This block is locked, for your security!</p>\r\n");
 #nullable restore
-#line 37 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
+#line (37,1)-(37,2) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml"
 }
 
 #line default
 #line hidden
 #nullable disable
+
         }
         #pragma warning restore 1998
     }

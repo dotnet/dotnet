@@ -23,7 +23,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
 
     protected virtual bool CanUseAddComponentParameter(CodeRenderingContext context)
     {
-        return !context.Options.SuppressAddComponentParameter && _version.CompareTo(RazorLanguageVersion.Version_8_0) >= 0;
+        return !context.Options.SuppressAddComponentParameter && _version >= RazorLanguageVersion.Version_8_0;
     }
 
     protected string GetAddComponentParameterMethodName(CodeRenderingContext context)

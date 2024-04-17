@@ -33,16 +33,6 @@ pr:
       - README.md
       - SECURITY.md
 
-parameters:
-- name: isRTM
-  displayName: "Produce RTM version?"
-  type: boolean
-  default: False
-- name: SDLEnabled
-  displayName: "Run SDL validation"
-  type: boolean
-  default: False
-
 variables:
   # Cannot use key:value syntax in root defined variables
   - name: _TeamName
@@ -50,9 +40,9 @@ variables:
   - name: Codeql.Enabled
     value: true
   - name: _RunAsInternal
-    value: ${{ and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}
+    value: False
   - name: _RunAsPublic
-    value: ${{ eq(variables._RunAsInternal, False) }}
+    value: True
   # Set default value for variables of PR and Public builds
   - name: _SignType
     value: test
@@ -69,40 +59,6 @@ variables:
   # in .packages. Force the location of packages to that folder.
   - name: NUGET_PACKAGES
     value: '$(Build.SourcesDirectory)/.packages/'
-
-  - ${{ if eq(parameters.isRTM, True) }}:
-    - name: _ReleaseVersionKind
-      value: release
-
-  # Produce real signed binaries for Internal builds
-  - ${{ if eq(variables._RunAsInternal, True) }}:
-    # Group gives access to $microsoft-symbol-server-pat and $symweb-symbol-server-pat
-    - group: DotNet-Symbol-Server-Pats
-    # Group gives access to $dn-bot-devdiv-drop-rw-code-rw and dn-bot-dnceng-build-rw-code-rw
-    - group: DotNet-VSTS-Infra-Access
-    - name: _DevDivDropAccessToken
-      value: $(dn-bot-devdiv-drop-rw-code-rw)
-    - name: _SignType
-      value: real
-    - name: _SignArgs
-      value: /p:DotNetSignType=$(_SignType) /p:TeamName=$(_TeamName) /p:Sign=$(_Sign)
-    - name: _Sign
-      value: True
-    - name: VisualStudioDropName
-      value: Products/$(System.TeamProject)/$(Build.DefinitionName)/$(Build.SourceBranchName)/$(Build.BuildNumber)
-    - name: _InternalBuildArgs
-      # IncludeSourceRevisionInInformationalVersion prevents ProductVersion (on file), and AssemblyInformationalVersion
-      # from appending +<commitId>, which breaks DTAAgent.
-      value: /p:DotNetSignType=$(_SignType)
-        /p:TeamName=$(_TeamName)
-        /p:DotNetFinalVersionKind=$(_ReleaseVersionKind)
-        /p:DotNetPublishUsingPipelines=true
-        /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
-        /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
-        /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
-        /p:VisualStudioDropName=$(VisualStudioDropName)
-        /p:GenerateSbom=true
-        /p:IncludeSourceRevisionInInformationalVersion=false
 
 stages:
 
@@ -124,19 +80,12 @@ stages:
       - job: Windows
         timeoutInMinutes: 120
         pool:
-          ${{ if eq(variables._RunAsPublic, True) }}:
-            name: NetCore-Public
-            demands: ImageOverride -equals windows.vs2022.amd64.open
-          ${{ if eq(variables._RunAsInternal, True) }}:
-            name: NetCore1ESPool-Internal
-            demands: ImageOverride -equals 1es-windows-2022
+          name: NetCore-Public
+          demands: ImageOverride -equals windows.vs2022.amd64.open
         strategy:
           matrix:
             Release:
               _BuildConfig: Release
-            # ${{ if eq(variables._RunAsPublic, True) }}:
-            #   Debug:
-            #     _BuildConfig: Debug
         steps:
         # This steps help to understand versions of .NET runtime installed on the machine,
         # which is useful to diagnose some governance issues.
@@ -145,10 +94,6 @@ stages:
           inputs:
             command: custom
             custom: '--info'
-
-        # Restore internal tools required for SBOM generation
-        - ${{ if eq(variables._RunAsInternal, True) }}:
-          - template: /eng/restore-internal-tools.yml
 
         - powershell: eng\common\CIBuild.cmd
             -configuration $(_BuildConfig)
@@ -179,19 +124,17 @@ stages:
             ArtifactName: TestResults
           condition: failed()
 
-        # Public pipeline does not upload packages into artifacts, but we need them for tests on Linux and MacOS.
-        - ${{ if eq(variables._RunAsPublic, True) }}:
-          - task: PublishBuildArtifacts@1
-            displayName: 'Publish Shipping Packages'
-            inputs:
-              PathtoPublish: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/Shipping'
-              ArtifactName: PackageArtifacts
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Shipping Packages'
+          inputs:
+            PathtoPublish: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/Shipping'
+            ArtifactName: PackageArtifacts
 
-          - task: PublishBuildArtifacts@1
-            displayName: 'Publish NonShippping Packages'
-            inputs:
-              PathtoPublish: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/NonShipping'
-              ArtifactName: PackageArtifacts
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish NonShippping Packages'
+          inputs:
+            PathtoPublish: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/NonShipping'
+            ArtifactName: PackageArtifacts
 
         - task: PublishBuildArtifacts@1
           displayName: 'Publish VSSetup'
@@ -255,81 +198,3 @@ stages:
             ArtifactName: TestResults
           condition: failed()
 
-      - ${{ if eq(variables._RunAsInternal, True) }}:
-        - job: Publish
-          dependsOn: OtherOSes
-          pool:
-              name: NetCore1ESPool-Internal
-              demands: ImageOverride -equals 1es-windows-2022
-          strategy:
-            matrix:
-              Release:
-                _BuildConfig: Release
-          steps:
-            # The template job needs a log, otherwise it writes a warning. We can disable log uploading only for
-            # the whole stage, which is not what we want to do. So we write an empty file instead.
-            - pwsh: 'New-Item -Type file -Force "$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/empty.log"'
-              name: 'Add_empty_logfile'
-            # Download the built packages into local package source, as if we built them on this machine.
-            - task: DownloadPipelineArtifact@2
-              displayName: Download Package Artifacts
-              inputs:
-                artifactName: PackageArtifacts
-                targetPath: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/Shipping'
-
-            - task: DownloadPipelineArtifact@2
-              displayName: Download VSSetup Artifacts
-              inputs:
-                artifactName: VSSetupArtifacts
-                targetPath: '$(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)'
-
-            - task: NuGetAuthenticate@1
-              displayName: 'NuGet Authenticate to dotnet-tools and test-tools feeds'
-
-            - task: NuGetCommand@2
-              displayName: 'Publish NuGet packages to dotnet-tools feed'
-              inputs:
-                command: push
-                packagesToPush: 'artifacts/packages/$(_BuildConfig)/**/*.nupkg;!artifacts/packages/$(_BuildConfig)/**/*.symbols.nupkg'
-                publishVstsFeed: 'public/dotnet-tools'
-
-            - task: NuGetCommand@2
-              displayName: 'Publish NuGet packages to test-tools feed'
-              inputs:
-                command: push
-                packagesToPush: 'artifacts/packages/$(_BuildConfig)/**/*.nupkg;!artifacts/packages/$(_BuildConfig)/**/*.symbols.nupkg'
-                publishVstsFeed: 'public/test-tools'
-
-            # Publishes setup VSIXes to a drop.
-            # Note: The insertion tool looks for the display name of this task in the logs.
-            - task: ms-vseng.MicroBuildTasks.4305a8de-ba66-4d8b-b2d1-0dc4ecbbf5e8.MicroBuildUploadVstsDropFolder@1
-              displayName: Upload VSTS Drop
-              inputs:
-                DropName: $(VisualStudioDropName)
-                DropFolder: 'artifacts\VSSetup\$(_BuildConfig)\Insertion'
-                AccessToken: $(_DevDivDropAccessToken)
-              condition: succeeded()
-
-            - task: PublishBuildArtifacts@1
-              displayName: Publish Artifact VSSetup
-              inputs:
-                PathtoPublish: 'artifacts\VSSetup\$(_BuildConfig)'
-                ArtifactName: 'VSSetup'
-              condition: succeeded()
-
-  - ${{ if eq(variables._RunAsInternal, True) }}:
-    - template: /eng/common/templates/job/onelocbuild.yml
-      parameters:
-        GitHubOrg: microsoft
-        MirrorRepo: vstest
-        LclSource: lclFilesfromPackage
-        LclPackageId: 'LCL-JUNO-PROD-VSTEST'
-
-- ${{ if eq(variables._RunAsInternal, True) }}:
-  - template: eng\common\templates\post-build\post-build.yml
-    parameters:
-      publishingInfraVersion: 3
-      SDLValidationParameters:
-        enable: false
-        continueOnError: false
-        params: ' -SourceToolsList @("policheck","credscan")'

@@ -6,14 +6,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Telemetry;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.VisualStudio.Editor.Razor;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Test.Common.TestProjectData;
@@ -32,16 +31,20 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         var languageServerFeatureOptions = TestLanguageServerFeatureOptions.Instance;
         _projectConfigurationFilePathStore = new TestProjectConfigurationFilePathStore();
 
-        _projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher);
+        var serviceProvider = VsMocks.CreateServiceProvider(static b =>
+            b.AddComponentModel(static b =>
+            {
+                var startupInitializer = new RazorStartupInitializer([]);
+                b.AddExport(startupInitializer);
+            }));
 
-        var projectManagerAccessor = StrictMock.Of<IProjectSnapshotManagerAccessor>(a =>
-            a.Instance == _projectManager);
+        _projectManager = CreateProjectSnapshotManager();
 
         _fallbackProjectManger = new FallbackProjectManager(
+            serviceProvider,
             _projectConfigurationFilePathStore,
             languageServerFeatureOptions,
-            projectManagerAccessor,
-            Dispatcher,
+            _projectManager,
             WorkspaceProvider,
             NoOpTelemetryReporter.Instance);
     }
@@ -56,9 +59,9 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
             "RootNamespace",
             "DisplayName");
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(hostProject);
+            updater.ProjectAdded(hostProject);
         });
 
         var projectId = ProjectId.CreateNewId();
@@ -136,9 +139,9 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
             "RootNamespace",
             "DisplayName");
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectConfigurationChanged(hostProject);
+            updater.ProjectConfigurationChanged(hostProject);
         });
 
         project = Assert.Single(_projectManager.GetProjects());
@@ -187,7 +190,7 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         Assert.Equal(SomeProjectFile1.TargetPath, project.GetDocument(SomeProjectFile1.FilePath)!.TargetPath);
         Assert.Equal(SomeProjectFile2.TargetPath, project.GetDocument(SomeProjectFile2.FilePath)!.TargetPath);
         // The test data is created with a "\" so when the test runs on Linux, and direct string comparison wouldn't work
-        Assert.True(FilePathNormalizer.FilePathsEquivalent(SomeProjectNestedComponentFile3.TargetPath, project.GetDocument(SomeProjectNestedComponentFile3.FilePath)!.TargetPath));
+        Assert.True(FilePathNormalizer.AreFilePathsEquivalent(SomeProjectNestedComponentFile3.TargetPath, project.GetDocument(SomeProjectNestedComponentFile3.FilePath)!.TargetPath));
     }
 
     [UIFact]

@@ -1,5 +1,59 @@
 <Project>
-   <PropertyGroup>
-      <ProducesDotNetReleaseShippingAssets>true</ProducesDotNetReleaseShippingAssets>
-   </PropertyGroup>
+
+  <PropertyGroup>
+    <ProducesDotNetReleaseShippingAssets>true</ProducesDotNetReleaseShippingAssets>
+    <!-- This avoids creating VS.*.symbols.nupkg packages that are identical to the original package. -->
+    <AutoGenerateSymbolPackages>false</AutoGenerateSymbolPackages>
+    <!-- Set PlatformName to TargetArchitecture to create unique build manifest files. -->
+    <PlatformName Condition="'$(TargetArchitecture)' != ''">$(TargetArchitecture)</PlatformName>
+  </PropertyGroup>
+
+  <Target Name="GetNonStableProductVersion">
+    <!-- Retrieve the non-stable runtime pack product version.
+         Don't stabilize the package version in order to retrieve the VersionSuffix. -->
+    <MSBuild Projects="$(RepoRoot)src/windowsdesktop/src/sfx/Microsoft.WindowsDesktop.App.Runtime.sfxproj"
+             Targets="ReturnProductVersion"
+             Properties="IsShipping=false">
+      <Output TaskParameter="TargetOutputs" PropertyName="NonStableProductVersion" />
+    </MSBuild>
+  </Target>
+
+  <!-- This target only runs when EnableDefaultArtifacts=true which is a single build leg in CI. -->
+  <Target Name="GenerateProductVersionFiles"
+          DependsOnTargets="GetNonStableProductVersion"
+          BeforeTargets="PublishToAzureDevOpsArtifacts"
+          Condition="'$(EnableDefaultArtifacts)' == 'true'">
+    <!-- Retrieve the runtime pack version -->
+    <MSBuild Projects="$(RepoRoot)src/windowsdesktop/src/sfx/Microsoft.WindowsDesktop.App.Runtime.sfxproj"
+             Targets="ReturnProductVersion">
+      <Output TaskParameter="TargetOutputs" PropertyName="ProductVersion" />
+    </MSBuild>
+
+    <ItemGroup>
+      <ProductVersionFile Include="$(ArtifactsShippingPackagesDir)productVersion.txt" />
+      <ProductVersionFile Include="$(ArtifactsShippingPackagesDir)windowsdesktop-productVersion.txt" />
+    </ItemGroup>
+
+    <!-- Generate productVersion.txt file containing the product version. -->
+    <WriteLinesToFile File="%(ProductVersionFile.Identity)"
+                      Lines="$(ProductVersion)"
+                      Overwrite="true"
+                      Encoding="ASCII" />
+
+    <ItemGroup>
+      <Artifact Include="@(ProductVersionFile)"
+                RelativeBlobPath="WindowsDesktop/$(NonStableProductVersion)/%(Filename)%(Extension)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="AddRelativeBlobPathToInstallerArtifacts"
+          DependsOnTargets="GetNonStableProductVersion"
+          BeforeTargets="PublishToAzureDevOpsArtifacts"
+          AfterTargets="GenerateChecksumsFromArtifacts">
+    <ItemGroup>
+      <Artifact Condition="'%(Artifact.PublishFlatContainer)' == 'true' and '%(Artifact.RelativeBlobPath)' == ''"
+                RelativeBlobPath="WindowsDesktop/$(NonStableProductVersion)/%(Filename)%(Extension)" />
+    </ItemGroup>
+  </Target>
+
 </Project>

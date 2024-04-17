@@ -225,6 +225,61 @@ public class RazorFormattingTest(ITestOutputHelper testOutput) : FormattingTestB
     }
 
     [Fact]
+    public async Task CodeBlock_FixCloseBrace3()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @code        {
+                        private int currentCount = 0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                        }
+                    """,
+            expected: """
+                    @code
+                    {
+                        private int currentCount = 0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                    }
+                    """,
+            razorLSPOptions: RazorLSPOptions.Default with { CodeBlockBraceOnNextLine = true });
+    }
+
+    [Fact]
+    public async Task CodeBlock_FixCloseBrace4()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @code        {
+                        private int currentCount = 0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }                        }
+                    """,
+            expected: """
+                    @code
+                    {
+                        private int currentCount = 0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                    }
+                    """,
+            razorLSPOptions: RazorLSPOptions.Default with { CodeBlockBraceOnNextLine = true });
+    }
+
+    [Fact]
     public async Task CodeBlock_TooMuchWhitespace()
     {
         await RunFormattingTestAsync(
@@ -277,6 +332,34 @@ public class RazorFormattingTest(ITestOutputHelper testOutput) : FormattingTestB
     }
 
     [Fact]
+    public async Task CodeBlock_NonSpaceWhitespace2()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @code	{
+                        private int currentCount = 0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                    }
+                    """,
+            expected: """
+                    @code
+                    {
+                        private int currentCount = 0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                    }
+                    """,
+            razorLSPOptions: RazorLSPOptions.Default with { CodeBlockBraceOnNextLine = true });
+    }
+
+    [Fact]
     public async Task CodeBlock_NoWhitespace()
     {
         await RunFormattingTestAsync(
@@ -300,6 +383,34 @@ public class RazorFormattingTest(ITestOutputHelper testOutput) : FormattingTestB
                         }
                     }
                     """);
+    }
+
+    [Fact]
+    public async Task CodeBlock_NoWhitespace2()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @code{
+                        private int currentCount = 0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                    }
+                    """,
+            expected: """
+                    @code
+                    {
+                        private int currentCount = 0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                    }
+                    """,
+            razorLSPOptions: RazorLSPOptions.Default with { CodeBlockBraceOnNextLine = true });
     }
 
     [Fact]
@@ -356,6 +467,35 @@ public class RazorFormattingTest(ITestOutputHelper testOutput) : FormattingTestB
                     }
                     """,
             fileKind: FileKinds.Legacy);
+    }
+
+    [Fact]
+    public async Task FunctionsBlock_TooManySpaces2()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @functions        {
+                        private int currentCount = 0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                    }
+                    """,
+            expected: """
+                    @functions
+                    {
+                        private int currentCount = 0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                    }
+                    """,
+            fileKind: FileKinds.Legacy,
+            razorLSPOptions: RazorLSPOptions.Default with { CodeBlockBraceOnNextLine = true });
     }
 
     [Fact]

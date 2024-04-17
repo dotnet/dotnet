@@ -1,0 +1,5 @@
+﻿Source Location: (38:0,38 [16] x:\dir\subdir\Test\TestComponent.cshtml)
+|new CustomType()|
+Generated Location: (966:23,0 [16] )
+|new CustomType()|
+

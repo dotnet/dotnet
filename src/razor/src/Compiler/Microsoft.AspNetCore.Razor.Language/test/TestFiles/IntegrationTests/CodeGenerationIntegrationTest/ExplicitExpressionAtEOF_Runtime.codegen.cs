@@ -12,13 +12,14 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
             WriteLiteral("This is markup\r\n\r\n");
+            Write(
 #nullable restore
-#line (3,3)-(3,3) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpressionAtEOF.cshtml"
-Write();
+#line (3,3)-(3,3) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpressionAtEOF.cshtml"
 
 #line default
 #line hidden
 #nullable disable
+            );
         }
         #pragma warning restore 1998
     }

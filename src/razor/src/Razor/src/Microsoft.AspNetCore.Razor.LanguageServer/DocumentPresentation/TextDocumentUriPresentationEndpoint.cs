@@ -8,11 +8,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -22,7 +24,7 @@ internal class TextDocumentUriPresentationEndpoint(
     IRazorDocumentMappingService razorDocumentMappingService,
     RazorComponentSearchEngine razorComponentSearchEngine,
     IClientConnection clientConnection,
-    FilePathService filePathService,
+    IFilePathService filePathService,
     IDocumentContextFactory documentContextFactory,
     IRazorLoggerFactory loggerFactory)
     : AbstractTextDocumentPresentationEndpointBase<UriPresentationParams>(razorDocumentMappingService, clientConnection, filePathService, loggerFactory.CreateLogger<TextDocumentUriPresentationEndpoint>()), ITextDocumentUriPresentationHandler

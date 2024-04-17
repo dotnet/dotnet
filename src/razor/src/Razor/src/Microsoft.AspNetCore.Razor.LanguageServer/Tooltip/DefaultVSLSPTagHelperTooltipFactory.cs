@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -18,8 +17,6 @@ using Microsoft.VisualStudio.Text.Adornments;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 
-[Export(typeof(VSLSPTagHelperTooltipFactory)), Shared]
-[method: ImportingConstructor]
 internal class DefaultVSLSPTagHelperTooltipFactory(ISnapshotResolver snapshotResolver) : VSLSPTagHelperTooltipFactory(snapshotResolver)
 {
     private static readonly Guid s_imageCatalogGuid = new("{ae27a6b0-e345-4288-96df-5eaf394ee369}");

@@ -24,22 +24,30 @@ public class InjectTargetExtension : IInjectTargetExtension
             throw new ArgumentNullException(nameof(node));
         }
 
-        var property = $"public {node.TypeName} {node.MemberName} {{ get; private set; }}";
-
-        if (node.Source.HasValue)
+        if (!context.Options.DesignTime && !string.IsNullOrWhiteSpace(node.TypeSource?.FilePath))
         {
-            using (context.CodeWriter.BuildLinePragma(node.Source.Value, context))
+            context.CodeWriter.WriteLine(RazorInjectAttribute);
+            context.CodeWriter.WriteAutoPropertyDeclaration(["public"], node.TypeName, node.MemberName, node.TypeSource, node.MemberSource, context, privateSetter: true, defaultValue: true);
+        }
+        else
+        {
+            var property = $"public {node.TypeName} {node.MemberName} {{ get; private set; }}";
+
+            if (node.Source.HasValue)
+            {
+                using (context.CodeWriter.BuildLinePragma(node.Source.Value, context))
+                {
+                    context.CodeWriter
+                        .WriteLine(RazorInjectAttribute)
+                        .WriteLine(property);
+                }
+            }
+            else
             {
                 context.CodeWriter
                     .WriteLine(RazorInjectAttribute)
                     .WriteLine(property);
             }
-        }
-        else
-        {
-            context.CodeWriter
-                .WriteLine(RazorInjectAttribute)
-                .WriteLine(property);
         }
     }
 }

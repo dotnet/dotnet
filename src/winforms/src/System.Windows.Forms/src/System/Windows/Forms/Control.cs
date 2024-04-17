@@ -199,14 +199,11 @@ public unsafe partial class Control :
     private static MessageId s_threadCallbackMessage;
     private static ContextCallback? s_invokeMarshaledCallbackHelperDelegate;
 
-#pragma warning disable IDE1006 // Naming Styles
     [ThreadStatic]
     private static bool t_inCrossThreadSafeCall;
 
     [ThreadStatic]
     internal static HelpInfo? t_currentHelpInfo;
-
-#pragma warning restore IDE1006
 
     private static FontHandleWrapper? s_defaultFontHandleWrapper;
 
@@ -1105,6 +1102,7 @@ public unsafe partial class Control :
     public virtual BindingContext? BindingContext
     {
         get => BindingContextInternal;
+        [RequiresUnreferencedCode(IBindableComponent.ComponentModelTrimIncompatibilityMessage)]
         set => BindingContextInternal = value;
     }
 
@@ -7055,6 +7053,11 @@ public unsafe partial class Control :
     {
         if (Properties.ContainsObjectThatIsNotNull(s_bindingsProperty))
         {
+            if (!Binding.IsSupported)
+            {
+                throw new NotSupportedException(SR.BindingNotSupported);
+            }
+
             UpdateBindings();
         }
 
@@ -10063,7 +10066,7 @@ public unsafe partial class Control :
         // zooming feature, as opposed to AutoScale.
         using (new LayoutTransaction(this, this, PropertyNames.Bounds, resumeLayout: false))
         {
-            ScaleControl(factor, factor, this);
+            ScaleControl(factor, factor);
             if (ScaleChildren)
             {
                 ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
@@ -10104,7 +10107,7 @@ public unsafe partial class Control :
         // positions of all controls.  Therefore, we should resume(false).
         using (new LayoutTransaction(this, this, PropertyNames.Bounds, false))
         {
-            ScaleControl(includedFactor, excludedFactor, requestingControl);
+            ScaleControl(includedFactor, excludedFactor);
 
             // Certain controls like 'PropertyGrid' does special scaling. Differing scaling to their own methods.
             if (!_doNotScaleChildren)
@@ -10185,7 +10188,7 @@ public unsafe partial class Control :
     ///  The requestingControl property indicates which control has requested
     ///  the scaling function.
     /// </summary>
-    internal void ScaleControl(SizeF includedFactor, SizeF excludedFactor, Control requestingControl)
+    internal void ScaleControl(SizeF includedFactor, SizeF excludedFactor)
     {
         try
         {
@@ -10373,7 +10376,9 @@ public unsafe partial class Control :
             // enumerate
             for (int i = 0; i < controlsCollection.Count; i++)
             {
+#pragma warning disable CS0618 // Type or member is obsolete - compat
                 controlsCollection[i].Scale(dx, dy);
+#pragma warning restore CS0618
             }
         }
     }
@@ -13309,46 +13314,25 @@ public unsafe partial class Control :
     ///
     ///  Explicit support of DropTarget
     ///
-    void IDropTarget.OnDragEnter(DragEventArgs drgEvent)
-    {
-        OnDragEnter(drgEvent);
-    }
+    void IDropTarget.OnDragEnter(DragEventArgs drgEvent) => OnDragEnter(drgEvent);
 
-    void IDropTarget.OnDragOver(DragEventArgs drgEvent)
-    {
-        OnDragOver(drgEvent);
-    }
+    void IDropTarget.OnDragOver(DragEventArgs drgEvent) => OnDragOver(drgEvent);
 
-    void IDropTarget.OnDragLeave(EventArgs e)
-    {
-        OnDragLeave(e);
-    }
+    void IDropTarget.OnDragLeave(EventArgs e) => OnDragLeave(e);
 
-    void IDropTarget.OnDragDrop(DragEventArgs drgEvent)
-    {
-        OnDragDrop(drgEvent);
-    }
+    void IDropTarget.OnDragDrop(DragEventArgs drgEvent) => OnDragDrop(drgEvent);
 
     ///
     ///  Explicit support of DropSource
     ///
-    void ISupportOleDropSource.OnGiveFeedback(GiveFeedbackEventArgs giveFeedbackEventArgs)
-    {
-        OnGiveFeedback(giveFeedbackEventArgs);
-    }
+    void ISupportOleDropSource.OnGiveFeedback(GiveFeedbackEventArgs giveFeedbackEventArgs) => OnGiveFeedback(giveFeedbackEventArgs);
 
-    void ISupportOleDropSource.OnQueryContinueDrag(QueryContinueDragEventArgs queryContinueDragEventArgs)
-    {
-        OnQueryContinueDrag(queryContinueDragEventArgs);
-    }
+    void ISupportOleDropSource.OnQueryContinueDrag(QueryContinueDragEventArgs queryContinueDragEventArgs) => OnQueryContinueDrag(queryContinueDragEventArgs);
 
     #region IKeyboardToolTip implementation
 
-    bool IKeyboardToolTip.CanShowToolTipsNow()
-    {
-        IKeyboardToolTip? host = ToolStripControlHost;
-        return IsHandleCreated && Visible && (host is null || host.CanShowToolTipsNow());
-    }
+    bool IKeyboardToolTip.CanShowToolTipsNow() =>
+        IsHandleCreated && Visible && (ToolStripControlHost is not IKeyboardToolTip toolTip || toolTip.CanShowToolTipsNow());
 
     Rectangle IKeyboardToolTip.GetNativeScreenRectangle() => GetToolNativeScreenRectangle();
 
@@ -13356,17 +13340,11 @@ public unsafe partial class Control :
 
     bool IKeyboardToolTip.IsHoveredWithMouse() => IsHoveredWithMouse();
 
-    bool IKeyboardToolTip.HasRtlModeEnabled()
-    {
-        Control? topLevelControl = TopLevelControlInternal;
-        return topLevelControl is not null && topLevelControl.RightToLeft == RightToLeft.Yes && !IsMirrored;
-    }
+    bool IKeyboardToolTip.HasRtlModeEnabled() =>
+        TopLevelControlInternal is { } topLevelControl && topLevelControl.RightToLeft == RightToLeft.Yes && !IsMirrored;
 
-    bool IKeyboardToolTip.AllowsToolTip()
-    {
-        IKeyboardToolTip? host = ToolStripControlHost;
-        return (host is null || host.AllowsToolTip()) && AllowsKeyboardToolTip();
-    }
+    bool IKeyboardToolTip.AllowsToolTip() =>
+        (ToolStripControlHost is not IKeyboardToolTip toolTip || toolTip.AllowsToolTip()) && AllowsKeyboardToolTip();
 
     IWin32Window IKeyboardToolTip.GetOwnerWindow() => this;
 
@@ -13376,21 +13354,12 @@ public unsafe partial class Control :
 
     string? IKeyboardToolTip.GetCaptionForTool(ToolTip toolTip) => GetCaptionForTool(toolTip);
 
-    bool IKeyboardToolTip.ShowsOwnToolTip()
-    {
-        IKeyboardToolTip? host = ToolStripControlHost;
-        return (host is null || host.ShowsOwnToolTip()) && ShowsOwnKeyboardToolTip();
-    }
+    bool IKeyboardToolTip.ShowsOwnToolTip() =>
+        (ToolStripControlHost is not IKeyboardToolTip toolTip || toolTip.ShowsOwnToolTip()) && ShowsOwnKeyboardToolTip();
 
-    bool IKeyboardToolTip.IsBeingTabbedTo()
-    {
-        return AreCommonNavigationalKeysDown();
-    }
+    bool IKeyboardToolTip.IsBeingTabbedTo() => AreCommonNavigationalKeysDown();
 
-    bool IKeyboardToolTip.AllowsChildrenToShowToolTips()
-    {
-        return AllowsChildrenToShowToolTips();
-    }
+    bool IKeyboardToolTip.AllowsChildrenToShowToolTips() => AllowsChildrenToShowToolTips();
 
     #endregion
 
