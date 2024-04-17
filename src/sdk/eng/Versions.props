@@ -64,18 +64,18 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/nuget/nuget.client -->
-    <NuGetBuildTasksPackageVersion>6.11.0-preview.1.22</NuGetBuildTasksPackageVersion>
-    <NuGetBuildTasksConsolePackageVersion>6.11.0-preview.1.22</NuGetBuildTasksConsolePackageVersion>
-    <NuGetLocalizationPackageVersion>6.11.0-preview.1.22</NuGetLocalizationPackageVersion>
-    <NuGetBuildTasksPackPackageVersion>6.11.0-preview.1.22</NuGetBuildTasksPackPackageVersion>
-    <NuGetCommandLineXPlatPackageVersion>6.11.0-preview.1.22</NuGetCommandLineXPlatPackageVersion>
-    <NuGetProjectModelPackageVersion>6.11.0-preview.1.22</NuGetProjectModelPackageVersion>
-    <MicrosoftBuildNuGetSdkResolverPackageVersion>6.11.0-preview.1.22</MicrosoftBuildNuGetSdkResolverPackageVersion>
-    <NuGetCommonPackageVersion>6.11.0-preview.1.22</NuGetCommonPackageVersion>
-    <NuGetConfigurationPackageVersion>6.11.0-preview.1.22</NuGetConfigurationPackageVersion>
-    <NuGetFrameworksPackageVersion>6.11.0-preview.1.22</NuGetFrameworksPackageVersion>
-    <NuGetPackagingPackageVersion>6.11.0-preview.1.22</NuGetPackagingPackageVersion>
-    <NuGetVersioningPackageVersion>6.11.0-preview.1.22</NuGetVersioningPackageVersion>
+    <NuGetBuildTasksPackageVersion>6.11.0-preview.1.23</NuGetBuildTasksPackageVersion>
+    <NuGetBuildTasksConsolePackageVersion>6.11.0-preview.1.23</NuGetBuildTasksConsolePackageVersion>
+    <NuGetLocalizationPackageVersion>6.11.0-preview.1.23</NuGetLocalizationPackageVersion>
+    <NuGetBuildTasksPackPackageVersion>6.11.0-preview.1.23</NuGetBuildTasksPackPackageVersion>
+    <NuGetCommandLineXPlatPackageVersion>6.11.0-preview.1.23</NuGetCommandLineXPlatPackageVersion>
+    <NuGetProjectModelPackageVersion>6.11.0-preview.1.23</NuGetProjectModelPackageVersion>
+    <MicrosoftBuildNuGetSdkResolverPackageVersion>6.11.0-preview.1.23</MicrosoftBuildNuGetSdkResolverPackageVersion>
+    <NuGetCommonPackageVersion>6.11.0-preview.1.23</NuGetCommonPackageVersion>
+    <NuGetConfigurationPackageVersion>6.11.0-preview.1.23</NuGetConfigurationPackageVersion>
+    <NuGetFrameworksPackageVersion>6.11.0-preview.1.23</NuGetFrameworksPackageVersion>
+    <NuGetPackagingPackageVersion>6.11.0-preview.1.23</NuGetPackagingPackageVersion>
+    <NuGetVersioningPackageVersion>6.11.0-preview.1.23</NuGetVersioningPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/Microsoft/vstest -->
@@ -115,13 +115,13 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/templating -->
-    <MicrosoftTemplateEngineAbstractionsPackageVersion>9.0.100-preview.4.24209.1</MicrosoftTemplateEngineAbstractionsPackageVersion>
+    <MicrosoftTemplateEngineAbstractionsPackageVersion>9.0.100-preview.4.24216.6</MicrosoftTemplateEngineAbstractionsPackageVersion>
     <MicrosoftTemplateEngineEdgePackageVersion>$(MicrosoftTemplateEngineAbstractionsPackageVersion)</MicrosoftTemplateEngineEdgePackageVersion>
     <MicrosoftTemplateEngineOrchestratorRunnableProjectsPackageVersion>$(MicrosoftTemplateEngineAbstractionsPackageVersion)</MicrosoftTemplateEngineOrchestratorRunnableProjectsPackageVersion>
     <MicrosoftTemplateEngineUtilsPackageVersion>$(MicrosoftTemplateEngineAbstractionsPackageVersion)</MicrosoftTemplateEngineUtilsPackageVersion>
     <MicrosoftTemplateSearchCommonPackageVersion>$(MicrosoftTemplateEngineAbstractionsPackageVersion)</MicrosoftTemplateSearchCommonPackageVersion>
     <!-- test dependencies -->
-    <MicrosoftTemplateEngineMocksPackageVersion>9.0.100-preview.4.24209.1</MicrosoftTemplateEngineMocksPackageVersion>
+    <MicrosoftTemplateEngineMocksPackageVersion>9.0.100-preview.4.24216.6</MicrosoftTemplateEngineMocksPackageVersion>
     <MicrosoftTemplateEngineTestHelperPackageVersion>$(MicrosoftTemplateEngineMocksPackageVersion)</MicrosoftTemplateEngineTestHelperPackageVersion>
     <MicrosoftTemplateEngineAuthoringTemplateVerifierVersion>$(MicrosoftTemplateEngineAbstractionsPackageVersion)</MicrosoftTemplateEngineAuthoringTemplateVerifierVersion>
     <MicrosoftTemplateSearchTemplateDiscoveryPackageVersion>$(MicrosoftTemplateEngineMocksPackageVersion)</MicrosoftTemplateSearchTemplateDiscoveryPackageVersion>
@@ -142,13 +142,13 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/aspnet/AspNetCore -->
-    <MicrosoftAspNetCoreAppRefPackageVersion>9.0.0-preview.4.24215.8</MicrosoftAspNetCoreAppRefPackageVersion>
-    <MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>9.0.0-preview.4.24215.8</MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>
-    <MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>9.0.0-preview.4.24215.8</MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreMvcAnalyzersPackageVersion>9.0.0-preview.4.24215.8</MicrosoftAspNetCoreMvcAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>9.0.0-preview.4.24215.8</MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreAnalyzersPackageVersion>9.0.0-preview.4.24215.8</MicrosoftAspNetCoreAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreTestHostPackageVersion>9.0.0-preview.4.24215.8</MicrosoftAspNetCoreTestHostPackageVersion>
+    <MicrosoftAspNetCoreAppRefPackageVersion>9.0.0-preview.4.24216.7</MicrosoftAspNetCoreAppRefPackageVersion>
+    <MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>9.0.0-preview.4.24216.7</MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>
+    <MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>9.0.0-preview.4.24216.7</MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreMvcAnalyzersPackageVersion>9.0.0-preview.4.24216.7</MicrosoftAspNetCoreMvcAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>9.0.0-preview.4.24216.7</MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreAnalyzersPackageVersion>9.0.0-preview.4.24216.7</MicrosoftAspNetCoreAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreTestHostPackageVersion>9.0.0-preview.4.24216.7</MicrosoftAspNetCoreTestHostPackageVersion>
   </PropertyGroup>
   <!-- Dependencies from https://github.com/dotnet/razor -->
   <PropertyGroup>
