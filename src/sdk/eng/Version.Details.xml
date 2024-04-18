@@ -3,45 +3,45 @@
   <ProductDependencies>
     <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="8.0.105">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>8dd7a8b4ac1c0f8a65ace1a9c2af572c99d26b1a</Sha>
+      <Sha>3da9776a3b9c9208d4aaa453175590497fd38a07</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Mocks" Version="8.0.105-servicing.24203.13">
+    <Dependency Name="Microsoft.TemplateEngine.Mocks" Version="8.0.105-servicing.24216.17">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>8dd7a8b4ac1c0f8a65ace1a9c2af572c99d26b1a</Sha>
+      <Sha>3da9776a3b9c9208d4aaa453175590497fd38a07</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.templating" Version="8.0.105-servicing.24203.13">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.templating" Version="8.0.105-servicing.24216.17">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>8dd7a8b4ac1c0f8a65ace1a9c2af572c99d26b1a</Sha>
+      <Sha>3da9776a3b9c9208d4aaa453175590497fd38a07</Sha>
       <SourceBuild RepoName="templating" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Ref" Version="8.0.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>dfd075b97471bd97ea70066a299d1fe92af90352</Sha>
+      <Sha>087e15321bb712ef6fe8b0ba6f8bd12facf92629</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.NetCore.SharedFramework.x64.8.0" Version="8.0.5-servicing.24215.24">
+    <Dependency Name="VS.Redist.Common.NetCore.SharedFramework.x64.8.0" Version="8.0.5-servicing.24216.15">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>dfd075b97471bd97ea70066a299d1fe92af90352</Sha>
+      <Sha>087e15321bb712ef6fe8b0ba6f8bd12facf92629</Sha>
       <SourceBuild RepoName="runtime" ManagedOnly="false" />
     </Dependency>
-    <Dependency Name="VS.Redist.Common.NetCore.TargetingPack.x64.8.0" Version="8.0.5-servicing.24215.24">
+    <Dependency Name="VS.Redist.Common.NetCore.TargetingPack.x64.8.0" Version="8.0.5-servicing.24216.15">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>dfd075b97471bd97ea70066a299d1fe92af90352</Sha>
+      <Sha>087e15321bb712ef6fe8b0ba6f8bd12facf92629</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Runtime.win-x64" Version="8.0.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>dfd075b97471bd97ea70066a299d1fe92af90352</Sha>
+      <Sha>087e15321bb712ef6fe8b0ba6f8bd12facf92629</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Host.win-x64" Version="8.0.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>dfd075b97471bd97ea70066a299d1fe92af90352</Sha>
+      <Sha>087e15321bb712ef6fe8b0ba6f8bd12facf92629</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.Platforms" Version="8.0.5-servicing.24215.24">
+    <Dependency Name="Microsoft.NETCore.Platforms" Version="8.0.5-servicing.24216.15">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>dfd075b97471bd97ea70066a299d1fe92af90352</Sha>
+      <Sha>087e15321bb712ef6fe8b0ba6f8bd12facf92629</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.HostModel" Version="8.0.5-servicing.24215.24">
+    <Dependency Name="Microsoft.NET.HostModel" Version="8.0.5-servicing.24216.15">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>dfd075b97471bd97ea70066a299d1fe92af90352</Sha>
+      <Sha>087e15321bb712ef6fe8b0ba6f8bd12facf92629</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.DependencyModel" Version="8.0.0">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
@@ -49,7 +49,7 @@
     </Dependency>
     <Dependency Name="Microsoft.NETCore.DotNetHostResolver" Version="8.0.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>dfd075b97471bd97ea70066a299d1fe92af90352</Sha>
+      <Sha>087e15321bb712ef6fe8b0ba6f8bd12facf92629</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.Workload.Emscripten.Current.Manifest-8.0.100" Version="8.0.5" CoherentParentDependency="Microsoft.NETCore.App.Runtime.win-x64">
       <Uri>https://github.com/dotnet/emsdk</Uri>
@@ -111,13 +111,13 @@
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>263571123fc3dc4a638e071234ac9fbf91913962</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.DeveloperCertificates.XPlat" Version="8.0.5-servicing.24216.11">
+    <Dependency Name="Microsoft.AspNetCore.DeveloperCertificates.XPlat" Version="8.0.5-servicing.24217.6">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.AspNetCore.TestHost" Version="8.0.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Build.NuGetSdkResolver" Version="6.8.1-rc.2">
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/NuGet-NuGet.Client-Trusted</Uri>
@@ -202,7 +202,7 @@
     </Dependency>
     <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="8.0.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>dfd075b97471bd97ea70066a299d1fe92af90352</Sha>
+      <Sha>087e15321bb712ef6fe8b0ba6f8bd12facf92629</Sha>
     </Dependency>
     <Dependency Name="System.CodeDom" Version="8.0.0">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
@@ -222,68 +222,68 @@
     </Dependency>
     <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="8.0.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop</Uri>
-      <Sha>6139b3281c5dd72654ae5edcbeb6b7e42019e7c1</Sha>
+      <Sha>dda23bbe00c4a4bfdd3732783f0cce37c11a4f40</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.5-servicing.24216.13">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.5-servicing.24217.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop</Uri>
-      <Sha>6139b3281c5dd72654ae5edcbeb6b7e42019e7c1</Sha>
+      <Sha>dda23bbe00c4a4bfdd3732783f0cce37c11a4f40</Sha>
     </Dependency>
     <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="8.0.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop</Uri>
-      <Sha>6139b3281c5dd72654ae5edcbeb6b7e42019e7c1</Sha>
+      <Sha>dda23bbe00c4a4bfdd3732783f0cce37c11a4f40</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.5-servicing.24216.13">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.5-servicing.24217.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop</Uri>
-      <Sha>6139b3281c5dd72654ae5edcbeb6b7e42019e7c1</Sha>
+      <Sha>dda23bbe00c4a4bfdd3732783f0cce37c11a4f40</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="8.0.5-servicing.24216.5" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
+    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="8.0.5-servicing.24217.2" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-wpf</Uri>
-      <Sha>cc1110ec8199d855f62b16511d2b4b08f46de853</Sha>
+      <Sha>b5af29a8f41f880f38fd015c6bcb7aeb816fcef6</Sha>
     </Dependency>
     <Dependency Name="Microsoft.AspNetCore.App.Ref" Version="8.0.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.App.Ref.Internal" Version="8.0.5-servicing.24216.11">
+    <Dependency Name="Microsoft.AspNetCore.App.Ref.Internal" Version="8.0.5-servicing.24217.6">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.AspNetCore.App.Runtime.win-x64" Version="8.0.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.AspNetCore.SharedFramework.x64.8.0" Version="8.0.5-servicing.24216.11">
+    <Dependency Name="VS.Redist.Common.AspNetCore.SharedFramework.x64.8.0" Version="8.0.5-servicing.24217.6">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
       <SourceBuild RepoName="aspnetcore" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="dotnet-dev-certs" Version="8.0.5-servicing.24216.11">
+    <Dependency Name="dotnet-dev-certs" Version="8.0.5-servicing.24217.6">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
-    <Dependency Name="dotnet-user-jwts" Version="8.0.5-servicing.24216.11">
+    <Dependency Name="dotnet-user-jwts" Version="8.0.5-servicing.24217.6">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
-    <Dependency Name="dotnet-user-secrets" Version="8.0.5-servicing.24216.11">
+    <Dependency Name="dotnet-user-secrets" Version="8.0.5-servicing.24217.6">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Analyzers" Version="8.0.5-servicing.24216.11">
+    <Dependency Name="Microsoft.AspNetCore.Analyzers" Version="8.0.5-servicing.24217.6">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Components.SdkAnalyzers" Version="8.0.5-servicing.24216.11">
+    <Dependency Name="Microsoft.AspNetCore.Components.SdkAnalyzers" Version="8.0.5-servicing.24217.6">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Mvc.Analyzers" Version="8.0.5-servicing.24216.11">
+    <Dependency Name="Microsoft.AspNetCore.Mvc.Analyzers" Version="8.0.5-servicing.24217.6">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Mvc.Api.Analyzers" Version="8.0.5-servicing.24216.11">
+    <Dependency Name="Microsoft.AspNetCore.Mvc.Api.Analyzers" Version="8.0.5-servicing.24217.6">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.CodeAnalysis.Razor.Tooling.Internal" Version="7.0.0-preview.24052.1">
       <Uri>https://github.com/dotnet/razor</Uri>
@@ -300,19 +300,19 @@
     </Dependency>
     <Dependency Name="Microsoft.Extensions.FileProviders.Embedded" Version="8.0.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.AspNetCore.Authorization" Version="8.0.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.AspNetCore.Components.Web" Version="8.0.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.JSInterop" Version="8.0.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Web.Xdt" Version="7.0.0-preview.22423.2" Pinned="true">
       <Uri>https://github.com/dotnet/xdt</Uri>
@@ -341,9 +341,9 @@
       <Sha>02fe27cd6a9b001c8feb7938e6ef4b3799745759</Sha>
       <SourceBuild RepoName="command-line-api" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.24175.3">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.24216.1">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>300e99190e6ae1983681694dbdd5f75f0c692081</Sha>
+      <Sha>908177a58a41532b3302c17f1e1a8cf1c1234545</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.24163.3">
@@ -431,7 +431,7 @@
     </Dependency>
     <Dependency Name="Microsoft.Extensions.ObjectPool" Version="8.0.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
-      <Sha>582b2e31f26fb410742b1bc7f2d0b1c573222115</Sha>
+      <Sha>1681d9acf750c1f1ba8f89d54796c99fbfbfb8b2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Win32.SystemEvents" Version="8.0.0">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
@@ -471,7 +471,7 @@
     </Dependency>
     <Dependency Name="System.Security.Cryptography.Xml" Version="8.0.1">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>dfd075b97471bd97ea70066a299d1fe92af90352</Sha>
+      <Sha>087e15321bb712ef6fe8b0ba6f8bd12facf92629</Sha>
     </Dependency>
     <Dependency Name="System.Security.Permissions" Version="8.0.0">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
