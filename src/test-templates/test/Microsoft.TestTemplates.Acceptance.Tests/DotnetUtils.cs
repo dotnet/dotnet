@@ -27,8 +27,8 @@ public static partial class DotnetUtils
     /// Invokes <c>dotnet new uninstall</c> with specified arguments.
     /// </summary>
     /// <param name="arguments"></param>
-    public static ExecutionResult InvokeDotnetNewUninstall(string arguments)
-        => InvokeDotnet("new uninstall " + arguments);
+    public static ExecutionResult InvokeDotnetNewUninstall(string arguments, bool assertExecution = true)
+        => InvokeDotnet("new uninstall " + arguments, assertExecution);
 
     /// <summary>
     /// Invokes <c>dotnet new</c> with specified arguments.
@@ -39,12 +39,12 @@ public static partial class DotnetUtils
     /// <param name="language">Filters templates based on language and specifies the language of the template to create.</param>
     /// <param name="outputDirectory">Location to place the generated output.</param>
     public static ExecutionResult InvokeDotnetNew(string templateName, string nameAs, string? targetFramework = null, string? language = null,
-        string? outputDirectory = null)
+        string? outputDirectory = null, bool assertExecution = true)
     {
         var targetArgs = string.IsNullOrEmpty(targetFramework) ? "" : $" -f {targetFramework}";
         var languageArgs = string.IsNullOrEmpty(language) ? "" : $" -lang {language}";
         var outputArgs = string.IsNullOrEmpty(outputDirectory) ? "" : $" -o {outputDirectory}";
-        return InvokeDotnet($"new {templateName} -n {nameAs}{targetArgs}{languageArgs}{outputArgs}");
+        return InvokeDotnet($"new {templateName} -n {nameAs}{targetArgs}{languageArgs}{outputArgs}", assertExecution);
     }
 
     /// <summary>

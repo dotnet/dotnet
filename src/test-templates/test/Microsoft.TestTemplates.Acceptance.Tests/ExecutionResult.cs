@@ -19,7 +19,20 @@ public static class ExecutionResultExtensions
     /// <param name="passedTestsCount">Passed test count</param>
     /// <param name="failedTestsCount">Failed test count</param>
     /// <param name="skippedTestsCount">Skipped test count</param>
-    public static void ValidateSummaryStatus(this ExecutionResult executionResult, int passedTestsCount, int failedTestsCount, int skippedTestsCount)
+    public static void ValidateSummaryStatus(this ExecutionResult executionResult, bool isTestingPlatform, int passedTestsCount, int failedTestsCount, int skippedTestsCount)
+    {
+        if (isTestingPlatform)
+        {
+            ValidateTestingPlatformSummaryStatus(executionResult, failedTestsCount == 0);
+        }
+        else
+        {
+            ValidateVSTestSummaryStatus(executionResult, passedTestsCount, failedTestsCount, skippedTestsCount);
+        }
+    }
+
+
+    private static void ValidateVSTestSummaryStatus(this ExecutionResult executionResult, int passedTestsCount, int failedTestsCount, int skippedTestsCount)
     {
         var totalTestCount = passedTestsCount + failedTestsCount + skippedTestsCount;
         if (totalTestCount == 0)
@@ -48,5 +61,17 @@ public static class ExecutionResultExtensions
                 Environment.NewLine,
                 executionResult.Arguments);
         }
+    }
+
+    private static void ValidateTestingPlatformSummaryStatus(this ExecutionResult executionResult, bool isSuccess)
+    {
+        StringAssert.Contains(
+            executionResult.StandardOutput,
+            isSuccess ? "Tests succeeded" : "Tests failed",
+            "The Test summary does not match.{2}Test Output: {0}{2}Standard Error: {1}{2}Arguments: {3}{2}",
+            executionResult.StandardOutput,
+            executionResult.StandardError,
+            Environment.NewLine,
+            executionResult.Arguments);
     }
 }

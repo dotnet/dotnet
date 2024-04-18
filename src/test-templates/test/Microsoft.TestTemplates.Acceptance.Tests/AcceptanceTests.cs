@@ -12,19 +12,20 @@ public sealed partial class AcceptanceTests
     [
         "net9.0",
     ];
-    private static readonly (string ProjectTemplateName, string ItemTemplateName, string[] Languages)[] AvailableItemTemplates =
+
+    private static readonly (string ProjectTemplateName, string ItemTemplateName, string[] Languages, bool SupportsTestingPlatform)[] AvailableItemTemplates =
     [
-        ("nunit", "nunit-test", Languages.All),
-        ("mstest", "mstest-class", Languages.All),
+        ("nunit", "nunit-test", Languages.All, false),
+        ("mstest", "mstest-class", Languages.All, true),
     ];
 
-    private static readonly (string ProjectTemplateName, string[] Languages, bool RunDotnetTest)[] AvailableProjectTemplates =
+    private static readonly (string ProjectTemplateName, string[] Languages, bool RunDotnetTest, bool SupportsTestingPlatform)[] AvailableProjectTemplates =
     [
-        ("mstest", Languages.All, true),
-        ("nunit", Languages.All, true),
-        ("xunit", Languages.All, true),
-        ("mstest-playwright", [Languages.CSharp], false),
-        ("nunit-playwright", [Languages.CSharp], false),
+        ("mstest", Languages.All, true, true),
+        ("nunit", Languages.All, true, false),
+        ("xunit", Languages.All, true, false),
+        ("mstest-playwright", [Languages.CSharp], false, false),
+        ("nunit-playwright", [Languages.CSharp], false, false),
     ];
 
     [AssemblyInitialize]
@@ -32,6 +33,7 @@ public sealed partial class AcceptanceTests
     {
         foreach (var targetFramework in SupportedTargetFrameworks)
         {
+            DotnetUtils.InvokeDotnetNewUninstall(GetTestTemplatePath(targetFramework), false);
             DotnetUtils.InvokeDotnetNewInstall(GetTestTemplatePath(targetFramework));
         }
     }
@@ -47,7 +49,8 @@ public sealed partial class AcceptanceTests
 
     [DataTestMethod]
     [DynamicData(nameof(GetTemplateItemsToTest), DynamicDataSourceType.Method)]
-    public void ItemTemplate_CanBeInstalledAndTestArePassing(string targetFramework, string projectTemplate, string itemTemplate, string language)
+    public void ItemTemplate_CanBeInstalledAndTestArePassing(string targetFramework, string projectTemplate, string itemTemplate,
+        string language, bool isTestingPlatform)
     {
         string testProjectName = GenerateTestProjectName();
         string outputDirectory = Path.Combine(Constants.ArtifactsTempDirectory, testProjectName);
@@ -72,14 +75,15 @@ public sealed partial class AcceptanceTests
         var result = DotnetUtils.InvokeDotnetTest(outputDirectory);
 
         // Verify the tests run as expected.
-        result.ValidateSummaryStatus(2, 0, 0);
+        result.ValidateSummaryStatus(isTestingPlatform, 2, 0, 0);
 
         Directory.Delete(outputDirectory, true);
     }
 
     [DataTestMethod]
     [DynamicData(nameof(GetTemplateProjectsToTest), DynamicDataSourceType.Method)]
-    public void ProjectTemplate_CanBeInstalledAndTestsArePassing(string targetFramework, string projectTemplate, string language, bool runDotnetTest)
+    public void ProjectTemplate_CanBeInstalledAndTestsArePassing(string targetFramework, string projectTemplate, string language,
+        bool runDotnetTest, bool isTestingPlatform)
     {
         var testProjectName = GenerateTestProjectName();
         string outputDirectory = Path.Combine(Constants.ArtifactsTempDirectory, testProjectName);
@@ -93,7 +97,7 @@ public sealed partial class AcceptanceTests
             var result = DotnetUtils.InvokeDotnetTest(outputDirectory);
 
             // Verify the tests run as expected.
-            result.ValidateSummaryStatus(1, 0, 0);
+            result.ValidateSummaryStatus(isTestingPlatform, 1, 0, 0);
         }
 
         Directory.Delete(outputDirectory, true);
@@ -103,11 +107,11 @@ public sealed partial class AcceptanceTests
     {
         foreach (var targetFramework in SupportedTargetFrameworks)
         {
-            foreach (var (projectTemplate, itemTemplate, languages) in AvailableItemTemplates)
+            foreach (var (projectTemplate, itemTemplate, languages, supportsTestingPlatform) in AvailableItemTemplates)
             {
                 foreach (var language in languages)
                 {
-                    yield return new string[] { targetFramework, projectTemplate, itemTemplate, language };
+                    yield return new object[] { targetFramework, projectTemplate, itemTemplate, language, supportsTestingPlatform };
                 }
             }
         }
@@ -117,11 +121,11 @@ public sealed partial class AcceptanceTests
     {
         foreach (var targetFramework in SupportedTargetFrameworks)
         {
-            foreach (var (projectTemplate, languages, runDotnetTest) in AvailableProjectTemplates)
+            foreach (var (projectTemplate, languages, runDotnetTest, supportsTestingPlatform) in AvailableProjectTemplates)
             {
                 foreach (var language in languages)
                 {
-                    yield return new object[] { targetFramework, projectTemplate, language, runDotnetTest };
+                    yield return new object[] { targetFramework, projectTemplate, language, runDotnetTest, supportsTestingPlatform };
                 }
             }
         }

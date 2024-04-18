@@ -20,6 +20,6 @@
   <PropertyGroup Label="Testing settings">
     <MicrosoftNetTestSdkVersion>17.8.0</MicrosoftNetTestSdkVersion>
     <MicrosoftTestPlatformVersion>$(MicrosoftNetTestSdkVersion)</MicrosoftTestPlatformVersion>
-    <MSTestVersion>3.2.0</MSTestVersion>
+    <MSTestVersion>3.3.1</MSTestVersion>
   </PropertyGroup>
 </Project>

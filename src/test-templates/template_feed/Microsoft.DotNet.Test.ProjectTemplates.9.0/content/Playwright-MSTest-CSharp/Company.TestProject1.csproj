@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="MSTest.Sdk/3.3.1">
 
   <PropertyGroup>
     <TargetFramework Condition="'$(TargetFrameworkOverride)' == ''">net9.0</TargetFramework>
@@ -8,15 +8,8 @@
     <Nullable>enable</Nullable>
 
     <IsPackable Condition="'$(EnablePack)' == 'true'">true</IsPackable>
-    <IsPackable Condition="'$(EnablePack)' != 'true'">false</IsPackable>
-    <IsTestProject>true</IsTestProject>
+    <EnablePlaywright>true</EnablePlaywright>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.0" />
-    <PackageReference Include="MSTest" Version="3.2.0" />
-    <PackageReference Include="Microsoft.Playwright.MSTest" Version="1.41.0" />
-  </ItemGroup>
 
   <ItemGroup>
     <Using Include="System.Text.RegularExpressions" />
