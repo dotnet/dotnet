@@ -338,6 +338,9 @@ if [ "$(uname)" = "Darwin" ]; then
     ulimit -n 10000
 fi
 
+# tools.sh expects the remaining arguments to be available via the $properties string array variable
+properties=$msbuild_args
+
 # Import Arcade
 . "$DIR/common/tools.sh"
 
