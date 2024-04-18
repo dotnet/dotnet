@@ -345,6 +345,9 @@ Remove-Item variable:global:_DotNetInstallDir -ea Ignore
 Remove-Item variable:global:_ToolsetBuildProj -ea Ignore
 Remove-Item variable:global:_MSBuildExe -ea Ignore
 
+# tools.ps1 expects the remaining arguments to be available via the $properties string array variable 
+[string[]] $properties = $MSBuildArguments
+
 # Import Arcade
 . "$PSScriptRoot/common/tools.ps1"
 
