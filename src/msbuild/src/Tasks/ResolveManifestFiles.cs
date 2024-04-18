@@ -285,17 +285,14 @@ namespace Microsoft.Build.Tasks
             {
                 targetPath = Path.GetFileName(item.ItemSpec);
                 //
-                // .NET >= 5 ClickOnce: If TargetPath metadata is not present in apphost.exe's metadata, we'll fallback to using AssemblyName
+                // .NETCore Launcher.exe based deployment: If the file is apphost.exe, we need to set 'TargetPath' metadata
+                // to {assemblyname}.exe so that the file gets published as {assemblyname}.exe and not apphost.exe.
                 //
                 if (LauncherBasedDeployment &&
                     targetPath.Equals(Constants.AppHostExe, StringComparison.InvariantCultureIgnoreCase) &&
                     !String.IsNullOrEmpty(AssemblyName))
                 {
-                    targetPath = item.GetMetadata(ItemMetadataNames.targetPath);
-                    if (String.IsNullOrEmpty(targetPath))
-                    {
-                        targetPath = AssemblyName;
-                    }
+                    targetPath = AssemblyName;
                 }
                 else
                 {
