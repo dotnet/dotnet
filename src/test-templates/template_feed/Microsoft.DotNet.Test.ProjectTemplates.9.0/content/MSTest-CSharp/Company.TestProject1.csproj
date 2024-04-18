@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="MSTest.Sdk/3.3.1">
 
   <PropertyGroup>
     <TargetFramework Condition="'$(TargetFrameworkOverride)' == ''">net9.0</TargetFramework>
@@ -8,17 +8,7 @@
     <Nullable>enable</Nullable>
 
     <IsPackable Condition="'$(EnablePack)' == 'true'">true</IsPackable>
-    <IsPackable Condition="'$(EnablePack)' != 'true'">false</IsPackable>
-    <IsTestProject>true</IsTestProject>
-    <EnableMSTestRunner Condition="'$(DisableRunner)' != 'true'">true</EnableMSTestRunner>
-    <OutputType Condition="'$(DisableRunner)' != 'true'">Exe</OutputType>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MSTest" Version="3.2.0" />
-    <PackageReference Condition="'$(DisableRunner)' == 'true'" Include="coverlet.collector" Version="6.0.0" />
-    <PackageReference Condition="'$(DisableRunner)' != 'true'" Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.10.1" />
-  </ItemGroup>
 
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />

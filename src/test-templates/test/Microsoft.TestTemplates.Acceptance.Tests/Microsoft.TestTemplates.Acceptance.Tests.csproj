@@ -1,9 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="MSTest.Sdk">
 
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
-    <IsTestProject>true</IsTestProject>
-    <IsPackable>false</IsPackable>
     <LangVersion>preview</LangVersion>
     <NoWarn>$(NoWarn);CS0105</NoWarn>
     <ImplicitUsings>enable</ImplicitUsings>
