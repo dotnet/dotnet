@@ -238,17 +238,17 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24217.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24217.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>8ec8057ac5073b6b2e3fcb0a33d588d2a3357ad3</Sha>
+      <Sha>6eb545ab682b04dc72cf574252b7843ec657dd99</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="9.0.0-beta.24217.1">
+    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="9.0.0-beta.24217.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>8ec8057ac5073b6b2e3fcb0a33d588d2a3357ad3</Sha>
+      <Sha>6eb545ab682b04dc72cf574252b7843ec657dd99</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="9.0.0-beta.24217.1">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="9.0.0-beta.24217.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>8ec8057ac5073b6b2e3fcb0a33d588d2a3357ad3</Sha>
+      <Sha>6eb545ab682b04dc72cf574252b7843ec657dd99</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.24210.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
@@ -258,14 +258,14 @@
       <Uri>https://github.com/dotnet/arcade-services</Uri>
       <Sha>9ec07c3673acf5602234c244d9465bca48f49969</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.24217.1">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.24217.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>8ec8057ac5073b6b2e3fcb0a33d588d2a3357ad3</Sha>
+      <Sha>6eb545ab682b04dc72cf574252b7843ec657dd99</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24217.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24217.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>8ec8057ac5073b6b2e3fcb0a33d588d2a3357ad3</Sha>
+      <Sha>6eb545ab682b04dc72cf574252b7843ec657dd99</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Logging.Console" Version="9.0.0-alpha.1.23612.13">
