@@ -365,7 +365,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 .ReferencesReader
                 .GetProjectReferencesAsync(NullLogger.Instance, CancellationToken.None);
 
-            var targetFramework = await _vsProjectAdapter.GetTargetFrameworkAsync();
+            var targetFramework = _vsProjectAdapter.GetTargetFramework();
 
             var packageReferences = (await ProjectServices
                 .ReferencesReader

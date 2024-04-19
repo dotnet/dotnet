@@ -912,13 +912,13 @@ namespace NuGet.PackageManagement.VisualStudio
             }
         }
 
-        private async Task<NuGetProject> CreateNuGetProjectAsync(IVsProjectAdapter project, INuGetProjectContext projectContext = null)
+        private Task<NuGetProject> CreateNuGetProjectAsync(IVsProjectAdapter project, INuGetProjectContext projectContext = null)
         {
             var context = new ProjectProviderContext(
                 projectContext ?? EmptyNuGetProjectContext,
                 () => PackagesFolderPathUtility.GetPackagesFolderPath(this, _settings.Value));
 
-            return await _projectSystemFactory.TryCreateNuGetProjectAsync(project, context);
+            return _projectSystemFactory.TryCreateNuGetProjectAsync(project, context);
         }
 
         internal async Task<IDictionary<string, List<IVsProjectAdapter>>> GetDependentProjectsDictionaryAsync()

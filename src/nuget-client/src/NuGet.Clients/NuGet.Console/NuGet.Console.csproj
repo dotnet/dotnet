@@ -8,7 +8,7 @@
     <Description>Package Manager PowerShell Console implementation.</Description>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <UseWpf>true</UseWpf>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
   </PropertyGroup>
 
   <ItemGroup>

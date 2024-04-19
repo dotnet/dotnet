@@ -161,15 +161,17 @@ namespace NuGet.PackageManagement.VisualStudio
 
         #region Getters
 
-        public async Task<string[]> GetProjectTypeGuidsAsync()
+        public string[] GetProjectTypeGuids()
         {
-            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            ThreadHelper.ThrowIfNotOnUIThread();
             return VsHierarchyUtility.GetProjectTypeGuidsFromHierarchy(VsHierarchy);
         }
 
         public async Task<FrameworkName> GetDotNetFrameworkNameAsync()
         {
-            var targetFrameworkMoniker = await GetTargetFrameworkStringAsync();
+            await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            var targetFrameworkMoniker = GetTargetFrameworkString();
 
             if (!string.IsNullOrEmpty(targetFrameworkMoniker))
             {
@@ -197,9 +199,10 @@ namespace NuGet.PackageManagement.VisualStudio
             return Enumerable.Empty<string>();
         }
 
-        public async Task<NuGetFramework> GetTargetFrameworkAsync()
+        public NuGetFramework GetTargetFramework()
         {
-            var frameworkString = await GetTargetFrameworkStringAsync();
+            ThreadHelper.ThrowIfNotOnUIThread();
+            var frameworkString = GetTargetFrameworkString();
 
             if (!string.IsNullOrEmpty(frameworkString))
             {
@@ -234,9 +237,9 @@ namespace NuGet.PackageManagement.VisualStudio
             return Enumerable.Empty<(string ItemId, string[] ItemMetadata)>();
         }
 
-        private async Task<string> GetTargetFrameworkStringAsync()
+        private string GetTargetFrameworkString()
         {
-            await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             var projectPath = FullName;
 #pragma warning disable CS0618 // Type or member is obsolete

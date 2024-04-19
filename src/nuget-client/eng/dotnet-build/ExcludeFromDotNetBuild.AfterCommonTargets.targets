@@ -6,7 +6,11 @@
   -->
   <PropertyGroup>
     <_SuppressAllTargets>false</_SuppressAllTargets>
-    <_SuppressAllTargets Condition="'$(DotNetBuildFromSource)' == 'true' and '$(ExcludeFromSourceBuild)' == 'true'">true</_SuppressAllTargets>
+    <_SuppressAllTargets Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(ExcludeFromSourceOnlyBuild)' == 'true'">true</_SuppressAllTargets>
+    <_SuppressAllTargets Condition="'$(DotNetBuild)' == 'true' and '$(ExcludeFromDotNetBuild)' == 'true'">true</_SuppressAllTargets>
+    <!-- General exclusion -->
+    <_SuppressAllTargets Condition="'$(ExcludeFromBuild)' == 'true'">true</_SuppressAllTargets>
+
     <!-- If excluding, then disable a restore warning, which will fire on newer SDKs, as well as set the NuGetRestoreTargets property to empty,
          which will avoid importing the restore targets inside the .NET SDK. If the restore targets exist, then static graph restore will attempt tpo
          execute. -->

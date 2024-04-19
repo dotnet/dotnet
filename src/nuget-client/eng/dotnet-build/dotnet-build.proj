@@ -1,0 +1,75 @@
+<Project Sdk="Microsoft.DotNet.Arcade.Sdk" DefaultTargets="Build">
+
+  <Import Project="../SourceBuild.props" />
+
+  <PropertyGroup>
+    <ProjectRoot>$(MSBuildThisFileDirectory)../../</ProjectRoot>
+    <ArcadeDir Condition="'$(SOURCE_BUILT_SDK_DIR_ARCADE)' != ''">$(SOURCE_BUILT_SDK_DIR_ARCADE)/tools/</ArcadeDir>
+    <ArcadeDir Condition="'$(ArcadeDir)' == ''">$(NuGetPackageRoot)/microsoft.dotnet.arcade.sdk/$(ARCADE_VERSION)/tools/</ArcadeDir>
+  </PropertyGroup>
+
+  <Target Name="Build">
+
+    <!-- Construct a set of properties for the inner build. Only pass properties that have been set.-->
+    <ItemGroup>
+      <_CommonProperties Include="Configuration=$(Configuration)" />
+      <_CommonProperties Include="DotNetBuildOrchestrator=$(DotNetBuildOrchestrator)" Condition="'$(DotNetBuildOrchestrator)' != ''" />
+      <_CommonProperties Include="DotNetBuildRepo=true" />
+      <_CommonProperties Include="DotNetBuildSourceOnly=$(DotNetBuildSourceOnly)" Condition="'$(DotNetBuildSourceOnly)' != ''" />
+    </ItemGroup>
+
+    <!-- Set of properties pass to the 'outer' build (but not the inner build). -->
+    <ItemGroup>
+      <_OuterBuildProperties Include="DotNetBuildPhase=Repo" />
+      <_OuterBuildProperties Include="PreventPrebuiltBuild=false" />
+      <_OuterBuildProperties Include="BaseInnerSourceBuildCommand=echo skipping inner sb invocation" />
+    </ItemGroup>
+
+    <!-- Set of properties to pass to the 'inner' build. -->
+    <ItemGroup>
+      <_InnerBuildProperties Include="DotNetBuildPhase=InnerRepo" />
+      <_InnerBuildProperties Include="DotNetBuildInnerRepo=true" />
+    </ItemGroup>
+
+    <!-- Pass _ImportOrUseTooling = false to avoid attempting to restore unneeded packages in Tools.proj.
+         NuGet.client uses package source mapping. If this repo onboards to arcade, this would no longer be needed. -->
+    <MSbuild Projects="$(ArcadeDir)/Build.proj"
+             Properties="@(_CommonProperties);@(_OuterBuildProperties);_ImportOrUseTooling=false;Restore=true;Build=false;Pack=false;Publish=false;Rebuild=false;Test=false;IntegrationTest=false;PerformanceTest=false"
+             Targets="Execute"
+            />
+
+    <MSBuild Projects="$(ProjectRoot)build/build.proj"
+             Properties="_NETCORE_ENGINEERING_TELEMETRY=Restore;@(_CommonProperties);@(_InnerBuildProperties)"
+             Targets="RestoreXPlat" />
+
+    <MSBuild Projects="$(ProjectRoot)build/build.proj"
+             Properties="_NETCORE_ENGINEERING_TELEMETRY=Build;@(_CommonProperties);@(_InnerBuildProperties)"
+             Targets="BuildXPlat" />
+
+    <MSBuild Projects="$(ProjectRoot)build/build.proj"
+             Properties="_NETCORE_ENGINEERING_TELEMETRY=Pack;@(_CommonProperties);@(_InnerBuildProperties)"
+             Targets="PackXPlat" />
+
+    <ItemGroup>
+      <_PublishProperties Include="DotNetPublishUsingPipelines=true" />
+      <_PublishProperties Include="PublishToSymbolServer=false" />
+      <_PublishProperties Include="AssetsLocalStorageDir=$(SourceBuiltAssetsDir)" />
+      <_PublishProperties Include="ShippingPackagesLocalStorageDir=$(SourceBuiltShippingPackagesDir)" />
+      <_PublishProperties Include="NonShippingPackagesLocalStorageDir=$(SourceBuiltNonShippingPackagesDir)" />
+      <_PublishProperties Include="AssetManifestsLocalStorageDir=$(SourceBuiltAssetManifestsDir)" />
+    </ItemGroup>
+
+    <MSbuild Projects="$(ArcadeDir)/SourceBuild/AfterSourceBuild.proj"
+             Properties="_NETCORE_ENGINEERING_TELEMETRY=AfterSourceBuild;@(_CommonProperties);@(_InnerBuildProperties);FailOnPrebuiltBaselineError=true;CurrentRepoSourceBuildArtifactsPackagesDir=$(ProjectRoot)artifacts/nupkgs/" />
+
+    <MSBuild Projects="$(ArcadeDir)Publish.proj"
+             Properties="_NETCORE_ENGINEERING_TELEMETRY=Publish;@(_CommonProperties);@(_PublishProperties);@(_InnerBuildProperties)"
+             Targets="Publish"
+             Condition="'$(DotNetBuildOrchestrator)' == 'true'" />
+
+    <MSbuild Projects="$(ArcadeDir)/SourceBuild/AfterSourceBuild.proj"
+             Properties="_NETCORE_ENGINEERING_TELEMETRY=AfterSourceBuild;@(_CommonProperties);@(_OuterBuildProperties);FailOnPrebuiltBaselineError=true;CurrentRepoSourceBuildArtifactsPackagesDir=$(ProjectRoot)artifacts/nupkgs/" />
+
+  </Target>
+
+</Project>

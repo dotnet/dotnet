@@ -838,7 +838,7 @@ namespace NuGetConsole.Host.PowerShell.Implementation
         {
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            return (await project.GetProjectTypeGuidsAsync()).Contains(VsProjectTypes.WebSiteProjectTypeGuid);
+            return project.GetProjectTypeGuids().Contains(VsProjectTypes.WebSiteProjectTypeGuid);
         }
 
         private async Task<Tuple<string, string>> CompleteTaskAsync(List<Task<Tuple<string, string>>> nameTasks)

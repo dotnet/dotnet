@@ -47,4 +47,11 @@
       <Sha>55fb7ef977e7d120dc12f0960edcff0739d7ee0e</Sha>
     </Dependency>
   </ProductDependencies>
+  <ToolsetDependencies>
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24203.1">
+      <Uri>https://github.com/dotnet/arcade</Uri>
+      <Sha>986a55a9c7f1ef547bc705d6adada5e0c2217819</Sha>
+      <SourceBuild RepoName="arcade" ManagedOnly="true" />
+    </Dependency>
+  </ToolsetDependencies>
 </Dependencies>

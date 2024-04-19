@@ -91,8 +91,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 .Setup(x => x.FullProjectPath)
                 .Returns(Path.Combine(fullPath, "foo.csproj"));
             projectAdapter
-                .Setup(x => x.GetTargetFrameworkAsync())
-                .ReturnsAsync(NuGetFramework.Parse("netstandard13"));
+                .Setup(x => x.GetTargetFramework())
+                .Returns(NuGetFramework.Parse("netstandard13"));
 
             var testMSBuildProjectExtensionsPath = Path.Combine(fullPath, "obj");
             Directory.CreateDirectory(testMSBuildProjectExtensionsPath);

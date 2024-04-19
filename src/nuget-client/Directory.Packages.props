@@ -138,7 +138,7 @@
 
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" Condition="'$(Shipping)' == 'true' AND '$(IsXPlat)' != 'true'" />
-    <GlobalPackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" version="1.0.0" Condition=" '$(DotNetBuildFromSource)' != 'true' " />
+    <GlobalPackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" version="1.0.0" Condition=" '$(DotNetBuildSourceOnly)' != 'true' " />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(UsePublicApiAnalyzer)' == 'true' ">
@@ -160,14 +160,14 @@
   </ItemGroup>
 
   <!-- FxCop Analyzers -->
-  <ItemGroup Condition="'$(Shipping)' == 'true' AND '$(SkipAnalyzers)' != 'true' AND '$(DotNetBuildFromSource)' != 'true'">
+  <ItemGroup Condition="'$(Shipping)' == 'true' AND '$(SkipAnalyzers)' != 'true' AND '$(DotNetBuildSourceOnly)' != 'true'">
     <GlobalPackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8" />
     <GlobalPackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.3" />
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)build\BannedSymbols.txt" Condition="'$(TestProject)' != 'true'" />
   </ItemGroup>
 
-  <!-- DotNetBuildFromSource can only use packages that are open source -->
-  <Target Name="CheckSourceBuildPackageReferences" AfterTargets="CollectPackageReferences" Condition=" '$(DotNetBuildFromSource)' == 'true' ">
+  <!-- DotNetBuildSourceOnly can only use packages that are open source -->
+  <Target Name="CheckSourceBuildPackageReferences" AfterTargets="CollectPackageReferences" Condition=" '$(DotNetBuildSourceOnly)' == 'true' ">
     <ItemGroup>
       <_allowBuildFromSourcePackage Remove="@(_allowBuildFromSourcePackage)" />
       <_sourceBuildUnexpectedPackage Remove="@(_sourceBuildUnexpectedPackage)" />
@@ -198,7 +198,7 @@
 
       <_sourceBuildUnexpectedPackage Include="@(PackageReference)" Exclude="@(_allowBuildFromSourcePackage)" />
     </ItemGroup>
-    <Error Text="Found @(_sourceBuildUnexpectedPackage-&gt;Count()) PackageReferences not on DotNetBuildFromSource allow list: '@(_sourceBuildUnexpectedPackage)'" Condition=" '@(_sourceBuildUnexpectedPackage)' != '' " />
+    <Error Text="Found @(_sourceBuildUnexpectedPackage-&gt;Count()) PackageReferences not on DotNetBuildSourceOnly allow list: '@(_sourceBuildUnexpectedPackage)'" Condition=" '@(_sourceBuildUnexpectedPackage)' != '' " />
   </Target>
 
 </Project>

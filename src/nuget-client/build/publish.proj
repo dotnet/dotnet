@@ -29,6 +29,7 @@
 
     <ItemGroup>
       <ItemsToPush Include="$(NuGetClientNupkgsDirectoryPath)/*.nupkg" />
+      <ItemsToPush Remove="$(NuGetClientNupkgsDirectoryPath)/NuGet.Packaging.Core.*" />
     </ItemGroup>
 
     <Error Condition="@(ItemsToPush->Count()) == 0" Text="There were no packages found at '$(NuGetClientNupkgsDirectoryPath)'." />

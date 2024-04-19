@@ -44,7 +44,7 @@ namespace NuGet.PackageManagement.VisualStudio
             _scriptExecutor = scriptExecutor;
         }
 
-        public async Task<NuGetProject> TryCreateNuGetProjectAsync(
+        public NuGetProject TryCreateNuGetProject(
             IVsProjectAdapter vsProjectAdapter,
             ProjectProviderContext context,
             bool forceProjectType)
@@ -52,9 +52,7 @@ namespace NuGet.PackageManagement.VisualStudio
             Assumes.Present(vsProjectAdapter);
             Assumes.Present(context);
 
-            await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-            var guids = await vsProjectAdapter.GetProjectTypeGuidsAsync();
+            var guids = vsProjectAdapter.GetProjectTypeGuids();
 
             // Web sites cannot have project.json
             if (guids.Contains(VsProjectTypes.WebSiteProjectTypeGuid, StringComparer.OrdinalIgnoreCase))
