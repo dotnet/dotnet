@@ -37,6 +37,12 @@ namespace Microsoft.DotNet.VersionTools.BuildManifest.Model
             }
         }
 
+        public string RepoOrigin
+        {
+            get => Attributes.GetOrDefault(nameof(RepoOrigin));
+            set => Attributes[nameof(RepoOrigin)] = value;
+        }
+
         public override string ToString() => $"Blob {Id}";
 
         public override bool Equals(object obj)

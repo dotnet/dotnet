@@ -24,6 +24,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
         private const string _testAzdoRepoUri = "https://dnceng@dev.azure.com/dnceng/internal/_git/dotnet-buildtest";
         private const string _normalizedTestAzdoRepoUri = "https://dev.azure.com/dnceng/internal/_git/dotnet-buildtest";
+        private const string _testRepoOrigin = "emsdk";
         private const string _testBuildBranch = "foobranch";
         private const string _testBuildCommit = "664996a16fa9228cfd7a55d767deb31f62a65f51";
         private const string _testAzdoBuildId = "89999999";
@@ -71,9 +72,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         {
             Action act = () =>
                 _buildModelFactory.CreateModelFromItems(null, null,
-                null, null, null, null, _testAzdoBuildId, null, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
-                true);
+                null, null, null, null, _testAzdoBuildId, null, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
+                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
             act.Should().Throw<ArgumentNullException>();
         }
 
@@ -126,9 +126,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             };
 
             var model = _buildModelFactory.CreateModelFromItems(artifacts, null,
-                null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
-                true);
+                null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
+                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
 
             _taskLoggingHelper.HasLoggedErrors.Should().BeFalse();
             // When Maestro sees a symbol package, it is supposed to re-do the symbol package path to
@@ -141,6 +140,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     blob.Attributes.Should().Contain("NonShipping", "true");
                     blob.Attributes.Should().Contain("Category", "SMORKELER");
                     blob.Attributes.Should().Contain("Id", bobSymbolsExpectedId);
+                    blob.Attributes.Should().Contain("RepoOrigin", _testRepoOrigin);
                 },
                 blob =>
                 {
@@ -149,6 +149,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     blob.Attributes.Should().Contain("NonShipping", "false");
                     blob.Attributes.Should().Contain("Category", "SNORPKEG");
                     blob.Attributes.Should().Contain("Id", bopSnupkgExpectedId);
+                    blob.Attributes.Should().Contain("RepoOrigin", _testRepoOrigin);
                 },
                 blob =>
                 {
@@ -156,6 +157,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     blob.NonShipping.Should().BeFalse();
                     blob.Attributes.Should().Contain("ARandomBitOfMAD", string.Empty);
                     blob.Attributes.Should().Contain("Id", zipArtifact);
+                    blob.Attributes.Should().Contain("RepoOrigin", _testRepoOrigin);
                 });
 
             model.Artifacts.Packages.Should().SatisfyRespectively(
@@ -167,6 +169,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     package.Attributes.Should().Contain("ShouldWePushDaNorpKeg", "YES");
                     package.Attributes.Should().Contain("Id", "test-package-a");
                     package.Attributes.Should().Contain("Version", "1.0.0");
+                    package.Attributes.Should().Contain("RepoOrigin", _testRepoOrigin);
                 });
 
             model.Identity.Attributes.Should().Contain("AzureDevOpsRepository", _normalizedTestAzdoRepoUri);
@@ -189,9 +192,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             };
 
             var model = _buildModelFactory.CreateModelFromItems(artifacts, null,
-                null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
-                true);
+                null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
+                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
 
             model.Artifacts.Blobs.Should().BeEmpty();
             model.Artifacts.Packages.Should().SatisfyRespectively(
@@ -205,6 +207,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     package.Attributes.Should().Contain("Category", "CASE");
                     package.Attributes.Should().Contain("Id", "test-package-a");
                     package.Attributes.Should().Contain("Version", "1.0.0");
+                    package.Attributes.Should().Contain("RepoOrigin", _testRepoOrigin);
                 });
         }
 
@@ -228,9 +231,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             };
 
             _buildModelFactory.CreateModelFromItems(artifacts, null,
-                null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
-                true);
+                null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
+                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
 
             _taskLoggingHelper.HasLoggedErrors.Should().BeTrue();
             _buildEngine.BuildErrorEvents.Should().Contain(e => e.Message.Equals($"Missing 'RelativeBlobPath' property on blob {zipArtifact}"));
@@ -253,9 +255,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             };
 
             _buildModelFactory.CreateModelFromItems(artifacts, null,
-                null, null, null, null, _testAzdoBuildId, null, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
-                true);
+                null, null, null, null, _testAzdoBuildId, null, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
+                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
 
             // Should have logged an error that an initial location was not present.
             _taskLoggingHelper.HasLoggedErrors.Should().BeTrue();
@@ -287,9 +288,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             };
 
             var model = _buildModelFactory.CreateModelFromItems(artifacts, null,
-                null, null, null, null, _testAzdoBuildId, manifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
-                true);
+                null, null, null, null, _testAzdoBuildId, manifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
+                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
 
             // Should have logged an error that an initial location was not present.
             _taskLoggingHelper.HasLoggedErrors.Should().BeFalse();
@@ -409,7 +409,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             {
                 var modelFromItems = _buildModelFactory.CreateModelFromItems(artifacts, itemsToSign,
                     strongNameSignInfo, fileSignInfo, fileExtensionSignInfo, certificatesSignInfo, _testAzdoBuildId,
-                    _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, true,
+                    _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, _testRepoOrigin, true,
                     VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
                     false);
 
@@ -448,6 +448,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                         blob.Attributes.Should().Contain("Id", bobSymbolsExpectedId);
                         blob.Attributes.Should().Contain("Category", "SMORKELER");
                         blob.Attributes.Should().Contain("NonShipping", "true");
+                        blob.Attributes.Should().Contain("RepoOrigin", _testRepoOrigin);
                     },
                     blob =>
                     {
@@ -456,6 +457,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                         blob.Attributes.Should().Contain("Id", bopSnupkgExpectedId);
                         blob.Attributes.Should().Contain("Category", "SNORPKEG");
                         blob.Attributes.Should().Contain("NonShipping", "false");
+                        blob.Attributes.Should().Contain("RepoOrigin", _testRepoOrigin);
                     },
                     blob =>
                     {
@@ -463,6 +465,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                         blob.NonShipping.Should().BeFalse();
                         blob.Attributes.Should().Contain("Id", zipArtifact);
                         blob.Attributes.Should().Contain("ARandomBitOfMAD", string.Empty);
+                        blob.Attributes.Should().Contain("RepoOrigin", _testRepoOrigin);
                     });
 
                 modelFromFile.Artifacts.Packages.Should().SatisfyRespectively(
@@ -474,6 +477,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                         package.Attributes.Should().Contain("Id", "test-package-a");
                         package.Attributes.Should().Contain("Version", "1.0.0");
                         package.Attributes.Should().Contain("ShouldWePushDaNorpKeg", "YES");
+                        package.Attributes.Should().Contain("RepoOrigin", _testRepoOrigin);
                     });
 
                 modelFromFile.SigningInformation.Should().NotBeNull();
@@ -562,8 +566,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             };
 
             var model = _buildModelFactory.CreateModelFromItems(artifacts, null,
-                null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
+                null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
+                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
                 true);
 
             _taskLoggingHelper.HasLoggedErrors.Should().BeFalse();
@@ -638,9 +642,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             var model = _buildModelFactory.CreateModelFromItems(artifacts, itemsToSign,
                 strongNameSignInfo, fileSignInfo, fileExtensionSignInfo, certificatesSignInfo,
-                _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
-                true);
+                _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
+                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
 
             _taskLoggingHelper.HasLoggedErrors.Should().BeFalse();
             model.SigningInformation.Should().NotBeNull();
@@ -713,9 +716,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             var model = _buildModelFactory.CreateModelFromItems(artifacts, itemsToSign,
                 null, null, null, null,
-                _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
-                true);
+                _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit,
+                _testRepoOrigin, false, VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest, true);
 
             _taskLoggingHelper.HasLoggedErrors.Should().BeTrue();
             _buildEngine.BuildErrorEvents.Should().HaveCount(1);

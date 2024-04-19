@@ -34,6 +34,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public string ManifestCommit { get; set; }
 
+        /// <summary>
+        /// Indicates the source of the artifacts. For a VMR build, the `ManifestRepoName` is dotnet/dotnet,
+        /// while the `ManifestRepoOrigin` corresponds to the actual product repository.
+        /// </summary>
+        public string ManifestRepoOrigin { get; set; }
+
         public string[] ManifestBuildData { get; set; }
 
         public string AzureDevOpsCollectionUri { get; set; }
@@ -140,7 +146,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     {
                         // Act as if %(PublishFlatContainer) were true for all items.
                         blobArtifacts = itemsToPushNoExcludes
-                            .Select(i => blobArtifactModelFactory.CreateBlobArtifactModel(i));
+                            .Select(i => blobArtifactModelFactory.CreateBlobArtifactModel(i, ManifestRepoOrigin));
                         foreach (var blobItem in itemsToPushNoExcludes)
                         {
                             if (!fileSystem.FileExists(blobItem.ItemSpec))
@@ -205,8 +211,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                             PushToLocalStorageOrAzDO(ItemType.BlobArtifact, blobItem);
                         }
 
-                        packageArtifacts = packageItems.Select(packageArtifactModelFactory.CreatePackageArtifactModel);
-                        blobArtifacts = blobItems.Select(i => blobArtifactModelFactory.CreateBlobArtifactModel(i)).Where(blob => blob != null);
+                        packageArtifacts = packageItems.Select(
+                            i => packageArtifactModelFactory.CreatePackageArtifactModel(i, ManifestRepoOrigin));
+                        blobArtifacts = blobItems.Select(
+                                i => blobArtifactModelFactory.CreateBlobArtifactModel(i, ManifestRepoOrigin))
+                            .Where(blob => blob != null);
                     }
 
                     PublishingInfraVersion targetPublishingVersion = PublishingInfraVersion.Latest;
@@ -218,7 +227,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                             Log.LogError($"Could not parse publishing infra version '{PublishingVersion}'");
                         }
                     }
-                    
+
                     SigningInformationModel signingInformationModel = signingInformationModelFactory.CreateSigningInformationModelFromItems(
                         ItemsToSign, StrongNameSignInfo, FileSignInfo, FileExtensionSignInfo, CertificatesSignInfo, blobArtifacts, packageArtifacts);
 
