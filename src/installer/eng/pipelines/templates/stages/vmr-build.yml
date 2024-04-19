@@ -696,6 +696,7 @@ stages:
             targetOS: linux
             targetArchitecture: x64
             extraProperties: /p:PgoInstrument=true
+            runTests: false
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -789,6 +790,7 @@ stages:
             targetOS: linux
             targetArchitecture: arm64
             extraProperties: /p:PgoInstrument=true
+            runTests: false
 
         - template: ../jobs/vmr-build.yml
           parameters:
