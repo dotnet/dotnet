@@ -146,3 +146,6 @@ dotnet_naming_rule.private_field_rule.style = private_member_style
 ; Diagnostics rule: Don't leave unnecessary suppressions
 dotnet_diagnostic.IDE0076.severity = warning
 dotnet_diagnostic.IDE0005.severity = warning
+
+; Code Quality rules: Assumes methods do null checks.
+dotnet_code_quality.CA1062.null_check_validation_methods = Assumes

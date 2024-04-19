@@ -128,9 +128,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             return Task.FromResult(new FrameworkName(_targetFrameworkString));
         }
 
-        public Task<string[]> GetProjectTypeGuidsAsync()
+        public string[] GetProjectTypeGuids()
         {
-            return Task.FromResult(Array.Empty<string>());
+            return Array.Empty<string>();
         }
 
         public Task<IEnumerable<string>> GetReferencedProjectsAsync()
@@ -148,9 +148,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             return Task.FromResult(Enumerable.Empty<CompatibilityProfile>());
         }
 
-        public Task<NuGetFramework> GetTargetFrameworkAsync()
+        public NuGetFramework GetTargetFramework()
         {
-            return Task.FromResult(NuGetFramework.Parse(_targetFrameworkString));
+            return NuGetFramework.Parse(_targetFrameworkString);
         }
 
         public Task<IEnumerable<(string PackageId, string Version)>> GetPackageVersionInformationAsync()

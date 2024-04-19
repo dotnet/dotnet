@@ -78,7 +78,11 @@ namespace NuGet.PackageManagement.VisualStudio
             {
                 if (_targetFramework == null)
                 {
-                    _targetFramework = NuGetUIThreadHelper.JoinableTaskFactory.Run(VsProjectAdapter.GetTargetFrameworkAsync);
+                    _targetFramework = NuGetUIThreadHelper.JoinableTaskFactory.Run(async () =>
+                    {
+                        await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                        return VsProjectAdapter.GetTargetFramework();
+                    });
                 }
 
                 return _targetFramework;
@@ -96,9 +100,9 @@ namespace NuGet.PackageManagement.VisualStudio
             NuGetProjectContext = nuGetProjectContext;
         }
 
-        public async Task InitializeProperties()
+        public void InitializeProperties()
         {
-            _targetFramework = await VsProjectAdapter.GetTargetFrameworkAsync();
+            _targetFramework = VsProjectAdapter.GetTargetFramework();
         }
 
         public virtual void AddFile(string path, Stream stream)

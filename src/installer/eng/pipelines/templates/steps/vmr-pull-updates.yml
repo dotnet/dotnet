@@ -66,6 +66,10 @@ steps:
   condition: ne(variables['Agent.OS'], 'Windows_NT')
   workingDirectory: $(Agent.BuildDirectory)/installer
 
+- script: git config --global diff.astextplain.textconv echo
+  displayName: Disable astextplain in git diff (Windows)
+  condition: eq(variables['Agent.OS'], 'Windows_NT')
+
 - powershell: >
     ./eng/vmr-sync.ps1 `
     -vmr ${{ parameters.vmrPath }} `

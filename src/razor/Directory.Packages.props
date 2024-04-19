@@ -121,6 +121,7 @@
     <PackageVersion Include="xunit" Version="$(_XunitPackageVersion)" />
     <PackageVersion Include="Xunit.Combinatorial" Version="1.5.25" />
     <PackageVersion Include="xunit.extensibility.execution" Version="$(_XunitPackageVersion)" />
+    <PackageVersion Include="xunit.runner.utility" Version="2.4.1" />
     <PackageVersion Include="Xunit.StaFact" Version="1.2.46-alpha" />
   </ItemGroup>
 </Project>

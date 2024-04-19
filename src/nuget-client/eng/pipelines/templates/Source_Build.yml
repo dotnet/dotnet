@@ -4,7 +4,7 @@ steps:
   inputs:
     targetType: "inline"
     script: |
-      ./eng/source-build/build.sh
+      ./eng/dotnet-build/build.sh --source-build
   condition: "always()"
 
 - task: PowerShell@2

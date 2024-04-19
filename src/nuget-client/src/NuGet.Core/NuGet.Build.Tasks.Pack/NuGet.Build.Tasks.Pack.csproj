@@ -37,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ILMerge" PrivateAssets="All" Condition=" '$(DotNetBuildFromSource)' != 'true' " />
+    <PackageReference Include="ILMerge" PrivateAssets="All" Condition=" '$(DotNetBuildSourceOnly)' != 'true' " />
     <None Include="$(BuildCommonDirectory)NOTICES.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
 
@@ -65,7 +65,7 @@
   <Target
     Name="PublishAndMergePackNupkg"
     AfterTargets="AfterBuild"
-    Condition="'$(TargetFramework)' != '' AND '$(IsXPlat)' != 'true' AND '$(DotNetBuildFromSource)' != 'true' AND '$(BuildingInsideVisualStudio)' != 'true'">
+    Condition="'$(TargetFramework)' != '' AND '$(IsXPlat)' != 'true' AND '$(DotNetBuildSourceOnly)' != 'true' AND '$(BuildingInsideVisualStudio)' != 'true'">
     <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish;ILMergeNuGetPack" />
   </Target>
 
@@ -104,7 +104,7 @@
           DependsOnTargets="GetILMergePlatformArg;DetermineILMergeNuGetPackInputsOutputs"
           Inputs="$(PathToBuiltNuGetPack);@(BuildArtifacts)"
           Outputs="$(PathToMergedNuGetPack)"
-          Condition="'$(TargetFramework)' != '' AND '$(DotNetBuildFromSource)' != 'true' ">
+          Condition="'$(TargetFramework)' != '' AND '$(DotNetBuildSourceOnly)' != 'true' ">
     <PropertyGroup>
       <ILMergeResultDir>$([System.IO.Path]::GetDirectoryName($(PathToMergedNuGetPack)))</ILMergeResultDir>
     </PropertyGroup>
@@ -212,19 +212,19 @@
 
   <Target Name="CreatePackNupkg">
     <PropertyGroup>
-      <!-- Build from source can't use ILMerge. -->
-      <ILMergeSubpath Condition="'$(DotNetBuildFromSource)' != 'true'">ilmerge\</ILMergeSubpath>
+      <!-- Build from source can't use ILMerge and XPLat builds don't run the ILmerge targets. -->
+      <ILMergeSubpath Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(IsXPlat)' != 'true'">ilmerge\</ILMergeSubpath>
       <PackagePathDir Condition="'$(TargetFramework)' == '$(NETFXTargetFramework)'">Desktop/</PackagePathDir>
       <PackagePathDir Condition="'$(TargetFramework)' == '$(NetStandardVersion)'">CoreCLR/</PackagePathDir>
     </PropertyGroup>
     <ItemGroup>
-      <TfmSpecificPackageFile Include="$(OutputPath)\$(ILMergeSubpath)NuGet.Build.Tasks.Pack.dll" Condition="'$(DotNetBuildFromSource)' != 'true'">
+      <TfmSpecificPackageFile Include="$(OutputPath)\$(ILMergeSubpath)NuGet.Build.Tasks.Pack.dll" Condition="'$(DotNetBuildSourceOnly)' != 'true'">
         <PackagePath>$(PackagePathDir)</PackagePath>
       </TfmSpecificPackageFile>
       <TfmSpecificPackageFile Include="$(OutputPath)\$(ILMergeSubpath)**\NuGet*.resources.dll">
         <PackagePath>$(PackagePathDir)</PackagePath>
       </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(OutputPath)\$(ILMergeSubpath)NuGet*.dll" Condition="'$(DotNetBuildFromSource)' == 'true'">
+      <TfmSpecificPackageFile Include="$(OutputPath)\$(ILMergeSubpath)NuGet*.dll" Condition="'$(DotNetBuildSourceOnly)' == 'true'">
         <PackagePath>$(PackagePathDir)</PackagePath>
       </TfmSpecificPackageFile>
     </ItemGroup>

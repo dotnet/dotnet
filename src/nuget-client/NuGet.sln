@@ -302,16 +302,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "steps", "steps", "{00112503
 		eng\common\templates\steps\generate-sbom.yml = eng\common\templates\steps\generate-sbom.yml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "source-build", "source-build", "{85D69893-216B-4D97-9E90-39340CA24CA4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet-build", "dotnet-build", "{85D69893-216B-4D97-9E90-39340CA24CA4}"
 	ProjectSection(SolutionItems) = preProject
-		eng\source-build\build.sh = eng\source-build\build.sh
-		eng\source-build\global.json = eng\source-build\global.json
-		eng\source-build\source-build.proj = eng\source-build\source-build.proj
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "source-build-patches", "source-build-patches", "{24038CC5-9A57-472D-825D-9C48F8E4009A}"
-	ProjectSection(SolutionItems) = preProject
-		eng\source-build-patches\0001-Rename-NuGet.Config-to-NuGet.config-to-account-for-a.patch = eng\source-build-patches\0001-Rename-NuGet.Config-to-NuGet.config-to-account-for-a.patch
+		eng\dotnet-build\build.sh = eng\dotnet-build\build.sh
+		eng\dotnet-build\global.json = eng\dotnet-build\global.json
+		eng\dotnet-build\dotnet-build.proj = eng\dotnet-build\dotnet-build.proj
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{EA5A2D72-33C8-442C-AB6D-99EA8739591D}"
@@ -828,7 +823,6 @@ Global
 		{AC389B99-E1E9-42AE-97AE-9874D0EFAD25} = {4497DE20-D8E5-4DCA-86F8-1993180E0EC2}
 		{00112503-3502-4331-B6C3-FD3F2D262242} = {AC389B99-E1E9-42AE-97AE-9874D0EFAD25}
 		{85D69893-216B-4D97-9E90-39340CA24CA4} = {70336E30-C737-4175-BC69-9015D49E496E}
-		{24038CC5-9A57-472D-825D-9C48F8E4009A} = {70336E30-C737-4175-BC69-9015D49E496E}
 		{4B35F4D8-A967-40ED-AFA0-CD3AE3DAD77E} = {EA5A2D72-33C8-442C-AB6D-99EA8739591D}
 		{56D1B750-1FEB-4DAC-8486-6CE5C5655132} = {CE4C7E1B-6883-49C3-A407-F807094777CC}
 		{A0A6BD09-1AF4-4F16-8118-F0FC17FF8413} = {CE4C7E1B-6883-49C3-A407-F807094777CC}

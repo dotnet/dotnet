@@ -232,7 +232,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 Mock.Get(projectAdapter)
                     .VerifyGet(x => x.FullProjectPath, Times.AtLeastOnce);
                 Mock.Get(projectAdapter)
-                    .Verify(x => x.GetTargetFrameworkAsync(), Times.AtLeastOnce);
+                    .Verify(x => x.GetTargetFramework(), Times.AtLeastOnce);
             }
         }
 

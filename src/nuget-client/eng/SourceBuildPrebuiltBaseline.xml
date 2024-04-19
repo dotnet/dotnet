@@ -25,6 +25,7 @@
     <!--
       Packages owned by .NET - exclusion of all versions.
     -->
+    <UsagePattern IdentityGlob="Microsoft.AspNetCore.App.Ref/*" />
     <UsagePattern IdentityGlob="Microsoft.Bcl.AsyncInterfaces/*" />
     <UsagePattern IdentityGlob="Microsoft.Build.Framework/*" />
     <UsagePattern IdentityGlob="Microsoft.Build.Tasks.Core/*" />
@@ -33,12 +34,15 @@
     <UsagePattern IdentityGlob="Microsoft.Build/*" />
     <UsagePattern IdentityGlob="Microsoft.CSharp/*" />
     <UsagePattern IdentityGlob="Microsoft.DotNet.Arcade.Sdk/*" />
+    <UsagePattern IdentityGlob="Microsoft.DotNet.Build.Tasks.Feed/*" />
     <UsagePattern IdentityGlob="Microsoft.DotNet.SourceBuild.Tasks/*" />
     <UsagePattern IdentityGlob="Microsoft.Extensions.CommandLineUtils.Sources/*" />
     <UsagePattern IdentityGlob="Microsoft.Extensions.FileProviders.Abstractions/*" />
     <UsagePattern IdentityGlob="Microsoft.Extensions.FileSystemGlobbing/*" />
     <UsagePattern IdentityGlob="Microsoft.Extensions.Primitives/*" />
     <UsagePattern IdentityGlob="Microsoft.NET.StringTools/*" />
+    <UsagePattern IdentityGlob="Microsoft.NETCore.App.Ref/*" />
+    <UsagePattern IdentityGlob="Microsoft.NETCore.App.Host*/*" />
     <UsagePattern IdentityGlob="Microsoft.NETCore.Platforms/*" />
     <UsagePattern IdentityGlob="Microsoft.NETCore.Targets/*" />
     <UsagePattern IdentityGlob="Microsoft.SourceLink.AzureRepos.Git/*2" />

@@ -54,7 +54,7 @@ namespace NuGet.VisualStudio
 
         IVsHierarchy VsHierarchy { get; }
 
-        Task<string[]> GetProjectTypeGuidsAsync();
+        string[] GetProjectTypeGuids();
 
         Task<FrameworkName> GetDotNetFrameworkNameAsync();
 
@@ -63,7 +63,7 @@ namespace NuGet.VisualStudio
         /// <summary>
         /// Project's target framework
         /// </summary>
-        Task<NuGetFramework> GetTargetFrameworkAsync();
+        NuGetFramework GetTargetFramework();
 
         /// <summary>
         /// Reads a project build items and the requested metadata.

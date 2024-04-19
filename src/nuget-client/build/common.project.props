@@ -12,31 +12,31 @@
     <NETFXTargetFramework>net472</NETFXTargetFramework>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <NETCoreTargetFramework>net8.0</NETCoreTargetFramework>
-    <NETCoreTargetFramework Condition="'$(DotNetBuildFromSource)' == 'true'">net9.0</NETCoreTargetFramework>
+    <NETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true'">net9.0</NETCoreTargetFramework>
     <NETCoreLegacyTargetFramework>netcoreapp3.1</NETCoreLegacyTargetFramework>
-    <NETCoreLegacyTargetFramework Condition="'$(DotNetBuildFromSource)' == 'true'">net9.0</NETCoreLegacyTargetFramework>
+    <NETCoreLegacyTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true'">net9.0</NETCoreLegacyTargetFramework>
     <NETCoreLegacyTargetFrameworkForSigning>netcoreapp5.0</NETCoreLegacyTargetFrameworkForSigning>
     
     <!-- Target frameworks for class libraries-->
     <TargetFrameworksLibrary>$(NetStandardVersion)</TargetFrameworksLibrary>
-    <TargetFrameworksLibrary Condition="'$(DotNetBuildFromSource)' == 'true'">$(NETCoreTargetFramework);$(TargetFrameworksLibrary)</TargetFrameworksLibrary>
-    <TargetFrameworksLibrary Condition="'$(IsXPlat)' != 'true' And '$(DotNetBuildFromSource)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksLibrary)</TargetFrameworksLibrary>
+    <TargetFrameworksLibrary Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NETCoreTargetFramework);$(TargetFrameworksLibrary)</TargetFrameworksLibrary>
+    <TargetFrameworksLibrary Condition="'$(IsXPlat)' != 'true' And '$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksLibrary)</TargetFrameworksLibrary>
 
     <!-- Target frameworks for class libraries which require signing APIs which need to target NET 5.0 -->
     <TargetFrameworksLibraryForSigning>$(TargetFrameworksLibrary)</TargetFrameworksLibraryForSigning>
-    <TargetFrameworksLibraryForSigning Condition="'$(DotNetBuildFromSource)' != 'true'">$(TargetFrameworksLibraryForSigning);$(NETCoreLegacyTargetFrameworkForSigning)</TargetFrameworksLibraryForSigning>
+    <TargetFrameworksLibraryForSigning Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(TargetFrameworksLibraryForSigning);$(NETCoreLegacyTargetFrameworkForSigning)</TargetFrameworksLibraryForSigning>
     
     <!-- Target framework for runnable apps -->
     <TargetFrameworksExe>$(NETCoreTargetFramework)</TargetFrameworksExe>
-    <TargetFrameworksExe Condition="'$(IsXPlat)' != 'true' And '$(DotNetBuildFromSource)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksExe)</TargetFrameworksExe>
+    <TargetFrameworksExe Condition="'$(IsXPlat)' != 'true' And '$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksExe)</TargetFrameworksExe>
 
     <!-- Target frameworks for unit tests -->
     <TargetFrameworksUnitTest>$(NETCoreTargetFramework)</TargetFrameworksUnitTest>
-    <TargetFrameworksUnitTest Condition="'$(IsXPlat)' != 'true' And '$(DotNetBuildFromSource)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksUnitTest)</TargetFrameworksUnitTest>
+    <TargetFrameworksUnitTest Condition="'$(IsXPlat)' != 'true' And '$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksUnitTest)</TargetFrameworksUnitTest>
 
     <!-- Target frameworks for unit tests that test libaries using signing APIs -->
     <TargetFrameworksUnitTestForSigning>$(NETCoreTargetFramework)</TargetFrameworksUnitTestForSigning>
-    <TargetFrameworksUnitTestForSigning Condition="'$(IsXPlat)' != 'true' And '$(DotNetBuildFromSource)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksUnitTestForSigning);$(NETCoreLegacyTargetFramework)</TargetFrameworksUnitTestForSigning>
+    <TargetFrameworksUnitTestForSigning Condition="'$(IsXPlat)' != 'true' And '$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksUnitTestForSigning);$(NETCoreLegacyTargetFramework)</TargetFrameworksUnitTestForSigning>
   </PropertyGroup>
 
   <!-- Common -->
@@ -59,7 +59,7 @@
     <LocalizationWorkDirectory>$(RepositoryRootDirectory)localize</LocalizationWorkDirectory>
     <NoWarn>$(NoWarn);NU5105;MSB3277;NETSDK1138</NoWarn>
     <!-- additional warnings new in .NET 6 that we need to disable when building with source-build -->
-    <NoWarn Condition="'$(DotNetBuildFromSource)' == 'true'">$(NoWarn);CS1998;CA1416;CS0618;CS1574</NoWarn>
+    <NoWarn Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NoWarn);CS1998;CA1416;CS0618;CS1574</NoWarn>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
 
@@ -96,7 +96,7 @@
     <!-- Same as SDK default, but without CandidateAssemblyFiles in front, which would search in Content items -->
     <AssemblySearchPaths>{HintPathFromItem};{TargetFrameworkDirectory};{RawFileName}</AssemblySearchPaths>
     <LangVersion>12</LangVersion>
-    <LangVersion Condition="'$(DotNetBuildFromSource)' == 'true'">latest</LangVersion>
+    <LangVersion Condition="'$(DotNetBuildSourceOnly)' == 'true'">latest</LangVersion>
   </PropertyGroup>
 
   <!-- NuGet's dev branch always targets the next upcoming version of .NET, so we always use the preview SDK -->

@@ -56,12 +56,12 @@
   </ItemGroup>
 
     <!-- Don't use PublicApiAnalyzer on source-build .NET -->
-  <PropertyGroup Condition=" '$(DotNetBuildFromSource)' == 'true' ">
+  <PropertyGroup Condition=" '$(DotNetBuildSourceOnly)' == 'true' ">
     <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
   </PropertyGroup>
 
   <!-- Projects we pack become public APIs that others can use -->
-  <PropertyGroup Condition=" '$(DotNetBuildFromSource)' != 'true' and '$(PackProject)' == 'true' ">
+  <PropertyGroup Condition=" '$(DotNetBuildSourceOnly)' != 'true' and '$(PackProject)' == 'true' ">
     <UsePublicApiAnalyzer Condition=" '$(UsePublicApiAnalyzer)' == '' " >true</UsePublicApiAnalyzer>
   </PropertyGroup>
 

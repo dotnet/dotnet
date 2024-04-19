@@ -299,7 +299,7 @@ stages:
       - output: pipelineArtifact
         displayName: 'Upload source-build log'
         condition: "or(failed(), eq(variables['System.debug'], 'true'))"
-        targetPath: "artifacts/sb/log/source-build.binlog"
+        targetPath: "artifacts/sb/log/source-inner-build.binlog"
         artifactName: "Source-build log"
     steps:
     - template: /eng/pipelines/templates/Source_Build.yml@self

@@ -3,7 +3,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Threading.Tasks;
 using Microsoft;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Utilities;
@@ -51,14 +50,14 @@ namespace NuGet.PackageManagement.VisualStudio
             _scriptExecutor = scriptExecutor;
         }
 
-        public async Task<NuGetProject> TryCreateNuGetProjectAsync(
+        public NuGetProject TryCreateNuGetProject(
             IVsProjectAdapter vsProjectAdapter,
             ProjectProviderContext context,
             bool forceProjectType)
         {
             Assumes.Present(vsProjectAdapter);
-
-            var projectServices = await TryCreateProjectServicesAsync(
+            ThreadHelper.ThrowIfNotOnUIThread();
+            var projectServices = TryCreateProjectServices(
                 vsProjectAdapter,
                 forceCreate: forceProjectType);
 
@@ -67,7 +66,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 return null;
             }
 
-            NuGetFramework targetFramework = await vsProjectAdapter.GetTargetFrameworkAsync();
+            NuGetFramework targetFramework = vsProjectAdapter.GetTargetFramework();
 
             return new LegacyPackageReferenceProject(
                 vsProjectAdapter,
@@ -80,11 +79,10 @@ namespace NuGet.PackageManagement.VisualStudio
         /// <summary>
         /// Is this project a non-CPS package reference based csproj?
         /// </summary>
-        private async Task<INuGetProjectServices> TryCreateProjectServicesAsync(
+        private INuGetProjectServices TryCreateProjectServices(
             IVsProjectAdapter vsProjectAdapter, bool forceCreate)
         {
-            await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
-
+            ThreadHelper.ThrowIfNotOnUIThread();
             var vsProject4 = vsProjectAdapter.Project.Object as VSProject4;
 
             // A legacy CSProj must cast to VSProject4 to manipulate package references

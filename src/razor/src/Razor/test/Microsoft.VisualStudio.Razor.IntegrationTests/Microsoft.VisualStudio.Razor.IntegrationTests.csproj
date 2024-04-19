@@ -35,6 +35,7 @@
     <PackageReference Include="NuGet.SolutionRestoreManager.Interop" />
     <PackageReference Include="Microsoft.Internal.VisualStudio.Shell.Framework" />
     <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.utility" />
   </ItemGroup>
 
   <ItemGroup>
