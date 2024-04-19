@@ -42,6 +42,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             string repoUri,
             string repoBranch,
             string repoCommit,
+            string repoOrigin,
             bool isStableBuild,
             PublishingInfraVersion publishingVersion,
             bool isReleaseOnlyPackageVersion);
@@ -137,6 +138,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             string repoUri,
             string repoBranch,
             string repoCommit,
+            string repoOrigin,
             bool isStableBuild,
             PublishingInfraVersion publishingVersion,
             bool isReleaseOnlyPackageVersion)
@@ -160,7 +162,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                 if (artifact.ItemSpec.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase) && !isSymbolsPackage)
                 {
-                    packageArtifacts.Add(_packageArtifactModelFactory.CreatePackageArtifactModel(artifact));
+                    packageArtifacts.Add(_packageArtifactModelFactory.CreatePackageArtifactModel(artifact, repoOrigin));
                 }
                 else
                 {
@@ -170,7 +172,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         artifact.SetMetadata("RelativeBlobPath", $"{AssetsVirtualDir}symbols/{fileName}");
                     }
 
-                    blobArtifacts.Add(_blobArtifactModelFactory.CreateBlobArtifactModel(artifact));
+                    blobArtifacts.Add(_blobArtifactModelFactory.CreateBlobArtifactModel(artifact, repoOrigin));
                 }
             }
 

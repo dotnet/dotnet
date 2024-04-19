@@ -9,7 +9,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 {
     public interface IBlobArtifactModelFactory
     {
-        BlobArtifactModel CreateBlobArtifactModel(ITaskItem item);
+        BlobArtifactModel CreateBlobArtifactModel(ITaskItem item, string repoOrigin);
     }
 
     public class BlobArtifactModelFactory : IBlobArtifactModelFactory
@@ -22,7 +22,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         }
 
         /// <summary>
-        /// Creates a BlobArtifactModel based on the datat in the ITaskItem provided. Logs errors that may occur,
+        /// Creates a BlobArtifactModel based on the data in the ITaskItem provided. Logs errors that may occur,
         /// but does not prevent the creation of the BlobArtifactModel. Errors do not prevent the creation because 
         /// we want to allow for the capture of all errors that may occur and report back all to the user so they can 
         /// mitigate all the errors found instead of one at a time, which would require continual re-runs of this code
@@ -31,7 +31,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// <param name="item"></param>
         /// <param name="log"></param>
         /// <returns></returns>
-        public BlobArtifactModel CreateBlobArtifactModel(ITaskItem item)
+        public BlobArtifactModel CreateBlobArtifactModel(ITaskItem item, string repoOrigin)
         {
             string path = item.GetMetadata("RelativeBlobPath");
             if (string.IsNullOrEmpty(path))
@@ -42,7 +42,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             return new BlobArtifactModel
             {
                 Attributes = MSBuildListSplitter.GetNamedProperties(item.GetMetadata("ManifestArtifactData")),
-                Id = path
+                Id = path,
+                RepoOrigin = repoOrigin
             };
         }
     }

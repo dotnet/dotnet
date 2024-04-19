@@ -10,7 +10,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 {
     public interface IPackageArtifactModelFactory
     {
-        PackageArtifactModel CreatePackageArtifactModel(ITaskItem item);
+        PackageArtifactModel CreatePackageArtifactModel(ITaskItem item, string repoOrigin);
     }
 
     public class PackageArtifactModelFactory : IPackageArtifactModelFactory
@@ -25,7 +25,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             _log = logger;
         }
 
-        public PackageArtifactModel CreatePackageArtifactModel(ITaskItem item)
+        public PackageArtifactModel CreatePackageArtifactModel(ITaskItem item, string repoOrigin)
         {
             _log.LogMessage($"Creating NupkgInfo based on '{item.ItemSpec}'");
 
@@ -35,7 +35,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             {
                 Attributes = MSBuildListSplitter.GetNamedProperties(item.GetMetadata("ManifestArtifactData")),
                 Id = info.Id,
-                Version = info.Version
+                Version = info.Version,
+                RepoOrigin = repoOrigin
             };
         }
     }
