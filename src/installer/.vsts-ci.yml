@@ -65,7 +65,7 @@ extends:
       ubuntu2204:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04
       mariner20CrossArm:
-        image: mcr.microsoft.com/dotnet-buildtools/prereqs:mariner-2.0-cross-arm
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-arm-alpine
       ubuntu2204DebPkg:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-debpkg
     sdl:
