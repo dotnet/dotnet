@@ -196,7 +196,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         Assert.NotNull(update.WorkspaceProject);
         Assert.Equal(update.WorkspaceProject.Id, _someWorkspaceProject.Id);
         Assert.Same(expectedProjectSnapshot, update.ProjectSnapshot);
-        Assert.True(update.CancellationToken.IsCancellationRequested);
+        Assert.True(update.IsCancelled);
     }
 
     [UIFact]

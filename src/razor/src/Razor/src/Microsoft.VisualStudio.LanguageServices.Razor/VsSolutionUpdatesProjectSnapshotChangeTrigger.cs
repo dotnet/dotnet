@@ -3,7 +3,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -25,9 +24,9 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
     private readonly IProjectWorkspaceStateGenerator _workspaceStateGenerator;
     private readonly IWorkspaceProvider _workspaceProvider;
     private readonly JoinableTaskFactory _jtf;
+    private readonly CancellationTokenSource _disposeTokenSource;
     private readonly JoinableTask _initializeTask;
 
-    private CancellationTokenSource? _activeSolutionCancellationTokenSource = new();
     private uint _updateCookie;
     private IVsSolutionBuildManager? _solutionBuildManager;
 
@@ -47,11 +46,13 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
         _workspaceProvider = workspaceProvider;
         _jtf = joinableTaskContext.Factory;
 
+        _disposeTokenSource = new();
+
         _projectManager.Changed += ProjectManager_Changed;
 
         _initializeTask = _jtf.RunAsync(async () =>
         {
-            await _jtf.SwitchToMainThreadAsync();
+            await _jtf.SwitchToMainThreadAsync(_disposeTokenSource.Token);
 
             // Attach the event sink to solution update events.
             _solutionBuildManager = _serviceProvider.GetService(typeof(SVsSolutionBuildManager)) as IVsSolutionBuildManager;
@@ -61,6 +62,16 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
             var hr = _solutionBuildManager.AdviseUpdateSolutionEvents(this, out _updateCookie);
             Marshal.ThrowExceptionForHR(hr);
         });
+    }
+
+    public void Dispose()
+    {
+        _disposeTokenSource.Cancel();
+        _disposeTokenSource.Dispose();
+
+        _jtf.AssertUIThread();
+
+        _solutionBuildManager?.UnadviseUpdateSolutionEvents(_updateCookie);
     }
 
     public int UpdateSolution_Begin(ref int pfCancelUpdate)
@@ -84,34 +95,17 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
     // This gets called when the project has finished building.
     public int UpdateProjectCfg_Done(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
     {
-        Debug.Assert(_activeSolutionCancellationTokenSource != null, "We should not get build events when there is no active solution");
-
-        _projectBuiltTask = OnProjectBuiltAsync(pHierProj, _activeSolutionCancellationTokenSource?.Token ?? CancellationToken.None);
+        _projectBuiltTask = OnProjectBuiltAsync(pHierProj, _disposeTokenSource.Token);
 
         return VSConstants.S_OK;
-    }
-
-    public void Dispose()
-    {
-        _jtf.AssertUIThread();
-
-        _solutionBuildManager?.UnadviseUpdateSolutionEvents(_updateCookie);
-        _activeSolutionCancellationTokenSource?.Cancel();
-        _activeSolutionCancellationTokenSource?.Dispose();
-        _activeSolutionCancellationTokenSource = null;
     }
 
     private void ProjectManager_Changed(object sender, ProjectChangeEventArgs args)
     {
         if (args.SolutionIsClosing)
         {
-            _activeSolutionCancellationTokenSource?.Cancel();
-            _activeSolutionCancellationTokenSource?.Dispose();
-            _activeSolutionCancellationTokenSource = null;
-        }
-        else
-        {
-            _activeSolutionCancellationTokenSource ??= new CancellationTokenSource();
+            // If the solution is closing, cancel all existing updates.
+            _workspaceStateGenerator.CancelUpdates();
         }
     }
 
@@ -119,11 +113,6 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
     {
         var projectFilePath = await projectHierarchy.GetProjectFilePathAsync(_jtf, cancellationToken);
         if (projectFilePath is null)
-        {
-            return;
-        }
-
-        if (_projectManager is null)
         {
             return;
         }
@@ -139,7 +128,7 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
                 {
                     // Trigger a tag helper update by forcing the project manager to see the workspace Project
                     // from the current solution.
-                    await _workspaceStateGenerator.UpdateAsync(workspaceProject, projectSnapshot, cancellationToken);
+                    _workspaceStateGenerator.EnqueueUpdate(workspaceProject, projectSnapshot);
                 }
             }
         }

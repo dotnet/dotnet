@@ -95,7 +95,7 @@ internal partial class RazorProjectInfoEndpointPublisher : IDisposable
                     break;
                 }
 
-                EnqueuePublish(args.Newer.AssumeNotNull());
+                EnqueuePublish(args.Newer);
 
                 break;
 
@@ -105,7 +105,7 @@ internal partial class RazorProjectInfoEndpointPublisher : IDisposable
                 {
                     // Don't enqueue project addition as those are unlikely to come through in large batches.
                     // Also ensures that we won't get project removal go through the queue without project addition.
-                    ImmediatePublish(args.Newer.AssumeNotNull(), _disposeTokenSource.Token);
+                    ImmediatePublish(args.Newer, _disposeTokenSource.Token);
                 }
 
                 break;
@@ -113,6 +113,9 @@ internal partial class RazorProjectInfoEndpointPublisher : IDisposable
             case ProjectChangeKind.ProjectRemoved:
                 // Enqueue removal so it will replace any other project changes in the work queue as they unnecessary now.
                 EnqueueRemoval(args.Older.AssumeNotNull());
+                break;
+
+            case ProjectChangeKind.DocumentChanged:
                 break;
 
             default:

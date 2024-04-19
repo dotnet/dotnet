@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json;
@@ -21,9 +20,8 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 internal class RazorCohostDynamicRegistrationService(
     LanguageServerFeatureOptions languageServerFeatureOptions,
-    [ImportMany] IEnumerable<IDynamicRegistrationProvider> registrationProviders,
-    RazorCohostClientCapabilitiesService razorCohostClientCapabilitiesService,
-    ILoggerFactory loggerFactory)
+    [ImportMany] IEnumerable<Lazy<IDynamicRegistrationProvider>> lazyRegistrationProviders,
+    Lazy<RazorCohostClientCapabilitiesService> lazyRazorCohostClientCapabilitiesService)
     : IRazorCohostDynamicRegistrationService
 {
 #pragma warning restore RS0030 // Do not use banned APIs
@@ -34,9 +32,8 @@ internal class RazorCohostDynamicRegistrationService(
     }];
 
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
-    private readonly IEnumerable<IDynamicRegistrationProvider> _registrationProviders = registrationProviders;
-    private readonly RazorCohostClientCapabilitiesService _razorCohostClientCapabilitiesService = razorCohostClientCapabilitiesService;
-    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorCohostDynamicRegistrationService>();
+    private readonly IEnumerable<Lazy<IDynamicRegistrationProvider>> _lazyRegistrationProviders = lazyRegistrationProviders;
+    private readonly Lazy<RazorCohostClientCapabilitiesService> _lazyRazorCohostClientCapabilitiesService = lazyRazorCohostClientCapabilitiesService;
 
     public async Task RegisterAsync(string clientCapabilitiesString, RazorCohostRequestContext requestContext, CancellationToken cancellationToken)
     {
@@ -45,16 +42,18 @@ internal class RazorCohostDynamicRegistrationService(
             return;
         }
 
+        // TODO: Should we delay everything below this line until a Razor file is opened?
+
         var clientCapabilities = JsonConvert.DeserializeObject<VSInternalClientCapabilities>(clientCapabilitiesString) ?? new();
 
-        _razorCohostClientCapabilitiesService.SetCapabilities(clientCapabilities);
+        _lazyRazorCohostClientCapabilitiesService.Value.SetCapabilities(clientCapabilities);
 
-        _registrationProviders.TryGetCount(out var providerCount);
+        _lazyRegistrationProviders.TryGetCount(out var providerCount);
         using var registrations = new PooledArrayBuilder<Registration>(providerCount);
 
-        foreach (var provider in _registrationProviders)
+        foreach (var provider in _lazyRegistrationProviders)
         {
-            var registration = provider.GetRegistration(clientCapabilities, _filter, requestContext);
+            var registration = provider.Value.GetRegistration(clientCapabilities, _filter, requestContext);
 
             if (registration is not null)
             {

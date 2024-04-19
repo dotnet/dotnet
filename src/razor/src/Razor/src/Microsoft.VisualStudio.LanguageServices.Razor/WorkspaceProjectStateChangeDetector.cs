@@ -70,17 +70,19 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
         _disposeTokenSource.Dispose();
     }
 
-    private async ValueTask ProcessBatchAsync(ImmutableArray<(Project? Project, IProjectSnapshot ProjectSnapshot)> items, CancellationToken token)
+    private ValueTask ProcessBatchAsync(ImmutableArray<(Project? Project, IProjectSnapshot ProjectSnapshot)> items, CancellationToken token)
     {
         foreach (var (project, projectSnapshot) in items.GetMostRecentUniqueItems(Comparer.Instance))
         {
             if (token.IsCancellationRequested)
             {
-                return;
+                return default;
             }
 
-            await _generator.UpdateAsync(project, projectSnapshot, token);
+            _generator.EnqueueUpdate(project, projectSnapshot);
         }
+
+        return default;
     }
 
     private void Workspace_WorkspaceChanged(object? sender, WorkspaceChangeEventArgs e)
