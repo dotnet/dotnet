@@ -236,12 +236,12 @@ WHERE "c"."ShippingAddress_AddressLine1" = '804 S. Lakeshore Road' AND "c"."Ship
 @__entity_equality_address_0_AddressLine1='804 S. Lakeshore Road' (Size = 21)
 @__entity_equality_address_0_Tags='["foo","bar"]' (Size = 13)
 @__entity_equality_address_0_ZipCode='38654' (Nullable = true)
-@__entity_equality_address_0_Code='US' (Size = 2)
-@__entity_equality_address_0_FullName='United States' (Size = 13)
+@__entity_equality_address_0_Country_Code='US' (Size = 2)
+@__entity_equality_address_0_Country_FullName='United States' (Size = 13)
 
 SELECT "c"."Id", "c"."Name", "c"."BillingAddress_AddressLine1", "c"."BillingAddress_AddressLine2", "c"."BillingAddress_Tags", "c"."BillingAddress_ZipCode", "c"."BillingAddress_Country_Code", "c"."BillingAddress_Country_FullName", "c"."ShippingAddress_AddressLine1", "c"."ShippingAddress_AddressLine2", "c"."ShippingAddress_Tags", "c"."ShippingAddress_ZipCode", "c"."ShippingAddress_Country_Code", "c"."ShippingAddress_Country_FullName"
 FROM "Customer" AS "c"
-WHERE "c"."ShippingAddress_AddressLine1" = @__entity_equality_address_0_AddressLine1 AND "c"."ShippingAddress_AddressLine2" IS NULL AND "c"."ShippingAddress_Tags" = @__entity_equality_address_0_Tags AND "c"."ShippingAddress_ZipCode" = @__entity_equality_address_0_ZipCode AND "c"."ShippingAddress_Country_Code" = @__entity_equality_address_0_Code AND "c"."ShippingAddress_Country_FullName" = @__entity_equality_address_0_FullName
+WHERE "c"."ShippingAddress_AddressLine1" = @__entity_equality_address_0_AddressLine1 AND "c"."ShippingAddress_AddressLine2" IS NULL AND "c"."ShippingAddress_Tags" = @__entity_equality_address_0_Tags AND "c"."ShippingAddress_ZipCode" = @__entity_equality_address_0_ZipCode AND "c"."ShippingAddress_Country_Code" = @__entity_equality_address_0_Country_Code AND "c"."ShippingAddress_Country_FullName" = @__entity_equality_address_0_Country_FullName
 """);
     }
 
@@ -268,15 +268,15 @@ WHERE "c"."ShippingAddress_AddressLine1" = @__entity_equality_address_0_AddressL
 @__entity_equality_address_0_AddressLine1='804 S. Lakeshore Road' (Size = 21)
 @__entity_equality_address_0_Tags='["foo","bar"]' (Size = 13)
 @__entity_equality_address_0_ZipCode='38654' (Nullable = true)
-@__entity_equality_address_0_Code='US' (Size = 2)
-@__entity_equality_address_0_FullName='United States' (Size = 13)
+@__entity_equality_address_0_Country_Code='US' (Size = 2)
+@__entity_equality_address_0_Country_FullName='United States' (Size = 13)
 
 SELECT "c"."Id", "c"."Name", "c"."BillingAddress_AddressLine1", "c"."BillingAddress_AddressLine2", "c"."BillingAddress_Tags", "c"."BillingAddress_ZipCode", "c"."BillingAddress_Country_Code", "c"."BillingAddress_Country_FullName", "c"."ShippingAddress_AddressLine1", "c"."ShippingAddress_AddressLine2", "c"."ShippingAddress_Tags", "c"."ShippingAddress_ZipCode", "c"."ShippingAddress_Country_Code", "c"."ShippingAddress_Country_FullName"
 FROM "Customer" AS "c"
 WHERE EXISTS (
     SELECT 1
     FROM "Customer" AS "c0"
-    WHERE "c0"."ShippingAddress_AddressLine1" = @__entity_equality_address_0_AddressLine1 AND "c0"."ShippingAddress_AddressLine2" IS NULL AND "c0"."ShippingAddress_Tags" = @__entity_equality_address_0_Tags AND "c0"."ShippingAddress_ZipCode" = @__entity_equality_address_0_ZipCode AND "c0"."ShippingAddress_Country_Code" = @__entity_equality_address_0_Code AND "c0"."ShippingAddress_Country_FullName" = @__entity_equality_address_0_FullName)
+    WHERE "c0"."ShippingAddress_AddressLine1" = @__entity_equality_address_0_AddressLine1 AND "c0"."ShippingAddress_AddressLine2" IS NULL AND "c0"."ShippingAddress_Tags" = @__entity_equality_address_0_Tags AND "c0"."ShippingAddress_ZipCode" = @__entity_equality_address_0_ZipCode AND "c0"."ShippingAddress_Country_Code" = @__entity_equality_address_0_Country_Code AND "c0"."ShippingAddress_Country_FullName" = @__entity_equality_address_0_Country_FullName)
 """);
     }
 
@@ -604,12 +604,12 @@ WHERE "v"."ShippingAddress_AddressLine1" = '804 S. Lakeshore Road' AND "v"."Ship
             """
 @__entity_equality_address_0_AddressLine1='804 S. Lakeshore Road' (Size = 21)
 @__entity_equality_address_0_ZipCode='38654' (Nullable = true)
-@__entity_equality_address_0_Code='US' (Size = 2)
-@__entity_equality_address_0_FullName='United States' (Size = 13)
+@__entity_equality_address_0_Country_Code='US' (Size = 2)
+@__entity_equality_address_0_Country_FullName='United States' (Size = 13)
 
 SELECT "v"."Id", "v"."Name", "v"."BillingAddress_AddressLine1", "v"."BillingAddress_AddressLine2", "v"."BillingAddress_ZipCode", "v"."BillingAddress_Country_Code", "v"."BillingAddress_Country_FullName", "v"."ShippingAddress_AddressLine1", "v"."ShippingAddress_AddressLine2", "v"."ShippingAddress_ZipCode", "v"."ShippingAddress_Country_Code", "v"."ShippingAddress_Country_FullName"
 FROM "ValuedCustomer" AS "v"
-WHERE "v"."ShippingAddress_AddressLine1" = @__entity_equality_address_0_AddressLine1 AND "v"."ShippingAddress_AddressLine2" IS NULL AND "v"."ShippingAddress_ZipCode" = @__entity_equality_address_0_ZipCode AND "v"."ShippingAddress_Country_Code" = @__entity_equality_address_0_Code AND "v"."ShippingAddress_Country_FullName" = @__entity_equality_address_0_FullName
+WHERE "v"."ShippingAddress_AddressLine1" = @__entity_equality_address_0_AddressLine1 AND "v"."ShippingAddress_AddressLine2" IS NULL AND "v"."ShippingAddress_ZipCode" = @__entity_equality_address_0_ZipCode AND "v"."ShippingAddress_Country_Code" = @__entity_equality_address_0_Country_Code AND "v"."ShippingAddress_Country_FullName" = @__entity_equality_address_0_Country_FullName
 """);
     }
 
@@ -628,15 +628,15 @@ WHERE "v"."ShippingAddress_AddressLine1" = @__entity_equality_address_0_AddressL
             """
 @__entity_equality_address_0_AddressLine1='804 S. Lakeshore Road' (Size = 21)
 @__entity_equality_address_0_ZipCode='38654' (Nullable = true)
-@__entity_equality_address_0_Code='US' (Size = 2)
-@__entity_equality_address_0_FullName='United States' (Size = 13)
+@__entity_equality_address_0_Country_Code='US' (Size = 2)
+@__entity_equality_address_0_Country_FullName='United States' (Size = 13)
 
 SELECT "v"."Id", "v"."Name", "v"."BillingAddress_AddressLine1", "v"."BillingAddress_AddressLine2", "v"."BillingAddress_ZipCode", "v"."BillingAddress_Country_Code", "v"."BillingAddress_Country_FullName", "v"."ShippingAddress_AddressLine1", "v"."ShippingAddress_AddressLine2", "v"."ShippingAddress_ZipCode", "v"."ShippingAddress_Country_Code", "v"."ShippingAddress_Country_FullName"
 FROM "ValuedCustomer" AS "v"
 WHERE EXISTS (
     SELECT 1
     FROM "ValuedCustomer" AS "v0"
-    WHERE "v0"."ShippingAddress_AddressLine1" = @__entity_equality_address_0_AddressLine1 AND "v0"."ShippingAddress_AddressLine2" IS NULL AND "v0"."ShippingAddress_ZipCode" = @__entity_equality_address_0_ZipCode AND "v0"."ShippingAddress_Country_Code" = @__entity_equality_address_0_Code AND "v0"."ShippingAddress_Country_FullName" = @__entity_equality_address_0_FullName)
+    WHERE "v0"."ShippingAddress_AddressLine1" = @__entity_equality_address_0_AddressLine1 AND "v0"."ShippingAddress_AddressLine2" IS NULL AND "v0"."ShippingAddress_ZipCode" = @__entity_equality_address_0_ZipCode AND "v0"."ShippingAddress_Country_Code" = @__entity_equality_address_0_Country_Code AND "v0"."ShippingAddress_Country_FullName" = @__entity_equality_address_0_Country_FullName)
 """);
     }
 
@@ -1014,12 +1014,50 @@ LIMIT @__p_0
             (await Assert.ThrowsAsync<InvalidOperationException>(
                 () => base.Same_complex_type_projected_twice_with_pushdown_as_part_of_another_projection(async))).Message);
 
+    #region GroupBy
+
+    public override async Task GroupBy_over_property_in_nested_complex_type(bool async)
+    {
+        await base.GroupBy_over_property_in_nested_complex_type(async);
+
+        AssertSql(
+            """
+SELECT "c"."ShippingAddress_Country_Code" AS "Code", COUNT(*) AS "Count"
+FROM "Customer" AS "c"
+GROUP BY "c"."ShippingAddress_Country_Code"
+""");
+    }
+
+    public override async Task GroupBy_over_complex_type(bool async)
+    {
+        await base.GroupBy_over_complex_type(async);
+
+        AssertSql(
+            """
+SELECT "c"."ShippingAddress_AddressLine1", "c"."ShippingAddress_AddressLine2", "c"."ShippingAddress_Tags", "c"."ShippingAddress_ZipCode", "c"."ShippingAddress_Country_Code", "c"."ShippingAddress_Country_FullName", COUNT(*) AS "Count"
+FROM "Customer" AS "c"
+GROUP BY "c"."ShippingAddress_AddressLine1", "c"."ShippingAddress_AddressLine2", "c"."ShippingAddress_Tags", "c"."ShippingAddress_ZipCode", "c"."ShippingAddress_Country_Code", "c"."ShippingAddress_Country_FullName"
+""");
+    }
+
+    public override async Task GroupBy_over_nested_complex_type(bool async)
+    {
+        await base.GroupBy_over_nested_complex_type(async);
+
+        AssertSql(
+            """
+SELECT "c"."ShippingAddress_Country_Code", "c"."ShippingAddress_Country_FullName", COUNT(*) AS "Count"
+FROM "Customer" AS "c"
+GROUP BY "c"."ShippingAddress_Country_Code", "c"."ShippingAddress_Country_FullName"
+""");
+    }
+
     public override async Task Entity_with_complex_type_with_group_by_and_first(bool async)
     {
         await base.Entity_with_complex_type_with_group_by_and_first(async);
 
         AssertSql(
-"""
+            """
 SELECT "c3"."Id", "c3"."Name", "c3"."BillingAddress_AddressLine1", "c3"."BillingAddress_AddressLine2", "c3"."BillingAddress_Tags", "c3"."BillingAddress_ZipCode", "c3"."BillingAddress_Country_Code", "c3"."BillingAddress_Country_FullName", "c3"."ShippingAddress_AddressLine1", "c3"."ShippingAddress_AddressLine2", "c3"."ShippingAddress_Tags", "c3"."ShippingAddress_ZipCode", "c3"."ShippingAddress_Country_Code", "c3"."ShippingAddress_Country_FullName"
 FROM (
     SELECT "c"."Id"
@@ -1036,6 +1074,8 @@ LEFT JOIN (
 ) AS "c3" ON "c1"."Id" = "c3"."Id"
 """);
     }
+
+    #endregion GroupBy
 
     [ConditionalFact]
     public virtual void Check_all_tests_overridden()
