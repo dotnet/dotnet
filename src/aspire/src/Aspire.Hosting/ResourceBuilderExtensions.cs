@@ -22,7 +22,7 @@ public static class ResourceBuilderExtensions
     /// <param name="name">The name of the environment variable.</param>
     /// <param name="value">The value of the environment variable.</param>
     /// <returns>A resource configured with the specified environment variable.</returns>
-    public static IResourceBuilder<T> WithEnvironment<T>(this IResourceBuilder<T> builder, string name, string? value) where T : IResource
+    public static IResourceBuilder<T> WithEnvironment<T>(this IResourceBuilder<T> builder, string name, string? value) where T : IResourceWithEnvironment
     {
         return builder.WithAnnotation(new EnvironmentAnnotation(name, value ?? string.Empty));
     }
@@ -363,6 +363,7 @@ public static class ResourceBuilderExtensions
     /// <param name="callback">Callback that modifies the endpoint.</param>
     /// <param name="createIfNotExists">Create endpoint if it does not exist.</param>
     /// <returns></returns>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("ApiDesign", "RS0026:Do not add multiple public overloads with optional parameters", Justification = "<Pending>")]
     public static IResourceBuilder<T> WithEndpoint<T>(this IResourceBuilder<T> builder, string endpointName, Action<EndpointAnnotation> callback, bool createIfNotExists = true) where T : IResourceWithEndpoints
     {
         var endpoint = builder.Resource.Annotations
@@ -404,6 +405,7 @@ public static class ResourceBuilderExtensions
     /// <param name="isProxied">Specifies if the endpoint will be proxied by DCP. Defaults to true.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
     /// <exception cref="DistributedApplicationException">Throws an exception if an endpoint with the same name already exists on the specified resource.</exception>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("ApiDesign", "RS0026:Do not add multiple public overloads with optional parameters", Justification = "<Pending>")]
     public static IResourceBuilder<T> WithEndpoint<T>(this IResourceBuilder<T> builder, int? port = null, int? targetPort = null, string? scheme = null, string? name = null, string? env = null, bool isProxied = true, bool? isExternal = null) where T : IResource
     {
         if (builder.Resource.Annotations.OfType<EndpointAnnotation>().Any(sb => string.Equals(sb.Name, name, StringComparisons.EndpointAnnotationName)))
