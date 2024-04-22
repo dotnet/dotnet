@@ -36,6 +36,11 @@ parameters:
   type: boolean
   default: false
 
+- name: useDevVersions
+  displayName: True when build output uses dev/CI versioning instead of official build versioning
+  type: boolean
+  default: false
+
 #### SOURCE-ONLY parameters ####
 
 # Instead of building the VMR directly, exports the sources into a tarball and builds from that
@@ -226,8 +231,13 @@ jobs:
 
   - ${{ if eq(parameters.targetOS, 'windows') }}:
     - script: |
-        call $(sourcesPath)\build.cmd -ci -cleanWhileBuilding -prepareMachine /p:TargetOS=${{ parameters.targetOS }} /p:TargetArchitecture=${{ parameters.targetArchitecture }} ${{ parameters.extraProperties }}
+        call $(sourcesPath)\build.cmd -ci -cleanWhileBuilding -prepareMachine %devArgument% /p:TargetOS=${{ parameters.targetOS }} /p:TargetArchitecture=${{ parameters.targetArchitecture }} ${{ parameters.extraProperties }}
       displayName: Build
+      env:
+        ${{ if eq(parameters.useDevVersions, 'True') }}:
+          devArgument: -dev
+        ${{ else }}:
+          devArgument: ''
 
     - ${{ if eq(parameters.runTests, 'True') }}:
       - script: |
@@ -293,6 +303,10 @@ jobs:
 
         if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
           customBuildArgs="$customBuildArgs --use-mono-runtime"
+        fi
+
+        if [[ '${{ parameters.useDevVersions }}' == 'True' ]]; then
+          customBuildArgs="$customBuildArgs --dev"
         fi
 
         if [[ -n "${{ parameters.crossRootFs }}" ]]; then
