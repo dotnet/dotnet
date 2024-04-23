@@ -76,14 +76,25 @@ A _Pre-SBE_ repo is a repo that is built before source-build-externals during th
 >
 > You can view the current pre-SBE repos by running `dotnet msbuild repo-projects/source-build-externals.proj -target:ShowDependencyGraph /p:DotNetBuildSourceOnly=true` from the root of the VMR.
 
-When updating a component that is used in a Pre-SBE repo, please adhere to the following steps:
+The steps outlined below will enable source-build to adjust the package version to match the N-1 artifacts in the product build. If you prefer to maintain a fixed version of the dependency and prevent source-build from making any changes, please follow the instructions provided [here](https://github.com/dotnet/source-build-externals/blob/83566118e44922c30d146654d42c7c3745cc119d/README.md?plain=1#L81). However, if you are comfortable with source-build infrastructure adjusting your package version, please proceed with the following steps:
 
-1. **Add the updated component**: Include the component with the updated version as a new submodule in source-build-externals named `<component>-<new-version>` (this new submodule should be separate from any previously existing version's submodule). Rename the component's old submodule to `<component>-<old-version>`. Also rename the old component's patches directory in `patches/` (if it exists) and the project file in `repo-projects/` to match the submodule name of `<component>-<old-version>`.
-    - See [#276](https://github.com/dotnet/source-build-externals/pull/276) for an example.
-2. **Update post-SBE repositories (if applicable)**: If your dependency is also in a repo that is built after SBE, allow the updated version to flow to the post-SBE repository and update the post-SBE repository to use this new version.
-3. **Build and release**: Perform a build and release the artifacts to update the n-1 (previous) artifacts for the pre-SBE repository.
-4. **Update the pre-SBE repository**: Update the pre-SBE repository to use the new version of the component.
-5. **Clean up**: Remove the outdated component from source-build-externals, the outdated component's patches directory in `patches/`, if applicable, and the project file in `repo-projects`. Rename the updated component's submodule to `<component>`. Also rename any existing patches directory in `patches/` and the respective project file in `repo-projects/` to match the submodule name, `<component>`.
+1. **Include the component in Versions.props and Version.Details.xml**:
+
+    1. **Locate the Pre-SBE repository**: This is where you'll be making changes.
+
+    1. **Check `eng/Versions.props`**: Look for a version property for your component. If it doesn't exist, you'll need to add it.
+
+    1. **Check `eng/Version.Details.xml`**: Similarly, look for an entry for your component. If it doesn't exist, add it.
+
+    1.  **Add a descriptive comment**: When adding an entry to `Version.Details.xml`, include a comment above the entry that describes what it is.
+
+    1. **Examples**: For reference, you can check these examples of [`eng/Versions.props`](https://github.com/dotnet/arcade/pull/14698/files#diff-1ea18ff65faa2ae6fed570b83747086d0317f5e4bc325064f6c14319a9c4ff67R81) and [`eng/Version.Details.xml`](https://github.com/dotnet/arcade/pull/14698/files#diff-fb62e94a1d6f29f863e3d0a22aa38269f6cd1d7f03b109dc06e2cbf2548b86d3R8).
+
+1. **Update the component**: 
+
+    1. **Wait for changes to propagate**: If you added a Version.Details.xml dependency and corresponding property in the Versions.Props for the component that you are updating, then you need to wait for these changes to flow to the [VMR](https://github.com/dotnet/dotnet) before you can update the component. If there is already a Version.Details.xml dependency and corresponding property in the Versions.Props, then there is no need to wait and you can move on to the next step immediately.
+
+    1. **Update the component**: Once the changes have propagated, you can update the component as usual. For guidance, follow the steps in [`Updating an External Component to a Newer Version`](#updating-an-external-component-to-a-newer-version).
 
 ## Patches
 
