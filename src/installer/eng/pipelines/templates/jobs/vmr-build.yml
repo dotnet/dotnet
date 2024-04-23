@@ -266,6 +266,20 @@ jobs:
     displayName: Prepare BuildLogs staging directory
     continueOnError: true
     condition: succeededOrFailed()
+
+  - ${{ if eq(variables['System.TeamProject'], 'public') }}:
+    - publish: '$(Build.StagingDirectory)/BuildLogs'
+      artifact: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
+      displayName: Publish BuildLogs
+      continueOnError: true
+      condition: succeededOrFailed()
+
+    - publish: '${{ variables.sourcesPath }}/artifacts/${{ parameters.architecture }}/Release/'
+      artifact: $(Agent.JobName)_Artifacts
+      displayName: Publish Artifacts
+      condition: succeededOrFailed()
+      continueOnError: true
+
   - task: PublishTestResults@2
     displayName: Publish Test Results
     condition: succeededOrFailed()
