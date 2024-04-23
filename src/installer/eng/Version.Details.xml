@@ -159,6 +159,11 @@
       <Uri>https://github.com/dotnet/msbuild</Uri>
       <Sha>b5265ef370a651f8c3458110b804e5cbf869eeb5</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.8.5-preview-24055-02">
+      <Uri>https://github.com/dotnet/msbuild</Uri>
+      <Sha>b5265ef370a651f8c3458110b804e5cbf869eeb5</Sha>
+      <SourceBuild RepoName="msbuild" ManagedOnly="true" />
+    </Dependency>
     <Dependency Name="NuGet.Build.Tasks" Version="6.8.1-rc.2" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/NuGet-NuGet.Client-Trusted</Uri>
       <Sha>550277e0616e549446f03fda35d3e23dff75dc01</Sha>
