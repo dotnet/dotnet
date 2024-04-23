@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <TestRoot Condition="'$(TestRoot)' == ''">$(ArtifactsObjDir)generatedtests/</TestRoot>
+    <TestSdkVersion Condition="'$(TestSdkVersion)' == ''">$(NETCoreSdkVersion)</TestSdkVersion>
   </PropertyGroup>
 
   <Target Name="CleanTestRoot">
@@ -46,11 +47,11 @@
     <PropertyGroup>
       <!-- Dotnet root typically ends in a \. Trim this to avoid issues with Exec -->
       <TestArgs>--dotnet-root "$(DotNetRoot.TrimEnd('\'))"</TestArgs>
-      <TestArgs>$(TestArgs) --sdk-version $(NETCoreSdkVersion)</TestArgs>
+      <TestArgs>$(TestArgs) --sdk-version $(TestSdkVersion)</TestArgs>
       <TestArgs>$(TestArgs) --test-root "$(TestRoot)"</TestArgs>
       <TestArgs>$(TestArgs) $(AdditionalTestArgs)</TestArgs>
 
-      <_MSBuildSdksDir>$(DotNetRoot)sdk/$(NETCoreSdkVersion)/Sdks</_MSBuildSdksDir>
+      <_MSBuildSdksDir>$(DotNetRoot)sdk/$(TestSdkVersion)/Sdks</_MSBuildSdksDir>
     </PropertyGroup>
 
     <ItemGroup>
