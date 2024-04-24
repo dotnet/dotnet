@@ -367,7 +367,7 @@ internal class RazorProjectService(
 
     private async Task UpdateProjectDocumentsAsync(ImmutableArray<DocumentSnapshotHandle> documents, ProjectKey projectKey, CancellationToken cancellationToken)
     {
-        _logger.LogDebug($"UpdateProjectDocuments for {projectKey} with {documents.Length} documents.");
+        _logger.LogDebug($"UpdateProjectDocuments for {projectKey} with {documents.Length} documents: {string.Join(", ", documents.Select(d => d.FilePath))}");
 
         var project = _projectManager.GetLoadedProject(projectKey);
         var currentProjectKey = project.Key;

@@ -39,18 +39,15 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task PublishCSharp_FirstTime_PublishesEntireSourceText()
+    public void PublishCSharp_FirstTime_PublishesEntireSourceText()
     {
         // Arrange
-        var publisher = new GeneratedDocumentPublisher(_projectManager, Dispatcher, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         var content = "// C# content";
         var sourceText = SourceText.From(content);
 
         // Act
-        await RunOnDispatcherAsync(() =>
-        {
-            publisher.PublishCSharp(s_hostProject.Key, "/path/to/file.razor", sourceText, 123);
-        });
+        publisher.PublishCSharp(s_hostProject.Key, "/path/to/file.razor", sourceText, 123);
 
         // Assert
         var updateRequest = Assert.Single(_serverClient.UpdateRequests);
@@ -61,16 +58,15 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task PublishHtml_FirstTime_PublishesEntireSourceText()
+    public void PublishHtml_FirstTime_PublishesEntireSourceText()
     {
         // Arrange
-        var publisher = new GeneratedDocumentPublisher(_projectManager, Dispatcher, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         var content = "HTML content";
         var sourceText = SourceText.From(content);
 
         // Act
-        await RunOnDispatcherAsync(() =>
-            publisher.PublishHtml(s_hostProject.Key, "/path/to/file.razor", sourceText, 123));
+        publisher.PublishHtml(s_hostProject.Key, "/path/to/file.razor", sourceText, 123);
 
         // Assert
         var updateRequest = Assert.Single(_serverClient.UpdateRequests);
@@ -81,21 +77,19 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task PublishCSharp_SecondTime_PublishesSourceTextDifferences()
+    public void PublishCSharp_SecondTime_PublishesSourceTextDifferences()
     {
         // Arrange
-        var publisher = new GeneratedDocumentPublisher(_projectManager, Dispatcher, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         var initialSourceText = SourceText.From("// Initial content\n");
-        await RunOnDispatcherAsync(() =>
-            publisher.PublishCSharp(s_hostProject.Key, "/path/to/file.razor", initialSourceText, 123));
+        publisher.PublishCSharp(s_hostProject.Key, "/path/to/file.razor", initialSourceText, 123);
         var change = new TextChange(
             new TextSpan(initialSourceText.Length, 0),
             "// Another line");
         var changedSourceText = initialSourceText.WithChanges(change);
 
         // Act
-        await RunOnDispatcherAsync(() =>
-            publisher.PublishCSharp(s_hostProject.Key, "/path/to/file.razor", changedSourceText, 124));
+        publisher.PublishCSharp(s_hostProject.Key, "/path/to/file.razor", changedSourceText, 124);
 
         // Assert
         Assert.Equal(2, _serverClient.UpdateRequests.Count);
@@ -107,21 +101,19 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task PublishHtml_SecondTime_PublishesSourceTextDifferences()
+    public void PublishHtml_SecondTime_PublishesSourceTextDifferences()
     {
         // Arrange
-        var publisher = new GeneratedDocumentPublisher(_projectManager, Dispatcher, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         var initialSourceText = SourceText.From("HTML content\n");
-        await RunOnDispatcherAsync(() =>
-            publisher.PublishHtml(s_hostProject.Key, "/path/to/file.razor", initialSourceText, 123));
+        publisher.PublishHtml(s_hostProject.Key, "/path/to/file.razor", initialSourceText, 123);
         var change = new TextChange(
             new TextSpan(initialSourceText.Length, 0),
             "More content!!");
         var changedSourceText = initialSourceText.WithChanges(change);
 
         // Act
-        await RunOnDispatcherAsync(() =>
-            publisher.PublishHtml(s_hostProject.Key, "/path/to/file.razor", changedSourceText, 124));
+        publisher.PublishHtml(s_hostProject.Key, "/path/to/file.razor", changedSourceText, 124);
 
         // Assert
         Assert.Equal(2, _serverClient.UpdateRequests.Count);
@@ -133,19 +125,17 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task PublishCSharp_SecondTime_IdenticalContent_NoTextChanges()
+    public void PublishCSharp_SecondTime_IdenticalContent_NoTextChanges()
     {
         // Arrange
-        var publisher = new GeneratedDocumentPublisher(_projectManager, Dispatcher, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         var sourceTextContent = "// The content";
         var initialSourceText = SourceText.From(sourceTextContent);
-        await RunOnDispatcherAsync(() =>
-            publisher.PublishCSharp(s_hostProject.Key, "/path/to/file.razor", initialSourceText, 123));
+        publisher.PublishCSharp(s_hostProject.Key, "/path/to/file.razor", initialSourceText, 123);
         var identicalSourceText = SourceText.From(sourceTextContent);
 
         // Act
-        await RunOnDispatcherAsync(() =>
-            publisher.PublishCSharp(s_hostProject.Key, "/path/to/file.razor", identicalSourceText, 124));
+        publisher.PublishCSharp(s_hostProject.Key, "/path/to/file.razor", identicalSourceText, 124);
 
         // Assert
         Assert.Equal(2, _serverClient.UpdateRequests.Count);
@@ -156,19 +146,17 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task PublishHtml_SecondTime_IdenticalContent_NoTextChanges()
+    public void PublishHtml_SecondTime_IdenticalContent_NoTextChanges()
     {
         // Arrange
-        var publisher = new GeneratedDocumentPublisher(_projectManager, Dispatcher, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         var sourceTextContent = "HTMl content";
         var initialSourceText = SourceText.From(sourceTextContent);
-        await RunOnDispatcherAsync(() =>
-            publisher.PublishHtml(s_hostProject.Key, "/path/to/file.razor", initialSourceText, 123));
+        publisher.PublishHtml(s_hostProject.Key, "/path/to/file.razor", initialSourceText, 123);
         var identicalSourceText = SourceText.From(sourceTextContent);
 
         // Act
-        await RunOnDispatcherAsync(() =>
-            publisher.PublishHtml(s_hostProject.Key, "/path/to/file.razor", identicalSourceText, 124));
+        publisher.PublishHtml(s_hostProject.Key, "/path/to/file.razor", identicalSourceText, 124);
 
         // Assert
         Assert.Equal(2, _serverClient.UpdateRequests.Count);
@@ -179,19 +167,17 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task PublishCSharp_DifferentFileSameContent_PublishesEverything()
+    public void PublishCSharp_DifferentFileSameContent_PublishesEverything()
     {
         // Arrange
-        var publisher = new GeneratedDocumentPublisher(_projectManager, Dispatcher, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         var sourceTextContent = "// The content";
         var initialSourceText = SourceText.From(sourceTextContent);
-        await RunOnDispatcherAsync(() =>
-            publisher.PublishCSharp(s_hostProject.Key, "/path/to/file1.razor", initialSourceText, 123));
+        publisher.PublishCSharp(s_hostProject.Key, "/path/to/file1.razor", initialSourceText, 123);
         var identicalSourceText = SourceText.From(sourceTextContent);
 
         // Act
-        await RunOnDispatcherAsync(() =>
-            publisher.PublishCSharp(s_hostProject.Key, "/path/to/file2.razor", identicalSourceText, 123));
+        publisher.PublishCSharp(s_hostProject.Key, "/path/to/file2.razor", identicalSourceText, 123);
 
         // Assert
         Assert.Equal(2, _serverClient.UpdateRequests.Count);
@@ -203,19 +189,17 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task PublishHtml_DifferentFileSameContent_PublishesEverything()
+    public void PublishHtml_DifferentFileSameContent_PublishesEverything()
     {
         // Arrange
-        var publisher = new GeneratedDocumentPublisher(_projectManager, Dispatcher, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         var sourceTextContent = "HTML content";
         var initialSourceText = SourceText.From(sourceTextContent);
-        await RunOnDispatcherAsync(() =>
-            publisher.PublishHtml(s_hostProject.Key, "/path/to/file1.razor", initialSourceText, 123));
+        publisher.PublishHtml(s_hostProject.Key, "/path/to/file1.razor", initialSourceText, 123);
         var identicalSourceText = SourceText.From(sourceTextContent);
 
         // Act
-        await RunOnDispatcherAsync(() =>
-            publisher.PublishHtml(s_hostProject.Key, "/path/to/file2.razor", identicalSourceText, 123));
+        publisher.PublishHtml(s_hostProject.Key, "/path/to/file2.razor", identicalSourceText, 123);
 
         // Assert
         Assert.Equal(2, _serverClient.UpdateRequests.Count);
@@ -230,14 +214,11 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     public async Task ProjectSnapshotManager_DocumentChanged_OpenDocument_PublishesEmptyTextChanges_CSharp()
     {
         // Arrange
-        var publisher = new GeneratedDocumentPublisher(_projectManager, Dispatcher, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         var sourceTextContent = "// The content";
         var initialSourceText = SourceText.From(sourceTextContent);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
-        });
+        publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
 
         // Act
         await _projectManager.UpdateAsync(updater =>
@@ -245,10 +226,7 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
             updater.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
         });
 
-        await RunOnDispatcherAsync(() =>
-        {
-            publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 124);
-        });
+        publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 124);
 
         // Assert
         Assert.Equal(2, _serverClient.UpdateRequests.Count);
@@ -262,14 +240,11 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     public async Task ProjectSnapshotManager_DocumentChanged_OpenDocument_VersionEquivalent_Noops_CSharp()
     {
         // Arrange
-        var publisher = new GeneratedDocumentPublisher(_projectManager, Dispatcher, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         var sourceTextContent = "// The content";
         var initialSourceText = SourceText.From(sourceTextContent);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
-        });
+        publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
 
         // Act
         await _projectManager.UpdateAsync(updater =>
@@ -277,10 +252,7 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
             updater.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
         });
 
-        await RunOnDispatcherAsync(() =>
-        {
-            publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
-        });
+        publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
 
         // Assert
         var updateRequest = Assert.Single(_serverClient.UpdateRequests);
@@ -292,14 +264,11 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     public async Task ProjectSnapshotManager_DocumentChanged_OpenDocument_PublishesEmptyTextChanges_Html()
     {
         // Arrange
-        var publisher = new GeneratedDocumentPublisher(_projectManager, Dispatcher, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         var sourceTextContent = "<!-- The content -->";
         var initialSourceText = SourceText.From(sourceTextContent);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            publisher.PublishHtml(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
-        });
+        publisher.PublishHtml(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
 
         // Act
         await _projectManager.UpdateAsync(updater =>
@@ -307,10 +276,7 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
             updater.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
         });
 
-        await RunOnDispatcherAsync(() =>
-        {
-            publisher.PublishHtml(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 124);
-        });
+        publisher.PublishHtml(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 124);
 
         // Assert
         Assert.Equal(2, _serverClient.UpdateRequests.Count);
@@ -324,14 +290,11 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     public async Task ProjectSnapshotManager_DocumentChanged_OpenDocument_VersionEquivalent_Noops_Html()
     {
         // Arrange
-        var publisher = new GeneratedDocumentPublisher(_projectManager, Dispatcher, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         var sourceTextContent = "<!-- The content -->";
         var initialSourceText = SourceText.From(sourceTextContent);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            publisher.PublishHtml(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
-        });
+        publisher.PublishHtml(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
 
         // Act
         await _projectManager.UpdateAsync(updater =>
@@ -339,10 +302,7 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
             updater.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
         });
 
-        await RunOnDispatcherAsync(() =>
-        {
-            publisher.PublishHtml(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
-        });
+        publisher.PublishHtml(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
 
         // Assert
         var updateRequest = Assert.Single(_serverClient.UpdateRequests);
@@ -354,14 +314,11 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     public async Task ProjectSnapshotManager_DocumentChanged_ClosedDocument_RepublishesTextChanges()
     {
         // Arrange
-        var publisher = new GeneratedDocumentPublisher(_projectManager, Dispatcher, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         var sourceTextContent = "// The content";
         var initialSourceText = SourceText.From(sourceTextContent);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
-        });
+        publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
 
         await _projectManager.UpdateAsync(updater =>
         {
@@ -374,10 +331,7 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
             updater.DocumentClosed(s_hostProject.Key, s_hostDocument.FilePath, new EmptyTextLoader(s_hostDocument.FilePath));
         });
 
-        await RunOnDispatcherAsync(() =>
-        {
-            publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
-        });
+        publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
 
         // Assert
         Assert.Equal(2, _serverClient.UpdateRequests.Count);
@@ -392,7 +346,7 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     public async Task ProjectSnapshotManager_DocumentMoved_DoesntRepublishWholeDocument()
     {
         // Arrange
-        var publisher = new GeneratedDocumentPublisher(_projectManager, Dispatcher, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         var sourceTextContent = """
             public void Method()
             {
@@ -407,10 +361,7 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
             """;
         var changedSourceText = SourceText.From(changedTextContent);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
-        });
+        publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
 
         await _projectManager.UpdateAsync(updater =>
         {
@@ -424,10 +375,7 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
             updater.DocumentAdded(s_hostProject2.Key, s_hostDocument, new EmptyTextLoader(s_hostDocument.FilePath));
         });
 
-        await RunOnDispatcherAsync(() =>
-        {
-            publisher.PublishCSharp(s_hostProject2.Key, s_hostDocument.FilePath, changedSourceText, 124);
-        });
+        publisher.PublishCSharp(s_hostProject2.Key, s_hostDocument.FilePath, changedSourceText, 124);
 
         // Assert
         Assert.Equal(2, _serverClient.UpdateRequests.Count);
@@ -443,14 +391,11 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     {
         // Arrange
         var options = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);
-        var publisher = new GeneratedDocumentPublisher(_projectManager, Dispatcher, _serverClient, options, LoggerFactory);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, options, LoggerFactory);
         var sourceTextContent = "// The content";
         var initialSourceText = SourceText.From(sourceTextContent);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
-        });
+        publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
 
         await _projectManager.UpdateAsync(updater =>
         {

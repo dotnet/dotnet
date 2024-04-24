@@ -40,7 +40,12 @@ internal sealed class SemanticTokensRangeEndpoint(
 
     public async Task<SemanticTokens?> HandleRequestAsync(SemanticTokensRangeParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return null;
+        }
+
         var colorBackground = _razorLSPOptionsMonitor.CurrentValue.ColorBackground;
 
         var correlationId = Guid.NewGuid();

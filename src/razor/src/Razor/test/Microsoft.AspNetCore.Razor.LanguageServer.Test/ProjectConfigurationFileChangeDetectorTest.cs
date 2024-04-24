@@ -1,15 +1,13 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
-using System.Threading;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Moq;
 using Xunit;
@@ -17,36 +15,33 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public class ProjectConfigurationFileChangeDetectorTest : LanguageServerTestBase
+public class ProjectConfigurationFileChangeDetectorTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    public ProjectConfigurationFileChangeDetectorTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task StartAsync_NotifiesListenersOfExistingConfigurationFiles()
     {
         // Arrange
         var eventArgs1 = new List<ProjectConfigurationFileChangeEventArgs>();
-        var listener1 = new Mock<IProjectConfigurationFileChangeListener>(MockBehavior.Strict);
-        listener1.Setup(l => l.ProjectConfigurationFileChanged(It.IsAny<ProjectConfigurationFileChangeEventArgs>()))
-            .Callback<ProjectConfigurationFileChangeEventArgs>(args => eventArgs1.Add(args));
+        var listenerMock1 = new StrictMock<IProjectConfigurationFileChangeListener>();
+        listenerMock1
+            .Setup(l => l.ProjectConfigurationFileChanged(It.IsAny<ProjectConfigurationFileChangeEventArgs>()))
+            .Callback<ProjectConfigurationFileChangeEventArgs>(eventArgs1.Add);
+
         var eventArgs2 = new List<ProjectConfigurationFileChangeEventArgs>();
-        var listener2 = new Mock<IProjectConfigurationFileChangeListener>(MockBehavior.Strict);
-        listener2.Setup(l => l.ProjectConfigurationFileChanged(It.IsAny<ProjectConfigurationFileChangeEventArgs>()))
-            .Callback<ProjectConfigurationFileChangeEventArgs>(args => eventArgs2.Add(args));
-        var existingConfigurationFiles = new[] { "c:/path/to/project.razor.json", "c:/other/path/project.razor.bin" };
-        var cts = new CancellationTokenSource();
+        var listenerMock2 = new StrictMock<IProjectConfigurationFileChangeListener>();
+        listenerMock2
+            .Setup(l => l.ProjectConfigurationFileChanged(It.IsAny<ProjectConfigurationFileChangeEventArgs>()))
+            .Callback<ProjectConfigurationFileChangeEventArgs>(eventArgs2.Add);
+
+        ImmutableArray<string> existingConfigurationFiles = ["c:/path/to/project.razor.json", "c:/other/path/project.razor.bin"];
+
         var detector = new TestProjectConfigurationFileChangeDetector(
-            cts,
-            Dispatcher,
-            new[] { listener1.Object, listener2.Object },
+            [listenerMock1.Object, listenerMock2.Object],
             existingConfigurationFiles,
             LoggerFactory);
 
         // Act
-        await detector.StartAsync("/some/workspace+directory", cts.Token);
+        await detector.StartAsync("/some/workspace+directory", DisposalToken);
 
         // Assert
         Assert.Collection(eventArgs1,
@@ -73,32 +68,17 @@ public class ProjectConfigurationFileChangeDetectorTest : LanguageServerTestBase
             });
     }
 
-    private class TestProjectConfigurationFileChangeDetector : ProjectConfigurationFileChangeDetector
+    private class TestProjectConfigurationFileChangeDetector(
+        IEnumerable<IProjectConfigurationFileChangeListener> listeners,
+        ImmutableArray<string> existingConfigurationFiles,
+        ILoggerFactory loggerFactory)
+        : ProjectConfigurationFileChangeDetector(listeners, TestLanguageServerFeatureOptions.Instance, loggerFactory)
     {
-        private readonly CancellationTokenSource _cancellationTokenSource;
-        private readonly IReadOnlyList<string> _existingConfigurationFiles;
+        private readonly ImmutableArray<string> _existingConfigurationFiles = existingConfigurationFiles;
 
-        public TestProjectConfigurationFileChangeDetector(
-            CancellationTokenSource cancellationTokenSource,
-            ProjectSnapshotManagerDispatcher dispatcher,
-            IEnumerable<IProjectConfigurationFileChangeListener> listeners,
-            IReadOnlyList<string> existingConfigurationFiles,
-            ILoggerFactory loggerFactory)
-            : base(dispatcher, listeners, TestLanguageServerFeatureOptions.Instance, loggerFactory)
-        {
-            _cancellationTokenSource = cancellationTokenSource;
-            _existingConfigurationFiles = existingConfigurationFiles;
-        }
+        protected override bool InitializeFileWatchers => false;
 
-        protected override void OnInitializationFinished()
-        {
-            // Once initialization has finished we want to ensure that no file watchers are created so cancel!
-            _cancellationTokenSource.Cancel();
-        }
-
-        protected override IEnumerable<string> GetExistingConfigurationFiles(string workspaceDirectory)
-        {
-            return _existingConfigurationFiles;
-        }
+        protected override ImmutableArray<string> GetExistingConfigurationFiles(string workspaceDirectory)
+            => _existingConfigurationFiles;
     }
 }

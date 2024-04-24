@@ -43,7 +43,7 @@ internal partial class RazorCustomMessageTarget
         {
             var (synchronized, csharpSnapshot) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(foldingRangeParams.HostDocumentVersion, hostDocument, cancellationToken);
 
-            if (synchronized)
+            if (synchronized && csharpSnapshot is not null)
             {
                 var csharpRequestParams = new FoldingRangeParams()
                 {
@@ -76,7 +76,7 @@ internal partial class RazorCustomMessageTarget
         {
             var (synchronized, htmlDocument) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(foldingRangeParams.HostDocumentVersion, hostDocument, cancellationToken);
 
-            if (synchronized)
+            if (synchronized && htmlDocument is not null)
             {
                 var htmlRequestParams = new FoldingRangeParams()
                 {

@@ -66,7 +66,6 @@ public class RenameEndpointDelegationTest(ITestOutputHelper testOutput) : Single
         var searchEngine = new DefaultRazorComponentSearchEngine(projectManager, LoggerFactory);
 
         var endpoint = new RenameEndpoint(
-            Dispatcher,
             searchEngine,
             projectManager,
             LanguageServerFeatureOptions,

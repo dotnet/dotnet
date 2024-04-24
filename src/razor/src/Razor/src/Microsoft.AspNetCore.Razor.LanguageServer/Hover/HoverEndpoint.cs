@@ -43,7 +43,12 @@ internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocume
 
     protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(TextDocumentPositionParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return Task.FromResult<IDelegatedParams?>(null);
+        }
+
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(
                 documentContext.Identifier,
                 positionInfo.Position,
@@ -51,16 +56,32 @@ internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocume
     }
 
     protected override Task<VSInternalHover?> TryHandleAsync(TextDocumentPositionParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
-        => _hoverService.GetRazorHoverInfoAsync(
-            requestContext.GetRequiredDocumentContext(),
-            positionInfo,
-            request.Position,
-            cancellationToken);
+    {
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return Task.FromResult<VSInternalHover?>(null);
+        }
+
+        return _hoverService.GetRazorHoverInfoAsync(
+                documentContext,
+                positionInfo,
+                request.Position,
+                cancellationToken);
+    }
 
     protected override Task<VSInternalHover?> HandleDelegatedResponseAsync(VSInternalHover? response, TextDocumentPositionParams originalRequest, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
-        => _hoverService.TranslateDelegatedResponseAsync(
-            response,
-            requestContext.GetRequiredDocumentContext(),
-            positionInfo,
-            cancellationToken);
+    {
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return Task.FromResult<VSInternalHover?>(null);
+        }
+
+        return _hoverService.TranslateDelegatedResponseAsync(
+                response,
+                documentContext,
+                positionInfo,
+                cancellationToken);
+    }
 }

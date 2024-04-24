@@ -6,9 +6,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal abstract class DocumentProcessedListener
+internal interface IDocumentProcessedListener
 {
-    public abstract void Initialize(IProjectSnapshotManager projectManager);
-
-    public abstract void DocumentProcessed(RazorCodeDocument codeDocument, IDocumentSnapshot documentSnapshot);
+    void DocumentProcessed(RazorCodeDocument codeDocument, IDocumentSnapshot documentSnapshot);
 }

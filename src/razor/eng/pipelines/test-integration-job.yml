@@ -73,6 +73,15 @@ steps:
         artifactType: Container
         parallel: true
 
+  - powershell: ./eng/scripts/InstallProcDump.ps1
+    displayName: Install ProcDump
+
+  - powershell: ./eng/scripts/StartDumpCollectionForHangingBuilds.ps1
+      $(ProcDumpPath)procdump.exe artifacts/log/${{ parameters.configuration }}
+      (Get-Date).AddMinutes(240)
+      devenv, xunit.console, xunit.console.x86
+    displayName: Start background dump collection
+
   - script: eng\cibuild.cmd
       -configuration ${{ parameters.configuration }}
       -msbuildEngine vs
@@ -83,15 +92,20 @@ steps:
     displayName: Run Integration Tests
     condition: succeeded()
 
+  - powershell: ./eng/scripts/FinishDumpCollectionForHangingBuilds.ps1 artifacts/log/${{ parameters.configuration }}
+    displayName: Finish background dump collection
+    continueOnError: true
+    condition: always()
+
   - task: PublishBuildArtifacts@1
     displayName: Upload Run tests BinLog
     condition: always()
     continueOnError: true
     inputs:
-        pathtoPublish: artifacts/log/${{ parameters.configuration }}/Build.binlog
-        artifactName: $(Agent.Os)_$(Agent.JobName) RunTestsBinLog
-        artifactType: Container
-        parallel: true
+      pathtoPublish: artifacts/log/${{ parameters.configuration }}/Build.binlog
+      artifactName: $(Agent.Os)_$(Agent.JobName) RunTestsBinLog
+      artifactType: Container
+      parallel: true
 
   - task: PublishTestResults@2
     displayName: Publish xUnit Test Results
@@ -110,7 +124,8 @@ steps:
       ArtifactName: '$(System.JobAttempt)-TestResults $(Build.BuildNumber)'
       publishLocation: Container
     continueOnError: true
-    condition: succeededOrFailed()
+    condition: always()
+
   - task: PublishBuildArtifacts@1
     displayName: Publish Logs
     inputs:
@@ -118,4 +133,4 @@ steps:
       ArtifactName: '$(System.JobAttempt)-Logs ${{ parameters.configuration }} $(Build.BuildNumber)'
       publishLocation: Container
     continueOnError: true
-    condition: succeededOrFailed()
+    condition: always()

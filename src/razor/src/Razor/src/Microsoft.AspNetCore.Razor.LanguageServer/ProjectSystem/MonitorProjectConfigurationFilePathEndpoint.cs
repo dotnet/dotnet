@@ -21,7 +21,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationHandler<MonitorProjectConfigurationFilePathParams>, IDisposable
 {
     private readonly IProjectSnapshotManager _projectManager;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly WorkspaceDirectoryPathResolver _workspaceDirectoryPathResolver;
     private readonly IEnumerable<IProjectConfigurationFileChangeListener> _listeners;
     private readonly LanguageServerFeatureOptions _options;
@@ -35,14 +34,12 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationH
 
     public MonitorProjectConfigurationFilePathEndpoint(
         IProjectSnapshotManager projectManager,
-        ProjectSnapshotManagerDispatcher dispatcher,
         WorkspaceDirectoryPathResolver workspaceDirectoryPathResolver,
         IEnumerable<IProjectConfigurationFileChangeListener> listeners,
         LanguageServerFeatureOptions options,
         ILoggerFactory loggerFactory)
     {
         _projectManager = projectManager;
-        _dispatcher = dispatcher;
         _workspaceDirectoryPathResolver = workspaceDirectoryPathResolver;
         _listeners = listeners;
         _options = options;
@@ -211,7 +208,6 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationH
     // Protected virtual for testing
     protected virtual IFileChangeDetector CreateFileChangeDetector()
         => new ProjectConfigurationFileChangeDetector(
-            _dispatcher,
             _listeners,
             _options,
             _loggerFactory);

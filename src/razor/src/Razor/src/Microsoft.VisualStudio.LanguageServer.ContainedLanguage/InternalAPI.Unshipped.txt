@@ -1,5 +1,5 @@
 #nullable enable
-Microsoft.VisualStudio.LanguageServer.ContainedLanguage.DefaultLSPDocumentSynchronizer.SynchronizedResult<TVirtualDocumentSnapshot>.Deconstruct(out bool Synchronized, out TVirtualDocumentSnapshot! VirtualSnapshot) -> void
+Microsoft.VisualStudio.LanguageServer.ContainedLanguage.DefaultLSPDocumentSynchronizer.SynchronizedResult<TVirtualDocumentSnapshot>.Deconstruct(out bool Synchronized, out TVirtualDocumentSnapshot? VirtualSnapshot) -> void
 Microsoft.VisualStudio.LanguageServer.ContainedLanguage.DefaultLSPDocumentSynchronizer.TryReturnPossiblyFutureSnapshot<TVirtualDocumentSnapshot>(int requiredHostDocumentVersion, System.Uri! hostDocumentUri, System.Uri? specificVirtualDocumentUri) -> Microsoft.VisualStudio.LanguageServer.ContainedLanguage.DefaultLSPDocumentSynchronizer.SynchronizedResult<TVirtualDocumentSnapshot!>?
 Microsoft.VisualStudio.LanguageServer.ContainedLanguage.LSPDocumentSnapshot.TryGetAllVirtualDocumentsAsArray<TVirtualDocument>(out System.Collections.Immutable.ImmutableArray<TVirtualDocument!> virtualDocuments) -> bool
 override Microsoft.VisualStudio.LanguageServer.ContainedLanguage.DefaultLSPDocument.SetVirtualDocuments(System.Collections.Generic.IReadOnlyList<Microsoft.VisualStudio.LanguageServer.ContainedLanguage.VirtualDocument!>! virtualDocuments) -> void

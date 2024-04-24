@@ -58,7 +58,12 @@ internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoin
             return Task.FromResult<IDelegatedParams?>(null);
         }
 
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return Task.FromResult<IDelegatedParams?>(null);
+        }
+
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(
                 documentContext.Identifier,
                 positionInfo.Position,
@@ -83,7 +88,7 @@ internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoin
 
             // Indicates the reference item is directly available in the code
             referenceItem.Origin = VSInternalItemOrigin.Exact;
-            
+
             if (!_filePathService.IsVirtualCSharpFile(referenceItem.Location.Uri) &&
                 !_filePathService.IsVirtualHtmlFile(referenceItem.Location.Uri))
             {

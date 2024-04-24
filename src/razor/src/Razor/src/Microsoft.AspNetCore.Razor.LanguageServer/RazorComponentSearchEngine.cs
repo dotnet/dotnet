@@ -10,6 +10,4 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal abstract class RazorComponentSearchEngine
 {
     public abstract Task<IDocumentSnapshot?> TryLocateComponentAsync(TagHelperDescriptor tagHelper);
-
-    public abstract Task<TagHelperDescriptor?> TryGetTagHelperDescriptorAsync(IDocumentSnapshot codeDocument, System.Threading.CancellationToken cancellationToken);
 }

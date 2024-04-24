@@ -30,7 +30,12 @@ internal sealed class InlayHintEndpoint(LanguageServerFeatureOptions featureOpti
 
     public Task<InlayHint[]?> HandleRequestAsync(InlayHintParams request, RazorRequestContext context, CancellationToken cancellationToken)
     {
-        var documentContext = context.GetRequiredDocumentContext();
+        var documentContext = context.DocumentContext;
+        if (documentContext is null)
+        {
+            return Task.FromResult<InlayHint[]?>(null);
+        }
+
         return _inlayHintService.GetInlayHintsAsync(_clientConnection, documentContext, request.Range, cancellationToken);
     }
 }

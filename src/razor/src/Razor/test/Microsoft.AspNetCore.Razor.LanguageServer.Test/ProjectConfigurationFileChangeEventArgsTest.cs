@@ -1,12 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Serialization;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Moq;
@@ -21,7 +19,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
     public void TryDeserialize_RemovedKind_ReturnsFalse()
     {
         // Arrange
-        var deserializerMock = new Mock<IRazorProjectInfoDeserializer>(MockBehavior.Strict);
+        var deserializerMock = new StrictMock<IRazorProjectInfoDeserializer>();
         deserializerMock
             .Setup(x => x.DeserializeFromFile(It.IsAny<string>()))
             .Returns(new RazorProjectInfo(
@@ -31,12 +29,12 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
                 rootNamespace: null,
                 displayName: "project",
                 projectWorkspaceState: ProjectWorkspaceState.Default,
-                documents: ImmutableArray<DocumentSnapshotHandle>.Empty));
+                documents: []));
 
         var args = new ProjectConfigurationFileChangeEventArgs(
             configurationFilePath: "/path/to/obj/project.razor.bin",
             kind: RazorFileChangeKind.Removed,
-            projectInfoDeserializer: deserializerMock.Object);
+            deserializer: deserializerMock.Object);
 
         // Act
         var result = args.TryDeserialize(TestLanguageServerFeatureOptions.Instance, out var handle);
@@ -51,7 +49,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
     public void TryDeserialize_DifferingSerializationPaths_ReturnsFalse()
     {
         // Arrange
-        var deserializerMock = new Mock<IRazorProjectInfoDeserializer>(MockBehavior.Strict);
+        var deserializerMock = new StrictMock<IRazorProjectInfoDeserializer>();
         var projectInfo = new RazorProjectInfo(
             "/path/to/ORIGINAL/obj/project.razor.bin",
             "c:/path/to/project.csproj",
@@ -59,7 +57,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
             rootNamespace: null,
             displayName: "project",
             projectWorkspaceState: ProjectWorkspaceState.Default,
-            documents: ImmutableArray<DocumentSnapshotHandle>.Empty);
+            documents: []);
 
         deserializerMock
             .Setup(x => x.DeserializeFromFile(It.IsAny<string>()))
@@ -68,7 +66,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
         var args = new ProjectConfigurationFileChangeEventArgs(
             configurationFilePath: "/path/to/DIFFERENT/obj/project.razor.bin",
             kind: RazorFileChangeKind.Added,
-            projectInfoDeserializer: deserializerMock.Object);
+            deserializer: deserializerMock.Object);
 
         // Act
         var result = args.TryDeserialize(TestLanguageServerFeatureOptions.Instance, out var deserializedProjectInfo);
@@ -82,7 +80,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
     public void TryDeserialize_MemoizesResults()
     {
         // Arrange
-        var deserializerMock = new Mock<IRazorProjectInfoDeserializer>(MockBehavior.Strict);
+        var deserializerMock = new StrictMock<IRazorProjectInfoDeserializer>();
         var projectInfo = new RazorProjectInfo(
             "/path/to/obj/project.razor.bin",
             "c:/path/to/project.csproj",
@@ -90,7 +88,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
             rootNamespace: null,
             displayName: "project",
             projectWorkspaceState: ProjectWorkspaceState.Default,
-            documents: ImmutableArray<DocumentSnapshotHandle>.Empty);
+            documents: []);
 
         deserializerMock
             .Setup(x => x.DeserializeFromFile(It.IsAny<string>()))
@@ -99,7 +97,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
         var args = new ProjectConfigurationFileChangeEventArgs(
             configurationFilePath: "/path/to/obj/project.razor.bin",
             kind: RazorFileChangeKind.Added,
-            projectInfoDeserializer: deserializerMock.Object);
+            deserializer: deserializerMock.Object);
 
         // Act
         var result1 = args.TryDeserialize(TestLanguageServerFeatureOptions.Instance, out var projectInfo1);
@@ -119,14 +117,17 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
     public void TryDeserialize_NullFileDeserialization_MemoizesResults_ReturnsFalse()
     {
         // Arrange
-        var deserializerMock = new Mock<IRazorProjectInfoDeserializer>(MockBehavior.Strict);
+        var deserializerMock = new StrictMock<IRazorProjectInfoDeserializer>();
         var callCount = 0;
         deserializerMock
             .Setup(x => x.DeserializeFromFile(It.IsAny<string>()))
             .Callback(() => callCount++)
             .Returns<RazorProjectInfo>(null);
 
-        var args = new ProjectConfigurationFileChangeEventArgs("/path/to/obj/project.razor.bin", RazorFileChangeKind.Changed, deserializerMock.Object);
+        var args = new ProjectConfigurationFileChangeEventArgs(
+            configurationFilePath: "/path/to/obj/project.razor.bin",
+            kind: RazorFileChangeKind.Changed,
+            deserializer: deserializerMock.Object);
 
         // Act
         var result1 = args.TryDeserialize(TestLanguageServerFeatureOptions.Instance, out var handle1);

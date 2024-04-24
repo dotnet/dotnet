@@ -59,9 +59,10 @@ internal class LegacyRazorCompletionEndpoint(
 
     public async Task<VSInternalCompletionList?> HandleRequestAsync(CompletionParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        var documentContext = requestContext.GetRequiredDocumentContext();
-
-        if (request.Context is null || !IsApplicableTriggerContext(request.Context))
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null ||
+            request.Context is null ||
+            !IsApplicableTriggerContext(request.Context))
         {
             return null;
         }

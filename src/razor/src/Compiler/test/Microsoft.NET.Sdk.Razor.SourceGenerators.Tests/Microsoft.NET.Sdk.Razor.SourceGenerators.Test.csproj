@@ -57,6 +57,11 @@
         <Reference Include="$(PkgMicrosoft_AspNetCore_App_Runtime_osx-x64)\runtimes\osx-x64\lib\net8.0\*.dll" />
       </ItemGroup>
     </When>
+    <When Condition="$(NetCoreSDKRuntimeIdentifier) == 'osx-arm64'">
+      <ItemGroup>
+        <Reference Include="$(PkgMicrosoft_AspNetCore_App_Runtime_osx-arm64)\runtimes\osx-arm64\lib\net8.0\*.dll" />
+      </ItemGroup>
+    </When>
   </Choose>
 
 </Project>

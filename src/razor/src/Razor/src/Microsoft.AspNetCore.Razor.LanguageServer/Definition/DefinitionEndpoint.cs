@@ -51,7 +51,11 @@ internal sealed class DefinitionEndpoint(
     protected async override Task<DefinitionResult?> TryHandleAsync(TextDocumentPositionParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
         Logger.LogInformation($"Starting go-to-def endpoint request.");
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return null;
+        }
 
         if (!FileKinds.IsComponent(documentContext.FileKind))
         {
@@ -99,7 +103,12 @@ internal sealed class DefinitionEndpoint(
 
     protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(TextDocumentPositionParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return Task.FromResult<IDelegatedParams?>(null);
+        }
+
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(
                 documentContext.Identifier,
                 positionInfo.Position,

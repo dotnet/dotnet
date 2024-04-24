@@ -28,8 +28,7 @@ public class RazorFileSynchronizerTest(ITestOutputHelper testOutput) : LanguageS
         var synchronizer = new RazorFileSynchronizer(projectService.Object);
 
         // Act
-        await RunOnDispatcherAsync(() =>
-            synchronizer.RazorFileChanged(filePath, RazorFileChangeKind.Added));
+        await synchronizer.RazorFileChangedAsync(filePath, RazorFileChangeKind.Added, DisposalToken);
 
         // Assert
         projectService.VerifyAll();
@@ -48,8 +47,7 @@ public class RazorFileSynchronizerTest(ITestOutputHelper testOutput) : LanguageS
         var synchronizer = new RazorFileSynchronizer(projectService.Object);
 
         // Act
-        await RunOnDispatcherAsync(() =>
-            synchronizer.RazorFileChanged(filePath, RazorFileChangeKind.Added));
+        await synchronizer.RazorFileChangedAsync(filePath, RazorFileChangeKind.Added, DisposalToken);
 
         // Assert
         projectService.VerifyAll();
@@ -68,8 +66,7 @@ public class RazorFileSynchronizerTest(ITestOutputHelper testOutput) : LanguageS
         var synchronizer = new RazorFileSynchronizer(projectService.Object);
 
         // Act
-        await RunOnDispatcherAsync(() =>
-            synchronizer.RazorFileChanged(filePath, RazorFileChangeKind.Removed));
+        await synchronizer.RazorFileChangedAsync(filePath, RazorFileChangeKind.Removed, DisposalToken);
 
         // Assert
         projectService.VerifyAll();
@@ -88,8 +85,7 @@ public class RazorFileSynchronizerTest(ITestOutputHelper testOutput) : LanguageS
         var synchronizer = new RazorFileSynchronizer(projectService.Object);
 
         // Act
-        await RunOnDispatcherAsync(() =>
-            synchronizer.RazorFileChanged(filePath, RazorFileChangeKind.Removed));
+        await synchronizer.RazorFileChangedAsync(filePath, RazorFileChangeKind.Removed, DisposalToken);
 
         // Assert
         projectService.VerifyAll();

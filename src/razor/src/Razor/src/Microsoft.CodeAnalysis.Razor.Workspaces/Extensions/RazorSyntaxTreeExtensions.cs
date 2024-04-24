@@ -3,8 +3,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -15,31 +17,27 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 
 internal static class RazorSyntaxTreeExtensions
 {
-    public static IReadOnlyList<RazorDirectiveSyntax> GetCodeBlockDirectives(this RazorSyntaxTree syntaxTree)
+    public static ImmutableArray<RazorDirectiveSyntax> GetSectionDirectives(this RazorSyntaxTree syntaxTree)
     {
-        if (syntaxTree is null)
-        {
-            throw new ArgumentNullException(nameof(syntaxTree));
-        }
+        return GetDirectives(syntaxTree, directive => directive.DirectiveDescriptor?.Directive == SectionDirective.Directive.Directive);
+    }
 
-        // We want all nodes of type RazorDirectiveSyntax which will contain code.
-        // Since code block directives occur at the top-level, we don't need to dive deeper into unrelated nodes.
-        var codeBlockDirectives = syntaxTree.Root
-            .DescendantNodes(node => node is RazorDocumentSyntax || node is MarkupBlockSyntax || node is CSharpCodeBlockSyntax)
+    public static ImmutableArray<RazorDirectiveSyntax> GetCodeBlockDirectives(this RazorSyntaxTree syntaxTree)
+    {
+        return GetDirectives(syntaxTree, directive => directive.DirectiveDescriptor?.Kind == DirectiveKind.CodeBlock);
+    }
+
+    private static ImmutableArray<RazorDirectiveSyntax> GetDirectives(RazorSyntaxTree syntaxTree, Func<RazorDirectiveSyntax, bool> predicate)
+    {
+        return syntaxTree.Root
+            .DescendantNodes(node => node is RazorDocumentSyntax or MarkupBlockSyntax or CSharpCodeBlockSyntax)
             .OfType<RazorDirectiveSyntax>()
-            .Where(directive => directive.DirectiveDescriptor?.Kind == DirectiveKind.CodeBlock)
-            .ToList();
-
-        return codeBlockDirectives;
+            .Where(predicate)
+            .SelectAsArray(d => d);
     }
 
     public static IReadOnlyList<CSharpStatementSyntax> GetCSharpStatements(this RazorSyntaxTree syntaxTree)
     {
-        if (syntaxTree is null)
-        {
-            throw new ArgumentNullException(nameof(syntaxTree));
-        }
-
         // We want all nodes that represent Razor C# statements, @{ ... }.
         var statements = syntaxTree.Root.DescendantNodes().OfType<CSharpStatementSyntax>().ToList();
         return statements;
@@ -52,26 +50,6 @@ internal static class RazorSyntaxTreeExtensions
         ILogger logger,
         bool includeWhitespace = false)
     {
-        if (syntaxTree is null)
-        {
-            throw new ArgumentNullException(nameof(syntaxTree));
-        }
-
-        if (sourceText is null)
-        {
-            throw new ArgumentNullException(nameof(sourceText));
-        }
-
-        if (position is null)
-        {
-            throw new ArgumentNullException(nameof(position));
-        }
-
-        if (logger is null)
-        {
-            throw new ArgumentNullException(nameof(logger));
-        }
-
         if (!position.TryGetAbsoluteIndex(sourceText, logger, out var absoluteIndex))
         {
             return default;

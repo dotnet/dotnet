@@ -110,7 +110,7 @@ internal sealed class DocumentContextFactory(
         var normalizedDocumentPath = FilePathNormalizer.Normalize(filePath);
         if (miscellaneousProject.GetDocument(normalizedDocumentPath) is { } miscDocument)
         {
-            _logger.LogDebug($"Found document {filePath} in the misc files project, but was asked for project context {projectContext}");
+            _logger.LogDebug($"Found document {filePath} in the misc files project, but was asked for project context {projectContext.Id}");
             return miscDocument;
         }
 

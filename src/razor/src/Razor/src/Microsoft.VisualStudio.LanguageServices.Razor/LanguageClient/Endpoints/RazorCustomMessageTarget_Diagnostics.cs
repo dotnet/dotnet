@@ -68,7 +68,8 @@ internal partial class RazorCustomMessageTarget
             hostDocumentVersion,
             hostDocument,
             cancellationToken).ConfigureAwait(false);
-        if (!synchronized)
+
+        if (!synchronized || virtualDocument is null)
         {
             return null;
         }

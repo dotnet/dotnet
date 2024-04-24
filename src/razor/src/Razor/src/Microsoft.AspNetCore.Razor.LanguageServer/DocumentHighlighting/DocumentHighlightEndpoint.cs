@@ -47,7 +47,12 @@ internal class DocumentHighlightEndpoint : AbstractRazorDelegatingEndpoint<Docum
 
     protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(DocumentHighlightParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return Task.FromResult<IDelegatedParams?>(null);
+        }
+
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(
                 documentContext.Identifier,
                 positionInfo.Position,
@@ -61,7 +66,12 @@ internal class DocumentHighlightEndpoint : AbstractRazorDelegatingEndpoint<Docum
             return null;
         }
 
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return null;
+        }
+
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
         var generatedDocument = codeDocument.GetGeneratedDocument(positionInfo.LanguageKind);

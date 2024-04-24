@@ -30,38 +30,39 @@ internal partial class RazorCustomMessageTarget
         where TParams : notnull, IPresentationParams
     {
         string languageServerName;
+        bool synchronized;
         VirtualDocumentSnapshot document;
         if (kind == RazorLanguageKind.CSharp)
         {
-            var syncResult = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
-                hostDocumentVersion,
-                presentationParams.TextDocument,
-                cancellationToken);
+            (synchronized, document) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
+                 hostDocumentVersion,
+                 presentationParams.TextDocument,
+                 cancellationToken);
             languageServerName = RazorLSPConstants.RazorCSharpLanguageServerName;
-            presentationParams.TextDocument = new TextDocumentIdentifier
-            {
-                Uri = syncResult.VirtualSnapshot.Uri,
-            };
-            document = syncResult.VirtualSnapshot;
         }
         else if (kind == RazorLanguageKind.Html)
         {
-            var syncResult = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
+            (synchronized, document) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
                 hostDocumentVersion,
                 presentationParams.TextDocument,
                 cancellationToken);
             languageServerName = RazorLSPConstants.HtmlLanguageServerName;
-            presentationParams.TextDocument = new TextDocumentIdentifier
-            {
-                Uri = syncResult.VirtualSnapshot.Uri,
-            };
-            document = syncResult.VirtualSnapshot;
         }
         else
         {
             Debug.Fail("Unexpected RazorLanguageKind. This can't really happen in a real scenario.");
             return null;
         }
+
+        if (!synchronized || document is null)
+        {
+            return null;
+        }
+
+        presentationParams.TextDocument = new TextDocumentIdentifier
+        {
+            Uri = document.Uri,
+        };
 
         var textBuffer = document.Snapshot.TextBuffer;
         var result = await _requestInvoker.ReinvokeRequestOnServerAsync<TParams, WorkspaceEdit?>(

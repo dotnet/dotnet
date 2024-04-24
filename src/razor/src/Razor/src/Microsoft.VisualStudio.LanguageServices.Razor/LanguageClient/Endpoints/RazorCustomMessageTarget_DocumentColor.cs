@@ -26,7 +26,7 @@ internal partial class RazorCustomMessageTarget
         }
 
         var (synchronized, htmlDoc) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(documentColorParams.HostDocumentVersion, documentColorParams.TextDocument, cancellationToken);
-        if (!synchronized)
+        if (!synchronized || htmlDoc is null)
         {
             return new List<ColorInformation>();
         }
@@ -62,7 +62,7 @@ internal partial class RazorCustomMessageTarget
         }
 
         var (synchronized, htmlDoc) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(colorPresentationParams.RequiredHostDocumentVersion, colorPresentationParams.TextDocument, cancellationToken);
-        if (!synchronized)
+        if (!synchronized || htmlDoc is null)
         {
             return new List<ColorPresentation>();
         }

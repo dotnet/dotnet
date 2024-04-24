@@ -14,16 +14,6 @@ internal readonly struct RazorRequestContext(VersionedDocumentContext? documentC
     public readonly string Method = method;
     public readonly Uri? Uri = uri;
 
-    public VersionedDocumentContext GetRequiredDocumentContext()
-    {
-        if (DocumentContext is null)
-        {
-            throw new ArgumentNullException(nameof(DocumentContext), $"Could not find a document context for '{Method}' on '{Uri}'");
-        }
-
-        return DocumentContext;
-    }
-
     public T GetRequiredService<T>() where T : class
     {
         return LspServices.GetRequiredService<T>();

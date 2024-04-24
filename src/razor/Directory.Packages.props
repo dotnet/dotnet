@@ -9,7 +9,7 @@
     <_MicrosoftVisualStudioShellPackagesVersion>17.9.36524</_MicrosoftVisualStudioShellPackagesVersion>
     <_MicrosoftVisualStudioPackagesVersion>17.10.72-preview</_MicrosoftVisualStudioPackagesVersion>
     <_VisualStudioLanguageServerProtocolVersion>17.10.13-preview</_VisualStudioLanguageServerProtocolVersion>
-    <_MicrosoftExtensionsPackageVersion>6.0.0</_MicrosoftExtensionsPackageVersion>
+    <_MicrosoftExtensionsPackageVersion>8.0.0</_MicrosoftExtensionsPackageVersion>
     <_BenchmarkDotNetPackageVersion>0.13.5.2136</_BenchmarkDotNetPackageVersion>
     <_MicrosoftVisualStudioExtensibilityTestingVersion>0.1.169-beta</_MicrosoftVisualStudioExtensibilityTestingVersion>
     <_MicrosoftCodeAnalysisAnalyzersPackageVersion>3.11.0-beta1.24170.2</_MicrosoftCodeAnalysisAnalyzersPackageVersion>
@@ -77,8 +77,8 @@
     <!--
         This package should use _VisualStudioLanguageServerProtocolVersion, but as of updating there was
         a mismatch in published versions (17.10.13-preview was not published). Next time this is updated please switch back to
-        _VisualStudioLanguageServerProtocolVersion
-      -->
+        _VisualStudioLanguageServerProtocolVersion if possible
+    -->
     <PackageVersion Include="Microsoft.VisualStudio.LanguageServer.Client.Implementation" Version="17.10.16-preview" />
     <PackageVersion Include="Microsoft.VisualStudio.LanguageServer.Protocol" Version="$(_VisualStudioLanguageServerProtocolVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.LanguageServer.Protocol.Extensions" Version="$(_VisualStudioLanguageServerProtocolVersion)" />
@@ -115,7 +115,7 @@
     <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="6.0.0" />
     <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
     <PackageVersion Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataPackageVersion)" />
-    <PackageVersion Include="System.Text.Encodings.Web" Version="6.0.0" />
+    <PackageVersion Include="System.Text.Encodings.Web" Version="8.0.0" />
     <PackageVersion Include="System.Text.Json" Version="6.0.0" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageVersion Include="xunit" Version="$(_XunitPackageVersion)" />

@@ -51,7 +51,12 @@ internal class ValidateBreakpointRangeEndpoint(
             return null;
         }
 
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return null;
+        }
+
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
         // We've already mapped the position, but sadly we need a range for breakpoints, so we have to do it again
@@ -73,7 +78,12 @@ internal class ValidateBreakpointRangeEndpoint(
             return null;
         }
 
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return null;
+        }
+
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
         if (_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), delegatedResponse, MappingBehavior.Inclusive, out var projectedRange))

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -27,23 +26,20 @@ internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
     // a document for each keystroke.
     private static readonly TimeSpan s_delay = TimeSpan.FromMilliseconds(10);
 
-    private readonly ImmutableArray<DocumentProcessedListener> _listeners;
+    private readonly ImmutableArray<IDocumentProcessedListener> _listeners;
     private readonly IProjectSnapshotManager _projectManager;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly LanguageServerFeatureOptions _options;
 
     private readonly AsyncBatchingWorkQueue<IDocumentSnapshot> _workQueue;
     private readonly CancellationTokenSource _disposeTokenSource;
 
     public OpenDocumentGenerator(
-        IEnumerable<DocumentProcessedListener> listeners,
+        IEnumerable<IDocumentProcessedListener> listeners,
         IProjectSnapshotManager projectManager,
-        ProjectSnapshotManagerDispatcher dispatcher,
         LanguageServerFeatureOptions options)
     {
         _listeners = listeners.ToImmutableArray();
         _projectManager = projectManager;
-        _dispatcher = dispatcher;
         _options = options;
 
         _disposeTokenSource = new();
@@ -53,11 +49,6 @@ internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
             _disposeTokenSource.Token);
 
         _projectManager.Changed += ProjectManager_Changed;
-
-        foreach (var listener in _listeners)
-        {
-            listener.Initialize(_projectManager);
-        }
     }
 
     public void Dispose()
@@ -77,25 +68,15 @@ internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
 
             var codeDocument = await document.GetGeneratedOutputAsync().ConfigureAwait(false);
 
-            await _dispatcher
-                .RunAsync(
-                    static state =>
-                    {
-                        var (codeDocument, document, listeners, token) = state;
+            foreach (var listener in _listeners)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
 
-                        foreach (var listener in listeners)
-                        {
-                            if (token.IsCancellationRequested)
-                            {
-                                return;
-                            }
-
-                            listener.DocumentProcessed(codeDocument, document);
-                        }
-                    },
-                    state: (codeDocument, document, _listeners, token),
-                    token)
-                .ConfigureAwait(false);
+                listener.DocumentProcessed(codeDocument, document);
+            }
         }
     }
 
