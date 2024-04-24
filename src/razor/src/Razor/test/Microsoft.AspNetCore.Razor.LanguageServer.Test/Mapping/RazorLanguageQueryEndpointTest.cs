@@ -50,6 +50,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var response = await languageEndpoint.HandleRequestAsync(request, requestContext, default);
 
         // Assert
+        Assert.NotNull(response);
         Assert.Equal(RazorLanguageKind.Razor, response.Kind);
         Assert.Equal(request.Position, response.Position);
         Assert.Equal(1337, response.HostDocumentVersion);
@@ -76,6 +77,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var response = await languageEndpoint.HandleRequestAsync(request, requestContext, default);
 
         // Assert
+        Assert.NotNull(response);
         Assert.Equal(RazorLanguageKind.Html, response.Kind);
         Assert.Equal(request.Position, response.Position);
         Assert.Equal(1337, response.HostDocumentVersion);
@@ -104,6 +106,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var response = await languageEndpoint.HandleRequestAsync(request, requestContext, default);
 
         // Assert
+        Assert.NotNull(response);
         Assert.Equal(RazorLanguageKind.CSharp, response.Kind);
         Assert.Equal(0, response.Position.Line);
         Assert.Equal(1, response.Position.Character);
@@ -135,6 +138,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var response = await languageEndpoint.HandleRequestAsync(request, requestContext, default);
 
         // Assert
+        Assert.NotNull(response);
         Assert.Equal(RazorLanguageKind.Html, response.Kind);
         Assert.Equal(0, response.Position.Line);
         Assert.Equal(1, response.Position.Character);

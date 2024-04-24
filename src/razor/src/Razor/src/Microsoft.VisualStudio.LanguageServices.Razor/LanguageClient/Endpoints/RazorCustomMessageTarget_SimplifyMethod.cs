@@ -24,7 +24,7 @@ internal partial class RazorCustomMessageTarget
                 request.Identifier.Version,
                 request.Identifier.TextDocumentIdentifier,
                 cancellationToken).ConfigureAwait(false);
-            if (!synchronized)
+            if (!synchronized || virtualDocument is null)
             {
                 return null;
             }

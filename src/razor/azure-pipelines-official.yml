@@ -286,6 +286,7 @@ extends:
                 dropName: $(VisualStudio.DropName)
                 dropFolder: 'artifacts\VSSetup\$(_BuildConfig)\Insertion'
                 accessToken: $(_DevDivDropAccessToken)
+                dropRetentionDays: 90
               continueOnError: true
               condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
 

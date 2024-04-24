@@ -115,7 +115,7 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
             return null;
         }
 
-        if (!synchronized)
+        if (!synchronized || virtualDocumentSnapshot is null)
         {
             return null;
         }
@@ -166,7 +166,7 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
         }
 
         var result = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, virtualDocument.Uri, rejectOnNewerParallelRequest, cancellationToken).ConfigureAwait(false);
-        _logger?.LogDebug($"{(result.Synchronized ? "Did" : "Did NOT")} synchronize for {caller}: Version {requiredHostDocumentVersion} for {result.VirtualSnapshot.Uri}");
+        _logger?.LogDebug($"{(result.Synchronized ? "Did" : "Did NOT")} synchronize for {caller}: Version {requiredHostDocumentVersion} for {result.VirtualSnapshot?.Uri}");
 
         // If we failed to sync on version 1, then it could be that we got new information while waiting, so try again
         if (requiredHostDocumentVersion == 1 && !result.Synchronized)
@@ -184,7 +184,7 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
 
             // try again
             result = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, virtualDocument.Uri, rejectOnNewerParallelRequest, cancellationToken).ConfigureAwait(false);
-            _logger?.LogDebug($"{(result.Synchronized ? "Did" : "Did NOT")} synchronize for {caller}: Version {requiredHostDocumentVersion} for {result.VirtualSnapshot.Uri}");
+            _logger?.LogDebug($"{(result.Synchronized ? "Did" : "Did NOT")} synchronize for {caller}: Version {requiredHostDocumentVersion} for {result.VirtualSnapshot?.Uri}");
         }
 
         return result;

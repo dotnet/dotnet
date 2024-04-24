@@ -3,268 +3,138 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 
-internal class RazorDiagnosticsPublisher : DocumentProcessedListener
+internal partial class RazorDiagnosticsPublisher : IDocumentProcessedListener, IDisposable
 {
-    // Internal for testing
-    internal TimeSpan _publishDelay = TimeSpan.FromSeconds(2);
-    internal readonly Dictionary<string, IReadOnlyList<RazorDiagnostic>> PublishedRazorDiagnostics;
-    internal readonly Dictionary<string, IReadOnlyList<Diagnostic>> PublishedCSharpDiagnostics;
-    internal Timer? _workTimer;
-    internal Timer? _documentClosedTimer;
+    private readonly record struct PublishedDiagnostics(IReadOnlyList<RazorDiagnostic> Razor, Diagnostic[]? CSharp)
+    {
+        public int Count => Razor.Count + (CSharp?.Length ?? 0);
+    }
 
-    private static readonly TimeSpan s_checkForDocumentClosedDelay = TimeSpan.FromSeconds(5);
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
+    private static readonly TimeSpan s_publishDelay = TimeSpan.FromSeconds(2);
+    private static readonly TimeSpan s_clearClosedDocumentsDelay = TimeSpan.FromSeconds(5);
+
+    private readonly IProjectSnapshotManager _projectManager;
     private readonly IClientConnection _clientConnection;
-    private readonly Dictionary<string, IDocumentSnapshot> _work;
     private readonly ILogger _logger;
-    private IProjectSnapshotManager? _projectManager;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly Lazy<RazorTranslateDiagnosticsService> _razorTranslateDiagnosticsService;
+    private readonly LanguageServerFeatureOptions _options;
+    private readonly Lazy<RazorTranslateDiagnosticsService> _translateDiagnosticsService;
     private readonly Lazy<IDocumentContextFactory> _documentContextFactory;
 
+    private readonly CancellationTokenSource _disposeTokenSource;
+    private readonly AsyncBatchingWorkQueue<IDocumentSnapshot> _workQueue;
+    private readonly Dictionary<string, PublishedDiagnostics> _publishedDiagnostics;
+
+    private Task _clearClosedDocumentsTask = Task.CompletedTask;
+
     public RazorDiagnosticsPublisher(
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
+        IProjectSnapshotManager projectManager,
         IClientConnection clientConnection,
-        LanguageServerFeatureOptions languageServerFeatureOptions,
-        Lazy<RazorTranslateDiagnosticsService> razorTranslateDiagnosticsService,
+        LanguageServerFeatureOptions options,
+        Lazy<RazorTranslateDiagnosticsService> translateDiagnosticsService,
         Lazy<IDocumentContextFactory> documentContextFactory,
         ILoggerFactory loggerFactory)
+        : this(projectManager, clientConnection, options,
+              translateDiagnosticsService, documentContextFactory,
+               loggerFactory, s_publishDelay)
     {
-        if (projectSnapshotManagerDispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-        }
+    }
 
-        if (clientConnection is null)
-        {
-            throw new ArgumentNullException(nameof(clientConnection));
-        }
-
-        if (languageServerFeatureOptions is null)
-        {
-            throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-        }
-
-        if (razorTranslateDiagnosticsService is null)
-        {
-            throw new ArgumentNullException(nameof(razorTranslateDiagnosticsService));
-        }
-
-        if (documentContextFactory is null)
-        {
-            throw new ArgumentNullException(nameof(documentContextFactory));
-        }
-
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
+    // Present for test to specify publish delay
+    protected RazorDiagnosticsPublisher(
+        IProjectSnapshotManager projectManager,
+        IClientConnection clientConnection,
+        LanguageServerFeatureOptions options,
+        Lazy<RazorTranslateDiagnosticsService> translateDiagnosticsService,
+        Lazy<IDocumentContextFactory> documentContextFactory,
+        ILoggerFactory loggerFactory,
+        TimeSpan publishDelay)
+    {
+        _projectManager = projectManager;
         _clientConnection = clientConnection;
-        _languageServerFeatureOptions = languageServerFeatureOptions;
-        _razorTranslateDiagnosticsService = razorTranslateDiagnosticsService;
+        _options = options;
+        _translateDiagnosticsService = translateDiagnosticsService;
         _documentContextFactory = documentContextFactory;
-        PublishedRazorDiagnostics = new Dictionary<string, IReadOnlyList<RazorDiagnostic>>(FilePathComparer.Instance);
-        PublishedCSharpDiagnostics = new Dictionary<string, IReadOnlyList<Diagnostic>>(FilePathComparer.Instance);
-        _work = new Dictionary<string, IDocumentSnapshot>(FilePathComparer.Instance);
+
+        _disposeTokenSource = new();
+        _workQueue = new AsyncBatchingWorkQueue<IDocumentSnapshot>(publishDelay, ProcessBatchAsync, _disposeTokenSource.Token);
+
+        _publishedDiagnostics = new Dictionary<string, PublishedDiagnostics>(FilePathComparer.Instance);
         _logger = loggerFactory.GetOrCreateLogger<RazorDiagnosticsPublisher>();
     }
 
-    // Used in tests to ensure we can control when background work completes.
-    public ManualResetEventSlim? BlockBackgroundWorkCompleting { get; set; }
-
-    // Used in tests to ensure we can control when background work completes.
-    public ManualResetEventSlim? NotifyBackgroundWorkCompleting { get; set; }
-
-    public override void Initialize(IProjectSnapshotManager projectManager)
+    public void Dispose()
     {
-        if (projectManager is null)
+        _disposeTokenSource.Cancel();
+        _disposeTokenSource.Dispose();
+    }
+
+    public void DocumentProcessed(RazorCodeDocument codeDocument, IDocumentSnapshot document)
+    {
+        _workQueue.AddWork(document);
+
+        StartDelayToClearDocuments();
+    }
+
+    private async ValueTask ProcessBatchAsync(ImmutableArray<IDocumentSnapshot> items, CancellationToken token)
+    {
+        foreach (var document in items.GetMostRecentUniqueItems(Comparer.Instance))
         {
-            throw new ArgumentNullException(nameof(projectManager));
-        }
-
-        _projectManager = projectManager;
-    }
-
-    public override void DocumentProcessed(RazorCodeDocument codeDocument, IDocumentSnapshot document)
-    {
-        if (document is null)
-        {
-            throw new ArgumentNullException(nameof(document));
-        }
-
-        _projectSnapshotManagerDispatcher.AssertRunningOnDispatcher();
-
-        lock (_work)
-        {
-            var filePath = document.FilePath.AssumeNotNull();
-            _work[filePath] = document;
-            StartWorkTimer();
-            StartDocumentClosedCheckTimer();
-        }
-    }
-
-    private void StartWorkTimer()
-    {
-        // Access to the timer is protected by the lock in Synchronize and in Timer_Tick
-        // Timer will fire after a fixed delay, but only once.
-        _workTimer ??= new Timer(WorkTimer_Tick, state: null, dueTime: _publishDelay, period: Timeout.InfiniteTimeSpan);
-    }
-
-    private void StartDocumentClosedCheckTimer()
-    {
-        _documentClosedTimer ??= new Timer(DocumentClosedTimer_Tick, null, s_checkForDocumentClosedDelay, Timeout.InfiniteTimeSpan);
-    }
-
-    private void DocumentClosedTimer_Tick(object? state)
-    {
-        DocumentClosedTimer_TickAsync(CancellationToken.None).Forget();
-    }
-
-    private async Task DocumentClosedTimer_TickAsync(CancellationToken cancellationToken)
-    {
-        await _projectSnapshotManagerDispatcher.RunAsync(
-            ClearClosedDocuments,
-            cancellationToken).ConfigureAwait(false);
-    }
-
-    // Internal for testing
-    internal void ClearClosedDocuments()
-    {
-        try
-        {
-            lock (PublishedRazorDiagnostics)
-            lock (PublishedCSharpDiagnostics)
+            if (token.IsCancellationRequested)
             {
-                ClearClosedDocumentsPublishedDiagnostics(PublishedRazorDiagnostics);
-                ClearClosedDocumentsPublishedDiagnostics(PublishedCSharpDiagnostics);
-
-                _documentClosedTimer?.Dispose();
-                _documentClosedTimer = null;
-
-                if (PublishedRazorDiagnostics.Count > 0 || PublishedCSharpDiagnostics.Count > 0)
-                {
-                    lock (_work)
-                    {
-                        // There's no way for us to know when a document is closed at this layer. Therefore, we need to poll every X seconds
-                        // and check if the currently tracked documents are closed. In practice this work is super minimal.
-                        StartDocumentClosedCheckTimer();
-                    }
-                }
-
-                void ClearClosedDocumentsPublishedDiagnostics<T>(Dictionary<string, IReadOnlyList<T>> publishedDiagnostics) where T : class
-                {
-                    var originalPublishedDiagnostics = new Dictionary<string, IReadOnlyList<T>>(publishedDiagnostics);
-                    foreach (var (key, value) in originalPublishedDiagnostics)
-                    {
-                        Assumes.NotNull(_projectManager);
-                        if (!_projectManager.IsDocumentOpen(key))
-                        {
-                            // Document is now closed, we shouldn't track its diagnostics anymore.
-                            publishedDiagnostics.Remove(key);
-
-                            // If the last published diagnostics for the document were > 0 then we need to clear them out so the user
-                            // doesn't have a ton of closed document errors that they can't get rid of.
-                            if (value.Count > 0)
-                            {
-                                PublishDiagnosticsForFilePath(key, Array.Empty<Diagnostic>());
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        catch
-        {
-            lock (PublishedRazorDiagnostics)
-            lock (PublishedCSharpDiagnostics)
-            {
-                _documentClosedTimer?.Dispose();
-                _documentClosedTimer = null;
-            }
-
-            throw;
-        }
-    }
-
-    // Internal for testing
-    internal async Task PublishDiagnosticsAsync(IDocumentSnapshot document)
-    {
-        var result = await document.GetGeneratedOutputAsync().ConfigureAwait(false);
-
-        Diagnostic[]? csharpDiagnostics = null;
-        if (_languageServerFeatureOptions.DelegateToCSharpOnDiagnosticPublish)
-        {
-            var uriBuilder = new UriBuilder()
-            {
-                Scheme = Uri.UriSchemeFile,
-                Path = document.FilePath,
-                Host = string.Empty,
-            };
-
-            var delegatedParams = new DocumentDiagnosticParams
-            {
-                TextDocument = new TextDocumentIdentifier { Uri = uriBuilder.Uri },
-            };
-
-            var delegatedResponse = await _clientConnection.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
-                CustomMessageNames.RazorCSharpPullDiagnosticsEndpointName,
-                delegatedParams,
-                CancellationToken.None).ConfigureAwait(false);
-
-            if (delegatedResponse.HasValue &&
-                delegatedResponse.Value.TryGetFirst(out var fullDiagnostics) &&
-                fullDiagnostics.Items is not null)
-            {
-                var documentContext = await _documentContextFactory.Value
-                    .TryCreateAsync(delegatedParams.TextDocument.Uri, projectContext: null, CancellationToken.None)
-                    .ConfigureAwait(false);
-
-                if (documentContext is not null)
-                {
-                    csharpDiagnostics = await _razorTranslateDiagnosticsService.Value
-                        .TranslateAsync(RazorLanguageKind.CSharp, fullDiagnostics.Items, documentContext, CancellationToken.None)
-                        .ConfigureAwait(false);
-                }
-            }
-        }
-
-        var razorDiagnostics = result.GetCSharpDocument().Diagnostics;
-
-        lock (PublishedRazorDiagnostics)
-        lock (PublishedCSharpDiagnostics)
-        {
-            var filePath = document.FilePath.AssumeNotNull();
-
-            if (PublishedRazorDiagnostics.TryGetValue(filePath, out var previousRazorDiagnostics) && razorDiagnostics.SequenceEqual(previousRazorDiagnostics)
-                && (csharpDiagnostics == null || (PublishedCSharpDiagnostics.TryGetValue(filePath, out var previousCsharpDiagnostics) && csharpDiagnostics.SequenceEqual(previousCsharpDiagnostics))))
-            {
-                // Diagnostics are the same as last publish
                 return;
             }
 
-            PublishedRazorDiagnostics[filePath] = razorDiagnostics;
-            if (csharpDiagnostics != null)
+            await PublishDiagnosticsAsync(document, token).ConfigureAwait(false);
+        }
+    }
+
+    private async Task PublishDiagnosticsAsync(IDocumentSnapshot document, CancellationToken token)
+    {
+        var result = await document.GetGeneratedOutputAsync().ConfigureAwait(false);
+        var csharpDiagnostics = await GetCSharpDiagnosticsAsync(document, token).ConfigureAwait(false);
+        var razorDiagnostics = result.GetCSharpDocument().Diagnostics;
+
+        lock (_publishedDiagnostics)
+        {
+            var filePath = document.FilePath.AssumeNotNull();
+
+            // See if these are the same diagnostics as last time. If so, we don't need to publish.
+            if (_publishedDiagnostics.TryGetValue(filePath, out var previousDiagnostics))
             {
-                PublishedCSharpDiagnostics[filePath] = csharpDiagnostics;
+                var sameRazorDiagnostics = razorDiagnostics.SequenceEqual(previousDiagnostics.Razor);
+                var sameCSharpDiagnostics = (csharpDiagnostics, previousDiagnostics.CSharp) switch
+                {
+                    (not null, not null) => csharpDiagnostics.SequenceEqual(previousDiagnostics.CSharp),
+                    (null, null) => true,
+                    _ => false,
+                };
+
+                if (sameRazorDiagnostics && sameCSharpDiagnostics)
+                {
+                    return;
+                }
             }
+
+            _publishedDiagnostics[filePath] = new(razorDiagnostics, csharpDiagnostics);
         }
 
         if (!document.TryGetText(out var sourceText))
@@ -273,8 +143,11 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
             return;
         }
 
-        var convertedDiagnostics = razorDiagnostics.Select(razorDiagnostic => RazorDiagnosticConverter.Convert(razorDiagnostic, sourceText, document));
-        var combinedDiagnostics = csharpDiagnostics == null ? convertedDiagnostics : convertedDiagnostics.Concat(csharpDiagnostics);
+        Diagnostic[] combinedDiagnostics = [
+            .. razorDiagnostics.Select(d => RazorDiagnosticConverter.Convert(d, sourceText, document)),
+            .. csharpDiagnostics ?? []
+        ];
+
         PublishDiagnosticsForFilePath(document.FilePath, combinedDiagnostics);
 
         if (_logger.IsEnabled(LogLevel.Trace))
@@ -282,84 +155,109 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
             var diagnosticString = string.Join(", ", razorDiagnostics.Select(diagnostic => diagnostic.Id));
             _logger.LogTrace($"Publishing diagnostics for document '{document.FilePath}': {diagnosticString}");
         }
-    }
 
-    private void WorkTimer_Tick(object? state)
-    {
-        WorkTimer_TickAsync().Forget();
-    }
-
-    private async Task WorkTimer_TickAsync()
-    {
-        try
+        async Task<Diagnostic[]?> GetCSharpDiagnosticsAsync(IDocumentSnapshot document, CancellationToken token)
         {
-            IDocumentSnapshot[] documents;
-            lock (_work)
+            if (_options.DelegateToCSharpOnDiagnosticPublish)
             {
-                documents = _work.Values.ToArray();
-                _work.Clear();
-            }
-
-            for (var i = 0; i < documents.Length; i++)
-            {
-                var document = documents[i];
-                await PublishDiagnosticsAsync(document).ConfigureAwait(false);
-            }
-
-            OnCompletingBackgroundWork();
-
-            lock (_work)
-            {
-                // Suppress analyzer that suggests using DisposeAsync().
-#pragma warning disable VSTHRD103 // Call async methods when in an async method
-
-                // Resetting the timer allows another batch of work to start.
-                _workTimer?.Dispose();
-                _workTimer = null;
-
-#pragma warning restore VSTHRD103 // Call async methods when in an async method
-
-                // If more work came in while we were running start the timer again.
-                if (_work.Count > 0)
+                var uriBuilder = new UriBuilder()
                 {
-                    StartWorkTimer();
+                    Scheme = Uri.UriSchemeFile,
+                    Path = document.FilePath,
+                    Host = string.Empty,
+                };
+
+                var delegatedParams = new DocumentDiagnosticParams
+                {
+                    TextDocument = new TextDocumentIdentifier { Uri = uriBuilder.Uri },
+                };
+
+                var delegatedResponse = await _clientConnection
+                    .SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
+                        CustomMessageNames.RazorCSharpPullDiagnosticsEndpointName,
+                        delegatedParams,
+                        token)
+                    .ConfigureAwait(false);
+
+                if (delegatedResponse.HasValue &&
+                    delegatedResponse.Value.TryGetFirst(out var fullDiagnostics) &&
+                    fullDiagnostics.Items is not null)
+                {
+                    var documentContext = await _documentContextFactory.Value
+                        .TryCreateAsync(delegatedParams.TextDocument.Uri, projectContext: null, token)
+                        .ConfigureAwait(false);
+
+                    if (documentContext is not null)
+                    {
+                        return await _translateDiagnosticsService.Value
+                            .TranslateAsync(RazorLanguageKind.CSharp, fullDiagnostics.Items, documentContext, token)
+                            .ConfigureAwait(false);
+                    }
                 }
             }
+
+            return null;
         }
-        catch
+    }
+
+    private void StartDelayToClearDocuments()
+    {
+        if (!_clearClosedDocumentsTask.IsCompleted)
         {
-            lock (_work)
+            return;
+        }
+
+        _clearClosedDocumentsTask = ClearClosedDocumentsAfterDelayAsync();
+
+        async Task ClearClosedDocumentsAfterDelayAsync()
+        {
+            await Task.Delay(s_clearClosedDocumentsDelay, _disposeTokenSource.Token).ConfigureAwait(false);
+
+            ClearClosedDocuments();
+        }
+    }
+
+    private void ClearClosedDocuments()
+    {
+        lock (_publishedDiagnostics)
+        {
+            using var documentsToRemove = new PooledArrayBuilder<(string filePath, bool publishToClear)>(capacity: _publishedDiagnostics.Count);
+
+            foreach (var (filePath, diagnostics) in _publishedDiagnostics)
             {
-                // Suppress analyzer that suggests using DisposeAsync().
-
-#pragma warning disable VSTHRD103 // Call async methods when in an async method
-
-                // Resetting the timer allows another batch of work to start.
-                _workTimer?.Dispose();
-                _workTimer = null;
-
-#pragma warning restore VSTHRD103 // Call async methods when in an async method
+                if (!_projectManager.IsDocumentOpen(filePath))
+                {
+                    // If there were previously published diagnostics for this document, take note so
+                    // we can publish an empty set of diagnostics.
+                    documentsToRemove.Add((filePath, publishToClear: diagnostics.Count > 0));
+                }
             }
 
-            throw;
+            if (documentsToRemove.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var (filePath, publishToClear) in documentsToRemove)
+            {
+                _publishedDiagnostics.Remove(filePath);
+
+                if (publishToClear)
+                {
+                    PublishDiagnosticsForFilePath(filePath, []);
+                }
+            }
+
+            if (_publishedDiagnostics.Count > 0)
+            {
+                // There's no way for us to know when a document is closed at this layer. Therefore, we need to poll every X seconds
+                // and check if the currently tracked documents are closed. In practice this work is super minimal.
+                StartDelayToClearDocuments();
+            }
         }
     }
 
-    private void OnCompletingBackgroundWork()
-    {
-        if (NotifyBackgroundWorkCompleting != null)
-        {
-            NotifyBackgroundWorkCompleting.Set();
-        }
-
-        if (BlockBackgroundWorkCompleting != null)
-        {
-            BlockBackgroundWorkCompleting.Wait();
-            BlockBackgroundWorkCompleting.Reset();
-        }
-    }
-
-    private void PublishDiagnosticsForFilePath(string filePath, IEnumerable<Diagnostic> diagnostics)
+    private void PublishDiagnosticsForFilePath(string filePath, Diagnostic[] diagnostics)
     {
         var uriBuilder = new UriBuilder()
         {
@@ -368,12 +266,15 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
             Host = string.Empty,
         };
 
-        _ = _clientConnection.SendNotificationAsync(
-            Methods.TextDocumentPublishDiagnosticsName,
-            new PublishDiagnosticParams()
-            {
-                Uri = uriBuilder.Uri,
-                Diagnostics = diagnostics.ToArray(),
-            }, CancellationToken.None);
+        _clientConnection
+            .SendNotificationAsync(
+                Methods.TextDocumentPublishDiagnosticsName,
+                new PublishDiagnosticParams()
+                {
+                    Uri = uriBuilder.Uri,
+                    Diagnostics = diagnostics,
+                },
+                _disposeTokenSource.Token)
+            .Forget();
     }
 }

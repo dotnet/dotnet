@@ -40,7 +40,11 @@ internal sealed class RazorMapToDocumentRangesEndpoint :
             throw new ArgumentNullException(nameof(request));
         }
 
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return null;
+        }
 
         if (request.Kind != RazorLanguageKind.CSharp)
         {

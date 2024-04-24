@@ -28,7 +28,7 @@ internal partial class RazorCustomMessageTarget
             wrapWithParams.TextDocument,
             cancellationToken);
 
-        if (!synchronized)
+        if (!synchronized || htmlDocument is null)
         {
             Debug.Fail("Document was not synchronized");
             return response;

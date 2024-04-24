@@ -238,11 +238,11 @@ internal static class IServiceCollectionExtensions
         {
             // If single server is on, then we don't want to publish diagnostics, so best to just not hook up to any
             // events etc.
-            services.AddSingleton<DocumentProcessedListener, RazorDiagnosticsPublisher>();
+            services.AddSingleton<IDocumentProcessedListener, RazorDiagnosticsPublisher>();
         }
 
-        services.AddSingleton<DocumentProcessedListener, GeneratedDocumentSynchronizer>();
-        services.AddSingleton<DocumentProcessedListener, CodeDocumentReferenceHolder>();
+        services.AddSingleton<IDocumentProcessedListener, GeneratedDocumentSynchronizer>();
+        services.AddSingleton<IDocumentProcessedListener, CodeDocumentReferenceHolder>();
 
         services.AddSingleton<LSPTagHelperTooltipFactory, DefaultLSPTagHelperTooltipFactory>();
         services.AddSingleton<VSLSPTagHelperTooltipFactory, DefaultVSLSPTagHelperTooltipFactory>();

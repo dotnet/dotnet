@@ -230,6 +230,13 @@ jobs:
       displayName: Setup Previously Source-Built SDK
 
   - ${{ if eq(parameters.targetOS, 'windows') }}:
+    # Node 20.x is a toolset dependency to build aspnetcore
+    # Keep in sync with aspnetcore: https://github.com/dotnet/aspnetcore/blob/7d5309210d8f7bae8fa074da495e9d009d67f1b4/.azure/pipelines/ci.yml#L719-L722
+    - task: NodeTool@0
+      displayName: Install Node 20.x
+      inputs:
+        versionSpec: 20.x
+
     - script: |
         call $(sourcesPath)\build.cmd -ci -cleanWhileBuilding -prepareMachine %devArgument% /p:TargetOS=${{ parameters.targetOS }} /p:TargetArchitecture=${{ parameters.targetArchitecture }} ${{ parameters.extraProperties }}
       displayName: Build

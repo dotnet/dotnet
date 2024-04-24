@@ -68,7 +68,6 @@ internal partial class RazorCustomMessageTarget
         var hostDocumentUri = request.Identifier.TextDocumentIdentifier.Uri;
 
         string languageServerName;
-        Uri projectedUri;
         bool synchronized;
         VirtualDocumentSnapshot virtualDocumentSnapshot;
         if (request.ProjectedKind == RazorLanguageKind.Html)
@@ -78,7 +77,6 @@ internal partial class RazorCustomMessageTarget
                 request.Identifier.TextDocumentIdentifier,
                 cancellationToken);
             languageServerName = RazorLSPConstants.HtmlLanguageServerName;
-            projectedUri = virtualDocumentSnapshot.Uri;
         }
         else if (request.ProjectedKind == RazorLanguageKind.CSharp)
         {
@@ -87,7 +85,6 @@ internal partial class RazorCustomMessageTarget
                 request.Identifier.TextDocumentIdentifier,
                 cancellationToken);
             languageServerName = RazorLSPConstants.RazorCSharpLanguageServerName;
-            projectedUri = virtualDocumentSnapshot.Uri;
         }
         else
         {
@@ -95,7 +92,7 @@ internal partial class RazorCustomMessageTarget
             return null;
         }
 
-        if (!synchronized)
+        if (!synchronized || virtualDocumentSnapshot is null)
         {
             return null;
         }
@@ -104,7 +101,7 @@ internal partial class RazorCustomMessageTarget
         {
             Context = request.Context,
             Position = request.ProjectedPosition,
-            TextDocument = request.Identifier.TextDocumentIdentifier.WithUri(projectedUri),
+            TextDocument = request.Identifier.TextDocumentIdentifier.WithUri(virtualDocumentSnapshot.Uri),
         };
 
         var continueOnCapturedContext = false;
@@ -282,7 +279,7 @@ internal partial class RazorCustomMessageTarget
             return null;
         }
 
-        if (!synchronized)
+        if (!synchronized || virtualDocumentSnapshot is null)
         {
             // Document was not synchronized
             return null;

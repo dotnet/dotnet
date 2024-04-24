@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,66 +15,42 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
+internal class ProjectConfigurationFileChangeDetector(
+    IEnumerable<IProjectConfigurationFileChangeListener> listeners,
+    LanguageServerFeatureOptions options,
+    ILoggerFactory loggerFactory) : IFileChangeDetector
 {
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
-    private readonly IEnumerable<IProjectConfigurationFileChangeListener> _listeners;
-    private readonly LanguageServerFeatureOptions _options;
-    private readonly ILogger _logger;
-    private FileSystemWatcher? _watcher;
-
-    private static readonly IReadOnlyCollection<string> s_ignoredDirectories = new string[]
-    {
+    private static readonly ImmutableArray<string> s_ignoredDirectories =
+    [
         "node_modules",
         "bin",
         ".vs",
-    };
+    ];
 
-    public ProjectConfigurationFileChangeDetector(
-        ProjectSnapshotManagerDispatcher dispatcher,
-        IEnumerable<IProjectConfigurationFileChangeListener> listeners,
-        LanguageServerFeatureOptions options,
-        ILoggerFactory loggerFactory)
+    private readonly ImmutableArray<IProjectConfigurationFileChangeListener> _listeners = listeners.ToImmutableArray();
+    private readonly LanguageServerFeatureOptions _options = options;
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<ProjectConfigurationFileChangeDetector>();
+
+    private FileSystemWatcher? _watcher;
+
+    public Task StartAsync(string workspaceDirectory, CancellationToken cancellationToken)
     {
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-        _listeners = listeners ?? throw new ArgumentNullException(nameof(listeners));
-        _options = options ?? throw new ArgumentNullException(nameof(options));
-        _logger = loggerFactory.GetOrCreateLogger<ProjectConfigurationFileChangeDetector>();
-    }
-
-    public async Task StartAsync(string workspaceDirectory, CancellationToken cancellationToken)
-    {
-        if (workspaceDirectory is null)
-        {
-            throw new ArgumentNullException(nameof(workspaceDirectory));
-        }
-
         // Dive through existing project configuration files and fabricate "added" events so listeners can accurately listen to state changes for them.
 
         workspaceDirectory = FilePathNormalizer.Normalize(workspaceDirectory);
         var existingConfigurationFiles = GetExistingConfigurationFiles(workspaceDirectory);
 
         _logger.LogDebug($"Triggering events for existing project configuration files");
-        await _dispatcher.RunAsync(() =>
+
+        foreach (var configurationFilePath in existingConfigurationFiles)
         {
-            foreach (var configurationFilePath in existingConfigurationFiles)
-            {
-                FileSystemWatcher_ProjectConfigurationFileEvent(configurationFilePath, RazorFileChangeKind.Added);
-            }
-        }, cancellationToken).ConfigureAwait(false);
+            NotifyListeners(new(configurationFilePath, RazorFileChangeKind.Added));
+        }
 
         // This is an entry point for testing
-        OnInitializationFinished();
-
-        if (cancellationToken.IsCancellationRequested)
+        if (!InitializeFileWatchers)
         {
-            // Client cancelled connection, no need to setup any file watchers. Server is about to tear down.
-            return;
+            return Task.CompletedTask;
         }
 
         try
@@ -85,23 +62,19 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
                 Directory.CreateDirectory(workspaceDirectory);
             }
         }
-        catch (OperationCanceledException)
-        {
-            return;
-        }
         catch (Exception ex)
         {
             // Directory.Exists will throw on things like long paths
             _logger.LogError(ex, $"Failed validating that file watcher would be successful for '{workspaceDirectory}'");
 
             // No point continuing because the FileSystemWatcher constructor would just throw too.
-            return;
+            return Task.FromException(ex);
         }
 
         if (cancellationToken.IsCancellationRequested)
         {
             // Client cancelled connection, no need to setup any file watchers. Server is about to tear down.
-            return;
+            return Task.FromCanceled(cancellationToken);
         }
 
         _logger.LogInformation($"Starting configuration file change detector for '{workspaceDirectory}'");
@@ -111,9 +84,9 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
             IncludeSubdirectories = true,
         };
 
-        _watcher.Created += (sender, args) => FileSystemWatcher_ProjectConfigurationFileEvent_Background(args.FullPath, RazorFileChangeKind.Added);
-        _watcher.Deleted += (sender, args) => FileSystemWatcher_ProjectConfigurationFileEvent_Background(args.FullPath, RazorFileChangeKind.Removed);
-        _watcher.Changed += (sender, args) => FileSystemWatcher_ProjectConfigurationFileEvent_Background(args.FullPath, RazorFileChangeKind.Changed);
+        _watcher.Created += (sender, args) => NotifyListeners(args.FullPath, RazorFileChangeKind.Added);
+        _watcher.Deleted += (sender, args) => NotifyListeners(args.FullPath, RazorFileChangeKind.Removed);
+        _watcher.Changed += (sender, args) => NotifyListeners(args.FullPath, RazorFileChangeKind.Changed);
         _watcher.Renamed += (sender, args) =>
         {
             // Translate file renames into remove / add
@@ -121,16 +94,18 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
             if (args.OldFullPath.EndsWith(_options.ProjectConfigurationFileName, FilePathComparison.Instance))
             {
                 // Renaming from project configuration file to something else. Just remove the configuration file.
-                FileSystemWatcher_ProjectConfigurationFileEvent_Background(args.OldFullPath, RazorFileChangeKind.Removed);
+                NotifyListeners(args.OldFullPath, RazorFileChangeKind.Removed);
             }
             else if (args.FullPath.EndsWith(_options.ProjectConfigurationFileName, FilePathComparison.Instance))
             {
                 // Renaming from a non-project configuration file file to a real one. Just add the configuration file.
-                FileSystemWatcher_ProjectConfigurationFileEvent_Background(args.FullPath, RazorFileChangeKind.Added);
+                NotifyListeners(args.FullPath, RazorFileChangeKind.Added);
             }
         };
 
         _watcher.EnableRaisingEvents = true;
+
+        return Task.CompletedTask;
     }
 
     public void Stop()
@@ -142,33 +117,28 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
     }
 
     // Protected virtual for testing
-    protected virtual void OnInitializationFinished()
-    {
-    }
+    protected virtual bool InitializeFileWatchers => true;
 
     // Protected virtual for testing
-    protected virtual IEnumerable<string> GetExistingConfigurationFiles(string workspaceDirectory)
+    protected virtual ImmutableArray<string> GetExistingConfigurationFiles(string workspaceDirectory)
     {
         return DirectoryHelper.GetFilteredFiles(
             workspaceDirectory,
             _options.ProjectConfigurationFileName,
             s_ignoredDirectories,
-            logger: _logger);
+            logger: _logger).ToImmutableArray();
     }
 
-    private void FileSystemWatcher_ProjectConfigurationFileEvent_Background(string physicalFilePath, RazorFileChangeKind kind)
+    private void NotifyListeners(string physicalFilePath, RazorFileChangeKind kind)
     {
-        _ = _dispatcher.RunAsync(
-            () => FileSystemWatcher_ProjectConfigurationFileEvent(physicalFilePath, kind),
-            CancellationToken.None);
+        NotifyListeners(new(physicalFilePath, kind));
     }
 
-    private void FileSystemWatcher_ProjectConfigurationFileEvent(string physicalFilePath, RazorFileChangeKind kind)
+    private void NotifyListeners(ProjectConfigurationFileChangeEventArgs args)
     {
-        var args = new ProjectConfigurationFileChangeEventArgs(physicalFilePath, kind);
         foreach (var listener in _listeners)
         {
-            _logger.LogDebug($"Notifying listener '{listener}' of config file path '{physicalFilePath}' change with kind '{kind}'");
+            _logger.LogDebug($"Notifying listener '{listener}' of config file path '{args.ConfigurationFilePath}' change with kind '{args.Kind}'");
             listener.ProjectConfigurationFileChanged(args);
         }
     }

@@ -2,16 +2,17 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -30,13 +31,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 
 public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    private static readonly RazorDiagnostic[] s_emptyRazorDiagnostics = [];
     private static readonly RazorDiagnostic[] s_singleRazorDiagnostic =
     [
         RazorDiagnosticFactory.CreateDirective_BlockDirectiveCannotBeImported("test")
     ];
 
-    private static readonly Diagnostic[] s_emptyCSharpDiagnostics = [];
     private static readonly Diagnostic[] s_singleCSharpDiagnostic =
     [
         new Diagnostic()
@@ -78,13 +77,13 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
             updater.DocumentAdded(hostProject.Key, closedHostDocument, TextLoader.From(textAndVersion));
         });
 
-        var openedDocument = testProjectManager.GetProjects()[0].GetDocument(openedHostDocument.FilePath);
-        Assert.NotNull(openedDocument);
+        var project = testProjectManager.GetLoadedProject(hostProject.Key);
+
+        var openedDocument = project.GetDocument(openedHostDocument.FilePath).AssumeNotNull();
         _openedDocument = openedDocument;
         _openedDocumentUri = new Uri("C:/project/open_document.cshtml");
 
-        var closedDocument = testProjectManager.GetProjects()[0].GetDocument(closedHostDocument.FilePath);
-        Assert.NotNull(closedDocument);
+        var closedDocument = project.GetDocument(closedHostDocument.FilePath).AssumeNotNull();
         _closedDocument = closedDocument;
 
         _projectManager = testProjectManager;
@@ -99,16 +98,16 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
         var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath);
         var codeDocument = CreateCodeDocument(s_singleRazorDiagnostic);
         processedOpenDocument.With(codeDocument);
-        // IClientConnection
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict).Object;
-        Mock.Get(clientConnection)
+
+        var clientConnectionMock = new StrictMock<IClientConnection>();
+        clientConnectionMock
             .Setup(d => d.SendNotificationAsync(
                 "textDocument/publishDiagnostics",
                 It.IsAny<PublishDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
             .Verifiable();
-        Mock.Get(clientConnection)
+        clientConnectionMock
             .Setup(d => d.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
                 CustomMessageNames.RazorCSharpPullDiagnosticsEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
@@ -117,28 +116,34 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
             .Verifiable();
 
         var documentContextFactory = new TestDocumentContextFactory(_openedDocument.FilePath, codeDocument);
-        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(Mock.Of<IRazorDocumentMappingService>(MockBehavior.Strict), LoggerFactory);
+        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(StrictMock.Of<IRazorDocumentMappingService>(), LoggerFactory);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(Dispatcher, clientConnection, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory)
-        {
-            BlockBackgroundWorkCompleting = new ManualResetEventSlim(initialState: true),
-            NotifyBackgroundWorkCompleting = new ManualResetEventSlim(initialState: false),
-        };
+        using var publisher = new TestRazorDiagnosticsPublisher(_projectManager, clientConnectionMock.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
+        var publisherAccessor = publisher.GetTestAccessor();
 
-        publisher.Initialize(_projectManager);
-        await RunOnDispatcherAsync(() =>
-            publisher.DocumentProcessed(_testCodeDocument, processedOpenDocument));
-        Assert.True(publisher.NotifyBackgroundWorkCompleting.Wait(TimeSpan.FromSeconds(2)));
-        publisher.NotifyBackgroundWorkCompleting.Reset();
+        // Act 1
+        publisher.DocumentProcessed(_testCodeDocument, processedOpenDocument);
+        await publisherAccessor.WaitForDiagnosticsToPublishAsync();
 
-        // Act
-        await RunOnDispatcherAsync(() =>
-            publisher.DocumentProcessed(_testCodeDocument, processedOpenDocument));
-        publisher.BlockBackgroundWorkCompleting.Set();
+        // Assert 1
+        clientConnectionMock
+            .Verify(d => d.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
+                CustomMessageNames.RazorCSharpPullDiagnosticsEndpointName,
+                It.IsAny<DocumentDiagnosticParams>(),
+                It.IsAny<CancellationToken>()),
+                Times.Once);
 
-        // Assert
-        // Verify that background work starts completing "again"
-        Assert.True(publisher.NotifyBackgroundWorkCompleting.Wait(TimeSpan.FromSeconds(2)));
+        // Act 2
+        publisher.DocumentProcessed(_testCodeDocument, processedOpenDocument);
+        await publisherAccessor.WaitForDiagnosticsToPublishAsync();
+
+        // Assert 2
+        clientConnectionMock
+            .Verify(d => d.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
+                CustomMessageNames.RazorCSharpPullDiagnosticsEndpointName,
+                It.IsAny<DocumentDiagnosticParams>(),
+                It.IsAny<CancellationToken>()),
+                Times.Exactly(2));
     }
 
     [Theory]
@@ -148,7 +153,7 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
     public async Task PublishDiagnosticsAsync_NewDocumentDiagnosticsGetPublished(bool shouldContainCSharpDiagnostic, bool shouldContainRazorDiagnostic)
     {
         // Arrange
-        var singleCSharpDiagnostic = new Diagnostic[]
+        var singleCSharpDiagnostic = new[]
         {
             new Diagnostic()
             {
@@ -165,32 +170,33 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
 
         Assert.NotNull(_openedDocument.FilePath);
         var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath);
-        var codeDocument = CreateCodeDocument(shouldContainRazorDiagnostic ? s_singleRazorDiagnostic : s_emptyRazorDiagnostics);
+        var codeDocument = CreateCodeDocument(shouldContainRazorDiagnostic ? s_singleRazorDiagnostic : []);
         processedOpenDocument.With(codeDocument);
 
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
+        var clientConnectionMock = new StrictMock<IClientConnection>();
         var requestResult = new FullDocumentDiagnosticReport();
         if (shouldContainCSharpDiagnostic)
         {
             requestResult.Items = singleCSharpDiagnostic;
         }
 
-        clientConnection
+        clientConnectionMock
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
                 CustomMessageNames.RazorCSharpPullDiagnosticsEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
-            .Callback<string, DocumentDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
+            .Callback((string method, DocumentDiagnosticParams @params, CancellationToken cancellationToken) =>
             {
                 Assert.Equal(_openedDocumentUri, @params.TextDocument.Uri);
             })
             .Returns(Task.FromResult(new SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?(requestResult)));
-        clientConnection
+
+        clientConnectionMock
             .Setup(server => server.SendNotificationAsync(
                 "textDocument/publishDiagnostics",
                 It.IsAny<PublishDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
-            .Callback<string, PublishDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
+            .Callback((string method, PublishDiagnosticParams @params, CancellationToken cancellationToken) =>
             {
                 Assert.Equal(processedOpenDocument.FilePath.TrimStart('/'), @params.Uri.AbsolutePath);
                 Assert.Equal(shouldContainCSharpDiagnostic && shouldContainRazorDiagnostic ? 2 : 1, @params.Diagnostics.Length);
@@ -224,14 +230,14 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
         var documentMappingService = new RazorDocumentMappingService(filePathService, documentContextFactory, LoggerFactory);
         var translateDiagnosticsService = new RazorTranslateDiagnosticsService(documentMappingService, LoggerFactory);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(Dispatcher, clientConnection.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
-        publisher.Initialize(_projectManager);
+        using var publisher = new TestRazorDiagnosticsPublisher(_projectManager, clientConnectionMock.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
+        var publisherAccessor = publisher.GetTestAccessor();
 
         // Act
-        await publisher.PublishDiagnosticsAsync(processedOpenDocument);
+        await publisherAccessor.PublishDiagnosticsAsync(processedOpenDocument, DisposalToken);
 
         // Assert
-        clientConnection.VerifyAll();
+        clientConnectionMock.VerifyAll();
     }
 
     [Fact]
@@ -242,24 +248,24 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
         var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath);
         var codeDocument = CreateCodeDocument(s_singleRazorDiagnostic);
         processedOpenDocument.With(codeDocument);
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
+        var clientConnectionMock = new StrictMock<IClientConnection>();
+        clientConnectionMock
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
                 CustomMessageNames.RazorCSharpPullDiagnosticsEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
-            .Callback<string, DocumentDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
+            .Callback((string method, DocumentDiagnosticParams @params, CancellationToken cancellationToken) =>
             {
                 Assert.Equal(_openedDocumentUri, @params.TextDocument.Uri);
             })
             .Returns(Task.FromResult(new SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?(new FullDocumentDiagnosticReport())));
 
-        clientConnection
+        clientConnectionMock
             .Setup(server => server.SendNotificationAsync(
                 "textDocument/publishDiagnostics",
                 It.IsAny<PublishDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
-            .Callback<string, PublishDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
+            .Callback((string method, PublishDiagnosticParams @params, CancellationToken cancellationToken) =>
             {
                 Assert.Equal(processedOpenDocument.FilePath.TrimStart('/'), @params.Uri.AbsolutePath);
                 var diagnostic = Assert.Single(@params.Diagnostics);
@@ -278,17 +284,17 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
             .Returns(Task.CompletedTask);
 
         var documentContextFactory = new TestDocumentContextFactory(_openedDocument.FilePath, codeDocument);
-        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(Mock.Of<IRazorDocumentMappingService>(MockBehavior.Strict), LoggerFactory);
+        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(StrictMock.Of<IRazorDocumentMappingService>(), LoggerFactory);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(Dispatcher, clientConnection.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
-        publisher.PublishedRazorDiagnostics[processedOpenDocument.FilePath] = s_emptyRazorDiagnostics;
-        publisher.Initialize(_projectManager);
+        using var publisher = new TestRazorDiagnosticsPublisher(_projectManager, clientConnectionMock.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
+        var publisherAccessor = publisher.GetTestAccessor();
+        publisherAccessor.SetPublishedDiagnostics(processedOpenDocument.FilePath, razorDiagnostics: [], csharpDiagnostics: null);
 
         // Act
-        await publisher.PublishDiagnosticsAsync(processedOpenDocument);
+        await publisherAccessor.PublishDiagnosticsAsync(processedOpenDocument, DisposalToken);
 
         // Assert
-        clientConnection.VerifyAll();
+        clientConnectionMock.VerifyAll();
     }
 
     [Fact]
@@ -297,29 +303,29 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
         // Arrange
         Assert.NotNull(_openedDocument.FilePath);
         var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath);
-        var codeDocument = CreateCodeDocument(s_emptyRazorDiagnostics);
+        var codeDocument = CreateCodeDocument([]);
         processedOpenDocument.With(codeDocument);
         var arranging = true;
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
+        var clientConnectionMock = new StrictMock<IClientConnection>();
+        clientConnectionMock
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
                 CustomMessageNames.RazorCSharpPullDiagnosticsEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
-            .Callback<string, DocumentDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
+            .Callback((string method, DocumentDiagnosticParams @params, CancellationToken cancellationToken) =>
             {
                 Assert.Equal(_openedDocumentUri, @params.TextDocument.Uri);
             })
             .Returns(Task.FromResult(
                 new SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?(
-                    arranging ? new FullDocumentDiagnosticReport() : new FullDocumentDiagnosticReport { Items = s_singleCSharpDiagnostic })));
+                    arranging ? new FullDocumentDiagnosticReport() : new FullDocumentDiagnosticReport { Items = s_singleCSharpDiagnostic.ToArray() })));
 
-        clientConnection.Setup(
+        clientConnectionMock.Setup(
             server => server.SendNotificationAsync(
                 "textDocument/publishDiagnostics",
                 It.IsAny<PublishDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
-            .Callback<string, PublishDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
+            .Callback((string method, PublishDiagnosticParams @params, CancellationToken cancellationToken) =>
             {
                 Assert.Equal(processedOpenDocument.FilePath.TrimStart('/'), @params.Uri.AbsolutePath);
                 Assert.True(processedOpenDocument.TryGetText(out var sourceText));
@@ -336,31 +342,32 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
             .Returns(Task.CompletedTask);
 
         var documentContextFactory = new TestDocumentContextFactory(_openedDocument.FilePath, codeDocument);
-        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(Mock.Of<IRazorDocumentMappingService>(MockBehavior.Strict), LoggerFactory);
+        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(StrictMock.Of<IRazorDocumentMappingService>(), LoggerFactory);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(Dispatcher, clientConnection.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
-        publisher.Initialize(_projectManager);
-        await publisher.PublishDiagnosticsAsync(processedOpenDocument);
+        using var publisher = new TestRazorDiagnosticsPublisher(_projectManager, clientConnectionMock.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
+        var publisherAccessor = publisher.GetTestAccessor();
+
+        await publisherAccessor.PublishDiagnosticsAsync(processedOpenDocument, DisposalToken);
         arranging = false;
 
         // Act
-        await publisher.PublishDiagnosticsAsync(processedOpenDocument);
+        await publisherAccessor.PublishDiagnosticsAsync(processedOpenDocument, DisposalToken);
 
         // Assert
-        clientConnection.VerifyAll();
+        clientConnectionMock.VerifyAll();
     }
 
     [Fact]
     public async Task PublishDiagnosticsAsync_NoopsIfRazorDiagnosticsAreSameAsPreviousPublish()
     {
         // Arrange
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
+        var clientConnectionMock = new StrictMock<IClientConnection>();
+        clientConnectionMock
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
                 CustomMessageNames.RazorCSharpPullDiagnosticsEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
-            .Callback<string, DocumentDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
+            .Callback((string method, DocumentDiagnosticParams @params, CancellationToken cancellationToken) =>
             {
                 Assert.Equal(_openedDocumentUri, @params.TextDocument.Uri);
             })
@@ -375,12 +382,12 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
         var documentMappingService = new RazorDocumentMappingService(filePathService, documentContextFactory, LoggerFactory);
         var translateDiagnosticsService = new RazorTranslateDiagnosticsService(documentMappingService, LoggerFactory);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(Dispatcher, clientConnection.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
-        publisher.PublishedRazorDiagnostics[processedOpenDocument.FilePath] = s_singleRazorDiagnostic;
-        publisher.Initialize(_projectManager);
+        using var publisher = new TestRazorDiagnosticsPublisher(_projectManager, clientConnectionMock.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
+        var publisherAccessor = publisher.GetTestAccessor();
+        publisherAccessor.SetPublishedDiagnostics(processedOpenDocument.FilePath, s_singleRazorDiagnostic, csharpDiagnostics: null);
 
         // Act & Assert
-        await publisher.PublishDiagnosticsAsync(processedOpenDocument);
+        await publisherAccessor.PublishDiagnosticsAsync(processedOpenDocument, DisposalToken);
     }
 
     [Fact]
@@ -389,28 +396,28 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
         // Arrange
         Assert.NotNull(_openedDocument.FilePath);
         var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath);
-        var codeDocument = CreateCodeDocument(s_emptyRazorDiagnostics);
+        var codeDocument = CreateCodeDocument([]);
         processedOpenDocument.With(codeDocument);
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
+        var clientConnectionMock = new StrictMock<IClientConnection>();
         var arranging = true;
 
-        clientConnection
+        clientConnectionMock
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
                 CustomMessageNames.RazorCSharpPullDiagnosticsEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
-            .Callback<string, DocumentDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
+            .Callback((string method, DocumentDiagnosticParams @params, CancellationToken cancellationToken) =>
             {
                 Assert.Equal(_openedDocumentUri, @params.TextDocument.Uri);
             })
             .Returns(Task.FromResult(new SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?(new FullDocumentDiagnosticReport())));
 
-        clientConnection
+        clientConnectionMock
             .Setup(server => server.SendNotificationAsync(
                 "textDocument/publishDiagnostics",
                 It.IsAny<PublishDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
-            .Callback<string, PublishDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
+            .Callback((string method, PublishDiagnosticParams @params, CancellationToken cancellationToken) =>
             {
                 if (!arranging)
                 {
@@ -424,28 +431,29 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
             .Returns(Task.CompletedTask);
 
         var documentContextFactory = new TestDocumentContextFactory(_openedDocument.FilePath, codeDocument);
-        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(Mock.Of<IRazorDocumentMappingService>(MockBehavior.Strict), LoggerFactory);
+        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(StrictMock.Of<IRazorDocumentMappingService>(), LoggerFactory);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(Dispatcher, clientConnection.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
-        publisher.Initialize(_projectManager);
-        await publisher.PublishDiagnosticsAsync(processedOpenDocument);
+        using var publisher = new TestRazorDiagnosticsPublisher(_projectManager, clientConnectionMock.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
+        var publisherAccessor = publisher.GetTestAccessor();
+
+        await publisherAccessor.PublishDiagnosticsAsync(processedOpenDocument, DisposalToken);
         arranging = false;
 
         // Act & Assert
-        await publisher.PublishDiagnosticsAsync(processedOpenDocument);
+        await publisherAccessor.PublishDiagnosticsAsync(processedOpenDocument, DisposalToken);
     }
 
     [Fact]
     public void ClearClosedDocuments_ClearsDiagnosticsForClosedDocument()
     {
         // Arrange
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
+        var clientConnectionMock = new StrictMock<IClientConnection>();
+        clientConnectionMock
             .Setup(server => server.SendNotificationAsync(
                 "textDocument/publishDiagnostics",
                 It.IsAny<PublishDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
-            .Callback<string, PublishDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
+            .Callback((string method, PublishDiagnosticParams @params, CancellationToken cancellationToken) =>
             {
                 Assert.NotNull(_closedDocument.FilePath);
                 Assert.Equal(_closedDocument.FilePath.TrimStart('/'), @params.Uri.AbsolutePath);
@@ -454,82 +462,77 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
             .Returns(Task.CompletedTask);
 
         var documentContextFactory = new TestDocumentContextFactory();
-        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(Mock.Of<IRazorDocumentMappingService>(MockBehavior.Strict), LoggerFactory);
+        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(StrictMock.Of<IRazorDocumentMappingService>(), LoggerFactory);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(Dispatcher, clientConnection.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
+        using var publisher = new TestRazorDiagnosticsPublisher(_projectManager, clientConnectionMock.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
+        var publisherAccessor = publisher.GetTestAccessor();
         Assert.NotNull(_closedDocument.FilePath);
-        publisher.PublishedRazorDiagnostics[_closedDocument.FilePath] = s_singleRazorDiagnostic;
-        publisher.PublishedCSharpDiagnostics[_closedDocument.FilePath] = s_singleCSharpDiagnostic;
-        publisher.Initialize(_projectManager);
+        publisherAccessor.SetPublishedDiagnostics(_closedDocument.FilePath, s_singleRazorDiagnostic, s_singleCSharpDiagnostic);
 
         // Act
-        publisher.ClearClosedDocuments();
+        publisherAccessor.ClearClosedDocuments();
 
         // Assert
-        clientConnection.VerifyAll();
+        clientConnectionMock.VerifyAll();
     }
 
     [Fact]
     public void ClearClosedDocuments_NoopsIfDocumentIsStillOpen()
     {
         // Arrange
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
+        var clientConnectionMock = new StrictMock<IClientConnection>();
         var documentContextFactory = new TestDocumentContextFactory();
-        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(Mock.Of<IRazorDocumentMappingService>(MockBehavior.Strict), LoggerFactory);
+        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(StrictMock.Of<IRazorDocumentMappingService>(), LoggerFactory);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(Dispatcher, clientConnection.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
+        using var publisher = new TestRazorDiagnosticsPublisher(_projectManager, clientConnectionMock.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
+        var publisherAccessor = publisher.GetTestAccessor();
         Assert.NotNull(_openedDocument.FilePath);
-        publisher.PublishedRazorDiagnostics[_openedDocument.FilePath] = s_singleRazorDiagnostic;
-        publisher.PublishedCSharpDiagnostics[_openedDocument.FilePath] = s_singleCSharpDiagnostic;
-        publisher.Initialize(_projectManager);
+        publisherAccessor.SetPublishedDiagnostics(_openedDocument.FilePath, s_singleRazorDiagnostic, s_singleCSharpDiagnostic);
 
         // Act & Assert
-        publisher.ClearClosedDocuments();
+        publisherAccessor.ClearClosedDocuments();
     }
 
     [Fact]
     public void ClearClosedDocuments_NoopsIfDocumentIsClosedButNoDiagnostics()
     {
         // Arrange
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
+        var clientConnectionMock = new StrictMock<IClientConnection>();
         var documentContextFactory = new TestDocumentContextFactory();
-        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(Mock.Of<IRazorDocumentMappingService>(MockBehavior.Strict), LoggerFactory);
+        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(StrictMock.Of<IRazorDocumentMappingService>(), LoggerFactory);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(Dispatcher, clientConnection.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
+        using var publisher = new TestRazorDiagnosticsPublisher(_projectManager, clientConnectionMock.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
+        var publisherAccessor = publisher.GetTestAccessor();
         Assert.NotNull(_closedDocument.FilePath);
-        publisher.PublishedRazorDiagnostics[_closedDocument.FilePath] = s_emptyRazorDiagnostics;
-        publisher.PublishedCSharpDiagnostics[_closedDocument.FilePath] = s_emptyCSharpDiagnostics;
-        publisher.Initialize(_projectManager);
+        publisherAccessor.SetPublishedDiagnostics(_closedDocument.FilePath, razorDiagnostics: [], csharpDiagnostics: []);
 
         // Act & Assert
-        publisher.ClearClosedDocuments();
+        publisherAccessor.ClearClosedDocuments();
     }
 
     [Fact]
     public void ClearClosedDocuments_RestartsTimerIfDocumentsStillOpen()
     {
         // Arrange
-        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
+        var clientConnectionMock = new StrictMock<IClientConnection>();
         var documentContextFactory = new TestDocumentContextFactory();
-        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(Mock.Of<IRazorDocumentMappingService>(MockBehavior.Strict), LoggerFactory);
+        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(StrictMock.Of<IRazorDocumentMappingService>(), LoggerFactory);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(Dispatcher, clientConnection.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
+        using var publisher = new TestRazorDiagnosticsPublisher(_projectManager, clientConnectionMock.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
+        var publisherAccessor = publisher.GetTestAccessor();
         Assert.NotNull(_closedDocument.FilePath);
         Assert.NotNull(_openedDocument.FilePath);
-        publisher.PublishedRazorDiagnostics[_closedDocument.FilePath] = s_emptyRazorDiagnostics;
-        publisher.PublishedCSharpDiagnostics[_closedDocument.FilePath] = s_emptyCSharpDiagnostics;
-        publisher.PublishedRazorDiagnostics[_openedDocument.FilePath] = s_emptyRazorDiagnostics;
-        publisher.PublishedCSharpDiagnostics[_openedDocument.FilePath] = s_emptyCSharpDiagnostics;
-        publisher.Initialize(_projectManager);
+        publisherAccessor.SetPublishedDiagnostics(_closedDocument.FilePath, razorDiagnostics: [], csharpDiagnostics: []);
+        publisherAccessor.SetPublishedDiagnostics(_openedDocument.FilePath, razorDiagnostics: [], csharpDiagnostics: []);
 
         // Act
-        publisher.ClearClosedDocuments();
+        publisherAccessor.ClearClosedDocuments();
 
         // Assert
-        Assert.NotNull(publisher._documentClosedTimer);
+        Assert.True(publisherAccessor.IsWaitingToClearClosedDocuments);
     }
 
-    private static RazorCodeDocument CreateCodeDocument(params RazorDiagnostic[] diagnostics)
+    private static RazorCodeDocument CreateCodeDocument(RazorDiagnostic[] diagnostics)
     {
         var codeDocument = TestRazorCodeDocument.Create("hello");
         var razorCSharpDocument = RazorCSharpDocument.Create(codeDocument, "hello", RazorCodeGenerationOptions.CreateDefault(), diagnostics);
@@ -538,29 +541,15 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
         return codeDocument;
     }
 
-    private class TestRazorDiagnosticsPublisher : RazorDiagnosticsPublisher, IDisposable
-    {
-        public TestRazorDiagnosticsPublisher(
-            ProjectSnapshotManagerDispatcher dispatcher,
-            IClientConnection clientConnection,
-            LanguageServerFeatureOptions options,
-            RazorTranslateDiagnosticsService razorTranslateDiagnosticsService,
-            IDocumentContextFactory documentContextFactory,
-            ILoggerFactory loggerFactory)
-            : base(dispatcher, clientConnection, options,
-                  new Lazy<RazorTranslateDiagnosticsService>(() => razorTranslateDiagnosticsService),
-                  new Lazy<IDocumentContextFactory>(() => documentContextFactory),
-                  loggerFactory)
-        {
-            // The diagnostics publisher by default will wait 2 seconds until publishing diagnostics. For testing purposes we reduce
-            // the amount of time we wait for diagnostic publishing because we have more concrete control of the timer and its lifecycle.
-            _publishDelay = TimeSpan.FromMilliseconds(1);
-        }
-
-        public void Dispose()
-        {
-            _workTimer?.Dispose();
-            _documentClosedTimer?.Dispose();
-        }
-    }
+    private class TestRazorDiagnosticsPublisher(
+        IProjectSnapshotManager projectManager,
+        IClientConnection clientConnection,
+        LanguageServerFeatureOptions options,
+        RazorTranslateDiagnosticsService translateDiagnosticsService,
+        IDocumentContextFactory documentContextFactory,
+        ILoggerFactory loggerFactory) : RazorDiagnosticsPublisher(projectManager, clientConnection, options,
+              new Lazy<RazorTranslateDiagnosticsService>(() => translateDiagnosticsService),
+              new Lazy<IDocumentContextFactory>(() => documentContextFactory),
+              loggerFactory,
+              publishDelay: TimeSpan.FromMilliseconds(1));
 }

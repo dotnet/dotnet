@@ -47,7 +47,11 @@ internal class RazorBreakpointSpanEndpoint : IRazorDocumentlessRequestHandler<Ra
 
     public async Task<RazorBreakpointSpanResponse?> HandleRequestAsync(RazorBreakpointSpanParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return null;
+        }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);

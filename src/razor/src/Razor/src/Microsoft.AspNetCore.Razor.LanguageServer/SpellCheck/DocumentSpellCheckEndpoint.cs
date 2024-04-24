@@ -19,7 +19,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.SpellCheck;
 
 [RazorLanguageServerEndpoint(VSInternalMethods.TextDocumentSpellCheckableRangesName)]
-internal sealed class DocumentSpellCheckEndpoint : IRazorRequestHandler<VSInternalDocumentSpellCheckableParams, VSInternalSpellCheckableRangeReport[]>, ICapabilitiesProvider
+internal sealed class DocumentSpellCheckEndpoint : IRazorRequestHandler<VSInternalDocumentSpellCheckableParams, VSInternalSpellCheckableRangeReport[]?>, ICapabilitiesProvider
 {
     private readonly IRazorDocumentMappingService _documentMappingService;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
@@ -52,9 +52,13 @@ internal sealed class DocumentSpellCheckEndpoint : IRazorRequestHandler<VSIntern
         return request.TextDocument;
     }
 
-    public async Task<VSInternalSpellCheckableRangeReport[]> HandleRequestAsync(VSInternalDocumentSpellCheckableParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
+    public async Task<VSInternalSpellCheckableRangeReport[]?> HandleRequestAsync(VSInternalDocumentSpellCheckableParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return null;
+        }
 
         using var _ = ListPool<SpellCheckRange>.GetPooledObject(out var ranges);
 

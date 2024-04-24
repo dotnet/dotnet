@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
@@ -28,19 +27,18 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
         var projectManager = StrictMock.Of<IProjectSnapshotManager>();
         _cache = new DocumentVersionCache(projectManager);
         _publisher = new TestGeneratedDocumentPublisher();
-        _synchronizer = new GeneratedDocumentSynchronizer(_publisher, _cache, Dispatcher, TestLanguageServerFeatureOptions.Instance);
+        _synchronizer = new GeneratedDocumentSynchronizer(_publisher, _cache, TestLanguageServerFeatureOptions.Instance);
         _document = TestDocumentSnapshot.Create("C:/path/to/file.razor");
         _codeDocument = CreateCodeDocument("<p>Hello World</p>");
     }
 
     [Fact]
-    public async Task DocumentProcessed_UnknownVersion_Noops()
+    public void DocumentProcessed_UnknownVersion_Noops()
     {
         // Arrange
 
         // Act
-        await Dispatcher.RunAsync(
-            () => _synchronizer.DocumentProcessed(_codeDocument, _document), DisposalToken);
+        _synchronizer.DocumentProcessed(_codeDocument, _document);
 
         // Assert
         Assert.False(_publisher.PublishedCSharp);
@@ -48,16 +46,13 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task DocumentProcessed_KnownVersion_Publishes()
+    public void DocumentProcessed_KnownVersion_Publishes()
     {
         // Arrange
-        await Dispatcher.RunAsync(() =>
-        {
-            _cache.TrackDocumentVersion(_document, version: 1337);
+        _cache.TrackDocumentVersion(_document, version: 1337);
 
-            // Act
-            _synchronizer.DocumentProcessed(_codeDocument, _document);
-        }, DisposalToken);
+        // Act
+        _synchronizer.DocumentProcessed(_codeDocument, _document);
 
         // Assert
         Assert.True(_publisher.PublishedCSharp);

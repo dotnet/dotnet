@@ -32,12 +32,6 @@
     <!-- ServiceHub assets are added by msbuild target -->
     <!--#SERVICEHUB_ASSETS#-->
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.CodeAnalysis.Razor.Compiler.dll" />
-    <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.ObjectPool.dll" />
-    <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.DependencyInjection.dll" />
-    <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
-    <Asset Type="Microsoft.VisualStudio.Assembly" Path="System.IO.Pipelines.dll" />
-    <Asset Type="Microsoft.VisualStudio.Assembly" Path="System.Runtime.CompilerServices.Unsafe.dll" />
-    <Asset Type="Microsoft.VisualStudio.Assembly" Path="System.Threading.Channels.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.AspNetCore.Razor.LanguageServer.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.CodeAnalysis.Razor.Workspaces.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly"  Path="Microsoft.VisualStudio.LanguageServices.Razor.dll" />
@@ -50,7 +44,6 @@
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.dll" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" Path="Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.dll" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.CodeAnalysis.Razor.Compiler.dll" />
-    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.Extensions.ObjectPool.dll" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.AspNetCore.Razor.Utilities.Shared.dll" />
   </Assets>
 </PackageManifest>

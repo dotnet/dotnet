@@ -22,7 +22,7 @@ internal partial class RazorCustomMessageTarget
             request.Identifier.Version,
             hostDocument,
             cancellationToken).ConfigureAwait(false);
-        if (!synchronized)
+        if (!synchronized || virtualDocument is null)
         {
             return Array.Empty<VSInternalSpellCheckableRangeReport>();
         }

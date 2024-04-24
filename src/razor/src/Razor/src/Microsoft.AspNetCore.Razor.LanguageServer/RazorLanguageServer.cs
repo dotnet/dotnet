@@ -145,6 +145,7 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
 
         // Folding Range Providers
         services.AddSingleton<IRazorFoldingRangeProvider, RazorCodeBlockFoldingProvider>();
+        services.AddSingleton<IRazorFoldingRangeProvider, SectionDirectiveFoldingProvider>();
         services.AddSingleton<IRazorFoldingRangeProvider, UsingsFoldingRangeProvider>();
 
         // Other

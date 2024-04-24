@@ -22,14 +22,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 
 internal class TextDocumentUriPresentationEndpoint(
     IRazorDocumentMappingService razorDocumentMappingService,
-    RazorComponentSearchEngine razorComponentSearchEngine,
     IClientConnection clientConnection,
     IFilePathService filePathService,
     IDocumentContextFactory documentContextFactory,
     ILoggerFactory loggerFactory)
     : AbstractTextDocumentPresentationEndpointBase<UriPresentationParams>(razorDocumentMappingService, clientConnection, filePathService, loggerFactory.GetOrCreateLogger<TextDocumentUriPresentationEndpoint>()), ITextDocumentUriPresentationHandler
 {
-    private readonly RazorComponentSearchEngine _razorComponentSearchEngine = razorComponentSearchEngine ?? throw new ArgumentNullException(nameof(razorComponentSearchEngine));
     private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
 
     public override string EndpointName => CustomMessageNames.RazorUriPresentationEndpoint;
@@ -101,14 +99,14 @@ internal class TextDocumentUriPresentationEndpoint(
                     {
                         Uri = request.TextDocument.Uri
                     },
-                    Edits = new[]
-                    {
+                    Edits =
+                    [
                         new TextEdit
                         {
                             NewText = componentTagText,
                             Range = request.Range
                         }
-                    }
+                    ]
                 }
             }
         };
@@ -127,45 +125,13 @@ internal class TextDocumentUriPresentationEndpoint(
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var descriptor = await _razorComponentSearchEngine.TryGetTagHelperDescriptorAsync(documentContext.Snapshot, cancellationToken).ConfigureAwait(false);
+        var descriptor = await documentContext.Snapshot.TryGetTagHelperDescriptorAsync(cancellationToken).ConfigureAwait(false);
         if (descriptor is null)
         {
-            Logger.LogInformation($"Failed to find tag helper descriptor.");
+            Logger.LogInformation($"Failed to find tag helper descriptor for {documentContext.Snapshot.FilePath}.");
             return null;
         }
 
-        var typeName = descriptor.GetTypeNameIdentifier();
-        if (string.IsNullOrWhiteSpace(typeName))
-        {
-            Logger.LogWarning($"Found a tag helper, {descriptor.Name}, but it has an empty TypeNameIdentifier.");
-            return null;
-        }
-
-        // TODO: Add @using statements if required, or fully qualify (GetTypeName())
-
-        using var _ = StringBuilderPool.GetPooledObject(out var sb);
-
-        sb.Append('<');
-        sb.Append(typeName);
-
-        foreach (var requiredAttribute in descriptor.EditorRequiredAttributes)
-        {
-            sb.Append(' ');
-            sb.Append(requiredAttribute.Name);
-            sb.Append("=\"\"");
-        }
-
-        if (descriptor.AllowedChildTags.Length > 0)
-        {
-            sb.Append("></");
-            sb.Append(typeName);
-            sb.Append('>');
-        }
-        else
-        {
-            sb.Append(" />");
-        }
-
-        return sb.ToString();
+        return descriptor.TryGetComponentTag();
     }
 }

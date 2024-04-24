@@ -25,7 +25,6 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Newtonsoft.Json;
 using Xunit.Abstractions;
-using static Nerdbank.Streams.MultiplexingStream;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 

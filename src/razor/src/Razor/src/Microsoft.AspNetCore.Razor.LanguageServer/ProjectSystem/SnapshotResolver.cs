@@ -110,7 +110,7 @@ internal sealed class SnapshotResolver : ISnapshotResolver
             return miscDocument;
         }
 
-        _logger.LogTrace($"{documentFilePath} not found in {_projectManager.GetProjects().SelectMany(p => p.DocumentFilePaths)}");
+        _logger.LogTrace($"{documentFilePath} not found in {string.Join(", ", _projectManager.GetProjects().SelectMany(p => p.DocumentFilePaths))}");
 
         return null;
     }

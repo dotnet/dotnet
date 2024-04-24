@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
@@ -34,7 +33,7 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
-        using var generator = new TestOpenDocumentGenerator(projectManager, Dispatcher, listener);
+        using var generator = new TestOpenDocumentGenerator(projectManager, listener);
 
         await projectManager.UpdateAsync(updater =>
         {
@@ -55,7 +54,7 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
-        using var generator = new TestOpenDocumentGenerator(projectManager, Dispatcher, listener);
+        using var generator = new TestOpenDocumentGenerator(projectManager, listener);
 
         await projectManager.UpdateAsync(updater =>
         {
@@ -77,7 +76,7 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
-        using var generator = new TestOpenDocumentGenerator(projectManager, Dispatcher, listener);
+        using var generator = new TestOpenDocumentGenerator(projectManager, listener);
 
         await projectManager.UpdateAsync(updater =>
         {
@@ -102,7 +101,7 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
-        using var generator = new TestOpenDocumentGenerator(projectManager, Dispatcher, listener);
+        using var generator = new TestOpenDocumentGenerator(projectManager, listener);
 
         await projectManager.UpdateAsync(updater =>
         {
@@ -125,7 +124,7 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
-        using var generator = new TestOpenDocumentGenerator(projectManager, Dispatcher, listener);
+        using var generator = new TestOpenDocumentGenerator(projectManager, listener);
 
         await projectManager.UpdateAsync(updater =>
         {
@@ -146,11 +145,10 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
 
     private class TestOpenDocumentGenerator(
         IProjectSnapshotManager projectManager,
-        ProjectSnapshotManagerDispatcher dispatcher,
-        params DocumentProcessedListener[] listeners)
-        : OpenDocumentGenerator(listeners, projectManager, dispatcher, TestLanguageServerFeatureOptions.Instance);
+        params IDocumentProcessedListener[] listeners)
+        : OpenDocumentGenerator(listeners, projectManager, TestLanguageServerFeatureOptions.Instance);
 
-    private class TestDocumentProcessedListener : DocumentProcessedListener
+    private class TestDocumentProcessedListener : IDocumentProcessedListener
     {
         private readonly TaskCompletionSource<IDocumentSnapshot> _tcs;
 
@@ -174,13 +172,9 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
             return _tcs.Task;
         }
 
-        public override void DocumentProcessed(RazorCodeDocument codeDocument, IDocumentSnapshot document)
+        public void DocumentProcessed(RazorCodeDocument codeDocument, IDocumentSnapshot document)
         {
             _tcs.SetResult(document);
-        }
-
-        public override void Initialize(IProjectSnapshotManager projectManager)
-        {
         }
     }
 }

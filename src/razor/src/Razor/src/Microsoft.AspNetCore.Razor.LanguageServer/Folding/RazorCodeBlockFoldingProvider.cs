@@ -5,40 +5,23 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Folding;
 
-internal sealed class RazorCodeBlockFoldingProvider : IRazorFoldingRangeProvider
+internal sealed class RazorCodeBlockFoldingProvider : AbstractSyntaxNodeFoldingProvider<RazorDirectiveSyntax>
 {
-    public async Task<ImmutableArray<FoldingRange>> GetFoldingRangesAsync(DocumentContext documentContext, CancellationToken cancellationToken)
+    protected override string GetCollapsedText(RazorDirectiveSyntax node)
     {
-        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        var syntaxTree = await documentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-        var codeBlocks = syntaxTree.GetCodeBlockDirectives();
+        return "@" + node.DirectiveDescriptor.Directive;
+    }
 
-        var builder = new List<FoldingRange>();
-        foreach (var codeBlock in codeBlocks)
-        {
-            sourceText.GetLineAndOffset(codeBlock.Span.Start, out var startLine, out var startOffset);
-            sourceText.GetLineAndOffset(codeBlock.Span.End, out var endLine, out var endOffset);
-            var foldingRange = new FoldingRange()
-            {
-                StartCharacter = startOffset,
-                StartLine = startLine,
-                EndCharacter = endOffset,
-                EndLine = endLine,
-
-                // Directives remove the "@" but for collapsing we want to keep it for users.
-                // Shows "@code" instead of "code".
-                CollapsedText = "@" + codeBlock.DirectiveDescriptor.Directive
-            };
-
-            builder.Add(foldingRange);
-        }
-
-        return builder.ToImmutableArray();
+    protected override ImmutableArray<RazorDirectiveSyntax> GetFoldableNodes(RazorSyntaxTree syntaxTree)
+    {
+        return syntaxTree.GetCodeBlockDirectives();
     }
 }

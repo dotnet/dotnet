@@ -61,7 +61,12 @@ internal class OnAutoInsertEndpoint(
 
     protected override async Task<VSInternalDocumentOnAutoInsertResponseItem?> TryHandleAsync(VSInternalDocumentOnAutoInsertParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return null;
+        }
+
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         if (codeDocument.IsUnsupported())
         {
@@ -114,7 +119,12 @@ internal class OnAutoInsertEndpoint(
 
     protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(VSInternalDocumentOnAutoInsertParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return Task.FromResult<IDelegatedParams?>(null);
+        }
+
         if (positionInfo.LanguageKind == RazorLanguageKind.Html)
         {
             if (!s_htmlAllowedTriggerCharacters.Contains(request.Character))
@@ -177,7 +187,11 @@ internal class OnAutoInsertEndpoint(
             return null;
         }
 
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return null;
+        }
 
         // For Html we just return the edit as is
         if (positionInfo.LanguageKind == RazorLanguageKind.Html)

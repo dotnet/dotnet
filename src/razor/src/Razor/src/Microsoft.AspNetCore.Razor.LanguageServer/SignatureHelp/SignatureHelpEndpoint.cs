@@ -41,13 +41,20 @@ internal sealed class SignatureHelpEndpoint(
 
     protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(SignatureHelpParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
-        if (request.Context is not null && request.Context.TriggerKind != SignatureHelpTriggerKind.Invoked && !optionsMonitor.CurrentValue.AutoListParams)
+        if (request.Context is not null &&
+            request.Context.TriggerKind != SignatureHelpTriggerKind.Invoked &&
+            !optionsMonitor.CurrentValue.AutoListParams)
         {
             // Return nothing if "Parameter Information" option is disabled unless signature help is invoked explicitly via command as opposed to typing or content change
             return Task.FromResult<IDelegatedParams?>(null);
         }
 
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return Task.FromResult<IDelegatedParams?>(null);
+        }
+
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(
                 documentContext.Identifier,
                 positionInfo.Position,

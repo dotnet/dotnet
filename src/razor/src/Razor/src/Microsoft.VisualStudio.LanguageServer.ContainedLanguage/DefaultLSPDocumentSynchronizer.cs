@@ -34,7 +34,7 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
         _documentManager = documentManager ?? throw new ArgumentNullException(nameof(documentManager));
     }
 
-    internal record SynchronizedResult<TVirtualDocumentSnapshot>(bool Synchronized, TVirtualDocumentSnapshot VirtualSnapshot)
+    internal record SynchronizedResult<TVirtualDocumentSnapshot>(bool Synchronized, TVirtualDocumentSnapshot? VirtualSnapshot)
         where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
     {
     }
@@ -94,6 +94,11 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
         lock (_documentContextLock)
         {
             var preSyncedSnapshot = GetVirtualDocumentSnapshot<TVirtualDocumentSnapshot>(hostDocumentUri, specificVirtualDocumentUri);
+            if (preSyncedSnapshot is null)
+            {
+                return new SynchronizedResult<TVirtualDocumentSnapshot>(Synchronized: false, VirtualSnapshot: null);
+            }
+
             var virtualDocumentUri = preSyncedSnapshot.Uri;
             if (!_virtualDocumentContexts.TryGetValue(virtualDocumentUri, out var documentContext))
             {
@@ -136,6 +141,11 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
         lock (_documentContextLock)
         {
             var preSyncedSnapshot = GetVirtualDocumentSnapshot<TVirtualDocumentSnapshot>(hostDocumentUri, specificVirtualDocumentUri);
+            if (preSyncedSnapshot is null)
+            {
+                return new SynchronizedResult<TVirtualDocumentSnapshot>(false, VirtualSnapshot: null);
+            }
+
             var virtualDocumentUri = preSyncedSnapshot.Uri;
             if (!_virtualDocumentContexts.TryGetValue(virtualDocumentUri, out var documentContext))
             {
@@ -184,7 +194,7 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
         }
     }
 
-    private TVirtualDocumentSnapshot GetVirtualDocumentSnapshot<TVirtualDocumentSnapshot>(Uri hostDocumentUri, Uri? specificVirtualDocumentUri)
+    private TVirtualDocumentSnapshot? GetVirtualDocumentSnapshot<TVirtualDocumentSnapshot>(Uri hostDocumentUri, Uri? specificVirtualDocumentUri)
         where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
     {
         var normalizedString = hostDocumentUri.GetAbsoluteOrUNCPath();
@@ -192,7 +202,10 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
 
         if (!_documentManager.TryGetDocument(normalizedUri, out var documentSnapshot))
         {
-            throw new InvalidOperationException($"Unable to retrieve snapshot for document {normalizedUri} after synchronization");
+            // Because LSP requests are mostly parallel (except document updates) we can sometimes get a request for a document
+            // that has since been closed, and hence its virtual document buffer(s) don't exist any more. Throwing an exception
+            // in this situation just produces noise.
+            return null;
         }
 
         if (specificVirtualDocumentUri is not null)

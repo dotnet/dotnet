@@ -29,13 +29,14 @@ internal partial class RazorCustomMessageTarget
             cancellationToken);
 
         var languageServerName = RazorLSPConstants.HtmlLanguageServerName;
-        var projectedUri = htmlDocument.Uri;
 
-        if (!synchronized)
+        if (!synchronized || htmlDocument is null)
         {
             Debug.Fail("RangeFormatting not synchronized.");
             return response;
         }
+
+        var projectedUri = htmlDocument.Uri;
 
         var formattingParams = new DocumentFormattingParams()
         {
@@ -67,7 +68,7 @@ internal partial class RazorCustomMessageTarget
         var languageServerName = RazorLSPConstants.HtmlLanguageServerName;
         var (synchronized, htmlDocument) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(request.HostDocumentVersion, hostDocument, cancellationToken);
 
-        if (!synchronized)
+        if (!synchronized || htmlDocument is null)
         {
             return response;
         }

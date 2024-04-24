@@ -12,28 +12,20 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal sealed class ProjectConfigurationFileChangeEventArgs : EventArgs
+internal sealed class ProjectConfigurationFileChangeEventArgs(
+    string configurationFilePath,
+    RazorFileChangeKind kind,
+    IRazorProjectInfoDeserializer? deserializer = null) : EventArgs
 {
-    public string ConfigurationFilePath { get; }
-    public RazorFileChangeKind Kind { get; }
+    public string ConfigurationFilePath { get; } = configurationFilePath;
+    public RazorFileChangeKind Kind { get; } = kind;
 
-    private readonly IRazorProjectInfoDeserializer _deserializer;
+    private readonly IRazorProjectInfoDeserializer _deserializer = deserializer ?? RazorProjectInfoDeserializer.Instance;
     private RazorProjectInfo? _projectInfo;
-    private readonly object _gate;
+    private readonly object _gate = new();
     private bool _deserialized;
 
-    public ProjectConfigurationFileChangeEventArgs(
-        string configurationFilePath,
-        RazorFileChangeKind kind,
-        IRazorProjectInfoDeserializer? projectInfoDeserializer = null)
-    {
-        ConfigurationFilePath = configurationFilePath ?? throw new ArgumentNullException(nameof(configurationFilePath));
-        Kind = kind;
-        _deserializer = projectInfoDeserializer ?? RazorProjectInfoDeserializer.Instance;
-        _gate = new object();
-    }
-
-    public bool TryDeserialize(LanguageServerFeatureOptions languageServerFeatureOptions, [NotNullWhen(true)] out RazorProjectInfo? projectInfo)
+    public bool TryDeserialize(LanguageServerFeatureOptions options, [NotNullWhen(true)] out RazorProjectInfo? projectInfo)
     {
         if (Kind == RazorFileChangeKind.Removed)
         {
@@ -65,7 +57,7 @@ internal sealed class ProjectConfigurationFileChangeEventArgs : EventArgs
                     {
                         Configuration = deserializedProjectInfo.Configuration with
                         {
-                            LanguageServerFlags = languageServerFeatureOptions.ToLanguageServerFlags()
+                            LanguageServerFlags = options.ToLanguageServerFlags()
                         }
                     };
 
@@ -79,15 +71,10 @@ internal sealed class ProjectConfigurationFileChangeEventArgs : EventArgs
                     return false;
                 }
             }
+
+            projectInfo = _projectInfo;
         }
 
-        projectInfo = _projectInfo;
-        if (projectInfo is null)
-        {
-            // Deserialization failed
-            return false;
-        }
-
-        return true;
+        return projectInfo is not null;
     }
 }

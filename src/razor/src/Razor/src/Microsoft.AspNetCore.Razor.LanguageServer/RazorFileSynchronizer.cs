@@ -3,6 +3,7 @@
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.VisualStudio.Threading;
@@ -13,21 +14,11 @@ internal class RazorFileSynchronizer(IRazorProjectService projectService) : IRaz
 {
     private readonly IRazorProjectService _projectService = projectService;
 
-    public void RazorFileChanged(string filePath, RazorFileChangeKind kind)
-    {
-        if (filePath is null)
+    public Task RazorFileChangedAsync(string filePath, RazorFileChangeKind kind, CancellationToken cancellationToken)
+        => kind switch
         {
-            throw new ArgumentNullException(nameof(filePath));
-        }
-
-        switch (kind)
-        {
-            case RazorFileChangeKind.Added:
-                _projectService.AddDocumentAsync(filePath, CancellationToken.None).Forget();
-                break;
-            case RazorFileChangeKind.Removed:
-                _projectService.RemoveDocumentAsync(filePath, CancellationToken.None).Forget();
-                break;
-        }
-    }
+            RazorFileChangeKind.Added => _projectService.AddDocumentAsync(filePath, cancellationToken),
+            RazorFileChangeKind.Removed => _projectService.RemoveDocumentAsync(filePath, cancellationToken),
+            _ => Task.CompletedTask
+        };
 }

@@ -19,9 +19,9 @@ internal partial class RazorCustomMessageTarget
         var (synchronized, virtualDocument) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
             request.Identifier.Version,
             hostDocument,
-            cancellationToken).ConfigureAwait(false);
+        cancellationToken).ConfigureAwait(false);
 
-        if (!synchronized)
+        if (!synchronized || virtualDocument is null)
         {
             return null;
         }

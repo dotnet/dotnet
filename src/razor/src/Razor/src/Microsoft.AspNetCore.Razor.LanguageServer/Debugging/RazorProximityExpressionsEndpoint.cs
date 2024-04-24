@@ -51,7 +51,11 @@ internal class RazorProximityExpressionsEndpoint : IRazorDocumentlessRequestHand
 
     public async Task<RazorProximityExpressionsResponse?> HandleRequestAsync(RazorProximityExpressionsParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        var documentContext = requestContext.GetRequiredDocumentContext();
+        var documentContext = requestContext.DocumentContext;
+        if (documentContext is null)
+        {
+            return null;
+        }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
