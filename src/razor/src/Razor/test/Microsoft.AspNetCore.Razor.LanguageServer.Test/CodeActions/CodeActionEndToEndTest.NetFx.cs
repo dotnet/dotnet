@@ -1048,7 +1048,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
             var codeActionToRun = GetCodeActionToRun(codeAction, childActionIndex, result);
             Assert.NotNull(codeActionToRun);
 
-            var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, Dispatcher);
+            var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory);
             var changes = await GetEditsAsync(
                 codeActionToRun,
                 requestContext,
@@ -1134,7 +1134,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
 
         Assert.NotNull(codeActionToRun);
 
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, Dispatcher, codeDocument, documentContext.Snapshot, optionsMonitor?.CurrentValue);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, codeDocument, documentContext.Snapshot, optionsMonitor?.CurrentValue);
         var changes = await GetEditsAsync(
             codeActionToRun,
             requestContext,
@@ -1215,7 +1215,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
         IClientConnection clientConnection,
         IRazorCodeActionResolver[] razorResolvers)
     {
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, Dispatcher);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory);
 
         var csharpResolvers = new CSharpCodeActionResolver[]
         {

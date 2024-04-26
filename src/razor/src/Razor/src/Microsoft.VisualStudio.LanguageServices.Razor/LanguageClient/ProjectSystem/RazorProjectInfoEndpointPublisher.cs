@@ -5,7 +5,6 @@ using System;
 using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
@@ -158,17 +157,12 @@ internal partial class RazorProjectInfoEndpointPublisher : IDisposable
 
     private void RemovePublishingData(IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
-        // This should never get called if we are inactive, so don't check _active flag
         ImmediatePublish(projectSnapshot.Key, encodedProjectInfo: null, cancellationToken);
     }
 
     private void ImmediatePublish(IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
-        using var stream = new MemoryStream();
-
-        var projectInfo = projectSnapshot.ToRazorProjectInfo(projectSnapshot.IntermediateOutputPath);
-        projectInfo.SerializeTo(stream);
-        var base64ProjectInfo = Convert.ToBase64String(stream.ToArray());
+        var base64ProjectInfo = projectSnapshot.ToBase64EncodedProjectInfo(projectSnapshot.IntermediateOutputPath);
 
         ImmediatePublish(projectSnapshot.Key, base64ProjectInfo, cancellationToken);
     }

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.Threading;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -812,13 +813,13 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
 
             if (args.Kind == ProjectChangeKind.DocumentAdded)
             {
-                _projectManager.Update(updater =>
-                    updater.DocumentOpened(s_hostProject.Key, s_documents[0].FilePath, _sourceText));
+                _projectManager.UpdateAsync(updater =>
+                    updater.DocumentOpened(s_hostProject.Key, s_documents[0].FilePath, _sourceText)).Forget();
             }
             else if (args.Kind == ProjectChangeKind.DocumentChanged)
             {
-                _projectManager.Update(updater =>
-                    updater.DocumentRemoved(s_hostProject.Key, s_documents[0]));
+                _projectManager.UpdateAsync(updater =>
+                    updater.DocumentRemoved(s_hostProject.Key, s_documents[0])).Forget();
             }
         };
 

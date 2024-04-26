@@ -21,8 +21,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- arcade -->
-    <PackageVersion Include="Microsoft.DotNet.SwaggerGenerator.MSBuild" Version="$(MicrosoftDotNetSwaggerGeneratorMSBuildVersion)" />
     <!-- arcade-services -->
     <PackageVersion Include="Microsoft.DotNet.Maestro.Client" Version="$(MicrosoftDotNetMaestroClientVersion)" />
     <!-- command-line-api -->

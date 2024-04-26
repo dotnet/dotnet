@@ -35,7 +35,7 @@ Set-StrictMode -Version 2.0
 . $PSScriptRoot\tools.ps1
 
 # Add source entry to PackageSources
-function AddPackageSource($sources, $SourceName, $SourceEndPoint, $creds, $Username, $pwd) {
+function AddPackageSource($sources, $SourceName, $SourceEndPoint, $creds, $Username, $Password) {
     $packageSource = $sources.SelectSingleNode("add[@key='$SourceName']")
     
     if ($packageSource -eq $null)
@@ -48,11 +48,12 @@ function AddPackageSource($sources, $SourceName, $SourceEndPoint, $creds, $Usern
     else {
         Write-Host "Package source $SourceName already present."
     }
-    AddCredential -Creds $creds -Source $SourceName -Username $Username -pwd $pwd
+    
+    AddCredential -Creds $creds -Source $SourceName -Username $Username -Password $Password
 }
 
 # Add a credential node for the specified source
-function AddCredential($creds, $source, $username, $pwd) {
+function AddCredential($creds, $source, $username, $password) {
     # Looks for credential configuration for the given SourceName. Create it if none is found.
     $sourceElement = $creds.SelectSingleNode($Source)
     if ($sourceElement -eq $null)
@@ -81,18 +82,17 @@ function AddCredential($creds, $source, $username, $pwd) {
         $passwordElement.SetAttribute("key", "ClearTextPassword")
         $sourceElement.AppendChild($passwordElement) | Out-Null
     }
-    
-    $passwordElement.SetAttribute("value", $pwd)
+    $passwordElement.SetAttribute("value", $Password)
 }
 
-function InsertMaestroPrivateFeedCredentials($Sources, $Creds, $Username, $pwd) {
+function InsertMaestroPrivateFeedCredentials($Sources, $Creds, $Username, $Password) {
     $maestroPrivateSources = $Sources.SelectNodes("add[contains(@key,'darc-int')]")
 
     Write-Host "Inserting credentials for $($maestroPrivateSources.Count) Maestro's private feeds."
     
     ForEach ($PackageSource in $maestroPrivateSources) {
         Write-Host "`tInserting credential for Maestro's feed:" $PackageSource.Key
-        AddCredential -Creds $creds -Source $PackageSource.Key -Username $Username -pwd $pwd
+        AddCredential -Creds $creds -Source $PackageSource.Key -Username $Username -Password $Password
     }
 }
 
@@ -144,23 +144,23 @@ if ($disabledSources -ne $null) {
 $userName = "dn-bot"
 
 # Insert credential nodes for Maestro's private feeds
-InsertMaestroPrivateFeedCredentials -Sources $sources -Creds $creds -Username $userName -pwd $Password
+InsertMaestroPrivateFeedCredentials -Sources $sources -Creds $creds -Username $userName -Password $Password
 
 # 3.1 uses a different feed url format so it's handled differently here
 $dotnet31Source = $sources.SelectSingleNode("add[@key='dotnet3.1']")
 if ($dotnet31Source -ne $null) {
-    AddPackageSource -Sources $sources -SourceName "dotnet3.1-internal" -SourceEndPoint "https://pkgs.dev.azure.com/dnceng/_packaging/dotnet3.1-internal/nuget/v2" -Creds $creds -Username $userName -pwd $Password
-    AddPackageSource -Sources $sources -SourceName "dotnet3.1-internal-transport" -SourceEndPoint "https://pkgs.dev.azure.com/dnceng/_packaging/dotnet3.1-internal-transport/nuget/v2" -Creds $creds -Username $userName -pwd $Password
+    AddPackageSource -Sources $sources -SourceName "dotnet3.1-internal" -SourceEndPoint "https://pkgs.dev.azure.com/dnceng/_packaging/dotnet3.1-internal/nuget/v2" -Creds $creds -Username $userName -Password $Password
+    AddPackageSource -Sources $sources -SourceName "dotnet3.1-internal-transport" -SourceEndPoint "https://pkgs.dev.azure.com/dnceng/_packaging/dotnet3.1-internal-transport/nuget/v2" -Creds $creds -Username $userName -Password $Password
 }
 
-$dotnetVersions = @('5','6','7','8')
+$dotnetVersions = @('5','6','7')
 
 foreach ($dotnetVersion in $dotnetVersions) {
     $feedPrefix = "dotnet" + $dotnetVersion;
     $dotnetSource = $sources.SelectSingleNode("add[@key='$feedPrefix']")
     if ($dotnetSource -ne $null) {
-        AddPackageSource -Sources $sources -SourceName "$feedPrefix-internal" -SourceEndPoint "https://pkgs.dev.azure.com/dnceng/internal/_packaging/$feedPrefix-internal/nuget/v2" -Creds $creds -Username $userName -pwd $Password
-        AddPackageSource -Sources $sources -SourceName "$feedPrefix-internal-transport" -SourceEndPoint "https://pkgs.dev.azure.com/dnceng/internal/_packaging/$feedPrefix-internal-transport/nuget/v2" -Creds $creds -Username $userName -pwd $Password
+        AddPackageSource -Sources $sources -SourceName "$feedPrefix-internal" -SourceEndPoint "https://pkgs.dev.azure.com/dnceng/internal/_packaging/$feedPrefix-internal/nuget/v2" -Creds $creds -Username $userName -Password $Password
+        AddPackageSource -Sources $sources -SourceName "$feedPrefix-internal-transport" -SourceEndPoint "https://pkgs.dev.azure.com/dnceng/internal/_packaging/$feedPrefix-internal-transport/nuget/v2" -Creds $creds -Username $userName -Password $Password
     }
 }
 

@@ -83,8 +83,8 @@ internal partial class RazorCustomMessageTarget
 
     private static bool SupportsMapCode(JToken token)
     {
-        return token is JObject obj
-            && obj.TryGetValue(VSInternalMethods.WorkspaceMapCodeName, out var supportsMapCode)
-            && supportsMapCode.ToObject<bool>();
+        var serverCapabilities = token.ToObject<VSInternalServerCapabilities>();
+
+        return serverCapabilities?.MapCodeProvider ?? false;
     }
 }

@@ -158,11 +158,11 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             return Task.FromResult(_projectPackageVersions);
         }
 
-        public async Task<IEnumerable<(string ItemId, string[] ItemMetadata)>> GetBuildItemInformationAsync(string itemName, params string[] metadataNames)
+        public IEnumerable<(string ItemId, string[] ItemMetadata)> GetBuildItemInformation(string itemName, params string[] metadataNames)
         {
             if (itemName == "PackageVersion")
             {
-                return await Task.FromResult(_projectPackageVersions.Select(x => (ItemId: x.PackageId, ItemMetadata: new string[] { x.Version })));
+                return _projectPackageVersions.Select(x => (ItemId: x.PackageId, ItemMetadata: new string[] { x.Version }));
             }
 
             return Enumerable.Empty<(string ItemId, string[] ItemMetadata)>();

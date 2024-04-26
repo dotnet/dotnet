@@ -73,6 +73,12 @@ internal class WorkspaceSemanticTokensRefreshNotifier : IWorkspaceSemanticTokens
                 return;
             }
 
+            // We could have been called before the LSP server has even been initialized
+            if (!_clientCapabilitiesService.CanGetClientCapabilities)
+            {
+                return;
+            }
+
             _supportsRefresh ??= _clientCapabilitiesService.ClientCapabilities.Workspace?.SemanticTokens?.RefreshSupport ?? false;
 
             if (_supportsRefresh is false)

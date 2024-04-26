@@ -1583,6 +1583,44 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             projectBuildProperties.VerifyAll();
         }
 
+        [Fact]
+        public async Task GetPackageSpec_WithNuGetAuditSuppress()
+        {
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            // Arrange
+            using var testDirectory = TestDirectory.Create();
+
+            var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
+            var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
+
+            Mock<IVsProjectAdapter> projectAdapterMock = Mock.Get(projectAdapter);
+            projectAdapterMock.Setup(m => m.GetBuildItemInformation(ProjectBuildProperties.NuGetAuditSuppress, It.IsAny<string[]>()))
+                .Returns([("https://cve.test/1", Array.Empty<string>())]);
+
+            var projectServices = new TestProjectSystemServices();
+            var testProject = new LegacyPackageReferenceProject(
+                projectAdapter,
+                Guid.NewGuid().ToString(),
+                projectServices,
+                _threadingService);
+
+            var settings = NullSettings.Instance;
+            var testDependencyGraphCacheContext = new DependencyGraphCacheContext(NullLogger.Instance, settings);
+
+            // Act
+            var packageSpecs = await testProject.GetPackageSpecsAsync(testDependencyGraphCacheContext);
+
+            // Assert
+            Assert.NotNull(packageSpecs);
+            var actualRestoreSpec = packageSpecs.Single();
+            SpecValidationUtility.ValidateProjectSpec(actualRestoreSpec);
+
+            var auditProperties = actualRestoreSpec.RestoreMetadata.RestoreAuditProperties;
+            auditProperties.SuppressedAdvisories.Should().NotBeNull();
+            auditProperties.SuppressedAdvisories.Should().BeEquivalentTo(["https://cve.test/1"]);
+        }
+
         private LegacyPackageReferenceProject CreateLegacyPackageReferenceProject(TestDirectory testDirectory, string range)
         {
             return ProjectFactories.CreateLegacyPackageReferenceProject(testDirectory, Guid.NewGuid().ToString(), range, _threadingService);

@@ -53,7 +53,7 @@ public class ProjectMutationBenchmark : ProjectSnapshotManagerBenchmarkBase
             cancellationSource.Cancel();
         });
 
-        _readThread = new Thread(async () =>
+        _readThread = new Thread(() =>
         {
             while (true)
             {
@@ -63,9 +63,9 @@ public class ProjectMutationBenchmark : ProjectSnapshotManagerBenchmarkBase
                     return;
                 }
 
-                await Dispatcher.RunAsync(() => ProjectManager.GetProjects(), CancellationToken.None).ConfigureAwait(false);
+                _ = ProjectManager.GetProjects();
                 Thread.Sleep(0);
-                await Dispatcher.RunAsync(() => ProjectManager.GetOpenDocuments(), CancellationToken.None).ConfigureAwait(false);
+                _ = ProjectManager.GetOpenDocuments();
                 Thread.Sleep(0);
             }
         });

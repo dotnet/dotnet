@@ -566,7 +566,7 @@ public class VisualStudioRazorParserIntegrationTest : VisualStudioTestBase
             documentTracker,
             _projectEngineFactoryProvider,
             new TestCompletionBroker(),
-            ErrorReporter,
+            LoggerFactory,
             JoinableTaskFactory.Context)
         {
             // We block idle work with the below reset events. Therefore, make tests fast and have the idle timer fire as soon as possible.

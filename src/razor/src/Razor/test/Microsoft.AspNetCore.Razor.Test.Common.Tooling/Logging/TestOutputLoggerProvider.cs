@@ -6,14 +6,15 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.Logging;
 
-internal class TestOutputLoggerProvider(ITestOutputHelper output) : ILoggerProvider
+internal class TestOutputLoggerProvider(ITestOutputHelper output, LogLevel logLevel = LogLevel.Trace) : ILoggerProvider
 {
     private ITestOutputHelper? _output = output;
+    private readonly LogLevel _logLevel = logLevel;
 
     public ITestOutputHelper? TestOutputHelper => _output;
 
     public ILogger CreateLogger(string categoryName)
-        => new TestOutputLogger(this, categoryName);
+        => new TestOutputLogger(this, categoryName, _logLevel);
 
     public void Dispose()
     {

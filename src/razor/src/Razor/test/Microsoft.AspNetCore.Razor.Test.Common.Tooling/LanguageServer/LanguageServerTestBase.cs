@@ -47,18 +47,11 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         FilePathService = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
     }
 
-    private protected override ProjectSnapshotManagerDispatcher CreateDispatcher()
-    {
-        var dispatcher = new LSPProjectSnapshotManagerDispatcher(ErrorReporter);
-        AddDisposable(dispatcher);
-
-        return dispatcher;
-    }
     private protected TestProjectSnapshotManager CreateProjectSnapshotManager()
         => CreateProjectSnapshotManager(ProjectEngineFactories.DefaultProvider);
 
     private protected TestProjectSnapshotManager CreateProjectSnapshotManager(IProjectEngineFactoryProvider projectEngineFactoryProvider)
-        => new(projectEngineFactoryProvider, Dispatcher, DisposalToken);
+        => new(projectEngineFactoryProvider, LoggerFactory, DisposalToken);
 
     internal RazorRequestContext CreateRazorRequestContext(VersionedDocumentContext? documentContext, ILspServices? lspServices = null)
     {

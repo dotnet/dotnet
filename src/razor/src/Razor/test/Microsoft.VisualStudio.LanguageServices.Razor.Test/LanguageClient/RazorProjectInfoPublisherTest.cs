@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
@@ -42,6 +43,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var publisher = new TestRazorProjectInfoPublisher(
             projectManager,
             projectConfigurationFilePathStore,
+            LoggerFactory,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
                 Assert.Same(expectedProjectSnapshot, snapshot);
@@ -88,6 +90,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var publisher = new TestRazorProjectInfoPublisher(
             projectManager,
             projectConfigurationFilePathStore,
+            LoggerFactory,
             onSerializeToFile: (snapshot, configurationFilePath) => attemptedToSerialize = true)
         {
             EnqueueDelay = 10,
@@ -124,6 +127,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var publisher = new TestRazorProjectInfoPublisher(
             projectManager,
             projectConfigurationFilePathStore,
+            LoggerFactory,
             onSerializeToFile: (snapshot, configurationFilePath) => attemptedToSerialize = true)
         {
             EnqueueDelay = 10,
@@ -164,6 +168,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var publisher = new TestRazorProjectInfoPublisher(
             projectManager,
             projectConfigurationFilePathStore,
+            LoggerFactory,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
                 Assert.Equal(expectedConfigurationFilePath, configurationFilePath);
@@ -208,6 +213,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var publisher = new TestRazorProjectInfoPublisher(
             projectManager,
             projectConfigurationFilePathStore,
+            LoggerFactory,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
                 Assert.Equal(expectedConfigurationFilePath, configurationFilePath);
@@ -246,6 +252,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var publisher = new TestRazorProjectInfoPublisher(
             projectManager,
             projectConfigurationFilePathStore,
+            LoggerFactory,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
                 Assert.Same(projectSnapshot, snapshot);
@@ -284,6 +291,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var publisher = new TestRazorProjectInfoPublisher(
             projectManager,
             projectConfigurationFilePathStore,
+            LoggerFactory,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
                 if (!aboutToChange)
@@ -334,6 +342,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var publisher = new TestRazorProjectInfoPublisher(
             projectManager,
             projectConfigurationFilePathStore,
+            LoggerFactory,
             onSerializeToFile: (snapshot, configurationFilePath) => attemptedToSerialize = true)
         {
             EnqueueDelay = 10,
@@ -368,6 +377,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var publisher = new TestRazorProjectInfoPublisher(
             projectManager,
             projectConfigurationFilePathStore,
+            LoggerFactory,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
                 Assert.Same(secondSnapshot, snapshot);
@@ -405,6 +415,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var publisher = new TestRazorProjectInfoPublisher(
             projectManager,
             projectConfigurationFilePathStore,
+            LoggerFactory,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
                 Assert.Same(secondSnapshot, snapshot);
@@ -450,6 +461,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var publisher = new TestRazorProjectInfoPublisher(
             projectManager,
             projectConfigurationFilePathStore,
+            LoggerFactory,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
                 Assert.Same(secondSnapshot, snapshot);
@@ -480,7 +492,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var projectManager = CreateProjectSnapshotManager();
         var projectConfigurationFilePathStore = new DefaultProjectConfigurationFilePathStore();
 
-        var publisher = new TestRazorProjectInfoPublisher(projectManager, projectConfigurationFilePathStore)
+        var publisher = new TestRazorProjectInfoPublisher(projectManager, projectConfigurationFilePathStore, LoggerFactory)
         {
             _active = true,
         };
@@ -504,6 +516,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var publisher = new TestRazorProjectInfoPublisher(
             projectManager,
             projectConfigurationFilePathStore,
+            LoggerFactory,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
                 Assert.Same(omniSharpProjectSnapshot, snapshot);
@@ -536,6 +549,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var publisher = new TestRazorProjectInfoPublisher(
             projectManager,
             projectConfigurationFilePathStore,
+            LoggerFactory,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
                 Assert.Equal(expectedConfigurationFilePath, configurationFilePath);
@@ -574,6 +588,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var publisher = new TestRazorProjectInfoPublisher(
             projectManager,
             projectConfigurationFilePathStore,
+            LoggerFactory,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
                 Assert.Fail("Serialization should not have been attempted because there is no ProjectWorkspaceState.");
@@ -603,7 +618,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var projectManager = CreateProjectSnapshotManager();
         var projectConfigurationFilePathStore = new DefaultProjectConfigurationFilePathStore();
 
-        var publisher = new TestRazorProjectInfoPublisher(projectManager, projectConfigurationFilePathStore)
+        var publisher = new TestRazorProjectInfoPublisher(projectManager, projectConfigurationFilePathStore, LoggerFactory)
         {
             _active = true,
         };
@@ -632,6 +647,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var publisher = new TestRazorProjectInfoPublisher(
             projectManager,
             projectConfigurationFilePathStore,
+            LoggerFactory,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
                 Assert.Equal(expectedConfigurationFilePath, configurationFilePath);
@@ -678,6 +694,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
     private class TestRazorProjectInfoPublisher(
         IProjectSnapshotManager projectManager,
         ProjectConfigurationFilePathStore projectStatePublishFilePathStore,
+        ILoggerFactory loggerFactory,
         Action<IProjectSnapshot, string>? onSerializeToFile = null,
         bool shouldSerialize = true,
         bool useRealShouldSerialize = false,
@@ -686,7 +703,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             s_lspEditorFeatureDetector.Object,
             projectManager,
             projectStatePublishFilePathStore,
-            TestRazorLogger.Instance)
+            loggerFactory)
     {
         private static readonly StrictMock<LSPEditorFeatureDetector> s_lspEditorFeatureDetector = new();
 

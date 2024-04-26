@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Remote;
 
@@ -22,9 +22,9 @@ public partial class OutOfProcTagHelperResolverTest
 {
     private class TestResolver(
         IRemoteClientProvider remoteClientProvider,
-        IErrorReporter errorReporter,
+        ILoggerFactory loggerFactory,
         ITelemetryReporter telemetryReporter)
-        : OutOfProcTagHelperResolver(remoteClientProvider, errorReporter, telemetryReporter)
+        : OutOfProcTagHelperResolver(remoteClientProvider, loggerFactory, telemetryReporter)
     {
         public Func<IProjectSnapshot, ValueTask<ImmutableArray<TagHelperDescriptor>>>? OnResolveOutOfProcess { get; init; }
 

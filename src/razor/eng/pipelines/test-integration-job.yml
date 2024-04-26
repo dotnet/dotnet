@@ -37,6 +37,7 @@ steps:
       -build
       -pack
       -publish
+      -deploy
       /p:BuildDependencyVsix=false
     name: Build
     displayName: Build

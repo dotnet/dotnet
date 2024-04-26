@@ -60,7 +60,7 @@ public class VisualStudioRazorParserTest : VisualStudioTestBase
             documentTracker,
             _projectEngineFactoryProvider,
             StrictMock.Of<ICompletionBroker>(),
-            ErrorReporter,
+            LoggerFactory,
             JoinableTaskContext);
 
     [UIFact]

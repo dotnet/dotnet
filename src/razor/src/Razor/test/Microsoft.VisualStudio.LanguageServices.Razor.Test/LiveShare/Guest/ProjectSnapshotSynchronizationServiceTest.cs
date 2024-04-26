@@ -54,7 +54,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
             _sessionContext,
             hostProjectManagerProxyMock.Object,
             _projectManager,
-            ErrorReporter,
+            LoggerFactory,
             JoinableTaskFactory);
 
         // Act
@@ -88,7 +88,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
             _projectManager,
-            ErrorReporter,
+            LoggerFactory,
             JoinableTaskFactory);
         var args = new ProjectChangeEventProxyArgs(older: null, newHandle, ProjectProxyChangeKind.ProjectAdded);
 
@@ -123,7 +123,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
             _projectManager,
-            ErrorReporter,
+            LoggerFactory,
             JoinableTaskFactory);
         var hostProject = new HostProject("/guest/path/project.csproj", "/guest/path/obj", RazorConfiguration.Default, "project");
 
@@ -163,7 +163,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
             _projectManager,
-            ErrorReporter,
+            LoggerFactory,
             JoinableTaskFactory);
         var hostProject = new HostProject("/guest/path/project.csproj", "/guest/path/obj", RazorConfiguration.Default, "project");
 
@@ -207,7 +207,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
             _projectManager,
-            ErrorReporter,
+            LoggerFactory,
             JoinableTaskFactory);
         var hostProject = new HostProject("/guest/path/project.csproj", "/guest/path/obj", RazorConfiguration.Default, "project");
 

@@ -3,7 +3,7 @@
 
 using System.ComponentModel.Composition;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Razor.Extensions;
 using Microsoft.VisualStudio.Threading;
@@ -15,12 +15,12 @@ namespace Microsoft.VisualStudio.LegacyEditor.Razor.Parsing;
 internal sealed class VisualStudioRazorParserFactory(
     IProjectEngineFactoryProvider projectEngineFactoryProvider,
     ICompletionBroker completionBroker,
-    IErrorReporter errorReporter,
+    ILoggerFactory loggerFactory,
     JoinableTaskContext joinableTaskContext) : IVisualStudioRazorParserFactory
 {
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider = projectEngineFactoryProvider;
     private readonly ICompletionBroker _completionBroker = completionBroker;
-    private readonly IErrorReporter _errorReporter = errorReporter;
+    private readonly ILoggerFactory _loggerFactory = loggerFactory;
     private readonly JoinableTaskContext _joinableTaskContext = joinableTaskContext;
 
     public IVisualStudioRazorParser Create(IVisualStudioDocumentTracker documentTracker)
@@ -31,7 +31,7 @@ internal sealed class VisualStudioRazorParserFactory(
             documentTracker,
             _projectEngineFactoryProvider,
             _completionBroker,
-            _errorReporter,
+            _loggerFactory,
             _joinableTaskContext);
     }
 }

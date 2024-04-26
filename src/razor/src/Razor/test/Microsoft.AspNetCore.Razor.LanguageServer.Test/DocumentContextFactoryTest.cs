@@ -181,7 +181,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create(string.Empty, documentSnapshot.FilePath));
         documentSnapshot.With(codeDocument);
         var documentResolver = new TestDocumentResolver(documentSnapshot);
-        await Dispatcher.RunAsync(() => _documentVersionCache.TrackDocumentVersion(documentSnapshot, version: 1337), DisposalToken);
+        _documentVersionCache.TrackDocumentVersion(documentSnapshot, version: 1337);
         var factory = new DocumentContextFactory(_projectManager, documentResolver, _documentVersionCache, LoggerFactory);
 
         // Act
