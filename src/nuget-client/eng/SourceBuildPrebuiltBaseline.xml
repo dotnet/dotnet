@@ -45,9 +45,6 @@
     <UsagePattern IdentityGlob="Microsoft.NETCore.App.Host*/*" />
     <UsagePattern IdentityGlob="Microsoft.NETCore.Platforms/*" />
     <UsagePattern IdentityGlob="Microsoft.NETCore.Targets/*" />
-    <UsagePattern IdentityGlob="Microsoft.SourceLink.AzureRepos.Git/*2" />
-    <UsagePattern IdentityGlob="Microsoft.SourceLink.Common/*" />
-    <UsagePattern IdentityGlob="Microsoft.SourceLink.GitHub/*" />
     <UsagePattern IdentityGlob="Microsoft.VisualStudio.Setup.Configuration.Interop/*" />
     <UsagePattern IdentityGlob="Microsoft.Web.Xdt/*" />
     <UsagePattern IdentityGlob="Microsoft.Win32.Registry/*" />

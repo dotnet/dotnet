@@ -137,7 +137,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" Condition="'$(Shipping)' == 'true' AND '$(IsXPlat)' != 'true'" />
     <GlobalPackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" version="1.0.0" Condition=" '$(DotNetBuildSourceOnly)' != 'true' " />
   </ItemGroup>
 
@@ -183,8 +182,6 @@
       <_allowBuildFromSourcePackage Include="Microsoft.Extensions.CommandLineUtils.Sources" />
       <_allowBuildFromSourcePackage Include="Microsoft.Extensions.FileProviders.Abstractions" />
       <_allowBuildFromSourcePackage Include="Microsoft.Extensions.FileSystemGlobbing" />
-      <_allowBuildFromSourcePackage Include="Microsoft.SourceLink.AzureRepos.Git" />
-      <_allowBuildFromSourcePackage Include="Microsoft.SourceLink.GitHub" />
       <_allowBuildFromSourcePackage Include="Microsoft.Web.Xdt" />
       <_allowBuildFromSourcePackage Include="Newtonsoft.Json" />
       <_allowBuildFromSourcePackage Include="System.CommandLine" />
