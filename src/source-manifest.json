@@ -79,10 +79,10 @@
       "commitSha": "77b30be775f467e096c0b2a908bf53239e1d164b"
     },
     {
-      "packageVersion": "4.11.0-1.24225.9",
+      "packageVersion": "4.11.0-1.24225.10",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "0d1f9fea04892d9e65e9a780bb773a4d5ed18f8e"
+      "commitSha": "5a0ec2b86212e7132cf473b5ccdcf01433c86375"
     },
     {
       "packageVersion": "3.11.0-beta1.24225.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "41b32876cc4aebe0bfd5484f1176c30db04fcd85"
+      "commitSha": "1ade1ed9bec281ccd01b7163601a3c75e343911e"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24222.1",
@@ -151,10 +151,10 @@
       "commitSha": "56d28849af08dc3143d019694aa92f186b89d2ac"
     },
     {
-      "packageVersion": "9.0.0-preview.5.24224.3",
+      "packageVersion": "9.0.0-preview.5.24226.1",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "5ae69b955cef19f70a6f114c6dcb53e863fa0327"
+      "commitSha": "65eded428d3b6569972f320f242dbc4b818b4339"
     },
     {
       "packageVersion": "9.0.0-preview.5.24223.8",
