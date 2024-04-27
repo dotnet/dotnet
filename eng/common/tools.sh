@@ -468,6 +468,7 @@ function MSBuild {
     done
     if [[ -z "$selectedPath" ]]; then
       Write-PipelineTelemetryError -category 'Build'  "Unable to find arcade sdk logger assembly."
+      Write-PipelineTelemetryError -category 'Build'  "InitializeBuildToolFramework: $_InitializeBuildToolFramework"
       ExitWithExitCode 1
     fi
     args+=( "-logger:$selectedPath" )
