@@ -141,50 +141,50 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
             return await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, cancellationToken).ConfigureAwait(false);
         }
 
-        _logger?.LogDebug($"Trying to synchronize for {caller} to version {requiredHostDocumentVersion} of {hostDocument.Uri} for {hostDocument.GetProjectContext()?.Id ?? "(no project context)"}");
+        _logger.LogDebug($"Trying to synchronize for {caller} to version {requiredHostDocumentVersion} of {hostDocument.Uri} for {hostDocument.GetProjectContext()?.Id ?? "(no project context)"}");
 
         var virtualDocument = FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocument.Uri, hostDocument.GetProjectContext());
 
         if (virtualDocument is { ProjectKey.Id: null })
         {
-            _logger?.LogDebug($"Trying to sync to a doc with no project Id. Waiting for document add.");
+            _logger.LogDebug($"Trying to sync to a doc with no project Id. Waiting for document add.");
             if (await _csharpVirtualDocumentAddListener.WaitForDocumentAddAsync(cancellationToken).ConfigureAwait(false))
             {
-                _logger?.LogDebug($"Wait successful!");
+                _logger.LogDebug($"Wait successful!");
                 virtualDocument = FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocument.Uri, hostDocument.GetProjectContext());
             }
             else
             {
-                _logger?.LogDebug($"Timed out :(");
+                _logger.LogDebug($"Timed out :(");
             }
         }
 
         if (virtualDocument is null)
         {
-            _logger?.LogDebug($"No virtual document found, falling back to old code.");
+            _logger.LogDebug($"No virtual document found, falling back to old code.");
             return await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, cancellationToken).ConfigureAwait(false);
         }
 
         var result = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, virtualDocument.Uri, rejectOnNewerParallelRequest, cancellationToken).ConfigureAwait(false);
-        _logger?.LogDebug($"{(result.Synchronized ? "Did" : "Did NOT")} synchronize for {caller}: Version {requiredHostDocumentVersion} for {result.VirtualSnapshot?.Uri}");
+        _logger.LogDebug($"{(result.Synchronized ? "Did" : "Did NOT")} synchronize for {caller}: Version {requiredHostDocumentVersion} for {result.VirtualSnapshot?.Uri}");
 
         // If we failed to sync on version 1, then it could be that we got new information while waiting, so try again
         if (requiredHostDocumentVersion == 1 && !result.Synchronized)
         {
-            _logger?.LogDebug($"Sync failed for v1 document. Trying to get virtual document again.");
+            _logger.LogDebug($"Sync failed for v1 document. Trying to get virtual document again.");
             virtualDocument = FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocument.Uri, hostDocument.GetProjectContext());
 
             if (virtualDocument is null)
             {
-                _logger?.LogDebug($"No virtual document found, falling back to old code.");
+                _logger.LogDebug($"No virtual document found, falling back to old code.");
                 return await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, cancellationToken).ConfigureAwait(false);
             }
 
-            _logger?.LogDebug($"Got virtual document after trying again {virtualDocument.Uri}. Trying to synchronize again.");
+            _logger.LogDebug($"Got virtual document after trying again {virtualDocument.Uri}. Trying to synchronize again.");
 
             // try again
             result = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, virtualDocument.Uri, rejectOnNewerParallelRequest, cancellationToken).ConfigureAwait(false);
-            _logger?.LogDebug($"{(result.Synchronized ? "Did" : "Did NOT")} synchronize for {caller}: Version {requiredHostDocumentVersion} for {result.VirtualSnapshot?.Uri}");
+            _logger.LogDebug($"{(result.Synchronized ? "Did" : "Did NOT")} synchronize for {caller}: Version {requiredHostDocumentVersion} for {result.VirtualSnapshot?.Uri}");
         }
 
         return result;

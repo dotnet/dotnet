@@ -1,9 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
+using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
@@ -11,7 +11,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServices.Razor;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using Xunit;
@@ -110,9 +109,9 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
                 filePath: "Three.csproj",
                 documents: [razorDocumentInfo]).WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath("obj3\\Three.dll")));
 
-        _projectNumberOne = _solutionWithTwoProjects.GetProject(projectId1);
-        _projectNumberTwo = _solutionWithTwoProjects.GetProject(projectId2);
-        _projectNumberThree = _solutionWithOneProject.GetProject(projectId3);
+        _projectNumberOne = _solutionWithTwoProjects.GetProject(projectId1).AssumeNotNull();
+        _projectNumberTwo = _solutionWithTwoProjects.GetProject(projectId2).AssumeNotNull();
+        _projectNumberThree = _solutionWithOneProject.GetProject(projectId3).AssumeNotNull();
 
         _hostProjectOne = new HostProject("One.csproj", "obj1", FallbackRazorConfiguration.MVC_1_1, "One");
         _hostProjectTwo = new HostProject("Two.csproj", "obj2", FallbackRazorConfiguration.MVC_1_1, "Two");
@@ -125,7 +124,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Arrange
         var generator = new TestProjectWorkspaceStateGenerator();
         var projectManager = CreateProjectSnapshotManager();
-        using var detector = new WorkspaceProjectStateChangeDetector(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider);
+        using var detector = CreateDetector(generator, projectManager);
         var detectorAccessor = detector.GetTestAccessor();
 
         var workspaceChangedTask = detectorAccessor.ListenForWorkspaceChangesAsync(
@@ -167,7 +166,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Arrange
         var generator = new TestProjectWorkspaceStateGenerator();
         var projectManager = CreateProjectSnapshotManager();
-        using var detector = new WorkspaceProjectStateChangeDetector(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider);
+        using var detector = CreateDetector(generator, projectManager);
         var detectorAccessor = detector.GetTestAccessor();
 
         await projectManager.UpdateAsync(updater =>
@@ -208,7 +207,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Arrange
         var generator = new TestProjectWorkspaceStateGenerator();
         var projectManager = CreateProjectSnapshotManager();
-        var detector = new WorkspaceProjectStateChangeDetector(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider);
+        using var detector = CreateDetector(generator, projectManager);
         var detectorAccessor = detector.GetTestAccessor();
 
         await projectManager.UpdateAsync(updater =>
@@ -251,7 +250,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Arrange
         var generator = new TestProjectWorkspaceStateGenerator();
         var projectManager = CreateProjectSnapshotManager();
-        var detector = new WorkspaceProjectStateChangeDetector(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider);
+        using var detector = CreateDetector(generator, projectManager);
         var detectorAccessor = detector.GetTestAccessor();
 
         await projectManager.UpdateAsync(updater =>
@@ -270,8 +269,8 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Assert
         Assert.Collection(
             generator.Updates,
-            p => Assert.Equal(_projectNumberOne.Id, p.WorkspaceProject.Id),
-            p => Assert.Equal(_projectNumberTwo.Id, p.WorkspaceProject.Id));
+            p => Assert.Equal(_projectNumberOne.Id, p.WorkspaceProject?.Id),
+            p => Assert.Equal(_projectNumberTwo.Id, p.WorkspaceProject?.Id));
     }
 
     [UITheory]
@@ -285,7 +284,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Arrange
         var generator = new TestProjectWorkspaceStateGenerator();
         var projectManager = CreateProjectSnapshotManager();
-        var detector = new WorkspaceProjectStateChangeDetector(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider);
+        using var detector = CreateDetector(generator, projectManager);
         var detectorAccessor = detector.GetTestAccessor();
 
         await projectManager.UpdateAsync(updater =>
@@ -311,10 +310,10 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Assert
         Assert.Collection(
             generator.Updates,
-            p => Assert.Equal(_projectNumberThree.Id, p.WorkspaceProject.Id),
+            p => Assert.Equal(_projectNumberThree.Id, p.WorkspaceProject?.Id),
             p => Assert.Null(p.WorkspaceProject),
-            p => Assert.Equal(_projectNumberOne.Id, p.WorkspaceProject.Id),
-            p => Assert.Equal(_projectNumberTwo.Id, p.WorkspaceProject.Id));
+            p => Assert.Equal(_projectNumberOne.Id, p.WorkspaceProject?.Id),
+            p => Assert.Equal(_projectNumberTwo.Id, p.WorkspaceProject?.Id));
     }
 
     [UITheory]
@@ -325,7 +324,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Arrange
         var generator = new TestProjectWorkspaceStateGenerator();
         var projectManager = CreateProjectSnapshotManager();
-        var detector = new WorkspaceProjectStateChangeDetector(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider);
+        using var detector = CreateDetector(generator, projectManager);
         var detectorAccessor = detector.GetTestAccessor();
 
         await projectManager.UpdateAsync(updater =>
@@ -351,8 +350,8 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         // Assert
         var update = Assert.Single(generator.Updates);
-        Assert.Equal(update.WorkspaceProject.Id, _projectNumberOne.Id);
-        Assert.Equal(update.ProjectSnapshot.FilePath, _hostProjectOne.FilePath);
+        Assert.Equal(_projectNumberOne.Id, update.WorkspaceProject?.Id);
+        Assert.Equal(_hostProjectOne.FilePath, update.ProjectSnapshot.FilePath);
     }
 
     [UIFact]
@@ -361,7 +360,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Arrange
         var generator = new TestProjectWorkspaceStateGenerator();
         var projectManager = CreateProjectSnapshotManager();
-        var detector = new WorkspaceProjectStateChangeDetector(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider);
+        using var detector = CreateDetector(generator, projectManager);
         var detectorAccessor = detector.GetTestAccessor();
 
         Workspace.TryApplyChanges(_solutionWithTwoProjects);
@@ -383,8 +382,8 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         // Assert
         var update = Assert.Single(generator.Updates);
-        Assert.Equal(update.WorkspaceProject.Id, _projectNumberOne.Id);
-        Assert.Equal(update.ProjectSnapshot.FilePath, _hostProjectOne.FilePath);
+        Assert.Equal(_projectNumberOne.Id, update.WorkspaceProject?.Id);
+        Assert.Equal(_hostProjectOne.FilePath, update.ProjectSnapshot.FilePath);
     }
 
     [UIFact]
@@ -393,7 +392,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Arrange
         var generator = new TestProjectWorkspaceStateGenerator();
         var projectManager = CreateProjectSnapshotManager();
-        var detector = new WorkspaceProjectStateChangeDetector(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider);
+        using var detector = CreateDetector(generator, projectManager);
         var detectorAccessor = detector.GetTestAccessor();
 
         Workspace.TryApplyChanges(_solutionWithTwoProjects);
@@ -415,8 +414,8 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         // Assert
         var update = Assert.Single(generator.Updates);
-        Assert.Equal(update.WorkspaceProject.Id, _projectNumberOne.Id);
-        Assert.Equal(update.ProjectSnapshot.FilePath, _hostProjectOne.FilePath);
+        Assert.Equal(_projectNumberOne.Id, update.WorkspaceProject?.Id);
+        Assert.Equal(_hostProjectOne.FilePath, update.ProjectSnapshot.FilePath);
     }
 
     [UIFact]
@@ -425,7 +424,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Arrange
         var generator = new TestProjectWorkspaceStateGenerator();
         var projectManager = CreateProjectSnapshotManager();
-        var detector = new WorkspaceProjectStateChangeDetector(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider);
+        using var detector = CreateDetector(generator, projectManager);
         var detectorAccessor = detector.GetTestAccessor();
 
         Workspace.TryApplyChanges(_solutionWithTwoProjects);
@@ -447,8 +446,8 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         // Assert
         var update = Assert.Single(generator.Updates);
-        Assert.Equal(update.WorkspaceProject.Id, _projectNumberOne.Id);
-        Assert.Equal(update.ProjectSnapshot.FilePath, _hostProjectOne.FilePath);
+        Assert.Equal(_projectNumberOne.Id, update.WorkspaceProject?.Id);
+        Assert.Equal(_hostProjectOne.FilePath, update.ProjectSnapshot.FilePath);
     }
 
     [UIFact]
@@ -457,7 +456,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Arrange
         var generator = new TestProjectWorkspaceStateGenerator();
         var projectManager = CreateProjectSnapshotManager();
-        var detector = new WorkspaceProjectStateChangeDetector(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider);
+        using var detector = CreateDetector(generator, projectManager);
         var detectorAccessor = detector.GetTestAccessor();
 
         Workspace.TryApplyChanges(_solutionWithTwoProjects);
@@ -482,6 +481,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
         var document = solution.GetDocument(_partialComponentClassDocumentId);
+        Assert.NotNull(document);
 
         // The change detector only operates when a semantic model / syntax tree is available.
         await document.GetSyntaxRootAsync();
@@ -496,8 +496,8 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         // Assert
         var update = Assert.Single(generator.Updates);
-        Assert.Equal(update.WorkspaceProject.Id, _projectNumberOne.Id);
-        Assert.Equal(update.ProjectSnapshot.FilePath, _hostProjectOne.FilePath);
+        Assert.Equal(_projectNumberOne.Id, update.WorkspaceProject?.Id);
+        Assert.Equal(_hostProjectOne.FilePath, update.ProjectSnapshot.FilePath);
     }
 
     [UIFact]
@@ -506,7 +506,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Arrange
         var generator = new TestProjectWorkspaceStateGenerator();
         var projectManager = CreateProjectSnapshotManager();
-        var detector = new WorkspaceProjectStateChangeDetector(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider);
+        using var detector = CreateDetector(generator, projectManager);
         var detectorAccessor = detector.GetTestAccessor();
 
         await projectManager.UpdateAsync(updater =>
@@ -534,7 +534,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Arrange
         var generator = new TestProjectWorkspaceStateGenerator();
         var projectManager = CreateProjectSnapshotManager();
-        var detector = new WorkspaceProjectStateChangeDetector(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider);
+        using var detector = CreateDetector(generator, projectManager);
         var detectorAccessor = detector.GetTestAccessor();
 
         await projectManager.UpdateAsync(updater =>
@@ -554,7 +554,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Assert
         Assert.Single(
             generator.Updates,
-            p => p.WorkspaceProject.Id == _projectNumberThree.Id);
+            p => p.WorkspaceProject?.Id == _projectNumberThree.Id);
     }
 
     [Fact]
@@ -569,6 +569,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
         var document = solution.GetDocument(_partialComponentClassDocumentId);
+        Assert.NotNull(document);
 
         // Initialize document
         await document.GetSyntaxRootAsync();
@@ -597,6 +598,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
         var document = solution.GetDocument(_partialComponentClassDocumentId);
+        Assert.NotNull(document);
 
         // Initialize document
         await document.GetSyntaxRootAsync();
@@ -625,6 +627,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
         var document = solution.GetDocument(_partialComponentClassDocumentId);
+        Assert.NotNull(document);
 
         // Act
         var result = WorkspaceProjectStateChangeDetector.IsPartialComponentClass(document);
@@ -649,6 +652,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
         var document = solution.GetDocument(_partialComponentClassDocumentId);
+        Assert.NotNull(document);
 
         await document.GetSyntaxRootAsync();
 
@@ -669,6 +673,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
         var document = solution.GetDocument(_partialComponentClassDocumentId);
+        Assert.NotNull(document);
 
         // Initialize document
         await document.GetSyntaxRootAsync();
@@ -684,7 +689,6 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     [Fact]
     public async Task IsPartialComponentClass_MultipleClassesOneComponentPartial_ReturnsTrue()
     {
-
         // Arrange
         var sourceText = SourceText.From($$"""
             public partial class NonComponent1 {}
@@ -702,6 +706,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
         var document = solution.GetDocument(_partialComponentClassDocumentId);
+        Assert.NotNull(document);
 
         // Initialize document
         await document.GetSyntaxRootAsync();
@@ -717,7 +722,6 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     [Fact]
     public async Task IsPartialComponentClass_NonComponents_ReturnsFalse()
     {
-
         // Arrange
         var sourceText = SourceText.From("""
             public partial class NonComponent1 {}
@@ -734,6 +738,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
             .WithDocumentSyntaxRoot(_partialComponentClassDocumentId, syntaxTreeRoot, PreservationMode.PreserveIdentity);
         var document = solution.GetDocument(_partialComponentClassDocumentId);
+        Assert.NotNull(document);
 
         // Initialize document
         await document.GetSyntaxRootAsync();
@@ -745,4 +750,7 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
         // Assert
         Assert.False(result);
     }
+
+    private WorkspaceProjectStateChangeDetector CreateDetector(IProjectWorkspaceStateGenerator generator, IProjectSnapshotManager projectManager)
+        => new(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, TimeSpan.FromMilliseconds(10));
 }

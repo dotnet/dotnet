@@ -33,6 +33,9 @@ public abstract class AbstractIntegrationTest : AbstractIdeIntegrationTest
 
     public override async Task InitializeAsync()
     {
+        // Not sure why the module initializer doesn't seem to work for integration tests
+        ThrowingTraceListener.Initialize();
+
         await base.InitializeAsync();
     }
 

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
@@ -51,7 +52,9 @@ internal class DocumentDidChangeEndpoint(
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
-            throw new InvalidOperationException($"Could not find a document context for didChange on '{request.TextDocument.Uri}'"); ;
+            _logger.LogError($"Could not find a document context for didChange on '{request.TextDocument.Uri}'");
+            Debug.Fail($"Could not find a document context for didChange on '{request.TextDocument.Uri}'");
+            throw new InvalidOperationException($"Could not find a document context for didChange on '{request.TextDocument.Uri}'");
         }
 
         var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
