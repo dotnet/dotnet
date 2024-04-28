@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.24224.2",
+      "packageVersion": "9.0.0-beta.24226.3",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "6ca3ae2ae79ef707c76ea1abf82b0787824b6da0"
+      "commitSha": "97e2f41e909dcabb1103fe98ba4540a246662187"
     },
     {
       "packageVersion": "9.0.0-preview.4.24223.11",
@@ -67,10 +67,10 @@
       "commitSha": "d542f3a80101883083b95fff0b67666b63002751"
     },
     {
-      "packageVersion": "6.11.0-preview.1.31",
+      "packageVersion": "6.11.0-preview.1.32",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "3ebcf80e47ce6aaca1d017acd8750e27c8208822"
+      "commitSha": "f6615e7a7177dd820b74b007c5f6b691ceedada3"
     },
     {
       "packageVersion": "7.0.0-preview.24226.3",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "2f9f08dea57e16c7edf2c916b30b6b0d1801773b"
+      "commitSha": "dfcbd374912b95e63e4c7b1345939401a8e52364"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24222.1",
@@ -151,10 +151,10 @@
       "commitSha": "56d28849af08dc3143d019694aa92f186b89d2ac"
     },
     {
-      "packageVersion": "9.0.0-preview.5.24226.1",
+      "packageVersion": "9.0.0-preview.5.24227.1",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "65eded428d3b6569972f320f242dbc4b818b4339"
+      "commitSha": "931d9299e79f4466447376e4e623acdfeef584cc"
     },
     {
       "packageVersion": "9.0.0-preview.5.24223.8",
@@ -163,10 +163,10 @@
       "commitSha": "9a9d4a2a8474d89c5b4c5ba7b23a00a687c10b72"
     },
     {
-      "packageVersion": "9.0.0-preview.5.24224.1",
+      "packageVersion": "9.0.0-preview.5.24226.1",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "ed866731842f39a5eef71e9678226a9db7e4fc9e"
+      "commitSha": "9133fa713206321760b985d4585ac5d2c04f319c"
     },
     {
       "packageVersion": "9.0.0-preview.24222.1",
