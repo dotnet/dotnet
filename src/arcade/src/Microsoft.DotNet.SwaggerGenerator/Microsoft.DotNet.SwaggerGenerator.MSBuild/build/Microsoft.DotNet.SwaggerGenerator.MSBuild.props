@@ -2,12 +2,12 @@
 <Project>
 
   <PropertyGroup>
-    <MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)../tools/net9.0/Microsoft.DotNet.SwaggerGenerator.MSBuild.dll</MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly>
-    <MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)../tools/net472/Microsoft.DotNet.SwaggerGenerator.MSBuild.dll</MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly>
-  </PropertyGroup>
+    <MicrosoftDotNetSwaggerGeneratorMSBuildDirectory Condition="'$(MicrosoftDotNetSwaggerGeneratorMSBuildDirectory)' == '' and '$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)../tools/net9.0/</MicrosoftDotNetSwaggerGeneratorMSBuildDirectory>
+    <MicrosoftDotNetSwaggerGeneratorMSBuildDirectory Condition="'$(MicrosoftDotNetSwaggerGeneratorMSBuildDirectory)' == '' and '$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)../tools/net472/</MicrosoftDotNetSwaggerGeneratorMSBuildDirectory>
+    <MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly>$(MicrosoftDotNetSwaggerGeneratorMSBuildDirectory)Microsoft.DotNet.SwaggerGenerator.MSBuild.dll</MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly>
+    <MicrosoftDotNetSwaggerGeneratorMSBuildTaskFactory Condition="'$(MicrosoftDotNetSwaggerGeneratorMSBuildTaskFactory)' == ''">AssemblyTaskFactory</MicrosoftDotNetSwaggerGeneratorMSBuildTaskFactory>
 
-  <PropertyGroup>
-    <SwaggerOutputDirectory>$(MSBuildProjectDirectory)\generated-code\</SwaggerOutputDirectory>
+    <SwaggerOutputDirectory>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', 'generated-code'))</SwaggerOutputDirectory>
   </PropertyGroup>
 
 </Project>
