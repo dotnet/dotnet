@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions.Execution;
 
-namespace Microsoft.DotNet.MsiInstallerTests.Framework
+namespace Microsoft.DotNet.MsiInstallerTests
 {
     abstract class RemoteDirectory
     {

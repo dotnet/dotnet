@@ -6,7 +6,7 @@ using Microsoft.DotNet.Installer.Windows;
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Serialization;
 
-namespace Microsoft.DotNet.MsiInstallerTests.Framework
+namespace Microsoft.DotNet.MsiInstallerTests
 {
     internal class VMControl : IDisposable
     {
@@ -73,7 +73,7 @@ namespace Microsoft.DotNet.MsiInstallerTests.Framework
         {
             var remoteCommand = new RemoteCommand(Log, VMMachineName, _psExecPath, workingDirectory, args);
 
-            for (int i = 0; i < 3; i++)
+            for (int i=0; i<3; i++)
             {
                 var result = remoteCommand.Execute();
                 if (result.ExitCode != 6 && !result.StdErr.Contains("The handle is invalid"))
@@ -204,7 +204,7 @@ namespace Microsoft.DotNet.MsiInstallerTests.Framework
         {
             VMEnabledState getCurrentState()
             {
-                var state = (VMEnabledState)(ushort)VMInstance.CimInstanceProperties["EnabledState"].Value;
+                var state = (VMEnabledState) (UInt16)VMInstance.CimInstanceProperties["EnabledState"].Value;
                 return state;
             }
 
@@ -219,7 +219,7 @@ namespace Microsoft.DotNet.MsiInstallerTests.Framework
 
             var methodParameters = new CimMethodParametersCollection()
             {
-                CimMethodParameter.Create("RequestedState", (ushort) targetState, CimFlags.In)
+                CimMethodParameter.Create("RequestedState", (UInt16) targetState, CimFlags.In)
             };
 
 
@@ -245,13 +245,13 @@ namespace Microsoft.DotNet.MsiInstallerTests.Framework
             {
                 CimInstance job = (CimInstance)result.OutParameters["Job"].Value;
                 job = _session.GetInstance(virtNamespace, job);
-                while (IsRunning((JobState)(ushort)job.CimInstanceProperties["JobState"].Value))
+                while (IsRunning((JobState)(UInt16)job.CimInstanceProperties["JobState"].Value))
                 {
                     await Task.Delay(100);
                     job = _session.GetInstance(job.CimSystemProperties.Namespace, job);
                 }
 
-                var jobState = (JobState)(ushort)job.CimInstanceProperties["JobState"].Value;
+                var jobState = (JobState)(UInt16)job.CimInstanceProperties["JobState"].Value;
                 if (jobState != JobState.Completed && jobState != JobState.CompletedWithWarnings)
                 {
                     Log.WriteLine("Job failed: " + jobState);
@@ -271,7 +271,7 @@ namespace Microsoft.DotNet.MsiInstallerTests.Framework
             }
             else
             {
-                if (result.ReturnValue.Value is uint returnValue)
+                if (result.ReturnValue.Value is UInt32 returnValue)
                 {
                     if (returnValue != 0)
                     {
@@ -305,7 +305,7 @@ namespace Microsoft.DotNet.MsiInstallerTests.Framework
             CompletedWithWarnings = 32768
         }
 
-        enum VMEnabledState : ushort
+        enum VMEnabledState : UInt16
         {
             Unknown = 0,
             Other = 1,
@@ -314,7 +314,7 @@ namespace Microsoft.DotNet.MsiInstallerTests.Framework
             ShuttingDown = 4,
             NotApplicable = 5,
             EnabledButOffline = 6,
-
+           
         }
 
         class RemoteCommand : TestCommand

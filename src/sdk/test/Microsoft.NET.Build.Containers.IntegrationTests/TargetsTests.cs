@@ -7,7 +7,6 @@ using static Microsoft.NET.Build.Containers.KnownStrings.Properties;
 
 namespace Microsoft.NET.Build.Containers.Targets.IntegrationTests;
 
-[Collection(nameof(MSBuildCollection))]
 public class TargetsTests
 {
     [InlineData("SelfContained", true, "/app/foo.exe")]

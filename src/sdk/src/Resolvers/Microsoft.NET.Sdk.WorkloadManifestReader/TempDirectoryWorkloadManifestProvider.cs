@@ -16,7 +16,8 @@ namespace Microsoft.NET.Sdk.WorkloadManifestReader
 
         public void RefreshWorkloadManifests() { }
 
-        public IEnumerable<ReadableWorkloadManifest> GetManifests()
+        public IEnumerable<ReadableWorkloadManifest>
+            GetManifests()
         {
             foreach (var workloadManifestDirectory in GetManifestDirectories())
             {
