@@ -592,8 +592,7 @@ internal static class CodeWriterExtensions
             return NullDisposable.Default;
         }
 
-        var sourceSpan = RemapFilePathIfNecessary(span.Value, context);
-        return new LinePragmaWriter(writer, sourceSpan, context, 0, useEnhancedLinePragma: false, suppressLineDefaultAndHidden);
+        return new LinePragmaWriter(writer, span.Value, context, 0, useEnhancedLinePragma: false, suppressLineDefaultAndHidden);
     }
 
     public static IDisposable BuildEnhancedLinePragma(this CodeWriter writer, SourceSpan? span, CodeRenderingContext context, int characterOffset = 0, bool suppressLineDefaultAndHidden = false)
@@ -604,8 +603,7 @@ internal static class CodeWriterExtensions
             return NullDisposable.Default;
         }
 
-        var sourceSpan = RemapFilePathIfNecessary(span.Value, context);
-        return new LinePragmaWriter(writer, sourceSpan, context, characterOffset, useEnhancedLinePragma: true, suppressLineDefaultAndHidden);
+        return new LinePragmaWriter(writer, span.Value, context, characterOffset, useEnhancedLinePragma: true, suppressLineDefaultAndHidden);
     }
 
     private static SourceSpan RemapFilePathIfNecessary(SourceSpan sourceSpan, CodeRenderingContext context)
@@ -804,13 +802,14 @@ internal static class CodeWriterExtensions
                 _writer.WriteLine("#nullable restore");
             }
 
+            var sourceSpan = RemapFilePathIfNecessary(span, context);
             if (useEnhancedLinePragma && _context.Options.UseEnhancedLinePragma)
             {
-                WriteEnhancedLineNumberDirective(writer, span, characterOffset);
+                WriteEnhancedLineNumberDirective(writer, sourceSpan, characterOffset);
             }
             else
             {
-                WriteLineNumberDirective(writer, span);
+                WriteLineNumberDirective(writer, sourceSpan);
             }
 
             // Capture the line index after writing the #line directive.

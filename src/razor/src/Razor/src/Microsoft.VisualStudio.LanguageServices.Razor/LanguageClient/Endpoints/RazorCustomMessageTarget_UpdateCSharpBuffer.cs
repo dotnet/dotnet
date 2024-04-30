@@ -93,10 +93,13 @@ internal partial class RazorCustomMessageTarget
 
             if (virtualDocuments.Length > 1)
             {
-                // If the particular document supports multiple virtual documents, we don't want to try to update a single one
-                // TODO: Remove this eventually, as it is a possibly valid state (see comment below) but this assert will help track
-                // down bugs for now.
-                Debug.Fail("Multiple virtual documents seem to be supported, but none were updated, which is not impossible, but surprising.");
+                // If the particular document supports multiple virtual documents, we don't want to try to update a single one. The server could
+                // be sending C# for a Misc Files file, but once the server knows about the real project, it will start sending C# for that, and
+                // that needs to be a brand new buffer.
+                _logger.LogDebug($"""
+                    Was looking for {request.ProjectKeyId} but found only:
+                    {string.Join(Environment.NewLine, virtualDocuments.Select(d => $"[{d.ProjectKey}] {d.Uri}"))}
+                    """);
             }
 
             _logger.LogDebug($"UpdateCSharpBuffer couldn't find any virtual docs for {request.HostDocumentVersion} of {hostDocumentUri}");

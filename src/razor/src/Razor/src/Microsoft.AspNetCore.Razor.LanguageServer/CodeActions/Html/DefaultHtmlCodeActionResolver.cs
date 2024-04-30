@@ -55,8 +55,7 @@ internal sealed class DefaultHtmlCodeActionResolver : HtmlCodeActionResolver
             throw new ArgumentNullException(nameof(codeAction));
         }
 
-        var documentContext = await _documentContextFactory.TryCreateForOpenDocumentAsync(resolveParams.RazorFileIdentifier, cancellationToken).ConfigureAwait(false);
-        if (documentContext is null)
+        if (!_documentContextFactory.TryCreateForOpenDocument(resolveParams.RazorFileIdentifier, out var documentContext))
         {
             return codeAction;
         }

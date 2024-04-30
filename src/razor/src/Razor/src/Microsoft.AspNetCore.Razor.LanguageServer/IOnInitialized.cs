@@ -3,11 +3,12 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal interface IOnInitialized
 {
-    Task OnInitializedAsync(VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken);
+    Task OnInitializedAsync(ILspServices services, CancellationToken cancellationToken);
 }
