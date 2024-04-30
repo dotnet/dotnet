@@ -203,7 +203,7 @@ stages:
       parameters:
         agentOs: Linux
         jobName: Build_Linux_musl_Release_arm
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-arm-alpine'
+        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:mariner-2.0-cross-arm'
         buildConfiguration: Release
         buildArchitecture: arm
         runtimeIdentifier: 'linux-musl-arm'

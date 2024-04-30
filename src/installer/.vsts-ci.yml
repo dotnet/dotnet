@@ -64,8 +64,8 @@ extends:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-39
       ubuntu2204:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04
-      ubuntu2204CrossArmAlpine:
-        image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-arm-alpine
+      mariner20CrossArm:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:mariner-2.0-cross-arm
       ubuntu2204DebPkg:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-debpkg
     sdl:
@@ -233,7 +233,7 @@ extends:
           parameters:
             agentOs: Linux
             jobName: Build_Linux_musl_Release_arm
-            container: ubuntu2204CrossArmAlpine
+            container: mariner20CrossArm
             buildConfiguration: Release
             buildArchitecture: arm
             runtimeIdentifier: 'linux-musl-arm'
