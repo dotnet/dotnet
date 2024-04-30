@@ -1,0 +1,25 @@
+From 3892dc913e63b0f617127c2183aab294de170031 Mon Sep 17 00:00:00 2001
+From: Viktor Hofer <viktor.hofer@microsoft.com>
+Date: Tue, 30 Apr 2024 17:49:47 +0200
+Subject: [PATCH] Disable APICompat for DotNetBuild
+
+---
+ eng/DotNetBuild.props | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/eng/DotNetBuild.props b/eng/DotNetBuild.props
+index 9d68b8265b0..387ff9082dc 100644
+--- a/eng/DotNetBuild.props
++++ b/eng/DotNetBuild.props
+@@ -85,6 +85,10 @@
+       <InnerBuildArgs Condition="'$(SourceBuiltAssetManifestsDir)' != ''">$(InnerBuildArgs) /p:SourceBuiltAssetManifestsDir=$(SourceBuiltAssetManifestsDir)</InnerBuildArgs>
+       <InnerBuildArgs Condition="'$(SourceBuiltSymbolsDir)' != ''">$(InnerBuildArgs) /p:SourceBuiltSymbolsDir=$(SourceBuiltSymbolsDir)</InnerBuildArgs>
+       <InnerBuildArgs Condition="'$(GitHubRepositoryName)' != ''">$(InnerBuildArgs) /p:GitHubRepositoryName=$(GitHubRepositoryName)</InnerBuildArgs>
++
++      <!-- TODO: Remove this when a new source-build product build got produced. -->
++      <InnerBuildArgs>$(InnerBuildArgs) /p:EnablePackageValidation=false</InnerBuildArgs>
++      <InnerBuildArgs>$(InnerBuildArgs) /p:ApiCompatValidateAssemblies=false</InnerBuildArgs>
+     </PropertyGroup>
+   </Target>
+ 
+-- 
