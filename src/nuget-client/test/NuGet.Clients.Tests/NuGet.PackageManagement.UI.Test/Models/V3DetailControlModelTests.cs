@@ -1273,7 +1273,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [MemberData(nameof(FloatingVersions_TestCases_NonPackageReferenceProject))]
         public async void WhenPackageStyleIsNotPackageReference_And_CustomVersion_UpdatesTab_IsSelectedVersionCorrect(NuGetProjectKind projectKind, ProjectModel.ProjectStyle projectStyle, string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
         {
-            // Arange project
+            // Arrange project
             Mock<IServiceBroker> mockServiceBroker = new Mock<IServiceBroker>();
             Mock<INuGetSearchService> mockSearchService = new Mock<INuGetSearchService>();
 

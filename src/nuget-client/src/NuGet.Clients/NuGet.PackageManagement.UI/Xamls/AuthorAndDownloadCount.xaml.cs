@@ -2,12 +2,14 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using NuGet.PackageManagement.UI.ViewModels;
 using Resx = NuGet.PackageManagement.UI.Resources;
 
 namespace NuGet.PackageManagement.UI
@@ -18,6 +20,13 @@ namespace NuGet.PackageManagement.UI
     /// </summary>
     public partial class AuthorAndDownloadCount : UserControl, INotifyPropertyChanged
     {
+        public static readonly DependencyProperty KnownOwnerViewModelsProperty =
+            DependencyProperty.Register(
+                nameof(KnownOwnerViewModels),
+                typeof(ImmutableList<KnownOwnerViewModel>),
+                typeof(AuthorAndDownloadCount),
+                new PropertyMetadata(OnPropertyChanged));
+
         public static readonly DependencyProperty AuthorProperty =
             DependencyProperty.Register(
                 nameof(Author),
@@ -35,6 +44,32 @@ namespace NuGet.PackageManagement.UI
         public AuthorAndDownloadCount()
         {
             InitializeComponent();
+        }
+
+        public ImmutableList<KnownOwnerViewModel> KnownOwnerViewModels
+        {
+            get
+            {
+                return GetValue(KnownOwnerViewModelsProperty) as ImmutableList<KnownOwnerViewModel>;
+            }
+            set
+            {
+                SetValue(KnownOwnerViewModelsProperty, value);
+                UpdateControl();
+            }
+        }
+
+        public string Author
+        {
+            get
+            {
+                return GetValue(AuthorProperty) as string;
+            }
+            set
+            {
+                SetValue(AuthorProperty, value);
+                UpdateControl();
+            }
         }
 
         public long? DownloadCount
@@ -58,19 +93,6 @@ namespace NuGet.PackageManagement.UI
             control?.UpdateControl();
         }
 
-        public string Author
-        {
-            get
-            {
-                return GetValue(AuthorProperty) as string;
-            }
-            set
-            {
-                SetValue(AuthorProperty, value);
-                UpdateControl();
-            }
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged(string propertyName)
@@ -83,7 +105,7 @@ namespace NuGet.PackageManagement.UI
 
         private void UpdateControl()
         {
-            if (!string.IsNullOrEmpty(Author))
+            if (KnownOwnerViewModels == null && !string.IsNullOrEmpty(Author))
             {
                 _textBlockAuthor.Text = Author;
                 _textBlockAuthor.Visibility = Visibility.Visible;
@@ -129,9 +151,9 @@ namespace NuGet.PackageManagement.UI
                 _textBlockDownloadCount.Visibility = Visibility.Collapsed;
             }
 
-            // set the visiblity of the separator.
-            if (_textBlockAuthor.Visibility == Visibility.Visible &&
-                _textBlockDownloadCount.Visibility == Visibility.Visible)
+            // set the visibility of the separator.
+            if ((_panelOwners.Visibility == Visibility.Visible || _textBlockAuthor.Visibility == Visibility.Visible)
+                && _textBlockDownloadCount.Visibility == Visibility.Visible)
             {
                 _separator.Visibility = Visibility.Visible;
             }
@@ -141,7 +163,8 @@ namespace NuGet.PackageManagement.UI
             }
 
             // set the visibility of the control itself.
-            if (_textBlockAuthor.Visibility == Visibility.Collapsed &&
+            if (_panelOwners.Visibility == Visibility.Collapsed &&
+                _textBlockAuthor.Visibility == Visibility.Collapsed &&
                 _textBlockDownloadCount.Visibility == Visibility.Collapsed)
             {
                 _self.Visibility = Visibility.Collapsed;

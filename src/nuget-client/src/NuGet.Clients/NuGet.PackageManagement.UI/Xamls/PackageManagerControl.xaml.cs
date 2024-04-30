@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using Microsoft;
 using Microsoft.ServiceHub.Framework;
@@ -304,6 +305,28 @@ namespace NuGet.PackageManagement.UI
             else
             {
                 EmitRefreshEvent(timeSpan, RefreshOperationSource.ActionsExecuted, RefreshOperationStatus.NoOp);
+            }
+        }
+
+        /// <summary>
+        /// Handles Hyperlink controls inside this DetailControl class associated with
+        /// <see cref="PackageManagerControlCommands.OpenExternalLink" />
+        /// </summary>
+        /// <param name="sender">A Hyperlink control</param>
+        /// <param name="e">Command arguments</param>
+        private void ExecuteOpenExternalLink(object sender, ExecutedRoutedEventArgs e)
+        {
+            var hyperlink = e.OriginalSource as Hyperlink;
+            if (hyperlink != null && hyperlink.NavigateUri != null)
+            {
+                Model.UIController.LaunchExternalLink(hyperlink.NavigateUri);
+                e.Handled = true;
+
+                if (e.Parameter is not null and HyperlinkType hyperlinkType)
+                {
+                    var evt = NavigatedTelemetryEvent.CreateWithExternalLink(hyperlinkType, UIUtility.ToContractsItemFilter(ActiveFilter), Model.IsSolution);
+                    TelemetryActivity.EmitTelemetryEvent(evt);
+                }
             }
         }
 

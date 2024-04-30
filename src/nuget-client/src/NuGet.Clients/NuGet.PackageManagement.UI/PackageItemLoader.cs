@@ -13,8 +13,8 @@ using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using NuGet.Common;
+using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.PackageManagement.VisualStudio;
-using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
@@ -262,9 +262,9 @@ namespace NuGet.PackageManagement.UI
                 return Enumerable.Empty<PackageItemViewModel>();
             }
 
-            var listItemViewModels = new List<PackageItemViewModel>();
+            var listItemViewModels = new List<PackageItemViewModel>(capacity: _state.ItemsCount);
 
-            foreach (PackageSearchMetadataContextInfo metadata in _state.Results.PackageSearchItems)
+            foreach (PackageSearchMetadataContextInfo metadataContextInfo in _state.Results.PackageSearchItems)
             {
                 VersionRange allowedVersions = VersionRange.All;
                 VersionRange versionOverride = null;
@@ -272,7 +272,7 @@ namespace NuGet.PackageManagement.UI
                 // get the allowed version range and pass it to package item view model to choose the latest version based on that
                 if (_packageReferences != null)
                 {
-                    IEnumerable<IPackageReferenceContextInfo> matchedPackageReferences = _packageReferences.Where(r => StringComparer.OrdinalIgnoreCase.Equals(r.Identity.Id, metadata.Identity.Id));
+                    IEnumerable<IPackageReferenceContextInfo> matchedPackageReferences = _packageReferences.Where(r => StringComparer.OrdinalIgnoreCase.Equals(r.Identity.Id, metadataContextInfo.Identity.Id));
                     VersionRange[] allowedVersionsRange = matchedPackageReferences.Select(r => r.AllowedVersions).Where(v => v != null).ToArray();
                     VersionRange[] versionOverrides = matchedPackageReferences.Select(r => r.VersionOverride).Where(v => v != null).ToArray();
 
@@ -287,30 +287,34 @@ namespace NuGet.PackageManagement.UI
                     }
                 }
 
-                var packageLevel = metadata.TransitiveOrigins != null ? PackageLevel.Transitive : PackageLevel.TopLevel;
+                var packageLevel = metadataContextInfo.TransitiveOrigins != null ? PackageLevel.Transitive : PackageLevel.TopLevel;
 
                 var transitiveToolTipMessage = string.Empty;
                 if (packageLevel == PackageLevel.Transitive)
                 {
-                    transitiveToolTipMessage = string.Format(CultureInfo.CurrentCulture, Resources.PackageVersionWithTransitiveOrigins, metadata.Identity.Version, string.Join(", ", metadata.TransitiveOrigins));
+                    transitiveToolTipMessage = string.Format(CultureInfo.CurrentCulture, Resources.PackageVersionWithTransitiveOrigins, metadataContextInfo.Identity.Version, string.Join(", ", metadataContextInfo.TransitiveOrigins));
                 }
+
+                ImmutableList<KnownOwnerViewModel> knownOwnerViewModels = LoadKnownOwnerViewModels(metadataContextInfo);
 
                 var listItem = new PackageItemViewModel(_searchService, _packageVulnerabilityService)
                 {
-                    Id = metadata.Identity.Id,
-                    Version = metadata.Identity.Version,
-                    IconUrl = metadata.IconUrl,
-                    Author = metadata.Authors,
-                    DownloadCount = metadata.DownloadCount,
-                    Summary = metadata.Summary,
+                    Id = metadataContextInfo.Identity.Id,
+                    Version = metadataContextInfo.Identity.Version,
+                    IconUrl = metadataContextInfo.IconUrl,
+                    Owner = metadataContextInfo.Owners,
+                    KnownOwnerViewModels = knownOwnerViewModels,
+                    Author = metadataContextInfo.Authors,
+                    DownloadCount = metadataContextInfo.DownloadCount,
+                    Summary = metadataContextInfo.Summary,
                     AllowedVersions = allowedVersions,
                     VersionOverride = versionOverride,
-                    PrefixReserved = metadata.PrefixReserved && !IsMultiSource,
-                    Recommended = metadata.IsRecommended,
-                    RecommenderVersion = metadata.RecommenderVersion,
-                    Vulnerabilities = metadata.Vulnerabilities,
+                    PrefixReserved = metadataContextInfo.PrefixReserved && !IsMultiSource,
+                    Recommended = metadataContextInfo.IsRecommended,
+                    RecommenderVersion = metadataContextInfo.RecommenderVersion,
+                    Vulnerabilities = metadataContextInfo.Vulnerabilities,
                     Sources = _packageSources,
-                    PackagePath = metadata.PackagePath,
+                    PackagePath = metadataContextInfo.PackagePath,
                     PackageFileService = _packageFileService,
                     IncludePrerelease = _includePrerelease,
                     PackageLevel = packageLevel,
@@ -323,7 +327,7 @@ namespace NuGet.PackageManagement.UI
                 }
                 else
                 {
-                    listItem.UpdateTransitivePackageStatus(metadata.Identity.Version);
+                    listItem.UpdateTransitivePackageStatus(metadataContextInfo.Identity.Version);
                 }
 
                 listItemViewModels.Add(listItem);
@@ -332,18 +336,15 @@ namespace NuGet.PackageManagement.UI
             return listItemViewModels.ToArray();
         }
 
-        private async Task<IReadOnlyCollection<VersionInfoContextInfo>> GetVersionInfoAsync(PackageIdentity identity)
+        private static ImmutableList<KnownOwnerViewModel> LoadKnownOwnerViewModels(PackageSearchMetadataContextInfo metadataContextInfo)
         {
-            Assumes.NotNull(identity);
+            ImmutableList<KnownOwnerViewModel> knownOwnerViewModels = null;
+            if (metadataContextInfo.KnownOwners != null)
+            {
+                knownOwnerViewModels = metadataContextInfo.KnownOwners.Select(knownOwner => new KnownOwnerViewModel(knownOwner)).ToImmutableList();
+            }
 
-            return await _searchService.GetPackageVersionsAsync(identity, _packageSources, _includePrerelease, CancellationToken.None);
-        }
-
-        private async Task<(PackageSearchMetadataContextInfo, PackageDeprecationMetadataContextInfo)> GetDetailedPackageSearchMetadataContextInfoAsync(PackageIdentity identity)
-        {
-            Assumes.NotNull(identity);
-
-            return await _searchService.GetPackageMetadataAsync(identity, _packageSources, _includePrerelease, CancellationToken.None);
+            return knownOwnerViewModels;
         }
 
         public void Dispose()
