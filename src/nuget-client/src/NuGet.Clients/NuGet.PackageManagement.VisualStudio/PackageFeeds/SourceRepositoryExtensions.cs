@@ -11,6 +11,7 @@ using NuGet.Packaging.Core;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Model;
+using NuGet.Protocol.Resources;
 using NuGet.Versioning;
 using NuGet.VisualStudio.Internal.Contracts;
 
@@ -42,7 +43,7 @@ namespace NuGet.PackageManagement.VisualStudio
 
             var searchResource = await sourceRepository.GetResourceAsync<PackageSearchResource>(cancellationToken);
 
-            var searchResults = await searchResource?.SearchAsync(
+            IEnumerable<IPackageSearchMetadata> searchResults = await searchResource?.SearchAsync(
                 searchToken.SearchString,
                 searchToken.SearchFilter,
                 searchToken.StartIndex,

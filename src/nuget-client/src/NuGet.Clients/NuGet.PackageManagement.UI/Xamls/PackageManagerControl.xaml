@@ -37,6 +37,9 @@
     <CommandBinding
       Command="{x:Static nuget:Commands.SearchPackageCommand}"
       Executed="ExecuteSearchPackageCommand"/>
+    <CommandBinding
+      Command="{x:Static nuget:PackageManagerControlCommands.OpenExternalLink}"
+      Executed="ExecuteOpenExternalLink" />
   </UserControl.CommandBindings>
   <UserControl.InputBindings>
     <KeyBinding

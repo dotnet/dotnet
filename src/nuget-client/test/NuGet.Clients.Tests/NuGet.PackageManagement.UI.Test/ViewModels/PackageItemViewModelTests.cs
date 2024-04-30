@@ -3,16 +3,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using FluentAssertions;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Sdk.TestFramework;
 using Moq;
-using NuGet.PackageManagement.UI.Utility;
+using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -403,6 +405,119 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
                 // Assert
                 Assert.Equal(IconBitmapStatus.DefaultIconDueToDecodingError, packageItemViewModel.BitmapStatus);
             }
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("  ")]
+        public void ByOwnerOrAuthor_WhenKnownOwnerViewModelsIsNull_AndAuthorIsNullOrWhitespace_IsNull(string emptyAuthor)
+        {
+            // Arrange
+            var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
+            {
+                Author = emptyAuthor,
+                Owner = "owner1, owner2",
+            };
+
+            // Act
+            string byOwnerOrAuthor = packageItemViewModel.ByOwnerOrAuthor;
+
+            // Assert
+            byOwnerOrAuthor.Should().BeNull();
+        }
+
+        [Fact]
+        public void ByOwnerOrAuthor_WhenKnownOwnerViewModelsIsNull_OnlyContainsAuthor()
+        {
+            // Arrange
+            var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
+            {
+                Author = "author1",
+                Owner = "owner1, owner2",
+            };
+
+            // Act
+            string byOwnerOrAuthor = packageItemViewModel.ByOwnerOrAuthor;
+
+            // Assert
+            byOwnerOrAuthor.Should()
+                .NotBeNull()
+                .And.Contain("author1")
+                .And.NotContain("owner1")
+                .And.NotContain("owner2");
+        }
+
+        [Fact]
+        public void ByOwnerOrAuthor_WhenKnownOwnerViewModelsIsEmpty_IsEmpty()
+        {
+            // Arrange
+            var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
+            {
+                Author = "author1",
+                Owner = "owner1, owner2",
+                KnownOwnerViewModels = ImmutableList<KnownOwnerViewModel>.Empty,
+            };
+
+            // Act
+            string byOwnerOrAuthor = packageItemViewModel.ByOwnerOrAuthor;
+
+            // Assert
+            byOwnerOrAuthor.Should()
+                .NotBeNull()
+                .And.BeEmpty();
+        }
+
+        [Fact]
+        public void ByOwnerOrAuthor_WhenOwnerIsEmpty_IsEmpty()
+        {
+            // Arrange
+            var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
+            {
+                Author = "author1",
+                Owner = string.Empty,
+                KnownOwnerViewModels = new List<KnownOwnerViewModel>()
+                {
+                    new KnownOwnerViewModel(new KnownOwner("owner1", new Uri("https://nuget.test/profiles/owner1?_src=template"))),
+                    new KnownOwnerViewModel(new KnownOwner("owner2", new Uri("https://nuget.test/profiles/owner2?_src=template"))),
+                }
+                .ToImmutableList()
+            };
+
+            // Act
+            string byOwnerOrAuthor = packageItemViewModel.ByOwnerOrAuthor;
+
+            // Assert
+            byOwnerOrAuthor.Should()
+                .NotBeNull()
+                .And.BeEmpty();
+        }
+
+        [Fact]
+        public void ByOwnerOrAuthor_WhenKnownOwnerViewModelsExist_OnlyContainsOwner()
+        {
+            // Arrange
+            var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
+            {
+                Author = "author1",
+                Owner = "owner1, owner2",
+                KnownOwnerViewModels = new List<KnownOwnerViewModel>()
+                {
+                    new KnownOwnerViewModel(new KnownOwner("owner1", new Uri("https://nuget.test/profiles/owner1?_src=template"))),
+                    new KnownOwnerViewModel(new KnownOwner("owner2", new Uri("https://nuget.test/profiles/owner2?_src=template"))),
+                }
+                .ToImmutableList()
+            };
+
+            // Act
+            string byOwnerOrAuthor = packageItemViewModel.ByOwnerOrAuthor;
+
+            // Assert
+            byOwnerOrAuthor.Should()
+                .NotBeNull()
+                .And.NotContain("author1")
+                .And.Contain("owner1")
+                .And.Contain("owner2");
         }
 
         private static void VerifyImageResult(object result, IconBitmapStatus bitmapStatus)
