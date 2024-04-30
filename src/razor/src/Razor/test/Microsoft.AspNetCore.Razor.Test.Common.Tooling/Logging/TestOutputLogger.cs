@@ -74,6 +74,10 @@ internal partial class TestOutputLogger : ILogger
         {
             _provider.TestOutputHelper.WriteLine(finalMessage);
         }
+        catch (InvalidOperationException iex) when (iex.Message == "There is no currently active test.")
+        {
+            // Ignore, something is logging a message outside of a test. Other loggers will capture it.
+        }
         catch (Exception ex)
         {
             // If an exception is thrown while writing a message, throw an AggregateException that includes

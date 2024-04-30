@@ -30,3 +30,9 @@ for($i=0; $i -le 3; $i++)
 if($success -eq $false){
   throw "Failed to create hive"
 }
+
+Write-Host "-- VS Info --"
+$vsDir = Split-Path -Parent $devenvExePath
+$isolationIni = Join-Path $vsDir 'devenv.isolation.ini'
+Get-Content $isolationIni | Write-Host
+Write-Host "-- /VS Info --"

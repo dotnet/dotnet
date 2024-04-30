@@ -39,7 +39,7 @@ public class LegacyRazorCompletionResolveEndpointTest : LanguageServerTestBase
         {
             CompletionItem = new CompletionItemSetting()
             {
-                DocumentationFormat = new[] { MarkupKind.PlainText, MarkupKind.Markdown },
+                DocumentationFormat = [MarkupKind.PlainText, MarkupKind.Markdown],
             }
         };
 

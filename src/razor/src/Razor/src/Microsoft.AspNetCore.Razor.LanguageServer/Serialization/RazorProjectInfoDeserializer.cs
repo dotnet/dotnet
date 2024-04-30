@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.IO;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 
@@ -12,6 +13,21 @@ internal sealed class RazorProjectInfoDeserializer : IRazorProjectInfoDeserializ
 
     private RazorProjectInfoDeserializer()
     {
+    }
+
+    public RazorProjectInfo? DeserializeFromString(string? base64String)
+    {
+        RazorProjectInfo? razorProjectInfo = null;
+
+        // ProjectInfo will be null if project is being deleted and should be removed
+        if (base64String is not null)
+        {
+            var projectInfoBytes = Convert.FromBase64String(base64String);
+            using var stream = new MemoryStream(projectInfoBytes);
+            razorProjectInfo = DeserializeFromStream(stream);
+        }
+
+        return razorProjectInfo;
     }
 
     public RazorProjectInfo? DeserializeFromFile(string filePath)

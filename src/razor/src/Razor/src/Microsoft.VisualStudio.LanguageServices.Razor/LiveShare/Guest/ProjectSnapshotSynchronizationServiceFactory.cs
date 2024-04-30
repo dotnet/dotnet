@@ -4,7 +4,7 @@
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LiveShare;
 using Microsoft.VisualStudio.Razor.LiveShare.Serialization;
@@ -17,7 +17,7 @@ namespace Microsoft.VisualStudio.Razor.LiveShare.Guest;
 [method: ImportingConstructor]
 internal class ProjectSnapshotSynchronizationServiceFactory(
     IProjectSnapshotManager projectManager,
-    IErrorReporter errorReporter,
+    ILoggerFactory loggerFactory,
     JoinableTaskContext joinableTaskContext) : ICollaborationServiceFactory
 {
     public async Task<ICollaborationService> CreateServiceAsync(CollaborationSession sessionContext, CancellationToken cancellationToken)
@@ -32,7 +32,7 @@ internal class ProjectSnapshotSynchronizationServiceFactory(
             sessionContext,
             projectSnapshotManagerProxy,
             projectManager,
-            errorReporter,
+            loggerFactory,
             joinableTaskContext.Factory);
 
         await synchronizationService.InitializeAsync(cancellationToken);

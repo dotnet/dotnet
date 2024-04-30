@@ -39,8 +39,6 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
 
     private Range Range { get; set; }
 
-    private ProjectSnapshotManagerDispatcher ProjectSnapshotManagerDispatcher { get; set; }
-
     private string PagesDirectory { get; set; }
 
     private string ProjectFilePath { get; set; }
@@ -90,15 +88,9 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
         var cancellationToken = CancellationToken.None;
         var documentVersion = 1;
 
-        await UpdateDocumentAsync(documentVersion, DocumentSnapshot, cancellationToken).ConfigureAwait(false);
+        VersionCache.TrackDocumentVersion(DocumentSnapshot, documentVersion);
 
         await RazorSemanticTokenService.GetSemanticTokensAsync(DocumentContext, Range.ToLinePositionSpan(), colorBackground: false, Guid.Empty, cancellationToken: cancellationToken).ConfigureAwait(false);
-    }
-
-    private async Task UpdateDocumentAsync(int newVersion, IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
-    {
-        await ProjectSnapshotManagerDispatcher.RunAsync(
-            () => VersionCache.TrackDocumentVersion(documentSnapshot, newVersion), cancellationToken).ConfigureAwait(false);
     }
 
     [GlobalCleanup]
@@ -121,7 +113,6 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
         var legend = new RazorSemanticTokensLegendService(capabilitiesService);
         RazorSemanticTokenService = languageServer.GetRequiredService<IRazorSemanticTokensInfoService>();
         VersionCache = languageServer.GetRequiredService<IDocumentVersionCache>();
-        ProjectSnapshotManagerDispatcher = languageServer.GetRequiredService<ProjectSnapshotManagerDispatcher>();
     }
 
     internal class TestRazorSemanticTokensInfoService : RazorSemanticTokensInfoService

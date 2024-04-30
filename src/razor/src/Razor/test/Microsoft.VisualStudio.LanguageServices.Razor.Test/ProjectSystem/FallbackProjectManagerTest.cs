@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.Editor.Razor;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Test.Common.TestProjectData;
@@ -71,15 +70,14 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
                 new CompilationOutputInfo().WithAssemblyPath(Path.Combine(SomeProject.IntermediateOutputPath, "SomeProject.dll")));
         Workspace.TryApplyChanges(Workspace.CurrentSolution.AddProject(projectInfo));
 
-        await RunOnDispatcherAsync(() =>
-        {
-            _fallbackProjectManger.DynamicFileAdded(
-                projectId,
-                hostProject.Key,
-                SomeProject.FilePath,
-                SomeProjectFile1.FilePath,
-                DisposalToken);
-        });
+        _fallbackProjectManger.DynamicFileAdded(
+            projectId,
+            hostProject.Key,
+            SomeProject.FilePath,
+            SomeProjectFile1.FilePath,
+            DisposalToken);
+
+        await WaitForProjectManagerUpdatesAsync();
 
         var project = Assert.Single(_projectManager.GetProjects());
         Assert.IsNotType<FallbackHostProject>(((ProjectSnapshot)project).HostProject);
@@ -96,15 +94,14 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
 
         Workspace.TryApplyChanges(Workspace.CurrentSolution.AddProject(projectInfo));
 
-        await RunOnDispatcherAsync(() =>
-        {
-            _fallbackProjectManger.DynamicFileAdded(
-                projectId,
-                SomeProject.Key,
-                SomeProject.FilePath,
-                SomeProjectFile1.FilePath,
-                DisposalToken);
-        });
+        _fallbackProjectManger.DynamicFileAdded(
+            projectId,
+            SomeProject.Key,
+            SomeProject.FilePath,
+            SomeProjectFile1.FilePath,
+            DisposalToken);
+
+        await WaitForProjectManagerUpdatesAsync();
 
         var project = Assert.Single(_projectManager.GetProjects());
         Assert.Equal("DisplayName", project.DisplayName);
@@ -128,15 +125,14 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
 
         Workspace.TryApplyChanges(Workspace.CurrentSolution.AddProject(projectInfo));
 
-        await RunOnDispatcherAsync(() =>
-        {
-            _fallbackProjectManger.DynamicFileAdded(
+        _fallbackProjectManger.DynamicFileAdded(
             projectId,
             SomeProject.Key,
             SomeProject.FilePath,
             SomeProjectFile1.FilePath,
             DisposalToken);
-        });
+
+        await WaitForProjectManagerUpdatesAsync();
 
         var project = Assert.Single(_projectManager.GetProjects());
         Assert.IsType<FallbackHostProject>(((ProjectSnapshot)project).HostProject);
@@ -168,35 +164,28 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
 
         Workspace.TryApplyChanges(Workspace.CurrentSolution.AddProject(projectInfo));
 
-        await RunOnDispatcherAsync(() =>
-        {
-            _fallbackProjectManger.DynamicFileAdded(
-                projectId,
-                SomeProject.Key,
-                SomeProject.FilePath,
-                SomeProjectFile1.FilePath,
-                DisposalToken);
-        });
+        _fallbackProjectManger.DynamicFileAdded(
+            projectId,
+            SomeProject.Key,
+            SomeProject.FilePath,
+            SomeProjectFile1.FilePath,
+            DisposalToken);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            _fallbackProjectManger.DynamicFileAdded(
-                projectId,
-                SomeProject.Key,
-                SomeProject.FilePath,
-                SomeProjectFile2.FilePath,
-                DisposalToken);
-        });
+        _fallbackProjectManger.DynamicFileAdded(
+            projectId,
+            SomeProject.Key,
+            SomeProject.FilePath,
+            SomeProjectFile2.FilePath,
+            DisposalToken);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            _fallbackProjectManger.DynamicFileAdded(
-                projectId,
-                SomeProject.Key,
-                SomeProject.FilePath,
-                SomeProjectNestedComponentFile3.FilePath,
-                DisposalToken);
-        });
+        _fallbackProjectManger.DynamicFileAdded(
+            projectId,
+            SomeProject.Key,
+            SomeProject.FilePath,
+            SomeProjectNestedComponentFile3.FilePath,
+            DisposalToken);
+
+        await WaitForProjectManagerUpdatesAsync();
 
         var project = Assert.Single(_projectManager.GetProjects());
 
@@ -222,36 +211,29 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
 
         Workspace.TryApplyChanges(Workspace.CurrentSolution.AddProject(projectInfo));
 
-        await RunOnDispatcherAsync(() =>
-        {
-            _fallbackProjectManger.DynamicFileAdded(
-                projectId,
-                SomeProject.Key,
-                SomeProject.FilePath,
-                SomeProjectFile1.FilePath,
-                DisposalToken);
-        });
+        _fallbackProjectManger.DynamicFileAdded(
+            projectId,
+            SomeProject.Key,
+            SomeProject.FilePath,
+            SomeProjectFile1.FilePath,
+            DisposalToken);
 
         // These two represent linked files, or shared project items
-        await RunOnDispatcherAsync(() =>
-        {
-            _fallbackProjectManger.DynamicFileAdded(
-                projectId,
-                SomeProject.Key,
-                SomeProject.FilePath,
-                AnotherProjectFile2.FilePath,
-                DisposalToken);
-        });
+        _fallbackProjectManger.DynamicFileAdded(
+            projectId,
+            SomeProject.Key,
+            SomeProject.FilePath,
+            AnotherProjectFile2.FilePath,
+            DisposalToken);
 
-        await RunOnDispatcherAsync(() =>
-        {
-            _fallbackProjectManger.DynamicFileAdded(
-                projectId,
-                SomeProject.Key,
-                SomeProject.FilePath,
-                AnotherProjectComponentFile1.FilePath,
-                DisposalToken);
-        });
+        _fallbackProjectManger.DynamicFileAdded(
+            projectId,
+            SomeProject.Key,
+            SomeProject.FilePath,
+            AnotherProjectComponentFile1.FilePath,
+            DisposalToken);
+
+        await WaitForProjectManagerUpdatesAsync();
 
         var project = Assert.Single(_projectManager.GetProjects());
 
@@ -272,18 +254,24 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
 
         Workspace.TryApplyChanges(Workspace.CurrentSolution.AddProject(projectInfo));
 
-        await RunOnDispatcherAsync(() =>
-        {
-            _fallbackProjectManger.DynamicFileAdded(
-                projectId,
-                SomeProject.Key,
-                SomeProject.FilePath,
-                SomeProjectFile1.FilePath,
-                DisposalToken);
-        });
+        _fallbackProjectManger.DynamicFileAdded(
+            projectId,
+            SomeProject.Key,
+            SomeProject.FilePath,
+            SomeProjectFile1.FilePath,
+            DisposalToken);
+
+        await WaitForProjectManagerUpdatesAsync();
 
         var kvp = Assert.Single(_projectConfigurationFilePathStore.GetMappings());
         Assert.Equal(SomeProject.Key, kvp.Key);
         Assert.Equal(Path.Combine(SomeProject.IntermediateOutputPath, "project.razor.bin"), kvp.Value);
+    }
+
+    private Task WaitForProjectManagerUpdatesAsync()
+    {
+        // The FallbackProjectManager fires and forgets any updates to the project manager.
+        // We can perform a no-op update to wait until the FallbackProjectManager's work is done.
+        return _projectManager.UpdateAsync(x => { });
     }
 }

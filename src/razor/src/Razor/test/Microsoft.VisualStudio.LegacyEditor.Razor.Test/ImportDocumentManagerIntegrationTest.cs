@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.IO;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
@@ -36,7 +35,7 @@ public class ImportDocumentManagerIntegrationTest : VisualStudioTestBase
     }
 
     [UIFact]
-    public async Task Changed_TrackerChanged_ResultsInChangedHavingCorrectArgs()
+    public void Changed_TrackerChanged_ResultsInChangedHavingCorrectArgs()
     {
         // Arrange
         var testImportsPath = Path.Combine(_directoryPath, "_ViewImports.cshtml");
@@ -95,10 +94,7 @@ public class ImportDocumentManagerIntegrationTest : VisualStudioTestBase
         };
 
         // Act
-        await RunOnDispatcherAsync(() =>
-        {
-            fileChangeTracker1Mock.Raise(t => t.Changed += null, new FileChangeEventArgs(testImportsPath, FileChangeKind.Changed));
-        });
+        fileChangeTracker1Mock.Raise(t => t.Changed += null, new FileChangeEventArgs(testImportsPath, FileChangeKind.Changed));
 
         // Assert
         Assert.True(called);

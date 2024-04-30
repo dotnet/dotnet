@@ -348,7 +348,7 @@ public partial class OnAutoInsertEndpointTest
         var lspServices = new Mock<ILspServices>(MockBehavior.Strict);
         lspServices
             .Setup(l => l.GetRequiredService<IAdhocWorkspaceFactory>()).Returns(TestAdhocWorkspaceFactory.Instance);
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, Dispatcher);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory);
         lspServices
             .Setup(l => l.GetRequiredService<IRazorFormattingService>())
             .Returns(formattingService);
@@ -383,7 +383,7 @@ public partial class OnAutoInsertEndpointTest
                 InsertSpaces = true
             },
         };
-        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(@params.TextDocument, DisposalToken);
+        Assert.True(DocumentContextFactory.TryCreateForOpenDocument(@params.TextDocument, out var documentContext));
 
         var requestContext = await CreateOnAutoInsertRequestContextAsync(documentContext);
 

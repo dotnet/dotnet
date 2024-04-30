@@ -40,7 +40,6 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
     private readonly JsonRpc _jsonRpc;
     private readonly ILoggerFactory _loggerFactory;
     private readonly LanguageServerFeatureOptions? _featureOptions;
-    private readonly ProjectSnapshotManagerDispatcher? _projectSnapshotManagerDispatcher;
     private readonly Action<IServiceCollection>? _configureServer;
     private readonly RazorLSPOptions _lspOptions;
     private readonly ILspServerActivationTracker? _lspServerActivationTracker;
@@ -54,7 +53,6 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
         JsonRpc jsonRpc,
         JsonSerializer serializer,
         ILoggerFactory loggerFactory,
-        ProjectSnapshotManagerDispatcher? projectSnapshotManagerDispatcher,
         LanguageServerFeatureOptions? featureOptions,
         Action<IServiceCollection>? configureServer,
         RazorLSPOptions? lspOptions,
@@ -65,7 +63,6 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
         _jsonRpc = jsonRpc;
         _loggerFactory = loggerFactory;
         _featureOptions = featureOptions;
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
         _configureServer = configureServer;
         _lspOptions = lspOptions ?? RazorLSPOptions.Default;
         _lspServerActivationTracker = lspServerActivationTracker;
@@ -107,17 +104,6 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
 
         // Add the logger as a service in case anything in CLaSP pulls it out to do logging
         services.AddSingleton<ILspLogger>(_logger);
-
-        services.AddSingleton<IErrorReporter, LanguageServerErrorReporter>();
-
-        if (_projectSnapshotManagerDispatcher is null)
-        {
-            services.AddSingleton<ProjectSnapshotManagerDispatcher, LSPProjectSnapshotManagerDispatcher>();
-        }
-        else
-        {
-            services.AddSingleton<ProjectSnapshotManagerDispatcher>(_projectSnapshotManagerDispatcher);
-        }
 
         services.AddSingleton<IAdhocWorkspaceFactory, AdhocWorkspaceFactory>();
         services.AddSingleton<IWorkspaceProvider, LspWorkspaceProvider>();

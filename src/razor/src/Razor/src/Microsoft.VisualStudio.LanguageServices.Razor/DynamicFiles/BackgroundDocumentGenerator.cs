@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -23,7 +24,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
 
     private readonly IProjectSnapshotManager _projectManager;
     private readonly IRazorDynamicFileInfoProviderInternal _infoProvider;
-    private readonly IErrorReporter _errorReporter;
+    private readonly ILogger _logger;
 
     private readonly CancellationTokenSource _disposeTokenSource;
     private readonly AsyncBatchingWorkQueue<(IProjectSnapshot, IDocumentSnapshot)> _workQueue;
@@ -34,8 +35,8 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
     public BackgroundDocumentGenerator(
         IProjectSnapshotManager projectManager,
         IRazorDynamicFileInfoProviderInternal infoProvider,
-        IErrorReporter errorReporter)
-        : this(projectManager, infoProvider, errorReporter, s_delay)
+        ILoggerFactory loggerFactory)
+        : this(projectManager, infoProvider, loggerFactory, s_delay)
     {
     }
 
@@ -43,12 +44,12 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
     protected BackgroundDocumentGenerator(
         IProjectSnapshotManager projectManager,
         IRazorDynamicFileInfoProviderInternal infoProvider,
-        IErrorReporter errorReporter,
+        ILoggerFactory loggerFactory,
         TimeSpan delay)
     {
         _projectManager = projectManager;
         _infoProvider = infoProvider;
-        _errorReporter = errorReporter;
+        _logger = loggerFactory.GetOrCreateLogger<BackgroundDocumentGenerator>();
 
         _disposeTokenSource = new();
         _workQueue = new AsyncBatchingWorkQueue<(IProjectSnapshot, IDocumentSnapshot)>(delay, ProcessBatchAsync, _disposeTokenSource.Token);
@@ -123,7 +124,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
             }
             catch (Exception ex)
             {
-                _errorReporter.ReportError(ex, project);
+                _logger.LogError(ex, $"Error encountered from project '{project.FilePath}':{Environment.NewLine}{ex}");
             }
         }
     }

@@ -2,8 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -32,9 +31,12 @@ internal class TestSnapshotResolver : ISnapshotResolver
             ? _projects
             : [];
 
-    public Task<IProjectSnapshot> GetMiscellaneousProjectAsync(CancellationToken cancellationToken)
-        => Task.FromResult(_miscProject);
+    public IProjectSnapshot GetMiscellaneousProject()
+        => _miscProject;
 
-    public Task<IDocumentSnapshot?> ResolveDocumentInAnyProjectAsync(string documentFilePath, CancellationToken cancellationToken)
-        => Task.FromResult<IDocumentSnapshot?>(null);
+    public bool TryResolveDocumentInAnyProject(string documentFilePath, [NotNullWhen(true)] out IDocumentSnapshot? document)
+    {
+        document = null;
+        return false;
+    }
 }

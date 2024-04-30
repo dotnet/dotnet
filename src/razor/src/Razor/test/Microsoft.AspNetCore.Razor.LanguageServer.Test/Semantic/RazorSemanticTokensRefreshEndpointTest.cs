@@ -66,11 +66,4 @@ public class RazorSemanticTokensRefreshEndpointTest(ITestOutputHelper testOutput
 
         return optionsMonitor;
     }
-
-    private class TestErrorReporter : IErrorReporter
-    {
-        public void ReportError(Exception exception) => throw new NotImplementedException();
-        public void ReportError(Exception exception, IProjectSnapshot? project) => throw new NotImplementedException();
-        public void ReportError(Exception exception, Project workspaceProject) => throw new NotImplementedException();
-    }
 }

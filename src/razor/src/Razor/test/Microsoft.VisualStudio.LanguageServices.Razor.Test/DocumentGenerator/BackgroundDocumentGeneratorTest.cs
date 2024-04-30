@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.DynamicFiles;
 using Moq;
@@ -66,7 +67,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         var hostDocument = s_documents[0];
 
         var project = projectManager.GetLoadedProject(s_hostProject1.Key);
-        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, ErrorReporter)
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, LoggerFactory)
         {
             NotifyBackgroundWorkStarting = new ManualResetEventSlim(initialState: false)
         };
@@ -109,10 +110,15 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             updater.ProjectAdded(s_hostProject1);
         });
 
-        var errorReporterMock = new StrictMock<IErrorReporter>();
-        errorReporterMock
-            .Setup(x => x.ReportError(It.IsAny<IOException>()))
+        var loggerMock = new StrictMock<ILogger>();
+        loggerMock
+            .Setup(x => x.Log(It.IsAny<LogLevel>(), It.IsAny<string>(), It.IsAny<IOException>()))
             .Throws<InvalidOperationException>(); // If this is thrown, the test fails
+
+        var loggerFactoryMock = new StrictMock<ILoggerFactory>();
+        loggerFactoryMock
+            .Setup(x => x.GetOrCreateLogger(It.IsAny<string>()))
+            .Returns(loggerMock.Object);
 
         var textLoader = new StrictMock<TextLoader>();
         textLoader
@@ -126,7 +132,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 
         var project = projectManager.GetLoadedProject(s_hostProject1.Key);
 
-        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, errorReporterMock.Object);
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, loggerFactoryMock.Object);
 
         // Act & Assert
         generator.Enqueue(project, project.GetDocument(s_documents[0].FilePath).AssumeNotNull());
@@ -145,10 +151,15 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             updater.ProjectAdded(s_hostProject1);
         });
 
-        var errorReporterMock = new StrictMock<IErrorReporter>();
-        errorReporterMock
-            .Setup(x => x.ReportError(It.IsAny<IOException>()))
+        var loggerMock = new StrictMock<ILogger>();
+        loggerMock
+            .Setup(x => x.Log(It.IsAny<LogLevel>(), It.IsAny<string>(), It.IsAny<UnauthorizedAccessException>()))
             .Throws<InvalidOperationException>(); // If this is thrown, the test fails
+
+        var loggerFactoryMock = new StrictMock<ILoggerFactory>();
+        loggerFactoryMock
+            .Setup(x => x.GetOrCreateLogger(It.IsAny<string>()))
+            .Returns(loggerMock.Object);
 
         var textLoaderMock = new StrictMock<TextLoader>();
         textLoaderMock
@@ -162,7 +173,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 
         var project = projectManager.GetLoadedProject(s_hostProject1.Key);
 
-        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, errorReporterMock.Object);
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, loggerFactoryMock.Object);
 
         // Act & Assert
         generator.Enqueue(project, project.GetDocument(s_documents[0].FilePath).AssumeNotNull());
@@ -187,7 +198,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         var project = projectManager.GetLoadedProject(s_hostProject1.Key);
         var documentKey1 = new DocumentKey(project.Key, s_documents[0].FilePath);
 
-        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, ErrorReporter);
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, LoggerFactory);
 
         // Act & Assert
 
@@ -222,7 +233,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         var documentKey1 = new DocumentKey(project.Key, s_documents[0].FilePath);
         var documentKey2 = new DocumentKey(project.Key, s_documents[1].FilePath);
 
-        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, ErrorReporter);
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, LoggerFactory);
 
         // Act & Assert
 
@@ -267,7 +278,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             }
         });
 
-        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, ErrorReporter)
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, LoggerFactory)
         {
             BlockBatchProcessing = true
         };
@@ -311,7 +322,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             updater.DocumentAdded(s_hostProject1.Key, TestProjectData.SomeProjectImportFile, null!);
         });
 
-        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, ErrorReporter)
+        using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, LoggerFactory)
         {
             BlockBatchProcessing = true
         };
@@ -338,8 +349,8 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     private class TestBackgroundDocumentGenerator(
         IProjectSnapshotManager projectManager,
         IRazorDynamicFileInfoProviderInternal dynamicFileInfoProvider,
-        IErrorReporter errorReporter)
-        : BackgroundDocumentGenerator(projectManager, dynamicFileInfoProvider, errorReporter, delay: TimeSpan.FromMilliseconds(1))
+        ILoggerFactory loggerFactory)
+        : BackgroundDocumentGenerator(projectManager, dynamicFileInfoProvider, loggerFactory, delay: TimeSpan.FromMilliseconds(1))
     {
         public readonly List<DocumentKey> PendingWork = [];
         public readonly List<DocumentKey> CompletedWork = [];

@@ -1,10 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.VisualStudio.Razor.Logging;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Moq;
 using Xunit;
@@ -12,19 +11,14 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor;
 
-public class VisualStudioLSPEditorFeatureDetectorTest : ToolingTestBase
+public class VisualStudioLSPEditorFeatureDetectorTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    public VisualStudioLSPEditorFeatureDetectorTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
-    [Fact]
+    [UIFact]
     public void IsLSPEditorAvailable_ProjectSupported_ReturnsTrue()
     {
         // Arrange
-        var logger = GetRazorLogger();
-        var featureDetector = new TestLSPEditorFeatureDetector(logger)
+        using var activityLog = GetRazorActivityLog();
+        var featureDetector = new TestLSPEditorFeatureDetector(activityLog)
         {
             ProjectSupportsLSPEditorValue = true,
         };
@@ -36,12 +30,12 @@ public class VisualStudioLSPEditorFeatureDetectorTest : ToolingTestBase
         Assert.True(result);
     }
 
-    [Fact]
+    [UIFact]
     public void IsLSPEditorAvailable_LegacyEditorEnabled_ReturnsFalse()
     {
         // Arrange
-        var logger = GetRazorLogger();
-        var featureDetector = new TestLSPEditorFeatureDetector(logger)
+        using var activityLog = GetRazorActivityLog();
+        var featureDetector = new TestLSPEditorFeatureDetector(activityLog)
         {
             UseLegacyEditor = true,
             ProjectSupportsLSPEditorValue = true,
@@ -54,12 +48,12 @@ public class VisualStudioLSPEditorFeatureDetectorTest : ToolingTestBase
         Assert.False(result);
     }
 
-    [Fact]
+    [UIFact]
     public void IsLSPEditorAvailable_IsVSRemoteClient_ReturnsTrue()
     {
         // Arrange
-        var logger = GetRazorLogger();
-        var featureDetector = new TestLSPEditorFeatureDetector(logger)
+        using var activityLog = GetRazorActivityLog();
+        var featureDetector = new TestLSPEditorFeatureDetector(activityLog)
         {
             IsVSRemoteClientValue = true,
             ProjectSupportsLSPEditorValue = true,
@@ -72,12 +66,12 @@ public class VisualStudioLSPEditorFeatureDetectorTest : ToolingTestBase
         Assert.True(result);
     }
 
-    [Fact]
+    [UIFact]
     public void IsLSPEditorAvailable_UnsupportedProject_ReturnsFalse()
     {
         // Arrange
-        var logger = GetRazorLogger();
-        var featureDetector = new TestLSPEditorFeatureDetector(logger)
+        using var activityLog = GetRazorActivityLog();
+        var featureDetector = new TestLSPEditorFeatureDetector(activityLog)
         {
             ProjectSupportsLSPEditorValue = false,
         };
@@ -89,12 +83,12 @@ public class VisualStudioLSPEditorFeatureDetectorTest : ToolingTestBase
         Assert.False(result);
     }
 
-    [Fact]
+    [UIFact]
     public void IsRemoteClient_VSRemoteClient_ReturnsTrue()
     {
         // Arrange
-        var logger = GetRazorLogger();
-        var featureDetector = new TestLSPEditorFeatureDetector(logger)
+        using var activityLog = GetRazorActivityLog();
+        var featureDetector = new TestLSPEditorFeatureDetector(activityLog)
         {
             IsVSRemoteClientValue = true,
         };
@@ -106,12 +100,12 @@ public class VisualStudioLSPEditorFeatureDetectorTest : ToolingTestBase
         Assert.True(result);
     }
 
-    [Fact]
+    [UIFact]
     public void IsRemoteClient_LiveShareGuest_ReturnsTrue()
     {
         // Arrange
-        var logger = GetRazorLogger();
-        var featureDetector = new TestLSPEditorFeatureDetector(logger)
+        using var activityLog = GetRazorActivityLog();
+        var featureDetector = new TestLSPEditorFeatureDetector(activityLog)
         {
             IsLiveShareGuestValue = true,
         };
@@ -123,12 +117,12 @@ public class VisualStudioLSPEditorFeatureDetectorTest : ToolingTestBase
         Assert.True(result);
     }
 
-    [Fact]
+    [UIFact]
     public void IsRemoteClient_UnknownEnvironment_ReturnsFalse()
     {
         // Arrange
-        var logger = GetRazorLogger();
-        var featureDetector = new TestLSPEditorFeatureDetector(logger);
+        using var activityLog = GetRazorActivityLog();
+        var featureDetector = new TestLSPEditorFeatureDetector(activityLog);
 
         // Act
         var result = featureDetector.IsRemoteClient();
@@ -137,22 +131,24 @@ public class VisualStudioLSPEditorFeatureDetectorTest : ToolingTestBase
         Assert.False(result);
     }
 
-    private static RazorLogger GetRazorLogger()
+    private RazorActivityLog GetRazorActivityLog()
     {
-        var mock = new Mock<RazorLogger>(MockBehavior.Strict);
-        mock.Setup(l => l.LogVerbose(It.IsAny<string>()));
+        var vsActivityLogMock = new StrictMock<IVsActivityLog>();
+        vsActivityLogMock
+            .Setup(x => x.LogEntry(It.IsAny<uint>(), "Razor", It.IsAny<string>()))
+            .Returns(VSConstants.S_OK);
 
-        return mock.Object;
+        var serviceProviderMock = new StrictMock<IAsyncServiceProvider>();
+        serviceProviderMock
+            .Setup(x => x.GetServiceAsync(typeof(SVsActivityLog)))
+            .ReturnsAsync(vsActivityLogMock.Object);
+
+        return new RazorActivityLog(serviceProviderMock.Object, JoinableTaskContext);
     }
 
-#pragma warning disable CS0618 // Type or member is obsolete (Test constructor)
-    private class TestLSPEditorFeatureDetector : VisualStudioLSPEditorFeatureDetector
+    private class TestLSPEditorFeatureDetector(RazorActivityLog activityLog)
+        : VisualStudioLSPEditorFeatureDetector(projectCapabilityResolver: null!, activityLog)
     {
-        public TestLSPEditorFeatureDetector(RazorLogger logger)
-            : base(projectCapabilityResolver: null, logger)
-        {
-        }
-
         public bool UseLegacyEditor { get; set; }
 
         public bool IsLiveShareGuestValue { get; set; }
@@ -171,7 +167,6 @@ public class VisualStudioLSPEditorFeatureDetectorTest : ToolingTestBase
 
         private protected override bool IsVSRemoteClient() => IsVSRemoteClientValue;
 
-        private protected override bool ProjectSupportsLSPEditor(string documentMoniker, IVsHierarchy hierarchy) => ProjectSupportsLSPEditorValue;
+        private protected override bool ProjectSupportsLSPEditor(string documentMoniker, IVsHierarchy? hierarchy) => ProjectSupportsLSPEditorValue;
     }
-#pragma warning restore CS0618 // Type or member is obsolete (Test constructor)
 }

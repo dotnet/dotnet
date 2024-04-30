@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Razor.ProjectSystem;
@@ -67,9 +66,6 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
 
         _workspaceProvider = workspaceProviderMock.Object;
     }
-
-    private protected override ProjectSnapshotManagerDispatcher CreateDispatcher()
-        => new VisualStudioProjectSnapshotManagerDispatcher(ErrorReporter);
 
     [UIFact]
     public async Task Initialize_AttachesEventSink()

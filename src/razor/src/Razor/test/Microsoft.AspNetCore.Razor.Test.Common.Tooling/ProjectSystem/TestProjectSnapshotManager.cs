@@ -6,16 +6,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 
 internal partial class TestProjectSnapshotManager(
     IProjectEngineFactoryProvider projectEngineFactoryProvider,
-    ProjectSnapshotManagerDispatcher dispatcher,
+    ILoggerFactory loggerFactory,
     CancellationToken disposalToken)
-    : ProjectSnapshotManager(projectEngineFactoryProvider, dispatcher)
+    : ProjectSnapshotManager(projectEngineFactoryProvider, loggerFactory)
 {
     private readonly CancellationToken _disposalToken = disposalToken;
 

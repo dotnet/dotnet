@@ -24,7 +24,7 @@ using VisualStudioMarkupKind = Microsoft.VisualStudio.LanguageServer.Protocol.Ma
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 
-internal sealed class HoverService(
+internal sealed partial class HoverService(
     LSPTagHelperTooltipFactory lspTagHelperTooltipFactory,
     VSLSPTagHelperTooltipFactory vsLspTagHelperTooltipFactory,
     IRazorDocumentMappingService mappingService,
@@ -94,15 +94,13 @@ internal sealed class HoverService(
         return response;
     }
 
-    public TestAccessor GetTestAccessor() => new(this);
-
-    public async Task<VSInternalHover?> GetHoverInfoAsync(string documentFilePath, RazorCodeDocument codeDocument, SourceLocation location, VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
+    private async Task<VSInternalHover?> GetHoverInfoAsync(
+        string documentFilePath,
+        RazorCodeDocument codeDocument,
+        SourceLocation location,
+        VSInternalClientCapabilities clientCapabilities,
+        CancellationToken cancellationToken)
     {
-        if (codeDocument is null)
-        {
-            throw new ArgumentNullException(nameof(codeDocument));
-        }
-
         var syntaxTree = codeDocument.GetSyntaxTree();
 
         var owner = syntaxTree.Root.FindInnermostNode(location.AbsoluteIndex);
@@ -349,11 +347,5 @@ internal sealed class HoverService(
         var hoverContentFormat = clientCapabilities.TextDocument?.Hover?.ContentFormat;
         var hoverKind = hoverContentFormat?.Contains(VisualStudioMarkupKind.Markdown) == true ? VisualStudioMarkupKind.Markdown : VisualStudioMarkupKind.PlainText;
         return hoverKind;
-    }
-
-    public class TestAccessor(HoverService service)
-    {
-        public Task<VSInternalHover?> GetHoverInfoAsync(string documentFilePath, RazorCodeDocument codeDocument, SourceLocation location, VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
-            => service.GetHoverInfoAsync(documentFilePath, codeDocument, location, clientCapabilities, cancellationToken);
     }
 }

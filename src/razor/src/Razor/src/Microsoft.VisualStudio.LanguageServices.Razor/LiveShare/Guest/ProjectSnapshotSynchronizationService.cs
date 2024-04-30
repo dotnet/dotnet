@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LiveShare;
 using Microsoft.VisualStudio.Threading;
@@ -17,14 +17,14 @@ internal class ProjectSnapshotSynchronizationService(
     CollaborationSession sessionContext,
     IProjectSnapshotManagerProxy hostProjectManagerProxy,
     IProjectSnapshotManager projectManager,
-    IErrorReporter errorReporter,
+    ILoggerFactory loggerFactory,
     JoinableTaskFactory jtf) : ICollaborationService, IAsyncDisposable, System.IAsyncDisposable
 {
     private readonly JoinableTaskFactory _jtf = jtf;
     private readonly CollaborationSession _sessionContext = sessionContext;
     private readonly IProjectSnapshotManagerProxy _hostProjectManagerProxy = hostProjectManagerProxy;
     private readonly IProjectSnapshotManager _projectManager = projectManager;
-    private readonly IErrorReporter _errorReporter = errorReporter;
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<ProjectSnapshotSynchronizationService>();
 
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
@@ -46,7 +46,7 @@ internal class ProjectSnapshotSynchronizationService(
         await _projectManager.UpdateAsync(
             static (updater, state) =>
             {
-                var (projects, errorReporter) = state;
+                var (projects, logger) = state;
 
                 foreach (var project in projects)
                 {
@@ -56,11 +56,11 @@ internal class ProjectSnapshotSynchronizationService(
                     }
                     catch (Exception ex)
                     {
-                        errorReporter.ReportError(ex, project);
+                        logger.LogError(ex, $"Error encountered from project '{project.FilePath}':{Environment.NewLine}{ex}");
                     }
                 }
             },
-            state: (projects, _errorReporter),
+            state: (projects, _logger),
             CancellationToken.None);
     }
 
@@ -175,7 +175,7 @@ internal class ProjectSnapshotSynchronizationService(
             }
             catch (Exception ex)
             {
-                _errorReporter.ReportError(ex);
+                _logger.LogError(ex);
             }
         });
     }

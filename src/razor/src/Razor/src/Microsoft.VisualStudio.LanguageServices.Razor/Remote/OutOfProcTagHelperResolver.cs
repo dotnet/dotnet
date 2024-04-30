@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -24,11 +24,11 @@ namespace Microsoft.VisualStudio.Razor.Remote;
 [method: ImportingConstructor]
 internal class OutOfProcTagHelperResolver(
     IRemoteClientProvider remoteClientProvider,
-    IErrorReporter errorReporter,
+    ILoggerFactory loggerFactory,
     ITelemetryReporter telemetryReporter) : ITagHelperResolver
 {
     private readonly IRemoteClientProvider _remoteClientProvider = remoteClientProvider;
-    private readonly IErrorReporter _errorReporter = errorReporter;
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<OutOfProcTagHelperResolver>();
     private readonly CompilationTagHelperResolver _innerResolver = new(telemetryReporter);
     private readonly TagHelperResultCache _resultCache = new();
 
@@ -51,7 +51,7 @@ internal class OutOfProcTagHelperResolver(
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            _errorReporter.ReportError(ex, projectSnapshot);
+            _logger.LogError(ex, $"Error encountered from project '{projectSnapshot.FilePath}':{Environment.NewLine}{ex}");
             return default;
         }
 
@@ -61,7 +61,7 @@ internal class OutOfProcTagHelperResolver(
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            _errorReporter.ReportError(ex, projectSnapshot);
+            _logger.LogError(ex, $"Error encountered from project '{projectSnapshot.FilePath}':{Environment.NewLine}{ex}");
             return default;
         }
     }

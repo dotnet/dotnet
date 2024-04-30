@@ -28,7 +28,7 @@ public class VisualStudioFileChangeTrackerTest(ITestOutputHelper testOutput) : V
             .Verifiable();
         var tracker = new VisualStudioFileChangeTracker(
             TestProjectData.SomeProjectImportFile.FilePath,
-            ErrorReporter,
+            LoggerFactory,
             fileChangeService.Object,
             JoinableTaskFactory.Context);
 
@@ -53,7 +53,7 @@ public class VisualStudioFileChangeTrackerTest(ITestOutputHelper testOutput) : V
             .Callback(() => callCount++);
         var tracker = new VisualStudioFileChangeTracker(
             TestProjectData.SomeProjectImportFile.FilePath,
-            ErrorReporter,
+            LoggerFactory,
             fileChangeService.Object,
             JoinableTaskFactory.Context);
 
@@ -82,7 +82,7 @@ public class VisualStudioFileChangeTrackerTest(ITestOutputHelper testOutput) : V
             .Verifiable();
         var tracker = new VisualStudioFileChangeTracker(
             TestProjectData.SomeProjectImportFile.FilePath,
-            ErrorReporter,
+            LoggerFactory,
             fileChangeService.Object,
             JoinableTaskFactory.Context);
 
@@ -109,7 +109,7 @@ public class VisualStudioFileChangeTrackerTest(ITestOutputHelper testOutput) : V
             .Throws(new InvalidOperationException());
         var tracker = new VisualStudioFileChangeTracker(
             TestProjectData.SomeProjectImportFile.FilePath,
-            ErrorReporter,
+            LoggerFactory,
             fileChangeService.Object,
             JoinableTaskFactory.Context);
 
@@ -130,7 +130,7 @@ public class VisualStudioFileChangeTrackerTest(ITestOutputHelper testOutput) : V
         // Arrange
         var filePath = TestProjectData.SomeProjectImportFile.FilePath;
         var fileChangeService = Mock.Of<IVsAsyncFileChangeEx>(MockBehavior.Strict);
-        var tracker = new VisualStudioFileChangeTracker(filePath, ErrorReporter, fileChangeService, JoinableTaskFactory.Context);
+        var tracker = new VisualStudioFileChangeTracker(filePath, LoggerFactory, fileChangeService, JoinableTaskFactory.Context);
 
         var called = false;
         tracker.Changed += (sender, args) =>
