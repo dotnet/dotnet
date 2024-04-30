@@ -21,7 +21,7 @@ public class ErrorBoundaryTest : ServerTestBase<ToggleExecutionModeServerFixture
     protected override void InitializeAsyncCore()
     {
         // Many of these tests trigger fatal exceptions, so we always have to reload
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: false);
         Browser.MountTestComponent<ErrorBoundaryContainer>();
     }
 

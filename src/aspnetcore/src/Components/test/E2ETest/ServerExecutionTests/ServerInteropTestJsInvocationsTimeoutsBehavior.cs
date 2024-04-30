@@ -23,7 +23,7 @@ public class ServerInteropTestJsInvocationsTimeoutsBehavior : ServerTestBase<Bas
 
     protected override void InitializeAsyncCore()
     {
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: true);
         Browser.MountTestComponent<LongRunningInterop>();
     }
 

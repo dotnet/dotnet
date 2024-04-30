@@ -5,7 +5,6 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO.Pipelines;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Metadata;
@@ -168,7 +167,7 @@ internal sealed class OpenApiDocumentService(
         return [new OpenApiTag { Name = description.ActionDescriptor.RouteValues["controller"] }];
     }
 
-    private OpenApiResponses GetResponses(ApiDescription description)
+    private static OpenApiResponses GetResponses(ApiDescription description)
     {
         // OpenAPI requires that each operation have a response, usually a successful one.
         // if there are no response types defined, we assume a successful 200 OK response
@@ -196,7 +195,7 @@ internal sealed class OpenApiDocumentService(
         return responses;
     }
 
-    private OpenApiResponse GetResponse(ApiDescription apiDescription, int statusCode, ApiResponseType apiResponseType)
+    private static OpenApiResponse GetResponse(ApiDescription apiDescription, int statusCode, ApiResponseType apiResponseType)
     {
         var description = ReasonPhrases.GetReasonPhrase(statusCode);
         var response = new OpenApiResponse
@@ -213,8 +212,7 @@ internal sealed class OpenApiDocumentService(
             .Select(responseFormat => responseFormat.MediaType);
         foreach (var contentType in apiResponseFormatContentTypes)
         {
-            var schema = apiResponseType.Type is {} type ? _componentService.GetOrCreateSchema(type) : new OpenApiSchema();
-            response.Content[contentType] = new OpenApiMediaType { Schema = schema };
+            response.Content[contentType] = new OpenApiMediaType();
         }
 
         // MVC's `ProducesAttribute` doesn't implement the produces metadata that the ApiExplorer
@@ -231,7 +229,7 @@ internal sealed class OpenApiDocumentService(
         return response;
     }
 
-    private List<OpenApiParameter>? GetParameters(ApiDescription description)
+    private static List<OpenApiParameter>? GetParameters(ApiDescription description)
     {
         List<OpenApiParameter>? parameters = null;
         foreach (var parameter in description.ParameterDescriptions)
@@ -256,7 +254,6 @@ internal sealed class OpenApiDocumentService(
                 // Per the OpenAPI specification, parameters that are sourced from the path
                 // are always required, regardless of the requiredness status of the parameter.
                 Required = parameter.Source == BindingSource.Path || parameter.IsRequired,
-                Schema = _componentService.GetOrCreateSchema(parameter.Type, parameter),
             };
             parameters ??= [];
             parameters.Add(openApiParameter);
@@ -316,22 +313,11 @@ internal sealed class OpenApiDocumentService(
         return requestBody;
     }
 
-    private OpenApiRequestBody GetJsonRequestBody(IList<ApiRequestFormat> supportedRequestFormats, ApiParameterDescription bodyParameter)
+    private static OpenApiRequestBody GetJsonRequestBody(IList<ApiRequestFormat> supportedRequestFormats, ApiParameterDescription bodyParameter)
     {
         if (supportedRequestFormats.Count == 0)
         {
-            if (bodyParameter.Type == typeof(Stream) || bodyParameter.Type == typeof(PipeReader))
-            {
-                // Assume "application/octet-stream" as the default media type
-                // for stream-based parameter types.
-                supportedRequestFormats = [new ApiRequestFormat { MediaType = "application/octet-stream" }];
-            }
-            else
-            {
-                // Assume "application/json" as the default media type
-                // for everything else.
-                supportedRequestFormats = [new ApiRequestFormat { MediaType = "application/json" }];
-            }
+            supportedRequestFormats = [new ApiRequestFormat { MediaType = "application/json" }];
         }
 
         var requestBody = new OpenApiRequestBody
@@ -343,7 +329,7 @@ internal sealed class OpenApiDocumentService(
         foreach (var requestForm in supportedRequestFormats)
         {
             var contentType = requestForm.MediaType;
-            requestBody.Content[contentType] = new OpenApiMediaType { Schema = _componentService.GetOrCreateSchema(bodyParameter.Type) };
+            requestBody.Content[contentType] = new OpenApiMediaType();
         }
 
         return requestBody;

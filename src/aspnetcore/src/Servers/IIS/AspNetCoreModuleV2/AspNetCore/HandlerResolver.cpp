@@ -22,8 +22,7 @@ const PCWSTR HandlerResolver::s_pwzAspnetcoreOutOfProcessRequestHandlerName = L"
 HandlerResolver::HandlerResolver(HMODULE hModule, const IHttpServer &pServer)
     : m_hModule(hModule),
       m_pServer(pServer),
-      m_loadedApplicationHostingModel(HOSTING_UNKNOWN),
-      m_shutdownDelay()
+      m_loadedApplicationHostingModel(HOSTING_UNKNOWN)
 {
     m_disallowRotationOnConfigChange = false;
     InitializeSRWLock(&m_requestHandlerLoadLock);
@@ -172,7 +171,6 @@ HandlerResolver::GetApplicationFactory(const IHttpApplication& pApplication, con
     m_loadedApplicationHostingModel = options.QueryHostingModel();
     m_loadedApplicationId = pApplication.GetApplicationId();
     m_disallowRotationOnConfigChange = options.QueryDisallowRotationOnConfigChange();
-    m_shutdownDelay = options.QueryShutdownDelay();
 
     RETURN_IF_FAILED(LoadRequestHandlerAssembly(pApplication, shadowCopyPath, options, pApplicationFactory, errorContext));
 
@@ -197,11 +195,6 @@ APP_HOSTING_MODEL HandlerResolver::GetHostingModel()
 bool HandlerResolver::GetDisallowRotationOnConfigChange()
 {
     return m_disallowRotationOnConfigChange;
-}
-
-std::chrono::milliseconds HandlerResolver::GetShutdownDelay() const
-{
-    return m_shutdownDelay;
 }
 
 HRESULT

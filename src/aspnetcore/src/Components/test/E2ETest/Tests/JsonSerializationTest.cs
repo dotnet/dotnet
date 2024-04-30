@@ -22,7 +22,7 @@ public class JsonSerializationTest : ServerTestBase<ToggleExecutionModeServerFix
 
     protected override void InitializeAsyncCore()
     {
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: _serverFixture.ExecutionMode == ExecutionMode.Client);
         Browser.MountTestComponent<JsonSerializationCases>();
         Browser.Exists(By.Id("json-serialization-cases"));
     }

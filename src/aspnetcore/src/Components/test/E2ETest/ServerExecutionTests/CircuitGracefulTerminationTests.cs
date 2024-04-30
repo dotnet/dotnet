@@ -38,7 +38,7 @@ public class CircuitGracefulTerminationTests : ServerTestBase<BasicTestAppServer
 
     protected override void InitializeAsyncCore()
     {
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: false);
         Browser.MountTestComponent<GracefulTermination>();
         Browser.Equal("Graceful Termination", () => Browser.Exists(By.TagName("h1")).Text);
 

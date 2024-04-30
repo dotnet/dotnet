@@ -25,7 +25,7 @@ public class WebAssemblyLocalizationTest : ServerTestBase<ToggleExecutionModeSer
     [InlineData("fr-FR", "Bonjour!")]
     public void CanSetCultureAndReadLocalizedResources(string culture, string message)
     {
-        Navigate($"{ServerPathBase}/?culture={culture}");
+        Navigate($"{ServerPathBase}/?culture={culture}", noReload: false);
 
         Browser.MountTestComponent<LocalizedText>();
 

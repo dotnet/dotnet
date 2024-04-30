@@ -22,7 +22,7 @@ public class HeadModificationTest : ServerTestBase<ToggleExecutionModeServerFixt
 
     protected override void InitializeAsyncCore()
     {
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: _serverFixture.ExecutionMode == ExecutionMode.Client);
     }
 
     [Fact]

@@ -32,7 +32,7 @@ public class CustomElementsTest : ServerTestBase<ToggleExecutionModeServerFixtur
 
     protected override void InitializeAsyncCore()
     {
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: false);
         app = Browser.MountTestComponent<CustomElementsComponent>();
     }
 

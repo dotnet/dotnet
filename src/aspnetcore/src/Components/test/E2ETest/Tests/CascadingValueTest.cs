@@ -22,7 +22,7 @@ public class CascadingValueTest : ServerTestBase<ToggleExecutionModeServerFixtur
 
     protected override void InitializeAsyncCore()
     {
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: _serverFixture.ExecutionMode == ExecutionMode.Client);
         Browser.MountTestComponent<BasicTestApp.CascadingValueTest.CascadingValueSupplier>();
     }
 

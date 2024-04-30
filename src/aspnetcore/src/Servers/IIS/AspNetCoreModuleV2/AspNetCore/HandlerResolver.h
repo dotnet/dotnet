@@ -19,7 +19,6 @@ public:
     void ResetHostingModel();
     APP_HOSTING_MODEL GetHostingModel();
     bool GetDisallowRotationOnConfigChange();
-    std::chrono::milliseconds GetShutdownDelay() const;
 
 private:
     HRESULT LoadRequestHandlerAssembly(const IHttpApplication &pApplication, const std::filesystem::path& shadowCopyPath, const ShimOptions& pConfiguration, std::unique_ptr<ApplicationFactory>& pApplicationFactory, ErrorContext& errorContext);
@@ -41,7 +40,6 @@ private:
     APP_HOSTING_MODEL m_loadedApplicationHostingModel;
     HostFxr m_hHostFxrDll;
     bool m_disallowRotationOnConfigChange;
-    std::chrono::milliseconds m_shutdownDelay;
 
     static const PCWSTR          s_pwzAspnetcoreInProcessRequestHandlerName;
     static const PCWSTR          s_pwzAspnetcoreOutOfProcessRequestHandlerName;

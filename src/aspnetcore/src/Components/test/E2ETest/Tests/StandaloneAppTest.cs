@@ -22,7 +22,7 @@ public class StandaloneAppTest
 
     protected override void InitializeAsyncCore()
     {
-        Navigate("/");
+        Navigate("/", noReload: true);
         WaitUntilLoaded();
     }
 

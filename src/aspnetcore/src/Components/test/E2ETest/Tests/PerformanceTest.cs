@@ -22,7 +22,7 @@ public class PerformanceTest
 
     protected override void InitializeAsyncCore()
     {
-        Navigate("/");
+        Navigate("/", noReload: true);
     }
 
     public override Task InitializeAsync() => base.InitializeAsync(Guid.NewGuid().ToString());
