@@ -17,6 +17,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -24,20 +25,23 @@ using Xunit.Sdk;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public class RazorProjectServiceTest : LanguageServerTestBase
+public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
     private static readonly SourceText s_emptyText = SourceText.From("");
 
-    private readonly TestProjectSnapshotManager _projectManager;
-    private readonly SnapshotResolver _snapshotResolver;
-    private readonly DocumentVersionCache _documentVersionCache;
-    private readonly RazorProjectService _projectService;
+    // Each of these is initialized by InitializeAsync() below.
+#nullable disable
+    private TestProjectSnapshotManager _projectManager;
+    private SnapshotResolver _snapshotResolver;
+    private DocumentVersionCache _documentVersionCache;
+    private RazorProjectService _projectService;
+#nullable enable
 
-    public RazorProjectServiceTest(ITestOutputHelper testOutput)
-        : base(testOutput)
+    protected override async Task InitializeAsync()
     {
         _projectManager = CreateProjectSnapshotManager();
         _snapshotResolver = new SnapshotResolver(_projectManager, LoggerFactory);
+        await _snapshotResolver.OnInitializedAsync(StrictMock.Of<ILspServices>(), DisposalToken);
         _documentVersionCache = new DocumentVersionCache(_projectManager);
 
         var remoteTextLoaderFactoryMock = new StrictMock<RemoteTextLoaderFactory>();
@@ -152,7 +156,7 @@ public class RazorProjectServiceTest : LanguageServerTestBase
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
 
-        var miscProject = await _snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
+        var miscProject = _snapshotResolver.GetMiscellaneousProject();
 
         await _projectManager.UpdateAsync(updater =>
         {
@@ -189,7 +193,7 @@ public class RazorProjectServiceTest : LanguageServerTestBase
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
 
-        var miscProject = await _snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
+        var miscProject = _snapshotResolver.GetMiscellaneousProject();
 
         var project = await _projectManager.UpdateAsync(updater =>
         {
@@ -227,10 +231,6 @@ public class RazorProjectServiceTest : LanguageServerTestBase
         // Arrange
         var hostProject = new HostProject("path/to/project.csproj", "path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         var document = new HostDocument("path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
-
-        // Note: We acquire the miscellaneous project here to avoid a spurious 'ProjectAdded'
-        // notification when it would get created by UpdateProject(...) below.
-        _ = await _snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
 
         await _projectManager.UpdateAsync(updater =>
         {
@@ -502,7 +502,7 @@ public class RazorProjectServiceTest : LanguageServerTestBase
         await _projectService.AddDocumentAsync(DocumentFilePath, DisposalToken);
         await _projectService.OpenDocumentAsync(DocumentFilePath, s_emptyText, version: 42, DisposalToken);
 
-        var miscProject = await _snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
+        var miscProject = _snapshotResolver.GetMiscellaneousProject();
 
         Assert.True(_projectManager.IsDocumentOpen(DocumentFilePath));
 
@@ -589,7 +589,7 @@ public class RazorProjectServiceTest : LanguageServerTestBase
 
         await _projectService.AddDocumentAsync(DocumentFilePath, DisposalToken);
 
-        var miscProject = await _snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
+        var miscProject = _snapshotResolver.GetMiscellaneousProject();
 
         Assert.False(_projectManager.IsDocumentOpen(DocumentFilePath));
 
@@ -640,7 +640,7 @@ public class RazorProjectServiceTest : LanguageServerTestBase
 
         await _projectService.AddDocumentAsync(DocumentFilePath, DisposalToken);
 
-        var miscProject = await _snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
+        var miscProject = _snapshotResolver.GetMiscellaneousProject();
 
         using var listener = _projectManager.ListenToNotifications();
 
@@ -683,7 +683,7 @@ public class RazorProjectServiceTest : LanguageServerTestBase
         // Arrange
         const string DocumentFilePath = "document.cshtml";
 
-        var miscProject = await _snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
+        var miscProject = _snapshotResolver.GetMiscellaneousProject();
 
         using var listener = _projectManager.ListenToNotifications();
 
@@ -771,7 +771,7 @@ public class RazorProjectServiceTest : LanguageServerTestBase
         await _projectService.OpenDocumentAsync(DocumentFilePath, s_emptyText, version: 42, DisposalToken);
 
         var ownerProject = _projectManager.GetLoadedProject(ownerProjectKey);
-        var miscProject = await _snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
+        var miscProject = _snapshotResolver.GetMiscellaneousProject();
 
         Assert.True(_projectManager.IsDocumentOpen(DocumentFilePath));
 
@@ -796,7 +796,7 @@ public class RazorProjectServiceTest : LanguageServerTestBase
 
         await _projectService.AddDocumentAsync(DocumentFilePath, DisposalToken);
 
-        var miscProject = await _snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
+        var miscProject = _snapshotResolver.GetMiscellaneousProject();
 
         Assert.False(_projectManager.IsDocumentOpen(DocumentFilePath));
 
@@ -839,7 +839,7 @@ public class RazorProjectServiceTest : LanguageServerTestBase
         // Arrange
         const string DocumentFilePath = "document.cshtml";
 
-        var miscProject = await _snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
+        var miscProject = _snapshotResolver.GetMiscellaneousProject();
 
         Assert.False(_projectManager.IsDocumentOpen(DocumentFilePath));
 
@@ -926,7 +926,7 @@ public class RazorProjectServiceTest : LanguageServerTestBase
         await _projectService.AddDocumentAsync(DocumentFilePath, DisposalToken);
         await _projectService.OpenDocumentAsync(DocumentFilePath, s_emptyText, version: 42, DisposalToken);
 
-        var miscProject = await _snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
+        var miscProject = _snapshotResolver.GetMiscellaneousProject();
 
         Assert.True(_projectManager.IsDocumentOpen(DocumentFilePath));
 
@@ -1039,7 +1039,7 @@ public class RazorProjectServiceTest : LanguageServerTestBase
         const string DocumentFilePath1 = "C:/path/to/document1.cshtml";
         const string DocumentFilePath2 = "C:/path/to/document2.cshtml";
 
-        var miscProject = await _snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
+        var miscProject = _snapshotResolver.GetMiscellaneousProject();
 
         await _projectManager.UpdateAsync(updater =>
         {
@@ -1069,7 +1069,7 @@ public class RazorProjectServiceTest : LanguageServerTestBase
         const string DocumentFilePath1 = "C:/path/to/document1.cshtml";
         const string DocumentFilePath2 = "C:/path/to/document2.cshtml";
 
-        var miscProject = await _snapshotResolver.GetMiscellaneousProjectAsync(DisposalToken);
+        var miscProject = _snapshotResolver.GetMiscellaneousProject();
 
         await _projectManager.UpdateAsync(updater =>
         {

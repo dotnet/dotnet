@@ -36,7 +36,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 
 internal static class IServiceCollectionExtensions
 {
-    public static void AddLifeCycleServices(this IServiceCollection services, RazorLanguageServer razorLanguageServer, ClientConnection serverManager, ILspServerActivationTracker? lspServerActivationTracker)
+    public static void AddLifeCycleServices(this IServiceCollection services, RazorLanguageServer razorLanguageServer, ClientConnection clientConnection, ILspServerActivationTracker? lspServerActivationTracker)
     {
         services.AddHandler<RazorInitializeEndpoint>();
         services.AddHandler<RazorInitializedEndpoint>();
@@ -51,7 +51,7 @@ internal static class IServiceCollectionExtensions
 
         services.AddSingleton<ICapabilitiesProvider, RazorLanguageServerCapability>();
 
-        services.AddSingleton<IOnInitialized>(serverManager);
+        services.AddSingleton<IOnInitialized>(clientConnection);
     }
 
     public static void AddFormattingServices(this IServiceCollection services)
@@ -207,10 +207,12 @@ internal static class IServiceCollectionExtensions
 
         services.AddSingleton<RemoteTextLoaderFactory, DefaultRemoteTextLoaderFactory>();
         services.AddSingleton<ISnapshotResolver, SnapshotResolver>();
+        services.AddSingleton<IOnInitialized>(sp => (SnapshotResolver)sp.GetRequiredService<ISnapshotResolver>());
         services.AddSingleton<IRazorProjectService, RazorProjectService>();
         services.AddSingleton<IRazorStartupService, OpenDocumentGenerator>();
         services.AddSingleton<IRazorDocumentMappingService, RazorDocumentMappingService>();
         services.AddSingleton<RazorFileChangeDetectorManager>();
+        services.AddSingleton<IOnInitialized>(sp => sp.GetRequiredService<RazorFileChangeDetectorManager>());
 
         if (featureOptions.UseProjectConfigurationEndpoint)
         {

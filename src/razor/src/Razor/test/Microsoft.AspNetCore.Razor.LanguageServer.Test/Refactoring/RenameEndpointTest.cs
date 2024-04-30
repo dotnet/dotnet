@@ -24,6 +24,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
@@ -121,7 +122,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             NewName = "Component5"
         };
 
-        var documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        Assert.True(documentContextFactory.TryCreateForOpenDocument(uri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -144,7 +145,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             NewName = "Component5"
         };
 
-        var documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        Assert.True(documentContextFactory.TryCreateForOpenDocument(uri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -185,7 +186,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             NewName = "Test2"
         };
 
-        var documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        Assert.True(documentContextFactory.TryCreateForOpenDocument(uri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -208,7 +209,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             NewName = "Test2"
         };
 
-        var documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        Assert.True(documentContextFactory.TryCreateForOpenDocument(uri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -231,7 +232,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             NewName = "Test2"
         };
 
-        var documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        Assert.True(documentContextFactory.TryCreateForOpenDocument(uri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -254,7 +255,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             NewName = "Test2"
         };
 
-        var documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        Assert.True(documentContextFactory.TryCreateForOpenDocument(uri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -277,7 +278,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             NewName = "Test2"
         };
 
-        var documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        Assert.True(documentContextFactory.TryCreateForOpenDocument(uri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -300,7 +301,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             NewName = "Component5"
         };
 
-        var documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        Assert.True(documentContextFactory.TryCreateForOpenDocument(uri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -386,7 +387,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             NewName = "Component5"
         };
 
-        var documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        Assert.True(documentContextFactory.TryCreateForOpenDocument(uri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -432,7 +433,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             NewName = "Component5"
         };
 
-        var documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        Assert.True(documentContextFactory.TryCreateForOpenDocument(uri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -485,7 +486,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             NewName = "TestComponent"
         };
 
-        var documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        Assert.True(documentContextFactory.TryCreateForOpenDocument(uri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -550,7 +551,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             NewName = "Test2"
         };
 
-        var documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        Assert.True(documentContextFactory.TryCreateForOpenDocument(uri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -584,7 +585,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             NewName = "Test2"
         };
 
-        var documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument.Uri, DisposalToken);
+        Assert.True(documentContextFactory.TryCreateForOpenDocument(request.TextDocument.Uri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -612,8 +613,9 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var projectManager = CreateProjectSnapshotManager();
 
         var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
-        var documentVersionCache = new DocumentVersionCache(projectManager);
+        await snapshotResolver.OnInitializedAsync(StrictMock.Of<ILspServices>(), DisposalToken);
 
+        var documentVersionCache = new DocumentVersionCache(projectManager);
         var documentContextFactory = new DocumentContextFactory(projectManager, snapshotResolver, documentVersionCache, LoggerFactory);
 
         var remoteTextLoaderFactoryMock = new StrictMock<RemoteTextLoaderFactory>();

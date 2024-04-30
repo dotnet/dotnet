@@ -383,7 +383,7 @@ public partial class OnAutoInsertEndpointTest
                 InsertSpaces = true
             },
         };
-        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(@params.TextDocument, DisposalToken);
+        Assert.True(DocumentContextFactory.TryCreateForOpenDocument(@params.TextDocument, out var documentContext));
 
         var requestContext = await CreateOnAutoInsertRequestContextAsync(documentContext);
 

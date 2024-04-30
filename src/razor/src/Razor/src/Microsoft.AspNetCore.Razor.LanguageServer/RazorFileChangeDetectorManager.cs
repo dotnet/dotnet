@@ -7,19 +7,20 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class RazorFileChangeDetectorManager(
     WorkspaceDirectoryPathResolver workspaceDirectoryPathResolver,
-    IEnumerable<IFileChangeDetector> fileChangeDetectors) : IDisposable
+    IEnumerable<IFileChangeDetector> fileChangeDetectors) : IOnInitialized, IDisposable
 {
     private readonly WorkspaceDirectoryPathResolver _workspaceDirectoryPathResolver = workspaceDirectoryPathResolver;
     private readonly ImmutableArray<IFileChangeDetector> _fileChangeDetectors = fileChangeDetectors.ToImmutableArray();
     private readonly object _disposeLock = new();
     private bool _disposed;
 
-    public async Task InitializedAsync(CancellationToken cancellationToken)
+    public async Task OnInitializedAsync(ILspServices services, CancellationToken cancellationToken)
     {
         // Initialized request, this occurs once the server and client have agreed on what sort of features they both support. It only happens once.
 

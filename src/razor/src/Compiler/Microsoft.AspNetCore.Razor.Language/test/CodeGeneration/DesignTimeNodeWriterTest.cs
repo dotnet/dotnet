@@ -553,7 +553,7 @@ Render Children
     public void LinePragma_Enhanced_Is_Adjusted_On_Windows(string fileName, string expectedFileName)
     {
         var writer = new RuntimeNodeWriter();
-        var context = TestCodeRenderingContext.CreateDesignTime();
+        var context = TestCodeRenderingContext.CreateDesignTime(source: RazorSourceDocument.Create("", fileName));
 
         Assert.True(context.Options.RemapLinePragmaPathsOnWindows);
         Assert.True(context.Options.UseEnhancedLinePragma);
@@ -586,6 +586,8 @@ Render Children
             """,
             csharp,
             ignoreLineEndingDifferences: true);
+
+        Assert.Single(((DefaultCodeRenderingContext)context).SourceMappings);
     }
 
 
