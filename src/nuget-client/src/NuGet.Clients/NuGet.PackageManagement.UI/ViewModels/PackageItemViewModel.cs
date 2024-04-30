@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -15,6 +16,7 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Microsoft;
 using Microsoft.VisualStudio.Threading;
+using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
@@ -64,6 +66,10 @@ namespace NuGet.PackageManagement.UI
 
         public bool IncludePrerelease { get; set; }
 
+        public ImmutableList<KnownOwnerViewModel> KnownOwnerViewModels { get; internal set; }
+
+        public string Owner { get; internal set; }
+
         private string _author;
         public string Author
         {
@@ -79,11 +85,54 @@ namespace NuGet.PackageManagement.UI
             }
         }
 
+        /// <summary>
+        /// When a collection of <see cref="KnownOwnerViewModels"/> is available, this property returns the <see cref="PackageSearchMetadataContextInfo.Owners"/>
+        /// string which contains the package owner name(s).
+        /// If the collection exists but is empty, it's treated as there being no assigned owner for this package by returning an empty string.
+        /// Otherwise, when there's no collection or no Owners string, it returns null.
+        /// </summary>
+        private string ByOwner
+        {
+            get
+            {
+                // Owners is only used when we have Known Owners.
+                if (KnownOwnerViewModels == null)
+                {
+                    return null;
+                }
+
+                // Empty Known Owners is treated as there being no assigned owner for this package.
+                if (KnownOwnerViewModels.IsEmpty)
+                {
+                    return string.Empty;
+                }
+
+                // Having Known Owners but with an empty Owners string is treated as there being no assigned owner for this package.
+                if (string.IsNullOrWhiteSpace(Owner))
+                {
+                    return string.Empty;
+                }
+
+                return string.Format(CultureInfo.CurrentCulture, Resx.Text_ByOwner, Owner);
+            }
+        }
+
         public string ByAuthor
         {
             get
             {
-                return _author != null ? string.Format(CultureInfo.CurrentCulture, Resx.Text_ByAuthor, _author) : null;
+                return !string.IsNullOrWhiteSpace(_author) ? string.Format(CultureInfo.CurrentCulture, Resx.Text_ByAuthor, _author) : null;
+            }
+        }
+
+        /// <summary>
+        /// Fallback to <see cref="ByAuthor"/> only when <see cref="ByOwner"> is null.
+        /// </summary>
+        public string ByOwnerOrAuthor
+        {
+            get
+            {
+                return ByOwner ?? ByAuthor;
             }
         }
 

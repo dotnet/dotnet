@@ -4,7 +4,7 @@
   "classifications": [ "Test", "NUnit", "Playwright" ],
   "name": "NUnit Playwright Test Project",
   "generatorVersions": "[1.0.0.0-*)",
-  "description": "A project that contains Playwright tests using NUnit test framwork, that can run on .NET on Windows, Linux and MacOS.",
+  "description": "A project that contains Playwright tests using NUnit test framework, that can run on .NET on Windows, Linux and MacOS.",
   "groupIdentity": "Microsoft.Test.Playwright.NUnit",
   "precedence": "11000",
   "identity": "Microsoft.Test.Playwright.NUnit.CSharp.9.0",

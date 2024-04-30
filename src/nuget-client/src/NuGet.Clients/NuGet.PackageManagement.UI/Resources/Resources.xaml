@@ -23,6 +23,8 @@
     x:Key="EmptyEnumerableToVisibilityConverter" />
   <nuget:EnumerableToVisibilityConverter
     x:Key="EnumerableToVisibilityConverter" />
+  <nuget:LastItemToVisibilityConverter
+    x:Key="LastItemToVisibilityConverter" />
   <nuget:InverseBooleanConverter
     x:Key="InverseBooleanConverter" />
   <nuget:BooleanToGridRowHeightConverter
@@ -681,6 +683,29 @@
           Property="TextBlock.TextDecorations"
           Value="{x:Null}" />
       </Trigger>
+    </Style.Triggers>
+  </Style>
+
+  <Style x:Key="HyperlinkSelectorAware" TargetType="{x:Type Hyperlink}" BasedOn="{StaticResource {x:Static vs:VsResourceKeys.ThemedDialogHyperlinkStyleKey}}">
+    <Style.Triggers>
+      <MultiDataTrigger>
+        <MultiDataTrigger.Conditions>
+          <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}}" Value="True" />
+          <Condition Binding="{Binding (Selector.IsSelectionActive), RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}}" Value="False" />
+        </MultiDataTrigger.Conditions>
+        <Setter
+          Property="Foreground"
+          Value="{DynamicResource {x:Static nuget:Brushes.ContentInactiveSelectedTextBrushKey}}" />
+      </MultiDataTrigger>
+      <MultiDataTrigger>
+        <MultiDataTrigger.Conditions>
+          <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}}" Value="True" />
+          <Condition Binding="{Binding (Selector.IsSelectionActive), RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}}" Value="True" />
+        </MultiDataTrigger.Conditions>
+        <Setter
+          Property="Foreground"
+          Value="{DynamicResource {x:Static nuget:Brushes.ContentSelectedTextBrushKey}}" />
+      </MultiDataTrigger>
     </Style.Triggers>
   </Style>
 

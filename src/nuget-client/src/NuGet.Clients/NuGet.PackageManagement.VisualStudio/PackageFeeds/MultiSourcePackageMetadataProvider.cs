@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,9 @@ using NuGet.Packaging.Core;
 using NuGet.ProjectManagement;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
+using NuGet.Protocol.Resources;
 using NuGet.Versioning;
+using NuGet.VisualStudio.Internal.Contracts;
 
 namespace NuGet.PackageManagement.VisualStudio
 {
@@ -19,9 +22,9 @@ namespace NuGet.PackageManagement.VisualStudio
     /// Implements a consolidated metadata provider for multiple package sources 
     /// with optional local repository as a fallback metadata source.
     /// </summary>
-    public sealed class MultiSourcePackageMetadataProvider : IPackageMetadataProvider
+    public sealed class MultiSourcePackageMetadataProvider : IPackageMetadataProvider, IOwnerDetailsUriService
     {
-        private readonly IEnumerable<SourceRepository> _sourceRepositories;
+        private readonly ReadOnlyCollection<SourceRepository> _sourceRepositories;
         private readonly SourceRepository _localRepository;
         private readonly IEnumerable<SourceRepository> _globalLocalRepositories;
         private readonly Common.ILogger _logger;
@@ -37,7 +40,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 throw new ArgumentNullException(nameof(sourceRepositories));
             }
 
-            _sourceRepositories = sourceRepositories;
+            _sourceRepositories = new ReadOnlyCollection<SourceRepository>(sourceRepositories.ToList());
 
             _localRepository = optionalLocalRepository;
 
@@ -53,21 +56,63 @@ namespace NuGet.PackageManagement.VisualStudio
 
         public async Task<IPackageSearchMetadata> GetPackageMetadataForIdentityAsync(PackageIdentity identity, CancellationToken cancellationToken)
         {
-            List<Task<IPackageSearchMetadata>> tasks = _sourceRepositories
-                .Select(r => GetMetadataTaskSafeAsync(() => r.GetPackageMetadataForIdentityAsync(identity, cancellationToken)))
-                .ToList();
+            List<Task<IPackageSearchMetadata>> tasks = new List<Task<IPackageSearchMetadata>>(capacity: _sourceRepositories.Count);
+            foreach (var sourceRepository in _sourceRepositories)
+            {
+                tasks.Add(GetMetadataTaskSafeAsync(() => sourceRepository.GetPackageMetadataForIdentityAsync(identity, cancellationToken)));
+            }
 
             return await GetPackageMetadataAsync(identity, tasks, cancellationToken);
         }
 
         public async Task<IPackageSearchMetadata> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
-            List<Task<IPackageSearchMetadata>> tasks = _sourceRepositories
-                .Select(r => GetMetadataTaskSafeAsync(() => r.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken)))
-                .ToList();
+            List<Task<IPackageSearchMetadata>> tasks = new List<Task<IPackageSearchMetadata>>(capacity: _sourceRepositories.Count);
+            foreach (var sourceRepository in _sourceRepositories)
+            {
+                tasks.Add(GetMetadataTaskSafeAsync(() => sourceRepository.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken)));
+            }
 
             return await GetPackageMetadataAsync(identity, tasks, cancellationToken);
         }
+
+        private OwnerDetailsUriTemplateResourceV3 _ownerDetailsUriTemplateResource;
+
+        private bool? _supportsKnownOwners;
+        public bool SupportsKnownOwners
+        {
+            get
+            {
+                if (_supportsKnownOwners.HasValue)
+                {
+                    return _supportsKnownOwners.Value;
+                }
+
+                // Currently, the Owner Details resource is only utilized for a single selected package source.
+                if (_sourceRepositories.Count == 1)
+                {
+                    _ownerDetailsUriTemplateResource = _sourceRepositories[0].GetResource<OwnerDetailsUriTemplateResourceV3>(CancellationToken.None);
+                    _supportsKnownOwners = _ownerDetailsUriTemplateResource != null;
+                }
+                else
+                {
+                    _supportsKnownOwners = false;
+                }
+
+                return _supportsKnownOwners.Value;
+            }
+        }
+
+        public Uri GetOwnerDetailsUri(string ownerName)
+        {
+            if (!SupportsKnownOwners)
+            {
+                return null;
+            }
+
+            return _ownerDetailsUriTemplateResource.GetUri(ownerName);
+        }
+
 
         public async Task<IPackageSearchMetadata> GetLatestPackageMetadataAsync(
             PackageIdentity identity,

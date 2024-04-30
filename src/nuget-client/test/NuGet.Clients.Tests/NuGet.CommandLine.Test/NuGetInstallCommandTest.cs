@@ -854,6 +854,35 @@ namespace NuGet.CommandLine.Test
             }
         }
 
+        [Fact]
+        public void InstallCommand_ExcludeVersion_HigherVersionAlreadyInstalled()
+        {
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var outputDirectory = pathContext.SolutionRoot;
+                var source = pathContext.PackageSource;
+                // Arrange
+                PackageCreator.CreatePackage("testPackage", "1.2.0", source);
+                PackageCreator.CreatePackage("testPackage", "1.1.0", source);
+
+                // Act
+                var r = RunInstall(pathContext, "testPackage", 0, new[] { "-OutputDirectory", outputDirectory, "-ExcludeVersion", "-Version", "1.2.0" });
+
+                // Assert
+                Assert.Equal(0, r.ExitCode);
+
+                // Act
+                var result = RunInstall(pathContext, "testPackage", 0, new[] { "-OutputDirectory", outputDirectory, "-ExcludeVersion", "-Version", "1.1.0" });
+
+                var output = result.Output;
+
+                // Assert
+                var alreadyInstalledMessage = string.Format(CultureInfo.CurrentCulture, NuGetResources.InstallCommandHigherVersionAlreadyExists, "testPackage.1.1.0", "testPackage.1.2.0");
+                Assert.Contains(alreadyInstalledMessage, output, StringComparison.OrdinalIgnoreCase);
+                r.ExitCode.Should().Be(0);
+            }
+        }
+
         // Test that PackageSaveMode specified in nuget.config file is used.
         [Fact]
         public void InstallCommand_PackageSaveModeInConfigFile()

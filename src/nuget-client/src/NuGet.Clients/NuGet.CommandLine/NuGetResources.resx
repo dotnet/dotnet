@@ -303,6 +303,9 @@
   <data name="InstallCommandPackageAlreadyExists" xml:space="preserve">
     <value>Package "{0}" is already installed.</value>
   </data>
+  <data name="InstallCommandHigherVersionAlreadyExists" xml:space="preserve">
+    <value>Skipping installation of package "{0}" because higher version "{1}" is already installed.</value>
+  </data>
   <data name="PackageCommandNoFilesForLibPackage" xml:space="preserve">
     <value>Failed to build package. Ensure '{0}' includes assembly files. For help on building symbols package, visit {1}.</value>
   </data>
