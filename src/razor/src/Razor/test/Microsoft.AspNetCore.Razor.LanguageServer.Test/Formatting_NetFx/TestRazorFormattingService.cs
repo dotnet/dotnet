@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Moq;
@@ -21,7 +20,6 @@ internal static class TestRazorFormattingService
 {
     public static async Task<IRazorFormattingService> CreateWithFullSupportAsync(
         ILoggerFactory loggerFactory,
-        ProjectSnapshotManagerDispatcher dispatcher,
         RazorCodeDocument? codeDocument = null,
         IDocumentSnapshot? documentSnapshot = null,
         RazorLSPOptions? razorLSPOptions = null)
@@ -35,10 +33,7 @@ internal static class TestRazorFormattingService
         var versionCache = new DocumentVersionCache(projectManager);
         if (documentSnapshot is not null)
         {
-            await dispatcher.RunAsync(() =>
-            {
-                versionCache.TrackDocumentVersion(documentSnapshot, version: 1);
-            }, CancellationToken.None);
+            versionCache.TrackDocumentVersion(documentSnapshot, version: 1);
         }
 
         var client = new FormattingLanguageServerClient(loggerFactory);

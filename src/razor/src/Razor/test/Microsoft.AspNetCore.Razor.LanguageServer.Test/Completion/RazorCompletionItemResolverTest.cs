@@ -31,13 +31,14 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
         : base(testOutput)
     {
         var snapshotResolver = new TestSnapshotResolver();
+
         _lspTagHelperTooltipFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
         _vsLspTagHelperTooltipFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
         _completionCapability = new VSInternalCompletionSetting()
         {
             CompletionItem = new CompletionItemSetting()
             {
-                DocumentationFormat = new[] { MarkupKind.PlainText, MarkupKind.Markdown },
+                DocumentationFormat = [MarkupKind.PlainText, MarkupKind.Markdown],
             }
         };
 
@@ -59,9 +60,9 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
         };
 
         var attributeDescriptionInfo = new BoundAttributeDescriptionInfo("System.DateTime", "System.DateTime", "DateTime", "Returns the time.");
-        _attributeDescription = new AggregateBoundAttributeDescription(ImmutableArray.Create(attributeDescriptionInfo));
+        _attributeDescription = new AggregateBoundAttributeDescription([attributeDescriptionInfo]);
         var elementDescriptionInfo = new BoundElementDescriptionInfo("System.SomeTagHelper", "This is some TagHelper.");
-        _elementDescription = new AggregateBoundElementDescription(ImmutableArray.Create(elementDescriptionInfo));
+        _elementDescription = new AggregateBoundElementDescription([elementDescriptionInfo]);
     }
 
     [Fact]

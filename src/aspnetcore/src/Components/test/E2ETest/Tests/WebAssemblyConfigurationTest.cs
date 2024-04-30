@@ -27,7 +27,7 @@ public class WebAssemblyConfigurationTest : ServerTestBase<BlazorWasmTestAppFixt
     {
         base.InitializeAsyncCore();
 
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: false);
         _appElement = Browser.MountTestComponent<ConfigurationComponent>();
     }
 

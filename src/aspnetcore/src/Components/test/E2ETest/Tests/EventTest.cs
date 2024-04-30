@@ -26,7 +26,7 @@ public class EventTest : ServerTestBase<ToggleExecutionModeServerFixture<Program
 
     protected override void InitializeAsyncCore()
     {
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: true);
     }
 
     [Fact]

@@ -39,7 +39,7 @@ public class ProjectContextsEndpointTest(ITestOutputHelper testOutput) : SingleS
             }
         };
 
-        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument.Uri, DisposalToken);
+        Assert.True(DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument.Uri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         var results = await endpoint.HandleRequestAsync(request, requestContext, default);

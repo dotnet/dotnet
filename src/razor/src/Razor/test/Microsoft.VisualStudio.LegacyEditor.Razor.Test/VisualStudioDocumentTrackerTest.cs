@@ -172,10 +172,7 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
         };
 
         // Act
-        await RunOnDispatcherAsync(() =>
-        {
-            _documentTracker.ProjectManager_Changed(_projectManager, e);
-        });
+        _documentTracker.ProjectManager_Changed(_projectManager, e);
 
         // Assert
         Assert.True(called);
@@ -201,10 +198,7 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
         };
 
         // Act
-        await RunOnDispatcherAsync(() =>
-        {
-            _documentTracker.ProjectManager_Changed(_projectManager, e);
-        });
+        _documentTracker.ProjectManager_Changed(_projectManager, e);
 
         // Assert
         Assert.True(called);
@@ -238,10 +232,7 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
         };
 
         // Act
-        await RunOnDispatcherAsync(() =>
-        {
-            _documentTracker.ProjectManager_Changed(_projectManager, e);
-        });
+        _documentTracker.ProjectManager_Changed(_projectManager, e);
 
         // Assert
         Assert.True(called);
@@ -262,10 +253,7 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
         _documentTracker.ContextChanged += (sender, args) => called = true;
 
         // Act
-        await RunOnDispatcherAsync(() =>
-        {
-            _documentTracker.ProjectManager_Changed(_projectManager, e);
-        });
+        _documentTracker.ProjectManager_Changed(_projectManager, e);
 
         // Assert
         Assert.False(called);

@@ -106,7 +106,7 @@ public class WebAssemblyICUShardingTest : ServerTestBase<ToggleExecutionModeServ
     {
         // Arrange
         // This verifies that we complain if the app programtically configures a language.
-        Navigate($"{ServerPathBase}/?culture=fr&dotNetCulture=es");
+        Navigate($"{ServerPathBase}/?culture=fr&dotNetCulture=es", noReload: false);
 
         var errorUi = Browser.Exists(By.Id("blazor-error-ui"));
         Browser.Equal("block", () => errorUi.GetCssValue("display"));
@@ -119,6 +119,6 @@ public class WebAssemblyICUShardingTest : ServerTestBase<ToggleExecutionModeServ
 
     private void Initialize(CultureInfo culture)
     {
-        Navigate($"{ServerPathBase}/?culture={culture}");
+        Navigate($"{ServerPathBase}/?culture={culture}", noReload: false);
     }
 }

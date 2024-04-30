@@ -128,10 +128,12 @@ namespace NuGet.PackageManagement.VisualStudio
             return (new[] { packageSpec }, null);
         }
 
-        private async Task<Dictionary<string, CentralPackageVersion>> GetCentralPackageVersionsAsync()
+        private Dictionary<string, CentralPackageVersion> GetCentralPackageVersions()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             IEnumerable<(string PackageId, string Version)> packageVersions =
-                        (await _vsProjectAdapter.GetBuildItemInformationAsync(ProjectBuildProperties.PackageVersion, ProjectBuildProperties.Version))
+                        _vsProjectAdapter.GetBuildItemInformation(ProjectBuildProperties.PackageVersion, ProjectBuildProperties.Version)
                         .Select(item => (PackageId: item.ItemId, Version: item.ItemMetadata.FirstOrDefault()));
 
             return packageVersions
@@ -154,6 +156,57 @@ namespace NuGet.PackageManagement.VisualStudio
             }
 
             return new CentralPackageVersion(packageId, VersionRange.Parse(version));
+        }
+
+        private RestoreAuditProperties GetRestoreAuditProperties()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            string enableAudit = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.NuGetAudit);
+            string auditLevel = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.NuGetAuditLevel);
+            string auditMode = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.NuGetAuditMode);
+            HashSet<string> suppressedAdvisories = GetSuppressedAdvisories();
+
+            return new RestoreAuditProperties()
+            {
+                EnableAudit = enableAudit,
+                AuditLevel = auditLevel,
+                AuditMode = auditMode,
+                SuppressedAdvisories = suppressedAdvisories,
+            };
+        }
+
+        private HashSet<string> GetSuppressedAdvisories()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            IEnumerable<(string ItemId, string[] ItemMetadata)> buildItems = _vsProjectAdapter.GetBuildItemInformation(ProjectBuildProperties.NuGetAuditSuppress);
+            if (buildItems is null)
+            {
+                return null;
+            }
+            else if (buildItems is ICollection<(string, string[])> collection)
+            {
+                if (collection.Count == 0) return null;
+
+                var suppressedAdvisories = new HashSet<string>(collection.Count, StringComparer.OrdinalIgnoreCase);
+                foreach ((string itemId, _) in buildItems.NoAllocEnumerate())
+                {
+                    suppressedAdvisories.Add(itemId);
+                }
+
+                return suppressedAdvisories;
+            }
+            else
+            {
+                var suppressedAdvisories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach ((string itemId, _) in buildItems.NoAllocEnumerate())
+                {
+                    suppressedAdvisories.Add(itemId);
+                }
+
+                return suppressedAdvisories.Count == 0 ? null : suppressedAdvisories;
+            }
         }
 
         #endregion
@@ -396,7 +449,7 @@ namespace NuGet.PackageManagement.VisualStudio
             if (isCpvmEnabled)
             {
                 // Add the central version information and merge the information to the package reference dependencies
-                projectTfi.CentralPackageVersions.AddRange(await GetCentralPackageVersionsAsync());
+                projectTfi.CentralPackageVersions.AddRange(GetCentralPackageVersions());
                 LibraryDependency.ApplyCentralVersionInformation(projectTfi.Dependencies, projectTfi.CentralPackageVersions);
             }
 
@@ -441,17 +494,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 }
             }
 
-            string enableAudit = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.NuGetAudit);
-            string auditLevel = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.NuGetAuditLevel);
-            string auditMode = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.NuGetAuditMode);
-            RestoreAuditProperties auditProperties = !string.IsNullOrEmpty(enableAudit) || !string.IsNullOrEmpty(auditLevel)
-                ? new RestoreAuditProperties()
-                {
-                    EnableAudit = enableAudit,
-                    AuditLevel = auditLevel,
-                    AuditMode = auditMode,
-                }
-                : null;
+            RestoreAuditProperties auditProperties = GetRestoreAuditProperties();
 
             var msbuildProjectExtensionsPath = await GetMSBuildProjectExtensionsPathAsync();
 

@@ -12,30 +12,31 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
 internal static class ISnapshotResolverExtensions
 {
-    public static async Task<ImmutableArray<IProjectSnapshot>> TryResolveAllProjectsAsync(
+    public static bool TryResolveAllProjects(
         this ISnapshotResolver snapshotResolver,
         string documentFilePath,
-        CancellationToken cancellationToken)
+        out ImmutableArray<IProjectSnapshot> projects)
     {
         var potentialProjects = snapshotResolver.FindPotentialProjects(documentFilePath);
 
-        using var projects = new PooledArrayBuilder<IProjectSnapshot>(capacity: potentialProjects.Length);
+        using var builder = new PooledArrayBuilder<IProjectSnapshot>(capacity: potentialProjects.Length);
 
         foreach (var project in potentialProjects)
         {
             if (project.GetDocument(documentFilePath) is not null)
             {
-                projects.Add(project);
+                builder.Add(project);
             }
         }
 
         var normalizedDocumentPath = FilePathNormalizer.Normalize(documentFilePath);
-        var miscProject = await snapshotResolver.GetMiscellaneousProjectAsync(cancellationToken).ConfigureAwait(false);
+        var miscProject = snapshotResolver.GetMiscellaneousProject();
         if (miscProject.GetDocument(normalizedDocumentPath) is not null)
         {
-            projects.Add(miscProject);
+            builder.Add(miscProject);
         }
 
-        return projects.DrainToImmutable();
+        projects = builder.DrainToImmutable();
+        return projects.Length > 0;
     }
 }

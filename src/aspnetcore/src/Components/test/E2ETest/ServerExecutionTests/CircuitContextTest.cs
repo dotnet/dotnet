@@ -24,7 +24,7 @@ public class CircuitContextTest : ServerTestBase<BasicTestAppServerSiteFixture<S
 
     protected override void InitializeAsyncCore()
     {
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: false);
         Browser.MountTestComponent<CircuitContextComponent>();
         Browser.Equal("Circuit Context", () => Browser.Exists(By.TagName("h1")).Text);
     }

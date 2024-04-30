@@ -75,6 +75,7 @@
     <FrameworkListFileClass Include="PresentationFramework.Aero2.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationFramework.AeroLite.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationFramework.Classic.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="PresentationFramework.Fluent.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationFramework.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationFramework.resources.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationFramework.Luna.dll" Profile="WPF" />

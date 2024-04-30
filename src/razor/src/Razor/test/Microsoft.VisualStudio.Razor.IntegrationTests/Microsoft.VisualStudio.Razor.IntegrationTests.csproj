@@ -20,6 +20,11 @@
       <PrivateAssets>All</PrivateAssets>
       <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\Microsoft.VisualStudio.RazorExtension\Microsoft.VisualStudio.RazorExtension.csproj">
+      <PrivateAssets>All</PrivateAssets>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\RazorDeployment\RazorDeployment.csproj" Private="False" Condition="'$(BuildDependencyVsix)' == 'true'">
       <PrivateAssets>All</PrivateAssets>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
@@ -45,8 +50,8 @@
       import the package ourselves, but as an implicit definition to stop Nuget complaining.
       TL;DR: MSBuild was designed to cause pain.
     -->
-    <PackageReference Include="xunit.runner.console" Version="$(XUnitRunnerConsoleVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true"/>
-    <PackageReference Include="xunit.runner.visualstudio" Version="$(XUnitRunnerVisualStudioVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true"/>
+    <PackageReference Include="xunit.runner.console" Version="$(XUnitRunnerConsoleVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="$(XUnitRunnerVisualStudioVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
   </ItemGroup>
 
   <ItemGroup>

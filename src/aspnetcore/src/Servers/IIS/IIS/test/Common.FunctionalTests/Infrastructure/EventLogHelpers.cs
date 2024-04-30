@@ -79,7 +79,7 @@ public class EventLogHelpers
         return string.Join(",", entries.Select(e => e.Message));
     }
 
-    internal static IEnumerable<EventLogEntry> GetEntries(IISDeploymentResult deploymentResult)
+    private static IEnumerable<EventLogEntry> GetEntries(IISDeploymentResult deploymentResult)
     {
         var eventLog = new EventLog("Application");
 
@@ -162,16 +162,9 @@ public class EventLogHelpers
         }
     }
 
-    public static string ShutdownMessage(IISDeploymentResult deploymentResult)
+    public static string InProcessShutdown()
     {
-        if (deploymentResult.DeploymentParameters.HostingModel == HostingModel.InProcess)
-        {
-            return "Application 'MACHINE/WEBROOT/APPHOST/.*?' has shutdown.";
-        }
-        else
-        {
-            return "Application '/LM/W3SVC/1/ROOT' with physical root '.*?' shut down process with Id '.*?' listening on port '.*?'";
-        }
+        return "Application 'MACHINE/WEBROOT/APPHOST/.*?' has shutdown.";
     }
 
     public static string ShutdownFileChange(IISDeploymentResult deploymentResult)

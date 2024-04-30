@@ -81,6 +81,7 @@ namespace NuGet.Protocol.Core.Types
                 yield return new Lazy<INuGetResourceProvider>(() => new PluginResourceProvider());
                 yield return new Lazy<INuGetResourceProvider>(() => new RepositorySignatureResourceProvider());
                 yield return new Lazy<INuGetResourceProvider>(() => new VulnerabilityInfoResourceV3Provider());
+                yield return new Lazy<INuGetResourceProvider>(() => new OwnerDetailsUriResourceV3Provider());
 
                 // Local repository providers
                 yield return new Lazy<INuGetResourceProvider>(() => new FindLocalPackagesResourceUnzippedProvider());

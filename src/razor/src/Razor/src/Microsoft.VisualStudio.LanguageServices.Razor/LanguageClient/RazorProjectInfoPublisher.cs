@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
@@ -26,7 +27,7 @@ internal class RazorProjectInfoPublisher : IRazorStartupService
     internal bool _active;
 
     private const string TempFileExt = ".temp";
-    private readonly RazorLogger _logger;
+    private readonly ILogger _logger;
     private readonly LSPEditorFeatureDetector _lspEditorFeatureDetector;
     private readonly IProjectSnapshotManager _projectManager;
     private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore;
@@ -41,7 +42,7 @@ internal class RazorProjectInfoPublisher : IRazorStartupService
         LSPEditorFeatureDetector lSPEditorFeatureDetector,
         IProjectSnapshotManager projectManager,
         ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
-        RazorLogger logger)
+        ILoggerFactory loggerFactory)
     {
         DeferredPublishTasks = new Dictionary<string, Task>(FilePathComparer.Instance);
         _pendingProjectPublishes = new Dictionary<ProjectKey, IProjectSnapshot>();
@@ -50,7 +51,7 @@ internal class RazorProjectInfoPublisher : IRazorStartupService
 
         _lspEditorFeatureDetector = lSPEditorFeatureDetector;
         _projectConfigurationFilePathStore = projectConfigurationFilePathStore;
-        _logger = logger;
+        _logger = loggerFactory.GetOrCreateLogger<RazorProjectInfoPublisher>();
 
         _projectManager = projectManager;
         _projectManager.Changed += ProjectManager_Changed;

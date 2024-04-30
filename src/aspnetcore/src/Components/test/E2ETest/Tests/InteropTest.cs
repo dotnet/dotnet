@@ -23,7 +23,7 @@ public class InteropTest : ServerTestBase<ToggleExecutionModeServerFixture<Progr
 
     protected override void InitializeAsyncCore()
     {
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: true);
         Browser.MountTestComponent<InteropComponent>();
     }
 

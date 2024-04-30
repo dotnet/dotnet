@@ -25,7 +25,7 @@ public class FormsTest : ServerTestBase<ToggleExecutionModeServerFixture<Program
     protected override void InitializeAsyncCore()
     {
         // On WebAssembly, page reloads are expensive so skip if possible
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: _serverFixture.ExecutionMode == ExecutionMode.Client);
     }
 
     protected virtual IWebElement MountSimpleValidationComponent()

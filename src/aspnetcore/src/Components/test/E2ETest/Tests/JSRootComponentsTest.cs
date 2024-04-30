@@ -25,7 +25,7 @@ public class JSRootComponentsTest : ServerTestBase<ToggleExecutionModeServerFixt
 
     protected override void InitializeAsyncCore()
     {
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: false);
         app = Browser.MountTestComponent<JavaScriptRootComponents>();
     }
 

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -47,6 +48,7 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
         _projectManager = CreateProjectSnapshotManager();
 
         var snapshotResolver = new SnapshotResolver(_projectManager, LoggerFactory);
+        await snapshotResolver.OnInitializedAsync(StrictMock.Of<ILspServices>(), DisposalToken);
         var documentVersionCache = new DocumentVersionCache(_projectManager);
 
         var remoteTextLoaderFactoryMock = new StrictMock<RemoteTextLoaderFactory>();
@@ -62,7 +64,7 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
                 return textLoaderMock.Object;
             });
 
-        var projectService = new RazorProjectService(
+        var projectService = new TestRazorProjectService(
             remoteTextLoaderFactoryMock.Object,
             snapshotResolver,
             documentVersionCache,
@@ -77,10 +79,10 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
             displayName: "",
             DisposalToken);
 
-        await projectService.AddDocumentAsync(s_componentFilePath1, DisposalToken);
+        await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath1, DisposalToken);
         await projectService.UpdateDocumentAsync(s_componentFilePath1, SourceText.From(""), version: 1, DisposalToken);
 
-        await projectService.AddDocumentAsync(s_componentFilePath2, DisposalToken);
+        await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath2, DisposalToken);
         await projectService.UpdateDocumentAsync(s_componentFilePath2, SourceText.From("@namespace Test"), version: 1, DisposalToken);
 
         await projectService.AddProjectAsync(
@@ -91,7 +93,7 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
             displayName: "",
             DisposalToken);
 
-        await projectService.AddDocumentAsync(s_componentFilePath3, DisposalToken);
+        await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath3, DisposalToken);
         await projectService.UpdateDocumentAsync(s_componentFilePath3, SourceText.From(""), version: 1, DisposalToken);
     }
 

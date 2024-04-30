@@ -212,18 +212,18 @@ namespace NuGet.PackageManagement.VisualStudio
             return NuGetFramework.UnsupportedFramework;
         }
 
-        public async Task<IEnumerable<(string ItemId, string[] ItemMetadata)>> GetBuildItemInformationAsync(string itemName, params string[] metadataNames)
+        public IEnumerable<(string ItemId, string[] ItemMetadata)> GetBuildItemInformation(string itemName, params string[] metadataNames)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (itemName == null)
             {
                 throw new ArgumentNullException(nameof(itemName));
             }
             if (metadataNames == null)
             {
-                throw new ArgumentNullException(nameof(itemName));
+                throw new ArgumentNullException(nameof(metadataNames));
             }
-
-            await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             var itemStorage = VsHierarchy as IVsBuildItemStorage;
             if (itemStorage != null)

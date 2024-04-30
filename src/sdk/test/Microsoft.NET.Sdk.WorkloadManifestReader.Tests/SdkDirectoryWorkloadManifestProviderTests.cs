@@ -552,8 +552,7 @@ namespace ManifestReaderTests
 }
 """);
 
-            var manifestProvider = new SdkDirectoryWorkloadManifestProvider(sdkRootPath: _fakeDotnetRootDirectory, sdkVersion: "8.0.200", userProfileDir: null, globalJsonPath: globalJsonPath);
-            var ex = Assert.Throws<FileNotFoundException>(() => manifestProvider.GetManifests());
+            var ex = Assert.Throws<FileNotFoundException>(() => new SdkDirectoryWorkloadManifestProvider(sdkRootPath: _fakeDotnetRootDirectory, sdkVersion: "8.0.200", userProfileDir: null, globalJsonPath: globalJsonPath));
             ex.Message.Should().Be(string.Format(Strings.WorkloadVersionFromGlobalJsonNotFound, "8.0.201", globalJsonPath));
         }
 

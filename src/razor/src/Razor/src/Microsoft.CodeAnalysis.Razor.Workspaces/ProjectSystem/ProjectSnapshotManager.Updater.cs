@@ -53,7 +53,7 @@ internal partial class ProjectSnapshotManager
         public void ProjectConfigurationChanged(HostProject project)
             => instance.ProjectConfigurationChanged(project);
 
-        public void ProjectWorkspaceStateChanged(ProjectKey projectKey, ProjectWorkspaceState? projectWorkspaceState)
+        public void ProjectWorkspaceStateChanged(ProjectKey projectKey, ProjectWorkspaceState projectWorkspaceState)
             => instance.ProjectWorkspaceStateChanged(projectKey, projectWorkspaceState);
 
         public void SolutionOpened()

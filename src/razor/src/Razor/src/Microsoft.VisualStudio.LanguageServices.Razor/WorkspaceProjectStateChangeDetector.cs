@@ -40,6 +40,16 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
         IProjectSnapshotManager projectManager,
         LanguageServerFeatureOptions options,
         IWorkspaceProvider workspaceProvider)
+        : this(generator, projectManager, options, workspaceProvider, s_delay)
+    {
+    }
+
+    public WorkspaceProjectStateChangeDetector(
+        IProjectWorkspaceStateGenerator generator,
+        IProjectSnapshotManager projectManager,
+        LanguageServerFeatureOptions options,
+        IWorkspaceProvider workspaceProvider,
+        TimeSpan delay)
     {
         _generator = generator;
         _projectManager = projectManager;
@@ -47,7 +57,7 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
 
         _disposeTokenSource = new();
         _workQueue = new AsyncBatchingWorkQueue<(Project?, IProjectSnapshot)>(
-            s_delay,
+            delay,
             ProcessBatchAsync,
             _disposeTokenSource.Token);
 

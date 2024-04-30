@@ -28,7 +28,7 @@ public class StartupErrorNotificationTest : ServerTestBase<BlazorWasmTestAppFixt
     {
         var url = $"{ServerPathBase}?error={(errorIsAsync ? "async" : "sync")}";
 
-        Navigate(url);
+        Navigate(url, noReload: true);
         var errorUiElem = Browser.Exists(By.Id("blazor-error-ui"), TimeSpan.FromSeconds(10));
         Assert.NotNull(errorUiElem);
 

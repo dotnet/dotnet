@@ -24,7 +24,7 @@ public class SectionsWithCascadingParametersTest : ServerTestBase<ToggleExecutio
 
     protected override void InitializeAsyncCore()
     {
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: _serverFixture.ExecutionMode == ExecutionMode.Client);
         Browser.MountTestComponent<BasicTestApp.SectionsTest.SectionsWithCascadingParameters>();
     }
 

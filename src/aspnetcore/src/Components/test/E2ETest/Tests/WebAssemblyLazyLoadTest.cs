@@ -28,7 +28,7 @@ public class WebAssemblyLazyLoadTest : ServerTestBase<ToggleExecutionModeServerF
 
     protected override void InitializeAsyncCore()
     {
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: false);
         Browser.MountTestComponent<TestRouterWithLazyAssembly>();
         Browser.Exists(By.Id("blazor-error-ui"));
 

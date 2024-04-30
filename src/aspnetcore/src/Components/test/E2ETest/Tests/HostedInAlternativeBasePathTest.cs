@@ -24,7 +24,7 @@ public class HostedInAlternativeBasePathTest : ServerTestBase<AspNetSiteServerFi
 
     protected override void InitializeAsyncCore()
     {
-        Navigate("/app/");
+        Navigate("/app/", noReload: true);
         WaitUntilLoaded();
     }
 

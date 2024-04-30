@@ -124,7 +124,6 @@ namespace Microsoft.DotNet.Cli
             command.Subcommands.Add(WorkloadRestoreCommandParser.GetCommand());
             command.Subcommands.Add(WorkloadCleanCommandParser.GetCommand());
             command.Subcommands.Add(WorkloadElevateCommandParser.GetCommand());
-            command.Subcommands.Add(WorkloadConfigCommandParser.GetCommand());
 
             command.Validators.Add(commandResult =>
             {

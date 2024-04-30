@@ -24,7 +24,7 @@ public class EventCustomArgsTest : ServerTestBase<ToggleExecutionModeServerFixtu
     protected override void InitializeAsyncCore()
     {
         // Always do a full page reload because these tests need to start with no custom event registrations
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: false);
         Browser.MountTestComponent<EventCustomArgsComponent>();
     }
 

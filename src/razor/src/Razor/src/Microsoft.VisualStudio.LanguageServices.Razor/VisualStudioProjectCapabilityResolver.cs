@@ -3,27 +3,17 @@
 
 using System;
 using System.ComponentModel.Composition;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Microsoft.VisualStudio.Razor;
 
 [Export(typeof(ProjectCapabilityResolver))]
-internal class VisualStudioProjectCapabilityResolver : ProjectCapabilityResolver
+[method: ImportingConstructor]
+internal class VisualStudioProjectCapabilityResolver(ILoggerFactory loggerFactory) : ProjectCapabilityResolver
 {
-    private readonly RazorLogger _razorLogger;
-
-    [ImportingConstructor]
-    public VisualStudioProjectCapabilityResolver(RazorLogger razorLogger)
-    {
-        if (razorLogger is null)
-        {
-            throw new ArgumentNullException(nameof(razorLogger));
-        }
-
-        _razorLogger = razorLogger;
-    }
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<VisualStudioProjectCapabilityResolver>();
 
     public override bool HasCapability(object project, string capability)
     {
@@ -49,13 +39,13 @@ internal class VisualStudioProjectCapabilityResolver : ProjectCapabilityResolver
         {
             // IsCapabilityMatch throws a NotSupportedException if it can't create a
             // BooleanSymbolExpressionEvaluator COM object
-            _razorLogger.LogWarning("Could not resolve project capability for hierarchy due to NotSupportedException.");
+            _logger.LogWarning($"Could not resolve project capability for hierarchy due to NotSupportedException.");
             return false;
         }
         catch (ObjectDisposedException)
         {
             // IsCapabilityMatch throws an ObjectDisposedException if the underlying hierarchy has been disposed
-            _razorLogger.LogWarning("Could not resolve project capability for hierarchy due to hierarchy being disposed.");
+            _logger.LogWarning($"Could not resolve project capability for hierarchy due to hierarchy being disposed.");
             return false;
         }
     }

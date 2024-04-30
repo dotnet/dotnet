@@ -3,7 +3,7 @@
 
 using System;
 using System.IO;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.Razor.Extensions;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -15,7 +15,7 @@ internal class VisualStudioFileChangeTracker : IFileChangeTracker, IVsFreeThread
 {
     private const _VSFILECHANGEFLAGS FileChangeFlags = _VSFILECHANGEFLAGS.VSFILECHG_Time | _VSFILECHANGEFLAGS.VSFILECHG_Size | _VSFILECHANGEFLAGS.VSFILECHG_Del | _VSFILECHANGEFLAGS.VSFILECHG_Add;
 
-    private readonly IErrorReporter _errorReporter;
+    private readonly ILogger _logger;
     private readonly IVsAsyncFileChangeEx _fileChangeService;
     private readonly JoinableTaskContext _joinableTaskContext;
 
@@ -32,7 +32,7 @@ internal class VisualStudioFileChangeTracker : IFileChangeTracker, IVsFreeThread
 
     public VisualStudioFileChangeTracker(
         string filePath,
-        IErrorReporter errorReporter,
+        ILoggerFactory loggerFactory,
         IVsAsyncFileChangeEx fileChangeService,
         JoinableTaskContext joinableTaskContext)
     {
@@ -42,7 +42,7 @@ internal class VisualStudioFileChangeTracker : IFileChangeTracker, IVsFreeThread
         }
 
         FilePath = filePath;
-        _errorReporter = errorReporter;
+        _logger = loggerFactory.GetOrCreateLogger<VisualStudioFileChangeTracker>();
         _fileChangeService = fileChangeService;
         _joinableTaskContext = joinableTaskContext;
     }
@@ -79,7 +79,7 @@ internal class VisualStudioFileChangeTracker : IFileChangeTracker, IVsFreeThread
                 catch (Exception exception)
                 {
                     // Don't explode on actual exceptions, just report gracefully.
-                    _errorReporter.ReportError(exception);
+                    _logger.LogError(exception);
                 }
 
                 return VSConstants.VSCOOKIE_NIL;
@@ -117,10 +117,10 @@ internal class VisualStudioFileChangeTracker : IFileChangeTracker, IVsFreeThread
                 {
                     // Don't report PathTooLongExceptions but don't fault either.
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
                     // Don't explode on actual exceptions, just report gracefully.
-                    _errorReporter.ReportError(exception);
+                    _logger.LogError(ex);
                 }
             });
         }

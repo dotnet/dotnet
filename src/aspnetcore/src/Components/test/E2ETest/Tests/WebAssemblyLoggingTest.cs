@@ -22,7 +22,7 @@ public class WebAssemblyLoggingTest : ServerTestBase<ToggleExecutionModeServerFi
 
     protected override void InitializeAsyncCore()
     {
-        Navigate(ServerPathBase);
+        Navigate(ServerPathBase, noReload: false);
         Browser.MountTestComponent<ErrorComponent>();
         Browser.Exists(By.Id("blazor-error-ui"));
 

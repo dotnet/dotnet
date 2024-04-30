@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Host;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -42,7 +41,6 @@ internal class RazorLanguageServerClient(
     ILoggerFactory loggerFactory,
     RazorLogHubTraceProvider traceProvider,
     LanguageServerFeatureOptions languageServerFeatureOptions,
-    ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
     ILanguageClientBroker languageClientBroker,
     ILanguageServiceBroker2 languageServiceBroker,
     ITelemetryReporter telemetryReporter,
@@ -63,7 +61,6 @@ internal class RazorLanguageServerClient(
     private readonly RazorProjectInfoEndpointPublisher _projectInfoEndpointPublisher = projectInfoEndpointPublisher ?? throw new ArgumentNullException(nameof(projectInfoEndpointPublisher));
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
     private readonly VisualStudioHostServicesProvider _vsHostWorkspaceServicesProvider = vsHostWorkspaceServicesProvider ?? throw new ArgumentNullException(nameof(vsHostWorkspaceServicesProvider));
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher ?? throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
     private readonly ILoggerFactory _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
     private readonly RazorLogHubTraceProvider _traceProvider = traceProvider ?? throw new ArgumentNullException(nameof(traceProvider));
 
@@ -113,7 +110,6 @@ internal class RazorLanguageServerClient(
             serverStream,
             _loggerFactory,
             _telemetryReporter,
-            _projectSnapshotManagerDispatcher,
             ConfigureLanguageServer,
             _languageServerFeatureOptions,
             lspOptions,

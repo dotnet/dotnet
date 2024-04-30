@@ -35,7 +35,7 @@ public class WebAssemblyPrerenderedTest : ServerTestBase<AspNetSiteServerFixture
     [Fact]
     public void CanPrerenderAndAddHeadOutletRootComponent()
     {
-        Navigate("/");
+        Navigate("/", noReload: true);
 
         // Verify that the title is updated during prerendering
         Browser.Equal("Current count: 0", () => Browser.Title);

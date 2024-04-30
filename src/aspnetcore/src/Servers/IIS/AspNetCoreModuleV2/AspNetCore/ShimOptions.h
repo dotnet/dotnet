@@ -89,12 +89,6 @@ public:
         return m_fDisallowRotationOnConfigChange;
     }
 
-    std::chrono::milliseconds
-    QueryShutdownDelay() const noexcept
-    {
-        return m_fShutdownDelay;
-    }
-
     ShimOptions(const ConfigurationSource &configurationSource);
 
 private:
@@ -110,7 +104,4 @@ private:
     bool                           m_fCleanShadowCopyDirectory;
     bool                           m_fDisallowRotationOnConfigChange;
     std::wstring                   m_strShadowCopyingDirectory;
-    std::chrono::milliseconds      m_fShutdownDelay;
-
-    void SetShutdownDelay(const std::wstring& shutdownDelay);
 };

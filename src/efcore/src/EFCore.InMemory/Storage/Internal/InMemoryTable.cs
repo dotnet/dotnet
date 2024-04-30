@@ -229,32 +229,29 @@ public class InMemoryTable<TKey> : IInMemoryTable
         object? rowValue,
         Dictionary<IProperty, object?> concurrencyConflicts)
     {
-        if (!property.IsConcurrencyToken)
+        if (property.IsConcurrencyToken)
         {
-            return false;
+            var comparer = property.GetKeyValueComparer();
+            var originalValue = entry.GetOriginalValue(property);
+
+            var converter = property.GetValueConverter()
+                ?? property.FindTypeMapping()?.Converter;
+
+            if (converter != null)
+            {
+                rowValue = converter.ConvertFromProvider(rowValue);
+            }
+
+            if ((comparer != null && !comparer.Equals(rowValue, originalValue))
+                || (comparer == null && !StructuralComparisons.StructuralEqualityComparer.Equals(rowValue, originalValue)))
+            {
+                concurrencyConflicts.Add(property, rowValue);
+
+                return true;
+            }
         }
 
-        var comparer = property.GetKeyValueComparer()
-            ?? StructuralComparisons.StructuralEqualityComparer;
-
-        var originalValue = entry.GetOriginalValue(property);
-
-        var converter = property.GetValueConverter()
-            ?? property.FindTypeMapping()?.Converter;
-
-        if (converter != null)
-        {
-            rowValue = converter.ConvertFromProvider(rowValue);
-        }
-
-        if (comparer.Equals(rowValue, originalValue))
-        {
-            return false;
-        }
-
-        concurrencyConflicts.Add(property, rowValue);
-
-        return true;
+        return false;
     }
 
     /// <summary>

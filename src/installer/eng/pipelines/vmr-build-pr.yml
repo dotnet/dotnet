@@ -20,9 +20,9 @@ pr:
 
 parameters:
 - name: vmrBranch
-  displayName: dotnet/dotnet branch to push to
+  displayName: dotnet/dotnet branch to use
   type: string
-  default: ' '
+  default: release/9.0.1xx-preview4
 
 - name: disableBuild
   displayName: Skip the VMR Build stage
@@ -49,7 +49,7 @@ resources:
     type: github
     name: dotnet/dotnet
     endpoint: dotnet
-    ref: ${{ variables.VmrBranch }}
+    ref: release/9.0.1xx-preview4
 
 stages:
 # You can temporarily disable the VMR Build stage by setting the disableBuild variable
