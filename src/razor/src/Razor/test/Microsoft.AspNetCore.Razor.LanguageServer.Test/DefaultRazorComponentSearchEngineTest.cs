@@ -64,7 +64,7 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
                 return textLoaderMock.Object;
             });
 
-        var projectService = new RazorProjectService(
+        var projectService = new TestRazorProjectService(
             remoteTextLoaderFactoryMock.Object,
             snapshotResolver,
             documentVersionCache,
@@ -79,10 +79,10 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
             displayName: "",
             DisposalToken);
 
-        await projectService.AddDocumentAsync(s_componentFilePath1, DisposalToken);
+        await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath1, DisposalToken);
         await projectService.UpdateDocumentAsync(s_componentFilePath1, SourceText.From(""), version: 1, DisposalToken);
 
-        await projectService.AddDocumentAsync(s_componentFilePath2, DisposalToken);
+        await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath2, DisposalToken);
         await projectService.UpdateDocumentAsync(s_componentFilePath2, SourceText.From("@namespace Test"), version: 1, DisposalToken);
 
         await projectService.AddProjectAsync(
@@ -93,7 +93,7 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
             displayName: "",
             DisposalToken);
 
-        await projectService.AddDocumentAsync(s_componentFilePath3, DisposalToken);
+        await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath3, DisposalToken);
         await projectService.UpdateDocumentAsync(s_componentFilePath3, SourceText.From(""), version: 1, DisposalToken);
     }
 

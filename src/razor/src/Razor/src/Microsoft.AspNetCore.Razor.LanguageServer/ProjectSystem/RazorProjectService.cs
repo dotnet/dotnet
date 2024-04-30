@@ -37,67 +37,46 @@ internal class RazorProjectService(
     private readonly IDocumentVersionCache _documentVersionCache = documentVersionCache;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorProjectService>();
 
-    public Task AddDocumentAsync(string filePath, CancellationToken cancellationToken)
+    public Task AddDocumentToMiscProjectAsync(string filePath, CancellationToken cancellationToken)
     {
         return _projectManager.UpdateAsync(
-            updater: AddDocumentCore,
+            updater: AddDocumentToMiscProjectCore,
             state: filePath,
             cancellationToken);
     }
 
-    private void AddDocumentCore(ProjectSnapshotManager.Updater updater, string filePath)
+    private void AddDocumentToMiscProjectCore(ProjectSnapshotManager.Updater updater, string filePath)
     {
         var textDocumentPath = FilePathNormalizer.Normalize(filePath);
 
-        var added = false;
-        foreach (var projectSnapshot in _snapshotResolver.FindPotentialProjects(textDocumentPath))
+        _logger.LogDebug($"Adding {filePath} to the miscellaneous files project, because we don't have project info (yet?)");
+        var miscFilesProject = _snapshotResolver.GetMiscellaneousProject();
+
+        if (miscFilesProject.GetDocument(FilePathNormalizer.Normalize(textDocumentPath)) is not null)
         {
-            added = true;
-            AddDocumentToProject(updater, projectSnapshot, textDocumentPath);
+            // Document already added. This usually occurs when VSCode has already pre-initialized
+            // open documents and then we try to manually add all known razor documents.
+            return;
         }
 
-        if (!added)
+        // Representing all of our host documents with a re-normalized target path to workaround GetRelatedDocument limitations.
+        var normalizedTargetFilePath = textDocumentPath.Replace('/', '\\').TrimStart('\\');
+
+        var hostDocument = new HostDocument(textDocumentPath, normalizedTargetFilePath);
+        var textLoader = _remoteTextLoaderFactory.Create(textDocumentPath);
+
+        _logger.LogInformation($"Adding document '{filePath}' to project '{miscFilesProject.Key}'.");
+
+        updater.DocumentAdded(miscFilesProject.Key, hostDocument, textLoader);
+
+        // Adding a document to a project could also happen because a target was added to a project, or we're moving a document
+        // from Misc Project to a real one, and means the newly added document could actually already be open.
+        // If it is, we need to make sure we start generating it so we're ready to handle requests that could start coming in.
+        if (_projectManager.IsDocumentOpen(textDocumentPath) &&
+            _projectManager.TryGetLoadedProject(miscFilesProject.Key, out var project) &&
+            project.GetDocument(textDocumentPath) is { } document)
         {
-            var miscFilesProject = _snapshotResolver.GetMiscellaneousProject();
-            AddDocumentToProject(updater, miscFilesProject, textDocumentPath);
-        }
-
-        void AddDocumentToProject(ProjectSnapshotManager.Updater updater, IProjectSnapshot projectSnapshot, string textDocumentPath)
-        {
-            if (projectSnapshot.GetDocument(FilePathNormalizer.Normalize(textDocumentPath)) is not null)
-            {
-                // Document already added. This usually occurs when VSCode has already pre-initialized
-                // open documents and then we try to manually add all known razor documents.
-                return;
-            }
-
-            var targetFilePath = textDocumentPath;
-            var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(projectSnapshot.FilePath);
-            if (targetFilePath.StartsWith(projectDirectory, FilePathComparison.Instance))
-            {
-                // Make relative
-                targetFilePath = textDocumentPath[projectDirectory.Length..];
-            }
-
-            // Representing all of our host documents with a re-normalized target path to workaround GetRelatedDocument limitations.
-            var normalizedTargetFilePath = targetFilePath.Replace('/', '\\').TrimStart('\\');
-
-            var hostDocument = new HostDocument(textDocumentPath, normalizedTargetFilePath);
-            var textLoader = _remoteTextLoaderFactory.Create(textDocumentPath);
-
-            _logger.LogInformation($"Adding document '{filePath}' to project '{projectSnapshot.Key}'.");
-
-            updater.DocumentAdded(projectSnapshot.Key, hostDocument, textLoader);
-
-            // Adding a document to a project could also happen because a target was added to a project, or we're moving a document
-            // from Misc Project to a real one, and means the newly added document could actually already be open.
-            // If it is, we need to make sure we start generating it so we're ready to handle requests that could start coming in.
-            if (_projectManager.IsDocumentOpen(textDocumentPath) &&
-                _projectManager.TryGetLoadedProject(projectSnapshot.Key, out var project) &&
-                project.GetDocument(textDocumentPath) is { } document)
-            {
-                document.GetGeneratedOutputAsync().Forget();
-            }
+            document.GetGeneratedOutputAsync().Forget();
         }
     }
 
@@ -114,8 +93,9 @@ internal class RazorProjectService(
                 if (!_snapshotResolver.TryResolveDocumentInAnyProject(textDocumentPath, out var document))
                 {
                     // Document hasn't been added. This usually occurs when VSCode trumps all other initialization
-                    // processes and pre-initializes already open documents.
-                    AddDocumentCore(updater, filePath);
+                    // processes and pre-initializes already open documents. We add this to the misc project, and
+                    // if/when we get project info from the client, it will be migrated to a real project.
+                    AddDocumentToMiscProjectCore(updater, filePath);
                 }
 
                 ActOnDocumentInMultipleProjects(

@@ -631,7 +631,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
                 return textLoaderMock.Object;
             });
 
-        var projectService = new RazorProjectService(
+        var projectService = new TestRazorProjectService(
             remoteTextLoaderFactoryMock.Object,
             snapshotResolver,
             documentVersionCache,
@@ -646,12 +646,12 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             updater.ProjectWorkspaceStateChanged(projectKey1, ProjectWorkspaceState.Create(tagHelpers));
         });
 
-        await projectService.AddDocumentAsync(s_componentFilePath1, DisposalToken);
-        await projectService.AddDocumentAsync(s_componentFilePath2, DisposalToken);
-        await projectService.AddDocumentAsync(s_directoryFilePath1, DisposalToken);
-        await projectService.AddDocumentAsync(s_directoryFilePath2, DisposalToken);
-        await projectService.AddDocumentAsync(s_componentFilePath1337, DisposalToken);
-        await projectService.AddDocumentAsync(s_indexFilePath1, DisposalToken);
+        await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath1, DisposalToken);
+        await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath2, DisposalToken);
+        await projectService.AddDocumentToPotentialProjectsAsync(s_directoryFilePath1, DisposalToken);
+        await projectService.AddDocumentToPotentialProjectsAsync(s_directoryFilePath2, DisposalToken);
+        await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath1337, DisposalToken);
+        await projectService.AddDocumentToPotentialProjectsAsync(s_indexFilePath1, DisposalToken);
 
         await projectService.UpdateDocumentAsync(s_componentFilePath1, SourceText.From(ComponentText1), version: 42, DisposalToken);
         await projectService.UpdateDocumentAsync(s_componentFilePath2, SourceText.From(ComponentText2), version: 42, DisposalToken);
@@ -668,9 +668,9 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             updater.ProjectWorkspaceStateChanged(projectKey2, ProjectWorkspaceState.Create(tagHelpers));
         });
 
-        await projectService.AddDocumentAsync(s_componentFilePath3, DisposalToken);
-        await projectService.AddDocumentAsync(s_componentFilePath4, DisposalToken);
-        await projectService.AddDocumentAsync(s_componentWithParamFilePath, DisposalToken);
+        await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath3, DisposalToken);
+        await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath4, DisposalToken);
+        await projectService.AddDocumentToPotentialProjectsAsync(s_componentWithParamFilePath, DisposalToken);
 
         await projectService.UpdateDocumentAsync(s_componentFilePath3, SourceText.From(ComponentText3), version: 42, DisposalToken);
         await projectService.UpdateDocumentAsync(s_componentFilePath4, SourceText.From(ComponentText4), version: 42, DisposalToken);

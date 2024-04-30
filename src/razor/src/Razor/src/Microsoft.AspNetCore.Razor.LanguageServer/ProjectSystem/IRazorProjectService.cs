@@ -14,7 +14,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
 internal interface IRazorProjectService
 {
-    Task AddDocumentAsync(string filePath, CancellationToken cancellationToken);
+    Task AddDocumentToMiscProjectAsync(string filePath, CancellationToken cancellationToken);
     Task OpenDocumentAsync(string filePath, SourceText sourceText, int version, CancellationToken cancellationToken);
     Task UpdateDocumentAsync(string filePath, SourceText sourceText, int version, CancellationToken cancellationToken);
     Task CloseDocumentAsync(string filePath, CancellationToken cancellationToken);
