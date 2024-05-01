@@ -14,7 +14,7 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.Razor.Logging;
 
-[Export(typeof(ILoggerProvider))]
+[ExportLoggerProvider]
 [method: ImportingConstructor]
 internal class OutputWindowLoggerProvider(
     // Anything this class imports would have a circular dependency if they tried to log anything,

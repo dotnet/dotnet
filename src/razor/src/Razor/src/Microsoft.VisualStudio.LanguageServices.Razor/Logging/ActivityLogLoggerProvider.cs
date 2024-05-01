@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.LanguageServices.Razor.Logging;
 /// <summary>
 /// An <see cref="ILoggerProvider"/> that logs any warnings or errors to the Visual Studio Activity Log.
 /// </summary>
-[Export(typeof(ILoggerProvider))]
+[ExportLoggerProvider(minimumLogLevel: LogLevel.Warning)]
 [method: ImportingConstructor]
 internal sealed partial class ActivityLogLoggerProvider(RazorActivityLog activityLog) : ILoggerProvider
 {

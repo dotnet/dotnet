@@ -73,16 +73,16 @@
       "commitSha": "4020570fd78096035b551a5ac0869ca995f4dbed"
     },
     {
-      "packageVersion": "7.0.0-preview.24230.1",
+      "packageVersion": "7.0.0-preview.24230.2",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "05aed40d356c6a9f2e4e662a7031e62293abc75a"
+      "commitSha": "2f71d656ec23e4649ee80d2433874cc7bc896df4"
     },
     {
-      "packageVersion": "4.11.0-2.24229.10",
+      "packageVersion": "4.11.0-2.24230.7",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "5e95dce38575ad63d86a923162e21740f2b2ab33"
+      "commitSha": "f4fcb032ea827b91111d010724cd35e26314aa71"
     },
     {
       "packageVersion": "3.11.0-beta1.24225.1",
@@ -91,10 +91,10 @@
       "commitSha": "8dccccec1ce3bd2fb532ec77d7e092ab9d684db7"
     },
     {
-      "packageVersion": "9.0.0-preview.4.24230.3",
+      "packageVersion": "9.0.0-preview.4.24251.2",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "d7a6ffa857ee8bee4732604c0cb7e9008f0df90c"
+      "commitSha": "350aa16807c6d346059657287e01b14474f10d74"
     },
     {
       "packageVersion": "9.0.0-preview.24222.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "788b23f2a91cf7614452f4e11ab1eb3016b80799"
+      "commitSha": "98ef0c47a86fcd5e62e64ba56bad0310f66af176"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24222.1",
@@ -169,10 +169,10 @@
       "commitSha": "c3d980ee32f93ed7261f589b3645f2996c07e68d"
     },
     {
-      "packageVersion": "9.0.0-preview.24229.1",
+      "packageVersion": "9.0.0-preview.24230.1",
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",
-      "commitSha": "043a1f6e332228705b0b64cd3fdc3cdba1ee682d"
+      "commitSha": "ebb0a34d9155bae6a37fa92b85cc0277d328aa61"
     },
     {
       "packageVersion": "1.0.0-beta.23475.1",
