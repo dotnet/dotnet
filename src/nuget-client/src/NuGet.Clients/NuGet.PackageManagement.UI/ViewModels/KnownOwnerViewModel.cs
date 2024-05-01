@@ -8,17 +8,14 @@ namespace NuGet.PackageManagement.UI.ViewModels
 {
     public class KnownOwnerViewModel
     {
-        private string _name;
-        private Uri _link;
-
         public KnownOwnerViewModel(KnownOwner knownOwner)
         {
-            _name = knownOwner.Name;
-            _link = knownOwner.Link;
+            Name = knownOwner.Name;
+            Link = knownOwner.Link;
         }
 
-        public string Name => _name;
+        public string Name { get; }
 
-        public Uri Link => _link;
+        public Uri Link { get; }
     }
 }
