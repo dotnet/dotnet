@@ -14,8 +14,6 @@ namespace NuGet.VisualStudio.Internal.Contracts
 {
     public sealed class PackageSearchMetadataContextInfo
     {
-        private IOwnerDetailsUriService? _ownerDetailsUriService;
-
         public PackageIdentity? Identity { get; internal set; }
         public string? Title { get; internal set; }
         public string? Description { get; internal set; }
@@ -28,34 +26,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
         public DateTimeOffset? Published { get; internal set; }
         public IReadOnlyList<string>? OwnersList { get; internal set; }
         public string? Owners { get; internal set; }
-        public IReadOnlyList<KnownOwner>? KnownOwners
-        {
-            get
-            {
-                if (_ownerDetailsUriService is null
-                    || !_ownerDetailsUriService.SupportsKnownOwners)
-                {
-                    return null;
-                }
-
-                if (OwnersList is null || OwnersList.Count == 0)
-                {
-                    return Array.Empty<KnownOwner>();
-                }
-
-                List<KnownOwner> knownOwners = new(capacity: OwnersList.Count);
-
-                foreach (string owner in OwnersList)
-                {
-                    Uri ownerDetailsUrl = _ownerDetailsUriService.GetOwnerDetailsUri(owner);
-                    KnownOwner knownOwner = new(owner, ownerDetailsUrl);
-                    knownOwners.Add(knownOwner);
-                }
-
-                return knownOwners;
-            }
-        }
-
+        public IReadOnlyList<KnownOwner>? KnownOwners { get; internal set; }
         public Uri? ReportAbuseUrl { get; internal set; }
         public Uri? PackageDetailsUrl { get; internal set; }
         public bool RequireLicenseAcceptance { get; internal set; }
@@ -73,15 +44,15 @@ namespace NuGet.VisualStudio.Internal.Contracts
 
         public static PackageSearchMetadataContextInfo Create(IPackageSearchMetadata packageSearchMetadata)
         {
-            return Create(packageSearchMetadata, isRecommended: false, recommenderVersion: null, ownerDetailsUriService: null);
+            return Create(packageSearchMetadata, isRecommended: false, recommenderVersion: null, knownOwners: null);
         }
 
-        public static PackageSearchMetadataContextInfo Create(IPackageSearchMetadata packageSearchMetadata, IOwnerDetailsUriService? ownerDetailsUriService)
+        public static PackageSearchMetadataContextInfo Create(IPackageSearchMetadata packageSearchMetadata, IReadOnlyList<KnownOwner>? knownOwners)
         {
-            return Create(packageSearchMetadata, isRecommended: false, recommenderVersion: null, ownerDetailsUriService);
+            return Create(packageSearchMetadata, isRecommended: false, recommenderVersion: null, knownOwners);
         }
 
-        public static PackageSearchMetadataContextInfo Create(IPackageSearchMetadata packageSearchMetadata, bool isRecommended, (string, string)? recommenderVersion, IOwnerDetailsUriService? ownerDetailsUriService)
+        public static PackageSearchMetadataContextInfo Create(IPackageSearchMetadata packageSearchMetadata, bool isRecommended, (string, string)? recommenderVersion, IReadOnlyList<KnownOwner>? knownOwners)
         {
             return new PackageSearchMetadataContextInfo()
             {
@@ -100,7 +71,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                 Published = packageSearchMetadata.Published,
                 OwnersList = packageSearchMetadata.OwnersList,
                 Owners = packageSearchMetadata.Owners,
-                _ownerDetailsUriService = ownerDetailsUriService,
+                KnownOwners = knownOwners,
                 ReportAbuseUrl = packageSearchMetadata.ReportAbuseUrl,
                 PackageDetailsUrl = packageSearchMetadata.PackageDetailsUrl,
                 PackagePath =
