@@ -1,6 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
+using System.Buffers;
 using System.Collections.Immutable;
 using System.IO;
 using MessagePack;
@@ -45,8 +47,14 @@ internal sealed record class RazorProjectInfo
         Documents = documents.NullToEmpty();
     }
 
+    public void SerializeTo(IBufferWriter<byte> bufferWriter)
+        => MessagePackSerializer.Serialize(bufferWriter, this, s_options);
+
     public void SerializeTo(Stream stream)
         => MessagePackSerializer.Serialize(stream, this, s_options);
+
+    public static RazorProjectInfo? DeserializeFrom(ReadOnlyMemory<byte> buffer)
+        => MessagePackSerializer.Deserialize<RazorProjectInfo>(buffer, s_options);
 
     public static RazorProjectInfo? DeserializeFrom(Stream stream)
         => MessagePackSerializer.Deserialize<RazorProjectInfo>(stream, s_options);
