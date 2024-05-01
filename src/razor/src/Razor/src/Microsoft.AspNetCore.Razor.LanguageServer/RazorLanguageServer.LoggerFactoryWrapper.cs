@@ -14,7 +14,7 @@ internal partial class RazorLanguageServer
     /// </summary>
     private sealed class LoggerFactoryWrapper(ILoggerFactory loggerFactory) : ILoggerFactory
     {
-        private ILoggerFactory _loggerFactory = loggerFactory;
+        private readonly ILoggerFactory _loggerFactory = loggerFactory;
 
         public void AddLoggerProvider(ILoggerProvider provider)
         {
