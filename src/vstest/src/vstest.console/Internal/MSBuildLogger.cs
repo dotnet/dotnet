@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -112,8 +113,13 @@ internal class MSBuildLogger : ITestLoggerWithParameters
             var failed = e.TestRunStatistics?[TestOutcome.Failed] ?? 0;
             var time = e.ElapsedTimeInRunningTests.TotalMilliseconds;
 
+            var resultIndicator = failed > 0
+                ? CommandLineResources.FailedTestIndicator
+                : skipped == total
+                    ? CommandLineResources.SkippedTestIndicator
+                    : CommandLineResources.PassedTestIndicator;
             var summary = string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummary,
-                        (failed > 0 ? CommandLineResources.FailedTestIndicator : CommandLineResources.PassedTestIndicator) + "!",
+                        resultIndicator + "!",
                         failed,
                         passed,
                         skipped,
@@ -121,8 +127,8 @@ internal class MSBuildLogger : ITestLoggerWithParameters
                         $"[{GetFormattedDurationString(e.ElapsedTimeInRunningTests)}]"
                         );
 
-            SendMessage("run-finish",
-                summary,
+
+            SendMessage("run-finish", summary,
                 total.ToString(CultureInfo.InvariantCulture),
                 passed.ToString(CultureInfo.InvariantCulture),
                 skipped.ToString(CultureInfo.InvariantCulture),
@@ -138,35 +144,48 @@ internal class MSBuildLogger : ITestLoggerWithParameters
         TPDebug.Assert(Output != null, "Initialize should have been called.");
         switch (e.Result.Outcome)
         {
-            case TestOutcome.Passed:
-                SendMessage("test-passed",
-                    CommandLineResources.PassedTestIndicator,
-                    e.Result.TestCase.DisplayName,
-                    e.Result.Duration.TotalMilliseconds.ToString(CultureInfo.InvariantCulture),
-                    FormatOutputs(e.Result));
-                break;
-            case TestOutcome.Skipped:
-                SendMessage("test-skipped",
-                    CommandLineResources.PassedTestIndicator,
-                    e.Result.TestCase.DisplayName,
-                    e.Result.Duration.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
-                break;
+            // DO NOT report passed or skipped until there is a proper msbuild progress api. This is polluting user output too much.
+            //case TestOutcome.Passed:
+            //    SendMessage("test-passed",
+            //        CommandLineResources.PassedTestIndicator,
+            //        e.Result.TestCase.DisplayName,
+            //        e.Result.Duration.TotalMilliseconds.ToString(CultureInfo.InvariantCulture),
+            //        FormatOutputs(e.Result));
+            //    break;
+            // DO NOT report passed or skipped until there is a proper msbuild progress api. This is polluting user output too much.
+            //case TestOutcome.Skipped:
+            //    SendMessage("test-skipped",
+            //        CommandLineResources.PassedTestIndicator,
+            //        e.Result.TestCase.DisplayName,
+            //        e.Result.Duration.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
+            //    break;
             case TestOutcome.Failed:
                 var result = e.Result;
                 Debug.WriteLine(">>>>ERR:" + result.ErrorMessage);
                 Debug.WriteLine(">>>>STK:" + result.ErrorStackTrace);
+
+                var formattedError = new StringBuilder();
+
+                formattedError.Append(result.TestCase.DisplayName);
+                formattedError.Append(" (");
+                formattedError.Append(GetFormattedDurationString(e.Result.Duration));
+                formattedError.Append("): ");
+
+                formattedError.Append(Resources.Resources.ErrorMessageBanner);
+                formattedError.Append(' ');
+                formattedError.AppendLine(result.ErrorMessage);
+
+                string? line = null;
+                string? file = null;
+
                 if (!StringUtils.IsNullOrWhiteSpace(result.ErrorStackTrace))
                 {
-                    string? stackFrame = null;
                     var stackFrames = Regex.Split(result.ErrorStackTrace, Environment.NewLine);
-                    string? line = null;
-                    string? file = null;
-                    string? place = null;
                     if (stackFrames.Length > 0)
                     {
                         foreach (var frame in stackFrames.Take(20))
                         {
-                            if (TryGetStackFrameLocation(frame, out line, out file, out place))
+                            if (StackTraceHelper.TryFindLocationFromStackFrame(frame, out file, out line, out _))
                             {
                                 break;
                             }
@@ -182,47 +201,23 @@ internal class MSBuildLogger : ITestLoggerWithParameters
                             // if there are no symbols but we collect source info, us the source info.
                             file = result.TestCase.CodeFilePath;
                             line = result.TestCase.LineNumber > 0 ? result.TestCase.LineNumber.ToString(CultureInfo.InvariantCulture) : null;
-                            place = stackFrame;
                         }
                         else
                         {
                             // if there are no symbols and no source info use the dll
-                            place = result.TestCase.DisplayName;
                             file = result.TestCase.Source;
                         }
                     }
 
-                    var outputs = FormatOutputs(result);
-                    SendMessage("test-failed", result.DisplayName, result.ErrorMessage, result.ErrorStackTrace, outputs, file, line, place);
-                    return;
+                    formattedError.AppendLine(Resources.Resources.StacktraceBanner);
+                    formattedError.AppendLine(result.ErrorStackTrace);
                 }
-                else
-                {
-                    SendMessage("test-failed", result.DisplayName, result.ErrorMessage);
-                }
+
+                AppendOutputs(result, formattedError);
+                SendMessage("test-failed", formattedError.ToString().TrimEnd(), file ?? string.Empty, line ?? "0");
 
                 break;
         }
-    }
-
-    private static bool TryGetStackFrameLocation(string stackFrame, out string? line, out string? file, out string? place)
-    {
-        // stack frame looks like this '   at Program.<Main>$(String[] args) in S:\t\ConsoleApp81\ConsoleApp81\Program.cs:line 9'
-        var match = Regex.Match(stackFrame, @"^\s+at (?<code>.+) in (?<file>.+):line (?<line>\d+)$?");
-
-        line = null;
-        file = null;
-        place = null;
-
-        if (match.Success)
-        {
-            // get the exact info from stack frame.
-            place = match.Groups["code"].Value;
-            file = match.Groups["file"].Value;
-            line = match.Groups["line"].Value;
-        }
-
-        return match.Success;
     }
 
     /// <summary>
@@ -240,12 +235,12 @@ internal class MSBuildLogger : ITestLoggerWithParameters
 
         var message = FormatMessage(name, data);
         Debug.WriteLine($"MSBUILDLOGGER: {message}");
-        Output.Information(appendPrefix: false, FormatMessage(name, data));
+        Output.Information(appendPrefix: false, message);
     }
 
     private static string FormatMessage(string name, params string?[] data)
     {
-        return $"||||{name}{data.Length}||||{string.Join("||||", data.Select(Escape))}";
+        return $"||||{name}||||{string.Join("||||", data.Select(Escape))}";
     }
 
     private static string? Escape(string? input)
@@ -272,9 +267,8 @@ internal class MSBuildLogger : ITestLoggerWithParameters
         return requiredMessageCollection;
     }
 
-    private static string FormatOutputs(TestResult result)
+    private static void AppendOutputs(TestResult result, StringBuilder stringBuilder)
     {
-        var stringBuilder = new StringBuilder();
         var testResultPrefix = "  ";
         TPDebug.Assert(result != null, "a null result can not be displayed");
 
@@ -290,7 +284,6 @@ internal class MSBuildLogger : ITestLoggerWithParameters
         {
             stringBuilder.AppendLine(testResultPrefix + CommandLineResources.StdErrMessagesBanner);
             AddFormattedOutput(stdErrMessagesCollection, stringBuilder);
-
         }
 
         var dbgTrcMessagesCollection = GetTestMessages(result.Messages, TestResultMessage.DebugTraceCategory);
@@ -306,8 +299,6 @@ internal class MSBuildLogger : ITestLoggerWithParameters
             stringBuilder.AppendLine(testResultPrefix + CommandLineResources.AddnlInfoMessagesBanner);
             AddFormattedOutput(addnlInfoMessagesCollection, stringBuilder);
         }
-
-        return stringBuilder.ToString();
     }
 
     private static void AddFormattedOutput(Collection<TestResultMessage> testMessageCollection, StringBuilder stringBuilder)
@@ -374,5 +365,102 @@ internal class MSBuildLogger : ITestLoggerWithParameters
         }
 
         return time.Count == 0 ? "< 1ms" : string.Join(" ", time);
+    }
+}
+
+internal class StackTraceHelper
+{
+    private static Regex? s_regex;
+
+    internal static bool TryFindLocationFromStackFrame(string? errorStackTrace, [NotNullWhen(true)] out string? file, out string? lineNumber, out string? place)
+    {
+        file = null;
+        place = null;
+        lineNumber = null;
+
+        if (errorStackTrace == null)
+        {
+            return false;
+        }
+
+        string[] stackFrames = Regex.Split(errorStackTrace, Environment.NewLine);
+        if (stackFrames.Length == 0)
+        {
+            return false;
+        }
+
+        // Take 20 frames at max, so we don't search 1000 items in a long stack trace.
+        foreach (string? stackFrame in stackFrames.Take(20))
+        {
+            if (TryGetStackFrameLocation(stackFrame, out lineNumber, out file, out place))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryGetStackFrameLocation(string stackFrame, out string? line, [NotNullWhen(true)] out string? file, out string? place)
+    {
+        InitializeRegex();
+
+        // stack frame looks like this '   at Program.<Main>$(String[] args) in S:\t\ConsoleApp81\ConsoleApp81\Program.cs:line 9'
+        Match match = s_regex.Match(stackFrame);
+
+        line = null;
+        file = null;
+        place = null;
+
+        if (match.Success)
+        {
+            // get the exact info from stack frame.
+            place = match.Groups["code"].Value;
+            file = match.Groups["file"].Value;
+            line = match.Groups["line"].Value;
+        }
+
+        return match.Success;
+    }
+
+    [MemberNotNull(nameof(s_regex))]
+    private static void InitializeRegex()
+    {
+        if (s_regex != null)
+        {
+            return;
+        }
+
+        string atResourceName = "Word_At";
+        string inResourceName = "StackTrace_InFileLineNumber";
+
+        string? atString = null;
+        string? inString = null;
+
+        // Grab words from localized resource, in case the stack trace is localized.
+        try
+        {
+            // Get these resources: https://github.com/dotnet/runtime/blob/main/src/libraries/System.Private.CoreLib/src/Resources/Strings.resx
+            MethodInfo? getResourceStringMethod = typeof(Environment).GetMethod("GetResourceString", BindingFlags.Static | BindingFlags.NonPublic, null, [typeof(string)], null);
+            if (getResourceStringMethod is not null)
+            {
+                // <value>at</value>
+                atString = (string?)getResourceStringMethod.Invoke(null, [atResourceName]);
+
+                // <value>in {0}:line {1}</value>
+                inString = (string?)getResourceStringMethod.Invoke(null, [inResourceName]);
+            }
+        }
+        catch
+        {
+            // If we fail, populate the defaults below.
+        }
+
+        atString = atString == null || atString == atResourceName ? "at" : atString;
+        inString = inString == null || inString == inResourceName ? "in {0}:line {1}" : inString;
+
+        string inPattern = string.Format(CultureInfo.InvariantCulture, inString, "(?<file>.+)", @"(?<line>\d+)");
+
+        s_regex = new Regex(@$"^   {atString} (?<code>.+) {inPattern}$", RegexOptions.Compiled, matchTimeout: TimeSpan.FromSeconds(1));
     }
 }

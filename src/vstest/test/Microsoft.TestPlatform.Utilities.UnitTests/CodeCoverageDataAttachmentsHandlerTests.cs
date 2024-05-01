@@ -33,7 +33,7 @@ public class CodeCoverageDataAttachmentsHandlerTests
 
     public TestContext? TestContext { get; set; }
 
-    internal string TestFilesDirectory => Path.Combine(TestContext!.DeploymentDirectory, "TestFiles");
+    internal string TestFilesDirectory => Path.Combine(TestContext!.DeploymentDirectory!, "TestFiles");
 
     public CodeCoverageDataAttachmentsHandlerTests()
     {
@@ -50,19 +50,17 @@ public class CodeCoverageDataAttachmentsHandlerTests
 #endif
     }
 
-#if NETFRAMEWORK
     [ClassInitialize]
     public static void ClassInitialize(TestContext context)
     {
         // Copying test files to correct place,
         var assemblyPath = AppDomain.CurrentDomain.BaseDirectory;
-        var testFilesDirectory = Path.Combine(context.DeploymentDirectory, "TestFiles");
+        var testFilesDirectory = Path.Combine(context.DeploymentDirectory!, "TestFiles");
         Directory.CreateDirectory(testFilesDirectory);
         var files = Directory.GetFiles(Path.Combine(assemblyPath, "TestFiles"));
         foreach (var file in files)
             File.Copy(file, Path.Combine(testFilesDirectory, Path.GetFileName(file)));
     }
-#endif
 
     [TestMethod]
     public async Task HandleDataCollectionAttachmentSetsShouldReturnEmptySetWhenNoAttachmentsOrAttachmentsAreNull()

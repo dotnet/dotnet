@@ -31,7 +31,7 @@ namespace TerminalLoggerUnitTests
         public void FailingTest()
         {
             // test characters taken from https://pages.ucsd.edu/~dkjordan/chin/unitestuni.html
-            Assert.AreEqual("ğğğ𦮙我們剛才從𓋴𓅓𓏏𓇏𓇌𓀀", 3);
+            Assert.AreEqual("ğğğ𦮙我們剛才從𓋴𓅓𓏏𓇏𓇌𓀀", "not the same");
         }
 
         /// <summary>

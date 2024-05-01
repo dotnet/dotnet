@@ -87,17 +87,18 @@ public class DataCollectorAttachmentProcessorAppDomainTests
         Assert.IsTrue(dcap.LoadSucceded);
 
         var attachmentsResult = await dcap.ProcessAttachmentSetsAsync(doc.DocumentElement, attachments, new Progress<int>(), _loggerMock.Object, CancellationToken.None);
+        var firstAttachmentSet = attachmentsResult.First();
 
         // assert
         // We return same instance but we're marshaling so we expected different pointers
-        Assert.AreNotSame(attachmentSet, attachmentsResult);
+        Assert.AreNotSame(attachmentSet, firstAttachmentSet);
 
-        Assert.AreEqual(attachmentSet.DisplayName, attachmentsResult.First().DisplayName);
-        Assert.AreEqual(attachmentSet.Uri, attachmentsResult.First().Uri);
+        Assert.AreEqual(attachmentSet.DisplayName, firstAttachmentSet.DisplayName);
+        Assert.AreEqual(attachmentSet.Uri, firstAttachmentSet.Uri);
         Assert.AreEqual(attachmentSet.Attachments.Count, attachmentsResult.Count);
-        Assert.AreEqual(attachmentSet.Attachments[0].Description, attachmentsResult.First().Attachments[0].Description);
-        Assert.AreEqual(attachmentSet.Attachments[0].Uri, attachmentsResult.First().Attachments[0].Uri);
-        Assert.AreEqual(attachmentSet.Attachments[0].Uri, attachmentsResult.First().Attachments[0].Uri);
+        Assert.AreEqual(attachmentSet.Attachments[0].Description, firstAttachmentSet.Attachments[0].Description);
+        Assert.AreEqual(attachmentSet.Attachments[0].Uri, firstAttachmentSet.Attachments[0].Uri);
+        Assert.AreEqual(attachmentSet.Attachments[0].Uri, firstAttachmentSet.Attachments[0].Uri);
     }
 
     [TestMethod]

@@ -503,17 +503,17 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
         return runSettingsXml;
     }
 
-    private void AssertCoverageResults(IList<AttachmentSet> attachments)
+    private static void AssertCoverageResults(IList<AttachmentSet> attachments)
     {
         foreach (var attachmentSet in attachments)
         {
             foreach (var attachment in attachmentSet.Attachments)
             {
-                var xmlCoverage = GetXmlCoverage(attachments.First().Attachments.First().Uri.LocalPath, TempDirectory);
+                var coverageReport = GetCoverageReport(attachments.First().Attachments.First().Uri.LocalPath);
 
                 foreach (var project in GetProjects())
                 {
-                    var moduleNode = GetModuleNode(xmlCoverage.DocumentElement!, project)!;
+                    var moduleNode = GetModule(coverageReport, project)!;
                     AssertCoverage(moduleNode, ExpectedMinimalModuleCoverage);
                 }
             }

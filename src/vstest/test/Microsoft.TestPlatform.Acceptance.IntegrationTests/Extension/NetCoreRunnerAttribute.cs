@@ -65,8 +65,8 @@ public class NetCoreRunnerAttribute : Attribute, ITestDataSource
         return dataRows;
     }
 
-    public string GetDisplayName(MethodInfo methodInfo, object[] data)
+    public string GetDisplayName(MethodInfo methodInfo, object?[]? data)
     {
-        return string.Format(CultureInfo.CurrentCulture, "{0} ({1})", methodInfo.Name, string.Join(",", data));
+        return string.Format(CultureInfo.CurrentCulture, "{0} ({1})", methodInfo.Name, string.Join(",", data ?? Array.Empty<string>()));
     }
 }

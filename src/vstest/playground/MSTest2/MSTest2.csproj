@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.3.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.3.1" />
     <PackageReference Include="coverlet.collector" Version="1.2.0" />
   </ItemGroup>
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) AND '$(OS)' != 'Windows_NT' ">

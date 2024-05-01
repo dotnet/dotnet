@@ -82,12 +82,21 @@ public class ManagedNameParser
     {
         var i = start;
         var quoted = false;
+        char? previousChar = null;
+        // Consume all characters that are in single quotes as is. Because F# methods wrapped in `` can have any text, like ``method name``.
+        // and will be emitted into CIL  as 'method name'.
+        // Make sure you ignore \', because that is how F# will escape ' if it appears in the method name.
         for (; i < managedMethodName.Length; i++)
         {
-            var c = managedMethodName[i];
-            if (c == '\'' || quoted)
+            if ((i - 1) > 0)
             {
-                quoted = c == '\'' ? !quoted : quoted;
+                previousChar = managedMethodName[i - 1];
+            }
+
+            var c = managedMethodName[i];
+            if ((c == '\'' && previousChar != '\\') || quoted)
+            {
+                quoted = (c == '\'' && previousChar != '\\') ? !quoted : quoted;
                 continue;
             }
 

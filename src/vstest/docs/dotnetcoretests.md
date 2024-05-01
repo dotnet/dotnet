@@ -1,4 +1,4 @@
-For dotnet core test projects, the test platform is acquired as a nuget package (Micorosoft.Net.Test.SDK) and the runtime (testhost.dll similar to testhost.exe) is also part of the nuget package. 
+For dotnet core test projects, the test platform is acquired as a nuget package (Microsoft.NET.Test.Sdk) and the runtime (testhost.dll similar to testhost.exe) is also part of the nuget package. 
 
 When dotnet build runs, the above mentioned packages are restored to the users' global nuget cache in the absence of any overridden config. When vstest.console.exe runs <UnitTestProject>.runtimeconfig.dev.json is looked into to determine the folders to look for the testhost.dll (something like the below) in addition to the folder where the test dll is present (https://github.com/Microsoft/vstest/blob/c7472a479966a218fb0ac508ed799418eb4bfc00/src/Microsoft.TestPlatform.TestHostProvider/Hosting/DotnetTestHostManager.cs#L374)
 

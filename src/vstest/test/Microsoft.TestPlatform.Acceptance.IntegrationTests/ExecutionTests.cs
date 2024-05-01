@@ -161,21 +161,6 @@ public class ExecutionTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
-    public void TestPlatformShouldBeCompatibleWithOldTestHost(RunnerInfo runnerInfo)
-    {
-        SetTestEnvironment(_testEnvironment, runnerInfo);
-
-        var assemblyPaths = GetAssetFullPath("SampleProjectWithOldTestHost.dll");
-        var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), string.Empty, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
-
-        InvokeVsTest(arguments);
-
-        ValidateSummaryStatus(1, 0, 0);
-        ExitCodeEquals(0);
-    }
-
-    [TestMethod]
     [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true)]
     [NetCoreTargetFrameworkDataSource]
     public void WorkingDirectoryIsSourceDirectory(RunnerInfo runnerInfo)
@@ -509,8 +494,8 @@ public class ExecutionTests : AcceptanceTestBase
         // or deps.json, and fails the run.
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        var xunitAssemblyPath = _testEnvironment.GetTestAsset("SimpleTestProject.dll");
-        var allDllsMatchingTestPattern = Directory.GetFiles(Path.GetDirectoryName(xunitAssemblyPath)!, "*test*.dll").Where(f => !f.EndsWith("SimpleTestProject.dll"));
+        var testAssemblyPath = _testEnvironment.GetTestAsset("SimpleTestProject.dll");
+        var allDllsMatchingTestPattern = Directory.GetFiles(Path.GetDirectoryName(testAssemblyPath)!, "*test*.dll").Where(f => !f.EndsWith("SimpleTestProject.dll"));
 
         string assemblyPaths = string.Join(" ", allDllsMatchingTestPattern.Select(s => s.AddDoubleQuote()));
         InvokeVsTestForExecution(assemblyPaths, testAdapterPath: string.Empty, FrameworkArgValue, string.Empty);
