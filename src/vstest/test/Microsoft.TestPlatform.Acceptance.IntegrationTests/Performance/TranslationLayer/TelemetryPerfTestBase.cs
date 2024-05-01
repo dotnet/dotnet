@@ -24,7 +24,9 @@ public class TelemetryPerfTestBase : PerformanceTestBase
     public TelemetryPerfTestBase()
     {
         var telemetryConfiguration = TelemetryConfiguration.CreateDefault();
+#pragma warning disable CS0618 // Type or member is obsolete
         telemetryConfiguration.InstrumentationKey = TelemetryInstrumentationKey;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         _client = new TelemetryClient(telemetryConfiguration);
     }

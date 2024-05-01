@@ -8,6 +8,10 @@ The `ManagedType` and `ManagedMethod` properties [have been defined](0017-Manage
 
 This document specifies a way for the TestCase to provide these display values directly to the test explorer, granting flexibility and control back to the test adapter.
 
+## Helper Library
+
+[Microsoft.TestPlatform.AdapterUtilities](https://www.nuget.org/packages/Microsoft.TestPlatform.AdapterUtilities) is a helper library created to make it easy to create values for `ManagedType` and `ManagedMethod` that meet this spec. Use `ManagedNameHelper.GetManagedName()` to create a `ManagedType`/`ManagedMethod` pair from a reflected type. Also `ManagedNameParser.ParseManagedTypeName` and `ManagedNameParser.ParseManagedMethodName` can parse and validate an existing `ManagedType` or `ManagedMethod`
+
 ## Specification
 
 TestCases for managed code may include a string array (string[]) valued property named `Hierarchy`. The specification below outlines the requirements for the contents of the property.

@@ -67,12 +67,15 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
     private ITestHostLauncher? _customTestHostLauncher;
     private Process? _testHostProcess;
     private StringBuilder? _testHostProcessStdError;
+    private StringBuilder? _testHostProcessStdOut;
     private bool _hostExitedEventRaised;
     private string _hostPackageVersion = "15.0.0";
     private Architecture _architecture;
     private Framework? _targetFramework;
     private bool _isVersionCheckRequired = true;
     private string? _dotnetHostPath;
+
+    private protected TestHostManagerCallbacks? _testHostManagerCallbacks;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DotnetTestHostManager"/> class.
@@ -169,13 +172,25 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
     private Action<object?, string?> ErrorReceivedCallback => (process, data) =>
     {
         TPDebug.Assert(_testHostProcessStdError is not null, "_testHostProcessStdError is null");
-        new TestHostManagerCallbacks(false, null).ErrorReceivedCallback(_testHostProcessStdError, data);
+        TPDebug.Assert(_testHostManagerCallbacks is not null, "Initialize must have been called before ExitCallBack");
+        _testHostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, data);
+    };
+
+    /// <summary>
+    /// Gets callback to read from process standard stream
+    /// </summary>
+    private Action<object?, string?> OutputReceivedCallback => (process, data) =>
+    {
+        TPDebug.Assert(_testHostProcessStdOut is not null, "LaunchTestHostAsync must have been called before OutputReceivedCallback");
+        TPDebug.Assert(_testHostManagerCallbacks is not null, "Initialize must have been called before OutputReceivedCallback");
+        _testHostManagerCallbacks.StandardOutputReceivedCallback(_testHostProcessStdOut, data);
     };
 
     /// <inheritdoc/>
     public void Initialize(IMessageLogger? logger, string runsettingsXml)
     {
         _hostExitedEventRaised = false;
+        _testHostManagerCallbacks = new TestHostManagerCallbacks(_environmentVariableHelper.GetEnvironmentVariable("VSTEST_EXPERIMENTAL_FORWARD_OUTPUT_FEATURE") == "1", logger);
 
         var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runsettingsXml);
         _architecture = runConfiguration.TargetPlatform;
@@ -706,6 +721,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
     private bool LaunchHost(TestProcessStartInfo testHostStartInfo, CancellationToken cancellationToken)
     {
         _testHostProcessStdError = new StringBuilder(0, CoreUtilities.Constants.StandardErrorMaxLength);
+        _testHostProcessStdOut = new StringBuilder(0, CoreUtilities.Constants.StandardErrorMaxLength);
 
         // We launch the test host process here if we're on the normal test running workflow.
         // If we're debugging and we have access to the newest version of the testhost launcher
@@ -729,7 +745,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                 testHostStartInfo.EnvironmentVariables,
                 ErrorReceivedCallback,
                 ExitCallBack,
-                null) as Process;
+                OutputReceivedCallback) as Process;
         }
         else
         {

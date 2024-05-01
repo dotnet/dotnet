@@ -50,6 +50,15 @@ public class ManagedNameParserTests
         AssertParse("Method", 1, new string[] { "B", "List<B>" }, "Method`1(B,List<B>)");
         AssertParse("Method", 0, new string[] { "B[]" }, "Method(B[])");
         AssertParse("Method", 0, new string[] { "A[,]", "B[,,][]" }, "Method(A[,],B[,,][])");
+
+        // An F# method that would look like this in code: member _.``method that does not pass`` () =
+        // And like this in CIL: instance void 'method that does not pass' () cil managed
+        Assert.AreEqual(("Method that does not pass", 0, null), Parse("'Method that does not pass'()"));
+
+        // An F# method that would look like this in code: member _.``method that doesn't pass`` () =
+        // And like this in CIL: instance void 'method that doesn\'t pass' () cil managed
+        // Notice the ' escaped by \.
+        Assert.AreEqual(("Method that doesn't pass", 0, null), Parse(@"'Method that doesn\'t pass'()"));
     }
 
     [TestMethod]

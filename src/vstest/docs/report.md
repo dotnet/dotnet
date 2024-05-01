@@ -60,7 +60,9 @@ a zip file (for e.g. loggers for C++ etc.).
 
 If it's a NuGet package, the test logger assemblies should get copied to the
 build output directory. When looking for a test logger, vstest will look for
-them in the same directory as the test assemblies.
+them in the same directory as the test assemblies. In most cases this means that
+test projects reference either the project (same codebase) or NuGet package 
+with the logger.
 
 If the test logger is made available as a zip file, it should be extracted
 to one of the following locations:

@@ -20,12 +20,6 @@ public class TestPlatformNugetPackageTests : CodeCoverageAcceptanceTestBase
         s_nugetPackageFolder = Path.Combine(IntegrationTestEnvironment.PublishDirectory, $"Microsoft.TestPlatform.{IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}.nupkg");
     }
 
-    [ClassCleanup]
-    public static void ClassCleanup()
-    {
-        Directory.Delete(s_nugetPackageFolder, true);
-    }
-
     [TestMethod]
     [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSourceAttribute(useCoreRunner: false)]

@@ -2,24 +2,43 @@
 .assembly extern mscorlib {}
 .assembly extern System.Core {}
 
-.method static public int32 Add(int32 x, int32 y) cil managed 
+.class public CleanNamespaceName.ClassName
 {
-    .maxstack 2
+    .method static public int32 Add(int32 x, int32 y) cil managed 
+    {
+        .maxstack 2
 
-    ldarg.0
-    ldarg.1
-    add
-    ret
-}
+        ldarg.0
+        ldarg.1
+        add
+        ret
+    }
 
-.method static public int32 'An awesome method to add 𝓧➕𝓨'(int32 '𝓧', int32 '𝓨') cil managed 
-{
-    .maxstack 2
+    .method static public int32 'An awesome method to add 𝓧➕𝓨'(int32 '𝓧', int32 '𝓨') cil managed 
+    {
+        .maxstack 2
 
-    ldarg.0
-    ldarg.1
-    add
-    ret
+        ldarg.0
+        ldarg.1
+        add
+        ret
+    }
+
+    // has ' and no spaces, e.g. coming from F# method ``don't``
+    .method static public void 'don\'t'() cil managed 
+    {
+        .maxstack 1
+
+        ret
+    }
+
+    // has ' and a space, e.g. coming from F# method ``don't pass``
+    .method static public void 'don\'t pass'() cil managed 
+    {
+        .maxstack 1
+
+        ret
+    }
 }
 
 .class public CleanNamespaceName.SecondLevel.'𝐌𝐲 𝗮𝘄𝗲𝘀𝗼𝗺𝗲 𝘤𝘭𝘢𝘴𝘴 𝘢𝘯 𝒊𝒏𝒂𝒄𝒄𝒆𝒔𝒔𝒊𝒃𝒍𝒆 𝙣𝙖𝙢𝙚 😭' 

@@ -42,16 +42,12 @@ parameters:
   displayName: "Run SDL validation"
   type: boolean
   default: False
-- name: SkipTests
-  displayName: "Skip tests"
-  type: boolean
-  default: False
 
 - name: otherOsPools
   type: object
   default:
-  - name: netcore1espool-internal
-    image: 1es-ubuntu-2204-pt
+  - name: $(DncEngInternalBuildPool)
+    image: 1es-ubuntu-2204
     os: linux
   - name: Azure Pipelines
     image: macOS-11
@@ -123,8 +119,8 @@ extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
     pool:
-      name: netcore1espool-internal
-      image: 1es-windows-2022-pt
+      name: $(DncEngInternalBuildPool)
+      image: 1es-windows-2022
       os: windows
     customBuildTags:
     - ES365AIMigrationTooling
@@ -147,8 +143,9 @@ extends:
           - job: Windows
             timeoutInMinutes: 120
             pool:
-              name: netcore1espool-internal
-              demands: ImageOverride -equals 1es-windows-2022-pt
+              name: $(DncEngInternalBuildPool)
+              image: 1es-windows-2022
+              os: windows
             steps:
             # This steps help to understand versions of .NET runtime installed on the machine,
             # which is useful to diagnose some governance issues.
@@ -169,26 +166,26 @@ extends:
                 /p:SourceBranchName=$(Build.SourceBranchName)
               name: Build
               displayName: Build
-            - ${{ if eq(parameters.SkipTests, False) }}:
-              # -ci is allowing to import some environment variables and some required configurations
-              # -nobl avoid overwriting binlog of the main Build
-              - script: Test.cmd
-                  -configuration Release
-                  -ci
-                  -nobl
-                  -integrationTest
-                  -performanceTest
-                name: Test
-                displayName: Test
 
-              # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
-              # through the console or trx
-              - task: 1ES.PublishBuildArtifacts@1
-                displayName: 'Publish Test Results folders'
-                inputs:
-                  PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
-                  ArtifactName: TestResults
-                condition: failed()
+            # -ci is allowing to import some environment variables and some required configurations
+            # -nobl avoid overwriting binlog of the main Build
+            - script: Test.cmd
+                -configuration Release
+                -ci
+                -nobl
+                -integrationTest
+                -performanceTest
+              name: Test
+              displayName: Test
+
+            # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
+            # through the console or trx
+            - task: 1ES.PublishBuildArtifacts@1
+              displayName: 'Publish Test Results folders'
+              inputs:
+                PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
+                ArtifactName: TestResults
+              condition: failed()
 
             - task: 1ES.PublishBuildArtifacts@1
               displayName: 'Publish VSSetup'
@@ -225,24 +222,23 @@ extends:
                 inputs:
                   artifactName: PackageArtifacts
                   targetPath: '$(Build.SourcesDirectory)/artifacts/packages/Release/Shipping'
-              
-              - ${{ if eq(parameters.SkipTests, False) }}:
-                - script: ./test.sh
-                    --configuration Release
-                    --ci
-                    --integrationTest
-                    --performanceTest
-                  name: Test
-                  displayName: Test
 
-                # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
-                # through the console or trx
-                - task: 1ES.PublishBuildArtifacts@1
-                  displayName: 'Publish Test Results folders'
-                  inputs:
-                    PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
-                    ArtifactName: TestResults
-                  condition: failed()
+              - script: ./test.sh
+                  --configuration Release
+                  --ci
+                  --integrationTest
+                  --performanceTest
+                name: Test
+                displayName: Test
+
+              # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
+              # through the console or trx
+              - task: 1ES.PublishBuildArtifacts@1
+                displayName: 'Publish Test Results folders'
+                inputs:
+                  PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
+                  ArtifactName: TestResults
+                condition: failed()
 
           - job: Publish
             dependsOn: 
@@ -250,7 +246,7 @@ extends:
                 - ${{ pool.os }}
             pool:
                 name: $(DncEngInternalBuildPool)
-                demands: ImageOverride -equals 1es-windows-2022-pt
+                image: 1es-windows-2022
                 os: windows
             steps:
               # The template job needs a log, otherwise it writes a warning. We can disable log uploading only for

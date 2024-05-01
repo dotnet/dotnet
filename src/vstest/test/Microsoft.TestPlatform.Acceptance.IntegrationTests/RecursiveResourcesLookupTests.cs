@@ -10,8 +10,9 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 public class RecursiveResourcesLookupTests : AcceptanceTestBase
 {
     [TestMethod]
-    // This only fails on .NET Framework, and it fails in teshtost, so no need to double check with
+    // This only fails on .NET Framework, and it fails in testhost, so no need to double check with
     // two different runners.
+    [Ignore("Temporarily ignore until solving https://github.com/microsoft/testfx/issues/2692")]
     [NetFullTargetFrameworkDataSource(useCoreRunner: false)]
     public void RunsToCompletionWhenJapaneseResourcesAreLookedUpForMSCorLib(RunnerInfo runnerInfo)
     {

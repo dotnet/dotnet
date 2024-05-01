@@ -69,25 +69,24 @@ public class VSTestTask2 : ToolTask, ITestTask
         if (TryGetMessage(singleLine, out string name, out string?[] data))
         {
             // See MSBuildLogger.cs for the messages produced.
-            // The number suffix is the amount of parameters that are sent along with the message.
             switch (name)
             {
                 // Forward the output we receive as messages.
-                case "output-info1":
+                case "output-info":
                     Log.LogMessage(MessageImportance.Low, data[0]);
                     break;
-                case "output-warning1":
+                case "output-warning":
                     Log.LogWarning(data[0]);
                     break;
-                case "output-error1":
+                case "output-error":
                     Log.LogError(data[0]);
                     break;
 
-                case "run-cancel1":
-                case "run-abort1":
+                case "run-cancel":
+                case "run-abort":
                     Log.LogError(data[0]);
                     break;
-                case "run-finish6":
+                case "run-finish":
                     // 0 - Localized summary
                     // 1 - total tests
                     // 2 - passed tests
@@ -116,7 +115,7 @@ public class VSTestTask2 : ToolTask, ITestTask
                         Log.LogMessage(MessageImportance.Low, summary);
                     }
                     break;
-                case "test-passed4":
+                case "test-passed":
                     {
                         // 0 - localized result indicator
                         // 1 - display name
@@ -128,7 +127,7 @@ public class VSTestTask2 : ToolTask, ITestTask
                         var outputs = data[3];
 
                         double durationNumber = 0;
-                        var _ = duration != null && double.TryParse(duration, out durationNumber);
+                        _ = duration != null && double.TryParse(duration, out durationNumber);
 
                         string? formattedDuration = GetFormattedDurationString(TimeSpan.FromMilliseconds(durationNumber));
                         var testResultWithTime = !formattedDuration.IsNullOrEmpty() ? $"{indicator} {displayName} [{formattedDuration}]" : $"{indicator} {displayName}";
@@ -156,7 +155,7 @@ public class VSTestTask2 : ToolTask, ITestTask
                         }
                     }
                     break;
-                case "test-skipped2":
+                case "test-skipped":
                     {
                         // 0 - localized result indicator
                         // 1 - display name
@@ -182,63 +181,20 @@ public class VSTestTask2 : ToolTask, ITestTask
                         }
                     }
                     break;
-                case "test-failed7":
+                case "test-failed":
                     {
-                        // 0 - display name
-                        // 1 - error message
-                        // 2 - error stack trace
-                        // 3 - outputs
-                        // 4 - file
-                        // 5 - line
-                        // 6 - place
-                        var displayName = data[0]; // Display name
-                        var fullErrorMessage = data[1];
-                        var fullStackTrace = data[2];
-                        var outputs = data[3];
-                        var file = data[4];
-                        var line = data[5];
-                        var place = data[6];
-                        var lineNumber = 0;
-                        var _ = !StringUtils.IsNullOrWhiteSpace(place) && int.TryParse(line, out lineNumber);
-
-                        string? nameAndPlace = place == displayName ? place : $"{displayName}: {place}";
-                        string? singleLineError = JoinSingleLineAndShorten(nameAndPlace, fullErrorMessage);
+                        // 0 - full error
+                        // 1 - file
+                        // 2 - line
+                        var fullErrorMessage = data[0];
+                        var file = data[1];
+                        var line = data[2];
+                        _ = int.TryParse(line, out int lineNumber);
 
                         file ??= string.Empty;
 
                         // Report error to msbuild.
-                        Log.LogError(null, "VSTEST1", null, file, lineNumber, 0, 0, 0, singleLineError, null);
-
-                        // Write the full error to verbose log.
-                        //
-                        // Log without location information, because it will give better experience in binary log viewer. By default you will see the output shortened followed by "Space: view, Ctrl+C: copy).
-                        // Pressing space will navigate to code, instead of showing the full output. To show full output you have to right-click and select View full text.
-                        // So we avoid providing source info
-                        // Log.LogMessage(null, "VSTEST1", null, file, lineNumber, 0, 0, 0, MessageImportance.Low, $"{displayName}: {fullErrorMessage}{n}Stack Trace:{n}{fullStackTrace}");
-                        var n = Environment.NewLine;
-                        Log.LogMessage(MessageImportance.Low, $"{displayName}: {fullErrorMessage}{n}Stack Trace:{n}{fullStackTrace}{n}Outputs:{n}{outputs}");
-                    }
-                    break;
-                case "test-failed3":
-                    {
-                        // 0 - display name
-                        // 1 - error message
-                        // 2 - outputs
-                        var displayName = data[0];
-                        var fullErrorMessage = data[1];
-                        var outputs = data[2];
-
-                        var singleLineError = JoinSingleLineAndShorten(displayName, fullErrorMessage);
-                        Log.LogError(null, "VSTEST1", null, string.Empty, 0, 0, 0, 0, singleLineError);
-                        // Write the full error to verbose log.
-                        //
-                        // Log without location information, because it will give better experience in binary log viewer. By default you will see the output shortened followed by "Space: view, Ctrl+C: copy).
-                        // Pressing space will navigate to code, instead of showing the full output. To show full output you have to right-click and select View full text.
-                        // So we avoid providing source info
-                        // var n = Environment.NewLine;
-                        // Log.LogMessage(null, "VSTEST1", null, string.Empty, 0, 0, 0, 0, MessageImportance.Low, $"{displayName}: {fullErrorMessage}");
-                        var n = Environment.NewLine;
-                        Log.LogMessage(MessageImportance.Low, $"{displayName}: {fullErrorMessage}{n}Outputs:{n}{outputs}");
+                        Log.LogError(null, "VSTEST1", null, file ?? string.Empty, lineNumber, 0, 0, 0, fullErrorMessage, null);
                     }
                     break;
                 default:
@@ -260,35 +216,6 @@ public class VSTestTask2 : ToolTask, ITestTask
                 Log.LogMessage(MessageImportance.Low, singleLine);
             }
         }
-    }
-
-    private static string? JoinSingleLineAndShorten(string? first, string? second)
-    {
-        // Join them with space if both are not null,
-        // otherwise use the one that is not null.
-        return first != null && second != null
-            ? SingleLineAndShorten(first) + " " + SingleLineAndShorten(second)
-            : SingleLineAndShorten(first) ?? SingleLineAndShorten(second);
-    }
-
-    private static string AsForwardedMessage(string?[] data)
-    {
-        return string.Join("||||", data.Select(CleanSeperator));
-    }
-
-    private static string? CleanSeperator(string? text)
-    {
-        return text == null ? null : text.Replace("||||", "___");
-    }
-
-    private static string? SingleLineAndShorten(string? text)
-    {
-        if (text == null)
-        {
-            return null;
-        }
-
-        return text.Length <= 1000 ? text : text.Substring(0, 1000).Replace('\r', ' ').Replace('\n', ' ');
     }
 
     private bool TryGetMessage(string singleLine, out string name, out string?[] data)

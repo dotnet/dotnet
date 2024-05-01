@@ -21,6 +21,7 @@ using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Host;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -357,6 +358,8 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
     {
         SetUpMocksForDotNetTestHost();
         var testHostManager = new TestableDotnetTestHostManager(false, _mockProcessHelper.Object, _mockFileHelper.Object, _mockEnvironment.Object, _mockRunsettingHelper.Object, _mockWindowsRegistry.Object, _mockEnvironmentVariableHelper.Object);
+        testHostManager.Initialize(new NullMessageLogger(), DefaultRunSettings);
+
         var operationManager = new TestableProxyOperationManager(_mockRequestData.Object, _mockRequestSender.Object, testHostManager);
 
         operationManager.SetupChannel(Enumerable.Empty<string>(), DefaultRunSettings);
@@ -369,6 +372,7 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
     {
         SetUpMocksForDotNetTestHost();
         var testHostManager = new TestableDotnetTestHostManager(true, _mockProcessHelper.Object, _mockFileHelper.Object, _mockEnvironment.Object, _mockRunsettingHelper.Object, _mockWindowsRegistry.Object, _mockEnvironmentVariableHelper.Object);
+        testHostManager.Initialize(new NullMessageLogger(), DefaultRunSettings);
         var operationManager = new TestableProxyOperationManager(_mockRequestData.Object, _mockRequestSender.Object, testHostManager);
 
         operationManager.SetupChannel(Enumerable.Empty<string>(), DefaultRunSettings);
@@ -585,5 +589,12 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
         {
             return new TestProcessStartInfo();
         }
+    }
+}
+
+internal class NullMessageLogger : IMessageLogger
+{
+    public void SendMessage(TestMessageLevel testMessageLevel, string message)
+    {
     }
 }

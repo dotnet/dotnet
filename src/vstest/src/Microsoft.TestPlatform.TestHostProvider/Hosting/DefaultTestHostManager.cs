@@ -67,7 +67,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     private StringBuilder? _testHostProcessStdOut;
     private IMessageLogger? _messageLogger;
     private bool _hostExitedEventRaised;
-    private TestHostManagerCallbacks? _testhostManagerCallbacks;
+    private TestHostManagerCallbacks? _testHostManagerCallbacks;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DefaultTestHostManager"/> class.
@@ -124,7 +124,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     private Action<object?> ExitCallBack => process =>
     {
         TPDebug.Assert(_testHostProcessStdError is not null, "LaunchTestHostAsync must have been called before ExitCallBack");
-        TPDebug.Assert(_testhostManagerCallbacks is not null, "Initialize must have been called before ExitCallBack");
+        TPDebug.Assert(_testHostManagerCallbacks is not null, "Initialize must have been called before ExitCallBack");
         TestHostManagerCallbacks.ExitCallBack(_processHelper, process, _testHostProcessStdError, OnHostExited);
     };
 
@@ -134,18 +134,18 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     private Action<object?, string?> ErrorReceivedCallback => (process, data) =>
     {
         TPDebug.Assert(_testHostProcessStdError is not null, "LaunchTestHostAsync must have been called before ErrorReceivedCallback");
-        TPDebug.Assert(_testhostManagerCallbacks is not null, "Initialize must have been called before ErrorReceivedCallback");
-        _testhostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, data);
+        TPDebug.Assert(_testHostManagerCallbacks is not null, "Initialize must have been called before ErrorReceivedCallback");
+        _testHostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, data);
     };
 
     /// <summary>
-    /// Gets callback to read from process error stream
+    /// Gets callback to read from process standard stream
     /// </summary>
     private Action<object?, string?> OutputReceivedCallback => (process, data) =>
     {
         TPDebug.Assert(_testHostProcessStdOut is not null, "LaunchTestHostAsync must have been called before OutputReceivedCallback");
-        TPDebug.Assert(_testhostManagerCallbacks is not null, "Initialize must have been called before OutputReceivedCallback");
-        _testhostManagerCallbacks.StandardOutputReceivedCallback(_testHostProcessStdOut, data);
+        TPDebug.Assert(_testHostManagerCallbacks is not null, "Initialize must have been called before OutputReceivedCallback");
+        _testHostManagerCallbacks.StandardOutputReceivedCallback(_testHostProcessStdOut, data);
     };
 
     /// <inheritdoc/>
@@ -371,7 +371,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
         var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runsettingsXml);
 
         _messageLogger = logger;
-        _testhostManagerCallbacks = new TestHostManagerCallbacks(_environmentVariableHelper.GetEnvironmentVariable("VSTEST_EXPERIMENTAL_FORWARD_OUTPUT_FEATURE") == "1", logger);
+        _testHostManagerCallbacks = new TestHostManagerCallbacks(_environmentVariableHelper.GetEnvironmentVariable("VSTEST_EXPERIMENTAL_FORWARD_OUTPUT_FEATURE") == "1", logger);
         _architecture = runConfiguration.TargetPlatform;
         _targetFramework = runConfiguration.TargetFramework;
         _testHostProcess = null;
