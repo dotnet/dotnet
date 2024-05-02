@@ -22,10 +22,8 @@
                                         Transition;[<Missing>];
                                     CSharpImplicitExpressionBody - [17..22)::5
                                         CSharpCodeBlock - [17..22)::5
-                                            CSharpExpressionLiteral - [17..18)::1 - [@] - Gen<Expr>
-                                                Transition;[@];
-                                            CSharpExpressionLiteral - [18..22)::4 - [true] - Gen<Expr>
-                                                Keyword;[true];
+                                            CSharpExpressionLiteral - [17..22)::5 - [@true] - Gen<Expr>
+                                                Keyword;[@true];
                         CSharpExpressionLiteral - [22..24)::2 - [  ] - Gen<None>
                             Whitespace;[  ];
                     MarkupTextLiteral - [24..25)::1 - ['] - Gen<Markup>
