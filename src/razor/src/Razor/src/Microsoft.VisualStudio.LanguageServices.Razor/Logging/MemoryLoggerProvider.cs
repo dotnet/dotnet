@@ -1,14 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Logging;
 
 namespace Microsoft.VisualStudio.Razor.Logging;
 
-[Export(typeof(ILoggerProvider))]
-[method: ImportingConstructor]
-internal partial class MemoryLoggerProvider() : ILoggerProvider
+[ExportLoggerProvider]
+internal partial class MemoryLoggerProvider : ILoggerProvider
 {
     // How many messages will the buffer contain
     private const int BufferSize = 5000;

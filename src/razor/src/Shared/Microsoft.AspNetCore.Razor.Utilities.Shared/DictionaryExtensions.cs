@@ -76,21 +76,4 @@ internal static class DictionaryExtensions
             return value;
         }
     }
-
-    public static TValue GetValueOrDefault<TKey, TValue>(
-        this Dictionary<TKey, TValue> dictionary,
-        TKey key,
-        TValue defaultValue)
-        where TKey : notnull
-    {
-        if (dictionary.TryGetValue(key, out var existingValue))
-        {
-            return existingValue;
-        }
-        else
-        {
-            dictionary.Add(key, defaultValue);
-            return defaultValue;
-        }
-    }
 }

@@ -13,10 +13,15 @@ namespace Microsoft.CodeAnalysis.Razor.Logging;
 
 internal abstract partial class AbstractLoggerFactory : ILoggerFactory
 {
+    private ImmutableArray<Lazy<ILoggerProvider, LoggerProviderMetadata>> _providers;
     private ImmutableDictionary<string, AggregateLogger> _loggers;
-    private ImmutableArray<ILoggerProvider> _providers;
 
     protected AbstractLoggerFactory(ImmutableArray<ILoggerProvider> providers)
+        : this(providers.SelectAsArray(p => new Lazy<ILoggerProvider, LoggerProviderMetadata>(() => p, LoggerProviderMetadata.Empty)))
+    {
+    }
+
+    protected AbstractLoggerFactory(ImmutableArray<Lazy<ILoggerProvider, LoggerProviderMetadata>> providers)
     {
         _providers = providers;
         _loggers = ImmutableDictionary.Create<string, AggregateLogger>(StringComparer.OrdinalIgnoreCase);
@@ -29,24 +34,26 @@ internal abstract partial class AbstractLoggerFactory : ILoggerFactory
             return logger;
         }
 
-        using var loggers = new PooledArrayBuilder<ILogger>(_providers.Length);
+        using var lazyLoggers = new PooledArrayBuilder<LazyLogger>(_providers.Length);
 
         foreach (var provider in _providers)
         {
-            loggers.Add(provider.CreateLogger(categoryName));
+            lazyLoggers.Add(new(provider, categoryName));
         }
 
-        var result = new AggregateLogger(loggers.DrainToImmutable());
+        var result = new AggregateLogger(lazyLoggers.DrainToImmutable());
         return ImmutableInterlocked.AddOrUpdate(ref _loggers, categoryName, result, (k, v) => v);
     }
 
     public void AddLoggerProvider(ILoggerProvider provider)
     {
-        if (ImmutableInterlocked.Update(ref _providers, (set, p) => set.Add(p), provider))
+        var lazyProvider = new Lazy<ILoggerProvider, LoggerProviderMetadata>(() => provider, LoggerProviderMetadata.Empty);
+
+        if (ImmutableInterlocked.Update(ref _providers, (set, p) => set.Add(p), lazyProvider))
         {
-            foreach (var (category, logger) in _loggers)
+            foreach (var (categoryName, logger) in _loggers)
             {
-                logger.AddLogger(provider.CreateLogger(category));
+                logger.AddLogger(new(lazyProvider, categoryName));
             }
         }
     }

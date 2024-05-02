@@ -7,16 +7,11 @@ using Microsoft.VisualStudio.Razor.Logging;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Logging;
 
-[Export(typeof(ILoggerProvider))]
-internal sealed class RazorLogHubLoggerProvider : ILoggerProvider
+[ExportLoggerProvider]
+[method: ImportingConstructor]
+internal sealed class RazorLogHubLoggerProvider(RazorLogHubTraceProvider traceProvider) : ILoggerProvider
 {
-    private readonly RazorLogHubTraceProvider _traceProvider;
-
-    [ImportingConstructor]
-    public RazorLogHubLoggerProvider(RazorLogHubTraceProvider traceProvider)
-    {
-        _traceProvider = traceProvider;
-    }
+    private readonly RazorLogHubTraceProvider _traceProvider = traceProvider;
 
     public ILogger CreateLogger(string categoryName)
     {

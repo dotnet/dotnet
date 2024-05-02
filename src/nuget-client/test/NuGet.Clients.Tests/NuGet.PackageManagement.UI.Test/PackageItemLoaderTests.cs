@@ -13,9 +13,7 @@ using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Threading;
 using Moq;
 using NuGet.Configuration;
-using NuGet.PackageManagement.UI.Utility;
 using NuGet.PackageManagement.UI.ViewModels;
-using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGet.Test.Utility;
@@ -247,7 +245,7 @@ namespace NuGet.PackageManagement.UI.Test
         }
 
         [Fact]
-        public async Task GetCurrent_OwnerDetailsService_SupportsKnownOwners_CreatesKnownOwnerViewModelsAsync()
+        public async Task GetCurrent_HasKnownOwners_CreatesKnownOwnerViewModelsAsync()
         {
             var version = NuGetVersion.Parse("4.3.0");
             var packageSearchMetadata = new PackageSearchMetadataBuilder.ClonedPackageSearchMetadata()
@@ -260,7 +258,15 @@ namespace NuGet.PackageManagement.UI.Test
             ownerDetailsUriService.Setup(x => x.SupportsKnownOwners).Returns(true);
             ownerDetailsUriService.Setup(x => x.GetOwnerDetailsUri(It.IsAny<string>())).Returns((string owner) => new Uri($"https://nuget.test/profiles/{owner}?_src=template"));
 
-            var packageSearchMetadataContextInfo = PackageSearchMetadataContextInfo.Create(packageSearchMetadata, ownerDetailsUriService.Object);
+            var knownOwner1 = new KnownOwner("owner1", new Uri("https://nuget.test/profiles/owner1?_src=template"));
+            var knownOwner2 = new KnownOwner("owner2", new Uri("https://nuget.test/profiles/owner2?_src=template"));
+            IReadOnlyList<KnownOwner> knownOwners = new List<KnownOwner>(capacity: 2)
+            {
+                knownOwner1,
+                knownOwner2
+            };
+
+            var packageSearchMetadataContextInfo = PackageSearchMetadataContextInfo.Create(packageSearchMetadata, knownOwners);
             var searchResult = new SearchResultContextInfo(new[] { packageSearchMetadataContextInfo }, new Dictionary<string, LoadingStatus> { { "Search", LoadingStatus.Loading } }, hasMoreItems: false);
             var serviceBroker = Mock.Of<IServiceBroker>();
             var testVersions = new List<VersionInfoContextInfo>() {
@@ -314,13 +320,13 @@ namespace NuGet.PackageManagement.UI.Test
                 .And.HaveCount(2)
                 .And.BeEquivalentTo(new[]
                 {
-                    new KnownOwnerViewModel(new KnownOwner("owner1", new Uri("https://nuget.test/profiles/owner1?_src=template"))),
-                    new KnownOwnerViewModel(new KnownOwner("owner2", new Uri("https://nuget.test/profiles/owner2?_src=template")))
+                    knownOwner1,
+                    knownOwner2
                 });
         }
 
         [Fact]
-        public async Task GetCurrent_OwnerDetailsService_DoesNotSupportKnownOwners_DoesNotCreateKnownOwnerViewModelsAsync()
+        public async Task GetCurrent_DoesNotHaveKnownOwners_DoesNotCreateKnownOwnerViewModelsAsync()
         {
             var version = NuGetVersion.Parse("4.3.0");
             var packageSearchMetadata = new PackageSearchMetadataBuilder.ClonedPackageSearchMetadata()
@@ -329,11 +335,8 @@ namespace NuGet.PackageManagement.UI.Test
                 OwnersList = new List<string> { "owner1", "owner2" },
             };
             PackageSource packageSource = new PackageSource("https://nuget.test/v3/index.json");
-            Mock<IOwnerDetailsUriService> ownerDetailsUriService = new Mock<IOwnerDetailsUriService>();
-            ownerDetailsUriService.Setup(x => x.SupportsKnownOwners).Returns(false);
-            ownerDetailsUriService.Setup(x => x.GetOwnerDetailsUri(It.IsAny<string>())).Returns((string owner) => new Uri($"https://nuget.test/profiles/{owner}?_src=template"));
 
-            var packageSearchMetadataContextInfo = PackageSearchMetadataContextInfo.Create(packageSearchMetadata, ownerDetailsUriService.Object);
+            var packageSearchMetadataContextInfo = PackageSearchMetadataContextInfo.Create(packageSearchMetadata, knownOwners: null);
             var searchResult = new SearchResultContextInfo(new[] { packageSearchMetadataContextInfo }, new Dictionary<string, LoadingStatus> { { "Search", LoadingStatus.Loading } }, hasMoreItems: false);
             var serviceBroker = Mock.Of<IServiceBroker>();
             var testVersions = new List<VersionInfoContextInfo>() {
