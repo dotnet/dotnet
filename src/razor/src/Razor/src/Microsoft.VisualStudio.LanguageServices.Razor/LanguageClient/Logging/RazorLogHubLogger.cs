@@ -9,16 +9,10 @@ using Microsoft.VisualStudio.Razor.Logging;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Logging;
 
-internal sealed class RazorLogHubLogger : ILogger
+internal sealed class RazorLogHubLogger(string categoryName, RazorLogHubTraceProvider traceProvider) : ILogger
 {
-    private string _categoryName;
-    private RazorLogHubTraceProvider _traceProvider;
-
-    public RazorLogHubLogger(string categoryName, RazorLogHubTraceProvider traceProvider)
-    {
-        _categoryName = categoryName;
-        _traceProvider = traceProvider;
-    }
+    private readonly string _categoryName = categoryName;
+    private readonly RazorLogHubTraceProvider _traceProvider = traceProvider;
 
     public bool IsEnabled(LogLevel logLevel)
     {

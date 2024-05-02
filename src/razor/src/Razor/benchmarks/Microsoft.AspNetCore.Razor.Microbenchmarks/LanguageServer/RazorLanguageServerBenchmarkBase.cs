@@ -19,7 +19,6 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Nerdbank.Streams;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
