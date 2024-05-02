@@ -1,0 +1,29 @@
+﻿Document - 
+    NamespaceDeclaration -  - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
+        ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_EscapedIdentifier_DesignTime -  - 
+            DefaultTagHelperRuntime - 
+            FieldDeclaration -  - private - global::InputTagHelper - __InputTagHelper
+            DesignTimeDirective - 
+                DirectiveToken - (14:0,14 [17] EscapedIdentifier.cshtml) - "*, TestAssembly"
+            CSharpCode - 
+                IntermediateToken -  - CSharp - #pragma warning disable 0414
+            CSharpCode - 
+                IntermediateToken -  - CSharp - private static object __o = null;
+            CSharpCode - 
+                IntermediateToken -  - CSharp - #pragma warning restore 0414
+            MethodDeclaration -  - public async - System.Threading.Tasks.Task - ExecuteAsync
+                HtmlContent - (31:0,31 [4] EscapedIdentifier.cshtml)
+                    LazyIntermediateToken - (31:0,31 [4] EscapedIdentifier.cshtml) - Html - \n\n
+                CSharpCode - (37:2,2 [24] EscapedIdentifier.cshtml)
+                    LazyIntermediateToken - (37:2,2 [24] EscapedIdentifier.cshtml) - CSharp - \n    var count = "1";\n
+                TagHelper - (64:5,0 [39] EscapedIdentifier.cshtml) - input - TagMode.SelfClosing
+                    DefaultTagHelperBody - 
+                    DefaultTagHelperCreate -  - InputTagHelper
+                    DefaultTagHelperProperty - (76:5,12 [23] EscapedIdentifier.cshtml) - age - int InputTagHelper.AgeProp - HtmlAttributeValueStyle.DoubleQuotes
+                        LazyIntermediateToken - (76:5,12 [16] EscapedIdentifier.cshtml) - CSharp - Convert.ToInt32(
+                        CSharpExpression - (92:5,28 [6] EscapedIdentifier.cshtml)
+                            LazyIntermediateToken - (92:5,28 [6] EscapedIdentifier.cshtml) - CSharp - @count
+                        LazyIntermediateToken - (98:5,34 [1] EscapedIdentifier.cshtml) - CSharp - )
+                    DefaultTagHelperExecute - 
+                HtmlContent - (103:5,39 [2] EscapedIdentifier.cshtml)
+                    LazyIntermediateToken - (103:5,39 [2] EscapedIdentifier.cshtml) - Html - \n

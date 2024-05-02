@@ -595,18 +595,17 @@ internal static class TagHelperBlockRewriter
             {
                 using var _ = SyntaxListBuilderPool.GetPooledBuilder<RazorSyntaxNode>(out var builder);
 
-                // Convert transition.
-                // Change to a MarkupChunkGenerator so that the '@' \ parenthesis is generated as part of the output.
-                var editHandler = _enableSpanEditHandlers
-                    ? node.GetEditHandler() ?? SpanEditHandler.CreateDefault((content) => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>(), AcceptedCharactersInternal.Any)
-                    : null;
-
-                var expression = SyntaxFactory.CSharpExpressionLiteral(new SyntaxList<SyntaxToken>(node.Transition.Transition), MarkupChunkGenerator.Instance).WithEditHandler(editHandler);
-                expression = (CSharpExpressionLiteralSyntax)VisitCSharpExpressionLiteral(expression);
-                builder.Add(expression);
-
                 var rewrittenBody = (CSharpCodeBlockSyntax)VisitCSharpCodeBlock(((CSharpImplicitExpressionBodySyntax)node.Body).CSharpCode);
-                builder.AddRange(rewrittenBody.Children);
+
+                // The transition needs to be considered part of the first token in the rewritten body, so we update the first child to include it.
+                // This ensures that, when we create tracking spans and write out the final C# code, the `@` is not treated as a separate, separable
+                // token from the content that follows it.
+                var firstChild = rewrittenBody.Children[0];
+                var firstToken = firstChild.GetFirstToken();
+                var newFirstToken = SyntaxFactory.Token(firstToken.Kind, node.Transition.Transition.Content + firstToken.Content).WithAnnotations(firstToken.GetAnnotations());
+
+                var newFirstChild = firstChild.ReplaceNode(firstToken, newFirstToken);
+                builder.AddRange(rewrittenBody.Children.Replace(firstChild, newFirstChild));
 
                 // Since the original transition is part of the body, we need something to take it's place.
                 var transition = SyntaxFactory.CSharpTransition(SyntaxFactory.MissingToken(SyntaxKind.Transition), chunkGenerator: null);
@@ -627,6 +626,7 @@ internal static class TagHelperBlockRewriter
             {
                 // Convert transition.
                 // Change to a MarkupChunkGenerator so that the '@' \ parenthesis is generated as part of the output.
+                // This is bad code, since @( is never valid C#, so we don't worry about trying to stitch the @ and the ( together.
                 var editHandler = _enableSpanEditHandlers
                     ? node.GetEditHandler() ?? SpanEditHandler.CreateDefault((content) => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>(), AcceptedCharactersInternal.Any)
                     : null;

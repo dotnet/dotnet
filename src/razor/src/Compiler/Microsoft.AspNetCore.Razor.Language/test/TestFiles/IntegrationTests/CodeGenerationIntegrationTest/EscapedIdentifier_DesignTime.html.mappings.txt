@@ -1,0 +1,28 @@
+﻿Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (31:0,31 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml)
+|
+
+|
+Generated Location: (31:0,31 [4] )
+|
+
+|
+
+Source Location: (62:4,1 [14] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml)
+|
+<input age="|
+Generated Location: (62:4,1 [14] )
+|
+<input age="|
+
+Source Location: (99:5,35 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml)
+|" />
+|
+Generated Location: (99:5,35 [6] )
+|" />
+|
+

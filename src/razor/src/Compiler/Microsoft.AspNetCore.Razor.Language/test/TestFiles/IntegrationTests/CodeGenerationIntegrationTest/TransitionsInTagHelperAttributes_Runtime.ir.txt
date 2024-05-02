@@ -43,8 +43,7 @@
                         LazyIntermediateToken - (204:8,23 [2] TransitionsInTagHelperAttributes.cshtml) - CSharp -  +
                         LazyIntermediateToken - (206:8,25 [1] TransitionsInTagHelperAttributes.cshtml) - CSharp -  
                         CSharpExpression - (207:8,26 [4] TransitionsInTagHelperAttributes.cshtml)
-                            LazyIntermediateToken - (207:8,26 [1] TransitionsInTagHelperAttributes.cshtml) - CSharp - @
-                            LazyIntermediateToken - (208:8,27 [3] TransitionsInTagHelperAttributes.cshtml) - CSharp - int
+                            LazyIntermediateToken - (207:8,26 [4] TransitionsInTagHelperAttributes.cshtml) - CSharp - @int
                     DefaultTagHelperExecute - 
                 HtmlContent - (217:8,36 [2] TransitionsInTagHelperAttributes.cshtml)
                     LazyIntermediateToken - (217:8,36 [2] TransitionsInTagHelperAttributes.cshtml) - Html - \n

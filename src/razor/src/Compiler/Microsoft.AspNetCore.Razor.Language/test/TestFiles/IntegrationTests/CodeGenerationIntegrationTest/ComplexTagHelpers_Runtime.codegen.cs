@@ -493,15 +493,8 @@ DateTimeOffset.Now.Year > 2014
 #line hidden
 #nullable disable
 #nullable restore
-#line (26,25)-(26,26) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml"
-@
-
-#line default
-#line hidden
-#nullable disable
-#nullable restore
-#line (26,26)-(26,49) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml"
-DateTimeOffset.Now.Year
+#line (26,25)-(26,49) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml"
+@DateTimeOffset.Now.Year
 
 #line default
 #line hidden

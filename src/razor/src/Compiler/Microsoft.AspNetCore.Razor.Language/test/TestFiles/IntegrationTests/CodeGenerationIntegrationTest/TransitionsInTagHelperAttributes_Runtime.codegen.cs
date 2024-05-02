@@ -138,15 +138,8 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #line hidden
 #nullable disable
 #nullable restore
-#line (9,27)-(9,28) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml"
-@
-
-#line default
-#line hidden
-#nullable disable
-#nullable restore
-#line (9,28)-(9,31) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml"
-int
+#line (9,27)-(9,31) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml"
+@int
 
 #line default
 #line hidden
