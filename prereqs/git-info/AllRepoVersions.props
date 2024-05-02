@@ -5,8 +5,8 @@
     <arcadeOutputPackageVersion>9.0.0-beta.24223.3</arcadeOutputPackageVersion>
     <aspireGitCommitHash>9d6b4ff780da64c972637368d6e1f58afef9535f</aspireGitCommitHash>
     <aspireOutputPackageVersion>9.0.0-preview.4.24218.6</aspireOutputPackageVersion>
-    <aspnetcoreGitCommitHash>7033ec7f402fa4b7df2bf72a5e3dff1df6831f57</aspnetcoreGitCommitHash>
-    <aspnetcoreOutputPackageVersion>9.0.0-preview.4.24219.8</aspnetcoreOutputPackageVersion>
+    <aspnetcoreGitCommitHash>1e41e689ffdd1c5a30e38ce527fe668e6730adcd</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>9.0.0-preview.4.24251.2</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>861f49c137941b9722a43e5993ccac7716c8528c</cecilGitCommitHash>
     <cecilOutputPackageVersion>0.11.4-alpha.24215.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>963d34b1fb712c673bfb198133d7e988182c9ef4</commandlineapiGitCommitHash>
@@ -15,13 +15,13 @@
     <deploymenttoolsOutputPackageVersion>9.0.0-preview.1.24176.3</deploymenttoolsOutputPackageVersion>
     <diagnosticsGitCommitHash>831eee3a9e69dd886fa190a9914a7f66260c653a</diagnosticsGitCommitHash>
     <diagnosticsOutputPackageVersion>8.0.0-preview.24151.1</diagnosticsOutputPackageVersion>
-    <efcoreGitCommitHash>ef5f7a3d7208a5d6f3d82ceeb44da26b19446c83</efcoreGitCommitHash>
-    <efcoreOutputPackageVersion>9.0.0-preview.4.24217.1</efcoreOutputPackageVersion>
+    <efcoreGitCommitHash>f8b7236443f9c9fc2a466f359a1d01cd161cbc4b</efcoreGitCommitHash>
+    <efcoreOutputPackageVersion>9.0.0-preview.4.24226.1</efcoreOutputPackageVersion>
     <emsdkGitCommitHash>9d28301f6a5f512db14f242f7403a4bfbcbcc8a4</emsdkGitCommitHash>
     <emsdkOutputPackageVersion>9.0.0-preview.4.24223.1</emsdkOutputPackageVersion>
     <fsharpGitCommitHash>3ef1cb25ffb292b5c87f9604d1a09b032277bf76</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.400-beta.24229.4</fsharpOutputPackageVersion>
-    <installerGitCommitHash>2e53cc30db7c24f0b32ef0d4de5d6186232988c3</installerGitCommitHash>
+    <installerGitCommitHash>4f2412cf25b3c8384dafc500ce050f82b49b0bfa</installerGitCommitHash>
     <installerOutputPackageVersion>9.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>bd0b1e4667e708d5cf24e116516ee6f18ad20cd7</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.11.0-preview-24225-01</msbuildOutputPackageVersion>
@@ -31,14 +31,14 @@
     <razorOutputPackageVersion>7.0.0-preview.24230.2</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>b07c100bfc66013a8444172d00cfa04c9ceb5a97</roslynanalyzersGitCommitHash>
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.24216.2</roslynanalyzersOutputPackageVersion>
-    <roslynGitCommitHash>f4fcb032ea827b91111d010724cd35e26314aa71</roslynGitCommitHash>
-    <roslynOutputPackageVersion>4.11.0-2.24230.7</roslynOutputPackageVersion>
+    <roslynGitCommitHash>fa7ece1ca25ef529db616ed6c839af9f027fa216</roslynGitCommitHash>
+    <roslynOutputPackageVersion>4.11.0-2.24252.3</roslynOutputPackageVersion>
     <runtimeGitCommitHash>274daa158a78f05279bf523e806ea2311972910b</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>9.0.0-preview.4.24230.10</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>4ab07002cb46cf169c85a09a546709a20642c65b</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24222.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>eac75bdecba513d1fa43b8a9185fdc7a26bd47c0</sdkGitCommitHash>
-    <sdkOutputPackageVersion>9.0.100-preview.4.24251.11</sdkOutputPackageVersion>
+    <sdkGitCommitHash>69388b05de4ded019551ae07ad73e2132c1452ea</sdkGitCommitHash>
+    <sdkOutputPackageVersion>9.0.100-preview.4.24252.10</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>1223ec47c74e79d44950d429a36386de6c7bf9c8</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24222.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>c0b5d69a1a1513528c77fffff708c7502d57c35c</sourcebuildreferencepackagesGitCommitHash>

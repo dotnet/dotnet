@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@9d6b4ff](https://github.com/dotnet/aspire/tree/9d6b4ff780da64c972637368d6e1f58afef9535f)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@7033ec7](https://github.com/dotnet/aspnetcore/tree/7033ec7f402fa4b7df2bf72a5e3dff1df6831f57)*
+*[dotnet/aspnetcore@1e41e68](https://github.com/dotnet/aspnetcore/tree/1e41e689ffdd1c5a30e38ce527fe668e6730adcd)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@5a37b51](https://github.com/google/googletest/tree/5a37b517ad4ab6738556f0284c256cae1466c5b4)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -28,13 +28,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@831eee3](https://github.com/dotnet/diagnostics/tree/831eee3a9e69dd886fa190a9914a7f66260c653a)*
 - `src/efcore`  
-*[dotnet/efcore@ef5f7a3](https://github.com/dotnet/efcore/tree/ef5f7a3d7208a5d6f3d82ceeb44da26b19446c83)*
+*[dotnet/efcore@f8b7236](https://github.com/dotnet/efcore/tree/f8b7236443f9c9fc2a466f359a1d01cd161cbc4b)*
 - `src/emsdk`  
 *[dotnet/emsdk@9d28301](https://github.com/dotnet/emsdk/tree/9d28301f6a5f512db14f242f7403a4bfbcbcc8a4)*
 - `src/fsharp`  
 *[dotnet/fsharp@3ef1cb2](https://github.com/dotnet/fsharp/tree/3ef1cb25ffb292b5c87f9604d1a09b032277bf76)*
 - `src/installer`  
-*[dotnet/installer@2e53cc3](https://github.com/dotnet/installer/tree/2e53cc30db7c24f0b32ef0d4de5d6186232988c3)*
+*[dotnet/installer@4f2412c](https://github.com/dotnet/installer/tree/4f2412cf25b3c8384dafc500ce050f82b49b0bfa)*
 - `src/msbuild`  
 *[dotnet/msbuild@bd0b1e4](https://github.com/dotnet/msbuild/tree/bd0b1e4667e708d5cf24e116516ee6f18ad20cd7)*
 - `src/nuget-client`  
@@ -44,7 +44,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@2f71d65](https://github.com/dotnet/razor/tree/2f71d656ec23e4649ee80d2433874cc7bc896df4)*
 - `src/roslyn`  
-*[dotnet/roslyn@f4fcb03](https://github.com/dotnet/roslyn/tree/f4fcb032ea827b91111d010724cd35e26314aa71)*
+*[dotnet/roslyn@fa7ece1](https://github.com/dotnet/roslyn/tree/fa7ece1ca25ef529db616ed6c839af9f027fa216)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@b07c100](https://github.com/dotnet/roslyn-analyzers/tree/b07c100bfc66013a8444172d00cfa04c9ceb5a97)*
 - `src/runtime`  
@@ -52,7 +52,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@4ab0700](https://github.com/dotnet/scenario-tests/tree/4ab07002cb46cf169c85a09a546709a20642c65b)*
 - `src/sdk`  
-*[dotnet/sdk@eac75bd](https://github.com/dotnet/sdk/tree/eac75bdecba513d1fa43b8a9185fdc7a26bd47c0)*
+*[dotnet/sdk@69388b0](https://github.com/dotnet/sdk/tree/69388b05de4ded019551ae07ad73e2132c1452ea)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@1223ec4](https://github.com/dotnet/source-build-externals/tree/1223ec47c74e79d44950d429a36386de6c7bf9c8)*
     - `src/source-build-externals/src/abstractions-xunit`  
