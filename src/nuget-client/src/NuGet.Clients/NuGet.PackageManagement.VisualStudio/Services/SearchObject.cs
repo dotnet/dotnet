@@ -81,12 +81,13 @@ namespace NuGet.PackageManagement.VisualStudio
                 foreach (IPackageSearchMetadata recommendedFeedResultItem in recommenderFeedResults.Items)
                 {
                     CacheBackgroundData(recommendedFeedResultItem, filter.IncludePrerelease);
+                    var knownOwners = CreateKnownOwners(recommendedFeedResultItem);
                     recommendedPackageSearchMetadataContextInfo.Add(
                         PackageSearchMetadataContextInfo.Create(
                             recommendedFeedResultItem,
                             isRecommended: true,
                             recommenderVersion: (_recommenderFeed as RecommenderPackageFeed)?.VersionInfo,
-                            _ownerDetailsUriService
+                            knownOwners
                             ));
                 }
 
@@ -95,7 +96,8 @@ namespace NuGet.PackageManagement.VisualStudio
                     if (!recommendedIds.Contains(mainFeedResultItem.Identity.Id))
                     {
                         CacheBackgroundData(mainFeedResultItem, filter.IncludePrerelease);
-                        recommendedPackageSearchMetadataContextInfo.Add(PackageSearchMetadataContextInfo.Create(mainFeedResultItem, _ownerDetailsUriService));
+                        var knownOwners = CreateKnownOwners(mainFeedResultItem);
+                        recommendedPackageSearchMetadataContextInfo.Add(PackageSearchMetadataContextInfo.Create(mainFeedResultItem, knownOwners));
                     }
                 }
 
@@ -110,7 +112,8 @@ namespace NuGet.PackageManagement.VisualStudio
             foreach (IPackageSearchMetadata packageSearchMetadata in mainFeedResult.Items)
             {
                 CacheBackgroundData(packageSearchMetadata, filter.IncludePrerelease);
-                packageSearchMetadataContextInfoCollection.Add(PackageSearchMetadataContextInfo.Create(packageSearchMetadata, _ownerDetailsUriService));
+                var knownOwners = CreateKnownOwners(packageSearchMetadata);
+                packageSearchMetadataContextInfoCollection.Add(PackageSearchMetadataContextInfo.Create(packageSearchMetadata, knownOwners));
             }
 
             return new SearchResultContextInfo(
@@ -185,7 +188,8 @@ namespace NuGet.PackageManagement.VisualStudio
             foreach (IPackageSearchMetadata packageSearchMetadata in _lastMainFeedSearchResult.Items)
             {
                 CacheBackgroundData(packageSearchMetadata, _lastSearchFilter.IncludePrerelease);
-                packageItems.Add(PackageSearchMetadataContextInfo.Create(packageSearchMetadata, _ownerDetailsUriService));
+                var knownOwners = CreateKnownOwners(packageSearchMetadata);
+                packageItems.Add(PackageSearchMetadataContextInfo.Create(packageSearchMetadata, knownOwners));
             }
 
             return new SearchResultContextInfo(
@@ -285,6 +289,33 @@ namespace NuGet.PackageManagement.VisualStudio
             }
 
             return fullUri;
+        }
+
+        private IReadOnlyList<KnownOwner>? CreateKnownOwners(IPackageSearchMetadata packageSearchMetadata)
+        {
+            if (_ownerDetailsUriService is null
+                || !_ownerDetailsUriService.SupportsKnownOwners)
+            {
+                return null;
+            }
+
+            IReadOnlyList<string> ownersList = packageSearchMetadata.OwnersList;
+
+            if (ownersList is null || ownersList.Count == 0)
+            {
+                return Array.Empty<KnownOwner>();
+            }
+
+            List<KnownOwner> knownOwners = new(capacity: ownersList.Count);
+
+            foreach (string owner in ownersList)
+            {
+                Uri ownerDetailsUrl = _ownerDetailsUriService.GetOwnerDetailsUri(owner);
+                KnownOwner knownOwner = new(owner, ownerDetailsUrl);
+                knownOwners.Add(knownOwner);
+            }
+
+            return knownOwners;
         }
     }
 }
