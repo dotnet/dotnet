@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -18,6 +19,7 @@ internal readonly record struct ProjectKey
     // end up. All creation logic is here in one place to ensure this is consistent.
     public static ProjectKey From(HostProject hostProject) => new(hostProject.IntermediateOutputPath);
     public static ProjectKey From(IProjectSnapshot project) => new(project.IntermediateOutputPath);
+    public static ProjectKey From(RazorProjectInfo project) => new(FilePathNormalizer.GetNormalizedDirectoryName(project.SerializedFilePath));
     public static ProjectKey From(Project project)
     {
         var intermediateOutputPath = FilePathNormalizer.GetNormalizedDirectoryName(project.CompilationOutputInfo.AssemblyPath);

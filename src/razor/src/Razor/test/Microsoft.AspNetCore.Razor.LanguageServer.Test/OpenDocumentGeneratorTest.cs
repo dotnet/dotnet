@@ -28,12 +28,43 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
     private readonly HostProject _hostProject2 = new("c:/Test2/Test2.csproj", "c:/Test2/obj", RazorConfiguration.Default, "TestRootNamespace");
 
     [Fact]
+    public async Task DocumentAdded_ProcessesOpenDocument()
+    {
+        // Arrange
+        var projectManager = CreateProjectSnapshotManager(new LspProjectEngineFactoryProvider(TestRazorLSPOptionsMonitor.Create()));
+        var listener = new TestDocumentProcessedListener();
+        using var generator = CreateOpenDocumentGenerator(projectManager, listener);
+
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectAdded(_hostProject1);
+            updater.ProjectAdded(_hostProject2);
+            updater.DocumentAdded(_hostProject1.Key, _documents[0], null!);
+            updater.DocumentOpened(_hostProject1.Key, _documents[0].FilePath, SourceText.From(string.Empty));
+        });
+
+        await listener.GetProcessedDocumentAsync(cancelAfter: TimeSpan.FromSeconds(10));
+        listener.Reset();
+
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.DocumentRemoved(_hostProject1.Key, _documents[0]);
+            updater.DocumentAdded(_hostProject2.Key, _documents[0], null!);
+        });
+
+        // Assert
+        var document = await listener.GetProcessedDocumentAsync(cancelAfter: TimeSpan.FromSeconds(10));
+        Assert.Equal(_hostProject2.Key, document.Project.Key);
+        Assert.Equal(_documents[0].FilePath, document.FilePath);
+    }
+
+    [Fact]
     public async Task DocumentAdded_IgnoresClosedDocument()
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
-        using var generator = new TestOpenDocumentGenerator(projectManager, listener);
+        using var generator = CreateOpenDocumentGenerator(projectManager, listener);
 
         await projectManager.UpdateAsync(updater =>
         {
@@ -54,7 +85,7 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
-        using var generator = new TestOpenDocumentGenerator(projectManager, listener);
+        using var generator = CreateOpenDocumentGenerator(projectManager, listener);
 
         await projectManager.UpdateAsync(updater =>
         {
@@ -76,7 +107,7 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
-        using var generator = new TestOpenDocumentGenerator(projectManager, listener);
+        using var generator = CreateOpenDocumentGenerator(projectManager, listener);
 
         await projectManager.UpdateAsync(updater =>
         {
@@ -101,7 +132,7 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
-        using var generator = new TestOpenDocumentGenerator(projectManager, listener);
+        using var generator = CreateOpenDocumentGenerator(projectManager, listener);
 
         await projectManager.UpdateAsync(updater =>
         {
@@ -124,7 +155,7 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
-        using var generator = new TestOpenDocumentGenerator(projectManager, listener);
+        using var generator = CreateOpenDocumentGenerator(projectManager, listener);
 
         await projectManager.UpdateAsync(updater =>
         {
@@ -143,14 +174,16 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         Assert.Equal(document.FilePath, _documents[0].FilePath);
     }
 
-    private class TestOpenDocumentGenerator(
+    private OpenDocumentGenerator CreateOpenDocumentGenerator(
         IProjectSnapshotManager projectManager,
         params IDocumentProcessedListener[] listeners)
-        : OpenDocumentGenerator(listeners, projectManager, TestLanguageServerFeatureOptions.Instance);
+    {
+        return new OpenDocumentGenerator(listeners, projectManager, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+    }
 
     private class TestDocumentProcessedListener : IDocumentProcessedListener
     {
-        private readonly TaskCompletionSource<IDocumentSnapshot> _tcs;
+        private TaskCompletionSource<IDocumentSnapshot> _tcs;
 
         public TestDocumentProcessedListener()
         {
@@ -175,6 +208,11 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         public void DocumentProcessed(RazorCodeDocument codeDocument, IDocumentSnapshot document)
         {
             _tcs.SetResult(document);
+        }
+
+        internal void Reset()
+        {
+            _tcs = new TaskCompletionSource<IDocumentSnapshot>();
         }
     }
 }

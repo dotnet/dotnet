@@ -23,5 +23,6 @@ internal static class RazorServices
             (typeof(IRemoteClientInitializationService), null),
             (typeof(IRemoteSemanticTokensService), null),
             (typeof(IRemoteHtmlDocumentService), null),
+            (typeof(IRemoteUriPresentationService), null),
         ]);
 }

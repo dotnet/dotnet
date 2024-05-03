@@ -6,11 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.DocumentPresentation;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -52,34 +51,9 @@ internal class TextDocumentUriPresentationEndpoint(
 
     protected override async Task<WorkspaceEdit?> TryGetRazorWorkspaceEditAsync(RazorLanguageKind languageKind, UriPresentationParams request, CancellationToken cancellationToken)
     {
-        if (languageKind is not RazorLanguageKind.Html)
-        {
-            // We don't do anything for HTML
-            return null;
-        }
-
-        if (request.Uris is null || request.Uris.Length == 0)
-        {
-            Logger.LogInformation($"No URIs were included in the request?");
-            return null;
-        }
-
-        var razorFileUri = request.Uris.Where(
-            x => Path.GetFileName(x.GetAbsoluteOrUNCPath()).EndsWith(".razor", FilePathComparison.Instance)).FirstOrDefault();
-
-        // We only want to handle requests for a single .razor file, but when there are files nested under a .razor
-        // file (for example, Goo.razor.css, Goo.razor.cs etc.) then we'll get all of those files as well, when the user
-        // thinks they're just dragging the parent one, so we have to be a little bit clever with the filter here
+        var razorFileUri = UriPresentationHelper.GetComponentFileNameFromUriPresentationRequest(languageKind, request.Uris, Logger);
         if (razorFileUri == null)
         {
-            Logger.LogInformation($"No file in the drop was a razor file URI.");
-            return null;
-        }
-
-        var fileName = Path.GetFileName(razorFileUri.GetAbsoluteOrUNCPath());
-        if (request.Uris.Any(uri => !Path.GetFileName(uri.GetAbsoluteOrUNCPath()).StartsWith(fileName, FilePathComparison.Instance)))
-        {
-            Logger.LogInformation($"One or more URIs were not a child file of the main .razor file.");
             return null;
         }
 

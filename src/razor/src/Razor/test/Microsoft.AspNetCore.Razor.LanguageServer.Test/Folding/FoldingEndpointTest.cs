@@ -34,6 +34,50 @@ public class FoldingEndpointTest(ITestOutputHelper testOutput) : SingleServerDel
             """);
 
     [Fact]
+    public Task CSharpStatement()
+       => VerifyRazorFoldsAsync("""
+            <p>hello!</p>
+
+            [|@{
+                var helloWorld = "";
+            }|]
+
+            @(DateTime
+                .Now)
+
+            <p>hello!</p>
+            """);
+
+    [Fact]
+    public Task CSharpStatement_Nested()
+      => VerifyRazorFoldsAsync("""
+            <p>hello!</p>
+
+            <div>
+
+                [|@{
+                    var helloWorld = "";
+                }|]
+
+            </div>
+
+            @(DateTime
+                .Now)
+
+            <p>hello!</p>
+            """);
+
+    [Fact]
+    public Task CSharpStatement_NotSingleLine()
+    => VerifyRazorFoldsAsync("""
+            <p>hello!</p>
+
+            @{ var helloWorld = ""; }
+
+            <p>hello!</p>
+            """);
+
+    [Fact]
     public Task CodeBlock()
        => VerifyRazorFoldsAsync("""
             <p>hello!</p>
@@ -100,6 +144,7 @@ public class FoldingEndpointTest(ITestOutputHelper testOutput) : SingleServerDel
             [
                 new UsingsFoldingRangeProvider(),
                 new RazorCodeBlockFoldingProvider(),
+                new RazorCSharpStatementFoldingProvider(),
                 new SectionDirectiveFoldingProvider()
             ],
             LoggerFactory);

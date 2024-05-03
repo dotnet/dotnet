@@ -167,10 +167,13 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<HtmlCodeActionResolver, DefaultHtmlCodeActionResolver>();
     }
 
-    public static void AddTextDocumentServices(this IServiceCollection services)
+    public static void AddTextDocumentServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
     {
         services.AddHandlerWithCapabilities<TextDocumentTextPresentationEndpoint>();
-        services.AddHandlerWithCapabilities<TextDocumentUriPresentationEndpoint>();
+        if (!featureOptions.UseRazorCohostServer)
+        {
+            services.AddHandlerWithCapabilities<TextDocumentUriPresentationEndpoint>();
+        }
 
         services.AddHandlerWithCapabilities<DocumentSpellCheckEndpoint>();
         services.AddHandler<WorkspaceSpellCheckEndpoint>();

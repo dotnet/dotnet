@@ -19,25 +19,15 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Debugging;
 internal class DefaultLSPBreakpointSpanProvider : LSPBreakpointSpanProvider
 {
     private readonly LSPRequestInvoker _requestInvoker;
-    private readonly Lazy<ILogger> _logger;
+    private readonly ILogger _logger;
 
     [ImportingConstructor]
     public DefaultLSPBreakpointSpanProvider(
         LSPRequestInvoker requestInvoker,
-        Lazy<ILoggerFactory> loggerFactory)
+        ILoggerFactory loggerFactory)
     {
-        if (requestInvoker is null)
-        {
-            throw new ArgumentNullException(nameof(requestInvoker));
-        }
-
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
         _requestInvoker = requestInvoker;
-        _logger = new Lazy<ILogger>(() => loggerFactory.Value.GetOrCreateLogger<DefaultLSPBreakpointSpanProvider>());
+        _logger = loggerFactory.GetOrCreateLogger<DefaultLSPBreakpointSpanProvider>();
     }
 
     public async override Task<Range?> GetBreakpointSpanAsync(LSPDocumentSnapshot documentSnapshot, Position position, CancellationToken cancellationToken)
@@ -69,7 +59,7 @@ internal class DefaultLSPBreakpointSpanProvider : LSPBreakpointSpanProvider
         var languageResponse = response?.Response;
         if (languageResponse is null)
         {
-            _logger.Value.LogInformation($"The breakpoint position could not be mapped to a valid range.");
+            _logger.LogInformation($"The breakpoint position could not be mapped to a valid range.");
             return null;
         }
 
