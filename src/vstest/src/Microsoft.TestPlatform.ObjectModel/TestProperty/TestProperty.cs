@@ -19,7 +19,7 @@ public class TestProperty : IEquatable<TestProperty>
 {
     private static readonly ConcurrentDictionary<string, Type> TypeCache = new();
 
-    private static bool DisableFastJson { get; set; } = FeatureFlag.Instance.IsSet(FeatureFlag.DISABLE_FASTER_JSON_SERIALIZATION);
+    private static bool DisableFastJson { get; set; } = FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_FASTER_JSON_SERIALIZATION);
 
     private Type _valueType;
 

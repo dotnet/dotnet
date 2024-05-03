@@ -22,7 +22,7 @@ public class JsonDataSerializer : IDataSerializer
 {
     private static JsonDataSerializer? s_instance;
 
-    private static readonly bool DisableFastJson = FeatureFlag.Instance.IsSet(FeatureFlag.DISABLE_FASTER_JSON_SERIALIZATION);
+    private static readonly bool DisableFastJson = FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_FASTER_JSON_SERIALIZATION);
 
     private static readonly JsonSerializer PayloadSerializerV1; // payload serializer for version <= 1
     private static readonly JsonSerializer PayloadSerializerV2; // payload serializer for version >= 2

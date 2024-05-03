@@ -98,4 +98,21 @@ public class DotnetTestTests : AcceptanceTestBase
         ValidateSummaryStatus(1, 1, 0);
         ExitCodeEquals(1);
     }
+
+    [TestMethod]
+    // patched dotnet is not published on non-windows systems
+    [TestCategory("Windows-Review")]
+    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    public void RunDotnetTestAndSeeOutputFromConsoleWriteLine(RunnerInfo runnerInfo)
+    {
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        var assemblyPath = GetAssetFullPath("OutputtingTestProject.dll");
+        InvokeDotnetTest($@"{assemblyPath} --logger:""Console;Verbosity=normal"" ");
+
+        StdOutputContains("MY OUTPUT FROM TEST");
+
+        ValidateSummaryStatus(1, 0, 0);
+        ExitCodeEquals(0);
+    }
 }

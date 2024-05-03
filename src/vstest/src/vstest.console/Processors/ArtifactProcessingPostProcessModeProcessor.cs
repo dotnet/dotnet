@@ -45,7 +45,7 @@ internal class ArtifactProcessingPostProcessModeProcessor : IArgumentProcessor
     }
 
     public static bool ContainsPostProcessCommand(string[]? args, IFeatureFlag? featureFlag = null)
-        => !(featureFlag ?? FeatureFlag.Instance).IsSet(FeatureFlag.DISABLE_ARTIFACTS_POSTPROCESSING) &&
+        => !(featureFlag ?? FeatureFlag.Instance).IsSet(FeatureFlag.VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING) &&
             (args?.Contains("--artifactsProcessingMode-postprocess", StringComparer.OrdinalIgnoreCase) == true ||
             args?.Contains(CommandName, StringComparer.OrdinalIgnoreCase) == true);
 }

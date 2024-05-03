@@ -38,7 +38,7 @@ public class ExtensionDecoratorTests
     public void ExtensionDecoratorFactory_DisabledByFlag()
     {
         // Arrange
-        _featureFlagMock.Setup(x => x.IsSet(FeatureFlag.DISABLE_SERIALTESTRUN_DECORATOR)).Returns(true);
+        _featureFlagMock.Setup(x => x.IsSet(FeatureFlag.VSTEST_DISABLE_SERIALTESTRUN_DECORATOR)).Returns(true);
 
         // Run test and assert
         ExtensionDecoratorFactory extensionDecoratorFactory = new(_featureFlagMock.Object);

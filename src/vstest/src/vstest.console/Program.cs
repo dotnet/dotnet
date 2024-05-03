@@ -23,7 +23,7 @@ public static class Program
 
     internal static int Run(string[]? args, UiLanguageOverride uiLanguageOverride)
     {
-        if (!FeatureFlag.Instance.IsSet(FeatureFlag.DISABLE_UTF8_CONSOLE_ENCODING))
+        if (!FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_UTF8_CONSOLE_ENCODING))
         {
             Console.OutputEncoding = Encoding.UTF8;
         }

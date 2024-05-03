@@ -16,7 +16,7 @@ internal class ExtensionDecoratorFactory
 
     public ITestExecutor Decorate(ITestExecutor originalTestExecutor)
     {
-        return _featureFlag.IsSet(FeatureFlag.DISABLE_SERIALTESTRUN_DECORATOR)
+        return _featureFlag.IsSet(FeatureFlag.VSTEST_DISABLE_SERIALTESTRUN_DECORATOR)
             ? originalTestExecutor
             : new SerialTestRunDecorator(originalTestExecutor);
     }

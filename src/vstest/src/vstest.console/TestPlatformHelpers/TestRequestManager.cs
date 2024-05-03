@@ -710,7 +710,7 @@ internal class TestRequestManager : ITestRequestManager
         // After MULTI_TFM  sourceToArchitectureMap and sourceToFrameworkMap are the source of truth, and are propagated forward,
         // so when we want to revert to the older behavior we need to re-enable the check, and unify all the architecture and
         // framework entries to the same chosen value.
-        var disableMultiTfm = FeatureFlag.Instance.IsSet(FeatureFlag.DISABLE_MULTI_TFM_RUN);
+        var disableMultiTfm = FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_MULTI_TFM_RUN);
 
         // Choose default architecture based on the framework.
         // For a run with mixed tfms enabled, or .NET "Core", the default platform architecture should be based on the process.

@@ -561,7 +561,7 @@ public class MultiTFMRunAndDiscoveryCompatibilityMode
             {
                 FeatureFlags = new Dictionary<string, bool>
                 {
-                    [FeatureFlag.DISABLE_MULTI_TFM_RUN] = true
+                    [FeatureFlag.VSTEST_DISABLE_MULTI_TFM_RUN] = true
                 }
             }
         );
