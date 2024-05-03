@@ -68,16 +68,6 @@ internal class RazorProjectService(
         _logger.LogInformation($"Adding document '{filePath}' to project '{miscFilesProject.Key}'.");
 
         updater.DocumentAdded(miscFilesProject.Key, hostDocument, textLoader);
-
-        // Adding a document to a project could also happen because a target was added to a project, or we're moving a document
-        // from Misc Project to a real one, and means the newly added document could actually already be open.
-        // If it is, we need to make sure we start generating it so we're ready to handle requests that could start coming in.
-        if (_projectManager.IsDocumentOpen(textDocumentPath) &&
-            _projectManager.TryGetLoadedProject(miscFilesProject.Key, out var project) &&
-            project.GetDocument(textDocumentPath) is { } document)
-        {
-            document.GetGeneratedOutputAsync().Forget();
-        }
     }
 
     public Task OpenDocumentAsync(string filePath, SourceText sourceText, int version, CancellationToken cancellationToken)
@@ -228,22 +218,24 @@ internal class RazorProjectService(
         CancellationToken cancellationToken)
     {
         return _projectManager.UpdateAsync(
-            updater =>
-            {
-                var normalizedPath = FilePathNormalizer.Normalize(filePath);
-                var hostProject = new HostProject(
-                    normalizedPath, intermediateOutputPath, configuration ?? FallbackRazorConfiguration.Latest, rootNamespace, displayName);
-
-                // ProjectAdded will no-op if the project already exists
-                updater.ProjectAdded(hostProject);
-
-                _logger.LogInformation($"Added project '{filePath}' with key {hostProject.Key} to project system.");
-
-                TryMigrateMiscellaneousDocumentsToProject(updater);
-
-                return hostProject.Key;
-            },
+            updater => AddProjectCore(updater, filePath, intermediateOutputPath, configuration, rootNamespace, displayName),
             cancellationToken);
+    }
+
+    private ProjectKey AddProjectCore(ProjectSnapshotManager.Updater updater, string filePath, string intermediateOutputPath, RazorConfiguration? configuration, string? rootNamespace, string? displayName)
+    {
+        var normalizedPath = FilePathNormalizer.Normalize(filePath);
+        var hostProject = new HostProject(
+            normalizedPath, intermediateOutputPath, configuration ?? FallbackRazorConfiguration.Latest, rootNamespace, displayName);
+
+        // ProjectAdded will no-op if the project already exists
+        updater.ProjectAdded(hostProject);
+
+        _logger.LogInformation($"Added project '{filePath}' with key {hostProject.Key} to project system.");
+
+        TryMigrateMiscellaneousDocumentsToProject(updater);
+
+        return hostProject.Key;
     }
 
     public Task UpdateProjectAsync(
@@ -255,53 +247,92 @@ internal class RazorProjectService(
         ImmutableArray<DocumentSnapshotHandle> documents,
         CancellationToken cancellationToken)
     {
+        return AddOrUpdateProjectCoreAsync(projectKey, filePath: null, configuration, rootNamespace, displayName, projectWorkspaceState, documents, cancellationToken);
+    }
+
+    public Task AddOrUpdateProjectAsync(
+       ProjectKey projectKey,
+       string filePath,
+       RazorConfiguration? configuration,
+       string? rootNamespace,
+       string? displayName,
+       ProjectWorkspaceState projectWorkspaceState,
+       ImmutableArray<DocumentSnapshotHandle> documents,
+       CancellationToken cancellationToken)
+    {
+        return AddOrUpdateProjectCoreAsync(projectKey, filePath, configuration, rootNamespace, displayName, projectWorkspaceState, documents, cancellationToken);
+    }
+
+    private Task AddOrUpdateProjectCoreAsync(
+        ProjectKey projectKey,
+        string? filePath,
+        RazorConfiguration? configuration,
+        string? rootNamespace,
+        string? displayName,
+        ProjectWorkspaceState projectWorkspaceState,
+        ImmutableArray<DocumentSnapshotHandle> documents,
+        CancellationToken cancellationToken)
+    {
         return _projectManager.UpdateAsync(
-            updater =>
-            {
-                if (!_projectManager.TryGetLoadedProject(projectKey, out var project))
-                {
-                    // Never tracked the project to begin with, noop.
-                    _logger.LogInformation($"Failed to update untracked project '{projectKey}'.");
-                    return;
-                }
+                    updater =>
+                    {
+                        if (!_projectManager.TryGetLoadedProject(projectKey, out var project))
+                        {
+                            if (filePath is null)
+                            {
+                                // Never tracked the project to begin with, noop.
+                                _logger.LogInformation($"Failed to update untracked project '{projectKey}'.");
+                                return;
 
-                UpdateProjectDocuments(updater, documents, project.Key);
+                            }
 
-                if (!projectWorkspaceState.Equals(ProjectWorkspaceState.Default))
-                {
-                    _logger.LogInformation($"Updating project '{project.Key}' TagHelpers ({projectWorkspaceState.TagHelpers.Length}) and C# Language Version ({projectWorkspaceState.CSharpLanguageVersion}).");
-                }
+                            // If we've been given a project file path, then we have enough info to add the project ourselves, because we know
+                            // the intermediate output path from the id
+                            var intermediateOutputPath = projectKey.Id;
 
-                updater.ProjectWorkspaceStateChanged(project.Key, projectWorkspaceState);
+                            var newKey = AddProjectCore(updater, filePath, intermediateOutputPath, configuration, rootNamespace, displayName);
+                            Debug.Assert(newKey == projectKey);
 
-                var currentConfiguration = project.Configuration;
-                var currentRootNamespace = project.RootNamespace;
-                if (currentConfiguration.ConfigurationName == configuration?.ConfigurationName &&
-                    currentRootNamespace == rootNamespace)
-                {
-                    _logger.LogTrace($"Updating project '{project.Key}'. The project is already using configuration '{configuration.ConfigurationName}' and root namespace '{rootNamespace}'.");
-                    return;
-                }
+                            project = _projectManager.GetLoadedProject(projectKey);
+                        }
 
-                if (configuration is null)
-                {
-                    configuration = FallbackRazorConfiguration.Latest;
-                    _logger.LogInformation($"Updating project '{project.Key}' to use the latest configuration ('{configuration.ConfigurationName}')'.");
-                }
-                else if (currentConfiguration.ConfigurationName != configuration.ConfigurationName)
-                {
-                    _logger.LogInformation($"Updating project '{project.Key}' to Razor configuration '{configuration.ConfigurationName}' with language version '{configuration.LanguageVersion}'.");
-                }
+                        UpdateProjectDocuments(updater, documents, project.Key);
 
-                if (currentRootNamespace != rootNamespace)
-                {
-                    _logger.LogInformation($"Updating project '{project.Key}''s root namespace to '{rootNamespace}'.");
-                }
+                        if (!projectWorkspaceState.Equals(ProjectWorkspaceState.Default))
+                        {
+                            _logger.LogInformation($"Updating project '{project.Key}' TagHelpers ({projectWorkspaceState.TagHelpers.Length}) and C# Language Version ({projectWorkspaceState.CSharpLanguageVersion}).");
+                        }
 
-                var hostProject = new HostProject(project.FilePath, project.IntermediateOutputPath, configuration, rootNamespace, displayName);
-                updater.ProjectConfigurationChanged(hostProject);
-            },
-            cancellationToken);
+                        updater.ProjectWorkspaceStateChanged(project.Key, projectWorkspaceState);
+
+                        var currentConfiguration = project.Configuration;
+                        var currentRootNamespace = project.RootNamespace;
+                        if (currentConfiguration.ConfigurationName == configuration?.ConfigurationName &&
+                            currentRootNamespace == rootNamespace)
+                        {
+                            _logger.LogTrace($"Updating project '{project.Key}'. The project is already using configuration '{configuration.ConfigurationName}' and root namespace '{rootNamespace}'.");
+                            return;
+                        }
+
+                        if (configuration is null)
+                        {
+                            configuration = FallbackRazorConfiguration.Latest;
+                            _logger.LogInformation($"Updating project '{project.Key}' to use the latest configuration ('{configuration.ConfigurationName}')'.");
+                        }
+                        else if (currentConfiguration.ConfigurationName != configuration.ConfigurationName)
+                        {
+                            _logger.LogInformation($"Updating project '{project.Key}' to Razor configuration '{configuration.ConfigurationName}' with language version '{configuration.LanguageVersion}'.");
+                        }
+
+                        if (currentRootNamespace != rootNamespace)
+                        {
+                            _logger.LogInformation($"Updating project '{project.Key}''s root namespace to '{rootNamespace}'.");
+                        }
+
+                        var hostProject = new HostProject(project.FilePath, project.IntermediateOutputPath, configuration, rootNamespace, displayName);
+                        updater.ProjectConfigurationChanged(hostProject);
+                    },
+                    cancellationToken);
     }
 
     private void UpdateProjectDocuments(
@@ -413,7 +444,18 @@ internal class RazorProjectService(
         var currentHostDocument = documentSnapshot.State.HostDocument;
 
         var textLoader = new DocumentSnapshotTextLoader(documentSnapshot);
-        var newHostDocument = new HostDocument(documentSnapshot.FilePath, documentSnapshot.TargetPath, documentSnapshot.FileKind);
+
+        // If we're moving from the misc files project to a real project, then target path will be the full path to the file
+        // and the next update to the project will update it to be a relative path. To save a bunch of busy work if that is
+        // the only change necessary, we can proactively do that work here.
+        var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(toProject.FilePath);
+        var newTargetPath = documentSnapshot.TargetPath;
+        if (FilePathNormalizer.Normalize(newTargetPath).StartsWith(projectDirectory))
+        {
+            newTargetPath = newTargetPath[projectDirectory.Length..];
+        }
+
+        var newHostDocument = new HostDocument(documentSnapshot.FilePath, newTargetPath, documentSnapshot.FileKind);
 
         _logger.LogInformation($"Moving '{documentFilePath}' from the '{fromProject.Key}' project to '{toProject.Key}' project.");
 

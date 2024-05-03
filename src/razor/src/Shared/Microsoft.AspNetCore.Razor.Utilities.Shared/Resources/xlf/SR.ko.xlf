@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="The_value_cannot_be_an_empty_string">
         <source>The value cannot be an empty string.</source>
-        <target state="new">The value cannot be an empty string.</target>
+        <target state="translated">값은 빈 문자열일 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="The_value_cannot_be_an_empty_string_composed_entirely_of_whitespace">

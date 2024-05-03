@@ -123,7 +123,7 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
         services.AddCodeActionsServices();
         services.AddOptionsServices(_lspOptions);
         services.AddHoverServices();
-        services.AddTextDocumentServices();
+        services.AddTextDocumentServices(featureOptions);
 
         // Auto insert
         services.AddSingleton<IOnAutoInsertProvider, CloseTextTagOnAutoInsertProvider>();
@@ -131,6 +131,7 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
 
         // Folding Range Providers
         services.AddSingleton<IRazorFoldingRangeProvider, RazorCodeBlockFoldingProvider>();
+        services.AddSingleton<IRazorFoldingRangeProvider, RazorCSharpStatementFoldingProvider>();
         services.AddSingleton<IRazorFoldingRangeProvider, SectionDirectiveFoldingProvider>();
         services.AddSingleton<IRazorFoldingRangeProvider, UsingsFoldingRangeProvider>();
 

@@ -21,25 +21,15 @@ internal class DefaultLSPProximityExpressionsProvider : LSPProximityExpressionsP
 {
     private readonly LSPRequestInvoker _requestInvoker;
 
-    private readonly Lazy<ILogger> _logger;
+    private readonly ILogger _logger;
 
     [ImportingConstructor]
     public DefaultLSPProximityExpressionsProvider(
         LSPRequestInvoker requestInvoker,
-        Lazy<ILoggerFactory> loggerFactory)
+        ILoggerFactory loggerFactory)
     {
-        if (requestInvoker is null)
-        {
-            throw new ArgumentNullException(nameof(requestInvoker));
-        }
-
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
         _requestInvoker = requestInvoker;
-        _logger = new Lazy<ILogger>(() => loggerFactory.Value.GetOrCreateLogger<DefaultLSPProximityExpressionsProvider>());
+        _logger = loggerFactory.GetOrCreateLogger<DefaultLSPProximityExpressionsProvider>();
     }
 
     public async override Task<IReadOnlyList<string>?> GetProximityExpressionsAsync(LSPDocumentSnapshot documentSnapshot, Position position, CancellationToken cancellationToken)
@@ -71,7 +61,7 @@ internal class DefaultLSPProximityExpressionsProvider : LSPProximityExpressionsP
         var languageResponse = response?.Response;
         if (languageResponse is null)
         {
-            _logger.Value.LogInformation($"The proximity expressions could not be resolved.");
+            _logger.LogInformation($"The proximity expressions could not be resolved.");
             return null;
         }
 

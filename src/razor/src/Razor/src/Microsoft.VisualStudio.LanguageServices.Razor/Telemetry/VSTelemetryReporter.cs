@@ -14,16 +14,16 @@ namespace Microsoft.VisualStudio.Razor.Telemetry;
 [Export(typeof(ITelemetryReporter))]
 internal class VSTelemetryReporter : TelemetryReporter
 {
-    private readonly Lazy<ILogger?> _logger;
+    private readonly ILogger _logger;
 
     [ImportingConstructor]
-    public VSTelemetryReporter(Lazy<ILoggerFactory> loggerFactory)
+    public VSTelemetryReporter(ILoggerFactory loggerFactory)
         // Get the DefaultSession for telemetry. This is set by VS with
         // TelemetryService.SetDefaultSession and provides the correct
         // appinsights keys etc
         : base(ImmutableArray.Create(TelemetryService.DefaultSession))
     {
-        _logger = new Lazy<ILogger?>(() => loggerFactory.Value.GetOrCreateLogger<VSTelemetryReporter>());
+        _logger = loggerFactory.GetOrCreateLogger<VSTelemetryReporter>();
     }
 
     protected override bool HandleException(Exception exception, string? message, params object?[] @params)
@@ -65,8 +65,8 @@ internal class VSTelemetryReporter : TelemetryReporter
     }
 
     protected override void LogTrace(string message)
-        => _logger.Value?.Log(LogLevel.Trace, message, exception: null);
+        => _logger.Log(LogLevel.Trace, message, exception: null);
 
     protected override void LogError(Exception exception, string message)
-        => _logger.Value?.Log(LogLevel.Error, message, exception);
+        => _logger.Log(LogLevel.Error, message, exception);
 }
