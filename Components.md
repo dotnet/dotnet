@@ -100,7 +100,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/winforms`  
 *[dotnet/winforms@1e5bb66](https://github.com/dotnet/winforms/tree/1e5bb66d12a8fade7978fd9dd4f9a56eadca3cd3)*
 - `src/wpf`  
-*[dotnet/wpf@ca92f7c](https://github.com/dotnet/wpf/tree/ca92f7cf0f7400e12ff30f271e14dbcdeec02691)*
+*[dotnet/wpf@dca320b](https://github.com/dotnet/wpf/tree/dca320b2b1d99b93c77199940c7c135e2ed1a7fc)*
 - `src/xdt`  
 *[dotnet/xdt@75b4429](https://github.com/dotnet/xdt/tree/75b4429c85a3bfe0af11c83048259d0ad6ca6611)*
 - `src/xliff-tasks`  
