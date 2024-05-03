@@ -189,15 +189,10 @@ Source Location: (935:25,23 [1] TestFiles/IntegrationTests/CodeGenerationIntegra
 Generated Location: (9254:213,40 [1] )
 | |
 
-Source Location: (936:25,24 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
-|@|
-Generated Location: (9255:213,41 [1] )
-|@|
-
-Source Location: (937:25,25 [23] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
-|DateTimeOffset.Now.Year|
-Generated Location: (9256:213,42 [23] )
-|DateTimeOffset.Now.Year|
+Source Location: (936:25,24 [24] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|@DateTimeOffset.Now.Year|
+Generated Location: (9255:213,41 [24] )
+|@DateTimeOffset.Now.Year|
 
 Source Location: (1155:29,28 [30] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
 |DateTimeOffset.Now.Year > 2014|

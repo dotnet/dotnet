@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using Microsoft.AspNetCore.Razor.Language.Components;
+using Roslyn.Test.Utilities;
 using Xunit;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
@@ -553,6 +554,83 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
     public void CreatesMarkupCodeSpansForNonStringTagHelperAttributes12()
     {
         EvaluateData(CodeTagHelperAttributes_Descriptors, "<person age=\"@{flag == 0 ? 11 : 12}\" />");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10186")]
+    public void CreatesMarkupCodeSpansForNonStringTagHelperAttributes13()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            @{ 
+                var count = "1";
+            }
+            <person age="Convert.ToInt32(@count)" />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10186")]
+    public void CreatesMarkupCodeSpansForNonStringTagHelperAttributes14()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            @{ 
+                var @string = "1";
+            }
+            <person age="Convert.ToInt32(@string)" />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10186")]
+    public void CreatesMarkupCodeSpansForNonStringTagHelperAttributes15()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            @{ 
+                var count = "1";
+            }
+            <person age=Convert.ToInt32(@count) />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10186")]
+    public void CreatesMarkupCodeSpansForNonStringTagHelperAttributes16()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            @{ 
+                var count = "1";
+            }
+            <person age='Convert.ToInt32(@count + "2")' />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10186")]
+    public void CreatesMarkupCodeSpansForNonStringTagHelperAttributes17()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            @{ 
+                var count = 1;
+            }
+            <person age='@@count' />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10186")]
+    public void CreatesMarkupCodeSpansForNonStringTagHelperAttributes18()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            @{ 
+                var count = 1;
+            }
+            <person age="@@count" />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10186")]
+    public void CreatesMarkupCodeSpansForNonStringTagHelperAttributes19()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            @{ 
+                var count = 1;
+            }
+            <person age=@@count />
+            """);
     }
 
     [Fact]
