@@ -49,10 +49,10 @@
       "commitSha": "f8b7236443f9c9fc2a466f359a1d01cd161cbc4b"
     },
     {
-      "packageVersion": "9.0.0-preview.4.24223.1",
+      "packageVersion": "9.0.0-preview.4.24252.5",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "9d28301f6a5f512db14f242f7403a4bfbcbcc8a4"
+      "commitSha": "7546e312322a7264183c967b9b59c1a4e825b570"
     },
     {
       "packageVersion": "8.0.400-beta.24229.4",
