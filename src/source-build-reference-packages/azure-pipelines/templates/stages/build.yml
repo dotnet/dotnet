@@ -12,7 +12,7 @@ stages:
         demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
       ${{ if eq(variables['System.TeamProject'], 'internal') }}:
         name: $(DncEngInternalBuildPool)
-        image: 1es-ubuntu-2204-pt
+        image: 1es-ubuntu-2204
         os: linux
     container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
     steps:
@@ -39,7 +39,7 @@ stages:
         demands: ImageOverride -equals 1es-windows-2022-open
       ${{ if eq(variables['System.TeamProject'], 'internal') }}:
         name: $(DncEngInternalBuildPool)
-        image: 1es-windows-2022-pt
+        image: 1es-windows-2022
         os: windows
     container: mcr.microsoft.com/windows/servercore:ltsc2022
     steps:
