@@ -29,11 +29,11 @@ internal class TestHostManagerCallbacks
             {
                 but = " But logger is null, so it won't forward any output.";
             }
-            EqtTrace.Verbose($"TestHostManagerCallbacks.ctor: Experimental forwarding output is enabled.{but}");
+            EqtTrace.Verbose($"TestHostManagerCallbacks.ctor: Forwarding output is enabled.{but}");
         }
         else
         {
-            EqtTrace.Verbose($"TestHostManagerCallbacks.ctor: Experimental forwarding output is disabled.");
+            EqtTrace.Verbose($"TestHostManagerCallbacks.ctor: Forwarding output is disabled.");
         }
         _forwardOutput = forwardOutput;
         _messageLogger = logger;

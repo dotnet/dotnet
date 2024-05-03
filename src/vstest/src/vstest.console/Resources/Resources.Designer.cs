@@ -319,15 +319,6 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Copyright (c) Microsoft Corporation.  All rights reserved..
-        /// </summary>
-        internal static string CopyrightCommandLineTitle {
-            get {
-                return ResourceManager.GetString("CopyrightCommandLineTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The Data Collector friendly name &apos;{0}&apos; is not valid.  The Data Collector will be ignored..
         /// </summary>
         internal static string DataCollectorFriendlyNameInvalid {
@@ -1036,7 +1027,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Microsoft (R) Test Execution Command Line Tool Version {0}.
+        ///   Looks up a localized string similar to VSTest version {0}.
         /// </summary>
         internal static string MicrosoftCommandLineTitle {
             get {

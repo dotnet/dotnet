@@ -191,9 +191,6 @@
     <value>-c|--Configuration|/c|/Configuration:&lt;Configuration&gt;
       The configuration the project is built for i.e. Debug/Release</value>
   </data>
-  <data name="CopyrightCommandLineTitle" xml:space="preserve">
-    <value>Copyright (c) Microsoft Corporation.  All rights reserved.</value>
-  </data>
   <data name="Days" xml:space="preserve">
     <value>Days</value>
   </data>
@@ -387,7 +384,7 @@
     <value>The Test Logger URI '{0}' is not valid.  The Test Logger will be ignored.</value>
   </data>
   <data name="MicrosoftCommandLineTitle" xml:space="preserve">
-    <value>Microsoft (R) Test Execution Command Line Tool Version {0}</value>
+    <value>VSTest version {0}</value>
   </data>
   <data name="Minutes" xml:space="preserve">
     <value>Minutes</value>

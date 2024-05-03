@@ -51,7 +51,7 @@ internal class ArgumentProcessorFactory
     {
         var defaultArgumentProcessor = DefaultArgumentProcessors;
 
-        if (!(featureFlag ?? FeatureFlag.Instance).IsSet(FeatureFlag.DISABLE_ARTIFACTS_POSTPROCESSING))
+        if (!(featureFlag ?? FeatureFlag.Instance).IsSet(FeatureFlag.VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING))
         {
             defaultArgumentProcessor.Add(new ArtifactProcessingCollectModeProcessor());
             defaultArgumentProcessor.Add(new ArtifactProcessingPostProcessModeProcessor());

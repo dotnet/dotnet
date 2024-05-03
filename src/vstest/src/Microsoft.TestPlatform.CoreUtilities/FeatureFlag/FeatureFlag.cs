@@ -32,33 +32,42 @@ internal partial class FeatureFlag : IFeatureFlag
     // Only check the env variable once, when it is not set or is set to 0, consider it unset. When it is anything else, consider it set.
     public bool IsSet(string featureFlag) => _cache.GetOrAdd(featureFlag, f => (Environment.GetEnvironmentVariable(f)?.Trim() ?? "0") != "0");
 
-    private const string VSTEST_ = nameof(VSTEST_);
-
     // Added for artifact post-processing, it enable/disable the post processing.
     // Added in 17.2-preview 7.0-preview
-    public const string DISABLE_ARTIFACTS_POSTPROCESSING = VSTEST_ + nameof(DISABLE_ARTIFACTS_POSTPROCESSING);
+    public const string VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING = nameof(VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING);
 
     // Added for artifact post-processing, it will show old output for dotnet sdk scenario.
     // It can be useful if we need to restore old UX in case users are parsing the console output.
     // Added in 17.2-preview 7.0-preview
-    public const string DISABLE_ARTIFACTS_POSTPROCESSING_NEW_SDK_UX = VSTEST_ + nameof(DISABLE_ARTIFACTS_POSTPROCESSING_NEW_SDK_UX);
+    public const string VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING_NEW_SDK_UX = nameof(VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING_NEW_SDK_UX);
 
     // Faster JSON serialization relies on less internals of NewtonsoftJson, and on some additional caching.
-    public const string DISABLE_FASTER_JSON_SERIALIZATION = VSTEST_ + nameof(DISABLE_FASTER_JSON_SERIALIZATION);
+    public const string VSTEST_DISABLE_FASTER_JSON_SERIALIZATION = nameof(VSTEST_DISABLE_FASTER_JSON_SERIALIZATION);
 
     // Forces vstest.console to run all sources using the same target framework (TFM) and architecture, instead of allowing
     // multiple different tfms and architectures to run at the same time.
-    public const string DISABLE_MULTI_TFM_RUN = VSTEST_ + nameof(DISABLE_MULTI_TFM_RUN);
+    public const string VSTEST_DISABLE_MULTI_TFM_RUN = nameof(VSTEST_DISABLE_MULTI_TFM_RUN);
 
     // Disables setting a higher value for SetMinThreads. Setting SetMinThreads value to higher allows testhost to connect back faster
     // even though we are blocking additional threads because we don't have to wait for ThreadPool to start more threads.
-    public const string DISABLE_THREADPOOL_SIZE_INCREASE = VSTEST_ + nameof(DISABLE_THREADPOOL_SIZE_INCREASE);
+    public const string VSTEST_DISABLE_THREADPOOL_SIZE_INCREASE = nameof(VSTEST_DISABLE_THREADPOOL_SIZE_INCREASE);
 
     // Disable the SerialTestRunDecorator
-    public const string DISABLE_SERIALTESTRUN_DECORATOR = VSTEST_ + nameof(DISABLE_SERIALTESTRUN_DECORATOR);
+    public const string VSTEST_DISABLE_SERIALTESTRUN_DECORATOR = nameof(VSTEST_DISABLE_SERIALTESTRUN_DECORATOR);
 
     // Disable setting UTF8 encoding in console.
-    public const string DISABLE_UTF8_CONSOLE_ENCODING = VSTEST_ + nameof(DISABLE_UTF8_CONSOLE_ENCODING);
+    public const string VSTEST_DISABLE_UTF8_CONSOLE_ENCODING = nameof(VSTEST_DISABLE_UTF8_CONSOLE_ENCODING);
+
+    // VSTEST_EXPERIMENTAL_FORWARD_OUTPUT_FEATURE=1 replaced by the CAPTURING and FORWARDING flags, and was enabling
+    // the same behavior as what is now the default (both capture and forward set to TRUE).
+    // Because this is the new default we don't have to handle it in any special way. Setting it to 0 was not defined
+    // and so it also does not need any special treatment.
+    //
+    // Disable capturing standard output of testhost.
+    public const string VSTEST_DISABLE_STANDARD_OUTPUT_CAPTURING = nameof(VSTEST_DISABLE_STANDARD_OUTPUT_CAPTURING);
+
+    // Disable forwarding standard output of testhost.
+    public const string VSTEST_DISABLE_STANDARD_OUTPUT_FORWARDING = nameof(VSTEST_DISABLE_STANDARD_OUTPUT_FORWARDING);
 
     [Obsolete("Only use this in tests.")]
     internal static void Reset()

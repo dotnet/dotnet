@@ -49,10 +49,8 @@ public class ExecutorUnitTests
         Assert.IsTrue(mockOutput.Messages.Count > 0, "Executor must print at least copyright info");
         Assert.IsNotNull(mockOutput.Messages.First().Message, "First Printed Message cannot be null or empty");
 
-        // Just check first 20 characters - don't need to check whole thing as assembly version is variable
-        // "First Printed message must be Microsoft Copyright");
         StringAssert.Contains(mockOutput.Messages.First().Message,
-            CommandLineResources.MicrosoftCommandLineTitle.Substring(0, 20));
+            CommandLineResources.MicrosoftCommandLineTitle.Split(['{'], 2)[0]);
 
         var suffixIndex = assemblyVersion.IndexOf("-");
         var version = suffixIndex == -1 ? assemblyVersion : assemblyVersion.Substring(0, suffixIndex);
@@ -71,11 +69,10 @@ public class ExecutorUnitTests
         // Verify that messages exist
         Assert.IsTrue(mockOutput.Messages.Count == 1, "Executor should not print no valid arguments provided");
 
-        // Just check first 20 characters - don't need to check whole thing as assembly version is variable
+        // Check the part of message before the actual version because that is variable.
         Assert.IsFalse(
             mockOutput.Messages.First()
-                .Message!.Contains(CommandLineResources.MicrosoftCommandLineTitle.Substring(0, 20)),
-            "First Printed message must be Microsoft Copyright");
+                .Message!.Contains(CommandLineResources.MicrosoftCommandLineTitle.Split(['{'], 2)[0]));
     }
 
     [TestMethod]
@@ -333,11 +330,11 @@ public class ExecutorUnitTests
         var exitCode = new Executor(mockOutput, _mockTestPlatformEventSource.Object, processHelper.Object, environment.Object).Execute();
         var assemblyVersion = typeof(Executor).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
 
-        Assert.AreEqual(5, mockOutput.Messages.Count);
+        Assert.AreEqual(4, mockOutput.Messages.Count);
         Assert.AreEqual("vstest.console.exe is running in emulated mode as x64. For better performance, please consider using the native runner vstest.console.arm64.exe.",
-            mockOutput.Messages[2].Message);
+            mockOutput.Messages[1].Message);
         Assert.AreEqual(OutputLevel.Warning,
-            mockOutput.Messages[2].Level);
+            mockOutput.Messages[1].Level);
     }
 
     [TestMethod]
@@ -353,8 +350,8 @@ public class ExecutorUnitTests
         var exitCode = new Executor(mockOutput, _mockTestPlatformEventSource.Object, processHelper.Object, environment.Object).Execute();
         var assemblyVersion = typeof(Executor).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
 
-        Assert.AreEqual(4, mockOutput.Messages.Count);
-        Assert.IsTrue(Regex.IsMatch(mockOutput.Messages[0].Message!, @"Microsoft \(R\) Test Execution Command Line Tool Version .* \(x64\)"));
+        Assert.AreEqual(3, mockOutput.Messages.Count);
+        Assert.IsTrue(Regex.IsMatch(mockOutput.Messages[0].Message!, @"VSTest version .* \(x64\)"));
         Assert.IsFalse(mockOutput.Messages.Any(message => message.Message!.Contains("vstest.console.exe is running in emulated mode")));
     }
 

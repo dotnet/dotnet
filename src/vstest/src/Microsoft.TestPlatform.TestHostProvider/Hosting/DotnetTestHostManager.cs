@@ -74,7 +74,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
     private Framework? _targetFramework;
     private bool _isVersionCheckRequired = true;
     private string? _dotnetHostPath;
-
+    private bool _captureOutput;
     private protected TestHostManagerCallbacks? _testHostManagerCallbacks;
 
     /// <summary>
@@ -190,9 +190,11 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
     public void Initialize(IMessageLogger? logger, string runsettingsXml)
     {
         _hostExitedEventRaised = false;
-        _testHostManagerCallbacks = new TestHostManagerCallbacks(_environmentVariableHelper.GetEnvironmentVariable("VSTEST_EXPERIMENTAL_FORWARD_OUTPUT_FEATURE") == "1", logger);
-
         var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runsettingsXml);
+        _captureOutput = runConfiguration.CaptureStandardOutput;
+        var forwardOutput = runConfiguration.ForwardStandardOutput;
+        _testHostManagerCallbacks = new TestHostManagerCallbacks(forwardOutput, logger);
+
         _architecture = runConfiguration.TargetPlatform;
         _targetFramework = runConfiguration.TargetFramework;
         _dotnetHostPath = runConfiguration.DotnetHostPath;
@@ -738,6 +740,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
 
             cancellationToken.ThrowIfCancellationRequested();
 
+            var outputCallback = _captureOutput ? OutputReceivedCallback : null;
             _testHostProcess = _processHelper.LaunchProcess(
                 testHostStartInfo.FileName!,
                 testHostStartInfo.Arguments,
@@ -745,7 +748,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                 testHostStartInfo.EnvironmentVariables,
                 ErrorReceivedCallback,
                 ExitCallBack,
-                OutputReceivedCallback) as Process;
+                outputCallback) as Process;
         }
         else
         {

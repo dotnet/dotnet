@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="17.11.1-preview.24229.3">
+    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="17.11.1-preview.24252.1">
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/vs-code-coverage</Uri>
-      <Sha>c49b72f8720f439ab5671cc7ef381e88939afe1b</Sha>
+      <Sha>fbf133f41f02e385042349b7e78251aa025e26a2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.24226.1">
       <Uri>https://github.com/dotnet/diagnostics</Uri>
@@ -44,14 +44,14 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24226.3">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24229.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>97e2f41e909dcabb1103fe98ba4540a246662187</Sha>
+      <Sha>be933308b9024d798a9a22c0b8f3c8e3616ffbd8</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24226.3">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24229.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>97e2f41e909dcabb1103fe98ba4540a246662187</Sha>
+      <Sha>be933308b9024d798a9a22c0b8f3c8e3616ffbd8</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.DiaSymReader.Pdb2Pdb" Version="1.1.0-beta2-19575-01">
@@ -62,9 +62,9 @@
       <Uri>https://github.com/dotnet/symreader-converter</Uri>
       <Sha>c5ba7c88f92e2dde156c324a8c8edc04d9fa4fe0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.24226.3">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.24229.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>97e2f41e909dcabb1103fe98ba4540a246662187</Sha>
+      <Sha>be933308b9024d798a9a22c0b8f3c8e3616ffbd8</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

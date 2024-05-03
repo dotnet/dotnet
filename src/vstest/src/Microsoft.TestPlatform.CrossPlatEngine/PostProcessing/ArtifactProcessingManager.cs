@@ -81,7 +81,7 @@ internal class ArtifactProcessingManager : IArtifactProcessingManager
         ValidateArg.NotNull(testRunCompleteEventArgs, nameof(testRunCompleteEventArgs));
         ValidateArg.NotNull(runSettingsXml, nameof(runSettingsXml));
 
-        if (_featureFlag.IsSet(FeatureFlag.DISABLE_ARTIFACTS_POSTPROCESSING))
+        if (_featureFlag.IsSet(FeatureFlag.VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING))
         {
             EqtTrace.Verbose("ArtifactProcessingManager.CollectArtifacts: Feature disabled");
             return;
@@ -120,7 +120,7 @@ internal class ArtifactProcessingManager : IArtifactProcessingManager
 
     public async Task PostProcessArtifactsAsync()
     {
-        if (_featureFlag.IsSet(FeatureFlag.DISABLE_ARTIFACTS_POSTPROCESSING))
+        if (_featureFlag.IsSet(FeatureFlag.VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING))
         {
             EqtTrace.Verbose("ArtifactProcessingManager.PostProcessArtifacts: Feature disabled");
             return;
