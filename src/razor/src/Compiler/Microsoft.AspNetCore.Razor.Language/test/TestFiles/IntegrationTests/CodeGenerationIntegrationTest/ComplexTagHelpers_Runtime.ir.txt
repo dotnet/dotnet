@@ -218,8 +218,7 @@
                         LazyIntermediateToken - (933:25,21 [2] ComplexTagHelpers.cshtml) - CSharp -  +
                         LazyIntermediateToken - (935:25,23 [1] ComplexTagHelpers.cshtml) - CSharp -  
                         CSharpExpression - (936:25,24 [24] ComplexTagHelpers.cshtml)
-                            LazyIntermediateToken - (936:25,24 [1] ComplexTagHelpers.cshtml) - CSharp - @
-                            LazyIntermediateToken - (937:25,25 [23] ComplexTagHelpers.cshtml) - CSharp - DateTimeOffset.Now.Year
+                            LazyIntermediateToken - (936:25,24 [24] ComplexTagHelpers.cshtml) - CSharp - @DateTimeOffset.Now.Year
                     DefaultTagHelperExecute - 
                 HtmlContent - (1075:27,12 [10] ComplexTagHelpers.cshtml)
                     LazyIntermediateToken - (1075:27,12 [10] ComplexTagHelpers.cshtml) - Html - \n        

@@ -44,15 +44,10 @@ Source Location: (206:8,25 [1] TestFiles/IntegrationTests/CodeGenerationIntegrat
 Generated Location: (2905:70,37 [1] )
 | |
 
-Source Location: (207:8,26 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
-|@|
-Generated Location: (2906:70,38 [1] )
-|@|
-
-Source Location: (208:8,27 [3] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
-|int|
-Generated Location: (2907:70,39 [3] )
-|int|
+Source Location: (207:8,26 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
+|@int|
+Generated Location: (2906:70,38 [4] )
+|@int|
 
 Source Location: (241:9,22 [3] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
 |int|

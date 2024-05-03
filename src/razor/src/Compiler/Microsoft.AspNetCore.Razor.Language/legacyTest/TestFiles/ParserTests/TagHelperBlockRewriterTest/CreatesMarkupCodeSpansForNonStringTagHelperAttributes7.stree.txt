@@ -27,10 +27,8 @@
                                         Transition;[<Missing>];
                                     CSharpImplicitExpressionBody - [17..23)::6
                                         CSharpCodeBlock - [17..23)::6
-                                            CSharpExpressionLiteral - [17..18)::1 - [@] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:AnyExceptNewline;ImplicitExpression[ATD];K15
-                                                Transition;[@];
-                                            CSharpExpressionLiteral - [18..23)::5 - [value] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:AnyExceptNewline;ImplicitExpression[ATD];K15
-                                                Identifier;[value];
+                                            CSharpExpressionLiteral - [17..23)::6 - [@value] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:AnyExceptNewline;ImplicitExpression[ATD];K15
+                                                Identifier;[@value];
                         CSharpExpressionLiteral - [23..25)::2 - [ +] - Gen<None> - ImplicitExpressionEditHandler;Accepts:AnyExceptNewline;ImplicitExpression[ATD];K15
                             Whitespace;[ ];
                             Text;[+];
@@ -57,10 +55,8 @@
                                         Transition;[<Missing>];
                                     CSharpImplicitExpressionBody - [45..56)::11
                                         CSharpCodeBlock - [45..56)::11
-                                            CSharpExpressionLiteral - [45..46)::1 - [@] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:AnyExceptNewline;ImplicitExpression[ATD];K15
-                                                Transition;[@];
-                                            CSharpExpressionLiteral - [46..56)::10 - [Bag["val"]] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:AnyExceptNewline;ImplicitExpression[ATD];K15
-                                                Identifier;[Bag];
+                                            CSharpExpressionLiteral - [45..56)::11 - [@Bag["val"]] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:AnyExceptNewline;ImplicitExpression[ATD];K15
+                                                Identifier;[@Bag];
                                                 LeftBracket;[[];
                                                 StringLiteral;["val"];
                                                 RightBracket;[]];
@@ -87,10 +83,8 @@
                                         Transition;[<Missing>];
                                     CSharpImplicitExpressionBody - [72..85)::13
                                         CSharpCodeBlock - [72..85)::13
-                                            CSharpExpressionLiteral - [72..73)::1 - [@] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:AnyExceptNewline;ImplicitExpression[ATD];K15
-                                                Transition;[@];
-                                            CSharpExpressionLiteral - [73..85)::12 - [DateTime.Now] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:AnyExceptNewline;ImplicitExpression[ATD];K15
-                                                Identifier;[DateTime];
+                                            CSharpExpressionLiteral - [72..85)::13 - [@DateTime.Now] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:AnyExceptNewline;ImplicitExpression[ATD];K15
+                                                Identifier;[@DateTime];
                                                 Dot;[.];
                                                 Identifier;[Now];
                     MarkupTextLiteral - [85..86)::1 - ['] - Gen<Markup> - SpanEditHandler;Accepts:Any
