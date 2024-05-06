@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.Private.Winforms" Version="9.0.0-preview.5.24252.1">
+    <Dependency Name="Microsoft.Private.Winforms" Version="9.0.0-preview.5.24253.4">
       <Uri>https://github.com/dotnet/winforms</Uri>
-      <Sha>92b471d52558be26fcdffd5e18fb7d2b5c89e749</Sha>
+      <Sha>c926856b3313d34df58e82c73675b4cf30b6e604</Sha>
       <SourceBuildTarball RepoName="winforms" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="9.0.0-preview.5.24252.1">
+    <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="9.0.0-preview.5.24253.4">
       <Uri>https://github.com/dotnet/winforms</Uri>
-      <Sha>92b471d52558be26fcdffd5e18fb7d2b5c89e749</Sha>
+      <Sha>c926856b3313d34df58e82c73675b4cf30b6e604</Sha>
     </Dependency>
     <Dependency Name="System.Reflection.MetadataLoadContext" Version="9.0.0-preview.4.24230.15" CoherentParentDependency="Microsoft.Private.Winforms">
       <Uri>https://github.com/dotnet/runtime</Uri>
@@ -151,31 +151,31 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>a70000532fea5967633032f9c40896fa5b4e12f3</Sha>
     </Dependency>
-    <Dependency Name="System.Drawing.Common" Version="9.0.0-preview.5.24252.1">
+    <Dependency Name="System.Drawing.Common" Version="9.0.0-preview.5.24253.4">
       <Uri>https://github.com/dotnet/winforms</Uri>
-      <Sha>92b471d52558be26fcdffd5e18fb7d2b5c89e749</Sha>
+      <Sha>c926856b3313d34df58e82c73675b4cf30b6e604</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24229.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24253.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>be933308b9024d798a9a22c0b8f3c8e3616ffbd8</Sha>
+      <Sha>020255bcf7d0b8beed7de05338d97396982ae527</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.CodeAnalysis" Version="9.0.0-beta.24229.1">
+    <Dependency Name="Microsoft.DotNet.CodeAnalysis" Version="9.0.0-beta.24253.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>be933308b9024d798a9a22c0b8f3c8e3616ffbd8</Sha>
+      <Sha>020255bcf7d0b8beed7de05338d97396982ae527</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="9.0.0-beta.24229.1">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="9.0.0-beta.24253.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>be933308b9024d798a9a22c0b8f3c8e3616ffbd8</Sha>
+      <Sha>020255bcf7d0b8beed7de05338d97396982ae527</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.ApiCompat" Version="9.0.0-beta.24053.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>f4e11a15c7b8a949d4a366e792a9843ff6e88cd5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.GenAPI" Version="9.0.0-beta.24229.1">
+    <Dependency Name="Microsoft.DotNet.GenAPI" Version="9.0.0-beta.24253.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>be933308b9024d798a9a22c0b8f3c8e3616ffbd8</Sha>
+      <Sha>020255bcf7d0b8beed7de05338d97396982ae527</Sha>
     </Dependency>
     <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="8.0.0-beta.23409.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
