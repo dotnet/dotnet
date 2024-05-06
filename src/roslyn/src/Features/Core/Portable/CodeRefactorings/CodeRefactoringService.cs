@@ -114,53 +114,45 @@ internal sealed class CodeRefactoringService(
         using (TelemetryLogging.LogBlockTimeAggregated(FunctionId.CodeRefactoring_Summary, $"Pri{priority.GetPriorityInt()}"))
         using (Logger.LogBlock(FunctionId.Refactoring_CodeRefactoringService_GetRefactoringsAsync, cancellationToken))
         {
-            using var _1 = ArrayBuilder<(CodeRefactoringProvider provider, CodeRefactoring codeRefactoring)>.GetInstance(out var pairs);
-            using var _2 = PooledDictionary<CodeRefactoringProvider, int>.GetInstance(out var providerToIndex);
+            using var _ = PooledDictionary<CodeRefactoringProvider, int>.GetInstance(out var providerToIndex);
 
             var orderedProviders = GetProviders(document).Where(p => priority == null || p.RequestPriority == priority).ToImmutableArray();
+
+            var pairs = await ProducerConsumer<(CodeRefactoringProvider provider, CodeRefactoring codeRefactoring)>.RunParallelAsync(
+                source: orderedProviders,
+                produceItems: static async (provider, callback, args, cancellationToken) =>
+                {
+                    // Run all providers in parallel to get the set of refactorings for this document.
+                    // Log an individual telemetry event for slow code refactoring computations to
+                    // allow targeted trace notifications for further investigation. 500 ms seemed like
+                    // a good value so as to not be too noisy, but if fired, indicates a potential
+                    // area requiring investigation.
+                    const int CodeRefactoringTelemetryDelay = 500;
+
+                    var providerName = provider.GetType().Name;
+
+                    var logMessage = KeyValueLogMessage.Create(m =>
+                    {
+                        m[TelemetryLogging.KeyName] = providerName;
+                        m[TelemetryLogging.KeyLanguageName] = args.document.Project.Language;
+                    });
+
+                    using (args.addOperationScope(providerName))
+                    using (RoslynEventSource.LogInformationalBlock(FunctionId.Refactoring_CodeRefactoringService_GetRefactoringsAsync, providerName, cancellationToken))
+                    using (TelemetryLogging.LogBlockTime(FunctionId.CodeRefactoring_Delay, logMessage, CodeRefactoringTelemetryDelay))
+                    {
+                        var refactoring = await args.@this.GetRefactoringFromProviderAsync(
+                            args.document, args.state, provider, args.options, cancellationToken).ConfigureAwait(false);
+                        if (refactoring != null)
+                            callback((provider, refactoring));
+                    }
+                },
+                args: (@this: this, document, state, options, addOperationScope),
+                cancellationToken).ConfigureAwait(false);
+
+            // Order the refactorings by the order of the providers.
             foreach (var provider in orderedProviders)
                 providerToIndex.Add(provider, providerToIndex.Count);
-
-            await ProducerConsumer<(CodeRefactoringProvider provider, CodeRefactoring codeRefactoring)>.RunAsync(
-                ProducerConsumerOptions.SingleReaderOptions,
-                produceItems: static (callback, args) =>
-                    // Run all providers in parallel to get the set of refactorings for this document.
-                    RoslynParallel.ForEachAsync(
-                        args.orderedProviders,
-                        args.cancellationToken,
-                        async (provider, cancellationToken) =>
-                        {
-                            // Log an individual telemetry event for slow code refactoring computations to
-                            // allow targeted trace notifications for further investigation. 500 ms seemed like
-                            // a good value so as to not be too noisy, but if fired, indicates a potential
-                            // area requiring investigation.
-                            const int CodeRefactoringTelemetryDelay = 500;
-
-                            var providerName = provider.GetType().Name;
-
-                            var logMessage = KeyValueLogMessage.Create(m =>
-                            {
-                                m[TelemetryLogging.KeyName] = providerName;
-                                m[TelemetryLogging.KeyLanguageName] = args.document.Project.Language;
-                            });
-
-                            using (args.addOperationScope(providerName))
-                            using (RoslynEventSource.LogInformationalBlock(FunctionId.Refactoring_CodeRefactoringService_GetRefactoringsAsync, providerName, cancellationToken))
-                            using (TelemetryLogging.LogBlockTime(FunctionId.CodeRefactoring_Delay, logMessage, CodeRefactoringTelemetryDelay))
-                            {
-                                var refactoring = await args.@this.GetRefactoringFromProviderAsync(
-                                    args.document, args.state, provider, args.options, cancellationToken).ConfigureAwait(false);
-                                if (refactoring != null)
-                                    callback((provider, refactoring));
-                            }
-                        }),
-                consumeItems: static async (reader, args) =>
-                {
-                    await foreach (var pair in reader)
-                        args.pairs.Add(pair);
-                },
-                args: (@this: this, document, state, orderedProviders, options, addOperationScope, pairs, cancellationToken),
-                cancellationToken).ConfigureAwait(false);
 
             return pairs
                 .OrderBy((tuple1, tuple2) => providerToIndex[tuple1.provider] - providerToIndex[tuple2.provider])
