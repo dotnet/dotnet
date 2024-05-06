@@ -172,6 +172,8 @@ namespace Microsoft.Extensions.Primitives
 
     public partial class StringSegmentComparer : System.Collections.Generic.IComparer<StringSegment>, System.Collections.Generic.IEqualityComparer<StringSegment>
     {
+        internal StringSegmentComparer() { }
+
         public static StringSegmentComparer Ordinal { get { throw null; } }
 
         public static StringSegmentComparer OrdinalIgnoreCase { get { throw null; } }
@@ -215,7 +217,7 @@ namespace Microsoft.Extensions.Primitives
         }
     }
 
-    public readonly partial struct StringValues : System.Collections.Generic.IList<string>, System.Collections.Generic.ICollection<string>, System.Collections.Generic.IEnumerable<string>, System.Collections.IEnumerable, System.Collections.Generic.IReadOnlyList<string>, System.Collections.Generic.IReadOnlyCollection<string>, System.IEquatable<StringValues>, System.IEquatable<string>
+    public readonly partial struct StringValues : System.Collections.Generic.IList<string>, System.Collections.Generic.ICollection<string>, System.Collections.Generic.IEnumerable<string>, System.Collections.IEnumerable, System.Collections.Generic.IReadOnlyList<string>, System.Collections.Generic.IReadOnlyCollection<string>, System.IEquatable<StringValues>, System.IEquatable<string>, System.IEquatable<string[]>
     {
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
@@ -228,9 +230,9 @@ namespace Microsoft.Extensions.Primitives
 
         public string this[int index] { get { throw null; } }
 
-        string System.Collections.Generic.IList<System.String>.this[int index] { get { throw null; } set { } }
-
         bool System.Collections.Generic.ICollection<string>.IsReadOnly { get { throw null; } }
+
+        string System.Collections.Generic.IList<string>.this[int index] { get { throw null; } set { } }
 
         public static StringValues Concat(StringValues values1, StringValues values2) { throw null; }
 
