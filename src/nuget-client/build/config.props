@@ -35,6 +35,8 @@
     <!-- This branches are used for creating insertion PRs -->
     <VsTargetBranch Condition="'$(IsEscrowMode)' == 'true'">rel/d$(VsTargetMajorVersion).$(MinorNuGetVersion)</VsTargetBranch>
     <VsTargetChannel Condition="'$(IsEscrowMode)' == 'true'">int.d$(VsTargetMajorVersion).$(MinorNuGetVersion)</VsTargetChannel>
+    <!-- Run Apex/E2E tests on the target release branch -->
+    <VsTargetChannelForTests Condition="'$(IsEscrowMode)' == 'true'">$(VsTargetChannel)</VsTargetChannelForTests>
   </PropertyGroup>
 
  <PropertyGroup Condition=" '$(PreReleaseVersion)' == '' ">
