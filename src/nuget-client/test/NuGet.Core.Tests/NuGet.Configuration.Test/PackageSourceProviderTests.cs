@@ -1388,6 +1388,44 @@ namespace NuGet.Configuration.Test
             AssertPackageSource(values[2], "three", "threesource", true);
         }
 
+        [Fact]
+        public void UpdatePackageSource_ShouldUpdateAllowInsecureConnections()
+        {
+            using var directory = TestDirectory.Create();
+
+            // Arrange
+            var configContents = """
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                    <packageSources>
+                        <add key="default-http" value="http://api.nuget.org/v3/index.json" />
+                    </packageSources>
+                </configuration>
+                """;
+
+            File.WriteAllText(Path.Combine(directory.Path, "NuGet.Config"), configContents);
+
+            var settings = new Settings(directory);
+            var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+            var source = packageSourceProvider.GetPackageSourceByName("default-http")!;
+
+            // Act
+            source.AllowInsecureConnections = true;
+            packageSourceProvider.UpdatePackageSource(source, false, false);
+
+            // Assert
+            settings = new Settings(directory);
+            var packageSourcesSection = settings.GetSection("packageSources");
+            packageSourcesSection.Should().NotBeNull();
+            packageSourcesSection!.Items.Count.Should().Be(1);
+            packageSourcesSection.Items.Should().AllBeOfType<SourceItem>();
+
+            var children = packageSourcesSection.Items.Cast<SourceItem>().ToList();
+            var parsedSource = children[0];
+            parsedSource.Key.Should().Be("default-http");
+            parsedSource.AllowInsecureConnections.Should().Be("True");
+        }
+
         // Test that a source added in a high priority config file is not
         // disabled by <disabledPackageSources> in a low priority file.
         [Fact]
