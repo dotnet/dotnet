@@ -177,7 +177,7 @@ internal class DotNetSdkHelper
             projectDirectory,
             additionalProcessConfigCallback: processConfigCallback,
             expectedExitCode: exitCode,
-            millisecondTimeout: 30000);
+            millisecondTimeout: 60000);
 
         void processConfigCallback(Process process)
         {
