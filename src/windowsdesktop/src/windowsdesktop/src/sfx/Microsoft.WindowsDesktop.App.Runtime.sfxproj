@@ -64,7 +64,7 @@
     <FrameworkListFileClass Include="System.Windows.Forms.Primitives.resources.dll" Profile="WindowsForms" />
     <FrameworkListFileClass Include="System.Windows.Forms.resources.dll" Profile="WindowsForms" />
     <FrameworkListFileClass Include="System.Windows.Input.Manipulations.resources.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Private.Windows.Core.dll"/>
+    <FrameworkListFileClass Include="System.Private.Windows.Core.dll" Profile="WindowsForms" />
   </ItemGroup>
 
   <!-- WPF specific references -->
