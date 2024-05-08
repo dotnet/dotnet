@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@259edc6](https://github.com/dotnet/scenario-tests/tree/259edc6efe049ed49f9e37890be702a886ba5ed8)*
 - `src/sdk`  
-*[dotnet/sdk@9284ad5](https://github.com/dotnet/sdk/tree/9284ad5b180576b0c80eee2cc3f79b3e59c83d39)*
+*[dotnet/sdk@e655bcd](https://github.com/dotnet/sdk/tree/e655bcd94975ce17bde5624dbb2e163f5ab11240)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@b027696](https://github.com/dotnet/source-build-externals/tree/b02769661c9a51985877819e8bdebfbcbee65710)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -88,17 +88,17 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@409af43](https://github.com/dotnet/symreader/tree/409af431ee684f9e07d34bbd4e51b9933345c1e1)*
 - `src/templating`  
-*[dotnet/templating@cd9256c](https://github.com/dotnet/templating/tree/cd9256c828c215e121ad99deacde3e8fbbb9b4c5)*
+*[dotnet/templating@74ed5fe](https://github.com/dotnet/templating/tree/74ed5fee860bc24b3b88902ccfccc89e52e678c7)*
 - `src/test-templates`  
 *[dotnet/test-templates@36e4339](https://github.com/dotnet/test-templates/tree/36e4339a33f9bdf3680591e2a3fcbc421aabc22c)*
 - `src/vstest`  
 *[microsoft/vstest@b521aa2](https://github.com/microsoft/vstest/tree/b521aa2c9c981f53b85af7c923175a850986173a)*
 - `src/windowsdesktop`  
-*[dotnet/windowsdesktop@436e9a8](https://github.com/dotnet/windowsdesktop/tree/436e9a8e566984a5ffe5f022de266f18d9aa9c4b)*
+*[dotnet/windowsdesktop@bf2373e](https://github.com/dotnet/windowsdesktop/tree/bf2373e37130cc0605f88a5c2dfe96d964be841f)*
 - `src/winforms`  
-*[dotnet/winforms@c926856](https://github.com/dotnet/winforms/tree/c926856b3313d34df58e82c73675b4cf30b6e604)*
+*[dotnet/winforms@c4596e2](https://github.com/dotnet/winforms/tree/c4596e24ffce46767ea5aabd1910d96f83941038)*
 - `src/wpf`  
-*[dotnet/wpf@5a8619a](https://github.com/dotnet/wpf/tree/5a8619ac9bda541fcf0f6639f7efe6e234cc99eb)*
+*[dotnet/wpf@a8a7d30](https://github.com/dotnet/wpf/tree/a8a7d306785f20a2262bf61ffecb08c18ab7170e)*
 - `src/xdt`  
 *[dotnet/xdt@bfa1e2d](https://github.com/dotnet/xdt/tree/bfa1e2d75f668a47c55a8db4e265ac837bc21229)*
 - `src/xliff-tasks`  
