@@ -615,7 +615,8 @@ namespace NuGet.Configuration
             {
                 if ((!string.Equals(newSource.Source, existingSource.Source, StringComparison.OrdinalIgnoreCase) ||
                     newSource.ProtocolVersion != existingSource.ProtocolVersion ||
-                    newSource.AllowInsecureConnections != existingSource.AllowInsecureConnections) && newSource.IsPersistable)
+                    newSource.AllowInsecureConnections != existingSource.AllowInsecureConnections ||
+                    newSource.DisableTLSCertificateValidation != existingSource.DisableTLSCertificateValidation) && newSource.IsPersistable)
                 {
                     Settings.AddOrUpdate(ConfigurationConstants.PackageSources, newSource.AsSourceItem());
                     isDirty = true;
