@@ -23,6 +23,12 @@
     </Artifact>
   </ItemGroup>
 
+  <!-- Temporary workaround until https://github.com/dotnet/arcade/pull/14757 is consumed. -->
+  <ItemGroup>
+    <ItemsToSign Include="@(Artifact)"
+                 Condition="$([System.String]::Copy('%(Filename)%(Extension)').EndsWith('.wixpack.zip')) and '$(PostBuildSign)' != 'true'" />
+  </ItemGroup>
+
   <!-- Include RID specific packages when default items are disabled. -->
   <ItemGroup Condition="'$(EnableDefaultArtifacts)' != 'true'">
     <Artifact Include="$(ArtifactsPackagesDir)**\Microsoft.WindowsDesktop.App.Runtime.*.nupkg;
