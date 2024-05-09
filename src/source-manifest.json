@@ -43,10 +43,10 @@
       "commitSha": "b6418173e784ec41a65c710c559120f8996fca7d"
     },
     {
-      "packageVersion": "9.0.0-preview.5.24258.2",
+      "packageVersion": "9.0.0-preview.5.24258.8",
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "f0eaa0216608d12cb867842378e0f3dc22d69bd4"
+      "commitSha": "f96570aecfc93fe49fbaa5f1f9515b3a3f3c038e"
     },
     {
       "packageVersion": "9.0.0-preview.5.24223.2",
