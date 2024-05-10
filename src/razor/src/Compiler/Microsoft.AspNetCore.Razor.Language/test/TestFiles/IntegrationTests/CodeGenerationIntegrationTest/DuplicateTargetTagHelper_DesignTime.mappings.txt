@@ -1,10 +1,10 @@
 ﻿Source Location: (14:0,14 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DuplicateTargetTagHelper.cshtml)
 |"*, TestAssembly"|
-Generated Location: (1143:19,37 [17] )
+Generated Location: (1848:33,37 [17] )
 |"*, TestAssembly"|
 
 Source Location: (67:2,32 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DuplicateTargetTagHelper.cshtml)
 |true|
-Generated Location: (2046:40,41 [4] )
+Generated Location: (2768:54,41 [4] )
 |true|
 

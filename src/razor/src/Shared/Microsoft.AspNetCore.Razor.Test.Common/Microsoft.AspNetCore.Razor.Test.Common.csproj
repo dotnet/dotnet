@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <!-- To generate baselines, run tests with /p:GenerateBaselines=true -->
@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Test.ComponentShim\Microsoft.AspNetCore.Razor.Test.ComponentShim.csproj" />
     <ProjectReference Include="..\..\Compiler\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj" />
+    <ProjectReference Include="..\..\Compiler\test\Microsoft.AspNetCore.Razor.Test.MvcShim\Microsoft.AspNetCore.Razor.Test.MvcShim.Compiler.csproj" PrivateAssets="All" />
     <PackageReference Include="Microsoft.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />

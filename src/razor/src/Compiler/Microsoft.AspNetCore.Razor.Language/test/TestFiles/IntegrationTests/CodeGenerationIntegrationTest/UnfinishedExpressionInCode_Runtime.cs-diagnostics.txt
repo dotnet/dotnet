@@ -1,0 +1,6 @@
+﻿// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UnfinishedExpressionInCode.cshtml(2,11): error CS1001: Identifier expected
+// DateTime.
+Diagnostic(ErrorCode.ERR_IdentifierExpected, "").WithLocation(2, 11),
+// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UnfinishedExpressionInCode.cshtml(3,1): error CS0117: 'DateTime' does not contain a definition for ''
+// 
+Diagnostic(ErrorCode.ERR_NoSuchMember, "").WithArguments("System.DateTime", "").WithLocation(3, 1)

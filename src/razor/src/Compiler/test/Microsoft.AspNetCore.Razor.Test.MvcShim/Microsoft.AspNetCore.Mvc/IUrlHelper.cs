@@ -7,5 +7,5 @@ namespace Microsoft.AspNetCore.Mvc;
 
 public interface IUrlHelper
 {
-
+    string Content(string contentPath);
 }

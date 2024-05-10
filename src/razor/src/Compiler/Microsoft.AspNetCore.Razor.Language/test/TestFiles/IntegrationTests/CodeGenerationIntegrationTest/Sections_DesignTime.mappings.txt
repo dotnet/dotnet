@@ -1,44 +1,44 @@
 ﻿Source Location: (89:6,9 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
 |Section2|
-Generated Location: (510:12,22 [8] )
+Generated Location: (1199:26,22 [8] )
 |Section2|
 
 Source Location: (172:10,9 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
 |Section1|
-Generated Location: (773:22,22 [8] )
+Generated Location: (1462:36,22 [8] )
 |Section1|
 
 Source Location: (235:14,9 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
 |NestedDelegates|
-Generated Location: (1036:32,22 [15] )
+Generated Location: (1725:46,22 [15] )
 |NestedDelegates|
 
 Source Location: (2:0,2 [44] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
 |
     Layout = "_SectionTestLayout.cshtml"
 |
-Generated Location: (1524:49,2 [44] )
+Generated Location: (2230:63,2 [44] )
 |
     Layout = "_SectionTestLayout.cshtml"
 |
 
 Source Location: (123:7,22 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
 |thing|
-Generated Location: (1817:58,22 [5] )
+Generated Location: (2523:72,22 [5] )
 |thing|
 
 Source Location: (260:15,6 [27] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
 | Func<dynamic, object> f = |
-Generated Location: (2202:71,6 [27] )
+Generated Location: (2908:85,6 [27] )
 | Func<dynamic, object> f = |
 
 Source Location: (295:15,41 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
 |item|
-Generated Location: (2500:79,41 [4] )
+Generated Location: (3249:93,41 [4] )
 |item|
 
 Source Location: (306:15,52 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
 |; |
-Generated Location: (2751:88,52 [2] )
+Generated Location: (3500:102,52 [2] )
 |; |
 

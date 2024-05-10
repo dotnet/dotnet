@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using System.Collections.Immutable;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 
@@ -22,4 +23,6 @@ public class CompiledAssembly
     public RazorCodeDocument CodeDocument { get; }
 
     public Compilation Compilation { get; }
+
+    public ImmutableArray<Diagnostic> EmitDiagnostics { get; init; }
 }
