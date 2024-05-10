@@ -3,8 +3,11 @@
 
 #nullable disable
 
+using Microsoft.AspNetCore.Html;
+
 namespace Microsoft.AspNetCore.Mvc.Rendering;
 
 public interface IHtmlHelper<TModel>
 {
+    IHtmlContent Raw(object value);
 }

@@ -1,8 +1,17 @@
 ﻿Document - 
     RazorCompiledItemAttribute - 
-    NamespaceDeclaration -  - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
+    NamespaceDeclaration -  - AspNetCore
+        UsingDirective - (1:0,1 [22] ) - global::System
+        UsingDirective - (24:1,1 [42] ) - global::System.Collections.Generic
+        UsingDirective - (67:2,1 [27] ) - global::System.Linq
+        UsingDirective - (95:3,1 [38] ) - global::System.Threading.Tasks
+        UsingDirective - (134:4,1 [40] ) - global::Microsoft.AspNetCore.Mvc
+        UsingDirective - (175:5,1 [50] ) - global::Microsoft.AspNetCore.Mvc.Rendering
+        UsingDirective - (226:6,1 [53] ) - global::Microsoft.AspNetCore.Mvc.ViewFeatures
         RazorSourceChecksumAttribute - 
-        ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_SymbolBoundAttributes_Runtime -  - 
+        RazorCompiledItemMetadataAttribute - 
+        CreateNewOnMetadataUpdateAttribute - 
+        ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_SymbolBoundAttributes - global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic> - 
             PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_0 - [item] - items - HtmlAttributeValueStyle.DoubleQuotes
             PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_1 - [(item)] - items - HtmlAttributeValueStyle.DoubleQuotes
             PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_2 - (click) - doSomething() - HtmlAttributeValueStyle.DoubleQuotes
@@ -13,7 +22,7 @@
             PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_7 - #local - value - HtmlAttributeValueStyle.DoubleQuotes
             DefaultTagHelperRuntime - 
             FieldDeclaration -  - private - global::TestNamespace.CatchAllTagHelper - __TestNamespace_CatchAllTagHelper
-            MethodDeclaration -  - public async - System.Threading.Tasks.Task - ExecuteAsync
+            MethodDeclaration -  - public async override - global::System.Threading.Tasks.Task - ExecuteAsync
                 HtmlContent - (31:1,0 [253] SymbolBoundAttributes.cshtml)
                     LazyIntermediateToken - (31:1,0 [2] SymbolBoundAttributes.cshtml) - Html - \n
                     LazyIntermediateToken - (33:2,0 [3] SymbolBoundAttributes.cshtml) - Html - <ul
@@ -124,3 +133,8 @@
                     PreallocatedTagHelperProperty - (669:18,19 [5] SymbolBoundAttributes.cshtml) - __tagHelperAttribute_6 - #local - StringProperty2
                     PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_7
                     DefaultTagHelperExecute - 
+            Inject - 
+            Inject - 
+            Inject - 
+            Inject - 
+            Inject - 

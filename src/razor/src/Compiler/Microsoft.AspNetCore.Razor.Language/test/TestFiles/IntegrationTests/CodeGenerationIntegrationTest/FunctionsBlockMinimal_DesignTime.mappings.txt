@@ -4,7 +4,7 @@ string foo(string input) {
 	return input + "!";
 }
 |
-Generated Location: (814:21,12 [55] )
+Generated Location: (1533:35,12 [55] )
 |
 string foo(string input) {
 	return input + "!";

@@ -1,29 +1,29 @@
 ﻿Source Location: (14:0,14 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml)
 |"*, TestAssembly"|
-Generated Location: (1009:18,37 [17] )
+Generated Location: (1707:32,37 [17] )
 |"*, TestAssembly"|
 
 Source Location: (37:2,2 [24] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml)
 |
     var count = "1";
 |
-Generated Location: (1500:35,2 [24] )
+Generated Location: (2215:49,2 [24] )
 |
     var count = "1";
 |
 
 Source Location: (76:5,12 [16] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml)
 |Convert.ToInt32(|
-Generated Location: (1788:44,27 [16] )
+Generated Location: (2503:58,27 [16] )
 |Convert.ToInt32(|
 
 Source Location: (92:5,28 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml)
 |@count|
-Generated Location: (1804:44,43 [6] )
+Generated Location: (2519:58,43 [6] )
 |@count|
 
 Source Location: (98:5,34 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml)
 |)|
-Generated Location: (1810:44,49 [1] )
+Generated Location: (2525:58,49 [1] )
 |)|
 

@@ -1,9 +1,18 @@
 ﻿Document - 
     RazorCompiledItemAttribute - 
-    NamespaceDeclaration -  - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
+    NamespaceDeclaration -  - AspNetCore
+        UsingDirective - (1:0,1 [22] ) - global::System
+        UsingDirective - (24:1,1 [42] ) - global::System.Collections.Generic
+        UsingDirective - (67:2,1 [27] ) - global::System.Linq
+        UsingDirective - (95:3,1 [38] ) - global::System.Threading.Tasks
+        UsingDirective - (134:4,1 [40] ) - global::Microsoft.AspNetCore.Mvc
+        UsingDirective - (175:5,1 [50] ) - global::Microsoft.AspNetCore.Mvc.Rendering
+        UsingDirective - (226:6,1 [53] ) - global::Microsoft.AspNetCore.Mvc.ViewFeatures
         RazorSourceChecksumAttribute - 
-        ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ExpressionsInCode_Runtime -  - 
-            MethodDeclaration -  - public async - System.Threading.Tasks.Task - ExecuteAsync
+        RazorCompiledItemMetadataAttribute - 
+        CreateNewOnMetadataUpdateAttribute - 
+        ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ExpressionsInCode - global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic> - 
+            MethodDeclaration -  - public async override - global::System.Threading.Tasks.Task - ExecuteAsync
                 CSharpCode - (2:0,2 [51] ExpressionsInCode.cshtml)
                     LazyIntermediateToken - (2:0,2 [51] ExpressionsInCode.cshtml) - CSharp - \n    object foo = null;\n    string bar = "Foo";\n
                 HtmlContent - (56:4,0 [2] ExpressionsInCode.cshtml)
@@ -36,3 +45,8 @@
                     LazyIntermediateToken - (196:13,28 [5] ExpressionsInCode.cshtml) - CSharp - \n}\n
                 HtmlContent - (201:15,0 [4] ExpressionsInCode.cshtml)
                     LazyIntermediateToken - (201:15,0 [4] ExpressionsInCode.cshtml) - Html - </p>
+            Inject - 
+            Inject - 
+            Inject - 
+            Inject - 
+            Inject - 
