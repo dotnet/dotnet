@@ -4,47 +4,47 @@
     <body>
       <trans-unit id="0_1_must_be_a_non_negative_and_non_zero_value">
         <source>{0} ('{1}') must be a non-negative and non-zero value.</source>
-        <target state="new">{0} ('{1}') must be a non-negative and non-zero value.</target>
+        <target state="translated">{0} ('{1}'), negatif ve sıfır olmayan bir değer olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="0_1_must_be_a_non_negative_value">
         <source>{0} ('{1}') must be a non-negative value.</source>
-        <target state="new">{0} ('{1}') must be a non-negative value.</target>
+        <target state="translated">{0} ('{1}'), negatif olmayan bir değer olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="0_1_must_be_a_non_zero_value">
         <source>{0} ('{1}') must be a non-zero value.</source>
-        <target state="new">{0} ('{1}') must be a non-zero value.</target>
+        <target state="translated">{0} ('{1}'), sıfır olmayan bir değer olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="0_1_must_be_equal_to_2">
         <source>{0} ('{1}') must be equal to '{2}'.</source>
-        <target state="new">{0} ('{1}') must be equal to '{2}'.</target>
+        <target state="translated">{0} ('{1}'), '{2}' değerine eşit olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="0_1_must_be_greater_than_2">
         <source>{0} ('{1}') must be greater than '{2}'.</source>
-        <target state="new">{0} ('{1}') must be greater than '{2}'.</target>
+        <target state="translated">{0} ('{1}'), '{2}' değerinden büyük olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="0_1_must_be_greater_than_or_equal_to_2">
         <source>{0} ('{1}') must be greater than or equal to '{2}'.</source>
-        <target state="new">{0} ('{1}') must be greater than or equal to '{2}'.</target>
+        <target state="translated">{0} ('{1}'), '{2}' değerinden büyük veya buna eşit olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="0_1_must_be_less_than_2">
         <source>{0} ('{1}') must be less than '{2}'.</source>
-        <target state="new">{0} ('{1}') must be less than '{2}'.</target>
+        <target state="translated">{0} ('{1}'), '{2}' değerinden küçük olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="0_1_must_be_less_than_or_equal_to_2">
         <source>{0} ('{1}') must be less than or equal to '{2}'.</source>
-        <target state="new">{0} ('{1}') must be less than or equal to '{2}'.</target>
+        <target state="translated">{0} ('{1}'), '{2}' değerinden küçük veya buna eşit olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="0_1_must_not_be_equal_to_2">
         <source>{0} ('{1}') must not be equal to '{2}'.</source>
-        <target state="new">{0} ('{1}') must not be equal to '{2}'.</target>
+        <target state="translated">{0} ('{1}'), '{2}' değerine eşit olmamalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="Cannot_advance_past_end_of_the_buffer_which_has_a_size_of_0">
@@ -89,7 +89,7 @@
       </trans-unit>
       <trans-unit id="The_value_cannot_be_an_empty_string_composed_entirely_of_whitespace">
         <source>The value cannot be an empty string or composed entirely of whitespace.</source>
-        <target state="new">The value cannot be an empty string or composed entirely of whitespace.</target>
+        <target state="translated">Değer boş bir dize olamaz veya tamamen boşluklardan oluşamaz.</target>
         <note />
       </trans-unit>
       <trans-unit id="This_program_location_is_thought_to_be_unreachable">

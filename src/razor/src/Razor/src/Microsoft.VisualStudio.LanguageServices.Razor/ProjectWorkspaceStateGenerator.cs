@@ -30,9 +30,10 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
     private readonly ITagHelperResolver _tagHelperResolver = tagHelperResolver;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<ProjectWorkspaceStateGenerator>();
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
-    private readonly SemaphoreSlim _semaphore = new(initialCount: 1);
 
-    private readonly CancellationTokenSource _disposeTokenSource = new();
+    private readonly SemaphoreSlim _semaphore = new(initialCount: 1);
+    private bool _disposed;
+
     private readonly Dictionary<ProjectKey, UpdateItem> _updates = [];
 
     private ManualResetEventSlim? _blockBackgroundWorkStart;
@@ -40,21 +41,16 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
 
     public void Dispose()
     {
-        if (_disposeTokenSource.IsCancellationRequested)
+        if (_disposed)
         {
             return;
         }
 
-        _disposeTokenSource.Cancel();
-        _disposeTokenSource.Dispose();
+        // We mark ourselves as disposed here to ensure that no further updates can be enqueued
+        // before we cancel the updates.
+        _disposed = true;
 
-        lock (_updates)
-        {
-            foreach (var (_, updateItem) in _updates)
-            {
-                updateItem.CancelWorkAndCleanUp();
-            }
-        }
+        CancelUpdates();
 
         // Release before dispose to ensure we don't throw exceptions from the background thread trying to release
         // while we're disposing. Multiple releases are fine, and if we release and it lets something passed the lock
@@ -68,37 +64,43 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
 
     public void EnqueueUpdate(Project? workspaceProject, IProjectSnapshot projectSnapshot)
     {
-        if (_disposeTokenSource.IsCancellationRequested)
+        if (_disposed)
         {
             return;
         }
 
         lock (_updates)
         {
-            if (_updates.TryGetValue(projectSnapshot.Key, out var updateItem))
+            var projectKey = projectSnapshot.Key;
+
+            if (_updates.TryGetValue(projectKey, out var updateItem))
             {
                 if (updateItem.IsRunning)
                 {
-                    _logger.LogTrace($"Cancelling previously enqueued update for '{projectSnapshot.FilePath}'.");
+                    _logger.LogTrace($"Cancelling previously enqueued update for '{projectKey}'.");
                 }
 
                 updateItem.CancelWorkAndCleanUp();
             }
 
-            _logger.LogTrace($"Enqueuing update for '{projectSnapshot.FilePath}'");
+            _logger.LogTrace($"Enqueuing update for '{projectKey}'");
 
-            _updates[projectSnapshot.Key] = UpdateItem.CreateAndStartWork(
-                token => UpdateWorkspaceStateAsync(workspaceProject, projectSnapshot, token),
-                _disposeTokenSource.Token);
+            _updates[projectKey] = UpdateItem.CreateAndStartWork(
+                token => UpdateWorkspaceStateAsync(workspaceProject, projectSnapshot, token));
         }
     }
 
     public void CancelUpdates()
     {
-        _logger.LogTrace($"Cancelling all previously enqueued updates.");
-
         lock (_updates)
         {
+            if (_updates.Count == 0)
+            {
+                return;
+            }
+
+            _logger.LogTrace($"Cancelling all previously enqueued updates.");
+
             foreach (var (_, updateItem) in _updates)
             {
                 updateItem.CancelWorkAndCleanUp();
@@ -110,30 +112,19 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
 
     private async Task UpdateWorkspaceStateAsync(Project? workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
-        if (_disposeTokenSource.IsCancellationRequested)
+        var projectKey = projectSnapshot.Key;
+
+        // Only allow a single TagHelper resolver request to process at a time in order to reduce
+        // Visual Studio memory pressure. Typically a TagHelper resolution result can be upwards of 10mb+.
+        // So if we now do multiple requests to resolve TagHelpers simultaneously it results in only a
+        // single one executing at a time so that we don't have N number of requests in flight with these
+        // 10mb payloads waiting to be processed.
+
+        var enteredSemaphore = await TryEnterSemaphoreAsync(projectKey, cancellationToken);
+        if (!enteredSemaphore)
         {
             return;
         }
-
-        try
-        {
-            // Only allow a single TagHelper resolver request to process at a time in order to reduce
-            // Visual Studio memory pressure. Typically a TagHelper resolution result can be upwards of 10mb+.
-            // So if we now do multiple requests to resolve TagHelpers simultaneously it results in only a
-            // single one executing at a time so that we don't have N number of requests in flight with these
-            // 10mb payloads waiting to be processed.
-            _logger.LogTrace($"In UpdateWorkspaceStateAsync, waiting for the semaphore, for '{projectSnapshot.Key}'");
-            await _semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (Exception)
-        {
-            _logger.LogTrace($"Exception waiting for the semaphore '{projectSnapshot.Key}'");
-
-            // Object disposed or task cancelled exceptions should be swallowed/no-op'd
-            return;
-        }
-
-        _logger.LogTrace($"Got the semaphore '{projectSnapshot.Key}'");
 
         try
         {
@@ -148,16 +139,16 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
 
             if (workspaceState is null)
             {
-                _logger.LogTrace($"Couldn't get any state for '{projectSnapshot.Key}'");
+                _logger.LogTrace($"Didn't receive {nameof(ProjectWorkspaceState)} for '{projectKey}'");
                 return;
             }
             else if (cancellationToken.IsCancellationRequested)
             {
-                _logger.LogTrace($"Got a cancellation request during discovery for '{projectSnapshot.Key}'");
+                _logger.LogTrace($"Got a cancellation request during discovery for '{projectKey}'");
                 return;
             }
 
-            _logger.LogTrace($"Updating project info with {workspaceState.TagHelpers.Length} tag helpers for '{projectSnapshot.Key}'");
+            _logger.LogTrace($"Received {nameof(ProjectWorkspaceState)} with {workspaceState.TagHelpers.Length} tag helper(s) for '{projectKey}'");
 
             await _projectManager
                 .UpdateAsync(
@@ -170,48 +161,87 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
                             return;
                         }
 
-                        logger.LogTrace($"Really updating project info with {workspaceState.TagHelpers.Length} tag helpers for '{projectKey}'");
+                        logger.LogTrace($"Updating project with {workspaceState.TagHelpers.Length} tag helper(s) for '{projectKey}'");
                         updater.ProjectWorkspaceStateChanged(projectKey, workspaceState);
                     },
-                    state: (projectSnapshot.Key, workspaceState, _logger, cancellationToken),
+                    state: (projectKey, workspaceState, _logger, cancellationToken),
                     cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
-            _logger.LogTrace($"Got an OperationCancelledException, for '{projectSnapshot.Key}'");
+            _logger.LogTrace($"Got an OperationCancelledException, for '{projectKey}'");
             // Abort work if we get a task canceled exception
             return;
         }
         catch (Exception ex)
         {
-            _logger.LogTrace($"Got an exception, for '{projectSnapshot.Key}'");
+            _logger.LogTrace($"Got an exception, for '{projectKey}'");
             _logger.LogError(ex);
         }
         finally
         {
-            try
-            {
-                _logger.LogTrace($"Felt cute, might release a semaphore later, for '{projectSnapshot.Key}'");
-
-                // Prevent ObjectDisposedException if we've disposed before we got here. The dispose method will release
-                // anyway, so we're all good.
-                if (!_disposeTokenSource.IsCancellationRequested)
-                {
-                    _logger.LogTrace($"Releasing the semaphore, for '{projectSnapshot.Key}'");
-                    _semaphore.Release();
-                }
-
-                _logger.LogTrace($"If you didn't see a log message about releasing a semaphore, we have a problem. (for '{projectSnapshot.Key}')");
-            }
-            catch
-            {
-                // Swallow exceptions that happen from releasing the semaphore.
-            }
+            ReleaseSemaphore(projectKey);
         }
 
-        _logger.LogTrace($"All finished for '{projectSnapshot.Key}'");
+        _logger.LogTrace($"All finished for '{projectKey}'");
+
         OnBackgroundWorkCompleted();
+    }
+
+    /// <summary>
+    /// Attempts to enter the semaphore and returns <see langword="false"/> on failure.
+    /// </summary>
+    private async Task<bool> TryEnterSemaphoreAsync(ProjectKey projectKey, CancellationToken cancellationToken)
+    {
+        _logger.LogTrace($"Try to enter semaphore for '{projectKey}'");
+
+        if (_disposed)
+        {
+            _logger.LogTrace($"Cannot enter semaphore because we have been disposed.");
+            return false;
+        }
+
+        try
+        {
+            await _semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+
+            _logger.LogTrace($"Entered semaphore for '{projectKey}'");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            // Swallow object and task cancelled exceptions
+            _logger.LogTrace($"""
+                Exception occurred while entering semaphore for '{projectKey}':
+                {ex}
+                """);
+            return false;
+        }
+    }
+
+    private void ReleaseSemaphore(ProjectKey projectKey)
+    {
+        try
+        {
+            // Prevent ObjectDisposedException if we've disposed before we got here.
+            // The dispose method will release anyway, so we're all good.
+            if (_disposed)
+            {
+                return;
+            }
+
+            _semaphore.Release();
+            _logger.LogTrace($"Released semaphore for '{projectKey}'");
+        }
+        catch (Exception ex)
+        {
+            // Swallow object and task cancelled exceptions
+            _logger.LogTrace($"""
+                Exception occurred while releasing semaphore for '{projectKey}':
+                {ex}
+                """);
+        }
     }
 
     /// <summary>

@@ -2,26 +2,26 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Serialization;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Serialization;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.Razor.LanguageClient;
-using Microsoft.VisualStudio.Razor.LanguageClient.ProjectSystem;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.Test.LanguageClient.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.LanguageClient.ProjectSystem;
 
 public class RazorProjectInfoEndpointPublisherTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
@@ -51,7 +51,9 @@ public class RazorProjectInfoEndpointPublisherTest(ITestOutputHelper testOutput)
             .Callback<string, string, ProjectInfoParams, CancellationToken>((s1, s2, param, ct) => callCount++)
             .ReturnsAsync(new ReinvokeResponse<object>());
 
-        using var publisher = CreateRazorProjectInfoEndpointPublisher(requestInvoker.Object, projectManager);
+        var serializer = new TestRazorProjectInfoFileSerializer();
+
+        using var publisher = CreateRazorProjectInfoEndpointPublisher(requestInvoker.Object, projectManager, serializer);
         var publisherAccessor = publisher.GetTestAccessor();
 
         var documentRemovedArgs = ProjectChangeEventArgs.CreateTestInstance(
@@ -93,7 +95,9 @@ public class RazorProjectInfoEndpointPublisherTest(ITestOutputHelper testOutput)
             .Callback<string, string, ProjectInfoParams, CancellationToken>((s1, s2, param, ct) => callCount++)
             .ReturnsAsync(new ReinvokeResponse<object>());
 
-        using var publisher = CreateRazorProjectInfoEndpointPublisher(requestInvoker.Object, projectManager);
+        var serializer = new TestRazorProjectInfoFileSerializer();
+
+        using var publisher = CreateRazorProjectInfoEndpointPublisher(requestInvoker.Object, projectManager, serializer);
         var publisherAccessor = publisher.GetTestAccessor();
 
         // Act
@@ -136,7 +140,9 @@ public class RazorProjectInfoEndpointPublisherTest(ITestOutputHelper testOutput)
             .Callback<string, string, ProjectInfoParams, CancellationToken>((s1, s2, param, ct) => callCount++)
             .ReturnsAsync(new ReinvokeResponse<object>());
 
-        using var publisher = CreateRazorProjectInfoEndpointPublisher(requestInvoker.Object, projectManager);
+        var serializer = new TestRazorProjectInfoFileSerializer();
+
+        using var publisher = CreateRazorProjectInfoEndpointPublisher(requestInvoker.Object, projectManager, serializer);
 
         // Act
         publisher.StartSending();
@@ -158,10 +164,10 @@ public class RazorProjectInfoEndpointPublisherTest(ITestOutputHelper testOutput)
         var projectConfigurationFilePathStore = new DefaultProjectConfigurationFilePathStore();
 
         var projectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", ProjectWorkspaceState.Create(CodeAnalysis.CSharp.LanguageVersion.CSharp7_3));
-        var expectedProjectInfo = projectSnapshot.ToRazorProjectInfo(projectSnapshot.IntermediateOutputPath);
+        var expectedProjectInfo = projectSnapshot.ToRazorProjectInfo();
         var callCount = 0;
         var requestInvoker = new Mock<LSPRequestInvoker>(MockBehavior.Strict);
-        var projectInfoParams = (ProjectInfoParams?)null;
+        ProjectInfoParams? projectInfoParams = null;
         requestInvoker
             .Setup(r => r.ReinvokeRequestOnServerAsync<ProjectInfoParams, object>(
                 LanguageServerConstants.RazorProjectInfoEndpoint,
@@ -175,7 +181,9 @@ public class RazorProjectInfoEndpointPublisherTest(ITestOutputHelper testOutput)
                 })
             .ReturnsAsync(new ReinvokeResponse<object>());
 
-        using var publisher = CreateRazorProjectInfoEndpointPublisher(requestInvoker.Object, projectManager);
+        var serializer = new TestRazorProjectInfoFileSerializer();
+
+        using var publisher = CreateRazorProjectInfoEndpointPublisher(requestInvoker.Object, projectManager, serializer);
         var publisherAccessor = publisher.GetTestAccessor();
 
         var args = ProjectChangeEventArgs.CreateTestInstance(projectSnapshot, projectSnapshot, documentFilePath: null!, changeKind);
@@ -189,14 +197,17 @@ public class RazorProjectInfoEndpointPublisherTest(ITestOutputHelper testOutput)
 
         // Assert
         Assert.Equal(1, callCount);
-        var projectInfo =
-            RazorProjectInfoDeserializer.Instance.DeserializeFromString(projectInfoParams!.ProjectInfo);
+        Assert.NotNull(projectInfoParams);
+        var filePath = Assert.Single(projectInfoParams.FilePaths);
+
         if (expectNullProjectInfo)
         {
-            Assert.Null(projectInfo);
+            Assert.Null(filePath);
         }
         else
         {
+            Assert.NotNull(filePath);
+            var projectInfo = await serializer.DeserializeFromFileAndDeleteAsync(filePath, DisposalToken);
             Assert.NotNull(projectInfo);
             Assert.Equal(expectedProjectInfo, projectInfo);
         }
@@ -210,9 +221,9 @@ public class RazorProjectInfoEndpointPublisherTest(ITestOutputHelper testOutput)
 
         var firstSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj");
         var secondSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", [@"C:\path\to\file.cshtml"]);
-        var expectedProjectInfoString = secondSnapshot.ToBase64EncodedProjectInfo(secondSnapshot.IntermediateOutputPath);
+        var expectedProjectInfo = secondSnapshot.ToRazorProjectInfo();
 
-        var projectInfoParams = (ProjectInfoParams?)null;
+        ProjectInfoParams? projectInfoParams = null;
         var callCount = 0;
         var requestInvoker = new Mock<LSPRequestInvoker>(MockBehavior.Strict);
         requestInvoker
@@ -228,7 +239,9 @@ public class RazorProjectInfoEndpointPublisherTest(ITestOutputHelper testOutput)
             })
             .ReturnsAsync(new ReinvokeResponse<object>());
 
-        using var publisher = CreateRazorProjectInfoEndpointPublisher(requestInvoker.Object, projectManager);
+        var serializer = new TestRazorProjectInfoFileSerializer();
+
+        using var publisher = CreateRazorProjectInfoEndpointPublisher(requestInvoker.Object, projectManager, serializer);
         var publisherAccessor = publisher.GetTestAccessor();
 
         // Act
@@ -239,7 +252,10 @@ public class RazorProjectInfoEndpointPublisherTest(ITestOutputHelper testOutput)
         // Assert
         Assert.Equal(1, callCount);
         Assert.NotNull(projectInfoParams);
-        Assert.Equal(expectedProjectInfoString, projectInfoParams.ProjectInfo);
+        var filePath = Assert.Single(projectInfoParams.FilePaths);
+        Assert.NotNull(filePath);
+        var projectInfo = await serializer.DeserializeFromFileAndDeleteAsync(filePath, DisposalToken);
+        Assert.Equal(expectedProjectInfo, projectInfo);
     }
 
     internal static IProjectSnapshot CreateProjectSnapshot(
@@ -257,5 +273,25 @@ public class RazorProjectInfoEndpointPublisherTest(ITestOutputHelper testOutput)
 
     private static RazorProjectInfoEndpointPublisher CreateRazorProjectInfoEndpointPublisher(
         LSPRequestInvoker requestInvoker,
-        IProjectSnapshotManager projectSnapshotManager) => new(requestInvoker, projectSnapshotManager, TimeSpan.FromMilliseconds(1));
+        IProjectSnapshotManager projectSnapshotManager,
+        IRazorProjectInfoFileSerializer serializer)
+        => new(requestInvoker, projectSnapshotManager, serializer, TimeSpan.FromMilliseconds(5));
+
+    private sealed class TestRazorProjectInfoFileSerializer : IRazorProjectInfoFileSerializer
+    {
+        private readonly Dictionary<string, RazorProjectInfo> _filePathToProjectInfoMap = new(FilePathComparer.Instance);
+
+        public Task<RazorProjectInfo> DeserializeFromFileAndDeleteAsync(string filePath, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(_filePathToProjectInfoMap[filePath]);
+        }
+
+        public Task<string> SerializeToTempFileAsync(RazorProjectInfo projectInfo, CancellationToken cancellationToken)
+        {
+            var filePath = Guid.NewGuid().ToString("D");
+            _filePathToProjectInfoMap[filePath] = projectInfo;
+
+            return Task.FromResult(filePath);
+        }
+    }
 }

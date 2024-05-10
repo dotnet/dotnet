@@ -11,6 +11,9 @@
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\Analyzers\Razor.Diagnostics.Analyzers\Razor.Diagnostics.Analyzers.csproj"
                       PrivateAssets="all"
                       ReferenceOutputAssembly="false"
+                      IncludeOutputGroupsInVSIX=""
+                      IncludeOutputGroupsInVSIXLocalOnly=""
+                      Private="false"
                       OutputItemType="Analyzer" />
   </ItemGroup>
 

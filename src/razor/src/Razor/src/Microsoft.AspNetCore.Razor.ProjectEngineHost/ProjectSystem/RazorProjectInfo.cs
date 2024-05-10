@@ -5,12 +5,14 @@ using System;
 using System.Buffers;
 using System.Collections.Immutable;
 using System.IO;
+using System.Linq;
 using MessagePack;
 using MessagePack.Resolvers;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Internal;
 
 namespace Microsoft.AspNetCore.Razor.ProjectSystem;
 
@@ -21,7 +23,7 @@ internal sealed record class RazorProjectInfo
             RazorProjectInfoResolver.Instance,
             StandardResolver.Instance));
 
-    public string SerializedFilePath { get; init; }
+    public ProjectKey ProjectKey { get; init; }
     public string FilePath { get; init; }
     public RazorConfiguration Configuration { get; init; }
     public string? RootNamespace { get; init; }
@@ -30,7 +32,7 @@ internal sealed record class RazorProjectInfo
     public ImmutableArray<DocumentSnapshotHandle> Documents { get; init; }
 
     public RazorProjectInfo(
-        string serializedFilePath,
+        ProjectKey projectKey,
         string filePath,
         RazorConfiguration configuration,
         string? rootNamespace,
@@ -38,13 +40,38 @@ internal sealed record class RazorProjectInfo
         ProjectWorkspaceState projectWorkspaceState,
         ImmutableArray<DocumentSnapshotHandle> documents)
     {
-        SerializedFilePath = serializedFilePath;
+        ProjectKey = projectKey;
         FilePath = filePath;
         Configuration = configuration;
         RootNamespace = rootNamespace;
         DisplayName = displayName;
         ProjectWorkspaceState = projectWorkspaceState;
         Documents = documents.NullToEmpty();
+    }
+
+    public bool Equals(RazorProjectInfo? other)
+        => other is not null &&
+           ProjectKey == other.ProjectKey &&
+           FilePath == other.FilePath &&
+           Configuration.Equals(other.Configuration) &&
+           RootNamespace == other.RootNamespace &&
+           DisplayName == other.DisplayName &&
+           ProjectWorkspaceState.Equals(other.ProjectWorkspaceState) &&
+           Documents.SequenceEqual(other.Documents);
+
+    public override int GetHashCode()
+    {
+        var hash = HashCodeCombiner.Start();
+
+        hash.Add(ProjectKey);
+        hash.Add(FilePath);
+        hash.Add(Configuration);
+        hash.Add(RootNamespace);
+        hash.Add(DisplayName);
+        hash.Add(ProjectWorkspaceState);
+        hash.Add(Documents);
+
+        return hash.CombinedHash;
     }
 
     public void SerializeTo(IBufferWriter<byte> bufferWriter)

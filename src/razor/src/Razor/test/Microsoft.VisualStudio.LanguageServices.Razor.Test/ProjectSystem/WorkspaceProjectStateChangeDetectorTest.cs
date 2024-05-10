@@ -193,9 +193,9 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         // Assert
         Assert.Equal(3, generator.Updates.Count);
-        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == ProjectKey.From(_projectNumberOne));
-        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == ProjectKey.From(_projectNumberTwo));
-        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == ProjectKey.From(_projectNumberThree));
+        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == _projectNumberOne.ToProjectKey());
+        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == _projectNumberTwo.ToProjectKey());
+        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == _projectNumberThree.ToProjectKey());
     }
 
     [UITheory]
@@ -234,9 +234,9 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
 
         // Assert
         Assert.Equal(3, generator.Updates.Count);
-        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == ProjectKey.From(_projectNumberOne));
-        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == ProjectKey.From(_projectNumberTwo));
-        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == ProjectKey.From(_projectNumberThree));
+        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == _projectNumberOne.ToProjectKey());
+        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == _projectNumberTwo.ToProjectKey());
+        Assert.Contains(generator.Updates, u => u.ProjectSnapshot.Key == _projectNumberThree.ToProjectKey());
     }
 
     [UITheory]

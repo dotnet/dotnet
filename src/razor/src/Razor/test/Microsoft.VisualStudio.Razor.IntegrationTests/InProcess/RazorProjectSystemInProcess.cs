@@ -81,7 +81,7 @@ internal partial class RazorProjectSystemInProcess
             {
                 if (snapshot.TryGetVirtualDocument<CSharpVirtualDocumentSnapshot>(out var virtualDocument))
                 {
-                    var result = virtualDocument.ProjectKey.Id is not null &&
+                    var result = !virtualDocument.ProjectKey.IsUnknown &&
                         virtualDocument.Snapshot.Length > 0;
                     return Task.FromResult(result);
                 }

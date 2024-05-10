@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
@@ -123,7 +122,7 @@ internal partial class ProjectConfigurationStateSynchronizer : IProjectConfigura
                 {
                     if (args.TryDeserialize(_options, out var projectInfo))
                     {
-                        var projectKey = ProjectKey.From(projectInfo);
+                        var projectKey = projectInfo.ProjectKey;
                         _logger.LogInformation($"Configuration file changed for project '{projectKey.Id}'.");
 
                         _workQueue.AddWork(new UpdateProject(projectKey, projectInfo));
@@ -145,7 +144,7 @@ internal partial class ProjectConfigurationStateSynchronizer : IProjectConfigura
                 {
                     if (args.TryDeserialize(_options, out var projectInfo))
                     {
-                        var projectKey = ProjectKey.From(projectInfo);
+                        var projectKey = projectInfo.ProjectKey;
                         _logger.LogInformation($"Configuration file added for project '{projectKey.Id}'.");
 
                         // Update will add the project if it doesn't exist

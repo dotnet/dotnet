@@ -5,6 +5,7 @@ using System;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Threading;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
@@ -167,7 +168,7 @@ internal sealed class FallbackProjectManager(
             return;
         }
 
-        var projectKey = ProjectKey.From(project);
+        var projectKey = project.ToProjectKey();
 
         var hostDocument = CreateHostDocument(filePath, projectFilePath);
         if (hostDocument is null)

@@ -49,9 +49,7 @@ internal sealed class ProjectConfigurationFileChangeEventArgs(
                     return false;
                 }
 
-                var normalizedSerializedFilePath = FilePathNormalizer.Normalize(deserializedProjectInfo.SerializedFilePath);
-                var normalizedDetectedFilePath = FilePathNormalizer.Normalize(ConfigurationFilePath);
-                if (string.Equals(normalizedSerializedFilePath, normalizedDetectedFilePath, FilePathComparison.Instance))
+                if (FilePathNormalizer.AreDirectoryPathsEquivalent(deserializedProjectInfo.ProjectKey.Id, ConfigurationFilePath))
                 {
                     // Modify the feature flags on the configuration before storing
                     deserializedProjectInfo = deserializedProjectInfo with
@@ -82,6 +80,6 @@ internal sealed class ProjectConfigurationFileChangeEventArgs(
     internal ProjectKey GetProjectKey()
     {
         var intermediateOutputPath = FilePathNormalizer.GetNormalizedDirectoryName(ConfigurationFilePath);
-        return ProjectKey.FromString(intermediateOutputPath);
+        return new ProjectKey(intermediateOutputPath);
     }
 }

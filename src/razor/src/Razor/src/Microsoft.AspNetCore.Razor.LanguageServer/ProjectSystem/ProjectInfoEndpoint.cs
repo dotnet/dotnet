@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Serialization;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Serialization;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
@@ -17,24 +18,32 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 /// Used to receive project system info updates from the client that were discovered OOB.
 /// </summary>
 [RazorLanguageServerEndpoint(LanguageServerConstants.RazorProjectInfoEndpoint)]
-internal class ProjectInfoEndpoint : IRazorNotificationHandler<ProjectInfoParams>
+internal class ProjectInfoEndpoint(
+    ProjectConfigurationStateManager stateManager,
+    IRazorProjectInfoFileSerializer serializer)
+    : IRazorNotificationHandler<ProjectInfoParams>
 {
-    private readonly ProjectConfigurationStateManager _projectConfigurationStateManager;
-
-    public ProjectInfoEndpoint(ProjectConfigurationStateManager projectConfigurationStateManager)
-    {
-        _projectConfigurationStateManager = projectConfigurationStateManager;
-    }
+    private readonly ProjectConfigurationStateManager _stateManager = stateManager;
+    private readonly IRazorProjectInfoFileSerializer _serializer = serializer;
 
     public bool MutatesSolutionState => false;
 
-    public Task HandleNotificationAsync(ProjectInfoParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
+    public async Task HandleNotificationAsync(ProjectInfoParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        var razorProjectInfo =
-            RazorProjectInfoDeserializer.Instance.DeserializeFromString(request.ProjectInfo);
+        var count = request.ProjectKeyIds.Length;
 
-        var projectKey = ProjectKey.FromString(request.ProjectKeyId);
+        for (var i = 0; i < count; i++)
+        {
+            var projectKey = new ProjectKey(request.ProjectKeyIds[i]);
 
-        return _projectConfigurationStateManager.ProjectInfoUpdatedAsync(projectKey, razorProjectInfo, cancellationToken);
+            RazorProjectInfo? projectInfo = null;
+
+            if (request.FilePaths[i] is string filePath)
+            {
+                projectInfo = await _serializer.DeserializeFromFileAndDeleteAsync(filePath, cancellationToken).ConfigureAwait(false);
+            }
+
+            await _stateManager.ProjectInfoUpdatedAsync(projectKey, projectInfo, cancellationToken).ConfigureAwait(false);
+        }
     }
 }

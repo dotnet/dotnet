@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem;

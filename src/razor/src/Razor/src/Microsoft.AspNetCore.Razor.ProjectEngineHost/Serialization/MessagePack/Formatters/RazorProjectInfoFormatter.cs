@@ -27,7 +27,7 @@ internal sealed class RazorProjectInfoFormatter : TopLevelFormatter<RazorProject
             throw new RazorProjectInfoSerializationException(SR.Unsupported_razor_project_info_version_encountered);
         }
 
-        var serializedFilePath = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+        var projectKeyId = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
         var filePath = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
         var configuration = reader.DeserializeOrNull<RazorConfiguration>(options) ?? RazorConfiguration.Default;
         var projectWorkspaceState = reader.DeserializeOrNull<ProjectWorkspaceState>(options) ?? ProjectWorkspaceState.Default;
@@ -35,7 +35,7 @@ internal sealed class RazorProjectInfoFormatter : TopLevelFormatter<RazorProject
         var displayName = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
         var documents = reader.Deserialize<ImmutableArray<DocumentSnapshotHandle>>(options);
 
-        return new RazorProjectInfo(serializedFilePath, filePath, configuration, rootNamespace, displayName, projectWorkspaceState, documents);
+        return new RazorProjectInfo(new ProjectKey(projectKeyId), filePath, configuration, rootNamespace, displayName, projectWorkspaceState, documents);
     }
 
     public override void Serialize(ref MessagePackWriter writer, RazorProjectInfo value, SerializerCachingOptions options)
@@ -43,7 +43,7 @@ internal sealed class RazorProjectInfoFormatter : TopLevelFormatter<RazorProject
         writer.WriteArrayHeader(7);
 
         writer.Write(SerializationFormat.Version);
-        CachedStringFormatter.Instance.Serialize(ref writer, value.SerializedFilePath, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.ProjectKey.Id, options);
         CachedStringFormatter.Instance.Serialize(ref writer, value.FilePath, options);
         writer.Serialize(value.Configuration, options);
         writer.Serialize(value.ProjectWorkspaceState, options);

@@ -391,10 +391,15 @@ internal class RazorProjectService(
 
             _logger.LogTrace($"Updating document '{newHostDocument.FilePath}''s file kind to '{newHostDocument.FileKind}' and target path to '{newHostDocument.TargetPath}'.");
 
-            var remoteTextLoader = _remoteTextLoaderFactory.Create(newFilePath);
+            // If the physical file name hasn't changed, we use the current document snapshot as the source of truth for text, in case
+            // it has received text change info from LSP. eg, if someone changes the TargetPath of the file while its open in the editor
+            // with unsaved changes, we don't want to reload it from disk.
+            var textLoader = FilePathComparer.Instance.Equals(currentHostDocument.FilePath, newHostDocument.FilePath)
+                ? new DocumentSnapshotTextLoader(documentSnapshot)
+                : _remoteTextLoaderFactory.Create(newFilePath);
 
             updater.DocumentRemoved(currentProjectKey, currentHostDocument);
-            updater.DocumentAdded(currentProjectKey, newHostDocument, remoteTextLoader);
+            updater.DocumentAdded(currentProjectKey, newHostDocument, textLoader);
         }
 
         project = _projectManager.GetLoadedProject(project.Key);
@@ -493,18 +498,27 @@ internal class RazorProjectService(
             }
 
             // Remove from miscellaneous project
-            var defaultMiscProject = miscellaneousProject;
-
-            updater.DocumentRemoved(defaultMiscProject.Key, documentSnapshot.State.HostDocument);
+            updater.DocumentRemoved(miscellaneousProject.Key, documentSnapshot.State.HostDocument);
 
             // Add to new project
 
             var textLoader = new DocumentSnapshotTextLoader(documentSnapshot);
-            var defaultProject = projectSnapshot;
-            var newHostDocument = new HostDocument(documentSnapshot.FilePath, documentSnapshot.TargetPath);
+
+            // If we're moving from the misc files project to a real project, then target path will be the full path to the file
+            // and the next update to the project will update it to be a relative path. To save a bunch of busy work if that is
+            // the only change necessary, we can proactively do that work here. This also means that when we later find out about
+            // this document the "real" way, it will be equal to the one we already know about, and we won't lose content
+            var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(projectSnapshot.FilePath);
+            var newTargetPath = documentSnapshot.TargetPath;
+            if (FilePathNormalizer.Normalize(newTargetPath).StartsWith(projectDirectory))
+            {
+                newTargetPath = newTargetPath[projectDirectory.Length..];
+            }
+
+            var newHostDocument = new HostDocument(documentSnapshot.FilePath, newTargetPath, documentSnapshot.FileKind);
             _logger.LogInformation($"Migrating '{documentFilePath}' from the '{miscellaneousProject.Key}' project to '{projectSnapshot.Key}' project.");
 
-            updater.DocumentAdded(defaultProject.Key, newHostDocument, textLoader);
+            updater.DocumentAdded(projectSnapshot.Key, newHostDocument, textLoader);
         }
     }
 

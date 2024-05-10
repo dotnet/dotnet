@@ -85,7 +85,7 @@ internal static class RazorProjectInfoSerializer
         var configurationFilePath = Path.Combine(intermediateOutputPath, configurationFileName);
 
         var projectInfo = new RazorProjectInfo(
-            serializedFilePath: configurationFilePath,
+            projectKey: new ProjectKey(intermediateOutputPath),
             filePath: project.FilePath!,
             configuration: configuration,
             rootNamespace: defaultNamespace,

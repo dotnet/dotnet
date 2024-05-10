@@ -15,6 +15,7 @@
     For example, if your service interface is IRemoteFrobulatorService, then the Include should be "Microsoft.VisualStudio.Razor.Frobulator".
   -->
   <ItemGroup>
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.LinkedEditingRange" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteLinkedEditingRangeServiceFactory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.SemanticTokens" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteSemanticTokensServiceFactory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.HtmlDocument" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteHtmlDocumentServiceFactory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.TagHelperProvider" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteTagHelperProviderServiceFactory"/>

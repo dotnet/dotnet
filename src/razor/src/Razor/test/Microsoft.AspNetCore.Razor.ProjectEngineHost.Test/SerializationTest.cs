@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
@@ -26,8 +25,8 @@ public class SerializationTest : ToolingTestBase
         var languageVersion = RazorLanguageVersion.Experimental;
 
         _configuration = new(languageVersion, "Custom", [new("TestExtension")]);
-        _projectWorkspaceState = ProjectWorkspaceState.Create(ImmutableArray.Create(
-            TagHelperDescriptorBuilder.Create("Test", "TestAssembly").Build()),
+        _projectWorkspaceState = ProjectWorkspaceState.Create(
+            tagHelpers: [TagHelperDescriptorBuilder.Create("Test", "TestAssembly").Build()],
             csharpLanguageVersion: LanguageVersion.LatestMajor);
     }
 
@@ -36,13 +35,13 @@ public class SerializationTest : ToolingTestBase
     {
         // Arrange
         var projectInfo = new RazorProjectInfo(
-            "/path/to/obj/project.razor.bin",
+            new ProjectKey("/path/to/obj/"),
             "/path/to/project.csproj",
             _configuration,
             rootNamespace: "TestProject",
             displayName: "project",
             _projectWorkspaceState,
-            ImmutableArray<DocumentSnapshotHandle>.Empty);
+            documents: []);
 
         var jsonText = JsonDataConvert.SerializeObject(projectInfo, ObjectWriters.WriteProperties);
         Assert.NotNull(jsonText);
@@ -69,13 +68,13 @@ public class SerializationTest : ToolingTestBase
     {
         // Arrange
         var projectInfo = new RazorProjectInfo(
-            "/path/to/obj/project.razor.bin",
+            new ProjectKey("/path/to/obj/"),
             "/path/to/project.csproj",
             _configuration,
             rootNamespace: "TestProject",
             displayName: "project",
             _projectWorkspaceState,
-            ImmutableArray<DocumentSnapshotHandle>.Empty);
+            documents: []);
 
         var jsonText = JsonDataConvert.SerializeObject(projectInfo, ObjectWriters.WriteProperties);
         Assert.NotNull(jsonText);
@@ -104,13 +103,13 @@ public class SerializationTest : ToolingTestBase
         var legacyDocument = new DocumentSnapshotHandle("/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
         var componentDocument = new DocumentSnapshotHandle("/path/to/otherfile.razor", "otherfile.razor", FileKinds.Component);
         var projectInfo = new RazorProjectInfo(
-            "/path/to/obj/project.razor.bin",
+            new ProjectKey("/path/to/obj/"),
             "/path/to/project.csproj",
             _configuration,
             rootNamespace: "TestProject",
             displayName: "project",
             _projectWorkspaceState,
-            ImmutableArray.Create(legacyDocument, componentDocument));
+            documents: [legacyDocument, componentDocument]);
 
         var jsonText = JsonDataConvert.SerializeObject(projectInfo, ObjectWriters.WriteProperties);
         Assert.NotNull(jsonText);

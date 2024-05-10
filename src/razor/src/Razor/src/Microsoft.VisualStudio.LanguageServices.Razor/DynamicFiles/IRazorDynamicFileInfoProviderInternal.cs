@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 
 namespace Microsoft.VisualStudio.Razor.DynamicFiles;
 

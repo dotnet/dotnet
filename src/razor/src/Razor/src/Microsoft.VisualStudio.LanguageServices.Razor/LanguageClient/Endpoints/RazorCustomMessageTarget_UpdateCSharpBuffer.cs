@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation. All rights reserved.
+﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
@@ -6,8 +6,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.Razor.LanguageClient.Extensions;
 using StreamJsonRpc;
@@ -48,7 +48,7 @@ internal partial class RazorCustomMessageTarget
             _documentManager.TryGetDocument(hostDocumentUri, out var documentSnapshot) &&
             documentSnapshot.TryGetAllVirtualDocuments<CSharpVirtualDocumentSnapshot>(out var virtualDocuments))
         {
-            if (virtualDocuments is [{ ProjectKey.Id: null }])
+            if (virtualDocuments is [{ ProjectKey.IsUnknown: true }])
             {
                 // If there is only a single virtual document, and its got a null id, then that means it's in our "misc files" project
                 // but the server clearly knows about it in a real project. That means its probably new, as Visual Studio opens a buffer
@@ -77,7 +77,7 @@ internal partial class RazorCustomMessageTarget
 
             foreach (var virtualDocument in virtualDocuments)
             {
-                if (virtualDocument.ProjectKey.Equals(ProjectKey.FromString(request.ProjectKeyId)))
+                if (virtualDocument.ProjectKey.Equals(new ProjectKey(request.ProjectKeyId)))
                 {
                     _logger.LogDebug($"UpdateCSharpBuffer virtual doc for {request.HostDocumentVersion} of {virtualDocument.Uri}");
 

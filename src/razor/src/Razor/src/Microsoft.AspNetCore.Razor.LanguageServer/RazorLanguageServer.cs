@@ -178,7 +178,10 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
 
             services.AddHandlerWithCapabilities<RenameEndpoint>();
             services.AddHandlerWithCapabilities<DefinitionEndpoint>();
-            services.AddHandlerWithCapabilities<LinkedEditingRangeEndpoint>();
+            if (!featureOptions.UseRazorCohostServer)
+            {
+                services.AddHandlerWithCapabilities<LinkedEditingRangeEndpoint>();
+            }
             services.AddHandler<WrapWithTagEndpoint>();
             services.AddHandler<RazorBreakpointSpanEndpoint>();
             services.AddHandler<RazorProximityExpressionsEndpoint>();

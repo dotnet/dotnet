@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.Protocol.DocumentPresentation;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
@@ -25,7 +24,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal class CohostUriPresentationEndpoint(IRemoteClientProvider remoteClientProvider, ILoggerFactory loggerFactory)
-    : AbstractRazorCohostDocumentRequestHandler<UriPresentationParams, WorkspaceEdit?>, IDynamicRegistrationProvider
+    : AbstractRazorCohostDocumentRequestHandler<VSInternalUriPresentationParams, WorkspaceEdit?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteClientProvider _remoteClientProvider = remoteClientProvider;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostUriPresentationEndpoint>();
@@ -51,10 +50,10 @@ internal class CohostUriPresentationEndpoint(IRemoteClientProvider remoteClientP
         return null;
     }
 
-    protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(UriPresentationParams request)
+    protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(VSInternalUriPresentationParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override async Task<WorkspaceEdit?> HandleRequestAsync(UriPresentationParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
+    protected override async Task<WorkspaceEdit?> HandleRequestAsync(VSInternalUriPresentationParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
     {
         var razorDocument = context.TextDocument.AssumeNotNull();
 

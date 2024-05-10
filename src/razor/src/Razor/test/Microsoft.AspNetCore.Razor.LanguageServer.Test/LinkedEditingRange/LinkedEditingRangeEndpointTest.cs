@@ -7,6 +7,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
+using Microsoft.CodeAnalysis.Razor.LinkedEditingRange;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
@@ -73,7 +74,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
 
         // Assert
         Assert.Equal(expectedRanges, result.Ranges);
-        Assert.Equal(LinkedEditingRangeEndpoint.WordPattern, result.WordPattern);
+        Assert.Equal(LinkedEditingRangeHelper.WordPattern, result.WordPattern);
     }
 
     [Fact]
@@ -114,7 +115,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
 
         // Assert
         Assert.Equal(expectedRanges, result.Ranges);
-        Assert.Equal(LinkedEditingRangeEndpoint.WordPattern, result.WordPattern);
+        Assert.Equal(LinkedEditingRangeHelper.WordPattern, result.WordPattern);
     }
 
     [Fact]
@@ -155,7 +156,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
 
         // Assert
         Assert.Equal(expectedRanges, result.Ranges);
-        Assert.Equal(LinkedEditingRangeEndpoint.WordPattern, result.WordPattern);
+        Assert.Equal(LinkedEditingRangeHelper.WordPattern, result.WordPattern);
     }
 
     [Fact]
@@ -248,7 +249,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
 
         // Assert
         Assert.Equal(expectedRanges, result.Ranges);
-        Assert.Equal(LinkedEditingRangeEndpoint.WordPattern, result.WordPattern);
+        Assert.Equal(LinkedEditingRangeHelper.WordPattern, result.WordPattern);
     }
 
     [Fact]
@@ -289,7 +290,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
 
         // Assert
         Assert.Equal(expectedRanges, result.Ranges);
-        Assert.Equal(LinkedEditingRangeEndpoint.WordPattern, result.WordPattern);
+        Assert.Equal(LinkedEditingRangeHelper.WordPattern, result.WordPattern);
     }
 
     [Fact]
@@ -330,7 +331,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
 
         // Assert
         Assert.Equal(expectedRanges, result.Ranges);
-        Assert.Equal(LinkedEditingRangeEndpoint.WordPattern, result.WordPattern);
+        Assert.Equal(LinkedEditingRangeHelper.WordPattern, result.WordPattern);
     }
 
     [Fact]
@@ -363,18 +364,18 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
     public void VerifyWordPatternCorrect()
     {
         // Assert
-        Assert.True(Regex.Match("Test", LinkedEditingRangeEndpoint.WordPattern).Length == 4);
-        Assert.True(Regex.Match("!Test", LinkedEditingRangeEndpoint.WordPattern).Length == 5);
-        Assert.True(Regex.Match("!Test.Test2", LinkedEditingRangeEndpoint.WordPattern).Length == 11);
+        Assert.True(Regex.Match("Test", LinkedEditingRangeHelper.WordPattern).Length == 4);
+        Assert.True(Regex.Match("!Test", LinkedEditingRangeHelper.WordPattern).Length == 5);
+        Assert.True(Regex.Match("!Test.Test2", LinkedEditingRangeHelper.WordPattern).Length == 11);
 
-        Assert.True(Regex.Match("Te>st", LinkedEditingRangeEndpoint.WordPattern).Length != 5);
-        Assert.True(Regex.Match("Te/st", LinkedEditingRangeEndpoint.WordPattern).Length != 5);
-        Assert.True(Regex.Match("Te\\st", LinkedEditingRangeEndpoint.WordPattern).Length != 5);
-        Assert.True(Regex.Match("Te!st", LinkedEditingRangeEndpoint.WordPattern).Length != 5);
+        Assert.True(Regex.Match("Te>st", LinkedEditingRangeHelper.WordPattern).Length != 5);
+        Assert.True(Regex.Match("Te/st", LinkedEditingRangeHelper.WordPattern).Length != 5);
+        Assert.True(Regex.Match("Te\\st", LinkedEditingRangeHelper.WordPattern).Length != 5);
+        Assert.True(Regex.Match("Te!st", LinkedEditingRangeHelper.WordPattern).Length != 5);
         Assert.True(Regex.Match("""
             Te
             st
             """,
-            LinkedEditingRangeEndpoint.WordPattern).Length != 4 + Environment.NewLine.Length);
+            LinkedEditingRangeHelper.WordPattern).Length != 4 + Environment.NewLine.Length);
     }
 }

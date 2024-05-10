@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
@@ -367,7 +368,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         var workspace = _workspaceProvider.GetWorkspace();
 
         return workspace.CurrentSolution.GetProject(projectId) is { Language: LanguageNames.CSharp } project
-            ? ProjectKey.From(project)
+            ? project.ToProjectKey()
             : null;
     }
 

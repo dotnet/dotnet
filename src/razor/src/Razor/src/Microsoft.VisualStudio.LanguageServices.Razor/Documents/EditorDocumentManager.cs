@@ -4,9 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Razor.Extensions;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;

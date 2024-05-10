@@ -98,7 +98,7 @@ public class ProjectKeyTests : WorkspaceTestBase
         var projectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Default, "Project", "Assembly", "C#").WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(assemblyPath));
         var project = Workspace.CurrentSolution.AddProject(projectInfo).GetProject(projectInfo.Id).AssumeNotNull();
 
-        var roslynKey = ProjectKey.From(project);
+        var roslynKey = project.ToProjectKey();
         var razorKey = TestProjectKey.Create(intermediateOutputPath);
 
         Assert.Equal(roslynKey, razorKey);
