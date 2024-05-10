@@ -90,7 +90,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/templating`  
 *[dotnet/templating@09db412](https://github.com/dotnet/templating/tree/09db4123744c58de1fe72c45954525acd4bca5c6)*
 - `src/test-templates`  
-*[dotnet/test-templates@36e4339](https://github.com/dotnet/test-templates/tree/36e4339a33f9bdf3680591e2a3fcbc421aabc22c)*
+*[dotnet/test-templates@52f2aae](https://github.com/dotnet/test-templates/tree/52f2aaed028b3e9820d46402a5c352c38b43b4b7)*
 - `src/vstest`  
 *[microsoft/vstest@b521aa2](https://github.com/microsoft/vstest/tree/b521aa2c9c981f53b85af7c923175a850986173a)*
 - `src/windowsdesktop`  
