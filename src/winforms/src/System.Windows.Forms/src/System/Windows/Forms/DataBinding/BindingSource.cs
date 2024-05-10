@@ -517,9 +517,7 @@ public partial class BindingSource : Component,
     private static IList CreateBindingList(Type type)
     {
         Type genericType = typeof(BindingList<>);
-#pragma warning disable IL2055 // Call to 'System.Type.MakeGenericType(params Type[])' can not be statically analyzed. It's not possible to guarantee the availability of requirements of the generic type.
         Type bindingType = genericType.MakeGenericType([type]);
-#pragma warning restore IL2055
 
         return (IList)Activator.CreateInstance(bindingType)!;
     }
