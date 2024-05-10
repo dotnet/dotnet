@@ -4,7 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.Text;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
@@ -77,7 +77,7 @@ internal abstract class AbstractFilePathService(LanguageServerFeatureOptions lan
 
         // If there is no project key, we still want to generate something as otherwise the GetRazorFilePath method
         // would end up unnecessarily overcomplicated
-        if (projectKey.Id is null)
+        if (projectKey.IsUnknown)
         {
             return ".p";
         }

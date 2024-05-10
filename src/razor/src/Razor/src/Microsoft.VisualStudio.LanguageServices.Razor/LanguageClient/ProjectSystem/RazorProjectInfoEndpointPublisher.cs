@@ -8,8 +8,10 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Serialization;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
@@ -26,6 +28,7 @@ internal partial class RazorProjectInfoEndpointPublisher : IDisposable
 {
     private readonly LSPRequestInvoker _requestInvoker;
     private readonly IProjectSnapshotManager _projectManager;
+    private readonly IRazorProjectInfoFileSerializer _serializer;
 
     private readonly AsyncBatchingWorkQueue<(IProjectSnapshot Project, bool Removal)> _workQueue;
     private readonly CancellationTokenSource _disposeTokenSource;
@@ -36,8 +39,9 @@ internal partial class RazorProjectInfoEndpointPublisher : IDisposable
     [ImportingConstructor]
     public RazorProjectInfoEndpointPublisher(
         LSPRequestInvoker requestInvoker,
-        IProjectSnapshotManager projectManager)
-        : this(requestInvoker, projectManager, s_enqueueDelay)
+        IProjectSnapshotManager projectManager,
+        IRazorProjectInfoFileSerializer serializer)
+        : this(requestInvoker, projectManager, serializer, s_enqueueDelay)
     {
     }
 
@@ -45,10 +49,12 @@ internal partial class RazorProjectInfoEndpointPublisher : IDisposable
     public RazorProjectInfoEndpointPublisher(
         LSPRequestInvoker requestInvoker,
         IProjectSnapshotManager projectManager,
+        IRazorProjectInfoFileSerializer serializer,
         TimeSpan enqueueDelay)
     {
         _requestInvoker = requestInvoker;
         _projectManager = projectManager;
+        _serializer = serializer;
 
         _disposeTokenSource = new();
         _workQueue = new(
@@ -68,12 +74,8 @@ internal partial class RazorProjectInfoEndpointPublisher : IDisposable
         _projectManager.Changed += ProjectManager_Changed;
 
         var projects = _projectManager.GetProjects();
-        foreach (var project in projects)
-        {
-            // Don't enqueue project addition as those are unlikely to come through in large batches.
-            // Also ensures that we won't get project removal go through the queue without project addition.
-            ImmediatePublish(project, _disposeTokenSource.Token);
-        }
+
+        PublishProjectsAsync(projects, _disposeTokenSource.Token).Forget();
     }
 
     private void ProjectManager_Changed(object sender, ProjectChangeEventArgs args)
@@ -89,23 +91,14 @@ internal partial class RazorProjectInfoEndpointPublisher : IDisposable
             case ProjectChangeKind.ProjectChanged:
             case ProjectChangeKind.DocumentRemoved:
             case ProjectChangeKind.DocumentAdded:
-                if (args.Newer is null)
-                {
-                    break;
-                }
-
-                EnqueuePublish(args.Newer);
+                EnqueuePublish(args.Newer.AssumeNotNull());
 
                 break;
 
             case ProjectChangeKind.ProjectAdded:
-
-                if (args.Newer is not null)
-                {
-                    // Don't enqueue project addition as those are unlikely to come through in large batches.
-                    // Also ensures that we won't get project removal go through the queue without project addition.
-                    ImmediatePublish(args.Newer, _disposeTokenSource.Token);
-                }
+                // Don't enqueue project addition as those are unlikely to come through in large batches.
+                // Also ensures that we won't get project removal go through the queue without project addition.
+                PublishProjectsAsync([args.Newer.AssumeNotNull()], _disposeTokenSource.Token).Forget();
 
                 break;
 
@@ -133,59 +126,57 @@ internal partial class RazorProjectInfoEndpointPublisher : IDisposable
         _workQueue.AddWork((Project: projectSnapshot, Removal: true));
     }
 
-    private ValueTask ProcessBatchAsync(ImmutableArray<(IProjectSnapshot Project, bool Removal)> workItems, CancellationToken cancellationToken)
+    private async ValueTask ProcessBatchAsync(ImmutableArray<(IProjectSnapshot, bool)> items, CancellationToken cancellationToken)
     {
-        foreach (var workItem in workItems.GetMostRecentUniqueItems(Comparer.Instance))
+        using var projectKeyIds = new PooledArrayBuilder<string>(capacity: items.Length);
+        using var filePaths = new PooledArrayBuilder<string?>(capacity: items.Length);
+
+        foreach (var (project, removal) in items.GetMostRecentUniqueItems(Comparer.Instance))
         {
-            if (cancellationToken.IsCancellationRequested)
+            string? filePath = null;
+
+            if (!removal)
             {
-                return default;
+                var projectInfo = project.ToRazorProjectInfo();
+                filePath = await _serializer.SerializeToTempFileAsync(projectInfo, cancellationToken).ConfigureAwait(false);
             }
 
-            if (workItem.Removal)
-            {
-                RemovePublishingData(workItem.Project, cancellationToken);
-            }
-            else
-            {
-                ImmediatePublish(workItem.Project, cancellationToken);
-            }
+            projectKeyIds.Add(project.Key.Id);
+            filePaths.Add(filePath);
         }
 
-        return default;
+        await SendRequestAsync(projectKeyIds.ToArray(), filePaths.ToArray(), cancellationToken);
     }
 
-    private void RemovePublishingData(IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+    private async Task PublishProjectsAsync(ImmutableArray<IProjectSnapshot> projects, CancellationToken cancellationToken)
     {
-        ImmediatePublish(projectSnapshot.Key, encodedProjectInfo: null, cancellationToken);
-    }
+        using var projectKeyIds = new PooledArrayBuilder<string>(capacity: projects.Length);
+        using var filePaths = new PooledArrayBuilder<string>(capacity: projects.Length);
 
-    private void ImmediatePublish(IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
-    {
-        var base64ProjectInfo = projectSnapshot.ToBase64EncodedProjectInfo(projectSnapshot.IntermediateOutputPath);
-
-        ImmediatePublish(projectSnapshot.Key, base64ProjectInfo, cancellationToken);
-    }
-
-    private void ImmediatePublish(ProjectKey projectKey, string? encodedProjectInfo, CancellationToken cancellationToken)
-    {
-        // This might be getting called after getting dequeued from work queue,
-        // check if the work got cancelled before doing anything.
-        if (cancellationToken.IsCancellationRequested)
+        foreach (var project in projects)
         {
-            return;
+            var projectInfo = project.ToRazorProjectInfo();
+            var filePath = await _serializer.SerializeToTempFileAsync(projectInfo, cancellationToken).ConfigureAwait(false);
+
+            projectKeyIds.Add(project.Key.Id);
+            filePaths.Add(filePath);
         }
 
-        var parameter = new ProjectInfoParams()
+        await SendRequestAsync(projectKeyIds.ToArray(), filePaths.ToArray(), cancellationToken);
+    }
+
+    private Task SendRequestAsync(string[] projectKeyIds, string?[] filePaths, CancellationToken cancellationToken)
+    {
+        var parameter = new ProjectInfoParams
         {
-            ProjectKeyId = projectKey.Id,
-            ProjectInfo = encodedProjectInfo
+            ProjectKeyIds = projectKeyIds,
+            FilePaths = filePaths
         };
 
-        _requestInvoker.ReinvokeRequestOnServerAsync<ProjectInfoParams, object>(
-                LanguageServerConstants.RazorProjectInfoEndpoint,
-                RazorLSPConstants.RazorLanguageServerName,
-                parameter,
-                cancellationToken).Forget();
+        return _requestInvoker.ReinvokeRequestOnServerAsync<ProjectInfoParams, object>(
+            LanguageServerConstants.RazorProjectInfoEndpoint,
+            RazorLSPConstants.RazorLanguageServerName,
+            parameter,
+            cancellationToken);
     }
 }

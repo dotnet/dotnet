@@ -31,7 +31,7 @@ internal class EphemeralProjectSnapshot : IProjectSnapshot
 
         _projectEngine = new Lazy<RazorProjectEngine>(CreateProjectEngine);
 
-        Key = ProjectKey.From(this);
+        Key = new ProjectKey(IntermediateOutputPath);
     }
 
     public ProjectKey Key { get; }

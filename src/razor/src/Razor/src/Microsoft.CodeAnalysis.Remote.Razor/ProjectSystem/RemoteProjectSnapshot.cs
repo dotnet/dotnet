@@ -40,7 +40,7 @@ internal class RemoteProjectSnapshot : IProjectSnapshot
         _project = project;
         _documentSnapshotFactory = documentSnapshotFactory;
         _telemetryReporter = telemetryReporter;
-        _projectKey = ProjectKey.From(_project);
+        _projectKey = _project.ToProjectKey();
 
         _lazyConfiguration = new Lazy<RazorConfiguration>(CreateRazorConfiguration);
         _lazyProjectEngine = new Lazy<RazorProjectEngine>(() =>

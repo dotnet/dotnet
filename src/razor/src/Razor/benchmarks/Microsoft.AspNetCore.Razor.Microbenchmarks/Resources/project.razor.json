@@ -1,6 +1,6 @@
 {
-  "__Version": 3,
-  "SerializedFilePath": "C:\\Users\\admin\\location\\blazorserver\\obj\\Debug\\net7.0\\project.razor.json",
+  "__Version": 4,
+  "ProjectKey": "C:\\Users\\admin\\location\\blazorserver\\obj\\Debug\\net7.0\\",
   "FilePath": "C:\\Users\\admin\\location\\blazorserver\\blazorserver.csproj",
   "Configuration": {
     "ConfigurationName": "MVC-3.0",

@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -188,7 +189,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
         // If generated file paths are not unique, then we just act as though we're in one unknown project
         if (!_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath)
         {
-            yield return default;
+            yield return ProjectKey.Unknown;
             yield break;
         }
 
@@ -211,7 +212,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
             // All we can do is return a default key and hope for the best.
             // TODO: Do we need to create some sort of Misc Files project on this (VS) side so the nav bar looks nicer?
             _logger.LogDebug($"Could not find any documents in projects for {hostDocumentUri}");
-            yield return default;
+            yield return ProjectKey.Unknown;
         }
     }
 

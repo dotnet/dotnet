@@ -23,7 +23,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
         deserializerMock
             .Setup(x => x.DeserializeFromFile(It.IsAny<string>()))
             .Returns(new RazorProjectInfo(
-                "/path/to/obj/project.razor.bin",
+                new ProjectKey("/path/to/obj/"),
                 "c:/path/to/project.csproj",
                 configuration: RazorConfiguration.Default,
                 rootNamespace: null,
@@ -51,7 +51,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
         // Arrange
         var deserializerMock = new StrictMock<IRazorProjectInfoDeserializer>();
         var projectInfo = new RazorProjectInfo(
-            "/path/to/ORIGINAL/obj/project.razor.bin",
+            new ProjectKey("/path/to/ORIGINAL/obj/"),
             "c:/path/to/project.csproj",
             configuration: RazorConfiguration.Default,
             rootNamespace: null,
@@ -82,7 +82,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
         // Arrange
         var deserializerMock = new StrictMock<IRazorProjectInfoDeserializer>();
         var projectInfo = new RazorProjectInfo(
-            "/path/to/obj/project.razor.bin",
+            new ProjectKey("/path/to/obj/"),
             "c:/path/to/project.csproj",
             configuration: RazorConfiguration.Default with { LanguageServerFlags = TestLanguageServerFeatureOptions.Instance.ToLanguageServerFlags() },
             rootNamespace: null,

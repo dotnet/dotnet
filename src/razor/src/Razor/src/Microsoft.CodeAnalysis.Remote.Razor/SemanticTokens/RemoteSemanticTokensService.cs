@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
@@ -19,10 +18,9 @@ internal sealed class RemoteSemanticTokensService(
     IServiceBroker serviceBroker,
     IRazorSemanticTokensInfoService razorSemanticTokensInfoService,
     DocumentSnapshotFactory documentSnapshotFactory)
-    : RazorServiceBase(serviceBroker), IRemoteSemanticTokensService
+    : RazorDocumentServiceBase(serviceBroker, documentSnapshotFactory), IRemoteSemanticTokensService
 {
     private readonly IRazorSemanticTokensInfoService _razorSemanticTokensInfoService = razorSemanticTokensInfoService;
-    private readonly DocumentSnapshotFactory _documentSnapshotFactory = documentSnapshotFactory;
 
     public ValueTask<int[]?> GetSemanticTokensDataAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId razorDocumentId, LinePositionSpan span, bool colorBackground, Guid correlationId, CancellationToken cancellationToken)
         => RazorBrokeredServiceImplementation.RunServiceAsync(
@@ -39,16 +37,8 @@ internal sealed class RemoteSemanticTokensService(
             return null;
         }
 
-        var documentContext = Create(razorDocument);
+        var documentContext = CreateRazorDocumentContext(razorDocument);
 
         return await _razorSemanticTokensInfoService.GetSemanticTokensAsync(documentContext, span, colorBackground, correlationId, cancellationToken).ConfigureAwait(false);
-    }
-
-    public VersionedDocumentContext Create(TextDocument textDocument)
-    {
-        var documentSnapshot = _documentSnapshotFactory.GetOrCreate(textDocument);
-
-        // HACK: Need to revisit version and projectContext here I guess
-        return new VersionedDocumentContext(textDocument.CreateUri(), documentSnapshot, projectContext: null, version: 1);
     }
 }

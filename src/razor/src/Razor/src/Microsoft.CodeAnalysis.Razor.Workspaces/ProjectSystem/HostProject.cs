@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -17,7 +18,7 @@ internal class HostProject
         RootNamespace = rootNamespace;
         DisplayName = displayName ?? Path.GetFileNameWithoutExtension(projectFilePath);
 
-        Key = ProjectKey.From(this);
+        Key = new ProjectKey(intermediateOutputPath);
     }
 
     public RazorConfiguration Configuration { get; }

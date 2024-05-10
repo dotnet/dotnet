@@ -24,9 +24,9 @@ internal sealed partial class ProjectWorkspaceStateGenerator
             _tokenSource = tokenSource;
         }
 
-        public static UpdateItem CreateAndStartWork(Func<CancellationToken, Task> updater, CancellationToken token)
+        public static UpdateItem CreateAndStartWork(Func<CancellationToken, Task> updater)
         {
-            var tokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
+            var tokenSource = new CancellationTokenSource();
 
             var task = Task.Run(
                 () => updater(tokenSource.Token),
@@ -37,6 +37,11 @@ internal sealed partial class ProjectWorkspaceStateGenerator
 
         public void CancelWorkAndCleanUp()
         {
+            if (_tokenSource.IsCancellationRequested)
+            {
+                return;
+            }
+
             _tokenSource.Cancel();
             _tokenSource.Dispose();
         }

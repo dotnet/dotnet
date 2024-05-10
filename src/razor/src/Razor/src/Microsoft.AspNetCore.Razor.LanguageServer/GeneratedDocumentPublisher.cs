@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -54,20 +55,18 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
         // For example, when a document moves from the Misc Project to a real project, we will update it here, and each version would
         // have a different project key. On the receiving end however, there is only one file path, therefore one version of the contents,
         // so we must ensure we only have a single document to compute diffs from, or things get out of sync.
-        if (!_options.IncludeProjectKeyInGeneratedFilePath)
-        {
-            projectKey = default;
-        }
+        var documentKey = _options.IncludeProjectKeyInGeneratedFilePath
+            ? new DocumentKey(projectKey, filePath)
+            : new DocumentKey(ProjectKey.Unknown, filePath);
 
         PublishData? previouslyPublishedData;
         IReadOnlyList<TextChange> textChanges;
 
         lock (_publishedCSharpData)
         {
-            var key = new DocumentKey(projectKey, filePath);
-            if (!_publishedCSharpData.TryGetValue(key, out previouslyPublishedData))
+            if (!_publishedCSharpData.TryGetValue(documentKey, out previouslyPublishedData))
             {
-                _logger.LogDebug($"New publish data created for {projectKey} and {filePath}");
+                _logger.LogDebug($"New publish data created for {documentKey.ProjectKey} and {filePath}");
                 previouslyPublishedData = PublishData.Default;
             }
 
@@ -84,10 +83,12 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
                 var currentDocumentLength = sourceText.Length;
                 var documentLengthDelta = sourceText.Length - previousDocumentLength;
                 _logger.LogTrace(
-                    $"Updating C# buffer of {filePath} for project {projectKey} to correspond with host document version {hostDocumentVersion}. {previousDocumentLength} -> {currentDocumentLength} = Change delta of {documentLengthDelta} via {textChanges.Count} text changes.");
+                    $"Updating C# buffer of {filePath} for project {documentKey.ProjectKey} to correspond with host document " +
+                    $"version {hostDocumentVersion}. {previousDocumentLength} -> {currentDocumentLength} = Change delta of " +
+                    $"{documentLengthDelta} via {textChanges.Count} text changes.");
             }
 
-            _publishedCSharpData[key] = new PublishData(sourceText, hostDocumentVersion);
+            _publishedCSharpData[documentKey] = new PublishData(sourceText, hostDocumentVersion);
         }
 
         var request = new UpdateBufferRequest()
@@ -168,19 +169,15 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
                         return;
                     }
 
-                    var projectKey = args.ProjectKey;
-                    if (!_options.IncludeProjectKeyInGeneratedFilePath)
-                    {
-                        projectKey = default;
-                    }
-
-                    var key = new DocumentKey(projectKey, documentFilePath);
+                    var documentKey = _options.IncludeProjectKeyInGeneratedFilePath
+                        ? new DocumentKey(args.ProjectKey, documentFilePath)
+                        : new DocumentKey(ProjectKey.Unknown, documentFilePath);
 
                     lock (_publishedCSharpData)
                     {
-                        if (_publishedCSharpData.ContainsKey(key))
+                        if (_publishedCSharpData.ContainsKey(documentKey))
                         {
-                            var removed = _publishedCSharpData.Remove(key);
+                            var removed = _publishedCSharpData.Remove(documentKey);
                             if (!removed)
                             {
                                 _logger.LogError($"Published data should be protected by the project snapshot manager's thread and should never fail to remove.");
@@ -219,11 +216,11 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
                     {
                         using var keysToRemove = new PooledArrayBuilder<DocumentKey>();
 
-                        foreach (var keyValuePair in _publishedCSharpData)
+                        foreach (var (documentKey, _) in _publishedCSharpData)
                         {
-                            if (keyValuePair.Key.ProjectKey.Equals(args.ProjectKey))
+                            if (documentKey.ProjectKey == args.ProjectKey)
                             {
-                                keysToRemove.Add(keyValuePair.Key);
+                                keysToRemove.Add(documentKey);
                             }
                         }
 

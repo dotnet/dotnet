@@ -54,7 +54,7 @@ internal class RemoteCSharpSemanticTokensProvider(IFilePathService filePathServi
 
         // TODO: A real implementation needs to get the SourceGeneratedDocument from the solution
 
-        var projectKey = ProjectKey.From(razorDocument.Project);
+        var projectKey = razorDocument.Project.ToProjectKey();
         var generatedFilePath = _filePathService.GetRazorCSharpFilePath(projectKey, razorDocument.FilePath.AssumeNotNull());
         var generatedDocumentId = solution.GetDocumentIdsWithFilePath(generatedFilePath).First(d => d.ProjectId == razorDocument.Project.Id);
         var generatedDocument = solution.GetDocument(generatedDocumentId).AssumeNotNull();

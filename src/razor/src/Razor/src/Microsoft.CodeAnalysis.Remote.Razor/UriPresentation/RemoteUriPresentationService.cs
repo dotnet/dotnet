@@ -4,6 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
@@ -22,10 +23,9 @@ internal sealed class RemoteUriPresentationService(
     IRazorDocumentMappingService documentMappingService,
     DocumentSnapshotFactory documentSnapshotFactory,
     ILoggerFactory loggerFactory)
-    : RazorServiceBase(serviceBroker), IRemoteUriPresentationService
+    : RazorDocumentServiceBase(serviceBroker, documentSnapshotFactory), IRemoteUriPresentationService
 {
     private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
-    private readonly DocumentSnapshotFactory _documentSnapshotFactory = documentSnapshotFactory;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RemoteUriPresentationService>();
 
     public ValueTask<TextChange?> GetPresentationAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId razorDocumentId, LinePositionSpan span, Uri[]? uris, CancellationToken cancellationToken)
@@ -37,15 +37,15 @@ internal sealed class RemoteUriPresentationService(
 
     private async ValueTask<TextChange?> GetPresentationAsync(Solution solution, DocumentId razorDocumentId, LinePositionSpan span, Uri[]? uris, CancellationToken cancellationToken)
     {
-        var razorDocument = solution.GetAdditionalDocument(razorDocumentId);
-        if (razorDocument is null)
+        var (razorDocument, codeDocument) = await GetRazorTextAndCodeDocumentsAsync(solution, razorDocumentId).ConfigureAwait(false);
+
+        if (razorDocument == null || codeDocument == null)
         {
             return null;
         }
 
-        var snapshot = _documentSnapshotFactory.GetOrCreate(razorDocument);
-        var codeDocument = await snapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
-        var sourceText = await razorDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
+        // If razorDocument was null, codeDocument above would've been null as well
+        var sourceText = await razorDocument.AssumeNotNull().GetTextAsync(cancellationToken);
 
         if (!sourceText.TryGetAbsoluteIndex(span.Start.Line, span.Start.Character, out var index))
         {
@@ -73,7 +73,7 @@ internal sealed class RemoteUriPresentationService(
             return null;
         }
 
-        var otherSnapshot = _documentSnapshotFactory.GetOrCreate(otherDocument);
+        var otherSnapshot = DocumentSnapshotFactory.GetOrCreate(otherDocument);
         var descriptor = await otherSnapshot.TryGetTagHelperDescriptorAsync(cancellationToken).ConfigureAwait(false);
 
         if (descriptor is null)

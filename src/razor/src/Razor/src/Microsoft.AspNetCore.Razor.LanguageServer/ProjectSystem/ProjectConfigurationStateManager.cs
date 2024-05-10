@@ -67,19 +67,17 @@ internal partial class ProjectConfigurationStateManager : IDisposable
         _disposalTokenSource.Dispose();
     }
 
-    private ValueTask ProcessBatchAsync(ImmutableArray<(ProjectKey ProjectKey, RazorProjectInfo? ProjectInfo)> workItems, CancellationToken cancellationToken)
+    private async ValueTask ProcessBatchAsync(ImmutableArray<(ProjectKey, RazorProjectInfo?)> items, CancellationToken cancellationToken)
     {
-        foreach (var workItem in workItems.GetMostRecentUniqueItems(Comparer.Instance))
+        foreach (var (projectKey, projectInfo) in items.GetMostRecentUniqueItems(Comparer.Instance))
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                return default;
+                return;
             }
 
-            UpdateProjectAsync(workItem.ProjectKey, workItem.ProjectInfo, cancellationToken).Forget();
+            await UpdateProjectAsync(projectKey, projectInfo, cancellationToken).ConfigureAwait(false);
         }
-
-        return default;
     }
 
     public async Task ProjectInfoUpdatedAsync(ProjectKey projectKey, RazorProjectInfo? projectInfo, CancellationToken cancellationToken)
@@ -88,9 +86,7 @@ internal partial class ProjectConfigurationStateManager : IDisposable
         {
             if (projectInfo is not null)
             {
-                // For the new code path using endpoint, SerializedFilePath is IntermediateOutputPath.
-                // We will rename it when we remove the old code path that actually uses serialized bin file.
-                var intermediateOutputPath = FilePathNormalizer.Normalize(projectInfo.SerializedFilePath);
+                var intermediateOutputPath = projectKey.Id;
                 _logger.LogInformation($"Found no existing project key for project key '{projectKey.Id}'. Assuming new project.");
 
                 projectKey = await AddProjectAsync(intermediateOutputPath, projectInfo, cancellationToken).ConfigureAwait(false);

@@ -15,10 +15,8 @@ namespace Microsoft.CodeAnalysis.Remote.Razor;
 internal sealed class RemoteHtmlDocumentService(
     IServiceBroker serviceBroker,
     DocumentSnapshotFactory documentSnapshotFactory)
-    : RazorServiceBase(serviceBroker), IRemoteHtmlDocumentService
+    : RazorDocumentServiceBase(serviceBroker, documentSnapshotFactory), IRemoteHtmlDocumentService
 {
-    private readonly DocumentSnapshotFactory _documentSnapshotFactory = documentSnapshotFactory;
-
     public ValueTask<string?> GetHtmlDocumentTextAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId razorDocumentId, CancellationToken cancellationToken)
        => RazorBrokeredServiceImplementation.RunServiceAsync(
             solutionInfo,
@@ -28,14 +26,10 @@ internal sealed class RemoteHtmlDocumentService(
 
     private async ValueTask<string?> GetHtmlDocumentTextAsync(Solution solution, DocumentId razorDocumentId, CancellationToken _)
     {
-        var razorDocument = solution.GetAdditionalDocument(razorDocumentId);
-        if (razorDocument is null)
+        if (await GetRazorCodeDocumentAsync(solution, razorDocumentId) is not { } codeDocument)
         {
             return null;
         }
-
-        var documentSnapshot = _documentSnapshotFactory.GetOrCreate(razorDocument);
-        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync();
 
         return codeDocument.GetHtmlSourceText().ToString();
     }
