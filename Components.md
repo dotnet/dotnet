@@ -8,7 +8,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@a62b463](https://github.com/dotnet/arcade/tree/a62b4639193b96a1a848ccddaf9fe421c3d3f21b)*
+*[dotnet/arcade@480401b](https://github.com/dotnet/arcade/tree/480401b003bfd2eb989c315da5d6b99ad13a968c)*
 - `src/aspire`  
 *[dotnet/aspire@0514ea9](https://github.com/dotnet/aspire/tree/0514ea9e12ece4dd764824ce925ae0eae6fcbd86)*
 - `src/aspnetcore`  
@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@259edc6](https://github.com/dotnet/scenario-tests/tree/259edc6efe049ed49f9e37890be702a886ba5ed8)*
 - `src/sdk`  
-*[dotnet/sdk@be98f6a](https://github.com/dotnet/sdk/tree/be98f6a7056ce5d15cdc1f3c67e681241546792a)*
+*[dotnet/sdk@190723c](https://github.com/dotnet/sdk/tree/190723c80d85721cdc58fd906e645c4029b947bb)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@7dc4b47](https://github.com/dotnet/source-build-externals/tree/7dc4b475c02c94754d95520e81d107bbe1909336)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -88,7 +88,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@409af43](https://github.com/dotnet/symreader/tree/409af431ee684f9e07d34bbd4e51b9933345c1e1)*
 - `src/templating`  
-*[dotnet/templating@fb0973a](https://github.com/dotnet/templating/tree/fb0973a099e844f82b158b964304b23abf6815fc)*
+*[dotnet/templating@a78c4f5](https://github.com/dotnet/templating/tree/a78c4f56224c801d10db62257a78c86cdf778a92)*
 - `src/test-templates`  
 *[dotnet/test-templates@52f2aae](https://github.com/dotnet/test-templates/tree/52f2aaed028b3e9820d46402a5c352c38b43b4b7)*
 - `src/vstest`  
