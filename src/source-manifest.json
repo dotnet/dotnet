@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "5d174dba8982a4daee22b8624a94d286367e8b58"
+      "commitSha": "12863e05856d40bdd2ad7f19bdf8c0b946703e24"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24258.1",
@@ -139,10 +139,10 @@
       "commitSha": "a78c4f56224c801d10db62257a78c86cdf778a92"
     },
     {
-      "packageVersion": "1.1.0-rc.24259.1",
+      "packageVersion": "1.1.0-rc.24263.1",
       "path": "test-templates",
       "remoteUri": "https://github.com/dotnet/test-templates",
-      "commitSha": "52f2aaed028b3e9820d46402a5c352c38b43b4b7"
+      "commitSha": "1a39b68e67a00df1be070569c3bcce5f38e8c36a"
     },
     {
       "packageVersion": "17.11.0-preview-24253-02",
@@ -169,10 +169,10 @@
       "commitSha": "a8a7d306785f20a2262bf61ffecb08c18ab7170e"
     },
     {
-      "packageVersion": "9.0.0-preview.24256.3",
+      "packageVersion": "9.0.0-preview.24263.1",
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",
-      "commitSha": "bfa1e2d75f668a47c55a8db4e265ac837bc21229"
+      "commitSha": "d62d4e036e024404581283f02321453a331821c2"
     },
     {
       "packageVersion": "1.0.0-beta.23475.1",
