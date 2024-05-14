@@ -13,10 +13,10 @@
       "commitSha": "0514ea9e12ece4dd764824ce925ae0eae6fcbd86"
     },
     {
-      "packageVersion": "9.0.0-preview.5.24263.8",
+      "packageVersion": "9.0.0-preview.5.24264.1",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "3307bf66ac87308d157ce9f9fa10bb56c1ebf602"
+      "commitSha": "1b454f57c664c1d43348c6c74cde7a2119813c8a"
     },
     {
       "packageVersion": "0.11.4-alpha.24230.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "9c00794550efdb492d22d02895dd210a4e08fa23"
+      "commitSha": "d50f666fd9a376ed17663915674118cf4c3eb529"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24263.2",
@@ -133,10 +133,10 @@
       "commitSha": "409af431ee684f9e07d34bbd4e51b9933345c1e1"
     },
     {
-      "packageVersion": "9.0.100-preview.5.24263.2",
+      "packageVersion": "9.0.100-preview.5.24264.2",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "f372e2641a0e9ce4bc7a6f3df19ae22e0ea62160"
+      "commitSha": "5c50959f76f18c6647abdb24f5ea87d8694a186a"
     },
     {
       "packageVersion": "1.1.0-rc.24263.1",
