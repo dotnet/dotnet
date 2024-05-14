@@ -1,0 +1,79 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Nikola Milosavljevic <nikolam@microsoft.com>
+Date: Tue, 23 Apr 2024 01:55:17 +0000
+Subject: [PATCH] Update MSBuild dependencies
+
+Backport: https://github.com/dotnet/runtime/issues/101395
+---
+ eng/Version.Details.xml                          | 12 ++++++++++++
+ eng/Versions.props                               |  6 +++---
+ src/tasks/AotCompilerTask/MonoAOTCompiler.csproj |  1 -
+ src/tasks/WasmAppBuilder/WasmAppBuilder.csproj   |  3 ---
+ 4 files changed, 15 insertions(+), 7 deletions(-)
+
+diff --git a/eng/Version.Details.xml b/eng/Version.Details.xml
+index fe35dc0997e..b90337395f6 100644
+--- a/eng/Version.Details.xml
++++ b/eng/Version.Details.xml
+@@ -414,6 +414,18 @@
+       <Uri>https://github.com/dotnet/msbuild</Uri>
+       <Sha>195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22</Sha>
+     </Dependency>
++    <Dependency Name="Microsoft.Build.Framework" Version="17.8.3">
++      <Uri>https://github.com/dotnet/msbuild</Uri>
++      <Sha>195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22</Sha>
++    </Dependency>
++    <Dependency Name="Microsoft.Build.Tasks.Core" Version="17.8.3">
++      <Uri>https://github.com/dotnet/msbuild</Uri>
++      <Sha>195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22</Sha>
++    </Dependency>
++    <Dependency Name="Microsoft.Build.Utilities.Core" Version="17.8.3">
++      <Uri>https://github.com/dotnet/msbuild</Uri>
++      <Sha>195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22</Sha>
++    </Dependency>
+     <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.8.3-preview-23613-06">
+       <Uri>https://github.com/dotnet/msbuild</Uri>
+       <Sha>195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22</Sha>
+diff --git a/eng/Versions.props b/eng/Versions.props
+index f012e409095..bf16c6ee71f 100644
+--- a/eng/Versions.props
++++ b/eng/Versions.props
+@@ -173,9 +173,9 @@
+     <MicrosoftDiagnosticsToolsRuntimeClientVersion>1.0.4-preview6.19326.1</MicrosoftDiagnosticsToolsRuntimeClientVersion>
+     <DNNEVersion>2.0.5</DNNEVersion>
+     <MicrosoftBuildVersion>17.8.3</MicrosoftBuildVersion>
+-    <MicrosoftBuildTasksCoreVersion>$(MicrosoftBuildVersion)</MicrosoftBuildTasksCoreVersion>
+-    <MicrosoftBuildFrameworkVersion>$(MicrosoftBuildVersion)</MicrosoftBuildFrameworkVersion>
+-    <MicrosoftBuildUtilitiesCoreVersion>$(MicrosoftBuildVersion)</MicrosoftBuildUtilitiesCoreVersion>
++    <MicrosoftBuildTasksCoreVersion>17.8.3</MicrosoftBuildTasksCoreVersion>
++    <MicrosoftBuildFrameworkVersion>17.8.3</MicrosoftBuildFrameworkVersion>
++    <MicrosoftBuildUtilitiesCoreVersion>17.8.3</MicrosoftBuildUtilitiesCoreVersion>
+     <NugetProjectModelVersion>6.2.4</NugetProjectModelVersion>
+     <NugetPackagingVersion>6.2.4</NugetPackagingVersion>
+     <DotnetSosVersion>7.0.412701</DotnetSosVersion>
+diff --git a/src/tasks/AotCompilerTask/MonoAOTCompiler.csproj b/src/tasks/AotCompilerTask/MonoAOTCompiler.csproj
+index e76730b5aec..88ae0fb136c 100644
+--- a/src/tasks/AotCompilerTask/MonoAOTCompiler.csproj
++++ b/src/tasks/AotCompilerTask/MonoAOTCompiler.csproj
+@@ -14,7 +14,6 @@
+   <ItemGroup>
+     <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
+     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
+-    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
+   </ItemGroup>
+   <ItemGroup>
+     <Compile Include="MonoAOTCompiler.cs" />
+diff --git a/src/tasks/WasmAppBuilder/WasmAppBuilder.csproj b/src/tasks/WasmAppBuilder/WasmAppBuilder.csproj
+index 34a51095986..d8c95954dd8 100644
+--- a/src/tasks/WasmAppBuilder/WasmAppBuilder.csproj
++++ b/src/tasks/WasmAppBuilder/WasmAppBuilder.csproj
+@@ -24,9 +24,6 @@
+ 
+     <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
+     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
+-    <!-- FIXME: is this the correct version of SRM to use when building for .NET Framework? -->
+-    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
+-    <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersion)" />
+   </ItemGroup>
+ 
+   <ItemGroup>
