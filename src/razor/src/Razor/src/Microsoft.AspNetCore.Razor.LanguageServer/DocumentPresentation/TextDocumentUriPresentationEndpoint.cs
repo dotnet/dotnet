@@ -51,7 +51,13 @@ internal class TextDocumentUriPresentationEndpoint(
 
     protected override async Task<WorkspaceEdit?> TryGetRazorWorkspaceEditAsync(RazorLanguageKind languageKind, UriPresentationParams request, CancellationToken cancellationToken)
     {
-        var razorFileUri = UriPresentationHelper.GetComponentFileNameFromUriPresentationRequest(languageKind, request.Uris, Logger);
+        if (languageKind is not RazorLanguageKind.Html)
+        {
+            // Component tags can only be inserted into Html contexts, so if this isn't Html there is nothing we can do.
+            return null;
+        }
+
+        var razorFileUri = UriPresentationHelper.GetComponentFileNameFromUriPresentationRequest(request.Uris, Logger);
         if (razorFileUri == null)
         {
             return null;

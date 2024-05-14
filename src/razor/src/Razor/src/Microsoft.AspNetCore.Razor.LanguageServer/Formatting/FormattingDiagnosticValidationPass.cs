@@ -17,23 +17,12 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-internal class FormattingDiagnosticValidationPass : FormattingPassBase
+internal sealed class FormattingDiagnosticValidationPass(
+    IRazorDocumentMappingService documentMappingService,
+    ILoggerFactory loggerFactory)
+    : FormattingPassBase(documentMappingService)
 {
-    private readonly ILogger _logger;
-
-    public FormattingDiagnosticValidationPass(
-        IRazorDocumentMappingService documentMappingService,
-        IClientConnection clientConnection,
-        ILoggerFactory loggerFactory)
-        : base(documentMappingService, clientConnection)
-    {
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        _logger = loggerFactory.GetOrCreateLogger<FormattingDiagnosticValidationPass>();
-    }
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<FormattingDiagnosticValidationPass>();
 
     // We want this to run at the very end.
     public override int Order => DefaultOrder + 1000;
@@ -85,7 +74,7 @@ internal class FormattingDiagnosticValidationPass : FormattingPassBase
                 Debug.Fail("A formatting result was rejected because the formatted text produced different diagnostics compared to the original text.");
             }
 
-            return new FormattingResult(Array.Empty<TextEdit>());
+            return new FormattingResult([]);
         }
 
         return result;

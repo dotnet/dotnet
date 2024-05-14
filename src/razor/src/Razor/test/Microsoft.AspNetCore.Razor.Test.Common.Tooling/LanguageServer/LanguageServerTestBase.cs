@@ -62,7 +62,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         return requestContext;
     }
 
-    protected static RazorCodeDocument CreateCodeDocument(string text, ImmutableArray<TagHelperDescriptor> tagHelpers = default, string? filePath = null)
+    protected static RazorCodeDocument CreateCodeDocument(string text, ImmutableArray<TagHelperDescriptor> tagHelpers = default, string? filePath = null, string? rootNamespace = null)
     {
         filePath ??= "test.cshtml";
 
@@ -75,7 +75,15 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         }
 
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath, relativePath: filePath);
-        var projectEngine = RazorProjectEngine.Create(RazorExtensions.Register);
+        var projectEngine = RazorProjectEngine.Create(b =>
+        {
+            if (rootNamespace != null)
+            {
+                b.SetRootNamespace(rootNamespace);
+            }
+
+            RazorExtensions.Register(b);
+        });
         var importDocumentName = fileKind == FileKinds.Legacy ? "_ViewImports.cshtml" : "_Imports.razor";
         var defaultImportDocument = TestRazorSourceDocument.Create(
             """

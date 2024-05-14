@@ -5,20 +5,13 @@ using System;
 using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentPresentation;
 
 internal static class UriPresentationHelper
 {
-    public static Uri? GetComponentFileNameFromUriPresentationRequest(RazorLanguageKind languageKind, Uri[]? uris, ILogger logger)
+    public static Uri? GetComponentFileNameFromUriPresentationRequest(Uri[]? uris, ILogger logger)
     {
-        if (languageKind is not RazorLanguageKind.Html)
-        {
-            // Component tags can only be inserted into Html contexts, so if this isn't Html there is nothing we can do.
-            return null;
-        }
-
         if (uris is null || uris.Length == 0)
         {
             logger.LogDebug($"No URIs were included in the request?");

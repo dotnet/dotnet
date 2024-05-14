@@ -408,11 +408,17 @@ public static class RazorCodeDocumentExtensions
                 var options = document.GetCodeGenerationOptions() ?? document.GetDocumentIntermediateNode()?.Options;
                 baseNamespace = options?.RootNamespace;
                 appendSuffix = true;
-            }
 
-            if (string.IsNullOrEmpty(baseNamespace))
+                // Empty RootNamespace is allowed only in components.
+                if (!FileKinds.IsComponent(document.GetFileKind()) && string.IsNullOrEmpty(baseNamespace))
+                {
+                    @namespace = null;
+                    return false;
+                }
+            }
+            else
             {
-                // There was no valid @namespace directive and we couldn't compute the RootNamespace.
+                // There was no valid @namespace directive.
                 @namespace = null;
                 return false;
             }
@@ -455,7 +461,11 @@ public static class RazorCodeDocumentExtensions
 
                     previousLength = builder.Length;
 
-                    builder.Append('.');
+                    if (previousLength != 0)
+                    {
+                        builder.Append('.');
+                    }
+
                     CSharpIdentifier.AppendSanitized(builder, token);
                 }
 

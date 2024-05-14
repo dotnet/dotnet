@@ -4,6 +4,7 @@
 /global.json                                   @dotnet/razor-tooling @dotnet/razor-compiler
 /azure-pipelines.yml                           @dotnet/razor-tooling @dotnet/razor-compiler
 /eng/                                          @dotnet/razor-tooling @dotnet/razor-compiler
+/eng/targets/Services.props                    @dotnet/razor-tooling
 /eng/common/                                   @dotnet/razor-tooling @dotnet/razor-compiler
 /eng/Versions.props                            @dotnet/razor-tooling @dotnet/razor-compiler
 /eng/Version.Details.xml                       @dotnet/razor-tooling @dotnet/razor-compiler

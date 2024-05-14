@@ -165,6 +165,51 @@ public sealed class RazorSourceGeneratorComponentTests : RazorSourceGeneratorTes
         await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
     }
 
+    [Fact, WorkItem("https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1954771")]
+    public async Task EmptyRootNamespace()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.cshtml"] = """
+                @(await Html.RenderComponentAsync<Shared.Component1>(RenderMode.Static))
+                @(await Html.RenderComponentAsync<Component3>(RenderMode.Static))
+                """,
+            ["Shared/Component1.razor"] = """
+                Component1 in Shared namespace
+                <Component2 />
+                <Component4 />
+                """,
+            ["Component2.razor"] = """
+                Component2 in global namespace
+                """,
+            ["Component3.razor"] = """
+                Component3 in global namespace
+                <Shared.Component1 />
+                """
+        }, new()
+        {
+            ["Component4.cs"] = """
+                using Microsoft.AspNetCore.Components;
+                public class Component4 : ComponentBase { }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project, options =>
+        {
+            options.TestGlobalOptions["build_property.RootNamespace"] = string.Empty;
+        });
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver, out compilation);
+
+        // Assert
+        Assert.Empty(result.Diagnostics);
+        Assert.Equal(4, result.GeneratedSources.Length);
+        result.VerifyOutputsMatchBaseline();
+        await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
+    }
+
     [Theory, CombinatorialData]
     public async Task AddComponentParameter(
         [CombinatorialValues("7.0", "8.0", "Latest")] string langVersion)

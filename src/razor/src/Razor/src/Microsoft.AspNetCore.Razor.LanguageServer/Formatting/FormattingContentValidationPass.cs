@@ -15,23 +15,12 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-internal class FormattingContentValidationPass : FormattingPassBase
+internal sealed class FormattingContentValidationPass(
+    IRazorDocumentMappingService documentMappingService,
+    ILoggerFactory loggerFactory)
+    : FormattingPassBase(documentMappingService)
 {
-    private readonly ILogger _logger;
-
-    public FormattingContentValidationPass(
-        IRazorDocumentMappingService documentMappingService,
-        IClientConnection clientConnection,
-        ILoggerFactory loggerFactory)
-        : base(documentMappingService, clientConnection)
-    {
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        _logger = loggerFactory.GetOrCreateLogger<FormattingContentValidationPass>();
-    }
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<FormattingContentValidationPass>();
 
     // We want this to run at the very end.
     public override int Order => DefaultOrder + 1000;
@@ -79,7 +68,7 @@ internal class FormattingContentValidationPass : FormattingPassBase
                 Debug.Fail("A formatting result was rejected because it was going to change non-whitespace content in the document.");
             }
 
-            return Task.FromResult(new FormattingResult(Array.Empty<TextEdit>()));
+            return Task.FromResult(new FormattingResult([]));
         }
 
         return Task.FromResult(result);

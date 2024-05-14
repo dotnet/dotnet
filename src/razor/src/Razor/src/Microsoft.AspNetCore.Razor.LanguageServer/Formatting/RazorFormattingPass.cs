@@ -18,14 +18,11 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-internal class RazorFormattingPass(
+internal sealed class RazorFormattingPass(
     IRazorDocumentMappingService documentMappingService,
-    IClientConnection clientConnection,
-    RazorLSPOptionsMonitor optionsMonitor,
-    ILoggerFactory loggerFactory)
-    : FormattingPassBase(documentMappingService, clientConnection)
+    RazorLSPOptionsMonitor optionsMonitor)
+    : FormattingPassBase(documentMappingService)
 {
-    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorFormattingPass>();
     private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
 
     // Run after the C# formatter pass.
@@ -85,7 +82,7 @@ internal class RazorFormattingPass(
         return edits;
     }
 
-    private void TryFormatBlocks(FormattingContext context, List<TextEdit> edits, RazorSourceDocument source, SyntaxNode node)
+    private static void TryFormatBlocks(FormattingContext context, List<TextEdit> edits, RazorSourceDocument source, SyntaxNode node)
     {
         // We only want to run one of these
         _ = TryFormatFunctionsBlock(context, edits, source, node) ||

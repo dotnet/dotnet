@@ -54,12 +54,12 @@ internal static class TestRazorFormattingService
 
         var passes = new List<IFormattingPass>()
         {
-            new HtmlFormattingPass(mappingService, client, versionCache, optionsMonitor, loggerFactory),
-            new CSharpFormattingPass(mappingService, client, loggerFactory),
-            new CSharpOnTypeFormattingPass(mappingService, client, optionsMonitor, loggerFactory),
-            new RazorFormattingPass(mappingService, client, optionsMonitor,  loggerFactory),
-            new FormattingDiagnosticValidationPass(mappingService, client, loggerFactory),
-            new FormattingContentValidationPass(mappingService, client, loggerFactory),
+            new HtmlFormattingPass(mappingService, client, versionCache, loggerFactory),
+            new CSharpFormattingPass(mappingService, loggerFactory),
+            new CSharpOnTypeFormattingPass(mappingService, loggerFactory),
+            new RazorFormattingPass(mappingService, optionsMonitor),
+            new FormattingDiagnosticValidationPass(mappingService, loggerFactory),
+            new FormattingContentValidationPass(mappingService, loggerFactory),
         };
 
         return new RazorFormattingService(passes, TestAdhocWorkspaceFactory.Instance);

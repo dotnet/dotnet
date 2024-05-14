@@ -17,23 +17,12 @@ using TextSpan = Microsoft.CodeAnalysis.Text.TextSpan;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-internal class CSharpFormattingPass : CSharpFormattingPassBase
+internal sealed class CSharpFormattingPass(
+    IRazorDocumentMappingService documentMappingService,
+    ILoggerFactory loggerFactory)
+    : CSharpFormattingPassBase(documentMappingService)
 {
-    private readonly ILogger _logger;
-
-    public CSharpFormattingPass(
-        IRazorDocumentMappingService documentMappingService,
-        IClientConnection clientConnection,
-        ILoggerFactory loggerFactory)
-        : base(documentMappingService, clientConnection)
-    {
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        _logger = loggerFactory.GetOrCreateLogger<CSharpFormattingPass>();
-    }
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CSharpFormattingPass>();
 
     // Run after the HTML and Razor formatter pass.
     public override int Order => DefaultOrder - 3;

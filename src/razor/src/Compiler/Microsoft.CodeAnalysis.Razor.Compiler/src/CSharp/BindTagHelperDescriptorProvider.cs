@@ -343,7 +343,8 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             private (string Type, string Namespace)? _names;
 
             public (string Type, string Namespace) GetNames()
-                => _names ??= (_type.ToDisplayString(), _type.ContainingNamespace.ToDisplayString());
+                => _names ??= (_type.ToDisplayString(),
+                    _type.ContainingNamespace.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat));
         }
 
         private static TagHelperDescriptor CreateElementBindTagHelper(

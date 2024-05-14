@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
-using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
@@ -21,10 +20,10 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
 internal abstract class CSharpFormattingPassBase : FormattingPassBase
 {
-    protected CSharpFormattingPassBase(IRazorDocumentMappingService documentMappingService, IClientConnection clientConnection)
-        : base(documentMappingService, clientConnection)
+    protected CSharpFormattingPassBase(IRazorDocumentMappingService documentMappingService)
+        : base(documentMappingService)
     {
-        CSharpFormatter = new CSharpFormatter(documentMappingService, clientConnection);
+        CSharpFormatter = new CSharpFormatter(documentMappingService);
     }
 
     protected CSharpFormatter CSharpFormatter { get; }

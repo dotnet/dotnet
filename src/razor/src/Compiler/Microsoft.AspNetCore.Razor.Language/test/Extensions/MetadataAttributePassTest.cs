@@ -133,7 +133,20 @@ public class MetadataAttributePassTest
         pass.Execute(codeDocument, irDocument);
 
         // Assert
-        SingleChild<NamespaceDeclarationIntermediateNode>(irDocument);
+        Assert.Equal(2, irDocument.Children.Count);
+
+        var item = Assert.IsType<RazorCompiledItemAttributeIntermediateNode>(irDocument.Children[0]);
+        Assert.Equal("/test.cshtml", item.Identifier);
+        Assert.Equal("test", item.Kind);
+        Assert.Equal("Test", item.TypeName);
+
+        Assert.Equal(2, @namespace.Children.Count);
+        var checksum = Assert.IsType<RazorSourceChecksumAttributeIntermediateNode>(@namespace.Children[0]);
+        Assert.Equal(CodeAnalysis.Text.SourceHashAlgorithm.Sha256, checksum.ChecksumAlgorithm);
+        Assert.Equal("/test.cshtml", checksum.Identifier);
+
+        var foundClass = Assert.IsType<ClassDeclarationIntermediateNode>(@namespace.Children[1]);
+        Assert.Equal("Test", foundClass.ClassName);
     }
 
     [Fact]

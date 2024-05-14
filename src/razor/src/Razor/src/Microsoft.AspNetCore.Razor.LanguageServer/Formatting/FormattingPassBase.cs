@@ -12,32 +12,15 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-internal abstract class FormattingPassBase : IFormattingPass
+internal abstract class FormattingPassBase(IRazorDocumentMappingService documentMappingService) : IFormattingPass
 {
     protected static readonly int DefaultOrder = 1000;
-
-    public FormattingPassBase(
-        IRazorDocumentMappingService documentMappingService,
-        IClientConnection clientConnection)
-    {
-        if (documentMappingService is null)
-        {
-            throw new ArgumentNullException(nameof(documentMappingService));
-        }
-
-        if (clientConnection is null)
-        {
-            throw new ArgumentNullException(nameof(clientConnection));
-        }
-
-        DocumentMappingService = documentMappingService;
-    }
 
     public abstract bool IsValidationPass { get; }
 
     public virtual int Order => DefaultOrder;
 
-    protected IRazorDocumentMappingService DocumentMappingService { get; }
+    protected IRazorDocumentMappingService DocumentMappingService { get; } = documentMappingService;
 
     public abstract Task<FormattingResult> ExecuteAsync(FormattingContext context, FormattingResult result, CancellationToken cancellationToken);
 
@@ -61,7 +44,7 @@ internal abstract class FormattingPassBase : IFormattingPass
 
         if (codeDocument.IsUnsupported())
         {
-            return Array.Empty<TextEdit>();
+            return [];
         }
 
         var edits = DocumentMappingService.GetHostDocumentEdits(codeDocument.GetCSharpDocument(), projectedTextEdits);

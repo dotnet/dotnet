@@ -18,7 +18,7 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
     internal static readonly ImmutableArray<RazorCommitCharacter> SingleLineDirectiveCommitCharacters = RazorCommitCharacter.CreateArray([" "]);
     internal static readonly ImmutableArray<RazorCommitCharacter> BlockDirectiveCommitCharacters = RazorCommitCharacter.CreateArray([" ", "{"]);
 
-    private static readonly IEnumerable<DirectiveDescriptor> s_defaultDirectives = new[]
+    private static readonly IEnumerable<DirectiveDescriptor> s_mvcDefaultDirectives = new[]
     {
         CSharpCodeParser.AddTagHelperDirectiveDescriptor,
         CSharpCodeParser.RemoveTagHelperDirectiveDescriptor,
@@ -26,8 +26,15 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
         CSharpCodeParser.UsingDirectiveDescriptor
     };
 
+    private static readonly IEnumerable<DirectiveDescriptor> s_componentDefaultDirectives = new[]
+    {
+        CSharpCodeParser.UsingDirectiveDescriptor
+    };
+
+
     // Test accessor
-    internal static IEnumerable<DirectiveDescriptor> DefaultDirectives => s_defaultDirectives;
+    internal static IEnumerable<DirectiveDescriptor> MvcDefaultDirectives => s_mvcDefaultDirectives;
+    internal static IEnumerable<DirectiveDescriptor> ComponentDefaultDirectives => s_componentDefaultDirectives;
 
     // internal for testing
     // Do not forget to update both insert and display text !important
@@ -133,7 +140,7 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
     // Internal for testing
     internal static ImmutableArray<RazorCompletionItem> GetDirectiveCompletionItems(RazorSyntaxTree syntaxTree)
     {
-        var defaultDirectives = FileKinds.IsComponent(syntaxTree.Options.FileKind) ? Array.Empty<DirectiveDescriptor>() : s_defaultDirectives;
+        var defaultDirectives = FileKinds.IsComponent(syntaxTree.Options.FileKind) ? s_componentDefaultDirectives : s_mvcDefaultDirectives;
         var directives = syntaxTree.Options.Directives.Concat(defaultDirectives);
 
         using var completionItems = new PooledArrayBuilder<RazorCompletionItem>();

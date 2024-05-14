@@ -180,7 +180,8 @@ public class ViewComponentTagHelperPass : IntermediateNodePassBase, IRazorOptimi
             }
 
             var className = $"__Generated__{tagHelper.GetViewComponentName()}ViewComponentTagHelper";
-            var fullyQualifiedName = $"{Namespace.Content}.{Class.ClassName}.{className}";
+            var namespaceSeparator = string.IsNullOrEmpty(Namespace.Content) ? string.Empty : ".";
+            var fullyQualifiedName = $"{Namespace.Content}{namespaceSeparator}{Class.ClassName}.{className}";
             var fieldName = GenerateFieldName(tagHelper);
 
             _tagHelpers.Add(tagHelper, (className, fullyQualifiedName, fieldName));

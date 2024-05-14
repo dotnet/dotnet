@@ -19,10 +19,10 @@ internal sealed class RemoteHtmlDocumentService(
 {
     public ValueTask<string?> GetHtmlDocumentTextAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId razorDocumentId, CancellationToken cancellationToken)
        => RazorBrokeredServiceImplementation.RunServiceAsync(
-            solutionInfo,
-            ServiceBrokerClient,
-            solution => GetHtmlDocumentTextAsync(solution, razorDocumentId, cancellationToken),
-            cancellationToken);
+           solutionInfo,
+           ServiceBrokerClient,
+           solution => GetHtmlDocumentTextAsync(solution, razorDocumentId, cancellationToken),
+           cancellationToken);
 
     private async ValueTask<string?> GetHtmlDocumentTextAsync(Solution solution, DocumentId razorDocumentId, CancellationToken _)
     {
