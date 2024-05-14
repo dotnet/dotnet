@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net5.0;netstandard2.0</TargetFrameworks>
+    <AssemblyName>NuGet.DependencyResolver.Core</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
+    <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+    <PackageReference Include="NuGet.Configuration" Version="6.7.1" />
+    <PackageReference Include="NuGet.LibraryModel" Version="6.7.1" />
+    <PackageReference Include="NuGet.Protocol" Version="6.7.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="NuGet.Configuration" Version="6.7.1" />
+    <PackageReference Include="NuGet.LibraryModel" Version="6.7.1" />
+    <PackageReference Include="NuGet.Protocol" Version="6.7.1" />
+  </ItemGroup>
+
+</Project>
