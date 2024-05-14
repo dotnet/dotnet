@@ -28,8 +28,8 @@ public class CSharpStatementBlockOnTypeFormattingTest(ITestOutputHelper testOutp
             triggerCharacter: '}');
     }
 
-    [Fact]
-    public async Task CloseCurly_IfBlock_MultiLineAsync()
+    [Theory, CombinatorialData]
+    public async Task CloseCurly_IfBlock_MultiLineAsync(bool inGlobalNamespace)
     {
         await RunOnTypeFormattingTestAsync(
             input: """
@@ -46,11 +46,12 @@ public class CSharpStatementBlockOnTypeFormattingTest(ITestOutputHelper testOutp
                         }
                     }
                     """,
-            triggerCharacter: '}');
+            triggerCharacter: '}',
+            inGlobalNamespace: inGlobalNamespace);
     }
 
-    [Fact]
-    public async Task CloseCurly_MultipleStatementBlocksAsync()
+    [Theory, CombinatorialData]
+    public async Task CloseCurly_MultipleStatementBlocksAsync(bool inGlobalNamespace)
     {
         await RunOnTypeFormattingTestAsync(
             input: """
@@ -79,7 +80,8 @@ public class CSharpStatementBlockOnTypeFormattingTest(ITestOutputHelper testOutp
                         }
                     }
                     """,
-            triggerCharacter: '}');
+            triggerCharacter: '}',
+            inGlobalNamespace: inGlobalNamespace);
     }
 
     [Fact]

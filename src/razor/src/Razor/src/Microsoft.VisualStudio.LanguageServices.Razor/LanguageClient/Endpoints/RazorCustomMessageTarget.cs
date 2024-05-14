@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -16,6 +17,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Razor.Snippets;
 using Microsoft.VisualStudio.Text;
@@ -35,6 +37,8 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly IProjectSnapshotManager _projectManager;
     private readonly SnippetCache _snippetCache;
+    private readonly IWorkspaceProvider _workspaceProvider;
+    private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer;
     private readonly FormattingOptionsProvider _formattingOptionsProvider;
     private readonly IClientSettingsManager _editorSettingsManager;
     private readonly LSPDocumentSynchronizer _documentSynchronizer;
@@ -54,6 +58,8 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
         LanguageServerFeatureOptions languageServerFeatureOptions,
         IProjectSnapshotManager projectManager,
         SnippetCache snippetCache,
+        IWorkspaceProvider workspaceProvider,
+        IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
         ILoggerFactory loggerFactory)
     {
         if (documentManager is null)
@@ -83,6 +89,8 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
         _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
         _projectManager = projectManager ?? throw new ArgumentNullException(nameof(projectManager));
         _snippetCache = snippetCache ?? throw new ArgumentNullException(nameof(snippetCache));
+        _workspaceProvider = workspaceProvider;
+        _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
         _logger = loggerFactory.GetOrCreateLogger<RazorCustomMessageTarget>();
     }
 
@@ -134,6 +142,12 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
        [CallerMemberName] string? caller = null)
        where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
     {
+        if (_languageServerFeatureOptions.UseRazorCohostServer &&
+            typeof(TVirtualDocumentSnapshot) == typeof(HtmlVirtualDocumentSnapshot))
+        {
+            return await TempForCohost_TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(hostDocument, cancellationToken);
+        }
+
         // For Html documents we don't do anything fancy, just call the standard service
         // If we're not generating unique document file names, then we can treat C# documents the same way
         if (!_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath ||
@@ -189,6 +203,47 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
         }
 
         return result;
+    }
+
+    private async Task<SynchronizedResult<TVirtualDocumentSnapshot>> TempForCohost_TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(TextDocumentIdentifier hostDocument, CancellationToken cancellationToken)
+        where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
+    {
+        Debug.Assert(typeof(TVirtualDocumentSnapshot) == typeof(HtmlVirtualDocumentSnapshot));
+        // Cohosting is responsible for Html, so we have to go through its service instead
+        var workspace = _workspaceProvider.GetWorkspace();
+        var documentIds = workspace.CurrentSolution.GetDocumentIdsWithFilePath(RazorUri.GetDocumentFilePathFromUri(hostDocument.Uri));
+
+        if (documentIds.Length != 1)
+        {
+            _logger.LogError($"Couldn't get document id from the workspace for {hostDocument.Uri}");
+            return new SynchronizedResult<TVirtualDocumentSnapshot>(false, null);
+        }
+
+        var document = workspace.CurrentSolution.GetAdditionalDocument(documentIds[0]);
+        if (document is null)
+        {
+            _logger.LogError($"Couldn't get document from the workspace for {documentIds[0]} which should be {hostDocument.Uri}");
+            return new SynchronizedResult<TVirtualDocumentSnapshot>(false, null);
+        }
+
+        if (!await _htmlDocumentSynchronizer.TrySynchronizeAsync(document, cancellationToken).ConfigureAwait(false))
+        {
+            return new SynchronizedResult<TVirtualDocumentSnapshot>(false, null);
+        }
+
+        if (!_documentManager.TryGetDocument(hostDocument.Uri, out var snapshot))
+        {
+            _logger.LogError($"Couldn't find document in LSPDocumentManager for {hostDocument.Uri}");
+            return new SynchronizedResult<TVirtualDocumentSnapshot>(false, null);
+        }
+
+        if (!snapshot.TryGetVirtualDocument<TVirtualDocumentSnapshot>(out var virtualDocument))
+        {
+            _logger.LogError($"Couldn't find virtual document snapshot for {hostDocument.Uri}");
+            return new SynchronizedResult<TVirtualDocumentSnapshot>(false, null);
+        }
+
+        return new SynchronizedResult<TVirtualDocumentSnapshot>(true, virtualDocument);
     }
 
     private SynchronizedResult<TVirtualDocumentSnapshot>? TryReturnPossiblyFutureSnapshot<TVirtualDocumentSnapshot>(

@@ -18,9 +18,9 @@ internal static class DirectiveVerifier
 
     static DirectiveVerifier()
     {
-        var defaultDirectiveVerifierList = new List<Action<CompletionItem>>(DirectiveCompletionItemProvider.DefaultDirectives.Count() * 2);
+        var defaultDirectiveVerifierList = new List<Action<CompletionItem>>(DirectiveCompletionItemProvider.MvcDefaultDirectives.Count() * 2);
 
-        foreach (var directive in DirectiveCompletionItemProvider.DefaultDirectives)
+        foreach (var directive in DirectiveCompletionItemProvider.MvcDefaultDirectives)
         {
             defaultDirectiveVerifierList.Add(item => Assert.Equal(directive.Directive, item.InsertText));
             defaultDirectiveVerifierList.Add(item => AssertDirectiveSnippet(item, directive.Directive));

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -15,40 +14,23 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using TextSpan = Microsoft.CodeAnalysis.Text.TextSpan;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-internal class HtmlFormattingPass : FormattingPassBase
+internal sealed class HtmlFormattingPass(
+    IRazorDocumentMappingService documentMappingService,
+    IClientConnection clientConnection,
+    IDocumentVersionCache documentVersionCache,
+    ILoggerFactory loggerFactory)
+    : FormattingPassBase(documentMappingService)
 {
-    private readonly ILogger _logger;
-    private readonly RazorLSPOptionsMonitor _optionsMonitor;
-
-    public HtmlFormattingPass(
-        IRazorDocumentMappingService documentMappingService,
-        IClientConnection clientConnection,
-        IDocumentVersionCache documentVersionCache,
-        RazorLSPOptionsMonitor optionsMonitor,
-        ILoggerFactory loggerFactory)
-        : base(documentMappingService, clientConnection)
-    {
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        _logger = loggerFactory.GetOrCreateLogger<HtmlFormattingPass>();
-
-        HtmlFormatter = new HtmlFormatter(clientConnection, documentVersionCache);
-        _optionsMonitor = optionsMonitor;
-    }
+    private readonly HtmlFormatter _htmlFormatter = new HtmlFormatter(clientConnection, documentVersionCache);
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<HtmlFormattingPass>();
 
     // We want this to run first because it uses the client HTML formatter.
     public override int Order => DefaultOrder - 5;
 
     public override bool IsValidationPass => false;
-
-    protected HtmlFormatter HtmlFormatter { get; }
 
     public async override Task<FormattingResult> ExecuteAsync(FormattingContext context, FormattingResult result, CancellationToken cancellationToken)
     {
@@ -58,11 +40,11 @@ internal class HtmlFormattingPass : FormattingPassBase
 
         if (context.IsFormatOnType && result.Kind == RazorLanguageKind.Html)
         {
-            htmlEdits = await HtmlFormatter.FormatOnTypeAsync(context, cancellationToken).ConfigureAwait(false);
+            htmlEdits = await _htmlFormatter.FormatOnTypeAsync(context, cancellationToken).ConfigureAwait(false);
         }
         else if (!context.IsFormatOnType)
         {
-            htmlEdits = await HtmlFormatter.FormatAsync(context, cancellationToken).ConfigureAwait(false);
+            htmlEdits = await _htmlFormatter.FormatAsync(context, cancellationToken).ConfigureAwait(false);
         }
         else
         {

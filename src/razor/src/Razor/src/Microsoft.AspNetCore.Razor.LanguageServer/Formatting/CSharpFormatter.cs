@@ -18,30 +18,11 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-internal class CSharpFormatter
+internal sealed class CSharpFormatter(IRazorDocumentMappingService documentMappingService)
 {
     private const string MarkerId = "RazorMarker";
 
-    private readonly IRazorDocumentMappingService _documentMappingService;
-    private readonly IClientConnection _clientConnection;
-
-    public CSharpFormatter(
-        IRazorDocumentMappingService documentMappingService,
-        IClientConnection clientConnection)
-    {
-        if (documentMappingService is null)
-        {
-            throw new ArgumentNullException(nameof(documentMappingService));
-        }
-
-        if (clientConnection is null)
-        {
-            throw new ArgumentNullException(nameof(clientConnection));
-        }
-
-        _documentMappingService = documentMappingService;
-        _clientConnection = clientConnection;
-    }
+    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
 
     public async Task<TextEdit[]> FormatAsync(FormattingContext context, Range rangeToFormat, CancellationToken cancellationToken)
     {
@@ -57,7 +38,7 @@ internal class CSharpFormatter
 
         if (!_documentMappingService.TryMapToGeneratedDocumentRange(context.CodeDocument.GetCSharpDocument(), rangeToFormat, out var projectedRange))
         {
-            return Array.Empty<TextEdit>();
+            return [];
         }
 
         var edits = await GetFormattingEditsAsync(context, projectedRange, cancellationToken).ConfigureAwait(false);
@@ -116,7 +97,7 @@ internal class CSharpFormatter
         // No point calling the C# formatting if we won't be interested in any of its work anyway
         if (projectedDocumentLocations.Count == 0)
         {
-            return new Dictionary<int, int>();
+            return [];
         }
 
         var (indentationMap, syntaxTree) = InitializeIndentationData(context, projectedDocumentLocations, cancellationToken);
@@ -195,7 +176,7 @@ internal class CSharpFormatter
                     // will not indent them at all. When they happen to be indented more than 2 levels this causes a problem
                     // because we essentially assume that we should always move them left by at least 2 levels. This means that these
                     // nodes end up moving left with every format operation, until they hit the minimum of 2 indent levels.
-                    // We can't fix this, so we just work around it by ignoring those lines compeletely, and leaving them where the
+                    // We can't fix this, so we just work around it by ignoring those lines completely, and leaving them where the
                     // user put them.
 
                     if (ShouldIgnoreLineCompletely(token, formattedText))
@@ -220,7 +201,7 @@ internal class CSharpFormatter
             {
                 // We don't want to format lines that are part of multi-line string literals
                 LiteralExpressionSyntax { RawKind: (int)CodeAnalysis.CSharp.SyntaxKind.StringLiteralExpression } => SpansMultipleLines(node, text),
-                // As above, but for mutli-line interpolated strings
+                // As above, but for multi-line interpolated strings
                 InterpolatedStringExpressionSyntax => SpansMultipleLines(node, text),
                 InterpolatedStringTextSyntax => SpansMultipleLines(node, text),
                 _ => false

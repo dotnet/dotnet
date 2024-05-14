@@ -14,6 +14,7 @@ internal class FormattingSpan
         FormattingBlockKind blockKind,
         int razorIndentationLevel,
         int htmlIndentationLevel,
+        bool isInGlobalNamespace,
         bool isInClassBody = false,
         int componentLambdaNestingLevel = 0)
     {
@@ -23,6 +24,7 @@ internal class FormattingSpan
         BlockKind = blockKind;
         RazorIndentationLevel = razorIndentationLevel;
         HtmlIndentationLevel = htmlIndentationLevel;
+        IsInGlobalNamespace = isInGlobalNamespace;
         IsInClassBody = isInClassBody;
         ComponentLambdaNestingLevel = componentLambdaNestingLevel;
     }
@@ -41,6 +43,8 @@ internal class FormattingSpan
 
     public int IndentationLevel => RazorIndentationLevel + HtmlIndentationLevel;
 
+    public bool IsInGlobalNamespace { get; }
+
     public bool IsInClassBody { get; }
 
     public int ComponentLambdaNestingLevel { get; }
@@ -49,7 +53,17 @@ internal class FormattingSpan
     {
         get
         {
-            var baseIndent = IsInClassBody ? 2 : 3;
+            var baseIndent = 1;
+
+            if (!IsInGlobalNamespace)
+            {
+                baseIndent++;
+            }
+
+            if (!IsInClassBody)
+            {
+                baseIndent++;
+            }
 
             return baseIndent + ComponentLambdaNestingLevel;
         }

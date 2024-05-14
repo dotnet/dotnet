@@ -115,8 +115,9 @@ internal partial class ComponentTagHelperDescriptorProvider : RazorEngineFeature
 
             if (fullyQualified)
             {
-                var containingNamespace = type.ContainingNamespace.ToDisplayString();
-                var fullName = $"{containingNamespace}.{type.Name}";
+                var fullName = type.ContainingNamespace.IsGlobalNamespace
+                    ? type.Name
+                    : $"{type.ContainingNamespace.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat)}.{type.Name}";
 
                 builder.TagMatchingRule(r =>
                 {
@@ -125,7 +126,8 @@ internal partial class ComponentTagHelperDescriptorProvider : RazorEngineFeature
 
                 metadata.Add(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch);
             }
-            else
+            // If the component is in the global namespace, skip adding this rule which is the same as the fully qualified one.
+            else if (!type.ContainingNamespace.IsGlobalNamespace)
             {
                 builder.TagMatchingRule(r =>
                 {

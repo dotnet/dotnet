@@ -18,6 +18,7 @@ internal class FormattingVisitor : SyntaxWalker
 {
     private const string HtmlTag = "html";
 
+    private readonly bool _inGlobalNamespace;
     private readonly List<FormattingSpan> _spans;
     private FormattingBlockKind _currentBlockKind;
     private SyntaxNode? _currentBlock;
@@ -26,8 +27,9 @@ internal class FormattingVisitor : SyntaxWalker
     private int _currentComponentIndentationLevel = 0;
     private bool _isInClassBody = false;
 
-    public FormattingVisitor()
+    public FormattingVisitor(bool inGlobalNamespace)
     {
+        _inGlobalNamespace = inGlobalNamespace;
         _spans = new List<FormattingSpan>();
         _currentBlockKind = FormattingBlockKind.Markup;
     }
@@ -481,7 +483,8 @@ internal class FormattingVisitor : SyntaxWalker
             _currentBlockKind,
             _currentRazorIndentationLevel,
             _currentHtmlIndentationLevel,
-            _isInClassBody,
+            isInGlobalNamespace: _inGlobalNamespace,
+            isInClassBody: _isInClassBody,
             _currentComponentIndentationLevel);
 
         _spans.Add(span);

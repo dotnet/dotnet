@@ -157,6 +157,7 @@ internal class FormattingContext : IDisposable
                         FormattingBlockKind.Markup,
                         razorIndentationLevel: 0,
                         htmlIndentationLevel: 0,
+                        isInGlobalNamespace: false,
                         isInClassBody: false,
                         componentLambdaNestingLevel: 0);
 
@@ -187,20 +188,22 @@ internal class FormattingContext : IDisposable
         if (_formattingSpans is null)
         {
             var syntaxTree = CodeDocument.GetSyntaxTree();
-            _formattingSpans = GetFormattingSpans(syntaxTree);
+            var inGlobalNamespace = CodeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace) &&
+                string.IsNullOrEmpty(@namespace);
+            _formattingSpans = GetFormattingSpans(syntaxTree, inGlobalNamespace: inGlobalNamespace);
         }
 
         return _formattingSpans;
     }
 
-    private static IReadOnlyList<FormattingSpan> GetFormattingSpans(RazorSyntaxTree syntaxTree)
+    private static IReadOnlyList<FormattingSpan> GetFormattingSpans(RazorSyntaxTree syntaxTree, bool inGlobalNamespace)
     {
         if (syntaxTree is null)
         {
             throw new ArgumentNullException(nameof(syntaxTree));
         }
 
-        var visitor = new FormattingVisitor();
+        var visitor = new FormattingVisitor(inGlobalNamespace: inGlobalNamespace);
         visitor.Visit(syntaxTree.Root);
 
         return visitor.FormattingSpans;

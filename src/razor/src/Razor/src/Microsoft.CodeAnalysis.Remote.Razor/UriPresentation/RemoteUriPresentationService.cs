@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.DocumentPresentation;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
@@ -54,13 +55,24 @@ internal sealed class RemoteUriPresentationService(
 
         var languageKind = _documentMappingService.GetLanguageKind(codeDocument, index, rightAssociative: true);
 
-        var razorFileUri = UriPresentationHelper.GetComponentFileNameFromUriPresentationRequest(languageKind, uris, _logger);
+        if (languageKind is not RazorLanguageKind.Html)
+        {
+            // Roslyn doesn't currently support Uri presentation, and whilst it might seem counter intuitive,
+            // our support for Uri presentation is to insert a Html tag, so we only support Html
+
+            // If Roslyn add support in future then this is where it would go.
+            return null;
+        }
+
+        var razorFileUri = UriPresentationHelper.GetComponentFileNameFromUriPresentationRequest(uris, _logger);
         if (razorFileUri is null)
         {
             return null;
         }
 
-        var ids = razorDocument.Project.Solution.GetDocumentIdsWithFilePath(GetDocumentFilePathFromUri(razorFileUri));
+        // Make sure we go through Roslyn to go from the Uri the client sent us, to one that it has a chance of finding in the solution
+        var uriToFind = RazorUri.GetDocumentFilePathFromUri(razorFileUri);
+        var ids = razorDocument.Project.Solution.GetDocumentIdsWithFilePath(uriToFind);
         if (ids.Length == 0)
         {
             return null;
@@ -89,8 +101,4 @@ internal sealed class RemoteUriPresentationService(
 
         return new TextChange(span.ToTextSpan(sourceText), tag);
     }
-
-    // TODO: Call the real Roslyn API once https://github.com/dotnet/roslyn/pull/73289 is merged
-    public static string GetDocumentFilePathFromUri(Uri uri)
-        => uri.IsFile ? uri.LocalPath : uri.AbsoluteUri;
 }

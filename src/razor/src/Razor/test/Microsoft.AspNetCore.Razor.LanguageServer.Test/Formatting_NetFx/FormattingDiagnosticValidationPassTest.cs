@@ -5,14 +5,12 @@ using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -35,7 +33,7 @@ public class FormattingDiagnosticValidationPassTest(ITestOutputHelper testOutput
             NewText = "@ ",
             Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) }
         };
-        var input = new FormattingResult(new[] { badEdit }, RazorLanguageKind.CSharp);
+        var input = new FormattingResult([badEdit], RazorLanguageKind.CSharp);
         var pass = GetPass();
 
         // Act
@@ -60,7 +58,7 @@ public class FormattingDiagnosticValidationPassTest(ITestOutputHelper testOutput
             NewText = "@ ",
             Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) }
         };
-        var input = new FormattingResult(new[] { badEdit }, RazorLanguageKind.Html);
+        var input = new FormattingResult([badEdit], RazorLanguageKind.Html);
         var pass = GetPass();
 
         // Act
@@ -113,7 +111,7 @@ public class Foo { }
             NewText = "@ ", // Creates a diagnostic
             Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) },
         };
-        var input = new FormattingResult(new[] { badEdit }, RazorLanguageKind.Razor);
+        var input = new FormattingResult([badEdit], RazorLanguageKind.Razor);
         var pass = GetPass();
 
         // Act
@@ -127,8 +125,7 @@ public class Foo { }
     {
         var mappingService = new RazorDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory);
 
-        var clientConnection = Mock.Of<IClientConnection>(MockBehavior.Strict);
-        var pass = new FormattingDiagnosticValidationPass(mappingService, clientConnection, LoggerFactory)
+        var pass = new FormattingDiagnosticValidationPass(mappingService, LoggerFactory)
         {
             DebugAssertsEnabled = false
         };
@@ -159,7 +156,7 @@ public class Foo { }
         var projectEngine = RazorProjectEngine.Create(builder => builder.SetRootNamespace("Test"));
         var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, importSources: default, tagHelpers);
 
-        var documentSnapshot = FormattingTestBase.CreateDocumentSnapshot(path, tagHelpers, fileKind, ImmutableArray<RazorSourceDocument>.Empty, ImmutableArray<IDocumentSnapshot>.Empty, projectEngine, codeDocument);
+        var documentSnapshot = FormattingTestBase.CreateDocumentSnapshot(path, tagHelpers, fileKind, [], [], projectEngine, codeDocument);
 
         return (codeDocument, documentSnapshot);
     }

@@ -285,9 +285,7 @@ internal sealed class DefinitionEndpoint(
         // Since we know how the compiler generates the C# source we can be a little specific here, and avoid
         // long tree walks. If the compiler ever changes how they generate their code, the tests for this will break
         // so we'll know about it.
-        if (root is CompilationUnitSyntax compilationUnit &&
-            compilationUnit.Members[0] is NamespaceDeclarationSyntax namespaceDeclaration &&
-            namespaceDeclaration.Members[0] is ClassDeclarationSyntax classDeclaration)
+        if (GetClassDeclaration(root) is { } classDeclaration)
         {
             var property = classDeclaration
                 .Members
@@ -311,8 +309,22 @@ internal sealed class DefinitionEndpoint(
             logger.LogInformation($"Property found but couldn't map its location.");
         }
 
-        logger.LogInformation($"Generated C# was not in expected shape (CompilationUnit -> Namespace -> Class)");
+        logger.LogInformation($"Generated C# was not in expected shape (CompilationUnit [-> Namespace] -> Class)");
 
         return null;
+
+        static ClassDeclarationSyntax? GetClassDeclaration(CodeAnalysis.SyntaxNode root)
+        {
+            return root switch
+            {
+                CompilationUnitSyntax unit => unit switch
+                {
+                    { Members: [NamespaceDeclarationSyntax { Members: [ClassDeclarationSyntax c, ..] }, ..] } => c,
+                    { Members: [ClassDeclarationSyntax c, ..] } => c,
+                    _ => null,
+                },
+                _ => null,
+            };
+        }
     }
 }

@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
-using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis;
@@ -23,30 +22,15 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
-using TextSpan = Microsoft.CodeAnalysis.Text.TextSpan;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
+internal sealed class CSharpOnTypeFormattingPass(
+    IRazorDocumentMappingService documentMappingService,
+    ILoggerFactory loggerFactory)
+    : CSharpFormattingPassBase(documentMappingService)
 {
-    private readonly ILogger _logger;
-    private readonly RazorLSPOptionsMonitor _optionsMonitor;
-
-    public CSharpOnTypeFormattingPass(
-        IRazorDocumentMappingService documentMappingService,
-        IClientConnection clientConnection,
-        RazorLSPOptionsMonitor optionsMonitor,
-        ILoggerFactory loggerFactory)
-        : base(documentMappingService, clientConnection)
-    {
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        _logger = loggerFactory.GetOrCreateLogger<CSharpOnTypeFormattingPass>();
-        _optionsMonitor = optionsMonitor;
-    }
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CSharpOnTypeFormattingPass>();
 
     public async override Task<FormattingResult> ExecuteAsync(FormattingContext context, FormattingResult result, CancellationToken cancellationToken)
     {
@@ -235,7 +219,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
             if (textEdits.Any(e => e.NewText.IndexOf("using") != -1))
             {
                 var usingStatementEdits = await AddUsingsCodeActionProviderHelper.GetUsingStatementEditsAsync(codeDocument, csharpText, originalTextWithChanges, cancellationToken).ConfigureAwait(false);
-                finalEdits = usingStatementEdits.Concat(finalEdits).ToArray();
+                finalEdits = [.. usingStatementEdits, .. finalEdits];
             }
         }
 

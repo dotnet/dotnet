@@ -101,7 +101,8 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
 
             public (string Type, string Namespace) GetNames()
             {
-                _names ??= (_type.ToDisplayString(), _type.ContainingNamespace.ToDisplayString());
+                _names ??= (_type.ToDisplayString(),
+                    _type.ContainingNamespace.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat));
 
                 return _names.GetValueOrDefault();
             }

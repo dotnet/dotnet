@@ -9643,6 +9643,39 @@ namespace New.Test
 
     #endregion
 
+    #region Namespace
+
+    [IntegrationTestFact]
+    public void EmptyRootNamespace()
+    {
+        DefaultRootNamespace = string.Empty;
+
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+            public class Component1 : ComponentBase { }
+            namespace Shared
+            {
+                public class Component2 : ComponentBase { }
+            }
+            class C
+            {
+                void M1(TestComponent t) { }
+                void M2(global::TestComponent t) { }
+            }
+            """));
+        var generated = CompileToCSharp("""
+            <h1>Generated</h1>
+            <Component1 />
+            <Shared.Component2 />
+            """);
+
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    #endregion
+
     #region "CSS scoping"
     [IntegrationTestFact]
     public void Component_WithCssScope()
