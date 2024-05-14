@@ -23,7 +23,7 @@ variables:
     value: ${{ replace(parameters.vmrBranch, ' ', '') }}
 - ${{ else }}:
   - name: VmrBranch
-    value: release/8.0.1xx
+    value: internal/release/8.0.1xx
 
 resources:
   repositories:
