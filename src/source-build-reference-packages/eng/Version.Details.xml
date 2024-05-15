@@ -8,24 +8,24 @@
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.24053.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.24252.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>5f670e45d060b25d5b07646dfcd94eae31893191</Sha>
+      <Sha>9c1cc994f8123ec2a923c5179c238c13da1b4ab7</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24253.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24260.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>020255bcf7d0b8beed7de05338d97396982ae527</Sha>
+      <Sha>480401b003bfd2eb989c315da5d6b99ad13a968c</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24253.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24260.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>020255bcf7d0b8beed7de05338d97396982ae527</Sha>
+      <Sha>480401b003bfd2eb989c315da5d6b99ad13a968c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.GenAPI.Task" Version="9.0.100-preview.5.24256.1">
+    <Dependency Name="Microsoft.DotNet.GenAPI.Task" Version="9.0.100-preview.5.24263.1">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>4050252d2473dba0d40ded80bac55b2e7d602351</Sha>
+      <Sha>190723c80d85721cdc58fd906e645c4029b947bb</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.ILAsm" Version="5.0.0-preview.4.20202.18">
       <Uri>https://github.com/dotnet/runtime</Uri>
