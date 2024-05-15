@@ -54,7 +54,7 @@
     <MicrosoftDotNetXliffTasksPackageVersion>1.0.0-beta.23475.1</MicrosoftDotNetXliffTasksPackageVersion>
     <MicrosoftSourceBuildIntermediatexlifftasksPackageVersion>1.0.0-beta.23475.1</MicrosoftSourceBuildIntermediatexlifftasksPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>4.11.0-2.24260.2</MicrosoftNetCompilersToolsetPackageVersion>
-    <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>4.11.0-1.24214.4</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
+    <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>4.11.0-2.24260.2</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
     <MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>4.11.0-2.24260.2</MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>
     <MicrosoftCodeAnalysisCommonPackageVersion>4.11.0-2.24260.2</MicrosoftCodeAnalysisCommonPackageVersion>
     <MicrosoftCodeAnalysisCSharpPackageVersion>4.11.0-2.24260.2</MicrosoftCodeAnalysisCSharpPackageVersion>
