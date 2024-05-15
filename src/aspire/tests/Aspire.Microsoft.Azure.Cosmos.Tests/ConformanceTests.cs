@@ -28,11 +28,11 @@ public class ConformanceTests : ConformanceTests<CosmosClient, AzureCosmosDBSett
     {
         if (key is null)
         {
-            builder.AddAzureCosmosDBClient("cosmosdb", configure);
+            builder.AddAzureCosmosDB("cosmosdb", configure);
         }
         else
         {
-            builder.AddKeyedAzureCosmosDbClient(key, configure);
+            builder.AddKeyedAzureCosmosDB(key, configure);
         }
     }
 

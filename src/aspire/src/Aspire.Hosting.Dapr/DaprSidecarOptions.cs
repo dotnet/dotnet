@@ -56,11 +56,6 @@ public sealed record DaprSidecarOptions
     public string? AppProtocol { get; init; }
 
     /// <summary>
-    /// Gets or sets the endpoint of the application the sidecar is connected to.
-    /// </summary>
-    public string? AppEndpoint { get; init; }
-
-    /// <summary>
     /// Gets or sets the command run by the Dapr CLI as part of starting the sidecar.
     /// </summary>
     public IImmutableList<string> Command { get; init; } = ImmutableList<string>.Empty;

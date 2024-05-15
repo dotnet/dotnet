@@ -3,21 +3,9 @@
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-var deploymentAndModelName = "gpt-35-turbo";
-var openai = builder.AddAzureOpenAI("openai").AddDeployment(
-    new(deploymentAndModelName, deploymentAndModelName, "0613")
-    );
+var openai = builder.AddConnectionString("openai");
 
 builder.AddProject<Projects.OpenAIEndToEnd_WebStory>("webstory")
-       .WithExternalHttpEndpoints()
-       .WithReference(openai)
-       .WithEnvironment("OpenAI__DeploymentName", deploymentAndModelName);
-
-// This project is only added in playground projects to support development/debugging
-// of the dashboard. It is not required in end developer code. Comment out this code
-// to test end developer dashboard launch experience. Refer to Directory.Build.props
-// for the path to the dashboard binary (defaults to the Aspire.Dashboard bin output
-// in the artifacts dir).
-builder.AddProject<Projects.Aspire_Dashboard>(KnownResourceNames.AspireDashboard);
+       .WithReference(openai);
 
 builder.Build().Run();

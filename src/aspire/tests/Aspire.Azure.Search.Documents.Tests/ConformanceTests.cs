@@ -36,7 +36,7 @@ public class ConformanceTests : ConformanceTests<SearchIndexClient, AzureSearchS
                   "ClientOptions": {
                     "Retry": {
                       "Mode": "Fixed",
-                      "MaxDelay": "00:00:03"  
+                      "MaxDelay": "PT3S"  
                     }
                   }
                 }
@@ -64,11 +64,11 @@ public class ConformanceTests : ConformanceTests<SearchIndexClient, AzureSearchS
     {
         if (key is null)
         {
-            builder.AddAzureSearchClient("search", ConfigureCredentials);
+            builder.AddAzureSearch("search", ConfigureCredentials);
         }
         else
         {
-            builder.AddKeyedAzureSearchClient(key, ConfigureCredentials);
+            builder.AddKeyedAzureSearch(key, ConfigureCredentials);
         }
 
         void ConfigureCredentials(AzureSearchSettings settings)

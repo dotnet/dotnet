@@ -1,7 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Aspire.Components.Common.Tests;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -11,18 +10,10 @@ using Xunit;
 
 namespace Aspire.MongoDB.Driver.Tests;
 
-public class AspireMongoDBDriverExtensionsTests : IClassFixture<MongoDbContainerFixture>
+public class AspireMongoDBDriverExtensionsTests
 {
+    private const string DefaultConnectionString = "mongodb://localhost:27017/mydatabase";
     private const string DefaultConnectionName = "mongodb";
-
-    private readonly MongoDbContainerFixture _containerFixture;
-
-    public AspireMongoDBDriverExtensionsTests(MongoDbContainerFixture containerFixture)
-    {
-        _containerFixture = containerFixture;
-    }
-
-    private string DefaultConnectionString => _containerFixture.GetConnectionString();
 
     [Theory]
     [InlineData("mongodb://localhost:27017/mydatabase", true)]
@@ -33,7 +24,7 @@ public class AspireMongoDBDriverExtensionsTests : IClassFixture<MongoDbContainer
 
         builder.AddMongoDBClient(DefaultConnectionName);
 
-        using var host = builder.Build();
+        var host = builder.Build();
 
         var mongoClient = host.Services.GetRequiredService<IMongoClient>();
 
@@ -66,7 +57,7 @@ public class AspireMongoDBDriverExtensionsTests : IClassFixture<MongoDbContainer
 
         builder.AddKeyedMongoDBClient(key);
 
-        using var host = builder.Build();
+        var host = builder.Build();
 
         var mongoClient = host.Services.GetRequiredKeyedService<IMongoClient>(key);
 
@@ -88,7 +79,7 @@ public class AspireMongoDBDriverExtensionsTests : IClassFixture<MongoDbContainer
         }
     }
 
-    [RequiresDockerFact]
+    [Fact]
     public async Task AddMongoDBDataSource_HealthCheckShouldBeRegisteredWhenEnabled()
     {
         var builder = CreateBuilder(DefaultConnectionString);
@@ -99,7 +90,7 @@ public class AspireMongoDBDriverExtensionsTests : IClassFixture<MongoDbContainer
             settings.HealthCheckTimeout = 1;
         });
 
-        using var host = builder.Build();
+        var host = builder.Build();
 
         var healthCheckService = host.Services.GetRequiredService<HealthCheckService>();
 
@@ -110,7 +101,7 @@ public class AspireMongoDBDriverExtensionsTests : IClassFixture<MongoDbContainer
         Assert.Contains(healthCheckReport.Entries, x => x.Key == healthCheckName);
     }
 
-    [RequiresDockerFact]
+    [Fact]
     public void AddKeyedMongoDBDataSource_HealthCheckShouldNotBeRegisteredWhenDisabled()
     {
         var builder = CreateBuilder(DefaultConnectionString);
@@ -120,7 +111,7 @@ public class AspireMongoDBDriverExtensionsTests : IClassFixture<MongoDbContainer
             settings.HealthChecks = false;
         });
 
-        using var host = builder.Build();
+        var host = builder.Build();
 
         var healthCheckService = host.Services.GetService<HealthCheckService>();
 
@@ -128,7 +119,7 @@ public class AspireMongoDBDriverExtensionsTests : IClassFixture<MongoDbContainer
 
     }
 
-    [RequiresDockerFact]
+    [Fact]
     public async Task AddKeyedMongoDBDataSource_HealthCheckShouldBeRegisteredWhenEnabled()
     {
         var key = DefaultConnectionName;
@@ -141,7 +132,7 @@ public class AspireMongoDBDriverExtensionsTests : IClassFixture<MongoDbContainer
             settings.HealthCheckTimeout = 1;
         });
 
-        using var host = builder.Build();
+        var host = builder.Build();
 
         var healthCheckService = host.Services.GetRequiredService<HealthCheckService>();
 
@@ -152,7 +143,7 @@ public class AspireMongoDBDriverExtensionsTests : IClassFixture<MongoDbContainer
         Assert.Contains(healthCheckReport.Entries, x => x.Key == healthCheckName);
     }
 
-    [RequiresDockerFact]
+    [Fact]
     public void AddMongoDBDataSource_HealthCheckShouldNotBeRegisteredWhenDisabled()
     {
         var builder = CreateBuilder(DefaultConnectionString);
@@ -162,7 +153,7 @@ public class AspireMongoDBDriverExtensionsTests : IClassFixture<MongoDbContainer
             settings.HealthChecks = false;
         });
 
-        using var host = builder.Build();
+        var host = builder.Build();
 
         var healthCheckService = host.Services.GetService<HealthCheckService>();
 

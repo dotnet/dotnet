@@ -32,7 +32,7 @@ public class AspirePostgreSqlNpgsqlExtensionsTests
             builder.AddNpgsqlDataSource("npgsql");
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var dataSource = useKeyed ?
             host.Services.GetRequiredKeyedService<NpgsqlDataSource>("npgsql") :
             host.Services.GetRequiredService<NpgsqlDataSource>();
@@ -60,7 +60,7 @@ public class AspirePostgreSqlNpgsqlExtensionsTests
             builder.AddNpgsqlDataSource("npgsql", SetConnectionString);
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var dataSource = useKeyed ?
             host.Services.GetRequiredKeyedService<NpgsqlDataSource>("npgsql") :
             host.Services.GetRequiredService<NpgsqlDataSource>();
@@ -92,7 +92,7 @@ public class AspirePostgreSqlNpgsqlExtensionsTests
             builder.AddNpgsqlDataSource("npgsql");
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var dataSource = useKeyed ?
             host.Services.GetRequiredKeyedService<NpgsqlDataSource>("npgsql") :
             host.Services.GetRequiredService<NpgsqlDataSource>();
@@ -124,7 +124,7 @@ public class AspirePostgreSqlNpgsqlExtensionsTests
             builder.AddNpgsqlDataSource("npgsql", configureDataSourceBuilder: configureDataSourceBuilder);
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var dataSource = useKeyed ?
             host.Services.GetRequiredKeyedService<NpgsqlDataSource>("npgsql") :
             host.Services.GetRequiredService<NpgsqlDataSource>();

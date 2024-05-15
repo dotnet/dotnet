@@ -48,7 +48,7 @@ public class ConformanceTests : ConformanceTests<QueueServiceClient, AzureStorag
                     "MessageEncoding": "Base64",
                     "Retry": {
                       "Mode": "Exponential",
-                      "Delay": "00:00:03"
+                      "Delay": "PT3S"
                     }
                   }
                 }
@@ -64,7 +64,7 @@ public class ConformanceTests : ConformanceTests<QueueServiceClient, AzureStorag
             ("""{"Aspire": { "Azure": { "Storage":{ "Queues": { "ServiceUri": "http://YOUR_URI", "HealthChecks": "false"}}}}}""", "Value is \"string\" but should be \"boolean\""),
             ("""{"Aspire": { "Azure": { "Storage":{ "Queues": { "ClientOptions": {"MessageEncoding": "Fast"}}}}}}""", "Value should match one of the values specified by the enum"),
             ("""{"Aspire": { "Azure": { "Storage":{ "Queues": { "ClientOptions": {"Retry": {"Mode": "Fast"}}}}}}}""", "Value should match one of the values specified by the enum"),
-            ("""{"Aspire": { "Azure": { "Storage":{ "Queues": { "ClientOptions": {"Retry": {"NetworkTimeout": "PT3S"}}}}}}}""", "The string value is not a match for the indicated regular expression")
+            ("""{"Aspire": { "Azure": { "Storage":{ "Queues": { "ClientOptions": {"Retry": {"NetworkTimeout": "3S"}}}}}}}""", "Value does not match format \"duration\"")
         };
 
     protected override void PopulateConfiguration(ConfigurationManager configuration, string? key = null)
@@ -78,11 +78,11 @@ public class ConformanceTests : ConformanceTests<QueueServiceClient, AzureStorag
     {
         if (key is null)
         {
-            builder.AddAzureQueueClient("queue", ConfigureCredentials);
+            builder.AddAzureQueueService("queue", ConfigureCredentials);
         }
         else
         {
-            builder.AddKeyedAzureQueueClient(key, ConfigureCredentials);
+            builder.AddKeyedAzureQueueService(key, ConfigureCredentials);
         }
 
         void ConfigureCredentials(AzureStorageQueuesSettings settings)

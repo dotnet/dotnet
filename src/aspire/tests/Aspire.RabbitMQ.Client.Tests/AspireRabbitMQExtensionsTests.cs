@@ -4,7 +4,6 @@
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Text;
-using Aspire.Components.Common.Tests;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,14 +33,14 @@ public class AspireRabbitMQExtensionsTests : IClassFixture<RabbitMQContainerFixt
 
         if (useKeyed)
         {
-            builder.AddKeyedRabbitMQClient("messaging");
+            builder.AddKeyedRabbitMQ("messaging");
         }
         else
         {
-            builder.AddRabbitMQClient("messaging");
+            builder.AddRabbitMQ("messaging");
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var connection = useKeyed ?
             host.Services.GetRequiredKeyedService<IConnection>("messaging") :
             host.Services.GetRequiredService<IConnection>();
@@ -64,14 +63,14 @@ public class AspireRabbitMQExtensionsTests : IClassFixture<RabbitMQContainerFixt
         void SetConnectionString(RabbitMQClientSettings settings) => settings.ConnectionString = _containerFixture.GetConnectionString();
         if (useKeyed)
         {
-            builder.AddKeyedRabbitMQClient("messaging", SetConnectionString);
+            builder.AddKeyedRabbitMQ("messaging", SetConnectionString);
         }
         else
         {
-            builder.AddRabbitMQClient("messaging", SetConnectionString);
+            builder.AddRabbitMQ("messaging", SetConnectionString);
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var connection = useKeyed ?
             host.Services.GetRequiredKeyedService<IConnection>("messaging") :
             host.Services.GetRequiredService<IConnection>();
@@ -96,14 +95,14 @@ public class AspireRabbitMQExtensionsTests : IClassFixture<RabbitMQContainerFixt
 
         if (useKeyed)
         {
-            builder.AddKeyedRabbitMQClient("messaging");
+            builder.AddKeyedRabbitMQ("messaging");
         }
         else
         {
-            builder.AddRabbitMQClient("messaging");
+            builder.AddRabbitMQ("messaging");
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var connection = useKeyed ?
             host.Services.GetRequiredKeyedService<IConnection>("messaging") :
             host.Services.GetRequiredService<IConnection>();
@@ -146,9 +145,9 @@ public class AspireRabbitMQExtensionsTests : IClassFixture<RabbitMQContainerFixt
 
         builder.Configuration.AddJsonStream(jsonStream);
 
-        builder.AddRabbitMQClient("messaging");
+        builder.AddRabbitMQ("messaging");
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var connectionFactory = (ConnectionFactory)host.Services.GetRequiredService<IConnectionFactory>();
 
         Assert.Equal(SslProtocols.Tls12, connectionFactory.AmqpUriSslProtocols);

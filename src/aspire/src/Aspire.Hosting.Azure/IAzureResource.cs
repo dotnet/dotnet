@@ -9,8 +9,4 @@ namespace Aspire.Hosting.ApplicationModel;
 /// </summary>
 public interface IAzureResource : IResource
 {
-    /// <summary>
-    /// Set by the AzureProvisioner to indicate the task that is provisioning the resource.
-    /// </summary>
-    public TaskCompletionSource? ProvisioningTaskCompletionSource { get; set; }
 }

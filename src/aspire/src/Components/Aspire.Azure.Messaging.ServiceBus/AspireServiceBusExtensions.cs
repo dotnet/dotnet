@@ -31,7 +31,7 @@ public static class AspireServiceBusExtensions
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{TClient, TOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Messaging:ServiceBus" section.</remarks>
     /// <exception cref="InvalidOperationException">Thrown when neither <see cref="AzureMessagingServiceBusSettings.ConnectionString"/> nor <see cref="AzureMessagingServiceBusSettings.Namespace"/> is provided.</exception>
-    public static void AddAzureServiceBusClient(
+    public static void AddAzureServiceBus(
         this IHostApplicationBuilder builder,
         string connectionName,
         Action<AzureMessagingServiceBusSettings>? configureSettings = null,
@@ -49,7 +49,7 @@ public static class AspireServiceBusExtensions
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{TClient, TOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Messaging:ServiceBus:{name}" section.</remarks>
     /// <exception cref="InvalidOperationException">Thrown when neither <see cref="AzureMessagingServiceBusSettings.ConnectionString"/> nor <see cref="AzureMessagingServiceBusSettings.Namespace"/> is provided.</exception>
-    public static void AddKeyedAzureServiceBusClient(
+    public static void AddKeyedAzureServiceBus(
         this IHostApplicationBuilder builder,
         string name,
         Action<AzureMessagingServiceBusSettings>? configureSettings = null,
@@ -64,11 +64,9 @@ public static class AspireServiceBusExtensions
 
     private sealed class MessageBusComponent : AzureComponent<AzureMessagingServiceBusSettings, ServiceBusClient, ServiceBusClientOptions>
     {
-        protected override IAzureClientBuilder<ServiceBusClient, ServiceBusClientOptions> AddClient(
-            AzureClientFactoryBuilder azureFactoryBuilder, AzureMessagingServiceBusSettings settings,
-            string connectionName, string configurationSectionName)
+        protected override IAzureClientBuilder<ServiceBusClient, ServiceBusClientOptions> AddClient<TBuilder>(TBuilder azureFactoryBuilder, AzureMessagingServiceBusSettings settings, string connectionName, string configurationSectionName)
         {
-            return ((IAzureClientFactoryBuilderWithCredential)azureFactoryBuilder).RegisterClientFactory<ServiceBusClient, ServiceBusClientOptions>((options, cred) =>
+            return azureFactoryBuilder.RegisterClientFactory<ServiceBusClient, ServiceBusClientOptions>((options, cred) =>
             {
                 var connectionString = settings.ConnectionString;
                 if (string.IsNullOrEmpty(connectionString) && string.IsNullOrEmpty(settings.Namespace))

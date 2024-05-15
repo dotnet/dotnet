@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using OpenTelemetry.Instrumentation.StackExchangeRedis;
 using OpenTelemetry.Trace;
 using StackExchange.Redis;
 using StackExchange.Redis.Configuration;
@@ -31,12 +30,8 @@ public static class AspireRedisExtensions
     /// <param name="configureSettings">An optional method that can be used for customizing the <see cref="StackExchangeRedisSettings"/>. It's invoked after the settings are read from the configuration.</param>
     /// <param name="configureOptions">An optional method that can be used for customizing the <see cref="ConfigurationOptions"/>. It's invoked after the options are read from the configuration.</param>
     /// <remarks>Reads the configuration from "Aspire:StackExchange:Redis" section.</remarks>
-    public static void AddRedisClient(
-        this IHostApplicationBuilder builder,
-        string connectionName,
-        Action<StackExchangeRedisSettings>? configureSettings = null,
-        Action<ConfigurationOptions>? configureOptions = null)
-        => AddRedisClient(builder, DefaultConfigSectionName, configureSettings, configureOptions, connectionName, serviceKey: null);
+    public static void AddRedis(this IHostApplicationBuilder builder, string connectionName, Action<StackExchangeRedisSettings>? configureSettings = null, Action<ConfigurationOptions>? configureOptions = null)
+        => AddRedis(builder, DefaultConfigSectionName, configureSettings, configureOptions, connectionName, serviceKey: null);
 
     /// <summary>
     /// Registers <see cref="IConnectionMultiplexer"/> as a keyed singleton for the given <paramref name="name"/> in the services provided by the <paramref name="builder"/>.
@@ -47,24 +42,14 @@ public static class AspireRedisExtensions
     /// <param name="configureSettings">An optional method that can be used for customizing the <see cref="StackExchangeRedisSettings"/>. It's invoked after the settings are read from the configuration.</param>
     /// <param name="configureOptions">An optional method that can be used for customizing the <see cref="ConfigurationOptions"/>. It's invoked after the options are read from the configuration.</param>
     /// <remarks>Reads the configuration from "Aspire:StackExchange:Redis:{name}" section.</remarks>
-    public static void AddKeyedRedisClient(
-        this IHostApplicationBuilder builder,
-        string name,
-        Action<StackExchangeRedisSettings>? configureSettings = null,
-        Action<ConfigurationOptions>? configureOptions = null)
+    public static void AddKeyedRedis(this IHostApplicationBuilder builder, string name, Action<StackExchangeRedisSettings>? configureSettings = null, Action<ConfigurationOptions>? configureOptions = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(name);
 
-        AddRedisClient(builder, $"{DefaultConfigSectionName}:{name}", configureSettings, configureOptions, connectionName: name, serviceKey: name);
+        AddRedis(builder, $"{DefaultConfigSectionName}:{name}", configureSettings, configureOptions, connectionName: name, serviceKey: name);
     }
 
-    private static void AddRedisClient(
-        IHostApplicationBuilder builder,
-        string configurationSectionName,
-        Action<StackExchangeRedisSettings>? configureSettings,
-        Action<ConfigurationOptions>? configureOptions,
-        string connectionName,
-        object? serviceKey)
+    private static void AddRedis(IHostApplicationBuilder builder, string configurationSectionName, Action<StackExchangeRedisSettings>? configureSettings, Action<ConfigurationOptions>? configureOptions, string connectionName, object? serviceKey)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
@@ -100,29 +85,34 @@ public static class AspireRedisExtensions
 
         if (serviceKey is null)
         {
-            builder.Services.AddSingleton<IConnectionMultiplexer>(sp => CreateConnection(sp, connectionName, configurationSectionName, optionsName));
+            builder.Services.AddSingleton<IConnectionMultiplexer>(
+                sp => ConnectionMultiplexer.Connect(GetConfigurationOptions(sp, connectionName, configurationSectionName, optionsName)));
         }
         else
         {
-            builder.Services.AddKeyedSingleton<IConnectionMultiplexer>(serviceKey, (sp, _) => CreateConnection(sp, connectionName, configurationSectionName, optionsName));
+            builder.Services.AddKeyedSingleton<IConnectionMultiplexer>(serviceKey,
+                (sp, key) => ConnectionMultiplexer.Connect(GetConfigurationOptions(sp, connectionName, configurationSectionName, optionsName)));
         }
 
         if (settings.Tracing)
         {
             // Supports distributed tracing
-            // We don't call AddRedisInstrumentation() here as it results in the TelemetryHostedService trying to resolve & connect to IConnectionMultiplexer
-            // via DI on startup which, if Redis is unavailable, can result in an app crash. Instead we add the ActivitySource manually and call
-            // ConfigureRedisInstrumentation() and AddInstrumentation() to ensure the Redis instrumentation services are registered. Then when creating the
-            // IConnectionMultiplexer, we register the connection with the StackExchangeRedisInstrumentation object.
-            builder.Services.AddOpenTelemetry()
+            if (serviceKey is null)
+            {
+                builder.Services.AddOpenTelemetry()
                 .WithTracing(t =>
                 {
-                    t.AddSource(StackExchangeRedisConnectionInstrumentation.ActivitySourceName);
-                    // This ensures the core Redis instrumentation services from OpenTelemetry.Instrumentation.StackExchangeRedis are added
-                    t.ConfigureRedisInstrumentation(_ => { });
-                    // This ensures that any logic performed by the AddInstrumentation method is executed (this is usually called by AddRedisInstrumentation())
-                    t.AddInstrumentation(sp => sp.GetRequiredService<StackExchangeRedisInstrumentation>());
+                    t.AddRedisInstrumentation();
                 });
+            }
+            else
+            {
+                builder.Services.AddOpenTelemetry()
+                .WithTracing(t =>
+                {
+                    t.AddRedisInstrumentationWithKeyedService(serviceKey);
+                });
+            }
         }
 
         if (settings.HealthChecks)
@@ -138,17 +128,6 @@ public static class AspireRedisExtensions
                     connectionMultiplexerFactory: sp => serviceKey is null ? sp.GetRequiredService<IConnectionMultiplexer>() : sp.GetRequiredKeyedService<IConnectionMultiplexer>(serviceKey),
                     healthCheckName));
         }
-    }
-
-    private static ConnectionMultiplexer CreateConnection(IServiceProvider serviceProvider, string connectionName, string configurationSectionName, string? optionsName)
-    {
-        var connection = ConnectionMultiplexer.Connect(GetConfigurationOptions(serviceProvider, connectionName, configurationSectionName, optionsName));
-
-        // Add the connection to instrumentation
-        var instrumentation = serviceProvider.GetService<StackExchangeRedisInstrumentation>();
-        instrumentation?.AddConnection(connection);
-
-        return connection;
     }
 
     private static ConfigurationOptions GetConfigurationOptions(IServiceProvider serviceProvider, string connectionName, string configurationSectionName, string? optionsName)

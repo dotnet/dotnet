@@ -32,7 +32,6 @@ microsoft
 mongodb
 mssql
 mysql
-nats
 noreferrer
 noopener
 npgsql
@@ -45,7 +44,6 @@ pgadmin
 postgre
 postgres
 protoc
-qdrant
 rabbitmq
 redis
 rediscommander

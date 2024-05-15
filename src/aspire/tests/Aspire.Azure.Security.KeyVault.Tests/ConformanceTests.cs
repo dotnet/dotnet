@@ -42,7 +42,7 @@ public class ConformanceTests : ConformanceTests<SecretClient, AzureSecurityKeyV
                     "DisableChallengeResourceVerification": true,
                     "Retry": {
                       "Mode": "Exponential",
-                      "Delay": "00:03"
+                      "Delay": "PT3S"
                     }
                   }
                 }
@@ -57,7 +57,7 @@ public class ConformanceTests : ConformanceTests<SecretClient, AzureSecurityKeyV
             ("""{"Aspire": { "Azure": { "Security":{ "KeyVault": { "VaultUri": "YOUR_URI"}}}}}""", "Value does not match format \"uri\""),
             ("""{"Aspire": { "Azure": { "Security":{ "KeyVault": { "VaultUri": "http://YOUR_URI", "HealthChecks": "false"}}}}}""", "Value is \"string\" but should be \"boolean\""),
             ("""{"Aspire": { "Azure": { "Security":{ "KeyVault": { "VaultUri": "http://YOUR_URI", "ClientOptions": {"Retry": {"Mode": "Fast"}}}}}}}""", "Value should match one of the values specified by the enum"),
-            ("""{"Aspire": { "Azure": { "Security":{ "KeyVault": { "VaultUri": "http://YOUR_URI", "ClientOptions": {"Retry": {"NetworkTimeout": "3S"}}}}}}}""", "The string value is not a match for the indicated regular expression")
+            ("""{"Aspire": { "Azure": { "Security":{ "KeyVault": { "VaultUri": "http://YOUR_URI", "ClientOptions": {"Retry": {"NetworkTimeout": "3S"}}}}}}}""", "Value does not match format \"duration\"")
         };
 
     protected override void PopulateConfiguration(ConfigurationManager configuration, string? key = null)
@@ -71,11 +71,11 @@ public class ConformanceTests : ConformanceTests<SecretClient, AzureSecurityKeyV
     {
         if (key is null)
         {
-            builder.AddAzureKeyVaultClient("secrets", ConfigureCredentials);
+            builder.AddAzureKeyVaultSecrets("secrets", ConfigureCredentials);
         }
         else
         {
-            builder.AddKeyedAzureKeyVaultClient(key, ConfigureCredentials);
+            builder.AddKeyedAzureKeyVaultSecrets(key, ConfigureCredentials);
         }
 
         void ConfigureCredentials(AzureSecurityKeyVaultSettings settings)
