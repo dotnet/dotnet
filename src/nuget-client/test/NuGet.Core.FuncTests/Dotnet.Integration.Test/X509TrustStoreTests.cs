@@ -21,19 +21,20 @@ namespace Dotnet.Integration.Test
         private readonly FileInfo _codeSigningCertificateBundle;
         private readonly FileInfo _timestampingCertificateBundle;
         private readonly TestLogger _logger;
+        private readonly ITestOutputHelper _testOutputHelper;
 
-        public X509TrustStoreTests(DotnetIntegrationTestFixture msbuildFixture, ITestOutputHelper helper)
+        public X509TrustStoreTests(DotnetIntegrationTestFixture dotnetFixture, ITestOutputHelper testOutputHelper)
         {
-            _logger = new TestLogger(helper);
+            _logger = new TestLogger(testOutputHelper);
 
             _codeSigningCertificateBundle = new FileInfo(
                 Path.Combine(
-                    msbuildFixture.SdkDirectory.FullName,
+                    dotnetFixture.SdkDirectory.FullName,
                     FallbackCertificateBundleX509ChainFactory.SubdirectoryName,
                     FallbackCertificateBundleX509ChainFactory.CodeSigningFileName));
             _timestampingCertificateBundle = new FileInfo(
                 Path.Combine(
-                    msbuildFixture.SdkDirectory.FullName,
+                    dotnetFixture.SdkDirectory.FullName,
                     FallbackCertificateBundleX509ChainFactory.SubdirectoryName,
                     FallbackCertificateBundleX509ChainFactory.TimestampingFileName));
 
@@ -41,6 +42,7 @@ namespace Dotnet.Integration.Test
             _logger.LogVerbose($"Code signing fallback certificate bundle file exists:  {_codeSigningCertificateBundle.Exists}");
             _logger.LogVerbose($"Expected timestamping fallback certificate bundle file path:  {_timestampingCertificateBundle.FullName}");
             _logger.LogVerbose($"Timestamping fallback certificate bundle file exists:  {_timestampingCertificateBundle.Exists}");
+            _testOutputHelper = testOutputHelper;
         }
 
         [PlatformTheory(Platform.Windows)]

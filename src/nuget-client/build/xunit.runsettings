@@ -1,8 +1,7 @@
 <RunSettings>
     <RunConfiguration>
-        <!-- Let the runtime decide how many cores to use -->
+        <!-- Use as many testhosts as logical processors -->
         <MaxCpuCount>0</MaxCpuCount>
-        <ReporterSwitch>verbose</ReporterSwitch>
         <!-- Consider it an error if no tests are discovered -->
         <TreatNoTestsAsError>true</TreatNoTestsAsError>
     </RunConfiguration>
@@ -11,10 +10,9 @@
             <DataCollector friendlyName="blame" enabled="True">
                 <Configuration>
                     <!-- Enables crash dump-->
-                    <CollectDump DumpType="Full" />
+                    <CollectDump DumpType="Mini" />
                     <!-- Enables hang dump-->
-                    <CollectDumpOnTestSessionHang TestTimeout="15min" HangDumpType="full" />
-                    <ResultsDirectory>%AGENT_TEMPDIRECTORY%</ResultsDirectory>
+                    <CollectDumpOnTestSessionHang TestTimeout="15min" HangDumpType="Mini" />
                 </Configuration>
             </DataCollector>
         </DataCollectors>

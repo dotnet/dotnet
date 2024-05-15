@@ -3,6 +3,7 @@
     <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
     <UseParallelXunit>true</UseParallelXunit>
     <Description>NuGet package signing cross framework test.</Description>
+    <TestProjectType Condition="'$(IsXPlat)' == 'true'">None</TestProjectType>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks.Console\NuGet.Build.Tasks.Console.csproj" />

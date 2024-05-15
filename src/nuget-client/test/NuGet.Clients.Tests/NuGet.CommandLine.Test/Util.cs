@@ -21,6 +21,7 @@ using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Test.Utility;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.CommandLine.Test
 {
@@ -46,15 +47,15 @@ namespace NuGet.CommandLine.Test
         /// <summary>
         /// Restore a solution.
         /// </summary>
-        public static CommandRunnerResult RestoreSolution(SimpleTestPathContext pathContext, int expectedExitCode = 0, params string[] additionalArgs)
+        public static CommandRunnerResult RestoreSolution(SimpleTestPathContext pathContext, int expectedExitCode = 0, ITestOutputHelper testOutputHelper = null, params string[] additionalArgs)
         {
-            return Restore(pathContext, pathContext.SolutionRoot, expectedExitCode, additionalArgs);
+            return Restore(pathContext, pathContext.SolutionRoot, expectedExitCode, testOutputHelper, additionalArgs);
         }
 
         /// <summary>
         /// Run nuget.exe restore {inputPath}
         /// </summary>
-        public static CommandRunnerResult Restore(SimpleTestPathContext pathContext, string inputPath, int expectedExitCode = 0, params string[] additionalArgs)
+        public static CommandRunnerResult Restore(SimpleTestPathContext pathContext, string inputPath, int expectedExitCode = 0, ITestOutputHelper testOutputHelper = null, params string[] additionalArgs)
         {
             var nugetExe = GetNuGetExePath();
 
@@ -68,24 +69,26 @@ namespace NuGet.CommandLine.Test
 
             args = args.Concat(additionalArgs).ToArray();
 
-            return RunCommand(pathContext, nugetExe, expectedExitCode, args);
+            return RunCommand(pathContext, nugetExe, expectedExitCode, testOutputHelper, args);
         }
 
-        public static CommandRunnerResult RunCommand(SimpleTestPathContext pathContext, string nugetExe, int expectedExitCode = 0, params string[] arguments)
+        public static CommandRunnerResult RunCommand(SimpleTestPathContext pathContext, string nugetExe, int expectedExitCode = 0, ITestOutputHelper testOutputHelper = null, params string[] arguments)
         {
             // Store the dg file for debugging
             var dgPath = Path.Combine(pathContext.WorkingDirectory, "out.dg");
-            var envVars = new Dictionary<string, string>()
-                {
-                    { "NUGET_HTTP_CACHE_PATH", pathContext.HttpCacheFolder }
-                };
+            var envVars = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["NUGET_HTTP_CACHE_PATH"] = pathContext.HttpCacheFolder,
+
+            };
 
             // Act
             var r = CommandRunner.Run(
                 nugetExe,
                 pathContext.WorkingDirectory.Path,
                 string.Join(" ", arguments),
-                environmentVariables: envVars);
+                environmentVariables: envVars,
+                testOutputHelper: testOutputHelper);
 
             // Assert
             Assert.True(expectedExitCode == r.ExitCode, r.Errors + "\n\n" + r.Output);

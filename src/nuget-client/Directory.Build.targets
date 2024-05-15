@@ -1,4 +1,37 @@
 <Project>
   <Import Project="build\common.targets" Condition="'$(IsCrossTargetingBuild)' == 'true' And '$(_WasCommonPropsImported)' != 'true'" />
+
+  <!--
+    Gets a list of target frameworks that the project supports.
+  -->
+  <Target Name="GetProjectTargetFrameworks" Returns="@(ProjectTargetFramework)">
+    <ItemGroup>
+      <ProjectTargetFramework Include="$(TargetFramework);$(TargetFrameworks)" ProjectFile="$(MSBuildProjectFullPath)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Determines if a project is a test project by checking the TestProject property and returning an item with the full path to the project file and its test type.
+  -->
+  <Target Name="IsTestProject"
+          Returns="@(TestProject)"
+          Condition="'$(TestProject)' == 'true'">
+    <ItemGroup>
+      <TestProject Include="$(MSBuildProjectFullPath)" TestType="$(TestProjectType)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Determines if a project supports a specified target framework.  This target first calls GetProjectTargetFrameworks to get a list of target frameworks that the project supports, then filters the list down to the specified target framework.
+    If the specified framework is supported, the target returns an item with the full path to the project file, otherwise it returns nothing which will signal that the project does not support that target framework.
+  -->
+  <Target Name="DoesProjectSupportTargetFramework"
+          DependsOnTargets="GetProjectTargetFrameworks"
+          Returns="@(_SupportedProject)">
+    <ItemGroup>
+      <_SupportedProject Include="%(ProjectTargetFramework.ProjectFile)" Condition="'%(Identity)' == '$(ProjectTargetFramework)'" />
+    </ItemGroup>
+  </Target>
+  
   <Import Project="eng\dotnet-build\ExcludeFromDotNetBuild.AfterCommonTargets.targets" Condition="'$(DotNetBuildRepo)' == 'true'" />
 </Project>

@@ -9,6 +9,7 @@ using NuGet.CommandLine.XPlat;
 using NuGet.Common;
 using NuGet.Test.Utility;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.XPlat.FuncTest
 {
@@ -16,6 +17,12 @@ namespace NuGet.XPlat.FuncTest
     {
         private static readonly string DotnetCli = TestFileSystemUtility.GetDotnetCli();
         private static readonly string XplatDll = DotnetCliUtil.GetXplatDll();
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public XPlatTrustTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
 
         [Theory]
         [InlineData("-config")]
@@ -29,14 +36,14 @@ namespace NuGet.XPlat.FuncTest
             {
                 // Arrange & Act
                 CommandRunnerResult result = CommandRunner.Run(
-                      DotnetCli,
-                      Directory.GetCurrentDirectory(),
-                      $"{XplatDll} trust {unrecognizedOption}");
+                    DotnetCli,
+                    Directory.GetCurrentDirectory(),
+                    $"{XplatDll} trust {unrecognizedOption}",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 Assert.Equal(1, result.ExitCode);
-                Assert.True(result.AllOutput.Contains($@"Specify --help for a list of available options and commands.
-error: Unrecognized option '{unrecognizedOption}'"));
+                Assert.True(result.AllOutput.Contains($"Unrecognized option '{unrecognizedOption}'"));
             }
         }
 
@@ -54,9 +61,10 @@ error: Unrecognized option '{unrecognizedOption}'"));
             {
                 // Arrange & Act
                 CommandRunnerResult result = CommandRunner.Run(
-                      DotnetCli,
-                      Directory.GetCurrentDirectory(),
-                      $"{XplatDll} trust {unrecognizedOption}");
+                    DotnetCli,
+                    Directory.GetCurrentDirectory(),
+                    $"{XplatDll} trust {unrecognizedOption}",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 Assert.Equal(1, result.ExitCode);
@@ -67,7 +75,7 @@ error: Unrecognized option '{unrecognizedOption}'"));
         [Theory]
         [InlineData("trust")]
         [InlineData("trust list")]
-        public static void Trust_List_Empty_Succeeds(string args)
+        public void Trust_List_Empty_Succeeds(string args)
         {
             Assert.NotNull(DotnetCli);
             Assert.NotNull(XplatDll);
@@ -79,9 +87,10 @@ error: Unrecognized option '{unrecognizedOption}'"));
 
                 // Act
                 CommandRunnerResult result = CommandRunner.Run(
-                      DotnetCli,
-                      mockPackagesDirectory.FullName,
-                      $"{XplatDll} {args}");
+                    DotnetCli,
+                    mockPackagesDirectory.FullName,
+                    $"{XplatDll} {args}",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 DotnetCliUtil.VerifyResultSuccess(result, "There are no trusted signers.");

@@ -20,9 +20,17 @@ namespace NuGet.CommandLine
 {
     using global::Test.Utility;
     using NuGet.Packaging;
+    using Xunit.Abstractions;
 
     public class ProjectFactoryTest
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public ProjectFactoryTest(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
         [Fact]
         public void ProjectFactoryInitializesPropertiesForPreprocessorFromAssemblyMetadata()
         {
@@ -475,7 +483,8 @@ namespace NuGet.CommandLine
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack Assembly.csproj -build");
+                    "pack Assembly.csproj -build",
+                    testOutputHelper: _testOutputHelper);
 
                 Util.VerifyResultSuccess(r);
 
@@ -518,7 +527,8 @@ namespace NuGet.CommandLine
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    $"pack Link{Path.DirectorySeparatorChar}Link.csproj -build -IncludeReferencedProjects -Version 1.0.0");
+                    $"pack Link{Path.DirectorySeparatorChar}Link.csproj -build -IncludeReferencedProjects -Version 1.0.0",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 Util.VerifyResultSuccess(r);
@@ -571,7 +581,8 @@ namespace NuGet.CommandLine
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    $"pack Link{Path.DirectorySeparatorChar}Link.csproj -build -IncludeReferencedProjects -Version 1.0.0");
+                    $"pack Link{Path.DirectorySeparatorChar}Link.csproj -build -IncludeReferencedProjects -Version 1.0.0",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 Util.VerifyResultSuccess(r);

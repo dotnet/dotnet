@@ -104,15 +104,13 @@ namespace Test.Utility
         {
             try
             {
-                _listener.Abort();
+                _listener?.Abort();
 
-                var task = _listenerTask;
+                Task task = _listenerTask;
+
                 _listenerTask = null;
 
-                if (task != null)
-                {
-                    task.Wait();
-                }
+                task?.Wait();
             }
             catch (Exception ex)
             {

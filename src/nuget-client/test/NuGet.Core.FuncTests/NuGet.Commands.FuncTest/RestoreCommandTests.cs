@@ -1418,7 +1418,7 @@ namespace NuGet.Commands.FuncTest
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue(because: logger.ShowMessages());
                 result.Should().BeAssignableTo<NoOpRestoreResult>(because: "This should be a no-op restore.");
-                Assert.True(metadataLastAccessTimeFirstRestore < File.GetLastAccessTimeUtc(metadataPath));
+                metadataLastAccessTimeFirstRestore.Should().BeOnOrBefore(File.GetLastAccessTimeUtc(metadataPath));
             }
         }
 
