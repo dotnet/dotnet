@@ -86,7 +86,7 @@
       </trans-unit>
       <trans-unit id="MicrosoftCommandLineTitle">
         <source>VSTest version {0}</source>
-        <target state="new">VSTest version {0}</target>
+        <target state="translated">Версия VSTest {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableLoggersArgumentHelp">
