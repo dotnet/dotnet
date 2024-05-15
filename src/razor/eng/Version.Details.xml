@@ -15,9 +15,9 @@
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>324e078a9b47b62cd6dec6c78c6308c4540aa1e5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CommonLanguageServerProtocol.Framework" Version="4.11.0-1.24214.4">
+    <Dependency Name="Microsoft.CommonLanguageServerProtocol.Framework" Version="4.11.0-2.24260.2">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>84c5476ef3111c9abd78d43e65063280bb7202d9</Sha>
+      <Sha>324e078a9b47b62cd6dec6c78c6308c4540aa1e5</Sha>
     </Dependency>
     <Dependency Name="Microsoft.CodeAnalysis.ExternalAccess.Razor" Version="4.11.0-2.24260.2">
       <Uri>https://github.com/dotnet/roslyn</Uri>
