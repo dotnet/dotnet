@@ -3,130 +3,127 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using Xunit.Abstractions;
 
 namespace NuGet.Test.Utility
 {
+    /// <summary>
+    /// Represents a class to run an executable and capture the output and error streams.
+    /// </summary>
     public class CommandRunner
     {
-        // Item1 of the returned tuple is the exit code. Item2 is the standard output, and Item3
-        // is the error output.
-        public static CommandRunnerResult Run(
-            string filename,
-            string workingDirectory,
-            string arguments,
-            int timeOutInMilliseconds = 60000,
-            Action<StreamWriter> inputAction = null,
-            IDictionary<string, string> environmentVariables = null)
+        /// <summary>
+        /// Runs the specified executable and returns the result.
+        /// </summary>
+        /// <param name="filename">The path to the executable to run.</param>
+        /// <param name="workingDirectory">An optional working directory to use when running the executable.</param>
+        /// <param name="arguments">Optional command-line arguments to pass to the executable.</param>
+        /// <param name="timeOutInMilliseconds">Optional amount of milliseconds to wait for the executable to exit before returning.</param>
+        /// <param name="inputAction">An optional <see cref="Action{T}" /> to invoke against the executables input stream.</param>
+        /// <param name="environmentVariables">An optional <see cref="Dictionary{TKey, TValue}" /> containing environment variables to specify when running the executable.</param>
+        /// <param name="testOutputHelper">An optional <see cref="ITestOutputHelper" /> to write output to.</param>
+        /// <returns>A <see cref="CommandRunnerResult" /> containing details about the result of the running the executable including the exit code and console output.</returns>
+        public static CommandRunnerResult Run(string filename, string workingDirectory = null, string arguments = null, int timeOutInMilliseconds = 60000, Action<StreamWriter> inputAction = null, IDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
         {
-            var output = new StringBuilder();
-            var error = new StringBuilder();
+            StringBuilder output = new();
+            StringBuilder error = new();
+            int exitCode = 0;
 
-            using var process = new Process
+            using (Process process = new()
             {
                 EnableRaisingEvents = true,
                 StartInfo = new ProcessStartInfo(Path.GetFullPath(filename), arguments)
                 {
-                    WorkingDirectory = Path.GetFullPath(workingDirectory),
+                    WorkingDirectory = Path.GetFullPath(workingDirectory ?? Environment.CurrentDirectory),
                     UseShellExecute = false,
-                    CreateNoWindow = true,
                     RedirectStandardError = true,
                     RedirectStandardOutput = true,
-                    RedirectStandardInput = inputAction != null
-                }
-            };
-
-            process.StartInfo.Environment["NuGetTestModeEnabled"] = bool.TrueString;
-
-            if (environmentVariables != null)
+                    RedirectStandardInput = true,
+                    CreateNoWindow = true,
+                },
+            })
             {
-                foreach (var pair in environmentVariables)
+                process.StartInfo.Environment["MSBUILDDISABLENODEREUSE"] = "1";
+                process.StartInfo.Environment["NUGET_SHOW_STACK"] = bool.TrueString;
+                process.StartInfo.Environment["NuGetTestModeEnabled"] = bool.TrueString;
+                process.StartInfo.Environment["UseSharedCompilation"] = bool.FalseString;
+
+                if (environmentVariables != null)
                 {
-                    process.StartInfo.EnvironmentVariables[pair.Key] = pair.Value;
+                    foreach (var pair in environmentVariables)
+                    {
+                        process.StartInfo.EnvironmentVariables[pair.Key] = pair.Value;
+                    }
                 }
-            }
 
-            process.OutputDataReceived += (_, args) =>
-            {
-                if (args.Data != null)
+                process.OutputDataReceived += OnOutputDataReceived;
+                process.ErrorDataReceived += OnErrorDataReceived;
+
+                testOutputHelper?.WriteLine($"> {process.StartInfo.FileName} {process.StartInfo.Arguments}");
+
+                Stopwatch stopwatch = Stopwatch.StartNew();
+
+                process.Start();
+
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+
+                inputAction?.Invoke(process.StandardInput);
+
+                process.StandardInput.Close();
+
+                if (!process.WaitForExit(timeOutInMilliseconds))
                 {
-                    output.AppendLine(args.Data);
+                    if (!process.HasExited)
+                    {
+                        process.Kill();
+                    }
+
+                    throw new TimeoutException($"{process.StartInfo.FileName} {process.StartInfo.Arguments} timed out after {stopwatch.Elapsed.TotalSeconds:N2} seconds");
                 }
-            };
 
-            process.ErrorDataReceived += (_, args) =>
-            {
-                if (args.Data != null)
-                {
-                    error.AppendLine(args.Data);
-                }
-            };
-
-            process.Start();
-
-            inputAction?.Invoke(process.StandardInput);
-
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-
-            bool processExited = process.WaitForExit(timeOutInMilliseconds);
-
-            if (processExited)
-            {
+                // The application that is processing the asynchronous output should call the WaitForExit method to ensure that the output buffer has been flushed.
                 process.WaitForExit();
 
-                return new CommandRunnerResult(process, process.ExitCode, output.ToString(), error.ToString());
+                stopwatch.Stop();
+                testOutputHelper?.WriteLine($"└ Completed in {stopwatch.Elapsed.TotalSeconds:N2}s");
+
+                process.OutputDataReceived -= OnOutputDataReceived;
+                process.ErrorDataReceived -= OnErrorDataReceived;
+
+                testOutputHelper?.WriteLine(string.Empty);
+                exitCode = process.ExitCode;
             }
 
-            string extraInfo = string.Empty;
+            return new CommandRunnerResult(exitCode, output.ToString(), error.ToString());
 
-            if (!TryKill(process, out Exception processException))
+            void OnOutputDataReceived(object sender, DataReceivedEventArgs args)
             {
-                extraInfo = $"Failed to kill the process: {processException}";
+                if (args?.Data != null)
+                {
+                    testOutputHelper?.WriteLine($"│  {args.Data}");
+
+                    lock (output)
+                    {
+                        output.AppendLine(args.Data);
+                    }
+                }
             }
 
-            throw new TimeoutException($"{process.StartInfo.FileName} {process.StartInfo.Arguments} timed out after {TimeSpan.FromMilliseconds(timeOutInMilliseconds).TotalSeconds:N0} seconds:{Environment.NewLine}Output:{output}{Environment.NewLine}Error:{error}{Environment.NewLine}{extraInfo}");
-
-            bool TryKill(Process process, out Exception exception)
+            void OnErrorDataReceived(object sender, DataReceivedEventArgs args)
             {
-                exception = null;
-
-                try
+                if (args?.Data != null)
                 {
-                    process.Kill();
+                    testOutputHelper?.WriteLine($"│  {args.Data}");
 
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    exception = e;
-                }
-
-                try
-                {
-                    if (process.HasExited)
+                    lock (error)
                     {
-                        return true;
+                        error.AppendLine(args.Data);
                     }
-
-                    bool exited = process.WaitForExit(milliseconds: 10000);
-
-                    if (!exited)
-                    {
-                        exception = new TimeoutException("Timed out waiting for process to end after attempting to kill it.", innerException: exception);
-                    }
-
-                    return exited;
                 }
-                catch (Exception e)
-                {
-                    exception = e;
-                }
-
-                return false;
             }
         }
     }

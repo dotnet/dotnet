@@ -10,6 +10,7 @@ using NuGet.Configuration;
 using NuGet.Configuration.Test;
 using NuGet.Test.Utility;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Dotnet.Integration.Test
 {
@@ -17,10 +18,12 @@ namespace Dotnet.Integration.Test
     public class DotnetSourcesTests
     {
         private readonly DotnetIntegrationTestFixture _fixture;
+        private readonly ITestOutputHelper _testOutputHelper;
 
-        public DotnetSourcesTests(DotnetIntegrationTestFixture fixture)
+        public DotnetSourcesTests(DotnetIntegrationTestFixture fixture, ITestOutputHelper testOutputHelper)
         {
             _fixture = fixture;
+            _testOutputHelper = testOutputHelper;
         }
 
         [PlatformFact(Platform.Windows)]
@@ -45,7 +48,7 @@ namespace Dotnet.Integration.Test
                 };
 
                 // Act
-                var result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args));
+                var result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 var loadedSettings = Settings.LoadDefaultSettings(root: workingPath, configFileName: null, machineWideSettings: null);
@@ -81,7 +84,7 @@ namespace Dotnet.Integration.Test
                 };
 
                 // Act
-                var result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args));
+                var result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
 
                 // Assert
@@ -126,7 +129,7 @@ namespace Dotnet.Integration.Test
                 };
 
                 // Act
-                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args));
+                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 ISettings loadedSettings = Settings.LoadDefaultSettings(root: workingPath, configFileName: null, machineWideSettings: null);
@@ -184,7 +187,7 @@ namespace Dotnet.Integration.Test
                 };
 
                 // Act
-                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args));
+                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 ISettings loadedSettings = Settings.LoadDefaultSettings(root: configFileDirectory, configFileName: null, machineWideSettings: null);
@@ -232,7 +235,7 @@ namespace Dotnet.Integration.Test
                     null);
 
                 // Act
-                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args));
+                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 Assert.Equal(shouldWarn, result.Output.Contains(warningMessage));
@@ -278,7 +281,7 @@ namespace Dotnet.Integration.Test
                     null);
 
                 // Act
-                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args));
+                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 // http source with false allowInsecureConnections have warnings.
@@ -339,7 +342,7 @@ warn : Non-HTTPS access will be removed in a future version. Consider migrating 
                 Assert.False(source.IsEnabled);
 
                 // Act
-                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args));
+                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 settings = Settings.LoadDefaultSettings(
@@ -402,7 +405,7 @@ warn : Non-HTTPS access will be removed in a future version. Consider migrating 
                 Assert.True(source.IsEnabled);
 
                 // Act
-                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args));
+                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 settings = Settings.LoadDefaultSettings(
@@ -450,7 +453,7 @@ warn : Non-HTTPS access will be removed in a future version. Consider migrating 
                 };
 
                 // Act
-                var result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args));
+                var result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 var loadedSettings = Settings.LoadDefaultSettings(root: workingPath, configFileName: null, machineWideSettings: null);
@@ -500,7 +503,7 @@ warn : Non-HTTPS access will be removed in a future version. Consider migrating 
                 };
 
                 // Act
-                var result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args));
+                var result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 var settings = Settings.LoadDefaultSettings(
@@ -556,7 +559,7 @@ warn : Non-HTTPS access will be removed in a future version. Consider migrating 
                 };
 
                 // Act
-                var result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args));
+                var result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
@@ -595,7 +598,7 @@ warn : Non-HTTPS access will be removed in a future version. Consider migrating 
                 };
 
                 // Act
-                var result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args));
+                var result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
@@ -636,7 +639,7 @@ warn : Non-HTTPS access will be removed in a future version. Consider migrating 
 
                 // Act
                 var command = string.Join(" ", args);
-                var result = shouldSucceed ? _fixture.RunDotnetExpectSuccess(workingPath, command) : _fixture.RunDotnetExpectFailure(workingPath, command);
+                var result = shouldSucceed ? _fixture.RunDotnetExpectSuccess(workingPath, command, testOutputHelper: _testOutputHelper) : _fixture.RunDotnetExpectFailure(workingPath, command, testOutputHelper: _testOutputHelper);
 
                 // Assert
                 if (!shouldSucceed)
@@ -694,7 +697,7 @@ warn : Non-HTTPS access will be removed in a future version. Consider migrating 
                 };
 
                 // Act
-                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args));
+                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 Assert.True(result.Success, result.Output + " " + result.Errors);
@@ -756,7 +759,7 @@ warn : Non-HTTPS access will be removed in a future version. Consider migrating 
                 };
 
                 // Act
-                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args));
+                CommandRunnerResult result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 Assert.True(result.Success, result.Output + " " + result.Errors);
@@ -820,7 +823,7 @@ warn : Non-HTTPS access will be removed in a future version. Consider migrating 
 
                 // Act
                 var command = string.Join(" ", args);
-                CommandRunnerResult result = shouldSucceed ? _fixture.RunDotnetExpectSuccess(configFileDirectory, command) : _fixture.RunDotnetExpectFailure(configFileDirectory, command);
+                CommandRunnerResult result = shouldSucceed ? _fixture.RunDotnetExpectSuccess(configFileDirectory, command, testOutputHelper: _testOutputHelper) : _fixture.RunDotnetExpectFailure(configFileDirectory, command, testOutputHelper: _testOutputHelper);
 
                 // Assert error message
                 if (!shouldSucceed)
@@ -878,7 +881,7 @@ warn : Non-HTTPS access will be removed in a future version. Consider migrating 
                 Assert.False(source.IsEnabled);
 
                 // Main Act
-                var result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args));
+                var result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 settings = Settings.LoadDefaultSettings(
@@ -949,7 +952,7 @@ warn : Non-HTTPS access will be removed in a future version. Consider migrating 
                 Assert.True(source.IsEnabled);
 
                 // Main Act
-                var result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args));
+                var result = _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 settings = Settings.LoadDefaultSettings(
@@ -1007,7 +1010,7 @@ warn : Non-HTTPS access will be removed in a future version. Consider migrating 
                 };
 
                 // Act
-                var result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args));
+                var result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 // Ensure that no messages are shown with Verbosity as Quiet
@@ -1050,7 +1053,7 @@ warn : Non-HTTPS access will be removed in a future version. Consider migrating 
                 };
 
                 // Act
-                var result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args));
+                var result = _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args), testOutputHelper: _testOutputHelper);
 
                 // Assert
                 Assert.True(result.Output.StartsWith("Registered Sources:"));
@@ -1071,7 +1074,7 @@ warn : Non-HTTPS access will be removed in a future version. Consider migrating 
             using (var testDirectory = _fixture.CreateTestDirectory())
             {
                 // Act
-                var result = _fixture.RunDotnetExpectFailure(testDirectory, command);
+                var result = _fixture.RunDotnetExpectFailure(testDirectory, command, testOutputHelper: _testOutputHelper);
 
                 var commandSplit = command.Split(' ');
 

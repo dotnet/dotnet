@@ -8,24 +8,27 @@ using NuGet.Test.Utility;
 using NuGet.XPlat.FuncTest;
 using Test.Utility;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Dotnet.Integration.Test
 {
     [Collection(DotnetIntegrationCollection.Name)]
     public class DotnetRestoreTLSCertificateValidationTests
     {
-        private readonly DotnetIntegrationTestFixture _msbuildFixture;
+        private readonly DotnetIntegrationTestFixture _dotnetFixture;
+        private readonly ITestOutputHelper _testOutputHelper;
 
-        public DotnetRestoreTLSCertificateValidationTests(DotnetIntegrationTestFixture fixture)
+        public DotnetRestoreTLSCertificateValidationTests(DotnetIntegrationTestFixture fixture, ITestOutputHelper testOutputHelper)
         {
-            _msbuildFixture = fixture;
+            _dotnetFixture = fixture;
+            _testOutputHelper = testOutputHelper;
         }
 
         [PlatformFact(Platform.Windows)]
         public async Task DotnetRestore_withTLSCertificateValidationDisabled_DoesnotThrowException()
         {
             // Arrange
-            using var pathContext = _msbuildFixture.CreateSimpleTestPathContext();
+            using var pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             TestDirectory packageSourceDirectory = TestDirectory.Create();
             var packageA100 = new SimpleTestPackageContext("A", "1.0.0");
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -39,7 +42,7 @@ namespace Dotnet.Integration.Test
             pathContext.Settings.AddSource("https-feed", $"{tcpListenerServer.URI}v3/index.json", "disableTLSCertificateValidation", "true");
 
             // Act & Assert
-            _msbuildFixture.RunDotnetExpectSuccess(workingDirectory, $"restore {projectA.ProjectName}.csproj --configfile {pathContext.Settings.ConfigPath}");
+            _dotnetFixture.RunDotnetExpectSuccess(workingDirectory, $"restore {projectA.ProjectName}.csproj --configfile {pathContext.Settings.ConfigPath}", testOutputHelper: _testOutputHelper);
             tcpListenerServer.StopServer();
         }
 
@@ -47,7 +50,7 @@ namespace Dotnet.Integration.Test
         public async Task DotnetRestore_withTLSCertificateValidationEnabled_ThrowException()
         {
             // Arrange
-            using var pathContext = _msbuildFixture.CreateSimpleTestPathContext();
+            using var pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             TestDirectory packageSourceDirectory = TestDirectory.Create();
             var packageB100 = new SimpleTestPackageContext("myPackg", "1.0.0");
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -61,7 +64,7 @@ namespace Dotnet.Integration.Test
             pathContext.Settings.AddSource("https-feed", $"{tcpListenerServer.URI}v3/index.json");
 
             // Act & Assert
-            var _result = _msbuildFixture.RunDotnetExpectFailure(workingDirectory, $"restore {projectB.ProjectName}.csproj --configfile {pathContext.Settings.ConfigPath} -v d");
+            var _result = _dotnetFixture.RunDotnetExpectFailure(workingDirectory, $"restore {projectB.ProjectName}.csproj --configfile {pathContext.Settings.ConfigPath} -v d", testOutputHelper: _testOutputHelper);
             tcpListenerServer.StopServer();
         }
 
@@ -69,7 +72,7 @@ namespace Dotnet.Integration.Test
         public async Task DotnetRestore_withAnotherSourceTLSCertificateValidationDisbaled_ThrowException()
         {
             // Arrange
-            using var pathContext = _msbuildFixture.CreateSimpleTestPathContext();
+            using var pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             TestDirectory packageSourceDirectory = TestDirectory.Create();
             var packageB100 = new SimpleTestPackageContext("myPackg", "1.0.0");
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -86,7 +89,7 @@ namespace Dotnet.Integration.Test
             pathContext.Settings.AddSource("https-feed2", $"{tcpListenerServer2.URI}v3/index.json", "disableTLSCertificateValidation", "true");
 
             // Act & Assert
-            var _result = _msbuildFixture.RunDotnetExpectFailure(workingDirectory, $"restore {projectB.ProjectName}.csproj --configfile {pathContext.Settings.ConfigPath}");
+            var _result = _dotnetFixture.RunDotnetExpectFailure(workingDirectory, $"restore {projectB.ProjectName}.csproj --configfile {pathContext.Settings.ConfigPath}", testOutputHelper: _testOutputHelper);
             tcpListenerServer1.StopServer();
             tcpListenerServer2.StopServer();
         }
@@ -95,7 +98,7 @@ namespace Dotnet.Integration.Test
         public async Task DotnetRestore_withAnotherSourceTLSCertificateValidationEnabled_DoesNotThrowException()
         {
             // Arrange
-            using var pathContext = _msbuildFixture.CreateSimpleTestPathContext();
+            using var pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             TestDirectory packageSourceDirectory = TestDirectory.Create();
             var packageB100 = new SimpleTestPackageContext("myPackg", "1.0.0");
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -112,7 +115,7 @@ namespace Dotnet.Integration.Test
             pathContext.Settings.AddSource("https-feed2", $"{tcpListenerServer2.URI}v3/index.json", "disableTLSCertificateValidation", "true");
 
             // Act & Assert
-            var _result = _msbuildFixture.RunDotnetExpectSuccess(workingDirectory, $"restore {projectB.ProjectName}.csproj --configfile {pathContext.Settings.ConfigPath} --source {tcpListenerServer2.URI}v3/index.json");
+            var _result = _dotnetFixture.RunDotnetExpectSuccess(workingDirectory, $"restore {projectB.ProjectName}.csproj --configfile {pathContext.Settings.ConfigPath} --source {tcpListenerServer2.URI}v3/index.json", testOutputHelper: _testOutputHelper);
             tcpListenerServer1.StopServer();
             tcpListenerServer2.StopServer();
         }

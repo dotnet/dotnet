@@ -17,6 +17,7 @@ using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 using Test.Utility.Signing;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.CommandLine.FuncTest.Commands
 {
@@ -35,12 +36,14 @@ namespace NuGet.CommandLine.FuncTest.Commands
         private static readonly string NU3005 = "NU3005: {0}";
 
         private SignCommandTestFixture _testFixture;
+        private readonly ITestOutputHelper _testOutputHelper;
         private TrustedTestCert<TestCertificate> _trustedTestCert;
         private readonly string _nugetExePath;
 
-        public RestoreCommandSignPackagesTests(SignCommandTestFixture fixture)
+        public RestoreCommandSignPackagesTests(SignCommandTestFixture fixture, ITestOutputHelper testOutputHelper)
         {
             _testFixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
+            _testOutputHelper = testOutputHelper;
             _trustedTestCert = SigningTestUtility.GenerateTrustedTestCertificate();
             _nugetExePath = _testFixture.NuGetExePath;
         }
@@ -406,7 +409,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
             }
         }
 
-        public static CommandRunnerResult RunRestore(string nugetExe, SimpleTestPathContext pathContext, int expectedExitCode = 0, params string[] additionalArgs)
+        public CommandRunnerResult RunRestore(string nugetExe, SimpleTestPathContext pathContext, int expectedExitCode = 0, params string[] additionalArgs)
         {
             // Store the dg file for debugging
             var envVars = new Dictionary<string, string>()
@@ -428,7 +431,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 nugetExe,
                 pathContext.WorkingDirectory,
                 string.Join(" ", args),
-                environmentVariables: envVars);
+                environmentVariables: envVars,
+                testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.True(expectedExitCode == r.ExitCode, r.AllOutput);

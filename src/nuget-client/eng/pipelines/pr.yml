@@ -1,0 +1,259 @@
+parameters:
+- name: RunUnitTestsOnWindows
+  displayName: Run unit tests on Windows
+  type: boolean
+  default: true
+- name: RunFunctionalTestsOnWindows
+  displayName: Run functional tests on Windows
+  type: boolean
+  default: true
+- name: RunUnitTestsOnLinux
+  displayName: Run unit tests on Linux
+  type: boolean
+  default: true
+- name: RunFunctionalTestsOnLinux
+  displayName: Run functional tests on Linux
+  type: boolean
+  default: true
+- name: RunUnitTestsOnMacOS
+  displayName: Run unit tests on MacOS
+  type: boolean
+  default: true
+- name: RunFunctionalTestsOnMacOS
+  displayName: Run functional tests on MacOS
+  type: boolean
+  default: true
+
+variables:
+  DOTNET_NOLOGO: 1
+  NUGET_EXPERIMENTAL_CHAIN_BUILD_RETRY_POLICY: 3,1000
+  SkipSigning: true
+  CI: true
+
+trigger:
+  branches:
+    include:
+    - dev
+  paths:
+    exclude:
+    - '*.md'
+
+pr:
+  branches:
+    include:
+    - '*'
+  paths:
+    exclude:
+    - '*.md'
+
+stages:
+- ${{ if eq(parameters.RunUnitTestsOnWindows, true) }}:
+  - stage:
+    displayName: Unit Tests on Windows (.NET Framework 4.7.2)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: Unit Tests on Windows (.NET Framework 4.7.2)
+        osName: Windows
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          agentPool: NetCore-Public
+          agentDemands: ImageOverride -equals Windows.VS2022Preview.Amd64.Open
+        ${{ else }}:
+          agentPool: VSEngSS-MicroBuild2022-1ES
+        testType: Unit
+        testTargetFramework: net472
+
+- ${{ if eq(parameters.RunUnitTestsOnWindows, true) }}:
+  - stage:
+    displayName: Unit Tests on Windows (.NET 8.0)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: Unit Tests on Windows (.NET 8.0)
+        osName: Windows
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          agentPool: NetCore-Public
+          agentDemands: ImageOverride -equals Windows.VS2022Preview.Amd64.Open
+        ${{ else }}:
+          agentPool: VSEngSS-MicroBuild2022-1ES
+        testType: Unit
+        testTargetFramework: net8.0
+
+- ${{ if eq(parameters.RunUnitTestsOnWindows, true) }}:
+  - stage:
+    displayName: Unit Tests on Windows (.NET Core 3.1)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: Unit Tests on Windows (.NET Core 3.1)
+        osName: Windows
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          agentPool: NetCore-Public
+          agentDemands: ImageOverride -equals Windows.VS2022Preview.Amd64.Open
+        ${{ else }}:
+          agentPool: VSEngSS-MicroBuild2022-1ES
+        testType: Unit
+        testTargetFramework: netcoreapp3.1
+
+- ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
+  - stage:
+    displayName: Functional Tests on Windows (.NET Framework 4.7.2)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: Functional Tests on Windows (.NET Framework 4.7.2)
+        osName: Windows
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          agentPool: NetCore-Public
+          agentDemands: ImageOverride -equals Windows.VS2022Preview.Amd64.Open
+        ${{ else }}:
+          agentPool: VSEngSS-MicroBuild2022-1ES
+        testType: Functional
+        testTargetFramework: net472
+        timeoutInMinutes: 60
+
+- ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
+  - stage:
+    displayName: Functional Tests on Windows (.NET 8.0)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: Functional Tests on Windows (.NET 8.0)
+        osName: Windows
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          agentPool: NetCore-Public
+          agentDemands: ImageOverride -equals Windows.VS2022Preview.Amd64.Open
+        ${{ else }}:
+          agentPool: VSEngSS-MicroBuild2022-1ES
+        testType: Functional
+        testTargetFramework: net8.0
+        timeoutInMinutes: 60
+
+- ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
+  - stage:
+    displayName: Functional Tests on Windows (.NET Core 3.1)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: Functional Tests on Windows (.NET Core 3.1)
+        osName: Windows
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          agentPool: NetCore-Public
+          agentDemands: ImageOverride -equals Windows.VS2022Preview.Amd64.Open
+        ${{ else }}:
+          agentPool: VSEngSS-MicroBuild2022-1ES
+        testType: Functional
+        testTargetFramework: netcoreapp3.1
+        timeoutInMinutes: 60
+
+- ${{ if eq(parameters.RunUnitTestsOnLinux, true) }}:
+  - stage:
+    displayName: Unit Tests on Linux (.NET 8.0)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: Unit Tests on Linux (.NET 8.0)
+        osName: Linux
+        vmImage: ubuntu-latest
+        testType: Unit
+        testTargetFramework: net8.0
+
+- ${{ if eq(parameters.RunUnitTestsOnLinux, true) }}:
+  - stage:
+    displayName: Unit Tests on Linux (.NET Core 3.1)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: Unit Tests on Linux (.NET Core 3.1)
+        osName: Linux
+        vmImage: ubuntu-latest
+        testType: Unit
+        testTargetFramework: netcoreapp3.1
+
+- ${{ if eq(parameters.RunFunctionalTestsOnLinux, true) }}:
+  - stage:
+    displayName: Functional Tests on Linux (.NET 8.0)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: Functional Tests on Linux (.NET 8.0)
+        osName: Linux
+        vmImage: ubuntu-latest
+        testType: Functional
+        testTargetFramework: net8.0
+        timeoutInMinutes: 60
+
+- ${{ if eq(parameters.RunFunctionalTestsOnLinux, true) }}:
+  - stage:
+    displayName: Functional Tests on Linux (.NET Core 3.1)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: Functional Tests on Linux (.NET Core 3.1)
+        osName: Linux
+        vmImage: ubuntu-latest
+        testType: Functional
+        testTargetFramework: netcoreapp3.1
+
+- ${{ if eq(parameters.RunUnitTestsOnMacOS, true) }}:
+  - stage:
+    displayName: Unit Tests on MacOS (.NET 8.0)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: Unit Tests on MacOS (.NET 8.0)
+        osName: MacOS
+        vmImage: macos-latest
+        testType: Unit
+        testTargetFramework: net8.0
+
+- ${{ if eq(parameters.RunUnitTestsOnMacOS, true) }}:
+  - stage:
+    displayName: Unit Tests on MacOS (.NET Core 3.1)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: Unit Tests on MacOS (.NET Core 3.1)
+        osName: MacOS
+        vmImage: macos-latest
+        testType: Unit
+        testTargetFramework: netcoreapp3.1
+
+- ${{ if eq(parameters.RunFunctionalTestsOnMacOS, true) }}:
+  - stage:
+    displayName: Functional Tests on MacOS (.NET 8.0)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: Functional Tests on MacOS (.NET 8.0)
+        osName: MacOS
+        vmImage: macos-latest
+        testType: Functional
+        testTargetFramework: net8.0
+        timeoutInMinutes: 60
+
+- ${{ if eq(parameters.RunFunctionalTestsOnMacOS, true) }}:
+  - stage:
+    displayName: Functional Tests on MacOS (.NET Core 3.1)
+    dependsOn: []
+    jobs:
+    - template: pr.job.yml
+      parameters:
+        displayName: Functional Tests on MacOS (.NET Core 3.1)
+        osName: MacOS
+        vmImage: macos-latest
+        testType: Functional
+        testTargetFramework: netcoreapp3.1

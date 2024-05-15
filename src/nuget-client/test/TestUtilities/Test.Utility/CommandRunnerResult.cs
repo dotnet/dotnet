@@ -8,8 +8,6 @@ namespace NuGet.Test.Utility
 {
     public class CommandRunnerResult
     {
-        public Process Process { get; }
-
         /// <summary>
         /// Refers to Exit Status Code of the command execution result
         /// </summary>
@@ -32,9 +30,8 @@ namespace NuGet.Test.Utility
         /// </summary>
         public string AllOutput => Output + Environment.NewLine + Errors;
 
-        internal CommandRunnerResult(Process process, int exitCode, string output, string error)
+        internal CommandRunnerResult(int exitCode, string output, string error)
         {
-            Process = process;
             ExitCode = exitCode;
             Output = output;
             Errors = error;

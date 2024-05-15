@@ -105,9 +105,11 @@ echo "Initializing submodules..."
 git submodule init
 git submodule update
 
-echo "Restoring NuGet packages..."
-dotnet msbuild build/build.proj /Target:Restore "/ConsoleLoggerParameters:Verbosity=Minimal;Summary;ForceNoAlign" /MaxCPUCount /NodeReuse:false
-if [ $? -ne 0 ]; then
-    echo "Restore packages failed!!"
-    return 1
+if [ "$RESTORE_NUGET_PACKAGES" != "false" ]; then
+    echo "Restoring NuGet packages..."
+    dotnet msbuild build/build.proj /Target:Restore "/ConsoleLoggerParameters:Verbosity=Minimal;Summary;ForceNoAlign" /MaxCPUCount /NodeReuse:false
+    if [ $? -ne 0 ]; then
+        echo "Restore packages failed!!"
+        return 1
+    fi
 fi

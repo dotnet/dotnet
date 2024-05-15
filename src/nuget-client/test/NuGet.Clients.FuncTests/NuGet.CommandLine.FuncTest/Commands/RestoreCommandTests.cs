@@ -17,6 +17,7 @@ using NuGet.ProjectModel;
 using NuGet.Protocol;
 using NuGet.Test.Utility;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.CommandLine.FuncTest.Commands
 {
@@ -24,6 +25,12 @@ namespace NuGet.CommandLine.FuncTest.Commands
     {
         private const int _successExitCode = 0;
         private const int _failureExitCode = 1;
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public RestoreCommandTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
 
         [Fact]
         public async Task Restore_LegacyPackageReference_WithNuGetLockFile()
@@ -950,7 +957,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
             }
         }
 
-        public static CommandRunnerResult RunRestore(SimpleTestPathContext pathContext, int expectedExitCode = 0, params string[] additionalArguments)
+        public CommandRunnerResult RunRestore(SimpleTestPathContext pathContext, int expectedExitCode = 0, params string[] additionalArguments)
         {
             var nugetExe = Util.GetNuGetExePath();
 
@@ -975,7 +982,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 nugetExe,
                 pathContext.WorkingDirectory.Path,
                 string.Join(" ", args),
-                environmentVariables: envVars);
+                environmentVariables: envVars,
+                testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.True(expectedExitCode == r.ExitCode, r.AllOutput);

@@ -7,11 +7,19 @@ using NuGet.Configuration.Test;
 using NuGet.Test.Utility;
 using Test.Utility;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.CommandLine.FuncTest.Commands
 {
     public class SearchCommandTest
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public SearchCommandTest(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
         [Fact]
         public void SearchCommand_TargetEndpointTest()
         {
@@ -24,7 +32,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    testOutputHelper: _testOutputHelper);
 
                 string index = $@"
                 {{
@@ -111,7 +120,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    testOutputHelper: _testOutputHelper);
 
                 server.Stop();
 
@@ -133,7 +143,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    testOutputHelper: _testOutputHelper);
 
                 string index = $@"
                 {{
@@ -222,7 +233,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    testOutputHelper: _testOutputHelper);
 
                 server.Stop();
 
@@ -248,7 +260,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    testOutputHelper: _testOutputHelper);
 
                 string index = $@"
                 {{
@@ -337,7 +350,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    testOutputHelper: _testOutputHelper);
 
                 server.Stop();
 
@@ -363,7 +377,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    testOutputHelper: _testOutputHelper);
 
                 string index = $@"
                 {{
@@ -452,7 +467,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    testOutputHelper: _testOutputHelper);
 
                 server.Stop();
 
@@ -478,7 +494,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    testOutputHelper: _testOutputHelper);
 
                 string index = $@"
                 {{
@@ -619,7 +636,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    testOutputHelper: _testOutputHelper);
 
                 server.Stop();
 
@@ -641,7 +659,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    testOutputHelper: _testOutputHelper);
 
                 string index = $@"
                 {{
@@ -730,7 +749,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    testOutputHelper: _testOutputHelper);
 
                 server.Stop();
 
@@ -752,7 +772,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    testOutputHelper: _testOutputHelper);
 
                 string index = $@"
                 {{
@@ -841,7 +862,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    testOutputHelper: _testOutputHelper);
 
                 server.Stop();
 
@@ -863,7 +885,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    testOutputHelper: _testOutputHelper);
 
                 string index = $@"
                 {{
@@ -911,7 +934,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    testOutputHelper: _testOutputHelper);
 
                 server.Stop();
 
@@ -933,7 +957,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
             CommandRunner.Run(
                 nugetexe,
                 config.WorkingDirectory,
-                $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    testOutputHelper: _testOutputHelper);
 
             string index = $@"
                 {{
@@ -981,7 +1006,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
             CommandRunnerResult result = CommandRunner.Run(
                 nugetexe,
                 config.WorkingDirectory,
-                string.Join(" ", args));
+                string.Join(" ", args),
+                    testOutputHelper: _testOutputHelper);
 
             server.Stop();
 
@@ -1097,7 +1123,8 @@ $@"<configuration>
             CommandRunnerResult result = CommandRunner.Run(
                 nugetexe,
                 config.WorkingDirectory,
-                string.Join(" ", args));
+                string.Join(" ", args),
+                    testOutputHelper: _testOutputHelper);
 
             server1.Stop();
             server2.Stop();

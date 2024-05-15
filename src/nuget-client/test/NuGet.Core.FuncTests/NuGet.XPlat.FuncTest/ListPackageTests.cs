@@ -21,12 +21,20 @@ using NuGet.Protocol;
 using NuGet.Test.Utility;
 using Test.Utility;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.XPlat.FuncTest
 {
     [Collection("NuGet XPlat Test Collection")]
     public class ListPackageTests
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public ListPackageTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
         [Fact]
         public void BasicListPackageParsing_Interactive()
         {
@@ -200,10 +208,10 @@ namespace NuGet.XPlat.FuncTest
             HttpHandlerResourceV3.CredentialService = new Lazy<ICredentialService>(() => mockedCredentialService.Object);
 
             // List package command requires restore to be run before it can list packages.
-            await RestoreProjectsAsync(pathContext, projectA, projectB);
+            await RestoreProjectsAsync(pathContext, projectA, projectB, _testOutputHelper);
 
             // Act
-            var logger = new TestLogger();
+            var logger = new TestLogger(_testOutputHelper);
             ListPackageCommandRunner listPackageCommandRunner = new();
             var packageRefArgs = new ListPackageArgs(
                                         path: Path.Combine(pathContext.SolutionRoot, "solution.sln"),
@@ -249,25 +257,26 @@ namespace NuGet.XPlat.FuncTest
                     });
             }
 
-            static async Task RestoreProjectsAsync(SimpleTestPathContext pathContext, SimpleTestProjectContext projectA, SimpleTestProjectContext projectB)
+            static async Task RestoreProjectsAsync(SimpleTestPathContext pathContext, SimpleTestProjectContext projectA, SimpleTestProjectContext projectB, ITestOutputHelper testOutputHelper)
             {
                 var settings = Settings.LoadDefaultSettings(Path.GetDirectoryName(pathContext.SolutionRoot), Path.GetFileName(pathContext.NuGetConfig), null);
                 var packageSourceProvider = new PackageSourceProvider(settings);
 
                 var sources = packageSourceProvider.LoadPackageSources();
 
-                await RestoreProjectAsync(settings, pathContext, projectA, sources);
-                await RestoreProjectAsync(settings, pathContext, projectB, sources);
+                await RestoreProjectAsync(settings, pathContext, projectA, sources, testOutputHelper);
+                await RestoreProjectAsync(settings, pathContext, projectB, sources, testOutputHelper);
             }
 
             static async Task RestoreProjectAsync(ISettings settings,
                 SimpleTestPathContext pathContext,
                 SimpleTestProjectContext project,
-                IEnumerable<PackageSource> packageSources)
+                IEnumerable<PackageSource> packageSources,
+                ITestOutputHelper testOutputHelper)
             {
                 var packageSpec = ProjectTestHelpers.WithSettingsBasedRestoreMetadata(project.PackageSpec, settings);
 
-                var logger = new TestLogger();
+                var logger = new TestLogger(testOutputHelper);
 
                 var command = new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec));
                 var restoreResult = await command.ExecuteAsync(CancellationToken.None);

@@ -13,6 +13,7 @@ using NuGet.Test.Utility;
 using NuGet.XPlat.FuncTest;
 using Test.Utility;
 using Xunit;
+using Xunit.Abstractions;
 using Strings = NuGet.CommandLine.XPlat.Strings;
 
 namespace Dotnet.Integration.Test
@@ -23,10 +24,12 @@ namespace Dotnet.Integration.Test
         private static readonly string ProjectName = "test_project_listpkg";
 
         private readonly DotnetIntegrationTestFixture _fixture;
+        private readonly ITestOutputHelper _testOutputHelper;
 
-        public DotnetListPackageTests(DotnetIntegrationTestFixture fixture)
+        public DotnetListPackageTests(DotnetIntegrationTestFixture fixture, ITestOutputHelper testOutputHelper)
         {
             _fixture = fixture;
+            _testOutputHelper = testOutputHelper;
         }
 
         [PlatformFact(Platform.Windows)]
@@ -45,13 +48,16 @@ namespace Dotnet.Integration.Test
                     packageX);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"add {projectA.ProjectPath} package packageX --version 1.0.0 --no-restore");
+                    $"add {projectA.ProjectPath} package packageX --version 1.0.0 --no-restore",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"restore {projectA.ProjectName}.csproj");
+                    $"restore {projectA.ProjectName}.csproj",
+                    testOutputHelper: _testOutputHelper);
 
                 CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package");
+                    $"list {projectA.ProjectPath} package",
+                    testOutputHelper: _testOutputHelper);
 
                 Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "packageX1.0.01.0.0"));
             }
@@ -74,10 +80,12 @@ namespace Dotnet.Integration.Test
 
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"add {projectA.ProjectPath} package packageX --no-restore");
+                    $"add {projectA.ProjectPath} package packageX --no-restore",
+                    testOutputHelper: _testOutputHelper);
 
                 CommandRunnerResult listResult = _fixture.RunDotnetExpectFailure(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package");
+                    $"list {projectA.ProjectPath} package",
+                    testOutputHelper: _testOutputHelper);
 
                 Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "No assets file was found".Replace(" ", "")));
             }
@@ -119,10 +127,12 @@ namespace Dotnet.Integration.Test
                 File.WriteAllText(Path.Combine(pathContext.SolutionRoot, ProjectName, string.Concat(ProjectName, ".csproj")), projectContent);
 
                 _fixture.RunDotnetExpectSuccess(Path.Combine(pathContext.SolutionRoot, projectA.ProjectName),
-                    $"restore {projectA.ProjectName}.csproj");
+                    $"restore {projectA.ProjectName}.csproj",
+                    testOutputHelper: _testOutputHelper);
 
                 CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package");
+                    $"list {projectA.ProjectPath} package",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert Requested version is [0.1.0,), but 1.0.0 was resolved
                 Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "[0.1.0,)"));
@@ -168,10 +178,12 @@ namespace Dotnet.Integration.Test
                 File.WriteAllText(Path.Combine(pathContext.SolutionRoot, ProjectName, string.Concat(ProjectName, ".csproj")), projectContent);
 
                 _fixture.RunDotnetExpectSuccess(Path.Combine(pathContext.SolutionRoot, projectA.ProjectName),
-                    $"restore {projectA.ProjectName}.csproj");
+                    $"restore {projectA.ProjectName}.csproj",
+                    testOutputHelper: _testOutputHelper);
 
                 CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package");
+                    $"list {projectA.ProjectPath} package",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert Resolved version is 1.0.0 and Requested version is 1.0.0, since it was overridden by VersionOverride tag
                 Assert.False(ContainsIgnoringSpaces(listResult.AllOutput, "2.0.0"));
@@ -218,10 +230,12 @@ namespace Dotnet.Integration.Test
                 var projectFilePath = Path.Combine(projectDirectory, $"{ProjectName}.csproj");
 
                 _fixture.RunDotnetExpectSuccess(projectDirectory,
-                    $"restore {projectFilePath}");
+                    $"restore {projectFilePath}",
+                    testOutputHelper: _testOutputHelper);
 
                 CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package");
+                    $"list {projectA.ProjectPath} package",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert Requested version is 0.1.0, but the resolved version is 1.0.0
                 Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "0.1.0"));
@@ -249,18 +263,22 @@ namespace Dotnet.Integration.Test
 
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"add {projectA.ProjectPath} package packageX --no-restore");
+                    $"add {projectA.ProjectPath} package packageX --no-restore",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"restore {projectA.ProjectName}.csproj");
+                    $"restore {projectA.ProjectName}.csproj",
+                    testOutputHelper: _testOutputHelper);
 
                 CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package");
+                    $"list {projectA.ProjectPath} package",
+                    testOutputHelper: _testOutputHelper);
 
                 Assert.False(ContainsIgnoringSpaces(listResult.AllOutput, "packageY"));
 
                 listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package --include-transitive");
+                    $"list {projectA.ProjectPath} package --include-transitive",
+                    testOutputHelper: _testOutputHelper);
 
                 Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "packageY"));
 
@@ -300,31 +318,38 @@ namespace Dotnet.Integration.Test
                     packageT);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"add {projectA.ProjectPath} reference {projectB.ProjectPath}");
+                    $"add {projectA.ProjectPath} reference {projectB.ProjectPath}",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"add {projectB.ProjectPath} reference {projectC.ProjectPath}");
+                    $"add {projectB.ProjectPath} reference {projectC.ProjectPath}",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectB.ProjectPath).FullName,
-                    $"add {projectA.ProjectPath} package packageX --no-restore");
+                    $"add {projectA.ProjectPath} package packageX --no-restore",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectB.ProjectPath).FullName,
-                    $"add {projectB.ProjectPath} package packageY --no-restore");
+                    $"add {projectB.ProjectPath} package packageY --no-restore",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectB.ProjectPath).FullName,
-                    $"add {projectC.ProjectPath} package packageZ --no-restore");
+                    $"add {projectC.ProjectPath} package packageZ --no-restore",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
                     $"restore {projectA.ProjectName}.csproj");
 
                 CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package{args}");
+                    $"list {projectA.ProjectPath} package{args}",
+                    testOutputHelper: _testOutputHelper);
 
                 Assert.False(ContainsIgnoringSpaces(listResult.AllOutput, projectB.ProjectName));
                 Assert.False(ContainsIgnoringSpaces(listResult.AllOutput, projectC.ProjectName));
 
                 listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package{args} --include-transitive");
+                    $"list {projectA.ProjectPath} package{args} --include-transitive",
+                    testOutputHelper: _testOutputHelper);
 
                 Assert.False(ContainsIgnoringSpaces(listResult.AllOutput, projectB.ProjectName));
                 Assert.False(ContainsIgnoringSpaces(listResult.AllOutput, projectC.ProjectName));
@@ -354,13 +379,16 @@ namespace Dotnet.Integration.Test
 
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"add {projectA.ProjectPath} package packageX --no-restore");
+                    $"add {projectA.ProjectPath} package packageX --no-restore",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"restore {projectA.ProjectName}.csproj");
+                    $"restore {projectA.ProjectName}.csproj",
+                    testOutputHelper: _testOutputHelper);
 
                 CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package {args}");
+                    $"list {projectA.ProjectPath} package {args}",
+                    testOutputHelper: _testOutputHelper);
 
                 Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, shouldInclude.Replace(" ", "")));
 
@@ -389,13 +417,16 @@ namespace Dotnet.Integration.Test
 
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"add {projectA.ProjectPath} package packageX --no-restore");
+                    $"add {projectA.ProjectPath} package packageX --no-restore",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"restore {projectA.ProjectName}.csproj");
+                    $"restore {projectA.ProjectName}.csproj",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectFailure(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package --framework net46 --framework invalidFramework");
+                    $"list {projectA.ProjectPath} package --framework net46 --framework invalidFramework",
+                    testOutputHelper: _testOutputHelper);
             }
         }
 
@@ -407,7 +438,8 @@ namespace Dotnet.Integration.Test
                 var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net46");
 
                 var listResult = _fixture.RunDotnetExpectFailure(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package --deprecated --outdated");
+                    $"list {projectA.ProjectPath} package --deprecated --outdated",
+                    testOutputHelper: _testOutputHelper);
 
                 Assert.Contains(string.Format(Strings.ListPkg_InvalidOptions, "--outdated", "--deprecated"), listResult.Errors);
             }
@@ -424,6 +456,7 @@ namespace Dotnet.Integration.Test
                 var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net461");
 
                 projectA.Properties.Add("RuntimeIdentifiers", "win;win-x86;win-x64");
+                projectA.Properties.Add("AutomaticallyUseReferenceAssemblyPackages", bool.FalseString);
 
                 var packageX = XPlatTestUtils.CreatePackage();
 
@@ -438,17 +471,20 @@ namespace Dotnet.Integration.Test
                     packageX);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"add {projectA.ProjectPath} package packageX --no-restore");
+                    $"add {projectA.ProjectPath} package packageX --no-restore",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"restore {projectA.ProjectName}.csproj");
+                    $"restore {projectA.ProjectName}.csproj",
+                    testOutputHelper: _testOutputHelper);
 
                 //the assets file should generate 4 sections in Targets: 1 for TFM only , and 3 for TFM + RID combinations 
                 var assetsFile = projectA.AssetsFile;
                 Assert.Equal(4, assetsFile.Targets.Count);
 
                 CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package");
+                    $"list {projectA.ProjectPath} package",
+                    testOutputHelper: _testOutputHelper);
 
                 //make sure there is no duplicate in output
                 Assert.True(NoDuplicateSection(listResult.AllOutput), listResult.AllOutput);
@@ -482,13 +518,16 @@ namespace Dotnet.Integration.Test
                 }
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"add {projectA.ProjectPath} package packageX --version {currentVersion} --no-restore");
+                    $"add {projectA.ProjectPath} package packageX --version {currentVersion} --no-restore",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"restore {projectA.ProjectName}.csproj");
+                    $"restore {projectA.ProjectName}.csproj",
+                    testOutputHelper: _testOutputHelper);
 
                 CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package --outdated {args}");
+                    $"list {projectA.ProjectPath} package --outdated {args}",
+                    testOutputHelper: _testOutputHelper);
 
                 Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, $"packageX{currentVersion}{currentVersion}{expectedVersion}"));
 
@@ -510,10 +549,12 @@ namespace Dotnet.Integration.Test
                         packageX);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"add {projectA.ProjectPath} package packageX --version 1.0.0 --no-restore");
+                    $"add {projectA.ProjectPath} package packageX --version 1.0.0 --no-restore",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"restore {projectA.ProjectName}.csproj");
+                    $"restore {projectA.ProjectName}.csproj",
+                    testOutputHelper: _testOutputHelper);
 
                 foreach (var nupkg in Directory.EnumerateDirectories(pathContext.PackageSource))
                 {
@@ -522,7 +563,8 @@ namespace Dotnet.Integration.Test
 
                 // Act
                 CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package --outdated");
+                    $"list {projectA.ProjectPath} package --outdated",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 string[] lines = listResult.AllOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
@@ -552,17 +594,21 @@ namespace Dotnet.Integration.Test
                         packageY2);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"add {projectA.ProjectPath} package packageX --version {currentVersion} --no-restore");
+                    $"add {projectA.ProjectPath} package packageX --version {currentVersion} --no-restore",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"add {projectA.ProjectPath} package packageY --version 1.0.0 --no-restore");
+                    $"add {projectA.ProjectPath} package packageY --version 1.0.0 --no-restore",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"restore {projectA.ProjectName}.csproj");
+                    $"restore {projectA.ProjectName}.csproj",
+                    testOutputHelper: _testOutputHelper);
 
                 // Act
                 CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package --outdated {args}");
+                    $"list {projectA.ProjectPath} package --outdated {args}",
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 string[] lines = listResult.AllOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
@@ -600,13 +646,16 @@ namespace Dotnet.Integration.Test
                     packageX);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"add {projectA.ProjectPath} package packageX --version 1.0.0 --no-restore");
+                    $"add {projectA.ProjectPath} package packageX --version 1.0.0 --no-restore",
+                    testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"restore {projectA.ProjectName}.csproj");
+                    $"restore {projectA.ProjectName}.csproj",
+                    testOutputHelper: _testOutputHelper);
 
                 CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package");
+                    $"list {projectA.ProjectPath} package",
+                    testOutputHelper: _testOutputHelper);
 
                 Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "packageX1.0.01.0.0"));
             }
@@ -635,13 +684,15 @@ namespace Dotnet.Integration.Test
                     .Build(_fixture, pathContext.SolutionRoot);
 
                 var workingDirectory = Path.Combine(pathContext.SolutionRoot, ProjectName);
-                _fixture.RunDotnetExpectSuccess(workingDirectory, $"restore {ProjectName}.csproj");
+                _fixture.RunDotnetExpectSuccess(workingDirectory, $"restore {ProjectName}.csproj",
+                    testOutputHelper: _testOutputHelper);
 
                 // Act
                 CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(
                     workingDirectory,
                     $"list package --outdated --source {source} {args}",
-                    environmentVariables: emptyHttpCache);
+                    environmentVariables: emptyHttpCache,
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 if (showsHttp)
@@ -683,10 +734,10 @@ namespace Dotnet.Integration.Test
             mockServer.Start();
             pathContext.Settings.AddSource("http-source", mockServer.ServiceIndexUri, allowInsecureConnections);
 
-            _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package A --version 1.0.0");
+            _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package A --version 1.0.0", testOutputHelper: _testOutputHelper);
 
             // Act
-            CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"list package --outdated");
+            CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"list package --outdated", testOutputHelper: _testOutputHelper);
             mockServer.Stop();
 
             // Assert

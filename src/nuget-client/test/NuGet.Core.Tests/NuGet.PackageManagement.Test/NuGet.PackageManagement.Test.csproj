@@ -3,6 +3,8 @@
     <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
     <UseParallelXunit>true</UseParallelXunit>
     <Description>Unit tests for NuGet.PackageManagement.</Description>
+    <TestProjectType Condition="'$(IsXPlat)' != 'true'">Functional</TestProjectType>
+    <TestProjectType Condition="'$(IsXPlat)' == 'true'">None</TestProjectType>
   </PropertyGroup>
 
   <ItemGroup>

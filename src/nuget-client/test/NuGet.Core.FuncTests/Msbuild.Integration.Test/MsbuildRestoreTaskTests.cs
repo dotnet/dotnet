@@ -17,16 +17,19 @@ using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Msbuild.Integration.Test
 {
     public class MsbuildRestoreTaskTests : IClassFixture<MsbuildIntegrationTestFixture>
     {
         private MsbuildIntegrationTestFixture _msbuildFixture;
+        private readonly ITestOutputHelper _testOutputHelper;
 
-        public MsbuildRestoreTaskTests(MsbuildIntegrationTestFixture fixture)
+        public MsbuildRestoreTaskTests(MsbuildIntegrationTestFixture fixture, ITestOutputHelper testOutputHelper)
         {
             _msbuildFixture = fixture;
+            _testOutputHelper = testOutputHelper;
         }
 
         [PlatformTheory(Platform.Windows)]
@@ -73,7 +76,7 @@ namespace Msbuild.Integration.Test
 
                 // Act
                 string args = $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore}";
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, args, ignoreExitCode: true);
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, args, ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
 
                 // Assert
@@ -123,7 +126,7 @@ namespace Msbuild.Integration.Test
                     packageX);
 
                 // Act
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}", ignoreExitCode: true);
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
 
                 // Assert
@@ -179,7 +182,7 @@ namespace Msbuild.Integration.Test
                     packageX);
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true", ignoreExitCode: true);
+                CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 // Assert
                 Assert.Equal(1, result.ExitCode);
@@ -234,7 +237,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     packageX);
 
                 // Act
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}", ignoreExitCode: true);
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
 
                 // Assert
@@ -293,7 +296,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     packageX);
 
                 // Act
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {projectA.ProjectPath}", ignoreExitCode: true);
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
 
                 // Assert
@@ -359,7 +362,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     packageX);
 
                 // Act
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {projectA.ProjectPath} /p:RestorePackagesConfig=true", ignoreExitCode: true);
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {projectA.ProjectPath} /p:RestorePackagesConfig=true", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
 
                 // Assert
@@ -421,7 +424,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
                 var pkgPath = Path.Combine(pathContext.SolutionRoot, "packages", "x.1.0.0");
                 // Act
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true", ignoreExitCode: true);
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
 
                 // Assert
@@ -481,7 +484,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     packageX);
 
                 // Restore the project with a PackageReference which generates assets
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true /p:RestoreCleanupAssetsForUnsupportedProjects={cleanupAssetsForUnsupportedProjects} {projectA.ProjectPath}", ignoreExitCode: true);
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true /p:RestoreCleanupAssetsForUnsupportedProjects={cleanupAssetsForUnsupportedProjects} {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 Assert.True(result.ExitCode == 0, result.AllOutput);
 
@@ -508,7 +511,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 projectA.Save();
 
                 // Restore the project with a PackageReference which generates assets
-                result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true /p:RestoreCleanupAssetsForUnsupportedProjects={cleanupAssetsForUnsupportedProjects} {projectA.ProjectPath}", ignoreExitCode: true);
+                result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true /p:RestoreCleanupAssetsForUnsupportedProjects={cleanupAssetsForUnsupportedProjects} {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 // Assert
                 Assert.True(result.ExitCode == 0, result.AllOutput);
@@ -571,7 +574,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var projectOutputTimestamps = new Dictionary<string, DateTime>();
 
                 // Restore the project with a PackageReference which generates assets
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath}", ignoreExitCode: true);
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
                 result.Success.Should().BeTrue(because: result.AllOutput);
 
                 foreach (var asset in projectOutputPaths)
@@ -582,7 +585,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 }
 
                 // Restore the project with a PackageReference which generates assets
-                result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true {project.ProjectPath}", ignoreExitCode: true);
+                result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true {project.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 result.Success.Should().BeTrue(because: result.AllOutput);
 
@@ -593,7 +596,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     fileInfo.LastWriteTimeUtc.Should().Be(projectOutputTimestamps[asset]);
                 }
 
-                result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath}", ignoreExitCode: true);
+                result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
                 result.Success.Should().BeTrue(result.AllOutput);
             }
         }
@@ -642,7 +645,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     packageX);
 
                 // Restore the project with a PackageReference which generates assets
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true {project.ProjectPath}", ignoreExitCode: true);
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true {project.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 result.Success.Should().BeFalse(because: result.AllOutput);
 
@@ -698,7 +701,8 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 // Restore the project with a PackageReference which generates assets
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath} /p:RestoreSources=\"{relativePath}\"" +
                     (isStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=true" : string.Empty),
-                    ignoreExitCode: true);
+                    ignoreExitCode: true,
+                    testOutputHelper: _testOutputHelper);
                 result.Success.Should().BeTrue(because: result.AllOutput);
 
                 foreach (var asset in projectOutputPaths)
@@ -727,7 +731,8 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 solution.Create(pathContext.SolutionRoot);
 
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestoreUseStaticGraphEvaluation=true",
-                    ignoreExitCode: true);
+                    ignoreExitCode: true,
+                    testOutputHelper: _testOutputHelper);
 
                 result.Success.Should().BeTrue(because: result.AllOutput);
                 result.AllOutput.Should().Contain("The solution did not have any projects to restore, ensure that all projects are known to " +
@@ -760,7 +765,8 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 File.WriteAllText(solution.SolutionPath, newSlnFileContent);
 
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestoreUseStaticGraphEvaluation=true",
-                    ignoreExitCode: true);
+                    ignoreExitCode: true,
+                    testOutputHelper: _testOutputHelper);
 
                 result.Success.Should().BeTrue(because: result.AllOutput);
                 result.AllOutput.Should().Contain($"The solution contains '{solution.Projects.Count}' project(s) '{project.ProjectName}' that are not known to MSBuild. " +
@@ -803,7 +809,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
                 File.Delete(projectB.ProjectPath);
 
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true {projectA.ProjectPath}", ignoreExitCode: true);
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 // Assert
                 Assert.True(result.ExitCode == 1, result.AllOutput);
@@ -852,7 +858,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageX);
 
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={restoreUseStaticGraphEvaluation} {projectA.ProjectPath}", ignoreExitCode: true);
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={restoreUseStaticGraphEvaluation} {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 // Assert
                 result.ExitCode.Should().Be(0, result.AllOutput);
@@ -880,7 +886,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                    project.ProjectPath,
                    @"<Project />");
 
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={restoreUseStaticGraphEvaluation} {solution.SolutionPath}", ignoreExitCode: true);
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={restoreUseStaticGraphEvaluation} {solution.SolutionPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 // Assert
                 result.ExitCode.Should().Be(0, result.AllOutput);
@@ -922,7 +928,8 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 solution.Create(pathContext.SolutionRoot);
                 // Act
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory,
-                    $"/t:restore {pathContext.SolutionRoot}" + (isStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=true" : string.Empty));
+                    $"/t:restore {pathContext.SolutionRoot}" + (isStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=true" : string.Empty),
+                    testOutputHelper: _testOutputHelper);
 
                 // Assert
                 result.Success.Should().BeTrue(because: result.AllOutput);
@@ -961,7 +968,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 solution.Projects.Add(projectA);
                 solution.Create(pathContext.SolutionRoot);
                 // Act
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}");
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}", testOutputHelper: _testOutputHelper);
 
                 // Assert
                 result.Success.Should().BeTrue(because: result.AllOutput);
@@ -1026,7 +1033,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 solution.Projects.Add(projectA);
                 solution.Create(pathContext.SolutionRoot);
                 // Act
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}");
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}", testOutputHelper: _testOutputHelper);
 
                 // Assert
                 result.Success.Should().BeTrue(because: result.AllOutput);
@@ -1079,7 +1086,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 solution.Projects.Add(projectA);
                 solution.Create(pathContext.SolutionRoot);
                 // Act
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}");
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}", testOutputHelper: _testOutputHelper);
 
                 // Assert
                 result.Success.Should().BeTrue(because: result.AllOutput);
@@ -1120,7 +1127,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 solution.Create(pathContext.SolutionRoot);
 
                 // Act
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}");
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}", testOutputHelper: _testOutputHelper);
 
                 // Assert
                 result.Success.Should().BeTrue(because: result.AllOutput);
@@ -1179,7 +1186,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
                 // Act
                 string args = $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true /p:RestoreUseStaticGraphEvaluation={useStaticGraphEvaluation}";
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, args, ignoreExitCode: true);
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, args, ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 // Assert
                 Assert.True(result.ExitCode == 0, result.AllOutput);
@@ -1235,7 +1242,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     packageX);
 
                 // Act
-                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true", ignoreExitCode: true);
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 // Assert
                 string formatString = "You are running the 'restore' operation with an 'HTTP' source, '{0}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS'";
@@ -1279,7 +1286,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             projectA.Properties.Add("WarningsNotAsErrors", "NU1603");
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
-            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore} {projectA.ProjectPath}", ignoreExitCode: true);
+            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore} {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
             // Assert
             result.Success.Should().BeTrue(because: result.AllOutput);
@@ -1317,7 +1324,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 </Project>");
 
 
-            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/NoAutoResponse /NoLogo /ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign /Target:PrintPackageReferences {projectPath}", ignoreExitCode: false);
+            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/NoAutoResponse /NoLogo /ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign /Target:PrintPackageReferences {projectPath}", ignoreExitCode: false, testOutputHelper: _testOutputHelper);
 
             // Assert
             result.Success.Should().BeTrue(because: result.AllOutput);
@@ -1369,7 +1376,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             File.WriteAllText(directoryPackagesPropsPath, directoryPackagesProps);
 
             // Act
-            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore} {projectA.ProjectPath}", ignoreExitCode: true);
+            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore} {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
             // Assert
             result.Success.Should().BeTrue(because: result.AllOutput);
@@ -1407,7 +1414,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 packageX150);
 
             // Pre-Conditions
-            var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath}", ignoreExitCode: true);
+            var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
             result.Success.Should().BeTrue(because: result.AllOutput);
             DateTime assetsFileWriteTime = GetFileLastWriteTime(project.AssetsFileOutputPath);
             var logMessages = project.AssetsFile.LogMessages;
@@ -1415,7 +1422,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             logMessages[0].Code.Should().Be(NuGetLogCode.NU1603);
 
             // Act
-            result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreForce=true {project.ProjectPath}");
+            result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreForce=true {project.ProjectPath}", testOutputHelper: _testOutputHelper);
 
             // Assert
             var currentWriteTime = GetFileLastWriteTime(project.AssetsFileOutputPath);
