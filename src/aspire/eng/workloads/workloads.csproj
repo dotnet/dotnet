@@ -10,6 +10,8 @@
     <VSTemp>$(WorkloadIntermediateOutputPath)VS/</VSTemp>
     <WorkloadOutputPath>$(ArtifactsBinDir)workloads/</WorkloadOutputPath>
     <WorkloadOutputPath Condition="'$(workloadArtifactsPath)' != ''">$(workloadArtifactsPath)/</WorkloadOutputPath>
+    <PackageSource>$(ArtifactsShippingPackagesDir)</PackageSource>
+    <PackageSource Condition="'$(workloadPackagesPath)' != ''">$(workloadPackagesPath)/</PackageSource>
     <RunAnalyzers>false</RunAnalyzers>
   </PropertyGroup>
 
@@ -73,11 +75,11 @@
       </ShortNames>
     </ItemGroup>
 
-    <MSBuild Projects="../dashboardpack/dashboardpack.csproj" Targets="restore;build" Properties="DashboardRuntime=%(_PackRuntimes.Identity);PackageOutputPath=$(WorkloadsPackageSource)" />
-    <MSBuild Projects="../dcppack/dcppack.csproj" Targets="restore;build" Properties="DcpRuntime=%(_PackRuntimes.Identity);PackageOutputPath=$(WorkloadsPackageSource)" />
+    <MSBuild Projects="../dashboardpack/dashboardpack.csproj" Targets="restore;build" Properties="DashboardRuntime=%(_PackRuntimes.Identity);PackageOutputPath=$(PackageSource)" />
+    <MSBuild Projects="../dcppack/dcppack.csproj" Targets="restore;build" Properties="DcpRuntime=%(_PackRuntimes.Identity);PackageOutputPath=$(PackageSource)" />
 
     <ItemGroup>
-      <ManifestPackages Include="$(WorkloadsPackageSource)Microsoft.NET.Sdk.Aspire.Manifest*.nupkg"
+      <ManifestPackages Include="$(PackageSource)Microsoft.NET.Sdk.Aspire.Manifest*.nupkg"
                         MsiVersion="$(MsiVersion)"
                         SupportsMachineArch="true" />
     </ItemGroup>
@@ -87,7 +89,7 @@
                                 BaseOutputPath="$(WorkloadOutputPath)"
                                 EnableSideBySideManifests="true"
                                 ComponentResources="@(ComponentResources)"
-                                PackageSource="$(WorkloadsPackageSource)"
+                                PackageSource="$(PackageSource)"
                                 ShortNames="@(ShortNames)"
                                 WorkloadManifestPackageFiles="@(ManifestPackages)"
                                 WixToolsetPath="$(WixToolsetPath)"

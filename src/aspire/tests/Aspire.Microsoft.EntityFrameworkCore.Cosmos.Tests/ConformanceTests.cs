@@ -16,7 +16,8 @@ public class ConformanceTests : ConformanceTests<TestDbContext, EntityFrameworkC
 {
     protected override ServiceLifetime ServiceLifetime => ServiceLifetime.Singleton;
 
-    protected override string ActivitySourceName => "Azure.Cosmos.Operation";
+    // https://github.com/open-telemetry/opentelemetry-dotnet-contrib/blob/cb5b2193ef9cacc0b9ef699e085022577551bf85/src/OpenTelemetry.Instrumentation.EntityFrameworkCore/Implementation/EntityFrameworkDiagnosticListener.cs#L38
+    protected override string ActivitySourceName => "OpenTelemetry.Instrumentation.EntityFrameworkCore";
 
     protected override string[] RequiredLogCategories => new string[]
     {
@@ -43,7 +44,7 @@ public class ConformanceTests : ConformanceTests<TestDbContext, EntityFrameworkC
         => options.Tracing = enabled;
 
     protected override void SetMetrics(EntityFrameworkCoreCosmosDBSettings options, bool enabled)
-        => throw new NotImplementedException();
+        => options.Metrics = enabled;
 
     protected override string ValidJsonConfig => """
         {
@@ -52,7 +53,8 @@ public class ConformanceTests : ConformanceTests<TestDbContext, EntityFrameworkC
               "EntityFrameworkCore": {
                 "Cosmos": {
                   "ConnectionString": "YOUR_CONNECTION_STRING",
-                  "Tracing": true
+                  "Tracing": true,
+                  "Metrics": true
                 }
               }
             }

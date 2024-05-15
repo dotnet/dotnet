@@ -25,14 +25,14 @@ public class AspireServiceBusExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureServiceBusClient("sb");
+            builder.AddKeyedAzureServiceBus("sb");
         }
         else
         {
-            builder.AddAzureServiceBusClient("sb");
+            builder.AddAzureServiceBus("sb");
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<ServiceBusClient>("sb") :
             host.Services.GetRequiredService<ServiceBusClient>();
@@ -52,14 +52,14 @@ public class AspireServiceBusExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureServiceBusClient("sb", settings => settings.ConnectionString = ConnectionString);
+            builder.AddKeyedAzureServiceBus("sb", settings => settings.ConnectionString = ConnectionString);
         }
         else
         {
-            builder.AddAzureServiceBusClient("sb", settings => settings.ConnectionString = ConnectionString);
+            builder.AddAzureServiceBus("sb", settings => settings.ConnectionString = ConnectionString);
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<ServiceBusClient>("sb") :
             host.Services.GetRequiredService<ServiceBusClient>();
@@ -82,14 +82,14 @@ public class AspireServiceBusExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureServiceBusClient("sb");
+            builder.AddKeyedAzureServiceBus("sb");
         }
         else
         {
-            builder.AddAzureServiceBusClient("sb");
+            builder.AddAzureServiceBus("sb");
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<ServiceBusClient>("sb") :
             host.Services.GetRequiredService<ServiceBusClient>();
@@ -110,14 +110,14 @@ public class AspireServiceBusExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureServiceBusClient("sb");
+            builder.AddKeyedAzureServiceBus("sb");
         }
         else
         {
-            builder.AddAzureServiceBusClient("sb");
+            builder.AddAzureServiceBus("sb");
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<ServiceBusClient>("sb") :
             host.Services.GetRequiredService<ServiceBusClient>();

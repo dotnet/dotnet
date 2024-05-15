@@ -32,7 +32,7 @@ public class AspireAzureEfCoreCosmosDBExtensionsTests
             });
         });
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<TestDbContext>();
 
 #pragma warning disable EF1001 // Internal EF Core API usage.
@@ -45,80 +45,6 @@ public class AspireAzureEfCoreCosmosDBExtensionsTests
 
         // Ensure the Region from the lambda was respected
         Assert.Equal("westus", extension.Region);
-
-#pragma warning restore EF1001 // Internal EF Core API usage.
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void CanConfigureRequestTimeout(bool useSettings)
-    {
-        var builder = Host.CreateEmptyApplicationBuilder(null);
-        builder.Configuration.AddInMemoryCollection([
-            new KeyValuePair<string, string?>("ConnectionStrings:cosmosConnection", ConnectionString),
-        ]);
-        if (!useSettings)
-        {
-            builder.Configuration.AddInMemoryCollection([
-                new KeyValuePair<string, string?>("Aspire:Microsoft:EntityFrameworkCore:Cosmos:RequestTimeout", "00:10:08"),
-            ]);
-        }
-
-        builder.AddCosmosDbContext<TestDbContext>("cosmosConnection", "databaseName",
-                configureDbContextOptions: optionsBuilder => optionsBuilder.UseCosmos(ConnectionString, "databaseName"),
-                configureSettings: useSettings ? settings => settings.RequestTimeout = TimeSpan.FromSeconds(608) : null);
-
-        using var host = builder.Build();
-        var context = host.Services.GetRequiredService<TestDbContext>();
-
-#pragma warning disable EF1001 // Internal EF Core API usage.
-
-        var extension = context.Options.FindExtension<CosmosOptionsExtension>();
-        Assert.NotNull(extension);
-
-        // Ensure the RequestTimeout was respected
-        Assert.Equal(TimeSpan.FromSeconds(608), extension.RequestTimeout);
-
-#pragma warning restore EF1001 // Internal EF Core API usage.
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void RequestTimeoutFromBuilderWinsOverOthers(bool useSettings)
-    {
-        var builder = Host.CreateEmptyApplicationBuilder(null);
-        builder.Configuration.AddInMemoryCollection([
-            new KeyValuePair<string, string?>("ConnectionStrings:cosmosConnection", ConnectionString),
-        ]);
-        if (!useSettings)
-        {
-            builder.Configuration.AddInMemoryCollection([
-                new KeyValuePair<string, string?>("Aspire:Microsoft:EntityFrameworkCore:Cosmos:RequestTimeout", "400"),
-            ]);
-        }
-
-        builder.AddCosmosDbContext<TestDbContext>("cosmosConnection", "databaseName",
-                configureDbContextOptions: optionsBuilder =>
-                {
-                    optionsBuilder.UseCosmos(ConnectionString, "databaseName", cosmosBuilder =>
-                    {
-                        cosmosBuilder.RequestTimeout(TimeSpan.FromSeconds(123));
-                    });
-                },
-                configureSettings: useSettings ? settings => settings.RequestTimeout = TimeSpan.FromSeconds(300) : null);
-
-        using var host = builder.Build();
-        var context = host.Services.GetRequiredService<TestDbContext>();
-
-#pragma warning disable EF1001 // Internal EF Core API usage.
-
-        var extension = context.Options.FindExtension<CosmosOptionsExtension>();
-        Assert.NotNull(extension);
-
-        // Ensure the RequestTimeout from builder was respected
-        Assert.Equal(TimeSpan.FromSeconds(123), extension.RequestTimeout);
 
 #pragma warning restore EF1001 // Internal EF Core API usage.
     }
@@ -140,7 +66,7 @@ public class AspireAzureEfCoreCosmosDBExtensionsTests
         builder.AddCosmosDbContext<TestDbContext>("cosmos", "test");
         builder.AddCosmosDbContext<TestDbContext2>("cosmos2", "test2");
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<TestDbContext>();
         var context2 = host.Services.GetRequiredService<TestDbContext2>();
 
@@ -149,53 +75,6 @@ public class AspireAzureEfCoreCosmosDBExtensionsTests
 
         actualConnectionString = context2.Database.GetCosmosDatabaseId();
         Assert.Equal("test2", actualConnectionString);
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void ThrowsWhenDbContextIsRegisteredBeforeAspireComponent(bool useServiceType)
-    {
-        var builder = Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings { EnvironmentName = Environments.Development });
-        builder.Configuration.AddInMemoryCollection([
-            new KeyValuePair<string, string?>("ConnectionStrings:cosmos", ConnectionString)
-        ]);
-
-        if (useServiceType)
-        {
-            builder.Services.AddDbContextPool<ITestDbContext, TestDbContext>(options => options.UseCosmos(ConnectionString, "databaseName"));
-        }
-        else
-        {
-            builder.Services.AddDbContextPool<TestDbContext>(options => options.UseCosmos(ConnectionString, "databaseName"));
-        }
-
-        var exception = Assert.Throws<InvalidOperationException>(() => builder.AddCosmosDbContext<TestDbContext>("cosmos", "databaseName"));
-        Assert.Equal("DbContext<TestDbContext> is already registered. Please ensure 'services.AddDbContext<TestDbContext>()' is not used when calling 'AddCosmosDbContext()' or use the corresponding 'Enrich' method.", exception.Message);
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void DoesntThrowWhenDbContextIsRegisteredBeforeAspireComponentProduction(bool useServiceType)
-    {
-        var builder = Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings { EnvironmentName = Environments.Production });
-        builder.Configuration.AddInMemoryCollection([
-            new KeyValuePair<string, string?>("ConnectionStrings:cosmos", ConnectionString)
-        ]);
-
-        if (useServiceType)
-        {
-            builder.Services.AddDbContextPool<ITestDbContext, TestDbContext>(options => options.UseCosmos(ConnectionString, "databaseName"));
-        }
-        else
-        {
-            builder.Services.AddDbContextPool<TestDbContext>(options => options.UseCosmos(ConnectionString, "databaseName"));
-        }
-
-        var exception = Record.Exception(() => builder.AddCosmosDbContext<TestDbContext>("cosmos", "databaseName"));
-
-        Assert.Null(exception);
     }
 
     public class TestDbContext2 : DbContext

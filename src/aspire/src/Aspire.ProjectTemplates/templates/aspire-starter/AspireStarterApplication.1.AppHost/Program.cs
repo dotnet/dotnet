@@ -7,7 +7,6 @@ var cache = builder.AddRedis("cache");
 var apiService = builder.AddProject<Projects.AspireStarterApplication__1_ApiService>("apiservice");
 
 builder.AddProject<Projects.AspireStarterApplication__1_Web>("webfrontend")
-    .WithExternalHttpEndpoints()
 #if UseRedisCache
     .WithReference(cache)
 #endif

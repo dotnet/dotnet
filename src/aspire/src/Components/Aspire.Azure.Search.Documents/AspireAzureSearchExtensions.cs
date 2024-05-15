@@ -22,7 +22,6 @@ namespace Microsoft.Extensions.Hosting;
 public static class AspireAzureSearchExtensions
 {
     private const string DefaultConfigSectionName = "Aspire:Azure:Search:Documents";
-
     /// <summary>
     /// Registers <see cref="SearchIndexClient"/> as a singleton in the services provided by the <paramref name="builder"/>.
     /// </summary>
@@ -31,7 +30,7 @@ public static class AspireAzureSearchExtensions
     /// <param name="configureSettings">An optional method that can be used for customizing the <see cref="AzureSearchSettings"/>. It's invoked after the settings are read from the configuration.</param>
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{SearchIndexClient, SearchClientOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Search:Documents" section.</remarks>
-    public static void AddAzureSearchClient(
+    public static void AddAzureSearch(
         this IHostApplicationBuilder builder,
         string connectionName,
         Action<AzureSearchSettings>? configureSettings = null,
@@ -48,7 +47,7 @@ public static class AspireAzureSearchExtensions
     /// <param name="configureSettings">An optional method that can be used for customizing the <see cref="AzureSearchSettings"/>. It's invoked after the settings are read from the configuration.</param>
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{SearchIndexClient, SearchClientOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Search:Documents:{name}" section.</remarks>
-    public static void AddKeyedAzureSearchClient(
+    public static void AddKeyedAzureSearch(
         this IHostApplicationBuilder builder,
         string name,
         Action<AzureSearchSettings>? configureSettings = null,
@@ -68,11 +67,9 @@ public static class AspireAzureSearchExtensions
         // https://github.com/Azure/azure-sdk-for-net/blob/bed506dee05319ff2de27ca98500daa10573fe7d/sdk/search/Azure.Search.Documents/src/Indexes/SearchIndexClient.cs#L92
         protected override string[] ActivitySourceNames => ["Azure.Search.Documents.*"];
 
-        protected override IAzureClientBuilder<SearchIndexClient, SearchClientOptions> AddClient(
-            AzureClientFactoryBuilder azureFactoryBuilder, AzureSearchSettings settings, string connectionName,
-            string configurationSectionName)
+        protected override IAzureClientBuilder<SearchIndexClient, SearchClientOptions> AddClient<TBuilder>(TBuilder azureFactoryBuilder, AzureSearchSettings settings, string connectionName, string configurationSectionName)
         {
-            return azureFactoryBuilder.AddClient<SearchIndexClient, SearchClientOptions>((options, _, _) =>
+            return azureFactoryBuilder.RegisterClientFactory<SearchIndexClient, SearchClientOptions>((options, cred) =>
             {
                 if (settings.Endpoint is null)
                 {

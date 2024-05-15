@@ -25,14 +25,14 @@ public class AspireTablesExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureTableClient("tables");
+            builder.AddKeyedAzureTableService("tables");
         }
         else
         {
-            builder.AddAzureTableClient("tables");
+            builder.AddAzureTableService("tables");
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<TableServiceClient>("tables") :
             host.Services.GetRequiredService<TableServiceClient>();
@@ -52,14 +52,14 @@ public class AspireTablesExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureTableClient("tables", settings => settings.ConnectionString = ConnectionString);
+            builder.AddKeyedAzureTableService("tables", settings => settings.ConnectionString = ConnectionString);
         }
         else
         {
-            builder.AddAzureTableClient("tables", settings => settings.ConnectionString = ConnectionString);
+            builder.AddAzureTableService("tables", settings => settings.ConnectionString = ConnectionString);
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<TableServiceClient>("tables") :
             host.Services.GetRequiredService<TableServiceClient>();
@@ -82,14 +82,14 @@ public class AspireTablesExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureTableClient("tables");
+            builder.AddKeyedAzureTableService("tables");
         }
         else
         {
-            builder.AddAzureTableClient("tables");
+            builder.AddAzureTableService("tables");
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<TableServiceClient>("tables") :
             host.Services.GetRequiredService<TableServiceClient>();
@@ -110,14 +110,14 @@ public class AspireTablesExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureTableClient("tables");
+            builder.AddKeyedAzureTableService("tables");
         }
         else
         {
-            builder.AddAzureTableClient("tables");
+            builder.AddAzureTableService("tables");
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<TableServiceClient>("tables") :
             host.Services.GetRequiredService<TableServiceClient>();

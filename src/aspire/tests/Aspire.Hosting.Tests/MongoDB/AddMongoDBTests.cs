@@ -3,7 +3,6 @@
 
 using System.Net.Sockets;
 using Aspire.Hosting.MongoDB;
-using Aspire.Hosting.Tests.Utils;
 using Aspire.Hosting.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -26,8 +25,11 @@ public class AddMongoDBTests
         var containerResource = Assert.Single(appModel.Resources.OfType<MongoDBServerResource>());
         Assert.Equal("mongodb", containerResource.Name);
 
+        var manifestAnnotation = Assert.Single(containerResource.Annotations.OfType<ManifestPublishingCallbackAnnotation>());
+        Assert.NotNull(manifestAnnotation.Callback);
+
         var endpoint = Assert.Single(containerResource.Annotations.OfType<EndpointAnnotation>());
-        Assert.Equal(27017, endpoint.TargetPort);
+        Assert.Equal(27017, endpoint.ContainerPort);
         Assert.False(endpoint.IsExternal);
         Assert.Equal("tcp", endpoint.Name);
         Assert.Null(endpoint.Port);
@@ -36,9 +38,9 @@ public class AddMongoDBTests
         Assert.Equal("tcp", endpoint.UriScheme);
 
         var containerAnnotation = Assert.Single(containerResource.Annotations.OfType<ContainerImageAnnotation>());
-        Assert.Equal(MongoDBContainerImageTags.Tag, containerAnnotation.Tag);
-        Assert.Equal(MongoDBContainerImageTags.Image, containerAnnotation.Image);
-        Assert.Equal(MongoDBContainerImageTags.Registry, containerAnnotation.Registry);
+        Assert.Equal("7.0.5", containerAnnotation.Tag);
+        Assert.Equal("mongo", containerAnnotation.Image);
+        Assert.Null(containerAnnotation.Registry);
     }
 
     [Fact]
@@ -54,8 +56,11 @@ public class AddMongoDBTests
         var containerResource = Assert.Single(appModel.Resources.OfType<MongoDBServerResource>());
         Assert.Equal("mongodb", containerResource.Name);
 
+        var manifestAnnotation = Assert.Single(containerResource.Annotations.OfType<ManifestPublishingCallbackAnnotation>());
+        Assert.NotNull(manifestAnnotation.Callback);
+
         var endpoint = Assert.Single(containerResource.Annotations.OfType<EndpointAnnotation>());
-        Assert.Equal(27017, endpoint.TargetPort);
+        Assert.Equal(27017, endpoint.ContainerPort);
         Assert.False(endpoint.IsExternal);
         Assert.Equal("tcp", endpoint.Name);
         Assert.Equal(9813, endpoint.Port);
@@ -64,77 +69,52 @@ public class AddMongoDBTests
         Assert.Equal("tcp", endpoint.UriScheme);
 
         var containerAnnotation = Assert.Single(containerResource.Annotations.OfType<ContainerImageAnnotation>());
-        Assert.Equal(MongoDBContainerImageTags.Tag, containerAnnotation.Tag);
-        Assert.Equal(MongoDBContainerImageTags.Image, containerAnnotation.Image);
-        Assert.Equal(MongoDBContainerImageTags.Registry, containerAnnotation.Registry);
+        Assert.Equal("7.0.5", containerAnnotation.Tag);
+        Assert.Equal("mongo", containerAnnotation.Image);
+        Assert.Null(containerAnnotation.Registry);
     }
 
     [Fact]
-    public async Task MongoDBCreatesConnectionString()
+    public void MongoDBCreatesConnectionString()
     {
         var appBuilder = DistributedApplication.CreateBuilder();
         appBuilder
             .AddMongoDB("mongodb")
-            .WithEndpoint("tcp", e => e.AllocatedEndpoint = new AllocatedEndpoint(e, "localhost", 27017))
+            .WithAnnotation(
+                new AllocatedEndpointAnnotation("mybinding",
+                ProtocolType.Tcp,
+                "localhost",
+                27017,
+                "https"
+            ))
             .AddDatabase("mydatabase");
 
         using var app = appBuilder.Build();
 
         var appModel = app.Services.GetRequiredService<DistributedApplicationModel>();
 
-        var dbResource = Assert.Single(appModel.Resources.OfType<MongoDBDatabaseResource>());
-        var serverResource = dbResource.Parent as IResourceWithConnectionString;
-        var connectionStringResource = dbResource as IResourceWithConnectionString;
-        Assert.NotNull(connectionStringResource);
-        var connectionString = await connectionStringResource.GetConnectionStringAsync();
+        var connectionStringResource = Assert.Single(appModel.Resources.OfType<MongoDBDatabaseResource>());
+        var connectionString = connectionStringResource.GetConnectionString();
 
-        Assert.Equal("mongodb://localhost:27017", await serverResource.GetConnectionStringAsync());
-        Assert.Equal("mongodb://{mongodb.bindings.tcp.host}:{mongodb.bindings.tcp.port}", serverResource.ConnectionStringExpression.ValueExpression);
+        Assert.Equal("mongodb://localhost:27017/", connectionStringResource.Parent.GetConnectionString());
+        Assert.Equal("mongodb://{mongodb.bindings.tcp.host}:{mongodb.bindings.tcp.port}", connectionStringResource.Parent.ConnectionStringExpression);
         Assert.Equal("mongodb://localhost:27017/mydatabase", connectionString);
-        Assert.Equal("{mongodb.connectionString}/mydatabase", connectionStringResource.ConnectionStringExpression.ValueExpression);
+        Assert.Equal("{mongodb.connectionString}/mydatabase", connectionStringResource.ConnectionStringExpression);
     }
 
     [Fact]
     public void WithMongoExpressAddsContainer()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
-        builder.AddMongoDB("mongo")
-            .WithMongoExpress();
+        var builder = DistributedApplication.CreateBuilder();
+        builder.AddMongoDB("mongo").WithMongoExpress();
 
         Assert.Single(builder.Resources.OfType<MongoExpressContainerResource>());
-    }
-
-    [Theory]
-    [InlineData("host.docker.internal")]
-    [InlineData("host.containers.internal")]
-    public async Task WithMongoExpressUsesContainerHost(string containerHost)
-    {
-        using var builder = TestDistributedApplicationBuilder.Create();
-        builder.AddMongoDB("mongo")
-            .WithEndpoint("tcp", e => e.AllocatedEndpoint = new AllocatedEndpoint(e, "localhost", 3000, containerHost))
-            .WithMongoExpress();
-
-        var mongoExpress = Assert.Single(builder.Resources.OfType<MongoExpressContainerResource>());
-
-        var env = await EnvironmentVariableEvaluator.GetEnvironmentVariablesAsync(mongoExpress);
-
-        Assert.Collection(env,
-            e =>
-            {
-                Assert.Equal("ME_CONFIG_MONGODB_URL", e.Key);
-                Assert.Equal($"mongodb://{containerHost}:3000/?directConnection=true", e.Value);
-            },
-            e =>
-            {
-                Assert.Equal("ME_CONFIG_BASICAUTH", e.Key);
-                Assert.Equal("false", e.Value);
-            });
     }
 
     [Fact]
     public void WithMongoExpressOnMultipleResources()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        var builder = DistributedApplication.CreateBuilder();
         builder.AddMongoDB("mongo").WithMongoExpress();
         builder.AddMongoDB("mongo2").WithMongoExpress();
 
@@ -142,45 +122,26 @@ public class AddMongoDBTests
     }
 
     [Fact]
-    public async Task VerifyManifest()
+    public void VerifyManifest()
     {
         var appBuilder = DistributedApplication.CreateBuilder();
         var mongo = appBuilder.AddMongoDB("mongo");
         var db = mongo.AddDatabase("mydb");
 
-        var mongoManifest = await ManifestUtils.GetManifest(mongo.Resource);
-        var dbManifest = await ManifestUtils.GetManifest(db.Resource);
+        var mongoManifest = ManifestUtils.GetManifest(mongo.Resource);
+        var dbManifest = ManifestUtils.GetManifest(db.Resource);
+        
+        Assert.Equal("container.v0", mongoManifest["type"]?.ToString());
+        Assert.Equal(mongo.Resource.ConnectionStringExpression, mongoManifest["connectionString"]?.ToString());
 
-        var expectedManifest = $$"""
-            {
-              "type": "container.v0",
-              "connectionString": "mongodb://{mongo.bindings.tcp.host}:{mongo.bindings.tcp.port}",
-              "image": "{{MongoDBContainerImageTags.Registry}}/{{MongoDBContainerImageTags.Image}}:{{MongoDBContainerImageTags.Tag}}",
-              "bindings": {
-                "tcp": {
-                  "scheme": "tcp",
-                  "protocol": "tcp",
-                  "transport": "tcp",
-                  "targetPort": 27017
-                }
-              }
-            }
-            """;
-        Assert.Equal(expectedManifest, mongoManifest.ToString());
-
-        expectedManifest = """
-            {
-              "type": "value.v0",
-              "connectionString": "{mongo.connectionString}/mydb"
-            }
-            """;
-        Assert.Equal(expectedManifest, dbManifest.ToString());
+        Assert.Equal("value.v0", dbManifest["type"]?.ToString());
+        Assert.Equal(db.Resource.ConnectionStringExpression, dbManifest["connectionString"]?.ToString());
     }
 
     [Fact]
     public void ThrowsWithIdenticalChildResourceNames()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        var builder = DistributedApplication.CreateBuilder();
 
         var db = builder.AddMongoDB("mongo1");
         db.AddDatabase("db");
@@ -191,7 +152,7 @@ public class AddMongoDBTests
     [Fact]
     public void ThrowsWithIdenticalChildResourceNamesDifferentParents()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        var builder = DistributedApplication.CreateBuilder();
 
         builder.AddMongoDB("mongo1")
             .AddDatabase("db");
@@ -203,7 +164,7 @@ public class AddMongoDBTests
     [Fact]
     public void CanAddDatabasesWithDifferentNamesOnSingleServer()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        var builder = DistributedApplication.CreateBuilder();
 
         var mongo1 = builder.AddMongoDB("mongo1");
 
@@ -213,14 +174,14 @@ public class AddMongoDBTests
         Assert.Equal("customers1", db1.Resource.DatabaseName);
         Assert.Equal("customers2", db2.Resource.DatabaseName);
 
-        Assert.Equal("{mongo1.connectionString}/customers1", db1.Resource.ConnectionStringExpression.ValueExpression);
-        Assert.Equal("{mongo1.connectionString}/customers2", db2.Resource.ConnectionStringExpression.ValueExpression);
+        Assert.Equal("{mongo1.connectionString}/customers1", db1.Resource.ConnectionStringExpression);
+        Assert.Equal("{mongo1.connectionString}/customers2", db2.Resource.ConnectionStringExpression);
     }
 
     [Fact]
     public void CanAddDatabasesWithTheSameNameOnMultipleServers()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        var builder = DistributedApplication.CreateBuilder();
 
         var db1 = builder.AddMongoDB("mongo1")
             .AddDatabase("db1", "imports");
@@ -231,7 +192,7 @@ public class AddMongoDBTests
         Assert.Equal("imports", db1.Resource.DatabaseName);
         Assert.Equal("imports", db2.Resource.DatabaseName);
 
-        Assert.Equal("{mongo1.connectionString}/imports", db1.Resource.ConnectionStringExpression.ValueExpression);
-        Assert.Equal("{mongo2.connectionString}/imports", db2.Resource.ConnectionStringExpression.ValueExpression);
+        Assert.Equal("{mongo1.connectionString}/imports", db1.Resource.ConnectionStringExpression);
+        Assert.Equal("{mongo2.connectionString}/imports", db2.Resource.ConnectionStringExpression);
     }
 }

@@ -6,7 +6,6 @@ using System.Collections;
 using System.IO.Pipelines;
 using System.Net.Sockets;
 using System.Text;
-using Aspire.Dashboard.Utils;
 using Aspire.Hosting.Dcp.Process;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -63,8 +62,7 @@ internal sealed class DcpHostService : IHostedLifecycleService, IAsyncDisposable
             return;
         }
 
-        // Ensure DCP is installed and has all required dependencies
-        _ = await _dependencyCheckService.GetDcpInfoAsync(cancellationToken).ConfigureAwait(false);
+        await _dependencyCheckService.EnsureDcpDependenciesAsync(cancellationToken).ConfigureAwait(false);
 
         EnsureDcpHostRunning();
         await _appExecutor.RunApplicationAsync(cancellationToken).ConfigureAwait(false);
@@ -72,43 +70,32 @@ internal sealed class DcpHostService : IHostedLifecycleService, IAsyncDisposable
 
     public async Task StopAsync(CancellationToken cancellationToken = default)
     {
-        if (_dcpOptions.DeleteResourcesOnShutdown)
+        _shutdownCts.Cancel();
+        if (_logProcessorTask is { } task)
         {
             try
             {
-                await _appExecutor.DeleteResourcesAsync(cancellationToken).ConfigureAwait(false);
+                await task.ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting application resources.");
+                _logger.LogError(ex, "Error in logging socket processor.");
             }
         }
-
-        _shutdownCts.Cancel();
-        await _appExecutor.StopAsync(cancellationToken).ConfigureAwait(false);
-
-        await TaskHelpers.WaitIgnoreCancelAsync(_logProcessorTask, _logger, "Error in logging socket processor.").ConfigureAwait(false);
     }
 
     public async ValueTask DisposeAsync()
     {
-        if (_dcpRunDisposable is { } disposable)
+        if (_dcpRunDisposable is null)
         {
-            _dcpRunDisposable = null;
-
-            try
-            {
-                await disposable.DisposeAsync().AsTask().ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                // Shutdown requested.
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex, "One or more monitoring tasks terminated with an error.");
-            }
+            return;
         }
+
+        await _dcpRunDisposable.DisposeAsync().ConfigureAwait(false);
+        _dcpRunDisposable = null;
     }
 
     private void EnsureDcpHostRunning()

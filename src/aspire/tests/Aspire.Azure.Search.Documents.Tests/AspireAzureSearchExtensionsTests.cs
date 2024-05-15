@@ -26,14 +26,14 @@ public class AspireAzureSearchExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureSearchClient("search");
+            builder.AddKeyedAzureSearch("search");
         }
         else
         {
-            builder.AddAzureSearchClient("search");
+            builder.AddAzureSearch("search");
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<SearchIndexClient>("search") :
             host.Services.GetRequiredService<SearchIndexClient>();
@@ -53,14 +53,14 @@ public class AspireAzureSearchExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureSearchClient("search", settings => { settings.Endpoint = searchEndpoint; settings.Key = key; });
+            builder.AddKeyedAzureSearch("search", settings => { settings.Endpoint = searchEndpoint; settings.Key = key; });
         }
         else
         {
-            builder.AddAzureSearchClient("search", settings => { settings.Endpoint = searchEndpoint; settings.Key = key; });
+            builder.AddAzureSearch("search", settings => { settings.Endpoint = searchEndpoint; settings.Key = key; });
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<SearchIndexClient>("search") :
             host.Services.GetRequiredService<SearchIndexClient>();

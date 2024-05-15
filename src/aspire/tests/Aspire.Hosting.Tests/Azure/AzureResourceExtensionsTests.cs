@@ -1,121 +1,33 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Aspire.Hosting.Utils;
 using Xunit;
 
 namespace Aspire.Hosting.Tests.Azure;
 
 public class AzureResourceExtensionsTests
 {
-    [Theory]
-    [InlineData(null)]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void AzureStorageUseEmulatorCallbackWithWithDataBindMountResultsInBindMountAnnotationWithDefaultPath(bool? isReadOnly)
+    [Fact]
+    public void AzureStorageUserEmulatorCallbackWithUsePersistenceResultsInVolumeAnnotation()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        var builder = DistributedApplication.CreateBuilder();
         var storage = builder.AddAzureStorage("storage").RunAsEmulator(configureContainer: builder =>
         {
-            if (isReadOnly.HasValue)
-            {
-                builder.WithDataBindMount(isReadOnly: isReadOnly.Value);
-            }
-            else
-            {
-                builder.WithDataBindMount();
-            }
+            builder.UsePersistence("mydata");
         });
 
-        var volumeAnnotation = storage.Resource.Annotations.OfType<ContainerMountAnnotation>().Single();
-        Assert.Equal(Path.GetFullPath(".azurite/storage"), volumeAnnotation.Source);
-        Assert.Equal("/data", volumeAnnotation.Target);
-        Assert.Equal(ContainerMountType.BindMount, volumeAnnotation.Type);
-        Assert.Equal(isReadOnly ?? false, volumeAnnotation.IsReadOnly);
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void AzureStorageUseEmulatorCallbackWithWithDataBindMountResultsInBindMountAnnotation(bool? isReadOnly)
-    {
-        using var builder = TestDistributedApplicationBuilder.Create();
-        var storage = builder.AddAzureStorage("storage").RunAsEmulator(configureContainer: builder =>
-        {
-            if (isReadOnly.HasValue)
-            {
-                builder.WithDataBindMount("mydata", isReadOnly: isReadOnly.Value);
-            }
-            else
-            {
-                builder.WithDataBindMount("mydata");
-            }
-        });
+        var computedPath = Path.GetFullPath("mydata");
 
         var volumeAnnotation = storage.Resource.Annotations.OfType<ContainerMountAnnotation>().Single();
-        Assert.Equal(Path.GetFullPath("mydata"), volumeAnnotation.Source);
+        Assert.Equal(computedPath, volumeAnnotation.Source);
         Assert.Equal("/data", volumeAnnotation.Target);
-        Assert.Equal(ContainerMountType.BindMount, volumeAnnotation.Type);
-        Assert.Equal(isReadOnly ?? false, volumeAnnotation.IsReadOnly);
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void AzureStorageUseEmulatorCallbackWithWithDataVolumeResultsInVolumeAnnotationWithDefaultName(bool? isReadOnly)
-    {
-        using var builder = TestDistributedApplicationBuilder.Create();
-        var storage = builder.AddAzureStorage("storage").RunAsEmulator(configureContainer: builder =>
-        {
-            if (isReadOnly.HasValue)
-            {
-                builder.WithDataVolume(isReadOnly: isReadOnly.Value);
-            }
-            else
-            {
-                builder.WithDataVolume();
-            }
-        });
-
-        var volumeAnnotation = storage.Resource.Annotations.OfType<ContainerMountAnnotation>().Single();
-        Assert.Equal("testhost-storage-data", volumeAnnotation.Source);
-        Assert.Equal("/data", volumeAnnotation.Target);
-        Assert.Equal(ContainerMountType.Volume, volumeAnnotation.Type);
-        Assert.Equal(isReadOnly ?? false, volumeAnnotation.IsReadOnly);
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void AzureStorageUseEmulatorCallbackWithWithDataVolumeResultsInVolumeAnnotation(bool? isReadOnly)
-    {
-        using var builder = TestDistributedApplicationBuilder.Create();
-        var storage = builder.AddAzureStorage("storage").RunAsEmulator(configureContainer: builder =>
-        {
-            if (isReadOnly.HasValue)
-            {
-                builder.WithDataVolume("mydata", isReadOnly: isReadOnly.Value);
-            }
-            else
-            {
-                builder.WithDataVolume("mydata");
-            }
-        });
-
-        var volumeAnnotation = storage.Resource.Annotations.OfType<ContainerMountAnnotation>().Single();
-        Assert.Equal("mydata", volumeAnnotation.Source);
-        Assert.Equal("/data", volumeAnnotation.Target);
-        Assert.Equal(ContainerMountType.Volume, volumeAnnotation.Type);
-        Assert.Equal(isReadOnly ?? false, volumeAnnotation.IsReadOnly);
+        Assert.Equal(ContainerMountType.Bind, volumeAnnotation.Type);
     }
 
     [Fact]
     public void AzureStorageUserEmulatorUseBlobQueueTablePortMethodsMutateEndpoints()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        var builder = DistributedApplication.CreateBuilder();
         var storage = builder.AddAzureStorage("storage").RunAsEmulator(configureContainer: builder =>
         {
             builder.UseBlobPort(9001);
@@ -136,7 +48,7 @@ public class AzureResourceExtensionsTests
     [InlineData(9007)]
     public void AddAzureCosmosDBWithEmulatorGetsExpectedPort(int? port = null)
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        var builder = DistributedApplication.CreateBuilder();
 
         var cosmos = builder.AddAzureCosmosDB("cosmos");
 
@@ -157,7 +69,7 @@ public class AzureResourceExtensionsTests
     [InlineData("1.0.7")]
     public void AddAzureCosmosDBWithEmulatorGetsExpectedImageTag(string imageTag)
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        var builder = DistributedApplication.CreateBuilder();
 
         var cosmos = builder.AddAzureCosmosDB("cosmos");
 

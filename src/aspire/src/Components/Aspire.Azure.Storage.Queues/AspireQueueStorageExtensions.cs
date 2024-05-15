@@ -32,7 +32,7 @@ public static class AspireQueueStorageExtensions
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{TClient, TOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Storage:Queues" section.</remarks>
     /// <exception cref="InvalidOperationException">Thrown when neither <see cref="AzureStorageQueuesSettings.ConnectionString"/> nor <see cref="AzureStorageQueuesSettings.ServiceUri"/> is provided.</exception>
-    public static void AddAzureQueueClient(
+    public static void AddAzureQueueService(
         this IHostApplicationBuilder builder,
         string connectionName,
         Action<AzureStorageQueuesSettings>? configureSettings = null,
@@ -51,7 +51,7 @@ public static class AspireQueueStorageExtensions
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{TClient, TOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Storage:Queues:{name}" section.</remarks>
     /// <exception cref="InvalidOperationException">Thrown when neither <see cref="AzureStorageQueuesSettings.ConnectionString"/> nor <see cref="AzureStorageQueuesSettings.ServiceUri"/> is provided.</exception>
-    public static void AddKeyedAzureQueueClient(
+    public static void AddKeyedAzureQueueService(
         this IHostApplicationBuilder builder,
         string name,
         Action<AzureStorageQueuesSettings>? configureSettings = null,
@@ -66,11 +66,9 @@ public static class AspireQueueStorageExtensions
 
     private sealed class StorageQueueComponent : AzureComponent<AzureStorageQueuesSettings, QueueServiceClient, QueueClientOptions>
     {
-        protected override IAzureClientBuilder<QueueServiceClient, QueueClientOptions> AddClient(
-            AzureClientFactoryBuilder azureFactoryBuilder, AzureStorageQueuesSettings settings, string connectionName,
-            string configurationSectionName)
+        protected override IAzureClientBuilder<QueueServiceClient, QueueClientOptions> AddClient<TBuilder>(TBuilder azureFactoryBuilder, AzureStorageQueuesSettings settings, string connectionName, string configurationSectionName)
         {
-            return ((IAzureClientFactoryBuilderWithCredential)azureFactoryBuilder).RegisterClientFactory<QueueServiceClient, QueueClientOptions>((options, cred) =>
+            return azureFactoryBuilder.RegisterClientFactory<QueueServiceClient, QueueClientOptions>((options, cred) =>
             {
                 var connectionString = settings.ConnectionString;
                 if (string.IsNullOrEmpty(connectionString) && settings.ServiceUri is null)

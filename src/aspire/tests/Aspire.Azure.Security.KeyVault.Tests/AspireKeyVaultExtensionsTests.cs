@@ -28,14 +28,14 @@ public class AspireKeyVaultExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureKeyVaultClient("secrets", settings => settings.VaultUri = vaultUri);
+            builder.AddKeyedAzureKeyVaultSecrets("secrets", settings => settings.VaultUri = vaultUri);
         }
         else
         {
-            builder.AddAzureKeyVaultClient("secrets", settings => settings.VaultUri = vaultUri);
+            builder.AddAzureKeyVaultSecrets("secrets", settings => settings.VaultUri = vaultUri);
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<SecretClient>("secrets") :
             host.Services.GetRequiredService<SecretClient>();
@@ -58,14 +58,14 @@ public class AspireKeyVaultExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureKeyVaultClient("secrets");
+            builder.AddKeyedAzureKeyVaultSecrets("secrets");
         }
         else
         {
-            builder.AddAzureKeyVaultClient("secrets");
+            builder.AddAzureKeyVaultSecrets("secrets");
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<SecretClient>("secrets") :
             host.Services.GetRequiredService<SecretClient>();
@@ -81,7 +81,7 @@ public class AspireKeyVaultExtensionsTests
             new KeyValuePair<string, string?>("ConnectionStrings:secrets", ConformanceTests.VaultUri)
         ]);
 
-        builder.Configuration.AddAzureKeyVaultSecrets("secrets", configureClientOptions: o =>
+        builder.Configuration.AddKeyVaultSecrets("secrets", configureClientOptions: o =>
         {
             o.Transport = new MockTransport(
                 CreateResponse("""

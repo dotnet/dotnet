@@ -34,7 +34,7 @@ public class ConsumerConfigurationTests
             builder.AddKafkaConsumer<string, string>("messaging");
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var connectionFactory = useKeyed
             ? host.Services.GetRequiredKeyedService(ReflectionHelpers.ConsumerConnectionFactoryStringKeyStringValueType.Value!, "messaging")
             : host.Services.GetRequiredService(ReflectionHelpers.ConsumerConnectionFactoryStringKeyStringValueType.Value!);
@@ -67,7 +67,7 @@ public class ConsumerConfigurationTests
             builder.AddKafkaConsumer<string, string>("messaging", configureSettings: SetConnectionString);
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var connectionFactory = useKeyed
             ? host.Services.GetRequiredKeyedService(ReflectionHelpers.ConsumerConnectionFactoryStringKeyStringValueType.Value!, "messaging")
             : host.Services.GetRequiredService(ReflectionHelpers.ConsumerConnectionFactoryStringKeyStringValueType.Value!);
@@ -100,7 +100,7 @@ public class ConsumerConfigurationTests
             builder.AddKafkaConsumer<string, string>("messaging");
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var connectionFactory = useKeyed
             ? host.Services.GetRequiredKeyedService(ReflectionHelpers.ConsumerConnectionFactoryStringKeyStringValueType.Value!, "messaging")
             : host.Services.GetRequiredService(ReflectionHelpers.ConsumerConnectionFactoryStringKeyStringValueType.Value!);
@@ -143,7 +143,7 @@ public class ConsumerConfigurationTests
 
         builder.AddKafkaConsumer<string, string>("messaging");
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var connectionFactory = host.Services.GetRequiredService(ReflectionHelpers.ConsumerConnectionFactoryStringKeyStringValueType.Value!);
 
         ConsumerConfig config = GetConsumerConfig(connectionFactory)!;

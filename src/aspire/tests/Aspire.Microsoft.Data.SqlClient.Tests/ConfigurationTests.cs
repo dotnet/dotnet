@@ -18,4 +18,8 @@ public class ConfigurationTests
     [Fact]
     public void TracingIsEnabledByDefault()
         => Assert.True(new MicrosoftDataSqlClientSettings().Tracing);
+
+    [Fact]
+    public void MetricsAreEnabledByDefault()
+        => Assert.True(new MicrosoftDataSqlClientSettings().Metrics);
 }

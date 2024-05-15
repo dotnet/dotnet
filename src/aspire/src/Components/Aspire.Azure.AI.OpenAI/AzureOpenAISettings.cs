@@ -49,26 +49,23 @@ public sealed class AzureOpenAISettings : IConnectionStringSettings
 
     void IConnectionStringSettings.ParseConnectionString(string? connectionString)
     {
-        if (Uri.TryCreate(connectionString, UriKind.Absolute, out var uri))
+        var connectionBuilder = new DbConnectionStringBuilder
+        {
+            ConnectionString = connectionString
+        };
+
+        if (connectionBuilder.ContainsKey(ConnectionStringEndpoint) && Uri.TryCreate(connectionBuilder[ConnectionStringEndpoint].ToString(), UriKind.Absolute, out var serviceUri))
+        {
+            Endpoint = serviceUri;
+        }
+        else if (Uri.TryCreate(connectionString, UriKind.Absolute, out var uri))
         {
             Endpoint = uri;
         }
-        else
+
+        if (connectionBuilder.ContainsKey(ConnectionStringKey))
         {
-            var connectionBuilder = new DbConnectionStringBuilder
-            {
-                ConnectionString = connectionString
-            };
-
-            if (connectionBuilder.ContainsKey(ConnectionStringEndpoint) && Uri.TryCreate(connectionBuilder[ConnectionStringEndpoint].ToString(), UriKind.Absolute, out var serviceUri))
-            {
-                Endpoint = serviceUri;
-            }
-
-            if (connectionBuilder.ContainsKey(ConnectionStringKey))
-            {
-                Key = connectionBuilder[ConnectionStringKey].ToString();
-            }
+            Key = connectionBuilder[ConnectionStringKey].ToString();
         }
     }
 }

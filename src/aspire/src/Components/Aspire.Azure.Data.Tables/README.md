@@ -19,10 +19,10 @@ dotnet add package Aspire.Azure.Data.Tables
 
 ## Usage example
 
-In the _Program.cs_ file of your project, call the `AddAzureTableClient` extension method to register a `TableServiceClient` for use via the dependency injection container. The method takes a connection name parameter.
+In the _Program.cs_ file of your project, call the `AddAzureTableService` extension method to register a `TableServiceClient` for use via the dependency injection container. The method takes a connection name parameter.
 
 ```csharp
-builder.AddAzureTableClient("tables");
+builder.AddAzureTableService("tables");
 ```
 
 You can then retrieve the `TableServiceClient` instance using dependency injection. For example, to retrieve the client from a Web API controller:
@@ -44,10 +44,10 @@ The .NET Aspire Azure Table storage library provides multiple options to configu
 
 ### Use a connection string
 
-When using a connection string from the `ConnectionStrings` configuration section, you can provide the name of the connection string when calling `builder.AddAzureTableClient()`:
+When using a connection string from the `ConnectionStrings` configuration section, you can provide the name of the connection string when calling `builder.AddAzureTableService()`:
 
 ```csharp
-builder.AddAzureTableClient("tableConnectionName");
+builder.AddAzureTableService("tableConnectionName");
 ```
 
 And then the connection information will be retrieved from the `ConnectionStrings` configuration section. Two connection formats are supported:
@@ -105,38 +105,36 @@ The Azure Table storage library supports [Microsoft.Extensions.Configuration](ht
 You can also pass the `Action<AzureDataTablesSettings> configureSettings` delegate to set up some or all the options inline, for example to disable health checks from code:
 
 ```csharp
-builder.AddAzureTableClient("tables", settings => settings.HealthChecks = false);
+    builder.AddAzureTableService("tables", settings => settings.HealthChecks = false);
 ```
 
-You can also setup the [TableClientOptions](https://learn.microsoft.com/dotnet/api/azure.data.tables.tableclientoptions) using the optional `Action<IAzureClientBuilder<TableServiceClient, TableClientOptions>> configureClientBuilder` parameter of the `AddAzureTableClient` method. For example, to set the first part of "User-Agent" headers for all requests issues by this client:
+You can also setup the [TableClientOptions](https://learn.microsoft.com/dotnet/api/azure.data.tables.tableclientoptions) using the optional `Action<IAzureClientBuilder<TableServiceClient, TableClientOptions>> configureClientBuilder` parameter of the `AddAzureTableService` method. For example, to set the first part of "User-Agent" headers for all requests issues by this client:
 
 ```csharp
-builder.AddAzureTableClient("tables", configureClientBuilder: clientBuilder => clientBuilder.ConfigureOptions(options => options.Diagnostics.ApplicationId = "myapp"));
+    builder.AddAzureTableService("tables", configureClientBuilder: clientBuilder => clientBuilder.ConfigureOptions(options => options.Diagnostics.ApplicationId = "myapp"));
 ```
 
 ## AppHost extensions
 
-In your AppHost project, install the Aspire Azure Storage Hosting library with [NuGet](https://www.nuget.org):
+In your AppHost project, install the Aspire Azure Hosting library with [NuGet](https://www.nuget.org):
 
 ```dotnetcli
-dotnet add package Aspire.Hosting.Azure.Storage
+dotnet add package Aspire.Hosting.Azure
 ```
 
 Then, in the _Program.cs_ file of `AppHost`, add a Table Storage connection and consume the connection using the following methods:
 
 ```csharp
-var tables = builder.ExecutionContext.IsPublishMode
-    ? builder.AddAzureStorage("storage").AddTables("tables")
-    : builder.AddConnectionString("tables");
+var tables = builder.AddAzureStorage("storage").AddTables("tables");
 
 var myService = builder.AddProject<Projects.MyService>()
                        .WithReference(tables);
 ```
 
-The `AddTables` method will add an Azure Storage table resource to the builder. Or `AddConnectionString` can be used to read the connection information from the AppHost's configuration (for example, from "user secrets") under the `ConnectionStrings:tables` config key. The `WithReference` method passes that connection information into a connection string named `tables` in the `MyService` project. In the _Program.cs_ file of `MyService`, the connection can be consumed using:
+The `AddTables` method will read connection information from the AppHost's configuration (for example, from "user secrets") under the `ConnectionStrings:tables` config key. The `WithReference` method passes that connection information into a connection string named `tables` in the `MyService` project. In the _Program.cs_ file of `MyService`, the connection can be consumed using:
 
 ```csharp
-builder.AddAzureTableClient("tables");
+builder.AddAzureTableService("tables");
 ```
 
 ## Additional documentation

@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Aspire.Hosting.Dapr;
 
-internal delegate IEnumerable<object> CommandLineArgBuilder();
+internal delegate IEnumerable<string> CommandLineArgBuilder();
 
-internal sealed record CommandLine(string FileName, IEnumerable<object> Arguments)
+internal sealed record CommandLine(string FileName, IEnumerable<string> Arguments)
 {
     public string ArgumentString
     {
@@ -178,26 +178,6 @@ internal static class CommandLineArgs
         };
     }
 
-    public static CommandLineArgBuilder ModelNamedObjectArg(string name, object value)
-    {
-        return () =>
-        {
-            return [name, value];
-        };
-    }
-
-    public static CommandLineArgBuilder ModelNamedObjectArg<T>(string name, object value, bool assignValue = false) where T : struct
-    {
-        return () =>
-        {
-            string? stringValue = Convert.ToString(value, CultureInfo.InvariantCulture);
-
-            return stringValue is not null
-                ? ModelNamedStringArg(name, stringValue, assignValue)()
-                : Enumerable.Empty<string>();
-        };
-    }
-
     public static CommandLineArgBuilder PostOptionsArgs(params CommandLineArgBuilder[] args)
     {
         return PostOptionsArgs(null, args);
@@ -210,7 +190,7 @@ internal static class CommandLineArgs
 
     public static CommandLineArgBuilder PostOptionsArgs(string? separator, IEnumerable<CommandLineArgBuilder> args)
     {
-        IEnumerable<object> GeneratePostOptionsArgs()
+        IEnumerable<string> GeneratePostOptionsArgs()
         {
             bool postOptions = false;
 

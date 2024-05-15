@@ -1,17 +1,6 @@
 <Project>
 
   <Import Project="..\Directory.Build.props" />
-  <PropertyGroup>
-    <TestArchiveTestsDir Condition="'$(TestArchiveTestsDir)' == ''">$([MSBuild]::NormalizeDirectory($(ArtifactsDir), 'helix', 'tests'))</TestArchiveTestsDir>
-    <TestArchiveTestsDirForWorkloadTests Condition="'$(TestArchiveTestsDirForWorkloadTests)' == ''">$([MSBuild]::NormalizeDirectory($(ArtifactsDir), 'helix', 'workload-tests'))</TestArchiveTestsDirForWorkloadTests>
-    <TestArchiveTestsDirForEndToEndTests Condition="'$(TestArchiveTestsDirForEndToEndTests)' == ''">$([MSBuild]::NormalizeDirectory($(ArtifactsDir), 'helix', 'e2e-tests'))</TestArchiveTestsDirForEndToEndTests>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <AddPublicApiAnalyzers>false</AddPublicApiAnalyzers>
-  </PropertyGroup>
-
-  <Import Project="Shared\Aspire.Workload.Testing.props" Condition="'$(IsWorkloadTestProject)' == 'true'" />
 
   <PropertyGroup>
     <!--

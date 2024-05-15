@@ -147,9 +147,10 @@ public class DistributedApplicationTests
 
         foreach (var item in appModel.Resources)
         {
-            if (item is IResourceWithEndpoints resourceWithEndpoints)
+            if ((item is ContainerResource || item is ProjectResource || item is ExecutableResource) && item.TryGetEndpoints(out _))
             {
-                Assert.True(resourceWithEndpoints.GetEndpoints().All(e => e.IsAllocated));
+                Assert.True(item.TryGetAllocatedEndPoints(out var endpoints));
+                Assert.NotEmpty(endpoints);
             }
         }
     }
@@ -222,8 +223,7 @@ public class DistributedApplicationTests
         testProgram.AppBuilder.Services.AddLogging(b => b.AddXunit(_testOutputHelper));
 
         testProgram.AppBuilder.AddContainer("redis-cli", "redis")
-            .WithArgs("redis-cli", "-h", "host.docker.internal", "-p", "9999", "MONITOR")
-            .WithContainerRunArgs("--add-host", "testlocalhost:127.0.0.1");
+            .WithArgs("redis-cli", "-h", "host.docker.internal", "-p", "9999", "MONITOR");
 
         await using var app = testProgram.Build();
 
@@ -237,7 +237,6 @@ public class DistributedApplicationTests
             {
                 Assert.Equal("redis:latest", item.Spec.Image);
                 Assert.Equal(["redis-cli", "-h", "host.docker.internal", "-p", "9999", "MONITOR"], item.Spec.Args);
-                Assert.Equal(["--add-host", "testlocalhost:127.0.0.1"], item.Spec.RunArgs);
             });
 
         await app.StopAsync();
@@ -254,7 +253,7 @@ public class DistributedApplicationTests
             .WithHttpEndpoint(name: "http0", env: "PORT0");
 
         testProgram.AppBuilder.AddContainer("redis0", "redis")
-            .WithEndpoint(targetPort: 6379, name: "tcp", env: "REDIS_PORT");
+            .WithEndpoint(containerPort: 6379, name: "tcp", env: "REDIS_PORT");
 
         await using var app = testProgram.Build();
 
@@ -274,104 +273,27 @@ public class DistributedApplicationTests
         var nodeApp = await KubernetesHelper.GetResourceByNameAsync<Executable>(kubernetes, "nodeapp", r => r.Status?.EffectiveEnv is not null, token);
         Assert.NotNull(nodeApp);
 
+        string? GetEnv(IEnumerable<EnvVar>? envVars, string name)
+        {
+            Assert.NotNull(envVars);
+            return Assert.Single(envVars.Where(e => e.Name == name)).Value;
+        };
+
         Assert.Equal("redis:latest", redisContainer.Spec.Image);
-        Assert.Equal("6379", GetEnv(redisContainer.Spec.Env, "REDIS_PORT"));
+        Assert.Equal("{{- portForServing \"redis0\" }}", GetEnv(redisContainer.Spec.Env, "REDIS_PORT"));
         Assert.Equal("6379", GetEnv(redisContainer.Status!.EffectiveEnv, "REDIS_PORT"));
 
-        Assert.Equal("{{- portForServing \"servicea_http0\" -}}", GetEnv(serviceA.Spec.Env, "PORT0"));
+        Assert.Equal("{{- portForServing \"servicea_http0\" }}", GetEnv(serviceA.Spec.Env, "PORT0"));
         var serviceAPortValue = GetEnv(serviceA.Status!.EffectiveEnv, "PORT0");
         Assert.False(string.IsNullOrEmpty(serviceAPortValue));
         Assert.NotEqual(0, int.Parse(serviceAPortValue, CultureInfo.InvariantCulture));
 
-        Assert.Equal("{{- portForServing \"nodeapp\" -}}", GetEnv(nodeApp.Spec.Env, "PORT"));
+        Assert.Equal("{{- portForServing \"nodeapp\" }}", GetEnv(nodeApp.Spec.Env, "PORT"));
         var nodeAppPortValue = GetEnv(nodeApp.Status!.EffectiveEnv, "PORT");
         Assert.False(string.IsNullOrEmpty(nodeAppPortValue));
         Assert.NotEqual(0, int.Parse(nodeAppPortValue, CultureInfo.InvariantCulture));
 
         await app.StopAsync();
-
-        static string? GetEnv(IEnumerable<EnvVar>? envVars, string name)
-        {
-            Assert.NotNull(envVars);
-            return Assert.Single(envVars.Where(e => e.Name == name)).Value;
-        }
-    }
-
-    [LocalOnlyFact("docker")]
-    public async Task StartAsync_DashboardAuthConfig_PassedToDashboardProcess()
-    {
-        var browserToken = "ThisIsATestToken";
-        var args = new string[] {
-            "ASPNETCORE_URLS=http://localhost:0",
-            "DOTNET_DASHBOARD_OTLP_ENDPOINT_URL=http://localhost:0",
-            $"DOTNET_DASHBOARD_FRONTEND_BROWSERTOKEN={browserToken}"
-        };
-        using var testProgram = CreateTestProgram(args: args, disableDashboard: false);
-
-        testProgram.AppBuilder.Services.AddLogging(b => b.AddXunit(_testOutputHelper));
-
-        await using var app = testProgram.Build();
-
-        var kubernetes = app.Services.GetRequiredService<IKubernetesService>();
-
-        await app.StartAsync();
-
-        using var cts = new CancellationTokenSource(Debugger.IsAttached ? Timeout.InfiniteTimeSpan : TimeSpan.FromSeconds(10));
-        var token = cts.Token;
-
-        var aspireDashboard = await KubernetesHelper.GetResourceByNameAsync<Executable>(kubernetes, "aspire-dashboard", r => r.Status?.EffectiveEnv is not null, token);
-        Assert.NotNull(aspireDashboard);
-
-        Assert.Equal("BrowserToken", GetEnv(aspireDashboard.Spec.Env, "DASHBOARD__FRONTEND__AUTHMODE"));
-        Assert.Equal("ThisIsATestToken", GetEnv(aspireDashboard.Spec.Env, "DASHBOARD__FRONTEND__BROWSERTOKEN"));
-
-        Assert.Equal("ApiKey", GetEnv(aspireDashboard.Spec.Env, "DASHBOARD__OTLP__AUTHMODE"));
-        var keyBytes = Convert.FromHexString(GetEnv(aspireDashboard.Spec.Env, "DASHBOARD__OTLP__PRIMARYAPIKEY")!);
-        Assert.Equal(16, keyBytes.Length);
-
-        await app.StopAsync();
-
-        static string? GetEnv(IEnumerable<EnvVar>? envVars, string name)
-        {
-            Assert.NotNull(envVars);
-            return Assert.Single(envVars.Where(e => e.Name == name)).Value;
-        }
-    }
-
-    [LocalOnlyFact("docker")]
-    public async Task StartAsync_UnsecuredAllowAnonymous_PassedToDashboardProcess()
-    {
-        var args = new string[] {
-            "ASPNETCORE_URLS=http://localhost:0",
-            "DOTNET_DASHBOARD_OTLP_ENDPOINT_URL=http://localhost:0",
-            "DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true"
-        };
-        using var testProgram = CreateTestProgram(args: args, disableDashboard: false);
-
-        testProgram.AppBuilder.Services.AddLogging(b => b.AddXunit(_testOutputHelper));
-
-        await using var app = testProgram.Build();
-
-        var kubernetes = app.Services.GetRequiredService<IKubernetesService>();
-
-        await app.StartAsync();
-
-        using var cts = new CancellationTokenSource(Debugger.IsAttached ? Timeout.InfiniteTimeSpan : TimeSpan.FromSeconds(10));
-        var token = cts.Token;
-
-        var aspireDashboard = await KubernetesHelper.GetResourceByNameAsync<Executable>(kubernetes, "aspire-dashboard", r => r.Status?.EffectiveEnv is not null, token);
-        Assert.NotNull(aspireDashboard);
-
-        Assert.Equal("Unsecured", GetEnv(aspireDashboard.Spec.Env, "DASHBOARD__FRONTEND__AUTHMODE"));
-        Assert.Equal("Unsecured", GetEnv(aspireDashboard.Spec.Env, "DASHBOARD__OTLP__AUTHMODE"));
-
-        await app.StopAsync();
-
-        static string? GetEnv(IEnumerable<EnvVar>? envVars, string name)
-        {
-            Assert.NotNull(envVars);
-            return Assert.Single(envVars.Where(e => e.Name == name)).Value;
-        }
     }
 
     [LocalOnlyFact("docker")]
@@ -409,9 +331,8 @@ public class DistributedApplicationTests
         using var testProgram = CreateTestProgram();
         testProgram.AppBuilder.Services.AddLogging(b => b.AddXunit(_testOutputHelper));
 
-        var sourcePath = Path.GetFullPath("/etc/path-here");
         testProgram.AppBuilder.AddContainer("redis-cli", "redis")
-            .WithBindMount(sourcePath, "path-here");
+            .WithBindMount("/etc/path-here", $"path-here");
 
         await using var app = testProgram.Build();
 
@@ -429,7 +350,7 @@ public class DistributedApplicationTests
 
         Assert.NotNull(redisContainer.Spec.VolumeMounts);
         Assert.NotEmpty(redisContainer.Spec.VolumeMounts);
-        Assert.Equal(sourcePath, redisContainer.Spec.VolumeMounts[0].Source);
+        Assert.Equal("/etc/path-here", redisContainer.Spec.VolumeMounts[0].Source);
 
         await app.StopAsync();
     }
@@ -441,7 +362,7 @@ public class DistributedApplicationTests
         testProgram.AppBuilder.Services.AddLogging(b => b.AddXunit(_testOutputHelper));
 
         testProgram.AppBuilder.AddContainer("redis-cli", "redis")
-            .WithBindMount("etc/path-here", "path-here");
+            .WithBindMount("etc/path-here", $"path-here");
 
         await using var app = testProgram.Build();
 
@@ -466,13 +387,13 @@ public class DistributedApplicationTests
     }
 
     [LocalOnlyFact("docker")]
-    public async Task VerifyDockerWithVolumeWorksWithName()
+    public async Task VerifyDockerWithVolumeMountWorksWithName()
     {
         using var testProgram = CreateTestProgram();
         testProgram.AppBuilder.Services.AddLogging(b => b.AddXunit(_testOutputHelper));
 
         testProgram.AppBuilder.AddContainer("redis-cli", "redis")
-            .WithVolume("test-volume-name", "/path-here");
+            .WithVolumeMount("test-volume-name", $"/path-here");
 
         await using var app = testProgram.Build();
 
@@ -548,7 +469,7 @@ public class DistributedApplicationTests
             }
         }
 
-        await foreach (var resource in s.WatchAsync<Executable>(cancellationToken: token))
+        await foreach(var resource in s.WatchAsync<Executable>(cancellationToken: token))
         {
             Assert.True(resource.Item2.Metadata.Annotations.TryGetValue(Executable.ResourceNameAnnotation, out var value));
             if (expectedExeResources.Contains(value))
@@ -564,6 +485,38 @@ public class DistributedApplicationTests
     }
 
     [LocalOnlyFact("docker")]
+    public async Task ReplicasAndProxylessEndpointThrows()
+    {
+        var testProgram = CreateTestProgram();
+        testProgram.ServiceABuilder.WithReplicas(2).WithEndpoint("http", endpoint =>
+        {
+            endpoint.IsProxied = false;
+        });
+        testProgram.AppBuilder.Services.AddLogging(b => b.AddXunit(_testOutputHelper));
+
+        await using var app = testProgram.Build();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => app.StartAsync());
+        Assert.Equal("'servicea' specifies multiple replicas and at least one proxyless endpoint. These features do not work together.", ex.Message);
+    }
+
+    [LocalOnlyFact("docker")]
+    public async Task ProxylessEndpointWithoutPortThrows()
+    {
+        var testProgram = CreateTestProgram();
+        testProgram.ServiceABuilder.WithEndpoint("http", endpoint =>
+        {
+            endpoint.IsProxied = false;
+        });
+        testProgram.AppBuilder.Services.AddLogging(b => b.AddXunit(_testOutputHelper));
+
+        await using var app = testProgram.Build();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => app.StartAsync());
+        Assert.Equal("Service 'servicea' needs to specify a port for endpoint 'http' since it isn't using a proxy.", ex.Message);
+    }
+
+    [LocalOnlyFact("docker")]
     public async Task ProxylessEndpointWorks()
     {
         var testProgram = CreateTestProgram();
@@ -575,13 +528,7 @@ public class DistributedApplicationTests
                 b.UseSocketsHttpHandler((handler, sp) => handler.PooledConnectionLifetime = TimeSpan.FromSeconds(5));
             });
 
-        testProgram.ServiceABuilder
-            .WithEndpoint("http", e =>
-            {
-                e.Port = 1234;
-                e.TargetPort = 1234;
-                e.IsProxied = false;
-            });
+        testProgram.ServiceABuilder.WithEndpoint(1234, "http", isProxied: false);
         testProgram.AppBuilder.Services.AddLogging(b => b.AddXunit(_testOutputHelper));
 
         await using var app = testProgram.Build();
@@ -622,17 +569,9 @@ public class DistributedApplicationTests
             });
 
         testProgram.ServiceABuilder
-            .WithEndpoint("http", e =>
-            {
-                e.Port = 1234;
-                e.TargetPort = 1234;
-                e.IsProxied = false;
-            }, createIfNotExists: false)
-            .WithEndpoint("https", e =>
-            {
-                e.UriScheme = "https";
-                e.Port = 1543;
-            }, createIfNotExists: true);
+            .ExcludeLaunchProfile()
+            .WithEndpoint(1234, "http", isProxied: false)
+            .WithEndpoint(1543, "https");
 
         testProgram.AppBuilder.Services.AddLogging(b => b.AddXunit(_testOutputHelper));
 
@@ -690,7 +629,7 @@ public class DistributedApplicationTests
         var servicea = builder.AddProject<Projects.ServiceA>("servicea")
             .WithReference(redis);
 
-        using var app = builder.Build();
+        var app = builder.Build();
         await app.StartAsync();
 
         var s = app.Services.GetRequiredService<IKubernetesService>();
@@ -708,46 +647,22 @@ public class DistributedApplicationTests
     }
 
     [LocalOnlyFact("docker")]
-    public async Task AfterResourcesCreatedLifecycleHookWorks()
+    public async Task ProxylessContainerWithoutPortThrows()
     {
         var builder = DistributedApplication.CreateBuilder(
             new DistributedApplicationOptions { DisableDashboard = true, AssemblyName = typeof(DistributedApplicationTests).Assembly.FullName });
 
-        builder.AddRedis("redis");
-        builder.Services.TryAddLifecycleHook<KubernetesTestLifecycleHook>();
+        var redis = builder.AddRedis("redis").WithEndpoint("tcp", endpoint =>
+        {
+            endpoint.IsProxied = false;
+        });
 
-        using var app = builder.Build();
+        var app = builder.Build();
 
-        var s = app.Services.GetRequiredService<IKubernetesService>();
-        var lifecycles = app.Services.GetServices<IDistributedApplicationLifecycleHook>();
-        var kubernetesLifecycle = (KubernetesTestLifecycleHook)lifecycles.Where(l => l.GetType() == typeof(KubernetesTestLifecycleHook)).First();
-        kubernetesLifecycle.KubernetesService = s;
-
-        await app.StartAsync();
-
-        await kubernetesLifecycle.HooksCompleted;
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => app.StartAsync());
+        Assert.Equal("Service 'redis' needs to specify a port for endpoint 'tcp' since it isn't using a proxy.", ex.Message);
     }
 
-    private sealed class KubernetesTestLifecycleHook : IDistributedApplicationLifecycleHook
-    {
-        private readonly TaskCompletionSource _tcs = new();
-
-        public IKubernetesService? KubernetesService { get; set; }
-
-        public Task HooksCompleted => _tcs.Task;
-
-        public async Task AfterEndpointsAllocatedAsync(DistributedApplicationModel appModel, CancellationToken cancellationToken)
-        {
-            Assert.Empty(await KubernetesService!.ListAsync<Container>(cancellationToken: cancellationToken));
-        }
-
-        public async Task AfterResourcesCreatedAsync(DistributedApplicationModel appModel, CancellationToken cancellationToken)
-        {
-            Assert.NotEmpty(await KubernetesService!.ListAsync<Container>(cancellationToken: cancellationToken));
-            _tcs.SetResult();
-        }
-    }
-
-    private static TestProgram CreateTestProgram(string[]? args = null, bool includeIntegrationServices = false, bool includeNodeApp = false, bool disableDashboard = true) =>
-        TestProgram.Create<DistributedApplicationTests>(args, includeIntegrationServices: includeIntegrationServices, includeNodeApp: includeNodeApp, disableDashboard: disableDashboard);
+    private static TestProgram CreateTestProgram(string[]? args = null, bool includeIntegrationServices = false, bool includeNodeApp = false) =>
+        TestProgram.Create<DistributedApplicationTests>(args, includeIntegrationServices: includeIntegrationServices, includeNodeApp: includeNodeApp);
 }
