@@ -1577,7 +1577,6 @@ The output directory structure is as follows:
   folders will be two additional folders: 'assets' and 'packages'. Assets
   contains all non-package outputs, while 'packages' contains all NuGet
   packages.
-  - A publish_files directory will contain the layout required for the .NET Core release publishing pipeline to publish nuget packages.
   - A manifest file will be generated under the root folder containing information about all gathered builds
 
 **Parameters**
