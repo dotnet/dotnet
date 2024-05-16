@@ -10,10 +10,12 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.LanguageClient.Extensions;
+using Microsoft.VisualStudio.Razor.Settings;
 using Newtonsoft.Json;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -26,13 +28,15 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostSemanticTokensRangeEndpoint(
-    IOutOfProcSemanticTokensService semanticTokensInfoService,
+    IRemoteClientProvider remoteClientProvider,
+    IClientSettingsManager clientSettingsManager,
     ISemanticTokensLegendService semanticTokensLegendService,
     ITelemetryReporter telemetryReporter,
     ILoggerFactory loggerFactory)
     : AbstractRazorCohostDocumentRequestHandler<SemanticTokensRangeParams, SemanticTokens?>, IDynamicRegistrationProvider
 {
-    private readonly IOutOfProcSemanticTokensService _semanticTokensInfoService = semanticTokensInfoService;
+    private readonly IRemoteClientProvider _remoteClientProvider = remoteClientProvider;
+    private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
     private readonly ISemanticTokensLegendService _semanticTokensLegendService = semanticTokensLegendService;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostSemanticTokensRangeEndpoint>();
@@ -66,19 +70,43 @@ internal sealed class CohostSemanticTokensRangeEndpoint(
 
     protected override async Task<SemanticTokens?> HandleRequestAsync(SemanticTokensRangeParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
     {
-        var correlationId = Guid.NewGuid();
-        using var _ = _telemetryReporter.TrackLspRequest(Methods.TextDocumentSemanticTokensRangeName, RazorLSPConstants.CohostLanguageServerName, correlationId);
+        var razorDocument = context.TextDocument.AssumeNotNull();
+        var span = request.Range.ToLinePositionSpan();
 
-        var data = await _semanticTokensInfoService.GetSemanticTokensDataAsync(context.TextDocument.AssumeNotNull(), request.Range.ToLinePositionSpan(), correlationId, cancellationToken);
+        var remoteClient = await _remoteClientProvider.TryGetClientAsync(cancellationToken).ConfigureAwait(false);
 
-        if (data is null)
+        if (remoteClient is null)
         {
+            _logger.LogWarning($"Couldn't get remote client");
             return null;
         }
 
-        return new SemanticTokens
+        try
         {
-            Data = data
-        };
+            var colorBackground = _clientSettingsManager.GetClientSettings().AdvancedSettings.ColorBackground;
+
+            var correlationId = Guid.NewGuid();
+            using var _ = _telemetryReporter.TrackLspRequest(Methods.TextDocumentSemanticTokensRangeName, RazorLSPConstants.CohostLanguageServerName, correlationId);
+
+            var data = await remoteClient.TryInvokeAsync<IRemoteSemanticTokensService, int[]?>(
+                razorDocument.Project.Solution,
+                (service, solutionInfo, cancellationToken) => service.GetSemanticTokensDataAsync(solutionInfo, razorDocument.Id, span, colorBackground, correlationId, cancellationToken),
+                cancellationToken).ConfigureAwait(false);
+
+            if (data.Value is not { } tokens)
+            {
+                return null;
+            }
+
+            return new SemanticTokens
+            {
+                Data = tokens
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error calling remote");
+            return null;
+        }
     }
 }
