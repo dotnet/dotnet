@@ -3,16 +3,16 @@
 <Project>
   <Import Project="GenerateServiceHubConfigurationFiles.targets" />
   <!--
-    Injects generated Asset entries for ServiceHub configuration files to vsixmanifest:    
+    Injects generated Asset entries for ServiceHub configuration files to vsixmanifest:
       <Asset Type="Microsoft.ServiceHub.Service" d:Source="File" Path="{service-name}.servicehub.service.json"/>
   -->
-  
+
   <Target Name="GetGeneratedVsixManifestPath">
     <PropertyGroup>
       <_GeneratedVsixManifestPath>$(IntermediateOutputPath)source.extension.g.vsixmanifest</_GeneratedVsixManifestPath>
     </PropertyGroup>
   </Target>
-    
+
   <!--
     Redefines VSSDK target FindSourceVsixManifest to allow adding generated content to the manifest.
     Workaround for: https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1179780
@@ -23,13 +23,13 @@
           Outputs="$(_GeneratedVsixManifestPath)">
     <PropertyGroup>
       <_Placeholder><![CDATA[<!--#SERVICEHUB_ASSETS#-->]]></_Placeholder>
-      <_Replacement>@(ServiceHubServiceJsonFile->'&lt;Asset Type="Microsoft.ServiceHub.Service" d:Source="File" Path="%(FileName)%(Extension)" /&gt;', '
+      <_Replacement>@(ServiceHubServiceJsonFile->'&lt;Asset Type="Microsoft.ServiceHub.Service" d:Source="File" Path="ServiceHubCore\%(FileName)%(Extension)" /&gt;', '
     ')</_Replacement>
     </PropertyGroup>
-    
+
     <Copy SourceFiles="$(VsixSourceManifestPath)" DestinationFiles="$(_GeneratedVsixManifestPath)" />
 
-    <WriteLinesToFile 
+    <WriteLinesToFile
       File="$(_GeneratedVsixManifestPath)"
       Lines="$([System.IO.File]::ReadAllText('$(_GeneratedVsixManifestPath)').Replace('$(_Placeholder)', '$(_Replacement)'))"
       Overwrite="true"
