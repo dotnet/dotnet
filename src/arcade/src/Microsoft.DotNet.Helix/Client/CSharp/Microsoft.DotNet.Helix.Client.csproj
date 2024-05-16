@@ -7,12 +7,14 @@
     <Description>This package provides access to the Helix Api located at https://helix.dot.net/</Description>
     <SwaggerDocumentUri>https://helix.dot.net/api/openapi.json</SwaggerDocumentUri>
     <SwaggerClientName>HelixApi</SwaggerClientName>
+    <ExcludeFromSwaggerOutputDirectory>README.md</ExcludeFromSwaggerOutputDirectory>
+    <!-- For opt-in GenerateSwaggerCode target. Re-generate code under generated-code via `dotnet build /t:GenerateSwaggerCode`. -->
+    <UsingInTreeToolSwaggerGeneratorMSBuild>true</UsingInTreeToolSwaggerGeneratorMSBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Azure.Core" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
-    <PackageReference Include="Microsoft.DotNet.SwaggerGenerator.MSBuild" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="System.Collections.Immutable" />
     <PackageReference Include="System.Text.Encodings.Web" />
