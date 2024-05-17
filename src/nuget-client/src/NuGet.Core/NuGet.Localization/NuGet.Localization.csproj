@@ -4,21 +4,13 @@
     <Shipping>true</Shipping>
     <PackProject>true</PackProject>
     <PackProject Condition="!Exists('$(LocalizationRootDirectory)')">false</PackProject>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
     <Description>NuGet localization package for dotnet CLI.</Description>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
     <LocalizationOutputDirectory>$(ArtifactsDirectory)LocalizedFiles</LocalizationOutputDirectory>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <NuspecFile>NuGet.Localization.nuspec</NuspecFile>
-    <NuspecProperties>
-      Version=$(Version);
-      configuration=$(Configuration);
-      LocalizationOutputDirectory=$(LocalizationOutputDirectory);
-      PackageIcon=$(PackageIcon);
-      PackageIconPath=$([System.IO.Path]::Combine($(RepositoryRootDirectory),$(PackageIcon)))
-    </NuspecProperties>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);CreateNupkg</TargetsForTfmSpecificContentInPackage>
+    <BeforePack>MoveLocalizedFilesToLocalizedArtifacts</BeforePack>
   </PropertyGroup>
 
   <!--
@@ -29,11 +21,15 @@
     ============================================================
   -->
 
-  <Target Name="MoveLocalizedFilesToLocalizedArtifacts" Condition="Exists($(LocalizationRootDirectory)) " BeforeTargets="GenerateNuspec">
+  <Target Name="MoveLocalizedFilesToLocalizedArtifacts" Condition="Exists($(LocalizationRootDirectory)) ">
     <MakeDir
             Directories="$(LocalizationOutputDirectory)"/>
     <ItemGroup>
-      <LocalizationProjects Include="@(SolutionProjectsWithoutVSIX)" Exclude="..\NuGet.Build.Tasks.Pack\NuGet.Build.Tasks.Pack.csproj"/>
+      <LocalizationProjects Include="@(CoreProjects)" 
+                            Exclude="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.Build.Tasks.Pack\NuGet.Build.Tasks.Pack.csproj;
+                            $(RepositoryRootDirectory)src\NuGet.Core\Microsoft.Build.NuGetSdkResolver\Microsoft.Build.NuGetSdkResolver.csproj;
+                            $(RepositoryRootDirectory)src\NuGet.Core\NuGet.Packaging.Core\NuGet.Packaging.Core.csproj"
+                            />
     </ItemGroup>
     <Message Text="Localization Projects: @(LocalizationProjects, '%0a')" Importance="High" />
     <MSBuild Projects="@(LocalizationProjects)"
@@ -54,4 +50,15 @@
 
     <Copy SourceFiles="@(_LocalizedFilePaths->'%(Identity)')" DestinationFiles="@(_LocalizedFilePaths->'%(TargetPath)')" />
   </Target>
+
+   <Target Name="CreateNupkg">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(LocalizationOutputDirectory)\**\*.resources.dll">
+        <PackagePath>lib</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+    <Message Text="Loc directory $(LocalizationOutputDirectory)" Importance="High" />
+    <Message Text="Files added: @(TfmSpecificPackageFile, '%0a')" Importance="High" />
+  </Target>
+
 </Project>
