@@ -256,6 +256,14 @@
     <ProductProjects Include="$(RepositoryRootDirectory)src\*\*\*.csproj" />
   </ItemGroup>
 
+  <!-- All projects that build assemblies that are inserted into the .NET SDK -->
+  <ItemGroup>
+    <CoreProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\*\*.csproj" 
+                  Exclude="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj;
+                           $(RepositoryRootDirectory)src\NuGet.Core\NuGet.Localization\NuGet.Localization.csproj;
+                           $(RepositoryRootDirectory)src\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj" />
+  </ItemGroup>
+
   <ItemGroup Condition=" '$(IsXPlat)' != 'true' ">
    <ApexProjects Include="$(RepositoryRootDirectory)test\NuGet.Tests.Apex\*\*.csproj" />
   </ItemGroup>

@@ -102,7 +102,6 @@ System.Reflection.MetadataLoadContext.dll
 System.Reflection.TypeExtensions.dll
 System.Resources.Extensions.dll
 System.Security.AccessControl.dll
-System.Security.Permissions.dll
 System.Security.Principal.Windows.dll
 System.Text.Encodings.Web.dll
 System.Text.Json.dll
