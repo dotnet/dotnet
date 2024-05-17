@@ -55,10 +55,10 @@
       "commitSha": "52bdf74cb9197b39fd4fa0f722f7558d718efab6"
     },
     {
-      "packageVersion": "8.0.400-beta.24259.2",
+      "packageVersion": "8.0.400-beta.24266.4",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "e2dad6af0f5a33cfbe6921a16224a9941197930d"
+      "commitSha": "a73a7c6ebc99bc8804412bf84b68e9a5c68f4378"
     },
     {
       "packageVersion": "17.11.0-preview-24263-02",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "6f34f629645ef164e7607c6e7cb636a2fe9aeabc"
+      "commitSha": "9bf0288892331c854ca9453a2fefe7d059e064ad"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24263.2",
