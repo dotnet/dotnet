@@ -48,7 +48,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDisplayName">
-        <source>Auto Insert Closing Tag</source>
+        <source>Auto insert closing tag</source>
         <target state="translated">終了タグを自動挿入する</target>
         <note />
       </trans-unit>
@@ -58,7 +58,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
-        <source>Auto Insert Attribute Quotes</source>
+        <source>Auto insert attribute quotes</source>
         <target state="translated">属性引用符の自動挿入</target>
         <note />
       </trans-unit>
@@ -68,7 +68,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
-        <source>Code/Functions block open brace on next line</source>
+        <source>Code/functions block open brace on next line</source>
         <target state="translated">コード/関数は、次の行で始め中かっこをブロックします</target>
         <note />
       </trans-unit>
@@ -78,17 +78,17 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDisplayName">
-        <source>Background for C# Code</source>
+        <source>Background for C# code</source>
         <target state="translated">C# コードの背景</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDescription">
-        <source>If true, pressing space will commit suggestions for Html elements and components</source>
+        <source>If true, pressing space will commit suggestions for HTML elements and components</source>
         <target state="translated">true の場合、スペースを押すと HTML 要素とコンポーネントの候補がコミットされます</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
-        <source>Commit Elements with Space</source>
+        <source>Commit elements with space</source>
         <target state="translated">スペースを含む要素のコミット</target>
         <note />
       </trans-unit>
@@ -98,7 +98,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDisplayName">
-        <source>Format On Type</source>
+        <source>Format on type</source>
         <target state="translated">入力時に書式設定</target>
         <note />
       </trans-unit>

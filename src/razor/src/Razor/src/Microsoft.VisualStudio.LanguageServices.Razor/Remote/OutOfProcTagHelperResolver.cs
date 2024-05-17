@@ -23,11 +23,11 @@ namespace Microsoft.VisualStudio.Razor.Remote;
 [Export(typeof(ITagHelperResolver))]
 [method: ImportingConstructor]
 internal class OutOfProcTagHelperResolver(
-    IRemoteClientProvider remoteClientProvider,
+    IRemoteServiceProvider remoteServiceProvider,
     ILoggerFactory loggerFactory,
     ITelemetryReporter telemetryReporter) : ITagHelperResolver
 {
-    private readonly IRemoteClientProvider _remoteClientProvider = remoteClientProvider;
+    private readonly IRemoteServiceProvider _remoteServiceProvider = remoteServiceProvider;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<OutOfProcTagHelperResolver>();
     private readonly CompilationTagHelperResolver _innerResolver = new(telemetryReporter);
     private readonly TagHelperResultCache _resultCache = new();
@@ -68,14 +68,6 @@ internal class OutOfProcTagHelperResolver(
 
     protected virtual async ValueTask<ImmutableArray<TagHelperDescriptor>> ResolveTagHelpersOutOfProcessAsync(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
-        var remoteClient = await _remoteClientProvider.TryGetClientAsync(cancellationToken);
-
-        if (remoteClient is null)
-        {
-            // Could not resolve
-            return default;
-        }
-
         if (!_resultCache.TryGetId(workspaceProject.Id, out var lastResultId))
         {
             lastResultId = -1;
@@ -83,19 +75,19 @@ internal class OutOfProcTagHelperResolver(
 
         var projectHandle = new ProjectSnapshotHandle(workspaceProject.Id, projectSnapshot.Configuration, projectSnapshot.RootNamespace);
 
-        var deltaResult = await remoteClient.TryInvokeAsync<IRemoteTagHelperProviderService, TagHelperDeltaResult>(
+        var deltaResult = await _remoteServiceProvider.TryInvokeAsync<IRemoteTagHelperProviderService, TagHelperDeltaResult>(
             workspaceProject.Solution,
             (service, solutionInfo, innerCancellationToken) =>
                 service.GetTagHelpersDeltaAsync(solutionInfo, projectHandle, lastResultId, innerCancellationToken),
             cancellationToken);
 
-        if (!deltaResult.HasValue)
+        if (deltaResult is null)
         {
             return default;
         }
 
         // Apply the delta we received to any cached checksums for the current project.
-        var checksums = ProduceChecksumsFromDelta(workspaceProject.Id, lastResultId, deltaResult.Value);
+        var checksums = ProduceChecksumsFromDelta(workspaceProject.Id, lastResultId, deltaResult);
 
         using var _1 = ArrayBuilderPool<TagHelperDescriptor>.GetPooledObject(out var tagHelpers);
         using var _2 = ArrayBuilderPool<Checksum>.GetPooledObject(out var checksumsToFetch);
@@ -118,18 +110,18 @@ internal class OutOfProcTagHelperResolver(
         if (checksumsToFetch.Count > 0)
         {
             // There are checksums that we don't have cached tag helpers for, so we need to fetch them from OOP.
-            var fetchResult = await remoteClient.TryInvokeAsync<IRemoteTagHelperProviderService, FetchTagHelpersResult>(
+            var fetchResult = await _remoteServiceProvider.TryInvokeAsync<IRemoteTagHelperProviderService, FetchTagHelpersResult>(
                 workspaceProject.Solution,
                 (service, solutionInfo, innerCancellationToken) =>
                     service.FetchTagHelpersAsync(solutionInfo, projectHandle, checksumsToFetch.DrainToImmutable(), innerCancellationToken),
                 cancellationToken);
 
-            if (!fetchResult.HasValue)
+            if (fetchResult is null)
             {
                 return default;
             }
 
-            var fetchedTagHelpers = fetchResult.Value.TagHelpers;
+            var fetchedTagHelpers = fetchResult.TagHelpers;
             if (fetchedTagHelpers.IsEmpty)
             {
                 // If we didn't receive any tag helpers, something catastrophic happened in the Roslyn OOP

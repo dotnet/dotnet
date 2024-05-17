@@ -9,16 +9,19 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-internal abstract partial class RazorServiceFactoryBase<TService>
+internal static class RemoteMefComposition
 {
-    internal static readonly ImmutableArray<Assembly> RemoteHostAssemblies = [typeof(RazorServiceFactoryBase<TService>).Assembly];
+    internal static readonly ImmutableArray<Assembly> RemoteHostAssemblies = [typeof(RemoteMefComposition).Assembly];
 
 #pragma warning disable VSTHRD012 // Provide JoinableTaskFactory where allowed
-    private static readonly AsyncLazy<ExportProvider> s_exportProviderLazy = new(GetExportProviderAsync);
+    private static readonly AsyncLazy<ExportProvider> s_exportProviderLazy = new(CreateExportProviderAsync);
 #pragma warning restore VSTHRD012 // Provide JoinableTaskFactory where allowed
 
+    public static Task<ExportProvider> GetExportProviderAsync()
+        => s_exportProviderLazy.GetValueAsync();
+
     // Inspired by https://github.com/dotnet/roslyn/blob/25aa74d725e801b8232dbb3e5abcda0fa72da8c5/src/Workspaces/Remote/ServiceHub/Host/RemoteWorkspaceManager.cs#L77
-    private static async Task<ExportProvider> GetExportProviderAsync()
+    private static async Task<ExportProvider> CreateExportProviderAsync()
     {
         var resolver = Resolver.DefaultInstance;
         var discovery = new AttributedPartDiscovery(resolver, isNonPublicSupported: true); // MEFv2 only

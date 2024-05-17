@@ -39,7 +39,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
 
     private readonly Project _workspaceProject;
     private readonly TestProjectSnapshotManager _projectManager;
-    private readonly IRemoteClientProvider _remoteClientProvider;
+    private readonly IRemoteServiceProvider _remoteClientProvider;
 
     public OutOfProcTagHelperResolverTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -47,7 +47,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
         var workspace = new AdhocWorkspace();
         AddDisposable(workspace);
 
-        _remoteClientProvider = StrictMock.Of<IRemoteClientProvider>();
+        _remoteClientProvider = StrictMock.Of<IRemoteServiceProvider>();
 
         var info = ProjectInfo.Create(ProjectId.CreateNewId("Test"), VersionStamp.Default, "Test", "Test", LanguageNames.CSharp, filePath: "Test.csproj");
         _workspaceProject = workspace.CurrentSolution.AddProject(info).GetProject(info.Id).AssumeNotNull();
