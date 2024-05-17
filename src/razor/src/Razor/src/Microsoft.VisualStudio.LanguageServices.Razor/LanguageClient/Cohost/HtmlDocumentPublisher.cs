@@ -18,35 +18,21 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [Export(typeof(IHtmlDocumentPublisher))]
 [method: ImportingConstructor]
 internal sealed class HtmlDocumentPublisher(
-    IRemoteClientProvider remoteClientProvider,
+    IRemoteServiceProvider remoteServiceProvider,
     LSPDocumentManager documentManager,
     JoinableTaskContext joinableTaskContext,
     ILoggerFactory loggerFactory) : IHtmlDocumentPublisher
 {
-    private readonly IRemoteClientProvider _remoteClientProvider = remoteClientProvider;
+    private readonly IRemoteServiceProvider _remoteServiceProvider = remoteServiceProvider;
     private readonly JoinableTaskContext _joinableTaskContext = joinableTaskContext;
     private readonly TrackingLSPDocumentManager _documentManager = documentManager as TrackingLSPDocumentManager ?? throw new InvalidOperationException("Expected TrackingLSPDocumentManager");
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<HtmlDocumentPublisher>();
 
-    public async Task<string?> GetHtmlSourceFromOOPAsync(TextDocument document, CancellationToken cancellationToken)
+    public Task<string?> GetHtmlSourceFromOOPAsync(TextDocument document, CancellationToken cancellationToken)
     {
-        var client = await _remoteClientProvider.TryGetClientAsync(cancellationToken).ConfigureAwait(false);
-        if (client is null)
-        {
-            _logger.LogError($"Couldn't get remote client for html document generation for {document.FilePath}. Html document contents will be stale");
-            return null;
-        }
-
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return null;
-        }
-
-        var htmlText = await client.TryInvokeAsync<IRemoteHtmlDocumentService, string?>(document.Project.Solution,
+        return _remoteServiceProvider.TryInvokeAsync<IRemoteHtmlDocumentService, string?>(document.Project.Solution,
             (service, solutionInfo, ct) => service.GetHtmlDocumentTextAsync(solutionInfo, document.Id, ct),
-            cancellationToken).ConfigureAwait(false);
-
-        return htmlText.Value;
+            cancellationToken).AsTask();
     }
 
     public async Task PublishAsync(TextDocument document, string htmlText, CancellationToken cancellationToken)

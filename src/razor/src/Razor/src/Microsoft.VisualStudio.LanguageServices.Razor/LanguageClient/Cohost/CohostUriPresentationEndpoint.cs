@@ -1,13 +1,11 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
@@ -25,18 +23,16 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal class CohostUriPresentationEndpoint(
-    IRemoteClientProvider remoteClientProvider,
+    IRemoteServiceProvider remoteServiceProvider,
     IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
     IFilePathService filePathService,
-    LSPRequestInvoker requestInvoker,
-    ILoggerFactory loggerFactory)
+    LSPRequestInvoker requestInvoker)
     : AbstractRazorCohostDocumentRequestHandler<VSInternalUriPresentationParams, WorkspaceEdit?>, IDynamicRegistrationProvider
 {
-    private readonly IRemoteClientProvider _remoteClientProvider = remoteClientProvider;
+    private readonly IRemoteServiceProvider _remoteServiceProvider = remoteServiceProvider;
     private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
     private readonly IFilePathService _filePathService = filePathService;
     private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
-    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostUriPresentationEndpoint>();
 
     protected override bool MutatesSolutionState => false;
 
@@ -66,29 +62,20 @@ internal class CohostUriPresentationEndpoint(
     {
         var razorDocument = context.TextDocument.AssumeNotNull();
 
-        var remoteClient = await _remoteClientProvider.TryGetClientAsync(cancellationToken).ConfigureAwait(false);
-        if (remoteClient is null)
-        {
-            _logger.LogWarning($"Couldn't get remote client");
-            return null;
-        }
+        var data = await _remoteServiceProvider.TryInvokeAsync<IRemoteUriPresentationService, TextChange?>(
+            razorDocument.Project.Solution,
+            (service, solutionInfo, cancellationToken) => service.GetPresentationAsync(solutionInfo, razorDocument.Id, request.Range.ToLinePositionSpan(), request.Uris, cancellationToken),
+            cancellationToken).ConfigureAwait(false);
 
-        try
+        // If we got a response back, then either Razor or C# wants to do something with this, so we're good to go
+        if (data is { } textChange)
         {
-            var data = await remoteClient.TryInvokeAsync<IRemoteUriPresentationService, TextChange?>(
-                razorDocument.Project.Solution,
-                (service, solutionInfo, cancellationToken) => service.GetPresentationAsync(solutionInfo, razorDocument.Id, request.Range.ToLinePositionSpan(), request.Uris, cancellationToken),
-                cancellationToken).ConfigureAwait(false);
+            var sourceText = await razorDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
 
-            // If we got a response back, then either Razor or C# wants to do something with this, so we're good to go
-            if (data.Value is { } textChange)
+            return new WorkspaceEdit
             {
-                var sourceText = await razorDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
-
-                return new WorkspaceEdit
+                DocumentChanges = new TextDocumentEdit[]
                 {
-                    DocumentChanges = new TextDocumentEdit[]
-                    {
                         new TextDocumentEdit
                         {
                             TextDocument = new()
@@ -97,14 +84,8 @@ internal class CohostUriPresentationEndpoint(
                             },
                             Edits = [textChange.ToTextEdit(sourceText)]
                         }
-                    }
-                };
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error calling remote");
-            return null;
+                }
+            };
         }
 
         // If we didn't get anything from Razor or Roslyn, lets ask Html what they want to do

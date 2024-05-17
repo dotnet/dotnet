@@ -48,7 +48,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDisplayName">
-        <source>Auto Insert Closing Tag</source>
+        <source>Auto insert closing tag</source>
         <target state="translated">Inserisci automaticamente tag di chiusura</target>
         <note />
       </trans-unit>
@@ -58,7 +58,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
-        <source>Auto Insert Attribute Quotes</source>
+        <source>Auto insert attribute quotes</source>
         <target state="translated">Inserire automaticamente le virgolette degli attributi</target>
         <note />
       </trans-unit>
@@ -68,7 +68,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
-        <source>Code/Functions block open brace on next line</source>
+        <source>Code/functions block open brace on next line</source>
         <target state="translated">Parentesi graffa di apertura blocco codice/funzioni alla riga successiva</target>
         <note />
       </trans-unit>
@@ -78,17 +78,17 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDisplayName">
-        <source>Background for C# Code</source>
+        <source>Background for C# code</source>
         <target state="translated">Sfondo per il codice C#</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDescription">
-        <source>If true, pressing space will commit suggestions for Html elements and components</source>
+        <source>If true, pressing space will commit suggestions for HTML elements and components</source>
         <target state="translated">Se è true, premendo lo spazio verrà eseguito il commit di suggerimenti per elementi e componenti HTML</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
-        <source>Commit Elements with Space</source>
+        <source>Commit elements with space</source>
         <target state="translated">Eseguire il commit degli elementi con lo spazio</target>
         <note />
       </trans-unit>
@@ -98,7 +98,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDisplayName">
-        <source>Format On Type</source>
+        <source>Format on type</source>
         <target state="translated">Formattare durante la digitazione</target>
         <note />
       </trans-unit>

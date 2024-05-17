@@ -48,7 +48,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDisplayName">
-        <source>Auto Insert Closing Tag</source>
+        <source>Auto insert closing tag</source>
         <target state="translated">Otomatik Olarak Kapanış Etiketi Ekle</target>
         <note />
       </trans-unit>
@@ -58,7 +58,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
-        <source>Auto Insert Attribute Quotes</source>
+        <source>Auto insert attribute quotes</source>
         <target state="translated">Öznitelik Tırnaklarını Otomatik Ekle</target>
         <note />
       </trans-unit>
@@ -68,7 +68,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
-        <source>Code/Functions block open brace on next line</source>
+        <source>Code/functions block open brace on next line</source>
         <target state="translated">Sonraki satırda Kod/İşlevler blok açma küme ayracı</target>
         <note />
       </trans-unit>
@@ -78,17 +78,17 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDisplayName">
-        <source>Background for C# Code</source>
+        <source>Background for C# code</source>
         <target state="translated">C# Kodu için Arka Plan</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDescription">
-        <source>If true, pressing space will commit suggestions for Html elements and components</source>
+        <source>If true, pressing space will commit suggestions for HTML elements and components</source>
         <target state="translated">Doğru ise, boşluk çubuğuna basıldığında HTML öğeleri ve bileşenleri ile ilgili öneriler işlenir.</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
-        <source>Commit Elements with Space</source>
+        <source>Commit elements with space</source>
         <target state="translated">Öğeleri Boşluk Çubuğuyla İşle</target>
         <note />
       </trans-unit>
@@ -98,7 +98,7 @@
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDisplayName">
-        <source>Format On Type</source>
+        <source>Format on type</source>
         <target state="translated">Yazarken Biçimlendir</target>
         <note />
       </trans-unit>

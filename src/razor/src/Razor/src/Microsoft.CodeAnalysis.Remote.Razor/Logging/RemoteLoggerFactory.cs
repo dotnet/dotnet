@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Composition;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -13,14 +14,15 @@ internal partial class RemoteLoggerFactory() : ILoggerFactory
 {
     private static TraceSource? s_traceSource;
 
-    internal static void Initialize(TraceSource traceSource)
+    internal static TraceSource Initialize(IServiceProvider hostProvidedServices)
     {
-        s_traceSource ??= traceSource;
+        s_traceSource ??= (TraceSource)hostProvidedServices.GetService(typeof(TraceSource));
+        return s_traceSource;
     }
 
     public void AddLoggerProvider(ILoggerProvider provider)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public ILogger GetOrCreateLogger(string categoryName)

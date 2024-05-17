@@ -21,7 +21,7 @@ namespace Microsoft.VisualStudio.Razor.Remote;
 public partial class OutOfProcTagHelperResolverTest
 {
     private class TestResolver(
-        IRemoteClientProvider remoteClientProvider,
+        IRemoteServiceProvider remoteClientProvider,
         ILoggerFactory loggerFactory,
         ITelemetryReporter telemetryReporter)
         : OutOfProcTagHelperResolver(remoteClientProvider, loggerFactory, telemetryReporter)
