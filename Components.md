@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@0514ea9](https://github.com/dotnet/aspire/tree/0514ea9e12ece4dd764824ce925ae0eae6fcbd86)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@98c6c29](https://github.com/dotnet/aspnetcore/tree/98c6c2917fc7e2c38d18862b31430dc5718d44b7)*
+*[dotnet/aspnetcore@35e82e6](https://github.com/dotnet/aspnetcore/tree/35e82e671453ee06e5a152b5cc69e0e355d60ec6)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@fa6de7f](https://github.com/google/googletest/tree/fa6de7f4382f5c8fb8b9e32eea28a2eb44966c32)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
