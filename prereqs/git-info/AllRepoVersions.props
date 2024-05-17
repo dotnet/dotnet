@@ -5,8 +5,8 @@
     <arcadeOutputPackageVersion>9.0.0-beta.24266.1</arcadeOutputPackageVersion>
     <aspireGitCommitHash>9faf59f870abdeb427c51c1380fce84d8163f2f0</aspireGitCommitHash>
     <aspireOutputPackageVersion>9.0.0-preview.2.24163.9</aspireOutputPackageVersion>
-    <aspnetcoreGitCommitHash>839d2527fb7a5ec63342bfae04d0e739d3e1c76d</aspnetcoreGitCommitHash>
-    <aspnetcoreOutputPackageVersion>9.0.0-preview.4.24260.3</aspnetcoreOutputPackageVersion>
+    <aspnetcoreGitCommitHash>f7aa9f30f28df0d404d195e993bc107dcafe5a3f</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>9.0.0-preview.4.24267.3</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>861f49c137941b9722a43e5993ccac7716c8528c</cecilGitCommitHash>
     <cecilOutputPackageVersion>0.11.4-alpha.24215.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>963d34b1fb712c673bfb198133d7e988182c9ef4</commandlineapiGitCommitHash>
@@ -15,13 +15,13 @@
     <deploymenttoolsOutputPackageVersion>9.0.0-preview.1.24176.3</deploymenttoolsOutputPackageVersion>
     <diagnosticsGitCommitHash>831eee3a9e69dd886fa190a9914a7f66260c653a</diagnosticsGitCommitHash>
     <diagnosticsOutputPackageVersion>8.0.0-preview.24151.1</diagnosticsOutputPackageVersion>
-    <efcoreGitCommitHash>97e717475b14b93aa59e66b19993159e609a0229</efcoreGitCommitHash>
-    <efcoreOutputPackageVersion>9.0.0-preview.4.24260.1</efcoreOutputPackageVersion>
-    <emsdkGitCommitHash>7546e312322a7264183c967b9b59c1a4e825b570</emsdkGitCommitHash>
-    <emsdkOutputPackageVersion>9.0.0-preview.4.24252.5</emsdkOutputPackageVersion>
+    <efcoreGitCommitHash>0d92a981a21f7c66de0084b793324aa86b13d990</efcoreGitCommitHash>
+    <efcoreOutputPackageVersion>9.0.0-preview.4.24266.3</efcoreOutputPackageVersion>
+    <emsdkGitCommitHash>869d9e84a0f9e08f9be51545196975388957beaf</emsdkGitCommitHash>
+    <emsdkOutputPackageVersion>9.0.0-preview.4.24266.2</emsdkOutputPackageVersion>
     <fsharpGitCommitHash>3ef1cb25ffb292b5c87f9604d1a09b032277bf76</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.400-beta.24229.4</fsharpOutputPackageVersion>
-    <installerGitCommitHash>75a08fda5c5224710237f1596a00b8c492e88124</installerGitCommitHash>
+    <installerGitCommitHash>33867744b6a5e01ebef4ac79523567a051d57179</installerGitCommitHash>
     <installerOutputPackageVersion>9.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>bd0b1e4667e708d5cf24e116516ee6f18ad20cd7</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.11.0-preview-24225-01</msbuildOutputPackageVersion>
@@ -33,12 +33,12 @@
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.24216.2</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>fa7ece1ca25ef529db616ed6c839af9f027fa216</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.11.0-2.24252.3</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>2270e3185f538a1581dcf11dd5317da1bd92909c</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>9.0.0-preview.4.24260.3</runtimeOutputPackageVersion>
+    <runtimeGitCommitHash>d0d6fed6c0eedd962ddc0f68554682064e9e11ca</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>9.0.0-preview.4.24266.19</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>4ab07002cb46cf169c85a09a546709a20642c65b</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24222.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>7bda36013487a9c13cae18b05750d1506a452fc2</sdkGitCommitHash>
-    <sdkOutputPackageVersion>9.0.100-preview.4.24260.18</sdkOutputPackageVersion>
+    <sdkGitCommitHash>e9279b36c745f5b18738f0e4c7fc36db58da3c38</sdkGitCommitHash>
+    <sdkOutputPackageVersion>9.0.100-preview.4.24267.24</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>1223ec47c74e79d44950d429a36386de6c7bf9c8</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24222.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>c0b5d69a1a1513528c77fffff708c7502d57c35c</sourcebuildreferencepackagesGitCommitHash>
