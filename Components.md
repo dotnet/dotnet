@@ -42,7 +42,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@b73973f](https://github.com/dotnet/razor/tree/b73973f81926717e4c40ca78f9bd57f21acd0901)*
 - `src/roslyn`  
-*[dotnet/roslyn@b9c35f1](https://github.com/dotnet/roslyn/tree/b9c35f1021d2d9d40521474c388d49ee7580ec98)*
+*[dotnet/roslyn@dd1d653](https://github.com/dotnet/roslyn/tree/dd1d6535773f71c1f921589cf59d1d62f6e8c27f)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@8dcccce](https://github.com/dotnet/roslyn-analyzers/tree/8dccccec1ce3bd2fb532ec77d7e092ab9d684db7)*
 - `src/runtime`  
@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@259edc6](https://github.com/dotnet/scenario-tests/tree/259edc6efe049ed49f9e37890be702a886ba5ed8)*
 - `src/sdk`  
-*[dotnet/sdk@0661e86](https://github.com/dotnet/sdk/tree/0661e866c3df23cd104c0db131b2270ec3cb4570)*
+*[dotnet/sdk@3d9dadc](https://github.com/dotnet/sdk/tree/3d9dadc28211ce3e0669ccdbf045fa37869fa84e)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@59204e5](https://github.com/dotnet/source-build-externals/tree/59204e5b14e6e197b3c942f992f6e3ec9196e50b)*
     - `src/source-build-externals/src/abstractions-xunit`  
