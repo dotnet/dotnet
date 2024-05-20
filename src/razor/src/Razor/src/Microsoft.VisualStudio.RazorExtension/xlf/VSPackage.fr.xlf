@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDisplayName">
         <source>Auto insert closing tag</source>
-        <target state="translated">Insertion automatique de la balise de fermeture</target>
+        <target state="new">Auto insert closing tag</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDescription">
@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
         <source>Auto insert attribute quotes</source>
-        <target state="translated">Insérer automatiquement des guillemets d’attribut</target>
+        <target state="new">Auto insert attribute quotes</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
         <source>Code/functions block open brace on next line</source>
-        <target state="translated">Le code/les fonctions bloquent l’accolade ouvrante à la ligne suivante</target>
+        <target state="new">Code/functions block open brace on next line</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">
@@ -79,17 +79,17 @@
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDisplayName">
         <source>Background for C# code</source>
-        <target state="translated">Arrière-plan pour code C#</target>
+        <target state="new">Background for C# code</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDescription">
         <source>If true, pressing space will commit suggestions for HTML elements and components</source>
-        <target state="translated">Si vrai, appuyez sur Espace pour valider les suggestions d’éléments et de composants HTML</target>
+        <target state="new">If true, pressing space will commit suggestions for HTML elements and components</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
         <source>Commit elements with space</source>
-        <target state="translated">Valider les éléments en appuyant sur Espace</target>
+        <target state="new">Commit elements with space</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
@@ -99,7 +99,7 @@
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDisplayName">
         <source>Format on type</source>
-        <target state="translated">Mettre en forme durant la frappe</target>
+        <target state="new">Format on type</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelCritical">
