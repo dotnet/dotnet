@@ -1,4 +1,34 @@
 variables:
+- name: alpineContainer
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.19-WithNode
+- name: centOSStreamContainer
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
+- name: fedoraContainer
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-40
+- name: ubuntuContainer
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04
+- name: ubuntuArmContainer
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-arm64
+
+- name: alpineName
+  value: Alpine319
+- name: centOSStreamName
+  value: CentOSStream9
+- name: fedoraName
+  value: Fedora40
+- name: ubuntuName
+  value: Ubuntu2204
+
+- name: alpineX64Rid
+  value: alpine.3.19-x64
+- name: centOSStreamX64Rid
+  value: centos.9-x64
+- name: fedoraX64Rid
+  value: fedora.40-x64
+- name: ubuntux64Rid
+  value: ubuntu.22.04-x64
+- name: ubuntuArm64Rid
+  value: ubuntu.22.04-arm64
 
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
   - name: defaultPoolName
