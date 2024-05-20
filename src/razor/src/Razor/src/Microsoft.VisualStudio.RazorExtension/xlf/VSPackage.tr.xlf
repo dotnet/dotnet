@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDisplayName">
         <source>Auto insert closing tag</source>
-        <target state="translated">Otomatik Olarak Kapanış Etiketi Ekle</target>
+        <target state="new">Auto insert closing tag</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDescription">
@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
         <source>Auto insert attribute quotes</source>
-        <target state="translated">Öznitelik Tırnaklarını Otomatik Ekle</target>
+        <target state="new">Auto insert attribute quotes</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
         <source>Code/functions block open brace on next line</source>
-        <target state="translated">Sonraki satırda Kod/İşlevler blok açma küme ayracı</target>
+        <target state="new">Code/functions block open brace on next line</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">
@@ -79,17 +79,17 @@
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDisplayName">
         <source>Background for C# code</source>
-        <target state="translated">C# Kodu için Arka Plan</target>
+        <target state="new">Background for C# code</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDescription">
         <source>If true, pressing space will commit suggestions for HTML elements and components</source>
-        <target state="translated">Doğru ise, boşluk çubuğuna basıldığında HTML öğeleri ve bileşenleri ile ilgili öneriler işlenir.</target>
+        <target state="new">If true, pressing space will commit suggestions for HTML elements and components</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
         <source>Commit elements with space</source>
-        <target state="translated">Öğeleri Boşluk Çubuğuyla İşle</target>
+        <target state="new">Commit elements with space</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
@@ -99,7 +99,7 @@
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDisplayName">
         <source>Format on type</source>
-        <target state="translated">Yazarken Biçimlendir</target>
+        <target state="new">Format on type</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelCritical">

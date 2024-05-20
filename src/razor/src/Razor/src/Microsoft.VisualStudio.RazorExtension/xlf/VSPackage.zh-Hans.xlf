@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDisplayName">
         <source>Auto insert closing tag</source>
-        <target state="translated">自动插入结束标记</target>
+        <target state="new">Auto insert closing tag</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDescription">
@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
         <source>Auto insert attribute quotes</source>
-        <target state="translated">自动插入属性引号</target>
+        <target state="new">Auto insert attribute quotes</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
         <source>Code/functions block open brace on next line</source>
-        <target state="translated">代码/函数块左大括号在下一行</target>
+        <target state="new">Code/functions block open brace on next line</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">
@@ -79,17 +79,17 @@
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDisplayName">
         <source>Background for C# code</source>
-        <target state="translated">C# 代码的背景</target>
+        <target state="new">Background for C# code</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDescription">
         <source>If true, pressing space will commit suggestions for HTML elements and components</source>
-        <target state="translated">如果为 true，按空格键将提交 HTML 元素和组件的建议</target>
+        <target state="new">If true, pressing space will commit suggestions for HTML elements and components</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
         <source>Commit elements with space</source>
-        <target state="translated">使用空格键提交元素</target>
+        <target state="new">Commit elements with space</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
@@ -99,7 +99,7 @@
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDisplayName">
         <source>Format on type</source>
-        <target state="translated">键入时格式设置</target>
+        <target state="new">Format on type</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelCritical">
