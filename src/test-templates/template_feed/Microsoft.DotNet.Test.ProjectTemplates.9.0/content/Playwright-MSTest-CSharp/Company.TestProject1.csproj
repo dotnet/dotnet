@@ -8,6 +8,11 @@
     <Nullable>enable</Nullable>
     <IsPackable Condition="'$(EnablePack)' == 'true'">true</IsPackable>
     <EnablePlaywright>true</EnablePlaywright>
+    <!--
+      Displays error on console in addition to the log file. Note that this feature comes with a performance impact.
+      For more information, visit https://learn.microsoft.com/dotnet/core/testing/unit-testing-platform-integration-dotnet-test#show-failure-per-test
+      -->
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
   </PropertyGroup>
 
   <ItemGroup>
