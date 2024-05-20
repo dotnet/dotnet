@@ -3,17 +3,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics.Tracing;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.LibraryModel;
 using NuGet.ProjectModel;
-using NuGet.Shared;
 
 namespace NuGet.Commands
 {
@@ -90,6 +87,10 @@ namespace NuGet.Commands
 
         private readonly DependencyGraphSpec _dependencyGraphSpec;
 
+        private readonly Lazy<bool> _isAssetsFileDirty;
+        private readonly Lazy<List<MSBuildOutputFile>> _dirtyMSBuildFiles;
+
+
         public RestoreResult(
             bool success,
             IEnumerable<RestoreTargetGraph> restoreGraphs,
@@ -123,6 +124,12 @@ namespace NuGet.Commands
             ProjectStyle = projectStyle;
             ElapsedTime = elapsedTime;
             LogMessages = lockFile?.LogMessages ?? new List<IAssetsLogMessage>();
+            _isAssetsFileDirty = new Lazy<bool>(() => PreviousLockFile == null
+                || !PreviousLockFile.Equals(LockFile));
+            _dirtyMSBuildFiles = new Lazy<List<MSBuildOutputFile>>(() =>
+            {
+                return MSBuildOutputFiles.Where(e => BuildAssetsUtils.HasChanges(e.Content, e.Path, NullLogger.Instance)).ToList();
+            });
         }
 
         /// <summary>
@@ -157,6 +164,11 @@ namespace NuGet.Commands
         ///  the file will not be written to disk.</remarks>
         public virtual async Task CommitAsync(ILogger log, CancellationToken token)
         {
+            if (log == null)
+            {
+                throw new ArgumentNullException(nameof(log));
+            }
+
             // Write the lock file
             var lockFileFormat = new LockFileFormat();
 
@@ -166,7 +178,6 @@ namespace NuGet.Commands
             if (NuGetEventSource.IsEnabled) TraceEvents.WriteAssetsFileStart(LockFilePath);
             await CommitAssetsFileAsync(
                 lockFileFormat,
-                result: this,
                 log: log,
                 toolCommit: isTool,
                 token: token);
@@ -196,7 +207,6 @@ namespace NuGet.Commands
 
         private async Task CommitAssetsFileAsync(
             LockFileFormat lockFileFormat,
-            IRestoreResult result,
             ILogger log,
             bool toolCommit,
             CancellationToken token)
@@ -206,12 +216,9 @@ namespace NuGet.Commands
             // Commit targets/props to disk before the assets file.
             // Visual Studio typically watches the assets file for changes
             // and begins a reload when that file changes.
-            var buildFilesToWrite = result.MSBuildOutputFiles
-                    .Where(e => BuildAssetsUtils.HasChanges(e.Content, e.Path, log));
+            BuildAssetsUtils.WriteFiles(_dirtyMSBuildFiles.Value, log);
 
-            BuildAssetsUtils.WriteFiles(buildFilesToWrite, log);
-
-            if (result.LockFile == null || result.LockFilePath == null)
+            if (LockFile == null || LockFilePath == null)
             {
                 // there is no assets file to be written so just return
                 return;
@@ -219,28 +226,27 @@ namespace NuGet.Commands
 
             // Avoid writing out the lock file if it is the same to avoid triggering an intellisense
             // update on a restore with no actual changes.
-            if (result.PreviousLockFile == null
-                || !result.PreviousLockFile.Equals(result.LockFile))
+            if (_isAssetsFileDirty.Value)
             {
                 if (toolCommit)
                 {
                     log.LogInformation(string.Format(CultureInfo.CurrentCulture,
                     Strings.Log_ToolWritingAssetsFile,
-                    result.LockFilePath));
+                    LockFilePath));
 
                     await FileUtility.ReplaceWithLock(
-                        (outputPath) => lockFileFormat.Write(outputPath, result.LockFile),
-                        result.LockFilePath);
+                        (outputPath) => lockFileFormat.Write(outputPath, LockFile),
+                        LockFilePath);
                 }
                 else
                 {
                     log.LogInformation(string.Format(CultureInfo.CurrentCulture,
                         Strings.Log_WritingAssetsFile,
-                        result.LockFilePath));
+                        LockFilePath));
 
                     FileUtility.Replace(
-                        (outputPath) => lockFileFormat.Write(outputPath, result.LockFile),
-                        result.LockFilePath);
+                        (outputPath) => lockFileFormat.Write(outputPath, LockFile),
+                        LockFilePath);
                 }
             }
             else
@@ -249,13 +255,13 @@ namespace NuGet.Commands
                 {
                     log.LogInformation(string.Format(CultureInfo.CurrentCulture,
                         Strings.Log_ToolSkippingAssetsFile,
-                        result.LockFilePath));
+                        LockFilePath));
                 }
                 else
                 {
                     log.LogInformation(string.Format(CultureInfo.CurrentCulture,
                         Strings.Log_SkippingAssetsFile,
-                        result.LockFilePath));
+                        LockFilePath));
                 }
             }
         }
@@ -309,6 +315,23 @@ namespace NuGet.Commands
                     (outputPath) => _dependencyGraphSpec.Save(outputPath),
                     _dependencyGraphSpecFilePath);
             }
+        }
+
+        internal virtual IReadOnlyList<string> GetDirtyFiles()
+        {
+            List<string> dirtyFiles = null;
+
+            if (_dirtyMSBuildFiles.Value.Count > 0)
+            {
+                dirtyFiles = _dirtyMSBuildFiles.Value.Select(e => e.Path).ToList();
+            }
+            if (_isAssetsFileDirty.Value)
+            {
+                dirtyFiles ??= new List<string>(1);
+                dirtyFiles.Add(LockFilePath);
+            }
+
+            return dirtyFiles;
         }
 
         private static class TraceEvents

@@ -78,7 +78,13 @@ namespace NuGet
 
             // Get a lock object for this one single key which allows other asynchronous tasks to be added and retrieved at the same time
             // rather than locking the entire cache.
-            object lockObject = _perTaskLock.GetOrAdd(key, static () => new object());
+            // NOTE: Be very careful about which overload of GetOrAdd is called. There was previously a very subtle bug with this call:
+            //
+            // GetOrAdd(key, static () => new object());
+            //
+            // Which calls the `GetOrAdd(TKey key, TValue value)` overload rather than the `GetOrAdd(TKey key, Func<TKey, TValue> valueFactory)`
+            // overload. The consequence is that the same static delegate is cached and locked on rather than having one lock object per key.
+            object lockObject = _perTaskLock.GetOrAdd(key, static (TKey _) => new object());
 
             lock (lockObject)
             {
