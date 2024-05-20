@@ -189,7 +189,7 @@ steps:
         -requiredValueSentinel "REQUIRED" `
         -reviewerGUID "6c25b447-1d90-4840-8fde-d8b22cb8733e" `
         -specificBuild "$(Build.BuildNumber)" `
-        -updateAssemblyVersions "false" `
+        -updateAssemblyVersions "true" `
         -updateCoreXTLibraries "false" `
         -visualStudioBranchName "$(Template.VSBranchName)" `
         -writePullRequest "prid.txt" `
