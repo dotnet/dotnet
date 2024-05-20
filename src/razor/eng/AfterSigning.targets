@@ -10,6 +10,35 @@
       Condition="!Exists('$(VSSetupDir)$(Configuration)\$(RazorExtensionVSIXName)')" />
   </Target>
 
+  <!--
+    Write a list of assembly names and versions that the insertion tool uses to update assembly versions in DevDiv.
+    We want to update these lines in VS's /src/ProductData/AssemblyVersions.tt:
+      const string RazorRuntimeAssemblyVersion = "7.0.0.0";
+      const string RazorToolingAssemblyVersion = "7.0.0.0";
+    Hence we write into VSSetup/DevDivPackages/DependentAssemblyVersions.csv:
+      RazorRuntimeAssembly,8.0.0.0
+      RazorToolingAssembly,8.0.0.0
+  -->
+  <PropertyGroup>
+    <_DependentAssemblyVersionsFile>$(VisualStudioBuildPackagesDir)DependentAssemblyVersions.csv</_DependentAssemblyVersionsFile>
+    <_RazorAssemblyVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion).0</_RazorAssemblyVersion>
+  </PropertyGroup>
+  <Target Name="_GenerateDependentAssemblyVersions"
+          AfterTargets="GenerateVisualStudioInsertionManifests"
+          Inputs="$(_RazorAssemblyVersion)"
+          Outputs="$(_DependentAssemblyVersionsFile)"
+          Condition="'$(OS)'=='WINDOWS_NT' AND '$(ArcadeBuildFromSource)' != 'true'">
+    <ItemGroup>
+      <_AssemblyVersionEntry Include="RazorRuntimeAssembly" />
+      <_AssemblyVersionEntry Include="RazorToolingAssembly" />
+    </ItemGroup>
+    <MakeDir Directories="$(VisualStudioBuildPackagesDir)"/>
+    <WriteLinesToFile Lines="@(_AssemblyVersionEntry->'%(Identity),$(_RazorAssemblyVersion)')" File="$(_DependentAssemblyVersionsFile)" Overwrite="true"/>
+    <ItemGroup>
+      <FileWrites Include="$(_DependentAssemblyVersionsFile)"/>
+    </ItemGroup>
+  </Target>
+
   <Target Name="_ZipLanguageServerBinaries" AfterTargets="Pack" Condition="'$(ArcadeBuildFromSource)' != 'true'">
     <!-- This target is defined in eng/targets/Packaging.targets and included in every project. -->
     <MSBuild Projects="$(RepoRoot)src\Razor\src\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj"
