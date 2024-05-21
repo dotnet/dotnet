@@ -273,7 +273,7 @@ namespace NuGet.Commands
             IReadOnlyList<string> filesToBeUpdated = result.GetDirtyFiles();
             try
             {
-                if (!isNoOp)
+                if (!isNoOp && filesToBeUpdated?.Count > 0)
                 {
                     progressReporter?.StartProjectUpdate(summaryRequest.InputPath, filesToBeUpdated);
                 }
@@ -286,7 +286,7 @@ namespace NuGet.Commands
             }
             finally
             {
-                if (!isNoOp)
+                if (!isNoOp && filesToBeUpdated?.Count > 0)
                 {
                     progressReporter?.EndProjectUpdate(summaryRequest.InputPath, filesToBeUpdated);
                 }

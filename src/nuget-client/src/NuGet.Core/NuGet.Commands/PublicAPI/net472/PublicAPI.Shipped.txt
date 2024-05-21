@@ -157,8 +157,8 @@ NuGet.Commands.IProjectFactory
 ~NuGet.Commands.IProjectFactory.Logger.set -> void
 NuGet.Commands.IProjectFactory.SetIncludeSymbols(bool includeSymbols) -> void
 NuGet.Commands.IRestoreProgressReporter
-~NuGet.Commands.IRestoreProgressReporter.EndProjectUpdate(string projectPath, System.Collections.Generic.IReadOnlyList<string> updatedFiles) -> void
-~NuGet.Commands.IRestoreProgressReporter.StartProjectUpdate(string projectPath, System.Collections.Generic.IReadOnlyList<string> updatedFiles) -> void
+NuGet.Commands.IRestoreProgressReporter.EndProjectUpdate(string! projectPath, System.Collections.Generic.IReadOnlyList<string!>! updatedFiles) -> void
+NuGet.Commands.IRestoreProgressReporter.StartProjectUpdate(string! projectPath, System.Collections.Generic.IReadOnlyList<string!>! updatedFiles) -> void
 NuGet.Commands.IRestoreRequestProvider
 ~NuGet.Commands.IRestoreRequestProvider.CreateRequests(string inputPath, NuGet.Commands.RestoreArgs restoreContext) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreSummaryRequest>>
 ~NuGet.Commands.IRestoreRequestProvider.Supports(string path) -> System.Threading.Tasks.Task<bool>
