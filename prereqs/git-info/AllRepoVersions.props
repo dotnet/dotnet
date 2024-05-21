@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <arcadeGitCommitHash>ed14da5934ffb536cff8f41f8b5719334524cbed</arcadeGitCommitHash>
-    <arcadeOutputPackageVersion>9.0.0-beta.24266.1</arcadeOutputPackageVersion>
+    <arcadeGitCommitHash>1cf3eaa1f6ada43ab988145a3f3efddb1ffa3b10</arcadeGitCommitHash>
+    <arcadeOutputPackageVersion>9.0.0-beta.24270.3</arcadeOutputPackageVersion>
     <aspireGitCommitHash>0514ea9e12ece4dd764824ce925ae0eae6fcbd86</aspireGitCommitHash>
     <aspireOutputPackageVersion>9.0.0-preview.4.24229.9</aspireOutputPackageVersion>
     <aspnetcoreGitCommitHash>e577ff3a06b552e287fdf652b1cbaf04de3ba6f3</aspnetcoreGitCommitHash>
