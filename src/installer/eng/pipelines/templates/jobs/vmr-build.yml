@@ -164,8 +164,8 @@ jobs:
         notFoundMessage="No source-built SDK found to download..."
 
         echo "Looking for source-built SDK to download..."
-        archiveUrlLine=`grep -m 1 "<PrivateSourceBuiltSdkUrl_CentOS8Stream>" "$packageVersionsPath" || :`
-        urlPattern="<PrivateSourceBuiltSdkUrl_CentOS8Stream>(.*)</PrivateSourceBuiltSdkUrl_CentOS8Stream>"
+        archiveUrlLine=`grep -m 1 "<PrivateSourceBuiltSdkUrl>" "$packageVersionsPath" || :`
+        urlPattern="<PrivateSourceBuiltSdkUrl>(.*)</PrivateSourceBuiltSdkUrl>"
 
         if [[ $archiveUrlLine =~ $urlPattern ]]; then
           archiveUrl="${BASH_REMATCH[1]}"
