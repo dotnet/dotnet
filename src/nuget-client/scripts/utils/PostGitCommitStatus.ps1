@@ -117,24 +117,25 @@ Function InitializeAllTestsToPending {
         Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "Unit Tests On Linux" -Status "success" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "skipped"
         Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "Functional Tests On Linux" -Status "success" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "skipped"
     }
-    if($env:RunEndToEndTests -eq "true")
-    {
-        Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "End_To_End_Tests_On_Windows Part1" -Status "pending" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "in progress"
-        Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "End_To_End_Tests_On_Windows Part2" -Status "pending" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "in progress"
-    }
-    else
-    {
-        Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "End_To_End_Tests_On_Windows Part1" -Status "success" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "skipped"
-        Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "End_To_End_Tests_On_Windows Part2" -Status "success" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "skipped"
-    }
-    if($env:RunApexTests -eq "true")
-    {
-        Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "Apex Tests On Windows" -Status "pending" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "in progress"
-    }
-    else
-    {
-        Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "Apex Tests On Windows" -Status "success" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "skipped"
-    }
+    # The Apex and end-to-end tests do not currently run
+    # if($env:RunEndToEndTests -eq "true")
+    # {
+        # Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "End_To_End_Tests_On_Windows Part1" -Status "pending" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "in progress"
+        # Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "End_To_End_Tests_On_Windows Part2" -Status "pending" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "in progress"
+    # }
+    # else
+    # {
+        # Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "End_To_End_Tests_On_Windows Part1" -Status "success" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "skipped"
+        # Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "End_To_End_Tests_On_Windows Part2" -Status "success" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "skipped"
+    # }
+    # if($env:RunApexTests -eq "true")
+    # {
+        # Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "Apex Tests On Windows" -Status "pending" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "in progress"
+    # }
+    # else
+    # {
+        # Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "Apex Tests On Windows" -Status "success" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "skipped"
+    # }
 }
 
 function SetCommitStatusForTestResult {

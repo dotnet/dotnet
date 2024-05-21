@@ -279,6 +279,83 @@ namespace NuGet.PackageManagement.Test
         }
 
         [Fact]
+        public async Task RestoreAsync_WithProgressReporter_WhenProjectIsForceRestoredButDoesNotWriteFiles_ProgressIsNotReported()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            var packageSpec = ProjectTestHelpers.GetPackageSpec(settings, projectName: "projectName", rootPath: pathContext.SolutionRoot);
+            var dgSpec = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
+            var progressReporter = new Mock<IRestoreProgressReporter>();
+
+            // Pre-Conditions
+            IReadOnlyList<RestoreSummary> result = await DependencyGraphRestoreUtility.RestoreAsync(
+                dgSpec,
+                new DependencyGraphCacheContext(),
+                new RestoreCommandProvidersCache(),
+                cacheContextModifier: _ => { },
+                sources: new SourceRepository[0],
+                parentId: Guid.Empty,
+                forceRestore: false,
+                isRestoreOriginalAction: true,
+                additionalMessages: null,
+                progressReporter: progressReporter.Object,
+                new TestLogger(),
+                CancellationToken.None);
+
+            // Pre-Conditions
+            result.Should().HaveCount(1);
+            RestoreSummary restoreSummary = result[0];
+            restoreSummary.Success.Should().BeTrue();
+            restoreSummary.NoOpRestore.Should().BeFalse();
+
+            progressReporter.Verify(r =>
+                r.StartProjectUpdate(
+                    It.IsAny<string>(),
+                    It.IsAny<IReadOnlyList<string>>()),
+                    Times.Once);
+            progressReporter.Verify(r =>
+                r.EndProjectUpdate(
+                    It.IsAny<string>(),
+                    It.IsAny<IReadOnlyList<string>>()),
+                    Times.Once);
+
+            var noopProgressReporter = new Mock<IRestoreProgressReporter>();
+
+            // Act
+            result = await DependencyGraphRestoreUtility.RestoreAsync(
+               dgSpec,
+               new DependencyGraphCacheContext(),
+               new RestoreCommandProvidersCache(),
+               cacheContextModifier: _ => { },
+               sources: new SourceRepository[0],
+               parentId: Guid.Empty,
+               forceRestore: true,
+               isRestoreOriginalAction: true,
+               additionalMessages: null,
+               progressReporter: noopProgressReporter.Object,
+               new TestLogger(),
+               CancellationToken.None);
+
+            // Assert
+            result.Should().HaveCount(1);
+            restoreSummary = result[0];
+            restoreSummary.Success.Should().BeTrue();
+            restoreSummary.NoOpRestore.Should().BeFalse();
+
+            noopProgressReporter.Verify(r =>
+                r.StartProjectUpdate(
+                    It.IsAny<string>(),
+                    It.IsAny<IReadOnlyList<string>>()),
+                    Times.Never);
+            noopProgressReporter.Verify(r =>
+                r.EndProjectUpdate(
+                    It.IsAny<string>(),
+                    It.IsAny<IReadOnlyList<string>>()),
+                    Times.Never);
+        }
+
+        [Fact]
         public async Task RestoreAsync_WithProgressReporter_WithMultipleProjects_ProgressIsNotReportedForChangedProjetsOnly()
         {
             // Arrange
