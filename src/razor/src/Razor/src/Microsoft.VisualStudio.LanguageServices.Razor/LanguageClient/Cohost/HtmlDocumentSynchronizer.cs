@@ -10,16 +10,19 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.VisualStudio.Utilities;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
+[ContentType(RazorConstants.RazorLSPContentTypeName)]
+[Export(typeof(LSPDocumentChangeListener))]
 [Export(typeof(IHtmlDocumentSynchronizer))]
 [method: ImportingConstructor]
 internal sealed partial class HtmlDocumentSynchronizer(
     LSPDocumentManager documentManager,
     IHtmlDocumentPublisher htmlDocumentPublisher,
     ILoggerFactory loggerFactory)
-    : IHtmlDocumentSynchronizer
+    : LSPDocumentChangeListener, IHtmlDocumentSynchronizer
 {
     private static readonly Task<bool> s_falseTask = Task.FromResult(false);
 
@@ -27,14 +30,31 @@ internal sealed partial class HtmlDocumentSynchronizer(
     private readonly TrackingLSPDocumentManager _documentManager = documentManager as TrackingLSPDocumentManager ?? throw new InvalidOperationException("Expected TrackingLSPDocumentManager");
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<HtmlDocumentSynchronizer>();
 
-    private readonly Dictionary<DocumentId, SynchronizationRequest> _synchronizationRequests = [];
+    private readonly Dictionary<Uri, SynchronizationRequest> _synchronizationRequests = [];
     private readonly object _gate = new();
+
+    public override void Changed(LSPDocumentSnapshot? old, LSPDocumentSnapshot? @new, VirtualDocumentSnapshot? virtualOld, VirtualDocumentSnapshot? virtualNew, LSPDocumentChangeKind kind)
+    {
+        if (kind == LSPDocumentChangeKind.Removed && old is not null)
+        {
+            lock (_gate)
+            {
+                if (_synchronizationRequests.TryGetValue(old.Uri, out var request))
+                {
+                    _logger.LogDebug($"Document {old.Uri} removed, so we're disposing and clearing out the sync request for it");
+                    request.Dispose();
+                    _synchronizationRequests.Remove(old.Uri);
+                }
+            }
+        }
+    }
 
     public async Task<HtmlDocumentResult?> TryGetSynchronizedHtmlDocumentAsync(TextDocument razorDocument, CancellationToken cancellationToken)
     {
         var syncResult = await TrySynchronizeAsync(razorDocument, cancellationToken).ConfigureAwait(false);
         if (!syncResult)
         {
+            _logger.LogDebug($"Couldn't synchronize for {razorDocument.FilePath}");
             return null;
         }
 
@@ -71,7 +91,8 @@ internal sealed partial class HtmlDocumentSynchronizer(
     {
         lock (_gate)
         {
-            if (_synchronizationRequests.TryGetValue(document.Id, out var request))
+            var documentUri = document.CreateUri();
+            if (_synchronizationRequests.TryGetValue(documentUri, out var request))
             {
                 if (requestedVersion.Checksum.Equals(request.RequestedVersion.Checksum))
                 {
@@ -79,10 +100,20 @@ internal sealed partial class HtmlDocumentSynchronizer(
                     // Html documents don't require semantic information. WorkspaceVersion changed too often to be used as a measure
                     // of equality for this purpose.
 
-                    _logger.LogDebug($"Already {(request.Task.IsCompleted ? "finished" : "working on")} that version for {document.FilePath}");
+#pragma warning disable VSTHRD103 // Use await instead of .Result
 #pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
-                    return request.Task;
+                    if (request.Task.IsCompleted && request.Task.Result == false)
+                    {
+                        _logger.LogDebug($"Already finished that version for {document.FilePath}, but was unsuccessful, so will recompute");
+                        request.Dispose();
+                    }
+                    else
+                    {
+                        _logger.LogDebug($"Already {(request.Task.IsCompleted ? "finished" : "working on")} that version for {document.FilePath}");
+                        return request.Task;
+                    }
 #pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
+#pragma warning restore VSTHRD103 // Use await instead of .Result
                 }
                 else if (requestedVersion.WorkspaceVersion < request.RequestedVersion.WorkspaceVersion)
                 {
@@ -105,28 +136,46 @@ internal sealed partial class HtmlDocumentSynchronizer(
             _logger.LogDebug($"Going to start working on Html for {document.FilePath} as at {requestedVersion}");
 
             var newRequest = SynchronizationRequest.CreateAndStart(document, requestedVersion, PublishHtmlDocumentAsync);
-            _synchronizationRequests[document.Id] = newRequest;
+            _synchronizationRequests[documentUri] = newRequest;
             return newRequest.Task;
         }
     }
 
-    private async Task PublishHtmlDocumentAsync(TextDocument document, CancellationToken cancellationToken)
+    private async Task<bool> PublishHtmlDocumentAsync(TextDocument document, CancellationToken cancellationToken)
     {
-        var htmlText = await _htmlDocumentPublisher.GetHtmlSourceFromOOPAsync(document, cancellationToken).ConfigureAwait(false);
+        string? htmlText;
+        try
+        {
+            htmlText = await _htmlDocumentPublisher.GetHtmlSourceFromOOPAsync(document, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error getting Html text for {document.FilePath}. Html document contents will be stale");
+            return false;
+        }
 
         if (cancellationToken.IsCancellationRequested)
         {
             // Checking cancellation before logging, as a new request coming in doesn't count as "Couldn't get Html"
-            return;
+            return false;
         }
 
         if (htmlText is null)
         {
             _logger.LogError($"Couldn't get Html text for {document.FilePath}. Html document contents will be stale");
-            return;
+            return false;
         }
 
-        await _htmlDocumentPublisher.PublishAsync(document, htmlText, cancellationToken).ConfigureAwait(false);
+        try
+        {
+            await _htmlDocumentPublisher.PublishAsync(document, htmlText, cancellationToken).ConfigureAwait(false);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error publishing Html text for {document.FilePath}. Html document contents will be stale");
+            return false;
+        }
     }
 
     internal TestAccessor GetTestAccessor()

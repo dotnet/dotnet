@@ -35,7 +35,7 @@ using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
+internal partial class RazorLanguageServer : NewtonsoftLanguageServer<RazorRequestContext>
 {
     private readonly JsonRpc _jsonRpc;
     private readonly ILoggerFactory _loggerFactory;

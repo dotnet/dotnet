@@ -2,3 +2,6 @@
 
 # Call ConfigureAwait
 dotnet_diagnostic.CA2007.severity = warning
+
+# Don't use SemaphoreSlim: See https://github.com/dotnet/razor/issues/10390
+dotnet_diagnostic.RS0030.severity = none

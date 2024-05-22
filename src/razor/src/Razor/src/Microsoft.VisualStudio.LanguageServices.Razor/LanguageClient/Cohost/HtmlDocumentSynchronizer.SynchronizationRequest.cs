@@ -14,21 +14,22 @@ internal sealed partial class HtmlDocumentSynchronizer
     {
         private readonly RazorDocumentVersion _requestedVersion = requestedVersion;
         private readonly TaskCompletionSource<bool> _tcs = new();
-        private readonly CancellationTokenSource _cts = new(TimeSpan.FromMinutes(5));
+        private CancellationTokenSource? _cts;
 
         public Task<bool> Task => _tcs.Task;
 
         public RazorDocumentVersion RequestedVersion => _requestedVersion;
 
-        internal static SynchronizationRequest CreateAndStart(TextDocument document, RazorDocumentVersion requestedVersion, Func<TextDocument, CancellationToken, Task> syncFunction)
+        internal static SynchronizationRequest CreateAndStart(TextDocument document, RazorDocumentVersion requestedVersion, Func<TextDocument, CancellationToken, Task<bool>> syncFunction)
         {
             var request = new SynchronizationRequest(requestedVersion);
             request.Start(document, syncFunction);
             return request;
         }
 
-        private void Start(TextDocument document, Func<TextDocument, CancellationToken, Task> syncFunction)
+        private void Start(TextDocument document, Func<TextDocument, CancellationToken, Task<bool>> syncFunction)
         {
+            _cts = new(TimeSpan.FromMinutes(1));
             _cts.Token.Register(Dispose);
             _ = syncFunction.Invoke(document, _cts.Token).ContinueWith((t, state) =>
             {
@@ -43,16 +44,19 @@ internal sealed partial class HtmlDocumentSynchronizer
                 }
                 else
                 {
-                    _cts.Dispose();
-                    tcs.SetResult(true);
+                    tcs.SetResult(t.Result);
                 }
+
+                _cts?.Dispose();
+                _cts = null;
             }, _tcs, _cts.Token, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
         }
 
         public void Dispose()
         {
-            _cts.Cancel();
-            _cts.Dispose();
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = null;
             _tcs.TrySetResult(false);
         }
     }

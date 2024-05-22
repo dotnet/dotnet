@@ -24,7 +24,7 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
     protected override void ConfigureWorkspace(AdhocWorkspace workspace)
     {
         var project = workspace.CurrentSolution.AddProject("Project", "Project.dll", LanguageNames.CSharp);
-        var document = project.AddAdditionalDocument("File.razor", SourceText.From("<div></div>"));
+        var document = project.AddAdditionalDocument("File.razor", SourceText.From("<div></div>"), filePath: "file://File.razor");
         _documentId = document.Id;
 
         Assert.True(workspace.TryApplyChanges(document.Project.Solution));
@@ -53,6 +53,79 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
     }
 
     [Fact]
+    public async Task TrySynchronize_ReopenedDocument_Generates()
+    {
+        var publisher = new TestHtmlDocumentPublisher();
+        var synchronizer = new HtmlDocumentSynchronizer(StrictMock.Of<TrackingLSPDocumentManager>(), publisher, LoggerFactory);
+
+        var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
+
+        Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+
+        // "Close" the document
+        var snapshot = StrictMock.Of<LSPDocumentSnapshot>(d => d.Uri == new Uri(document.FilePath));
+        synchronizer.Changed(snapshot, null, null, null, LSPDocumentChangeKind.Removed);
+
+        Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+
+        Assert.Collection(publisher.Publishes,
+            i =>
+            {
+                Assert.Equal(_documentId, i.Item1.Id);
+                Assert.Equal("<div></div>", i.Item2);
+            },
+            i =>
+            {
+                Assert.Equal(_documentId, i.Item1.Id);
+                Assert.Equal("<div></div>", i.Item2);
+            });
+    }
+
+    [Fact]
+    public async Task TrySynchronize_CancelledGeneration_Generates()
+    {
+        var publisher = new TestHtmlDocumentPublisher();
+        var synchronizer = new HtmlDocumentSynchronizer(StrictMock.Of<TrackingLSPDocumentManager>(), publisher, LoggerFactory);
+
+        var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
+
+        publisher.OOPReturnsNull = true;
+        Assert.False(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+
+        publisher.OOPReturnsNull = false;
+        Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+
+        Assert.Collection(publisher.Publishes,
+            i =>
+            {
+                Assert.Equal(_documentId, i.Item1.Id);
+                Assert.Equal("<div></div>", i.Item2);
+            });
+    }
+
+    [Fact]
+    public async Task TrySynchronize_ExceptionDuringGeneration_Generates()
+    {
+        var publisher = new TestHtmlDocumentPublisher(() => throw new Exception());
+        var synchronizer = new HtmlDocumentSynchronizer(StrictMock.Of<TrackingLSPDocumentManager>(), publisher, LoggerFactory);
+
+        var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
+
+        Assert.False(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+
+        // Stop throwing exceptions :)
+        publisher.GenerateTask = null;
+        Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
+
+        Assert.Collection(publisher.Publishes,
+            i =>
+            {
+                Assert.Equal(_documentId, i.Item1.Id);
+                Assert.Equal("<div></div>", i.Item2);
+            });
+    }
+
+    [Fact]
     public async Task TrySynchronize_WorkspaceMovedForward_NoDocumentChanges_DoesntGenerate()
     {
         var publisher = new TestHtmlDocumentPublisher();
@@ -64,7 +137,7 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
         Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
 
         // Add a new document, moving the workspace forward but leaving our document unaffected
-        Assert.True(Workspace.TryApplyChanges(document.Project.AddAdditionalDocument("Foo2.razor", SourceText.From("")).Project.Solution));
+        Assert.True(Workspace.TryApplyChanges(document.Project.AddAdditionalDocument("Foo2.razor", SourceText.From(""), filePath: "file://Foo2.razor").Project.Solution));
 
         document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
         var version2 = await RazorDocumentVersion.CreateAsync(document, DisposalToken);
@@ -227,14 +300,22 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
 
         public List<(TextDocument, string)> Publishes => _publishes;
 
+        public bool OOPReturnsNull { get; set; }
+        public Func<Task>? GenerateTask { get; set; } = generateTask;
+
         public async Task<string?> GetHtmlSourceFromOOPAsync(TextDocument document, CancellationToken cancellationToken)
         {
-            if (generateTask is not null)
+            if (GenerateTask is not null)
             {
-                await generateTask();
+                await GenerateTask();
             }
 
             if (cancellationToken.IsCancellationRequested)
+            {
+                return null;
+            }
+
+            if (OOPReturnsNull)
             {
                 return null;
             }
