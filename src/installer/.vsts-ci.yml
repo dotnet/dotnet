@@ -329,53 +329,6 @@ extends:
             buildArchitecture: arm64
             runTests: false
 
-        # Windows PGO Instrumentation builds
-        - template: eng/build.yml@self
-          parameters:
-            agentOs: Windows_NT
-            pgoInstrument: true
-            jobName: Build_Release_x64
-            buildConfiguration: Release
-            buildArchitecture: x64
-            additionalBuildParameters: '/p:PublishInternalAsset=true'
-            runTests: false
-        - template: eng/build.yml@self
-          parameters:
-            agentOs: Windows_NT
-            pgoInstrument: true
-            jobName: Build_Release_x86
-            buildConfiguration: Release
-            buildArchitecture: x86
-            runTests: false
-        - template: eng/build.yml@self
-          parameters:
-            agentOs: Windows_NT
-            pgoInstrument: true
-            jobName: Build_Release_arm64
-            buildConfiguration: Release
-            buildArchitecture: arm64
-            runTests: false
-
-        # Linux PGO Instrumentation builds
-        - template: eng/build.yml@self
-          parameters:
-            agentOs: Linux
-            pgoInstrument: true
-            jobName: Build_LinuxPortable_Release_x64
-            buildConfiguration: Release
-            buildArchitecture: x64
-            linuxPortable: true
-            runTests: false
-        - template: eng/build.yml@self
-          parameters:
-            agentOs: Linux
-            pgoInstrument: true
-            jobName: Build_Release_arm64
-            buildConfiguration: Release
-            buildArchitecture: arm64
-            linuxPortable: true
-            runTests: false
-
       # Source Build
       - template: /eng/common/templates-official/jobs/source-build.yml@self
 
