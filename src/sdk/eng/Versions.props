@@ -149,25 +149,25 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/windowsdesktop -->
-    <VSRedistCommonWindowsDesktopSharedFrameworkx6490PackageVersion>9.0.0-preview.5.24271.5</VSRedistCommonWindowsDesktopSharedFrameworkx6490PackageVersion>
-    <VSRedistCommonWindowsDesktopTargetingPackx6490PackageVersion>9.0.0-preview.5.24271.5</VSRedistCommonWindowsDesktopTargetingPackx6490PackageVersion>
-    <MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>9.0.0-preview.5.24271.5</MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>
-    <MicrosoftWindowsDesktopAppRefPackageVersion>9.0.0-preview.5.24271.5</MicrosoftWindowsDesktopAppRefPackageVersion>
+    <VSRedistCommonWindowsDesktopSharedFrameworkx6490PackageVersion>9.0.0-preview.6.24272.2</VSRedistCommonWindowsDesktopSharedFrameworkx6490PackageVersion>
+    <VSRedistCommonWindowsDesktopTargetingPackx6490PackageVersion>9.0.0-preview.6.24272.2</VSRedistCommonWindowsDesktopTargetingPackx6490PackageVersion>
+    <MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>9.0.0-preview.6.24272.2</MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>
+    <MicrosoftWindowsDesktopAppRefPackageVersion>9.0.0-preview.6.24272.2</MicrosoftWindowsDesktopAppRefPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/nuget/nuget.client -->
-    <NuGetBuildTasksPackageVersion>6.11.0-preview.2.58</NuGetBuildTasksPackageVersion>
-    <NuGetBuildTasksConsolePackageVersion>6.11.0-preview.2.58</NuGetBuildTasksConsolePackageVersion>
-    <NuGetLocalizationPackageVersion>6.11.0-preview.2.58</NuGetLocalizationPackageVersion>
-    <NuGetBuildTasksPackPackageVersion>6.11.0-preview.2.58</NuGetBuildTasksPackPackageVersion>
-    <NuGetCommandLineXPlatPackageVersion>6.11.0-preview.2.58</NuGetCommandLineXPlatPackageVersion>
-    <NuGetProjectModelPackageVersion>6.11.0-preview.2.58</NuGetProjectModelPackageVersion>
-    <MicrosoftBuildNuGetSdkResolverPackageVersion>6.11.0-preview.2.58</MicrosoftBuildNuGetSdkResolverPackageVersion>
-    <NuGetCommonPackageVersion>6.11.0-preview.2.58</NuGetCommonPackageVersion>
-    <NuGetConfigurationPackageVersion>6.11.0-preview.2.58</NuGetConfigurationPackageVersion>
-    <NuGetFrameworksPackageVersion>6.11.0-preview.2.58</NuGetFrameworksPackageVersion>
-    <NuGetPackagingPackageVersion>6.11.0-preview.2.58</NuGetPackagingPackageVersion>
-    <NuGetVersioningPackageVersion>6.11.0-preview.2.58</NuGetVersioningPackageVersion>
+    <NuGetBuildTasksPackageVersion>6.11.0-preview.2.61</NuGetBuildTasksPackageVersion>
+    <NuGetBuildTasksConsolePackageVersion>6.11.0-preview.2.61</NuGetBuildTasksConsolePackageVersion>
+    <NuGetLocalizationPackageVersion>6.11.0-preview.2.61</NuGetLocalizationPackageVersion>
+    <NuGetBuildTasksPackPackageVersion>6.11.0-preview.2.61</NuGetBuildTasksPackPackageVersion>
+    <NuGetCommandLineXPlatPackageVersion>6.11.0-preview.2.61</NuGetCommandLineXPlatPackageVersion>
+    <NuGetProjectModelPackageVersion>6.11.0-preview.2.61</NuGetProjectModelPackageVersion>
+    <MicrosoftBuildNuGetSdkResolverPackageVersion>6.11.0-preview.2.61</MicrosoftBuildNuGetSdkResolverPackageVersion>
+    <NuGetCommonPackageVersion>6.11.0-preview.2.61</NuGetCommonPackageVersion>
+    <NuGetConfigurationPackageVersion>6.11.0-preview.2.61</NuGetConfigurationPackageVersion>
+    <NuGetFrameworksPackageVersion>6.11.0-preview.2.61</NuGetFrameworksPackageVersion>
+    <NuGetPackagingPackageVersion>6.11.0-preview.2.61</NuGetPackagingPackageVersion>
+    <NuGetVersioningPackageVersion>6.11.0-preview.2.61</NuGetVersioningPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/Microsoft/vstest -->
@@ -235,19 +235,19 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/aspnet/AspNetCore -->
-    <MicrosoftAspNetCoreAppRefPackageVersion>9.0.0-preview.5.24271.5</MicrosoftAspNetCoreAppRefPackageVersion>
-    <MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>9.0.0-preview.5.24271.5</MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>
-    <MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>9.0.0-preview.5.24271.5</MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreMvcAnalyzersPackageVersion>9.0.0-preview.5.24271.5</MicrosoftAspNetCoreMvcAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>9.0.0-preview.5.24271.5</MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreAnalyzersPackageVersion>9.0.0-preview.5.24271.5</MicrosoftAspNetCoreAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreTestHostPackageVersion>9.0.0-preview.5.24271.5</MicrosoftAspNetCoreTestHostPackageVersion>
-    <MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>9.0.0-preview.5.24271.5</MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>
-    <MicrosoftAspNetCoreAppRefInternalPackageVersion>9.0.0-preview.5.24271.5</MicrosoftAspNetCoreAppRefInternalPackageVersion>
-    <VSRedistCommonAspNetCoreSharedFrameworkx6490PackageVersion>9.0.0-preview.5.24271.5</VSRedistCommonAspNetCoreSharedFrameworkx6490PackageVersion>
-    <dotnetdevcertsPackageVersion>9.0.0-preview.5.24271.5</dotnetdevcertsPackageVersion>
-    <dotnetuserjwtsPackageVersion>9.0.0-preview.5.24271.5</dotnetuserjwtsPackageVersion>
-    <dotnetusersecretsPackageVersion>9.0.0-preview.5.24271.5</dotnetusersecretsPackageVersion>
+    <MicrosoftAspNetCoreAppRefPackageVersion>9.0.0-preview.5.24272.5</MicrosoftAspNetCoreAppRefPackageVersion>
+    <MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>9.0.0-preview.5.24272.5</MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>
+    <MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>9.0.0-preview.5.24272.5</MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreMvcAnalyzersPackageVersion>9.0.0-preview.5.24272.5</MicrosoftAspNetCoreMvcAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>9.0.0-preview.5.24272.5</MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreAnalyzersPackageVersion>9.0.0-preview.5.24272.5</MicrosoftAspNetCoreAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreTestHostPackageVersion>9.0.0-preview.5.24272.5</MicrosoftAspNetCoreTestHostPackageVersion>
+    <MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>9.0.0-preview.5.24272.5</MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>
+    <MicrosoftAspNetCoreAppRefInternalPackageVersion>9.0.0-preview.5.24272.5</MicrosoftAspNetCoreAppRefInternalPackageVersion>
+    <VSRedistCommonAspNetCoreSharedFrameworkx6490PackageVersion>9.0.0-preview.5.24272.5</VSRedistCommonAspNetCoreSharedFrameworkx6490PackageVersion>
+    <dotnetdevcertsPackageVersion>9.0.0-preview.5.24272.5</dotnetdevcertsPackageVersion>
+    <dotnetuserjwtsPackageVersion>9.0.0-preview.5.24272.5</dotnetuserjwtsPackageVersion>
+    <dotnetusersecretsPackageVersion>9.0.0-preview.5.24272.5</dotnetusersecretsPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/razor -->
@@ -257,8 +257,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/wpf -->
-    <MicrosoftNETSdkWindowsDesktopPackageVersion>9.0.0-preview.5.24271.4</MicrosoftNETSdkWindowsDesktopPackageVersion>
-    <MicrosoftDotNetWpfProjectTemplatesPackageVersion>9.0.0-preview.5.24271.4</MicrosoftDotNetWpfProjectTemplatesPackageVersion>
+    <MicrosoftNETSdkWindowsDesktopPackageVersion>9.0.0-preview.6.24272.2</MicrosoftNETSdkWindowsDesktopPackageVersion>
+    <MicrosoftDotNetWpfProjectTemplatesPackageVersion>9.0.0-preview.6.24272.2</MicrosoftDotNetWpfProjectTemplatesPackageVersion>
   </PropertyGroup>
   <PropertyGroup Label="Runtime and Apphost aliases">
     <!-- Runtime and Apphost pack versions are the same for all RIDs. We flow the x64 version above and create aliases without the winx64 here for clarity elsewhere. -->
