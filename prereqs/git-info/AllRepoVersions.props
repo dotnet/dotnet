@@ -25,17 +25,17 @@
     <msbuildOutputPackageVersion>17.11.0-preview-24271-01</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>c57a95605a71ff65853a05dd536d19efbed36926</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.11.0-preview.2.61</nugetclientOutputPackageVersion>
-    <razorGitCommitHash>a3cc018a9ede83197ca406ff847cdfb22095c411</razorGitCommitHash>
-    <razorOutputPackageVersion>9.0.0-preview.24271.2</razorOutputPackageVersion>
+    <razorGitCommitHash>714c057950fca95997e725949a93d9cb2e7c193b</razorGitCommitHash>
+    <razorOutputPackageVersion>9.0.0-preview.24272.3</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>8dccccec1ce3bd2fb532ec77d7e092ab9d684db7</roslynanalyzersGitCommitHash>
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.24225.1</roslynanalyzersOutputPackageVersion>
-    <roslynGitCommitHash>db31e78a558fbc92e9d9a3e85b8a14a3dfb9af90</roslynGitCommitHash>
-    <roslynOutputPackageVersion>4.11.0-2.24271.4</roslynOutputPackageVersion>
+    <roslynGitCommitHash>d89c824648207390f5be355a782048812ba5f91e</roslynGitCommitHash>
+    <roslynOutputPackageVersion>4.11.0-2.24272.10</roslynOutputPackageVersion>
     <runtimeGitCommitHash>5c06e5d01fa0ea4122e7202cefb921a779f9843a</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>9.0.0-preview.5.24272.2</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>f51a73f2b5a01a5f91e66098dee90203d3274fac</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24272.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>72532fb2642377276c93ecb6d187af3b46f7eb17</sdkGitCommitHash>
+    <sdkGitCommitHash>a134a94cfb1209e4181072719d554eb232b51317</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>59204e5b14e6e197b3c942f992f6e3ec9196e50b</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24263.2</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>0df72d85186994facaefcb4eb832b8c8a8e5ae3d</sourcebuildreferencepackagesGitCommitHash>

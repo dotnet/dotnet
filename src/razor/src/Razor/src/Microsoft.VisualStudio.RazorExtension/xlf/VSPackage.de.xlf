@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDisplayName">
         <source>Auto insert closing tag</source>
-        <target state="new">Auto insert closing tag</target>
+        <target state="translated">Schließendes Tag automatisch einfügen</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDescription">

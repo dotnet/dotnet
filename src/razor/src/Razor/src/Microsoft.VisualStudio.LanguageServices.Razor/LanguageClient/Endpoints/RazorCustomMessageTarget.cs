@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -26,9 +25,8 @@ using static Microsoft.VisualStudio.LanguageServer.ContainedLanguage.DefaultLSPD
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Endpoints;
 
-[Export(typeof(IRazorCustomMessageTarget))]
 [Export(typeof(RazorCustomMessageTarget))]
-internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
+internal partial class RazorCustomMessageTarget
 {
     private readonly TrackingLSPDocumentManager _documentManager;
     private readonly JoinableTaskFactory _joinableTaskFactory;
