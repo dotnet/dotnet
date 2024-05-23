@@ -50,8 +50,13 @@ namespace NuGet.SolutionRestoreManager.Test
             ProjectReferences = new VsReferenceItems(projectReferences);
             Properties =
                 addTargetFrameworkProperties
-                ? new VsProjectProperties(ProjectRestoreInfoBuilder.GetTargetFrameworkProperties(targetFrameworkMoniker, originalTargetFramework).Concat(projectProperties))
+                ? new VsProjectProperties(ProjectRestoreInfoBuilder.GetTargetFrameworkProperties(targetFrameworkMoniker, originalTargetFramework).Select(ToIVsProjectProperty).Concat(projectProperties))
                 : new VsProjectProperties(projectProperties);
+        }
+
+        private IVsProjectProperty ToIVsProjectProperty(KeyValuePair<string, string> pair)
+        {
+            return new VsProjectProperty(pair.Key, pair.Value);
         }
     }
 }

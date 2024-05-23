@@ -165,6 +165,9 @@ namespace NuGet.VisualStudio.Telemetry
                 // IVsSolutionRestoreService4
                 [nameof(IVsSolutionRestoreService4) + "." + nameof(IVsSolutionRestoreService4.RegisterRestoreInfoSourceAsync)] = new Count(),
 
+                // IVsSolutionRestoreService5
+                [nameof(IVsSolutionRestoreService5) + "." + nameof(IVsSolutionRestoreService5.NominateProjectAsync)] = new Count(),
+
                 // IVsSolutionRestoreStatusProvider
                 [nameof(IVsSolutionRestoreStatusProvider) + "." + nameof(IVsSolutionRestoreStatusProvider.IsRestoreCompleteAsync)] = new Count(),
             };

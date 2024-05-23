@@ -13,10 +13,10 @@
       "commitSha": "0514ea9e12ece4dd764824ce925ae0eae6fcbd86"
     },
     {
-      "packageVersion": "9.0.0-preview.5.24271.5",
+      "packageVersion": "9.0.0-preview.5.24272.5",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "808be46a63a3f93e703c22d67e1759ddf7eceb1a"
+      "commitSha": "da02847b0893b618b024876e700e5639e023e4f1"
     },
     {
       "packageVersion": "0.11.4-alpha.24230.1",
@@ -43,10 +43,10 @@
       "commitSha": "a9efc2e9a04c86be5f66995522f63679ced519c7"
     },
     {
-      "packageVersion": "9.0.0-preview.5.24263.3",
+      "packageVersion": "9.0.0-preview.5.24271.1",
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "ab14ca2e5e25ba3ee4c175b3ea09833f9912e124"
+      "commitSha": "e969995b2701f228815259941467104b6ee8dbee"
     },
     {
       "packageVersion": "9.0.0-preview.5.24264.2",
@@ -67,10 +67,10 @@
       "commitSha": "9e21c71e90cd513a70ccb889259cb6c5d24cac34"
     },
     {
-      "packageVersion": "6.11.0-preview.2.58",
+      "packageVersion": "6.11.0-preview.2.61",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "19d80325ef632eb62a63f367fbba9d726a1d4395"
+      "commitSha": "c57a95605a71ff65853a05dd536d19efbed36926"
     },
     {
       "packageVersion": "9.0.0-preview.24271.2",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "263c87418b22b7feff41a0250d5448fa8ce14eb6"
+      "commitSha": "2aa59ff0367879db4528b16ee51cf57198edc1d9"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24263.2",
@@ -151,10 +151,10 @@
       "commitSha": "2588f022c1c4a12e159e0ed07f5a5ea3f3c9eaa8"
     },
     {
-      "packageVersion": "9.0.0-preview.5.24271.5",
+      "packageVersion": "9.0.0-preview.6.24272.2",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "9206c9f3d8356268f6b6282535dd27b57bc2e667"
+      "commitSha": "e909c990a3c40ea48826a78438714540b7c50e57"
     },
     {
       "packageVersion": "9.0.0-preview.5.24268.1",
@@ -163,10 +163,10 @@
       "commitSha": "0aa3a4dfea1dad493ecbfe15cd513604468b3916"
     },
     {
-      "packageVersion": "9.0.0-preview.5.24271.4",
+      "packageVersion": "9.0.0-preview.6.24272.2",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "93285ebf1dcd4e40549a001841179d2a1ec286e7"
+      "commitSha": "c30fa6e62d3b94e5c65dda316f5c04397a8cb70d"
     },
     {
       "packageVersion": "9.0.0-preview.24270.1",
