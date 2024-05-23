@@ -133,7 +133,7 @@ namespace NuGet.PackageManagement.VisualStudio
             ThreadHelper.ThrowIfNotOnUIThread();
 
             IEnumerable<(string PackageId, string Version)> packageVersions =
-                        _vsProjectAdapter.GetBuildItemInformation(ProjectBuildProperties.PackageVersion, ProjectBuildProperties.Version)
+                        _vsProjectAdapter.GetBuildItemInformation(ProjectItems.PackageVersion, ProjectBuildProperties.Version)
                         .Select(item => (PackageId: item.ItemId, Version: item.ItemMetadata.FirstOrDefault()));
 
             return packageVersions
@@ -180,7 +180,7 @@ namespace NuGet.PackageManagement.VisualStudio
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            IEnumerable<(string ItemId, string[] ItemMetadata)> buildItems = _vsProjectAdapter.GetBuildItemInformation(ProjectBuildProperties.NuGetAuditSuppress);
+            IEnumerable<(string ItemId, string[] ItemMetadata)> buildItems = _vsProjectAdapter.GetBuildItemInformation(ProjectItems.NuGetAuditSuppress);
             if (buildItems is null)
             {
                 return null;
