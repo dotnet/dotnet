@@ -3,6 +3,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Text.Tagging;
+using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -21,8 +22,8 @@ public class DocumentHighlightTests(ITestOutputHelper testOutputHelper) : Abstra
         var tags = await TestServices.Editor.WaitForTagsAsync<ITextMarkerTag>(ControlledHangMitigatingCancellationToken);
 
         Assert.Collection(tags,
-            t => Assert.Equal("<p>", t.Span.GetText()),
-            t => Assert.Equal("</p>", t.Span.GetText()));
+            t => AssertEx.EqualOrDiff("<p>", t.Span.GetText()),
+            t => AssertEx.EqualOrDiff("</p>", t.Span.GetText()));
     }
 
     [IdeFact]
@@ -35,6 +36,6 @@ public class DocumentHighlightTests(ITestOutputHelper testOutputHelper) : Abstra
         var tags = await TestServices.Editor.WaitForTagsAsync<ITextMarkerTag>(ControlledHangMitigatingCancellationToken);
 
         Assert.Equal(3, tags.Length);
-        Assert.All(tags, t => Assert.Equal("currentCount", t.Span.GetText()));
+        Assert.All(tags, t => AssertEx.EqualOrDiff("currentCount", t.Span.GetText()));
     }
 }

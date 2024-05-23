@@ -15,6 +15,9 @@ namespace Microsoft.VisualStudio.Razor.LiveShare.Host;
 
 internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, ICollaborationService, IDisposable
 {
+    // AsyncSemaphore is banned. See https://github.com/dotnet/razor/issues/10390 for more info.
+#pragma warning disable RS0030 // Do not use banned APIs
+
     private readonly CollaborationSession _session;
     private readonly IProjectSnapshotManager _projectSnapshotManager;
     private readonly JoinableTaskFactory _jtf;

@@ -3,6 +3,7 @@
 
 using System.Linq;
 using System.Threading.Tasks;
+using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -50,8 +51,8 @@ public class CSharpCodeActionsTests(ITestOutputHelper testOutputHelper) : Abstra
 
         // Assert
         Assert.Collection(codeActions,
-            a => Assert.Equal("@using System.Data", a.Actions.Single().DisplayText),
-            a => Assert.Equal("System.Data.ConflictOption", a.Actions.Single().DisplayText));
+            a => AssertEx.EqualOrDiff("@using System.Data", a.Actions.Single().DisplayText),
+            a => AssertEx.EqualOrDiff("System.Data.ConflictOption", a.Actions.Single().DisplayText));
 
         var codeAction = codeActions.ElementAt(1).Actions.First();
 
@@ -80,8 +81,8 @@ public class CSharpCodeActionsTests(ITestOutputHelper testOutputHelper) : Abstra
 
         // Assert
         Assert.Collection(codeActions,
-            a => Assert.Equal("@using System.Data", a.Actions.Single().DisplayText),
-            a => Assert.Equal("System.Data.ConflictOption", a.Actions.Single().DisplayText));
+            a => AssertEx.EqualOrDiff("@using System.Data", a.Actions.Single().DisplayText),
+            a => AssertEx.EqualOrDiff("System.Data.ConflictOption", a.Actions.Single().DisplayText));
 
         var codeAction = codeActions.First().Actions.First();
 
