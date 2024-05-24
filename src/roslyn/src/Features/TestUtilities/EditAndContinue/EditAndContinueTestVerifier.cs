@@ -12,7 +12,6 @@ using System.Threading;
 using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.CodeAnalysis.Contracts.EditAndContinue;
 using Microsoft.CodeAnalysis.Emit;
-using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Test.Utilities;
@@ -22,7 +21,7 @@ using static Microsoft.CodeAnalysis.EditAndContinue.AbstractEditAndContinueAnaly
 
 namespace Microsoft.CodeAnalysis.EditAndContinue.UnitTests
 {
-    internal abstract class EditAndContinueTestHelpers
+    internal abstract class EditAndContinueTestVerifier
     {
         public const EditAndContinueCapabilities BaselineCapabilities = EditAndContinueCapabilities.Baseline;
 
