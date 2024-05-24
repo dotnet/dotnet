@@ -395,6 +395,20 @@ public class DefaultTestHostManagerTests
     }
 
     [TestMethod]
+    public void DefaultTestHostManagerShouldNotBeSharedWhenOptedIn()
+    {
+        _testHostManager.Initialize(_mockMessageLogger.Object, $"""
+            <?xml version="1.0" encoding="utf-8"?>
+            <RunSettings>
+            <RunConfiguration>
+                <DisableSharedTestHost>{true}</DisableSharedTestHost>
+            </RunConfiguration>
+            </RunSettings>
+            """);
+        Assert.IsFalse(_testHostManager.Shared);
+    }
+
+    [TestMethod]
     public void DefaultTestHostManagerShouldBeShared()
     {
         Assert.IsTrue(_testHostManager.Shared);

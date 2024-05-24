@@ -87,7 +87,7 @@ internal class TestPlatform : ITestPlatform
         loggerManager.Initialize(discoveryCriteria.RunSettings);
 
         IProxyDiscoveryManager discoveryManager = _testEngine.GetDiscoveryManager(requestData, discoveryCriteria, sourceToSourceDetailMap, warningLogger);
-        discoveryManager.Initialize(options?.SkipDefaultAdapters ?? false);
+        discoveryManager.Initialize(GetSkipDefaultAdapters(options, discoveryCriteria.RunSettings));
 
         return new DiscoveryRequest(requestData, discoveryCriteria, discoveryManager, loggerManager);
     }
@@ -110,9 +110,29 @@ internal class TestPlatform : ITestPlatform
         loggerManager.Initialize(testRunCriteria.TestRunSettings);
 
         IProxyExecutionManager executionManager = _testEngine.GetExecutionManager(requestData, testRunCriteria, sourceToSourceDetailMap, warningLogger);
-        executionManager.Initialize(options?.SkipDefaultAdapters ?? false);
+        executionManager.Initialize(GetSkipDefaultAdapters(options, testRunCriteria.TestRunSettings));
 
         return new TestRunRequest(requestData, testRunCriteria, executionManager, loggerManager);
+    }
+
+    private static bool GetSkipDefaultAdapters(TestPlatformOptions? options, string? runSettings)
+    {
+        if (options?.SkipDefaultAdapters ?? false)
+        {
+            EqtTrace.Verbose($"TestPlatform.GetSkipDefaultAdapters: Skipping default adapters because of TestPlatform options SkipDefaultAdapters.");
+            return true;
+        }
+
+        RunConfiguration runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runSettings);
+        var skipping = runConfiguration.SkipDefaultAdapters;
+        if (skipping)
+        {
+            EqtTrace.Verbose($"TestPlatform.GetSkipDefaultAdapters: Skipping default adapters because of RunConfiguration SkipDefaultAdapters.");
+            return true;
+        }
+
+        EqtTrace.Verbose($"TestPlatform.GetSkipDefaultAdapters: Not skipping default adapters SkipDefaultAdapters was false.");
+        return false;
     }
 
     /// <inheritdoc/>
