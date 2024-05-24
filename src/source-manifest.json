@@ -79,10 +79,10 @@
       "commitSha": "56be853811224127942a9b1eef8d6b76f2829579"
     },
     {
-      "packageVersion": "4.11.0-2.24273.1",
+      "packageVersion": "4.11.0-2.24273.9",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "c2d84f5770613c882b7c3a2fbf9291c93f68b714"
+      "commitSha": "ec93266ae18214bc9b67c5d9d8e6c001b9179789"
     },
     {
       "packageVersion": "3.11.0-beta1.24225.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "08b9d33c71c65c0cd0a6d9cee0df6dec68574792"
+      "commitSha": "27f1cac7cdb4071c4abf68e3548f66050287ceef"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24263.2",
