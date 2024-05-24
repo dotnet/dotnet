@@ -30,6 +30,7 @@ internal class TestLSPRequestInvoker : LSPRequestInvoker
         _csharpServer = csharpServer;
     }
 
+    [Obsolete]
     public override Task<IEnumerable<ReinvokeResponse<TOut>>> ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(
         string method,
         string contentType,
@@ -39,6 +40,7 @@ internal class TestLSPRequestInvoker : LSPRequestInvoker
         throw new NotImplementedException();
     }
 
+    [Obsolete]
     public override Task<IEnumerable<ReinvokeResponse<TOut>>> ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(
         string method,
         string contentType,

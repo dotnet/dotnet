@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -42,7 +43,7 @@ internal class DocumentHighlightEndpoint : AbstractRazorDelegatingEndpoint<Docum
     protected override Task<DocumentHighlight[]?> TryHandleAsync(DocumentHighlightParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
         // We don't handle this in any particular way for Razor, we just delegate
-        return Task.FromResult<DocumentHighlight[]?>(null);
+        return SpecializedTasks.Null<DocumentHighlight[]>();
     }
 
     protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(DocumentHighlightParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
@@ -50,7 +51,7 @@ internal class DocumentHighlightEndpoint : AbstractRazorDelegatingEndpoint<Docum
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
-            return Task.FromResult<IDelegatedParams?>(null);
+            return SpecializedTasks.Null<IDelegatedParams>();
         }
 
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(

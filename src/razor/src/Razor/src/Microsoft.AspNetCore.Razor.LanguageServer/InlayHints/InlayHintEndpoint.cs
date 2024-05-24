@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -33,7 +34,7 @@ internal sealed class InlayHintEndpoint(LanguageServerFeatureOptions featureOpti
         var documentContext = context.DocumentContext;
         if (documentContext is null)
         {
-            return Task.FromResult<InlayHint[]?>(null);
+            return SpecializedTasks.Null<InlayHint[]>();
         }
 
         return _inlayHintService.GetInlayHintsAsync(_clientConnection, documentContext, request.Range, cancellationToken);

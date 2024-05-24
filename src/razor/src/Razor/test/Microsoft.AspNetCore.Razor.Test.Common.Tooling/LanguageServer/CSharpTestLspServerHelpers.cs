@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
@@ -191,7 +192,7 @@ internal static class CSharpTestLspServerHelpers
     {
         public Task<ImmutableArray<RazorMappedSpanResult>> MapSpansAsync(Document document, IEnumerable<TextSpan> spans, CancellationToken cancellationToken)
         {
-            return Task.FromResult(ImmutableArray<RazorMappedSpanResult>.Empty);
+            return SpecializedTasks.EmptyImmutableArray<RazorMappedSpanResult>();
         }
     }
 }

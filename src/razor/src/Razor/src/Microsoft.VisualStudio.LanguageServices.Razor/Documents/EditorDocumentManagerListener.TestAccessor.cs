@@ -12,7 +12,8 @@ internal partial class EditorDocumentManagerListener
 
     internal sealed class TestAccessor(EditorDocumentManagerListener instance)
     {
-        public Task ProjectChangedTask => instance._projectChangedTask;
+        public Task WaitUntilCurrentBatchCompletesAsync()
+            => instance._workQueue.WaitUntilCurrentBatchCompletesAsync();
 
         public event EventHandler OnChangedOnDisk
         {

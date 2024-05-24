@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
 using Xunit;
 using Microsoft.VisualStudio.Razor.LanguageClient;
+using Microsoft.AspNetCore.Razor.Threading;
 
 namespace Microsoft.VisualStudio.Extensibility.Testing;
 
@@ -44,7 +45,7 @@ internal partial class RazorProjectSystemInProcess
             var projectKeys = projectManager.GetAllProjectKeys(projectFilePath);
             if (projectKeys.Length == 0)
             {
-                return Task.FromResult(false);
+                return SpecializedTasks.False;
             }
 
             return Task.FromResult(projectManager.TryGetLoadedProject(projectKeys[0], out _));
@@ -61,7 +62,7 @@ internal partial class RazorProjectSystemInProcess
             if (projectKeys.Length == 0 ||
                 !projectSnapshotManager.TryGetLoadedProject(projectKeys[0], out var project))
             {
-                return Task.FromResult(false);
+                return SpecializedTasks.False;
             }
 
             var document = project.GetDocument(filePath);
@@ -87,7 +88,7 @@ internal partial class RazorProjectSystemInProcess
                 }
             }
 
-            return Task.FromResult(false);
+            return SpecializedTasks.False;
 
         }, TimeSpan.FromMilliseconds(100), cancellationToken);
     }

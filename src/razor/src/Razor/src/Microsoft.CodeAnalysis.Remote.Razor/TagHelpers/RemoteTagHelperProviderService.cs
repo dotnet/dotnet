@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.ServiceHub.Framework;
 
@@ -29,9 +28,8 @@ internal sealed class RemoteTagHelperProviderService(
         ProjectSnapshotHandle projectHandle,
         ImmutableArray<Checksum> checksums,
         CancellationToken cancellationToken)
-        => RazorBrokeredServiceImplementation.RunServiceAsync(
+        => RunServiceAsync(
             solutionInfo,
-            ServiceBrokerClient,
             solution => FetchTagHelpersCoreAsync(solution, projectHandle, checksums, cancellationToken),
             cancellationToken);
 
@@ -102,9 +100,8 @@ internal sealed class RemoteTagHelperProviderService(
         ProjectSnapshotHandle projectHandle,
         int lastResultId,
         CancellationToken cancellationToken)
-        => RazorBrokeredServiceImplementation.RunServiceAsync(
+        => RunServiceAsync(
             solutionInfo,
-            ServiceBrokerClient,
             solution => GetTagHelpersDeltaCoreAsync(solution, projectHandle, lastResultId, cancellationToken),
             cancellationToken);
 

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
@@ -106,7 +107,7 @@ internal sealed class DefinitionEndpoint(
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
-            return Task.FromResult<IDelegatedParams?>(null);
+            return SpecializedTasks.Null<IDelegatedParams>();
         }
 
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(

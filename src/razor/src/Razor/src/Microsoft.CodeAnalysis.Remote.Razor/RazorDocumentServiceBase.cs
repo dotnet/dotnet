@@ -1,10 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.ServiceHub.Framework;
 
@@ -17,32 +17,33 @@ internal abstract class RazorDocumentServiceBase(
 {
     protected DocumentSnapshotFactory DocumentSnapshotFactory { get; } = documentSnapshotFactory;
 
-    protected async Task<(TextDocument?, RazorCodeDocument?)> GetRazorTextAndCodeDocumentsAsync(Solution solution, DocumentId razorDocumentId)
+    protected ValueTask<T> RunServiceAsync<T>(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId razorDocumentId, Func<RemoteDocumentContext, ValueTask<T>> implementation, CancellationToken cancellationToken)
+    {
+        return RunServiceAsync(
+            solutionInfo,
+            solution =>
+            {
+                var documentContext = CreateRazorDocumentContext(solution, razorDocumentId);
+                if (documentContext is null)
+                {
+                    return default;
+                }
+
+                return implementation(documentContext);
+            },
+            cancellationToken);
+    }
+
+    private RemoteDocumentContext? CreateRazorDocumentContext(Solution solution, DocumentId razorDocumentId)
     {
         var razorDocument = solution.GetAdditionalDocument(razorDocumentId);
         if (razorDocument is null)
         {
-            return (null, null);
+            return null;
         }
 
-        var snapshot = DocumentSnapshotFactory.GetOrCreate(razorDocument);
-        var codeDocument = await snapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
+        var documentSnapshot = DocumentSnapshotFactory.GetOrCreate(razorDocument);
 
-        return (razorDocument, codeDocument);
-    }
-
-    protected async Task<RazorCodeDocument?> GetRazorCodeDocumentAsync(Solution solution, DocumentId razorDocumentId)
-    {
-        var (_, codeDocument) = await GetRazorTextAndCodeDocumentsAsync(solution, razorDocumentId);
-
-        return codeDocument;
-    }
-
-    protected VersionedDocumentContext CreateRazorDocumentContext(TextDocument textDocument)
-    {
-        var documentSnapshot = DocumentSnapshotFactory.GetOrCreate(textDocument);
-
-        // HACK: Need to revisit version and projectContext here I guess
-        return new VersionedDocumentContext(textDocument.CreateUri(), documentSnapshot, projectContext: null, version: 1);
+        return new RemoteDocumentContext(razorDocument.CreateUri(), documentSnapshot);
     }
 }

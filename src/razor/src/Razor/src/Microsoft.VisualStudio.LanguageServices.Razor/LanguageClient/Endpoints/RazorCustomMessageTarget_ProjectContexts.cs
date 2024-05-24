@@ -4,6 +4,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -44,7 +45,7 @@ internal partial class RazorCustomMessageTarget
 
         if (projectContexts.Count == 0)
         {
-            return Task.FromResult<VSProjectContextList?>(null);
+            return SpecializedTasks.Null<VSProjectContextList>();
         }
 
         var result = new VSProjectContextList

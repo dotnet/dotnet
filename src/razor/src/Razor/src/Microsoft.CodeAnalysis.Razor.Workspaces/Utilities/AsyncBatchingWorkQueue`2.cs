@@ -92,7 +92,7 @@ internal class AsyncBatchingWorkQueue<TItem, TResult>
     /// Task kicked off to do the next batch of processing of <see cref="_nextBatch"/>. These
     /// tasks form a chain so that the next task only processes when the previous one completes.
     /// </summary>
-    private Task<TResult?> _updateTask = Task.FromResult(default(TResult));
+    private Task<TResult?> _updateTask = SpecializedTasks.Default<TResult>();
 
     /// <summary>
     /// Whether or not there is an existing task in flight that will process the current batch

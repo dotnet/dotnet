@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -21,7 +22,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 internal sealed class ExtractToCodeBehindCodeActionProvider : IRazorCodeActionProvider
 {
-    private static readonly Task<IReadOnlyList<RazorVSInternalCodeAction>?> s_emptyResult = Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(null);
     private readonly ILogger _logger;
 
     public ExtractToCodeBehindCodeActionProvider(ILoggerFactory loggerFactory)
@@ -38,30 +38,30 @@ internal sealed class ExtractToCodeBehindCodeActionProvider : IRazorCodeActionPr
     {
         if (context is null)
         {
-            return s_emptyResult;
+            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
         }
 
         if (!context.SupportsFileCreation)
         {
-            return s_emptyResult;
+            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
         }
 
         if (!FileKinds.IsComponent(context.CodeDocument.GetFileKind()))
         {
-            return s_emptyResult;
+            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
         }
 
         var syntaxTree = context.CodeDocument.GetSyntaxTree();
         if (syntaxTree?.Root is null)
         {
-            return s_emptyResult;
+            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
         }
 
         var owner = syntaxTree.Root.FindInnermostNode(context.Location.AbsoluteIndex);
         if (owner is null)
         {
             _logger.LogWarning($"Owner should never be null.");
-            return s_emptyResult;
+            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
         }
 
         var directiveNode = owner?.Parent switch
@@ -76,42 +76,42 @@ internal sealed class ExtractToCodeBehindCodeActionProvider : IRazorCodeActionPr
         };
         if (directiveNode is null)
         {
-            return s_emptyResult;
+            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
         }
 
         // Make sure we've found a @code or @functions
         if (directiveNode.DirectiveDescriptor != ComponentCodeDirective.Directive &&
             directiveNode.DirectiveDescriptor != FunctionsDirective.Directive)
         {
-            return s_emptyResult;
+            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
         }
 
         // No code action if malformed
         if (directiveNode.GetDiagnostics().Any(d => d.Severity == RazorDiagnosticSeverity.Error))
         {
-            return s_emptyResult;
+            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
         }
 
         var csharpCodeBlockNode = (directiveNode.Body as RazorDirectiveBodySyntax)?.CSharpCode;
         if (csharpCodeBlockNode is null)
         {
-            return s_emptyResult;
+            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
         }
 
         // Do not provide code action if the cursor is inside the code block
         if (context.Location.AbsoluteIndex > csharpCodeBlockNode.SpanStart)
         {
-            return s_emptyResult;
+            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
         }
 
         if (HasUnsupportedChildren(csharpCodeBlockNode))
         {
-            return s_emptyResult;
+            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
         }
 
         if (!TryGetNamespace(context.CodeDocument, out var @namespace))
         {
-            return s_emptyResult;
+            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
         }
 
         var actionParams = new ExtractToCodeBehindCodeActionParams()

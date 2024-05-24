@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
         <source>Auto insert attribute quotes</source>
-        <target state="new">Auto insert attribute quotes</target>
+        <target state="translated">특성 따옴표 자동 삽입</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
         <source>Code/functions block open brace on next line</source>
-        <target state="new">Code/functions block open brace on next line</target>
+        <target state="translated">코드/함수는 다음 줄에서 여는 중괄호를 차단함</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">
@@ -79,17 +79,17 @@
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDisplayName">
         <source>Background for C# code</source>
-        <target state="new">Background for C# code</target>
+        <target state="translated">C# 코드의 배경</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDescription">
         <source>If true, pressing space will commit suggestions for HTML elements and components</source>
-        <target state="new">If true, pressing space will commit suggestions for HTML elements and components</target>
+        <target state="translated">true일 경우 스페이스바를 누르면 HTML 요소 및 구성 요소에 대한 제안이 커밋됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
         <source>Commit elements with space</source>
-        <target state="new">Commit elements with space</target>
+        <target state="translated">공백을 사용하여 요소 커밋</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
@@ -99,7 +99,7 @@
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDisplayName">
         <source>Format on type</source>
-        <target state="new">Format on type</target>
+        <target state="translated">형식의 서식</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelCritical">

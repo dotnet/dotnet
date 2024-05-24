@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
@@ -17,5 +18,5 @@ internal class WorkspacePullDiagnosticsEndpoint : IRazorDocumentlessRequestHandl
     // We don't actually support workspace diagnostics, but by registering the capability in DocumentPullDiagnosticsEndpoint we will get requests
 
     public Task<VSInternalWorkspaceDiagnosticReport[]> HandleRequestAsync(VSInternalWorkspaceDiagnosticsParams request, RazorRequestContext context, CancellationToken cancellationToken)
-        => Task.FromResult(Array.Empty<VSInternalWorkspaceDiagnosticReport>());
+        => SpecializedTasks.EmptyArray<VSInternalWorkspaceDiagnosticReport>();
 }

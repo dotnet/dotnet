@@ -4,7 +4,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
 using Microsoft.CodeAnalysis.Razor.LinkedEditingRange;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
@@ -23,23 +22,20 @@ internal sealed class RemoteLinkedEditingRangeService(
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RemoteLinkedEditingRangeService>();
 
     public ValueTask<LinePositionSpan[]?> GetRangesAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId razorDocumentId, LinePosition linePosition, CancellationToken cancellationToken)
-        => RazorBrokeredServiceImplementation.RunServiceAsync(
+        => RunServiceAsync(
             solutionInfo,
-            ServiceBrokerClient,
-            solution => GetRangesAsync(solution, razorDocumentId, linePosition, cancellationToken),
+            razorDocumentId,
+            context => GetRangesAsync(context, linePosition, cancellationToken),
             cancellationToken);
 
-    public async ValueTask<LinePositionSpan[]?> GetRangesAsync(Solution solution, DocumentId razorDocumentId, LinePosition linePosition, CancellationToken cancellationToken)
+    public async ValueTask<LinePositionSpan[]?> GetRangesAsync(RemoteDocumentContext context, LinePosition linePosition, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
         {
             return null;
         }
 
-        if (await GetRazorCodeDocumentAsync(solution, razorDocumentId).ConfigureAwait(false) is not { } codeDocument)
-        {
-            return null;
-        }
+        var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
         return LinkedEditingRangeHelper.GetLinkedSpans(linePosition, codeDocument, _logger);
     }
