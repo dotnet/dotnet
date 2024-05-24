@@ -4,10 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text;
@@ -47,15 +47,16 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
         _serializer.AddVSInternalExtensionConverters();
     }
 
+    [Obsolete]
     public override Task<IEnumerable<ReinvokeResponse<TOut>>> ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(string method, string contentType, TIn parameters, CancellationToken cancellationToken)
     {
-        var capabilitiesFilter = _fallbackCapabilitiesFilterResolver.Resolve(method);
-        return RequestMultipleServerCoreAsync<TIn, TOut>(method, contentType, capabilitiesFilter, parameters, cancellationToken);
+        return RequestMultipleServerCoreAsync<TIn, TOut>(method, parameters, cancellationToken);
     }
 
+    [Obsolete]
     public override Task<IEnumerable<ReinvokeResponse<TOut>>> ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(string method, string contentType, Func<JToken, bool> capabilitiesFilter, TIn parameters, CancellationToken cancellationToken)
     {
-        return RequestMultipleServerCoreAsync<TIn, TOut>(method, contentType, capabilitiesFilter, parameters, cancellationToken);
+        return RequestMultipleServerCoreAsync<TIn, TOut>(method, parameters, cancellationToken);
     }
 
     public override Task<ReinvokeResponse<TOut>> ReinvokeRequestOnServerAsync<TIn, TOut>(
@@ -81,17 +82,12 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
         }
 
         var serializedParams = JToken.FromObject(parameters);
-#pragma warning disable CS0618 // Type or member is obsolete. Temporary until we resolve the changes to the ILanguageServiceBroker2 interface.
-        var (languageClient, resultToken) = await _languageServiceBroker.RequestAsync(
-            Array.Empty<string>(),
-            capabilitiesFilter,
-            languageServerName,
-            method,
-            serializedParams,
+        var response = await _languageServiceBroker.RequestAsync(
+            new GeneralRequest<TIn, TOut> { LanguageServerName = languageServerName, Method = method, Request = parameters },
             cancellationToken);
-#pragma warning restore CS0618 // Type or member is obsolete
 
-        var result = resultToken is not null ? new ReinvokeResponse<TOut>(languageClient!, resultToken.ToObject<TOut>(_serializer)!) : default;
+        // No callers actually use the languageClient when handling the response.
+        var result = response is not null ? new ReinvokeResponse<TOut>(languageClient: null!, response) : default;
         return result;
     }
 
@@ -109,38 +105,26 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
         TIn parameters,
         CancellationToken cancellationToken)
     {
-        var serializedParams = JToken.FromObject(parameters);
-        JToken ParameterFactory(ITextSnapshot _)
-        {
-            return serializedParams;
-        }
-
-#pragma warning disable CS0618 // Type or member is obsolete. Temporary until we resolve the changes to the ILanguageServiceBroker2 interface.
         var response = await _languageServiceBroker.RequestAsync(
-            textBuffer,
-            capabilitiesFilter,
-            languageServerName,
-            method,
-            ParameterFactory,
+            new DocumentRequest<TIn, TOut>()
+            {
+                TextBuffer = textBuffer,
+                LanguageServerName = languageServerName,
+                ParameterFactory = _ => parameters,
+                Method = method,
+            },
             cancellationToken);
-#pragma warning restore CS0618 // Type or member is obsolete
 
         if (response is null)
         {
             return null;
         }
 
-        var responseBody = default(TOut);
-        if (response.Response is not null)
-        {
-            responseBody = response.Response.ToObject<TOut>(_serializer);
-        }
-
-        var reinvocationResponse = new ReinvocationResponse<TOut>(response.LanguageClientName, responseBody);
+        var reinvocationResponse = new ReinvocationResponse<TOut>(languageServerName, response);
         return reinvocationResponse;
     }
 
-    private async Task<IEnumerable<ReinvokeResponse<TOut>>> RequestMultipleServerCoreAsync<TIn, TOut>(string method, string contentType, Func<JToken, bool> capabilitiesFilter, TIn parameters, CancellationToken cancellationToken)
+    private async Task<IEnumerable<ReinvokeResponse<TOut>>> RequestMultipleServerCoreAsync<TIn, TOut>(string method, TIn parameters, CancellationToken cancellationToken)
         where TIn : notnull
     {
         if (string.IsNullOrEmpty(method))
@@ -148,21 +132,18 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
             throw new ArgumentException("message", nameof(method));
         }
 
-        var serializedParams = JToken.FromObject(parameters);
-
-#pragma warning disable CS0618 // Type or member is obsolete
-        var clientAndResultTokenPairs = await _languageServiceBroker.RequestMultipleAsync(
-            new[] { contentType },
-            capabilitiesFilter,
-            method,
-            serializedParams,
+        var reinvokeResponses = _languageServiceBroker.RequestAllAsync(
+            new GeneralRequest<TIn, TOut>() { LanguageServerName = null, Method = method, Request = parameters },
             cancellationToken).ConfigureAwait(false);
-#pragma warning restore CS0618 // Type or member is obsolete
 
-        // a little ugly - tuple deconstruction in lambda arguments doesn't work - https://github.com/dotnet/csharplang/issues/258
-        var results = clientAndResultTokenPairs.Select((clientAndResultToken) => clientAndResultToken.Item2 is not null ? new ReinvokeResponse<TOut>(clientAndResultToken.Item1, clientAndResultToken.Item2.ToObject<TOut>(_serializer)!) : default);
+        using var responses = new PooledArrayBuilder<ReinvokeResponse<TOut>>();
+        await foreach (var reinvokeResponse in reinvokeResponses)
+        {
+            // No callers actually use the languageClient when handling the response.
+            responses.Add(new ReinvokeResponse<TOut>(languageClient: null!, reinvokeResponse.response!));
+        }
 
-        return results;
+        return responses.ToArray();
     }
 
     public override IAsyncEnumerable<ReinvocationResponse<TOut>> ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(
@@ -182,27 +163,13 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
         TIn parameters,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        var serializedParams = JToken.FromObject(parameters);
-        Func<ITextSnapshot, JToken> parameterFactory = (_) => serializedParams;
-
-#pragma warning disable CS0618 // Type or member is obsolete. Temporary until we resolve the changes to the ILanguageServiceBroker2 interface.
-        var requests = _languageServiceBroker.RequestMultipleAsync(
-            textBuffer,
-            capabilitiesFilter,
-            method,
-            parameterFactory,
+        var requests = _languageServiceBroker.RequestAllAsync(
+            new DocumentRequest<TIn, TOut> { ParameterFactory = _ => parameters, Method = method, TextBuffer = textBuffer },
             cancellationToken);
-#pragma warning restore CS0618 // Type or member is obsolete
 
         await foreach (var response in requests)
         {
-            var responseBody = default(TOut);
-            if (response.Response is not null)
-            {
-                responseBody = response.Response.ToObject<TOut>(_serializer);
-                var reinvocationResponse = new ReinvocationResponse<TOut>(response.LanguageClientName, responseBody);
-                yield return reinvocationResponse;
-            }
+            yield return new ReinvocationResponse<TOut>(response.client, response.response);
         }
     }
 }

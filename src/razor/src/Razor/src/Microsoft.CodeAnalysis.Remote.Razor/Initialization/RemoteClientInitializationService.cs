@@ -3,7 +3,6 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
 using Microsoft.ServiceHub.Framework;
@@ -15,7 +14,7 @@ internal sealed class RemoteClientInitializationService(
     : RazorServiceBase(serviceBroker), IRemoteClientInitializationService
 {
     public ValueTask InitializeAsync(RemoteClientInitializationOptions options, CancellationToken cancellationToken)
-        => RazorBrokeredServiceImplementation.RunServiceAsync(_ =>
+        => RunServiceAsync(ct =>
             {
                 RemoteLanguageServerFeatureOptions.SetOptions(options);
                 return default;
@@ -23,10 +22,10 @@ internal sealed class RemoteClientInitializationService(
             cancellationToken);
 
     public ValueTask InitializeLSPAsync(RemoteClientLSPInitializationOptions options, CancellationToken cancellationToken)
-        => RazorBrokeredServiceImplementation.RunServiceAsync(_ =>
-        {
-            RemoteSemanticTokensLegendService.SetLegend(options.TokenTypes, options.TokenModifiers);
-            return default;
-        },
+        => RunServiceAsync(ct =>
+            {
+                RemoteSemanticTokensLegendService.SetLegend(options.TokenTypes, options.TokenModifiers);
+                return default;
+            },
             cancellationToken);
 }

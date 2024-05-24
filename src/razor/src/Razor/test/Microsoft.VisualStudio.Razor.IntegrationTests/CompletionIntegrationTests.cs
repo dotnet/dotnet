@@ -125,7 +125,7 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
 
             <PageTitle>Test</PageTitle>
 
-            <div></div>
+            <div>Hello</div>
             """,
             open: true,
             ControlledHangMitigatingCancellationToken);
@@ -133,7 +133,7 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
         var textView = await TestServices.Editor.GetActiveTextViewAsync(HangMitigatingCancellationToken);
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
 
-        await TestServices.Editor.PlaceCaretAsync("<di", charsOffset: 1, ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.PlaceCaretAsync("Hel", charsOffset: 1, ControlledHangMitigatingCancellationToken);
         TestServices.Input.Send("{DELETE}");
 
         // Make sure completion doesn't come up for 15 seconds

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -20,9 +21,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 internal sealed class TypeAccessibilityCodeActionProvider : ICSharpCodeActionProvider
 {
-    private static readonly Task<IReadOnlyList<RazorVSInternalCodeAction>?> s_emptyResult =
-        Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(Array.Empty<RazorVSInternalCodeAction>());
-
     private static readonly IEnumerable<string> s_supportedDiagnostics = new[]
     {
         // `The type or namespace name 'type/namespace' could not be found
@@ -55,12 +53,12 @@ internal sealed class TypeAccessibilityCodeActionProvider : ICSharpCodeActionPro
 
         if (context.Request?.Context?.Diagnostics is null)
         {
-            return s_emptyResult;
+            return SpecializedTasks.AsNullable(SpecializedTasks.EmptyReadOnlyList<RazorVSInternalCodeAction>());
         }
 
         if (codeActions is null || !codeActions.Any())
         {
-            return s_emptyResult;
+            return SpecializedTasks.AsNullable(SpecializedTasks.EmptyReadOnlyList<RazorVSInternalCodeAction>());
         }
 
         var results = context.SupportsCodeActionResolve

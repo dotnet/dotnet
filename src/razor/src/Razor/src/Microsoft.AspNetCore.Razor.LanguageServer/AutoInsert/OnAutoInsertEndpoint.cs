@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -122,7 +123,7 @@ internal class OnAutoInsertEndpoint(
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
-            return Task.FromResult<IDelegatedParams?>(null);
+            return SpecializedTasks.Null<IDelegatedParams>();
         }
 
         if (positionInfo.LanguageKind == RazorLanguageKind.Html)
@@ -130,7 +131,7 @@ internal class OnAutoInsertEndpoint(
             if (!s_htmlAllowedTriggerCharacters.Contains(request.Character))
             {
                 Logger.LogInformation($"Inapplicable HTML trigger char {request.Character}.");
-                return Task.FromResult<IDelegatedParams?>(null);
+                return SpecializedTasks.Null<IDelegatedParams>();
             }
 
             if (!_optionsMonitor.CurrentValue.AutoInsertAttributeQuotes && request.Character == "=")
@@ -138,7 +139,7 @@ internal class OnAutoInsertEndpoint(
                 // Use Razor setting for autoinsert attribute quotes. HTML Server doesn't have a way to pass that
                 // information along so instead we just don't delegate the request.
                 Logger.LogTrace($"Not delegating to HTML completion because AutoInsertAttributeQuotes is disabled");
-                return Task.FromResult<IDelegatedParams?>(null);
+                return SpecializedTasks.Null<IDelegatedParams>();
             }
         }
         else if (positionInfo.LanguageKind == RazorLanguageKind.CSharp)
@@ -146,7 +147,7 @@ internal class OnAutoInsertEndpoint(
             if (!s_cSharpAllowedTriggerCharacters.Contains(request.Character))
             {
                 Logger.LogInformation($"Inapplicable C# trigger char {request.Character}.");
-                return Task.FromResult<IDelegatedParams?>(null);
+                return SpecializedTasks.Null<IDelegatedParams>();
             }
 
             // Special case for C# where we use AutoInsert for two purposes:
@@ -163,7 +164,7 @@ internal class OnAutoInsertEndpoint(
             if (!_optionsMonitor.CurrentValue.FormatOnType)
             {
                 Logger.LogInformation($"Formatting on type disabled, so auto insert is a no-op for C#.");
-                return Task.FromResult<IDelegatedParams?>(null);
+                return SpecializedTasks.Null<IDelegatedParams>();
             }
         }
 

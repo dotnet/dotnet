@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
         <source>Auto insert attribute quotes</source>
-        <target state="new">Auto insert attribute quotes</target>
+        <target state="translated">Anführungszeichen für Attribute automatisch einfügen</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
         <source>Code/functions block open brace on next line</source>
-        <target state="new">Code/functions block open brace on next line</target>
+        <target state="translated">Code/Funktionen blockieren öffnende Klammer in nächster Zeile</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">
@@ -79,17 +79,17 @@
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDisplayName">
         <source>Background for C# code</source>
-        <target state="new">Background for C# code</target>
+        <target state="translated">Hintergrund für C#-Code</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDescription">
         <source>If true, pressing space will commit suggestions for HTML elements and components</source>
-        <target state="new">If true, pressing space will commit suggestions for HTML elements and components</target>
+        <target state="translated">Wenn TRUE, werden beim Drücken der LEERTASTE Vorschläge für HTML-Elemente und -Komponenten committet.</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
         <source>Commit elements with space</source>
-        <target state="new">Commit elements with space</target>
+        <target state="translated">Elemente durch Drücken der LEERTASTE committen</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
@@ -99,7 +99,7 @@
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDisplayName">
         <source>Format on type</source>
-        <target state="new">Format on type</target>
+        <target state="translated">Bei Eingabe formatieren</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelCritical">
