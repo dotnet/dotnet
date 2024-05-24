@@ -116,8 +116,8 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
     /// <inheritdoc/>
     public bool WaitForRequestHandlerConnection(int clientConnectionTimeout)
     {
-        var waitSucess = _handShakeComplete.WaitOne(clientConnectionTimeout);
-        return waitSucess && _handShakeSuccessful;
+        var waitSuccess = _handShakeComplete.WaitOne(clientConnectionTimeout);
+        return waitSuccess && _handShakeSuccessful;
     }
 
     /// <inheritdoc/>

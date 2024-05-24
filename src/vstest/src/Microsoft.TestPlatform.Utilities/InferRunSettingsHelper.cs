@@ -657,7 +657,7 @@ public class InferRunSettingsHelper
         List<string> compatibleSources = new();
         StringBuilder warnings = new();
         warnings.AppendLine();
-        bool incompatiblityFound = false;
+        bool incompatibilityFound = false;
         foreach (var source in sourcePlatforms.Keys)
         {
             Architecture actualPlatform = sourcePlatforms[source];
@@ -667,10 +667,10 @@ public class InferRunSettingsHelper
             {
                 var onlyFileName = Path.GetFileName(source);
                 // Add message for incompatible sources.
-                var incompatiblityMessage = string.Format(CultureInfo.CurrentCulture, OMResources.SourceIncompatible, onlyFileName, actualFramework.Name, actualPlatform);
+                var incompatibilityMessage = string.Format(CultureInfo.CurrentCulture, OMResources.SourceIncompatible, onlyFileName, actualFramework.Name, actualPlatform);
 
-                warnings.AppendLine(incompatiblityMessage);
-                incompatiblityFound = true;
+                warnings.AppendLine(incompatibilityMessage);
+                incompatibilityFound = true;
             }
             else
             {
@@ -678,7 +678,7 @@ public class InferRunSettingsHelper
             }
         }
 
-        if (incompatiblityFound)
+        if (incompatibilityFound)
         {
             incompatibleSettingWarning = string.Format(CultureInfo.CurrentCulture, OMResources.DisplayChosenSettings, chosenFramework, chosenPlatform, warnings.ToString(), MultiTargetingForwardLink);
         }
@@ -703,12 +703,7 @@ public class InferRunSettingsHelper
     private static bool IsPlatformIncompatible(Architecture sourcePlatform, Architecture targetPlatform)
     {
         return sourcePlatform is not Architecture.Default and not Architecture.AnyCPU
-            && (targetPlatform == Architecture.X64 && !Is64BitOperatingSystem() || sourcePlatform != targetPlatform);
-
-        static bool Is64BitOperatingSystem()
-        {
-            return Environment.Is64BitOperatingSystem;
-        }
+            && (targetPlatform == Architecture.X64 && !Environment.Is64BitOperatingSystem || sourcePlatform != targetPlatform);
     }
 
     /// <summary>

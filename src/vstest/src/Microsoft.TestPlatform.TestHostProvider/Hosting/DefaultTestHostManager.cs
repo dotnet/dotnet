@@ -58,7 +58,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     private readonly IEnvironment _environment;
     private readonly IDotnetHostHelper _dotnetHostHelper;
     private readonly IEnvironmentVariableHelper _environmentVariableHelper;
-
+    private bool _disableAppDomain;
     private Architecture _architecture;
     private Framework? _targetFramework;
     private ITestHostLauncher? _customTestHostLauncher;
@@ -199,10 +199,10 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
             testhostProcessPath = Path.Combine(currentWorkingDirectory, "..", testHostProcessName);
         }
 
-        if (!Shared)
+        if (_disableAppDomain)
         {
-            // Not sharing the host which means we need to pass the test assembly path as argument
-            // so that the test host can create an appdomain on startup (Main method) and set appbase
+            // When host appdomains are disabled (in that case host is not shared) we need to pass the test assembly path as argument
+            // so that the test host can create one appdomain on startup (Main method) and set appbase.
             argumentsString += " --testsourcepath " + sources.FirstOrDefault()?.AddDoubleQuote();
         }
 
@@ -379,7 +379,13 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
         _targetFramework = runConfiguration.TargetFramework;
         _testHostProcess = null;
 
-        Shared = !runConfiguration.DisableAppDomain;
+        _disableAppDomain = runConfiguration.DisableAppDomain;
+        // If appdomains are disabled the host cannot be shared, because sharing means loading multiple assemblies
+        // into the same process, and without appdomains we cannot safely do that.
+        //
+        // The OPPOSITE is not true though, disabling testhost sharing does not mean that we should not load the
+        // dll into a separate appdomain in the host. It just means that we wish to run each dll in separate exe.
+        Shared = !_disableAppDomain && !runConfiguration.DisableSharedTestHost;
         _hostExitedEventRaised = false;
 
         IsInitialized = true;

@@ -95,6 +95,7 @@ public class RunConfiguration : TestRunSettings
         ExecutionThreadApartmentState = Constants.DefaultExecutionThreadApartmentState;
         CaptureStandardOutput = !FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_STANDARD_OUTPUT_CAPTURING);
         ForwardStandardOutput = !FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_STANDARD_OUTPUT_FORWARDING);
+        DisableSharedTestHost = FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_SHARING_NETFRAMEWORK_TESTHOST);
     }
 
     /// <summary>
@@ -455,6 +456,16 @@ public class RunConfiguration : TestRunSettings
     /// </summary>
     public bool ForwardStandardOutput { get; private set; }
 
+    /// <summary>
+    /// Disables sharing of .NET Framework testhosts.
+    /// </summary>
+    public bool DisableSharedTestHost { get; private set; }
+
+    /// <summary>
+    /// Skips passing VisualStudio built in adapters to the project.
+    /// </summary>
+    public bool SkipDefaultAdapters { get; private set; }
+
     /// <inheritdoc/>
     public override XmlElement ToXml()
     {
@@ -577,6 +588,14 @@ public class RunConfiguration : TestRunSettings
         XmlElement forwardStandardOutput = doc.CreateElement(nameof(ForwardStandardOutput));
         forwardStandardOutput.InnerXml = ForwardStandardOutput.ToString();
         root.AppendChild(forwardStandardOutput);
+
+        XmlElement disableSharedTesthost = doc.CreateElement(nameof(DisableSharedTestHost));
+        disableSharedTesthost.InnerXml = DisableSharedTestHost.ToString();
+        root.AppendChild(disableSharedTesthost);
+
+        XmlElement skipDefaultAdapters = doc.CreateElement(nameof(SkipDefaultAdapters));
+        skipDefaultAdapters.InnerXml = SkipDefaultAdapters.ToString();
+        root.AppendChild(skipDefaultAdapters);
 
         return root;
     }
@@ -963,6 +982,38 @@ public class RunConfiguration : TestRunSettings
 
                         runConfiguration.ForwardStandardOutput = bForwardStandardOutput;
                         break;
+
+                    case nameof(DisableSharedTestHost):
+                        {
+                            XmlRunSettingsUtilities.ThrowOnHasAttributes(reader);
+                            string element = reader.ReadElementContentAsString();
+
+                            bool boolValue;
+                            if (!bool.TryParse(element, out boolValue))
+                            {
+                                throw new SettingsException(string.Format(CultureInfo.CurrentCulture,
+                                    Resources.Resources.InvalidSettingsIncorrectValue, Constants.RunConfigurationSettingsName, boolValue, elementName));
+                            }
+
+                            runConfiguration.DisableSharedTestHost = boolValue;
+                            break;
+                        }
+
+                    case nameof(SkipDefaultAdapters):
+                        {
+                            XmlRunSettingsUtilities.ThrowOnHasAttributes(reader);
+                            string element = reader.ReadElementContentAsString();
+
+                            bool boolValue;
+                            if (!bool.TryParse(element, out boolValue))
+                            {
+                                throw new SettingsException(string.Format(CultureInfo.CurrentCulture,
+                                    Resources.Resources.InvalidSettingsIncorrectValue, Constants.RunConfigurationSettingsName, boolValue, elementName));
+                            }
+
+                            runConfiguration.SkipDefaultAdapters = boolValue;
+                            break;
+                        }
 
                     default:
                         // Ignore a runsettings element that we don't understand. It could occur in the case

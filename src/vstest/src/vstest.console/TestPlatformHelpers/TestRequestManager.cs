@@ -1510,23 +1510,21 @@ internal class TestRequestManager : ITestRequestManager
     private static List<string> GetSources(TestRunRequestPayload testRunRequestPayload)
     {
         // TODO: This should also use hashset to only return distinct sources.
-        List<string> sources = new();
-        if (testRunRequestPayload.Sources != null
-            && testRunRequestPayload.Sources.Count > 0)
+        if (testRunRequestPayload.Sources is { Count: > 0 })
         {
-            sources = testRunRequestPayload.Sources;
+            return testRunRequestPayload.Sources;
         }
-        else if (testRunRequestPayload.TestCases != null
-                 && testRunRequestPayload.TestCases.Count > 0)
+
+        if (testRunRequestPayload.TestCases is { Count: > 0 })
         {
-            ISet<string> sourcesSet = new HashSet<string>();
+            var sourcesSet = new HashSet<string>();
             foreach (var testCase in testRunRequestPayload.TestCases)
             {
                 sourcesSet.Add(testCase.Source);
             }
-            sources = sourcesSet.ToList();
+            return sourcesSet.ToList();
         }
-        return sources;
+        return [];
     }
 }
 

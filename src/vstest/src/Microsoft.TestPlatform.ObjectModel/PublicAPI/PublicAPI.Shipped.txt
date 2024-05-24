@@ -974,3 +974,5 @@ virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateValueCallback.In
 Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture.RiscV64 = 8 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture
 Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.CaptureStandardOutput.get -> bool
 Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.ForwardStandardOutput.get -> bool
+Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.DisableSharedTestHost.get -> bool
+Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.SkipDefaultAdapters.get -> bool

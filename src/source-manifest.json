@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.24270.3",
+      "packageVersion": "9.0.0-beta.24272.5",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "1cf3eaa1f6ada43ab988145a3f3efddb1ffa3b10"
+      "commitSha": "2001d73c8ff942331a73300ba61fa6164805b231"
     },
     {
       "packageVersion": "9.0.0-preview.4.24229.9",
@@ -37,10 +37,10 @@
       "commitSha": "6b80783f6743ee9f18940eb6acb7135e5c111d4b"
     },
     {
-      "packageVersion": "8.0.0-preview.24259.1",
+      "packageVersion": "8.0.0-preview.24267.2",
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "a9efc2e9a04c86be5f66995522f63679ced519c7"
+      "commitSha": "3f6ec187afd27d5f242c9275ca1b6e16c43a1b0c"
     },
     {
       "packageVersion": "9.0.0-preview.5.24271.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "3b23672629e0d622525b44616b7479622624744f"
+      "commitSha": "afca930a9011ced421024a89f966d28c59f24d38"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24263.2",
@@ -145,10 +145,10 @@
       "commitSha": "95602ba339a3d693f709d2ff11533a9f3ba5328e"
     },
     {
-      "packageVersion": "17.11.0-preview-24265-01",
+      "packageVersion": "17.11.0-preview-24273-01",
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "2588f022c1c4a12e159e0ed07f5a5ea3f3c9eaa8"
+      "commitSha": "196d737555bb879a38056f3a6c94a9bb8ec78b1c"
     },
     {
       "packageVersion": "9.0.0-preview.6.24273.2",

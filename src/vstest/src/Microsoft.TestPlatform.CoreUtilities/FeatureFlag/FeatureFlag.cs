@@ -69,6 +69,10 @@ internal partial class FeatureFlag : IFeatureFlag
     // Disable forwarding standard output of testhost.
     public const string VSTEST_DISABLE_STANDARD_OUTPUT_FORWARDING = nameof(VSTEST_DISABLE_STANDARD_OUTPUT_FORWARDING);
 
+    // Disable not sharing .NET Framework testhosts. Which will return behavior to sharing testhosts when they are running .NET Framework dlls, and are not disabling appdomains or running in parallel.
+    public const string VSTEST_DISABLE_SHARING_NETFRAMEWORK_TESTHOST = nameof(VSTEST_DISABLE_SHARING_NETFRAMEWORK_TESTHOST);
+
+
     [Obsolete("Only use this in tests.")]
     internal static void Reset()
     {
