@@ -16,7 +16,7 @@
     <NETCoreLegacyTargetFramework>netcoreapp3.1</NETCoreLegacyTargetFramework>
     <NETCoreLegacyTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true'">net9.0</NETCoreLegacyTargetFramework>
     <NETCoreLegacyTargetFrameworkForSigning>netcoreapp5.0</NETCoreLegacyTargetFrameworkForSigning>
-    
+
     <!-- Target frameworks for class libraries-->
     <TargetFrameworksLibrary>$(NetStandardVersion)</TargetFrameworksLibrary>
     <TargetFrameworksLibrary Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NETCoreTargetFramework);$(TargetFrameworksLibrary)</TargetFrameworksLibrary>
@@ -25,7 +25,7 @@
     <!-- Target frameworks for class libraries which require signing APIs which need to target NET 5.0 -->
     <TargetFrameworksLibraryForSigning>$(TargetFrameworksLibrary)</TargetFrameworksLibraryForSigning>
     <TargetFrameworksLibraryForSigning Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(TargetFrameworksLibraryForSigning);$(NETCoreLegacyTargetFrameworkForSigning)</TargetFrameworksLibraryForSigning>
-    
+
     <!-- Target framework for runnable apps -->
     <TargetFrameworksExe>$(NETCoreTargetFramework)</TargetFrameworksExe>
     <TargetFrameworksExe Condition="'$(IsXPlat)' != 'true' And '$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksExe)</TargetFrameworksExe>
@@ -124,7 +124,8 @@
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <VsixOutputDirName>VS15</VsixOutputDirName>
     <CodeAnalysisRuleSet Condition="'$(CodeAnalysisRuleSet)' == ''">$(BuildCommonDirectory)NuGet.ruleset</CodeAnalysisRuleSet>
-    <EnforceCodeStyleInBuild Condition=" '$(EnforceCodeStyleInBuild)' != '' " >true</EnforceCodeStyleInBuild>
+    <EnforceCodeStyleInBuild Condition="'$(EnforceCodeStyleInBuild)' == ''">true</EnforceCodeStyleInBuild>
+    <NoWarn>$(NoWarn);EnableGenerateDocumentationFile</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -258,14 +259,14 @@
 
   <!-- All projects that build assemblies that are inserted into the .NET SDK -->
   <ItemGroup>
-    <CoreProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\*\*.csproj" 
+    <CoreProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\*\*.csproj"
                   Exclude="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj;
                            $(RepositoryRootDirectory)src\NuGet.Core\NuGet.Localization\NuGet.Localization.csproj;
                            $(RepositoryRootDirectory)src\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsXPlat)' != 'true' ">
-   <ApexProjects Include="$(RepositoryRootDirectory)test\NuGet.Tests.Apex\*\*.csproj" />
+    <ApexProjects Include="$(RepositoryRootDirectory)test\NuGet.Tests.Apex\*\*.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsXPlat)' != 'true' ">

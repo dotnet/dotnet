@@ -44,64 +44,64 @@ NuGet.SemanticVersion.SemanticVersion(int major, int minor, int build, int revis
 ~NuGet.SemanticVersion.Version.get -> System.Version
 NuGet.SolutionRestoreManager.IVsProjectProperties
 NuGet.SolutionRestoreManager.IVsProjectProperties.Count.get -> int
-~NuGet.SolutionRestoreManager.IVsProjectProperties.Item(object index) -> NuGet.SolutionRestoreManager.IVsProjectProperty
+NuGet.SolutionRestoreManager.IVsProjectProperties.Item(object! index) -> NuGet.SolutionRestoreManager.IVsProjectProperty?
 NuGet.SolutionRestoreManager.IVsProjectProperty
-~NuGet.SolutionRestoreManager.IVsProjectProperty.Name.get -> string
-~NuGet.SolutionRestoreManager.IVsProjectProperty.Value.get -> string
+NuGet.SolutionRestoreManager.IVsProjectProperty.Name.get -> string!
+NuGet.SolutionRestoreManager.IVsProjectProperty.Value.get -> string?
 NuGet.SolutionRestoreManager.IVsProjectRestoreInfo
-~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.BaseIntermediatePath.get -> string
-~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.OriginalTargetFrameworks.get -> string
-~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.TargetFrameworks.get -> NuGet.SolutionRestoreManager.IVsTargetFrameworks
-~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.ToolReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
+NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.BaseIntermediatePath.get -> string!
+NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.OriginalTargetFrameworks.get -> string?
+NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.TargetFrameworks.get -> NuGet.SolutionRestoreManager.IVsTargetFrameworks!
+NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.ToolReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems?
 NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2
-~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.BaseIntermediatePath.get -> string
-~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.OriginalTargetFrameworks.get -> string
-~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.TargetFrameworks.get -> NuGet.SolutionRestoreManager.IVsTargetFrameworks2
-~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.ToolReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
+NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.BaseIntermediatePath.get -> string!
+NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.OriginalTargetFrameworks.get -> string?
+NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.TargetFrameworks.get -> NuGet.SolutionRestoreManager.IVsTargetFrameworks2!
+NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.ToolReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems?
 NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource
 NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource.HasPendingNomination.get -> bool
-~NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource.Name.get -> string
-~NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource.WhenNominated(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource.Name.get -> string!
+NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource.WhenNominated(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 NuGet.SolutionRestoreManager.IVsReferenceItem
-~NuGet.SolutionRestoreManager.IVsReferenceItem.Name.get -> string
-~NuGet.SolutionRestoreManager.IVsReferenceItem.Properties.get -> NuGet.SolutionRestoreManager.IVsReferenceProperties
+NuGet.SolutionRestoreManager.IVsReferenceItem.Name.get -> string!
+NuGet.SolutionRestoreManager.IVsReferenceItem.Properties.get -> NuGet.SolutionRestoreManager.IVsReferenceProperties?
 NuGet.SolutionRestoreManager.IVsReferenceItems
 NuGet.SolutionRestoreManager.IVsReferenceItems.Count.get -> int
-~NuGet.SolutionRestoreManager.IVsReferenceItems.Item(object index) -> NuGet.SolutionRestoreManager.IVsReferenceItem
+NuGet.SolutionRestoreManager.IVsReferenceItems.Item(object! index) -> NuGet.SolutionRestoreManager.IVsReferenceItem?
 NuGet.SolutionRestoreManager.IVsReferenceProperties
 NuGet.SolutionRestoreManager.IVsReferenceProperties.Count.get -> int
-~NuGet.SolutionRestoreManager.IVsReferenceProperties.Item(object index) -> NuGet.SolutionRestoreManager.IVsReferenceProperty
+NuGet.SolutionRestoreManager.IVsReferenceProperties.Item(object! index) -> NuGet.SolutionRestoreManager.IVsReferenceProperty?
 NuGet.SolutionRestoreManager.IVsReferenceProperty
-~NuGet.SolutionRestoreManager.IVsReferenceProperty.Name.get -> string
-~NuGet.SolutionRestoreManager.IVsReferenceProperty.Value.get -> string
+NuGet.SolutionRestoreManager.IVsReferenceProperty.Name.get -> string!
+NuGet.SolutionRestoreManager.IVsReferenceProperty.Value.get -> string?
 NuGet.SolutionRestoreManager.IVsSolutionRestoreService
-~NuGet.SolutionRestoreManager.IVsSolutionRestoreService.CurrentRestoreOperation.get -> System.Threading.Tasks.Task<bool>
-~NuGet.SolutionRestoreManager.IVsSolutionRestoreService.NominateProjectAsync(string projectUniqueName, NuGet.SolutionRestoreManager.IVsProjectRestoreInfo projectRestoreInfo, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+NuGet.SolutionRestoreManager.IVsSolutionRestoreService.CurrentRestoreOperation.get -> System.Threading.Tasks.Task<bool>!
+NuGet.SolutionRestoreManager.IVsSolutionRestoreService.NominateProjectAsync(string! projectUniqueName, NuGet.SolutionRestoreManager.IVsProjectRestoreInfo! projectRestoreInfo, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
 NuGet.SolutionRestoreManager.IVsSolutionRestoreService2
-~NuGet.SolutionRestoreManager.IVsSolutionRestoreService2.NominateProjectAsync(string projectUniqueName, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+NuGet.SolutionRestoreManager.IVsSolutionRestoreService2.NominateProjectAsync(string! projectUniqueName, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
 NuGet.SolutionRestoreManager.IVsSolutionRestoreService3
-~NuGet.SolutionRestoreManager.IVsSolutionRestoreService3.CurrentRestoreOperation.get -> System.Threading.Tasks.Task<bool>
-~NuGet.SolutionRestoreManager.IVsSolutionRestoreService3.NominateProjectAsync(string projectUniqueName, NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2 projectRestoreInfo, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+NuGet.SolutionRestoreManager.IVsSolutionRestoreService3.CurrentRestoreOperation.get -> System.Threading.Tasks.Task<bool>!
+NuGet.SolutionRestoreManager.IVsSolutionRestoreService3.NominateProjectAsync(string! projectUniqueName, NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2! projectRestoreInfo, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
 NuGet.SolutionRestoreManager.IVsSolutionRestoreService4
-~NuGet.SolutionRestoreManager.IVsSolutionRestoreService4.RegisterRestoreInfoSourceAsync(NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource restoreInfoSource, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+NuGet.SolutionRestoreManager.IVsSolutionRestoreService4.RegisterRestoreInfoSourceAsync(NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource! restoreInfoSource, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 NuGet.SolutionRestoreManager.IVsSolutionRestoreStatusProvider
-~NuGet.SolutionRestoreManager.IVsSolutionRestoreStatusProvider.IsRestoreCompleteAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+NuGet.SolutionRestoreManager.IVsSolutionRestoreStatusProvider.IsRestoreCompleteAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
 NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo
-~NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.PackageReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
-~NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.ProjectReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
-~NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.Properties.get -> NuGet.SolutionRestoreManager.IVsProjectProperties
-~NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.TargetFrameworkMoniker.get -> string
+NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.PackageReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems?
+NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.ProjectReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems?
+NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.Properties.get -> NuGet.SolutionRestoreManager.IVsProjectProperties!
+NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.TargetFrameworkMoniker.get -> string!
 NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2
-~NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2.FrameworkReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
-~NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2.PackageDownloads.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
+NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2.FrameworkReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems?
+NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2.PackageDownloads.get -> NuGet.SolutionRestoreManager.IVsReferenceItems?
 NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo3
-~NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo3.CentralPackageVersions.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
+NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo3.CentralPackageVersions.get -> NuGet.SolutionRestoreManager.IVsReferenceItems?
 NuGet.SolutionRestoreManager.IVsTargetFrameworks
 NuGet.SolutionRestoreManager.IVsTargetFrameworks.Count.get -> int
-~NuGet.SolutionRestoreManager.IVsTargetFrameworks.Item(object index) -> NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo
+NuGet.SolutionRestoreManager.IVsTargetFrameworks.Item(object! index) -> NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo?
 NuGet.SolutionRestoreManager.IVsTargetFrameworks2
 NuGet.SolutionRestoreManager.IVsTargetFrameworks2.Count.get -> int
-~NuGet.SolutionRestoreManager.IVsTargetFrameworks2.Item(object index) -> NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2
+NuGet.SolutionRestoreManager.IVsTargetFrameworks2.Item(object! index) -> NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2?
 NuGet.VisualStudio.IRegistryKey
 NuGet.VisualStudio.IRegistryKey.Close() -> void
 ~NuGet.VisualStudio.IRegistryKey.GetValue(string name) -> object

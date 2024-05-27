@@ -142,14 +142,14 @@ namespace NuGet.Common
         /// <summary>
         /// Return empty list of NuGetLogCode if all lists of NuGetLogCode are not the same.
         /// </summary>
-        public static IEnumerable<NuGetLogCode> GetDistinctNuGetLogCodesOrDefault(IEnumerable<IEnumerable<NuGetLogCode>> nugetLogCodeLists)
+        public static IEnumerable<NuGetLogCode> GetDistinctNuGetLogCodesOrDefault(IEnumerable<IEnumerable<NuGetLogCode>?> nugetLogCodeLists)
         {
             if (nugetLogCodeLists.Any())
             {
                 var result = Enumerable.Empty<NuGetLogCode>();
                 var first = true;
 
-                foreach (var logCodeList in nugetLogCodeLists)
+                foreach (IEnumerable<NuGetLogCode>? logCodeList in nugetLogCodeLists)
                 {
                     // If this is first item, assign it to result
                     if (first)

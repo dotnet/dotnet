@@ -3,6 +3,10 @@ parameters:
   type: boolean
 - name: NuGetLocalizationType
   type: string
+- name: RunUnitTests
+  displayName: Run unit tests
+  type: boolean
+  default: true
 
 steps:
 - task: PowerShell@1
@@ -126,33 +130,36 @@ steps:
     msbuildArguments: "/restore:false /target:CopyFinalNuGetExeToOutputPath /binarylogger:$(Build.StagingDirectory)\\binlog\\06.CopyFinalNuGetExeToOutputPath.binlog"
   condition: "and(succeeded(),eq(variables['BuildRTM'], 'false'))"
 
-- task: MSBuild@1
-  displayName: "Run unit tests (stop on error)"
-  continueOnError: "false"
-  inputs:
-    solution: "build\\build.proj"
-    configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /target:CoreUnitTests;UnitTestsVS /property:BuildRTM=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /property:SkipILMergeOfNuGetExe=true /binarylogger:$(Build.StagingDirectory)\\binlog\\07.RunUnitTests.binlog"
-  condition: "and(succeeded(), eq(variables['BuildRTM'], 'true'), not(eq(variables['IsOfficialBuild'], 'true')))"
+- ${{ if eq(parameters.RunUnitTests, true) }}:
+  - task: MSBuild@1
+    displayName: "Run unit tests (stop on error)"
+    continueOnError: "false"
+    inputs:
+      solution: "build\\build.proj"
+      configuration: "$(BuildConfiguration)"
+      msbuildArguments: "/restore:false /target:CoreUnitTests;UnitTestsVS /property:BuildRTM=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /property:SkipILMergeOfNuGetExe=true /binarylogger:$(Build.StagingDirectory)\\binlog\\07.RunUnitTests.binlog"
+    condition: "and(succeeded(), eq(variables['BuildRTM'], 'true'), not(eq(variables['IsOfficialBuild'], 'true')))"
 
-- task: MSBuild@1
-  displayName: "Run unit tests (continue on error)"
-  continueOnError: "true"
-  inputs:
-    solution: "build\\build.proj"
-    configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /target:CoreUnitTests;UnitTestsVS /property:BuildRTM=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /property:SkipILMergeOfNuGetExe=true /binarylogger:$(Build.StagingDirectory)\\binlog\\08.RunUnitTests.binlog"
-  condition: "and(succeeded(), eq(variables['BuildRTM'], 'true'), eq(variables['IsOfficialBuild'], 'true'))"
+- ${{ if eq(parameters.RunUnitTests, true) }}:
+  - task: MSBuild@1
+    displayName: "Run unit tests (continue on error)"
+    continueOnError: "true"
+    inputs:
+      solution: "build\\build.proj"
+      configuration: "$(BuildConfiguration)"
+      msbuildArguments: "/restore:false /target:CoreUnitTests;UnitTestsVS /property:BuildRTM=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /property:SkipILMergeOfNuGetExe=true /binarylogger:$(Build.StagingDirectory)\\binlog\\08.RunUnitTests.binlog"
+    condition: "and(succeeded(), eq(variables['BuildRTM'], 'true'), eq(variables['IsOfficialBuild'], 'true'))"
 
-- task: PublishTestResults@2
-  displayName: "Publish Test Results"
-  inputs:
-    testRunner: "VSTest"
-    testResultsFiles: "*.trx"
-    testRunTitle: "NuGet.Client Unit Tests On Windows"
-    searchFolder: "$(Build.Repository.LocalPath)\\build\\TestResults"
-    publishRunAttachments: "false"
-  condition: "and(succeededOrFailed(),eq(variables['BuildRTM'], 'true'))"
+- ${{ if eq(parameters.RunUnitTests, true) }}:
+  - task: PublishTestResults@2
+    displayName: "Publish Test Results"
+    inputs:
+      testRunner: "VSTest"
+      testResultsFiles: "*.trx"
+      testRunTitle: "NuGet.Client Unit Tests On Windows"
+      searchFolder: "$(Build.Repository.LocalPath)\\build\\TestResults"
+      publishRunAttachments: "false"
+    condition: "and(succeededOrFailed(),eq(variables['BuildRTM'], 'true'))"
 
 - task: PowerShell@1
   displayName: "Initialize Git Commit Status on GitHub"

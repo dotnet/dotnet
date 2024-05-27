@@ -14,7 +14,7 @@ jobs:
     displayName: "Static Analysis"
     timeoutInMinutes: 180
     pool:
-      vmImage: windows-latest
+      name: VSEngSS-MicroBuild2022-1ES
 
     steps:
       - task: CredScan@2
@@ -47,7 +47,7 @@ jobs:
           isLargeApp: true
           toolVersion: "Latest"
         env:
-          AzureServicesAuthConnectionString: runAs=App;AppId=$(ApiScanClientId);TenantId=$(ApiScanTenant);AppKey=$(ApiScanSecret)
+          AzureServicesAuthConnectionString: RunAs=App;AppId=$(ApiScanClientId)
 
       - task: SdtReport@1
         displayName: "Generate Analysis Report"

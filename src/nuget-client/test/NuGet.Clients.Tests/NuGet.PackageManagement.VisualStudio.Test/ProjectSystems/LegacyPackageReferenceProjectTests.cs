@@ -1595,7 +1595,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
 
             Mock<IVsProjectAdapter> projectAdapterMock = Mock.Get(projectAdapter);
-            projectAdapterMock.Setup(m => m.GetBuildItemInformation(ProjectBuildProperties.NuGetAuditSuppress, It.IsAny<string[]>()))
+            projectAdapterMock.Setup(m => m.GetBuildItemInformation(ProjectItems.NuGetAuditSuppress, It.IsAny<string[]>()))
                 .Returns([("https://cve.test/1", Array.Empty<string>())]);
 
             var projectServices = new TestProjectSystemServices();
