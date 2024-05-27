@@ -3,26 +3,23 @@
 
 #nullable enable
 
-using System;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace NuGet.SolutionRestoreManager
 {
     /// <summary>
-    /// Represents a property as a key-value pair
+    /// Represents metadata associated with a single reference item, e.g. project or package.
     /// </summary>
-    [ComImport]
-    [Guid("28954114-b5b5-40c4-8ca3-c983e1429960")]
-    public interface IVsProjectProperty
+    public interface IVsReferenceItem2
     {
         /// <summary>
-        /// Property name.
+        /// The item's name. In MSBuild, this is the Identifier metadata.
         /// </summary>
         string Name { get; }
 
         /// <summary>
-        /// Property value.
+        /// Collection of item metadata.
         /// </summary>
-        string? Value { get; }
+        IReadOnlyDictionary<string, string?>? Metadata { get; }
     }
 }

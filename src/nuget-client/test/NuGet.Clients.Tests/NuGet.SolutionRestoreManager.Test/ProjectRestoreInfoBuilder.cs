@@ -196,7 +196,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 originalTargetFramework: tfm.TargetAlias);
         }
 
-        public static IEnumerable<IVsProjectProperty> GetTargetFrameworkProperties(NuGetFramework framework, string originalString = null, string clrSupport = null)
+        public static Dictionary<string, string> GetTargetFrameworkProperties(NuGetFramework framework, string originalString = null, string clrSupport = null)
         {
             string platformVersion = framework.PlatformVersion.ToString();
             string platformMoniker = GetTargetPlatformMoniker(framework);
@@ -213,19 +213,21 @@ namespace NuGet.SolutionRestoreManager.Test
                 platformVersion = lowerPlatformVersionFramework.PlatformVersion.ToString();
             }
 
-            return new IVsProjectProperty[]
+            var properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
-                new VsProjectProperty(ProjectBuildProperties.TargetFrameworkMoniker, GetTargetFrameworkMoniker(framework)),
-                new VsProjectProperty(ProjectBuildProperties.TargetPlatformMoniker, platformMoniker),
-                new VsProjectProperty(ProjectBuildProperties.TargetFrameworkIdentifier, framework.Framework),
-                new VsProjectProperty(ProjectBuildProperties.TargetFrameworkVersion, "v" + framework.Version),
-                new VsProjectProperty(ProjectBuildProperties.TargetFrameworkProfile, framework.Profile),
-                new VsProjectProperty(ProjectBuildProperties.TargetPlatformIdentifier, framework.Platform),
-                new VsProjectProperty(ProjectBuildProperties.TargetPlatformVersion, platformVersion),
-                new VsProjectProperty(ProjectBuildProperties.TargetFramework, originalString ?? framework.GetShortFolderName()),
-                new VsProjectProperty(ProjectBuildProperties.CLRSupport, clrSupport ?? string.Empty),
-                new VsProjectProperty(ProjectBuildProperties.WindowsTargetPlatformMinVersion, windowsTargetPlatformMinVersion)
+                [ProjectBuildProperties.TargetFrameworkMoniker] = GetTargetFrameworkMoniker(framework),
+                [ProjectBuildProperties.TargetPlatformMoniker] = platformMoniker,
+                [ProjectBuildProperties.TargetFrameworkIdentifier] = framework.Framework,
+                [ProjectBuildProperties.TargetFrameworkVersion] = "v" + framework.Version,
+                [ProjectBuildProperties.TargetFrameworkProfile] = framework.Profile,
+                [ProjectBuildProperties.TargetPlatformIdentifier] = framework.Platform,
+                [ProjectBuildProperties.TargetPlatformVersion] = platformVersion,
+                [ProjectBuildProperties.TargetFramework] = originalString ?? framework.GetShortFolderName(),
+                [ProjectBuildProperties.CLRSupport] = clrSupport ?? string.Empty,
+                [ProjectBuildProperties.WindowsTargetPlatformMinVersion] = windowsTargetPlatformMinVersion
             };
+
+            return properties;
         }
 
         private static string GetTargetPlatformMoniker(NuGetFramework framework)
@@ -269,7 +271,7 @@ namespace NuGet.SolutionRestoreManager.Test
             return sb.ToString();
         }
 
-        public static IEnumerable<IVsProjectProperty> GetTargetFrameworkProperties(string targetFrameworkMoniker, string originalFrameworkName = null)
+        public static Dictionary<string, string> GetTargetFrameworkProperties(string targetFrameworkMoniker, string originalFrameworkName = null)
         {
             var framework = NuGetFramework.Parse(targetFrameworkMoniker);
             var originalTFM = !string.IsNullOrEmpty(originalFrameworkName) ?

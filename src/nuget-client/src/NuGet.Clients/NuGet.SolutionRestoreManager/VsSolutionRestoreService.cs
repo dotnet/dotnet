@@ -1,8 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -40,7 +41,8 @@ namespace NuGet.SolutionRestoreManager
     [Export(typeof(IVsSolutionRestoreService2))]
     [Export(typeof(IVsSolutionRestoreService3))]
     [Export(typeof(IVsSolutionRestoreService4))]
-    public sealed class VsSolutionRestoreService : IVsSolutionRestoreService, IVsSolutionRestoreService2, IVsSolutionRestoreService3, IVsSolutionRestoreService4
+    [Export(typeof(IVsSolutionRestoreService5))]
+    public sealed class VsSolutionRestoreService : IVsSolutionRestoreService, IVsSolutionRestoreService2, IVsSolutionRestoreService3, IVsSolutionRestoreService4, IVsSolutionRestoreService5
     {
         private readonly IProjectSystemCache _projectSystemCache;
         private readonly ISolutionRestoreWorker _restoreWorker;
@@ -145,7 +147,7 @@ namespace NuGet.SolutionRestoreManager
             public string ProjectUniqueName { get; set; }
         }
 
-        public Task<bool> NominateProjectAsync(string projectUniqueName, IVsProjectRestoreInfo projectRestoreInfo, CancellationToken token)
+        Task<bool> IVsSolutionRestoreService.NominateProjectAsync(string projectUniqueName, IVsProjectRestoreInfo projectRestoreInfo, CancellationToken token)
         {
             const string eventName = nameof(IVsSolutionRestoreService) + "." + nameof(NominateProjectAsync);
             var eventData = new NominateProjectAsyncEventData()
@@ -154,10 +156,12 @@ namespace NuGet.SolutionRestoreManager
             };
             using var _ = NuGetETW.ExtensibilityEventSource.StartStopEvent(eventName, eventData);
 
-            return NominateProjectAsync(projectUniqueName, projectRestoreInfo, null, token);
+            var projectRestoreInfoAdapter = ProjectRestoreInfo3Adapter.Create(projectRestoreInfo);
+
+            return NominateProjectAsync(projectUniqueName, projectRestoreInfoAdapter, token);
         }
 
-        public Task<bool> NominateProjectAsync(string projectUniqueName, IVsProjectRestoreInfo2 projectRestoreInfo, CancellationToken token)
+        Task<bool> IVsSolutionRestoreService3.NominateProjectAsync(string projectUniqueName, IVsProjectRestoreInfo2 projectRestoreInfo, CancellationToken token)
         {
             const string eventName = nameof(IVsSolutionRestoreService3) + "." + nameof(NominateProjectAsync);
             var eventData = new NominateProjectAsyncEventData()
@@ -166,7 +170,31 @@ namespace NuGet.SolutionRestoreManager
             };
             using var _ = NuGetETW.ExtensibilityEventSource.StartStopEvent(eventName, eventData);
 
-            return NominateProjectAsync(projectUniqueName, null, projectRestoreInfo, token);
+            var projectRestoreInfoAdapter = ProjectRestoreInfo3Adapter.Create(projectRestoreInfo);
+
+            return NominateProjectAsync(projectUniqueName, projectRestoreInfoAdapter, token);
+        }
+
+        Task<bool> IVsSolutionRestoreService5.NominateProjectAsync(string projectUniqueName, IVsProjectRestoreInfo3 projectRestoreInfo, CancellationToken token)
+        {
+            const string eventName = nameof(IVsSolutionRestoreService5) + "." + nameof(NominateProjectAsync);
+            var eventData = new NominateProjectAsyncEventData()
+            {
+                ProjectUniqueName = projectUniqueName
+            };
+            using var _ = NuGetETW.ExtensibilityEventSource.StartStopEvent(eventName, eventData);
+
+            if (string.IsNullOrEmpty(projectUniqueName))
+            {
+                throw new ArgumentException($"'{nameof(projectUniqueName)}' cannot be null or empty.", nameof(projectUniqueName));
+            }
+
+            if (projectRestoreInfo is null)
+            {
+                throw new ArgumentNullException(nameof(projectRestoreInfo));
+            }
+
+            return NominateProjectAsync(projectUniqueName, projectRestoreInfo, token);
         }
 
         /// <summary>
@@ -178,35 +206,42 @@ namespace NuGet.SolutionRestoreManager
         /// <param name="token"></param>
         /// <remarks>Exactly one of projectRestoreInfos has to null.</remarks>
         /// <returns>The task that scheduled restore</returns>
-        private async Task<bool> NominateProjectAsync(string projectUniqueName, IVsProjectRestoreInfo projectRestoreInfo, IVsProjectRestoreInfo2 projectRestoreInfo2, CancellationToken token)
+        private async Task<bool> NominateProjectAsync(string projectUniqueName, IVsProjectRestoreInfo3 projectRestoreInfo, CancellationToken token)
         {
             if (string.IsNullOrEmpty(projectUniqueName))
             {
                 throw new ArgumentException(Resources.Argument_Cannot_Be_Null_Or_Empty, nameof(projectUniqueName));
             }
 
-            if (projectRestoreInfo == null && projectRestoreInfo2 == null)
+            if (projectRestoreInfo == null)
             {
                 throw new ArgumentNullException(nameof(projectRestoreInfo));
             }
 
-            if (projectRestoreInfo != null && projectRestoreInfo2 != null)
+            if (string.IsNullOrEmpty(projectRestoreInfo.MSBuildProjectExtensionsPath))
             {
-                throw new ArgumentException($"Internal error: Both {nameof(projectRestoreInfo)} and {nameof(projectRestoreInfo2)} cannot have values. Please file an issue at NuGet/Home if you see this exception.");
+                throw new ArgumentException(message: $"MsBuildProjectExtensionsPath must have a value",
+                    paramName: nameof(projectRestoreInfo));
             }
 
-            if (projectRestoreInfo != null)
+            if (projectRestoreInfo.TargetFrameworks == null)
             {
-                if (projectRestoreInfo.TargetFrameworks == null)
-                {
-                    throw new InvalidOperationException("TargetFrameworks cannot be null.");
-                }
+                throw new InvalidOperationException("TargetFrameworks cannot be null.");
             }
-            else
+
+            for (int i = 0; i < projectRestoreInfo.TargetFrameworks.Count; i++)
             {
-                if (projectRestoreInfo2.TargetFrameworks == null)
+                IVsTargetFrameworkInfo4 targetFramework = projectRestoreInfo.TargetFrameworks[i];
+                if (targetFramework is null)
                 {
-                    throw new InvalidOperationException("TargetFrameworks cannot be null.");
+                    throw new ArgumentException(message: $"Target framework at index {i} must not be null",
+                        paramName: nameof(projectRestoreInfo));
+                }
+
+                if (targetFramework.Properties is null)
+                {
+                    throw new ArgumentException(message: $"Target framework at index {i} must provide project properties",
+                        paramName: nameof(projectRestoreInfo));
                 }
             }
 
@@ -218,10 +253,10 @@ namespace NuGet.SolutionRestoreManager
                 ProjectNames projectNames = await GetProjectNamesAsync(projectUniqueName, token);
 
                 DependencyGraphSpec dgSpec;
-                IReadOnlyList<IAssetsLogMessage> nominationErrors = null;
+                IReadOnlyList<IAssetsLogMessage>? nominationErrors = null;
                 try
                 {
-                    dgSpec = ToDependencyGraphSpec(projectNames, projectRestoreInfo, projectRestoreInfo2);
+                    dgSpec = ToDependencyGraphSpec(projectNames, projectRestoreInfo);
                 }
                 catch (Exception e)
                 {
@@ -235,9 +270,7 @@ namespace NuGet.SolutionRestoreManager
                     };
 
                     var projectDirectory = Path.GetDirectoryName(projectUniqueName);
-                    string projectIntermediatePath = projectRestoreInfo == null
-                        ? projectRestoreInfo2.BaseIntermediatePath
-                        : projectRestoreInfo.BaseIntermediatePath;
+                    string projectIntermediatePath = projectRestoreInfo.MSBuildProjectExtensionsPath;
                     var dgSpecOutputPath = GetProjectOutputPath(projectDirectory, projectIntermediatePath);
                     dgSpec = CreateMinimalDependencyGraphSpec(projectUniqueName, dgSpecOutputPath);
                 }
@@ -265,64 +298,62 @@ namespace NuGet.SolutionRestoreManager
             }
         }
 
-        private static DependencyGraphSpec ToDependencyGraphSpec(ProjectNames projectNames, IVsProjectRestoreInfo projectRestoreInfo, IVsProjectRestoreInfo2 projectRestoreInfo2)
+        private static DependencyGraphSpec ToDependencyGraphSpec(ProjectNames projectNames, IVsProjectRestoreInfo3 projectRestoreInfo)
         {
             var dgSpec = new DependencyGraphSpec();
 
-            var packageSpec = projectRestoreInfo != null ?
-                ToPackageSpec(projectNames, projectRestoreInfo.TargetFrameworks, projectRestoreInfo.OriginalTargetFrameworks, projectRestoreInfo.BaseIntermediatePath) :
-                ToPackageSpec(projectNames, projectRestoreInfo2.TargetFrameworks, projectRestoreInfo2.OriginalTargetFrameworks, projectRestoreInfo2.BaseIntermediatePath);
+            var packageSpec = ToPackageSpec(projectNames, projectRestoreInfo);
 
             dgSpec.AddRestore(packageSpec.RestoreMetadata.ProjectUniqueName);
             dgSpec.AddProject(packageSpec);
 
-            if (projectRestoreInfo != null && projectRestoreInfo.ToolReferences != null)
+            if (projectRestoreInfo.ToolReferences != null)
             {
                 VSNominationUtilities.ProcessToolReferences(projectNames, projectRestoreInfo.TargetFrameworks, projectRestoreInfo.ToolReferences, dgSpec);
-            }
-            else if (projectRestoreInfo2 != null && projectRestoreInfo2.ToolReferences != null)
-            {
-                VSNominationUtilities.ProcessToolReferences(projectNames, projectRestoreInfo2.TargetFrameworks, projectRestoreInfo2.ToolReferences, dgSpec);
             }
 
             return dgSpec;
         }
 
-        internal static PackageSpec ToPackageSpec(ProjectNames projectNames, IEnumerable TargetFrameworks, string originalTargetFrameworkstr, string msbuildProjectExtensionsPath)
+        internal static PackageSpec ToPackageSpec(ProjectNames projectNames, IVsProjectRestoreInfo3 projectRestoreInfo)
         {
-            var cpvmEnabled = VSNominationUtilities.IsCentralPackageVersionManagementEnabled(TargetFrameworks);
+            var targetFrameworks = projectRestoreInfo.TargetFrameworks;
 
-            var tfis = TargetFrameworks
-                .Cast<IVsTargetFrameworkInfo>()
-                .Select(tfi => VSNominationUtilities.ToTargetFrameworkInformation(tfi, cpvmEnabled, projectNames.FullName))
-                .ToArray();
+            var cpvmEnabled = VSNominationUtilities.IsCentralPackageVersionManagementEnabled(targetFrameworks);
+
+            TargetFrameworkInformation[] tfis = new TargetFrameworkInformation[targetFrameworks.Count];
+            for (int i = 0; i < targetFrameworks.Count; i++)
+            {
+                IVsTargetFrameworkInfo4 targetFrameworkInfo = targetFrameworks[i];
+                TargetFrameworkInformation tfi = VSNominationUtilities.ToTargetFrameworkInformation(targetFrameworkInfo, cpvmEnabled, projectNames.FullName);
+                tfis[i] = tfi;
+            }
 
             var projectFullPath = Path.GetFullPath(projectNames.FullName);
             var projectDirectory = Path.GetDirectoryName(projectFullPath);
 
             // Initialize OTF and CT values when original value of OTF property is not provided.
-            var originalTargetFrameworks = tfis
-                .Select(tfi => GetBestOriginalFrameworkValue(tfi))
+            string[]? originalTargetFrameworks = tfis
+                .Select(GetBestOriginalFrameworkValue)
                 .ToArray();
             var crossTargeting = originalTargetFrameworks.Length > 1;
 
             // if "TargetFrameworks" property presents in the project file prefer the raw value.
-            if (!string.IsNullOrWhiteSpace(originalTargetFrameworkstr))
+            if (!string.IsNullOrWhiteSpace(projectRestoreInfo.OriginalTargetFrameworks))
             {
-                originalTargetFrameworks = MSBuildStringUtility.Split(
-                    originalTargetFrameworkstr);
+                originalTargetFrameworks = MSBuildStringUtility.Split(projectRestoreInfo.OriginalTargetFrameworks!);
                 // cross-targeting is always ON even in case of a single tfm in the list.
                 crossTargeting = true;
             }
 
-            var outputPath = GetProjectOutputPath(projectDirectory, msbuildProjectExtensionsPath);
+            var outputPath = GetProjectOutputPath(projectDirectory, projectRestoreInfo.MSBuildProjectExtensionsPath);
 
-            var projectName = VSNominationUtilities.GetPackageId(projectNames, TargetFrameworks);
+            var projectName = VSNominationUtilities.GetPackageId(projectNames, targetFrameworks);
 
             var packageSpec = new PackageSpec(tfis)
             {
                 Name = projectName,
-                Version = VSNominationUtilities.GetPackageVersion(TargetFrameworks),
+                Version = VSNominationUtilities.GetPackageVersion(targetFrameworks),
                 FilePath = projectFullPath,
                 RestoreMetadata = new ProjectRestoreMetadata
                 {
@@ -331,8 +362,7 @@ namespace NuGet.SolutionRestoreManager
                     ProjectPath = projectFullPath,
                     OutputPath = outputPath,
                     ProjectStyle = ProjectStyle.PackageReference,
-                    TargetFrameworks = TargetFrameworks
-                        .Cast<IVsTargetFrameworkInfo>()
+                    TargetFrameworks = targetFrameworks
                         .Select(item => VSNominationUtilities.ToProjectRestoreMetadataFrameworkInfo(item, projectDirectory, projectFullPath))
                         .ToList(),
                     OriginalTargetFrameworks = originalTargetFrameworks,
@@ -340,21 +370,21 @@ namespace NuGet.SolutionRestoreManager
 
                     // Read project properties for settings. ISettings values will be applied later since
                     // this value is put in the nomination cache and ISettings could change.
-                    PackagesPath = VSNominationUtilities.GetRestoreProjectPath(TargetFrameworks),
-                    FallbackFolders = VSNominationUtilities.GetRestoreFallbackFolders(TargetFrameworks).AsList(),
-                    Sources = VSNominationUtilities.GetRestoreSources(TargetFrameworks)
+                    PackagesPath = VSNominationUtilities.GetRestoreProjectPath(targetFrameworks),
+                    FallbackFolders = VSNominationUtilities.GetRestoreFallbackFolders(targetFrameworks).AsList(),
+                    Sources = VSNominationUtilities.GetRestoreSources(targetFrameworks)
                                     .Select(e => new PackageSource(e))
                                     .ToList(),
-                    ProjectWideWarningProperties = VSNominationUtilities.GetProjectWideWarningProperties(TargetFrameworks),
+                    ProjectWideWarningProperties = VSNominationUtilities.GetProjectWideWarningProperties(targetFrameworks),
                     CacheFilePath = NoOpRestoreUtilities.GetProjectCacheFilePath(cacheRoot: outputPath),
-                    RestoreLockProperties = VSNominationUtilities.GetRestoreLockProperties(TargetFrameworks),
+                    RestoreLockProperties = VSNominationUtilities.GetRestoreLockProperties(targetFrameworks),
                     CentralPackageVersionsEnabled = cpvmEnabled,
-                    CentralPackageFloatingVersionsEnabled = VSNominationUtilities.IsCentralPackageFloatingVersionsEnabled(TargetFrameworks),
-                    CentralPackageVersionOverrideDisabled = VSNominationUtilities.IsCentralPackageVersionOverrideDisabled(TargetFrameworks),
-                    CentralPackageTransitivePinningEnabled = VSNominationUtilities.IsCentralPackageTransitivePinningEnabled(TargetFrameworks),
-                    RestoreAuditProperties = VSNominationUtilities.GetRestoreAuditProperties(TargetFrameworks),
+                    CentralPackageFloatingVersionsEnabled = VSNominationUtilities.IsCentralPackageFloatingVersionsEnabled(targetFrameworks),
+                    CentralPackageVersionOverrideDisabled = VSNominationUtilities.IsCentralPackageVersionOverrideDisabled(targetFrameworks),
+                    CentralPackageTransitivePinningEnabled = VSNominationUtilities.IsCentralPackageTransitivePinningEnabled(targetFrameworks),
+                    RestoreAuditProperties = VSNominationUtilities.GetRestoreAuditProperties(targetFrameworks),
                 },
-                RuntimeGraph = VSNominationUtilities.GetRuntimeGraph(TargetFrameworks),
+                RuntimeGraph = VSNominationUtilities.GetRuntimeGraph(targetFrameworks),
                 RestoreSettings = new ProjectRestoreSettings() { HideWarningsAndErrors = true }
             };
 

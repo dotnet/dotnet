@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
@@ -24,6 +26,6 @@ namespace NuGet.SolutionRestoreManager
         /// </summary>
         /// <param name="index">Reference name or index.</param>
         /// <returns>Reference item matching index.</returns>
-        IVsTargetFrameworkInfo Item(object index);
+        IVsTargetFrameworkInfo? Item(object index);
     }
 }

@@ -13,11 +13,15 @@ parameters:
 - name: RunCrossFrameworkTestsOnWindows
   displayName: Run cross framweork tests on Windows
   type: boolean
-  default: true
+  default: false
+- name: RunUnitTestsOnWindows
+  displayName: Run unit tests on Windows
+  type: boolean
+  default: false
 - name: RunFunctionalTestsOnWindows
   displayName: Run functional tests on Windows
   type: boolean
-  default: true
+  default: false
 - name: RunSourceBuild
   displayName: Run source build
   type: boolean
@@ -25,11 +29,11 @@ parameters:
 - name: RunTestsOnLinux
   displayName: Run tests on Linux
   type: boolean
-  default: true
+  default: false
 - name: RunTestsOnMac
   displayName: Run tests on Mac
   type: boolean
-  default: true
+  default: false
 - name: RunMonoTestsOnMac
   displayName: Run Mono tests on Mac
   type: boolean
@@ -48,6 +52,7 @@ variables:
   Codeql.TSAEnabled: false
   RunBuildForPublishing: ${{ parameters.RunBuildForPublishing }}
   RunCrossFrameworkTestsOnWindows: ${{ parameters.RunCrossFrameworkTestsOnWindows }}
+  RunUnitTestsOnWindows: ${{ parameters.RunUnitTestsOnWindows }}
   RunFunctionalTestsOnWindows: ${{ parameters.RunFunctionalTestsOnWindows }}
   RunSourceBuild: ${{ parameters.RunSourceBuild }}
   RunTestsOnLinux: ${{ parameters.RunTestsOnLinux }}
@@ -77,6 +82,7 @@ extends:
         NuGetLocalizationType: ${{parameters.NuGetLocalizationType}}
         RunBuildForPublishing: ${{parameters.RunBuildForPublishing}}
         RunCrossFrameworkTestsOnWindows: ${{parameters.RunCrossFrameworkTestsOnWindows}}
+        RunUnitTestsOnWindows: ${{parameters.RunUnitTestsOnWindows}}
         RunFunctionalTestsOnWindows: ${{parameters.RunFunctionalTestsOnWindows}}
         RunSourceBuild: ${{parameters.RunSourceBuild}}
         RunTestsOnLinux: ${{parameters.RunTestsOnLinux}}
