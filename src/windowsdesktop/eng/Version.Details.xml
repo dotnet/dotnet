@@ -9,14 +9,14 @@
       <Uri>https://github.com/dotnet/winforms</Uri>
       <Sha>0aa3a4dfea1dad493ecbfe15cd513604468b3916</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Wpf.GitHub" Version="9.0.0-preview.6.24273.2">
+    <Dependency Name="Microsoft.DotNet.Wpf.GitHub" Version="9.0.0-preview.6.24276.1">
       <Uri>https://github.com/dotnet/wpf</Uri>
-      <Sha>a20608ce88a435fcf2c793cb5de8745fce0724bf</Sha>
+      <Sha>94d8cc517c1491412018f36069b278c74ebd3bd9</Sha>
       <SourceBuildTarball RepoName="wpf" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="9.0.0-preview.6.24273.2">
+    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="9.0.0-preview.6.24276.1">
       <Uri>https://github.com/dotnet/wpf</Uri>
-      <Sha>a20608ce88a435fcf2c793cb5de8745fce0724bf</Sha>
+      <Sha>94d8cc517c1491412018f36069b278c74ebd3bd9</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Ref" Version="9.0.0-preview.5.24265.2" CoherentParentDependency="Microsoft.Private.Winforms">
       <Uri>https://github.com/dotnet/runtime</Uri>
@@ -34,9 +34,9 @@
       <Uri>https://github.com/dotnet/winforms</Uri>
       <Sha>0aa3a4dfea1dad493ecbfe15cd513604468b3916</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Wpf.ProjectTemplates" Version="9.0.0-preview.6.24273.2">
+    <Dependency Name="Microsoft.DotNet.Wpf.ProjectTemplates" Version="9.0.0-preview.6.24276.1">
       <Uri>https://github.com/dotnet/wpf</Uri>
-      <Sha>a20608ce88a435fcf2c793cb5de8745fce0724bf</Sha>
+      <Sha>94d8cc517c1491412018f36069b278c74ebd3bd9</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Win32.Registry.AccessControl" Version="9.0.0-preview.5.24265.2" CoherentParentDependency="Microsoft.Private.Winforms">
       <Uri>https://github.com/dotnet/runtime</Uri>
@@ -152,29 +152,29 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24272.5">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24274.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>2001d73c8ff942331a73300ba61fa6164805b231</Sha>
+      <Sha>91fdecfe881902a109205279e023037692db4c11</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Feed" Version="9.0.0-beta.24272.5">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Feed" Version="9.0.0-beta.24274.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>2001d73c8ff942331a73300ba61fa6164805b231</Sha>
+      <Sha>91fdecfe881902a109205279e023037692db4c11</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.SharedFramework.Sdk" Version="9.0.0-beta.24272.5">
+    <Dependency Name="Microsoft.DotNet.SharedFramework.Sdk" Version="9.0.0-beta.24274.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>2001d73c8ff942331a73300ba61fa6164805b231</Sha>
+      <Sha>91fdecfe881902a109205279e023037692db4c11</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Archives" Version="9.0.0-beta.24272.5">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Archives" Version="9.0.0-beta.24274.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>2001d73c8ff942331a73300ba61fa6164805b231</Sha>
+      <Sha>91fdecfe881902a109205279e023037692db4c11</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="9.0.0-beta.24272.5">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="9.0.0-beta.24274.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>2001d73c8ff942331a73300ba61fa6164805b231</Sha>
+      <Sha>91fdecfe881902a109205279e023037692db4c11</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.VersionTools.Tasks" Version="9.0.0-beta.24272.5">
+    <Dependency Name="Microsoft.DotNet.VersionTools.Tasks" Version="9.0.0-beta.24274.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>2001d73c8ff942331a73300ba61fa6164805b231</Sha>
+      <Sha>91fdecfe881902a109205279e023037692db4c11</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
