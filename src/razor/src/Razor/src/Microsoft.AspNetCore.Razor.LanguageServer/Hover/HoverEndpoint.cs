@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -46,7 +47,7 @@ internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocume
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
-            return Task.FromResult<IDelegatedParams?>(null);
+            return SpecializedTasks.Null<IDelegatedParams>();
         }
 
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(
@@ -60,7 +61,7 @@ internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocume
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
-            return Task.FromResult<VSInternalHover?>(null);
+            return SpecializedTasks.Null<VSInternalHover>();
         }
 
         return _hoverService.GetRazorHoverInfoAsync(
@@ -75,7 +76,7 @@ internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocume
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
-            return Task.FromResult<VSInternalHover?>(null);
+            return SpecializedTasks.Null<VSInternalHover>();
         }
 
         return _hoverService.TranslateDelegatedResponseAsync(

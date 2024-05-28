@@ -26,6 +26,9 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
     ITelemetryReporter telemetryReporter)
     : IProjectWorkspaceStateGenerator, IDisposable
 {
+    // SemaphoreSlim is banned. See https://github.com/dotnet/razor/issues/10390 for more info.
+#pragma warning disable RS0030 // Do not use banned APIs
+
     private readonly IProjectSnapshotManager _projectManager = projectManager;
     private readonly ITagHelperResolver _tagHelperResolver = tagHelperResolver;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<ProjectWorkspaceStateGenerator>();

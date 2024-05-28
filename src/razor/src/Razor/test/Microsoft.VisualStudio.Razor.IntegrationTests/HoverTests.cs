@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -24,7 +25,7 @@ public class HoverTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdito
 
         // Assert
         const string ExpectedResult = "Microsoft.AspNetCore.Components.Web.PageTitleEnables rendering an HTML <title> to a HeadOutlet component.";
-        Assert.Equal(ExpectedResult, hoverString);
+        AssertEx.EqualOrDiff(ExpectedResult, hoverString);
     }
 
     [IdeFact]
@@ -42,6 +43,6 @@ public class HoverTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdito
 
         // Assert
         const string ExpectedResult = "string? SurveyPrompt.Title { get; set; }";
-        Assert.Equal(ExpectedResult, hoverString);
+        AssertEx.EqualOrDiff(ExpectedResult, hoverString);
     }
 }

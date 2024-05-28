@@ -14,6 +14,9 @@ namespace Microsoft.VisualStudio.Razor.Logging;
 [Export(typeof(RazorLogHubTraceProvider))]
 internal class VisualStudioWindowsLogHubTraceProvider : RazorLogHubTraceProvider
 {
+    // SemaphoreSlim is banned. See https://github.com/dotnet/razor/issues/10390 for more info.
+#pragma warning disable RS0030 // Do not use banned APIs
+
     private static readonly LoggerOptions s_logOptions = new(
         requestedLoggingLevel: new LoggingLevelSettings(SourceLevels.Information | SourceLevels.ActivityTracing),
         privacySetting: PrivacyFlags.MayContainPersonallyIdentifibleInformation | PrivacyFlags.MayContainPrivateInformation);

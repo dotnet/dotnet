@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -38,7 +39,7 @@ public abstract class FormattingLanguageServerTestBase(ITestOutputHelper testOut
         public Task<TextEdit[]> FormatAsync(VersionedDocumentContext documentContext, Range? range, FormattingOptions options, CancellationToken cancellationToken)
         {
             Called = true;
-            return Task.FromResult(Array.Empty<TextEdit>());
+            return SpecializedTasks.EmptyArray<TextEdit>();
         }
 
         public Task<TextEdit[]> FormatCodeActionAsync(DocumentContext documentContext, RazorLanguageKind kind, TextEdit[] formattedEdits, FormattingOptions options, CancellationToken cancellationToken)

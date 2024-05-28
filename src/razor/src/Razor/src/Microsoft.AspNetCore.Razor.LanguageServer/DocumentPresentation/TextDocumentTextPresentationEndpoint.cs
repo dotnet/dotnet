@@ -4,6 +4,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -46,6 +47,6 @@ internal class TextDocumentTextPresentationEndpoint(
         CancellationToken cancellationToken)
     {
         // We don't do anything special with text
-        return Task.FromResult<WorkspaceEdit?>(null);
+        return SpecializedTasks.Null<WorkspaceEdit>();
     }
 }

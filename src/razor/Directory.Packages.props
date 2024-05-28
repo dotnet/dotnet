@@ -11,7 +11,7 @@
     <_VisualStudioLanguageServerProtocolVersion>17.11.1-preview</_VisualStudioLanguageServerProtocolVersion>
     <_MicrosoftExtensionsPackageVersion>8.0.0</_MicrosoftExtensionsPackageVersion>
     <_BenchmarkDotNetPackageVersion>0.13.5.2136</_BenchmarkDotNetPackageVersion>
-    <_MicrosoftVisualStudioExtensibilityTestingVersion>0.1.169-beta</_MicrosoftVisualStudioExtensibilityTestingVersion>
+    <_MicrosoftVisualStudioExtensibilityTestingVersion>0.1.187-beta</_MicrosoftVisualStudioExtensibilityTestingVersion>
     <_MicrosoftCodeAnalysisAnalyzersPackageVersion>3.11.0-beta1.24170.2</_MicrosoftCodeAnalysisAnalyzersPackageVersion>
     <_MicrosoftVisualStudioLanguageServicesPackageVersion>$(MicrosoftVisualStudioLanguageServicesPackageVersion)</_MicrosoftVisualStudioLanguageServicesPackageVersion>
     <_XunitPackageVersion>2.6.3</_XunitPackageVersion>
@@ -74,12 +74,7 @@
     <PackageVersion Include="Microsoft.VisualStudio.Interop" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Language" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Language.Intellisense" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
-    <!--
-        This package should use _VisualStudioLanguageServerProtocolVersion, but as of updating there was
-        a mismatch in published versions (17.10.13-preview was not published). Next time this is updated please switch back to
-        _VisualStudioLanguageServerProtocolVersion if possible
-    -->
-    <PackageVersion Include="Microsoft.VisualStudio.LanguageServer.Client.Implementation" Version="17.11.1-preview" />
+    <PackageVersion Include="Microsoft.VisualStudio.LanguageServer.Client.Implementation" Version="$(_VisualStudioLanguageServerProtocolVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.LanguageServer.Protocol" Version="$(_VisualStudioLanguageServerProtocolVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.LanguageServer.Protocol.Extensions" Version="$(_VisualStudioLanguageServerProtocolVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.LanguageServer.Protocol.Internal" Version="$(_VisualStudioLanguageServerProtocolVersion)" />

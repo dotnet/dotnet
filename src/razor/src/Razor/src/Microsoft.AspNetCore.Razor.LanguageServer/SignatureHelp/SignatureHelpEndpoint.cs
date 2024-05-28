@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -46,13 +47,13 @@ internal sealed class SignatureHelpEndpoint(
             !optionsMonitor.CurrentValue.AutoListParams)
         {
             // Return nothing if "Parameter Information" option is disabled unless signature help is invoked explicitly via command as opposed to typing or content change
-            return Task.FromResult<IDelegatedParams?>(null);
+            return SpecializedTasks.Null<IDelegatedParams>();
         }
 
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
-            return Task.FromResult<IDelegatedParams?>(null);
+            return SpecializedTasks.Null<IDelegatedParams>();
         }
 
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(

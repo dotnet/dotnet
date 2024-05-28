@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
@@ -251,7 +252,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         var projectKey = TryFindProjectKeyForProjectId(projectId);
         if (projectKey is not { } razorProjectKey)
         {
-            return Task.FromResult<RazorDynamicFileInfo?>(null);
+            return SpecializedTasks.Null<RazorDynamicFileInfo>();
         }
 
         _fallbackProjectManager.DynamicFileAdded(projectId, razorProjectKey, projectFilePath, filePath, cancellationToken);
