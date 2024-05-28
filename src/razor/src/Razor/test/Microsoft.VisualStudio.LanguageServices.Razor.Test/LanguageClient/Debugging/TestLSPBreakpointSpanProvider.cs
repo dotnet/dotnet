@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -38,7 +39,7 @@ internal class TestLSPBreakpointSpanProvider : LSPBreakpointSpanProvider
     {
         if (documentSnapshot.Uri != _documentUri)
         {
-            return Task.FromResult((Range)null);
+            return SpecializedTasks.Null<Range>();
         }
 
         foreach (var mapping in _mappings.OrderBy(d => d.Key))
@@ -50,6 +51,6 @@ internal class TestLSPBreakpointSpanProvider : LSPBreakpointSpanProvider
             }
         }
 
-        return Task.FromResult((Range)null);
+        return SpecializedTasks.Null<Range>();
     }
 }

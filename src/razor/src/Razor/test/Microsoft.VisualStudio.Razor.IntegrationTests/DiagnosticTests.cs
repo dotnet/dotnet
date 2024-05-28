@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -33,19 +34,19 @@ public class DiagnosticTests(ITestOutputHelper testOutputHelper) : AbstractRazor
         Assert.Collection(errors,
             (error) =>
             {
-                Assert.Equal("Counter.razor(2, 1): error RZ9980: Unclosed tag 'h1' with no matching end tag.", error);
+                AssertEx.EqualOrDiff("Counter.razor(2, 1): error RZ9980: Unclosed tag 'h1' with no matching end tag.", error);
             },
             (error) =>
             {
-                Assert.Equal("Counter.razor(3, 2): error RZ1034: Found a malformed 'PageTitle' tag helper. Tag helpers must have a start and end tag or be self closing.", error);
+                AssertEx.EqualOrDiff("Counter.razor(3, 2): error RZ1034: Found a malformed 'PageTitle' tag helper. Tag helpers must have a start and end tag or be self closing.", error);
             },
             (error) =>
             {
-                Assert.Equal("Counter.razor(7, 18): error CS1002: ; expected", error);
+                AssertEx.EqualOrDiff("Counter.razor(7, 18): error CS1002: ; expected", error);
             },
             (error) =>
             {
-                Assert.Equal("Counter.razor(7, 9): error CS0127: Since 'Counter.Function()' returns void, a return keyword must not be followed by an object expression", error);
+                AssertEx.EqualOrDiff("Counter.razor(7, 9): error CS0127: Since 'Counter.Function()' returns void, a return keyword must not be followed by an object expression", error);
             });
     }
 
@@ -77,7 +78,7 @@ public class DiagnosticTests(ITestOutputHelper testOutputHelper) : AbstractRazor
         Assert.Collection(errors,
             (error) =>
             {
-                Assert.Equal("Error.cshtml(10, 6): warning HTML0001: Element start tag is missing closing angle bracket.", error);
+                AssertEx.EqualOrDiff("Error.cshtml(10, 6): warning HTML0001: Element start tag is missing closing angle bracket.", error);
             });
     }
 
@@ -109,7 +110,7 @@ public class DiagnosticTests(ITestOutputHelper testOutputHelper) : AbstractRazor
         Assert.Collection(errors,
             (error) =>
             {
-                Assert.Equal("Error.cshtml(10, 21): error CS1963: An expression tree may not contain a dynamic operation", error);
+                AssertEx.EqualOrDiff("Error.cshtml(10, 21): error CS1963: An expression tree may not contain a dynamic operation", error);
             });
     }
 
@@ -149,7 +150,7 @@ public class DiagnosticTests(ITestOutputHelper testOutputHelper) : AbstractRazor
         Assert.Collection(errors,
             (error) =>
             {
-                Assert.Equal("Error.cshtml(9, 21): error CS1963: An expression tree may not contain a dynamic operation", error);
+                AssertEx.EqualOrDiff("Error.cshtml(9, 21): error CS1963: An expression tree may not contain a dynamic operation", error);
             });
     }
 
@@ -182,11 +183,11 @@ public class DiagnosticTests(ITestOutputHelper testOutputHelper) : AbstractRazor
         Assert.Collection(errors,
             (error) =>
             {
-                Assert.Equal("Error.cshtml(10, 21): error CS1963: An expression tree may not contain a dynamic operation", error);
+                AssertEx.EqualOrDiff("Error.cshtml(10, 21): error CS1963: An expression tree may not contain a dynamic operation", error);
             },
             (error) =>
             {
-                Assert.Equal("Error.cshtml(11, 6): warning HTML0204: Element 'li' cannot be nested inside element 'body'.", error);
+                AssertEx.EqualOrDiff("Error.cshtml(11, 6): warning HTML0204: Element 'li' cannot be nested inside element 'body'.", error);
             });
     }
 }

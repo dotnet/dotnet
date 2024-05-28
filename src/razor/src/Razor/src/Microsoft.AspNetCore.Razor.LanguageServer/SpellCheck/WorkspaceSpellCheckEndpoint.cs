@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.SpellCheck;
@@ -17,5 +18,5 @@ internal sealed class WorkspaceSpellCheckEndpoint : IRazorDocumentlessRequestHan
     // Razor files generally don't do anything at the workspace level, so continuing that tradition for spell checking
 
     public Task<VSInternalWorkspaceSpellCheckableReport[]> HandleRequestAsync(VSInternalWorkspaceSpellCheckableParams request, RazorRequestContext context, CancellationToken cancellationToken)
-        => Task.FromResult(Array.Empty<VSInternalWorkspaceSpellCheckableReport>());
+        => SpecializedTasks.EmptyArray<VSInternalWorkspaceSpellCheckableReport>();
 }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -24,8 +25,6 @@ internal sealed partial class HtmlDocumentSynchronizer(
     ILoggerFactory loggerFactory)
     : LSPDocumentChangeListener, IHtmlDocumentSynchronizer
 {
-    private static readonly Task<bool> s_falseTask = Task.FromResult(false);
-
     private readonly IHtmlDocumentPublisher _htmlDocumentPublisher = htmlDocumentPublisher;
     private readonly TrackingLSPDocumentManager _documentManager = documentManager as TrackingLSPDocumentManager ?? throw new InvalidOperationException("Expected TrackingLSPDocumentManager");
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<HtmlDocumentSynchronizer>();
@@ -123,7 +122,7 @@ internal sealed partial class HtmlDocumentSynchronizer(
                     // for a different checksum, but the same workspace version, we assume the new request is the newer document.
 
                     _logger.LogDebug($"We've already seen {request.RequestedVersion} for {document.FilePath} so that's a no from me");
-                    return s_falseTask;
+                    return SpecializedTasks.False;
                 }
                 else if (!request.Task.IsCompleted)
                 {

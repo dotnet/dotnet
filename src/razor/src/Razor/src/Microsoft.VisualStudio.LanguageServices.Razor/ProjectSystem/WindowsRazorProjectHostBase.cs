@@ -21,6 +21,9 @@ namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnceDisposedAsync, IProjectDynamicLoadComponent
 {
+    // AsyncSemaphore is banned. See https://github.com/dotnet/razor/issues/10390 for more info.
+#pragma warning disable RS0030 // Do not use banned APIs
+
     private static readonly DataflowLinkOptions s_dataflowLinkOptions = new DataflowLinkOptions() { PropagateCompletion = true };
 
     private readonly IServiceProvider _serviceProvider;

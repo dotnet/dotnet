@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.Threading;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.Serialization;
 
@@ -12,6 +13,6 @@ internal class BenchmarkConfigurationSyncService : IConfigurationSyncService
 {
     public Task<RazorLSPOptions?> GetLatestOptionsAsync(CancellationToken cancellationToken)
     {
-        return Task.FromResult<RazorLSPOptions?>(null);
+        return SpecializedTasks.Null<RazorLSPOptions>();
     }
 }

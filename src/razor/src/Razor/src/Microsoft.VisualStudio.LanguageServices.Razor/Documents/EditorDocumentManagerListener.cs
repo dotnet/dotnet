@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading;
@@ -11,6 +13,7 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Threading;
@@ -27,19 +30,27 @@ namespace Microsoft.VisualStudio.Razor.Documents;
 // open/close state of documents. If other triggers depend on a document being open/closed (some do) then we need to ensure we
 // can mark open/closed prior to them running.
 [Export(typeof(IRazorStartupService))]
-internal partial class EditorDocumentManagerListener : IRazorStartupService
+internal partial class EditorDocumentManagerListener : IRazorStartupService, IDisposable
 {
+    private abstract record Work(ProjectKey ProjectKey);
+    private sealed record DocumentAdded(ProjectKey ProjectKey, string DocumentFilePath, string ProjectFilePath) : Work(ProjectKey);
+    private sealed record DocumentRemoved(ProjectKey ProjectKey, string DocumentFilePath) : Work(ProjectKey);
+    private sealed record ProjectRemoved(ProjectKey ProjectKey, IEnumerable<string> DocumentFilePaths) : Work(ProjectKey);
+
+    private static readonly TimeSpan s_delay = TimeSpan.FromMilliseconds(10);
+
     private readonly IEditorDocumentManager _documentManager;
     private readonly IProjectSnapshotManager _projectManager;
     private readonly JoinableTaskContext _joinableTaskContext;
     private readonly ITelemetryReporter _telemetryReporter;
 
+    private readonly AsyncBatchingWorkQueue<Work> _workQueue;
+    private readonly CancellationTokenSource _disposeTokenSource;
+
     private EventHandler? _onChangedOnDisk;
     private EventHandler? _onChangedInEditor;
     private EventHandler? _onOpened;
     private EventHandler? _onClosed;
-
-    private Task _projectChangedTask = Task.CompletedTask;
 
     [ImportingConstructor]
     public EditorDocumentManagerListener(
@@ -53,6 +64,9 @@ internal partial class EditorDocumentManagerListener : IRazorStartupService
         _joinableTaskContext = joinableTaskContext;
         _telemetryReporter = telemetryReporter;
 
+        _disposeTokenSource = new();
+        _workQueue = new AsyncBatchingWorkQueue<Work>(s_delay, ProcessBatchAsync, _disposeTokenSource.Token);
+
         _onChangedOnDisk = Document_ChangedOnDisk;
         _onChangedInEditor = Document_ChangedInEditor;
         _onOpened = Document_Opened;
@@ -61,70 +75,88 @@ internal partial class EditorDocumentManagerListener : IRazorStartupService
         _projectManager.PriorityChanged += ProjectManager_Changed;
     }
 
-    private void ProjectManager_Changed(object? sender, ProjectChangeEventArgs e)
+    public void Dispose()
     {
-        _projectChangedTask = ProjectManager_ChangedAsync(e, CancellationToken.None);
+        _disposeTokenSource.Cancel();
+        _disposeTokenSource.Dispose();
     }
 
-    private async Task ProjectManager_ChangedAsync(ProjectChangeEventArgs e, CancellationToken cancellationToken)
+    private void ProjectManager_Changed(object? sender, ProjectChangeEventArgs e)
     {
-        try
+        Work? work = e.Kind switch
         {
-            switch (e.Kind)
-            {
-                case ProjectChangeKind.DocumentAdded:
-                    {
-                        // Don't do any work if the solution is closing
-                        if (e.SolutionIsClosing)
-                        {
-                            return;
-                        }
+            ProjectChangeKind.DocumentAdded => new DocumentAdded(e.ProjectKey, e.DocumentFilePath.AssumeNotNull(), e.ProjectFilePath),
+            ProjectChangeKind.DocumentRemoved => new DocumentRemoved(e.ProjectKey, e.DocumentFilePath.AssumeNotNull()),
+            ProjectChangeKind.ProjectRemoved => new ProjectRemoved(e.ProjectKey, e.Older.AssumeNotNull().DocumentFilePaths),
+            _ => null
+        };
 
-                        var key = new DocumentKey(e.ProjectKey, e.DocumentFilePath.AssumeNotNull());
-
-                        // GetOrCreateDocument needs to be run on the UI thread
-                        await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
-
-                        var document = _documentManager.GetOrCreateDocument(
-                            key, e.ProjectFilePath, e.ProjectKey, _onChangedOnDisk, _onChangedInEditor, _onOpened, _onClosed);
-                        if (document.IsOpenInEditor)
-                        {
-                            _onOpened?.Invoke(document, EventArgs.Empty);
-                        }
-
-                        break;
-                    }
-
-                case ProjectChangeKind.DocumentRemoved:
-                    {
-                        await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
-
-                        RemoveAndDisposeDocument_RunOnUIThread(e.ProjectKey, e.DocumentFilePath.AssumeNotNull());
-
-                        break;
-                    }
-
-                case ProjectChangeKind.ProjectRemoved:
-                    {
-                        await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
-
-                        foreach (var documentFilePath in e.Older.AssumeNotNull().DocumentFilePaths)
-                        {
-                            RemoveAndDisposeDocument_RunOnUIThread(e.ProjectKey, documentFilePath.AssumeNotNull());
-                        }
-
-                        break;
-                    }
-            }
+        if (work is null)
+        {
+            return;
         }
-        catch (Exception ex)
+
+        // Don't do any work if the solution is closing
+        if (work is DocumentAdded && e.SolutionIsClosing)
         {
-            Debug.Fail($"""
+            return;
+        }
+
+        _workQueue.AddWork(work);
+    }
+
+    private async ValueTask ProcessBatchAsync(ImmutableArray<Work> items, CancellationToken cancellationToken)
+    {
+        // GetOrCreateDocument needs to be run on the UI thread
+        await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
+
+        foreach (var work in items)
+        {
+            try
+            {
+                switch (work)
+                {
+                    case DocumentAdded e:
+                        {
+                            var key = new DocumentKey(e.ProjectKey, e.DocumentFilePath);
+
+                            var document = _documentManager.GetOrCreateDocument(
+                                key, e.ProjectFilePath, e.ProjectKey, _onChangedOnDisk, _onChangedInEditor, _onOpened, _onClosed);
+                            if (document.IsOpenInEditor)
+                            {
+                                _onOpened?.Invoke(document, EventArgs.Empty);
+                            }
+
+                            break;
+                        }
+
+                    case DocumentRemoved e:
+                        {
+                            RemoveAndDisposeDocument_RunOnUIThread(e.ProjectKey, e.DocumentFilePath);
+
+                            break;
+                        }
+
+                    case ProjectRemoved e:
+                        {
+                            foreach (var documentFilePath in e.DocumentFilePaths)
+                            {
+                                RemoveAndDisposeDocument_RunOnUIThread(e.ProjectKey, documentFilePath);
+                            }
+
+                            break;
+                        }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Fail($"""
                 EditorDocumentManagerListener.ProjectManager_Changed threw exception:
                 {ex.Message}
                 Stack trace:
                 {ex.StackTrace}
                 """);
+            }
         }
 
         void RemoveAndDisposeDocument_RunOnUIThread(ProjectKey projectKey, string documentFilePath)

@@ -7,6 +7,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Extensions;
 using Microsoft.VisualStudio.Text;
@@ -180,13 +181,13 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
             if (!_virtualDocumentContexts.TryGetValue(virtualDocument.Uri, out var documentContext))
             {
                 // Document was deleted/removed in mid-synchronization
-                return Task.FromResult(false);
+                return SpecializedTasks.False;
             }
 
             if (requiredHostDocumentVersion == documentContext.SeenHostDocumentVersion)
             {
                 // Already synchronized
-                return Task.FromResult(true);
+                return SpecializedTasks.True;
             }
 
             // Currently tracked synchronizing context is not sufficient, need to update a new one.

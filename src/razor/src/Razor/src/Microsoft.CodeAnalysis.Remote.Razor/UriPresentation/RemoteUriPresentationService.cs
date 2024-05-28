@@ -4,9 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.DocumentPresentation;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -30,31 +28,23 @@ internal sealed class RemoteUriPresentationService(
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RemoteUriPresentationService>();
 
     public ValueTask<TextChange?> GetPresentationAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId razorDocumentId, LinePositionSpan span, Uri[]? uris, CancellationToken cancellationToken)
-        => RazorBrokeredServiceImplementation.RunServiceAsync(
+        => RunServiceAsync(
             solutionInfo,
-            ServiceBrokerClient,
-            solution => GetPresentationAsync(solution, razorDocumentId, span, uris, cancellationToken),
+            razorDocumentId,
+            context => GetPresentationAsync(context, span, uris, cancellationToken),
             cancellationToken);
 
-    private async ValueTask<TextChange?> GetPresentationAsync(Solution solution, DocumentId razorDocumentId, LinePositionSpan span, Uri[]? uris, CancellationToken cancellationToken)
+    private async ValueTask<TextChange?> GetPresentationAsync(RemoteDocumentContext context, LinePositionSpan span, Uri[]? uris, CancellationToken cancellationToken)
     {
-        var (razorDocument, codeDocument) = await GetRazorTextAndCodeDocumentsAsync(solution, razorDocumentId).ConfigureAwait(false);
-
-        if (razorDocument == null || codeDocument == null)
-        {
-            return null;
-        }
-
-        // If razorDocument was null, codeDocument above would've been null as well
-        var sourceText = await razorDocument.AssumeNotNull().GetTextAsync(cancellationToken);
-
+        var sourceText = await context.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
         if (!sourceText.TryGetAbsoluteIndex(span.Start.Line, span.Start.Character, out var index))
         {
             return null;
         }
 
-        var languageKind = _documentMappingService.GetLanguageKind(codeDocument, index, rightAssociative: true);
+        var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
+        var languageKind = _documentMappingService.GetLanguageKind(codeDocument, index, rightAssociative: true);
         if (languageKind is not RazorLanguageKind.Html)
         {
             // Roslyn doesn't currently support Uri presentation, and whilst it might seem counter intuitive,
@@ -70,16 +60,18 @@ internal sealed class RemoteUriPresentationService(
             return null;
         }
 
+        var solution = context.TextDocument.Project.Solution;
+
         // Make sure we go through Roslyn to go from the Uri the client sent us, to one that it has a chance of finding in the solution
         var uriToFind = RazorUri.GetDocumentFilePathFromUri(razorFileUri);
-        var ids = razorDocument.Project.Solution.GetDocumentIdsWithFilePath(uriToFind);
+        var ids = solution.GetDocumentIdsWithFilePath(uriToFind);
         if (ids.Length == 0)
         {
             return null;
         }
 
         // We assume linked documents would produce the same component tag so just take the first
-        var otherDocument = razorDocument.Project.Solution.GetAdditionalDocument(ids[0]);
+        var otherDocument = solution.GetAdditionalDocument(ids[0]);
         if (otherDocument is null)
         {
             return null;

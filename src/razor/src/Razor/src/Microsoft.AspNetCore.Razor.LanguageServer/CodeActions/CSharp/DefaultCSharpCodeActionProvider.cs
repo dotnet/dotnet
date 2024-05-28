@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Newtonsoft.Json.Linq;
@@ -17,9 +18,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 internal sealed class DefaultCSharpCodeActionProvider : ICSharpCodeActionProvider
 {
-    private static readonly Task<IReadOnlyList<RazorVSInternalCodeAction>?> s_emptyResult =
-        Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(Array.Empty<RazorVSInternalCodeAction>());
-
     // Internal for testing
     internal static readonly HashSet<string> SupportedDefaultCodeActionNames = new HashSet<string>()
     {
@@ -78,7 +76,7 @@ internal sealed class DefaultCSharpCodeActionProvider : ICSharpCodeActionProvide
         // code action resolve.
         if (!context.SupportsCodeActionResolve)
         {
-            return s_emptyResult;
+            return SpecializedTasks.AsNullable(SpecializedTasks.EmptyReadOnlyList<RazorVSInternalCodeAction>());
         }
 
         var tree = context.CodeDocument.GetSyntaxTree();

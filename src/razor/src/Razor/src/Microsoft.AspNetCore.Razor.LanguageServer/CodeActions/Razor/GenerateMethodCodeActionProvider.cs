@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
 using SyntaxFacts = Microsoft.CodeAnalysis.CSharp.SyntaxFacts;
 using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
@@ -19,14 +20,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
 
 internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
 {
-    private static readonly Task<IReadOnlyList<RazorVSInternalCodeAction>?> s_emptyResult = Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(null);
-
     public Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
     {
         var nameNotExistDiagnostics = context.Request.Context.Diagnostics.Any(d => d.Code == "CS0103");
         if (!nameNotExistDiagnostics)
         {
-            return s_emptyResult;
+            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
         }
 
         var syntaxTree = context.CodeDocument.GetSyntaxTree();
@@ -44,7 +43,7 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
             return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(codeActions);
         }
 
-        return s_emptyResult;
+        return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
     }
 
     private static bool IsGenerateEventHandlerValid(

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -88,7 +89,7 @@ public class FormatDocumentTests(ITestOutputHelper testOutputHelper) : AbstractR
             throw new Exception("Test did not have expected results file so one has been generated. Running the test again should make it pass.");
         }
 
-        Assert.Equal(expected, actual);
+        AssertEx.EqualOrDiff(expected, actual);
     }
 
     private static string GetResourceName(string name, string suffix)
