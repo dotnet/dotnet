@@ -32,7 +32,7 @@ extends:
   parameters:
     pool:
       name: $(DncEngInternalBuildPool)
-      image: 1es-windows-2022-pt
+      image: 1es-windows-2022
       os: windows
     customBuildTags:
     - ES365AIMigrationTooling
@@ -78,7 +78,7 @@ extends:
             - Source_Build_Managed
             pool:
               name: $(DncEngInternalBuildPool)
-              demands: ImageOverride -equals 1es-windows-2022-pt
+              demands: ImageOverride -equals 1es-windows-2022
     - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
       - template: /eng/common/templates-official/post-build/post-build.yml@self
         parameters:
