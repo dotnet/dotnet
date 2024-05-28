@@ -21,7 +21,7 @@
     <formatOutputPackageVersion>8.0.511601</formatOutputPackageVersion>
     <fsharpGitCommitHash>fc5e9eda234e2b69aa479f4f83faddc31fdd4da7</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.102-beta.24081.2</fsharpOutputPackageVersion>
-    <installerGitCommitHash>307c956093913c9041c287d40fe3ed74ea353783</installerGitCommitHash>
+    <installerGitCommitHash>ab2d260803954d9bf430a3e129c1551f5541ece5</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>b5265ef370a651f8c3458110b804e5cbf869eeb5</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.8.5-preview-24055-02</msbuildOutputPackageVersion>
@@ -35,8 +35,8 @@
     <roslynOutputPackageVersion>4.8.0-7.24067.24</roslynOutputPackageVersion>
     <runtimeGitCommitHash>3b8b000a0e115700b18265d8ec8c6307056dc94d</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>8.0.6-servicing.24267.15</runtimeOutputPackageVersion>
-    <sdkGitCommitHash>598754e8099b8c0da4622b885ef5e1a20f3e5bed</sdkGitCommitHash>
-    <sdkOutputPackageVersion>8.0.106-servicing.24270.25</sdkOutputPackageVersion>
+    <sdkGitCommitHash>a25547650ecad145af54e2fce6336394e8b21d5e</sdkGitCommitHash>
+    <sdkOutputPackageVersion>8.0.106-servicing.24272.10</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>908177a58a41532b3302c17f1e1a8cf1c1234545</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.24216.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>79827eed138fd2575a8b24820b4f385ee4ffb6e6</sourcebuildreferencepackagesGitCommitHash>
@@ -45,8 +45,8 @@
     <sourcelinkOutputPackageVersion>8.0.0-beta.23615.1</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>2c8079e2e8e78c0cd11ac75a32014756136ecdb9</symreaderGitCommitHash>
     <symreaderOutputPackageVersion>2.1.0-beta.23253.1</symreaderOutputPackageVersion>
-    <templatingGitCommitHash>d470e3b7e208e8c499809fc0caf83805e5a3a021</templatingGitCommitHash>
-    <templatingOutputPackageVersion>8.0.106-servicing.24267.14</templatingOutputPackageVersion>
+    <templatingGitCommitHash>1d50f84e633ba21f344910bbb10a251fbb6232f5</templatingGitCommitHash>
+    <templatingOutputPackageVersion>8.0.106-servicing.24272.5</templatingOutputPackageVersion>
     <testtemplatesGitCommitHash>1e5f3603af2277910aad946736ee23283e7f3e16</testtemplatesGitCommitHash>
     <testtemplatesOutputPackageVersion>1.1.0-rc.23410.2</testtemplatesOutputPackageVersion>
     <vstestGitCommitHash>aa59400b11e1aeee2e8af48928dbd48748a8bef9</vstestGitCommitHash>

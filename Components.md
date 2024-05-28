@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@307c956](https://github.com/dotnet/installer/tree/307c956093913c9041c287d40fe3ed74ea353783)*
+*[dotnet/installer@ab2d260](https://github.com/dotnet/installer/tree/ab2d260803954d9bf430a3e129c1551f5541ece5)*
 - `src/msbuild`  
 *[dotnet/msbuild@b5265ef](https://github.com/dotnet/msbuild/tree/b5265ef370a651f8c3458110b804e5cbf869eeb5)*
 - `src/nuget-client`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@3b8b000](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC3b8b000a0e115700b18265d8ec8c6307056dc94d)*
 - `src/sdk`  
-*[_git/dotnet-sdk@598754e](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC598754e8099b8c0da4622b885ef5e1a20f3e5bed)*
+*[_git/dotnet-sdk@a255476](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GCa25547650ecad145af54e2fce6336394e8b21d5e)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@908177a](https://github.com/dotnet/source-build-externals/tree/908177a58a41532b3302c17f1e1a8cf1c1234545)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -84,7 +84,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@2c8079e](https://github.com/dotnet/symreader/tree/2c8079e2e8e78c0cd11ac75a32014756136ecdb9)*
 - `src/templating`  
-*[_git/dotnet-templating@d470e3b](https://dev.azure.com/dnceng/internal/_git/dotnet-templating/?version=GCd470e3b7e208e8c499809fc0caf83805e5a3a021)*
+*[_git/dotnet-templating@1d50f84](https://dev.azure.com/dnceng/internal/_git/dotnet-templating/?version=GC1d50f84e633ba21f344910bbb10a251fbb6232f5)*
 - `src/test-templates`  
 *[dotnet/test-templates@1e5f360](https://github.com/dotnet/test-templates/tree/1e5f3603af2277910aad946736ee23283e7f3e16)*
 - `src/vstest`  
