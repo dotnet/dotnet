@@ -13,9 +13,9 @@
       "shortName": "p",
       "longName": "enable-pack"
     },
-    "DisableRunner": {
+    "UseVSTest": {
       "shortName": "",
-      "longName": "disable-runner"
+      "longName": "use-vstest"
     },
     "skipRestore": {
       "longName": "no-restore",

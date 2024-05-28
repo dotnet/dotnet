@@ -42,11 +42,11 @@
       "defaultValue": "false",
       "description": "Whether or not to enable packaging (via \"dotnet pack\") for the project."
     },
-    "DisableRunner": {
+    "UseVSTest": {
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "false",
-      "description": "Whether or not to disable MSTest runner for the project. More information at https://aka.ms/mstest/runner"
+      "description": "Use VSTest platform instead of MSTest runner. More information at https://aka.ms/mstest/sdk/runner"
     },
     "HostIdentifier": {
       "type": "bind",

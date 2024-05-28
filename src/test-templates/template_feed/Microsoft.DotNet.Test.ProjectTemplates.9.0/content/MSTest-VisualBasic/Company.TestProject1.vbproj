@@ -10,6 +10,7 @@
       For more information, visit https://learn.microsoft.com/dotnet/core/testing/unit-testing-platform-integration-dotnet-test#show-failure-per-test
       -->
     <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+    <UseVSTest Condition=" '$(UseVSTest)' == 'true' ">true</UseVSTest>
   </PropertyGroup>
 
 </Project>
