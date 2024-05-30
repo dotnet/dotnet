@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Host;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 
-internal abstract class HostServicesProvider
+internal interface IHostServicesProvider
 {
-    public abstract HostServices GetServices();
+    HostServices GetServices();
 }

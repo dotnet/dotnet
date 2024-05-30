@@ -18,22 +18,17 @@ using RazorLanguageServerConstants = Microsoft.CodeAnalysis.Razor.Protocol.Langu
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
-public class RazorLanguageServerTest : ToolingTestBase
+public class RazorLanguageServerTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    public RazorLanguageServerTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task LocaleIsSetCorrectly()
     {
         var (clientStream, serverStream) = FullDuplexStream.CreatePair();
-        using var server = RazorLanguageServerWrapper.Create(serverStream, serverStream, LoggerFactory, NoOpTelemetryReporter.Instance);
+        using var host = RazorLanguageServerHost.Create(serverStream, serverStream, LoggerFactory, NoOpTelemetryReporter.Instance);
 
-        var innerServer = server.GetInnerLanguageServerForTesting();
-        innerServer.Initialize();
-        var queue = innerServer.GetTestAccessor().GetRequestExecutionQueue();
+        var server = host.GetTestAccessor().Server;
+        server.Initialize();
+        var queue = server.GetTestAccessor().GetRequestExecutionQueue();
 
         var initializeParams = new InitializeParams
         {
@@ -41,11 +36,11 @@ public class RazorLanguageServerTest : ToolingTestBase
             Locale = "de-DE"
         };
 
-        await queue.ExecuteAsync<InitializeParams, InitializeResult>(initializeParams, Methods.InitializeName, LanguageServerConstants.DefaultLanguageName, innerServer.GetLspServices(), DisposalToken);
+        await queue.ExecuteAsync<InitializeParams, InitializeResult>(initializeParams, Methods.InitializeName, LanguageServerConstants.DefaultLanguageName, server.GetLspServices(), DisposalToken);
 
         // We have to send one more request, because culture is set before any request starts, but the first initialize request has to
         // be started in order to set the culture.
-        await queue.ExecuteAsync<VSInternalWorkspaceDiagnosticsParams, VSInternalWorkspaceDiagnosticReport[]>(new(), VSInternalMethods.WorkspacePullDiagnosticName, LanguageServerConstants.DefaultLanguageName, innerServer.GetLspServices(), DisposalToken);
+        await queue.ExecuteAsync<VSInternalWorkspaceDiagnosticsParams, VSInternalWorkspaceDiagnosticReport[]>(new(), VSInternalMethods.WorkspacePullDiagnosticName, LanguageServerConstants.DefaultLanguageName, server.GetLspServices(), DisposalToken);
 
         var cultureInfo = queue.GetTestAccessor().GetCultureInfo();
 
@@ -57,13 +52,13 @@ public class RazorLanguageServerTest : ToolingTestBase
     public void AllHandlersRegisteredAsync()
     {
         var (clientStream, serverStream) = FullDuplexStream.CreatePair();
-        using var server = RazorLanguageServerWrapper.Create(serverStream, serverStream, LoggerFactory, NoOpTelemetryReporter.Instance);
+        using var host = RazorLanguageServerHost.Create(serverStream, serverStream, LoggerFactory, NoOpTelemetryReporter.Instance);
 
-        var innerServer = server.GetInnerLanguageServerForTesting();
-        var handlerProvider = innerServer.GetTestAccessor().HandlerProvider;
+        var server = host.GetTestAccessor().Server;
+        var handlerProvider = server.GetTestAccessor().HandlerProvider;
 
         var registeredMethods = handlerProvider.GetRegisteredMethods();
-        var handlerTypes = typeof(RazorLanguageServerWrapper).Assembly.GetTypes()
+        var handlerTypes = typeof(RazorLanguageServerHost).Assembly.GetTypes()
             .Where(t => typeof(IMethodHandler).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
 
         // We turn this into a Set to handle cases like Completion where we have two handlers, only one of which will be registered

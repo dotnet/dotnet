@@ -64,7 +64,7 @@ internal class RazorLanguageServerClient(
     private readonly ILoggerFactory _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
     private readonly RazorLogHubTraceProvider _traceProvider = traceProvider ?? throw new ArgumentNullException(nameof(traceProvider));
 
-    private RazorLanguageServerWrapper? _server;
+    private RazorLanguageServerHost? _host;
 
     public event AsyncEventHandler<EventArgs>? StartAsync;
     public event AsyncEventHandler<EventArgs>? StopAsync
@@ -105,7 +105,7 @@ internal class RazorLanguageServerClient(
 
         var lspOptions = RazorLSPOptions.From(_clientSettingsManager.GetClientSettings());
 
-        _server = RazorLanguageServerWrapper.Create(
+        _host = RazorLanguageServerHost.Create(
             serverStream,
             serverStream,
             _loggerFactory,
@@ -184,24 +184,23 @@ internal class RazorLanguageServerClient(
     {
         if (_vsHostWorkspaceServicesProvider is not null)
         {
-            var wrapper = new HostServicesProviderWrapper(_vsHostWorkspaceServicesProvider);
-            serviceCollection.AddSingleton<HostServicesProvider>(wrapper);
+            serviceCollection.AddSingleton<IHostServicesProvider>(new HostServicesProviderAdapter(_vsHostWorkspaceServicesProvider));
         }
     }
 
     private async Task EnsureCleanedUpServerAsync()
     {
-        if (_server is null)
+        if (_host is null)
         {
             // Server was already cleaned up
             return;
         }
 
-        if (_server is not null)
+        if (_host is not null)
         {
             _projectConfigurationFilePathStore.Changed -= ProjectConfigurationFilePathStore_Changed;
             // Server still hasn't shutdown, wait for it to shutdown
-            await _server.WaitForExitAsync().ConfigureAwait(false);
+            await _host.WaitForExitAsync().ConfigureAwait(false);
         }
     }
 
@@ -298,10 +297,10 @@ internal class RazorLanguageServerClient(
         }
     }
 
-    private sealed class HostServicesProviderWrapper(VisualStudioHostServicesProvider vsHostServicesProvider) : HostServicesProvider
+    private sealed class HostServicesProviderAdapter(VisualStudioHostServicesProvider vsHostServicesProvider) : IHostServicesProvider
     {
         private readonly VisualStudioHostServicesProvider _vsHostServicesProvider = vsHostServicesProvider;
 
-        public override HostServices GetServices() => _vsHostServicesProvider.GetServices();
+        public HostServices GetServices() => _vsHostServicesProvider.GetServices();
     }
 }
