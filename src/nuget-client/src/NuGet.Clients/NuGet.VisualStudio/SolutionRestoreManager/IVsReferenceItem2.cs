@@ -20,6 +20,9 @@ namespace NuGet.SolutionRestoreManager
         /// <summary>
         /// Collection of item metadata.
         /// </summary>
-        IReadOnlyDictionary<string, string?>? Metadata { get; }
+        /// <remarks>
+        /// The dictionary should be <see cref="System.StringComparer.OrdinalIgnoreCase"/> for key comparisons to match MSBuild's behaviour.
+        /// </remarks>
+        IReadOnlyDictionary<string, string>? Metadata { get; }
     }
 }

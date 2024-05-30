@@ -13,10 +13,10 @@
       "commitSha": "0514ea9e12ece4dd764824ce925ae0eae6fcbd86"
     },
     {
-      "packageVersion": "9.0.0-preview.6.24278.9",
+      "packageVersion": "9.0.0-preview.6.24279.3",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "05744cae5f4efb681b934cd117bdd0634c0659ad"
+      "commitSha": "1e79c9bdc0d2062eaea6e08e476765023bf5fc3a"
     },
     {
       "packageVersion": "0.11.4-alpha.24230.1",
@@ -67,10 +67,10 @@
       "commitSha": "3c039cbcf52a73b39f38194d2e67a3fac9a7666d"
     },
     {
-      "packageVersion": "6.11.0-preview.2.66",
+      "packageVersion": "6.11.0-preview.2.71",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "a7131d98a28b0be1d21a125b5660fc8782c27ace"
+      "commitSha": "16fc5fb903a24fdde58baeb0e957d9a7cb3b9815"
     },
     {
       "packageVersion": "9.0.0-preview.24277.1",
@@ -97,16 +97,16 @@
       "commitSha": "5c06e5d01fa0ea4122e7202cefb921a779f9843a"
     },
     {
-      "packageVersion": "9.0.0-preview.24278.1",
+      "packageVersion": "9.0.0-preview.24279.2",
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "3996d918434d17d7e8b52679621bab5e1fcef126"
+      "commitSha": "54700bbee86f660d37bd519a905b62bb50adc8c8"
     },
     {
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "96d53a446692902706d356b5b7b40131a4c38d7b"
+      "commitSha": "29ba54dc3875962b664c0a9003f69c262ffbd5b5"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24263.2",

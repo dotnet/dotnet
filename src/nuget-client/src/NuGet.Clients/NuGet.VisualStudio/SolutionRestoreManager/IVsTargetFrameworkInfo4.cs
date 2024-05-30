@@ -23,6 +23,9 @@ namespace NuGet.SolutionRestoreManager
         /// Collection of project level properties evaluated per each Target Framework,
         /// e.g. PackageTargetFallback.
         /// </summary>
-        IReadOnlyDictionary<string, string?> Properties { get; }
+        /// <remarks>
+        /// The dictionary should be <see cref="System.StringComparer.OrdinalIgnoreCase"/> for key comparisons to match MSBuild's behaviour.
+        /// </remarks>
+        IReadOnlyDictionary<string, string> Properties { get; }
     }
 }

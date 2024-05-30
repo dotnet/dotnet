@@ -22,13 +22,13 @@ steps:
   inputs:
     targetType: inline
     script: |
-      $nupkgs = Get-ChildItem $(System.ArtifactsDirectory)/nupkgs/*.nupkg -Exclude *.symbols.nupkg
+      $nupkgs = Get-ChildItem $(System.ArtifactsDirectory)/nupkgs/*.nupkg -Exclude *.symbols.nupkg,NuGet.CommandLine.XPlat.*
       if ($nupkgs.Count -eq 0) { throw "Could not find nupkgs" }
       "nupkgs:"
       $nupkgs.FullName
       ""
       "Building validation tool"
-      dotnet run --project tools-local/ensure-nupkg-dependencies-on-source/ -- $nupkgs -s https://api.nuget.org/v3/index.json
+      dotnet build tools-local/ensure-nupkg-dependencies-on-source/
       if ($LASTEXITCODE -ne 0) { throw "Build was not successful" }
       ""
       "Running validation tool"
