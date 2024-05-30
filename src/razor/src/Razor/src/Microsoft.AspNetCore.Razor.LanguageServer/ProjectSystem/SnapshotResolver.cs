@@ -22,17 +22,10 @@ internal sealed class SnapshotResolver : ISnapshotResolver, IOnInitialized
     private readonly IProjectSnapshotManager _projectManager;
     private readonly ILogger _logger;
 
-    // Internal for testing
-    internal readonly HostProject MiscellaneousHostProject;
-
     public SnapshotResolver(IProjectSnapshotManager projectManager, ILoggerFactory loggerFactory)
     {
         _projectManager = projectManager;
         _logger = loggerFactory.GetOrCreateLogger<SnapshotResolver>();
-
-        var miscellaneousProjectPath = Path.Combine(TempDirectory.Instance.DirectoryPath, "__MISC_RAZOR_PROJECT__");
-        var normalizedPath = FilePathNormalizer.Normalize(miscellaneousProjectPath);
-        MiscellaneousHostProject = new HostProject(normalizedPath, normalizedPath, FallbackRazorConfiguration.Latest, rootNamespace: null, "Miscellaneous Files");
     }
 
     public Task OnInitializedAsync(ILspServices services, CancellationToken cancellationToken)
@@ -41,7 +34,7 @@ internal sealed class SnapshotResolver : ISnapshotResolver, IOnInitialized
 
         return _projectManager.UpdateAsync(
             (updater, miscHostProject) => updater.ProjectAdded(miscHostProject),
-            state: MiscellaneousHostProject,
+            state: MiscFilesHostProject.Instance,
             cancellationToken);
     }
 
@@ -55,7 +48,7 @@ internal sealed class SnapshotResolver : ISnapshotResolver, IOnInitialized
         foreach (var project in _projectManager.GetProjects())
         {
             // Always exclude the miscellaneous project.
-            if (project.FilePath == MiscellaneousHostProject.FilePath)
+            if (project.FilePath == MiscFilesHostProject.Instance.FilePath)
             {
                 continue;
             }
@@ -72,7 +65,7 @@ internal sealed class SnapshotResolver : ISnapshotResolver, IOnInitialized
 
     public IProjectSnapshot GetMiscellaneousProject()
     {
-        return _projectManager.GetLoadedProject(MiscellaneousHostProject.Key);
+        return _projectManager.GetLoadedProject(MiscFilesHostProject.Instance.Key);
     }
 
     public bool TryResolveDocumentInAnyProject(string documentFilePath, [NotNullWhen(true)] out IDocumentSnapshot? document)

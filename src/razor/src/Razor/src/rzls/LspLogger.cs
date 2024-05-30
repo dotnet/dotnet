@@ -3,30 +3,25 @@
 
 using System;
 using System.Threading;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.VisualStudio.Threading;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 /// <summary>
 /// ILogger implementation that logs via the window/logMessage LSP method
 /// </summary>
-internal class LspLogger : ILogger
+internal class LspLogger(string categoryName, LogLevel logLevel, IClientConnection clientConnection) : ILogger
 {
-    private readonly LogLevel _logLevel;
-    private readonly string _categoryName;
-    private IClientConnection _clientConnection;
-
-    public LspLogger(string categoryName, LogLevel logLevel, IClientConnection clientConnection)
-    {
-        _logLevel = logLevel;
-        _categoryName = categoryName;
-        _clientConnection = clientConnection;
-    }
+    private readonly LogLevel _logLevel = logLevel;
+    private readonly string _categoryName = categoryName;
+    private readonly IClientConnection _clientConnection = clientConnection;
 
     public bool IsEnabled(LogLevel logLevel)
     {
-        return logLevel >= _logLevel;
+        return logLevel.IsAtLeast(_logLevel);
     }
 
     public void Log(LogLevel logLevel, string message, Exception? exception)
@@ -46,6 +41,7 @@ internal class LspLogger : ILogger
             LogLevel.Trace => MessageType.Log,
             _ => throw new NotImplementedException(),
         };
+
         if (exception is not null)
         {
             message += Environment.NewLine + exception.ToString();
@@ -57,11 +53,6 @@ internal class LspLogger : ILogger
             Message = $"[{_categoryName}] {message}",
         };
 
-        if (_clientConnection is null)
-        {
-            throw new InvalidOperationException($"Tried to log before {nameof(IClientConnection)} was set.");
-        }
-
-        _ = _clientConnection.SendNotificationAsync(Methods.WindowLogMessageName, @params, CancellationToken.None);
+        _clientConnection.SendNotificationAsync(Methods.WindowLogMessageName, @params, CancellationToken.None).Forget();
     }
 }

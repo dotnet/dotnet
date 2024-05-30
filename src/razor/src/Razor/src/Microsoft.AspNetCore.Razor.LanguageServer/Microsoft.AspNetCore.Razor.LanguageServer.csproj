@@ -54,4 +54,14 @@
     <AdditionalFiles Include="PublicAPI\PublicAPI.Unshipped.txt" />
   </ItemGroup>
 
+  <!-- Display files included by the Microsoft.CommonLanguageServerProtocol.Framework source package in a separate folder -->
+  <ItemGroup>
+    <Content Update="@(Content)">
+      <Link Condition="'%(NuGetPackageId)' == 'Microsoft.CommonLanguageServerProtocol.Framework'">CLaSP\%(Link)</Link>
+    </Content>
+    <Compile Update="@(Compile)">
+      <Link Condition="'%(NuGetPackageId)' == 'Microsoft.CommonLanguageServerProtocol.Framework'">CLaSP\%(Link)</Link>
+    </Compile>
+  </ItemGroup>
+
 </Project>
