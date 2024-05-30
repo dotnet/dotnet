@@ -25,11 +25,9 @@ internal sealed class RazorConfigurationFormatter : ValueFormatter<RazorConfigur
 
         count -= 2;
 
-        var forceRuntimeCodeGeneration = false;
-
         if (reader.NextMessagePackType is MessagePackType.Boolean)
         {
-            forceRuntimeCodeGeneration = reader.ReadBoolean();
+            reader.ReadBoolean(); // forceRuntimeCodeGeneration
             count -= 1;
         }
 
