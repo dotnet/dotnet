@@ -107,7 +107,6 @@ if ($AddInternalFlow) {
 }
 
 Write-Host "Making default channels for SDK repos"
-MakeDefaultChannel https://github.com/dotnet/installer $SdkBranch $SdkChannel
 MakeDefaultChannel https://github.com/dotnet/sdk $SdkBranch $SdkChannel
 MakeDefaultChannel https://github.com/dotnet/roslyn-analyzers $SdkBranch $SdkChannel
 MakeDefaultChannel https://github.com/dotnet/templating $SdkBranch $SdkChannel
@@ -116,7 +115,6 @@ if ($AddInternalFlow) {
     # Because of where internal fixes tend to be, we eliminate some leaves in the sdk graph
     # and flow them through the normal public channels: templating, roslyn-analyzers
     Write-Host "Making default channels for SDK repos"
-    MakeDefaultChannel https://dev.azure.com/dnceng/internal/_git/dotnet-installer $InternalSdkBranch $InternalSdkChannel
     MakeDefaultChannel https://dev.azure.com/dnceng/internal/_git/dotnet-sdk $InternalSdkBranch $InternalSdkChannel
     MakeDefaultChannel https://dev.azure.com/dnceng/internal/_git/dotnet-templating $InternalSdkBranch $InternalSdkChannel
 }
@@ -138,7 +136,6 @@ AddArcadeFlow https://github.com/dotnet/runtime $RuntimeBranch
 AddArcadeFlow https://github.com/dotnet/windowsdesktop $RuntimeBranch
 AddArcadeFlow https://github.com/dotnet/wpf $RuntimeBranch
 AddArcadeFlow https://github.com/dotnet/winforms $RuntimeBranch
-AddArcadeFlow https://github.com/dotnet/installer $SdkBranch
 AddArcadeFlow https://github.com/dotnet/sdk $SdkBranch
 AddArcadeFlow https://github.com/dotnet/roslyn-analyzers $SdkBranch
 AddArcadeFlow https://github.com/dotnet/templating $SdkBranch
@@ -185,14 +182,11 @@ if ($AddInternalFlow) {
 }
 
 Write-Host "Add sdk->sdk flow"
-AddFlow https://github.com/dotnet/sdk $SdkChannel https://github.com/dotnet/installer $SdkBranch EveryBuild
 AddFlow https://github.com/dotnet/roslyn-analyzers $SdkChannel https://github.com/dotnet/sdk $SdkBranch EveryBuild
 AddFlow https://github.com/dotnet/templating $SdkChannel https://github.com/dotnet/sdk $SdkBranch EveryBuild
 
 if ($AddInternalFlow) {
     Write-Host "Adding internal sdk->internal sdk flow"
-    # Nothing but SDK->installer flows internally
-    AddFlow https://dev.azure.com/dnceng/internal/_git/dotnet-sdk $InternalSdkChannel https://dev.azure.com/dnceng/internal/_git/dotnet-installer $InternalSdkBranch EveryBuild
     AddFlow https://dev.azure.com/dnceng/internal/_git/dotnet-templating $InternalSdkChannel https://dev.azure.com/dnceng/internal/_git/dotnet-sdk $InternalSdkBranch EveryBuild
     
     Write-Host "Disabling internal sdk->internal sdk flow"
