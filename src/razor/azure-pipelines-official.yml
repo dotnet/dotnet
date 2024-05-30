@@ -118,6 +118,7 @@ extends:
                   arguments: -ConfigFile $(Build.SourcesDirectory)/NuGet.config -Password $Env:Token
                 env:
                   Token: $(dn-bot-dnceng-artifact-feeds-rw)
+              - task: NuGetAuthenticate@1
               - powershell: ./restore.cmd -msbuildEngine dotnet -ci $(_InternalRuntimeDownloadArgs); ./eng/scripts/CodeCheck.ps1 -ci
                 displayName: Run eng/scripts/CodeCheck.ps1
 
@@ -193,6 +194,7 @@ extends:
                 arguments: -ConfigFile $(Build.SourcesDirectory)/NuGet.config -Password $Env:Token
               env:
                 Token: $(dn-bot-dnceng-artifact-feeds-rw)
+            - task: NuGetAuthenticate@1
 
             # Don't create a binary log until we can customize the name
             # https://github.com/dotnet/arcade/pull/12988
@@ -325,6 +327,7 @@ extends:
                 arguments: $(Build.SourcesDirectory)/NuGet.config $Token
               env:
                 Token: $(dn-bot-dnceng-artifact-feeds-rw)
+            - task: NuGetAuthenticate@1
 
             - script: eng/cibuild.sh
                 --restore
@@ -377,6 +380,7 @@ extends:
                 arguments: $(Build.SourcesDirectory)/NuGet.config $Token
               env:
                 Token: $(dn-bot-dnceng-artifact-feeds-rw)
+            - task: NuGetAuthenticate@1
 
             - script: eng/cibuild.sh
                 --restore
