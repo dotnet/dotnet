@@ -21,21 +21,21 @@
     <emsdkOutputPackageVersion>9.0.0-preview.5.24273.1</emsdkOutputPackageVersion>
     <fsharpGitCommitHash>77bb9c63cd7a6c21f8a0e40478a80babb476eea8</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.400-beta.24277.3</fsharpOutputPackageVersion>
-    <msbuildGitCommitHash>18773f232aeb4606483c848864f348671e91a15c</msbuildGitCommitHash>
-    <msbuildOutputPackageVersion>17.11.0-preview-24278-03</msbuildOutputPackageVersion>
-    <nugetclientGitCommitHash>a7131d98a28b0be1d21a125b5660fc8782c27ace</nugetclientGitCommitHash>
-    <nugetclientOutputPackageVersion>6.11.0-preview.2.66</nugetclientOutputPackageVersion>
+    <msbuildGitCommitHash>b963c24ef3657479f662347a4b1dbf8185042966</msbuildGitCommitHash>
+    <msbuildOutputPackageVersion>17.11.0-preview-24279-02</msbuildOutputPackageVersion>
+    <nugetclientGitCommitHash>16fc5fb903a24fdde58baeb0e957d9a7cb3b9815</nugetclientGitCommitHash>
+    <nugetclientOutputPackageVersion>6.11.0-preview.2.71</nugetclientOutputPackageVersion>
     <razorGitCommitHash>6ada92f5fc25f916afccc41d3dce2c618d9fcd11</razorGitCommitHash>
     <razorOutputPackageVersion>9.0.0-preview.24277.1</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>8dccccec1ce3bd2fb532ec77d7e092ab9d684db7</roslynanalyzersGitCommitHash>
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.24225.1</roslynanalyzersOutputPackageVersion>
-    <roslynGitCommitHash>2e1435d1aadd8ddb90a171e207e3cb2ae67253f2</roslynGitCommitHash>
-    <roslynOutputPackageVersion>4.11.0-2.24274.2</roslynOutputPackageVersion>
+    <roslynGitCommitHash>8595c8d30a4546cf662dba9ae475b4a2c50fb922</roslynGitCommitHash>
+    <roslynOutputPackageVersion>4.11.0-3.24279.17</roslynOutputPackageVersion>
     <runtimeGitCommitHash>062439076e1fc244a9dd243ba2a8ad7c5330f1f1</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>9.0.0-preview.5.24279.13</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>259edc6efe049ed49f9e37890be702a886ba5ed8</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24257.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>cefec947ceab2d16214a7218e85bf3e6a58f8bb1</sdkGitCommitHash>
+    <sdkGitCommitHash>21540b065f91c2bfe06259b589de2306f98a0990</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>59204e5b14e6e197b3c942f992f6e3ec9196e50b</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24263.2</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>0df72d85186994facaefcb4eb832b8c8a8e5ae3d</sourcebuildreferencepackagesGitCommitHash>
