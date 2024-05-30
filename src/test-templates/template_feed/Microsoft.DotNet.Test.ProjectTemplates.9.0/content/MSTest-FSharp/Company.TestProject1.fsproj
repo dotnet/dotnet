@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSTest.Sdk/3.4.0">
+﻿<Project Sdk="MSTest.Sdk/3.4.1">
 
   <PropertyGroup>
     <TargetFramework Condition="'$(TargetFrameworkOverride)' == ''">net9.0</TargetFramework>
