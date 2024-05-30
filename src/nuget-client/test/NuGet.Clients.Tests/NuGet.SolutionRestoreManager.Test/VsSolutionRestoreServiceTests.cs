@@ -2491,6 +2491,81 @@ namespace NuGet.SolutionRestoreManager.Test
             Assert.Equal(expected, exception.Message);
         }
 
+        [Fact]
+        public void ToPackageSpec_WithNuGetAuditSupressItem_PackageSpecHasSupressUrl()
+        {
+            // Arrange
+            ProjectNames projectName = new(@"n:\path\to\current\project.csproj", "project", "project.csproj", "project", Guid.NewGuid().ToString());
+            string cveUrl = "https://cve.test/1";
+
+            var targetFrameworks = new VsTargetFrameworkInfo4[]
+            {
+                new VsTargetFrameworkInfo4(
+                items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase)
+                {
+                    [ProjectItems.NuGetAuditSuppress] = [ new VsReferenceItem2(cveUrl, EmptyProperties) ]
+                },
+                properties: new Dictionary<string,string>())
+            };
+
+            var pri = new VsProjectRestoreInfo3
+            {
+                MSBuildProjectExtensionsPath = string.Empty,
+                TargetFrameworks = targetFrameworks,
+                OriginalTargetFrameworks = string.Empty
+            };
+
+            // Act
+            var actual = VsSolutionRestoreService.ToPackageSpec(projectName, pri);
+
+            // Assert
+            RestoreAuditProperties auditProperties = actual.RestoreMetadata.RestoreAuditProperties;
+            string actualUrl = Assert.Single(auditProperties.SuppressedAdvisories);
+            actualUrl.Should().Be(cveUrl);
+        }
+
+        [Fact]
+        public void ToPackageSpec_TwoTFMsWithDifferentNuGetAuditSupressItems_Throws()
+        {
+            // Arrange
+            ProjectNames projectName = new(@"n:\path\to\current\project.csproj", "project", "project.csproj", "project", Guid.NewGuid().ToString());
+            string cve1Url = "https://cve.test/1";
+            string cve2Url = "https://cve.test/2";
+
+            var targetFrameworks = new VsTargetFrameworkInfo4[]
+            {
+                new VsTargetFrameworkInfo4(
+                    items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectItems.NuGetAuditSuppress] = [ new VsReferenceItem2(cve1Url, EmptyProperties) ]
+                    },
+                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectBuildProperties.TargetFrameworkMoniker] = ".NETCoreApp,Version=8.0"
+                    }),
+                new VsTargetFrameworkInfo4(
+                    items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectItems.NuGetAuditSuppress] = [ new VsReferenceItem2(cve2Url, EmptyProperties) ]
+                    },
+                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectBuildProperties.TargetFrameworkMoniker] = ".NETFramework,Version=4.8"
+                    }),
+            };
+
+            var pri = new VsProjectRestoreInfo3
+            {
+                MSBuildProjectExtensionsPath = string.Empty,
+                TargetFrameworks = targetFrameworks,
+                OriginalTargetFrameworks = string.Empty
+            };
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidOperationException>(() => VsSolutionRestoreService.ToPackageSpec(projectName, pri));
+            exception.Message.Should().Contain(ProjectItems.NuGetAuditSuppress);
+        }
+
         private async Task<DependencyGraphSpec> CaptureNominateResultAsync(
             string projectFullPath,
             IVsProjectRestoreInfo pri,

@@ -155,16 +155,16 @@ namespace NuGet.SolutionRestoreManager
             return result;
         }
 
-        private static IReadOnlyDictionary<string, string?>? ToPropertiesDictionary(IVsReferenceProperties? properties)
+        private static IReadOnlyDictionary<string, string>? ToPropertiesDictionary(IVsReferenceProperties? properties)
         {
             if (properties is null) { return null; }
 
-            var result = new Dictionary<string, string?>(properties.Count, StringComparer.OrdinalIgnoreCase);
+            var result = new Dictionary<string, string>(properties.Count, StringComparer.OrdinalIgnoreCase);
 
             for (var i = 0; i < properties.Count; i++)
             {
-                var property = properties.Item(i) ?? throw new Exception($"Property index {i} returned null");
-                result.Add(property.Name, property.Value);
+                IVsReferenceProperty property = properties.Item(i) ?? throw new Exception($"Property index {i} returned null");
+                result.Add(property.Name, property.Value ?? string.Empty);
             }
 
             return result;
@@ -228,14 +228,14 @@ namespace NuGet.SolutionRestoreManager
 
             public IReadOnlyDictionary<string, IReadOnlyList<IVsReferenceItem2>>? Items { get; init; }
 
-            public required IReadOnlyDictionary<string, string?> Properties { get; init; }
+            public required IReadOnlyDictionary<string, string> Properties { get; init; }
         }
 
         private record VsReferenceItem2Adapter : IVsReferenceItem2
         {
             public required string Name { get; init; }
 
-            public IReadOnlyDictionary<string, string?>? Metadata { get; init; }
+            public IReadOnlyDictionary<string, string>? Metadata { get; init; }
         }
     }
 }
