@@ -148,7 +148,7 @@ namespace NuGet.SolutionRestoreManager
             return tfi;
         }
 
-        internal static NuGetFramework GetTargetFramework(IReadOnlyDictionary<string, string?> properties, string projectFullPath)
+        internal static NuGetFramework GetTargetFramework(IReadOnlyDictionary<string, string> properties, string projectFullPath)
         {
             var targetFrameworkMoniker = GetPropertyValueOrNull(properties, ProjectBuildProperties.TargetFrameworkMoniker);
             var targetPlatformMoniker = GetPropertyValueOrNull(properties, ProjectBuildProperties.TargetPlatformMoniker);
@@ -312,15 +312,75 @@ namespace NuGet.SolutionRestoreManager
             string? enableAudit = GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.NuGetAudit, s => s);
             string? auditLevel = GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.NuGetAuditLevel, s => s);
             string? auditMode = GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.NuGetAuditMode, s => s);
+            HashSet<string>? suppressedAdvisories = GetSuppressedAdvisories(tfms);
 
-            return !string.IsNullOrEmpty(enableAudit) || !string.IsNullOrEmpty(auditLevel) || !string.IsNullOrEmpty(auditMode)
+            return !string.IsNullOrEmpty(enableAudit) || !string.IsNullOrEmpty(auditLevel) || !string.IsNullOrEmpty(auditMode) || suppressedAdvisories is not null
                 ? new RestoreAuditProperties()
                 {
                     EnableAudit = enableAudit,
                     AuditLevel = auditLevel,
                     AuditMode = auditMode,
+                    SuppressedAdvisories = suppressedAdvisories,
                 }
                 : null;
+
+            static HashSet<string>? GetSuppressedAdvisories(IReadOnlyList<IVsTargetFrameworkInfo4> tfms)
+            {
+                if (tfms.Count == 0) { return null; }
+
+                // Create the hash set from the first TargetFramework
+                HashSet<string>? suppressedAdvisories = null;
+                if (tfms[0].Items?.TryGetValue(ProjectItems.NuGetAuditSuppress, out IReadOnlyList<IVsReferenceItem2>? suppressItems) ?? false)
+                {
+                    suppressedAdvisories = new(suppressItems.Count, StringComparer.Ordinal);
+                    for (int i = 0; i < suppressItems.Count; i++)
+                    {
+                        string url = suppressItems[i].Name;
+                        suppressedAdvisories.Add(url);
+                    }
+                }
+
+                // Validate that other TargetFrameworks use the same collection
+                for (int i = 1; i < tfms.Count; i++)
+                {
+                    if (!AreSameAdvisories(suppressedAdvisories, tfms[i].Items))
+                    {
+                        string message = string.Format(Resources.ItemValuesAreDifferentAcrossTargetFrameworks, ProjectItems.NuGetAuditSuppress);
+                        throw new InvalidOperationException(message);
+                    }
+                }
+
+                return suppressedAdvisories;
+
+                static bool AreSameAdvisories(HashSet<string>? suppressedAdvisories, IReadOnlyDictionary<string, IReadOnlyList<IVsReferenceItem2>>? items)
+                {
+                    IReadOnlyList<IVsReferenceItem2>? suppressItems = null;
+                    _ = items?.TryGetValue(ProjectItems.NuGetAuditSuppress, out suppressItems);
+
+                    if (suppressItems is null || suppressedAdvisories is null)
+                    {
+                        if (suppressItems is null && suppressedAdvisories is null)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+
+                    if (suppressedAdvisories.Count != suppressItems.Count) { return false; }
+
+                    for (int i = 0; i < suppressItems.Count; i++)
+                    {
+                        var url = suppressItems[i].Name;
+                        if (!suppressedAdvisories.Contains(url))
+                            return false;
+                    }
+
+                    return true;
+                }
+            }
         }
 
         private static NuGetFramework GetToolFramework(IReadOnlyList<IVsTargetFrameworkInfo4> targetFrameworks)
@@ -618,7 +678,7 @@ namespace NuGet.SolutionRestoreManager
         }
 
         private static string? GetPropertyValueOrNull(
-            IReadOnlyDictionary<string, string?> properties, string propertyName)
+            IReadOnlyDictionary<string, string> properties, string propertyName)
         {
             try
             {

@@ -32,10 +32,12 @@ internal class Program
             var sourcesList = ParseResult.GetValue<List<string>>(sourcesOption);
             if (files is not null && sourcesList is not null)
             {
-                await ExecuteAsync(files, sourcesList, CancellationToken);
+                return await ExecuteAsync(files, sourcesList, CancellationToken);
             }
+            Console.WriteLine("Error getting command arguments");
+            return -1;
         });
-        var exitCode = await rootCommand.Parse(args).InvokeAsync();
+        int exitCode = await rootCommand.Parse(args).InvokeAsync();
         return exitCode;
     }
 
