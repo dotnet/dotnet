@@ -76,7 +76,7 @@ internal sealed class MapCodeEndpoint(
     }
 
     private async Task<WorkspaceEdit?> HandleMappingsAsync(VSInternalMapCodeMapping[] mappings, Guid mapCodeCorrelationId, CancellationToken cancellationToken)
-    { 
+    {
         using var _ = ArrayBuilderPool<TextDocumentEdit>.GetPooledObject(out var changes);
         foreach (var mapping in mappings)
         {
@@ -316,7 +316,7 @@ internal sealed class MapCodeEndpoint(
             [nodeToMap.ToFullString()],
             FocusLocations: focusLocations);
 
-        WorkspaceEdit? edits = null;
+        WorkspaceEdit? edits;
         try
         {
             edits = await _clientConnection.SendRequestAsync<DelegatedMapCodeParams, WorkspaceEdit?>(

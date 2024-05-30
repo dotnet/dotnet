@@ -177,7 +177,6 @@ public abstract class IntegrationTestBase
             throw new XunitException($"The resource {sourceFileName} was not found.");
         }
         var fileContent = testFile.ReadAllText();
-        var normalizedContent = NormalizeNewLines(fileContent);
 
         var workingDirectory = Path.GetDirectoryName(fileName);
         var fullPath = sourceFileName;
