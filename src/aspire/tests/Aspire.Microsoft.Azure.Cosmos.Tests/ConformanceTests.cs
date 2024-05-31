@@ -6,11 +6,10 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Xunit;
 
 namespace Aspire.Microsoft.Azure.Cosmos.Tests;
 
-public class ConformanceTests : ConformanceTests<CosmosClient, MicrosoftAzureCosmosSettings>
+public class ConformanceTests : ConformanceTests<CosmosClient, AzureCosmosDBSettings>
 {
     protected override ServiceLifetime ServiceLifetime => ServiceLifetime.Singleton;
 
@@ -25,25 +24,25 @@ public class ConformanceTests : ConformanceTests<CosmosClient, MicrosoftAzureCos
                 "AccountEndpoint=https://example.documents.azure.com:443/;AccountKey=fake;")
         });
 
-    protected override void RegisterComponent(HostApplicationBuilder builder, Action<MicrosoftAzureCosmosSettings>? configure = null, string? key = null)
+    protected override void RegisterComponent(HostApplicationBuilder builder, Action<AzureCosmosDBSettings>? configure = null, string? key = null)
     {
         if (key is null)
         {
-            builder.AddAzureCosmosClient("cosmosdb", configure);
+            builder.AddAzureCosmosDB("cosmosdb", configure);
         }
         else
         {
-            builder.AddKeyedAzureCosmosClient(key, configure);
+            builder.AddKeyedAzureCosmosDB(key, configure);
         }
     }
 
-    protected override void SetHealthCheck(MicrosoftAzureCosmosSettings options, bool enabled)
+    protected override void SetHealthCheck(AzureCosmosDBSettings options, bool enabled)
         => throw new NotImplementedException();
 
-    protected override void SetTracing(MicrosoftAzureCosmosSettings options, bool enabled)
-        => options.DisableTracing = !enabled;
+    protected override void SetTracing(AzureCosmosDBSettings options, bool enabled)
+        => options.Tracing = enabled;
 
-    protected override void SetMetrics(MicrosoftAzureCosmosSettings options, bool enabled)
+    protected override void SetMetrics(AzureCosmosDBSettings options, bool enabled)
         => throw new NotImplementedException();
 
     protected override string ValidJsonConfig => """
@@ -53,7 +52,7 @@ public class ConformanceTests : ConformanceTests<CosmosClient, MicrosoftAzureCos
               "Azure": {
                 "Cosmos": {
                   "ConnectionString": "YOUR_CONNECTION_STRING",
-                  "DisableTracing": false
+                  "Tracing": true
                 }
               }
             }
@@ -71,34 +70,5 @@ public class ConformanceTests : ConformanceTests<CosmosClient, MicrosoftAzureCos
     {
         // TODO: Get rid of GetAwaiter().GetResult()
         service.ReadAccountAsync().GetAwaiter().GetResult();
-    }
-
-    [Fact]
-    public void CanAddMultipleKeyedServices()
-    {
-        var builder = Host.CreateEmptyApplicationBuilder(null);
-        builder.Configuration.AddInMemoryCollection([
-            new KeyValuePair<string, string?>("ConnectionStrings:cosmosdb1", "AccountEndpoint=https://example1.documents.azure.com:443/;AccountKey=fake;"),
-            new KeyValuePair<string, string?>("ConnectionStrings:cosmosdb2", "AccountEndpoint=https://example2.documents.azure.com:443/;AccountKey=fake;"),
-            new KeyValuePair<string, string?>("ConnectionStrings:cosmosdb3", "AccountEndpoint=https://example3.documents.azure.com:443/;AccountKey=fake;"),
-        ]);
-
-        builder.AddAzureCosmosClient("cosmosdb1");
-        builder.AddKeyedAzureCosmosClient("cosmosdb2");
-        builder.AddKeyedAzureCosmosClient("cosmosdb3");
-
-        using var host = builder.Build();
-
-        var client1 = host.Services.GetRequiredService<CosmosClient>();
-        var client2 = host.Services.GetRequiredKeyedService<CosmosClient>("cosmosdb2");
-        var client3 = host.Services.GetRequiredKeyedService<CosmosClient>("cosmosdb3");
-
-        Assert.NotSame(client1, client2);
-        Assert.NotSame(client1, client3);
-        Assert.NotSame(client2, client3);
-
-        Assert.Equal("https://example1.documents.azure.com/", client1.Endpoint.ToString());
-        Assert.Equal("https://example2.documents.azure.com/", client2.Endpoint.ToString());
-        Assert.Equal("https://example3.documents.azure.com/", client3.Endpoint.ToString());
     }
 }

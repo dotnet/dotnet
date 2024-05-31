@@ -81,7 +81,6 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
             throw new ArgumentException("message", nameof(method));
         }
 
-        var serializedParams = JToken.FromObject(parameters);
         var response = await _languageServiceBroker.RequestAsync(
             new GeneralRequest<TIn, TOut> { LanguageServerName = languageServerName, Method = method, Request = parameters },
             cancellationToken);

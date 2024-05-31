@@ -18,17 +18,7 @@ Aspire.Azure.Data.Tables:
 - Metric names:
   - none (currently not supported by the Azure SDK)
 
-Aspire.Azure.Messaging.EventHubs:
-- Log categories:
-  - "Azure.Core"
-  - "Azure.Identity"
-  - "Azure.Messaging.EventHubs"
-- Activity source names:
-  - "Azure.Messaging.EventHubs.*"
-- Metric names:
-  - none (currently not supported by the Azure SDK)
-
-  - Aspire.Azure.Messaging.ServiceBus:
+Aspire.Azure.Messaging.ServiceBus:
 - Log categories:
   - "Azure.Core"
   - "Azure.Identity"
@@ -79,7 +69,7 @@ Aspire.Confluent.Kafka:
 - Log categories:
   - "Aspire.Confluent.Kafka"
 - Activity source names:
-  - none (currently not supported by Confluent.Kafka library)
+  - N/A
 - Metric names:
   - "Aspire.Confluent.Kafka"
     - "messaging.kafka.consumer.queue.message_count"
@@ -100,7 +90,6 @@ Aspire.Microsoft.Azure.Cosmos:
 - Activity source names:
   - "Azure.Cosmos.Operation"
 - Metric names:
-  - none
 
 Aspire.Microsoft.Data.SqlClient:
 - Log categories:
@@ -108,7 +97,23 @@ Aspire.Microsoft.Data.SqlClient:
 - Activity source names:
   - "OpenTelemetry.Instrumentation.SqlClient"
 - Metric names:
-  - none
+  - "Microsoft.Data.SqlClient.EventSource"
+    - "active-hard-connections"
+    - "hard-connects"
+    - "hard-disconnects"
+    - "active-soft-connects"
+    - "soft-connects"
+    - "soft-disconnects"
+    - "number-of-non-pooled-connections"
+    - "number-of-pooled-connections"
+    - "number-of-active-connection-pool-groups"
+    - "number-of-inactive-connection-pool-groups"
+    - "number-of-active-connection-pools"
+    - "number-of-inactive-connection-pools"
+    - "number-of-active-connections"
+    - "number-of-free-connections"
+    - "number-of-stasis-connections"
+    - "number-of-reclaimed-connections"
 
 Aspire.MongoDB.Driver:
 - Log categories:
@@ -132,8 +137,19 @@ Aspire.Microsoft.EntityFrameworkCore.Cosmos:
   - "Microsoft.EntityFrameworkCore.Query",
 - Activity source names:
   - "Azure.Cosmos.Operation"
+  - "OpenTelemetry.Instrumentation.EntityFrameworkCore"
 - Metric names:
-  - none
+  - "Microsoft.EntityFrameworkCore":
+    - "ec_Microsoft_EntityFrameworkCore_active_db_contexts"
+    - "ec_Microsoft_EntityFrameworkCore_total_queries"
+    - "ec_Microsoft_EntityFrameworkCore_queries_per_second"
+    - "ec_Microsoft_EntityFrameworkCore_total_save_changes"
+    - "ec_Microsoft_EntityFrameworkCore_save_changes_per_second"
+    - "ec_Microsoft_EntityFrameworkCore_compiled_query_cache_hit_rate"
+    - "ec_Microsoft_Entity_total_execution_strategy_operation_failures"
+    - "ec_Microsoft_E_execution_strategy_operation_failures_per_second"
+    - "ec_Microsoft_EntityFramew_total_optimistic_concurrency_failures"
+    - "ec_Microsoft_EntityF_optimistic_concurrency_failures_per_second"
 
 Aspire.Microsoft.EntityFrameworkCore.SqlServer:
 - Log categories:
@@ -148,9 +164,19 @@ Aspire.Microsoft.EntityFrameworkCore.SqlServer:
   - "Microsoft.EntityFrameworkCore.Query"
   - "Microsoft.EntityFrameworkCore.Update"
 - Activity source names:
-  - "OpenTelemetry.Instrumentation.SqlClient"
+  - "OpenTelemetry.Instrumentation.EntityFrameworkCore"
 - Metric names:
-  - none
+  - "Microsoft.EntityFrameworkCore":
+    - "ec_Microsoft_EntityFrameworkCore_active_db_contexts"
+    - "ec_Microsoft_EntityFrameworkCore_total_queries"
+    - "ec_Microsoft_EntityFrameworkCore_queries_per_second"
+    - "ec_Microsoft_EntityFrameworkCore_total_save_changes"
+    - "ec_Microsoft_EntityFrameworkCore_save_changes_per_second"
+    - "ec_Microsoft_EntityFrameworkCore_compiled_query_cache_hit_rate"
+    - "ec_Microsoft_Entity_total_execution_strategy_operation_failures"
+    - "ec_Microsoft_E_execution_strategy_operation_failures_per_second"
+    - "ec_Microsoft_EntityFramew_total_optimistic_concurrency_failures"
+    - "ec_Microsoft_EntityF_optimistic_concurrency_failures_per_second"
 
 Aspire.MySqlConnector:
 - Log categories:
@@ -172,14 +198,6 @@ Aspire.MySqlConnector:
     - "db.client.connections.pending_requests"
     - "db.client.connections.timeouts"
     - "db.client.connections.usage"
-
-Aspire.NATS.Net:
-- Log categories:
-  - "NATS"
-- Activity source names:
-  - "NATS.Net"
-- Metric names:
-  - none (currently not supported by NATS.Net library)
 
 Aspire.Npgsql:
 - Log categories:
@@ -219,6 +237,17 @@ Aspire.Npgsql.EntityFrameworkCore.PostgreSQL:
 - Activity source names:
   - "Npgsql"
 - Metric names:
+  - "Microsoft.EntityFrameworkCore":
+    - "ec_Microsoft_EntityFrameworkCore_active_db_contexts"
+    - "ec_Microsoft_EntityFrameworkCore_total_queries"
+    - "ec_Microsoft_EntityFrameworkCore_queries_per_second"
+    - "ec_Microsoft_EntityFrameworkCore_total_save_changes"
+    - "ec_Microsoft_EntityFrameworkCore_save_changes_per_second"
+    - "ec_Microsoft_EntityFrameworkCore_compiled_query_cache_hit_rate"
+    - "ec_Microsoft_Entity_total_execution_strategy_operation_failures"
+    - "ec_Microsoft_E_execution_strategy_operation_failures_per_second"
+    - "ec_Microsoft_EntityFramew_total_optimistic_concurrency_failures"
+    - "ec_Microsoft_EntityF_optimistic_concurrency_failures_per_second"
   - "Npgsql":
     - "db.client.commands.bytes_read"
     - "db.client.commands.bytes_written"
@@ -244,9 +273,19 @@ Aspire.Oracle.EntityFrameworkCore:
   - "Microsoft.EntityFrameworkCore.Query"
   - "Microsoft.EntityFrameworkCore.Update"
 - Activity source names:
-  - none (currently not supported by Oracle.EntityFrameworkCore library)
+  - "OpenTelemetry.Instrumentation.EntityFrameworkCore"
 - Metric names:
-  - none
+  - "Microsoft.EntityFrameworkCore":
+    - "ec_Microsoft_EntityFrameworkCore_active_db_contexts"
+    - "ec_Microsoft_EntityFrameworkCore_total_queries"
+    - "ec_Microsoft_EntityFrameworkCore_queries_per_second"
+    - "ec_Microsoft_EntityFrameworkCore_total_save_changes"
+    - "ec_Microsoft_EntityFrameworkCore_save_changes_per_second"
+    - "ec_Microsoft_EntityFrameworkCore_compiled_query_cache_hit_rate"
+    - "ec_Microsoft_Entity_total_execution_strategy_operation_failures"
+    - "ec_Microsoft_E_execution_strategy_operation_failures_per_second"
+    - "ec_Microsoft_EntityFramew_total_optimistic_concurrency_failures"
+    - "ec_Microsoft_EntityF_optimistic_concurrency_failures_per_second"
 
 Aspire.Pomelo.EntityFrameworkCore.MySql:
 - Log categories:
@@ -263,6 +302,17 @@ Aspire.Pomelo.EntityFrameworkCore.MySql:
 - Activity source names:
   - "MySqlConnector"
 - Metric names:
+  - "Microsoft.EntityFrameworkCore":
+    - "ec_Microsoft_EntityFrameworkCore_active_db_contexts"
+    - "ec_Microsoft_EntityFrameworkCore_total_queries"
+    - "ec_Microsoft_EntityFrameworkCore_queries_per_second"
+    - "ec_Microsoft_EntityFrameworkCore_total_save_changes"
+    - "ec_Microsoft_EntityFrameworkCore_save_changes_per_second"
+    - "ec_Microsoft_EntityFrameworkCore_compiled_query_cache_hit_rate"
+    - "ec_Microsoft_Entity_total_execution_strategy_operation_failures"
+    - "ec_Microsoft_E_execution_strategy_operation_failures_per_second"
+    - "ec_Microsoft_EntityFramew_total_optimistic_concurrency_failures"
+    - "ec_Microsoft_EntityF_optimistic_concurrency_failures_per_second"
   - "MySqlConnector":
     - "db.client.connections.create_time"
     - "db.client.connections.use_time"
@@ -274,14 +324,6 @@ Aspire.Pomelo.EntityFrameworkCore.MySql:
     - "db.client.connections.timeouts"
     - "db.client.connections.usage"
 
-Aspire.Qdrant.Client:
-- Log categories:
-  "Qdrant.Client"
-- Activity source names:
-  - none (not currently supported by Qdrant.Client library) 
-- Metric names:
-  - none (currently not supported by Qdrant.Client library)
-
 Aspire.RabbitMQ.Client:
 - Log categories:
   - "RabbitMQ.Client"
@@ -289,14 +331,6 @@ Aspire.RabbitMQ.Client:
   - "Aspire.RabbitMQ.Client"
 - Metric names:
   - none (currently not supported by RabbitMQ.Client library)
-
-Aspire.Seq:
-- Log categories:
-  - "Seq"
-- Activity source names:
-  - N/A (Seq is a telemetry sink, not a telemetry source)
-- Metric names:
-  - N/A (Seq is a telemetry sink, not a telemetry source)
 
 Aspire.StackExchange.Redis:
 - Log categories:

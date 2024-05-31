@@ -12,11 +12,12 @@ using Xunit;
 
 namespace Aspire.Microsoft.EntityFrameworkCore.Cosmos.Tests;
 
-public class ConformanceTests : ConformanceTests<TestDbContext, EntityFrameworkCoreCosmosSettings>
+public class ConformanceTests : ConformanceTests<TestDbContext, EntityFrameworkCoreCosmosDBSettings>
 {
     protected override ServiceLifetime ServiceLifetime => ServiceLifetime.Singleton;
 
-    protected override string ActivitySourceName => "Azure.Cosmos.Operation";
+    // https://github.com/open-telemetry/opentelemetry-dotnet-contrib/blob/cb5b2193ef9cacc0b9ef699e085022577551bf85/src/OpenTelemetry.Instrumentation.EntityFrameworkCore/Implementation/EntityFrameworkDiagnosticListener.cs#L38
+    protected override string ActivitySourceName => "OpenTelemetry.Instrumentation.EntityFrameworkCore";
 
     protected override string[] RequiredLogCategories => new string[]
     {
@@ -33,17 +34,17 @@ public class ConformanceTests : ConformanceTests<TestDbContext, EntityFrameworkC
                 "Host=fake;Database=catalog"),
         });
 
-    protected override void RegisterComponent(HostApplicationBuilder builder, Action<EntityFrameworkCoreCosmosSettings>? configure = null, string? key = null)
+    protected override void RegisterComponent(HostApplicationBuilder builder, Action<EntityFrameworkCoreCosmosDBSettings>? configure = null, string? key = null)
         => builder.AddCosmosDbContext<TestDbContext>("cosmosdb", "TestDatabase", configure);
 
-    protected override void SetHealthCheck(EntityFrameworkCoreCosmosSettings options, bool enabled)
+    protected override void SetHealthCheck(EntityFrameworkCoreCosmosDBSettings options, bool enabled)
         => throw new NotImplementedException();
 
-    protected override void SetTracing(EntityFrameworkCoreCosmosSettings options, bool enabled)
-        => options.DisableTracing = !enabled;
+    protected override void SetTracing(EntityFrameworkCoreCosmosDBSettings options, bool enabled)
+        => options.Tracing = enabled;
 
-    protected override void SetMetrics(EntityFrameworkCoreCosmosSettings options, bool enabled)
-        => throw new NotImplementedException();
+    protected override void SetMetrics(EntityFrameworkCoreCosmosDBSettings options, bool enabled)
+        => options.Metrics = enabled;
 
     protected override string ValidJsonConfig => """
         {
@@ -52,7 +53,8 @@ public class ConformanceTests : ConformanceTests<TestDbContext, EntityFrameworkC
               "EntityFrameworkCore": {
                 "Cosmos": {
                   "ConnectionString": "YOUR_CONNECTION_STRING",
-                  "DisableTracing": false
+                  "Tracing": true,
+                  "Metrics": true
                 }
               }
             }

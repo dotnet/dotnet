@@ -163,15 +163,14 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
     {
         File.Delete(_filePath);
 
-        var innerServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
+        var server = RazorLanguageServerHost.GetTestAccessor().Server;
 
-        await innerServer.ShutdownAsync();
-        await innerServer.ExitAsync();
+        await server.ShutdownAsync();
+        await server.ExitAsync();
     }
 
     private void EnsureServicesInitialized()
     {
-        var languageServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
-        DocumentMappingService = languageServer.GetRequiredService<IRazorDocumentMappingService>();
+        DocumentMappingService = RazorLanguageServerHost.GetRequiredService<IRazorDocumentMappingService>();
     }
 }

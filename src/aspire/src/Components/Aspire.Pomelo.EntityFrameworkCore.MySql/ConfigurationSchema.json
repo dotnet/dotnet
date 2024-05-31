@@ -54,37 +54,33 @@
                 "MySql": {
                   "type": "object",
                   "properties": {
-                    "CommandTimeout": {
-                      "type": "integer",
-                      "description": "Gets or sets the time in seconds to wait for the command to execute."
-                    },
                     "ConnectionString": {
                       "type": "string",
                       "description": "Gets or sets the connection string of the MySQL database to connect to."
                     },
-                    "DisableHealthChecks": {
+                    "HealthChecks": {
                       "type": "boolean",
-                      "description": "Gets or sets a boolean value that indicates whether the database health check is disabled or not.",
-                      "default": false
+                      "description": "Gets or sets a boolean value that indicates whether the database health check is enabled or not.",
+                      "default": true
                     },
-                    "DisableMetrics": {
+                    "Metrics": {
                       "type": "boolean",
-                      "description": "Gets or sets a boolean value that indicates whether the OpenTelemetry metrics are disabled or not.",
-                      "default": false
+                      "description": "Gets or sets a boolean value that indicates whether the OpenTelemetry metrics are enabled or not.",
+                      "default": true
                     },
-                    "DisableRetry": {
+                    "Retry": {
                       "type": "boolean",
-                      "description": "Gets or sets whether retries should be disabled.",
-                      "default": false
-                    },
-                    "DisableTracing": {
-                      "type": "boolean",
-                      "description": "Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is disabled or not.",
-                      "default": false
+                      "description": "Gets or sets whether retries should be enabled.",
+                      "default": true
                     },
                     "ServerVersion": {
                       "type": "string",
                       "description": "Gets or sets the server version of the MySQL database to connect to."
+                    },
+                    "Tracing": {
+                      "type": "boolean",
+                      "description": "Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is enabled or not.",
+                      "default": true
                     }
                   },
                   "description": "Provides the client configuration settings for connecting to a MySQL database using EntityFrameworkCore."

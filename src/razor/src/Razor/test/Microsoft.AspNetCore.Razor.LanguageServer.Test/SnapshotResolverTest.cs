@@ -105,7 +105,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
     public async Task TryResolveAllProjects_OnlyMiscellaneousProjectContainsDocument_ReturnsTrue()
     {
         // Arrange
-        var documentFilePath = Path.Combine(TempDirectory.Instance.DirectoryPath, "document.cshtml");
+        var documentFilePath = Path.Combine(MiscFilesHostProject.Instance.DirectoryPath, "document.cshtml");
         var snapshotResolver = await CreateSnapshotResolverAsync(documentFilePath, addToMiscellaneous: true);
         await snapshotResolver.OnInitializedAsync(StrictMock.Of<ILspServices>(), DisposalToken);
 
@@ -166,7 +166,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
     public async Task TryResolveAllProjects_MiscellaneousOwnerProjectWithOthers_ReturnsTrue()
     {
         // Arrange
-        var documentFilePath = Path.Combine(TempDirectory.Instance.DirectoryPath, "file.cshtml");
+        var documentFilePath = Path.Combine(MiscFilesHostProject.Instance.DirectoryPath, "file.cshtml");
         documentFilePath = FilePathNormalizer.Normalize(documentFilePath);
 
         var projectManager = CreateProjectSnapshotManager();
@@ -225,7 +225,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
 
         // Act
         var project = snapshotResolver.GetMiscellaneousProject();
-        var inManager = projectManager.GetLoadedProject(snapshotResolver.MiscellaneousHostProject.Key);
+        var inManager = projectManager.GetLoadedProject(MiscFilesHostProject.Instance.Key);
 
         // Assert
         Assert.Same(inManager, project);
@@ -244,7 +244,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
 
         // Assert
         Assert.Single(projectManager.GetProjects());
-        Assert.Equal(snapshotResolver.MiscellaneousHostProject.FilePath, project.FilePath);
+        Assert.Equal(MiscFilesHostProject.Instance.FilePath, project.FilePath);
     }
 
     private async Task<SnapshotResolver> CreateSnapshotResolverAsync(string filePath, bool addToMiscellaneous = false)

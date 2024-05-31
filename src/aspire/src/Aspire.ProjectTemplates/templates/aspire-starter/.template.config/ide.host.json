@@ -2,7 +2,6 @@
   "$schema": "https://json.schemastore.org/ide.host",
   "icon": "ide/AspireStarter.ico",
   "displayOverviewPage": "0",
-  "disableHttpsSymbol": "NoHttps",
   "unsupportedHosts": [
     {
       "id": "vs",
@@ -12,11 +11,6 @@
   "symbolInfo": [
     {
       "id": "UseRedisCache",
-      "isVisible": true,
-      "persistenceScope": "templateGroup"
-    },
-    {
-      "id": "TestFramework",
       "isVisible": true,
       "persistenceScope": "templateGroup"
     }

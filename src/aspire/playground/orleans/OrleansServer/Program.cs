@@ -1,18 +1,35 @@
 using Orleans.Runtime;
-using OrleansContracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-builder.AddKeyedAzureTableClient("clustering");
-builder.AddKeyedAzureBlobClient("grainstate");
+builder.AddKeyedAzureTableService("clustering");
+builder.AddKeyedAzureBlobService("grainstate");
 builder.UseOrleans();
 
 var app = builder.Build();
 
-app.MapGet("/", () => "OK");
+app.MapGet("/counter/{grainId}", async (IClusterClient client, string grainId) =>
+{
+    var grain = client.GetGrain<ICounterGrain>(grainId);
+    return await grain.Get();
+});
+
+app.MapPost("/counter/{grainId}", async (IClusterClient client, string grainId) =>
+{
+    var grain = client.GetGrain<ICounterGrain>(grainId);
+    return await grain.Increment();
+});
+
+app.UseFileServer();
 
 await app.RunAsync();
+
+public interface ICounterGrain : IGrainWithStringKey
+{
+    ValueTask<int> Increment();
+    ValueTask<int> Get();
+}
 
 public sealed class CounterGrain(
     [PersistentState("count")] IPersistentState<int> count) : ICounterGrain

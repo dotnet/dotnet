@@ -9,8 +9,7 @@
           "scheme": "tcp",
           "protocol": "tcp",
           "transport": "tcp",
-          "port": 9999,
-          "targetPort": 6379
+          "containerPort": 6379
         }
       }
     },
@@ -20,16 +19,13 @@
       "env": {
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
-        "OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY": "in_memory",
-        "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true",
         "ConnectionStrings__redis": "{redis.connectionString}"
       },
       "bindings": {
         "http": {
           "scheme": "http",
           "protocol": "tcp",
-          "transport": "http",
-          "port": 12345
+          "transport": "http"
         },
         "https": {
           "scheme": "https",
@@ -44,16 +40,13 @@
       "env": {
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
-        "OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY": "in_memory",
-        "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true",
         "ConnectionStrings__redis": "{redis.connectionString}"
       },
       "bindings": {
         "http": {
           "scheme": "http",
           "protocol": "tcp",
-          "transport": "http",
-          "port": 13456
+          "transport": "http"
         }
       }
     }

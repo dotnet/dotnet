@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.AddAzureOpenAIClient("openai");
+builder.AddAzureOpenAI("openai");
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

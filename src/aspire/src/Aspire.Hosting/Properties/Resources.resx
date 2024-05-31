@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,18 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ContainerMountAnonymousVolumesReadOnlyExceptionMessage" xml:space="preserve">
-    <value>Anonymous volumes cannot be read-only.</value>
-  </data>
-  <data name="ContainerMountBindMountsRequireRootedPaths" xml:space="preserve">
-    <value>Bind mounts must specify an absolute path.</value>
-  </data>
-  <data name="ContainerMountBindMountsRequireSourceExceptionMessage" xml:space="preserve">
-    <value>Bind mounts must specify a source path.</value>
-  </data>
   <data name="ContainerRuntimePrerequisiteMissingExceptionMessage" xml:space="preserve">
-    <value>Container runtime '{0}' could not be found. The error from the container runtime check was: {1}.
-See https://aka.ms/dotnet/aspire/containers for more details on supported container runtimes.</value>
+    <value>Container runtime '{0}' could not be found. The error from the container runtime check was: {1}.</value>
   </data>
   <data name="ContainerRuntimeUnhealthyExceptionMessage" xml:space="preserve">
     <value>Container runtime '{0}' was found but appears to be unhealthy. The error from the container runtime check was {1}.</value>

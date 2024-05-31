@@ -15,7 +15,7 @@ namespace Aspire.Microsoft.EntityFrameworkCore.SqlServer.Tests;
 
 public class AspireSqlServerEFCoreSqlClientExtensionsTests
 {
-    private const string ConnectionString = "Data Source=fake;Database=master;Encrypt=True";
+    private const string ConnectionString = "Data Source=fake;Database=master";
 
     [Fact]
     public void ReadsFromConnectionStringsCorrectly()
@@ -27,7 +27,7 @@ public class AspireSqlServerEFCoreSqlClientExtensionsTests
 
         builder.AddSqlServerDbContext<TestDbContext>("sqlconnection");
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<TestDbContext>();
 
         Assert.Equal(ConnectionString, context.Database.GetDbConnection().ConnectionString);
@@ -43,7 +43,7 @@ public class AspireSqlServerEFCoreSqlClientExtensionsTests
 
         builder.AddSqlServerDbContext<TestDbContext>("sqlconnection", settings => settings.ConnectionString = ConnectionString);
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<TestDbContext>();
 
         var actualConnectionString = context.Database.GetDbConnection().ConnectionString;
@@ -63,7 +63,7 @@ public class AspireSqlServerEFCoreSqlClientExtensionsTests
 
         builder.AddSqlServerDbContext<TestDbContext>("sqlconnection");
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<TestDbContext>();
 
         var actualConnectionString = context.Database.GetDbConnection().ConnectionString;
@@ -78,8 +78,8 @@ public class AspireSqlServerEFCoreSqlClientExtensionsTests
         var builder = Host.CreateEmptyApplicationBuilder(null);
         builder.Configuration.AddInMemoryCollection([
             new KeyValuePair<string, string?>("ConnectionStrings:sqlconnection", ConnectionString),
-            new KeyValuePair<string, string?>("Aspire:Microsoft:EntityFrameworkCore:SqlServer:DisableRetry", "false"),
-            new KeyValuePair<string, string?>("Aspire:Microsoft:EntityFrameworkCore:SqlServer:CommandTimeout", "608")
+            new KeyValuePair<string, string?>("Aspire:Microsoft:EntityFrameworkCore:SqlServer:Retry", "true"),
+            new KeyValuePair<string, string?>("Aspire:Microsoft:EntityFrameworkCore:SqlServer:Timeout", "608")
         ]);
 
         builder.AddSqlServerDbContext<TestDbContext>("sqlconnection", configureDbContextOptions: optionsBuilder =>
@@ -90,7 +90,7 @@ public class AspireSqlServerEFCoreSqlClientExtensionsTests
             });
         });
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<TestDbContext>();
 
 #pragma warning disable EF1001 // Internal EF Core API usage.
@@ -123,7 +123,7 @@ public class AspireSqlServerEFCoreSqlClientExtensionsTests
         var builder = Host.CreateEmptyApplicationBuilder(null);
         builder.Configuration.AddInMemoryCollection([
             new KeyValuePair<string, string?>("ConnectionStrings:sqlconnection", ConnectionString),
-            new KeyValuePair<string, string?>("Aspire:Microsoft:EntityFrameworkCore:SqlServer:DisableRetry", "true"),
+            new KeyValuePair<string, string?>("Aspire:Microsoft:EntityFrameworkCore:SqlServer:Retry", "false"),
         ]);
 
         builder.AddSqlServerDbContext<TestDbContext>("sqlconnection", configureDbContextOptions: optionsBuilder =>
@@ -134,7 +134,7 @@ public class AspireSqlServerEFCoreSqlClientExtensionsTests
             });
         });
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<TestDbContext>();
 
 #pragma warning disable EF1001 // Internal EF Core API usage.
@@ -155,82 +155,13 @@ public class AspireSqlServerEFCoreSqlClientExtensionsTests
 #pragma warning restore EF1001 // Internal EF Core API usage.
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void CanConfigureCommandTimeout(bool useSettings)
-    {
-        var builder = Host.CreateEmptyApplicationBuilder(null);
-        builder.Configuration.AddInMemoryCollection([
-            new KeyValuePair<string, string?>("ConnectionStrings:sqlconnection", ConnectionString)
-        ]);
-        if (!useSettings)
-        {
-            builder.Configuration.AddInMemoryCollection([
-                new KeyValuePair<string, string?>("Aspire:Microsoft:EntityFrameworkCore:SqlServer:CommandTimeout", "608")
-            ]);
-        }
-
-        builder.AddSqlServerDbContext<TestDbContext>("sqlconnection",
-                configureDbContextOptions: optionsBuilder => optionsBuilder.UseSqlServer(),
-                configureSettings: useSettings ? settings => settings.CommandTimeout = 608 : null);
-
-        using var host = builder.Build();
-        var context = host.Services.GetRequiredService<TestDbContext>();
-
-#pragma warning disable EF1001 // Internal EF Core API usage.
-
-        var extension = context.Options.FindExtension<SqlServerOptionsExtension>();
-        Assert.NotNull(extension);
-
-        // ensure the command timeout was respected
-        Assert.Equal(608, extension.CommandTimeout);
-
-#pragma warning restore EF1001 // Internal EF Core API usage.
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void CommandTimeoutFromBuilderWinsOverOthers(bool useSettings)
-    {
-        var builder = Host.CreateEmptyApplicationBuilder(null);
-        builder.Configuration.AddInMemoryCollection([
-            new KeyValuePair<string, string?>("ConnectionStrings:sqlconnection", ConnectionString)
-        ]);
-        if (!useSettings)
-        {
-            builder.Configuration.AddInMemoryCollection([
-                new KeyValuePair<string, string?>("Aspire:Microsoft:EntityFrameworkCore:SqlServer:CommandTimeout", "400")
-            ]);
-        }
-
-        builder.AddSqlServerDbContext<TestDbContext>("sqlconnection",
-                configureDbContextOptions: optionsBuilder =>
-                    optionsBuilder.UseSqlServer(builder => builder.CommandTimeout(123)),
-                configureSettings: useSettings ? settings => settings.CommandTimeout = 300 : null);
-
-        using var host = builder.Build();
-        var context = host.Services.GetRequiredService<TestDbContext>();
-
-#pragma warning disable EF1001 // Internal EF Core API usage.
-
-        var extension = context.Options.FindExtension<SqlServerOptionsExtension>();
-        Assert.NotNull(extension);
-
-        // ensure the command timeout from builder was respected
-        Assert.Equal(123, extension.CommandTimeout);
-
-#pragma warning restore EF1001 // Internal EF Core API usage.
-    }
-
     /// <summary>
     /// Verifies that two different DbContexts can be registered with different connection strings.
     /// </summary>
     [Fact]
     public void CanHave2DbContexts()
     {
-        const string connectionString2 = "Data Source=fake2;Database=master2;Encrypt=True";
+        const string connectionString2 = "Data Source=fake2;Database=master2";
 
         var builder = Host.CreateEmptyApplicationBuilder(null);
         builder.Configuration.AddInMemoryCollection([
@@ -241,7 +172,7 @@ public class AspireSqlServerEFCoreSqlClientExtensionsTests
         builder.AddSqlServerDbContext<TestDbContext>("sqlconnection");
         builder.AddSqlServerDbContext<TestDbContext2>("sqlconnection2");
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<TestDbContext>();
         var context2 = host.Services.GetRequiredService<TestDbContext2>();
 
@@ -250,53 +181,6 @@ public class AspireSqlServerEFCoreSqlClientExtensionsTests
 
         actualConnectionString = context2.Database.GetDbConnection().ConnectionString;
         Assert.Equal(connectionString2, actualConnectionString);
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void ThrowsWhenDbContextIsRegisteredBeforeAspireComponent(bool useServiceType)
-    {
-        var builder = Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings { EnvironmentName = Environments.Development });
-        builder.Configuration.AddInMemoryCollection([
-            new KeyValuePair<string, string?>("ConnectionStrings:sqlconnection", ConnectionString)
-        ]);
-
-        if (useServiceType)
-        {
-            builder.Services.AddDbContextPool<ITestDbContext, TestDbContext>(options => options.UseSqlServer(ConnectionString));
-        }
-        else
-        {
-            builder.Services.AddDbContextPool<TestDbContext>(options => options.UseSqlServer(ConnectionString));
-        }
-
-        var exception = Assert.Throws<InvalidOperationException>(() => builder.AddSqlServerDbContext<TestDbContext>("sqlconnection"));
-        Assert.Equal("DbContext<TestDbContext> is already registered. Please ensure 'services.AddDbContext<TestDbContext>()' is not used when calling 'AddSqlServerDbContext()' or use the corresponding 'Enrich' method.", exception.Message);
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void DoesntThrowWhenDbContextIsRegisteredBeforeAspireComponentProduction(bool useServiceType)
-    {
-        var builder = Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings { EnvironmentName = Environments.Production });
-        builder.Configuration.AddInMemoryCollection([
-            new KeyValuePair<string, string?>("ConnectionStrings:sqlconnection", ConnectionString)
-        ]);
-
-        if (useServiceType)
-        {
-            builder.Services.AddDbContextPool<ITestDbContext, TestDbContext>(options => options.UseSqlServer(ConnectionString));
-        }
-        else
-        {
-            builder.Services.AddDbContextPool<TestDbContext>(options => options.UseSqlServer(ConnectionString));
-        }
-
-        var exception = Record.Exception(() => builder.AddSqlServerDbContext<TestDbContext>("sqlconnection"));
-
-        Assert.Null(exception);
     }
 
     public class TestDbContext2 : DbContext

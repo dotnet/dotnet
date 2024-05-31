@@ -14,13 +14,13 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -62,7 +62,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
     {
         EnsureServicesInitialized();
 
-        var loggerFactory = RazorLanguageServer.GetRequiredService<ILoggerFactory>();
+        var loggerFactory = RazorLanguageServerHost.GetRequiredService<ILoggerFactory>();
 
         var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "ComponentApp");
         ProjectFilePath = Path.Combine(projectRoot, "ComponentApp.csproj");
@@ -75,7 +75,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
         var version = 1;
         DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, projectContext: null, version);
 
-        var razorOptionsMonitor = RazorLanguageServer.GetRequiredService<RazorLSPOptionsMonitor>();
+        var razorOptionsMonitor = RazorLanguageServerHost.GetRequiredService<RazorLSPOptionsMonitor>();
         var clientCapabilitiesService = new BenchmarkClientCapabilitiesService(new VSInternalClientCapabilities() { SupportsVisualStudioExtensions = true });
         var razorSemanticTokensLegendService = new RazorSemanticTokensLegendService(clientCapabilitiesService);
         SemanticTokensRangeEndpoint = new SemanticTokensRangeEndpoint(RazorSemanticTokenService, razorSemanticTokensLegendService, razorOptionsMonitor, telemetryReporter: null);
@@ -90,8 +90,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
         var documentVersion = 1;
         VersionCache.TrackDocumentVersion(DocumentSnapshot, documentVersion);
 
-        var languageServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
-        RequestContext = new RazorRequestContext(DocumentContext, languageServer.GetLspServices(), "lsp/method", uri: null);
+        RequestContext = new RazorRequestContext(DocumentContext, RazorLanguageServerHost.GetRequiredService<ILspServices>(), "lsp/method", uri: null);
 
         var random = new Random();
         var codeDocument = await DocumentContext.GetCodeDocumentAsync(CancellationToken);
@@ -124,9 +123,10 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
     [GlobalCleanup]
     public async Task CleanupServerAsync()
     {
-        var innerServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
-        await innerServer.ShutdownAsync();
-        await innerServer.ExitAsync();
+        var server = RazorLanguageServerHost.GetTestAccessor().Server;
+
+        await server.ShutdownAsync();
+        await server.ExitAsync();
     }
 
     protected internal override void Builder(IServiceCollection collection)
@@ -136,9 +136,8 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
 
     private void EnsureServicesInitialized()
     {
-        var languageServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
-        RazorSemanticTokenService = languageServer.GetRequiredService<IRazorSemanticTokensInfoService>();
-        VersionCache = languageServer.GetRequiredService<IDocumentVersionCache>();
+        RazorSemanticTokenService = RazorLanguageServerHost.GetRequiredService<IRazorSemanticTokensInfoService>();
+        VersionCache = RazorLanguageServerHost.GetRequiredService<IDocumentVersionCache>();
     }
 
     internal class TestCustomizableRazorSemanticTokensInfoService : RazorSemanticTokensInfoService

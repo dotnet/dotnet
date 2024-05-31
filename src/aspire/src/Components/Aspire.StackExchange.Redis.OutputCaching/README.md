@@ -77,8 +77,8 @@ The Redis OutputCache component supports [Microsoft.Extensions.Configuration](ht
           "ConnectTimeout": 3000,
           "ConnectRetry": 2
         },
-        "DisableHealthChecks": true,
-        "DisableTracing": false
+        "HealthChecks": false,
+        "Tracing": true
       }
     }
   }
@@ -90,7 +90,7 @@ The Redis OutputCache component supports [Microsoft.Extensions.Configuration](ht
 You can also pass the `Action<StackExchangeRedisSettings> configureSettings` delegate to set up some or all the options inline, for example to disable health checks from code:
 
 ```csharp
-builder.AddRedisOutputCache("cache", settings => settings.DisableHealthChecks = true);
+builder.AddRedisOutputCache("cache", settings => settings.HealthChecks = false);
 ```
 
 You can also setup the [ConfigurationOptions](https://stackexchange.github.io/StackExchange.Redis/Configuration.html#configuration-options) using the `Action<ConfigurationOptions> configureOptions` delegate parameter of the `AddRedisOutputCache` method. For example to set the connection timeout:
@@ -101,13 +101,7 @@ builder.AddRedisOutputCache("cache", configureOptions: options => options.Connec
 
 ## AppHost extensions
 
-In your AppHost project, install the `Aspire.Hosting.Redis` library with [NuGet](https://www.nuget.org):
-
-```dotnetcli
-dotnet add package Aspire.Hosting.Redis
-```
-
-Then, in the _Program.cs_ file of `AppHost`, register a Redis server and consume the connection using the following methods:
+In your AppHost project, register a Redis server and consume the connection using the following methods:
 
 ```csharp
 var redis = builder.AddRedis("cache");

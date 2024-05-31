@@ -83,6 +83,21 @@ internal static partial class ProcessUtil
 
         var processLifetimeTcs = new TaskCompletionSource<ProcessResult>();
 
+        process.Exited += (_, e) =>
+        {
+            startupComplete.Wait();
+
+            if (processSpec.ThrowOnNonZeroReturnCode && process.ExitCode != 0)
+            {
+                processLifetimeTcs.TrySetException(new InvalidOperationException(
+                    $"Command {processSpec.ExecutablePath} {processSpec.Arguments} returned non-zero exit code {process.ExitCode}"));
+            }
+            else
+            {
+                processLifetimeTcs.TrySetResult(new ProcessResult(process.ExitCode));
+            }
+        };
+
         try
         {
 #if ASPIRE_EVENTSOURCE
@@ -93,21 +108,6 @@ internal static partial class ProcessUtil
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
             processSpec.OnStart?.Invoke(process.Id);
-
-            process.WaitForExitAsync().ContinueWith(t =>
-            {
-                startupComplete.Wait();
-
-                if (processSpec.ThrowOnNonZeroReturnCode && process.ExitCode != 0)
-                {
-                    processLifetimeTcs.TrySetException(new InvalidOperationException(
-                        $"Command {processSpec.ExecutablePath} {processSpec.Arguments} returned non-zero exit code {process.ExitCode}"));
-                }
-                else
-                {
-                    processLifetimeTcs.TrySetResult(new ProcessResult(process.ExitCode));
-                }
-            }, TaskScheduler.Default);
         }
         finally
         {

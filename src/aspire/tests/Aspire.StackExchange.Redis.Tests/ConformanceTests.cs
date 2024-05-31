@@ -1,29 +1,26 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Aspire.Components.Common.Tests;
 using Aspire.Components.ConformanceTests;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using StackExchange.Redis;
-using Xunit;
 
 namespace Aspire.StackExchange.Redis.Tests;
 
-public class ConformanceTests : ConformanceTests<IConnectionMultiplexer, StackExchangeRedisSettings>, IClassFixture<RedisContainerFixture>
+public class ConformanceTests : ConformanceTests<IConnectionMultiplexer, StackExchangeRedisSettings>
 {
-    private readonly RedisContainerFixture _containerFixture;
-
-    protected string ConnectionString => _containerFixture.GetConnectionString();
-
     protected override ServiceLifetime ServiceLifetime => ServiceLifetime.Singleton;
 
-    protected override bool CanConnectToServer => RequiresDockerTheoryAttribute.IsSupported;
+    // IConnectionMultiplexer can be created only via call to ConnectionMultiplexer.Connect
+    protected override bool CanCreateClientWithoutConnectingToServer => false;
+
+    protected override bool CanConnectToServer => AspireRedisHelpers.CanConnectToServer;
 
     protected override bool SupportsKeyedRegistrations => true;
 
-    protected override string[] RequiredLogCategories => ["StackExchange.Redis.ConnectionMultiplexer"];
+    protected override string[] RequiredLogCategories => ["StackExchange.Redis"];
 
     // https://github.com/open-telemetry/opentelemetry-dotnet-contrib/blob/e4cb523a4a3592e1a1adf30f3596025bfd8978e3/src/OpenTelemetry.Instrumentation.StackExchangeRedis/StackExchangeRedisConnectionInstrumentation.cs#L34
     protected override string ActivitySourceName => "OpenTelemetry.Instrumentation.StackExchangeRedis";
@@ -34,12 +31,12 @@ public class ConformanceTests : ConformanceTests<IConnectionMultiplexer, StackEx
             "StackExchange": {
               "Redis": {
                 "ConnectionString": "YOUR_ENDPOINT",
-                "DisableHealthChecks": false,
-                "DisableTracing": true,
+                "HealthChecks": true,
+                "Tracing": false,
                 "ConfigurationOptions": {
                   "CheckCertificateRevocation": true,
                   "ConnectTimeout": 5,
-                  "HeartbeatInterval": "00:00:02",
+                  "HeartbeatInterval": "PT5S",
                   "Ssl" : true,
                   "SslProtocols" : "Tls11"
                 }
@@ -54,43 +51,31 @@ public class ConformanceTests : ConformanceTests<IConnectionMultiplexer, StackEx
             ("""{"Aspire": { "StackExchange": { "Redis":{ "ConfigurationOptions": "YOUR_OPTION"}}}}""", "Value is \"string\" but should be \"object\""),
             ("""{"Aspire": { "StackExchange": { "Redis":{ "ConfigurationOptions": { "Proxy": "Fast"}}}}}""", "Value should match one of the values specified by the enum"),
             ("""{"Aspire": { "StackExchange": { "Redis":{ "ConfigurationOptions": { "SslProtocols": "Fast"}}}}}""", "Value should match one of the values specified by the enum"),
-            ("""{"Aspire": { "StackExchange": { "Redis":{ "ConfigurationOptions": { "HeartbeatInterval": "3S"}}}}}""", "The string value is not a match for the indicated regular expression")
+            ("""{"Aspire": { "StackExchange": { "Redis":{ "ConfigurationOptions": { "HeartbeatInterval": "3S"}}}}}""", "Value does not match format \"duration\"")
         };
 
-    public ConformanceTests(RedisContainerFixture containerFixture)
-    {
-        _containerFixture = containerFixture;
-    }
-
-    protected override void PopulateConfiguration(ConfigurationManager configuration, string? key = null)
-    {
-        string connectionString = RequiresDockerTheoryAttribute.IsSupported
-                                    ? _containerFixture.GetConnectionString()
-                                    : "localhost";
-        configuration.AddInMemoryCollection([
-            new KeyValuePair<string, string?>(ConformanceTests.CreateConfigKey("Aspire:StackExchange:Redis", key, "ConnectionString"), connectionString)
-        ]);
-    }
+    protected override void PopulateConfiguration(ConfigurationManager configuration, string? key = null) =>
+        AspireRedisHelpers.PopulateConfiguration(configuration, key);
 
     protected override void RegisterComponent(HostApplicationBuilder builder, Action<StackExchangeRedisSettings>? configure = null, string? key = null)
     {
         if (key is null)
         {
-            builder.AddRedisClient("redis", configure);
+            builder.AddRedis("redis", configure);
         }
         else
         {
-            builder.AddKeyedRedisClient(key, configure);
+            builder.AddKeyedRedis(key, configure);
         }
     }
 
-    protected override void SetHealthCheck(StackExchangeRedisSettings options, bool enabled)
-        => options.DisableHealthChecks = !enabled;
+    protected override void SetHealthCheck(StackExchangeRedisSettings settings, bool enabled)
+        => settings.HealthChecks = enabled;
 
-    protected override void SetTracing(StackExchangeRedisSettings options, bool enabled)
-        => options.DisableTracing = !enabled;
+    protected override void SetTracing(StackExchangeRedisSettings settings, bool enabled)
+        => settings.Tracing = enabled;
 
-    protected override void SetMetrics(StackExchangeRedisSettings options, bool enabled)
+    protected override void SetMetrics(StackExchangeRedisSettings settings, bool enabled)
         => throw new NotImplementedException();
 
     protected override void TriggerActivity(IConnectionMultiplexer service)

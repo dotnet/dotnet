@@ -14,39 +14,34 @@ public sealed class NpgsqlEntityFrameworkCorePostgreSQLSettings
     public string? ConnectionString { get; set; }
 
     /// <summary>
-    /// Gets or sets whether retries should be disabled.
+    /// Gets or sets whether retries should be enabled.
     /// </summary>
     /// <value>
-    /// The default value is <see langword="false"/>.
+    /// The default value is <see langword="true"/>.
     /// </value>
-    public bool DisableRetry { get; set; }
+    public bool Retry { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets a boolean value that indicates whether the database health check is disabled or not.
+    /// Gets or sets a boolean value that indicates whether the database health check is enabled or not.
     /// </summary>
     /// <value>
-    /// The default value is <see langword="false"/>.
+    /// The default value is <see langword="true"/>.
     /// </value>
-    public bool DisableHealthChecks { get; set; }
+    public bool HealthChecks { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is disabled or not.
+    /// Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is enabled or not.
     /// </summary>
     /// <value>
-    /// The default value is <see langword="false"/>.
+    /// The default value is <see langword="true"/>.
     /// </value>
-    public bool DisableTracing { get; set; }
+    public bool Tracing { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets a boolean value that indicates whether the OpenTelemetry metrics are disabled or not.
+    /// Gets or sets a boolean value that indicates whether the OpenTelemetry metrics are enabled or not.
     /// </summary>
     /// <value>
-    /// The default value is <see langword="false"/>.
+    /// The default value is <see langword="true"/>.
     /// </value>
-    public bool DisableMetrics { get; set; }
-
-    /// <summary>
-    /// Gets or sets the time in seconds to wait for the command to execute.
-    /// </summary>
-    public int? CommandTimeout { get; set; }
+    public bool Metrics { get; set; } = true;
 }

@@ -35,7 +35,7 @@ public class AspireEFPostgreSqlExtensionsTests
 
         builder.AddNpgsqlDbContext<TestDbContext>("npgsql", configureDbContextOptions: ConfigureDbContextOptionsBuilderForTesting);
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<TestDbContext>();
 
         Assert.Equal(ConnectionString, context.Database.GetDbConnection().ConnectionString);
@@ -53,7 +53,7 @@ public class AspireEFPostgreSqlExtensionsTests
             settings => settings.ConnectionString = ConnectionString,
             configureDbContextOptions: ConfigureDbContextOptionsBuilderForTesting);
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<TestDbContext>();
 
         var actualConnectionString = context.Database.GetDbConnection().ConnectionString;
@@ -73,7 +73,7 @@ public class AspireEFPostgreSqlExtensionsTests
 
         builder.AddNpgsqlDbContext<TestDbContext>("npgsql", configureDbContextOptions: ConfigureDbContextOptionsBuilderForTesting);
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<TestDbContext>();
 
         var actualConnectionString = context.Database.GetDbConnection().ConnectionString;
@@ -100,7 +100,7 @@ public class AspireEFPostgreSqlExtensionsTests
             });
         });
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<TestDbContext>();
 
 #pragma warning disable EF1001 // Internal EF Core API usage.
@@ -130,7 +130,7 @@ public class AspireEFPostgreSqlExtensionsTests
         var builder = Host.CreateEmptyApplicationBuilder(null);
         builder.Configuration.AddInMemoryCollection([
             new KeyValuePair<string, string?>("ConnectionStrings:npgsql", ConnectionString),
-            new KeyValuePair<string, string?>("Aspire:Npgsql:EntityFrameworkCore:PostgreSQL:DisableRetry", "true")
+            new KeyValuePair<string, string?>("Aspire:Npgsql:EntityFrameworkCore:PostgreSQL:Retry", "false")
         ]);
 
         builder.AddNpgsqlDbContext<TestDbContext>("npgsql", configureDbContextOptions: optionsBuilder =>
@@ -142,7 +142,7 @@ public class AspireEFPostgreSqlExtensionsTests
             });
         });
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<TestDbContext>();
 
 #pragma warning disable EF1001 // Internal EF Core API usage.
@@ -159,74 +159,6 @@ public class AspireEFPostgreSqlExtensionsTests
 
         // ensure no retry strategy was registered
         Assert.Null(extension.ExecutionStrategyFactory);
-
-#pragma warning restore EF1001 // Internal EF Core API usage.
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void CanConfigureCommandTimeout(bool useSettings)
-    {
-        var builder = Host.CreateEmptyApplicationBuilder(null);
-        builder.Configuration.AddInMemoryCollection([
-            new KeyValuePair<string, string?>("ConnectionStrings:npgsql", ConnectionString)
-        ]);
-        if (!useSettings)
-        {
-            builder.Configuration.AddInMemoryCollection([
-                new KeyValuePair<string, string?>("Aspire:Npgsql:EntityFrameworkCore:PostgreSQL:CommandTimeout", "123")
-            ]);
-        }
-
-        builder.AddNpgsqlDbContext<TestDbContext>("npgsql",
-            configureDbContextOptions: optionsBuilder => optionsBuilder.UseNpgsql(),
-            configureSettings: useSettings ? settings => settings.CommandTimeout = 123 : null);
-
-        using var host = builder.Build();
-        var context = host.Services.GetRequiredService<TestDbContext>();
-
-#pragma warning disable EF1001 // Internal EF Core API usage.
-
-        var extension = context.Options.FindExtension<NpgsqlOptionsExtension>();
-        Assert.NotNull(extension);
-
-        // ensure the command timeout was respected
-        Assert.Equal(123, extension.CommandTimeout);
-
-#pragma warning restore EF1001 // Internal EF Core API usage.
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void CommandTimeoutFromBuilderWinsOverOthers(bool useSettings)
-    {
-        var builder = Host.CreateEmptyApplicationBuilder(null);
-        builder.Configuration.AddInMemoryCollection([
-            new KeyValuePair<string, string?>("ConnectionStrings:npgsql", ConnectionString)
-        ]);
-        if (!useSettings)
-        {
-            builder.Configuration.AddInMemoryCollection([
-                new KeyValuePair<string, string?>("Aspire:Npgsql:EntityFrameworkCore:PostgreSQL:CommandTimeout", "400")
-            ]);
-        }
-
-        builder.AddNpgsqlDbContext<TestDbContext>("npgsql",
-            configureDbContextOptions: optionsBuilder => optionsBuilder.UseNpgsql(builder => builder.CommandTimeout(123)),
-            configureSettings: useSettings ? settings => settings.CommandTimeout = 300 : null);
-
-        using var host = builder.Build();
-        var context = host.Services.GetRequiredService<TestDbContext>();
-
-#pragma warning disable EF1001 // Internal EF Core API usage.
-
-        var extension = context.Options.FindExtension<NpgsqlOptionsExtension>();
-        Assert.NotNull(extension);
-
-        // ensure the command timeout was respected
-        Assert.Equal(123, extension.CommandTimeout);
 
 #pragma warning restore EF1001 // Internal EF Core API usage.
     }
@@ -248,7 +180,7 @@ public class AspireEFPostgreSqlExtensionsTests
         builder.AddNpgsqlDbContext<TestDbContext>("npgsql");
         builder.AddNpgsqlDbContext<TestDbContext2>("npgsql2");
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<TestDbContext>();
         var context2 = host.Services.GetRequiredService<TestDbContext2>();
 
@@ -257,53 +189,6 @@ public class AspireEFPostgreSqlExtensionsTests
 
         actualConnectionString = context2.Database.GetDbConnection().ConnectionString;
         Assert.Equal(connectionString2, actualConnectionString);
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void ThrowsWhenDbContextIsRegisteredBeforeAspireComponent(bool useServiceType)
-    {
-        var builder = Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings { EnvironmentName = Environments.Development });
-        builder.Configuration.AddInMemoryCollection([
-            new KeyValuePair<string, string?>("ConnectionStrings:npgsql", ConnectionString)
-        ]);
-
-        if (useServiceType)
-        {
-            builder.Services.AddDbContextPool<ITestDbContext, TestDbContext>(options => options.UseNpgsql(ConnectionString));
-        }
-        else
-        {
-            builder.Services.AddDbContextPool<TestDbContext>(options => options.UseNpgsql(ConnectionString));
-        }
-
-        var exception = Assert.Throws<InvalidOperationException>(() => builder.AddNpgsqlDbContext<TestDbContext>("npgsql"));
-        Assert.Equal("DbContext<TestDbContext> is already registered. Please ensure 'services.AddDbContext<TestDbContext>()' is not used when calling 'AddNpgsqlDbContext()' or use the corresponding 'Enrich' method.", exception.Message);
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void DoesntThrowWhenDbContextIsRegisteredBeforeAspireComponentProduction(bool useServiceType)
-    {
-        var builder = Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings { EnvironmentName = Environments.Production });
-        builder.Configuration.AddInMemoryCollection([
-            new KeyValuePair<string, string?>("ConnectionStrings:npgsql", ConnectionString)
-        ]);
-
-        if (useServiceType)
-        {
-            builder.Services.AddDbContextPool<ITestDbContext, TestDbContext>(options => options.UseNpgsql(ConnectionString));
-        }
-        else
-        {
-            builder.Services.AddDbContextPool<TestDbContext>(options => options.UseNpgsql(ConnectionString));
-        }
-
-        var exception = Record.Exception(() => builder.AddNpgsqlDbContext<TestDbContext>("npgsql"));
-
-        Assert.Null(exception);
     }
 
     public class TestDbContext2 : DbContext

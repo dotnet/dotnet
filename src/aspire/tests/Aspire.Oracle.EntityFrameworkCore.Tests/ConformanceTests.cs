@@ -3,6 +3,7 @@
 
 using Aspire.Components.Common.Tests;
 using Aspire.Components.ConformanceTests;
+using Microsoft.DotNet.RemoteExecutor;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +18,8 @@ public class ConformanceTests : ConformanceTests<TestDbContext, OracleEntityFram
 
     protected override ServiceLifetime ServiceLifetime => ServiceLifetime.Singleton;
 
-    protected override string ActivitySourceName => throw new NotImplementedException();
+    // https://github.com/open-telemetry/opentelemetry-dotnet-contrib/blob/cb5b2193ef9cacc0b9ef699e085022577551bf85/src/OpenTelemetry.Instrumentation.EntityFrameworkCore/Implementation/EntityFrameworkDiagnosticListener.cs#L38
+    protected override string ActivitySourceName => "OpenTelemetry.Instrumentation.EntityFrameworkCore";
 
     protected override string[] RequiredLogCategories => new string[]
     {
@@ -40,7 +42,9 @@ public class ConformanceTests : ConformanceTests<TestDbContext, OracleEntityFram
             "Oracle": {
               "EntityFrameworkCore": {
                 "ConnectionString": "YOUR_CONNECTION_STRING",
-                "DisableHealthChecks": true
+                "HealthChecks": false,
+                "Tracing": true,
+                "Metrics": true
               }
             }
           }
@@ -49,8 +53,10 @@ public class ConformanceTests : ConformanceTests<TestDbContext, OracleEntityFram
 
     protected override (string json, string error)[] InvalidJsonToErrorMessage => new[]
         {
-            ("""{"Aspire": { "Oracle": { "EntityFrameworkCore":{ "DisableRetry": "5"}}}}""", "Value is \"string\" but should be \"boolean\""),
-            ("""{"Aspire": { "Oracle": { "EntityFrameworkCore":{ "DisableHealthChecks": "true"}}}}""", "Value is \"string\" but should be \"boolean\""),
+            ("""{"Aspire": { "Oracle": { "EntityFrameworkCore":{ "Retry": "5"}}}}""", "Value is \"string\" but should be \"boolean\""),
+            ("""{"Aspire": { "Oracle": { "EntityFrameworkCore":{ "HealthChecks": "false"}}}}""", "Value is \"string\" but should be \"boolean\""),
+            ("""{"Aspire": { "Oracle": { "EntityFrameworkCore":{ "Tracing": "false"}}}}""", "Value is \"string\" but should be \"boolean\""),
+            ("""{"Aspire": { "Oracle": { "EntityFrameworkCore":{ "Metrics": "false"}}}}""", "Value is \"string\" but should be \"boolean\""),
         };
 
     protected override void PopulateConfiguration(ConfigurationManager configuration, string? key = null)
@@ -63,13 +69,13 @@ public class ConformanceTests : ConformanceTests<TestDbContext, OracleEntityFram
         => builder.AddOracleDatabaseDbContext<TestDbContext>("orclconnection", configure);
 
     protected override void SetHealthCheck(OracleEntityFrameworkCoreSettings options, bool enabled)
-        => options.DisableHealthChecks = !enabled;
+        => options.HealthChecks = enabled;
 
     protected override void SetTracing(OracleEntityFrameworkCoreSettings options, bool enabled)
-        => throw new NotImplementedException();
+        => options.Tracing = enabled;
 
     protected override void SetMetrics(OracleEntityFrameworkCoreSettings options, bool enabled)
-        => throw new NotImplementedException();
+        => options.Metrics = enabled;
 
     protected override void TriggerActivity(TestDbContext service)
     {
@@ -99,5 +105,13 @@ public class ConformanceTests : ConformanceTests<TestDbContext, OracleEntityFram
         TestDbContext? dbContext = host.Services.GetService<TestDbContext>();
 
         Assert.NotNull(dbContext);
+    }
+
+    [ConditionalFact]
+    public void TracingEnablesTheRightActivitySource()
+    {
+        SkipIfCanNotConnectToServer();
+
+        RemoteExecutor.Invoke(() => ActivitySourceTest(key: null)).Dispose();
     }
 }
