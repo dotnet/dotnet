@@ -60,7 +60,7 @@ public class RunnerInfo
             $"Runner = {RunnerFramework}",
             $"TargetFramework = {TargetFramework}",
             string.IsNullOrEmpty(InIsolationValue) ? "InProcess" : "InIsolation",
-            VSTestConsoleInfo == null ? null : VSTestConsoleInfo.ToString(),
+            VSTestConsoleInfo?.ToString(),
             TestHostInfo == null ? null : string.Join(",", TestHostInfo),
             AdapterInfo == null ? null : string.Join(",", AdapterInfo)
         }.Where(s => s != null));
