@@ -19,12 +19,12 @@ public class ComponentRenderModeAttributeIntegrationTests : RazorIntegrationTest
     public void RenderMode_Attribute_With_Diagnostics()
     {
         var generated = CompileToCSharp($$"""
-                <{{ComponentName}} @rendermode="@Microsoft.AspNetCore.Components.Web.RenderMode.Server)" />
+                <{{ComponentName}} @rendermode="@Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer)" />
                 """);
 
         // Assert
 
-        //x:\dir\subdir\Test\TestComponent.cshtml(1, 29): Error RZ9986: Component attributes do not support complex content(mixed C# and markup). Attribute: '@rendermode', text: 'Microsoft.AspNetCore.Components.Web.RenderMode.Server)'
+        //x:\dir\subdir\Test\TestComponent.cshtml(1, 29): Error RZ9986: Component attributes do not support complex content(mixed C# and markup). Attribute: '@rendermode', text: 'Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer)'
         var diagnostic = Assert.Single(generated.RazorDiagnostics);
         Assert.Equal("RZ9986", diagnostic.Id);
     }
@@ -33,7 +33,7 @@ public class ComponentRenderModeAttributeIntegrationTests : RazorIntegrationTest
     public void RenderMode_Attribute_On_Html_Element()
     {
         var generated = CompileToCSharp("""
-                <input @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
+                <input @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer" />
                 """);
 
         // Assert
@@ -46,9 +46,9 @@ public class ComponentRenderModeAttributeIntegrationTests : RazorIntegrationTest
     public void RenderMode_Attribute_On_Component_With_Directive()
     {
         var generated = CompileToCSharp($$"""
-                @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
-                <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
+                <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer" />
                 """);
 
         // Assert

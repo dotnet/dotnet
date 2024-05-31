@@ -1,9 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
@@ -17,27 +17,18 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
     {
         // Arrange & Act
         var component = CompileToComponent("""
-            @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.Server
+            @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
             """);
 
         // Assert
-        var attribute = Assert.Single(component.GetType().CustomAttributes);
-        Assert.EndsWith("PrivateComponentRenderModeAttribute", attribute.AttributeType.Name);
-
-        var attributeType = component.GetType().Assembly.GetTypes().Single(t => t.Name.EndsWith("PrivateComponentRenderModeAttribute", StringComparison.Ordinal));
-        Assert.NotNull(attributeType);
-
-        var modeProperty = attributeType.GetProperty("Mode");
-        Assert.NotNull(modeProperty);
-
-        var instance = Activator.CreateInstance(attributeType);
-        Assert.NotNull(instance);
-
-        var modeValue = modeProperty.GetValue(instance);
-        Assert.NotNull(modeValue);
-
-        var valueType = modeValue.GetType();
-        Assert.Equal("Microsoft.AspNetCore.Components.Web.ServerRenderMode", valueType.FullName);
+        VerifyRenderModeAttribute(component, """
+            private sealed class __PrivateComponentRenderModeAttribute : global::Microsoft.AspNetCore.Components.RenderModeAttribute
+                    {
+                        private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl => Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
+                        ;
+                        public override global::Microsoft.AspNetCore.Components.IComponentRenderMode Mode => ModeImpl;
+                    }
+            """);
     }
 
     [Fact]
@@ -46,27 +37,18 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
         // Arrange & Act
         var component = CompileToComponent("""
             @using static Microsoft.AspNetCore.Components.Web.RenderMode
-            @rendermode Server
+            @rendermode InteractiveServer
             """);
 
         // Assert
-        var attribute = Assert.Single(component.GetType().CustomAttributes);
-        Assert.EndsWith("PrivateComponentRenderModeAttribute", attribute.AttributeType.Name);
-
-        var attributeType = component.GetType().Assembly.GetTypes().Single(t => t.Name.EndsWith("PrivateComponentRenderModeAttribute", StringComparison.Ordinal));
-        Assert.NotNull(attributeType);
-
-        var modeProperty = attributeType.GetProperty("Mode");
-        Assert.NotNull(modeProperty);
-
-        var instance = Activator.CreateInstance(attributeType);
-        Assert.NotNull(instance);
-
-        var modeValue = modeProperty.GetValue(instance);
-        Assert.NotNull(modeValue);
-
-        var valueType = modeValue.GetType();
-        Assert.Equal("Microsoft.AspNetCore.Components.Web.ServerRenderMode", valueType.FullName);
+        VerifyRenderModeAttribute(component, """
+            private sealed class __PrivateComponentRenderModeAttribute : global::Microsoft.AspNetCore.Components.RenderModeAttribute
+                    {
+                        private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl => InteractiveServer
+                        ;
+                        public override global::Microsoft.AspNetCore.Components.IComponentRenderMode Mode => ModeImpl;
+                    }
+            """);
     }
 
     [Fact]
@@ -89,8 +71,8 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
     {
         // Arrange & Act
         var compilationResult = CompileToCSharp("""
-            @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.Server
-            @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.Server
+            @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
+            @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
             """);
 
         // Assert
@@ -119,7 +101,7 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
     public void LanguageVersion()
     {
         var compilationResult = CompileToCSharp("""
-            @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.Server
+            @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
             """, configuration: Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 });
 
         Assert.Empty(compilationResult.RazorDiagnostics);
@@ -180,7 +162,7 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
                 @rendermode myRenderMode
                 @code
                 {
-                    Microsoft.AspNetCore.Components.IComponentRenderMode myRenderMode = new Microsoft.AspNetCore.Components.Web.ServerRenderMode();
+                    Microsoft.AspNetCore.Components.IComponentRenderMode myRenderMode = new Microsoft.AspNetCore.Components.Web.InteractiveServerRenderMode();
                 }
                 """);
 
@@ -200,7 +182,7 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
                 @rendermode myRenderMode
                 @code
                 {
-                    static Microsoft.AspNetCore.Components.IComponentRenderMode myRenderMode = new Microsoft.AspNetCore.Components.Web.ServerRenderMode();
+                    static Microsoft.AspNetCore.Components.IComponentRenderMode myRenderMode = new Microsoft.AspNetCore.Components.Web.InteractiveServerRenderMode();
                 }
                 """);
 
@@ -216,7 +198,7 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
                 @rendermode TestComponent.myRenderMode
                 @code
                 {
-                    internal static Microsoft.AspNetCore.Components.IComponentRenderMode myRenderMode = new Microsoft.AspNetCore.Components.Web.ServerRenderMode();
+                    internal static Microsoft.AspNetCore.Components.IComponentRenderMode myRenderMode = new Microsoft.AspNetCore.Components.Web.InteractiveServerRenderMode();
                 }
                 """);
 
@@ -230,27 +212,26 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
     {
         // Arrange & Act
         var component = CompileToComponent("""
-            @rendermode @(Microsoft.AspNetCore.Components.Web.RenderMode.Server)
+            @rendermode @(Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer)
             """);
 
         // Assert
-        var attribute = Assert.Single(component.GetType().CustomAttributes);
-        Assert.EndsWith("PrivateComponentRenderModeAttribute", attribute.AttributeType.Name);
+        VerifyRenderModeAttribute(component, $$"""
+            private sealed class __PrivateComponentRenderModeAttribute : global::Microsoft.AspNetCore.Components.RenderModeAttribute
+                    {
+                        private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl =>
+            #nullable restore
+            #line (1,15)-(1,79) "{{DefaultDocumentPath}}"
+            Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
-        var attributeType = component.GetType().Assembly.GetTypes().Single(t => t.Name.EndsWith("PrivateComponentRenderModeAttribute", StringComparison.Ordinal));
-        Assert.NotNull(attributeType);
+            #line default
+            #line hidden
+            #nullable disable
 
-        var modeProperty = attributeType.GetProperty("Mode");
-        Assert.NotNull(modeProperty);
-
-        var instance = Activator.CreateInstance(attributeType);
-        Assert.NotNull(instance);
-
-        var modeValue = modeProperty.GetValue(instance);
-        Assert.NotNull(modeValue);
-
-        var valueType = modeValue.GetType();
-        Assert.Equal("Microsoft.AspNetCore.Components.Web.ServerRenderMode", valueType.FullName);
+                        ;
+                        public override global::Microsoft.AspNetCore.Components.IComponentRenderMode Mode => ModeImpl;
+                    }
+            """);
     }
 
     [Fact]
@@ -268,23 +249,22 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
             """);
 
         // Assert
-        var attribute = Assert.Single(component.GetType().CustomAttributes);
-        Assert.EndsWith("PrivateComponentRenderModeAttribute", attribute.AttributeType.Name);
+        VerifyRenderModeAttribute(component, $$"""
+            private sealed class __PrivateComponentRenderModeAttribute : global::Microsoft.AspNetCore.Components.RenderModeAttribute
+                    {
+                        private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl =>
+            #nullable restore
+            #line (1,15)-(1,66) "{{DefaultDocumentPath}}"
+            new TestComponent.MyRenderMode("This is some text")
 
-        var attributeType = component.GetType().Assembly.GetTypes().Single(t => t.Name.EndsWith("PrivateComponentRenderModeAttribute", StringComparison.Ordinal));
-        Assert.NotNull(attributeType);
+            #line default
+            #line hidden
+            #nullable disable
 
-        var modeProperty = attributeType.GetProperty("Mode");
-        Assert.NotNull(modeProperty);
-
-        var instance = Activator.CreateInstance(attributeType);
-        Assert.NotNull(instance);
-
-        var modeValue = modeProperty.GetValue(instance);
-        Assert.NotNull(modeValue);
-
-        var valueType = modeValue.GetType();
-        Assert.Equal("Test.TestComponent+MyRenderMode", valueType.FullName);
+                        ;
+                        public override global::Microsoft.AspNetCore.Components.IComponentRenderMode Mode => ModeImpl;
+                    }
+            """);
     }
 
     [Fact]
@@ -302,23 +282,22 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
             """);
 
         // Assert
-        var attribute = Assert.Single(component.GetType().CustomAttributes);
-        Assert.EndsWith("PrivateComponentRenderModeAttribute", attribute.AttributeType.Name);
+        VerifyRenderModeAttribute(component, $$"""
+            private sealed class __PrivateComponentRenderModeAttribute : global::Microsoft.AspNetCore.Components.RenderModeAttribute
+                    {
+                        private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl =>
+            #nullable restore
+            #line (1,15)-(1,52) "{{DefaultDocumentPath}}"
+            new MyRenderMode("This is some text")
 
-        var attributeType = component.GetType().Assembly.GetTypes().Single(t => t.Name.EndsWith("PrivateComponentRenderModeAttribute", StringComparison.Ordinal));
-        Assert.NotNull(attributeType);
+            #line default
+            #line hidden
+            #nullable disable
 
-        var modeProperty = attributeType.GetProperty("Mode");
-        Assert.NotNull(modeProperty);
-
-        var instance = Activator.CreateInstance(attributeType);
-        Assert.NotNull(instance);
-
-        var modeValue = modeProperty.GetValue(instance);
-        Assert.NotNull(modeValue);
-
-        var valueType = modeValue.GetType();
-        Assert.Equal("Test.TestComponent+MyRenderMode", valueType.FullName);
+                        ;
+                        public override global::Microsoft.AspNetCore.Components.IComponentRenderMode Mode => ModeImpl;
+                    }
+            """);
     }
 
     [Fact]
@@ -338,23 +317,24 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
             """);
 
         // Assert
-        var attribute = Assert.Single(component.GetType().CustomAttributes);
-        Assert.EndsWith("PrivateComponentRenderModeAttribute", attribute.AttributeType.Name);
+        VerifyRenderModeAttribute(component, $$"""
+            private sealed class __PrivateComponentRenderModeAttribute : global::Microsoft.AspNetCore.Components.RenderModeAttribute
+                    {
+                        private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl =>
+            #nullable restore
+            #line (1,15)-(3,7) "{{DefaultDocumentPath}}"
+            new TestComponent.MyRenderMode(@"This is
+            some
+            text")
 
-        var attributeType = component.GetType().Assembly.GetTypes().Single(t => t.Name.EndsWith("PrivateComponentRenderModeAttribute", StringComparison.Ordinal));
-        Assert.NotNull(attributeType);
+            #line default
+            #line hidden
+            #nullable disable
 
-        var modeProperty = attributeType.GetProperty("Mode");
-        Assert.NotNull(modeProperty);
-
-        var instance = Activator.CreateInstance(attributeType);
-        Assert.NotNull(instance);
-
-        var modeValue = modeProperty.GetValue(instance);
-        Assert.NotNull(modeValue);
-
-        var valueType = modeValue.GetType();
-        Assert.Equal("Test.TestComponent+MyRenderMode", valueType.FullName);
+                        ;
+                        public override global::Microsoft.AspNetCore.Components.IComponentRenderMode Mode => ModeImpl;
+                    }
+            """);
     }
 
     [Fact]
@@ -366,27 +346,39 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
 
             @code
             {
-                public static Microsoft.AspNetCore.Components.IComponentRenderMode GetRenderMode() => Microsoft.AspNetCore.Components.Web.RenderMode.Server;
+                public static Microsoft.AspNetCore.Components.IComponentRenderMode GetRenderMode() => Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer;
             }
             """);
 
         // Assert
-        var attribute = Assert.Single(component.GetType().CustomAttributes);
-        Assert.EndsWith("PrivateComponentRenderModeAttribute", attribute.AttributeType.Name);
+        VerifyRenderModeAttribute(component, $$"""
+            private sealed class __PrivateComponentRenderModeAttribute : global::Microsoft.AspNetCore.Components.RenderModeAttribute
+                    {
+                        private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl =>
+            #nullable restore
+            #line (1,15)-(1,44) "{{DefaultDocumentPath}}"
+            TestComponent.GetRenderMode()
 
-        var attributeType = component.GetType().Assembly.GetTypes().Single(t => t.Name.EndsWith("PrivateComponentRenderModeAttribute", StringComparison.Ordinal));
+            #line default
+            #line hidden
+            #nullable disable
+
+                        ;
+                        public override global::Microsoft.AspNetCore.Components.IComponentRenderMode Mode => ModeImpl;
+                    }
+            """);
+    }
+
+    private static void VerifyRenderModeAttribute(INamedTypeSymbol component, string expected)
+    {
+        var attribute = Assert.Single(component.GetAttributes());
+        AssertEx.Equal("__PrivateComponentRenderModeAttribute", attribute.AttributeClass?.Name);
+
+        var attributeType = component.ContainingAssembly.GetTypeByMetadataName("Test.TestComponent+__PrivateComponentRenderModeAttribute");
         Assert.NotNull(attributeType);
 
-        var modeProperty = attributeType.GetProperty("Mode");
-        Assert.NotNull(modeProperty);
-
-        var instance = Activator.CreateInstance(attributeType);
-        Assert.NotNull(instance);
-
-        var modeValue = modeProperty.GetValue(instance);
-        Assert.NotNull(modeValue);
-
-        var valueType = modeValue.GetType();
-        Assert.Equal("Microsoft.AspNetCore.Components.Web.ServerRenderMode", valueType.FullName);
+        expected = expected.NormalizeLineEndings();
+        var actual = attributeType.DeclaringSyntaxReferences.Single().GetSyntax().ToString().NormalizeLineEndings();
+        AssertEx.AssertEqualToleratingWhitespaceDifferences(expected, actual);
     }
 }

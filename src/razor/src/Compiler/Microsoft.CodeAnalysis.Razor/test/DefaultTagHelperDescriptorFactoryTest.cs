@@ -1845,7 +1845,6 @@ public class DefaultTagHelperDescriptorFactoryTest
     public void CreateDescriptor_BuildsDescriptorsFromSimpleTypes()
     {
         // Arrange
-        var objectAssemblyName = typeof(Enumerable).GetTypeInfo().Assembly.GetName().Name;
         var factory = new DefaultTagHelperDescriptorFactory(Compilation, includeDocumentation: false, excludeHidden: false);
         var typeSymbol = Compilation.GetTypeByMetadataName(typeof(Enumerable).FullName);
         var expectedDescriptor =

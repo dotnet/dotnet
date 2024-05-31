@@ -27,7 +27,7 @@ namespace Test
             __o = (global::Microsoft.AspNetCore.Components.IComponentRenderMode)(
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                            Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                            Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
 #line default
 #line hidden
@@ -37,7 +37,7 @@ namespace Test
                 __o = (global::Microsoft.AspNetCore.Components.IComponentRenderMode)(
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                                Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
 #line default
 #line hidden
@@ -47,7 +47,7 @@ namespace Test
                     __o = (global::Microsoft.AspNetCore.Components.IComponentRenderMode)(
 #nullable restore
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                    Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                                    Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
 #line default
 #line hidden
@@ -75,7 +75,7 @@ __o = typeof(global::Test.TestComponent);
                 __o = (global::Microsoft.AspNetCore.Components.IComponentRenderMode)(
 #nullable restore
 #line 5 "x:\dir\subdir\Test\TestComponent.cshtml"
-                             Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                             Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
 #line default
 #line hidden
@@ -85,7 +85,7 @@ __o = typeof(global::Test.TestComponent);
                     __o = (global::Microsoft.AspNetCore.Components.IComponentRenderMode)(
 #nullable restore
 #line 6 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                    Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                                    Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
 #line default
 #line hidden
@@ -104,7 +104,7 @@ __o = typeof(global::Test.TestComponent);
                     __o = (global::Microsoft.AspNetCore.Components.IComponentRenderMode)(
 #nullable restore
 #line 7 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                    Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                                    Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
 #line default
 #line hidden
