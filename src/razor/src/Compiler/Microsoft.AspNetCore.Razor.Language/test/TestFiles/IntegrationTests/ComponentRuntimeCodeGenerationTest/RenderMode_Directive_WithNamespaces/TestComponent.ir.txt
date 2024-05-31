@@ -12,8 +12,8 @@
             ClassDeclaration -  - private sealed - __PrivateComponentRenderModeAttribute - global::Microsoft.AspNetCore.Components.RenderModeAttribute - 
                 CSharpCode - 
                     IntermediateToken -  - CSharp - private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl => 
-                    CSharpCode - (43:2,12 [53] x:\dir\subdir\Test\TestComponent.cshtml)
-                        IntermediateToken -  - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                    CSharpCode - (43:2,12 [64] x:\dir\subdir\Test\TestComponent.cshtml)
+                        IntermediateToken -  - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
                     IntermediateToken -  - CSharp - ;
                 CSharpCode - 
                     IntermediateToken -  - CSharp - public override global::Microsoft.AspNetCore.Components.IComponentRenderMode Mode => ModeImpl;

@@ -10,6 +10,7 @@
     <_MicrosoftVisualStudioPackagesVersion>17.10.151</_MicrosoftVisualStudioPackagesVersion>
     <_VisualStudioLanguageServerProtocolVersion>17.11.1-preview</_VisualStudioLanguageServerProtocolVersion>
     <_MicrosoftExtensionsPackageVersion>8.0.0</_MicrosoftExtensionsPackageVersion>
+    <_BasicReferenceAssembliesVersion>1.7.2</_BasicReferenceAssembliesVersion>
     <_BenchmarkDotNetPackageVersion>0.13.5.2136</_BenchmarkDotNetPackageVersion>
     <_MicrosoftVisualStudioExtensibilityTestingVersion>0.1.187-beta</_MicrosoftVisualStudioExtensibilityTestingVersion>
     <_MicrosoftCodeAnalysisAnalyzersPackageVersion>3.11.0-beta1.24170.2</_MicrosoftCodeAnalysisAnalyzersPackageVersion>
@@ -19,6 +20,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageVersion Include="Basic.Reference.Assemblies.AspNet80" Version="$(_BasicReferenceAssembliesVersion)" />
+    <PackageVersion Include="Basic.Reference.Assemblies.Net80" Version="$(_BasicReferenceAssembliesVersion)" />
     <PackageVersion Include="BenchmarkDotNet" Version="$(_BenchmarkDotNetPackageVersion)" />
     <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="$(_BenchmarkDotNetPackageVersion)" />
     <PackageVersion Include="DiffPlex" Version="1.7.2" />

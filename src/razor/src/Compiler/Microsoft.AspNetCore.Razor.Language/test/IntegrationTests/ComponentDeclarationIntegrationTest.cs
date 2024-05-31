@@ -3,13 +3,8 @@
 
 #nullable disable
 
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
+using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Roslyn.Test.Utilities;
 using Xunit;
 
@@ -19,11 +14,8 @@ public class ComponentDeclarationRazorIntegrationTest : RazorIntegrationTestBase
 {
     public ComponentDeclarationRazorIntegrationTest()
     {
-        // Include this assembly to use types defined in tests.
-        BaseCompilation = DefaultBaseCompilation.AddReferences(MetadataReference.CreateFromFile(GetType().Assembly.Location));
+        AdditionalSyntaxTrees.Add(Parse(AdditionalCode));
     }
-
-    internal override CSharpCompilation BaseCompilation { get; }
 
     internal override string FileKind => FileKinds.Component;
 
@@ -39,9 +31,8 @@ public class ComponentDeclarationRazorIntegrationTest : RazorIntegrationTestBase
 }");
 
         // Assert
-        var property = component.GetType().GetProperty("Value");
-        Assert.NotNull(property);
-        Assert.Same(typeof(string), property.PropertyType);
+        var property = component.GetMembers("Value").Single();
+        AssertEx.Equal("public System.String Test.TestComponent.Value { get; set; }", property.ToTestDisplayString());
     }
 
     [Fact]
@@ -53,9 +44,8 @@ public class ComponentDeclarationRazorIntegrationTest : RazorIntegrationTestBase
 ");
 
         // Assert
-        var property = component.GetType().GetProperty("Value", BindingFlags.NonPublic | BindingFlags.Instance);
-        Assert.NotNull(property);
-        Assert.Same(typeof(string), property.PropertyType);
+        var property = component.GetMembers("Value").Single();
+        AssertEx.Equal("private System.String Test.TestComponent.Value { get; set; }", property.ToTestDisplayString());
     }
 
     [Fact]
@@ -68,33 +58,34 @@ public class ComponentDeclarationRazorIntegrationTest : RazorIntegrationTestBase
 ");
 
         // Assert
-        var property = component.GetType().GetProperty("Value", BindingFlags.NonPublic | BindingFlags.Instance);
-        Assert.NotNull(property);
-        Assert.Same(typeof(StringBuilder), property.PropertyType);
+        var property = component.GetMembers("Value").Single();
+        AssertEx.Equal("private System.Text.StringBuilder Test.TestComponent.Value { get; set; }", property.ToTestDisplayString());
     }
 
     [Fact]
     public void DeclarationConfiguration_IncludesInherits()
     {
         // Arrange & Act
-        var component = CompileToComponent($@"
-@inherits {FullTypeName<BaseClass>()}
+        var component = CompileToComponent(@"
+@inherits TestNamespace.BaseClass
 ");
 
         // Assert
-        Assert.Same(typeof(BaseClass), component.GetType().BaseType);
+        AssertEx.Equal("Test.TestComponent", component.ToTestDisplayString());
+        AssertEx.Equal("TestNamespace.BaseClass", component.BaseType.ToTestDisplayString());
     }
 
     [Fact]
     public void DeclarationConfiguration_IncludesImplements()
     {
         // Arrange & Act
-        var component = CompileToComponent($@"
-@implements {FullTypeName<IDoCoolThings>()}
+        var component = CompileToComponent(@"
+@implements TestNamespace.IDoCoolThings
 ");
 
         // Assert
-        Assert.Contains(typeof(IDoCoolThings), component.GetType().GetInterfaces());
+        AssertEx.Equal("Test.TestComponent", component.ToTestDisplayString());
+        AssertEx.Equal("TestNamespace.IDoCoolThings", component.Interfaces.Single().ToTestDisplayString());
     }
 
     [Fact, WorkItem("https://github.com/dotnet/blazor/issues/453")]
@@ -155,6 +146,14 @@ namespace Test
             Diagnostic(ErrorCode.ERR_SingleTypeNameNotFound, "StringBuilder").WithArguments("StringBuilder").WithLocation(2, 12));
     }
 
+    private const string AdditionalCode =
+    """
+    using Microsoft.AspNetCore.Components;
+    using Microsoft.AspNetCore.Components.Rendering;
+    using System.Threading.Tasks;
+
+    namespace TestNamespace;
+
     public class BaseClass : IComponent
     {
         public void Attach(RenderHandle renderHandle)
@@ -174,4 +173,5 @@ namespace Test
     public interface IDoCoolThings
     {
     }
+    """;
 }

@@ -21,10 +21,32 @@ namespace AspNetCore
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_CSharp7 : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic>
     #nullable disable
     {
+        #line hidden
+        #pragma warning disable 0649
+        private global::Microsoft.AspNetCore.Razor.Runtime.TagHelpers.TagHelperExecutionContext __tagHelperExecutionContext;
+        #pragma warning restore 0649
+        private global::Microsoft.AspNetCore.Razor.Runtime.TagHelpers.TagHelperRunner __tagHelperRunner = new global::Microsoft.AspNetCore.Razor.Runtime.TagHelpers.TagHelperRunner();
+        #pragma warning disable 0169
+        private string __tagHelperStringValueBuffer;
+        #pragma warning restore 0169
+        private global::Microsoft.AspNetCore.Razor.Runtime.TagHelpers.TagHelperScopeManager __backed__tagHelperScopeManager = null;
+        private global::Microsoft.AspNetCore.Razor.Runtime.TagHelpers.TagHelperScopeManager __tagHelperScopeManager
+        {
+            get
+            {
+                if (__backed__tagHelperScopeManager == null)
+                {
+                    __backed__tagHelperScopeManager = new global::Microsoft.AspNetCore.Razor.Runtime.TagHelpers.TagHelperScopeManager(StartTagHelperWritingScope, EndTagHelperWritingScope);
+                }
+                return __backed__tagHelperScopeManager;
+            }
+        }
+        private global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.BodyTagHelper __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_BodyTagHelper;
         #pragma warning disable 1998
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
-            WriteLiteral("<body>\r\n");
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("body", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
+                WriteLiteral("\r\n");
 #nullable restore
 #line (2,7)-(8,9) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
 
@@ -53,7 +75,7 @@ namespace AspNetCore
 #line hidden
 #nullable disable
 
-            WriteLiteral("\r\n");
+                WriteLiteral("\r\n");
 #nullable restore
 #line (16,6)-(23,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
 if (nameLookup.TryGetValue("John Doe", out var entry))
@@ -68,8 +90,8 @@ if (nameLookup.TryGetValue("John Doe", out var entry))
 #line hidden
 #nullable disable
 
-            WriteLiteral("    <p>\r\n        Here\'s a very unique number: ");
-            Write(
+                WriteLiteral("    <p>\r\n        Here\'s a very unique number: ");
+                Write(
 #nullable restore
 #line (24,40)-(24,102) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
 1.618_033_988_749_894_848_204_586_834_365_638_117_720_309_179M
@@ -77,9 +99,9 @@ if (nameLookup.TryGetValue("John Doe", out var entry))
 #line default
 #line hidden
 #nullable disable
-            );
-            WriteLiteral("\r\n    </p>\r\n\r\n    <div>\r\n        ");
-            Write(
+                );
+                WriteLiteral("\r\n    </p>\r\n\r\n    <div>\r\n        ");
+                Write(
 #nullable restore
 #line (28,11)-(28,45) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
 (First: "John", Last: "Doe").First
@@ -87,9 +109,9 @@ if (nameLookup.TryGetValue("John Doe", out var entry))
 #line default
 #line hidden
 #nullable disable
-            );
-            WriteLiteral(" ");
-            WriteLiteral("\r\n    </div>\r\n\r\n");
+                );
+                WriteLiteral(" ");
+                WriteLiteral("\r\n    </div>\r\n\r\n");
 #nullable restore
 #line (31,6)-(43,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
 switch (entry.Extra)
@@ -109,7 +131,17 @@ switch (entry.Extra)
 #line hidden
 #nullable disable
 
-            WriteLiteral("</body>");
+            }
+            );
+            __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_BodyTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.BodyTagHelper>();
+            __tagHelperExecutionContext.Add(__Microsoft_AspNetCore_Mvc_Razor_TagHelpers_BodyTagHelper);
+            await __tagHelperRunner.RunAsync(__tagHelperExecutionContext);
+            if (!__tagHelperExecutionContext.Output.IsContentModified)
+            {
+                await __tagHelperExecutionContext.SetOutputContentAsync();
+            }
+            Write(__tagHelperExecutionContext.Output);
+            __tagHelperExecutionContext = __tagHelperScopeManager.End();
         }
         #pragma warning restore 1998
         #nullable restore

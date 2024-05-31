@@ -2501,10 +2501,7 @@ namespace Test
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
-        CompileToAssembly(generated,
-            // x:\dir\subdir\Test\TestComponent.cshtml(1,61): error CS1503: Argument 2: cannot convert from 'Microsoft.AspNetCore.Components.EventCallback<int>' to 'System.Action<int>'
-            //                                                             UpdateValue
-            Diagnostic(ErrorCode.ERR_BadArgType, "UpdateValue").WithArguments("2", "Microsoft.AspNetCore.Components.EventCallback<int>", "System.Action<int>").WithLocation(1, 61));
+        CompileToAssembly(generated);
     }
 
     [IntegrationTestFact]
@@ -2539,10 +2536,7 @@ namespace Test
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
-        CompileToAssembly(generated,
-            // x:\dir\subdir\Test\TestComponent.cshtml(1,61): error CS1503: Argument 2: cannot convert from 'Microsoft.AspNetCore.Components.EventCallback<Test.CustomValue>' to 'System.Action<Test.CustomValue>'
-            //                                                             UpdateValue
-            Diagnostic(ErrorCode.ERR_BadArgType, "UpdateValue").WithArguments("2", "Microsoft.AspNetCore.Components.EventCallback<Test.CustomValue>", "System.Action<Test.CustomValue>").WithLocation(1, 61));
+        CompileToAssembly(generated);
     }
 
     [IntegrationTestFact]
@@ -2577,10 +2571,7 @@ namespace Test
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
-        CompileToAssembly(generated,
-            // x:\dir\subdir\Test\TestComponent.cshtml(1,82): error CS1503: Argument 2: cannot convert from 'Microsoft.AspNetCore.Components.EventCallback<Test.CustomValue>' to 'System.Action<Test.CustomValue>'
-            //                                                                                  UpdateValue
-            Diagnostic(ErrorCode.ERR_BadArgType, "UpdateValue").WithArguments("2", "Microsoft.AspNetCore.Components.EventCallback<Test.CustomValue>", "System.Action<Test.CustomValue>").WithLocation(1, 82));
+        CompileToAssembly(generated);
     }
 
     [IntegrationTestFact]
@@ -2613,10 +2604,7 @@ namespace Test
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
-        CompileToAssembly(generated,
-            // x:\dir\subdir\Test\TestComponent.cshtml(2,61): error CS1503: Argument 2: cannot convert from 'Microsoft.AspNetCore.Components.EventCallback<TParam>' to 'System.Action<TParam>'
-            //                                                             UpdateValue
-            Diagnostic(ErrorCode.ERR_BadArgType, "UpdateValue").WithArguments("2", "Microsoft.AspNetCore.Components.EventCallback<TParam>", "System.Action<TParam>").WithLocation(2, 61));
+        CompileToAssembly(generated);
     }
 
     [IntegrationTestFact]
@@ -2649,10 +2637,7 @@ namespace Test
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
-        CompileToAssembly(generated,
-            // x:\dir\subdir\Test\TestComponent.cshtml(2,77): error CS1503: Argument 2: cannot convert from 'Microsoft.AspNetCore.Components.EventCallback<TParam>' to 'System.Action<TParam>'
-            //                                                                             UpdateValue
-            Diagnostic(ErrorCode.ERR_BadArgType, "UpdateValue").WithArguments("2", "Microsoft.AspNetCore.Components.EventCallback<TParam>", "System.Action<TParam>").WithLocation(2, 77));
+        CompileToAssembly(generated);
     }
 
     [IntegrationTestFact]
@@ -10706,7 +10691,7 @@ Time: @DateTime.Now
     public void RenderMode_Directive_FullyQualified()
     {
         var generated = CompileToCSharp("""
-                @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
                 """);
 
         // Assert
@@ -10719,7 +10704,7 @@ Time: @DateTime.Now
     public void RenderMode_Directive_SimpleExpression()
     {
         var generated = CompileToCSharp("""
-                @rendermode @(Microsoft.AspNetCore.Components.Web.RenderMode.Server)
+                @rendermode @(Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer)
                 """);
 
         // Assert
@@ -10732,7 +10717,7 @@ Time: @DateTime.Now
     public void RenderMode_Directive_SimpleExpression_With_Code()
     {
         var generated = CompileToCSharp("""
-                @rendermode @(Microsoft.AspNetCore.Components.Web.RenderMode.Server)
+                @rendermode @(Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer)
 
                 @code
                 {
@@ -10756,7 +10741,7 @@ Time: @DateTime.Now
                     [Parameter]
                     public int Count { get; set; }
                 }
-                @rendermode @(Microsoft.AspNetCore.Components.Web.RenderMode.Server)
+                @rendermode @(Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer)
                 """);
 
         // Assert
@@ -10790,7 +10775,7 @@ Time: @DateTime.Now
         var generated = CompileToCSharp("""
                 @namespace Custom.Namespace
 
-                @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
                 """);
 
         // Assert
@@ -10803,7 +10788,7 @@ Time: @DateTime.Now
     public void RenderMode_Attribute_With_SimpleIdentifier()
     {
         var generated = CompileToCSharp($"""
-                <{ComponentName} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
+                <{ComponentName} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer" />
                 """);
 
         // Assert
@@ -10836,7 +10821,7 @@ Time: @DateTime.Now
     public void RenderMode_Attribute_With_Existing_Attributes()
     {
         var generated = CompileToCSharp($$"""
-                <{{ComponentName}} P2="abc" @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" P1="def" />
+                <{{ComponentName}} P2="abc" @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer" P1="def" />
 
                 @code
                 {
@@ -10856,7 +10841,7 @@ Time: @DateTime.Now
     public void Duplicate_RenderMode()
     {
         var generated = CompileToCSharp($$"""
-                <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server"
+                <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer"
                                    @rendermode="Value2" />
                 """);
 
@@ -10870,8 +10855,8 @@ Time: @DateTime.Now
     public void RenderMode_Multiple_Components()
     {
         var generated = CompileToCSharp($$"""
-                <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
-                <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
+                <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer" />
+                <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer" />
                 """);
 
         // Assert
@@ -10884,13 +10869,13 @@ Time: @DateTime.Now
     public void RenderMode_Child_Components()
     {
         var generated = CompileToCSharp($$"""
-                <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server">
-                    <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server">
-                        <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
+                <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer">
+                    <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer">
+                        <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer" />
                     </{{ComponentName}}>
-                 <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server">
-                        <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
-                        <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
+                 <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer">
+                        <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer" />
+                        <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer" />
                     </{{ComponentName}}>
                 </{{ComponentName}}>
 
@@ -10913,7 +10898,7 @@ Time: @DateTime.Now
         var generated = CompileToCSharp($$"""
                 @typeparam TRenderMode where TRenderMode : Microsoft.AspNetCore.Components.IComponentRenderMode
 
-                <{{ComponentName}} @rendermode="RenderModeParam" RenderModeParam="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
+                <{{ComponentName}} @rendermode="RenderModeParam" RenderModeParam="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer" />
 
                 @code
                 {
@@ -10931,7 +10916,7 @@ Time: @DateTime.Now
     public void RenderMode_With_Ternary()
     {
         var generated = CompileToCSharp($$"""
-                <{{ComponentName}} @rendermode="@(true ? Microsoft.AspNetCore.Components.Web.RenderMode.Server : null)" />
+                <{{ComponentName}} @rendermode="@(true ? Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer : null)" />
                 """);
 
         // Assert
@@ -10974,7 +10959,7 @@ Time: @DateTime.Now
                 {
                     public class RenderModeContainer
                     {
-                        public Microsoft.AspNetCore.Components.IComponentRenderMode RenderMode => Microsoft.AspNetCore.Components.Web.RenderMode.Server;
+                        public Microsoft.AspNetCore.Components.IComponentRenderMode RenderMode => Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer;
                     }
 
                     RenderModeContainer? Container => null;
@@ -11406,7 +11391,7 @@ Time: @DateTime.Now
     public void FormName_NoAddNamedEventMethod()
     {
         // Arrange
-        var componentShim = BaseCompilation.References.Single(r => r.Display.EndsWith("Microsoft.AspNetCore.Razor.Test.ComponentShim.dll", StringComparison.Ordinal));
+        var componentsDll = BaseCompilation.References.Single(r => r.Display == "Microsoft.AspNetCore.Components (aspnet80)");
         var minimalShim = """
             namespace Microsoft.AspNetCore.Components
             {
@@ -11459,9 +11444,9 @@ Time: @DateTime.Now
                 assemblyName: "Microsoft.AspNetCore.Components",
                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
             .AddSyntaxTrees(Parse(minimalShim))
-            .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
+            .AddReferences(ReferenceUtil.NetLatestAll)
             .EmitToImageReference();
-        var baseCompilation = BaseCompilation.ReplaceReference(componentShim, minimalShimRef);
+        var baseCompilation = BaseCompilation.ReplaceReference(componentsDll, minimalShimRef);
 
         // Act
         var generated = CompileToCSharp("""

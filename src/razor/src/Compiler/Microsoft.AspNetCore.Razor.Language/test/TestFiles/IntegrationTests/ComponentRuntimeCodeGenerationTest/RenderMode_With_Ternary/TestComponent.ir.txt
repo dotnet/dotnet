@@ -7,6 +7,6 @@
         UsingDirective - (136:5,1 [47] ) - global::Microsoft.AspNetCore.Components
         ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase - 
             MethodDeclaration -  - protected override - void - BuildRenderTree
-                Component - (0:0,0 [102] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
-                    RenderMode - (28:0,28 [70] x:\dir\subdir\Test\TestComponent.cshtml)
-                        LazyIntermediateToken - (30:0,30 [67] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - true ? Microsoft.AspNetCore.Components.Web.RenderMode.Server : null
+                Component - (0:0,0 [113] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
+                    RenderMode - (28:0,28 [81] x:\dir\subdir\Test\TestComponent.cshtml)
+                        LazyIntermediateToken - (30:0,30 [78] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - true ? Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer : null
