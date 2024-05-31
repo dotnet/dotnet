@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <PublishReadyToRun>true</PublishReadyToRun>
-    <RuntimeIdentifier>$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
+    <UseCurrentRuntimeIdentifier>true</UseCurrentRuntimeIdentifier>
   </PropertyGroup>
 
   <ItemGroup>
