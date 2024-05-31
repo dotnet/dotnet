@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@54700bb](https://github.com/dotnet/scenario-tests/tree/54700bbee86f660d37bd519a905b62bb50adc8c8)*
 - `src/sdk`  
-*[dotnet/sdk@a76fabe](https://github.com/dotnet/sdk/tree/a76fabed282c701e6bce1ca8d32446b378a25e48)*
+*[dotnet/sdk@50e5522](https://github.com/dotnet/sdk/tree/50e5522ba7859752569fe082c6faab17cd10e06b)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@f1b44a3](https://github.com/dotnet/source-build-externals/tree/f1b44a365df0b8dbc38403ee8696adc25fbdd76a)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -88,7 +88,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@409af43](https://github.com/dotnet/symreader/tree/409af431ee684f9e07d34bbd4e51b9933345c1e1)*
 - `src/templating`  
-*[dotnet/templating@6b3fb0e](https://github.com/dotnet/templating/tree/6b3fb0e0f93bd0df2e6aa1d78c4ffd3f6c41276d)*
+*[dotnet/templating@d5ce8d1](https://github.com/dotnet/templating/tree/d5ce8d12e80118d84a2b24244b7396403af07c93)*
 - `src/test-templates`  
 *[dotnet/test-templates@820d544](https://github.com/dotnet/test-templates/tree/820d5449b63655f4b63b87077ab6891456e4fa7f)*
 - `src/vstest`  
