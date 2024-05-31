@@ -63,25 +63,11 @@ msft,./sdk/x.y.z/**/System.Windows.Extensions.dll
 msft,./sdk/x.y.z/**/System.Security.Permissions.dll
 msft,./sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Diagnostics.EventLog.dll
 
-# netfx runtimes for dotnet-watch - https://github.com/dotnet/source-build/issues/3285
-msft,./sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.CodeAnalysis.Elfie.dll
-msft,./sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.Win32.SystemEvents.dll
-msft,./sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/runtimes/*
-msft,./sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Configuration.ConfigurationManager.dll
-msft,./sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Drawing.Common.dll
-msft,./sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Security.Cryptography.ProtectedData.dll
-msft,./sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Security.Permissions.dll
-msft,./sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Windows.Extensions.dll
-
-# netfx runtimes for dotnet-format - https://github.com/dotnet/source-build/issues/3509
-msft,./sdk/x.y.z/DotnetTools/dotnet-format/Microsoft.CodeAnalysis.Elfie.dll
-msft,./sdk/x.y.z/DotnetTools/dotnet-format/Microsoft.Win32.SystemEvents.dll
-msft,./sdk/x.y.z/DotnetTools/dotnet-format/runtimes/*
-msft,./sdk/x.y.z/DotnetTools/dotnet-format/System.Configuration.ConfigurationManager.dll
-msft,./sdk/x.y.z/DotnetTools/dotnet-format/System.Drawing.Common.dll
-msft,./sdk/x.y.z/DotnetTools/dotnet-format/System.Security.Cryptography.ProtectedData.dll
-msft,./sdk/x.y.z/DotnetTools/dotnet-format/System.Security.Permissions.dll
-msft,./sdk/x.y.z/DotnetTools/dotnet-format/System.Windows.Extensions.dll
+# Exclude format and watch tools due to too much noise
+msft,./sdk/x.y.z/DotnetTools/dotnet-format/**
+msft,./sdk/x.y.z/DotnetTools/dotnet-watch/**
+sb,./sdk/x.y.z/DotnetTools/dotnet-format/**
+sb,./sdk/x.y.z/DotnetTools/dotnet-watch/**
 
 # netfx runtimes for fsharp - https://github.com/dotnet/source-build/issues/3290
 msft,./sdk/x.y.z/FSharp/Microsoft.VisualStudio.Setup.Configuration.Interop.dll
