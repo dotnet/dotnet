@@ -224,7 +224,7 @@ public class VSTestTask2 : ToolTask, ITestTask
         {
             var parts = singleLine.Split(_messageSplitterArray, StringSplitOptions.None);
             name = parts[1];
-            data = parts.Skip(2).Take(parts.Length).Select(p => p == null ? null : p.Replace("~~~~", "\r").Replace("!!!!", "\n")).ToArray();
+            data = parts.Skip(2).Take(parts.Length).Select(p => p?.Replace("~~~~", "\r").Replace("!!!!", "\n")).ToArray();
             return true;
         }
 

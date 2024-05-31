@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@0514ea9](https://github.com/dotnet/aspire/tree/0514ea9e12ece4dd764824ce925ae0eae6fcbd86)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@5f8f891](https://github.com/dotnet/aspnetcore/tree/5f8f891f8849d21efc5306f3053397203d4b7656)*
+*[dotnet/aspnetcore@53db4d9](https://github.com/dotnet/aspnetcore/tree/53db4d97d7c77d13e20e58a98f104e88d6af6040)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@9b4993c](https://github.com/google/googletest/tree/9b4993ca7d1279dec5c5d41ba327cb11a77bdc00)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@54700bb](https://github.com/dotnet/scenario-tests/tree/54700bbee86f660d37bd519a905b62bb50adc8c8)*
 - `src/sdk`  
-*[dotnet/sdk@b0e9af0](https://github.com/dotnet/sdk/tree/b0e9af0530394fff1237038efcdcdc2590bb9772)*
+*[dotnet/sdk@a76fabe](https://github.com/dotnet/sdk/tree/a76fabed282c701e6bce1ca8d32446b378a25e48)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@f1b44a3](https://github.com/dotnet/source-build-externals/tree/f1b44a365df0b8dbc38403ee8696adc25fbdd76a)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -92,7 +92,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/test-templates`  
 *[dotnet/test-templates@820d544](https://github.com/dotnet/test-templates/tree/820d5449b63655f4b63b87077ab6891456e4fa7f)*
 - `src/vstest`  
-*[microsoft/vstest@196d737](https://github.com/microsoft/vstest/tree/196d737555bb879a38056f3a6c94a9bb8ec78b1c)*
+*[microsoft/vstest@614363f](https://github.com/microsoft/vstest/tree/614363f91499f2fbebe9f7cc1a622b3d9fc32033)*
 - `src/windowsdesktop`  
 *[dotnet/windowsdesktop@f778f53](https://github.com/dotnet/windowsdesktop/tree/f778f53d3a473d811614cb817d9aa6b5eed43d05)*
 - `src/winforms`  

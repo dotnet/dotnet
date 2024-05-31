@@ -1428,9 +1428,7 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
         {
             var testProcessStartInfo = _dataSerializer.DeserializePayload<TestProcessStartInfo>(message);
 
-            ackPayload.HostProcessId = customHostLauncher != null
-                ? customHostLauncher.LaunchTestHost(testProcessStartInfo!)
-                : -1;
+            ackPayload.HostProcessId = customHostLauncher?.LaunchTestHost(testProcessStartInfo!) ?? -1;
         }
         catch (Exception ex)
         {
