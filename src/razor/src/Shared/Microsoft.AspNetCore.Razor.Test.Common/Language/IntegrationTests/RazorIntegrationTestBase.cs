@@ -11,8 +11,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
@@ -35,26 +35,10 @@ public class RazorIntegrationTestBase
 
     static RazorIntegrationTestBase()
     {
-        var referenceAssemblyRoots = new[]
-        {
-            typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly, // System.Runtime
-            typeof(Enumerable).Assembly, // Other .NET fundamental types
-            typeof(Console).Assembly,
-            typeof(System.Linq.Expressions.Expression).Assembly,
-            typeof(ComponentBase).Assembly,
-            typeof(CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly, // needed to support `dynamic`
-        };
-
-        var referenceAssemblies = referenceAssemblyRoots
-            .SelectMany(assembly => assembly.GetReferencedAssemblies().Concat(new[] { assembly.GetName() }))
-            .Distinct()
-            .Select(Assembly.Load)
-            .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
-            .ToList();
         DefaultBaseCompilation = CSharpCompilation.Create(
             "TestAssembly",
             Array.Empty<SyntaxTree>(),
-            referenceAssemblies,
+            ReferenceUtil.AspNetLatestAll,
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
         CSharpParseOptions = new CSharpParseOptions(LanguageVersion.Preview);
@@ -89,6 +73,8 @@ public class RazorIntegrationTestBase
     internal string DefaultRootNamespace { get; set; }
 
     internal virtual string DefaultFileName { get; }
+
+    internal string DefaultDocumentPath => WorkingDirectory + PathSeparator + DefaultFileName;
 
     internal virtual bool DesignTime { get; }
 
@@ -369,12 +355,11 @@ public class RazorIntegrationTestBase
             {
                 Compilation = compilation,
                 CSharpDiagnostics = diagnostics,
-                Assembly = diagnostics.Any() ? null : Assembly.Load(peStream.ToArray())
             };
         }
     }
 
-    protected IComponent CompileToComponent(string cshtmlSource)
+    protected INamedTypeSymbol CompileToComponent(string cshtmlSource)
     {
         var assemblyResult = CompileToAssembly(DefaultFileName, cshtmlSource);
 
@@ -382,30 +367,26 @@ public class RazorIntegrationTestBase
         return CompileToComponent(assemblyResult, componentFullTypeName);
     }
 
-    protected IComponent CompileToComponent(CompileToCSharpResult cSharpResult, string fullTypeName)
+    protected INamedTypeSymbol CompileToComponent(CompileToCSharpResult cSharpResult, string fullTypeName)
     {
         return CompileToComponent(CompileToAssembly(cSharpResult), fullTypeName);
     }
 
-    protected IComponent CompileToComponent(CompileToAssemblyResult assemblyResult, string fullTypeName)
+    protected INamedTypeSymbol CompileToComponent(CompileToAssemblyResult assemblyResult, string fullTypeName)
     {
-        var componentType = assemblyResult.Assembly.GetType(fullTypeName);
+        var componentType = assemblyResult.Compilation.GetTypeByMetadataName(fullTypeName);
         if (componentType == null)
         {
-            throw new XunitException(
-                $"Failed to find component type '{fullTypeName}'. Found types:" + Environment.NewLine +
-                string.Join(Environment.NewLine, assemblyResult.Assembly.ExportedTypes.Select(t => t.FullName)));
+            throw new XunitException($"Failed to find component type '{fullTypeName}'");
         }
 
-        return (IComponent)Activator.CreateInstance(componentType);
+        return componentType;
     }
 
     protected static CSharpSyntaxTree Parse(string text, string path = null)
     {
         return (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(text, CSharpParseOptions, path: path);
     }
-
-    protected static string FullTypeName<T>() => typeof(T).FullName.Replace('+', '.');
 
     protected static void AssertSourceEquals(string expected, CompileToCSharpResult generated)
     {
@@ -431,7 +412,6 @@ public class RazorIntegrationTestBase
 
     protected class CompileToAssemblyResult
     {
-        public Assembly Assembly { get; set; }
         public Compilation Compilation { get; set; }
         public string VerboseLog { get; set; }
         public IEnumerable<Diagnostic> CSharpDiagnostics { get; set; }

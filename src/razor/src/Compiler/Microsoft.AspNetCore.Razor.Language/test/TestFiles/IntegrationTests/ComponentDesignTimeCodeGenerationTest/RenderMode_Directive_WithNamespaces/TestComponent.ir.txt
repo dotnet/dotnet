@@ -10,7 +10,7 @@
         ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase - 
             DesignTimeDirective - 
                 DirectiveToken - (11:0,11 [16] x:\dir\subdir\Test\TestComponent.cshtml) - Custom.Namespace
-                DirectiveToken - (43:2,12 [53] x:\dir\subdir\Test\TestComponent.cshtml) - Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                DirectiveToken - (43:2,12 [64] x:\dir\subdir\Test\TestComponent.cshtml) - Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
             CSharpCode - 
                 IntermediateToken -  - CSharp - #pragma warning disable 0414
             CSharpCode - 
@@ -30,8 +30,8 @@
                     IntermediateToken -  - CSharp - #pragma warning restore 0414
                 CSharpCode - 
                     IntermediateToken -  - CSharp - private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl => 
-                    CSharpCode - (43:2,12 [53] x:\dir\subdir\Test\TestComponent.cshtml)
-                        IntermediateToken -  - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                    CSharpCode - (43:2,12 [64] x:\dir\subdir\Test\TestComponent.cshtml)
+                        IntermediateToken -  - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
                     IntermediateToken -  - CSharp - ;
                 CSharpCode - 
                     IntermediateToken -  - CSharp - public override global::Microsoft.AspNetCore.Components.IComponentRenderMode Mode => ModeImpl;

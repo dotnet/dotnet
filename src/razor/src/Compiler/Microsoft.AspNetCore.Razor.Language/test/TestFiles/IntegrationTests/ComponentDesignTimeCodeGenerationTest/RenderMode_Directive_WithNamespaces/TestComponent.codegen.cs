@@ -30,7 +30,7 @@ global::System.Object __typeHelper = nameof(Custom.Namespace);
         ((global::System.Action)(() => {
 #nullable restore
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-global::System.Object __typeHelper = nameof(Microsoft.AspNetCore.Components.Web.RenderMode.Server);
+global::System.Object __typeHelper = nameof(Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer);
 
 #line default
 #line hidden
@@ -59,7 +59,7 @@ global::System.Object __typeHelper = nameof(Microsoft.AspNetCore.Components.Web.
             private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl => 
 #nullable restore
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-            Microsoft.AspNetCore.Components.Web.RenderMode.Server
+            Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
 #line default
 #line hidden

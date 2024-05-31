@@ -11,6 +11,8 @@
         RazorCompiledItemMetadataAttribute - 
         CreateNewOnMetadataUpdateAttribute - 
         ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ConditionalAttributes - global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic> - 
+            DefaultTagHelperRuntime - 
+            FieldDeclaration -  - private - global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper - __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper
             DesignTimeDirective - 
                 DirectiveToken - (287:7,8 [62] ) - global::Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper<TModel>
                 DirectiveToken - (350:7,71 [4] ) - Html
@@ -112,11 +114,13 @@
                     LazyIntermediateToken - (283:9,41 [2] ConditionalAttributes.cshtml) - Html - />
                 CSharpCode - (285:9,43 [6] ConditionalAttributes.cshtml)
                     LazyIntermediateToken - (285:9,43 [6] ConditionalAttributes.cshtml) - CSharp - \n    
-                HtmlContent - (291:10,4 [18] ConditionalAttributes.cshtml)
-                    LazyIntermediateToken - (291:10,4 [2] ConditionalAttributes.cshtml) - Html - <a
-                    LazyIntermediateToken - (293:10,6 [13] ConditionalAttributes.cshtml) - Html -  href="~/Foo"
-                    LazyIntermediateToken - (306:10,19 [1] ConditionalAttributes.cshtml) - Html -  
-                    LazyIntermediateToken - (307:10,20 [2] ConditionalAttributes.cshtml) - Html - />
+                TagHelper - (291:10,4 [18] ConditionalAttributes.cshtml) - a - TagMode.SelfClosing
+                    DefaultTagHelperBody - 
+                    DefaultTagHelperCreate -  - Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper
+                    DefaultTagHelperHtmlAttribute -  - href - HtmlAttributeValueStyle.DoubleQuotes
+                        HtmlContent - (300:10,13 [5] ConditionalAttributes.cshtml)
+                            LazyIntermediateToken - (300:10,13 [5] ConditionalAttributes.cshtml) - Html - ~/Foo
+                    DefaultTagHelperExecute - 
                 CSharpCode - (309:10,22 [6] ConditionalAttributes.cshtml)
                     LazyIntermediateToken - (309:10,22 [6] ConditionalAttributes.cshtml) - CSharp - \n    
                 HtmlContent - (315:11,4 [7] ConditionalAttributes.cshtml)

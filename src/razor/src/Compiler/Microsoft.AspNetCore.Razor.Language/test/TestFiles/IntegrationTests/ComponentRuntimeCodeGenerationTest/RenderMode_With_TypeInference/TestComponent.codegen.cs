@@ -43,8 +43,8 @@ RenderModeParam
 
             , 2, 
 #nullable restore
-#line (3,63)-(3,116) "x:\dir\subdir\Test\TestComponent.cshtml"
-Microsoft.AspNetCore.Components.Web.RenderMode.Server
+#line (3,63)-(3,127) "x:\dir\subdir\Test\TestComponent.cshtml"
+Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
 #line default
 #line hidden

@@ -1,3 +1,0 @@
-﻿// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MinimizedTagHelpers.cshtml(159,57): error CS0103: The name 'InvalidTagHelperIndexerAssignment' does not exist in the current context
-//                     throw new InvalidOperationException(InvalidTagHelperIndexerAssignment("booldict-prefix-key", "DivTagHelper", "BoolDictProp"));
-Diagnostic(ErrorCode.ERR_NameNotInContext, "InvalidTagHelperIndexerAssignment").WithArguments("InvalidTagHelperIndexerAssignment").WithLocation(159, 57)
