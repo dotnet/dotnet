@@ -37,7 +37,7 @@ Container.RenderMode
 
     public class RenderModeContainer
     {
-        public Microsoft.AspNetCore.Components.IComponentRenderMode RenderMode => Microsoft.AspNetCore.Components.Web.RenderMode.Server;
+        public Microsoft.AspNetCore.Components.IComponentRenderMode RenderMode => Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer;
     }
 
     RenderModeContainer? Container => null;

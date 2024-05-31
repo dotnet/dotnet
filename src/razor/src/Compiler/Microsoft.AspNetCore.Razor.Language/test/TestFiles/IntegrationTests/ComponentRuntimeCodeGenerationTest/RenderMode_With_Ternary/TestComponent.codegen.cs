@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.TestComponent>(0);
             global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode = 
 #nullable restore
-#line (1,31)-(1,98) "x:\dir\subdir\Test\TestComponent.cshtml"
-true ? Microsoft.AspNetCore.Components.Web.RenderMode.Server : null
+#line (1,31)-(1,109) "x:\dir\subdir\Test\TestComponent.cshtml"
+true ? Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer : null
 
 #line default
 #line hidden

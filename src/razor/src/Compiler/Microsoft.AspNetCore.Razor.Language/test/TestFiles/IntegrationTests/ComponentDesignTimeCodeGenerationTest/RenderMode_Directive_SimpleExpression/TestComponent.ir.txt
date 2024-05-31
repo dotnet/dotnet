@@ -26,8 +26,8 @@
                     IntermediateToken -  - CSharp - #pragma warning restore 0414
                 CSharpCode - 
                     IntermediateToken -  - CSharp - private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl => 
-                    CSharpCode - (14:0,14 [53] x:\dir\subdir\Test\TestComponent.cshtml)
-                        LazyIntermediateToken - (14:0,14 [53] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                    CSharpCode - (14:0,14 [64] x:\dir\subdir\Test\TestComponent.cshtml)
+                        LazyIntermediateToken - (14:0,14 [64] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
                     IntermediateToken -  - CSharp - ;
                 CSharpCode - 
                     IntermediateToken -  - CSharp - public override global::Microsoft.AspNetCore.Components.IComponentRenderMode Mode => ModeImpl;

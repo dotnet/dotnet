@@ -1,39 +1,39 @@
-﻿Source Location: (28:0,28 [53] x:\dir\subdir\Test\TestComponent.cshtml)
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (895:23,0 [53] )
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
+﻿Source Location: (28:0,28 [64] x:\dir\subdir\Test\TestComponent.cshtml)
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
+Generated Location: (895:23,0 [64] )
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
 
-Source Location: (117:1,32 [53] x:\dir\subdir\Test\TestComponent.cshtml)
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (1400:35,0 [53] )
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
+Source Location: (128:1,32 [64] x:\dir\subdir\Test\TestComponent.cshtml)
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
+Generated Location: (1411:35,0 [64] )
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
 
-Source Location: (210:2,36 [53] x:\dir\subdir\Test\TestComponent.cshtml)
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (1922:47,0 [53] )
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
+Source Location: (232:2,36 [64] x:\dir\subdir\Test\TestComponent.cshtml)
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
+Generated Location: (1945:47,0 [64] )
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
 
-Source Location: (320:4,29 [53] x:\dir\subdir\Test\TestComponent.cshtml)
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (2641:65,0 [53] )
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
+Source Location: (353:4,29 [64] x:\dir\subdir\Test\TestComponent.cshtml)
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
+Generated Location: (2675:65,0 [64] )
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
 
-Source Location: (413:5,36 [53] x:\dir\subdir\Test\TestComponent.cshtml)
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (3163:77,0 [53] )
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
+Source Location: (457:5,36 [64] x:\dir\subdir\Test\TestComponent.cshtml)
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
+Generated Location: (3209:77,0 [64] )
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
 
-Source Location: (508:6,36 [53] x:\dir\subdir\Test\TestComponent.cshtml)
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (3747:91,0 [53] )
-|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
+Source Location: (563:6,36 [64] x:\dir\subdir\Test\TestComponent.cshtml)
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
+Generated Location: (3805:91,0 [64] )
+|Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer|
 
-Source Location: (617:11,1 [73] x:\dir\subdir\Test\TestComponent.cshtml)
+Source Location: (683:11,1 [73] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 |
-Generated Location: (4420:112,0 [73] )
+Generated Location: (4489:112,0 [73] )
 |
     [Parameter]
     public RenderFragment ChildContent { get; set; }

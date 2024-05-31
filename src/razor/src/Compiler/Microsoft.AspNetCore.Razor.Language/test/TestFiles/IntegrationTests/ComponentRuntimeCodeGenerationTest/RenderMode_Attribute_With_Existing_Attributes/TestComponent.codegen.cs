@@ -21,8 +21,8 @@ namespace Test
             __builder.AddComponentParameter(1, "P2", "abc");
             global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode = 
 #nullable restore
-#line (1,38)-(1,91) "x:\dir\subdir\Test\TestComponent.cshtml"
-Microsoft.AspNetCore.Components.Web.RenderMode.Server
+#line (1,38)-(1,102) "x:\dir\subdir\Test\TestComponent.cshtml"
+Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
 #line default
 #line hidden
