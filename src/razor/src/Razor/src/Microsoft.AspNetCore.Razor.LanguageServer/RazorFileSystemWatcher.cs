@@ -1,10 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.ComponentModel;
 using System.IO;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
+[DesignerCategory("code")]
 internal class RazorFileSystemWatcher : FileSystemWatcher
 {
     // Without trimming trailing `/`, `\\` from the workspace directory, the FileSystemWatcher

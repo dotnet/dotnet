@@ -235,7 +235,6 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
 
     private static void WriteBaseline(string text, string filePath)
     {
-        var lines = text.Replace("\r", "").Replace("\n", "\r\n");
         File.WriteAllText(filePath, text, _baselineEncoding);
     }
 

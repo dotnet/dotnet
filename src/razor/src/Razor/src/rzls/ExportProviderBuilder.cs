@@ -1,13 +1,11 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#if !NET472
-
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Composition;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal sealed class ExportProviderBuilder
 {
@@ -44,5 +42,3 @@ internal sealed class ExportProviderBuilder
         return exportProvider;
     }
 }
-
-#endif
