@@ -3,7 +3,6 @@
 
 namespace Aspire.Hosting.Dcp.Model;
 
-using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
@@ -20,14 +19,7 @@ internal abstract class CustomResource : KubernetesObject, IMetadata<V1ObjectMet
 {
     public const string ServiceProducerAnnotation = "service-producer";
     public const string ServiceConsumerAnnotation = "service-consumer";
-    public const string EndpointNameAnnotation = "endpoint-name";
-    public const string ResourceNameAnnotation = "resource-name";
-    public const string OtelServiceNameAnnotation = "otel-service-name";
-    public const string ResourceStateAnnotation = "resource-state";
-
-    public string? AppModelResourceName => Metadata.Annotations?.TryGetValue(ResourceNameAnnotation, out var value) is true ? value : null;
-
-    public string? AppModelInitialState => Metadata.Annotations?.TryGetValue(ResourceStateAnnotation, out var value) is true ? value : null;
+    public const string UriSchemeAnnotation = "uri-scheme";
 
     [JsonPropertyName("metadata")]
     public V1ObjectMeta Metadata { get; set; } = new V1ObjectMeta();
@@ -52,53 +44,12 @@ internal abstract class CustomResource : KubernetesObject, IMetadata<V1ObjectMet
         AnnotateAsObjectList<TValue>(Metadata.Annotations, annotationName, value);
     }
 
-    public bool TryGetAnnotationAsObjectList<TValue>(string annotationName, [NotNullWhen(true)] out List<TValue>? list)
-    {
-        return TryGetAnnotationAsObjectList<TValue>(Metadata.Annotations, annotationName, out list);
-    }
-
-    internal static bool TryGetAnnotationAsObjectList<TValue>(IDictionary<string, string>? annotations, string annotationName, [NotNullWhen(true)] out List<TValue>? list)
-    {
-        list = null;
-
-        if (annotations is null)
-        {
-            return false;
-        }
-
-        string? annotationValue;
-        bool found = annotations.TryGetValue(annotationName, out annotationValue);
-        if (!found || string.IsNullOrWhiteSpace(annotationValue))
-        {
-            return false;
-        }
-
-        try
-        {
-            list = JsonSerializer.Deserialize<List<TValue>>(annotationValue);
-        }
-        catch
-        {
-            return false;
-        }
-
-        return list is not null;
-    }
-
     internal static void AnnotateAsObjectList<TValue>(IDictionary<string, string> annotations, string annotationName, TValue value)
     {
         List<TValue> values;
-        if (annotations.TryGetValue(annotationName, out var annotationVal) && !string.IsNullOrWhiteSpace(annotationVal))
+        if (annotations.TryGetValue(annotationName, out var annotationVal))
         {
-            try
-            {
-                values = JsonSerializer.Deserialize<List<TValue>>(annotationVal) ?? new();
-            }
-            catch
-            {
-                values = new();
-            }
-
+            values = JsonSerializer.Deserialize<List<TValue>>(annotationVal) ?? new();
             if (!values.Contains(value))
             {
                 values.Add(value);
@@ -106,7 +57,8 @@ internal abstract class CustomResource : KubernetesObject, IMetadata<V1ObjectMet
         }
         else
         {
-            values = [value];
+            values = new();
+            values.Add(value);
         }
 
         var newAnnotationVal = JsonSerializer.Serialize(values);
@@ -224,12 +176,4 @@ internal static class Rules
         bool isValid = Regex.IsMatch(candidate, @"^[[a-zA-Z_~][a-zA-Z0-9\-._~]*$");
         return isValid;
     }
-}
-
-internal static class Logs
-{
-    public const string StreamTypeStdOut = "stdout";
-    public const string StreamTypeStdErr = "stderr";
-    public const string StreamTypeAll = "all";
-    public const string SubResourceName = "log";
 }

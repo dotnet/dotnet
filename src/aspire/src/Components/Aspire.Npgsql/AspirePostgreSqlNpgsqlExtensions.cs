@@ -72,7 +72,7 @@ public static class AspirePostgreSqlNpgsqlExtensions
 
         // Same as SqlClient connection pooling is on by default and can be handled with connection string 
         // https://www.npgsql.org/doc/connection-string-parameters.html#pooling
-        if (!settings.DisableHealthChecks)
+        if (settings.HealthChecks)
         {
             builder.TryAddHealthCheck(new HealthCheckRegistration(
                 serviceKey is null ? "PostgreSql" : $"PostgreSql_{connectionName}",
@@ -85,7 +85,7 @@ public static class AspirePostgreSqlNpgsqlExtensions
                 timeout: default));
         }
 
-        if (!settings.DisableTracing)
+        if (settings.Tracing)
         {
             builder.Services.AddOpenTelemetry()
                 .WithTracing(tracerProviderBuilder =>
@@ -94,7 +94,7 @@ public static class AspirePostgreSqlNpgsqlExtensions
                 });
         }
 
-        if (!settings.DisableMetrics)
+        if (settings.Metrics)
         {
             builder.Services.AddOpenTelemetry()
                 .WithMetrics(NpgsqlCommon.AddNpgsqlMetrics);

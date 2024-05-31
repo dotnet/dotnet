@@ -79,8 +79,9 @@ The .NET Aspire SQL Server EntityFrameworkCore SqlClient component supports [Mic
     "Microsoft": {
       "EntityFrameworkCore": {
         "SqlServer": {
-          "DisableHealthChecks": true,
-          "DisableTracing": true
+          "HealthChecks": false,
+          "Tracing": false,
+          "Metrics": true
         }
       }
     }
@@ -93,24 +94,18 @@ The .NET Aspire SQL Server EntityFrameworkCore SqlClient component supports [Mic
 Also you can pass the `Action<MicrosoftEntityFrameworkCoreSqlServerSettings> configureSettings` delegate to set up some or all the options inline, for example to disable health checks from code:
 
 ```csharp
-    builder.AddSqlServerDbContext<MyDbContext>("sqldata", settings => settings.DisableHealthChecks = true);
+    builder.AddSqlServerDbContext<MyDbContext>("sqldata", settings => settings.HealthChecks = false);
 ```
 
 or
 
 ```csharp
-    builder.EnrichSqlServerDbContext<MyDbContext>(settings => settings.DisableHealthChecks = true);
+    builder.EnrichSqlServerDbContext<MyDbContext>(settings => settings.HealthChecks = false);
 ```
 
 ## AppHost extensions
 
-In your AppHost project, install the `Aspire.Hosting.SqlServer` library with [NuGet](https://www.nuget.org):
-
-```dotnetcli
-dotnet add package Aspire.Hosting.SqlServer
-```
-
-Then, in the _Program.cs_ file of `AppHost`, register a SqlServer database and consume the connection using the following methods:
+In your AppHost project, register a SqlServer database and consume the connection using the following methods:
 
 ```csharp
 var sql = builder.AddSqlServer("sql").AddDatabase("sqldata");

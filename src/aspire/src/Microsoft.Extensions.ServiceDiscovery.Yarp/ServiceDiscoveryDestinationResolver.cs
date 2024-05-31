@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.ServiceDiscovery.Yarp;
 /// Initializes a new <see cref="ServiceDiscoveryDestinationResolver"/> instance.
 /// </remarks>
 /// <param name="resolver">The endpoint resolver registry.</param>
-internal sealed class ServiceDiscoveryDestinationResolver(ServiceEndpointResolver resolver) : IDestinationResolver
+internal sealed class ServiceDiscoveryDestinationResolver(ServiceEndPointResolver resolver) : IDestinationResolver
 {
     /// <inheritdoc/>
     public async ValueTask<ResolvedDestinationCollection> ResolveDestinationsAsync(IReadOnlyDictionary<string, DestinationConfig> destinations, CancellationToken cancellationToken)
@@ -54,32 +54,32 @@ internal sealed class ServiceDiscoveryDestinationResolver(ServiceEndpointResolve
         var originalHost = originalConfig.Host is { Length: > 0 } h ? h : originalUri.Authority;
         var serviceName = originalUri.GetLeftPart(UriPartial.Authority);
 
-        var result = await resolver.GetEndpointsAsync(serviceName, cancellationToken).ConfigureAwait(false);
-        var results = new List<(string Name, DestinationConfig Config)>(result.Endpoints.Count);
+        var endPoints = await resolver.GetEndPointsAsync(serviceName, cancellationToken).ConfigureAwait(false);
+        var results = new List<(string Name, DestinationConfig Config)>(endPoints.Count);
         var uriBuilder = new UriBuilder(originalUri);
         var healthUri = originalConfig.Health is { Length: > 0 } health ? new Uri(health) : null;
         var healthUriBuilder = healthUri is { } ? new UriBuilder(healthUri) : null;
-        foreach (var endpoint in result.Endpoints)
+        foreach (var endPoint in endPoints)
         {
-            var addressString = endpoint.ToString()!;
-            Uri uri;
+            var addressString = endPoint.GetEndPointString();
+            Uri result;
             if (!addressString.Contains("://"))
             {
-                uri = new Uri($"https://{addressString}");
+                result = new Uri($"https://{addressString}");
             }
             else
             {
-                uri = new Uri(addressString);
+                result = new Uri(addressString);
             }
 
-            uriBuilder.Host = uri.Host;
-            uriBuilder.Port = uri.Port;
+            uriBuilder.Host = result.Host;
+            uriBuilder.Port = result.Port;
             var resolvedAddress = uriBuilder.Uri.ToString();
             var healthAddress = originalConfig.Health;
             if (healthUriBuilder is not null)
             {
-                healthUriBuilder.Host = uri.Host;
-                healthUriBuilder.Port = uri.Port;
+                healthUriBuilder.Host = result.Host;
+                healthUriBuilder.Port = result.Port;
                 healthAddress = healthUriBuilder.Uri.ToString();
             }
 
@@ -88,6 +88,6 @@ internal sealed class ServiceDiscoveryDestinationResolver(ServiceEndpointResolve
             results.Add((name, config));
         }
 
-        return (results, result.ChangeToken);
+        return (results, endPoints.ChangeToken);
     }
 }

@@ -46,12 +46,6 @@ public static class IDistributedApplicationBuilderExtensions
 
         return builder
             .AddResource(resource)
-            .WithInitialState(new()
-            {
-                Properties = [],
-                ResourceType = "DaprComponent",
-                State = KnownResourceStates.Hidden
-            })
             .WithAnnotation(new ManifestPublishingCallbackAnnotation(context => WriteDaprComponentResourceToManifest(context, resource)));
     }
 

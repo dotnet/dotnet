@@ -3,10 +3,11 @@
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+builder.AddAzureProvisioning();
+
 var azureSearch = builder.AddAzureSearch("search");
 
 builder.AddProject<Projects.AzureSearch_ApiService>("api")
-       .WithExternalHttpEndpoints()
        .WithReference(azureSearch);
 
 // This project is only added in playground projects to support development/debugging

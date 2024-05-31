@@ -73,12 +73,12 @@
                           "properties": {
                             "Delay": {
                               "type": "string",
-                              "pattern": "^-?(\\d{1,7}|((\\d{1,7}[\\.:])?(([01]?\\d|2[0-3]):[0-5]?\\d|([01]?\\d|2[0-3]):[0-5]?\\d:[0-5]?\\d)(\\.\\d{1,7})?))$",
+                              "format": "duration",
                               "description": "The delay between retry attempts for a fixed approach or the delay\non which to base calculations for a backoff-based approach.\nIf the service provides a Retry-After response header, the next retry will be delayed by the duration specified by the header value."
                             },
                             "MaxDelay": {
                               "type": "string",
-                              "pattern": "^-?(\\d{1,7}|((\\d{1,7}[\\.:])?(([01]?\\d|2[0-3]):[0-5]?\\d|([01]?\\d|2[0-3]):[0-5]?\\d:[0-5]?\\d)(\\.\\d{1,7})?))$",
+                              "format": "duration",
                               "description": "The maximum permissible delay between retry attempts when the service does not provide a Retry-After response header.\nIf the service provides a Retry-After response header, the next retry will be delayed by the duration specified by the header value."
                             },
                             "MaxRetries": {
@@ -94,7 +94,7 @@
                             },
                             "NetworkTimeout": {
                               "type": "string",
-                              "pattern": "^-?(\\d{1,7}|((\\d{1,7}[\\.:])?(([01]?\\d|2[0-3]):[0-5]?\\d|([01]?\\d|2[0-3]):[0-5]?\\d:[0-5]?\\d)(\\.\\d{1,7})?))$",
+                              "format": "duration",
                               "description": "The timeout applied to an individual network operations."
                             }
                           },
@@ -103,15 +103,15 @@
                       },
                       "description": "Options that allow you to configure the requests sent to Key Vault."
                     },
-                    "DisableHealthChecks": {
+                    "HealthChecks": {
                       "type": "boolean",
-                      "description": "Gets or sets a boolean value that indicates whether the Key Vault health check is disabled or not.",
-                      "default": false
+                      "description": "Gets or sets a boolean value that indicates whether the Key Vault health check is enabled or not.",
+                      "default": true
                     },
-                    "DisableTracing": {
+                    "Tracing": {
                       "type": "boolean",
-                      "description": "Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is disabled or not.",
-                      "default": false
+                      "description": "Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is enabled or not.",
+                      "default": true
                     },
                     "VaultUri": {
                       "type": "string",

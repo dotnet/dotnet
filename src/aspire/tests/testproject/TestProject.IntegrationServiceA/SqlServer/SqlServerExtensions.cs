@@ -1,8 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Text;
-using Aspire.TestProject;
 using Microsoft.Data.SqlClient;
 using Polly;
 
@@ -15,16 +13,14 @@ public static class SqlServerExtensions
 
     private static async Task<IResult> VerifySqlServerAsync(SqlConnection connection)
     {
-        StringBuilder errorMessageBuilder = new();
         try
         {
-            ResiliencePipeline pipeline = ResilienceUtils.GetDefaultResiliencePipelineBuilder<SqlException>(args =>
-            {
-                errorMessageBuilder.AppendLine($"{Environment.NewLine}Service retry #{args.AttemptNumber} due to {args.Outcome.Exception}");
-                return ValueTask.CompletedTask;
-            }).Build();
+            var policy = Policy
+                .Handle<SqlException>()
+                // retry 60 times with a 1 second delay between retries
+                .WaitAndRetryAsync(60, retryAttempt => TimeSpan.FromSeconds(1));
 
-            await pipeline.ExecuteAsync(async token => await connection.OpenAsync(token));
+            await policy.ExecuteAsync(connection.OpenAsync);
 
             var command = connection.CreateCommand();
             command.CommandText = $"SELECT 1";
@@ -34,7 +30,7 @@ public static class SqlServerExtensions
         }
         catch (Exception e)
         {
-            return Results.Problem($"Error: {e}{Environment.NewLine}** Previous retries: {errorMessageBuilder}");
+            return Results.Problem(e.ToString());
         }
     }
 }

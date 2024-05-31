@@ -14,31 +14,28 @@
       "path": "test.bicep",
       "params": {
         "test": "{val.value}",
-        "p2": "{test0.outputs.val0}",
         "values": [
           "one",
           "two"
         ]
       }
     },
-    "test0": {
+    "kv": {
       "type": "azure.bicep.v0",
-      "path": "test0.module.bicep"
-    },
-    "kv3": {
-      "type": "azure.bicep.v0",
-      "connectionString": "{kv3.outputs.vaultUri}",
-      "path": "kv3.module.bicep",
+      "connectionString": "{kv.outputs.vaultUri}",
+      "path": "aspire.hosting.azure.bicep.keyvault.bicep",
       "params": {
         "principalId": "",
-        "principalType": ""
+        "principalType": "",
+        "vaultName": "kv"
       }
     },
     "appConfig": {
       "type": "azure.bicep.v0",
       "connectionString": "{appConfig.outputs.appConfigEndpoint}",
-      "path": "appConfig.module.bicep",
+      "path": "aspire.hosting.azure.bicep.appconfig.bicep",
       "params": {
+        "configName": "appconfig",
         "principalId": "",
         "principalType": "",
         "sku": "standard"
@@ -46,10 +43,11 @@
     },
     "storage": {
       "type": "azure.bicep.v0",
-      "path": "storage.module.bicep",
+      "path": "aspire.hosting.azure.bicep.storage.bicep",
       "params": {
         "principalId": "",
-        "principalType": ""
+        "principalType": "",
+        "storageName": "storage"
       }
     },
     "blob": {
@@ -67,10 +65,14 @@
     "sql": {
       "type": "azure.bicep.v0",
       "connectionString": "Server=tcp:{sql.outputs.sqlServerFqdn},1433;Encrypt=True;Authentication=\u0022Active Directory Default\u0022",
-      "path": "sql.module.bicep",
+      "path": "aspire.hosting.azure.bicep.sql.bicep",
       "params": {
+        "serverName": "sql",
         "principalId": "",
-        "principalName": ""
+        "principalName": "",
+        "databases": [
+          "db"
+        ]
       }
     },
     "db": {
@@ -99,11 +101,15 @@
     "postgres2": {
       "type": "azure.bicep.v0",
       "connectionString": "{postgres2.secretOutputs.connectionString}",
-      "path": "postgres2.module.bicep",
+      "path": "aspire.hosting.azure.bicep.postgres.bicep",
       "params": {
+        "serverName": "postgres2",
         "keyVaultName": "",
         "administratorLogin": "{administratorLogin.value}",
-        "administratorLoginPassword": "{administratorLoginPassword.value}"
+        "administratorLoginPassword": "{administratorLoginPassword.value}",
+        "databases": [
+          "db2"
+        ]
       }
     },
     "db2": {
@@ -113,53 +119,67 @@
     "cosmos": {
       "type": "azure.bicep.v0",
       "connectionString": "{cosmos.secretOutputs.connectionString}",
-      "path": "cosmos.module.bicep",
+      "path": "aspire.hosting.azure.bicep.cosmosdb.bicep",
       "params": {
+        "databaseAccountName": "cosmos",
+        "databases": [
+          "db3"
+        ],
         "keyVaultName": ""
       }
-    },
-    "lawkspc": {
-      "type": "azure.bicep.v0",
-      "path": "lawkspc.module.bicep"
     },
     "ai": {
       "type": "azure.bicep.v0",
       "connectionString": "{ai.outputs.appInsightsConnectionString}",
-      "path": "ai.module.bicep",
+      "path": "aspire.hosting.azure.bicep.appinsights.bicep",
       "params": {
-        "logAnalyticsWorkspaceId": "{lawkspc.outputs.logAnalyticsWorkspaceId}"
-      }
-    },
-    "aiwithoutlaw": {
-      "type": "azure.bicep.v0",
-      "connectionString": "{aiwithoutlaw.outputs.appInsightsConnectionString}",
-      "path": "aiwithoutlaw.module.bicep",
-      "params": {
+        "appInsightsName": "ai",
         "logAnalyticsWorkspaceId": ""
       }
     },
     "redis": {
       "type": "azure.bicep.v0",
       "connectionString": "{redis.secretOutputs.connectionString}",
-      "path": "redis.module.bicep",
+      "path": "aspire.hosting.azure.bicep.redis.bicep",
       "params": {
+        "redisCacheName": "redis",
         "keyVaultName": ""
       }
     },
     "sb": {
       "type": "azure.bicep.v0",
       "connectionString": "{sb.outputs.serviceBusEndpoint}",
-      "path": "sb.module.bicep",
+      "path": "aspire.hosting.azure.bicep.servicebus.bicep",
       "params": {
+        "serviceBusNamespaceName": "sb",
         "principalId": "",
-        "principalType": ""
+        "principalType": "",
+        "queues": [
+          "queue1"
+        ],
+        "topics": [
+          {
+            "name": "topic1",
+            "subscriptions": [
+              "subscription1",
+              "subscription2"
+            ]
+          },
+          {
+            "name": "topic2",
+            "subscriptions": [
+              "subscription1"
+            ]
+          }
+        ]
       }
     },
     "signalr": {
       "type": "azure.bicep.v0",
       "connectionString": "Endpoint=https://{signalr.outputs.hostName};AuthType=azure",
-      "path": "signalr.module.bicep",
+      "path": "aspire.hosting.azure.bicep.signalr.bicep",
       "params": {
+        "name": "signalr",
         "principalId": "",
         "principalType": ""
       }
@@ -170,15 +190,13 @@
       "env": {
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
-        "OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY": "in_memory",
-        "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true",
         "ConnectionStrings__db": "{db.connectionString}",
         "ConnectionStrings__db2": "{db2.connectionString}",
         "ConnectionStrings__cosmos": "{cosmos.connectionString}",
         "ConnectionStrings__blob": "{blob.connectionString}",
         "ConnectionStrings__table": "{table.connectionString}",
         "ConnectionStrings__queue": "{queue.connectionString}",
-        "ConnectionStrings__kv3": "{kv3.connectionString}",
+        "ConnectionStrings__kv": "{kv.connectionString}",
         "ConnectionStrings__appConfig": "{appConfig.connectionString}",
         "APPLICATIONINSIGHTS_CONNECTION_STRING": "{ai.connectionString}",
         "ConnectionStrings__redis": "{redis.connectionString}",
@@ -192,14 +210,12 @@
         "http": {
           "scheme": "http",
           "protocol": "tcp",
-          "transport": "http",
-          "external": true
+          "transport": "http"
         },
         "https": {
           "scheme": "https",
           "protocol": "tcp",
-          "transport": "http",
-          "external": true
+          "transport": "http"
         }
       }
     }

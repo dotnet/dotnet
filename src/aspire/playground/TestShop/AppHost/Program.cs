@@ -5,32 +5,25 @@ var catalogDb = builder.AddPostgres("postgres")
                        .AddDatabase("catalogdb");
 
 var basketCache = builder.AddRedis("basketcache")
-                         .WithDataVolume()
-                         .WithRedisCommander(c =>
-                         {
-                             c.WithHostPort(33801);
-                         });
+                         .WithRedisCommander();
 
 var catalogService = builder.AddProject<Projects.CatalogService>("catalogservice")
                             .WithReference(catalogDb)
                             .WithReplicas(2);
 
-var messaging = builder.AddRabbitMQ("messaging", password: builder.CreateStablePassword("rabbitmq-password", special: false))
-                       .WithDataVolume()
-                       .WithManagementPlugin()
-                       .PublishAsContainer();
+var messaging = builder.AddRabbitMQ("messaging").PublishAsContainer();
 
 var basketService = builder.AddProject("basketservice", @"..\BasketService\BasketService.csproj")
                            .WithReference(basketCache)
                            .WithReference(messaging);
 
 builder.AddProject<Projects.MyFrontend>("frontend")
-       .WithExternalHttpEndpoints()
        .WithReference(basketService)
-       .WithReference(catalogService);
+       .WithReference(catalogService.GetEndpoint("http"));
 
-builder.AddProject<Projects.OrderProcessor>("orderprocessor", launchProfileName: "OrderProcessor")
-       .WithReference(messaging);
+builder.AddProject<Projects.OrderProcessor>("orderprocessor")
+       .WithReference(messaging)
+       .WithLaunchProfile("OrderProcessor");
 
 builder.AddProject<Projects.ApiGateway>("apigateway")
        .WithReference(basketService)

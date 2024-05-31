@@ -10,8 +10,6 @@ internal sealed class LaunchProfileAnnotation : IResourceAnnotation
 {
     public LaunchProfileAnnotation(string launchProfileName)
     {
-        ArgumentNullException.ThrowIfNull(launchProfileName);
-
         LaunchProfileName = launchProfileName;
     }
 

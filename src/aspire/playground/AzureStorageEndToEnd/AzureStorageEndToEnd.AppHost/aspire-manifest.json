@@ -2,10 +2,11 @@
   "resources": {
     "storage": {
       "type": "azure.bicep.v0",
-      "path": "storage.module.bicep",
+      "path": "aspire.hosting.azure.bicep.storage.bicep",
       "params": {
         "principalId": "",
-        "principalType": ""
+        "principalType": "",
+        "storageName": "storage"
       }
     },
     "blobs": {
@@ -18,22 +19,18 @@
       "env": {
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
-        "OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY": "in_memory",
-        "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true",
         "ConnectionStrings__blobs": "{blobs.connectionString}"
       },
       "bindings": {
         "http": {
           "scheme": "http",
           "protocol": "tcp",
-          "transport": "http",
-          "external": true
+          "transport": "http"
         },
         "https": {
           "scheme": "https",
           "protocol": "tcp",
-          "transport": "http",
-          "external": true
+          "transport": "http"
         }
       }
     }

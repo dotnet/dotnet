@@ -4,7 +4,6 @@
 using System.Text.Json.Nodes;
 using Aspire.Hosting.Azure;
 using Aspire.Hosting.Azure.Provisioning;
-using Aspire.Hosting.Utils;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 
@@ -13,29 +12,29 @@ namespace Aspire.Hosting.Tests.Azure;
 public class AzureBicepProvisionerTests
 {
     [Fact]
-    public async Task SetParametersTranslatesParametersToARMCompatibleJsonParameters()
+    public void SetParametersTranslatesParametersToARMCompatibleJsonParameters()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        var builder = DistributedApplication.CreateBuilder();
 
         var bicep0 = builder.AddBicepTemplateString("bicep0", "param name string")
                .WithParameter("name", "david");
 
         var parameters = new JsonObject();
-        await BicepProvisioner.SetParametersAsync(parameters, bicep0.Resource);
+        BicepProvisioner.SetParameters(parameters, bicep0.Resource);
 
         Assert.Single(parameters);
         Assert.Equal("david", parameters["name"]?["value"]?.ToString());
     }
 
     [Fact]
-    public async Task SetParametersTranslatesCompatibleParameterTypes()
+    public void SetParametersTranslatesCompatibleParameterTypes()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        var builder = DistributedApplication.CreateBuilder();
 
         var connectionStringResource = builder.CreateResourceBuilder(
             new ResourceWithConnectionString("A", "connection string"));
 
-        var param = builder.AddParameter("param", _ => "paramValue");
+        var param = builder.AddParameter("param", () => "paramValue");
 
         var bicep0 = builder.AddBicepTemplateString("bicep0", "param name string")
                .WithParameter("name", "john")
@@ -46,7 +45,7 @@ public class AzureBicepProvisionerTests
                .WithParameter("param", param);
 
         var parameters = new JsonObject();
-        await BicepProvisioner.SetParametersAsync(parameters, bicep0.Resource);
+        BicepProvisioner.SetParameters(parameters, bicep0.Resource);
 
         Assert.Equal(6, parameters.Count);
         Assert.Equal("john", parameters["name"]?["value"]?.ToString());
@@ -58,9 +57,9 @@ public class AzureBicepProvisionerTests
     }
 
     [Fact]
-    public async Task ResourceWithTheSameBicepTemplateAndParametersHaveTheSameCheckSum()
+    public void ResourceWithTheSameBicepTemplateAndParametersHaveTheSameCheckSum()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        var builder = DistributedApplication.CreateBuilder();
 
         var bicep0 = builder.AddBicepTemplateString("bicep0", "param name string")
                        .WithParameter("name", "david")
@@ -75,52 +74,20 @@ public class AzureBicepProvisionerTests
                        .WithParameter("jsonObj", new JsonObject { ["key"] = "value" });
 
         var parameters0 = new JsonObject();
-        await BicepProvisioner.SetParametersAsync(parameters0, bicep0.Resource);
+        BicepProvisioner.SetParameters(parameters0, bicep0.Resource);
         var checkSum0 = BicepProvisioner.GetChecksum(bicep0.Resource, parameters0);
 
         var parameters1 = new JsonObject();
-        await BicepProvisioner.SetParametersAsync(parameters1, bicep1.Resource);
+        BicepProvisioner.SetParameters(parameters1, bicep1.Resource);
         var checkSum1 = BicepProvisioner.GetChecksum(bicep1.Resource, parameters1);
 
         Assert.Equal(checkSum0, checkSum1);
     }
 
-    [Theory]
-    [InlineData("1alpha")]
-    [InlineData("-alpha")]
-    [InlineData("")]
-    [InlineData(" alpha")]
-    [InlineData("alpha 123")]
-    public void WithParameterDoesNotAllowParameterNamesWhichAreInvalidBicepIdentifiers(string bicepParameterName)
-    {
-        var ex = Assert.Throws<ArgumentException>(() =>
-        {
-            using var builder = TestDistributedApplicationBuilder.Create();
-            builder.AddAzureConstruct("construct", _ => { })
-                   .WithParameter(bicepParameterName);
-        });
-
-        Assert.Equal("Bicep parameter names must only contain alpha, numeric, and _ characters and must start with an alpha or _ characters. (Parameter 'bicepParameterName')", ex.Message);
-    }
-
-    [Theory]
-    [InlineData("alpha")]
-    [InlineData("a1pha")]
-    [InlineData("_alpha")]
-    [InlineData("__alpha")]
-    [InlineData("alpha1_")]
-    [InlineData("Alpha1_A")]
-    public void WithParameterAllowsParameterNamesWhichAreValidBicepIdentifiers(string bicepParameterName)
-    {
-        using var builder = TestDistributedApplicationBuilder.Create();
-        builder.AddAzureConstruct("construct", _ => { })
-                .WithParameter(bicepParameterName);
-    }
-
     [Fact]
-    public async Task ResourceWithSameTemplateButDifferentParametersHaveDifferentChecksums()
+    public void ResourceWithSameTemplateButDifferentParametersHaveDifferentChecksums()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        var builder = DistributedApplication.CreateBuilder();
 
         var bicep0 = builder.AddBicepTemplateString("bicep0", "param name string")
                        .WithParameter("name", "david")
@@ -134,20 +101,20 @@ public class AzureBicepProvisionerTests
                        .WithParameter("jsonObj", new JsonObject { ["key"] = "value" });
 
         var parameters0 = new JsonObject();
-        await BicepProvisioner.SetParametersAsync(parameters0, bicep0.Resource);
+        BicepProvisioner.SetParameters(parameters0, bicep0.Resource);
         var checkSum0 = BicepProvisioner.GetChecksum(bicep0.Resource, parameters0);
 
         var parameters1 = new JsonObject();
-        await BicepProvisioner.SetParametersAsync(parameters1, bicep1.Resource);
+        BicepProvisioner.SetParameters(parameters1, bicep1.Resource);
         var checkSum1 = BicepProvisioner.GetChecksum(bicep1.Resource, parameters1);
 
         Assert.NotEqual(checkSum0, checkSum1);
     }
 
     [Fact]
-    public async Task GetCurrentChecksumSkipsKnownValuesForCheckSumCreation()
+    public void GetCurrentChecksumSkipsKnownValuesForCheckSumCreation()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        var builder = DistributedApplication.CreateBuilder();
 
         var bicep0 = builder.AddBicepTemplateString("bicep0", "param name string")
                        .WithParameter("name", "david")
@@ -162,14 +129,14 @@ public class AzureBicepProvisionerTests
                        .WithParameter(AzureBicepResource.KnownParameters.PrincipalType, "type");
 
         var parameters0 = new JsonObject();
-        await BicepProvisioner.SetParametersAsync(parameters0, bicep0.Resource);
+        BicepProvisioner.SetParameters(parameters0, bicep0.Resource);
         var checkSum0 = BicepProvisioner.GetChecksum(bicep0.Resource, parameters0);
 
         // Save the old version of this resource's parameters to config
         var config = new ConfigurationManager();
         config["Parameters"] = parameters0.ToJsonString();
 
-        var checkSum1 = await BicepProvisioner.GetCurrentChecksumAsync(bicep1.Resource, config);
+        var checkSum1 = BicepProvisioner.GetCurrentChecksum(bicep1.Resource, config);
 
         Assert.Equal(checkSum0, checkSum1);
     }
@@ -178,7 +145,6 @@ public class AzureBicepProvisionerTests
         Resource(name),
         IResourceWithConnectionString
     {
-        public ReferenceExpression ConnectionStringExpression =>
-           ReferenceExpression.Create($"{connectionString}");
+        public string? GetConnectionString() => connectionString;
     }
 }

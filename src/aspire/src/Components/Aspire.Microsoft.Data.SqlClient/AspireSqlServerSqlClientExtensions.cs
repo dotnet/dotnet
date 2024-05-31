@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
 namespace Microsoft.Extensions.Hosting;
@@ -81,7 +82,7 @@ public static class AspireSqlServerSqlClientExtensions
 
         // SqlClient Data Provider (Microsoft.Data.SqlClient) handles connection pooling automatically and it's on by default
         // https://learn.microsoft.com/sql/connect/ado-net/sql-server-connection-pooling
-        if (!settings.DisableTracing)
+        if (settings.Tracing)
         {
             builder.Services.AddOpenTelemetry().WithTracing(tracerProviderBuilder =>
             {
@@ -89,7 +90,19 @@ public static class AspireSqlServerSqlClientExtensions
             });
         }
 
-        if (!settings.DisableHealthChecks)
+        if (settings.Metrics)
+        {
+            builder.Services.AddOpenTelemetry().WithMetrics(meterProviderBuilder =>
+            {
+                meterProviderBuilder.AddEventCountersInstrumentation(eventCountersInstrumentationOptions =>
+                {
+                    // https://github.com/dotnet/SqlClient/blob/main/src/Microsoft.Data.SqlClient/src/Microsoft/Data/SqlClient/SqlClientEventSource.cs#L73
+                    eventCountersInstrumentationOptions.AddEventSources("Microsoft.Data.SqlClient.EventSource");
+                });
+            });
+        }
+
+        if (settings.HealthChecks)
         {
             builder.TryAddHealthCheck(new HealthCheckRegistration(
                 serviceKey is null ? "SqlServer" : $"SqlServer_{connectionName}",

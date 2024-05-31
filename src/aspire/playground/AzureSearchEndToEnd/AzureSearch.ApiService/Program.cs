@@ -12,7 +12,7 @@ using AzureSearch.ApiService;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-builder.AddAzureSearchClient("search");
+builder.AddAzureSearch("search");
 
 var app = builder.Build();
 

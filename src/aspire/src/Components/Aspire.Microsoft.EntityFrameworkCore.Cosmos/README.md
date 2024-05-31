@@ -71,7 +71,7 @@ See the [ConnectionString documentation](https://learn.microsoft.com/azure/cosmo
 
 ### Use configuration providers
 
-The .NET Aspire Microsoft EntityFrameworkCore Cosmos component supports [Microsoft.Extensions.Configuration](https://learn.microsoft.com/dotnet/api/microsoft.extensions.configuration). It loads the `EntityFrameworkCoreCosmosSettings` from configuration by using the `Aspire:Microsaoft:EntityFrameworkCore:Cosmos` key. Example `appsettings.json` that configures some of the options:
+The .NET Aspire Microsoft EntityFrameworkCore Cosmos component supports [Microsoft.Extensions.Configuration](https://learn.microsoft.com/dotnet/api/microsoft.extensions.configuration). It loads the `EntityFrameworkCoreCosmosDBSettings` from configuration by using the `Aspire:Microsaoft:EntityFrameworkCore:Cosmos` key. Example `appsettings.json` that configures some of the options:
 
 ```json
 {
@@ -79,7 +79,7 @@ The .NET Aspire Microsoft EntityFrameworkCore Cosmos component supports [Microso
     "Microsoft": {
       "EntityFrameworkCore": {
         "Cosmos": {
-          "DisableTracing": true
+          "Tracing": false
         }
       }
     }
@@ -89,27 +89,27 @@ The .NET Aspire Microsoft EntityFrameworkCore Cosmos component supports [Microso
 
 ### Use inline delegates
 
-Also you can pass the `Action<EntityFrameworkCoreCosmosSettings> configureSettings` delegate to set up some or all the options inline, for example to disable tracing from code:
+Also you can pass the `Action<EntityFrameworkCoreCosmosDBSettings> configureSettings` delegate to set up some or all the options inline, for example to disable tracing from code:
 
 ```csharp
-    builder.AddCosmosDbContext<MyDbContext>("cosmosdb", "mydb", settings => settings.DisableTracing = true);
+    builder.AddCosmosDbContext<MyDbContext>("cosmosdb", "mydb", settings => settings.Tracing = false);
 ```
 
 or
 
 ```csharp
-    builder.EnrichCosmosDbContext<MyDbContext>(settings => settings.DisableTracing = true);
+    builder.EnrichCosmosDbContext<MyDbContext>(settings => settings.Tracing = false);
 ```
 
 ## AppHost extensions
 
-In your AppHost project, install the Aspire Azure CosmosDB Hosting library with [NuGet](https://www.nuget.org):
+In your AppHost project, install the Aspire Azure Hosting library with [NuGet](https://www.nuget.org):
 
 ```dotnetcli
-dotnet add package Aspire.Hosting.Azure.CosmosDB
+dotnet add package Aspire.Hosting.Azure
 ```
 
-Then, in the _Program.cs_ file of `AppHost`, add a Cosmos DB connection and consume the connection using the following methods:
+Then, in the _Program.cs_ file of `AppHost`, add a Cosmos DB connection and consume the connection using the following methods::
 
 ```csharp
 var cosmosdb = builder.AddAzureCosmosDB("cdb").AddDatabase("cosmosdb");

@@ -10,8 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Http" />
-    <InternalsVisibleTo Include="Microsoft.Extensions.ServiceDiscovery.Tests"/>
-    <InternalsVisibleTo Include="Microsoft.Extensions.ServiceDiscovery.Dns.Tests"/>
+    <Compile Include="$(SharedDir)ValueStopwatch\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -11,9 +11,7 @@ namespace Aspire.Hosting;
 public sealed class DistributedApplicationOptions
 {
     private readonly Lazy<Assembly?> _assembly;
-    private readonly Lazy<string?> _projectDirectoryLazy;
-    // This is for testing
-    private string? _projectDirectory;
+    private readonly Lazy<string?> _projectDirectory;
 
     /// <summary>
     /// Initializes a new instance of <see cref="DistributedApplicationOptions"/>.
@@ -21,14 +19,8 @@ public sealed class DistributedApplicationOptions
     public DistributedApplicationOptions()
     {
         _assembly = new(ResolveAssembly);
-        _projectDirectoryLazy = new(ResolveProjectDirectory);
+        _projectDirectory = new(ResolveProjectDirectory);
     }
-
-    /// <summary>
-    /// When containers are used, use this value instead to override the container registry
-    /// that is specified.
-    /// </summary>
-    public string? ContainerRegistryOverride { get; set; }
 
     /// <summary>
     /// The command line arguments.
@@ -47,18 +39,9 @@ public sealed class DistributedApplicationOptions
 
     internal Assembly? Assembly => _assembly.Value;
 
-    internal string? ProjectDirectory
-    {
-        get => _projectDirectory ?? _projectDirectoryLazy.Value;
-        set => _projectDirectory = value;
-    }
+    internal string? ProjectDirectory => _projectDirectory.Value;
 
     internal bool DashboardEnabled => !DisableDashboard;
-
-    /// <summary>
-    /// Allows the use of HTTP urls for for the AppHost resource endpoint.
-    /// </summary>
-    public bool AllowUnsecuredTransport { get; set; }
 
     private string? ResolveProjectDirectory()
     {

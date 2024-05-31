@@ -33,7 +33,7 @@ public static class AspireKeyVaultExtensions
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{TClient, TOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Security:KeyVault" section.</remarks>
     /// <exception cref="InvalidOperationException">Thrown when mandatory <see cref="AzureSecurityKeyVaultSettings.VaultUri"/> is not provided.</exception>
-    public static void AddAzureKeyVaultClient(
+    public static void AddAzureKeyVaultSecrets(
         this IHostApplicationBuilder builder,
         string connectionName,
         Action<AzureSecurityKeyVaultSettings>? configureSettings = null,
@@ -52,7 +52,7 @@ public static class AspireKeyVaultExtensions
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{TClient, TOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Security:KeyVault:{name}" section.</remarks>
     /// <exception cref="InvalidOperationException">Thrown when mandatory <see cref="AzureSecurityKeyVaultSettings.VaultUri"/> is not provided.</exception>
-    public static void AddKeyedAzureKeyVaultClient(
+    public static void AddKeyedAzureKeyVaultSecrets(
         this IHostApplicationBuilder builder,
         string name,
         Action<AzureSecurityKeyVaultSettings>? configureSettings = null,
@@ -73,7 +73,7 @@ public static class AspireKeyVaultExtensions
     /// <param name="configureSettings">An optional method that can be used for customizing the <see cref="AzureSecurityKeyVaultSettings"/>. It's invoked after the settings are read from the configuration.</param>
     /// <param name="configureClientOptions">An optional method that can be used for customizing the <see cref="SecretClientOptions"/>.</param>
     /// <param name="options">An optional <see cref="AzureKeyVaultConfigurationOptions"/> instance to configure the behavior of the configuration provider.</param>
-    public static void AddAzureKeyVaultSecrets(
+    public static void AddKeyVaultSecrets(
         this IConfigurationManager configurationManager,
         string connectionName,
         Action<AzureSecurityKeyVaultSettings>? configureSettings = null,
@@ -119,11 +119,9 @@ public static class AspireKeyVaultExtensions
 
     private sealed class KeyVaultComponent : AzureComponent<AzureSecurityKeyVaultSettings, SecretClient, SecretClientOptions>
     {
-        protected override IAzureClientBuilder<SecretClient, SecretClientOptions> AddClient(
-            AzureClientFactoryBuilder azureFactoryBuilder, AzureSecurityKeyVaultSettings settings,
-            string connectionName, string configurationSectionName)
+        protected override IAzureClientBuilder<SecretClient, SecretClientOptions> AddClient<TBuilder>(TBuilder azureFactoryBuilder, AzureSecurityKeyVaultSettings settings, string connectionName, string configurationSectionName)
         {
-            return azureFactoryBuilder.AddClient<SecretClient, SecretClientOptions>((options, cred, _) =>
+            return azureFactoryBuilder.RegisterClientFactory<SecretClient, SecretClientOptions>((options, cred) =>
             {
                 if (settings.VaultUri is null)
                 {
@@ -150,12 +148,12 @@ public static class AspireKeyVaultExtensions
         }
 
         protected override bool GetHealthCheckEnabled(AzureSecurityKeyVaultSettings settings)
-            => !settings.DisableHealthChecks;
+            => settings.HealthChecks;
 
         protected override TokenCredential? GetTokenCredential(AzureSecurityKeyVaultSettings settings)
             => settings.Credential;
 
         protected override bool GetTracingEnabled(AzureSecurityKeyVaultSettings settings)
-            => !settings.DisableTracing;
+            => settings.Tracing;
     }
 }
