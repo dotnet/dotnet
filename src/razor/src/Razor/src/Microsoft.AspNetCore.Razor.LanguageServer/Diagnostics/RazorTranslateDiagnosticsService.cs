@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -16,6 +17,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Diagnostic = Microsoft.VisualStudio.LanguageServer.Protocol.Diagnostic;
 using DiagnosticSeverity = Microsoft.VisualStudio.LanguageServer.Protocol.DiagnosticSeverity;
 using Position = Microsoft.VisualStudio.LanguageServer.Protocol.Position;
@@ -25,10 +27,17 @@ using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 
-internal class RazorTranslateDiagnosticsService
+/// <summary>
+/// Contains several methods for mapping and filtering Razor and C# diagnostics. It allows for
+/// translating code diagnostics from one representation into another, such as from C# to Razor.
+/// </summary>
+/// <param name="documentMappingService">The <see cref="IRazorDocumentMappingService"/>.</param>
+/// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
+/// <exception cref="ArgumentNullException"/>
+internal class RazorTranslateDiagnosticsService(IRazorDocumentMappingService documentMappingService, ILoggerFactory loggerFactory)
 {
-    private readonly ILogger _logger;
-    private readonly IRazorDocumentMappingService _documentMappingService;
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorTranslateDiagnosticsService>();
+    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
 
     // Internal for testing
     internal static readonly IReadOnlyCollection<string> CSharpDiagnosticsToIgnore = new HashSet<string>()
@@ -36,29 +45,6 @@ internal class RazorTranslateDiagnosticsService
         "RemoveUnnecessaryImportsFixable",
         "IDE0005_gen", // Using directive is unnecessary
     };
-
-    /// <summary>
-    /// Contains several methods for mapping and filtering Razor and C# diagnostics. It allows for
-    /// translating code diagnostics from one representation into another, such as from C# to Razor.
-    /// </summary>
-    /// <param name="documentMappingService">The <see cref="IRazorDocumentMappingService"/>.</param>
-    /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
-    /// <exception cref="ArgumentNullException"/>
-    public RazorTranslateDiagnosticsService(IRazorDocumentMappingService documentMappingService, ILoggerFactory loggerFactory)
-    {
-        if (documentMappingService is null)
-        {
-            throw new ArgumentNullException(nameof(documentMappingService));
-        }
-
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        _documentMappingService = documentMappingService;
-        _logger = loggerFactory.GetOrCreateLogger<RazorTranslateDiagnosticsService>();
-    }
 
     /// <summary>
     /// Translates code diagnostics from one representation into another.
@@ -78,26 +64,26 @@ internal class RazorTranslateDiagnosticsService
         if (codeDocument.IsUnsupported() != false)
         {
             _logger.LogInformation($"Unsupported code document.");
-            return Array.Empty<Diagnostic>();
+            return [];
         }
 
         var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
 
         var filteredDiagnostics = diagnosticKind == RazorLanguageKind.CSharp
-        ? FilterCSharpDiagnostics(diagnostics, codeDocument, sourceText)
+            ? FilterCSharpDiagnostics(diagnostics, codeDocument, sourceText)
             : FilterHTMLDiagnostics(diagnostics, codeDocument, sourceText, _logger);
-        if (!filteredDiagnostics.Any())
+        if (filteredDiagnostics.Length == 0)
         {
             _logger.LogDebug($"No diagnostics remaining after filtering.");
-
-            return Array.Empty<Diagnostic>();
+            return [];
         }
 
-        _logger.LogDebug($"{filteredDiagnostics.Length}/{diagnostics.Length} diagnostics remain after filtering.");
+        _logger.LogDebug($"{filteredDiagnostics.Length}/{diagnostics.Length} diagnostics remain after filtering {diagnosticKind}.");
 
         var mappedDiagnostics = MapDiagnostics(
             diagnosticKind,
             filteredDiagnostics,
+            documentContext.Snapshot,
             codeDocument,
             sourceText);
 
@@ -134,27 +120,35 @@ internal class RazorTranslateDiagnosticsService
     private Diagnostic[] MapDiagnostics(
         RazorLanguageKind languageKind,
         IReadOnlyList<Diagnostic> diagnostics,
+        IDocumentSnapshot documentSnapshot,
         RazorCodeDocument codeDocument,
         SourceText sourceText)
     {
-        if (languageKind != RazorLanguageKind.CSharp)
-        {
-            // All other non-C# requests map directly to where they are in the document.
-            return diagnostics.ToArray();
-        }
-
-        var mappedDiagnostics = new List<Diagnostic>();
+        var projects = RazorDiagnosticConverter.GetProjectInformation(documentSnapshot);
+        using var mappedDiagnostics = new PooledArrayBuilder<Diagnostic>();
 
         for (var i = 0; i < diagnostics.Count; i++)
         {
             var diagnostic = diagnostics[i];
 
-            if (!TryGetOriginalDiagnosticRange(diagnostic, codeDocument, sourceText, out var originalRange))
+            // C# requests don't map directly to where they are in the document.
+            if (languageKind == RazorLanguageKind.CSharp)
             {
-                continue;
+                if (!TryGetOriginalDiagnosticRange(diagnostic, codeDocument, sourceText, out var originalRange))
+                {
+                    continue;
+                }
+
+                diagnostic.Range = originalRange;
             }
 
-            diagnostic.Range = originalRange;
+            if (diagnostic is VSDiagnostic vsDiagnostic)
+            {
+                // We're the ones reporting the diagnostic, and it shows up as coming from our filename (not the generated one), so
+                // the project info should be consistent too
+                vsDiagnostic.Projects = projects;
+            }
+
             mappedDiagnostics.Add(diagnostic);
         }
 

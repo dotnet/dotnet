@@ -10,12 +10,23 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Extensions;
 internal static class TextDocumentExtensions
 {
     /// <summary>
-    /// Mutates the <see cref="TextDocumentIdentifier"/> by changing the <see cref="Uri"/>. Returns it again for convenience.
+    /// Returns a copy of the passed in <see cref="TextDocumentIdentifier"/> with the passed in <see cref="Uri"/>.
     /// </summary>
     public static TextDocumentIdentifier WithUri(this TextDocumentIdentifier textDocumentIdentifier, Uri uri)
     {
-        textDocumentIdentifier.Uri = uri;
-        return textDocumentIdentifier;
+        if (textDocumentIdentifier is VSTextDocumentIdentifier vsTdi)
+        {
+            return new VSTextDocumentIdentifier
+            {
+                Uri = uri,
+                ProjectContext = vsTdi.ProjectContext
+            };
+        }
+
+        return new TextDocumentIdentifier
+        {
+            Uri = uri
+        };
     }
 
     public static RazorTextDocumentIdentifier ToRazorTextDocumentIdentifier(this TextDocumentIdentifier textDocumentIdentifier)

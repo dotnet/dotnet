@@ -4,14 +4,16 @@
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.Test;
 
-public class RazorWorkspaceListenerTest
+public class RazorWorkspaceListenerTest(ITestOutputHelper testOutputHelper) : ToolingTestBase(testOutputHelper)
 {
     [Fact]
     public async Task ProjectAdded_SchedulesTask()
