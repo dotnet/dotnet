@@ -1532,5 +1532,101 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             Assert.Contains($"Package 'packageA' 1.2.0 has a known high severity vulnerability", result.AllOutput);
             Assert.DoesNotContain($"Package 'packageA' 1.1.0 has a known high severity vulnerability", result.AllOutput);
         }
+
+        [Fact]
+        public async Task MsbuildRestore_WithMultipleProjectsInSameDirectory_RaisesAppropriateWarnings()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource, sourceReportsVulnerabilities: true);
+
+            mockServer.Vulnerabilities.Add(
+                "packageA",
+                new List<(Uri, PackageVulnerabilitySeverity, VersionRange)> {
+                    (new Uri("https://contoso.com/advisories/12345"), PackageVulnerabilitySeverity.High, VersionRange.Parse("[1.0.0, 2.0.0)")),
+                    (new Uri("https://contoso.com/advisories/12346"), PackageVulnerabilitySeverity.Critical, VersionRange.Parse("[1.2.0, 2.0.0)"))
+                });
+            pathContext.Settings.RemoveSource("source");
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri);
+
+            var packageA1 = new SimpleTestPackageContext()
+            {
+                Id = "packageA",
+                Version = "1.1.0"
+            };
+            var packageA2 = new SimpleTestPackageContext()
+            {
+                Id = "packageA",
+                Version = "1.2.0"
+            };
+            var packageB = new SimpleTestPackageContext()
+            {
+                Id = "packageB",
+                Version = "2.2.0"
+            };
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                packageA1,
+                packageA2,
+                packageB);
+
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = new SimpleTestProjectContext(
+                "a",
+                ProjectStyle.PackagesConfig,
+                pathContext.SolutionRoot);
+            projectA.Properties.Add("NuGetAuditLevel", "critical");
+
+            var projectB = new SimpleTestProjectContext(
+                "b",
+                ProjectStyle.PackagesConfig,
+                pathContext.SolutionRoot);
+            projectB.Properties.Add("NuGetAuditLevel", "high");
+            projectB.ProjectPath = Path.Combine(pathContext.SolutionRoot, "a", $"b.csproj");
+
+            solution.Projects.Add(projectA);
+            solution.Projects.Add(projectB);
+            solution.Create(pathContext.SolutionRoot);
+
+
+            using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectB.ProjectPath), "packages.config")))
+            {
+                writer.Write(
+@"<packages>
+  <package id=""packageA"" version=""1.1.0"" />
+  <package id=""packageA"" version=""1.2.0"" />
+  <package id=""packageB"" version=""2.2.0"" />
+</packages>");
+            }
+            mockServer.Start();
+
+            // Act
+            string args = $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true";
+            CommandRunnerResult r = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, args, ignoreExitCode: true, testOutputHelper: _testOutputHelper);
+
+            mockServer.Stop();
+
+            // Assert
+            r.Success.Should().BeTrue(because: r.AllOutput);
+            var packageFileA = Path.Combine(pathContext.SolutionRoot, "packages", "packageA.1.1.0", "packageA.1.1.0.nupkg");
+            var packageFileA120 = Path.Combine(pathContext.SolutionRoot, "packages", "packageA.1.2.0", "packageA.1.2.0.nupkg");
+            var packageFileB = Path.Combine(pathContext.SolutionRoot, "packages", "packageB.2.2.0", "packageB.2.2.0.nupkg");
+            File.Exists(packageFileA).Should().BeTrue();
+            File.Exists(packageFileA120).Should().BeTrue();
+            File.Exists(packageFileB).Should().BeTrue();
+
+            // MSBuild replays warnings at the bottom, so only look there.
+            var replayedOutput = r.AllOutput.Substring(r.AllOutput.IndexOf($"\"{solution.SolutionPath}\" (Restore "));
+
+            replayedOutput.Should().Contain($"Package 'packageA' 1.2.0 has a known critical severity vulnerability", Exactly.Twice());
+            replayedOutput.Should().Contain($"Package 'packageA' 1.2.0 has a known high severity vulnerability", Exactly.Once());
+            replayedOutput.Should().Contain($"Package 'packageA' 1.1.0 has a known high severity vulnerability", Exactly.Once());
+            // Make sure that we're not missing out asserting any reported vulnerabilities.
+            replayedOutput.Should().NotContain($"a known low severity vulnerability");
+            replayedOutput.Should().NotContain($"a known moderate severity vulnerability");
+            replayedOutput.Should().Contain($"a known high severity vulnerability", Exactly.Twice());
+            replayedOutput.Should().Contain($"a known critical severity vulnerability", Exactly.Twice());
+        }
     }
 }

@@ -276,16 +276,16 @@ namespace NuGet.CommandLine
 
             if (packageRestoreInputs.RestoringWithSolutionFile)
             {
-                Dictionary<string, string> configToProjectPath = GetPackagesConfigToProjectPath(packageRestoreInputs);
+                Dictionary<string, HashSet<string>> configToProjectPath = GetPackagesConfigToProjectsPath(packageRestoreInputs);
                 Dictionary<PackageReference, List<string>> packageReferenceToProjects = new(PackageReferenceComparer.Instance);
 
-                foreach (string configFile in packageRestoreInputs.PackagesConfigFiles)
+                foreach (string configFile in packageRestoreInputs.PackagesConfigFiles.Distinct())
                 {
                     foreach (PackageReference packageReference in GetInstalledPackageReferences(configFile))
                     {
-                        if (!configToProjectPath.TryGetValue(configFile, out string projectPath))
+                        if (!configToProjectPath.TryGetValue(configFile, out HashSet<string> projectPath))
                         {
-                            projectPath = configFile;
+                            projectPath = new HashSet<string> { configFile };
                         }
 
                         if (!packageReferenceToProjects.TryGetValue(packageReference, out List<string> value))
@@ -293,7 +293,7 @@ namespace NuGet.CommandLine
                             value ??= new();
                             packageReferenceToProjects.Add(packageReference, value);
                         }
-                        value.Add(projectPath);
+                        value.AddRange(projectPath);
                     }
                 }
 
@@ -469,17 +469,25 @@ namespace NuGet.CommandLine
             }
         }
 
-        private static Dictionary<string, string> GetPackagesConfigToProjectPath(PackageRestoreInputs packageRestoreInputs)
+        private Dictionary<string, HashSet<string>> GetPackagesConfigToProjectsPath(PackageRestoreInputs packageRestoreInputs)
         {
-            Dictionary<string, string> configToProjectPath = new();
+            Dictionary<string, HashSet<string>> configToProjectPath = new();
             foreach (PackageSpec project in packageRestoreInputs.ProjectReferenceLookup.Projects)
             {
                 if (project.RestoreMetadata?.ProjectStyle == ProjectStyle.PackagesConfig)
                 {
-                    configToProjectPath.Add(((PackagesConfigProjectRestoreMetadata)project.RestoreMetadata).PackagesConfigPath, project.FilePath);
+                    var packagesConfig = ((PackagesConfigProjectRestoreMetadata)project.RestoreMetadata).PackagesConfigPath;
+
+                    if (configToProjectPath.TryGetValue(packagesConfig, out HashSet<string> existingValue))
+                    {
+                        existingValue.Add(project.FilePath);
+                    }
+                    else
+                    {
+                        configToProjectPath.Add(packagesConfig, new HashSet<string> { project.FilePath });
+                    }
                 }
             }
-
             return configToProjectPath;
         }
 

@@ -12,6 +12,7 @@ Microsoft.IdentityModel.Logging.dll
 Microsoft.IdentityModel.Tokens.dll
 Microsoft.Internal.VisualStudio.Interop.dll
 Microsoft.Internal.VisualStudio.Shell.Framework.dll
+Microsoft.Internal.VisualStudio.Shell.Framework.resources.dll
 Microsoft.IO.Redist.dll
 Microsoft.NET.StringTools.dll
 Microsoft.ServiceHub.Framework.dll
@@ -76,6 +77,7 @@ Microsoft.TeamFoundation.WorkItemTracking.Proxy.resources.dll
 Microsoft.TeamFoundation.WorkItemTracking.WebApi.dll
 Microsoft.VisualStudio.Debugger.Interop.16.0.dll
 Microsoft.VisualStudio.Interop.dll
+Microsoft.VisualStudio.Linux.ConnectionManager.Store.dll
 Microsoft.VisualStudio.RpcContracts.dll
 Microsoft.VisualStudio.Services.Client.Interactive.dll
 Microsoft.VisualStudio.Services.Client.Interactive.resources.dll
@@ -99,7 +101,6 @@ System.IO.Pipelines.dll
 System.Management.Automation.dll
 System.Net.Http.Formatting.dll
 System.Reflection.MetadataLoadContext.dll
-System.Reflection.TypeExtensions.dll
 System.Resources.Extensions.dll
 System.Security.AccessControl.dll
 System.Security.Principal.Windows.dll
