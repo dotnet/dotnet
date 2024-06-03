@@ -24,7 +24,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/command-line-api`  
 *[dotnet/command-line-api@963d34b](https://github.com/dotnet/command-line-api/tree/963d34b1fb712c673bfb198133d7e988182c9ef4)*
 - `src/deployment-tools`  
-*[dotnet/deployment-tools@bc9bf8d](https://github.com/dotnet/deployment-tools/tree/bc9bf8d30525e437ded7856fea6a528ad20b1903)*
+*[dotnet/deployment-tools@4017482](https://github.com/dotnet/deployment-tools/tree/40174825bd85a333428e68e6049bfe7cc28e9061)*
 - `src/diagnostics`  
 *[dotnet/diagnostics@3f6ec18](https://github.com/dotnet/diagnostics/tree/3f6ec187afd27d5f242c9275ca1b6e16c43a1b0c)*
 - `src/efcore`  

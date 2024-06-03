@@ -35,16 +35,6 @@ jobs:
       InternalMSBuildArgs: ''
     Codeql.Enabled: ${{ parameters.codeql }}
   steps:
-  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-    - task: NuGetAuthenticate@1
-    - task: MicroBuildSigningPlugin@2
-      displayName: Install MicroBuild plugin for Signing
-      inputs:
-        signType: $(SignType)
-        zipSources: false
-        feedSource: https://dnceng.pkgs.visualstudio.com/_packaging/MicroBuildToolset/nuget/v3/index.json
-      continueOnError: false
-      condition: and(succeeded(), in(variables['SignType'], 'real', 'test'))
   - powershell: Remove-Item -Recurse -ErrorAction Ignore "$env:LocalAppData\NuGet\v3-cache"
     displayName: Clear NuGet http cache (if exists)
   - ${{ if ne(variables['System.TeamProject'], 'public') }}:
@@ -56,6 +46,16 @@ jobs:
         arguments: -ConfigFile $(Build.SourcesDirectory)/NuGet.config -Password $Env:Token
       env:
         Token: $(dn-bot-dnceng-artifact-feeds-rw)
+    - task: NuGetAuthenticate@1
+  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - task: MicroBuildSigningPlugin@2
+      displayName: Install MicroBuild plugin for Signing
+      inputs:
+        signType: $(SignType)
+        zipSources: false
+        feedSource: https://dnceng.pkgs.visualstudio.com/_packaging/MicroBuildToolset/nuget/v3/index.json
+      continueOnError: false
+      condition: and(succeeded(), in(variables['SignType'], 'real', 'test'))
   - script: >-
       eng\common\cibuild.cmd $(CommonMSBuildArgs) $(InternalMSBuildArgs)
     displayName: Build
