@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading.Tasks;
+using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -180,9 +181,22 @@ namespace NuGet.VisualStudio
                 return default;
             }
 
+            Properties properties = envDTEProject.Properties;
             try
             {
-                var property = envDTEProject.Properties.Item(propertyName);
+                Property property;
+                if (Marshal.IsComObject(properties) && properties is INonThrowingDTEProjectProperties nonThrowingProperties)
+                {
+                    // NOTE: We purposely ignore the return code, the entire point of this path is to NOT throw for simple failures,
+                    // if the call fails the out param will be set to null, which is handled below (and is the normal return
+                    // in the throwing case).
+                    nonThrowingProperties.Item(propertyName, out property);
+                }
+                else
+                {
+                    property = properties.Item(propertyName);
+                }
+
                 if (property != null)
                 {
                     return (T)property.Value;

@@ -79,24 +79,27 @@ namespace Test.Utility
             SolutionDirectory = solutionDirectory;
         }
 
-        public MSBuildNuGetProject AddNewMSBuildProject(string projectName = null, NuGetFramework projectTargetFramework = null, string packagesConfigName = null)
+        public MSBuildNuGetProject AddNewMSBuildProject(string projectName = null, NuGetFramework projectTargetFramework = null, string projectPath = null, bool validateExistingProject = true)
         {
-            var existingProject = Task.Run(async () => await GetNuGetProjectAsync(projectName));
-            existingProject.Wait();
-            if (existingProject.IsCompleted && existingProject.Result != null)
+            if (validateExistingProject)
             {
-                throw new ArgumentException("Project with " + projectName + " already exists");
+                var existingProject = Task.Run(async () => await GetNuGetProjectAsync(projectName));
+                existingProject.Wait();
+                if (existingProject.IsCompleted && existingProject.Result != null)
+                {
+                    throw new ArgumentException("Project with " + projectName + " already exists");
+                }
             }
 
-            var packagesFolder = PackagesFolder;
             projectName = string.IsNullOrEmpty(projectName) ? Guid.NewGuid().ToString() : projectName;
-            var projectFullPath = Path.Combine(SolutionDirectory, projectName);
+            var projectFullPath = projectPath ?? Path.Combine(SolutionDirectory, projectName);
             Directory.CreateDirectory(projectFullPath);
 
             projectTargetFramework = projectTargetFramework ?? NuGetFramework.Parse("net45");
+
             var msBuildNuGetProjectSystem = new TestMSBuildNuGetProjectSystem(projectTargetFramework, new TestNuGetProjectContext(),
                 projectFullPath, projectName);
-            var msBuildNuGetProject = new MSBuildNuGetProject(msBuildNuGetProjectSystem, packagesFolder, projectFullPath);
+            var msBuildNuGetProject = new MSBuildNuGetProject(msBuildNuGetProjectSystem, PackagesFolder, projectFullPath);
             NuGetProjects.Add(msBuildNuGetProject);
             return msBuildNuGetProject;
         }

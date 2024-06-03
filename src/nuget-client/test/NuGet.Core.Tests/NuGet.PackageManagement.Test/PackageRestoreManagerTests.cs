@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using NuGet.Configuration;
 using NuGet.PackageManagement;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
@@ -387,6 +388,56 @@ namespace NuGet.Test
 
                 restoreFailedPackages[restoreFailedPackages.Keys.Where(r => r.PackageIdentity.Equals(testPackage2)).First()].Should().BeEquivalentTo(new[] { "projectA", "projectC" });
             }
+        }
+
+        [Fact]
+        public async Task RestoreMissingPackagesInSolutionAsync_WithProjectsSharingSameName_Succeeds()
+        {
+            // Arrange
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            using var testSolutionManager = new TestSolutionManager(simpleTestPathContext);
+
+            var projectA = testSolutionManager.AddNewMSBuildProject("Project");
+            var projectBPath = Path.Combine(testSolutionManager.SolutionDirectory, "subfolder", "Project");
+            var projectB = testSolutionManager.AddNewMSBuildProject("Project", projectPath: projectBPath, validateExistingProject: false);
+
+            var packageA = new SimpleTestPackageContext("a", "1.0.0");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(simpleTestPathContext.PackageSource, packageA);
+
+            var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(simpleTestPathContext.PackageSource));
+            var testSettings = NullSettings.Instance;
+            var resolutionContext = new ResolutionContext();
+
+            var nuGetPackageManager = new NuGetPackageManager(
+                sourceRepositoryProvider,
+                testSettings,
+                testSolutionManager,
+                new TestDeleteOnRestartManager());
+
+            await nuGetPackageManager.InstallPackageAsync(projectA, packageA.Identity,
+                resolutionContext, new TestNuGetProjectContext(), sourceRepositoryProvider.GetRepositories().First(), null, CancellationToken.None);
+            await nuGetPackageManager.InstallPackageAsync(projectB, packageA.Identity,
+                resolutionContext, new TestNuGetProjectContext(), sourceRepositoryProvider.GetRepositories().First(), null, CancellationToken.None);
+
+            var packageRestoreManager = new PackageRestoreManager(
+                sourceRepositoryProvider,
+                testSettings,
+                testSolutionManager);
+
+            // pre-conditions
+            nuGetPackageManager.PackageExistsInPackagesFolder(packageA.Identity).Should().BeTrue();
+            TestFileSystemUtility.DeleteRandomTestFolder(Path.Combine(testSolutionManager.SolutionDirectory, "packages"));
+            nuGetPackageManager.PackageExistsInPackagesFolder((packageA.Identity)).Should().BeFalse();
+
+            // Act
+            PackageRestoreResult result = await packageRestoreManager.RestoreMissingPackagesInSolutionAsync(testSolutionManager.SolutionDirectory,
+                new TestNuGetProjectContext(),
+                new TestLogger(),
+                CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            nuGetPackageManager.PackageExistsInPackagesFolder((packageA.Identity)).Should().BeTrue();
         }
 
         private static DownloadResourceResult GetDownloadResult(string source, FileInfo packageFileInfo)

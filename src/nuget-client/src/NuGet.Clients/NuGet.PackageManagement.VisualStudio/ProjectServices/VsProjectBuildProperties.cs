@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using EnvDTE;
 using Microsoft;
 using Microsoft.VisualStudio;
@@ -108,8 +109,23 @@ namespace NuGet.PackageManagement.VisualStudio
                 {
                     _project = _dteProject.Value;
                 }
-                var property = _project.Properties.Item(propertyName);
+
+                Property property = null;
+                var properties = _project.Properties;
+                if (Marshal.IsComObject(_project) && properties is INonThrowingDTEProjectProperties nonThrowingProperties)
+                {
+                    // NOTE: We purposely ignore the return code, the entire point of this path is to NOT throw for simple failures,
+                    // if the call fails the out param will be set to null, which is handled below (and is the normal return
+                    // in the throwing case).
+                    nonThrowingProperties.Item(propertyName, out property);
+                }
+                else
+                {
+                    property = properties.Item(propertyName);
+                }
+
                 _buildPropertiesTelemetry.OnDteUsed(propertyName, _projectTypeGuids);
+
                 return property?.Value as string;
             }
             catch (ArgumentException)
