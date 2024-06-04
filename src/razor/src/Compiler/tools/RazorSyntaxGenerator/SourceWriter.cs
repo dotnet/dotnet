@@ -320,92 +320,6 @@ internal class SourceWriter : AbstractFileWriter
         }
     }
 
-    private void WriteGreenSerialization(Node node)
-    {
-        var valueFields = node.Fields.Where(n => !IsNodeOrNodeList(n.Type)).ToList();
-        var nodeFields = node.Fields.Where(n => IsNodeOrNodeList(n.Type)).ToList();
-
-        // object reader constructor
-        WriteLine();
-        WriteLine("    internal {0}(ObjectReader reader)", node.Name);
-        WriteLine("        : base(reader)");
-        WriteLine("    {");
-
-        WriteLine("      this.SlotCount = {0};", nodeFields.Count);
-
-        for (int i = 0, n = nodeFields.Count; i < n; i++)
-        {
-            var field = nodeFields[i];
-            string type = GetFieldType(field, green: true);
-            WriteLine("      var {0} = ({1})reader.ReadValue();", CamelCase(field.Name), type);
-            WriteLine("      if ({0} != null)", CamelCase(field.Name));
-            WriteLine("      {");
-            WriteLine("         AdjustFlagsAndWidth({0});", CamelCase(field.Name));
-            WriteLine("         this.{0} = {0};", CamelCase(field.Name), type);
-            WriteLine("      }");
-        }
-
-        for (int i = 0, n = valueFields.Count; i < n; i++)
-        {
-            var field = valueFields[i];
-            string type = GetFieldType(field, green: true);
-            WriteLine("      this.{0} = ({1})reader.{2}();", CamelCase(field.Name), type, GetReaderMethod(type));
-        }
-
-        WriteLine("    }");
-
-        // IWritable
-        WriteLine();
-        WriteLine("    internal override void WriteTo(ObjectWriter writer)");
-        WriteLine("    {");
-        WriteLine("      base.WriteTo(writer);");
-
-        for (int i = 0, n = nodeFields.Count; i < n; i++)
-        {
-            var field = nodeFields[i];
-            string type = GetFieldType(field, green: true);
-            WriteLine("      writer.WriteValue(this.{0});", CamelCase(field.Name));
-        }
-
-        for (int i = 0, n = valueFields.Count; i < n; i++)
-        {
-            var field = valueFields[i];
-            var type = GetFieldType(field, green: true);
-            WriteLine("      writer.{0}(this.{1});", GetWriterMethod(type), CamelCase(field.Name));
-        }
-
-        WriteLine("    }");
-
-        // IReadable
-        WriteLine();
-        WriteLine("    static {0}()", node.Name);
-        WriteLine("    {");
-        WriteLine("       ObjectBinder.RegisterTypeReader(typeof({0}), r => new {0}(r));", node.Name);
-        WriteLine("    }");
-    }
-
-    private string GetWriterMethod(string type)
-    {
-        switch (type)
-        {
-            case "bool":
-                return "WriteBoolean";
-            default:
-                throw new InvalidOperationException("Type 'type' not supported for object reader serialization.");
-        }
-    }
-
-    private string GetReaderMethod(string type)
-    {
-        switch (type)
-        {
-            case "bool":
-                return "ReadBoolean";
-            default:
-                throw new InvalidOperationException("Type 'type' not supported for object reader serialization.");
-        }
-    }
-
     private void WriteCtorBody(List<Field> valueFields, List<Field> nodeFields)
     {
         // constructor body
@@ -675,28 +589,6 @@ internal class SourceWriter : AbstractFileWriter
                 WriteLine("    }");
             }
         }
-        WriteLine("  }");
-    }
-
-    private void WriteContextualGreenFactories()
-    {
-        var nodes = Tree.Types.Where(n => !(n is PredefinedNode) && !(n is AbstractNode)).ToList();
-        WriteLine();
-        WriteLine("  internal partial class ContextAwareSyntax");
-        WriteLine("  {");
-
-        WriteLine();
-        WriteLine("    private SyntaxFactoryContext context;");
-        WriteLine();
-
-        WriteLine();
-        WriteLine("    public ContextAwareSyntax(SyntaxFactoryContext context)");
-        WriteLine("    {");
-        WriteLine("        this.context = context;");
-        WriteLine("    }");
-
-        WriteGreenFactories(nodes, withSyntaxFactoryContext: true);
-
         WriteLine("  }");
     }
 
@@ -1273,18 +1165,6 @@ internal class SourceWriter : AbstractFileWriter
         return field.Type;
     }
 
-    private string GetChildPosition(int i)
-    {
-        if (i == 0)
-        {
-            return "Position";
-        }
-        else
-        {
-            return "GetChildPosition(" + i + ")";
-        }
-    }
-
     private string GetChildIndex(int i)
     {
         if (i == 0)
@@ -1422,45 +1302,6 @@ internal class SourceWriter : AbstractFileWriter
 
         WriteLine();
         WriteLine("        return this;");
-        WriteLine("    }");
-    }
-
-    private void WriteRedWithMethod(Node node)
-    {
-        WriteLine();
-        Write("    public {0} With(", node.Name);
-
-        // parameters
-        for (int f = 0; f < node.Fields.Count; f++)
-        {
-            var field = node.Fields[f];
-            var type = GetRedPropertyType(field);
-            Write("Optional<{0}> {1} = default(Optional<{0}>)", type, UnderscoreCamelCase(field.Name));
-            if (f < node.Fields.Count - 1)
-            {
-                Write(", ");
-            }
-        }
-        WriteLine(")");
-        WriteLine("    {");
-
-        Write("        return Update(");
-
-        for (int f = 0; f < node.Fields.Count; f++)
-        {
-            var field = node.Fields[f];
-            var parameterName = UnderscoreCamelCase(field.Name);
-            WriteLine();
-            Write("                    {0}.HasValue ? {0}.Value : {1}", parameterName, field.Name);
-            if (f < node.Fields.Count - 1)
-            {
-                Write(",");
-            }
-        }
-
-        WriteLine();
-        WriteLine("                    );");
-
         WriteLine("    }");
     }
 

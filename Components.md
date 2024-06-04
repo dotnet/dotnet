@@ -40,7 +40,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/tree/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@6f45629](https://github.com/dotnet/razor/tree/6f456295226e95b6a4a425530798074ae0f08c86)*
+*[dotnet/razor@31b79cb](https://github.com/dotnet/razor/tree/31b79cb36b6842f19088f70f910e7356057d990e)*
 - `src/roslyn`  
 *[dotnet/roslyn@f840f7f](https://github.com/dotnet/roslyn/tree/f840f7f23cf6592c30606dbe581e3325739575d6)*
 - `src/roslyn-analyzers`  
@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@54700bb](https://github.com/dotnet/scenario-tests/tree/54700bbee86f660d37bd519a905b62bb50adc8c8)*
 - `src/sdk`  
-*[dotnet/sdk@1c7a2e4](https://github.com/dotnet/sdk/tree/1c7a2e4ff6118470792c60be1c923f599c5f5dc8)*
+*[dotnet/sdk@ad23e7b](https://github.com/dotnet/sdk/tree/ad23e7b7c3badaf155220cad9dcb537c41b52f78)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@f1b44a3](https://github.com/dotnet/source-build-externals/tree/f1b44a365df0b8dbc38403ee8696adc25fbdd76a)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -90,7 +90,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/templating`  
 *[dotnet/templating@992a268](https://github.com/dotnet/templating/tree/992a26854d23749a01364b6fec3cbaf4fd8a5b24)*
 - `src/test-templates`  
-*[dotnet/test-templates@820d544](https://github.com/dotnet/test-templates/tree/820d5449b63655f4b63b87077ab6891456e4fa7f)*
+*[dotnet/test-templates@3f9ca30](https://github.com/dotnet/test-templates/tree/3f9ca30feb8df458b808672e4ac14fb544bdd8ed)*
 - `src/vstest`  
 *[microsoft/vstest@614363f](https://github.com/microsoft/vstest/tree/614363f91499f2fbebe9f7cc1a622b3d9fc32033)*
 - `src/windowsdesktop`  

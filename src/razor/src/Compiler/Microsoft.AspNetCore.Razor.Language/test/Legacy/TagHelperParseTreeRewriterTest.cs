@@ -55,12 +55,6 @@ public class TagHelperParseTreeRewriterTest : TagHelperRewritingTestBase
         var errorSink = new ErrorSink();
         var parseResult = ParseDocument(documentContent);
         var document = parseResult.Root;
-        var binder = new TagHelperBinder(tagHelperPrefix: null, tagHelpers: []);
-        var parseTreeRewriter = new TagHelperParseTreeRewriter.Rewriter(
-            parseResult.Source,
-            binder,
-            parseResult.Options,
-            errorSink);
 
         // Assert - Guard
         var rootBlock = Assert.IsType<RazorDocumentSyntax>(document);

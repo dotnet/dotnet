@@ -428,19 +428,4 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
             },
             node => Assert.Same(@namespace, node));
     }
-
-    private DocumentIntermediateNode CreateIRDocument(RazorEngine engine, RazorCodeDocument codeDocument)
-    {
-        foreach (var phase in engine.Phases)
-        {
-            phase.Execute(codeDocument);
-
-            if (phase is IRazorDocumentClassifierPhase)
-            {
-                break;
-            }
-        }
-
-        return codeDocument.GetDocumentIntermediateNode();
-    }
 }

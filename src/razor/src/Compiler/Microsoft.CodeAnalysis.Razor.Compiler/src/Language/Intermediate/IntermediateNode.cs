@@ -4,6 +4,7 @@
 #nullable disable
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -48,6 +49,7 @@ public abstract class IntermediateNode
     public abstract void Accept(IntermediateNodeVisitor visitor);
 
     [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
+    [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members")]
     private string Tree
     {
         get

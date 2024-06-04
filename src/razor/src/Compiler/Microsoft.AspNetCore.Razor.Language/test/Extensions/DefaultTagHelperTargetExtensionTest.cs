@@ -1151,24 +1151,6 @@ private global::Microsoft.AspNetCore.Razor.Runtime.TagHelpers.TagHelperScopeMana
         ((DefaultCodeRenderingContext)context).AncestorsInternal.Push(node);
     }
 
-    private static DocumentIntermediateNode Lower(RazorCodeDocument codeDocument, RazorProjectEngine engine)
-    {
-        foreach (var phase in engine.Phases)
-        {
-            phase.Execute(codeDocument);
-
-            if (phase is IRazorIntermediateNodeLoweringPhase)
-            {
-                break;
-            }
-        }
-
-        var irDocument = codeDocument.GetDocumentIntermediateNode();
-        Assert.NotNull(irDocument);
-
-        return irDocument;
-    }
-
     private static TagHelperDescriptor CreateTagHelperDescriptor(
         string tagName,
         string typeName,

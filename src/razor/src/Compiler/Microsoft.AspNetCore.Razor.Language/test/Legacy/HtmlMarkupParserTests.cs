@@ -174,7 +174,6 @@ public class HtmlMarkupParserTests
     public void IsCommentContentEndingInvalid_ReturnsTrueForDisallowedContent()
     {
         // Arrange
-        var expectedToken1 = SyntaxFactory.Token(SyntaxKind.Text, "a");
         var sequence = new[]
         {
                 SyntaxFactory.Token(SyntaxKind.OpenAngle, "<"),
@@ -190,7 +189,6 @@ public class HtmlMarkupParserTests
     public void IsCommentContentEndingInvalid_ReturnsFalseForEmptyContent()
     {
         // Arrange
-        var expectedToken1 = SyntaxFactory.Token(SyntaxKind.Text, "a");
         var sequence = Array.Empty<SyntaxToken>();
 
         // Act & Assert
