@@ -30,7 +30,6 @@ public static class IDistributedApplicationResourceBuilderExtensions
     /// <param name="builder">The resource builder instance.</param>
     /// <param name="options">Options for configuring the Dapr sidecar, if any.</param>
     /// <returns>The resource builder instance.</returns>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("ApiDesign", "RS0027:API with optional parameter(s) should have the most parameters amongst its public overloads", Justification = "<Pending>")]
     public static IResourceBuilder<T> WithDaprSidecar<T>(this IResourceBuilder<T> builder, DaprSidecarOptions? options = null) where T : IResource
     {
         return builder.WithDaprSidecar(
@@ -55,13 +54,7 @@ public static class IDistributedApplicationResourceBuilderExtensions
         // Add Dapr is idempoent, so we can call it multiple times.
         builder.ApplicationBuilder.AddDapr();
 
-        var sidecarBuilder = builder.ApplicationBuilder.AddResource(new DaprSidecarResource($"{builder.Resource.Name}-dapr"))
-                                                       .WithInitialState(new()
-                                                       {
-                                                           Properties = [],
-                                                           ResourceType = "DaprSidecar",
-                                                           State = KnownResourceStates.Hidden
-                                                       });
+        var sidecarBuilder = builder.ApplicationBuilder.AddResource(new DaprSidecarResource($"{builder.Resource.Name}-dapr"));
 
         configureSidecar(sidecarBuilder);
 

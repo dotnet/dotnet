@@ -1,135 +1,33 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Security.Cryptography.X509Certificates;
-using Aspire.Dashboard.Configuration;
-using Aspire.Hosting;
-using Grpc.Core;
-using Grpc.Net.Client;
-using Grpc.Net.Client.Configuration;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.InternalTesting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.EnvironmentVariables;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Testing;
 using Xunit.Abstractions;
 
 namespace Aspire.Dashboard.Tests.Integration;
 
 public static class IntegrationTestHelpers
 {
-    private static readonly X509Certificate2 s_testCertificate = TestCertificateLoader.GetTestCertificate();
-
-    public static DashboardWebApplication CreateDashboardWebApplication(
-        ITestOutputHelper testOutputHelper,
-        Action<Dictionary<string, string?>>? additionalConfiguration = null,
-        ITestSink? testSink = null)
+    public static DashboardWebApplication CreateDashboardWebApplication(ITestOutputHelper testOutputHelper)
     {
-        var initialData = new Dictionary<string, string?>
-        {
-            [DashboardConfigNames.DashboardFrontendUrlName.ConfigKey] = "http://127.0.0.1:0",
-            [DashboardConfigNames.DashboardOtlpUrlName.ConfigKey] = "http://127.0.0.1:0",
-            [DashboardConfigNames.DashboardOtlpAuthModeName.ConfigKey] = nameof(OtlpAuthMode.Unsecured),
-            [DashboardConfigNames.DashboardFrontendAuthModeName.ConfigKey] = nameof(FrontendAuthMode.Unsecured)
-        };
-
-        additionalConfiguration?.Invoke(initialData);
-
         var config = new ConfigurationManager()
-            .AddInMemoryCollection(initialData).Build();
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ASPNETCORE_URLS"] = "https://127.0.0.1:0",
+                ["DOTNET_DASHBOARD_OTLP_ENDPOINT_URL"] = "http://127.0.0.1:0",
+                ["Kestrel:Certificates:Default:Path"] = TestCertificateLoader.TestCertificatePath,
+                ["Kestrel:Certificates:Default:Password"] = "testPassword"
+            }).Build();
 
         var dashboardWebApplication = new DashboardWebApplication(builder =>
         {
-            builder.Services.PostConfigure<LoggerFilterOptions>(o =>
-            {
-                o.Rules.Clear();
-            });
-
-            // Remove environment variable source of configuration.
-            var sources = ((IConfigurationBuilder)builder.Configuration).Sources;
-            foreach (var item in sources.ToList())
-            {
-                if (item is EnvironmentVariablesConfigurationSource)
-                {
-                    sources.Remove(item);
-                }
-            }            
             builder.Configuration.AddConfiguration(config);
-
             builder.Logging.AddXunit(testOutputHelper);
             builder.Logging.SetMinimumLevel(LogLevel.Trace);
-            if (testSink != null)
-            {
-                builder.Logging.AddProvider(new TestLoggerProvider(testSink));
-            }
-            builder.WebHost.ConfigureKestrel(serverOptions =>
-            {
-                serverOptions.ConfigureHttpsDefaults(options =>
-                {
-                    options.ServerCertificate = s_testCertificate;
-                });
-            });
         });
 
         return dashboardWebApplication;
-    }
-
-    public static GrpcChannel CreateGrpcChannel(
-        string address,
-        ITestOutputHelper testOutputHelper,
-        Action<X509Certificate2?>? validationCallback = null,
-        int? retryCount = null,
-        X509CertificateCollection? clientCertificates = null)
-    {
-        ServiceConfig? serviceConfig = null;
-        if (retryCount > 0)
-        {
-            var defaultMethodConfig = new MethodConfig
-            {
-                Names = { MethodName.Default },
-                RetryPolicy = new RetryPolicy
-                {
-                    MaxAttempts = retryCount,
-                    InitialBackoff = TimeSpan.FromSeconds(1),
-                    MaxBackoff = TimeSpan.FromSeconds(5),
-                    BackoffMultiplier = 1.5,
-                    RetryableStatusCodes = { StatusCode.Unavailable }
-                }
-            };
-
-            serviceConfig = new ServiceConfig { MethodConfigs = { defaultMethodConfig } };
-        }
-
-        var loggerFactory = LoggerFactory.Create(builder =>
-        {
-            builder.AddXunit(testOutputHelper);
-            builder.SetMinimumLevel(LogLevel.Trace);
-        });
-
-        var handler = new SocketsHttpHandler
-        {
-            SslOptions =
-            {
-                RemoteCertificateValidationCallback = (message, cert, chain, errors) =>
-                {
-                    validationCallback?.Invoke((X509Certificate2)cert!);
-                    return true;
-                }
-            }
-        };
-        if (clientCertificates != null)
-        {
-            handler.SslOptions.ClientCertificates = clientCertificates;
-        }
-
-        var channel = GrpcChannel.ForAddress(address, new()
-        {
-            HttpHandler = handler,
-            LoggerFactory = loggerFactory,
-            ServiceConfig = serviceConfig
-        });
-        return channel;
     }
 }

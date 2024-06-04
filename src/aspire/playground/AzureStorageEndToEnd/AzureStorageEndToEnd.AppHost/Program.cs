@@ -1,16 +1,16 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 var storage = builder.AddAzureStorage("storage").RunAsEmulator(container =>
 {
-    container.WithDataBindMount();
+    container.UsePersistence();
 });
 
 var blobs = storage.AddBlobs("blobs");
 
 builder.AddProject<Projects.AzureStorageEndToEnd_ApiService>("api")
-       .WithExternalHttpEndpoints()
        .WithReference(blobs);
 
 // This project is only added in playground projects to support development/debugging
@@ -21,4 +21,3 @@ builder.AddProject<Projects.AzureStorageEndToEnd_ApiService>("api")
 builder.AddProject<Projects.Aspire_Dashboard>(KnownResourceNames.AspireDashboard);
 
 builder.Build().Run();
-

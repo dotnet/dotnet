@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Data.Common;
-using Aspire.Components.Common.Tests;
 using Aspire.Components.ConformanceTests;
 using Microsoft.DotNet.RemoteExecutor;
 using Microsoft.Extensions.Configuration;
@@ -13,10 +12,12 @@ using Xunit;
 
 namespace Aspire.MySqlConnector.Tests;
 
-public class ConformanceTests : ConformanceTests<MySqlDataSource, MySqlConnectorSettings>, IClassFixture<MySqlContainerFixture>
+public class ConformanceTests : ConformanceTests<MySqlDataSource, MySqlConnectorSettings>
 {
-    private readonly MySqlContainerFixture? _containerFixture;
-    private string ConnectionString { get; set; }
+    private const string ConnectionSting = "Host=localhost;Database=test_aspire_mysql;Username=root;Password=password";
+
+    private static readonly Lazy<bool> s_canConnectToServer = new(GetCanConnect);
+
     protected override ServiceLifetime ServiceLifetime => ServiceLifetime.Singleton;
 
     // https://github.com/mysql-net/MySqlConnector/blob/d895afc013a5849d33a123a7061442e2cbb9ce76/src/MySqlConnector/Utilities/ActivitySourceHelper.cs#L61
@@ -32,16 +33,16 @@ public class ConformanceTests : ConformanceTests<MySqlDataSource, MySqlConnector
 
     protected override bool SupportsKeyedRegistrations => true;
 
-    protected override bool CanConnectToServer => RequiresDockerTheoryAttribute.IsSupported;
+    protected override bool CanConnectToServer => s_canConnectToServer.Value;
 
     protected override string ValidJsonConfig => """
         {
           "Aspire": {
             "MySqlConnector": {
               "ConnectionString": "YOUR_CONNECTION_STRING",
-              "DisableHealthChecks": true,
-              "DisableTracing": false,
-              "DisableMetrics": false
+              "HealthChecks": false,
+              "Tracing": true,
+              "Metrics": true
             }
           }
         }
@@ -49,22 +50,14 @@ public class ConformanceTests : ConformanceTests<MySqlDataSource, MySqlConnector
 
     protected override (string json, string error)[] InvalidJsonToErrorMessage => new[]
         {
-            ("""{"Aspire": { "MySqlConnector":{ "DisableMetrics": 0}}}""", "Value is \"integer\" but should be \"boolean\""),
-            ("""{"Aspire": { "MySqlConnector":{ "ConnectionString": "Con", "DisableHealthChecks": "true"}}}""", "Value is \"string\" but should be \"boolean\"")
+            ("""{"Aspire": { "MySqlConnector":{ "Metrics": 0}}}""", "Value is \"integer\" but should be \"boolean\""),
+            ("""{"Aspire": { "MySqlConnector":{ "ConnectionString": "Con", "HealthChecks": "false"}}}""", "Value is \"string\" but should be \"boolean\"")
         };
-
-    public ConformanceTests(MySqlContainerFixture? containerFixture)
-    {
-        _containerFixture = containerFixture;
-        ConnectionString = (_containerFixture is not null && RequiresDockerTheoryAttribute.IsSupported)
-                                        ? _containerFixture.GetConnectionString()
-                                        : "Server=localhost;User ID=root;Password=password;Database=test_aspire_mysql";
-    }
 
     protected override void PopulateConfiguration(ConfigurationManager configuration, string? key = null)
         => configuration.AddInMemoryCollection(new KeyValuePair<string, string?>[1]
         {
-            new KeyValuePair<string, string?>(CreateConfigKey("Aspire:MySqlConnector", key, "ConnectionString"), ConnectionString)
+            new KeyValuePair<string, string?>(CreateConfigKey("Aspire:MySqlConnector", key, "ConnectionString"), ConnectionSting)
         });
 
     protected override void RegisterComponent(HostApplicationBuilder builder, Action<MySqlConnectorSettings>? configure = null, string? key = null)
@@ -80,13 +73,13 @@ public class ConformanceTests : ConformanceTests<MySqlDataSource, MySqlConnector
     }
 
     protected override void SetHealthCheck(MySqlConnectorSettings options, bool enabled)
-        => options.DisableHealthChecks = !enabled;
+        => options.HealthChecks = enabled;
 
     protected override void SetTracing(MySqlConnectorSettings options, bool enabled)
-        => options.DisableTracing = !enabled;
+        => options.Tracing = enabled;
 
     protected override void SetMetrics(MySqlConnectorSettings options, bool enabled)
-        => options.DisableMetrics = !enabled;
+        => options.Metrics = enabled;
 
     protected override void TriggerActivity(MySqlDataSource service)
     {
@@ -121,16 +114,45 @@ public class ConformanceTests : ConformanceTests<MySqlDataSource, MySqlConnector
         T? Resolve<T>() => key is null ? host.Services.GetService<T>() : host.Services.GetKeyedService<T>(key);
     }
 
-    [RequiresDockerFact]
+    [ConditionalFact]
     public void TracingEnablesTheRightActivitySource()
-        => RemoteExecutor.Invoke(static connectionStringToUse => RunWithConnectionString(connectionStringToUse, obj => obj.ActivitySourceTest(key: null)),
-                                 ConnectionString).Dispose();
+    {
+        SkipIfCanNotConnectToServer();
 
-    [RequiresDockerFact]
+        RemoteExecutor.Invoke(() => ActivitySourceTest(key: null)).Dispose();
+    }
+
+    [ConditionalFact]
     public void TracingEnablesTheRightActivitySource_Keyed()
-        => RemoteExecutor.Invoke(static connectionStringToUse => RunWithConnectionString(connectionStringToUse, obj => obj.ActivitySourceTest(key: "key")),
-                                 ConnectionString).Dispose();
+    {
+        SkipIfCanNotConnectToServer();
 
-    private static void RunWithConnectionString(string connectionString, Action<ConformanceTests> test)
-        => test(new ConformanceTests(null) { ConnectionString = connectionString });
+        RemoteExecutor.Invoke(() => ActivitySourceTest(key: "key")).Dispose();
+    }
+
+    private static bool GetCanConnect()
+    {
+        using MySqlConnection connection = new(ConnectionSting);
+
+        try
+        {
+            // clear the database from the connection string so we can create it
+            var builder = new MySqlConnectionStringBuilder(connection.ConnectionString);
+            string dbName = connection.Database;
+            builder.Database = null;
+
+            using var noDatabaseConnection = new MySqlConnection(builder.ConnectionString);
+
+            noDatabaseConnection.Open();
+
+            using var cmd = new MySqlCommand($"CREATE DATABASE IF NOT EXISTS `{dbName}`", noDatabaseConnection);
+            cmd.ExecuteNonQuery();
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+
+        return true;
+    }
 }

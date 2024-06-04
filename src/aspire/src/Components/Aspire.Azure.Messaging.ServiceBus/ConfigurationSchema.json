@@ -35,7 +35,7 @@
                       "properties": {
                         "ConnectionIdleTimeout": {
                           "type": "string",
-                          "pattern": "^-?(\\d{1,7}|((\\d{1,7}[\\.:])?(([01]?\\d|2[0-3]):[0-5]?\\d|([01]?\\d|2[0-3]):[0-5]?\\d:[0-5]?\\d)(\\.\\d{1,7})?))$",
+                          "format": "duration",
                           "description": "The amount of time to allow a connection to have no observed traffic before considering\nit idle and eligible to close."
                         },
                         "CustomEndpointAddress": {
@@ -56,12 +56,12 @@
                           "properties": {
                             "Delay": {
                               "type": "string",
-                              "pattern": "^-?(\\d{1,7}|((\\d{1,7}[\\.:])?(([01]?\\d|2[0-3]):[0-5]?\\d|([01]?\\d|2[0-3]):[0-5]?\\d:[0-5]?\\d)(\\.\\d{1,7})?))$",
+                              "format": "duration",
                               "description": "The delay between retry attempts for a fixed approach or the delay\non which to base calculations for a backoff-based approach."
                             },
                             "MaxDelay": {
                               "type": "string",
-                              "pattern": "^-?(\\d{1,7}|((\\d{1,7}[\\.:])?(([01]?\\d|2[0-3]):[0-5]?\\d|([01]?\\d|2[0-3]):[0-5]?\\d:[0-5]?\\d)(\\.\\d{1,7})?))$",
+                              "format": "duration",
                               "description": "The maximum permissible delay between retry attempts."
                             },
                             "MaxRetries": {
@@ -77,7 +77,7 @@
                             },
                             "TryTimeout": {
                               "type": "string",
-                              "pattern": "^-?(\\d{1,7}|((\\d{1,7}[\\.:])?(([01]?\\d|2[0-3]):[0-5]?\\d|([01]?\\d|2[0-3]):[0-5]?\\d:[0-5]?\\d)(\\.\\d{1,7})?))$",
+                              "format": "duration",
                               "description": "The maximum duration to wait for completion of a single attempt, whether the initial\nattempt or a retry."
                             }
                           },
@@ -97,15 +97,6 @@
                       "type": "string",
                       "description": "Gets or sets the connection string used to connect to the Service Bus namespace."
                     },
-                    "DisableTracing": {
-                      "type": "boolean",
-                      "description": "Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is disabled or not.",
-                      "default": false
-                    },
-                    "FullyQualifiedNamespace": {
-                      "type": "string",
-                      "description": "Gets or sets the fully qualified Service Bus namespace."
-                    },
                     "HealthCheckQueueName": {
                       "type": "string",
                       "description": "Name of the queue used by the health check. Mandatory to get health checks enabled."
@@ -113,6 +104,14 @@
                     "HealthCheckTopicName": {
                       "type": "string",
                       "description": "Name of the topic used by the health check. Mandatory to get health checks enabled."
+                    },
+                    "Namespace": {
+                      "type": "string",
+                      "description": "Gets or sets the fully qualified Service Bus namespace."
+                    },
+                    "Tracing": {
+                      "type": "boolean",
+                      "description": "Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is enabled or not."
                     }
                   },
                   "description": "Provides the client configuration settings for connecting to Azure Service Bus."

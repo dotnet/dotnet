@@ -3,9 +3,8 @@
 
 using Aspire.Components.Common.Tests;
 using Aspire.Components.ConformanceTests;
-using Aspire.Hosting.MySql;
-using Aspire.MySqlConnector.Tests;
 using Microsoft.DotNet.RemoteExecutor;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,11 +13,12 @@ using Xunit;
 
 namespace Aspire.Pomelo.EntityFrameworkCore.MySql.Tests;
 
-public class ConformanceTests : ConformanceTests<TestDbContext, PomeloEntityFrameworkCoreMySqlSettings>, IClassFixture<MySqlContainerFixture>
+public class ConformanceTests : ConformanceTests<TestDbContext, PomeloEntityFrameworkCoreMySqlSettings>
 {
-    private readonly MySqlContainerFixture? _containerFixture;
-    protected string ConnectionString { get; private set; }
-    protected readonly string ServerVersion = $"{MySqlContainerImageTags.Tag}-mysql";
+    // in the future it can become a static property that reads the value from Env Var
+    protected const string ConnectionString = "Server=localhost;User ID=root;Password=pass;Database=test";
+
+    private static readonly Lazy<bool> s_canConnectToServer = new(GetCanConnect);
 
     protected override ServiceLifetime ServiceLifetime => ServiceLifetime.Singleton;
 
@@ -45,7 +45,7 @@ public class ConformanceTests : ConformanceTests<TestDbContext, PomeloEntityFram
         "MySqlConnector.MySqlDataSource",
     };
 
-    protected override bool CanConnectToServer => RequiresDockerTheoryAttribute.IsSupported;
+    protected override bool CanConnectToServer => s_canConnectToServer.Value;
 
     protected override string ValidJsonConfig => """
         {
@@ -54,9 +54,9 @@ public class ConformanceTests : ConformanceTests<TestDbContext, PomeloEntityFram
               "EntityFrameworkCore": {
                 "MySql": {
                   "ConnectionString": "YOUR_CONNECTION_STRING",
-                  "DisableHealthChecks": true,
-                  "DisableTracing": false,
-                  "DisableMetrics": false
+                  "HealthChecks": false,
+                  "Tracing": true,
+                  "Metrics": true
                 }
               }
             }
@@ -66,38 +66,30 @@ public class ConformanceTests : ConformanceTests<TestDbContext, PomeloEntityFram
 
     protected override (string json, string error)[] InvalidJsonToErrorMessage => new[]
         {
-            ("""{"Aspire": { "Pomelo": { "EntityFrameworkCore":{ "MySql": { "DisableRetry": "true"}}}}}""", "Value is \"string\" but should be \"boolean\""),
-            ("""{"Aspire": { "Pomelo": { "EntityFrameworkCore":{ "MySql": { "DisableHealthChecks": "true"}}}}}""", "Value is \"string\" but should be \"boolean\""),
-            ("""{"Aspire": { "Pomelo": { "EntityFrameworkCore":{ "MySql": { "DisableTracing": "true"}}}}}""", "Value is \"string\" but should be \"boolean\""),
-            ("""{"Aspire": { "Pomelo": { "EntityFrameworkCore":{ "MySql": { "DisableMetrics": "true"}}}}}""", "Value is \"string\" but should be \"boolean\""),
+            ("""{"Aspire": { "Pomelo": { "EntityFrameworkCore":{ "MySql": { "Retry": "false"}}}}}""", "Value is \"string\" but should be \"boolean\""),
+            ("""{"Aspire": { "Pomelo": { "EntityFrameworkCore":{ "MySql": { "HealthChecks": "false"}}}}}""", "Value is \"string\" but should be \"boolean\""),
+            ("""{"Aspire": { "Pomelo": { "EntityFrameworkCore":{ "MySql": { "Tracing": "false"}}}}}""", "Value is \"string\" but should be \"boolean\""),
+            ("""{"Aspire": { "Pomelo": { "EntityFrameworkCore":{ "MySql": { "Metrics": "false"}}}}}""", "Value is \"string\" but should be \"boolean\""),
         };
-
-    public ConformanceTests(MySqlContainerFixture? containerFixture)
-    {
-        _containerFixture = containerFixture;
-        ConnectionString = (_containerFixture is not null && RequiresDockerTheoryAttribute.IsSupported)
-                                        ? _containerFixture.GetConnectionString()
-                                        : "Server=localhost;User ID=root;Password=password;Database=test_aspire_mysql";
-    }
 
     protected override void PopulateConfiguration(ConfigurationManager configuration, string? key = null)
         => configuration.AddInMemoryCollection(new KeyValuePair<string, string?>[2]
         {
             new("Aspire:Pomelo:EntityFrameworkCore:MySql:ConnectionString", ConnectionString),
-            new("Aspire:Pomelo:EntityFrameworkCore:MySql:ServerVersion", ServerVersion)
+            new("Aspire:Pomelo:EntityFrameworkCore:MySql:ServerVersion", "8.2.0-mysql")
         });
 
     protected override void RegisterComponent(HostApplicationBuilder builder, Action<PomeloEntityFrameworkCoreMySqlSettings>? configure = null, string? key = null)
         => builder.AddMySqlDbContext<TestDbContext>("mysql", configure);
 
     protected override void SetHealthCheck(PomeloEntityFrameworkCoreMySqlSettings options, bool enabled)
-        => options.DisableHealthChecks = !enabled;
+        => options.HealthChecks = enabled;
 
     protected override void SetTracing(PomeloEntityFrameworkCoreMySqlSettings options, bool enabled)
-        => options.DisableTracing = !enabled;
+        => options.Tracing = enabled;
 
     protected override void SetMetrics(PomeloEntityFrameworkCoreMySqlSettings options, bool enabled)
-        => options.DisableMetrics = !enabled;
+        => options.Metrics = enabled;
 
     protected override void TriggerActivity(TestDbContext service)
     {
@@ -127,11 +119,28 @@ public class ConformanceTests : ConformanceTests<TestDbContext, PomeloEntityFram
         Assert.NotNull(dbContext);
     }
 
-    [RequiresDockerFact]
+    [ConditionalFact(Skip = "Pomelo depends on ef method that was removed in 9.0")]
     public void TracingEnablesTheRightActivitySource()
-        => RemoteExecutor.Invoke(static connectionStringToUse => RunWithConnectionString(connectionStringToUse, obj => obj.ActivitySourceTest(key: null)),
-                                 ConnectionString).Dispose();
+    {
+        SkipIfCanNotConnectToServer();
 
-    private static void RunWithConnectionString(string connectionString, Action<ConformanceTests> test)
-        => test(new ConformanceTests(null) { ConnectionString = connectionString });
+        RemoteExecutor.Invoke(() => ActivitySourceTest(key: null)).Dispose();
+    }
+
+    private static bool GetCanConnect()
+    {
+        var builder = new DbContextOptionsBuilder<TestDbContext>().UseMySql(connectionString: ConnectionString, new MySqlServerVersion(new Version(8, 2, 0)));
+        using TestDbContext dbContext = new(builder.Options);
+
+        try
+        {
+            dbContext.Database.EnsureCreated();
+
+            return true;
+        }
+        catch (InvalidOperationException)
+        {
+            return false;
+        }
+    }
 }

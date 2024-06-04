@@ -26,14 +26,14 @@ public class AspireAzureSearchExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureSearchClient("search");
+            builder.AddKeyedAzureSearch("search");
         }
         else
         {
-            builder.AddAzureSearchClient("search");
+            builder.AddAzureSearch("search");
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<SearchIndexClient>("search") :
             host.Services.GetRequiredService<SearchIndexClient>();
@@ -53,49 +53,19 @@ public class AspireAzureSearchExtensionsTests
 
         if (useKeyed)
         {
-            builder.AddKeyedAzureSearchClient("search", settings => { settings.Endpoint = searchEndpoint; settings.Key = key; });
+            builder.AddKeyedAzureSearch("search", settings => { settings.Endpoint = searchEndpoint; settings.Key = key; });
         }
         else
         {
-            builder.AddAzureSearchClient("search", settings => { settings.Endpoint = searchEndpoint; settings.Key = key; });
+            builder.AddAzureSearch("search", settings => { settings.Endpoint = searchEndpoint; settings.Key = key; });
         }
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var client = useKeyed ?
             host.Services.GetRequiredKeyedService<SearchIndexClient>("search") :
             host.Services.GetRequiredService<SearchIndexClient>();
 
         Assert.NotNull(client);
         Assert.Equal(new Uri(SearchEndpoint), client.Endpoint);
-    }
-
-    [Fact]
-    public void CanAddMultipleKeyedServices()
-    {
-        var builder = Host.CreateEmptyApplicationBuilder(null);
-        builder.Configuration.AddInMemoryCollection([
-            new KeyValuePair<string, string?>("ConnectionStrings:search1", ConnectionString),
-            new KeyValuePair<string, string?>("ConnectionStrings:search2", "Endpoint=https://aspireazuresearchtests2.search.windows.net/;Key=fake"),
-            new KeyValuePair<string, string?>("ConnectionStrings:search3", "Endpoint=https://aspireazuresearchtests3.search.windows.net/;Key=fake")
-        ]);
-
-        builder.AddAzureSearchClient("search1");
-        builder.AddKeyedAzureSearchClient("search2");
-        builder.AddKeyedAzureSearchClient("search3");
-
-        using var host = builder.Build();
-
-        // Unkeyed services don't work with keyed services. See https://github.com/dotnet/aspire/issues/3890
-        //var client1 = host.Services.GetRequiredService<SearchIndexClient>();
-        var client2 = host.Services.GetRequiredKeyedService<SearchIndexClient>("search2");
-        var client3 = host.Services.GetRequiredKeyedService<SearchIndexClient>("search3");
-
-        //Assert.NotSame(client1, client2);
-        //Assert.NotSame(client1, client3);
-        Assert.NotSame(client2, client3);
-
-        //Assert.Equal(new Uri(SearchEndpoint), client1.Endpoint);
-        Assert.Equal(new Uri("https://aspireazuresearchtests2.search.windows.net/"), client2.Endpoint);
-        Assert.Equal(new Uri("https://aspireazuresearchtests3.search.windows.net/"), client3.Endpoint);
     }
 }

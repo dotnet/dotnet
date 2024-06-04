@@ -32,13 +32,13 @@ public abstract class ConformanceTests : ConformanceTests<ServiceBusClient, Azur
               "Messaging": {
                 "ServiceBus": {
                   "Namespace": "YOUR_NAMESPACE",
-                  "DisableHealthChecks": false,
+                  "HealthChecks": true,
                   "ClientOptions": {
-                    "ConnectionIdleTimeout": "00:01",
+                    "ConnectionIdleTimeout": "PT1S",
                     "EnableCrossEntityTransactions": true,
                     "RetryOptions": {
                       "Mode": "Fixed",
-                      "MaxDelay": "00:03"  
+                      "MaxDelay": "PT3S"  
                     },
                     "TransportType": "AmqpWebSockets"
                   }
@@ -54,25 +54,25 @@ public abstract class ConformanceTests : ConformanceTests<ServiceBusClient, Azur
             ("""{"Aspire": { "Azure": { "Messaging":{ "ServiceBus": {"ClientOptions": {"CustomEndpointAddress": "EndPoint"}}}}}}""", "Value does not match format \"uri\""),
             ("""{"Aspire": { "Azure": { "Messaging":{ "ServiceBus": {"ClientOptions": {"EnableCrossEntityTransactions": "false"}}}}}}""", "Value is \"string\" but should be \"boolean\""),
             ("""{"Aspire": { "Azure": { "Messaging":{ "ServiceBus": {"ClientOptions": {"RetryOptions": {"Mode": "Fast"}}}}}}}""", "Value should match one of the values specified by the enum"),
-            ("""{"Aspire": { "Azure": { "Messaging":{ "ServiceBus": {"ClientOptions": {"RetryOptions": {"TryTimeout": "3S"}}}}}}}""", "The string value is not a match for the indicated regular expression"),
+            ("""{"Aspire": { "Azure": { "Messaging":{ "ServiceBus": {"ClientOptions": {"RetryOptions": {"TryTimeout": "3S"}}}}}}}""", "Value does not match format \"duration\""),
             ("""{"Aspire": { "Azure": { "Messaging":{ "ServiceBus": {"ClientOptions": {"TransportType": "HTTP"}}}}}}""", "Value should match one of the values specified by the enum")
         };
 
     // When credentials are not available, we switch to using raw connection string (otherwise we get CredentialUnavailableException)
     protected KeyValuePair<string, string?> GetMainConfigEntry(string? key)
         => CanConnectToServer
-                ? new(CreateConfigKey("Aspire:Azure:Messaging:ServiceBus", key, nameof(AzureMessagingServiceBusSettings.FullyQualifiedNamespace)), FullyQualifiedNamespace)
+                ? new(CreateConfigKey("Aspire:Azure:Messaging:ServiceBus", key, nameof(AzureMessagingServiceBusSettings.Namespace)), FullyQualifiedNamespace)
                 : new(CreateConfigKey("Aspire:Azure:Messaging:ServiceBus", key, nameof(AzureMessagingServiceBusSettings.ConnectionString)), ConnectionString);
 
     protected override void RegisterComponent(HostApplicationBuilder builder, Action<AzureMessagingServiceBusSettings>? configure = null, string? key = null)
     {
         if (key is null)
         {
-            builder.AddAzureServiceBusClient("sb", ConfigureCredentials);
+            builder.AddAzureServiceBus("sb", ConfigureCredentials);
         }
         else
         {
-            builder.AddKeyedAzureServiceBusClient(key, ConfigureCredentials);
+            builder.AddKeyedAzureServiceBus(key, ConfigureCredentials);
         }
 
         void ConfigureCredentials(AzureMessagingServiceBusSettings settings)
@@ -89,7 +89,7 @@ public abstract class ConformanceTests : ConformanceTests<ServiceBusClient, Azur
         => throw new NotImplementedException();
 
     protected override void SetTracing(AzureMessagingServiceBusSettings options, bool enabled)
-        => options.DisableTracing = !enabled;
+        => options.Tracing = enabled;
 
     public static RemoteInvokeOptions EnableTracingForAzureSdk()
         => new()

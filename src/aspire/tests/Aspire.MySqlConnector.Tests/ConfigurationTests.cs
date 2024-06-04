@@ -13,13 +13,13 @@ public class ConfigurationTests
 
     [Fact]
     public void HealthCheckIsEnabledByDefault()
-        => Assert.False(new MySqlConnectorSettings().DisableHealthChecks);
+        => Assert.True(new MySqlConnectorSettings().HealthChecks);
 
     [Fact]
     public void TracingIsEnabledByDefault()
-        => Assert.False(new MySqlConnectorSettings().DisableTracing);
+        => Assert.True(new MySqlConnectorSettings().Tracing);
 
     [Fact]
     public void MetricsAreEnabledByDefault()
-        => Assert.False(new MySqlConnectorSettings().DisableMetrics);
+        => Assert.True(new MySqlConnectorSettings().Metrics);
 }

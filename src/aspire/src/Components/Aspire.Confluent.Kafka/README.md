@@ -85,7 +85,7 @@ The .NET Aspire Confluent Kafka component supports [Microsoft.Extensions.Configu
     "Confluent": {
       "Kafka": {
         "Producer": {
-          "DisableHealthChecks": false,
+          "HealthChecks": true,
           "Config": {
             "Acks": "All"
           }
@@ -105,12 +105,12 @@ The `Config` properties of both  `Aspire:Confluent:Kafka:Producer` and `Aspire.C
 Also you can pass the `Action<KafkaProducerSettings> configureSettings` delegate to set up some or all the options inline, for example to disable health checks from code:
 
 ```csharp
-    builder.AddKafkaProducer<string, string>("messaging", settings => settings.DisableHealthChecks = true);
+    builder.AddKafkaProducer<string, string>("messaging", settings => settings.HealthChecks = false);
 ```
 
 Similarly you can configure inline a consumer from code:
 ```c#
-    builder.AddKafkaConsumer<string, string>("messaging", settings => settings.DisableHealthChecks = true);
+    builder.AddKafkaConsumer<string, string>("messaging", settings => settings.HealthChecks = false);
 ```
 
 ### Use inline delegates to configure `ProducerBuilder<TKey, TValue>` and `ConsumerBuilder<TKey, TValue>`.
@@ -126,13 +126,7 @@ You can refer to [`ProducerBuilder<TKey, TValue>`](https://docs.confluent.io/pla
 
 ## AppHost extensions
 
-In your AppHost project, install the `Aspire.Hosting.Kafka` library with [NuGet](https://www.nuget.org):
-
-```dotnetcli
-dotnet add package Aspire.Hosting.Kafka
-```
-
-Then, in the _Program.cs_ file of `AppHost`, register an Apache Kafka container and consume the connection using the following methods:
+In your AppHost project, register an Apache Kafka container and consume the connection using the following methods:
 
 ```csharp
 var messaging = builder.AddKafka("messaging");

@@ -31,13 +31,13 @@ public class ConformanceTests : ConformanceTests<TableServiceClient, AzureDataTa
               "Data": {
                 "Tables": {
                   "ServiceUri": "http://YOUR_URI",
-                  "DisableHealthChecks": true,
-                  "DisableTracing": false,
+                  "HealthChecks": false,
+                  "Tracing": true,
                   "ClientOptions": {
                     "EnableTenantDiscovery": true,
                     "Retry": {
                       "Mode": "Exponential",
-                      "Delay": "00:00:01"
+                      "Delay": "PT3S"
                     }
                   }
                 }
@@ -50,9 +50,9 @@ public class ConformanceTests : ConformanceTests<TableServiceClient, AzureDataTa
     protected override (string json, string error)[] InvalidJsonToErrorMessage => new[]
         {
             ("""{"Aspire": { "Azure": { "Data":{ "Tables": { "ServiceUri": "YOUR_URI"}}}}}""", "Value does not match format \"uri\""),
-            ("""{"Aspire": { "Azure": { "Data":{ "Tables": { "ServiceUri": "http://YOUR_URI", "DisableHealthChecks": "true"}}}}}""", "Value is \"string\" but should be \"boolean\""),
+            ("""{"Aspire": { "Azure": { "Data":{ "Tables": { "ServiceUri": "http://YOUR_URI", "HealthChecks": "false"}}}}}""", "Value is \"string\" but should be \"boolean\""),
             ("""{"Aspire": { "Azure": { "Data":{ "Tables": { "ServiceUri": "http://YOUR_URI", "ClientOptions": {"Retry": {"Mode": "Fast"}}}}}}}""", "Value should match one of the values specified by the enum"),
-            ("""{"Aspire": { "Azure": { "Data":{ "Tables": { "ServiceUri": "http://YOUR_URI", "ClientOptions": {"Retry": {"NetworkTimeout": "3S"}}}}}}}""", "The string value is not a match for the indicated regular expression")
+            ("""{"Aspire": { "Azure": { "Data":{ "Tables": { "ServiceUri": "http://YOUR_URI", "ClientOptions": {"Retry": {"NetworkTimeout": "3S"}}}}}}}""", "Value does not match format \"duration\"")
         };
 
     protected override string[] RequiredLogCategories => new string[]
@@ -76,11 +76,11 @@ public class ConformanceTests : ConformanceTests<TableServiceClient, AzureDataTa
     {
         if (key is null)
         {
-            builder.AddAzureTableClient("tables", ConfigureCredentials);
+            builder.AddAzureTableService("tables", ConfigureCredentials);
         }
         else
         {
-            builder.AddKeyedAzureTableClient(key, ConfigureCredentials);
+            builder.AddKeyedAzureTableService(key, ConfigureCredentials);
         }
 
         void ConfigureCredentials(AzureDataTablesSettings settings)
@@ -94,13 +94,13 @@ public class ConformanceTests : ConformanceTests<TableServiceClient, AzureDataTa
     }
 
     protected override void SetHealthCheck(AzureDataTablesSettings options, bool enabled)
-        => options.DisableHealthChecks = !enabled;
+        => options.HealthChecks = enabled;
 
     protected override void SetMetrics(AzureDataTablesSettings options, bool enabled)
         => throw new NotImplementedException();
 
     protected override void SetTracing(AzureDataTablesSettings options, bool enabled)
-        => options.DisableTracing = !enabled;
+        => options.Tracing = enabled;
 
     protected override void TriggerActivity(TableServiceClient service)
     {
@@ -126,7 +126,7 @@ public class ConformanceTests : ConformanceTests<TableServiceClient, AzureDataTa
         try
         {
             // "test" is a pre-existing table
-            _ = tableClient.GetTableClient("test").Query<TableEntity>(filter: "false").FirstOrDefault();
+            tableClient.GetTableClient("test").Query<TableEntity>(filter: "false").FirstOrDefault();
 
             return true;
         }

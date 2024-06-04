@@ -32,11 +32,11 @@ public class ConformanceTests : ConformanceTests<SearchIndexClient, AzureSearchS
               "Search": {
                 "Documents": {
                   "Endpoint": "http://YOUR_URI",
-                  "DisableTracing": false,
+                  "Tracing": true,
                   "ClientOptions": {
                     "Retry": {
                       "Mode": "Fixed",
-                      "MaxDelay": "00:00:03"  
+                      "MaxDelay": "PT3S"  
                     }
                   }
                 }
@@ -49,7 +49,7 @@ public class ConformanceTests : ConformanceTests<SearchIndexClient, AzureSearchS
     protected override (string json, string error)[] InvalidJsonToErrorMessage =>
         [
             ("""{"Aspire": { "Azure": { "Search":{ "Documents": {"Endpoint": "YOUR_URI"}}}}}""", "Value does not match format \"uri\""),
-            ("""{"Aspire": { "Azure": { "Search":{ "Documents": {"Endpoint": "http://YOUR_URI", "DisableTracing": "true"}}}}}""", "Value is \"string\" but should be \"boolean\""),
+            ("""{"Aspire": { "Azure": { "Search":{ "Documents": {"Endpoint": "http://YOUR_URI", "Tracing": "false"}}}}}""", "Value is \"string\" but should be \"boolean\""),
         ];
 
     protected override string ActivitySourceName => "Azure.Search.Documents.SearchIndexClient";
@@ -64,11 +64,11 @@ public class ConformanceTests : ConformanceTests<SearchIndexClient, AzureSearchS
     {
         if (key is null)
         {
-            builder.AddAzureSearchClient("search", ConfigureCredentials);
+            builder.AddAzureSearch("search", ConfigureCredentials);
         }
         else
         {
-            builder.AddKeyedAzureSearchClient(key, ConfigureCredentials);
+            builder.AddKeyedAzureSearch(key, ConfigureCredentials);
         }
 
         void ConfigureCredentials(AzureSearchSettings settings)
@@ -91,13 +91,13 @@ public class ConformanceTests : ConformanceTests<SearchIndexClient, AzureSearchS
         => RemoteExecutor.Invoke(() => ActivitySourceTest(key: "key")).Dispose();
 
     protected override void SetHealthCheck(AzureSearchSettings options, bool enabled)
-        => options.DisableHealthChecks = !enabled;
+        => options.HealthChecks = enabled;
 
     protected override void SetMetrics(AzureSearchSettings options, bool enabled)
         => throw new NotImplementedException();
 
     protected override void SetTracing(AzureSearchSettings options, bool enabled)
-        => options.DisableTracing = !enabled;
+        => options.Tracing = enabled;
 
     protected override void TriggerActivity(SearchIndexClient service)
         => service.GetIndex("my-index");

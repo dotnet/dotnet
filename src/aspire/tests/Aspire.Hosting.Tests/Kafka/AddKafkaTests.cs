@@ -23,8 +23,11 @@ public class AddKafkaTests
         var containerResource = Assert.Single(appModel.Resources.OfType<KafkaServerResource>());
         Assert.Equal("kafka", containerResource.Name);
 
+        var manifestAnnotation = Assert.Single(containerResource.Annotations.OfType<ManifestPublishingCallbackAnnotation>());
+        Assert.NotNull(manifestAnnotation.Callback);
+
         var endpoint = Assert.Single(containerResource.Annotations.OfType<EndpointAnnotation>());
-        Assert.Equal(9092, endpoint.TargetPort);
+        Assert.Equal(9092, endpoint.ContainerPort);
         Assert.False(endpoint.IsExternal);
         Assert.Equal("tcp", endpoint.Name);
         Assert.Null(endpoint.Port);
@@ -33,57 +36,45 @@ public class AddKafkaTests
         Assert.Equal("tcp", endpoint.UriScheme);
 
         var containerAnnotation = Assert.Single(containerResource.Annotations.OfType<ContainerImageAnnotation>());
-        Assert.Equal(KafkaContainerImageTags.Tag, containerAnnotation.Tag);
-        Assert.Equal(KafkaContainerImageTags.Image, containerAnnotation.Image);
-        Assert.Equal(KafkaContainerImageTags.Registry, containerAnnotation.Registry);
+        Assert.Equal("7.6.0", containerAnnotation.Tag);
+        Assert.Equal("confluentinc/confluent-local", containerAnnotation.Image);
+        Assert.Null(containerAnnotation.Registry);
     }
 
     [Fact]
-    public async Task KafkaCreatesConnectionString()
+    public void KafkaCreatesConnectionString()
     {
         var appBuilder = DistributedApplication.CreateBuilder();
         appBuilder
             .AddKafka("kafka")
-            .WithEndpoint("tcp", e => e.AllocatedEndpoint = new AllocatedEndpoint(e, "localhost", 27017));
+            .WithAnnotation(
+                new AllocatedEndpointAnnotation("mybinding",
+                ProtocolType.Tcp,
+                "localhost",
+                27017,
+                "tcp"
+            ));
 
         using var app = appBuilder.Build();
 
         var appModel = app.Services.GetRequiredService<DistributedApplicationModel>();
 
-        var connectionStringResource = Assert.Single(appModel.Resources.OfType<KafkaServerResource>()) as IResourceWithConnectionString;
-        var connectionString = await connectionStringResource.GetConnectionStringAsync();
+        var connectionStringResource = Assert.Single(appModel.Resources.OfType<KafkaServerResource>());
+        var connectionString = connectionStringResource.GetConnectionString();
 
         Assert.Equal("localhost:27017", connectionString);
-        Assert.Equal("{kafka.bindings.tcp.host}:{kafka.bindings.tcp.port}", connectionStringResource.ConnectionStringExpression.ValueExpression);
+        Assert.Equal("{kafka.bindings.tcp.host}:{kafka.bindings.tcp.port}", connectionStringResource.ConnectionStringExpression);
     }
 
     [Fact]
-    public async Task VerifyManifest()
+    public void VerifyManifest()
     {
-        using var appBuilder = TestDistributedApplicationBuilder.Create();
-
+        var appBuilder = DistributedApplication.CreateBuilder();
         var kafka = appBuilder.AddKafka("kafka");
 
-        var manifest = await ManifestUtils.GetManifest(kafka.Resource);
+        var manifest = ManifestUtils.GetManifest(kafka.Resource);
 
-        var expectedManifest = $$"""
-            {
-              "type": "container.v0",
-              "connectionString": "{kafka.bindings.tcp.host}:{kafka.bindings.tcp.port}",
-              "image": "{{KafkaContainerImageTags.Registry}}/{{KafkaContainerImageTags.Image}}:{{KafkaContainerImageTags.Tag}}",
-              "env": {
-                "KAFKA_ADVERTISED_LISTENERS": "PLAINTEXT://localhost:29092,PLAINTEXT_HOST://localhost:9092"
-              },
-              "bindings": {
-                "tcp": {
-                  "scheme": "tcp",
-                  "protocol": "tcp",
-                  "transport": "tcp",
-                  "targetPort": 9092
-                }
-              }
-            }
-            """;
-        Assert.Equal(expectedManifest, manifest.ToString());
+        Assert.Equal("container.v0", manifest["type"]?.ToString());
+        Assert.Equal(kafka.Resource.ConnectionStringExpression, manifest["connectionString"]?.ToString());
     }
 }

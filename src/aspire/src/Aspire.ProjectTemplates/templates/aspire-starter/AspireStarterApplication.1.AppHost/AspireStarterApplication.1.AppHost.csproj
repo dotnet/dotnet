@@ -6,7 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsAspireHost>true</IsAspireHost>
-    <UserSecretsId>98048c9c-bf28-46ba-a98e-63767ee5e3a8</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,10 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="!!REPLACE_WITH_LATEST_VERSION!!" />
-  <!--#if (UseRedisCache) -->
-    <PackageReference Include="Aspire.Hosting.Redis" Version="!!REPLACE_WITH_LATEST_VERSION!!" />
-  <!--#endif -->
+    <PackageReference Include="Aspire.Hosting" Version="!!REPLACE_WITH_LATEST_VERSION!!" />
   </ItemGroup>
 
 </Project>

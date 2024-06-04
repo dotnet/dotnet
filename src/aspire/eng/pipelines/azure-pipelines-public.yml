@@ -5,20 +5,6 @@ trigger:
     - main
     - vNext
     - release/*
-  paths:
-    include:
-      - '*'
-    exclude:
-      - eng/Version.Details.xml
-      - .github/*
-      - docs/*
-      - CODE_OF_CONDUCT.md
-      - CONTRIBUTING.md
-      - README.md
-      - SECURITY.md
-      - LICENSE.TXT
-      - PATENTS.TXT
-      - THIRD-PARTY-NOTICES.TXT
 
 pr:
   branches:
@@ -27,20 +13,6 @@ pr:
     - vNext
     - release/*
     - feature/*
-  paths:
-    include:
-      - '*'
-    exclude:
-      - eng/Version.Details.xml
-      - .github/*
-      - docs/*
-      - CODE_OF_CONDUCT.md
-      - CONTRIBUTING.md
-      - README.md
-      - SECURITY.md
-      - LICENSE.TXT
-      - PATENTS.TXT
-      - THIRD-PARTY-NOTICES.TXT
 
 variables:
   - template: /eng/common/templates/variables/pool-providers.yml
@@ -103,9 +75,9 @@ stages:
 
       jobs:
 
-      - job: Windows
+      - job: windows
         # timeout accounts for wait times for helix agents up to 30mins
-        timeoutInMinutes: 90
+        timeoutInMinutes: 60
 
         pool:
           name: $(DncEngPublicBuildPool)
@@ -127,14 +99,13 @@ stages:
               dotnetScript: $(Build.SourcesDirectory)/dotnet.cmd
               buildScript: $(_buildScript)
               buildConfig: $(_BuildConfig)
-              repoArtifactsPath: $(Build.Arcade.ArtifactsPath)
               repoLogPath: $(Build.Arcade.LogsPath)
               repoTestResultsPath: $(Build.Arcade.TestResultsPath)
               isWindows: true
 
-      - job: Linux
+      - job: linux
         # timeout accounts for wait times for helix agents up to 30mins
-        timeoutInMinutes: 90
+        timeoutInMinutes: 60
 
         pool:
           name: $(DncEngPublicBuildPool)
@@ -156,7 +127,6 @@ stages:
             dotnetScript: $(Build.SourcesDirectory)/dotnet.sh
             buildScript: $(_buildScript)
             buildConfig: $(_BuildConfig)
-            repoArtifactsPath: $(Build.Arcade.ArtifactsPath)
             repoLogPath: $(Build.Arcade.LogsPath)
             repoTestResultsPath: $(Build.Arcade.TestResultsPath)
             isWindows: false
