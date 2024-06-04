@@ -73,6 +73,9 @@ extends:
         name: $(DncEngInternalBuildPool)
         image: 1es-windows-2022
         os: windows
+      ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+        componentgovernance:
+          ignoreDirectories: artifacts, .packages
       # Temporary to workaround MicroBuild issues.
       credscan:
         enabled: false
