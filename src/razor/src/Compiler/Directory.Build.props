@@ -14,9 +14,10 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisLevel>Latest</AnalysisLevel>
     <AnalysisMode>Default</AnalysisMode>
-    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);EnableGenerateDocumentationFile</NoWarn>
     <!-- Disable XLIFF tasks -->
     <UsingToolXliff>false</UsingToolXliff>
     <DebugType>portable</DebugType>

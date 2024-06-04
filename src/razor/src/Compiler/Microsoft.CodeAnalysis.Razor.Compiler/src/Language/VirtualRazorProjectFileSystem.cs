@@ -195,7 +195,7 @@ internal class VirtualRazorProjectFileSystem : RazorProjectFileSystem
                 var startIndex = parentDirectory.Path.Length;
                 var directoryNameLength = directoryPath.Length - startIndex;
 
-                if (string.Compare(path, startIndex, directoryPath, startIndex, directoryPath.Length - startIndex, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(path, startIndex, directoryPath, startIndex, directoryNameLength, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return currentDirectory;
                 }

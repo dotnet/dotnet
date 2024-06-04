@@ -331,7 +331,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
         if (node.Source is { FilePath: not null } sourceSpan)
         {
-            using (context.CodeWriter.BuildEnhancedLinePragma(node.Source.Value, context, suppressLineDefaultAndHidden: !node.AppendLineDefaultAndHidden))
+            using (context.CodeWriter.BuildEnhancedLinePragma(sourceSpan, context, suppressLineDefaultAndHidden: !node.AppendLineDefaultAndHidden))
             {
                 context.CodeWriter.WriteUsing(node.Content, endLine: node.HasExplicitSemicolon);
             }

@@ -282,21 +282,6 @@ public class ModelDirectiveTest : RazorProjectEngineTestBase
         return codeDocument.GetDocumentIntermediateNode();
     }
 
-    private string GetCSharpContent(IntermediateNode node)
-    {
-        var builder = new StringBuilder();
-        for (var i = 0; i < node.Children.Count; i++)
-        {
-            var child = node.Children[i] as IntermediateToken;
-            if (child.Kind == TokenKind.CSharp)
-            {
-                builder.Append(child.Content);
-            }
-        }
-
-        return builder.ToString();
-    }
-
     private class ClassNodeVisitor : IntermediateNodeWalker
     {
         public ClassDeclarationIntermediateNode Node { get; set; }

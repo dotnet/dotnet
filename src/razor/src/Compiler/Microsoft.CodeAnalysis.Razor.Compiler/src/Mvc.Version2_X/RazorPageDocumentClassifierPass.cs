@@ -38,7 +38,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
 
     protected override bool IsMatch(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
     {
-        return PageDirective.TryGetPageDirective(documentNode, out var pageDirective);
+        return PageDirective.TryGetPageDirective(documentNode, out _);
     }
 
     protected override void OnDocumentStructureCreated(
