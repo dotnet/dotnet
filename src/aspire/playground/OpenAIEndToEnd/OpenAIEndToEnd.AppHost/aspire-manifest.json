@@ -1,12 +1,14 @@
 {
   "resources": {
     "openai": {
-      "type": "azure.bicep.v0",
-      "connectionString": "{openai.outputs.connectionString}",
-      "path": "openai.module.bicep",
-      "params": {
-        "principalId": "",
-        "principalType": ""
+      "type": "parameter.v0",
+      "connectionString": "{openai.value}",
+      "value": "{openai.inputs.value}",
+      "inputs": {
+        "value": {
+          "type": "string",
+          "secret": true
+        }
       }
     },
     "webstory": {
@@ -15,23 +17,18 @@
       "env": {
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
-        "OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY": "in_memory",
-        "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true",
-        "ConnectionStrings__openai": "{openai.connectionString}",
-        "OpenAI__DeploymentName": "gpt-35-turbo"
+        "ConnectionStrings__openai": "{openai.connectionString}"
       },
       "bindings": {
         "http": {
           "scheme": "http",
           "protocol": "tcp",
-          "transport": "http",
-          "external": true
+          "transport": "http"
         },
         "https": {
           "scheme": "https",
           "protocol": "tcp",
-          "transport": "http",
-          "external": true
+          "transport": "http"
         }
       }
     }

@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-builder.AddAzureCosmosClient("cosmos");
+builder.AddAzureCosmosDB("cosmos");
 builder.AddCosmosDbContext<TestCosmosContext>("cosmos", "ef");
 
 var app = builder.Build();

@@ -40,35 +40,32 @@ public sealed class AzureOpenAISettings : IConnectionStringSettings
     public string? Key { get; set; }
 
     /// <summary>
-    /// Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is disabled or not.
+    /// Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is enabled or not.
     /// </summary>
     /// <value>
-    /// The default value is <see langword="false"/>.
+    /// The default value is <see langword="true"/>.
     /// </value>
-    public bool DisableTracing { get; set; }
+    public bool Tracing { get; set; } = true;
 
     void IConnectionStringSettings.ParseConnectionString(string? connectionString)
     {
-        if (Uri.TryCreate(connectionString, UriKind.Absolute, out var uri))
+        var connectionBuilder = new DbConnectionStringBuilder
+        {
+            ConnectionString = connectionString
+        };
+
+        if (connectionBuilder.ContainsKey(ConnectionStringEndpoint) && Uri.TryCreate(connectionBuilder[ConnectionStringEndpoint].ToString(), UriKind.Absolute, out var serviceUri))
+        {
+            Endpoint = serviceUri;
+        }
+        else if (Uri.TryCreate(connectionString, UriKind.Absolute, out var uri))
         {
             Endpoint = uri;
         }
-        else
+
+        if (connectionBuilder.ContainsKey(ConnectionStringKey))
         {
-            var connectionBuilder = new DbConnectionStringBuilder
-            {
-                ConnectionString = connectionString
-            };
-
-            if (connectionBuilder.ContainsKey(ConnectionStringEndpoint) && Uri.TryCreate(connectionBuilder[ConnectionStringEndpoint].ToString(), UriKind.Absolute, out var serviceUri))
-            {
-                Endpoint = serviceUri;
-            }
-
-            if (connectionBuilder.ContainsKey(ConnectionStringKey))
-            {
-                Key = connectionBuilder[ConnectionStringKey].ToString();
-            }
+            Key = connectionBuilder[ConnectionStringKey].ToString();
         }
     }
 }

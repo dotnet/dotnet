@@ -1,7 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Aspire.Dashboard.Model;
 using Aspire.Hosting.Dashboard;
 using Xunit;
 
@@ -176,23 +175,25 @@ public class ResourcePublisherTests
         await task;
     }
 
-    private static GenericResourceSnapshot CreateResourceSnapshot(string name)
+    private static ContainerSnapshot CreateResourceSnapshot(string name)
     {
-        return new GenericResourceSnapshot(new()
-        {
-            Properties = [],
-            ResourceType = KnownResourceTypes.Container
-        })
+        return new ContainerSnapshot()
         {
             Name = name,
             Uid = "",
-            State = null,
-            StateStyle = null,
+            State = "",
             ExitCode = null,
             CreationTimeStamp = null,
             DisplayName = "",
-            Urls = [],
+            Endpoints = [],
             Environment = [],
+            ExpectedEndpointsCount = null,
+            Services = [],
+            Args = [],
+            Command = "",
+            ContainerId = "",
+            Image = "",
+            Ports = []
         };
     }
 }

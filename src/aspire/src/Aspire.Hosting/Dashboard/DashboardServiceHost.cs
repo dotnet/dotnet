@@ -1,11 +1,9 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Diagnostics;
 using System.Net;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Dcp;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -14,6 +12,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -53,9 +52,7 @@ internal sealed class DashboardServiceHost : IHostedService
         IConfiguration configuration,
         DistributedApplicationExecutionContext executionContext,
         ILoggerFactory loggerFactory,
-        IConfigureOptions<LoggerFilterOptions> loggerOptions,
-        ResourceNotificationService resourceNotificationService,
-        ResourceLoggerService resourceLoggerService)
+        IConfigureOptions<LoggerFilterOptions> loggerOptions)
     {
         _logger = loggerFactory.CreateLogger<DashboardServiceHost>();
 
@@ -76,32 +73,6 @@ internal sealed class DashboardServiceHost : IHostedService
             // Configuration
             builder.Services.AddSingleton(configuration);
 
-            var resourceServiceConfigSection = configuration.GetSection("AppHost:ResourceService");
-            builder.Services.AddOptions<ResourceServiceOptions>()
-                .Bind(resourceServiceConfigSection)
-                .ValidateOnStart();
-            builder.Services.AddSingleton<IValidateOptions<ResourceServiceOptions>, ValidateResourceServiceOptions>();
-
-            // Configure authentication scheme for the dashboard service
-            builder.Services
-                .AddAuthentication()
-                .AddScheme<ResourceServiceApiKeyAuthenticationOptions, ResourceServiceApiKeyAuthenticationHandler>(
-                    ResourceServiceApiKeyAuthenticationDefaults.AuthenticationScheme,
-                    options => { });
-
-            // Configure authorization policy for the dashboard service.
-            // The authorization policy accepts anyone who successfully authenticates via the
-            // specified scheme, and that scheme enforces a valid API key (when configured to
-            // use API keys for calls.)
-            builder.Services
-                .AddAuthorizationBuilder()
-                .AddPolicy(
-                    name: ResourceServiceApiKeyAuthorization.PolicyName,
-                    policy: new AuthorizationPolicyBuilder(
-                        ResourceServiceApiKeyAuthenticationDefaults.AuthenticationScheme)
-                        .RequireAuthenticatedUser()
-                        .Build());
-
             // Logging
             builder.Services.AddSingleton(loggerFactory);
             builder.Services.AddSingleton(loggerOptions);
@@ -111,15 +82,10 @@ internal sealed class DashboardServiceHost : IHostedService
             builder.Services.AddSingleton(applicationModel);
             builder.Services.AddSingleton(kubernetesService);
             builder.Services.AddSingleton<DashboardServiceData>();
-            builder.Services.AddSingleton(resourceNotificationService);
-            builder.Services.AddSingleton(resourceLoggerService);
 
             builder.WebHost.ConfigureKestrel(ConfigureKestrel);
 
             _app = builder.Build();
-
-            _app.UseAuthentication();
-            _app.UseAuthorization();
 
             _app.MapGrpcService<DashboardService>();
         }
@@ -181,11 +147,11 @@ internal sealed class DashboardServiceHost : IHostedService
     /// </remarks>
     public async Task<string> GetResourceServiceUriAsync(CancellationToken cancellationToken = default)
     {
-        var startTime = Stopwatch.GetTimestamp();
+        var stopwatch = ValueStopwatch.StartNew();
 
         var uri = await _resourceServiceUri.Task.WaitAsync(cancellationToken).ConfigureAwait(false);
 
-        var elapsed = Stopwatch.GetElapsedTime(startTime);
+        var elapsed = stopwatch.GetElapsedTime();
 
         if (elapsed > TimeSpan.FromSeconds(2))
         {

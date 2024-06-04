@@ -13,17 +13,17 @@ public class ConfigurationTests
 
     [Fact]
     public void HealthCheckIsEnabledByDefault()
-        => Assert.False(new PomeloEntityFrameworkCoreMySqlSettings().DisableHealthChecks);
+        => Assert.True(new PomeloEntityFrameworkCoreMySqlSettings().HealthChecks);
 
     [Fact]
     public void TracingIsEnabledByDefault()
-        => Assert.False(new PomeloEntityFrameworkCoreMySqlSettings().DisableTracing);
+        => Assert.True(new PomeloEntityFrameworkCoreMySqlSettings().Tracing);
 
     [Fact]
     public void MetricsAreEnabledByDefault()
-        => Assert.False(new PomeloEntityFrameworkCoreMySqlSettings().DisableMetrics);
+        => Assert.True(new PomeloEntityFrameworkCoreMySqlSettings().Metrics);
 
     [Fact]
     public void RetriesAreEnabledByDefault()
-        => Assert.False(new PomeloEntityFrameworkCoreMySqlSettings().DisableRetry);
+        => Assert.True(new PomeloEntityFrameworkCoreMySqlSettings().Retry);
 }

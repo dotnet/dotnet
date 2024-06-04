@@ -28,7 +28,7 @@ public static class AspireRedisOutputCacheExtensions
     /// </remarks>
     public static void AddRedisOutputCache(this IHostApplicationBuilder builder, string connectionName, Action<StackExchangeRedisSettings>? configureSettings = null, Action<ConfigurationOptions>? configureOptions = null)
     {
-        builder.AddRedisClient(connectionName, configureSettings, configureOptions);
+        builder.AddRedis(connectionName, configureSettings, configureOptions);
 
         builder.AddRedisOutputCacheCore((RedisOutputCacheOptions options, IServiceProvider sp) =>
         {
@@ -51,7 +51,7 @@ public static class AspireRedisOutputCacheExtensions
     /// </remarks>
     public static void AddKeyedRedisOutputCache(this IHostApplicationBuilder builder, string name, Action<StackExchangeRedisSettings>? configureSettings = null, Action<ConfigurationOptions>? configureOptions = null)
     {
-        builder.AddKeyedRedisClient(name, configureSettings, configureOptions);
+        builder.AddKeyedRedis(name, configureSettings, configureOptions);
 
         builder.AddRedisOutputCacheCore((RedisOutputCacheOptions options, IServiceProvider sp) =>
         {

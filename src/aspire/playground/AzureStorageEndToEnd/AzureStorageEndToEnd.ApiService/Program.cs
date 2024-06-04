@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.AddAzureBlobClient("blobs");
+builder.AddAzureBlobService("blobs");
 
 var app = builder.Build();
 

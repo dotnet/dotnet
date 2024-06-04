@@ -48,7 +48,7 @@
                     },
                     "ContinuationTimeout": {
                       "type": "string",
-                      "pattern": "^-?(\\d{1,7}|((\\d{1,7}[\\.:])?(([01]?\\d|2[0-3]):[0-5]?\\d|([01]?\\d|2[0-3]):[0-5]?\\d:[0-5]?\\d)(\\.\\d{1,7})?))$",
+                      "format": "duration",
                       "description": "Amount of time protocol  operations (e.g. queue.declare ) are allowed to take before\ntiming out."
                     },
                     "DefaultAddressFamily": {
@@ -208,7 +208,7 @@
                     },
                     "HandshakeContinuationTimeout": {
                       "type": "string",
-                      "pattern": "^-?(\\d{1,7}|((\\d{1,7}[\\.:])?(([01]?\\d|2[0-3]):[0-5]?\\d|([01]?\\d|2[0-3]):[0-5]?\\d:[0-5]?\\d)(\\.\\d{1,7})?))$",
+                      "format": "duration",
                       "description": "Amount of time protocol handshake operations are allowed to take before\ntiming out."
                     },
                     "HostName": {
@@ -221,7 +221,7 @@
                     },
                     "NetworkRecoveryInterval": {
                       "type": "string",
-                      "pattern": "^-?(\\d{1,7}|((\\d{1,7}[\\.:])?(([01]?\\d|2[0-3]):[0-5]?\\d|([01]?\\d|2[0-3]):[0-5]?\\d:[0-5]?\\d)(\\.\\d{1,7})?))$",
+                      "format": "duration",
                       "description": "Amount of time client will wait for before re-trying  to recover connection."
                     },
                     "Password": {
@@ -238,7 +238,7 @@
                     },
                     "RequestedConnectionTimeout": {
                       "type": "string",
-                      "pattern": "^-?(\\d{1,7}|((\\d{1,7}[\\.:])?(([01]?\\d|2[0-3]):[0-5]?\\d|([01]?\\d|2[0-3]):[0-5]?\\d:[0-5]?\\d)(\\.\\d{1,7})?))$",
+                      "format": "duration",
                       "description": "Timeout setting for connection attempts."
                     },
                     "RequestedFrameMax": {
@@ -247,17 +247,17 @@
                     },
                     "RequestedHeartbeat": {
                       "type": "string",
-                      "pattern": "^-?(\\d{1,7}|((\\d{1,7}[\\.:])?(([01]?\\d|2[0-3]):[0-5]?\\d|([01]?\\d|2[0-3]):[0-5]?\\d:[0-5]?\\d)(\\.\\d{1,7})?))$",
+                      "format": "duration",
                       "description": "Heartbeat timeout to use when negotiating with the server."
                     },
                     "SocketReadTimeout": {
                       "type": "string",
-                      "pattern": "^-?(\\d{1,7}|((\\d{1,7}[\\.:])?(([01]?\\d|2[0-3]):[0-5]?\\d|([01]?\\d|2[0-3]):[0-5]?\\d:[0-5]?\\d)(\\.\\d{1,7})?))$",
+                      "format": "duration",
                       "description": "Timeout setting for socket read operations."
                     },
                     "SocketWriteTimeout": {
                       "type": "string",
-                      "pattern": "^-?(\\d{1,7}|((\\d{1,7}[\\.:])?(([01]?\\d|2[0-3]):[0-5]?\\d|([01]?\\d|2[0-3]):[0-5]?\\d:[0-5]?\\d)(\\.\\d{1,7})?))$",
+                      "format": "duration",
                       "description": "Timeout setting for socket write operations."
                     },
                     "Ssl": {
@@ -332,19 +332,19 @@
                   "type": "string",
                   "description": "Gets or sets the connection string of the RabbitMQ server to connect to."
                 },
-                "DisableHealthChecks": {
+                "HealthChecks": {
                   "type": "boolean",
-                  "description": "Gets or sets a boolean value that indicates whether the RabbitMQ health check is disabled or not.",
-                  "default": false
-                },
-                "DisableTracing": {
-                  "type": "boolean",
-                  "description": "Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is disabled or not.",
-                  "default": false
+                  "description": "Gets or sets a boolean value that indicates whether the RabbitMQ health check is enabled or not.",
+                  "default": true
                 },
                 "MaxConnectRetryCount": {
                   "type": "integer",
                   "description": "Gets or sets the maximum number of connection retry attempts. Default value is 5, set it to 0 to disable the retry mechanism."
+                },
+                "Tracing": {
+                  "type": "boolean",
+                  "description": "Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is enabled or not.",
+                  "default": true
                 }
               },
               "description": "Provides the client configuration settings for connecting to a RabbitMQ message broker."

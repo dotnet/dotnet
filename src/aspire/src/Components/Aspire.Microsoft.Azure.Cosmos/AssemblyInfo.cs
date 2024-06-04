@@ -4,6 +4,6 @@
 using Aspire;
 using Aspire.Microsoft.Azure.Cosmos;
 
-[assembly: ConfigurationSchema("Aspire:Microsoft:Azure:Cosmos", typeof(MicrosoftAzureCosmosSettings))]
+[assembly: ConfigurationSchema("Aspire:Microsoft:Azure:Cosmos", typeof(AzureCosmosDBSettings))]
 
 [assembly: LoggingCategories("Azure-Cosmos-Operation-Request-Diagnostics")]

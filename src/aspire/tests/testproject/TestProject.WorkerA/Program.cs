@@ -6,5 +6,5 @@ using TestProject.WorkerA;
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddHostedService<Worker>();
 
-using var host = builder.Build();
+var host = builder.Build();
 host.Run();

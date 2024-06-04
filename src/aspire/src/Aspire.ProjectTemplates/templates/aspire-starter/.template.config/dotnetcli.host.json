@@ -4,22 +4,10 @@
       "Framework": {
         "longName": "framework"
       },
-      "appHostHttpPort": {
+      "appHttpPort": {
         "isHidden": true
       },
-      "appHostHttpsPort": {
-        "isHidden": true
-      },
-      "appHostOtlpHttpPort": {
-        "isHidden": true
-      },
-      "appHostOtlpHttpsPort": {
-        "isHidden": true
-      },
-      "appHostResourceHttpPort": {
-        "isHidden": true
-      },
-      "appHostResourceHttpsPort": {
+      "appHttpsPort": {
         "isHidden": true
       },
       "webHttpPort": {
@@ -35,20 +23,14 @@
         "isHidden": true
       },
       "NoHttps": {
-        "longName": "no-https",
-        "shortName": ""
+        "isHidden": true
       },
       "UseRedisCache": {
         "longName": "use-redis-cache",
         "shortName": ""
-      },
-      "TestFramework": {
-        "longName": "test-framework",
-        "shortName": "t"
       }
     },
     "usageExamples": [
-      "--use-redis-cache",
-      "--test-framework MSTest"
+      "--use-redis-cache"
     ]
   }

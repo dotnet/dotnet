@@ -1,171 +1,165 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Text;
+using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-using Xunit.Abstractions;
-using Aspire.TestProject;
-using Aspire.Workload.Tests;
 
 namespace Aspire.EndToEnd.Tests;
 
 /// <summary>
 /// This fixture ensures the TestProject.AppHost application is started before a test is executed.
-///
+/// 
 /// Represents the the IntegrationServiceA project in the test application used to send HTTP requests
 /// to the project's endpoints.
 /// </summary>
 public sealed class IntegrationServicesFixture : IAsyncLifetime
 {
-#if TESTS_RUNNING_OUTSIDE_OF_REPO
-    public static bool TestsRunningOutsideOfRepo = true;
-#else
-    public static bool TestsRunningOutsideOfRepo;
-#endif
+    private Process? _appHostProcess;
+    private Dictionary<string, ProjectInfo>? _projects;
 
-    public static string? TestScenario { get; } = EnvironmentVariables.TestScenario;
-    public Dictionary<string, ProjectInfo> Projects => Project?.InfoTable ?? throw new InvalidOperationException("Project is not initialized");
-    private TestResourceNames _resourcesToSkip;
-    private readonly IMessageSink _diagnosticMessageSink;
-    private readonly TestOutputWrapper _testOutput;
-    private AspireProject? _project;
+    public Dictionary<string, ProjectInfo> Projects => _projects!;
 
-    public BuildEnvironment BuildEnvironment { get; init; }
     public ProjectInfo IntegrationServiceA => Projects["integrationservicea"];
-    public AspireProject Project => _project ?? throw new InvalidOperationException("Project is not initialized");
-
-    public IntegrationServicesFixture(IMessageSink diagnosticMessageSink)
-    {
-        _diagnosticMessageSink = diagnosticMessageSink;
-        _testOutput = new TestOutputWrapper(messageSink: _diagnosticMessageSink);
-        BuildEnvironment = new(TestsRunningOutsideOfRepo, (probePath, solutionRoot) =>
-            $"Running outside-of-repo: Could not find {probePath} computed from solutionRoot={solutionRoot}. ");
-        if (BuildEnvironment.HasSdkWithWorkload)
-        {
-            BuildEnvironment.EnvVars["TestsRunningOutsideOfRepo"] = "true";
-        }
-        BuildEnvironment.EnvVars.Add("ASPIRE_ALLOW_UNSECURED_TRANSPORT", "true");
-    }
 
     public async Task InitializeAsync()
     {
-        _project = new AspireProject("TestProject", BuildEnvironment.TestProjectPath, _testOutput, BuildEnvironment);
-        if (TestsRunningOutsideOfRepo)
-        {
-            _testOutput.WriteLine("");
-            _testOutput.WriteLine($"****************************************");
-            _testOutput.WriteLine($"   Running EndToEnd tests outside-of-repo");
-            _testOutput.WriteLine($"   TestProject: {Project.AppHostProjectDirectory}");
-            _testOutput.WriteLine($"****************************************");
-            _testOutput.WriteLine("");
-        }
+        var appHostDirectory = Path.Combine(GetRepoRoot(), "tests", "testproject", "TestProject.AppHost");
 
-        await Project.BuildAsync();
+        var output = new StringBuilder();
+        var appExited = new TaskCompletionSource();
+        var projectsParsed = new TaskCompletionSource();
+        var appRunning = new TaskCompletionSource();
+        var stdoutComplete = new TaskCompletionSource();
+        var stderrComplete = new TaskCompletionSource();
+        _appHostProcess = new Process();
+        _appHostProcess.StartInfo = new ProcessStartInfo("dotnet", "run -- --disable-dashboard")
+        {
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            RedirectStandardInput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            WorkingDirectory = appHostDirectory
+        };
+        _appHostProcess.OutputDataReceived += (sender, e) =>
+        {
+            if (e.Data is null)
+            {
+                stdoutComplete.SetResult();
+                return;
+            }
 
-        string extraArgs = "";
-        _resourcesToSkip = GetResourcesToSkip();
-        if (_resourcesToSkip != TestResourceNames.None && _resourcesToSkip.ToCSVString() is string skipArg)
-        {
-            extraArgs += $"--skip-resources {skipArg}";
-        }
-        await Project.StartAsync([extraArgs]);
+            output.AppendLine(e.Data);
 
-        foreach (var project in Projects.Values)
-        {
-            project.Client = AspireProject.Client.Value;
-        }
-    }
+            if (e.Data?.StartsWith("$ENDPOINTS: ") == true)
+            {
+                _projects = ParseProjectInfo(e.Data.Substring("$ENDPOINTS: ".Length));
+                projectsParsed.SetResult();
+            }
 
-    public Task DumpComponentLogsAsync(TestResourceNames resource, ITestOutputHelper? testOutputArg = null)
-    {
-        if (resource == TestResourceNames.None)
+            if (e.Data?.Contains("Distributed application started") == true)
+            {
+                appRunning.SetResult();
+            }
+        };
+        _appHostProcess.ErrorDataReceived += (sender, e) =>
         {
-            return Task.CompletedTask;
-        }
-        if (resource == TestResourceNames.All || !Enum.IsDefined<TestResourceNames>(resource))
-        {
-            throw new ArgumentException($"Only one resource is supported at a time. resource: {resource}");
-        }
+            if (e.Data is null)
+            {
+                stderrComplete.SetResult();
+                return;
+            }
 
-        string component = resource switch
-        {
-            TestResourceNames.cosmos => "cosmos",
-            TestResourceNames.kafka => "kafka",
-            TestResourceNames.mongodb => "mongodb",
-            TestResourceNames.mysql or TestResourceNames.efmysql => "mysql",
-            TestResourceNames.oracledatabase => "oracledatabase",
-            TestResourceNames.postgres or TestResourceNames.efnpgsql => "postgres",
-            TestResourceNames.rabbitmq => "rabbitmq",
-            TestResourceNames.redis => "redis",
-            TestResourceNames.sqlserver => "sqlserver",
-            _ => throw new ArgumentException($"Unknown resource: {resource}")
+            output.AppendLine(e.Data);
         };
 
-        return Project.DumpComponentLogsAsync(component, testOutputArg);
+        EventHandler appExitedCallback = (sender, e) => appExited.SetResult();
+        _appHostProcess.EnableRaisingEvents = true;
+        _appHostProcess.Exited += appExitedCallback;
+
+        _appHostProcess.Start();
+        _appHostProcess.BeginOutputReadLine();
+        _appHostProcess.BeginErrorReadLine();
+
+        var successfulTask = Task.WhenAll(appRunning.Task, projectsParsed.Task);
+        var failedTask = appExited.Task;
+        var timeoutTask = Task.Delay(TimeSpan.FromMinutes(5));
+
+        var resultTask = await Task.WhenAny(successfulTask, failedTask, timeoutTask);
+        if (resultTask == failedTask)
+        {
+            // wait for all the output to be read
+            var allOutputComplete = Task.WhenAll(stdoutComplete.Task, stderrComplete.Task);
+            await Task.WhenAny(allOutputComplete, timeoutTask);
+        }
+        Assert.True(resultTask == successfulTask, $"App run failed: {Environment.NewLine}{output}");
+
+        _appHostProcess.Exited -= appExitedCallback;
+
+        var client = CreateHttpClient();
+        foreach (var project in Projects.Values)
+        {
+            project.Client = client;
+        }
     }
+
+    private static HttpClient CreateHttpClient()
+    {
+        var services = new ServiceCollection();
+        services.AddHttpClient()
+            .ConfigureHttpClientDefaults(b =>
+            {
+                b.ConfigureHttpClient(client =>
+                {
+                    // Disable the HttpClient timeout to allow the timeout strategies to control the timeout.
+                    client.Timeout = Timeout.InfiniteTimeSpan;
+                });
+
+                b.UseSocketsHttpHandler((handler, sp) =>
+                {
+                    handler.PooledConnectionLifetime = TimeSpan.FromSeconds(5);
+                    handler.ConnectTimeout = TimeSpan.FromSeconds(5);
+                });
+
+                // Ensure transient errors are retried for up to 5 minutes
+                b.AddStandardResilienceHandler(options =>
+                {
+                    options.AttemptTimeout.Timeout = TimeSpan.FromMinutes(1);
+                    options.CircuitBreaker.SamplingDuration = TimeSpan.FromMinutes(2); // needs to be at least double the AttemptTimeout to pass options validation
+                    options.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(5);
+                });
+            });
+
+        return services.BuildServiceProvider().GetRequiredService<IHttpClientFactory>().CreateClient();
+    }
+
+    private static Dictionary<string, ProjectInfo> ParseProjectInfo(string json) =>
+        JsonSerializer.Deserialize<Dictionary<string, ProjectInfo>>(json)!;
 
     public async Task DisposeAsync()
     {
-        if (Project?.AppHostProcess is not null)
+        if (_appHostProcess is not null)
         {
-            await Project.DumpDockerInfoAsync(new TestOutputWrapper(null));
-        }
-        if (Project is not null)
-        {
-            await Project.DisposeAsync();
+            if (!_appHostProcess.HasExited)
+            {
+                _appHostProcess.StandardInput.WriteLine("Stop");
+            }
+            await _appHostProcess.WaitForExitAsync();
         }
     }
 
-    public void EnsureAppHasResources(TestResourceNames expectedResourceNames)
+    private static string GetRepoRoot()
     {
-        foreach (var ename in Enum.GetValues<TestResourceNames>())
-        {
-            if (ename != TestResourceNames.None && expectedResourceNames.HasFlag(ename) && _resourcesToSkip.HasFlag(ename))
-            {
-                throw new InvalidOperationException($"The required resource '{ename}' was skipped for the app run for TestScenario: {TestScenario}. Make sure that the TEST_SCENARIO environment variable matches the intended scenario for the test. Resources that were skipped: {string.Join(",", _resourcesToSkip)}. TestScenario: {TestScenario} ");
-            }
-        }
-    }
+        var directory = AppContext.BaseDirectory;
 
-    private static TestResourceNames GetResourcesToSkip()
-    {
-        TestResourceNames resourcesToInclude = TestScenario switch
+        while (directory != null && !Directory.Exists(Path.Combine(directory, ".git")))
         {
-            "oracle" => TestResourceNames.oracledatabase,
-            "cosmos" => TestResourceNames.cosmos,
-            "basicservices" => TestResourceNames.kafka
-                              | TestResourceNames.mongodb
-                              | TestResourceNames.rabbitmq
-                              | TestResourceNames.redis
-                              | TestResourceNames.postgres
-                              | TestResourceNames.efnpgsql
-                              | TestResourceNames.mysql
-                              | TestResourceNames.efmysql
-                              | TestResourceNames.sqlserver,
-            "" or null => TestResourceNames.All,
-            _ => throw new ArgumentException($"Unknown test scenario '{TestScenario}'")
-        };
-
-        TestResourceNames resourcesToSkip = TestResourceNames.All & ~resourcesToInclude;
-
-        // always skip cosmos on macos/arm64
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
-        {
-            resourcesToSkip |= TestResourceNames.cosmos;
-        }
-        if (string.IsNullOrEmpty(TestScenario))
-        {
-            // no scenario specified
-            if (BuildEnvironment.IsRunningOnCI)
-            {
-                resourcesToSkip |= TestResourceNames.cosmos;
-                resourcesToSkip |= TestResourceNames.oracledatabase;
-            }
+            directory = Directory.GetParent(directory)!.FullName;
         }
 
-        // always skip the dashboard
-        resourcesToSkip |= TestResourceNames.dashboard;
-
-        return resourcesToSkip;
+        return directory!;
     }
 }

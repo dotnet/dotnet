@@ -8,27 +8,14 @@
         "longName": "no-restore",
         "shortName": ""
       },
-      "appHostHttpPort": {
+      "appHttpPort": {
         "isHidden": true
       },
-      "appHostHttpsPort": {
-        "isHidden": true
-      },
-      "appHostOtlpHttpPort": {
-        "isHidden": true
-      },
-      "appHostOtlpHttpsPort": {
-        "isHidden": true
-      },
-      "appHostResourceHttpPort": {
-        "isHidden": true
-      },
-      "appHostResourceHttpsPort": {
+      "appHttpsPort": {
         "isHidden": true
       },
       "NoHttps": {
-        "longName": "no-https",
-        "shortName": ""
+        "isHidden": true
       }
     },
     "usageExamples": [ ]

@@ -16,7 +16,7 @@ public class EnrichCosmosDbTests : ConformanceTests
     private const string ConnectionString = "Host=fake;Database=catalog";
     private const string DatabaseName = "TestDatabase";
 
-    protected override void RegisterComponent(HostApplicationBuilder builder, Action<EntityFrameworkCoreCosmosSettings>? configure = null, string? key = null)
+    protected override void RegisterComponent(HostApplicationBuilder builder, Action<EntityFrameworkCoreCosmosDBSettings>? configure = null, string? key = null)
     {
         builder.Services.AddDbContextPool<TestDbContext>(options => options.UseCosmos(ConnectionString, DatabaseName));
         builder.EnrichCosmosDbContext<TestDbContext>(configure);
@@ -62,7 +62,7 @@ public class EnrichCosmosDbTests : ConformanceTests
 
         builder.EnrichCosmosDbContext<TestDbContext>();
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<TestDbContext>();
 
 #pragma warning disable EF1001 // Internal EF Core API usage.
@@ -91,7 +91,7 @@ public class EnrichCosmosDbTests : ConformanceTests
 
         builder.EnrichCosmosDbContext<TestDbContext>();
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<ITestDbContext>() as TestDbContext;
         Assert.NotNull(context);
     }
@@ -112,25 +112,8 @@ public class EnrichCosmosDbTests : ConformanceTests
         Assert.NotNull(optionsDescriptor);
         Assert.Equal(ServiceLifetime.Singleton, optionsDescriptor.Lifetime);
 
-        using var host = builder.Build();
+        var host = builder.Build();
         var context = host.Services.GetRequiredService<ITestDbContext>() as TestDbContext;
         Assert.NotNull(context);
-    }
-
-    [Fact]
-    public void EnrichWithConflictingRequestTimeoutThrows()
-    {
-        var builder = Host.CreateEmptyApplicationBuilder(null);
-
-        builder.Services.AddDbContextPool<ITestDbContext, TestDbContext>(optionsBuilder =>
-        {
-            optionsBuilder.UseCosmos(ConnectionString, DatabaseName, builder => builder.RequestTimeout(TimeSpan.FromSeconds(123)));
-        });
-
-        builder.EnrichCosmosDbContext<TestDbContext>(settings => settings.RequestTimeout = TimeSpan.FromSeconds(456));
-        using var host = builder.Build();
-
-        var exception = Assert.Throws<InvalidOperationException>(host.Services.GetRequiredService<TestDbContext>);
-        Assert.Equal("Conflicting values for 'RequestTimeout' were found in EntityFrameworkCoreCosmosSettings and set in DbContextOptions<TestDbContext>.", exception.Message);
     }
 }

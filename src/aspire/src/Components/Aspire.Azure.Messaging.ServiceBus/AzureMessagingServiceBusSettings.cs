@@ -11,13 +11,13 @@ namespace Aspire.Azure.Messaging.ServiceBus;
 /// </summary>
 public sealed class AzureMessagingServiceBusSettings : IConnectionStringSettings
 {
-    private bool? _disableTracing;
+    private bool? _tracing;
 
     /// <summary>
     /// Gets or sets the connection string used to connect to the Service Bus namespace. 
     /// </summary>
     /// <remarks>
-    /// If <see cref="ConnectionString"/> is set, it overrides <see cref="FullyQualifiedNamespace"/> and <see cref="Credential"/>.
+    /// If <see cref="ConnectionString"/> is set, it overrides <see cref="Namespace"/> and <see cref="Credential"/>.
     /// </remarks>
     public string? ConnectionString { get; set; }
 
@@ -27,7 +27,7 @@ public sealed class AzureMessagingServiceBusSettings : IConnectionStringSettings
     /// <remarks>
     /// Used along with <see cref="Credential"/> to establish the connection.
     /// </remarks>
-    public string? FullyQualifiedNamespace { get; set; }
+    public string? Namespace { get; set; }
 
     /// <summary>
     /// Gets or sets the credential used to authenticate to the Service Bus namespace.
@@ -45,23 +45,20 @@ public sealed class AzureMessagingServiceBusSettings : IConnectionStringSettings
     public string? HealthCheckTopicName { get; set; }
 
     /// <summary>
-    /// Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is disabled or not.
+    /// Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is enabled or not.
     /// </summary>
     /// <remarks>
     /// ServiceBus ActivitySource support in Azure SDK is experimental, the shape of Activities may change in the future without notice.
     /// It can be enabled by setting "Azure.Experimental.EnableActivitySource" <see cref="AppContext"/> switch to true.
     /// Or by setting "AZURE_EXPERIMENTAL_ENABLE_ACTIVITY_SOURCE" environment variable to "true".
     /// </remarks>
-    /// <value>  
-    /// The default value is <see langword="false"/>.  
-    /// </value>
-    public bool DisableTracing
+    public bool Tracing
     {
-        get { return _disableTracing ??= !GetTracingDefaultValue(); }
-        set { _disableTracing = value; }
+        get { return _tracing ??= GetTracingDefaultValue(); }
+        set { _tracing = value; }
     }
 
-    // Defaults DisableTracing to false if the experimental switch is set
+    // default Tracing to true if the experimental switch is set
     // TODO: remove this when ActivitySource support is no longer experimental
     private static bool GetTracingDefaultValue()
     {
@@ -86,7 +83,7 @@ public sealed class AzureMessagingServiceBusSettings : IConnectionStringSettings
             // a service bus namespace can't contain ';'. if it is found assume it is a connection string
             if (!connectionString.Contains(';'))
             {
-                FullyQualifiedNamespace = connectionString;
+                Namespace = connectionString;
             }
             else
             {

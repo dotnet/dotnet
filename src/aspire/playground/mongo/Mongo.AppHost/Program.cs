@@ -4,11 +4,10 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 var db = builder.AddMongoDB("mongo")
-    .WithMongoExpress(c => c.WithHostPort(3022))
+    .WithMongoExpress()
     .PublishAsContainer();
 
 builder.AddProject<Projects.Mongo_ApiService>("api")
-       .WithExternalHttpEndpoints()
        .WithReference(db);
 
 // This project is only added in playground projects to support development/debugging
