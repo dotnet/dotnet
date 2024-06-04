@@ -1,8 +1,8 @@
 trigger: none
 
 schedules:
-- cron: 0 12 * * 1
-  displayName: Weekly Monday build
+- cron: 0 12 * * *
+  displayName: Daily build
   branches:
     include:
     - main
@@ -13,16 +13,12 @@ stages:
   - stage: SynchronizeSecrets
     jobs:
     - job: Synchronize
+      displayName: Synchronize secrets
       pool:
         name: NetCore1ESPool-Internal-NoMSI
         demands: ImageOverride -equals 1es-windows-2022
 
       steps:
-      - task: UseDotNet@2
-        displayName: Install Correct .NET Version
-        inputs:
-          useGlobalJson: true
-
       - task: UseDotNet@2
         displayName: Install .NET 6 runtime
         inputs:
@@ -34,7 +30,7 @@ stages:
       - task: AzureCLI@2
         inputs:
           azureSubscription: DotNet Eng Services Secret Manager
-          scriptType: ps
+          scriptType: pscore
           scriptLocation: inlineScript
           inlineScript: |
             Get-ChildItem .vault-config/*.yaml |% { dotnet secret-manager synchronize $_}
