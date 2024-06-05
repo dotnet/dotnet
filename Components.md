@@ -46,11 +46,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@8dcccce](https://github.com/dotnet/roslyn-analyzers/tree/8dccccec1ce3bd2fb532ec77d7e092ab9d684db7)*
 - `src/runtime`  
-*[dotnet/runtime@de6897b](https://github.com/dotnet/runtime/tree/de6897b3b71c1628329ab586ea3e4ecc6a5a2ab3)*
+*[dotnet/runtime@4049205](https://github.com/dotnet/runtime/tree/4049205d3a0889def4a7b911ba0754b382959a8d)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@259edc6](https://github.com/dotnet/scenario-tests/tree/259edc6efe049ed49f9e37890be702a886ba5ed8)*
 - `src/sdk`  
-*[dotnet/sdk@b5a6543](https://github.com/dotnet/sdk/tree/b5a65436629da391ce9c1bc80ad5bb868b965608)*
+*[dotnet/sdk@a923c5c](https://github.com/dotnet/sdk/tree/a923c5cfee0be7114bd379d771e7714913d0d027)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@59204e5](https://github.com/dotnet/source-build-externals/tree/59204e5b14e6e197b3c942f992f6e3ec9196e50b)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -94,11 +94,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/vstest`  
 *[microsoft/vstest@2588f02](https://github.com/microsoft/vstest/tree/2588f022c1c4a12e159e0ed07f5a5ea3f3c9eaa8)*
 - `src/windowsdesktop`  
-*[dotnet/windowsdesktop@4b985fd](https://github.com/dotnet/windowsdesktop/tree/4b985fd0f9794ca084e5d0ced977dccad4a31436)*
+*[dotnet/windowsdesktop@5cf8ed1](https://github.com/dotnet/windowsdesktop/tree/5cf8ed1548e6ebb8e3440e9d6b559d0c6f6a955a)*
 - `src/winforms`  
-*[dotnet/winforms@5ad8b52](https://github.com/dotnet/winforms/tree/5ad8b52370086eb9edeb96e3830b5122bb8ea975)*
+*[dotnet/winforms@950e839](https://github.com/dotnet/winforms/tree/950e83954509c24f21c4e6865877315ff3b110cd)*
 - `src/wpf`  
-*[dotnet/wpf@c7e3f90](https://github.com/dotnet/wpf/tree/c7e3f907a6784961c0292138eaa01b7fa8cbf4f1)*
+*[dotnet/wpf@27ca6e5](https://github.com/dotnet/wpf/tree/27ca6e59de38af4a3b2b4212e726f0c389f57ecf)*
 - `src/xdt`  
 *[dotnet/xdt@ab3fab3](https://github.com/dotnet/xdt/tree/ab3fab3f13fe09c8eb14aafc7811bf33e6de5654)*
 - `src/xliff-tasks`  
