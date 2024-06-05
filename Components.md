@@ -88,7 +88,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@409af43](https://github.com/dotnet/symreader/tree/409af431ee684f9e07d34bbd4e51b9933345c1e1)*
 - `src/templating`  
-*[dotnet/templating@fbef813](https://github.com/dotnet/templating/tree/fbef8134d41410fea9c6899648cafe6a83eafa35)*
+*[dotnet/templating@e5ef11c](https://github.com/dotnet/templating/tree/e5ef11cf6fcc2480120af1967aac8312a49e629e)*
 - `src/test-templates`  
 *[dotnet/test-templates@f57e2c3](https://github.com/dotnet/test-templates/tree/f57e2c3eb78ac1033d410fde85509100b7512730)*
 - `src/vstest`  
