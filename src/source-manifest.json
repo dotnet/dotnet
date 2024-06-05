@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "24855ca48329beaa82524f805e1b4bcc6975b136"
+      "commitSha": "15da90716271cef9d0cbf887432195aa80994160"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24303.2",
@@ -151,22 +151,22 @@
       "commitSha": "614363f91499f2fbebe9f7cc1a622b3d9fc32033"
     },
     {
-      "packageVersion": "9.0.0-preview.6.24304.4",
+      "packageVersion": "9.0.0-preview.6.24305.2",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "9e4ac28c06e1dd73e506d34b6a96ca48e850fda5"
+      "commitSha": "be87d751ff24656a8ea0438c65413a499f66ab9b"
     },
     {
-      "packageVersion": "9.0.0-preview.6.24303.5",
+      "packageVersion": "9.0.0-preview.6.24304.3",
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "4819717a216a80d82b7d174344e5d0ce69029ccd"
+      "commitSha": "481bb3da8f01a74276c1666ee9b8725a9f519b12"
     },
     {
-      "packageVersion": "9.0.0-preview.6.24304.1",
+      "packageVersion": "9.0.0-preview.6.24304.2",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "1dbca5fccc72e1c11096a7d0b0c6819b16e74d7a"
+      "commitSha": "55be8542a1b100bd63a6adb132bbb739f139fe5b"
     },
     {
       "packageVersion": "9.0.0-preview.24303.1",
