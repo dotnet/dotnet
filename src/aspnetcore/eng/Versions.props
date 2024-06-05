@@ -167,14 +167,14 @@
     <!-- Packages from dotnet/source-build-externals -->
     <MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>9.0.0-alpha.1.24278.2</MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>
     <!-- Packages from dotnet/source-build-reference-packages -->
-    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesVersion>9.0.0-alpha.1.24278.2</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesVersion>
+    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesVersion>9.0.0-alpha.1.24303.1</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesVersion>
     <!-- Packages from dotnet/symreader -->
     <MicrosoftSourceBuildIntermediatesymreaderVersion>2.1.0-beta.24208.1</MicrosoftSourceBuildIntermediatesymreaderVersion>
     <!-- Packages from dotnet/winforms -->
     <SystemDrawingCommonVersion>9.0.0-preview.6.24302.1</SystemDrawingCommonVersion>
     <!-- Packages from dotnet/xdt -->
-    <MicrosoftWebXdtVersion>9.0.0-preview.24277.2</MicrosoftWebXdtVersion>
-    <MicrosoftSourceBuildIntermediatexdtVersion>9.0.0-preview.24277.2</MicrosoftSourceBuildIntermediatexdtVersion>
+    <MicrosoftWebXdtVersion>9.0.0-preview.24303.1</MicrosoftWebXdtVersion>
+    <MicrosoftSourceBuildIntermediatexdtVersion>9.0.0-preview.24303.1</MicrosoftSourceBuildIntermediatexdtVersion>
   </PropertyGroup>
   <!--
 
@@ -318,8 +318,8 @@
     <MicrosoftPlaywrightVersion>1.28.0</MicrosoftPlaywrightVersion>
     <PollyExtensionsHttpVersion>3.0.0</PollyExtensionsHttpVersion>
     <PollyVersion>7.2.4</PollyVersion>
-    <SeleniumSupportVersion>4.20.0</SeleniumSupportVersion>
-    <SeleniumWebDriverVersion>4.20.0</SeleniumWebDriverVersion>
+    <SeleniumSupportVersion>4.21.0</SeleniumSupportVersion>
+    <SeleniumWebDriverVersion>4.21.0</SeleniumWebDriverVersion>
     <SerilogExtensionsLoggingVersion>1.4.0</SerilogExtensionsLoggingVersion>
     <SerilogSinksFileVersion>4.0.0</SerilogSinksFileVersion>
     <StackExchangeRedisVersion>2.7.27</StackExchangeRedisVersion>
