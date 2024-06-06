@@ -54,6 +54,11 @@ namespace NuGet.XPlat.FuncTest
             }
         }
 
+        public override void LogMinimal(string data, ConsoleColor color)
+        {
+            LogInternal(LogLevel.Minimal, data);
+        }
+
         public ConcurrentQueue<string> Messages
         {
             get

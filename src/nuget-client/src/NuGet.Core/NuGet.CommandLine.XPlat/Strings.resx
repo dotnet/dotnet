@@ -912,4 +912,46 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
   <data name="ConfigGetCommandDescription" xml:space="preserve">
     <value>Gets the NuGet configuration settings that will be applied.</value>
   </data>
+  <data name="WhyCommand_Description" xml:space="preserve">
+    <value>Shows the dependency graph for a particular package for a given project or solution.</value>
+  </data>
+  <data name="WhyCommand_PathArgument_Description" xml:space="preserve">
+    <value>A path to a project, solution file, or directory.</value>
+  </data>
+  <data name="WhyCommand_PackageArgument_Description" xml:space="preserve">
+    <value>The package name to lookup in the dependency graph.</value>
+  </data>
+  <data name="WhyCommand_FrameworksOption_Description" xml:space="preserve">
+    <value>The target framework(s) for which dependency graphs are shown.</value>
+  </data>
+  <data name="WhyCommand_Error_ArgumentCannotBeEmpty" xml:space="preserve">
+    <value>Unable to run 'dotnet nuget why'. The '{0}' argument cannot be empty.</value>
+    <comment>{0} - Argument that was not provided</comment>
+  </data>
+  <data name="WhyCommand_Error_PathIsMissingOrInvalid" xml:space="preserve">
+    <value>Unable to run 'dotnet nuget why'. Missing or invalid project/solution file '{0}'.</value>
+    <comment>{0} - Project/solution file path</comment>
+  </data>
+  <data name="WhyCommand_Message_NonSDKStyleProjectsAreNotSupported" xml:space="preserve">
+    <value>Unable to run 'dotnet nuget why' for project '{0}'. This command only works on SDK-style projects.</value>
+  </data>
+  <data name="WhyCommand_Error_InvalidAssetsFile" xml:space="preserve">
+    <value>The assets file {0} is invalid. Please run restore for project '{1}' before running this command.</value>
+    <comment>{0} - Assets file path, {1} - Project name</comment>
+  </data>
+  <data name="WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget" xml:space="preserve">
+    <value>The assets file {0} for project '{1}' does not contain a target for the specified input framework '{2}'.</value>
+    <comment>{0} - Assets file path, {1} - Project name, {2} - Framework</comment>
+  </data>
+  <data name="WhyCommand_Message_NoDependencyGraphsFoundInProject" xml:space="preserve">
+    <value>Project '{0}' does not have a dependency on '{1}'.</value>
+    <comment>{0} - Project name, {1} - Target package</comment>
+  </data>
+  <data name="WhyCommand_Message_DependencyGraphsFoundInProject" xml:space="preserve">
+    <value>Project '{0}' has the following dependency graph(s) for '{1}':</value>
+    <comment>{0} - Project name, {1} - Target package</comment>
+  </data>
+  <data name="WhyCommand_Message_NoDependencyGraphsFoundForFramework" xml:space="preserve">
+    <value>No dependency graph(s) found for this target framework.</value>
+  </data>
 </root>

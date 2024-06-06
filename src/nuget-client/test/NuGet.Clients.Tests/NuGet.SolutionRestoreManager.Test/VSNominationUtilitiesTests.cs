@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System;
 using Xunit;
 using FluentAssertions;
+using System.Collections.Immutable;
 
 namespace NuGet.SolutionRestoreManager.Test
 {
@@ -21,6 +22,60 @@ namespace NuGet.SolutionRestoreManager.Test
             {
                 new VsTargetFrameworkInfo4(
                     items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase),
+                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectBuildProperties.NuGetAudit] = "true"
+                    }),
+            };
+
+            // Act
+            var actual = VSNominationUtilities.GetRestoreAuditProperties(targetFrameworks);
+
+            // Assert
+            actual.SuppressedAdvisories.Should().BeNull();
+        }
+
+        [Fact]
+        public void GetRestoreAuditProperties_WithEmptySuppressionsList_ReturnsNull()
+        {
+            // Arrange
+            var targetFrameworks = new VsTargetFrameworkInfo4[]
+            {
+                new VsTargetFrameworkInfo4(
+                    items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectItems.NuGetAuditSuppress] = ImmutableArray<IVsReferenceItem2>.Empty,
+                    },
+                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectBuildProperties.NuGetAudit] = "true"
+                    }),
+            };
+
+            // Act
+            var actual = VSNominationUtilities.GetRestoreAuditProperties(targetFrameworks);
+
+            // Assert
+            actual.SuppressedAdvisories.Should().BeNull();
+        }
+
+        [Fact]
+        public void GetRestoreAuditProperties_NullAndEmptySuppressions_ReturnsNull()
+        {
+            // Arrange
+            var targetFrameworks = new VsTargetFrameworkInfo4[]
+            {
+                new VsTargetFrameworkInfo4(
+                    items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase),
+                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectBuildProperties.NuGetAudit] = "true"
+                    }),
+                new VsTargetFrameworkInfo4(
+                    items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectItems.NuGetAuditSuppress] = ImmutableArray<IVsReferenceItem2>.Empty,
+                    },
                     properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)
                     {
                         [ProjectBuildProperties.NuGetAudit] = "true"
@@ -112,7 +167,10 @@ namespace NuGet.SolutionRestoreManager.Test
             {
                 new VsTargetFrameworkInfo4(
                     items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase),
-                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)),
+                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectBuildProperties.NuGetAudit] = "true"
+                    }),
                 new VsTargetFrameworkInfo4(
                     items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase)
                     {
@@ -122,7 +180,10 @@ namespace NuGet.SolutionRestoreManager.Test
                                 new VsReferenceItem2(cve2Url, metadata: EmptyMetadata),
                             ]
                     },
-                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)),
+                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectBuildProperties.NuGetAudit] = "true"
+                    }),
             };
 
             // Act & Assert

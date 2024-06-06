@@ -39,8 +39,8 @@ variables:
   BINLOG_DIRECTORY: $(Build.StagingDirectory)/binlog
   DOTNET_NOLOGO: 1
   NUGET_EXPERIMENTAL_CHAIN_BUILD_RETRY_POLICY: 3,1000
-  Codeql.Enabled: false
-  Codeql.TSAEnabled: false
+  Codeql.Enabled: true
+  Codeql.TSAEnabled: true
   RunBuildForPublishing: ${{ parameters.RunBuildForPublishing }}
   RunCrossFrameworkTestsOnWindows: ${{ parameters.RunCrossFrameworkTestsOnWindows }}
   RunFunctionalTestsOnWindows: ${{ parameters.RunFunctionalTestsOnWindows }}

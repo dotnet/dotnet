@@ -332,11 +332,14 @@ namespace NuGet.SolutionRestoreManager
                 HashSet<string>? suppressedAdvisories = null;
                 if (tfms[0].Items?.TryGetValue(ProjectItems.NuGetAuditSuppress, out IReadOnlyList<IVsReferenceItem2>? suppressItems) ?? false)
                 {
-                    suppressedAdvisories = new(suppressItems.Count, StringComparer.Ordinal);
-                    for (int i = 0; i < suppressItems.Count; i++)
+                    if (suppressItems.Count > 0)
                     {
-                        string url = suppressItems[i].Name;
-                        suppressedAdvisories.Add(url);
+                        suppressedAdvisories = new(suppressItems.Count, StringComparer.Ordinal);
+                        for (int i = 0; i < suppressItems.Count; i++)
+                        {
+                            string url = suppressItems[i].Name;
+                            suppressedAdvisories.Add(url);
+                        }
                     }
                 }
 
@@ -357,9 +360,11 @@ namespace NuGet.SolutionRestoreManager
                     IReadOnlyList<IVsReferenceItem2>? suppressItems = null;
                     _ = items?.TryGetValue(ProjectItems.NuGetAuditSuppress, out suppressItems);
 
-                    if (suppressItems is null || suppressedAdvisories is null)
+                    int expectedCount = suppressedAdvisories?.Count ?? 0;
+                    int actualCount = suppressItems?.Count ?? 0;
+                    if (expectedCount == 0 || actualCount == 0)
                     {
-                        if (suppressItems is null && suppressedAdvisories is null)
+                        if (expectedCount == 0 && actualCount == 0)
                         {
                             return true;
                         }
@@ -369,7 +374,7 @@ namespace NuGet.SolutionRestoreManager
                         }
                     }
 
-                    if (suppressedAdvisories.Count != suppressItems.Count) { return false; }
+                    if (suppressedAdvisories!.Count != suppressItems!.Count) { return false; }
 
                     for (int i = 0; i < suppressItems.Count; i++)
                     {

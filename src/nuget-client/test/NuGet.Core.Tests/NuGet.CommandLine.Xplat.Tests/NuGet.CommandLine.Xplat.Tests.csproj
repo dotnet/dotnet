@@ -21,4 +21,12 @@
     <PackageReference Include="System.Memory" />
     <PackageReference Include="System.CommandLine" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="compiler\resources\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="compiler\resources\DNW.Test.SampleProject1.project.assets.json" />
+  </ItemGroup>
 </Project>
