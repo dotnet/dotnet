@@ -21,8 +21,7 @@ internal sealed class RazorLogHubLogger(string categoryName, RazorLogHubTracePro
 
     public void Log(LogLevel logLevel, string message, Exception? exception)
     {
-        var traceSource = _traceProvider.TryGetTraceSource();
-        if (traceSource is null)
+        if (!_traceProvider.TryGetTraceSource(out var traceSource))
         {
             // We can't log if there is no trace source to log to
             return;
