@@ -46,11 +46,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@333f90a](https://github.com/dotnet/roslyn-analyzers/tree/333f90a3051f084e7af42b516b6bdd7ae8e004f3)*
 - `src/runtime`  
-*[dotnet/runtime@3750ac5](https://github.com/dotnet/runtime/tree/3750ac51619efbbc59bf07d3879758a9c18c4b0e)*
+*[dotnet/runtime@87ca274](https://github.com/dotnet/runtime/tree/87ca274e3bb98b2b39c5e7ab2b17df5f0e25e2ce)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@54700bb](https://github.com/dotnet/scenario-tests/tree/54700bbee86f660d37bd519a905b62bb50adc8c8)*
 - `src/sdk`  
-*[dotnet/sdk@366ad3a](https://github.com/dotnet/sdk/tree/366ad3a712fc5e95bd2c8baf4961cbc8404b785c)*
+*[dotnet/sdk@fc0c69c](https://github.com/dotnet/sdk/tree/fc0c69c637ab0ac3e25d5b6db63f75c5a90b0b79)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@7db0052](https://github.com/dotnet/source-build-externals/tree/7db00527ef8fbbe61f67e9295beebddf187efff8)*
     - `src/source-build-externals/src/abstractions-xunit`  
