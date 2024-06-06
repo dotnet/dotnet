@@ -20,14 +20,21 @@ stages:
 
       steps:
       - task: UseDotNet@2
+        displayName: Install global.json SDK
+        inputs:
+          useGlobalJson: true
+
+      - task: UseDotNet@2
         displayName: Install .NET 6 runtime
         inputs:
           packageType: runtime
           version: 6.x
 
       - script: dotnet tool restore
+        displayName: Restore dotnet tools
 
       - task: AzureCLI@2
+        displayName: Run secret-manager synchronize
         inputs:
           azureSubscription: DotNet Eng Services Secret Manager
           scriptType: pscore

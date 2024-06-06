@@ -669,7 +669,7 @@ $@"
             var strongNameSignInfo = new Dictionary<string, List<SignInfo>>()
             {
                 { "7cec85d7bea7798e", new List<SignInfo>{ new SignInfo("ArcadeCertTest", "ArcadeStrongTest", "123") } },
-                { "adb9793829ddae60", new List<SignInfo>{ new SignInfo("Microsoft400", "AspNetCore", "123") } } // lgtm [cs/common-default-passwords] Safe, these are tests
+                { "adb9793829ddae60", new List<SignInfo>{ new SignInfo("Microsoft400", "AspNetCore", "123") } } // lgtm [cs/common-default-passwords] Safe, these are certificate names
             };
 
             // Overriding information
