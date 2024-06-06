@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft;
@@ -295,7 +296,13 @@ namespace NuGet.PackageManagement.UI
                     transitiveToolTipMessage = string.Format(CultureInfo.CurrentCulture, Resources.PackageVersionWithTransitiveOrigins, metadataContextInfo.Identity.Version, string.Join(", ", metadataContextInfo.TransitiveOrigins));
                 }
 
-                ImmutableList<KnownOwnerViewModel> knownOwnerViewModels = LoadKnownOwnerViewModels(metadataContextInfo);
+                ImmutableList<KnownOwnerViewModel> knownOwnerViewModels = null;
+
+                // Only load KnownOwners for the Browse tab.
+                if (_itemFilter == ContractItemFilter.All)
+                {
+                    knownOwnerViewModels = LoadKnownOwnerViewModels(metadataContextInfo);
+                }
 
                 var listItem = new PackageItemViewModel(_searchService, _packageVulnerabilityService)
                 {

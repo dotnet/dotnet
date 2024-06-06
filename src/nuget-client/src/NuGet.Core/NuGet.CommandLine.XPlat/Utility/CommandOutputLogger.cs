@@ -128,7 +128,7 @@ namespace NuGet.CommandLine.XPlat
             return Task.CompletedTask;
         }
 
-        public void LogMinimal(string data, ConsoleColor color)
+        public virtual void LogMinimal(string data, ConsoleColor color)
         {
             var currentColor = Console.ForegroundColor;
             Console.ForegroundColor = color;

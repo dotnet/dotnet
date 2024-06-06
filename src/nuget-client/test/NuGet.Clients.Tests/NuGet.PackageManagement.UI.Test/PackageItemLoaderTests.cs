@@ -326,6 +326,80 @@ namespace NuGet.PackageManagement.UI.Test
         }
 
         [Fact]
+        public async Task GetCurrent_HasKnownOwners_NotOnBrowseTab_DoesNotCreateKnownOwnerViewModels()
+        {
+            var version = NuGetVersion.Parse("4.3.0");
+            var packageSearchMetadata = new PackageSearchMetadataBuilder.ClonedPackageSearchMetadata()
+            {
+                Identity = new PackageIdentity("NuGet.Versioning", version),
+                OwnersList = new List<string> { "owner1", "owner2" },
+            };
+            PackageSource packageSource = new PackageSource("https://nuget.test/v3/index.json");
+            Mock<IOwnerDetailsUriService> ownerDetailsUriService = new Mock<IOwnerDetailsUriService>();
+            ownerDetailsUriService.Setup(x => x.SupportsKnownOwners).Returns(true);
+            ownerDetailsUriService.Setup(x => x.GetOwnerDetailsUri(It.IsAny<string>())).Returns((string owner) => new Uri($"https://nuget.test/profiles/{owner}?_src=template"));
+
+            var knownOwner1 = new KnownOwner("owner1", new Uri("https://nuget.test/profiles/owner1?_src=template"));
+            var knownOwner2 = new KnownOwner("owner2", new Uri("https://nuget.test/profiles/owner2?_src=template"));
+            IReadOnlyList<KnownOwner> knownOwners = new List<KnownOwner>(capacity: 2)
+            {
+                knownOwner1,
+                knownOwner2
+            };
+
+            var packageSearchMetadataContextInfo = PackageSearchMetadataContextInfo.Create(packageSearchMetadata, knownOwners);
+            var searchResult = new SearchResultContextInfo(new[] { packageSearchMetadataContextInfo }, new Dictionary<string, LoadingStatus> { { "Search", LoadingStatus.Loading } }, hasMoreItems: false);
+            var serviceBroker = Mock.Of<IServiceBroker>();
+            var testVersions = new List<VersionInfoContextInfo>() {
+                new VersionInfoContextInfo(version),
+            };
+
+            var searchService = new Mock<INuGetSearchService>(MockBehavior.Strict);
+            searchService.Setup(ss => ss.GetPackageVersionsAsync(
+                It.IsAny<PackageIdentity>(),
+                It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
+                It.IsAny<bool>(),
+                It.IsAny<bool>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(testVersions);
+            searchService.Setup(ss => ss.GetPackageMetadataAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((packageSearchMetadataContextInfo, It.IsAny<PackageDeprecationMetadataContextInfo>()));
+            searchService.Setup(s => s.SearchAsync(It.IsAny<IReadOnlyCollection<IProjectContextInfo>>(),
+                It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
+                It.IsAny<IReadOnlyCollection<string>>(),
+                It.IsAny<string>(),
+                It.IsAny<SearchFilter>(),
+                It.IsAny<NuGet.VisualStudio.Internal.Contracts.ItemFilter>(),
+                It.IsAny<bool>(),
+                It.IsAny<bool>(),
+                It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<SearchResultContextInfo>(searchResult));
+            searchService.Setup(s => s.RefreshSearchAsync(It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<SearchResultContextInfo>(searchResult));
+            var uiContext = new Mock<INuGetUIContext>();
+            uiContext.Setup(ui => ui.ServiceBroker).Returns(serviceBroker);
+            var context = new PackageLoadContext(isSolution: false, uiContext.Object);
+            var mockProgress = Mock.Of<IProgress<IItemLoaderState>>();
+
+            var loader = await PackageItemLoader.CreateAsync(
+                serviceBroker,
+                context,
+                new List<PackageSourceContextInfo>() { PackageSourceContextInfo.Create(packageSource) },
+                NuGet.VisualStudio.Internal.Contracts.ItemFilter.Installed,
+                searchService.Object,
+                Mock.Of<INuGetPackageFileService>(),
+                TestSearchTerm);
+
+            // Act
+            await loader.UpdateStateAndReportAsync(searchResult, Mock.Of<IProgress<IItemLoaderState>>(), CancellationToken.None);
+            IEnumerable<PackageItemViewModel> viewModels = loader.GetCurrent();
+
+            // Assert
+            ImmutableList<KnownOwnerViewModel> knownOwnerViewModels = viewModels.Single().KnownOwnerViewModels;
+            knownOwnerViewModels.Should().BeNull();
+        }
+
+        [Fact]
         public async Task GetCurrent_DoesNotHaveKnownOwners_DoesNotCreateKnownOwnerViewModelsAsync()
         {
             var version = NuGetVersion.Parse("4.3.0");

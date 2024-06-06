@@ -9,7 +9,7 @@
     <TestSessionTimeout Condition=" '$(TestSessionTimeout)' == ''">9000000</TestSessionTimeout>
     <TestAdaptersPaths>C:\Test;C:\NuGet</TestAdaptersPaths>
     <ResultsDirectory>C:\Test\Results</ResultsDirectory>
-    <ProcDumpCollector> Condition=" '$(ProcDumpCollector)' == '' ">enabled</ProcDumpCollector>
+    <ProcDumpCollector Condition=" '$(ProcDumpCollector)' == '' ">enabled</ProcDumpCollector>
     <LingeringProcessCollector Condition=" '$(LingeringProcessCollector)' == '' ">enabled</LingeringProcessCollector>
     <OptProfCollector Condition=" '$(OptProfCollector)' == '' ">disabled</OptProfCollector>
     <ScreenshotCollector Condition=" '$(ScreenshotCollector)' == '' ">enabled</ScreenshotCollector>

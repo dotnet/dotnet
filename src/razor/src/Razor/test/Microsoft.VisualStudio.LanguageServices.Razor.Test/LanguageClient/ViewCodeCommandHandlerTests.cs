@@ -1,58 +1,51 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
+using System;
 using System.CodeDom.Compiler;
 using System.IO;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.Commanding.Commands;
-using Microsoft.VisualStudio.Threading;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient;
 
-public class ViewCodeCommandHandlerTests : ToolingTestBase
+public class ViewCodeCommandHandlerTests(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    public ViewCodeCommandHandlerTests(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
-    [Fact]
+    [UIFact]
     public void RazorFile_Available()
     {
         using var _ = CreateTestFiles("test.razor", out var razorFilePath);
 
-        var handler = CreateHandler(razorFilePath, out var args);
+        var (handler, args) = CreateHandlerAndArgs(razorFilePath);
 
         var result = handler.GetCommandState(args);
 
         Assert.True(result.IsAvailable);
     }
 
-    [Fact]
+    [UIFact]
     public void CsHtmlFile_Available()
     {
         using var _ = CreateTestFiles("test.cshtml", out var razorFilePath);
 
-        var handler = CreateHandler(razorFilePath, out var args);
+        var (handler, args) = CreateHandlerAndArgs(razorFilePath);
 
         var result = handler.GetCommandState(args);
 
         Assert.True(result.IsAvailable);
     }
 
-    [Fact]
+    [UIFact]
     public void RazorFile_Cached_Available()
     {
         using var files = CreateTestFiles("test.razor", out var razorFilePath);
 
-        var handler = CreateHandler(razorFilePath, out var args);
+        var (handler, args) = CreateHandlerAndArgs(razorFilePath);
 
         var result = handler.GetCommandState(args);
 
@@ -65,43 +58,46 @@ public class ViewCodeCommandHandlerTests : ToolingTestBase
         Assert.False(File.Exists(razorFilePath + ".cs"), "The premise of this test is bad and it should feel bad");
     }
 
-    [Fact]
+    [UIFact]
     public void NonRazorFile_NotAvailable()
     {
         using var _ = CreateTestFiles("test.daveswebframework", out var razorFilePath);
 
-        var handler = CreateHandler(razorFilePath, out var args);
+        var (handler, args) = CreateHandlerAndArgs(razorFilePath);
 
         var result = handler.GetCommandState(args);
 
         Assert.False(result.IsAvailable);
     }
 
-    [Fact]
+    [UIFact]
     public void RazorFile_NoCSharpFile_NotAvailable()
     {
         var razorFilePath = "nonexistent.razor";
 
-        var handler = CreateHandler(razorFilePath, out var args);
+        var (handler, args) = CreateHandlerAndArgs(razorFilePath);
 
         var result = handler.GetCommandState(args);
 
         Assert.False(result.IsAvailable);
     }
 
-    private static ViewCodeCommandHandler CreateHandler(string razorFilePath, out ViewCodeCommandArgs args)
+    private (ViewCodeCommandHandler, ViewCodeCommandArgs) CreateHandlerAndArgs(string razorFilePath)
     {
-        var textBuffer = Mock.Of<ITextBuffer>(MockBehavior.Strict);
-        var textDocument = Mock.Of<ITextDocument>(doc => doc.FilePath == razorFilePath, MockBehavior.Strict);
-        var textDocumentFactory = Mock.Of<ITextDocumentFactoryService>(factory => factory.TryGetTextDocument(textBuffer, out textDocument) == true, MockBehavior.Strict);
-        var joinableTaskContext = new JoinableTaskContext();
-        var documentInteractionManager = Mock.Of<DocumentInteractionManager>(MockBehavior.Strict);
-        var handler = new ViewCodeCommandHandler(documentInteractionManager, textDocumentFactory, joinableTaskContext);
+        var textBuffer = StrictMock.Of<ITextBuffer>();
+        var textDocument = StrictMock.Of<ITextDocument>(doc
+            => doc.FilePath == razorFilePath);
+        var textDocumentFactory = StrictMock.Of<ITextDocumentFactoryService>(factory =>
+            factory.TryGetTextDocument(textBuffer, out textDocument) == true);
+
+        var serviceProvider = StrictMock.Of<IServiceProvider>();
+
+        var handler = new ViewCodeCommandHandler(serviceProvider, textDocumentFactory, JoinableTaskContext);
 
         var textView = Mock.Of<ITextView>(MockBehavior.Strict);
-        args = new ViewCodeCommandArgs(textView, textBuffer);
+        var args = new ViewCodeCommandArgs(textView, textBuffer);
 
-        return handler;
+        return (handler, args);
     }
 
     private static TempFileCollection CreateTestFiles(string razorFileName, out string razorFilePath)
