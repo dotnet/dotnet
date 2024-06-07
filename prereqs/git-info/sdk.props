@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <GitCommitHash>6775e3b3d3f1a1d850b9d415ebc5c0e3d23b0a43</GitCommitHash>
+    <GitCommitHash>9707d0a746341ff2d5845af2801671f1daf57454</GitCommitHash>
     <OfficialBuildId>20240607.1</OfficialBuildId>
     <OutputPackageVersion>0.0.0</OutputPackageVersion>
     <PreReleaseVersionLabel></PreReleaseVersionLabel>
