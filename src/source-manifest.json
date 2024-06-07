@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "9707d0a746341ff2d5845af2801671f1daf57454"
+      "commitSha": "35b2c21ea64c7b401b77076516d9319879d8314b"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24263.2",
