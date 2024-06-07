@@ -34,7 +34,6 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient;
 [method: ImportingConstructor]
 internal class RazorLanguageServerClient(
     RazorCustomMessageTarget customTarget,
-    RazorLanguageClientMiddleLayer middleLayer,
     LSPRequestInvoker requestInvoker,
     ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
     RazorProjectInfoEndpointPublisher projectInfoEndpointPublisher,
@@ -55,7 +54,6 @@ internal class RazorLanguageServerClient(
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager ?? throw new ArgumentNullException(nameof(clientSettingsManager));
     private readonly ILspServerActivationTracker _lspServerActivationTracker = lspServerActivationTracker ?? throw new ArgumentNullException(nameof(lspServerActivationTracker));
     private readonly RazorCustomMessageTarget _customMessageTarget = customTarget ?? throw new ArgumentNullException(nameof(customTarget));
-    private readonly RazorLanguageClientMiddleLayer _middleLayer = middleLayer ?? throw new ArgumentNullException(nameof(middleLayer));
     private readonly LSPRequestInvoker _requestInvoker = requestInvoker ?? throw new ArgumentNullException(nameof(requestInvoker));
     private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore = projectConfigurationFilePathStore ?? throw new ArgumentNullException(nameof(projectConfigurationFilePathStore));
     private readonly RazorProjectInfoEndpointPublisher _projectInfoEndpointPublisher = projectInfoEndpointPublisher ?? throw new ArgumentNullException(nameof(projectInfoEndpointPublisher));
@@ -81,7 +79,7 @@ internal class RazorLanguageServerClient(
 
     public IEnumerable<string>? FilesToWatch => null;
 
-    public object MiddleLayer => _middleLayer;
+    public object? MiddleLayer => null;
 
     public object CustomMessageTarget => _customMessageTarget;
 
