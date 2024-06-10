@@ -120,3 +120,33 @@ int Exit(int ret)
 
     return ret;
 }
+
+DWORD MyGetTempPath(
+    _In_ DWORD BufferLength,
+    _Out_writes_to_opt_(BufferLength, return + 1) PWSTR Buffer)
+{
+    GETTEMPPATH2W *pfnGetTempPath2W = NULL;
+    HMODULE kernelbase = LoadLibraryExW(L"kernelbase.dll", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
+
+    if (kernelbase != NULL)
+    {
+        pfnGetTempPath2W = (GETTEMPPATH2W *)GetProcAddress(kernelbase, "GetTempPath2W");
+    }
+
+    DWORD result = 0;
+    if (pfnGetTempPath2W != NULL)
+    {
+        result = pfnGetTempPath2W(BufferLength, Buffer);
+    }
+    else
+    {
+        result = GetTempPathW(BufferLength, Buffer);
+    }
+
+    if (kernelbase != NULL)
+    {
+        FreeLibrary(kernelbase);
+    }
+
+    return result;
+}
