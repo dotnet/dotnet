@@ -6,13 +6,4 @@
     <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
   </PropertyGroup>
 
-  <!-- This should be resolved/removed with https://github.com/dotnet/source-build/issues/4101 -->
-  <Target Name="AddInstallers"
-          BeforeTargets="GetCategorizedIntermediateNupkgContents">
-    <ItemGroup>
-      <!-- Include installers when in product VMR builds. These are not necessary when building the repo-only build as we don't
-           need them in downstream source-only PR legs. We could include them, but it may bump us over the package size limit. -->
-      <IntermediateNupkgArtifactFile Include="$(CurrentRepoSourceBuildArtifactsPackagesDir)Shipping\*.msi" />
-    </ItemGroup>
-  </Target>
 </Project>
