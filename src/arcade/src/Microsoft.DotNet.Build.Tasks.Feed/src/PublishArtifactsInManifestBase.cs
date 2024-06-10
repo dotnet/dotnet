@@ -31,6 +31,7 @@ using NuGet.Versioning;
 using static Microsoft.DotNet.Build.Tasks.Feed.GeneralUtils;
 using static Microsoft.DotNet.Build.CloudTestTasks.AzureStorageUtils;
 using MsBuildUtils = Microsoft.Build.Utilities;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
@@ -117,6 +118,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public string AkaMSClientId { get; set; }
 
         public string AkaMSClientSecret { get; set; }
+
+        public X509Certificate2 AkaMSClientCertificate { get; set; }
 
         public string AkaMSTenant { get; set; }
 
@@ -1476,19 +1479,40 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 await PublishAssetsWithoutStreamingPublishingAsync(assetPublisher, assetsToPublish, buildAssets, feedConfig);
             }
 
-            if (feedConfig.Type == FeedType.AzureStorageContainer)
+            if (feedConfig.Type == FeedType.AzureStorageContainer && 
+                feedConfig.LatestLinkShortUrlPrefixes.Any())
             {
 
                 if (LinkManager == null)
                 {
-                    LinkManager = new LatestLinksManager(
-                        AkaMSClientId,
-                        AkaMSClientSecret,
-                        AkaMSTenant,
-                        AkaMSGroupOwner,
-                        AkaMSCreatedBy,
-                        AkaMsOwners,
-                        Log);
+                    // If there is a client cert supplied, use that.
+                    // Otherwise, use the client secret.
+                    if (AkaMSClientCertificate != null)
+                    {
+                        LinkManager = new LatestLinksManager(
+                            AkaMSClientId,
+                            AkaMSClientCertificate,
+                            AkaMSTenant,
+                            AkaMSGroupOwner,
+                            AkaMSCreatedBy,
+                            AkaMsOwners,
+                            Log);
+                    }
+                    else if (!string.IsNullOrEmpty(AkaMSClientSecret))
+                    {
+                        LinkManager = new LatestLinksManager(
+                            AkaMSClientId,
+                            AkaMSClientSecret,
+                            AkaMSTenant,
+                            AkaMSGroupOwner,
+                            AkaMSCreatedBy,
+                            AkaMsOwners,
+                            Log);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Cannot create latest links for feed config without aka.ms authentication information");
+                    }
                 }
 
                 // The latest links should be updated only after the publishing is complete, to avoid

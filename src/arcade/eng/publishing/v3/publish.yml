@@ -122,6 +122,15 @@ stages:
         filePath: $(Build.SourcesDirectory)/eng/common/enable-cross-org-publishing.ps1
         arguments: -token $(dn-bot-all-orgs-artifact-feeds-rw)
 
+    - task: AzureCLI@2
+      displayName: Get aka.ms client certificate
+      inputs:
+        azureSubscription: 'DotNet-Engineering-Services_KeyVault'
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az keyvault secret show --vault-name EngKeyVault --name Redirection-UST-Client-NetCoreDeployment | ConvertFrom-Json | Select-Object -Expand  value > $(Agent.TempDirectory)/akamsclientcert.pfx
+
     - task: PowerShell@2
       displayName: Publish packages, blobs and symbols
       inputs:
@@ -141,6 +150,7 @@ stages:
           /p:AzureDevOpsFeedsKey='$(dn-bot-all-orgs-artifact-feeds-rw)' 
           /p:AkaMSClientId=$(akams-app-id) 
           /p:AkaMSClientSecret=$(akams-app-secret) ${{ parameters.artifactsPublishingAdditionalParameters }} 
+          /p:AkaMSClientCertificate=$(Agent.TempDirectory)/akamsclientcert.pfx
           /p:PDBArtifactsBasePath='$(Build.ArtifactStagingDirectory)/PDBArtifacts/' 
           /p:SymbolPublishingExclusionsFile='$(Build.ArtifactStagingDirectory)/ReleaseConfigs/SymbolPublishingExclusionsFile.txt' ${{ parameters.symbolPublishingAdditionalParameters}} 
           /p:MsdlToken=$(microsoft-symbol-server-pat) 
@@ -157,9 +167,7 @@ stages:
           /p:DotNetBuildsPublicUriBase64='$(dotnetbuilds-public-container-uri-base64)' 
           /p:DotNetBuildsPublicChecksumsUriBase64='$(dotnetbuilds-public-container-checksum-uri-base64)' 
           /p:DotNetBuildsInternalUriBase64='$(dotnetbuilds-internal-container-uri-base64)' 
-          /p:DotNetBuildsInternalChecksumsUriBase64='$(dotnetbuilds-internal-container-checksum-uri-base64)' 
-          /p:DotNetCliMsrcDotNetUriBase64='$(dotnetclimsrc-dotnet-container-uri-base64)' 
-          /p:DotNetCliChecksumsMsrcDotNetUriBase64='$(dotnetclichecksumsmsrc-dotnet-container-uri-base64)'
+          /p:DotNetBuildsInternalChecksumsUriBase64='$(dotnetbuilds-internal-container-checksum-uri-base64)'
 
     - template: /eng/common/templates-official/steps/publish-logs.yml@self
       parameters:

@@ -192,47 +192,6 @@ secrets:
     parameters:
       secret: dotnetfeedmsrc-read-sas-token
 
-  dotnetclimsrc-access-key:
-    type: text
-    parameters:
-      description: Also located in dnceng-pipeline-secrets keyvault.
-
-  dotnetclimsrc-connection-string:
-    type: azure-storage-connection-string
-    parameters:
-      storageKeySecret: dotnetclimsrc-access-key
-      account: dotnetclimsrc
-
-  dotnetclimsrc-read-sas-token:
-    type: azure-storage-container-sas-token
-    parameters:
-      connectionString: dotnetclimsrc-connection-string
-      permissions: rl
-      container: dotnet
-
-  dotnetclimsrc-read-sas-token-base64:
-    type: base64-encoder
-    parameters:
-      secret: dotnetclimsrc-read-sas-token
-
-  dotnetclichecksumsmsrc-storage-key:
-    type: text
-    parameters:
-      description: Also located in dnceng-pipeline-secrets keyvault.
-
-  dotnetclichecksumsmsrc-connection-string:
-    type: azure-storage-connection-string
-    parameters:
-      storageKeySecret: dotnetclichecksumsmsrc-storage-key
-      account: dotnetclichecksumsmsrc
-      
-  dotnetclichecksumsmsrc-dotnet-read-list-sas-token:
-    type: azure-storage-container-sas-token
-    parameters:
-      connectionString: dotnetclichecksumsmsrc-connection-string
-      permissions: rl
-      container: dotnet
-
   dotnetbuilds-internal-container-read-token:
     type: azure-storage-container-sas-token
     parameters:

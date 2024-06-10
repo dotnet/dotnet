@@ -11,7 +11,9 @@ using Microsoft.DotNet.VersionTools.BuildManifest.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
@@ -150,6 +152,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public string AkaMSClientId { get; set; }
 
         public string AkaMSClientSecret { get; set; }
+
+        /// <summary>
+        /// Path to client certificate
+        /// </summary>
+        public string AkaMSClientCertificate { get; set; }
 
         public string AkaMSTenant { get; set; }
 
@@ -320,6 +327,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 SkipSafetyChecks = this.SkipSafetyChecks,
                 AkaMSClientId = this.AkaMSClientId,
                 AkaMSClientSecret = this.AkaMSClientSecret,
+                AkaMSClientCertificate = !string.IsNullOrEmpty(AkaMSClientCertificate) ?
+                    new X509Certificate2(Convert.FromBase64String(File.ReadAllText(AkaMSClientCertificate))) : null,
                 AkaMSCreatedBy = this.AkaMSCreatedBy,
                 AkaMSGroupOwner = this.AkaMSGroupOwner,
                 AkaMsOwners = this.AkaMsOwners,
