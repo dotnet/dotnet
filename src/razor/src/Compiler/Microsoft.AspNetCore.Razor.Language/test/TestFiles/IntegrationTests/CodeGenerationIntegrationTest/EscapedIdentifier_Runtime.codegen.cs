@@ -62,22 +62,8 @@ namespace AspNetCore
             __tagHelperExecutionContext.Add(__InputTagHelper);
             __InputTagHelper.AgeProp = 
 #nullable restore
-#line (6,13)-(6,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml"
-Convert.ToInt32(
-
-#line default
-#line hidden
-#nullable disable
-#nullable restore
-#line (6,29)-(6,35) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml"
-@count
-
-#line default
-#line hidden
-#nullable disable
-#nullable restore
-#line (6,35)-(6,36) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml"
-)
+#line (6,13)-(6,36) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml"
+Convert.ToInt32(@count)
 
 #line default
 #line hidden

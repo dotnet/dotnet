@@ -5,11 +5,11 @@
     ],
     "codebaseAdmins": [
         "REDMOND\\manishj",
-        "REDMOND\\vaagrawa"
+        "REDMOND\\phillipa"
     ],
     "instanceUrl": "https://devdiv.visualstudio.com",
     "projectName": "DevDiv",
-    "areaPath": "DevDiv\\NET Developer Experience\\Productivity\\Razor Tooling",
+    "areaPath": "DevDiv\\NET Developer Experience\\Razor Tooling",
     "iterationPath": "DevDiv",
     "tools": [
         "APIScan"

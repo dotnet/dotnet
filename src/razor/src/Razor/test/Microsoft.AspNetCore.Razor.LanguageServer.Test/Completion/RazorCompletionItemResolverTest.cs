@@ -30,10 +30,10 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
     public RazorCompletionItemResolverTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        var snapshotResolver = new TestSnapshotResolver();
+        var projectManager = CreateProjectSnapshotManager();
 
-        _lspTagHelperTooltipFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
-        _vsLspTagHelperTooltipFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
+        _lspTagHelperTooltipFactory = new DefaultLSPTagHelperTooltipFactory(projectManager);
+        _vsLspTagHelperTooltipFactory = new DefaultVSLSPTagHelperTooltipFactory(projectManager);
         _completionCapability = new VSInternalCompletionSetting()
         {
             CompletionItem = new CompletionItemSetting()

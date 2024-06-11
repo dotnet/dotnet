@@ -12,18 +12,8 @@ Generated Location: (2215:49,2 [24] )
     var count = "1";
 |
 
-Source Location: (76:5,12 [16] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml)
-|Convert.ToInt32(|
-Generated Location: (2503:58,27 [16] )
-|Convert.ToInt32(|
-
-Source Location: (92:5,28 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml)
-|@count|
-Generated Location: (2519:58,43 [6] )
-|@count|
-
-Source Location: (98:5,34 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml)
-|)|
-Generated Location: (2525:58,49 [1] )
-|)|
+Source Location: (76:5,12 [23] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml)
+|Convert.ToInt32(@count)|
+Generated Location: (2503:58,27 [23] )
+|Convert.ToInt32(@count)|
 

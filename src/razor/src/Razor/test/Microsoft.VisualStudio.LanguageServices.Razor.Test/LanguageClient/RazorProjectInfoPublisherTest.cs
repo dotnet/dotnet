@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -20,7 +20,7 @@ using Xunit.Sdk;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient;
 
-public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
+public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : VisualStudioWorkspaceTestBase(testOutput)
 {
     [Fact]
     [WorkItem("https://github.com/dotnet/aspnetcore/issues/35945")]

@@ -18,13 +18,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal sealed class DocumentContextFactory(
     IProjectSnapshotManager projectManager,
-    ISnapshotResolver snapshotResolver,
     IDocumentVersionCache documentVersionCache,
     ILoggerFactory loggerFactory)
     : IDocumentContextFactory
 {
     private readonly IProjectSnapshotManager _projectManager = projectManager;
-    private readonly ISnapshotResolver _snapshotResolver = snapshotResolver;
     private readonly IDocumentVersionCache _documentVersionCache = documentVersionCache;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<DocumentContextFactory>();
 
@@ -109,7 +107,7 @@ internal sealed class DocumentContextFactory(
     {
         if (projectContext is null)
         {
-            return _snapshotResolver.TryResolveDocumentInAnyProject(filePath, out documentSnapshot);
+            return _projectManager.TryResolveDocumentInAnyProject(filePath, _logger, out documentSnapshot);
         }
 
         if (_projectManager.TryGetLoadedProject(projectContext.ToProjectKey(), out var project) &&
@@ -122,7 +120,7 @@ internal sealed class DocumentContextFactory(
         // Couldn't find the document in a real project. Maybe the language server doesn't yet know about the project
         // that the IDE is asking us about. In that case, we might have the document in our misc files project, and we'll
         // move it to the real project when/if we find out about it.
-        var miscellaneousProject = _snapshotResolver.GetMiscellaneousProject();
+        var miscellaneousProject = _projectManager.GetMiscellaneousProject();
         var normalizedDocumentPath = FilePathNormalizer.Normalize(filePath);
         if (miscellaneousProject.GetDocument(normalizedDocumentPath) is { } miscDocument)
         {

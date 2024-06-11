@@ -14,8 +14,9 @@ namespace Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 internal partial class TestProjectSnapshotManager(
     IProjectEngineFactoryProvider projectEngineFactoryProvider,
     ILoggerFactory loggerFactory,
-    CancellationToken disposalToken)
-    : ProjectSnapshotManager(projectEngineFactoryProvider, loggerFactory)
+    CancellationToken disposalToken,
+    Action<ProjectSnapshotManager.Updater>? initializer = null)
+    : ProjectSnapshotManager(projectEngineFactoryProvider, loggerFactory, initializer)
 {
     private readonly CancellationToken _disposalToken = disposalToken;
 

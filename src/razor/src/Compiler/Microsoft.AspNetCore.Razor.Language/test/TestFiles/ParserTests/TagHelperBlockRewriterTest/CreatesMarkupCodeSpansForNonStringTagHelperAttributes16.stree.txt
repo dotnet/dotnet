@@ -40,21 +40,12 @@
                     MarkupTextLiteral - [42..43)::1 - ['] - Gen<Markup>
                         SingleQuote;['];
                     MarkupTagHelperAttributeValue - [43..72)::29
-                        CSharpExpressionLiteral - [43..59)::16 - [Convert.ToInt32(] - Gen<None>
+                        CSharpExpressionLiteral - [43..72)::29 - [Convert.ToInt32(@count + "2")] - Gen<None>
                             Text;[Convert.ToInt32(];
-                        MarkupBlock - [59..65)::6
-                            CSharpCodeBlock - [59..65)::6
-                                CSharpImplicitExpression - [59..65)::6
-                                    CSharpTransition - [59..59)::0
-                                        Transition;[<Missing>];
-                                    CSharpImplicitExpressionBody - [59..65)::6
-                                        CSharpCodeBlock - [59..65)::6
-                                            CSharpExpressionLiteral - [59..65)::6 - [@count] - Gen<Expr>
-                                                Identifier;[@count];
-                        CSharpExpressionLiteral - [65..67)::2 - [ +] - Gen<None>
+                            Transition;[@];
+                            Identifier;[count];
                             Whitespace;[ ];
                             Text;[+];
-                        CSharpExpressionLiteral - [67..72)::5 - [ "2")] - Gen<None>
                             Whitespace;[ ];
                             DoubleQuote;["];
                             Text;[2];

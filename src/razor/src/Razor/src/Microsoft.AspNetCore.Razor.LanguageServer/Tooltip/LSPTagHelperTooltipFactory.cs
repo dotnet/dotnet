@@ -5,14 +5,22 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 
-internal abstract class LSPTagHelperTooltipFactory(ISnapshotResolver snapshotResolver) : TagHelperTooltipFactoryBase(snapshotResolver)
+internal abstract class LSPTagHelperTooltipFactory(IProjectSnapshotManager projectManager) : TagHelperTooltipFactoryBase(projectManager)
 {
-    public abstract Task<MarkupContent?> TryCreateTooltipAsync(string documentFilePath, AggregateBoundElementDescription elementDescriptionInfo, MarkupKind markupKind, CancellationToken cancellationToken);
+    public abstract Task<MarkupContent?> TryCreateTooltipAsync(
+        string documentFilePath,
+        AggregateBoundElementDescription elementDescriptionInfo,
+        MarkupKind markupKind,
+        CancellationToken cancellationToken);
 
-    public abstract bool TryCreateTooltip(AggregateBoundAttributeDescription attributeDescriptionInfo, MarkupKind markupKind, [NotNullWhen(true)] out MarkupContent? tooltipContent);
+    public abstract bool TryCreateTooltip(
+        AggregateBoundAttributeDescription attributeDescriptionInfo,
+        MarkupKind markupKind,
+        [NotNullWhen(true)] out MarkupContent? tooltipContent);
 }

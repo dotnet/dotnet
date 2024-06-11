@@ -13,18 +13,10 @@
                     MarkupTextLiteral - [12..13)::1 - ['] - Gen<Markup>
                         SingleQuote;['];
                     MarkupTagHelperAttributeValue - [13..24)::11
-                        MarkupBlock - [13..22)::9
-                            CSharpExpressionLiteral - [13..17)::4 - [    ] - Gen<Expr>
-                                Whitespace;[    ];
-                            CSharpCodeBlock - [17..22)::5
-                                CSharpImplicitExpression - [17..22)::5
-                                    CSharpTransition - [17..17)::0
-                                        Transition;[<Missing>];
-                                    CSharpImplicitExpressionBody - [17..22)::5
-                                        CSharpCodeBlock - [17..22)::5
-                                            CSharpExpressionLiteral - [17..22)::5 - [@true] - Gen<Expr>
-                                                Keyword;[@true];
-                        CSharpExpressionLiteral - [22..24)::2 - [  ] - Gen<None>
+                        CSharpExpressionLiteral - [13..24)::11 - [    @true  ] - Gen<None>
+                            Whitespace;[    ];
+                            Transition;[@];
+                            Keyword;[true];
                             Whitespace;[  ];
                     MarkupTextLiteral - [24..25)::1 - ['] - Gen<Markup>
                         SingleQuote;['];

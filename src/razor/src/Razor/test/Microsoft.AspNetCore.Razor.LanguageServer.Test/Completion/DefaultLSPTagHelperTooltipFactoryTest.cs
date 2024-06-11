@@ -6,7 +6,7 @@
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
@@ -14,7 +14,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 
-public class DefaultLSPTagHelperTooltipFactoryTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
+public class DefaultLSPTagHelperTooltipFactoryTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
     [Fact]
     public void CleanSummaryContent_Markup_ReplacesSeeCrefs()
@@ -66,8 +66,8 @@ World", cleanedSummary);
     public async Task TryCreateTooltip_Markup_NoAssociatedTagHelperDescriptions_ReturnsFalse()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(projectManager);
         var elementDescription = AggregateBoundElementDescription.Empty;
 
         // Act
@@ -81,8 +81,8 @@ World", cleanedSummary);
     public async Task TryCreateTooltip_Markup_Element_SingleAssociatedTagHelper_ReturnsTrue()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(projectManager);
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>Uses <see cref=\"T:System.Collections.List{System.String}\" />s</summary>"),
@@ -103,8 +103,8 @@ Uses `List<System.String>`s", markdown.Value);
     public async Task TryCreateTooltip_Markup_Element_PlainText_NoBold()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(projectManager);
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>Uses <see cref=\"T:System.Collections.List{System.String}\" />s</summary>"),
@@ -126,8 +126,8 @@ Uses `List<System.String>`s", markdown.Value);
     public void TryCreateTooltip_Markup_Attribute_PlainText_NoBold()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(projectManager);
         var associatedAttributeDescriptions = new[]
         {
             new BoundAttributeDescriptionInfo(
@@ -153,8 +153,8 @@ Uses `List<System.String>`s", markdown.Value);
     public async Task TryCreateTooltip_Markup_Element_MultipleAssociatedTagHelpers_ReturnsTrue()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(projectManager);
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>\nUses <see cref=\"T:System.Collections.List{System.String}\" />s\n</summary>"),
@@ -181,8 +181,8 @@ Also uses `List<System.String>`s", markdown.Value);
     public void TryCreateTooltip_Markup_Attribute_SingleAssociatedAttribute_ReturnsTrue()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(projectManager);
         var associatedAttributeDescriptions = new[]
         {
             new BoundAttributeDescriptionInfo(
@@ -208,8 +208,8 @@ Uses `List<System.String>`s", markdown.Value);
     public void TryCreateTooltip_Markup_Attribute_MultipleAssociatedAttributes_ReturnsTrue()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(projectManager);
         var associatedAttributeDescriptions = new[]
         {
             new BoundAttributeDescriptionInfo(

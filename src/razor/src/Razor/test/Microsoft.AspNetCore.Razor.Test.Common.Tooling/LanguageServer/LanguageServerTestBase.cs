@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
@@ -50,8 +51,13 @@ public abstract class LanguageServerTestBase : ToolingTestBase
     private protected TestProjectSnapshotManager CreateProjectSnapshotManager()
         => CreateProjectSnapshotManager(ProjectEngineFactories.DefaultProvider);
 
-    private protected TestProjectSnapshotManager CreateProjectSnapshotManager(IProjectEngineFactoryProvider projectEngineFactoryProvider)
-        => new(projectEngineFactoryProvider, LoggerFactory, DisposalToken);
+    private protected TestProjectSnapshotManager CreateProjectSnapshotManager(
+        IProjectEngineFactoryProvider projectEngineFactoryProvider)
+        => new(
+            projectEngineFactoryProvider,
+            LoggerFactory,
+            DisposalToken,
+            initializer: static updater => updater.ProjectAdded(MiscFilesHostProject.Instance));
 
     internal RazorRequestContext CreateRazorRequestContext(VersionedDocumentContext? documentContext, ILspServices? lspServices = null)
     {
@@ -128,6 +134,23 @@ public abstract class LanguageServerTestBase : ToolingTestBase
     internal static VersionedDocumentContext CreateDocumentContext(Uri uri, IDocumentSnapshot snapshot)
     {
         return new VersionedDocumentContext(uri, snapshot, projectContext: null, version: 0);
+    }
+
+    protected static TextLoader CreateTextLoader(string filePath, string text)
+    {
+        return CreateTextLoader(filePath, SourceText.From(text));
+    }
+
+    protected static TextLoader CreateTextLoader(string filePath, SourceText text)
+    {
+        var mock = new StrictMock<TextLoader>();
+
+        var textAndVersion = TextAndVersion.Create(text, VersionStamp.Create(), filePath);
+
+        mock.Setup(x => x.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(textAndVersion);
+
+        return mock.Object;
     }
 
     internal static RazorLSPOptionsMonitor GetOptionsMonitor(bool enableFormatting = true, bool autoShowCompletion = true, bool autoListParams = true, bool formatOnType = true, bool autoInsertAttributeQuotes = true, bool colorBackground = false, bool codeBlockBraceOnNextLine = false, bool commitElementsWithSpace = true)

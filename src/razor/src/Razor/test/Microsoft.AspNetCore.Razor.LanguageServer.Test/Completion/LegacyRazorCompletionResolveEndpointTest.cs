@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
@@ -31,9 +32,9 @@ public class LegacyRazorCompletionResolveEndpointTest : LanguageServerTestBase
     public LegacyRazorCompletionResolveEndpointTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        var snapshotResolver = new TestSnapshotResolver();
-        _lspTagHelperTooltipFactory = new Mock<LSPTagHelperTooltipFactory>(MockBehavior.Strict, snapshotResolver).Object;
-        _vsLspTagHelperTooltipFactory = new Mock<VSLSPTagHelperTooltipFactory>(MockBehavior.Strict, snapshotResolver).Object;
+        var projectManager = CreateProjectSnapshotManager();
+        _lspTagHelperTooltipFactory = new StrictMock<LSPTagHelperTooltipFactory>(projectManager).Object;
+        _vsLspTagHelperTooltipFactory = new StrictMock<VSLSPTagHelperTooltipFactory>(projectManager).Object;
         _completionListCache = new CompletionListCache();
         _completionCapability = new VSInternalCompletionSetting()
         {
@@ -96,8 +97,8 @@ public class LegacyRazorCompletionResolveEndpointTest : LanguageServerTestBase
     public async Task Handle_Resolve_DirectiveAttributeCompletion_ReturnsCompletionItemWithDocumentation()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var lspDescriptionFactory = new Mock<LSPTagHelperTooltipFactory>(MockBehavior.Strict, snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var lspDescriptionFactory = new StrictMock<LSPTagHelperTooltipFactory>(projectManager);
         var markdown = new MarkupContent
         {
             Kind = MarkupKind.Markdown,
@@ -125,8 +126,8 @@ public class LegacyRazorCompletionResolveEndpointTest : LanguageServerTestBase
     public async Task Handle_Resolve_DirectiveAttributeParameterCompletion_ReturnsCompletionItemWithDocumentation()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new Mock<LSPTagHelperTooltipFactory>(MockBehavior.Strict, snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new StrictMock<LSPTagHelperTooltipFactory>(projectManager);
         var markdown = new MarkupContent
         {
             Kind = MarkupKind.Markdown,
@@ -154,8 +155,8 @@ public class LegacyRazorCompletionResolveEndpointTest : LanguageServerTestBase
     public async Task Handle_Resolve_TagHelperElementCompletion_ReturnsCompletionItemWithDocumentation()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var lspDescriptionFactory = new Mock<LSPTagHelperTooltipFactory>(MockBehavior.Strict, snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var lspDescriptionFactory = new StrictMock<LSPTagHelperTooltipFactory>(projectManager);
         var markdown = new MarkupContent
         {
             Kind = MarkupKind.Markdown,
@@ -183,8 +184,8 @@ public class LegacyRazorCompletionResolveEndpointTest : LanguageServerTestBase
     public async Task Handle_Resolve_TagHelperAttribute_ReturnsCompletionItemWithDocumentation()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var lspDescriptionFactory = new Mock<LSPTagHelperTooltipFactory>(MockBehavior.Strict, snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var lspDescriptionFactory = new StrictMock<LSPTagHelperTooltipFactory>(projectManager);
         var markdown = new MarkupContent
         {
             Kind = MarkupKind.Markdown,
