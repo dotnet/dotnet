@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Core" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+    <PackageReference Include="Azure.Identity" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <PackageReference Include="Azure.Storage.Blobs" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" />
 

@@ -70,40 +70,44 @@ use darc to achieve them, as well as a general reference guide to darc commands.
 
 The darc client is a .NET Core global tool.  It requires that a .NET Core SDK be
 installed globally on the machine. The client can be installed using the
-eng\common\darc-init.ps1 script located under any arcade enabled repository.
-The version number is currently baked into the install script, so ensuring you
-have the latest arcade is a good idea.
+`eng\common\darc-init.ps1` script located under any arcade enabled repository.
+The version of the tool that will be installed will match the version of the Maestro++
+service at the time of the installation.
 
-#### Step 1: Ensure you're part of the **arcade-contrib** team:
-- If not you'll get 'Forbidden' errors when trying to use darc
-- Go to https://github.com/orgs/dotnet/teams/arcade-contrib/members
-- Click on "Request to join"
+#### Step 1: Ensure you're part of the **dotnetes-maestro-users** CoreIdentity group:
+Go to https://coreidentity.microsoft.com/manage/Entitlement/entitlement/dotnetesmaes-z54r and request to join.
 
 #### Step 2: Install the darc client:
 ```
-PS C:\enlistments\arcade> .\eng\common\darc-init.ps1
-
-Tool 'microsoft.dotnet.darc' (version '1.1.0-beta.19057.9') was successfully uninstalled.
-Installing Darc CLI version 1.1.0-beta.19081.1...
+D:\repos\arcade> .\eng\common\darc-init.ps1
+  Attempting to install 'sdk v9.0.100-preview.4.24267.66' from public location.
+dotnet-install: Extracting the archive.
+dotnet-install: Adding to current process PATH: "D:\repos\arcade\.dotnet\". Note: This change will not be visible if PowerShell was run as a child process.
+dotnet-install: Note that the script does not resolve dependencies during installation.
+dotnet-install: To check the list of dependencies, go to https://learn.microsoft.com/dotnet/core/install/windows#dependencies
+dotnet-install: Installed version is 9.0.100-preview.4.24267.66
+dotnet-install: Installation finished
+Tool 'microsoft.dotnet.darc' (version '1.1.0-beta.24304.4') was successfully uninstalled.
+Installing Darc CLI version 1.1.0-beta.24306.2...
 You may need to restart your command window if this is the first dotnet tool you have installed.
-  Restoring packages for C:\Users\mmitche\AppData\Local\Temp\jlbo0wgo.ki2\restore.csproj...
-  Installing Microsoft.DotNet.Darc 1.1.0-beta.19081.1.
-  Restore completed in 13.12 sec for C:\Users\mmitche\AppData\Local\Temp\jlbo0wgo.ki2\restore.csproj.
+'D:\repos\arcade\.dotnet\dotnet.exe' tool install microsoft.dotnet.darc --version 1.1.0-beta.24306.2 --add-source 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json' -v minimal -g
 You can invoke the tool using the following command: darc
-Tool 'microsoft.dotnet.darc' (version '1.1.0-beta.19081.1') was successfully installed.
+Tool 'microsoft.dotnet.darc' (version '1.1.0-beta.24306.2') was successfully installed.
 ```
 
-If you get a `SecurityError` saying that `\eng\common\darc-init.ps1 cannot be loaded because running
-scripts is disabled on this system` , you can relax your `ExecutionPolicy` for this script:
+If you get a `SecurityError` saying that `\eng\common\darc-init.ps1` cannot be loaded because running
+scripts is disabled on this system, you can relax your `ExecutionPolicy` for this script:
+
 ```
 powershell -ExecutionPolicy ByPass -File .\darc-init.ps1
 ```
+
 After your client is installed, you should be able to launch it by typing 'darc'
-on the command line.  If this is the first global tool you've installed, you may
+on the command line. If this is the first global tool you've installed, you may
 need to first restart your command window.
 
 ```
-PS C:\enlistments\arcade> darc
+D:\repos\arcade> darc
 Microsoft.DotNet 1.1.0-beta.19081.1+270fa76db13d4c103a6dec2b03f1fd79730ff429
 c Microsoft Corporation. All rights reserved.
 ERROR(S):
@@ -137,8 +141,8 @@ PATs that may be used:
   eng/Version.Details.xml)  Required scopes: Code-Read, Build-Read & Execute, Packaging Read.
   The recommended way of generating the PAT is using the [PatGeneratorTool](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet-eng/NuGet/Microsoft.DncEng.PatGeneratorTool),
   with the `dotnet pat-generator --scopes build_execute code --organizations dnceng devdiv --expires-in 180` command
-- A Build Asset Registry (BAR) password for interacting with Maestro++/BAR (e.g.
-  obtaining build information needed for a drop).
+- *[DEPRECATED] A Build Asset Registry (BAR) password for interacting with Maestro++/BAR (e.g.
+  obtaining build information needed for a drop). This one is no longer needed and you can sign-in through browser when using darc.*
 
 These tokens can either be passed on the command line using parameters (see [Common parameters](#common-parameters)), or
 cached locally on the machine using the [`darc authenticate`](#authenticate) command.
@@ -146,7 +150,7 @@ cached locally on the machine using the [`darc authenticate`](#authenticate) com
 After supplying your secrets, a simple `darc get-channels` operations should succeed.
 
 ```
-PS C:\enlistments\arcade> darc get-channels
+D:\repos\arcade> darc get-channels
 .NET Tools - Latest
 .NET Engineering Services - Int
 .NET Engineering Services - Prod

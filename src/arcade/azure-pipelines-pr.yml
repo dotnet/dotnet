@@ -99,7 +99,7 @@ stages:
             }
 
             # Detects if Version.Details.xml or Versions.props changed (a version bump)
-            $fullDiff=$(git diff HEAD HEAD~ -- eng/Version.Details.xml eng/Versions.props)
+            $fullDiff=$(git diff --unified=0 HEAD HEAD~ -- eng/Version.Details.xml eng/Versions.props)
             if ($fullDiff -match 'Microsoft.DotNet.XHarness.CLI')
             {
               Write-Host "Detected a version bump of Microsoft.DotNet.XHarness.CLI, will run XHarness E2E tests"

@@ -24,7 +24,7 @@
     Workaround for https://github.com/NuGet/Home/issues/3116
   -->
   <PropertyGroup>
-    <RestoreNoCache Condition="'$(ContinuousIntegrationBuild)' == 'true'">true</RestoreNoCache>
+    <RestoreNoHttpCache Condition="'$(ContinuousIntegrationBuild)' == 'true'">true</RestoreNoHttpCache>
   </PropertyGroup>
 
   <!--

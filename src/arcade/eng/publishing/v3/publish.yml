@@ -149,7 +149,6 @@ stages:
           /p:PublishInstallersAndChecksums=true 
           /p:AzureDevOpsFeedsKey='$(dn-bot-all-orgs-artifact-feeds-rw)' 
           /p:AkaMSClientId=$(akams-app-id) 
-          /p:AkaMSClientSecret=$(akams-app-secret) ${{ parameters.artifactsPublishingAdditionalParameters }} 
           /p:AkaMSClientCertificate=$(Agent.TempDirectory)/akamsclientcert.pfx
           /p:PDBArtifactsBasePath='$(Build.ArtifactStagingDirectory)/PDBArtifacts/' 
           /p:SymbolPublishingExclusionsFile='$(Build.ArtifactStagingDirectory)/ReleaseConfigs/SymbolPublishingExclusionsFile.txt' ${{ parameters.symbolPublishingAdditionalParameters}} 

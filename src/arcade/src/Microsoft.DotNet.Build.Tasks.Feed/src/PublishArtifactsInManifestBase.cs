@@ -68,8 +68,20 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         /// <summary>
         /// Authentication token to be used when interacting with Maestro API.
+        /// Deprecated and should not be used anymore.
         /// </summary>
         public string BuildAssetRegistryToken { get; set; }
+
+        /// <summary>
+        /// Federated token to be used in edge cases when this task cannot be called from within an AzureCLI task directly.
+        /// The token is obtained in a previous AzureCLI@2 step and passed as a secret to this task.
+        /// </summary>
+        public string MaestroApiFederatedToken { get; set; }
+
+        /// <summary>
+        /// When running this task locally, allow the interactive browser-based authentication against Maestro.
+        /// </summary>
+        public bool AllowInteractiveAuthentication { get; set; }
 
         /// <summary>
         /// Directory where "nuget.exe" is installed. This will be used to publish packages.
@@ -1784,11 +1796,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             if (string.IsNullOrEmpty(MaestroApiEndpoint))
             {
                 Log.LogError($"The property {nameof(MaestroApiEndpoint)} is required but doesn't have a value set.");
-            }
-
-            if (string.IsNullOrEmpty(BuildAssetRegistryToken))
-            {
-                Log.LogError($"The property {nameof(BuildAssetRegistryToken)} is required but doesn't have a value set.");
             }
 
             if (UseStreamingPublishing && string.IsNullOrEmpty(AzdoApiToken))

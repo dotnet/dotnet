@@ -12,7 +12,7 @@ namespace Microsoft.DotNet.PackageTesting
     {
         public static Package CreatePackageObject(string packagePath)
         {
-            PackageArchiveReader nupkgReader = new(packagePath);
+            using PackageArchiveReader nupkgReader = new(packagePath);
             NuspecReader nuspecReader = nupkgReader.NuspecReader;
 
             string packageId = nuspecReader.GetId();
