@@ -122,6 +122,10 @@
     <!-- Dependencies from https://github.com/NuGet/NuGet.Client -->
     <NuGetBuildTasksPackageVersion>6.8.1-rc.2</NuGetBuildTasksPackageVersion>
   </PropertyGroup>
+  <PropertyGroup>
+    <!-- Dependencies from https://github.com/dotnet/msbuild -->
+    <MicrosoftBuildPackageVersion>17.8.5</MicrosoftBuildPackageVersion>
+  </PropertyGroup>
   <!-- Dependencies from https://github.com/dotnet/deployment-tools -->
   <PropertyGroup>
     <MicrosoftDeploymentDotNetReleasesVersion>2.0.0-preview.1.23463.1</MicrosoftDeploymentDotNetReleasesVersion>
