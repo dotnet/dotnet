@@ -29,6 +29,13 @@ public static class FileKinds
         return string.Equals(fileKind, FileKinds.ComponentImport, StringComparison.OrdinalIgnoreCase);
     }
 
+#nullable enable
+    internal static bool IsLegacy(string? fileKind)
+    {
+        return string.Equals(fileKind, FileKinds.Legacy, StringComparison.OrdinalIgnoreCase);
+    }
+#nullable disable
+
     public static string GetComponentFileKindFromFilePath(string filePath)
     {
         if (filePath == null)

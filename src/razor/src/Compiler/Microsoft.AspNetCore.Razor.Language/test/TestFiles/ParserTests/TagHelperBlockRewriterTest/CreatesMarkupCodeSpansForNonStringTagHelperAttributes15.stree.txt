@@ -38,18 +38,10 @@
                         Text;[age];
                     Equals;[=];
                     MarkupTagHelperAttributeValue - [42..65)::23
-                        CSharpExpressionLiteral - [42..58)::16 - [Convert.ToInt32(] - Gen<None>
+                        CSharpExpressionLiteral - [42..65)::23 - [Convert.ToInt32(@count)] - Gen<None>
                             Text;[Convert.ToInt32(];
-                        MarkupBlock - [58..64)::6
-                            CSharpCodeBlock - [58..64)::6
-                                CSharpImplicitExpression - [58..64)::6
-                                    CSharpTransition - [58..58)::0
-                                        Transition;[<Missing>];
-                                    CSharpImplicitExpressionBody - [58..64)::6
-                                        CSharpCodeBlock - [58..64)::6
-                                            CSharpExpressionLiteral - [58..64)::6 - [@count] - Gen<Expr>
-                                                Identifier;[@count];
-                        CSharpExpressionLiteral - [64..65)::1 - [)] - Gen<None>
+                            Transition;[@];
+                            Identifier;[count];
                             Text;[)];
                 MarkupMiscAttributeContent - [65..66)::1
                     MarkupTextLiteral - [65..66)::1 - [ ] - Gen<Markup>

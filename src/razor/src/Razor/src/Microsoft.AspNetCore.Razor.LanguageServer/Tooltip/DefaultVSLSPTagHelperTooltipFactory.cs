@@ -11,13 +11,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.Core.Imaging;
 using Microsoft.VisualStudio.Text.Adornments;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 
-internal class DefaultVSLSPTagHelperTooltipFactory(ISnapshotResolver snapshotResolver) : VSLSPTagHelperTooltipFactory(snapshotResolver)
+internal class DefaultVSLSPTagHelperTooltipFactory(IProjectSnapshotManager projectManager) : VSLSPTagHelperTooltipFactory(projectManager)
 {
     private static readonly Guid s_imageCatalogGuid = new("{ae27a6b0-e345-4288-96df-5eaf394ee369}");
 

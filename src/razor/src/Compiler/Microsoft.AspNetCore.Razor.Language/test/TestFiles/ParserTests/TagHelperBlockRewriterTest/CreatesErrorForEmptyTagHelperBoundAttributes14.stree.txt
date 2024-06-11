@@ -13,24 +13,12 @@
                     MarkupTextLiteral - [12..13)::1 - ['] - Gen<Markup>
                         SingleQuote;['];
                     MarkupTagHelperAttributeValue - [13..26)::13
-                        MarkupBlock - [13..24)::11
-                            CSharpExpressionLiteral - [13..17)::4 - [    ] - Gen<Expr>
-                                Whitespace;[    ];
-                            CSharpCodeBlock - [17..24)::7
-                                CSharpImplicitExpression - [17..24)::7
-                                    CSharpTransition - [17..17)::0
-                                        Transition;[<Missing>];
-                                    CSharpImplicitExpressionBody - [17..24)::7
-                                        CSharpCodeBlock - [17..24)::7
-                                            CSharpExpressionLiteral - [17..18)::1 - [@] - Gen<Expr>
-                                                Transition;[@];
-                                            CSharpExpressionLiteral - [18..19)::1 - [(] - Gen<Expr>
-                                                LeftParenthesis;[(];
-                                            CSharpExpressionLiteral - [19..23)::4 - [true] - Gen<Expr>
-                                                Keyword;[true];
-                                            CSharpExpressionLiteral - [23..24)::1 - [)] - Gen<Expr>
-                                                RightParenthesis;[)];
-                        CSharpExpressionLiteral - [24..26)::2 - [  ] - Gen<None>
+                        CSharpExpressionLiteral - [13..26)::13 - [    @(true)  ] - Gen<None>
+                            Whitespace;[    ];
+                            Transition;[@];
+                            LeftParenthesis;[(];
+                            Keyword;[true];
+                            RightParenthesis;[)];
                             Whitespace;[  ];
                     MarkupTextLiteral - [26..27)::1 - ['] - Gen<Markup>
                         SingleQuote;['];

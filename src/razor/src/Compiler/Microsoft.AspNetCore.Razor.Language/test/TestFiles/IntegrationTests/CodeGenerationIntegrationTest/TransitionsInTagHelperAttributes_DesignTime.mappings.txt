@@ -29,25 +29,10 @@ Source Location: (171:7,26 [2] TestFiles/IntegrationTests/CodeGenerationIntegrat
 Generated Location: (3245:75,33 [2] )
 |42|
 
-Source Location: (202:8,21 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
-|42|
-Generated Location: (3631:84,33 [2] )
-|42|
-
-Source Location: (204:8,23 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
-| +|
-Generated Location: (3633:84,35 [2] )
-| +|
-
-Source Location: (206:8,25 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
-| |
-Generated Location: (3635:84,37 [1] )
-| |
-
-Source Location: (207:8,26 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
-|@int|
-Generated Location: (3636:84,38 [4] )
-|@int|
+Source Location: (202:8,21 [9] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
+|42 + @int|
+Generated Location: (3631:84,33 [9] )
+|42 + @int|
 
 Source Location: (241:9,22 [3] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
 |int|
@@ -74,38 +59,8 @@ Source Location: (307:11,19 [6] TestFiles/IntegrationTests/CodeGenerationIntegra
 Generated Location: (4790:111,19 [6] )
 |@class|
 
-Source Location: (321:11,33 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
-|4|
-Generated Location: (5010:118,33 [1] )
-|4|
-
-Source Location: (322:11,34 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
-| *|
-Generated Location: (5011:118,34 [2] )
-| *|
-
-Source Location: (324:11,36 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
-| |
-Generated Location: (5013:118,36 [1] )
-| |
-
-Source Location: (325:11,37 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
-|@|
-Generated Location: (5014:118,37 [1] )
-|@|
-
-Source Location: (326:11,38 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
-|(|
-Generated Location: (5015:118,38 [1] )
-|(|
-
-Source Location: (327:11,39 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
-|@int + 2|
-Generated Location: (5016:118,39 [8] )
-|@int + 2|
-
-Source Location: (335:11,47 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
-|)|
-Generated Location: (5024:118,47 [1] )
-|)|
+Source Location: (321:11,33 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
+|4 * @(@int + 2)|
+Generated Location: (5010:118,33 [15] )
+|4 * @(@int + 2)|
 

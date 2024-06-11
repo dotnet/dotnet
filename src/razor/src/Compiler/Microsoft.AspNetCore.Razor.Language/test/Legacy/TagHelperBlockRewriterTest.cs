@@ -475,6 +475,11 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
                 .Name("name")
                 .Metadata(PropertyName("Name"))
                 .TypeName(typeof(string).FullName))
+            .BoundAttributeDescriptor(attribute =>
+                attribute
+                .Name("tag")
+                .Metadata(PropertyName("Tag"))
+                .TypeName(typeof(object).FullName))
             .Build()
     ];
 
@@ -630,6 +635,86 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
                 var count = 1;
             }
             <person age=@@count />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10426")]
+    public void CreatesMarkupCodeSpans_EscapedExpression_01()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            <person tag='@new string("1, 2")' />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10426")]
+    public void CreatesMarkupCodeSpans_EscapedExpression_02()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            <person tag="@(new string("1, 2"))" />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10426")]
+    public void CreatesMarkupCodeSpans_EscapedExpression_03()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            <person tag="@new string(@x("1, 2"))" />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10426")]
+    public void CreatesMarkupCodeSpans_EscapedExpression_04()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            <person tag='new string("1, 2")' />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10426")]
+    public void CreatesMarkupCodeSpans_EscapedExpression_05()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            <person tag='new string(@x("1, 2"))' />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10426")]
+    public void CreatesMarkupCodeSpans_EscapedExpression_06()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            <person tag='@new string("1 2")' />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10426")]
+    public void CreatesMarkupCodeSpans_EscapedExpression_07()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            <person tag="@(new string("1 2"))" />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10426")]
+    public void CreatesMarkupCodeSpans_EscapedExpression_08()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            <person tag="@(new string(@x("1 2")))" />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10426")]
+    public void CreatesMarkupCodeSpans_EscapedExpression_09()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            <person tag='"0" + new string("1 2")' />
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10426")]
+    public void CreatesMarkupCodeSpans_EscapedExpression_10()
+    {
+        EvaluateData(CodeTagHelperAttributes_Descriptors, """
+            <person tag='"0" + new @String("1 2")' />
             """);
     }
 

@@ -44,6 +44,10 @@ public class TestTagHelperDescriptors
                                 .Name("age")
                                 .Metadata(PropertyName("AgeProp"))
                                 .TypeName("System.Int32"),
+                            builder => builder
+                                .Name("tag")
+                                .Metadata(PropertyName("TagProp"))
+                                .TypeName("System.Object"),
                         })
                 };
         }

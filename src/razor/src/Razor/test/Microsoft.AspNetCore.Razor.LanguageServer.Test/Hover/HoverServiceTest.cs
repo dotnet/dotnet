@@ -1041,9 +1041,9 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
 
     private HoverService GetHoverService(IRazorDocumentMappingService mappingService = null)
     {
-        var snapshotResolver = new TestSnapshotResolver();
-        var lspTagHelperTooltipFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
-        var vsLspTagHelperTooltipFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var lspTagHelperTooltipFactory = new DefaultLSPTagHelperTooltipFactory(projectManager);
+        var vsLspTagHelperTooltipFactory = new DefaultVSLSPTagHelperTooltipFactory(projectManager);
 
         var clientCapabilities = CreateMarkDownCapabilities();
         clientCapabilities.SupportsVisualStudioExtensions = true;

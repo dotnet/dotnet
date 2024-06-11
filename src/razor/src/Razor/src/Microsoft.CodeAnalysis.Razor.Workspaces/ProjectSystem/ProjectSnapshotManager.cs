@@ -24,15 +24,13 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 // (language version, extensions, named configuration).
 //
 // The implementation will create a ProjectSnapshot for each HostProject.
-internal partial class ProjectSnapshotManager(
-    IProjectEngineFactoryProvider projectEngineFactoryProvider,
-    ILoggerFactory loggerFactory)
-    : IProjectSnapshotManager, IDisposable
+internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDisposable
 {
     private static readonly LoadTextOptions s_loadTextOptions = new(SourceHashAlgorithm.Sha256);
 
-    private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider = projectEngineFactoryProvider;
-    private readonly Dispatcher _dispatcher = new(loggerFactory);
+    private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
+    private readonly Dispatcher _dispatcher;
+    private readonly bool _initialized;
 
     public event EventHandler<ProjectChangeEventArgs>? PriorityChanged;
     public event EventHandler<ProjectChangeEventArgs>? Changed;
@@ -62,6 +60,28 @@ internal partial class ProjectSnapshotManager(
     // We have a queue for changes because if one change results in another change aka, add -> open
     // we want to make sure the "add" finishes running first before "open" is notified.
     private readonly Queue<ProjectChangeEventArgs> _notificationQueue = new();
+
+    /// <summary>
+    /// Constructs an instance of <see cref="ProjectSnapshotManager"/>.
+    /// </summary>
+    /// <param name="projectEngineFactoryProvider">The <see cref="IProjectEngineFactoryProvider"/> to
+    /// use when creating <see cref="ProjectState"/>.</param>
+    /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> to use.</param>
+    /// <param name="initializer">An optional callback to set up the initial set of projects and documents.
+    /// Note that this is called during construction, so it does not run on the dispatcher and notifications
+    /// will not be sent.</param>
+    public ProjectSnapshotManager(
+        IProjectEngineFactoryProvider projectEngineFactoryProvider,
+        ILoggerFactory loggerFactory,
+        Action<Updater>? initializer = null)
+    {
+        _projectEngineFactoryProvider = projectEngineFactoryProvider;
+        _dispatcher = new(loggerFactory);
+
+        initializer?.Invoke(new(this));
+
+        _initialized = true;
+    }
 
     public void Dispose()
     {
@@ -159,7 +179,10 @@ internal partial class ProjectSnapshotManager(
 
     private void DocumentAdded(ProjectKey projectKey, HostDocument document, TextLoader textLoader)
     {
-        _dispatcher.AssertRunningOnDispatcher();
+        if (_initialized)
+        {
+            _dispatcher.AssertRunningOnDispatcher();
+        }
 
         if (TryUpdate(
             projectKey,
@@ -174,7 +197,10 @@ internal partial class ProjectSnapshotManager(
 
     private void DocumentRemoved(ProjectKey projectKey, HostDocument document)
     {
-        _dispatcher.AssertRunningOnDispatcher();
+        if (_initialized)
+        {
+            _dispatcher.AssertRunningOnDispatcher();
+        }
 
         if (TryUpdate(
             projectKey,
@@ -189,7 +215,10 @@ internal partial class ProjectSnapshotManager(
 
     private void DocumentOpened(ProjectKey projectKey, string documentFilePath, SourceText sourceText)
     {
-        _dispatcher.AssertRunningOnDispatcher();
+        if (_initialized)
+        {
+            _dispatcher.AssertRunningOnDispatcher();
+        }
 
         if (TryUpdate(
             projectKey,
@@ -204,7 +233,10 @@ internal partial class ProjectSnapshotManager(
 
     private void DocumentClosed(ProjectKey projectKey, string documentFilePath, TextLoader textLoader)
     {
-        _dispatcher.AssertRunningOnDispatcher();
+        if (_initialized)
+        {
+            _dispatcher.AssertRunningOnDispatcher();
+        }
 
         if (TryUpdate(
             projectKey,
@@ -219,7 +251,10 @@ internal partial class ProjectSnapshotManager(
 
     private void DocumentChanged(ProjectKey projectKey, string documentFilePath, SourceText sourceText)
     {
-        _dispatcher.AssertRunningOnDispatcher();
+        if (_initialized)
+        {
+            _dispatcher.AssertRunningOnDispatcher();
+        }
 
         if (TryUpdate(
             projectKey,
@@ -234,7 +269,10 @@ internal partial class ProjectSnapshotManager(
 
     private void DocumentChanged(ProjectKey projectKey, string documentFilePath, TextLoader textLoader)
     {
-        _dispatcher.AssertRunningOnDispatcher();
+        if (_initialized)
+        {
+            _dispatcher.AssertRunningOnDispatcher();
+        }
 
         if (TryUpdate(
             projectKey,
@@ -249,7 +287,10 @@ internal partial class ProjectSnapshotManager(
 
     private void ProjectAdded(HostProject hostProject)
     {
-        _dispatcher.AssertRunningOnDispatcher();
+        if (_initialized)
+        {
+            _dispatcher.AssertRunningOnDispatcher();
+        }
 
         if (TryUpdate(
             hostProject.Key,
@@ -264,7 +305,10 @@ internal partial class ProjectSnapshotManager(
 
     private void ProjectConfigurationChanged(HostProject hostProject)
     {
-        _dispatcher.AssertRunningOnDispatcher();
+        if (_initialized)
+        {
+            _dispatcher.AssertRunningOnDispatcher();
+        }
 
         if (TryUpdate(
             hostProject.Key,
@@ -279,7 +323,10 @@ internal partial class ProjectSnapshotManager(
 
     private void ProjectWorkspaceStateChanged(ProjectKey projectKey, ProjectWorkspaceState projectWorkspaceState)
     {
-        _dispatcher.AssertRunningOnDispatcher();
+        if (_initialized)
+        {
+            _dispatcher.AssertRunningOnDispatcher();
+        }
 
         if (TryUpdate(
             projectKey,
@@ -294,7 +341,10 @@ internal partial class ProjectSnapshotManager(
 
     private void ProjectRemoved(ProjectKey projectKey)
     {
-        _dispatcher.AssertRunningOnDispatcher();
+        if (_initialized)
+        {
+            _dispatcher.AssertRunningOnDispatcher();
+        }
 
         if (TryUpdate(
             projectKey,
@@ -309,7 +359,10 @@ internal partial class ProjectSnapshotManager(
 
     private void SolutionOpened()
     {
-        _dispatcher.AssertRunningOnDispatcher();
+        if (_initialized)
+        {
+            _dispatcher.AssertRunningOnDispatcher();
+        }
 
         using (_readerWriterLock.DisposableWrite())
         {
@@ -319,7 +372,10 @@ internal partial class ProjectSnapshotManager(
 
     private void SolutionClosed()
     {
-        _dispatcher.AssertRunningOnDispatcher();
+        if (_initialized)
+        {
+            _dispatcher.AssertRunningOnDispatcher();
+        }
 
         using (_readerWriterLock.DisposableWrite())
         {
@@ -329,6 +385,11 @@ internal partial class ProjectSnapshotManager(
 
     private void NotifyListeners(IProjectSnapshot? older, IProjectSnapshot? newer, string? documentFilePath, ProjectChangeKind kind)
     {
+        if (!_initialized)
+        {
+            return;
+        }
+
         _notificationQueue.Enqueue(new ProjectChangeEventArgs(older, newer, documentFilePath, kind, IsSolutionClosing));
 
         if (_notificationQueue.Count == 1)

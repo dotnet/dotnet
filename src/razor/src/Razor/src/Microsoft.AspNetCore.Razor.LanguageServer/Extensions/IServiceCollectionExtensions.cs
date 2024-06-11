@@ -210,8 +210,6 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton((services) => (IRazorStartupService)services.GetRequiredService<IDocumentVersionCache>());
 
         services.AddSingleton<RemoteTextLoaderFactory, DefaultRemoteTextLoaderFactory>();
-        services.AddSingleton<ISnapshotResolver, SnapshotResolver>();
-        services.AddSingleton<IOnInitialized>(sp => (SnapshotResolver)sp.GetRequiredService<ISnapshotResolver>());
         services.AddSingleton<IRazorProjectService, RazorProjectService>();
         services.AddSingleton<IRazorStartupService, OpenDocumentGenerator>();
         services.AddSingleton<IRazorDocumentMappingService, RazorDocumentMappingService>();
@@ -256,7 +254,7 @@ internal static class IServiceCollectionExtensions
 
         // Add project snapshot manager
         services.AddSingleton<IProjectEngineFactoryProvider, LspProjectEngineFactoryProvider>();
-        services.AddSingleton<IProjectSnapshotManager, ProjectSnapshotManager>();
+        services.AddSingleton<IProjectSnapshotManager, LspProjectSnapshotManager>();
     }
 
     public static void AddHandlerWithCapabilities<T>(this IServiceCollection services)

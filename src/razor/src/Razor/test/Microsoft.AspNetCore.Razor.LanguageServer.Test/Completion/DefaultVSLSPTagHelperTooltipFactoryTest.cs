@@ -9,7 +9,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.Text.Adornments;
 using Xunit;
@@ -18,7 +18,7 @@ using static Microsoft.AspNetCore.Razor.LanguageServer.Tooltip.DefaultVSLSPTagHe
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 
-public class DefaultVSLSPTagHelperTooltipFactoryTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
+public class DefaultVSLSPTagHelperTooltipFactoryTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
     [Fact]
     public void CleanAndClassifySummaryContent_ClassifiedTextElement_ReplacesSeeCrefs()
@@ -170,8 +170,8 @@ End summary description.";
     public async Task TryCreateTooltip_ClassifiedTextElement_NoAssociatedTagHelperDescriptions_ReturnsFalse()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(projectManager);
         var elementDescription = AggregateBoundElementDescription.Empty;
 
         // Act
@@ -185,8 +185,8 @@ End summary description.";
     public async Task TryCreateTooltip_ClassifiedTextElement_Element_SingleAssociatedTagHelper_ReturnsTrue_NestedTypes()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(projectManager);
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo(
@@ -226,8 +226,8 @@ End summary description.";
     public async Task TryCreateTooltip_ClassifiedTextElement_Element_NamespaceContainsTypeName_ReturnsTrue()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(projectManager);
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo(
@@ -266,8 +266,8 @@ End summary description.";
     public async Task TryCreateTooltip_ClassifiedTextElement_Element_MultipleAssociatedTagHelpers_ReturnsTrue()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(projectManager);
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>\nUses <see cref=\"T:System.Collections.List{System.String}\" />s\n</summary>"),
@@ -320,8 +320,8 @@ End summary description.";
     public void TryCreateTooltip_ClassifiedTextElement_NoAssociatedAttributeDescriptions_ReturnsFalse()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(projectManager);
         var elementDescription = AggregateBoundAttributeDescription.Empty;
 
         // Act
@@ -336,8 +336,8 @@ End summary description.";
     public void TryCreateTooltip_ClassifiedTextElement_Attribute_SingleAssociatedAttribute_ReturnsTrue_NestedTypes()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(projectManager);
         var associatedAttributeDescriptions = new[]
         {
             new BoundAttributeDescriptionInfo(
@@ -385,8 +385,8 @@ End summary description.";
     public void TryCreateTooltip_ClassifiedTextElement_Attribute_MultipleAssociatedAttributes_ReturnsTrue()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(projectManager);
         var associatedAttributeDescriptions = new[]
         {
             new BoundAttributeDescriptionInfo(
@@ -460,8 +460,8 @@ End summary description.";
     public async Task TryCreateTooltip_ContainerElement_NoAssociatedTagHelperDescriptions_ReturnsFalse()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(projectManager);
         var elementDescription = AggregateBoundElementDescription.Empty;
 
         // Act
@@ -475,8 +475,8 @@ End summary description.";
     public async Task TryCreateTooltip_ContainerElement_Attribute_MultipleAssociatedTagHelpers_ReturnsTrue()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(projectManager);
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>\nUses <see cref=\"T:System.Collections.List{System.String}\" />s\n</summary>"),
@@ -559,8 +559,8 @@ End summary description.";
     public void TryCreateTooltip_ContainerElement_NoAssociatedAttributeDescriptions_ReturnsFalse()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(projectManager);
         var elementDescription = AggregateBoundAttributeDescription.Empty;
 
         // Act
@@ -575,8 +575,8 @@ End summary description.";
     public void TryCreateTooltip_ContainerElement_Attribute_MultipleAssociatedAttributes_ReturnsTrue()
     {
         // Arrange
-        var snapshotResolver = new TestSnapshotResolver();
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
+        var projectManager = CreateProjectSnapshotManager();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(projectManager);
         var associatedAttributeDescriptions = new[]
         {
             new BoundAttributeDescriptionInfo(

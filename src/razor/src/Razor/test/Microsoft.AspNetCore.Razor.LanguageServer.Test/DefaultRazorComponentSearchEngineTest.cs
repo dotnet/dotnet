@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -47,8 +46,6 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
     {
         _projectManager = CreateProjectSnapshotManager();
 
-        var snapshotResolver = new SnapshotResolver(_projectManager, LoggerFactory);
-        await snapshotResolver.OnInitializedAsync(StrictMock.Of<ILspServices>(), DisposalToken);
         var documentVersionCache = new DocumentVersionCache(_projectManager);
 
         var remoteTextLoaderFactoryMock = new StrictMock<RemoteTextLoaderFactory>();
@@ -66,7 +63,6 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
 
         var projectService = new TestRazorProjectService(
             remoteTextLoaderFactoryMock.Object,
-            snapshotResolver,
             documentVersionCache,
             _projectManager,
             LoggerFactory);

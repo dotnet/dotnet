@@ -25,7 +25,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
 internal class RazorProjectService(
     RemoteTextLoaderFactory remoteTextLoaderFactory,
-    ISnapshotResolver snapshotResolver,
     IDocumentVersionCache documentVersionCache,
     IProjectSnapshotManager projectManager,
     ILoggerFactory loggerFactory)
@@ -33,7 +32,6 @@ internal class RazorProjectService(
 {
     private readonly IProjectSnapshotManager _projectManager = projectManager;
     private readonly RemoteTextLoaderFactory _remoteTextLoaderFactory = remoteTextLoaderFactory;
-    private readonly ISnapshotResolver _snapshotResolver = snapshotResolver;
     private readonly IDocumentVersionCache _documentVersionCache = documentVersionCache;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorProjectService>();
 
@@ -50,7 +48,7 @@ internal class RazorProjectService(
         var textDocumentPath = FilePathNormalizer.Normalize(filePath);
 
         _logger.LogDebug($"Adding {filePath} to the miscellaneous files project, because we don't have project info (yet?)");
-        var miscFilesProject = _snapshotResolver.GetMiscellaneousProject();
+        var miscFilesProject = _projectManager.GetMiscellaneousProject();
 
         if (miscFilesProject.GetDocument(FilePathNormalizer.Normalize(textDocumentPath)) is not null)
         {
@@ -80,7 +78,7 @@ internal class RazorProjectService(
                 // We are okay to use the non-project-key overload of TryResolveDocument here because we really are just checking if the document
                 // has been added to _any_ project. AddDocument will take care of adding to all of the necessary ones, and then below we ensure
                 // we process them all too
-                if (!_snapshotResolver.TryResolveDocumentInAnyProject(textDocumentPath, out var document))
+                if (!_projectManager.TryResolveDocumentInAnyProject(textDocumentPath, _logger, out var document))
                 {
                     // Document hasn't been added. This usually occurs when VSCode trumps all other initialization
                     // processes and pre-initializes already open documents. We add this to the misc project, and
@@ -152,7 +150,7 @@ internal class RazorProjectService(
                         if (_projectManager.IsDocumentOpen(textDocumentPath))
                         {
                             _logger.LogInformation($"Moving document '{textDocumentPath}' from project '{projectSnapshot.Key}' to misc files because it is open.");
-                            var miscellaneousProject = _snapshotResolver.GetMiscellaneousProject();
+                            var miscellaneousProject = _projectManager.GetMiscellaneousProject();
                             if (projectSnapshot != miscellaneousProject)
                             {
                                 MoveDocument(updater, textDocumentPath, fromProject: projectSnapshot, toProject: miscellaneousProject);
@@ -197,9 +195,9 @@ internal class RazorProjectService(
     private void ActOnDocumentInMultipleProjects(string filePath, Action<IProjectSnapshot, string> action)
     {
         var textDocumentPath = FilePathNormalizer.Normalize(filePath);
-        if (!_snapshotResolver.TryResolveAllProjects(textDocumentPath, out var projects))
+        if (!_projectManager.TryResolveAllProjects(textDocumentPath, out var projects))
         {
-            var miscFilesProject = _snapshotResolver.GetMiscellaneousProject();
+            var miscFilesProject = _projectManager.GetMiscellaneousProject();
             projects = [miscFilesProject];
         }
 
@@ -346,7 +344,7 @@ internal class RazorProjectService(
         var currentProjectKey = project.Key;
         var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(project.FilePath);
         var documentMap = documents.ToDictionary(document => EnsureFullPath(document.FilePath, projectDirectory), FilePathComparer.Instance);
-        var miscellaneousProject = _snapshotResolver.GetMiscellaneousProject();
+        var miscellaneousProject = _projectManager.GetMiscellaneousProject();
 
         // "Remove" any unnecessary documents by putting them into the misc project
         foreach (var documentFilePath in project.DocumentFilePaths)
@@ -403,7 +401,7 @@ internal class RazorProjectService(
         }
 
         project = _projectManager.GetLoadedProject(project.Key);
-        miscellaneousProject = _snapshotResolver.GetMiscellaneousProject();
+        miscellaneousProject = _projectManager.GetMiscellaneousProject();
 
         // Add (or migrate from misc) any new documents
         foreach (var documentKvp in documentMap)
@@ -482,11 +480,11 @@ internal class RazorProjectService(
 
     private void TryMigrateMiscellaneousDocumentsToProject(ProjectSnapshotManager.Updater updater)
     {
-        var miscellaneousProject = _snapshotResolver.GetMiscellaneousProject();
+        var miscellaneousProject = _projectManager.GetMiscellaneousProject();
 
         foreach (var documentFilePath in miscellaneousProject.DocumentFilePaths)
         {
-            var projectSnapshot = _snapshotResolver.FindPotentialProjects(documentFilePath).FirstOrDefault();
+            var projectSnapshot = _projectManager.FindPotentialProjects(documentFilePath).FirstOrDefault();
             if (projectSnapshot is null)
             {
                 continue;

@@ -24,7 +24,6 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
@@ -612,11 +611,8 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
 
         var projectManager = CreateProjectSnapshotManager();
 
-        var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
-        await snapshotResolver.OnInitializedAsync(StrictMock.Of<ILspServices>(), DisposalToken);
-
         var documentVersionCache = new DocumentVersionCache(projectManager);
-        var documentContextFactory = new DocumentContextFactory(projectManager, snapshotResolver, documentVersionCache, LoggerFactory);
+        var documentContextFactory = new DocumentContextFactory(projectManager, documentVersionCache, LoggerFactory);
 
         var remoteTextLoaderFactoryMock = new StrictMock<RemoteTextLoaderFactory>();
         remoteTextLoaderFactoryMock
@@ -633,7 +629,6 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
 
         var projectService = new TestRazorProjectService(
             remoteTextLoaderFactoryMock.Object,
-            snapshotResolver,
             documentVersionCache,
             projectManager,
             LoggerFactory);

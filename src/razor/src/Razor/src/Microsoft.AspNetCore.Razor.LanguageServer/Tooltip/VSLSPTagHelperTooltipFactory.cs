@@ -5,18 +5,29 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.Text.Adornments;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 
-internal abstract class VSLSPTagHelperTooltipFactory(ISnapshotResolver snapshotResolver) : TagHelperTooltipFactoryBase(snapshotResolver)
+internal abstract class VSLSPTagHelperTooltipFactory(IProjectSnapshotManager projectManager) : TagHelperTooltipFactoryBase(projectManager)
 {
-    public abstract Task<ContainerElement?> TryCreateTooltipContainerAsync(string documentFilePath, AggregateBoundElementDescription elementDescriptionInfo, CancellationToken cancellationToken);
+    public abstract Task<ContainerElement?> TryCreateTooltipContainerAsync(
+        string documentFilePath,
+        AggregateBoundElementDescription elementDescriptionInfo,
+        CancellationToken cancellationToken);
 
-    public abstract bool TryCreateTooltip(AggregateBoundAttributeDescription attributeDescriptionInfo, [NotNullWhen(true)] out ContainerElement? tooltipContent);
+    public abstract bool TryCreateTooltip(
+        AggregateBoundAttributeDescription attributeDescriptionInfo,
+        [NotNullWhen(true)] out ContainerElement? tooltipContent);
 
-    public abstract Task<ClassifiedTextElement?> TryCreateTooltipAsync(string documentFilePath, AggregateBoundElementDescription elementDescriptionInfo, CancellationToken cancellationToken);
+    public abstract Task<ClassifiedTextElement?> TryCreateTooltipAsync(
+        string documentFilePath,
+        AggregateBoundElementDescription elementDescriptionInfo,
+        CancellationToken cancellationToken);
 
-    public abstract bool TryCreateTooltip(AggregateBoundAttributeDescription attributeDescriptionInfo, [NotNullWhen(true)] out ClassifiedTextElement? tooltipContent);
+    public abstract bool TryCreateTooltip(
+        AggregateBoundAttributeDescription attributeDescriptionInfo,
+        [NotNullWhen(true)] out ClassifiedTextElement? tooltipContent);
 }

@@ -11,10 +11,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 
-internal abstract class TagHelperTooltipFactoryBase
+internal abstract class TagHelperTooltipFactoryBase(IProjectSnapshotManager projectManager)
 {
     protected static readonly string TagContentGroupName = "content";
     private static readonly Regex s_codeRegex = new Regex($"""<(?:c|code)>(?<{TagContentGroupName}>.*?)<\/(?:c|code)>""", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
@@ -22,16 +23,11 @@ internal abstract class TagHelperTooltipFactoryBase
 
     private static readonly IReadOnlyList<char> s_newLineChars = new char[] { '\n', '\r' };
 
-    private readonly ISnapshotResolver _snapshotResolver;
-
-    protected TagHelperTooltipFactoryBase(ISnapshotResolver snapshotResolver)
-    {
-        _snapshotResolver = snapshotResolver;
-    }
+    private readonly IProjectSnapshotManager _projectManager = projectManager;
 
     internal async Task<string?> GetProjectAvailabilityAsync(string documentFilePath, string tagHelperTypeName, CancellationToken cancellationToken)
     {
-        if (!_snapshotResolver.TryResolveAllProjects(documentFilePath, out var projectSnapshots))
+        if (!_projectManager.TryResolveAllProjects(documentFilePath, out var projectSnapshots))
         {
             return null;
         }
