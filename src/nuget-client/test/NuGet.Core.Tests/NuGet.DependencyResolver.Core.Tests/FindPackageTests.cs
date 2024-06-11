@@ -1,8 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -165,7 +165,7 @@ namespace NuGet.DependencyResolver.Core.Tests
         }
 
         [Fact]
-        public async Task FindPackage_VerifyMissingListedPackageThrowsNotFound()
+        public async Task FindPackage_VerifyMissingListedPackage_ThrowsNotFoundAndLogsErrorAsync()
         {
             // Arrange
             var range = new LibraryRange("x", VersionRange.Parse("1.0.0-beta"), LibraryDependencyTarget.Package);
@@ -176,6 +176,7 @@ namespace NuGet.DependencyResolver.Core.Tests
             var token = CancellationToken.None;
             var edge = new GraphEdge<RemoteResolveResult>(null, null, null);
             var actualIdentity = new LibraryIdentity("x", NuGetVersion.Parse("1.0.0-beta"), LibraryType.Package);
+            var packageIdentity = new PackageIdentity(actualIdentity.Name, actualIdentity.Version);
             var dependencies = new[] { new LibraryDependency() { LibraryRange = new LibraryRange("y", VersionRange.All, LibraryDependencyTarget.Package) } };
             var dependencyInfo = LibraryDependencyInfo.Create(actualIdentity, framework, dependencies);
 
@@ -198,6 +199,12 @@ namespace NuGet.DependencyResolver.Core.Tests
 
             // Assert
             Assert.Equal(2, hitCount);
+            Assert.Equal(1, testLogger.Errors);
+            string errorMessage = string.Format(CultureInfo.CurrentCulture,
+                                                Strings.Error_PackageNotFoundWhenExpected,
+                                                remoteProvider.Object.Source,
+                                                packageIdentity.ToString());
+            Assert.Equal(errorMessage, testLogger.ErrorMessages.Single());
         }
 
         [Fact]
