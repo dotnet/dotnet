@@ -26,9 +26,9 @@
 
   <!-- Redistribute package content from other nuget packages. -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.Wpf.GitHub" Version="$(MicrosoftDotNetWpfGitHubVersion)" />
-    <PackageReference Include="Microsoft.Private.Winforms" Version="$(MicrosoftPrivateWinformsVersion)" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.Internal.Runtime.WindowsDesktop.Transport" Version="$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)" />
+    <PackageReference Include="Microsoft.DotNet.Wpf.GitHub" />
+    <PackageReference Include="Microsoft.Private.Winforms" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Internal.Runtime.WindowsDesktop.Transport" />
   </ItemGroup>
 
 </Project>

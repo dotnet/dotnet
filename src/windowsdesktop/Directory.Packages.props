@@ -1,0 +1,76 @@
+<Project>
+
+  <PropertyGroup>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    <!-- Using multiple feeds isn't supported by Maestro: https://github.com/dotnet/arcade/issues/14155. -->
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Arcade dependencies -->
+    <PackageVersion Include="Microsoft.DotNet.Build.Tasks.Archives" Version="$(MicrosoftDotNetBuildTasksArchivesVersion)" />
+    <PackageVersion Include="Microsoft.DotNet.Build.Tasks.Installers" Version="$(MicrosoftDotNetBuildTasksInstallersVersion)" />
+
+    <!-- CoreFx dependencies -->
+    <PackageVersion Include="System.Data.DataSetExtensions" Version="$(SystemDataDataSetExtensionsVersion)" />
+    <PackageVersion Include="System.Data.SqlClient" Version="$(SystemDataSqlClientVersion)" />
+    <PackageVersion Include="System.Reflection.Emit.ILGeneration" Version="$(SystemReflectionEmitILGenerationVersion)" />
+    <PackageVersion Include="System.Reflection.Emit.Lightweight" Version="$(SystemReflectionEmitLightweightVersion)" />
+    <PackageVersion Include="System.Reflection.Emit" Version="$(SystemReflectionEmitVersion)" />
+
+    <!-- NuGet dependencies -->
+    <PackageVersion Include="NuGet.Packaging" Version="$(NugetPackagingVersion)" />
+
+    <!-- Runtime dependencies -->
+    <PackageVersion Include="Microsoft.Win32.Registry.AccessControl" Version="$(MicrosoftWin32RegistryAccessControlVersion)" />
+    <PackageVersion Include="Microsoft.Win32.Registry" Version="$(MicrosoftWin32RegistryVersion)" />
+    <PackageVersion Include="Microsoft.Win32.SystemEvents" Version="$(MicrosoftWin32SystemEventsVersion)" />
+    <PackageVersion Include="System.CodeDom" Version="$(SystemCodeDomVersion)" />
+    <PackageVersion Include="System.ComponentModel.Composition.Registration" Version="$(SystemComponentModelCompositionRegistrationVersion)" />
+    <PackageVersion Include="System.ComponentModel.Composition" Version="$(SystemComponentModelCompositionVersion)" />
+    <PackageVersion Include="System.Configuration.ConfigurationManager" Version="$(SystemConfigurationConfigurationManagerVersion)" />
+    <PackageVersion Include="System.Data.Odbc" Version="$(SystemDataOdbcVersion)" />
+    <PackageVersion Include="System.Data.OleDb" Version="$(SystemDataOleDbVersion)" />
+    <PackageVersion Include="System.Diagnostics.EventLog" Version="$(SystemDiagnosticsEventLogVersion)" />
+    <PackageVersion Include="System.Diagnostics.PerformanceCounter" Version="$(SystemDiagnosticsPerformanceCounterVersion)" />
+    <PackageVersion Include="System.DirectoryServices.AccountManagement" Version="$(SystemDirectoryServicesAccountManagementVersion)" />
+    <PackageVersion Include="System.DirectoryServices.Protocols" Version="$(SystemDirectoryServicesProtocolsVersion)" />
+    <PackageVersion Include="System.DirectoryServices" Version="$(SystemDirectoryServicesVersion)" />
+    <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="$(SystemIOFileSystemAccessControlVersion)" />
+    <PackageVersion Include="System.IO.Packaging" Version="$(SystemIOPackagingVersion)" />
+    <PackageVersion Include="System.IO.Pipes.AccessControl" Version="$(SystemIOPipesAccessControlVersion)" />
+    <PackageVersion Include="System.IO.Ports" Version="$(SystemIOPortsVersion)" />
+    <PackageVersion Include="System.Management" Version="$(SystemManagementVersion)" />
+    <PackageVersion Include="System.Reflection.Context" Version="$(SystemReflectionContextVersion)" />
+    <PackageVersion Include="System.Runtime.Caching" Version="$(SystemRuntimeCachingVersion)" />
+    <PackageVersion Include="System.Security.AccessControl" Version="$(SystemSecurityAccessControlVersion)" />
+    <PackageVersion Include="System.Security.Cryptography.Cng" Version="$(SystemSecurityCryptographyCngVersion)" />
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="$(SystemSecurityCryptographyPkcsVersion)" />
+    <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="$(SystemSecurityCryptographyProtectedDataVersion)" />
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" />
+    <PackageVersion Include="System.Security.Permissions" Version="$(SystemSecurityPermissionsVersion)" />
+    <PackageVersion Include="System.Security.Principal.Windows" Version="$(SystemSecurityPrincipalWindowsVersion)" />
+    <PackageVersion Include="System.ServiceModel.Syndication" Version="$(SystemServiceModelSyndicationVersion)" />
+    <PackageVersion Include="System.ServiceProcess.ServiceController" Version="$(SystemServiceProcessServiceControllerVersion)" />
+    <PackageVersion Include="System.Speech" Version="$(SystemSpeechVersion)" />
+    <PackageVersion Include="System.Text.Encoding.CodePages" Version="$(SystemTextEncodingCodePagesVersion)" />
+    <PackageVersion Include="System.Threading.AccessControl" Version="$(SystemThreadingAccessControlVersion)" />
+
+    <!-- WCF dependencies -->
+    <PackageVersion Include="System.ServiceModel.Duplex" Version="$(SystemServiceModelVersion)" />
+    <PackageVersion Include="System.ServiceModel.Http" Version="$(SystemServiceModelVersion)" />
+    <PackageVersion Include="System.ServiceModel.NetTcp" Version="$(SystemServiceModelVersion)" />
+    <PackageVersion Include="System.ServiceModel.Primitives" Version="$(SystemServiceModelVersion)" />
+    <PackageVersion Include="System.ServiceModel.Security" Version="$(SystemServiceModelVersion)" />
+    <PackageVersion Include="System.Web.Services.Description" Version="$(SystemServiceModelVersion)" />
+
+    <!-- WinForms dependencies -->
+    <PackageVersion Include="Microsoft.Private.Winforms" Version="$(MicrosoftPrivateWinformsVersion)" />
+    <PackageVersion Include="System.Drawing.Common" Version="$(SystemDrawingCommonVersion)" />
+
+    <!-- WPF dependencies-->
+    <PackageVersion Include="Microsoft.DotNet.Wpf.GitHub" Version="$(MicrosoftDotNetWpfGitHubVersion)" />
+    <PackageVersion Include="Microsoft.Internal.Runtime.WindowsDesktop.Transport" Version="$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)" />
+  </ItemGroup>
+
+</Project>
