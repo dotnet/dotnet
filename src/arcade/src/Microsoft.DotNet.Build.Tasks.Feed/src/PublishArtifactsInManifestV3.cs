@@ -91,7 +91,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                 // Fetch Maestro record of the build. We're going to use it to get the BAR ID
                 // of the assets being published so we can add a new location for them.
-                IMaestroApi client = ApiFactory.GetAuthenticated(MaestroApiEndpoint, BuildAssetRegistryToken);
+                IMaestroApi client = MaestroApiFactory.GetAuthenticated(
+                    MaestroApiEndpoint,
+                    BuildAssetRegistryToken,
+                    MaestroApiFederatedToken,
+                    disableInteractiveAuth: !AllowInteractiveAuthentication);
+
                 Maestro.Client.Models.Build buildInformation = await client.Builds.GetBuildAsync(BARBuildId);
                 ReadOnlyDictionary<string, Asset> buildAssets = CreateBuildAssetDictionary(buildInformation);
 
