@@ -227,13 +227,25 @@ namespace Xunit
 		{
 			GuardArgumentNotNull(nameof(collection), collection);
 
-			// We special case HashSet<T> because it has a custom Contains implementation that is based on the comparer
-			// passed into their constructors, which we don't have access to.
-			var hashSet = collection as HashSet<T>;
-			if (hashSet != null)
-				Contains(expected, hashSet);
-			else
-				Contains(expected, collection, GetEqualityComparer<T>());
+			// We special case sets because they are constructed with their comparers, which we don't have access to.
+			// We want to let them do their normal logic when appropriate, and not try to use our default comparer.
+			var set = collection as ISet<T>;
+			if (set != null)
+			{
+				Contains(expected, set);
+				return;
+			}
+#if NET5_0_OR_GREATER
+			var readOnlySet = collection as IReadOnlySet<T>;
+			if (readOnlySet != null)
+			{
+				Contains(expected, readOnlySet);
+				return;
+			}
+#endif
+
+			// Fall back to the assumption that this is a linear container and use our default comparer
+			Contains(expected, collection, GetEqualityComparer<T>());
 		}
 
 		/// <summary>
@@ -327,13 +339,25 @@ namespace Xunit
 		{
 			GuardArgumentNotNull(nameof(collection), collection);
 
-			// We special case HashSet<T> because it has a custom Contains implementation that is based on the comparer
-			// passed into their constructors, which we don't have access to.
-			var hashSet = collection as HashSet<T>;
-			if (hashSet != null)
-				DoesNotContain(expected, hashSet);
-			else
-				DoesNotContain(expected, collection, GetEqualityComparer<T>());
+			// We special case sets because they are constructed with their comparers, which we don't have access to.
+			// We want to let them do their normal logic when appropriate, and not try to use our default comparer.
+			var set = collection as ISet<T>;
+			if (set != null)
+			{
+				DoesNotContain(expected, set);
+				return;
+			}
+#if NET5_0_OR_GREATER
+			var readOnlySet = collection as IReadOnlySet<T>;
+			if (readOnlySet != null)
+			{
+				DoesNotContain(expected, readOnlySet);
+				return;
+			}
+#endif
+
+			// Fall back to the assumption that this is a linear container and use our default comparer
+			DoesNotContain(expected, collection, GetEqualityComparer<T>());
 		}
 
 		/// <summary>

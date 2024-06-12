@@ -7,6 +7,7 @@
 #pragma warning disable CS8603
 #pragma warning disable CS8604
 #pragma warning disable CS8621
+#pragma warning disable CS8625
 #endif
 
 using System;
@@ -283,8 +284,16 @@ namespace Xunit.Internal
 			out object converted)
 #endif
 		{
-			converted = Convert.ChangeType(value, targetType, CultureInfo.CurrentCulture);
-			return converted != null;
+			try
+			{
+				converted = Convert.ChangeType(value, targetType, CultureInfo.CurrentCulture);
+				return converted != null;
+			}
+			catch (InvalidCastException)
+			{
+				converted = null;
+				return false;
+			}
 		}
 
 #if XUNIT_NULLABLE
@@ -370,7 +379,7 @@ namespace Xunit.Internal
 				var actualTypeInfo = actualType.GetTypeInfo();
 
 				// Primitive types, enums and strings should just fall back to their Equals implementation
-				if (expectedTypeInfo.IsPrimitive || expectedTypeInfo.IsEnum || expectedType == typeof(string))
+				if (expectedTypeInfo.IsPrimitive || expectedTypeInfo.IsEnum || expectedType == typeof(string) || expectedType == typeof(decimal))
 					return VerifyEquivalenceIntrinsics(expected, actual, prefix);
 
 				// DateTime and DateTimeOffset need to be compared via IComparable (because of a circular

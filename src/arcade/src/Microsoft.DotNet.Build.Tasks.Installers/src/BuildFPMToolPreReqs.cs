@@ -40,24 +40,16 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 }
 
                 // Open the Config Json and read the values into the model
-                TextReader projectFileReader = File.OpenText(ConfigJsonFile);
-                if (projectFileReader != null)
-                {
-                    string jsonFileText = projectFileReader.ReadToEnd();
-                    ConfigJson configJson = JsonConvert.DeserializeObject<ConfigJson>(jsonFileText);
+                string jsonFileText = File.ReadAllText(ConfigJsonFile, Encoding.UTF8);
+                ConfigJson configJson = JsonConvert.DeserializeObject<ConfigJson>(jsonFileText);
 
-                    // Update the Changelog and Copyright files by replacing tokens with values from config json
-                    UpdateChangelog(configJson, PackageVersion);
-                    UpdateCopyRight(configJson);
+                // Update the Changelog and Copyright files by replacing tokens with values from config json
+                UpdateChangelog(configJson, PackageVersion);
+                UpdateCopyRight(configJson);
 
-                    // Build the full list of parameters 
-                    FPMParameters = BuildCmdParameters(configJson, PackageVersion);
-                    Log.LogMessage(LogImportance.Normal, "Generated RPM paramters:  " + FPMParameters);
-                }
-                else
-                {
-                    throw new IOException($"Could not open the file {ConfigJsonFile} for reading.");
-                }
+                // Build the full list of parameters
+                FPMParameters = BuildCmdParameters(configJson, PackageVersion);
+                Log.LogMessage(LogImportance.Normal, "Generated RPM paramters:  " + FPMParameters);
             }
             catch (Exception e)
             {

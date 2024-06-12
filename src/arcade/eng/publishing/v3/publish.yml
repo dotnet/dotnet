@@ -15,7 +15,6 @@ stages:
     - group: DotNet-Symbol-Server-Pats
     - group: DotNetBuilds storage account tokens
     - group: AzureDevOps-Artifact-Feeds-Pats
-    - group: DotNet-MSRC-Storage
     - group: Publish-Build-Assets
   
     # Default Maestro++ API Endpoint and API Version
