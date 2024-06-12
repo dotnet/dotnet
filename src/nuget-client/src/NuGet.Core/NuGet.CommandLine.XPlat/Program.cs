@@ -209,9 +209,12 @@ namespace NuGet.CommandLine.XPlat
                     // Log the stack trace as verbose output.
                     log.LogVerbose(e.ToString());
 
-                    exitCode = 1;
+                    if (e is CommandParsingException)
+                    {
+                        ShowBestHelp(app, args);
+                    }
 
-                    ShowBestHelp(app, args);
+                    exitCode = 1;
                 }
             }
 
@@ -277,7 +280,7 @@ namespace NuGet.CommandLine.XPlat
 
             app.FullName = Strings.App_FullName;
             app.HelpOption(XPlatUtility.HelpOption);
-            app.VersionOption("--version", typeof(Program).GetTypeInfo().Assembly.GetName().Version.ToString());
+            app.VersionOption("--version", typeof(Program).Assembly.GetName().Version.ToString());
 
             return app;
         }

@@ -280,7 +280,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
         }
 
-        private void SerializeCommonProperties(ref MessagePackWriter writer, ILogMessage value, MessagePackSerializerOptions options)
+        private static void SerializeCommonProperties(ref MessagePackWriter writer, ILogMessage value, MessagePackSerializerOptions options)
         {
             writer.Write(TypeNamePropertyName);
             writer.Write(value.GetType().Name);
@@ -298,14 +298,14 @@ namespace NuGet.VisualStudio.Internal.Contracts
             options.Resolver.GetFormatter<WarningLevel>()!.Serialize(ref writer, value.WarningLevel, options);
         }
 
-        private void Serialize(ref MessagePackWriter writer, LogMessage logMessage, MessagePackSerializerOptions options)
+        private static void Serialize(ref MessagePackWriter writer, LogMessage logMessage, MessagePackSerializerOptions options)
         {
             writer.WriteMapHeader(count: 7);
 
             SerializeCommonProperties(ref writer, logMessage, options);
         }
 
-        private void Serialize(ref MessagePackWriter writer, PackagingLogMessage logMessage, MessagePackSerializerOptions options)
+        private static void Serialize(ref MessagePackWriter writer, PackagingLogMessage logMessage, MessagePackSerializerOptions options)
         {
             writer.WriteMapHeader(count: 12);
 
@@ -323,7 +323,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             writer.Write(logMessage.StartLineNumber);
         }
 
-        private void Serialize(ref MessagePackWriter writer, RestoreLogMessage logMessage, MessagePackSerializerOptions options)
+        private static void Serialize(ref MessagePackWriter writer, RestoreLogMessage logMessage, MessagePackSerializerOptions options)
         {
             writer.WriteMapHeader(count: 15);
 
@@ -360,7 +360,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
         }
 
-        private void Serialize(ref MessagePackWriter writer, SignatureLog logMessage, MessagePackSerializerOptions options)
+        private static void Serialize(ref MessagePackWriter writer, SignatureLog logMessage, MessagePackSerializerOptions options)
         {
             writer.WriteMapHeader(count: 8);
 

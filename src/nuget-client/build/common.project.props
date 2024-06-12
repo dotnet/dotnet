@@ -123,7 +123,9 @@
   <PropertyGroup>
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <VsixOutputDirName>VS15</VsixOutputDirName>
-    <CodeAnalysisRuleSet Condition="'$(CodeAnalysisRuleSet)' == ''">$(BuildCommonDirectory)NuGet.ruleset</CodeAnalysisRuleSet>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnableNETAnalyzers Condition="'$(DotNetBuildSourceOnly)' == 'true'">false</EnableNETAnalyzers>
+    <AnalysisLevel>8.0-None</AnalysisLevel>
     <EnforceCodeStyleInBuild Condition="'$(EnforceCodeStyleInBuild)' == ''">true</EnforceCodeStyleInBuild>
     <NoWarn>$(NoWarn);EnableGenerateDocumentationFile</NoWarn>
   </PropertyGroup>
@@ -199,7 +201,6 @@
   <!-- Add symbols to the dll for test dlls -->
   <PropertyGroup Condition=" '$(TestProject)' == 'true' ">
     <DebugType>full</DebugType>
-    <CodeAnalysisRuleSet>$(BuildCommonDirectory)NuGet.Tests.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <!-- The project that builds the VSIX -->

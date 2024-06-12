@@ -111,7 +111,7 @@ namespace NuGet.Credentials.Test
 
                 var credentialProviders = (await providerBuilder.BuildAllAsync()).ToArray();
                 Assert.Equal(1, credentialProviders.Count());
-                var bla = typeof(SecurePluginCredentialProvider).GetTypeInfo().GetField("_canShowDialog", BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.Instance);
+                var bla = typeof(SecurePluginCredentialProvider).GetField("_canShowDialog", BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.Instance);
                 Assert.Equal(canShowDialog, bla.GetValue(credentialProviders.Single()));
             }
         }

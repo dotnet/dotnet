@@ -188,6 +188,7 @@ namespace NuGet.Build.Tasks.Console
                     else
                     {
 #endif
+#pragma warning disable format
                         using var reader = new BinaryReader(getStream(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true), leaveOpen: true);
 
                         if (!TryDeserializeGlobalProperties(errorWriter, reader, out globalProperties))
@@ -195,6 +196,7 @@ namespace NuGet.Build.Tasks.Console
                             // An error will have already been logged by TryDeserializeGlobalProperties()
                             return false;
                         }
+#pragma warning restore format
 #if NETFRAMEWORK
                     }
 #endif

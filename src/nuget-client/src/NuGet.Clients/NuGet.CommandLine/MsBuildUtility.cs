@@ -284,6 +284,12 @@ namespace NuGet.CommandLine
                 AddProperty(args, "RestoreUseSkipNonexistentTargets", bool.FalseString);
             }
 
+            // Checking the SDK uses MSBuild intrinsic functions that were added in 16.5
+            if (toolset.ParsedVersion.CompareTo(new Version(16, 5)) < 0)
+            {
+                AddProperty(args, "NuGetExeSkipSdkAnalysisLevelCheck", bool.TrueString);
+            }
+
             // Add additional args to msbuild if needed
             var msbuildAdditionalArgs = reader.GetEnvironmentVariable("NUGET_RESTORE_MSBUILD_ARGS");
 

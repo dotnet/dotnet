@@ -38,7 +38,7 @@ namespace NuGet.CommandLine.Test
 
         public static string GetResource(string name)
         {
-            using (var reader = new StreamReader(typeof(Util).GetTypeInfo().Assembly.GetManifestResourceStream(name)))
+            using (var reader = new StreamReader(typeof(Util).Assembly.GetManifestResourceStream(name)))
             {
                 return reader.ReadToEnd();
             }

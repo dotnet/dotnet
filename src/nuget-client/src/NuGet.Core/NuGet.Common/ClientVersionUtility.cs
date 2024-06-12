@@ -23,7 +23,7 @@ namespace NuGet.Common
             {
                 string version = string.Empty;
 
-                var assembly = typeof(ClientVersionUtility).GetTypeInfo().Assembly;
+                var assembly = typeof(ClientVersionUtility).Assembly;
 
                 var informationalVersionAttr = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
                 if (informationalVersionAttr != null)

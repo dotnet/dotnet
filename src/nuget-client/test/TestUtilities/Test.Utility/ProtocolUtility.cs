@@ -19,7 +19,7 @@ namespace Test.Utility
     {
         public static string GetResource(string name, Type type)
         {
-            using (var reader = new StreamReader(type.GetTypeInfo().Assembly.GetManifestResourceStream(name)))
+            using (var reader = new StreamReader(type.Assembly.GetManifestResourceStream(name)))
             {
                 return reader.ReadToEnd();
             }

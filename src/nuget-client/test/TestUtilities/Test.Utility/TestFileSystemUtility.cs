@@ -84,7 +84,7 @@ namespace NuGet.Test.Utility
             }
 
             // Second, check next to this assembly
-            var assemblyFileInfo = new FileInfo(typeof(TestFileSystemUtility).GetTypeInfo().Assembly.Location);
+            var assemblyFileInfo = new FileInfo(typeof(TestFileSystemUtility).Assembly.Location);
 
             DirectoryInfo repoRoot = GetRepositoryRootFromStartingDirectory(assemblyFileInfo.Directory);
 
@@ -166,7 +166,7 @@ namespace NuGet.Test.Utility
 
         public static bool DeleteRandomTestFolder(string randomTestPath)
         {
-            // Avoid cleaning up test folders if 
+            // Avoid cleaning up test folders if
             if (!SkipCleanupLazy.Value && Directory.Exists(randomTestPath))
             {
                 AssertNotTempPath(randomTestPath);

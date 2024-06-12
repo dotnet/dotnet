@@ -73,6 +73,10 @@ Copyright (c) .NET Foundation. All rights reserved.
     <!-- Report on low severity vulnerabilities, and higher. Allowed values are: low, moderate, high, critical -->
     <NuGetAuditLevel Condition=" '$(NuGetAuditLevel)' == '' ">low</NuGetAuditLevel>
     <!-- Report known vulnerabilities on direct dependencies only. Allowed values are: direct, all -->
+    <NuGetAuditMode Condition="'$(NuGetAuditMode)' == ''
+                    AND '$(NuGetExeSkipSdkAnalysisLevelCheck)' != 'true'
+                    AND $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::ValueOrDefault('$(SdkAnalysisLevel)', '0.0')), '9.0.100'))"
+                    >all</NuGetAuditMode>
     <NuGetAuditMode Condition=" '$(NuGetAuditMode)' == '' ">direct</NuGetAuditMode>
   </PropertyGroup>
 
