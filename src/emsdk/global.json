@@ -3,8 +3,8 @@
     "dotnet": "8.0.101"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "8.0.0-beta.24266.3",
-    "Microsoft.DotNet.Helix.Sdk": "8.0.0-beta.24266.3",
+    "Microsoft.DotNet.Arcade.Sdk": "8.0.0-beta.24270.4",
+    "Microsoft.DotNet.Helix.Sdk": "8.0.0-beta.24270.4",
     "Microsoft.Build.Traversal": "2.0.34"
   }
 }
