@@ -13,16 +13,6 @@
   </Target>
 
   <!--
-    Workaround to fix IntelliSense file generation for XAML projects
-    https://github.com/dotnet/project-system/issues/2488
-  -->
-  <Target Name="WorkaroundForXamlIntelliSenseBuildIssue" AfterTargets="_CheckCompileDesignTimePrerequisite">
-    <PropertyGroup>
-      <BuildingProject>false</BuildingProject>
-    </PropertyGroup>
-  </Target>
-
-  <!--
     WPF temp project sets OutDir, which makes the SDK create an empty directory for it,
     polluting the output dir. Avoid creating these directories.
     https://github.com/dotnet/sdk/issues/1367

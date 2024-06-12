@@ -75,7 +75,7 @@ namespace Xunit.ConsoleClient
                 if (commandLine.Debug)
                     Debugger.Launch();
 
-                logger = new ConsoleRunnerLogger(!commandLine.NoColor, consoleLock);
+                logger = new ConsoleRunnerLogger(!commandLine.NoColor, true, consoleLock);
                 reporterMessageHandler = MessageSinkWithTypesAdapter.Wrap(reporter.CreateMessageHandler(logger));
 
                 if (!commandLine.NoLogo)

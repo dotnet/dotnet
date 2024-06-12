@@ -1,10 +1,19 @@
 #if XUNIT_NULLABLE
 #nullable enable
+#else
+// In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
+#pragma warning disable CS8604
 #endif
 
 using System;
 using System.Globalization;
 using System.Linq;
+using Xunit.Internal;
+
+// An "ExceptionUtility" class exists in both xunit.assert (Xunit.Internal.ExceptionUtility) as well as xunit.execution.dotnet (Xunit.Sdk.ExceptionUtility)
+// This causes an compile-time error in projects that reference both the xunit.assert.source and xunit.core packages.
+// To resolve this issue, add an alias for the Xunit.Internal.ExceptionUtility to make sure, the xunit.assert core uses the right ExceptionUtility
+using ExceptionUtilityInternal = Xunit.Internal.ExceptionUtility;
 
 namespace Xunit.Sdk
 {
@@ -26,9 +35,18 @@ namespace Xunit.Sdk
 
 		static string FormatInnerException(Exception innerException)
 		{
+			var text = innerException.Message;
+			var filteredStack = ExceptionUtilityInternal.TransformStackTrace(ExceptionUtilityInternal.FilterStackTrace(innerException.StackTrace), "  ");
+			if (!string.IsNullOrWhiteSpace(filteredStack))
+			{
+				if (text.Length != 0)
+					text += Environment.NewLine;
+
+				text += "Stack Trace:" + Environment.NewLine + filteredStack;
+			}
+
 			var lines =
-				innerException
-					.Message
+				text
 					.Split(crlfSeparators, StringSplitOptions.RemoveEmptyEntries)
 					.Select((value, idx) => idx > 0 ? "            " + value : value);
 

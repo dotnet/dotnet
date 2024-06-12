@@ -277,4 +277,25 @@
     <GetVsixSourceItemsDependsOn>$(GetVsixSourceItemsDependsOn);_GetVsixTemplateItems</GetVsixSourceItemsDependsOn>
   </PropertyGroup>
 
+  <!--
+    Make sure to include information about inputs and outputs to CreateVsixContainer for fast up-to-date check.
+  -->
+  <PropertyGroup>
+    <CollectUpToDateCheckInputDesignTimeDependsOn>$(CollectUpToDateCheckInputDesignTimeDependsOn);CollectVsixUpToDateCheckInput</CollectUpToDateCheckInputDesignTimeDependsOn>
+    <CollectUpToDateCheckBuiltDesignTimeDependsOn>$(CollectUpToDateCheckBuiltDesignTimeDependsOn);CollectVsixUpToDateCheckBuilt</CollectUpToDateCheckBuiltDesignTimeDependsOn>
+  </PropertyGroup>
+
+  <Target Name="CollectVsixUpToDateCheckInput" DependsOnTargets="GetVsixSourceItems;FindSourceVsixManifest">
+    <ItemGroup Condition="$(CreateVsixContainer)">
+      <UpToDateCheckInput Include="@(VSIXSourceItem)" />
+      <UpToDateCheckInput Include="@(SourceVsixManifest)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CollectVsixUpToDateCheckBuilt">
+    <ItemGroup Condition="$(CreateVsixContainer)">
+      <UpToDateCheckBuilt Include="$(TargetVsixContainer)" />
+    </ItemGroup>
+  </Target>
+
 </Project>

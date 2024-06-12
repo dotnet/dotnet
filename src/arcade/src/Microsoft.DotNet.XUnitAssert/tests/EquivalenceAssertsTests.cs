@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using Xunit;
 using Xunit.Sdk;
+
+#if XUNIT_IMMUTABLE_COLLECTIONS
+using System.Collections.Immutable;
+#endif
 
 public class EquivalenceAssertsTests
 {
@@ -70,6 +73,43 @@ public class EquivalenceAssertsTests
 		public void SameValueFromDifferentIntrinsicTypes_Success()
 		{
 			Assert.Equivalent(12, 12L);
+		}
+
+				// https://github.com/xunit/xunit/issues/2913
+		[Fact]
+		public void Decimals_Success()
+		{
+			Assert.Equivalent(1m, 1m);
+		}
+
+		// https://github.com/xunit/xunit/issues/2913
+		[Fact]
+		public void Decimals_Failure()
+		{
+			var ex = Record.Exception(() => Assert.Equivalent(1m, 2m));
+
+			Assert.IsType<EquivalentException>(ex);
+			Assert.Equal(
+				"Assert.Equivalent() Failure" + Environment.NewLine +
+				"Expected: 1" + Environment.NewLine +
+				"Actual:   2",
+				ex.Message
+			);
+		}
+
+		// https://github.com/xunit/xunit/issues/2913
+		[Fact]
+		public void IntrinsicPlusNonIntrinsic_Failure()
+		{
+			var ex = Record.Exception(() => Assert.Equivalent(1m, new object()));
+
+			Assert.IsType<EquivalentException>(ex);
+			Assert.Equal(
+				"Assert.Equivalent() Failure" + Environment.NewLine +
+				"Expected: 1" + Environment.NewLine +
+				"Actual:   Object { }",
+				ex.Message
+			);
 		}
 	}
 
@@ -654,6 +694,8 @@ public class EquivalenceAssertsTests
 		}
 	}
 
+#if XUNIT_IMMUTABLE_COLLECTIONS
+
 	public class ImmutableArrayOfValueTypes_NotStrict
 	{
 		[Fact]
@@ -782,6 +824,8 @@ public class EquivalenceAssertsTests
 			);
 		}
 	}
+
+#endif
 
 	public class ArrayOfObjects_NotStrict
 	{
@@ -1085,6 +1129,7 @@ public class EquivalenceAssertsTests
 			Assert.Equivalent(new List<int> { 1, 2, 3 }, new[] { 1, 2, 3 });
 		}
 
+#if XUNIT_IMMUTABLE_COLLECTIONS
 		[Fact]
 		public void ArrayIsEquivalentToImmutableArray()
 		{
@@ -1102,6 +1147,7 @@ public class EquivalenceAssertsTests
 		{
 			Assert.Equivalent(new[] { 1, 2, 3 }.ToImmutableList(), new[] { 1, 2, 3 }.ToImmutableSortedSet());
 		}
+#endif
 	}
 
 	public class Dictionaries_NotStrict
@@ -1566,6 +1612,19 @@ public class EquivalenceAssertsTests
 				ex.Message
 			);
 		}
+
+		// Ensuring we use reference equality for the circular reference hash sets
+
+		// [Theory]
+		// [InlineData(true)]
+		// [InlineData(false)]
+		// public void Issue2939(bool strict)
+		// {
+		// 	var expected = new Uri("http://example.com");
+		// 	var actual = new Uri("http://example.com");
+
+		// 	Assert.Equivalent(expected, actual, strict);
+		// }
 	}
 
 	public class CircularReferences

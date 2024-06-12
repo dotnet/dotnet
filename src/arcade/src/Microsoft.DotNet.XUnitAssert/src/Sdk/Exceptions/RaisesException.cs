@@ -43,7 +43,14 @@ namespace Xunit.Sdk
 
 		/// <summary>
 		/// Creates a new instance of the <see cref="RaisesException" /> class to be thrown when
-		/// no event was raised.
+		/// no event (without data) was raised.
+		/// </summary>
+		public static RaisesException ForNoEvent() =>
+			new RaisesException("Assert.Raises() Failure: No event was raised");
+
+		/// <summary>
+		/// Creates a new instance of the <see cref="RaisesException" /> class to be thrown when
+		/// no event (with data) was raised.
 		/// </summary>
 		/// <param name="expected">The type of the event args that was expected</param>
 		public static RaisesException ForNoEvent(Type expected) =>
