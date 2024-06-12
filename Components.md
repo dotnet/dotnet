@@ -44,7 +44,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn`  
 *[dotnet/roslyn@de75b3c](https://github.com/dotnet/roslyn/tree/de75b3c77d41c21562fc2e9dbcc26b2268c80b26)*
 - `src/roslyn-analyzers`  
-*[dotnet/roslyn-analyzers@d94bbb3](https://github.com/dotnet/roslyn-analyzers/tree/d94bbb338a691b953322eb515517f4d39c8e8d06)*
+*[dotnet/roslyn-analyzers@223fa62](https://github.com/dotnet/roslyn-analyzers/tree/223fa62ea09457588b4b0f88ee8ac62ea5ab5db5)*
 - `src/runtime`  
 *[_git/dotnet-runtime@e0b6a81](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GCe0b6a8149721f5d4f4bc8fe2ae8d39543a503b1d)*
 - `src/sdk`  
