@@ -11,7 +11,7 @@ namespace NuGet.Test.Utility
     {
         public static string GetResource(string name, Type type)
         {
-            using (var reader = new StreamReader(type.GetTypeInfo().Assembly.GetManifestResourceStream(name)))
+            using (var reader = new StreamReader(type.Assembly.GetManifestResourceStream(name)))
             {
                 return reader.ReadToEnd();
             }
@@ -26,7 +26,7 @@ namespace NuGet.Test.Utility
 
         public static byte[] GetResourceBytes(string name, Type type)
         {
-            using (var reader = new BinaryReader(type.GetTypeInfo().Assembly.GetManifestResourceStream(name)))
+            using (var reader = new BinaryReader(type.Assembly.GetManifestResourceStream(name)))
             {
                 return reader.ReadBytes((int)reader.BaseStream.Length);
             }

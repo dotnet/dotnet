@@ -156,9 +156,7 @@
     <AdditionalFiles Include="$(MSBuildProjectDirectory)\PublicAPI\$(TargetFramework)\PublicAPI.Unshipped.txt" />
   </ItemGroup>
 
-  <!-- FxCop Analyzers -->
   <ItemGroup Condition="'$(Shipping)' == 'true' AND '$(SkipAnalyzers)' != 'true' AND '$(DotNetBuildSourceOnly)' != 'true'">
-    <GlobalPackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8" />
     <GlobalPackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.3" />
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)build\BannedSymbols.txt" Condition="'$(TestProject)' != 'true'" />
   </ItemGroup>

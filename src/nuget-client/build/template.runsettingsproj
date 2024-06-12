@@ -140,7 +140,8 @@
     <DataCollector Condition="'$(ProcDumpCollector)' == 'enabled'" Include="datacollector://Microsoft/DevDiv/TestExtensions/ProcDumpCollector/v1">
       <FriendlyName>ProcDump Collector</FriendlyName>
       <Configuration>
-        <RootDumpDirectory>C:\Test\Logs\Dumps</RootDumpDirectory>
+        <RootDumpDirectory>%SystemDrive%\dumps</RootDumpDirectory>
+        <AttachDumpFilesToResults>true</AttachDumpFilesToResults>
         <Deployment PackageName="Microsoft.DevDiv.TestExtensions.ProcDumpCollector" />
       </Configuration>
     </DataCollector>

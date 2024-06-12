@@ -113,8 +113,9 @@ namespace NuGet.PackageManagement
         /// <param name="solutionDirectory">Current solution directory</param>
         /// <param name="packageReferencesDict">Dictionary of package reference with project names</param>
         /// <returns>List of packages restore data with missing package details.</returns>
-	    public IEnumerable<PackageRestoreData> GetPackagesRestoreData(string solutionDirectory,
-        Dictionary<PackageReference, List<string>> packageReferencesDict)
+#pragma warning disable IDE0055
+	    public IEnumerable<PackageRestoreData> GetPackagesRestoreData(string solutionDirectory, Dictionary<PackageReference, List<string>> packageReferencesDict)
+#pragma warning restore IDE0055
         {
             var packages = new List<PackageRestoreData>();
 

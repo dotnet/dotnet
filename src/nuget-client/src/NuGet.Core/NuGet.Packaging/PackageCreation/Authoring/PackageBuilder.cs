@@ -492,7 +492,7 @@ namespace NuGet.Packaging
         private static string CreatorInfo()
         {
             List<string> creatorInfo = new List<string>();
-            var assembly = typeof(PackageBuilder).GetTypeInfo().Assembly;
+            var assembly = typeof(PackageBuilder).Assembly;
             creatorInfo.Add(assembly.FullName);
 #if !IS_CORECLR // CORECLR_TODO: Environment.OSVersion
             creatorInfo.Add(Environment.OSVersion.ToString());

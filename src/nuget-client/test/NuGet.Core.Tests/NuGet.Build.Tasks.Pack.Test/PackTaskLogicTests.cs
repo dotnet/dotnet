@@ -783,7 +783,7 @@ namespace NuGet.Build.Tasks.Pack.Test
                 Directory.CreateDirectory(Path.Combine(testDir, "obj"));
                 File.WriteAllBytes(dllPath, new byte[0]);
                 var path = string.Join(".", typeof(PackTaskLogicTests).Namespace, "compiler.resources", "project.assets.json");
-                using (var reader = new StreamReader(GetType().GetTypeInfo().Assembly.GetManifestResourceStream(path)))
+                using (var reader = new StreamReader(GetType().Assembly.GetManifestResourceStream(path)))
                 {
                     var contents = reader.ReadToEnd();
                     File.WriteAllText(Path.Combine(testDir, "obj", "project.assets.json"), contents);

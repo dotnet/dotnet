@@ -65,3 +65,14 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "MSBuild tasks expect arrays.", Scope = "member", Target = "~P:NuGet.Build.Tasks.RestoreTask.EmbedInBinlog")]
 [assembly: SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "MSBuild tasks expect arrays.", Scope = "member", Target = "~P:NuGet.Build.Tasks.StaticGraphRestoreTaskBase.EmbedInBinlog")]
 [assembly: SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly", Justification = "Argument comes from another method.", Scope = "member", Target = "~M:NuGet.Build.Tasks.TaskLoggingQueue.ConsoleOutLogItemConverter.Create(System.Type)~NuGet.Build.Tasks.ConsoleOutLogItem")]
+[assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>", Scope = "member", Target = "~M:NuGet.Build.Tasks.GetGlobalPropertyValueTask.GetGlobalProperties(NuGet.Common.ILogger)~System.Collections.Generic.IReadOnlyDictionary{System.String,System.String}")]
+[assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>", Scope = "member", Target = "~M:NuGet.Build.Tasks.StaticGraphRestoreTaskBase.Execute~System.Boolean")]
+[assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>", Scope = "member", Target = "~M:NuGet.Build.Tasks.StaticGraphRestoreTaskBase.GetGlobalProperties~System.Collections.Generic.Dictionary{System.String,System.String}")]
+
+/* Unmerged change from project 'NuGet.Build.Tasks (net8.0)'
+Added:
+[assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:NuGet.Build.Tasks.CheckForDuplicateNuGetItemsTask.EvaluateWarningProperties(System.String,System.String,System.String,System.String)~NuGet.ProjectModel.WarningProperties")]
+*/
+[assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:NuGet.Build.Tasks.CheckForDuplicateNuGetItemsTask.EvaluateWarningProperties(System.String,System.String,System.String,System.String)~NuGet.ProjectModel.WarningProperties")]
+[assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:NuGet.Build.Tasks.StaticGraphRestoreTaskBase.GetProcessFileName(System.String)~System.String")]
+[assembly: SuppressMessage("Performance", "CA1825:Avoid zero-length array allocations", Justification = "<Pending>", Scope = "member", Target = "~M:NuGet.Build.MSBuildUtility.WrapMSBuildItem(System.Collections.Generic.IEnumerable{Microsoft.Build.Framework.ITaskItem})~NuGet.Commands.IMSBuildItem[]")]

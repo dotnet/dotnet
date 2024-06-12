@@ -99,7 +99,9 @@ namespace NuGet.Protocol
                 {
                     try
                     {
+#pragma warning disable CA2016 // Forward the 'CancellationToken' parameter to methods
                         await _credentialPromptLock.WaitAsync();
+#pragma warning restore CA2016 // Forward the 'CancellationToken' parameter to methods
 
                         if (cacheVersion != _tokenStore.Version)
                         {
