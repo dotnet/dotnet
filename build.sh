@@ -287,8 +287,6 @@ source $scriptroot/eng/common/native/init-os-and-arch.sh
 source $scriptroot/eng/common/native/init-distro-rid.sh
 initDistroRidGlobal "$os" "$arch" ""
 if [[ -n "$target_rid" ]]; then
-  # override with user's preferred RID
-  export __DistroRid="$target_rid"
   properties+=( "/p:TargetRid=$target_rid" )
 fi
 
