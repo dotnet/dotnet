@@ -1,9 +1,8 @@
 <Project>
 
-  <Import Project="$(RepositoryEngineeringDir)Package.props" />
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' AND '$(BuildingInsideVisualStudio)' != 'true'">
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and '$(BuildingInsideVisualStudio)' != 'true'">
     <FrameworkReference
         Update="Microsoft.NETCore.App"
         TargetingPackVersion="$(MicrosoftNETCoreAppRefPackageVersion)"
@@ -11,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(RepoRoot)LICENSE.txt" PackagePath="LICENSE.txt" Pack="true"/>
-    <None Include="$(RepoRoot)THIRD-PARTY-NOTICES.txt" PackagePath="THIRD-PARTY-NOTICES.txt" Pack="true"/>
+    <None Include="$(RepoRoot)LICENSE.txt" PackagePath="LICENSE.txt" Pack="true" />
+    <None Include="$(RepoRoot)THIRD-PARTY-NOTICES.txt" PackagePath="THIRD-PARTY-NOTICES.txt" Pack="true" />
   </ItemGroup>
 
 </Project>

@@ -30,7 +30,7 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
             ChunkMemoryStream input = new ChunkMemoryStream(valueBytes, 512);
             ChunkMemoryStream output = new ChunkMemoryStream(1024);
 
-            IOperationProvider[] operations = Array.Empty<IOperationProvider>();
+            IOperationProvider[] operations = [];
             EngineConfig cfg = new EngineConfig(_engineEnvironmentSettings.Host.Logger, VariableCollection.Root());
             IProcessor processor = Processor.Create(cfg, operations);
 
@@ -140,30 +140,6 @@ namespace Microsoft.TemplateEngine.Core.UnitTests
             bool changed = processor.Run(input, output, 5);
 
             Verify(Encoding.UTF8, output, changed, "Hello    \r\n    There    \r\n    You", "Hello    \r\n    You");
-        }
-
-        private class ChunkMemoryStream : MemoryStream
-        {
-            private readonly int _chunkSize;
-
-            internal ChunkMemoryStream(int chunkSize) : base()
-            {
-                _chunkSize = chunkSize;
-            }
-
-            internal ChunkMemoryStream(byte[] buffer, int chunkSize) : base(buffer)
-            {
-                _chunkSize = chunkSize;
-            }
-
-            public override int Read(byte[] buffer, int offset, int count)
-            {
-                if (count > _chunkSize)
-                {
-                    count = _chunkSize;
-                }
-                return base.Read(buffer, offset, count);
-            }
         }
     }
 }

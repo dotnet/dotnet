@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(NETCoreTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
     <Description>The extension of templates verification engine enabling verification testing through dotnet template engine API.</Description>
     <EnablePublicApiAnalyzer>true</EnablePublicApiAnalyzer>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -20,16 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="LocalizableStrings.Designer.cs"
-             DesignTime="True"
-             AutoGen="True"
-             DependentUpon="LocalizableStrings.resx" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Update="LocalizableStrings.resx"
-                      Generator="ResXFileCodeGenerator"
-                      LastGenOutput="LocalizableStrings.Designer.cs" />
+                      GenerateSource="true" />
   </ItemGroup>
 
 </Project>
