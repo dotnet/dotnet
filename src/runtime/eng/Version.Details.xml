@@ -92,11 +92,11 @@
     </Dependency>
     <Dependency Name="Microsoft.NET.Workload.Emscripten.Current.Manifest-8.0.100" Version="8.0.7">
       <Uri>https://github.com/dotnet/emsdk</Uri>
-      <Sha>41fe641713abfc3ed87a017c93f0a649f5172fb1</Sha>
+      <Sha>727397ca6ba44045f3049fdb12d3908da3de8cee</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.emsdk" Version="8.0.7-servicing.24310.3">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.emsdk" Version="8.0.7-servicing.24312.2">
       <Uri>https://github.com/dotnet/emsdk</Uri>
-      <Sha>41fe641713abfc3ed87a017c93f0a649f5172fb1</Sha>
+      <Sha>727397ca6ba44045f3049fdb12d3908da3de8cee</Sha>
       <SourceBuild RepoName="emsdk" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.24257.2">
@@ -411,18 +411,6 @@
       <Sha>46a7370763921ded24dcb70c585ee97883c615d4</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Build" Version="17.8.3">
-      <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.Build.Framework" Version="17.8.3">
-      <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.Build.Tasks.Core" Version="17.8.3">
-      <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.Build.Utilities.Core" Version="17.8.3">
       <Uri>https://github.com/dotnet/msbuild</Uri>
       <Sha>195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22</Sha>
     </Dependency>
