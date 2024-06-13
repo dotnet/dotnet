@@ -26,13 +26,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@5ce78f6](https://github.com/dotnet/diagnostics/tree/5ce78f66d89ea529e459abddb129ab36cb5bd936)*
 - `src/emsdk`  
-*[dotnet/emsdk@41fe641](https://github.com/dotnet/emsdk/tree/41fe641713abfc3ed87a017c93f0a649f5172fb1)*
+*[dotnet/emsdk@727397c](https://github.com/dotnet/emsdk/tree/727397ca6ba44045f3049fdb12d3908da3de8cee)*
 - `src/format`  
 *[_git/dotnet-format@f3db9c5](https://dev.azure.com/dnceng/internal/_git/dotnet-format/?version=GCf3db9c59a54819769154eb5e0fdbc232848b6b9a)*
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@ff61ab4](https://github.com/dotnet/installer/tree/ff61ab4014bd7f49e43a0e0a89f2f92539f744cc)*
+*[dotnet/installer@3566b48](https://github.com/dotnet/installer/tree/3566b48c5a472f0c736c7fa37bd5be52b92a5e8b)*
 - `src/msbuild`  
 *[dotnet/msbuild@b5265ef](https://github.com/dotnet/msbuild/tree/b5265ef370a651f8c3458110b804e5cbf869eeb5)*
 - `src/nuget-client`  
@@ -46,9 +46,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@223fa62](https://github.com/dotnet/roslyn-analyzers/tree/223fa62ea09457588b4b0f88ee8ac62ea5ab5db5)*
 - `src/runtime`  
-*[_git/dotnet-runtime@e0b6a81](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GCe0b6a8149721f5d4f4bc8fe2ae8d39543a503b1d)*
+*[_git/dotnet-runtime@cc6880c](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GCcc6880ce36d783678284d36e8397fc30fda93c8a)*
 - `src/sdk`  
-*[_git/dotnet-sdk@2795318](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC2795318dbcc993573b9bd1df7c02a411132ea77c)*
+*[_git/dotnet-sdk@6218c7e](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC6218c7e0e18bf4df408d041549f5944a42c9c0f0)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@4f2151d](https://github.com/dotnet/source-build-externals/tree/4f2151df120194f0268944f1b723c14820738fc8)*
     - `src/source-build-externals/src/abstractions-xunit`  

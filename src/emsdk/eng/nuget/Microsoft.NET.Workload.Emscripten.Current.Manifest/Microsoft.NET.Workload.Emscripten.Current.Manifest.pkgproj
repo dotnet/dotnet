@@ -25,11 +25,12 @@
 
     <PropertyGroup>
       <WorkloadManifestPath>$(IntermediateOutputPath)WorkloadManifest.json</WorkloadManifestPath>
+      <WorkloadManifestTargetsPath>$(IntermediateOutputPath)WorkloadManifest.targets</WorkloadManifestTargetsPath>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageFile Include="$(WorkloadManifestPath)" TargetPath="data" />
-      <PackageFile Include="WorkloadManifest.targets" TargetPath="data" />
+      <PackageFile Include="$(WorkloadManifestTargetsPath)" TargetPath="data" />
     </ItemGroup>
   </Target>
 
@@ -50,6 +51,11 @@
       TemplateFile="WorkloadManifest.json.in"
       Properties="@(_WorkloadManifestValues->'%(Identity)=%(Value)')"
       OutputPath="$(WorkloadManifestPath)" />
+
+    <GenerateFileFromTemplate
+      TemplateFile="WorkloadManifest.targets.in"
+      Properties="@(_WorkloadManifestValues->'%(Identity)=%(Value)')"
+      OutputPath="$(WorkloadManifestTargetsPath)" />
   </Target>
 
   <Import Project="$(NuGetPackageRoot)\microsoft.dotnet.build.tasks.packaging\$(MicrosoftDotNetBuildTasksPackagingVersion)\build\Microsoft.DotNet.Build.Tasks.Packaging.targets" />
