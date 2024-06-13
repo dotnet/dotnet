@@ -27,7 +27,6 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects
             _ = file ?? throw new ArgumentNullException(nameof(file));
 
             JObject srcObject = file.ReadJObjectFromIFile();
-            var parameterLocalizations = new Dictionary<string, ParameterSymbolLocalizationModel>();
 
             List<(string Key, string Value)> localizedStrings = srcObject.Properties()
                 .Select(p => p.Value.Type == JTokenType.String ? (p.Name, p.Value.ToString()) : throw new Exception(LocalizableStrings.Authoring_InvalidJsonElementInLocalizationFile))
@@ -128,8 +127,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects
             // Split them using '/' and store together with the localized string.
             IEnumerable<(IEnumerable<string> NameParts, string LocalizedString)> strings = localizedStrings
                 .Where(s => s.Key.StartsWith("postActions" + KeySeparator))
-                .Select(s => (s.Key.Split(KeySeparator).AsEnumerable().Skip(1), s.Value))
-                .ToList();
+                .Select(s => (s.Key.Split(KeySeparator).AsEnumerable().Skip(1), s.Value));
 
             foreach (var postActionParts in strings.GroupBy(p => p.NameParts.FirstOrDefault()))
             {

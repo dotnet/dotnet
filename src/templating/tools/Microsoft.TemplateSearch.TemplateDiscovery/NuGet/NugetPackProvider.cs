@@ -51,7 +51,7 @@ namespace Microsoft.TemplateSearch.TemplateDiscovery.NuGet
             }
         }
 
-        public string Name { get; private set; }
+        public string Name { get; }
 
         public bool SupportsGetPackageInfoViaApi => true;
 
@@ -278,7 +278,7 @@ namespace Microsoft.TemplateSearch.TemplateDiscovery.NuGet
 
             public long TotalDownloads { get; }
 
-            public IReadOnlyList<string> Owners => Array.Empty<string>();
+            public IReadOnlyList<string> Owners => [];
 
             public bool Reserved { get; }
 
