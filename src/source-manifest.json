@@ -55,10 +55,10 @@
       "commitSha": "fae2c9534679912d43304de91e622f63e7110919"
     },
     {
-      "packageVersion": "8.0.400-beta.24305.3",
+      "packageVersion": "8.0.400-beta.24313.2",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "c7b0e6beb436606d39867b9a7aff6cdb4788744b"
+      "commitSha": "887849ab11fafb6e5da2e29ecbbcfd292cb6cf5c"
     },
     {
       "packageVersion": "17.11.0-preview-24312-02",
@@ -67,10 +67,10 @@
       "commitSha": "36c5352263d4948a5a2fe0af0b38bf5350e15d43"
     },
     {
-      "packageVersion": "6.11.0-rc.95",
+      "packageVersion": "6.11.0-rc.96",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "343177069bc7e099f31b673b32aa162ae8010b36"
+      "commitSha": "9985c402f27c2dd8c04196749fe7b184be870ca1"
     },
     {
       "packageVersion": "9.0.0-preview.24311.2",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "ba8469382a5c99b7da4f107df10c709dde77ca91"
+      "commitSha": "1f7e6f0686b63ce8c67fd1181b23dc348e922e36"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24303.2",
@@ -133,10 +133,10 @@
       "commitSha": "409af431ee684f9e07d34bbd4e51b9933345c1e1"
     },
     {
-      "packageVersion": "9.0.100-preview.6.24313.2",
+      "packageVersion": "9.0.100-preview.6.24313.5",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "58916a8dbe1aaf06cceb9a5785ba6304dc659df1"
+      "commitSha": "df6965525ff1b8bf600b553976ef37dd5f093e49"
     },
     {
       "packageVersion": "1.1.0-rc.24303.1",

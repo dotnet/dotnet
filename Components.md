@@ -32,11 +32,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/emsdk`  
 *[dotnet/emsdk@fae2c95](https://github.com/dotnet/emsdk/tree/fae2c9534679912d43304de91e622f63e7110919)*
 - `src/fsharp`  
-*[dotnet/fsharp@c7b0e6b](https://github.com/dotnet/fsharp/tree/c7b0e6beb436606d39867b9a7aff6cdb4788744b)*
+*[dotnet/fsharp@887849a](https://github.com/dotnet/fsharp/tree/887849ab11fafb6e5da2e29ecbbcfd292cb6cf5c)*
 - `src/msbuild`  
 *[dotnet/msbuild@36c5352](https://github.com/dotnet/msbuild/tree/36c5352263d4948a5a2fe0af0b38bf5350e15d43)*
 - `src/nuget-client`  
-*[nuget/nuget.client@3431770](https://github.com/nuget/nuget.client/tree/343177069bc7e099f31b673b32aa162ae8010b36)*
+*[nuget/nuget.client@9985c40](https://github.com/nuget/nuget.client/tree/9985c402f27c2dd8c04196749fe7b184be870ca1)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/tree/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@54700bb](https://github.com/dotnet/scenario-tests/tree/54700bbee86f660d37bd519a905b62bb50adc8c8)*
 - `src/sdk`  
-*[dotnet/sdk@ba84693](https://github.com/dotnet/sdk/tree/ba8469382a5c99b7da4f107df10c709dde77ca91)*
+*[dotnet/sdk@1f7e6f0](https://github.com/dotnet/sdk/tree/1f7e6f0686b63ce8c67fd1181b23dc348e922e36)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@7db0052](https://github.com/dotnet/source-build-externals/tree/7db00527ef8fbbe61f67e9295beebddf187efff8)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -88,7 +88,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@409af43](https://github.com/dotnet/symreader/tree/409af431ee684f9e07d34bbd4e51b9933345c1e1)*
 - `src/templating`  
-*[dotnet/templating@58916a8](https://github.com/dotnet/templating/tree/58916a8dbe1aaf06cceb9a5785ba6304dc659df1)*
+*[dotnet/templating@df69655](https://github.com/dotnet/templating/tree/df6965525ff1b8bf600b553976ef37dd5f093e49)*
 - `src/test-templates`  
 *[dotnet/test-templates@3f9ca30](https://github.com/dotnet/test-templates/tree/3f9ca30feb8df458b808672e4ac14fb544bdd8ed)*
 - `src/vstest`  
