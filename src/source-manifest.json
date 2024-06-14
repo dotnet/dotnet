@@ -85,10 +85,10 @@
       "commitSha": "0b8371953e61f6179f39f1d62ebbd6a251f335e0"
     },
     {
-      "packageVersion": "3.11.0-beta1.24306.2",
+      "packageVersion": "3.11.0-beta1.24313.1",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "4d5fd9da36d64d4c3370b8813122e226844fc6ed"
+      "commitSha": "52913b28e20a224a5f6d56fe0b84b13210e274b0"
     },
     {
       "packageVersion": "9.0.0-preview.6.24307.2",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "9199d0efd4e3ba0a3a2d847923fd36e3c0a145ba"
+      "commitSha": "37ce5a6ff4d6656984b8f77c3bee1e0586f493a5"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24303.2",
@@ -151,10 +151,10 @@
       "commitSha": "614363f91499f2fbebe9f7cc1a622b3d9fc32033"
     },
     {
-      "packageVersion": "9.0.0-preview.6.24312.6",
+      "packageVersion": "9.0.0-preview.6.24313.7",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "fb008e99835a648ad495d5a82a51a79d7df884f5"
+      "commitSha": "0ed99b950691b92e4b97ba6f93c2650006e4bb17"
     },
     {
       "packageVersion": "9.0.0-preview.6.24307.1",
@@ -163,10 +163,10 @@
       "commitSha": "25717b4f5d6f00097dc9bc328a3d4652ad71414c"
     },
     {
-      "packageVersion": "9.0.0-preview.6.24312.1",
+      "packageVersion": "9.0.0-preview.6.24313.1",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "347a22fae546c58377d59a55f6db563b02fa014e"
+      "commitSha": "fb350a6c36a9d15c75f9c7a76e0b3616201ebc7f"
     },
     {
       "packageVersion": "9.0.0-preview.24310.1",
