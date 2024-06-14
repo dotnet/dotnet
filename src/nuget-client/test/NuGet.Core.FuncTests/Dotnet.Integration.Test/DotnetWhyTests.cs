@@ -84,7 +84,7 @@ namespace Dotnet.Integration.Test
             Assert.Contains($"Project '{ProjectName}' does not have a dependency on '{packageZ.Id}'", result.AllOutput);
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/13547")]
         public async void WhyCommand_WithFrameworksOption_OptionParsedSuccessfully()
         {
             // Arrange
@@ -117,7 +117,7 @@ namespace Dotnet.Integration.Test
             Assert.Contains($"Project '{ProjectName}' has the following dependency graph(s) for '{packageY.Id}'", result.AllOutput);
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/13547")]
         public async void WhyCommand_WithFrameworksOptionAlias_OptionParsedSuccessfully()
         {
             // Arrange
@@ -184,7 +184,7 @@ namespace Dotnet.Integration.Test
             Assert.Contains($"Required argument missing for command: 'why'.", result.Errors);
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/13547")]
         public async void WhyCommand_InvalidFrameworksOption_WarnsCorrectly()
         {
             // Arrange
