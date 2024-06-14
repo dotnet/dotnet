@@ -560,6 +560,7 @@ namespace NuGet.Packaging.Signing
 
             if (certificates == null || certificates.Count == 0)
             {
+                certificates?.Dispose();
                 throw new SignatureException(errors.ChainBuildingFailed, Strings.CertificateChainBuildFailed);
             }
 
