@@ -8,6 +8,10 @@
     <SystemPackagesVersion Condition="'$(SystemPackagesVersion)' == ''">4.3.0</SystemPackagesVersion>
     <VSFrameworkVersion Condition="'$(VSFrameworkVersion)' == ''">17.8.37297</VSFrameworkVersion>
     <SystemCommandLineVersion Condition="'$(SystemCommandLineVersion)' == ''">2.0.0-beta4.23307.1</SystemCommandLineVersion>
+    <MSTestPackageVersion>3.4.3</MSTestPackageVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <!-- Default MSBuild version -->
     <MicrosoftBuildVersion Condition="'$(MicrosoftBuildVersion)' == ''">17.10.4</MicrosoftBuildVersion>
     <!-- The last package version of MSBuild that works with netcoreapp3.1 or netstandard2.0 is 16.8.0.  Our assemblies are still compiled against MSBuild assembly version 15.1.0.0 which will work with all versions -->
@@ -61,7 +65,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageVersion Include="Microsoft.PowerShell.3.ReferenceAssemblies" Version="1.0.0" />
     <PackageVersion Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="16.153.0" />
-    <PackageVersion Include="Microsoft.Test.Apex.VisualStudio" Version="17.6.33522.47" />
+    <PackageVersion Include="Microsoft.Test.Apex.VisualStudio" Version="17.11.35005.70" />
     <PackageVersion Include="Microsoft.TestPlatform.Portable" Version="17.1.0" />
     <PackageVersion Include="Microsoft.VisualStudio.LanguageServices" Version="4.3.1" />
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem" Version="17.4.221-pre" />
@@ -78,8 +82,8 @@
     <PackageVersion Include="Microsoft.VSSDK.BuildTools" Version="17.0.1600" />
     <PackageVersion Include="Microsoft.Web.Xdt" Version="$(MicrosoftWebXdtPackageVersion)" />
     <PackageVersion Include="Moq" Version="4.18.1" />
-    <PackageVersion Include="MSTest.TestAdapter" Version="2.2.10" />
-    <PackageVersion Include="MSTest.TestFramework" Version="2.2.10" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="$(MSTestPackageVersion)" />
+    <PackageVersion Include="MSTest.TestFramework" Version="$(MSTestPackageVersion)" />
     <PackageVersion Include="Newtonsoft.Json" Version="$(NewtonsoftJsonPackageVersion)" />
     <PackageVersion Include="NuGet.Client.EndToEnd.TestData" Version="1.0.0" />
     <PackageVersion Include="NuGet.Core" Version="2.14.0-rtm-832" />
