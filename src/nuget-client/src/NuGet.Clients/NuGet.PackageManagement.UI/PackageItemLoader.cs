@@ -298,8 +298,9 @@ namespace NuGet.PackageManagement.UI
 
                 ImmutableList<KnownOwnerViewModel> knownOwnerViewModels = null;
 
-                // Only load KnownOwners for the Browse tab.
-                if (_itemFilter == ContractItemFilter.All)
+                // Only load KnownOwners for the Browse tab and not for any Recommended packages.
+                // Recommended packages won't have KnownOwners metadata as they are not part of the search results.
+                if (_itemFilter == ContractItemFilter.All && !metadataContextInfo.IsRecommended)
                 {
                     knownOwnerViewModels = LoadKnownOwnerViewModels(metadataContextInfo);
                 }

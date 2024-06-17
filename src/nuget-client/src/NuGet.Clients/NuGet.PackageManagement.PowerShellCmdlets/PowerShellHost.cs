@@ -46,7 +46,9 @@ namespace NuGetConsole.Host.PowerShell.Implementation
         private Microsoft.VisualStudio.Threading.AsyncLazy<IVsMonitorSelection> _vsMonitorSelection;
         private IVsMonitorSelection VsMonitorSelection => ThreadHelper.JoinableTaskFactory.Run(_vsMonitorSelection.GetValueAsync);
 
+#pragma warning disable RS0030 // Do not used banned APIs
         private readonly AsyncSemaphore _initScriptsLock = new AsyncSemaphore(1);
+#pragma warning restore RS0030 // Do not used banned APIs
         private readonly string _name;
         private readonly IRestoreEvents _restoreEvents;
         private readonly IRunspaceManager _runspaceManager;
@@ -431,6 +433,7 @@ namespace NuGetConsole.Host.PowerShell.Implementation
         private async Task ExecuteInitScriptsAsync()
         {
             // Fix for Bug 1426 Disallow ExecuteInitScripts from being executed concurrently by multiple threads.
+#pragma warning disable RS0030 // Do not used banned APIs
             using (await _initScriptsLock.EnterAsync())
             {
                 if (!await _solutionManager.Value.IsSolutionOpenAsync())
@@ -477,6 +480,7 @@ namespace NuGetConsole.Host.PowerShell.Implementation
                 _currentRestore = latestRestore;
                 _currentSolutionDirectory = latestSolutionDirectory;
             }
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         private async Task ExecuteInitPs1Async(string installPath, PackageIdentity identity)
@@ -930,7 +934,9 @@ namespace NuGetConsole.Host.PowerShell.Implementation
         public void Dispose()
         {
             _restoreEvents.SolutionRestoreCompleted -= RestoreEvents_SolutionRestoreCompleted;
+#pragma warning disable RS0030 // Do not used banned APIs
             _initScriptsLock.Dispose();
+#pragma warning restore RS0030 // Do not used banned APIs
             Runspace?.Dispose();
             _tokenSource?.Dispose();
         }

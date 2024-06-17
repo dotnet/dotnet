@@ -225,7 +225,9 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
 
             foreach (var task in installedPackages.Zip(metadataTasks, (p, t) => Tuple.Create(t, p)))
             {
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
                 var metadata = await task.Item1;
+#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
 
                 if (metadata != null)
                 {

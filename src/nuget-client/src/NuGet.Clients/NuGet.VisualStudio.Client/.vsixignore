@@ -1,5 +1,6 @@
 # assemblies not to be included in VSIX
 
+Azure.Core.dll
 Ben.Demystifier.dll
 MessagePack.Annotations.dll
 MessagePack.dll
@@ -76,6 +77,8 @@ Microsoft.TeamFoundation.WorkItemTracking.Proxy.dll
 Microsoft.TeamFoundation.WorkItemTracking.Proxy.resources.dll
 Microsoft.TeamFoundation.WorkItemTracking.WebApi.dll
 Microsoft.VisualStudio.Debugger.Interop.16.0.dll
+Microsoft.VisualStudio.Extensibility.Editor.Contracts.dll
+
 Microsoft.VisualStudio.Interop.dll
 Microsoft.VisualStudio.Linux.ConnectionManager.Store.dll
 Microsoft.VisualStudio.RpcContracts.dll
@@ -99,6 +102,7 @@ System.Diagnostics.DiagnosticSource.dll
 System.IdentityModel.Tokens.Jwt.dll
 System.IO.Pipelines.dll
 System.Management.Automation.dll
+System.Memory.Data.dll
 System.Net.Http.Formatting.dll
 System.Reflection.MetadataLoadContext.dll
 System.Resources.Extensions.dll
