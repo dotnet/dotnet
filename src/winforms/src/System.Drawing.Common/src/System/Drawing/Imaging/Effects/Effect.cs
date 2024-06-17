@@ -5,8 +5,6 @@
 
 namespace System.Drawing.Imaging.Effects;
 
-#pragma warning disable IDE0036
-
 /// <summary>
 ///  Base class for all effects.
 /// </summary>
@@ -49,5 +47,4 @@ public unsafe abstract class Effect : IDisposable
         }
     }
 }
-#pragma warning restore IDE0036
 #endif
