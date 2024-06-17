@@ -587,7 +587,9 @@ namespace NuGet.PackageManagement.UI
             });
         public Task<(PackageSearchMetadataContextInfo, PackageDeprecationMetadataContextInfo)> GetDetailedPackageSearchMetadataAsync()
         {
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
             return _detailedPackageSearchMetadata.Value;
+#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
         }
 
         private PackageDeprecationMetadataContextInfo _deprecationMetadata;

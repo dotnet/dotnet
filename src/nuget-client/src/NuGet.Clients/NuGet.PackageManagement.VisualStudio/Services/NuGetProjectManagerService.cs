@@ -347,7 +347,9 @@ namespace NuGet.PackageManagement.VisualStudio
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+#pragma warning disable RS0030 // Do not used banned APIs
             _semaphoreReleaser = await _state.AsyncSemaphore.EnterAsync(cancellationToken);
+#pragma warning restore RS0030 // Do not used banned APIs
 
             _state.Reset();
 

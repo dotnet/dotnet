@@ -92,7 +92,9 @@ namespace NuGet.SolutionRestoreManager
             {
                 const string eventName = nameof(IVsSolutionRestoreService) + "." + nameof(IVsSolutionRestoreService.CurrentRestoreOperation);
                 NuGetETW.ExtensibilityEventSource.Write(eventName, NuGetETW.InfoEventOptions);
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
                 return _restoreWorker.CurrentRestoreOperation;
+#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
             }
         }
 
@@ -102,7 +104,9 @@ namespace NuGet.SolutionRestoreManager
             {
                 const string eventName = nameof(IVsSolutionRestoreService) + "." + nameof(IVsSolutionRestoreService3.CurrentRestoreOperation);
                 NuGetETW.ExtensibilityEventSource.Write(eventName, NuGetETW.InfoEventOptions);
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
                 return _restoreWorker.CurrentRestoreOperation;
+#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
             }
         }
 

@@ -6,7 +6,6 @@
     <NewtonsoftJsonPackageVersion Condition="'$(NewtonsoftJsonPackageVersion)' == ''">13.0.3</NewtonsoftJsonPackageVersion>
     <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == ''">7.0.3</SystemTextJsonVersion>
     <SystemPackagesVersion Condition="'$(SystemPackagesVersion)' == ''">4.3.0</SystemPackagesVersion>
-    <VSFrameworkVersion Condition="'$(VSFrameworkVersion)' == ''">17.8.37297</VSFrameworkVersion>
     <SystemCommandLineVersion Condition="'$(SystemCommandLineVersion)' == ''">2.0.0-beta4.23307.1</SystemCommandLineVersion>
     <MSTestPackageVersion>3.4.3</MSTestPackageVersion>
   </PropertyGroup>
@@ -58,7 +57,7 @@
     <PackageVersion Include="Microsoft.Extensions.CommandLineUtils.Sources" Version="3.0.0-preview6.19253.5" />
     <PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="$(MicrosoftExtensionsFileProvidersAbstractionsPackageVersion)" />
     <PackageVersion Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)" />
-    <PackageVersion Include="Microsoft.Internal.VisualStudio.Shell.Framework" Version="$(VSFrameworkVersion)" />
+    <PackageVersion Include="Microsoft.Internal.VisualStudio.Shell.Framework" Version="17.10.40173" />
     <PackageVersion Include="Microsoft.Net.Compilers.netcore" Version="3.0.0-dev-61717-03" />
     <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="3.9.0" />
     <PackageVersion Include="Microsoft.NET.StringTools" Version="$(MicrosoftBuildVersion)" />
@@ -73,11 +72,11 @@
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.Managed" Version="17.2.0-beta1-20502-01" />
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.Managed.VS" Version="17.2.0-beta1-20502-01" />
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.VS" Version="17.4.221-pre" />
-    <PackageVersion Include="Microsoft.VisualStudio.SDK" Version="$(VSFrameworkVersion)" />
+    <PackageVersion Include="Microsoft.VisualStudio.SDK" Version="17.10.40171" />
     <PackageVersion Include="Microsoft.VisualStudio.Sdk.TestFramework.Xunit" Version="17.6.32" />
     <PackageVersion Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.4.2244" />
     <PackageVersion Include="Microsoft.VisualStudio.TemplateWizardInterface" Version="17.10.40170" />
-    <PackageVersion Include="Microsoft.VisualStudio.VCProjectEngine" Version="$(VSFrameworkVersion)" />
+    <PackageVersion Include="Microsoft.VisualStudio.VCProjectEngine" Version="17.10.40173" />
     <PackageVersion Include="Microsoft.VisualStudio.Workspace.VSIntegration" Version="17.0.7-preview-0001-g5492e466a9" />
     <PackageVersion Include="Microsoft.VSSDK.BuildTools" Version="17.0.1600" />
     <PackageVersion Include="Microsoft.Web.Xdt" Version="$(MicrosoftWebXdtPackageVersion)" />
@@ -113,7 +112,7 @@
       To resolve runtime assembly binding failures, we'll downgrade the package from 4.11.1 to 4.9.0.
     -->
     <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.9.0" />
-    <PackageVersion Include="VsWebSite.Interop" Version="$(VSFrameworkVersion)" />
+    <PackageVersion Include="VsWebSite.Interop" Version="17.10.40173" />
     <PackageVersion Include="xunit" Version="2.6.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
     <PackageVersion Include="Xunit.StaFact" Version="1.1.11" />
@@ -132,10 +131,10 @@
               '$(MSBuildProjectFile)' == 'NuGet.VisualStudio.Contracts.csproj' OR
               '$(MSBuildProjectFile)' == 'NuGet.VisualStudio.Interop.csproj' OR
               '$(MSBuildProjectFile)' == 'NuGet.SolutionRestoreManager.Interop.csproj'">
-    <PackageVersion Include="Microsoft.ServiceHub.Framework" Version="4.2.102" />
-    <PackageVersion Include="Microsoft.VisualStudio.ComponentModelHost" Version="17.4.255" />
+    <PackageVersion Include="Microsoft.ServiceHub.Framework" Version="4.5.31" />
+    <PackageVersion Include="Microsoft.VisualStudio.ComponentModelHost" Version="17.10.191" />
     <PackageVersion Update="Microsoft.VisualStudio.SDK" Version="" />
-    <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="$(VSFrameworkVersion)" />
+    <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="17.10.40173" />
   </ItemGroup>
 
   <ItemGroup>

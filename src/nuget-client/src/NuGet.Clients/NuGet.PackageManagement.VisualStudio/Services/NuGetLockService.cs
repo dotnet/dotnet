@@ -18,7 +18,9 @@ namespace NuGet.PackageManagement.VisualStudio
     [PartCreationPolicy(CreationPolicy.Shared)]
     public sealed class NuGetLockService : INuGetLockService, IDisposable
     {
+#pragma warning disable RS0030 // Do not used banned APIs
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+#pragma warning restore RS0030 // Do not used banned APIs
 
         private readonly AsyncLocalInt _lockCount = new AsyncLocalInt();
 
@@ -33,7 +35,9 @@ namespace NuGet.PackageManagement.VisualStudio
             _joinableTaskFactory = joinableTaskContext.CreateFactory(_joinableTaskCollection);
         }
 
+#pragma warning disable RS0030 // Do not used banned APIs
         public bool IsLockHeld => _semaphore.CurrentCount == 0;
+#pragma warning restore RS0030 // Do not used banned APIs
 
         public int LockCount => _lockCount.Value;
 
@@ -50,7 +54,9 @@ namespace NuGet.PackageManagement.VisualStudio
                 {
                     using (_joinableTaskCollection.Join())
                     {
+#pragma warning disable RS0030 // Do not used banned APIs
                         await _semaphore.WaitAsync(token);
+#pragma warning restore RS0030 // Do not used banned APIs
                     }
 
                     // Once this thread acquired the lock then increment lockCount
@@ -69,7 +75,9 @@ namespace NuGet.PackageManagement.VisualStudio
                     {
                         try
                         {
+#pragma warning disable RS0030 // Do not used banned APIs
                             _semaphore.Release();
+#pragma warning restore RS0030 // Do not used banned APIs
                         }
                         catch (ObjectDisposedException) { }
 
@@ -98,7 +106,9 @@ namespace NuGet.PackageManagement.VisualStudio
 
         public void Dispose()
         {
+#pragma warning disable RS0030 // Do not used banned APIs
             _semaphore.Dispose();
+#pragma warning restore RS0030 // Do not used banned APIs
         }
     }
 }

@@ -75,6 +75,17 @@ steps:
     configuration: "$(BuildConfiguration)"
     msbuildArguments: "/restore:false /target:RestoreVS /property:BuildNumber=$(BuildNumber) /property:BuildRTM=$(BuildRTM) /property:IncludeApex=true /binarylogger:$(Build.StagingDirectory)\\binlog\\01.Restore.binlog"
 
+- task: CmdLine@2
+  displayName: "Restore packages to publish to the .NET Core build asset registry (BAR)"
+  inputs:
+    script: dotnet restore $(Build.Repository.LocalPath)\build\publish.proj -binarylogger:$(Build.StagingDirectory)\\binlog\\01.Restore-publish.binlog"
+    workingDirectory: cli
+    failOnStderr: true
+  env:
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+    DOTNET_MULTILEVEL_LOOKUP: true
+  condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'))"
+
 - task: PowerShell@1
   displayName: "Set IncludeApex variable"
   name: "includeapex"
@@ -160,15 +171,6 @@ steps:
       searchFolder: "$(Build.Repository.LocalPath)\\build\\TestResults"
       publishRunAttachments: "false"
     condition: "and(succeededOrFailed(),eq(variables['BuildRTM'], 'true'))"
-
-- task: PowerShell@1
-  displayName: "Initialize Git Commit Status on GitHub"
-  inputs:
-    scriptType: "inlineScript"
-    inlineScript: |
-      . $(Build.Repository.LocalPath)\\scripts\\utils\\PostGitCommitStatus.ps1
-      SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -VstsPersonalAccessToken $(System.AccessToken) -CommitSha $(Build.SourceVersion) -TestName "$env:AGENT_JOBNAME"
-  condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"
 
 - task: MSBuild@1
   displayName: "Sign Assemblies"
@@ -407,3 +409,12 @@ steps:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
     DOTNET_MULTILEVEL_LOOKUP: true
   condition: "and(succeeded(),eq(variables['PublishArtifactsToDotNetBuildAssetRegistry'], 'true'), eq(variables['BuildRTM'], 'false'))"
+
+- task: PowerShell@1
+  displayName: "Initialize Git Commit Status on GitHub"
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      . $(Build.Repository.LocalPath)\\scripts\\utils\\PostGitCommitStatus.ps1
+      SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -VstsPersonalAccessToken $(System.AccessToken) -CommitSha $(Build.SourceVersion) -TestName "$env:AGENT_JOBNAME"
+  condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"
