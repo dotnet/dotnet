@@ -7,9 +7,9 @@ Creates a GitHub pull request to merge a head branch into a base branch
 The GitHub repository owner.
 .PARAMETER RepoName
 The GitHub repository name.
-.PARAMETER BaseBranch
+.PARAMETER MergeToBranch
 The base branch -- the target branch for the PR
-.PARAMETER HeadBranch
+.PARAMETER MergeFromBranch
 The current branch
 .PARAMETER AllowAutomatedCommits
 Create a PR even if the only commits are from dotnet-maestro[bot]
@@ -28,11 +28,11 @@ param(
 
     [Alias('b')]
     [Parameter(Mandatory = $true)]
-    $BaseBranch,
+    $MergeToBranch,
 
     [Alias('h')]
     [Parameter(Mandatory = $true)]
-    $HeadBranch,
+    $MergeFromBranch,
 
     [switch]$AllowAutomatedCommits,
 
@@ -110,20 +110,20 @@ $formatString = '%h %cn <%ce>: %s (%cr)'
 
 try {
     Invoke-Block { & git fetch --quiet origin }
-    Invoke-Block { & git checkout --quiet $BaseBranch }
-    Invoke-Block { & git reset --hard origin/$BaseBranch }
+    Invoke-Block { & git checkout --quiet $MergeToBranch }
+    Invoke-Block { & git reset --hard origin/$MergeToBranch }
 
-    Write-Host -f Magenta "${BaseBranch}:`t`t$(& git log --format=$formatString -1 HEAD)"
+    Write-Host -f Magenta "${MergeToBranch}:`t`t$(& git log --format=$formatString -1 HEAD)"
 
-    Invoke-Block { & git checkout --quiet $HeadBranch }
-    Invoke-Block { & git reset --quiet --hard origin/$HeadBranch }
+    Invoke-Block { & git checkout --quiet $MergeFromBranch }
+    Invoke-Block { & git reset --quiet --hard origin/$MergeFromBranch }
 
-    Write-Host -f Magenta "${HeadBranch}:`t$(& git log --format=$formatString -1 HEAD)"
+    Write-Host -f Magenta "${MergeFromBranch}:`t$(& git log --format=$formatString -1 HEAD)"
 
-    [string[]] $commitsToMerge = & git rev-list "$BaseBranch..$HeadBranch" # find all commits which will be merged
+    [string[]] $commitsToMerge = & git rev-list "$MergeToBranch..$MergeFromBranch" # find all commits which will be merged
 
     if (-not $commitsToMerge) {
-        Write-Warning "There were no commits to be merged from $HeadBranch into $BaseBranch"
+        Write-Warning "There were no commits to be merged from $MergeFromBranch into $MergeToBranch"
         exit 0
     }
 
@@ -144,11 +144,11 @@ try {
         $authors = $authors | % { "* $_" }
     }
     
-    $committersList = "This PR merges commits made on $HeadBranch by the following committers:`n`n$($authors -join "`n")"
+    $committersList = "This PR merges commits made on $MergeFromBranch by the following committers:`n`n$($authors -join "`n")"
 
     Write-Host $committersList
 
-    $mergeBranchName = "merge/$HeadBranch-to-$BaseBranch"
+    $mergeBranchName = "merge/$MergeFromBranch-to-$MergeToBranch"
     Invoke-Block { & git checkout -B $mergeBranchName  }
 
     $remoteName = 'origin'
@@ -180,7 +180,7 @@ try {
         variables = @{
             repoOwner   = $RepoOwner
             repoName    = $RepoName
-            baseRefName = $BaseBranch
+            baseRefName = $MergeToBranch
         }
     }
 
@@ -211,7 +211,7 @@ try {
             "This pull request has been updated.`n`n$committersList"
         } else {
             @"
-:x: Uh oh, this pull request could not be updated automatically. New commits were pushed to $HeadBranch, but I could not automatically push those to $mergeBranchName to update this PR.
+:x: Uh oh, this pull request could not be updated automatically. New commits were pushed to $MergeFromBranch, but I could not automatically push those to $mergeBranchName to update this PR.
 You may need to fix this problem by merging branches with this PR. Contact .NET Core Engineering if you are not sure what to do about this.
 "@
         }
@@ -246,7 +246,7 @@ You may need to fix this problem by merging branches with this PR. Contact .NET 
         }
 
         $prBody = @"
-I detected changes in the $HeadBranch branch which have not been merged yet to $BaseBranch. I'm a robot and am [configured](https://github.com/dotnet/versions/blob/main/Maestro/subscriptions.json) to help you automatically keep $BaseBranch up to date, so I've opened this PR.
+I detected changes in the $MergeFromBranch branch which have not been merged yet to $MergeToBranch. I'm a robot and am configured to help you automatically keep $MergeToBranch up to date, so I've opened this PR.
 
 $committersList
 
@@ -264,11 +264,11 @@ Run these commands to merge this pull request from the command line.
 
 `````` sh
 git fetch
-git checkout ${HeadBranch}
+git checkout ${MergeFromBranch}
 git pull --ff-only
-git checkout ${baseBranch}
+git checkout ${MergeToBranch}
 git pull --ff-only
-git merge --no-ff ${HeadBranch}
+git merge --no-ff ${MergeFromBranch}
 
 # If there are merge conflicts, resolve them and then run `git merge --continue` to complete the merge
 # Pushing the changes to the PR branch will re-trigger PR validation.
@@ -302,7 +302,7 @@ git push
 Contributors to this repo have permission update this pull request by pushing to the branch '$mergeBranchName'. This can be done to resolve conflicts or make other changes to this pull request before it is merged.
 
 ``````
-git checkout -b ${mergeBranchName} $BaseBranch
+git checkout -b ${mergeBranchName} $MergeToBranch
 git pull https://github.com/$prOwnerName/$prRepoName ${mergeBranchName}
 (make changes)
 git commit -m "Updated PR with my changes"
@@ -313,7 +313,7 @@ git push https://github.com/$prOwnerName/$prRepoName HEAD:${mergeBranchName}
     <summary>or if you are using SSH</summary>
 
 ``````
-git checkout -b ${mergeBranchName} $BaseBranch
+git checkout -b ${mergeBranchName} $MergeToBranch
 git pull git@github.com:$prOwnerName/$prRepoName ${mergeBranchName}
 (make changes)
 git commit -m "Updated PR with my changes"
@@ -323,19 +323,19 @@ git push git@github.com:$prOwnerName/$prRepoName HEAD:${mergeBranchName}
 </details>
 
 Contact .NET Core Engineering (dotnet/dnceng) if you have questions or issues.
-Also, if this PR was generated incorrectly, help us fix it. See https://github.com/dotnet/arcade/blob/master/scripts/GitHubMergeBranches.ps1.
+Also, if this PR was generated incorrectly, help us fix it. See https://github.com/dotnet/arcade/blob/main/.github/workflows/scripts/inter-branch-merge.ps1.
 
 "@;
 
         $data = @{
-            title                 = "[automated] Merge branch '$HeadBranch' => '$BaseBranch'"
+            title                 = "[automated] Merge branch '$MergeFromBranch' => '$MergeToBranch'"
             head                  = "${prOwnerName}:${mergeBranchName}"
-            base                  = $BaseBranch
+            base                  = $MergeToBranch
             body                  = $prBody
             maintainer_can_modify = $true
         }
 
-        if ($PSCmdlet.ShouldProcess("Create PR from ${prOwnerName}:${mergeBranchName} to $BaseBranch on $Reponame")) {
+        if ($PSCmdlet.ShouldProcess("Create PR from ${prOwnerName}:${mergeBranchName} to $MergeToBranch on $Reponame")) {
             $resp = Invoke-RestMethod -Method POST -Headers $previewHeaders `
                 https://api.github.com/repos/$RepoOwner/$RepoName/pulls `
                 -Body ($data | ConvertTo-Json)

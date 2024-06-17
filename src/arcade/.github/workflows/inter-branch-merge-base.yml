@@ -15,20 +15,16 @@
 on:
   workflow_call:
     inputs:      
-      base_branch:
+      configuration_file_branch:
         type: string
-        description: The branch to merge changes into
-        required: true
-      allowAutomatedCommits:
-        type: boolean
-        description: To allow the commits made by the dotnet-maestro[bot]. Applied only when all changes in current branch made by bot. Default is false.
+        description: The branch to read the configuration file from.
         required: false
-        default: false
-      quietComments:
-        type: boolean
+        default: 'main'
+      configuration_file_path:
+        type: string
+        description: The path to the configuration file.
         required: false
-        description: Do not tag authors of the original PRs and do produce comments when existing PR is updated. Reduces GitHub notifications noise on the new (automated) PR
-        default: true
+        default: 'github-merge-flow.json'
       script_version:
         type: string
         required: false
@@ -56,34 +52,25 @@ jobs:
           ref: ${{ inputs.script_version }}
           sparse-checkout: |
             .github
-
-      - name: Switch parameters setting
-        id: switch-parameters
-        run: | 
-          $mergeSwitchArguments = ""
-
-          if ('${{ inputs.allowAutomatedCommits }}' -eq 'true') {
-            $mergeSwitchArguments = "-AllowAutomatedCommits"
-          }else{
-            Write-Host "AllowAutomatedCommits is set to False"
-          }
-
-          if ('${{ inputs.quietComments }}' -eq 'true') {
-            $mergeSwitchArguments = $mergeSwitchArguments + " -QuietComments"
-          }else{
-            Write-Host "QuietComments is set to False"
-          }
-
-          "mergeSwitchArguments=$mergeSwitchArguments" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-
       - name: Fetch repository name
         id: fetch-repo-name
         run: |
           $repoName = "${{ github.repository }}"
           $repoNameWithoutOwner = $repoName.Substring("${{ github.repository_owner }}".Length + 1)
           "repository_name=$repoNameWithoutOwner" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Extract configuration values
+        id: extract-configuration-values
+        run: ${{ github.workspace }}\arcade-repository\.github\workflows\scripts\read-configuration.ps1 -ConfigurationFileBranch ${{ inputs.configuration_file_branch }} -RepoName ${{ steps.fetch-repo-name.outputs.repository_name }} -RepoOwner ${{ github.repository_owner }} -MergeFromBranch $env:GITHUB_REF_NAME -ConfigurationFilePath ${{inputs.configuration_file_path}}
+        env: 
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      - run: ${{ github.workspace }}\arcade-repository\.github\workflows\scripts\inter-branch-merge.ps1 -RepoName ${{ steps.fetch-repo-name.outputs.repository_name }} -RepoOwner ${{ github.repository_owner }} -HeadBranch $env:GITHUB_REF_NAME -BaseBranch ${{ inputs.base_branch }} ${{ steps.switch-parameters.outputs.mergeSwitchArguments }}
+      - run: Write-Host "Configuration required for running merge flow was not found or was not valid."
+        if: steps.extract-configuration-values.outputs.configurationFound != 'true'
+        name: Read configuration status
+
+      - run: ${{ github.workspace }}\arcade-repository\.github\workflows\scripts\inter-branch-merge.ps1 -RepoName ${{ steps.fetch-repo-name.outputs.repository_name }} -RepoOwner ${{ github.repository_owner }} -MergeFromBranch $env:GITHUB_REF_NAME -MergeToBranch ${{ steps.extract-configuration-values.outputs.mergeToBranch }} ${{ steps.extract-configuration-values.outputs.mergeSwitchArguments }}
+        if: steps.extract-configuration-values.outputs.configurationFound == 'true'
         name: Merge branches
         working-directory: ${{ github.workspace }}/repository
         env: 
