@@ -33,6 +33,9 @@ parameters:
 variables:
 - template: /src/installer/eng/pipelines/templates/variables/vmr-build.yml@self
 
+# GH access token for SB bot - BotAccount-dotnet-sb-bot-pat
+- group: DotNet-Source-Build-Bot-Secrets-MVP
+
 jobs:
 - template: templates/jobs/sdk-diff-tests.yml
   parameters:
@@ -40,6 +43,7 @@ jobs:
     targetRid: ${{ variables.centOSStreamX64Rid }}
     architecture: x64
     dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
+    publishTestResultsPr: true
 
 - template: templates/jobs/sdk-diff-tests.yml
   parameters:

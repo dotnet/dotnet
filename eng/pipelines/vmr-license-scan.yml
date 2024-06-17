@@ -20,7 +20,10 @@ parameters:
   default: " " # Set it to an empty string to allow it be an optional parameter
 
 variables:
-  installerRoot: '$(Build.SourcesDirectory)/src/installer'
+# GH access token for SB bot - BotAccount-dotnet-sb-bot-pat
+- group: DotNet-Source-Build-Bot-Secrets-MVP
+- name: installerRoot
+  value: '$(Build.SourcesDirectory)/src/installer'
 
 jobs:
 - job: Setup
@@ -136,3 +139,45 @@ jobs:
       mergeTestResults: true
       publishRunAttachments: true
       testRunTitle: $(Agent.JobName)
+
+- job: CreateBaselineUpdatePR
+  dependsOn: LicenseScan
+  condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'))
+  pool:
+    name: NetCore1ESPool-Svc-Internal
+    demands: ImageOverride -equals 1es-ubuntu-2004
+  variables:
+  - template: templates/variables/pipelines.yml
+  steps:
+
+  - script: |
+      source ./eng/common/tools.sh
+      InitializeDotNetCli true
+    displayName: Install .NET SDK
+    workingDirectory: $(Build.SourcesDirectory)
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: specific
+      buildVersionToDownload: specific
+      project: internal
+      buildId: $(Build.BuildId)
+      artifact: ''
+      patterns: '**/Updated*'
+      allowPartiallySucceededBuilds: true
+      allowFailedBuilds: true
+      downloadPath: $(Pipeline.Workspace)/Artifacts
+      checkDownloadedFiles: true
+    displayName: Download Updated Baselines
+
+  - script: |
+      find $(Pipeline.Workspace)/Artifacts -type f -exec mv {} $(Pipeline.Workspace)/Artifacts \;
+    displayName: Move Artifacts to root
+
+  - template: templates/steps/create-baseline-update-pr.yml
+    parameters:
+      pipeline: license
+      repo: dotnet/installer
+      originalFilesDirectory: src/SourceBuild/content/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/baselines/licenses
+      updatedFilesDirectory: $(Pipeline.Workspace)/Artifacts
+      pullRequestTitle: Update Source-Build License Scan Baselines and Exclusions
