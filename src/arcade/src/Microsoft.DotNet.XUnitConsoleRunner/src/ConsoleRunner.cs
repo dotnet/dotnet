@@ -75,7 +75,8 @@ namespace Xunit.ConsoleClient
                 if (commandLine.Debug)
                     Debugger.Launch();
 
-                logger = new ConsoleRunnerLogger(!commandLine.NoColor, true, consoleLock);
+                // Don't use ansi colors codes as those cause issues on the default Windows terminal.
+                logger = new ConsoleRunnerLogger(!commandLine.NoColor, useAnsiColor: false, consoleLock);
                 reporterMessageHandler = MessageSinkWithTypesAdapter.Wrap(reporter.CreateMessageHandler(logger));
 
                 if (!commandLine.NoLogo)
