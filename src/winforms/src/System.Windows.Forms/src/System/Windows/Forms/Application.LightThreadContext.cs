@@ -10,7 +10,9 @@ public sealed partial class Application
     /// <summary>
     ///  Lighter weight <see cref="ThreadContext"/> that doesn't support <see cref="IMsoComponent"/>.
     /// </summary>
+#pragma warning disable IDE0036
     internal unsafe sealed class LightThreadContext : ThreadContext
+#pragma warning restore IDE0036
     {
         protected override bool? GetMessageLoopInternal(bool mustBeActive, int loopCount)
         {
