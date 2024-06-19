@@ -26,7 +26,6 @@
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <RepositoryReference Include="msbuild" />
-    <RepositoryReference Include="runtime" />
     <RepositoryReference Include="source-build-reference-packages" />
   </ItemGroup>
 
