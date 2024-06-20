@@ -209,7 +209,11 @@ internal class RunSpecificTestsArgumentExecutor : IArgumentExecutor
     /// <param name="sources"> Test source assemblies paths. </param>
     private void DiscoverTestsAndSelectSpecified(IEnumerable<string> sources)
     {
-        Output.WriteLine(CommandLineResources.StartingDiscovery, OutputLevel.Information);
+        if (Environment.GetEnvironmentVariable("VSTEST_MSBUILD_NOLOGO") != "1")
+        {
+            Output.WriteLine(CommandLineResources.StartingDiscovery, OutputLevel.Information);
+        }
+
         if (!StringUtils.IsNullOrEmpty(EqtTrace.LogFile))
         {
             Output.Information(false, CommandLineResources.VstestDiagLogOutputPath, EqtTrace.LogFile);

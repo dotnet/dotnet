@@ -58,6 +58,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [Ignore]
     [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
