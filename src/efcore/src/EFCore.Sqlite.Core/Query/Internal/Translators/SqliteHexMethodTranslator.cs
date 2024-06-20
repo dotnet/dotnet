@@ -3,7 +3,8 @@
 
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
-namespace Microsoft.EntityFrameworkCore.Sqlite.Query.Internal.Translators;
+// ReSharper disable once CheckNamespace
+namespace Microsoft.EntityFrameworkCore.Sqlite.Query.Internal;
 
 /// <summary>
 ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -60,11 +61,13 @@ public class SqliteHexMethodTranslator : IMethodCallTranslator
         if (method.Equals(UnhexMethodInfo)
             || method.Equals(UnhexWithIgnoreCharsMethodInfo))
         {
+            // unhex returns NULL whenever the decoding fails, hence mark as
+            // nullable and use an all-false argumentsPropagateNullability
             return _sqlExpressionFactory.Function(
                 "unhex",
                 arguments.Skip(1),
                 nullable: true,
-                arguments.Skip(1).Select(_ => true).ToArray(),
+                argumentsPropagateNullability: arguments.Skip(1).Select(_ => false).ToArray(),
                 typeof(byte[]));
         }
 

@@ -84,12 +84,40 @@ public abstract class GearsOfWarQueryTestBase<TFixture> : QueryTestBase<TFixture
             async,
             ss => ss.Set<Weapon>().Select(w => w.IsAutomatic.ToString()));
 
-    [ConditionalTheory]
+    [ConditionalTheory(Skip = "Issue #33941 Nullable<bool>.ToString() does not match C#")]
     [MemberData(nameof(IsAsyncData))]
     public virtual Task ToString_boolean_property_nullable(bool async)
         => AssertQuery(
             async,
             ss => ss.Set<LocustHorde>().Select(lh => lh.Eradicated.ToString()));
+
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
+    public virtual Task ToString_enum_property_projection(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<Gear>().Select(g => g.Rank.ToString()));
+
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
+    public virtual Task ToString_nullable_enum_property_projection(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<Weapon>().Select(w => w.AmmunitionType.ToString()));
+
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
+    public virtual Task ToString_enum_contains(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<Mission>().Where(g => g.Difficulty.ToString().Contains("Med")).Select(g => g.CodeName));
+
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
+    public virtual Task ToString_nullable_enum_contains(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<Weapon>().Where(w => w.AmmunitionType.ToString().Contains("Cart")).Select(g => g.Name));
 
     [ConditionalTheory]
     [MemberData(nameof(IsAsyncData))]
@@ -1765,21 +1793,21 @@ public abstract class GearsOfWarQueryTestBase<TFixture> : QueryTestBase<TFixture
     public virtual Task Coalesce_operator_in_predicate(bool async)
         => AssertQuery(
             async,
-            ss => ss.Set<Weapon>().Where(w => (bool?)w.IsAutomatic ?? false));
+            ss => ss.Set<CogTag>().Where(x => (bool?)x.Gear.HasSoulPatch ?? false));
 
     [ConditionalTheory]
     [MemberData(nameof(IsAsyncData))]
     public virtual Task Coalesce_operator_in_predicate_with_other_conditions(bool async)
         => AssertQuery(
             async,
-            ss => ss.Set<Weapon>().Where(w => w.AmmunitionType == AmmunitionType.Cartridge && ((bool?)w.IsAutomatic ?? false)));
+            ss => ss.Set<CogTag>().Where(x => x.Note != "K.I.A." && ((bool?)x.Gear.HasSoulPatch ?? false)));
 
     [ConditionalTheory]
     [MemberData(nameof(IsAsyncData))]
     public virtual Task Coalesce_operator_in_projection_with_other_conditions(bool async)
         => AssertQueryScalar(
             async,
-            ss => ss.Set<Weapon>().Select(w => w.AmmunitionType == AmmunitionType.Cartridge && ((bool?)w.IsAutomatic ?? false)));
+            ss => ss.Set<CogTag>().Select(x => x.Note != "K.I.A." && ((bool?)x.Gear.HasSoulPatch ?? false)));
 
     [ConditionalTheory]
     [MemberData(nameof(IsAsyncData))]
@@ -2676,7 +2704,7 @@ public abstract class GearsOfWarQueryTestBase<TFixture> : QueryTestBase<TFixture
                   where f is LocustHorde
                   let horde = (LocustHorde)f
                   orderby f.Name
-                  select new { Name = EF.Property<string>(horde, "Name"), Eradicated = EF.Property<bool>((LocustHorde)f, "Eradicated") },
+                  select new { Name = EF.Property<string>(horde, "Name"), Eradicated = EF.Property<bool?>((LocustHorde)f, "Eradicated") },
             assertOrder: true);
 
     [ConditionalTheory]
@@ -3120,16 +3148,6 @@ public abstract class GearsOfWarQueryTestBase<TFixture> : QueryTestBase<TFixture
                     cg =>
                         new { Prop = cg.Gear != null ? cg.Gear.HasSoulPatch : false }),
             e => e.Prop);
-
-    [ConditionalTheory]
-    [MemberData(nameof(IsAsyncData))]
-    public virtual Task Enum_ToString_is_client_eval(bool async)
-        => AssertQuery(
-            async,
-            ss =>
-                ss.Set<Gear>().OrderBy(g => g.SquadId)
-                    .ThenBy(g => g.Nickname)
-                    .Select(g => g.Rank.ToString()));
 
     [ConditionalTheory]
     [MemberData(nameof(IsAsyncData))]

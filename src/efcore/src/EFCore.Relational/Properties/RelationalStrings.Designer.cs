@@ -890,6 +890,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 view, entityType, otherEntityType);
 
         /// <summary>
+        ///     '{name}' was constructed with {argumentCount} arguments, but the nullability was defined for {argumentNullabilityCount} arguments. When in doubt use 'false' for nullability argument.
+        /// </summary>
+        public static string InconsistentNumberOfArguments(object? name, object? argumentCount, object? argumentNullabilityCount)
+            => string.Format(
+                GetString("InconsistentNumberOfArguments", nameof(name), nameof(argumentCount), nameof(argumentNullabilityCount)),
+                name, argumentCount, argumentNullabilityCount);
+
+        /// <summary>
         ///     Cannot set default value '{value}' of type '{valueType}' on property '{property}' of type '{propertyType}' in entity type '{entityType}'.
         /// </summary>
         public static string IncorrectDefaultValueType(object? value, object? valueType, object? property, object? propertyType, object? entityType)
@@ -1170,6 +1178,30 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => GetString("JsonNodeMustBeHandledByProviderSpecificVisitor");
 
         /// <summary>
+        ///     Using parameter to access the element of a JSON collection '{entityTypeName}' is not supported when using '{asNoTrackingWithIdentityResolution}'. Use constant, or project the entire JSON entity collection instead.
+        /// </summary>
+        public static string JsonProjectingCollectionElementAccessedUsingParmeterNoTrackingWithIdentityResolution(object? entityTypeName, object? asNoTrackingWithIdentityResolution)
+            => string.Format(
+                GetString("JsonProjectingCollectionElementAccessedUsingParmeterNoTrackingWithIdentityResolution", nameof(entityTypeName), nameof(asNoTrackingWithIdentityResolution)),
+                entityTypeName, asNoTrackingWithIdentityResolution);
+
+        /// <summary>
+        ///     When using '{asNoTrackingWithIdentityResolution}' entities mapped to JSON must be projected in a particular order. Project entire collection of entities '{entityTypeName}' before its individual elements.
+        /// </summary>
+        public static string JsonProjectingEntitiesIncorrectOrderNoTrackingWithIdentityResolution(object? entityTypeName, object? asNoTrackingWithIdentityResolution)
+            => string.Format(
+                GetString("JsonProjectingEntitiesIncorrectOrderNoTrackingWithIdentityResolution", nameof(entityTypeName), nameof(asNoTrackingWithIdentityResolution)),
+                entityTypeName, asNoTrackingWithIdentityResolution);
+
+        /// <summary>
+        ///     Projecting queryable operations on JSON collection is not supported for '{asNoTrackingWithIdentityResolution}'.
+        /// </summary>
+        public static string JsonProjectingQueryableOperationNoTrackingWithIdentityResolution(object? asNoTrackingWithIdentityResolution)
+            => string.Format(
+                GetString("JsonProjectingQueryableOperationNoTrackingWithIdentityResolution", nameof(asNoTrackingWithIdentityResolution)),
+                asNoTrackingWithIdentityResolution);
+
+        /// <summary>
         ///     The JSON property name should only be configured on nested owned navigations.
         /// </summary>
         public static string JsonPropertyNameShouldBeConfiguredOnNestedNavigation
@@ -1188,6 +1220,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("JsonRequiredEntityWithNullJson", nameof(entity)),
                 entity);
+
+        /// <summary>
+        ///     Type mapping type '{typeMapping}', which is being used on property '{property}' on entity type '{entityType}' in a JSON document, has not defined a JsonValueReaderWriter.
+        /// </summary>
+        public static string JsonValueReadWriterMissingOnTypeMapping(object? typeMapping, object? property, object? entityType)
+            => string.Format(
+                GetString("JsonValueReadWriterMissingOnTypeMapping", nameof(typeMapping), nameof(property), nameof(entityType)),
+                typeMapping, property, entityType);
 
         /// <summary>
         ///     The mapping strategy '{mappingStrategy}' used for '{entityType}' is not supported for keyless entity types.  See https://go.microsoft.com/fwlink/?linkid=2130430 for more information.

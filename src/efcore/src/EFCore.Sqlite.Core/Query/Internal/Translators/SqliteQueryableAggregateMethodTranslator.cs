@@ -4,7 +4,8 @@
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Sqlite.Internal;
 
-namespace Microsoft.EntityFrameworkCore.Sqlite.Query.Internal.Translators;
+// ReSharper disable once CheckNamespace
+namespace Microsoft.EntityFrameworkCore.Sqlite.Query.Internal;
 
 /// <summary>
 ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -53,9 +54,14 @@ public class SqliteQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                     var averageArgumentType = GetProviderType(averageSqlExpression);
                     if (averageArgumentType == typeof(decimal))
                     {
-                        throw new NotSupportedException(
-                            SqliteStrings.AggregateOperationNotSupported(
-                                nameof(Queryable.Average), averageArgumentType.ShortDisplayName()));
+                        averageSqlExpression = CombineTerms(source, averageSqlExpression);
+                        return _sqlExpressionFactory.Function(
+                            "ef_avg",
+                            [averageSqlExpression],
+                            nullable: true,
+                            argumentsPropagateNullability: [false],
+                            averageSqlExpression.Type,
+                            averageSqlExpression.TypeMapping);
                     }
 
                     break;
@@ -99,8 +105,14 @@ public class SqliteQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                     var sumArgumentType = GetProviderType(sumSqlExpression);
                     if (sumArgumentType == typeof(decimal))
                     {
-                        throw new NotSupportedException(
-                            SqliteStrings.AggregateOperationNotSupported(nameof(Queryable.Sum), sumArgumentType.ShortDisplayName()));
+                        sumSqlExpression = CombineTerms(source, sumSqlExpression);
+                        return _sqlExpressionFactory.Function(
+                            "ef_sum",
+                            [sumSqlExpression],
+                            nullable: true,
+                            argumentsPropagateNullability: [false],
+                            sumSqlExpression.Type,
+                            sumSqlExpression.TypeMapping);
                     }
 
                     break;
@@ -114,4 +126,21 @@ public class SqliteQueryableAggregateMethodTranslator : IAggregateMethodCallTran
         => expression.TypeMapping?.Converter?.ProviderClrType
             ?? expression.TypeMapping?.ClrType
             ?? expression.Type;
+
+    private SqlExpression CombineTerms(EnumerableExpression enumerableExpression, SqlExpression sqlExpression)
+    {
+        if (enumerableExpression.Predicate != null)
+        {
+            sqlExpression = _sqlExpressionFactory.Case(
+                new List<CaseWhenClause> { new(enumerableExpression.Predicate, sqlExpression) },
+                elseResult: null);
+        }
+
+        if (enumerableExpression.IsDistinct)
+        {
+            sqlExpression = new DistinctExpression(sqlExpression);
+        }
+
+        return sqlExpression;
+    }
 }

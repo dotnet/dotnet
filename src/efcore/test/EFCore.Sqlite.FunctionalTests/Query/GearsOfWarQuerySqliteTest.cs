@@ -504,7 +504,7 @@ WHERE "s"."Banner5" = @__byteArrayParam_0
 
         AssertSql(
             """
-SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
+SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Difficulty", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
 FROM "Missions" AS "m"
 WHERE CAST(strftime('%Y', "m"."Date") AS INTEGER) = 1990
 """);
@@ -516,7 +516,7 @@ WHERE CAST(strftime('%Y', "m"."Date") AS INTEGER) = 1990
 
         AssertSql(
             """
-SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
+SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Difficulty", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
 FROM "Missions" AS "m"
 WHERE CAST(strftime('%m', "m"."Date") AS INTEGER) = 11
 """);
@@ -528,7 +528,7 @@ WHERE CAST(strftime('%m', "m"."Date") AS INTEGER) = 11
 
         AssertSql(
             """
-SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
+SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Difficulty", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
 FROM "Missions" AS "m"
 WHERE CAST(strftime('%d', "m"."Date") AS INTEGER) = 10
 """);
@@ -540,7 +540,7 @@ WHERE CAST(strftime('%d', "m"."Date") AS INTEGER) = 10
 
         AssertSql(
             """
-SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
+SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Difficulty", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
 FROM "Missions" AS "m"
 WHERE CAST(strftime('%j', "m"."Date") AS INTEGER) = 314
 """);
@@ -552,7 +552,7 @@ WHERE CAST(strftime('%j', "m"."Date") AS INTEGER) = 314
 
         AssertSql(
             """
-SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
+SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Difficulty", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
 FROM "Missions" AS "m"
 WHERE CAST(strftime('%w', "m"."Date") AS INTEGER) = 6
 """);
@@ -564,7 +564,7 @@ WHERE CAST(strftime('%w', "m"."Date") AS INTEGER) = 6
 
         AssertSql(
             """
-SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
+SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Difficulty", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
 FROM "Missions" AS "m"
 WHERE date("m"."Date", CAST(3 AS TEXT) || ' years') = '1993-11-10'
 """);
@@ -580,7 +580,7 @@ WHERE date("m"."Date", CAST(3 AS TEXT) || ' years') = '1993-11-10'
 
         AssertSql(
             """
-SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
+SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Difficulty", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
 FROM "Missions" AS "m"
 WHERE CAST(strftime('%Y', "m"."Date", CAST(3 AS TEXT) || ' years') AS INTEGER) = 1993
 """);
@@ -596,7 +596,7 @@ WHERE CAST(strftime('%Y', "m"."Date", CAST(3 AS TEXT) || ' years') AS INTEGER) =
 
         AssertSql(
             """
-SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
+SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Difficulty", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
 FROM "Missions" AS "m"
 WHERE date("m"."Date", CAST(3 AS TEXT) || ' years', CAST(3 AS TEXT) || ' months') = '1994-02-10'
 """);
@@ -608,7 +608,7 @@ WHERE date("m"."Date", CAST(3 AS TEXT) || ' years', CAST(3 AS TEXT) || ' months'
 
         AssertSql(
             """
-SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
+SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Difficulty", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
 FROM "Missions" AS "m"
 WHERE date("m"."Date", CAST(3 AS TEXT) || ' months') = '1991-02-10'
 """);
@@ -620,7 +620,7 @@ WHERE date("m"."Date", CAST(3 AS TEXT) || ' months') = '1991-02-10'
 
         AssertSql(
             """
-SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
+SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Difficulty", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
 FROM "Missions" AS "m"
 WHERE date("m"."Date", CAST(3 AS TEXT) || ' days') = '1990-11-13'
 """);
@@ -1066,10 +1066,7 @@ FROM "Gears" AS "g"
 WHERE CASE
     WHEN "g"."LeaderNickname" IS NOT NULL THEN length("g"."LeaderNickname")
     ELSE NULL
-END = 5 AND CASE
-    WHEN "g"."LeaderNickname" IS NOT NULL THEN length("g"."LeaderNickname")
-    ELSE NULL
-END IS NOT NULL
+END = 5
 """);
     }
 
@@ -1181,7 +1178,7 @@ SELECT COALESCE((
     FROM (
         SELECT DISTINCT "w"."Id", "w"."AmmunitionType", "w"."IsAutomatic", "w"."Name", "w"."OwnerFullName", "w"."SynergyWithId"
         FROM "Weapons" AS "w"
-        WHERE "g"."FullName" = "w"."OwnerFullName" AND "w"."Name" IS NOT NULL AND instr("w"."Name", 'Lancer') > 0
+        WHERE "g"."FullName" = "w"."OwnerFullName" AND instr("w"."Name", 'Lancer') > 0
     ) AS "w0"
     LIMIT 1), 0)
 FROM "Gears" AS "g"
@@ -1566,7 +1563,7 @@ FROM "Gears" AS "g"
 WHERE CASE
     WHEN "g"."LeaderNickname" IS NOT NULL THEN "g"."LeaderNickname" LIKE '%us'
     ELSE NULL
-END = 1
+END
 """);
     }
 
@@ -2345,7 +2342,7 @@ FROM "Gears" AS "g"
 WHERE "g"."HasSoulPatch" AND COALESCE((
     SELECT DISTINCT "w"."IsAutomatic"
     FROM "Weapons" AS "w"
-    WHERE "g"."FullName" = "w"."OwnerFullName" AND "w"."Name" IS NOT NULL AND instr("w"."Name", 'Lancer') > 0
+    WHERE "g"."FullName" = "w"."OwnerFullName" AND instr("w"."Name", 'Lancer') > 0
     LIMIT 1), 0)
 ORDER BY "g"."Nickname"
 """);
@@ -2361,18 +2358,6 @@ SELECT "w"."Name" AS "Name1", "w1"."Name" AS "Name2"
 FROM "Weapons" AS "w"
 LEFT JOIN "Weapons" AS "w0" ON "w"."SynergyWithId" = "w0"."Id"
 INNER JOIN "Weapons" AS "w1" ON "w0"."Id" = "w1"."Id"
-""");
-    }
-
-    public override async Task Enum_ToString_is_client_eval(bool async)
-    {
-        await base.Enum_ToString_is_client_eval(async);
-
-        AssertSql(
-            """
-SELECT "g"."Rank"
-FROM "Gears" AS "g"
-ORDER BY "g"."SquadId", "g"."Nickname"
 """);
     }
 
@@ -3052,7 +3037,7 @@ WHERE "g"."HasSoulPatch" AND (
     FROM (
         SELECT DISTINCT "w"."Id", "w"."AmmunitionType", "w"."IsAutomatic", "w"."Name", "w"."OwnerFullName", "w"."SynergyWithId"
         FROM "Weapons" AS "w"
-        WHERE "g"."FullName" = "w"."OwnerFullName" AND "w"."Name" IS NOT NULL AND instr("w"."Name", 'Lancer') > 0
+        WHERE "g"."FullName" = "w"."OwnerFullName" AND instr("w"."Name", 'Lancer') > 0
     ) AS "w0"
     LIMIT 1)
 ORDER BY "g"."Nickname"
@@ -3190,8 +3175,8 @@ FROM "Weapons" AS "w"
         AssertSql(
             """
 SELECT CASE
-    WHEN NOT ("w"."IsAutomatic") THEN 'False'
-    ELSE 'True'
+    WHEN "w"."IsAutomatic" THEN 'True'
+    ELSE 'False'
 END
 FROM "Weapons" AS "w"
 """);
@@ -3255,7 +3240,7 @@ WHERE "g"."HasSoulPatch" AND COALESCE((
     FROM (
         SELECT DISTINCT "w"."Id", "w"."AmmunitionType", "w"."IsAutomatic", "w"."Name", "w"."OwnerFullName", "w"."SynergyWithId"
         FROM "Weapons" AS "w"
-        WHERE "g"."FullName" = "w"."OwnerFullName" AND "w"."Name" IS NOT NULL AND instr("w"."Name", 'Lancer') > 0
+        WHERE "g"."FullName" = "w"."OwnerFullName" AND instr("w"."Name", 'Lancer') > 0
     ) AS "w0"
     LIMIT 1), 0)
 ORDER BY "g"."Nickname"
@@ -3370,7 +3355,7 @@ FROM "Gears" AS "g"
 WHERE CASE
     WHEN "g"."LeaderNickname" IS NULL THEN NULL
     ELSE "g"."LeaderNickname" LIKE '%us' AND "g"."LeaderNickname" IS NOT NULL
-END = 1
+END
 """);
     }
 
@@ -3447,6 +3432,71 @@ FROM "Squads" AS "s"
 LEFT JOIN "Gears" AS "g" ON "s"."Id" = "g"."SquadId"
 WHERE "s"."Id" < 20
 ORDER BY "s"."Id", "g"."Nickname"
+""");
+    }
+
+    public override async Task ToString_enum_property_projection(bool async)
+    {
+        await base.ToString_enum_property_projection(async);
+
+        AssertSql(
+"""
+SELECT CASE "g"."Rank"
+    WHEN 0 THEN 'None'
+    WHEN 1 THEN 'Private'
+    WHEN 2 THEN 'Corporal'
+    WHEN 4 THEN 'Sergeant'
+    WHEN 8 THEN 'Lieutenant'
+    WHEN 16 THEN 'Captain'
+    WHEN 32 THEN 'Major'
+    WHEN 64 THEN 'Colonel'
+    WHEN 128 THEN 'General'
+    ELSE COALESCE(CAST("g"."Rank" AS TEXT), '')
+END
+FROM "Gears" AS "g"
+""");
+    }
+
+    public override async Task ToString_nullable_enum_property_projection(bool async)
+    {
+        await base.ToString_nullable_enum_property_projection(async);
+
+        AssertSql(
+"""
+SELECT CASE "w"."AmmunitionType"
+    WHEN 1 THEN 'Cartridge'
+    WHEN 2 THEN 'Shell'
+    ELSE COALESCE(CAST("w"."AmmunitionType" AS TEXT), '')
+END
+FROM "Weapons" AS "w"
+""");
+    }
+
+    public override async Task ToString_enum_contains(bool async)
+    {
+        await base.ToString_enum_contains(async);
+
+        AssertSql(
+"""
+SELECT "m"."CodeName"
+FROM "Missions" AS "m"
+WHERE instr(CAST("m"."Difficulty" AS TEXT), 'Med') > 0
+""");
+    }
+
+    public override async Task ToString_nullable_enum_contains(bool async)
+    {
+        await base.ToString_nullable_enum_contains(async);
+
+        AssertSql(
+"""
+SELECT "w"."Name"
+FROM "Weapons" AS "w"
+WHERE instr(CASE "w"."AmmunitionType"
+    WHEN 1 THEN 'Cartridge'
+    WHEN 2 THEN 'Shell'
+    ELSE COALESCE(CAST("w"."AmmunitionType" AS TEXT), '')
+END, 'Cart') > 0
 """);
     }
 
@@ -3769,8 +3819,9 @@ WHERE "t"."Id" IS NOT NULL AND "t"."Id" IN (
 
         AssertSql(
             """
-SELECT "w"."AmmunitionType" = 1 AND "w"."AmmunitionType" IS NOT NULL AND COALESCE("w"."IsAutomatic", 0)
-FROM "Weapons" AS "w"
+SELECT ("t"."Note" <> 'K.I.A.' OR "t"."Note" IS NULL) AND COALESCE("g"."HasSoulPatch", 0)
+FROM "Tags" AS "t"
+LEFT JOIN "Gears" AS "g" ON "t"."GearNickName" = "g"."Nickname" AND "t"."GearSquadId" = "g"."SquadId"
 """);
     }
 
@@ -3794,7 +3845,7 @@ ORDER BY "w0"."Name" LIKE '%Lancer' AND "w0"."Name" IS NOT NULL
         AssertSql(
             """
 SELECT CASE
-    WHEN "g"."LeaderNickname" IS NOT NULL THEN length("g"."LeaderNickname") <> length("g"."LeaderNickname")
+    WHEN "g"."LeaderNickname" IS NOT NULL THEN 0
     ELSE NULL
 END
 FROM "Gears" AS "g"
@@ -3909,7 +3960,7 @@ INNER JOIN "Cities" AS "c" ON "g0"."CityOfBirthName" = "c"."Name"
             """
 SELECT "c"."Name", "c"."Location", "c"."Nation"
 FROM "Cities" AS "c"
-WHERE "c"."Location" IS NOT NULL AND instr("c"."Location", 'Jacinto') > 0
+WHERE instr("c"."Location", 'Jacinto') > 0
 """);
     }
 
@@ -4632,9 +4683,10 @@ ORDER BY "g"."Nickname", "g"."SquadId", "g0"."Nickname", "g0"."SquadId", "w"."Id
 
         AssertSql(
             """
-SELECT "w"."Id", "w"."AmmunitionType", "w"."IsAutomatic", "w"."Name", "w"."OwnerFullName", "w"."SynergyWithId"
-FROM "Weapons" AS "w"
-WHERE "w"."AmmunitionType" = 1 AND COALESCE("w"."IsAutomatic", 0)
+SELECT "t"."Id", "t"."GearNickName", "t"."GearSquadId", "t"."IssueDate", "t"."Note"
+FROM "Tags" AS "t"
+LEFT JOIN "Gears" AS "g" ON "t"."GearNickName" = "g"."Nickname" AND "t"."GearSquadId" = "g"."SquadId"
+WHERE ("t"."Note" <> 'K.I.A.' OR "t"."Note" IS NULL) AND COALESCE("g"."HasSoulPatch", 0)
 """);
     }
 
@@ -4824,7 +4876,7 @@ END IS NOT NULL
 SELECT COALESCE((
     SELECT DISTINCT "w"."IsAutomatic"
     FROM "Weapons" AS "w"
-    WHERE "g"."FullName" = "w"."OwnerFullName" AND "w"."Name" IS NOT NULL AND instr("w"."Name", 'Lancer') > 0
+    WHERE "g"."FullName" = "w"."OwnerFullName" AND instr("w"."Name", 'Lancer') > 0
     LIMIT 1), 0)
 FROM "Gears" AS "g"
 WHERE "g"."HasSoulPatch"
@@ -5050,7 +5102,10 @@ WHERE "g"."Rank" & @__parameter_0 = @__parameter_0
 
         AssertSql(
             """
-SELECT "g"."HasSoulPatch" AND "t"."Note" IS NOT NULL AND instr("t"."Note", 'Cole') > 0
+SELECT "g"."HasSoulPatch" AND CASE
+    WHEN instr("t"."Note", 'Cole') > 0 THEN 1
+    ELSE 0
+END
 FROM "Tags" AS "t"
 LEFT JOIN "Gears" AS "g" ON "t"."GearNickName" = "g"."Nickname" AND "t"."GearSquadId" = "g"."SquadId"
 """);
@@ -5994,9 +6049,9 @@ WHERE "g"."HasSoulPatch" AND (
 
         AssertSql(
             """
-SELECT CASE
-    WHEN "f"."Eradicated" = 0 THEN 'False'
-    WHEN "f"."Eradicated" = 1 THEN 'True'
+SELECT CASE "f"."Eradicated"
+    WHEN 0 THEN 'False'
+    WHEN 1 THEN 'True'
     ELSE NULL
 END
 FROM "Factions" AS "f"
@@ -6141,9 +6196,10 @@ LEFT JOIN (
 
         AssertSql(
             """
-SELECT "w"."Id", "w"."AmmunitionType", "w"."IsAutomatic", "w"."Name", "w"."OwnerFullName", "w"."SynergyWithId"
-FROM "Weapons" AS "w"
-WHERE COALESCE("w"."IsAutomatic", 0)
+SELECT "t"."Id", "t"."GearNickName", "t"."GearSquadId", "t"."IssueDate", "t"."Note"
+FROM "Tags" AS "t"
+LEFT JOIN "Gears" AS "g" ON "t"."GearNickName" = "g"."Nickname" AND "t"."GearSquadId" = "g"."SquadId"
+WHERE COALESCE("g"."HasSoulPatch", 0)
 """);
     }
 
@@ -6574,7 +6630,7 @@ ORDER BY "g0"."Rank"
 
         AssertSql(
             """
-SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
+SELECT "m"."Id", "m"."CodeName", "m"."Date", "m"."Difficulty", "m"."Duration", "m"."Rating", "m"."Time", "m"."Timeline"
 FROM "Missions" AS "m"
 WHERE "m"."Rating" IS NULL
 """);
@@ -7238,7 +7294,7 @@ WHERE "g"."Discriminator" = 'Officer'
 SELECT "t"."Id", "t"."GearNickName", "t"."GearSquadId", "t"."IssueDate", "t"."Note"
 FROM "Tags" AS "t"
 LEFT JOIN "Gears" AS "g" ON "t"."GearNickName" = "g"."Nickname" AND "t"."GearSquadId" = "g"."SquadId"
-WHERE "g"."HasSoulPatch" OR ("t"."Note" IS NOT NULL AND instr("t"."Note", 'Cole') > 0)
+WHERE "g"."HasSoulPatch" OR instr("t"."Note", 'Cole') > 0
 """);
     }
 
@@ -7334,7 +7390,7 @@ SELECT (
     FROM (
         SELECT DISTINCT "w"."Id", "w"."AmmunitionType", "w"."IsAutomatic", "w"."Name", "w"."OwnerFullName", "w"."SynergyWithId"
         FROM "Weapons" AS "w"
-        WHERE "g"."FullName" = "w"."OwnerFullName" AND "w"."Name" IS NOT NULL AND instr("w"."Name", 'Lancer') > 0
+        WHERE "g"."FullName" = "w"."OwnerFullName" AND instr("w"."Name", 'Lancer') > 0
     ) AS "w0"
     LIMIT 1)
 FROM "Gears" AS "g"
@@ -7486,10 +7542,7 @@ FROM "Gears" AS "g"
 WHERE CASE
     WHEN "g"."LeaderNickname" IS NOT NULL THEN length("g"."LeaderNickname")
     ELSE NULL
-END = 5 AND CASE
-    WHEN "g"."LeaderNickname" IS NOT NULL THEN length("g"."LeaderNickname")
-    ELSE NULL
-END IS NOT NULL
+END = 5
 """);
     }
 
@@ -8275,10 +8328,7 @@ FROM "Gears" AS "g"
 WHERE CASE
     WHEN "g"."LeaderNickname" IS NULL THEN NULL
     ELSE length("g"."LeaderNickname")
-END = 5 AND CASE
-    WHEN "g"."LeaderNickname" IS NULL THEN NULL
-    ELSE length("g"."LeaderNickname")
-END IS NOT NULL
+END = 5
 """);
     }
 
@@ -8481,7 +8531,7 @@ LEFT JOIN (
             """
 SELECT "g"."Nickname", "g"."SquadId", "g"."AssignedCityName", "g"."CityOfBirthName", "g"."Discriminator", "g"."FullName", "g"."HasSoulPatch", "g"."LeaderNickname", "g"."LeaderSquadId", "g"."Rank"
 FROM "Gears" AS "g"
-WHERE "g"."LeaderNickname" = 'Marcus' AND "g"."LeaderNickname" IS NOT NULL
+WHERE "g"."LeaderNickname" = 'Marcus'
 """);
     }
 
@@ -8704,7 +8754,7 @@ LEFT JOIN "Weapons" AS "w0" ON "g"."FullName" = "w0"."OwnerFullName"
 ORDER BY (
     SELECT "w"."Name"
     FROM "Weapons" AS "w"
-    WHERE "g"."FullName" = "w"."OwnerFullName" AND "w"."Name" IS NOT NULL AND instr("w"."Name", 'Gnasher') > 0
+    WHERE "g"."FullName" = "w"."OwnerFullName" AND instr("w"."Name", 'Gnasher') > 0
     LIMIT 1), "g"."Nickname", "g"."SquadId"
 """);
     }

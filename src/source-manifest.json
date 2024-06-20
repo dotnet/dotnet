@@ -13,10 +13,10 @@
       "commitSha": "9faf59f870abdeb427c51c1380fce84d8163f2f0"
     },
     {
-      "packageVersion": "9.0.0-preview.6.24309.2",
+      "packageVersion": "9.0.0-preview.6.24320.2",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "7f2dfb0020ff29ab57df31e910f2b2d5ef48bf82"
+      "commitSha": "cd92ed12476de4e03ae5293d81362f2eb07b4f80"
     },
     {
       "packageVersion": "0.11.4-alpha.24230.1",
@@ -43,10 +43,10 @@
       "commitSha": "33d8bf23a6566cd3fb9055acfc9f1141391d5421"
     },
     {
-      "packageVersion": "9.0.0-preview.5.24271.1",
+      "packageVersion": "9.0.0-preview.6.24318.1",
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "e969995b2701f228815259941467104b6ee8dbee"
+      "commitSha": "9a80b6b085fbe20cdb1c60b549947ecabefe9172"
     },
     {
       "packageVersion": "9.0.0-preview.6.24277.2",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "d0ccce00860ffdee00d7328705e841e4f785a999"
+      "commitSha": "19ceeb7d5fd7756ffe707d8cef5f9a7d3449aa65"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24303.2",
@@ -195,7 +195,7 @@
     {
       "path": "aspnetcore/src/submodules/Node-Externals",
       "remoteUri": "https://github.com/dotnet/Node-Externals",
-      "commitSha": "fb911deddbaf7367146718374a403d393571f18a"
+      "commitSha": "a1b1b1bb01630a6109adf5767d9a2770c6dc5639"
     },
     {
       "path": "nuget-client/submodules/NuGet.Build.Localization",

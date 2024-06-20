@@ -3,6 +3,7 @@
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
 public partial class OpenApiComponentServiceTests : OpenApiDocumentServiceTestBase
@@ -91,6 +92,51 @@ public partial class OpenApiComponentServiceTests : OpenApiDocumentServiceTestBa
     }
 
     [Fact]
+    public async Task GetOpenApiResponse_GeneratesSchemaForPoco_WithValidationAttributes()
+    {
+        // Arrange
+        var builder = CreateBuilder();
+
+        // Act
+        builder.MapGet("/", () => new ProjectBoard { Id = 2, Name = "Test", IsPrivate = false });
+
+        // Assert
+        await VerifyOpenApiDocument(builder, document =>
+        {
+            var operation = document.Paths["/"].Operations[OperationType.Get];
+            var response = operation.Responses["200"];
+
+            Assert.NotNull(response);
+            var content = Assert.Single(response.Content);
+            Assert.Equal("application/json", content.Key);
+            Assert.NotNull(content.Value.Schema);
+            Assert.Equal("object", content.Value.Schema.Type);
+            Assert.Collection(content.Value.Schema.Properties,
+                property =>
+                {
+                    Assert.Equal("id", property.Key);
+                    Assert.Equal("integer", property.Value.Type);
+                    Assert.Equal(1, property.Value.Minimum);
+                    Assert.Equal(100, property.Value.Maximum);
+                },
+                property =>
+                {
+                    Assert.Equal("name", property.Key);
+                    Assert.Equal("string", property.Value.Type);
+                    Assert.Equal(5, property.Value.MinLength);
+                },
+                property =>
+                {
+                    Assert.Equal("isPrivate", property.Key);
+                    Assert.Equal("boolean", property.Value.Type);
+                    var defaultValue = Assert.IsAssignableFrom<OpenApiBoolean>(property.Value.Default);
+                    Assert.True(defaultValue.Value);
+                });
+
+        });
+    }
+
+    [Fact]
     public async Task GetOpenApiResponse_HandlesNullablePocoResponse()
     {
         // Arrange
@@ -137,6 +183,28 @@ public partial class OpenApiComponentServiceTests : OpenApiDocumentServiceTestBa
     }
 
     [Fact]
+    public async Task GetOpenApiResponse_RespectsRequiredAttributeOnBodyProperties()
+    {
+        // Arrange
+        var builder = CreateBuilder();
+
+        // Act
+        builder.MapPost("/required-properties", () => new RequiredTodo { Title = "Test Title", Completed = true });
+
+        // Assert
+        await VerifyOpenApiDocument(builder, document =>
+        {
+            var operation = document.Paths["/required-properties"].Operations[OperationType.Post];
+            var response = operation.Responses["200"];
+            var content = Assert.Single(response.Content);
+            var schema = content.Value.Schema;
+            Assert.Collection(schema.Required,
+                property => Assert.Equal("title", property),
+                property => Assert.Equal("completed", property));
+        });
+    }
+
+    [Fact]
     public async Task GetOpenApiResponse_HandlesInheritedTypeResponse()
     {
         // Arrange
@@ -157,8 +225,11 @@ public partial class OpenApiComponentServiceTests : OpenApiDocumentServiceTestBa
                 property =>
                 {
                     Assert.Equal("dueDate", property.Key);
-                    Assert.Equal("string", property.Value.Type);
-                    Assert.Equal("date-time", property.Value.Format);
+                    // DateTime schema appears twice in the document so we expect
+                    // this to map to a reference ID.
+                    var dateTimeSchema = property.Value.GetEffective(document);
+                    Assert.Equal("string", dateTimeSchema.Type);
+                    Assert.Equal("date-time", dateTimeSchema.Format);
                 },
                 property =>
                 {
@@ -179,8 +250,11 @@ public partial class OpenApiComponentServiceTests : OpenApiDocumentServiceTestBa
                 property =>
                 {
                     Assert.Equal("createdAt", property.Key);
-                    Assert.Equal("string", property.Value.Type);
-                    Assert.Equal("date-time", property.Value.Format);
+                    // DateTime schema appears twice in the document so we expect
+                    // this to map to a reference ID.
+                    var dateTimeSchema = property.Value.GetEffective(document);
+                    Assert.Equal("string", dateTimeSchema.Type);
+                    Assert.Equal("date-time", dateTimeSchema.Format);
                 });
         });
     }
@@ -417,14 +491,14 @@ public partial class OpenApiComponentServiceTests : OpenApiDocumentServiceTestBa
                 property =>
                 {
                     Assert.Equal("pageIndex", property.Key);
-                    Assert.Equal("integer", property.Value.Type);
-                    Assert.Equal("int32", property.Value.Format);
+                    Assert.Equal("integer", property.Value.GetEffective(document).Type);
+                    Assert.Equal("int32", property.Value.GetEffective(document).Format);
                 },
                 property =>
                 {
                     Assert.Equal("pageSize", property.Key);
-                    Assert.Equal("integer", property.Value.Type);
-                    Assert.Equal("int32", property.Value.Format);
+                    Assert.Equal("integer", property.Value.GetEffective(document).Type);
+                    Assert.Equal("int32", property.Value.GetEffective(document).Format);
                 },
                 property =>
                 {
@@ -435,8 +509,8 @@ public partial class OpenApiComponentServiceTests : OpenApiDocumentServiceTestBa
                 property =>
                 {
                     Assert.Equal("totalPages", property.Key);
-                    Assert.Equal("integer", property.Value.Type);
-                    Assert.Equal("int32", property.Value.Format);
+                    Assert.Equal("integer", property.Value.GetEffective(document).Type);
+                    Assert.Equal("int32", property.Value.GetEffective(document).Format);
                 },
                 property =>
                 {
@@ -448,8 +522,8 @@ public partial class OpenApiComponentServiceTests : OpenApiDocumentServiceTestBa
                         property =>
                         {
                             Assert.Equal("id", property.Key);
-                            Assert.Equal("integer", property.Value.Type);
-                            Assert.Equal("int32", property.Value.Format);
+                            Assert.Equal("integer", property.Value.GetEffective(document).Type);
+                            Assert.Equal("int32", property.Value.GetEffective(document).Format);
                         },
                         property =>
                         {
@@ -491,16 +565,19 @@ public partial class OpenApiComponentServiceTests : OpenApiDocumentServiceTestBa
             var response = responses.Value;
             Assert.True(response.Content.TryGetValue("application/problem+json", out var mediaType));
             Assert.Equal("object", mediaType.Schema.Type);
+            // `string` schemas appear multiple times in this document so they should
+            // all resolve to reference IDs, hence the use of `GetEffective` to resolve the
+            // final schema.
             Assert.Collection(mediaType.Schema.Properties,
                 property =>
                 {
                     Assert.Equal("type", property.Key);
-                    Assert.Equal("string", property.Value.Type);
+                    Assert.Equal("string", property.Value.GetEffective(document).Type);
                 },
                 property =>
                 {
                     Assert.Equal("title", property.Key);
-                    Assert.Equal("string", property.Value.Type);
+                    Assert.Equal("string", property.Value.GetEffective(document).Type);
                 },
                 property =>
                 {
@@ -511,12 +588,12 @@ public partial class OpenApiComponentServiceTests : OpenApiDocumentServiceTestBa
                 property =>
                 {
                     Assert.Equal("detail", property.Key);
-                    Assert.Equal("string", property.Value.Type);
+                    Assert.Equal("string", property.Value.GetEffective(document).Type);
                 },
                 property =>
                 {
                     Assert.Equal("instance", property.Key);
-                    Assert.Equal("string", property.Value.Type);
+                    Assert.Equal("string", property.Value.GetEffective(document).Type);
                 },
                 property =>
                 {
@@ -525,7 +602,7 @@ public partial class OpenApiComponentServiceTests : OpenApiDocumentServiceTestBa
                     // The errors object is a dictionary of string[]. Use `additionalProperties`
                     // to indicate that the payload can be arbitrary keys with string[] values.
                     Assert.Equal("array", property.Value.AdditionalProperties.Type);
-                    Assert.Equal("string", property.Value.AdditionalProperties.Items.Type);
+                    Assert.Equal("string", property.Value.AdditionalProperties.Items.GetEffective(document).Type);
                 });
         });
     }
