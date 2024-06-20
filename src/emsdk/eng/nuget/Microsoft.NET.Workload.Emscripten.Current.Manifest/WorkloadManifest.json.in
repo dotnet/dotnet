@@ -3,18 +3,18 @@
   "workloads": {
     "microsoft-net-sdk-emscripten": {
       "abstract": true,
-      "description": "Emscripten SDK compiler tooling",
+      "description": "Emscripten SDK compiler tooling for ${NetVersion}.0",
       "packs": [
-        "Microsoft.NET.Runtime.Emscripten.Node",
-        "Microsoft.NET.Runtime.Emscripten.Python",
-        "Microsoft.NET.Runtime.Emscripten.Cache",
-        "Microsoft.NET.Runtime.Emscripten.Sdk"
+        "Microsoft.NET.Runtime.Emscripten.Node.${NetVersion}",
+        "Microsoft.NET.Runtime.Emscripten.Python.${NetVersion}",
+        "Microsoft.NET.Runtime.Emscripten.Cache.${NetVersion}",
+        "Microsoft.NET.Runtime.Emscripten.Sdk.${NetVersion}"
       ],
       "platforms": [ "win-x64", "win-arm64", "linux-x64", "linux-arm64", "linux-musl-x64", "linux-musl-arm64", "osx-x64", "osx-arm64" ]
     }
   },
   "packs": {
-    "Microsoft.NET.Runtime.Emscripten.Node" : {
+    "Microsoft.NET.Runtime.Emscripten.Node.${NetVersion}" : {
       "kind": "Sdk",
       "version": "${PackageVersion}",
       "alias-to": {
@@ -28,7 +28,7 @@
         "osx-arm64": "Microsoft.NET.Runtime.Emscripten.${EmscriptenVersion}.Node.osx-arm64"
       }
     },
-    "Microsoft.NET.Runtime.Emscripten.Python" : {
+    "Microsoft.NET.Runtime.Emscripten.Python.${NetVersion}" : {
       "kind": "Sdk",
       "version": "${PackageVersion}",
       "alias-to": {
@@ -38,7 +38,7 @@
         "osx-arm64": "Microsoft.NET.Runtime.Emscripten.${EmscriptenVersion}.Python.osx-arm64"
       }
     },
-    "Microsoft.NET.Runtime.Emscripten.Cache" : {
+    "Microsoft.NET.Runtime.Emscripten.Cache.${NetVersion}" : {
       "kind": "Sdk",
       "version": "${PackageVersion}",
       "alias-to": {
@@ -52,7 +52,7 @@
         "osx-arm64": "Microsoft.NET.Runtime.Emscripten.${EmscriptenVersion}.Cache.osx-arm64"
       }
     },
-    "Microsoft.NET.Runtime.Emscripten.Sdk" : {
+    "Microsoft.NET.Runtime.Emscripten.Sdk.${NetVersion}" : {
       "kind": "Sdk",
       "version": "${PackageVersion}",
       "alias-to": {
