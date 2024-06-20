@@ -23,6 +23,8 @@
     <FrameworkListFileClass Include="System.Diagnostics.EventLog.dll" Profile="WindowsForms;WPF" />
     <FrameworkListFileClass Include="System.Diagnostics.PerformanceCounter.dll" Profile="WindowsForms;WPF" />
     <FrameworkListFileClass Include="System.DirectoryServices.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.Formats.Nrbf.dll" Profile="WindowsForms;WPF" />
+    <FrameworkListFileClass Include="System.IO.Hashing.dll" Profile="WindowsForms;WPF" />
     <FrameworkListFileClass Include="System.IO.Packaging.dll" Profile="WindowsForms;WPF" />
     <FrameworkListFileClass Include="System.Resources.Extensions.dll" Profile="WindowsForms;WPF" />
     <FrameworkListFileClass Include="System.Security.Cryptography.Pkcs.dll" Profile="WindowsForms;WPF" />
