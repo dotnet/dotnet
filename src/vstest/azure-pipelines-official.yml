@@ -42,6 +42,11 @@ parameters:
   displayName: "Run SDL validation"
   type: boolean
   default: False
+# This option should be used with caution. This is useful for unblocking circular deps issue with testanywhere
+- name: SkipTests
+  displayName: "Skip tests"
+  type: boolean
+  default: False
 
 - name: otherOsPools
   type: object
@@ -50,7 +55,7 @@ parameters:
     image: 1es-ubuntu-2204
     os: linux
   - name: Azure Pipelines
-    image: macOS-11
+    image: macOS-12
     os: macOS
 
 variables:
@@ -167,25 +172,26 @@ extends:
               name: Build
               displayName: Build
 
-            # -ci is allowing to import some environment variables and some required configurations
-            # -nobl avoid overwriting binlog of the main Build
-            - script: Test.cmd
-                -configuration Release
-                -ci
-                -nobl
-                -integrationTest
-                -performanceTest
-              name: Test
-              displayName: Test
+            - ${{ if eq(parameters.SkipTests, False) }}:
+              # -ci is allowing to import some environment variables and some required configurations
+              # -nobl avoid overwriting binlog of the main Build
+              - script: Test.cmd
+                  -configuration Release
+                  -ci
+                  -nobl
+                  -integrationTest
+                  -performanceTest
+                name: Test
+                displayName: Test
 
-            # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
-            # through the console or trx
-            - task: 1ES.PublishBuildArtifacts@1
-              displayName: 'Publish Test Results folders'
-              inputs:
-                PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
-                ArtifactName: TestResults
-              condition: failed()
+              # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
+              # through the console or trx
+              - task: 1ES.PublishBuildArtifacts@1
+                displayName: 'Publish Test Results folders'
+                inputs:
+                  PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
+                  ArtifactName: TestResults
+                condition: failed()
 
             - task: 1ES.PublishBuildArtifacts@1
               displayName: 'Publish VSSetup'
@@ -223,22 +229,23 @@ extends:
                   artifactName: PackageArtifacts
                   targetPath: '$(Build.SourcesDirectory)/artifacts/packages/Release/Shipping'
 
-              - script: ./test.sh
-                  --configuration Release
-                  --ci
-                  --integrationTest
-                  --performanceTest
-                name: Test
-                displayName: Test
+              - ${{ if eq(parameters.SkipTests, False) }}:
+                - script: ./test.sh
+                    --configuration Release
+                    --ci
+                    --integrationTest
+                    --performanceTest
+                  name: Test
+                  displayName: Test
 
-              # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
-              # through the console or trx
-              - task: 1ES.PublishBuildArtifacts@1
-                displayName: 'Publish Test Results folders'
-                inputs:
-                  PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
-                  ArtifactName: TestResults
-                condition: failed()
+                # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
+                # through the console or trx
+                - task: 1ES.PublishBuildArtifacts@1
+                  displayName: 'Publish Test Results folders'
+                  inputs:
+                    PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
+                    ArtifactName: TestResults
+                  condition: failed()
 
           - job: Publish
             dependsOn: 

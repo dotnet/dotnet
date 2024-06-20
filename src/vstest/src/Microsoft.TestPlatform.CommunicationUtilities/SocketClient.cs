@@ -70,7 +70,15 @@ public class SocketClient : ICommunicationEndPoint
         if (!_stopped)
         {
             EqtTrace.Info("SocketClient: Stop: Cancellation requested. Stopping message loop.");
-            _cancellation.Cancel();
+
+            try
+            {
+                _cancellation.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+                // This is race condition with stop on error.
+            }
         }
     }
 

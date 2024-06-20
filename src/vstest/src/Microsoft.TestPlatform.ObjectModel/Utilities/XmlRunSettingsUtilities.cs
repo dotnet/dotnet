@@ -233,7 +233,7 @@ public static class XmlRunSettingsUtilities
         try
         {
             using var stringReader = new StringReader(runSettingsXml);
-            var reader = XmlReader.Create(stringReader, ReaderSettings);
+            using var reader = XmlReader.Create(stringReader, ReaderSettings);
 
             // read to the fist child
             XmlReaderUtilities.ReadToRootNode(reader);
@@ -277,7 +277,7 @@ public static class XmlRunSettingsUtilities
 
         runSettingsXml = runSettingsXml.Trim();
         using StringReader stringReader1 = new(runSettingsXml);
-        XmlReader reader = XmlReader.Create(stringReader1, ReaderSettings);
+        using XmlReader reader = XmlReader.Create(stringReader1, ReaderSettings);
 
         // read to the fist child
         XmlReaderUtilities.ReadToRootNode(reader);
@@ -357,7 +357,7 @@ public static class XmlRunSettingsUtilities
         try
         {
             using var stringReader = new StringReader(settingsXml);
-            XmlReader reader = XmlReader.Create(stringReader, ReaderSettings);
+            using XmlReader reader = XmlReader.Create(stringReader, ReaderSettings);
 
             // read to the fist child
             XmlReaderUtilities.ReadToRootNode(reader);

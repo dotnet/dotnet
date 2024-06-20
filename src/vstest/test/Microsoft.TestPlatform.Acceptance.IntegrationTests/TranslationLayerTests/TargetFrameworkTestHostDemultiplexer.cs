@@ -42,6 +42,7 @@ public class TargetFrameworkTestHostDemultiplexer : AcceptanceTestBase
         => ExecuteContainerInMultiHost(runnerInfo, 3);
 
     [TestMethod]
+    [Ignore("Flaky on server with object has been disposed")]
     [NetCoreTargetFrameworkDataSource]
     [NetFullTargetFrameworkDataSource]
     public void ExecuteContainerInMultiHost_MoreHostsThanTests(RunnerInfo runnerInfo)

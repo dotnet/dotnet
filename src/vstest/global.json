@@ -1,6 +1,6 @@
 {
   "sdk": {
-    "version": "9.0.100-preview.3.24204.13",
+    "version": "9.0.100-preview.4.24267.66",
     "rollForward": "minor",
     "allowPrerelease": false,
     "architecture": "x64"
@@ -29,9 +29,9 @@
     },
     "xcopy-msbuild": "17.8.5",
     "vswhere": "2.2.7",
-    "dotnet": "9.0.100-preview.3.24204.13"
+    "dotnet": "9.0.100-preview.4.24267.66"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "9.0.0-beta.24266.1"
+    "Microsoft.DotNet.Arcade.Sdk": "9.0.0-beta.24306.4"
   }
 }
