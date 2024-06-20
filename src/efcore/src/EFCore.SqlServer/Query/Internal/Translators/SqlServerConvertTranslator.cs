@@ -3,7 +3,8 @@
 
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
-namespace Microsoft.EntityFrameworkCore.SqlServer.Query.Internal.Translators;
+// ReSharper disable once CheckNamespace
+namespace Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 
 /// <summary>
 ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -36,7 +37,8 @@ public class SqlServerConvertTranslator : IMethodCallTranslator
         typeof(int),
         typeof(long),
         typeof(short),
-        typeof(string)
+        typeof(string),
+        typeof(object)
     ];
 
     private static readonly MethodInfo[] SupportedMethods

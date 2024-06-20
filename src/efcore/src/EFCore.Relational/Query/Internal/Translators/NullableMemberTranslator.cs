@@ -3,7 +3,8 @@
 
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
-namespace Microsoft.EntityFrameworkCore.Query.Internal.Translators;
+// ReSharper disable once CheckNamespace
+namespace Microsoft.EntityFrameworkCore.Query.Internal;
 
 /// <summary>
 ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -11,21 +12,8 @@ namespace Microsoft.EntityFrameworkCore.Query.Internal.Translators;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public class NullableMemberTranslator : IMemberTranslator
+public class NullableMemberTranslator(ISqlExpressionFactory sqlExpressionFactory) : IMemberTranslator
 {
-    private readonly ISqlExpressionFactory _sqlExpressionFactory;
-
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public NullableMemberTranslator(ISqlExpressionFactory sqlExpressionFactory)
-    {
-        _sqlExpressionFactory = sqlExpressionFactory;
-    }
-
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
     ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
@@ -41,14 +29,12 @@ public class NullableMemberTranslator : IMemberTranslator
         if (member.DeclaringType?.IsNullableValueType() == true
             && instance != null)
         {
-            switch (member.Name)
+            return member.Name switch
             {
-                case nameof(Nullable<int>.Value):
-                    return instance;
-
-                case nameof(Nullable<int>.HasValue):
-                    return _sqlExpressionFactory.IsNotNull(instance);
-            }
+                nameof(Nullable<int>.Value) => instance,
+                nameof(Nullable<int>.HasValue) => sqlExpressionFactory.IsNotNull(instance),
+                _ => null
+            };
         }
 
         return null;

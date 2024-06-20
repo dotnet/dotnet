@@ -52,6 +52,12 @@ public abstract class QueryContext : IParameterValues
     protected virtual QueryContextDependencies Dependencies { get; }
 
     /// <summary>
+    ///    The <see cref="EntityMaterializerSource"/>, which can be used to create stand-alone entity instances.
+    /// </summary>
+    public virtual IEntityMaterializerSource EntityMaterializerSource
+        => Dependencies.EntityMaterializerSource;
+
+    /// <summary>
     ///     Sets the navigation for given entity as loaded.
     /// </summary>
     /// <param name="entity">The entity instance.</param>
@@ -126,10 +132,10 @@ public abstract class QueryContext : IParameterValues
     /// </summary>
     [EntityFrameworkInternal]
     public virtual InternalEntityEntry? TryGetEntry(
-            IKey key,
-            object[] keyValues,
-            bool throwOnNullKey,
-            out bool hasNullKey)
+        IKey key,
+        object[] keyValues,
+        bool throwOnNullKey,
+        out bool hasNullKey)
         // InitializeStateManager will populate the field before calling here
         => _stateManager!.TryGetEntry(key, keyValues, throwOnNullKey, out hasNullKey);
 

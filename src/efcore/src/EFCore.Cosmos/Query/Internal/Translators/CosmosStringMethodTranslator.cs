@@ -1,7 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-namespace Microsoft.EntityFrameworkCore.Cosmos.Query.Internal.Translators;
+// ReSharper disable once CheckNamespace
+namespace Microsoft.EntityFrameworkCore.Cosmos.Query.Internal;
 
 /// <summary>
 ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -23,11 +24,20 @@ public class CosmosStringMethodTranslator(ISqlExpressionFactory sqlExpressionFac
     private static readonly MethodInfo ContainsMethodInfo
         = typeof(string).GetRuntimeMethod(nameof(string.Contains), [typeof(string)])!;
 
+    private static readonly MethodInfo ContainsWithStringComparisonMethodInfo
+        = typeof(string).GetRuntimeMethod(nameof(string.Contains), [typeof(string), typeof(StringComparison)])!;
+
     private static readonly MethodInfo StartsWithMethodInfo
         = typeof(string).GetRuntimeMethod(nameof(string.StartsWith), [typeof(string)])!;
 
+    private static readonly MethodInfo StartsWithWithStringComparisonMethodInfo
+        = typeof(string).GetRuntimeMethod(nameof(string.StartsWith), [typeof(string), typeof(StringComparison)])!;
+
     private static readonly MethodInfo EndsWithMethodInfo
         = typeof(string).GetRuntimeMethod(nameof(string.EndsWith), [typeof(string)])!;
+
+    private static readonly MethodInfo EndsWithWithStringComparisonMethodInfo
+        = typeof(string).GetRuntimeMethod(nameof(string.EndsWith), [typeof(string), typeof(StringComparison)])!;
 
     private static readonly MethodInfo ToLowerMethodInfo
         = typeof(string).GetRuntimeMethod(nameof(string.ToLower), [])!;
@@ -118,14 +128,77 @@ public class CosmosStringMethodTranslator(ISqlExpressionFactory sqlExpressionFac
                 return TranslateSystemFunction("CONTAINS", typeof(bool), instance, arguments[0]);
             }
 
+            if (ContainsWithStringComparisonMethodInfo.Equals(method))
+            {
+                if (arguments[1] is SqlConstantExpression { Value: StringComparison comparisonType })
+                {
+                    return comparisonType switch
+                    {
+                        StringComparison.Ordinal
+                            => TranslateSystemFunction(
+                                "CONTAINS", typeof(bool), instance, arguments[0], sqlExpressionFactory.Constant(false)),
+                        StringComparison.OrdinalIgnoreCase
+                            => TranslateSystemFunction(
+                                "CONTAINS", typeof(bool), instance, arguments[0], sqlExpressionFactory.Constant(true)),
+
+                        _ => null // TODO: Explicit translation error for unsupported StringComparison argument (depends on #26410)
+                    };
+                }
+
+                // TODO: Explicit translation error for non-constant StringComparison argument (depends on #26410)
+                return null;
+            }
+
             if (StartsWithMethodInfo.Equals(method))
             {
                 return TranslateSystemFunction("STARTSWITH", typeof(bool), instance, arguments[0]);
             }
 
+            if (StartsWithWithStringComparisonMethodInfo.Equals(method))
+            {
+                if (arguments[1] is SqlConstantExpression { Value: StringComparison comparisonType })
+                {
+                    return comparisonType switch
+                    {
+                        StringComparison.Ordinal
+                            => TranslateSystemFunction(
+                                "STARTSWITH", typeof(bool), instance, arguments[0], sqlExpressionFactory.Constant(false)),
+                        StringComparison.OrdinalIgnoreCase
+                            => TranslateSystemFunction(
+                                "STARTSWITH", typeof(bool), instance, arguments[0], sqlExpressionFactory.Constant(true)),
+
+                        _ => null // TODO: Explicit translation error for unsupported StringComparison argument (depends on #26410)
+                    };
+                }
+
+                // TODO: Explicit translation error for non-constant StringComparison argument (depends on #26410)
+                return null;
+            }
+
             if (EndsWithMethodInfo.Equals(method))
             {
                 return TranslateSystemFunction("ENDSWITH", typeof(bool), instance, arguments[0]);
+            }
+
+            if (EndsWithWithStringComparisonMethodInfo.Equals(method))
+            {
+                if (arguments[1] is SqlConstantExpression { Value: StringComparison comparisonType })
+                {
+                    return comparisonType switch
+                    {
+                        StringComparison.Ordinal
+                            => TranslateSystemFunction(
+                                "ENDSWITH", typeof(bool), instance, arguments[0], sqlExpressionFactory.Constant(false)),
+                        StringComparison.OrdinalIgnoreCase
+                            => TranslateSystemFunction(
+                                "ENDSWITH", typeof(bool), instance, arguments[0], sqlExpressionFactory.Constant(true)),
+
+                        _ => null // TODO: Explicit translation error for unsupported StringComparison argument (depends on #26410)
+                    };
+                }
+
+                // TODO: Explicit translation error for non-constant StringComparison argument (depends on #26410)
+                return null;
             }
 
             if (ToLowerMethodInfo.Equals(method))

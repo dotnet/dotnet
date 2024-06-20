@@ -38,14 +38,6 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
             => GetString("CanConnectNotSupported");
 
         /// <summary>
-        ///     The query contained a new array expression containing non-constant elements, which could not be translated: '{newArrayExpression}'.
-        /// </summary>
-        public static string CannotTranslateNonConstantNewArrayExpression(object? newArrayExpression)
-            => string.Format(
-                GetString("CannotTranslateNonConstantNewArrayExpression", nameof(newArrayExpression)),
-                newArrayExpression);
-
-        /// <summary>
         ///     None of connection string, CredentialToken, account key or account endpoint were specified. Specify a set of connection details.
         /// </summary>
         public static string ConnectionInfoMissing
@@ -90,6 +82,12 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
                 property, entityType, propertyType);
 
         /// <summary>
+        ///     The 'Except()' LINQ operator isn't supported by Cosmos.
+        /// </summary>
+        public static string ExceptNotSupported
+            => GetString("ExceptNotSupported");
+
+        /// <summary>
         ///     The type of the '{idProperty}' property on '{entityType}' is '{propertyType}'. All 'id' properties must be strings or have a string value converter.
         /// </summary>
         public static string IdNonStringStoreType(object? idProperty, object? entityType, object? propertyType)
@@ -128,10 +126,24 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
                 property1, property2, entityType, storeName);
 
         /// <summary>
+        ///     Skip, Take, First/FirstOrDefault and Single/SingleOrDefault aren't supported in subqueries since Cosmos doesn't support LIMIT/OFFSET in subqueries.
+        /// </summary>
+        public static string LimitOffsetNotSupportedInSubqueries
+            => GetString("LimitOffsetNotSupportedInSubqueries");
+
+        /// <summary>
         ///     'Reverse' could not be translated to the server because there is no ordering on the server side.
         /// </summary>
         public static string MissingOrderingInSelectExpression
             => GetString("MissingOrderingInSelectExpression");
+
+        /// <summary>
+        ///     Cosmos container '{container1}' is referenced by the query, but '{container2}' is already being referenced. A query can only reference a single Cosmos container.
+        /// </summary>
+        public static string MultipleContainersReferencedInQuery(object? container1, object? container2)
+            => string.Format(
+                GetString("MultipleContainersReferencedInQuery", nameof(container1), nameof(container2)),
+                container1, container2);
 
         /// <summary>
         ///     Navigation '{entityType}.{navigationName}' doesn't point to an embedded entity.
@@ -172,6 +184,12 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
             => string.Format(
                 GetString("NoIdProperty", nameof(entityType)),
                 entityType);
+
+        /// <summary>
+        ///     Cosmos subqueries must be correlated, referencing values from the outer query.
+        /// </summary>
+        public static string NonCorrelatedSubqueriesNotSupported
+            => GetString("NonCorrelatedSubqueriesNotSupported");
 
         /// <summary>
         ///     Including navigation '{navigation}' is not supported as the navigation is not embedded in same resource.
@@ -240,12 +258,6 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
             => string.Format(
                 GetString("OneOfTwoValuesMustBeSet", nameof(param1), nameof(param2)),
                 param1, param2);
-
-        /// <summary>
-        ///     Only constants or parameters are currently allowed in Contains.
-        /// </summary>
-        public static string OnlyConstantsAndParametersAllowedInContains
-            => GetString("OnlyConstantsAndParametersAllowedInContains");
 
         /// <summary>
         ///     The entity of type '{entityType}' is mapped as a part of the document mapped to '{missingEntityType}', but there is no tracked entity of this type with the corresponding key value. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the key values.

@@ -3,7 +3,8 @@
 
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
-namespace Microsoft.EntityFrameworkCore.Sqlite.Query.Internal.Translators;
+// ReSharper disable once CheckNamespace
+namespace Microsoft.EntityFrameworkCore.Sqlite.Query.Internal;
 
 /// <summary>
 ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -76,13 +77,14 @@ public class SqliteObjectToStringTranslator : IMethodCallTranslator
             if (instance is ColumnExpression { IsNullable: true })
             {
                 return _sqlExpressionFactory.Case(
+                    instance,
                     new[]
                     {
                         new CaseWhenClause(
-                            _sqlExpressionFactory.Equal(instance, _sqlExpressionFactory.Constant(false)),
+                            _sqlExpressionFactory.Constant(false),
                             _sqlExpressionFactory.Constant(false.ToString())),
                         new CaseWhenClause(
-                            _sqlExpressionFactory.Equal(instance, _sqlExpressionFactory.Constant(true)),
+                            _sqlExpressionFactory.Constant(true),
                             _sqlExpressionFactory.Constant(true.ToString()))
                     },
                     _sqlExpressionFactory.Constant(null, typeof(string)));
@@ -92,11 +94,13 @@ public class SqliteObjectToStringTranslator : IMethodCallTranslator
                 new[]
                 {
                     new CaseWhenClause(
-                        _sqlExpressionFactory.Equal(instance, _sqlExpressionFactory.Constant(false)),
-                        _sqlExpressionFactory.Constant(false.ToString()))
+                        instance,
+                        _sqlExpressionFactory.Constant(true.ToString()))
                 },
-                _sqlExpressionFactory.Constant(true.ToString()));
+                _sqlExpressionFactory.Constant(false.ToString()));
         }
+
+        // Enums are handled by EnumMethodTranslator
 
         return TypeMapping.Contains(instance.Type)
             ? _sqlExpressionFactory.Convert(instance, typeof(string))

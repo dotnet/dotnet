@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.EntityFrameworkCore.Query.Internal;
-using Microsoft.EntityFrameworkCore.Query.Internal.Translators;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace Microsoft.EntityFrameworkCore.Query;
@@ -33,7 +32,7 @@ public class RelationalMethodCallTranslatorProvider : IMethodCallTranslatorProvi
             new CollateTranslator(),
             new ContainsTranslator(sqlExpressionFactory),
             new LikeTranslator(sqlExpressionFactory),
-            new EnumHasFlagTranslator(sqlExpressionFactory),
+            new EnumMethodTranslator(sqlExpressionFactory),
             new GetValueOrDefaultTranslator(sqlExpressionFactory),
             new ComparisonTranslator(sqlExpressionFactory),
             new ByteArraySequenceEqualTranslator(sqlExpressionFactory),

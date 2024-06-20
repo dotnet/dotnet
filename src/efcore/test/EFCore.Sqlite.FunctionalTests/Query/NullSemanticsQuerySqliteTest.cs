@@ -17,6 +17,77 @@ public class NullSemanticsQuerySqliteTest : NullSemanticsQueryTestBase<NullSeman
         //Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
+    public override async Task Join_uses_database_semantics(bool async)
+    {
+        await base.Join_uses_database_semantics(async);
+
+        AssertSql(
+            """
+SELECT "e"."Id" AS "Id1", "e0"."Id" AS "Id2", "e"."NullableIntA", "e0"."NullableIntB"
+FROM "Entities1" AS "e"
+INNER JOIN "Entities2" AS "e0" ON "e"."NullableIntA" = "e0"."NullableIntB"
+""");
+    }
+
+    public override async Task Join_uses_csharp_semantics_for_anon_objects(bool async)
+    {
+        await base.Join_uses_csharp_semantics_for_anon_objects(async);
+
+        AssertSql(
+            """
+SELECT "e"."Id" AS "Id1", "e0"."Id" AS "Id2", "e"."NullableIntA", "e0"."NullableIntB"
+FROM "Entities1" AS "e"
+INNER JOIN "Entities2" AS "e0" ON "e"."NullableIntA" = "e0"."NullableIntB" OR ("e"."NullableIntA" IS NULL AND "e0"."NullableIntB" IS NULL)
+""");
+    }
+
+    public override async Task Null_semantics_conditional(bool async)
+    {
+        await base.Null_semantics_conditional(async);
+
+        AssertSql(
+            """
+SELECT "e"."Id"
+FROM "Entities1" AS "e"
+WHERE "e"."BoolA" = CASE
+    WHEN "e"."BoolB" THEN "e"."NullableBoolB"
+    ELSE "e"."NullableBoolC"
+END
+""",
+            //
+            """
+SELECT "e"."Id"
+FROM "Entities1" AS "e"
+WHERE CASE
+    WHEN ("e"."NullableBoolA" <> "e"."NullableBoolB" OR "e"."NullableBoolA" IS NULL OR "e"."NullableBoolB" IS NULL) AND ("e"."NullableBoolA" IS NOT NULL OR "e"."NullableBoolB" IS NOT NULL) THEN "e"."BoolB"
+    ELSE "e"."BoolC"
+END = "e"."BoolA"
+""",
+            //
+            """
+SELECT "e"."Id"
+FROM "Entities1" AS "e"
+WHERE CASE
+    WHEN CASE
+        WHEN "e"."BoolA" THEN ("e"."NullableBoolA" <> "e"."NullableBoolB" OR "e"."NullableBoolA" IS NULL OR "e"."NullableBoolB" IS NULL) AND ("e"."NullableBoolA" IS NOT NULL OR "e"."NullableBoolB" IS NOT NULL)
+        ELSE "e"."BoolC"
+    END <> "e"."BoolB" THEN "e"."BoolA"
+    ELSE ("e"."NullableBoolB" = "e"."NullableBoolC" AND "e"."NullableBoolB" IS NOT NULL AND "e"."NullableBoolC" IS NOT NULL) OR ("e"."NullableBoolB" IS NULL AND "e"."NullableBoolC" IS NULL)
+END
+""",
+            //
+            """
+SELECT CASE
+    WHEN CASE
+        WHEN "e"."BoolA" THEN "e"."NullableIntA"
+        ELSE "e"."IntB"
+    END > "e"."IntC" THEN 1
+    ELSE 0
+END
+FROM "Entities1" AS "e"
+""");
+    }
+
     public override async Task Null_semantics_contains_non_nullable_item_with_non_nullable_subquery(bool async)
     {
         await base.Null_semantics_contains_non_nullable_item_with_non_nullable_subquery(async);
@@ -185,6 +256,36 @@ ORDER BY "e"."Id"
 """);
     }
 
+    public override async Task CaseOpWhen_projection(bool async)
+    {
+        await base.CaseOpWhen_projection(async);
+
+        AssertSql(
+            """
+SELECT CASE "e"."StringA" = 'Foo'
+    WHEN 1 THEN 3
+    WHEN 0 THEN 2
+END
+FROM "Entities1" AS "e"
+ORDER BY "e"."Id"
+""");
+    }
+
+    public override async Task CaseOpWhen_predicate(bool async)
+    {
+        await base.CaseOpWhen_predicate(async);
+
+        AssertSql(
+            """
+SELECT "e"."Id", "e"."BoolA", "e"."BoolB", "e"."BoolC", "e"."IntA", "e"."IntB", "e"."IntC", "e"."NullableBoolA", "e"."NullableBoolB", "e"."NullableBoolC", "e"."NullableIntA", "e"."NullableIntB", "e"."NullableIntC", "e"."NullableStringA", "e"."NullableStringB", "e"."NullableStringC", "e"."StringA", "e"."StringB", "e"."StringC"
+FROM "Entities1" AS "e"
+WHERE CASE "e"."StringA" = 'Foo'
+    WHEN 1 THEN 3
+    WHEN 0 THEN 2
+END = 2
+""");
+    }
+
     public override async Task Bool_equal_nullable_bool_HasValue(bool async)
     {
         await base.Bool_equal_nullable_bool_HasValue(async);
@@ -322,7 +423,95 @@ WHERE 0
             """
 SELECT "e"."Id", "e"."BoolA", "e"."BoolB", "e"."BoolC", "e"."IntA", "e"."IntB", "e"."IntC", "e"."NullableBoolA", "e"."NullableBoolB", "e"."NullableBoolC", "e"."NullableIntA", "e"."NullableIntB", "e"."NullableIntC", "e"."NullableStringA", "e"."NullableStringB", "e"."NullableStringC", "e"."StringA", "e"."StringB", "e"."StringC"
 FROM "Entities1" AS "e"
-WHERE "e"."BoolB" | ("e"."NullableBoolA" IS NOT NULL)
+WHERE "e"."BoolB" OR "e"."NullableBoolA" IS NOT NULL
+""");
+    }
+
+    public override async Task Negated_order_comparison_on_non_nullable_arguments_gets_optimized(bool async)
+    {
+        await base.Negated_order_comparison_on_non_nullable_arguments_gets_optimized(async);
+
+        AssertSql(
+            """
+@__i_0='1'
+
+SELECT "e"."Id"
+FROM "Entities1" AS "e"
+WHERE "e"."IntA" <= @__i_0
+""",
+            //
+            """
+@__i_0='1'
+
+SELECT "e"."Id"
+FROM "Entities1" AS "e"
+WHERE "e"."IntA" < @__i_0
+""",
+            //
+            """
+@__i_0='1'
+
+SELECT "e"."Id"
+FROM "Entities1" AS "e"
+WHERE "e"."IntA" >= @__i_0
+""",
+            //
+            """
+@__i_0='1'
+
+SELECT "e"."Id"
+FROM "Entities1" AS "e"
+WHERE "e"."IntA" > @__i_0
+""");
+    }
+
+    public override async Task Negated_order_comparison_on_nullable_arguments_doesnt_get_optimized(bool async)
+    {
+        await base.Negated_order_comparison_on_nullable_arguments_doesnt_get_optimized(async);
+
+        AssertSql(
+            """
+@__i_0='1' (Nullable = true)
+
+SELECT "e"."Id"
+FROM "Entities1" AS "e"
+WHERE CASE
+    WHEN "e"."NullableIntA" > @__i_0 THEN 0
+    ELSE 1
+END
+""",
+            //
+            """
+@__i_0='1' (Nullable = true)
+
+SELECT "e"."Id"
+FROM "Entities1" AS "e"
+WHERE CASE
+    WHEN "e"."NullableIntA" >= @__i_0 THEN 0
+    ELSE 1
+END
+""",
+            //
+            """
+@__i_0='1' (Nullable = true)
+
+SELECT "e"."Id"
+FROM "Entities1" AS "e"
+WHERE CASE
+    WHEN "e"."NullableIntA" < @__i_0 THEN 0
+    ELSE 1
+END
+""",
+            //
+            """
+@__i_0='1' (Nullable = true)
+
+SELECT "e"."Id"
+FROM "Entities1" AS "e"
+WHERE CASE
+    WHEN "e"."NullableIntA" <= @__i_0 THEN 0
+    ELSE 1
+END
 """);
     }
 

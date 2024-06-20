@@ -4,7 +4,8 @@
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using ExpressionExtensions = Microsoft.EntityFrameworkCore.Query.ExpressionExtensions;
 
-namespace Microsoft.EntityFrameworkCore.SqlServer.Query.Internal.Translators;
+// ReSharper disable once CheckNamespace
+namespace Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 
 /// <summary>
 ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -70,6 +71,11 @@ public class SqlServerStringMethodTranslator : IMethodCallTranslator
         = typeof(Enumerable).GetRuntimeMethods().Single(
             m => m.Name == nameof(Enumerable.LastOrDefault)
                 && m.GetParameters().Length == 1).MakeGenericMethod(typeof(char));
+
+    private static readonly MethodInfo PatIndexMethodInfo
+        = typeof(SqlServerDbFunctionsExtensions).GetRuntimeMethod(
+            nameof(SqlServerDbFunctionsExtensions.PatIndex),
+            [typeof(DbFunctions), typeof(string), typeof(string)])!;
 
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
 
@@ -286,6 +292,20 @@ public class SqlServerStringMethodTranslator : IMethodCallTranslator
                 method.ReturnType);
         }
 
+        if (PatIndexMethodInfo.Equals(method))
+        {
+            var pattern = arguments[1];
+            var expression = arguments[2];
+
+            return _sqlExpressionFactory.Function(
+                "PATINDEX",
+                new[] { pattern, expression },
+                nullable: true,
+                argumentsPropagateNullability: new[] { true, true },
+                method.ReturnType
+            );
+        }
+
         return null;
     }
 
@@ -335,26 +355,30 @@ public class SqlServerStringMethodTranslator : IMethodCallTranslator
                 method.ReturnType);
         }
 
-        charIndexExpression = _sqlExpressionFactory.Subtract(charIndexExpression, _sqlExpressionFactory.Constant(1));
-
         // If the pattern is an empty string, we need to special case to always return 0 (since CHARINDEX return 0, which we'd subtract to
         // -1). Handle separately for constant and non-constant patterns.
-        if (searchExpression is SqlConstantExpression { Value : string constantSearchPattern })
+        if (searchExpression is SqlConstantExpression { Value: "" })
         {
-            return constantSearchPattern == string.Empty
-                ? _sqlExpressionFactory.Constant(0, typeof(int))
-                : charIndexExpression;
+            return _sqlExpressionFactory.Case(
+                [new(_sqlExpressionFactory.IsNotNull(instance), _sqlExpressionFactory.Constant(0))],
+                elseResult: null
+            );
         }
 
-        return _sqlExpressionFactory.Case(
-            new[]
-            {
-                new CaseWhenClause(
-                    _sqlExpressionFactory.Equal(
-                        searchExpression,
-                        _sqlExpressionFactory.Constant(string.Empty, stringTypeMapping)),
-                    _sqlExpressionFactory.Constant(0))
-            },
-            charIndexExpression);
+        SqlExpression offsetExpression = searchExpression is SqlConstantExpression
+            ? _sqlExpressionFactory.Constant(1)
+            : _sqlExpressionFactory.Case(
+                new[]
+                {
+                    new CaseWhenClause(
+                        _sqlExpressionFactory.Equal(
+                            searchExpression,
+                            _sqlExpressionFactory.Constant(string.Empty, stringTypeMapping)),
+                        _sqlExpressionFactory.Constant(0))
+                },
+                _sqlExpressionFactory.Constant(1));
+
+
+        return _sqlExpressionFactory.Subtract(charIndexExpression, offsetExpression);
     }
 }
