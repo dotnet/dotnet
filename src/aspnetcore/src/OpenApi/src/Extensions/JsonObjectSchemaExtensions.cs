@@ -1,12 +1,17 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
+using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization.Metadata;
 using JsonSchemaMapper;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.OpenApi.Models;
@@ -119,6 +124,29 @@ internal static class JsonObjectSchemaExtensions
     }
 
     /// <summary>
+    /// Populate the default value into the current schema.
+    /// </summary>
+    /// <param name="schema">The <see cref="JsonObject"/> produced by the underlying schema generator.</param>
+    /// <param name="defaultValue">An object representing the <see cref="object"/> associated with the default value.</param>
+    /// <param name="jsonTypeInfo">The <see cref="JsonTypeInfo"/> associated with the target type.</param>
+    internal static void ApplyDefaultValue(this JsonObject schema, object? defaultValue, JsonTypeInfo? jsonTypeInfo)
+    {
+        if (jsonTypeInfo is null)
+        {
+            return;
+        }
+
+        if (defaultValue is null)
+        {
+            schema[OpenApiSchemaKeywords.DefaultKeyword] = null;
+        }
+        else
+        {
+            schema[OpenApiSchemaKeywords.DefaultKeyword] = JsonSerializer.SerializeToNode(defaultValue, jsonTypeInfo);
+        }
+    }
+
+    /// <summary>
     /// Applies the primitive types and formats to the schema based on the type.
     /// </summary>
     /// <remarks>
@@ -136,14 +164,15 @@ internal static class JsonObjectSchemaExtensions
     /// opposed to after the generated schemas have been mapped to OpenAPI schemas.
     /// </remarks>
     /// <param name="schema">The <see cref="JsonObject"/> produced by the underlying schema generator.</param>
-    /// <param name="type">The <see cref="Type"/> associated with the <see paramref="schema"/>.</param>
-    internal static void ApplyPrimitiveTypesAndFormats(this JsonObject schema, Type type)
+    /// <param name="context">The <see cref="JsonSchemaGenerationContext"/> associated with the <see paramref="schema"/>.</param>
+    internal static void ApplyPrimitiveTypesAndFormats(this JsonObject schema, JsonSchemaGenerationContext context)
     {
-        if (_simpleTypeToOpenApiSchema.TryGetValue(type, out var openApiSchema))
+        if (_simpleTypeToOpenApiSchema.TryGetValue(context.TypeInfo.Type, out var openApiSchema))
         {
             schema[OpenApiSchemaKeywords.NullableKeyword] = openApiSchema.Nullable || (schema[OpenApiSchemaKeywords.TypeKeyword] is JsonArray schemaType && schemaType.GetValues<string>().Contains("null"));
             schema[OpenApiSchemaKeywords.TypeKeyword] = openApiSchema.Type;
             schema[OpenApiSchemaKeywords.FormatKeyword] = openApiSchema.Format;
+            schema[OpenApiConstants.SchemaId] = context.TypeInfo.GetSchemaReferenceId();
         }
     }
 
@@ -228,7 +257,8 @@ internal static class JsonObjectSchemaExtensions
     /// </summary>
     /// <param name="schema">The <see cref="JsonObject"/> produced by the underlying schema generator.</param>
     /// <param name="parameterDescription">The <see cref="ApiParameterDescription"/> associated with the <see paramref="schema"/>.</param>
-    internal static void ApplyParameterInfo(this JsonObject schema, ApiParameterDescription parameterDescription)
+    /// <param name="jsonTypeInfo">The <see cref="JsonTypeInfo"/> associated with the <see paramref="schema"/>.</param>
+    internal static void ApplyParameterInfo(this JsonObject schema, ApiParameterDescription parameterDescription, JsonTypeInfo? jsonTypeInfo)
     {
         // This is special handling for parameters that are not bound from the body but represented in a complex type.
         // For example:
@@ -251,6 +281,17 @@ internal static class JsonObjectSchemaExtensions
         {
             var attributes = validations.OfType<ValidationAttribute>();
             schema.ApplyValidationAttributes(attributes);
+            if (parameterDescription.ParameterDescriptor is IParameterInfoParameterDescriptor { ParameterInfo: { } parameterInfo })
+            {
+                if (parameterInfo.HasDefaultValue)
+                {
+                    schema.ApplyDefaultValue(parameterInfo.DefaultValue, jsonTypeInfo);
+                }
+                else if (parameterInfo.GetCustomAttributes<DefaultValueAttribute>().LastOrDefault() is { } defaultValueAttribute)
+                {
+                    schema.ApplyDefaultValue(defaultValueAttribute.Value, jsonTypeInfo);
+                }
+            }
         }
         // Route constraints are only defined on parameters that are sourced from the path. Since
         // they are encoded in the route template, and not in the type information based to the underlying
@@ -283,5 +324,15 @@ internal static class JsonObjectSchemaExtensions
             schema[OpenApiSchemaKeywords.DiscriminatorKeyword] = polymorphismOptions.TypeDiscriminatorPropertyName;
             schema[OpenApiSchemaKeywords.DiscriminatorMappingKeyword] = mappings;
         }
+    }
+
+    /// <summary>
+    /// Set the x-schema-id property on the schema to the identifier associated with the type.
+    /// </summary>
+    /// <param name="schema">The <see cref="JsonObject"/> produced by the underlying schema generator.</param>
+    /// <param name="context">The <see cref="JsonSchemaGenerationContext"/> associated with the current type.</param>
+    internal static void ApplySchemaReferenceId(this JsonObject schema, JsonSchemaGenerationContext context)
+    {
+        schema[OpenApiConstants.SchemaId] = context.TypeInfo.GetSchemaReferenceId();
     }
 }
