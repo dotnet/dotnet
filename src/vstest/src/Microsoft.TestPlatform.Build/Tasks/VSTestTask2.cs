@@ -101,24 +101,24 @@ public class VSTestTask2 : ToolTask, ITestTask
                     break;
                 case "output-error":
                     {
+                        // Downgrade errors to info messages, xUnit outputs every assertion failure and it confuses users who see doubled error count.
+                        // Libraries write to error output, and don't expect tests to fail.
+                        // Logs are often written to error stream as well.
                         var error = data[0];
-                        if (error != null && error.StartsWith("[xUnit.net", StringComparison.OrdinalIgnoreCase))
-                        {
-                            // Downgrade errors from xunit, because they will end up being duplicated on screen with assertion errors.
-                            // And we end up with more errors in summary which is hard to figure out for users.
-                            LogMSBuildOutputMessage(error);
-                        }
-                        else
-                        {
-                            Log.LogError(data[0]);
-                        }
+                        LogMSBuildOutputMessage(error);
 
                         break;
                     }
 
                 case "run-cancel":
+                    // There is other overload that takes just message, and params, specifying the name of the first parameter explicitly so I don't
+                    // accidentally use it, because that will throw error when message is null, which it always is (We provide that null as first parameter).
+                    Log.LogError(subcategory: null, "TESTRUNCANCEL", null, TestFileFullPath?.ItemSpec ?? string.Empty, 0, 0, 0, 0, data[0]);
+                    break;
                 case "run-abort":
-                    Log.LogError(data[0]);
+                    // There is other overload that takes just message, and params, specifying the name of the first parameter explicitly so I don't
+                    // accidentally use it, because that will throw error when message is null, which it always is (We provide that null as first parameter).
+                    Log.LogError(subcategory: null, "TESTRUNABORT", null, TestFileFullPath?.ItemSpec ?? string.Empty, 0, 0, 0, 0, data[0]);
                     break;
                 case "run-finish":
                     // 0 - Localized summary
@@ -228,7 +228,7 @@ public class VSTestTask2 : ToolTask, ITestTask
                         file ??= string.Empty;
 
                         // Report error to msbuild.
-                        Log.LogError(null, "VSTEST1", null, file ?? string.Empty, lineNumber, 0, 0, 0, fullErrorMessage, null);
+                        Log.LogError(null, "TESTERROR", null, file ?? string.Empty, lineNumber, 0, 0, 0, fullErrorMessage, null);
                     }
                     break;
                 default:
@@ -248,8 +248,13 @@ public class VSTestTask2 : ToolTask, ITestTask
         }
     }
 
-    private void LogMSBuildOutputMessage(string singleLine)
+    private void LogMSBuildOutputMessage(string? singleLine)
     {
+
+        if (singleLine == null)
+        {
+            return;
+        }
 
         var message = new ExtendedBuildMessageEventArgs("TLTESTOUTPUT", singleLine, null, null, MessageImportance.High);
         BuildEngine.LogMessageEvent(message);
