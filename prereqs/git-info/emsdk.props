@@ -2,8 +2,8 @@
 <Project>
   <PropertyGroup>
     <GitCommitHash>9880d891ddfddee1b1182c149468a43b89c090a0</GitCommitHash>
-    <OfficialBuildId>20240617.2</OfficialBuildId>
-    <OutputPackageVersion>9.0.0-preview.6.24317.2</OutputPackageVersion>
+    <OfficialBuildId>20240619.1</OfficialBuildId>
+    <OutputPackageVersion>9.0.0-preview.6.24319.1</OutputPackageVersion>
     <PreReleaseVersionLabel>preview.6</PreReleaseVersionLabel>
     <IsStable>false</IsStable>
   </PropertyGroup>
