@@ -13,7 +13,7 @@ namespace Microsoft.IdentityModel.Tokens
     {
 #pragma warning disable 1591
         // general
-        // public const string IDX10000 = "IDX10000:";
+        public const string IDX10000 = "IDX10000: The parameter '{0}' cannot be a 'null' or an empty object. ";
 
         // properties, configuration 
         public const string IDX10101 = "IDX10101: MaximumTokenSizeInBytes must be greater than zero. value: '{0}'";
@@ -35,7 +35,7 @@ namespace Microsoft.IdentityModel.Tokens
         public const string IDX10207 = "IDX10207: Unable to validate audience. The 'audiences' parameter is null.";
         public const string IDX10208 = "IDX10208: Unable to validate audience. validationParameters.ValidAudience is null or whitespace and validationParameters.ValidAudiences is null.";
         public const string IDX10209 = "IDX10209: Token has length: '{0}' which is larger than the MaximumTokenSizeInBytes: '{1}'.";
-        public const string IDX10211 = "IDX10211: Unable to validate issuer. The 'issuer' parameter is null or whitespace";
+        public const string IDX10211 = "IDX10211: Unable to validate issuer. The 'issuer' parameter is null or whitespace.";
         public const string IDX10214 = "IDX10214: Audience validation failed. Audiences: '{0}'. Did not match: validationParameters.ValidAudience: '{1}' or validationParameters.ValidAudiences: '{2}'.";
         public const string IDX10222 = "IDX10222: Lifetime validation failed. The token is not yet valid. ValidFrom (UTC): '{0}', Current time (UTC): '{1}'.";
         public const string IDX10223 = "IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '{0}', Current time (UTC): '{1}'.";
@@ -79,6 +79,8 @@ namespace Microsoft.IdentityModel.Tokens
         //public const string IDX10263 = "IDX10263: Unable to re-validate with ConfigurationManager.LastKnownGoodConfiguration as it is expired.";
         public const string IDX10264 = "IDX10264: Reading issuer signing keys from validation parameters and configuration.";
         public const string IDX10265 = "IDX10265: Reading issuer signing keys from configuration.";
+        //public const string IDX10266 = "IDX10266: Unable to validate issuer. validationParameters.ValidIssuer is null or whitespace, validationParameters.ValidIssuers is null or empty and ConfigurationManager is null.";
+
 
         // 10500 - SignatureValidation
         public const string IDX10500 = "IDX10500: Signature validation failed. No security keys were provided to validate the signature.";
@@ -125,7 +127,7 @@ namespace Microsoft.IdentityModel.Tokens
         public const string IDX10904 = "IDX10904: Token decryption key : '{0}' found in TokenValidationParameters.";
         public const string IDX10905 = "IDX10905: Token decryption key : '{0}' found in Configuration/Metadata.";
 
-        // Formating
+        // Formatting
         public const string IDX10400 = "IDX10400: Unable to decode: '{0}' as Base64url encoded string.";
         public const string IDX10401 = "IDX10401: Invalid requested key size. Valid key sizes are: 256, 384, and 512.";
 
@@ -134,6 +136,7 @@ namespace Microsoft.IdentityModel.Tokens
         // public const string IDX10622 = "IDX10622:";
         // public const string IDX10623 = "IDX10623:";
         // public const string IDX10624 = "IDX10624:";
+        public const string IDX10625 = "IDX10625: Failed to verify the authenticationTag length, the actual tag length '{0}' does not match the expected tag length '{1}'. authenticationTag: '{2}', algorithm: '{3}'.";
         // public const string IDX10627 = "IDX10627:";
         public const string IDX10628 = "IDX10628: Cannot set the MinimumSymmetricKeySizeInBits to less than '{0}'.";
         public const string IDX10630 = "IDX10630: The '{0}' for signing cannot be smaller than '{1}' bits. KeySize: '{2}'.";
@@ -217,7 +220,7 @@ namespace Microsoft.IdentityModel.Tokens
         public const string IDX10710 = "IDX10710: Computing a JWK thumbprint is supported only on SymmetricSecurityKey, JsonWebKey, RsaSecurityKey, X509SecurityKey, and ECDsaSecurityKey.";
         public const string IDX10711 = "IDX10711: Unable to Decrypt, Internal DecryptionFunction is not available.";
         public const string IDX10712 = "IDX10712: Unable to Encrypt, Internal EncryptionFunction is not available.";
-        public const string IDX10713 = "IDX10713: Encrytion/Decryption using algorithm '{0}' is only supported on Windows platform.";
+        public const string IDX10713 = "IDX10713: Encryption/Decryption using algorithm '{0}' is only supported on Windows platform.";
         public const string IDX10714 = "IDX10714: Unable to perform the decryption. There is a authentication tag mismatch.";
         public const string IDX10715 = "IDX10715: Encryption using algorithm: '{0}' is not supported.";
         public const string IDX10716 = "IDX10716: '{0}' must be greater than 0, was: '{1}'";

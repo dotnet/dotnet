@@ -14,11 +14,8 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         [Fact]
         public void ComputeJwkThumbprint()
         {
-            var exception = Assert.Throws<NotSupportedException>(() => new ManagedKeyVaultSecurityKey.ManagedKeyVaultSecurityKey("keyid").ComputeJwkThumbprint());
-            Assert.Contains("IDX10710", exception.Message);
-
-#if NET461 || NET462
-            exception = Assert.Throws<PlatformNotSupportedException>(() => new ECDsaSecurityKey(KeyingMaterial.JsonWebKeyP256, false).ComputeJwkThumbprint());
+#if NET462
+            var exception = Assert.Throws<PlatformNotSupportedException>(() => new ECDsaSecurityKey(KeyingMaterial.JsonWebKeyP256, false).ComputeJwkThumbprint());
             Assert.Contains("IDX10695", exception.Message);
 #else
             var ex = Record.Exception(() => new ECDsaSecurityKey(KeyingMaterial.JsonWebKeyP256, false).ComputeJwkThumbprint());

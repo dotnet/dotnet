@@ -57,8 +57,8 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
 
                 theoryData.Add(new OpenIdConnectTheoryData("AccountsGoogleCom")
                 {
-                    CompareTo = JsonUtilities.SetAdditionalDataKeysToUpperCase(OpenIdConfigData.AccountsGoogleComConfig),
-                    Json = JsonUtilities.SetAdditionalDataKeysToUpperCase(OpenIdConfigData.AccountsGoogleComJson, OpenIdConfigData.AccountsGoogleComConfig)
+                    CompareTo = OpenIdConfigData.AccountsGoogleComConfig,
+                    Json = OpenIdConfigData.AccountsGoogleComJson
                 });
 
                 theoryData.Add(new OpenIdConnectTheoryData("FrontChannelFalse")

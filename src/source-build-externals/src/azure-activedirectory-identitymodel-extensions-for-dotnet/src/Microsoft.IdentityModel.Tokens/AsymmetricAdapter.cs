@@ -2,6 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
+#if NET6_0_OR_GREATER
+using System.Buffers;
+using System.Diagnostics;
+#endif
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Logging;
 
@@ -330,12 +334,20 @@ namespace Microsoft.IdentityModel.Tokens
 
         private bool VerifyECDsa(byte[] bytes, byte[] signature)
         {
+#if NET6_0_OR_GREATER
+            return VerifyUsingSpan(isRSA: false, bytes, signature);
+#else
             return ECDsa.VerifyHash(HashAlgorithm.ComputeHash(bytes), signature);
+#endif
         }
 
         private bool VerifyUsingOffsetECDsa(byte[] bytes, int offset, int count, byte[] signature)
         {
+#if NET6_0_OR_GREATER
+            return VerifyUsingSpan(isRSA: false, bytes.AsSpan(offset, count), signature);
+#else
             return ECDsa.VerifyHash(HashAlgorithm.ComputeHash(bytes, offset, count), signature);
+#endif
         }
 
         private byte[] DecryptWithRsa(byte[] bytes)
@@ -373,13 +385,48 @@ namespace Microsoft.IdentityModel.Tokens
 
         private bool VerifyRsa(byte[] bytes, byte[] signature)
         {
+#if NET6_0_OR_GREATER
+            return VerifyUsingSpan(isRSA: true, bytes, signature);
+#else
             return RSA.VerifyHash(HashAlgorithm.ComputeHash(bytes), signature, HashAlgorithmName, RSASignaturePadding);
+#endif
         }
 
         private bool VerifyUsingOffsetRsa(byte[] bytes, int offset, int count, byte[] signature)
         {
+#if NET6_0_OR_GREATER
+            return VerifyUsingSpan(isRSA: true, bytes.AsSpan(offset, count), signature);
+#else
             return RSA.VerifyHash(HashAlgorithm.ComputeHash(bytes, offset, count), signature, HashAlgorithmName, RSASignaturePadding);
+#endif
         }
+
+#if NET6_0_OR_GREATER
+        private bool VerifyUsingSpan(bool isRSA, ReadOnlySpan<byte> bytes, byte[] signature)
+        {
+            int hashByteLength = HashAlgorithm.HashSize / 8;
+            byte[] array = null;
+            Span<byte> hash = hashByteLength <= 256 ? stackalloc byte[256] : array = ArrayPool<byte>.Shared.Rent(hashByteLength);
+            hash = hash.Slice(0, hashByteLength);
+
+            try
+            {
+                bool hashResult = HashAlgorithm.TryComputeHash(bytes, hash, out int bytesWritten);
+                Debug.Assert(hashResult && bytesWritten == hashByteLength, "HashAlgorithm.TryComputeHash failed");
+
+                return isRSA ?
+                    RSA.VerifyHash(hash, signature, HashAlgorithmName, RSASignaturePadding) :
+                    ECDsa.VerifyHash(hash, signature);
+            }
+            finally
+            {
+                if (array is not null)
+                {
+                    ArrayPool<byte>.Shared.Return(array, clearArray: true);
+                }
+            }
+        }
+#endif
 
 #region DESKTOP related code
 #if DESKTOP

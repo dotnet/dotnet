@@ -1301,7 +1301,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 SignatureProvider = CreateProvider(securityKey, algorithm)
             });
 
-#if NET461 || NET462
+#if NET462
             // RSA throws a different exception in the following three cases than HMAC or ECDSA 472+
             theoryData.Add(new SignTheoryData($"{prefix}_CountNegative")
             {

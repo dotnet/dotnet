@@ -32,14 +32,12 @@ namespace Microsoft.IdentityModel.Tokens
             CreateECDsaFunction = CreateECDsaUsingECParams;
 #elif NETSTANDARD2_0
             // Although NETSTANDARD2_0 specifies that ECParameters are supported, we still need to call SupportsECParameters()
-            // as NET461 is listed as supporting NETSTANDARD2_0, but DOES NOT support ECParameters.
+            // as NET462 is listed as supporting NETSTANDARD2_0, but DOES NOT support ECParameters.
             // See: https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.ecparameters?view=netstandard-2.0
-            if (SupportsECParameters())
-                CreateECDsaFunction = CreateECDsaUsingECParams;
-            else
-                CreateECDsaFunction = CreateECDsaUsingCNGKey;
+            if (SupportsECParameters()) CreateECDsaFunction = CreateECDsaUsingECParams;
+            else CreateECDsaFunction = CreateECDsaUsingCNGKey;
 #else
-            CreateECDsaFunction = CreateECDsaUsingCNGKey;
+        CreateECDsaFunction = CreateECDsaUsingCNGKey;
 #endif
         }
 
@@ -51,7 +49,7 @@ namespace Microsoft.IdentityModel.Tokens
             return CreateECDsaFunction(jsonWebKey, usePrivateKey);
         }
 
-#if NET461 || NET462 || NETSTANDARD2_0
+#if NET462 || NETSTANDARD2_0
         /// <summary>
         /// Creates an ECDsa object using the <paramref name="jsonWebKey"/> and <paramref name="usePrivateKey"/>.
         /// 'ECParameters' structure is available in .NET Framework 4.7+, .NET Standard 1.6+, and .NET Core 1.0+.
@@ -230,32 +228,12 @@ namespace Microsoft.IdentityModel.Tokens
             return (uint)magicNumber;
         }
 
-        /// <summary>
-        /// Tests if user's runtime platform supports operations using <see cref="CngKey"/>.
-        /// </summary>
-        /// <returns>True if operations using <see cref="CngKey"/> are supported on user's runtime platform, false otherwise.</returns>
-        [MethodImpl(MethodImplOptions.NoOptimization)]
-        private static bool SupportsCNGKey()
-        {
-            try
-            {
-#pragma warning disable CA1416 // Validate platform compatibility
-                _ = CngKeyBlobFormat.EccPrivateBlob;
-#pragma warning restore CA1416 // Validate platform compatibility
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
 #if NET472 || NETSTANDARD2_0 || NET6_0_OR_GREATER
         /// <summary>
         /// Creates an ECDsa object using the <paramref name="jsonWebKey"/> and <paramref name="usePrivateKey"/>.
         /// 'ECParameters' structure is available in .NET Framework 4.7+, .NET Standard 1.6+, and .NET Core 1.0+.
         /// </summary>
-        private ECDsa CreateECDsaUsingECParams(JsonWebKey jsonWebKey, bool usePrivateKey)
+        private static ECDsa CreateECDsaUsingECParams(JsonWebKey jsonWebKey, bool usePrivateKey)
         {
             if (jsonWebKey == null)
                 throw LogHelper.LogArgumentNullException(nameof(jsonWebKey));

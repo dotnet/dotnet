@@ -157,6 +157,11 @@ csharp_space_between_square_brackets = false
 dotnet_code_quality.ca1802.api_surface = private, internal
 dotnet_code_quality.CA2208.api_surface = public
 
+# Threading analyzers https://github.com/microsoft/vs-threading/blob/main/doc/analyzers/index.md
+
+# Use .ConfigureAwait(bool)
+dotnet_diagnostic.VSTHRD111.severity = warning
+
 # Do not pass literals as localized parameters, globalization is not used
 dotnet_diagnostic.CA1303.severity = none
 

@@ -49,6 +49,7 @@ namespace Microsoft.IdentityModel.Benchmarks
             ValidateTokenAsyncTests validateTokenAsyncTests = new ValidateTokenAsyncTests();
             validateTokenAsyncTests.Setup();
             TokenValidationResult tokenValidationResult = validateTokenAsyncTests.JsonWebTokenHandler_ValidateTokenAsync().Result;
+            var claims = validateTokenAsyncTests.JsonWebTokenHandler_ValidateTokenAsync_CreateClaims();
 
             ValidateSignedHttpRequestAsyncTests validateSignedHttpRequestAsyncTests = new ValidateSignedHttpRequestAsyncTests();
             validateSignedHttpRequestAsyncTests.Setup();

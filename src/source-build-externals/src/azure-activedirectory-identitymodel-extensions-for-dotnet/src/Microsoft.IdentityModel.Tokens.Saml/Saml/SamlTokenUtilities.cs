@@ -48,44 +48,6 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         }
 
         /// <summary>
-        /// Returns all <see cref="SecurityKey"/> to use when validating the signature of a token.
-        /// </summary>
-        /// <param name="token">The <see cref="string"/> representation of the token that is being validated.</param>
-        /// <param name="samlToken">The <see cref="SecurityToken"/> that is being validated.</param>
-        /// <param name="tokenKeyInfo">The <see cref="KeyInfo"/> field of the token being validated</param>
-        /// <param name="validationParameters">A <see cref="TokenValidationParameters"/> required for validation.</param>
-        /// <param name="keyMatched">A <see cref="bool"/> to represent if a a issuer signing key matched with token kid or x5t</param>
-        /// <returns>Returns all <see cref="SecurityKey"/> to use for signature validation.</returns>
-        internal static IEnumerable<SecurityKey> GetKeysForTokenSignatureValidation(string token, SecurityToken samlToken, KeyInfo tokenKeyInfo, TokenValidationParameters validationParameters, out bool keyMatched)
-        {
-            keyMatched = false;
-
-            if (validationParameters.IssuerSigningKeyResolver != null)
-            {
-                return validationParameters.IssuerSigningKeyResolver(token, samlToken, tokenKeyInfo?.Id, validationParameters);
-            }
-            else
-            {
-                SecurityKey key = ResolveTokenSigningKey(tokenKeyInfo, validationParameters);
-
-                if (key != null)
-                {
-                    keyMatched = true;
-                    return new List<SecurityKey> { key };
-                }
-                else
-                {
-                    keyMatched = false;
-                    if (validationParameters.TryAllIssuerSigningKeys)
-                    {
-                        return TokenUtilities.GetAllSigningKeys(validationParameters: validationParameters);
-                    }
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
         /// Creates <see cref="Claim"/>'s from <paramref name="claimsCollection"/>.
         /// </summary>
         /// <param name="claimsCollection"> A dictionary that represents a set of claims.</param>

@@ -66,7 +66,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         public static TheoryData<string, SecurityKey, bool> HasPrivateKeyTheoryData()
         {
             var theoryData = new TheoryData<string, SecurityKey, bool>();
-#if NET461 || NET462
+#if NET462
             theoryData.Add(
                 "KeyingMaterial.RsaSecurityKeyWithCspProvider_2048",
                 KeyingMaterial.RsaSecurityKeyWithCspProvider_2048,
@@ -80,7 +80,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             );
 #endif
 
-#if NET461 || NET462
+#if NET462
 
             theoryData.Add(
                 "KeyingMaterial.RsaSecurityKeyWithCngProvider_2048",
