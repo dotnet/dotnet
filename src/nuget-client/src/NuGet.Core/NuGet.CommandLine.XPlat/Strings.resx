@@ -869,6 +869,14 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
   <data name="Error_NoSource" xml:space="preserve">
     <value>No package sources found.</value>
   </data>
+  <data name="Error_MultipleProjectOrSolutionFilesInDirectory" xml:space="preserve">
+    <value>The directory '{0}' contains multiple project or solution files. Please specify which project or solution file to use.</value>
+    <comment>{0} - Directory</comment>
+  </data>
+  <data name="Error_NoProjectOrSolutionFilesInDirectory" xml:space="preserve">
+    <value>The directory '{0}' does not contain any project or solution files.</value>
+    <comment>{0} - Directory</comment>
+  </data>
   <data name="pkgSearch_FormatDescription" xml:space="preserve">
     <value>Format the output accordingly. Either `table`, or `json`. The default value is `table`.</value>
     <comment>Please don't translate `table`, `json`.</comment>
@@ -928,19 +936,23 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <value>Unable to run 'dotnet nuget why'. The '{0}' argument cannot be empty.</value>
     <comment>{0} - Argument that was not provided</comment>
   </data>
-  <data name="WhyCommand_Error_PathIsMissingOrInvalid" xml:space="preserve">
-    <value>Unable to run 'dotnet nuget why'. Missing or invalid project/solution file '{0}'.</value>
-    <comment>{0} - Project/solution file path</comment>
+  <data name="Error_PathIsMissingOrInvalid" xml:space="preserve">
+    <value>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</value>
+    <comment>{0} - Input path argument</comment>
+  </data>
+  <data name="WhyCommand_Error_ArgumentExceptionThrown" xml:space="preserve">
+    <value>Unable to run 'dotnet nuget why'. {0}</value>
+    <comment>{0} - Exception mssage</comment>
   </data>
   <data name="WhyCommand_Message_NonSDKStyleProjectsAreNotSupported" xml:space="preserve">
     <value>Unable to run 'dotnet nuget why' for project '{0}'. This command only works on SDK-style projects.</value>
   </data>
   <data name="WhyCommand_Error_InvalidAssetsFile" xml:space="preserve">
-    <value>The assets file {0} is invalid. Please run restore for project '{1}' before running this command.</value>
+    <value>The assets file '{0}' is invalid. Please run restore for project '{1}' before running this command.</value>
     <comment>{0} - Assets file path, {1} - Project name</comment>
   </data>
   <data name="WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget" xml:space="preserve">
-    <value>The assets file {0} for project '{1}' does not contain a target for the specified input framework '{2}'.</value>
+    <value>The assets file '{0}' for project '{1}' does not contain a target for the specified input framework '{2}'.</value>
     <comment>{0} - Assets file path, {1} - Project name, {2} - Framework</comment>
   </data>
   <data name="WhyCommand_Message_NoDependencyGraphsFoundInProject" xml:space="preserve">
