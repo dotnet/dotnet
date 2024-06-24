@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Json;
 
 using TokenLogMessages = Microsoft.IdentityModel.Tokens.LogMessages;
 
@@ -599,8 +600,18 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         }
 
         // If a string is in IS8061 format, assume a DateTime is in UTC
+        // Because this is a friend class, we can't remove this method without
+        // breaking compatibility.
         internal static string GetStringClaimValueType(string str)
         {
+            return GetStringClaimValueType(str, string.Empty);
+        }
+
+        internal static string GetStringClaimValueType(string str, string claimType)
+        {
+            if (!string.IsNullOrEmpty(claimType) && !JsonSerializerPrimitives.TryAllStringClaimsAsDateTime() && JsonSerializerPrimitives.IsKnownToNotBeDateTime(claimType))
+                return ClaimValueTypes.String;
+
             if (DateTime.TryParse(str, out DateTime dateTimeValue))
             {
                 string dtUniversal = dateTimeValue.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture);

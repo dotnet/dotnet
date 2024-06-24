@@ -278,10 +278,7 @@ new OpenIdConnectMessageTheoryData("EmptyJsonStringEmptyJobj")
         {
             TestUtilities.WriteHeader(testId, "OidcCreateAuthenticationRequestUrl", true);
             var context = new CompareContext();
-#if NET461
-            if (!message.SkuTelemetryValue.Equals("ID_NET461"))
-                context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET461");
-#elif NET462
+#if NET462
             if (!message.SkuTelemetryValue.Equals("ID_NET462"))
                 context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET462");
 #elif NET472
@@ -293,6 +290,9 @@ new OpenIdConnectMessageTheoryData("EmptyJsonStringEmptyJobj")
 #elif NET8_0
             if (!message.SkuTelemetryValue.Equals("ID_NET8_0"))
                 context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET8_0");
+#elif NET9_0
+            if (!message.SkuTelemetryValue.Equals("ID_NET9_0"))
+                context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET9_0");
 #elif NET_CORE
             if (!message.SkuTelemetryValue.Equals("ID_NETSTANDARD2_0"))
                 context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NETSTANDARD2_0");
@@ -553,10 +553,7 @@ new OpenIdConnectMessageTheoryData("EmptyJsonStringEmptyJobj")
             TestUtilities.WriteHeader("OidcCreateLogoutRequestUrl - " + testId, true);
 
             var context = new CompareContext();
-#if NET461
-            if (!message.SkuTelemetryValue.Equals("ID_NET461"))
-                context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET461");
-#elif NET472
+#if NET472
             if (!message.SkuTelemetryValue.Equals("ID_NET472"))
                 context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET472");
 #elif NET6_0
@@ -565,6 +562,9 @@ new OpenIdConnectMessageTheoryData("EmptyJsonStringEmptyJobj")
 #elif NET8_0
             if (!message.SkuTelemetryValue.Equals("ID_NET8_0"))
                 context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET8_0");
+#elif NET9_0
+            if (!message.SkuTelemetryValue.Equals("ID_NET9_0"))
+                context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET9_0");
 #elif NET_CORE
             if (!message.SkuTelemetryValue.Equals("ID_NETSTANDARD2_0"))
                 context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NETSTANDARD2_0");

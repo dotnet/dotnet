@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.IdentityModel.Tokens.Json.Tests
@@ -167,6 +168,11 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
             dictionary["string"] = "string";
             dictionary["false"] = false;
             dictionary["true"] = true;
+        }
+
+        public static JsonWebToken CreateUnsignedJsonWebToken(string key, object value)
+        {
+            return new JsonWebToken(CreateUnsignedToken(key, value));
         }
 
         public static string CreateUnsignedToken(string key, object value)

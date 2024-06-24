@@ -10,13 +10,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
 {
-
     /// <summary>
     ///  Retrieves a populated <see cref="OpenIdConnectConfiguration"/> given an address.
     /// </summary>
     public class OpenIdConnectConfigurationRetriever : IConfigurationRetriever<OpenIdConnectConfiguration>
     {
-
         /// <summary>
         /// Retrieves a populated <see cref="OpenIdConnectConfiguration"/> given an address.
         /// </summary>

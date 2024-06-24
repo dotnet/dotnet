@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Microsoft.IdentityModel.Tokens.SecurityTokenException">
+    <Position X="6.25" Y="1.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAgAAAgAAAAQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\SecurityTokenException.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ExceptionDetail" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Microsoft.IdentityModel.Tokens.SecurityTokenValidationException" Collapsed="true">
+    <Position X="6.5" Y="4" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\SecurityTokenValidationException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.IdentityModel.Tokens.SecurityTokenInvalidIssuerException">
+    <Position X="6.25" Y="5.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAgAAEAAAAAAAAAAAAACAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\SecurityTokenInvalidIssuerException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.IdentityModel.Tokens.ExceptionDetail">
+    <Position X="10.25" Y="1.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAEAAEAAAAAAAAAEAABAAAAAA=</HashCode>
+      <FileName>Validation\ExceptionDetail.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

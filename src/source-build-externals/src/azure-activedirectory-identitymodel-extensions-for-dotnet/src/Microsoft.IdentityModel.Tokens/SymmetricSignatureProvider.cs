@@ -207,7 +207,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <inheritdoc/>
         public override bool Sign(ReadOnlySpan<byte> input, Span<byte> signature, out int bytesWritten)
         {
-            if (input == null || input.Length == 0)
+            if (input.Length == 0)
                 throw LogHelper.LogArgumentNullException(nameof(input));
 
             if (_disposed)

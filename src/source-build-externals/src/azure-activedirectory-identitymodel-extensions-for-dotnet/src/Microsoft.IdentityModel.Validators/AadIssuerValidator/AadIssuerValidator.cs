@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using static Microsoft.IdentityModel.Validators.AadIssuerValidator;
 
 namespace Microsoft.IdentityModel.Validators
 {
@@ -23,8 +24,12 @@ namespace Microsoft.IdentityModel.Validators
     {
         private static readonly TimeSpan LastKnownGoodConfigurationLifetime = new TimeSpan(0, 24, 0, 0);
 
+        internal const string V11EndpointSuffix = "/v1.1";
+        internal const string V11EndpointSuffixWithTrailingSlash = $"{V11EndpointSuffix}/";
+
         internal const string V2EndpointSuffix = "/v2.0";
         internal const string V2EndpointSuffixWithTrailingSlash = $"{V2EndpointSuffix}/";
+
         internal const string TenantIdTemplate = "{tenantid}";
 
         private Func<string, BaseConfigurationManager> _configurationManagerProvider;
@@ -35,7 +40,8 @@ namespace Microsoft.IdentityModel.Validators
         {
             HttpClient = httpClient;
             AadAuthority = aadAuthority.TrimEnd('/');
-            IsV2Authority = aadAuthority.Contains(V2EndpointSuffix);
+            AadAuthorityVersion = GetProtocolVersion(AadAuthority);
+            SetupAuthorities(AadAuthority, AadAuthorityVersion);
         }
 
         internal AadIssuerValidator(
@@ -51,11 +57,12 @@ namespace Microsoft.IdentityModel.Validators
         }
 
         private HttpClient HttpClient { get; }
-        private string _aadAuthorityV1;
-        private string _aadAuthorityV2;
+
         private BaseConfigurationManager _configurationManagerV1;
+        private BaseConfigurationManager _configurationManagerV11;
         private BaseConfigurationManager _configurationManagerV2;
         private IssuerLastKnownGood _issuerLKGV1;
+        private IssuerLastKnownGood _issuerLKGV11;
         private IssuerLastKnownGood _issuerLKGV2;
 
         internal BaseConfigurationManager ConfigurationManagerV1
@@ -71,6 +78,22 @@ namespace Microsoft.IdentityModel.Validators
             set
             {
                 _configurationManagerV1 = value;
+            }
+        }
+
+        internal BaseConfigurationManager ConfigurationManagerV11
+        {
+            get
+            {
+                if (_configurationManagerV11 == null)
+                    _configurationManagerV11 = CreateConfigManager(AadAuthorityV11);
+
+                return _configurationManagerV11;
+            }
+
+            set
+            {
+                _configurationManagerV11 = value;
             }
         }
 
@@ -92,30 +115,54 @@ namespace Microsoft.IdentityModel.Validators
 
         internal string AadAuthorityV1
         {
-            get
-            {
-                if (_aadAuthorityV1 == null)
-                    _aadAuthorityV1 = IsV2Authority ? CreateV1Authority(AadAuthority) : AadAuthority;
+            get;
+            private set;
+        }
 
-                return _aadAuthorityV1;
-            }
+        internal string AadAuthorityV11
+        {
+            get;
+            private set;
         }
 
         internal string AadAuthorityV2
         {
-            get
-            {
-                if (_aadAuthorityV2 == null)
-                    _aadAuthorityV2 = IsV2Authority ? AadAuthority : AadAuthority + V2EndpointSuffix;
+            get;
+            private set;
+        }
 
-                return _aadAuthorityV2;
+        private void SetupAuthorities(string aadAuthority, ProtocolVersion version)
+        {
+            switch (version)
+            {
+                case ProtocolVersion.V1:
+                    AadAuthorityV1 = aadAuthority;
+                    AadAuthorityV11 = AadAuthorityV1 + V11EndpointSuffix;
+                    AadAuthorityV2 = AadAuthorityV1 + V2EndpointSuffix;
+                    break;
+                    
+                case ProtocolVersion.V11:
+                    AadAuthorityV1 = CreateV1Authority(AadAuthority, V11EndpointSuffix);
+                    AadAuthorityV11 = aadAuthority;
+                    AadAuthorityV2 = AadAuthorityV1 + V2EndpointSuffix;
+                    break;
+
+                case ProtocolVersion.V2:
+                    AadAuthorityV1 = CreateV1Authority(AadAuthority);
+                    AadAuthorityV11 = AadAuthorityV1 + V11EndpointSuffix;
+                    AadAuthorityV2 = aadAuthority;
+                    break;
+
+                default:
+                    throw new InvalidOperationException("Unsupported protocol version.");
             }
         }
 
         internal string AadIssuerV1 { get; set; }
         internal string AadIssuerV2 { get; set; }
         internal string AadAuthority { get; set; }
-        internal bool IsV2Authority { get; set; }
+        internal ProtocolVersion AadAuthorityVersion { get; set; }
+
         internal static readonly IDictionary<string, AadIssuerValidator> s_issuerValidators = new ConcurrentDictionary<string, AadIssuerValidator>();
 
         /// <summary>
@@ -144,7 +191,7 @@ namespace Microsoft.IdentityModel.Validators
             ValueTask<string> vt = ValidateAsync(issuer, securityToken, validationParameters);
             return vt.IsCompletedSuccessfully ?
                 vt.Result :
-                vt.AsTask().GetAwaiter().GetResult();
+                vt.AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -196,18 +243,18 @@ namespace Microsoft.IdentityModel.Validators
 
             try
             {
-                var isV2Issuer = IsV2Issuer(securityToken);
-                var effectiveConfigurationManager = GetEffectiveConfigurationManager(isV2Issuer);
+                var issuerVersion = GetTokenIssuerVersion(securityToken);
+                var effectiveConfigurationManager = GetEffectiveConfigurationManager(issuerVersion);
 
                 string aadIssuer = null;
                 if (validationParameters.ValidateWithLKG)
                 {
                     // returns null if LKG issuer expired
-                    aadIssuer = GetEffectiveLKGIssuer(isV2Issuer);
+                    aadIssuer = GetEffectiveLKGIssuer(issuerVersion);
                 }
                 else
                 {
-                    var baseConfiguration = await GetBaseConfiguration(effectiveConfigurationManager, validationParameters).ConfigureAwait(false);
+                    var baseConfiguration = await GetBaseConfigurationAsync(effectiveConfigurationManager, validationParameters).ConfigureAwait(false);
                     aadIssuer = baseConfiguration.Issuer;
                 }
 
@@ -217,7 +264,7 @@ namespace Microsoft.IdentityModel.Validators
 
                     // The original LKG assignment behavior for previous self-state management.
                     if (isIssuerValid && !validationParameters.ValidateWithLKG)
-                        SetEffectiveLKGIssuer(aadIssuer, isV2Issuer, effectiveConfigurationManager.LastKnownGoodLifetime);
+                        SetEffectiveLKGIssuer(aadIssuer, issuerVersion, effectiveConfigurationManager.LastKnownGoodLifetime);
 
                     if (isIssuerValid)
                         return issuer;
@@ -305,12 +352,13 @@ namespace Microsoft.IdentityModel.Validators
             return s_issuerValidators[aadAuthority];
         }
 
-        private static string CreateV1Authority(string aadV2Authority)
-        {
-            if (aadV2Authority.Contains(AadIssuerValidatorConstants.Organizations))
-                return aadV2Authority.Replace($"{AadIssuerValidatorConstants.Organizations}{V2EndpointSuffix}", AadIssuerValidatorConstants.Common);
 
-            return aadV2Authority.Replace(V2EndpointSuffix, string.Empty);
+        private static string CreateV1Authority(string aadV2Authority, string suffixToReplace = V2EndpointSuffix)
+        {
+            if (suffixToReplace == V2EndpointSuffix && aadV2Authority.Contains(AadIssuerValidatorConstants.Organizations))
+                return aadV2Authority.Replace($"{AadIssuerValidatorConstants.Organizations}{suffixToReplace}", AadIssuerValidatorConstants.Common);
+
+            return aadV2Authority.Replace(suffixToReplace, string.Empty);
         }
 
         private ConfigurationManager<OpenIdConnectConfiguration> CreateConfigManager(
@@ -350,7 +398,7 @@ namespace Microsoft.IdentityModel.Validators
             }
         }
 
-        private void SetEffectiveLKGIssuer(string aadIssuer, bool isV2Issuer, TimeSpan lastKnownGoodLifetime)
+        private void SetEffectiveLKGIssuer(string aadIssuer, ProtocolVersion protocolVersion, TimeSpan lastKnownGoodLifetime)
         {
             var issuerLKG = new IssuerLastKnownGood
             {
@@ -358,15 +406,40 @@ namespace Microsoft.IdentityModel.Validators
                 LastKnownGoodLifetime = lastKnownGoodLifetime
             };
 
-            if (isV2Issuer)
-                _issuerLKGV2 = issuerLKG;
-            else
-                _issuerLKGV1 = issuerLKG;
+            switch (protocolVersion)
+            {
+                case ProtocolVersion.V1:
+                    _issuerLKGV1 = issuerLKG;
+                    break;
+
+                case ProtocolVersion.V11:
+                    _issuerLKGV11 = issuerLKG;
+                    break;
+
+                case ProtocolVersion.V2:
+                    _issuerLKGV2 = issuerLKG;
+                    break;
+            }
         }
 
-        private string GetEffectiveLKGIssuer(bool isV2Issuer)
+        private string GetEffectiveLKGIssuer(ProtocolVersion protocolVersion)
         {
-            var effectiveLKGIssuer = isV2Issuer ? _issuerLKGV2 : _issuerLKGV1;
+            IssuerLastKnownGood effectiveLKGIssuer = null;
+            switch (protocolVersion)
+            {
+                case ProtocolVersion.V1:
+                    effectiveLKGIssuer = _issuerLKGV1;
+                    break;
+
+                case ProtocolVersion.V11:
+                    effectiveLKGIssuer = _issuerLKGV11;
+                    break;
+
+                case ProtocolVersion.V2:
+                    effectiveLKGIssuer = _issuerLKGV2;
+                    break;
+            }
+
             if (effectiveLKGIssuer != null && effectiveLKGIssuer.IsValid)
             {
                 return effectiveLKGIssuer.Issuer;
@@ -375,33 +448,88 @@ namespace Microsoft.IdentityModel.Validators
             return null;
         }
 
-        private static bool IsV2Issuer(SecurityToken securityToken)
+        private static ProtocolVersion GetTokenIssuerVersion(SecurityToken securityToken)
         {
-            return securityToken.Issuer.EndsWith(V2EndpointSuffixWithTrailingSlash, StringComparison.OrdinalIgnoreCase) ||
-                securityToken.Issuer.EndsWith(V2EndpointSuffix, StringComparison.OrdinalIgnoreCase);
+            if (securityToken.Issuer.EndsWith(V2EndpointSuffixWithTrailingSlash, StringComparison.OrdinalIgnoreCase) ||
+                securityToken.Issuer.EndsWith(V2EndpointSuffix, StringComparison.OrdinalIgnoreCase))
+                return ProtocolVersion.V2;
+
+            if (securityToken.Issuer.EndsWith(V11EndpointSuffixWithTrailingSlash, StringComparison.OrdinalIgnoreCase) ||
+                securityToken.Issuer.EndsWith(V11EndpointSuffix, StringComparison.OrdinalIgnoreCase))
+                return ProtocolVersion.V11;
+
+            return ProtocolVersion.V1;
         }
 
-        private BaseConfigurationManager GetEffectiveConfigurationManager(bool isV2Issuer)
+        private BaseConfigurationManager GetEffectiveConfigurationManager(ProtocolVersion protocolVersion)
         {        
             if (_configurationManagerProvider != null)
             {
-                var aadAuthority = isV2Issuer ? AadAuthorityV2 : AadAuthorityV1;
-                var configurationManager = _configurationManagerProvider(aadAuthority);
+                string aadAuthority = GetAuthority(protocolVersion);
+                
 
+                var configurationManager = _configurationManagerProvider(aadAuthority);
                 if (configurationManager != null)
                     return configurationManager;
             }
 
-            // If no provider or provider returned null, fallback to previous strategy
-            return isV2Issuer ? ConfigurationManagerV2 : ConfigurationManagerV1;
+            // If no provider or provider returned null, fallback to previous strategy            
+            return GetConfigurationManager(protocolVersion);
         }
 
-        private static async Task<BaseConfiguration> GetBaseConfiguration(BaseConfigurationManager configurationManager, TokenValidationParameters validationParameters)
+        private BaseConfigurationManager GetConfigurationManager(ProtocolVersion protocolVersion)
+        {
+            switch (protocolVersion)
+            {
+                case ProtocolVersion.V1:
+                    return ConfigurationManagerV1;
+
+                case ProtocolVersion.V11:
+                    return ConfigurationManagerV11;
+
+                case ProtocolVersion.V2:
+                    return ConfigurationManagerV2;
+
+                default:
+                    return ConfigurationManagerV1;
+            }
+        }
+
+        private string GetAuthority(ProtocolVersion protocolVersion)
+        {
+            switch (protocolVersion)
+            {
+                case ProtocolVersion.V1:
+                    return AadAuthorityV1;
+
+                case ProtocolVersion.V11:
+                    return AadAuthorityV11;
+
+                case ProtocolVersion.V2:
+                    return AadAuthorityV2;
+
+                default:
+                    return AadAuthorityV1;
+            }
+        }
+
+        private static ProtocolVersion GetProtocolVersion(string aadAuthority)
+        {
+            if (aadAuthority.Contains(V2EndpointSuffix))
+                return ProtocolVersion.V2;
+
+            if (aadAuthority.Contains(V11EndpointSuffix))
+                return ProtocolVersion.V11;
+
+            return ProtocolVersion.V1;
+        }
+
+        private static Task<BaseConfiguration> GetBaseConfigurationAsync(BaseConfigurationManager configurationManager, TokenValidationParameters validationParameters)
         {
             if (validationParameters.RefreshBeforeValidation)
                 configurationManager.RequestRefresh();
 
-            return await configurationManager.GetBaseConfigurationAsync(CancellationToken.None).ConfigureAwait(false);
+            return configurationManager.GetBaseConfigurationAsync(CancellationToken.None);
         }
 
         /// <summary>Gets the tenant ID from a token.</summary>

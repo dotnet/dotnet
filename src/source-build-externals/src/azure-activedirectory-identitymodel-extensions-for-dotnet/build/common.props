@@ -32,7 +32,7 @@
 
   <!-- Wilson version  -->
   <PropertyGroup>
-    <WilsonCurrentVersion>7.4.1</WilsonCurrentVersion>
+    <WilsonCurrentVersion>8.0.0</WilsonCurrentVersion>
 
     <PreviewVersionSuffix Condition="'$(PreviewVersionSuffix)' == '' and '$(BuildingInsideVisualStudio)' != 'true'">preview-$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMddHHmmss"))</PreviewVersionSuffix>
     <!--VS re-evaluates the variables, so having seconds or minutes creates an infinite loop of package updates-->
@@ -46,8 +46,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageValidationBaselineVersion>7.0.0</PackageValidationBaselineVersion>
+    <EnablePackageValidation>false</EnablePackageValidation>
+    <PackageValidationBaselineVersion>8.0.0</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
@@ -58,8 +58,10 @@
     <NoWarn>$(NoWarn);SYSLIB0050</NoWarn>
     <NoWarn>$(NoWarn);SYSLIB0051</NoWarn>
   </PropertyGroup>
-  
+
   <ItemGroup>
+     <!-- Protects against sync-over-async: https://github.com/microsoft/vs-threading/blob/main/doc/analyzers/index.md. -->
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.9.28" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All"/>
   </ItemGroup>
 
