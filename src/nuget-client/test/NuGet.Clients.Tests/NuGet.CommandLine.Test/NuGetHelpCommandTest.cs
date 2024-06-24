@@ -12,6 +12,7 @@ namespace NuGet.CommandLine.Test
         [InlineData("client-certs")]
         [InlineData("config")]
         [InlineData("delete")]
+        [InlineData("eula")]
         [InlineData("help")]
         [InlineData("init")]
         [InlineData("install")]

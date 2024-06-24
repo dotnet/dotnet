@@ -296,7 +296,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Disable using the Http cache and contact all configured package sources for live information..
+        ///   Looks up a localized string similar to Disable the use of the HTTP cache and contact all configured package sources for live information..
         /// </summary>
         internal static string CommandNoHttpCache {
             get {
@@ -439,6 +439,15 @@ namespace NuGet.CommandLine {
         internal static string DeleteCommandUsageSummary {
             get {
                 return ResourceManager.GetString("DeleteCommandUsageSummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display NuGet.exe&apos;s End User Liscence Agreement (EULA).
+        /// </summary>
+        internal static string EulaDescription {
+            get {
+                return ResourceManager.GetString("EulaDescription", resourceCulture);
             }
         }
         
@@ -886,7 +895,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to NoCache is deprecated in favor of the appropriately named NoHttpCache..
+        ///   Looks up a localized string similar to NoCache is deprecated and has been renamed to NoHttpCache. Please use NoHttpCache instead..
         /// </summary>
         internal static string Log_RestoreNoCacheInformation {
             get {
