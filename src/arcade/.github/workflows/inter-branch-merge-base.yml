@@ -24,7 +24,7 @@ on:
         type: string
         description: The path to the configuration file.
         required: false
-        default: 'github-merge-flow.json'
+        default: 'github-merge-flow.jsonc'
       script_version:
         type: string
         required: false

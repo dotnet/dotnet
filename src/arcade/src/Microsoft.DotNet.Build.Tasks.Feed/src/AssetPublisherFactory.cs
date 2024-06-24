@@ -38,7 +38,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     {
                         return new AzureStorageContainerAssetTokenCredentialPublisher(
                             new Uri(feedConfig.TargetURL),
-                            new DefaultAzureCredential(),
+                            new DefaultAzureCredential(new DefaultAzureCredentialOptions {  ManagedIdentityClientId = task.ManagedIdentityClientId }),
                             _log);
                     }
                 default:

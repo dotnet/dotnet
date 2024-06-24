@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.24317.3",
+      "packageVersion": "9.0.0-beta.24321.4",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "579b9d3c2a51de22be7685f0bd624bf83265c901"
+      "commitSha": "3aba80fecac252e1cdaffcebc0a37a24a960228b"
     },
     {
       "packageVersion": "9.0.0-preview.2.24163.9",
@@ -49,10 +49,10 @@
       "commitSha": "9a80b6b085fbe20cdb1c60b549947ecabefe9172"
     },
     {
-      "packageVersion": "9.0.0-preview.6.24317.2",
+      "packageVersion": "9.0.0-preview.7.24319.4",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "9880d891ddfddee1b1182c149468a43b89c090a0"
+      "commitSha": "ffe9afdc046cf7a6f82cc7c5796aade54047af64"
     },
     {
       "packageVersion": "8.0.400-beta.24321.3",
@@ -79,10 +79,10 @@
       "commitSha": "0b7c3a0bc36e8e82845e7e29a88934b774ba0f36"
     },
     {
-      "packageVersion": "4.11.0-3.24319.7",
+      "packageVersion": "4.11.0-3.24321.9",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "8085c11499980340a0d11d144739c569981a6ee5"
+      "commitSha": "847d58843a139405d633a55c82b232582c996848"
     },
     {
       "packageVersion": "3.11.0-beta1.24318.1",
@@ -91,10 +91,10 @@
       "commitSha": "f1115edce8633ebe03a86191bc05c6969ed9a821"
     },
     {
-      "packageVersion": "9.0.0-preview.6.24319.11",
+      "packageVersion": "9.0.0-preview.6.24323.2",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "117cfccdd71abc164e6b933ca7602b509a1365dd"
+      "commitSha": "d38e5593427f63e513ca3be11c3fdccb07b88ce1"
     },
     {
       "packageVersion": "9.0.0-preview.24279.2",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "157b331918129595ca7052156fa08a20aeea1c79"
+      "commitSha": "3cfb3ea0bf20d99ffba14e1cb56e07f0806ce1eb"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24303.2",

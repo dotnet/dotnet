@@ -31,11 +31,16 @@ jobs:
     - checkout: self
       clean: true
     steps:
-    - script: eng\update-packagesource.cmd 
-        -gitHubPat $(BotAccount-dotnet-maestro-bot-PAT)
-        -barToken $(MaestroAccessToken)
-        -packagesSource $(Build.SourcesDirectory)/build_stage_artifacts
+    - task: AzureCLI@2
       displayName: Update package source
+      inputs:
+        azureSubscription: "Darc: Maestro Production"
+        scriptType: ps
+        scriptLocation: inlineScript
+        inlineScript: >
+          .\eng\update-packagesource.ps1
+          -gitHubPat $(BotAccount-dotnet-maestro-bot-PAT)
+          -packagesSource $(Build.SourcesDirectory)/build_stage_artifacts
     - script: eng\common\cibuild.cmd
         $(_BuildArgs)
       displayName: Build / Validate

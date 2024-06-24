@@ -538,7 +538,7 @@
     <!-- determine if there is a file to be updated, and setup the output file -->
     <PropertyGroup>
       <RuntimeFileSource Condition="'%(File.FileName)%(File.Extension)' == 'runtime.json'">%(File.Identity)</RuntimeFileSource>
-      <_runtimeJsonIncluded Condition="'$(IsLineupPackage)' == 'true' OR '$(IncludeRuntimeJson)' == 'true'">true</_runtimeJsonIncluded>
+      <_runtimeJsonIncluded Condition="'$(IncludeRuntimeJson)' != 'false' and ('$(IsLineupPackage)' == 'true' OR '$(IncludeRuntimeJson)' == 'true')">true</_runtimeJsonIncluded>
     </PropertyGroup>
 
     <!-- only include runtime.json in lineup packages -->
