@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@9faf59f](https://github.com/dotnet/aspire/tree/9faf59f870abdeb427c51c1380fce84d8163f2f0)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@68adb02](https://github.com/dotnet/aspnetcore/tree/68adb02eb4217bad645d165f10355e346b693a5e)*
+*[dotnet/aspnetcore@07fefab](https://github.com/dotnet/aspnetcore/tree/07fefabf86cda0f83970f1a7ea4bc3f0bcdbf307)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@a7f443b](https://github.com/google/googletest/tree/a7f443b80b105f940225332ed3c31f2790092f47)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -28,7 +28,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@33d8bf2](https://github.com/dotnet/diagnostics/tree/33d8bf23a6566cd3fb9055acfc9f1141391d5421)*
 - `src/efcore`  
-*[dotnet/efcore@9a80b6b](https://github.com/dotnet/efcore/tree/9a80b6b085fbe20cdb1c60b549947ecabefe9172)*
+*[dotnet/efcore@e227289](https://github.com/dotnet/efcore/tree/e227289bd2633146ceb56874e592a01bfc5c30f9)*
 - `src/emsdk`  
 *[dotnet/emsdk@9880d89](https://github.com/dotnet/emsdk/tree/9880d891ddfddee1b1182c149468a43b89c090a0)*
 - `src/fsharp`  
@@ -42,7 +42,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@0b7c3a0](https://github.com/dotnet/razor/tree/0b7c3a0bc36e8e82845e7e29a88934b774ba0f36)*
 - `src/roslyn`  
-*[dotnet/roslyn@847d588](https://github.com/dotnet/roslyn/tree/847d58843a139405d633a55c82b232582c996848)*
+*[dotnet/roslyn@5ec8cfd](https://github.com/dotnet/roslyn/tree/5ec8cfd6d1255e4f4e9d610dd42aa30c60303e40)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@f1115ed](https://github.com/dotnet/roslyn-analyzers/tree/f1115edce8633ebe03a86191bc05c6969ed9a821)*
 - `src/runtime`  
@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@54700bb](https://github.com/dotnet/scenario-tests/tree/54700bbee86f660d37bd519a905b62bb50adc8c8)*
 - `src/sdk`  
-*[dotnet/sdk@04bf68d](https://github.com/dotnet/sdk/tree/04bf68dcd2f7ab218993ead5149beb29b95f6dde)*
+*[dotnet/sdk@9941bdf](https://github.com/dotnet/sdk/tree/9941bdf3a6c43cd3c47912a6d0109ac5dd3a59da)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@9a2785b](https://github.com/dotnet/source-build-externals/tree/9a2785b8409e4ee8db848cc2fbfa19b3316a3baa)*
     - `src/source-build-externals/src/abstractions-xunit`  
