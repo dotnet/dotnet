@@ -95,7 +95,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     MaestroApiEndpoint,
                     BuildAssetRegistryToken,
                     MaestroApiFederatedToken,
-                    managedIdentityId: null,
+                    MaestroManagedIdentityId,
                     disableInteractiveAuth: !AllowInteractiveAuthentication);
 
                 Maestro.Client.Models.Build buildInformation = await client.Builds.GetBuildAsync(BARBuildId);

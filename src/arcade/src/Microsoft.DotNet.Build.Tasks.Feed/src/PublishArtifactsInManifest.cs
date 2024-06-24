@@ -54,7 +54,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// Metadata LatestLinkShortUrlPrefixes (optional): If provided, AKA ms links are generated (for artifacts blobs only)
         ///                                               that target this short url path. The link is construct as such:
         ///                                               aka.ms/AkaShortUrlPath/BlobArtifactPath -> Target blob url
-        ///                                               If specified, then AkaMSClientId, AkaMSClientSecret and AkaMSTenant must be provided.
+        ///                                               If specified, then AkaMSClientId, AkaMSClientCertificate and AkaMSTenant must be provided.
         ///                                               The version information is stripped away from the file and blob artifact path.
         /// </summary>
         public ITaskItem[] TargetFeedConfig { get; set; }
@@ -101,6 +101,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// The token is obtained in a previous AzureCLI@2 step and passed as a secret to this task.
         /// </summary>
         public string MaestroApiFederatedToken { get; set; }
+
+        /// <summary>
+        /// Managed identity to be used to authenticate with Maestro app in case the regular Azure CLI or token is not available.
+        /// </summary>
+        public string MaestroManagedIdentityId { get; set; }
 
         /// <summary>
         /// When running this task locally, allow the interactive browser-based authentication against Maestro.
@@ -162,8 +167,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public string AkaMSClientId { get; set; }
 
-        public string AkaMSClientSecret { get; set; }
-
         /// <summary>
         /// Path to client certificate
         /// </summary>
@@ -176,6 +179,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public string AkaMSCreatedBy { get; set; }
 
         public string AkaMSGroupOwner { get; set; }
+
+        /// <summary>
+        /// Client ID to use with credential-free publishing. If not specified, the default
+        /// credential is used.
+        /// </summary>
+        public string ManagedIdentityClientId { get; set; }
 
         public string BuildQuality
         {
@@ -271,7 +280,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                             MaestroApiEndpoint,
                             BuildAssetRegistryToken,
                             MaestroApiFederatedToken,
-                            managedIdentityId: null,
+                            MaestroManagedIdentityId,
                             !AllowInteractiveAuthentication);
                         Maestro.Client.Models.Build buildInformation = await client.Builds.GetBuildAsync(BARBuildId);
 
@@ -342,13 +351,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 InternalBuild = this.InternalBuild,
                 SkipSafetyChecks = this.SkipSafetyChecks,
                 AkaMSClientId = this.AkaMSClientId,
-                AkaMSClientSecret = this.AkaMSClientSecret,
                 AkaMSClientCertificate = !string.IsNullOrEmpty(AkaMSClientCertificate) ?
                     new X509Certificate2(Convert.FromBase64String(File.ReadAllText(AkaMSClientCertificate))) : null,
                 AkaMSCreatedBy = this.AkaMSCreatedBy,
                 AkaMSGroupOwner = this.AkaMSGroupOwner,
                 AkaMsOwners = this.AkaMsOwners,
                 AkaMSTenant = this.AkaMSTenant,
+                ManagedIdentityClientId = this.ManagedIdentityClientId,
                 PublishInstallersAndChecksums = this.PublishInstallersAndChecksums,
                 FeedKeys = this.FeedKeys,
                 FeedSasUris = this.FeedSasUris,

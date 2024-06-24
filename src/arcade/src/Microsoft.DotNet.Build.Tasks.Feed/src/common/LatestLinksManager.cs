@@ -29,22 +29,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public LatestLinksManager(
             string akaMSClientId,
-            string akaMSClientSecret,
-            string akaMSTenant,
-            string akaMSGroupOwner,
-            string akaMSCreatedBy,
-            string akaMsOwners,
-            TaskLoggingHelper logger)
-        {
-            _logger = logger;
-            _akaMSGroupOwner = akaMSGroupOwner;
-            _akaMSCreatedBy = akaMSCreatedBy;
-            _akaMSOwners = akaMsOwners;
-            _linkManager = new AkaMSLinkManager(akaMSClientId, akaMSClientSecret, akaMSTenant, _logger);
-        }
-
-        public LatestLinksManager(
-            string akaMSClientId,
             X509Certificate2 certificate,
             string akaMSTenant,
             string akaMSGroupOwner,
