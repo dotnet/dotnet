@@ -48,7 +48,7 @@ public class SelectExpression : Expression, IPrintableExpression
         // TODO: Redo aliasing
         _sources = [new SourceExpression(new ObjectReferenceExpression(entityType, "root"), RootAlias)];
         _projectionMapping[new ProjectionMember()]
-            = new EntityProjectionExpression(entityType, new ObjectReferenceExpression(entityType, RootAlias));
+            = new EntityProjectionExpression(new ObjectReferenceExpression(entityType, RootAlias), entityType);
     }
 
     /// <summary>
@@ -61,8 +61,7 @@ public class SelectExpression : Expression, IPrintableExpression
     {
         var fromSql = new FromSqlExpression(entityType.ClrType, sql, argument);
         _sources = [new SourceExpression(fromSql, RootAlias)];
-        _projectionMapping[new ProjectionMember()] = new EntityProjectionExpression(
-            entityType, new ObjectReferenceExpression(entityType, RootAlias));
+        _projectionMapping[new ProjectionMember()] = new EntityProjectionExpression(new ObjectReferenceExpression(entityType, RootAlias), entityType);
     }
 
     /// <summary>
@@ -87,7 +86,7 @@ public class SelectExpression : Expression, IPrintableExpression
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual ReadItemInfo? ReadItemInfo { get; }
+    public virtual ReadItemInfo? ReadItemInfo { get; init; }
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -95,8 +94,20 @@ public class SelectExpression : Expression, IPrintableExpression
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public SelectExpression(SqlExpression projection)
+    public SelectExpression(Expression projection)
         => _projectionMapping[new ProjectionMember()] = projection;
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    public SelectExpression(SourceExpression source, Expression projection)
+    {
+        _sources.Add(source);
+        _projectionMapping[new ProjectionMember()] = projection;
+    }
 
     private SelectExpression()
     {
@@ -108,19 +119,34 @@ public class SelectExpression : Expression, IPrintableExpression
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public static SelectExpression CreateForPrimitiveCollection(
-        SourceExpression source,
-        Type elementClrType,
-        CoreTypeMapping elementTypeMapping)
-        => new()
+    public static SelectExpression CreateForCollection(Expression sourceExpression, string sourceAlias, Expression projection)
+    {
+        // SelectExpressions representing bare arrays are of the form SELECT VALUE i FROM i IN x.
+        // Unfortunately, Cosmos doesn't support x being anything but a root container or a property access
+        // (e.g. SELECT VALUE i FROM i IN c.SomeArray).
+        // For example, x cannot be a function invocation (SELECT VALUE i FROM i IN SetUnion(...)) or an array constant
+        // (SELECT VALUE i FROM i IN [1,2,3]).
+        // So we wrap any non-property in a subquery as follows: SELECT i FROM i IN (SELECT VALUE [1,2,3])
+        if (!SourceExpression.IsCompatible(sourceExpression))
+        {
+            sourceExpression = new SelectExpression(
+                [new ProjectionExpression(sourceExpression, null!)],
+                sources: [],
+                orderings: [])
+            {
+                UsesSingleValueProjection = true
+            };
+        }
+
+        var source = new SourceExpression(sourceExpression, sourceAlias, withIn: true);
+
+        return new SelectExpression
         {
             _sources = { source },
-            _projectionMapping =
-            {
-                [new ProjectionMember()] = new ScalarReferenceExpression(source.Alias, elementClrType, elementTypeMapping)
-            },
+            _projectionMapping = { [new ProjectionMember()] = projection },
             UsesSingleValueProjection = true
         };
+    }
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -314,8 +340,8 @@ public class SelectExpression : Expression, IPrintableExpression
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual int AddToProjection(ObjectArrayProjectionExpression objectArrayProjection)
-        => AddToProjection(objectArrayProjection, null);
+    public virtual int AddToProjection(ObjectArrayAccessExpression objectArrayAccess)
+        => AddToProjection(objectArrayAccess, null);
 
     private int AddToProjection(Expression expression, string? alias)
     {
@@ -326,7 +352,7 @@ public class SelectExpression : Expression, IPrintableExpression
         }
 
         var baseAlias = alias
-            ?? (expression as IAccessExpression)?.Name
+            ?? (expression as IAccessExpression)?.PropertyName
             ?? "c";
 
         var currentAlias = baseAlias;
@@ -490,6 +516,86 @@ public class SelectExpression : Expression, IPrintableExpression
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
+    public virtual Expression AddJoin(ShapedQueryExpression inner, Expression outerShaper)
+    {
+        var (innerSelect, innerShaper) = ((SelectExpression)inner.QueryExpression, inner.ShaperExpression);
+
+        // TODO: Proper alias management (#33894).
+        // Create a new source (JOIN) for the server side of the query; if the inner query represents a bare array, unwrap it and
+        // add the JOIN directly
+        var joinSource = CosmosQueryUtils.TryExtractBareArray(inner, out var bareArray) && SourceExpression.IsCompatible(bareArray)
+            ? new SourceExpression(bareArray, "a", withIn: true)
+            : new SourceExpression(innerSelect, "a");
+
+        // Make the necessary modifications to the shaper side, projecting out a TransparentIdentifier (outer/inner)
+        var transparentIdentifierType = TransparentIdentifierFactory.Create(outerShaper.Type, innerShaper.Type);
+        var outerMemberInfo = transparentIdentifierType.GetTypeInfo().GetDeclaredField("Outer")!;
+        var innerMemberInfo = transparentIdentifierType.GetTypeInfo().GetDeclaredField("Inner")!;
+
+        var projectionMapping = new Dictionary<ProjectionMember, Expression>();
+        var mapping = new Dictionary<ProjectionMember, ProjectionMember>();
+
+        foreach (var (projectionMember, expression) in _projectionMapping)
+        {
+            var remappedProjectionMember = projectionMember.Prepend(outerMemberInfo);
+            mapping[projectionMember] = remappedProjectionMember;
+            projectionMapping[remappedProjectionMember] = expression;
+        }
+
+        outerShaper = new ProjectionMemberRemappingExpressionVisitor(this, mapping).Visit(outerShaper);
+        mapping.Clear();
+
+        foreach (var (projectionMember, expression) in innerSelect._projectionMapping)
+        {
+            var remappedProjectionMember = projectionMember.Prepend(innerMemberInfo);
+            mapping[projectionMember] = remappedProjectionMember;
+
+            Expression projectionToAdd;
+            if (projectionMember.Last is null)
+            {
+                projectionToAdd = expression switch
+                {
+                    SqlExpression e => new ScalarReferenceExpression(joinSource.Alias, e.Type, e.TypeMapping),
+                    EntityProjectionExpression e => e.Update(new ObjectReferenceExpression(e.EntityType, joinSource.Alias)),
+
+                    _ => throw new UnreachableException(
+                        $"Unexpected expression type in projection when adding join: {expression.GetType().Name}")
+                };
+            }
+            else
+            {
+                // TODO: #34004
+                // The subquery is projecting out a JSON object; for the projection mapping of the outer query, we need to generate
+                // property accesses over that object: Scalar/ObjectAccessExpressions over the ObjectReferenceExpression that references
+                // the JOIN source.
+                // However, the JSON object being projected out of the subquery doesn't correspond to any entity type, and there's currently
+                // no way for us to represent a reference to that - ObjectReferenceExpression requires an IEntityType. Changing that
+                // requires shaper-side changes (see comment in ObjectReferenceExpression); if we can remove that requirement, we can
+                // possibly also merge ScalarReferenceExpression and ObjectReferenceExpression to a single SourceReferenceExpression.
+                throw new InvalidOperationException(CosmosStrings.ComplexProjectionInSubqueryNotSupported);
+            }
+
+            projectionMapping[remappedProjectionMember] = projectionToAdd;
+        }
+
+        innerSelect.ApplyProjection();
+        _sources.Add(joinSource);
+
+        innerShaper = new ProjectionMemberRemappingExpressionVisitor(this, mapping).Visit(innerShaper);
+        _projectionMapping = projectionMapping;
+        innerSelect._projectionMapping.Clear();
+
+        return New(
+            transparentIdentifierType.GetTypeInfo().DeclaredConstructors.Single(),
+            new[] { outerShaper, innerShaper }, outerMemberInfo, innerMemberInfo);
+    }
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public override Type Type
         => typeof(object);
 
@@ -605,7 +711,34 @@ public class SelectExpression : Expression, IPrintableExpression
             Predicate = predicate,
             Offset = offset,
             Limit = limit,
-            IsDistinct = IsDistinct
+            IsDistinct = IsDistinct,
+            UsesSingleValueProjection = UsesSingleValueProjection,
+            ReadItemInfo = ReadItemInfo
+        };
+    }
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    public virtual SelectExpression WithSingleValueProjection()
+    {
+        var projectionMapping = new Dictionary<ProjectionMember, Expression>();
+        foreach (var (projectionMember, expression) in _projectionMapping)
+        {
+            projectionMapping[projectionMember] = expression;
+        }
+
+        return new SelectExpression(Projection.ToList(), Sources.ToList(), Orderings.ToList())
+        {
+            _projectionMapping = projectionMapping,
+            Predicate = Predicate,
+            Offset = Offset,
+            Limit = Limit,
+            IsDistinct = IsDistinct,
+            UsesSingleValueProjection = true
         };
     }
 
@@ -672,11 +805,16 @@ public class SelectExpression : Expression, IPrintableExpression
             expressionPrinter.Append("1");
         }
 
-        if (Sources.Any())
+        if (Sources.Count > 0)
         {
             expressionPrinter.AppendLine().Append("FROM ");
+            expressionPrinter.Visit(Sources[0]);
 
-            expressionPrinter.VisitCollection(Sources, p => p.AppendLine());
+            for (var i = 1; i < Sources.Count; i++)
+            {
+                expressionPrinter.AppendLine().Append("JOIN ");
+                expressionPrinter.Visit(Sources[i]);
+            }
         }
 
         if (Predicate != null)
@@ -727,4 +865,27 @@ public class SelectExpression : Expression, IPrintableExpression
         => this.Print();
 
     #endregion Print
+
+    private sealed class ProjectionMemberRemappingExpressionVisitor(
+        SelectExpression queryExpression,
+        Dictionary<ProjectionMember, ProjectionMember> projectionMemberMappings)
+        : ExpressionVisitor
+    {
+        protected override Expression VisitExtension(Expression expression)
+        {
+            if (expression is ProjectionBindingExpression projectionBindingExpression)
+            {
+                Check.DebugAssert(
+                    projectionBindingExpression.ProjectionMember is not null,
+                    "ProjectionBindingExpression must have projection member.");
+
+                return new ProjectionBindingExpression(
+                    queryExpression,
+                    projectionMemberMappings[projectionBindingExpression.ProjectionMember],
+                    projectionBindingExpression.Type);
+            }
+
+            return base.VisitExtension(expression);
+        }
+    }
 }
