@@ -21,7 +21,7 @@ internal class ManifestPublisher(ILogger<ManifestPublisher> logger,
 
     public Utf8JsonWriter? JsonWriter { get; set; }
 
-    public virtual async Task PublishAsync(DistributedApplicationModel model, CancellationToken cancellationToken)
+    public async Task PublishAsync(DistributedApplicationModel model, CancellationToken cancellationToken)
     {
         await PublishInternalAsync(model, cancellationToken).ConfigureAwait(false);
         _lifetime.StopApplication();
@@ -48,118 +48,8 @@ internal class ManifestPublisher(ILogger<ManifestPublisher> logger,
     protected async Task WriteManifestAsync(DistributedApplicationModel model, Utf8JsonWriter jsonWriter, CancellationToken cancellationToken)
     {
         var manifestPath = _options.Value.OutputPath ?? throw new DistributedApplicationException("The '--output-path [path]' option was not specified even though '--publisher manifest' argument was used.");
-        var context = new ManifestPublishingContext(_executionContext, manifestPath, jsonWriter);
+        var context = new ManifestPublishingContext(_executionContext, manifestPath, jsonWriter, cancellationToken);
 
-        jsonWriter.WriteStartObject();
-        WriteResources(model, context);
-        jsonWriter.WriteEndObject();
-
-        await jsonWriter.FlushAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    private static void WriteResources(DistributedApplicationModel model, ManifestPublishingContext context)
-    {
-        context.Writer.WriteStartObject("resources");
-        foreach (var resource in model.Resources)
-        {
-            WriteResource(resource, context);
-        }
-        context.Writer.WriteEndObject();
-    }
-
-    internal static void WriteResource(IResource resource, ManifestPublishingContext context)
-    {
-        // First see if the resource has a callback annotation with overrides the behavior for rendering
-        // out the JSON. If so use that callback, otherwise use the fallback logic that we have.
-        if (resource.TryGetLastAnnotation<ManifestPublishingCallbackAnnotation>(out var manifestPublishingCallbackAnnotation))
-        {
-            if (manifestPublishingCallbackAnnotation.Callback != null)
-            {
-                WriteResourceObject(resource, () => manifestPublishingCallbackAnnotation.Callback(context));
-            }
-        }
-        else if (resource is ContainerResource container)
-        {
-            WriteResourceObject(container, () => context.WriteContainer(container));
-        }
-        else if (resource is ProjectResource project)
-        {
-            WriteResourceObject(project, () => WriteProject(project, context));
-        }
-        else if (resource is ExecutableResource executable)
-        {
-            WriteResourceObject(executable, () => WriteExecutable(executable, context));
-        }
-        else
-        {
-            WriteResourceObject(resource, () => WriteError(context));
-        }
-
-        void WriteResourceObject<T>(T resource, Action action) where T : IResource
-        {
-            context.Writer.WriteStartObject(resource.Name);
-            action();
-            context.WriteManifestMetadata(resource);
-            context.Writer.WriteEndObject();
-        }
-    }
-
-    private static void WriteError(ManifestPublishingContext context)
-    {
-        context.Writer.WriteString("error", "This resource does not support generation in the manifest.");
-    }
-
-    private static void WriteProject(ProjectResource project, ManifestPublishingContext context)
-    {
-        context.Writer.WriteString("type", "project.v0");
-
-        if (!project.TryGetLastAnnotation<IProjectMetadata>(out var metadata))
-        {
-            throw new DistributedApplicationException("Project metadata not found.");
-        }
-
-        var relativePathToProjectFile = context.GetManifestRelativePath(metadata.ProjectPath);
-
-        context.Writer.WriteString("path", relativePathToProjectFile);
-
-        context.WriteEnvironmentVariables(project);
-        context.WriteBindings(project);
-    }
-
-    private static void WriteExecutable(ExecutableResource executable, ManifestPublishingContext context)
-    {
-        context.Writer.WriteString("type", "executable.v0");
-
-        // Write the connection string if it exists.
-        context.WriteConnectionString(executable);
-
-        var relativePathToProjectFile = context.GetManifestRelativePath(executable.WorkingDirectory);
-
-        context.Writer.WriteString("workingDirectory", relativePathToProjectFile);
-
-        context.Writer.WriteString("command", executable.Command);
-
-        var args = new List<string>(executable.Args ?? []);
-        if (executable.TryGetAnnotationsOfType<ExecutableArgsCallbackAnnotation>(out var argsCallback))
-        {
-            foreach (var callback in argsCallback)
-            {
-                callback.Callback(args);
-            }
-        }
-
-        if (args.Count > 0)
-        {
-            context.Writer.WriteStartArray("args");
-
-            foreach (var arg in args)
-            {
-                context.Writer.WriteStringValue(arg);
-            }
-            context.Writer.WriteEndArray();
-        }
-
-        context.WriteEnvironmentVariables(executable);
-        context.WriteBindings(executable);
+        await context.WriteModel(model, cancellationToken).ConfigureAwait(false);
     }
 }

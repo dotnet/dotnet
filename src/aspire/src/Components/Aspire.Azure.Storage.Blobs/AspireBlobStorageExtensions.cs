@@ -31,7 +31,7 @@ public static class AspireBlobStorageExtensions
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{TClient, TOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Storage:Blobs" section.</remarks>
     /// <exception cref="InvalidOperationException">Thrown when neither <see cref="AzureStorageBlobsSettings.ConnectionString"/> nor <see cref="AzureStorageBlobsSettings.ServiceUri"/> is provided.</exception>
-    public static void AddAzureBlobService(
+    public static void AddAzureBlobClient(
         this IHostApplicationBuilder builder,
         string connectionName,
         Action<AzureStorageBlobsSettings>? configureSettings = null,
@@ -50,7 +50,7 @@ public static class AspireBlobStorageExtensions
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{TClient, TOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Storage:Blobs:{name}" section.</remarks>
     /// <exception cref="InvalidOperationException">Thrown when neither <see cref="AzureStorageBlobsSettings.ConnectionString"/> nor <see cref="AzureStorageBlobsSettings.ServiceUri"/> is provided.</exception>
-    public static void AddKeyedAzureBlobService(
+    public static void AddKeyedAzureBlobClient(
         this IHostApplicationBuilder builder,
         string name,
         Action<AzureStorageBlobsSettings>? configureSettings = null,
@@ -65,9 +65,11 @@ public static class AspireBlobStorageExtensions
 
     private sealed class BlobStorageComponent : AzureComponent<AzureStorageBlobsSettings, BlobServiceClient, BlobClientOptions>
     {
-        protected override IAzureClientBuilder<BlobServiceClient, BlobClientOptions> AddClient<TBuilder>(TBuilder azureFactoryBuilder, AzureStorageBlobsSettings settings, string connectionName, string configurationSectionName)
+        protected override IAzureClientBuilder<BlobServiceClient, BlobClientOptions> AddClient(
+            AzureClientFactoryBuilder azureFactoryBuilder, AzureStorageBlobsSettings settings, string connectionName,
+            string configurationSectionName)
         {
-            return azureFactoryBuilder.RegisterClientFactory<BlobServiceClient, BlobClientOptions>((options, cred) =>
+            return ((IAzureClientFactoryBuilderWithCredential)azureFactoryBuilder).RegisterClientFactory<BlobServiceClient, BlobClientOptions>((options, cred) =>
             {
                 var connectionString = settings.ConnectionString;
                 if (string.IsNullOrEmpty(connectionString) && settings.ServiceUri is null)
@@ -97,12 +99,12 @@ public static class AspireBlobStorageExtensions
             => new AzureBlobStorageHealthCheck(client);
 
         protected override bool GetHealthCheckEnabled(AzureStorageBlobsSettings settings)
-            => settings.HealthChecks;
+            => !settings.DisableHealthChecks;
 
         protected override TokenCredential? GetTokenCredential(AzureStorageBlobsSettings settings)
             => settings.Credential;
 
         protected override bool GetTracingEnabled(AzureStorageBlobsSettings settings)
-            => settings.Tracing;
+            => !settings.DisableTracing;
     }
 }

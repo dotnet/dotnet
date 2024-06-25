@@ -21,6 +21,7 @@ namespace Microsoft.Extensions.Hosting;
 public static class AspireAzureOpenAIExtensions
 {
     private const string DefaultConfigSectionName = "Aspire:Azure:AI:OpenAI";
+
     /// <summary>
     /// Registers <see cref="OpenAIClient"/> as a singleton in the services provided by the <paramref name="builder"/>.
     /// </summary>
@@ -29,7 +30,7 @@ public static class AspireAzureOpenAIExtensions
     /// <param name="configureSettings">An optional method that can be used for customizing the <see cref="AzureOpenAISettings"/>. It's invoked after the settings are read from the configuration.</param>
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{OpenAIClient, OpenAIClientOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire.Azure.AI.OpenAI" section.</remarks>
-    public static void AddAzureOpenAI(
+    public static void AddAzureOpenAIClient(
         this IHostApplicationBuilder builder,
         string connectionName,
         Action<AzureOpenAISettings>? configureSettings = null,
@@ -46,7 +47,7 @@ public static class AspireAzureOpenAIExtensions
     /// <param name="configureSettings">An optional method that can be used for customizing the <see cref="AzureOpenAISettings"/>. It's invoked after the settings are read from the configuration.</param>
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{OpenAIClient, OpenAIClientOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire.Azure.AI.OpenAI:{name}" section.</remarks>
-    public static void AddKeyedAzureOpenAI(
+    public static void AddKeyedAzureOpenAIClient(
         this IHostApplicationBuilder builder,
         string name,
         Action<AzureOpenAISettings>? configureSettings = null,
@@ -61,9 +62,11 @@ public static class AspireAzureOpenAIExtensions
 
     private sealed class OpenAIComponent : AzureComponent<AzureOpenAISettings, OpenAIClient, OpenAIClientOptions>
     {
-        protected override IAzureClientBuilder<OpenAIClient, OpenAIClientOptions> AddClient<TBuilder>(TBuilder azureFactoryBuilder, AzureOpenAISettings settings, string connectionName, string configurationSectionName)
+        protected override IAzureClientBuilder<OpenAIClient, OpenAIClientOptions> AddClient(
+            AzureClientFactoryBuilder azureFactoryBuilder, AzureOpenAISettings settings, string connectionName,
+            string configurationSectionName)
         {
-            return azureFactoryBuilder.RegisterClientFactory<OpenAIClient, OpenAIClientOptions>((options, cred) =>
+            return azureFactoryBuilder.AddClient<OpenAIClient, OpenAIClientOptions>((options, _, _) =>
             {
                 if (settings.Endpoint is null)
                 {
@@ -119,6 +122,6 @@ public static class AspireAzureOpenAIExtensions
             => settings.Credential;
 
         protected override bool GetTracingEnabled(AzureOpenAISettings settings)
-            => settings.Tracing;
+            => !settings.DisableTracing;
     }
 }

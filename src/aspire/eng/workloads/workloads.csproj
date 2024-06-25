@@ -2,7 +2,7 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <IncludeBuildOutput>false</IncludeBuildOutput>
 
@@ -10,8 +10,6 @@
     <VSTemp>$(WorkloadIntermediateOutputPath)VS/</VSTemp>
     <WorkloadOutputPath>$(ArtifactsBinDir)workloads/</WorkloadOutputPath>
     <WorkloadOutputPath Condition="'$(workloadArtifactsPath)' != ''">$(workloadArtifactsPath)/</WorkloadOutputPath>
-    <PackageSource>$(ArtifactsShippingPackagesDir)</PackageSource>
-    <PackageSource Condition="'$(workloadPackagesPath)' != ''">$(workloadPackagesPath)/</PackageSource>
     <RunAnalyzers>false</RunAnalyzers>
   </PropertyGroup>
 
@@ -54,8 +52,8 @@
     <ItemGroup>
       <!-- Overrides for Visual Studio setup generation. If the workload definition IDs change,
            these must be updated. -->
-      <_ComponentResources Include="aspire" Title=".NET Aspire SDK (Preview)"
-                           Description=".NET Aspire SDK (Preview)"
+      <_ComponentResources Include="aspire" Title=".NET Aspire SDK"
+                           Description=".NET SDK Workload for building observable and scalable cloud-native applications"
                            AdvertisePackage="true"/>
       <_ComponentResources Include="aspire-host-runtime" Title=".NET Aspire SDK Hosts"
                            Description=".NET Aspire SDK Hosts"/>
@@ -75,11 +73,11 @@
       </ShortNames>
     </ItemGroup>
 
-    <MSBuild Projects="../dashboardpack/dashboardpack.csproj" Targets="restore;build" Properties="DashboardRuntime=%(_PackRuntimes.Identity);PackageOutputPath=$(PackageSource)" />
-    <MSBuild Projects="../dcppack/dcppack.csproj" Targets="restore;build" Properties="DcpRuntime=%(_PackRuntimes.Identity);PackageOutputPath=$(PackageSource)" />
+    <MSBuild Projects="../dashboardpack/dashboardpack.csproj" Targets="restore;build" Properties="DashboardRuntime=%(_PackRuntimes.Identity);PackageOutputPath=$(WorkloadsPackageSource)" />
+    <MSBuild Projects="../dcppack/dcppack.csproj" Targets="restore;build" Properties="DcpRuntime=%(_PackRuntimes.Identity);PackageOutputPath=$(WorkloadsPackageSource)" />
 
     <ItemGroup>
-      <ManifestPackages Include="$(PackageSource)Microsoft.NET.Sdk.Aspire.Manifest*.nupkg"
+      <ManifestPackages Include="$(WorkloadsPackageSource)Microsoft.NET.Sdk.Aspire.Manifest*.nupkg"
                         MsiVersion="$(MsiVersion)"
                         SupportsMachineArch="true" />
     </ItemGroup>
@@ -89,7 +87,7 @@
                                 BaseOutputPath="$(WorkloadOutputPath)"
                                 EnableSideBySideManifests="true"
                                 ComponentResources="@(ComponentResources)"
-                                PackageSource="$(PackageSource)"
+                                PackageSource="$(WorkloadsPackageSource)"
                                 ShortNames="@(ShortNames)"
                                 WorkloadManifestPackageFiles="@(ManifestPackages)"
                                 WixToolsetPath="$(WixToolsetPath)"
