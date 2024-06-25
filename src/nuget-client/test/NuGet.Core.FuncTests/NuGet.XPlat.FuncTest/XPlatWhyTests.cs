@@ -187,8 +187,10 @@ namespace NuGet.XPlat.FuncTest
             // Arrange
             var logger = new TestCommandOutputLogger();
 
+            string fakeProjectPath = "FakeProjectPath.csproj";
+
             var whyCommandArgs = new WhyCommandArgs(
-                    "FakeProjectPath.csproj",
+                    fakeProjectPath,
                     "PackageX",
                     [],
                     logger);
@@ -200,7 +202,7 @@ namespace NuGet.XPlat.FuncTest
             var errorOutput = logger.ShowErrors();
 
             Assert.Equal(ExitCodes.InvalidArguments, result);
-            Assert.Contains($"Unable to run 'dotnet nuget why'. Missing or invalid project/solution file 'FakeProjectPath.csproj'.", errorOutput);
+            Assert.Contains($"Unable to run 'dotnet nuget why'. Missing or invalid path '{fakeProjectPath}'. Please provide a path to a project, solution file, or directory.", errorOutput);
         }
 
         [Fact]
@@ -244,7 +246,7 @@ namespace NuGet.XPlat.FuncTest
             var output = logger.ShowMessages();
 
             Assert.Equal(ExitCodes.Success, result);
-            Assert.Contains($"The assets file {project.AssetsFileOutputPath} for project '{ProjectName}' does not contain a target for the specified input framework '{inputFrameworksOption}'.", output);
+            Assert.Contains($"The assets file '{project.AssetsFileOutputPath}' for project '{ProjectName}' does not contain a target for the specified input framework '{inputFrameworksOption}'.", output);
             Assert.Contains($"Project '{ProjectName}' has the following dependency graph(s) for '{packageY.Id}'", output);
         }
     }

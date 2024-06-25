@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.Build.Construction;
@@ -80,6 +81,41 @@ namespace NuGet.CommandLine.XPlat
         {
             var sln = SolutionFile.Parse(solutionPath);
             return sln.ProjectsInOrder.Select(p => p.AbsolutePath);
+        }
+
+        /// <summary>
+        /// Get the list of project paths from the input 'path' argument. Path must be a directory, solution file or project file.
+        /// </summary>
+        /// <returns>List of project paths. Returns null if path was a directory with none or multiple project/solution files.</returns>
+        /// <exception cref="ArgumentException">Throws an exception if the directory has none or multiple project/solution files.</exception>
+        internal static IEnumerable<string> GetListOfProjectsFromPathArgument(string path)
+        {
+            string fullPath = Path.GetFullPath(path);
+
+            string projectOrSolutionFile;
+
+            // the path points to a directory
+            if (Directory.Exists(fullPath))
+            {
+                projectOrSolutionFile = XPlatUtility.GetProjectOrSolutionFileFromDirectory(fullPath);
+            }
+            // the path points to a project or solution file
+            else if (XPlatUtility.IsSolutionFile(fullPath) || XPlatUtility.IsProjectFile(fullPath))
+            {
+                projectOrSolutionFile = fullPath;
+            }
+            else
+            {
+                throw new ArgumentException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Strings.Error_PathIsMissingOrInvalid,
+                        path));
+            }
+
+            return XPlatUtility.IsSolutionFile(projectOrSolutionFile)
+                        ? MSBuildAPIUtility.GetProjectsFromSolution(projectOrSolutionFile).Where(f => File.Exists(f))
+                        : [projectOrSolutionFile];
         }
 
         /// <summary>

@@ -1,12 +1,14 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.IO;
 using System.Linq;
 using Microsoft.Build.Definition;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Locator;
 using NuGet.CommandLine.XPlat;
+using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
@@ -430,6 +432,114 @@ namespace NuGet.CommandLine.Xplat.Tests
             string updatedPropsFile = File.ReadAllText(Path.Combine(testDirectory, "Directory.Packages.props"));
             Assert.Contains(@$"<PackageVersion Include=""X"" Version=""1.0.0"" />", updatedPropsFile);
             Assert.DoesNotContain(@$"<PackageVersion Include=""X"" VersionOverride=""3.0.0"" />", updatedPropsFile);
+        }
+
+        [Fact]
+        public void GetListOfProjectsFromPathArgument_WithProjectFile_ReturnsCorrectPaths()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var net8 = NuGetFramework.Parse("net8.0");
+
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
+
+            projectA.Save();
+
+            // Act
+            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(projectA.ProjectPath);
+
+            // Assert
+            Assert.Equal(projectList.Count(), 1);
+            Assert.Contains(projectA.ProjectPath, projectList);
+        }
+
+        [Fact]
+        public void GetListOfProjectsFromPathArgument_WithProjectDirectory_ReturnsCorrectPaths()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var net8 = NuGetFramework.Parse("net8.0");
+
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
+
+            projectA.Save();
+
+            // Act
+            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(Path.GetDirectoryName(projectA.ProjectPath));
+
+            // Assert
+            Assert.Equal(projectList.Count(), 1);
+            Assert.Contains(projectA.ProjectPath, projectList);
+        }
+
+        [Fact]
+        public void GetListOfProjectsFromPathArgument_WithSolutionFile_ReturnsCorrectPaths()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var net8 = NuGetFramework.Parse("net8.0");
+
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
+            var projectB = SimpleTestProjectContext.CreateNETCore("b", pathContext.SolutionRoot, net8);
+
+            solution.Projects.Add(projectA);
+            solution.Projects.Add(projectB);
+            solution.Create(pathContext.SolutionRoot);
+
+            // Act
+            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(Path.GetDirectoryName(solution.SolutionPath));
+
+            // Assert
+            Assert.Equal(projectList.Count(), 2);
+            Assert.Contains(projectA.ProjectPath, projectList);
+            Assert.Contains(projectB.ProjectPath, projectList);
+        }
+
+        [Fact]
+        public void GetListOfProjectsFromPathArgument_WithSolutionDirectory_ReturnsCorrectPaths()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var net8 = NuGetFramework.Parse("net8.0");
+
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
+            var projectB = SimpleTestProjectContext.CreateNETCore("b", pathContext.SolutionRoot, net8);
+
+            solution.Projects.Add(projectA);
+            solution.Projects.Add(projectB);
+            solution.Create(pathContext.SolutionRoot);
+
+            // Act
+            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(pathContext.SolutionRoot);
+
+            // Assert
+            Assert.Equal(projectList.Count(), 2);
+            Assert.Contains(projectA.ProjectPath, projectList);
+            Assert.Contains(projectB.ProjectPath, projectList);
+        }
+
+        [Theory]
+        [InlineData("X.sln", "Y.sln")]
+        [InlineData("A.csproj", "B.csproj")]
+        [InlineData("X.sln", "A.csproj")]
+        [InlineData()]
+        [InlineData("random.txt")]
+        public void GetListOfProjectsFromPathArgument_WithDirectoryWithInvalidNumberOfSolutionsOrProjects_ThrowsException(params string[] directoryFiles)
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+
+            foreach (var filename in directoryFiles)
+            {
+                var filePath = Path.Combine(pathContext.SolutionRoot, filename);
+                File.Create(filePath);
+            }
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => MSBuildAPIUtility.GetListOfProjectsFromPathArgument(pathContext.SolutionRoot));
         }
     }
 }
