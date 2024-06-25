@@ -5,11 +5,12 @@ using System.Diagnostics.CodeAnalysis;
 using Aspire;
 using Aspire.Oracle.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
 using Oracle.EntityFrameworkCore;
+using Oracle.EntityFrameworkCore.Infrastructure.Internal;
+using Oracle.EntityFrameworkCore.Storage.Internal;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -41,6 +42,8 @@ public static class AspireOracleEFCoreExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
+        builder.EnsureDbContextNotRegistered<TContext>();
+
         var settings = builder.GetDbContextSettings<TContext, OracleEntityFrameworkCoreSettings>(
             DefaultConfigSectionName,
             (settings, section) => section.Bind(settings)
@@ -65,15 +68,15 @@ public static class AspireOracleEFCoreExtensions
             {
                 // Resiliency:
                 // Connection resiliency automatically retries failed database commands
-                if (settings.Retry)
+                if (!settings.DisableRetry)
                 {
                     builder.ExecutionStrategy(context => new OracleRetryingExecutionStrategy(context));
                 }
 
                 // The time in seconds to wait for the command to execute.
-                if (settings.Timeout.HasValue)
+                if (settings.CommandTimeout.HasValue)
                 {
-                    builder.CommandTimeout(settings.Timeout);
+                    builder.CommandTimeout(settings.CommandTimeout);
                 }
             });
 
@@ -105,40 +108,62 @@ public static class AspireOracleEFCoreExtensions
 
         void ConfigureRetry()
         {
-            if (!settings.Retry)
+#pragma warning disable EF1001 // Internal EF Core API usage.
+            if (!settings.DisableRetry || settings.CommandTimeout.HasValue)
             {
-                return;
-            }
+                builder.PatchServiceDescriptor<TContext>(optionsBuilder => optionsBuilder.UseOracle(options =>
+                {
+                    var extension = optionsBuilder.Options.FindExtension<OracleOptionsExtension>();
 
-            builder.PatchServiceDescriptor<TContext>(optionsBuilder =>
-                optionsBuilder.UseOracle(options => options.ExecutionStrategy(context => new OracleRetryingExecutionStrategy(context)))
-            );
+                    if (!settings.DisableRetry)
+                    {
+                        var executionStrategy = extension?.ExecutionStrategyFactory?.Invoke(new ExecutionStrategyDependencies(null!, optionsBuilder.Options, null!));
+
+                        if (executionStrategy != null)
+                        {
+                            if (executionStrategy is OracleRetryingExecutionStrategy)
+                            {
+                                // Keep custom Retry strategy.
+                                // Any sub-class of OracleRetryingExecutionStrategy is a valid retry strategy
+                                // which shouldn't be replaced even with DisableRetry == false
+                            }
+                            else if (executionStrategy.GetType() != typeof(OracleExecutionStrategy))
+                            {
+                                // Check OracleExecutionStrategy specifically (no 'is'), any sub-class is treated as a custom strategy.
+
+                                throw new InvalidOperationException($"{nameof(OracleEntityFrameworkCoreSettings)}.{nameof(OracleEntityFrameworkCoreSettings.DisableRetry)} needs to be set when a custom Execution Strategy is configured.");
+                            }
+                            else
+                            {
+                                options.ExecutionStrategy(context => new OracleRetryingExecutionStrategy(context));
+                            }
+                        }
+                        else
+                        {
+                            options.ExecutionStrategy(context => new OracleRetryingExecutionStrategy(context));
+                        }
+                    }
+
+                    if (settings.CommandTimeout.HasValue)
+                    {
+                        if (extension != null &&
+                            extension.CommandTimeout.HasValue &&
+                            extension.CommandTimeout != settings.CommandTimeout)
+                        {
+                            throw new InvalidOperationException($"Conflicting values for 'CommandTimeout' were found in {nameof(OracleEntityFrameworkCoreSettings)} and set in DbContextOptions<{typeof(TContext).Name}>.");
+                        }
+
+                        options.CommandTimeout(settings.CommandTimeout);
+                    }
+                }));
+            }
+#pragma warning restore EF1001 // Internal EF Core API usage.
         }
     }
 
     private static void ConfigureInstrumentation<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors | DynamicallyAccessedMemberTypes.PublicProperties)] TContext>(IHostApplicationBuilder builder, OracleEntityFrameworkCoreSettings settings) where TContext : DbContext
     {
-        if (settings.Tracing)
-        {
-            builder.Services.AddOpenTelemetry().WithTracing(tracerProviderBuilder =>
-            {
-                tracerProviderBuilder.AddEntityFrameworkCoreInstrumentation();
-            });
-        }
-
-        if (settings.Metrics)
-        {
-            builder.Services.AddOpenTelemetry().WithMetrics(meterProviderBuilder =>
-            {
-                meterProviderBuilder.AddEventCountersInstrumentation(eventCountersInstrumentationOptions =>
-                {
-                    // https://github.com/dotnet/efcore/blob/a1cd4f45aa18314bc91d2b9ea1f71a3b7d5bf636/src/EFCore/Infrastructure/EntityFrameworkEventSource.cs#L45
-                    eventCountersInstrumentationOptions.AddEventSources("Microsoft.EntityFrameworkCore");
-                });
-            });
-        }
-
-        if (settings.HealthChecks)
+        if (!settings.DisableHealthChecks)
         {
             builder.TryAddHealthCheck(
                 name: typeof(TContext).Name,

@@ -3,14 +3,12 @@ trigger:
   branches:
     include:
     - main
-    - vNext
     - release/*
 
 pr:
   branches:
     include:
     - main
-    - vNext
     - release/*
     - feature/*
 
@@ -75,9 +73,9 @@ stages:
 
       jobs:
 
-      - job: windows
+      - job: Windows
         # timeout accounts for wait times for helix agents up to 30mins
-        timeoutInMinutes: 60
+        timeoutInMinutes: 90
 
         pool:
           name: $(DncEngPublicBuildPool)
@@ -99,13 +97,14 @@ stages:
               dotnetScript: $(Build.SourcesDirectory)/dotnet.cmd
               buildScript: $(_buildScript)
               buildConfig: $(_BuildConfig)
+              repoArtifactsPath: $(Build.Arcade.ArtifactsPath)
               repoLogPath: $(Build.Arcade.LogsPath)
               repoTestResultsPath: $(Build.Arcade.TestResultsPath)
               isWindows: true
 
-      - job: linux
+      - job: Linux
         # timeout accounts for wait times for helix agents up to 30mins
-        timeoutInMinutes: 60
+        timeoutInMinutes: 90
 
         pool:
           name: $(DncEngPublicBuildPool)
@@ -127,6 +126,7 @@ stages:
             dotnetScript: $(Build.SourcesDirectory)/dotnet.sh
             buildScript: $(_buildScript)
             buildConfig: $(_BuildConfig)
+            repoArtifactsPath: $(Build.Arcade.ArtifactsPath)
             repoLogPath: $(Build.Arcade.LogsPath)
             repoTestResultsPath: $(Build.Arcade.TestResultsPath)
             isWindows: false

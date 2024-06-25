@@ -9,12 +9,15 @@ var redis = builder.AddRedis("redis", 9999).WithEndpoint("tcp", (endpoint) =>
 });
 
 builder.AddProject<Projects.ProxylessEndToEnd_ApiService>("api")
-    .WithEndpoint(12345, "http", isProxied: false)
+    .WithEndpoint("http", e =>
+    {
+        e.IsProxied = false;
+        e.Port = 12345;
+    })
     .WithReference(redis);
 
-builder.AddProject<Projects.ProxylessEndToEnd_ApiService>("api2")
-    .ExcludeLaunchProfile()
-    .WithEndpoint(13456, "http")
+builder.AddProject<Projects.ProxylessEndToEnd_ApiService>("api2", launchProfileName: null)
+    .WithHttpEndpoint(port: 13456)
     .WithReference(redis);
 
 // This project is only added in playground projects to support development/debugging

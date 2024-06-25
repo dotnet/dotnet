@@ -41,14 +41,14 @@ public class ConformanceTests : ConformanceTests<QueueServiceClient, AzureStorag
               "Storage": {
                 "Queues": {
                   "ServiceUri": "http://YOUR_URI",
-                  "HealthChecks": false,
-                  "Tracing": true,
+                  "DisableHealthChecks": true,
+                  "DisableTracing": false,
                   "ClientOptions": {
                     "EnableTenantDiscovery": true,
                     "MessageEncoding": "Base64",
                     "Retry": {
                       "Mode": "Exponential",
-                      "Delay": "PT3S"
+                      "Delay": "00:00:03"
                     }
                   }
                 }
@@ -61,10 +61,10 @@ public class ConformanceTests : ConformanceTests<QueueServiceClient, AzureStorag
     protected override (string json, string error)[] InvalidJsonToErrorMessage => new[]
         {
             ("""{"Aspire": { "Azure": { "Storage":{ "Queues": { "ServiceUri": "YOUR_URI"}}}}}""", "Value does not match format \"uri\""),
-            ("""{"Aspire": { "Azure": { "Storage":{ "Queues": { "ServiceUri": "http://YOUR_URI", "HealthChecks": "false"}}}}}""", "Value is \"string\" but should be \"boolean\""),
+            ("""{"Aspire": { "Azure": { "Storage":{ "Queues": { "ServiceUri": "http://YOUR_URI", "DisableHealthChecks": "true"}}}}}""", "Value is \"string\" but should be \"boolean\""),
             ("""{"Aspire": { "Azure": { "Storage":{ "Queues": { "ClientOptions": {"MessageEncoding": "Fast"}}}}}}""", "Value should match one of the values specified by the enum"),
             ("""{"Aspire": { "Azure": { "Storage":{ "Queues": { "ClientOptions": {"Retry": {"Mode": "Fast"}}}}}}}""", "Value should match one of the values specified by the enum"),
-            ("""{"Aspire": { "Azure": { "Storage":{ "Queues": { "ClientOptions": {"Retry": {"NetworkTimeout": "3S"}}}}}}}""", "Value does not match format \"duration\"")
+            ("""{"Aspire": { "Azure": { "Storage":{ "Queues": { "ClientOptions": {"Retry": {"NetworkTimeout": "PT3S"}}}}}}}""", "The string value is not a match for the indicated regular expression")
         };
 
     protected override void PopulateConfiguration(ConfigurationManager configuration, string? key = null)
@@ -78,11 +78,11 @@ public class ConformanceTests : ConformanceTests<QueueServiceClient, AzureStorag
     {
         if (key is null)
         {
-            builder.AddAzureQueueService("queue", ConfigureCredentials);
+            builder.AddAzureQueueClient("queue", ConfigureCredentials);
         }
         else
         {
-            builder.AddKeyedAzureQueueService(key, ConfigureCredentials);
+            builder.AddKeyedAzureQueueClient(key, ConfigureCredentials);
         }
 
         void ConfigureCredentials(AzureStorageQueuesSettings settings)
@@ -96,13 +96,13 @@ public class ConformanceTests : ConformanceTests<QueueServiceClient, AzureStorag
     }
 
     protected override void SetHealthCheck(AzureStorageQueuesSettings options, bool enabled)
-        => options.HealthChecks = enabled;
+        => options.DisableHealthChecks = !enabled;
 
     protected override void SetMetrics(AzureStorageQueuesSettings options, bool enabled)
         => throw new NotImplementedException();
 
     protected override void SetTracing(AzureStorageQueuesSettings options, bool enabled)
-        => options.Tracing = enabled;
+        => options.DisableTracing = !enabled;
 
     protected override void TriggerActivity(QueueServiceClient service)
     {

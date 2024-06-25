@@ -31,7 +31,7 @@ public static class AspireTablesExtensions
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{TClient, TOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Data:Tables" section.</remarks>
     /// <exception cref="InvalidOperationException">Thrown when neither <see cref="AzureDataTablesSettings.ConnectionString"/> nor <see cref="AzureDataTablesSettings.ServiceUri"/> is provided.</exception>
-    public static void AddAzureTableService(
+    public static void AddAzureTableClient(
         this IHostApplicationBuilder builder,
         string connectionName,
         Action<AzureDataTablesSettings>? configureSettings = null,
@@ -50,7 +50,7 @@ public static class AspireTablesExtensions
     /// <param name="configureClientBuilder">An optional method that can be used for customizing the <see cref="IAzureClientBuilder{TClient, TOptions}"/>.</param>
     /// <remarks>Reads the configuration from "Aspire:Azure:Data:Tables:{name}" section.</remarks>
     /// <exception cref="InvalidOperationException">Thrown when neither <see cref="AzureDataTablesSettings.ConnectionString"/> nor <see cref="AzureDataTablesSettings.ServiceUri"/> is provided.</exception>
-    public static void AddKeyedAzureTableService(
+    public static void AddKeyedAzureTableClient(
         this IHostApplicationBuilder builder,
         string name,
         Action<AzureDataTablesSettings>? configureSettings = null,
@@ -65,9 +65,11 @@ public static class AspireTablesExtensions
 
     private sealed class TableServiceComponent : AzureComponent<AzureDataTablesSettings, TableServiceClient, TableClientOptions>
     {
-        protected override IAzureClientBuilder<TableServiceClient, TableClientOptions> AddClient<TBuilder>(TBuilder azureFactoryBuilder, AzureDataTablesSettings settings, string connectionName, string configurationSectionName)
+        protected override IAzureClientBuilder<TableServiceClient, TableClientOptions> AddClient(
+            AzureClientFactoryBuilder azureFactoryBuilder, AzureDataTablesSettings settings, string connectionName,
+            string configurationSectionName)
         {
-            return azureFactoryBuilder.RegisterClientFactory<TableServiceClient, TableClientOptions>((options, cred) =>
+            return ((IAzureClientFactoryBuilderWithCredential)azureFactoryBuilder).RegisterClientFactory<TableServiceClient, TableClientOptions>((options, cred) =>
             {
                 var connectionString = settings.ConnectionString;
                 if (string.IsNullOrEmpty(connectionString) && settings.ServiceUri is null)
@@ -97,12 +99,12 @@ public static class AspireTablesExtensions
             => new AzureTableServiceHealthCheck(client, new AzureTableServiceHealthCheckOptions());
 
         protected override bool GetHealthCheckEnabled(AzureDataTablesSettings settings)
-            => settings.HealthChecks;
+            => !settings.DisableHealthChecks;
 
         protected override TokenCredential? GetTokenCredential(AzureDataTablesSettings settings)
             => settings.Credential;
 
         protected override bool GetTracingEnabled(AzureDataTablesSettings settings)
-            => settings.Tracing;
+            => !settings.DisableTracing;
     }
 }

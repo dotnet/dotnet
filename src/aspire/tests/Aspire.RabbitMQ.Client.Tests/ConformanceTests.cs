@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Aspire.Components.Common.Tests;
 using Aspire.Components.ConformanceTests;
 using Microsoft.DotNet.XUnitExtensions;
 using Microsoft.Extensions.Configuration;
@@ -49,8 +50,8 @@ public class ConformanceTests : ConformanceTests<IConnection, RabbitMQClientSett
                 },
                 "ConnectionString": "amqp://localhost:5672",
                 "MaxConnectRetryCount": 10,
-                "HealthChecks": true,
-                "Tracing": false
+                "DisableHealthChecks": false,
+                "DisableTracing": true
               }
             }
           }
@@ -63,7 +64,7 @@ public class ConformanceTests : ConformanceTests<IConnection, RabbitMQClientSett
             ("""{"Aspire": { "RabbitMQ": { "Client":{ "ConnectionFactory": { "AmqpUriSslProtocols": "Fast"}}}}}""", "Value should match one of the values specified by the enum"),
             ("""{"Aspire": { "RabbitMQ": { "Client":{ "ConnectionFactory": { "Ssl":{ "AcceptablePolicyErrors": "Fast"}}}}}}""", "Value should match one of the values specified by the enum"),
             ("""{"Aspire": { "RabbitMQ": { "Client":{ "ConnectionFactory": { "Ssl":{ "Version": "Fast"}}}}}}""", "Value should match one of the values specified by the enum"),
-            ("""{"Aspire": { "RabbitMQ": { "Client":{ "ConnectionFactory": { "RequestedConnectionTimeout": "3S"}}}}}""", "Value does not match format \"duration\"")
+            ("""{"Aspire": { "RabbitMQ": { "Client":{ "ConnectionFactory": { "RequestedConnectionTimeout": "3S"}}}}}""", "The string value is not a match for the indicated regular expression")
         };
 
     protected override void PopulateConfiguration(ConfigurationManager configuration, string? key = null)
@@ -81,26 +82,26 @@ public class ConformanceTests : ConformanceTests<IConnection, RabbitMQClientSett
     {
         if (key is null)
         {
-            builder.AddRabbitMQ("rabbit", configure);
+            builder.AddRabbitMQClient("rabbit", configure);
         }
         else
         {
-            builder.AddKeyedRabbitMQ(key, configure);
+            builder.AddKeyedRabbitMQClient(key, configure);
         }
     }
 
-    protected override void SetHealthCheck(RabbitMQClientSettings settings, bool enabled)
-        => settings.HealthChecks = enabled;
+    protected override void SetHealthCheck(RabbitMQClientSettings options, bool enabled)
+        => options.DisableHealthChecks = !enabled;
 
     protected override void DisableRetries(RabbitMQClientSettings options)
     {
         options.MaxConnectRetryCount = 0;
     }
 
-    protected override void SetTracing(RabbitMQClientSettings settings, bool enabled)
-        => settings.Tracing = enabled;
+    protected override void SetTracing(RabbitMQClientSettings options, bool enabled)
+        => options.DisableTracing = !enabled;
 
-    protected override void SetMetrics(RabbitMQClientSettings settings, bool enabled)
+    protected override void SetMetrics(RabbitMQClientSettings options, bool enabled)
         => throw new NotImplementedException();
 
     protected override void TriggerActivity(IConnection service)
