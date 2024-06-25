@@ -98,7 +98,7 @@ namespace Microsoft.IdentityModel.Protocols
 
                 var httpClient = _httpClient ?? _defaultHttpClient;
                 var uri = new Uri(address, UriKind.RelativeOrAbsolute);
-                response = await SendAsyncAndRetryOnNetworkError(httpClient, uri).ConfigureAwait(false);
+                response = await SendAndRetryOnNetworkErrorAsync(httpClient, uri).ConfigureAwait(false);
 
                 var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
@@ -116,7 +116,7 @@ namespace Microsoft.IdentityModel.Protocols
             throw LogHelper.LogExceptionMessage(unsuccessfulHttpResponseException);
         }
 
-        private async Task<HttpResponseMessage> SendAsyncAndRetryOnNetworkError(HttpClient httpClient, Uri uri)
+        private async Task<HttpResponseMessage> SendAndRetryOnNetworkErrorAsync(HttpClient httpClient, Uri uri)
         {
             int maxAttempt = 2;
             HttpResponseMessage response = null;

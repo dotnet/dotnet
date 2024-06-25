@@ -476,7 +476,8 @@ namespace Microsoft.IdentityModel.Tokens
             // the caller's TaskScheduler (if there is one) as some custom TaskSchedulers might be single-threaded and its execution can be blocked.
             if (Interlocked.CompareExchange(ref _eventQueueTaskState, EventQueueTaskRunning, EventQueueTaskStopped) == EventQueueTaskStopped)
             {
-                Task.Run(EventQueueTaskAction);
+                // EventQueueTaskAction manages its own state.
+                _ = Task.Run(EventQueueTaskAction);
             }
         }
 

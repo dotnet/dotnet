@@ -2,9 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using Microsoft.IdentityModel.Logging;
 
 namespace Microsoft.IdentityModel.Tokens
@@ -165,6 +166,11 @@ namespace Microsoft.IdentityModel.Tokens
         private byte[] DecryptWithAesCbc(byte[] ciphertext, byte[] authenticatedData, byte[] iv, byte[] authenticationTag)
         {
             // Verify authentication Tag
+            if (SymmetricSignatureProvider.ExpectedSignatureSizeInBytes.TryGetValue(Algorithm, out int expectedTagLength)
+                && expectedTagLength != authenticationTag.Length)
+                throw LogHelper.LogExceptionMessage(new SecurityTokenDecryptionFailedException(
+                    LogHelper.FormatInvariant(LogMessages.IDX10625, authenticationTag.Length, expectedTagLength, Base64UrlEncoder.Encode(authenticationTag), Algorithm)));
+
             byte[] al = Utility.ConvertToBigEndian(authenticatedData.Length * 8);
             byte[] macBytes = new byte[authenticatedData.Length + iv.Length + ciphertext.Length + al.Length];
             Array.Copy(authenticatedData, 0, macBytes, 0, authenticatedData.Length);

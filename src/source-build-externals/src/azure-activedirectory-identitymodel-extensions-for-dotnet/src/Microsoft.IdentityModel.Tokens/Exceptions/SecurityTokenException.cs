@@ -2,18 +2,22 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Diagnostics;
 using System.Runtime.Serialization;
+using System.Text;
 using Microsoft.IdentityModel.Logging;
 
 namespace Microsoft.IdentityModel.Tokens
 {
-
     /// <summary>
     /// Represents a security token exception.
     /// </summary>
     [Serializable]
     public class SecurityTokenException : Exception
     {
+        [NonSerialized]
+        private string _stackTrace;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SecurityTokenException"/> class.
         /// </summary>
@@ -53,6 +57,49 @@ namespace Microsoft.IdentityModel.Tokens
         protected SecurityTokenException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+        }
+
+        /// <summary>
+        /// Gets the stack trace that is captured when the exception is created.
+        /// </summary>
+        public override string StackTrace
+        {
+            get
+            {
+                if (_stackTrace == null)
+                {
+                    if (ExceptionDetail == null)
+                        return base.StackTrace;
+#if NET8_0_OR_GREATER
+                    _stackTrace = new StackTrace(ExceptionDetail.StackFrames).ToString();
+#else
+                    StringBuilder sb = new();
+                    foreach (StackFrame frame in ExceptionDetail.StackFrames)
+                    {
+                        sb.Append(frame.ToString());
+                        sb.Append(Environment.NewLine);
+                    }
+
+                    _stackTrace = sb.ToString();
+#endif
+                }
+
+                return _stackTrace;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the source of the exception.
+        /// </summary>
+        public override string Source
+        {
+            get => base.Source;
+            set => base.Source = value;
+        }
+
+        internal ExceptionDetail ExceptionDetail
+        {
+            get; set;
         }
 
 #if NET472 || NETSTANDARD2_0 || NET6_0_OR_GREATER

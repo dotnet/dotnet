@@ -104,7 +104,6 @@ namespace Microsoft.IdentityModel.Tokens
             SecurityAlgorithms.EcdhEsA256kw
         };
 
-#if NET461 || NET462 || NET472 || NETSTANDARD2_0 || NET6_0_OR_GREATER
         /// <summary>
         /// Creating a Signature requires the use of a <see cref="HashAlgorithm"/>.
         /// This method returns the <see cref="HashAlgorithmName"/>
@@ -148,7 +147,6 @@ namespace Microsoft.IdentityModel.Tokens
 
             throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(nameof(algorithm), LogHelper.FormatInvariant(LogMessages.IDX10652, LogHelper.MarkAsNonPII(algorithm))));
         }
-#endif
 
         /// <summary>
         /// Creating a Signature requires the use of a <see cref="HashAlgorithm"/>.

@@ -37,9 +37,14 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         public const string OpenIdProfile = "openid profile";
 
         /// <summary>
-        /// Indicates <c>phone</c> profile scope see: https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims.
+        /// Indicates <c>phone</c> scope see: https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims.
         /// </summary>
         public const string Phone = "phone";
+
+        /// <summary>
+        /// Indicates <c>profile</c> scope see: https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims.
+        /// </summary>
+        public const string Profile = "profile";
 
         /// <summary>
         /// Indicates <c>user_impersonation</c> scope for Azure Active Directory.

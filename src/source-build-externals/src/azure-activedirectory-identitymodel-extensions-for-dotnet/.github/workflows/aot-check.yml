@@ -1,0 +1,28 @@
+name: "AOT Check"
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+    branches: [ "dev" ]
+
+jobs:
+  analyze:
+    runs-on: windows-latest
+    name: Wilson GitHub AOT check
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: Runs powershell script
+      id: aot-powershell
+      run: build\test-aot.ps1 'net8.0'
+

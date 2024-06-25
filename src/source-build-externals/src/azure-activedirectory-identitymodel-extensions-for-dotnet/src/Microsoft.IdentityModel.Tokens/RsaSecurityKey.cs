@@ -76,7 +76,7 @@ namespace Microsoft.IdentityModel.Tokens
                     {
                         // imitate signing
                         byte[] hash = new byte[20];
-#if NET461 || NET462 || NET472 || NETSTANDARD2_0 || NET6_0_OR_GREATER
+#if NET462 || NET472 || NETSTANDARD2_0 || NET6_0_OR_GREATER
                         Rsa.SignData(hash, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 #else
                         if (Rsa is RSACryptoServiceProvider rsaCryptoServiceProvider)

@@ -205,7 +205,7 @@ namespace Microsoft.IdentityModel.Tokens
             return _rsa.VerifyData(input, hash, signature);
         }
 
-#if NET461 || NET462 || NET472 || NETSTANDARD2_0
+#if NET462 || NET472 || NETSTANDARD2_0
         /// <summary>
         /// Verifies that a digital signature is valid by determining the hash value in the signature using the provided public key and comparing it to the hash value of the provided data.
         /// </summary>

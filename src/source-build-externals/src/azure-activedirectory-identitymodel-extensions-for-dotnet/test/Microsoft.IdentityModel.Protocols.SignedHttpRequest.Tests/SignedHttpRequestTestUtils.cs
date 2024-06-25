@@ -103,7 +103,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             Kid = Base64UrlEncoder.Encode(new JsonWebKey(DefaultJwkEcdsa.ToString(Formatting.None)).ComputeJwkThumbprint())
         };
 
-#if NET461 || NET462
+#if NET462
         internal static JObject DefaultJwkEcdsa => new JObject
         {
             { "kty", "EC" },

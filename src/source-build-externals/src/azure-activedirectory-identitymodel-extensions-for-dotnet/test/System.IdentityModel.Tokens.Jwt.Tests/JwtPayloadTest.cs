@@ -58,9 +58,13 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             JwtPayload jwtPayload = new JwtPayload();
             Type type = typeof(JwtPayload);
             PropertyInfo[] properties = type.GetProperties();
+#if NET9_0_OR_GREATER
+            if (properties.Length != 26) //Additional inherited "Capacity" property from Dictionary is added in .NET 9 
+                Assert.True(false, "Number of properties has changed from 26 to: " + properties.Length + ", adjust tests");
+#else
             if (properties.Length != 25)
                 Assert.True(false, "Number of properties has changed from 25 to: " + properties.Length + ", adjust tests");
-
+#endif
             GetSetContext context =
                 new GetSetContext
                 {

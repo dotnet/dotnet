@@ -16,22 +16,33 @@ namespace Microsoft.IdentityModel.Validators.Tests
         public const string TenantIdAsGuid = "f645ad92-e38d-4d1a-b510-d1b09a74a8ca";
         public const string ProductionPrefNetworkUSEnvironment = "login.microsoftonline.us";
         public const string AadInstance = "https://login.microsoftonline.com";
+        public const string AadInstancePPE = "https://login.windows-ppe.net";
         public const string AuthorityV1 = AadInstance + "/common";
+        public const string AuthorityV1PPE = AadInstancePPE + "/common";
         public const string AuthorityCommonTenant = AadInstance + "/common/";
+        public const string AuthorityCommonTenantPPE = AadInstancePPE + "/common/";
         public const string AuthorityOrganizationsTenant = AadInstance + "/organizations/";
         public const string AuthorityOrganizationsUSTenant = "https://" + ProductionPrefNetworkUSEnvironment + "/organizations";
         public const string Organizations = "organizations";
 
         public const string AuthorityWithTenantSpecified = AadInstance + "/" + TenantIdAsGuid;
         public const string AuthorityCommonTenantWithV2 = AadInstance + "/common/v2.0";
+        public const string AuthorityCommonTenantWithV2PPE = AadInstancePPE + "/common/v2.0";
+        public const string AuthorityCommonTenantWithV11 = AadInstance + "/common/v1.1";
+        public const string AuthorityCommonTenantWithV11PPE = AadInstancePPE + "/common/v1.1";
         public const string AuthorityOrganizationsWithV2 = AadInstance + "/organizations/v2.0";
         public const string AuthorityOrganizationsUSWithV2 = AuthorityOrganizationsUSTenant + "/v2.0";
         public const string AuthorityWithTenantSpecifiedWithV2 = AadInstance + "/" + TenantIdAsGuid + "/v2.0";
         public const string AadIssuer = AadInstance + "/" + TenantIdAsGuid + "/v2.0";
+        public const string AadIssuerPPE = AadInstancePPE + "/" + TenantIdAsGuid + "/v2.0";
+        public const string AadIssuerV11 = AadInstance + "/" + TenantIdAsGuid + "/v1.1";
+        public const string AadIssuerV11PPE = AadInstancePPE + "/" + TenantIdAsGuid + "/v1.1";
         public const string UsGovIssuer = "https://login.microsoftonline.us/" + UsGovTenantId + "/v2.0";
         public const string UsGovTenantId = "72f988bf-86f1-41af-91ab-2d7cd011db47";
         public const string V1Issuer = "https://sts.windows.net/f645ad92-e38d-4d1a-b510-d1b09a74a8ca/";
+        public const string V1IssuerPPE = "https://sts.windows-ppe.net/f645ad92-e38d-4d1a-b510-d1b09a74a8ca/";
         public const string AadIssuerV1CommonAuthority = "https://sts.windows.net/{tenantid}/";
+        public const string AadIssuerV11CommonAuthority = AadInstance + "/{tenantid}/v1.1";
         public const string AadIssuerV2CommonAuthority = AadInstance + "/{tenantid}/v2.0";
 
         public const string B2CSignUpSignInUserFlow = "b2c_1_susi";

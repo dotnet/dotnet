@@ -503,7 +503,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
                 try
                 {
-                    Header = CreateHeaderClaimSet(Base64UrlEncoder.UnsafeDecode(headerSpan).AsSpan());
+                    Header = CreateHeaderClaimSet(Base64UrlEncoder.Decode(headerSpan).AsSpan());
                 }
                 catch (Exception ex)
                 {
@@ -517,7 +517,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 ReadOnlySpan<char> encryptedKeyBytes = encodedTokenSpan.Slice(Dot1 + 1, Dot2 - Dot1 - 1);
                 if (!encryptedKeyBytes.IsEmpty)
                 {
-                    EncryptedKeyBytes = Base64UrlEncoder.UnsafeDecode(encryptedKeyBytes);
+                    EncryptedKeyBytes = Base64UrlEncoder.Decode(encryptedKeyBytes);
                     _encryptedKey = encryptedKeyBytes.ToString();
                 }
                 else
@@ -531,7 +531,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
                 try
                 {
-                    InitializationVectorBytes = Base64UrlEncoder.UnsafeDecode(initializationVectorSpan);
+                    InitializationVectorBytes = Base64UrlEncoder.Decode(initializationVectorSpan);
                 }
                 catch (Exception ex)
                 {
@@ -544,7 +544,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
                 try
                 {
-                    AuthenticationTagBytes = Base64UrlEncoder.UnsafeDecode(authTagSpan);
+                    AuthenticationTagBytes = Base64UrlEncoder.Decode(authTagSpan);
                 }
                 catch (Exception ex)
                 {
@@ -557,7 +557,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
                 try
                 {
-                    CipherTextBytes = Base64UrlEncoder.UnsafeDecode(cipherTextSpan);
+                    CipherTextBytes = Base64UrlEncoder.Decode(cipherTextSpan);
                 }
                 catch (Exception ex)
                 {
@@ -569,15 +569,16 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         internal JsonClaimSet CreateClaimSet(ReadOnlySpan<char> strSpan, int startIndex, int length, bool createHeaderClaimSet)
         {
             int outputSize = Base64UrlEncoding.ValidateAndGetOutputSize(strSpan, startIndex, length);
+
             byte[] output = ArrayPool<byte>.Shared.Rent(outputSize);
             try
             {
-                Base64UrlEncoding.Decode(strSpan, startIndex, length, output);
+                Base64UrlEncoder.Decode(strSpan.Slice(startIndex, length), output);
                 return createHeaderClaimSet ? CreateHeaderClaimSet(output.AsSpan()) : CreatePayloadClaimSet(output.AsSpan());
             }
             finally
             {
-                ArrayPool<byte>.Shared.Return(output);
+                ArrayPool<byte>.Shared.Return(output, true);
             }
         }
 

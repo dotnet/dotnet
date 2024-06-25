@@ -19,6 +19,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
+using System.Xml.Linq;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -60,6 +61,7 @@ namespace Microsoft.IdentityModel.TestUtils
                 { typeof(IEnumerable<X509Data>).ToString(), AreX509DataEnumsEqual },
                 { typeof(int).ToString(), AreIntsEqual },
                 { typeof(IssuerSerial).ToString(), CompareAllPublicProperties },
+                { typeof(IssuerValidationResult).ToString(), AreIssuerValidationResultsEqual },
                 { typeof(JArray).ToString(), AreJArraysEqual },
                 { typeof(JObject).ToString(), AreJObjectsEqual },
                 { typeof(JsonElement).ToString(), AreJsonElementsEqual },
@@ -538,6 +540,69 @@ namespace Microsoft.IdentityModel.TestUtils
             if (!wasCompared)
                 localContext.Diffs.Add($"Objects were not handled: '{object1.GetType().ToString()}'.");
 #endif
+
+            return context.Merge(localContext);
+        }
+
+        public static bool AreIssuerValidationResultsEqual(object object1, object object2, CompareContext context)
+        {
+            var localContext = new CompareContext(context);
+            if (!ContinueCheckingEquality(object1, object2, context))
+                return context.Merge(localContext);
+
+            return AreIssuerValidationResultsEqual(
+                object1 as IssuerValidationResult,
+                object2 as IssuerValidationResult,
+                "IssuerValidationResult1",
+                "IssuerValidationResult2",
+                null,
+                context);
+        }
+
+        internal static bool AreIssuerValidationResultsEqual(
+            IssuerValidationResult issuerValidationResult1,
+            IssuerValidationResult issuerValidationResult2,
+            string name1,
+            string name2,
+            string stackPrefix,
+            CompareContext context)
+        {
+            var localContext = new CompareContext(context);
+            if (!ContinueCheckingEquality(issuerValidationResult1, issuerValidationResult2, localContext))
+                return context.Merge(localContext);
+
+            if (issuerValidationResult1.Issuer != issuerValidationResult2.Issuer)
+                localContext.Diffs.Add($"IssuerValidationResult1.Issuer: {issuerValidationResult1.Issuer} != IssuerValidationResult2.Issuer: {issuerValidationResult2.Issuer}");
+
+            if (issuerValidationResult1.Source != issuerValidationResult2.Source)
+                localContext.Diffs.Add($"IssuerValidationResult1.Source: {issuerValidationResult1.Source} != IssuerValidationResult2.Source: {issuerValidationResult2.Source}");
+
+            // true => both are not null.
+            if (ContinueCheckingEquality(issuerValidationResult1.Exception, issuerValidationResult2.Exception, localContext))
+            {
+                AreStringsEqual(
+                    issuerValidationResult1.Exception.Message,
+                    issuerValidationResult2.Exception.Message,
+                    $"({name1})issuerValidationResult1.Exception.Message",
+                    $"({name2})issuerValidationResult1.Exception.Message",
+                    localContext);
+
+                AreStringsEqual(
+                    issuerValidationResult1.Exception.Source,
+                    issuerValidationResult2.Exception.Source,
+                    $"({name1})issuerValidationResult1.Exception.Source",
+                    $"({name2})issuerValidationResult2.Exception.Source",
+                    localContext);
+
+                if (!string.IsNullOrEmpty(stackPrefix))
+                    AreStringPrefixesEqual(
+                        issuerValidationResult1.Exception.StackTrace.Trim(),
+                        issuerValidationResult2.Exception.StackTrace.Trim(),
+                        $"({name1})issuerValidationResult1.Exception.StackTrace",
+                        $"({name2})issuerValidationResult2.Exception.StackTrace",
+                        stackPrefix.Trim(),
+                        localContext);
+            }
 
             return context.Merge(localContext);
         }
@@ -1089,14 +1154,42 @@ namespace Microsoft.IdentityModel.TestUtils
 
             if (!string.Equals(str1, str2, context.StringComparison))
             {
-                localContext.Diffs.Add($"{name1} != {name2}, StringComparison: '{context.StringComparison}'");
-                localContext.Diffs.Add(str1);
+                localContext.Diffs.Add($"'{name1}' != '{name2}', StringComparison: '{context.StringComparison}'");
+                localContext.Diffs.Add($"'{str1}'");
                 localContext.Diffs.Add($"!=");
-                localContext.Diffs.Add(str2);
+                localContext.Diffs.Add($"'{str2}'");
             }
 
             return context.Merge(localContext);
         }
+
+        public static bool AreStringPrefixesEqual(
+            string string1,
+            string string2,
+            string name1,
+            string name2,
+            string prefix,
+            CompareContext context)
+        {
+            var localContext = new CompareContext(context);
+            if (!ContinueCheckingEquality(string1, string2, localContext))
+                return context.Merge(localContext);
+
+            if (!string1.StartsWith(prefix, context.StringComparison))
+            {
+                localContext.Diffs.Add($"'{name1}': does not start with prefix: '{prefix}', StringComparison: '{context.StringComparison}'");
+                localContext.Diffs.Add($"'{string1}'");
+            }
+
+            if (!string2.StartsWith(prefix, context.StringComparison))
+            {
+                localContext.Diffs.Add($"'{name2}': does not start with prefix: '{prefix}', StringComparison: '{context.StringComparison}'");
+                localContext.Diffs.Add($"'{string2}'");
+            }
+
+            return context.Merge(localContext);
+        }
+
 
         public static bool AreStringEnumDictionariesEqual(IDictionary<string, IEnumerable<string>> dictionary1, IDictionary<string, IEnumerable<string>> dictionary2, CompareContext context)
         {
@@ -1314,6 +1407,26 @@ namespace Microsoft.IdentityModel.TestUtils
             }
 
             return context.Merge($"CompareAllPublicProperties: {type}", localContext);
+        }
+
+        public static bool IsOnlyOneObjectNull(object object1, object object2, CompareContext context)
+        {
+            if (object1 == null && object2 == null)
+                return false;
+
+            if (object1 == null)
+            {
+                context.Diffs.Add(BuildStringDiff(object2.GetType().ToString(), object1, object2));
+                return true;
+            }
+
+            if (object2 == null)
+            {
+                context.Diffs.Add(BuildStringDiff(object1.GetType().ToString(), object1, object2));
+                return true;
+            }
+
+            return false;
         }
 
         public static bool ContinueCheckingEquality(object obj1, object obj2, CompareContext context)

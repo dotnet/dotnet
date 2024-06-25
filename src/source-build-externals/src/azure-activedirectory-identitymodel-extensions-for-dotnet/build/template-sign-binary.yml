@@ -10,7 +10,7 @@ steps:
   displayName: 'Sign ${{ parameters.LibraryName }}'
   inputs:
     ConnectedServiceName: 'IDDP Code Signing'
-    FolderPath: '$(Build.SourcesDirectory)\src'
+    FolderPath: '$(Build.SourcesDirectory)\$(WilsonSourceDirectory)src'
     Pattern: ${{ parameters.LibraryName }}.dll
     signConfigType: inlineSignParams
     inlineOperation: |
@@ -67,3 +67,13 @@ steps:
      ]
     SessionTimeout: 20
     VerboseLogin: true
+  condition: and(succeeded(), eq(variables['PipelineType'], 'legacy'))
+
+- task: onebranch.pipeline.signing@1
+  displayName: 'Sign ${{ parameters.LibraryName }} with OneBranch'
+  inputs:
+    command: 'sign'
+    signing_profile: 'external_distribution' #CP-230012 -> https://eng.ms/docs/products/onebranch/signing/containerbuildsigning#signing-using-onebranchpipelinesigning-ado-task
+    files_to_sign: '**/${{ parameters.LibraryName }}.dll'
+    search_root: '$(Build.SourcesDirectory)\$(WilsonSourceDirectory)src'
+  condition: and(succeeded(), eq(variables['PipelineType'], 'onebranch'))

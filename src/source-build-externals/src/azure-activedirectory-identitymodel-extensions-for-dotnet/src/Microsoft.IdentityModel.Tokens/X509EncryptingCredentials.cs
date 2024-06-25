@@ -21,7 +21,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// </remarks>
         /// <exception cref="ArgumentNullException">if 'certificate' is null.</exception>
         public X509EncryptingCredentials(X509Certificate2 certificate)
-            : this(certificate, SecurityAlgorithms.DefaultAsymmetricKeyWrapAlgorithm, SecurityAlgorithms.DefaultSymmetricEncryptionAlgorithm)
+            : this(certificate, SecurityAlgorithms.RsaOAEP, SecurityAlgorithms.DefaultSymmetricEncryptionAlgorithm)
         {
         }
 
