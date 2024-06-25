@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using Microsoft.Build.Evaluation;
 using NuGet.ProjectModel;
 
@@ -31,10 +30,21 @@ namespace NuGet.CommandLine.XPlat
             }
 
             string targetPackage = whyCommandArgs.Package;
+            IEnumerable<string> projectPaths;
+            try
+            {
+                projectPaths = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(whyCommandArgs.Path);
+            }
+            catch (ArgumentException ex)
+            {
+                whyCommandArgs.Logger.LogError(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Strings.WhyCommand_Error_ArgumentExceptionThrown,
+                        ex.Message));
 
-            IEnumerable<string> projectPaths = Path.GetExtension(whyCommandArgs.Path).Equals(".sln")
-                                                    ? MSBuildAPIUtility.GetProjectsFromSolution(whyCommandArgs.Path).Where(f => File.Exists(f))
-                                                    : [whyCommandArgs.Path];
+                return ExitCodes.InvalidArguments;
+            }
 
             foreach (var projectPath in projectPaths)
             {
@@ -48,7 +58,7 @@ namespace NuGet.CommandLine.XPlat
 
                     if (assetsFile != null)
                     {
-                        ValidateFrameworksOptions(assetsFile, whyCommandArgs.Frameworks, whyCommandArgs.Logger);
+                        ValidateFrameworksOptionsExistInAssetsFile(assetsFile, whyCommandArgs.Frameworks, whyCommandArgs.Logger);
 
                         Dictionary<string, List<DependencyNode>?>? dependencyGraphPerFramework = DependencyGraphFinder.GetAllDependencyGraphsForTarget(
                             assetsFile,
@@ -89,6 +99,9 @@ namespace NuGet.CommandLine.XPlat
             return ExitCodes.Success;
         }
 
+        /// <summary>
+        /// Validates that the input 'path' argument is a valid path to a directory, solution file or project file.
+        /// </summary>
         private static bool ValidatePathArgument(string path, ILoggerWithColor logger)
         {
             if (string.IsNullOrEmpty(path))
@@ -98,24 +111,41 @@ namespace NuGet.CommandLine.XPlat
                         CultureInfo.CurrentCulture,
                         Strings.WhyCommand_Error_ArgumentCannotBeEmpty,
                         "PROJECT|SOLUTION"));
-
                 return false;
             }
 
-            if (!File.Exists(path)
-                || (!path.EndsWith("proj", StringComparison.OrdinalIgnoreCase)
-                    && !path.EndsWith(".sln", StringComparison.OrdinalIgnoreCase)))
+            // Check that the input is a valid path
+            string fullPath;
+            try
+            {
+                fullPath = Path.GetFullPath(path);
+            }
+            catch (ArgumentException)
             {
                 logger.LogError(
                     string.Format(
                         CultureInfo.CurrentCulture,
-                        Strings.WhyCommand_Error_PathIsMissingOrInvalid,
-                        path));
-
+                        Strings.WhyCommand_Error_ArgumentExceptionThrown,
+                        string.Format(CultureInfo.CurrentCulture, Strings.Error_PathIsMissingOrInvalid, path)));
                 return false;
             }
 
-            return true;
+            // Check that the path is a directory, solution file or project file
+            if (Directory.Exists(fullPath)
+                || (File.Exists(fullPath)
+                    && (XPlatUtility.IsSolutionFile(fullPath) || XPlatUtility.IsProjectFile(fullPath))))
+            {
+                return true;
+            }
+            else
+            {
+                logger.LogError(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Strings.WhyCommand_Error_ArgumentExceptionThrown,
+                        string.Format(CultureInfo.CurrentCulture, Strings.Error_PathIsMissingOrInvalid, path)));
+                return false;
+            }
         }
 
         private static bool ValidatePackageArgument(string package, ILoggerWithColor logger)
@@ -127,11 +157,30 @@ namespace NuGet.CommandLine.XPlat
                         CultureInfo.CurrentCulture,
                         Strings.WhyCommand_Error_ArgumentCannotBeEmpty,
                         "PACKAGE"));
-
                 return false;
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Validates that the input frameworks options have corresponding targets in the assets file. Outputs a warning message if a framework does not exist.
+        /// </summary>
+        private static void ValidateFrameworksOptionsExistInAssetsFile(LockFile assetsFile, List<string> inputFrameworks, ILoggerWithColor logger)
+        {
+            foreach (var frameworkAlias in inputFrameworks)
+            {
+                if (assetsFile.GetTarget(frameworkAlias, runtimeIdentifier: null) == null)
+                {
+                    logger.LogWarning(
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            Strings.WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget,
+                            assetsFile.Path,
+                            assetsFile.PackageSpec.Name,
+                            frameworkAlias));
+                }
+            }
         }
 
         /// <summary>
@@ -185,29 +234,6 @@ namespace NuGet.CommandLine.XPlat
             }
 
             return assetsFile;
-        }
-
-        /// <summary>
-        /// Validates that the input frameworks options have corresponding targets in the assets file. Outputs a warning message if a framework does not exist.
-        /// </summary>
-        /// <param name="assetsFile"></param>
-        /// <param name="inputFrameworks"></param>
-        /// <param name="logger"></param>
-        private static void ValidateFrameworksOptions(LockFile assetsFile, List<string> inputFrameworks, ILoggerWithColor logger)
-        {
-            foreach (var frameworkAlias in inputFrameworks)
-            {
-                if (assetsFile.GetTarget(frameworkAlias, runtimeIdentifier: null) == null)
-                {
-                    logger.LogWarning(
-                        string.Format(
-                            CultureInfo.CurrentCulture,
-                            Strings.WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget,
-                            assetsFile.Path,
-                            assetsFile.PackageSpec.Name,
-                            frameworkAlias));
-                }
-            }
         }
     }
 }

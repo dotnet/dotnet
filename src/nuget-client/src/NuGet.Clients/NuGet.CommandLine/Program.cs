@@ -156,7 +156,10 @@ namespace NuGet.CommandLine
                 }
                 else
                 {
-                    SetConsoleInteractivity(console, command as Command);
+                    if (command is Command baseCommand)
+                    {
+                        SetConsoleInteractivity(console, baseCommand);
+                    }
 
                     try
                     {
