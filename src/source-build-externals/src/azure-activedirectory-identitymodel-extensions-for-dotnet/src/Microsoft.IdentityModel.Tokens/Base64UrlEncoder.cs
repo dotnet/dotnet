@@ -173,13 +173,10 @@ namespace Microsoft.IdentityModel.Tokens
         public static byte[] DecodeBytes(string str)
         {
             _ = str ?? throw LogHelper.LogExceptionMessage(new ArgumentNullException(nameof(str)));
-            return UnsafeDecode(str.AsSpan());
+            return Decode(str.AsSpan());
         }
 
-#if NET6_0_OR_GREATER
-        [SkipLocalsInit]
-#endif
-        internal static unsafe byte[] UnsafeDecode(ReadOnlySpan<char> strSpan)
+        internal static byte[] Decode(ReadOnlySpan<char> strSpan)
         {
             int mod = strSpan.Length % 4;
             if (mod == 1)
@@ -189,11 +186,43 @@ namespace Microsoft.IdentityModel.Tokens
             int decodedLength = strSpan.Length + (4 - mod) % 4;
 
 #if NET6_0_OR_GREATER
+
+            Span<byte> output = new byte[decodedLength];
+
+            int length = Decode(strSpan, output, needReplace, decodedLength);
+
+            return output.Slice(0, length).ToArray();
+#else
+            return UnsafeDecode(strSpan, needReplace, decodedLength);
+#endif
+        }
+
+        internal static void Decode(ReadOnlySpan<char> strSpan, Span<byte> output)
+        {
+            int mod = strSpan.Length % 4;
+            if (mod == 1)
+                throw LogHelper.LogExceptionMessage(new FormatException(LogHelper.FormatInvariant(LogMessages.IDX10400, strSpan.ToString())));
+
+            bool needReplace = strSpan.IndexOfAny(base64UrlCharacter62, base64UrlCharacter63) >= 0;
+            int decodedLength = strSpan.Length + (4 - mod) % 4;
+
+#if NET6_0_OR_GREATER
+            Decode(strSpan, output, needReplace, decodedLength);
+#else
+            Decode(strSpan, output, needReplace, decodedLength);
+#endif
+        }
+
+#if NET6_0_OR_GREATER
+
+        [SkipLocalsInit]
+        private static int Decode(ReadOnlySpan<char> strSpan, Span<byte> output, bool needReplace, int decodedLength)
+        {
             // If the incoming chars don't contain any of the base64url characters that need to be replaced,
             // and if the incoming chars are of the exact right length, then we'll be able to just pass the
-            // incoming chars directly to Convert.TryFromBase64Chars. Otherwise, rent an array, copy all the
+            // incoming chars directly to DecodeFromUtf8InPlace. Otherwise, rent an array, copy all the
             // data into it, and do whatever fixups are necessary on that copy, then pass that copy into
-            // Convert.TryFromBase64Chars.
+            // DecodeFromUtf8InPlace.
 
             const int StackAllocThreshold = 512;
             char[] arrayPoolChars = null;
@@ -207,28 +236,7 @@ namespace Microsoft.IdentityModel.Tokens
                     arrayPoolChars = ArrayPool<char>.Shared.Rent(decodedLength);
                 charsSpan = charsSpan.Slice(0, decodedLength);
 
-                source.CopyTo(charsSpan);
-                if (source.Length < charsSpan.Length)
-                {
-                    charsSpan[source.Length] = base64PadCharacter;
-                    if (source.Length + 1 < charsSpan.Length)
-                    {
-                        charsSpan[source.Length + 1] = base64PadCharacter;
-                    }
-                }
-
-                if (needReplace)
-                {
-                    Span<char> remaining = charsSpan;
-                    int pos;
-                    while ((pos = remaining.IndexOfAny(base64UrlCharacter62, base64UrlCharacter63)) >= 0)
-                    {
-                        remaining[pos] = (remaining[pos] == base64UrlCharacter62) ? base64Character62 : base64Character63;
-                        remaining = remaining.Slice(pos + 1);
-                    }
-                }
-
-                source = charsSpan;
+                source = HandlePaddingAndReplace(source, charsSpan, needReplace);
             }
 
             byte[] arrayPoolBytes = null;
@@ -236,24 +244,65 @@ namespace Microsoft.IdentityModel.Tokens
                 stackalloc byte[StackAllocThreshold] :
                 arrayPoolBytes = ArrayPool<byte>.Shared.Rent(decodedLength);
 
-            bool converted = Convert.TryFromBase64Chars(source, bytesSpan, out int bytesWritten);
-            Debug.Assert(converted, "Expected TryFromBase64Chars to be successful");
-            byte[] result = bytesSpan.Slice(0, bytesWritten).ToArray();
+            int length = Encoding.UTF8.GetBytes(source, bytesSpan);
+            Span<byte> utf8Span = bytesSpan.Slice(0, length);
 
-            if (arrayPoolBytes is not null)
+            try
             {
-                bytesSpan.Clear();
-                ArrayPool<byte>.Shared.Return(arrayPoolBytes);
+                OperationStatus status = System.Buffers.Text.Base64.DecodeFromUtf8InPlace(utf8Span, out int bytesWritten);
+                if (status != OperationStatus.Done)
+                    throw LogHelper.LogExceptionMessage(new FormatException(LogHelper.FormatInvariant(LogMessages.IDX10400, strSpan.ToString())));
+
+                utf8Span.Slice(0, bytesWritten).CopyTo(output);
+
+                return bytesWritten;
+            }
+            finally
+            {
+                if (arrayPoolBytes is not null)
+                {
+                    bytesSpan.Clear();
+                    ArrayPool<byte>.Shared.Return(arrayPoolBytes);
+                }
+
+                if (arrayPoolChars is not null)
+                {
+                    charsSpan.Clear();
+                    ArrayPool<char>.Shared.Return(arrayPoolChars);
+                }
+            }
+        }
+
+        private static ReadOnlySpan<char> HandlePaddingAndReplace(ReadOnlySpan<char> source, Span<char> charsSpan, bool needReplace)
+        {
+            source.CopyTo(charsSpan);
+            if (source.Length < charsSpan.Length)
+            {
+                charsSpan[source.Length] = base64PadCharacter;
+                if (source.Length + 1 < charsSpan.Length)
+                {
+                    charsSpan[source.Length + 1] = base64PadCharacter;
+                }
             }
 
-            if (arrayPoolChars is not null)
+            if (needReplace)
             {
-                charsSpan.Clear();
-                ArrayPool<char>.Shared.Return(arrayPoolChars);
+                Span<char> remaining = charsSpan;
+                int pos;
+                while ((pos = remaining.IndexOfAny(base64UrlCharacter62, base64UrlCharacter63)) >= 0)
+                {
+                    remaining[pos] = (remaining[pos] == base64UrlCharacter62) ? base64Character62 : base64Character63;
+                    remaining = remaining.Slice(pos + 1);
+                }
             }
 
-            return result;
+            return charsSpan;
+        }
+
 #else
+
+        private static unsafe byte[] UnsafeDecode(ReadOnlySpan<char> strSpan, bool needReplace, int decodedLength)
+        {
             if (needReplace)
             {
                 string decodedString = new(char.MinValue, decodedLength);
@@ -298,8 +347,14 @@ namespace Microsoft.IdentityModel.Tokens
                     return Convert.FromBase64String(decodedString);
                 }
             }
-#endif
         }
+
+        private static void Decode(ReadOnlySpan<char> strSpan, Span<byte> output, bool needReplace, int decodedLength)
+        {
+            byte[] result = UnsafeDecode(strSpan, needReplace, decodedLength);
+            result.CopyTo(output);
+        }
+#endif
 
         /// <summary>
         /// Decodes the string from Base64UrlEncoded to UTF8.

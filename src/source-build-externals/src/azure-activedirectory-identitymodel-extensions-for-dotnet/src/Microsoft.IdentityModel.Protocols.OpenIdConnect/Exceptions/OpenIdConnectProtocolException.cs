@@ -6,7 +6,6 @@ using System.Runtime.Serialization;
 
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
 {
-
     /// <summary>
     /// This exception is thrown when an OpenIdConnect protocol handler encounters a protocol error.
     /// </summary>

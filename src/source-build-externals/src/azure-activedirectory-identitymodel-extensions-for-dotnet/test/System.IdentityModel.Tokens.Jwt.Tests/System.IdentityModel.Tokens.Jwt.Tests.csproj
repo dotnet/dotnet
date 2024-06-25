@@ -19,6 +19,10 @@
     <ProjectReference Include="..\..\src\Microsoft.IdentityModel.Validators\Microsoft.IdentityModel.Validators.csproj" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>

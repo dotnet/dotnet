@@ -60,6 +60,43 @@ namespace Microsoft.IdentityModel.Benchmarks
             }
         }
 
+        public static Dictionary<string, object> ClaimsExtendedExample
+        {
+            get
+            {
+                DateTime now = DateTime.UtcNow;
+                return new Dictionary<string, object>()
+                {
+                    { "acct", 0 },
+                    { "aio", Guid.NewGuid().ToString() },
+                    { "amr", new List<string>() { "pwd", "mfa" } },
+                    { "app_displayname", "MyApp" },
+                    { "appidacr", 0 },
+                    { "azpacr", 0 },
+                    { "azp", Guid.NewGuid().ToString() },
+                    { "groups", new List<string>() { "group1", "group2" } },
+                    { "name", "Bob" },
+                    { "oid", Guid.NewGuid().ToString() },
+                    { "rh", Guid.NewGuid().ToString() },
+                    { "scp", "access_as_user" },
+                    { JwtRegisteredClaimNames.Sub, Guid.NewGuid().ToString() },
+                    { "tid", Guid.NewGuid().ToString() },
+                    { "family_name", "Smith" },
+                    { "ver", "2.0" },
+                    { "wids", new List<string>() { Guid.NewGuid().ToString() } },
+                    { "xms_cc", Guid.NewGuid().ToString() },
+                    { "role", new List<string>() { "role1", "Developer", "Sales"} },
+                    { JwtRegisteredClaimNames.Email, "Bob@contoso.com" },
+                    { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(now + TimeSpan.FromDays(1)) },
+                    { JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(now) },
+                    { JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(now) },
+                    { JwtRegisteredClaimNames.GivenName, "Bob" },
+                    { JwtRegisteredClaimNames.Iss, Issuer },
+                    { JwtRegisteredClaimNames.Aud, Audience }
+                };
+            }
+        }
+
         public static SigningCredentials SigningCredentialsRsaSha256 => new(RsaSecurityKey, SecurityAlgorithms.RsaSha256, SecurityAlgorithms.Sha256);
 
         public static EncryptingCredentials EncryptingCredentialsAes256Sha512 => new(SymmetricEncryptionKey512, "dir", SecurityAlgorithms.Aes256CbcHmacSha512);

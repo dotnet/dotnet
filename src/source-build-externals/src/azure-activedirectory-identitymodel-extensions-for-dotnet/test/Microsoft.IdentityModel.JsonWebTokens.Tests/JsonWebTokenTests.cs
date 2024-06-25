@@ -363,14 +363,14 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     PropertyName = "aud",
                     PropertyValue = new List<string>(),
                     PropertyType = typeof(List<string>),
-                    Json = JsonUtilities.CreateUnsignedToken("aud", new List<string>{ null, null })
+                    Json = JsonUtilities.CreateUnsignedToken("aud", new List<string> { null, null })
                 });
 
                 theoryData.Add(new GetPayloadValueTheoryData("singleNonNull")
                 {
                     ClaimValue = new List<string> { "audience" },
                     PropertyName = "aud",
-                    PropertyValue = new List<string> { "audience"},
+                    PropertyValue = new List<string> { "audience" },
                     PropertyType = typeof(List<string>),
                     Json = JsonUtilities.CreateUnsignedToken("aud", "audience")
                 });
@@ -379,7 +379,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 {
                     ClaimValue = new List<string> { "audience1" },
                     PropertyName = "aud",
-                    PropertyValue = new List<string> { "audience1"},
+                    PropertyValue = new List<string> { "audience1" },
                     PropertyType = typeof(List<string>),
                     Json = JsonUtilities.CreateUnsignedToken("aud", new List<string> { null, "audience1", null })
                 });
@@ -726,7 +726,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 
                 return theoryData;
             }
-            
+
         }
 
         // This test ensures that accessing claims from the payload works as expected.
@@ -981,7 +981,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 {
                     PropertyName = "dateTime",
                     PropertyType = typeof(string[]),
-                    PropertyValue = new string[] {dateTime.ToString("o", CultureInfo.InvariantCulture)},
+                    PropertyValue = new string[] { dateTime.ToString("o", CultureInfo.InvariantCulture) },
                     Json = JsonUtilities.CreateUnsignedToken("dateTime", dateTime)
                 });
 
@@ -1717,6 +1717,25 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 theoryData.ExpectedException.ProcessException(ex, context);
             }
             TestUtilities.AssertFailIfErrors(context);
+        }
+
+        [Fact]
+        public void DerivedJsonWebToken_IsCreatedCorrectly()
+        {
+            var expectedCustomClaim = "customclaim";
+            var tokenStr = new JsonWebTokenHandler().CreateToken(new SecurityTokenDescriptor
+            {
+                Issuer = Default.Issuer,
+                Claims = new Dictionary<string, object>
+                {
+                    { "CustomClaim", expectedCustomClaim },
+                }
+            });
+
+            var derivedToken = new CustomJsonWebToken(tokenStr);
+
+            Assert.Equal(expectedCustomClaim, derivedToken.CustomClaim);
+            Assert.Equal(Default.Issuer, derivedToken.Issuer);
         }
     }
 

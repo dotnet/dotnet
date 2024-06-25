@@ -5,8 +5,8 @@
     <arcadeOutputPackageVersion>9.0.0-beta.24321.4</arcadeOutputPackageVersion>
     <aspireGitCommitHash>9faf59f870abdeb427c51c1380fce84d8163f2f0</aspireGitCommitHash>
     <aspireOutputPackageVersion>9.0.0-preview.2.24163.9</aspireOutputPackageVersion>
-    <aspnetcoreGitCommitHash>613c1e990b6b6411bda84456aefe14fe8e194279</aspnetcoreGitCommitHash>
-    <aspnetcoreOutputPackageVersion>9.0.0-preview.6.24320.4</aspnetcoreOutputPackageVersion>
+    <aspnetcoreGitCommitHash>28481ab0d6a31883a6c058d045ca8f72591a7eca</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>9.0.0-preview.7.24321.1</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>d145726036eb9c09a0e3cf03c4f70effd3b31cd7</cecilGitCommitHash>
     <cecilOutputPackageVersion>0.11.4-alpha.24313.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>963d34b1fb712c673bfb198133d7e988182c9ef4</commandlineapiGitCommitHash>
@@ -35,9 +35,9 @@
     <runtimeOutputPackageVersion>9.0.0-preview.6.24323.2</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>54700bbee86f660d37bd519a905b62bb50adc8c8</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24279.2</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>ff9735447ce8ca62879d70d322a5bd1cd8f4e7d8</sdkGitCommitHash>
-    <sourcebuildexternalsGitCommitHash>7db00527ef8fbbe61f67e9295beebddf187efff8</sourcebuildexternalsGitCommitHash>
-    <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24303.2</sourcebuildexternalsOutputPackageVersion>
+    <sdkGitCommitHash>c70ce24205f6d86a023382b0f58bb490ba861b64</sdkGitCommitHash>
+    <sourcebuildexternalsGitCommitHash>9a2785b8409e4ee8db848cc2fbfa19b3316a3baa</sourcebuildexternalsGitCommitHash>
+    <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24320.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>9ae78a4e6412926d19ba97cfed159bf9de70b538</sourcebuildreferencepackagesGitCommitHash>
     <sourcebuildreferencepackagesOutputPackageVersion>9.0.0-alpha.1.24304.1</sourcebuildreferencepackagesOutputPackageVersion>
     <sourcelinkGitCommitHash>14a0a42ffb29b53fb9939f14da5a4be8c6c07e0b</sourcelinkGitCommitHash>

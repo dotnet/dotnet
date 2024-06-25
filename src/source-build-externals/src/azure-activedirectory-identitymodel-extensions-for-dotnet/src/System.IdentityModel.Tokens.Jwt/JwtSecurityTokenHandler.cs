@@ -35,7 +35,7 @@ namespace System.IdentityModel.Tokens.Jwt
         private Dictionary<string, string> _outboundAlgorithmMap = null;
         private static string _shortClaimType = _namespace + "/ShortTypeName";
         private bool _mapInboundClaims = DefaultMapInboundClaims;
-
+       
         /// <summary>
         /// Default claim type mapping for inbound claims.
         /// </summary>
@@ -924,7 +924,7 @@ namespace System.IdentityModel.Tokens.Jwt
                         validationParameters.ConfigurationManager.RequestRefresh();
                         validationParameters.RefreshBeforeValidation = true;
                         var lastConfig = currentConfiguration;
-                        currentConfiguration = validationParameters.ConfigurationManager.GetBaseConfigurationAsync(CancellationToken.None).GetAwaiter().GetResult();
+                        currentConfiguration = validationParameters.ConfigurationManager.GetBaseConfigurationAsync(CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult();
 
                         // Only try to re-validate using the newly obtained config if it doesn't reference equal the previously used configuration.
                         if (lastConfig != currentConfiguration)
@@ -1344,7 +1344,7 @@ namespace System.IdentityModel.Tokens.Jwt
                 if (key != null)
                 {
                     kidMatched = true;
-                    keys = new List<SecurityKey> { key };
+                    keys = [key];
                 }
             }
 
@@ -1812,7 +1812,7 @@ namespace System.IdentityModel.Tokens.Jwt
             {
                 var key = ResolveTokenDecryptionKey(jwtToken.RawData, jwtToken, validationParameters);
                 if (key != null)
-                    keys = new List<SecurityKey> { key };
+                    keys = [key];
             }
 
             // control gets here if:

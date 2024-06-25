@@ -87,7 +87,7 @@ namespace Microsoft.IdentityModel.TestUtils
             return issuer;
         }
 
-        public static ValueTask<string> IssuerValidatorAsync(string issuer, SecurityToken token, TokenValidationParameters validationParameters)
+        public static ValueTask<string> IssuerValidatorInternalAsync(string issuer, SecurityToken token, TokenValidationParameters validationParameters)
         {
             return new ValueTask<string>(issuer);
         }

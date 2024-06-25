@@ -8,7 +8,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IdentityModel.Tokens.Jwt.Tests;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -86,9 +85,9 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         public void CreateTokenThrowsNullArgumentException()
         {
             var handler = new JsonWebTokenHandler();
-            Assert.Throws<ArgumentNullException>(() => handler.CreateToken(null, Default.SymmetricEncryptingCredentials, new Dictionary<string, object> { {"key", "value" } }));
-            Assert.Throws<ArgumentNullException>(() => handler.CreateToken("Payload", (EncryptingCredentials) null, new Dictionary<string, object> { { "key", "value" } }));
-            Assert.Throws<ArgumentNullException>(() => handler.CreateToken("Payload", Default.SymmetricEncryptingCredentials, (Dictionary<string, object>) null));
+            Assert.Throws<ArgumentNullException>(() => handler.CreateToken(null, Default.SymmetricEncryptingCredentials, new Dictionary<string, object> { { "key", "value" } }));
+            Assert.Throws<ArgumentNullException>(() => handler.CreateToken("Payload", (EncryptingCredentials)null, new Dictionary<string, object> { { "key", "value" } }));
+            Assert.Throws<ArgumentNullException>(() => handler.CreateToken("Payload", Default.SymmetricEncryptingCredentials, (Dictionary<string, object>)null));
         }
 
         [Theory, MemberData(nameof(TokenValidationClaimsTheoryData))]
@@ -276,7 +275,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 theoryData);
 
 
-        JwtTestData.InvalidEncodedSegmentsData("", theoryData);
+            JwtTestData.InvalidEncodedSegmentsData("", theoryData);
             JwtTestData.ValidEncodedSegmentsData(theoryData);
 
             return theoryData;
@@ -476,7 +475,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 
                 tokenHandler.InboundClaimTypeMap.Clear();
                 var encryptionCredentials = KeyingMaterial.DefaultSymmetricEncryptingCreds_AesGcm128;
-                encryptionCredentials.CryptoProviderFactory = new CryptoProviderFactoryMock();
+                encryptionCredentials.CryptoProviderFactory = new CryptoProviderFactoryForGcm();
                 return new TheoryData<CreateTokenTheoryData>
                 {
                     new CreateTokenTheoryData
@@ -2824,7 +2823,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 
         // Test checks to make sure that default times are correctly added to the token
         // upon token creation.
-        [Fact (Skip = "Rewrite test to use claims, string will not succeed")]
+        [Fact(Skip = "Rewrite test to use claims, string will not succeed")]
         public void SetDefaultTimesOnTokenCreation()
         {
             // when the payload is passed as a string to JsonWebTokenHandler.CreateToken, we no longer
@@ -2980,9 +2979,9 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 }
             };
 
-            if(jsonValidationResult.IsValid && jwtValidationResult.IsValid)
+            if (jsonValidationResult.IsValid && jwtValidationResult.IsValid)
             {
-                if(!IdentityComparer.AreEqual(jsonValidationResult, jwtValidationResult, context))
+                if (!IdentityComparer.AreEqual(jsonValidationResult, jwtValidationResult, context))
                 {
                     context.AddDiff("jsonValidationResult.IsValid && jwtValidationResult.IsValid, Validation results are not equal");
                 }
@@ -3216,7 +3215,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             try
             {
                 var handler = new JsonWebTokenHandler();
-                var validationResult =handler.ValidateTokenAsync(theoryData.Token, theoryData.ValidationParameters).Result;
+                var validationResult = handler.ValidateTokenAsync(theoryData.Token, theoryData.ValidationParameters).Result;
                 if (validationResult.Exception != null)
                 {
                     if (validationResult.IsValid)
@@ -3524,7 +3523,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 incorrectSigningKeysConfig.SigningKeys.Add(KeyingMaterial.X509SecurityKey2);
                 theoryData.Add(new JwtTheoryData
                 {
-                    TestId = nameof(Default.AsymmetricJws) + "_" + "TVPInvalid" + "_" + "ConfigSigningKeysInvalid" + "_SignatureValidatorReturnsValidToken",
+                    TestId = nameof(Default.AsymmetricJws) + "_TVPInvalid_ConfigSigningKeysInvalid_SignatureValidatorReturnsValidToken",
                     Token = Default.AsymmetricJws,
                     ValidationParameters = new TokenValidationParameters
                     {
@@ -3568,7 +3567,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     var setupValidationResult = handler.ValidateTokenAsync(theoryData.Token, theoryData.ValidationParameters).Result;
 
                     theoryData.ValidationParameters.ValidateWithLKG = previousValidateWithLKG;
-                   
+
                     if (setupValidationResult.Exception != null)
                     {
                         if (setupValidationResult.IsValid)
@@ -4189,6 +4188,99 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 },
             };
         }
+
+        [Theory, MemberData(nameof(ValidateAuthenticationTagLengthTheoryData))]
+        public async Task ValidateTokenAsync_ModifiedAuthNTag(CreateTokenTheoryData theoryData)
+        {
+            // arrange
+            var payload = new JObject()
+            {
+                { JwtRegisteredClaimNames.Email, "Bob@contoso.com" },
+                { JwtRegisteredClaimNames.GivenName, "Bob" },
+                { JwtRegisteredClaimNames.Iss, "http://Default.Issuer.com"},
+                { JwtRegisteredClaimNames.Aud, "http://Default.Audience.com" },
+                { JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(DateTime.Now).ToString() },
+                { JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(DateTime.Now).ToString() },
+                { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(DateTime.Now.AddDays(1)).ToString() },
+            }.ToString();
+
+            var jsonWebTokenHandler = new JsonWebTokenHandler();
+            var signingCredentials = Default.SymmetricSigningCredentials;
+
+            if (SupportedAlgorithms.IsAesGcm(theoryData.Algorithm))
+            {
+                theoryData.EncryptingCredentials.CryptoProviderFactory = new CryptoProviderFactoryForGcm();
+            }
+
+            var jwe = jsonWebTokenHandler.CreateToken(payload, signingCredentials, theoryData.EncryptingCredentials);
+            var jweWithExtraCharacters = jwe + "_cannoli_hunts_truffles_";
+
+            // act
+            var tokenValidationResult = await jsonWebTokenHandler.ValidateTokenAsync(jweWithExtraCharacters, theoryData.ValidationParameters).ConfigureAwait(false);
+
+            // assert
+            Assert.Equal(theoryData.IsValid, tokenValidationResult.IsValid);
+        }
+
+        public static TheoryData<CreateTokenTheoryData> ValidateAuthenticationTagLengthTheoryData()
+        {
+            var signingCredentials512 = new SigningCredentials(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaPKCS1, SecurityAlgorithms.Sha512);
+            return new TheoryData<CreateTokenTheoryData>()
+            {
+                new("Aes256Gcm_IsNotValidByDefault")
+                {
+                    Algorithm = SecurityAlgorithms.Aes256Gcm,
+                    EncryptingCredentials = KeyingMaterial.DefaultSymmetricEncryptingCreds_AesGcm256,
+                    ValidationParameters = new TokenValidationParameters
+                    {
+                        TokenDecryptionKey = KeyingMaterial.DefaultSymmetricSigningCreds_256_Sha2.Key,
+                        IssuerSigningKey = Default.SymmetricSigningKey256,
+                        ValidAudience = "http://Default.Audience.com",
+                        ValidIssuer = "http://Default.Issuer.com",
+                    },
+                    IsValid = false
+                },
+                new("A128CBC-HS256_IsNotValidByDefault")
+                {
+                    Algorithm = SecurityAlgorithms.Aes128CbcHmacSha256,
+                    EncryptingCredentials = new EncryptingCredentials(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaPKCS1, SecurityAlgorithms.Aes128CbcHmacSha256),
+                    ValidationParameters = new TokenValidationParameters
+                    {
+                        TokenDecryptionKey = KeyingMaterial.JsonWebKeyRsa256SigningCredentials.Key,
+                        IssuerSigningKey = Default.SymmetricSigningKey256,
+                        ValidAudience = "http://Default.Audience.com",
+                        ValidIssuer = "http://Default.Issuer.com",
+                    },
+                    IsValid = false
+                },
+                new("A192CBC-HS384_IsNotValidByDefault")
+                {
+                    Algorithm = SecurityAlgorithms.Aes192CbcHmacSha384,
+                    EncryptingCredentials = new EncryptingCredentials(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaPKCS1, SecurityAlgorithms.Aes192CbcHmacSha384),
+                    ValidationParameters = new TokenValidationParameters
+                    {
+                        TokenDecryptionKey = KeyingMaterial.JsonWebKeyRsa256SigningCredentials.Key,
+                        IssuerSigningKey = Default.SymmetricSigningKey256,
+                        ValidAudience = "http://Default.Audience.com",
+                        ValidIssuer = "http://Default.Issuer.com",
+                    },
+                    IsValid = false
+                },
+                new("A256CBC-HS512_IsNotValidByDefault")
+                {
+                    Algorithm = SecurityAlgorithms.Aes256CbcHmacSha512,
+                    EncryptingCredentials = new EncryptingCredentials(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaPKCS1, SecurityAlgorithms.Aes256CbcHmacSha512),
+                    ValidationParameters = new TokenValidationParameters
+                    {
+                        TokenDecryptionKey = signingCredentials512.Key,
+                        IssuerSigningKey = Default.SymmetricSigningKey256,
+                        ValidAudience = "http://Default.Audience.com",
+                        ValidIssuer = "http://Default.Issuer.com",
+                    },
+                    IsValid = false
+                }
+            };
+        }
     }
 
     public class CreateTokenTheoryData : TheoryDataBase
@@ -4237,21 +4329,21 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
     }
 
     // Overrides CryptoProviderFactory.CreateAuthenticatedEncryptionProvider to create AuthenticatedEncryptionProviderMock that provides AesGcm encryption.
-    public class CryptoProviderFactoryMock: CryptoProviderFactory
+    public class CryptoProviderFactoryForGcm : CryptoProviderFactory
     {
         public override AuthenticatedEncryptionProvider CreateAuthenticatedEncryptionProvider(SecurityKey key, string algorithm)
         {
             if (SupportedAlgorithms.IsSupportedEncryptionAlgorithm(algorithm, key) && SupportedAlgorithms.IsAesGcm(algorithm))
-                return new AuthenticatedEncryptionProviderMock(key, algorithm);
+                return new AuthenticatedEncryptionProviderForGcm(key, algorithm);
 
             return null;
         }
     }
 
     // Overrides AuthenticatedEncryptionProvider.Encrypt to offer AesGcm encryption for testing.
-    public class AuthenticatedEncryptionProviderMock: AuthenticatedEncryptionProvider
+    public class AuthenticatedEncryptionProviderForGcm : AuthenticatedEncryptionProvider
     {
-        public AuthenticatedEncryptionProviderMock(SecurityKey key, string algorithm): base(key, algorithm)
+        public AuthenticatedEncryptionProviderForGcm(SecurityKey key, string algorithm) : base(key, algorithm)
         { }
 
         public override AuthenticatedEncryptionResult Encrypt(byte[] plaintext, byte[] authenticatedData)
@@ -4275,7 +4367,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 aes.Encrypt(iv, plaintext, ciphertext, authenticationTag, authenticatedData);
             }
 
-            return new AuthenticatedEncryptionResult(Key, ciphertext, iv, authenticationTag); 
+            return new AuthenticatedEncryptionResult(Key, ciphertext, iv, authenticationTag);
         }
     }
 

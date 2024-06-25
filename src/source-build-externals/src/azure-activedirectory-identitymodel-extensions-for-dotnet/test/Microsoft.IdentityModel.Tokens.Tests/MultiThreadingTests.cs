@@ -121,7 +121,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 {
                     Claims = Default.PayloadDictionary,
                     SigningCredentials = new SigningCredentials(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSha256, SecurityAlgorithms.Sha256),
-                    EncryptingCredentials = new EncryptingCredentials(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaOaepKeyWrap, SecurityAlgorithms.Aes128CbcHmacSha256)
+                    EncryptingCredentials = new EncryptingCredentials(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaOAEP, SecurityAlgorithms.Aes128CbcHmacSha256)
                 };
 
                 var tokenValidationParametersEncryptedRsaKW = new TokenValidationParameters
@@ -152,7 +152,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
                 var jwtEncryptedDir = jwtSecurityTokenHandler.CreateEncodedJwt(securityTokenDescriptorEncryptedDir);
 
-#if NET461 || NET462 || NET472
+#if NET462 || NET472
                 // RSACng 
                 var securityTokenDescriptorRsaCng = new SecurityTokenDescriptor
                 {
@@ -174,7 +174,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 {
                     Claims = Default.PayloadDictionary,
                     SigningCredentials = new SigningCredentials(KeyingMaterial.RsaSecurityKeyCng_2048, SecurityAlgorithms.RsaSha256, SecurityAlgorithms.Sha256),
-                    EncryptingCredentials = new EncryptingCredentials(KeyingMaterial.RsaSecurityKeyCng_2048, SecurityAlgorithms.RsaOaepKeyWrap, SecurityAlgorithms.Aes128CbcHmacSha256)
+                    EncryptingCredentials = new EncryptingCredentials(KeyingMaterial.RsaSecurityKeyCng_2048, SecurityAlgorithms.RsaOAEP, SecurityAlgorithms.Aes128CbcHmacSha256)
                 };
 
                 var tokenValidationParametersEncryptedRsaKWCng = new TokenValidationParameters
@@ -235,7 +235,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                         TokenDescriptor = securityTokenDescriptorEncryptedDir,
                         ValidationParameters = tokenValidationParametersEncryptedDir
                     },
-#if NET461 || NET462 || NET472
+#if NET462 || NET472
                     new MultiThreadingTheoryData
                     {
                         JwtSecurityTokenHandler = jwtSecurityTokenHandler,

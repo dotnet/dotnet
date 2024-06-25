@@ -130,6 +130,14 @@ namespace Microsoft.IdentityModel.Tokens.Json
 
         internal static object CreateObjectFromJsonElement(JsonElement jsonElement, int currentDepth)
         {
+            return CreateObjectFromJsonElement(jsonElement, currentDepth, string.Empty);
+        }
+
+        /// <remarks>
+        /// <paramref name="claimType"/> is not considered on recursive calls.
+        /// </remarks>
+        internal static object CreateObjectFromJsonElement(JsonElement jsonElement, int currentDepth, string claimType)
+        {
             if (currentDepth >= MaxDepth)
                 throw new InvalidOperationException(LogHelper.FormatInvariant(
                     LogMessages.IDX10815,
@@ -138,6 +146,9 @@ namespace Microsoft.IdentityModel.Tokens.Json
 
             if (jsonElement.ValueKind == JsonValueKind.String)
             {
+                if (!string.IsNullOrEmpty(claimType) && !TryAllStringClaimsAsDateTime() && IsKnownToNotBeDateTime(claimType))
+                    return jsonElement.GetString();
+
                 if (DateTime.TryParse(jsonElement.GetString(), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime dateTime))
                     return dateTime;
 
@@ -175,7 +186,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
                 int index = 0;
                 foreach (JsonElement j in jsonElement.EnumerateArray())
                 {
-                    items[index++] = CreateObjectFromJsonElement(j, currentDepth + 1);
+                    items[index++] = CreateObjectFromJsonElement(j, currentDepth + 1, string.Empty);
                 }
 
                 return items;
@@ -190,7 +201,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
                 KeyValuePair<string, object>[] kvps = new KeyValuePair<string, object>[numItems];
                 foreach (JsonProperty property in jsonElement.EnumerateObject())
                 {
-                    kvps[index++] = new KeyValuePair<string, object>(property.Name, CreateObjectFromJsonElement(property.Value, currentDepth + 1));
+                    kvps[index++] = new KeyValuePair<string, object>(property.Name, CreateObjectFromJsonElement(property.Value, currentDepth + 1, string.Empty));
                 }
 
                 return kvps;
@@ -295,7 +306,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
                     Dictionary<string, object> dictionary = new();
                     foreach (JsonProperty property in jsonElement.EnumerateObject())
                     {
-                        dictionary[property.Name] = CreateObjectFromJsonElement(property.Value, currentDepth + 1);
+                        dictionary[property.Name] = CreateObjectFromJsonElement(property.Value, currentDepth + 1, string.Empty);
                     }
 
                     t = (T)(object)dictionary;
@@ -386,7 +397,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
                     numItems = 0;
                     foreach (JsonElement j in jsonElement.EnumerateArray())
                     {
-                        items[numItems++] = CreateObjectFromJsonElement(j, currentDepth + 1);
+                        items[numItems++] = CreateObjectFromJsonElement(j, currentDepth + 1, string.Empty);
                     }
 
                     t = (T)(object)items;
@@ -397,7 +408,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
                     List<object> items = new();
                     foreach (JsonElement j in jsonElement.EnumerateArray())
                     {
-                        items.Add(CreateObjectFromJsonElement(j, currentDepth + 1));
+                        items.Add(CreateObjectFromJsonElement(j, currentDepth + 1, string.Empty));
                     }
 
                     t = (T)(object)items;
@@ -408,7 +419,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
                     Collection<object> items = new();
                     foreach (JsonElement j in jsonElement.EnumerateArray())
                     {
-                        items.Add(CreateObjectFromJsonElement(j, currentDepth + 1));
+                        items.Add(CreateObjectFromJsonElement(j, currentDepth + 1, string.Empty));
                     }
 
                     t = (T)(object)items;
@@ -695,6 +706,122 @@ namespace Microsoft.IdentityModel.Tokens.Json
             return retVal;
         }
 
+        internal const string TryToCreateDateTimeClaimsSwitch = "Switch.Microsoft.IdentityModel.TryAllStringClaimsAsDateTime";
+
+        public static bool TryAllStringClaimsAsDateTime()
+        {
+            return (AppContext.TryGetSwitch(TryToCreateDateTimeClaimsSwitch, out bool tryAsDateTime) && tryAsDateTime);
+        }
+
+        /// <summary>
+        /// This is a non-exhaustive list of claim types that are not expected to be DateTime values
+        /// sourced from expected Entra V1 and V2 claims, OpenID Connect claims, and a selection of
+        /// restricted claim names.
+        /// </summary>
+        private static readonly HashSet<string> s_knownNonDateTimeClaimTypes = new(StringComparer.Ordinal)
+        {
+            // Header Values.
+            "alg",
+            "cty",
+            "crit",
+            "enc",
+            "jku",
+            "jwk",
+            "kid",
+            "typ",
+            "x5c",
+            "x5t",
+            "x5t#S256",
+            "x5u",
+            "zip",
+            // JWT claims.
+            "acr",
+            "acrs",
+            "access_token",
+            "account_type",
+            "acct",
+            "actor",
+            "actort",
+            "actortoken",
+            "aio",
+            "altsecid",
+            "amr",
+            "app_displayname",
+            "appid",
+            "appidacr",
+            "at_hash",
+            "aud",
+            "authorization_code",
+            "azp",
+            "azpacr",
+            "c_hash",
+            "cnf",
+            "capolids",
+            "ctry",
+            "email",
+            "family_name",
+            "fwd",
+            "gender",
+            "given_name",
+            "groups",
+            "hasgroups",
+            "idp",
+            "idtyp",
+            "in_corp",
+            "ipaddr",
+            "iss",
+            "jti",
+            "login_hint",
+            "name",
+            "nameid",
+            "nickname",
+            "nonce",
+            "oid",
+            "onprem_sid",
+            "phone_number",
+            "phone_number_verified",
+            "pop_jwk",
+            "preferred_username",
+            "prn",
+            "puid",
+            "pwd_url",
+            "rh",
+            "role",
+            "roles",
+            "secaud",
+            "sid",
+            "sub",
+            "tenant_ctry",
+            "tenant_region_scope",
+            "tid",
+            "unique_name",
+            "upn",
+            "uti",
+            "ver",
+            "verified_primary_email",
+            "verified_secondary_email",
+            "vnet",
+            "website",
+            "wids",
+            "xms_cc",
+            "xms_edov",
+            "xms_pdl",
+            "xms_pl",
+            "xms_tpl",
+            "ztdid"
+        };
+
+        internal static bool IsKnownToNotBeDateTime(string claimType)
+        {
+            if (string.IsNullOrEmpty(claimType))
+                return true;
+
+            if (s_knownNonDateTimeClaimTypes.Contains(claimType))
+                return true;
+
+            return false;
+        }
+
         internal static object ReadStringAsObject(ref Utf8JsonReader reader, string propertyName, string className, bool read = false)
         {
             // returning null keeps the same logic as JsonSerialization.ReadObject
@@ -706,6 +833,13 @@ namespace Microsoft.IdentityModel.Tokens.Json
                     CreateJsonReaderException(ref reader, "JsonTokenType.String", className, propertyName));
 
             string originalString = reader.GetString();
+
+            if (!TryAllStringClaimsAsDateTime() && IsKnownToNotBeDateTime(propertyName))
+            {
+                reader.Read();
+                return originalString;
+            }
+
 #pragma warning disable CA1031 // Do not catch general exception types
             try
             {

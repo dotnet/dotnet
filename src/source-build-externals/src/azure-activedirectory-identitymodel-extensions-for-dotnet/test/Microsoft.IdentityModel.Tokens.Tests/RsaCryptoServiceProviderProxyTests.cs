@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#if NET461 || NET462 || NET472
+#if NET462 || NET472
 using System.Security.Cryptography.X509Certificates;
 #endif
 
-#if NET461 || NET462 || NET472
+#if NET462 || NET472
 
 using System;
 using System.Security.Cryptography;
@@ -59,7 +59,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         {
             get
             {
-#if NET461 || NET462 || NET472
+#if NET462 || NET472
                 var rsaCsp = new RSACryptoServiceProvider();
                 rsaCsp.ImportParameters(KeyingMaterial.RsaParameters_2048);
 #else
@@ -111,7 +111,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         {
             get
             {
-#if NET461 || NET462 || NET472
+#if NET462 || NET472
                 var rsaFromX509Cert = new RSACryptoServiceProvider();
                 var rsaCng = KeyingMaterial.DefaultCert_2048.GetRSAPrivateKey() as RSACng;
                 var parameters = rsaCng.ExportParameters(true);
@@ -185,7 +185,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         {
             get
             {
-#if NET461 || NET462 || NET472
+#if NET462 || NET472
                 var rsaCsp = new RSACryptoServiceProvider();
                 rsaCsp.ImportParameters(KeyingMaterial.RsaParameters_2048);
 #else
@@ -254,7 +254,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         {
             get
             {
-#if NET461 || NET462 || NET472
+#if NET462 || NET472
                 var rsaCsp = new RSACryptoServiceProvider();
                 rsaCsp.ImportParameters(KeyingMaterial.RsaParameters_2048);
 #else
@@ -328,7 +328,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         {
             get
             {
-#if NET461 || NET462 || NET472
+#if NET462 || NET472
                 var rsaCsp = new RSACryptoServiceProvider();
                 rsaCsp.ImportParameters(KeyingMaterial.RsaParameters_2048);
 #else

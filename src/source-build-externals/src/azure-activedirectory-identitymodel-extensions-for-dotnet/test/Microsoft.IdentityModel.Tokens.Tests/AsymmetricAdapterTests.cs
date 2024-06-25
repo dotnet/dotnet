@@ -24,11 +24,8 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
             try
             {
-#if NET461 || NET462 || NET472 || NETCOREAPP2_1 || NET6_0_OR_GREATER
                 AsymmetricAdapter asymmetricdapter = new AsymmetricAdapter(theoryData.SecurityKey, theoryData.Algorithm, hashAlgorithm, SupportedAlgorithms.GetHashAlgorithmName(theoryData.Algorithm), true);
-#else
-                AsymmetricAdapter asymmetricdapter = new AsymmetricAdapter(theoryData.SecurityKey, theoryData.Algorithm, hashAlgorithm, true);
-#endif
+
                 byte[] signature = asymmetricdapter.Sign(bytes);
                 if (!asymmetricdapter.Verify(bytes, signature))
                     context.AddDiff($"Verify failed for test: {theoryData.TestId}");
@@ -59,7 +56,6 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
                 // RSA
                 // RSACertificateExtensions.GetRSAPrivateKey - this results in 
-                #if NET461 || NET462 || NET472 || NETCOREAPP2_1 || NET6_0_OR_GREATER
                 new AsymmetricAdapterTheoryData
                 {
                     Algorithm = SecurityAlgorithms.RsaSha256,
@@ -67,7 +63,6 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                     SecurityKey = new RsaSecurityKey(RSACertificateExtensions.GetRSAPrivateKey(KeyingMaterial.CertSelfSigned2048_SHA256) as RSA),
                     TestId = "RSACertificateExtensions_GetRSAPrivateKey"
                 },
-                #endif
 
                 // X509Certificte2.PrivateKey - this results in the RSA being of type RSACryptoServiceProviderProxy
                 new AsymmetricAdapterTheoryData

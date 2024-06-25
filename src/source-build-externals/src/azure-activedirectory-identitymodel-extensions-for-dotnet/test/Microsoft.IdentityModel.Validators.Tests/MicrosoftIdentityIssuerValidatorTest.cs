@@ -12,7 +12,6 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using NSubstitute;
 using Xunit;
 
@@ -65,7 +64,7 @@ namespace Microsoft.IdentityModel.Validators.Tests
 
             IdentityComparer.AreEqual(ValidatorConstants.AuthorityV1, validator.AadAuthorityV1, context);
             IdentityComparer.AreEqual(ValidatorConstants.AuthorityCommonTenantWithV2, validator.AadAuthorityV2, context);
-            IdentityComparer.AreBoolsEqual(false, validator.IsV2Authority, context);
+            IdentityComparer.AreEqual(ProtocolVersion.V1, validator.AadAuthorityVersion, context);
             TestUtilities.AssertFailIfErrors(context);
         }
 
@@ -77,12 +76,12 @@ namespace Microsoft.IdentityModel.Validators.Tests
 
             IdentityComparer.AreEqual(ValidatorConstants.AuthorityV1, validator.AadAuthorityV1, context);
             IdentityComparer.AreEqual(ValidatorConstants.AuthorityCommonTenantWithV2, validator.AadAuthorityV2, context);
-            IdentityComparer.AreBoolsEqual(false, validator.IsV2Authority, context);
+            IdentityComparer.AreEqual(ProtocolVersion.V1, validator.AadAuthorityVersion, context);
 
             validator = CreateIssuerValidator(ValidatorConstants.AuthorityWithTenantSpecified);
             IdentityComparer.AreEqual(ValidatorConstants.AuthorityWithTenantSpecified, validator.AadAuthorityV1, context);
             IdentityComparer.AreEqual(ValidatorConstants.AuthorityWithTenantSpecifiedWithV2, validator.AadAuthorityV2, context);
-            IdentityComparer.AreBoolsEqual(false, validator.IsV2Authority, context);
+            IdentityComparer.AreEqual(ProtocolVersion.V1, validator.AadAuthorityVersion, context);
 
             TestUtilities.AssertFailIfErrors(context);
         }
@@ -97,7 +96,7 @@ namespace Microsoft.IdentityModel.Validators.Tests
 
             IdentityComparer.AreEqual(ValidatorConstants.AuthorityV1, validator.AadAuthorityV1, context);
             IdentityComparer.AreEqual(ValidatorConstants.AuthorityCommonTenantWithV2, validator.AadAuthorityV2, context);
-            IdentityComparer.AreBoolsEqual(true, validator.IsV2Authority, context);
+            IdentityComparer.AreEqual(ProtocolVersion.V2, validator.AadAuthorityVersion, context);
             TestUtilities.AssertFailIfErrors(context);
         }
 
@@ -111,7 +110,7 @@ namespace Microsoft.IdentityModel.Validators.Tests
 
             IdentityComparer.AreEqual(ValidatorConstants.AuthorityV1, validator.AadAuthorityV1, context);
             IdentityComparer.AreEqual(ValidatorConstants.AuthorityOrganizationsWithV2, validator.AadAuthorityV2, context);
-            IdentityComparer.AreBoolsEqual(true, validator.IsV2Authority, context);
+            IdentityComparer.AreEqual(ProtocolVersion.V2, validator.AadAuthorityVersion, context);
             TestUtilities.AssertFailIfErrors(context);
         }
 
@@ -124,7 +123,7 @@ namespace Microsoft.IdentityModel.Validators.Tests
             var validator = CreateIssuerValidator(authorityNotInAliases);
             IdentityComparer.AreEqual(ValidatorConstants.B2CAuthority, validator.AadAuthorityV1, context);
             IdentityComparer.AreEqual(ValidatorConstants.B2CAuthorityWithV2, validator.AadAuthorityV2, context);
-            IdentityComparer.AreBoolsEqual(true, validator.IsV2Authority, context);
+            IdentityComparer.AreEqual(ProtocolVersion.V2, validator.AadAuthorityVersion, context);
             TestUtilities.AssertFailIfErrors(context);
         }
 
@@ -452,7 +451,7 @@ namespace Microsoft.IdentityModel.Validators.Tests
                 });
             IdentityComparer.AreEqual(ValidatorConstants.B2CAuthority, validator.AadAuthorityV1, context);
             IdentityComparer.AreEqual(ValidatorConstants.B2CAuthorityWithV2, validator.AadAuthorityV2, context);
-            IdentityComparer.AreBoolsEqual(true, validator.IsV2Authority, context);
+            IdentityComparer.AreEqual(ProtocolVersion.V2, validator.AadAuthorityVersion, context);
             TestUtilities.AssertFailIfErrors(context);
         }
 
@@ -498,7 +497,7 @@ namespace Microsoft.IdentityModel.Validators.Tests
                 });
             IdentityComparer.AreEqual(ValidatorConstants.B2CAuthority, validator.AadAuthorityV1, context);
             IdentityComparer.AreEqual(ValidatorConstants.B2CAuthorityWithV2, validator.AadAuthorityV2, context);
-            IdentityComparer.AreBoolsEqual(true, validator.IsV2Authority, context);
+            IdentityComparer.AreEqual(ProtocolVersion.V2, validator.AadAuthorityVersion, context);
             TestUtilities.AssertFailIfErrors(context);
         }
 
@@ -568,7 +567,7 @@ namespace Microsoft.IdentityModel.Validators.Tests
 
             IdentityComparer.AreEqual(ValidatorConstants.B2CCustomDomainAuthority, validator.AadAuthorityV1, context);
             IdentityComparer.AreEqual(ValidatorConstants.B2CCustomDomainAuthorityWithV2, validator.AadAuthorityV2, context);
-            IdentityComparer.AreBoolsEqual(true, validator.IsV2Authority, context);
+            IdentityComparer.AreEqual(ProtocolVersion.V2, validator.AadAuthorityVersion, context);
             TestUtilities.AssertFailIfErrors(context);
         }
 
@@ -595,11 +594,16 @@ namespace Microsoft.IdentityModel.Validators.Tests
         }
 
         [Theory]
-        [InlineData(true, true)]
-        [InlineData(true, false)]
-        [InlineData(false, false)]
-        [InlineData(false, true)]
-        public void Validate_WithAuthorityUsingConfigurationProvider(bool isV2Token, bool isV2Authority)
+        [InlineData(ProtocolVersion.V1, ProtocolVersion.V1)]
+        [InlineData(ProtocolVersion.V1, ProtocolVersion.V11)]
+        [InlineData(ProtocolVersion.V1, ProtocolVersion.V2)]
+        [InlineData(ProtocolVersion.V11, ProtocolVersion.V1)]
+        [InlineData(ProtocolVersion.V11, ProtocolVersion.V11)]
+        [InlineData(ProtocolVersion.V11, ProtocolVersion.V2)]
+        [InlineData(ProtocolVersion.V2, ProtocolVersion.V1)]
+        [InlineData(ProtocolVersion.V2, ProtocolVersion.V11)]
+        [InlineData(ProtocolVersion.V2, ProtocolVersion.V2)]
+        public void Validate_WithAuthorityUsingConfigurationProvider(ProtocolVersion authorityVersion, ProtocolVersion tokenVersion)
         {
             var configurationManagerProvider = (string authority) =>
             {
@@ -620,20 +624,50 @@ namespace Microsoft.IdentityModel.Validators.Tests
                            {
                                Issuer = ValidatorConstants.AadIssuerV2CommonAuthority
                            })
+                    },
+                    {
+                        ValidatorConstants.AuthorityCommonTenantWithV11,
+                        new MockConfigurationManager<OpenIdConnectConfiguration>(
+                            new OpenIdConnectConfiguration()
+                            {
+                                Issuer = ValidatorConstants.AadIssuerV11CommonAuthority
+                            })
                     }
                 };
 
                 return configManagerMap[authority];
             };
 
+            var tokenIssuerProvider = (ProtocolVersion version) =>
+            {
+                if (version == ProtocolVersion.V11)
+                    return ValidatorConstants.AadIssuerV11;
+
+                if (version == ProtocolVersion.V2)
+                    return ValidatorConstants.AadIssuer;
+
+                return ValidatorConstants.V1Issuer;
+            };
+
+            var authorityUrlProvider = (ProtocolVersion version) =>
+            {
+                if (version == ProtocolVersion.V11)
+                    return ValidatorConstants.AuthorityCommonTenantWithV11;
+
+                if (version == ProtocolVersion.V2)
+                    return ValidatorConstants.AuthorityCommonTenantWithV2;
+
+                return ValidatorConstants.AuthorityV1;
+            };
+
             var context = new CompareContext();
             var tidClaim = new Claim(ValidatorConstants.ClaimNameTid, ValidatorConstants.TenantIdAsGuid);
 
-            var tokenIssuer = isV2Token ? ValidatorConstants.AadIssuer : ValidatorConstants.V1Issuer;
+            var tokenIssuer = tokenIssuerProvider(tokenVersion);
             var issClaim = new Claim(ValidatorConstants.ClaimNameIss, tokenIssuer);
             var jwtSecurityToken = new JwtSecurityToken(issuer: tokenIssuer, claims: new[] { issClaim, tidClaim });
 
-            var authority = isV2Authority ? ValidatorConstants.AuthorityCommonTenantWithV2 : ValidatorConstants.AuthorityV1;
+            var authority = authorityUrlProvider(authorityVersion);
             var aadIssuerValidator = AadIssuerValidator.GetAadIssuerValidator(authority, _httpClient, configurationManagerProvider);
 
             var actualIssuer = aadIssuerValidator.Validate(tokenIssuer, jwtSecurityToken, new TokenValidationParameters());
@@ -642,43 +676,160 @@ namespace Microsoft.IdentityModel.Validators.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Fact]
-        public void Validate_UsesLKGWithoutConfigurationProvider()
+        [Theory]
+        [InlineData(ProtocolVersion.V1, ProtocolVersion.V1)]
+        [InlineData(ProtocolVersion.V1, ProtocolVersion.V11)]
+        [InlineData(ProtocolVersion.V1, ProtocolVersion.V2)]
+        [InlineData(ProtocolVersion.V11, ProtocolVersion.V1)]
+        [InlineData(ProtocolVersion.V11, ProtocolVersion.V11)]
+        [InlineData(ProtocolVersion.V11, ProtocolVersion.V2)]
+        [InlineData(ProtocolVersion.V2, ProtocolVersion.V1)]
+        [InlineData(ProtocolVersion.V2, ProtocolVersion.V11)]
+        [InlineData(ProtocolVersion.V2, ProtocolVersion.V2)]
+        public void Validate_UsesLKGWithoutConfigurationProvider(ProtocolVersion authorityVersion, ProtocolVersion tokenVersion)
         {
+            var tokenIssuerProvider = (ProtocolVersion version) =>
+            {
+                if (version == ProtocolVersion.V11)
+                    return ValidatorConstants.AadIssuerV11;
+
+                if (version == ProtocolVersion.V2)
+                    return ValidatorConstants.AadIssuer;
+
+                return ValidatorConstants.V1Issuer;
+            };
+
+            var authorityUrlProvider = (ProtocolVersion version) =>
+            {
+                if (version == ProtocolVersion.V11)
+                    return ValidatorConstants.AuthorityCommonTenantWithV11;
+
+                if (version == ProtocolVersion.V2)
+                    return ValidatorConstants.AuthorityCommonTenantWithV2;
+
+                return ValidatorConstants.AuthorityV1;
+            };
+
+            var goodAuthorityIssuer = (ProtocolVersion version) =>
+            {
+                if (version == ProtocolVersion.V11)
+                    return ValidatorConstants.AadIssuerV11CommonAuthority;
+
+                if (version == ProtocolVersion.V2)
+                    return ValidatorConstants.AadIssuerV2CommonAuthority;
+
+                return ValidatorConstants.AadIssuerV1CommonAuthority;
+            };
+
+            var configurationManagerSetter = (AadIssuerValidator validator, bool isRefresh = false) =>
+            {
+                if (!isRefresh)
+                {
+                    validator.ConfigurationManagerV1 = new MockConfigurationManager<OpenIdConnectConfiguration>(
+                        new OpenIdConnectConfiguration
+                        {
+                            Issuer = goodAuthorityIssuer(ProtocolVersion.V1)
+                        });
+                    validator.ConfigurationManagerV11 = new MockConfigurationManager<OpenIdConnectConfiguration>(
+                        new OpenIdConnectConfiguration
+                        {
+                            Issuer = goodAuthorityIssuer(ProtocolVersion.V11)
+                        });
+                    validator.ConfigurationManagerV2 = new MockConfigurationManager<OpenIdConnectConfiguration>(
+                        new OpenIdConnectConfiguration
+                        {
+                            Issuer = goodAuthorityIssuer(ProtocolVersion.V2)
+                        });
+                }
+                else
+                {
+                    var refreshedConfig = new OpenIdConnectConfiguration
+                    {
+                        Issuer = "hxxp://brokenissuer/{tenantid}"
+                    };
+
+                    ((MockConfigurationManager<OpenIdConnectConfiguration>)validator.ConfigurationManagerV11).RefreshedConfiguration = refreshedConfig;
+                    ((MockConfigurationManager<OpenIdConnectConfiguration>)validator.ConfigurationManagerV2).RefreshedConfiguration = refreshedConfig;
+                    ((MockConfigurationManager<OpenIdConnectConfiguration>)validator.ConfigurationManagerV1).RefreshedConfiguration = refreshedConfig;
+                    validator.ConfigurationManagerV11.RequestRefresh();
+                    validator.ConfigurationManagerV2.RequestRefresh();
+                    validator.ConfigurationManagerV1.RequestRefresh();
+                }
+            };
+
             var context = new CompareContext();
             var tidClaim = new Claim(ValidatorConstants.ClaimNameTid, ValidatorConstants.TenantIdAsGuid);
 
-            var v2TokenIssuer = ValidatorConstants.AadIssuer;
-            var issClaim = new Claim(ValidatorConstants.ClaimNameIss, v2TokenIssuer);
-            var jwtSecurityToken = new JwtSecurityToken(issuer: v2TokenIssuer, claims: new[] { issClaim, tidClaim });
+            var issuer = tokenIssuerProvider(tokenVersion);
+            var issClaim = new Claim(ValidatorConstants.ClaimNameIss, issuer);
+            var jwtSecurityToken = new JwtSecurityToken(issuer: issuer, claims: new[] { issClaim, tidClaim });
 
-            var v2Authority = ValidatorConstants.AuthorityCommonTenantWithV2;
-            var aadIssuerValidator = AadIssuerValidator.GetAadIssuerValidator(v2Authority, _httpClient);
+            var authority = authorityUrlProvider(authorityVersion);
+            var aadIssuerValidator = AadIssuerValidator.GetAadIssuerValidator(authority, _httpClient);
 
             // set config to a mock and assert on LKG being null
-            var v2Configuration = new OpenIdConnectConfiguration
-            {
-                Issuer = ValidatorConstants.AadIssuerV2CommonAuthority
-            };
+            configurationManagerSetter(aadIssuerValidator);
 
-            var v2ConfigurationRefreshed = new OpenIdConnectConfiguration
-            {
-                Issuer = "hxxp://brokenissuer/{tenantid}"
-            };
-
-            aadIssuerValidator.ConfigurationManagerV2 = new MockConfigurationManager<OpenIdConnectConfiguration>(v2Configuration);
-            
             // set LKG
-            var actualIssuer = aadIssuerValidator.Validate(v2TokenIssuer, jwtSecurityToken, new TokenValidationParameters());
-            IdentityComparer.AreEqual(v2TokenIssuer, actualIssuer, context);
+            var actualIssuer = aadIssuerValidator.Validate(issuer, jwtSecurityToken, new TokenValidationParameters());
+            IdentityComparer.AreEqual(issuer, actualIssuer, context);
             TestUtilities.AssertFailIfErrors(context);
 
             // replace config with broken issuer and validate with LKG
-            ((MockConfigurationManager<OpenIdConnectConfiguration>)aadIssuerValidator.ConfigurationManagerV2).RefreshedConfiguration = v2ConfigurationRefreshed;
-            aadIssuerValidator.ConfigurationManagerV2.RequestRefresh();
+            configurationManagerSetter(aadIssuerValidator, true);
 
-            actualIssuer = aadIssuerValidator.Validate(v2TokenIssuer, jwtSecurityToken, new TokenValidationParameters { ValidateWithLKG = true });
-            IdentityComparer.AreEqual(v2TokenIssuer, actualIssuer, context);
+            actualIssuer = aadIssuerValidator.Validate(issuer, jwtSecurityToken, new TokenValidationParameters { ValidateWithLKG = true });
+            IdentityComparer.AreEqual(issuer, actualIssuer, context);
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        [Theory]
+        [InlineData(ProtocolVersion.V1, ProtocolVersion.V1)]
+        [InlineData(ProtocolVersion.V1, ProtocolVersion.V11)]
+        [InlineData(ProtocolVersion.V1, ProtocolVersion.V2)]
+        [InlineData(ProtocolVersion.V11, ProtocolVersion.V1)]
+        [InlineData(ProtocolVersion.V11, ProtocolVersion.V11)]
+        [InlineData(ProtocolVersion.V11, ProtocolVersion.V2)]
+        [InlineData(ProtocolVersion.V2, ProtocolVersion.V1)]
+        [InlineData(ProtocolVersion.V2, ProtocolVersion.V11)]
+        [InlineData(ProtocolVersion.V2, ProtocolVersion.V2)]
+        public void Validate_CanFetchMetadataWithoutConfigurationProvider(ProtocolVersion authorityVersion, ProtocolVersion tokenVersion)
+        {
+            var tokenIssuerProvider = (ProtocolVersion version) =>
+            {
+                if (version == ProtocolVersion.V11)
+                    return ValidatorConstants.AadIssuerV11PPE;
+
+                if (version == ProtocolVersion.V2)
+                    return ValidatorConstants.AadIssuerPPE;
+
+                return ValidatorConstants.V1IssuerPPE;
+            };
+
+            var authorityUrlProvider = (ProtocolVersion version) =>
+            {
+                if (version == ProtocolVersion.V11)
+                    return ValidatorConstants.AuthorityCommonTenantWithV11PPE;
+
+                if (version == ProtocolVersion.V2)
+                    return ValidatorConstants.AuthorityCommonTenantWithV2PPE;
+
+                return ValidatorConstants.AuthorityV1PPE;
+            };
+           
+            var context = new CompareContext();
+            var tidClaim = new Claim(ValidatorConstants.ClaimNameTid, ValidatorConstants.TenantIdAsGuid);
+
+            var issuer = tokenIssuerProvider(tokenVersion);
+            var issClaim = new Claim(ValidatorConstants.ClaimNameIss, issuer);
+            var jwtSecurityToken = new JwtSecurityToken(issuer: issuer, claims: new[] { issClaim, tidClaim });
+
+            var authority = authorityUrlProvider(authorityVersion);
+            var aadIssuerValidator = AadIssuerValidator.GetAadIssuerValidator(authority, _httpClient);
+                        
+            // set LKG
+            var actualIssuer = aadIssuerValidator.Validate(issuer, jwtSecurityToken, new TokenValidationParameters());
+            IdentityComparer.AreEqual(issuer, actualIssuer, context);
             TestUtilities.AssertFailIfErrors(context);
         }
 

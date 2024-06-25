@@ -10,7 +10,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <AbstractionsXunitReleaseVersion>2.0.3</AbstractionsXunitReleaseVersion>
-    <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>7.4.1</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
+    <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>8.0.0-preview1</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
     <CssParserReleaseVersionSuffix>20230414.1</CssParserReleaseVersionSuffix>
     <HumanizerReleaseVersion>2.14.1</HumanizerReleaseVersion>
     <MSBuildLocatorReleaseVersion>1.6.10</MSBuildLocatorReleaseVersion>

@@ -19,3 +19,5 @@ steps:
   inputs:
     scriptName: build/VerifySigning.ps1
     arguments: '-buildType ${{ parameters.BuildConfiguration }}'
+  condition: and(succeeded(), eq(variables['PipelineType'], 'legacy'))
+

@@ -1311,7 +1311,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 }
                     
                 if (key != null)
-                    keys = new List<SecurityKey> { key };
+                    keys = [key];
             }
 
             // on decryption for ECDH-ES, we get the public key from the EPK value see: https://datatracker.ietf.org/doc/html/rfc7518#appendix-C
