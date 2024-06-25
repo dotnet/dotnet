@@ -14,12 +14,10 @@ public sealed partial class Application
     /// <summary>
     ///  <see cref="ThreadContext"/> that supports <see cref="IMsoComponent"/>.
     /// </summary>
-#pragma warning disable IDE0036
-    internal unsafe sealed class ComponentThreadContext :
+    internal sealed unsafe class ComponentThreadContext :
         ThreadContext,
         IMsoComponent.Interface,
         IManagedWrapper<IMsoComponent>
-#pragma warning restore IDE0036
     {
         private bool _trackingComponent;
 
