@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Remote;
 
-interface IRemoteLinkedEditingRangeService
+internal interface IRemoteLinkedEditingRangeService
 {
     ValueTask<LinePositionSpan[]?> GetRangesAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId razorDocumentId, LinePosition linePosition, CancellationToken cancellationToken);
 }

@@ -10,13 +10,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 using ItemReference = Microsoft.VisualStudio.Razor.ProjectSystem.ManagedProjectSystemSchema.ItemReference;
@@ -28,7 +25,6 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
     private readonly IServiceProvider _serviceProvider;
     private readonly ItemCollection _referenceItems;
     private readonly TestProjectSnapshotManager _projectManager;
-    private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore;
     private readonly ItemCollection _contentItems;
     private readonly ItemCollection _noneItems;
 
@@ -43,10 +39,6 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         }));
 
         _projectManager = CreateProjectSnapshotManager();
-
-        var projectConfigurationFilePathStore = new Mock<ProjectConfigurationFilePathStore>(MockBehavior.Strict);
-        projectConfigurationFilePathStore.Setup(s => s.Remove(It.IsAny<ProjectKey>())).Verifiable();
-        _projectConfigurationFilePathStore = projectConfigurationFilePathStore.Object;
 
         _referenceItems = new ItemCollection(ManagedProjectSystemSchema.ResolvedCompilationReference.SchemaName);
         _contentItems = new ItemCollection(ManagedProjectSystemSchema.ContentItem.SchemaName);
@@ -71,7 +63,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         });
         var services = new TestProjectSystemServices("C:\\To\\Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore);
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager);
         var changes = new TestProjectChangeDescription[]
         {
              afterChangeContentItems.ToChange(_contentItems.ToSnapshot()),
@@ -113,11 +105,11 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         });
         var services = new TestProjectSystemServices("C:\\To\\Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore);
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager);
         var changes = new TestProjectChangeDescription[]
         {
-             _contentItems.ToChange(),
-             _noneItems.ToChange(),
+            _contentItems.ToChange(),
+            _noneItems.ToChange(),
         };
         var update = services.CreateUpdate(changes).Value;
 
@@ -156,11 +148,11 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         });
         var services = new TestProjectSystemServices("C:\\To\\Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore);
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager);
         var changes = new TestProjectChangeDescription[]
         {
-             _contentItems.ToChange(),
-             _noneItems.ToChange(),
+            _contentItems.ToChange(),
+            _noneItems.ToChange(),
         };
         var update = services.CreateUpdate(changes).Value;
 
@@ -177,7 +169,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         // Arrange
         var services = new TestProjectSystemServices("C:\\To\\Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore);
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager);
         var itemState = new Dictionary<string, string>()
         {
             [ItemReference.LinkPropertyName] = "Index.cshtml",
@@ -197,7 +189,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         // Arrange
         var services = new TestProjectSystemServices("C:\\Path\\Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore);
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager);
         var itemState = new Dictionary<string, string>()
         {
             [ItemReference.FullPathPropertyName] = "C:\\Path\\site.css",
@@ -217,7 +209,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         // Arrange
         var services = new TestProjectSystemServices("C:\\Path\\To\\Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore);
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager);
         var itemState = new Dictionary<string, string>()
         {
             [ItemReference.LinkPropertyName] = "site.html",
@@ -239,7 +231,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         var expectedPath = "C:\\Path\\Index.cshtml";
         var services = new TestProjectSystemServices("C:\\Path\\Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore);
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager);
         var itemState = new Dictionary<string, string>()
         {
             [ItemReference.FullPathPropertyName] = expectedPath,
@@ -262,7 +254,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         var expectedTargetPath = "C:\\Path\\To\\Index.cshtml";
         var services = new TestProjectSystemServices("C:\\Path\\To\\Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore);
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager);
         var itemState = new Dictionary<string, string>()
         {
             [ItemReference.LinkPropertyName] = "Index.cshtml",
@@ -286,7 +278,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         var expectedTargetPath = "C:\\Path\\To\\Index.cshtml";
         var services = new TestProjectSystemServices("C:\\Path\\To\\Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore);
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager);
         var itemState = new Dictionary<string, string>()
         {
             [ItemReference.LinkPropertyName] = "Index.cshtml",
@@ -309,7 +301,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         // Arrange
         var services = new TestProjectSystemServices("C:\\To\\Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore);
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager);
 
         // Act & Assert
         await host.LoadAsync();
@@ -325,7 +317,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         // Arrange
         var services = new TestProjectSystemServices("Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore);
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager);
 
         // Act & Assert
         await Task.Run(async () => await host.LoadAsync());
@@ -345,7 +337,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var services = new TestProjectSystemServices("Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore)
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager)
         {
             AssemblyVersion = new Version(2, 0),
         };
@@ -381,7 +373,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var services = new TestProjectSystemServices("C:\\Path\\Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore)
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager)
         {
             AssemblyVersion = new Version(2, 0), // Mock for reading the assembly's version
         };
@@ -416,7 +408,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
         var services = new TestProjectSystemServices("Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore);
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager);
 
         await Task.Run(async () => await host.LoadAsync());
         Assert.Empty(_projectManager.GetProjects());
@@ -444,7 +436,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var services = new TestProjectSystemServices("Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore);
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager);
 
         await Task.Run(async () => await host.LoadAsync());
         Assert.Empty(_projectManager.GetProjects());
@@ -483,7 +475,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var services = new TestProjectSystemServices("C:\\Path\\Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore)
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager)
         {
             AssemblyVersion = new Version(2, 0),
         };
@@ -528,7 +520,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var services = new TestProjectSystemServices("Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore)
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager)
         {
             AssemblyVersion = new Version(2, 0),
         };
@@ -573,7 +565,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var services = new TestProjectSystemServices("C:\\Path\\Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore)
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager)
         {
             AssemblyVersion = new Version(2, 0),
         };
@@ -618,7 +610,7 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var services = new TestProjectSystemServices("Test.csproj");
 
-        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore)
+        var host = new TestFallbackRazorProjectHost(services, _serviceProvider, _projectManager)
         {
             AssemblyVersion = new Version(2, 0), // Mock for reading the assembly's version
         };
@@ -652,9 +644,8 @@ public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         internal TestFallbackRazorProjectHost(
             IUnconfiguredProjectCommonServices commonServices,
             IServiceProvider serviceProvider,
-            IProjectSnapshotManager projectManager,
-            ProjectConfigurationFilePathStore projectConfigurationFilePathStore)
-            : base(commonServices, serviceProvider, projectManager, projectConfigurationFilePathStore, languageServerFeatureOptions: null)
+            IProjectSnapshotManager projectManager)
+            : base(commonServices, serviceProvider, projectManager)
         {
             SkipIntermediateOutputPathExistCheck_TestOnly = true;
         }

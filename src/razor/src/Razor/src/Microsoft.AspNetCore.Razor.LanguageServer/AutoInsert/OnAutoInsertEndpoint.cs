@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -26,15 +27,19 @@ internal class OnAutoInsertEndpoint(
     IClientConnection clientConnection,
     IEnumerable<IOnAutoInsertProvider> onAutoInsertProvider,
     RazorLSPOptionsMonitor optionsMonitor,
+    IAdhocWorkspaceFactory workspaceFactory,
+    IRazorFormattingService razorFormattingService,
     ILoggerFactory loggerFactory)
     : AbstractRazorDelegatingEndpoint<VSInternalDocumentOnAutoInsertParams, VSInternalDocumentOnAutoInsertResponseItem?>(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.GetOrCreateLogger<OnAutoInsertEndpoint>()), ICapabilitiesProvider
 {
     private static readonly HashSet<string> s_htmlAllowedTriggerCharacters = new(StringComparer.Ordinal) { "=", };
     private static readonly HashSet<string> s_cSharpAllowedTriggerCharacters = new(StringComparer.Ordinal) { "'", "/", "\n" };
 
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-    private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor ?? throw new ArgumentNullException(nameof(optionsMonitor));
-    private readonly IReadOnlyList<IOnAutoInsertProvider> _onAutoInsertProviders = onAutoInsertProvider?.ToList() ?? throw new ArgumentNullException(nameof(onAutoInsertProvider));
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
+    private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
+    private readonly IAdhocWorkspaceFactory _workspaceFactory = workspaceFactory;
+    private readonly IRazorFormattingService _razorFormattingService = razorFormattingService;
+    private readonly List<IOnAutoInsertProvider> _onAutoInsertProviders = onAutoInsertProvider.ToList();
 
     protected override string CustomMessageTarget => CustomMessageNames.RazorOnAutoInsertEndpointName;
 
@@ -78,13 +83,12 @@ internal class OnAutoInsertEndpoint(
 
         var character = request.Character;
 
-        var applicableProviders = new List<IOnAutoInsertProvider>();
-        for (var i = 0; i < _onAutoInsertProviders.Count; i++)
+        using var _ = ListPool<IOnAutoInsertProvider>.GetPooledObject(out var applicableProviders);
+        foreach (var provider in _onAutoInsertProviders)
         {
-            var formatOnTypeProvider = _onAutoInsertProviders[i];
-            if (formatOnTypeProvider.TriggerCharacter == character)
+            if (provider.TriggerCharacter == character)
             {
-                applicableProviders.Add(formatOnTypeProvider);
+                applicableProviders.Add(provider);
             }
         }
 
@@ -98,19 +102,16 @@ internal class OnAutoInsertEndpoint(
         var uri = request.TextDocument.Uri;
         var position = request.Position;
 
-        var workspaceFactory = requestContext.GetRequiredService<IAdhocWorkspaceFactory>();
-        using (var formattingContext = FormattingContext.Create(uri, documentContext.Snapshot, codeDocument, request.Options, workspaceFactory))
+        using var formattingContext = FormattingContext.Create(uri, documentContext.Snapshot, codeDocument, request.Options, _workspaceFactory);
+        foreach (var provider in applicableProviders)
         {
-            for (var i = 0; i < applicableProviders.Count; i++)
+            if (provider.TryResolveInsertion(position, formattingContext, out var textEdit, out var format))
             {
-                if (applicableProviders[i].TryResolveInsertion(position, formattingContext, out var textEdit, out var format))
+                return new VSInternalDocumentOnAutoInsertResponseItem()
                 {
-                    return new VSInternalDocumentOnAutoInsertResponseItem()
-                    {
-                        TextEdit = textEdit,
-                        TextEditFormat = format,
-                    };
-                }
+                    TextEdit = textEdit,
+                    TextEditFormat = format,
+                };
             }
         }
 
@@ -136,7 +137,7 @@ internal class OnAutoInsertEndpoint(
 
             if (!_optionsMonitor.CurrentValue.AutoInsertAttributeQuotes && request.Character == "=")
             {
-                // Use Razor setting for autoinsert attribute quotes. HTML Server doesn't have a way to pass that
+                // Use Razor setting for auto insert attribute quotes. HTML Server doesn't have a way to pass that
                 // information along so instead we just don't delegate the request.
                 Logger.LogTrace($"Not delegating to HTML completion because AutoInsertAttributeQuotes is disabled");
                 return SpecializedTasks.Null<IDelegatedParams>();
@@ -203,25 +204,17 @@ internal class OnAutoInsertEndpoint(
         // For C# we run the edit through our formatting engine
         var edits = new[] { delegatedResponse.TextEdit };
 
-        var razorFormattingService = requestContext.GetRequiredService<IRazorFormattingService>();
-        TextEdit[] mappedEdits;
-        if (delegatedResponse.TextEditFormat == InsertTextFormat.Snippet)
-        {
-            mappedEdits = await razorFormattingService.FormatSnippetAsync(documentContext, positionInfo.LanguageKind, edits, originalRequest.Options, cancellationToken).ConfigureAwait(false);
-        }
-        else
-        {
-            mappedEdits = await razorFormattingService.FormatOnTypeAsync(documentContext, positionInfo.LanguageKind, edits, originalRequest.Options, hostDocumentIndex: 0, triggerCharacter: '\0', cancellationToken).ConfigureAwait(false);
-        }
-
-        if (mappedEdits.Length != 1)
+        var mappedEdits = delegatedResponse.TextEditFormat == InsertTextFormat.Snippet
+            ? await _razorFormattingService.FormatSnippetAsync(documentContext, positionInfo.LanguageKind, edits, originalRequest.Options, cancellationToken).ConfigureAwait(false)
+            : await _razorFormattingService.FormatOnTypeAsync(documentContext, positionInfo.LanguageKind, edits, originalRequest.Options, hostDocumentIndex: 0, triggerCharacter: '\0', cancellationToken).ConfigureAwait(false);
+        if (mappedEdits is not [{ } edit])
         {
             return null;
         }
 
         return new VSInternalDocumentOnAutoInsertResponseItem()
         {
-            TextEdit = mappedEdits[0],
+            TextEdit = edit,
             TextEditFormat = delegatedResponse.TextEditFormat,
         };
     }

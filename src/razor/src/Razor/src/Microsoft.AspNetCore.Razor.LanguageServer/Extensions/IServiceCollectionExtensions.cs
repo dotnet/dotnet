@@ -26,7 +26,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
-using Microsoft.CodeAnalysis.Razor.Serialization;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,6 +47,7 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<CapabilitiesManager>();
         services.AddSingleton<IInitializeManager<InitializeParams, InitializeResult>, CapabilitiesManager>(sp => sp.GetRequiredService<CapabilitiesManager>());
         services.AddSingleton<IClientCapabilitiesService>(sp => sp.GetRequiredService<CapabilitiesManager>());
+        services.AddSingleton<IWorkspaceRootPathProvider>(sp => sp.GetRequiredService<CapabilitiesManager>());
         services.AddSingleton<AbstractRequestContextFactory<RazorRequestContext>, RazorRequestContextFactory>();
 
         services.AddSingleton<ICapabilitiesProvider, RazorLanguageServerCapability>();
@@ -211,31 +211,13 @@ internal static class IServiceCollectionExtensions
 
         services.AddSingleton<RemoteTextLoaderFactory, DefaultRemoteTextLoaderFactory>();
         services.AddSingleton<IRazorProjectService, RazorProjectService>();
+        services.AddSingleton<IRazorStartupService>((services) => (RazorProjectService)services.GetRequiredService<IRazorProjectService>());
         services.AddSingleton<IRazorStartupService, OpenDocumentGenerator>();
         services.AddSingleton<IRazorDocumentMappingService, RazorDocumentMappingService>();
         services.AddSingleton<RazorFileChangeDetectorManager>();
         services.AddSingleton<IOnInitialized>(sp => sp.GetRequiredService<RazorFileChangeDetectorManager>());
 
-        if (featureOptions.UseProjectConfigurationEndpoint)
-        {
-            services.AddSingleton<IRazorProjectInfoFileSerializer, RazorProjectInfoFileSerializer>();
-            services.AddSingleton<ProjectConfigurationStateManager>();
-        }
-        else 
-        {
-            services.AddSingleton<IProjectConfigurationFileChangeListener, ProjectConfigurationStateSynchronizer>();
-        }
-
         services.AddSingleton<IRazorFileChangeListener, RazorFileSynchronizer>();
-
-        // If we're not monitoring the whole workspace folder for configuration changes, then we don't actually need the the file change
-        // detector wired up via DI, as the razor/monitorProjectConfigurationFilePath endpoint will directly construct one. This means
-        // it can be a little simpler, and doesn't need to worry about which folders it's told to listen to.
-        if (featureOptions.MonitorWorkspaceFolderForConfigurationFiles)
-        {
-            services.AddSingleton<IFileChangeDetector, ProjectConfigurationFileChangeDetector>();
-        }
-
         services.AddSingleton<IFileChangeDetector, RazorFileChangeDetector>();
 
         // Document processed listeners

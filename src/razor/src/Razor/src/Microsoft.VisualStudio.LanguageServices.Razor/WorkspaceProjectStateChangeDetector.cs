@@ -10,11 +10,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language.Components;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudio.Razor;
@@ -73,6 +73,11 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
 
     public void Dispose()
     {
+        if (_disposeTokenSource.IsCancellationRequested)
+        {
+            return;
+        }
+
         _projectManager.Changed -= ProjectManager_Changed;
         _workspace.WorkspaceChanged -= Workspace_WorkspaceChanged;
 

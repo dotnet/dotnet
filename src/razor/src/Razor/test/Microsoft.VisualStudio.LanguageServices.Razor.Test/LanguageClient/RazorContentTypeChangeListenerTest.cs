@@ -5,7 +5,6 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -72,7 +71,7 @@ public class RazorContentTypeChangeListenerTest : ToolingTestBase
         var lspDocumentManager = new Mock<TrackingLSPDocumentManager>(MockBehavior.Strict);
         lspDocumentManager.Setup(manager => manager.TrackDocument(It.IsAny<ITextBuffer>()))
             .Throws<Exception>();
-        var featureDetector = Mock.Of<LSPEditorFeatureDetector>(detector => detector.IsRemoteClient() == true, MockBehavior.Strict);
+        var featureDetector = Mock.Of<ILspEditorFeatureDetector>(detector => detector.IsRemoteClient() == true, MockBehavior.Strict);
         var listener = CreateListener(lspDocumentManager.Object, featureDetector);
 
         // Act & Assert
@@ -209,14 +208,14 @@ public class RazorContentTypeChangeListenerTest : ToolingTestBase
 
     private RazorContentTypeChangeListener CreateListener(
         TrackingLSPDocumentManager lspDocumentManager = null,
-        LSPEditorFeatureDetector lspEditorFeatureDetector = null,
+        ILspEditorFeatureDetector lspEditorFeatureDetector = null,
         IFileToContentTypeService fileToContentTypeService = null)
     {
         var textDocumentFactory = new Mock<ITextDocumentFactoryService>(MockBehavior.Strict).Object;
         Mock.Get(textDocumentFactory).Setup(f => f.TryGetTextDocument(It.IsAny<ITextBuffer>(), out It.Ref<ITextDocument>.IsAny)).Returns(false);
 
         lspDocumentManager ??= Mock.Of<TrackingLSPDocumentManager>(MockBehavior.Strict);
-        lspEditorFeatureDetector ??= Mock.Of<LSPEditorFeatureDetector>(detector => detector.IsLSPEditorAvailable(It.IsAny<string>(), null) == true && detector.IsRemoteClient() == false, MockBehavior.Strict);
+        lspEditorFeatureDetector ??= Mock.Of<ILspEditorFeatureDetector>(detector => detector.IsLspEditorEnabled() == true && detector.IsRemoteClient() == false, MockBehavior.Strict);
         fileToContentTypeService ??= Mock.Of<IFileToContentTypeService>(detector => detector.GetContentTypeForFilePath(It.IsAny<string>()) == _razorContentType, MockBehavior.Strict);
         var textManager = new Mock<IVsTextManager2>(MockBehavior.Strict);
         textManager.Setup(m => m.GetUserPreferences2(null, null, It.IsAny<LANGPREFERENCES2[]>(), null)).Returns(VSConstants.E_NOTIMPL);

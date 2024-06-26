@@ -155,6 +155,9 @@ internal partial class RazorCustomMessageTarget
             AddSnippetCompletions(request, ref builder.AsRef());
             completionList.Items = builder.ToArray();
 
+            completionList.Data = JsonHelpers.TryConvertFromJsonElement(completionList.Data);
+            ConvertJsonElementToJObject(completionList);
+
             return completionList;
         }
         finally
@@ -165,6 +168,14 @@ internal partial class RazorCustomMessageTarget
                 var revertedProvisionalChange = new VisualStudioTextChange(revertedProvisionalTextEdit, virtualDocumentSnapshot.Snapshot);
                 UpdateVirtualDocument(revertedProvisionalChange, request.ProjectedKind, request.Identifier.Version, hostDocumentUri, virtualDocumentSnapshot.Uri);
             }
+        }
+    }
+
+    private void ConvertJsonElementToJObject(VSInternalCompletionList completionList)
+    {
+        foreach (var item in completionList.Items)
+        {
+            item.Data = JsonHelpers.TryConvertFromJsonElement(item.Data);
         }
     }
 
@@ -287,6 +298,8 @@ internal partial class RazorCustomMessageTarget
 
         var completionResolveParams = request.CompletionItem;
 
+        completionResolveParams.Data = JsonHelpers.TryConvertBackToJsonElement(completionResolveParams.Data);
+
         var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
         var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalCompletionItem, CompletionItem?>(
             textBuffer,
@@ -294,7 +307,14 @@ internal partial class RazorCustomMessageTarget
             languageServerName,
             completionResolveParams,
             cancellationToken).ConfigureAwait(false);
-        return response?.Response;
+
+        var item = response?.Response;
+        if (item is not null)
+        {
+            item.Data = JsonHelpers.TryConvertFromJsonElement(item.Data);
+        }
+
+        return item;
     }
 
     [JsonRpcMethod(LanguageServerConstants.RazorGetFormattingOptionsEndpointName, UseSingleObjectParameterDeserialization = true)]

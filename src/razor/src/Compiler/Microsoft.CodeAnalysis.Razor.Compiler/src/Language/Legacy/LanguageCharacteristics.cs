@@ -13,7 +13,7 @@ internal abstract class LanguageCharacteristics<TTokenizer>
     where TTokenizer : Tokenizer
 {
     public abstract string GetSample(SyntaxKind type);
-    public abstract TTokenizer CreateTokenizer(ITextDocument source);
+    public abstract TTokenizer CreateTokenizer(SeekableTextReader source);
     public abstract SyntaxKind FlipBracket(SyntaxKind bracket);
     public abstract SyntaxToken CreateMarkerToken();
 

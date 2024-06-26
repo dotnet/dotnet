@@ -25,7 +25,9 @@ using Microsoft.AspNetCore.Razor.LanguageServer.SignatureHelp;
 using Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.FoldingRanges;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,9 +42,10 @@ internal partial class RazorLanguageServer : NewtonsoftLanguageServer<RazorReque
     private readonly JsonRpc _jsonRpc;
     private readonly ILoggerFactory _loggerFactory;
     private readonly LanguageServerFeatureOptions? _featureOptions;
-    private readonly Action<IServiceCollection>? _configureServer;
+    private readonly Action<IServiceCollection>? _configureServices;
     private readonly RazorLSPOptions _lspOptions;
     private readonly ILspServerActivationTracker? _lspServerActivationTracker;
+    private readonly IRazorProjectInfoDriver? _projectInfoDriver;
     private readonly ITelemetryReporter _telemetryReporter;
     private readonly ClientConnection _clientConnection;
 
@@ -53,18 +56,20 @@ internal partial class RazorLanguageServer : NewtonsoftLanguageServer<RazorReque
         JsonSerializer serializer,
         ILoggerFactory loggerFactory,
         LanguageServerFeatureOptions? featureOptions,
-        Action<IServiceCollection>? configureServer,
+        Action<IServiceCollection>? configureServices,
         RazorLSPOptions? lspOptions,
         ILspServerActivationTracker? lspServerActivationTracker,
+        IRazorProjectInfoDriver? projectInfoDriver,
         ITelemetryReporter telemetryReporter)
         : base(jsonRpc, serializer, CreateILspLogger(loggerFactory, telemetryReporter))
     {
         _jsonRpc = jsonRpc;
         _loggerFactory = loggerFactory;
         _featureOptions = featureOptions;
-        _configureServer = configureServer;
+        _configureServices = configureServices;
         _lspOptions = lspOptions ?? RazorLSPOptions.Default;
         _lspServerActivationTracker = lspServerActivationTracker;
+        _projectInfoDriver = projectInfoDriver;
         _telemetryReporter = telemetryReporter;
 
         _clientConnection = new ClientConnection(_jsonRpc);
@@ -104,9 +109,9 @@ internal partial class RazorLanguageServer : NewtonsoftLanguageServer<RazorReque
         // Wrap the logger factory so that we can add [LSP] to the start of all the categories
         services.AddSingleton<ILoggerFactory>(loggerFactoryWrapper);
 
-        if (_configureServer is not null)
+        if (_configureServices is not null)
         {
-            _configureServer(services);
+            _configureServices(services);
         }
 
         services.AddSingleton<IClientConnection>(_clientConnection);
@@ -121,6 +126,17 @@ internal partial class RazorLanguageServer : NewtonsoftLanguageServer<RazorReque
         services.AddSingleton(featureOptions);
 
         services.AddSingleton<IFilePathService, LSPFilePathService>();
+
+        if (_projectInfoDriver is { } projectInfoDriver)
+        {
+            services.AddSingleton<IRazorProjectInfoDriver>(_projectInfoDriver);
+        }
+        else
+        {
+            // If the language server was not created with an IRazorProjectInfoDriver,
+            // fall back to a FileWatcher-base driver.
+            services.AddSingleton<IRazorProjectInfoDriver, FileWatcherBasedRazorProjectInfoDriver>();
+        }
 
         services.AddLifeCycleServices(this, _clientConnection, _lspServerActivationTracker);
 
@@ -138,14 +154,19 @@ internal partial class RazorLanguageServer : NewtonsoftLanguageServer<RazorReque
         services.AddSingleton<IOnAutoInsertProvider, CloseTextTagOnAutoInsertProvider>();
         services.AddSingleton<IOnAutoInsertProvider, AutoClosingTagOnAutoInsertProvider>();
 
-        // Folding Range Providers
-        services.AddSingleton<IRazorFoldingRangeProvider, RazorCodeBlockFoldingProvider>();
-        services.AddSingleton<IRazorFoldingRangeProvider, RazorCSharpStatementFoldingProvider>();
-        services.AddSingleton<IRazorFoldingRangeProvider, SectionDirectiveFoldingProvider>();
-        services.AddSingleton<IRazorFoldingRangeProvider, UsingsFoldingRangeProvider>();
+        if (!featureOptions.UseRazorCohostServer)
+        {
+            // Folding Range Providers
+            services.AddSingleton<IRazorFoldingRangeProvider, RazorCodeBlockFoldingProvider>();
+            services.AddSingleton<IRazorFoldingRangeProvider, RazorCSharpStatementFoldingProvider>();
+            services.AddSingleton<IRazorFoldingRangeProvider, RazorCSharpStatementKeywordFoldingProvider>();
+            services.AddSingleton<IRazorFoldingRangeProvider, SectionDirectiveFoldingProvider>();
+            services.AddSingleton<IRazorFoldingRangeProvider, UsingsFoldingRangeProvider>();
+
+            services.AddSingleton<IFoldingRangeService, FoldingRangeService>();
+        }
 
         // Other
-        services.AddSingleton<WorkspaceDirectoryPathResolver, DefaultWorkspaceDirectoryPathResolver>();
         services.AddSingleton<RazorComponentSearchEngine, DefaultRazorComponentSearchEngine>();
 
         // Get the DefaultSession for telemetry. This is set by VS with
@@ -175,22 +196,13 @@ internal partial class RazorLanguageServer : NewtonsoftLanguageServer<RazorReque
             services.AddHandlerWithCapabilities<DocumentHighlightEndpoint>();
             services.AddHandlerWithCapabilities<OnAutoInsertEndpoint>();
 
-            // Project system info handler
-            if (featureOptions.UseProjectConfigurationEndpoint)
-            {
-                services.AddHandler<ProjectInfoEndpoint>();
-            }
-            else
-            {
-                services.AddHandler<MonitorProjectConfigurationFilePathEndpoint>();
-            }
-
             services.AddHandlerWithCapabilities<RenameEndpoint>();
             services.AddHandlerWithCapabilities<DefinitionEndpoint>();
 
             if (!featureOptions.UseRazorCohostServer)
             {
                 services.AddHandlerWithCapabilities<LinkedEditingRangeEndpoint>();
+                services.AddHandlerWithCapabilities<FoldingRangeEndpoint>();
             }
 
             services.AddHandler<WrapWithTagEndpoint>();
@@ -201,7 +213,6 @@ internal partial class RazorLanguageServer : NewtonsoftLanguageServer<RazorReque
             services.AddSingleton<IDocumentColorService, DocumentColorService>();
 
             services.AddHandler<ColorPresentationEndpoint>();
-            services.AddHandlerWithCapabilities<FoldingRangeEndpoint>();
             services.AddHandlerWithCapabilities<ValidateBreakpointRangeEndpoint>();
             services.AddHandlerWithCapabilities<FindAllReferencesEndpoint>();
             services.AddHandlerWithCapabilities<ProjectContextsEndpoint>();

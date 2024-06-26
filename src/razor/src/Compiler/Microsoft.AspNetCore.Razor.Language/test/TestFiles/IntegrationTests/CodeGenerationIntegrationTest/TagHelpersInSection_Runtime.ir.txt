@@ -62,7 +62,7 @@
                         LazyIntermediateToken - (359:11,22 [6] TagHelpersInSection.cshtml) - Html - \n    
                         LazyIntermediateToken - (365:12,4 [6] TagHelpersInSection.cshtml) - Html - </div>
                         LazyIntermediateToken - (371:12,10 [4] TagHelpersInSection.cshtml) - Html - \n\n
-                    MalformedDirective - (379:14,4 [114] TagHelpersInSection.cshtml) - section
+                    MalformedDirective - (379:14,4 [112] TagHelpersInSection.cshtml) - section
                         DirectiveToken - (388:14,13 [13] TagHelpersInSection.cshtml) - nestedsection
                         HtmlContent - (404:14,29 [29] TagHelpersInSection.cshtml)
                             LazyIntermediateToken - (404:14,29 [10] TagHelpersInSection.cshtml) - Html - \n        

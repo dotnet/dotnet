@@ -7,7 +7,7 @@ using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.CodeAnalysis.Razor.Utilities;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
@@ -40,6 +40,11 @@ internal sealed class RazorActivityLog : IDisposable
 
     public void Dispose()
     {
+        if (_disposeTokenSource.IsCancellationRequested)
+        {
+            return;
+        }
+
         _disposeTokenSource.Cancel();
         _disposeTokenSource.Dispose();
     }

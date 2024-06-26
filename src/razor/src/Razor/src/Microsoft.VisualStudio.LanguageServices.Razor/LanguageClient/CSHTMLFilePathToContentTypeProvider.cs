@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.ComponentModel.Composition;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Utilities;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient;
@@ -15,7 +14,7 @@ internal class CSHTMLFilePathToContentTypeProvider : RazorFilePathToContentTypeP
     [ImportingConstructor]
     public CSHTMLFilePathToContentTypeProvider(
         IContentTypeRegistryService contentTypeRegistryService,
-        LSPEditorFeatureDetector lspEditorFeatureDetector) : base(contentTypeRegistryService, lspEditorFeatureDetector)
+        ILspEditorFeatureDetector lspEditorFeatureDetector) : base(contentTypeRegistryService, lspEditorFeatureDetector)
     {
     }
 }

@@ -168,6 +168,11 @@ internal partial class ProjectSnapshotManager
 
             public void Dispose()
             {
+                if (_disposeTokenSource.IsCancellationRequested)
+                {
+                    return;
+                }
+
                 _taskQueue.Complete();
                 _disposeTokenSource.Cancel();
                 _disposeTokenSource.Dispose();

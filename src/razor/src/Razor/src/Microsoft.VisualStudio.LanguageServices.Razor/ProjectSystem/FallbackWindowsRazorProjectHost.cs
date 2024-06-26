@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.Shell;
 using ContentItem = Microsoft.VisualStudio.Razor.ProjectSystem.ManagedProjectSystemSchema.ContentItem;
@@ -40,18 +39,14 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
             NoneItem.SchemaName,
             ConfigurationGeneralSchemaName,
         });
-    private readonly LanguageServerFeatureOptions? _languageServerFeatureOptions;
 
     [ImportingConstructor]
     public FallbackWindowsRazorProjectHost(
         IUnconfiguredProjectCommonServices commonServices,
         [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-        IProjectSnapshotManager projectManager,
-        ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
-        LanguageServerFeatureOptions? languageServerFeatureOptions)
-        : base(commonServices, serviceProvider, projectManager, projectConfigurationFilePathStore)
+        IProjectSnapshotManager projectManager)
+        : base(commonServices, serviceProvider, projectManager)
     {
-        _languageServerFeatureOptions = languageServerFeatureOptions;
     }
 
     protected override ImmutableHashSet<string> GetRuleNames() => s_ruleNames;
@@ -147,12 +142,6 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
                 : projectFileName;
 
             var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace: null, displayName);
-
-            if (_languageServerFeatureOptions is not null)
-            {
-                var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
-                ProjectConfigurationFilePathStore.Set(hostProject.Key, projectConfigurationFile);
-            }
 
             UpdateProject(updater, hostProject);
 

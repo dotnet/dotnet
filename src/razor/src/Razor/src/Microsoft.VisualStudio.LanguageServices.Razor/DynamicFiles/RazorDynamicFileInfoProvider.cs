@@ -32,7 +32,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
     private readonly ConcurrentDictionary<Key, Entry> _entries;
     private readonly Func<Key, Entry> _createEmptyEntry;
     private readonly IRazorDocumentServiceProviderFactory _factory;
-    private readonly LSPEditorFeatureDetector _lspEditorFeatureDetector;
+    private readonly ILspEditorFeatureDetector _lspEditorFeatureDetector;
     private readonly IFilePathService _filePathService;
     private readonly IWorkspaceProvider _workspaceProvider;
     private readonly FallbackProjectManager _fallbackProjectManager;
@@ -40,7 +40,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
     [ImportingConstructor]
     public RazorDynamicFileInfoProvider(
         IRazorDocumentServiceProviderFactory factory,
-        LSPEditorFeatureDetector lspEditorFeatureDetector,
+        ILspEditorFeatureDetector lspEditorFeatureDetector,
         IFilePathService filePathService,
         IWorkspaceProvider workspaceProvider,
         IProjectSnapshotManager projectManager,
@@ -201,7 +201,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
             throw new ArgumentNullException(nameof(documentFilePath));
         }
 
-        if (_lspEditorFeatureDetector.IsLSPEditorAvailable())
+        if (_lspEditorFeatureDetector.IsLspEditorEnabled())
         {
             return;
         }

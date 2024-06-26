@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
@@ -15,11 +16,33 @@ public class RazorWorkspaceListener : IDisposable
 
     private string? _projectInfoFileName;
     private Workspace? _workspace;
-    private ImmutableDictionary<ProjectId, TaskDelayScheduler> _workQueues = ImmutableDictionary<ProjectId, TaskDelayScheduler>.Empty;
+
+    // Use an immutable dictionary for ImmutableInterlocked operations. The value isn't checked, just
+    // the existance of the key so work is only done for projects with dynamic files.
+    private ImmutableDictionary<ProjectId, bool> _projectsWithDynamicFile = ImmutableDictionary<ProjectId, bool>.Empty;
+    private readonly CancellationTokenSource _disposeTokenSource = new();
+    private readonly AsyncBatchingWorkQueue<ProjectId> _workQueue;
 
     public RazorWorkspaceListener(ILoggerFactory loggerFactory)
     {
         _logger = loggerFactory.CreateLogger(nameof(RazorWorkspaceListener));
+        _workQueue = new(TimeSpan.FromMilliseconds(500), UpdateCurrentProjectsAsync, EqualityComparer<ProjectId>.Default, _disposeTokenSource.Token);
+    }
+
+    public void Dispose()
+    {
+        if (_workspace is not null)
+        {
+            _workspace.WorkspaceChanged -= Workspace_WorkspaceChanged;
+        }
+
+        if (_disposeTokenSource.IsCancellationRequested)
+        {
+            return;
+        }
+
+        _disposeTokenSource.Cancel();
+        _disposeTokenSource.Dispose();
     }
 
     public void EnsureInitialized(Workspace workspace, string projectInfoFileName)
@@ -45,14 +68,11 @@ public class RazorWorkspaceListener : IDisposable
             return;
         }
 
-        // We expect this to be called multiple times per project so a no-op update operation seems like a better choice
-        // than constructing a new TaskDelayScheduler each time, and using the TryAdd method, which doesn't support a
-        // valueFactory argument.
-        var scheduler = ImmutableInterlocked.AddOrUpdate(ref _workQueues, projectId, static _ => new TaskDelayScheduler(s_debounceTime, CancellationToken.None), static (_, val) => val);
+        ImmutableInterlocked.GetOrAdd(ref _projectsWithDynamicFile, projectId, static (_) => true);
 
         // Schedule a task, in case adding a dynamic file is the last thing that happens
         _logger.LogTrace("{projectId} scheduling task due to dynamic file", projectId);
-        scheduler.ScheduleAsyncTask(ct => SerializeProjectAsync(projectId, ct), CancellationToken.None);
+        _workQueue.AddWork(projectId);
     }
 
     private void Workspace_WorkspaceChanged(object? sender, WorkspaceChangeEventArgs e)
@@ -61,11 +81,6 @@ public class RazorWorkspaceListener : IDisposable
         {
             case WorkspaceChangeKind.SolutionChanged:
             case WorkspaceChangeKind.SolutionReloaded:
-                foreach (var project in e.OldSolution.Projects)
-                {
-                    RemoveProject(project);
-                }
-
                 foreach (var project in e.NewSolution.Projects)
                 {
                     EnqueueUpdate(project);
@@ -81,13 +96,12 @@ public class RazorWorkspaceListener : IDisposable
 
                 break;
 
-            case WorkspaceChangeKind.ProjectRemoved:
-                RemoveProject(e.OldSolution.GetProject(e.ProjectId));
+            case WorkspaceChangeKind.ProjectReloaded:
+                EnqueueUpdate(e.NewSolution.GetProject(e.ProjectId));
                 break;
 
-            case WorkspaceChangeKind.ProjectReloaded:
-                RemoveProject(e.OldSolution.GetProject(e.ProjectId));
-                EnqueueUpdate(e.NewSolution.GetProject(e.ProjectId));
+            case WorkspaceChangeKind.ProjectRemoved:
+                RemoveProject(e.ProjectId.AssumeNotNull());
                 break;
 
             case WorkspaceChangeKind.ProjectAdded:
@@ -112,30 +126,24 @@ public class RazorWorkspaceListener : IDisposable
                 }
 
                 break;
+
             case WorkspaceChangeKind.SolutionCleared:
             case WorkspaceChangeKind.SolutionRemoved:
                 foreach (var project in e.OldSolution.Projects)
                 {
-                    RemoveProject(project);
+                    RemoveProject(project.Id);
                 }
 
                 break;
+
             default:
                 break;
         }
     }
 
-    private void RemoveProject(Project? project)
+    private void RemoveProject(ProjectId projectId)
     {
-        if (project is null)
-        {
-            return;
-        }
-
-        if (ImmutableInterlocked.TryRemove(ref _workQueues, project.Id, out var scheduler))
-        {
-            scheduler.Dispose();
-        }
+        ImmutableInterlocked.TryRemove(ref _projectsWithDynamicFile, projectId, out var _);
     }
 
     private void EnqueueUpdate(Project? project)
@@ -149,44 +157,42 @@ public class RazorWorkspaceListener : IDisposable
             return;
         }
 
+        // Don't queue work for projects that don't have a dynamic file
+        if (!_projectsWithDynamicFile.TryGetValue(project.Id, out var _))
+        {
+            return;
+        }
+
         var projectId = project.Id;
-        if (_workQueues.TryGetValue(projectId, out var scheduler))
-        {
-            _logger.LogTrace("{projectId} scheduling task due to workspace event", projectId);
+        _workQueue.AddWork(projectId);
+    }
 
-            scheduler.ScheduleAsyncTask(ct => SerializeProjectAsync(projectId, ct), CancellationToken.None);
+    private async ValueTask UpdateCurrentProjectsAsync(ImmutableArray<ProjectId> projectIds, CancellationToken cancellationToken)
+    {
+        var solution = _workspace.AssumeNotNull().CurrentSolution;
+
+        foreach (var projectId in projectIds)
+        {
+            if (_disposeTokenSource.IsCancellationRequested)
+            {
+                return;
+            }
+
+            var project = solution.GetProject(projectId);
+            if (project is null)
+            {
+                _logger?.LogTrace("Project {projectId} is not in workspace", projectId);
+                continue;
+            }
+
+            await SerializeProjectAsync(project, solution, cancellationToken).ConfigureAwait(false);
         }
     }
 
-    // Protected for testing
-    protected virtual Task SerializeProjectAsync(ProjectId projectId, CancellationToken ct)
+    // private protected for testing
+    private protected virtual Task SerializeProjectAsync(Project project, Solution solution, CancellationToken cancellationToken)
     {
-        if (_projectInfoFileName is null || _workspace is null)
-        {
-            return Task.CompletedTask;
-        }
-
-        var project = _workspace.CurrentSolution.GetProject(projectId);
-        if (project is null)
-        {
-            return Task.CompletedTask;
-        }
-
-        _logger.LogTrace("{projectId} writing json file", projectId);
-        return RazorProjectInfoSerializer.SerializeAsync(project, _projectInfoFileName, ct);
-    }
-
-    public void Dispose()
-    {
-        if (_workspace is not null)
-        {
-            _workspace.WorkspaceChanged -= Workspace_WorkspaceChanged;
-        }
-
-        var queues = Interlocked.Exchange(ref _workQueues, ImmutableDictionary<ProjectId, TaskDelayScheduler>.Empty);
-        foreach (var (_, value) in queues)
-        {
-            value.Dispose();
-        }
+        _logger?.LogTrace("Serializing information for {projectId}", project.Id);
+        return RazorProjectInfoSerializer.SerializeAsync(project, _projectInfoFileName.AssumeNotNull(), _logger, cancellationToken);
     }
 }

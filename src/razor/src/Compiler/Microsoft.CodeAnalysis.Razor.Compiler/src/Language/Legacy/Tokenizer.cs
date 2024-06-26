@@ -13,7 +13,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 internal abstract class Tokenizer : ITokenizer
 {
-    protected Tokenizer(ITextDocument source)
+    protected Tokenizer(SeekableTextReader source)
     {
         if (source == null)
         {
@@ -34,7 +34,7 @@ internal abstract class Tokenizer : ITokenizer
 
     protected SyntaxToken CurrentSyntaxToken { get; private set; }
 
-    public ITextDocument Source { get; private set; }
+    public SeekableTextReader Source { get; private set; }
 
     protected StringBuilder Buffer { get; private set; }
 
@@ -409,7 +409,7 @@ internal abstract class Tokenizer : ITokenizer
         public SyntaxToken Result { get; }
     }
 
-    private static LookaheadToken BeginLookahead(ITextBuffer buffer)
+    private static LookaheadToken BeginLookahead(SeekableTextReader buffer)
     {
         _ = buffer.Position;
         return new LookaheadToken(buffer);
@@ -417,12 +417,12 @@ internal abstract class Tokenizer : ITokenizer
 
     private struct LookaheadToken : IDisposable
     {
-        private readonly ITextBuffer _buffer;
+        private readonly SeekableTextReader _buffer;
         private readonly int _position;
 
         private bool _accepted;
 
-        public LookaheadToken(ITextBuffer buffer)
+        public LookaheadToken(SeekableTextReader buffer)
         {
             _buffer = buffer;
             _position = buffer.Position;

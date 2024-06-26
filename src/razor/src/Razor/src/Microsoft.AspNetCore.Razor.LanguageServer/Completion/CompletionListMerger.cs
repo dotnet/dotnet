@@ -5,6 +5,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
 
@@ -107,18 +111,49 @@ internal static class CompletionListMerger
             return;
         }
 
+        // We have to be agnostic to which serialization method the delegated servers use, including
+        // the scenario where they use different ones, so we normalize the data to JObject.
+        TrySplitJsonElement(data, collector);
+        TrySplitJObject(data, collector);
+    }
+
+    private static void TrySplitJsonElement(object data, List<JObject> collector)
+    {
+        if (data is not JsonElement jsonElement)
+        {
+            return;
+        }
+
+        if (jsonElement.TryGetProperty(Data1Key, out _) || jsonElement.TryGetProperty(Data1Key.ToLowerInvariant(), out _) &&
+            jsonElement.TryGetProperty(Data2Key, out _) || jsonElement.TryGetProperty(Data2Key.ToLowerInvariant(), out _))
+        {
+            // Merged data
+            var mergedCompletionListData = jsonElement.Deserialize<MergedCompletionListData>();
+
+            if (mergedCompletionListData is null)
+            {
+                Debug.Fail("Merged completion list data is null, this should never happen.");
+                return;
+            }
+
+            Split(mergedCompletionListData.Data1, collector);
+            Split(mergedCompletionListData.Data2, collector);
+        }
+        else
+        {
+            collector.Add((JObject)JsonHelpers.TryConvertFromJsonElement(jsonElement).AssumeNotNull());
+        }
+    }
+
+    private static void TrySplitJObject(object data, List<JObject> collector)
+    {
         if (data is not JObject jobject)
         {
             return;
         }
 
-        if (!(jobject.ContainsKey(Data1Key) || jobject.ContainsKey(Data1Key.ToLowerInvariant())) ||
-            !(jobject.ContainsKey(Data2Key) || jobject.ContainsKey(Data2Key.ToLowerInvariant())))
-        {
-            // Normal, non-merged data
-            collector.Add(jobject);
-        }
-        else
+        if ((jobject.ContainsKey(Data1Key) || jobject.ContainsKey(Data1Key.ToLowerInvariant())) &&
+            (jobject.ContainsKey(Data2Key) || jobject.ContainsKey(Data2Key.ToLowerInvariant())))
         {
             // Merged data
             var mergedCompletionListData = jobject.ToObject<MergedCompletionListData>();
@@ -131,6 +166,11 @@ internal static class CompletionListMerger
 
             Split(mergedCompletionListData.Data1, collector);
             Split(mergedCompletionListData.Data2, collector);
+        }
+        else
+        {
+            // Normal, non-merged data
+            collector.Add(jobject);
         }
     }
 

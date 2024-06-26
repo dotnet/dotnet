@@ -41,13 +41,9 @@ internal class RemoteLanguageServerFeatureOptions : LanguageServerFeatureOptions
 
     public override bool IncludeProjectKeyInGeneratedFilePath => s_options.IncludeProjectKeyInGeneratedFilePath;
 
-    public override bool MonitorWorkspaceFolderForConfigurationFiles => throw new InvalidOperationException("This option has not been synced to OOP.");
-
     public override bool UseRazorCohostServer => s_options.UseRazorCohostServer;
 
     public override bool DisableRazorLanguageServer => throw new InvalidOperationException("This option has not been synced to OOP.");
 
     public override bool ForceRuntimeCodeGeneration => throw new InvalidOperationException("This option has not been synced to OOP.");
-
-    public override bool UseProjectConfigurationEndpoint => throw new InvalidOperationException("This option has not been synced to OOP.");
 }

@@ -4,33 +4,37 @@
 #nullable disable
 
 using System.IO;
-using System.Text;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-internal sealed class SeekableTextReader : TextReader, ITextDocument
+internal sealed class SeekableTextReader : TextReader
 {
-    private readonly RazorSourceDocument _sourceDocument;
     private readonly string _filePath;
     private int _position;
     private int _current;
     private SourceLocation _location;
     private (TextSpan Span, int LineIndex) _cachedLineInfo;
 
-    public SeekableTextReader(string source, string filePath) : this(RazorSourceDocument.Create(source, Encoding.UTF8, RazorSourceDocumentProperties.Create(filePath, relativePath: null))) { }
-
-    public SeekableTextReader(RazorSourceDocument source)
+    public SeekableTextReader(string source, string filePath) : this(SourceText.From(source, checksumAlgorithm: SourceHashAlgorithm.Sha256), filePath)
     {
-        _sourceDocument = source;
-        _filePath = source.FilePath;
-        _cachedLineInfo = (_sourceDocument.Text.Lines[0].Span, 0);
+    }
+
+    public SeekableTextReader(RazorSourceDocument source) : this(source.Text, source.FilePath)
+    {
+    }
+
+    private SeekableTextReader(SourceText sourceText, string filePath)
+    {
+        SourceText = sourceText;
+        _filePath = filePath;
+        _cachedLineInfo = (SourceText.Lines[0].Span, 0);
         UpdateState();
     }
 
     public SourceLocation Location => _location;
 
-    public int Length => _sourceDocument.Text.Length;
+    public int Length => SourceText.Length;
 
     public int Position
     {
@@ -44,6 +48,8 @@ internal sealed class SeekableTextReader : TextReader, ITextDocument
             }
         }
     }
+
+    public SourceText SourceText { get; }
 
     public override int Read()
     {
@@ -60,24 +66,24 @@ internal sealed class SeekableTextReader : TextReader, ITextDocument
         if (_cachedLineInfo.Span.Contains(_position))
         {
             _location = new SourceLocation(_filePath, _position, _cachedLineInfo.LineIndex, _position - _cachedLineInfo.Span.Start);
-            _current = _sourceDocument.Text[_location.AbsoluteIndex];
+            _current = SourceText[_location.AbsoluteIndex];
 
             return;
         }
 
-        if (_position < _sourceDocument.Text.Length)
+        if (_position < SourceText.Length)
         {
             if (_position >= _cachedLineInfo.Span.End)
             {
                 // Try to avoid the GetLocation call by checking if the next line contains the position
                 var nextLineIndex = _cachedLineInfo.LineIndex + 1;
-                var nextLineSpan = _sourceDocument.Text.Lines[nextLineIndex].Span;
+                var nextLineSpan = SourceText.Lines[nextLineIndex].Span;
 
                 if (nextLineSpan.Contains(_position))
                 {
                     _cachedLineInfo = (nextLineSpan, nextLineIndex);
                     _location = new SourceLocation(_filePath, _position, nextLineIndex, _position - nextLineSpan.Start);
-                    _current = _sourceDocument.Text[_location.AbsoluteIndex];
+                    _current = SourceText[_location.AbsoluteIndex];
 
                     return;
                 }
@@ -86,30 +92,30 @@ internal sealed class SeekableTextReader : TextReader, ITextDocument
             {
                 // Try to avoid the GetLocation call by checking if the previous line contains the position
                 var prevLineIndex = _cachedLineInfo.LineIndex - 1;
-                var prevLineSpan = _sourceDocument.Text.Lines[prevLineIndex].Span;
+                var prevLineSpan = SourceText.Lines[prevLineIndex].Span;
 
                 if (prevLineSpan.Contains(_position))
                 {
                     _cachedLineInfo = (prevLineSpan, prevLineIndex);
                     _location = new SourceLocation(_filePath, _position, prevLineIndex, _position - prevLineSpan.Start);
-                    _current = _sourceDocument.Text[_location.AbsoluteIndex];
+                    _current = SourceText[_location.AbsoluteIndex];
 
                     return;
                 }
             }
 
             // The call to GetLocation is expensive
-            _location = new SourceLocation(_sourceDocument.FilePath, _position, _sourceDocument.Text.Lines.GetLinePosition(_position));
+            _location = new SourceLocation(_filePath, _position, SourceText.Lines.GetLinePosition(_position));
 
-            var lineSpan = _sourceDocument.Text.Lines[_location.LineIndex].Span;
+            var lineSpan = SourceText.Lines[_location.LineIndex].Span;
             _cachedLineInfo = (lineSpan, _location.LineIndex);
 
-            _current = _sourceDocument.Text[_location.AbsoluteIndex];
+            _current = SourceText[_location.AbsoluteIndex];
 
             return;
         }
 
-        if (_sourceDocument.Text.Length == 0)
+        if (SourceText.Length == 0)
         {
             _location = SourceLocation.Zero;
             _current = -1;
@@ -117,8 +123,8 @@ internal sealed class SeekableTextReader : TextReader, ITextDocument
             return;
         }
 
-        var lineNumber = _sourceDocument.Text.Lines.Count - 1;
-        _location = new SourceLocation(_filePath, Length, lineNumber, _sourceDocument.Text.Lines[lineNumber].Span.Length);
+        var lineNumber = SourceText.Lines.Count - 1;
+        _location = new SourceLocation(_filePath, Length, lineNumber, SourceText.Lines[lineNumber].Span.Length);
 
         _current = -1;
     }

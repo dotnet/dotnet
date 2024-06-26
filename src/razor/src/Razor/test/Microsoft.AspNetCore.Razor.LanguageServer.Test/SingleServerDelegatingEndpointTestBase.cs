@@ -35,7 +35,8 @@ public abstract partial class SingleServerDelegatingEndpointTestBase : LanguageS
     private protected async Task<TestLanguageServer> CreateLanguageServerAsync(
         RazorCodeDocument codeDocument,
         string razorFilePath,
-        IEnumerable<(string, string)>? additionalRazorDocuments = null)
+        IEnumerable<(string, string)>? additionalRazorDocuments = null,
+        bool multiTargetProject = true)
     {
         var projectKey = TestProjectKey.Create("");
         var csharpSourceText = codeDocument.GetCSharpSourceText();
@@ -76,6 +77,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase : LanguageS
                 SupportsDiagnosticRequests = true,
             },
             razorSpanMappingService: null,
+            multiTargetProject,
             DisposalToken);
 
         AddDisposable(csharpServer);

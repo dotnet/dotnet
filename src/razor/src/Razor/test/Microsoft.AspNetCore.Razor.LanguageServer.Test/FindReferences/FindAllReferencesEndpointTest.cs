@@ -4,14 +4,12 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.Threading;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -48,7 +46,7 @@ public class FindAllReferencesEndpointTest(ITestOutputHelper testOutput) : Singl
         var codeDocument = CreateCodeDocument(output);
         var razorFilePath = "C:/path/to/file.razor";
 
-        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath, multiTargetProject: false);
 
         var endpoint = new FindAllReferencesEndpoint(
             LanguageServerFeatureOptions, DocumentMappingService, languageServer, LoggerFactory, FilePathService);
@@ -56,20 +54,12 @@ public class FindAllReferencesEndpointTest(ITestOutputHelper testOutput) : Singl
         var sourceText = codeDocument.GetSourceText();
         sourceText.GetLineAndOffset(cursorPosition, out var line, out var offset);
 
-        var completedTokenSource = new CancellationTokenSource();
-        var progressToken = new ProgressWithCompletion<object>((val) =>
-        {
-            var results = Assert.IsType<VSInternalReferenceItem[]>(val);
-            completedTokenSource.CancelAfter(0);
-        });
-
         var request = new ReferenceParams
         {
             Context = new ReferenceContext()
             {
                 IncludeDeclaration = true
             },
-            PartialResultToken = progressToken,
             TextDocument = new TextDocumentIdentifier
             {
                 Uri = new Uri(razorFilePath)

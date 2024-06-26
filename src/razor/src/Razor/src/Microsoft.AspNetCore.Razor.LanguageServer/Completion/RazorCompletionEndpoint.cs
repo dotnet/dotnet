@@ -38,7 +38,6 @@ internal class RazorCompletionEndpoint(
         {
             ResolveProvider = true,
             TriggerCharacters = _completionListProvider.AggregateTriggerCharacters.ToArray(),
-            AllCommitCharacters = new[] { ":", ">", " ", "=" },
         };
     }
 

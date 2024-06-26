@@ -35,7 +35,7 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
             serverStream,
             razorLoggerFactory,
             NoOpTelemetryReporter.Instance,
-            configure: (collection) =>
+            configureServices: (collection) =>
             {
                 collection.AddSingleton<IOnInitialized, NoopClientNotifierService>();
                 collection.AddSingleton<IClientConnection, NoopClientNotifierService>();

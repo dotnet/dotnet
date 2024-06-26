@@ -3,13 +3,13 @@
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];
         CSharpCodeBlock - [2..147)::145
-            RazorDirective - [2..147)::145 - Directive:{functions;CodeBlock;Unrestricted}
+            RazorDirective - [2..145)::143 - Directive:{functions;CodeBlock;Unrestricted}
                 CSharpTransition - [2..3)::1 - Gen<None> - SpanEditHandler;Accepts:None
                     Transition;[@];
-                RazorDirectiveBody - [3..147)::144
+                RazorDirectiveBody - [3..145)::142
                     RazorMetaCode - [3..12)::9 - Gen<None> - SpanEditHandler;Accepts:None
                         Identifier;[functions];
-                    CSharpCodeBlock - [12..147)::135
+                    CSharpCodeBlock - [12..145)::133
                         UnclassifiedTextLiteral - [12..13)::1 - [ ] - Gen<None> - SpanEditHandler;Accepts:AllWhitespace
                             Whitespace;[ ];
                         RazorMetaCode - [13..14)::1 - Gen<None> - AutoCompleteEditHandler;Accepts:None,AutoComplete:[<null>];AtEnd
@@ -55,9 +55,8 @@
                                 Whitespace;[    ];
                                 RightBrace;[}];
                                 NewLine;[LF];
-                        RazorMetaCode - [144..147)::3 - Gen<None> - SpanEditHandler;Accepts:None
+                        RazorMetaCode - [144..145)::1 - Gen<None> - SpanEditHandler;Accepts:None
                             RightBrace;[}];
-                            NewLine;[LF];
-        MarkupTextLiteral - [147..147)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
-            Marker;[];
+            RazorMetaCode - [145..147)::2 - Gen<None> - SpanEditHandler;Accepts:Any
+                NewLine;[LF];
     EndOfFile;[];

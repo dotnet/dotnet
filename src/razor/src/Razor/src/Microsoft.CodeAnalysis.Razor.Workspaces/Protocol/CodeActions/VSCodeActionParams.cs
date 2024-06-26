@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
@@ -15,21 +16,15 @@ namespace Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 [DataContract]
 internal class VSCodeActionParams
 {
-    //
-    // Summary:
-    //     Gets or sets the document identifier indicating where the command was invoked.
+    [JsonPropertyName("textDocument")]
     [DataMember(Name = "textDocument")]
     public required VSTextDocumentIdentifier TextDocument { get; set; }
 
-    //
-    // Summary:
-    //     Gets or sets the range in the document for which the command was invoked.
+    [JsonPropertyName("range")]
     [DataMember(Name = "range")]
     public required Range Range { get; set; }
 
-    //
-    // Summary:
-    //     Gets or sets the additional diagnostic information about the code action context.
+    [JsonPropertyName("context")]
     [DataMember(Name = "context")]
     public required VSInternalCodeActionContext Context { get; set; }
 }

@@ -49,14 +49,49 @@ global::System.Object __typeHelper = "*, TestAssembly";
 #line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml"
   
     var count = "1";
+    var alive = true;
+    var obj = new { age = (object)1 };
+    var item = new { Items = new System.List<string>() { "one", "two" } };
 
 #line default
 #line hidden
 #nullable disable
             __InputTagHelper = CreateTagHelper<global::InputTagHelper>();
 #nullable restore
-#line 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml"
+#line 9 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml"
 __InputTagHelper.AgeProp = Convert.ToInt32(@count);
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 9 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml"
+               __InputTagHelper.AliveProp = !@alive;
+
+#line default
+#line hidden
+#nullable disable
+            await __tagHelperRunner.RunAsync(__tagHelperExecutionContext);
+            __InputTagHelper = CreateTagHelper<global::InputTagHelper>();
+#nullable restore
+#line 10 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml"
+__InputTagHelper.AgeProp = (int)@obj.age;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 10 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml"
+     __InputTagHelper.TagProp = new { @params = 1 };
+
+#line default
+#line hidden
+#nullable disable
+            await __tagHelperRunner.RunAsync(__tagHelperExecutionContext);
+            __InputTagHelper = CreateTagHelper<global::InputTagHelper>();
+#nullable restore
+#line 11 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedIdentifier.cshtml"
+__InputTagHelper.DictionaryOfBoolAndStringTupleProperty["test"] = (@item. Items.Where(i=>i.Contains("one")). Count()>0, @item. Items.FirstOrDefault(i=>i.Contains("one"))?. Replace("one",""));
 
 #line default
 #line hidden

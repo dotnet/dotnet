@@ -13,10 +13,6 @@ internal static class LanguageServerConstants
 
     public const string RazorLanguageServerName = "Razor Language Server";
 
-    public const string RazorMonitorProjectConfigurationFilePathEndpoint = "razor/monitorProjectConfigurationFilePath";
-
-    public const string RazorProjectInfoEndpoint = "razor/projectInfo";
-
     public const string RazorMapToDocumentRangesEndpoint = "razor/mapToDocumentRanges";
 
     public const string RazorCodeActionRunnerCommand = "razor/runCodeAction";

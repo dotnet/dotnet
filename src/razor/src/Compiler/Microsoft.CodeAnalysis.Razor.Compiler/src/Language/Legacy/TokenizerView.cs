@@ -19,7 +19,7 @@ internal class TokenizerView<TTokenizer>
     public bool EndOfFile { get; private set; }
     public SyntaxToken Current { get; private set; }
 
-    public ITextDocument Source
+    public SeekableTextReader Source
     {
         get { return Tokenizer.Source; }
     }

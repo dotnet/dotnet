@@ -212,6 +212,11 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
             _logger.LogTrace($"Entered semaphore for '{projectKey}'");
             return true;
         }
+        catch (OperationCanceledException)
+        {
+            _logger.LogTrace($"Update cancelled before entering semaphore for '{projectKey}'");
+            return false;
+        }
         catch (Exception ex)
         {
             // Swallow object and task cancelled exceptions

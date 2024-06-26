@@ -8,14 +8,10 @@ using Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-internal class DirectiveCSharpTokenizer : CSharpTokenizer
+internal class DirectiveCSharpTokenizer(SeekableTextReader source) : CSharpTokenizer(source)
 {
     private bool _visitedFirstTokenStart;
     private bool _visitedFirstTokenLineEnd;
-
-    public DirectiveCSharpTokenizer(ITextDocument source) : base(source)
-    {
-    }
 
     protected override StateResult Dispatch()
     {

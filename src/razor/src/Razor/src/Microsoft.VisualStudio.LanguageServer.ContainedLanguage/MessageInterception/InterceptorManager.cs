@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -22,5 +23,11 @@ public abstract class InterceptorManager
     /// <param name="contentType">The content type name of the contained language where the message originated</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The message token with any applicable modifications, or null to block the message.</returns>
+    [Obsolete("Please move to GenericInterceptionMiddleLayer and generic interceptors.")]
     public abstract Task<JToken?> ProcessInterceptorsAsync(string methodName, JToken message, string contentType, CancellationToken cancellationToken);
+
+    public virtual Task<TJsonToken?> ProcessGenericInterceptorsAsync<TJsonToken>(string methodName, TJsonToken message, string contentType, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException("When providing a custom InterceptorManager and calling ProcessGenericInterceptorsAsync, you must also provide the implementation.");
+    }
 }

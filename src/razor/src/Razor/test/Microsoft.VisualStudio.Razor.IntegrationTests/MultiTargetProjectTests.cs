@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -11,19 +10,23 @@ namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
 public class MultiTargetProjectTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
-    protected override string TargetFrameworkElement => $"""<TargetFrameworks>net7.0;{TargetFramework}</TargetFrameworks>""";
+    private const string OtherTargetFramework = "net7.0";
+
+    protected override string TargetFrameworkElement => $"""<TargetFrameworks>{OtherTargetFramework};{TargetFramework}</TargetFrameworks>""";
 
     [IdeFact]
-    public async Task ValidateMultipleJsonFiles()
+    public async Task ValidateMultipleProjects()
     {
-        var solutionPath = await TestServices.SolutionExplorer.GetDirectoryNameAsync(ControlledHangMitigatingCancellationToken);
+        // This just verifies that there are actually two projects present with the same file path:
+        // one for each target framework.
 
-        // This is a little odd, but there is no "real" way to check this via VS, and one of the most important things this test can do
-        // is ensure that each target framework gets its own project.razor.bin file, and doesn't share one from a cache or anything.
-        Assert.Equal(2, GetProjectRazorJsonFileCount());
+        var projectKeyIds = await TestServices.RazorProjectSystem.GetProjectKeyIdsForProjectAsync(ProjectFilePath, ControlledHangMitigatingCancellationToken);
 
-        int GetProjectRazorJsonFileCount()
-            => Directory.EnumerateFiles(solutionPath, "project.razor.*.bin", SearchOption.AllDirectories).Count();
+        projectKeyIds = projectKeyIds.Sort();
+
+        Assert.Equal(2, projectKeyIds.Length);
+        Assert.Contains(OtherTargetFramework, projectKeyIds[0]);
+        Assert.Contains(TargetFramework, projectKeyIds[1]);
     }
 
     [IdeFact]
@@ -53,9 +56,8 @@ public class MultiTargetProjectTests(ITestOutputHelper testOutputHelper) : Abstr
         Assert.Equal(expectedProjectFileName, actualProjectFileName);
     }
 
-    [IdeTheory]
-    [CombinatorialData]
-    public async Task OpenExistingProject_WithReopenedFile(bool deleteProjectRazorJson)
+    [IdeFact]
+    public async Task OpenExistingProject_WithReopenedFile()
     {
         var solutionPath = await TestServices.SolutionExplorer.GetDirectoryNameAsync(ControlledHangMitigatingCancellationToken);
         var expectedProjectFileName = await TestServices.SolutionExplorer.GetAbsolutePathForProjectRelativeFilePathAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.ProjectFile, ControlledHangMitigatingCancellationToken);
@@ -65,13 +67,6 @@ public class MultiTargetProjectTests(ITestOutputHelper testOutputHelper) : Abstr
         await TestServices.Editor.WaitForSemanticClassificationAsync("class name", ControlledHangMitigatingCancellationToken, count: 1);
 
         await TestServices.SolutionExplorer.CloseSolutionAsync(ControlledHangMitigatingCancellationToken);
-
-        if (deleteProjectRazorJson)
-        {
-            // Clear out the project.razor.bin file which ensures our restored file will have to be in the Misc Project
-            var projectRazorJsonFileName = Directory.EnumerateFiles(solutionPath, "project.razor.*.bin", SearchOption.AllDirectories).First();
-            File.Delete(projectRazorJsonFileName);
-        }
 
         var solutionFileName = Path.Combine(solutionPath, RazorProjectConstants.BlazorSolutionName + ".sln");
         await TestServices.SolutionExplorer.OpenSolutionAsync(solutionFileName, ControlledHangMitigatingCancellationToken);

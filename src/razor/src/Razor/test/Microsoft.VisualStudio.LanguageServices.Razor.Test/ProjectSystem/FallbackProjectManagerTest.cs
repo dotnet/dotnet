@@ -22,13 +22,11 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
 {
     private readonly FallbackProjectManager _fallbackProjectManger;
     private readonly TestProjectSnapshotManager _projectManager;
-    private readonly TestProjectConfigurationFilePathStore _projectConfigurationFilePathStore;
 
     public FallbackProjectManagerTest(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
     {
         var languageServerFeatureOptions = TestLanguageServerFeatureOptions.Instance;
-        _projectConfigurationFilePathStore = new TestProjectConfigurationFilePathStore();
 
         var serviceProvider = VsMocks.CreateServiceProvider(static b =>
             b.AddComponentModel(static b =>
@@ -41,7 +39,6 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
 
         _fallbackProjectManger = new FallbackProjectManager(
             serviceProvider,
-            _projectConfigurationFilePathStore,
             languageServerFeatureOptions,
             _projectManager,
             WorkspaceProvider,
@@ -241,31 +238,6 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
             filePath => filePath == SomeProjectFile1.FilePath);
 
         Assert.Equal(SomeProjectFile1.TargetPath, project.GetDocument(SomeProjectFile1.FilePath)!.TargetPath);
-    }
-
-    [UIFact]
-    public async Task DynamicFileAdded_UnknownProject_SetsConfigurationFileStore()
-    {
-        var projectId = ProjectId.CreateNewId();
-        var projectInfo = ProjectInfo.Create(
-            projectId, VersionStamp.Default, "DisplayName", "AssemblyName", LanguageNames.CSharp, filePath: SomeProject.FilePath)
-            .WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(Path.Combine(SomeProject.IntermediateOutputPath, "SomeProject.dll")))
-            .WithDefaultNamespace("RootNamespace");
-
-        Workspace.TryApplyChanges(Workspace.CurrentSolution.AddProject(projectInfo));
-
-        _fallbackProjectManger.DynamicFileAdded(
-            projectId,
-            SomeProject.Key,
-            SomeProject.FilePath,
-            SomeProjectFile1.FilePath,
-            DisposalToken);
-
-        await WaitForProjectManagerUpdatesAsync();
-
-        var kvp = Assert.Single(_projectConfigurationFilePathStore.GetMappings());
-        Assert.Equal(SomeProject.Key, kvp.Key);
-        Assert.Equal(Path.Combine(SomeProject.IntermediateOutputPath, "project.razor.bin"), kvp.Value);
     }
 
     private Task WaitForProjectManagerUpdatesAsync()

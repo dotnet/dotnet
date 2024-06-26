@@ -43,6 +43,11 @@ internal class WorkspaceSemanticTokensRefreshNotifier : IWorkspaceSemanticTokens
 
     public void Dispose()
     {
+        if (_disposeTokenSource.IsCancellationRequested)
+        {
+            return;
+        }
+
         _optionsChangeListener.Dispose();
 
         _disposeTokenSource.Cancel();

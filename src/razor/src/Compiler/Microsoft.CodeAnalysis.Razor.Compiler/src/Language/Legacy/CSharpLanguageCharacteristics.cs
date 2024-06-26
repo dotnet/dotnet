@@ -173,7 +173,7 @@ internal class CSharpLanguageCharacteristics : LanguageCharacteristics<CSharpTok
 
     public static CSharpLanguageCharacteristics Instance => _instance;
 
-    public override CSharpTokenizer CreateTokenizer(ITextDocument source)
+    public override CSharpTokenizer CreateTokenizer(SeekableTextReader source)
     {
         return new CSharpTokenizer(source);
     }

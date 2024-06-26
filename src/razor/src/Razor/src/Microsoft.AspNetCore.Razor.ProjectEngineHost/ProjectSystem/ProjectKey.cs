@@ -35,4 +35,7 @@ internal readonly record struct ProjectKey
 
     public override int GetHashCode()
         => IsUnknown ? 0 : FilePathComparer.Instance.GetHashCode(Id);
+
+    public override string ToString()
+        => IsUnknown ? "<Unknown Project>" : Id;
 }

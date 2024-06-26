@@ -14,8 +14,6 @@ using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Razor.DynamicFiles;
 using Moq;
 using Xunit;
@@ -43,7 +41,7 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
     protected override async Task InitializeAsync()
     {
         var documentServiceFactory = new RazorDocumentServiceProviderFactory();
-        var editorFeatureDetector = StrictMock.Of<LSPEditorFeatureDetector>();
+        var editorFeatureDetector = StrictMock.Of<ILspEditorFeatureDetector>();
 
         _projectManager = CreateProjectSnapshotManager();
 
@@ -75,7 +73,6 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
 
         var fallbackProjectManager = new FallbackProjectManager(
             serviceProvider,
-            StrictMock.Of<ProjectConfigurationFilePathStore>(),
             languageServerFeatureOptions,
             _projectManager,
             WorkspaceProvider,

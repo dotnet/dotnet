@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
-using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -50,6 +49,11 @@ internal partial class RazorFileChangeDetector : IFileChangeDetector, IDisposabl
 
     public void Dispose()
     {
+        if (_disposeTokenSource.IsCancellationRequested)
+        {
+            return;
+        }
+
         _disposeTokenSource.Cancel();
         _disposeTokenSource.Dispose();
     }

@@ -13,6 +13,7 @@ namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterce
 /// Receives notification messages from the server and invokes any applicable message interception layers.
 /// </summary>
 #pragma warning disable CS0618 // Type or member is obsolete. Temporary for compatibility with ILanguageClientMiddleLayer
+[Obsolete("Please move to GenericInterceptionMiddleLayer and generic interceptors.")]
 public class InterceptionMiddleLayer : ILanguageClientMiddleLayer, ILanguageClientMiddleLayer2<JToken>
 #pragma warning restore CS0618 // Type or member is obsolete
 {

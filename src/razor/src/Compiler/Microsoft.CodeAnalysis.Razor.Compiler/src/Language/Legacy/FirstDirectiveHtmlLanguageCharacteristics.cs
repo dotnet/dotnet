@@ -7,13 +7,11 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 internal class FirstDirectiveHtmlLanguageCharacteristics : HtmlLanguageCharacteristics
 {
-    private static readonly FirstDirectiveHtmlLanguageCharacteristics _instance = new FirstDirectiveHtmlLanguageCharacteristics();
-
     private FirstDirectiveHtmlLanguageCharacteristics()
     {
     }
 
-    public static new FirstDirectiveHtmlLanguageCharacteristics Instance => _instance;
+    public static new FirstDirectiveHtmlLanguageCharacteristics Instance { get; } = new FirstDirectiveHtmlLanguageCharacteristics();
 
-    public override HtmlTokenizer CreateTokenizer(ITextDocument source) => new DirectiveHtmlTokenizer(source);
+    public override HtmlTokenizer CreateTokenizer(SeekableTextReader source) => new DirectiveHtmlTokenizer(source);
 }

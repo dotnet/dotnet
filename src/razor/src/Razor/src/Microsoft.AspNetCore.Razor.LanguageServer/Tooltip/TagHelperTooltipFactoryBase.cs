@@ -36,6 +36,11 @@ internal abstract class TagHelperTooltipFactoryBase(IProjectSnapshotManager proj
 
         foreach (var project in projectSnapshots)
         {
+            if (MiscFilesHostProject.IsMiscellaneousProject(project))
+            {
+                continue;
+            }
+
             var found = false;
             var tagHelpers = await project.GetTagHelpersAsync(cancellationToken).ConfigureAwait(false);
             foreach (var tagHelper in tagHelpers)
