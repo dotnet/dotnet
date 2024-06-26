@@ -22,29 +22,29 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-symuploader</Uri>
       <Sha>d617bc8ed2787c235a57cf0dcdfd087b86ff9521</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Authoring.Tasks" Version="9.0.100-preview.6.24316.1">
+    <Dependency Name="Microsoft.TemplateEngine.Authoring.Tasks" Version="9.0.100-preview.7.24323.1">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>5cbcd39027f739dd3ce1e5d50cfb99446a605491</Sha>
+      <Sha>35d4d2654e2ddf43cd0161b049248b818675a1c0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24320.2">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24321.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>a1cd79a2b483a09f58fa9f6286b589bb759d391d</Sha>
+      <Sha>3aba80fecac252e1cdaffcebc0a37a24a960228b</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="9.0.0-beta.24320.2">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="9.0.0-beta.24321.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>a1cd79a2b483a09f58fa9f6286b589bb759d391d</Sha>
+      <Sha>3aba80fecac252e1cdaffcebc0a37a24a960228b</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Maestro.Client" Version="1.1.0-beta.24317.3">
+    <Dependency Name="Microsoft.DotNet.Maestro.Client" Version="1.1.0-beta.24324.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>937147daa2585553fd1760d9c0e70c6fb3747352</Sha>
+      <Sha>109cc7d63caa4f2d2a3bee850695d3b6d993d754</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Maestro.Tasks" Version="1.1.0-beta.24317.3">
+    <Dependency Name="Microsoft.DotNet.Maestro.Tasks" Version="1.1.0-beta.24324.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>937147daa2585553fd1760d9c0e70c6fb3747352</Sha>
+      <Sha>109cc7d63caa4f2d2a3bee850695d3b6d993d754</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XHarness.CLI" Version="9.0.0-prerelease.24312.3">
+    <Dependency Name="Microsoft.DotNet.XHarness.CLI" Version="9.0.0-prerelease.24317.3">
       <Uri>https://github.com/dotnet/xharness</Uri>
-      <Sha>6ce15319de72ab6d4c3b0f4c40f59300cffc5450</Sha>
+      <Sha>65d0584b517952962b7a79195b5d7606b52fcbfe</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.8.0">
       <Uri>https://github.com/dotnet/roslyn</Uri>
@@ -124,9 +124,9 @@
       <Sha>39aef81ec6cffa06da9964b46d4b9e3bf2fc9979</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24320.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24321.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>a1cd79a2b483a09f58fa9f6286b589bb759d391d</Sha>
+      <Sha>3aba80fecac252e1cdaffcebc0a37a24a960228b</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
@@ -154,9 +154,9 @@
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="9.0.0-alpha.1.24303.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="9.0.0-alpha.1.24320.1">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>7db00527ef8fbbe61f67e9295beebddf187efff8</Sha>
+      <Sha>9a2785b8409e4ee8db848cc2fbfa19b3316a3baa</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
