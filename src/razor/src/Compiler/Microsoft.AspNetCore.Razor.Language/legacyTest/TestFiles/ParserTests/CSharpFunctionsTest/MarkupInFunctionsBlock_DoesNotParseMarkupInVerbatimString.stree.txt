@@ -3,13 +3,13 @@
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];
         CSharpCodeBlock - [2..82)::80
-            RazorDirective - [2..82)::80 - Directive:{functions;CodeBlock;Unrestricted}
+            RazorDirective - [2..80)::78 - Directive:{functions;CodeBlock;Unrestricted}
                 CSharpTransition - [2..3)::1 - Gen<None> - SpanEditHandler;Accepts:None
                     Transition;[@];
-                RazorDirectiveBody - [3..82)::79
+                RazorDirectiveBody - [3..80)::77
                     RazorMetaCode - [3..12)::9 - Gen<None> - SpanEditHandler;Accepts:None
                         Identifier;[functions];
-                    CSharpCodeBlock - [12..82)::70
+                    CSharpCodeBlock - [12..80)::68
                         UnclassifiedTextLiteral - [12..13)::1 - [ ] - Gen<None> - SpanEditHandler;Accepts:AllWhitespace
                             Whitespace;[ ];
                         RazorMetaCode - [13..14)::1 - Gen<None> - AutoCompleteEditHandler;Accepts:None,AutoComplete:[<null>];AtEnd
@@ -32,9 +32,8 @@
                                 StringLiteral;[@"<h3>@message</h3>"];
                                 Semicolon;[;];
                                 NewLine;[LF];
-                        RazorMetaCode - [79..82)::3 - Gen<None> - SpanEditHandler;Accepts:None
+                        RazorMetaCode - [79..80)::1 - Gen<None> - SpanEditHandler;Accepts:None
                             RightBrace;[}];
-                            NewLine;[LF];
-        MarkupTextLiteral - [82..82)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
-            Marker;[];
+            RazorMetaCode - [80..82)::2 - Gen<None> - SpanEditHandler;Accepts:Any
+                NewLine;[LF];
     EndOfFile;[];

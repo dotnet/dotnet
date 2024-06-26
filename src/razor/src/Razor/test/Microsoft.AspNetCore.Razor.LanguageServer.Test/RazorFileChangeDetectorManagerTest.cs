@@ -28,15 +28,13 @@ public class RazorFileChangeDetectorManagerTest(ITestOutputHelper testOutput) : 
             Path = initialWorkspaceDirectory
         };
 
-        var clientSettings = new InitializeParams()
+        var initializeParams = new InitializeParams()
         {
             RootUri = uriBuilder.Uri,
         };
 
-        var languageServerMock = new StrictMock<IInitializeManager<InitializeParams, InitializeResult>>();
-        languageServerMock
-            .Setup(s => s.GetInitializeParams())
-            .Returns(clientSettings);
+        var capabilitiesManager = new CapabilitiesManager(StrictMock.Of<ILspServices>());
+        capabilitiesManager.SetInitializeParams(initializeParams);
 
         var expectedWorkspaceDirectory = $"\\\\{initialWorkspaceDirectory}";
 
@@ -56,8 +54,7 @@ public class RazorFileChangeDetectorManagerTest(ITestOutputHelper testOutput) : 
 
         detectorMock2.Setup(x => x.Stop());
 
-        var workspaceDirectoryPathResolver = new DefaultWorkspaceDirectoryPathResolver(languageServerMock.Object);
-        using (var detectorManager = new RazorFileChangeDetectorManager(workspaceDirectoryPathResolver, [detectorMock1.Object, detectorMock2.Object]))
+        using (var detectorManager = new RazorFileChangeDetectorManager(capabilitiesManager, [detectorMock1.Object, detectorMock2.Object]))
         {
             // Act
             await detectorManager.OnInitializedAsync(StrictMock.Of<ILspServices>(), DisposalToken);
@@ -66,7 +63,6 @@ public class RazorFileChangeDetectorManagerTest(ITestOutputHelper testOutput) : 
         // Assert
         detectorMock1.VerifyAll();
         detectorMock2.VerifyAll();
-        languageServerMock.VerifyAll();
     }
 
     [Fact]
@@ -74,15 +70,13 @@ public class RazorFileChangeDetectorManagerTest(ITestOutputHelper testOutput) : 
     {
         // Arrange
         var expectedWorkspaceDirectory = "\\\\testpath";
-        var clientSettings = new InitializeParams()
+        var initializeParams = new InitializeParams()
         {
             RootUri = new Uri(expectedWorkspaceDirectory),
         };
 
-        var languageServerMock = new StrictMock<IInitializeManager<InitializeParams, InitializeResult>>();
-        languageServerMock
-            .Setup(s => s.GetInitializeParams())
-            .Returns(clientSettings);
+        var capabilitiesManager = new CapabilitiesManager(StrictMock.Of<ILspServices>());
+        capabilitiesManager.SetInitializeParams(initializeParams);
 
         var detectorMock = new StrictMock<IFileChangeDetector>();
         var cts = new TaskCompletionSource<bool>();
@@ -94,8 +88,7 @@ public class RazorFileChangeDetectorManagerTest(ITestOutputHelper testOutput) : 
             .Setup(d => d.Stop())
             .Callback(() => stopCount++);
 
-        var workspaceDirectoryPathResolver = new DefaultWorkspaceDirectoryPathResolver(languageServerMock.Object);
-        using var detectorManager = new RazorFileChangeDetectorManager(workspaceDirectoryPathResolver, [detectorMock.Object]);
+        using var detectorManager = new RazorFileChangeDetectorManager(capabilitiesManager, [detectorMock.Object]);
 
         // Act
         var initializeTask = detectorManager.OnInitializedAsync(StrictMock.Of<ILspServices>(), DisposalToken);
@@ -107,7 +100,5 @@ public class RazorFileChangeDetectorManagerTest(ITestOutputHelper testOutput) : 
 
         // Assert
         Assert.Equal(2, stopCount);
-
-        languageServerMock.VerifyAll();
     }
 }

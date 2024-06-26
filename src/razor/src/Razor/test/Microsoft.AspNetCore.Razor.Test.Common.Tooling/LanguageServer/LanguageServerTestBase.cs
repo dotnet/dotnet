@@ -22,31 +22,18 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
-using Newtonsoft.Json;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 
-public abstract class LanguageServerTestBase : ToolingTestBase
+public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    private protected IRazorSpanMappingService SpanMappingService { get; }
-    private protected IFilePathService FilePathService { get; }
+    private ThrowingRazorSpanMappingService? _spanMappingService;
+    private LSPFilePathService? _filePathService;
 
-    protected JsonSerializer Serializer { get; }
-
-    protected LanguageServerTestBase(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-        SpanMappingService = new ThrowingRazorSpanMappingService();
-
-        Serializer = new JsonSerializer();
-        Serializer.AddVSInternalExtensionConverters();
-        Serializer.AddVSExtensionConverters();
-
-        FilePathService = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
-    }
+    private protected IRazorSpanMappingService SpanMappingService => _spanMappingService ??= new();
+    private protected IFilePathService FilePathService => _filePathService ??= new(TestLanguageServerFeatureOptions.Instance);
 
     private protected TestProjectSnapshotManager CreateProjectSnapshotManager()
         => CreateProjectSnapshotManager(ProjectEngineFactories.DefaultProvider);
@@ -59,14 +46,10 @@ public abstract class LanguageServerTestBase : ToolingTestBase
             DisposalToken,
             initializer: static updater => updater.ProjectAdded(MiscFilesHostProject.Instance));
 
-    internal RazorRequestContext CreateRazorRequestContext(VersionedDocumentContext? documentContext, ILspServices? lspServices = null)
-    {
-        lspServices ??= new Mock<ILspServices>(MockBehavior.Strict).Object;
-
-        var requestContext = new RazorRequestContext(documentContext, lspServices, "lsp/method", uri: null);
-
-        return requestContext;
-    }
+    private protected static RazorRequestContext CreateRazorRequestContext(
+        VersionedDocumentContext? documentContext,
+        ILspServices? lspServices = null)
+        => new(documentContext, lspServices ?? StrictMock.Of<ILspServices>(), "lsp/method", uri: null);
 
     protected static RazorCodeDocument CreateCodeDocument(string text, ImmutableArray<TagHelperDescriptor> tagHelpers = default, string? filePath = null, string? rootNamespace = null)
     {
@@ -104,22 +87,22 @@ public abstract class LanguageServerTestBase : ToolingTestBase
                 @using Microsoft.AspNetCore.Components.Web
                 """,
             RazorSourceDocumentProperties.Create(importDocumentName, importDocumentName));
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, ImmutableArray.Create(defaultImportDocument), tagHelpers);
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, [defaultImportDocument], tagHelpers);
         return codeDocument;
     }
 
-    internal static IDocumentContextFactory CreateDocumentContextFactory(Uri documentPath, string sourceText)
+    private protected static IDocumentContextFactory CreateDocumentContextFactory(Uri documentPath, string sourceText)
     {
         var codeDocument = CreateCodeDocument(sourceText);
         return CreateDocumentContextFactory(documentPath, codeDocument);
     }
 
-    internal static VersionedDocumentContext CreateDocumentContext(Uri documentPath, RazorCodeDocument codeDocument)
+    private protected static VersionedDocumentContext CreateDocumentContext(Uri documentPath, RazorCodeDocument codeDocument)
     {
         return TestDocumentContext.From(documentPath.GetAbsoluteOrUNCPath(), codeDocument, hostDocumentVersion: 1337);
     }
 
-    internal static IDocumentContextFactory CreateDocumentContextFactory(
+    private protected static IDocumentContextFactory CreateDocumentContextFactory(
         Uri documentPath,
         RazorCodeDocument codeDocument,
         bool documentFound = true)
@@ -131,7 +114,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         return documentContextFactory;
     }
 
-    internal static VersionedDocumentContext CreateDocumentContext(Uri uri, IDocumentSnapshot snapshot)
+    private protected static VersionedDocumentContext CreateDocumentContext(Uri uri, IDocumentSnapshot snapshot)
     {
         return new VersionedDocumentContext(uri, snapshot, projectContext: null, version: 0);
     }
@@ -153,7 +136,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         return mock.Object;
     }
 
-    internal static RazorLSPOptionsMonitor GetOptionsMonitor(bool enableFormatting = true, bool autoShowCompletion = true, bool autoListParams = true, bool formatOnType = true, bool autoInsertAttributeQuotes = true, bool colorBackground = false, bool codeBlockBraceOnNextLine = false, bool commitElementsWithSpace = true)
+    private protected static RazorLSPOptionsMonitor GetOptionsMonitor(bool enableFormatting = true, bool autoShowCompletion = true, bool autoListParams = true, bool formatOnType = true, bool autoInsertAttributeQuotes = true, bool colorBackground = false, bool codeBlockBraceOnNextLine = false, bool commitElementsWithSpace = true)
     {
         var configService = StrictMock.Of<IConfigurationSyncService>();
 

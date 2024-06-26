@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -42,10 +43,11 @@ internal sealed partial class RazorLanguageServerHost : IDisposable
         Stream output,
         ILoggerFactory loggerFactory,
         ITelemetryReporter telemetryReporter,
-        Action<IServiceCollection>? configure = null,
+        Action<IServiceCollection>? configureServices = null,
         LanguageServerFeatureOptions? featureOptions = null,
         RazorLSPOptions? razorLSPOptions = null,
         ILspServerActivationTracker? lspServerActivationTracker = null,
+        IRazorProjectInfoDriver? projectInfoDriver = null,
         TraceSource? traceSource = null)
     {
         var (jsonRpc, jsonSerializer) = CreateJsonRpc(input, output);
@@ -61,9 +63,10 @@ internal sealed partial class RazorLanguageServerHost : IDisposable
             jsonSerializer,
             loggerFactory,
             featureOptions,
-            configure,
+            configureServices,
             razorLSPOptions,
             lspServerActivationTracker,
+            projectInfoDriver,
             telemetryReporter);
 
         var host = new RazorLanguageServerHost(server);

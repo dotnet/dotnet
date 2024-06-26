@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
@@ -247,10 +248,10 @@ public class LegacyRazorCompletionResolveEndpointTest : LanguageServerTestBase
     private VSInternalCompletionItem ConvertToBridgedItem(CompletionItem completionItem)
     {
         var textWriter = new StringWriter();
-        Serializer.Serialize(textWriter, completionItem);
+        ProtocolSerializer.Instance.Serialize(textWriter, completionItem);
         var stringBuilder = textWriter.GetStringBuilder();
         var jsonReader = new JsonTextReader(new StringReader(stringBuilder.ToString()));
-        var bridgedItem = Serializer.Deserialize<VSInternalCompletionItem>(jsonReader);
+        var bridgedItem = ProtocolSerializer.Instance.Deserialize<VSInternalCompletionItem>(jsonReader);
         return bridgedItem;
     }
 }

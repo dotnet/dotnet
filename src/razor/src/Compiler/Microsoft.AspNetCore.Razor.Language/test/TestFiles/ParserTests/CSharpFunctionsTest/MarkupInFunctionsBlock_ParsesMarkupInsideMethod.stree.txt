@@ -3,13 +3,13 @@
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup>
             NewLine;[LF];
         CSharpCodeBlock - [2..98)::96
-            RazorDirective - [2..98)::96 - Directive:{functions;CodeBlock;Unrestricted}
+            RazorDirective - [2..96)::94 - Directive:{functions;CodeBlock;Unrestricted}
                 CSharpTransition - [2..3)::1 - Gen<None>
                     Transition;[@];
-                RazorDirectiveBody - [3..98)::95
+                RazorDirectiveBody - [3..96)::93
                     RazorMetaCode - [3..12)::9 - Gen<None>
                         Identifier;[functions];
-                    CSharpCodeBlock - [12..98)::86
+                    CSharpCodeBlock - [12..96)::84
                         UnclassifiedTextLiteral - [12..13)::1 - [ ] - Gen<None>
                             Whitespace;[ ];
                         RazorMetaCode - [13..14)::1 - Gen<None>
@@ -59,9 +59,8 @@
                                 Whitespace;[    ];
                                 RightBrace;[}];
                                 NewLine;[LF];
-                        RazorMetaCode - [95..98)::3 - Gen<None>
+                        RazorMetaCode - [95..96)::1 - Gen<None>
                             RightBrace;[}];
-                            NewLine;[LF];
-        MarkupTextLiteral - [98..98)::0 - [] - Gen<Markup>
-            Marker;[];
+            RazorMetaCode - [96..98)::2 - Gen<None>
+                NewLine;[LF];
     EndOfFile;[];

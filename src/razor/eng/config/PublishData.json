@@ -1,4 +1,25 @@
 {
+  "feeds": {
+    "vs-impl": "https://pkgs.dev.azure.com/azure-public/vside/_packaging/vs-impl/nuget/v3/index.json"
+  },
+  "packages": {
+    "default": {
+      "rzls": "vs-impl",
+      "rzls.alpine-arm64": "vs-impl",
+      "rzls.alpine-x64": "vs-impl",
+      "rzls.linux-arm64": "vs-impl",
+      "rzls.linux-x64": "vs-impl",
+      "rzls.linux-musl-x64": "vs-impl",
+      "rzls.linux-musl-arm64": "vs-impl",
+      "rzls.neutral": "vs-impl",
+      "rzls.osx-arm64": "vs-impl",
+      "rzls.osx-x64": "vs-impl",
+      "rzls.win-arm64": "vs-impl",
+      "rzls.win-x64": "vs-impl",
+      "rzls.win-x86": "vs-impl",
+      "Microsoft.VisualStudio.DevKit.Razor": "vs-impl"
+    }
+  },
   "branches": {
     "main": {
       "nugetKind": [
@@ -8,7 +29,7 @@
       "vsBranch": "main",
       "vsMajorVersion": 17,
       "insertionCreateDraftPR": true,
-      "insertionTitlePrefix": "[d17.11 P3]"
+      "insertionTitlePrefix": "[d17.12 P1]"
     },
     "release/dev17.5": {
       "nugetKind": [
@@ -70,10 +91,10 @@
         "Shipping",
         "NonShipping"
       ],
-      "vsBranch": "rel/d17.11",
+      "vsBranch": "main",
       "vsMajorVersion": 17,
       "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[17.11 P2]"
+      "insertionTitlePrefix": "[17.11 P3]"
     }
   }
 }

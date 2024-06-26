@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
 using Xunit;
 using Microsoft.VisualStudio.Razor.LanguageClient;
 using Microsoft.AspNetCore.Razor.Threading;
+using System.Collections.Immutable;
 
 namespace Microsoft.VisualStudio.Extensibility.Testing;
 
@@ -71,6 +72,16 @@ internal partial class RazorProjectSystemInProcess
         }, TimeSpan.FromMilliseconds(100), cancellationToken);
     }
 
+    public async Task<ImmutableArray<string>> GetProjectKeyIdsForProjectAsync(string projectFilePath, CancellationToken cancellationToken)
+    {
+        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManager>(cancellationToken);
+        Assert.NotNull(projectManager);
+
+        var projectKeys = projectManager.GetAllProjectKeys(projectFilePath);
+
+        return projectKeys.SelectAsArray(key => key.Id);
+    }
+
     public async Task WaitForCSharpVirtualDocumentAsync(string razorFilePath, CancellationToken cancellationToken)
     {
         var documentManager = await TestServices.Shell.GetComponentModelServiceAsync<LSPDocumentManager>(cancellationToken);
@@ -93,4 +104,3 @@ internal partial class RazorProjectSystemInProcess
         }, TimeSpan.FromMilliseconds(100), cancellationToken);
     }
 }
-

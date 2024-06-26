@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
+using System.Threading;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Razor;
 using Microsoft.VisualStudio.Razor.LanguageClient;
@@ -75,6 +77,25 @@ internal static class VsMocks
         var builder = new ServiceProviderBuilder();
         configure?.Invoke(builder);
         return builder.Mock.Object;
+    }
+
+    public static IVsService<TService, TInterface> CreateVsService<TService, TInterface>(Mock<TInterface> serviceMock)
+        where TService : class
+        where TInterface : class
+        => CreateVsService<TService, TInterface>(serviceMock.Object);
+
+    public static IVsService<TService, TInterface> CreateVsService<TService, TInterface>(TInterface service)
+        where TService : class
+        where TInterface : class
+    {
+        var mock = new StrictMock<IVsService<TService, TInterface>>();
+
+        mock.Setup(x => x.GetValueAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(service);
+        mock.Setup(x => x.GetValueOrNullAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(service);
+
+        return mock.Object;
     }
 
     public interface IServiceProviderBuilder

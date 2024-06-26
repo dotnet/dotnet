@@ -10,15 +10,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 using Rules = Microsoft.CodeAnalysis.Razor.ProjectSystem.Rules;
@@ -30,7 +26,6 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
     private readonly IServiceProvider _serviceProvider;
     private readonly ItemCollection _configurationItems;
     private readonly ItemCollection _extensionItems;
-    private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore;
     private readonly ItemCollection _razorComponentWithTargetPathItems;
     private readonly ItemCollection _razorGenerateWithTargetPathItems;
     private readonly PropertyCollection _razorGeneralProperties;
@@ -48,11 +43,6 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
             }));
 
         _projectManager = CreateProjectSnapshotManager();
-
-        var projectConfigurationFilePathStore = new Mock<ProjectConfigurationFilePathStore>(MockBehavior.Strict);
-        projectConfigurationFilePathStore.Setup(s => s.Remove(It.IsAny<ProjectKey>())).Verifiable();
-        projectConfigurationFilePathStore.Setup(s => s.Set(It.IsAny<ProjectKey>(), It.IsAny<string>())).Verifiable();
-        _projectConfigurationFilePathStore = projectConfigurationFilePathStore.Object;
 
         _configurationItems = new ItemCollection(Rules.RazorConfiguration.SchemaName);
         _extensionItems = new ItemCollection(Rules.RazorExtension.SchemaName);
@@ -634,7 +624,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
     {
         // Arrange
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
 
         // Act & Assert
         await host.LoadAsync();
@@ -649,7 +639,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
     {
         // Arrange
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
 
         // Act & Assert
         await Task.Run(async () => await host.LoadAsync());
@@ -668,7 +658,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
 
         // Act & Assert
         await Task.Run(async () => await host.LoadAsync());
@@ -712,7 +702,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
 
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
         host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
@@ -765,7 +755,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
     public void IntermediateOutputPathCalculationHandlesRelativePaths(string baseIntermediateOutputPath, string intermediateOutputPath, string expectedCombinedIOP)
     {
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
 
         var state = TestProjectRuleSnapshot.CreateProperties(
              WindowsRazorProjectHostBase.ConfigurationGeneralSchemaName,
@@ -808,7 +798,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
 
         await Task.Run(async () => await host.LoadAsync());
         Assert.Empty(_projectManager.GetProjects());
@@ -859,7 +849,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
         host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
@@ -913,7 +903,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
         host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
@@ -1069,7 +1059,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
         host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
@@ -1144,7 +1134,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
         host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
@@ -1224,7 +1214,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
 
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
         host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
@@ -1321,7 +1311,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
-        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, _projectConfigurationFilePathStore, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
+        var host = new DefaultWindowsRazorProjectHost(services, _serviceProvider, _projectManager, languageServerFeatureOptions: new TestLanguageServerFeatureOptions());
         host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());

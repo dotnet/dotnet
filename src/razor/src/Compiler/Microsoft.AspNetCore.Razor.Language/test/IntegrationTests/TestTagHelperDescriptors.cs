@@ -45,9 +45,18 @@ public class TestTagHelperDescriptors
                                 .Metadata(PropertyName("AgeProp"))
                                 .TypeName("System.Int32"),
                             builder => builder
+                                .Name("alive")
+                                .Metadata(PropertyName("AliveProp"))
+                                .TypeName("System.Boolean"),
+                            builder => builder
                                 .Name("tag")
                                 .Metadata(PropertyName("TagProp"))
                                 .TypeName("System.Object"),
+                            builder => builder
+                                .Name("tuple-dictionary")
+                                .Metadata(PropertyName("DictionaryOfBoolAndStringTupleProperty"))
+                                .TypeName(typeof(IDictionary<string, int>).Namespace + ".IDictionary<System.String, (System.Boolean, System.String)>")
+                                .AsDictionaryAttribute("tuple-prefix-", typeof((bool, string)).FullName)
                         })
                 };
         }

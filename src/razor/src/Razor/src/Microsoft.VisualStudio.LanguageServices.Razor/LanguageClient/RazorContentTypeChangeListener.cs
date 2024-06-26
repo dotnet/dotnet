@@ -3,7 +3,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -18,7 +17,7 @@ internal class RazorContentTypeChangeListener : ITextBufferContentTypeListener
 {
     private readonly TrackingLSPDocumentManager _lspDocumentManager;
     private readonly ITextDocumentFactoryService _textDocumentFactory;
-    private readonly LSPEditorFeatureDetector _lspEditorFeatureDetector;
+    private readonly ILspEditorFeatureDetector _lspEditorFeatureDetector;
     private readonly IEditorOptionsFactoryService _editorOptionsFactory;
     private readonly IFileToContentTypeService _fileToContentTypeService;
 
@@ -26,7 +25,7 @@ internal class RazorContentTypeChangeListener : ITextBufferContentTypeListener
     public RazorContentTypeChangeListener(
         ITextDocumentFactoryService textDocumentFactory,
         LSPDocumentManager lspDocumentManager,
-        LSPEditorFeatureDetector lspEditorFeatureDetector,
+        ILspEditorFeatureDetector lspEditorFeatureDetector,
         IEditorOptionsFactoryService editorOptionsFactory,
         IFileToContentTypeService fileToContentTypeService)
     {

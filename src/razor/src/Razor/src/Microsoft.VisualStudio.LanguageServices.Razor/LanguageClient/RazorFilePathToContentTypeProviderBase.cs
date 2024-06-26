@@ -3,7 +3,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Utilities;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient;
@@ -11,11 +10,11 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient;
 internal abstract class RazorFilePathToContentTypeProviderBase : IFilePathToContentTypeProvider
 {
     private readonly IContentTypeRegistryService _contentTypeRegistryService;
-    private readonly LSPEditorFeatureDetector _lspEditorFeatureDetector;
+    private readonly ILspEditorFeatureDetector _lspEditorFeatureDetector;
 
     public RazorFilePathToContentTypeProviderBase(
         IContentTypeRegistryService contentTypeRegistryService,
-        LSPEditorFeatureDetector lspEditorFeatureDetector)
+        ILspEditorFeatureDetector lspEditorFeatureDetector)
     {
         if (contentTypeRegistryService is null)
         {
@@ -33,7 +32,7 @@ internal abstract class RazorFilePathToContentTypeProviderBase : IFilePathToCont
 
     public bool TryGetContentTypeForFilePath(string filePath, [NotNullWhen(true)] out IContentType? contentType)
     {
-        if (_lspEditorFeatureDetector.IsLSPEditorAvailable(filePath, hierarchy: null))
+        if (_lspEditorFeatureDetector.IsLspEditorEnabled())
         {
             contentType = _contentTypeRegistryService.GetContentType(RazorConstants.RazorLSPContentTypeName);
             return true;

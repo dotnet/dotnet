@@ -80,7 +80,11 @@ internal partial class RazorCustomMessageTarget
 
             if (response.Response != null)
             {
-                codeActions.AddRange(response.Response);
+                foreach (var codeAction in response.Response)
+                {
+                    codeAction.Data = JsonHelpers.TryConvertFromJsonElement(codeAction.Data);
+                    codeActions.Add(codeAction);
+                }
             }
         }
 
@@ -126,6 +130,8 @@ internal partial class RazorCustomMessageTarget
 
         var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
         var codeAction = resolveCodeActionParams.CodeAction;
+        codeAction.Data = JsonHelpers.TryConvertBackToJsonElement(codeAction.Data);
+
         var requests = _requestInvoker.ReinvokeRequestOnMultipleServersAsync<CodeAction, VSInternalCodeAction?>(
             textBuffer,
             Methods.CodeActionResolveName,
@@ -138,7 +144,10 @@ internal partial class RazorCustomMessageTarget
             if (response.Response is not null)
             {
                 // Only take the first response from a resolution
-                return response.Response;
+                var resolved = response.Response;
+                resolved.Data = JsonHelpers.TryConvertFromJsonElement(resolved.Data);
+
+                return resolved;
             }
         }
 

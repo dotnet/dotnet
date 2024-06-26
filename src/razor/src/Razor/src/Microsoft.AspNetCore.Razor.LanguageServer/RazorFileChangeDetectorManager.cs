@@ -12,10 +12,10 @@ using Microsoft.CommonLanguageServerProtocol.Framework;
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class RazorFileChangeDetectorManager(
-    WorkspaceDirectoryPathResolver workspaceDirectoryPathResolver,
+    IWorkspaceRootPathProvider workspaceRootPathProvider,
     IEnumerable<IFileChangeDetector> fileChangeDetectors) : IOnInitialized, IDisposable
 {
-    private readonly WorkspaceDirectoryPathResolver _workspaceDirectoryPathResolver = workspaceDirectoryPathResolver;
+    private readonly IWorkspaceRootPathProvider _workspaceRootPathProvider = workspaceRootPathProvider;
     private readonly ImmutableArray<IFileChangeDetector> _fileChangeDetectors = fileChangeDetectors.ToImmutableArray();
     private readonly object _disposeLock = new();
     private bool _disposed;
@@ -24,7 +24,7 @@ internal class RazorFileChangeDetectorManager(
     {
         // Initialized request, this occurs once the server and client have agreed on what sort of features they both support. It only happens once.
 
-        var workspaceDirectoryPath = _workspaceDirectoryPathResolver.Resolve();
+        var workspaceDirectoryPath = await _workspaceRootPathProvider.GetRootPathAsync(cancellationToken).ConfigureAwait(false);
 
         foreach (var fileChangeDetector in _fileChangeDetectors)
         {

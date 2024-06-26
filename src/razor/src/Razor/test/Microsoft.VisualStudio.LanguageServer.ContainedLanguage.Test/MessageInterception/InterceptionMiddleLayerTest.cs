@@ -13,6 +13,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.WebTools.Languages.Shared.VS.Test.LanguageServer.MiddleLayerProviders;
 
+#pragma warning disable CS0618 // Type or member is obsolete
+
 public class InterceptionMiddleLayerTest : ToolingTestBase
 {
     public InterceptionMiddleLayerTest(ITestOutputHelper testOutput)

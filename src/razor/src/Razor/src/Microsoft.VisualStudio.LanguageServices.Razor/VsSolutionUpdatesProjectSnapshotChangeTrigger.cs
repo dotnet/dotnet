@@ -66,6 +66,11 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
 
     public void Dispose()
     {
+        if (_disposeTokenSource.IsCancellationRequested)
+        {
+            return;
+        }
+
         _disposeTokenSource.Cancel();
         _disposeTokenSource.Dispose();
 

@@ -7,7 +7,6 @@ namespace Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 
 internal class TestLanguageServerFeatureOptions(
     bool includeProjectKeyInGeneratedFilePath = false,
-    bool monitorWorkspaceFolderForConfigurationFiles = true,
     bool forceRuntimeCodeGeneration = false) : LanguageServerFeatureOptions
 {
     public static readonly LanguageServerFeatureOptions Instance = new TestLanguageServerFeatureOptions();
@@ -36,13 +35,9 @@ internal class TestLanguageServerFeatureOptions(
 
     public override bool IncludeProjectKeyInGeneratedFilePath => includeProjectKeyInGeneratedFilePath;
 
-    public override bool MonitorWorkspaceFolderForConfigurationFiles => monitorWorkspaceFolderForConfigurationFiles;
-
     public override bool UseRazorCohostServer => false;
 
     public override bool DisableRazorLanguageServer => false;
 
     public override bool ForceRuntimeCodeGeneration => forceRuntimeCodeGeneration;
-
-    public override bool UseProjectConfigurationEndpoint => false;
 }

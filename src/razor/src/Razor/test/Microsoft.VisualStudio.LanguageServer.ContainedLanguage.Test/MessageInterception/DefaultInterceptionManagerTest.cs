@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -14,6 +15,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Test.MessageInterception;
 
+#pragma warning disable CS0618 // Type or member is obsolete
+
 public class DefaultInterceptionManagerTest : ToolingTestBase
 {
     public DefaultInterceptionManagerTest(ITestOutputHelper testOutput)
@@ -24,7 +27,7 @@ public class DefaultInterceptionManagerTest : ToolingTestBase
     [Fact]
     public void Ctor_NullArguments_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => new DefaultInterceptorManager(null!));
+        Assert.Throws<ArgumentNullException>(() => new DefaultInterceptorManager(null!, null!));
     }
 
     [Theory]
@@ -32,7 +35,7 @@ public class DefaultInterceptionManagerTest : ToolingTestBase
     [InlineData("")]
     public void HasInterceptor_InvalidMessageName_Throws(string? input)
     {
-        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors());
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors(), GenerateLazyGenericInterceptors());
 
         Assert.Throws<ArgumentException>(() => sut.HasInterceptor(input!, "testContentType"));
     }
@@ -40,7 +43,7 @@ public class DefaultInterceptionManagerTest : ToolingTestBase
     [Fact]
     public void HasInterceptor_HasNoInterceptors_ReturnsFalse()
     {
-        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors());
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors(), GenerateLazyGenericInterceptors());
 
         Assert.False(sut.HasInterceptor("foo", "testContentType"));
     }
@@ -49,7 +52,16 @@ public class DefaultInterceptionManagerTest : ToolingTestBase
     public void HasInterceptor_HasMatchingInterceptor_ReturnsTrue()
     {
         var fakeInterceptor = Mock.Of<MessageInterceptor>(MockBehavior.Strict);
-        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors((fakeInterceptor, "expected", "testContentType")));
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors((fakeInterceptor, "expected", "testContentType")), GenerateLazyGenericInterceptors());
+
+        Assert.True(sut.HasInterceptor("expected", "testContentType"));
+    }
+
+    [Fact]
+    public void HasInterceptor_HasMatchingGenericInterceptor_ReturnsTrue()
+    {
+        var fakeInterceptor = Mock.Of<GenericMessageInterceptor>(MockBehavior.Strict);
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors(), GenerateLazyGenericInterceptors((fakeInterceptor, "expected", "testContentType")));
 
         Assert.True(sut.HasInterceptor("expected", "testContentType"));
     }
@@ -58,7 +70,8 @@ public class DefaultInterceptionManagerTest : ToolingTestBase
     public void HasInterceptor_DoesNotHaveMatchingInterceptor_ReturnsFalse()
     {
         var fakeInterceptor = Mock.Of<MessageInterceptor>(MockBehavior.Strict);
-        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors((fakeInterceptor, "unexpected", "testContentType")));
+        var fakeGenericInterceptor = Mock.Of<GenericMessageInterceptor>(MockBehavior.Strict);
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors((fakeInterceptor, "unexpected", "testContentType")), GenerateLazyGenericInterceptors((fakeGenericInterceptor, "unexpected", "testContentType")));
 
         Assert.False(sut.HasInterceptor("expected", "testContentType"));
     }
@@ -67,7 +80,8 @@ public class DefaultInterceptionManagerTest : ToolingTestBase
     public void HasInterceptor_HasMismatchedContentType_ReturnsFalse()
     {
         var fakeInterceptor = Mock.Of<MessageInterceptor>(MockBehavior.Strict);
-        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors((fakeInterceptor, "expected", "testContentType")));
+        var fakeGenericInterceptor = Mock.Of<GenericMessageInterceptor>(MockBehavior.Strict);
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors((fakeInterceptor, "expected", "testContentType")), GenerateLazyGenericInterceptors((fakeGenericInterceptor, "expected", "testContentType")));
 
         Assert.False(sut.HasInterceptor("expected", "unknownContentType"));
     }
@@ -77,19 +91,50 @@ public class DefaultInterceptionManagerTest : ToolingTestBase
     [InlineData("")]
     public async Task ProcessInterceptorsAsync_InvalidMethodName_Throws(string? input)
     {
-        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors());
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors(), GenerateLazyGenericInterceptors());
 
         await Assert.ThrowsAsync<ArgumentException>(
             () => sut.ProcessInterceptorsAsync(input!, JToken.Parse("{}"), "valid", DisposalToken));
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public async Task ProcessGenericInterceptorsAsync_JToken_InvalidMethodName_Throws(string? input)
+    {
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors(), GenerateLazyGenericInterceptors());
+
+        await Assert.ThrowsAsync<ArgumentException>(
+            () => sut.ProcessGenericInterceptorsAsync<JToken>(input!, JToken.Parse("{}"), "valid", DisposalToken));
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public async Task ProcessGenericInterceptorsAsync_JsonElement_InvalidMethodName_Throws(string? input)
+    {
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors(), GenerateLazyGenericInterceptors());
+
+        await Assert.ThrowsAsync<ArgumentException>(
+            () => sut.ProcessGenericInterceptorsAsync<JsonElement>(input!, JsonDocument.Parse("{}").RootElement, "valid", DisposalToken));
+    }
+
     [Fact]
     public async Task ProcessInterceptorsAsync_InvalidMessage_Throws()
     {
-        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors());
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors(), GenerateLazyGenericInterceptors());
 
         await Assert.ThrowsAsync<ArgumentNullException>(
             () => sut.ProcessInterceptorsAsync("valid", null!, "valid", DisposalToken));
+    }
+
+    [Fact]
+    public async Task ProcessGenericInterceptorsAsync_JToken_InvalidMessage_Throws()
+    {
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors(), GenerateLazyGenericInterceptors());
+
+        await Assert.ThrowsAsync<ArgumentNullException>(
+            () => sut.ProcessGenericInterceptorsAsync<JToken>("valid", null!, "valid", DisposalToken));
     }
 
     [Theory]
@@ -97,7 +142,7 @@ public class DefaultInterceptionManagerTest : ToolingTestBase
     [InlineData("")]
     public async Task ProcessInterceptorsAsync_InvalidSourceLanguageName_Throws(string? input)
     {
-        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors());
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors(), GenerateLazyGenericInterceptors());
 
         await Assert.ThrowsAsync<ArgumentException>(
             () => sut.ProcessInterceptorsAsync("valid", JToken.Parse("{}"), input!, DisposalToken));
@@ -107,10 +152,22 @@ public class DefaultInterceptionManagerTest : ToolingTestBase
     public async Task ProcessInterceptorsAsync_NoInterceptorMatches_NoChangesMadeToToken()
     {
         var fakeInterceptor = Mock.Of<MessageInterceptor>(MockBehavior.Strict);
-        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors((fakeInterceptor, "unexpected", "testContentType")));
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors((fakeInterceptor, "unexpected", "testContentType")), GenerateLazyGenericInterceptors());
         var testToken = JToken.Parse("\"theToken\"");
 
         var result = await sut.ProcessInterceptorsAsync("testMessage", testToken, "testContentType", DisposalToken);
+
+        Assert.Equal(testToken, result);
+    }
+
+    [Fact]
+    public async Task ProcessGenericInterceptorsAsync_JsonElement_NoInterceptorMatches_NoChangesMadeToToken()
+    {
+        var fakeInterceptor = Mock.Of<GenericMessageInterceptor>(MockBehavior.Strict);
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors(), GenerateLazyGenericInterceptors((fakeInterceptor, "unexpected", "testContentType")));
+        var testToken = JsonDocument.Parse("\"theToken\"").RootElement;
+
+        var result = await sut.ProcessGenericInterceptorsAsync("testMessage", testToken, "testContentType", DisposalToken);
 
         Assert.Equal(testToken, result);
     }
@@ -123,10 +180,26 @@ public class DefaultInterceptionManagerTest : ToolingTestBase
         Mock.Get(fakeInterceptor)
             .Setup(x => x.ApplyChangesAsync(It.IsAny<JToken>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new InterceptionResult(expected, false));
-        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors((fakeInterceptor, "testMessage", "testContentType")));
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors((fakeInterceptor, "testMessage", "testContentType")), GenerateLazyGenericInterceptors());
         var testToken = JToken.Parse("\"theToken\"");
 
         var result = await sut.ProcessInterceptorsAsync("testMessage", testToken, "testContentType", DisposalToken);
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public async Task ProcessGenericInterceptorsAsync_JsonElement_InterceptorMatchesButDoesNotChangeDocumentUri_ChangesAppliedToToken()
+    {
+        var expected = JsonDocument.Parse("\"new token\"").RootElement;
+        var fakeInterceptor = Mock.Of<GenericMessageInterceptor>(MockBehavior.Strict);
+        Mock.Get(fakeInterceptor)
+            .Setup(x => x.ApplyChangesAsync<JsonElement>(It.IsAny<JsonElement>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new GenericInterceptionResult<JsonElement>(expected, false));
+        var sut = new DefaultInterceptorManager(GenerateLazyInterceptors(), GenerateLazyGenericInterceptors((fakeInterceptor, "testMessage", "testContentType")));
+        var testToken = JsonDocument.Parse("\"theToken\"").RootElement;
+
+        var result = await sut.ProcessGenericInterceptorsAsync("testMessage", testToken, "testContentType", DisposalToken);
 
         Assert.Equal(expected, result);
     }
@@ -145,7 +218,8 @@ public class DefaultInterceptionManagerTest : ToolingTestBase
         var sut = new DefaultInterceptorManager(
             GenerateLazyInterceptors(
                 (fakeInterceptor, "testMessage", "testContentType"),
-                (mockSecondInterceptor.Object, "testMessage", "testContentType")));
+                (mockSecondInterceptor.Object, "testMessage", "testContentType")),
+            GenerateLazyGenericInterceptors());
         var testToken = JToken.Parse("\"theToken\"");
 
         _ = await sut.ProcessInterceptorsAsync("testMessage", testToken, "testContentType", DisposalToken);
@@ -158,23 +232,73 @@ public class DefaultInterceptionManagerTest : ToolingTestBase
     }
 
     [Fact]
+    public async Task ProcessGenericInterceptorsAsync_JsonElement_InterceptorMatches_ChangedTokenPassedToSecondInterceptor()
+    {
+        var expected = JsonDocument.Parse("\"new token\"").RootElement;
+        var fakeInterceptor = Mock.Of<GenericMessageInterceptor>(MockBehavior.Strict);
+        Mock.Get(fakeInterceptor)
+            .Setup(x => x.ApplyChangesAsync(It.IsAny<JsonElement>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new GenericInterceptionResult<JsonElement>(expected, false));
+        var mockSecondInterceptor = new Mock<GenericMessageInterceptor>(MockBehavior.Strict);
+        mockSecondInterceptor.Setup(x => x.ApplyChangesAsync(It.IsAny<JsonElement>(), "testContentType", DisposalToken))
+            .ReturnsAsync(new GenericInterceptionResult<JsonElement>(expected, false));
+        var sut = new DefaultInterceptorManager(
+            GenerateLazyInterceptors(),
+            GenerateLazyGenericInterceptors(
+                (fakeInterceptor, "testMessage", "testContentType"),
+                (mockSecondInterceptor.Object, "testMessage", "testContentType")));
+        var testToken = JsonDocument.Parse("\"theToken\"").RootElement;
+
+        _ = await sut.ProcessGenericInterceptorsAsync("testMessage", testToken, "testContentType", DisposalToken);
+
+        mockSecondInterceptor.Verify(
+            x => x.ApplyChangesAsync(It.Is<JsonElement>(t => t.Equals(expected)), It.IsAny<string>(), It.IsAny<CancellationToken>()));
+        mockSecondInterceptor.Verify(
+            x => x.ApplyChangesAsync(It.Is<JsonElement>(t => t.Equals(testToken)), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    [Fact]
     public async Task ProcessInterceptorsAsync_InterceptorChangesDocumentUri_CausesAdditionalPass()
     {
         var expected = JToken.Parse("\"new token\"");
-        var mockInterceptor =new Mock<MessageInterceptor>(MockBehavior.Strict);
+        var mockInterceptor = new Mock<MessageInterceptor>(MockBehavior.Strict);
         mockInterceptor
             .SetupSequence(x => x.ApplyChangesAsync(It.IsAny<JToken>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new InterceptionResult(expected, true))
             .ReturnsAsync(new InterceptionResult(expected, false));
         var sut = new DefaultInterceptorManager(
             GenerateLazyInterceptors(
-                (mockInterceptor.Object, "testMessage", "testContentType")));
+                (mockInterceptor.Object, "testMessage", "testContentType")),
+            GenerateLazyGenericInterceptors());
         var testToken = JToken.Parse("\"theToken\"");
 
         _ = await sut.ProcessInterceptorsAsync("testMessage", testToken, "testContentType", DisposalToken);
 
         mockInterceptor.Verify(
             x => x.ApplyChangesAsync(It.IsAny<JToken>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Exactly(2));
+    }
+
+    [Fact]
+    public async Task ProcessGenericInterceptorsAsync_InterceptorChangesDocumentUri_CausesAdditionalPass()
+    {
+        var expected = JsonDocument.Parse("\"new token\"").RootElement;
+        var mockInterceptor = new Mock<GenericMessageInterceptor>(MockBehavior.Strict);
+        mockInterceptor
+            .SetupSequence(x => x.ApplyChangesAsync(It.IsAny<JsonElement>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new GenericInterceptionResult<JsonElement>(expected, true))
+            .ReturnsAsync(new GenericInterceptionResult<JsonElement>(expected, false));
+        var sut = new DefaultInterceptorManager(
+            GenerateLazyInterceptors(),
+            GenerateLazyGenericInterceptors(
+                (mockInterceptor.Object, "testMessage", "testContentType")));
+        var testToken = JsonDocument.Parse("\"theToken\"").RootElement;
+
+        _ = await sut.ProcessGenericInterceptorsAsync("testMessage", testToken, "testContentType", DisposalToken);
+
+        mockInterceptor.Verify(
+            x => x.ApplyChangesAsync(It.IsAny<JsonElement>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Exactly(2));
     }
 
@@ -189,13 +313,36 @@ public class DefaultInterceptionManagerTest : ToolingTestBase
         var sut = new DefaultInterceptorManager(
             GenerateLazyInterceptors(
                 (fakeInterceptor, "testMessage", "testContentType"),
-                (mockSecondInterceptor.Object, "testMessage", "testContentType")));
+                (mockSecondInterceptor.Object, "testMessage", "testContentType")),
+            GenerateLazyGenericInterceptors());
         var testToken = JToken.Parse("\"theToken\"");
 
         _ = await sut.ProcessInterceptorsAsync("testMessage", testToken, "testContentType", DisposalToken);
 
         mockSecondInterceptor.Verify(
             x => x.ApplyChangesAsync(It.IsAny<JToken>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task ProcessGenericInterceptorsAsync_InterceptorReturnsDefault_DoesNotCallAdditionalInterceptors()
+    {
+        var fakeInterceptor = Mock.Of<GenericMessageInterceptor>(MockBehavior.Strict);
+        Mock.Get(fakeInterceptor)
+            .Setup(x => x.ApplyChangesAsync(It.IsAny<JsonElement>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new GenericInterceptionResult<JsonElement>(default, false));
+        var mockSecondInterceptor = new Mock<GenericMessageInterceptor>(MockBehavior.Strict);
+        var sut = new DefaultInterceptorManager(
+            GenerateLazyInterceptors(),
+            GenerateLazyGenericInterceptors(
+                (fakeInterceptor, "testMessage", "testContentType"),
+                (mockSecondInterceptor.Object, "testMessage", "testContentType")));
+        var testToken = JsonDocument.Parse("\"theToken\"").RootElement;
+
+        _ = await sut.ProcessGenericInterceptorsAsync("testMessage", testToken, "testContentType", DisposalToken);
+
+        mockSecondInterceptor.Verify(
+            x => x.ApplyChangesAsync(It.IsAny<JsonElement>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
@@ -208,12 +355,32 @@ public class DefaultInterceptionManagerTest : ToolingTestBase
             .ReturnsAsync(new InterceptionResult(null, false));
         var sut = new DefaultInterceptorManager(
             GenerateLazyInterceptors(
-                (fakeInterceptor, "testMessage", "testContentType")));
+                (fakeInterceptor, "testMessage", "testContentType")),
+            GenerateLazyGenericInterceptors());
         var testToken = JToken.Parse("\"theToken\"");
 
         var result = await sut.ProcessInterceptorsAsync("testMessage", testToken, "testContentType", DisposalToken);
 
         Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task ProcessGenericInterceptorsAsync_InterceptorReturnsDefault_ReturnsDefault()
+    {
+        var fakeInterceptor = Mock.Of<GenericMessageInterceptor>(MockBehavior.Strict);
+        Mock.Get(fakeInterceptor)
+            .Setup(x => x.ApplyChangesAsync(It.IsAny<JsonElement>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new GenericInterceptionResult<JsonElement>(default, false));
+        var sut = new DefaultInterceptorManager(
+            GenerateLazyInterceptors(),
+            GenerateLazyGenericInterceptors(
+                (fakeInterceptor, "testMessage", "testContentType")));
+        var testToken = JsonDocument.Parse("\"theToken\"").RootElement;
+
+        var result = await sut.ProcessGenericInterceptorsAsync("testMessage", testToken, "testContentType", DisposalToken);
+
+        Assert.Equal(JsonValueKind.Undefined, result.ValueKind);
+        Assert.True(result.Equals(default(JsonElement)));
     }
 
     private static IEnumerable<Lazy<MessageInterceptor, IInterceptMethodMetadata>> GenerateLazyInterceptors(params (MessageInterceptor, string, string)[] fakeInterceptors)
@@ -227,6 +394,22 @@ public class DefaultInterceptionManagerTest : ToolingTestBase
                 m.ContentTypes == new string[] { contentTypeName },
                 MockBehavior.Strict);
             result.Add(new Lazy<MessageInterceptor, IInterceptMethodMetadata>(() => i, metadata));
+        }
+
+        return result;
+    }
+
+    private static IEnumerable<Lazy<GenericMessageInterceptor, IInterceptMethodMetadata>> GenerateLazyGenericInterceptors(params (GenericMessageInterceptor, string, string)[] fakeInterceptors)
+    {
+        var result = new List<Lazy<GenericMessageInterceptor, IInterceptMethodMetadata>>();
+
+        foreach ((var i, var metadataString, var contentTypeName) in fakeInterceptors)
+        {
+            var metadata = Mock.Of<IInterceptMethodMetadata>(m =>
+                m.InterceptMethods == new string[] { metadataString } &&
+                m.ContentTypes == new string[] { contentTypeName },
+                MockBehavior.Strict);
+            result.Add(new Lazy<GenericMessageInterceptor, IInterceptMethodMetadata>(() => i, metadata));
         }
 
         return result;

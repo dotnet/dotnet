@@ -34,7 +34,7 @@ internal partial class ParserContext
 
     public HashSet<string> SeenDirectives { get; }
 
-    public ITextDocument Source { get; }
+    public SeekableTextReader Source { get; }
 
     public RazorSourceDocument SourceDocument { get; }
 

@@ -6,6 +6,8 @@ using System.Buffers;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using MessagePack;
 using MessagePack.Resolvers;
 using Microsoft.AspNetCore.Razor.Language;
@@ -85,4 +87,7 @@ internal sealed record class RazorProjectInfo
 
     public static RazorProjectInfo? DeserializeFrom(Stream stream)
         => MessagePackSerializer.Deserialize<RazorProjectInfo>(stream, s_options);
+
+    public static ValueTask<RazorProjectInfo> DeserializeFromAsync(Stream stream, CancellationToken cancellationToken)
+        => MessagePackSerializer.DeserializeAsync<RazorProjectInfo>(stream, s_options, cancellationToken);
 }

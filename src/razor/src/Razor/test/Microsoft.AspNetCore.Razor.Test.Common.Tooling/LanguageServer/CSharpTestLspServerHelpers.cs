@@ -48,10 +48,10 @@ internal static class CSharpTestLspServerHelpers
             (csharpDocumentUri, csharpSourceText)
         };
 
-        return CreateCSharpLspServerAsync(files, serverCapabilities, razorSpanMappingService, cancellationToken);
+        return CreateCSharpLspServerAsync(files, serverCapabilities, razorSpanMappingService, multiTargetProject: true, cancellationToken);
     }
 
-    public static async Task<CSharpTestLspServer> CreateCSharpLspServerAsync(IEnumerable<(Uri Uri, SourceText SourceText)> files, VSInternalServerCapabilities serverCapabilities, IRazorSpanMappingService razorSpanMappingService, CancellationToken cancellationToken)
+    public static async Task<CSharpTestLspServer> CreateCSharpLspServerAsync(IEnumerable<(Uri Uri, SourceText SourceText)> files, VSInternalServerCapabilities serverCapabilities, IRazorSpanMappingService razorSpanMappingService, bool multiTargetProject, CancellationToken cancellationToken)
     {
         var csharpFiles = files.Select(f => new CSharpFile(f.Uri, f.SourceText));
 
@@ -60,7 +60,7 @@ internal static class CSharpTestLspServerHelpers
             // ComponentBase here comes from our ComponentShim project, not the real ASP.NET libraries. It's enough for the generated C#
             // in tests to at least compile better.
             .Add(ReferenceUtil.AspNetLatestComponents);
-        var workspace = CreateCSharpTestWorkspace(csharpFiles, exportProvider, metadataReferences, razorSpanMappingService);
+        var workspace = CreateCSharpTestWorkspace(csharpFiles, exportProvider, metadataReferences, razorSpanMappingService, multiTargetProject);
         var clientCapabilities = new VSInternalClientCapabilities
         {
             SupportsVisualStudioExtensions = true,
@@ -97,7 +97,8 @@ internal static class CSharpTestLspServerHelpers
         IEnumerable<CSharpFile> files,
         ExportProvider exportProvider,
         ImmutableArray<MetadataReference> metadataReferences,
-        IRazorSpanMappingService razorSpanMappingService)
+        IRazorSpanMappingService razorSpanMappingService,
+        bool multiTargetProject)
     {
         var hostServices = MefHostServices.Create(exportProvider.AsCompositionContext());
         var workspace = TestWorkspace.Create(hostServices);
@@ -121,7 +122,9 @@ internal static class CSharpTestLspServerHelpers
             filePath: @"C:\TestSolution\TestProject.csproj",
             metadataReferences: metadataReferences);
 
-        var projectInfos = new ProjectInfo[] { projectInfoNet60, projectInfoNet80 };
+        ProjectInfo[] projectInfos = multiTargetProject
+            ? [projectInfoNet60, projectInfoNet80]
+            : [projectInfoNet80];
 
         var solutionInfo = SolutionInfo.Create(
             id: SolutionId.CreateNewId("TestSolution"),

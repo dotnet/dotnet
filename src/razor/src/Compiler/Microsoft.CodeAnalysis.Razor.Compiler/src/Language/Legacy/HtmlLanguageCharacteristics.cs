@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
 
@@ -11,16 +10,11 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 internal class HtmlLanguageCharacteristics : LanguageCharacteristics<HtmlTokenizer>
 {
-    private static readonly HtmlLanguageCharacteristics _instance = new HtmlLanguageCharacteristics();
-
     protected HtmlLanguageCharacteristics()
     {
     }
 
-    public static HtmlLanguageCharacteristics Instance
-    {
-        get { return _instance; }
-    }
+    public static HtmlLanguageCharacteristics Instance { get; } = new HtmlLanguageCharacteristics();
 
     public override string GetSample(SyntaxKind type)
     {
@@ -69,7 +63,7 @@ internal class HtmlLanguageCharacteristics : LanguageCharacteristics<HtmlTokeniz
         }
     }
 
-    public override HtmlTokenizer CreateTokenizer(ITextDocument source)
+    public override HtmlTokenizer CreateTokenizer(SeekableTextReader source)
     {
         return new HtmlTokenizer(source);
     }

@@ -26,14 +26,12 @@ namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 [method: ImportingConstructor]
 internal sealed class FallbackProjectManager(
     [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-    ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IProjectSnapshotManager projectManager,
     IWorkspaceProvider workspaceProvider,
     ITelemetryReporter telemetryReporter)
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
-    private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore = projectConfigurationFilePathStore;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IProjectSnapshotManager _projectManager = projectManager;
     private readonly IWorkspaceProvider _workspaceProvider = workspaceProvider;
@@ -123,10 +121,6 @@ internal sealed class FallbackProjectManager(
             cancellationToken);
 
         AddFallbackDocument(hostProject.Key, filePath, project.FilePath, cancellationToken);
-
-        var configurationFilePath = Path.Combine(intermediateOutputPath, _languageServerFeatureOptions.ProjectConfigurationFileName);
-
-        _projectConfigurationFilePathStore.Set(hostProject.Key, configurationFilePath);
     }
 
     private void AddFallbackDocument(ProjectKey projectKey, string filePath, string projectFilePath, CancellationToken cancellationToken)

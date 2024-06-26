@@ -114,36 +114,4 @@ public class ProjectTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdi
 
         await TestServices.Editor.CloseCodeFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.ErrorCshtmlFile, saveFile: false, ControlledHangMitigatingCancellationToken);
     }
-
-    [IdeFact]
-    public async Task OpenExistingProject_WithReopenedFile_NoProjectRazorJson()
-    {
-        var solutionPath = await TestServices.SolutionExplorer.GetDirectoryNameAsync(ControlledHangMitigatingCancellationToken);
-        var expectedProjectFileName = await TestServices.SolutionExplorer.GetAbsolutePathForProjectRelativeFilePathAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.ProjectFile, ControlledHangMitigatingCancellationToken);
-
-        // Open SurveyPrompt and make sure its all up and running
-        await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.ErrorCshtmlFile, ControlledHangMitigatingCancellationToken);
-        await TestServices.Editor.WaitForSemanticClassificationAsync("class name", ControlledHangMitigatingCancellationToken, count: 1);
-
-        await TestServices.SolutionExplorer.CloseSolutionAsync(ControlledHangMitigatingCancellationToken);
-
-        // Clear out the project.razor.bin file which ensures our restored file will have to be in the Misc Project
-        var projectRazorJsonFileName = Directory.EnumerateFiles(solutionPath, "project.razor.*.bin", SearchOption.AllDirectories).First();
-        File.Delete(projectRazorJsonFileName);
-
-        var solutionFileName = Path.Combine(solutionPath, RazorProjectConstants.BlazorSolutionName + ".sln");
-        await TestServices.SolutionExplorer.OpenSolutionAsync(solutionFileName, ControlledHangMitigatingCancellationToken);
-
-        await TestServices.Workspace.WaitForProjectSystemAsync(ControlledHangMitigatingCancellationToken);
-
-        await TestServices.Editor.WaitForSemanticClassificationAsync("class name", ControlledHangMitigatingCancellationToken, count: 1);
-
-        TestServices.Input.Send("1");
-
-        // Make sure the test framework didn't do something weird and create new project
-        var actualProjectFileName = await TestServices.SolutionExplorer.GetAbsolutePathForProjectRelativeFilePathAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.ProjectFile, ControlledHangMitigatingCancellationToken);
-        Assert.Equal(expectedProjectFileName, actualProjectFileName);
-
-        await TestServices.Editor.CloseCodeFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.ErrorCshtmlFile, saveFile: false, ControlledHangMitigatingCancellationToken);
-    }
 }

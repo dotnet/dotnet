@@ -32,7 +32,6 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
 
     private readonly Dictionary<ProjectConfigurationSlice, IDisposable> _projectSubscriptions = new();
     private readonly List<IDisposable> _disposables = new();
-    protected readonly ProjectConfigurationFilePathStore ProjectConfigurationFilePathStore;
 
     internal const string BaseIntermediateOutputPathPropertyName = "BaseIntermediateOutputPath";
     internal const string IntermediateOutputPathPropertyName = "IntermediateOutputPath";
@@ -47,8 +46,7 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
     protected WindowsRazorProjectHostBase(
         IUnconfiguredProjectCommonServices commonServices,
         IServiceProvider serviceProvider,
-        IProjectSnapshotManager projectManager,
-        ProjectConfigurationFilePathStore projectConfigurationFilePathStore)
+        IProjectSnapshotManager projectManager)
         : base(commonServices.ThreadingService.JoinableTaskContext)
     {
         CommonServices = commonServices;
@@ -56,7 +54,6 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
         _projectManager = projectManager;
 
         _lock = new AsyncSemaphore(initialCount: 1);
-        ProjectConfigurationFilePathStore = projectConfigurationFilePathStore;
     }
 
     protected abstract ImmutableHashSet<string> GetRuleNames();
@@ -286,7 +283,6 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
     protected void RemoveProject(ProjectSnapshotManager.Updater updater, ProjectKey projectKey)
     {
         updater.ProjectRemoved(projectKey);
-        ProjectConfigurationFilePathStore.Remove(projectKey);
     }
 
     private async Task ExecuteWithLockAsync(Func<Task> func)

@@ -47,9 +47,8 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
         IUnconfiguredProjectCommonServices commonServices,
         [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
         IProjectSnapshotManager projectManager,
-        ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
         LanguageServerFeatureOptions languageServerFeatureOptions)
-        : base(commonServices, serviceProvider, projectManager, projectConfigurationFilePathStore)
+        : base(commonServices, serviceProvider, projectManager)
     {
         _languageServerFeatureOptions = languageServerFeatureOptions;
     }
@@ -97,9 +96,6 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
                         : projectFileName;
 
                     var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace, displayName);
-
-                    var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
-                    ProjectConfigurationFilePathStore.Set(hostProject.Key, projectConfigurationFile);
 
                     UpdateProject(updater, hostProject);
 

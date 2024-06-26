@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json;
@@ -149,10 +150,10 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
     private VSInternalCompletionItem ConvertToBridgedItem(CompletionItem completionItem)
     {
         using var textWriter = new StringWriter();
-        Serializer.Serialize(textWriter, completionItem);
+        ProtocolSerializer.Instance.Serialize(textWriter, completionItem);
         var stringBuilder = textWriter.GetStringBuilder();
         using var jsonReader = new JsonTextReader(new StringReader(stringBuilder.ToString()));
-        var bridgedItem = Serializer.Deserialize<VSInternalCompletionItem>(jsonReader);
+        var bridgedItem = ProtocolSerializer.Instance.Deserialize<VSInternalCompletionItem>(jsonReader);
         return bridgedItem;
     }
 
@@ -160,7 +161,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
     {
         public override Task<VSInternalCompletionItem> ResolveAsync(
             VSInternalCompletionItem item,
-            VSInternalCompletionList containingCompletionlist,
+            VSInternalCompletionList containingCompletionList,
             object originalRequestContext,
             VSInternalClientCapabilities clientCapabilities,
             CancellationToken cancellationToken)

@@ -16,7 +16,7 @@ public abstract class HtmlTokenizerTestBase : TokenizerTestBase
         get { return _ignoreRemaining; }
     }
 
-    internal override object CreateTokenizer(ITextDocument source)
+    internal override object CreateTokenizer(SeekableTextReader source)
     {
         return new HtmlTokenizer(source);
     }
