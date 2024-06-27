@@ -201,7 +201,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
             throw new ArgumentNullException(nameof(documentFilePath));
         }
 
-        if (_lspEditorFeatureDetector.IsLspEditorEnabled())
+        if (_lspEditorFeatureDetector.IsLspEditorEnabledAndAvailable(documentFilePath))
         {
             return;
         }
