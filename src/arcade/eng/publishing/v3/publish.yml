@@ -106,6 +106,7 @@ stages:
           /p:AzureDevOpsFeedsKey='$(dn-bot-all-orgs-artifact-feeds-rw)'
           /p:AkaMSClientId=$(akams-app-id)
           /p:AkaMSClientCertificate=$(Agent.TempDirectory)/akamsclientcert.pfx
+          /p:ManagedIdentityClientId=$env:servicePrincipalId
           ${{ parameters.artifactsPublishingAdditionalParameters }} 
           /p:PDBArtifactsBasePath='$(Build.ArtifactStagingDirectory)/PDBArtifacts/'
           /p:SymbolPublishingExclusionsFile='$(Build.ArtifactStagingDirectory)/ReleaseConfigs/SymbolPublishingExclusionsFile.txt'
@@ -121,10 +122,6 @@ stages:
           /p:UseStreamingPublishing='true'
           /p:StreamingPublishingMaxClients=16
           /p:NonStreamingPublishingMaxClients=12
-          /p:DotNetBuildsPublicUriBase64='$(dotnetbuilds-public-container-uri-base64)' 
-          /p:DotNetBuildsPublicChecksumsUriBase64='$(dotnetbuilds-public-container-checksum-uri-base64)' 
-          /p:DotNetBuildsInternalUriBase64='$(dotnetbuilds-internal-container-uri-base64)' 
-          /p:DotNetBuildsInternalChecksumsUriBase64='$(dotnetbuilds-internal-container-checksum-uri-base64)'
 
     - template: /eng/common/templates-official/steps/publish-logs.yml@self
       parameters:
