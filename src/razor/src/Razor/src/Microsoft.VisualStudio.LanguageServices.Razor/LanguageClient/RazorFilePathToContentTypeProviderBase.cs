@@ -32,7 +32,7 @@ internal abstract class RazorFilePathToContentTypeProviderBase : IFilePathToCont
 
     public bool TryGetContentTypeForFilePath(string filePath, [NotNullWhen(true)] out IContentType? contentType)
     {
-        if (_lspEditorFeatureDetector.IsLspEditorEnabled())
+        if (_lspEditorFeatureDetector.IsLspEditorEnabledAndAvailable(filePath))
         {
             contentType = _contentTypeRegistryService.GetContentType(RazorConstants.RazorLSPContentTypeName);
             return true;

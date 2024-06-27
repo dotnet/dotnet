@@ -12,6 +12,7 @@
     "areaPath": "DevDiv\\NET Developer Experience\\Razor Tooling",
     "iterationPath": "DevDiv",
     "tools": [
-        "APIScan"
+        "APIScan",
+        "BinSkim"
     ]
 }
