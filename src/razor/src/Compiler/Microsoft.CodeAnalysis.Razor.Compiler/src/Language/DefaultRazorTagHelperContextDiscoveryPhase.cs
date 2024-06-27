@@ -53,22 +53,25 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
             visitor = new TagHelperDirectiveVisitor(descriptors, matches);
         }
 
-        if (codeDocument.GetImportSyntaxTrees() is { IsDefault: false } imports)
+        using (visitor)
         {
-            foreach (var import in imports)
+            if (codeDocument.GetImportSyntaxTrees() is { IsDefault: false } imports)
             {
-                visitor.Visit(import);
+                foreach (var import in imports)
+                {
+                    visitor.Visit(import);
+                }
             }
+
+            visitor.Visit(syntaxTree);
+
+            // This will always be null for a component document.
+            var tagHelperPrefix = visitor.TagHelperPrefix;
+
+            var context = TagHelperDocumentContext.Create(tagHelperPrefix, matches.ToImmutableArray());
+            codeDocument.SetTagHelperContext(context);
+            codeDocument.SetPreTagHelperSyntaxTree(syntaxTree);
         }
-
-        visitor.Visit(syntaxTree);
-
-        // This will always be null for a component document.
-        var tagHelperPrefix = visitor.TagHelperPrefix;
-
-        var context = TagHelperDocumentContext.Create(tagHelperPrefix, matches.ToImmutableArray());
-        codeDocument.SetTagHelperContext(context);
-        codeDocument.SetPreTagHelperSyntaxTree(syntaxTree);
     }
 
     private static bool MatchesDirective(TagHelperDescriptor descriptor, string typePattern, string assemblyName)
@@ -106,25 +109,27 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
         return span;
     }
 
-    internal abstract class DirectiveVisitor(HashSet<TagHelperDescriptor> matches) : SyntaxWalker
+    internal abstract class DirectiveVisitor(HashSet<TagHelperDescriptor> matches) : SyntaxWalker, IDisposable
     {
         protected readonly HashSet<TagHelperDescriptor> Matches = matches;
 
         public abstract string TagHelperPrefix { get; }
 
         public abstract void Visit(RazorSyntaxTree tree);
+
+        public abstract void Dispose();
     }
 
     internal sealed class TagHelperDirectiveVisitor : DirectiveVisitor
     {
-        private readonly List<TagHelperDescriptor> _tagHelpers;
+        private List<TagHelperDescriptor> _tagHelpers;
         private string _tagHelperPrefix;
 
         public TagHelperDirectiveVisitor(IReadOnlyList<TagHelperDescriptor> tagHelpers, HashSet<TagHelperDescriptor> matches)
             : base(matches)
         {
             // We don't want to consider components in a view document.
-            _tagHelpers = new();
+            _tagHelpers = ListPool<TagHelperDescriptor>.Default.Get();
 
             for (var i = 0; i < tagHelpers.Count; i++)
             {
@@ -229,11 +234,20 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
 
             return false;
         }
+
+        public override void Dispose()
+        {
+            if (_tagHelpers != null)
+            {
+                ListPool<TagHelperDescriptor>.Default.Return(_tagHelpers);
+                _tagHelpers = null;
+            }
+        }
     }
 
     internal sealed class ComponentDirectiveVisitor : DirectiveVisitor
     {
-        private readonly ImmutableArray<TagHelperDescriptor> _notFullyQualifiedComponents;
+        private List<TagHelperDescriptor> _notFullyQualifiedComponents;
         private readonly string _filePath;
         private RazorSourceDocument _source;
 
@@ -242,7 +256,7 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
         {
             _filePath = filePath;
 
-            using var builder = new PooledArrayBuilder<TagHelperDescriptor>(capacity: tagHelpers.Count);
+            _notFullyQualifiedComponents = ListPool<TagHelperDescriptor>.Default.Get();
 
             for (var i = 0; i < tagHelpers.Count; i++)
             {
@@ -260,7 +274,7 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
                     continue;
                 }
 
-                builder.Add(tagHelper);
+                _notFullyQualifiedComponents.Add(tagHelper);
 
                 if (currentNamespace is null)
                 {
@@ -282,8 +296,6 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
                     Matches.Add(tagHelper);
                 }
             }
-
-            _notFullyQualifiedComponents = builder.DrainToImmutable();
         }
 
         // There is no support for tag helper prefix in component documents.
@@ -426,6 +438,15 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
         internal static bool IsTagHelperFromMangledClass(TagHelperDescriptor tagHelper)
         {
             return ComponentMetadata.IsMangledClass(tagHelper.GetTypeNameIdentifier());
+        }
+
+        public override void Dispose()
+        {
+            if (_notFullyQualifiedComponents != null)
+            {
+                ListPool<TagHelperDescriptor>.Default.Return(_notFullyQualifiedComponents);
+                _notFullyQualifiedComponents = null;
+            }
         }
     }
 }
