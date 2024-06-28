@@ -36,12 +36,6 @@
       "replaces": "net9.0",
       "defaultValue": "net9.0"
     },
-    "EnablePack": {
-      "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "false",
-      "description": "Whether or not to enable packaging (via \"dotnet pack\") for the project."
-    },
     "HostIdentifier": {
       "type": "bind",
       "binding": "host:HostIdentifier"
@@ -51,6 +45,14 @@
       "datatype": "bool",
       "description": "If specified, skips the automatic restore of the project on create.",
       "defaultValue": "false"
+    },
+    "langVersion": {
+      "type": "parameter",
+      "datatype": "text",
+      "description": "Sets the LangVersion property in the created project file",
+      "defaultValue": "latest",
+      "replaces": "$(ProjectLanguageVersion)",
+      "displayName": "Language version"
     }
   },
   "primaryOutputs": [
