@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>9.0.0-preview.6.24327.7</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>54700bbee86f660d37bd519a905b62bb50adc8c8</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24279.2</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>e68e429fef2e624762f69adc613dcb6569201acc</sdkGitCommitHash>
+    <sdkGitCommitHash>39b754044aa4d43c786c9822db9ef6a388eda948</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>9a2785b8409e4ee8db848cc2fbfa19b3316a3baa</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24320.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>9ae78a4e6412926d19ba97cfed159bf9de70b538</sourcebuildreferencepackagesGitCommitHash>
@@ -50,12 +50,12 @@
     <testtemplatesOutputPackageVersion>1.1.0-rc.24317.1</testtemplatesOutputPackageVersion>
     <vstestGitCommitHash>5b69fd31169dd07ced917329bbb483f3b73ea98f</vstestGitCommitHash>
     <vstestOutputPackageVersion>17.11.0-preview-24320-06</vstestOutputPackageVersion>
-    <windowsdesktopGitCommitHash>d3fdef2e74038f5e9d12a4d98cf435d944faaa2e</windowsdesktopGitCommitHash>
-    <windowsdesktopOutputPackageVersion>9.0.0-preview.6.24322.3</windowsdesktopOutputPackageVersion>
-    <winformsGitCommitHash>5e2c470d4eef498573c9be2a5334a42e0b238120</winformsGitCommitHash>
-    <winformsOutputPackageVersion>9.0.0-preview.6.24322.2</winformsOutputPackageVersion>
-    <wpfGitCommitHash>09042565754fc3e627021377138e4ecdb1e08cd0</wpfGitCommitHash>
-    <wpfOutputPackageVersion>9.0.0-preview.6.24322.3</wpfOutputPackageVersion>
+    <windowsdesktopGitCommitHash>f226f55f1c8ff221e99559915d52711fdf638a61</windowsdesktopGitCommitHash>
+    <windowsdesktopOutputPackageVersion>9.0.0-preview.6.24327.6</windowsdesktopOutputPackageVersion>
+    <winformsGitCommitHash>8dd0293125e7be7d7215bfdca6c5adc7286d7859</winformsGitCommitHash>
+    <winformsOutputPackageVersion>9.0.0-preview.6.24327.6</winformsOutputPackageVersion>
+    <wpfGitCommitHash>52a24b19407405ad048267676f7f105f4b2f05e8</wpfGitCommitHash>
+    <wpfOutputPackageVersion>9.0.0-preview.6.24327.8</wpfOutputPackageVersion>
     <xdtGitCommitHash>0d51607fb791c51a14b552ed24fe3430c252148b</xdtGitCommitHash>
     <xdtOutputPackageVersion>9.0.0-preview.24317.2</xdtOutputPackageVersion>
     <xlifftasksGitCommitHash>73f0850939d96131c28cf6ea6ee5aacb4da0083a</xlifftasksGitCommitHash>
