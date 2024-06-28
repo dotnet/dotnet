@@ -21,7 +21,7 @@ public class RazorProjectInfoSerializerTest(ITestOutputHelper testOutputHelper) 
                     .WithFilePath("virtualcsharp-razor:///e:/Scratch/RazorInConsole/Goo.cshtml__virtual.cs")
                     .Project;
 
-        var documents = RazorProjectInfoSerializer.GetDocuments(project, "temp");
+        var documents = RazorProjectInfoFactory.GetDocuments(project, "temp");
 
         Assert.Single(documents);
     }
@@ -35,7 +35,7 @@ public class RazorProjectInfoSerializerTest(ITestOutputHelper testOutputHelper) 
 
         project = workspace.CurrentSolution.GetProject(project.Id)!;
 
-        var documents = RazorProjectInfoSerializer.GetDocuments(project, "temp");
+        var documents = RazorProjectInfoFactory.GetDocuments(project, "temp");
 
         Assert.Single(documents);
     }
@@ -53,7 +53,7 @@ public class RazorProjectInfoSerializerTest(ITestOutputHelper testOutputHelper) 
             .WithFilePath("virtualcsharp-razor:///e:/Scratch/RazorInConsole/Another.cshtml__virtual.cs")
             .Project;
 
-        var documents = RazorProjectInfoSerializer.GetDocuments(project, "temp");
+        var documents = RazorProjectInfoFactory.GetDocuments(project, "temp");
 
         Assert.Single(documents);
     }
@@ -71,7 +71,7 @@ public class RazorProjectInfoSerializerTest(ITestOutputHelper testOutputHelper) 
             .WithFilePath("virtualcsharp-razor:///e:/Scratch/RazorInConsole/Another.cshtml__virtual.cs")
             .Project;
 
-        var documents = RazorProjectInfoSerializer.GetDocuments(project, "temp");
+        var documents = RazorProjectInfoFactory.GetDocuments(project, "temp");
 
         Assert.Single(documents);
     }
@@ -85,7 +85,7 @@ public class RazorProjectInfoSerializerTest(ITestOutputHelper testOutputHelper) 
             .WithFilePath("e:/Scratch/RazorInConsole/Goo.cs")
             .Project;
 
-        var documents = RazorProjectInfoSerializer.GetDocuments(project, "temp");
+        var documents = RazorProjectInfoFactory.GetDocuments(project, "temp");
 
         Assert.Empty(documents);
     }

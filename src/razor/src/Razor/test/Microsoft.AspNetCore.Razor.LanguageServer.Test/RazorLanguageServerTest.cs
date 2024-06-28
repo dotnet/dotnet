@@ -2,13 +2,19 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Nerdbank.Streams;
 using Xunit;
@@ -21,8 +27,8 @@ public class RazorLanguageServerTest(ITestOutputHelper testOutput) : ToolingTest
     [Fact]
     public async Task LocaleIsSetCorrectly()
     {
-        var (clientStream, serverStream) = FullDuplexStream.CreatePair();
-        using var host = RazorLanguageServerHost.Create(serverStream, serverStream, LoggerFactory, NoOpTelemetryReporter.Instance);
+        var (_, serverStream) = FullDuplexStream.CreatePair();
+        using var host = CreateLanguageServerHost(serverStream, serverStream);
 
         var server = host.GetTestAccessor().Server;
         server.Initialize();
@@ -49,8 +55,8 @@ public class RazorLanguageServerTest(ITestOutputHelper testOutput) : ToolingTest
     [Fact]
     public void AllHandlersRegisteredAsync()
     {
-        var (clientStream, serverStream) = FullDuplexStream.CreatePair();
-        using var host = RazorLanguageServerHost.Create(serverStream, serverStream, LoggerFactory, NoOpTelemetryReporter.Instance);
+        var (_, serverStream) = FullDuplexStream.CreatePair();
+        using var host = CreateLanguageServerHost(serverStream, serverStream);
 
         var server = host.GetTestAccessor().Server;
         var handlerProvider = server.GetTestAccessor().HandlerProvider;
@@ -91,6 +97,39 @@ public class RazorLanguageServerTest(ITestOutputHelper testOutput) : ToolingTest
             }
 
             return attribute.Method;
+        }
+    }
+
+    private RazorLanguageServerHost CreateLanguageServerHost(Stream input, Stream output)
+    {
+        return RazorLanguageServerHost.Create(
+            input,
+            output,
+            LoggerFactory,
+            NoOpTelemetryReporter.Instance,
+            configureServices: s =>
+            {
+                s.AddSingleton<IRazorProjectInfoDriver, TestProjectInfoDriver>();
+
+                // VS Code only handler is added by rzls, but add here for testing purposes
+                s.AddHandler<RazorNamedPipeConnectHandler>();
+            });
+    }
+
+    private class TestProjectInfoDriver : IRazorProjectInfoDriver
+    {
+        public void AddListener(IRazorProjectInfoListener listener)
+        {
+        }
+
+        public ImmutableArray<RazorProjectInfo> GetLatestProjectInfo()
+        {
+            return ImmutableArray<RazorProjectInfo>.Empty;
+        }
+
+        public Task WaitForInitializationAsync()
+        {
+            return Task.CompletedTask;
         }
     }
 }

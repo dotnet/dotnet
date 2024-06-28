@@ -19,8 +19,6 @@ internal class RemoteLanguageServerFeatureOptions : LanguageServerFeatureOptions
 
     public override bool SupportsFileManipulation => throw new InvalidOperationException("This option has not been synced to OOP.");
 
-    public override string ProjectConfigurationFileName => throw new InvalidOperationException("This option has not been synced to OOP.");
-
     public override string CSharpVirtualDocumentSuffix => s_options.CSharpVirtualDocumentSuffix;
 
     public override string HtmlVirtualDocumentSuffix => s_options.HtmlVirtualDocumentSuffix;

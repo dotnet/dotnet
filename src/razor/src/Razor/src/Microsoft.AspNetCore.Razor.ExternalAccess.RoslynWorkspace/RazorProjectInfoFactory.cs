@@ -19,31 +19,31 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace;
 
-internal static class RazorProjectInfoSerializer
+internal static class RazorProjectInfoFactory
 {
     private static readonly StringComparison s_stringComparison;
 
-    static RazorProjectInfoSerializer()
+    static RazorProjectInfoFactory()
     {
         s_stringComparison = RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
             ? StringComparison.Ordinal
             : StringComparison.OrdinalIgnoreCase;
     }
 
-    public static async Task SerializeAsync(Project project, string configurationFileName, ILogger? logger, CancellationToken cancellationToken)
+    public static async Task<RazorProjectInfo?> ConvertAsync(Project project, ILogger? logger, CancellationToken cancellationToken)
     {
         var projectPath = Path.GetDirectoryName(project.FilePath);
         if (projectPath is null)
         {
-            logger?.LogTrace("projectPath is null, skipping writing info for {projectId}", project.Id);
-            return;
+            logger?.LogInformation("projectPath is null, skip conversion for {projectId}", project.Id);
+            return null;
         }
 
         var intermediateOutputPath = Path.GetDirectoryName(project.CompilationOutputInfo.AssemblyPath);
         if (intermediateOutputPath is null)
         {
-            logger?.LogTrace("intermediatePath is null, skipping writing info for {projectId}", project.Id);
-            return;
+            logger?.LogInformation("intermediatePath is null, skip conversion for {projectId}", project.Id);
+            return null;
         }
 
         // First, lets get the documents, because if there aren't any, we can skip out early
@@ -52,8 +52,16 @@ internal static class RazorProjectInfoSerializer
         // Not a razor project
         if (documents.Length == 0)
         {
-            logger?.LogTrace("No razor documents for {projectId}", project.Id);
-            return;
+            if (project.DocumentIds.Count == 0)
+            {
+                logger?.LogInformation("No razor documents for {projectId}", project.Id);
+            }
+            else
+            {
+                logger?.LogTrace("No documents in {projectId}", project.Id);
+            }
+            
+            return null;
         }
 
         var csharpLanguageVersion = (project.ParseOptions as CSharpParseOptions)?.LanguageVersion ?? LanguageVersion.Default;
@@ -86,9 +94,7 @@ internal static class RazorProjectInfoSerializer
 
         var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers, csharpLanguageVersion);
 
-        var configurationFilePath = Path.Combine(intermediateOutputPath, configurationFileName);
-
-        var projectInfo = new RazorProjectInfo(
+        return new RazorProjectInfo(
             projectKey: new ProjectKey(intermediateOutputPath),
             filePath: project.FilePath!,
             configuration: configuration,
@@ -96,8 +102,6 @@ internal static class RazorProjectInfoSerializer
             displayName: project.Name,
             projectWorkspaceState: projectWorkspaceState,
             documents: documents);
-
-        WriteToFile(configurationFilePath, projectInfo, logger);
     }
 
     private static RazorConfiguration ComputeRazorConfigurationOptions(AnalyzerConfigOptionsProvider options, ILogger? logger, out string defaultNamespace)
@@ -124,38 +128,6 @@ internal static class RazorProjectInfoSerializer
         defaultNamespace = rootNamespace ?? "ASP"; // TODO: Source generator does this. Do we want it?
 
         return razorConfiguration;
-    }
-
-    private static void WriteToFile(string configurationFilePath, RazorProjectInfo projectInfo, ILogger? logger)
-    {
-        // We need to avoid having an incomplete file at any point, but our
-        // project configuration is large enough that it will be written as multiple operations.
-        var tempFilePath = string.Concat(configurationFilePath, ".temp");
-        var tempFileInfo = new FileInfo(tempFilePath);
-
-        if (tempFileInfo.Exists)
-        {
-            // This could be caused by failures during serialization or early process termination.
-            logger?.LogTrace("deleting existing file {filePath}", tempFilePath);
-            tempFileInfo.Delete();
-        }
-
-        // This needs to be in explicit brackets because the operation needs to be completed
-        // by the time we move the temp file into its place
-        using (var stream = tempFileInfo.Create())
-        {
-            projectInfo.SerializeTo(stream);
-        }
-
-        var fileInfo = new FileInfo(configurationFilePath);
-        if (fileInfo.Exists)
-        {
-            logger?.LogTrace("deleting existing file {filePath}", configurationFilePath);
-            fileInfo.Delete();
-        }
-
-        logger?.LogTrace("Moving {tmpPath} to {newPath}", tempFilePath, configurationFilePath);
-        File.Move(tempFileInfo.FullName, configurationFilePath);
     }
 
     internal static ImmutableArray<DocumentSnapshotHandle> GetDocuments(Project project, string projectPath)
