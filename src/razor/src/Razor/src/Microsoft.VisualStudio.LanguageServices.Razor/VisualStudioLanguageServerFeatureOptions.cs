@@ -76,8 +76,6 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
     // We don't currently support file creation operations on VS Codespaces or VS Liveshare
     public override bool SupportsFileManipulation => !IsCodespacesOrLiveshare;
 
-    // In VS we override the project configuration file name because we don't want our serialized state to clash with other platforms (VSCode)
-    public override string ProjectConfigurationFileName => "project.razor.vs.bin";
 
     public override string CSharpVirtualDocumentSuffix => ".ide.g.cs";
 

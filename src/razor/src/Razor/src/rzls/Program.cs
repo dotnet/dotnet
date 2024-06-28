@@ -7,9 +7,12 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -85,7 +88,12 @@ public class Program
             Console.OpenStandardOutput(),
             loggerFactory,
             devKitTelemetryReporter ?? NoOpTelemetryReporter.Instance,
-            featureOptions: languageServerFeatureOptions);
+            featureOptions: languageServerFeatureOptions,
+            configureServices: static services =>
+            {
+                services.AddSingleton<IRazorProjectInfoDriver, NamedPipeBasedRazorProjectInfoDriver>();
+                services.AddHandler<RazorNamedPipeConnectHandler>();
+            });
 
         // Now we have a server, and hence a connection, we have somewhere to log
         var clientConnection = host.GetRequiredService<IClientConnection>();

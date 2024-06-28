@@ -11,7 +11,6 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
     private readonly LanguageServerFeatureOptions _defaults = new DefaultLanguageServerFeatureOptions();
 
     private readonly bool? _supportsFileManipulation;
-    private readonly string? _projectConfigurationFileName;
     private readonly string? _csharpVirtualDocumentSuffix;
     private readonly string? _htmlVirtualDocumentSuffix;
     private readonly bool? _singleServerCompletionSupport;
@@ -27,7 +26,6 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
     private readonly bool? _forceRuntimeCodeGeneration;
 
     public override bool SupportsFileManipulation => _supportsFileManipulation ?? _defaults.SupportsFileManipulation;
-    public override string ProjectConfigurationFileName => _projectConfigurationFileName ?? _defaults.ProjectConfigurationFileName;
     public override string CSharpVirtualDocumentSuffix => _csharpVirtualDocumentSuffix ?? DefaultLanguageServerFeatureOptions.DefaultCSharpVirtualDocumentSuffix;
     public override string HtmlVirtualDocumentSuffix => _htmlVirtualDocumentSuffix ?? DefaultLanguageServerFeatureOptions.DefaultHtmlVirtualDocumentSuffix;
     public override bool SingleServerCompletionSupport => _singleServerCompletionSupport ?? _defaults.SingleServerCompletionSupport;
@@ -52,7 +50,6 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
             }
 
             TryProcessBoolOption(nameof(SupportsFileManipulation), ref _supportsFileManipulation, option, args, i);
-            TryProcessStringOption(nameof(ProjectConfigurationFileName), ref _projectConfigurationFileName, option, args, i);
             TryProcessStringOption(nameof(CSharpVirtualDocumentSuffix), ref _csharpVirtualDocumentSuffix, option, args, i);
             TryProcessStringOption(nameof(HtmlVirtualDocumentSuffix), ref _htmlVirtualDocumentSuffix, option, args, i);
             TryProcessBoolOption(nameof(SingleServerCompletionSupport), ref _singleServerCompletionSupport, option, args, i);

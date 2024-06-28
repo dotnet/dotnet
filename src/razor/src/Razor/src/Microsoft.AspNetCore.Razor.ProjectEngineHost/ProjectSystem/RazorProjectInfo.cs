@@ -76,6 +76,9 @@ internal sealed record class RazorProjectInfo
         return hash.CombinedHash;
     }
 
+    public byte[] Serialize()
+        => MessagePackSerializer.Serialize(this, s_options);
+
     public void SerializeTo(IBufferWriter<byte> bufferWriter)
         => MessagePackSerializer.Serialize(bufferWriter, this, s_options);
 

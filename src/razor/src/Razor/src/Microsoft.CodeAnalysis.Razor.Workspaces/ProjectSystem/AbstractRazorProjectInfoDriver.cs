@@ -53,7 +53,11 @@ internal abstract partial class AbstractRazorProjectInfoDriver : IRazorProjectIn
 
         _disposeTokenSource.Cancel();
         _disposeTokenSource.Dispose();
+
+        OnDispose();
     }
+
+    protected virtual void OnDispose() { }
 
     public Task WaitForInitializationAsync()
     {
@@ -98,10 +102,12 @@ internal abstract partial class AbstractRazorProjectInfoDriver : IRazorProjectIn
                 switch (work)
                 {
                     case Update(var projectInfo):
+                        Logger?.LogTrace($"Sending update for {projectInfo.FilePath} with {projectInfo.ProjectWorkspaceState.TagHelpers.Length} TagHelpers");
                         _latestProjectInfoMap[projectInfo.ProjectKey] = projectInfo;
                         break;
 
                     case Remove(var projectKey):
+                        Logger?.LogTrace($"Removing {projectKey.Id}");
                         _latestProjectInfoMap.Remove(projectKey);
                         break;
 
