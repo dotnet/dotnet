@@ -61,10 +61,10 @@
       "commitSha": "b24f5df4ddfb9ae10cf53381380f7d934c2026ef"
     },
     {
-      "packageVersion": "17.12.0-preview-24326-05",
+      "packageVersion": "17.12.0-preview-24328-02",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "30563992824329573884da87b01f64b81ddc1105"
+      "commitSha": "671434e9205da3a9e091057b5aa92d908d66fc70"
     },
     {
       "packageVersion": "6.11.0-rc.110",
@@ -73,10 +73,10 @@
       "commitSha": "d1d2e260de9b8f20175e7766aa88e1ce1ece6b4e"
     },
     {
-      "packageVersion": "9.0.0-preview.24327.6",
+      "packageVersion": "9.0.0-preview.24328.1",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "06ba1873724c6fb0b5c5fa427c683ba55906d810"
+      "commitSha": "1e807699db6db8bfe7c6b3043a1b50ddf32ddba9"
     },
     {
       "packageVersion": "4.12.0-1.24327.10",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "e80b6ebc8b92ce2026f82cbfa34257d05d58cf83"
+      "commitSha": "bc84728d164b5d0716555acb7a60ea3e4f801efc"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24324.1",
