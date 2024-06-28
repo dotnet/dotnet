@@ -51,6 +51,14 @@
       "datatype": "bool",
       "description": "If specified, skips the automatic restore of the project on create.",
       "defaultValue": "false"
+    },
+    "langVersion": {
+      "type": "parameter",
+      "datatype": "text",
+      "description": "Sets the LangVersion property in the created project file",
+      "defaultValue": "latest",
+      "replaces": "$(ProjectLanguageVersion)",
+      "displayName": "Language version"
     }
   },
   "primaryOutputs": [
