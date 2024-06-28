@@ -19,10 +19,10 @@
     <efcoreOutputPackageVersion>9.0.0-preview.6.24318.1</efcoreOutputPackageVersion>
     <emsdkGitCommitHash>ffe9afdc046cf7a6f82cc7c5796aade54047af64</emsdkGitCommitHash>
     <emsdkOutputPackageVersion>9.0.0-preview.7.24319.4</emsdkOutputPackageVersion>
-    <fsharpGitCommitHash>556819c570c803598b7f610639bdc6d35b12f2f7</fsharpGitCommitHash>
-    <fsharpOutputPackageVersion>8.0.400-beta.24325.8</fsharpOutputPackageVersion>
-    <msbuildGitCommitHash>fb4bc63bbd7a3e150ec53432ae4a467ef64ef72f</msbuildGitCommitHash>
-    <msbuildOutputPackageVersion>17.12.0-preview-24326-04</msbuildOutputPackageVersion>
+    <fsharpGitCommitHash>b24f5df4ddfb9ae10cf53381380f7d934c2026ef</fsharpGitCommitHash>
+    <fsharpOutputPackageVersion>8.0.400-beta.24327.3</fsharpOutputPackageVersion>
+    <msbuildGitCommitHash>30563992824329573884da87b01f64b81ddc1105</msbuildGitCommitHash>
+    <msbuildOutputPackageVersion>17.12.0-preview-24326-05</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>d1d2e260de9b8f20175e7766aa88e1ce1ece6b4e</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.11.0-rc.110</nugetclientOutputPackageVersion>
     <razorGitCommitHash>51439b41a664739b1a26578c081b3f1ed15ccf21</razorGitCommitHash>
@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>9.0.0-preview.7.24327.4</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>54700bbee86f660d37bd519a905b62bb50adc8c8</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24279.2</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>bc21e7913d81c624b2b218b0c6c034c097b0da6b</sdkGitCommitHash>
+    <sdkGitCommitHash>95e1a9076b13640f95382237980dfe9227635135</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>311ef7fef52828f4a70a94d13e32c394fd3292ee</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24324.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>0b53e839fa2f09a5994cc6006533dcc3d45a4226</sourcebuildreferencepackagesGitCommitHash>
