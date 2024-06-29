@@ -54,13 +54,7 @@ namespace NuGet.Test.Utility
                     File.WriteAllText(Path.Combine(testDirectory.FullName, "Directory.Solution.props"), "<Project />");
                     File.WriteAllText(Path.Combine(testDirectory.FullName, "Directory.Solution.targets"), "<Project />");
                     File.WriteAllText(Path.Combine(testDirectory.FullName, "Directory.Build.rsp"), string.Empty);
-                    File.WriteAllText(
-                        Path.Combine(testDirectory.FullName, "Directory.Packages.props"),
-                        @"<Project>
-  <PropertyGroup>
-    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
-  </PropertyGroup>
-</Project>");
+                    File.WriteAllText(Path.Combine(testDirectory.FullName, "Directory.Packages.props"), "<Project />");
                 }
                 catch (Exception)
                 {

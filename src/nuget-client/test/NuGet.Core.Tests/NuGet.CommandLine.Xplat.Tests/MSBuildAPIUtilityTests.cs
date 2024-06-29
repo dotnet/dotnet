@@ -46,7 +46,13 @@ namespace NuGet.CommandLine.Xplat.Tests
                 ProjectCollection = projectCollection
             };
 
-            File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), @$"<Project />");
+            var propsFile =
+@$"<Project>
+    <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), propsFile);
 
             string projectContent =
 @$"<Project Sdk=""Microsoft.NET.Sdk"">    
@@ -200,7 +206,13 @@ namespace NuGet.CommandLine.Xplat.Tests
             };
 
             // Arrange Directory.Packages.props file
-            File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), "<Project />");
+            var propsFile =
+@$"<Project>
+    <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), propsFile);
 
             // Arrange project file
             string projectContent =
@@ -261,8 +273,11 @@ namespace NuGet.CommandLine.Xplat.Tests
             // Arrange Directory.Packages.props file
             var propsFile =
 @$"<Project>
+    <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
     <ItemGroup>
-        <PackageVersion Include=""X"" Version=""1.0.0"" />
+    <PackageVersion Include=""X"" Version=""1.0.0"" />
     </ItemGroup>
 </Project>";
             File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), propsFile);
@@ -327,8 +342,11 @@ namespace NuGet.CommandLine.Xplat.Tests
             // Arrange Directory.Packages.props file
             var propsFile =
 @$"<Project>
+    <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
     <ItemGroup>
-        <PackageVersion Include=""X"" Version=""1.0.0"" />
+    <PackageVersion Include=""X"" Version=""1.0.0"" />
     </ItemGroup>
 </Project>";
             File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), propsFile);
@@ -393,8 +411,11 @@ namespace NuGet.CommandLine.Xplat.Tests
             // Arrange Directory.Packages.props file
             var propsFile =
 @$"<Project>
+    <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
     <ItemGroup>
-        <PackageVersion Include=""X"" Version=""1.0.0"" />
+    <PackageVersion Include=""X"" Version=""1.0.0"" />
     </ItemGroup>
 </Project>";
             File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), propsFile);

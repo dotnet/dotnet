@@ -105,8 +105,6 @@
     "Microsoft.VisualStudio.ComponentGroup.AdditionalWebProjectTemplates",
     "Microsoft.VisualStudio.ComponentGroup.Maui.iOS",
     "Component.xamarin",
-    "runtimes.ios",
-    "Microsoft.VisualStudio.Workload.NetCrossPlat",
-    "Component.Android.SDK.MAUI"
+    "runtimes.ios"
   ]
 }
