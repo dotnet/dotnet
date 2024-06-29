@@ -13,8 +13,7 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Query.Internal;
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
 [DebuggerDisplay("{Microsoft.EntityFrameworkCore.Query.ExpressionPrinter.Print(this), nq}")]
-public abstract class SqlExpression(Type type, CoreTypeMapping? typeMapping)
-    : Expression, IPrintableExpression
+public abstract class SqlExpression(Type type, CoreTypeMapping? typeMapping) : Expression, IPrintableExpression
 {
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -74,9 +73,8 @@ public abstract class SqlExpression(Type type, CoreTypeMapping? typeMapping)
                 || obj is SqlExpression sqlExpression
                 && Equals(sqlExpression));
 
-    private bool Equals(SqlExpression sqlExpression)
-        => Type == sqlExpression.Type
-            && TypeMapping?.Equals(sqlExpression.TypeMapping) == true;
+    private bool Equals(SqlExpression other)
+        => Type == other.Type && TypeMapping?.Equals(other.TypeMapping) == true;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to

@@ -13,10 +13,10 @@
       "commitSha": "9faf59f870abdeb427c51c1380fce84d8163f2f0"
     },
     {
-      "packageVersion": "9.0.0-preview.7.24321.1",
+      "packageVersion": "9.0.0-preview.7.24328.7",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "28481ab0d6a31883a6c058d045ca8f72591a7eca"
+      "commitSha": "77994c64cee73e0093fe25cd434bee8bd2580b4e"
     },
     {
       "packageVersion": "0.11.4-alpha.24313.1",
@@ -43,10 +43,10 @@
       "commitSha": "33d8bf23a6566cd3fb9055acfc9f1141391d5421"
     },
     {
-      "packageVersion": "9.0.0-preview.6.24318.1",
+      "packageVersion": "9.0.0-preview.7.24322.1",
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "9a80b6b085fbe20cdb1c60b549947ecabefe9172"
+      "commitSha": "ecd6104d7db803a976116a49d5855bce85634051"
     },
     {
       "packageVersion": "9.0.0-preview.7.24319.4",
@@ -79,10 +79,10 @@
       "commitSha": "1e807699db6db8bfe7c6b3043a1b50ddf32ddba9"
     },
     {
-      "packageVersion": "4.12.0-1.24327.10",
+      "packageVersion": "4.12.0-1.24328.12",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "7039c4c223e84299eeb3f05d1d5a08a63ee7d6ac"
+      "commitSha": "5db6d5cb2374e63fcb872ff3206b7a34c63926bf"
     },
     {
       "packageVersion": "3.11.0-beta1.24324.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "a6b5d017d4aadcb5cc2bc21352c6e83c559b26d6"
+      "commitSha": "a081e8d8cdcce5cb0b0329cf68cf190060e870a6"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24324.1",
