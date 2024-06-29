@@ -5198,10 +5198,10 @@ namespace ClassLibrary
         }
 
         [PlatformTheory(Platform.Windows)]
-        [InlineData(false)]
-        [InlineData(true)]
+        [InlineData("false")]
+        [InlineData("true")]
         [InlineData(null)]
-        public void PackCommand_PackProjectWithCentralTransitiveDependencies(bool? centralPackageTransitivePinningEnabled)
+        public void PackCommand_PackProjectWithCentralTransitiveDependencies(string CentralPackageTransitivePinningEnabled)
         {
             using (var testDirectory = _dotnetFixture.CreateTestDirectory())
             {
@@ -5224,24 +5224,33 @@ namespace ClassLibrary
                         new Dictionary<string, string>(),
                         new Dictionary<string, string>());
 
-                    if (centralPackageTransitivePinningEnabled.HasValue)
+                    ProjectFileUtils.AddProperty(
+                        xml,
+                        ProjectBuildProperties.ManagePackageVersionsCentrally,
+                        "true");
+
+                    if (CentralPackageTransitivePinningEnabled != null)
                     {
                         ProjectFileUtils.AddProperty(
                             xml,
                             ProjectBuildProperties.CentralPackageTransitivePinningEnabled,
-                            centralPackageTransitivePinningEnabled.ToString());
+                            CentralPackageTransitivePinningEnabled);
                     }
 
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
                 }
 
                 // The test depends on the presence of these packages and their versions.
-                var directoryPackagesPropsName = Path.Combine(workingDirectory, "Directory.Packages.props");
+                // Change to Directory.Packages.props when new cli that supports NuGet.props will be downloaded
+                var directoryPackagesPropsName = Path.Combine(workingDirectory, $"Directory.Build.props");
                 var directoryPackagesPropsContent = @"<Project>
                         <ItemGroup>
-                            <PackageVersion Include=""Moq"" Version=""4.10.0""/>
-                            <PackageVersion Include=""Castle.Core"" Version=""4.4.0""/>
+                            <PackageVersion Include = ""Moq"" Version = ""4.10.0""/>
+                            <PackageVersion Include = ""Castle.Core"" Version = ""4.4.0""/>
                         </ItemGroup>
+                        <PropertyGroup>
+	                        <CentralPackageVersionsFileImported>true</CentralPackageVersionsFileImported>
+                        </PropertyGroup>
                     </Project>";
                 File.WriteAllText(directoryPackagesPropsName, directoryPackagesPropsContent);
 
@@ -5262,7 +5271,7 @@ namespace ClassLibrary
                     Assert.Equal(1, dependencyGroups.Count);
                     Assert.Equal(FrameworkConstants.CommonFrameworks.NetStandard20, dependencyGroups[0].TargetFramework);
                     var packages = dependencyGroups[0].Packages.ToList();
-                    if (centralPackageTransitivePinningEnabled == true)
+                    if (CentralPackageTransitivePinningEnabled == "true")
                     {
                         Assert.Equal(2, packages.Count);
                         var moqPackage = packages.Where(p => p.Id.Equals("Moq", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();

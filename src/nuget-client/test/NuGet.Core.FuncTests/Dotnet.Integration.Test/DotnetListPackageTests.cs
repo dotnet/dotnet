@@ -108,7 +108,10 @@ namespace Dotnet.Integration.Test
 
                 var propsFile =
 @$"<Project>
-   <ItemGroup>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+    <ItemGroup>
         <PackageVersion Include=""X"" Version=""[0.1.0,)"" />
     </ItemGroup>
 </Project>";
@@ -159,6 +162,9 @@ namespace Dotnet.Integration.Test
 
                 var propsFile =
 @$"<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
     <ItemGroup>
         <PackageVersion Include=""X"" Version=""2.0.0"" />
     </ItemGroup>
@@ -208,6 +214,9 @@ namespace Dotnet.Integration.Test
 
                 var propsFile =
 @$"<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
     <ItemGroup>
         <GlobalPackageReference Include=""X"" Version=""0.1.0"" />
     </ItemGroup>

@@ -697,7 +697,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -740,7 +745,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -781,10 +791,14 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-  <ItemGroup>
-    <PackageVersion Include=""X"" Version=""1.0.0"" />
-  </ItemGroup>
-</Project>";
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -828,10 +842,14 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-  <ItemGroup>
-    <PackageVersion Include=""X"" Version=""1.0.0"" />
-  </ItemGroup>
-</Project>";
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -874,6 +892,9 @@ namespace Dotnet.Integration.Test
                     packageX100);
 
             var propsFile = @$"<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
   <ItemGroup>
     <Content Include=""SomeFile"" />
   </ItemGroup>
@@ -928,7 +949,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -985,7 +1011,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1043,10 +1074,14 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-    <ItemGroup>
-        <PackageVersion Include=""X"" Version=""1.0.0"" />
-    </ItemGroup>
-</Project>";
+                                <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                    <ItemGroup>
+                                        <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                    </ItemGroup>
+                                </PropertyGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1068,11 +1103,13 @@ namespace Dotnet.Integration.Test
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
 
             //Act
-            var result = _fixture.RunDotnetExpectSuccess(projectADirectory, $"add {projectA.ProjectPath} package {packageX}", testOutputHelper: _testOutputHelper);
+            var result = _fixture.RunDotnetExpectFailure(projectADirectory, $"add {projectA.ProjectPath} package {packageX} ", testOutputHelper: _testOutputHelper);
 
             // Assert
             Assert.DoesNotContain("error: Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: X", result.Output);
-            Assert.Contains(@$"<PackageVersion Include=""{packageX}"" Version=""{version1}"" />", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+            Assert.Contains(@$"<ItemGroup>
+                                        <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                    </ItemGroup>", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
             Assert.Contains(@$"<ItemGroup>
         <PackageReference Include=""X"" />
     </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
@@ -1102,10 +1139,14 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-  <ItemGroup>
-    <PackageVersion Include=""X"" Version=""1.0.0"" />
-  </ItemGroup>
-</Project>";
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1158,7 +1199,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1215,7 +1261,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1272,10 +1323,14 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-  <ItemGroup>
-    <PackageVersion Include=""X"" Version=""1.0.0"" />
-  </ItemGroup>
-</Project>";
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1301,7 +1356,9 @@ namespace Dotnet.Integration.Test
 
             // Assert
             Assert.DoesNotContain("error: Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: X", result.Output);
-            Assert.Contains(@$"<PackageVersion Include=""X"" Version=""1.0.0"" />", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+            Assert.Contains(@$"<ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
             Assert.Contains(@$"<ItemGroup>
         <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
     </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
@@ -1331,10 +1388,14 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-  <ItemGroup>
-    <PackageVersion Include=""X"" Version=""1.0.0"" />
-  </ItemGroup>
-</Project>";
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1391,10 +1452,14 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-  <ItemGroup>
-    <PackageVersion Include=""X"" Version=""1.0.0"" />
-  </ItemGroup>
-</Project>";
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1451,11 +1516,15 @@ namespace Dotnet.Integration.Test
                     packageX200);
 
             var propsFile = @$"<Project>
-  <ItemGroup>
-    <PackageVersion Include=""X"" Version=""1.0.0"" />
-    <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
-  </ItemGroup>
-</Project>";
+                                    <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                    </PropertyGroup>
+                                    <ItemGroup>
+                                    <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                    <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
+                                    </ItemGroup>
+                                </Project>
+                                ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1507,7 +1576,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                    <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                    </PropertyGroup>
+                                </Project>
+                                ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -1564,7 +1638,12 @@ namespace Dotnet.Integration.Test
                     packageX100,
                     packageX200);
 
-            var propsFile = @$"<Project />";
+            var propsFile = @$"<Project>
+                                    <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                    </PropertyGroup>
+                                </Project>
+                                ";
 
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);

@@ -543,8 +543,8 @@ namespace NuGet.PackageManagement.VisualStudio
                     ConfigFilePaths = GetConfigFilePaths(settings),
                     ProjectWideWarningProperties = WarningProperties.GetWarningProperties(
                         treatWarningsAsErrors,
-                        noWarn,
                         warningsAsErrors,
+                        noWarn,
                         warningsNotAsErrors),
                     RestoreLockProperties = new RestoreLockProperties(
                         restorePackagesWithLockFile,

@@ -1308,6 +1308,9 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             File.WriteAllText(
                 Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"),
                 @$"<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
   <ItemGroup>
     <GlobalPackageReference Include=""PackageA"" Version=""1.2.3"" />
     <GlobalPackageReference Include=""PackageB"" Version=""4.5.6"" />

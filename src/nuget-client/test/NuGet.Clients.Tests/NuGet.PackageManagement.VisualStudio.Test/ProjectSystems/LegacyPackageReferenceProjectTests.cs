@@ -1573,11 +1573,11 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
             var warningProperties = actualRestoreSpec.RestoreMetadata.ProjectWideWarningProperties;
             warningProperties.AllWarningsAsErrors.Should().BeTrue();
-            warningProperties.NoWarn.Contains(NuGetLogCode.NU1504);
+            warningProperties.NoWarn.Should().Contain(NuGetLogCode.NU1504);
             warningProperties.NoWarn.Should().HaveCount(1);
-            warningProperties.WarningsNotAsErrors.Contains(NuGetLogCode.NU1801);
+            warningProperties.WarningsNotAsErrors.Should().Contain(NuGetLogCode.NU1801);
             warningProperties.WarningsNotAsErrors.Should().HaveCount(1);
-            warningProperties.WarningsAsErrors.Contains(NuGetLogCode.NU1803);
+            warningProperties.WarningsAsErrors.Should().Contain(NuGetLogCode.NU1803);
             warningProperties.WarningsAsErrors.Should().HaveCount(1);
             // Verify
             projectBuildProperties.VerifyAll();
