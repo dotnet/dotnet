@@ -79,8 +79,8 @@ The .NET Aspire PostgreSQL EntityFrameworkCore Npgsql component supports [Micros
     "Npgsql": {
       "EntityFrameworkCore": {
         "PostgreSQL": {
-          "HealthChecks": false,
-          "Tracing": false
+          "DisableHealthChecks": true,
+          "DisableTracing": true
         }
       }
     }
@@ -93,18 +93,24 @@ The .NET Aspire PostgreSQL EntityFrameworkCore Npgsql component supports [Micros
 Also you can pass the `Action<NpgsqlEntityFrameworkCorePostgreSQLSettings> configureSettings` delegate to set up some or all the options inline, for example to disable health checks from code:
 
 ```csharp
-    builder.AddNpgsqlDbContext<MyDbContext>("postgresdb", settings => settings.HealthChecks = false);
+    builder.AddNpgsqlDbContext<MyDbContext>("postgresdb", settings => settings.DisableHealthChecks = true);
 ```
 
 or
 
 ```csharp
-    builder.EnrichNpgsqlDbContext<MyDbContext>(settings => settings.HealthChecks = false);
+    builder.EnrichNpgsqlDbContext<MyDbContext>(settings => settings.DisableHealthChecks = true);
 ```
 
 ## AppHost extensions
 
-In your AppHost project, register a Postgres database and consume the connection using the following methods:
+In your AppHost project, install the `Aspire.Hosting.PostgreSQL` library with [NuGet](https://www.nuget.org):
+
+```dotnetcli
+dotnet add package Aspire.Hosting.PostgreSQL
+```
+
+Then, in the _Program.cs_ file of `AppHost`, register a Postgres database and consume the connection using the following methods:
 
 ```csharp
 var postgresdb = builder.AddPostgres("pg").AddDatabase("postgresdb");

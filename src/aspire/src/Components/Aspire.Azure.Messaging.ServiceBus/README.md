@@ -19,10 +19,10 @@ dotnet add package Aspire.Azure.Messaging.ServiceBus
 
 ## Usage example
 
-In the _Program.cs_ file of your project, call the `AddAzureServiceBus` extension method to register a `ServiceBusClient` for use via the dependency injection container. The method takes a connection name parameter.
+In the _Program.cs_ file of your project, call the `AddAzureServiceBusClient` extension method to register a `ServiceBusClient` for use via the dependency injection container. The method takes a connection name parameter.
 
 ```csharp
-builder.AddAzureServiceBus("sb");
+builder.AddAzureServiceBusClient("sb");
 ```
 
 You can then retrieve the `ServiceBusClient` instance using dependency injection. For example, to retrieve the client from a Web API controller:
@@ -44,10 +44,10 @@ The .NET Aspire Azure Service Bus library provides multiple options to configure
 
 ### Use a connection string
 
-When using a connection string from the `ConnectionStrings` configuration section, you can provide the name of the connection string when calling `builder.AddAzureServiceBus()`:
+When using a connection string from the `ConnectionStrings` configuration section, you can provide the name of the connection string when calling `builder.AddAzureServiceBusClient()`:
 
 ```csharp
-builder.AddAzureServiceBus("serviceBusConnectionName");
+builder.AddAzureServiceBusClient("serviceBusConnectionName");
 ```
 
 And then the connection information will be retrieved from the `ConnectionStrings` configuration section. Two connection formats are supported:
@@ -87,7 +87,7 @@ The .NET Aspire Azure Service Bus library supports [Microsoft.Extensions.Configu
       "Messaging": {
         "ServiceBus": {
           "HealthCheckQueueName": "myQueue",
-          "Tracing": true,
+          "DisableTracing": false,
           "ClientOptions": {
             "Identifier": "CLIENT_ID"
           }
@@ -103,36 +103,38 @@ The .NET Aspire Azure Service Bus library supports [Microsoft.Extensions.Configu
 You can also pass the `Action<AzureMessagingServiceBusSettings> configureSettings` delegate to set up some or all the options inline, for example to configure the health check queue name from code:
 
 ```csharp
-    builder.AddAzureServiceBus("sb", settings => settings.HealthCheckQueueName = "myQueue");
+builder.AddAzureServiceBusClient("sb", settings => settings.HealthCheckQueueName = "myQueue");
 ```
 
-You can also setup the [ServiceBusClientOptions](https://learn.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusclientoptions) using the optional `Action<IAzureClientBuilder<ServiceBusClient, ServiceBusClientOptions>> configureClientBuilder` parameter of the `AddAzureServiceBus` method. For example, to set the client ID for this client:
+You can also setup the [ServiceBusClientOptions](https://learn.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusclientoptions) using the optional `Action<IAzureClientBuilder<ServiceBusClient, ServiceBusClientOptions>> configureClientBuilder` parameter of the `AddAzureServiceBusClient` method. For example, to set the client ID for this client:
 
 ```csharp
-    builder.AddAzureServiceBus("sb", configureClientBuilder: clientBuilder => clientBuilder.ConfigureOptions(options => options.Identifier = "CLIENT_ID"));
+builder.AddAzureServiceBusClient("sb", configureClientBuilder: clientBuilder => clientBuilder.ConfigureOptions(options => options.Identifier = "CLIENT_ID"));
 ```
 
 ## AppHost extensions
 
-In your AppHost project, install the Aspire Azure Hosting library with [NuGet](https://www.nuget.org):
+In your AppHost project, install the Aspire Azure Service Bus Hosting library with [NuGet](https://www.nuget.org):
 
 ```dotnetcli
-dotnet add package Aspire.Hosting.Azure
+dotnet add package Aspire.Hosting.Azure.ServiceBus
 ```
 
 Then, in the _Program.cs_ file of `AppHost`, add a Service Bus connection and consume the connection using the following methods:
 
 ```csharp
-var serviceBus = builder.AddAzureServiceBus("sb");
+var serviceBus = builder.ExecutionContext.IsPublishMode
+    ? builder.AddAzureServiceBus("sb")
+    ? builder.AddConnectionString("sb");
 
 var myService = builder.AddProject<Projects.MyService>()
                        .WithReference(serviceBus);
 ```
 
-The `AddAzureServiceBus` method will read connection information from the AppHost's configuration (for example, from "user secrets") under the `ConnectionStrings:sb` config key. The `WithReference` method passes that connection information into a connection string named `sb` in the `MyService` project. In the _Program.cs_ file of `MyService`, the connection can be consumed using:
+The `AddAzureServiceBus` method adds an Azure Service Bus Namespace to the builder. Or `AddConnectionString` can be used to read connection information from the AppHost's configuration (for example, from "user secrets") under the `ConnectionStrings:sb` config key. The `WithReference` method passes that connection information into a connection string named `sb` in the `MyService` project. In the _Program.cs_ file of `MyService`, the connection can be consumed using:
 
 ```csharp
-builder.AddAzureServiceBus("sb");
+builder.AddAzureServiceBusClient("sb");
 ```
 
 ## Additional documentation

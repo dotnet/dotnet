@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Aspire.Components.Common.Tests;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,9 +10,16 @@ using Xunit;
 
 namespace Aspire.MySqlConnector.Tests;
 
-public class AspireMySqlConnectorExtensionsTests
+public class AspireMySqlConnectorExtensionsTests : IClassFixture<MySqlContainerFixture>
 {
-    private const string ConnectionString = "Server=localhost;Database=test_aspire_mysql";
+    private readonly MySqlContainerFixture _containerFixture;
+    private string ConnectionString => RequiresDockerTheoryAttribute.IsSupported
+                                        ? _containerFixture.GetConnectionString()
+                                        : "Server=localhost;Database=test_aspire_mysql";
+    private string NormalizedConnectionString => new MySqlConnectionStringBuilder(ConnectionString).ConnectionString;
+
+    public AspireMySqlConnectorExtensionsTests(MySqlContainerFixture containerFixture)
+        => _containerFixture = containerFixture;
 
     [Theory]
     [InlineData(true)]
@@ -32,12 +40,12 @@ public class AspireMySqlConnectorExtensionsTests
             builder.AddMySqlDataSource("mysql");
         }
 
-        var host = builder.Build();
+        using var host = builder.Build();
         var dataSource = useKeyed ?
             host.Services.GetRequiredKeyedService<MySqlDataSource>("mysql") :
             host.Services.GetRequiredService<MySqlDataSource>();
 
-        Assert.Equal(ConnectionString, dataSource.ConnectionString);
+        Assert.Equal(NormalizedConnectionString, dataSource.ConnectionString);
     }
 
     [Theory]
@@ -50,7 +58,7 @@ public class AspireMySqlConnectorExtensionsTests
             new KeyValuePair<string, string?>("ConnectionStrings:mysql", "unused")
         ]);
 
-        static void SetConnectionString(MySqlConnectorSettings settings) => settings.ConnectionString = ConnectionString;
+        void SetConnectionString(MySqlConnectorSettings settings) => settings.ConnectionString = ConnectionString;
         if (useKeyed)
         {
             builder.AddKeyedMySqlDataSource("mysql", SetConnectionString);
@@ -60,12 +68,12 @@ public class AspireMySqlConnectorExtensionsTests
             builder.AddMySqlDataSource("mysql", SetConnectionString);
         }
 
-        var host = builder.Build();
+        using var host = builder.Build();
         var dataSource = useKeyed ?
             host.Services.GetRequiredKeyedService<MySqlDataSource>("mysql") :
             host.Services.GetRequiredService<MySqlDataSource>();
 
-        Assert.Equal(ConnectionString, dataSource.ConnectionString);
+        Assert.Equal(NormalizedConnectionString, dataSource.ConnectionString);
         // the connection string from config should not be used since code set it explicitly
         Assert.DoesNotContain("unused", dataSource.ConnectionString);
     }
@@ -92,13 +100,42 @@ public class AspireMySqlConnectorExtensionsTests
             builder.AddMySqlDataSource("mysql");
         }
 
-        var host = builder.Build();
+        using var host = builder.Build();
         var dataSource = useKeyed ?
             host.Services.GetRequiredKeyedService<MySqlDataSource>("mysql") :
             host.Services.GetRequiredService<MySqlDataSource>();
 
-        Assert.Equal(ConnectionString, dataSource.ConnectionString);
+        Assert.Equal(NormalizedConnectionString, dataSource.ConnectionString);
         // the connection string from config should not be used since it was found in ConnectionStrings
         Assert.DoesNotContain("unused", dataSource.ConnectionString);
+    }
+
+    [Fact]
+    public void CanAddMultipleKeyedServices()
+    {
+        var builder = Host.CreateEmptyApplicationBuilder(null);
+        builder.Configuration.AddInMemoryCollection([
+            new KeyValuePair<string, string?>("ConnectionStrings:mysql1", "Server=localhost1;Database=test_aspire_mysql"),
+            new KeyValuePair<string, string?>("ConnectionStrings:mysql2", "Server=localhost2;Database=test_aspire_mysql"),
+            new KeyValuePair<string, string?>("ConnectionStrings:mysql3", "Server=localhost3;Database=test_aspire_mysql"),
+        ]);
+
+        builder.AddMySqlDataSource("mysql1");
+        builder.AddKeyedMySqlDataSource("mysql2");
+        builder.AddKeyedMySqlDataSource("mysql3");
+
+        using var host = builder.Build();
+
+        var connection1 = host.Services.GetRequiredService<MySqlDataSource>();
+        var connection2 = host.Services.GetRequiredKeyedService<MySqlDataSource>("mysql2");
+        var connection3 = host.Services.GetRequiredKeyedService<MySqlDataSource>("mysql3");
+
+        Assert.NotSame(connection1, connection2);
+        Assert.NotSame(connection1, connection3);
+        Assert.NotSame(connection2, connection3);
+
+        Assert.Contains("localhost1", connection1.ConnectionString);
+        Assert.Contains("localhost2", connection2.ConnectionString);
+        Assert.Contains("localhost3", connection3.ConnectionString);
     }
 }
