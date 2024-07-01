@@ -1,16 +1,22 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Aspire.Components.Common.Tests;
 using Aspire.Components.ConformanceTests;
 using Microsoft.Data.SqlClient;
+using Microsoft.DotNet.RemoteExecutor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Xunit;
 
 namespace Aspire.Microsoft.Data.SqlClient.Tests;
 
-public class ConformanceTests : ConformanceTests<SqlConnection, MicrosoftDataSqlClientSettings>
+public class ConformanceTests : ConformanceTests<SqlConnection, MicrosoftDataSqlClientSettings>, IClassFixture<SqlServerContainerFixture>
 {
+    private readonly SqlServerContainerFixture? _containerFixture;
+    private string ConnectionString { get; set; }
+    protected override bool CanConnectToServer => RequiresDockerTheoryAttribute.IsSupported;
     protected override ServiceLifetime ServiceLifetime => ServiceLifetime.Scoped;
 
     // https://github.com/open-telemetry/opentelemetry-dotnet/blob/031ed48714e16ba4a5b099b6e14647994a0b9c1b/src/OpenTelemetry.Instrumentation.SqlClient/Implementation/SqlActivitySourceHelper.cs#L31
@@ -27,9 +33,8 @@ public class ConformanceTests : ConformanceTests<SqlConnection, MicrosoftDataSql
             "SqlServer": {
               "SqlClient": {
                 "ConnectionString": "YOUR_CONNECTION_STRING",
-                "HealthChecks": true,
-                "Tracing": true,
-                "Metrics": false
+                "DisableHealthChecks": false,
+                "DisableTracing": false
               }
             }
           }
@@ -38,15 +43,23 @@ public class ConformanceTests : ConformanceTests<SqlConnection, MicrosoftDataSql
 
     protected override (string json, string error)[] InvalidJsonToErrorMessage => new[]
         {
-            ("""{"Aspire": { "Microsoft": { "Data" : { "SqlClient":{ "Metrics": 0}}}}}""", "Value is \"integer\" but should be \"boolean\""),
-            ("""{"Aspire": { "Microsoft": { "Data" : { "SqlClient":{ "ConnectionString": "Con", "HealthChecks": "false"}}}}}""", "Value is \"string\" but should be \"boolean\"")
+            ("""{"Aspire": { "Microsoft": { "Data" : { "SqlClient":{ "DisableTracing": 0}}}}}""", "Value is \"integer\" but should be \"boolean\""),
+            ("""{"Aspire": { "Microsoft": { "Data" : { "SqlClient":{ "ConnectionString": "Con", "DisableHealthChecks": "true"}}}}}""", "Value is \"string\" but should be \"boolean\"")
         };
+
+    public ConformanceTests(SqlServerContainerFixture? containerFixture)
+    {
+        _containerFixture = containerFixture;
+        ConnectionString = (_containerFixture is not null && RequiresDockerTheoryAttribute.IsSupported)
+                                        ? _containerFixture.GetConnectionString()
+                                        : "Server=localhost;User ID=root;Password=password;Database=test_aspire_mysql";
+    }
 
     protected override void PopulateConfiguration(ConfigurationManager configuration, string? key = null)
         => configuration.AddInMemoryCollection(new KeyValuePair<string, string?>[1]
         {
             new KeyValuePair<string, string?>(CreateConfigKey("Aspire:Microsoft:Data:SqlClient", key, "ConnectionString"),
-                "Data Source=fake;Database=master")
+                ConnectionString)
         });
 
     protected override void RegisterComponent(HostApplicationBuilder builder, Action<MicrosoftDataSqlClientSettings>? configure = null, string? key = null)
@@ -62,14 +75,33 @@ public class ConformanceTests : ConformanceTests<SqlConnection, MicrosoftDataSql
     }
 
     protected override void SetHealthCheck(MicrosoftDataSqlClientSettings options, bool enabled)
-        => options.HealthChecks = enabled;
+        => options.DisableHealthChecks = !enabled;
 
     protected override void SetTracing(MicrosoftDataSqlClientSettings options, bool enabled)
-        => options.Tracing = enabled;
+        => options.DisableTracing = !enabled;
 
     protected override void SetMetrics(MicrosoftDataSqlClientSettings options, bool enabled)
-        => options.Metrics = enabled;
+        => throw new NotImplementedException();
 
     protected override void TriggerActivity(SqlConnection service)
-        => service.Open();
+    {
+        service.Open();
+        using var command = service.CreateCommand();
+        command.CommandText = "SELECT 1;";
+        command.ExecuteScalar();
+    }
+
+    [RequiresDockerFact]
+    public void TracingEnablesTheRightActivitySource()
+        => RemoteExecutor.Invoke(static connectionStringToUse => RunWithConnectionString(connectionStringToUse, obj => obj.ActivitySourceTest(key: null)),
+                                 ConnectionString).Dispose();
+
+    [RequiresDockerFact]
+    public void TracingEnablesTheRightActivitySource_Keyed()
+        => RemoteExecutor.Invoke(static connectionStringToUse => RunWithConnectionString(connectionStringToUse, obj => obj.ActivitySourceTest(key: "key")),
+                                 ConnectionString).Dispose();
+
+    private static void RunWithConnectionString(string connectionString, Action<ConformanceTests> test)
+        => test(new ConformanceTests(null) { ConnectionString = connectionString });
+
 }

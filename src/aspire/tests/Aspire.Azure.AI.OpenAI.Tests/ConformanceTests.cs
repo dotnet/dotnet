@@ -31,13 +31,13 @@ public class ConformanceTests : ConformanceTests<OpenAIClient, AzureOpenAISettin
               "AI": {
                 "OpenAI": {
                   "Endpoint": "http://YOUR_URI",
-                  "Tracing": true,
+                  "DisableTracing": false,
                   "ClientOptions": {
-                    "ConnectionIdleTimeout": "PT1S",
+                    "ConnectionIdleTimeout": "00:10",
                     "EnableCrossEntityTransactions": true,
                     "RetryOptions": {
                       "Mode": "Fixed",
-                      "MaxDelay": "PT3S"  
+                      "MaxDelay": "00:00:30"  
                     },
                     "TransportType": "AmqpWebSockets"
                   }
@@ -51,7 +51,7 @@ public class ConformanceTests : ConformanceTests<OpenAIClient, AzureOpenAISettin
     protected override (string json, string error)[] InvalidJsonToErrorMessage => new[]
         {
             ("""{"Aspire": { "Azure": { "AI":{ "OpenAI": {"Endpoint": "YOUR_URI"}}}}}""", "Value does not match format \"uri\""),
-            ("""{"Aspire": { "Azure": { "AI":{ "OpenAI": {"Endpoint": "http://YOUR_URI", "Tracing": "false"}}}}}""", "Value is \"string\" but should be \"boolean\""),
+            ("""{"Aspire": { "Azure": { "AI":{ "OpenAI": {"Endpoint": "http://YOUR_URI", "DisableTracing": "true"}}}}}""", "Value is \"string\" but should be \"boolean\""),
         };
 
     protected override string ActivitySourceName => "Azure.AI.OpenAI.OpenAIClient";
@@ -66,11 +66,11 @@ public class ConformanceTests : ConformanceTests<OpenAIClient, AzureOpenAISettin
     {
         if (key is null)
         {
-            builder.AddAzureOpenAI("openai", ConfigureCredentials);
+            builder.AddAzureOpenAIClient("openai", ConfigureCredentials);
         }
         else
         {
-            builder.AddKeyedAzureOpenAI(key, ConfigureCredentials);
+            builder.AddKeyedAzureOpenAIClient(key, ConfigureCredentials);
         }
 
         void ConfigureCredentials(AzureOpenAISettings settings)
@@ -99,7 +99,7 @@ public class ConformanceTests : ConformanceTests<OpenAIClient, AzureOpenAISettin
         => throw new NotImplementedException();
 
     protected override void SetTracing(AzureOpenAISettings options, bool enabled)
-        => options.Tracing = enabled;
+        => options.DisableTracing = !enabled;
 
     protected override void TriggerActivity(OpenAIClient service)
         => service.GetCompletions(new CompletionsOptions { DeploymentName = "dummy-gpt" });

@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Aspire.Dashboard.Model;
 using Aspire.Hosting.Dashboard;
 using Xunit;
 
@@ -18,8 +19,8 @@ public class ResourcePublisherTests
         var b = CreateResourceSnapshot("B");
         var c = CreateResourceSnapshot("C");
 
-        await publisher.IntegrateAsync(a, ResourceSnapshotChangeType.Upsert).ConfigureAwait(true);
-        await publisher.IntegrateAsync(b, ResourceSnapshotChangeType.Upsert).ConfigureAwait(true);
+        await publisher.IntegrateAsync(a, ResourceSnapshotChangeType.Upsert).ConfigureAwait(false);
+        await publisher.IntegrateAsync(b, ResourceSnapshotChangeType.Upsert).ConfigureAwait(false);
 
         Assert.Equal(0, publisher.OutgoingSubscriberCount);
 
@@ -43,7 +44,7 @@ public class ResourcePublisherTests
             }
         });
 
-        await publisher.IntegrateAsync(c, ResourceSnapshotChangeType.Upsert).ConfigureAwait(true);
+        await publisher.IntegrateAsync(c, ResourceSnapshotChangeType.Upsert).ConfigureAwait(false);
 
         Assert.True(sync.WaitOne(TimeSpan.FromSeconds(1)));
 
@@ -68,8 +69,8 @@ public class ResourcePublisherTests
         var b = CreateResourceSnapshot("B");
         var c = CreateResourceSnapshot("C");
 
-        await publisher.IntegrateAsync(a, ResourceSnapshotChangeType.Upsert).ConfigureAwait(true);
-        await publisher.IntegrateAsync(b, ResourceSnapshotChangeType.Upsert).ConfigureAwait(true);
+        await publisher.IntegrateAsync(a, ResourceSnapshotChangeType.Upsert).ConfigureAwait(false);
+        await publisher.IntegrateAsync(b, ResourceSnapshotChangeType.Upsert).ConfigureAwait(false);
 
         Assert.Equal(0, publisher.OutgoingSubscriberCount);
 
@@ -81,7 +82,7 @@ public class ResourcePublisherTests
         Assert.Equal(2, snapshot1.Length);
         Assert.Equal(2, snapshot2.Length);
 
-        await publisher.IntegrateAsync(c, ResourceSnapshotChangeType.Upsert).ConfigureAwait(true);
+        await publisher.IntegrateAsync(c, ResourceSnapshotChangeType.Upsert).ConfigureAwait(false);
 
         var enumerator1 = subscription1.GetAsyncEnumerator(cts.Token);
         var enumerator2 = subscription2.GetAsyncEnumerator(cts.Token);
@@ -115,9 +116,9 @@ public class ResourcePublisherTests
         var a2 = CreateResourceSnapshot("A");
         var a3 = CreateResourceSnapshot("A");
 
-        await publisher.IntegrateAsync(a1, ResourceSnapshotChangeType.Upsert).ConfigureAwait(true);
-        await publisher.IntegrateAsync(a2, ResourceSnapshotChangeType.Upsert).ConfigureAwait(true);
-        await publisher.IntegrateAsync(a3, ResourceSnapshotChangeType.Upsert).ConfigureAwait(true);
+        await publisher.IntegrateAsync(a1, ResourceSnapshotChangeType.Upsert).ConfigureAwait(false);
+        await publisher.IntegrateAsync(a2, ResourceSnapshotChangeType.Upsert).ConfigureAwait(false);
+        await publisher.IntegrateAsync(a3, ResourceSnapshotChangeType.Upsert).ConfigureAwait(false);
 
         var (snapshot, _) = publisher.Subscribe();
 
@@ -135,9 +136,9 @@ public class ResourcePublisherTests
         var a = CreateResourceSnapshot("A");
         var b = CreateResourceSnapshot("B");
 
-        await publisher.IntegrateAsync(a, ResourceSnapshotChangeType.Upsert).ConfigureAwait(true);
-        await publisher.IntegrateAsync(b, ResourceSnapshotChangeType.Upsert).ConfigureAwait(true);
-        await publisher.IntegrateAsync(a, ResourceSnapshotChangeType.Delete).ConfigureAwait(true);
+        await publisher.IntegrateAsync(a, ResourceSnapshotChangeType.Upsert).ConfigureAwait(false);
+        await publisher.IntegrateAsync(b, ResourceSnapshotChangeType.Upsert).ConfigureAwait(false);
+        await publisher.IntegrateAsync(a, ResourceSnapshotChangeType.Delete).ConfigureAwait(false);
 
         var (snapshot, _) = publisher.Subscribe();
 
@@ -169,31 +170,29 @@ public class ResourcePublisherTests
         });
 
         // Push through an update.
-        await publisher.IntegrateAsync(CreateResourceSnapshot("A"), ResourceSnapshotChangeType.Upsert).ConfigureAwait(true);
+        await publisher.IntegrateAsync(CreateResourceSnapshot("A"), ResourceSnapshotChangeType.Upsert).ConfigureAwait(false);
 
         // Let the subscriber exit.
         await task;
     }
 
-    private static ContainerSnapshot CreateResourceSnapshot(string name)
+    private static GenericResourceSnapshot CreateResourceSnapshot(string name)
     {
-        return new ContainerSnapshot()
+        return new GenericResourceSnapshot(new()
+        {
+            Properties = [],
+            ResourceType = KnownResourceTypes.Container
+        })
         {
             Name = name,
             Uid = "",
-            State = "",
+            State = null,
+            StateStyle = null,
             ExitCode = null,
             CreationTimeStamp = null,
             DisplayName = "",
-            Endpoints = [],
+            Urls = [],
             Environment = [],
-            ExpectedEndpointsCount = null,
-            Services = [],
-            Args = [],
-            Command = "",
-            ContainerId = "",
-            Image = "",
-            Ports = []
         };
     }
 }

@@ -14,33 +14,23 @@ public sealed class OracleEntityFrameworkCoreSettings
     public string? ConnectionString { get; set; }
 
     /// <summary>
-    /// Gets or sets whether retries should be enabled.
+    /// Gets or sets whether retries should be disabled.
     /// </summary>
     /// <value>
-    /// The default value is <see langword="true"/>.
+    /// The default value is <see langword="false"/>.
     /// </value>
-    public bool Retry { get; set; } = true;
+    public bool DisableRetry { get; set; }
 
     /// <summary>
-    /// <para>Gets or sets a boolean value that indicates whether the database health check is enabled or not.</para>
-    /// <para>The default value is <see langword="true"/>.</para>
+    /// Gets or sets a boolean value that indicates whether the database health check is disabled or not.
     /// </summary>
-    public bool HealthChecks { get; set; } = true;
+    /// <value>
+    /// The default value is <see langword="false"/>.
+    /// </value>
+    public bool DisableHealthChecks { get; set; }
 
     /// <summary>
-    /// <para>Gets or sets a boolean value that indicates whether the Open Telemetry tracing is enabled or not.</para>
-    /// <para>The default value is <see langword="true"/>.</para>
+    /// Gets or sets the time in seconds to wait for the command to execute.
     /// </summary>
-    public bool Tracing { get; set; } = true;
-
-    /// <summary>
-    /// <para>Gets or sets a boolean value that indicates whether the Open Telemetry metrics are enabled or not.</para>
-    /// <para>The default value is <see langword="true"/>.</para>
-    /// </summary>
-    public bool Metrics { get; set; } = true;
-
-    /// <summary>
-    /// The time in seconds to wait for the command to execute.
-    /// </summary>
-    public int? Timeout { get; set; }
+    public int? CommandTimeout { get; set; }
 }

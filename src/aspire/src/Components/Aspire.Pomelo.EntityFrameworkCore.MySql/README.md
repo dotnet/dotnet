@@ -81,8 +81,8 @@ Example `appsettings.json` that configures some of the options:
     "Pomelo": {
       "EntityFrameworkCore": {
         "MySql": {
-          "HealthChecks": false,
-          "Tracing": false
+          "DisableHealthChecks": true,
+          "DisableTracing": true
         }
       }
     }
@@ -95,18 +95,24 @@ Example `appsettings.json` that configures some of the options:
 Also you can pass the `Action<PomeloEntityFrameworkCoreMySqlSettings> configureSettings` delegate to set up some or all the options inline, for example to disable health checks from code:
 
 ```csharp
-    builder.AddMySqlDbContext<MyDbContext>("mysqldb", settings => settings.HealthChecks = false);
+    builder.AddMySqlDbContext<MyDbContext>("mysqldb", settings => settings.DisableHealthChecks = true);
 ```
 
 or
 
 ```csharp
-    builder.EnrichMySqlDbContext<MyDbContext>(settings => settings.HealthChecks = false);
+    builder.EnrichMySqlDbContext<MyDbContext>(settings => settings.DisableHealthChecks = true);
 ```
 
 ## AppHost extensions
 
-In your AppHost project, register a MySQL container and consume the connection using the following methods:
+In your AppHost project, install the `Aspire.Hosting.MySql` library with [NuGet](https://www.nuget.org):
+
+```dotnetcli
+dotnet add package Aspire.Hosting.MySql
+```
+
+Then, in the _Program.cs_ file of `AppHost`, register a MySQL container and consume the connection using the following methods:
 
 ```csharp
 var mysqldb = builder.AddMySql("mysql").AddDatabase("mysqldb");

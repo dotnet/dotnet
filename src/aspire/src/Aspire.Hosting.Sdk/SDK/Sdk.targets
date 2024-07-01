@@ -2,7 +2,7 @@
 
   <!--
   A property-based workload cannot import props files (except AutoImport.props, which has very tight limitations.
-  Instead, we copy everything from Aspire.Hosting.props into these targets.
+  Instead, we copy everything from Aspire.Hosting.AppHost.props into these targets.
   This means they cannot be overridden in the csproj, and may cause ordering issues, particularly StaticWebAssets.
   -->
 
@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <Target Name="__WarnOnAspireCapabilityMissing" BeforeTargets="PrepareForBuild" Condition="!@(ProjectCapability->AnyHaveMetadataValue('Identity', 'Aspire'))">
-    <Warning Code="ASPIRE002" Text="$(MSBuildProjectName) is an Aspire AppHost project but necessary dependencies aren't present. Are you missing an Aspire.Hosting PackageReference?" />
+    <Warning Code="ASPIRE002" Text="$(MSBuildProjectName) is an Aspire AppHost project but necessary dependencies aren't present. Are you missing an Aspire.Hosting.AppHost PackageReference?" />
   </Target>
 
   <Target Name="__WarnOnMininumVsVersionMissing" BeforeTargets="PrepareForBuild" Condition="'$(BuildingInsideVisualStudio)' == 'true' and $([MSBuild]::VersionLessThan('$(MSBuildVersion)', '17.10.0'))">

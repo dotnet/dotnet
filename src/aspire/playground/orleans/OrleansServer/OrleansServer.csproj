@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.Orleans.Clustering.AzureStorage" />
     <ProjectReference Include="..\..\..\src\Components\Aspire.Azure.Data.Tables\Aspire.Azure.Data.Tables.csproj" />
     <ProjectReference Include="..\..\..\src\Components\Aspire.Azure.Storage.Blobs\Aspire.Azure.Storage.Blobs.csproj" />
+    <ProjectReference Include="..\OrleansContracts\OrleansContracts.csproj" />
     <ProjectReference Include="..\OrleansServiceDefaults\OrleansServiceDefaults.csproj" />
   </ItemGroup>
 
