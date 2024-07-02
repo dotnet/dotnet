@@ -287,7 +287,18 @@
 
   <Target Name="CollectVsixUpToDateCheckInput" DependsOnTargets="GetVsixSourceItems;FindSourceVsixManifest">
     <ItemGroup Condition="$(CreateVsixContainer)">
-      <UpToDateCheckInput Include="@(VSIXSourceItem)" />
+      <_InputVSIXSourceItem Include="@(VSIXSourceItem)" />
+      <_InputVSIXSourceItem Remove="@(IntermediateAssembly)" />
+      <_InputVSIXSourceItem Remove="@(AddModules)" />
+      <_InputVSIXSourceItem Remove="$(IntermediateOutputPath)$(_SGenDllName)" />
+      <_InputVSIXSourceItem Remove="@(_DebugSymbolsIntermediatePath)" />
+      <_InputVSIXSourceItem Remove="@(DocFileItem)" />
+      <_InputVSIXSourceItem Remove="@(SatelliteDllsProjectOutputGroupOutput->'%(FinalOutputPath)')" />
+      <_InputVSIXSourceItem Remove="@(SatelliteDllsProjectOutputGroupOutput)" />
+      <_InputVSIXSourceItem Remove="$(IntermediateOutputPath)$(TargetName).pkgdef" />
+      <_InputVSIXSourceItem Remove="@(_GeneratedExtensionJson)" />
+
+      <UpToDateCheckInput Include="@(_InputVSIXSourceItem)" />
       <UpToDateCheckInput Include="@(SourceVsixManifest)" />
     </ItemGroup>
   </Target>
