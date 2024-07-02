@@ -7,11 +7,11 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.DiaSymReader
 {
-    [ComImport]
     [Guid("B62B923C-B500-3158-A543-24F307A8B7E1")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComVisible(false)]
-    public interface ISymUnmanagedMethod
+    [GeneratedWhenPossibleComInterface]
+    public partial interface ISymUnmanagedMethod
     {
         [PreserveSig]
         int GetToken(out int methodToken);
@@ -70,7 +70,7 @@ namespace Microsoft.DiaSymReader
         /// <returns>HResult</returns>
         [PreserveSig]
         int GetSourceStartEnd(
-            ISymUnmanagedDocument[] documents,
+            [In, Out, MarshalAs(UnmanagedType.LPArray)] ISymUnmanagedDocument[] documents,
             [In, Out, MarshalAs(UnmanagedType.LPArray)] int[] lines,
             [In, Out, MarshalAs(UnmanagedType.LPArray)] int[] columns,
             [MarshalAs(UnmanagedType.Bool)]out bool defined);

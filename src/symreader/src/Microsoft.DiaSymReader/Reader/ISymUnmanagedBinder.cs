@@ -7,11 +7,11 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.DiaSymReader
 {
-    [ComImport]
     [Guid("AA544D42-28CB-11d3-BD22-0000F80849BD")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComVisible(false)]
-    public interface ISymUnmanagedBinder
+    [GeneratedWhenPossibleComInterface]
+    public partial interface ISymUnmanagedBinder
     {
         /// <summary>
         /// Given a metadata interface and a file name, returns a new instance of <see cref="ISymUnmanagedReader"/> 

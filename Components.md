@@ -20,7 +20,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/aspnetcore/src/submodules/Node-Externals`  
     *[dotnet/Node-Externals@a1b1b1b](https://github.com/dotnet/Node-Externals/tree/a1b1b1bb01630a6109adf5767d9a2770c6dc5639)*
 - `src/cecil`  
-*[dotnet/cecil@d145726](https://github.com/dotnet/cecil/tree/d145726036eb9c09a0e3cf03c4f70effd3b31cd7)*
+*[dotnet/cecil@7e4af02](https://github.com/dotnet/cecil/tree/7e4af02521473d89d6144b3da58fef253e498974)*
 - `src/command-line-api`  
 *[dotnet/command-line-api@803d859](https://github.com/dotnet/command-line-api/tree/803d8598f98fb4efd94604b32627ee9407f246db)*
 - `src/deployment-tools`  
@@ -46,11 +46,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@43709af](https://github.com/dotnet/roslyn-analyzers/tree/43709af7570da7140fb3e9a5237f55ffb24677e7)*
 - `src/runtime`  
-*[dotnet/runtime@a900bbf](https://github.com/dotnet/runtime/tree/a900bbf6fcf33fa2e799ed599ab86e00d6124c05)*
+*[dotnet/runtime@5044e93](https://github.com/dotnet/runtime/tree/5044e936ce154fcf3223cbe6f5e2ad66605cea9f)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@54700bb](https://github.com/dotnet/scenario-tests/tree/54700bbee86f660d37bd519a905b62bb50adc8c8)*
 - `src/sdk`  
-*[dotnet/sdk@4289f4a](https://github.com/dotnet/sdk/tree/4289f4aac7ade93b5c1b080cae14b0dc0c9c3a11)*
+*[dotnet/sdk@06574d2](https://github.com/dotnet/sdk/tree/06574d2b970bfdc5826dd92914e2e0f45ca6c0e8)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@311ef7f](https://github.com/dotnet/source-build-externals/tree/311ef7fef52828f4a70a94d13e32c394fd3292ee)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -86,7 +86,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sourcelink`  
 *[dotnet/sourcelink@14a0a42](https://github.com/dotnet/sourcelink/tree/14a0a42ffb29b53fb9939f14da5a4be8c6c07e0b)*
 - `src/symreader`  
-*[dotnet/symreader@200bba3](https://github.com/dotnet/symreader/tree/200bba3d3695c902b740931b8d9c2ba09d037f24)*
+*[dotnet/symreader@0710a78](https://github.com/dotnet/symreader/tree/0710a7892d89999956e8808c28e9dd0512bd53f3)*
 - `src/templating`  
 *[dotnet/templating@81ab22e](https://github.com/dotnet/templating/tree/81ab22e8bf15861237b11d3900ff49de07ee3844)*
 - `src/test-templates`  

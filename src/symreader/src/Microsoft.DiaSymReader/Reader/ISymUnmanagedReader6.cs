@@ -7,11 +7,11 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.DiaSymReader
 {
-    [ComImport]
     [Guid("2d7babeb-4415-4a19-8be0-dfacc7611594")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComVisible(false)]
-    public interface ISymUnmanagedCompilerInfoReader
+    [GeneratedWhenPossibleComInterface]
+    public partial interface ISymUnmanagedCompilerInfoReader
     {
         /// <summary>
         /// Returns compiler version number and name.

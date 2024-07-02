@@ -7,11 +7,11 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.DiaSymReader
 {
-    [ComImport]
     [Guid("9F60EEBE-2D9A-3F7C-BF58-80BC991C60BB")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComVisible(false)]
-    public interface ISymUnmanagedVariable
+    [GeneratedWhenPossibleComInterface]
+    public partial interface ISymUnmanagedVariable
     {
         [PreserveSig]
         int GetName(

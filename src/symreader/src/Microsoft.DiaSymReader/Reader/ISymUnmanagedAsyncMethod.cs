@@ -7,11 +7,11 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.DiaSymReader
 {
-    [ComImport]
     [Guid("B20D55B3-532E-4906-87E7-25BD5734ABD2")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComVisible(false)]
-    public interface ISymUnmanagedAsyncMethod
+    [GeneratedWhenPossibleComInterface]
+    public partial interface ISymUnmanagedAsyncMethod
     {
         [PreserveSig]
         int IsAsyncMethod([MarshalAs(UnmanagedType.Bool)]out bool value);

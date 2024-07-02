@@ -6,9 +6,16 @@ using System;
 using System.Runtime.InteropServices;
 using System.Reflection;
 
+#if NET9_0_OR_GREATER
+using System.Runtime.InteropServices.Marshalling;
+#endif
+
 namespace Microsoft.DiaSymReader
 {
-    internal unsafe class MetadataAdapterBase : IMetadataImport, IMetadataEmit
+#if NET9_0_OR_GREATER
+    [GeneratedComClass]
+#endif
+    internal unsafe partial class MetadataAdapterBase : IMetadataImport, IMetadataEmit
     {
         public virtual int GetTokenFromSig(byte* voidPointerSig, int byteCountSig)
             => throw new NotImplementedException();

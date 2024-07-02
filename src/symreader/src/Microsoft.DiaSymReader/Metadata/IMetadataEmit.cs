@@ -10,11 +10,11 @@ using System.Security;
 
 namespace Microsoft.DiaSymReader
 {
-    [ComImport]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [Guid("BA3FEE4C-ECB9-4e41-83B7-183FA41CD859")]
     [SuppressUnmanagedCodeSecurity]
-    internal unsafe interface IMetadataEmit
+    [GeneratedWhenPossibleComInterface]
+    internal unsafe partial interface IMetadataEmit
     {
         // SymWriter doesn't use any methods from this interface except for GetTokenFromSig, which is only called when 
         // DefineLocalVariable(2) and DefineConstant(2) don't specify signature token, or the token is nil.
