@@ -44,7 +44,12 @@ public class RazorLanguageServerTest(ITestOutputHelper testOutput) : ToolingTest
 
         // We have to send one more request, because culture is set before any request starts, but the first initialize request has to
         // be started in order to set the culture.
-        await queue.ExecuteAsync<VSInternalWorkspaceDiagnosticsParams, VSInternalWorkspaceDiagnosticReport[]>(new(), VSInternalMethods.WorkspacePullDiagnosticName, LanguageServerConstants.DefaultLanguageName, server.GetLspServices(), DisposalToken);
+        // The request isn't actually valid, so we wrap it in a try catch, but we don't care for this test
+        try
+        {
+            await queue.ExecuteAsync<VSInternalDocumentDiagnosticsParams, VSInternalDiagnosticReport[]>(new(), VSInternalMethods.DocumentPullDiagnosticName, LanguageServerConstants.DefaultLanguageName, server.GetLspServices(), DisposalToken);
+        }
+        catch { }
 
         var cultureInfo = queue.GetTestAccessor().GetCultureInfo();
 
@@ -122,14 +127,8 @@ public class RazorLanguageServerTest(ITestOutputHelper testOutput) : ToolingTest
         {
         }
 
-        public ImmutableArray<RazorProjectInfo> GetLatestProjectInfo()
-        {
-            return ImmutableArray<RazorProjectInfo>.Empty;
-        }
+        public ImmutableArray<RazorProjectInfo> GetLatestProjectInfo() => [];
 
-        public Task WaitForInitializationAsync()
-        {
-            return Task.CompletedTask;
-        }
+        public Task WaitForInitializationAsync() => Task.CompletedTask;
     }
 }

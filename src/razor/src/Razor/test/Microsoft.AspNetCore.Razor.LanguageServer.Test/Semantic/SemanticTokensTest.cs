@@ -50,7 +50,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         }
     };
 
-    private static Regex s_matchNewLines = MyRegex();
+    private static readonly Regex s_matchNewLines = MyRegex();
 
 #if NET
     [GeneratedRegex("\r\n")]
@@ -1021,6 +1021,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             csharpDocumentUri,
             s_semanticTokensServerCapabilities,
             SpanMappingService,
+            capabilitiesUpdater: null,
             DisposalToken);
 
         var razorRange = GetSpan(documentText);
