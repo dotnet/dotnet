@@ -7,12 +7,15 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.DiaSymReader
 {
-    [ComImport]
     [Guid("ACCEE350-89AF-4ccb-8B40-1C2C4C6F9434")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComVisible(false)]
-    public interface ISymUnmanagedBinder2 : ISymUnmanagedBinder
+    [GeneratedWhenPossibleComInterface]
+    public partial interface ISymUnmanagedBinder2 : ISymUnmanagedBinder
     {
+        // .NET 8+ COM source generators respect COM interface inheritance
+        // so re-declaration of inherited method is not needed.
+#if NETSTANDARD2_0
         #region ISymUnmanagedBinder methods
 
         /// <summary>
@@ -47,9 +50,10 @@ namespace Microsoft.DiaSymReader
             [MarshalAs(UnmanagedType.Interface)]out ISymUnmanagedReader reader);
 
         #endregion
+#endif
 
         /// <summary>
-        /// Given a metadata interface and a file name, returns the 
+        /// Given a metadata interface and a file name, returns the
         /// <see cref="ISymUnmanagedReader"/> interface that will read the debugging symbols associated
         /// with the module.
         /// </summary>

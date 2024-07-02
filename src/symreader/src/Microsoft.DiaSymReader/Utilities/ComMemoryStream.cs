@@ -5,9 +5,14 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.InteropServices;
+#if NET9_0_OR_GREATER
+using System.Runtime.InteropServices.Marshalling;
+#endif
+
+#if NETSTANDARD2_0
 using STATSTG = System.Runtime.InteropServices.ComTypes.STATSTG;
+#endif
 
 namespace Microsoft.DiaSymReader
 {
@@ -18,7 +23,10 @@ namespace Microsoft.DiaSymReader
     /// 2. Read and Write are optimized to avoid copying (see <see cref="IUnsafeComStream"/>)
     /// 3. Allocates in chunks instead of a contiguous buffer to avoid re-alloc and copy costs when growing.
     /// </summary>
-    internal unsafe sealed class ComMemoryStream : IUnsafeComStream
+#if NET9_0_OR_GREATER
+    [GeneratedComClass]
+#endif
+    internal unsafe sealed partial class ComMemoryStream : IUnsafeComStream
     {
         // internal for testing
         internal const int STREAM_SEEK_SET = 0;
@@ -240,12 +248,12 @@ namespace Microsoft.DiaSymReader
         {
         }
 
-        void IUnsafeComStream.Clone(out IStream ppstm)
+        void IUnsafeComStream.Clone(out IntPtr ppstm)
         {
             throw new NotSupportedException();
         }
 
-        void IUnsafeComStream.CopyTo(IStream pstm, long cb, int* pcbRead, int* pcbWritten)
+        void IUnsafeComStream.CopyTo(IntPtr pstm, long cb, int* pcbRead, int* pcbWritten)
         {
             throw new NotSupportedException();
         }

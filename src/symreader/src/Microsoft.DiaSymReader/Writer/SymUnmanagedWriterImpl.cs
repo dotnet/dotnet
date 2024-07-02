@@ -6,7 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+#if NET9_0_OR_GREATER
+using System.Runtime.InteropServices.Marshalling;
+#endif
 using System.Text;
 using System.Threading;
 
@@ -110,10 +114,10 @@ namespace Microsoft.DiaSymReader
             }
             finally
             {
-                // We leave releasing SymWriter and document writer COM objects the to GC -- 
+                // We leave releasing SymWriter and document writer COM objects the to GC --
                 // we write to an in-memory stream hence no files are being locked.
                 // We need to keep these alive until the symWriter is closed because the
-                // symWriter seems to have a un-ref-counted reference to them.  
+                // symWriter seems to have a un-ref-counted reference to them.
                 _documentWriters.Clear();
             }
         }
@@ -344,10 +348,19 @@ namespace Microsoft.DiaSymReader
         private unsafe void DefineLocalConstantImpl(ISymUnmanagedWriter5 symWriter, string name, object value, int constantSignatureToken)
         {
             VariantStructure variant = new VariantStructure();
+#if NETSTANDARD2_0
 #pragma warning disable CS0618 // Type or member is obsolete
             Marshal.GetNativeVariantForObject(value, new IntPtr(&variant));
 #pragma warning restore CS0618 // Type or member is obsolete
             symWriter.DefineConstant2(name, variant, constantSignatureToken);
+#else
+            // The .NET 9 ComVariant represents the same type the VariantStructure is
+            // attempting to express here. Therefore, we can merely bit cast the bits from
+            // one to the other.
+            using ComVariant tmp = ComVariantMarshaller.ConvertToUnmanaged(value);
+            variant = Unsafe.BitCast<ComVariant, VariantStructure>(tmp);
+            symWriter.DefineConstant2(name, variant, constantSignatureToken);
+#endif
         }
 
         private bool DefineLocalStringConstant(ISymUnmanagedWriter5 symWriter, string name, string value, int constantSignatureToken)
@@ -388,7 +401,7 @@ namespace Microsoft.DiaSymReader
             catch (ArgumentException)
             {
                 // writing the constant value into the PDB failed because the string value was most probably too long.
-                // We will report a warning for this issue and continue writing the PDB. 
+                // We will report a warning for this issue and continue writing the PDB.
                 // The effect on the debug experience is that the symbol for the constant will not be shown in the local
                 // window of the debugger. Nor will the user be able to bind to it in expressions in the EE.
 
@@ -676,9 +689,9 @@ namespace Microsoft.DiaSymReader
 
             // See symwrite.cpp - the data byte[] doesn't depend on the content of metadata tables or IL.
             // The writer only sets two values of the ImageDebugDirectory struct.
-            // 
+            //
             //   IMAGE_DEBUG_DIRECTORY *pIDD
-            // 
+            //
             //   if ( pIDD == NULL ) return E_INVALIDARG;
             //   memset( pIDD, 0, sizeof( *pIDD ) );
             //   pIDD->Type = IMAGE_DEBUG_TYPE_CODEVIEW;
@@ -710,7 +723,7 @@ namespace Microsoft.DiaSymReader
             }
 
             // Data has the following structure:
-            // struct RSDSI                     
+            // struct RSDSI
             // {
             //     DWORD dwSig;                 // "RSDS"
             //     GUID guidSig;                // GUID
@@ -723,7 +736,7 @@ namespace Microsoft.DiaSymReader
             guid = new Guid(guidBytes);
 
             // Retrieve the timestamp the PDB writer generates when creating a new PDB stream.
-            // Note that ImageDebugDirectory.TimeDateStamp is not set by GetDebugInfo, 
+            // Note that ImageDebugDirectory.TimeDateStamp is not set by GetDebugInfo,
             // we need to go through IPdbWriter interface to get it.
             ((IPdbWriter)symWriter).GetSignatureAge(out stamp, out age);
         }
