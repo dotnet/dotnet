@@ -125,7 +125,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
                 _cancellationToken);
         }
 
-        private Task<SymbolInformation[]> HandleDocumentSymbolAsync<TParams>(TParams @params)
+        private Task<SumType<DocumentSymbol[], SymbolInformation[]>?> HandleDocumentSymbolAsync<TParams>(TParams @params)
         {
             Assert.IsType<DelegatedDocumentSymbolParams>(@params);
 
@@ -137,7 +137,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
                 },
             };
 
-            return _csharpServer.ExecuteRequestAsync<DocumentSymbolParams, SymbolInformation[]>(
+            return _csharpServer.ExecuteRequestAsync<DocumentSymbolParams, SumType<DocumentSymbol[], SymbolInformation[]>?>(
                 Methods.TextDocumentDocumentSymbolName,
                 delegatedRequest,
                 _cancellationToken);

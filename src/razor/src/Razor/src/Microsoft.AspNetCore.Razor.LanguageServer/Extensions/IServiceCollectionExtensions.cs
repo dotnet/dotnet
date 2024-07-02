@@ -113,7 +113,6 @@ internal static class IServiceCollectionExtensions
     public static void AddDiagnosticServices(this IServiceCollection services)
     {
         services.AddHandlerWithCapabilities<DocumentPullDiagnosticsEndpoint>();
-        services.AddHandler<WorkspacePullDiagnosticsEndpoint>();
         services.AddSingleton<RazorTranslateDiagnosticsService>();
         services.AddSingleton(sp => new Lazy<RazorTranslateDiagnosticsService>(sp.GetRequiredService<RazorTranslateDiagnosticsService>));
     }

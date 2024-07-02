@@ -107,7 +107,7 @@ public class DocumentHighlightEndpointTest(ITestOutputHelper testOutput) : Langu
             DocumentHighlightProvider = true
         };
         await using var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
-            csharpSourceText, csharpDocumentUri, serverCapabilities, razorSpanMappingService: null, DisposalToken);
+            csharpSourceText, csharpDocumentUri, serverCapabilities, razorSpanMappingService: null, capabilitiesUpdater: null, DisposalToken);
         await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString());
 
         var razorFilePath = "C:/path/to/file.razor";
@@ -156,17 +156,8 @@ public class DocumentHighlightEndpointTest(ITestOutputHelper testOutput) : Langu
         Assert.Equal(actual, expected);
     }
 
-    private class DocumentHighlightServer : IClientConnection
+    private class DocumentHighlightServer(CSharpTestLspServer csharpServer, Uri csharpDocumentUri) : IClientConnection
     {
-        private readonly CSharpTestLspServer _csharpServer;
-        private readonly Uri _csharpDocumentUri;
-
-        public DocumentHighlightServer(CSharpTestLspServer csharpServer, Uri csharpDocumentUri)
-        {
-            _csharpServer = csharpServer;
-            _csharpDocumentUri = csharpDocumentUri;
-        }
-
         public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
@@ -186,12 +177,12 @@ public class DocumentHighlightEndpointTest(ITestOutputHelper testOutput) : Langu
             {
                 TextDocument = new TextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri
+                    Uri = csharpDocumentUri
                 },
                 Position = highlightParams.ProjectedPosition,
             };
 
-            var result = await _csharpServer.ExecuteRequestAsync<DocumentHighlightParams, DocumentHighlight[]>(
+            var result = await csharpServer.ExecuteRequestAsync<DocumentHighlightParams, DocumentHighlight[]>(
                 Methods.TextDocumentDocumentHighlightName, highlightRequest, cancellationToken);
 
             return (TResponse)(object)result;

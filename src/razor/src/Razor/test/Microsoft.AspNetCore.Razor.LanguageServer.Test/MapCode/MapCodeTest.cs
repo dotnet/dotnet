@@ -186,31 +186,6 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
             <PageTitle>Title</PageTitle>
             """;
 
-        Location[][] locations = [
-            [
-                new Location
-                {
-                    Range = new Range
-                    {
-                        Start = new Position(1, 0),
-                        End = new Position(1, 0)
-                    },
-                    Uri = new Uri(RazorFilePath)
-                }
-            ],
-            [
-                new Location
-                {
-                    Range = new Range
-                    {
-                        Start = new Position(0, 0),
-                        End = new Position(5, 0)
-                    },
-                    Uri = new Uri(RazorFilePath)
-                }
-            ]
-        ];
-
         var expectedCode = """
             <h3>Component</h3>
             <PageTitle>Title</PageTitle>
@@ -311,7 +286,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         var csharpSourceText = codeDocument.GetCSharpSourceText();
         var csharpDocumentUri = new Uri(razorFilePath + "__virtual.g.cs");
         await using var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
-            csharpSourceText, csharpDocumentUri, new VSInternalServerCapabilities(), razorSpanMappingService: null, DisposalToken);
+            csharpSourceText, csharpDocumentUri, new VSInternalServerCapabilities(), razorSpanMappingService: null, capabilitiesUpdater: null, DisposalToken);
         await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString());
 
         var documentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument, version: 1337);
@@ -372,17 +347,8 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         AssertEx.EqualOrDiff(expectedCode, actualCode.ToString());
     }
 
-    private class MapCodeServer : IClientConnection
+    private class MapCodeServer(CSharpTestLspServer csharpServer, Uri csharpDocumentUri) : IClientConnection
     {
-        private readonly CSharpTestLspServer _csharpServer;
-        private readonly Uri _csharpDocumentUri;
-
-        public MapCodeServer(CSharpTestLspServer csharpServer, Uri csharpDocumentUri)
-        {
-            _csharpServer = csharpServer;
-            _csharpDocumentUri = csharpDocumentUri;
-        }
-
         public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
@@ -403,7 +369,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
                 new() {
                     TextDocument = new TextDocumentIdentifier()
                     {
-                        Uri = _csharpDocumentUri
+                        Uri = csharpDocumentUri
                     },
                     Contents = delegatedMapCodeParams.Contents,
                     FocusLocations = delegatedMapCodeParams.FocusLocations
@@ -414,7 +380,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
                 Mappings = mappings
             };
 
-            var result = await _csharpServer.ExecuteRequestAsync<VSInternalMapCodeParams, WorkspaceEdit?>(
+            var result = await csharpServer.ExecuteRequestAsync<VSInternalMapCodeParams, WorkspaceEdit?>(
                 VSInternalMethods.WorkspaceMapCodeName, mapCodeRequest, cancellationToken);
             if (result is null)
             {

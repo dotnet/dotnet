@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.AspNetCore.Razor.Threading;
@@ -34,13 +33,14 @@ internal static class CSharpTestLspServerHelpers
         Uri csharpDocumentUri,
         VSInternalServerCapabilities serverCapabilities,
         CancellationToken cancellationToken) =>
-        CreateCSharpLspServerAsync(csharpSourceText, csharpDocumentUri, serverCapabilities, new EmptyMappingService(), cancellationToken);
+        CreateCSharpLspServerAsync(csharpSourceText, csharpDocumentUri, serverCapabilities, new EmptyMappingService(), capabilitiesUpdater: null, cancellationToken);
 
     public static Task<CSharpTestLspServer> CreateCSharpLspServerAsync(
         SourceText csharpSourceText,
         Uri csharpDocumentUri,
         VSInternalServerCapabilities serverCapabilities,
         IRazorSpanMappingService razorSpanMappingService,
+        Action<VSInternalClientCapabilities> capabilitiesUpdater,
         CancellationToken cancellationToken)
     {
         var files = new[]
@@ -48,10 +48,16 @@ internal static class CSharpTestLspServerHelpers
             (csharpDocumentUri, csharpSourceText)
         };
 
-        return CreateCSharpLspServerAsync(files, serverCapabilities, razorSpanMappingService, multiTargetProject: true, cancellationToken);
+        return CreateCSharpLspServerAsync(files, serverCapabilities, razorSpanMappingService, multiTargetProject: true, capabilitiesUpdater, cancellationToken);
     }
 
-    public static async Task<CSharpTestLspServer> CreateCSharpLspServerAsync(IEnumerable<(Uri Uri, SourceText SourceText)> files, VSInternalServerCapabilities serverCapabilities, IRazorSpanMappingService razorSpanMappingService, bool multiTargetProject, CancellationToken cancellationToken)
+    public static async Task<CSharpTestLspServer> CreateCSharpLspServerAsync(
+        IEnumerable<(Uri Uri, SourceText SourceText)> files,
+        VSInternalServerCapabilities serverCapabilities,
+        IRazorSpanMappingService razorSpanMappingService,
+        bool multiTargetProject,
+         Action<VSInternalClientCapabilities> capabilitiesUpdater,
+        CancellationToken cancellationToken)
     {
         var csharpFiles = files.Select(f => new CSharpFile(f.Uri, f.SourceText));
 
@@ -70,7 +76,7 @@ internal static class CSharpTestLspServerHelpers
                 {
                     CompletionListSetting = new()
                     {
-                        ItemDefaults = new string[] { EditRangeSetting }
+                        ItemDefaults = [EditRangeSetting]
                     },
                     CompletionItem = new()
                     {
@@ -88,6 +94,8 @@ internal static class CSharpTestLspServerHelpers
                 Configuration = true
             }
         };
+
+        capabilitiesUpdater?.Invoke(clientCapabilities);
 
         return await CSharpTestLspServer.CreateAsync(
             workspace, exportProvider, clientCapabilities, serverCapabilities, cancellationToken);
