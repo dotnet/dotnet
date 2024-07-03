@@ -12,8 +12,10 @@
           DependsOnTargets="GetCurrentRuntimeInformation;
                             GenerateRpmsInner" />
 
+  <!-- Removed TestSdkRpm. SDK RPMS should be tested in a separate container to avoid polluting or relying on the
+       build environment. https://github.com/dotnet/sdk/issues/41910 -->
   <Target Name="GenerateRpmsInner"
-          DependsOnTargets="TestFPMTool;BuildRpms;TestSdkRpm"
+          DependsOnTargets="TestFPMTool;BuildRpms"
           Condition=" '$(IsRPMBasedDistro)' == 'True' "
           Outputs="@(GeneratedInstallers)"/>
 

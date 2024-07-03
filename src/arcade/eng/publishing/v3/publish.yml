@@ -147,6 +147,18 @@ stages:
             filePath: $(Build.SourcesDirectory)/eng/common/enable-cross-org-publishing.ps1
             arguments: -token $(dn-bot-all-orgs-artifact-feeds-rw)
 
+        - task: AzureCLI@2
+          displayName: Authenticate Maestro API
+          name: AuthenticateMaestro
+          inputs:
+            azureSubscription: 'Darc: Maestro Production'
+            addSpnToEnvironment: true
+            scriptType: ps
+            scriptLocation: inlineScript
+            inlineScript: |
+              $token = (az account get-access-token --resource "$env:servicePrincipalId" | ConvertFrom-Json).accessToken
+              echo "##vso[task.setvariable variable=MaestroToken;isOutput=true;isSecret=true]$token"
+
         - task: PowerShell@2
           displayName: Publish packages, blobs and symbols
           inputs:
@@ -158,7 +170,7 @@ stages:
               /p:IsInternalBuild=${{ contains(variables['AzDOBranch'], 'internal/') }}
               /p:NugetPath=$(NuGetExeToolPath)
               /p:MaestroApiEndpoint='$(MaestroApiEndPoint)'
-              /p:BuildAssetRegistryToken='$(MaestroApiAccessToken)'
+              /p:BuildAssetRegistryToken='$(AuthenticateMaestro.MaestroToken)'
               /p:ManifestsBasePath='$(Build.ArtifactStagingDirectory)/AssetManifests/'
               /p:BlobBasePath='$(Build.ArtifactStagingDirectory)/BlobArtifacts/'
               /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts/'
