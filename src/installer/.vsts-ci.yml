@@ -21,14 +21,12 @@ variables:
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - name: Codeql.Enabled
     value: true
-  - group: DotNet-DotNetCli-Storage
   - group: DotNet-Installer-SDLValidation-Params
   - name: _PublishUsingPipelines
     value: true
 - name: _InternalRuntimeDownloadArgs
   value: ''
 - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-  - group: DotNetBuilds storage account read tokens
   - name: _InternalRuntimeDownloadArgs
     value: /p:DotNetRuntimeSourceFeed=https://dotnetbuilds.blob.core.windows.net/internal
       /p:DotNetRuntimeSourceFeedKey=$(dotnetbuilds-internal-container-read-token-base64)
@@ -334,6 +332,8 @@ extends:
 
       # Source Build
       - template: /eng/common/templates-official/jobs/source-build.yml@self
+        parameters:
+          enableInternalSources: true
 
     - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
       - stage: Publish
