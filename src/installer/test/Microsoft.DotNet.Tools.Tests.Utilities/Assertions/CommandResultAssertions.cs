@@ -28,14 +28,14 @@ namespace Microsoft.DotNet.Tools.Test.Utilities
         public AndConstraint<CommandResultAssertions> Pass()
         {
             Execute.Assertion.ForCondition(_commandResult.ExitCode == 0)
-                .FailWith(AppendDiagnosticsTo($"Expected command to pass but it did not."));
+                .FailWith(AppendDiagnosticsTo("Expected command to pass but it did not."));
             return new AndConstraint<CommandResultAssertions>(this);
         }
 
         public AndConstraint<CommandResultAssertions> Fail()
         {
             Execute.Assertion.ForCondition(_commandResult.ExitCode != 0)
-                .FailWith(AppendDiagnosticsTo($"Expected command to fail but it did not."));
+                .FailWith(AppendDiagnosticsTo("Expected command to fail but it did not."));
             return new AndConstraint<CommandResultAssertions>(this);
         }
 
@@ -125,7 +125,7 @@ namespace Microsoft.DotNet.Tools.Test.Utilities
         public AndConstraint<CommandResultAssertions> NotHaveStdOut()
         {
             Execute.Assertion.ForCondition(string.IsNullOrEmpty(_commandResult.StdOut))
-                .FailWith(AppendDiagnosticsTo($"Expected command to not output to stdout but it was not:"));
+                .FailWith(AppendDiagnosticsTo("Expected command to not output to stdout but it was not:"));
             return new AndConstraint<CommandResultAssertions>(this);
         }
 
