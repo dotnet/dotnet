@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.Utilities;
 
@@ -16,23 +15,14 @@ internal abstract class RazorFilePathToContentTypeProviderBase : IFilePathToCont
         IContentTypeRegistryService contentTypeRegistryService,
         ILspEditorFeatureDetector lspEditorFeatureDetector)
     {
-        if (contentTypeRegistryService is null)
-        {
-            throw new ArgumentNullException(nameof(contentTypeRegistryService));
-        }
-
-        if (lspEditorFeatureDetector is null)
-        {
-            throw new ArgumentNullException(nameof(lspEditorFeatureDetector));
-        }
-
         _contentTypeRegistryService = contentTypeRegistryService;
         _lspEditorFeatureDetector = lspEditorFeatureDetector;
     }
 
     public bool TryGetContentTypeForFilePath(string filePath, [NotNullWhen(true)] out IContentType? contentType)
     {
-        if (_lspEditorFeatureDetector.IsLspEditorEnabledAndAvailable(filePath))
+        if (_lspEditorFeatureDetector.IsLspEditorEnabled() &&
+            _lspEditorFeatureDetector.IsLspEditorSupported(filePath))
         {
             contentType = _contentTypeRegistryService.GetContentType(RazorConstants.RazorLSPContentTypeName);
             return true;

@@ -17,8 +17,6 @@ internal class TestLanguageServerFeatureOptions(
 
     public override string HtmlVirtualDocumentSuffix => "__virtual.html";
 
-    public override bool SingleServerCompletionSupport => false;
-
     public override bool SingleServerSupport => false;
 
     public override bool DelegateToCSharpOnDiagnosticPublish => true;

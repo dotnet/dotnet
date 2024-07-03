@@ -81,8 +81,6 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
 
     public override string HtmlVirtualDocumentSuffix => "__virtual.html";
 
-    public override bool SingleServerCompletionSupport => true;
-
     public override bool SingleServerSupport => true;
 
     public override bool DelegateToCSharpOnDiagnosticPublish => false;

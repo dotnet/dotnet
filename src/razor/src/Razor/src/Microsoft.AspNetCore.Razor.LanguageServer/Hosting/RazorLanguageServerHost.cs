@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -11,8 +12,6 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
@@ -74,18 +73,19 @@ internal sealed partial class RazorLanguageServerHost : IDisposable
         return host;
     }
 
-    private static (JsonRpc, JsonSerializer) CreateJsonRpc(Stream input, Stream output)
+    private static (JsonRpc, JsonSerializerOptions) CreateJsonRpc(Stream input, Stream output)
     {
-        var messageFormatter = new JsonMessageFormatter();
-        messageFormatter.JsonSerializer.AddVSInternalExtensionConverters();
-        messageFormatter.JsonSerializer.ContractResolver = new CamelCasePropertyNamesContractResolver();
+        var messageFormatter = new SystemTextJsonFormatter();
+
+        // In its infinite wisdom, the LSP client has a public method that takes Newtonsoft.Json types, but an internal method that takes System.Text.Json types.
+        typeof(VSInternalExtensionUtilities).GetMethod("AddVSInternalExtensionConverters", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!.Invoke(null, [messageFormatter.JsonSerializerOptions]);
 
         var jsonRpc = new JsonRpc(new HeaderDelimitedMessageHandler(output, input, messageFormatter));
 
         // Get more information about exceptions that occur during RPC method invocations.
         jsonRpc.ExceptionStrategy = ExceptionProcessing.ISerializable;
 
-        return (jsonRpc, messageFormatter.JsonSerializer);
+        return (jsonRpc, messageFormatter.JsonSerializerOptions);
     }
 
     public Task WaitForExitAsync()

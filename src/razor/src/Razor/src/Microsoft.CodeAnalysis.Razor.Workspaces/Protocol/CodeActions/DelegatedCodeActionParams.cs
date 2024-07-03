@@ -2,22 +2,21 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 
-[DataContract]
 internal class DelegatedCodeActionParams
 {
-    [DataMember(Name = "hostDocumentVersion")]
+    [JsonPropertyName("hostDocumentVersion")]
     public int HostDocumentVersion { get; set; }
 
-    [DataMember(Name = "codeActionParams")]
+    [JsonPropertyName("codeActionParams")]
     public required VSCodeActionParams CodeActionParams { get; set; }
 
-    [DataMember(Name = "languageKind")]
+    [JsonPropertyName("languageKind")]
     public RazorLanguageKind LanguageKind { get; set; }
 
-    [DataMember(Name = "correlationId")]
+    [JsonPropertyName("correlationId")]
     public Guid CorrelationId { get; set; }
 }

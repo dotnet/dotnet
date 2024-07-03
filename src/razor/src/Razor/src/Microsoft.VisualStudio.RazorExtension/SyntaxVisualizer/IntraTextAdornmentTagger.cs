@@ -96,7 +96,9 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
             var translatedAdornmentCache = new Dictionary<SnapshotSpan, TAdornment>();
 
             foreach (var keyValuePair in adornmentCache)
+            {
                 translatedAdornmentCache.Add(keyValuePair.Key.TranslateTo(snapshot, SpanTrackingMode.EdgeExclusive), keyValuePair.Value);
+            }
 
             adornmentCache = translatedAdornmentCache;
         }
@@ -109,7 +111,9 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
         }
 
         if (translatedSpans.Count == 0)
+        {
             return;
+        }
 
         var start = translatedSpans.Select(span => span.Start).Min();
         var end = translatedSpans.Select(span => span.End).Max();
@@ -124,7 +128,9 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
     {
         var handler = TagsChanged;
         if (handler != null)
+        {
             handler(this, new SnapshotSpanEventArgs(span));
+        }
     }
 
     private void HandleLayoutChanged(object sender, TextViewLayoutChangedEventArgs e)
@@ -139,14 +145,18 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
             select keyValuePair.Key);
 
         foreach (var span in toRemove)
+        {
             adornmentCache.Remove(span);
+        }
     }
 
     // Produces tags on the snapshot that the tag consumer asked for.
     public virtual IEnumerable<ITagSpan<IntraTextAdornmentTag>> GetTags(NormalizedSnapshotSpanCollection spans)
     {
         if (spans == null || spans.Count == 0)
+        {
             yield break;
+        }
 
         // Translate the request to the snapshot that this tagger is current with.
 
@@ -169,7 +179,9 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
     private IEnumerable<TagSpan<IntraTextAdornmentTag>> GetAdornmentTagsOnSnapshot(NormalizedSnapshotSpanCollection spans)
     {
         if (spans.Count == 0)
+        {
             yield break;
+        }
 
         var snapshot = spans[0].Snapshot;
 
@@ -183,8 +195,12 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
         // so that they can be removed from the cache if they no longer correspond to data tags.
         var toRemove = new HashSet<SnapshotSpan>();
         foreach (var ar in adornmentCache)
+        {
             if (spans.IntersectsWith(new NormalizedSnapshotSpanCollection(ar.Key)))
+            {
                 toRemove.Add(ar.Key);
+            }
+        }
 
         foreach (var spanDataPair in GetAdornmentData(spans).Distinct(new Comparer()))
         {
@@ -196,14 +212,18 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
             if (adornmentCache.TryGetValue(snapshotSpan, out adornment))
             {
                 if (UpdateAdornment(adornment, adornmentData))
+                {
                     toRemove.Remove(snapshotSpan);
+                }
             }
             else
             {
                 adornment = CreateAdornment(adornmentData, snapshotSpan);
 
                 if (adornment == null)
+                {
                     continue;
+                }
 
                 // Get the adornment to measure itself. Its DesiredSize property is used to determine
                 // how much space to leave between text for this adornment.
@@ -222,7 +242,9 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
         }
 
         foreach (var snapshotSpan in toRemove)
+        {
             adornmentCache.Remove(snapshotSpan);
+        }
     }
 
     public event EventHandler<SnapshotSpanEventArgs>? TagsChanged;
@@ -232,9 +254,15 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
         public bool Equals(Tuple<SnapshotSpan, PositionAffinity?, TData> x, Tuple<SnapshotSpan, PositionAffinity?, TData> y)
         {
             if (x == null && y == null)
+            {
                 return true;
+            }
+
             if (x == null || y == null)
+            {
                 return false;
+            }
+
             return x.Item1.Equals(y.Item1);
         }
 

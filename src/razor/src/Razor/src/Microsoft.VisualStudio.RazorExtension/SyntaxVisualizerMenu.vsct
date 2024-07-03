@@ -97,6 +97,27 @@
           <ButtonText>Show Generated HTML</ButtonText>
         </Strings>
       </Button>
+
+      <Button guid="guidSyntaxVisualizerMenuCmdSet" id="cmdIdShowAllTagHelpers" priority="0x203" type="Button">
+        <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="grpidRazorSyntaxVisualizer" />
+        <Strings>
+          <ButtonText>Show All Tag Helpers</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidSyntaxVisualizerMenuCmdSet" id="cmdIdShowInScopeTagHelpers" priority="0x204" type="Button">
+        <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="grpidRazorSyntaxVisualizer" />
+        <Strings>
+          <ButtonText>Show In Scope Tag Helpers</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidSyntaxVisualizerMenuCmdSet" id="cmdIdShowReferencedTagHelpers" priority="0x205" type="Button">
+        <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="grpidRazorSyntaxVisualizer" />
+        <Strings>
+          <ButtonText>Show Referenced Tag Helpers</ButtonText>
+        </Strings>
+      </Button>
       
     </Buttons>
   </Commands>
@@ -116,6 +137,9 @@
       <IDSymbol name="cmdidShowSourceMappingsButton" value="0x0110" />
       <IDSymbol name="cmdidShowGeneratedCode" value="0x0111" />
       <IDSymbol name="cmdidShowGeneratedHtml" value="0x0112" />
+      <IDSymbol name="cmdIdShowAllTagHelpers" value="0x0113" />
+      <IDSymbol name="cmdIdShowInScopeTagHelpers" value="0x0114" />
+      <IDSymbol name="cmdIdShowReferencedTagHelpers" value="0x0115" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

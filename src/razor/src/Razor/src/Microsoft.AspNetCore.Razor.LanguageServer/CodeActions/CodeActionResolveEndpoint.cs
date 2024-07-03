@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
@@ -12,7 +13,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
@@ -66,13 +66,13 @@ internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandl
             throw new ArgumentNullException(nameof(request));
         }
 
-        if (request.Data is not JObject paramsObj)
+        if (request.Data is not JsonElement paramsObj)
         {
             _logger.LogError($"Invalid CodeAction Received '{request.Title}'.");
             return request;
         }
 
-        var resolutionParams = paramsObj.ToObject<RazorCodeActionResolutionParams>();
+        var resolutionParams = paramsObj.Deserialize<RazorCodeActionResolutionParams>();
 
         if (resolutionParams is null)
         {
@@ -87,7 +87,7 @@ internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandl
         // as it does not support Command.Edit based code actions anymore.
         if (resolutionParams.Action == LanguageServerConstants.CodeActions.EditBasedCodeActionCommand)
         {
-            request.Edit = (resolutionParams.Data as JObject)?.ToObject<WorkspaceEdit>();
+            request.Edit = (resolutionParams.Data as JsonElement?)?.Deserialize<WorkspaceEdit>();
             return request;
         }
 
@@ -128,7 +128,7 @@ internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandl
             return codeAction;
         }
 
-        if (resolutionParams.Data is not JObject data)
+        if (resolutionParams.Data is not JsonElement data)
         {
             return codeAction;
         }
@@ -148,20 +148,20 @@ internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandl
 
     private async Task<CodeAction> ResolveDelegatedCodeActionAsync(ImmutableDictionary<string, BaseDelegatedCodeActionResolver> resolvers, CodeAction codeAction, RazorCodeActionResolutionParams resolutionParams, CancellationToken cancellationToken)
     {
-        if (resolutionParams.Data is not JObject csharpParamsObj)
+        if (resolutionParams.Data is not JsonElement csharpParamsObj)
         {
             _logger.LogError($"Invalid CodeAction Received.");
             Debug.Fail($"Invalid CSharp CodeAction Received.");
             return codeAction;
         }
 
-        var csharpParams = csharpParamsObj.ToObject<CodeActionResolveParams>();
+        var csharpParams = csharpParamsObj.Deserialize<CodeActionResolveParams>();
         if (csharpParams is null)
         {
             throw new ArgumentOutOfRangeException($"Data was not convertible to {nameof(CodeActionResolveParams)}");
         }
 
-        codeAction.Data = csharpParams.Data as JToken;
+        codeAction.Data = csharpParams.Data;
 
         if (!resolvers.TryGetValue(resolutionParams.Action, out var resolver))
         {

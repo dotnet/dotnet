@@ -2,23 +2,26 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.CodeAnalysis.Razor.Serialization;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Extensions;
+using Microsoft.VisualStudio.Razor;
+using Microsoft.VisualStudio.Razor.Documents;
+using Microsoft.VisualStudio.Razor.LanguageClient;
+using Microsoft.VisualStudio.Razor.SyntaxVisualizer;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Threading;
-using Microsoft.VisualStudio.Razor.LanguageClient;
-using Microsoft.VisualStudio.Razor.Documents;
-using Microsoft.VisualStudio.Razor.SyntaxVisualizer;
-using Microsoft.VisualStudio.Razor;
+using Newtonsoft.Json;
 
 namespace Microsoft.VisualStudio.RazorExtension.SyntaxVisualizer;
 
@@ -153,6 +156,33 @@ internal partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTable
         }
 
         OpenVirtualDocuments<HtmlVirtualDocumentSnapshot>(_activeWpfTextView.TextBuffer);
+    }
+
+    public void ShowSerializedTagHelpers(TagHelperDisplayMode displayKind)
+    {
+        ThreadHelper.ThrowIfNotOnUIThread();
+
+        var codeDocument = GetCodeDocument();
+        var tagHelpers = displayKind switch
+        {
+            TagHelperDisplayMode.All => codeDocument.GetTagHelpers(),
+            TagHelperDisplayMode.InScope => codeDocument.GetTagHelperContext().TagHelpers,
+            TagHelperDisplayMode.Referenced => (IEnumerable<TagHelperDescriptor>)codeDocument.GetReferencedTagHelpers(),
+            _ => []
+        };
+
+        var serializer = new JsonSerializer();
+        serializer.Converters.Add(new TagHelperDescriptorJsonConverter());
+
+        var tempFileName = GetTempFileName(displayKind.ToString() + "TagHelpers.json");
+
+        using (var writer = new JsonTextWriter(new StreamWriter(tempFileName)))
+        {
+            writer.Formatting = Formatting.Indented;
+            serializer.Serialize(writer, tagHelpers);
+        }
+
+        VsShellUtilities.OpenDocument(ServiceProvider.GlobalProvider, tempFileName);
     }
 
     private static string GetTempFileName(string originalFilePath)
@@ -462,16 +492,24 @@ internal partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTable
     private void treeView_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
     {
         if (e.Key != System.Windows.Input.Key.Enter)
+        {
             return;
+        }
 
         if (!IsVisible || _activeWpfTextView is null)
+        {
             return;
+        }
 
         if (treeView.SelectedItem is not TreeViewItem item)
+        {
             return;
+        }
 
         if (item.Tag is not RazorSyntaxNode node)
+        {
             return;
+        }
 
         var caretPoint = new SnapshotPoint(_activeWpfTextView.TextBuffer.CurrentSnapshot, node.SpanEnd);
 
@@ -508,5 +546,12 @@ internal partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTable
         }
 
         return codeDocument;
+    }
+
+    internal enum TagHelperDisplayMode
+    {
+        All,
+        InScope,
+        Referenced
     }
 }

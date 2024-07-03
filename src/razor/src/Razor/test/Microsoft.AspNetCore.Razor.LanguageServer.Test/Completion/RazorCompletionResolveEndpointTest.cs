@@ -4,14 +4,13 @@
 #nullable disable
 
 using System;
-using System.IO;
+using System.Text.Json;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -149,11 +148,8 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
 
     private VSInternalCompletionItem ConvertToBridgedItem(CompletionItem completionItem)
     {
-        using var textWriter = new StringWriter();
-        ProtocolSerializer.Instance.Serialize(textWriter, completionItem);
-        var stringBuilder = textWriter.GetStringBuilder();
-        using var jsonReader = new JsonTextReader(new StringReader(stringBuilder.ToString()));
-        var bridgedItem = ProtocolSerializer.Instance.Deserialize<VSInternalCompletionItem>(jsonReader);
+        var serialized = JsonSerializer.Serialize(completionItem, SerializerOptions);
+        var bridgedItem = JsonSerializer.Deserialize<VSInternalCompletionItem>(serialized, SerializerOptions);
         return bridgedItem;
     }
 

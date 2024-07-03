@@ -73,21 +73,11 @@ internal static class IServiceCollectionExtensions
         services.AddHandlerWithCapabilities<DocumentRangeFormattingEndpoint>();
     }
 
-    public static void AddCompletionServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
+    public static void AddCompletionServices(this IServiceCollection services)
     {
         services.AddHandlerWithCapabilities<InlineCompletionEndpoint>();
-
-        if (featureOptions.SingleServerCompletionSupport)
-        {
-            services.AddHandlerWithCapabilities<RazorCompletionEndpoint>();
-            services.AddHandlerWithCapabilities<RazorCompletionResolveEndpoint>();
-        }
-        else
-        {
-            services.AddHandlerWithCapabilities<LegacyRazorCompletionEndpoint>();
-            services.AddHandlerWithCapabilities<LegacyRazorCompletionResolveEndpoint>();
-        }
-
+        services.AddHandlerWithCapabilities<RazorCompletionEndpoint>();
+        services.AddHandlerWithCapabilities<RazorCompletionResolveEndpoint>();
         services.AddSingleton<CompletionListCache>();
         services.AddSingleton<CompletionListProvider>();
         services.AddSingleton<DelegatedCompletionListProvider>();

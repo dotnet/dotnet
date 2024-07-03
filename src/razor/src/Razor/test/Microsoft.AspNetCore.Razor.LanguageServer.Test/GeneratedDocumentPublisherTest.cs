@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -96,7 +97,7 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
         var updateRequest = _serverClient.UpdateRequests.Last();
         Assert.Equal("/path/to/file.razor", updateRequest.HostDocumentFilePath);
         var textChange = Assert.Single(updateRequest.Changes);
-        Assert.Equal(change, textChange);
+        Assert.Equal(change.ToRazorTextChange(), textChange);
         Assert.Equal(124, updateRequest.HostDocumentVersion);
     }
 
@@ -120,7 +121,7 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
         var updateRequest = _serverClient.UpdateRequests.Last();
         Assert.Equal("/path/to/file.razor", updateRequest.HostDocumentFilePath);
         var textChange = Assert.Single(updateRequest.Changes);
-        Assert.Equal(change, textChange);
+        Assert.Equal(change.ToRazorTextChange(), textChange);
         Assert.Equal(124, updateRequest.HostDocumentVersion);
     }
 

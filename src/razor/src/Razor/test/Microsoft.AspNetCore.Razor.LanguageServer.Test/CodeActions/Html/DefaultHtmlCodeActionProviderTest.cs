@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -16,7 +17,6 @@ using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
-using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -55,7 +55,7 @@ public class DefaultHtmlCodeActionProviderTest(ITestOutputHelper testOutput) : L
         Assert.NotNull(providedCodeActions);
         var action = Assert.Single(providedCodeActions);
         Assert.Equal("Test", action.Name);
-        Assert.Equal("Html", ((JObject)action.Data!)["language"]!.ToString());
+        Assert.Equal("Html", ((JsonElement)action.Data!).GetProperty("language").GetString());
     }
 
     [Fact]

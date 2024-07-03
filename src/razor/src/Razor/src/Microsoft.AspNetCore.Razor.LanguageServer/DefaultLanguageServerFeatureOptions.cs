@@ -17,8 +17,6 @@ internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOption
 
     public override string HtmlVirtualDocumentSuffix => DefaultHtmlVirtualDocumentSuffix;
 
-    public override bool SingleServerCompletionSupport => false;
-
     public override bool SingleServerSupport => false;
 
     public override bool DelegateToCSharpOnDiagnosticPublish => false;

@@ -102,11 +102,15 @@ internal sealed class SourceMappingTagger : ITagger<SourceMappingTag>
     private void HandleBufferChanged(TextContentChangedEventArgs args)
     {
         if (args.Changes.Count == 0)
+        {
             return;
+        }
 
         var tagsChanged = TagsChanged;
         if (tagsChanged == null)
+        {
             return;
+        }
 
         // Combine all changes into a single span so that
         // the ITagger<>.TagsChanged event can be raised just once for a compound edit

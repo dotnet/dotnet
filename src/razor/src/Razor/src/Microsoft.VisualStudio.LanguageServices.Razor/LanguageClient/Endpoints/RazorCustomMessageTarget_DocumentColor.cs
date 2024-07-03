@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.ColorPresentation;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Threading;
-using Newtonsoft.Json.Linq;
 using StreamJsonRpc;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Endpoints;
@@ -36,7 +35,6 @@ internal partial class RazorCustomMessageTarget
         var requests = _requestInvoker.ReinvokeRequestOnMultipleServersAsync<DocumentColorParams, ColorInformation[]>(
             htmlTextBuffer,
             Methods.DocumentColorRequest.Name,
-            SupportsDocumentColor,
             documentColorParams,
             cancellationToken).ConfigureAwait(false);
 
@@ -85,16 +83,5 @@ internal partial class RazorCustomMessageTarget
         }
 
         return colorPresentation;
-    }
-
-    private static bool SupportsDocumentColor(JToken token)
-    {
-        var serverCapabilities = token.ToObject<ServerCapabilities>();
-
-        var supportsDocumentColor = serverCapabilities?.DocumentColorProvider?.Match(
-            boolValue => boolValue,
-            options => options != null) ?? false;
-
-        return supportsDocumentColor;
     }
 }

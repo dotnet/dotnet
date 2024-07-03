@@ -3,8 +3,8 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 
@@ -30,33 +30,27 @@ internal class RazorLanguageServerCapability : ICapabilitiesProvider
         dict["razor"] = s_default;
     }
 
-    public static bool TryGet(JToken token, [NotNullWhen(true)] out RazorLanguageServerCapability? razorCapability)
+    public static bool TryGet(JsonElement token, [NotNullWhen(true)] out RazorLanguageServerCapability? razorCapability)
     {
-        if (token is not JObject jobject)
+        if (token.ValueKind != JsonValueKind.Object)
         {
             razorCapability = null;
             return false;
         }
 
-        if (!jobject.TryGetValue("experimental", out var experimentalCapabilitiesToken))
+        if (!token.TryGetProperty("experimental", out var experimentalCapabilities))
         {
             razorCapability = null;
             return false;
         }
 
-        if (experimentalCapabilitiesToken is not JObject experimentalCapabilities)
+        if (!experimentalCapabilities.TryGetProperty(RazorCapabilityKey, out var razorCapabilityToken))
         {
             razorCapability = null;
             return false;
         }
 
-        if (!experimentalCapabilities.TryGetValue(RazorCapabilityKey, out var razorCapabilityToken))
-        {
-            razorCapability = null;
-            return false;
-        }
-
-        razorCapability = razorCapabilityToken.ToObject<RazorLanguageServerCapability>();
+        razorCapability = razorCapabilityToken.Deserialize<RazorLanguageServerCapability>();
         return razorCapability is not null;
     }
 }

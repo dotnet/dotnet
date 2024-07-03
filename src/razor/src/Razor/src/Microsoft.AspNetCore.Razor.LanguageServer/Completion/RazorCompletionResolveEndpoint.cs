@@ -9,7 +9,10 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
-internal class RazorCompletionResolveEndpoint : IVSCompletionResolveEndpoint, ICapabilitiesProvider
+[RazorLanguageServerEndpoint(Methods.TextDocumentCompletionResolveName)]
+internal class RazorCompletionResolveEndpoint
+    : IRazorDocumentlessRequestHandler<VSInternalCompletionItem, VSInternalCompletionItem>,
+      ICapabilitiesProvider
 {
     private readonly AggregateCompletionItemResolver _completionItemResolver;
     private readonly CompletionListCache _completionListCache;

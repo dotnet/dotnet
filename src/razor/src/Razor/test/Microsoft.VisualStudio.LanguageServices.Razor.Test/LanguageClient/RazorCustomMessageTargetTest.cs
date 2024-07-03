@@ -26,7 +26,6 @@ using Microsoft.VisualStudio.Razor.Snippets;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
 using Moq;
-using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -116,7 +115,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         {
             HostDocumentFilePath = "C:/path/to/file.razor",
             HostDocumentVersion = 1337,
-            Changes = Array.Empty<TextChange>(),
+            Changes = [],
         };
 
         // Act
@@ -170,7 +169,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             ProjectKeyId = projectKey2.Id,
             HostDocumentFilePath = "C:/path/to/file.razor",
             HostDocumentVersion = 1337,
-            Changes = Array.Empty<TextChange>(),
+            Changes = [],
         };
 
         // Act
@@ -262,7 +261,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             .Setup(invoker => invoker.ReinvokeRequestOnMultipleServersAsync<VSCodeActionParams, IReadOnlyList<VSInternalCodeAction>>(
                 _textBuffer,
                 Methods.TextDocumentCodeActionName,
-                It.IsAny<Func<JToken, bool>>(),
                 It.IsAny<VSCodeActionParams>(),
                 It.IsAny<CancellationToken>()))
             .Returns(expectedResults);
@@ -345,7 +343,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             .Setup(invoker => invoker.ReinvokeRequestOnMultipleServersAsync<CodeAction, VSInternalCodeAction>(
                 It.IsAny<ITextBuffer>(),
                 Methods.CodeActionResolveName,
-                It.IsAny<Func<JToken, bool>>(),
                 It.IsAny<VSInternalCodeAction>(),
                 It.IsAny<CancellationToken>()))
             .Returns(expectedResponses);
@@ -512,7 +509,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 _textBuffer,
                 It.IsAny<string>(),
                 RazorLSPConstants.RazorCSharpLanguageServerName,
-                It.IsAny<Func<JToken, bool>>(),
                 It.IsAny<SemanticTokensParams>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ReinvocationResponse<SemanticTokens>("languageClient", expectedCSharpResults));
@@ -591,7 +587,6 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 _textBuffer,
                 It.IsAny<string>(),
                 RazorLSPConstants.RazorCSharpLanguageServerName,
-                It.IsAny<Func<JToken, bool>>(),
                 It.IsAny<SemanticTokensParams>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ReinvocationResponse<SemanticTokens>("languageClient", expectedCSharpResults));

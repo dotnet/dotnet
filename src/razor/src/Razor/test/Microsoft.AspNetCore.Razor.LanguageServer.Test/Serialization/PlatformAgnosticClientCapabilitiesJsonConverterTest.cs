@@ -3,10 +3,9 @@
 
 #nullable disable
 
-using System.IO;
 using System.Linq;
+using System.Text.Json;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Serialization;
@@ -76,10 +75,9 @@ public class PlatformAgnosticClientCapabilitiesJsonConverterTest
     }
   }
 }";
-        var stringReader = new StringReader(rawJson);
 
         // Act
-        var capabilities = JsonSerializer.CreateDefault().Deserialize<VSInternalClientCapabilities>(new JsonTextReader(stringReader));
+        var capabilities = JsonSerializer.Deserialize<VSInternalClientCapabilities>(rawJson);
 
         // Assert
         Assert.True(capabilities.Workspace.ApplyEdit);

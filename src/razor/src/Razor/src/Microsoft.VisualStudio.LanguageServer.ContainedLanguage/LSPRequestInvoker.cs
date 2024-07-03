@@ -42,6 +42,7 @@ internal abstract class LSPRequestInvoker
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     /// <remarks>When operating on a document the <see cref="ITextBuffer"/> overload should be used, since it guarantees ordering.</remarks>
+    [Obsolete("Use the overload that doesn't take a capability filter")]
     public abstract Task<ReinvokeResponse<TOut>> ReinvokeRequestOnServerAsync<TIn, TOut>(
         string method,
         string languageServerName,
@@ -58,6 +59,7 @@ internal abstract class LSPRequestInvoker
         CancellationToken cancellationToken)
         where TIn : notnull;
 
+    [Obsolete("Use the overload that doesn't take a capability filter")]
     public abstract Task<ReinvocationResponse<TOut>?> ReinvokeRequestOnServerAsync<TIn, TOut>(
         ITextBuffer textBuffer,
         string method,
@@ -114,6 +116,7 @@ internal abstract class LSPRequestInvoker
         CancellationToken cancellationToken)
         where TIn : notnull;
 
+    [Obsolete("New callers should use a method that doesn't have a capabilities filter")]
     public abstract IAsyncEnumerable<ReinvocationResponse<TOut>> ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(
         ITextBuffer textBuffer,
         string method,

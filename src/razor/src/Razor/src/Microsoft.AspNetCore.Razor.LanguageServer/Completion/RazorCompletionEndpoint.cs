@@ -14,12 +14,13 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
+[RazorLanguageServerEndpoint(Methods.TextDocumentCompletionName)]
 internal class RazorCompletionEndpoint(
     CompletionListProvider completionListProvider,
     ITelemetryReporter? telemetryReporter,
     RazorLSPOptionsMonitor optionsMonitor,
     ILoggerFactory loggerFactory)
-    : IVSCompletionEndpoint
+    : IRazorRequestHandler<CompletionParams, VSInternalCompletionList?>, ICapabilitiesProvider
 {
     private readonly CompletionListProvider _completionListProvider = completionListProvider;
     private readonly ITelemetryReporter? _telemetryReporter = telemetryReporter;

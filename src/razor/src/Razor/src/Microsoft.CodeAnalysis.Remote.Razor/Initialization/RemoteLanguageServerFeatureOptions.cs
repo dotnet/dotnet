@@ -23,8 +23,6 @@ internal class RemoteLanguageServerFeatureOptions : LanguageServerFeatureOptions
 
     public override string HtmlVirtualDocumentSuffix => s_options.HtmlVirtualDocumentSuffix;
 
-    public override bool SingleServerCompletionSupport => throw new InvalidOperationException("This option has not been synced to OOP.");
-
     public override bool SingleServerSupport => throw new InvalidOperationException("This option has not been synced to OOP.");
 
     public override bool DelegateToCSharpOnDiagnosticPublish => throw new InvalidOperationException("This option has not been synced to OOP.");

@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Text.Json.Serialization;
 
 // A file for delegated record types to be put. Each individually
 // should be a plain record. If more logic is needed than record
@@ -12,77 +13,77 @@ namespace Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 internal record DelegatedSpellCheckParams(
-    TextDocumentIdentifierAndVersion Identifier);
+    [property: JsonPropertyName("identifier")] TextDocumentIdentifierAndVersion Identifier);
 
 internal record DelegatedDiagnosticParams(
-    TextDocumentIdentifierAndVersion Identifier,
-    Guid CorrelationId);
+    [property: JsonPropertyName("identifier")] TextDocumentIdentifierAndVersion Identifier,
+    [property: JsonPropertyName("correlationId")] Guid CorrelationId);
 
 internal record DelegatedPositionParams(
-    TextDocumentIdentifierAndVersion Identifier,
-    Position ProjectedPosition,
-    RazorLanguageKind ProjectedKind) : IDelegatedParams;
+    [property: JsonPropertyName("identifier")] TextDocumentIdentifierAndVersion Identifier,
+    [property: JsonPropertyName("projectedPosition")] Position ProjectedPosition,
+    [property: JsonPropertyName("projectedKind")] RazorLanguageKind ProjectedKind) : IDelegatedParams;
 
 internal record DelegatedInlayHintParams(
-    TextDocumentIdentifierAndVersion Identifier,
-    Range ProjectedRange,
-    RazorLanguageKind ProjectedKind) : IDelegatedParams;
+    [property: JsonPropertyName("identifier")] TextDocumentIdentifierAndVersion Identifier,
+    [property: JsonPropertyName("projectedRange")] Range ProjectedRange,
+    [property: JsonPropertyName("projectedKind")] RazorLanguageKind ProjectedKind) : IDelegatedParams;
 
 internal record DelegatedInlayHintResolveParams(
-    TextDocumentIdentifierAndVersion Identifier,
-    InlayHint InlayHint,
-    RazorLanguageKind ProjectedKind) : IDelegatedParams;
+    [property: JsonPropertyName("identifier")] TextDocumentIdentifierAndVersion Identifier,
+    [property: JsonPropertyName("inlayHint")] InlayHint InlayHint,
+    [property: JsonPropertyName("projectedKind")] RazorLanguageKind ProjectedKind) : IDelegatedParams;
 
 internal record DelegatedValidateBreakpointRangeParams(
-    TextDocumentIdentifierAndVersion Identifier,
-    Range ProjectedRange,
-    RazorLanguageKind ProjectedKind) : IDelegatedParams;
+    [property: JsonPropertyName("identifier")] TextDocumentIdentifierAndVersion Identifier,
+    [property: JsonPropertyName("projectedRange")] Range ProjectedRange,
+    [property: JsonPropertyName("projectedKind")] RazorLanguageKind ProjectedKind) : IDelegatedParams;
 
 internal record DelegatedOnAutoInsertParams(
-    TextDocumentIdentifierAndVersion Identifier,
-    Position ProjectedPosition,
-    RazorLanguageKind ProjectedKind,
-    string Character,
-    FormattingOptions Options) : IDelegatedParams;
+    [property: JsonPropertyName("identifier")] TextDocumentIdentifierAndVersion Identifier,
+    [property: JsonPropertyName("projectedPosition")] Position ProjectedPosition,
+    [property: JsonPropertyName("projectedKind")] RazorLanguageKind ProjectedKind,
+    [property: JsonPropertyName("character")] string Character,
+    [property: JsonPropertyName("options")] FormattingOptions Options) : IDelegatedParams;
 
 internal record DelegatedRenameParams(
-    TextDocumentIdentifierAndVersion Identifier,
-    Position ProjectedPosition,
-    RazorLanguageKind ProjectedKind,
-    string NewName) : IDelegatedParams;
+    [property: JsonPropertyName("identifier")] TextDocumentIdentifierAndVersion Identifier,
+    [property: JsonPropertyName("projectedPosition")] Position ProjectedPosition,
+    [property: JsonPropertyName("projectedKind")] RazorLanguageKind ProjectedKind,
+    [property: JsonPropertyName("newName")] string NewName) : IDelegatedParams;
 
 internal record DelegatedCompletionParams(
-    TextDocumentIdentifierAndVersion Identifier,
-    Position ProjectedPosition,
-    RazorLanguageKind ProjectedKind,
-    VSInternalCompletionContext Context,
-    TextEdit? ProvisionalTextEdit,
-    bool ShouldIncludeSnippets,
-    Guid CorrelationId) : IDelegatedParams;
+    [property: JsonPropertyName("identifier")] TextDocumentIdentifierAndVersion Identifier,
+    [property: JsonPropertyName("projectedPosition")] Position ProjectedPosition,
+    [property: JsonPropertyName("projectedKind")] RazorLanguageKind ProjectedKind,
+    [property: JsonPropertyName("context")] VSInternalCompletionContext Context,
+    [property: JsonPropertyName("provisionalTextEdit")] TextEdit? ProvisionalTextEdit,
+    [property: JsonPropertyName("shouldIncludeSnippets")] bool ShouldIncludeSnippets,
+    [property: JsonPropertyName("correlationId")] Guid CorrelationId) : IDelegatedParams;
 
 internal record DelegatedMapCodeParams(
-    TextDocumentIdentifierAndVersion Identifier,
-    RazorLanguageKind ProjectedKind,
-    Guid MapCodeCorrelationId,
-    string[] Contents,
-    Location[][] FocusLocations) : IDelegatedParams;
+    [property: JsonPropertyName("identifier")] TextDocumentIdentifierAndVersion Identifier,
+    [property: JsonPropertyName("projectedKind")] RazorLanguageKind ProjectedKind,
+    [property: JsonPropertyName("mapCodeCorrelationId")] Guid MapCodeCorrelationId,
+    [property: JsonPropertyName("contents")] string[] Contents,
+    [property: JsonPropertyName("focusLocations")] Location[][] FocusLocations) : IDelegatedParams;
 
 internal record DelegatedCompletionResolutionContext(
-    DelegatedCompletionParams OriginalRequestParams,
-    object? OriginalCompletionListData);
+    [property: JsonPropertyName("originalRequestParams")] DelegatedCompletionParams OriginalRequestParams,
+    [property: JsonPropertyName("originalCompletionListData")] object? OriginalCompletionListData);
 
 internal record DelegatedCompletionItemResolveParams(
-    TextDocumentIdentifierAndVersion Identifier,
-    VSInternalCompletionItem CompletionItem,
-    RazorLanguageKind OriginatingKind);
+    [property: JsonPropertyName("identifier")] TextDocumentIdentifierAndVersion Identifier,
+    [property: JsonPropertyName("completionItem")] VSInternalCompletionItem CompletionItem,
+    [property: JsonPropertyName("originatingKind")] RazorLanguageKind OriginatingKind);
 
 internal record DelegatedProjectContextsParams(
-    Uri Uri);
+    [property: JsonPropertyName("uri")] Uri Uri);
 
 internal record DelegatedDocumentSymbolParams(
-    TextDocumentIdentifierAndVersion Identifier);
+    [property: JsonPropertyName("identifier")] TextDocumentIdentifierAndVersion Identifier);
 
 internal record DelegatedSimplifyMethodParams(
-    TextDocumentIdentifierAndVersion Identifier,
-    bool RequiresVirtualDocument,
-    TextEdit TextEdit);
+    [property: JsonPropertyName("identifier")] TextDocumentIdentifierAndVersion Identifier,
+    [property: JsonPropertyName("requiresVirtualDocument")] bool RequiresVirtualDocument,
+    [property: JsonPropertyName("textEdit")] TextEdit TextEdit);

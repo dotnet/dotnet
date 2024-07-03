@@ -3,5 +3,8 @@
 
 namespace Microsoft.VisualStudio.Razor;
 
-// For MEF export and unit tests
-internal interface IAggregateProjectCapabilityResolver : IProjectCapabilityResolver { }
+internal static class WellKnownProjectCapabilities
+{
+    public const string DotNetCoreCSharp = "CSharp&CPS";
+    public const string LegacyRazorEditor = "LegacyRazorEditor";
+}

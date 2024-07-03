@@ -2,14 +2,15 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -40,7 +41,7 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
         {
             var request = GenerateConfigParams();
 
-            var result = await _clientConnection.SendRequestAsync<ConfigurationParams, JObject[]>(Methods.WorkspaceConfigurationName, request, cancellationToken).ConfigureAwait(false);
+            var result = await _clientConnection.SendRequestAsync<ConfigurationParams, JsonObject[]>(Methods.WorkspaceConfigurationName, request, cancellationToken).ConfigureAwait(false);
 
             // LSP spec indicates result should be the same length as the number of ConfigurationItems we pass in.
             if (result?.Length != request.Items.Length || result[0] is null)
@@ -84,7 +85,7 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
     }
 
     // Internal for testing
-    internal RazorLSPOptions BuildOptions(JObject[] result)
+    internal RazorLSPOptions BuildOptions(JsonObject[] result)
     {
         // VS Code will send back settings in the first two elements, VS will send back settings in the 3rd
         // so we can effectively detect which IDE we're in.
@@ -107,7 +108,7 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
     }
 
     private void ExtractVSCodeOptions(
-        JObject[] result,
+        JsonObject[] result,
         out bool enableFormatting,
         out bool autoClosingTags,
         out bool commitElementsWithSpace,
@@ -123,48 +124,44 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
         // this matches VS Code's html servers commit behaviour
         commitElementsWithSpace = false;
 
-        if (razor != null)
+        if (razor.TryGetPropertyValue("format", out var parsedFormatNode) &&
+            parsedFormatNode?.AsObject() is { } parsedFormat)
         {
-            if (razor.TryGetValue("format", out var parsedFormat))
+            if (parsedFormat.TryGetPropertyValue("enable", out var parsedEnableFormatting) &&
+                parsedEnableFormatting is not null)
             {
-                if (parsedFormat is JObject jObject)
-                {
-                    if (jObject.TryGetValue("enable", out var parsedEnableFormatting))
-                    {
-                        enableFormatting = GetObjectOrDefault(parsedEnableFormatting, enableFormatting);
-                    }
-
-                    if (jObject.TryGetValue("codeBlockBraceOnNextLine", out var parsedCodeBlockBraceOnNextLine))
-                    {
-                        codeBlockBraceOnNextLine = GetObjectOrDefault(parsedCodeBlockBraceOnNextLine, codeBlockBraceOnNextLine);
-                    }
-                }
+                enableFormatting = GetObjectOrDefault(parsedEnableFormatting, enableFormatting);
             }
 
-            if (razor.TryGetValue("completion", out var parsedCompletion))
+            if (parsedFormat.TryGetPropertyValue("codeBlockBraceOnNextLine", out var parsedCodeBlockBraceOnNextLine) &&
+                parsedCodeBlockBraceOnNextLine is not null)
             {
-                if (parsedCompletion is JObject jObject &&
-                    jObject.TryGetValue("commitElementsWithSpace", out var parsedCommitElementsWithSpace))
-                {
-                    commitElementsWithSpace = GetObjectOrDefault(parsedCommitElementsWithSpace, commitElementsWithSpace);
-                }
+                codeBlockBraceOnNextLine = GetObjectOrDefault(parsedCodeBlockBraceOnNextLine, codeBlockBraceOnNextLine);
             }
         }
 
-        if (html != null)
+        if (razor.TryGetPropertyValue("completion", out var parsedCompletionNode) &&
+            parsedCompletionNode?.AsObject() is { } parsedCompletion)
         {
-            if (html.TryGetValue("autoClosingTags", out var parsedAutoClosingTags))
+            if (parsedCompletion.TryGetPropertyValue("commitElementsWithSpace", out var parsedCommitElementsWithSpace) &&
+                parsedCommitElementsWithSpace is not null)
             {
-                autoClosingTags = GetObjectOrDefault(parsedAutoClosingTags, autoClosingTags);
+                commitElementsWithSpace = GetObjectOrDefault(parsedCommitElementsWithSpace, commitElementsWithSpace);
             }
+        }
+
+        if (html.TryGetPropertyValue("autoClosingTags", out var parsedAutoClosingTags) &&
+            parsedAutoClosingTags is not null)
+        {
+            autoClosingTags = GetObjectOrDefault(parsedAutoClosingTags, autoClosingTags);
         }
     }
 
-    private ClientSettings ExtractVSOptions(JObject[] result)
+    private ClientSettings ExtractVSOptions(JsonObject[] result)
     {
         try
         {
-            var settings = result[2]?.ToObject<ClientSettings>();
+            var settings = result[2].Deserialize<ClientSettings>();
             if (settings is null)
             {
                 return ClientSettings.Default;
@@ -188,23 +185,23 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
 
             return settings;
         }
-        catch (JsonReaderException)
+        catch (Exception)
         {
             return ClientSettings.Default;
         }
     }
 
-    private T GetObjectOrDefault<T>(JToken token, T defaultValue)
+    private T GetObjectOrDefault<T>(JsonNode token, T defaultValue, [CallerArgumentExpression(nameof(defaultValue))] string? expression = null)
     {
         try
         {
-            // JToken.ToObject could potentially throw here if the user provides malformed options.
+            // GetValue could potentially throw here if the user provides malformed options.
             // If this occurs, catch the exception and return the default value.
-            return token.ToObject<T>() ?? defaultValue;
+            return token.GetValue<T>() ?? defaultValue;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Malformed option: Token {token} cannot be converted to type {typeof(T)}.");
+            _logger.LogError(ex, $"Malformed option: Token {token} cannot be converted to type {typeof(T)} for {expression}.");
             return defaultValue;
         }
     }

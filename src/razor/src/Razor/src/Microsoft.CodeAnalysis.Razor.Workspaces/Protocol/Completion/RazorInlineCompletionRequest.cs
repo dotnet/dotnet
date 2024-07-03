@@ -1,15 +1,13 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json;
 
 namespace Microsoft.CodeAnalysis.Razor.Protocol.Completion;
 
 internal class RazorInlineCompletionRequest : VSInternalInlineCompletionRequest
 {
-    [DataMember(Name = "razorLanguageKind")]
-    [JsonProperty(Required = Required.Always)]
+    [JsonPropertyName("razorLanguageKind")]
     public RazorLanguageKind Kind { get; set; }
 }

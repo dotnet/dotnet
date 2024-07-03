@@ -35,6 +35,36 @@
   </ItemGroup>
 
   <!--
+    We provide a simple mechanism for including NetFx-only files.
+    If a C# file should only be compiled under NetFx, it can be named with a ".NetFx.cs" extension.
+    Or, the file can be included in a folder called "NetFx" or has a name that ends in "_NetFx".
+  -->
+  <ItemGroup Condition="'$(TargetFramework)' != '$(DefaultNetFxTargetFramework)'">
+    <Compile Remove="**\*.NetFx.cs" />
+    <Compile Remove="**\NetFx\**\*.*" />
+    <Compile Remove="**\*_NetFx\**\*.*" />
+
+    <None Include="**\*.NetFx.cs" />
+    <None Include="**\NetFx\**\*.*" />
+    <None Include="**\*_NetFx\**\*.*" />
+  </ItemGroup>
+
+  <!--
+    We provide a simple mechanism for including NetCore-only files.
+    If a C# file should only be compiled under NetCore, it can be named with a ".NetCore.cs" extension.
+    Or, the file can be included in a folder called "NetCore" or has a name that ends in "_NetCore".
+  -->
+  <ItemGroup Condition="'$(TargetFramework)' != '$(NetCurrent)' AND '$(TargetFramework)' != '$(NetPrevious)'">
+    <Compile Remove="**\*.NetCore.cs" />
+    <Compile Remove="**\NetCore\**\*.*" />
+    <Compile Remove="**\*_NetCore\**\*.*" />
+
+    <None Include="**\*.NetCore.cs" />
+    <None Include="**\NetCore\**\*.*" />
+    <None Include="**\*_NetCore\**\*.*" />
+  </ItemGroup>
+
+  <!--
     Warn consumers until the underlying issue is fixed
     https://github.com/dotnet/roslyn/issues/72657
   -->

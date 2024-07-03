@@ -9,8 +9,6 @@ using Microsoft.Internal.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Razor.Extensions;
 using Microsoft.VisualStudio.Razor.Logging;
 using Microsoft.VisualStudio.Settings;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.Razor;
@@ -18,65 +16,32 @@ namespace Microsoft.VisualStudio.Razor;
 [Export(typeof(ILspEditorFeatureDetector))]
 internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDisposable
 {
-    internal const string DotNetCoreCSharpCapability = "CSharp&CPS";
-    internal const string LegacyRazorEditorCapability = "LegacyRazorEditor";
-
     private readonly IUIContextService _uiContextService;
+    private readonly IProjectCapabilityResolver _projectCapabilityResolver;
     private readonly JoinableTaskFactory _jtf;
-    private readonly CancellationTokenSource _disposeTokenSource;
-    private readonly IAggregateProjectCapabilityResolver _projectCapabilityResolver;
-    private readonly Lazy<IVsUIShellOpenDocument> _vsUIShellOpenDocument;
-    private readonly AsyncLazy<bool> _lazyUseLegacyEditorTask;
     private readonly RazorActivityLog _activityLog;
+    private readonly CancellationTokenSource _disposeTokenSource;
+    private readonly AsyncLazy<bool> _lazyLegacyEditorEnabled;
 
     [ImportingConstructor]
     public LspEditorFeatureDetector(
-        IAggregateProjectCapabilityResolver projectCapabilityResolver,
         IVsService<SVsFeatureFlags, IVsFeatureFlags> vsFeatureFlagsService,
         IVsService<SVsSettingsPersistenceManager, ISettingsManager> vsSettingsManagerService,
         IUIContextService uiContextService,
+        IProjectCapabilityResolver projectCapabilityResolver,
         JoinableTaskContext joinableTaskContext,
         RazorActivityLog activityLog)
-        : this(
-              projectCapabilityResolver,
-              vsFeatureFlagsService,
-              vsSettingsManagerService,
-              uiContextService,
-              joinableTaskContext,
-              activityLog,
-              new Lazy<IVsUIShellOpenDocument>(() =>
-              {
-                // This method is first called by out IFilePathToContentTypeProvider.TryGetContentTypeForFilePath(...) implementations on UI thread.
-                ThreadHelper.ThrowIfNotOnUIThread();
-                var shellOpenDocument = (IVsUIShellOpenDocument)ServiceProvider.GlobalProvider.GetService(typeof(SVsUIShellOpenDocument));
-                Assumes.Present(shellOpenDocument);
-
-                return shellOpenDocument;
-              })
-        )
-    { }
-
-    // Primarily for unit tests
-    public LspEditorFeatureDetector(
-        IAggregateProjectCapabilityResolver projectCapabilityResolver,
-        IVsService<SVsFeatureFlags, IVsFeatureFlags> vsFeatureFlagsService,
-        IVsService<SVsSettingsPersistenceManager, ISettingsManager> vsSettingsManagerService,
-        IUIContextService uiContextService,
-        JoinableTaskContext joinableTaskContext,
-        RazorActivityLog activityLog,
-        Lazy<IVsUIShellOpenDocument> vsUIShellOpenDocument)
     {
         _uiContextService = uiContextService;
+        _projectCapabilityResolver = projectCapabilityResolver;
         _jtf = joinableTaskContext.Factory;
+        _activityLog = activityLog;
+
         _disposeTokenSource = new();
 
-        _projectCapabilityResolver = projectCapabilityResolver;
-        _vsUIShellOpenDocument = vsUIShellOpenDocument;
-
-        _lazyUseLegacyEditorTask = new(() =>
+        _lazyLegacyEditorEnabled = new(() =>
              ComputeUseLegacyEditorAsync(vsFeatureFlagsService, vsSettingsManagerService, activityLog, _disposeTokenSource.Token),
              _jtf);
-        _activityLog = activityLog;
     }
 
     public void Dispose()
@@ -103,7 +68,7 @@ internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDis
         if (vsFeatureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.UseLegacyRazorEditor, defaultValue: false))
 #pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
         {
-            activityLog.LogInfo($"Using Legacy Razor editor because the '{WellKnownFeatureFlagNames.UseLegacyRazorEditor}' feature flag is enabled.");
+            activityLog.LogInfo($"Using legacy editor because the '{WellKnownFeatureFlagNames.UseLegacyRazorEditor}' feature flag is enabled.");
             return true;
         }
 
@@ -112,87 +77,62 @@ internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDis
 
         if (useLegacyEditorSetting)
         {
-            activityLog.LogInfo($"Using Legacy Razor editor because the '{WellKnownSettingNames.UseLegacyASPNETCoreEditor}' setting is set to true.");
+            activityLog.LogInfo($"Using legacy editor because the '{WellKnownSettingNames.UseLegacyASPNETCoreEditor}' setting is set to true.");
             return true;
         }
 
-        activityLog.LogInfo($"Using LSP Razor editor.");
+        activityLog.LogInfo($"Using LSP editor.");
         return false;
     }
 
-    /// <summary>
-    /// Checks that LSP editor is enabled via feature flag and tools/options setting, and available for document's project
-    /// </summary>
-    /// <param name="documentMoniker">Document to check for project compatibility with LSP</param>
-    /// <returns>true if LSP editor is enabled and available for document's project</returns>
-    public bool IsLspEditorEnabledAndAvailable(string documentMoniker)
+    /// <inheritdoc/>
+    public bool IsLspEditorEnabled()
     {
-        // This method is first called by out IFilePathToContentTypeProvider.TryGetContentTypeForFilePath(...) implementations.
-        // We call AsyncLazy<T>.GetValue() below to get the value. If the work hasn't yet completed, we guard against a hidden+
+        // This method is first called by our IFilePathToContentTypeProvider.TryGetContentTypeForFilePath(...) implementations.
+        // We call AsyncLazy<T>.GetValue() below to get the value. If the work hasn't yet completed, we guard against a hidden
         // JTF.Run(...) on a background thread by asserting the UI thread.
 
-        if (!_lazyUseLegacyEditorTask.IsValueFactoryCompleted)
+        if (!_lazyLegacyEditorEnabled.IsValueFactoryCompleted)
         {
             _jtf.AssertUIThread();
         }
-        
-        var isLspEditorEnabled = !_lazyUseLegacyEditorTask.GetValue(_disposeTokenSource.Token);
 
-        if (!isLspEditorEnabled)
+        var useLegacyEditorEnabled = _lazyLegacyEditorEnabled.GetValue(_disposeTokenSource.Token);
+
+        if (useLegacyEditorEnabled)
         {
-            _activityLog.LogInfo("Using Legacy editor because the option or feature flag was set to true");
+            _activityLog.LogInfo("Using legacy editor because the option or feature flag was set to true");
             return false;
         }
 
-        // Even if LSP editor is enabled via feature flag and tools/options, document's project might not support
-        // LSP editor (e.g. .Net Framework projects don't support LSP Razor editor)
-        if (!ProjectSupportsLspEditor(documentMoniker))
-        {
-            // Current project hierarchy doesn't support the LSP Razor editor
-            _activityLog.LogInfo("Using Legacy editor because the current project does not support LSP Editor");
-            return false;
-        }
-
-        _activityLog.LogInfo("LSP Editor is enabled and available");
+        _activityLog.LogInfo("LSP editor is enabled.");
         return true;
     }
 
-    // NOTE: This code is needed for legacy Razor editor support in .Net Framework projects. Do not delete unless support for .Net Framework projects is discontinued.
-    private bool ProjectSupportsLspEditor(string documentMoniker)
+    /// <inheritdoc/>
+    public bool IsLspEditorSupported(string documentFilePath)
     {
-        var hr = _vsUIShellOpenDocument.Value.IsDocumentInAProject(documentMoniker, out var uiHierarchy, out _, out _, out _);
-        var hierarchy = uiHierarchy as IVsHierarchy;
-        if (!ErrorHandler.Succeeded(hr))
+        // Regardless of whether the LSP is enabled via the feature flag or tools/options, the document's project
+        // might not support it. For example, .NET Framework projects don't support the LSP Razor editor.
+
+        var useLegacyEditor = _projectCapabilityResolver.ResolveCapability(WellKnownProjectCapabilities.LegacyRazorEditor, documentFilePath);
+
+        if (useLegacyEditor)
         {
-            _activityLog.LogWarning($"Project does not support LSP Editor because {nameof(_vsUIShellOpenDocument.Value.IsDocumentInAProject)} failed with exit code {hr}");
-            return false;
-        }
-        
-        if (hierarchy is null)
-        {
-            _activityLog.LogWarning($"Project does not support LSP Editor because {nameof(hierarchy)} is null");
+            _activityLog.LogInfo($"'{documentFilePath}' does not support the LSP editor because it is associated with the '{WellKnownProjectCapabilities.LegacyRazorEditor}' capability.");
             return false;
         }
 
-        // We allow projects to specifically opt-out of the legacy Razor editor because there are legacy scenarios which would rely on behind-the-scenes
-        // opt-out mechanics to enable the .NET Core editor in non-.NET Core scenarios. Therefore, we need a similar mechanic to continue supporting
-        // those types of scenarios for the new .NET Core Razor editor.
-        if (_projectCapabilityResolver.HasCapability(documentMoniker, hierarchy, LegacyRazorEditorCapability))
+        var supportsRazor = _projectCapabilityResolver.ResolveCapability(WellKnownProjectCapabilities.DotNetCoreCSharp, documentFilePath);
+
+        if (!supportsRazor)
         {
-            _activityLog.LogInfo($"Project does not support LSP Editor because '{documentMoniker}' has Capability {LegacyRazorEditorCapability}");
-            // CPS project that requires the legacy editor
+            _activityLog.LogInfo($"'{documentFilePath}' does not support the LSP editor because it is not associated with the '{WellKnownProjectCapabilities.DotNetCoreCSharp}' capability.");
             return false;
         }
 
-        if (_projectCapabilityResolver.HasCapability(documentMoniker, hierarchy, DotNetCoreCSharpCapability))
-        {
-            // .NET Core project that supports C#
-            return true;
-        }
-
-        _activityLog.LogInfo($"Project {documentMoniker} does not support LSP Editor because it does not have the {DotNetCoreCSharpCapability} capability.");
-        // Not a C# .NET Core project. This typically happens for legacy Razor scenarios
-        return false;
+        _activityLog.LogInfo($"LSP editor is supported for '{documentFilePath}'.");
+        return supportsRazor;
     }
 
     public bool IsRemoteClient()

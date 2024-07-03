@@ -3,6 +3,7 @@
 
 using System;
 using System.Composition;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
@@ -16,7 +17,6 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.LanguageClient.Extensions;
 using Microsoft.VisualStudio.Razor.Settings;
-using Newtonsoft.Json;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -49,7 +49,7 @@ internal sealed class CohostSemanticTokensRangeEndpoint(
         if (clientCapabilities.TextDocument?.SemanticTokens?.DynamicRegistration == true)
         {
             var semanticTokensRefreshQueue = requestContext.GetRequiredService<IRazorSemanticTokensRefreshQueue>();
-            var clientCapabilitiesString = JsonConvert.SerializeObject(clientCapabilities);
+            var clientCapabilitiesString = JsonSerializer.Serialize(clientCapabilities);
             semanticTokensRefreshQueue.Initialize(clientCapabilitiesString);
 
             return new Registration()

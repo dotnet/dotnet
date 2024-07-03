@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -12,15 +13,14 @@ using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal sealed class DefaultCSharpCodeActionProvider : ICSharpCodeActionProvider
+internal sealed class DefaultCSharpCodeActionProvider(LanguageServerFeatureOptions languageServerFeatureOptions) : ICSharpCodeActionProvider
 {
     // Internal for testing
-    internal static readonly HashSet<string> SupportedDefaultCodeActionNames = new HashSet<string>()
-    {
+    internal static readonly HashSet<string> SupportedDefaultCodeActionNames =
+    [
         RazorPredefinedCodeRefactoringProviderNames.GenerateEqualsAndGetHashCodeFromMembers,
         RazorPredefinedCodeRefactoringProviderNames.AddAwait,
         RazorPredefinedCodeRefactoringProviderNames.AddDebuggerDisplay,
@@ -39,39 +39,24 @@ internal sealed class DefaultCSharpCodeActionProvider : ICSharpCodeActionProvide
         RazorPredefinedCodeFixProviderNames.ImplementAbstractClass,
         RazorPredefinedCodeFixProviderNames.ImplementInterface,
         RazorPredefinedCodeFixProviderNames.RemoveUnusedVariable,
-    };
+    ];
 
     // We don't support any code actions in implicit expressions at the moment, but rather than simply returning early
     // I thought it best to create an allow list, empty, so that we can easily add them later if we identify any big
     // hitters that we want to enable.
     // The one example commented out here should not be taken as an opinion as to what that allow list should look like.
-    internal static readonly HashSet<string> SupportedImplicitExpressionCodeActionNames = new HashSet<string>()
-    {
+    internal static readonly HashSet<string> SupportedImplicitExpressionCodeActionNames =
+    [
         // RazorPredefinedCodeFixProviderNames.RemoveUnusedVariable,
-    };
+    ];
 
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-
-    public DefaultCSharpCodeActionProvider(LanguageServerFeatureOptions languageServerFeatureOptions)
-    {
-        _languageServerFeatureOptions = languageServerFeatureOptions;
-    }
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
 
     public Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(
         RazorCodeActionContext context,
         IEnumerable<RazorVSInternalCodeAction> codeActions,
         CancellationToken cancellationToken)
     {
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        if (codeActions is null)
-        {
-            throw new ArgumentNullException(nameof(codeActions));
-        }
-
         // Used to identify if this is VSCode which doesn't support
         // code action resolve.
         if (!context.SupportsCodeActionResolve)
@@ -93,24 +78,14 @@ internal sealed class DefaultCSharpCodeActionProvider : ICSharpCodeActionProvide
         {
             var isOnAllowList = codeAction.Name is not null && allowList.Contains(codeAction.Name);
 
-            if (_languageServerFeatureOptions.ShowAllCSharpCodeActions && codeAction.Data is not null)
+            // If this code action isn't on the allow list, it might have been handled by another provider, which means
+            // it will already have been wrapped, so we have to check not to double-wrap it.
+            if (_languageServerFeatureOptions.ShowAllCSharpCodeActions &&
+                CanDeserializeTo<RazorCodeActionResolutionParams>(codeAction.Data))
             {
-                // If this code action isn't on the allow list, it might have been handled by another provider, which means
-                // it will already have been wrapped, so we have to check not to double-wrap it. Unfortunately there isn't a
-                // good way to do this, but to try and deserialize some Json. Since this only needs to happen if the feature
-                // flag is on, any perf hit here isn't going to affect real users.
-                try
-                {
-                    if (((JToken)codeAction.Data).ToObject<RazorCodeActionResolutionParams>() is not null)
-                    {
-                        // This code action has already been wrapped by something else, so skip it here, or it could
-                        // be marked as experimental when its not, and more importantly would be duplicated in the list.
-                        continue;
-                    }
-                }
-                catch
-                {
-                }
+                // This code action has already been wrapped by something else, so skip it here, or it could
+                // be marked as experimental when its not, and more importantly would be duplicated in the list.
+                continue;
             }
 
             if (_languageServerFeatureOptions.ShowAllCSharpCodeActions || isOnAllowList)
@@ -120,5 +95,23 @@ internal sealed class DefaultCSharpCodeActionProvider : ICSharpCodeActionProvide
         }
 
         return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(results);
+
+        static bool CanDeserializeTo<T>(object? data)
+        {
+            // We don't care about errors here, and there is no TryDeserialize method, so we can just brute force this.
+            // Since this only happens if the feature flag is on, which is internal only and intended only for users of
+            // this repo, any perf hit here isn't going to affect real users.
+            try
+            {
+                if (data is JsonElement element &&
+                    element.Deserialize<RazorCodeActionResolutionParams>() is not null)
+                {
+                    return true;
+                }
+            }
+            catch { }
+
+            return false;
+        }
     }
 }

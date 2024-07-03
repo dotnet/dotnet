@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -88,12 +90,11 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
         Assert.EndsWith("String.cs", location.Uri.ToString());
 
         // Note: The location is in a generated C# "metadata-as-source" file, which has a different
-        // number of using directives in .NET Framework vs. .NET Core. So, the line numbers are different.
-#if NETFRAMEWORK
-        Assert.Equal(24, location.Range.Start.Line);
-#else
-        Assert.Equal(21, location.Range.Start.Line);
-#endif
+        // number of using directives in .NET Framework vs. .NET Core, so rather than relying on line
+        // numbers we do some vague notion of actual navigation and test the actual source line that
+        // the user would see.
+        var line = File.ReadLines(location.Uri.LocalPath).ElementAt(location.Range.Start.Line);
+        Assert.Contains("public sealed class String", line);
     }
 
     [Theory]

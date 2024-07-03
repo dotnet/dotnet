@@ -27,7 +27,7 @@ public sealed class CSharpTestLspServer : IAsyncDisposable
     private readonly JsonRpc _clientRpc;
     private readonly JsonRpc _serverRpc;
 
-    private readonly JsonMessageFormatter _clientMessageFormatter;
+    private readonly SystemTextJsonFormatter _clientMessageFormatter;
     private readonly SystemTextJsonFormatter _serverMessageFormatter;
     private readonly HeaderDelimitedMessageHandler _clientMessageHandler;
     private readonly HeaderDelimitedMessageHandler _serverMessageHandler;
@@ -54,7 +54,7 @@ public sealed class CSharpTestLspServer : IAsyncDisposable
             ExceptionStrategy = ExceptionProcessing.ISerializable,
         };
 
-        _clientMessageFormatter = CreateNewtonsoftMessageFormatter();
+        _clientMessageFormatter = CreateSystemTextJsonMessageFormatter(languageServerFactory);
         _clientMessageHandler = new HeaderDelimitedMessageHandler(clientStream, clientStream, _clientMessageFormatter);
         _clientRpc = new JsonRpc(_clientMessageHandler)
         {
@@ -78,14 +78,6 @@ public sealed class CSharpTestLspServer : IAsyncDisposable
 
             // In its infinite wisdom, the LSP client has a public method that takes Newtonsoft.Json types, but an internal method that takes System.Text.Json types.
             typeof(VSInternalExtensionUtilities).GetMethod("AddVSInternalExtensionConverters", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!.Invoke(null, [messageFormatter.JsonSerializerOptions]);
-
-            return messageFormatter;
-        }
-
-        static JsonMessageFormatter CreateNewtonsoftMessageFormatter()
-        {
-            var messageFormatter = new JsonMessageFormatter();
-            VSInternalExtensionUtilities.AddVSInternalExtensionConverters(messageFormatter.JsonSerializer);
 
             return messageFormatter;
         }

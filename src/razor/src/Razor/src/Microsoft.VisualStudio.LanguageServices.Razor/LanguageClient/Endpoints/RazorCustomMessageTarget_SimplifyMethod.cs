@@ -7,7 +7,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.LanguageClient.Extensions;
-using Newtonsoft.Json.Linq;
 using StreamJsonRpc;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Endpoints;
@@ -41,19 +40,9 @@ internal partial class RazorCustomMessageTarget
         var response = await _requestInvoker.ReinvokeRequestOnServerAsync<SimplifyMethodParams, TextEdit[]?>(
             RazorLSPConstants.RoslynSimplifyMethodEndpointName,
             RazorLSPConstants.RazorCSharpLanguageServerName,
-            SupportsSimplifyMethod,
             simplifyTypeNamesParams,
             cancellationToken).ConfigureAwait(false);
 
         return response.Result;
-    }
-
-    private static bool SupportsSimplifyMethod(JToken token)
-    {
-        var serverCapabilities = token.ToObject<VSInternalServerCapabilities>();
-
-        return serverCapabilities?.Experimental is JObject experimental
-            && experimental.TryGetValue(RazorLSPConstants.RoslynSimplifyMethodEndpointName, out var supportsSimplifyMethod)
-            && supportsSimplifyMethod.ToObject<bool>();
     }
 }
