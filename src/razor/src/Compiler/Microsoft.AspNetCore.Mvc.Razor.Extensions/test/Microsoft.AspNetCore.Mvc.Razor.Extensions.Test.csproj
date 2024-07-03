@@ -27,6 +27,10 @@
     <PackageReference Include="Moq" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" Key="$(MoqPublicKey)" />
+  </ItemGroup>
+
   <Target Name="CopyDepsFromShims_Build" AfterTargets="Build">
     <ItemGroup>
       <MvcShim Condition="$(TargetFramework) != ''" Include="$(ArtifactsBinDir)\Microsoft.AspNetCore.Razor.Test.MvcShim.Compiler\$(Configuration)\$(TargetFramework)\Microsoft.AspNetCore.Razor.Test.MvcShim.Compiler.deps.json" />

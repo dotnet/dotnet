@@ -27,4 +27,20 @@
     <AdditionalFiles Include="InternalAPI.Shipped.txt" />
     <AdditionalFiles Include="InternalAPI.Unshipped.txt" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" Key="$(MoqPublicKey)" />
+    <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Test" Key="$(RazorKey)" />
+    <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServices.Razor" Key="$(RazorKey)" />
+    <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServices.Razor.Test" Key="$(RazorKey)" />
+    <InternalsVisibleTo Include="Microsoft.VisualStudio.RazorExtension" Key="$(RazorKey)" />
+    <InternalsVisibleTo Include="Microsoft.WebTools.Languages.IntegrationTests" Key="$(VisualStudioKey)" />
+    <InternalsVisibleTo Include="Microsoft.WebTools.Languages.LanguageServer" Key="$(VisualStudioKey)" />
+    <InternalsVisibleTo Include="Microsoft.WebTools.Languages.LanguageServer.Test" Key="$(VisualStudioKey)" />
+    <InternalsVisibleTo Include="Microsoft.WebTools.Languages.LanguageServer.Delegation" Key="$(VisualStudioKey)" />
+    <InternalsVisibleTo Include="Microsoft.WebTools.Languages.LanguageServer.Delegation.Test" Key="$(VisualStudioKey)" />
+    <InternalsVisibleTo Include="Microsoft.WebTools.Languages.LanguageServer.IntegrationTests" Key="$(VisualStudioKey)" />
+    <InternalsVisibleTo Include="Microsoft.WebTools.Languages.TestServices" Key="$(VisualStudioKey)" />
+  </ItemGroup>
+  
 </Project>
