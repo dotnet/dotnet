@@ -3,5 +3,6 @@
   <Import Project="..\eng\TestVersions.props" />
   <PropertyGroup>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <UseVSTestRunner>true</UseVSTestRunner>
   </PropertyGroup>
 </Project>
