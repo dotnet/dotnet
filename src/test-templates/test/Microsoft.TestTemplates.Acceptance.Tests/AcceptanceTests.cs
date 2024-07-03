@@ -36,6 +36,10 @@ public sealed partial class AcceptanceTests
             DotnetUtils.InvokeDotnetNewUninstall(GetTestTemplatePath(targetFramework), false);
             DotnetUtils.InvokeDotnetNewInstall(GetTestTemplatePath(targetFramework));
         }
+
+        // Setup the artifacts/temp directory to not use arcade
+        File.WriteAllText(Path.Combine(Constants.ArtifactsTempDirectory, "Directory.Build.props"), "<Project />");
+        File.WriteAllText(Path.Combine(Constants.ArtifactsTempDirectory, "Directory.Build.targets"), "<Project />");
     }
 
     [AssemblyCleanup]
