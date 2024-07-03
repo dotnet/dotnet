@@ -13,7 +13,6 @@ stages:
     timeoutInMinutes: 120
     variables:
     - group: DotNet-Symbol-Server-Pats
-    - group: DotNetBuilds storage account tokens
     - group: AzureDevOps-Artifact-Feeds-Pats
     - group: Publish-Build-Assets
 
