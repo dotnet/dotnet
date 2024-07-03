@@ -8,7 +8,7 @@
         is trying to parse that version and will consider any version with more than 4 `.` in it as invalid.
     -->
     <SemanticVersioningV1>true</SemanticVersioningV1>
-    <VersionPrefix>17.11.0</VersionPrefix>
+    <VersionPrefix>17.12.0</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
   </PropertyGroup>
   <PropertyGroup Label="Arcade settings">
