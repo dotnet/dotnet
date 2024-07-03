@@ -33,7 +33,6 @@ To create a manifest, use the PushToAzureDevOpsArtifacts, providing the feed tha
   <Error Condition="'$(BUILD_SOURCEBRANCH)' == ''" Text="The BUILD_SOURCEBRANCH property is required." />
   <Error Condition="'$(BUILD_SOURCEVERSION)' == ''" Text="The BUILD_SOURCEVERSION property is required." />
   <Error Condition="'$(BUILD_REPOSITORY_URI)' == ''" Text="The BUILD_REPOSITORY_URI property is required." />
-  <Error Condition="'$(MaestroAccessToken)' == ''" Text="The MaestroAccessToken property is required." />
   <Error Condition="'$(MaestroApiEndpoint)' == ''" Text="The MaestroApiEndpoint property is required." />
   <Error Condition="'$(SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)' == ''" Text="The SYSTEM_TEAMFOUNDATIONCOLLECTIONURI property is required." />
   <Error Condition="'$(SYSTEM_TEAMPROJECT)' == ''" Text="The SYSTEM_TEAMPROJECT property is required." />
@@ -70,11 +69,22 @@ To create a manifest, use the PushToAzureDevOpsArtifacts, providing the feed tha
 
 If you only have one Azure DevOps job that publishes assets, then you can add this [task](https://github.com/dotnet/arcade/blob/de44b15e79b9d124d04c16458bead2a1d7ea02ef/eng/common/templates/job/publish-build-assets.yml#L47) into your build steps.
 
-Publish manifest to BAR
+**Publish manifest to BAR**
 
-> `powershell -ExecutionPolicy Bypass -Command "eng\common\sdk-task.ps1 -task PublishBuildAssets -restore -msbuildEngine dotnet /p:ManifestsPath='$(Build.StagingDirectory)/Download/AssetManifests' /p:BuildAssetRegistryToken=$(MaestroAccessToken) /p:MaestroApiEndpoint=https://maestro.dot.net"`
-
-`MaestroAccessToken` is available by referencing the "Publish-Build-Assets" [variable group](https://github.com/dotnet/arcade/blob/de44b15e79b9d124d04c16458bead2a1d7ea02ef/eng/common/templates/job/publish-build-assets.yml#L36) in dnceng/internal.
+```yaml
+- task: AzureCLI@2
+  displayName: Publish manifest to BAR
+  inputs:
+    azureSubscription: "Darc: Maestro Production"
+    scriptType: ps
+    scriptLocation: scriptPath
+    scriptPath: $(Build.SourcesDirectory)/eng/common/sdk-task.ps1
+    arguments: -task PublishBuildAssets
+      -restore
+      -msbuildEngine dotnet
+      /p:ManifestsPath='$(Build.StagingDirectory)/Download/AssetManifests'
+      /p:MaestroApiEndpoint=https://maestro.dot.net"
+```
 
 ### Publishing multiple manifests
 

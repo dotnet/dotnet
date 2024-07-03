@@ -158,14 +158,17 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     }
                     var key = GetFeedKey(feed);
                     var sasUri = GetFeedSasUri(feed);
-                    if (string.IsNullOrEmpty(key) && string.IsNullOrEmpty(sasUri))
-                    {
-                        Log?.LogError($"No keys found for {feed}, unable to publish to it.");
-                        continue;
-                    }
 
                     var feedType = feed.StartsWith("https://pkgs.dev.azure.com")
                         ? FeedType.AzDoNugetFeed : FeedType.AzureStorageContainer;
+
+                    // If no SAS is specified, then the default azure credential will be used.
+                    if (feedType == FeedType.AzDoNugetFeed && string.IsNullOrEmpty(key))
+                    {
+                        Log?.LogError($"No key found for {feed}, unable to publish to it.");
+                        continue;
+                    }
+
                     yield return new TargetFeedConfig(
                         type,
                         feed,

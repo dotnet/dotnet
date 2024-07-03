@@ -2,8 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Net.Http;
-using System.Threading.Tasks;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.Deployment.Tasks.Links
@@ -13,10 +13,29 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links
         [Required]
         // Authentication data
         public string ClientId { get; set; }
-        [Required]
         // Authentication data
         public string ClientSecret { get; set; }
+        public string ClientCertificate { get; set; }
         [Required]
         public string Tenant { get; set; }
+
+        protected AkaMSLinkManager CreateAkaMSLinksManager()
+        {
+            AkaMSLinkManager manager;
+            if (!string.IsNullOrEmpty(ClientCertificate))
+            {
+                manager = new AkaMSLinkManager(ClientId, new X509Certificate2(Convert.FromBase64String(File.ReadAllText(ClientCertificate))), Tenant, Log);
+            }
+            else if (!string.IsNullOrEmpty(ClientSecret))
+            {
+                manager = new AkaMSLinkManager(ClientId, ClientSecret, Tenant, Log);
+            }
+            else
+            {
+                throw new Exception("aka.ms Authentication information not provided.");
+            }
+
+            return manager;
+        }
     }
 }

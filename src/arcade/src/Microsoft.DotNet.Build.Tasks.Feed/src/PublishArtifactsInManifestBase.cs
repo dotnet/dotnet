@@ -29,7 +29,9 @@ using Microsoft.DotNet.VersionTools.BuildManifest.Model;
 using Newtonsoft.Json;
 using NuGet.Versioning;
 using static Microsoft.DotNet.Build.Tasks.Feed.GeneralUtils;
+using static Microsoft.DotNet.Build.CloudTestTasks.AzureStorageUtils;
 using MsBuildUtils = Microsoft.Build.Utilities;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
@@ -66,8 +68,25 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         /// <summary>
         /// Authentication token to be used when interacting with Maestro API.
+        /// Deprecated and should not be used anymore.
         /// </summary>
         public string BuildAssetRegistryToken { get; set; }
+
+        /// <summary>
+        /// Federated token to be used in edge cases when this task cannot be called from within an AzureCLI task directly.
+        /// The token is obtained in a previous AzureCLI@2 step and passed as a secret to this task.
+        /// </summary>
+        public string MaestroApiFederatedToken { get; set; }
+
+        /// <summary>
+        /// Managed identity to be used to authenticate with Maestro API in case the regular Azure CLI or token is not available.
+        /// </summary>
+        public string MaestroManagedIdentityId { get; set; }
+
+        /// <summary>
+        /// When running this task locally, allow the interactive browser-based authentication against Maestro.
+        /// </summary>
+        public bool AllowInteractiveAuthentication { get; set; }
 
         /// <summary>
         /// Directory where "nuget.exe" is installed. This will be used to publish packages.
@@ -117,6 +136,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public string AkaMSClientSecret { get; set; }
 
+        public X509Certificate2 AkaMSClientCertificate { get; set; }
+
         public string AkaMSTenant { get; set; }
 
         public string AkaMsOwners { get; set; }
@@ -124,6 +145,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public string AkaMSCreatedBy { get; set; }
 
         public string AkaMSGroupOwner { get; set; }
+
+        public string ManagedIdentityClientId { get; set; }
 
         public string BuildQuality { get; set; }
 
@@ -1376,10 +1399,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             )
         {
             // Using these callbacks we can mock up functionality when testing.
-            CompareLocalPackageToFeedPackageCallBack ??= GeneralUtils.CompareLocalPackageToFeedPackage;
+            CompareLocalPackageToFeedPackageCallBack ??= CompareLocalPackageToFeedPackage;
             RunProcessAndGetOutputsCallBack ??= GeneralUtils.RunProcessAndGetOutputsAsync;
             ProcessExecutionResult nugetResult = null;
-            var packageStatus = GeneralUtils.PackageFeedStatus.Unknown;
+            var packageStatus = PackageFeedStatus.Unknown;
 
             try
             {
@@ -1395,7 +1418,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     if (nugetResult.ExitCode == 0)
                     {
                         // We have just pushed this package so we know it exists and is identical to our local copy
-                        packageStatus = GeneralUtils.PackageFeedStatus.ExistsAndIdenticalToLocal;
+                        packageStatus = PackageFeedStatus.ExistsAndIdenticalToLocal;
                         break;
                     }
 
@@ -1406,12 +1429,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                     switch (packageStatus)
                     {
-                        case GeneralUtils.PackageFeedStatus.ExistsAndIdenticalToLocal:
+                        case PackageFeedStatus.ExistsAndIdenticalToLocal:
                             {
                                 Log.LogMessage(MessageImportance.Normal, $"Package '{localPackageLocation}' already exists on '{feedConfig.TargetURL}' but has the same content; skipping push");
                                 break;
                             }
-                        case GeneralUtils.PackageFeedStatus.ExistsAndDifferent:
+                        case PackageFeedStatus.ExistsAndDifferent:
                             {
                                 Log.LogError($"Package '{localPackageLocation}' already exists on '{feedConfig.TargetURL}' with different content.");
                                 break;
@@ -1425,11 +1448,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                             }
                     }
                 }
-                while (packageStatus != GeneralUtils.PackageFeedStatus.ExistsAndIdenticalToLocal && // Success
-                       packageStatus != GeneralUtils.PackageFeedStatus.ExistsAndDifferent &&        // Give up: Non-retriable error
+                while (packageStatus != PackageFeedStatus.ExistsAndIdenticalToLocal && // Success
+                       packageStatus != PackageFeedStatus.ExistsAndDifferent &&        // Give up: Non-retriable error
                        attemptIndex <= MaxRetryCount);                                              // Give up: Too many retries
 
-                if (packageStatus != GeneralUtils.PackageFeedStatus.ExistsAndIdenticalToLocal)
+                if (packageStatus != PackageFeedStatus.ExistsAndIdenticalToLocal)
                 {
                     Log.LogError($"Failed to publish package '{id}@{version}' to '{feedConfig.TargetURL}' after {MaxRetryCount} attempts. (Final status: {packageStatus})");
                 }
@@ -1443,7 +1466,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 Log.LogError($"Unexpected exception pushing package '{id}@{version}': {e.Message}");
             }
 
-            if (packageStatus != GeneralUtils.PackageFeedStatus.ExistsAndIdenticalToLocal && nugetResult?.ExitCode != 0)
+            if (packageStatus != PackageFeedStatus.ExistsAndIdenticalToLocal && nugetResult?.ExitCode != 0)
             {
                 Log.LogError($"Output from nuget.exe: {Environment.NewLine}StdOut:{Environment.NewLine}{nugetResult.StandardOut}{Environment.NewLine}StdErr:{Environment.NewLine}{nugetResult.StandardError}");
             }
@@ -1475,19 +1498,40 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 await PublishAssetsWithoutStreamingPublishingAsync(assetPublisher, assetsToPublish, buildAssets, feedConfig);
             }
 
-            if (feedConfig.Type == FeedType.AzureStorageContainer)
+            if (feedConfig.Type == FeedType.AzureStorageContainer && 
+                feedConfig.LatestLinkShortUrlPrefixes.Any())
             {
 
                 if (LinkManager == null)
                 {
-                    LinkManager = new LatestLinksManager(
-                        AkaMSClientId,
-                        AkaMSClientSecret,
-                        AkaMSTenant,
-                        AkaMSGroupOwner,
-                        AkaMSCreatedBy,
-                        AkaMsOwners,
-                        Log);
+                    // If there is a client cert supplied, use that.
+                    // Otherwise, use the client secret.
+                    if (AkaMSClientCertificate != null)
+                    {
+                        LinkManager = new LatestLinksManager(
+                            AkaMSClientId,
+                            AkaMSClientCertificate,
+                            AkaMSTenant,
+                            AkaMSGroupOwner,
+                            AkaMSCreatedBy,
+                            AkaMsOwners,
+                            Log);
+                    }
+                    else if (!string.IsNullOrEmpty(AkaMSClientSecret))
+                    {
+                        LinkManager = new LatestLinksManager(
+                            AkaMSClientId,
+                            AkaMSClientSecret,
+                            AkaMSTenant,
+                            AkaMSGroupOwner,
+                            AkaMSCreatedBy,
+                            AkaMsOwners,
+                            Log);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Cannot create latest links for feed config without aka.ms authentication information");
+                    }
                 }
 
                 // The latest links should be updated only after the publishing is complete, to avoid
@@ -1759,11 +1803,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             if (string.IsNullOrEmpty(MaestroApiEndpoint))
             {
                 Log.LogError($"The property {nameof(MaestroApiEndpoint)} is required but doesn't have a value set.");
-            }
-
-            if (string.IsNullOrEmpty(BuildAssetRegistryToken))
-            {
-                Log.LogError($"The property {nameof(BuildAssetRegistryToken)} is required but doesn't have a value set.");
             }
 
             if (UseStreamingPublishing && string.IsNullOrEmpty(AzdoApiToken))

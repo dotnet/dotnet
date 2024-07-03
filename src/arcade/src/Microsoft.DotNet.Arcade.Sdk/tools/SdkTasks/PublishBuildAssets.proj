@@ -3,7 +3,6 @@
   <!--
     Required variables:
       ManifestsPath                     Path to file containing manifest files.
-      BuildAssetRegistryToken           Token required to insert metadata into BAR.
       MaestroApiEndpoint                Maestro's endpoint.
   -->
   
@@ -37,11 +36,8 @@
 
   <Target Name="Execute">
     <Error Text="The ManifestsPath property must be set on the command line." Condition="'$(ManifestsPath)' == ''" />
-    <Error Text="The BuildAssetRegistryToken property must be set on the command line." Condition="'$(BuildAssetRegistryToken)' == ''" />
-    <Error Text="The MaestroApiEndpoint property must be set on the command line." Condition="'$(MaestroApiEndpoint)' == ''" />
     
     <PushMetadataToBuildAssetRegistry ManifestsPath="$(ManifestsPath)"
-                                      BuildAssetRegistryToken="$(BuildAssetRegistryToken)"
                                       MaestroApiEndpoint="$(MaestroApiEndpoint)"
                                       RepoRoot="$(RepoRoot)"
                                       AssetVersion="$(Version)"/>

@@ -2,6 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading.Tasks;
+using Azure.Core;
+using Azure.Identity;
 using Microsoft.DotNet.Build.CloudTestTasks;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
@@ -13,19 +15,21 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
     /// </summary>
     public class CreateNewAzureContainer : CreateAzureContainer
     {
-        public override async Task<AzureStorageUtils> GetBlobStorageUtilsAsync(string accountName, string accountKey, string containerName)
+        public override async Task<AzureStorageUtils> GetBlobStorageUtilsAsync()
         {
             int version = 0;
-            string versionedContainerName = containerName;
+            string versionedContainerName = ContainerName;
 
             AzureStorageUtils blobUtils;
             bool needsUniqueName;
             do
             {
-                blobUtils = new AzureStorageUtils(accountName, accountKey, versionedContainerName);
+                blobUtils = AccountKey is null ?
+                    new AzureStorageUtils(AccountName, new AzureCliCredential(), versionedContainerName) :
+                    new AzureStorageUtils(AccountName, AccountKey, versionedContainerName);
                 if (await blobUtils.CheckIfContainerExistsAsync())
                 {
-                    versionedContainerName = $"{containerName}-{++version}";
+                    versionedContainerName = $"{ContainerName}-{++version}";
                     needsUniqueName = true;
                 }
                 else
