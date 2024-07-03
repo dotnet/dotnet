@@ -2,28 +2,25 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
-using Microsoft.DotNet.Build.Tasks.Feed.Model;
-using Microsoft.DotNet.Deployment.Tasks.Links.src;
-using Microsoft.DotNet.VersionTools.BuildManifest;
-using Microsoft.DotNet.VersionTools.BuildManifest.Model;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
+using Microsoft.DotNet.Build.Tasks.Feed.Model;
+using Microsoft.DotNet.Deployment.Tasks.Links;
+using Microsoft.DotNet.VersionTools.BuildManifest;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
     public class LatestLinksManager
     {
-        private TaskLoggingHelper Logger { get; }
-        private AkaMSLinkManager LinkManager { get; } = null;
-        private string AkaMSClientId { get; }
-        private string AkaMSClientSecret { get; }
-        private string AkaMSTenant { get; }
-        private string AkaMsOwners { get; }
-        private string AkaMSCreatedBy { get; }
-        private string AkaMSGroupOwner { get; }
+        private TaskLoggingHelper _logger { get; }
+        private AkaMSLinkManager _linkManager { get; } = null;
+        private string _akaMSOwners { get; }
+        private string _akaMSCreatedBy { get; }
+        private string _akaMSGroupOwner { get; }
 
         private static HashSet<string> AccountsWithCdns { get; } = new()
         {
@@ -39,14 +36,27 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             string akaMsOwners,
             TaskLoggingHelper logger)
         {
-            Logger = logger;
-            AkaMSClientId = akaMSClientId;
-            AkaMSClientSecret = akaMSClientSecret;
-            AkaMSTenant = akaMSTenant;
-            AkaMSGroupOwner = akaMSGroupOwner;
-            AkaMSCreatedBy = akaMSCreatedBy;
-            AkaMsOwners = akaMsOwners;
-            LinkManager = new AkaMSLinkManager(AkaMSClientId, AkaMSClientSecret, AkaMSTenant, Logger);
+            _logger = logger;
+            _akaMSGroupOwner = akaMSGroupOwner;
+            _akaMSCreatedBy = akaMSCreatedBy;
+            _akaMSOwners = akaMsOwners;
+            _linkManager = new AkaMSLinkManager(akaMSClientId, akaMSClientSecret, akaMSTenant, _logger);
+        }
+
+        public LatestLinksManager(
+            string akaMSClientId,
+            X509Certificate2 certificate,
+            string akaMSTenant,
+            string akaMSGroupOwner,
+            string akaMSCreatedBy,
+            string akaMsOwners,
+            TaskLoggingHelper logger)
+        {
+            _logger = logger;
+            _akaMSGroupOwner = akaMSGroupOwner;
+            _akaMSCreatedBy = akaMSCreatedBy;
+            _akaMSOwners = akaMsOwners;
+            _linkManager = new AkaMSLinkManager(akaMSClientId, certificate, akaMSTenant, _logger);
         }
 
         public async System.Threading.Tasks.Task CreateOrUpdateLatestLinksAsync(
@@ -54,9 +64,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             TargetFeedConfig feedConfig,
             int expectedSuffixLength)
         {
+            // The link manager should only be used if there are actually links that could
+            // be created.
             if (!feedConfig.LatestLinkShortUrlPrefixes.Any())
             {
-                return;
+                throw new ArgumentException("No link prefixes specified.");
             }
 
             string feedBaseUrl = feedConfig.SafeTargetURL;
@@ -77,27 +89,27 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 feedBaseUrl = feedBaseUrl.Replace(".blob.core.windows.net", ".azureedge.net");
             }
 
-            Logger.LogMessage(MessageImportance.High, "\nThe following aka.ms links for blobs will be created:");
+            _logger.LogMessage(MessageImportance.High, "\nThe following aka.ms links for blobs will be created:");
             IEnumerable<AkaMSLink> linksToCreate = assetsToPublish
                 .Where(asset => !feedConfig.FilenamesToExclude.Contains(Path.GetFileName(asset)))
                 .Select(asset =>
-            {
+                    {
 
-                // blob path.
-                string actualTargetUrl = feedBaseUrl + asset;
+                        // blob path.
+                        string actualTargetUrl = feedBaseUrl + asset;
 
-                List<AkaMSLink> newLinks = new List<AkaMSLink>();
-                foreach (string shortUrlPrefix in feedConfig.LatestLinkShortUrlPrefixes)
-                {
-                    newLinks.Add(GetAkaMSLinkForAsset(shortUrlPrefix, feedBaseUrl, asset, feedConfig.Flatten));
-                }
+                        List<AkaMSLink> newLinks = new List<AkaMSLink>();
+                        foreach (string shortUrlPrefix in feedConfig.LatestLinkShortUrlPrefixes)
+                        {
+                            newLinks.Add(GetAkaMSLinkForAsset(shortUrlPrefix, feedBaseUrl, asset, feedConfig.Flatten));
+                        }
 
-                return newLinks;
-            })
+                        return newLinks;
+                    })
                 .SelectMany(links => links)
                 .ToList();
 
-            await LinkManager.CreateOrUpdateLinksAsync(linksToCreate, AkaMsOwners, AkaMSCreatedBy, AkaMSGroupOwner, true);
+            await _linkManager.CreateOrUpdateLinksAsync(linksToCreate, _akaMSOwners, _akaMSCreatedBy, _akaMSGroupOwner, true);
         }
 
         /// <sunnary>
@@ -118,9 +130,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 ShortUrl = GetLatestShortUrlForBlob(shortUrlPrefix, asset, flatten),
                 TargetUrl = actualTargetUrl
             };
-            Logger.LogMessage(MessageImportance.High, $"  {Path.GetFileName(asset)}");
+            _logger.LogMessage(MessageImportance.High, $"  {Path.GetFileName(asset)}");
 
-            Logger.LogMessage(MessageImportance.High, $"  aka.ms/{newLink.ShortUrl} -> {newLink.TargetUrl}");
+            _logger.LogMessage(MessageImportance.High, $"  aka.ms/{newLink.ShortUrl} -> {newLink.TargetUrl}");
 
             return newLink;
         }
