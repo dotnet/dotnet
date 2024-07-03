@@ -22,6 +22,10 @@
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.ProjectEngineHost\Microsoft.AspNetCore.Razor.ProjectEngineHost.csproj" PrivateAssets="all" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.Test" Key="$(RazorKey)" />
+  </ItemGroup>
+
   <!--
     Include the build output of project references in the package created. We need to do this because the compiler packages
     are published via a separate process to tooling, so anything that references this package will try to transitively pull
