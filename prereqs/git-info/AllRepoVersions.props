@@ -21,8 +21,8 @@
     <emsdkOutputPackageVersion>9.0.0-preview.7.24319.4</emsdkOutputPackageVersion>
     <fsharpGitCommitHash>02adf13f8d69e0105fff4d68dbd5fb1d43bc0e17</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.400-beta.24351.2</fsharpOutputPackageVersion>
-    <msbuildGitCommitHash>47393a047ff0edd6ac49d503a784e1194f518dbf</msbuildGitCommitHash>
-    <msbuildOutputPackageVersion>17.12.0-preview-24352-02</msbuildOutputPackageVersion>
+    <msbuildGitCommitHash>a481b831d5ca713519ca981e8a71aeb8fbaa906f</msbuildGitCommitHash>
+    <msbuildOutputPackageVersion>17.12.0-preview-24353-01</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>c0d441fc5e99e6765c9e0b2f77de162b9866b305</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.11.0-rc.122</nugetclientOutputPackageVersion>
     <razorGitCommitHash>013d660d07ca54a311576c84374e0ade3ce4608c</razorGitCommitHash>
