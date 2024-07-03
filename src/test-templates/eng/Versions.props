@@ -18,8 +18,8 @@
     <MSTestv2IntellitestFrameworkVersion>net472</MSTestv2IntellitestFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Label="Testing settings">
-    <MicrosoftNetTestSdkVersion>17.8.0</MicrosoftNetTestSdkVersion>
-    <MicrosoftTestPlatformVersion>$(MicrosoftNetTestSdkVersion)</MicrosoftTestPlatformVersion>
-    <MSTestVersion>3.4.1</MSTestVersion>
+    <!-- Arcade is messing up with the properties of MSTest.Sdk so we need to set explicitely MicrosoftNetTestSdkVersion and MSTestVersion -->
+    <MicrosoftNetTestSdkVersion>17.10.0</MicrosoftNetTestSdkVersion>
+    <MSTestVersion>3.4.3</MSTestVersion>
   </PropertyGroup>
 </Project>
