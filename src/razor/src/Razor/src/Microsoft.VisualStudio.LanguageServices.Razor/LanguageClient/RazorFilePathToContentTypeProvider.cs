@@ -9,12 +9,10 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient;
 [FileExtension(RazorLSPConstants.RazorFileExtension)]
 [Name(nameof(RazorFilePathToContentTypeProvider))]
 [Export(typeof(IFilePathToContentTypeProvider))]
-internal class RazorFilePathToContentTypeProvider : RazorFilePathToContentTypeProviderBase
+[method: ImportingConstructor]
+internal class RazorFilePathToContentTypeProvider(
+    IContentTypeRegistryService contentTypeRegistryService,
+    ILspEditorFeatureDetector lspEditorFeatureDetector)
+    : RazorFilePathToContentTypeProviderBase(contentTypeRegistryService, lspEditorFeatureDetector)
 {
-    [ImportingConstructor]
-    public RazorFilePathToContentTypeProvider(
-        IContentTypeRegistryService contentTypeRegistryService,
-        ILspEditorFeatureDetector lspEditorFeatureDetector) : base(contentTypeRegistryService, lspEditorFeatureDetector)
-    {
-    }
 }

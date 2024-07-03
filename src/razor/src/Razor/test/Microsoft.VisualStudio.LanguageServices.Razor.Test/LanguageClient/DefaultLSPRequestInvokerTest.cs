@@ -15,16 +15,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient;
 
-public class DefaultLSPRequestInvokerTest : ToolingTestBase
+public class DefaultLSPRequestInvokerTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    private readonly FallbackCapabilitiesFilterResolver _capabilitiesResolver;
-
-    public DefaultLSPRequestInvokerTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-        _capabilitiesResolver = new DefaultFallbackCapabilitiesFilterResolver();
-    }
-
     [Fact]
     public async Task ReinvokeRequestOnServerAsync_InvokesRazorLanguageClient()
     {
@@ -36,7 +28,7 @@ public class DefaultLSPRequestInvokerTest : ToolingTestBase
             called = true;
             Assert.Equal(expectedMethod, method);
         });
-        var requestInvoker = new DefaultLSPRequestInvoker(broker, _capabilitiesResolver);
+        var requestInvoker = new DefaultLSPRequestInvoker(broker);
 
         // Act
         await requestInvoker.ReinvokeRequestOnServerAsync<object, object>(
@@ -57,7 +49,7 @@ public class DefaultLSPRequestInvokerTest : ToolingTestBase
             called = true;
             Assert.Equal(expectedMethod, method);
         });
-        var requestInvoker = new DefaultLSPRequestInvoker(broker, _capabilitiesResolver);
+        var requestInvoker = new DefaultLSPRequestInvoker(broker);
 
         // Act
         await requestInvoker.ReinvokeRequestOnServerAsync<object, object>(
@@ -78,7 +70,7 @@ public class DefaultLSPRequestInvokerTest : ToolingTestBase
             called = true;
             Assert.Equal(expectedMethod, method);
         });
-        var requestInvoker = new DefaultLSPRequestInvoker(broker, _capabilitiesResolver);
+        var requestInvoker = new DefaultLSPRequestInvoker(broker);
 
         // Act
         await requestInvoker.ReinvokeRequestOnServerAsync<object, object>(
@@ -99,7 +91,7 @@ public class DefaultLSPRequestInvokerTest : ToolingTestBase
             called = true;
             Assert.Equal(expectedMethod, method);
         });
-        var requestInvoker = new DefaultLSPRequestInvoker(broker, _capabilitiesResolver);
+        var requestInvoker = new DefaultLSPRequestInvoker(broker);
 
         // Act
         await requestInvoker.ReinvokeRequestOnServerAsync<object, object>(
@@ -120,7 +112,7 @@ public class DefaultLSPRequestInvokerTest : ToolingTestBase
             called = true;
             Assert.Equal(expectedMethod, method);
         });
-        var requestInvoker = new DefaultLSPRequestInvoker(broker, _capabilitiesResolver);
+        var requestInvoker = new DefaultLSPRequestInvoker(broker);
 
         // Act
         await requestInvoker.ReinvokeRequestOnServerAsync<object, object>(
@@ -141,7 +133,7 @@ public class DefaultLSPRequestInvokerTest : ToolingTestBase
             called = true;
             Assert.Equal(expectedMethod, method);
         });
-        var requestInvoker = new DefaultLSPRequestInvoker(broker, _capabilitiesResolver);
+        var requestInvoker = new DefaultLSPRequestInvoker(broker);
 
         // Act
         await requestInvoker.ReinvokeRequestOnServerAsync<object, object>(

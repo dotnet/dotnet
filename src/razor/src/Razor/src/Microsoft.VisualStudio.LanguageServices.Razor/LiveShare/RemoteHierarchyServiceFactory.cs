@@ -5,8 +5,8 @@ using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.LiveShare;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
-using Task = System.Threading.Tasks.Task;
 
 namespace Microsoft.VisualStudio.Razor.LiveShare;
 
@@ -20,10 +20,13 @@ namespace Microsoft.VisualStudio.Razor.LiveShare;
     Scope = SessionScope.Host,
     Role = ServiceRole.RemoteService)]
 [method: ImportingConstructor]
-internal sealed class RemoteHierarchyServiceFactory(JoinableTaskContext joinableTaskContext) : ICollaborationServiceFactory
+internal sealed class RemoteHierarchyServiceFactory(
+    IVsService<SVsUIShellOpenDocument, IVsUIShellOpenDocument> vsUIShellOpenDocumentService,
+    JoinableTaskContext joinableTaskContext) : ICollaborationServiceFactory
 {
     public Task<ICollaborationService> CreateServiceAsync(CollaborationSession session, CancellationToken cancellationToken)
     {
-        return Task.FromResult<ICollaborationService>(new RemoteHierarchyService(session, joinableTaskContext.Factory));
+        return Task.FromResult<ICollaborationService>(
+            new RemoteHierarchyService(session, vsUIShellOpenDocumentService, joinableTaskContext.Factory));
     }
 }

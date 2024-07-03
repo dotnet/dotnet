@@ -40,7 +40,9 @@ internal sealed class SourceMappingAdornmentTaggerProvider : IViewTaggerProvider
         }
 
         if (buffer != textView.TextBuffer)
+        {
             return null;
+        }
 
         return SourceMappingAdornmentTagger.GetTagger(
             (IWpfTextView)textView,

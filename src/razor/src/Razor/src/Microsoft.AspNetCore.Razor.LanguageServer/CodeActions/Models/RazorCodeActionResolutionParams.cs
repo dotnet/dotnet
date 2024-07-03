@@ -1,19 +1,19 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 
-[JsonObject]
 internal class RazorCodeActionResolutionParams
 {
-    [JsonProperty(PropertyName = "action", Required = Required.Always)]
+    [JsonPropertyName("action")]
     public required string Action { get; set; }
 
-    [JsonProperty(PropertyName = "language", Required = Required.Always)]
+    [JsonPropertyName("language")]
     public required string Language { get; set; }
 
-    [JsonProperty(PropertyName = "data", Required = Required.Always)]
+    [JsonPropertyName("data")]
     public required object Data { get; set; }
 }

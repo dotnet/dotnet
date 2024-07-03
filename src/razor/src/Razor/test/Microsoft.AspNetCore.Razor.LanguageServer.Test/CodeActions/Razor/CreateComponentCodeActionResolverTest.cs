@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
@@ -11,7 +12,6 @@ using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -26,7 +26,7 @@ public class CreateComponentCodeActionResolverTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var resolver = new CreateComponentCodeActionResolver(_emptyDocumentContextFactory, TestLanguageServerFeatureOptions.Instance);
-        var data = JObject.FromObject(new CreateComponentCodeActionParams()
+        var data = JsonSerializer.SerializeToElement(new CreateComponentCodeActionParams()
         {
             Uri = new Uri("c:/Test.razor"),
             Path = "c:/Another.razor",
@@ -49,7 +49,7 @@ public class CreateComponentCodeActionResolverTest(ITestOutputHelper testOutput)
         codeDocument.SetUnsupported();
 
         var resolver = new CreateComponentCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance);
-        var data = JObject.FromObject(new CreateComponentCodeActionParams()
+        var data = JsonSerializer.SerializeToElement(new CreateComponentCodeActionParams()
         {
             Uri = documentPath,
             Path = "c:/Another.razor",
@@ -72,7 +72,7 @@ public class CreateComponentCodeActionResolverTest(ITestOutputHelper testOutput)
         codeDocument.SetFileKind(FileKinds.Legacy);
 
         var resolver = new CreateComponentCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance);
-        var data = JObject.FromObject(new CreateComponentCodeActionParams()
+        var data = JsonSerializer.SerializeToElement(new CreateComponentCodeActionParams()
         {
             Uri = documentPath,
             Path = "c:/Another.razor",
@@ -99,7 +99,7 @@ public class CreateComponentCodeActionResolverTest(ITestOutputHelper testOutput)
             Uri = documentPath,
             Path = "c:/Another.razor",
         };
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -130,7 +130,7 @@ public class CreateComponentCodeActionResolverTest(ITestOutputHelper testOutput)
             Uri = documentPath,
             Path = "c:/Another.razor",
         };
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);

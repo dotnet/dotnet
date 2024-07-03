@@ -5,8 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
 using StreamJsonRpc;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Endpoints;
@@ -20,19 +18,9 @@ internal partial class RazorCustomMessageTarget
         var response = await _requestInvoker.ReinvokeRequestOnServerAsync<FormatNewFileParams, string?>(
             RazorLSPConstants.RoslynFormatNewFileEndpointName,
             RazorLSPConstants.RazorCSharpLanguageServerName,
-            SupportsFormatNewFile,
             request,
             cancellationToken).ConfigureAwait(false);
 
         return response.Result;
-    }
-
-    private static bool SupportsFormatNewFile(JToken token)
-    {
-        var serverCapabilities = token.ToObject<VSInternalServerCapabilities>();
-
-        return serverCapabilities?.Experimental is JObject experimental
-            && experimental.TryGetValue(RazorLSPConstants.RoslynFormatNewFileEndpointName, out var supportsFormatNewFile)
-            && supportsFormatNewFile.ToObject<bool>();
     }
 }

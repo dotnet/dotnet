@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Text.Json;
 using Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
 using Microsoft.AspNetCore.Razor.LanguageServer.ColorPresentation;
 using Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
@@ -32,12 +33,11 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Newtonsoft.Json;
 using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal partial class RazorLanguageServer : NewtonsoftLanguageServer<RazorRequestContext>, IDisposable
+internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorRequestContext>, IDisposable
 {
     private readonly JsonRpc _jsonRpc;
     private readonly ILoggerFactory _loggerFactory;
@@ -52,14 +52,14 @@ internal partial class RazorLanguageServer : NewtonsoftLanguageServer<RazorReque
 
     public RazorLanguageServer(
         JsonRpc jsonRpc,
-        JsonSerializer serializer,
+        JsonSerializerOptions options,
         ILoggerFactory loggerFactory,
         LanguageServerFeatureOptions? featureOptions,
         Action<IServiceCollection>? configureServices,
         RazorLSPOptions? lspOptions,
         ILspServerActivationTracker? lspServerActivationTracker,
         ITelemetryReporter telemetryReporter)
-        : base(jsonRpc, serializer, CreateILspLogger(loggerFactory, telemetryReporter))
+        : base(jsonRpc, options, CreateILspLogger(loggerFactory, telemetryReporter))
     {
         _jsonRpc = jsonRpc;
         _loggerFactory = loggerFactory;
@@ -129,7 +129,7 @@ internal partial class RazorLanguageServer : NewtonsoftLanguageServer<RazorReque
         services.AddDiagnosticServices();
         services.AddSemanticTokensServices(featureOptions);
         services.AddDocumentManagementServices(featureOptions);
-        services.AddCompletionServices(featureOptions);
+        services.AddCompletionServices();
         services.AddFormattingServices();
         services.AddCodeActionsServices();
         services.AddOptionsServices(_lspOptions);

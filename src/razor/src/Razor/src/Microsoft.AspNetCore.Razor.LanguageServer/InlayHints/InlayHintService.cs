@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -14,7 +16,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.InlayHints;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.InlayHints;
 
@@ -93,10 +94,11 @@ internal sealed class InlayHintService(IRazorDocumentMappingService documentMapp
     public async Task<InlayHint?> ResolveInlayHintAsync(IClientConnection clientConnection, InlayHint inlayHint, CancellationToken cancellationToken)
     {
         var inlayHintWrapper = inlayHint.Data as RazorInlayHintWrapper;
+
         if (inlayHintWrapper is null &&
-            inlayHint.Data is JObject dataObj)
+            inlayHint.Data is JsonElement dataElement)
         {
-            inlayHintWrapper = dataObj.ToObject<RazorInlayHintWrapper>();
+            inlayHintWrapper = dataElement.Deserialize<RazorInlayHintWrapper>();
         }
 
         if (inlayHintWrapper is null)

@@ -12,14 +12,9 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal abstract class BaseDelegatedCodeActionResolver : ICodeActionResolver
+internal abstract class BaseDelegatedCodeActionResolver(IClientConnection clientConnection) : ICodeActionResolver
 {
-    protected readonly IClientConnection ClientConnection;
-
-    public BaseDelegatedCodeActionResolver(IClientConnection clientConnection)
-    {
-        ClientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-    }
+    protected readonly IClientConnection ClientConnection = clientConnection;
 
     public abstract string Action { get; }
 

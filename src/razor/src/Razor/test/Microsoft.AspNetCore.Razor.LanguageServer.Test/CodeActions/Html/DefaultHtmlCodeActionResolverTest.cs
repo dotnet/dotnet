@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
@@ -15,7 +17,6 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
-using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -83,7 +84,7 @@ public class DefaultHtmlCodeActionResolverTest(ITestOutputHelper testOutput) : L
 
         var codeActionParams = new CodeActionResolveParams()
         {
-            Data = new JObject(),
+            Data = new JsonElement(),
             RazorFileIdentifier = new VSTextDocumentIdentifier
             {
                 Uri = new Uri(documentPath)

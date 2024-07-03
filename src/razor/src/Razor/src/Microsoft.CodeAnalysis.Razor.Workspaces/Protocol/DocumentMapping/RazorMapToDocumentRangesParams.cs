@@ -2,23 +2,22 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
 namespace Microsoft.CodeAnalysis.Razor.Protocol.DocumentMapping;
 
-[DataContract]
 internal class RazorMapToDocumentRangesParams
 {
-    [DataMember(Name = "kind")]
+    [JsonPropertyName("kind")]
     public RazorLanguageKind Kind { get; init; }
 
-    [DataMember(Name = "razorDocumentUri")]
+    [JsonPropertyName("razorDocumentUri")]
     public required Uri RazorDocumentUri { get; init; }
 
-    [DataMember(Name = "projectedRanges")]
+    [JsonPropertyName("projectedRanges")]
     public required Range[] ProjectedRanges { get; init; }
 
-    [DataMember(Name = "mappingBehavior")]
+    [JsonPropertyName("mappingBehavior")]
     public MappingBehavior MappingBehavior { get; init; }
 }

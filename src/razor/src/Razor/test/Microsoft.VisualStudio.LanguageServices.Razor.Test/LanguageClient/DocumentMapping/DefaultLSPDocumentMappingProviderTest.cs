@@ -14,7 +14,6 @@ using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text;
 using Moq;
-using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -63,7 +62,6 @@ public class DefaultLSPDocumentMappingProviderTest : ToolingTestBase
                 It.IsAny<ITextBuffer>(),
                 LanguageServerConstants.RazorMapToDocumentRangesEndpoint,
                 RazorLSPConstants.RazorLanguageServerName,
-                It.IsAny<Func<JToken, bool>>(),
                 It.IsAny<RazorMapToDocumentRangesParams>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ReinvocationResponse<RazorMapToDocumentRangesResponse>("TestLanguageClient", response));

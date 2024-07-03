@@ -13,8 +13,6 @@ internal abstract class LanguageServerFeatureOptions
 
     public abstract string HtmlVirtualDocumentSuffix { get; }
 
-    public abstract bool SingleServerCompletionSupport { get; }
-
     public abstract bool SingleServerSupport { get; }
 
     public abstract bool DelegateToCSharpOnDiagnosticPublish { get; }

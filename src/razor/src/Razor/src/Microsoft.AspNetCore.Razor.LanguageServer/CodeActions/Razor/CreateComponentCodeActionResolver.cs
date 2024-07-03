@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -13,7 +14,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
@@ -30,14 +30,9 @@ internal sealed class CreateComponentCodeActionResolver : IRazorCodeActionResolv
 
     public string Action => LanguageServerConstants.CodeActions.CreateComponentFromTag;
 
-    public async Task<WorkspaceEdit?> ResolveAsync(JObject data, CancellationToken cancellationToken)
+    public async Task<WorkspaceEdit?> ResolveAsync(JsonElement data, CancellationToken cancellationToken)
     {
-        if (data is null)
-        {
-            return null;
-        }
-
-        var actionParams = data.ToObject<CreateComponentCodeActionParams>();
+        var actionParams = data.Deserialize<CreateComponentCodeActionParams>();
         if (actionParams is null)
         {
             return null;

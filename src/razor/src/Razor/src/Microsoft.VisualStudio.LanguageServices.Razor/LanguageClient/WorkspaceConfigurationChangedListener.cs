@@ -4,11 +4,9 @@
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Settings;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient;
 
@@ -39,19 +37,8 @@ internal class WorkspaceConfigurationChangedListener(LSPRequestInvoker requestIn
         await _requestInvoker.ReinvokeRequestOnServerAsync<DidChangeConfigurationParams, Unit>(
             Methods.WorkspaceDidChangeConfigurationName,
             RazorLSPConstants.RazorLanguageServerName,
-            CheckRazorServerCapability,
             new DidChangeConfigurationParams(),
             CancellationToken.None);
-    }
-
-    private static bool CheckRazorServerCapability(JToken token)
-    {
-        // We're talking cross-language servers here. Given the workspace/didChangeConfiguration is a normal LSP message this will only fail
-        // if the Razor language server is not running. Typically this would be OK from a platform perspective; however VS will explode if
-        // there's not a corresponding language server to accept the message. To protect ourselves from this scenario we can utilize capabilities
-        // and just lookup generic Razor language server specific capabilities. If they exist we can succeed.
-        var isRazorLanguageServer = RazorLanguageServerCapability.TryGet(token, out _);
-        return isRazorLanguageServer;
     }
 
     private class Unit

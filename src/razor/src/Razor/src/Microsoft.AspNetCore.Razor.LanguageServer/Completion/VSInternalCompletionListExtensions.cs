@@ -3,8 +3,9 @@
 
 using System;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
@@ -18,15 +19,10 @@ internal static class VSInternalCompletionListExtensions
         int resultId,
         VSInternalCompletionSetting? completionSetting)
     {
-        if (completionList is null)
-        {
-            throw new ArgumentNullException(nameof(completionList));
-        }
-
-        var data = new JObject()
+        var data = JsonSerializer.SerializeToElement(new JsonObject()
         {
             [ResultIdKey] = resultId,
-        };
+        });
 
         if (completionSetting?.CompletionList?.Data == true)
         {

@@ -54,7 +54,9 @@ internal sealed class SourceMappingAdornmentTagger : IntraTextAdornmentTagger<So
     protected override IEnumerable<Tuple<SnapshotSpan, PositionAffinity?, SourceMappingTag>> GetAdornmentData(NormalizedSnapshotSpanCollection spans)
     {
         if (spans.Count == 0)
+        {
             yield break;
+        }
 
         var snapshot = spans[0].Snapshot;
 
@@ -67,7 +69,9 @@ internal sealed class SourceMappingAdornmentTagger : IntraTextAdornmentTagger<So
             // Ignore data tags that are split by projection.
             // This is theoretically possible but unlikely in current scenarios.
             if (sourceMappingSpans.Count != 1)
+            {
                 continue;
+            }
 
             var adornmentSpan = new SnapshotSpan(sourceMappingSpans[0].Start, 0);
 

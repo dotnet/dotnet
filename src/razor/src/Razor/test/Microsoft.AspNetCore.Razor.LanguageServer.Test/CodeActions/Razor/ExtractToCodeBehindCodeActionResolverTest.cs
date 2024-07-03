@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
@@ -14,7 +15,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Newtonsoft.Json.Linq;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -41,7 +41,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
     {
         // Arrange
         var resolver = new ExtractToCodeBehindCodeActionResolver(_emptyDocumentContextFactory, TestLanguageServerFeatureOptions.Instance, _languageServer);
-        var data = JObject.FromObject(new ExtractToCodeBehindCodeActionParams()
+        var data = JsonSerializer.SerializeToElement(new ExtractToCodeBehindCodeActionParams()
         {
             Uri = new Uri("c:/Test.razor"),
             RemoveStart = 14,
@@ -71,7 +71,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
         codeDocument.SetUnsupported();
 
         var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
-        var data = JObject.FromObject(CreateExtractToCodeBehindCodeActionParams(new Uri("c:/Test.razor"), contents, "@code", "Test"));
+        var data = JsonSerializer.SerializeToElement(CreateExtractToCodeBehindCodeActionParams(new Uri("c:/Test.razor"), contents, "@code", "Test"));
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -93,7 +93,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
         codeDocument.SetFileKind(FileKinds.Legacy);
 
         var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
-        var data = JObject.FromObject(CreateExtractToCodeBehindCodeActionParams(new Uri("c:/Test.razor"), contents, "@code", "Test"));
+        var data = JsonSerializer.SerializeToElement(CreateExtractToCodeBehindCodeActionParams(new Uri("c:/Test.razor"), contents, "@code", "Test"));
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -119,7 +119,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
 
         var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -181,7 +181,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
 
         var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -251,7 +251,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
 
         var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -331,7 +331,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
 
         var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -413,7 +413,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
 
         var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -483,7 +483,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
 
         var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@functions", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -545,7 +545,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
 
         var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -609,7 +609,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
 
         var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, _languageServer);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -677,7 +677,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
 
         var resolver = new ExtractToCodeBehindCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance, languageServer);
         var actionParams = CreateExtractToCodeBehindCodeActionParams(documentPath, contents, "@code", @namespace);
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);

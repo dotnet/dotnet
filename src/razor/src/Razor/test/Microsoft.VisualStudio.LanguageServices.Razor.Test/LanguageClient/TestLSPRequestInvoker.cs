@@ -60,6 +60,7 @@ internal class TestLSPRequestInvoker : LSPRequestInvoker
         throw new NotImplementedException();
     }
 
+    [Obsolete]
     public override IAsyncEnumerable<ReinvocationResponse<TOut>> ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(
         ITextBuffer textBuffer,
         string method,
@@ -79,6 +80,7 @@ internal class TestLSPRequestInvoker : LSPRequestInvoker
         throw new NotImplementedException();
     }
 
+    [Obsolete]
     public override Task<ReinvokeResponse<TOut>> ReinvokeRequestOnServerAsync<TIn, TOut>(
         string method,
         string languageServerName,
@@ -105,6 +107,7 @@ internal class TestLSPRequestInvoker : LSPRequestInvoker
         return default;
     }
 
+    [Obsolete]
     public override Task<ReinvocationResponse<TOut>> ReinvokeRequestOnServerAsync<TIn, TOut>(
         ITextBuffer textBuffer,
         string method,

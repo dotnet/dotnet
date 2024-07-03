@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
@@ -18,7 +19,6 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
-using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -225,7 +225,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                 Assert.Equal("@using System.IO", r.Title);
                 Assert.Null(r.Edit);
                 Assert.NotNull(r.Data);
-                var resolutionParams = ((JObject)r.Data).ToObject<RazorCodeActionResolutionParams>();
+                var resolutionParams = ((JsonElement)r.Data).Deserialize<RazorCodeActionResolutionParams>();
                 Assert.NotNull(resolutionParams);
                 Assert.Equal(LanguageServerConstants.CodeActions.AddUsing, resolutionParams.Action);
             },
@@ -284,7 +284,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                 Assert.Equal("@using System.IO", r.Title);
                 Assert.Null(r.Edit);
                 Assert.NotNull(r.Data);
-                var resolutionParams = ((JObject)r.Data).ToObject<RazorCodeActionResolutionParams>();
+                var resolutionParams = ((JsonElement)r.Data).Deserialize<RazorCodeActionResolutionParams>();
                 Assert.NotNull(resolutionParams);
                 Assert.Equal(LanguageServerConstants.CodeActions.Default, resolutionParams.Action);
             }
@@ -336,7 +336,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                 Assert.Equal("@using System.IO", r.Title);
                 Assert.Null(r.Edit);
                 Assert.NotNull(r.Data);
-                var resolutionParams = ((JObject)r.Data).ToObject<RazorCodeActionResolutionParams>();
+                var resolutionParams = ((JsonElement)r.Data).Deserialize<RazorCodeActionResolutionParams>();
                 Assert.NotNull(resolutionParams);
                 Assert.Equal(LanguageServerConstants.CodeActions.Default, resolutionParams.Action);
             },
@@ -414,7 +414,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                 Assert.Equal("@using SuperSpecialNamespace", r.Title);
                 Assert.Null(r.Edit);
                 Assert.NotNull(r.Data);
-                var resolutionParams = ((JObject)r.Data).ToObject<RazorCodeActionResolutionParams>();
+                var resolutionParams = ((JsonElement)r.Data).Deserialize<RazorCodeActionResolutionParams>();
                 Assert.NotNull(resolutionParams);
                 Assert.Equal(LanguageServerConstants.CodeActions.AddUsing, resolutionParams.Action);
             },
@@ -423,7 +423,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                 Assert.Equal("@using System.IO", r.Title);
                 Assert.Null(r.Edit);
                 Assert.NotNull(r.Data);
-                var resolutionParams = ((JObject)r.Data).ToObject<RazorCodeActionResolutionParams>();
+                var resolutionParams = ((JsonElement)r.Data).Deserialize<RazorCodeActionResolutionParams>();
                 Assert.NotNull(resolutionParams);
                 Assert.Equal(LanguageServerConstants.CodeActions.AddUsing, resolutionParams.Action);
             },

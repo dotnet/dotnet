@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Text.Json.Serialization;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Protocol;
@@ -11,4 +12,6 @@ namespace Microsoft.CodeAnalysis.Razor.Protocol;
 /// and deserializing that class, if the <see cref="TextDocumentIdentifier"/> is a <see cref="VSTextDocumentIdentifier"/>
 /// it will lose the project context information.
 /// </summary>
-internal record class TextDocumentIdentifierAndVersion(TextDocumentIdentifier TextDocumentIdentifier, int Version);
+internal record class TextDocumentIdentifierAndVersion(
+    [property:JsonPropertyName("textDocumentIdentifier")] TextDocumentIdentifier TextDocumentIdentifier,
+    [property:JsonPropertyName("version")] int Version);

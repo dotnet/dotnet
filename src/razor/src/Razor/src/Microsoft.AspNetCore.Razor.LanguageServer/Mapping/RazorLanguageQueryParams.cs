@@ -3,16 +3,16 @@
 
 using System;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Mapping;
 
-[DataContract]
 internal class RazorLanguageQueryParams
 {
-    [DataMember(Name = "uri")]
+    [JsonPropertyName("uri")]
     public required Uri Uri { get; set; }
 
-    [DataMember(Name = "position")]
+    [JsonPropertyName("position")]
     public required Position Position { get; set; }
 }

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -95,7 +96,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
         {
             HostDocumentFilePath = filePath,
             ProjectKeyId = projectKey.Id,
-            Changes = textChanges,
+            Changes = textChanges.Select(t => t.ToRazorTextChange()).ToArray(),
             HostDocumentVersion = hostDocumentVersion,
             PreviousWasEmpty = previouslyPublishedData.SourceText.Length == 0
         };
@@ -138,7 +139,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
         {
             HostDocumentFilePath = filePath,
             ProjectKeyId = projectKey.Id,
-            Changes = textChanges,
+            Changes = textChanges.Select(t => t.ToRazorTextChange()).ToArray(),
             HostDocumentVersion = hostDocumentVersion,
             PreviousWasEmpty = previouslyPublishedData.SourceText.Length == 0
         };

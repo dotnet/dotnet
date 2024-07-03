@@ -222,6 +222,11 @@ stages:
           displayName: Restore, Build and Test
           condition: succeeded()
 
+        - publish: artifacts/log/$(_BuildConfig)
+          artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) Logs
+          displayName: Publish Build Artifacts
+          condition: always()
+
         - publish: artifacts/TestResults/$(_BuildConfig)
           artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) TestResults
           displayName: Publish Test Results
@@ -262,6 +267,11 @@ stages:
           name: Build
           displayName: Restore, Build and Test
           condition: succeeded()
+
+        - publish: artifacts/log/$(_BuildConfig)
+          artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) Logs
+          displayName: Publish Build Artifacts
+          condition: always()
 
         - publish: artifacts/TestResults/$(_BuildConfig)/
           artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) TestResults

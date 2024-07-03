@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -28,11 +28,6 @@ internal class TestClient : IClientConnection
     public InitializeResult ServerSettings => throw new NotImplementedException();
 
     public object GetService(Type serviceType)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool TryGetRequest(long id, out string method, out TaskCompletionSource<JToken> pendingTask)
     {
         throw new NotImplementedException();
     }

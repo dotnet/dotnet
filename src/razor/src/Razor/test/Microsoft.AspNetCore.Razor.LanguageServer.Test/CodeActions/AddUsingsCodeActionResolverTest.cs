@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -25,7 +25,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var resolver = new AddUsingsCodeActionResolver(_emptyDocumentContextFactory);
-        var data = JObject.FromObject(new AddUsingsCodeActionParams()
+        var data = JsonSerializer.SerializeToElement(new AddUsingsCodeActionParams()
         {
             Uri = new Uri("c:/Test.razor"),
             Namespace = "System",
@@ -48,7 +48,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         codeDocument.SetUnsupported();
 
         var resolver = new AddUsingsCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument));
-        var data = JObject.FromObject(new AddUsingsCodeActionParams()
+        var data = JsonSerializer.SerializeToElement(new AddUsingsCodeActionParams()
         {
             Uri = documentPath,
             Namespace = "System",
@@ -75,7 +75,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
             Uri = documentPath,
             Namespace = "System",
         };
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -113,7 +113,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
             Uri = documentPath,
             Namespace = "System",
         };
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -158,7 +158,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
             Uri = documentPath,
             Namespace = "System",
         };
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -197,7 +197,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
             Uri = documentPath,
             Namespace = "System",
         };
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -234,7 +234,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
             Uri = documentPath,
             Namespace = "System",
         };
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -272,7 +272,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
             Uri = documentPath,
             Namespace = "System",
         };
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -306,7 +306,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
             Uri = documentPath,
             Namespace = "System.Linq",
         };
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);
@@ -344,7 +344,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
             Uri = documentPath,
             Namespace = "Microsoft.AspNetCore.Razor.Language",
         };
-        var data = JObject.FromObject(actionParams);
+        var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
         var workspaceEdit = await resolver.ResolveAsync(data, default);

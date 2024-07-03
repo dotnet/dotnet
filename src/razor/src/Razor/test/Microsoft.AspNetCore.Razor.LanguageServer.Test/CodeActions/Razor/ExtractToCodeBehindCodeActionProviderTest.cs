@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
@@ -17,7 +18,6 @@ using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
-using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -221,9 +221,9 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
         // Assert
         Assert.NotNull(commandOrCodeActionContainer);
         var codeAction = Assert.Single(commandOrCodeActionContainer);
-        var razorCodeActionResolutionParams = ((JObject)codeAction.Data!).ToObject<RazorCodeActionResolutionParams>();
+        var razorCodeActionResolutionParams = ((JsonElement)codeAction.Data!).Deserialize<RazorCodeActionResolutionParams>();
         Assert.NotNull(razorCodeActionResolutionParams);
-        var actionParams = ((JObject)razorCodeActionResolutionParams.Data).ToObject<ExtractToCodeBehindCodeActionParams>();
+        var actionParams = ((JsonElement)razorCodeActionResolutionParams.Data).Deserialize<ExtractToCodeBehindCodeActionParams>();
         Assert.NotNull(actionParams);
 
         Assert.Equal(removeSpan, TextSpan.FromBounds(actionParams.RemoveStart, actionParams.RemoveEnd));
@@ -265,9 +265,9 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
         // Assert
         Assert.NotNull(commandOrCodeActionContainer);
         var codeAction = Assert.Single(commandOrCodeActionContainer);
-        var razorCodeActionResolutionParams = ((JObject)codeAction.Data!).ToObject<RazorCodeActionResolutionParams>();
+        var razorCodeActionResolutionParams = ((JsonElement)codeAction.Data!).Deserialize<RazorCodeActionResolutionParams>();
         Assert.NotNull(razorCodeActionResolutionParams);
-        var actionParams = ((JObject)razorCodeActionResolutionParams.Data).ToObject<ExtractToCodeBehindCodeActionParams>();
+        var actionParams = ((JsonElement)razorCodeActionResolutionParams.Data).Deserialize<ExtractToCodeBehindCodeActionParams>();
         Assert.NotNull(actionParams);
 
         Assert.Equal(removeSpan, TextSpan.FromBounds(actionParams.RemoveStart, actionParams.RemoveEnd));
@@ -339,9 +339,9 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
         // Assert
         Assert.NotNull(commandOrCodeActionContainer);
         var codeAction = Assert.Single(commandOrCodeActionContainer);
-        var razorCodeActionResolutionParams = ((JObject)codeAction.Data!).ToObject<RazorCodeActionResolutionParams>();
+        var razorCodeActionResolutionParams = ((JsonElement)codeAction.Data!).Deserialize<RazorCodeActionResolutionParams>();
         Assert.NotNull(razorCodeActionResolutionParams);
-        var actionParams = ((JObject)razorCodeActionResolutionParams.Data).ToObject<ExtractToCodeBehindCodeActionParams>();
+        var actionParams = ((JsonElement)razorCodeActionResolutionParams.Data).Deserialize<ExtractToCodeBehindCodeActionParams>();
         Assert.NotNull(actionParams);
 
         Assert.Equal(removeSpan, TextSpan.FromBounds(actionParams.RemoveStart, actionParams.RemoveEnd));

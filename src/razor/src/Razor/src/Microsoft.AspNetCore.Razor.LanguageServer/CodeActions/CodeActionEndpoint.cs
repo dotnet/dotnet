@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -22,7 +23,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
 using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
@@ -215,9 +215,9 @@ internal sealed class CodeActionEndpoint(
 
         foreach (var codeAction in codeActions)
         {
-            // Note: we may see a perf benefit from using a JsonConverter
-            var tags = ((JToken?)codeAction.Data)?["CustomTags"]?.ToObject<string[]>();
-            if (tags is null || tags.Length == 0)
+            if (codeAction.Data is not JsonElement jsonData ||
+                !jsonData.TryGetProperty("CustomTags", out var value) ||
+                value.Deserialize<string[]>() is not [..] tags)
             {
                 continue;
             }

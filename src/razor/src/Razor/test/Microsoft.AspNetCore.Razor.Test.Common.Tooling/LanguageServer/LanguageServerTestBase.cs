@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
@@ -22,18 +23,29 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 
-public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
+public abstract class LanguageServerTestBase : ToolingTestBase
 {
-    private ThrowingRazorSpanMappingService? _spanMappingService;
-    private LSPFilePathService? _filePathService;
+    private protected IRazorSpanMappingService SpanMappingService { get; }
+    private protected IFilePathService FilePathService { get; }
+    private protected JsonSerializerOptions SerializerOptions { get; }
 
-    private protected IRazorSpanMappingService SpanMappingService => _spanMappingService ??= new();
-    private protected IFilePathService FilePathService => _filePathService ??= new(TestLanguageServerFeatureOptions.Instance);
+    protected LanguageServerTestBase(ITestOutputHelper testOutput)
+        : base(testOutput)
+    {
+        SpanMappingService = new ThrowingRazorSpanMappingService();
+
+        SerializerOptions = new JsonSerializerOptions();
+        // In its infinite wisdom, the LSP client has a public method that takes Newtonsoft.Json types, but an internal method that takes System.Text.Json types.
+        typeof(VSInternalExtensionUtilities).GetMethod("AddVSInternalExtensionConverters", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!.Invoke(null, [SerializerOptions]);
+
+        FilePathService = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
+    }
 
     private protected TestProjectSnapshotManager CreateProjectSnapshotManager()
         => CreateProjectSnapshotManager(ProjectEngineFactories.DefaultProvider);

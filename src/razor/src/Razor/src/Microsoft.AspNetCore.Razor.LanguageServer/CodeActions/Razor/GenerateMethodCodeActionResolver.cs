@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -20,7 +21,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
 using CSharpSyntaxFactory = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
@@ -59,14 +59,9 @@ internal class GenerateMethodCodeActionResolver : IRazorCodeActionResolver
         _razorFormattingService = razorFormattingService;
     }
 
-    public async Task<WorkspaceEdit?> ResolveAsync(JObject data, CancellationToken cancellationToken)
+    public async Task<WorkspaceEdit?> ResolveAsync(JsonElement data, CancellationToken cancellationToken)
     {
-        if (data is null)
-        {
-            return null;
-        }
-
-        var actionParams = data.ToObject<GenerateMethodCodeActionParams>();
+        var actionParams = data.Deserialize<GenerateMethodCodeActionParams>();
         if (actionParams is null)
         {
             return null;

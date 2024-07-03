@@ -3,8 +3,9 @@
 
 using System;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 
@@ -26,19 +27,19 @@ internal static class CodeActionExtensions
             razorCodeAction = new VSInternalCodeAction()
             {
                 Title = razorCodeAction.Title,
-                Data = JToken.FromObject(resolutionParams),
+                Data = JsonSerializer.SerializeToElement(resolutionParams),
                 TelemetryId = razorCodeAction.TelemetryId,
             };
         }
 
-        var serializedParams = JToken.FromObject(razorCodeAction.Data);
-        var arguments = new JArray(serializedParams);
+        var serializedParams = JsonSerializer.SerializeToNode(razorCodeAction.Data).AssumeNotNull();
+        var arguments = new JsonArray(serializedParams);
 
         return new Command
         {
             Title = razorCodeAction.Title ?? string.Empty,
             CommandIdentifier = LanguageServerConstants.RazorCodeActionRunnerCommand,
-            Arguments = arguments.ToArray(),
+            Arguments = arguments.ToArray()!
         };
     }
 
@@ -71,7 +72,7 @@ internal static class CodeActionExtensions
             Language = language,
             Data = resolveParams
         };
-        razorCodeAction.Data = JToken.FromObject(resolutionParams);
+        razorCodeAction.Data = JsonSerializer.SerializeToElement(resolutionParams);
 
         if (!isOnAllowList)
         {
@@ -108,7 +109,7 @@ internal static class CodeActionExtensions
             Language = language,
             Data = resolveParams
         };
-        razorCodeAction.Data = JToken.FromObject(resolutionParams);
+        razorCodeAction.Data = JsonSerializer.SerializeToElement(resolutionParams);
 
         if (!isOnAllowList)
         {

@@ -5,5 +5,8 @@ namespace Microsoft.VisualStudio.Razor;
 
 internal interface IProjectCapabilityResolver
 {
-    bool HasCapability(string documentFilePath, object project, string capability);
+    /// <summary>
+    /// Determines whether the project associated with the specified document has the given <paramref name="capability"/>.
+    /// </summary>
+    bool ResolveCapability(string capability, string documentFilePath);
 }

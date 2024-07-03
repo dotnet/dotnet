@@ -5,12 +5,10 @@ using System;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.DocumentMapping;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.DocumentMapping;
 
@@ -76,20 +74,9 @@ internal class DefaultLSPDocumentMappingProvider : LSPDocumentMappingProvider
             documentSnapshot.Snapshot.TextBuffer,
             LanguageServerConstants.RazorMapToDocumentRangesEndpoint,
             RazorLSPConstants.RazorLanguageServerName,
-            CheckRazorRangeMappingCapability,
             mapToDocumentRangeParams,
             cancellationToken).ConfigureAwait(false);
 
         return documentMappingResponse?.Response;
-    }
-
-    private static bool CheckRazorRangeMappingCapability(JToken token)
-    {
-        if (!RazorLanguageServerCapability.TryGet(token, out var razorCapability))
-        {
-            return false;
-        }
-
-        return razorCapability.RangeMapping;
     }
 }

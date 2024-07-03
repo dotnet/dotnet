@@ -42,7 +42,7 @@ internal class RazorLanguageServerClient(
     IClientSettingsManager clientSettingsManager,
     ILspServerActivationTracker lspServerActivationTracker,
     VisualStudioHostServicesProvider vsHostServicesProvider)
-    : ILanguageClient, ILanguageClientCustomMessage2, ILanguageClientPriority
+    : ILanguageClient, ILanguageClientCustomMessage2, ILanguageClientPriority, IPropertyOwner
 {
     private readonly ILanguageClientBroker _languageClientBroker = languageClientBroker;
     private readonly ILanguageServiceBroker2 _languageServiceBroker = languageServiceBroker;
@@ -83,6 +83,16 @@ internal class RazorLanguageServerClient(
     public int Priority => 10;
 
     public bool ShowNotificationOnInitializeFailed => true;
+
+    public PropertyCollection Properties { get; } = CreateStjPropertyCollection();
+
+    private static PropertyCollection CreateStjPropertyCollection()
+    {
+        // Opt in to System.Text.Json serialization on the client
+        var collection = new PropertyCollection();
+        collection.AddProperty("lsp-serialization", "stj");
+        return collection;
+    }
 
     public async Task<Connection?> ActivateAsync(CancellationToken token)
     {

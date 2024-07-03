@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
@@ -17,7 +18,6 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
@@ -32,14 +32,9 @@ internal sealed class AddUsingsCodeActionResolver : IRazorCodeActionResolver
 
     public string Action => LanguageServerConstants.CodeActions.AddUsing;
 
-    public async Task<WorkspaceEdit?> ResolveAsync(JObject data, CancellationToken cancellationToken)
+    public async Task<WorkspaceEdit?> ResolveAsync(JsonElement data, CancellationToken cancellationToken)
     {
-        if (data is null)
-        {
-            return null;
-        }
-
-        var actionParams = data.ToObject<AddUsingsCodeActionParams>();
+        var actionParams = data.Deserialize<AddUsingsCodeActionParams>();
         if (actionParams is null)
         {
             return null;

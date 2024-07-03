@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -18,7 +20,6 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
-using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -587,8 +588,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             {
                 Assert.True(c.TryGetFirst(out var command1));
                 var command = Assert.IsType<Command>(command1);
-                var codeActionParamsToken = (JToken)command.Arguments!.First();
-                var codeActionParams = codeActionParamsToken.ToObject<RazorCodeActionResolutionParams>();
+                var codeActionParamsToken = (JsonObject)command.Arguments!.First();
+                var codeActionParams = codeActionParamsToken.Deserialize<RazorCodeActionResolutionParams>();
                 Assert.NotNull(codeActionParams);
                 Assert.Equal(LanguageServerConstants.CodeActions.EditBasedCodeActionCommand, codeActionParams.Action);
             },
@@ -847,7 +848,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(new List<RazorVSInternalCodeAction>() {
                     new RazorVSInternalCodeAction() {
                         Title = "SomeTitle",
-                        Data = JToken.FromObject(new AddUsingsCodeActionParams()
+                        Data = JsonSerializer.SerializeToElement(new AddUsingsCodeActionParams()
                         {
                             Namespace="Test",
                             Uri = new Uri("C:/path/to/Page.razor")
@@ -921,7 +922,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             {
                     new RazorVSInternalCodeAction()
                     {
-                        Data = JToken.FromObject(new { CustomTags = new object[] { "CodeActionName" } }),
+                        Data = JsonSerializer.SerializeToElement(new { CustomTags = new object[] { "CodeActionName" } }),
                         Diagnostics = diagnostics.ToArray()
                     }
                 };

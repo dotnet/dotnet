@@ -3,6 +3,8 @@
 
 using System;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
@@ -17,7 +19,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
-using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -28,7 +29,7 @@ public class DefaultCSharpCodeActionResolverTest(ITestOutputHelper testOutput) :
     private static readonly CodeAction s_defaultResolvedCodeAction = new()
     {
         Title = "ResolvedCodeAction",
-        Data = JToken.FromObject(new object()),
+        Data = JsonSerializer.SerializeToElement(new object()),
         Edit = new WorkspaceEdit()
         {
             DocumentChanges = new TextDocumentEdit[] {
@@ -85,7 +86,7 @@ public class DefaultCSharpCodeActionResolverTest(ITestOutputHelper testOutput) :
         var resolvedCodeAction = new CodeAction()
         {
             Title = "ResolvedCodeAction",
-            Data = JToken.FromObject(new object()),
+            Data = JsonSerializer.SerializeToElement(new object()),
             Edit = new WorkspaceEdit()
             {
                 DocumentChanges = null
@@ -110,7 +111,7 @@ public class DefaultCSharpCodeActionResolverTest(ITestOutputHelper testOutput) :
         var resolvedCodeAction = new CodeAction()
         {
             Title = "ResolvedCodeAction",
-            Data = JToken.FromObject(new object()),
+            Data = JsonSerializer.SerializeToElement(new object()),
             Edit = new WorkspaceEdit()
             {
                 DocumentChanges = new TextDocumentEdit[] {
@@ -154,7 +155,7 @@ public class DefaultCSharpCodeActionResolverTest(ITestOutputHelper testOutput) :
         var resolvedCodeAction = new CodeAction()
         {
             Title = "ResolvedCodeAction",
-            Data = JToken.FromObject(new object()),
+            Data = JsonSerializer.SerializeToElement(new object()),
             Edit = new WorkspaceEdit()
             {
                 DocumentChanges = new SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[] {
@@ -190,7 +191,7 @@ public class DefaultCSharpCodeActionResolverTest(ITestOutputHelper testOutput) :
 
         codeActionParams = new CodeActionResolveParams()
         {
-            Data = new JObject(),
+            Data = new JsonElement(),
             RazorFileIdentifier = new VSTextDocumentIdentifier
             {
                 Uri = documentUri

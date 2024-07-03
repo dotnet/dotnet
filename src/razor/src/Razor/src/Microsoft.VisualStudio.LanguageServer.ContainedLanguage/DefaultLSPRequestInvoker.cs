@@ -9,9 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.VisualStudio.LanguageServer.Client;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
@@ -21,30 +19,16 @@ namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 internal class DefaultLSPRequestInvoker : LSPRequestInvoker
 {
     private readonly ILanguageServiceBroker2 _languageServiceBroker;
-    private readonly FallbackCapabilitiesFilterResolver _fallbackCapabilitiesFilterResolver;
-    private readonly JsonSerializer _serializer;
 
     [ImportingConstructor]
-    public DefaultLSPRequestInvoker(
-        ILanguageServiceBroker2 languageServiceBroker,
-        FallbackCapabilitiesFilterResolver fallbackCapabilitiesFilterResolver)
+    public DefaultLSPRequestInvoker(ILanguageServiceBroker2 languageServiceBroker)
     {
         if (languageServiceBroker is null)
         {
             throw new ArgumentNullException(nameof(languageServiceBroker));
         }
 
-        if (fallbackCapabilitiesFilterResolver is null)
-        {
-            throw new ArgumentNullException(nameof(fallbackCapabilitiesFilterResolver));
-        }
-
         _languageServiceBroker = languageServiceBroker;
-        _fallbackCapabilitiesFilterResolver = fallbackCapabilitiesFilterResolver;
-
-        // We need these converters so we don't lose information as part of the deserialization.
-        _serializer = new JsonSerializer();
-        _serializer.AddVSInternalExtensionConverters();
     }
 
     [Obsolete]
@@ -59,20 +43,9 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
         return RequestMultipleServerCoreAsync<TIn, TOut>(method, parameters, cancellationToken);
     }
 
-    public override Task<ReinvokeResponse<TOut>> ReinvokeRequestOnServerAsync<TIn, TOut>(
+    public async override Task<ReinvokeResponse<TOut>> ReinvokeRequestOnServerAsync<TIn, TOut>(
         string method,
         string languageServerName,
-        TIn parameters,
-        CancellationToken cancellationToken)
-    {
-        var capabilitiesFilter = _fallbackCapabilitiesFilterResolver.Resolve(method);
-        return ReinvokeRequestOnServerAsync<TIn, TOut>(method, languageServerName, capabilitiesFilter, parameters, cancellationToken);
-    }
-
-    public override async Task<ReinvokeResponse<TOut>> ReinvokeRequestOnServerAsync<TIn, TOut>(
-        string method,
-        string languageServerName,
-        Func<JToken, bool> capabilitiesFilter,
         TIn parameters,
         CancellationToken cancellationToken)
     {
@@ -90,19 +63,18 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
         return result;
     }
 
-    public override Task<ReinvocationResponse<TOut>?> ReinvokeRequestOnServerAsync<TIn, TOut>(ITextBuffer textBuffer, string method, string languageServerName, TIn parameters, CancellationToken cancellationToken)
-    {
-        var capabilitiesFilter = _fallbackCapabilitiesFilterResolver.Resolve(method);
-        return ReinvokeRequestOnServerAsync<TIn, TOut>(textBuffer, method, languageServerName, capabilitiesFilter, parameters, cancellationToken);
-    }
-
-    public override async Task<ReinvocationResponse<TOut>?> ReinvokeRequestOnServerAsync<TIn, TOut>(
-        ITextBuffer textBuffer,
+    [Obsolete]
+    public override Task<ReinvokeResponse<TOut>> ReinvokeRequestOnServerAsync<TIn, TOut>(
         string method,
         string languageServerName,
         Func<JToken, bool> capabilitiesFilter,
         TIn parameters,
         CancellationToken cancellationToken)
+    {
+        return ReinvokeRequestOnServerAsync<TIn, TOut>(method, languageServerName, parameters, cancellationToken);
+    }
+
+    public override async Task<ReinvocationResponse<TOut>?> ReinvokeRequestOnServerAsync<TIn, TOut>(ITextBuffer textBuffer, string method, string languageServerName, TIn parameters, CancellationToken cancellationToken)
     {
         var response = await _languageServiceBroker.RequestAsync(
             new DocumentRequest<TIn, TOut>()
@@ -121,6 +93,18 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
 
         var reinvocationResponse = new ReinvocationResponse<TOut>(languageServerName, response);
         return reinvocationResponse;
+    }
+
+    [Obsolete]
+    public override Task<ReinvocationResponse<TOut>?> ReinvokeRequestOnServerAsync<TIn, TOut>(
+        ITextBuffer textBuffer,
+        string method,
+        string languageServerName,
+        Func<JToken, bool> capabilitiesFilter,
+        TIn parameters,
+        CancellationToken cancellationToken)
+    {
+        return ReinvokeRequestOnServerAsync<TIn, TOut>(textBuffer, method, languageServerName, parameters, cancellationToken);
     }
 
     private async Task<IEnumerable<ReinvokeResponse<TOut>>> RequestMultipleServerCoreAsync<TIn, TOut>(string method, TIn parameters, CancellationToken cancellationToken)
@@ -145,20 +129,20 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
         return responses.ToArray();
     }
 
+    [Obsolete("New callers should use a method that doesn't have a capabilities filter")]
     public override IAsyncEnumerable<ReinvocationResponse<TOut>> ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(
         ITextBuffer textBuffer,
         string method,
+        Func<JToken, bool> capabilitiesFilter,
         TIn parameters,
         CancellationToken cancellationToken)
     {
-        var capabilitiesFilter = _fallbackCapabilitiesFilterResolver.Resolve(method);
-        return ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(textBuffer, method, capabilitiesFilter, parameters, cancellationToken);
+        return ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(textBuffer, method, parameters, cancellationToken);
     }
 
     public override async IAsyncEnumerable<ReinvocationResponse<TOut>> ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(
         ITextBuffer textBuffer,
         string method,
-        Func<JToken, bool> capabilitiesFilter,
         TIn parameters,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
