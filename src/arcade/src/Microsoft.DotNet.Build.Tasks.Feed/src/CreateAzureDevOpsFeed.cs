@@ -1,6 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Azure.Core;
+using Azure.Identity;
 using Microsoft.Build.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -39,7 +41,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// <summary>
         /// Personal access token used to authorize to the API and create the feed
         /// </summary>
-        [Required]
         public string AzureDevOpsPersonalAccessToken { get; set; }
 
         public string RepositoryName { get; set; }
@@ -119,6 +120,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 }
 
                 string azureDevOpsFeedsBaseUrl = $"https://feeds.dev.azure.com/{AzureDevOpsOrg}/";
+
+                if (string.IsNullOrEmpty(AzureDevOpsPersonalAccessToken))
+                {
+                    const string AzureDevOpsScope = "499b84ac-1321-427f-aa17-267ca6975798/.default";
+                    AzureDevOpsPersonalAccessToken = new AzureCliCredential().GetToken(new TokenRequestContext(new[] { AzureDevOpsScope })).Token;
+                }
+
                 do
                 {
                     using (HttpClient client = new HttpClient(new HttpClientHandler { CheckCertificateRevocationList = true })

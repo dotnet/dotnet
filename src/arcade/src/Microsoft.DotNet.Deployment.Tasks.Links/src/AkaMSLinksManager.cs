@@ -1,22 +1,22 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.Arcade.Common;
-using Microsoft.Build.Framework;
-using Microsoft.Identity.Client;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net;
-using System.Runtime.InteropServices;
+using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Arcade.Common;
+using Microsoft.Build.Framework;
+using Microsoft.Identity.Client;
+using Newtonsoft.Json;
 
-namespace Microsoft.DotNet.Deployment.Tasks.Links.src
+namespace Microsoft.DotNet.Deployment.Tasks.Links
 {
     public class AkaMSLinkManager
     {
@@ -34,8 +34,6 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
         /// </summary>
         private const int BulkApiBatchSize = 100;
         private const int MaxRetries = 5;
-        private string _clientId;
-        private string _clientSecret;
         private string _tenant;
         private string ApiTargeturl { get => $"{ApiBaseUrl}/1/{_tenant}"; }
         private ExponentialRetry RetryHandler;
@@ -45,14 +43,29 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
 
         public AkaMSLinkManager(string clientId, string clientSecret, string tenant, Microsoft.Build.Utilities.TaskLoggingHelper log)
         {
-            _clientId = clientId;
-            _clientSecret = clientSecret;
             _tenant = tenant;
             _log = log;
             _akamsLinksApp = new Lazy<IConfidentialClientApplication>(() => 
                 ConfidentialClientApplicationBuilder
-                    .Create(_clientId)
-                    .WithClientSecret(_clientSecret)
+                    .Create(clientId)
+                    .WithClientSecret(clientSecret)
+                    .WithAuthority(Authority)
+                    .Build());
+
+            RetryHandler = new ExponentialRetry
+            {
+                MaxAttempts = MaxRetries
+            };
+        }
+
+        public AkaMSLinkManager(string clientId, X509Certificate2 certificate, string tenant, Microsoft.Build.Utilities.TaskLoggingHelper log)
+        {
+            _tenant = tenant;
+            _log = log;
+            _akamsLinksApp = new Lazy<IConfidentialClientApplication>(() =>
+                ConfidentialClientApplicationBuilder
+                    .Create(clientId)
+                    .WithCertificate(certificate, sendX5C: true)
                     .WithAuthority(Authority)
                     .Build());
 

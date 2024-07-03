@@ -1,7 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Azure;
+using Azure.Core;
+using Azure.Core.Pipeline;
 using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
@@ -14,7 +15,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Azure.Core.Pipeline;
 using System.Net.Http;
 using Microsoft.DotNet.Build.Tasks.Feed;
 
@@ -33,15 +33,13 @@ namespace Microsoft.DotNet.Build.CloudTestTasks
             {".svg", "no-cache"}
         };
 
-        // Save the credential so we can sign SAS tokens
-        private readonly StorageSharedKeyCredential _credential;
 
         public BlobContainerClient Container { get; set; }
 
         private static readonly HttpClient s_httpClient = new HttpClient(
             new HttpClientHandler() 
             { 
-                CheckCertificateRevocationList = true 
+                CheckCertificateRevocationList = true
             })
         { 
             Timeout = TimeSpan.FromSeconds(300) 
@@ -53,10 +51,18 @@ namespace Microsoft.DotNet.Build.CloudTestTasks
 
         public AzureStorageUtils(string AccountName, string AccountKey, string ContainerName)
         {
-            _credential = new StorageSharedKeyCredential(AccountName, AccountKey);
-            Uri endpoint = new Uri($"https://{AccountName}.blob.core.windows.net");
-            BlobServiceClient service = new BlobServiceClient(endpoint, _credential, s_clientOptions);
+            StorageSharedKeyCredential credential = new(AccountName, AccountKey);
+            Uri endpoint = new($"https://{AccountName}.blob.core.windows.net");
+            BlobServiceClient service = new(endpoint, credential, s_clientOptions);
             Container = service.GetBlobContainerClient(ContainerName);
+        }
+
+        public AzureStorageUtils(string accountName, TokenCredential credential, string containerName)
+        {
+            Uri endpoint = new($"https://{accountName}.blob.core.windows.net");
+            BlobServiceClient service = new(endpoint, credential, s_clientOptions);
+            Container = service.GetBlobContainerClient(containerName);
+            service.GetBlobContainerClient(containerName);
         }
 
         public BlobClient GetBlob(string destinationBlob) =>
@@ -135,7 +141,7 @@ namespace Microsoft.DotNet.Build.CloudTestTasks
                 ExpiresOn = DateTimeOffset.UtcNow.AddDays(tokenExpirationInDays)
             };
             builder.SetPermissions(containerPermissions);
-            return builder.ToSasQueryParameters(_credential).ToString();
+            return Container.GenerateSasUri(builder).ToString();
         }
 
         public async Task<bool> CheckIfContainerExistsAsync() =>

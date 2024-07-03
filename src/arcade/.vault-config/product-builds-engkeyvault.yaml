@@ -29,11 +29,6 @@ secrets:
       Name: dotnet-bot
 
   #Publish-Build-Assets
-  MaestroAccessToken:
-    type: maestro-access-token
-    parameters:
-      environment: maestro-prod.westus2.cloudapp.azure.com
-
   BotAccount-dotnet-maestro-bot-PAT:
     type: github-access-token
     parameters:

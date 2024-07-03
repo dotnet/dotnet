@@ -29,8 +29,9 @@
                                                   else all the artifacts and symbols are downloaded before publishing.
 
       Optional aka.ms link generation parameters:
-        - AkaMSClientId                         : Client ID for the aka.ms AD application
-        - AkaMSClientSecret                     : Client secret for the aka.ms AD application
+        - AkaMSClientId                         : Client ID for the aka.ms Entra application
+        - AkaMSClientSecret                     : Client secret for the aka.ms Entra application (deprecated)
+        - AkaMSClientCertificate                : Client certificate for the aka.ms Entra application
         - AkaMSTenant                           : Tenant ID for aka.ms link generation. Defaults to ncd
         - AkaMSOwners                           : Semi-colon delimited list of aliases of the owners of generated links. Defaults to dn-bot
         - AkaMSCreatedBy                        : Semi-colon delimited list of aliases of the creator/updator links. Defaults to dn-bot
@@ -146,10 +147,12 @@
       NugetPath="$(NugetPath)"
       AkaMSClientId="$(AkaMSClientId)"
       AkaMSClientSecret="$(AkaMSClientSecret)"
+      AkaMSClientCertificate="$(AkaMSClientCertificate)"
       AkaMSTenant="$(AkaMSTenant)"
       AkaMSOwners="$(AkaMSOwners)"
       AkaMSGroupOwner="$(AkaMSGroupOwner)"
       AkaMSCreatedBy="$(AkaMSCreatedBy)" 
+      ManagedIdentityClientId="$(ManagedIdentityClientId)"
       MsdlToken="$(MsdlToken)"
       SymWebToken="$(SymWebToken)"
       SymbolPublishingExclusionsFile="$(SymbolPublishingExclusionsFile)"
