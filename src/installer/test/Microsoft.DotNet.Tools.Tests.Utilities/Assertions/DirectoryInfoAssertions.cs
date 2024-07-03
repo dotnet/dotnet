@@ -26,7 +26,7 @@ namespace Microsoft.DotNet.Tools.Test.Utilities
         public AndConstraint<DirectoryInfoAssertions> Exist()
         {
             Execute.Assertion.ForCondition(_dirInfo.Exists)
-                .FailWith("Expected directory {0} does not exist.", _dirInfo.FullName);
+                .FailWith(String.Format("Expected directory {0} does not exist.", _dirInfo.FullName));
             return new AndConstraint<DirectoryInfoAssertions>(this);
         }
 
@@ -71,7 +71,7 @@ namespace Microsoft.DotNet.Tools.Test.Utilities
             Execute.Assertion
                 .ForCondition(file == null)
                 .BecauseOf(because, reasonArgs)
-                .FailWith("File {0} should not be found in directory {1}.", expectedFile, _dirInfo.FullName);
+                .FailWith(String.Format("File {0} should not be found in directory {1}.", expectedFile, _dirInfo.FullName));
             return new AndConstraint<DirectoryInfoAssertions>(this);
         }
 
@@ -109,8 +109,8 @@ namespace Microsoft.DotNet.Tools.Test.Utilities
             Execute.Assertion
                 .ForCondition(matchingFileExists == true)
                 .BecauseOf(because, reasonArgs)
-                .FailWith("Expected directory {0} to contain files matching {1}, but no matching file exists.",
-                    _dirInfo.FullName, expectedFilesSearchPattern);
+                .FailWith(String.Format("Expected directory {0} to contain files matching {1}, but no matching file exists.",
+                    _dirInfo.FullName, expectedFilesSearchPattern));
 
             return new AndConstraint<DirectoryInfoAssertions>(this);
         }
@@ -132,8 +132,8 @@ namespace Microsoft.DotNet.Tools.Test.Utilities
         {
             var matchingFileCount = _dirInfo.EnumerateFiles(expectedFilesSearchPattern, searchOption).Count();
             Execute.Assertion.ForCondition(matchingFileCount == 0)
-                .FailWith("Found {0} files that should not exist in directory {1}. No file matching {2} should exist.",
-                    matchingFileCount, _dirInfo.FullName, expectedFilesSearchPattern);
+                .FailWith(String.Format("Found {0} files that should not exist in directory {1}. No file matching {2} should exist.",
+                    matchingFileCount, _dirInfo.FullName, expectedFilesSearchPattern));
             return new AndConstraint<DirectoryInfoAssertions>(this);
         }
 
@@ -141,7 +141,7 @@ namespace Microsoft.DotNet.Tools.Test.Utilities
         {
             var dir = _dirInfo.EnumerateDirectories(expectedDir, SearchOption.TopDirectoryOnly).SingleOrDefault();
             Execute.Assertion.ForCondition(dir != null)
-                .FailWith("Expected directory {0} cannot be found inside directory {1}.", expectedDir, _dirInfo.FullName);
+                .FailWith(String.Format("Expected directory {0} cannot be found inside directory {1}.", expectedDir, _dirInfo.FullName));
 
             return new AndConstraint<DirectoryInfoAssertions>(new DirectoryInfoAssertions(dir));
         }
@@ -160,7 +160,7 @@ namespace Microsoft.DotNet.Tools.Test.Utilities
         {
             var dir = _dirInfo.EnumerateDirectories(unexpectedDir, SearchOption.TopDirectoryOnly).SingleOrDefault();
             Execute.Assertion.ForCondition(dir == null)
-                .FailWith("Directory {0} should not be found in directory {1}.", unexpectedDir, _dirInfo.FullName);
+                .FailWith(String.Format("Directory {0} should not be found in directory {1}.", unexpectedDir, _dirInfo.FullName));
 
             return new AndConstraint<DirectoryInfoAssertions>(new DirectoryInfoAssertions(dir));
         }

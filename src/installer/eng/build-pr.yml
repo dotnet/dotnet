@@ -234,8 +234,8 @@ jobs:
     - task: PublishTestResults@2
       displayName: Publish Test Results
       inputs:
-        testRunner: XUnit
-        testResultsFiles: 'artifacts/TestResults/${{ parameters.buildConfiguration }}/*.xml'
+        testRunner: VSTest
+        testResultsFiles: 'artifacts/TestResults/${{ parameters.buildConfiguration }}/*.trx'
         testRunTitle: '$(_AgentOSName)_$(Agent.JobName)'
         platform: '$(BuildPlatform)'
         configuration: '${{ parameters.buildConfiguration }}'
