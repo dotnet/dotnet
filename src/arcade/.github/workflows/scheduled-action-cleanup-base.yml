@@ -1,0 +1,49 @@
+on:
+  workflow_call:
+    inputs:
+      repository_owners:
+        description: 'A comma-separated list of repository owners where the workflow will run. Defaults to "dotnet,microsoft".'
+        required: false
+        type: string
+        default: 'dotnet,microsoft'
+
+jobs:
+  cleanup:
+    if: ${{ contains(format('{0},', inputs.repository_owners), format('{0},', github.repository_owner)) && github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+    - name: Cleanup workflow runs
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const repo_owner = context.payload.repository.owner.login;
+          const repo_name = context.payload.repository.name;
+
+          // look up workflow from current run
+          const currentWorkflowRun = await github.rest.actions.getWorkflowRun({
+            owner: repo_owner,
+            repo: repo_name,
+            run_id: context.runId
+          });
+
+          // get runs which are 'completed' (other candidate values of status field are e.g. 'queued' and 'in_progress')
+          for await (const response of github.paginate.iterator(
+            github.rest.actions.listWorkflowRuns, {
+              owner: repo_owner,
+              repo: repo_name,
+              workflow_id: currentWorkflowRun.data.workflow_id,
+              status: 'completed'
+            }
+          )) {
+            // delete each run
+            for (const run of response.data) {
+              console.log(`Deleting workflow run ${run.id}`);
+              await github.rest.actions.deleteWorkflowRun({
+                owner: repo_owner,
+                repo: repo_name,
+                run_id: run.id
+              });
+            }
+          }
