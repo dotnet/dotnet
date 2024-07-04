@@ -1138,12 +1138,20 @@ WHERE EXISTS (
 
         AssertSql(
             """
-SELECT [w].[Id], CASE
-    WHEN [w].[IsAutomatic] = CAST(0 AS bit) THEN CAST(1 AS bit)
-    ELSE CAST(0 AS bit)
-END AS [Manual]
+SELECT [w].[Id], [w].[IsAutomatic] ^ CAST(1 AS bit) AS [Manual]
 FROM [Weapons] AS [w]
 WHERE [w].[IsAutomatic] = CAST(1 AS bit)
+""");
+    }
+
+    public override async Task Select_inverted_nullable_boolean(bool async)
+    {
+        await base.Select_inverted_nullable_boolean(async);
+
+        AssertSql(
+            """
+SELECT [l].[Id], [l].[Eradicated] ^ CAST(1 AS bit) AS [Alive]
+FROM [LocustHordes] AS [l]
 """);
     }
 
@@ -1701,10 +1709,10 @@ LEFT JOIN [Cities] AS [c] ON [u].[AssignedCityName] = [c].[Name]
         AssertSql(
             """
 SELECT CASE
-    WHEN [u].[LeaderNickname] IS NOT NULL THEN COALESCE(CASE
+    WHEN [u].[LeaderNickname] IS NOT NULL THEN CASE
         WHEN CAST(LEN([u].[Nickname]) AS int) = 5 THEN CAST(1 AS bit)
         ELSE CAST(0 AS bit)
-    END, CAST(0 AS bit))
+    END
     ELSE NULL
 END
 FROM (
@@ -4146,7 +4154,7 @@ SELECT CASE
             FROM [Officers] AS [o]
         ) AS [u]
         LEFT JOIN [Tags] AS [t] ON [u].[Nickname] = [t].[GearNickName] AND [u].[SquadId] = [t].[GearSquadId]
-        WHERE [t].[Note] = N'Foo' AND [t].[Note] IS NOT NULL) THEN CAST(1 AS bit)
+        WHERE [t].[Note] = N'Foo') THEN CAST(1 AS bit)
     ELSE CAST(0 AS bit)
 END
 """);
@@ -5406,7 +5414,7 @@ LEFT JOIN (
         await base.ToString_enum_property_projection(async);
 
         AssertSql(
-"""
+            """
 SELECT CASE [u].[Rank]
     WHEN 0 THEN N'None'
     WHEN 1 THEN N'Private'
@@ -5417,7 +5425,7 @@ SELECT CASE [u].[Rank]
     WHEN 32 THEN N'Major'
     WHEN 64 THEN N'Colonel'
     WHEN 128 THEN N'General'
-    ELSE COALESCE(CAST([u].[Rank] AS nvarchar(max)), N'')
+    ELSE CAST([u].[Rank] AS nvarchar(max))
 END
 FROM (
     SELECT [g].[Rank]
@@ -6850,7 +6858,7 @@ INNER JOIN (
     FROM [LocustHordes] AS [l1]
     WHERE [l1].[Name] = N'Swarm'
 ) AS [l2] ON [u].[Name] = [l2].[CommanderName]
-WHERE [l2].[Eradicated] <> CAST(1 AS bit) OR [l2].[Eradicated] IS NULL
+WHERE [l2].[Eradicated] = CAST(0 AS bit) OR [l2].[Eradicated] IS NULL
 """);
     }
 
@@ -6873,7 +6881,7 @@ LEFT JOIN (
     FROM [LocustHordes] AS [l1]
     WHERE [l1].[Name] = N'Swarm'
 ) AS [l2] ON [u].[Name] = [l2].[CommanderName]
-WHERE [l2].[Eradicated] <> CAST(1 AS bit) OR [l2].[Eradicated] IS NULL
+WHERE [l2].[Eradicated] = CAST(0 AS bit) OR [l2].[Eradicated] IS NULL
 """);
     }
 
@@ -7050,12 +7058,9 @@ ORDER BY [u].[Nickname], [u].[SquadId], [s].[Id], [s].[Nickname]
         AssertSql(
             """
 SELECT CASE
-    WHEN CASE
-        WHEN [u].[HasSoulPatch] = CAST(1 AS bit) THEN CAST(1 AS bit)
-        ELSE COALESCE([u].[HasSoulPatch], CAST(1 AS bit))
-    END = CAST(0 AS bit) THEN CAST(1 AS bit)
-    ELSE CAST(0 AS bit)
-END AS [c]
+    WHEN [u].[HasSoulPatch] = CAST(1 AS bit) THEN CAST(1 AS bit)
+    ELSE COALESCE([u].[HasSoulPatch], CAST(1 AS bit))
+END ^ CAST(1 AS bit) AS [c]
 FROM [Tags] AS [t]
 LEFT JOIN (
     SELECT [g].[Nickname], [g].[SquadId], [g].[HasSoulPatch]
@@ -7856,7 +7861,7 @@ SELECT COALESCE((
     SELECT TOP(1) [w].[Id]
     FROM [Weapons] AS [w]
     WHERE [u].[FullName] = [w].[OwnerFullName]
-    ORDER BY [w].[Id]), 0, 42)
+    ORDER BY [w].[Id]), 0)
 FROM (
     SELECT [g].[FullName]
     FROM [Gears] AS [g]
@@ -8662,7 +8667,7 @@ WHERE COALESCE([w].[SynergyWithId], 0) = 0
             """
 SELECT [w].[Id], [w].[AmmunitionType], [w].[IsAutomatic], [w].[Name], [w].[OwnerFullName], [w].[SynergyWithId]
 FROM [Weapons] AS [w]
-WHERE COALESCE([w].[Id], 0) = 0
+WHERE [w].[Id] = 0
 """);
     }
 
@@ -9523,7 +9528,7 @@ FROM (
         SELECT [o].[Nickname], [o].[SquadId], [o].[AssignedCityName], [o].[CityOfBirthName], [o].[FullName], [o].[HasSoulPatch], [o].[LeaderNickname], [o].[LeaderSquadId], [o].[Rank], N'Officer' AS [Discriminator]
         FROM [Officers] AS [o]
     ) AS [u]
-    WHERE [u].[Nickname] <> @__prm_Inner_Nickname_0 AND [u].[Nickname] <> @__prm_Inner_Nickname_0
+    WHERE [u].[Nickname] <> @__prm_Inner_Nickname_0
 ) AS [u0]
 ORDER BY [u0].[FullName]
 """);
@@ -10181,7 +10186,7 @@ INNER JOIN [LocustHordes] AS [l1] ON [u].[Name] = [l1].[CommanderName]
 WHERE CASE
     WHEN [l1].[Name] = N'Locust' THEN CAST(1 AS bit)
     ELSE NULL
-END <> CAST(1 AS bit) OR CASE
+END = CAST(0 AS bit) OR CASE
     WHEN [l1].[Name] = N'Locust' THEN CAST(1 AS bit)
     ELSE NULL
 END IS NULL

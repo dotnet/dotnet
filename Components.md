@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@a6e341e](https://github.com/dotnet/aspire/tree/a6e341ebbf956bbcec0dda304109815fcbae70c9)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@d301328](https://github.com/dotnet/aspnetcore/tree/d301328737c4912b95f236c4b349cf46ef7a473a)*
+*[dotnet/aspnetcore@16fb943](https://github.com/dotnet/aspnetcore/tree/16fb9434a38e8e19d35ee01c2c238571c6e91502)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@a7f443b](https://github.com/google/googletest/tree/a7f443b80b105f940225332ed3c31f2790092f47)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -28,7 +28,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@33d8bf2](https://github.com/dotnet/diagnostics/tree/33d8bf23a6566cd3fb9055acfc9f1141391d5421)*
 - `src/efcore`  
-*[dotnet/efcore@ecd6104](https://github.com/dotnet/efcore/tree/ecd6104d7db803a976116a49d5855bce85634051)*
+*[dotnet/efcore@97d2365](https://github.com/dotnet/efcore/tree/97d23658be5e87375a8338d36381785721e0b6bd)*
 - `src/emsdk`  
 *[dotnet/emsdk@ffe9afd](https://github.com/dotnet/emsdk/tree/ffe9afdc046cf7a6f82cc7c5796aade54047af64)*
 - `src/fsharp`  
@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@54700bb](https://github.com/dotnet/scenario-tests/tree/54700bbee86f660d37bd519a905b62bb50adc8c8)*
 - `src/sdk`  
-*[dotnet/sdk@3e3bec0](https://github.com/dotnet/sdk/tree/3e3bec0dc61133cf08726f68db105fcb344e66b3)*
+*[dotnet/sdk@a1c2f92](https://github.com/dotnet/sdk/tree/a1c2f927a4c9a8f784220c9d07aa5b7808b3fdc8)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@311ef7f](https://github.com/dotnet/source-build-externals/tree/311ef7fef52828f4a70a94d13e32c394fd3292ee)*
     - `src/source-build-externals/src/abstractions-xunit`  
