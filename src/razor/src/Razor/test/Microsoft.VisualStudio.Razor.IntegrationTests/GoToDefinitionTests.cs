@@ -292,7 +292,7 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
         await TestServices.Editor.WaitForCurrentLineTextAsync("public string FieldName { get; set; }", ControlledHangMitigatingCancellationToken);
     }
 
-    [ConditionalSkipIdeFact(Issue = "Flaky after multitarget work")]
+    [IdeFact]
     public async Task GoToDefinition_ComponentAttribute_BoundAttribute()
     {
         // Create the files
