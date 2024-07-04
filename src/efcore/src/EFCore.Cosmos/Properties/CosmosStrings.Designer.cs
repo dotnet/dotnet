@@ -108,6 +108,14 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
                 idProperty, entityType, propertyType);
 
         /// <summary>
+        ///     The entity type '{entityType}' has an index defined over properties '{properties}'. The Azure Cosmos DB provider for EF Core currently does not support index definitions.
+        /// </summary>
+        public static string IndexesExist(object? entityType, object? properties)
+            => string.Format(
+                GetString("IndexesExist", nameof(entityType), nameof(properties)),
+                entityType, properties);
+
+        /// <summary>
         ///     The specified entity type '{derivedType}' is not derived from '{entityType}'.
         /// </summary>
         public static string InvalidDerivedTypeInEntityProjection(object? derivedType, object? entityType)
@@ -138,7 +146,7 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
                 property1, property2, entityType, storeName);
 
         /// <summary>
-        ///     Skip, Take, First/FirstOrDefault and Single/SingleOrDefault aren't supported in subqueries since Cosmos doesn't support LIMIT/OFFSET in subqueries.
+        ///     The query requires use of LIMIT and OFFSET in a subquery, which is unsupported by Cosmos.
         /// </summary>
         public static string LimitOffsetNotSupportedInSubqueries
             => GetString("LimitOffsetNotSupportedInSubqueries");
@@ -368,6 +376,12 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
             => string.Format(
                 GetString("ThroughputMismatch", nameof(throughput1), nameof(entityType1), nameof(entityType2), nameof(throughput2), nameof(container)),
                 throughput1, entityType1, entityType2, throughput2, container);
+
+        /// <summary>
+        ///     'ToPageAsync' can only be used as the terminating operator of the top-level query.
+        /// </summary>
+        public static string ToPageAsyncAtTopLevelOnly
+            => GetString("ToPageAsyncAtTopLevelOnly");
 
         /// <summary>
         ///     The provisioned throughput was configured as manual on '{manualEntityType}', but on '{autoscaleEntityType}' it was configured as autoscale. All entity types mapped to the same container '{container}' must be configured with the same provisioned throughput type.
