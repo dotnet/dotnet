@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,11 +40,10 @@ internal class TextEditResponseRewriter : DelegatedCompletionResponseRewriter
             {
                 completionList.ItemDefaults.EditRange = TranslateRange(hostDocumentPosition, delegatedParameters.ProjectedPosition, range);
             }
-            else
+            else if (editRange.TryGetSecond(out var insertReplaceRange))
             {
-                // TO-DO: Handle InsertReplaceEdit type
-                // https://github.com/dotnet/razor/issues/8829
-                Debug.Fail("Unsupported edit type.");
+                insertReplaceRange.Insert = TranslateRange(hostDocumentPosition, delegatedParameters.ProjectedPosition, insertReplaceRange.Insert);
+                insertReplaceRange.Replace = TranslateRange(hostDocumentPosition, delegatedParameters.ProjectedPosition, insertReplaceRange.Replace);
             }
         }
 
@@ -71,11 +71,10 @@ internal class TextEditResponseRewriter : DelegatedCompletionResponseRewriter
                     var translatedRange = TranslateRange(hostDocumentPosition, projectedPosition, textEdit.Range);
                     textEdit.Range = translatedRange;
                 }
-                else
+                else if (edit.TryGetSecond(out var insertReplaceEdit))
                 {
-                    // TO-DO: Handle InsertReplaceEdit type
-                    // https://github.com/dotnet/razor/issues/8829
-                    Debug.Fail("Unsupported edit type.");
+                    insertReplaceEdit.Insert = TranslateRange(hostDocumentPosition, projectedPosition, insertReplaceEdit.Insert);
+                    insertReplaceEdit.Replace = TranslateRange(hostDocumentPosition, projectedPosition, insertReplaceEdit.Replace);
                 }
             }
             else if (item.AdditionalTextEdits is not null)

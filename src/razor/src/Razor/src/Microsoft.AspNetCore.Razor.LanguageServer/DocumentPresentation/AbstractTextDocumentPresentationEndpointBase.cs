@@ -85,7 +85,13 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
             return result;
         }
 
-        if (languageKind is not (RazorLanguageKind.CSharp or RazorLanguageKind.Html))
+        if (languageKind is RazorLanguageKind.CSharp)
+        {
+            // Roslyn does not support Uri or Text presentation, so to prevent unnecessary LSP calls and misleading telemetry
+            // reports, we just return null here.
+            return null;
+        }
+        else if (languageKind is not RazorLanguageKind.Html)
         {
             _logger.LogInformation($"Unsupported language {languageKind}.");
             return null;
@@ -141,7 +147,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
 
             if (documentEditList.Count > 0)
             {
-                documentChanges = documentEditList.ToArray();
+                documentChanges = [.. documentEditList];
                 return true;
             }
         }
@@ -213,7 +219,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
             });
         }
 
-        return remappedDocumentEdits.ToArray();
+        return [.. remappedDocumentEdits];
     }
 
     private TextEdit[]? MapTextEdits(bool mapRanges, RazorCodeDocument codeDocument, IEnumerable<TextEdit> edits)
@@ -239,7 +245,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
             mappedEdits.Add(newEdit);
         }
 
-        return mappedEdits.ToArray();
+        return [.. mappedEdits];
     }
 
     private WorkspaceEdit? MapWorkspaceEdit(WorkspaceEdit workspaceEdit, bool mapRanges, RazorCodeDocument codeDocument, int hostDocumentVersion)

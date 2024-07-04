@@ -36,7 +36,8 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
         var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
         clientConnection
             .Setup(l => l.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorTextPresentationEndpoint, It.IsAny<IRazorPresentationParams>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
+            .ReturnsAsync(response)
+            .Verifiable();
 
         var endpoint = new TextDocumentTextPresentationEndpoint(
             documentMappingService,
@@ -67,7 +68,7 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
     }
 
     [Fact]
-    public async Task Handle_CSharp_MakesRequest()
+    public async Task Handle_CSharp_DoesNotMakeRequest()
     {
         // Arrange
         var codeDocument = TestRazorCodeDocument.Create("@counter");
@@ -79,12 +80,7 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
             s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.CSharp &&
             s.TryMapToGeneratedDocumentRange(csharpDocument, It.IsAny<LinePositionSpan>(), out projectedRange) == true, MockBehavior.Strict);
 
-        var response = (WorkspaceEdit?)null;
-
         var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnection
-            .Setup(l => l.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(CustomMessageNames.RazorTextPresentationEndpoint, It.IsAny<IRazorPresentationParams>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
 
         var endpoint = new TextDocumentTextPresentationEndpoint(
             documentMappingService,
