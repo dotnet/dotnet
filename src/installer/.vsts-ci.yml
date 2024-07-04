@@ -110,7 +110,6 @@ extends:
             buildArchitecture: x64
             additionalBuildParameters: '/p:PublishInternalAsset=true'
             runTests: true
-
         # Linux
         - template: eng/build.yml@self
           parameters:
@@ -214,7 +213,6 @@ extends:
             buildConfiguration: Release
             buildArchitecture: arm64
             runTests: false
-
         # Linux
         - template: eng/build.yml@self
           parameters:
