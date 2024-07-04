@@ -614,7 +614,7 @@ SELECT CASE
         SELECT 1
         FROM [Gears] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [g]
         LEFT JOIN [Tags] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [t] ON [g].[Nickname] = [t].[GearNickName] AND [g].[SquadId] = [t].[GearSquadId]
-        WHERE [t].[Note] = N'Foo' AND [t].[Note] IS NOT NULL) THEN CAST(1 AS bit)
+        WHERE [t].[Note] = N'Foo') THEN CAST(1 AS bit)
     ELSE CAST(0 AS bit)
 END
 """);
@@ -851,7 +851,7 @@ SELECT COALESCE((
     SELECT TOP(1) [w].[Id]
     FROM [Weapons] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [w]
     WHERE [g].[FullName] = [w].[OwnerFullName]
-    ORDER BY [w].[Id]), 0, 42)
+    ORDER BY [w].[Id]), 0)
 FROM [Gears] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [g]
 """);
     }
@@ -2587,7 +2587,7 @@ INNER JOIN [Factions] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [f]
 WHERE CASE
     WHEN [f].[Name] = N'Locust' THEN CAST(1 AS bit)
     ELSE NULL
-END <> CAST(1 AS bit) OR CASE
+END = CAST(0 AS bit) OR CASE
     WHEN [f].[Name] = N'Locust' THEN CAST(1 AS bit)
     ELSE NULL
 END IS NULL
@@ -2660,10 +2660,10 @@ WHERE 0 = 1
         AssertSql(
             """
 SELECT CASE
-    WHEN [g].[LeaderNickname] IS NOT NULL THEN COALESCE(CASE
+    WHEN [g].[LeaderNickname] IS NOT NULL THEN CASE
         WHEN CAST(LEN([g].[Nickname]) AS int) = 5 THEN CAST(1 AS bit)
         ELSE CAST(0 AS bit)
-    END, CAST(0 AS bit))
+    END
     ELSE NULL
 END
 FROM [Gears] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [g]
@@ -2943,7 +2943,7 @@ SELECT [g0].[Nickname], [g0].[SquadId], [g0].[AssignedCityName], [g0].[CityOfBir
 FROM (
     SELECT DISTINCT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[Discriminator], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[PeriodEnd], [g].[PeriodStart], [g].[Rank]
     FROM [Gears] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [g]
-    WHERE [g].[Nickname] <> @__prm_Inner_Nickname_0 AND [g].[Nickname] <> @__prm_Inner_Nickname_0
+    WHERE [g].[Nickname] <> @__prm_Inner_Nickname_0
 ) AS [g0]
 ORDER BY [g0].[FullName]
 """);
@@ -3012,12 +3012,20 @@ GROUP BY [g].[Rank]
 
         AssertSql(
             """
-SELECT [w].[Id], CASE
-    WHEN [w].[IsAutomatic] = CAST(0 AS bit) THEN CAST(1 AS bit)
-    ELSE CAST(0 AS bit)
-END AS [Manual]
+SELECT [w].[Id], [w].[IsAutomatic] ^ CAST(1 AS bit) AS [Manual]
 FROM [Weapons] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [w]
 WHERE [w].[IsAutomatic] = CAST(1 AS bit)
+""");
+    }
+
+    public override async Task Select_inverted_nullable_boolean(bool async)
+    {
+        await base.Select_inverted_nullable_boolean(async);
+
+        AssertSql(
+            """
+SELECT [f].[Id], [f].[Eradicated] ^ CAST(1 AS bit) AS [Alive]
+FROM [Factions] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [f]
 """);
     }
 
@@ -4413,12 +4421,9 @@ ORDER BY [c].[Name], [w].[Id]
         AssertSql(
             """
 SELECT CASE
-    WHEN CASE
-        WHEN [g].[HasSoulPatch] = CAST(1 AS bit) THEN CAST(1 AS bit)
-        ELSE COALESCE([g].[HasSoulPatch], CAST(1 AS bit))
-    END = CAST(0 AS bit) THEN CAST(1 AS bit)
-    ELSE CAST(0 AS bit)
-END AS [c]
+    WHEN [g].[HasSoulPatch] = CAST(1 AS bit) THEN CAST(1 AS bit)
+    ELSE COALESCE([g].[HasSoulPatch], CAST(1 AS bit))
+END ^ CAST(1 AS bit) AS [c]
 FROM [Tags] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [t]
 LEFT JOIN [Gears] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [g] ON [t].[GearNickName] = [g].[Nickname] AND [t].[GearSquadId] = [g].[SquadId]
 """);
@@ -4534,7 +4539,7 @@ INNER JOIN (
     FROM [Factions] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [f]
     WHERE [f].[Name] = N'Swarm'
 ) AS [f0] ON [l].[Name] = [f0].[CommanderName]
-WHERE [f0].[Eradicated] <> CAST(1 AS bit) OR [f0].[Eradicated] IS NULL
+WHERE [f0].[Eradicated] = CAST(0 AS bit) OR [f0].[Eradicated] IS NULL
 """);
     }
 
@@ -4798,7 +4803,7 @@ WHERE 2 & [g].[Rank] = [g].[Rank]
         await base.ToString_enum_property_projection(async);
 
         AssertSql(
-"""
+            """
 SELECT CASE [g].[Rank]
     WHEN 0 THEN N'None'
     WHEN 1 THEN N'Private'
@@ -4809,7 +4814,7 @@ SELECT CASE [g].[Rank]
     WHEN 32 THEN N'Major'
     WHEN 64 THEN N'Colonel'
     WHEN 128 THEN N'General'
-    ELSE COALESCE(CAST([g].[Rank] AS nvarchar(max)), N'')
+    ELSE CAST([g].[Rank] AS nvarchar(max))
 END
 FROM [Gears] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [g]
 """);
@@ -6490,7 +6495,7 @@ LEFT JOIN (
     FROM [Factions] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [f]
     WHERE [f].[Name] = N'Swarm'
 ) AS [f0] ON [l].[Name] = [f0].[CommanderName]
-WHERE [f0].[Eradicated] <> CAST(1 AS bit) OR [f0].[Eradicated] IS NULL
+WHERE [f0].[Eradicated] = CAST(0 AS bit) OR [f0].[Eradicated] IS NULL
 """);
     }
 
@@ -7311,7 +7316,7 @@ INNER JOIN [Cities] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [c] O
             """
 SELECT [w].[Id], [w].[AmmunitionType], [w].[IsAutomatic], [w].[Name], [w].[OwnerFullName], [w].[PeriodEnd], [w].[PeriodStart], [w].[SynergyWithId]
 FROM [Weapons] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [w]
-WHERE COALESCE([w].[Id], 0) = 0
+WHERE [w].[Id] = 0
 """);
     }
 

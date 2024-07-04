@@ -80,14 +80,10 @@ public class SqlServerStringAggregateMethodTranslator : IAggregateMethodCallTran
             }
         }
 
-        // STRING_AGG filters out nulls, but string.Join treats them as empty strings; coalesce unless we know we're aggregating over
-        // a non-nullable column.
-        if (sqlExpression is not ColumnExpression { IsNullable: false })
-        {
-            sqlExpression = _sqlExpressionFactory.Coalesce(
-                sqlExpression,
-                _sqlExpressionFactory.Constant(string.Empty, typeof(string)));
-        }
+        // STRING_AGG filters out nulls, but string.Join treats them as empty strings.
+        sqlExpression = _sqlExpressionFactory.Coalesce(
+            sqlExpression,
+            _sqlExpressionFactory.Constant(string.Empty, typeof(string)));
 
         // STRING_AGG returns null when there are no rows (or non-null values), but string.Join returns an empty string.
         return
@@ -105,7 +101,7 @@ public class SqlServerStringAggregateMethodTranslator : IAggregateMethodCallTran
                     source,
                     enumerableArgumentIndex: 0,
                     nullable: true,
-                    argumentsPropagateNullability: new[] { false, true },
+                    argumentsPropagateNullability: new[] { false, false },
                     typeof(string)),
                 _sqlExpressionFactory.Constant(string.Empty, typeof(string)),
                 resultTypeMapping);

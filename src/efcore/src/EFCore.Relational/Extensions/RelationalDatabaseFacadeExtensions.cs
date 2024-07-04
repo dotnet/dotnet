@@ -178,8 +178,8 @@ public static class RelationalDatabaseFacadeExtensions
     public static int ExecuteSqlRaw(
         this DatabaseFacade databaseFacade,
         string sql,
-        params object[] parameters)
-        => ExecuteSqlRaw(databaseFacade, sql, (IEnumerable<object>)parameters);
+        params object?[] parameters)
+        => ExecuteSqlRaw(databaseFacade, sql, (IEnumerable<object?>)parameters);
 
     /// <summary>
     ///     Executes the given SQL against the database and returns the number of rows affected.
@@ -211,7 +211,7 @@ public static class RelationalDatabaseFacadeExtensions
     public static int ExecuteSqlInterpolated(
         this DatabaseFacade databaseFacade,
         FormattableString sql)
-        => ExecuteSqlRaw(databaseFacade, sql.Format, sql.GetArguments()!);
+        => ExecuteSqlRaw(databaseFacade, sql.Format, sql.GetArguments());
 
     /// <summary>
     ///     Executes the given SQL against the database and returns the number of rows affected.
@@ -243,7 +243,7 @@ public static class RelationalDatabaseFacadeExtensions
     public static int ExecuteSql(
         this DatabaseFacade databaseFacade,
         FormattableString sql)
-        => ExecuteSqlRaw(databaseFacade, sql.Format, sql.GetArguments()!);
+        => ExecuteSqlRaw(databaseFacade, sql.Format, sql.GetArguments());
 
     /// <summary>
     ///     Executes the given SQL against the database and returns the number of rows affected.
@@ -281,7 +281,7 @@ public static class RelationalDatabaseFacadeExtensions
     public static int ExecuteSqlRaw(
         this DatabaseFacade databaseFacade,
         string sql,
-        IEnumerable<object> parameters)
+        IEnumerable<object?> parameters)
     {
         Check.NotNull(sql, nameof(sql));
         Check.NotNull(parameters, nameof(parameters));
@@ -292,27 +292,20 @@ public static class RelationalDatabaseFacadeExtensions
             : null;
         var logger = facadeDependencies.CommandLogger;
 
-        concurrencyDetector?.EnterCriticalSection();
+        using var _ = concurrencyDetector?.EnterCriticalSection();
 
-        try
-        {
-            var rawSqlCommand = facadeDependencies.RawSqlCommandBuilder
-                .Build(sql, parameters, databaseFacade.GetService<IModel>());
+        var rawSqlCommand = facadeDependencies.RawSqlCommandBuilder
+            .Build(sql, parameters, databaseFacade.GetService<IModel>());
 
-            return rawSqlCommand
-                .RelationalCommand
-                .ExecuteNonQuery(
-                    new RelationalCommandParameterObject(
-                        facadeDependencies.RelationalConnection,
-                        rawSqlCommand.ParameterValues,
-                        null,
-                        ((IDatabaseFacadeDependenciesAccessor)databaseFacade).Context,
-                        logger, CommandSource.ExecuteSqlRaw));
-        }
-        finally
-        {
-            concurrencyDetector?.ExitCriticalSection();
-        }
+        return rawSqlCommand
+            .RelationalCommand
+            .ExecuteNonQuery(
+                new RelationalCommandParameterObject(
+                    facadeDependencies.RelationalConnection,
+                    rawSqlCommand.ParameterValues,
+                    null,
+                    ((IDatabaseFacadeDependenciesAccessor)databaseFacade).Context,
+                    logger, CommandSource.ExecuteSqlRaw));
     }
 
     /// <summary>
@@ -608,29 +601,22 @@ public static class RelationalDatabaseFacadeExtensions
             : null;
         var logger = facadeDependencies.CommandLogger;
 
-        concurrencyDetector?.EnterCriticalSection();
+        using var _ = concurrencyDetector?.EnterCriticalSection();
 
-        try
-        {
-            var rawSqlCommand = facadeDependencies.RawSqlCommandBuilder
-                .Build(sql, parameters, databaseFacade.GetService<IModel>());
+        var rawSqlCommand = facadeDependencies.RawSqlCommandBuilder
+            .Build(sql, parameters, databaseFacade.GetService<IModel>());
 
-            return await rawSqlCommand
-                .RelationalCommand
-                .ExecuteNonQueryAsync(
-                    new RelationalCommandParameterObject(
-                        facadeDependencies.RelationalConnection,
-                        rawSqlCommand.ParameterValues,
-                        null,
-                        ((IDatabaseFacadeDependenciesAccessor)databaseFacade).Context,
-                        logger, CommandSource.ExecuteSqlRaw),
-                    cancellationToken)
-                .ConfigureAwait(false);
-        }
-        finally
-        {
-            concurrencyDetector?.ExitCriticalSection();
-        }
+        return await rawSqlCommand
+            .RelationalCommand
+            .ExecuteNonQueryAsync(
+                new RelationalCommandParameterObject(
+                    facadeDependencies.RelationalConnection,
+                    rawSqlCommand.ParameterValues,
+                    null,
+                    ((IDatabaseFacadeDependenciesAccessor)databaseFacade).Context,
+                    logger, CommandSource.ExecuteSqlRaw),
+                cancellationToken)
+            .ConfigureAwait(false);
     }
 
     /// <summary>

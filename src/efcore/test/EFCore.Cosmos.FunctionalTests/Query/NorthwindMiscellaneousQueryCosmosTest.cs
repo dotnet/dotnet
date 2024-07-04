@@ -2372,6 +2372,20 @@ WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] | 10248) = 10248))
 """);
             });
 
+    public override Task Where_bitwise_binary_xor(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Where_bitwise_binary_xor(async);
+
+                AssertSql(
+                    """
+SELECT c
+FROM root c
+WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] ^ 1) = 10249))
+""");
+            });
+
     public override async Task Select_bitwise_or_with_logical_or(bool async)
     {
         // Always throws for sync.
@@ -5309,6 +5323,95 @@ FROM root c
 WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = @__p_0))
 """);
             });
+
+    [ConditionalFact]
+    public virtual async Task ToPageAsync()
+    {
+        await using var context = CreateContext();
+
+        var totalCustomers = await context.Set<Customer>().CountAsync();
+
+        var page1 = await context.Set<Customer>()
+            .OrderBy(c => c.CustomerID)
+            .ToPageAsync(pageSize: 1, continuationToken: null);
+
+        var customer1 = Assert.Single(page1.Values);
+        Assert.Equal("ALFKI", customer1.CustomerID);
+
+        var page2 = await context.Set<Customer>()
+            .OrderBy(c => c.CustomerID)
+            .ToPageAsync(pageSize: 2, page1.ContinuationToken);
+
+        Assert.Collection(
+            page2.Values,
+            c => Assert.Equal("ANATR", c.CustomerID),
+            c => Assert.Equal("ANTON", c.CustomerID));
+
+        var page3 = await context.Set<Customer>()
+            .OrderBy(c => c.CustomerID)
+            .ToPageAsync(pageSize: totalCustomers, page2.ContinuationToken);
+
+        Assert.Equal(totalCustomers - 3, page3.Values.Count);
+        Assert.Null(page3.ContinuationToken);
+
+        AssertSql(
+            """
+SELECT COUNT(1) AS c
+FROM root c
+WHERE (c["Discriminator"] = "Customer")
+""",
+            //
+            """
+SELECT c
+FROM root c
+WHERE (c["Discriminator"] = "Customer")
+ORDER BY c["CustomerID"]
+""",
+            //
+            """
+SELECT c
+FROM root c
+WHERE (c["Discriminator"] = "Customer")
+ORDER BY c["CustomerID"]
+""",
+            //
+            """
+SELECT c
+FROM root c
+WHERE (c["Discriminator"] = "Customer")
+ORDER BY c["CustomerID"]
+""");
+    }
+
+    [ConditionalFact]
+    public virtual async Task ToPageAsync_with_exact_maxItemCount()
+    {
+        await using var context = CreateContext();
+
+        var totalCustomers = await context.Set<Customer>().CountAsync();
+
+        var onlyPage = await context.Set<Customer>()
+            .OrderBy(c => c.CustomerID)
+            .ToPageAsync(pageSize: totalCustomers, continuationToken: null);
+
+        Assert.Equal("ALFKI", onlyPage.Values[0].CustomerID);
+        Assert.Equal("WOLZA", onlyPage.Values[^1].CustomerID);
+        Assert.Null(onlyPage.ContinuationToken);
+
+        AssertSql(
+            """
+SELECT COUNT(1) AS c
+FROM root c
+WHERE (c["Discriminator"] = "Customer")
+""",
+            //
+            """
+SELECT c
+FROM root c
+WHERE (c["Discriminator"] = "Customer")
+ORDER BY c["CustomerID"]
+""");
+    }
 
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);

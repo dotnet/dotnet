@@ -2883,7 +2883,7 @@ INNER JOIN "Factions" AS "f" ON "l"."Name" = "f"."CommanderName"
 WHERE CASE
     WHEN "f"."Name" = 'Locust' THEN 1
     ELSE NULL
-END <> 1 OR CASE
+END = 0 OR CASE
     WHEN "f"."Name" = 'Locust' THEN 1
     ELSE NULL
 END IS NULL
@@ -3096,7 +3096,7 @@ WHERE "f"."ServerAddress" = CAST('127.0.0.1' AS TEXT)
             """
 SELECT "w"."Id", "w"."AmmunitionType", "w"."IsAutomatic", "w"."Name", "w"."OwnerFullName", "w"."SynergyWithId"
 FROM "Weapons" AS "w"
-WHERE COALESCE("w"."Id", 0) = 0
+WHERE "w"."Id" = 0
 """);
     }
 
@@ -3312,7 +3312,7 @@ WHERE instr("s"."Banner", char("l"."ThreatLevelByte")) > 0
         AssertSql(
             """
 SELECT CASE
-    WHEN "g"."LeaderNickname" IS NOT NULL THEN COALESCE(length("g"."Nickname") = 5, 0)
+    WHEN "g"."LeaderNickname" IS NOT NULL THEN length("g"."Nickname") = 5
     ELSE NULL
 END
 FROM "Gears" AS "g"
@@ -3440,7 +3440,7 @@ ORDER BY "s"."Id", "g"."Nickname"
         await base.ToString_enum_property_projection(async);
 
         AssertSql(
-"""
+            """
 SELECT CASE "g"."Rank"
     WHEN 0 THEN 'None'
     WHEN 1 THEN 'Private'
@@ -3451,7 +3451,7 @@ SELECT CASE "g"."Rank"
     WHEN 32 THEN 'Major'
     WHEN 64 THEN 'Colonel'
     WHEN 128 THEN 'General'
-    ELSE COALESCE(CAST("g"."Rank" AS TEXT), '')
+    ELSE CAST("g"."Rank" AS TEXT)
 END
 FROM "Gears" AS "g"
 """);
@@ -3864,7 +3864,7 @@ SELECT "g0"."Nickname", "g0"."SquadId", "g0"."AssignedCityName", "g0"."CityOfBir
 FROM (
     SELECT DISTINCT "g"."Nickname", "g"."SquadId", "g"."AssignedCityName", "g"."CityOfBirthName", "g"."Discriminator", "g"."FullName", "g"."HasSoulPatch", "g"."LeaderNickname", "g"."LeaderSquadId", "g"."Rank"
     FROM "Gears" AS "g"
-    WHERE "g"."Nickname" <> @__prm_Inner_Nickname_0 AND "g"."Nickname" <> @__prm_Inner_Nickname_0
+    WHERE "g"."Nickname" <> @__prm_Inner_Nickname_0
 ) AS "g0"
 ORDER BY "g0"."FullName"
 """);
@@ -5497,7 +5497,7 @@ LEFT JOIN (
     FROM "Factions" AS "f"
     WHERE "f"."Name" = 'Swarm'
 ) AS "f0" ON "l"."Name" = "f0"."CommanderName"
-WHERE "f0"."Eradicated" <> 1 OR "f0"."Eradicated" IS NULL
+WHERE "f0"."Eradicated" = 0 OR "f0"."Eradicated" IS NULL
 """);
     }
 
@@ -5565,7 +5565,7 @@ INNER JOIN (
     FROM "Factions" AS "f"
     WHERE "f"."Name" = 'Swarm'
 ) AS "f0" ON "l"."Name" = "f0"."CommanderName"
-WHERE "f0"."Eradicated" <> 1 OR "f0"."Eradicated" IS NULL
+WHERE "f0"."Eradicated" = 0 OR "f0"."Eradicated" IS NULL
 """);
     }
 
@@ -5629,7 +5629,7 @@ SELECT COALESCE((
     FROM "Weapons" AS "w"
     WHERE "g"."FullName" = "w"."OwnerFullName"
     ORDER BY "w"."Id"
-    LIMIT 1), 0, 42)
+    LIMIT 1), 0)
 FROM "Gears" AS "g"
 """);
     }
@@ -6154,6 +6154,17 @@ ORDER BY "g"."Nickname", "g1"."Nickname"
 SELECT "w"."Id", NOT ("w"."IsAutomatic") AS "Manual"
 FROM "Weapons" AS "w"
 WHERE "w"."IsAutomatic"
+""");
+    }
+
+    public override async Task Select_inverted_nullable_boolean(bool async)
+    {
+        await base.Select_inverted_nullable_boolean(async);
+
+        AssertSql(
+            """
+SELECT "f"."Id", NOT ("f"."Eradicated") AS "Alive"
+FROM "Factions" AS "f"
 """);
     }
 
@@ -8942,7 +8953,7 @@ SELECT NOT EXISTS (
     SELECT 1
     FROM "Gears" AS "g"
     LEFT JOIN "Tags" AS "t" ON "g"."Nickname" = "t"."GearNickName" AND "g"."SquadId" = "t"."GearSquadId"
-    WHERE "t"."Note" = 'Foo' AND "t"."Note" IS NOT NULL)
+    WHERE "t"."Note" = 'Foo')
 """);
     }
 
