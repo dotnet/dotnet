@@ -53,10 +53,8 @@ stages:
   
   ## PR-only jobs
   
-  - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-    
+  - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}: 
     ## Windows
-
     - template: eng/build-pr.yml
       parameters:
         agentOs: Windows_NT
@@ -136,8 +134,8 @@ stages:
         linuxPortable: true
         runTests: true
 
-    # MacOS
 
+    # MacOS
     - template: eng/build-pr.yml
       parameters:
         agentOs: Darwin
