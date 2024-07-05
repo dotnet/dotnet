@@ -28,7 +28,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@33d8bf2](https://github.com/dotnet/diagnostics/tree/33d8bf23a6566cd3fb9055acfc9f1141391d5421)*
 - `src/efcore`  
-*[dotnet/efcore@ac7380e](https://github.com/dotnet/efcore/tree/ac7380ef5962a06314491ff6412945a84ca8f2df)*
+*[dotnet/efcore@ec42520](https://github.com/dotnet/efcore/tree/ec42520f1717d410314bfca41aba9f4cd04f7ab3)*
 - `src/emsdk`  
 *[dotnet/emsdk@ffe9afd](https://github.com/dotnet/emsdk/tree/ffe9afdc046cf7a6f82cc7c5796aade54047af64)*
 - `src/fsharp`  
