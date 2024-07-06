@@ -438,10 +438,10 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
     <value>The lock file for {0} at location {1} does not exist, no-op is not possible. Continuing restore.</value>
   </data>
   <data name="Warning_MinVersionDoesNotExist" xml:space="preserve">
-    <value>{0} depends on {1} but {2} was not found. An approximate best match of {3} was resolved.</value>
+    <value>{0} depends on {1} but {2} was not found. {3} was resolved instead.</value>
   </data>
   <data name="Warning_MinVersionNonInclusive" xml:space="preserve">
-    <value>{0} does not provide an inclusive lower bound for dependency {1}. An approximate best match of {2} was resolved.</value>
+    <value>{0} does not provide an inclusive lower bound for dependency {1}. {2} was resolved instead.</value>
   </data>
   <data name="Warning_ProjectDependencyMissingLowerBound" xml:space="preserve">
     <value>Project dependency {0} does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.</value>

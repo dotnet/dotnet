@@ -23,12 +23,17 @@ parameters:
   displayName: Run functional tests on MacOS
   type: boolean
   default: true
+- name: RunSourceBuild
+  displayName: Run a SourceBuild build
+  type: boolean
+  default: true
 
 variables:
   DOTNET_NOLOGO: 1
   NUGET_EXPERIMENTAL_CHAIN_BUILD_RETRY_POLICY: 3,1000
   SkipSigning: true
   CI: true
+  Codeql.Enabled: false
 
 trigger:
   branches:
@@ -257,3 +262,23 @@ stages:
         vmImage: macos-latest
         testType: Functional
         testTargetFramework: netcoreapp3.1
+
+- ${{ if eq(parameters.RunSourceBuild, true) }}:
+  - stage:
+    displayName: Source Build
+    dependsOn: []
+    jobs:
+    - job:
+      displayName: Source Build
+      timeoutInMinutes: 15
+      variables:
+        DOTNET_NUGET_SIGNATURE_VERIFICATION: true
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+      - task: PowerShell@2
+        displayName: "Run source-build script"
+        inputs:
+          targetType: "inline"
+          script: |
+            ./eng/dotnet-build/build.sh --source-build

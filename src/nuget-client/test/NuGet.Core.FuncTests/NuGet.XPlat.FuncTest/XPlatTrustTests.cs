@@ -130,7 +130,7 @@ namespace NuGet.XPlat.FuncTest
         {
             // Arrange
             var logLevel = LogLevel.Information;
-            var logger = new TestCommandOutputLogger();
+            var logger = new TestCommandOutputLogger(_testOutputHelper);
             var testApp = new CommandLineApplication();
 
             testApp.Name = "dotnet nuget_test";

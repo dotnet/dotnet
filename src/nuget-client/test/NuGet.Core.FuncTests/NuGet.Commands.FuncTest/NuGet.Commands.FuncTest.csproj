@@ -2,7 +2,6 @@
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksUnitTestForSigning)</TargetFrameworks>
     <Description>Integration tests for the more involved NuGet.Commands, such as restore.</Description>
-    <UseParallelXunit>true</UseParallelXunit>
   </PropertyGroup>
 
   <ItemGroup>

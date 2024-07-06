@@ -22,11 +22,6 @@
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="xunit.runner.json"
-          CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
   <Target Name="CopyFinalNuGetExeToOutputPath"
           AfterTargets="PrepareForRun"
           Inputs="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe"

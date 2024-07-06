@@ -329,7 +329,7 @@
     ============================================================
     RunTestsOnProjects
     Finds all test assemblies and allows Xunit to run them as
-    efficiently as the xunit.runner.json settings allow.
+    efficiently as the xunit.runsettings allow.
     ============================================================
   -->
   <Target Name="RunTestsOnProjects">

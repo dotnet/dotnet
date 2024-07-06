@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
-    <UseParallelXunit>true</UseParallelXunit>
     <Description>Unit tests for NuGet.PackageManagement.</Description>
     <TestProjectType Condition="'$(IsXPlat)' != 'true'">Functional</TestProjectType>
     <TestProjectType Condition="'$(IsXPlat)' == 'true'">None</TestProjectType>
@@ -16,9 +15,5 @@
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

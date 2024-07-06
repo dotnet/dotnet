@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
-    <UseParallelXunit>true</UseParallelXunit>
     <Description>NuGet package signing cross framework test.</Description>
     <TestProjectType Condition="'$(IsXPlat)' == 'true'">None</TestProjectType>
   </PropertyGroup>

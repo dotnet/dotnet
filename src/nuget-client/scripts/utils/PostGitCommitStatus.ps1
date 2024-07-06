@@ -75,7 +75,11 @@ Function InitializeAllTestsToPending {
     Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "Build_and_UnitTest_NonRTM" -Status "pending" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "in progress"
     Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "Build_and_UnitTest_RTM" -Status "pending" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "in progress"
     Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "Static Analysis" -Status "pending" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "in progress"
-    Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "Source Build" -Status "pending" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "in progress"
+    
+    if($env:RunSourceBuild -eq "true")
+    {
+        Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "Source Build" -Status "pending" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "in progress"
+    }
     if($env:RunFunctionalTestsOnWindows -eq "true")
     {
         # Setup individual states for the matrixing of jobs in "Functional Tests On Windows".

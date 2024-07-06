@@ -7,11 +7,19 @@ using System.IO;
 using System.Linq;
 using NuGet.CommandLine.XPlat;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.XPlat.FuncTest
 {
     public class XPlatHelpOutputTests
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public XPlatHelpOutputTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
         public static IEnumerable<object[]> ParseSuccessfully
         {
             get
@@ -43,7 +51,7 @@ namespace NuGet.XPlat.FuncTest
             var originalConsoleOut = Console.Out;
             using var consoleOutput = new StringWriter();
             Console.SetOut(consoleOutput);
-            var log = new TestCommandOutputLogger();
+            var log = new TestCommandOutputLogger(_testOutputHelper);
 
             // Act
             var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -63,7 +71,7 @@ namespace NuGet.XPlat.FuncTest
             var originalConsoleOut = Console.Out;
             using var consoleOutput = new StringWriter();
             Console.SetOut(consoleOutput);
-            var log = new TestCommandOutputLogger();
+            var log = new TestCommandOutputLogger(_testOutputHelper);
 
             // Act
             var exitCode = Program.MainInternal(args.ToArray(), log);

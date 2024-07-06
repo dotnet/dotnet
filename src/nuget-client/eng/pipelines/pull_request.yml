@@ -25,7 +25,7 @@ parameters:
 - name: RunSourceBuild
   displayName: Run source build
   type: boolean
-  default: true
+  default: false
 - name: RunTestsOnLinux
   displayName: Run tests on Linux
   type: boolean

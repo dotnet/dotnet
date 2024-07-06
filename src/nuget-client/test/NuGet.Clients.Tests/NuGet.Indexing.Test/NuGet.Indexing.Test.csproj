@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
-    <UseParallelXunit>true</UseParallelXunit>
     <Description>Unit tests for NuGet.Indexing.</Description>
   </PropertyGroup>
 

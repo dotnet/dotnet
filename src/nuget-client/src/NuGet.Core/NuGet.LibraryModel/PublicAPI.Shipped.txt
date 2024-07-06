@@ -121,7 +121,7 @@ NuGet.LibraryModel.LibraryRange.LibraryRange(string! name, NuGet.LibraryModel.Li
 NuGet.LibraryModel.LibraryRange.LibraryRange(string! name, NuGet.Versioning.VersionRange? versionRange, NuGet.LibraryModel.LibraryDependencyTarget typeConstraint) -> void
 NuGet.LibraryModel.LibraryRange.Name.get -> string!
 NuGet.LibraryModel.LibraryRange.Name.set -> void
-NuGet.LibraryModel.LibraryRange.ToLockFileDependencyGroupString() -> string?
+NuGet.LibraryModel.LibraryRange.ToLockFileDependencyGroupString() -> string!
 NuGet.LibraryModel.LibraryRange.TypeConstraint.get -> NuGet.LibraryModel.LibraryDependencyTarget
 NuGet.LibraryModel.LibraryRange.TypeConstraint.set -> void
 NuGet.LibraryModel.LibraryRange.TypeConstraintAllows(NuGet.LibraryModel.LibraryDependencyTarget flag) -> bool

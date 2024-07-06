@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NuGet.Test.Server;
+using Xunit.Abstractions;
 
 namespace Test.Utility
 {
@@ -21,13 +22,15 @@ namespace Test.Utility
     {
         private readonly X509Certificate2 _certificate;
         private readonly string _packageDirectory;
+        private readonly ITestOutputHelper _testOutputHelper;
         private TcpListener _tcpListener;
         private bool _runServer = true;
         public string URI;
 
-        public SelfSignedCertificateMockServer(string packageDirectory)
+        public SelfSignedCertificateMockServer(string packageDirectory, ITestOutputHelper testOutputHelper)
         {
             _packageDirectory = packageDirectory;
+            _testOutputHelper = testOutputHelper;
             _certificate = GenerateSelfSignedCertificate();
         }
 
@@ -103,7 +106,7 @@ namespace Test.Utility
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Error processing request: " + ex.Message);
+                        _testOutputHelper.WriteLine($"[SelfSignedCertificateMockServer] Error processing request: {ex}");
                     }
                 }
             }
@@ -124,7 +127,7 @@ namespace Test.Utility
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error processing request: {ex.Message}");
+                _testOutputHelper.WriteLine($"[SelfSignedCertificateMockServer] Error processing request: {ex}");
             }
         }
 

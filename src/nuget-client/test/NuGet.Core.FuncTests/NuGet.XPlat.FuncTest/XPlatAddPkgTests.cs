@@ -20,6 +20,7 @@ using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.XPlat.FuncTest
 {
@@ -28,7 +29,12 @@ namespace NuGet.XPlat.FuncTest
     {
         private static readonly string ProjectName = "test_project_addpkg";
 
-        private static MSBuildAPIUtility MsBuild => new MSBuildAPIUtility(new TestCommandOutputLogger());
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public XPlatAddPkgTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
 
         // Argument parsing related tests
 
@@ -109,7 +115,7 @@ namespace NuGet.XPlat.FuncTest
                     argList.Add(prereleaseOption);
                 }
 
-                var logger = new TestCommandOutputLogger();
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
                 var testApp = new CommandLineApplication();
                 var mockCommandRunner = new Mock<IPackageReferenceCommandRunner>();
                 mockCommandRunner
@@ -209,7 +215,7 @@ namespace NuGet.XPlat.FuncTest
                     argList.Add(prereleaseOption);
                 }
 
-                var logger = new TestCommandOutputLogger();
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
                 var testApp = new CommandLineApplication();
                 var mockCommandRunner = new Mock<IPackageReferenceCommandRunner>();
                 mockCommandRunner
@@ -251,11 +257,12 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packageX);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, userInputVersion, projectA);
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, userInputVersion, projectA);
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
                 var itemGroup = XPlatTestUtils.GetItemGroupForAllFrameworks(projectXmlRoot);
 
@@ -289,6 +296,7 @@ namespace NuGet.XPlat.FuncTest
             {
                 var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net46; netcoreapp1.0");
                 var packages = inputVersions.Select(e => XPlatTestUtils.CreatePackage(packageVersion: e)).ToArray();
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Generate Package
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -296,12 +304,11 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packages);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packages[0].Id, "*", projectA, noVersion: true, prerelease: prerelease);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packages[0].Id, "*", projectA, noVersion: true, prerelease: prerelease);
                 var commandRunner = new AddPackageReferenceCommandRunner();
-                var msBuild = MsBuild;
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, msBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
                 // Assert
@@ -332,12 +339,12 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packages);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packages[0].Id, "*", projectA, noVersion: true, prerelease: prerelease);
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packages[0].Id, "*", projectA, noVersion: true, prerelease: prerelease);
                 var commandRunner = new AddPackageReferenceCommandRunner();
-                var msBuild = MsBuild;
 
                 // Act & Assert
-                var result = await Assert.ThrowsAsync<CommandException>(() => commandRunner.ExecuteCommand(packageArgs, msBuild));
+                var result = await Assert.ThrowsAsync<CommandException>(() => commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger)));
                 Assert.Equal(string.Format(CultureInfo.CurrentCulture, Strings.PrereleaseVersionsAvailable, packages.Max(x => x.Identity.Version)), result.Message);
             }
         }
@@ -356,12 +363,13 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     XPlatTestUtils.CreatePackage(packageVersion: "1.0.0"));
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs("packageY", "*", projectA, noVersion: true, prerelease: prerelease);
+
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, "packageY", "*", projectA, noVersion: true, prerelease: prerelease);
                 var commandRunner = new AddPackageReferenceCommandRunner();
-                var msBuild = MsBuild;
 
                 // Act & Assert
-                var result = await Assert.ThrowsAsync<CommandException>(() => commandRunner.ExecuteCommand(packageArgs, msBuild));
+                var result = await Assert.ThrowsAsync<CommandException>(() => commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger)));
                 Assert.Equal(string.Format(CultureInfo.CurrentCulture, Strings.Error_NoVersionsAvailable, "packageY"), result.Message);
             }
         }
@@ -382,6 +390,7 @@ namespace NuGet.XPlat.FuncTest
                 projectA.Save();
 
                 var packageX = XPlatTestUtils.CreatePackage();
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Generate Package
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -389,11 +398,11 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packageX);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, userInputVersion, projectA);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, userInputVersion, projectA);
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
                 var itemGroup = XPlatTestUtils.GetItemGroupForAllFrameworks(projectXmlRoot);
 
@@ -438,6 +447,8 @@ namespace NuGet.XPlat.FuncTest
 
                 projectA.Save();
 
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+
                 // Verify that the package reference exists before removing.
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
                 var itemGroup = XPlatTestUtils.GetItemGroupForAllFrameworks(projectXmlRoot, packageType: PackageType.DotnetCliTool);
@@ -445,11 +456,11 @@ namespace NuGet.XPlat.FuncTest
                 Assert.NotNull(itemGroup);
                 Assert.True(XPlatTestUtils.ValidateReference(itemGroup, packageDotnetCliToolX.Id, "1.0.0", PackageType.DotnetCliTool));
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageY.Id, userInputVersion, projectA, noRestore: false);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageY.Id, userInputVersion, projectA, noRestore: false);
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
                 itemGroup = XPlatTestUtils.GetItemGroupForAllFrameworks(projectXmlRoot);
 
@@ -487,11 +498,12 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packageX);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, userInputVersion, projectA, noRestore: true);
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, userInputVersion, projectA, noRestore: true);
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
                 // If noRestore is set, then we do not perform compatibility check.
@@ -541,15 +553,16 @@ namespace NuGet.XPlat.FuncTest
                 // Verify that the package reference exists before removing.
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
                 var itemGroup = XPlatTestUtils.GetItemGroupForAllFrameworks(projectXmlRoot, packageType: PackageType.DotnetCliTool);
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
 
                 Assert.NotNull(itemGroup);
                 Assert.True(XPlatTestUtils.ValidateReference(itemGroup, packageDotnetCliToolX.Id, "1.0.0", PackageType.DotnetCliTool));
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageY.Id, userInputVersion, projectA, noRestore: true);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageY.Id, userInputVersion, projectA, noRestore: true);
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
                 itemGroup = XPlatTestUtils.GetItemGroupForAllFrameworks(projectXmlRoot);
 
@@ -576,12 +589,13 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packageX);
 
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
                 // Since user is not inputing a version, it is converted to a "*"
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, "*", projectA, noVersion: true);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, "*", projectA, noVersion: true);
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
                 // Assert
@@ -615,12 +629,14 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packageX);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, userInputVersion, projectA);
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, userInputVersion, projectA);
                 var commandRunner = new AddPackageReferenceCommandRunner();
                 var commonFramework = XPlatTestUtils.GetCommonFramework(packageFrameworks, projectFrameworks);
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
                 var itemGroup = XPlatTestUtils.GetItemGroupForFramework(projectXmlRoot, commonFramework);
 
@@ -661,13 +677,15 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packageX);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, packageX.Version, projectA,
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, packageX.Version, projectA,
                     frameworks: userInputFrameworks);
                 var commandRunner = new AddPackageReferenceCommandRunner();
                 var commonFramework = XPlatTestUtils.GetCommonFramework(packageFrameworks, projectFrameworks, userInputFrameworks);
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
                 var itemGroup = XPlatTestUtils.GetItemGroupForFramework(projectXmlRoot, commonFramework);
 
@@ -723,11 +741,12 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packageX);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, userInputVersion, project);
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, userInputVersion, project);
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(project.ProjectPath).Root;
 
                 // Assert
@@ -763,15 +782,17 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     new SimpleTestPackageContext[] { packageX_V1_Context, packageX_V2_Context });
 
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+
                 // Since user is not inputing a version, it is converted to a " * " in the command
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX_V1.Id, "*",
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX_V1.Id, "*",
                     projectA,
                     sources: customSourcePath);
 
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
 
                 // Assert
                 Assert.Equal(0, result);
@@ -809,15 +830,17 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     new SimpleTestPackageContext[] { packageY_V1_Context });
 
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+
                 // Since user is not inputing a version, it is converted to a " * " in the command
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX, "*",
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX, "*",
                     projectA,
                     sources: customSourcePath);
 
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
 
                 // Assert
                 Assert.Equal(1, result);
@@ -845,14 +868,16 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     new SimpleTestPackageContext[] { packageX_V1_Context, packageX_V2_Context });
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX_V1.Id, packageX_V1.Version.ToString(),
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX_V1.Id, packageX_V1.Version.ToString(),
                     projectA,
                     sources: customSourcePath);
 
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
 
                 // Assert
                 Assert.Equal(0, result);
@@ -892,14 +917,18 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     new SimpleTestPackageContext[] { packageX_V1_Context, packageX_V2_Context });
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX_V3.Id, packageX_V3.Version.ToString(),
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger,
+                    packageX_V3.Id,
+                    packageX_V3.Version.ToString(),
                     projectA,
                     sources: customSourcePath);
 
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
 
                 // Assert
                 Assert.Equal(1, result);
@@ -938,8 +967,12 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packageX);
 
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+
                 // Since user is not inputing a version, it is converted to a "*" in the command
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, "*",
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger,
+                    packageX.Id,
+                    "*",
                     projectA,
                     frameworks: userInputFrameworks,
                     noVersion: true);
@@ -948,7 +981,7 @@ namespace NuGet.XPlat.FuncTest
                 var commonFramework = XPlatTestUtils.GetCommonFramework(packageFrameworks, projectFrameworks, userInputFrameworks);
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
                 var itemGroup = XPlatTestUtils.GetItemGroupForFramework(projectXmlRoot, commonFramework);
 
@@ -982,12 +1015,14 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packageX);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, packageX.Version, projectA,
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, packageX.Version, projectA,
                     frameworks: userInputFrameworks);
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
                 // Assert
@@ -1012,11 +1047,13 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packageX);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs("unknown_package_id", "1.0.0", projectA);
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, "unknown_package_id", "1.0.0", projectA);
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
                 // Assert
@@ -1047,17 +1084,20 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packageY);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, packageX.Version, projectA);
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+                var msbuild = new MSBuildAPIUtility(logger);
+
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, packageX.Version, projectA);
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, msbuild);
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
-                packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageY.Id, packageY.Version, projectA);
+                packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageY.Id, packageY.Version, projectA);
 
                 // Act
-                result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                result = await commandRunner.ExecuteCommand(packageArgs, msbuild);
                 projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
                 // Assert
@@ -1091,6 +1131,9 @@ namespace NuGet.XPlat.FuncTest
                 var packageX = XPlatTestUtils.CreatePackage("PkgX", frameworkString: packageFrameworks);
                 var packageY = XPlatTestUtils.CreatePackage("PkgY", frameworkString: packageFrameworks);
 
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+                var msBuild = new MSBuildAPIUtility(logger);
+
                 // Generate Package
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -1101,12 +1144,13 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packageY);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id,
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(
+                    logger,
+                    packageX.Id,
                     packageX.Version,
                     projectA,
                     frameworks: userInputFrameworks);
                 var commandRunner = new AddPackageReferenceCommandRunner();
-                var msBuild = MsBuild;
                 var commonFramework = XPlatTestUtils.GetCommonFramework(packageFrameworks,
                     projectFrameworks,
                     userInputFrameworks);
@@ -1115,7 +1159,7 @@ namespace NuGet.XPlat.FuncTest
                 var result = await commandRunner.ExecuteCommand(packageArgs, msBuild);
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
-                packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageY.Id, packageY.Version, projectA);
+                packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageY.Id, packageY.Version, projectA);
 
                 // Act
                 result = await commandRunner.ExecuteCommand(packageArgs, msBuild);
@@ -1139,20 +1183,23 @@ namespace NuGet.XPlat.FuncTest
                 var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net46");
                 var packageX = XPlatTestUtils.CreatePackage();
 
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+
                 // Generate Package
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
                     PackageSaveMode.Defaultv3,
                     packageX);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id,
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger,
+                    packageX.Id,
                     packageX.Version,
                     projectA,
                     packageDirectory: tempGlobalPackagesDirectory.Path);
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
                 var itemGroup = XPlatTestUtils.GetItemGroupForAllFrameworks(projectXmlRoot);
 
@@ -1186,6 +1233,7 @@ namespace NuGet.XPlat.FuncTest
                 var packages = new SimpleTestPackageContext[] { XPlatTestUtils.CreatePackage(packageVersion: latestVersion),
                         XPlatTestUtils.CreatePackage(packageVersion: "0.0.5"), XPlatTestUtils.CreatePackage(packageVersion: "0.0.9") };
 
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Generate Package
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -1193,9 +1241,9 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packages);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packages[0].Id, userInputVersionOld, projectA);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packages[0].Id, userInputVersionOld, projectA);
                 var commandRunner = new AddPackageReferenceCommandRunner();
-                var msBuild = MsBuild;
+                var msBuild = new MSBuildAPIUtility(logger);
 
                 // Create a package ref with the old version
                 var result = await commandRunner.ExecuteCommand(packageArgs, msBuild);
@@ -1207,7 +1255,7 @@ namespace NuGet.XPlat.FuncTest
                 //The model fom which the args are generated needs updated as well
                 projectA.AddPackageToAllFrameworks(new SimpleTestPackageContext(packages[0].Id, userInputVersionOld));
 
-                packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packages[0].Id, userInputVersionNew, projectA, noVersion: noVersion);
+                packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packages[0].Id, userInputVersionNew, projectA, noVersion: noVersion);
                 commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
@@ -1258,9 +1306,11 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packages);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packages[0].Id, userInputVersionOld, projectA);
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packages[0].Id, userInputVersionOld, projectA);
                 var commandRunner = new AddPackageReferenceCommandRunner();
-                var msBuild = MsBuild;
+
+                var msBuild = new MSBuildAPIUtility(logger);
 
                 // Create a package ref with old version
                 var result = await commandRunner.ExecuteCommand(packageArgs, msBuild);
@@ -1271,7 +1321,7 @@ namespace NuGet.XPlat.FuncTest
                 //The model fom which the args are generated needs updated as well - not 100% correct, but does the job
                 projectA.AddPackageToAllFrameworks(new SimpleTestPackageContext(packages[0].Id, userInputVersionOld));
 
-                packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packages[0].Id, userInputVersionNew, projectA, noVersion: noVersion);
+                packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packages[0].Id, userInputVersionNew, projectA, noVersion: noVersion);
                 commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
@@ -1302,12 +1352,14 @@ namespace NuGet.XPlat.FuncTest
                     PackageSaveMode.Defaultv3,
                     packageX);
 
-                // Since user is not inputing a version, it is converted to a "*"
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, "*", projectA, noVersion: true);
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+
+                // Since user is not specifying a version, it is converted to a "*"
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, "*", projectA, noVersion: true);
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
                 // Assert

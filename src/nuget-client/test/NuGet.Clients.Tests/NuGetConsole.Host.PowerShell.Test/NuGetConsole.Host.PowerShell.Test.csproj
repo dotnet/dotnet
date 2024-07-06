@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
-    <UseParallelXunit>true</UseParallelXunit>
     <Description>Unit and integration tests for NuGet.PackageManagement.PowerShellCmdlets.</Description>
   </PropertyGroup>
 

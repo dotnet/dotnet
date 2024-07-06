@@ -1,2 +1,1 @@
 #nullable enable
-~static NuGet.Commands.MSBuildRestoreUtility.GetRestoreAuditProperties(NuGet.Commands.IMSBuildItem specItem, System.Collections.Generic.HashSet<string> suppressionItems) -> NuGet.ProjectModel.RestoreAuditProperties

@@ -411,7 +411,7 @@ namespace NuGet.PackageManagement.VisualStudio
 
             await TaskScheduler.Default;
 
-            LockFile lockFile = LockFileUtilities.GetLockFile(assetsFilePath, NullLogger.Instance);
+            LockFile lockFile = LockFileUtilities.GetLockFile(assetsFilePath, NullLogger.Instance, LockFileReadFlags.PackageFolders | LockFileReadFlags.Targets);
             _packageFolders = lockFile?.PackageFolders ?? Array.Empty<LockFileItem>();
 
             return lockFile?.Targets;

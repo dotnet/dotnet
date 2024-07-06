@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="xunit.runner.json"
-          CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj" />
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.SolutionRestoreManager\NuGet.SolutionRestoreManager.csproj" />
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />

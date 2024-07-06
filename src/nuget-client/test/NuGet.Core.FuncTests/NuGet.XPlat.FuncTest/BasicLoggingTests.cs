@@ -2,16 +2,24 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.XPlat.FuncTest
 {
     public class BasicLoggingTests
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public BasicLoggingTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
         [Fact]
         public void BasicLogging_NoParams_ExitCode()
         {
             // Arrange
-            var log = new TestCommandOutputLogger();
+            var log = new TestCommandOutputLogger(_testOutputHelper);
 
             var args = new string[]
             {

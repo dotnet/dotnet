@@ -12,12 +12,20 @@ using NuGet.CommandLine.XPlat;
 using NuGet.Configuration;
 using NuGet.Test.Utility;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.XPlat.FuncTest
 {
     [Collection("NuGet XPlat Test Collection")]
     public class XPlatClientCertTests
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public XPlatClientCertTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
         [Fact]
         public void ClientCertAddCommand_Fail_CertificateSourceCombinationSpecified()
         {
@@ -38,7 +46,7 @@ namespace NuGet.XPlat.FuncTest
                     testInfo.CertificateStoreLocation.ToString()
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -65,7 +73,7 @@ namespace NuGet.XPlat.FuncTest
                     testInfo.PackageSourceName
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -95,7 +103,7 @@ namespace NuGet.XPlat.FuncTest
                     @".\MyCertificate.pfx"
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -113,7 +121,7 @@ namespace NuGet.XPlat.FuncTest
             // Arrange
             var args = new[] { "add", "client-cert" };
 
-            var log = new TestCommandOutputLogger();
+            var log = new TestCommandOutputLogger(_testOutputHelper);
 
             // Act
             var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -143,7 +151,7 @@ namespace NuGet.XPlat.FuncTest
                     "SOME"
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -178,7 +186,7 @@ namespace NuGet.XPlat.FuncTest
                     testInfo.CertificatePassword
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 //Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -218,7 +226,7 @@ namespace NuGet.XPlat.FuncTest
                     "--force"
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -259,7 +267,7 @@ namespace NuGet.XPlat.FuncTest
                     password
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -300,7 +308,7 @@ namespace NuGet.XPlat.FuncTest
                     testInfo.CertificateFindValue.ToString()
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -343,7 +351,7 @@ namespace NuGet.XPlat.FuncTest
                     "--force"
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -375,7 +383,7 @@ namespace NuGet.XPlat.FuncTest
                     testInfo.ConfigFile
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -413,7 +421,7 @@ namespace NuGet.XPlat.FuncTest
                     testInfo.ConfigFile
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -443,7 +451,7 @@ namespace NuGet.XPlat.FuncTest
                     testInfo.PackageSourceName
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -479,7 +487,7 @@ namespace NuGet.XPlat.FuncTest
                     testInfo.PackageSourceName
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -513,7 +521,7 @@ namespace NuGet.XPlat.FuncTest
                     testInfo.CertificateStoreLocation.ToString()
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -545,7 +553,7 @@ namespace NuGet.XPlat.FuncTest
                     testInfo.CertificatePassword
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -573,7 +581,7 @@ namespace NuGet.XPlat.FuncTest
                     testInfo.PackageSourceName
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -615,7 +623,7 @@ namespace NuGet.XPlat.FuncTest
                     "--force"
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -668,7 +676,7 @@ namespace NuGet.XPlat.FuncTest
                     "--force"
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -716,7 +724,7 @@ namespace NuGet.XPlat.FuncTest
                     updatedPassword
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -751,7 +759,7 @@ namespace NuGet.XPlat.FuncTest
                     updatedPassword
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);
@@ -799,7 +807,7 @@ namespace NuGet.XPlat.FuncTest
                     updatedFindValue
                 };
 
-                var log = new TestCommandOutputLogger();
+                var log = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Act
                 var exitCode = Program.MainInternal(args.ToArray(), log);

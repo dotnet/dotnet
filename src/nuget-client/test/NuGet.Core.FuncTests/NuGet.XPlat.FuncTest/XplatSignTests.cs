@@ -13,6 +13,7 @@ using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.XPlat.FuncTest
 {
@@ -20,6 +21,12 @@ namespace NuGet.XPlat.FuncTest
     public class XplatSignTests
     {
         private const string _invalidArgException = "Invalid value provided for '{0}'. The accepted values are {1}.";
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public XplatSignTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
 
         [Fact]
         public void SignCommandArgsParsing_MissingPackagePath_Throws()
@@ -430,7 +437,7 @@ namespace NuGet.XPlat.FuncTest
         {
             // Arrange
             var logLevel = LogLevel.Information;
-            var logger = new TestCommandOutputLogger();
+            var logger = new TestCommandOutputLogger(_testOutputHelper);
             var testApp = new CommandLineApplication();
             var mockCommandRunner = new Mock<ISignCommandRunner>();
 

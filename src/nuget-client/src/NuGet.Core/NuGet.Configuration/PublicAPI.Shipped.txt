@@ -138,6 +138,8 @@ NuGet.Configuration.PackageSource.Credentials.get -> NuGet.Configuration.Package
 NuGet.Configuration.PackageSource.Credentials.set -> void
 NuGet.Configuration.PackageSource.Description.get -> string?
 NuGet.Configuration.PackageSource.Description.set -> void
+NuGet.Configuration.PackageSource.DisableTLSCertificateValidation.get -> bool
+NuGet.Configuration.PackageSource.DisableTLSCertificateValidation.set -> void
 NuGet.Configuration.PackageSource.Equals(NuGet.Configuration.PackageSource? other) -> bool
 NuGet.Configuration.PackageSource.IsEnabled.get -> bool
 NuGet.Configuration.PackageSource.IsEnabled.set -> void
@@ -298,11 +300,14 @@ NuGet.Configuration.SettingsUtility
 NuGet.Configuration.SourceItem
 NuGet.Configuration.SourceItem.AllowInsecureConnections.get -> string?
 NuGet.Configuration.SourceItem.AllowInsecureConnections.set -> void
+NuGet.Configuration.SourceItem.DisableTLSCertificateValidation.get -> string?
+NuGet.Configuration.SourceItem.DisableTLSCertificateValidation.set -> void
 NuGet.Configuration.SourceItem.ProtocolVersion.get -> string?
 NuGet.Configuration.SourceItem.ProtocolVersion.set -> void
 NuGet.Configuration.SourceItem.SourceItem(string! key, string! value) -> void
 NuGet.Configuration.SourceItem.SourceItem(string! key, string! value, string? protocolVersion) -> void
 NuGet.Configuration.SourceItem.SourceItem(string! key, string! value, string? protocolVersion, string? allowInsecureConnections) -> void
+NuGet.Configuration.SourceItem.SourceItem(string! key, string! value, string? protocolVersion, string? allowInsecureConnections, string? disableTLSCertificateValidation) -> void
 NuGet.Configuration.StoreClientCertItem
 NuGet.Configuration.StoreClientCertItem.FindType.get -> System.Security.Cryptography.X509Certificates.X509FindType
 NuGet.Configuration.StoreClientCertItem.FindValue.get -> string!
@@ -474,6 +479,7 @@ static readonly NuGet.Configuration.ConfigurationConstants.CredentialsSectionNam
 static readonly NuGet.Configuration.ConfigurationConstants.DefaultPackageManagementFormatKey -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.DefaultPushSource -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.DependencyVersion -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.DisableTLSCertificateValidation -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.DisabledPackageSources -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.DoNotShowPackageManagementSelectionKey -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.Enabled -> string!

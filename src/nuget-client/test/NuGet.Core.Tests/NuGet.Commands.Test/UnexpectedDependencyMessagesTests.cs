@@ -223,8 +223,8 @@ namespace NuGet.Commands.Test
 
             logs.Select(e => e.Message).Should().BeEquivalentTo(new[]
             {
-                "x 9.0.0 does not provide an inclusive lower bound for dependency b (<= 5.0.0). An approximate best match of b 2.0.0 was resolved.",
-                "y 8.0.0 does not provide an inclusive lower bound for dependency b (> 1.0.0 && <= 6.0.0). An approximate best match of b 3.0.0 was resolved."
+                string.Format(Strings.Warning_MinVersionNonInclusive, "x 9.0.0", "b (<= 5.0.0)", "b 2.0.0"),
+                string.Format(Strings.Warning_MinVersionNonInclusive, "y 8.0.0", "b (> 1.0.0 && <= 6.0.0)", "b 3.0.0")
             });
         }
 
@@ -703,7 +703,7 @@ namespace NuGet.Commands.Test
             var log = UnexpectedDependencyMessages.GetMissingLowerBoundMessage(dependency);
 
             log.Code.Should().Be(NuGetLogCode.NU1602);
-            log.Message.Should().Be("a 9.0.0 does not provide an inclusive lower bound for dependency b (> 1.0.0). An approximate best match of b 2.0.0 was resolved.");
+            log.Message.Should().Be(string.Format(Strings.Warning_MinVersionNonInclusive, "a 9.0.0", "b (> 1.0.0)", "b 2.0.0"));
         }
 
         [Fact]
@@ -717,7 +717,7 @@ namespace NuGet.Commands.Test
             var log = UnexpectedDependencyMessages.GetMissingLowerBoundMessage(dependency);
 
             log.Code.Should().Be(NuGetLogCode.NU1602);
-            log.Message.Should().Be("a 9.0.0 does not provide an inclusive lower bound for dependency b (<= 5.0.0). An approximate best match of b 2.0.0 was resolved.");
+            log.Message.Should().Be(string.Format(Strings.Warning_MinVersionNonInclusive, "a 9.0.0", "b (<= 5.0.0)", "b 2.0.0"));
         }
 
         [Fact]
@@ -731,7 +731,7 @@ namespace NuGet.Commands.Test
             var log = UnexpectedDependencyMessages.GetMissingLowerBoundMessage(dependency);
 
             log.Code.Should().Be(NuGetLogCode.NU1603);
-            log.Message.Should().Be("a 9.0.0 depends on b (>= 1.0.0) but b 1.0.0 was not found. An approximate best match of b 2.0.0 was resolved.");
+            log.Message.Should().Be(string.Format(Strings.Warning_MinVersionDoesNotExist, "a 9.0.0", "b (>= 1.0.0)", "b 1.0.0", "b 2.0.0"));
         }
 
         [Theory]

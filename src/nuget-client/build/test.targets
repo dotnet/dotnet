@@ -16,7 +16,8 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <TestResultsDirectory>$(BuildCommonDirectory)TestResults\</TestResultsDirectory>
+    <VSTestResultsDirectory>$(RepositoryRootDirectory).test\TestResults\</VSTestResultsDirectory>
+    <RunSettingsFilePath Condition="'$(RunSettingsFilePath)' == ''">$(MSBuildThisFileDirectory)xunit.runsettings</RunSettingsFilePath>
   </PropertyGroup>
 
   <!-- Workaround for test projects not automatically creating binding redirects -->
@@ -24,12 +25,5 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
-
-  <ItemGroup Condition=" '$(UseParallelXunit)' == 'true' ">
-    <None Include="$(BuildCommonDirectory)TestShared\xunit.runner.json">
-      <Link>xunit.runner.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 
 </Project>
