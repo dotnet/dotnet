@@ -1631,5 +1631,61 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             replayedOutput.Should().Contain($"a known high severity vulnerability", Exactly.Twice());
             replayedOutput.Should().Contain($"a known critical severity vulnerability", Exactly.Twice());
         }
+
+        [Theory]
+        [InlineData(false, null)] // Disabled in Directory.Build.props, not set in Directory.Packages.props
+        [InlineData(false, false)] // Disabled in Directory.Build.props, disabled in Directory.Packages.props
+        [InlineData(null, false)] // Not set in Directory.Build.props, disabled in Directory.Packages.props
+        public async Task MsBuildRestore_WithCPMDisabled_IndividualProjectCanEnableCPM(bool? enabledInDirectoryBuildProps, bool? enabledInDirectoryPackagesProps)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            var packageX = new SimpleTestPackageContext("x", "1.0.0");
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageX);
+
+            // Directory.Build.props disables CPM which happens before Directory.Packages.props is imported
+            File.WriteAllText(
+                Path.Combine(pathContext.SolutionRoot, "Directory.Build.props"),
+                $@"<Project>
+    <PropertyGroup>
+        {(enabledInDirectoryBuildProps == true ? "<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>" : enabledInDirectoryBuildProps == false ? "<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>" : "")}
+    </PropertyGroup>
+</Project>");
+
+            File.WriteAllText(
+                Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"),
+                $@"<Project>
+    <PropertyGroup>
+        {(enabledInDirectoryPackagesProps == true ? "<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>" : enabledInDirectoryPackagesProps == false ? "<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>" : "")}
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageVersion Include=""{packageX.Id}"" Version=""{packageX.Version}"" />
+    </ItemGroup>
+</Project>");
+
+            SimpleTestProjectContext projectA = SimpleTestProjectContext.CreateNETCoreWithSDK("a", pathContext.SolutionRoot, FrameworkConstants.CommonFrameworks.Net472.GetShortFolderName());
+
+            // The project enables CPM and Directory.Packages.props was already imported even if CPM was diabled
+            projectA.Properties.Add("ManagePackageVersionsCentrally", bool.TrueString);
+            projectA.Properties.Add("TreatWarningsAsErrors", bool.TrueString);
+
+            projectA.AddPackageToAllFrameworks(new SimpleTestPackageContext()
+            {
+                Id = packageX.Id,
+                Version = null
+            });
+
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot, projectA);
+
+            solution.Create(pathContext.SolutionRoot);
+
+            // Act
+            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
+
+            // Assert
+            result.Success.Should().BeTrue();
+        }
     }
 }

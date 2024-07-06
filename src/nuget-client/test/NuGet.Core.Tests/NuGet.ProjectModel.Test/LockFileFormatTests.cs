@@ -1424,6 +1424,89 @@ namespace NuGet.ProjectModel.Test
 
 
         [Theory]
+        [InlineData(LockFileReadFlags.CentralTransitiveDependencyGroups)]
+        [InlineData(LockFileReadFlags.Libraries)]
+        [InlineData(LockFileReadFlags.PackageFolders)]
+        [InlineData(LockFileReadFlags.PackageSpec)]
+        [InlineData(LockFileReadFlags.ProjectFileDependencyGroups)]
+        [InlineData(LockFileReadFlags.Targets)]
+        [InlineData(LockFileReadFlags.PackageFolders | LockFileReadFlags.Targets)]
+        [InlineData(LockFileReadFlags.All)]
+        public void LockFileFormat_ReadUsesReadFlags_WithNewtonsoftEnvReader(LockFileReadFlags flags)
+        {
+            // Returns "NUGET_EXPERIMENTAL_USE_NJ_FOR_FILE_PARSING: true" which means Newtonsoft.Json code path is used to parse the file
+            var environmentVariableReader = LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader().First()[0] as IEnvironmentVariableReader;
+
+            LockFileFormat_ReadUsesReadFlags_WithEnvReader(flags, environmentVariableReader);
+        }
+
+        [Theory]
+        [InlineData(LockFileReadFlags.CentralTransitiveDependencyGroups)]
+        [InlineData(LockFileReadFlags.Libraries)]
+        [InlineData(LockFileReadFlags.PackageFolders)]
+        [InlineData(LockFileReadFlags.PackageSpec)]
+        [InlineData(LockFileReadFlags.ProjectFileDependencyGroups)]
+        [InlineData(LockFileReadFlags.Targets)]
+        [InlineData(LockFileReadFlags.PackageFolders | LockFileReadFlags.Targets)]
+        [InlineData(LockFileReadFlags.All)]
+        public void LockFileFormat_ReadUsesReadFlags_WithSystemTextJsonEnvReader(LockFileReadFlags flags)
+        {
+            // Returns "NUGET_EXPERIMENTAL_USE_NJ_FOR_FILE_PARSING: false" which means System.Text.Json code path is used to parse the file
+            var environmentVariableReader = LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader().Skip(1).First()[0] as IEnvironmentVariableReader;
+
+            LockFileFormat_ReadUsesReadFlags_WithEnvReader(flags, environmentVariableReader);
+        }
+
+        private void LockFileFormat_ReadUsesReadFlags_WithEnvReader(LockFileReadFlags flags, IEnvironmentVariableReader environmentVariableReader)
+        {
+            // Arrange
+            var lockFileContent = @"{
+  ""version"": 3,
+  ""targets"": {
+    "".NETPlatform,Version=v5.0"": {}
+  },
+  ""libraries"": {
+    ""System.Runtime/4.0.20-beta-22927"": {
+      ""type"": ""package"",
+      ""files"": []
+    }
+  },
+  ""projectFileDependencyGroups"": {
+    "".NETPlatform,Version=v5.0"": []
+  },
+  ""centralTransitiveDependencyGroups"": {
+    "".NETPlatform,Version=v5.0"": {
+      ""Newtonsoft.Json"": {
+        ""version"": ""1.0.0""           
+      }
+    }
+  },
+  ""packageFolders"": {
+    ""a"": {}
+  },
+  ""project"":   {
+    ""restore"": {
+      ""projectName"": ""ProjectPath""
+    }
+  }
+}";
+
+            // Act
+            var lockFile = Parse(lockFileContent, "In Memory", environmentVariableReader, logger: null, flags);
+
+            // Assert
+            Assert.NotNull(lockFile);
+            Assert.Equal(3, lockFile.Version);
+            Assert.Equal(flags.HasFlag(LockFileReadFlags.CentralTransitiveDependencyGroups) ? 1 : 0, lockFile.CentralTransitiveDependencyGroups.Count);
+            Assert.Equal(flags.HasFlag(LockFileReadFlags.Libraries) ? 1 : 0, lockFile.Libraries.Count);
+            Assert.Equal(flags.HasFlag(LockFileReadFlags.PackageFolders) ? 1 : 0, lockFile.PackageFolders.Count);
+            Assert.Equal(flags.HasFlag(LockFileReadFlags.PackageSpec) ? "ProjectPath" : null, lockFile.PackageSpec.Name);
+            Assert.Equal(flags.HasFlag(LockFileReadFlags.ProjectFileDependencyGroups) ? 1 : 0, lockFile.ProjectFileDependencyGroups.Count);
+            Assert.Equal(flags.HasFlag(LockFileReadFlags.Targets) ? 1 : 0, lockFile.Targets.Count);
+        }
+
+
+        [Theory]
         [MemberData(nameof(LockFileParsingEnvironmentVariable.TestEnvironmentVariableReader), MemberType = typeof(LockFileParsingEnvironmentVariable))]
         public void LockFileFormat_SkipsInvalidErrorMessage(IEnvironmentVariableReader environmentVariableReader)
         {
@@ -2410,13 +2493,13 @@ namespace NuGet.ProjectModel.Test
             }
         }
 
-        private LockFile Parse(string lockFileContent, string path, IEnvironmentVariableReader environmentVariableReader, ILogger logger = null)
+        private LockFile Parse(string lockFileContent, string path, IEnvironmentVariableReader environmentVariableReader, ILogger logger = null, LockFileReadFlags flags = LockFileReadFlags.All)
         {
             var reader = new LockFileFormat();
             byte[] byteArray = Encoding.UTF8.GetBytes(lockFileContent);
             using (var stream = new MemoryStream(byteArray))
             {
-                return reader.Read(stream, logger ?? NullLogger.Instance, path, environmentVariableReader, true);
+                return reader.Read(stream, logger ?? NullLogger.Instance, path, environmentVariableReader, true, flags);
             }
         }
     }

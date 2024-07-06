@@ -1,5 +1,1 @@
 #nullable enable
-~const NuGet.ProjectManagement.ProjectItems.FrameworkReference = "FrameworkReference" -> string
-~const NuGet.ProjectManagement.ProjectItems.NuGetAuditSuppress = "NuGetAuditSuppress" -> string
-~const NuGet.ProjectManagement.ProjectItems.PackageDownload = "PackageDownload" -> string
-~const NuGet.ProjectManagement.ProjectItems.PackageVersion = "PackageVersion" -> string

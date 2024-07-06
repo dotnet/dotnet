@@ -17,7 +17,6 @@
       "src\\NuGet.Core\\NuGet.LibraryModel\\NuGet.LibraryModel.csproj",
       "src\\NuGet.Core\\NuGet.Localization\\NuGet.Localization.csproj",
       "src\\NuGet.Core\\NuGet.PackageManagement\\NuGet.PackageManagement.csproj",
-      "src\\NuGet.Core\\NuGet.Packaging.Core\\NuGet.Packaging.Core.csproj",
       "src\\NuGet.Core\\NuGet.Packaging\\NuGet.Packaging.csproj",
       "src\\NuGet.Core\\NuGet.ProjectModel\\NuGet.ProjectModel.csproj",
       "src\\NuGet.Core\\NuGet.Protocol\\NuGet.Protocol.csproj",

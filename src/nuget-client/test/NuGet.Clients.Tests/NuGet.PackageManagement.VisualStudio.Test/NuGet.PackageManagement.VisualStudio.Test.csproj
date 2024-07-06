@@ -33,9 +33,4 @@
     <PackageReference Include="Microsoft.Build.Framework" />
     <PackageReference Include="Microsoft.NET.StringTools" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Include="xunit.runner.json"
-          CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
 </Project>

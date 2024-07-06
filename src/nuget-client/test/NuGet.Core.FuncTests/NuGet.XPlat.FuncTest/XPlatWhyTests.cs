@@ -5,6 +5,7 @@ using NuGet.CommandLine.XPlat;
 using NuGet.Packaging;
 using NuGet.Test.Utility;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.XPlat.FuncTest
 {
@@ -12,14 +13,18 @@ namespace NuGet.XPlat.FuncTest
     public class XPlatWhyTests
     {
         private static readonly string ProjectName = "Test.Project.DotnetNugetWhy";
-        private static MSBuildAPIUtility MsBuild => new MSBuildAPIUtility(new TestCommandOutputLogger());
+
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public XPlatWhyTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
 
         [Fact]
         public async void WhyCommand_ProjectHasTransitiveDependency_DependencyPathExists()
         {
             // Arrange
-            var logger = new TestCommandOutputLogger();
-
             var pathContext = new SimpleTestPathContext();
             var projectFramework = "net472";
             var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, projectFramework);
@@ -37,9 +42,10 @@ namespace NuGet.XPlat.FuncTest
                 packageX,
                 packageY);
 
-            var addPackageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, packageX.Version, project);
+            var logger = new TestCommandOutputLogger(_testOutputHelper);
+            var addPackageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, packageX.Version, project);
             var addPackageCommandRunner = new AddPackageReferenceCommandRunner();
-            var addPackageResult = await addPackageCommandRunner.ExecuteCommand(addPackageArgs, MsBuild);
+            var addPackageResult = await addPackageCommandRunner.ExecuteCommand(addPackageArgs, new MSBuildAPIUtility(logger));
 
             var whyCommandArgs = new WhyCommandArgs(
                     project.ProjectPath,
@@ -63,8 +69,6 @@ namespace NuGet.XPlat.FuncTest
         public async void WhyCommand_ProjectHasNoDependencyOnTargetPackage_PathDoesNotExist()
         {
             // Arrange
-            var logger = new TestCommandOutputLogger();
-
             var pathContext = new SimpleTestPathContext();
             var projectFramework = "net472";
             var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, projectFramework);
@@ -80,9 +84,10 @@ namespace NuGet.XPlat.FuncTest
                 packageX,
                 packageZ);
 
-            var addPackageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, packageX.Version, project);
+            var logger = new TestCommandOutputLogger(_testOutputHelper);
+            var addPackageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, packageX.Version, project);
             var addPackageCommandRunner = new AddPackageReferenceCommandRunner();
-            var addPackageResult = await addPackageCommandRunner.ExecuteCommand(addPackageArgs, MsBuild);
+            var addPackageResult = await addPackageCommandRunner.ExecuteCommand(addPackageArgs, new MSBuildAPIUtility(logger));
 
             var whyCommandArgs = new WhyCommandArgs(
                     project.ProjectPath,
@@ -104,7 +109,7 @@ namespace NuGet.XPlat.FuncTest
         public void WhyCommand_ProjectDidNotRunRestore_Fails()
         {
             // Arrange
-            var logger = new TestCommandOutputLogger();
+            var logger = new TestCommandOutputLogger(_testOutputHelper);
 
             var pathContext = new SimpleTestPathContext();
             var projectFramework = "net472";
@@ -137,7 +142,7 @@ namespace NuGet.XPlat.FuncTest
         public void WhyCommand_EmptyProjectArgument_Fails()
         {
             // Arrange
-            var logger = new TestCommandOutputLogger();
+            var logger = new TestCommandOutputLogger(_testOutputHelper);
 
             var whyCommandArgs = new WhyCommandArgs(
                     "",
@@ -159,7 +164,7 @@ namespace NuGet.XPlat.FuncTest
         public void WhyCommand_EmptyPackageArgument_Fails()
         {
             // Arrange
-            var logger = new TestCommandOutputLogger();
+            var logger = new TestCommandOutputLogger(_testOutputHelper);
 
             var pathContext = new SimpleTestPathContext();
             var projectFramework = "net472";
@@ -185,7 +190,7 @@ namespace NuGet.XPlat.FuncTest
         public void WhyCommand_InvalidProject_Fails()
         {
             // Arrange
-            var logger = new TestCommandOutputLogger();
+            var logger = new TestCommandOutputLogger(_testOutputHelper);
 
             string fakeProjectPath = "FakeProjectPath.csproj";
 
@@ -209,8 +214,6 @@ namespace NuGet.XPlat.FuncTest
         public async void WhyCommand_InvalidFrameworksOption_WarnsCorrectly()
         {
             // Arrange
-            var logger = new TestCommandOutputLogger();
-
             var pathContext = new SimpleTestPathContext();
             var projectFramework = "net472";
             var inputFrameworksOption = "invalidFrameworkAlias";
@@ -229,9 +232,10 @@ namespace NuGet.XPlat.FuncTest
                 packageX,
                 packageY);
 
-            var addPackageCommandArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, packageX.Version, project);
+            var logger = new TestCommandOutputLogger(_testOutputHelper);
+            var addPackageCommandArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, packageX.Version, project);
             var addPackageCommandRunner = new AddPackageReferenceCommandRunner();
-            var addPackageResult = await addPackageCommandRunner.ExecuteCommand(addPackageCommandArgs, MsBuild);
+            var addPackageResult = await addPackageCommandRunner.ExecuteCommand(addPackageCommandArgs, new MSBuildAPIUtility(logger));
 
             var whyCommandArgs = new WhyCommandArgs(
                     project.ProjectPath,

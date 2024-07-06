@@ -2,7 +2,6 @@
   <PropertyGroup>
     <TargetFrameworks>$(NETFXTargetFramework)</TargetFrameworks>
     <Description>Integration tests for NuGet powered msbuild functionalities (restore/pack).</Description>
-    <UseParallelXunit>true</UseParallelXunit>
     <TestProjectType Condition="'$(IsXPlat)' == 'true'">None</TestProjectType>
   </PropertyGroup>
 

@@ -236,8 +236,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Build.NuGetSdkRes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.VisualStudio.Common.Test", "test\NuGet.Clients.Tests\NuGet.VisualStudio.Common.Test\NuGet.VisualStudio.Common.Test.csproj", "{1EDFC48B-2CEC-49DD-90DA-3A69BDDAB8CF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.Packaging.Core", "src\NuGet.Core\NuGet.Packaging.Core\NuGet.Packaging.Core.csproj", "{02B7C422-C592-4BA6-89A7-ACBD7923B34D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Msbuild.Integration.Test", "test\NuGet.Core.FuncTests\Msbuild.Integration.Test\Msbuild.Integration.Test.csproj", "{92EF44DB-4F40-4610-A1AD-3A554A0CA8B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.Build.Tasks.Console", "src\NuGet.Core\NuGet.Build.Tasks.Console\NuGet.Build.Tasks.Console.csproj", "{3ED13630-90EB-420E-8083-0959B2955C6E}"
@@ -303,8 +301,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet-build", "dotnet-build", "{85D69893-216B-4D97-9E90-39340CA24CA4}"
 	ProjectSection(SolutionItems) = preProject
 		eng\dotnet-build\build.sh = eng\dotnet-build\build.sh
-		eng\dotnet-build\global.json = eng\dotnet-build\global.json
 		eng\dotnet-build\dotnet-build.proj = eng\dotnet-build\dotnet-build.proj
+		eng\dotnet-build\global.json = eng\dotnet-build\global.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{EA5A2D72-33C8-442C-AB6D-99EA8739591D}"
@@ -634,10 +632,6 @@ Global
 		{1EDFC48B-2CEC-49DD-90DA-3A69BDDAB8CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EDFC48B-2CEC-49DD-90DA-3A69BDDAB8CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EDFC48B-2CEC-49DD-90DA-3A69BDDAB8CF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{02B7C422-C592-4BA6-89A7-ACBD7923B34D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{02B7C422-C592-4BA6-89A7-ACBD7923B34D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{02B7C422-C592-4BA6-89A7-ACBD7923B34D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{02B7C422-C592-4BA6-89A7-ACBD7923B34D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{92EF44DB-4F40-4610-A1AD-3A554A0CA8B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{92EF44DB-4F40-4610-A1AD-3A554A0CA8B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92EF44DB-4F40-4610-A1AD-3A554A0CA8B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -805,7 +799,6 @@ Global
 		{299B3E44-5372-4D6B-A4E9-3DBEA4705701} = {506AF844-92E0-4404-BBFC-0AB073890A72}
 		{ADCF5BF7-5A77-4F0E-AE76-96C611A079D8} = {7323F93B-D141-4001-BB9E-7AF14031143E}
 		{1EDFC48B-2CEC-49DD-90DA-3A69BDDAB8CF} = {01BC4531-1E25-48D7-A8FD-A47D6FEC47FB}
-		{02B7C422-C592-4BA6-89A7-ACBD7923B34D} = {506AF844-92E0-4404-BBFC-0AB073890A72}
 		{92EF44DB-4F40-4610-A1AD-3A554A0CA8B9} = {BB63CACA-866F-454F-BA4C-78B788D032BB}
 		{3ED13630-90EB-420E-8083-0959B2955C6E} = {506AF844-92E0-4404-BBFC-0AB073890A72}
 		{2011B5A4-2184-4F94-9897-E5BC2425DCDA} = {7323F93B-D141-4001-BB9E-7AF14031143E}

@@ -192,7 +192,7 @@ namespace NuGet.CommandLine.FuncTest
 
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            new Action(() => CommandRunner.Run(fileName, arguments: args, timeOutInMilliseconds: 1000, testOutputHelper: _testOutputHelper))
+            new Action(() => CommandRunner.Run(fileName, arguments: args, timeOutInMilliseconds: 1000, testOutputHelper: _testOutputHelper, timeoutRetryCount: 0))
                 .Should().Throw<TimeoutException>();
 
             stopwatch.Stop();

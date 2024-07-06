@@ -742,7 +742,11 @@ NuGet.ProjectManagement.XmlUtility
 ~const NuGet.ProjectManagement.ProjectItemProperties.NoWarn = "NoWarn" -> string
 ~const NuGet.ProjectManagement.ProjectItemProperties.PrivateAssets = "PrivateAssets" -> string
 ~const NuGet.ProjectManagement.ProjectItemProperties.VersionOverride = "VersionOverride" -> string
+~const NuGet.ProjectManagement.ProjectItems.FrameworkReference = "FrameworkReference" -> string
+~const NuGet.ProjectManagement.ProjectItems.NuGetAuditSuppress = "NuGetAuditSuppress" -> string
+~const NuGet.ProjectManagement.ProjectItems.PackageDownload = "PackageDownload" -> string
 ~const NuGet.ProjectManagement.ProjectItems.PackageReference = "PackageReference" -> string
+~const NuGet.ProjectManagement.ProjectItems.PackageVersion = "PackageVersion" -> string
 ~const NuGet.ProjectManagement.ProjectItems.ProjectReference = "ProjectReference" -> string
 ~override NuGet.PackageManagement.IDEExecutionContext.OpenFile(string fullPath) -> System.Threading.Tasks.Task
 ~override NuGet.PackageManagement.ProjectContextLogger.Log(NuGet.Common.ILogMessage message) -> void

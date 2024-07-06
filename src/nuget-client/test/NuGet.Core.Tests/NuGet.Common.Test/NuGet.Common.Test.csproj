@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
-    <UseParallelXunit>true</UseParallelXunit>
     <Description>Unit tests for NuGet.Common.</Description>
     <Nullable>enable</Nullable>
   </PropertyGroup>

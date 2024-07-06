@@ -37,7 +37,7 @@ namespace Dotnet.Integration.Test
                     packageA100);
             var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, packageA100, "net472");
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
-            SelfSignedCertificateMockServer tcpListenerServer = new SelfSignedCertificateMockServer(packageSourceDirectory);
+            SelfSignedCertificateMockServer tcpListenerServer = new SelfSignedCertificateMockServer(packageSourceDirectory, _testOutputHelper);
             var serverTask = tcpListenerServer.StartServerAsync();
             pathContext.Settings.AddSource("https-feed", $"{tcpListenerServer.URI}v3/index.json", "disableTLSCertificateValidation", "true");
 
@@ -59,7 +59,7 @@ namespace Dotnet.Integration.Test
                     packageB100);
             var projectB = XPlatTestUtils.CreateProject("ProjectB", pathContext, packageB100, "net472");
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectB.ProjectName);
-            SelfSignedCertificateMockServer tcpListenerServer = new SelfSignedCertificateMockServer(packageSourceDirectory);
+            SelfSignedCertificateMockServer tcpListenerServer = new SelfSignedCertificateMockServer(packageSourceDirectory, _testOutputHelper);
             var serverTask = tcpListenerServer.StartServerAsync();
             pathContext.Settings.AddSource("https-feed", $"{tcpListenerServer.URI}v3/index.json");
 
@@ -81,8 +81,8 @@ namespace Dotnet.Integration.Test
                     packageB100);
             var projectB = XPlatTestUtils.CreateProject("ProjectB", pathContext, packageB100, "net472");
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectB.ProjectName);
-            SelfSignedCertificateMockServer tcpListenerServer1 = new SelfSignedCertificateMockServer(packageSourceDirectory);
-            SelfSignedCertificateMockServer tcpListenerServer2 = new SelfSignedCertificateMockServer(packageSourceDirectory);
+            SelfSignedCertificateMockServer tcpListenerServer1 = new SelfSignedCertificateMockServer(packageSourceDirectory, _testOutputHelper);
+            SelfSignedCertificateMockServer tcpListenerServer2 = new SelfSignedCertificateMockServer(packageSourceDirectory, _testOutputHelper);
             var serverTask = tcpListenerServer1.StartServerAsync();
             var serverTask2 = tcpListenerServer2.StartServerAsync();
             pathContext.Settings.AddSource("https-feed1", $"{tcpListenerServer1.URI}v3/index.json");
@@ -107,8 +107,8 @@ namespace Dotnet.Integration.Test
                     packageB100);
             var projectB = XPlatTestUtils.CreateProject("ProjectB", pathContext, packageB100, "net472");
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectB.ProjectName);
-            SelfSignedCertificateMockServer tcpListenerServer1 = new SelfSignedCertificateMockServer(packageSourceDirectory);
-            SelfSignedCertificateMockServer tcpListenerServer2 = new SelfSignedCertificateMockServer(packageSourceDirectory);
+            SelfSignedCertificateMockServer tcpListenerServer1 = new SelfSignedCertificateMockServer(packageSourceDirectory, _testOutputHelper);
+            SelfSignedCertificateMockServer tcpListenerServer2 = new SelfSignedCertificateMockServer(packageSourceDirectory, _testOutputHelper);
             var serverTask = tcpListenerServer1.StartServerAsync();
             var serverTask2 = tcpListenerServer2.StartServerAsync();
             pathContext.Settings.AddSource("https-feed1", $"{tcpListenerServer1.URI}v3/index.json");

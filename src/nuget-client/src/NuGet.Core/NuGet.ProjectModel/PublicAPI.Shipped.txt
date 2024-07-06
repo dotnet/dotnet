@@ -541,6 +541,8 @@ NuGet.ProjectModel.RestoreAuditProperties.EnableAudit.get -> string?
 NuGet.ProjectModel.RestoreAuditProperties.EnableAudit.set -> void
 NuGet.ProjectModel.RestoreAuditProperties.Equals(NuGet.ProjectModel.RestoreAuditProperties? other) -> bool
 NuGet.ProjectModel.RestoreAuditProperties.RestoreAuditProperties() -> void
+NuGet.ProjectModel.RestoreAuditProperties.SuppressedAdvisories.get -> System.Collections.Generic.HashSet<string!>?
+NuGet.ProjectModel.RestoreAuditProperties.SuppressedAdvisories.set -> void
 NuGet.ProjectModel.RestoreAuditProperties.TryParseAuditLevel(out NuGet.Protocol.PackageVulnerabilitySeverity result) -> bool
 NuGet.ProjectModel.RestoreAuditProperties.TryParseEnableAudit(out bool result) -> bool
 NuGet.ProjectModel.RestoreLockProperties

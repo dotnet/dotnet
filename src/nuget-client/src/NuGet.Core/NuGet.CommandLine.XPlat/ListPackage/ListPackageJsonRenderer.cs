@@ -54,7 +54,7 @@ namespace NuGet.CommandLine.XPlat.ListPackage
 
         public ListPackageJsonRenderer(TextWriter textWriter = null)
         {
-            _writer = textWriter != null ? textWriter : Console.Out;
+            _writer = textWriter ?? Console.Out;
         }
 
         public void AddProblem(ProblemType problemType, string text)

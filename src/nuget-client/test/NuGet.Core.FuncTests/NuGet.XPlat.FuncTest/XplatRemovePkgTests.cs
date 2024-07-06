@@ -10,6 +10,7 @@ using NuGet.CommandLine.XPlat;
 using NuGet.Packaging;
 using NuGet.Test.Utility;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.XPlat.FuncTest
 {
@@ -17,8 +18,12 @@ namespace NuGet.XPlat.FuncTest
     public class XPlatRemovePkgTests
     {
         private static readonly string ProjectName = "test_project_removepkg";
+        private readonly ITestOutputHelper _testOutputHelper;
 
-        private static MSBuildAPIUtility MsBuild => new MSBuildAPIUtility(new TestCommandOutputLogger());
+        public XPlatRemovePkgTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
 
         // Argument parsing related tests
 
@@ -40,7 +45,7 @@ namespace NuGet.XPlat.FuncTest
                     projectOption,
                     projectPath};
 
-                var logger = new TestCommandOutputLogger();
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
                 var testApp = new CommandLineApplication();
                 var mockCommandRunner = new Mock<IPackageReferenceCommandRunner>();
                 mockCommandRunner
@@ -84,6 +89,7 @@ namespace NuGet.XPlat.FuncTest
                     packageX);
 
                 var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, packageX, "net46");
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
 
                 // Verify that the package reference exists before removing.
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
@@ -92,11 +98,11 @@ namespace NuGet.XPlat.FuncTest
                 Assert.NotNull(itemGroup);
                 Assert.True(XPlatTestUtils.ValidateReference(itemGroup, packageX.Id, "1.0.0"));
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, projectA);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, projectA);
                 var commandRunner = new RemovePackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
                 // Assert
@@ -114,16 +120,16 @@ namespace NuGet.XPlat.FuncTest
             using (var pathContext = new SimpleTestPathContext())
             {
                 var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net46");
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(unknownPackageId, projectA);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, unknownPackageId, projectA);
                 var commandRunner = new RemovePackageReferenceCommandRunner();
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
                 Assert.True(XPlatTestUtils.ValidateNoReference(projectXmlRoot, unknownPackageId));
-                var msBuild = MsBuild;
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, msBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
                 // Assert
@@ -149,6 +155,8 @@ namespace NuGet.XPlat.FuncTest
 
                 var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, packageX, "net46; netcoreapp1.0", packageframework);
 
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+
                 // Verify that the package reference exists before removing.
                 var projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
                 var itemGroup = XPlatTestUtils.GetItemGroupForFramework(projectXmlRoot, packageframework);
@@ -156,11 +164,11 @@ namespace NuGet.XPlat.FuncTest
                 Assert.NotNull(itemGroup);
                 Assert.True(XPlatTestUtils.ValidateReference(itemGroup, packageX.Id, "1.0.0"));
 
-                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(packageX.Id, projectA);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, projectA);
                 var commandRunner = new RemovePackageReferenceCommandRunner();
 
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
                 projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
                 // Assert

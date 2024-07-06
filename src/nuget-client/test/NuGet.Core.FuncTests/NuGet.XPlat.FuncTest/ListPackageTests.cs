@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.CommandLineUtils;
@@ -211,6 +212,10 @@ namespace NuGet.XPlat.FuncTest
             await RestoreProjectsAsync(pathContext, projectA, projectB, _testOutputHelper);
 
             // Act
+            var output = new StringBuilder();
+            var error = new StringBuilder();
+            using TextWriter consoleOut = new StringWriter(output);
+            using TextWriter consoleError = new StringWriter(error);
             var logger = new TestLogger(_testOutputHelper);
             ListPackageCommandRunner listPackageCommandRunner = new();
             var packageRefArgs = new ListPackageArgs(
@@ -218,7 +223,7 @@ namespace NuGet.XPlat.FuncTest
                                         packageSources: [new(mockServer.ServiceIndexUri)],
                                         frameworks: ["net6.0"],
                                         reportType: ReportType.Vulnerable,
-                                        renderer: new ListPackageConsoleRenderer(),
+                                        renderer: new ListPackageConsoleRenderer(consoleOut, consoleError),
                                         includeTransitive: false,
                                         prerelease: false,
                                         highestPatch: false,
@@ -294,7 +299,7 @@ namespace NuGet.XPlat.FuncTest
                 File.WriteAllText(projectPath, string.Empty);
 
                 var logLevel = LogLevel.Information;
-                var logger = new TestCommandOutputLogger();
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
                 var testApp = new CommandLineApplication();
                 var mockCommandRunner = new Mock<IListPackageCommandRunner>();
                 mockCommandRunner

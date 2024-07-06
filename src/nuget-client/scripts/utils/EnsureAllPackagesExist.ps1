@@ -26,7 +26,6 @@ Param (
 "NuGet.LibraryModel",
 "NuGet.Localization",
 "NuGet.PackageManagement",
-"NuGet.Packaging.Core",
 "NuGet.Packaging",
 "NuGet.ProjectModel",
 "NuGet.Protocol",

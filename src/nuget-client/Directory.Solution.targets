@@ -9,9 +9,8 @@
     <VSTestNoLogo Condition="'$(VSTestNoLogo)' == ''">true</VSTestNoLogo>
     <VSTestVerbosity Condition="'$(SYSTEM_DEBUG)' == 'true'">detailed</VSTestVerbosity>
     <VSTestVerbosity Condition="'$(VSTestVerbosity)' == ''">quiet</VSTestVerbosity>
-    <VSTestSetting Condition="'$(VSTestSetting)' == '' And '$(CI)' == 'true'">$([System.IO.Path]::Combine('$(MSBuildThisFileDirectory)', 'build', 'xunit.runsettings'))</VSTestSetting>
+    <VSTestSetting Condition="'$(VSTestSetting)' == ''">$([System.IO.Path]::Combine('$(MSBuildThisFileDirectory)', 'build', 'xunit.runsettings'))</VSTestSetting>
     <VSTestResultsDirectory Condition="'$(VSTestResultsDirectory)' == ''">$([System.IO.Path]::Combine('$(MSBuildThisFileDirectory)', 'TestResults'))</VSTestResultsDirectory>
-    <VSTestLogger Condition="'$(VSTestLogger)' == ''">console%3Bverbosity=$(VSTestVerbosity)</VSTestLogger>
 
     <!--
       Build tests for all supported target frameworks by default, otherwise build tests for just the specified target framework.
@@ -188,15 +187,24 @@
 
     <ItemGroup>
       <!--
-        Splits the command-line arguments for the test runner into an item group.
+        Adds the console logger with verbosity and then adds any specified from the command-line.
       -->
-      <VSTestLogger Include="$(VSTestLogger)" />
+      <VSTestLogger Include="console%3Bverbosity=$(VSTestVerbosity);$(VSTestLogger)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <VSTestCommand Include="dotnet test" />
+      <VSTestCommand Include="@(TestAssembly->'&quot;%(Identity)&quot;', ' ')" />
+      <VSTestCommand Include="--nologo" Condition="'$(VSTestNoLogo)' == 'true'" />
+      <VSTestCommand Include="--settings &quot;$(VSTestSetting)&quot;" Condition="'$(VSTestSetting)' != ''" />
+      <VSTestCommand Include="--ResultsDirectory &quot;$(VSTestResultsDirectory)&quot;" Condition="'$(VSTestResultsDirectory)' != ''" />
+      <VSTestCommand Include="--diag &quot;$(BinlogDirectory)vstest.diag.log&quot; " Condition="'$(BinlogDirectory)' != ''" />
     </ItemGroup>
 
     <!--
       Runs the tests via 'dotnet test'.
     -->
-    <Exec Command="dotnet test @(TestAssembly->'&quot;%(Identity)&quot;', ' ') --logger &quot;console;verbosity=$(VSTestVerbosity)&quot; --logger @(VSTestLogger->'&quot;%(Identity)&quot;', ' --logger ') --settings &quot;$(VSTestSetting)&quot; --ResultsDirectory &quot;$(VSTestResultsDirectory)&quot;"
+    <Exec Command="@(VSTestCommand->'%(Identity)', ' ') --logger @(VSTestLogger->Distinct()->'&quot;%(Identity)&quot;', ' --logger ')"
           IgnoreStandardErrorWarningFormat="true"
           IgnoreExitCode="true"
           LogStandardErrorAsError="false">

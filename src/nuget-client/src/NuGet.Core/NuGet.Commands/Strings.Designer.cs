@@ -2475,7 +2475,7 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} depends on {1} but {2} was not found. An approximate best match of {3} was resolved..
+        ///   Looks up a localized string similar to {0} depends on {1} but {2} was not found. {3} was resolved instead..
         /// </summary>
         internal static string Warning_MinVersionDoesNotExist {
             get {
@@ -2484,7 +2484,7 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} does not provide an inclusive lower bound for dependency {1}. An approximate best match of {2} was resolved..
+        ///   Looks up a localized string similar to {0} does not provide an inclusive lower bound for dependency {1}. {2} was resolved instead..
         /// </summary>
         internal static string Warning_MinVersionNonInclusive {
             get {

@@ -951,6 +951,7 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.MSBuildRestoreUtility.GetDependencySpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items, bool readOnly) -> NuGet.ProjectModel.DependencyGraphSpec
 ~static NuGet.Commands.MSBuildRestoreUtility.GetMessageForUnsupportedProject(string path) -> NuGet.Common.RestoreLogMessage
 ~static NuGet.Commands.MSBuildRestoreUtility.GetPackageSpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items) -> NuGet.ProjectModel.PackageSpec
+~static NuGet.Commands.MSBuildRestoreUtility.GetRestoreAuditProperties(NuGet.Commands.IMSBuildItem specItem, System.Collections.Generic.HashSet<string> suppressionItems) -> NuGet.ProjectModel.RestoreAuditProperties
 ~static NuGet.Commands.MSBuildRestoreUtility.GetWarningForUnsupportedProject(string path) -> NuGet.Common.RestoreLogMessage
 ~static NuGet.Commands.MSBuildRestoreUtility.HasInvalidClear(System.Collections.Generic.IEnumerable<string> values) -> bool
 ~static NuGet.Commands.MSBuildRestoreUtility.LogErrorForClearIfInvalid(System.Collections.Generic.IEnumerable<string> values, string projectPath, NuGet.Common.ILogger logger) -> bool

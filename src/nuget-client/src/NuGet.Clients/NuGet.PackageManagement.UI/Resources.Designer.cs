@@ -1123,7 +1123,7 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Versions - {0}.
+        ///   Looks up a localized string similar to Versions: {0}.
         /// </summary>
         public static string Label_InstalledVersionsCount {
             get {

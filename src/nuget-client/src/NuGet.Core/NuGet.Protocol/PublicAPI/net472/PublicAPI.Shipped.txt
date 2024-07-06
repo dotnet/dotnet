@@ -90,6 +90,7 @@ NuGet.Protocol.Core.Types.IPackageSearchMetadata.IsListed.get -> bool
 ~NuGet.Protocol.Core.Types.IPackageSearchMetadata.LicenseMetadata.get -> NuGet.Packaging.LicenseMetadata
 ~NuGet.Protocol.Core.Types.IPackageSearchMetadata.LicenseUrl.get -> System.Uri
 ~NuGet.Protocol.Core.Types.IPackageSearchMetadata.Owners.get -> string
+~NuGet.Protocol.Core.Types.IPackageSearchMetadata.OwnersList.get -> System.Collections.Generic.IReadOnlyList<string>
 ~NuGet.Protocol.Core.Types.IPackageSearchMetadata.PackageDetailsUrl.get -> System.Uri
 NuGet.Protocol.Core.Types.IPackageSearchMetadata.PrefixReserved.get -> bool
 ~NuGet.Protocol.Core.Types.IPackageSearchMetadata.ProjectUrl.get -> System.Uri
@@ -182,6 +183,8 @@ NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetada
 ~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.LicenseUrl.set -> void
 ~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.Owners.get -> string
 ~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.Owners.set -> void
+~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.OwnersList.get -> System.Collections.Generic.IReadOnlyList<string>
+~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.OwnersList.set -> void
 ~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.PackageDetailsUrl.get -> System.Uri
 ~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.PackageDetailsUrl.set -> void
 ~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.PackagePath.get -> string
@@ -636,6 +639,7 @@ NuGet.Protocol.LocalPackageSearchMetadata.IsListed.get -> bool
 ~NuGet.Protocol.LocalPackageSearchMetadata.LoadFileAsText(string path) -> string
 ~NuGet.Protocol.LocalPackageSearchMetadata.LocalPackageSearchMetadata(NuGet.Protocol.LocalPackageInfo package) -> void
 ~NuGet.Protocol.LocalPackageSearchMetadata.Owners.get -> string
+~NuGet.Protocol.LocalPackageSearchMetadata.OwnersList.get -> System.Collections.Generic.IReadOnlyList<string>
 ~NuGet.Protocol.LocalPackageSearchMetadata.PackageDetailsUrl.get -> System.Uri
 ~NuGet.Protocol.LocalPackageSearchMetadata.PackagePath.get -> string
 ~NuGet.Protocol.LocalPackageSearchMetadata.PackageReader.get -> System.Func<NuGet.Packaging.PackageReaderBase>
@@ -757,6 +761,7 @@ NuGet.Protocol.PackageSearchMetadata.IsListed.get -> bool
 ~NuGet.Protocol.PackageSearchMetadata.LicenseMetadata.get -> NuGet.Packaging.LicenseMetadata
 ~NuGet.Protocol.PackageSearchMetadata.LicenseUrl.get -> System.Uri
 ~NuGet.Protocol.PackageSearchMetadata.Owners.get -> string
+~NuGet.Protocol.PackageSearchMetadata.OwnersList.get -> System.Collections.Generic.IReadOnlyList<string>
 ~NuGet.Protocol.PackageSearchMetadata.PackageDetailsUrl.get -> System.Uri
 ~NuGet.Protocol.PackageSearchMetadata.PackageDetailsUrl.set -> void
 ~NuGet.Protocol.PackageSearchMetadata.PackageId.get -> string
@@ -793,6 +798,7 @@ NuGet.Protocol.PackageSearchMetadataV2Feed.LastEdited.get -> System.DateTimeOffs
 ~NuGet.Protocol.PackageSearchMetadataV2Feed.LicenseMetadata.get -> NuGet.Packaging.LicenseMetadata
 ~NuGet.Protocol.PackageSearchMetadataV2Feed.LicenseUrl.get -> System.Uri
 ~NuGet.Protocol.PackageSearchMetadataV2Feed.Owners.get -> string
+~NuGet.Protocol.PackageSearchMetadataV2Feed.OwnersList.get -> System.Collections.Generic.IReadOnlyList<string>
 ~NuGet.Protocol.PackageSearchMetadataV2Feed.PackageDetailsUrl.get -> System.Uri
 ~NuGet.Protocol.PackageSearchMetadataV2Feed.PackageId.get -> string
 ~NuGet.Protocol.PackageSearchMetadataV2Feed.PackageSearchMetadataV2Feed(NuGet.Protocol.V2FeedPackageInfo package) -> void
@@ -1338,6 +1344,8 @@ NuGet.Protocol.Plugins.UnixAndMonoPlatformsEmbeddedSignatureVerifier.UnixAndMono
 NuGet.Protocol.Plugins.WindowsEmbeddedSignatureVerifier
 NuGet.Protocol.Plugins.WindowsEmbeddedSignatureVerifier.WindowsEmbeddedSignatureVerifier() -> void
 NuGet.Protocol.ProtocolConstants
+NuGet.Protocol.Providers.OwnerDetailsUriResourceV3Provider
+NuGet.Protocol.Providers.OwnerDetailsUriResourceV3Provider.OwnerDetailsUriResourceV3Provider() -> void
 NuGet.Protocol.Providers.VulnerabilityInfoResourceV3Provider
 NuGet.Protocol.Providers.VulnerabilityInfoResourceV3Provider.VulnerabilityInfoResourceV3Provider() -> void
 NuGet.Protocol.ProxyAuthenticationHandler
@@ -1395,6 +1403,8 @@ NuGet.Protocol.RepositorySignatureResource.AllRepositorySigned.get -> bool
 NuGet.Protocol.RepositorySignatureResource.UpdateRepositorySignatureInfo() -> void
 NuGet.Protocol.RepositorySignatureResourceProvider
 NuGet.Protocol.RepositorySignatureResourceProvider.RepositorySignatureResourceProvider() -> void
+NuGet.Protocol.Resources.OwnerDetailsUriTemplateResourceV3
+NuGet.Protocol.Resources.OwnerDetailsUriTemplateResourceV3.GetUri(string! owner) -> System.Uri!
 NuGet.Protocol.Resources.VulnerabilityInfoResourceV3
 NuGet.Protocol.Resources.VulnerabilityInfoResourceV3.GetVulnerabilityDataAsync(NuGet.Protocol.Model.V3VulnerabilityIndexEntry! vulnerabilityPage, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Model.PackageVulnerabilityInfo!>!>!>!
 NuGet.Protocol.Resources.VulnerabilityInfoResourceV3.GetVulnerabilityFilesAsync(NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Model.V3VulnerabilityIndexEntry!>!>!
@@ -1843,6 +1853,7 @@ override NuGet.Protocol.Plugins.StandardOutputReceiver.Close() -> void
 override NuGet.Protocol.Plugins.StandardOutputReceiver.Connect() -> void
 ~override NuGet.Protocol.Plugins.UnixAndMonoPlatformsEmbeddedSignatureVerifier.IsValid(string filePath) -> bool
 ~override NuGet.Protocol.Plugins.WindowsEmbeddedSignatureVerifier.IsValid(string filePath) -> bool
+override NuGet.Protocol.Providers.OwnerDetailsUriResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.Providers.VulnerabilityInfoResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 ~override NuGet.Protocol.ProxyAuthenticationHandler.SendAsync(System.Net.Http.HttpRequestMessage request, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>
 ~override NuGet.Protocol.RawSearchResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
@@ -2026,6 +2037,7 @@ static NuGet.Protocol.Events.ProtocolDiagnostics.ResourceEvent -> NuGet.Protocol
 static NuGet.Protocol.Plugins.TimeoutUtilities.IsValid(System.TimeSpan timeout) -> bool
 ~static NuGet.Protocol.RegistrationUtility.CreateVersionRange(string stringToParse) -> NuGet.Versioning.VersionRange
 ~static NuGet.Protocol.RegistrationUtility.LoadRanges(NuGet.Protocol.HttpSource httpSource, System.Uri registrationUri, string packageId, NuGet.Versioning.VersionRange range, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Newtonsoft.Json.Linq.JObject>>
+static NuGet.Protocol.Resources.OwnerDetailsUriTemplateResourceV3.CreateOrNull(System.Uri! uriTemplate) -> NuGet.Protocol.Resources.OwnerDetailsUriTemplateResourceV3?
 ~static NuGet.Protocol.SemaphoreSlimThrottle.CreateBinarySemaphore() -> NuGet.Protocol.SemaphoreSlimThrottle
 ~static NuGet.Protocol.SemaphoreSlimThrottle.CreateSemaphoreThrottle(int initialCount) -> NuGet.Protocol.SemaphoreSlimThrottle
 ~static NuGet.Protocol.StreamExtensions.CopyToAsync(this System.IO.Stream stream, System.IO.Stream destination, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task

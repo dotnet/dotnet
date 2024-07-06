@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
-    <UseParallelXunit>true</UseParallelXunit>
     <Description>An end-to-end test suite for NuGet.CommandLine. Contains tests for every nuget.exe CLI command. Overlaps in tests with NuGet.CommandLine.FuncTest.</Description>
     <TestProjectType Condition="'$(IsXPlat)' != 'true'">Functional</TestProjectType>
   </PropertyGroup>

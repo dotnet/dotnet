@@ -429,7 +429,7 @@
     <value>Learn about Uninstall Options</value>
   </data>
   <data name="Label_InstalledVersionsCount" xml:space="preserve">
-    <value>Versions - {0}</value>
+    <value>Versions: {0}</value>
   </data>
   <data name="GroupBoxHeader_InstallOptions" xml:space="preserve">
     <value>Install and Update Options</value>

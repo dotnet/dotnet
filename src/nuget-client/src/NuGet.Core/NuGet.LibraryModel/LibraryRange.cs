@@ -73,42 +73,40 @@ namespace NuGet.LibraryModel
             return output;
         }
 
-        public string? ToLockFileDependencyGroupString()
+        public string ToLockFileDependencyGroupString()
         {
-            if (VersionRange is null)
-            {
-                return null;
-            }
-
             StringBuilder sb = StringBuilderPool.Shared.Rent(256);
 
             sb.Append(Name);
 
-            if (VersionRange.HasLowerBound)
+            if (VersionRange != null)
             {
-                if (VersionRange.IsMinInclusive)
+                if (VersionRange.HasLowerBound)
                 {
-                    sb.Append(" >= ");
-                }
-                else
-                {
-                    sb.Append(" > ");
+                    if (VersionRange.IsMinInclusive)
+                    {
+                        sb.Append(" >= ");
+                    }
+                    else
+                    {
+                        sb.Append(" > ");
+                    }
+
+                    if (VersionRange.IsFloating)
+                    {
+                        VersionRange.Float.ToString(sb);
+                    }
+                    else
+                    {
+                        sb.Append(VersionRange.MinVersion.ToNormalizedString());
+                    }
                 }
 
-                if (VersionRange.IsFloating)
+                if (VersionRange.HasUpperBound)
                 {
-                    VersionRange.Float.ToString(sb);
+                    sb.Append(VersionRange.IsMaxInclusive ? " <= " : " < ");
+                    sb.Append(VersionRange.MaxVersion.ToNormalizedString());
                 }
-                else
-                {
-                    sb.Append(VersionRange.MinVersion.ToNormalizedString());
-                }
-            }
-
-            if (VersionRange.HasUpperBound)
-            {
-                sb.Append(VersionRange.IsMaxInclusive ? " <= " : " < ");
-                sb.Append(VersionRange.MaxVersion.ToNormalizedString());
             }
 
             return StringBuilderPool.Shared.ToStringAndReturn(sb);

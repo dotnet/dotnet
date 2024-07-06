@@ -58,6 +58,11 @@ NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.BaseIntermediatePath.get -> 
 NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.OriginalTargetFrameworks.get -> string?
 NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.TargetFrameworks.get -> NuGet.SolutionRestoreManager.IVsTargetFrameworks2!
 NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.ToolReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems?
+NuGet.SolutionRestoreManager.IVsProjectRestoreInfo3
+NuGet.SolutionRestoreManager.IVsProjectRestoreInfo3.MSBuildProjectExtensionsPath.get -> string!
+NuGet.SolutionRestoreManager.IVsProjectRestoreInfo3.OriginalTargetFrameworks.get -> string?
+NuGet.SolutionRestoreManager.IVsProjectRestoreInfo3.TargetFrameworks.get -> System.Collections.Generic.IReadOnlyList<NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo4!>!
+NuGet.SolutionRestoreManager.IVsProjectRestoreInfo3.ToolReferences.get -> System.Collections.Generic.IReadOnlyList<NuGet.SolutionRestoreManager.IVsReferenceItem2!>?
 NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource
 NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource.HasPendingNomination.get -> bool
 NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource.Name.get -> string!
@@ -65,6 +70,9 @@ NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource.WhenNominated(System.Th
 NuGet.SolutionRestoreManager.IVsReferenceItem
 NuGet.SolutionRestoreManager.IVsReferenceItem.Name.get -> string!
 NuGet.SolutionRestoreManager.IVsReferenceItem.Properties.get -> NuGet.SolutionRestoreManager.IVsReferenceProperties?
+NuGet.SolutionRestoreManager.IVsReferenceItem2
+NuGet.SolutionRestoreManager.IVsReferenceItem2.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>?
+NuGet.SolutionRestoreManager.IVsReferenceItem2.Name.get -> string!
 NuGet.SolutionRestoreManager.IVsReferenceItems
 NuGet.SolutionRestoreManager.IVsReferenceItems.Count.get -> int
 NuGet.SolutionRestoreManager.IVsReferenceItems.Item(object! index) -> NuGet.SolutionRestoreManager.IVsReferenceItem?
@@ -84,6 +92,8 @@ NuGet.SolutionRestoreManager.IVsSolutionRestoreService3.CurrentRestoreOperation.
 NuGet.SolutionRestoreManager.IVsSolutionRestoreService3.NominateProjectAsync(string! projectUniqueName, NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2! projectRestoreInfo, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
 NuGet.SolutionRestoreManager.IVsSolutionRestoreService4
 NuGet.SolutionRestoreManager.IVsSolutionRestoreService4.RegisterRestoreInfoSourceAsync(NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource! restoreInfoSource, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+NuGet.SolutionRestoreManager.IVsSolutionRestoreService5
+NuGet.SolutionRestoreManager.IVsSolutionRestoreService5.NominateProjectAsync(string! projectUniqueName, NuGet.SolutionRestoreManager.IVsProjectRestoreInfo3! projectRestoreInfo, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
 NuGet.SolutionRestoreManager.IVsSolutionRestoreStatusProvider
 NuGet.SolutionRestoreManager.IVsSolutionRestoreStatusProvider.IsRestoreCompleteAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
 NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo
@@ -96,6 +106,9 @@ NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2.FrameworkReferences.get -> 
 NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2.PackageDownloads.get -> NuGet.SolutionRestoreManager.IVsReferenceItems?
 NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo3
 NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo3.CentralPackageVersions.get -> NuGet.SolutionRestoreManager.IVsReferenceItems?
+NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo4
+NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo4.Items.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<NuGet.SolutionRestoreManager.IVsReferenceItem2!>!>?
+NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo4.Properties.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
 NuGet.SolutionRestoreManager.IVsTargetFrameworks
 NuGet.SolutionRestoreManager.IVsTargetFrameworks.Count.get -> int
 NuGet.SolutionRestoreManager.IVsTargetFrameworks.Item(object! index) -> NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo?

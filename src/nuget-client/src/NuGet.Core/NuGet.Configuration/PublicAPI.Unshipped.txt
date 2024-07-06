@@ -1,7 +1,1 @@
 #nullable enable
-NuGet.Configuration.PackageSource.DisableTLSCertificateValidation.get -> bool
-NuGet.Configuration.PackageSource.DisableTLSCertificateValidation.set -> void
-NuGet.Configuration.SourceItem.DisableTLSCertificateValidation.get -> string?
-NuGet.Configuration.SourceItem.DisableTLSCertificateValidation.set -> void
-NuGet.Configuration.SourceItem.SourceItem(string! key, string! value, string? protocolVersion, string? allowInsecureConnections, string? disableTLSCertificateValidation) -> void
-static readonly NuGet.Configuration.ConfigurationConstants.DisableTLSCertificateValidation -> string!

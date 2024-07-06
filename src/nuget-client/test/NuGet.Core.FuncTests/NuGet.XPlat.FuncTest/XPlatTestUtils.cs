@@ -11,13 +11,11 @@ using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NuGet.CommandLine.XPlat;
-using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
 using NuGet.Test.Utility;
-using NuGet.Versioning;
 
 namespace NuGet.XPlat.FuncTest
 {
@@ -209,19 +207,16 @@ namespace NuGet.XPlat.FuncTest
             return package;
         }
 
-        internal static PackageReferenceArgs GetPackageReferenceArgs(string packageId, SimpleTestProjectContext project)
+        internal static PackageReferenceArgs GetPackageReferenceArgs(TestCommandOutputLogger logger, string packageId, SimpleTestProjectContext project)
         {
-            var logger = new TestCommandOutputLogger();
             return new PackageReferenceArgs(project.ProjectPath, logger)
             {
                 PackageId = packageId
             };
         }
 
-        internal static PackageReferenceArgs GetPackageReferenceArgs(string packageId, string packageVersion, SimpleTestProjectContext project,
-            string frameworks = "", string packageDirectory = "", string sources = "", bool noRestore = false, bool noVersion = false, bool prerelease = false)
+        internal static PackageReferenceArgs GetPackageReferenceArgs(TestCommandOutputLogger logger, string packageId, string packageVersion, SimpleTestProjectContext project, string frameworks = "", string packageDirectory = "", string sources = "", bool noRestore = false, bool noVersion = false, bool prerelease = false)
         {
-            var logger = new TestCommandOutputLogger();
             var dgFilePath = string.Empty;
             if (!noRestore)
             {

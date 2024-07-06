@@ -78,7 +78,7 @@ jobs:
     condition: succeeded()
     inputs:
       command: test
-      arguments: --no-restore --restore:false --no-build --framework $(TestTargetFramework) --blame --logger trx --binarylogger:"$(BinlogDirectory)02-RunTests.binlog"
+      arguments: --no-restore --restore:false --no-build --framework $(TestTargetFramework) --binarylogger:"$(BinlogDirectory)02-RunTests.binlog"
       testRunTitle: ${{ parameters.osName }} $(TestType) Tests ($(TestTargetFramework))
 
   - task: PublishPipelineArtifact@1

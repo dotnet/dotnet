@@ -1,13 +1,1 @@
 #nullable enable
-NuGet.Protocol.Providers.OwnerDetailsUriResourceV3Provider
-NuGet.Protocol.Providers.OwnerDetailsUriResourceV3Provider.OwnerDetailsUriResourceV3Provider() -> void
-NuGet.Protocol.Resources.OwnerDetailsUriTemplateResourceV3
-NuGet.Protocol.Resources.OwnerDetailsUriTemplateResourceV3.GetUri(string! owner) -> System.Uri!
-override NuGet.Protocol.Providers.OwnerDetailsUriResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
-static NuGet.Protocol.Resources.OwnerDetailsUriTemplateResourceV3.CreateOrNull(System.Uri! uriTemplate) -> NuGet.Protocol.Resources.OwnerDetailsUriTemplateResourceV3?
-~NuGet.Protocol.Core.Types.IPackageSearchMetadata.OwnersList.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.OwnersList.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata.OwnersList.set -> void
-~NuGet.Protocol.LocalPackageSearchMetadata.OwnersList.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.Protocol.PackageSearchMetadata.OwnersList.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.Protocol.PackageSearchMetadataV2Feed.OwnersList.get -> System.Collections.Generic.IReadOnlyList<string>
