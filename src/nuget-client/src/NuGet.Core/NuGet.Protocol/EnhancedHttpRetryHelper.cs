@@ -70,17 +70,17 @@ namespace NuGet.Protocol
 
         private readonly IEnvironmentVariableReader _environmentVariableReader;
 
-        private bool? _isEnabled = null;
+        private Lazy<bool> _isEnabled;
 
-        private int? _retryCount = null;
+        private Lazy<int> _retryCount;
 
-        private int? _delayInMilliseconds = null;
+        private Lazy<int> _delayInMilliseconds;
 
-        private bool? _retry429 = null;
+        private Lazy<bool> _retry429;
 
-        private bool? _observeRetryAfter = null;
+        private Lazy<bool> _observeRetryAfter;
 
-        private TimeSpan? _maxRetyAfterDelay = null;
+        private Lazy<TimeSpan> _maxRetyAfterDelay;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EnhancedHttpRetryHelper" /> class.
@@ -90,46 +90,44 @@ namespace NuGet.Protocol
         public EnhancedHttpRetryHelper(IEnvironmentVariableReader environmentVariableReader)
         {
             _environmentVariableReader = environmentVariableReader ?? throw new ArgumentNullException(nameof(environmentVariableReader));
+            _isEnabled = new Lazy<bool>(() => GetBoolFromEnvironmentVariable(IsEnabledEnvironmentVariableName, defaultValue: DefaultEnabled, _environmentVariableReader));
+            _retryCount = new Lazy<int>(() => GetIntFromEnvironmentVariable(RetryCountEnvironmentVariableName, defaultValue: DefaultRetryCount, _environmentVariableReader));
+            _delayInMilliseconds = new Lazy<int>(() => GetIntFromEnvironmentVariable(DelayInMillisecondsEnvironmentVariableName, defaultValue: DefaultDelayMilliseconds, _environmentVariableReader));
+            _retry429 = new Lazy<bool>(() => GetBoolFromEnvironmentVariable(Retry429EnvironmentVariableName, defaultValue: true, _environmentVariableReader));
+            _observeRetryAfter = new Lazy<bool>(() => GetBoolFromEnvironmentVariable(ObserveRetryAfterEnvironmentVariableName, defaultValue: DefaultObserveRetryAfter, _environmentVariableReader));
+            _maxRetyAfterDelay = new Lazy<TimeSpan>(() =>
+            {
+                int maxRetryAfterDelay = GetIntFromEnvironmentVariable(MaximumRetryAfterDurationEnvironmentVariableName, defaultValue: (int)TimeSpan.FromHours(1).TotalSeconds, _environmentVariableReader);
+                return TimeSpan.FromSeconds(maxRetryAfterDelay);
+            });
         }
 
         /// <summary>
         /// Gets a value indicating whether or not enhanced HTTP retry should be enabled.  The default value is <see langword="true" />.
         /// </summary>
-        internal bool IsEnabled => _isEnabled ??= GetBoolFromEnvironmentVariable(IsEnabledEnvironmentVariableName, defaultValue: DefaultEnabled, _environmentVariableReader);
+        internal bool IsEnabled => _isEnabled.Value;
 
         /// <summary>
         /// Gets a value indicating the maximum number of times to retry.  The default value is 6.
         /// </summary>
-        internal int RetryCount => _retryCount ??= GetIntFromEnvironmentVariable(RetryCountEnvironmentVariableName, defaultValue: DefaultRetryCount, _environmentVariableReader);
+        internal int RetryCount => _retryCount.Value;
 
         /// <summary>
         /// Gets a value indicating the delay in milliseconds to wait before retrying a connection.  The default value is 1000.
         /// </summary>
-        internal int DelayInMilliseconds => _delayInMilliseconds ??= GetIntFromEnvironmentVariable(DelayInMillisecondsEnvironmentVariableName, defaultValue: DefaultDelayMilliseconds, _environmentVariableReader);
+        internal int DelayInMilliseconds => _delayInMilliseconds.Value;
 
         /// <summary>
         /// Gets a value indicating whether or not retryable HTTP 4xx responses should be retried.
         /// </summary>
-        internal bool Retry429 => _retry429 ??= GetBoolFromEnvironmentVariable(Retry429EnvironmentVariableName, defaultValue: true, _environmentVariableReader);
+        internal bool Retry429 => _retry429.Value;
 
         /// <summary>
         /// Gets a value indicating whether or not to observe the Retry-After header on HTTP responses.
         /// </summary>
-        internal bool ObserveRetryAfter => _observeRetryAfter ??= GetBoolFromEnvironmentVariable(ObserveRetryAfterEnvironmentVariableName, defaultValue: DefaultObserveRetryAfter, _environmentVariableReader);
+        internal bool ObserveRetryAfter => _observeRetryAfter.Value;
 
-        internal TimeSpan MaxRetryAfterDelay
-        {
-            get
-            {
-                if (_maxRetyAfterDelay == null)
-                {
-                    int maxRetryAfterDelay = GetIntFromEnvironmentVariable(MaximumRetryAfterDurationEnvironmentVariableName, defaultValue: (int)TimeSpan.FromHours(1).TotalSeconds, _environmentVariableReader);
-                    _maxRetyAfterDelay = TimeSpan.FromSeconds(maxRetryAfterDelay);
-                }
-
-                return _maxRetyAfterDelay.Value;
-            }
-        }
+        internal TimeSpan MaxRetryAfterDelay => _maxRetyAfterDelay.Value;
 
         /// <summary>
         /// Gets a <see cref="bool" /> value from the specified environment variable.
