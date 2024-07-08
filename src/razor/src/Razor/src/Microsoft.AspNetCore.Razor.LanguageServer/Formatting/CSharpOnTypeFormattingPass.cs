@@ -54,10 +54,6 @@ internal sealed class CSharpOnTypeFormattingPass(
             }
 
             // Ask C# for formatting changes.
-            var indentationOptions = new RazorIndentationOptions(
-                UseTabs: !context.Options.InsertSpaces,
-                TabSize: context.Options.TabSize,
-                IndentationSize: context.Options.TabSize);
             var autoFormattingOptions = new RazorAutoFormattingOptions(
                 formatOnReturn: true, formatOnTyping: true, formatOnSemicolon: true, formatOnCloseBrace: true);
 
@@ -65,7 +61,7 @@ internal sealed class CSharpOnTypeFormattingPass(
                 context.CSharpWorkspaceDocument,
                 typedChar: context.TriggerCharacter,
                 projectedIndex,
-                indentationOptions,
+                context.Options.GetIndentationOptions(),
                 autoFormattingOptions,
                 indentStyle: CodeAnalysis.Formatting.FormattingOptions.IndentStyle.Smart,
                 cancellationToken).ConfigureAwait(false);

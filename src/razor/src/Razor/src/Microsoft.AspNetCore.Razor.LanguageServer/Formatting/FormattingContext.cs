@@ -73,28 +73,7 @@ internal class FormattingContext : IDisposable
         }
     }
 
-    public AdhocWorkspace CSharpWorkspace
-    {
-        get
-        {
-            if (_csharpWorkspace is null)
-            {
-                var adhocWorkspace = _workspaceFactory.Create();
-                var csharpOptions = GetChangedOptionSet(adhocWorkspace.Options);
-                adhocWorkspace.TryApplyChanges(adhocWorkspace.CurrentSolution.WithOptions(csharpOptions));
-                _csharpWorkspace = adhocWorkspace;
-            }
-
-            return _csharpWorkspace;
-        }
-    }
-
-    public CodeAnalysis.Options.OptionSet GetChangedOptionSet(CodeAnalysis.Options.OptionSet optionsSet)
-    {
-        return optionsSet.WithChangedOption(CodeAnalysis.Formatting.FormattingOptions.TabSize, LanguageNames.CSharp, Options.TabSize)
-                         .WithChangedOption(CodeAnalysis.Formatting.FormattingOptions.IndentationSize, LanguageNames.CSharp, Options.TabSize)
-                         .WithChangedOption(CodeAnalysis.Formatting.FormattingOptions.UseTabs, LanguageNames.CSharp, !Options.InsertSpaces);
-    }
+    public AdhocWorkspace CSharpWorkspace => _csharpWorkspace ??= _workspaceFactory.Create();
 
     /// <summary>A Dictionary of int (line number) to IndentationContext.</summary>
     /// <remarks>
