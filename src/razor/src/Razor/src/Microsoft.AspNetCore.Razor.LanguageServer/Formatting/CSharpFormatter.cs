@@ -7,10 +7,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
@@ -83,10 +84,7 @@ internal sealed class CSharpFormatter(IRazorDocumentMappingService documentMappi
         var root = await context.CSharpWorkspaceDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
         Assumes.NotNull(root);
 
-        var workspace = context.CSharpWorkspace;
-
-        // Formatting options will already be set in the workspace.
-        var changes = CodeAnalysis.Formatting.Formatter.GetFormattedTextChanges(root, spanToFormat, workspace, cancellationToken: cancellationToken);
+        var changes = RazorCSharpFormattingInteractionService.GetFormattedTextChanges(context.CSharpWorkspace.Services, root, spanToFormat, context.Options.GetIndentationOptions(), cancellationToken);
 
         var edits = changes.Select(c => c.ToTextEdit(csharpSourceText)).ToArray();
         return edits;
@@ -108,7 +106,7 @@ internal sealed class CSharpFormatter(IRazorDocumentMappingService documentMappi
 
         // At this point, we have added all the necessary markers and attached annotations.
         // Let's invoke the C# formatter and hope for the best.
-        var formattedRoot = CodeAnalysis.Formatting.Formatter.Format(root, context.CSharpWorkspace, cancellationToken: cancellationToken);
+        var formattedRoot = RazorCSharpFormattingInteractionService.Format(context.CSharpWorkspace.Services, root, context.Options.GetIndentationOptions(), cancellationToken);
         var formattedText = formattedRoot.GetText();
 
         var desiredIndentationMap = new Dictionary<int, int>();
