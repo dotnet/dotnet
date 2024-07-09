@@ -41,22 +41,12 @@ internal sealed class TypeAccessibilityCodeActionProvider : ICSharpCodeActionPro
         IEnumerable<RazorVSInternalCodeAction> codeActions,
         CancellationToken cancellationToken)
     {
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        if (codeActions is null)
-        {
-            throw new ArgumentNullException(nameof(codeActions));
-        }
-
         if (context.Request?.Context?.Diagnostics is null)
         {
             return SpecializedTasks.AsNullable(SpecializedTasks.EmptyReadOnlyList<RazorVSInternalCodeAction>());
         }
 
-        if (codeActions is null || !codeActions.Any())
+        if (!codeActions.Any())
         {
             return SpecializedTasks.AsNullable(SpecializedTasks.EmptyReadOnlyList<RazorVSInternalCodeAction>());
         }
@@ -276,7 +266,7 @@ internal sealed class TypeAccessibilityCodeActionProvider : ICSharpCodeActionPro
         var fqnWorkspaceEditDocumentChange = new TextDocumentEdit()
         {
             TextDocument = codeDocumentIdentifier,
-            Edits = new[] { fqnTextEdit },
+            Edits = [fqnTextEdit],
         };
 
         var fqnWorkspaceEdit = new WorkspaceEdit()

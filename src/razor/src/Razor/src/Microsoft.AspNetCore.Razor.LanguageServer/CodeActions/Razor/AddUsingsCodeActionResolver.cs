@@ -21,14 +21,9 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal sealed class AddUsingsCodeActionResolver : IRazorCodeActionResolver
+internal sealed class AddUsingsCodeActionResolver(IDocumentContextFactory documentContextFactory) : IRazorCodeActionResolver
 {
-    private readonly IDocumentContextFactory _documentContextFactory;
-
-    public AddUsingsCodeActionResolver(IDocumentContextFactory documentContextFactory)
-    {
-        _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
-    }
+    private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
 
     public string Action => LanguageServerConstants.CodeActions.AddUsing;
 
@@ -46,12 +41,6 @@ internal sealed class AddUsingsCodeActionResolver : IRazorCodeActionResolver
         }
 
         var documentSnapshot = documentContext.Snapshot;
-
-        var text = await documentSnapshot.GetTextAsync().ConfigureAwait(false);
-        if (text is null)
-        {
-            return null;
-        }
 
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
         if (codeDocument.IsUnsupported())
@@ -150,7 +139,7 @@ internal sealed class AddUsingsCodeActionResolver : IRazorCodeActionResolver
         return new TextDocumentEdit()
         {
             TextDocument = codeDocumentIdentifier,
-            Edits = edits.ToArray(),
+            Edits = [.. edits]
         };
     }
 
@@ -178,14 +167,14 @@ internal sealed class AddUsingsCodeActionResolver : IRazorCodeActionResolver
         return new TextDocumentEdit
         {
             TextDocument = codeDocumentIdentifier,
-            Edits = new[]
-            {
+            Edits =
+            [
                 new TextEdit()
                 {
                     NewText = string.Concat($"@using {newUsingNamespace}{Environment.NewLine}"),
                     Range = range,
                 }
-            }
+            ]
         };
     }
 
@@ -234,15 +223,5 @@ internal sealed class AddUsingsCodeActionResolver : IRazorCodeActionResolver
         return false;
     }
 
-    private readonly struct RazorUsingDirective
-    {
-        readonly public RazorDirectiveSyntax Node { get; }
-        readonly public AddImportChunkGenerator Statement { get; }
-
-        public RazorUsingDirective(RazorDirectiveSyntax node, AddImportChunkGenerator statement)
-        {
-            Node = node;
-            Statement = statement;
-        }
-    }
+    private readonly record struct RazorUsingDirective(RazorDirectiveSyntax Node, AddImportChunkGenerator Statement);
 }

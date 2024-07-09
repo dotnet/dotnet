@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 
-internal class GenerateMethodCodeActionParams
+internal sealed class GenerateMethodCodeActionParams
 {
     [JsonPropertyName("uri")]
     public required Uri Uri { get; set; }

@@ -25,23 +25,16 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal sealed class ExtractToCodeBehindCodeActionResolver : IRazorCodeActionResolver
+internal sealed class ExtractToCodeBehindCodeActionResolver(
+    IDocumentContextFactory documentContextFactory,
+    LanguageServerFeatureOptions languageServerFeatureOptions,
+    IClientConnection clientConnection) : IRazorCodeActionResolver
 {
     private static readonly Workspace s_workspace = new AdhocWorkspace();
 
-    private readonly IDocumentContextFactory _documentContextFactory;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly IClientConnection _clientConnection;
-
-    public ExtractToCodeBehindCodeActionResolver(
-        IDocumentContextFactory documentContextFactory,
-        LanguageServerFeatureOptions languageServerFeatureOptions,
-        IClientConnection clientConnection)
-    {
-        _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
-        _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-    }
+    private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
+    private readonly IClientConnection _clientConnection = clientConnection;
 
     public string Action => LanguageServerConstants.CodeActions.ExtractToCodeBehindAction;
 
@@ -86,10 +79,6 @@ internal sealed class ExtractToCodeBehindCodeActionResolver : IRazorCodeActionRe
         }.Uri;
 
         var text = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        if (text is null)
-        {
-            return null;
-        }
 
         var className = Path.GetFileNameWithoutExtension(path);
         var codeBlockContent = text.GetSubTextString(new CodeAnalysis.Text.TextSpan(actionParams.ExtractStart, actionParams.ExtractEnd - actionParams.ExtractStart)).Trim();
@@ -112,26 +101,30 @@ internal sealed class ExtractToCodeBehindCodeActionResolver : IRazorCodeActionRe
             new TextDocumentEdit
             {
                 TextDocument = codeDocumentIdentifier,
-                Edits = new[]
-                {
+                Edits =
+                [
                     new TextEdit
                     {
                         NewText = string.Empty,
                         Range = removeRange,
                     }
-                },
+                ],
             },
             new TextDocumentEdit
             {
                 TextDocument = codeBehindDocumentIdentifier,
-                Edits  = new[]
-                {
+                Edits =
+                [
                     new TextEdit
                     {
                         NewText = codeBehindContent,
-                        Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) },
+                        Range = new Range
+                        {
+                            Start = new Position(0, 0),
+                            End = new Position(0, 0)
+                        },
                     }
-                },
+                ],
             }
         };
 
@@ -150,17 +143,17 @@ internal sealed class ExtractToCodeBehindCodeActionResolver : IRazorCodeActionRe
     /// <returns>A non-existent file path with the same base name and a codebehind extension.</returns>
     private static string GenerateCodeBehindPath(string path)
     {
+        var baseFileName = Path.GetFileNameWithoutExtension(path);
+        var extension = Path.GetExtension(path);
+        var directoryName = Path.GetDirectoryName(path).AssumeNotNull();
+
         var n = 0;
         string codeBehindPath;
         do
         {
             var identifier = n > 0 ? n.ToString(CultureInfo.InvariantCulture) : string.Empty;  // Make it look nice
-            var directoryName = Path.GetDirectoryName(path);
-            Assumes.NotNull(directoryName);
 
-            codeBehindPath = Path.Combine(
-                directoryName,
-                $"{Path.GetFileNameWithoutExtension(path)}{identifier}{Path.GetExtension(path)}.cs");
+            codeBehindPath = Path.Combine(directoryName, $"{baseFileName}{identifier}{extension}.cs");
             n++;
         }
         while (File.Exists(codeBehindPath));
@@ -168,13 +161,14 @@ internal sealed class ExtractToCodeBehindCodeActionResolver : IRazorCodeActionRe
         return codeBehindPath;
     }
 
-    private async Task<string> GenerateCodeBehindClassAsync(CodeAnalysis.Razor.ProjectSystem.IProjectSnapshot project, Uri codeBehindUri, string className, string namespaceName, string contents, RazorCodeDocument razorCodeDocument, CancellationToken cancellationToken)
+    private async Task<string> GenerateCodeBehindClassAsync(IProjectSnapshot project, Uri codeBehindUri, string className, string namespaceName, string contents, RazorCodeDocument razorCodeDocument, CancellationToken cancellationToken)
     {
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
 
         var usingDirectives = razorCodeDocument
             .GetDocumentIntermediateNode()
             .FindDescendantNodes<UsingDirectiveIntermediateNode>();
+
         foreach (var usingDirective in usingDirectives)
         {
             builder.Append("using ");
@@ -219,8 +213,8 @@ internal sealed class ExtractToCodeBehindCodeActionResolver : IRazorCodeActionRe
         {
             // Sadly we can't use a "real" workspace here, because we don't have access. If we use our workspace, it wouldn't have the right settings
             // for C# formatting, only Razor formatting, and we have no access to Roslyn's real workspace, since it could be in another process.
-            var node = await CSharpSyntaxTree.ParseText(newFileContent).GetRootAsync(cancellationToken).ConfigureAwait(false);
-            node = Formatter.Format(node, s_workspace);
+            var node = await CSharpSyntaxTree.ParseText(newFileContent, cancellationToken: cancellationToken).GetRootAsync(cancellationToken).ConfigureAwait(false);
+            node = Formatter.Format(node, s_workspace, cancellationToken: cancellationToken);
 
             return node.ToFullString();
         }

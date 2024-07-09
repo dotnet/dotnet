@@ -13,30 +13,13 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal sealed class DefaultHtmlCodeActionResolver : HtmlCodeActionResolver
+internal sealed class DefaultHtmlCodeActionResolver(
+    IDocumentContextFactory documentContextFactory,
+    IClientConnection clientConnection,
+    IRazorDocumentMappingService documentMappingService) : HtmlCodeActionResolver(clientConnection)
 {
-    private readonly IDocumentContextFactory _documentContextFactory;
-    private readonly IRazorDocumentMappingService _documentMappingService;
-
-    public DefaultHtmlCodeActionResolver(
-        IDocumentContextFactory documentContextFactory,
-        IClientConnection clientConnection,
-        IRazorDocumentMappingService documentMappingService)
-        : base(clientConnection)
-    {
-        if (documentContextFactory is null)
-        {
-            throw new ArgumentNullException(nameof(documentContextFactory));
-        }
-
-        if (documentMappingService is null)
-        {
-            throw new ArgumentNullException(nameof(documentMappingService));
-        }
-
-        _documentContextFactory = documentContextFactory;
-        _documentMappingService = documentMappingService;
-    }
+    private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
+    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
 
     public override string Action => LanguageServerConstants.CodeActions.Default;
 
@@ -45,16 +28,6 @@ internal sealed class DefaultHtmlCodeActionResolver : HtmlCodeActionResolver
         CodeAction codeAction,
         CancellationToken cancellationToken)
     {
-        if (resolveParams is null)
-        {
-            throw new ArgumentNullException(nameof(resolveParams));
-        }
-
-        if (codeAction is null)
-        {
-            throw new ArgumentNullException(nameof(codeAction));
-        }
-
         if (!_documentContextFactory.TryCreateForOpenDocument(resolveParams.RazorFileIdentifier, out var documentContext))
         {
             return codeAction;

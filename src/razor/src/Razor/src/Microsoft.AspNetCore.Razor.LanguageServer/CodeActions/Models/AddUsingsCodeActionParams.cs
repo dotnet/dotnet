@@ -11,8 +11,10 @@ internal sealed class AddUsingsCodeActionParams
 {
     [JsonPropertyName("uri")]
     public required Uri Uri { get; set; }
+
     [JsonPropertyName("namespace")]
     public required string Namespace { get; set; }
+
     [JsonPropertyName("additionalEdit")]
     public TextDocumentEdit? AdditionalEdit { get; set; }
 }

@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 
-internal class RazorCodeActionResolutionParams
+internal sealed class RazorCodeActionResolutionParams
 {
     [JsonPropertyName("action")]
     public required string Action { get; set; }

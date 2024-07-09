@@ -10,6 +10,7 @@ internal sealed class CreateComponentCodeActionParams
 {
     [JsonPropertyName("uri")]
     public required Uri Uri { get; set; }
+
     [JsonPropertyName("path")]
     public required string Path { get; set; }
 }

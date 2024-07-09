@@ -20,20 +20,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 /// <summary>
 /// Resolves and remaps the code action, without running formatting passes.
 /// </summary>
-internal sealed class UnformattedRemappingCSharpCodeActionResolver : CSharpCodeActionResolver
+internal sealed class UnformattedRemappingCSharpCodeActionResolver(
+    IDocumentContextFactory documentContextFactory,
+    IClientConnection clientConnection,
+    IRazorDocumentMappingService documentMappingService) : CSharpCodeActionResolver(clientConnection)
 {
-    private readonly IDocumentContextFactory _documentContextFactory;
-    private readonly IRazorDocumentMappingService _documentMappingService;
-
-    public UnformattedRemappingCSharpCodeActionResolver(
-        IDocumentContextFactory documentContextFactory,
-        IClientConnection clientConnection,
-        IRazorDocumentMappingService documentMappingService)
-        : base(clientConnection)
-    {
-        _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
-        _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
-    }
+    private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
+    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
 
     public override string Action => LanguageServerConstants.CodeActions.UnformattedRemap;
 
@@ -42,16 +35,6 @@ internal sealed class UnformattedRemappingCSharpCodeActionResolver : CSharpCodeA
         CodeAction codeAction,
         CancellationToken cancellationToken)
     {
-        if (csharpParams is null)
-        {
-            throw new ArgumentNullException(nameof(csharpParams));
-        }
-
-        if (codeAction is null)
-        {
-            throw new ArgumentNullException(nameof(codeAction));
-        }
-
         cancellationToken.ThrowIfCancellationRequested();
 
         if (!_documentContextFactory.TryCreateForOpenDocument(csharpParams.RazorFileIdentifier, out var documentContext))
@@ -112,7 +95,7 @@ internal sealed class UnformattedRemappingCSharpCodeActionResolver : CSharpCodeA
                 new TextDocumentEdit()
                 {
                     TextDocument = codeDocumentIdentifier,
-                    Edits = new[] { textEdit },
+                    Edits = [textEdit],
                 }
             },
         };

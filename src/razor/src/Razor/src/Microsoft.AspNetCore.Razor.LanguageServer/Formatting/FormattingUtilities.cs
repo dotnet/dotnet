@@ -8,8 +8,8 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
 internal static class FormattingUtilities
 {
-    public static readonly string Indent = "$$Indent$$";
-    public static readonly string InitialIndent = "$$InitialIndent$$";
+    public const string Indent = "$$Indent$$";
+    public const string InitialIndent = "$$InitialIndent$$";
 
     /// <summary>
     ///  Adds indenting to the method.

@@ -80,7 +80,7 @@ internal static class CodeBlockService
                 Range = eofRange
             };
 
-            return new TextEdit[] { start, method, end };
+            return [start, method, end];
         }
 
         // A well-formed @code block exists, generate the method within it.
@@ -115,7 +115,7 @@ internal static class CodeBlockService
             NewText = formattedGeneratedMethod
         };
 
-        return new TextEdit[] { edit };
+        return [edit];
     }
 
     private static string FormatMethodInCodeBlock(
@@ -171,5 +171,6 @@ internal static class CodeBlockService
     /// </summary>
     /// <param name="textLine">The line to check.</param>
     /// <returns>true if the line is empty, otherwise false.</returns>
-    private static bool IsLineEmpty(TextLine textLine) => textLine.Start == textLine.End;
+    private static bool IsLineEmpty(TextLine textLine)
+        => textLine.Start == textLine.End;
 }

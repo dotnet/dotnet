@@ -16,7 +16,10 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal sealed class DefaultCSharpCodeActionResolver : CSharpCodeActionResolver
+internal sealed class DefaultCSharpCodeActionResolver(
+    IDocumentContextFactory documentContextFactory,
+    IClientConnection clientConnection,
+    IRazorFormattingService razorFormattingService) : CSharpCodeActionResolver(clientConnection)
 {
     // Usually when we need to format code, we utilize the formatting options provided
     // by the platform. However, we aren't provided such options in the case of code actions
@@ -33,28 +36,8 @@ internal sealed class DefaultCSharpCodeActionResolver : CSharpCodeActionResolver
         },
     };
 
-    private readonly IDocumentContextFactory _documentContextFactory;
-    private readonly IRazorFormattingService _razorFormattingService;
-
-    public DefaultCSharpCodeActionResolver(
-        IDocumentContextFactory documentContextFactory,
-        IClientConnection clientConnection,
-        IRazorFormattingService razorFormattingService)
-        : base(clientConnection)
-    {
-        if (documentContextFactory is null)
-        {
-            throw new ArgumentNullException(nameof(documentContextFactory));
-        }
-
-        if (razorFormattingService is null)
-        {
-            throw new ArgumentNullException(nameof(razorFormattingService));
-        }
-
-        _documentContextFactory = documentContextFactory;
-        _razorFormattingService = razorFormattingService;
-    }
+    private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
+    private readonly IRazorFormattingService _razorFormattingService = razorFormattingService;
 
     public override string Action => LanguageServerConstants.CodeActions.Default;
 
@@ -63,16 +46,6 @@ internal sealed class DefaultCSharpCodeActionResolver : CSharpCodeActionResolver
         CodeAction codeAction,
         CancellationToken cancellationToken)
     {
-        if (csharpParams is null)
-        {
-            throw new ArgumentNullException(nameof(csharpParams));
-        }
-
-        if (codeAction is null)
-        {
-            throw new ArgumentNullException(nameof(codeAction));
-        }
-
         if (!_documentContextFactory.TryCreateForOpenDocument(csharpParams.RazorFileIdentifier, out var documentContext))
         {
             return codeAction;

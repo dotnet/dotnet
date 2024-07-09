@@ -18,7 +18,7 @@ using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
 
-internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
+internal sealed class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
 {
     public Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
     {
@@ -29,18 +29,14 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
         }
 
         var syntaxTree = context.CodeDocument.GetSyntaxTree();
-        var owner = syntaxTree.Root.FindToken(context.Location.AbsoluteIndex).Parent;
-        Assumes.NotNull(owner);
+        var owner = syntaxTree.Root.FindToken(context.Location.AbsoluteIndex).Parent.AssumeNotNull();
 
         if (IsGenerateEventHandlerValid(owner, out var methodName, out var eventName))
         {
             var uri = context.Request.TextDocument.Uri;
-            var codeActions = new List<RazorVSInternalCodeAction>()
-            {
+            return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>([
                 RazorCodeActionFactory.CreateGenerateMethod(uri, methodName, eventName),
-                RazorCodeActionFactory.CreateAsyncGenerateMethod(uri, methodName, eventName)
-            };
-            return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(codeActions);
+                RazorCodeActionFactory.CreateAsyncGenerateMethod(uri, methodName, eventName)]);
         }
 
         return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();

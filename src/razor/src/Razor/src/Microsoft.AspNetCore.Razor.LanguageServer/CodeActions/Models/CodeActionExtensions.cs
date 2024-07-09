@@ -50,16 +50,6 @@ internal static class CodeActionExtensions
         string language = LanguageServerConstants.CodeActions.Languages.CSharp,
         bool isOnAllowList = true)
     {
-        if (razorCodeAction is null)
-        {
-            throw new ArgumentNullException(nameof(razorCodeAction));
-        }
-
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
         var resolveParams = new CodeActionResolveParams()
         {
             Data = razorCodeAction.Data,

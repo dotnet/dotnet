@@ -58,11 +58,6 @@ internal sealed class CodeActionEndpoint(
 
     public async Task<SumType<Command, CodeAction>[]?> HandleRequestAsync(VSCodeActionParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        if (request is null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
-
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
@@ -127,12 +122,12 @@ internal sealed class CodeActionEndpoint(
 
         serverCapabilities.CodeActionProvider = new CodeActionOptions
         {
-            CodeActionKinds = new[]
-            {
+            CodeActionKinds =
+            [
                 CodeActionKind.RefactorExtract,
                 CodeActionKind.QuickFix,
                 CodeActionKind.Refactor
-            },
+            ],
             ResolveProvider = true,
         };
     }
@@ -186,13 +181,13 @@ internal sealed class CodeActionEndpoint(
         // No point delegating if we're in a Razor context
         if (languageKind == RazorLanguageKind.Razor)
         {
-            return ImmutableArray<RazorVSInternalCodeAction>.Empty;
+            return [];
         }
 
         var codeActions = await GetCodeActionsFromLanguageServerAsync(languageKind, documentContext, context, correlationId, cancellationToken).ConfigureAwait(false);
         if (codeActions is not [_, ..])
         {
-            return ImmutableArray<RazorVSInternalCodeAction>.Empty;
+            return [];
         }
 
         IEnumerable<ICodeActionProvider> providers;
@@ -268,7 +263,7 @@ internal sealed class CodeActionEndpoint(
             // For C# we have to map the ranges to the generated document
             if (!_documentMappingService.TryMapToGeneratedDocumentRange(context.CodeDocument.GetCSharpDocument(), context.Request.Range, out var projectedRange))
             {
-                return Array.Empty<RazorVSInternalCodeAction>();
+                return [];
             }
 
             var newContext = context.Request.Context;
@@ -301,7 +296,7 @@ internal sealed class CodeActionEndpoint(
         {
             _telemetryReporter?.ReportFault(e, "Error getting code actions from delegate language server for {languageKind}", languageKind);
             _logger.LogError(e, $"Error getting code actions from delegate language server for {languageKind}");
-            return Array.Empty<RazorVSInternalCodeAction>();
+            return [];
         }
     }
 
