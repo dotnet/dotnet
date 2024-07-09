@@ -145,7 +145,39 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     var ((compilationA, razorSourceGeneratorOptionsA), hasRazorFilesA) = a;
                     var ((compilationB, razorSourceGeneratorOptionsB), hasRazorFilesB) = b;
 
-                    if (!compilationA.References.SequenceEqual(compilationB.References))
+                    // When using the generator cache in the compiler it's possible to encounter metadata references that are different instances
+                    // but ultimately represent the same underlying assembly. We compare the module version ids to determine if the references are the same
+                    if (!compilationA.References.SequenceEqual(compilationB.References, new LambdaComparer<MetadataReference>((old, @new) => 
+                    {
+                        if (ReferenceEquals(old, @new))
+                        {
+                            return true;
+                        }
+
+                        if (old is null || @new is null)
+                        {
+                            return false;
+                        }
+
+                        var oldSymbol = compilationA.GetAssemblyOrModuleSymbol(old);
+                        var newSymbol = compilationB.GetAssemblyOrModuleSymbol(@new);
+
+                        if (SymbolEqualityComparer.Default.Equals(oldSymbol, newSymbol))
+                        {
+                            return true;
+                        }
+
+                        if (oldSymbol is IAssemblySymbol oldAssembly && newSymbol is IAssemblySymbol newAssembly)
+                        {
+                            var oldModuleMVIDs = oldAssembly.Modules.Select(GetMVID);
+                            var newModuleMVIDs = newAssembly.Modules.Select(GetMVID);
+                            return oldModuleMVIDs.SequenceEqual(newModuleMVIDs);
+
+                            static Guid GetMVID(IModuleSymbol m) => m.GetMetadata()?.GetModuleVersionId() ?? Guid.Empty;
+                        }
+
+                        return false;
+                    })))
                     {
                         return false;
                     }

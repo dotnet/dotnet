@@ -74,7 +74,6 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             // the tagHelperFeature will have its Engine property set as part of adding it to the engine, which is used later when doing the actual discovery
             var discoveryProjectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, new VirtualRazorProjectFileSystem(), b =>
             {
-                b.Features.Add(new DefaultMetadataReferenceFeature { References = compilation.References.ToImmutableArray() });
                 b.Features.Add(tagHelperFeature);
                 b.Features.Add(new DefaultTagHelperDescriptorProvider());
 
