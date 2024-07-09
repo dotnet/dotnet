@@ -17,16 +17,10 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal sealed class CreateComponentCodeActionResolver : IRazorCodeActionResolver
+internal sealed class CreateComponentCodeActionResolver(IDocumentContextFactory documentContextFactory, LanguageServerFeatureOptions languageServerFeatureOptions) : IRazorCodeActionResolver
 {
-    private readonly IDocumentContextFactory _documentContextFactory;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-
-    public CreateComponentCodeActionResolver(IDocumentContextFactory documentContextFactory, LanguageServerFeatureOptions languageServerFeatureOptions)
-    {
-        _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
-        _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentException(nameof(languageServerFeatureOptions));
-    }
+    private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
 
     public string Action => LanguageServerConstants.CodeActions.CreateComponentFromTag;
 
@@ -93,14 +87,14 @@ internal sealed class CreateComponentCodeActionResolver : IRazorCodeActionResolv
             documentChanges.Add(new TextDocumentEdit
             {
                 TextDocument = documentIdentifier,
-                Edits = new[]
-                {
+                Edits =
+                [
                     new TextEdit()
                     {
                         NewText = namespaceDirective.GetContent(),
                         Range = new Range{ Start = new Position(0, 0), End = new Position(0, 0) },
                     }
-                }
+                ]
             });
         }
     }

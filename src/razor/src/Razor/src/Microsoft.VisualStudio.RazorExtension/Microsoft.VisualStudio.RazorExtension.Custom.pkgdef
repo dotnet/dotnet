@@ -38,12 +38,6 @@
 "ShowBraceCompletion"=dword:00000001
 "ShowSmartIndent"=dword:00000001
 
-[$RootKey$\FeatureFlags\Razor\LSP\LegacyEditor]
-"Description"="Uses the legacy Razor editor when editing Razor (ASP.NET Core)."
-"Value"=dword:00000000
-"Title"="Use legacy Razor editor (requires restart)"
-"PreviewPaneChannels"="int.main"
-
 [$RootKey$\FeatureFlags\Razor\LSP\ShowAllCSharpCodeActions]
 "Description"="Show all C# code actions in Razor files. Note: This is experimental, some actions may not apply correctly, or at all!"
 "Value"=dword:00000000

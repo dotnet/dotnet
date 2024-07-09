@@ -18,21 +18,19 @@ namespace Microsoft.VisualStudio.Razor;
 
 public class LspEditorFeatureDetectorTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    public static TheoryData<bool, bool, bool> IsLspEditorEnabledTestData { get; } = new()
+    public static TheoryData<bool, bool> IsLspEditorEnabledTestData { get; } = new()
     {
-        // legacyEditorFeatureFlag, legacyEditorSetting, expectedResult
-        { false, false, true },
-        { false, true, false },
-        { true, false, false },
-        { true, true, false }
+        // legacyEditorSetting, expectedResult
+        { false, true },
+        { true, false },
     };
 
     [UITheory]
     [MemberData(nameof(IsLspEditorEnabledTestData))]
-    public void IsLspEditorEnabled(bool legacyEditorFeatureFlag, bool legacyEditorSetting, bool expectedResult)
+    public void IsLspEditorEnabled(bool legacyEditorSetting, bool expectedResult)
     {
         // Arrange
-        var featureDetector = CreateLspEditorFeatureDetector(legacyEditorFeatureFlag, legacyEditorSetting);
+        var featureDetector = CreateLspEditorFeatureDetector(legacyEditorSetting);
 
         // Act
         var result = featureDetector.IsLspEditorEnabled();
@@ -41,27 +39,25 @@ public class LspEditorFeatureDetectorTest(ITestOutputHelper testOutput) : Toolin
         Assert.Equal(expectedResult, result);
     }
 
-    public static TheoryData<bool, bool, bool, bool, bool> IsLspEditorEnabledAndSupportedTestData { get; } = new()
+    public static TheoryData<bool, bool, bool, bool> IsLspEditorEnabledAndSupportedTestData { get; } = new()
     {
-        // legacyEditorFeatureFlag, legacyEditorSetting, hasLegacyRazorEditorCapability, hasDotNetCoreCSharpCapability, expectedResult
-        { false, false, true, false, false }, // .Net Framework project - always non-LSP
-        { false, false, false, true, true },  // .Net Core project
-        { false, false, true, true, false },  // .Net Core project opts-in into legacy razor editor (exists in reality?)
-        { true, false, false, true, false },  // .Net Core project but legacy editor via feature flag
-        { false, true, false, true, false },  // .Net Core project but legacy editor via editor option
+        // legacyEditorSetting, hasLegacyRazorEditorCapability, hasDotNetCoreCSharpCapability, expectedResult
+        { false, true, false, false }, // .Net Framework project - always non-LSP
+        { false, false, true, true },  // .Net Core project
+        { false, true, true, false },  // .Net Core project opts-in into legacy razor editor (exists in reality?)
+        { true, false, true, false },  // .Net Core project but legacy editor via editor option
     };
 
     [UITheory]
     [MemberData(nameof(IsLspEditorEnabledAndSupportedTestData))]
     public void IsLspEditorEnabledAndSupported(
-        bool legacyEditorFeatureFlag,
         bool legacyEditorSetting,
         bool hasLegacyRazorEditorCapability,
         bool hasDotNetCoreCSharpCapability,
         bool expectedResult)
     {
         // Arrange
-        var featureDetector = CreateLspEditorFeatureDetector(legacyEditorFeatureFlag, legacyEditorSetting, hasLegacyRazorEditorCapability, hasDotNetCoreCSharpCapability);
+        var featureDetector = CreateLspEditorFeatureDetector(legacyEditorSetting, hasLegacyRazorEditorCapability, hasDotNetCoreCSharpCapability);
 
         // Act
         var result = featureDetector.IsLspEditorEnabled() &&
@@ -124,19 +120,17 @@ public class LspEditorFeatureDetectorTest(ITestOutputHelper testOutput) : Toolin
     }
 
     private ILspEditorFeatureDetector CreateLspEditorFeatureDetector(IUIContextService uiContextService)
-        => CreateLspEditorFeatureDetector(legacyEditorFeatureFlag: false, legacyEditorSetting: false, uiContextService, hasLegacyRazorEditorCapability: false, hasDotNetCoreCSharpCapability: true);
+        => CreateLspEditorFeatureDetector(legacyEditorSetting: false, uiContextService, hasLegacyRazorEditorCapability: false, hasDotNetCoreCSharpCapability: true);
 
     private ILspEditorFeatureDetector CreateLspEditorFeatureDetector(
-        bool legacyEditorFeatureFlag = false,
         bool legacyEditorSetting = false,
         bool hasLegacyRazorEditorCapability = false,
         bool hasDotNetCoreCSharpCapability = true)
     {
-        return CreateLspEditorFeatureDetector(legacyEditorFeatureFlag, legacyEditorSetting, CreateUIContextService(), hasLegacyRazorEditorCapability, hasDotNetCoreCSharpCapability);
+        return CreateLspEditorFeatureDetector(legacyEditorSetting, CreateUIContextService(), hasLegacyRazorEditorCapability, hasDotNetCoreCSharpCapability);
     }
 
     private ILspEditorFeatureDetector CreateLspEditorFeatureDetector(
-        bool legacyEditorFeatureFlag,
         bool legacyEditorSetting,
         IUIContextService uiContextService,
         bool hasLegacyRazorEditorCapability,
@@ -145,7 +139,6 @@ public class LspEditorFeatureDetectorTest(ITestOutputHelper testOutput) : Toolin
         uiContextService ??= CreateUIContextService();
 
         var featureDetector = new LspEditorFeatureDetector(
-            CreateVsFeatureFlagsService(legacyEditorFeatureFlag),
             CreateVsSettingsManagerService(legacyEditorSetting),
             uiContextService,
             CreateProjectCapabilityResolver(hasLegacyRazorEditorCapability, hasDotNetCoreCSharpCapability),
@@ -155,16 +148,6 @@ public class LspEditorFeatureDetectorTest(ITestOutputHelper testOutput) : Toolin
         AddDisposable(featureDetector);
 
         return featureDetector;
-    }
-
-    private static IVsService<SVsFeatureFlags, IVsFeatureFlags> CreateVsFeatureFlagsService(bool useLegacyEditor)
-    {
-        var vsFeatureFlagsMock = new StrictMock<IVsFeatureFlags>();
-        vsFeatureFlagsMock
-            .Setup(x => x.IsFeatureEnabled(WellKnownFeatureFlagNames.UseLegacyRazorEditor, It.IsAny<bool>()))
-            .Returns(useLegacyEditor);
-
-        return VsMocks.CreateVsService<SVsFeatureFlags, IVsFeatureFlags>(vsFeatureFlagsMock);
     }
 
     private static IVsService<SVsSettingsPersistenceManager, ISettingsManager> CreateVsSettingsManagerService(bool useLegacyEditor)

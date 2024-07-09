@@ -405,7 +405,7 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
 
         var sourceText = SourceText.From(text);
 
-        var context = new RazorCodeActionContext(request, documentSnapshot, codeDocument, location, sourceText, supportsFileCreation, supportsCodeActionResolve: true);
+        var context = new RazorCodeActionContext(request, documentSnapshot, codeDocument, location, sourceText, supportsFileCreation, SupportsCodeActionResolve: true);
 
         return context;
     }

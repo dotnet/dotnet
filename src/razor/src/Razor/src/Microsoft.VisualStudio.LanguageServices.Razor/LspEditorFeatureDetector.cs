@@ -25,7 +25,6 @@ internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDis
 
     [ImportingConstructor]
     public LspEditorFeatureDetector(
-        IVsService<SVsFeatureFlags, IVsFeatureFlags> vsFeatureFlagsService,
         IVsService<SVsSettingsPersistenceManager, ISettingsManager> vsSettingsManagerService,
         IUIContextService uiContextService,
         IProjectCapabilityResolver projectCapabilityResolver,
@@ -40,7 +39,7 @@ internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDis
         _disposeTokenSource = new();
 
         _lazyLegacyEditorEnabled = new(() =>
-             ComputeUseLegacyEditorAsync(vsFeatureFlagsService, vsSettingsManagerService, activityLog, _disposeTokenSource.Token),
+             ComputeUseLegacyEditorAsync(vsSettingsManagerService, activityLog, _disposeTokenSource.Token),
              _jtf);
     }
 
@@ -56,22 +55,10 @@ internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDis
     }
 
     private static async Task<bool> ComputeUseLegacyEditorAsync(
-        IVsService<SVsFeatureFlags, IVsFeatureFlags> vsFeatureFlagsService,
         IVsService<SVsSettingsPersistenceManager, ISettingsManager> vsSettingsManagerService,
         RazorActivityLog activityLog,
         CancellationToken cancellationToken)
     {
-        var vsFeatureFlags = await vsFeatureFlagsService.GetValueAsync(cancellationToken).ConfigureAwaitRunInline();
-
-        // IVsFeatureFlags is free-threaded but VSTHRD010 seems to be reported anyway.
-#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
-        if (vsFeatureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.UseLegacyRazorEditor, defaultValue: false))
-#pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
-        {
-            activityLog.LogInfo($"Using legacy editor because the '{WellKnownFeatureFlagNames.UseLegacyRazorEditor}' feature flag is enabled.");
-            return true;
-        }
-
         var settingsManager = await vsSettingsManagerService.GetValueAsync(cancellationToken).ConfigureAwaitRunInline();
         var useLegacyEditorSetting = settingsManager.GetValueOrDefault<bool>(WellKnownSettingNames.UseLegacyASPNETCoreEditor);
 
@@ -101,7 +88,7 @@ internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDis
 
         if (useLegacyEditorEnabled)
         {
-            _activityLog.LogInfo("Using legacy editor because the option or feature flag was set to true");
+            _activityLog.LogInfo("Using legacy editor because the option was set to true");
             return false;
         }
 
@@ -112,7 +99,7 @@ internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDis
     /// <inheritdoc/>
     public bool IsLspEditorSupported(string documentFilePath)
     {
-        // Regardless of whether the LSP is enabled via the feature flag or tools/options, the document's project
+        // Regardless of whether the LSP is enabled via tools/options, the document's project
         // might not support it. For example, .NET Framework projects don't support the LSP Razor editor.
 
         var useLegacyEditor = _projectCapabilityResolver.ResolveCapability(WellKnownProjectCapabilities.LegacyRazorEditor, documentFilePath);

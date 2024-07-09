@@ -85,13 +85,8 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         return true;
     }
 
-    private void AddCreateComponentFromTag(RazorCodeActionContext context, IStartTagSyntaxNode startTag, List<RazorVSInternalCodeAction> container)
+    private static void AddCreateComponentFromTag(RazorCodeActionContext context, IStartTagSyntaxNode startTag, List<RazorVSInternalCodeAction> container)
     {
-        if (context is null)
-        {
-            return;
-        }
-
         if (!context.SupportsFileCreation)
         {
             return;
@@ -126,7 +121,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         container.Add(codeAction);
     }
 
-    private async Task AddComponentAccessFromTagAsync(RazorCodeActionContext context, IStartTagSyntaxNode startTag, List<RazorVSInternalCodeAction> container, CancellationToken cancellationToken)
+    private static async Task AddComponentAccessFromTagAsync(RazorCodeActionContext context, IStartTagSyntaxNode startTag, List<RazorVSInternalCodeAction> container, CancellationToken cancellationToken)
     {
         var haveAddedNonQualifiedFix = false;
 
@@ -150,7 +145,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         // For all the matches, add options for add @using and fully qualify
         foreach (var tagHelperPair in matching)
         {
-            if (tagHelperPair._fullyQualified is null)
+            if (tagHelperPair.FullyQualified is null)
             {
                 continue;
             }
@@ -158,18 +153,18 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
             // If they have a typo, eg <CounTer /> and we've offered them <Counter /> above, then it would be odd to offer
             // them <BlazorApp.Pages.Counter /> as well. We will offer them <BlazorApp.MisTypedPages.CounTer /> though, if it
             // exists.
-            if (!haveAddedNonQualifiedFix || !tagHelperPair._caseInsensitiveMatch)
+            if (!haveAddedNonQualifiedFix || !tagHelperPair.CaseInsensitiveMatch)
             {
                 // if fqn contains a generic typeparam, we should strip it out. Otherwise, replacing tag name will leave generic parameters in razor code, which are illegal
                 // e.g. <Component /> -> <Component<T> />
-                var fullyQualifiedName = DefaultRazorComponentSearchEngine.RemoveGenericContent(tagHelperPair._short.Name.AsMemory()).ToString();
+                var fullyQualifiedName = DefaultRazorComponentSearchEngine.RemoveGenericContent(tagHelperPair.Short.Name.AsMemory()).ToString();
 
                 // If the match was case insensitive, then see if we can work out a new tag name to use as part of adding a using statement
                 TextDocumentEdit? additionalEdit = null;
                 string? newTagName = null;
-                if (tagHelperPair._caseInsensitiveMatch)
+                if (tagHelperPair.CaseInsensitiveMatch)
                 {
-                    newTagName = tagHelperPair._short.TagMatchingRules.FirstOrDefault()?.TagName;
+                    newTagName = tagHelperPair.Short.TagMatchingRules.FirstOrDefault()?.TagName;
                     if (newTagName is not null)
                     {
                         additionalEdit = CreateRenameTagEdit(context, startTag, newTagName).DocumentChanges!.Value.First().First.AssumeNotNull();
@@ -178,7 +173,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
 
                 // We only want to add a using statement if this was a case sensitive match, or if we were able to determine a new tag
                 // name to give the tag.
-                if (!tagHelperPair._caseInsensitiveMatch || newTagName is not null)
+                if (!tagHelperPair.CaseInsensitiveMatch || newTagName is not null)
                 {
                     if (AddUsingsCodeActionProviderHelper.TryCreateAddUsingResolutionParams(fullyQualifiedName, context.Request.TextDocument.Uri, additionalEdit, out var @namespace, out var resolutionParams))
                     {
@@ -195,7 +190,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         }
     }
 
-    private async Task<List<TagHelperPair>> FindMatchingTagHelpersAsync(RazorCodeActionContext context, IStartTagSyntaxNode startTag, CancellationToken cancellationToken)
+    private static async Task<List<TagHelperPair>> FindMatchingTagHelpersAsync(RazorCodeActionContext context, IStartTagSyntaxNode startTag, CancellationToken cancellationToken)
     {
         // Get all data necessary for matching
         var tagName = startTag.Name.Content;
@@ -220,7 +215,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         {
             if (SatisfiesRules(tagHelper.TagMatchingRules, tagName.AsSpan(), parentTagName.AsSpan(), attributes, out var caseInsensitiveMatch))
             {
-                matching.Add(tagHelper.Name, new TagHelperPair(@short: tagHelper, caseInsensitiveMatch));
+                matching.Add(tagHelper.Name, new TagHelperPair(tagHelper, caseInsensitiveMatch));
             }
         }
 
@@ -229,9 +224,9 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         {
             if (matching.TryGetValue(tagHelper.Name, out var tagHelperPair))
             {
-                if (tagHelperPair != null && tagHelper != tagHelperPair._short)
+                if (tagHelperPair != null && tagHelper != tagHelperPair.Short)
                 {
-                    tagHelperPair._fullyQualified = tagHelper;
+                    tagHelperPair.FullyQualified = tagHelper;
                 }
             }
         }
@@ -239,7 +234,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         return new List<TagHelperPair>(matching.Values);
     }
 
-    private bool SatisfiesRules(ImmutableArray<TagMatchingRuleDescriptor> tagMatchingRules, ReadOnlySpan<char> tagNameWithoutPrefix, ReadOnlySpan<char> parentTagNameWithoutPrefix, ImmutableArray<KeyValuePair<string, string>> tagAttributes, out bool caseInsensitiveMatch)
+    private static bool SatisfiesRules(ImmutableArray<TagMatchingRuleDescriptor> tagMatchingRules, ReadOnlySpan<char> tagNameWithoutPrefix, ReadOnlySpan<char> parentTagNameWithoutPrefix, ImmutableArray<KeyValuePair<string, string>> tagAttributes, out bool caseInsensitiveMatch)
     {
         caseInsensitiveMatch = false;
 
@@ -308,7 +303,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
                 new TextDocumentEdit()
                 {
                     TextDocument = codeDocumentIdentifier,
-                    Edits = textEdits.ToArray(),
+                    Edits = [.. textEdits]
                 }
             },
         };
@@ -333,16 +328,8 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         return false;
     }
 
-    private class TagHelperPair
+    private sealed record class TagHelperPair(TagHelperDescriptor Short, bool CaseInsensitiveMatch)
     {
-        public readonly TagHelperDescriptor _short;
-        public readonly bool _caseInsensitiveMatch;
-        public TagHelperDescriptor? _fullyQualified = null;
-
-        public TagHelperPair(TagHelperDescriptor @short, bool caseInsensitiveMatch)
-        {
-            _short = @short;
-            _caseInsensitiveMatch = caseInsensitiveMatch;
-        }
+        public TagHelperDescriptor? FullyQualified { get; set; }
     }
 }

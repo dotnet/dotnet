@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 
 [DataContract]
-internal class RazorVSInternalCodeAction : VSInternalCodeAction
+internal sealed class RazorVSInternalCodeAction : VSInternalCodeAction
 {
     [JsonPropertyName("name")]
     [DataMember(Name = "name")]

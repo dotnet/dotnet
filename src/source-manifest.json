@@ -13,10 +13,10 @@
       "commitSha": "a6e341ebbf956bbcec0dda304109815fcbae70c9"
     },
     {
-      "packageVersion": "9.0.0-preview.7.24358.3",
+      "packageVersion": "9.0.0-preview.7.24358.14",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "fed7b428b2c34cc1850557111f945e4cbe5d1268"
+      "commitSha": "ea1257e11255cdefe8cff9118b2964a0f4d04ca1"
     },
     {
       "packageVersion": "0.11.5-alpha.24324.1",
@@ -43,10 +43,10 @@
       "commitSha": "33d8bf23a6566cd3fb9055acfc9f1141391d5421"
     },
     {
-      "packageVersion": "9.0.0-preview.7.24357.1",
+      "packageVersion": "9.0.0-preview.7.24358.2",
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "09247f41aeff1a862c39f8db640ef43eb06bb9b3"
+      "commitSha": "a4aa68d9a505b22fdb2476a0e0bb87fda56d111c"
     },
     {
       "packageVersion": "9.0.0-preview.7.24319.4",
@@ -73,10 +73,10 @@
       "commitSha": "d9f91cd1cd968625906de9efd52d73b880687a0f"
     },
     {
-      "packageVersion": "9.0.0-preview.24357.1",
+      "packageVersion": "9.0.0-preview.24358.3",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "b17a0e8ece87ee6c63527356a52e56db1ab5c6b6"
+      "commitSha": "63e225dfab5af5f3684c1a6674920cef513ba724"
     },
     {
       "packageVersion": "4.12.0-1.24358.8",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "8ca5983e4462a95821a5f226b6f89a398112d2bb"
+      "commitSha": "17304ecd1327c7a9ed343ae6bd57bdc3e2ada73b"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24324.1",
@@ -185,7 +185,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "1d17ea141d2c11b8917d2c7d029f1c4e2b9769b2"
+      "commitSha": "34ad51b3dc4f922d8ab622491dd44fc2c39afee9"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",

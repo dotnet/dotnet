@@ -5,10 +5,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal abstract class HtmlCodeActionResolver : BaseDelegatedCodeActionResolver
+internal abstract class HtmlCodeActionResolver(IClientConnection clientConnection) : BaseDelegatedCodeActionResolver(clientConnection)
 {
-    public HtmlCodeActionResolver(IClientConnection clientConnection)
-        : base(clientConnection)
-    {
-    }
 }

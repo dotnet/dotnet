@@ -20,27 +20,12 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal sealed class ExtractToCodeBehindCodeActionProvider : IRazorCodeActionProvider
+internal sealed class ExtractToCodeBehindCodeActionProvider(ILoggerFactory loggerFactory) : IRazorCodeActionProvider
 {
-    private readonly ILogger _logger;
-
-    public ExtractToCodeBehindCodeActionProvider(ILoggerFactory loggerFactory)
-    {
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        _logger = loggerFactory.GetOrCreateLogger<ExtractToCodeBehindCodeActionProvider>();
-    }
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<ExtractToCodeBehindCodeActionProvider>();
 
     public Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
     {
-        if (context is null)
-        {
-            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
-        }
-
         if (!context.SupportsFileCreation)
         {
             return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
@@ -64,7 +49,7 @@ internal sealed class ExtractToCodeBehindCodeActionProvider : IRazorCodeActionPr
             return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
         }
 
-        var directiveNode = owner?.Parent switch
+        var directiveNode = owner.Parent switch
         {
             // When the caret is '@code$$ {' or '@code$${' then tree is:
             // RazorDirective -> RazorDirectiveBody -> CSharpCodeBlock -> (MetaCode or TextLiteral)
@@ -145,10 +130,5 @@ internal sealed class ExtractToCodeBehindCodeActionProvider : IRazorCodeActionPr
         => codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out @namespace);
 
     private static bool HasUnsupportedChildren(Language.Syntax.SyntaxNode node)
-    {
-        return node.DescendantNodes().Any(n =>
-            n is MarkupBlockSyntax ||
-            n is CSharpTransitionSyntax ||
-            n is RazorCommentBlockSyntax);
-    }
+        => node.DescendantNodes().Any(n => n is MarkupBlockSyntax or CSharpTransitionSyntax or RazorCommentBlockSyntax);
 }
