@@ -3175,5 +3175,93 @@ namespace MyApp
         {
             public void Initialize(IncrementalGeneratorInitializationContext context) => action(context);
         }
+
+        [Fact]
+        public async Task IncrementalCompilation_NothingRuns_When_AdditionalFiles_HaveSameContent()
+        {
+            // Arrange
+            using var eventListener = new RazorEventListener();
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = "<h1>Hello world</h1>",
+                ["Pages/Counter.razor"] = "<h1>Counter</h1>",
+            });
+            var compilation = await project.GetCompilationAsync();
+            var (driver, additionalTexts) = await GetDriverWithAdditionalTextAsync(project);
+
+            var result = RunGenerator(compilation!, ref driver);
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+
+            eventListener.Events.Clear();
+
+            result = RunGenerator(compilation!, ref driver)
+                        .VerifyOutputsMatch(result);
+
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+            Assert.Empty(eventListener.Events);
+
+            project = project.RemoveAdditionalDocument(project.AdditionalDocumentIds[1])
+                             .AddAdditionalDocument("Counter.razor", SourceText.From("<h1>Counter</h1>", Encoding.UTF8))
+                             .Project;
+
+            compilation = await project.GetCompilationAsync();
+
+            result = RunGenerator(compilation!, ref driver)
+                        .VerifyOutputsMatch(result);
+
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+
+            Assert.Empty(eventListener.Events);
+        }
+
+        [Fact]
+        public async Task IncrementalCompilation_OnlyCompilationRuns_When_MetadataReferences_SameAssembly()
+        {
+            // Arrange
+            using var eventListener = new RazorEventListener();
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = "<h1>Hello world</h1>",
+                ["Pages/Counter.razor"] = "<h1>Counter</h1>",
+            });
+            var compilation = await project.GetCompilationAsync();
+            var (driver, additionalTexts) = await GetDriverWithAdditionalTextAsync(project);
+
+            var result = RunGenerator(compilation!, ref driver);
+
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+
+            eventListener.Events.Clear();
+
+            result = RunGenerator(compilation!, ref driver)
+                .VerifyOutputsMatch(result);
+
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+            Assert.Empty(eventListener.Events);
+
+            var reference = (PortableExecutableReference) project.MetadataReferences[^1];
+
+            project = project.RemoveMetadataReference(reference)
+                             .AddMetadataReference(MetadataReference.CreateFromFile(reference.FilePath!));
+
+            compilation = await project.GetCompilationAsync();
+
+            result = RunGenerator(compilation!, ref driver)
+                .VerifyOutputsMatch(result);
+
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+
+            // reference causes the compilation to change so we re-run tag helper discovery there
+            // but we didn't re-check the actual reference itself
+            Assert.Collection(eventListener.Events,
+               e => Assert.Equal("DiscoverTagHelpersFromCompilationStart", e.EventName),
+               e => Assert.Equal("DiscoverTagHelpersFromCompilationStop", e.EventName));
+        }
     }
 }

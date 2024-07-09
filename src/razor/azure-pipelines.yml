@@ -141,6 +141,14 @@ stages:
           displayName: Build and Deploy
           condition: succeeded()
 
+        # Needed for Microsoft.AspNetCore.Razor.Microbenchmarks.Generator tests
+        - task: UseDotNet@2
+          displayName: 'Install .NET 8 runtime'
+          inputs:
+            packageType: runtime
+            version: 8.x
+            installationPath: '$(Build.SourcesDirectory)\.dotnet'
+
         - script: eng\CIBuild.cmd
             -configuration $(_BuildConfig)
             -prepareMachine
