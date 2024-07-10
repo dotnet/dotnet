@@ -37,12 +37,12 @@ namespace NuGet.PackageManagement
             // Before fetching vulnerability data, check if any projects are enabled for audit
             // If there are no settings, then run the audit for all packages
             bool anyProjectsEnabledForAudit = restoreAuditProperties.Count == 0;
-            var auditSettings = new Dictionary<string, (bool, PackageVulnerabilitySeverity)>(restoreAuditProperties.Count);
+            var auditSettings = new Dictionary<string, ProjectAuditSettings>(restoreAuditProperties.Count);
             foreach (var (projectPath, restoreAuditProperty) in restoreAuditProperties)
             {
                 _ = restoreAuditProperty.TryParseEnableAudit(out bool isAuditEnabled);
                 _ = restoreAuditProperty.TryParseAuditLevel(out PackageVulnerabilitySeverity minimumAuditSeverity);
-                auditSettings.Add(projectPath, (isAuditEnabled, minimumAuditSeverity));
+                auditSettings.Add(projectPath, new ProjectAuditSettings(isAuditEnabled, minimumAuditSeverity, restoreAuditProperty.SuppressedAdvisories));
                 anyProjectsEnabledForAudit |= isAuditEnabled;
             }
 
@@ -80,13 +80,14 @@ namespace NuGet.PackageManagement
 
             stopwatch.Restart();
             Dictionary<PackageIdentity, PackageAuditInfo>? packagesWithKnownVulnerabilities = FindPackagesWithKnownVulnerabilities(allVulnerabilityData.KnownVulnerabilities!, packages);
-            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0;
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
 
             List<PackageIdentity> packagesWithReportedAdvisories = new(packagesWithKnownVulnerabilities?.Count ?? 0);
 
-            IReadOnlyList<ILogMessage> warnings = packagesWithKnownVulnerabilities is not null ?
-                CreateWarnings(packagesWithKnownVulnerabilities, auditSettings, ref Sev0Matches, ref Sev1Matches, ref Sev2Matches, ref Sev3Matches, ref InvalidSevMatches, ref packagesWithReportedAdvisories) :
-                Array.Empty<ILogMessage>();
+            IReadOnlyList<ILogMessage> warnings = packagesWithKnownVulnerabilities is not null
+                ? CreateWarnings(packagesWithKnownVulnerabilities, auditSettings, ref Sev0Matches, ref Sev1Matches, ref Sev2Matches, ref Sev3Matches, ref InvalidSevMatches,
+                                    ref TotalWarningsSuppressedCount, ref DistinctAdvisoriesSuppressedCount, ref packagesWithReportedAdvisories)
+                : Array.Empty<ILogMessage>();
 
             foreach (var warning in warnings.NoAllocEnumerate())
             {
@@ -103,6 +104,8 @@ namespace NuGet.PackageManagement
                 Severity2VulnerabilitiesFound = Sev2Matches,
                 Severity3VulnerabilitiesFound = Sev3Matches,
                 InvalidSeverityVulnerabilitiesFound = InvalidSevMatches,
+                TotalWarningsSuppressedCount = TotalWarningsSuppressedCount,
+                DistinctAdvisoriesSuppressedCount = DistinctAdvisoriesSuppressedCount,
                 Packages = packagesWithReportedAdvisories,
                 DownloadDurationInSeconds = downloadDurationInSeconds,
                 CheckPackagesDurationInSeconds = checkPackagesDurationInSeconds,
@@ -195,12 +198,14 @@ namespace NuGet.PackageManagement
         }
 
         internal static List<LogMessage> CreateWarnings(Dictionary<PackageIdentity, PackageAuditInfo> packagesWithKnownVulnerabilities,
-            Dictionary<string, (bool, PackageVulnerabilitySeverity)> auditSettings,
+            Dictionary<string, ProjectAuditSettings> auditSettings,
             ref int Sev0Matches,
             ref int Sev1Matches,
             ref int Sev2Matches,
             ref int Sev3Matches,
             ref int InvalidSevMatches,
+            ref int TotalWarningsSuppressedCount,
+            ref int DistinctAdvisoriesSuppressedCount,
             ref List<PackageIdentity> packagesWithReportedAdvisories)
         {
             var warnings = new List<LogMessage>();
@@ -221,10 +226,15 @@ namespace NuGet.PackageManagement
                     for (int i = 0; i < auditInfo.Projects.Count; i++)
                     {
                         string projectPath = auditInfo.Projects[i];
-                        auditSettings.TryGetValue(projectPath, out (bool IsAuditEnabled, PackageVulnerabilitySeverity MinimumSeverity) auditSetting);
+                        auditSettings.TryGetValue(projectPath, out ProjectAuditSettings? auditSetting);
 
                         if (auditSetting == default || auditSetting.IsAuditEnabled && (int)vulnerability.Severity >= (int)auditSetting.MinimumSeverity)
                         {
+                            if (CheckIfAdvisoryHasBeenSuppressed(auditSetting?.SuppressedAdvisories, vulnerability.Url.OriginalString, ref TotalWarningsSuppressedCount, ref DistinctAdvisoriesSuppressedCount))
+                            {
+                                continue;
+                            }
+
                             isVulnerabilityReported = true;
                             if (!counted)
                             {
@@ -336,6 +346,24 @@ namespace NuGet.PackageManagement
             }
         }
 
+        private static bool CheckIfAdvisoryHasBeenSuppressed(Dictionary<string, bool>? suppressedAdvisories, string advisoryUrl, ref int totalWarningsSuppressedCount, ref int distinctAdvisoriesSuppressedCount)
+        {
+            if (suppressedAdvisories?.TryGetValue(advisoryUrl, out bool advisoryUsed) == true)
+            {
+                totalWarningsSuppressedCount++;
+
+                if (!advisoryUsed)
+                {
+                    suppressedAdvisories[advisoryUrl] = true;
+                    distinctAdvisoriesSuppressedCount++;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
         internal class PackageAuditInfo
         {
             public PackageIdentity Identity { get; }
@@ -349,6 +377,31 @@ namespace NuGet.PackageManagement
                 Identity = identity;
                 Vulnerabilities = new();
                 Projects = projects;
+            }
+        }
+
+        internal class ProjectAuditSettings
+        {
+            public bool IsAuditEnabled { get; }
+
+            public PackageVulnerabilitySeverity MinimumSeverity { get; }
+
+            public Dictionary<string, bool>? SuppressedAdvisories { get; }
+
+            public ProjectAuditSettings(bool enableAudit, PackageVulnerabilitySeverity auditLevel, HashSet<string>? suppressedAdvisories)
+            {
+                IsAuditEnabled = enableAudit;
+                MinimumSeverity = auditLevel;
+
+                if (suppressedAdvisories != null)
+                {
+                    SuppressedAdvisories = new Dictionary<string, bool>(suppressedAdvisories.Count);
+
+                    foreach (string advisory in suppressedAdvisories)
+                    {
+                        SuppressedAdvisories.Add(advisory, false);
+                    }
+                }
             }
         }
     }

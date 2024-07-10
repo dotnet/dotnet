@@ -38,6 +38,10 @@ parameters:
   displayName: Run Mono tests on Mac
   type: boolean
   default: true
+- name: RunStaticAnalysis
+  displayName: Run static analysis
+  type: boolean
+  default: false
 resources:
   repositories:
   - repository: MicroBuildTemplate
@@ -58,6 +62,7 @@ variables:
   RunTestsOnLinux: ${{ parameters.RunTestsOnLinux }}
   RunTestsOnMac: ${{ parameters.RunTestsOnMac }}
   RunMonoTestsOnMac: ${{ parameters.RunMonoTestsOnMac }}
+  RunStaticAnalysis: ${{ parameters.RunStaticAnalysis }}
 extends:
   template: azure-pipelines/MicroBuild.1ES.Unofficial.yml@MicroBuildTemplate
   parameters:
@@ -88,3 +93,4 @@ extends:
         RunTestsOnLinux: ${{parameters.RunTestsOnLinux}}
         RunTestsOnMac: ${{parameters.RunTestsOnMac}}
         RunMonoTestsOnMac: ${{parameters.RunMonoTestsOnMac}}
+        RunStaticAnalysis: ${{parameters.RunStaticAnalysis}}

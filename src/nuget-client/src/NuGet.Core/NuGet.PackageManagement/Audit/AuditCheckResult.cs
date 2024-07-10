@@ -20,6 +20,8 @@ namespace NuGet.PackageManagement
         internal int Severity2VulnerabilitiesFound { get; set; }
         internal int Severity3VulnerabilitiesFound { get; set; }
         internal int InvalidSeverityVulnerabilitiesFound { get; set; }
+        internal int TotalWarningsSuppressedCount { get; set; }
+        internal int DistinctAdvisoriesSuppressedCount { get; set; }
         internal List<PackageIdentity>? Packages { get; set; }
         internal double? DownloadDurationInSeconds { get; set; }
         internal double? CheckPackagesDurationInSeconds { get; set; }
@@ -32,6 +34,8 @@ namespace NuGet.PackageManagement
         private const string AuditVulnerabilitiesSev2Count = "PackagesConfig.Audit.Vulnerability.Severity2.Count";
         private const string AuditVulnerabilitiesSev3Count = "PackagesConfig.Audit.Vulnerability.Severity3.Count";
         private const string AuditVulnerabilitiesInvalidSeverityCount = "PackagesConfig.Audit.Vulnerability.SeverityInvalid.Count";
+        private const string AuditSuppressedAdvisoriesTotalWarningsSuppressedCount = "PackagesConfig.Audit.SuppressedAdvisories.TotalWarningsSuppressed.Count";
+        private const string AuditSuppressedAdvisoriesDistinctAdvisoriesSuppressedCount = "PackagesConfig.Audit.SuppressedAdvisories.DistinctAdvisoriesSuppressed.Count";
         private const string AuditDurationDownload = "PackagesConfig.Audit.Duration.Download";
         private const string AuditDurationCheck = "PackagesConfig.Audit.Duration.Check";
         private const string SourcesWithVulnerabilitiesCount = "PackagesConfig.Audit.DataSources.Count";
@@ -56,6 +60,8 @@ namespace NuGet.PackageManagement
             telemetryEvent[AuditVulnerabilitiesSev2Count] = Severity2VulnerabilitiesFound;
             telemetryEvent[AuditVulnerabilitiesSev3Count] = Severity3VulnerabilitiesFound;
             telemetryEvent[AuditVulnerabilitiesInvalidSeverityCount] = InvalidSeverityVulnerabilitiesFound;
+            telemetryEvent[AuditSuppressedAdvisoriesTotalWarningsSuppressedCount] = TotalWarningsSuppressedCount;
+            telemetryEvent[AuditSuppressedAdvisoriesDistinctAdvisoriesSuppressedCount] = DistinctAdvisoriesSuppressedCount;
             telemetryEvent[AuditVulnerabilitiesCount] = Packages?.Count ?? 0;
 
             if (DownloadDurationInSeconds.HasValue)
