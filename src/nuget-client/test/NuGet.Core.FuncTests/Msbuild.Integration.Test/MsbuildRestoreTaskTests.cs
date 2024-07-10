@@ -1146,7 +1146,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
         [PlatformTheory(Platform.Windows)]
         [InlineData(true)]
         [InlineData(false)]
-        public async Task MsbuildRestore_PackagesConfigDependency_WithHttpSource_Warns(bool useStaticGraphEvaluation)
+        public async Task MsbuildRestore_PackagesConfigDependency_WithHttpSource_Errors(bool useStaticGraphEvaluation)
         {
             // Arrange
             using (var pathContext = new SimpleTestPathContext())
@@ -1192,20 +1192,16 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, args, ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 // Assert
-                Assert.True(result.ExitCode == 0, result.AllOutput);
-                Assert.Contains("Added package 'x.1.0.0' to folder", result.AllOutput);
-                Assert.Contains("You are running the 'restore' operation with an 'HTTP' source, 'http://api.source/index.json'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.", result.Output);
+                Assert.Equal(1, result.ExitCode);
+                Assert.Contains("restore", result.AllOutput);
+                Assert.Contains("http://api.source/index.json", result.AllOutput);
             }
         }
 
         [PlatformTheory(Platform.Windows)]
-        [InlineData("false", true)]
-        [InlineData("FALSE", true)]
-        [InlineData("invalidString", true)]
-        [InlineData("", true)]
-        [InlineData("true", false)]
-        [InlineData("TRUE", false)]
-        public async Task MsbuildRestore_PackagesConfigDependency_WithHttpSourceAndAllowInsecureConnections_WarnsCorrectly(string allowInsecureConnections, bool hasHttpWarning)
+        [InlineData("true")]
+        [InlineData("TRUE")]
+        public async Task MsbuildRestore_PackagesConfigDependency_WithHttpSourceAndAllowInsecureConnectionsTrue_ShouldNotError(string allowInsecureConnections)
         {
             // Arrange
             using (var pathContext = new SimpleTestPathContext())
@@ -1248,23 +1244,66 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
                 // Assert
-                string formatString = "You are running the 'restore' operation with an 'HTTP' source, '{0}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS'";
-                string warningForHttpSource = string.Format(formatString, "http://api.source/index.json");
-                string warningForHttpsSource = string.Format(formatString, "https://api.source/index.json");
 
                 Assert.True(result.ExitCode == 0, result.AllOutput);
                 Assert.Contains("Added package 'x.1.0.0' to folder", result.AllOutput);
-                Assert.DoesNotContain(warningForHttpsSource, result.Output);
-                if (hasHttpWarning)
-                {
-                    Assert.Contains(warningForHttpSource, result.Output);
-                }
-                else
-                {
-                    Assert.DoesNotContain(warningForHttpSource, result.Output);
-                }
             }
         }
+
+        [PlatformTheory(Platform.Windows)]
+        [InlineData("false")]
+        [InlineData("FALSE")]
+        [InlineData("invalidString")]
+        [InlineData("")]
+        public async Task MsbuildRestore_PackagesConfigDependency_WithHttpSourceAndAllowInsecureConnectionsFalse_ShouldError(string allowInsecureConnections)
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                // Set up solution, project, and packages
+                pathContext.Settings.AddSource("http-feed", "http://api.source/index.json", allowInsecureConnections);
+                pathContext.Settings.AddSource("https-feed", "https://api.source/index.json", allowInsecureConnections);
+
+                var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+                var net461 = NuGetFramework.Parse("net472");
+                var projectA = new SimpleTestProjectContext(
+                    "a",
+                    ProjectStyle.PackagesConfig,
+                    pathContext.SolutionRoot);
+                projectA.Frameworks.Add(new SimpleTestProjectFrameworkContext(net461));
+
+                var packageX = new SimpleTestPackageContext()
+                {
+                    Id = "x",
+                    Version = "1.0.0"
+                };
+                packageX.AddFile("lib/net472/a.dll");
+
+                solution.Projects.Add(projectA);
+                solution.Create(pathContext.SolutionRoot);
+
+                using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
+                {
+                    writer.Write(
+@"<packages>
+  <package id=""x"" version=""1.0.0"" targetFramework=""net472"" />
+</packages>");
+                }
+
+                await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    packageX);
+
+                // Act
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true", ignoreExitCode: true);
+
+                // Assert
+                Assert.True(result.ExitCode == 1, result.AllOutput);
+                Assert.Contains("restore", result.AllOutput);
+                Assert.Contains("http://api.source/index.json", result.AllOutput);
+            }
+        }
+
 
         [PlatformTheory(Platform.Windows)]
         [InlineData(true)]
@@ -1458,7 +1497,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     (new Uri("https://contoso.com/advisories/12346"), PackageVulnerabilitySeverity.Critical, VersionRange.Parse("[1.2.0, 2.0.0)"))
                 });
             pathContext.Settings.RemoveSource("source");
-            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri);
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "true");
 
             // set up solution, projects and packages
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -1550,7 +1589,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     (new Uri("https://contoso.com/advisories/12346"), PackageVulnerabilitySeverity.Critical, VersionRange.Parse("[1.2.0, 2.0.0)"))
                 });
             pathContext.Settings.RemoveSource("source");
-            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri);
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "true");
 
             var packageA1 = new SimpleTestPackageContext()
             {
@@ -1654,7 +1693,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     (new Uri(advisoryUrl2), PackageVulnerabilitySeverity.High, VersionRange.Parse("[1.0.0, 3.0.0)"))
                 });
             pathContext.Settings.RemoveSource("source");
-            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri);
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "true");
 
             // set up the solution, projects and packages
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);

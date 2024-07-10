@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace NuGet.PackageManagement.UI.Options
@@ -20,6 +21,15 @@ namespace NuGet.PackageManagement.UI.Options
                 components.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private void LinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://aka.ms/nuget/how-settings-are-applied",
+                UseShellExecute = true
+            });
         }
 
         #region Component Designer generated code
@@ -52,8 +62,9 @@ namespace NuGet.PackageManagement.UI.Options
             this.MachineWidePackageSourcesListBox = new NuGet.PackageManagement.UI.Options.PackageSourceCheckedListBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-            this.HttpWarning = new System.Windows.Forms.Label();
-            this.HttpWarningIcon = new System.Windows.Forms.PictureBox();
+            this.HttpErrorOrWarning = new System.Windows.Forms.Label();
+            this.HttpErrorOrWarningIcon = new System.Windows.Forms.PictureBox();
+            this.configurationLink = new System.Windows.Forms.LinkLabel();
             this.images32px = new System.Windows.Forms.ImageList(this.components);
             this.images64px = new System.Windows.Forms.ImageList(this.components);
             this.PackageSourcesContextMenu.SuspendLayout();
@@ -61,7 +72,7 @@ namespace NuGet.PackageManagement.UI.Options
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.HttpWarningIcon)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HttpErrorOrWarningIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // HeaderLabel
@@ -208,25 +219,33 @@ namespace NuGet.PackageManagement.UI.Options
             this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 0, 0);
             this.tableLayoutPanel3.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.AutoSize = true;
             // 
             // tableLayoutPanel4
             // 
             resources.ApplyResources(this.tableLayoutPanel4, "tableLayoutPanel4");
-            this.tableLayoutPanel4.Controls.Add(this.HttpWarning, 1, 0);
-            this.tableLayoutPanel4.Controls.Add(this.HttpWarningIcon, 0, 0);
+            this.tableLayoutPanel4.Controls.Add(this.HttpErrorOrWarning, 1, 0);
+            this.tableLayoutPanel4.Controls.Add(this.HttpErrorOrWarningIcon, 0, 0);
+            this.tableLayoutPanel4.Controls.Add(this.configurationLink, 1, 1);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             // 
-            // HttpWarning
+            // HttpErrorOrWarning
             // 
-            resources.ApplyResources(this.HttpWarning, "HttpWarning");
-            this.HttpWarning.Name = "HttpWarning";
+            resources.ApplyResources(this.HttpErrorOrWarning, "HttpWarning");
+            this.HttpErrorOrWarning.Name = "HttpWarning";
             // 
-            // HttpWarningIcon
+            // HttpErrorOrWarningIcon
             // 
-            resources.ApplyResources(this.HttpWarningIcon, "HttpWarningIcon");
-            this.HttpWarningIcon.AccessibleRole = System.Windows.Forms.AccessibleRole.Alert;
-            this.HttpWarningIcon.Name = "HttpWarningIcon";
-            this.HttpWarningIcon.TabStop = false;
+            resources.ApplyResources(this.HttpErrorOrWarningIcon, "HttpWarningIcon");
+            this.HttpErrorOrWarningIcon.AccessibleRole = System.Windows.Forms.AccessibleRole.Alert;
+            this.HttpErrorOrWarningIcon.Name = "HttpWarningIcon";
+            this.HttpErrorOrWarningIcon.TabStop = false;
+            //
+            // Configuration link
+            //
+            this.configurationLink.Text = Resources.Link_configuration;
+            this.configurationLink.LinkClicked += new LinkLabelLinkClickedEventHandler(LinkLabel_LinkClicked);
+            this.configurationLink.AutoSize = true;
             // 
             // images32px
             // 
@@ -261,7 +280,7 @@ namespace NuGet.PackageManagement.UI.Options
             this.tableLayoutPanel3.PerformLayout();
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.HttpWarningIcon)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HttpErrorOrWarningIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -291,7 +310,8 @@ namespace NuGet.PackageManagement.UI.Options
         private ImageList images64px;
         private TableLayoutPanel tableLayoutPanel3;
         private TableLayoutPanel tableLayoutPanel4;
-        private Label HttpWarning;
-        private PictureBox HttpWarningIcon;
+        private Label HttpErrorOrWarning;
+        private PictureBox HttpErrorOrWarningIcon;
+        private LinkLabel configurationLink;
     }
 }

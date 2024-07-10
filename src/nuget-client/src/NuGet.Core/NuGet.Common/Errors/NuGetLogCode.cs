@@ -223,6 +223,11 @@ namespace NuGet.Common
         NU1301 = 1301,
 
         /// <summary>
+        /// Insecure Source specified.
+        /// </summary>
+        NU1302 = 1302,
+
+        /// <summary>
         /// Package MinClientVersion did not match.
         /// </summary>
         NU1401 = 1401,

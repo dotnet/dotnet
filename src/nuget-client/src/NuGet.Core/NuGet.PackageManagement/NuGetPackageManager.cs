@@ -1125,7 +1125,7 @@ namespace NuGet.PackageManagement
                     PackageSource source = enabledSource.PackageSource;
                     if (source.IsHttp && !source.IsHttps && !source.AllowInsecureConnections)
                     {
-                        nuGetProjectContext.Log(MessageLevel.Warning, Strings.Warning_HttpServerUsage, "update", source.Source);
+                        nuGetProjectContext.Log(MessageLevel.Error, Strings.Error_HttpSource_Single, "update", source.Source);
                     }
                 }
 
@@ -1817,7 +1817,7 @@ namespace NuGet.PackageManagement
                 PackageSource source = enabledSource.PackageSource;
                 if (source.IsHttp && !source.IsHttps && !source.AllowInsecureConnections)
                 {
-                    nuGetProjectContext.Log(MessageLevel.Warning, Strings.Warning_HttpServerUsage, "install", source.Source);
+                    nuGetProjectContext.Log(MessageLevel.Error, Strings.Error_HttpSource_Single, "install", source.Source);
                 }
             }
 

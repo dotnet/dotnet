@@ -68,7 +68,7 @@ namespace NuGet.CommandLine.Test
                     {
                         ids.Add(context.Request.Headers.Get(ProtocolConstants.SessionId));
                     };
-
+                    pathContext.Settings.AddSource("http-feed", server.Uri + "nuget", allowInsecureConnectionsValue: "true");
                     server.Start();
 
                     var result = Util.Restore(pathContext, inputPath, 0, _testOutputHelper, "-Source", server.Uri + "nuget");

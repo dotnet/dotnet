@@ -5,10 +5,6 @@
 // instead modify the neighboring .tt file (text template) and/or NuGet.CommandLine.Xplat\Commands\Commands.xml (data file),
 // then re-execute the text template via "run custom tool" on VS context menu for .tt file, or via dotnet-t4 global tool.
 
-using System;
-using System.Threading.Tasks;
-using NuGet.Common;
-
 namespace NuGet.Commands
 {
     public partial class AddSourceArgs
@@ -21,6 +17,7 @@ namespace NuGet.Commands
         public string ValidAuthenticationTypes { get; set; }
         public string ProtocolVersion { get; set; }
         public string Configfile { get; set; }
+        public bool AllowInsecureConnections { get; set; }
     }
 
     public partial class AddClientCertArgs
@@ -82,6 +79,7 @@ namespace NuGet.Commands
         public string ValidAuthenticationTypes { get; set; }
         public string ProtocolVersion { get; set; }
         public string Configfile { get; set; }
+        public bool AllowInsecureConnections { get; set; }
     }
 
     public partial class UpdateClientCertArgs

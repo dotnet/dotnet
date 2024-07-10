@@ -966,4 +966,7 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
   <data name="WhyCommand_Message_NoDependencyGraphsFoundForFramework" xml:space="preserve">
     <value>No dependency graph(s) found for this target framework.</value>
   </data>
+  <data name="SourcesCommandAllowInsecureConnectionsDescription" xml:space="preserve">
+    <value>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</value>
+  </data>
 </root>

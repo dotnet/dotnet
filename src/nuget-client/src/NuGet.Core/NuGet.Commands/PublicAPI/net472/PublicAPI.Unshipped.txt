@@ -1,1 +1,5 @@
 #nullable enable
+NuGet.Commands.UpdateSourceArgs.AllowInsecureConnections.set -> void
+NuGet.Commands.UpdateSourceArgs.AllowInsecureConnections.get -> bool
+NuGet.Commands.AddSourceArgs.AllowInsecureConnections.set -> void
+NuGet.Commands.AddSourceArgs.AllowInsecureConnections.get -> bool

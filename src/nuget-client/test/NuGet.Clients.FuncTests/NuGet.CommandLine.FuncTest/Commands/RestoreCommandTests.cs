@@ -1187,7 +1187,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
 
         [Fact]
-        public async Task Restore_WithHttpSource_Warns()
+        public async Task Restore_WithHttpSource_Fails()
         {
             // Arrange
             using var pathContext = new SimpleTestPathContext();
@@ -1215,22 +1215,18 @@ namespace NuGet.CommandLine.FuncTest.Commands
             solution.Create(pathContext.SolutionRoot);
 
             // Act
-            var result = RunRestore(pathContext, _successExitCode);
+            var result = RunRestore(pathContext, _failureExitCode);
 
             // Assert
-            result.Success.Should().BeTrue();
-            Assert.Contains($"Added package 'A.1.0.0' to folder '{projectAPackages}'", result.Output);
-            Assert.Contains("You are running the 'restore' operation with an 'HTTP' source, 'http://api.source/index.json'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.", result.Output);
+            result.Success.Should().BeFalse();
+            Assert.Contains("restore", result.Errors);
+            Assert.Contains("http://api.source/index.json", result.Errors);
         }
 
         [Theory]
-        [InlineData("false", true)]
-        [InlineData("FALSE", true)]
-        [InlineData("invalidString", true)]
-        [InlineData("", true)]
-        [InlineData("true", false)]
-        [InlineData("TRUE", false)]
-        public async Task Restore_WithHttpSourceAndFalseAllowInsecureConnections_WarnsCorrectly(string allowInsecureConnections, bool hasHttpWarning)
+        [InlineData("true")]
+        [InlineData("TRUE")]
+        public async Task Restore_WithHttpSourceAndAllowInsecureConnectionsAttributeSetTrue_DoesNotFail(string allowInsecureConnections)
         {
             // Arrange
             using var pathContext = new SimpleTestPathContext();
@@ -1261,21 +1257,51 @@ namespace NuGet.CommandLine.FuncTest.Commands
             CommandRunnerResult result = RunRestore(pathContext, _successExitCode);
 
             // Assert
-            string formatString = "You are running the 'restore' operation with an 'HTTP' source, '{0}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS'";
-            string warningForHttpSource = string.Format(formatString, "http://api.source/index.json");
-            string warningForHttpsSource = string.Format(formatString, "https://api.source/index.json");
 
             result.Success.Should().BeTrue();
-            Assert.Contains($"Added package 'A.1.0.0' to folder '{projectBPackages}'", result.Output);
-            Assert.DoesNotContain(warningForHttpsSource, result.Output);
-            if (hasHttpWarning)
-            {
-                Assert.Contains(warningForHttpSource, result.Output);
-            }
-            else
-            {
-                Assert.DoesNotContain(warningForHttpSource, result.Output);
-            }
+            Assert.Contains($"Added package 'A.1.0.0' to folder '{projectBPackages}'", result.AllOutput);
+        }
+
+        [Theory]
+        [InlineData("false")]
+        [InlineData("FALSE")]
+        [InlineData("invalidString")]
+        [InlineData("")]
+        public async Task Restore_WithHttpSourceAndAllowInsecureConnectionsAttributeSetFalse_Fails(string allowInsecureConnections)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            // Set up solution, project, and packages
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var packageA = new SimpleTestPackageContext("a", "1.0.0");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
+            pathContext.Settings.AddSource("http-feed", "http://api.source/index.json", allowInsecureConnections);
+            pathContext.Settings.AddSource("https-feed", "https://api.source/index.json", allowInsecureConnections);
+
+            var net461 = NuGetFramework.Parse("net461");
+            var projectB = new SimpleTestProjectContext(
+                "b",
+                ProjectStyle.PackagesConfig,
+                pathContext.SolutionRoot);
+            projectB.Frameworks.Add(new SimpleTestProjectFrameworkContext(net461));
+            var projectBPackages = Path.Combine(pathContext.SolutionRoot, "packages");
+
+            Util.CreateFile(Path.GetDirectoryName(projectB.ProjectPath), "packages.config",
+@"<packages>
+  <package id=""A"" version=""1.0.0"" targetFramework=""net461"" />
+</packages>");
+
+            solution.Projects.Add(projectB);
+            solution.Create(pathContext.SolutionRoot);
+
+            // Act
+            CommandRunnerResult result = RunRestore(pathContext, _failureExitCode);
+
+            // Assert
+            result.Success.Should().BeFalse();
+            Assert.Contains("restore", result.Errors);
+            Assert.Contains("http://api.source/index.json", result.Errors);
+            Assert.DoesNotContain("https://api.source/index.json", result.Errors);
         }
 
         [Fact]
@@ -1300,7 +1326,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                     (new Uri(advisoryUrl2), PackageVulnerabilitySeverity.High, VersionRange.Parse("[1.0.0, 3.0.0)"))
                 });
             pathContext.Settings.RemoveSource("source");
-            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri);
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "true");
 
             // set up solution, projects and packages
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);

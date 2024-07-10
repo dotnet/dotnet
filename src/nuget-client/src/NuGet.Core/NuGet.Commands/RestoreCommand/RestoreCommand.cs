@@ -254,8 +254,8 @@ namespace NuGet.Commands
                         var source = remoteProvider.Source;
                         if (source.IsHttp && !source.IsHttps && !source.AllowInsecureConnections)
                         {
-                            await _logger.LogAsync(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1803,
-                                string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "restore", source.Source)));
+                            await _logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1302,
+                                string.Format(CultureInfo.CurrentCulture, Strings.Error_HttpSource_Single, "restore", source.Source)));
                         }
                     }
                 }
