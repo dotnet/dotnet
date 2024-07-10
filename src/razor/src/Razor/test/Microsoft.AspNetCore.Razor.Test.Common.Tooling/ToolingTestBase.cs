@@ -70,6 +70,12 @@ public abstract partial class ToolingTestBase : IAsyncLifetime
     /// </summary>
     internal ILoggerFactory LoggerFactory { get; }
 
+    /// <summary>
+    /// An <see cref="ITestOutputHelper"/> that the currently running test can use to write
+    /// though using <see cref="LoggerFactory"/> is probably preferred.
+    /// </summary>
+    internal ITestOutputHelper TestOutputHelper { get; }
+
     private ILogger? _logger;
 
     /// <summary>
@@ -86,6 +92,7 @@ public abstract partial class ToolingTestBase : IAsyncLifetime
         _disposalTokenSource = new();
         DisposalToken = _disposalTokenSource.Token;
 
+        TestOutputHelper = testOutput;
         LoggerFactory = new TestOutputLoggerFactory(testOutput);
 
         // Give this thread a name, so it's easier to find in the VS Threads window.
