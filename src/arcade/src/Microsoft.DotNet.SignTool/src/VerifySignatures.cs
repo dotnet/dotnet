@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
@@ -101,8 +102,18 @@ namespace Microsoft.DotNet.SignTool
             X509Certificate2 certificate;
             try
             {
+                // We later suppress SYSLIB0057 because X509CertificateLoader does not handle authenticode inputs
+                // so we should verify that the certificate is authenticode before using X509Certificate2.CreateFromSignedFile
+                var certContentType = X509Certificate2.GetCertContentType(fullPath);
+                if (certContentType != X509ContentType.Authenticode)
+                {
+                    return false;
+                }
+
+                #pragma warning disable SYSLIB0057 // Suppress obsoletion warning for CreateFromSignedFile
                 X509Certificate signer = X509Certificate2.CreateFromSignedFile(fullPath);
                 certificate = new X509Certificate2(signer);
+                #pragma warning restore SYSLIB0057
             }
             catch (Exception)
             {
