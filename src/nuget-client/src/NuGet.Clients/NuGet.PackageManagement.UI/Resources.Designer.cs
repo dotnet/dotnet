@@ -745,11 +745,29 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to HTTP Source.
+        /// </summary>
+        public static string DialogTitle_HttpSource {
+            get {
+                return ResourceManager.GetString("DialogTitle_HttpSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Don&apos;t show this again.
         /// </summary>
         public static string DoNotShowThisAgain {
             get {
                 return ResourceManager.GetString("DoNotShowThisAgain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file..
+        /// </summary>
+        public static string Error_HttpSource_Single {
+            get {
+                return ResourceManager.GetString("Error_HttpSource_Single", resourceCulture);
             }
         }
         
@@ -1380,6 +1398,15 @@ namespace NuGet.PackageManagement.UI {
         public static string LicenseTerm_LinkName {
             get {
                 return ResourceManager.GetString("LicenseTerm_LinkName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Common NuGet configurations; How settings are applied..
+        /// </summary>
+        public static string Link_configuration {
+            get {
+                return ResourceManager.GetString("Link_configuration", resourceCulture);
             }
         }
         
@@ -2619,20 +2646,20 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Warning: Non-HTTPS access will be removed in a future version. Consider migrating to an &apos;HTTPS&apos; source..
+        ///   Looks up a localized string similar to You are attempting to add an HTTP source, which is insecure. Would you like to proceed with adding this insecure HTTP source?.
         /// </summary>
-        public static string Warning_HTTPSource {
+        public static string Warn_Adding_HttpSource {
             get {
-                return ResourceManager.GetString("Warning_HTTPSource", resourceCulture);
+                return ResourceManager.GetString("Warn_Adding_HttpSource", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Non-HTTPS access will be removed in a future version. Consider migrating to an &apos;HTTPS&apos; source..
+        ///   Looks up a localized string similar to AllowInsecureConnections is enabled and allows http access. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere..
         /// </summary>
-        public static string Warning_NewHTTPSource_VSOptions {
+        public static string Warning_HTTPSource {
             get {
-                return ResourceManager.GetString("Warning_NewHTTPSource_VSOptions", resourceCulture);
+                return ResourceManager.GetString("Warning_HTTPSource", resourceCulture);
             }
         }
         

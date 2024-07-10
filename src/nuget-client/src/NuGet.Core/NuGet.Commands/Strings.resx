@@ -1099,4 +1099,26 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
   <data name="SourcesCommandValidProtocolVersion" xml:space="preserve">
     <value>The protocol version specified is invalid. Valid protocol versions are from {0} to {1}.</value>
   </data>
+  <data name="Error_HttpSources_Multiple" xml:space="preserve">
+    <value>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Please refer to https://aka.ms/nuget-https-everywhere for more information.</value>
+    <comment>0 - The command name. Ex. Push/Delete. 1 - list of server URIs</comment>
+  </data>
+  <data name="Error_HttpSource_Single" xml:space="preserve">
+    <value>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Please refer to https://aka.ms/nuget-https-everywhere for more information.</value>
+    <comment>0 - The command name. Ex. Push/Delete. 1 - server URI.</comment>
+  </data>
+  <data name="Error_HttpSource_Single_Short" xml:space="preserve">
+    <value>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. Please refer to https://aka.ms/nuget-https-everywhere for more information.</value>
+    <comment>0 - The command name. Ex. Push/Delete. 1 - server URI.</comment>
+  </data>
+  <data name="Warning_List_HttpSource" xml:space="preserve">
+    <value>The following is a 'Non-HTTPS' source: {0}
+NuGet requires HTTPS sources. Please refer to https://aka.ms/nuget-https-everywhere for more information.</value>
+    <comment>{0} - list of server URIs</comment>
+  </data>
+  <data name="Warning_List_HttpSources" xml:space="preserve">
+    <value>The following are 'Non-HTTPS' sources: {0}
+NuGet requires HTTPS sources. Please refer to https://aka.ms/nuget-https-everywhere for more information.</value>
+    <comment>{0} - list of server URIs</comment>
+  </data>
 </root>

@@ -100,7 +100,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -236,7 +236,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -368,7 +368,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -497,7 +497,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -584,7 +584,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -680,7 +680,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -775,7 +775,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -849,7 +849,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -921,7 +921,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -995,7 +995,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -1065,7 +1065,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -1139,7 +1139,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -1207,7 +1207,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -1288,7 +1288,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -1355,7 +1355,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -1421,7 +1421,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 
@@ -1486,7 +1486,7 @@ namespace NuGet.CommandLine.Test
                 var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i]);
+                    SimpleTestSettingsContext.AddEntry(section, $"source{i}", sources[i], "allowInsecureConnections", "true");
                 }
                 settings.Save();
 

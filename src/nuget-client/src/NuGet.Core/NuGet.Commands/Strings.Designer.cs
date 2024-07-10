@@ -385,6 +385,33 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. Please refer to https://aka.ms/nuget-https-everywhere for more information..
+        /// </summary>
+        internal static string Error_HttpSource_Single {
+            get {
+                return ResourceManager.GetString("Error_HttpSource_Single", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source: {1}. NuGet requires HTTPS sources. Please refer to https://aka.ms/nuget-https-everywhere for more information..
+        /// </summary>
+        internal static string Error_HttpSource_Single_Short {
+            get {
+                return ResourceManager.GetString("Error_HttpSource_Single_Short", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with &apos;HTTP&apos; sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. Please refer to https://aka.ms/nuget-https-everywhere for more information..
+        /// </summary>
+        internal static string Error_HttpSources_Multiple {
+            get {
+                return ResourceManager.GetString("Error_HttpSources_Multiple", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The package {0} {1} has a package type {2} that is incompatible with this project..
         /// </summary>
         internal static string Error_IncompatiblePackageType {
@@ -2476,6 +2503,27 @@ namespace NuGet.Commands {
         
         /// <summary>
         ///   Looks up a localized string similar to {0} depends on {1} but {2} was not found. {3} was resolved instead..
+        ///   Looks up a localized string similar to The following is a &apos;Non-HTTPS&apos; source: {0}
+        ///NuGet requires HTTPS sources. Please refer to https://aka.ms/nuget-https-everywhere for more information..
+        /// </summary>
+        internal static string Warning_List_HttpSource {
+            get {
+                return ResourceManager.GetString("Warning_List_HttpSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following are &apos;Non-HTTPS&apos; sources: {0}
+        ///NuGet requires HTTPS sources. Please refer to https://aka.ms/nuget-https-everywhere for more information..
+        /// </summary>
+        internal static string Warning_List_HttpSources {
+            get {
+                return ResourceManager.GetString("Warning_List_HttpSources", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} depends on {1} but {2} was not found. An approximate best match of {3} was resolved..
         /// </summary>
         internal static string Warning_MinVersionDoesNotExist {
             get {

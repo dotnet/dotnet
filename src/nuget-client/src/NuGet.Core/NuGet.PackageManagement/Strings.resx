@@ -443,4 +443,8 @@
 {2} - severity, for example low, moderate, high, or critical
 {3} - URL for more info on the known vulnerability</comment>
   </data>
+  <data name="Error_HttpSource_Single" xml:space="preserve">
+    <value>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Please refer to https://aka.ms/nuget-https-everywhere.</value>
+    <comment>0 - The command name. Ex. Push/Delete. 1 - server uri.</comment>
+  </data>
 </root>

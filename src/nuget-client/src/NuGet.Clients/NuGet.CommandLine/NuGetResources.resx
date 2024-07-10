@@ -714,14 +714,6 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
   <data name="Error_NuGetExeNeedsToBeUnblockedAfterDownloading" xml:space="preserve">
     <value>NuGet.exe file on path {0} needs to be unblocked after downloading.</value>
   </data>
-  <data name="Warning_HttpServerUsage" xml:space="preserve">
-    <value>You are running the '{0}' operation with an 'HTTP' source, '{1}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</value>
-    <comment>0 - The command name. Ex. Push/Delete. 1 - server uri.</comment>
-  </data>
-  <data name="Warning_HttpSources_Multiple" xml:space="preserve">
-    <value>You are running the '{0}' operation with 'HTTP' sources: {1}
-Non-HTTPS access will be removed in a future version. Consider migrating to 'HTTPS' sources.</value>
-  </data>
   <data name="Error_SourceProviderIsNull" xml:space="preserve">
     <value>Property SourceProvider is null.</value>
     <comment>Don't localize 'SourceProvider'</comment>
@@ -746,5 +738,11 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</comment>
     <comment>{0} - name of the assembly running the command, e.g., NuGet
 {1} - current command marked as deprecated, e.g., list
 {2} - replacement command. For example, search</comment>
+  </data>
+  <data name="Error_HttpSources_Multiple" xml:space="preserve">
+    <value>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Please refer to https://aka.ms/nuget-https-everywhere.</value>
+  </data>
+  <data name="Error_HttpSource_Single" xml:space="preserve">
+    <value>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Please refer to https://aka.ms/nuget-https-everywhere.</value>
   </data>
 </root>

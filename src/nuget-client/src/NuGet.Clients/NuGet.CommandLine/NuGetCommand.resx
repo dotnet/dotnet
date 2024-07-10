@@ -934,4 +934,7 @@ nuget client-certs List</value>
   <data name="EulaDescription" xml:space="preserve">
     <value>Display NuGet.exe's End User Liscence Agreement (EULA)</value>
   </data>
+  <data name="SourcesCommandAllowInsecureConnectionsDescription" xml:space="preserve">
+    <value>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</value>
+  </data>
 </root>

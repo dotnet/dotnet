@@ -367,6 +367,24 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. Please refer to https://aka.ms/nuget-https-everywhere..
+        /// </summary>
+        public static string Error_HttpSource_Single {
+            get {
+                return ResourceManager.GetString("Error_HttpSource_Single", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with &apos;HTTP&apos; sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. Please refer to https://aka.ms/nuget-https-everywhere..
+        /// </summary>
+        public static string Error_HttpSources_Multiple {
+            get {
+                return ResourceManager.GetString("Error_HttpSources_Multiple", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid characters in one of the following path segments: &apos;{0}&apos;.
         /// </summary>
         public static string Error_InvalidCharactersInPathSegment {
@@ -1725,25 +1743,6 @@ namespace NuGet.CommandLine {
         public static string Warning_FileDoesNotExist {
             get {
                 return ResourceManager.GetString("Warning_FileDoesNotExist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source, &apos;{1}&apos;. Non-HTTPS access will be removed in a future version. Consider migrating to an &apos;HTTPS&apos; source..
-        /// </summary>
-        public static string Warning_HttpServerUsage {
-            get {
-                return ResourceManager.GetString("Warning_HttpServerUsage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with &apos;HTTP&apos; sources: {1}
-        ///Non-HTTPS access will be removed in a future version. Consider migrating to &apos;HTTPS&apos; sources..
-        /// </summary>
-        public static string Warning_HttpSources_Multiple {
-            get {
-                return ResourceManager.GetString("Warning_HttpSources_Multiple", resourceCulture);
             }
         }
         

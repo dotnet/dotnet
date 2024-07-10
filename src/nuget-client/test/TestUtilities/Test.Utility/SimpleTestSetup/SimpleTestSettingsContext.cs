@@ -164,6 +164,16 @@ namespace NuGet.Test.Utility
             section.Add(setting);
         }
 
+        public static void AddEntry(XElement section, string key, string value, string additionalAtrributeName, string additionalAttributeValue, string additionalAtrributeName2, string additionalAttributeValue2)
+        {
+            var setting = new XElement(XName.Get("add"));
+            setting.Add(new XAttribute(XName.Get("key"), key));
+            setting.Add(new XAttribute(XName.Get("value"), value));
+            setting.Add(new XAttribute(XName.Get(additionalAtrributeName), additionalAttributeValue));
+            setting.Add(new XAttribute(XName.Get(additionalAtrributeName2), additionalAttributeValue2));
+            section.Add(setting);
+        }
+
         public static void AddSetting(XDocument doc, string key, string value)
         {
             RemoveSetting(doc, key);

@@ -1246,7 +1246,7 @@ EndProject");
                                 MockServer.SetResponseContent(response, content);
                             }
                         }));
-
+                    pathContext.Settings.AddSource("http-source", $"{server.Uri}nuget", allowInsecureConnectionsValue: "True");
                     server.Get.Add("/nuget", r => "OK");
 
                     server.Start();
@@ -3305,7 +3305,7 @@ EndProject";
                     (new Uri("https://contoso.com/advisories/12345"), PackageVulnerabilitySeverity.High, VersionRange.Parse("[1.0.0, 2.0.0)"))
                 });
             pathContext.Settings.RemoveSource("source");
-            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri);
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "True");
 
             var workingPath = pathContext.WorkingDirectory;
             Util.CreateTestPackage("packageA", "1.1.0", pathContext.PackageSource);
@@ -3351,7 +3351,7 @@ EndProject";
                 });
 
             pathContext.Settings.RemoveSource("source");
-            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri);
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "True");
 
             Util.CreateTestPackage("packageA", "1.1.0", pathContext.PackageSource);
             Util.CreateTestPackage("packageB", "2.2.0", pathContext.PackageSource);
@@ -3404,7 +3404,7 @@ EndProject";
                     (new Uri("https://contoso.com/advisories/12345"), PackageVulnerabilitySeverity.High, VersionRange.Parse("[1.0.0, 2.0.0)"))
                 });
             pathContext.Settings.RemoveSource("source");
-            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri);
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "True");
 
             Util.CreateTestPackage("packageA", "1.1.0", pathContext.PackageSource);
             Util.CreateTestPackage("packageB", "2.2.0", pathContext.PackageSource);
@@ -3459,7 +3459,7 @@ EndProject";
                     (new Uri("https://contoso.com/advisories/12346"), PackageVulnerabilitySeverity.Critical, VersionRange.Parse("[1.0.0, 2.0.0)"))
                 });
             pathContext.Settings.RemoveSource("source");
-            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri);
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "True");
 
             Util.CreateTestPackage("packageA", "1.1.0", pathContext.PackageSource);
             Util.CreateTestPackage("packageB", "2.2.0", pathContext.PackageSource);
@@ -3515,7 +3515,7 @@ EndProject";
                     (new Uri("https://contoso.com/advisories/12346"), PackageVulnerabilitySeverity.Critical, VersionRange.Parse("[1.2.0, 2.0.0)"))
                 });
             pathContext.Settings.RemoveSource("source");
-            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri);
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "True");
 
             Util.CreateTestPackage("packageA", "1.1.0", pathContext.PackageSource);
             Util.CreateTestPackage("packageA", "1.2.0", pathContext.PackageSource);
@@ -3588,7 +3588,7 @@ EndProject";
                     (new Uri("https://contoso.com/advisories/12346"), PackageVulnerabilitySeverity.Critical, VersionRange.Parse("[1.2.0, 2.0.0)"))
                 });
             pathContext.Settings.RemoveSource("source");
-            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri);
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "true");
 
             Util.CreateTestPackage("packageA", "1.1.0", pathContext.PackageSource);
             Util.CreateTestPackage("packageA", "1.2.0", pathContext.PackageSource);
@@ -3669,7 +3669,7 @@ EndProject";
                     (new Uri(advisoryUrl2), PackageVulnerabilitySeverity.Critical, VersionRange.Parse("[1.0.0, 3.0.0)"))
                 });
             pathContext.Settings.RemoveSource("source");
-            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri);
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "true");
 
             var packageA1 = new SimpleTestPackageContext() { Id = "packageA", Version = "1.1.0" };
             var packageA2 = new SimpleTestPackageContext() { Id = "packageA", Version = "1.2.0" };

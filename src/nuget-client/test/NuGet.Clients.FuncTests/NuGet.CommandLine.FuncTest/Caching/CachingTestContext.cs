@@ -252,18 +252,18 @@ namespace NuGet.CommandLine.Test.Caching
             ProjectPath = Path.Combine(WorkingPath, "project.csproj");
 
             OutputPackagesPath = Path.Combine(WorkingPath, "packages");
-            CreateNuGetConfig(WorkingPath);
 
             Directory.CreateDirectory(OutputPackagesPath);
         }
 
-        private void CreateNuGetConfig(string workingDirectory)
+        internal void CreateNuGetConfig(string workingDirectory, string source)
         {
             string nugetConfigContent =
-                @"<?xml version='1.0' encoding='utf-8'?>
+                $@"<?xml version='1.0' encoding='utf-8'?>
 <configuration>
   <packageSources>
     <clear />
+    <add key=""http-feed"" value=""{source}"" allowInsecureConnections=""true""/>
   </packageSources>
   <packageSourceMapping>
     <clear />

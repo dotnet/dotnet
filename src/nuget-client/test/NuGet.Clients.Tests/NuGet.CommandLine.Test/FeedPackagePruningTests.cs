@@ -74,7 +74,7 @@ namespace NuGet.CommandLine.Test
                 server.Start();
 
                 var feedUrl = server.Uri + "index.json";
-
+                pathContext.Settings.AddSource(feedUrl, feedUrl, allowInsecureConnectionsValue: "true");
                 // Restore x 2.0.0 and populate the http cache
                 var r = Util.Restore(pathContext, projectA.ProjectPath, 0, _testOutputHelper, "-Source", feedUrl);
 

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -4065,10 +4066,8 @@ namespace NuGet.Commands.FuncTest
             }
         }
 
-        [Theory]
-        [InlineData("true", false)]
-        [InlineData("false", true)]
-        public async Task Restore_WithHttpSource_Warns(string allowInsecureConnections, bool isHttpWarningExpected)
+        [Fact]
+        public async Task Restore_WithHttpSourceAndAllowInsecureConnectionsFalse_ThrowsError()
         {
             // Arrange
             using var pathContext = new SimpleTestPathContext();
@@ -4076,8 +4075,37 @@ namespace NuGet.Commands.FuncTest
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
             string httpSourceUrl = "http://api.source/index.json";
             string httpsSourceUrl = "https://api.source/index.json";
-            pathContext.Settings.AddSource("http-feed", httpSourceUrl, allowInsecureConnections);
-            pathContext.Settings.AddSource("https-feed", httpsSourceUrl, allowInsecureConnections);
+            pathContext.Settings.AddSource("http-feed", httpSourceUrl, "False");
+            pathContext.Settings.AddSource("https-feed", httpsSourceUrl, "False");
+
+            var logger = new TestLogger();
+            ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            var project1Spec = ProjectTestHelpers.GetPackageSpec(settings, "Project1", pathContext.SolutionRoot, framework: "net5.0");
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, project1Spec);
+            var command = new RestoreCommand(request);
+
+            // Act
+            var result = await command.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeFalse(because: logger.ShowMessages());
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            IAssetsLogMessage logMessage = result.LockFile.LogMessages[0];
+            logMessage.Code.Should().Be(NuGetLogCode.NU1302);
+            Assert.Contains(httpSourceUrl, logMessage.Message);
+        }
+
+        [Fact]
+        public async Task Restore_WithHttpSourceAndAllowInsecureConnectionsTrue_Succeeds()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var packageA = new SimpleTestPackageContext("a", "1.0.0");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
+            string httpSourceUrl = "http://api.source/index.json";
+            string httpsSourceUrl = "https://api.source/index.json";
+            pathContext.Settings.AddSource("http-feed", httpSourceUrl, "True");
+            pathContext.Settings.AddSource("https-feed", httpsSourceUrl, "True");
 
             var logger = new TestLogger();
             ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
@@ -4090,21 +4118,7 @@ namespace NuGet.Commands.FuncTest
 
             // Assert
             result.Success.Should().BeTrue(because: logger.ShowMessages());
-            result.LockFile.Libraries.Should().HaveCount(0);
-
-            string expectedWarning = $"You are running the 'restore' operation with an 'HTTP' source, '{httpSourceUrl}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.";
-
-            if (isHttpWarningExpected)
-            {
-                result.LockFile.LogMessages.Should().HaveCount(1);
-                IAssetsLogMessage logMessage = result.LockFile.LogMessages[0];
-                logMessage.Code.Should().Be(NuGetLogCode.NU1803);
-                Assert.Equal(expectedWarning, logMessage.Message);
-            }
-            else
-            {
-                result.LockFile.LogMessages.Should().HaveCount(0);
-            }
+            result.LockFile.LogMessages.Should().HaveCount(0);
         }
 
         [Fact]

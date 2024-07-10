@@ -8,12 +8,13 @@ In here we describe the general workflow guidelines the NuGet developer/contribu
 
 To help ensure that only the highest quality code makes its way into the project, all code changes need to be submitted to GitHub as PRs.
 
-In general a PR should be approved by the Subject Matter Expert (SME) of that code. For example, a change to the Banana project should be signed off by `@Monkey`, and not by `@Giraffe`. If you don't know the SME, someone on the team will help you identify them. Of course, sometimes it's the SME who is making a change, in which case a secondary person will have to sign off on the change (e.g. `@JuniorMonkey`).
+In general a PR should be approved by a Subject Matter Expert (SME) of that code. For example, a change to the Banana project should be signed off by `@Monkey`, and not by `@Giraffe`. If you don't know the SME, someone on the team will help you identify them. Of course, sometimes it's the SME who is making a change, in which case a secondary person will have to sign off on the change (e.g. `@JuniorMonkey`).
 
 To commit the PR to the repo use the GitHub `Squash and Merge` button. We can't stress this enough. Always use `Squash and Merge` unless an exception is explicitly stated in this document.
 
 This repo has bots that manage all stale PRs. Stale PRs will be autoclosed.
 
+- *Do* follow the pull request template, as it helps the maintainers drive quality across the product.
 - *Do* favor having more than 1 reviewer.
 - *Do not* merge too quickly. Wait for at least 24h after the last significant changes before merging unless the change is urgent.
 - *Do* address all feedback. Not necessarily by accepting it, but by reaching a resolution with the reviewer. All comments need to be marked as resolved before merging.

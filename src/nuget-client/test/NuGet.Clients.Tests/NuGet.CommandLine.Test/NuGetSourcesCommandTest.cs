@@ -2,11 +2,11 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NuGet.Common;
 using NuGet.Configuration;
-using NuGet.Configuration.Test;
 using NuGet.Test.Utility;
 using Xunit;
 
@@ -14,11 +14,42 @@ namespace NuGet.CommandLine.Test
 {
     public class NuGetSourcesCommandTest
     {
-        [Theory]
-        [InlineData("http://test_source", true)]
-        [InlineData("https://test_source", false)]
-        public void SourcesCommandTest_AddSource(string source, bool shouldWarn)
+
+        [Fact]
+        public void SourcesCommandTest_AddSourceWithHTTPSource_ShouldFail()
         {
+            string source = "http://test_source";
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                TestDirectory workingPath = pathContext.WorkingDirectory;
+                SimpleTestSettingsContext settings = pathContext.Settings;
+
+                // Arrange
+                var nugetexe = Util.GetNuGetExePath();
+                var args = new string[] {
+                    "sources",
+                    "Add",
+                    "-Name",
+                    "test_source",
+                    "-Source",
+                    source,
+                    "-ConfigFile",
+                    settings.ConfigPath
+                };
+
+                // Act
+                CommandRunnerResult result = CommandRunner.Run(nugetexe, workingPath, string.Join(" ", args));
+
+                // Assert
+                Assert.Equal(1, result.ExitCode);
+                Assert.Contains(source, result.Errors);
+            }
+        }
+
+        [Fact]
+        public void SourcesCommandTest_AddSourceWithHTTPSSource_ShouldSucceed()
+        {
+            string source = "https://test_source";
             using (var pathContext = new SimpleTestPathContext())
             {
                 TestDirectory workingPath = pathContext.WorkingDirectory;
@@ -46,26 +77,177 @@ namespace NuGet.CommandLine.Test
                 SettingSection packageSourcesSection = loadedSettings.GetSection("packageSources");
                 SourceItem sourceItem = packageSourcesSection?.GetFirstItemWithAttribute<SourceItem>("key", "test_source");
                 Assert.Equal(source, sourceItem.GetValueAsPath());
-                Assert.Equal(shouldWarn, result.Output.Contains("WARNING: You are running the 'add source' operation with an 'HTTP' source"));
             }
         }
 
         [Theory]
-        [InlineData("http://source.test", true)]
-        [InlineData("https://source.test", false)]
-        public void SourcesCommandTest_UpdateSource(string source, bool shouldWarn)
+        [InlineData("http://test_source")]
+        [InlineData("https://test_source")]
+        public void SourcesCommandTest_AddSource_AllowInsecureConnections(string source)
         {
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                TestDirectory workingPath = pathContext.WorkingDirectory;
+                SimpleTestSettingsContext settings = pathContext.Settings;
+
+                // Arrange
+                var nugetexe = Util.GetNuGetExePath();
+                var args = new string[] {
+                    "sources",
+                    "Add",
+                    "-Name",
+                    "test_source",
+                    "-Source",
+                    source,
+                    "-ConfigFile",
+                    settings.ConfigPath,
+                    "-AllowInsecureConnections"
+                };
+
+                // Act
+                CommandRunnerResult result = CommandRunner.Run(nugetexe, workingPath, string.Join(" ", args));
+
+                // Assert
+                Assert.Equal(0, result.ExitCode);
+                ISettings loadedSettings = Configuration.Settings.LoadDefaultSettings(workingPath, null, null);
+                SettingSection packageSourcesSection = loadedSettings.GetSection("packageSources");
+                SourceItem sourceItem = packageSourcesSection?.GetFirstItemWithAttribute<SourceItem>("key", "test_source");
+                Assert.Equal(source, sourceItem.GetValueAsPath());
+                Assert.Equal("True", sourceItem.AllowInsecureConnections);
+                Assert.False(result.Errors.Contains(source));
+            }
+        }
+
+        [Fact]
+        public void SourcesCommandTest_UpdateSourceWithHTTPSource_ShouldFail()
+        {
+            using (SimpleTestPathContext pathContext = new SimpleTestPathContext())
+            {
+                string source = "http://source.test";
+                var nugetexe = Util.GetNuGetExePath();
+                var configFileName = "nuget.config";
+                var configFilePath = Path.Combine(pathContext.WorkingDirectory, configFileName);
+
+                pathContext.Settings.AddSource("test_source", "http://source.test.initial");
+
+                // Arrange
+                var args = new string[] {
+                    "sources",
+                    "Update",
+                    "-Name",
+                    "test_source",
+                    "-Source",
+                    source,
+                    "-ConfigFile",
+                    configFilePath
+                };
+
+                // Act
+                CommandRunnerResult result = CommandRunner.Run(
+                    nugetexe,
+                    pathContext.WorkingDirectory,
+                    string.Join(" ", args));
+
+                // Assert
+                Assert.Equal(1, result.ExitCode);
+                Assert.Contains(source, result.Errors);
+            }
+        }
+
+        [Fact]
+        public void SourcesCommandTest_UpdateSourceWithHTTPSSource_ShouldSucceed()
+        {
+            string source = "https://source.test";
+            using (SimpleTestPathContext pathContext = new SimpleTestPathContext())
+            {
+                var nugetexe = Util.GetNuGetExePath();
+                var configFileName = "nuget.config";
+                var configFilePath = Path.Combine(pathContext.WorkingDirectory, configFileName);
+
+                pathContext.Settings.AddSource("test_source", "http://source.test.initial");
+
+                // Arrange
+                var args = new string[] {
+                    "sources",
+                    "Update",
+                    "-Name",
+                    "test_source",
+                    "-Source",
+                    source,
+                    "-ConfigFile",
+                    configFilePath
+                };
+
+                // Act
+                CommandRunnerResult result = CommandRunner.Run(
+                    nugetexe,
+                    pathContext.WorkingDirectory,
+                    string.Join(" ", args));
+
+                // Assert
+                Assert.Equal(0, result.ExitCode);
+                ISettings loadedSettings = Configuration.Settings.LoadDefaultSettings(pathContext.WorkingDirectory, configFileName, null);
+                SettingSection packageSourcesSection = loadedSettings.GetSection("packageSources");
+                SourceItem sourceItem = packageSourcesSection?.GetFirstItemWithAttribute<SourceItem>("key", "test_source");
+                Assert.Equal(source, sourceItem.GetValueAsPath());
+            }
+        }
+
+        [Fact]
+        public void SourcesCommandTest_RemoveAllowInsecureConnectionsOfHttpSource_Fails()
+        {
+            string source = "http://source.test";
             using (TestDirectory configFileDirectory = TestDirectory.Create())
             {
                 var nugetexe = Util.GetNuGetExePath();
                 var configFileName = "nuget.config";
                 var configFilePath = Path.Combine(configFileDirectory, configFileName);
-
                 var nugetConfig = string.Format(
                     @"<?xml version=""1.0"" encoding=""utf-8""?>
 <configuration>
   <packageSources>
-    <add key=""test_source"" value=""http://source.test.initial"" />
+    <add key=""test_source"" value=""http://source.test.initial"" AllowInsecureConnections=""True""/>
+  </packageSources>
+</configuration>", source);
+                Util.CreateFile(configFileDirectory, configFileName, nugetConfig);
+
+                // Arrange
+                var args = new string[] {
+                    "sources",
+                    "Update",
+                    "-Name",
+                    "test_source",
+                    "-Source",
+                    source,
+                    "-ConfigFile",
+                    configFilePath
+                };
+
+                // Act
+                CommandRunnerResult result = CommandRunner.Run(
+                    nugetexe,
+                    configFileDirectory,
+                    string.Join(" ", args));
+
+                // Assert
+                Assert.Equal(1, result.ExitCode);
+                Assert.Contains(source, result.Errors);
+            }
+        }
+        [Fact]
+        public void SourcesCommandTest_RemoveAllowInsecureConnectionsOfHttpsSource_Succeeds()
+        {
+            string source = "https://source.test";
+            using (TestDirectory configFileDirectory = TestDirectory.Create())
+            {
+                var nugetexe = Util.GetNuGetExePath();
+                var configFileName = "nuget.config";
+                var configFilePath = Path.Combine(configFileDirectory, configFileName);
+                var nugetConfig = string.Format(
+                    @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <packageSources>
+    <add key=""test_source"" value=""http://source.test.initial"" AllowInsecureConnections=""True""/>
   </packageSources>
 </configuration>", source);
                 Util.CreateFile(configFileDirectory, configFileName, nugetConfig);
@@ -94,12 +276,62 @@ namespace NuGet.CommandLine.Test
                 SettingSection packageSourcesSection = loadedSettings.GetSection("packageSources");
                 SourceItem sourceItem = packageSourcesSection?.GetFirstItemWithAttribute<SourceItem>("key", "test_source");
                 Assert.Equal(source, sourceItem.GetValueAsPath());
-                Assert.Equal(shouldWarn, result.Output.Contains("WARNING: You are running the 'update source' operation with an 'HTTP' source"));
+                Assert.Null(sourceItem.AllowInsecureConnections);
+            }
+        }
+
+        [Theory]
+        [InlineData("http://source.test")]
+        [InlineData("https://source.test")]
+        public void SourcesCommandTest_UpdateSource_AddAllowInsecureConnections(string source)
+        {
+            using (TestDirectory configFileDirectory = TestDirectory.Create())
+            {
+                var nugetexe = Util.GetNuGetExePath();
+                var configFileName = "nuget.config";
+                var configFilePath = Path.Combine(configFileDirectory, configFileName);
+
+                var nugetConfig = string.Format(
+                    @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <packageSources>
+    <add key=""test_source"" value=""http://source.test.initial"" />
+  </packageSources>
+</configuration>", source);
+                Util.CreateFile(configFileDirectory, configFileName, nugetConfig);
+
+                // Arrange
+                var args = new string[] {
+                    "sources",
+                    "Update",
+                    "-Name",
+                    "test_source",
+                    "-Source",
+                    source,
+                    "-ConfigFile",
+                    configFilePath,
+                    "-AllowInsecureConnections"
+                };
+
+                // Act
+                CommandRunnerResult result = CommandRunner.Run(
+                    nugetexe,
+                    configFileDirectory,
+                    string.Join(" ", args));
+
+                // Assert
+                Assert.Equal(0, result.ExitCode);
+                ISettings loadedSettings = Configuration.Settings.LoadDefaultSettings(configFileDirectory, configFileName, null);
+                SettingSection packageSourcesSection = loadedSettings.GetSection("packageSources");
+                SourceItem sourceItem = packageSourcesSection?.GetFirstItemWithAttribute<SourceItem>("key", "test_source");
+                Assert.Equal(source, sourceItem.GetValueAsPath());
+                Assert.Equal("True", sourceItem.AllowInsecureConnections);
+                Assert.False(result.Errors.Contains(source));
             }
         }
 
         [Fact]
-        public void SourcesCommandTest_EnableSource_WarnWhenUsingHttp()
+        public void SourcesCommandTest_EnableSource_ThrowsAnExceptionWhenUsingHTTP()
         {
             // Arrange
             string nugetexe = Util.GetNuGetExePath();
@@ -137,29 +369,13 @@ namespace NuGet.CommandLine.Test
                     string.Join(" ", args));
 
                 // Assert
-                Util.VerifyResultSuccess(result);
-
-                ISettings settings = Configuration.Settings.LoadDefaultSettings(
-                    configFileDirectory,
-                    configFileName,
-                    null);
-
-                PackageSourceProvider packageSourceProvider = new Configuration.PackageSourceProvider(settings);
-                var sources = packageSourceProvider.LoadPackageSources().ToList();
-
-                var testSources = sources.Where(s => s.Name == "test_source");
-                Assert.Single(testSources);
-                PackageSource source = testSources.Single();
-
-                Assert.Equal("test_source", source.Name);
-                Assert.Equal("http://test_source", source.Source);
-                Assert.True(source.IsEnabled, "Source is not enabled");
-                Assert.True(result.Output.Contains("WARNING: You are running the 'enable source' operation with an 'HTTP' source, 'http://test_source'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source."));
+                Assert.Equal(1, result.ExitCode);
+                Assert.Contains("http://test_source", result.Errors);
             }
         }
 
         [Fact]
-        public void SourcesCommandTest_DisableSource_NoWarnWhenUsingHttp()
+        public void SourcesCommandTest_DisableSource_NoErrorWhenUsingHttp()
         {
             // Arrange
             var nugetexe = Util.GetNuGetExePath();
@@ -210,15 +426,15 @@ namespace NuGet.CommandLine.Test
                 Assert.Equal("test_source", source.Name);
                 Assert.Equal("http://test_source", source.Source);
                 Assert.False(source.IsEnabled, "Source is not disabled");
-                Assert.False(result.Output.Contains("WARNING:"));
+                Assert.False(result.Errors.Contains("http://test_source"));
             }
         }
 
         [Theory]
-        [InlineData("http://source.test", "http://source.test.2", true, "WARNING: You are running the 'list source' operation with 'HTTP' source")]
-        [InlineData("https://source.test", "http://source.test.2", true, "WARNING: You are running the 'list source' operation with an 'HTTP' source")]
-        [InlineData("https://source.test", "https://source.test.2", false, "WARNING")]
-        public void SourcesList_WithDefaultFormat_UsesDetailedFormat(string source, string secondSource, bool shouldWarn, string warningMessage)
+        [InlineData("http://source.test", "http://source.test.2")]
+        [InlineData("https://source.test", "http://source.test.2")]
+        [InlineData("https://source.test", "https://source.test.2")]
+        public void SourcesList_WithDefaultFormat_UsesDetailedFormat(string source, string secondSource)
         {
             // Arrange
             var nugetexe = Util.GetNuGetExePath();
@@ -255,7 +471,54 @@ namespace NuGet.CommandLine.Test
 
                 // test to ensure detailed format is the default
                 Assert.True(result.Output.StartsWith("Registered Sources:"));
-                Assert.Equal(shouldWarn, result.Output.Contains(warningMessage));
+            }
+        }
+
+        [Fact]
+        public void SourcesCommandTest_AddWithUserNamePassword()
+        {
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var workingPath = pathContext.WorkingDirectory;
+                var settings = pathContext.Settings;
+
+                // Arrange
+                var nugetexe = Util.GetNuGetExePath();
+                var args = new string[] {
+                    "sources",
+                    "Add",
+                    "-Name",
+                    "test_source",
+                    "-Source",
+                    "https://test_source",
+                    "-UserName",
+                    "test_user_name",
+                    "-Password",
+                    "test_password",
+                    "-ConfigFile",
+                    settings.ConfigPath
+                };
+
+                // Act
+                CommandRunnerResult result = CommandRunner.Run(nugetexe, workingPath, string.Join(" ", args));
+
+                // Assert
+                Assert.True(0 == result.ExitCode, result.Output + " " + result.Errors);
+
+                var loadedSettings = Configuration.Settings.LoadDefaultSettings(workingPath, null, null);
+
+                var packageSourcesSection = loadedSettings.GetSection("packageSources");
+                var sourceItem = packageSourcesSection?.GetFirstItemWithAttribute<SourceItem>("key", "test_source");
+                Assert.Equal("https://test_source", sourceItem.GetValueAsPath());
+
+                var sourceCredentialsSection = loadedSettings.GetSection("packageSourceCredentials");
+                var credentialItem = sourceCredentialsSection?.Items.First(c => string.Equals(c.ElementName, "test_source", StringComparison.OrdinalIgnoreCase)) as CredentialsItem;
+                Assert.NotNull(credentialItem);
+
+                Assert.Equal("test_user_name", credentialItem.Username);
+
+                var password = Configuration.EncryptionUtility.DecryptString(credentialItem.Password);
+                Assert.Equal("test_password", password);
             }
         }
 
@@ -285,6 +548,14 @@ namespace NuGet.CommandLine.Test
     <add key=""source9"" value=""https://source.test9"" allowInsecureConnections=""false""/>
   </packageSources>
 </configuration>");
+                List<PackageSource> httpPackageSources =
+                [
+                    new PackageSource("http://source.test1", "source1"),
+                    new PackageSource("http://source.test2", "source2"),
+                    new PackageSource("http://source.test3", "source3"),
+                    new PackageSource("http://source.test4", "source4"),
+                    new PackageSource("http://source.test5", "source5")
+                ];
 
                 var args = new string[] {
                     "sources",
@@ -303,63 +574,12 @@ namespace NuGet.CommandLine.Test
                 Util.VerifyResultSuccess(result);
 
                 // http source with false allowInsecureConnections have warnings.
-                string expectedWarning = SettingsTestUtils.RemoveWhitespace(@"
-WARNING: You are running the 'list source' operation with 'HTTP' sources: 
-source1
-source2
-source3
-source4
-source5
-Non-HTTPS access will be removed in a future version. Consider migrating to 'HTTPS' sources.");
-                Assert.Contains(expectedWarning, SettingsTestUtils.RemoveWhitespace(result.Output));
-            }
-        }
 
-        [Fact]
-        public void SourcesCommandTest_AddWithUserNamePassword()
-        {
-            using (var pathContext = new SimpleTestPathContext())
-            {
-                var workingPath = pathContext.WorkingDirectory;
-                var settings = pathContext.Settings;
-
-                // Arrange
-                var nugetexe = Util.GetNuGetExePath();
-                var args = new string[] {
-                    "sources",
-                    "Add",
-                    "-Name",
-                    "test_source",
-                    "-Source",
-                    "http://test_source",
-                    "-UserName",
-                    "test_user_name",
-                    "-Password",
-                    "test_password",
-                    "-ConfigFile",
-                    settings.ConfigPath
-                };
-
-                // Act
-                CommandRunnerResult result = CommandRunner.Run(nugetexe, workingPath, string.Join(" ", args));
-
-                // Assert
-                Assert.True(0 == result.ExitCode, result.Output + " " + result.Errors);
-
-                var loadedSettings = Configuration.Settings.LoadDefaultSettings(workingPath, null, null);
-
-                var packageSourcesSection = loadedSettings.GetSection("packageSources");
-                var sourceItem = packageSourcesSection?.GetFirstItemWithAttribute<SourceItem>("key", "test_source");
-                Assert.Equal("http://test_source", sourceItem.GetValueAsPath());
-
-                var sourceCredentialsSection = loadedSettings.GetSection("packageSourceCredentials");
-                var credentialItem = sourceCredentialsSection?.Items.First(c => string.Equals(c.ElementName, "test_source", StringComparison.OrdinalIgnoreCase)) as CredentialsItem;
-                Assert.NotNull(credentialItem);
-
-                Assert.Equal("test_user_name", credentialItem.Username);
-
-                var password = Configuration.EncryptionUtility.DecryptString(credentialItem.Password);
-                Assert.Equal("test_password", password);
+                Assert.Contains("http://source.test1", result.AllOutput);
+                Assert.Contains("http://source.test2", result.AllOutput);
+                Assert.Contains("http://source.test3", result.AllOutput);
+                Assert.Contains("http://source.test4", result.AllOutput);
+                Assert.Contains("http://source.test5", result.AllOutput);
             }
         }
 
@@ -379,7 +599,7 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
                     "-Name",
                     "test_source",
                     "-Source",
-                    "http://test_source",
+                    "https://test_source",
                     "-UserName",
                     "test_user_name",
                     "-Password",
@@ -399,7 +619,7 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
 
                 var packageSourcesSection = loadedSettings.GetSection("packageSources");
                 var sourceItem = packageSourcesSection?.GetFirstItemWithAttribute<SourceItem>("key", "test_source");
-                Assert.Equal("http://test_source", sourceItem.GetValueAsPath());
+                Assert.Equal("https://test_source", sourceItem.GetValueAsPath());
 
                 var sourceCredentialsSection = loadedSettings.GetSection("packageSourceCredentials");
                 var credentialItem = sourceCredentialsSection?.Items.First(c => string.Equals(c.ElementName, "test_source", StringComparison.OrdinalIgnoreCase)) as CredentialsItem;
@@ -431,7 +651,7 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
                     "-Name",
                     "test_source",
                     "-Source",
-                    "http://test_source",
+                    "https://test_source",
                     "-UserName",
                     "test_user_name",
                     "-Password",
@@ -456,7 +676,7 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
 
                 var packageSourcesSection = settings.GetSection("packageSources");
                 var sourceItem = packageSourcesSection?.GetFirstItemWithAttribute<SourceItem>("key", "test_source");
-                Assert.Equal("http://test_source", sourceItem.GetValueAsPath());
+                Assert.Equal("https://test_source", sourceItem.GetValueAsPath());
 
                 var sourceCredentialsSection = settings.GetSection("packageSourceCredentials");
                 var credentialItem = sourceCredentialsSection?.Items.First(c => string.Equals(c.ElementName, "test_source", StringComparison.OrdinalIgnoreCase)) as CredentialsItem;
@@ -765,7 +985,7 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
                     @"<?xml version=""1.0"" encoding=""utf-8""?>
 <configuration>
   <packageSources>
-    <add key=""test_source"" value=""http://test_source"" />
+    <add key=""test_source"" value=""https://test_source"" />
   </packageSources>
   <disabledPackageSources>
     <add key=""test_source"" value=""true"" />
@@ -793,7 +1013,7 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
 
                 var source = sources.Single();
                 Assert.Equal("test_source", source.Name);
-                Assert.Equal("http://test_source", source.Source);
+                Assert.Equal("https://test_source", source.Source);
                 Assert.False(source.IsEnabled);
 
                 // Main Act
@@ -824,7 +1044,7 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
                 source = testSources.Single();
 
                 Assert.Equal("test_source", source.Name);
-                Assert.Equal("http://test_source", source.Source);
+                Assert.Equal("https://test_source", source.Source);
                 Assert.True(source.IsEnabled, "Source is not enabled");
             }
         }

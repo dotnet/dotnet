@@ -933,10 +933,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
     <comment>{0} is a version number</comment>
   </data>
   <data name="Warning_HTTPSource" xml:space="preserve">
-    <value>Warning: Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</value>
-  </data>
-  <data name="Warning_NewHTTPSource_VSOptions" xml:space="preserve">
-    <value>Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</value>
+    <value>AllowInsecureConnections is enabled and allows http access. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere.</value>
   </data>
   <data name="VSOptions_Button_Add" xml:space="preserve">
     <value>Add</value>
@@ -1047,5 +1044,17 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   </data>
   <data name="Text_By" xml:space="preserve">
     <value>by</value>
+  </data>
+  <data name="Error_HttpSource_Single" xml:space="preserve">
+    <value>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</value>
+  </data>
+  <data name="Warn_Adding_HttpSource" xml:space="preserve">
+    <value>You are attempting to add an HTTP source, which is insecure. Would you like to proceed with adding this insecure HTTP source?</value>
+  </data>
+  <data name="Link_configuration" xml:space="preserve">
+    <value>Common NuGet configurations; How settings are applied.</value>
+  </data>
+  <data name="DialogTitle_HttpSource" xml:space="preserve">
+    <value>HTTP Source</value>
   </data>
 </root>

@@ -98,7 +98,7 @@ namespace NuGet.CommandLine.Test
 
                         throw new Exception("This test needs to be updated to support: " + path);
                     });
-
+                    pathContext.Settings.AddSource("http-feed", $"{server.Uri}nuget", allowInsecureConnectionsValue: "true");
                     server.Start();
 
                     // Act
@@ -211,7 +211,7 @@ namespace NuGet.CommandLine.Test
 
                         throw new Exception("This test needs to be updated to support: " + path);
                     });
-
+                    pathContext.Settings.AddSource("http-feed", $"{server.Uri}nuget", allowInsecureConnectionsValue: "true");
                     server.Start();
 
                     // Act
@@ -349,7 +349,7 @@ namespace NuGet.CommandLine.Test
 
                         throw new Exception("This test needs to be updated to support: " + path);
                     });
-
+                    pathContext.Settings.AddSource("http-feed", $"{server.Uri}index.json", allowInsecureConnectionsValue: "true");
                     server.Start();
 
                     // The minimum time is the number of urls x 3 waits x 200ms
@@ -534,7 +534,7 @@ namespace NuGet.CommandLine.Test
 
                         throw new Exception("This test needs to be updated to support: " + path);
                     });
-
+                    pathContext.Settings.AddSource("http-feed", $"{server.Uri}index.json", allowInsecureConnectionsValue: "true");
                     server.Start();
 
                     // The minimum time is the number of urls x 3 waits x 200ms

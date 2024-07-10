@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Globalization;
 using System.Windows.Forms;
 using NuGet.Configuration;
 using NuGet.VisualStudio.Internal.Contracts;
@@ -38,10 +39,20 @@ namespace NuGet.PackageManagement.UI.Options
 
                 if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections)
                 {
-                    var sourceMessage = string.Concat(
-                        Resources.Warning_HTTPSource,
+                    var sourceMessage = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.Error_HttpSource_Single,
                         packageSource.Source);
                     return new CheckedListBoxItemAccessibleObject(this, packageSource.Name, index, sourceMessage);
+                }
+
+                if (packageSource.AllowInsecureConnections)
+                {
+                    var insecureConnectionMessage = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.Warning_HTTPSource,
+                        packageSource.Source);
+                    return new CheckedListBoxItemAccessibleObject(this, packageSource.Name, index, insecureConnectionMessage);
                 }
 
                 return new CheckedListBoxItemAccessibleObject(this, packageSource.Name, index, packageSource.Source);
