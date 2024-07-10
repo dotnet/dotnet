@@ -27,7 +27,10 @@ parameters:
   displayName: Run a SourceBuild build
   type: boolean
   default: true
-
+- name: RunStaticAnalysis
+  displayName: Run a static analysis
+  type: boolean
+  default: true
 variables:
   DOTNET_NOLOGO: 1
   NUGET_EXPERIMENTAL_CHAIN_BUILD_RETRY_POLICY: 3,1000
@@ -263,22 +266,38 @@ stages:
         testType: Functional
         testTargetFramework: netcoreapp3.1
 
-- ${{ if eq(parameters.RunSourceBuild, true) }}:
+- ${{ if or(eq(parameters.RunSourceBuild, true), eq(parameters.RunStaticAnalysis, true)) }}:
   - stage:
-    displayName: Source Build
+    displayName: Source Build and Static Analysis
     dependsOn: []
     jobs:
-    - job:
-      displayName: Source Build
-      timeoutInMinutes: 15
-      variables:
-        DOTNET_NUGET_SIGNATURE_VERIFICATION: true
-      pool:
-        vmImage: ubuntu-latest
-      steps:
-      - task: PowerShell@2
-        displayName: "Run source-build script"
-        inputs:
-          targetType: "inline"
-          script: |
-            ./eng/dotnet-build/build.sh --source-build
+    - ${{ if eq(parameters.RunSourceBuild, true) }}:
+      - job:
+        displayName: Source Build
+        timeoutInMinutes: 15
+        variables:
+          DOTNET_NUGET_SIGNATURE_VERIFICATION: true
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - task: PowerShell@2
+          displayName: "Run source-build script"
+          inputs:
+            targetType: "inline"
+            script: |
+              ./eng/dotnet-build/build.sh --source-build
+    - ${{ if eq(parameters.RunStaticAnalysis, true) }}:
+      - job:
+        displayName: Run Static Analysis
+        timeoutInMinutes: 15
+        pool:
+          vmImage: windows-latest
+        steps:
+        - task: PowerShell@2
+          displayName: Run configure.ps1
+          inputs:
+            filePath: configure.ps1
+        - script: SET | SORT
+          displayName: Log Environment Variables
+        - script: dotnet format whitespace --verify-no-changes NuGet.sln
+          displayName: Run dotnet format whitespace

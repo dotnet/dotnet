@@ -263,8 +263,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "eng", "eng", "{70336E30-C73
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pipelines", "pipelines", "{41230E57-542E-4CFD-8D4A-C41A126461E6}"
 	ProjectSection(SolutionItems) = preProject
+		eng\pipelines\ci.yml = eng\pipelines\ci.yml
 		eng\pipelines\compliance.yml = eng\pipelines\compliance.yml
+		eng\pipelines\dailytests.yml = eng\pipelines\dailytests.yml
 		eng\pipelines\official.yml = eng\pipelines\official.yml
+		eng\pipelines\optprof.yml = eng\pipelines\optprof.yml
+		eng\pipelines\pr.job.yml = eng\pipelines\pr.job.yml
+		eng\pipelines\pr.yml = eng\pipelines\pr.yml
 		eng\pipelines\pull_request.yml = eng\pipelines\pull_request.yml
 	EndProjectSection
 EndProject

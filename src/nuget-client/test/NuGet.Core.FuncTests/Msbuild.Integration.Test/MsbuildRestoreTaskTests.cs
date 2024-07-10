@@ -1632,6 +1632,102 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             replayedOutput.Should().Contain($"a known critical severity vulnerability", Exactly.Twice());
         }
 
+        [Fact]
+        public async Task MsbuildRestore_WithPackagesConfigProject_PackageWithVulnerabilities_WithSuppressedAdvisories_SuppressesExpectedVulnerabilities()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var advisoryUrl1 = "https://contoso.com/advisories/12345";
+            var advisoryUrl2 = "https://contoso.com/advisories/12346";
+
+            // set up vulnerability server
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource, sourceReportsVulnerabilities: true);
+
+            mockServer.Vulnerabilities.Add(
+                "packageA",
+                new List<(Uri, PackageVulnerabilitySeverity, VersionRange)> {
+                    (new Uri(advisoryUrl1), PackageVulnerabilitySeverity.Critical, VersionRange.Parse("[1.0.0, 3.0.0)"))
+                });
+            mockServer.Vulnerabilities.Add(
+                "packageB",
+                new List<(Uri, PackageVulnerabilitySeverity, VersionRange)> {
+                    (new Uri(advisoryUrl2), PackageVulnerabilitySeverity.High, VersionRange.Parse("[1.0.0, 3.0.0)"))
+                });
+            pathContext.Settings.RemoveSource("source");
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri);
+
+            // set up the solution, projects and packages
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = new SimpleTestProjectContext("projectA", ProjectStyle.PackagesConfig, pathContext.SolutionRoot);
+            var projectB = new SimpleTestProjectContext("projectB", ProjectStyle.PackagesConfig, pathContext.SolutionRoot);
+
+            solution.Projects.Add(projectA);
+            solution.Projects.Add(projectB);
+            solution.Create(pathContext.SolutionRoot);
+
+            var packageA1 = new SimpleTestPackageContext() { Id = "packageA", Version = "1.1.0" };
+            var packageA2 = new SimpleTestPackageContext() { Id = "packageA", Version = "1.2.0" };
+            var packageB1 = new SimpleTestPackageContext() { Id = "packageB", Version = "2.1.0" };
+            var packageB2 = new SimpleTestPackageContext() { Id = "packageB", Version = "2.2.0" };
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, packageA1, packageA2, packageB1, packageB2);
+
+            using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
+            {
+                writer.Write(
+@"<packages>
+  <package id=""packageA"" version=""1.1.0"" />
+  <package id=""packageB"" version=""2.1.0"" />
+</packages>");
+            }
+
+            using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectB.ProjectPath), "packages.config")))
+            {
+                writer.Write(
+@"<packages>
+  <package id=""packageA"" version=""1.2.0"" />
+  <package id=""packageB"" version=""2.2.0"" />
+</packages>");
+            }
+
+            // suppress the vulnerability on package A for project A
+            var xmlA = projectA.GetXML();
+            ProjectFileUtils.AddItem(
+                                xmlA,
+                                name: "NuGetAuditSuppress",
+                                identity: advisoryUrl1,
+                                framework: NuGetFramework.AnyFramework,
+                                properties: new Dictionary<string, string>(),
+                                attributes: new Dictionary<string, string>());
+            xmlA.Save(projectA.ProjectPath);
+
+            // suppress the vulnerability on package B for project B
+            var xmlB = projectB.GetXML();
+            ProjectFileUtils.AddItem(
+                                xmlB,
+                                name: "NuGetAuditSuppress",
+                                identity: advisoryUrl2,
+                                framework: NuGetFramework.AnyFramework,
+                                properties: new Dictionary<string, string>(),
+                                attributes: new Dictionary<string, string>());
+            xmlB.Save(projectB.ProjectPath);
+
+            // Act
+            mockServer.Start();
+
+            string args = $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true";
+            var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, args, ignoreExitCode: true, testOutputHelper: _testOutputHelper);
+
+            mockServer.Stop();
+
+            // Assert
+            Assert.True(result.ExitCode == 0, result.AllOutput);
+            Assert.DoesNotContain($"Package 'packageA' 1.1.0 has a known critical severity vulnerability", result.AllOutput); // suppressed
+            Assert.Contains($"Package 'packageB' 2.1.0 has a known high severity vulnerability", result.AllOutput);
+            Assert.Contains($"Package 'packageA' 1.2.0 has a known critical severity vulnerability", result.AllOutput);
+            Assert.DoesNotContain($"Package 'packageB' 2.2.0 has a known high severity vulnerability", result.AllOutput); // suppressed
+        }
+
         [Theory]
         [InlineData(false, null)] // Disabled in Directory.Build.props, not set in Directory.Packages.props
         [InlineData(false, false)] // Disabled in Directory.Build.props, disabled in Directory.Packages.props

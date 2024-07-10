@@ -535,8 +535,8 @@ namespace NuGet.PackageManagement.Test
                 {packageIdentity, packageAuditInfo }
             };
 
-            var auditSettings = new Dictionary<string, (bool, PackageVulnerabilitySeverity)>();
-            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0;
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>();
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
             List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
 
             List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
@@ -546,6 +546,8 @@ namespace NuGet.PackageManagement.Test
                        ref Sev2Matches,
                        ref Sev3Matches,
                        ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
                        ref packagesWithReportedAdvisories);
 
             warnings.Should().BeEmpty();
@@ -575,8 +577,8 @@ namespace NuGet.PackageManagement.Test
                 {packageIdentity, packageAuditInfo }
             };
 
-            var auditSettings = new Dictionary<string, (bool, PackageVulnerabilitySeverity)>();
-            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0;
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>();
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
             List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
 
             List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
@@ -586,6 +588,8 @@ namespace NuGet.PackageManagement.Test
                        ref Sev2Matches,
                        ref Sev3Matches,
                        ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
                        ref packagesWithReportedAdvisories);
 
             warnings.Should().HaveCount(2);
@@ -631,8 +635,8 @@ namespace NuGet.PackageManagement.Test
                 {packageIdentity, packageAuditInfo }
             };
 
-            var auditSettings = new Dictionary<string, (bool, PackageVulnerabilitySeverity)>();
-            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0;
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>();
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
             List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
 
             List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
@@ -642,6 +646,8 @@ namespace NuGet.PackageManagement.Test
                        ref Sev2Matches,
                        ref Sev3Matches,
                        ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
                        ref packagesWithReportedAdvisories);
 
             warnings.Should().HaveCount(1);
@@ -694,8 +700,8 @@ namespace NuGet.PackageManagement.Test
                 {packageC, packageAuditInfoC },
             };
 
-            var auditSettings = new Dictionary<string, (bool, PackageVulnerabilitySeverity)>();
-            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0;
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>();
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
             List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
 
             List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
@@ -705,6 +711,8 @@ namespace NuGet.PackageManagement.Test
                        ref Sev2Matches,
                        ref Sev3Matches,
                        ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
                        ref packagesWithReportedAdvisories);
 
             warnings.Should().HaveCount(11);
@@ -745,13 +753,13 @@ namespace NuGet.PackageManagement.Test
                 {packageIdentity, packageAuditInfo }
             };
 
-            var auditSettings = new Dictionary<string, (bool, PackageVulnerabilitySeverity)>()
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>()
             {
-                { projectPath1 , (true, PackageVulnerabilitySeverity.Moderate) },
-                { projectPath2 , (false, PackageVulnerabilitySeverity.Moderate) }
+                { projectPath1 , new AuditChecker.ProjectAuditSettings(true, PackageVulnerabilitySeverity.Moderate, suppressedAdvisories: null) },
+                { projectPath2 , new AuditChecker.ProjectAuditSettings(false, PackageVulnerabilitySeverity.Moderate, suppressedAdvisories: null) }
             };
 
-            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0;
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
             List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
 
             List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
@@ -761,6 +769,8 @@ namespace NuGet.PackageManagement.Test
                        ref Sev2Matches,
                        ref Sev3Matches,
                        ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
                        ref packagesWithReportedAdvisories);
 
             warnings.Should().HaveCount(1);
@@ -799,13 +809,13 @@ namespace NuGet.PackageManagement.Test
                 {packageIdentity, packageAuditInfo }
             };
 
-            var auditSettings = new Dictionary<string, (bool, PackageVulnerabilitySeverity)>()
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>()
             {
-                { projectPath1 , (true, PackageVulnerabilitySeverity.Moderate) },
-                { projectPath2 , (true, PackageVulnerabilitySeverity.High) }
+                { projectPath1 , new AuditChecker.ProjectAuditSettings(true, PackageVulnerabilitySeverity.Moderate, suppressedAdvisories: null) },
+                { projectPath2 , new AuditChecker.ProjectAuditSettings(true, PackageVulnerabilitySeverity.High, suppressedAdvisories: null) }
             };
 
-            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0;
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
             List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
 
             List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
@@ -815,6 +825,8 @@ namespace NuGet.PackageManagement.Test
                        ref Sev2Matches,
                        ref Sev3Matches,
                        ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
                        ref packagesWithReportedAdvisories);
 
             warnings.Should().HaveCount(1);
@@ -831,6 +843,8 @@ namespace NuGet.PackageManagement.Test
             Sev2Matches.Should().Be(0);
             Sev3Matches.Should().Be(0);
             InvalidSevMatches.Should().Be(0);
+            TotalWarningsSuppressedCount.Should().Be(0);
+            DistinctAdvisoriesSuppressedCount.Should().Be(0);
             packagesWithReportedAdvisories.Should().HaveCount(1);
             packagesWithReportedAdvisories[0].Should().Be(packageIdentity);
         }
@@ -925,6 +939,140 @@ namespace NuGet.PackageManagement.Test
             result.Severity2VulnerabilitiesFound.Should().Be(0);
             result.Severity3VulnerabilitiesFound.Should().Be(0);
             result.InvalidSeverityVulnerabilitiesFound.Should().Be(0);
+        }
+
+        [Fact]
+        public void CreateWarnings_WithAuditSettings_WithSuppressedAdvisories_SuppressesExpectedVulnerabilities()
+        {
+            string cveUrl1 = "https://cve.test/suppressed/1";
+            string cveUrl2 = "https://cve.test/suppressed/2";
+
+            PackageIdentity packageIdentity = new("packageId", new NuGetVersion(2, 0, 0));
+            var projectPath = "C:\\solution\\project\\project1.csproj";
+            AuditChecker.PackageAuditInfo packageAuditInfo = new(packageIdentity, new string[] { projectPath });
+
+            packageAuditInfo.Vulnerabilities.Add(new PackageVulnerabilityInfo(
+                                    new Uri(cveUrl1),
+                                    PackageVulnerabilitySeverity.Moderate,
+                                    VersionRange.Parse("[1.0.0, 3.0.0)")));
+            packageAuditInfo.Vulnerabilities.Add(new PackageVulnerabilityInfo(
+                                    new Uri(cveUrl2),
+                                    PackageVulnerabilitySeverity.Moderate,
+                                    VersionRange.Parse("[1.0.0, 3.0.0)")));
+
+            var suppressedAdvisories = new HashSet<string> { cveUrl1 }; // suppress one of the two advisories
+
+            Dictionary<PackageIdentity, AuditChecker.PackageAuditInfo> result = new()
+            {
+                {packageIdentity, packageAuditInfo }
+            };
+
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>()
+            {
+                { projectPath , new AuditChecker.ProjectAuditSettings(true, PackageVulnerabilitySeverity.Moderate, suppressedAdvisories) }
+            };
+
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
+            List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
+
+            List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
+                       auditSettings,
+                       ref Sev0Matches,
+                       ref Sev1Matches,
+                       ref Sev2Matches,
+                       ref Sev3Matches,
+                       ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
+                       ref packagesWithReportedAdvisories);
+
+            warnings.Should().HaveCount(1);
+            warnings.Any(m => m.Message.Contains(cveUrl1)).Should().BeFalse(); // cveUrl1 should be suppressed
+            warnings.Any(m => m.Message.Contains(cveUrl2)).Should().BeTrue(); // cveUrl2 should not be suppressed
+
+            Sev0Matches.Should().Be(0);
+            Sev1Matches.Should().Be(1);
+            Sev2Matches.Should().Be(0);
+            Sev3Matches.Should().Be(0);
+            InvalidSevMatches.Should().Be(0);
+            TotalWarningsSuppressedCount.Should().Be(1);
+            DistinctAdvisoriesSuppressedCount.Should().Be(1);
+            packagesWithReportedAdvisories.Should().HaveCount(1);
+            packagesWithReportedAdvisories[0].Should().Be(packageIdentity);
+        }
+
+        [Fact]
+        public void CreateWarnings_WithAuditSettings_WithSuppressedAdvisories_CountsSuppressedAdvisoriesCorrectly()
+        {
+            string cveUrl1 = "https://cve.test/suppressed/1";
+            string cveUrl2 = "https://cve.test/suppressed/2";
+            string cveUrl3 = "https://cve.test/suppressed/3";
+
+            var projectPath = "C:\\solution\\project\\project1.csproj";
+
+            PackageIdentity packageIdentityA = new("packageA", new NuGetVersion(2, 0, 0));
+            AuditChecker.PackageAuditInfo packageAuditInfoA = new(packageIdentityA, new string[] { projectPath });
+            packageAuditInfoA.Vulnerabilities.Add(new PackageVulnerabilityInfo(
+                                    new Uri(cveUrl1), // this will be suppressed
+                                    PackageVulnerabilitySeverity.Moderate,
+                                    VersionRange.Parse("[1.0.0, 3.0.0)")));
+            packageAuditInfoA.Vulnerabilities.Add(new PackageVulnerabilityInfo(
+                                    new Uri(cveUrl2), // this will be suppressed
+                                    PackageVulnerabilitySeverity.Moderate,
+                                    VersionRange.Parse("[1.0.0, 3.0.0)")));
+
+            PackageIdentity packageIdentityB = new("packageB", new NuGetVersion(2, 0, 0));
+            AuditChecker.PackageAuditInfo packageAuditInfoB = new(packageIdentityB, new string[] { projectPath });
+            packageAuditInfoB.Vulnerabilities.Add(new PackageVulnerabilityInfo(
+                                    new Uri(cveUrl1), // this will be suppressed
+                                    PackageVulnerabilitySeverity.Moderate,
+                                    VersionRange.Parse("[1.0.0, 3.0.0)")));
+            packageAuditInfoB.Vulnerabilities.Add(new PackageVulnerabilityInfo(
+                                    new Uri(cveUrl3), // this will not be suppressed
+                                    PackageVulnerabilitySeverity.Moderate,
+                                    VersionRange.Parse("[1.0.0, 3.0.0)")));
+
+            var suppressedAdvisories = new HashSet<string> { cveUrl1, cveUrl2 };
+
+            Dictionary<PackageIdentity, AuditChecker.PackageAuditInfo> result = new()
+            {
+                { packageIdentityA, packageAuditInfoA },
+                { packageIdentityB, packageAuditInfoB }
+            };
+
+            var auditSettings = new Dictionary<string, AuditChecker.ProjectAuditSettings>()
+            {
+                { projectPath , new AuditChecker.ProjectAuditSettings(true, PackageVulnerabilitySeverity.Moderate, suppressedAdvisories) }
+            };
+
+            int Sev0Matches = 0, Sev1Matches = 0, Sev2Matches = 0, Sev3Matches = 0, InvalidSevMatches = 0, TotalWarningsSuppressedCount = 0, DistinctAdvisoriesSuppressedCount = 0;
+            List<PackageIdentity> packagesWithReportedAdvisories = new List<PackageIdentity>();
+
+            List<LogMessage> warnings = AuditChecker.CreateWarnings(result!,
+                       auditSettings,
+                       ref Sev0Matches,
+                       ref Sev1Matches,
+                       ref Sev2Matches,
+                       ref Sev3Matches,
+                       ref InvalidSevMatches,
+                       ref TotalWarningsSuppressedCount,
+                       ref DistinctAdvisoriesSuppressedCount,
+                       ref packagesWithReportedAdvisories);
+
+            warnings.Should().HaveCount(1);
+            warnings.Any(m => m.Message.Contains(cveUrl1)).Should().BeFalse();
+            warnings.Any(m => m.Message.Contains(cveUrl2)).Should().BeFalse();
+            warnings.Any(m => m.Message.Contains(cveUrl3)).Should().BeTrue();
+
+            Sev0Matches.Should().Be(0);
+            Sev1Matches.Should().Be(1);
+            Sev2Matches.Should().Be(0);
+            Sev3Matches.Should().Be(0);
+            InvalidSevMatches.Should().Be(0);
+            TotalWarningsSuppressedCount.Should().Be(3);
+            DistinctAdvisoriesSuppressedCount.Should().Be(2);
+            packagesWithReportedAdvisories.Should().HaveCount(1);
+            packagesWithReportedAdvisories[0].Should().Be(packageIdentityB);
         }
 
         // Setup a test bed with multiple sources, 1 source with vulnerabilities, 1 vulnerable package wih a moderate vulnerability.

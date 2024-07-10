@@ -41,6 +41,10 @@ parameters:
   displayName: Run Mono tests on Mac
   type: boolean
   default: false
+- name: RunStaticAnalysis
+  displayName: Run static analysis
+  type: boolean
+  default: true
 
 stages:
 - stage: Initialize
@@ -74,6 +78,7 @@ stages:
   jobs:
   - job: RunStaticSourceAnalysis
     displayName: Run Static Source Analysis
+    condition: "and(succeeded(), ne(variables['RunStaticAnalysis'], 'false'))"
     timeoutInMinutes: 15
     pool:
       name: AzurePipelines-EO

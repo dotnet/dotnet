@@ -22,49 +22,49 @@
     <!-- nuget -->
     <NugetPackagingVersion>6.2.4</NugetPackagingVersion>
     <!-- runtime -->
-    <MicrosoftInternalRuntimeWindowsDesktopTransportVersion>9.0.0-preview.7.24355.8</MicrosoftInternalRuntimeWindowsDesktopTransportVersion>
-    <MicrosoftNETCoreAppRefVersion>9.0.0-preview.7.24355.8</MicrosoftNETCoreAppRefVersion>
-    <MicrosoftNETCoreAppRuntimewinx64Version>9.0.0-preview.7.24355.8</MicrosoftNETCoreAppRuntimewinx64Version>
-    <MicrosoftWin32RegistryAccessControlVersion>9.0.0-preview.7.24355.8</MicrosoftWin32RegistryAccessControlVersion>
+    <MicrosoftInternalRuntimeWindowsDesktopTransportVersion>9.0.0-preview.7.24357.2</MicrosoftInternalRuntimeWindowsDesktopTransportVersion>
+    <MicrosoftNETCoreAppRefVersion>9.0.0-preview.7.24357.2</MicrosoftNETCoreAppRefVersion>
+    <MicrosoftNETCoreAppRuntimewinx64Version>9.0.0-preview.7.24357.2</MicrosoftNETCoreAppRuntimewinx64Version>
+    <MicrosoftWin32RegistryAccessControlVersion>9.0.0-preview.7.24357.2</MicrosoftWin32RegistryAccessControlVersion>
     <MicrosoftWin32RegistryVersion>5.0.0</MicrosoftWin32RegistryVersion>
-    <MicrosoftWin32SystemEventsVersion>9.0.0-preview.7.24355.8</MicrosoftWin32SystemEventsVersion>
-    <SystemCodeDomVersion>9.0.0-preview.7.24355.8</SystemCodeDomVersion>
-    <SystemComponentModelCompositionRegistrationVersion>9.0.0-preview.7.24355.8</SystemComponentModelCompositionRegistrationVersion>
-    <SystemComponentModelCompositionVersion>9.0.0-preview.7.24355.8</SystemComponentModelCompositionVersion>
-    <SystemConfigurationConfigurationManagerVersion>9.0.0-preview.7.24355.8</SystemConfigurationConfigurationManagerVersion>
-    <SystemDataOdbcVersion>9.0.0-preview.7.24355.8</SystemDataOdbcVersion>
-    <SystemDataOleDbVersion>9.0.0-preview.7.24355.8</SystemDataOleDbVersion>
-    <SystemDiagnosticsEventLogVersion>9.0.0-preview.7.24355.8</SystemDiagnosticsEventLogVersion>
-    <SystemDiagnosticsPerformanceCounterVersion>9.0.0-preview.7.24355.8</SystemDiagnosticsPerformanceCounterVersion>
-    <SystemDirectoryServicesAccountManagementVersion>9.0.0-preview.7.24355.8</SystemDirectoryServicesAccountManagementVersion>
-    <SystemDirectoryServicesProtocolsVersion>9.0.0-preview.7.24355.8</SystemDirectoryServicesProtocolsVersion>
-    <SystemDirectoryServicesVersion>9.0.0-preview.7.24355.8</SystemDirectoryServicesVersion>
+    <MicrosoftWin32SystemEventsVersion>9.0.0-preview.7.24357.2</MicrosoftWin32SystemEventsVersion>
+    <SystemCodeDomVersion>9.0.0-preview.7.24357.2</SystemCodeDomVersion>
+    <SystemComponentModelCompositionRegistrationVersion>9.0.0-preview.7.24357.2</SystemComponentModelCompositionRegistrationVersion>
+    <SystemComponentModelCompositionVersion>9.0.0-preview.7.24357.2</SystemComponentModelCompositionVersion>
+    <SystemConfigurationConfigurationManagerVersion>9.0.0-preview.7.24357.2</SystemConfigurationConfigurationManagerVersion>
+    <SystemDataOdbcVersion>9.0.0-preview.7.24357.2</SystemDataOdbcVersion>
+    <SystemDataOleDbVersion>9.0.0-preview.7.24357.2</SystemDataOleDbVersion>
+    <SystemDiagnosticsEventLogVersion>9.0.0-preview.7.24357.2</SystemDiagnosticsEventLogVersion>
+    <SystemDiagnosticsPerformanceCounterVersion>9.0.0-preview.7.24357.2</SystemDiagnosticsPerformanceCounterVersion>
+    <SystemDirectoryServicesAccountManagementVersion>9.0.0-preview.7.24357.2</SystemDirectoryServicesAccountManagementVersion>
+    <SystemDirectoryServicesProtocolsVersion>9.0.0-preview.7.24357.2</SystemDirectoryServicesProtocolsVersion>
+    <SystemDirectoryServicesVersion>9.0.0-preview.7.24357.2</SystemDirectoryServicesVersion>
     <SystemIOFileSystemAccessControlVersion>5.0.0</SystemIOFileSystemAccessControlVersion>
-    <SystemIOPackagingVersion>9.0.0-preview.7.24355.8</SystemIOPackagingVersion>
+    <SystemIOPackagingVersion>9.0.0-preview.7.24357.2</SystemIOPackagingVersion>
     <SystemIOPipesAccessControlVersion>5.0.0</SystemIOPipesAccessControlVersion>
-    <SystemIOPortsVersion>9.0.0-preview.7.24355.8</SystemIOPortsVersion>
-    <SystemManagementVersion>9.0.0-preview.7.24355.8</SystemManagementVersion>
-    <SystemReflectionContextVersion>9.0.0-preview.7.24355.8</SystemReflectionContextVersion>
-    <SystemRuntimeCachingVersion>9.0.0-preview.7.24355.8</SystemRuntimeCachingVersion>
+    <SystemIOPortsVersion>9.0.0-preview.7.24357.2</SystemIOPortsVersion>
+    <SystemManagementVersion>9.0.0-preview.7.24357.2</SystemManagementVersion>
+    <SystemReflectionContextVersion>9.0.0-preview.7.24357.2</SystemReflectionContextVersion>
+    <SystemRuntimeCachingVersion>9.0.0-preview.7.24357.2</SystemRuntimeCachingVersion>
     <SystemSecurityAccessControlVersion>6.0.0</SystemSecurityAccessControlVersion>
     <SystemSecurityCryptographyCngVersion>5.0.0</SystemSecurityCryptographyCngVersion>
-    <SystemSecurityCryptographyPkcsVersion>9.0.0-preview.7.24355.8</SystemSecurityCryptographyPkcsVersion>
-    <SystemSecurityCryptographyProtectedDataVersion>9.0.0-preview.7.24355.8</SystemSecurityCryptographyProtectedDataVersion>
-    <SystemSecurityCryptographyXmlVersion>9.0.0-preview.7.24355.8</SystemSecurityCryptographyXmlVersion>
-    <SystemSecurityPermissionsVersion>9.0.0-preview.7.24355.8</SystemSecurityPermissionsVersion>
+    <SystemSecurityCryptographyPkcsVersion>9.0.0-preview.7.24357.2</SystemSecurityCryptographyPkcsVersion>
+    <SystemSecurityCryptographyProtectedDataVersion>9.0.0-preview.7.24357.2</SystemSecurityCryptographyProtectedDataVersion>
+    <SystemSecurityCryptographyXmlVersion>9.0.0-preview.7.24357.2</SystemSecurityCryptographyXmlVersion>
+    <SystemSecurityPermissionsVersion>9.0.0-preview.7.24357.2</SystemSecurityPermissionsVersion>
     <SystemSecurityPrincipalWindowsVersion>5.0.0</SystemSecurityPrincipalWindowsVersion>
-    <SystemServiceModelSyndicationVersion>9.0.0-preview.7.24355.8</SystemServiceModelSyndicationVersion>
-    <SystemServiceProcessServiceControllerVersion>9.0.0-preview.7.24355.8</SystemServiceProcessServiceControllerVersion>
-    <SystemSpeechVersion>9.0.0-preview.7.24355.8</SystemSpeechVersion>
-    <SystemTextEncodingCodePagesVersion>9.0.0-preview.7.24355.8</SystemTextEncodingCodePagesVersion>
-    <SystemThreadingAccessControlVersion>9.0.0-preview.7.24355.8</SystemThreadingAccessControlVersion>
-    <VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>9.0.0-preview.7.24355.8</VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>
+    <SystemServiceModelSyndicationVersion>9.0.0-preview.7.24357.2</SystemServiceModelSyndicationVersion>
+    <SystemServiceProcessServiceControllerVersion>9.0.0-preview.7.24357.2</SystemServiceProcessServiceControllerVersion>
+    <SystemSpeechVersion>9.0.0-preview.7.24357.2</SystemSpeechVersion>
+    <SystemTextEncodingCodePagesVersion>9.0.0-preview.7.24357.2</SystemTextEncodingCodePagesVersion>
+    <SystemThreadingAccessControlVersion>9.0.0-preview.7.24357.2</SystemThreadingAccessControlVersion>
+    <VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>9.0.0-preview.7.24357.2</VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>
     <!-- wcf -->
     <SystemServiceModelVersion>4.10.0</SystemServiceModelVersion>
     <!-- winforms -->
-    <MicrosoftPrivateWinformsVersion>9.0.0-preview.7.24357.1</MicrosoftPrivateWinformsVersion>
-    <SystemDrawingCommonVersion>9.0.0-preview.7.24357.1</SystemDrawingCommonVersion>
+    <MicrosoftPrivateWinformsVersion>9.0.0-preview.7.24358.1</MicrosoftPrivateWinformsVersion>
+    <SystemDrawingCommonVersion>9.0.0-preview.7.24358.1</SystemDrawingCommonVersion>
     <!-- wpf -->
-    <MicrosoftDotNetWpfGitHubVersion>9.0.0-preview.7.24358.2</MicrosoftDotNetWpfGitHubVersion>
+    <MicrosoftDotNetWpfGitHubVersion>9.0.0-preview.7.24359.1</MicrosoftDotNetWpfGitHubVersion>
   </PropertyGroup>
 </Project>
