@@ -2163,7 +2163,7 @@ class UnitTestRecordPropertyTestEnvironment : public Environment {
 };
 
 // This will test property recording outside of any test or test case.
-static Environment* record_property_env GTEST_ATTRIBUTE_UNUSED_ =
+GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static Environment* record_property_env =
     AddGlobalTestEnvironment(new UnitTestRecordPropertyTestEnvironment);
 
 // This group of tests is for predicate assertions (ASSERT_PRED*, etc)
@@ -6705,8 +6705,9 @@ TEST(ColoredOutputTest, UsesColorsWhenTermSupportsColors) {
 
 // Verifies that StaticAssertTypeEq works in a namespace scope.
 
-static bool dummy1 GTEST_ATTRIBUTE_UNUSED_ = StaticAssertTypeEq<bool, bool>();
-static bool dummy2 GTEST_ATTRIBUTE_UNUSED_ =
+GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static bool dummy1 =
+    StaticAssertTypeEq<bool, bool>();
+GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static bool dummy2 =
     StaticAssertTypeEq<const int, const int>();
 
 // Verifies that StaticAssertTypeEq works in a class.
@@ -7480,22 +7481,6 @@ TEST(NativeArrayTest, WorksForTwoDimensionalArray) {
   NativeArray<char[3]> na(a, 2, RelationToSourceReference());
   ASSERT_EQ(2U, na.size());
   EXPECT_EQ(a, na.begin());
-}
-
-// IndexSequence
-TEST(IndexSequence, MakeIndexSequence) {
-  using testing::internal::IndexSequence;
-  using testing::internal::MakeIndexSequence;
-  EXPECT_TRUE(
-      (std::is_same<IndexSequence<>, MakeIndexSequence<0>::type>::value));
-  EXPECT_TRUE(
-      (std::is_same<IndexSequence<0>, MakeIndexSequence<1>::type>::value));
-  EXPECT_TRUE(
-      (std::is_same<IndexSequence<0, 1>, MakeIndexSequence<2>::type>::value));
-  EXPECT_TRUE((
-      std::is_same<IndexSequence<0, 1, 2>, MakeIndexSequence<3>::type>::value));
-  EXPECT_TRUE(
-      (std::is_base_of<IndexSequence<0, 1, 2>, MakeIndexSequence<3>>::value));
 }
 
 // ElemFromList
