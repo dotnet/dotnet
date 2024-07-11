@@ -1,6 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Azure.Core;
+using Azure.Identity;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
 using NuGet.Packaging;
@@ -15,10 +17,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.src
 {
     public class PublishSignedAssets : PublishArtifactsInManifestBase
     {
+        private static readonly string AzureDevOpsScope = "499b84ac-1321-427f-aa17-267ca6975798/.default";
+
         /// <summary>
         /// Required token to publishe packages to the feeds
         /// </summary>
-        [Required]
         public string AzureDevOpsPersonalAccessToken { get; set; }
 
         /// <summary>
@@ -54,6 +57,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.src
         {
             try
             {
+                if (string.IsNullOrEmpty(AzureDevOpsPersonalAccessToken))
+                {
+                    AzureDevOpsPersonalAccessToken = (await new AzureCliCredential().GetTokenAsync(new TokenRequestContext(new[] { AzureDevOpsScope }))).Token;
+                }
+
                 // Push shipping packages
                 await PushPackagesToFeed(ShippingAssetsFolder, ShippingFeedName);
 
