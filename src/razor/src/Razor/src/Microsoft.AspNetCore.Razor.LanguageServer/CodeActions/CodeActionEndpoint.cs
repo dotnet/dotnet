@@ -82,7 +82,7 @@ internal sealed class CodeActionEndpoint(
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        using var _ = ArrayBuilderPool<SumType<Command, CodeAction>>.GetPooledObject(out var commandsOrCodeActions);
+        using var commandsOrCodeActions = new PooledArrayBuilder<SumType<Command, CodeAction>>();
 
         // Grouping the code actions causes VS to sort them into groups, rather than just alphabetically sorting them
         // by title. The latter is bad for us because it can put "Remove <div>" at the top in some locales, and our fully
@@ -201,12 +201,12 @@ internal sealed class CodeActionEndpoint(
             providers = _htmlCodeActionProviders;
         }
 
-        return await FilterCodeActionsAsync(context, codeActions, providers, cancellationToken).ConfigureAwait(false);
+        return await FilterCodeActionsAsync(context, codeActions.ToImmutableArray(), providers, cancellationToken).ConfigureAwait(false);
     }
 
     private RazorVSInternalCodeAction[] ExtractCSharpCodeActionNamesFromData(RazorVSInternalCodeAction[] codeActions)
     {
-        using var _ = ArrayBuilderPool<RazorVSInternalCodeAction>.GetPooledObject(out var actions);
+        using var actions = new PooledArrayBuilder<RazorVSInternalCodeAction>();
 
         foreach (var codeAction in codeActions)
         {
@@ -239,20 +239,19 @@ internal sealed class CodeActionEndpoint(
 
     private static async Task<ImmutableArray<RazorVSInternalCodeAction>> FilterCodeActionsAsync(
         RazorCodeActionContext context,
-        RazorVSInternalCodeAction[] codeActions,
+        ImmutableArray<RazorVSInternalCodeAction> codeActions,
         IEnumerable<ICodeActionProvider> providers,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        using var _ = ArrayBuilderPool<Task<IReadOnlyList<RazorVSInternalCodeAction>?>>.GetPooledObject(out var tasks);
-
+        using var tasks = new PooledArrayBuilder<Task<ImmutableArray<RazorVSInternalCodeAction>>>();
         foreach (var provider in providers)
         {
             tasks.Add(provider.ProvideAsync(context, codeActions, cancellationToken));
         }
 
-        return await ConsolidateCodeActionsFromProvidersAsync(tasks.ToImmutableArray(), cancellationToken).ConfigureAwait(false);
+        return await ConsolidateCodeActionsFromProvidersAsync(tasks.ToImmutable(), cancellationToken).ConfigureAwait(false);
     }
 
     // Internal for testing
@@ -304,35 +303,32 @@ internal sealed class CodeActionEndpoint(
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        using var _ = ArrayBuilderPool<Task<IReadOnlyList<RazorVSInternalCodeAction>?>>.GetPooledObject(out var tasks);
+        using var tasks = new PooledArrayBuilder<Task<ImmutableArray<RazorVSInternalCodeAction>>>();
 
         foreach (var provider in _razorCodeActionProviders)
         {
             tasks.Add(provider.ProvideAsync(context, cancellationToken));
         }
 
-        return await ConsolidateCodeActionsFromProvidersAsync(tasks.ToImmutableArray(), cancellationToken).ConfigureAwait(false);
+        return await ConsolidateCodeActionsFromProvidersAsync(tasks.ToImmutable(), cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task<ImmutableArray<RazorVSInternalCodeAction>> ConsolidateCodeActionsFromProvidersAsync(
-        ImmutableArray<Task<IReadOnlyList<RazorVSInternalCodeAction>?>> tasks,
+        ImmutableArray<Task<ImmutableArray<RazorVSInternalCodeAction>>> tasks,
         CancellationToken cancellationToken)
     {
         var results = await Task.WhenAll(tasks).ConfigureAwait(false);
 
-        using var _ = ArrayBuilderPool<RazorVSInternalCodeAction>.GetPooledObject(out var codeActions);
+        using var codeActions = new PooledArrayBuilder<RazorVSInternalCodeAction>();
 
         cancellationToken.ThrowIfCancellationRequested();
 
         foreach (var result in results)
         {
-            if (result is not null)
-            {
-                codeActions.AddRange(result);
-            }
+            codeActions.AddRange(result);
         }
 
-        return codeActions.ToImmutableArray();
+        return codeActions.ToImmutable();
     }
 
     private static ImmutableHashSet<string> GetAllAvailableCodeActionNames()

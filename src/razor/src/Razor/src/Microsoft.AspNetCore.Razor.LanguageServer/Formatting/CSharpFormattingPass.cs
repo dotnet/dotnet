@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -50,7 +52,7 @@ internal sealed class CSharpFormattingPass(
 
         // Apply original C# edits
         var csharpEdits = await FormatCSharpAsync(changedContext, cancellationToken).ConfigureAwait(false);
-        if (csharpEdits.Count > 0)
+        if (csharpEdits.Length > 0)
         {
             var csharpChanges = csharpEdits.Select(c => c.ToTextChange(changedText));
             changedText = changedText.WithChanges(csharpChanges);
@@ -78,10 +80,11 @@ internal sealed class CSharpFormattingPass(
         return new FormattingResult(finalEdits);
     }
 
-    private async Task<List<TextEdit>> FormatCSharpAsync(FormattingContext context, CancellationToken cancellationToken)
+    private async Task<ImmutableArray<TextEdit>> FormatCSharpAsync(FormattingContext context, CancellationToken cancellationToken)
     {
         var sourceText = context.SourceText;
-        var csharpEdits = new List<TextEdit>();
+
+        using var csharpEdits = new PooledArrayBuilder<TextEdit>();
         foreach (var mapping in context.CodeDocument.GetCSharpDocument().SourceMappings)
         {
             var span = new TextSpan(mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
@@ -97,6 +100,6 @@ internal sealed class CSharpFormattingPass(
             csharpEdits.AddRange(edits.Where(e => range.Contains(e.Range)));
         }
 
-        return csharpEdits;
+        return csharpEdits.ToImmutable();
     }
 }

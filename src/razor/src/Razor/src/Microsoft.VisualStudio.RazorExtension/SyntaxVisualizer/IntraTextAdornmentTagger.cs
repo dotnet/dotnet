@@ -26,10 +26,13 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
     : ITagger<IntraTextAdornmentTag>
     where TAdornment : UIElement
 {
+    private readonly List<SnapshotSpan> _invalidatedSpans = new List<SnapshotSpan>();
+
+    // not readonly because it's updated in AsyncUpdate
+    private Dictionary<SnapshotSpan, TAdornment> _adornmentCache = new Dictionary<SnapshotSpan, TAdornment>();
+
     protected readonly IWpfTextView view;
-    private Dictionary<SnapshotSpan, TAdornment> adornmentCache = new Dictionary<SnapshotSpan, TAdornment>();
     protected ITextSnapshot snapshot { get; private set; }
-    private readonly List<SnapshotSpan> invalidatedSpans = new List<SnapshotSpan>();
 
     protected IntraTextAdornmentTagger(IWpfTextView view)
     {
@@ -69,12 +72,12 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
     /// </summary>
     protected void InvalidateSpans(IList<SnapshotSpan> spans)
     {
-        lock (invalidatedSpans)
+        lock (_invalidatedSpans)
         {
-            var wasEmpty = invalidatedSpans.Count == 0;
-            invalidatedSpans.AddRange(spans);
+            var wasEmpty = _invalidatedSpans.Count == 0;
+            _invalidatedSpans.AddRange(spans);
 
-            if (wasEmpty && invalidatedSpans.Count > 0)
+            if (wasEmpty && _invalidatedSpans.Count > 0)
             {
                 ThreadHelper.JoinableTaskFactory.Run(async () =>
                 {
@@ -95,19 +98,19 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
 
             var translatedAdornmentCache = new Dictionary<SnapshotSpan, TAdornment>();
 
-            foreach (var keyValuePair in adornmentCache)
+            foreach (var keyValuePair in _adornmentCache)
             {
                 translatedAdornmentCache.Add(keyValuePair.Key.TranslateTo(snapshot, SpanTrackingMode.EdgeExclusive), keyValuePair.Value);
             }
 
-            adornmentCache = translatedAdornmentCache;
+            _adornmentCache = translatedAdornmentCache;
         }
 
         List<SnapshotSpan> translatedSpans;
-        lock (invalidatedSpans)
+        lock (_invalidatedSpans)
         {
-            translatedSpans = invalidatedSpans.Select(s => s.TranslateTo(snapshot, SpanTrackingMode.EdgeInclusive)).ToList();
-            invalidatedSpans.Clear();
+            translatedSpans = _invalidatedSpans.Select(s => s.TranslateTo(snapshot, SpanTrackingMode.EdgeInclusive)).ToList();
+            _invalidatedSpans.Clear();
         }
 
         if (translatedSpans.Count == 0)
@@ -138,15 +141,14 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
         var visibleSpan = view.TextViewLines.FormattedSpan;
 
         // Filter out the adornments that are no longer visible.
-        var toRemove = new List<SnapshotSpan>(
-            from keyValuePair
-            in adornmentCache
+        var toRemove = from keyValuePair
+            in _adornmentCache
             where !keyValuePair.Key.TranslateTo(visibleSpan.Snapshot, SpanTrackingMode.EdgeExclusive).IntersectsWith(visibleSpan)
-            select keyValuePair.Key);
+            select keyValuePair.Key;
 
         foreach (var span in toRemove)
         {
-            adornmentCache.Remove(span);
+            _adornmentCache.Remove(span);
         }
     }
 
@@ -194,7 +196,7 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
         // Mark which adornments fall inside the requested spans with Keep=false
         // so that they can be removed from the cache if they no longer correspond to data tags.
         var toRemove = new HashSet<SnapshotSpan>();
-        foreach (var ar in adornmentCache)
+        foreach (var ar in _adornmentCache)
         {
             if (spans.IntersectsWith(new NormalizedSnapshotSpanCollection(ar.Key)))
             {
@@ -209,7 +211,7 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
             var snapshotSpan = spanDataPair.Item1;
             var affinity = spanDataPair.Item2;
             var adornmentData = spanDataPair.Item3;
-            if (adornmentCache.TryGetValue(snapshotSpan, out adornment))
+            if (_adornmentCache.TryGetValue(snapshotSpan, out adornment))
             {
                 if (UpdateAdornment(adornment, adornmentData))
                 {
@@ -235,7 +237,7 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
                 // can help avoid the size change and the resulting unnecessary re-format.
                 adornment.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 
-                adornmentCache.Add(snapshotSpan, adornment);
+                _adornmentCache.Add(snapshotSpan, adornment);
             }
 
             yield return new TagSpan<IntraTextAdornmentTag>(snapshotSpan, new IntraTextAdornmentTag(adornment, null, affinity));
@@ -243,7 +245,7 @@ internal abstract class IntraTextAdornmentTagger<TData, TAdornment>
 
         foreach (var snapshotSpan in toRemove)
         {
-            adornmentCache.Remove(snapshotSpan);
+            _adornmentCache.Remove(snapshotSpan);
         }
     }
 

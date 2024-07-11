@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
@@ -38,7 +39,7 @@ internal static class AddUsingsCodeActionProviderHelper
         var oldUsings = await FindUsingDirectiveStringsAsync(originalCSharpText, cancellationToken).ConfigureAwait(false);
         var newUsings = await FindUsingDirectiveStringsAsync(changedCSharpText, cancellationToken).ConfigureAwait(false);
 
-        var edits = new List<TextEdit>();
+        using var edits = new PooledArrayBuilder<TextEdit>();
         foreach (var usingStatement in newUsings.Except(oldUsings))
         {
             // This identifier will be eventually thrown away.
@@ -48,7 +49,7 @@ internal static class AddUsingsCodeActionProviderHelper
             edits.AddRange(workspaceEdit.DocumentChanges!.Value.First.First().Edits);
         }
 
-        return [.. edits];
+        return edits.ToArray();
     }
 
     private static async Task<IEnumerable<string>> FindUsingDirectiveStringsAsync(SourceText originalCSharpText, CancellationToken cancellationToken)

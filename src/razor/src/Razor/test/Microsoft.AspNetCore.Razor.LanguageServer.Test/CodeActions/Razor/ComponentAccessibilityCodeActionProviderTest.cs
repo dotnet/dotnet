@@ -49,7 +49,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
 
         // Assert
-        Assert.Null(commandOrCodeActionContainer);
+        Assert.Empty(commandOrCodeActionContainer);
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
 
         // Assert
-        Assert.Null(commandOrCodeActionContainer);
+        Assert.Empty(commandOrCodeActionContainer);
     }
 
     [Fact]
@@ -108,7 +108,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
 
         // Assert
-        Assert.Null(commandOrCodeActionContainer);
+        Assert.Empty(commandOrCodeActionContainer);
     }
 
     [Fact]
@@ -137,7 +137,6 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
 
         // Assert
-        Assert.NotNull(commandOrCodeActionContainer);
         Assert.Collection(commandOrCodeActionContainer,
             e =>
             {
@@ -186,7 +185,6 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
 
         // Assert
-        Assert.NotNull(commandOrCodeActionContainer);
         Assert.Collection(commandOrCodeActionContainer,
             e =>
             {
@@ -237,7 +235,6 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
 
         // Assert
-        Assert.NotNull(commandOrCodeActionContainer);
         Assert.Collection(commandOrCodeActionContainer,
             e =>
             {
@@ -280,7 +277,6 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
 
         // Assert
-        Assert.NotNull(commandOrCodeActionContainer);
         Assert.Collection(commandOrCodeActionContainer,
             e =>
             {
@@ -329,7 +325,6 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
 
         // Assert
-        Assert.NotNull(commandOrCodeActionContainer);
         var command = Assert.Single(commandOrCodeActionContainer);
         Assert.Equal(LanguageServerSR.Create_Component_FromTag_Title, command.Title);
         Assert.NotNull(command.Data);
@@ -361,7 +356,6 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
 
         // Assert
-        Assert.NotNull(commandOrCodeActionContainer);
         var command = Assert.Single(commandOrCodeActionContainer);
         Assert.Equal(LanguageServerSR.Create_Component_FromTag_Title, command.Title);
         Assert.NotNull(command.Data);
@@ -393,7 +387,6 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
 
         // Assert
-        Assert.NotNull(commandOrCodeActionContainer);
         Assert.Empty(commandOrCodeActionContainer);
     }
 
@@ -423,7 +416,6 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
 
         // Assert
-        Assert.NotNull(commandOrCodeActionContainer);
         Assert.Collection(commandOrCodeActionContainer,
             e =>
             {

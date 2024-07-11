@@ -2,10 +2,12 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -29,7 +31,7 @@ internal class AggregateCompletionItemResolver
         VSInternalClientCapabilities? clientCapabilities,
         CancellationToken cancellationToken)
     {
-        var completionItemResolverTasks = new List<Task<VSInternalCompletionItem?>>(_completionItemResolvers.Count);
+        using var completionItemResolverTasks = new PooledArrayBuilder<Task<VSInternalCompletionItem?>>(_completionItemResolvers.Count);
 
         foreach (var completionItemResolver in _completionItemResolvers)
         {
@@ -44,7 +46,9 @@ internal class AggregateCompletionItemResolver
             }
         }
 
-        var resolvedCompletionItems = new Queue<VSInternalCompletionItem>();
+        // We don't currently handle merging completion items because it's very rare for more than one resolution to take place.
+        // Instead we'll prioritized the last completion item resolved.
+        VSInternalCompletionItem? lastResolved = null;
         foreach (var completionItemResolverTask in completionItemResolverTasks)
         {
             try
@@ -52,7 +56,7 @@ internal class AggregateCompletionItemResolver
                 var resolvedCompletionItem = await completionItemResolverTask.ConfigureAwait(false);
                 if (resolvedCompletionItem is not null)
                 {
-                    resolvedCompletionItems.Enqueue(resolvedCompletionItem);
+                    lastResolved = resolvedCompletionItem;
                 }
 
                 cancellationToken.ThrowIfCancellationRequested();
@@ -63,14 +67,6 @@ internal class AggregateCompletionItemResolver
             }
         }
 
-        if (resolvedCompletionItems.Count == 0)
-        {
-            return null;
-        }
-
-        // We don't currently handle merging completion items because it's very rare for more than one resolution to take place.
-        // Instead we'll prioritized the last completion item resolved.
-        var finalCompletionItem = resolvedCompletionItems.Last();
-        return finalCompletionItem;
+        return lastResolved;
     }
 }

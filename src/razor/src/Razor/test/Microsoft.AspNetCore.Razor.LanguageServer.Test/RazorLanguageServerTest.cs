@@ -117,7 +117,7 @@ public class RazorLanguageServerTest(ITestOutputHelper testOutput) : ToolingTest
                 s.AddSingleton<IRazorProjectInfoDriver, TestProjectInfoDriver>();
 
                 // VS Code only handler is added by rzls, but add here for testing purposes
-                s.AddHandler<RazorNamedPipeConnectHandler>();
+                s.AddHandler<RazorNamedPipeConnectEndpoint>();
             });
     }
 

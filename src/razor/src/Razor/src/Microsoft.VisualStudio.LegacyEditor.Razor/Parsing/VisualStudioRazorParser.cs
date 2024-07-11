@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -548,7 +549,7 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
                 return;
             }
 
-            var matchingRequests = new List<CodeDocumentRequest>();
+            using var matchingRequests = new PooledArrayBuilder<CodeDocumentRequest>();
             for (var i = _codeDocumentRequests.Count - 1; i >= 0; i--)
             {
                 var request = _codeDocumentRequests[i];

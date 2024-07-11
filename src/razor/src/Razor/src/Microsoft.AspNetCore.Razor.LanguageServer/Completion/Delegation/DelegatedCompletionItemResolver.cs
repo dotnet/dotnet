@@ -52,7 +52,7 @@ internal class DelegatedCompletionItemResolver : CompletionItemResolver
 
         // If the data was merged to combine resultId with original data, undo that merge and set the data back
         // to what it originally was for the delegated request
-        if (CompletionListMerger.TrySplit(associatedDelegatedCompletion.Data, out var splitData) && splitData.Count == 2)
+        if (CompletionListMerger.TrySplit(associatedDelegatedCompletion.Data, out var splitData) && splitData.Length == 2)
         {
             item.Data = splitData[1];
         }

@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -20,12 +21,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
 
 internal sealed class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
 {
-    public Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
+    public Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
     {
         var nameNotExistDiagnostics = context.Request.Context.Diagnostics.Any(d => d.Code == "CS0103");
         if (!nameNotExistDiagnostics)
         {
-            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
+            return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
 
         var syntaxTree = context.CodeDocument.GetSyntaxTree();
@@ -34,12 +35,14 @@ internal sealed class GenerateMethodCodeActionProvider : IRazorCodeActionProvide
         if (IsGenerateEventHandlerValid(owner, out var methodName, out var eventName))
         {
             var uri = context.Request.TextDocument.Uri;
-            return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>([
-                RazorCodeActionFactory.CreateGenerateMethod(uri, methodName, eventName),
-                RazorCodeActionFactory.CreateAsyncGenerateMethod(uri, methodName, eventName)]);
+            return Task.FromResult<ImmutableArray<RazorVSInternalCodeAction>>(
+                [
+                    RazorCodeActionFactory.CreateGenerateMethod(uri, methodName, eventName),
+                    RazorCodeActionFactory.CreateAsyncGenerateMethod(uri, methodName, eventName)
+                ]);
         }
 
-        return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
+        return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
     }
 
     private static bool IsGenerateEventHandlerValid(
@@ -69,7 +72,7 @@ internal sealed class GenerateMethodCodeActionProvider : IRazorCodeActionProvide
             return false;
         }
 
-        // MarkupTagHelperElement > MarkupTagHelperStartTag > MarkupTagHelperDirectiveAttribute 
+        // MarkupTagHelperElement > MarkupTagHelperStartTag > MarkupTagHelperDirectiveAttribute
         if (commonParent.Parent.Parent is not MarkupTagHelperElementSyntax { TagHelperInfo.BindingResult: var binding })
         {
             return false;

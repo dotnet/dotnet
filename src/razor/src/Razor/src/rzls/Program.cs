@@ -92,7 +92,7 @@ public class Program
             configureServices: static services =>
             {
                 services.AddSingleton<IRazorProjectInfoDriver, NamedPipeBasedRazorProjectInfoDriver>();
-                services.AddHandler<RazorNamedPipeConnectHandler>();
+                services.AddHandler<RazorNamedPipeConnectEndpoint>();
             });
 
         // Now we have a server, and hence a connection, we have somewhere to log

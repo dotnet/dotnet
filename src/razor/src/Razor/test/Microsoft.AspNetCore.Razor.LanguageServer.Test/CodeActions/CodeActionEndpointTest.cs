@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -369,7 +370,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
         var codeActionEndpoint = new CodeActionEndpoint(
             _documentMappingService,
             new IRazorCodeActionProvider[] {
-                    new MockNullRazorCodeActionProvider()
+                    new MockEmptyRazorCodeActionProvider()
             },
             Array.Empty<ICSharpCodeActionProvider>(),
             Array.Empty<IHtmlCodeActionProvider>(),
@@ -409,9 +410,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             documentMappingService,
             new IRazorCodeActionProvider[] {
                     new MockRazorCodeActionProvider(),
-                    new MockNullRazorCodeActionProvider(),
+                    new MockEmptyRazorCodeActionProvider(),
                     new MockRazorCodeActionProvider(),
-                    new MockNullRazorCodeActionProvider(),
+                    new MockEmptyRazorCodeActionProvider(),
             },
             new ICSharpCodeActionProvider[] {
                     new MockCSharpCodeActionProvider(),
@@ -454,7 +455,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             new IRazorCodeActionProvider[] {
                     new MockRazorCodeActionProvider(),
                     new MockRazorCommandProvider(),
-                    new MockNullRazorCodeActionProvider()
+                    new MockEmptyRazorCodeActionProvider()
             },
             Array.Empty<ICSharpCodeActionProvider>(),
             Array.Empty<IHtmlCodeActionProvider>(),
@@ -558,7 +559,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             new IRazorCodeActionProvider[] {
                     new MockRazorCodeActionProvider(),
                     new MockRazorCommandProvider(),
-                    new MockNullRazorCodeActionProvider()
+                    new MockEmptyRazorCodeActionProvider()
             },
             Array.Empty<ICSharpCodeActionProvider>(),
             Array.Empty<IHtmlCodeActionProvider>(),
@@ -811,41 +812,42 @@ public class CodeActionEndpointTest : LanguageServerTestBase
 
     private class MockRazorCodeActionProvider : IRazorCodeActionProvider
     {
-        public Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
+        public Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
         {
-            return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(new List<RazorVSInternalCodeAction>() { new RazorVSInternalCodeAction() });
+            return Task.FromResult<ImmutableArray<RazorVSInternalCodeAction>>([new RazorVSInternalCodeAction()]);
         }
     }
 
     private class MockMultipleRazorCodeActionProvider : IRazorCodeActionProvider
     {
-        public Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
+        public Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
         {
-            return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(new List<RazorVSInternalCodeAction>()
-                {
+            return Task.FromResult<ImmutableArray<RazorVSInternalCodeAction>>(
+                [
                     new RazorVSInternalCodeAction(),
                     new RazorVSInternalCodeAction()
-                });
+                ]);
         }
     }
 
     private class MockCSharpCodeActionProvider : ICSharpCodeActionProvider
     {
-        public Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, IEnumerable<RazorVSInternalCodeAction> codeActions, CancellationToken cancellationToken)
+        public Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(RazorCodeActionContext _1, ImmutableArray<RazorVSInternalCodeAction> _2, CancellationToken _3)
         {
-            return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(new List<RazorVSInternalCodeAction>()
-                {
+            return Task.FromResult<ImmutableArray<RazorVSInternalCodeAction>>(
+                [
                     new RazorVSInternalCodeAction()
-                });
+                ]);
         }
     }
 
     private class MockRazorCommandProvider : IRazorCodeActionProvider
     {
-        public Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
+        public Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(RazorCodeActionContext _1, CancellationToken _2)
         {
             // O# Code Actions don't have `Data`, but `Commands` do
-            return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(new List<RazorVSInternalCodeAction>() {
+            return Task.FromResult<ImmutableArray<RazorVSInternalCodeAction>>(
+                [
                     new RazorVSInternalCodeAction() {
                         Title = "SomeTitle",
                         Data = JsonSerializer.SerializeToElement(new AddUsingsCodeActionParams()
@@ -854,15 +856,15 @@ public class CodeActionEndpointTest : LanguageServerTestBase
                             Uri = new Uri("C:/path/to/Page.razor")
                         })
                     }
-                });
+                ]);
         }
     }
 
-    private class MockNullRazorCodeActionProvider : IRazorCodeActionProvider
+    private class MockEmptyRazorCodeActionProvider : IRazorCodeActionProvider
     {
-        public Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
+        public Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(RazorCodeActionContext _1, CancellationToken _2)
         {
-            return SpecializedTasks.Null<IReadOnlyList<RazorVSInternalCodeAction>>();
+            return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
     }
 

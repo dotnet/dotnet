@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
+using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.Utilities;
 using IServiceProvider = System.IServiceProvider;
 
@@ -42,7 +43,8 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
     private readonly ILspEditorFeatureDetector _editorFeatureDetector;
     private readonly IEditorOptionsFactoryService _editorOptionsFactory;
     private readonly IClientSettingsManager _editorSettingsManager;
-    private readonly IVsTextManager4 _textManager;
+    private readonly JoinableTaskContext _joinableTaskContext;
+    private IVsTextManager4? _textManager;
 
     /// <summary>
     /// Protects concurrent modifications to _activeTextViews and _textBuffer's
@@ -62,16 +64,27 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
         IVsEditorAdaptersFactoryService editorAdaptersFactory,
         ILspEditorFeatureDetector editorFeatureDetector,
         IEditorOptionsFactoryService editorOptionsFactory,
-        IClientSettingsManager editorSettingsManager)
+        IClientSettingsManager editorSettingsManager,
+        JoinableTaskContext joinableTaskContext)
     {
         _serviceProvider = serviceProvider;
         _editorAdaptersFactory = editorAdaptersFactory;
         _editorFeatureDetector = editorFeatureDetector;
         _editorOptionsFactory = editorOptionsFactory;
         _editorSettingsManager = editorSettingsManager;
-        _textManager = (IVsTextManager4)serviceProvider.GetService(typeof(SVsTextManager));
+        _joinableTaskContext = joinableTaskContext;
+    }
 
-        Assumes.Present(_textManager);
+    /// <summary>
+    /// Gets instance of <see cref="IVsTextManager4"/>. This accesses COM object and requires to be called on the UI thread.
+    /// </summary>
+    private IVsTextManager4 TextManager
+    {
+        get
+        {
+            _joinableTaskContext.AssertUIThread();
+            return _textManager ??= (IVsTextManager4)_serviceProvider.GetService(typeof(SVsTextManager));
+        }
     }
 
     public void SubjectBuffersConnected(ITextView textView, ConnectionReason reason, IReadOnlyCollection<ITextBuffer> subjectBuffers)
@@ -133,7 +146,8 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
 
                 // Initialize TextView options. We only need to do this once per TextView, as the options should
                 // automatically update and they aren't options we care about keeping track of.
-                InitializeRazorTextViewOptions(_textManager, optionsTracker);
+                Assumes.Present(TextManager);
+                InitializeRazorTextViewOptions(TextManager, optionsTracker);
 
                 // A change in Tools->Options settings only kicks off an options changed event in the view
                 // and not the buffer, i.e. even if we listened for TextBuffer option changes, we would never
@@ -201,7 +215,7 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
 
         // Retrieve current space/tabs settings from from Tools->Options and update options in
         // the actual editor.
-        (ClientSpaceSettings ClientSpaceSettings, ClientCompletionSettings ClientCompletionSettings) settings = UpdateRazorEditorOptions(_textManager, optionsTracker);
+        (ClientSpaceSettings ClientSpaceSettings, ClientCompletionSettings ClientCompletionSettings) settings = UpdateRazorEditorOptions(TextManager, optionsTracker);
 
         // Keep track of accurate settings on the client side so we can easily retrieve the
         // options later when the server sends us a workspace/configuration request.

@@ -46,13 +46,12 @@ public class DefaultHtmlCodeActionProviderTest(ITestOutputHelper testOutput) : L
         var documentMappingService = Mock.Of<IRazorDocumentMappingService>(MockBehavior.Strict);
         var provider = new DefaultHtmlCodeActionProvider(documentMappingService);
 
-        var codeActions = new[] { new RazorVSInternalCodeAction() { Name = "Test" } };
+        ImmutableArray<RazorVSInternalCodeAction> codeActions = [ new RazorVSInternalCodeAction() { Name = "Test" } ];
 
         // Act
         var providedCodeActions = await provider.ProvideAsync(context, codeActions, DisposalToken);
 
         // Assert
-        Assert.NotNull(providedCodeActions);
         var action = Assert.Single(providedCodeActions);
         Assert.Equal("Test", action.Name);
         Assert.Equal("Html", ((JsonElement)action.Data!).GetProperty("language").GetString());
@@ -99,33 +98,32 @@ public class DefaultHtmlCodeActionProviderTest(ITestOutputHelper testOutput) : L
 
         var provider = new DefaultHtmlCodeActionProvider(documentMappingServiceMock.Object);
 
-        var codeActions = new[]
+        ImmutableArray<RazorVSInternalCodeAction> codeActions =
+        [
+            new RazorVSInternalCodeAction()
             {
-                new RazorVSInternalCodeAction()
+                Name = "Test",
+                Edit = new WorkspaceEdit
                 {
-                    Name = "Test",
-                    Edit = new WorkspaceEdit
+                    DocumentChanges = new TextDocumentEdit[]
                     {
-                        DocumentChanges = new TextDocumentEdit[]
+                        new TextDocumentEdit
                         {
-                            new TextDocumentEdit
+                            TextDocument = new OptionalVersionedTextDocumentIdentifier { Uri= new Uri("c:/Test.razor.html"), Version = 1 },
+                            Edits = new TextEdit[]
                             {
-                                TextDocument = new OptionalVersionedTextDocumentIdentifier { Uri= new Uri("c:/Test.razor.html"), Version = 1 },
-                                Edits = new TextEdit[]
-                                {
-                                    new TextEdit { NewText = "Goo" }
-                                }
+                                new TextEdit { NewText = "Goo" }
                             }
                         }
                     }
                 }
-            };
+            }
+        ];
 
         // Act
         var providedCodeActions = await provider.ProvideAsync(context, codeActions, DisposalToken);
 
         // Assert
-        Assert.NotNull(providedCodeActions);
         var action = Assert.Single(providedCodeActions);
         Assert.NotNull(action.Edit);
         Assert.True(action.Edit.TryGetDocumentChanges(out var changes));

@@ -83,7 +83,7 @@ internal class OnAutoInsertEndpoint(
 
         var character = request.Character;
 
-        using var _ = ListPool<IOnAutoInsertProvider>.GetPooledObject(out var applicableProviders);
+        using var applicableProviders = new PooledArrayBuilder<IOnAutoInsertProvider>();
         foreach (var provider in _onAutoInsertProviders)
         {
             if (provider.TriggerCharacter == character)
