@@ -134,6 +134,9 @@ fi
       git clone -c protocol.file.allow=always --no-checkout "$sourceDir" "$destDir"
     fi
 
+    # For sourcelink, ensure that the origin remote URI is updated to match the outer repo's
+    git -C "$destDir" remote set-url origin $(git -C "$sourceDir" remote get-url origin)
+
     (
       cd "$destDir"
       echo "Checking out sources..."
