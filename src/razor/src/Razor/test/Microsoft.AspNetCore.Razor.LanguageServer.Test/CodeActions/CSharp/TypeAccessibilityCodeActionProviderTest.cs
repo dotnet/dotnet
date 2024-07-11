@@ -48,18 +48,18 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new TypeAccessibilityCodeActionProvider();
-        var csharpCodeActions = new[] {
+        ImmutableArray<RazorVSInternalCodeAction> csharpCodeActions =
+        [
             new RazorVSInternalCodeAction()
             {
                 Title = "System.Net.Dns"
             }
-        };
+        ];
 
         // Act
         var results = await provider.ProvideAsync(context, csharpCodeActions, default);
 
         // Assert
-        Assert.NotNull(results);
         Assert.Empty(results);
     }
 
@@ -103,18 +103,18 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new TypeAccessibilityCodeActionProvider();
-        var csharpCodeActions = new[] {
+        ImmutableArray<RazorVSInternalCodeAction> csharpCodeActions =
+        [
             new RazorVSInternalCodeAction()
             {
                 Title = "System.Net.Dns"
             }
-        };
+        ];
 
         // Act
         var results = await provider.ProvideAsync(context, csharpCodeActions, default);
 
         // Assert
-        Assert.NotNull(results);
         Assert.Empty(results);
 
     }
@@ -146,13 +146,12 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new TypeAccessibilityCodeActionProvider();
-        var csharpCodeActions = Array.Empty<RazorVSInternalCodeAction>();
+        var csharpCodeActions = ImmutableArray<RazorVSInternalCodeAction>.Empty;
 
         // Act
         var results = await provider.ProvideAsync(context, csharpCodeActions, default);
 
         // Assert
-        Assert.NotNull(results);
         Assert.Empty(results);
 
     }
@@ -201,7 +200,8 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new TypeAccessibilityCodeActionProvider();
-        var csharpCodeActions = new[] {
+        ImmutableArray<RazorVSInternalCodeAction> csharpCodeActions =
+        [
             new RazorVSInternalCodeAction()
             {
                 Title = "System.IO.Path",
@@ -212,13 +212,12 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                 Title = "System.IO.SomethingElse",
                 Name = "CodeActionFromVSCode"
             }
-        };
+        ];
 
         // Act
         var results = await provider.ProvideAsync(context, csharpCodeActions, default);
 
         // Assert
-        Assert.NotNull(results);
         Assert.Collection(results,
             r =>
             {
@@ -260,7 +259,8 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new TypeAccessibilityCodeActionProvider();
-        var csharpCodeActions = new[] {
+        ImmutableArray<RazorVSInternalCodeAction> csharpCodeActions =
+        [
             new RazorVSInternalCodeAction()
             {
                 Title = "System.IO.Path",
@@ -271,13 +271,12 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                 Title = "using System.IO;",
                 Name = "AddImport"
             }
-        };
+        ];
 
         // Act
         var results = await provider.ProvideAsync(context, csharpCodeActions, default);
 
         // Assert
-        Assert.NotNull(results);
         Assert.Collection(results,
             r =>
             {
@@ -312,7 +311,8 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new TypeAccessibilityCodeActionProvider();
-        var csharpCodeActions = new[] {
+        ImmutableArray<RazorVSInternalCodeAction> csharpCodeActions =
+        [
             new RazorVSInternalCodeAction()
             {
                 Title = "System.IO.Path",
@@ -323,13 +323,12 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                 Title = "using System.IO;",
                 Name = "AddImport"
             }
-        };
+        ];
 
         // Act
         var results = await provider.ProvideAsync(context, csharpCodeActions, default);
 
         // Assert
-        Assert.NotNull(results);
         Assert.Collection(results,
             r =>
             {
@@ -390,7 +389,8 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new TypeAccessibilityCodeActionProvider();
-        var csharpCodeActions = new[] {
+        ImmutableArray<RazorVSInternalCodeAction> csharpCodeActions =
+        [
             new RazorVSInternalCodeAction()
             {
                 Title = "Fully qualify 'Path' -> System.IO.Path",
@@ -401,13 +401,12 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                 Title = "Fully qualify 'Path' -> SuperSpecialNamespace.Path",
                 Name = "CodeActionFromVSCode"
             }
-        };
+        ];
 
         // Act
         var results = await provider.ProvideAsync(context, csharpCodeActions, default);
 
         // Assert
-        Assert.NotNull(results);
         Assert.Collection(results,
             r =>
             {

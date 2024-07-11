@@ -130,7 +130,7 @@ internal sealed class RenameEndpoint(
             return null;
         }
 
-        var documentChanges = new List<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
+        using var _ = ListPool<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>.GetPooledObject(out var documentChanges);
         var fileRename = GetFileRenameForComponent(originComponentDocumentSnapshot, newPath);
         documentChanges.Add(fileRename);
         AddEditsForCodeDocument(documentChanges, originTagHelpers, request.NewName, request.TextDocument.Uri, codeDocument);

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Completion;
@@ -16,7 +17,7 @@ internal static class VSInternalCompletionItemExtensions
 
     private static readonly Dictionary<RazorCommitCharacter, VSInternalCommitCharacter> s_commitCharacterCache = [];
 
-    public static bool TryGetCompletionListResultIds(this VSInternalCompletionItem completion, [NotNullWhen(true)] out IReadOnlyList<int>? resultIds)
+    public static bool TryGetCompletionListResultIds(this VSInternalCompletionItem completion, out ImmutableArray<int> resultIds)
     {
         if (completion is null)
         {
@@ -25,12 +26,12 @@ internal static class VSInternalCompletionItemExtensions
 
         if (!CompletionListMerger.TrySplit(completion.Data, out var splitData))
         {
-            resultIds = null;
+            resultIds = default;
             return false;
         }
 
-        var ids = new List<int>();
-        for (var i = 0; i < splitData.Count; i++)
+        using var ids = new PooledArrayBuilder<int>();
+        for (var i = 0; i < splitData.Length; i++)
         {
             var data = splitData[i];
             if (data.TryGetProperty(ResultIdKey, out var resultIdElement) &&
@@ -42,11 +43,11 @@ internal static class VSInternalCompletionItemExtensions
 
         if (ids.Count > 0)
         {
-            resultIds = ids;
+            resultIds = ids.ToImmutable();
             return true;
         }
 
-        resultIds = null;
+        resultIds = default;
         return false;
     }
 

@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -69,7 +71,7 @@ internal sealed class AddUsingsCodeActionResolver(IDocumentContextFactory docume
          * that now I can come up with a more sophisticated heuristic (something along the lines of checking if
          * there's already an ordering, etc.).
          */
-        using var _ = ListPool<TextDocumentEdit>.GetPooledObject(out var documentChanges);
+        using var documentChanges = new PooledArrayBuilder<TextDocumentEdit>();
 
         // Need to add the additional edit first, as the actual usings go at the top of the file, and would
         // change the ranges needed in the additional edit if they went in first
@@ -78,11 +80,12 @@ internal sealed class AddUsingsCodeActionResolver(IDocumentContextFactory docume
             documentChanges.Add(additionalEdit);
         }
 
-        var usingDirectives = FindUsingDirectives(codeDocument);
+        using var usingDirectives = new PooledArrayBuilder<RazorUsingDirective>();
+        CollectUsingDirectives(codeDocument, ref usingDirectives.AsRef());
         if (usingDirectives.Count > 0)
         {
             // Interpolate based on existing @using statements
-            var edits = GenerateSingleUsingEditsInterpolated(codeDocument, codeDocumentIdentifier, @namespace, usingDirectives);
+            var edits = GenerateSingleUsingEditsInterpolated(codeDocument, codeDocumentIdentifier, @namespace, in usingDirectives);
             documentChanges.Add(edits);
         }
         else
@@ -102,9 +105,11 @@ internal sealed class AddUsingsCodeActionResolver(IDocumentContextFactory docume
         RazorCodeDocument codeDocument,
         OptionalVersionedTextDocumentIdentifier codeDocumentIdentifier,
         string newUsingNamespace,
-        List<RazorUsingDirective> existingUsingDirectives)
+        ref readonly PooledArrayBuilder<RazorUsingDirective> existingUsingDirectives)
     {
-        var edits = new List<TextEdit>();
+        Debug.Assert(existingUsingDirectives.Count > 0);
+
+        using var edits = new PooledArrayBuilder<TextEdit>();
         var newText = $"@using {newUsingNamespace}{Environment.NewLine}";
 
         foreach (var usingDirective in existingUsingDirectives)
@@ -129,7 +134,7 @@ internal sealed class AddUsingsCodeActionResolver(IDocumentContextFactory docume
         // If we haven't actually found a place to insert the using directive, do so at the end
         if (edits.Count == 0)
         {
-            var endIndex = existingUsingDirectives.Last().Node.Span.End;
+            var endIndex = existingUsingDirectives[^1].Node.Span.End;
             var lineIndex = GetLineIndexOrEnd(codeDocument, endIndex - 1) + 1;
             var head = new Position(lineIndex, 0);
             var edit = new TextEdit() { Range = new Range { Start = head, End = head }, NewText = newText };
@@ -139,7 +144,7 @@ internal sealed class AddUsingsCodeActionResolver(IDocumentContextFactory docume
         return new TextDocumentEdit()
         {
             TextDocument = codeDocumentIdentifier,
-            Edits = [.. edits]
+            Edits = edits.ToArray()
         };
     }
 
@@ -190,9 +195,8 @@ internal sealed class AddUsingsCodeActionResolver(IDocumentContextFactory docume
         }
     }
 
-    private static List<RazorUsingDirective> FindUsingDirectives(RazorCodeDocument codeDocument)
+    private static void CollectUsingDirectives(RazorCodeDocument codeDocument, ref PooledArrayBuilder<RazorUsingDirective> directives)
     {
-        var directives = new List<RazorUsingDirective>();
         var syntaxTreeRoot = codeDocument.GetSyntaxTree().Root;
         foreach (var node in syntaxTreeRoot.DescendantNodes())
         {
@@ -207,8 +211,6 @@ internal sealed class AddUsingsCodeActionResolver(IDocumentContextFactory docume
                 }
             }
         }
-
-        return directives;
     }
 
     private static bool IsNamespaceOrPageDirective(SyntaxNode node)

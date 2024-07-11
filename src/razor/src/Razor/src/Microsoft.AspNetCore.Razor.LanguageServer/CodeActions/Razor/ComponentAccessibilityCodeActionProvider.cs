@@ -24,15 +24,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActionProvider
 {
-    public async Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
+    public async Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
     {
-        using var _ = ListPool<RazorVSInternalCodeAction>.GetPooledObject(out var codeActions);
-
         // Locate cursor
         var node = context.CodeDocument.GetSyntaxTree().Root.FindInnermostNode(context.Location.AbsoluteIndex);
         if (node is null)
         {
-            return null;
+            return [];
         }
 
         // Find start tag. We allow this code action to work from anywhere in the start tag, which includes
@@ -43,7 +41,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         var startTag = (IStartTagSyntaxNode?)node.FirstAncestorOrSelf<SyntaxNode>(n => n is IStartTagSyntaxNode);
         if (startTag is null)
         {
-            return null;
+            return [];
         }
 
         if (context.Location.AbsoluteIndex < startTag.SpanStart)
@@ -51,27 +49,30 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
             // Cursor is before the start tag, so we shouldn't show a light bulb. This can happen
             // in cases where the cursor is in whitespace at the beginning of the document
             // eg: $$ <Component></Component>
-            return null;
+            return [];
         }
 
         // Ignore if start tag has dots, as we only handle short tags
         if (startTag.Name.Content.Contains("."))
         {
-            return null;
+            return [];
         }
 
         if (!IsApplicableTag(startTag))
         {
-            return null;
+            return [];
         }
 
-        if (IsTagUnknown(startTag, context))
+        if (!IsTagUnknown(startTag, context))
         {
-            await AddComponentAccessFromTagAsync(context, startTag, codeActions, cancellationToken).ConfigureAwait(false);
-            AddCreateComponentFromTag(context, startTag, codeActions);
+            return [];
         }
 
-        return codeActions.ToArray();
+        using var _ = ListPool<RazorVSInternalCodeAction>.GetPooledObject(out var codeActions);
+        await AddComponentAccessFromTagAsync(context, startTag, codeActions, cancellationToken).ConfigureAwait(false);
+        AddCreateComponentFromTag(context, startTag, codeActions);
+
+        return [.. codeActions];
     }
 
     private static bool IsApplicableTag(IStartTagSyntaxNode startTag)
@@ -190,7 +191,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         }
     }
 
-    private static async Task<List<TagHelperPair>> FindMatchingTagHelpersAsync(RazorCodeActionContext context, IStartTagSyntaxNode startTag, CancellationToken cancellationToken)
+    private static async Task<ImmutableArray<TagHelperPair>> FindMatchingTagHelpersAsync(RazorCodeActionContext context, IStartTagSyntaxNode startTag, CancellationToken cancellationToken)
     {
         // Get all data necessary for matching
         var tagName = startTag.Name.Content;
@@ -231,7 +232,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
             }
         }
 
-        return new List<TagHelperPair>(matching.Values);
+        return [.. matching.Values];
     }
 
     private static bool SatisfiesRules(ImmutableArray<TagMatchingRuleDescriptor> tagMatchingRules, ReadOnlySpan<char> tagNameWithoutPrefix, ReadOnlySpan<char> parentTagNameWithoutPrefix, ImmutableArray<KeyValuePair<string, string>> tagAttributes, out bool caseInsensitiveMatch)
@@ -273,7 +274,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
 
     private static WorkspaceEdit CreateRenameTagEdit(RazorCodeActionContext context, IStartTagSyntaxNode startTag, string newTagName)
     {
-        using var _ = ListPool<TextEdit>.GetPooledObject(out var textEdits);
+        using var textEdits = new PooledArrayBuilder<TextEdit>();
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = context.Request.TextDocument.Uri };
 
         var startTagTextEdit = new TextEdit
@@ -303,7 +304,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
                 new TextDocumentEdit()
                 {
                     TextDocument = codeDocumentIdentifier,
-                    Edits = [.. textEdits]
+                    Edits = textEdits.ToArray()
                 }
             },
         };

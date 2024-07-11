@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
@@ -17,5 +18,5 @@ internal interface ICodeActionProvider
     /// The list of code actions returned from all providers will be combined together in a list. A null result and an empty
     /// result are effectively the same.
     /// </remarks>
-    Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, IEnumerable<RazorVSInternalCodeAction> codeActions, CancellationToken cancellationToken);
+    Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(RazorCodeActionContext context, ImmutableArray<RazorVSInternalCodeAction> codeActions, CancellationToken cancellationToken);
 }

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -52,16 +54,16 @@ internal sealed class DefaultCSharpCodeActionProvider(LanguageServerFeatureOptio
 
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
 
-    public Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(
+    public Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(
         RazorCodeActionContext context,
-        IEnumerable<RazorVSInternalCodeAction> codeActions,
+        ImmutableArray<RazorVSInternalCodeAction> codeActions,
         CancellationToken cancellationToken)
     {
         // Used to identify if this is VSCode which doesn't support
         // code action resolve.
         if (!context.SupportsCodeActionResolve)
         {
-            return SpecializedTasks.AsNullable(SpecializedTasks.EmptyReadOnlyList<RazorVSInternalCodeAction>());
+            return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
 
         var tree = context.CodeDocument.GetSyntaxTree();
@@ -72,7 +74,7 @@ internal sealed class DefaultCSharpCodeActionProvider(LanguageServerFeatureOptio
             ? SupportedImplicitExpressionCodeActionNames
             : SupportedDefaultCodeActionNames;
 
-        var results = new List<RazorVSInternalCodeAction>();
+        using var results = new PooledArrayBuilder<RazorVSInternalCodeAction>();
 
         foreach (var codeAction in codeActions)
         {
@@ -94,7 +96,7 @@ internal sealed class DefaultCSharpCodeActionProvider(LanguageServerFeatureOptio
             }
         }
 
-        return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(results);
+        return Task.FromResult(results.ToImmutable());
 
         static bool CanDeserializeTo<T>(object? data)
         {
