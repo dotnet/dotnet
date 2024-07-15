@@ -41,7 +41,11 @@ namespace NuGet.Protocol.Tests
             var end = start.AddYears(1);
             var cert = request.CreateSelfSigned(start, end);
             var data = cert.Export(X509ContentType.Pfx);
+#if NET9_0_OR_GREATER
+            return X509CertificateLoader.LoadPkcs12(data, null);
+#else
             return new X509Certificate2(data);
+#endif
         }
     }
 }
