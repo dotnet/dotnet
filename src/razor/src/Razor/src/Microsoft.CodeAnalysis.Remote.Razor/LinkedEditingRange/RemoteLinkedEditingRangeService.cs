@@ -9,12 +9,11 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.ServiceHub.Framework;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 internal sealed class RemoteLinkedEditingRangeService(
-    IServiceBroker serviceBroker,
+    IRazorServiceBroker serviceBroker,
     DocumentSnapshotFactory documentSnapshotFactory,
     ILoggerFactory loggerFactory)
     : RazorDocumentServiceBase(serviceBroker, documentSnapshotFactory), IRemoteLinkedEditingRangeService

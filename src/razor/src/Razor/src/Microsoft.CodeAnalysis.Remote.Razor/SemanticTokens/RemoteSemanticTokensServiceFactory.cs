@@ -4,7 +4,6 @@
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
-using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Composition;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -17,7 +16,7 @@ internal sealed class RemoteSemanticTokensServiceFactory : RazorServiceFactoryBa
     {
     }
 
-    protected override IRemoteSemanticTokensService CreateService(IServiceBroker serviceBroker, ExportProvider exportProvider)
+    protected override IRemoteSemanticTokensService CreateService(IRazorServiceBroker serviceBroker, ExportProvider exportProvider)
     {
         var infoService = exportProvider.GetExportedValue<IRazorSemanticTokensInfoService>();
         var documentSnapshotFactory = exportProvider.GetExportedValue<DocumentSnapshotFactory>();

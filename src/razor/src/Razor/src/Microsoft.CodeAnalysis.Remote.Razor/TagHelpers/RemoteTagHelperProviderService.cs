@@ -10,12 +10,11 @@ using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.ServiceHub.Framework;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 internal sealed class RemoteTagHelperProviderService(
-    IServiceBroker serviceBroker,
+    IRazorServiceBroker serviceBroker,
     RemoteTagHelperResolver tagHelperResolver,
     RemoteTagHelperDeltaProvider tagHelperDeltaProvider)
     : RazorServiceBase(serviceBroker), IRemoteTagHelperProviderService

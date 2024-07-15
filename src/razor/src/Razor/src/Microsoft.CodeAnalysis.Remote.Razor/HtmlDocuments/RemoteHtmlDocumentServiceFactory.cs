@@ -3,7 +3,6 @@
 
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
-using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Composition;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -16,7 +15,7 @@ internal sealed class RemoteHtmlDocumentServiceFactory : RazorServiceFactoryBase
     {
     }
 
-    protected override IRemoteHtmlDocumentService CreateService(IServiceBroker serviceBroker, ExportProvider exportProvider)
+    protected override IRemoteHtmlDocumentService CreateService(IRazorServiceBroker serviceBroker, ExportProvider exportProvider)
     {
         var documentSnapshotFactory = exportProvider.GetExportedValue<DocumentSnapshotFactory>();
         return new RemoteHtmlDocumentService(serviceBroker, documentSnapshotFactory);

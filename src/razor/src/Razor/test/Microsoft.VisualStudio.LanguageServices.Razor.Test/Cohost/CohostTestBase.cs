@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Remote;
+using Microsoft.CodeAnalysis.Remote.Razor;
 using Microsoft.CodeAnalysis.Text;
 using Xunit.Abstractions;
 
@@ -19,11 +20,12 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Works
 
     private protected IRemoteServiceProvider RemoteServiceProvider => _remoteServiceProvider.AssumeNotNull();
 
-    protected override Task InitializeAsync()
+    protected override async Task InitializeAsync()
     {
-        _remoteServiceProvider = new ShortCircuitingRemoteServiceProvider(TestOutputHelper);
+        await base.InitializeAsync();
 
-        return base.InitializeAsync();
+        var exportProvider = AddDisposable(await RemoteMefComposition.CreateExportProviderAsync());
+        _remoteServiceProvider = AddDisposable(new TestRemoteServiceProvider(exportProvider));
     }
 
     protected TextDocument CreateRazorDocument(string contents)

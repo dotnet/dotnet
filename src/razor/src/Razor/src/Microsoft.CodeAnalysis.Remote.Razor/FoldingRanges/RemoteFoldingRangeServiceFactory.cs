@@ -5,7 +5,6 @@ using Microsoft.CodeAnalysis.Razor.FoldingRanges;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
-using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Composition;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -18,7 +17,7 @@ internal sealed class RemoteFoldingRangeServiceFactory : RazorServiceFactoryBase
     {
     }
 
-    protected override IRemoteFoldingRangeService CreateService(IServiceBroker serviceBroker, ExportProvider exportProvider)
+    protected override IRemoteFoldingRangeService CreateService(IRazorServiceBroker serviceBroker, ExportProvider exportProvider)
     {
         var infoService = exportProvider.GetExportedValue<IFoldingRangeService>();
         var documentSnapshotFactory = exportProvider.GetExportedValue<DocumentSnapshotFactory>();

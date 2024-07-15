@@ -90,6 +90,23 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
     }
 
     [Fact]
+    public void GetCompletionAt_InEmptyDocument_ReturnsEmptyCompletionArray()
+    {
+        // Arrange
+        var service = new TagHelperCompletionProvider(RazorTagHelperCompletionService, TestRazorLSPOptionsMonitor.Create());
+        var context = CreateRazorCompletionContext(
+            "$$",
+            isRazorFile: true,
+            tagHelpers: DefaultTagHelpers);
+
+        // Act
+        var completions = service.GetCompletionItems(context);
+
+        // Assert
+        Assert.Empty(completions);
+    }
+
+    [Fact]
     public void GetCompletionAt_OutsideOfTagName_DoesNotReturnCompletions()
     {
         // Arrange

@@ -17,5 +17,5 @@ internal interface IRemoteServiceProvider
         CancellationToken cancellationToken,
         [CallerFilePath] string? callerFilePath = null,
         [CallerMemberName] string? callerMemberName = null)
-        where TService : class;
+        where TService : class, IDisposable;
 }

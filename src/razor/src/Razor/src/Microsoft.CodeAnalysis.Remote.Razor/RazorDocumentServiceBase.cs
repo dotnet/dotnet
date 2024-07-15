@@ -6,12 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
-using Microsoft.ServiceHub.Framework;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 internal abstract class RazorDocumentServiceBase(
-    IServiceBroker serviceBroker,
+    IRazorServiceBroker serviceBroker,
     DocumentSnapshotFactory documentSnapshotFactory)
     : RazorServiceBase(serviceBroker)
 {

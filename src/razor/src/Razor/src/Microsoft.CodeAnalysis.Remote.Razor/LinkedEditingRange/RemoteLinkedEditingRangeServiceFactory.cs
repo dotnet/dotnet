@@ -4,7 +4,6 @@
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
-using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Composition;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -17,7 +16,7 @@ internal sealed class RemoteLinkedEditingRangeServiceFactory : RazorServiceFacto
     {
     }
 
-    protected override IRemoteLinkedEditingRangeService CreateService(IServiceBroker serviceBroker, ExportProvider exportProvider)
+    protected override IRemoteLinkedEditingRangeService CreateService(IRazorServiceBroker serviceBroker, ExportProvider exportProvider)
     {
         var documentSnapshotFactory = exportProvider.GetExportedValue<DocumentSnapshotFactory>();
         var loggerFactory = exportProvider.GetExportedValue<ILoggerFactory>();
