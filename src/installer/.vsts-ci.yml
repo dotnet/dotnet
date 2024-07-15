@@ -58,8 +58,8 @@ extends:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
       debian11:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:debian-11-amd64
-      fedora36:
-        image: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-36
+      fedora40:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-40
       ubuntu2204:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04
       mariner20CrossArm:
@@ -123,8 +123,8 @@ extends:
         - template: eng/build.yml@self
           parameters:
             agentOs: Linux
-            jobName: Build_Fedora_36_Debug_x64
-            container: fedora36
+            jobName: Build_Fedora_40_Debug_x64
+            container: fedora40
             buildConfiguration: Debug
             buildArchitecture: x64
             linuxPortable: true
