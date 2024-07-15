@@ -147,7 +147,11 @@ namespace NuGet.Configuration.Test
 
             private X509Certificate2 GetCertificate()
             {
+#if NET9_0_OR_GREATER
+                return X509CertificateLoader.LoadPkcs12(CreateCertificate(), CertificatePassword);
+#else
                 return new X509Certificate2(CreateCertificate(), CertificatePassword);
+#endif
             }
 
             private void RemoveCertificateFromStorage()
