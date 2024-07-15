@@ -100,7 +100,7 @@ jobs:
     - output: pipelineArtifact
       displayName: 'Publish Artifacts'
       condition: succeededOrFailed()
-      targetPath: '${{ variables.sourcesPath }}/artifacts/${{ parameters.architecture }}/Release/'
+      targetPath: $(Build.ArtifactStagingDirectory)/publishing
       artifactName: $(Agent.JobName)_Artifacts
 
   steps:
@@ -267,6 +267,13 @@ jobs:
     continueOnError: true
     condition: succeededOrFailed()
 
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: ${{ variables.sourcesPath }}/artifacts/${{ parameters.architecture }}/Release/
+      TargetFolder: $(Build.ArtifactStagingDirectory)/publishing
+    displayName: Copy artifacts to Artifact Staging Directory
+    condition: succeededOrFailed()
+
   - ${{ if eq(variables['System.TeamProject'], 'public') }}:
     - publish: '$(Build.StagingDirectory)/BuildLogs'
       artifact: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
@@ -274,7 +281,7 @@ jobs:
       continueOnError: true
       condition: succeededOrFailed()
 
-    - publish: '${{ variables.sourcesPath }}/artifacts/${{ parameters.architecture }}/Release/'
+    - publish: $(Build.ArtifactStagingDirectory)/publishing
       artifact: $(Agent.JobName)_Artifacts
       displayName: Publish Artifacts
       condition: succeededOrFailed()
