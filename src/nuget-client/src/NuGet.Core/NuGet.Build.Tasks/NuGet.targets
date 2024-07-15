@@ -70,14 +70,20 @@ Copyright (c) .NET Foundation. All rights reserved.
   <PropertyGroup>
     <!-- Enable NuGetAudit by default -->
     <NuGetAudit Condition=" '$(NuGetAudit)' == '' ">true</NuGetAudit>
-    <!-- Report on low severity vulnerabilities, and higher. Allowed values are: low, moderate, high, critical -->
+    <!-- Report all severity vulnerabilities (low severity and higher). Allowed values are: low, moderate, high, critical -->
     <NuGetAuditLevel Condition=" '$(NuGetAuditLevel)' == '' ">low</NuGetAuditLevel>
-    <!-- Report known vulnerabilities on direct dependencies only. Allowed values are: direct, all -->
+    <!-- Report known vulnerabilities on direct and transitive dependencies, unless SdkAnalysisLevel (or equalivant) is lower than 9.0.100. Allowed values are: direct, all -->
     <NuGetAuditMode Condition="'$(NuGetAuditMode)' == ''
                     AND '$(NuGetExeSkipSdkAnalysisLevelCheck)' != 'true'
-                    AND $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::ValueOrDefault('$(SdkAnalysisLevel)', '0.0')), '9.0.100'))"
-                    >all</NuGetAuditMode>
-    <NuGetAuditMode Condition=" '$(NuGetAuditMode)' == '' ">direct</NuGetAuditMode>
+                    AND '$(SdkAnalysisLevel)' != ''
+                    AND $([MSBuild]::VersionLessThan('$(SdkAnalysisLevel)', '9.0.100'))"
+                    >direct</NuGetAuditMode>
+    <NuGetAuditMode Condition="'$(NuGetAuditMode)' == ''
+                    AND '$(NuGetExeSkipSdkAnalysisLevelCheck)' != 'true'
+                    AND '$(UsingMicrosoftNETSdk)' == 'true'
+                    AND '$(SdkAnalysisLevel)' == ''"
+                    >direct</NuGetAuditMode>
+    <NuGetAuditMode Condition=" '$(NuGetAuditMode)' == '' ">all</NuGetAuditMode>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -920,6 +926,8 @@ Copyright (c) .NET Foundation. All rights reserved.
         <NuGetAudit>$(NuGetAudit)</NuGetAudit>
         <NuGetAuditLevel>$(NuGetAuditLevel)</NuGetAuditLevel>
         <NuGetAuditMode>$(NuGetAuditMode)</NuGetAuditMode>
+        <SdkAnalysisLevel>$(SdkAnalysisLevel)</SdkAnalysisLevel>
+        <UsingMicrosoftNETSdk>$(UsingMicrosoftNETSdk)</UsingMicrosoftNETSdk>
       </_RestoreGraphEntry>
     </ItemGroup>
 

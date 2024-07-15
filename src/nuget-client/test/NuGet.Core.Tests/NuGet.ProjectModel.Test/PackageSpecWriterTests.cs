@@ -728,6 +728,36 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Fact]
+        public void Write_RestoreSdkAnalysisLevel_RoundTrips()
+        {
+            // Arrange
+            var json = @"{
+                  ""restore"": {
+                    ""projectUniqueName"": ""projectUniqueName"",
+                    ""SdkAnalysisLevel"": ""9.0.100""
+                  }
+                }";
+
+            // Act & Assert
+            VerifyJsonPackageSpecRoundTrip(json);
+        }
+
+        [Fact]
+        public void Write_RestoreUsingMicrosoftNetSdk_RoundTrips()
+        {
+            // Arrange
+            var json = @"{
+                  ""restore"": {
+                    ""projectUniqueName"": ""projectUniqueName"",
+                    ""UsingMicrosoftNETSdk"": false
+                  }
+                }";
+
+            // Act & Assert
+            VerifyJsonPackageSpecRoundTrip(json);
+        }
+
+        [Fact]
         public void Write_RestoreAuditPropertiesWithSuppressions_RoundTrips()
         {
             // Arrange

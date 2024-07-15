@@ -41,7 +41,7 @@ parameters:
 - name: RunMonoTestsOnMac
   displayName: Run Mono tests on Mac
   type: boolean
-  default: true
+  default: false
 
 resources:
   pipelines:

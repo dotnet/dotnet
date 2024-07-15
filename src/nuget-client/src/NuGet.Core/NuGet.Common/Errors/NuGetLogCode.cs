@@ -377,6 +377,11 @@ namespace NuGet.Common
         NU1904 = 1904,
 
         /// <summary>
+        /// Audit source did not provide vulnerability data
+        /// </summary>
+        NU1905 = 1905,
+
+        /// <summary>
         /// Undefined signature error
         /// </summary>
         NU3000 = 3000,

@@ -385,6 +385,8 @@ namespace NuGet.ProjectModel.Test
             originalProjectRestoreMetadata.OriginalTargetFrameworks = new List<string>() { "net45" };
             originalProjectRestoreMetadata.Files = new List<ProjectRestoreMetadataFile>() { new ProjectRestoreMetadataFile("packagePath", "absolutePath") };
             originalProjectRestoreMetadata.ProjectWideWarningProperties = warningProperties;
+            originalProjectRestoreMetadata.SdkAnalysisLevel = new NuGetVersion("9.0.100");
+            originalProjectRestoreMetadata.UsingMicrosoftNETSdk = false;
 
             return originalProjectRestoreMetadata;
         }

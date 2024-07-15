@@ -6,6 +6,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
@@ -30,6 +31,11 @@ namespace NuGet.VisualStudio.Common
 
         private readonly IVisualStudioShell _visualStudioShell;
         private readonly Lazy<INuGetErrorList> _errorList;
+
+        /// <summary>
+        /// Keeps track of whether or not Dispose() has been called.  If the value is zero, Dispose() has not been called.  If the value is not zero, Dispose() has been called.
+        /// </summary>
+        private int _isDisposed = 0;
 
         [SuppressMessage("Build", "CA2213:'OutputConsoleLogger' contains field '_semaphore' that is of IDisposable type 'ReentrantSemaphore', but it is never disposed. Change the Dispose method on 'OutputConsoleLogger' to call Close or Dispose on this field.", Justification = "Field is disposed from async task invoked from Dispose.")]
         internal readonly ReentrantSemaphore _semaphore = ReentrantSemaphore.Create(1, NuGetUIThreadHelper.JoinableTaskFactory.Context, ReentrantSemaphore.ReentrancyMode.NotAllowed);
@@ -72,6 +78,12 @@ namespace NuGet.VisualStudio.Common
 
         public void Dispose()
         {
+            // Only allow one thread to dispose this object
+            if (Interlocked.CompareExchange(ref _isDisposed, 1, 0) != 0)
+            {
+                return;
+            }
+
             NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async () =>
             {
                 await _semaphore.ExecuteAsync(async () =>
@@ -172,6 +184,12 @@ namespace NuGet.VisualStudio.Common
 
         private void Run(Func<Task> action, [CallerMemberName] string methodName = null)
         {
+            // If Dispose() has been called, do not execute the action because the semaphore was disposed of
+            if (_isDisposed != 0)
+            {
+                return;
+            }
+
             NuGetUIThreadHelper.JoinableTaskFactory
                                .RunAsync(() => _semaphore.ExecuteAsync(action))
                                .PostOnFailure(nameof(OutputConsoleLogger), methodName);

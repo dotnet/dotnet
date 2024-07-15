@@ -231,7 +231,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Determines if a given version is better suited to the range than a current version.
         /// </summary>
-        public bool IsBetter(NuGetVersion? current, NuGetVersion considering)
+        public bool IsBetter(NuGetVersion? current, NuGetVersion? considering)
         {
             if (ReferenceEquals(current, considering))
             {

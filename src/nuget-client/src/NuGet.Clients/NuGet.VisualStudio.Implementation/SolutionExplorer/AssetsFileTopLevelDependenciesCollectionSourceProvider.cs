@@ -92,11 +92,21 @@ namespace NuGet.VisualStudio.SolutionExplorer
 
             var collectionSource = new AggregateRelationCollectionSource(hierarchyItem);
             AggregateContainsRelationCollection? collection = null;
+            AssetsFileDependenciesSnapshot? lastSnapshot = null;
 
             var actionBlock = new ActionBlock<IProjectVersionedValue<AssetsFileDependenciesSnapshot>>(
                 async versionedValue =>
                 {
                     AssetsFileDependenciesSnapshot snapshot = versionedValue.Value;
+
+                    if (ReferenceEquals(snapshot, lastSnapshot))
+                    {
+                        // Skip version-only updates.
+                        return;
+                    }
+
+                    lastSnapshot = snapshot;
+
                     if (snapshot.TryGetTarget(target, out AssetsFileTarget? targetData))
                     {
                         if (TryGetLibrary(targetData, libraryName, out AssetsFileTargetLibrary? library))

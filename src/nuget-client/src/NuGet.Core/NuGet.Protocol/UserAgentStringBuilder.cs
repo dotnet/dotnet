@@ -3,6 +3,7 @@
 
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using NuGet.Packaging;
 
 namespace NuGet.Protocol.Core.Types
@@ -30,18 +31,15 @@ namespace NuGet.Protocol.Core.Types
 
             // Read the client version from the assembly metadata and normalize it.
             NuGetClientVersion = MinClientVersionUtility.GetNuGetClientVersion().ToNormalizedString();
+
+            _osInfo = GetOS();
         }
 
         public string NuGetClientVersion { get; }
 
+        [Obsolete("This value is now ignored")]
         public UserAgentStringBuilder WithOSDescription(string osInfo)
         {
-#if NETCOREAPP2_0_OR_GREATER
-            _osInfo = osInfo.Replace("(", @"\(", StringComparison.Ordinal).Replace(")", @"\)", StringComparison.Ordinal);
-#else
-            _osInfo = osInfo.Replace("(", @"\(").Replace(")", @"\)");
-#endif
-
             return this;
         }
 
@@ -53,8 +51,6 @@ namespace NuGet.Protocol.Core.Types
 
         public string Build()
         {
-            var osDescription = _osInfo ?? GetOSVersion();
-
             var clientInfo = _clientName;
             if (NuGetTestMode.Enabled)
             {
@@ -65,7 +61,7 @@ namespace NuGet.Protocol.Core.Types
                 clientInfo = DefaultNuGetClientName;
             }
 
-            if (string.IsNullOrEmpty(osDescription))
+            if (string.IsNullOrEmpty(_osInfo))
             {
                 return string.Format(
                     CultureInfo.InvariantCulture,
@@ -81,7 +77,7 @@ namespace NuGet.Protocol.Core.Types
                     UserAgentWithOSDescriptionTemplate,
                     clientInfo,
                     NuGetClientVersion,
-                    osDescription);
+                    _osInfo);
             }
             else
             {
@@ -90,26 +86,39 @@ namespace NuGet.Protocol.Core.Types
                     UserAgentWithOSDescriptionAndVisualStudioSKUTemplate,
                     _clientName,
                     NuGetClientVersion, /* NuGet version */
-                    osDescription, /* OS version */
+                    _osInfo, /* OS version */
                     _vsInfo);  /* VS SKU + version */
             }
         }
 
-        private string GetOSVersion()
+        internal static string GetOS()
         {
-            if (_osInfo == null)
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-#if !IS_CORECLR
-                // When not on CoreClr and no OSDescription was provided,
-                // we will set it ourselves.
-                _osInfo = Environment.OSVersion.ToString();
-#else
-                // When on CoreClr, one should use the .WithOSDescription() method to set it.
-                _osInfo = string.Empty;
-#endif
+                return OSPlatform.Windows.ToString();
             }
-
-            return _osInfo;
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return OSPlatform.Linux.ToString();
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return OSPlatform.OSX.ToString();
+            }
+#if NETCOREAPP
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+            {
+                return OSPlatform.FreeBSD.ToString();
+            }
+            else if (OperatingSystem.IsBrowser())
+            {
+                return "BROWSER";
+            }
+#endif
+            else
+            {
+                return "UnknownOS";
+            }
         }
     }
 }

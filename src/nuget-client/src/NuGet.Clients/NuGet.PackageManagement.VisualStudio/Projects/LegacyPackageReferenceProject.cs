@@ -511,6 +511,8 @@ namespace NuGet.PackageManagement.VisualStudio
             string centralPackageTransitivePinningEnabled = GetPropertySafe(_vsProjectAdapter.BuildProperties, ProjectBuildProperties.CentralPackageTransitivePinningEnabled);
             // Do not add new properties here. Use BuildProperties.GetPropertyValue instead, without DTE fallback.
 #pragma warning restore CS0618 // Type or member is obsolete
+            string skdAnalysisLevelString = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.SdkAnalysisLevel);
+            string usingNetSdk = _vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.UsingMicrosoftNETSdk);
 
             return new PackageSpec(tfis)
             {
@@ -555,6 +557,8 @@ namespace NuGet.PackageManagement.VisualStudio
                     CentralPackageFloatingVersionsEnabled = MSBuildStringUtility.IsTrue(_vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.CentralPackageFloatingVersionsEnabled)),
                     CentralPackageTransitivePinningEnabled = MSBuildStringUtility.IsTrue(centralPackageTransitivePinningEnabled),
                     RestoreAuditProperties = auditProperties,
+                    SdkAnalysisLevel = MSBuildRestoreUtility.GetSdkAnalysisLevel(skdAnalysisLevelString),
+                    UsingMicrosoftNETSdk = MSBuildRestoreUtility.GetUsingMicrosoftNETSdk(usingNetSdk),
                 }
             };
         }

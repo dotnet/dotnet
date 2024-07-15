@@ -359,7 +359,7 @@ namespace NuGet.PackageManagement.Test
             {
                 new SourceRepository(new PackageSource("https://contoso.com/v3/index.json"), new List<INuGetResourceProvider>{new VulnerabilityInfoResourceProvider(vulnerabilityResults) })
             };
-            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
+            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, auditSources: null, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
             vulnerabilityData.Should().BeNull();
             count.Should().Be(0);
         }
@@ -393,7 +393,7 @@ namespace NuGet.PackageManagement.Test
                 new SourceRepository(new PackageSource(sourceWithVulnerabilityData), providers)
             };
 
-            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
+            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, auditSources: null, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
             vulnerabilityData.Should().NotBeNull();
             vulnerabilityData!.Exceptions.Should().BeNull();
             vulnerabilityData.KnownVulnerabilities.Should().HaveCount(1);
@@ -434,7 +434,7 @@ namespace NuGet.PackageManagement.Test
                 new SourceRepository(new PackageSource(sourceWithVulnerabilityData), providers)
             };
 
-            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
+            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, auditSources: null, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
             count.Should().Be(1);
             vulnerabilityData.Should().NotBeNull();
             vulnerabilityData!.KnownVulnerabilities.Should().HaveCount(1);
@@ -488,7 +488,7 @@ namespace NuGet.PackageManagement.Test
                 new SourceRepository(new PackageSource(sourceWithVulnerabilityData), providers)
             };
 
-            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
+            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, auditSources: null, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
             vulnerabilityData.Should().NotBeNull();
             vulnerabilityData!.KnownVulnerabilities.Should().HaveCount(2);
             vulnerabilityData.KnownVulnerabilities!.First().Keys.Should().Contain("B");
@@ -509,14 +509,92 @@ namespace NuGet.PackageManagement.Test
             using SourceCacheContext cacheContext = new();
 
             // Act
-            (int count, GetVulnerabilityInfoResult? result) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, cacheContext, NullLogger.Instance, CancellationToken.None);
+            (int count, GetVulnerabilityInfoResult? result) = await AuditChecker.GetAllVulnerabilityDataAsync(sourceRepositories, auditSources: null, cacheContext, NullLogger.Instance, CancellationToken.None);
 
             // Assert
             result.Should().NotBeNull();
             result!.KnownVulnerabilities.Should().BeNull();
             result.Exceptions.Should().NotBeNull();
             count.Should().Be(0);
+        }
 
+        [Fact]
+        public async Task GetAllVulnerabilityDataAsync_PackageAndAuditSource_ReturnsAuditSourceVulnerabilitiesOnly()
+        {
+            List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> firstKnownVulnerabilities = new List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>()
+            {
+                new Dictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>
+                {
+                    {
+                        "A",
+                        new PackageVulnerabilityInfo[] {
+                            new PackageVulnerabilityInfo(new Uri("https://vulnerability1"), PackageVulnerabilitySeverity.Low, VersionRange.Parse("[1.0.0,2.0.0)"))
+                        }
+                    }
+                }
+            };
+            List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> secondKnownVulnerabilities = new List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>()
+            {
+                new Dictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>
+                {
+                    {
+                        "B",
+                        new PackageVulnerabilityInfo[] {
+                            new PackageVulnerabilityInfo(new Uri("https://vulnerability2"), PackageVulnerabilitySeverity.Low, VersionRange.Parse("[2.0.0,3.0.0)"))
+                        }
+                    }
+                }
+            };
+
+            string packageSourceUrl = "https://contoso.test/vulnerability/v3/index.json";
+            string auditSourceUrl = "https://contoso.test/vulnerability/secondary/v3/index.json";
+            Dictionary<string, GetVulnerabilityInfoResult> vulnerabilityResults = new()
+            {
+                { packageSourceUrl, new GetVulnerabilityInfoResult(firstKnownVulnerabilities, exceptions: null) },
+                { auditSourceUrl, new GetVulnerabilityInfoResult(secondKnownVulnerabilities, exceptions: null) }
+            };
+
+            var providers = new List<INuGetResourceProvider> { new VulnerabilityInfoResourceProvider(vulnerabilityResults) };
+            var packageSources = new List<SourceRepository>
+            {
+                new SourceRepository(new PackageSource(packageSourceUrl), providers),
+            };
+            var auditSources = new List<SourceRepository>
+            {
+                new SourceRepository(new PackageSource(auditSourceUrl), providers)
+            };
+
+            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(packageSources, auditSources, Mock.Of<SourceCacheContext>(), NullLogger.Instance, CancellationToken.None);
+            vulnerabilityData.Should().NotBeNull();
+            vulnerabilityData!.KnownVulnerabilities.Should().HaveCount(1);
+            vulnerabilityData.KnownVulnerabilities![0].Keys.Should().HaveCount(1);
+            vulnerabilityData.KnownVulnerabilities[0].Keys.First().Should().Be("B");
+        }
+
+        [Fact]
+        public async Task GetAllVulnerabilityDataAsync_AuditSourceWithoutVulnerabilityDB_RaisesWarning()
+        {
+            // Arrange
+            string auditSourceUrl = "https://contoso.test/nuget/v3/index.json";
+            Dictionary<string, GetVulnerabilityInfoResult> vulnerabilityResults = new();
+
+            var providers = new List<INuGetResourceProvider> { new VulnerabilityInfoResourceProvider(vulnerabilityResults) };
+            var packageSources = new List<SourceRepository>();
+            var auditSources = new List<SourceRepository>
+            {
+                new SourceRepository(new PackageSource(auditSourceUrl), providers)
+            };
+
+            var logger = new TestLogger();
+
+            // Act
+            (int count, GetVulnerabilityInfoResult? vulnerabilityData) = await AuditChecker.GetAllVulnerabilityDataAsync(packageSources, auditSources, Mock.Of<SourceCacheContext>(), logger, CancellationToken.None);
+
+            // Assert
+            logger.LogMessages.Should().ContainSingle();
+            ILogMessage logMessage = logger.LogMessages.Single();
+            logMessage.Code.Should().Be(NuGetLogCode.NU1905);
+            logMessage.Message.Should().Contain(auditSourceUrl);
         }
 
         [Fact]

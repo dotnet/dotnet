@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using Newtonsoft.Json;
 using NuGet.Common;
 using NuGet.Frameworks;
@@ -64,7 +63,6 @@ namespace NuGet.ProjectModel
 #pragma warning disable CS0612 // Type or member is obsolete
             SetDictionaryValues(writer, "scripts", packageSpec.Scripts);
 #pragma warning restore CS0612 // Type or member is obsolete
-
 
             if (packageSpec.Dependencies.Count > 0)
             {
@@ -188,6 +186,11 @@ namespace NuGet.ProjectModel
                 SetValue(writer, "packagesConfigPath", pcMsbuildMetadata.PackagesConfigPath);
             }
 
+            if (packageSpec.RestoreMetadata.SdkAnalysisLevel is not null)
+            {
+                SetValue(writer, "SdkAnalysisLevel", packageSpec.RestoreMetadata.SdkAnalysisLevel.ToString());
+            }
+
             writer.WriteObjectEnd();
         }
 
@@ -210,6 +213,7 @@ namespace NuGet.ProjectModel
             SetValueIfTrue(writer, "centralPackageFloatingVersionsEnabled", msbuildMetadata.CentralPackageFloatingVersionsEnabled);
             SetValueIfTrue(writer, "centralPackageVersionOverrideDisabled", msbuildMetadata.CentralPackageVersionOverrideDisabled);
             SetValueIfTrue(writer, "CentralPackageTransitivePinningEnabled", msbuildMetadata.CentralPackageTransitivePinningEnabled);
+            SetValueIfFalse(writer, "UsingMicrosoftNETSdk", msbuildMetadata.UsingMicrosoftNETSdk);
         }
 
 
@@ -689,6 +693,14 @@ namespace NuGet.ProjectModel
         private static void SetValueIfTrue(IObjectWriter writer, string name, bool value)
         {
             if (value)
+            {
+                writer.WriteNameValue(name, value);
+            }
+        }
+
+        private static void SetValueIfFalse(IObjectWriter writer, string name, bool value)
+        {
+            if (!value)
             {
                 writer.WriteNameValue(name, value);
             }

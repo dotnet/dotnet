@@ -4,8 +4,10 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 
 namespace NuGet.ProjectModel
@@ -218,6 +220,25 @@ namespace NuGet.ProjectModel
                 return GetBoolean();
             }
             return false;
+        }
+
+        internal bool ReadNextTokenAsBoolOrThrowAnException(byte[] propertyName)
+        {
+            ThrowExceptionIfDisposed();
+
+            if (Read() && (TokenType == JsonTokenType.False || TokenType == JsonTokenType.True))
+            {
+                return GetBoolean();
+            }
+            else
+            {
+                throw new ArgumentException(
+                    string.Format(CultureInfo.CurrentCulture,
+                    Strings.Invalid_AttributeValue,
+                    Encoding.UTF8.GetString(propertyName),
+                    _reader.ReadTokenAsString(),
+                    "false"));
+            }
         }
 
         internal IReadOnlyList<string> ReadNextStringOrArrayOfStringsAsReadOnlyList()

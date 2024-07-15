@@ -18,6 +18,7 @@ namespace NuGet.PackageManagement
         public EventHandler<PackageRestoredEventArgs> PackageRestoredEvent { get; }
         public EventHandler<PackageRestoreFailedEventArgs> PackageRestoreFailedEvent { get; }
         public IEnumerable<SourceRepository> SourceRepositories { get; }
+        public IReadOnlyList<SourceRepository> AuditSources { get; }
         public int MaxNumberOfParallelTasks { get; }
         public ILogger Logger { get; }
         public bool EnableNuGetAudit { get; }
@@ -45,6 +46,32 @@ namespace NuGet.PackageManagement
             bool enableNuGetAudit,
             Dictionary<string, RestoreAuditProperties> restoreAuditProperties,
             ILogger logger)
+            : this(
+                  nuGetPackageManager,
+                  packages,
+                  token,
+                  packageRestoredEvent,
+                  packageRestoreFailedEvent,
+                  sourceRepositories,
+                  auditSources: null,
+                  maxNumberOfParallelTasks,
+                  enableNuGetAudit,
+                  restoreAuditProperties,
+                  logger)
+        {
+        }
+
+        public PackageRestoreContext(NuGetPackageManager nuGetPackageManager,
+            IEnumerable<PackageRestoreData> packages,
+            CancellationToken token,
+            EventHandler<PackageRestoredEventArgs> packageRestoredEvent,
+            EventHandler<PackageRestoreFailedEventArgs> packageRestoreFailedEvent,
+            IEnumerable<SourceRepository> sourceRepositories,
+            IReadOnlyList<SourceRepository> auditSources,
+            int maxNumberOfParallelTasks,
+            bool enableNuGetAudit,
+            Dictionary<string, RestoreAuditProperties> restoreAuditProperties,
+            ILogger logger)
         {
             if (maxNumberOfParallelTasks <= 0)
             {
@@ -58,6 +85,7 @@ namespace NuGet.PackageManagement
             PackageRestoredEvent = packageRestoredEvent;
             PackageRestoreFailedEvent = packageRestoreFailedEvent;
             SourceRepositories = sourceRepositories;
+            AuditSources = auditSources;
             MaxNumberOfParallelTasks = maxNumberOfParallelTasks;
             EnableNuGetAudit = enableNuGetAudit;
             RestoreAuditProperties = restoreAuditProperties ?? throw new ArgumentNullException(nameof(restoreAuditProperties));

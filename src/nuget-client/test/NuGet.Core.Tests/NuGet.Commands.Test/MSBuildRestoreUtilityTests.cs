@@ -4737,6 +4737,69 @@ namespace NuGet.Commands.Test
             MSBuildRestoreUtility.IsPropertyFalse(item, propertyName).Should().Be(expected);
         }
 
+        [Theory]
+        [InlineData("9.0.100")]
+        [InlineData("7.0.100")]
+        [InlineData("9.1.100")]
+        [InlineData("9.2.101")]
+        public void GetSdkAnalysisLevel_WithValidVersions_ReturnsNuGetVersion(string sdkAnalysisLevel)
+        {
+            // Arrange
+            NuGetVersion expected = new NuGetVersion(sdkAnalysisLevel);
+
+            //Act
+            NuGetVersion actual = MSBuildRestoreUtility.GetSdkAnalysisLevel(sdkAnalysisLevel);
+
+            //Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData("invalid")]
+        [InlineData("1.3e")]
+        public void GetSdkAnalysisLevel_WithInvalidVersions_ThrowsException(string sdkAnalysisLevel)
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => MSBuildRestoreUtility.GetSdkAnalysisLevel(sdkAnalysisLevel));
+        }
+
+        [Theory]
+        [InlineData("true")]
+        [InlineData("True")]
+        [InlineData("trUe")]
+        [InlineData("TrUe")]
+        public void GetUsingMicrosoftNETSdk_WithTrueValue_ReturnsTrue(string usingMicrosoftNETSdk)
+        {
+            // Act
+            bool actual = MSBuildRestoreUtility.GetUsingMicrosoftNETSdk(usingMicrosoftNETSdk);
+
+            // Assert
+            Assert.True(actual);
+        }
+
+        [Theory]
+        [InlineData("false")]
+        [InlineData("False")]
+        [InlineData("falSe")]
+        [InlineData("FalsE")]
+        public void GetUsingMicrosoftNETSdk_WithFalseValue_ReturnsFalse(string usingMicrosoftNETSdk)
+        {
+            // Act
+            bool actual = MSBuildRestoreUtility.GetUsingMicrosoftNETSdk(usingMicrosoftNETSdk);
+
+            // Assert
+            Assert.False(actual);
+        }
+
+        [Theory]
+        [InlineData("t")]
+        [InlineData("1.3e")]
+        [InlineData("1")]
+        public void GetUsingMicrosoftNETSdk_WithInvalidValue_ThrowsException(string usingMicrosoftNETSdk)
+        {
+            Assert.Throws<ArgumentException>(() => MSBuildRestoreUtility.GetUsingMicrosoftNETSdk(usingMicrosoftNETSdk));
+        }
+
         private static IDictionary<string, string> CreateProject(string root, string uniqueName)
         {
             var project1Path = Path.Combine(root, "a.csproj");

@@ -387,9 +387,11 @@ namespace NuGet.SolutionRestoreManager
                     CentralPackageVersionOverrideDisabled = VSNominationUtilities.IsCentralPackageVersionOverrideDisabled(targetFrameworks),
                     CentralPackageTransitivePinningEnabled = VSNominationUtilities.IsCentralPackageTransitivePinningEnabled(targetFrameworks),
                     RestoreAuditProperties = VSNominationUtilities.GetRestoreAuditProperties(targetFrameworks),
+                    SdkAnalysisLevel = VSNominationUtilities.GetSdkAnalysisLevel(targetFrameworks),
+                    UsingMicrosoftNETSdk = VSNominationUtilities.GetUsingMicrosoftNETSdk(targetFrameworks),
                 },
                 RuntimeGraph = VSNominationUtilities.GetRuntimeGraph(targetFrameworks),
-                RestoreSettings = new ProjectRestoreSettings() { HideWarningsAndErrors = true }
+                RestoreSettings = new ProjectRestoreSettings() { HideWarningsAndErrors = true },
             };
 
             return packageSpec;

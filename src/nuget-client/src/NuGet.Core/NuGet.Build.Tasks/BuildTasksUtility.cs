@@ -5,9 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-#if IS_CORECLR
-using System.Runtime.InteropServices;
-#endif
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
@@ -31,7 +28,6 @@ using NuGet.ProjectManagement;
 using NuGet.Shared;
 using static NuGet.Shared.XmlUtility;
 using System.Globalization;
-using System.Collections;
 #endif
 
 namespace NuGet.Build.Tasks
@@ -169,8 +165,7 @@ namespace NuGet.Build.Tasks
 
                 // Set user agent string used for network calls
 #if IS_CORECLR
-                UserAgent.SetUserAgentString(new UserAgentStringBuilder("NuGet .NET Core MSBuild Task")
-                    .WithOSDescription(RuntimeInformation.OSDescription));
+                UserAgent.SetUserAgentString(new UserAgentStringBuilder("NuGet .NET Core MSBuild Task"));
 #else
                 // OS description is set by default on Desktop
                 UserAgent.SetUserAgentString(new UserAgentStringBuilder("NuGet Desktop MSBuild Task"));

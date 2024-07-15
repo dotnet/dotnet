@@ -372,8 +372,11 @@ namespace NuGet.CommandLine
 
                 using SourceCacheContext cacheContext = new();
 
+                var auditSources = GetAuditSources();
+
                 var auditUtility = new AuditChecker(
                     repositories,
+                    auditSources,
                     cacheContext,
                     Console);
 
@@ -467,6 +470,24 @@ namespace NuGet.CommandLine
 
                 return restoreSummaries;
             }
+        }
+
+        private List<SourceRepository> GetAuditSources()
+        {
+            IReadOnlyList<PackageSource> auditSources = SourceProvider.LoadAuditSources();
+
+            List<SourceRepository> auditRepositories = new List<SourceRepository>(auditSources.Count);
+            for (int i = 0; i < auditSources.Count; i++)
+            {
+                PackageSource source = auditSources[i];
+                if (source.IsEnabled)
+                {
+                    SourceRepository repository = Repository.Factory.GetCoreV3(source);
+                    auditRepositories.Add(repository);
+                }
+            }
+
+            return auditRepositories;
         }
 
         private Dictionary<string, HashSet<string>> GetPackagesConfigToProjectsPath(PackageRestoreInputs packageRestoreInputs)

@@ -712,5 +712,26 @@ namespace NuGet.SolutionRestoreManager
 
             return input;
         }
+
+        internal static NuGetVersion? GetSdkAnalysisLevel(IReadOnlyList<IVsTargetFrameworkInfo4> targetFrameworks)
+        {
+            string? skdAnalysisLevelString = GetSingleNonEvaluatedPropertyOrNull(targetFrameworks, nameof(ProjectBuildProperties.SdkAnalysisLevel), v => v);
+
+            return skdAnalysisLevelString is null
+            ? null
+            : MSBuildRestoreUtility.GetSdkAnalysisLevel(skdAnalysisLevelString);
+        }
+
+        internal static bool GetUsingMicrosoftNETSdk(IReadOnlyList<IVsTargetFrameworkInfo4> targetFrameworks)
+        {
+            string? usingNetSdk = GetSingleNonEvaluatedPropertyOrNull(targetFrameworks, nameof(ProjectBuildProperties.UsingMicrosoftNETSdk), v => v);
+
+            if (usingNetSdk is not null)
+            {
+                return MSBuildRestoreUtility.GetUsingMicrosoftNETSdk(usingNetSdk);
+            }
+
+            return false;
+        }
     }
 }

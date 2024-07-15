@@ -308,6 +308,8 @@ namespace NuGet.Commands
                 result.RestoreMetadata.CentralPackageVersionOverrideDisabled = isCentralPackageVersionOverrideDisabled;
                 result.RestoreMetadata.CentralPackageFloatingVersionsEnabled = isCentralPackageFloatingVersionsEnabled;
                 result.RestoreMetadata.CentralPackageTransitivePinningEnabled = isCentralPackageTransitivePinningEnabled;
+                result.RestoreMetadata.UsingMicrosoftNETSdk = MSBuildRestoreUtility.GetUsingMicrosoftNETSdk(specItem.GetProperty("UsingMicrosoftNETSdk"));
+                result.RestoreMetadata.SdkAnalysisLevel = MSBuildRestoreUtility.GetSdkAnalysisLevel(specItem.GetProperty("SdkAnalysisLevel"));
             }
 
             return result;
@@ -939,6 +941,36 @@ namespace NuGet.Commands
             }
 
             return null;
+        }
+
+        public static NuGetVersion GetSdkAnalysisLevel(string sdkAnalysisLevel)
+        {
+            if (string.IsNullOrEmpty(sdkAnalysisLevel))
+            {
+                return null;
+            }
+
+            if (!NuGetVersion.TryParse(sdkAnalysisLevel, out NuGetVersion version))
+            {
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.Invalid_AttributeValue, "SdkAnalysisLevel", sdkAnalysisLevel, "9.0.100"));
+            }
+
+            return version;
+        }
+
+        public static bool GetUsingMicrosoftNETSdk(string usingMicrosoftNETSdk)
+        {
+            if (string.IsNullOrEmpty(usingMicrosoftNETSdk))
+            {
+                return false;
+            }
+
+            if (!bool.TryParse(usingMicrosoftNETSdk, out var result))
+            {
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.Invalid_AttributeValue, "UsingMicrosoftNETSdk", usingMicrosoftNETSdk, "false"));
+            }
+
+            return result;
         }
 
         private static HashSet<string> GetAuditSuppressions(IEnumerable<IMSBuildItem> items)

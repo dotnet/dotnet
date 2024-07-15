@@ -37,12 +37,10 @@
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
     <PackageVersion Include="ILMerge" Version="3.0.41" />
     <PackageVersion Include="Lucene.Net" Version="3.0.3" />
-    <PackageVersion Include="MessagePack" Version="2.5.108" />
     <PackageVersion Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
     <PackageVersion Include="Microsoft.Build.Artifacts" Version="4.2.0" />
     <PackageVersion Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildVersion)" />
     <PackageVersion Include="Microsoft.Build.Locator" Version="1.5.5" />
-    <PackageVersion Include="Microsoft.Build.Runtime" Version="$(MicrosoftBuildVersion)" />
     <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildVersion)" />
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis" Version="4.3.1" />
@@ -58,17 +56,13 @@
     <PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="$(MicrosoftExtensionsFileProvidersAbstractionsPackageVersion)" />
     <PackageVersion Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)" />
     <PackageVersion Include="Microsoft.Internal.VisualStudio.Shell.Framework" Version="17.10.40173" />
-    <PackageVersion Include="Microsoft.Net.Compilers.netcore" Version="3.0.0-dev-61717-03" />
-    <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="3.9.0" />
     <PackageVersion Include="Microsoft.NET.StringTools" Version="$(MicrosoftBuildVersion)" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageVersion Include="Microsoft.PowerShell.3.ReferenceAssemblies" Version="1.0.0" />
     <PackageVersion Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="16.153.0" />
     <PackageVersion Include="Microsoft.Test.Apex.VisualStudio" Version="17.11.35005.70" />
-    <PackageVersion Include="Microsoft.TestPlatform.Portable" Version="17.1.0" />
     <PackageVersion Include="Microsoft.VisualStudio.LanguageServices" Version="4.3.1" />
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem" Version="17.4.221-pre" />
-    <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.Interop" Version="17.4.221-pre" />
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.Managed" Version="17.2.0-beta1-20502-01" />
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.Managed.VS" Version="17.2.0-beta1-20502-01" />
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.VS" Version="17.4.221-pre" />
@@ -92,8 +86,6 @@
     <PackageVersion Include="System.Collections" Version="$(SystemPackagesVersion)" />
     <PackageVersion Include="System.CommandLine" Version="$(SystemCommandLineVersion)" />
     <PackageVersion Include="System.ComponentModel.Composition" Version="$(SystemComponentModelCompositionPackageVersion)" />
-    <PackageVersion Include="System.Configuration.ConfigurationManager" Version="4.4.0" />
-    <PackageVersion Include="System.Diagnostics.Debug" Version="$(SystemPackagesVersion)" />
     <PackageVersion Include="System.IO.FileSystem.Primitives" Version="$(SystemPackagesVersion)" />
     <PackageVersion Include="System.Memory" Version="4.5.5" />
     <PackageVersion Include="System.Resources.ResourceManager" Version="$(SystemPackagesVersion)" />
@@ -116,7 +108,6 @@
     <PackageVersion Include="xunit" Version="2.6.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
     <PackageVersion Include="Xunit.StaFact" Version="1.1.11" />
-
   </ItemGroup>
 
   <!--
@@ -185,7 +176,6 @@
       <_allowBuildFromSourcePackage Include="Newtonsoft.Json" />
       <_allowBuildFromSourcePackage Include="System.CommandLine" />
       <_allowBuildFromSourcePackage Include="System.ComponentModel.Composition" />
-      <_allowBuildFromSourcePackage Include="System.Diagnostics.Debug" />
       <_allowBuildFromSourcePackage Include="System.Security.Cryptography.Cng" />
       <_allowBuildFromSourcePackage Include="System.Security.Cryptography.Pkcs" />
       <_allowBuildFromSourcePackage Include="System.Security.Cryptography.ProtectedData" />

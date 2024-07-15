@@ -109,6 +109,8 @@ namespace NuGet.ProjectModel
         private static readonly byte[] HashTagImportPropertyName = Encoding.UTF8.GetBytes("#import");
         private static readonly byte[] ProjectReferencesPropertyName = Encoding.UTF8.GetBytes("projectReferences");
         private static readonly byte[] EmptyStringPropertyName = Encoding.UTF8.GetBytes(string.Empty);
+        private static readonly byte[] SdkAnalysisLevel = Encoding.UTF8.GetBytes("SdkAnalysisLevel");
+        private static readonly byte[] UsingMicrosoftNETSdk = Encoding.UTF8.GetBytes("UsingMicrosoftNETSdk");
 
         internal static PackageSpec GetPackageSpecUtf8JsonStreamReader(Stream stream, string name, string packageSpecPath, IEnvironmentVariableReader environmentVariableReader, string snapshotValue = null)
         {
@@ -945,6 +947,8 @@ namespace NuGet.ProjectModel
             RestoreAuditProperties auditProperties = null;
             bool useMacros = MSBuildStringUtility.IsTrue(environmentVariableReader.GetEnvironmentVariable(MacroStringsUtility.NUGET_ENABLE_EXPERIMENTAL_MACROS));
             var userSettingsDirectory = NuGetEnvironment.GetFolderPath(NuGetFolderPath.UserSettingsDirectory);
+            bool usingMicrosoftNetSdk = true;
+            NuGetVersion sdkAnalysisLevel = null;
 
             if (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.StartObject)
             {
@@ -1169,6 +1173,32 @@ namespace NuGet.ProjectModel
 
                         warningProperties = new WarningProperties(warnAsError, noWarn, allWarningsAsErrors, warningsNotAsErrors);
                     }
+                    else if (jsonReader.ValueTextEquals(UsingMicrosoftNETSdk))
+                    {
+                        usingMicrosoftNetSdk = jsonReader.ReadNextTokenAsBoolOrThrowAnException(UsingMicrosoftNETSdk);
+                    }
+                    else if (jsonReader.ValueTextEquals(SdkAnalysisLevel))
+                    {
+                        string sdkAnalysisLevelString = jsonReader.ReadNextTokenAsString();
+
+                        if (!string.IsNullOrEmpty(sdkAnalysisLevelString))
+                        {
+                            try
+                            {
+                                sdkAnalysisLevel = new NuGetVersion(sdkAnalysisLevelString);
+                            }
+                            catch (ArgumentException ex)
+                            {
+                                throw new ArgumentException(
+                                    string.Format(CultureInfo.CurrentCulture,
+                                    Strings.Invalid_AttributeValue,
+                                    Encoding.UTF8.GetString(SdkAnalysisLevel),
+                                    sdkAnalysisLevelString,
+                                    "9.0.100"),
+                                    ex);
+                            }
+                        }
+                    }
                     else
                     {
                         jsonReader.Skip();
@@ -1193,6 +1223,8 @@ namespace NuGet.ProjectModel
             msbuildMetadata.CentralPackageVersionOverrideDisabled = centralPackageVersionOverrideDisabled;
             msbuildMetadata.CentralPackageTransitivePinningEnabled = CentralPackageTransitivePinningEnabled;
             msbuildMetadata.RestoreAuditProperties = auditProperties;
+            msbuildMetadata.SdkAnalysisLevel = sdkAnalysisLevel;
+            msbuildMetadata.UsingMicrosoftNETSdk = usingMicrosoftNetSdk;
 
             if (configFilePaths != null)
             {
