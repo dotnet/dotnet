@@ -684,6 +684,7 @@ namespace NuGet.ProjectModel.Test
       ""projectPath"": ""X:\\ProjectPath\\ProjectPath.csproj"",
       ""outputPath"": ""X:\\ProjectPath\\obj\\"",
       ""projectStyle"": ""PackageReference"",
+      ""UsingMicrosoftNETSdk"": false,
       ""originalTargetFrameworks"": [
         ""netcoreapp10""
       ],
@@ -1144,7 +1145,8 @@ namespace NuGet.ProjectModel.Test
   },
   ""project"": {
     ""restore"": {
-      ""projectPath"": ""kung\\fu\\fighting.csproj""
+      ""projectPath"": ""kung\\fu\\fighting.csproj"",
+      ""UsingMicrosoftNETSdk"": false,
     }
   },
   ""logs"": [

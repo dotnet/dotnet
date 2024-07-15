@@ -266,9 +266,9 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
                 var resolver = new VersionFolderPathResolver(packagesDir.FullName, isLowercase);
 
-                var sources = new List<string>
+                var sources = new List<SourceRepository>
                 {
-                    sourceDir.FullName
+                    Repository.Factory.GetCoreV3(sourceDir.FullName)
                 };
 
                 var projectJson = @"
@@ -290,7 +290,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(
                     spec,
-                    sources.Select(x => Repository.Factory.GetCoreV3(x)),
+                    sources,
                     packagesDir.FullName,
                     Enumerable.Empty<string>(),
                     logger)
@@ -344,9 +344,9 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 var resolverA = new VersionFolderPathResolver(packagesDir.FullName, !isLowercase);
                 var resolverB = new VersionFolderPathResolver(packagesDir.FullName, isLowercase);
 
-                var sources = new List<string>
+                var sources = new List<SourceRepository>
                 {
-                    sourceDir.FullName
+                    Repository.Factory.GetCoreV3(sourceDir.FullName)
                 };
 
                 var projectJson = @"
@@ -380,7 +380,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 // Execute the first restore with the opposite lowercase setting.
                 var requestA = new TestRestoreRequest(
                     spec,
-                    sources.Select(x => Repository.Factory.GetCoreV3(x)),
+                    sources,
                     packagesDir.FullName,
                     Enumerable.Empty<string>(),
                     logger)
@@ -396,7 +396,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 // Execute the second restore with the request lowercase setting.
                 var requestB = new TestRestoreRequest(
                     spec,
-                    sources.Select(x => Repository.Factory.GetCoreV3(x)),
+                    sources,
                     packagesDir.FullName,
                     Enumerable.Empty<string>(),
                     logger)

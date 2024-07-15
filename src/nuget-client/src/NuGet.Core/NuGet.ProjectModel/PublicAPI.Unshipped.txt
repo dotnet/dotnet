@@ -9,3 +9,7 @@ NuGet.ProjectModel.LockFileReadFlags.PackageSpec = 16 -> NuGet.ProjectModel.Lock
 NuGet.ProjectModel.LockFileReadFlags.ProjectFileDependencyGroups = 4 -> NuGet.ProjectModel.LockFileReadFlags
 NuGet.ProjectModel.LockFileReadFlags.Targets = 2 -> NuGet.ProjectModel.LockFileReadFlags
 ~static NuGet.ProjectModel.LockFileUtilities.GetLockFile(string lockFilePath, NuGet.Common.ILogger logger, NuGet.ProjectModel.LockFileReadFlags flags) -> NuGet.ProjectModel.LockFile
+~NuGet.ProjectModel.ProjectRestoreMetadata.SdkAnalysisLevel.get -> NuGet.Versioning.NuGetVersion
+~NuGet.ProjectModel.ProjectRestoreMetadata.SdkAnalysisLevel.set -> void
+NuGet.ProjectModel.ProjectRestoreMetadata.UsingMicrosoftNETSdk.get -> bool
+NuGet.ProjectModel.ProjectRestoreMetadata.UsingMicrosoftNETSdk.set -> void

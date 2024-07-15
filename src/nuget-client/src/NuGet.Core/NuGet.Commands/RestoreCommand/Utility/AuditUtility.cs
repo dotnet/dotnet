@@ -6,13 +6,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.DependencyResolver;
 using NuGet.LibraryModel;
-using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
 using NuGet.Protocol;
@@ -87,25 +87,17 @@ namespace NuGet.Commands.Restore.Utility
             }
 
             Stopwatch stopwatch = Stopwatch.StartNew();
-            GetVulnerabilityInfoResult? allVulnerabilityData = await GetAllVulnerabilityDataAsync(cancellationToken);
+            List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>? allVulnerabilityData = await GetAllVulnerabilityDataAsync(cancellationToken);
             stopwatch.Stop();
             DownloadDurationSeconds = stopwatch.Elapsed.TotalSeconds;
 
-            if (allVulnerabilityData?.Exceptions is not null)
-            {
-                ReplayErrors(allVulnerabilityData.Exceptions);
-            }
-
             // Performance: Early exit if there's no vulnerability data to check packages against.
-            if (allVulnerabilityData is null || !AnyVulnerabilityDataFound(allVulnerabilityData.KnownVulnerabilities))
+            if (allVulnerabilityData is null || !AnyVulnerabilityDataFound(allVulnerabilityData))
             {
                 return;
             }
 
-            if (allVulnerabilityData.KnownVulnerabilities is not null)
-            {
-                CheckPackageVulnerabilities(allVulnerabilityData.KnownVulnerabilities);
-            }
+            CheckPackageVulnerabilities(allVulnerabilityData);
 
             bool HasPackages()
             {
@@ -331,7 +323,7 @@ namespace NuGet.Commands.Restore.Utility
             return result;
         }
 
-        private async Task<GetVulnerabilityInfoResult?> GetAllVulnerabilityDataAsync(CancellationToken cancellationToken)
+        private async Task<List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>?> GetAllVulnerabilityDataAsync(CancellationToken cancellationToken)
         {
             var results = new Task<GetVulnerabilityInfoResult?>[_vulnerabilityInfoProviders.Count];
             for (int i = 0; i < _vulnerabilityInfoProviders.Count; i++)
@@ -346,11 +338,18 @@ namespace NuGet.Commands.Restore.Utility
                 cancellationToken.ThrowIfCancellationRequested();
             }
 
-            List<Exception>? errors = null;
             List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>? knownVulnerabilities = null;
-            foreach (var resultTask in results)
+            for (int i = 0; i < results.Length; i++)
             {
-                GetVulnerabilityInfoResult? result = await resultTask;
+                GetVulnerabilityInfoResult? result = await results[i];
+
+                if (_vulnerabilityInfoProviders[i].IsAuditSource && (result?.KnownVulnerabilities is null || result.KnownVulnerabilities.Count == 0))
+                {
+                    string message = string.Format(CultureInfo.CurrentCulture, Strings.Warning_AuditSourceWithoutVulnerabilityData, _vulnerabilityInfoProviders[i].SourceName);
+                    RestoreLogMessage logMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1905, message);
+                    _logger.Log(logMessage);
+                }
+
                 if (result is null) continue;
 
                 if (result.KnownVulnerabilities != null)
@@ -366,20 +365,11 @@ namespace NuGet.Commands.Restore.Utility
 
                 if (result.Exceptions != null)
                 {
-                    if (errors == null)
-                    {
-                        errors = new();
-                    }
-
-                    errors.AddRange(result.Exceptions.InnerExceptions);
+                    ReplayErrors(result.Exceptions);
                 }
             }
 
-            GetVulnerabilityInfoResult? final =
-                knownVulnerabilities != null || errors != null
-                ? new(knownVulnerabilities, errors != null ? new AggregateException(errors) : null)
-                : null;
-            return final;
+            return knownVulnerabilities;
         }
 
         private PackageVulnerabilitySeverity ParseAuditLevel()

@@ -37,7 +37,7 @@ parameters:
 - name: RunMonoTestsOnMac
   displayName: Run Mono tests on Mac
   type: boolean
-  default: true
+  default: false
 - name: RunStaticAnalysis
   displayName: Run static analysis
   type: boolean

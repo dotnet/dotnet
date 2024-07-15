@@ -43,7 +43,7 @@ namespace NuGet.Commands
             {
                 if (remoteProviders[i].SourceRepository != null)
                 {
-                    providers.Add(new VulnerabilityInformationProvider(remoteProviders[i].SourceRepository, NullLogger.Instance));
+                    providers.Add(new VulnerabilityInformationProvider(remoteProviders[i].SourceRepository, NullLogger.Instance, isAuditSource: false));
                 }
             }
             return providers;
@@ -82,6 +82,7 @@ namespace NuGet.Commands
 
         internal IReadOnlyList<IVulnerabilityInformationProvider> VulnerabilityInfoProviders { get; }
 
+        [Obsolete("Create via RestoreCommandProvidersCache")]
         public static RestoreCommandProviders Create(
             string globalFolderPath,
             IEnumerable<string> fallbackPackageFolderPaths,
@@ -150,7 +151,7 @@ namespace NuGet.Commands
             var vulnerabilityInfoProviders = new List<IVulnerabilityInformationProvider>(remoteProviders.Count);
             foreach (SourceRepository source in sources)
             {
-                var provider = new VulnerabilityInformationProvider(source, log);
+                var provider = new VulnerabilityInformationProvider(source, log, isAuditSource: false);
                 vulnerabilityInfoProviders.Add(provider);
             }
 

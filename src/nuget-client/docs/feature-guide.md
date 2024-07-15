@@ -97,6 +97,33 @@ These considerations are also useful for smaller changes that might not require 
   * World readiness considerations
 * User documentation
 
+#### Warnings and defaults
+
+The .NET 9 SDK introduces a new [`SdkAnalysisLevel` property](https://github.com/dotnet/designs/blob/main/proposed/sdk-analysis-level.md), which is intended to allow customers to avoid breaking changes while still upgrading to new versions of the build tools.
+Going forward, any in-scope change to NuGet must compare `SdkAnalysisLevel` to the version of the .NET SDK that corresponds to NuGet's dev branch is going to be inserted into.
+For example, NuGet 6.12 will ship in the .NET 9.0.100 SDK.
+Therefore, any in-scope change to NuGet in NuGet 6.12 must retain existing/previous behavior when `SdkAnalysisVersion` is lower than this version, and the new behavior applies only when it's equal or higher.
+
+Since `SdkAnalysisLevel` will apply to many features, including features that are not part of NuGet, it is not a substitute for having a feature specific configuration.
+`SdkAnalysisLevel` should just be used to decide what the default is for that configuration value.
+
+A non-exhaustive list of examples of in-scope changes to NuGet include:
+
+* New restore warning
+* New pack validation
+* Change a warning to an error
+* Changes to feature opt-in/out, or other changes to configuration defaults
+
+Note that `SdkAnalysisLevel` is only set by the .NET SDK, and only starting from the .NET 9.0.100 SDK.
+Therefore the following logic should apply anywhere NuGet needs to make a decision based on the `SdkAnalysisLevel`:
+
+1. If `SdkAnalysisLevel` is set, regardless of project type, always use that value.
+1. Otherwise, if `UsingMicrosoftNETSdk` has the value `true`, then assume that the `SdkAnalysisLevel` is 8.0.400.
+1. Otherwise, assume `SdkAnalysisLevel` is equal to the highest version that the feature compares to, so always use the latest defaults.
+
+This means that `SdkAnalysisLevel` is used as intended for SDK style projects, but non-SDK style project always use the latest defaults.
+All project types use the same configuration, so that customers can set a single property in a *Directory.Build.props* file, or environment variable.
+
 #### Restore considerations
 
 * NuGet tool parity, ensure all products work as expected

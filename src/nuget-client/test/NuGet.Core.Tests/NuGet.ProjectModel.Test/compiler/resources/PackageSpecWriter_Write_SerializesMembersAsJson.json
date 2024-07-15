@@ -46,6 +46,7 @@
     "outputPath": "outputPath",
     "projectStyle": "PackageReference",
     "crossTargeting": true,
+    "UsingMicrosoftNETSdk": false,
     "fallbackFolders": [
       "b",
       "a",

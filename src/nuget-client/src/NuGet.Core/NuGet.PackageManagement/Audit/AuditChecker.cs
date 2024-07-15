@@ -17,17 +17,28 @@ using NuGet.Protocol.Core.Types;
 using System.Diagnostics;
 using NuGet.ProjectModel;
 using NuGet.Shared;
+using System.Globalization;
 
 namespace NuGet.PackageManagement
 {
     public class AuditChecker(
-        List<SourceRepository> sourceRepositories,
+        List<SourceRepository> packageSources,
+        IReadOnlyList<SourceRepository>? auditSources,
         SourceCacheContext sourceCacheContext,
         ILogger logger)
     {
-        private readonly List<SourceRepository> _sourceRepositories = sourceRepositories;
+        private readonly List<SourceRepository> _packageSources = packageSources;
+        private readonly IReadOnlyList<SourceRepository>? _auditSources = auditSources;
         private readonly ILogger _logger = logger;
         private readonly SourceCacheContext _sourceCacheContext = sourceCacheContext;
+
+        public AuditChecker(
+             List<SourceRepository> sourceRepositories,
+             SourceCacheContext sourceCacheContext,
+             ILogger logger)
+            : this(sourceRepositories, auditSources: null, sourceCacheContext, logger)
+        {
+        }
 
         public async Task<AuditCheckResult> CheckPackageVulnerabilitiesAsync(IEnumerable<PackageRestoreData> packages, Dictionary<string, RestoreAuditProperties> restoreAuditProperties, CancellationToken cancellationToken)
         {
@@ -55,7 +66,7 @@ namespace NuGet.PackageManagement
             }
 
             Stopwatch stopwatch = Stopwatch.StartNew();
-            (int sourceWithVulnerabilityCount, GetVulnerabilityInfoResult? allVulnerabilityData) = await GetAllVulnerabilityDataAsync(_sourceRepositories, _sourceCacheContext, _logger, cancellationToken);
+            (int sourceWithVulnerabilityCount, GetVulnerabilityInfoResult? allVulnerabilityData) = await GetAllVulnerabilityDataAsync(_packageSources, _auditSources, _sourceCacheContext, _logger, cancellationToken);
             stopwatch.Stop();
             double downloadDurationInSeconds = stopwatch.Elapsed.TotalSeconds;
 
@@ -127,18 +138,35 @@ namespace NuGet.PackageManagement
             }
         }
 
-        internal static async Task<(int, GetVulnerabilityInfoResult?)> GetAllVulnerabilityDataAsync(List<SourceRepository> sourceRepositories, SourceCacheContext sourceCacheContext, ILogger logger, CancellationToken cancellationToken)
+        internal static async Task<(int, GetVulnerabilityInfoResult?)> GetAllVulnerabilityDataAsync(
+            List<SourceRepository> packageSources,
+            IReadOnlyList<SourceRepository>? auditSources,
+            SourceCacheContext sourceCacheContext,
+            ILogger logger,
+            CancellationToken cancellationToken)
         {
             int SourcesWithVulnerabilityData = 0;
-            List<Task<GetVulnerabilityInfoResult?>>? results = new(sourceRepositories.Count);
-
-            foreach (SourceRepository source in sourceRepositories)
+            List<Task<GetVulnerabilityInfoResult?>> results;
+            IReadOnlyList<SourceRepository> vulnerabilitySources;
+            bool usingAuditSources;
+            if (auditSources?.Count > 0)
             {
+                results = new(auditSources.Count);
+                vulnerabilitySources = auditSources;
+                usingAuditSources = true;
+            }
+            else
+            {
+                results = new(packageSources.Count);
+                vulnerabilitySources = packageSources;
+                usingAuditSources = false;
+            }
+
+            for (int i = 0; i < vulnerabilitySources.Count; i++)
+            {
+                SourceRepository source = vulnerabilitySources[i];
                 Task<GetVulnerabilityInfoResult?> getVulnerabilityInfoResult = GetVulnerabilityInfoAsync(source, sourceCacheContext, logger);
-                if (getVulnerabilityInfoResult != null)
-                {
-                    results.Add(getVulnerabilityInfoResult);
-                }
+                results.Add(getVulnerabilityInfoResult);
             }
 
             await Task.WhenAll(results);
@@ -149,10 +177,21 @@ namespace NuGet.PackageManagement
 
             List<Exception>? errors = null;
             List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>? knownVulnerabilities = null;
-            foreach (var resultTask in results)
+            for (int i = 0; i < results.Count; i++)
             {
+                Task<GetVulnerabilityInfoResult?> resultTask = results[i];
                 GetVulnerabilityInfoResult? result = await resultTask;
-                if (result is null) continue;
+
+                if (result is null)
+                {
+                    if (usingAuditSources)
+                    {
+                        string message = string.Format(CultureInfo.CurrentCulture, Strings.Warning_AuditSourceWithoutData, vulnerabilitySources[i].PackageSource.Name);
+                        RestoreLogMessage restoreLogMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1905, message);
+                        logger.Log(restoreLogMessage);
+                    }
+                    continue;
+                }
 
                 if (result.KnownVulnerabilities != null)
                 {

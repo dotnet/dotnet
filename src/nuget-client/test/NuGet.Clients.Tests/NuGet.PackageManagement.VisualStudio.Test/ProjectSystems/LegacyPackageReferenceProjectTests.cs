@@ -1621,6 +1621,174 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             auditProperties.SuppressedAdvisories.Should().BeEquivalentTo(["https://cve.test/1"]);
         }
 
+        [Fact]
+        public async Task GetPackageSpec_WithValidSdkAnalysisLevel_ReadsSdkAnalysisLevelValue()
+        {
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            // Arrange
+            string sdkAnalysisLevel = "9.0.809";
+            using var testDirectory = TestDirectory.Create();
+            NuGetVersion expectedVersion = new NuGetVersion(sdkAnalysisLevel);
+            var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
+            projectBuildProperties.Setup(b => b.GetPropertyValue(ProjectBuildProperties.SdkAnalysisLevel))
+                .Returns(sdkAnalysisLevel);
+            var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
+
+            Mock<IVsProjectAdapter> projectAdapterMock = Mock.Get(projectAdapter);
+
+            var projectServices = new TestProjectSystemServices();
+            var testProject = new LegacyPackageReferenceProject(
+                projectAdapter,
+                Guid.NewGuid().ToString(),
+                projectServices,
+                _threadingService);
+
+            var settings = NullSettings.Instance;
+            var testDependencyGraphCacheContext = new DependencyGraphCacheContext(NullLogger.Instance, settings);
+
+            // Act
+            var packageSpecs = await testProject.GetPackageSpecsAsync(testDependencyGraphCacheContext);
+
+            // Assert
+            Assert.NotNull(packageSpecs);
+            var actualRestoreSpec = packageSpecs.Single();
+            SpecValidationUtility.ValidateProjectSpec(actualRestoreSpec);
+            actualRestoreSpec.RestoreMetadata.SdkAnalysisLevel.Should().Be(expectedVersion);
+        }
+
+        [Theory]
+        [InlineData("False")]
+        [InlineData("FaLse")]
+        [InlineData("false")]
+        public async Task GetPackageSpec_WithFalseUsingMicrosoftNetSdk_ReadsFalse(string usingSdk)
+        {
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            // Arrange
+            using var testDirectory = TestDirectory.Create();
+            var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
+            projectBuildProperties.Setup(b => b.GetPropertyValue(ProjectBuildProperties.UsingMicrosoftNETSdk))
+                .Returns(usingSdk);
+            var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
+
+            Mock<IVsProjectAdapter> projectAdapterMock = Mock.Get(projectAdapter);
+
+            var projectServices = new TestProjectSystemServices();
+            var testProject = new LegacyPackageReferenceProject(
+                projectAdapter,
+                Guid.NewGuid().ToString(),
+                projectServices,
+                _threadingService);
+
+            var settings = NullSettings.Instance;
+            var testDependencyGraphCacheContext = new DependencyGraphCacheContext(NullLogger.Instance, settings);
+
+            // Act
+            var packageSpecs = await testProject.GetPackageSpecsAsync(testDependencyGraphCacheContext);
+
+            // Assert
+            Assert.NotNull(packageSpecs);
+            var actualRestoreSpec = packageSpecs.Single();
+            SpecValidationUtility.ValidateProjectSpec(actualRestoreSpec);
+
+            Assert.False(actualRestoreSpec.RestoreMetadata.UsingMicrosoftNETSdk);
+        }
+
+        [Theory]
+        [InlineData("True")]
+        [InlineData("true")]
+        [InlineData("TrUe")]
+        public async Task GetPackageSpec_WithTrueUsingMicrosoftNetSdk_ReadsTrue(string usingSdk)
+        {
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            // Arrange
+            using var testDirectory = TestDirectory.Create();
+            var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
+            projectBuildProperties.Setup(b => b.GetPropertyValue(ProjectBuildProperties.UsingMicrosoftNETSdk))
+                .Returns(usingSdk);
+            var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
+
+            Mock<IVsProjectAdapter> projectAdapterMock = Mock.Get(projectAdapter);
+
+            var projectServices = new TestProjectSystemServices();
+            var testProject = new LegacyPackageReferenceProject(
+                projectAdapter,
+                Guid.NewGuid().ToString(),
+                projectServices,
+                _threadingService);
+
+            var settings = NullSettings.Instance;
+            var testDependencyGraphCacheContext = new DependencyGraphCacheContext(NullLogger.Instance, settings);
+
+            // Act
+            var packageSpecs = await testProject.GetPackageSpecsAsync(testDependencyGraphCacheContext);
+
+            // Assert
+            Assert.NotNull(packageSpecs);
+            var actualRestoreSpec = packageSpecs.Single();
+            SpecValidationUtility.ValidateProjectSpec(actualRestoreSpec);
+
+            Assert.True(actualRestoreSpec.RestoreMetadata.UsingMicrosoftNETSdk);
+        }
+
+        [Fact]
+        public async Task GetPackageSpec_WithInvalidSdkAnalysisLevel_ThrowsAnException()
+        {
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            // Arrange
+            using var testDirectory = TestDirectory.Create();
+            var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
+            projectBuildProperties.Setup(b => b.GetPropertyValue(ProjectBuildProperties.SdkAnalysisLevel))
+                .Returns("9.ainvlaid");
+            var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
+
+            Mock<IVsProjectAdapter> projectAdapterMock = Mock.Get(projectAdapter);
+
+            var projectServices = new TestProjectSystemServices();
+            var testProject = new LegacyPackageReferenceProject(
+                projectAdapter,
+                Guid.NewGuid().ToString(),
+                projectServices,
+                _threadingService);
+
+            var settings = NullSettings.Instance;
+            var testDependencyGraphCacheContext = new DependencyGraphCacheContext(NullLogger.Instance, settings);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(async () => await testProject.GetPackageSpecsAsync(testDependencyGraphCacheContext));
+        }
+
+        [Fact]
+        public async Task GetPackageSpec_WithInvalidUsingMicrosoftNetSdk_ThrowsAnException()
+        {
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            // Arrange
+            using var testDirectory = TestDirectory.Create();
+            var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
+            projectBuildProperties.Setup(b => b.GetPropertyValue(ProjectBuildProperties.UsingMicrosoftNETSdk))
+                .Returns("falsetrue");
+            var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
+
+            Mock<IVsProjectAdapter> projectAdapterMock = Mock.Get(projectAdapter);
+
+            var projectServices = new TestProjectSystemServices();
+            var testProject = new LegacyPackageReferenceProject(
+                projectAdapter,
+                Guid.NewGuid().ToString(),
+                projectServices,
+                _threadingService);
+
+            var settings = NullSettings.Instance;
+            var testDependencyGraphCacheContext = new DependencyGraphCacheContext(NullLogger.Instance, settings);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(async () => await testProject.GetPackageSpecsAsync(testDependencyGraphCacheContext));
+        }
+
         private LegacyPackageReferenceProject CreateLegacyPackageReferenceProject(TestDirectory testDirectory, string range)
         {
             return ProjectFactories.CreateLegacyPackageReferenceProject(testDirectory, Guid.NewGuid().ToString(), range, _threadingService);

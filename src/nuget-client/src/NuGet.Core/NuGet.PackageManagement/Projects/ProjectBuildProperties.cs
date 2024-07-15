@@ -63,5 +63,7 @@ namespace NuGet.ProjectManagement
         public const string NuGetAuditLevel = nameof(NuGetAuditLevel);
         public const string NuGetAuditMode = nameof(NuGetAuditMode);
         public const string CentralPackageFloatingVersionsEnabled = nameof(CentralPackageFloatingVersionsEnabled);
+        public const string SdkAnalysisLevel = nameof(SdkAnalysisLevel);
+        public const string UsingMicrosoftNETSdk = nameof(UsingMicrosoftNETSdk);
     }
 }

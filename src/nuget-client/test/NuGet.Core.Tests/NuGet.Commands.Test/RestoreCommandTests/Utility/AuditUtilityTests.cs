@@ -317,6 +317,31 @@ public class AuditUtilityTests
         auditUtility.TransitivePackagesWithAdvisory.Should().BeNullOrEmpty();
     }
 
+    [Fact]
+    public async Task Check_AuditSourceWithoutVulnerabilityData_RaisesNU1905()
+    {
+        // Arrange
+        var context = new AuditTestContext();
+
+        context.PackagesDependencyProvider.Package("pkga", "1.0.0");
+
+        context.WithRestoreTarget()
+            .DependsOn("pkga", "1.0.0");
+
+        var pkgaVulnerabilities = context
+            .WithVulnerabilityProvider(isAuditSource: true, sourceName: "SourceName");
+
+        // Act
+        AuditUtility auditUtility = await context.CheckPackageVulnerabilitiesAsync(CancellationToken.None);
+
+        //Assert
+        auditUtility.DownloadDurationSeconds.Should().NotBeNull("audit utility did not check vulnerability providers");
+        context.Log.Messages.Count.Should().Be(1);
+        RestoreLogMessage logMessage = (RestoreLogMessage)context.Log.LogMessages.First();
+        logMessage.Code.Should().Be(NuGetLogCode.NU1905);
+        logMessage.Message.Should().Contain("SourceName");
+    }
+
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -506,14 +531,14 @@ public class AuditUtilityTests
             return testProject;
         }
 
-        public VulnerabilityProviderTestContext WithVulnerabilityProvider()
+        public VulnerabilityProviderTestContext WithVulnerabilityProvider(bool isAuditSource = false, string? sourceName = null)
         {
             if (_vulnerabilityProviders is null)
             {
                 _vulnerabilityProviders = new();
             }
 
-            VulnerabilityProviderTestContext provider = new();
+            VulnerabilityProviderTestContext provider = new(isAuditSource, sourceName);
             _vulnerabilityProviders.Add(provider);
             return provider;
         }
@@ -590,13 +615,20 @@ public class AuditUtilityTests
     {
         public Dictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>? KnownVulnerabilities { get; private set; }
         public AggregateException? Exceptions { get; private set; }
+        public bool IsAuditSource { get; private set; }
+        public string SourceName { get; private set; }
         public Mock<IVulnerabilityInformationProvider> Mock { get; }
 
-        public VulnerabilityProviderTestContext()
+        public VulnerabilityProviderTestContext(bool isAuditSource = false, string? sourceName = null)
         {
+            IsAuditSource = isAuditSource;
+            SourceName = sourceName ?? Guid.NewGuid().ToString();
+
             Mock = new Mock<IVulnerabilityInformationProvider>();
             Mock.Setup(p => p.GetVulnerabilityInformationAsync(It.IsAny<CancellationToken>()))
                 .Returns(CreateVulnerabilityInformationResult);
+            Mock.SetupGet(p => p.IsAuditSource).Returns(IsAuditSource);
+            Mock.SetupGet(p => p.SourceName).Returns(SourceName);
         }
 
         private Task<GetVulnerabilityInfoResult?> CreateVulnerabilityInformationResult()

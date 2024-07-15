@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using NuGet.Configuration;
 using NuGet.Packaging.Signing;
 using NuGet.ProjectModel;
+using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
 using NuGet.Shared;
 
 namespace NuGet.Commands
@@ -167,7 +169,8 @@ namespace NuGet.Commands
             var fallbackPaths = projectPackageSpec.RestoreMetadata.FallbackFolders;
             var globalPath = GetPackagesPath(restoreArgs, projectPackageSpec);
             var settings = _settings ?? Settings.LoadImmutableSettingsGivenConfigPaths(projectPackageSpec.RestoreMetadata.ConfigFilePaths, settingsLoadingContext);
-            var sources = restoreArgs.GetEffectiveSources(settings, projectPackageSpec.RestoreMetadata.Sources);
+            var packageSources = restoreArgs.GetEffectiveSources(settings, projectPackageSpec.RestoreMetadata.Sources);
+            var auditSources = GetAuditSources(restoreArgs.CachingSourceProvider);
             var clientPolicyContext = ClientPolicyContext.GetClientPolicy(settings, restoreArgs.Log);
             var packageSourceMapping = PackageSourceMapping.GetPackageSourceMapping(settings);
             var updateLastAccess = SettingsUtility.GetUpdatePackageLastAccessTimeEnabledStatus(settings);
@@ -175,7 +178,8 @@ namespace NuGet.Commands
             var sharedCache = _providerCache.GetOrCreate(
                 globalPath,
                 fallbackPaths.AsList(),
-                sources,
+                packageSources,
+                auditSources,
                 restoreArgs.CacheContext,
                 restoreArgs.Log,
                 updateLastAccess);
@@ -219,9 +223,31 @@ namespace NuGet.Commands
                 request,
                 project.MSBuildProjectPath,
                 settings.GetConfigFilePaths(),
-                sources);
+                packageSources);
 
             return summaryRequest;
+        }
+
+        private static IReadOnlyList<SourceRepository> GetAuditSources(CachingSourceProvider cachingSourceProvider)
+        {
+            IReadOnlyList<PackageSource> auditSources = cachingSourceProvider.PackageSourceProvider.LoadAuditSources();
+
+            if (auditSources is null || auditSources.Count == 0)
+            {
+                return Array.Empty<SourceRepository>();
+            }
+
+            var auditSourceRepositories = new List<SourceRepository>(auditSources.Count);
+            for (int i = 0; i < auditSources.Count; i++)
+            {
+                PackageSource source = auditSources[i];
+                if (source.IsEnabled)
+                {
+                    auditSourceRepositories.Add(cachingSourceProvider.CreateRepository(source));
+                }
+            }
+
+            return auditSourceRepositories;
         }
 
         private string GetPackagesPath(RestoreArgs restoreArgs, PackageSpec project)
