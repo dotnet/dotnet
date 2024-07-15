@@ -5,12 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
-using Microsoft.ServiceHub.Framework;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 internal sealed class RemoteClientInitializationService(
-    IServiceBroker serviceBroker)
+    IRazorServiceBroker serviceBroker)
     : RazorServiceBase(serviceBroker), IRemoteClientInitializationService
 {
     public ValueTask InitializeAsync(RemoteClientInitializationOptions options, CancellationToken cancellationToken)

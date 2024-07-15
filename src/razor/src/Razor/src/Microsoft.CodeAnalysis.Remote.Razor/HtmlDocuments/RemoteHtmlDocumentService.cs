@@ -7,12 +7,11 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
-using Microsoft.ServiceHub.Framework;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 internal sealed class RemoteHtmlDocumentService(
-    IServiceBroker serviceBroker,
+    IRazorServiceBroker serviceBroker,
     DocumentSnapshotFactory documentSnapshotFactory)
     : RazorDocumentServiceBase(serviceBroker, documentSnapshotFactory), IRemoteHtmlDocumentService
 {

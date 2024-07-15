@@ -11,13 +11,12 @@ using Microsoft.CodeAnalysis.Razor.Protocol.Folding;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
-using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 internal sealed class RemoteFoldingRangeService(
-    IServiceBroker serviceBroker,
+    IRazorServiceBroker serviceBroker,
     IFoldingRangeService foldingRangeService,
     DocumentSnapshotFactory documentSnapshotFactory,
     IFilePathService filePathService)

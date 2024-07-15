@@ -7133,12 +7133,11 @@ class C
 ";
             var comp = CreateCompilation(src, targetFramework: s_targetFrameworkSupportingByRefLikeGenerics, options: TestOptions.ReleaseExe);
 
-            // https://github.com/dotnet/roslyn/issues/73559: Should we adjust wording for the error? Ref struct implement interfaces, but not convertible to them.  
             comp.VerifyDiagnostics(
-                // (23,16): error CS1674: 'T': type used in a using statement must be implicitly convertible to 'System.IDisposable'.
+                // (23,16): error CS1674: 'T': type used in a using statement must implement 'System.IDisposable'.
                 //         using (t)
                 Diagnostic(ErrorCode.ERR_NoConvToIDisp, "t").WithArguments("T").WithLocation(23, 16),
-                // (27,16): error CS1674: 'IMyDisposable': type used in a using statement must be implicitly convertible to 'System.IDisposable'.
+                // (27,16): error CS1674: 'IMyDisposable': type used in a using statement must implement 'System.IDisposable'.
                 //         using (s)
                 Diagnostic(ErrorCode.ERR_NoConvToIDisp, "s").WithArguments("IMyDisposable").WithLocation(27, 16)
                 );
@@ -13518,7 +13517,7 @@ class C
             var comp = CreateCompilation(src, targetFramework: s_targetFrameworkSupportingByRefLikeGenerics, options: TestOptions.ReleaseExe);
 
             comp.VerifyDiagnostics(
-                // (32,22): error CS8410: 'T': type used in an asynchronous using statement must be implicitly convertible to 'System.IAsyncDisposable' or implement a suitable 'DisposeAsync' method.
+                // (32,22): error CS8410: 'T': type used in an asynchronous using statement must implement 'System.IAsyncDisposable' or implement a suitable 'DisposeAsync' method.
                 //         await using (new T())
                 Diagnostic(ErrorCode.ERR_NoConvToIAsyncDisp, "new T()").WithArguments("T").WithLocation(32, 22)
                 );
@@ -26177,9 +26176,9 @@ namespace System
                 // (18,16): error CS8352: Cannot use variable 'x1' in this context because it may expose referenced variables outside of their declaration scope
                 //         return x1;
                 Diagnostic(ErrorCode.ERR_EscapeVariable, "x1").WithArguments("x1").WithLocation(18, 16),
-                // (29,29): error CS8352: Cannot use variable 'inner' in this context because it may expose referenced variables outside of their declaration scope
+                // (29,27): error CS8352: Cannot use variable '[outer] = inner' in this context because it may expose referenced variables outside of their declaration scope
                 //         result = new S2() { [outer] = inner, Field2 = outer };
-                Diagnostic(ErrorCode.ERR_EscapeVariable, "[outer] = inner").WithArguments("inner").WithLocation(29, 29)
+                Diagnostic(ErrorCode.ERR_EscapeVariable, "{ [outer] = inner, Field2 = outer }").WithArguments("[outer] = inner").WithLocation(29, 27)
                 );
         }
 

@@ -13,12 +13,11 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.ServiceHub.Framework;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 internal sealed class RemoteUriPresentationService(
-    IServiceBroker serviceBroker,
+    IRazorServiceBroker serviceBroker,
     IRazorDocumentMappingService documentMappingService,
     DocumentSnapshotFactory documentSnapshotFactory,
     ILoggerFactory loggerFactory)

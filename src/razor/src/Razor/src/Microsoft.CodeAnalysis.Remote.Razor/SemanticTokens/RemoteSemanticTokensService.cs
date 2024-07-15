@@ -9,12 +9,11 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.ServiceHub.Framework;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 internal sealed class RemoteSemanticTokensService(
-    IServiceBroker serviceBroker,
+    IRazorServiceBroker serviceBroker,
     IRazorSemanticTokensInfoService razorSemanticTokensInfoService,
     DocumentSnapshotFactory documentSnapshotFactory)
     : RazorDocumentServiceBase(serviceBroker, documentSnapshotFactory), IRemoteSemanticTokensService

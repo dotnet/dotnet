@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Composition;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -15,7 +14,7 @@ internal sealed class RemoteClientInitializationServiceFactory : RazorServiceFac
     {
     }
 
-    protected override IRemoteClientInitializationService CreateService(IServiceBroker serviceBroker, ExportProvider exportProvider)
+    protected override IRemoteClientInitializationService CreateService(IRazorServiceBroker serviceBroker, ExportProvider exportProvider)
     {
         return new RemoteClientInitializationService(serviceBroker);
     }

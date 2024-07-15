@@ -20,8 +20,9 @@ internal static class RemoteMefComposition
     public static Task<ExportProvider> GetExportProviderAsync()
         => s_exportProviderLazy.GetValueAsync();
 
+    // Internal for testing
     // Inspired by https://github.com/dotnet/roslyn/blob/25aa74d725e801b8232dbb3e5abcda0fa72da8c5/src/Workspaces/Remote/ServiceHub/Host/RemoteWorkspaceManager.cs#L77
-    private static async Task<ExportProvider> CreateExportProviderAsync()
+    internal static async Task<ExportProvider> CreateExportProviderAsync()
     {
         var resolver = new Resolver(SimpleAssemblyLoader.Instance);
         var discovery = new AttributedPartDiscovery(resolver, isNonPublicSupported: true); // MEFv2 only

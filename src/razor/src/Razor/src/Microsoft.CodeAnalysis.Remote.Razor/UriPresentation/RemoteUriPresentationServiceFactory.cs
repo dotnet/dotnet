@@ -5,7 +5,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
-using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Composition;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -18,7 +17,7 @@ internal sealed class RemoteUriPresentationServiceFactory : RazorServiceFactoryB
     {
     }
 
-    protected override IRemoteUriPresentationService CreateService(IServiceBroker serviceBroker, ExportProvider exportProvider)
+    protected override IRemoteUriPresentationService CreateService(IRazorServiceBroker serviceBroker, ExportProvider exportProvider)
     {
         var documentMappingService = exportProvider.GetExportedValue<IRazorDocumentMappingService>();
         var documentSnapshotFactory = exportProvider.GetExportedValue<DocumentSnapshotFactory>();

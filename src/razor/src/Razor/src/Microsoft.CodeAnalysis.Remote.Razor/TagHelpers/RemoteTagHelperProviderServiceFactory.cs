@@ -3,7 +3,6 @@
 
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Composition;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -16,7 +15,7 @@ internal sealed class RemoteTagHelperProviderServiceFactory : RazorServiceFactor
     {
     }
 
-    protected override IRemoteTagHelperProviderService CreateService(IServiceBroker serviceBroker, ExportProvider exportProvider)
+    protected override IRemoteTagHelperProviderService CreateService(IRazorServiceBroker serviceBroker, ExportProvider exportProvider)
     {
         var tagHelperResolver = exportProvider.GetExportedValue<RemoteTagHelperResolver>().AssumeNotNull();
         var tagHelperDeltaProvider = exportProvider.GetExportedValue<RemoteTagHelperDeltaProvider>().AssumeNotNull();

@@ -12,7 +12,7 @@ namespace Microsoft.CodeAnalysis.Remote.Razor;
 /// <summary>
 /// An abstraction to avoid calling the static <see cref="RazorBrokeredServiceImplementation"/> helper defined in Roslyn
 /// </summary>
-internal interface IBrokeredServiceInterceptor
+internal interface IRazorServiceBroker : IDisposable
 {
     ValueTask RunServiceAsync(Func<CancellationToken, ValueTask> implementation, CancellationToken cancellationToken);
 
