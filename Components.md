@@ -12,9 +12,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@a6e341e](https://github.com/dotnet/aspire/tree/a6e341ebbf956bbcec0dda304109815fcbae70c9)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@71b5ef3](https://github.com/dotnet/aspnetcore/tree/71b5ef3f5c997fbbb9ff3dc1a16d58e8ccdeed52)*
+*[dotnet/aspnetcore@fe84bd0](https://github.com/dotnet/aspnetcore/tree/fe84bd02ebbb681e928536f6fa56d4cfd2dc72c3)*
     - `src/aspnetcore/src/submodules/googletest`  
-    *[google/googletest@34ad51b](https://github.com/google/googletest/tree/34ad51b3dc4f922d8ab622491dd44fc2c39afee9)*
+    *[google/googletest@b4aaf97](https://github.com/google/googletest/tree/b4aaf97d8f7eaffab79aa15e10a91b331b941fe2)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
     *[aspnet/MessagePack-CSharp@ecc4e18](https://github.com/aspnet/MessagePack-CSharp/tree/ecc4e18ad7a0c7db51cd7e3d2997a291ed01444d)*
     - `src/aspnetcore/src/submodules/Node-Externals`  
@@ -46,11 +46,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@43709af](https://github.com/dotnet/roslyn-analyzers/tree/43709af7570da7140fb3e9a5237f55ffb24677e7)*
 - `src/runtime`  
-*[dotnet/runtime@5ab200c](https://github.com/dotnet/runtime/tree/5ab200cd23f23baefc2d7189bf721075400fb7f2)*
+*[dotnet/runtime@b885a58](https://github.com/dotnet/runtime/tree/b885a58062434707e7584d29910af429a1ee0107)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@54700bb](https://github.com/dotnet/scenario-tests/tree/54700bbee86f660d37bd519a905b62bb50adc8c8)*
 - `src/sdk`  
-*[dotnet/sdk@0b6dbc2](https://github.com/dotnet/sdk/tree/0b6dbc261edb998404ab2ea90317324bbdc7d400)*
+*[dotnet/sdk@fb0dbfc](https://github.com/dotnet/sdk/tree/fb0dbfcae23254a675367faf078c85e3b2688aa3)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@52c45e5](https://github.com/dotnet/source-build-externals/tree/52c45e529d6a5956136ba3cddf849a16b65eb1f2)*
     - `src/source-build-externals/src/abstractions-xunit`  
