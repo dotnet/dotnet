@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@a6e341e](https://github.com/dotnet/aspire/tree/a6e341ebbf956bbcec0dda304109815fcbae70c9)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@fe84bd0](https://github.com/dotnet/aspnetcore/tree/fe84bd02ebbb681e928536f6fa56d4cfd2dc72c3)*
+*[dotnet/aspnetcore@90a622d](https://github.com/dotnet/aspnetcore/tree/90a622d4f3f377dcf4eabbbbb8765ba9d3e65415)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@b4aaf97](https://github.com/google/googletest/tree/b4aaf97d8f7eaffab79aa15e10a91b331b941fe2)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@54700bb](https://github.com/dotnet/scenario-tests/tree/54700bbee86f660d37bd519a905b62bb50adc8c8)*
 - `src/sdk`  
-*[dotnet/sdk@1eed0b8](https://github.com/dotnet/sdk/tree/1eed0b84b5749122f5891d4119941f45b2f9cc5d)*
+*[dotnet/sdk@3ce2c10](https://github.com/dotnet/sdk/tree/3ce2c10e02674d93516235519390187a3f4815d4)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@52c45e5](https://github.com/dotnet/source-build-externals/tree/52c45e529d6a5956136ba3cddf849a16b65eb1f2)*
     - `src/source-build-externals/src/abstractions-xunit`  
