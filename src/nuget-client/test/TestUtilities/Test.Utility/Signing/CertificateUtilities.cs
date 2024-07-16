@@ -60,7 +60,11 @@ namespace Test.Utility.Signing
 
             X509Certificate2 certificate;
 
+#if NET9_0_OR_GREATER
+            using (var certificateTmp = X509CertificateLoader.LoadCertificate(bcCertificate.GetEncoded()))
+#else
             using (var certificateTmp = new X509Certificate2(bcCertificate.GetEncoded()))
+#endif
             {
                 certificate = RSACertificateExtensions.CopyWithPrivateKey(certificateTmp, privateKey);
             }
