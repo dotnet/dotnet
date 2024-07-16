@@ -47,7 +47,15 @@ person.Name
 #nullable disable
 
             __builder.OpenComponent<global::Test.MyComponent>(2);
-            __builder.AddComponentParameter(3, "PersonTemplate", (global::Microsoft.AspNetCore.Components.RenderFragment<Test.Person>)(
+            __builder.AddComponentParameter(3, nameof(global::Test.MyComponent.
+#nullable restore
+#line (2,14)-(2,28) "x:\dir\subdir\Test\TestComponent.cshtml"
+PersonTemplate
+
+#line default
+#line hidden
+#nullable disable
+            ), (global::Microsoft.AspNetCore.Components.RenderFragment<Test.Person>)(
 #nullable restore
 #line (2,31)-(2,39) "x:\dir\subdir\Test\TestComponent.cshtml"
 template

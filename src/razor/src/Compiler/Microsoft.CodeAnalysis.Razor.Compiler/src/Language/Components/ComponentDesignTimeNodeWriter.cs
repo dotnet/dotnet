@@ -603,7 +603,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
     public override void WriteComponentTypeInferenceMethod(CodeRenderingContext context, ComponentTypeInferenceMethodIntermediateNode node)
     {
-        base.WriteComponentTypeInferenceMethod(context, node, returnComponentType: true);
+        base.WriteComponentTypeInferenceMethod(context, node, returnComponentType: true, allowNameof: false);
     }
 
     private void WriteTypeInferenceMethodParameterInnards(CodeRenderingContext context, TypeInferenceMethodParameter parameter)
@@ -746,12 +746,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         using (context.CodeWriter.BuildLinePragma(attributeSourceSpan, context))
         {
             context.CodeWriter.WritePadding(0, attributeSourceSpan, context);
-            // Escape the property name in case it's a C# keyword
-            if (CSharpSyntaxFacts.GetKeywordKind(node.PropertyName) != CSharpSyntaxKind.None ||
-                CSharpSyntaxFacts.GetContextualKeywordKind(node.PropertyName) != CSharpSyntaxKind.None)
-            {
-                context.CodeWriter.Write("@");
-            }
+            context.CodeWriter.WriteIdentifierEscapeIfNeeded(node.PropertyName);
             context.AddSourceMappingFor(attributeSourceSpan);
             context.CodeWriter.WriteLine(node.PropertyName);
         }

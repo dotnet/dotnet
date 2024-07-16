@@ -5,9 +5,14 @@ Generated Location: (371:12,0 [43] )
 |using Microsoft.AspNetCore.Components.Web
 |
 
+Source Location: (57:1,13 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|OnClick|
+Generated Location: (1027:29,0 [7] )
+|OnClick|
+
 Source Location: (67:1,23 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 |Increment|
-Generated Location: (1338:29,0 [9] )
+Generated Location: (1517:37,0 [9] )
 |Increment|
 
 Source Location: (90:3,7 [139] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -18,7 +23,7 @@ Source Location: (90:3,7 [139] x:\dir\subdir\Test\TestComponent.cshtml)
         return Task.CompletedTask;
     }
 |
-Generated Location: (1588:40,0 [139] )
+Generated Location: (1767:48,0 [139] )
 |
     private int counter;
     private Task Increment(MouseEventArgs e) {

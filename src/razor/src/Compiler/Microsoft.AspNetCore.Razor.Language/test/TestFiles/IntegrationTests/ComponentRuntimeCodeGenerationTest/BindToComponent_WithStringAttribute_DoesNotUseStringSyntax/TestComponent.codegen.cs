@@ -18,7 +18,15 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.InputText>(0);
-            __builder.AddComponentParameter(1, "Value", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.String>(
+            __builder.AddComponentParameter(1, nameof(global::Test.InputText.
+#nullable restore
+#line (1,18)-(1,23) "x:\dir\subdir\Test\TestComponent.cshtml"
+Value
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.String>(
 #nullable restore
 #line (1,25)-(1,36) "x:\dir\subdir\Test\TestComponent.cshtml"
 person.Name
@@ -27,7 +35,7 @@ person.Name
 #line hidden
 #nullable disable
             ));
-            __builder.AddComponentParameter(2, "ValueChanged", (global::System.Action<System.String>)(__value => person.Name = __value));
+            __builder.AddComponentParameter(2, nameof(global::Test.InputText.ValueChanged), (global::System.Action<System.String>)(__value => person.Name = __value));
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

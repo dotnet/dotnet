@@ -23,3 +23,8 @@ Source Location: (78:1,13 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1940:60,0 [9] )
 |parentKey|
 
+Source Location: (89:1,24 [5] x:\dir\subdir\Test\TestComponent.cshtml)
+|Items|
+Generated Location: (2813:84,0 [5] )
+|Items|
+

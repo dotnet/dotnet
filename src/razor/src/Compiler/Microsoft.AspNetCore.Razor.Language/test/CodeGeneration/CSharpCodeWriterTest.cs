@@ -32,7 +32,7 @@ public class CSharpCodeWriterTest
     public void CSharpCodeWriter_TracksPosition_WithWrite()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.Write("1234");
@@ -48,7 +48,7 @@ public class CSharpCodeWriterTest
     public void CSharpCodeWriter_TracksPosition_WithIndent()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.WriteLine();
@@ -65,7 +65,7 @@ public class CSharpCodeWriterTest
     public void CSharpCodeWriter_TracksPosition_WithWriteLine()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.WriteLine("1234");
@@ -83,7 +83,7 @@ public class CSharpCodeWriterTest
     public void CSharpCodeWriter_TracksPosition_WithWriteLine_WithNewLineInContent(string newLine)
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.WriteLine("1234" + newLine + "12");
@@ -104,7 +104,7 @@ public class CSharpCodeWriterTest
     public void CSharpCodeWriter_TracksPosition_WithWrite_WithNewlineInContent(string newLine)
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.Write("1234" + newLine + "123" + newLine + "12");
@@ -124,7 +124,7 @@ public class CSharpCodeWriterTest
     public void CSharpCodeWriter_TracksPosition_WithWrite_WithNewlineInContent_RepeatedN()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.Write("1234\n\n123");
@@ -144,7 +144,7 @@ public class CSharpCodeWriterTest
     public void CSharpCodeWriter_TracksPosition_WithWrite_WithMixedNewlineInContent()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.Write("1234\r123\r\n12\n1");
@@ -164,7 +164,7 @@ public class CSharpCodeWriterTest
     public void CSharpCodeWriter_TracksPosition_WithNewline_SplitAcrossWrites()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.Write("1234\r");
@@ -185,7 +185,7 @@ public class CSharpCodeWriterTest
     public void CSharpCodeWriter_TracksPosition_WithTwoNewline_SplitAcrossWrites_R()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.Write("1234\r");
@@ -206,7 +206,7 @@ public class CSharpCodeWriterTest
     public void CSharpCodeWriter_TracksPosition_WithTwoNewline_SplitAcrossWrites_N()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.Write("1234\n");
@@ -227,7 +227,7 @@ public class CSharpCodeWriterTest
     public void CSharpCodeWriter_TracksPosition_WithTwoNewline_SplitAcrossWrites_Reversed()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.Write("1234\n");
@@ -248,7 +248,7 @@ public class CSharpCodeWriterTest
     public void CSharpCodeWriter_TracksPosition_WithNewline_SplitAcrossWrites_AtBeginning()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.Write("\r");
@@ -269,7 +269,7 @@ public class CSharpCodeWriterTest
     public void CSharpCodeWriter_LinesBreaksOutsideOfContentAreNotCounted()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.Write("\r\nHello\r\nWorld\r\n", startIndex: 2, count: 12);
@@ -287,7 +287,7 @@ public class CSharpCodeWriterTest
         var filePath = "some-path";
         var mappingLocation = new SourceSpan(filePath, 10, 4, 3, 9);
 
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
         var expected = $"#line 5 \"{filePath}\"" + writer.NewLine;
 
         // Act
@@ -302,7 +302,7 @@ public class CSharpCodeWriterTest
     public void WriteField_WritesFieldDeclaration()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.WriteField(Array.Empty<string>(), new[] { "private" }, "global::System.String", "_myString");
@@ -319,7 +319,7 @@ public class CSharpCodeWriterTest
     public void WriteField_WithModifiers_WritesFieldDeclaration()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.WriteField(Array.Empty<string>(), new[] { "private", "readonly", "static" }, "global::System.String", "_myString");
@@ -336,7 +336,7 @@ public class CSharpCodeWriterTest
     public void WriteField_WithModifiersAndSupressions_WritesFieldDeclaration()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.WriteField(
@@ -362,7 +362,7 @@ public class CSharpCodeWriterTest
     public void WriteAutoPropertyDeclaration_WritesPropertyDeclaration()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.WriteAutoPropertyDeclaration(new[] { "public" }, "global::System.String", "MyString");
@@ -379,7 +379,7 @@ public class CSharpCodeWriterTest
     public void WriteAutoPropertyDeclaration_WithModifiers_WritesPropertyDeclaration()
     {
         // Arrange
-        var writer = new CodeWriter();
+        using var writer = new CodeWriter();
 
         // Act
         writer.WriteAutoPropertyDeclaration(new[] { "public", "static" }, "global::System.String", "MyString");
@@ -402,7 +402,7 @@ public class CSharpCodeWriterTest
             o.IndentSize = 4;
         });
 
-        var writer = new CodeWriter(Environment.NewLine, options);
+        using var writer = new CodeWriter(Environment.NewLine, options);
 
         // Act
         writer.BuildClassDeclaration(Array.Empty<string>(), "C", "", Array.Empty<string>(), Array.Empty<TypeParameter>(), context: null);
@@ -428,7 +428,7 @@ public class CSharpCodeWriterTest
             o.IndentSize = 4;
         });
 
-        var writer = new CodeWriter(Environment.NewLine, options);
+        using var writer = new CodeWriter(Environment.NewLine, options);
 
         // Act
         writer.BuildClassDeclaration(Array.Empty<string>(), "C", "", Array.Empty<string>(), Array.Empty<TypeParameter>(), context: null);

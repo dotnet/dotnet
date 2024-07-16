@@ -27,3 +27,8 @@ Generated Location: (1630:56,0 [67] )
     [Parameter] public TRenderMode RenderModeParam { get; set;}
 |
 
+Source Location: (144:2,45 [15] x:\dir\subdir\Test\TestComponent.cshtml)
+|RenderModeParam|
+Generated Location: (2487:77,0 [15] )
+|RenderModeParam|
+

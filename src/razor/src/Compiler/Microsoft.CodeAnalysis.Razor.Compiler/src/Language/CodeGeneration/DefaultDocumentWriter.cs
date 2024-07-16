@@ -34,7 +34,6 @@ internal class DefaultDocumentWriter : DocumentWriter
         }
 
         using var context = new DefaultCodeRenderingContext(
-            new CodeWriter(Environment.NewLine, _options),
             _codeTarget.CreateNodeWriter(),
             codeDocument,
             documentNode,

@@ -79,12 +79,60 @@ namespace __Blazor.Test.TestComponent
         public static void CreateMyComponent_0<T>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::Test.MyClass<T> __arg0, int __seq1, global::Microsoft.AspNetCore.Components.EventCallback __arg1, int __seq2, global::System.Boolean __arg2, int __seq3, global::System.String __arg3, int __seq4, global::System.Delegate __arg4, int __seq5, global::System.Object __arg5)
         {
         __builder.OpenComponent<global::Test.MyComponent<T>>(seq);
-        __builder.AddAttribute(__seq0, "MyParameter", (object)__arg0);
-        __builder.AddAttribute(__seq1, "MyEvent", (object)__arg1);
-        __builder.AddAttribute(__seq2, "BoolParameter", (object)__arg2);
-        __builder.AddAttribute(__seq3, "StringParameter", (object)__arg3);
-        __builder.AddAttribute(__seq4, "DelegateParameter", (object)__arg4);
-        __builder.AddAttribute(__seq5, "ObjectParameter", (object)__arg5);
+        __builder.AddAttribute(__seq0, nameof(global::Test.MyComponent<T>.
+#nullable restore
+#line (1,14)-(1,25) "x:\dir\subdir\Test\TestComponent.cshtml"
+MyParameter
+
+#line default
+#line hidden
+#nullable disable
+        ), (object)__arg0);
+        __builder.AddAttribute(__seq1, nameof(global::Test.MyComponent<T>.
+#nullable restore
+#line (2,5)-(2,12) "x:\dir\subdir\Test\TestComponent.cshtml"
+MyEvent
+
+#line default
+#line hidden
+#nullable disable
+        ), (object)__arg1);
+        __builder.AddAttribute(__seq2, nameof(global::Test.MyComponent<T>.
+#nullable restore
+#line (3,5)-(3,18) "x:\dir\subdir\Test\TestComponent.cshtml"
+BoolParameter
+
+#line default
+#line hidden
+#nullable disable
+        ), (object)__arg2);
+        __builder.AddAttribute(__seq3, nameof(global::Test.MyComponent<T>.
+#nullable restore
+#line (4,5)-(4,20) "x:\dir\subdir\Test\TestComponent.cshtml"
+StringParameter
+
+#line default
+#line hidden
+#nullable disable
+        ), (object)__arg3);
+        __builder.AddAttribute(__seq4, nameof(global::Test.MyComponent<T>.
+#nullable restore
+#line (5,5)-(5,22) "x:\dir\subdir\Test\TestComponent.cshtml"
+DelegateParameter
+
+#line default
+#line hidden
+#nullable disable
+        ), (object)__arg4);
+        __builder.AddAttribute(__seq5, nameof(global::Test.MyComponent<T>.
+#nullable restore
+#line (6,5)-(6,20) "x:\dir\subdir\Test\TestComponent.cshtml"
+ObjectParameter
+
+#line default
+#line hidden
+#nullable disable
+        ), (object)__arg5);
         __builder.CloseComponent();
         }
     }

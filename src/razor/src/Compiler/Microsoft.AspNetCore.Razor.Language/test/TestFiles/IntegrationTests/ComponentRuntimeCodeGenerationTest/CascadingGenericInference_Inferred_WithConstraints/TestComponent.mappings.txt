@@ -3,3 +3,8 @@
 Generated Location: (871:23,0 [30] )
 |Array.Empty<WeatherForecast>()|
 
+Source Location: (126:2,29 [9] x:\dir\subdir\Test\TestComponent.cshtml)
+|FieldName|
+Generated Location: (2182:51,0 [9] )
+|FieldName|
+

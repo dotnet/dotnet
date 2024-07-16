@@ -3,3 +3,8 @@
 Generated Location: (850:23,0 [29] )
 |new Dictionary<int, string>()|
 
+Source Location: (6:0,6 [5] x:\dir\subdir\Test\TestComponent.cshtml)
+|Items|
+Generated Location: (1983:49,0 [5] )
+|Items|
+

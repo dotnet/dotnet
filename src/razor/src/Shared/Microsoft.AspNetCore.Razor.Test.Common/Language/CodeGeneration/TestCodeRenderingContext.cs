@@ -15,7 +15,6 @@ public static class TestCodeRenderingContext
         RazorSourceDocument source = null,
         IntermediateNodeWriter nodeWriter = null)
     {
-        var codeWriter = new CodeWriter();
         var documentNode = new DocumentIntermediateNode();
         var options = RazorCodeGenerationOptions.CreateDesignTimeDefault();
 
@@ -40,7 +39,7 @@ public static class TestCodeRenderingContext
             nodeWriter = new DesignTimeNodeWriter();
         }
 
-        var context = new DefaultCodeRenderingContext(codeWriter, nodeWriter, codeDocument, documentNode, options);
+        var context = new DefaultCodeRenderingContext(nodeWriter, codeDocument, documentNode, options);
         context.Visitor = new RenderChildrenVisitor(context);
 
         return context;
@@ -52,7 +51,6 @@ public static class TestCodeRenderingContext
         RazorSourceDocument source = null,
         IntermediateNodeWriter nodeWriter = null)
     {
-        var codeWriter = new CodeWriter();
         var documentNode = new DocumentIntermediateNode();
         var options = RazorCodeGenerationOptions.CreateDefault();
 
@@ -77,7 +75,7 @@ public static class TestCodeRenderingContext
             nodeWriter = new RuntimeNodeWriter();
         }
 
-        var context = new DefaultCodeRenderingContext(codeWriter, nodeWriter, codeDocument, documentNode, options);
+        var context = new DefaultCodeRenderingContext(nodeWriter, codeDocument, documentNode, options);
         context.Visitor = new RenderChildrenVisitor(context);
 
         return context;

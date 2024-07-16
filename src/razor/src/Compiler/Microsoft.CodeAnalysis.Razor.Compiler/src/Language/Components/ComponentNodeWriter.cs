@@ -62,12 +62,6 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         return;
     }
 
-    // Currently the same for design time and runtime
-    public override void WriteComponentTypeInferenceMethod(CodeRenderingContext context, ComponentTypeInferenceMethodIntermediateNode node)
-    {
-        WriteComponentTypeInferenceMethod(context, node, returnComponentType: false);
-    }
-
     protected bool ShouldSuppressTypeInferenceCall(ComponentIntermediateNode node)
     {
         // When RZ10001 (type of component cannot be inferred) is reported, we want to suppress the equivalent CS0411 errors,
@@ -75,7 +69,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         return node.Diagnostics.Any(d => d.Id == ComponentDiagnosticFactory.GenericComponentTypeInferenceUnderspecified.Id);
     }
 
-    protected void WriteComponentTypeInferenceMethod(CodeRenderingContext context, ComponentTypeInferenceMethodIntermediateNode node, bool returnComponentType)
+    protected void WriteComponentTypeInferenceMethod(CodeRenderingContext context, ComponentTypeInferenceMethodIntermediateNode node, bool returnComponentType, bool allowNameof)
     {
         if (context == null)
         {
@@ -97,9 +91,9 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         //  public static void CreateFoo_0<T1, T2>(RenderTreeBuilder __builder, int seq, int __seq0, T1 __arg0, int __seq1, global::System.Collections.Generic.List<T2> __arg1, int __seq2, string __arg2)
         //  {
         //      builder.OpenComponent<Foo<T1, T2>>();
-        //      builder.AddComponentParameter(__seq0, "Attr0", __arg0);
-        //      builder.AddComponentParameter(__seq1, "Attr1", __arg1);
-        //      builder.AddComponentParameter(__seq2, "Attr2", __arg2);
+        //      builder.AddComponentParameter(__seq0, nameof(Foo<T1, T2>.Attr0), __arg0);
+        //      builder.AddComponentParameter(__seq1, nameof(Foo<T1, T2>.Attr1), __arg1);
+        //      builder.AddComponentParameter(__seq2, nameof(Foo<T1, T2>.Attr2), __arg2);
         //      builder.CloseComponent();
         //  }
         //
@@ -195,8 +189,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
                     context.CodeWriter.WriteStartInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, GetAddComponentParameterMethodName(context));
                     context.CodeWriter.Write(parameter.SeqName);
                     context.CodeWriter.Write(", ");
-
-                    context.CodeWriter.Write($"\"{attribute.AttributeName}\"");
+                    WriteComponentAttributeName(context, attribute, allowNameof);
                     context.CodeWriter.Write(", ");
 
                     if (!CanUseAddComponentParameter(context))
@@ -337,6 +330,41 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
                 writer.WriteLine(";");
             }
             writer.WriteLine("}");
+        }
+    }
+
+    protected static void WriteComponentAttributeName(CodeRenderingContext context, ComponentAttributeIntermediateNode attribute, bool allowNameof = true)
+    {
+        if (allowNameof && attribute.BoundAttribute?.ContainingType is string containingType)
+        {
+            containingType = attribute.Annotations[ComponentMetadata.Component.ConcreteContainingType] as string ?? containingType;
+
+            // nameof(containingType.PropertyName)
+            // This allows things like Find All References to work in the IDE as we have an actual reference to the parameter
+            context.CodeWriter.Write("nameof(");
+            TypeNameHelper.WriteGloballyQualifiedName(context.CodeWriter, containingType);
+            context.CodeWriter.Write(".");
+
+            var isSynthesized = attribute.Annotations.TryGetValue(ComponentMetadata.Bind.IsSynthesized, out string synthesizedString) && synthesizedString == bool.TrueString;
+            if (!isSynthesized)
+            {
+                var attributeSourceSpan = (SourceSpan)(attribute.Annotations[ComponentMetadata.Bind.PropertySpan] ?? attribute.Annotations[ComponentMetadata.Common.OriginalAttributeSpan]);
+                var requiresEscaping = attribute.PropertyName.IdentifierRequiresEscaping();
+                using (context.CodeWriter.BuildEnhancedLinePragma(attributeSourceSpan, context, characterOffset: requiresEscaping ? 1 : 0))
+                {
+                    context.CodeWriter.WriteIdentifierEscapeIfNeeded(attribute.PropertyName);
+                    context.CodeWriter.WriteLine(attribute.PropertyName);
+                }
+            }
+            else
+            {
+                context.CodeWriter.Write(attribute.PropertyName);
+            }
+            context.CodeWriter.Write(")");
+        }
+        else
+        {
+            context.CodeWriter.WriteStringLiteral(attribute.AttributeName);
         }
     }
 

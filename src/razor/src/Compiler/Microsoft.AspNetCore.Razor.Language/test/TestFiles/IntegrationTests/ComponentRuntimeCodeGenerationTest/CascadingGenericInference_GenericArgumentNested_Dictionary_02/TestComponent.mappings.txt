@@ -3,3 +3,8 @@
 Generated Location: (850:23,0 [33] )
 |() => new Dictionary<X, string>()|
 
+Source Location: (6:0,6 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Data|
+Generated Location: (2087:50,0 [4] )
+|Data|
+

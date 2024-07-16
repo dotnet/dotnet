@@ -21,17 +21,11 @@ internal class DefaultCodeRenderingContext : CodeRenderingContext
     private readonly PooledObject<ImmutableArray<SourceMapping>.Builder> _sourceMappingsBuilder;
 
     public DefaultCodeRenderingContext(
-        CodeWriter codeWriter,
         IntermediateNodeWriter nodeWriter,
         RazorCodeDocument codeDocument,
         DocumentIntermediateNode documentNode,
         RazorCodeGenerationOptions options)
     {
-        if (codeWriter == null)
-        {
-            throw new ArgumentNullException(nameof(codeWriter));
-        }
-
         if (nodeWriter == null)
         {
             throw new ArgumentNullException(nameof(nodeWriter));
@@ -52,7 +46,6 @@ internal class DefaultCodeRenderingContext : CodeRenderingContext
             throw new ArgumentNullException(nameof(options));
         }
 
-        CodeWriter = codeWriter;
         _codeDocument = codeDocument;
         _documentNode = documentNode;
         Options = options;
@@ -69,12 +62,9 @@ internal class DefaultCodeRenderingContext : CodeRenderingContext
             Diagnostics.Add(diagnostics[i]);
         }
 
-        var newLineString = codeDocument.Items[NewLineString];
-        if (newLineString != null)
-        {
-            // Set new line character to a specific string regardless of platform, for testing purposes.
-            codeWriter.NewLine = (string)newLineString;
-        }
+        // Set new line character to a specific string regardless of platform, for testing purposes.
+        var newLineString = codeDocument.Items[NewLineString] as string ?? Environment.NewLine;
+        CodeWriter = new CodeWriter(newLineString, options);
 
         Items[NewLineString] = codeDocument.Items[NewLineString];
         Items[SuppressUniqueIds] = codeDocument.Items[SuppressUniqueIds] ?? options.SuppressUniqueIds;
@@ -127,7 +117,7 @@ internal class DefaultCodeRenderingContext : CodeRenderingContext
         AddSourceMappingFor(node.Source.Value);
     }
 
-    public override void AddSourceMappingFor(SourceSpan source)
+    public override void AddSourceMappingFor(SourceSpan source, int offset = 0)
     {
         if (SourceDocument.FilePath != null &&
             !string.Equals(SourceDocument.FilePath, source.FilePath, StringComparison.OrdinalIgnoreCase))
@@ -136,7 +126,9 @@ internal class DefaultCodeRenderingContext : CodeRenderingContext
             return;
         }
 
-        var generatedLocation = new SourceSpan(CodeWriter.Location, source.Length);
+        var currentLocation = CodeWriter.Location with { AbsoluteIndex = CodeWriter.Location.AbsoluteIndex + offset, CharacterIndex = CodeWriter.Location.CharacterIndex + offset };
+
+        var generatedLocation = new SourceSpan(currentLocation, source.Length);
         var sourceMapping = new SourceMapping(source, generatedLocation);
 
         SourceMappings.Add(sourceMapping);
@@ -220,6 +212,7 @@ internal class DefaultCodeRenderingContext : CodeRenderingContext
     public override void Dispose()
     {
         _sourceMappingsBuilder.Dispose();
+        CodeWriter.Dispose();
     }
 
     private struct ScopeInternal

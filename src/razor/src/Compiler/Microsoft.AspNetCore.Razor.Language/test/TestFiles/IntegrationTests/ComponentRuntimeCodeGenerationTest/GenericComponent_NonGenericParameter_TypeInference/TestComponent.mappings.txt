@@ -24,3 +24,13 @@ Generated Location: (1312:46,0 [38] )
     MyClass Hello = new MyClass();
 |
 
+Source Location: (33:1,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Item|
+Generated Location: (1991:66,0 [4] )
+|Item|
+
+Source Location: (42:1,22 [3] x:\dir\subdir\Test\TestComponent.cshtml)
+|Foo|
+Generated Location: (2239:75,0 [3] )
+|Foo|
+

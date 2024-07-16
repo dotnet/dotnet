@@ -47,7 +47,15 @@ context.ToLowerInvariant()
 #nullable disable
 
             __builder.OpenComponent<global::Test.MyComponent>(2);
-            __builder.AddComponentParameter(3, "Header", (global::Microsoft.AspNetCore.Components.RenderFragment<System.String>)(
+            __builder.AddComponentParameter(3, nameof(global::Test.MyComponent.
+#nullable restore
+#line (2,14)-(2,20) "x:\dir\subdir\Test\TestComponent.cshtml"
+Header
+
+#line default
+#line hidden
+#nullable disable
+            ), (global::Microsoft.AspNetCore.Components.RenderFragment<System.String>)(
 #nullable restore
 #line (2,22)-(2,28) "x:\dir\subdir\Test\TestComponent.cshtml"
 header

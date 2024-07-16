@@ -57,6 +57,26 @@
         <target state="translated">{0} 크기의 버퍼를 할당할 수 없습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Contains_more_than_one_element">
+        <source>Contains more than one element</source>
+        <target state="new">Contains more than one element</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Contains_more_than_one_matching_element">
+        <source>Contains more than one matching element</source>
+        <target state="new">Contains more than one matching element</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Contains_no_elements">
+        <source>Contains no elements</source>
+        <target state="new">Contains no elements</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Contains_no_matching_elements">
+        <source>Contains no matching elements</source>
+        <target state="new">Contains no matching elements</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Destination_is_too_short">
         <source>Destination is too short.</source>
         <target state="translated">대상이 너무 짧습니다.</target>

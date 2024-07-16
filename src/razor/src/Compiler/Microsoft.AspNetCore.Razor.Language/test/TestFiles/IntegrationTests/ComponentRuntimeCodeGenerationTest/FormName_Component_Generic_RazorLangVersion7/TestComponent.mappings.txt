@@ -44,3 +44,13 @@ Generated Location: (2379:80,0 [52] )
     [Parameter] public T Parameter { get; set; }
 |
 
+Source Location: (140:2,82 [9] x:\dir\subdir\Test\TestComponent.cshtml)
+|Parameter|
+Generated Location: (3337:103,0 [9] )
+|Parameter|
+
+Source Location: (245:3,87 [9] x:\dir\subdir\Test\TestComponent.cshtml)
+|Parameter|
+Generated Location: (4211:120,0 [9] )
+|Parameter|
+

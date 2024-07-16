@@ -76,8 +76,24 @@ namespace __Blazor.Test.UseTestComponent
         public static void CreateTestComponent_0<TItem1, TItem2>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, (TItem1, TItem2) __arg0, int __seq1, global::System.Collections.Generic.List<(TItem1, TItem2)> __arg1, int __seq2, global::Microsoft.AspNetCore.Components.RenderFragment<(TItem1, TItem2)> __arg2)
         {
         __builder.OpenComponent<global::Test.TestComponent<TItem1, TItem2>>(seq);
-        __builder.AddComponentParameter(__seq0, "Item1", __arg0);
-        __builder.AddComponentParameter(__seq1, "Items2", __arg1);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.TestComponent<TItem1, TItem2>.
+#nullable restore
+#line (2,16)-(2,21) "x:\dir\subdir\Test\UseTestComponent.cshtml"
+Item1
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
+        __builder.AddComponentParameter(__seq1, nameof(global::Test.TestComponent<TItem1, TItem2>.
+#nullable restore
+#line (2,28)-(2,34) "x:\dir\subdir\Test\UseTestComponent.cshtml"
+Items2
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg1);
         __builder.AddComponentParameter(__seq2, "ChildContent", __arg2);
         __builder.CloseComponent();
         }

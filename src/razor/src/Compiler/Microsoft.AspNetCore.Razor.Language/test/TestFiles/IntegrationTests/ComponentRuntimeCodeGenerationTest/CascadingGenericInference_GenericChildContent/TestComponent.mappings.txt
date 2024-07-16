@@ -8,3 +8,8 @@ Source Location: (50:0,50 [12] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1426:34,0 [12] )
 |context.Year|
 
+Source Location: (6:0,6 [5] x:\dir\subdir\Test\TestComponent.cshtml)
+|Items|
+Generated Location: (2366:61,0 [5] )
+|Items|
+

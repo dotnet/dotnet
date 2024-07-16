@@ -35,6 +35,7 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
     public string Name { get; }
     public string TypeName { get; }
     public string DisplayName { get; }
+    public string? ContainingType { get; }
 
     public string? IndexerNamePrefix { get; }
     public string? IndexerTypeName { get; }
@@ -62,6 +63,7 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
         string? indexerTypeName,
         DocumentationObject documentationObject,
         string displayName,
+        string? containingType,
         bool caseSensitive,
         bool isEditorRequired,
         ImmutableArray<BoundAttributeParameterDescriptor> parameters,
@@ -76,6 +78,7 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
         IndexerTypeName = indexerTypeName;
         _documentationObject = documentationObject;
         DisplayName = displayName;
+        ContainingType = containingType;
         Parameters = parameters.NullToEmpty();
         Metadata = metadata ?? MetadataCollection.Empty;
 
@@ -137,6 +140,7 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
         builder.AppendData(IndexerNamePrefix);
         builder.AppendData(IndexerTypeName);
         builder.AppendData(DisplayName);
+        builder.AppendData(ContainingType);
 
         DocumentationObject.AppendToChecksum(in builder);
 

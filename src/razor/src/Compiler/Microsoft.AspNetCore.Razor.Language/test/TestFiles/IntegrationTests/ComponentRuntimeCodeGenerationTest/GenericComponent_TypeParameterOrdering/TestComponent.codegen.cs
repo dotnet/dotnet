@@ -18,7 +18,15 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent<IComposedInterface, string>>(0);
-            __builder.AddComponentParameter(1, "Value", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>(
+            __builder.AddComponentParameter(1, nameof(global::Test.MyComponent<IComposedInterface, string>.
+#nullable restore
+#line (1,64)-(1,69) "x:\dir\subdir\Test\TestComponent.cshtml"
+Value
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>(
 #nullable restore
 #line (1,71)-(1,86) "x:\dir\subdir\Test\TestComponent.cshtml"
 _componentValue
@@ -27,11 +35,19 @@ _componentValue
 #line hidden
 #nullable disable
             ));
-            __builder.AddComponentParameter(2, "ValueChanged", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<string>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<string>(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => _componentValue = __value, _componentValue))));
+            __builder.AddComponentParameter(2, nameof(global::Test.MyComponent<IComposedInterface, string>.ValueChanged), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<string>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<string>(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => _componentValue = __value, _componentValue))));
             __builder.CloseComponent();
             __builder.AddMarkupContent(3, "\r\n");
             __builder.OpenComponent<global::Test.MyComponent<IComposedInterface, string>>(4);
-            __builder.AddComponentParameter(5, "Value", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>(
+            __builder.AddComponentParameter(5, nameof(global::Test.MyComponent<IComposedInterface, string>.
+#nullable restore
+#line (2,64)-(2,69) "x:\dir\subdir\Test\TestComponent.cshtml"
+Value
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>(
 #nullable restore
 #line (2,71)-(2,86) "x:\dir\subdir\Test\TestComponent.cshtml"
 _componentValue
@@ -40,7 +56,7 @@ _componentValue
 #line hidden
 #nullable disable
             ));
-            __builder.AddComponentParameter(6, "ValueChanged", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<string>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<string>(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => _componentValue = __value, _componentValue))));
+            __builder.AddComponentParameter(6, nameof(global::Test.MyComponent<IComposedInterface, string>.ValueChanged), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<string>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<string>(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => _componentValue = __value, _componentValue))));
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

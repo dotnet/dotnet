@@ -8,3 +8,8 @@ Source Location: (38:0,38 [18] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1079:31,0 [18] )
 |context.ToString()|
 
+Source Location: (13:0,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Item|
+Generated Location: (1890:54,0 [4] )
+|Item|
+

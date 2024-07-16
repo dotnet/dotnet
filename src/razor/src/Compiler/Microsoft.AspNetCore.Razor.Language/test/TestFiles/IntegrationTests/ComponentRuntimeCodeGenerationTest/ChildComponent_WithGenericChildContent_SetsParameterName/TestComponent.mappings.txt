@@ -1,5 +1,10 @@
-﻿Source Location: (93:2,32 [23] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (13:0,13 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyAttr|
+Generated Location: (884:23,0 [6] )
+|MyAttr|
+
+Source Location: (93:2,32 [23] x:\dir\subdir\Test\TestComponent.cshtml)
 |item.ToLowerInvariant()|
-Generated Location: (1250:28,0 [23] )
+Generated Location: (1429:36,0 [23] )
 |item.ToLowerInvariant()|
 

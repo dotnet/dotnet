@@ -55,8 +55,24 @@ namespace __Blazor.Test.TestComponent
         public static void CreateMyComponent_0<T>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::Test.MyClass<T> __arg0, int __seq1, global::System.Boolean __arg1)
         {
         __builder.OpenComponent<global::Test.MyComponent<T>>(seq);
-        __builder.AddAttribute(__seq0, "MyParameter", (object)__arg0);
-        __builder.AddAttribute(__seq1, "BoolParameter", (object)__arg1);
+        __builder.AddAttribute(__seq0, nameof(global::Test.MyComponent<T>.
+#nullable restore
+#line (1,14)-(1,25) "x:\dir\subdir\Test\TestComponent.cshtml"
+MyParameter
+
+#line default
+#line hidden
+#nullable disable
+        ), (object)__arg0);
+        __builder.AddAttribute(__seq1, nameof(global::Test.MyComponent<T>.
+#nullable restore
+#line (1,30)-(1,43) "x:\dir\subdir\Test\TestComponent.cshtml"
+BoolParameter
+
+#line default
+#line hidden
+#nullable disable
+        ), (object)__arg1);
         __builder.CloseComponent();
         }
     }

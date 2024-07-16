@@ -177,4 +177,16 @@
   <data name="Unsupported_type_0" xml:space="preserve">
     <value>Unsupported type: '{0}'.</value>
   </data>
+  <data name="Contains_no_elements" xml:space="preserve">
+    <value>Contains no elements</value>
+  </data>
+  <data name="Contains_more_than_one_element" xml:space="preserve">
+    <value>Contains more than one element</value>
+  </data>
+  <data name="Contains_no_matching_elements" xml:space="preserve">
+    <value>Contains no matching elements</value>
+  </data>
+  <data name="Contains_more_than_one_matching_element" xml:space="preserve">
+    <value>Contains more than one matching element</value>
+  </data>
 </root>

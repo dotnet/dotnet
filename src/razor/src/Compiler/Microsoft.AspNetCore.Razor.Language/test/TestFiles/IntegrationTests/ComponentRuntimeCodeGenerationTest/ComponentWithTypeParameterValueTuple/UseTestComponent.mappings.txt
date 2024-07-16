@@ -33,3 +33,13 @@ Generated Location: (1694:59,0 [176] )
     List<(string, int)> items2 = new List<(string, int)>() { item2 };
 |
 
+Source Location: (28:1,15 [5] x:\dir\subdir\Test\UseTestComponent.cshtml)
+|Item1|
+Generated Location: (2684:81,0 [5] )
+|Item1|
+
+Source Location: (40:1,27 [6] x:\dir\subdir\Test\UseTestComponent.cshtml)
+|Items2|
+Generated Location: (2947:90,0 [6] )
+|Items2|
+

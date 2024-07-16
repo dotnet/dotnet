@@ -18,7 +18,15 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.TestComponent>(0);
-            __builder.AddComponentParameter(1, "Gutter", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<(System.Int32 Horizontal, System.Int32 Vertical)>(
+            __builder.AddComponentParameter(1, nameof(global::Test.TestComponent.
+#nullable restore
+#line (5,16)-(5,22) "x:\dir\subdir\Test\TestComponent.cshtml"
+Gutter
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<(System.Int32 Horizontal, System.Int32 Vertical)>(
 #nullable restore
 #line (5,24)-(5,32) "x:\dir\subdir\Test\TestComponent.cshtml"
 (32, 16)

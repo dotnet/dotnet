@@ -11,6 +11,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Razor;
 using Microsoft.VisualStudio.Razor.LanguageClient;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 using Moq;
@@ -79,25 +80,6 @@ internal static class VsMocks
         return builder.Mock.Object;
     }
 
-    public static IVsService<TService, TInterface> CreateVsService<TService, TInterface>(Mock<TInterface> serviceMock)
-        where TService : class
-        where TInterface : class
-        => CreateVsService<TService, TInterface>(serviceMock.Object);
-
-    public static IVsService<TService, TInterface> CreateVsService<TService, TInterface>(TInterface service)
-        where TService : class
-        where TInterface : class
-    {
-        var mock = new StrictMock<IVsService<TService, TInterface>>();
-
-        mock.Setup(x => x.GetValueAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(service);
-        mock.Setup(x => x.GetValueOrNullAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(service);
-
-        return mock.Object;
-    }
-
     public interface IServiceProviderBuilder
     {
         void AddService<T>(T? serviceInstance)
@@ -160,6 +142,59 @@ internal static class VsMocks
         }
     }
 
+    public static IAsyncServiceProvider CreateAsyncServiceProvider(Action<IAsyncServiceProviderBuilder>? configure = null)
+    {
+        var builder = new AsyncServiceProviderBuilder();
+        configure?.Invoke(builder);
+        return builder.Mock.Object;
+    }
+
+    public interface IAsyncServiceProviderBuilder
+    {
+        void AddService<TService, TInterface>(TInterface service)
+            where TInterface : class;
+        void AddService<TService, TInterface>(Func<TInterface> service)
+            where TInterface : class;
+    }
+
+    private class AsyncServiceProviderBuilder : IAsyncServiceProviderBuilder
+    {
+        private readonly StrictMock<IAsyncServiceProvider> _mock1;
+        private readonly Mock<IAsyncServiceProvider2> _mock2;
+        private readonly Mock<IAsyncServiceProvider3> _mock3;
+
+        public StrictMock<IAsyncServiceProvider> Mock => _mock1;
+
+        public AsyncServiceProviderBuilder()
+        {
+            _mock1 = new();
+            _mock2 = Mock.As<IAsyncServiceProvider2>();
+            _mock3 = Mock.As<IAsyncServiceProvider3>();
+        }
+
+        public void AddService<TService, TInterface>(TInterface service)
+            where TInterface : class
+        {
+            _mock1.Setup(x => x.GetServiceAsync(typeof(TService)))
+                  .ReturnsAsync(service);
+            _mock2.Setup(x => x.GetServiceAsync(typeof(TService), /*swallowException*/ false))
+                  .ReturnsAsync(service);
+            _mock3.Setup(x => x.GetServiceAsync<TService, TInterface>(/*throwOnFailure*/ true, It.IsAny<CancellationToken>()))
+                  .ReturnsAsync(service);
+        }
+
+        public void AddService<TService, TInterface>(Func<TInterface> getServiceCallback)
+            where TInterface : class
+        {
+            _mock1.Setup(x => x.GetServiceAsync(typeof(TService)))
+                  .ReturnsAsync(() => getServiceCallback());
+            _mock2.Setup(x => x.GetServiceAsync(typeof(TService), /*swallowException*/ false))
+                  .ReturnsAsync(() => getServiceCallback());
+            _mock3.Setup(x => x.GetServiceAsync<TService, TInterface>(/*throwOnFailure*/ true, It.IsAny<CancellationToken>()))
+                  .ReturnsAsync(() => getServiceCallback());
+        }
+    }
+
     public static IComponentModel CreateComponentModel(Action<IComponentModelBuilder>? configure = null)
     {
         var builder = new ComponentModelBuilder();
@@ -218,5 +253,24 @@ internal static class VsMocks
                 yield return new Export(contractName, exportValueGetter);
             }
         }
+    }
+
+    public static IVsService<TService, TInterface> CreateVsService<TService, TInterface>(Mock<TInterface> serviceMock)
+        where TService : class
+        where TInterface : class
+        => CreateVsService<TService, TInterface>(serviceMock.Object);
+
+    public static IVsService<TService, TInterface> CreateVsService<TService, TInterface>(TInterface service)
+        where TService : class
+        where TInterface : class
+    {
+        var mock = new StrictMock<IVsService<TService, TInterface>>();
+
+        mock.Setup(x => x.GetValueAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(service);
+        mock.Setup(x => x.GetValueOrNullAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(service);
+
+        return mock.Object;
     }
 }

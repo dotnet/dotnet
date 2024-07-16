@@ -58,19 +58,43 @@ namespace __Blazor.Test.TestComponent
         public static void CreateMyComponent_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0)
         {
         __builder.OpenComponent<global::Test.MyComponent<TItem>>(seq);
-        __builder.AddComponentParameter(__seq0, "Item", __arg0);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.MyComponent<TItem>.
+#nullable restore
+#line (1,14)-(1,18) "x:\dir\subdir\Test\TestComponent.cshtml"
+Item
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
         __builder.CloseComponent();
         }
         public static void CreateMyComponent_1<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0)
         {
         __builder.OpenComponent<global::Test.MyComponent<TItem>>(seq);
-        __builder.AddComponentParameter(__seq0, "Item", __arg0);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.MyComponent<TItem>.
+#nullable restore
+#line (2,14)-(2,18) "x:\dir\subdir\Test\TestComponent.cshtml"
+Item
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
         __builder.CloseComponent();
         }
         public static void CreateMyComponent_2<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0)
         {
         __builder.OpenComponent<global::Test.MyComponent<TItem>>(seq);
-        __builder.AddComponentParameter(__seq0, "Item", __arg0);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.MyComponent<TItem>.
+#nullable restore
+#line (3,14)-(3,18) "x:\dir\subdir\Test\TestComponent.cshtml"
+Item
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
         __builder.CloseComponent();
         }
     }
