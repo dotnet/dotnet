@@ -9,9 +9,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Remote.Razor;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.Test.Cohost;
+namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-internal class TestServiceBroker : IRazorServiceBroker
+internal sealed class TestServiceBroker : IRazorServiceBroker
 {
     private Solution? _solution;
 

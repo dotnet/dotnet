@@ -8,7 +8,7 @@ using System.Linq;
 using System;
 using Xunit;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.Test.Cohost;
+namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 internal static class ServiceFactoryMap
 {

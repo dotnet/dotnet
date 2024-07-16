@@ -13,10 +13,30 @@ using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.Test.Cohost;
+namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostLinkedEditingRangeTest(ITestOutputHelper testOutputHelper) : CohostTestBase(testOutputHelper)
+public class CohostLinkedEditingRangeEndpointTest(ITestOutputHelper testOutputHelper) : CohostTestBase(testOutputHelper)
 {
+    [Theory]
+    [InlineData("$$PageTitle", "PageTitle")]
+    [InlineData("Page$$Title", "PageTitle")]
+    [InlineData("PageTitle$$", "PageTitle")]
+    [InlineData("PageTitle", "$$PageTitle")]
+    [InlineData("PageTitle", "Page$$Title")]
+    [InlineData("PageTitle", "PageTitle$$")]
+    public async Task Component_StartAndEndTag(string startTag, string endTag)
+    {
+        var input = $"""
+            This is a Razor document.
+
+            <[|{startTag}|]>This is the title</[|{endTag}|]>
+
+            The end.
+            """;
+
+        await VerifyLinkedEditingRangeAsync(input);
+    }
+
     [Theory]
     [InlineData("$$div")]
     [InlineData("di$$v")]
@@ -141,7 +161,7 @@ public class CohostLinkedEditingRangeTest(ITestOutputHelper testOutputHelper) : 
     private async Task VerifyLinkedEditingRangeAsync(string input)
     {
         TestFileMarkupParser.GetPositionAndSpans(input, out input, out int cursorPosition, out ImmutableArray<TextSpan> spans);
-        var document = CreateRazorDocument(input);
+        var document = CreateProjectAndRazorDocument(input);
         var sourceText = await document.GetTextAsync(DisposalToken);
         sourceText.GetLineAndOffset(cursorPosition, out var lineIndex, out var characterIndex);
 
