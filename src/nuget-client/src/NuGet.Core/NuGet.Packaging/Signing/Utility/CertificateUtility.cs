@@ -382,5 +382,67 @@ namespace NuGet.Packaging.Signing
 
             return certificatesRawData.AsReadOnly();
         }
+
+        /// <summary>
+        /// Tries to deduce the hash algorithm from the given certificate fingerprint.
+        /// </summary>
+        /// <param name="certificateFingerprint">The certificate fingerprint.</param>
+        /// <param name="hashAlgorithmName">The deduced hash algorithm name.</param>
+        /// <returns><c>true</c> if the hash algorithm was successfully deduced; otherwise, <c>false</c>.</returns>
+        public static bool TryDeduceHashAlgorithm(string certificateFingerprint, out HashAlgorithmName hashAlgorithmName)
+        {
+            hashAlgorithmName = HashAlgorithmName.Unknown;
+
+            if (!IsHex(certificateFingerprint))
+                return false;
+
+            // One hexadecimal character is 4 bits.
+            switch (certificateFingerprint.Length)
+            {
+                case 40: // 64 characters * 4 bits/character = 160 bits
+                    hashAlgorithmName = HashAlgorithmName.SHA1;
+                    return true;
+
+                case 64: // 64 characters * 4 bits/character = 256 bits
+                    hashAlgorithmName = HashAlgorithmName.SHA256;
+                    return true;
+
+                case 96: // 96 characters * 4 bits/character = 384 bits
+                    hashAlgorithmName = HashAlgorithmName.SHA384;
+                    return true;
+
+                case 128: // 128 characters * 4 bits/character = 512 bits
+                    hashAlgorithmName = HashAlgorithmName.SHA512;
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Determines if the given string represents a valid hexadecimal value.
+        /// </summary>
+        /// <param name="certificateFingerprint">The string to check.</param>
+        /// <returns><c>true</c> if the string is a valid hexadecimal value; otherwise, <c>false</c>.</returns>
+        private static bool IsHex(string certificateFingerprint)
+        {
+            if (string.IsNullOrEmpty(certificateFingerprint))
+            {
+                return false;
+            }
+
+            for (var i = 0; i < certificateFingerprint.Length; ++i)
+            {
+                char c = certificateFingerprint[i];
+
+                if (!char.IsDigit(c) && !(c >= 'a' && c <= 'f') && !(c >= 'A' && c <= 'F'))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }

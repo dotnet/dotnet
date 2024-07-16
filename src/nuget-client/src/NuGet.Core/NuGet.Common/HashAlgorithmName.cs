@@ -9,5 +9,6 @@ namespace NuGet.Common
         SHA256 = 1,
         SHA384 = 2,
         SHA512 = 3,
+        SHA1 = 4
     }
 }

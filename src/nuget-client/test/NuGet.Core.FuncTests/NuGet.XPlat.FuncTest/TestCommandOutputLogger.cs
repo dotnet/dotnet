@@ -70,6 +70,8 @@ namespace NuGet.XPlat.FuncTest
             }
         }
 
+        public ConcurrentQueue<string> WarningMessages => Logger.WarningMessages;
+
         public ConcurrentQueue<string> ErrorMessages
         {
             get

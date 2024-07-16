@@ -1697,7 +1697,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SHA-1 fingerprint of the certificate used to search a local certificate store for the certificate. The certificate store can be specified by --certificate-store-name and --certificate-store-location options..
+        ///   Looks up a localized string similar to SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate. The certificate store can be specified by --certificate-store-name and --certificate-store-location options..
         /// </summary>
         internal static string SignCommandCertificateFingerprintDescription {
             get {
@@ -1769,6 +1769,15 @@ namespace NuGet.CommandLine.XPlat {
         internal static string SignCommandHashAlgorithmDescription {
             get {
                 return ResourceManager.GetString("SignCommandHashAlgorithmDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid value for &apos;--certificate-fingerprint&apos; option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal)..
+        /// </summary>
+        internal static string SignCommandInvalidCertificateFingerprint {
+            get {
+                return ResourceManager.GetString("SignCommandInvalidCertificateFingerprint", resourceCulture);
             }
         }
         
@@ -1949,15 +1958,6 @@ namespace NuGet.CommandLine.XPlat {
         internal static string SourcesCommandValidProtocolVersion {
             get {
                 return ResourceManager.GetString("SourcesCommandValidProtocolVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        internal static string String1 {
-            get {
-                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
         

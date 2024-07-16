@@ -629,7 +629,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
     <value>Directory where the signed package(s) should be saved. By default the original package is overwritten by the signed package.</value>
   </data>
   <data name="SignCommandCertificateFingerprintDescription" xml:space="preserve">
-    <value>SHA-1 fingerprint of the certificate used to search a local certificate store for the certificate. The certificate store can be specified by --certificate-store-name and --certificate-store-location options.</value>
+    <value>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate. The certificate store can be specified by --certificate-store-name and --certificate-store-location options.</value>
     <comment>Please don't localize '--certificate-store-name' and '--certificate-store-location'</comment>
   </data>
   <data name="SignCommandCertificatePasswordDescription" xml:space="preserve">
@@ -740,9 +740,6 @@ The search is a case-insensitive string comparison using the supplied value, whi
   </data>
   <data name="Error_TrustFingerPrintAlreadyExist" xml:space="preserve">
     <value>The certificate finger you're trying to add is already in the certificate fingerprint list.</value>
-  </data>
-  <data name="String1" xml:space="preserve">
-    <value />
   </data>
   <data name="Warning_HttpServerUsage" xml:space="preserve">
     <value>You are running the '{0}' operation with an 'HTTP' source, '{1}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</value>
@@ -968,5 +965,8 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
   </data>
   <data name="SourcesCommandAllowInsecureConnectionsDescription" xml:space="preserve">
     <value>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</value>
+  </data>
+  <data name="SignCommandInvalidCertificateFingerprint" xml:space="preserve">
+    <value>Invalid value for '--certificate-fingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</value>
   </data>
 </root>

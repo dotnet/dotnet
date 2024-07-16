@@ -42,7 +42,7 @@ namespace NuGet.Commands
         public string SubjectName { get; set; }
 
         /// <summary>
-        /// The SHA-1 fingerprint of the certificate.
+        /// SHA256 or SHA384 or SHA512 fingerprint of the certificate.
         /// </summary>
         public string Fingerprint { get; set; }
 

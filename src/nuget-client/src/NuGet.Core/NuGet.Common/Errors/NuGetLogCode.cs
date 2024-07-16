@@ -603,6 +603,11 @@ namespace NuGet.Common
         NU3042 = 3042,
 
         /// <summary>
+        /// The certificate fingerprint is invalid.
+        /// </summary>
+        NU3043 = 3043,
+
+        /// <summary>
         /// Undefined Package Error.
         /// </summary>
         NU5000 = 5000,
