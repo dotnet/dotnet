@@ -99,7 +99,7 @@ namespace NuGet.CommandLine.XPlat
 
                     ValidatePackagePaths(packagePaths);
                     WarnIfNoTimestamper(logger, timestamper);
-                    ValidateCertificateInputs(path, fingerprint, subject, store, location);
+                    ValidateCertificateInputs(path, fingerprint, subject, store, location, logger);
                     ValidateAndCreateOutputDirectory(outputDirectory);
 
                     SigningSpecificationsV1 signingSpec = SigningSpecifications.V1;
@@ -209,7 +209,7 @@ namespace NuGet.CommandLine.XPlat
         }
 
         private static void ValidateCertificateInputs(CommandOption path, CommandOption fingerprint,
-                                                      CommandOption subject, CommandOption store, CommandOption location)
+                                                      CommandOption subject, CommandOption store, CommandOption location, ILogger logger)
         {
             if (string.IsNullOrEmpty(path.Value()) &&
                 string.IsNullOrEmpty(fingerprint.Value()) &&
@@ -231,6 +231,17 @@ namespace NuGet.CommandLine.XPlat
             {
                 // Thow if the user provided a fingerprint and a subject
                 throw new ArgumentException(Strings.SignCommandMultipleCertificateException);
+            }
+            else if (fingerprint.Value() != null)
+            {
+                if (!CertificateUtility.TryDeduceHashAlgorithm(fingerprint.Value(), out HashAlgorithmName hashAlgorithmName))
+                {
+                    throw new ArgumentException(Strings.SignCommandInvalidCertificateFingerprint);
+                }
+                else if (hashAlgorithmName == HashAlgorithmName.SHA1)
+                {
+                    logger.Log(LogMessage.CreateWarning(NuGetLogCode.NU3043, Strings.SignCommandInvalidCertificateFingerprint));
+                }
             }
         }
     }

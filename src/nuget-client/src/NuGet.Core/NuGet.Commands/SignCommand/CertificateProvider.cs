@@ -172,7 +172,7 @@ namespace NuGet.Commands
 
         private static X509Certificate2Collection LoadCertificateFromStore(CertificateSourceOptions options)
         {
-            X509Certificate2Collection resultCollection = null;
+            X509Certificate2Collection resultCollection = new();
 
             using var store = new X509Store(options.StoreName, options.StoreLocation);
 
@@ -184,9 +184,27 @@ namespace NuGet.Commands
             // validity checks ourselves.
             const bool validOnly = false;
 
-            if (!string.IsNullOrEmpty(options.Fingerprint))
+            if (!string.IsNullOrEmpty(options.Fingerprint) &&
+                CertificateUtility.TryDeduceHashAlgorithm(options.Fingerprint, out Common.HashAlgorithmName hashAlgorithmName))
             {
-                resultCollection = store.Certificates.Find(X509FindType.FindByThumbprint, options.Fingerprint, validOnly);
+                if (hashAlgorithmName == Common.HashAlgorithmName.SHA1)
+                {
+                    resultCollection = store.Certificates.Find(X509FindType.FindByThumbprint, options.Fingerprint, validOnly);
+                }
+                else if (hashAlgorithmName != Common.HashAlgorithmName.Unknown)
+                {
+                    foreach (var cert in store.Certificates)
+                    {
+                        string actualFingerprint = CertificateUtility.GetHashString(cert, hashAlgorithmName);
+
+                        if (string.Equals(actualFingerprint, options.Fingerprint, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            resultCollection.Add(cert);
+                            break;
+                        }
+                    }
+
+                }
             }
             else if (!string.IsNullOrEmpty(options.SubjectName))
             {
@@ -195,7 +213,6 @@ namespace NuGet.Commands
 
             store.Close();
 
-            resultCollection = resultCollection ?? new X509Certificate2Collection();
             resultCollection = GetValidCertificates(resultCollection);
 
             return resultCollection;

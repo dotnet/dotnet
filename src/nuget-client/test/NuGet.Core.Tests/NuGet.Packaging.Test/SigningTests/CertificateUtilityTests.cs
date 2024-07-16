@@ -344,6 +344,33 @@ namespace NuGet.Packaging.Test
             }
         }
 
+        [Theory]
+        [InlineData("ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234", Common.HashAlgorithmName.SHA1)]
+        [InlineData("ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234", Common.HashAlgorithmName.SHA256)]
+        [InlineData("ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234", Common.HashAlgorithmName.SHA384)]
+        [InlineData("ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234", Common.HashAlgorithmName.SHA512)]
+        public void TryDeduceHashAlgorithm_ValidInputs_ReturnsCorrectAlgorithm(string certificateFingerprint, Common.HashAlgorithmName expectedAlgorithm)
+        {
+            bool result = CertificateUtility.TryDeduceHashAlgorithm(certificateFingerprint, out Common.HashAlgorithmName hashAlgorithmName);
+
+            Assert.True(result);
+            Assert.Equal(expectedAlgorithm, hashAlgorithmName);
+        }
+
+        [Theory]
+        [InlineData("GHIJKLMNOPQRSTUVWXYZ")] // Non-hex characters
+        [InlineData("ABCD")]
+        [InlineData(null)]
+        [InlineData("")]
+        public void TryDeduceHashAlgorithm_InvalidInputs_ReturnsFalse(string certificateFingerprint)
+        {
+            bool result = CertificateUtility.TryDeduceHashAlgorithm(certificateFingerprint, out Common.HashAlgorithmName hashAlgorithmName);
+
+            Assert.False(result);
+            Assert.Equal(Common.HashAlgorithmName.Unknown, hashAlgorithmName);
+        }
+
+
         private static int GetExtendedKeyUsageCount(X509Certificate2 certificate)
         {
             foreach (var extension in certificate.Extensions)
