@@ -36,6 +36,8 @@
     
     <Nullable>Disable</Nullable>
     <LangVersion>latest</LangVersion>
+
+    <CommonSrc>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', 'common'))</CommonSrc>
   </PropertyGroup>
 
   <PropertyGroup>
