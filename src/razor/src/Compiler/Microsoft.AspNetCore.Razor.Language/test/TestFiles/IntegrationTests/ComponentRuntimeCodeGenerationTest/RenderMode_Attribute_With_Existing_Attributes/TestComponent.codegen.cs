@@ -18,7 +18,15 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.TestComponent>(0);
-            __builder.AddComponentParameter(1, "P2", "abc");
+            __builder.AddComponentParameter(1, nameof(global::Test.TestComponent.
+#nullable restore
+#line (1,16)-(1,18) "x:\dir\subdir\Test\TestComponent.cshtml"
+P2
+
+#line default
+#line hidden
+#nullable disable
+            ), "abc");
             global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode = 
 #nullable restore
 #line (1,38)-(1,102) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -29,7 +37,15 @@ Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 #nullable disable
 
             ;
-            __builder.AddComponentParameter(2, "P1", "def");
+            __builder.AddComponentParameter(2, nameof(global::Test.TestComponent.
+#nullable restore
+#line (1,104)-(1,106) "x:\dir\subdir\Test\TestComponent.cshtml"
+P1
+
+#line default
+#line hidden
+#nullable disable
+            ), "def");
             __builder.AddComponentRenderMode(__renderMode);
             __builder.CloseComponent();
         }

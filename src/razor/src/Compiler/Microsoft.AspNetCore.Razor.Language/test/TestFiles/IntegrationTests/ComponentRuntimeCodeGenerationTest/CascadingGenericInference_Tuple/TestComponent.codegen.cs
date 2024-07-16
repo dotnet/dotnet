@@ -45,7 +45,15 @@ namespace __Blazor.Test.TestComponent
         public static void CreateParentComponent_0<T>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, (T, T) __arg0, int __seq1, Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
         __builder.OpenComponent<global::Test.ParentComponent<T>>(seq);
-        __builder.AddComponentParameter(__seq0, "Parameter", __arg0);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.ParentComponent<T>.
+#nullable restore
+#line (1,18)-(1,27) "x:\dir\subdir\Test\TestComponent.cshtml"
+Parameter
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
         __builder.AddComponentParameter(__seq1, "ChildContent", __arg1);
         __builder.CloseComponent();
         }

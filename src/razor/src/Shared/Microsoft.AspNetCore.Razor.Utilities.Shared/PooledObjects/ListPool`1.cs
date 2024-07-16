@@ -18,6 +18,9 @@ internal static partial class ListPool<T>
 {
     public static readonly ObjectPool<List<T>> Default = DefaultPool.Create(Policy.Instance);
 
+    public static ObjectPool<List<T>> Create(int size = 20)
+        => DefaultPool.Create(Policy.Instance, size);
+
     public static PooledObject<List<T>> GetPooledObject()
         => Default.GetPooledObject();
 

@@ -22,3 +22,13 @@ Source Location: (79:2,31 [26] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1273:41,0 [26] )
 |(IEnumerable<int> x) => {}|
 
+Source Location: (61:2,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Item|
+Generated Location: (2087:62,0 [4] )
+|Item|
+
+Source Location: (70:2,22 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyEvent|
+Generated Location: (2335:71,0 [7] )
+|MyEvent|
+

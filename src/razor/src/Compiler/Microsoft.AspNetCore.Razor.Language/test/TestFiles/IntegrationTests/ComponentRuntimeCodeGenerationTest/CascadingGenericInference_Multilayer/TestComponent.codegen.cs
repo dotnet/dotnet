@@ -50,7 +50,15 @@ namespace __Blazor.Test.TestComponent
         public static void CreateAncestor_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Collections.Generic.IEnumerable<TItem> __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
         __builder.OpenComponent<global::Test.Ancestor<TItem>>(seq);
-        __builder.AddComponentParameter(__seq0, "Items", __arg0);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.Ancestor<TItem>.
+#nullable restore
+#line (1,11)-(1,16) "x:\dir\subdir\Test\TestComponent.cshtml"
+Items
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
         __builder.AddComponentParameter(__seq1, "ChildContent", __arg1);
         __builder.CloseComponent();
         }

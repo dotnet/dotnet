@@ -21,3 +21,8 @@ Generated Location: (1343:40,0 [82] )
     public void Update() { }
 |
 
+Source Location: (19:0,19 [5] x:\dir\subdir\Test\TestComponent.cshtml)
+|Value|
+Generated Location: (2072:62,0 [5] )
+|Value|
+

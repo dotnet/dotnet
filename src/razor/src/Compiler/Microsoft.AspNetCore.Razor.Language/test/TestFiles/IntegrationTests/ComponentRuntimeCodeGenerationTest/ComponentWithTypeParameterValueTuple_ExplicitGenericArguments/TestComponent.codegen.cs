@@ -48,7 +48,15 @@ where TValue : struct
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.TestComponent<decimal, decimal>>(0);
-            __builder.AddComponentParameter(1, "Data", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Collections.Generic.List<(decimal Domain, decimal Value)>>(
+            __builder.AddComponentParameter(1, nameof(global::Test.TestComponent<decimal, decimal>.
+#nullable restore
+#line (4,16)-(4,20) "x:\dir\subdir\Test\TestComponent.cshtml"
+Data
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Collections.Generic.List<(decimal Domain, decimal Value)>>(
 #nullable restore
 #line (4,22)-(4,26) "x:\dir\subdir\Test\TestComponent.cshtml"
 null

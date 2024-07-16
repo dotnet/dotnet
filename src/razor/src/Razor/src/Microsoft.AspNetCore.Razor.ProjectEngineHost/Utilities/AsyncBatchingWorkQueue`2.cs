@@ -271,9 +271,8 @@ internal class AsyncBatchingWorkQueue<TItem, TResult>
         catch (OperationCanceledException)
         {
             // Silently continue to allow the next batch to be processed.
+            return default;
         }
-
-        return Assumed.Unreachable<TResult?>();
     }
 
     private (ImmutableArray<TItem> items, CancellationToken batchCancellationToken) GetNextBatchAndResetQueue()

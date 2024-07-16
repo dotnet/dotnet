@@ -394,6 +394,24 @@ internal static class CodeWriterExtensions
         }
     }
 
+    /// <summary>
+    /// Writes an "@" character if the provided identifier needs escaping in c#
+    /// </summary>
+    public static CodeWriter WriteIdentifierEscapeIfNeeded(this CodeWriter writer, string identifier)
+    {
+        if (IdentifierRequiresEscaping(identifier))
+        {
+            writer.Write("@");
+        }
+        return writer;
+    }
+
+    public static bool IdentifierRequiresEscaping(this string identifier)
+    {
+        return CodeAnalysis.CSharp.SyntaxFacts.GetKeywordKind(identifier) != CodeAnalysis.CSharp.SyntaxKind.None ||
+            CodeAnalysis.CSharp.SyntaxFacts.GetContextualKeywordKind(identifier) != CodeAnalysis.CSharp.SyntaxKind.None;
+    }
+
     public static CSharpCodeWritingScope BuildScope(this CodeWriter writer)
     {
         return new CSharpCodeWritingScope(writer);
@@ -845,8 +863,10 @@ internal static class CodeWriterExtensions
                 if (!_context.Options.UseEnhancedLinePragma)
                 {
                     context.CodeWriter.WritePadding(0, span, context);
+                    characterOffset = 0;
                 }
-                context.AddSourceMappingFor(span);
+
+                context.AddSourceMappingFor(span, characterOffset);
             }
         }
 

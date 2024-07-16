@@ -67,6 +67,8 @@ public sealed partial class BoundAttributeDescriptorBuilder : TagHelperObjectBui
 
     public string? DisplayName { get; set; }
 
+    public string? ContainingType { get; set; }
+
     public IDictionary<string, string?> Metadata => _metadata.MetadataDictionary;
 
     public void SetMetadata(MetadataCollection metadata) => _metadata.SetMetadataCollection(metadata);
@@ -113,6 +115,7 @@ public sealed partial class BoundAttributeDescriptorBuilder : TagHelperObjectBui
             IndexerValueTypeName,
             _documentationObject,
             GetDisplayName(),
+            ContainingType,
             CaseSensitive,
             IsEditorRequired,
             Parameters.ToImmutable(),

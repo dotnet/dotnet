@@ -88,9 +88,33 @@ namespace __Blazor.Test.UseTestComponent
             where TItem3 : global::Image, new()
         {
         __builder.OpenComponent<global::Test.TestComponent<TItem1, TItem2, TItem3>>(seq);
-        __builder.AddComponentParameter(__seq0, "Item1", __arg0);
-        __builder.AddComponentParameter(__seq1, "Items2", __arg1);
-        __builder.AddComponentParameter(__seq2, "Item3", __arg2);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.TestComponent<TItem1, TItem2, TItem3>.
+#nullable restore
+#line (2,16)-(2,21) "x:\dir\subdir\Test\UseTestComponent.cshtml"
+Item1
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
+        __builder.AddComponentParameter(__seq1, nameof(global::Test.TestComponent<TItem1, TItem2, TItem3>.
+#nullable restore
+#line (2,29)-(2,35) "x:\dir\subdir\Test\UseTestComponent.cshtml"
+Items2
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg1);
+        __builder.AddComponentParameter(__seq2, nameof(global::Test.TestComponent<TItem1, TItem2, TItem3>.
+#nullable restore
+#line (2,43)-(2,48) "x:\dir\subdir\Test\UseTestComponent.cshtml"
+Item3
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg2);
         __builder.AddComponentParameter(__seq3, "ChildContent", __arg3);
         __builder.CloseComponent();
         }

@@ -18,7 +18,15 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent>(0);
-            __builder.AddComponentParameter(1, "OnClick", (global::System.Action<System.EventArgs>)(
+            __builder.AddComponentParameter(1, nameof(global::Test.MyComponent.
+#nullable restore
+#line (1,14)-(1,21) "x:\dir\subdir\Test\TestComponent.cshtml"
+OnClick
+
+#line default
+#line hidden
+#nullable disable
+            ), (global::System.Action<System.EventArgs>)(
 #nullable restore
 #line (1,25)-(1,46) "x:\dir\subdir\Test\TestComponent.cshtml"
 e => { Increment(); }

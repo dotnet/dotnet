@@ -15,3 +15,13 @@ Source Location: (44:1,31 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1178:36,0 [7] )
 |x => {}|
 
+Source Location: (26:1,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Item|
+Generated Location: (1918:57,0 [4] )
+|Item|
+
+Source Location: (35:1,22 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyEvent|
+Generated Location: (2166:66,0 [7] )
+|MyEvent|
+

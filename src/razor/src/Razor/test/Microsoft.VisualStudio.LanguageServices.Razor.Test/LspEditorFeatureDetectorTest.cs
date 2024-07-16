@@ -8,7 +8,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.Internal.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Razor.Logging;
 using Microsoft.VisualStudio.Settings;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Moq;
 using Xunit;
@@ -221,12 +220,10 @@ public class LspEditorFeatureDetectorTest(ITestOutputHelper testOutput) : Toolin
             })
             .Returns(VSConstants.S_OK);
 
-        var serviceProviderMock = new StrictMock<IAsyncServiceProvider>();
-        serviceProviderMock
-            .Setup(x => x.GetServiceAsync(typeof(SVsActivityLog)))
-            .ReturnsAsync(vsActivityLogMock.Object);
+        var serviceProvider = VsMocks.CreateAsyncServiceProvider(b =>
+            b.AddService<SVsActivityLog, IVsActivityLog>(vsActivityLogMock.Object));
 
-        var activityLog = new RazorActivityLog(serviceProviderMock.Object, JoinableTaskContext);
+        var activityLog = new RazorActivityLog(serviceProvider);
 
         AddDisposable(activityLog);
 

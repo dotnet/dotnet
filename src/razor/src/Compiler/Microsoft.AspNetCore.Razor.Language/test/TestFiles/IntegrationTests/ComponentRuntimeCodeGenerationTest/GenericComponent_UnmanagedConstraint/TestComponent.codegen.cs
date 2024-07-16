@@ -45,7 +45,15 @@ namespace __Blazor.Test.TestComponent
             where T : unmanaged
         {
         __builder.OpenComponent<global::Test.MyComponent<T>>(seq);
-        __builder.AddComponentParameter(__seq0, "Parameter", __arg0);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.MyComponent<T>.
+#nullable restore
+#line (2,14)-(2,23) "x:\dir\subdir\Test\TestComponent.cshtml"
+Parameter
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
         __builder.CloseComponent();
         }
     }

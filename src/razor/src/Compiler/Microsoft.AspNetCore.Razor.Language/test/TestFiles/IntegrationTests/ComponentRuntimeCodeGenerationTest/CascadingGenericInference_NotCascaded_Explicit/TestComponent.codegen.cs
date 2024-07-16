@@ -18,7 +18,15 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.Grid<DateTime>>(0);
-            __builder.AddComponentParameter(1, "Items", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Collections.Generic.IEnumerable<DateTime>>(
+            __builder.AddComponentParameter(1, nameof(global::Test.Grid<DateTime>.
+#nullable restore
+#line (1,24)-(1,29) "x:\dir\subdir\Test\TestComponent.cshtml"
+Items
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Collections.Generic.IEnumerable<DateTime>>(
 #nullable restore
 #line (1,33)-(1,56) "x:\dir\subdir\Test\TestComponent.cshtml"
 Array.Empty<DateTime>()

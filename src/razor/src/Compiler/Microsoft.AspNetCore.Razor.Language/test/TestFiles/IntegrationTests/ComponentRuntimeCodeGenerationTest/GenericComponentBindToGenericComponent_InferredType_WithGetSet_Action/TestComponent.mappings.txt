@@ -26,3 +26,8 @@ Generated Location: (1553:48,0 [128] )
     public void UpdateValue(TParam value) { ParentValue = value; }
 |
 
+Source Location: (38:1,19 [5] x:\dir\subdir\Test\TestComponent.cshtml)
+|Value|
+Generated Location: (2360:70,0 [5] )
+|Value|
+

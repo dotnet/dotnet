@@ -41,8 +41,8 @@ public class RazorTagHelperParsingBenchmark
             });
         BlazorServerTagHelpersDemoFile = fileSystem.GetItem(Path.Combine(blazorServerTagHelpersFilePath), FileKinds.Component);
 
-        var matches = new HashSet<TagHelperDescriptor>();
-        ComponentDirectiveVisitor = new ComponentDirectiveVisitor(blazorServerTagHelpersFilePath, tagHelpers, currentNamespace: null, matches);
+        ComponentDirectiveVisitor = new ComponentDirectiveVisitor();
+        ComponentDirectiveVisitor.Initialize(blazorServerTagHelpersFilePath, tagHelpers, currentNamespace: null);
         var codeDocument = ProjectEngine.ProcessDesignTime(BlazorServerTagHelpersDemoFile);
         SyntaxTree = codeDocument.GetSyntaxTree();
     }

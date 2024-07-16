@@ -242,8 +242,10 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 {
                     var compilation = CSharpCompilation.Create("components", references: refs);
                     return compilation.GetTypesByMetadataName("Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder")
-                        .Any(static (t, compilation) => t.DeclaredAccessibility == Accessibility.Public &&
-                            t.GetMembers("AddComponentParameter").Any(static m => m.DeclaredAccessibility == Accessibility.Public), compilation);
+                        .Any(static t =>
+                            t.DeclaredAccessibility == Accessibility.Public &&
+                            t.GetMembers("AddComponentParameter")
+                                .Any(static m => m.DeclaredAccessibility == Accessibility.Public));
                 });
 
             IncrementalValuesProvider<(string, SourceGeneratorRazorCodeDocument)> processed(bool designTime)

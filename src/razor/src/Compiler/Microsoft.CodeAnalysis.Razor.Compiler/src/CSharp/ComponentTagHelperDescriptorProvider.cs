@@ -178,7 +178,7 @@ internal partial class ComponentTagHelperDescriptorProvider : RazorEngineFeature
                     continue;
                 }
 
-                CreateProperty(builder, property, kind);
+                CreateProperty(builder, type, property, kind);
             }
 
             if (builder.BoundAttributes.Any(static a => a.IsParameterizedChildContentProperty()) &&
@@ -195,13 +195,14 @@ internal partial class ComponentTagHelperDescriptorProvider : RazorEngineFeature
             return builder.Build();
         }
 
-        private static void CreateProperty(TagHelperDescriptorBuilder builder, IPropertySymbol property, PropertyKind kind)
+        private static void CreateProperty(TagHelperDescriptorBuilder builder, INamedTypeSymbol containingSymbol, IPropertySymbol property, PropertyKind kind)
         {
             builder.BindAttribute(pb =>
             {
                 using var metadata = new MetadataBuilder();
 
                 pb.Name = property.Name;
+                pb.ContainingType = containingSymbol.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat);
                 pb.TypeName = property.Type.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat);
                 pb.IsEditorRequired = property.GetAttributes().Any(
                     static a => a.AttributeClass.HasFullName("Microsoft.AspNetCore.Components.EditorRequiredAttribute"));

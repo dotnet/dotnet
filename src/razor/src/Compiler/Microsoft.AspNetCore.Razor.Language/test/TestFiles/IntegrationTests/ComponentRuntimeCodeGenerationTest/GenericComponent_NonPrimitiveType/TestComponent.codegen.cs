@@ -18,7 +18,15 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent<CustomType>>(0);
-            __builder.AddComponentParameter(1, "Item", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<CustomType>(
+            __builder.AddComponentParameter(1, nameof(global::Test.MyComponent<CustomType>.
+#nullable restore
+#line (1,33)-(1,37) "x:\dir\subdir\Test\TestComponent.cshtml"
+Item
+
+#line default
+#line hidden
+#nullable disable
+            ), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<CustomType>(
 #nullable restore
 #line (1,39)-(1,55) "x:\dir\subdir\Test\TestComponent.cshtml"
 new CustomType()

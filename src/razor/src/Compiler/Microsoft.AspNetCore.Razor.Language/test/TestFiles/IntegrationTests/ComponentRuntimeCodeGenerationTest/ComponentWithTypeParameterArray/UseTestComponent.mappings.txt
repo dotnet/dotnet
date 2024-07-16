@@ -40,3 +40,18 @@ Generated Location: (1872:67,0 [208] )
     Tag[] items3() => new [] { tag };
 |
 
+Source Location: (28:1,15 [6] x:\dir\subdir\Test\UseTestComponent.cshtml)
+|Items1|
+Generated Location: (2889:90,0 [6] )
+|Items1|
+
+Source Location: (42:1,29 [6] x:\dir\subdir\Test\UseTestComponent.cshtml)
+|Items2|
+Generated Location: (3144:99,0 [6] )
+|Items2|
+
+Source Location: (56:1,43 [6] x:\dir\subdir\Test\UseTestComponent.cshtml)
+|Items3|
+Generated Location: (3399:108,0 [6] )
+|Items3|
+

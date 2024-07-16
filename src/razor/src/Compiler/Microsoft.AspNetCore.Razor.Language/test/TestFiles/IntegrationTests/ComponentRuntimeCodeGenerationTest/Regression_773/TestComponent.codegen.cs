@@ -29,7 +29,15 @@ namespace Test
         {
             __builder.AddMarkupContent(0, "<h1>Hello, world!</h1>\r\n\r\nWelcome to your new app.\r\n\r\n");
             __builder.OpenComponent<global::Test.SurveyPrompt>(1);
-            __builder.AddComponentParameter(2, "Title", "<div>Test!</div>");
+            __builder.AddComponentParameter(2, nameof(global::Test.SurveyPrompt.
+#nullable restore
+#line (7,15)-(7,20) "x:\dir\subdir\Test\TestComponent.cshtml"
+Title
+
+#line default
+#line hidden
+#nullable disable
+            ), "<div>Test!</div>");
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

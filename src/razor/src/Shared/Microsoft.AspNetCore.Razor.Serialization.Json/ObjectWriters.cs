@@ -174,6 +174,7 @@ internal static class ObjectWriters
                 writer.WriteIfNotNull(nameof(value.IndexerNamePrefix), value.IndexerNamePrefix);
                 writer.WriteIfNotNull(nameof(value.IndexerTypeName), value.IndexerTypeName);
                 writer.WriteIfNotNull(nameof(value.DisplayName), value.DisplayName);
+                writer.WriteIfNotNull(nameof(value.ContainingType), value.ContainingType);
                 WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
                 writer.WriteIfNotTrue(nameof(value.CaseSensitive), value.CaseSensitive);
                 writer.WriteIfNotFalse(nameof(value.IsEditorRequired), value.IsEditorRequired);

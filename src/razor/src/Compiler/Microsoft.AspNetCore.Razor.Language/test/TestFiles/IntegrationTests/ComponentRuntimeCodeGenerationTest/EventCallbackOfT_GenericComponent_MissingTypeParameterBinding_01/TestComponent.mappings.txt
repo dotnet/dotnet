@@ -7,3 +7,8 @@ Generated Location: (783:23,0 [28] )
     private int counter;
 |
 
+Source Location: (13:0,13 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|OnClick|
+Generated Location: (1477:43,0 [7] )
+|OnClick|
+

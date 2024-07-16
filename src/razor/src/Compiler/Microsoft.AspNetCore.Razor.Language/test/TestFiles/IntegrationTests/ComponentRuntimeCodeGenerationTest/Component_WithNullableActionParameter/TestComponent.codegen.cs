@@ -18,7 +18,15 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.ComponentWithNullableAction>(0);
-            __builder.AddComponentParameter(1, "NullableAction", (global::System.Action)(
+            __builder.AddComponentParameter(1, nameof(global::Test.ComponentWithNullableAction.
+#nullable restore
+#line (1,30)-(1,44) "x:\dir\subdir\Test\TestComponent.cshtml"
+NullableAction
+
+#line default
+#line hidden
+#nullable disable
+            ), (global::System.Action)(
 #nullable restore
 #line (1,47)-(1,61) "x:\dir\subdir\Test\TestComponent.cshtml"
 NullableAction

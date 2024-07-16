@@ -1672,6 +1672,115 @@ namespace Test
         }
     }
 
+    [IntegrationTestFact]
+    public void AddComponentParameter_GlobalNamespace()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse(@"
+using System;
+using Microsoft.AspNetCore.Components;
+
+public class MyComponent : ComponentBase
+{
+    [Parameter]
+    public string Value { get; set; }
+}"));
+
+        // Act
+        var generated = CompileToCSharp(@"<MyComponent Value=""Hello"" />");
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact]
+    public void AddComponentParameter_WithNameof()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse(@"
+using System;
+using Microsoft.AspNetCore.Components;
+
+namespace Test
+{
+    public class MyComponent : ComponentBase
+    {
+        [Parameter]
+        public string Value { get; set; }
+    }
+}"));
+
+        // Act
+        var generated = CompileToCSharp(@"
+<MyComponent Value=""Hello"" />
+@code {
+    public string nameof(string s) => string.Empty;
+}");
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, designTime ? [] : [
+                    // (21,55): error CS0120: An object reference is required for the non-static field, method, or property 'MyComponent.Value'
+                    //             __builder.AddComponentParameter(1, nameof(global::Test.MyComponent.
+                    Diagnostic(ErrorCode.ERR_ObjectRequired, "global::Test.MyComponent.\r\n#nullable restore\r\n#line (1,14)-(1,19) \"x:\\dir\\subdir\\Test\\TestComponent.cshtml\"\r\nValue").WithArguments("Test.MyComponent.Value").WithLocation(21, 55)
+            ]);
+    }
+
+    [IntegrationTestFact]
+    public void AddComponentParameter_EscapedComponentName()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse(@"
+using System;
+using Microsoft.AspNetCore.Components;
+
+namespace Test
+{
+    public class @int : ComponentBase
+    {
+        [Parameter]
+        public string Value { get; set; }
+    }
+}"));
+
+        // Act
+        var generated = CompileToCSharp(@"<int Value=""Hello"" />");
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact]
+    public void AddComponentParameter_DynamicComponentName()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse(@"
+using System;
+using Microsoft.AspNetCore.Components;
+
+namespace Test
+{
+    public class dynamic : ComponentBase
+    {
+        [Parameter]
+        public string Value { get; set; }
+    }
+}"));
+
+        // Act
+        var generated = CompileToCSharp(@"<dynamic Value=""Hello"" />");
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
     #endregion
 
     #region Bind
@@ -1699,6 +1808,114 @@ namespace Test
         // Act
         var generated = CompileToCSharp(@"
 <MyComponent @bind-Value=""ParentValue"" />
+@code {
+    public int ParentValue { get; set; } = 42;
+}");
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact]
+    public void BindToComponent_SpecifiesValue_WithMatchingProperties_WithNameof()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse(@"
+using System;
+using Microsoft.AspNetCore.Components;
+
+namespace Test
+{
+    public class MyComponent : ComponentBase
+    {
+        [Parameter]
+        public int Value { get; set; }
+
+        [Parameter]
+        public Action<int> ValueChanged { get; set; }
+    }
+}"));
+
+        // Act
+        var generated = CompileToCSharp(@"
+<MyComponent @bind-Value=""ParentValue"" />
+@code {
+    public int ParentValue { get; set; } = 42;
+
+    public string nameof(string s) => string.Empty;
+}");
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, designTime ? [] : [
+                // (21,55): error CS0120: An object reference is required for the non-static field, method, or property 'MyComponent.Value'
+                //             __builder.AddComponentParameter(1, nameof(global::Test.MyComponent.
+                Diagnostic(ErrorCode.ERR_ObjectRequired, "global::Test.MyComponent.\r\n#nullable restore\r\n#line (1,20)-(1,25) \"x:\\dir\\subdir\\Test\\TestComponent.cshtml\"\r\nValue").WithArguments("Test.MyComponent.Value").WithLocation(21, 55),
+                // (38,55): error CS0120: An object reference is required for the non-static field, method, or property 'MyComponent.ValueChanged'
+                //             __builder.AddComponentParameter(2, nameof(global::Test.MyComponent.ValueChanged), (global::System.Action<System.Int32>)(__value => ParentValue = __value));
+                Diagnostic(ErrorCode.ERR_ObjectRequired, "global::Test.MyComponent.ValueChanged").WithArguments("Test.MyComponent.ValueChanged").WithLocation(38, 55)
+            ]);
+    }
+
+    [IntegrationTestFact]
+    public void BindToComponent_SpecifiesValue_WithMatchingProperties_EscapedComponentName()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse(@"
+using System;
+using Microsoft.AspNetCore.Components;
+
+namespace Test
+{
+    public class @int : ComponentBase
+    {
+        [Parameter]
+        public int Value { get; set; }
+
+        [Parameter]
+        public Action<int> ValueChanged { get; set; }
+    }
+}"));
+
+        // Act
+        var generated = CompileToCSharp(@"
+<int @bind-Value=""ParentValue"" />
+@code {
+    public int ParentValue { get; set; } = 42;
+}");
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact]
+    public void BindToComponent_SpecifiesValue_WithMatchingProperties_DynamicComponentName()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse(@"
+using System;
+using Microsoft.AspNetCore.Components;
+
+namespace Test
+{
+    public class dynamic : ComponentBase
+    {
+        [Parameter]
+        public int Value { get; set; }
+
+        [Parameter]
+        public Action<int> ValueChanged { get; set; }
+    }
+}"));
+
+        // Act
+        var generated = CompileToCSharp(@"
+<dynamic @bind-Value=""ParentValue"" />
 @code {
     public int ParentValue { get; set; } = 42;
 }");
@@ -1791,15 +2008,15 @@ namespace Test
             ? [// x:\dir\subdir\Test\TestComponent.cshtml(1,27): error CS1503: Argument 1: cannot convert from 'string' to 'int'
                // ParentValue
                Diagnostic(ErrorCode.ERR_BadArgType, "ParentValue").WithArguments("1", "string", "int").WithLocation(1, 27),
-               // (30,127): error CS0029: Cannot implicitly convert type 'int' to 'string'
+               // (37,38): error CS0029: Cannot implicitly convert type 'int' to 'string'
                //             __builder.AddComponentParameter(2, "ValueChanged", (global::System.Action<System.Int32>)(__value => ParentValue = __value));
                Diagnostic(ErrorCode.ERR_NoImplicitConv, "__value").WithArguments("int", "string").WithLocation(37, 38)]
             : [// x:\dir\subdir\Test\TestComponent.cshtml(1,27): error CS1503: Argument 1: cannot convert from 'string' to 'int'
                // ParentValue
                Diagnostic(ErrorCode.ERR_BadArgType, "ParentValue").WithArguments("1", "string", "int").WithLocation(1, 27),
-               // (30,127): error CS0029: Cannot implicitly convert type 'int' to 'string'
+               // (38,158): error CS0029: Cannot implicitly convert type 'int' to 'string'
                //             __builder.AddComponentParameter(2, "ValueChanged", (global::System.Action<System.Int32>)(__value => ParentValue = __value));
-               Diagnostic(ErrorCode.ERR_NoImplicitConv, "__value").WithArguments("int", "string").WithLocation(30, 127)]);
+               Diagnostic(ErrorCode.ERR_NoImplicitConv, "__value").WithArguments("int", "string").WithLocation(38, 158)]);
     }
 
     [IntegrationTestFact]
@@ -1876,9 +2093,9 @@ namespace Test
             : [// x:\dir\subdir\Test\TestComponent.cshtml(1,27): error CS1503: Argument 1: cannot convert from 'string' to 'int'
                //                           ParentValue
                Diagnostic(ErrorCode.ERR_BadArgType, "ParentValue").WithArguments("1", "string", "int").WithLocation(1, 27),
-               // (37,13): error CS1503: Argument 2: cannot convert from 'Microsoft.AspNetCore.Components.EventCallback<string>' to 'Microsoft.AspNetCore.Components.EventCallback'
+               // (38,351): error CS1503: Argument 2: cannot convert from 'Microsoft.AspNetCore.Components.EventCallback<string>' to 'Microsoft.AspNetCore.Components.EventCallback'
                //             global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => ParentValue = __value, ParentValue)));
-               Diagnostic(ErrorCode.ERR_BadArgType, "global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => ParentValue = __value, ParentValue)").WithArguments("2", "Microsoft.AspNetCore.Components.EventCallback<string>", "Microsoft.AspNetCore.Components.EventCallback").WithLocation(30, 320)
+               Diagnostic(ErrorCode.ERR_BadArgType, "global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => ParentValue = __value, ParentValue)").WithArguments("2", "Microsoft.AspNetCore.Components.EventCallback<string>", "Microsoft.AspNetCore.Components.EventCallback").WithLocation(38, 351)
             ]
         );
     }
@@ -2077,18 +2294,18 @@ namespace Test
 
 
         CompileToAssembly(generated, DesignTime
-            ? [// (31,227): error CS0029: Cannot implicitly convert type 'int' to 'string'
+            ? [// (31,179): error CS0029: Cannot implicitly convert type 'int' to 'string'
                //             __builder.AddComponentParameter(3, "ValueExpression", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Linq.Expressions.Expression<System.Func<System.String>>>(() => ParentValue));
                Diagnostic(ErrorCode.ERR_NoImplicitConv, "ParentValue").WithArguments("int", "string").WithLocation(38, 179),
-               // (31,227): error CS1662: Cannot convert lambda expression to intended delegate type because some of the return types in the block are not implicitly convertible to the delegate return type
+               // (31,179): error CS1662: Cannot convert lambda expression to intended delegate type because some of the return types in the block are not implicitly convertible to the delegate return type
                //             __builder.AddComponentParameter(3, "ValueExpression", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Linq.Expressions.Expression<System.Func<System.String>>>(() => ParentValue));
                Diagnostic(ErrorCode.ERR_CantConvAnonMethReturns, "ParentValue").WithArguments("lambda expression").WithLocation(38, 179)]
-            : [// (31,227): error CS0029: Cannot implicitly convert type 'int' to 'string'
+            : [// (39,258): error CS0029: Cannot implicitly convert type 'int' to 'string'
                //             __builder.AddComponentParameter(3, "ValueExpression", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Linq.Expressions.Expression<System.Func<System.String>>>(() => ParentValue));
-               Diagnostic(ErrorCode.ERR_NoImplicitConv, "ParentValue").WithArguments("int", "string").WithLocation(31, 227),
-               // (31,227): error CS1662: Cannot convert lambda expression to intended delegate type because some of the return types in the block are not implicitly convertible to the delegate return type
+               Diagnostic(ErrorCode.ERR_NoImplicitConv, "ParentValue").WithArguments("int", "string").WithLocation(39, 258),
+               // (39,258): error CS1662: Cannot convert lambda expression to intended delegate type because some of the return types in the block are not implicitly convertible to the delegate return type
                //             __builder.AddComponentParameter(3, "ValueExpression", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Linq.Expressions.Expression<System.Func<System.String>>>(() => ParentValue));
-               Diagnostic(ErrorCode.ERR_CantConvAnonMethReturns, "ParentValue").WithArguments("lambda expression").WithLocation(31, 227)
+               Diagnostic(ErrorCode.ERR_CantConvAnonMethReturns, "ParentValue").WithArguments("lambda expression").WithLocation(39, 258)
             ]);
     }
 
@@ -10364,9 +10581,9 @@ namespace Test
             : [// x:\dir\subdir\Test\TestComponent.cshtml(1,32): error CS1003: Syntax error, ',' expected
               //                               x
               Diagnostic(ErrorCode.ERR_SyntaxError, "").WithArguments(",").WithLocation(1, 32),
-              // (27,91): error CS1501: No overload for method 'TypeCheck' takes 2 arguments
+              // (29,88): error CS1501: No overload for method 'TypeCheck' takes 2 arguments
               //             __o = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.String>(
-              Diagnostic(ErrorCode.ERR_BadArgCount, "TypeCheck<global::System.String>").WithArguments("TypeCheck", "2").WithLocation(21, 138)]
+              Diagnostic(ErrorCode.ERR_BadArgCount, "TypeCheck<global::System.String>").WithArguments("TypeCheck", "2").WithLocation(29, 88)]
             );
         Assert.NotEmpty(generated.RazorDiagnostics);
     }
@@ -11132,6 +11349,7 @@ Time: @DateTime.Now
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
     }
 
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
@@ -11178,6 +11396,7 @@ Time: @DateTime.Now
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
     }
 
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
@@ -11193,6 +11412,7 @@ Time: @DateTime.Now
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
     }
 
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
@@ -11208,6 +11428,7 @@ Time: @DateTime.Now
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
     }
 
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]

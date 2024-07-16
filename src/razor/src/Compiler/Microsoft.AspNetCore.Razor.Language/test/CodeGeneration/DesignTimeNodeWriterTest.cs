@@ -506,7 +506,7 @@ Render Children
     public void LinePragma_Is_Adjusted_On_Windows(string fileName, string expectedFileName)
     {
         var writer = new DesignTimeNodeWriter();
-        var context = TestCodeRenderingContext.CreateDesignTime();
+        using var context = TestCodeRenderingContext.CreateDesignTime();
 
         Assert.True(context.Options.RemapLinePragmaPathsOnWindows);
 
@@ -553,7 +553,7 @@ Render Children
     public void LinePragma_Enhanced_Is_Adjusted_On_Windows(string fileName, string expectedFileName)
     {
         var writer = new RuntimeNodeWriter();
-        var context = TestCodeRenderingContext.CreateDesignTime(source: RazorSourceDocument.Create("", fileName));
+        using var context = TestCodeRenderingContext.CreateDesignTime(source: RazorSourceDocument.Create("", fileName));
 
         Assert.True(context.Options.RemapLinePragmaPathsOnWindows);
         Assert.True(context.Options.UseEnhancedLinePragma);

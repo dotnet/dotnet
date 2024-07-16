@@ -35,7 +35,7 @@ public abstract class CodeRenderingContext : IDisposable
 
     public abstract void AddSourceMappingFor(IntermediateNode node);
 
-    public abstract void AddSourceMappingFor(SourceSpan node);
+    public abstract void AddSourceMappingFor(SourceSpan node, int offset = 0);
 
     public abstract void RenderNode(IntermediateNode node);
 

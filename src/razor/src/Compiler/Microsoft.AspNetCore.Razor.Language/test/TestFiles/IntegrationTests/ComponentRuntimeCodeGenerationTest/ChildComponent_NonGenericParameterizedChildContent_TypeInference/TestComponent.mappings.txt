@@ -13,3 +13,8 @@ Source Location: (103:2,16 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1345:42,0 [7] )
 |context|
 
+Source Location: (13:0,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Item|
+Generated Location: (2224:65,0 [4] )
+|Item|
+

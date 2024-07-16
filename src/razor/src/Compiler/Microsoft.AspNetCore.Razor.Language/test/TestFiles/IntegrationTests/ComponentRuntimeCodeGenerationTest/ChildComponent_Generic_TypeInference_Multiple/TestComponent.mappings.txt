@@ -13,3 +13,18 @@ Source Location: (93:2,21 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1461:42,0 [6] )
 |"bye!"|
 
+Source Location: (13:0,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Item|
+Generated Location: (2125:63,0 [4] )
+|Item|
+
+Source Location: (44:1,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Item|
+Generated Location: (2673:77,0 [4] )
+|Item|
+
+Source Location: (85:2,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Item|
+Generated Location: (3221:91,0 [4] )
+|Item|
+

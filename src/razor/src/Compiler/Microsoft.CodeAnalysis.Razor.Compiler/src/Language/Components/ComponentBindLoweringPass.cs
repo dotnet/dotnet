@@ -537,6 +537,7 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
 
             ComponentAttributeIntermediateNode valueNode = node != null ? new ComponentAttributeIntermediateNode(node) : new ComponentAttributeIntermediateNode(getNode);
             valueNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName();
+            valueNode.Annotations[ComponentMetadata.Bind.PropertySpan] = bindEntry.GetOriginalPropertySpan();
             valueNode.AttributeName = valueAttributeName;
             valueNode.BoundAttribute = valueAttribute; // Might be null if it doesn't match a component attribute
             valueNode.PropertyName = valuePropertyName;
@@ -554,6 +555,8 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
 
             var changeNode = node != null ? new ComponentAttributeIntermediateNode(node) : new ComponentAttributeIntermediateNode(getNode);
             changeNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName();
+            changeNode.Annotations[ComponentMetadata.Bind.PropertySpan] = bindEntry.GetOriginalPropertySpan();
+            changeNode.Annotations[ComponentMetadata.Bind.IsSynthesized] = bool.TrueString;
             changeNode.AttributeName = changeAttributeName;
             changeNode.BoundAttribute = changeAttribute; // Might be null if it doesn't match a component attribute
             changeNode.PropertyName = changeAttribute?.GetPropertyName();
@@ -575,6 +578,8 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             {
                 var expressionNode = node != null ? new ComponentAttributeIntermediateNode(node) : new ComponentAttributeIntermediateNode(getNode);
                 expressionNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName();
+                expressionNode.Annotations[ComponentMetadata.Bind.PropertySpan] = bindEntry.GetOriginalPropertySpan();
+                expressionNode.Annotations[ComponentMetadata.Bind.IsSynthesized] = bool.TrueString;
                 expressionNode.AttributeName = expressionAttributeName;
                 expressionNode.BoundAttribute = expressionAttribute;
                 expressionNode.PropertyName = expressionAttribute.GetPropertyName();
@@ -613,6 +618,7 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         var helperNode = new ComponentAttributeIntermediateNode(intermediateNode);
         helperNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = intermediateNode.OriginalAttributeName;
         helperNode.Annotations[ComponentMetadata.Common.IsDesignTimePropertyAccessHelper] = bool.TrueString;
+        helperNode.Annotations[ComponentMetadata.Bind.IsSynthesized] = bool.TrueString;
         helperNode.PropertyName = propertyName;
 
         builder.Add(helperNode);
@@ -1172,5 +1178,22 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         public string GetEffectiveBindNodeChangeAttributeName() => BindNode?.TagHelper.GetChangeAttributeName() ?? BindGetNode?.TagHelper.GetChangeAttributeName();
 
         public string GetEffectiveBindNodeExpressionAttributeName() => BindNode?.TagHelper.GetExpressionAttributeName() ?? BindGetNode?.TagHelper.GetExpressionAttributeName();
+
+        internal SourceSpan? GetOriginalPropertySpan()
+        {
+            var node = BindNode ?? (IntermediateNode)BindGetNode;
+            if (node?.Annotations[ComponentMetadata.Common.OriginalAttributeSpan] is SourceSpan attributeSourceSpan)
+            {
+                var offset = "bind-".Length;
+                return new SourceSpan(attributeSourceSpan.FilePath,
+                                      attributeSourceSpan.AbsoluteIndex + offset,
+                                      attributeSourceSpan.LineIndex,
+                                      attributeSourceSpan.CharacterIndex + offset,
+                                      attributeSourceSpan.Length - offset,
+                                      attributeSourceSpan.LineCount,
+                                      attributeSourceSpan.EndCharacterIndex);
+            }
+            return null;
+        }
     }
 }

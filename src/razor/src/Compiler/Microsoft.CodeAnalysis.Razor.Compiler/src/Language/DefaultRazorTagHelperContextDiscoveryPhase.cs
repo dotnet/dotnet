@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -11,95 +9,59 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePhaseBase
+internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePhaseBase
 {
     protected override void ExecuteCore(RazorCodeDocument codeDocument)
     {
         var syntaxTree = codeDocument.GetPreTagHelperSyntaxTree() ?? codeDocument.GetSyntaxTree();
         ThrowForMissingDocumentDependency(syntaxTree);
 
-        var descriptors = codeDocument.GetTagHelpers();
-        if (descriptors == null)
+        var tagHelpers = codeDocument.GetTagHelpers();
+        if (tagHelpers == null)
         {
-            if (!Engine.TryGetFeature(out ITagHelperFeature feature))
+            if (!Engine.TryGetFeature(out ITagHelperFeature? tagHelperFeature))
             {
                 // No feature, nothing to do.
                 return;
             }
 
-            descriptors = feature.GetDescriptors();
+            tagHelpers = tagHelperFeature.GetDescriptors();
         }
 
-        var parserOptions = codeDocument.GetParserOptions();
-
-        using var _ = HashSetPool<TagHelperDescriptor>.GetPooledObject(out var matches);
+        using var _ = GetPooledVisitor(codeDocument, tagHelpers, out var visitor);
 
         // We need to find directives in all of the *imports* as well as in the main razor file
         //
         // The imports come logically before the main razor file and are in the order they
         // should be processed.
-        DirectiveVisitor visitor;
-        if (FileKinds.IsComponent(codeDocument.GetFileKind()) &&
-            (parserOptions == null || parserOptions.FeatureFlags.AllowComponentFileKind))
-        {
-            codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var currentNamespace);
-            visitor = new ComponentDirectiveVisitor(codeDocument.Source.FilePath, descriptors, currentNamespace, matches);
-        }
-        else
-        {
-            visitor = new TagHelperDirectiveVisitor(descriptors, matches);
-        }
 
-        using (visitor)
+        if (codeDocument.GetImportSyntaxTrees() is { IsDefault: false } imports)
         {
-            if (codeDocument.GetImportSyntaxTrees() is { IsDefault: false } imports)
+            foreach (var import in imports)
             {
-                foreach (var import in imports)
-                {
-                    visitor.Visit(import);
-                }
+                visitor.Visit(import);
             }
-
-            visitor.Visit(syntaxTree);
-
-            // This will always be null for a component document.
-            var tagHelperPrefix = visitor.TagHelperPrefix;
-
-            var context = TagHelperDocumentContext.Create(tagHelperPrefix, matches.ToImmutableArray());
-            codeDocument.SetTagHelperContext(context);
-            codeDocument.SetPreTagHelperSyntaxTree(syntaxTree);
         }
+
+        visitor.Visit(syntaxTree);
+
+        // This will always be null for a component document.
+        var tagHelperPrefix = visitor.TagHelperPrefix;
+
+        var context = TagHelperDocumentContext.Create(tagHelperPrefix, visitor.GetResults());
+        codeDocument.SetTagHelperContext(context);
+        codeDocument.SetPreTagHelperSyntaxTree(syntaxTree);
     }
 
-    private static bool MatchesDirective(TagHelperDescriptor descriptor, string typePattern, string assemblyName)
-    {
-        if (!string.Equals(descriptor.AssemblyName, assemblyName, StringComparison.Ordinal))
-        {
-            return false;
-        }
-
-        var typePatternSpan = RemoveGlobalPrefix(typePattern.AsSpan());
-
-        if (typePatternSpan[^1] == '*')
-        {
-            if (typePatternSpan.Length == 1)
-            {
-                // TypePattern is "*".
-                return true;
-            }
-
-            return descriptor.Name.AsSpan().StartsWith(typePatternSpan[..^1], StringComparison.Ordinal);
-        }
-
-        return descriptor.Name.AsSpan().Equals(typePatternSpan, StringComparison.Ordinal);
-    }
-
-    private static ReadOnlySpan<char> RemoveGlobalPrefix(in ReadOnlySpan<char> span)
+    private static ReadOnlySpan<char> GetSpanWithoutGlobalPrefix(string s)
     {
         const string globalPrefix = "global::";
+
+        var span = s.AsSpan();
 
         if (span.StartsWith(globalPrefix.AsSpan(), StringComparison.Ordinal))
         {
@@ -109,39 +71,143 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
         return span;
     }
 
-    internal abstract class DirectiveVisitor(HashSet<TagHelperDescriptor> matches) : SyntaxWalker, IDisposable
+    internal abstract class DirectiveVisitor : SyntaxWalker
     {
-        protected readonly HashSet<TagHelperDescriptor> Matches = matches;
+        private bool _isInitialized;
+        private readonly HashSet<TagHelperDescriptor> _matches = [];
 
-        public abstract string TagHelperPrefix { get; }
+        protected bool IsInitialized => _isInitialized;
+
+        public virtual string? TagHelperPrefix => null;
 
         public abstract void Visit(RazorSyntaxTree tree);
 
-        public abstract void Dispose();
+        public ImmutableArray<TagHelperDescriptor> GetResults() => [.. _matches];
+
+        protected void Initialize()
+        {
+            _isInitialized = true;
+        }
+
+        public virtual void Reset()
+        {
+            _matches.Clear();
+            _isInitialized = false;
+        }
+
+        public void AddMatch(TagHelperDescriptor tagHelper)
+        {
+            _matches.Add(tagHelper);
+        }
+
+        public void AddMatches(List<TagHelperDescriptor> tagHelpers)
+        {
+            foreach (var tagHelper in tagHelpers)
+            {
+                _matches.Add(tagHelper);
+            }
+        }
+
+        public void RemoveMatch(TagHelperDescriptor tagHelper)
+        {
+            _matches.Remove(tagHelper);
+        }
+
+        public void RemoveMatches(List<TagHelperDescriptor> tagHelpers)
+        {
+            foreach (var tagHelper in tagHelpers)
+            {
+                _matches.Remove(tagHelper);
+            }
+        }
     }
 
     internal sealed class TagHelperDirectiveVisitor : DirectiveVisitor
     {
-        private List<TagHelperDescriptor> _tagHelpers;
-        private string _tagHelperPrefix;
+        /// <summary>
+        /// A larger pool of <see cref="TagHelperDescriptor"/> lists to handle scenarios where tag helpers
+        /// originate from a large number of assemblies.
+        /// </summary>
+        private static readonly ObjectPool<List<TagHelperDescriptor>> s_pool = ListPool<TagHelperDescriptor>.Create(100);
 
-        public TagHelperDirectiveVisitor(IReadOnlyList<TagHelperDescriptor> tagHelpers, HashSet<TagHelperDescriptor> matches)
-            : base(matches)
+        /// <summary>
+        /// A map from assembly name to list of <see cref="TagHelperDescriptor"/>. Lists are allocated from and returned to
+        /// <see cref="s_pool"/>.
+        /// </summary>
+        private readonly Dictionary<string, List<TagHelperDescriptor>> _nonComponentTagHelperMap = new(StringComparer.Ordinal);
+
+        private IReadOnlyList<TagHelperDescriptor>? _tagHelpers;
+        private bool _nonComponentTagHelperMapComputed;
+        private string? _tagHelperPrefix;
+
+        public override string? TagHelperPrefix => _tagHelperPrefix;
+
+        private Dictionary<string, List<TagHelperDescriptor>> NonComponentTagHelperMap
         {
-            // We don't want to consider components in a view document.
-            _tagHelpers = ListPool<TagHelperDescriptor>.Default.Get();
-
-            for (var i = 0; i < tagHelpers.Count; i++)
+            get
             {
-                var tagHelper = tagHelpers[i];
-                if (!tagHelper.IsAnyComponentDocumentTagHelper())
+                if (!_nonComponentTagHelperMapComputed)
                 {
-                    _tagHelpers.Add(tagHelper);
+                    ComputeNonComponentTagHelpersMap();
+
+                    _nonComponentTagHelperMapComputed = true;
+                }
+
+                return _nonComponentTagHelperMap;
+
+                void ComputeNonComponentTagHelpersMap()
+                {
+                    var tagHelpers = _tagHelpers.AssumeNotNull();
+
+                    string? currentAssemblyName = null;
+                    List<TagHelperDescriptor>? currentTagHelpers = null;
+
+                    // We don't want to consider components in a view document.
+                    foreach (var tagHelper in tagHelpers.AsEnumerable())
+                    {
+                        if (!tagHelper.IsAnyComponentDocumentTagHelper())
+                        {
+                            if (tagHelper.AssemblyName != currentAssemblyName)
+                            {
+                                currentAssemblyName = tagHelper.AssemblyName;
+
+                                if (!_nonComponentTagHelperMap.TryGetValue(currentAssemblyName, out currentTagHelpers))
+                                {
+                                    currentTagHelpers = s_pool.Get();
+                                    _nonComponentTagHelperMap.Add(currentAssemblyName, currentTagHelpers);
+                                }
+                            }
+
+                            currentTagHelpers!.Add(tagHelper);
+                        }
+                    }
                 }
             }
         }
 
-        public override string TagHelperPrefix => _tagHelperPrefix;
+        public void Initialize(IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        {
+            Debug.Assert(!IsInitialized);
+
+            _tagHelpers = tagHelpers;
+
+            base.Initialize();
+        }
+
+        public override void Reset()
+        {
+            foreach (var (_, tagHelpers) in _nonComponentTagHelperMap)
+            {
+                s_pool.Return(tagHelpers);
+            }
+
+            _nonComponentTagHelperMap.Clear();
+            _nonComponentTagHelperMapComputed = false;
+            _tagHelpers = null;
+            _tagHelperPrefix = null;
+
+            base.Reset();
+        }
 
         public override void Visit(RazorSyntaxTree tree)
         {
@@ -160,58 +226,100 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
 
                 switch (literal.ChunkGenerator)
                 {
-                    case null:
-                        continue;
-
                     case AddTagHelperChunkGenerator addTagHelper:
-                        if (addTagHelper.AssemblyName == null)
                         {
-                            // Skip this one, it's an error
-                            continue;
-                        }
-
-                        if (!AssemblyContainsTagHelpers(addTagHelper.AssemblyName, _tagHelpers))
-                        {
-                            // No tag helpers in the assembly.
-                            continue;
-                        }
-
-                        foreach (var tagHelper in _tagHelpers)
-                        {
-                            if (MatchesDirective(tagHelper, addTagHelper.TypePattern, addTagHelper.AssemblyName))
+                            if (addTagHelper.AssemblyName == null)
                             {
-                                Matches.Add(tagHelper);
+                                // Skip this one, it's an error
+                                continue;
+                            }
+
+                            if (!NonComponentTagHelperMap.TryGetValue(addTagHelper.AssemblyName, out var nonComponentTagHelpers))
+                            {
+                                // No tag helpers in the assembly.
+                                continue;
+                            }
+
+                            switch (GetSpanWithoutGlobalPrefix(addTagHelper.TypePattern))
+                            {
+                                case ['*']:
+                                    AddMatches(nonComponentTagHelpers);
+                                    break;
+
+                                case [.. var pattern, '*']:
+                                    foreach (var tagHelper in nonComponentTagHelpers)
+                                    {
+                                        if (tagHelper.Name.AsSpan().StartsWith(pattern, StringComparison.Ordinal))
+                                        {
+                                            AddMatch(tagHelper);
+                                        }
+                                    }
+
+                                    break;
+
+                                case var pattern:
+                                    foreach (var tagHelper in nonComponentTagHelpers)
+                                    {
+                                        if (tagHelper.Name.AsSpan().Equals(pattern, StringComparison.Ordinal))
+                                        {
+                                            AddMatch(tagHelper);
+                                        }
+                                    }
+
+                                    break;
                             }
                         }
 
                         break;
 
                     case RemoveTagHelperChunkGenerator removeTagHelper:
-                        if (removeTagHelper.AssemblyName == null)
                         {
-                            // Skip this one, it's an error
-                            continue;
-                        }
-
-
-                        if (!AssemblyContainsTagHelpers(removeTagHelper.AssemblyName, _tagHelpers))
-                        {
-                            // No tag helpers in the assembly.
-                            continue;
-                        }
-
-                        foreach (var tagHelper in _tagHelpers)
-                        {
-                            if (MatchesDirective(tagHelper, removeTagHelper.TypePattern, removeTagHelper.AssemblyName))
+                            if (removeTagHelper.AssemblyName == null)
                             {
-                                Matches.Remove(tagHelper);
+                                // Skip this one, it's an error
+                                continue;
+                            }
+
+                            if (!NonComponentTagHelperMap.TryGetValue(removeTagHelper.AssemblyName, out var nonComponentTagHelpers))
+                            {
+                                // No tag helpers in the assembly.
+                                continue;
+                            }
+
+                            switch (GetSpanWithoutGlobalPrefix(removeTagHelper.TypePattern))
+                            {
+                                case ['*']:
+                                    RemoveMatches(nonComponentTagHelpers);
+                                    break;
+
+                                case [.. var pattern, '*']:
+                                    foreach (var tagHelper in nonComponentTagHelpers)
+                                    {
+                                        if (tagHelper.Name.AsSpan().StartsWith(pattern, StringComparison.Ordinal))
+                                        {
+                                            RemoveMatch(tagHelper);
+                                        }
+                                    }
+
+                                    break;
+
+                                case var pattern:
+                                    foreach (var tagHelper in nonComponentTagHelpers)
+                                    {
+                                        if (tagHelper.Name.AsSpan().Equals(pattern, StringComparison.Ordinal))
+                                        {
+                                            RemoveMatch(tagHelper);
+                                        }
+                                    }
+
+                                    break;
                             }
                         }
 
                         break;
 
                     case TagHelperPrefixDirectiveChunkGenerator tagHelperPrefix:
-                        if (!string.IsNullOrEmpty(tagHelperPrefix.DirectiveText))
+                        if (!tagHelperPrefix.DirectiveText.IsNullOrEmpty())
                         {
                             // We only expect to see a single one of these per file, but that's enforced at another level.
                             _tagHelperPrefix = tagHelperPrefix.DirectiveText;
@@ -221,46 +329,26 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
                 }
             }
         }
-
-        private static bool AssemblyContainsTagHelpers(string assemblyName, List<TagHelperDescriptor> tagHelpers)
-        {
-            foreach (var tagHelper in tagHelpers)
-            {
-                if (tagHelper.AssemblyName == assemblyName)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public override void Dispose()
-        {
-            if (_tagHelpers != null)
-            {
-                ListPool<TagHelperDescriptor>.Default.Return(_tagHelpers);
-                _tagHelpers = null;
-            }
-        }
     }
 
     internal sealed class ComponentDirectiveVisitor : DirectiveVisitor
     {
-        private List<TagHelperDescriptor> _notFullyQualifiedComponents;
-        private readonly string _filePath;
-        private RazorSourceDocument _source;
+        private readonly List<TagHelperDescriptor> _nonFullyQualifiedComponents = [];
 
-        public ComponentDirectiveVisitor(string filePath, IReadOnlyList<TagHelperDescriptor> tagHelpers, string currentNamespace, HashSet<TagHelperDescriptor> matches)
-            : base(matches)
+        private string? _filePath;
+        private RazorSourceDocument? _source;
+
+        private string FilePath => _filePath.AssumeNotNull();
+        private RazorSourceDocument Source => _source.AssumeNotNull();
+
+        public void Initialize(string filePath, IReadOnlyList<TagHelperDescriptor> tagHelpers, string? currentNamespace)
         {
+            Debug.Assert(!IsInitialized);
+
             _filePath = filePath;
 
-            _notFullyQualifiedComponents = ListPool<TagHelperDescriptor>.Default.Get();
-
-            for (var i = 0; i < tagHelpers.Count; i++)
+            foreach (var tagHelper in tagHelpers.AsEnumerable())
             {
-                var tagHelper = tagHelpers[i];
                 // We don't want to consider non-component tag helpers in a component document.
                 if (!tagHelper.IsAnyComponentDocumentTagHelper() || IsTagHelperFromMangledClass(tagHelper))
                 {
@@ -270,11 +358,11 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
                 if (tagHelper.IsComponentFullyQualifiedNameMatch)
                 {
                     // If the component descriptor matches for a fully qualified name, using directives shouldn't matter.
-                    Matches.Add(tagHelper);
+                    AddMatch(tagHelper);
                     continue;
                 }
 
-                _notFullyQualifiedComponents.Add(tagHelper);
+                _nonFullyQualifiedComponents.Add(tagHelper);
 
                 if (currentNamespace is null)
                 {
@@ -287,22 +375,31 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
                     // E.g, if the type name is `Test.MyComponent.ChildContent`, we want to add it if `Test.MyComponent` is in scope.
                     if (IsTypeInScope(tagHelper, currentNamespace))
                     {
-                        Matches.Add(tagHelper);
+                        AddMatch(tagHelper);
                     }
                 }
                 else if (IsTypeInScope(tagHelper, currentNamespace))
                 {
                     // Also, if the type is already in scope of the document's namespace, using isn't necessary.
-                    Matches.Add(tagHelper);
+                    AddMatch(tagHelper);
                 }
             }
+
+            base.Initialize();
         }
 
-        // There is no support for tag helper prefix in component documents.
-        public override string TagHelperPrefix => null;
+        public override void Reset()
+        {
+            _nonFullyQualifiedComponents.Clear();
+            _filePath = null;
+            _source = null;
+
+            base.Reset();
+        }
 
         public override void Visit(RazorSyntaxTree tree)
         {
+            // Set _source based on the current tree, since this visitor is called for the document and its imports.
             _source = tree.Source;
             Visit(tree.Root);
         }
@@ -319,43 +416,45 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
 
                 switch (literal.ChunkGenerator)
                 {
-                    case null:
-                        // We can't find a chunk generator.
-                        continue;
                     case AddTagHelperChunkGenerator addTagHelper:
-                        // Make sure this node exists in the file we're parsing and not in its imports.
-                        if (_filePath.Equals(_source.FilePath, StringComparison.Ordinal))
+                        if (FilePath == Source.FilePath)
                         {
                             addTagHelper.Diagnostics.Add(
-                                ComponentDiagnosticFactory.Create_UnsupportedTagHelperDirective(node.GetSourceSpan(_source)));
+                                ComponentDiagnosticFactory.Create_UnsupportedTagHelperDirective(node.GetSourceSpan(Source)));
                         }
+
                         break;
+
                     case RemoveTagHelperChunkGenerator removeTagHelper:
                         // Make sure this node exists in the file we're parsing and not in its imports.
-                        if (_filePath.Equals(_source.FilePath, StringComparison.Ordinal))
+                        if (FilePath == Source.FilePath)
                         {
                             removeTagHelper.Diagnostics.Add(
-                                ComponentDiagnosticFactory.Create_UnsupportedTagHelperDirective(node.GetSourceSpan(_source)));
+                                ComponentDiagnosticFactory.Create_UnsupportedTagHelperDirective(node.GetSourceSpan(Source)));
                         }
+
                         break;
+
                     case TagHelperPrefixDirectiveChunkGenerator tagHelperPrefix:
                         // Make sure this node exists in the file we're parsing and not in its imports.
-                        if (_filePath.Equals(_source.FilePath, StringComparison.Ordinal))
+                        if (FilePath == Source.FilePath)
                         {
                             tagHelperPrefix.Diagnostics.Add(
-                                ComponentDiagnosticFactory.Create_UnsupportedTagHelperDirective(node.GetSourceSpan(_source)));
+                                ComponentDiagnosticFactory.Create_UnsupportedTagHelperDirective(node.GetSourceSpan(Source)));
                         }
+
                         break;
+
                     case AddImportChunkGenerator { IsStatic: false } usingStatement:
                         // Get the namespace from the using statement.
                         var @namespace = usingStatement.ParsedNamespace;
-                        if (@namespace.IndexOf('=') != -1)
+                        if (@namespace.Contains('='))
                         {
                             // We don't support usings with alias.
                             continue;
                         }
 
-                        foreach (var tagHelper in _notFullyQualifiedComponents)
+                        foreach (var tagHelper in _nonFullyQualifiedComponents)
                         {
                             Debug.Assert(!tagHelper.IsComponentFullyQualifiedNameMatch, "We've already processed these.");
 
@@ -365,15 +464,16 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
                                 // E.g, if the type name is `Test.MyComponent.ChildContent`, we want to add it if `Test.MyComponent` is in this namespace.
                                 if (IsTypeInNamespace(tagHelper, @namespace))
                                 {
-                                    Matches.Add(tagHelper);
+                                    AddMatch(tagHelper);
                                 }
                             }
                             else if (IsTypeInNamespace(tagHelper, @namespace))
                             {
                                 // If the type is at the top-level or if the type's namespace matches the using's namespace, add it.
-                                Matches.Add(tagHelper);
+                                AddMatch(tagHelper);
                             }
                         }
+
                         break;
                 }
             }
@@ -381,21 +481,18 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
 
         internal static bool IsTypeInNamespace(TagHelperDescriptor tagHelper, string @namespace)
         {
-            return IsTypeInNamespace(tagHelper.GetTypeNamespace(), @namespace);
+            var typeNamespace = tagHelper.GetTypeNamespace();
 
-            static bool IsTypeInNamespace(string typeNamespace, string @namespace)
+            if (typeNamespace.IsNullOrEmpty())
             {
-                if (string.IsNullOrEmpty(typeNamespace))
-                {
-                    // Either the typeName is not the full type name or this type is at the top level.
-                    return true;
-                }
-
-                // Remove global:: prefix from namespace.
-                var normalizedNamespace = RemoveGlobalPrefix(@namespace.AsSpan());
-
-                return normalizedNamespace.Equals(typeNamespace.AsSpan(), StringComparison.Ordinal);
+                // Either the typeName is not the full type name or this type is at the top level.
+                return true;
             }
+
+            // Remove global:: prefix from namespace.
+            var normalizedNamespaceSpan = GetSpanWithoutGlobalPrefix(@namespace);
+
+            return normalizedNamespaceSpan.Equals(typeNamespace.AsSpan(), StringComparison.Ordinal);
         }
 
         // Check if the given type is already in scope given the namespace of the current document.
@@ -403,27 +500,24 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
         // If the namespace of the document is `MyComponents.Components.Shared`,
         // then the types `MyComponents.FooComponent`, `MyComponents.Components.BarComponent`, `MyComponents.Components.Shared.BazComponent` are all in scope.
         // Whereas `MyComponents.SomethingElse.OtherComponent` is not in scope.
-        internal static bool IsTypeInScope(TagHelperDescriptor descriptor, string currentNamespace)
+        internal static bool IsTypeInScope(TagHelperDescriptor tagHelper, string @namespace)
         {
-            return IsTypeInScopeCore(currentNamespace, descriptor.GetTypeNamespace());
-        }
+            var typeNamespace = tagHelper.GetTypeNamespace();
 
-        private static bool IsTypeInScopeCore(string currentNamespace, string typeNamespace)
-        {
-            if (string.IsNullOrEmpty(typeNamespace))
+            if (typeNamespace.IsNullOrEmpty())
             {
                 // Either the typeName is not the full type name or this type is at the top level.
                 return true;
             }
 
-            if (!currentNamespace.StartsWith(typeNamespace, StringComparison.Ordinal))
+            if (!@namespace.StartsWith(typeNamespace, StringComparison.Ordinal))
             {
                 // typeName: MyComponents.Shared.SomeCoolNamespace
                 // currentNamespace: MyComponents.Shared
                 return false;
             }
 
-            if (typeNamespace.Length > currentNamespace.Length && typeNamespace[currentNamespace.Length] != '.')
+            if (typeNamespace.Length > @namespace.Length && typeNamespace[@namespace.Length] != '.')
             {
                 // typeName: MyComponents.SharedFoo
                 // currentNamespace: MyComponent.Shared
@@ -438,15 +532,6 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
         internal static bool IsTagHelperFromMangledClass(TagHelperDescriptor tagHelper)
         {
             return ComponentMetadata.IsMangledClass(tagHelper.GetTypeNameIdentifier());
-        }
-
-        public override void Dispose()
-        {
-            if (_notFullyQualifiedComponents != null)
-            {
-                ListPool<TagHelperDescriptor>.Default.Return(_notFullyQualifiedComponents);
-                _notFullyQualifiedComponents = null;
-            }
         }
     }
 }

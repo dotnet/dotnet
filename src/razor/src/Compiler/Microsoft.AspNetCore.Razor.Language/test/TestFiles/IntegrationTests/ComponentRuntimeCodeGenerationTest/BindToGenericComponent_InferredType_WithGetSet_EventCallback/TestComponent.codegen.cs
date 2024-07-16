@@ -56,8 +56,16 @@ namespace __Blazor.Test.TestComponent
         public static void CreateMyComponent_0<TValue>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TValue __arg0, int __seq1, global::Microsoft.AspNetCore.Components.EventCallback<TValue> __arg1)
         {
         __builder.OpenComponent<global::Test.MyComponent<TValue>>(seq);
-        __builder.AddComponentParameter(__seq0, "Value", __arg0);
-        __builder.AddComponentParameter(__seq1, "ValueChanged", __arg1);
+        __builder.AddComponentParameter(__seq0, nameof(global::Test.MyComponent<TValue>.
+#nullable restore
+#line (1,20)-(1,25) "x:\dir\subdir\Test\TestComponent.cshtml"
+Value
+
+#line default
+#line hidden
+#nullable disable
+        ), __arg0);
+        __builder.AddComponentParameter(__seq1, nameof(global::Test.MyComponent<TValue>.ValueChanged), __arg1);
         __builder.CloseComponent();
         }
     }

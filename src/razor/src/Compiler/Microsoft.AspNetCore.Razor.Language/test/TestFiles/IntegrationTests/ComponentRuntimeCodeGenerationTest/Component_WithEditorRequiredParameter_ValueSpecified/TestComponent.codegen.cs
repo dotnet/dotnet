@@ -18,7 +18,15 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.ComponentWithEditorRequiredParameters>(0);
-            __builder.AddComponentParameter(1, "Property1", "Some Value");
+            __builder.AddComponentParameter(1, nameof(global::Test.ComponentWithEditorRequiredParameters.
+#nullable restore
+#line (1,40)-(1,49) "x:\dir\subdir\Test\TestComponent.cshtml"
+Property1
+
+#line default
+#line hidden
+#nullable disable
+            ), "Some Value");
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

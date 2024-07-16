@@ -276,5 +276,6 @@ internal class RazorHtmlWriter : SyntaxWalker, IDisposable
     public void Dispose()
     {
         _sourceMappingsBuilder.Dispose();
+        Builder.Dispose();
     }
 }

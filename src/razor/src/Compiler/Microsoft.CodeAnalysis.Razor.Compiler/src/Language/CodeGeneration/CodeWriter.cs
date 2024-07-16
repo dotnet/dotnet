@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -10,13 +11,13 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
-public sealed partial class CodeWriter
+public sealed partial class CodeWriter : IDisposable
 {
     // This is the size of each "page", which are arrays of ReadOnlyMemory<char>.
     // This number was chosen arbitrarily as a "best guess". If changed, care should be
     // taken to ensure that pages are not allocated on the LOH. ReadOnlyMemory<char>
     // takes up 16 bytes, so a page size of 1000 is 16k.
-    private const int PageSize = 1000;
+    private const int MinimumPageSize = 1000;
 
     // Rather than using a StringBuilder, we maintain a linked list of pages, which are arrays
     // of "chunks of text", represented by ReadOnlyMemory<char>. This avoids copying strings
@@ -65,9 +66,17 @@ public sealed partial class CodeWriter
         }
 
         // If we're at the start of a page, we need to add the page first.
-        var lastPage = _pageOffset == 0
-            ? _pages.AddLast(new ReadOnlyMemory<char>[PageSize]).Value
-            : _pages.Last!.Value;
+        ReadOnlyMemory<char>[] lastPage;
+
+        if (_pageOffset == 0)
+        {
+            lastPage = ArrayPool<ReadOnlyMemory<char>>.Shared.Rent(MinimumPageSize);
+            _pages.AddLast(lastPage);
+        }
+        else
+        {
+            lastPage = _pages.Last!.Value;
+        }
 
         // Add our chunk of text (the ReadOnlyMemory<char>) and increment the offset.
         lastPage[_pageOffset] = value;
@@ -75,7 +84,9 @@ public sealed partial class CodeWriter
 
         // We've reached the end of a page, so we reset the offset to 0.
         // This will cause a new page to be added next time.
-        if (_pageOffset == PageSize)
+        // _pageOffset is checked against the lastPage.Length as the Rent call that
+        // return that array may return an array longer that MinimumPageSize.
+        if (_pageOffset == lastPage.Length)
         {
             _pageOffset = 0;
         }
@@ -369,5 +380,15 @@ public sealed partial class CodeWriter
 
             return result;
         }
+    }
+
+    public void Dispose()
+    {
+        foreach (var page in _pages)
+        {
+            ArrayPool<ReadOnlyMemory<char>>.Shared.Return(page, clearArray: true);
+        }
+
+        _pages.Clear();
     }
 }
