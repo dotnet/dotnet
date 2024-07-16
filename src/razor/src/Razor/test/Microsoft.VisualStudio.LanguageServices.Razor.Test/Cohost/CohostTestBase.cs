@@ -2,7 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using Basic.Reference.Assemblies;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
@@ -12,7 +14,7 @@ using Microsoft.CodeAnalysis.Remote.Razor;
 using Microsoft.CodeAnalysis.Text;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.Test.Cohost;
+namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : WorkspaceTestBase(testOutputHelper)
 {
@@ -28,7 +30,7 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Works
         _remoteServiceProvider = AddDisposable(new TestRemoteServiceProvider(exportProvider));
     }
 
-    protected TextDocument CreateRazorDocument(string contents)
+    protected TextDocument CreateProjectAndRazorDocument(string contents)
     {
         var projectFilePath = TestProjectData.SomeProject.FilePath;
         var documentFilePath = TestProjectData.SomeProjectComponentFile1.FilePath;
@@ -36,19 +38,34 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Works
         var projectId = ProjectId.CreateNewId(debugName: projectName);
         var documentId = DocumentId.CreateNewId(projectId, debugName: documentFilePath);
 
-        var solution = Workspace.CurrentSolution.AddProject(ProjectInfo.Create(
-            projectId,
-            VersionStamp.Create(),
-            name: projectName,
-            assemblyName: projectName,
-            LanguageNames.CSharp,
-            documentFilePath));
+        var projectInfo = ProjectInfo
+            .Create(
+                projectId,
+                VersionStamp.Create(),
+                name: projectName,
+                assemblyName: projectName,
+                LanguageNames.CSharp,
+                documentFilePath)
+            .WithMetadataReferences(AspNet80.ReferenceInfos.All.Select(r => r.Reference));
 
-        solution = solution.AddAdditionalDocument(
-            documentId,
-            documentFilePath,
-            SourceText.From(contents),
-            filePath: documentFilePath);
+        var solution = Workspace.CurrentSolution.AddProject(projectInfo);
+
+        solution = solution
+            .AddAdditionalDocument(
+                documentId,
+                documentFilePath,
+                SourceText.From(contents),
+                filePath: documentFilePath)
+            .AddAdditionalDocument(
+                DocumentId.CreateNewId(projectId),
+                name: "_Imports.razor",
+                text: SourceText.From("""
+                    @using Microsoft.AspNetCore.Components
+                    @using Microsoft.AspNetCore.Components.Authorization
+                    @using Microsoft.AspNetCore.Components.Routing
+                    @using Microsoft.AspNetCore.Components.Web
+                    """),
+                filePath: TestProjectData.SomeProjectComponentImportFile1.FilePath);
 
         return solution.GetAdditionalDocument(documentId).AssumeNotNull();
     }

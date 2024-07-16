@@ -286,6 +286,7 @@ public abstract class RazorWorkspaceListenerBase : IDisposable
             return;
         }
 
+        stream.WriteProjectInfoAction(ProjectInfoAction.Update);
         await stream.WriteProjectInfoAsync(projectInfo, cancellationToken).ConfigureAwait(false);
     }
 

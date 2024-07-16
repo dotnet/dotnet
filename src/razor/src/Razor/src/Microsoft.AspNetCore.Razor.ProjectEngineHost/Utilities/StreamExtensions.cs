@@ -56,7 +56,8 @@ internal static class StreamExtensions
         var length = ReadSize(stream);
 
         using var _ = ArrayPool<byte>.Shared.GetPooledArray(length, out var encodedBytes);
-        await stream.ReadAsync(encodedBytes, 0, length, cancellationToken).ConfigureAwait(false);
+
+        await ReadExactlyAsync(stream, encodedBytes, length, cancellationToken).ConfigureAwait(false);
         return encoding.GetString(encodedBytes, 0, length);
     }
 
@@ -94,8 +95,6 @@ internal static class StreamExtensions
 
     public static async Task WriteProjectInfoAsync(this Stream stream, RazorProjectInfo projectInfo, CancellationToken cancellationToken)
     {
-        WriteProjectInfoAction(stream, ProjectInfoAction.Update);
-
         var bytes = projectInfo.Serialize();
         WriteSize(stream, bytes.Length);
         await stream.WriteAsync(bytes, 0, bytes.Length, cancellationToken).ConfigureAwait(false);
@@ -106,11 +105,15 @@ internal static class StreamExtensions
         var sizeToRead = ReadSize(stream);
 
         using var _ = ArrayPool<byte>.Shared.GetPooledArray(sizeToRead, out var projectInfoBytes);
-        await stream.ReadAsync(projectInfoBytes, 0, projectInfoBytes.Length, cancellationToken).ConfigureAwait(false);
-        return RazorProjectInfo.DeserializeFrom(projectInfoBytes.AsMemory());
+        await ReadExactlyAsync(stream, projectInfoBytes, sizeToRead, cancellationToken).ConfigureAwait(false);
+
+        // The array may be larger than the bytes read so make sure to trim accordingly.
+        var projectInfoMemory = projectInfoBytes.AsMemory(0, sizeToRead);
+
+        return RazorProjectInfo.DeserializeFrom(projectInfoMemory);
     }
 
-    private static void WriteSize(Stream stream, int length)
+    public static void WriteSize(this Stream stream, int length)
     {
 #if NET
         Span<byte> sizeBytes = stackalloc byte[4];
@@ -125,7 +128,7 @@ internal static class StreamExtensions
 
     }
 
-    private unsafe static int ReadSize(Stream stream)
+    public unsafe static int ReadSize(this Stream stream)
     {
 #if NET
         Span<byte> bytes = stackalloc byte[4];
@@ -137,4 +140,24 @@ internal static class StreamExtensions
         return BitConverter.ToInt32(bytes, 0);
 #endif
     }
+
+#if NET
+    private static ValueTask ReadExactlyAsync(Stream stream, byte[] buffer, int length, CancellationToken cancellationToken)
+        => stream.ReadExactlyAsync(buffer, 0, length, cancellationToken);
+#else
+    private static async ValueTask ReadExactlyAsync(Stream stream, byte[] buffer, int length, CancellationToken cancellationToken)
+    {
+        var bytesRead = 0;
+        while (bytesRead < length)
+        {
+            var read = await stream.ReadAsync(buffer, bytesRead, length - bytesRead, cancellationToken);
+            if (read == 0)
+            {
+                throw new EndOfStreamException();
+            }
+
+            bytesRead += read;
+        }
+    }
+#endif
 }

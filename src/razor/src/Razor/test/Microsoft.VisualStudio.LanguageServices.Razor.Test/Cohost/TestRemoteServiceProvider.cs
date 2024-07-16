@@ -11,12 +11,12 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.VisualStudio.Composition;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.Test.Cohost;
+namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 /// <summary>
 /// An implementation of IRemoteServiceProvider that doesn't actually do anything remote, but rather directly calls service methods
 /// </summary>
-internal class TestRemoteServiceProvider(ExportProvider exportProvider) : IRemoteServiceProvider, IDisposable
+internal sealed class TestRemoteServiceProvider(ExportProvider exportProvider) : IRemoteServiceProvider, IDisposable
 {
     private readonly TestServiceBroker _testServiceBroker = new TestServiceBroker();
     private readonly Dictionary<Type, IDisposable> _services = new Dictionary<Type, IDisposable>();
