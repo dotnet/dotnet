@@ -26,7 +26,7 @@ public class TestImportProjectFeature : RazorProjectEngineFeatureBase, IImportPr
     private void AddHierarchicalImports(RazorProjectItem projectItem, List<RazorProjectItem> imports)
     {
         // We want items in descending order. FindHierarchicalItems returns items in ascending order.
-        var importProjectItems = ProjectEngine.FileSystem.FindHierarchicalItems(projectItem.FilePath, "_Imports.cshtml").Reverse();
+        var importProjectItems = ProjectEngine.FileSystem.FindHierarchicalItems(projectItem.FilePath, "_ViewImports.cshtml").Reverse();
         imports.AddRange(importProjectItems);
     }
 }

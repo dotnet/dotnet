@@ -10,24 +10,24 @@ namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 [Shared]
 [Export(typeof(LanguageServerFeatureOptions))]
+[Export(typeof(RemoteLanguageServerFeatureOptions))]
 internal class RemoteLanguageServerFeatureOptions : LanguageServerFeatureOptions
 {
-    // It's okay to use default here because we expect the options to be set before the first real OOP call
-    private static RemoteClientInitializationOptions s_options = default;
+    private RemoteClientInitializationOptions _options = default;
 
-    public static void SetOptions(RemoteClientInitializationOptions options) => s_options = options;
+    public void SetOptions(RemoteClientInitializationOptions options) => _options = options;
 
     public override bool SupportsFileManipulation => throw new InvalidOperationException("This option has not been synced to OOP.");
 
-    public override string CSharpVirtualDocumentSuffix => s_options.CSharpVirtualDocumentSuffix;
+    public override string CSharpVirtualDocumentSuffix => _options.CSharpVirtualDocumentSuffix;
 
-    public override string HtmlVirtualDocumentSuffix => s_options.HtmlVirtualDocumentSuffix;
+    public override string HtmlVirtualDocumentSuffix => _options.HtmlVirtualDocumentSuffix;
 
     public override bool SingleServerSupport => throw new InvalidOperationException("This option has not been synced to OOP.");
 
     public override bool DelegateToCSharpOnDiagnosticPublish => throw new InvalidOperationException("This option has not been synced to OOP.");
 
-    public override bool UsePreciseSemanticTokenRanges => s_options.UsePreciseSemanticTokenRanges;
+    public override bool UsePreciseSemanticTokenRanges => _options.UsePreciseSemanticTokenRanges;
 
     public override bool ShowAllCSharpCodeActions => throw new InvalidOperationException("This option has not been synced to OOP.");
 
@@ -35,9 +35,9 @@ internal class RemoteLanguageServerFeatureOptions : LanguageServerFeatureOptions
 
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => throw new InvalidOperationException("This option has not been synced to OOP.");
 
-    public override bool IncludeProjectKeyInGeneratedFilePath => s_options.IncludeProjectKeyInGeneratedFilePath;
+    public override bool IncludeProjectKeyInGeneratedFilePath => _options.IncludeProjectKeyInGeneratedFilePath;
 
-    public override bool UseRazorCohostServer => s_options.UseRazorCohostServer;
+    public override bool UseRazorCohostServer => _options.UseRazorCohostServer;
 
     public override bool DisableRazorLanguageServer => throw new InvalidOperationException("This option has not been synced to OOP.");
 

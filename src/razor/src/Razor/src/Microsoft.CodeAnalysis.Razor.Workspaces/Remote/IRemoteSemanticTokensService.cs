@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Remote;
 
-internal interface IRemoteSemanticTokensService : IDisposable
+internal interface IRemoteSemanticTokensService
 {
     ValueTask<int[]?> GetSemanticTokensDataAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,

@@ -5,29 +5,35 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.LinkedEditingRange;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-internal sealed class RemoteLinkedEditingRangeService(
-    IRazorServiceBroker serviceBroker,
-    DocumentSnapshotFactory documentSnapshotFactory,
-    ILoggerFactory loggerFactory)
-    : RazorDocumentServiceBase(serviceBroker, documentSnapshotFactory), IRemoteLinkedEditingRangeService
+internal sealed class RemoteLinkedEditingRangeService(in ServiceArgs args) : RazorDocumentServiceBase(in args), IRemoteLinkedEditingRangeService
 {
-    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RemoteLinkedEditingRangeService>();
+    internal sealed class Factory : FactoryBase<IRemoteLinkedEditingRangeService>
+    {
+        protected override IRemoteLinkedEditingRangeService CreateService(in ServiceArgs args)
+            => new RemoteLinkedEditingRangeService(in args);
+    }
 
-    public ValueTask<LinePositionSpan[]?> GetRangesAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId razorDocumentId, LinePosition linePosition, CancellationToken cancellationToken)
+    public ValueTask<LinePositionSpan[]?> GetRangesAsync(
+        RazorPinnedSolutionInfoWrapper solutionInfo,
+        DocumentId razorDocumentId,
+        LinePosition linePosition,
+        CancellationToken cancellationToken)
         => RunServiceAsync(
             solutionInfo,
             razorDocumentId,
             context => GetRangesAsync(context, linePosition, cancellationToken),
             cancellationToken);
 
-    public async ValueTask<LinePositionSpan[]?> GetRangesAsync(RemoteDocumentContext context, LinePosition linePosition, CancellationToken cancellationToken)
+    public async ValueTask<LinePositionSpan[]?> GetRangesAsync(
+        RemoteDocumentContext context,
+        LinePosition linePosition,
+        CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
         {
@@ -36,6 +42,6 @@ internal sealed class RemoteLinkedEditingRangeService(
 
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        return LinkedEditingRangeHelper.GetLinkedSpans(linePosition, codeDocument, _logger);
+        return LinkedEditingRangeHelper.GetLinkedSpans(linePosition, codeDocument, Logger);
     }
 }

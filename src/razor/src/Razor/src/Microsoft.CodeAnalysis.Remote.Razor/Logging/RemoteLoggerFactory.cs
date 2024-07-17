@@ -1,33 +1,35 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Composition;
-using System.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.Logging;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.Logging;
 
-[Export(typeof(ILoggerFactory)), Shared]
-[method: ImportingConstructor]
-internal partial class RemoteLoggerFactory() : ILoggerFactory
+[Shared]
+[Export(typeof(ILoggerFactory))]
+[Export(typeof(RemoteLoggerFactory))]
+internal sealed class RemoteLoggerFactory : ILoggerFactory
 {
-    private static TraceSource? s_traceSource;
+    private ILoggerFactory _targetLoggerFactory = EmptyLoggerFactory.Instance;
 
-    internal static TraceSource Initialize(IServiceProvider hostProvidedServices)
+    internal void SetTargetLoggerFactory(ILoggerFactory loggerFactory)
     {
-        s_traceSource ??= (TraceSource)hostProvidedServices.GetService(typeof(TraceSource));
-        return s_traceSource;
+        // We only set the target logger factory if the current factory is empty.
+        if (_targetLoggerFactory is EmptyLoggerFactory)
+        {
+            _targetLoggerFactory = loggerFactory;
+        }
     }
 
     public void AddLoggerProvider(ILoggerProvider provider)
     {
-        throw new NotImplementedException();
+        _targetLoggerFactory.AddLoggerProvider(provider);
     }
 
     public ILogger GetOrCreateLogger(string categoryName)
     {
-        return new Logger(categoryName);
+        return _targetLoggerFactory.GetOrCreateLogger(categoryName);
     }
 
     public void Dispose()

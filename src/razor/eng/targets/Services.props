@@ -15,12 +15,12 @@
     For example, if your service interface is IRemoteFrobulatorService, then the Include should be "Microsoft.VisualStudio.Razor.Frobulator".
   -->
   <ItemGroup>
-    <ServiceHubService Include="Microsoft.VisualStudio.Razor.LinkedEditingRange" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteLinkedEditingRangeServiceFactory" />
-    <ServiceHubService Include="Microsoft.VisualStudio.Razor.SemanticTokens" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteSemanticTokensServiceFactory" />
-    <ServiceHubService Include="Microsoft.VisualStudio.Razor.HtmlDocument" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteHtmlDocumentServiceFactory" />
-    <ServiceHubService Include="Microsoft.VisualStudio.Razor.TagHelperProvider" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteTagHelperProviderServiceFactory"/>
-    <ServiceHubService Include="Microsoft.VisualStudio.Razor.ClientInitialization" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteClientInitializationServiceFactory" />
-    <ServiceHubService Include="Microsoft.VisualStudio.Razor.UriPresentation" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteUriPresentationServiceFactory" />
-    <ServiceHubService Include="Microsoft.VisualStudio.Razor.FoldingRange" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteFoldingRangeServiceFactory" />
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.LinkedEditingRange" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteLinkedEditingRangeService+Factory" />
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.SemanticTokens" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteSemanticTokensService+Factory" />
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.HtmlDocument" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteHtmlDocumentService+Factory" />
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.TagHelperProvider" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteTagHelperProviderService+Factory"/>
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.ClientInitialization" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteClientInitializationService+Factory" />
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.UriPresentation" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteUriPresentationService+Factory" />
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.FoldingRange" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteFoldingRangeService+Factory" />
   </ItemGroup>
 </Project>

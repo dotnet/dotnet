@@ -27,13 +27,13 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal class CohostFoldingRangeEndpoint(
-    IRemoteServiceProvider remoteServiceProvider,
+    IRemoteServiceInvoker remoteServiceInvoker,
     IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
     LSPRequestInvoker requestInvoker,
     ILoggerFactory loggerFactory)
     : AbstractRazorCohostDocumentRequestHandler<FoldingRangeParams, FoldingRange[]?>, IDynamicRegistrationProvider
 {
-    private readonly IRemoteServiceProvider _remoteServiceProvider = remoteServiceProvider;
+    private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
     private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostFoldingRangeEndpoint>();
@@ -62,10 +62,11 @@ internal class CohostFoldingRangeEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(FoldingRangeParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override async Task<FoldingRange[]?> HandleRequestAsync(FoldingRangeParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
-    {
-        var razorDocument = context.TextDocument.AssumeNotNull();
+    protected override Task<FoldingRange[]?> HandleRequestAsync(FoldingRangeParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
+        => HandleRequestAsync(context.TextDocument.AssumeNotNull(), cancellationToken);
 
+    private async Task<FoldingRange[]?> HandleRequestAsync(TextDocument razorDocument, CancellationToken cancellationToken)
+    {
         _logger.LogDebug($"Getting folding ranges for {razorDocument.FilePath}");
         // TODO: Should we have a separate method/service for getting C# ranges, so we can kick off both tasks in parallel? Or are we better off transition to OOP once?
         var htmlRangesResult = await GetHtmlFoldingRangesAsync(razorDocument, cancellationToken).ConfigureAwait(false);
@@ -78,7 +79,7 @@ internal class CohostFoldingRangeEndpoint(
         }
 
         _logger.LogDebug($"Calling OOP with the {htmlRanges.Length} html ranges, so it can fill in the rest");
-        var data = await _remoteServiceProvider.TryInvokeAsync<IRemoteFoldingRangeService, ImmutableArray<RemoteFoldingRange>>(
+        var data = await _remoteServiceInvoker.TryInvokeAsync<IRemoteFoldingRangeService, ImmutableArray<RemoteFoldingRange>>(
             razorDocument.Project.Solution,
             (service, solutionInfo, cancellationToken) => service.GetFoldingRangesAsync(solutionInfo, razorDocument.Id, htmlRanges, cancellationToken),
             cancellationToken).ConfigureAwait(false);
@@ -122,6 +123,14 @@ internal class CohostFoldingRangeEndpoint(
         }
 
         return result.Response.SelectAsArray(RemoteFoldingRange.FromLspFoldingRange);
+    }
+
+    internal TestAccessor GetTestAccessor() => new(this);
+
+    internal readonly struct TestAccessor(CohostFoldingRangeEndpoint instance)
+    {
+        public Task<FoldingRange[]?> HandleRequestAsync(TextDocument razorDocument, CancellationToken cancellationToken)
+            => instance.HandleRequestAsync(razorDocument, cancellationToken);
     }
 }
 

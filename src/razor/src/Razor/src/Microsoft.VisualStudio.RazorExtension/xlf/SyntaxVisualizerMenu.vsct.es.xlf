@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="cmdIdShowAllTagHelpers|ButtonText">
         <source>Show All Tag Helpers</source>
-        <target state="new">Show All Tag Helpers</target>
+        <target state="translated">Mostrar todos los asistentes de etiquetas</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdIdShowInScopeTagHelpers|ButtonText">
         <source>Show In Scope Tag Helpers</source>
-        <target state="new">Show In Scope Tag Helpers</target>
+        <target state="translated">Mostrar asistentes de etiquetas de ámbito</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdIdShowReferencedTagHelpers|ButtonText">
         <source>Show Referenced Tag Helpers</source>
-        <target state="new">Show Referenced Tag Helpers</target>
+        <target state="translated">Mostrar asistentes de etiquetas a los que se hace referencia</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidRazorSyntaxVisualizer|ButtonText">

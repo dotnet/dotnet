@@ -23,11 +23,11 @@ namespace Microsoft.VisualStudio.Razor.Remote;
 [Export(typeof(ITagHelperResolver))]
 [method: ImportingConstructor]
 internal class OutOfProcTagHelperResolver(
-    IRemoteServiceProvider remoteServiceProvider,
+    IRemoteServiceInvoker remoteServiceInvoker,
     ILoggerFactory loggerFactory,
     ITelemetryReporter telemetryReporter) : ITagHelperResolver
 {
-    private readonly IRemoteServiceProvider _remoteServiceProvider = remoteServiceProvider;
+    private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<OutOfProcTagHelperResolver>();
     private readonly CompilationTagHelperResolver _innerResolver = new(telemetryReporter);
     private readonly TagHelperResultCache _resultCache = new();
@@ -75,7 +75,7 @@ internal class OutOfProcTagHelperResolver(
 
         var projectHandle = new ProjectSnapshotHandle(workspaceProject.Id, projectSnapshot.Configuration, projectSnapshot.RootNamespace);
 
-        var deltaResult = await _remoteServiceProvider.TryInvokeAsync<IRemoteTagHelperProviderService, TagHelperDeltaResult>(
+        var deltaResult = await _remoteServiceInvoker.TryInvokeAsync<IRemoteTagHelperProviderService, TagHelperDeltaResult>(
             workspaceProject.Solution,
             (service, solutionInfo, innerCancellationToken) =>
                 service.GetTagHelpersDeltaAsync(solutionInfo, projectHandle, lastResultId, innerCancellationToken),
@@ -110,7 +110,7 @@ internal class OutOfProcTagHelperResolver(
         if (checksumsToFetch.Count > 0)
         {
             // There are checksums that we don't have cached tag helpers for, so we need to fetch them from OOP.
-            var fetchResult = await _remoteServiceProvider.TryInvokeAsync<IRemoteTagHelperProviderService, FetchTagHelpersResult>(
+            var fetchResult = await _remoteServiceInvoker.TryInvokeAsync<IRemoteTagHelperProviderService, FetchTagHelpersResult>(
                 workspaceProject.Solution,
                 (service, solutionInfo, innerCancellationToken) =>
                     service.FetchTagHelpersAsync(solutionInfo, projectHandle, checksumsToFetch.DrainToImmutable(), innerCancellationToken),

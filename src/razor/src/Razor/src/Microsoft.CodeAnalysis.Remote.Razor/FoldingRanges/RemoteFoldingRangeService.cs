@@ -12,31 +12,40 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-internal sealed class RemoteFoldingRangeService(
-    IRazorServiceBroker serviceBroker,
-    IFoldingRangeService foldingRangeService,
-    DocumentSnapshotFactory documentSnapshotFactory,
-    IFilePathService filePathService)
-    : RazorDocumentServiceBase(serviceBroker, documentSnapshotFactory), IRemoteFoldingRangeService
+internal sealed class RemoteFoldingRangeService(in ServiceArgs args) : RazorDocumentServiceBase(in args), IRemoteFoldingRangeService
 {
-    private readonly IFoldingRangeService _foldingRangeService = foldingRangeService;
-    private readonly IFilePathService _filePathService = filePathService;
+    internal sealed class Factory : FactoryBase<IRemoteFoldingRangeService>
+    {
+        protected override IRemoteFoldingRangeService CreateService(in ServiceArgs args)
+            => new RemoteFoldingRangeService(in args);
+    }
 
-    public ValueTask<ImmutableArray<RemoteFoldingRange>> GetFoldingRangesAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId documentId, ImmutableArray<RemoteFoldingRange> htmlRanges, CancellationToken cancellationToken)
+    private readonly IFoldingRangeService _foldingRangeService = args.ExportProvider.GetExportedValue<IFoldingRangeService>();
+    private readonly IFilePathService _filePathService = args.ExportProvider.GetExportedValue<IFilePathService>();
+
+    public ValueTask<ImmutableArray<RemoteFoldingRange>> GetFoldingRangesAsync(
+        RazorPinnedSolutionInfoWrapper solutionInfo,
+        DocumentId documentId,
+        ImmutableArray<RemoteFoldingRange> htmlRanges,
+        CancellationToken cancellationToken)
         => RunServiceAsync(
             solutionInfo,
             documentId,
             context => GetFoldingRangesAsync(context, htmlRanges, cancellationToken),
             cancellationToken);
 
-    private async ValueTask<ImmutableArray<RemoteFoldingRange>> GetFoldingRangesAsync(RemoteDocumentContext context, ImmutableArray<RemoteFoldingRange> htmlRanges, CancellationToken cancellationToken)
+    private async ValueTask<ImmutableArray<RemoteFoldingRange>> GetFoldingRangesAsync(
+        RemoteDocumentContext context,
+        ImmutableArray<RemoteFoldingRange> htmlRanges,
+        CancellationToken cancellationToken)
     {
         var generatedDocument = await context.GetGeneratedDocumentAsync(_filePathService, cancellationToken).ConfigureAwait(false);
 
-        var csharpRanges = await ExternalAccess.Razor.Cohost.Handlers.FoldingRanges.GetFoldingRangesAsync(generatedDocument, cancellationToken).ConfigureAwait(false);
+        var csharpRanges = await ExternalHandlers.FoldingRanges.GetFoldingRangesAsync(generatedDocument, cancellationToken).ConfigureAwait(false);
 
         var convertedCSharp = csharpRanges.SelectAsArray(ToFoldingRange);
         var convertedHtml = htmlRanges.SelectAsArray(RemoteFoldingRange.ToLspFoldingRange);
@@ -47,7 +56,7 @@ internal sealed class RemoteFoldingRangeService(
     }
 
     public static FoldingRange ToFoldingRange(Roslyn.LanguageServer.Protocol.FoldingRange r)
-        => new FoldingRange
+        => new()
         {
             StartLine = r.StartLine,
             StartCharacter = r.StartCharacter,

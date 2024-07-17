@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
-using MessagePack.Formatters;
 using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 
@@ -15,7 +13,7 @@ internal static class RazorServices
     public static readonly RazorServiceDescriptorsWrapper Descriptors = new(
         ComponentName,
         featureDisplayNameProvider: feature => $"Razor {feature} Feature",
-        additionalFormatters: ImmutableArray<IMessagePackFormatter>.Empty,
+        additionalFormatters: [],
         additionalResolvers: TopLevelResolvers.All,
         interfaces:
         [

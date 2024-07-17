@@ -21,10 +21,10 @@ namespace Microsoft.VisualStudio.Razor.Remote;
 public partial class OutOfProcTagHelperResolverTest
 {
     private class TestResolver(
-        IRemoteServiceProvider remoteClientProvider,
+        IRemoteServiceInvoker remoteServiceInvoker,
         ILoggerFactory loggerFactory,
         ITelemetryReporter telemetryReporter)
-        : OutOfProcTagHelperResolver(remoteClientProvider, loggerFactory, telemetryReporter)
+        : OutOfProcTagHelperResolver(remoteServiceInvoker, loggerFactory, telemetryReporter)
     {
         public Func<IProjectSnapshot, ValueTask<ImmutableArray<TagHelperDescriptor>>>? OnResolveOutOfProcess { get; init; }
 

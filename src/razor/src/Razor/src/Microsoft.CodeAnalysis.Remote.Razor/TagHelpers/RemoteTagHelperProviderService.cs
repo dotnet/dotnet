@@ -13,14 +13,16 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-internal sealed class RemoteTagHelperProviderService(
-    IRazorServiceBroker serviceBroker,
-    RemoteTagHelperResolver tagHelperResolver,
-    RemoteTagHelperDeltaProvider tagHelperDeltaProvider)
-    : RazorServiceBase(serviceBroker), IRemoteTagHelperProviderService
+internal sealed partial class RemoteTagHelperProviderService(in ServiceArgs args) : RazorBrokeredServiceBase(in args), IRemoteTagHelperProviderService
 {
-    private readonly RemoteTagHelperResolver _tagHelperResolver = tagHelperResolver;
-    private readonly RemoteTagHelperDeltaProvider _tagHelperDeltaProvider = tagHelperDeltaProvider;
+    internal sealed class Factory : FactoryBase<IRemoteTagHelperProviderService>
+    {
+        protected override IRemoteTagHelperProviderService CreateService(in ServiceArgs args)
+            => new RemoteTagHelperProviderService(in args);
+    }
+
+    private readonly RemoteTagHelperResolver _tagHelperResolver = args.ExportProvider.GetExportedValue<RemoteTagHelperResolver>();
+    private readonly RemoteTagHelperDeltaProvider _tagHelperDeltaProvider = args.ExportProvider.GetExportedValue<RemoteTagHelperDeltaProvider>();
 
     public ValueTask<FetchTagHelpersResult> FetchTagHelpersAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,
