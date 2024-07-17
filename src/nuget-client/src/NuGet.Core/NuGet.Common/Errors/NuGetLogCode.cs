@@ -288,6 +288,11 @@ namespace NuGet.Common
         NU1507 = 1507,
 
         /// <summary>
+        /// Duplicate NuGetAuditSuppress found
+        /// </summary>
+        NU1508 = 1508,
+
+        /// <summary>
         /// Dependency bumped up
         /// </summary>
         NU1601 = 1601,

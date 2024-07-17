@@ -1699,6 +1699,7 @@ EndGlobal";
         [Theory]
         [InlineData("PackageReference", "NU1504")]
         [InlineData("PackageDownload", "NU1505")]
+        [InlineData("NuGetAuditSuppress", "NU1508")]
         public async Task DotnetRestore_WithDuplicateItem_WarnsWithLogCode(string itemName, string logCode)
         {
             using (SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext())

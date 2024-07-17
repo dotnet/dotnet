@@ -359,7 +359,7 @@ Copyright (c) .NET Foundation. All rights reserved.
     <CheckForDuplicateNuGetItemsTask
       Items="@(NuGetAuditSuppress)"
       ItemName="NuGetAuditSuppress"
-      LogCode="NU1505"
+      LogCode="NU1508"
       MSBuildProjectFullPath="$(MSBuildProjectFullPath)"
       TreatWarningsAsErrors="$(TreatWarningsAsErrors)"
       WarningsAsErrors="$(WarningsAsErrors)"
