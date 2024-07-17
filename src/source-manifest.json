@@ -49,10 +49,10 @@
       "commitSha": "e92f92efe5854b6fe013787830b59166cb9b4ed9"
     },
     {
-      "packageVersion": "8.1.531402",
+      "packageVersion": "8.1.536001",
       "path": "format",
-      "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-format",
-      "commitSha": "362d7b82e64498aced9ba0abb537b9c63e10ee91"
+      "remoteUri": "https://github.com/dotnet/format",
+      "commitSha": "b252c608794019761c3f0eb50d142db1ff1b6a2e"
     },
     {
       "packageVersion": "8.0.102-beta.24081.2",
