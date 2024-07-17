@@ -1,12 +1,52 @@
 version: 2.1
 
 orbs:
-  win: circleci/windows@1.0.0
+  win: circleci/windows@5.0
 
 executors:
   bionic:
     docker:
       - image: buildpack-deps:bionic
+  mac:
+    environment:
+      EMSDK_NOTTY: "1"
+      # Without this, any `brew install` command will result in self-update of
+      # brew itself which takes more than 4 minutes.
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+    macos:
+      xcode: "12.5.1"
+    resource_class: macos.x86.medium.gen2
+  mac_arm64:
+    environment:
+      EMSDK_NOTTY: "1"
+      # Without this, any `brew install` command will result in self-update of
+      # brew itself which takes more than 4 minutes.
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+    macos:
+      xcode: "13.4.1"
+    resource_class: macos.m1.medium.gen1
+  linux_arm64:
+    machine:
+      image: ubuntu-2004:2023.07.1
+    resource_class: arm.medium
+
+commands:
+  setup-macos:
+    steps:
+      - checkout
+      - run:
+          name: Install CMake
+          command: brew install cmake
+  test-macos:
+    steps:
+      - run:
+          name: test.sh
+          command: test/test.sh
+      - run:
+          name: test.py
+          command: |
+            source emsdk_env.sh
+            test/test.py
 
 jobs:
   flake8:
@@ -20,9 +60,9 @@ jobs:
             apt-get install -q -y python-pip python3-pip
       - run: python2 -m pip install --upgrade pip
       - run: python3 -m pip install --upgrade pip
-      - run: python2 -m pip install flake8==3.7.8
-      - run: python3 -m pip install flake8==3.7.8
-      - run: python2 -m flake8 --show-source --statistics
+      - run: python2 -m pip install flake8==3.9.2
+      - run: python3 -m pip install flake8==3.9.2
+      - run: python2 -m flake8 --show-source --statistics --extend-exclude=./scripts
       - run: python3 -m flake8 --show-source --statistics
   test-linux:
     executor: bionic
@@ -40,6 +80,7 @@ jobs:
       - run:
           name: Install debian packages
           command: apt-get update -q && apt-get install -q -y cmake build-essential openjdk-8-jre-headless ksh zsh
+      - run: test/test_node_path.sh
       - run: test/test.sh
       - run: test/test_source_env.sh
       - run:
@@ -47,28 +88,27 @@ jobs:
           command: |
             source emsdk_env.sh
             test/test.py
-  test-mac:
-    macos:
-      xcode: "12.5.1"
-    environment:
-      EMSDK_NOTTY: "1"
-      # Without this, any `brew installl` command will result in self-update of
-      # brew itself which takes more than 4 minutes.
-      HOMEBREW_NO_AUTO_UPDATE: "1"
+  test-linux-arm64:
+    executor: linux_arm64
     steps:
       - checkout
       - run:
-          name: Install cmake
-          command: brew install cmake
+          name: Install debian packages
+          command: sudo apt-get update -q && sudo apt-get install -q cmake build-essential openjdk-8-jre-headless
       - run: test/test.sh
-      - run:
-          name: test.py
-          command: |
-            source emsdk_env.sh
-            test/test.py
+  test-mac:
+    executor: mac
+    steps:
+      - setup-macos
+      - test-macos
+  test-mac-arm64:
+    executor: mac_arm64
+    steps:
+      - setup-macos
+      - test-macos
   test-windows:
     executor:
-      name: win/vs2019
+      name: win/server-2019
       shell: bash.exe
     environment:
       # We need python installed before we can test anytyhing.
@@ -133,7 +173,7 @@ jobs:
             $env:SYSTEM_FLAG="--system"
             test/test_path_preservation.ps1
 
-  build-docker-image:
+  build-docker-image-x64:
     executor: bionic
     steps:
       - checkout
@@ -141,15 +181,15 @@ jobs:
           name: install docker
           command: apt-get update -q && apt-get install -q -y docker.io
       - setup_remote_docker
-      # Build and test the tip-of-tree build of EMSDK
+      # Build the `latest` version of EMSDK as docker image
       - run:
           name: build
-          command: make -C ./docker version=tot build
+          command: make -C ./docker version=latest build
       - run:
           name: test
-          command: make -C ./docker version=tot test
+          command: make -C ./docker version=latest test
 
-  publish-docker-image:
+  publish-docker-image-x64:
     executor: bionic
     steps:
       - checkout
@@ -168,6 +208,53 @@ jobs:
           command: |
             docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
             make -C ./docker version=${CIRCLE_TAG} alias=latest push
+
+  publish-docker-image-arm64:
+    executor: linux_arm64
+    steps:
+      - checkout
+      - run:
+          name: check if emscripten-releases-tags.json has changed
+          command: |
+            CHANGED_FILES=$(git diff --name-only <<pipeline.git.base_revision>>..<<pipeline.git.revision>>)
+            if [[ ! $CHANGED_FILES =~ "emscripten-releases-tags.json" ]]; then
+              echo "emscripten-releases-tags.json has not changed, skipping build and publish"
+              circleci-agent step halt
+            fi
+      - run:
+          name: extract latest emscripten arm64 linux version
+          command: |
+            ARM64_VERSION=$(grep -oP '(?<="latest-arm64-linux": ")[^"]*' emscripten-releases-tags.json)
+            ARM64_IMAGE_TAG=${ARM64_VERSION}-arm64
+            echo "export ARM64_VERSION=$ARM64_VERSION" >> $BASH_ENV
+            echo "export ARM64_IMAGE_TAG=$ARM64_IMAGE_TAG" >> $BASH_ENV
+            echo "ARM64_VERSION=$ARM64_VERSION"
+            echo "ARM64_IMAGE_TAG=$ARM64_IMAGE_TAG"
+      - run:
+          name: check if docker image already exists
+          command: |
+            if [ -z "$ARM64_VERSION" ]; then
+              echo "ARM64_VERSION is empty, skipping publish"
+              circleci-agent step halt
+              exit 0
+            fi
+            DOCKER_IMAGE_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" https://hub.docker.com/v2/repositories/emscripten/emsdk/tags/$ARM64_IMAGE_TAG)
+            if [ "$DOCKER_IMAGE_EXISTS" = "200" ]; then
+              echo "Docker image: $ARM64_VERSION"
+              echo "Docker image already exists, skipping build and publish"
+              circleci-agent step halt
+            fi
+      - run:
+          name: build
+          command: make -C ./docker version=${ARM64_VERSION} build
+      - run:
+          name: test
+          command: make -C ./docker version=${ARM64_VERSION} test
+      - run:
+          name: push image
+          command: |
+            docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
+            make -C ./docker version=${ARM64_VERSION} alias=${ARM64_IMAGE_TAG} only_alias=true push
 
   test-bazel-linux:
     executor: bionic
@@ -190,11 +277,7 @@ jobs:
       - run: test/test_bazel.sh
 
   test-bazel-mac:
-    macos:
-      xcode: "12.5.1"
-    environment:
-      EMSDK_NOTTY: "1"
-      HOMEBREW_NO_AUTO_UPDATE: "1"
+    executor: mac
     steps:
       - checkout
       - run: brew install grep
@@ -206,7 +289,7 @@ jobs:
 
   test-bazel-windows:
     executor:
-      name: win/vs2019
+      name: win/server-2019
       shell: powershell.exe -ExecutionPolicy Bypass
     environment:
       PYTHONUNBUFFERED: "1"
@@ -234,21 +317,31 @@ workflows:
   test-linux:
     jobs:
       - test-linux
+  test-linux-arm64:
+    jobs:
+      - test-linux-arm64
   test-mac:
     jobs:
       - test-mac
+  test-mac-arm64:
+    jobs:
+      - test-mac-arm64
   test-windows:
     jobs:
       - test-windows
   build-docker-image:
     jobs:
-      - build-docker-image
-      - publish-docker-image:
+      - build-docker-image-x64
+      - publish-docker-image-x64:
           filters:
             branches:
               ignore: /.*/
             tags:
               only: /.*/
+      - publish-docker-image-arm64:
+          filters:
+            branches:
+              only: main
   test-bazel-linux:
     jobs:
       - test-bazel-linux
