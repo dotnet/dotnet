@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@c77a7b8](https://github.com/dotnet/installer/tree/c77a7b8e37ebb97119b5807d4b0f04e852a6103a)*
+*[dotnet/installer@b96752a](https://github.com/dotnet/installer/tree/b96752afa7cb015228e9e6948ce6f706eeb286c2)*
 - `src/msbuild`  
 *[dotnet/msbuild@b5265ef](https://github.com/dotnet/msbuild/tree/b5265ef370a651f8c3458110b804e5cbf869eeb5)*
 - `src/nuget-client`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@08338fc](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC08338fcaa5c9b9a8190abb99222fed12aaba956c)*
 - `src/sdk`  
-*[_git/dotnet-sdk@78685e2](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC78685e249cfb02ff5bb173837eb18296e42f399b)*
+*[_git/dotnet-sdk@d5cd19d](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GCd5cd19d7e39ec04e07a98bc663f82552b780f633)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@b086ae0](https://github.com/dotnet/source-build-externals/tree/b086ae0e4cf1ae64f1237f976fa65221f87cd4a0)*
     - `src/source-build-externals/src/abstractions-xunit`  
