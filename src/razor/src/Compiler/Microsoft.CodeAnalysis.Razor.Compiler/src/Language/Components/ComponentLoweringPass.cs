@@ -203,8 +203,15 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                 const string bindPrefix = "@bind-";
                 if (child is TagHelperDirectiveAttributeIntermediateNode { OriginalAttributeName: { } originalAttributeName } &&
                     originalAttributeName.StartsWith(bindPrefix, StringComparison.Ordinal) &&
-                    originalAttributeName.AsSpan()[bindPrefix.Length..].Equals(attributeName.AsSpan(), StringComparison.Ordinal))
+                    originalAttributeName.AsSpan(start: bindPrefix.Length).Equals(attributeName.AsSpan(), StringComparison.Ordinal))
                 {
+                    return true;
+                }
+                if (child is TagHelperDirectiveAttributeParameterIntermediateNode { OriginalAttributeName: { } originalName, AttributeNameWithoutParameter: { } nameWithoutParameter } &&
+                    originalName.StartsWith(bindPrefix, StringComparison.Ordinal) &&
+                    nameWithoutParameter.AsSpan(start: bindPrefix.Length - 1).Equals(attributeName.AsSpan(), StringComparison.Ordinal))
+                {
+                    // `@bind-Value:get` or `@bind-Value:set` is specified.
                     return true;
                 }
             }
