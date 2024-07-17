@@ -83,11 +83,7 @@ namespace NuGet.Test.Server
                 var cert = request.CreateSelfSigned(start, end);
                 var certBytes = cert.Export(X509ContentType.Pfx, "password");
 
-#if NET9_0_OR_GREATER
-                return X509CertificateLoader.LoadPkcs12(certBytes, "password", X509KeyStorageFlags.Exportable);
-#else
                 return new X509Certificate2(certBytes, "password", X509KeyStorageFlags.Exportable);
-#endif
             }
         }
 
