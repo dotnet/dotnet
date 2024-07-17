@@ -12,13 +12,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@a6e341e](https://github.com/dotnet/aspire/tree/a6e341ebbf956bbcec0dda304109815fcbae70c9)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@2d8a074](https://github.com/dotnet/aspnetcore/tree/2d8a0742d8f70d627ae68b798939abba95caabdf)*
+*[dotnet/aspnetcore@ec15944](https://github.com/dotnet/aspnetcore/tree/ec1594438c33702e564c36252ed11d024b5e6aad)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@b4aaf97](https://github.com/google/googletest/tree/b4aaf97d8f7eaffab79aa15e10a91b331b941fe2)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
     *[aspnet/MessagePack-CSharp@ecc4e18](https://github.com/aspnet/MessagePack-CSharp/tree/ecc4e18ad7a0c7db51cd7e3d2997a291ed01444d)*
     - `src/aspnetcore/src/submodules/Node-Externals`  
-    *[dotnet/Node-Externals@a1b1b1b](https://github.com/dotnet/Node-Externals/tree/a1b1b1bb01630a6109adf5767d9a2770c6dc5639)*
+    *[dotnet/Node-Externals@eb33ea2](https://github.com/dotnet/Node-Externals/tree/eb33ea21fa1013d5e97951725e9d5c52c5a6a026)*
 - `src/cecil`  
 *[dotnet/cecil@7e4af02](https://github.com/dotnet/cecil/tree/7e4af02521473d89d6144b3da58fef253e498974)*
 - `src/command-line-api`  
