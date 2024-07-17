@@ -1198,6 +1198,96 @@ namespace Test
         Assert.Empty(generated.RazorDiagnostics);
     }
 
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/10553")]
+    public void Component_WithEditorRequiredParameter_ValueSpecifiedUsingBindGetSet()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using System;
+            using Microsoft.AspNetCore.Components;
+
+            namespace Test;
+
+            public class ComponentWithEditorRequiredParameters : ComponentBase
+            {
+                [Parameter]
+                [EditorRequired]
+                public string Property1 { get; set; }
+            }
+            """));
+
+        var generated = CompileToCSharp("""
+            <ComponentWithEditorRequiredParameters @bind-Property1:get="myField" @bind-Property1:set="OnFieldChanged" />
+
+            @code {
+                private string myField = "Some Value";
+                private void OnFieldChanged(string value) { }
+            }
+            """);
+
+        CompileToAssembly(generated);
+        Assert.Empty(generated.RazorDiagnostics);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/10553")]
+    public void Component_WithEditorRequiredParameter_ValueSpecifiedUsingBindGet()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using System;
+            using Microsoft.AspNetCore.Components;
+
+            namespace Test;
+
+            public class ComponentWithEditorRequiredParameters : ComponentBase
+            {
+                [Parameter]
+                [EditorRequired]
+                public string Property1 { get; set; }
+            }
+            """));
+
+        var generated = CompileToCSharp("""
+            <ComponentWithEditorRequiredParameters @bind-Property1:get="myField" />
+
+            @code {
+                private string myField = "Some Value";
+            }
+            """);
+
+        CompileToAssembly(generated);
+        Assert.Empty(generated.RazorDiagnostics);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/10553")]
+    public void Component_WithEditorRequiredParameter_ValueSpecifiedUsingBindSet()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using System;
+            using Microsoft.AspNetCore.Components;
+
+            namespace Test;
+
+            public class ComponentWithEditorRequiredParameters : ComponentBase
+            {
+                [Parameter]
+                [EditorRequired]
+                public string Property1 { get; set; }
+            }
+            """));
+
+        var generated = CompileToCSharp("""
+            <ComponentWithEditorRequiredParameters @bind-Property1:set="OnFieldChanged" />
+
+            @code {
+                private void OnFieldChanged(string value) { }
+            }
+            """);
+
+        var compiled = CompileToAssembly(generated);
+        generated.RazorDiagnostics.Verify(
+            // x:\dir\subdir\Test\TestComponent.cshtml(1,61): error RZ10016: Attribute 'bind-Property1:set' was used but no attribute 'bind-Property1:get' was found.
+            Diagnostic("RZ10016").WithLocation(1, 61));
+    }
+
     [IntegrationTestFact]
     public void Component_WithEditorRequiredChildContent_NoValueSpecified()
     {
