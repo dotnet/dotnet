@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,8 +14,6 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-#pragma warning disable RS0030 // Do not use banned APIs
-[Shared]
 [Export(typeof(IRazorCohostDynamicRegistrationService))]
 [method: ImportingConstructor]
 internal class RazorCohostDynamicRegistrationService(
@@ -24,7 +22,6 @@ internal class RazorCohostDynamicRegistrationService(
     Lazy<RazorCohostClientCapabilitiesService> lazyRazorCohostClientCapabilitiesService)
     : IRazorCohostDynamicRegistrationService
 {
-#pragma warning restore RS0030 // Do not use banned APIs
     private readonly DocumentFilter[] _filter = [new DocumentFilter()
     {
         Language = Constants.RazorLanguageName,

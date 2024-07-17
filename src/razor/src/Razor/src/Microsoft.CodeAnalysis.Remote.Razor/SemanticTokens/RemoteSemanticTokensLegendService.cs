@@ -6,22 +6,24 @@ using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
 
-[Export(typeof(ISemanticTokensLegendService)), Shared]
+[Shared]
+[Export(typeof(ISemanticTokensLegendService))]
+[Export(typeof(RemoteSemanticTokensLegendService))]
 internal sealed class RemoteSemanticTokensLegendService : ISemanticTokensLegendService
 {
-    private static SemanticTokenModifiers s_tokenModifiers = null!;
-    private static SemanticTokenTypes s_tokenTypes = null!;
+    private SemanticTokenModifiers _tokenModifiers = null!;
+    private SemanticTokenTypes _tokenTypes = null!;
 
-    public SemanticTokenModifiers TokenModifiers => s_tokenModifiers;
+    public SemanticTokenModifiers TokenModifiers => _tokenModifiers;
 
-    public SemanticTokenTypes TokenTypes => s_tokenTypes;
+    public SemanticTokenTypes TokenTypes => _tokenTypes;
 
-    public static void SetLegend(string[] tokenTypes, string[] tokenModifiers)
+    public void SetLegend(string[] tokenTypes, string[] tokenModifiers)
     {
-        if (s_tokenTypes is null)
+        if (_tokenTypes is null)
         {
-            s_tokenTypes = new SemanticTokenTypes(tokenTypes);
-            s_tokenModifiers = new SemanticTokenModifiers(tokenModifiers);
+            _tokenTypes = new SemanticTokenTypes(tokenTypes);
+            _tokenModifiers = new SemanticTokenModifiers(tokenModifiers);
         }
     }
 }

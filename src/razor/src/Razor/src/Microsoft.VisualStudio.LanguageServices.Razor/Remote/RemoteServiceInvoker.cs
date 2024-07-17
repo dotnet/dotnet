@@ -18,23 +18,23 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudio.Razor.Remote;
 
-[Export(typeof(IRemoteServiceProvider))]
+[Export(typeof(IRemoteServiceInvoker))]
 [method: ImportingConstructor]
-internal sealed class RemoteServiceProvider(
+internal sealed class RemoteServiceInvoker(
     IWorkspaceProvider workspaceProvider,
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IClientCapabilitiesService clientCapabilitiesService,
     ISemanticTokensLegendService semanticTokensLegendService,
     ITelemetryReporter telemetryReporter,
     ILoggerFactory loggerFactory)
-    : IRemoteServiceProvider
+    : IRemoteServiceInvoker
 {
     private readonly IWorkspaceProvider _workspaceProvider = workspaceProvider;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
     private readonly ISemanticTokensLegendService _semanticTokensLegendService = semanticTokensLegendService;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
-    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RemoteServiceProvider>();
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RemoteServiceInvoker>();
 
     private readonly object _gate = new();
     private ValueTask<bool>? _isInitializedTask;
@@ -47,7 +47,7 @@ internal sealed class RemoteServiceProvider(
         CancellationToken cancellationToken,
         [CallerFilePath] string? callerFilePath = null,
         [CallerMemberName] string? callerMemberName = null)
-        where TService : class, IDisposable
+        where TService : class
     {
         var client = await TryGetClientAsync(cancellationToken).ConfigureAwait(false);
         if (client is null)

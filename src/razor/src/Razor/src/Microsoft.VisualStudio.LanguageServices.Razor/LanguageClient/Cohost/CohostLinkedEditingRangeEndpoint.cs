@@ -24,10 +24,10 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [ExportCohostStatelessLspService(typeof(CohostLinkedEditingRangeEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal class CohostLinkedEditingRangeEndpoint(IRemoteServiceProvider remoteServiceProvider, ILoggerFactory loggerFactory)
+internal class CohostLinkedEditingRangeEndpoint(IRemoteServiceInvoker remoteServiceInvoker, ILoggerFactory loggerFactory)
     : AbstractRazorCohostDocumentRequestHandler<LinkedEditingRangeParams, LinkedEditingRanges?>, IDynamicRegistrationProvider
 {
-    private readonly IRemoteServiceProvider _remoteServiceProvider = remoteServiceProvider;
+    private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostLinkedEditingRangeEndpoint>();
 
     protected override bool MutatesSolutionState => false;
@@ -59,7 +59,7 @@ internal class CohostLinkedEditingRangeEndpoint(IRemoteServiceProvider remoteSer
 
     private async Task<LinkedEditingRanges?> HandleRequestAsync(LinkedEditingRangeParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        var linkedRanges = await _remoteServiceProvider.TryInvokeAsync<IRemoteLinkedEditingRangeService, LinePositionSpan[]?>(
+        var linkedRanges = await _remoteServiceInvoker.TryInvokeAsync<IRemoteLinkedEditingRangeService, LinePositionSpan[]?>(
             razorDocument.Project.Solution,
             (service, solutionInfo, cancellationToken) => service.GetRangesAsync(solutionInfo, razorDocument.Id, request.Position.ToLinePosition(), cancellationToken),
             cancellationToken).ConfigureAwait(false);

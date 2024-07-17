@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.DocumentPresentation;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -16,24 +15,33 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-internal sealed class RemoteUriPresentationService(
-    IRazorServiceBroker serviceBroker,
-    IRazorDocumentMappingService documentMappingService,
-    DocumentSnapshotFactory documentSnapshotFactory,
-    ILoggerFactory loggerFactory)
-    : RazorDocumentServiceBase(serviceBroker, documentSnapshotFactory), IRemoteUriPresentationService
+internal sealed partial class RemoteUriPresentationService(in ServiceArgs args) : RazorDocumentServiceBase(in args), IRemoteUriPresentationService
 {
-    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
-    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RemoteUriPresentationService>();
+    internal sealed class Factory : FactoryBase<IRemoteUriPresentationService>
+    {
+        protected override IRemoteUriPresentationService CreateService(in ServiceArgs args)
+            => new RemoteUriPresentationService(in args);
+    }
 
-    public ValueTask<TextChange?> GetPresentationAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId razorDocumentId, LinePositionSpan span, Uri[]? uris, CancellationToken cancellationToken)
+    private readonly IRazorDocumentMappingService _documentMappingService = args.ExportProvider.GetExportedValue<IRazorDocumentMappingService>();
+
+    public ValueTask<TextChange?> GetPresentationAsync(
+        RazorPinnedSolutionInfoWrapper solutionInfo,
+        DocumentId razorDocumentId,
+        LinePositionSpan span,
+        Uri[]? uris,
+        CancellationToken cancellationToken)
         => RunServiceAsync(
             solutionInfo,
             razorDocumentId,
             context => GetPresentationAsync(context, span, uris, cancellationToken),
             cancellationToken);
 
-    private async ValueTask<TextChange?> GetPresentationAsync(RemoteDocumentContext context, LinePositionSpan span, Uri[]? uris, CancellationToken cancellationToken)
+    private async ValueTask<TextChange?> GetPresentationAsync(
+        RemoteDocumentContext context,
+        LinePositionSpan span,
+        Uri[]? uris,
+        CancellationToken cancellationToken)
     {
         var sourceText = await context.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
         if (!sourceText.TryGetAbsoluteIndex(span.Start.Line, span.Start.Character, out var index))
@@ -53,7 +61,7 @@ internal sealed class RemoteUriPresentationService(
             return null;
         }
 
-        var razorFileUri = UriPresentationHelper.GetComponentFileNameFromUriPresentationRequest(uris, _logger);
+        var razorFileUri = UriPresentationHelper.GetComponentFileNameFromUriPresentationRequest(uris, Logger);
         if (razorFileUri is null)
         {
             return null;

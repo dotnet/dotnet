@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
@@ -17,8 +18,14 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient;
 internal class TestLSPRequestInvoker : LSPRequestInvoker
 {
     private readonly CSharpTestLspServer _csharpServer;
+    private readonly Dictionary<string, object> _htmlResponses;
 
     public TestLSPRequestInvoker() { }
+
+    public TestLSPRequestInvoker(List<(string method, object response)> htmlResponses)
+    {
+        _htmlResponses = htmlResponses.ToDictionary(kvp => kvp.method, kvp => kvp.response);
+    }
 
     public TestLSPRequestInvoker(CSharpTestLspServer csharpServer)
     {
@@ -102,6 +109,11 @@ internal class TestLSPRequestInvoker : LSPRequestInvoker
         {
             var result = await _csharpServer.ExecuteRequestAsync<TIn, TOut>(method, parameters, cancellationToken).ConfigureAwait(false);
             return new ReinvocationResponse<TOut>(languageClientName: RazorLSPConstants.RazorCSharpLanguageServerName, result);
+        }
+
+        if (_htmlResponses.TryGetValue(method, out var response))
+        {
+            return new ReinvocationResponse<TOut>(languageClientName: "html", (TOut)response);
         }
 
         return default;

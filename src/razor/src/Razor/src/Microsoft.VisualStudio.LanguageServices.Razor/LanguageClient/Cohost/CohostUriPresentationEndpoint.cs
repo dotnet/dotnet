@@ -23,13 +23,13 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal class CohostUriPresentationEndpoint(
-    IRemoteServiceProvider remoteServiceProvider,
+    IRemoteServiceInvoker remoteServiceInvoker,
     IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
     IFilePathService filePathService,
     LSPRequestInvoker requestInvoker)
     : AbstractRazorCohostDocumentRequestHandler<VSInternalUriPresentationParams, WorkspaceEdit?>, IDynamicRegistrationProvider
 {
-    private readonly IRemoteServiceProvider _remoteServiceProvider = remoteServiceProvider;
+    private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
     private readonly IFilePathService _filePathService = filePathService;
     private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
@@ -62,7 +62,7 @@ internal class CohostUriPresentationEndpoint(
     {
         var razorDocument = context.TextDocument.AssumeNotNull();
 
-        var data = await _remoteServiceProvider.TryInvokeAsync<IRemoteUriPresentationService, TextChange?>(
+        var data = await _remoteServiceInvoker.TryInvokeAsync<IRemoteUriPresentationService, TextChange?>(
             razorDocument.Project.Solution,
             (service, solutionInfo, cancellationToken) => service.GetPresentationAsync(solutionInfo, razorDocument.Id, request.Range.ToLinePositionSpan(), request.Uris, cancellationToken),
             cancellationToken).ConfigureAwait(false);

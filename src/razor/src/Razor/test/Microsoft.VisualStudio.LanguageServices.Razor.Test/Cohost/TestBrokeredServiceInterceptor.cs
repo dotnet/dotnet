@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Remote.Razor;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-internal sealed class TestServiceBroker : IRazorServiceBroker
+internal sealed class TestBrokeredServiceInterceptor : IRazorBrokeredServiceInterceptor
 {
     private Solution? _solution;
 
@@ -20,17 +20,14 @@ internal sealed class TestServiceBroker : IRazorServiceBroker
         _solution = solution;
     }
 
-    public ValueTask RunServiceAsync(Func<CancellationToken, ValueTask> implementation, CancellationToken cancellationToken)
-    {
-        return implementation(cancellationToken);
-    }
+    public ValueTask RunServiceAsync(
+        Func<CancellationToken, ValueTask> implementation,
+        CancellationToken cancellationToken)
+        => implementation(cancellationToken);
 
-    public ValueTask<T> RunServiceAsync<T>(RazorPinnedSolutionInfoWrapper solutionInfo, Func<Solution, ValueTask<T>> implementation, CancellationToken cancellationToken)
-    {
-        return implementation(_solution.AssumeNotNull());
-    }
-
-    public void Dispose()
-    {
-    }
+    public ValueTask<T> RunServiceAsync<T>(
+        RazorPinnedSolutionInfoWrapper solutionInfo,
+        Func<Solution, ValueTask<T>> implementation,
+        CancellationToken cancellationToken)
+        => implementation(_solution.AssumeNotNull());
 }

@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="cmdIdShowAllTagHelpers|ButtonText">
         <source>Show All Tag Helpers</source>
-        <target state="new">Show All Tag Helpers</target>
+        <target state="translated">모든 태그 도우미 표시</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdIdShowInScopeTagHelpers|ButtonText">
         <source>Show In Scope Tag Helpers</source>
-        <target state="new">Show In Scope Tag Helpers</target>
+        <target state="translated">범위 태그 도우미에서 표시</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdIdShowReferencedTagHelpers|ButtonText">
         <source>Show Referenced Tag Helpers</source>
-        <target state="new">Show Referenced Tag Helpers</target>
+        <target state="translated">참조된 태그 도우미 표시</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidRazorSyntaxVisualizer|ButtonText">
