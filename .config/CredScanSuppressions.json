@@ -1,0 +1,316 @@
+{
+  "tool": "Credential Scanner",
+  "suppressions": [
+    {
+      "_justification": "This is a default PostgreSQL username and password, used in integration tests to connect to local db instance.",
+      "placeholder": [
+        "postgres"
+      ]
+    },
+    {
+      "_justification": "This is fake key name, used in integration tests to try to connect to Azure ServiceBus.",
+      "placeholder": [
+        "fake"
+      ]
+    },
+    {
+      "_justification": "This is fake API key, used in integration tests to try to connect to OTLP services and other various tests.",
+      "placeholder": [
+        "TestKey123!"
+      ]
+    },
+    {
+      "_justification": "This is fake API key, used in integration tests to try to connect to OTLP services.",
+      "placeholder": [
+        "!321yeKtseT"
+      ]
+    },
+    {
+      "_justification": "This is fake password, used in integration tests.",
+      "placeholder": [
+        "p@ssw0rd1"
+      ]
+    },
+    {
+      "_justification": "This is a fake password used in test code.",
+      "placeholder": [
+        "aspnetcore"
+      ]
+    },
+    {
+      "_justification": "This is a fake password used in test code.",
+      "placeholder": [
+        "password"
+      ]
+    },
+    {
+      "_justification": "This is a fake password used in test code.",
+      "placeholder": [
+        "my password"
+      ]
+    },
+    {
+      "_justification": "This is a fake password used in test code.",
+      "placeholder": [
+        "newpassword"
+      ]
+    },
+    {
+      "_justification": "This is a fake password used in test code.",
+      "placeholder": [
+        "testpassword"
+      ]
+    },
+    {
+      "_justification": "This is a fake password hash used in test code.",
+      "placeholder": [
+        "AAABAgMEBQYHCAkKCwwNDg\u002BukCEMDf0yyQ29NYubggE="
+      ]
+    },
+    {
+      "_justification": "This is a fake password used in test code.",
+      "placeholder": [
+        "1qaz!QAZ"
+      ]
+    },
+    {
+      "_justification": "This is a fake password used in test code.",
+      "placeholder": [
+        "1qaz@WSX"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/testCert.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/DataProtection/DataProtection/test/Microsoft.AspNetCore.DataProtection.Tests/TestFiles/TestCert1.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/DataProtection/DataProtection/test/Microsoft.AspNetCore.DataProtection.Tests/TestFiles/TestCert2.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/DataProtection/Extensions/test/TestFiles/TestCert.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/DataProtection/Extensions/test/TestFiles/TestCert2.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/DataProtection/Extensions/test/TestFiles/TestCert3.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file without private key",
+      "file": [
+        "/src/aspnetcore/src/DataProtection/Extensions/test/TestFiles/TestCert3WithoutPrivateKey.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file without private key",
+      "file": [
+        "/src/aspnetcore/src/DataProtection/Extensions/test/TestFiles/TestCertWithoutPrivateKey.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/DefaultBuilder/test/Microsoft.AspNetCore.FunctionalTests/testCert.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/Middleware/WebSockets/test/ConformanceTests/AutobahnTestApp/TestResources/testCert.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/Security/Authentication/Negotiate/test/Negotiate.FunctionalTest/negotiateAuthCert.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/Servers/IIS/tools/TestCert.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/aspnetdevcert.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/eku.client.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/eku.code_signing.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/eku.multiple_usages.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/eku.server.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/no_extensions.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/SignalR/common/Shared/testCert.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate UT certificate file with private key",
+      "file": [
+        "/src/aspnetcore/src/SignalR/common/Shared/testCertECC.pfx"
+      ]
+    },
+    {
+      "_justification": "Legitimate key file used for testing",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/https-aspnet.key"
+      ]
+    },
+    {
+      "_justification": "Legitimate key file used for testing",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/https-dsa-protected.key"
+      ]
+    },
+    {
+      "_justification": "Legitimate key file used for testing",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/https-dsa.key"
+      ]
+    },
+    {
+      "_justification": "Legitimate key file used for testing",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/https-ecdsa-protected.key"
+      ]
+    },
+    {
+      "_justification": "Legitimate key file used for testing",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/https-ecdsa.key"
+      ]
+    },
+    {
+      "_justification": "Legitimate key file used for testing",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/https-rsa-protected.key"
+      ]
+    },
+    {
+      "_justification": "Legitimate key file used for testing",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/https-rsa.key"
+      ]
+    },
+    {
+      "_justification": "Legitimate key file used for testing",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/intermediate2_ca.key"
+      ]
+    },
+    {
+      "_justification": "Legitimate key file used for testing",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/intermediate_ca.key"
+      ]
+    },
+    {
+      "_justification": "Legitimate key file used for testing",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/leaf.com.key"
+      ]
+    },
+    {
+      "_justification": "Legitimate key file used for testing",
+      "file": [
+        "/src/aspnetcore/src/Shared/TestCertificates/root_ca.key"
+      ]
+    },
+    {
+      "_justification": "Legitimate key file used for testing",
+      "file": [
+        "/src/aspnetcore/src/SignalR/clients/ts/FunctionalTests/node_modules/https-proxy-agent/node_modules/agent-base/test/ssl-cert-snakeoil.key"
+      ]
+    },
+    {
+      "_justification": "Common infrastructure.",
+      "file": [
+        "/src/deployment-tools/eng/common/internal-feed-operations.ps1",
+        "/src/deployment-tools/eng/common/internal-feed-operations.sh"
+      ]
+    },
+    {
+      "_justification": "New certificate file with private key used only for testing",
+      "file": [
+        "/src/msbuild/src/Tasks.UnitTests/TestResources/mycert.pfx"
+      ]
+    },
+    {
+      "_justification": "Unit tests use dummy input data.",
+      "file": [
+        "/src/nuget-client/test/NuGet.Core.Tests/NuGet.Protocol.Tests/Plugins/Messages/GetCredentialsResponseTests.cs",
+        "/src/nuget-client/test/NuGet.Core.Tests/NuGet.Protocol.Tests/Plugins/Messages/SetCredentialsRequestTests.cs",
+        "/src/nuget-client/docs/cross-platform-debugging.md"
+      ]
+    },
+    {
+      "_justification": "Suppression approved. Private key for testing purpose.",
+      "placeholder": [
+        "-----BEGIN PRIVATE KEY-----",
+        "-----BEGIN * PRIVATE KEY-----"
+      ],
+      "file": [
+        "/src/runtime/src/libraries/Common/tests/System/Security/Cryptography/AlgorithmImplementations/DSA/DSAKeyPemTests.cs",
+        "/src/runtime/src/libraries/Common/tests/System/Security/Cryptography/AlgorithmImplementations/EC/ECKeyPemTests.cs",
+        "/src/runtime/src/libraries/Common/tests/System/Security/Cryptography/AlgorithmImplementations/RSA/RSAKeyPemTests.cs",
+        "/src/runtime/src/libraries/Common/tests/System/Security/Cryptography/X509Certificates/TestData.cs",
+        "/src/runtime/src/tests/FunctionalTests/Android/Device_Emulator/gRPC/grpc-dotnet/testassets/Certs/InteropTests/server1.key"
+      ]
+    },
+    {
+      "_justification": "Suppression approved. Private key for testing purpose.",
+      "file": [
+        "/src/runtime/src/tests/FunctionalTests/Android/Device_Emulator/gRPC/grpc-dotnet/testassets/Certs/InteropTests/server1.pfx"
+      ]
+    }
+  ]
+}
