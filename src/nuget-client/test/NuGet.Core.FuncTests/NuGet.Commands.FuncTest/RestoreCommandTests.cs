@@ -4073,8 +4073,8 @@ namespace NuGet.Commands.FuncTest
             using var pathContext = new SimpleTestPathContext();
             var packageA = new SimpleTestPackageContext("a", "1.0.0");
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
-            string httpSourceUrl = "http://api.source/index.json";
-            string httpsSourceUrl = "https://api.source/index.json";
+            string httpSourceUrl = "http://unit.test/index.json";
+            string httpsSourceUrl = "https://unit.test/index.json";
             pathContext.Settings.AddSource("http-feed", httpSourceUrl, "False");
             pathContext.Settings.AddSource("https-feed", httpsSourceUrl, "False");
 
@@ -4096,14 +4096,102 @@ namespace NuGet.Commands.FuncTest
         }
 
         [Fact]
+        public async Task Restore_WithHttpSourceSdkAnalysisLevelLowerThan90100_Warns()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var packageA = new SimpleTestPackageContext("a", "1.0.0");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
+            string httpSourceUrl = "http://unit.test/index.json";
+            string httpsSourceUrl = "https://unit.test/index.json";
+            pathContext.Settings.AddSource("http-feed", httpSourceUrl, "False");
+            pathContext.Settings.AddSource("https-feed", httpsSourceUrl, "False");
+
+            var logger = new TestLogger();
+            ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            var project1Spec = ProjectTestHelpers.GetPackageSpec(settings, "Project1", pathContext.SolutionRoot, framework: "net5.0");
+            project1Spec.RestoreMetadata.SdkAnalysisLevel = new NuGetVersion("7.8.100");
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, project1Spec);
+            var command = new RestoreCommand(request);
+
+            // Act
+            var result = await command.ExecuteAsync();
+
+            // Assert
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            IAssetsLogMessage logMessage = result.LockFile.LogMessages[0];
+            logMessage.Code.Should().Be(NuGetLogCode.NU1803);
+            Assert.Contains(httpSourceUrl, logMessage.Message);
+        }
+
+        [Fact]
+        public async Task Restore_WithHttpSourceSdkAnalysisLevelHigherThan90100_ThrowsAnError()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var packageA = new SimpleTestPackageContext("a", "1.0.0");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
+            string httpSourceUrl = "http://unit.test/index.json";
+            string httpsSourceUrl = "https://unit.test/index.json";
+            pathContext.Settings.AddSource("http-feed", httpSourceUrl, "False");
+            pathContext.Settings.AddSource("https-feed", httpsSourceUrl, "False");
+
+            var logger = new TestLogger();
+            ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            var project1Spec = ProjectTestHelpers.GetPackageSpec(settings, "Project1", pathContext.SolutionRoot, framework: "net5.0");
+            project1Spec.RestoreMetadata.SdkAnalysisLevel = new NuGetVersion("9.0.400");
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, project1Spec);
+            var command = new RestoreCommand(request);
+
+            // Act
+            var result = await command.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeFalse(because: logger.ShowMessages());
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            IAssetsLogMessage logMessage = result.LockFile.LogMessages[0];
+            logMessage.Code.Should().Be(NuGetLogCode.NU1302);
+            Assert.Contains(httpSourceUrl, logMessage.Message);
+        }
+
+        [Theory]
+        [InlineData("8.0.100")]
+        [InlineData("9.0.400")]
+        public async Task Restore_WithHttpSourceAnySdkAnalysisLevelWithAllowInsecureConnectionsTrue_Succeeds(string version)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var packageA = new SimpleTestPackageContext("a", "1.0.0");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
+            string httpSourceUrl = "http://unit.test/index.json";
+            string httpsSourceUrl = "https://unit.test/index.json";
+            pathContext.Settings.AddSource("http-feed", httpSourceUrl, "True");
+            pathContext.Settings.AddSource("https-feed", httpsSourceUrl, "True");
+
+            var logger = new TestLogger();
+            ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            var project1Spec = ProjectTestHelpers.GetPackageSpec(settings, "Project1", pathContext.SolutionRoot, framework: "net5.0");
+            project1Spec.RestoreMetadata.SdkAnalysisLevel = new NuGetVersion(version);
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, project1Spec);
+            var command = new RestoreCommand(request);
+
+            // Act
+            var result = await command.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+            result.LockFile.LogMessages.Should().HaveCount(0);
+        }
+
+        [Fact]
         public async Task Restore_WithHttpSourceAndAllowInsecureConnectionsTrue_Succeeds()
         {
             // Arrange
             using var pathContext = new SimpleTestPathContext();
             var packageA = new SimpleTestPackageContext("a", "1.0.0");
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
-            string httpSourceUrl = "http://api.source/index.json";
-            string httpsSourceUrl = "https://api.source/index.json";
+            string httpSourceUrl = "http://unit.test/index.json";
+            string httpsSourceUrl = "https://unit.test/index.json";
             pathContext.Settings.AddSource("http-feed", httpSourceUrl, "True");
             pathContext.Settings.AddSource("https-feed", httpsSourceUrl, "True");
 

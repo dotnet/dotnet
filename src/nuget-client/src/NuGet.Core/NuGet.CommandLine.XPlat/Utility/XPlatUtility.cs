@@ -158,5 +158,11 @@ namespace NuGet.CommandLine.XPlat
 
             return false;
         }
+
+        internal static bool IsJsonFile(string filename)
+        {
+            var extension = Path.GetExtension(filename);
+            return string.Equals(".json", extension, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

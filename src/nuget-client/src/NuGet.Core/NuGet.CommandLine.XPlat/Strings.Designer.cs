@@ -709,6 +709,15 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Project &apos;{0}&apos; does not have MSBuild property ProjectAssetsFile defined. This may indicate that this project does not support NuGet PackageReference, or that project customization has prevented the .NET SDK setting default values..
+        /// </summary>
+        internal static string Error_ProjectAssetsFilePropertyNotFound {
+            get {
+                return ResourceManager.GetString("Error_ProjectAssetsFilePropertyNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A trusted repository with the service index &apos;{0}&apos; already exists..
         /// </summary>
         internal static string Error_TrustedRepoAlreadyExists {
@@ -2269,11 +2278,20 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The assets file &apos;{0}&apos; is invalid. Please run restore for project &apos;{1}&apos; before running this command..
+        ///   Looks up a localized string similar to The file &apos;{0}&apos; does not appear to be a NuGet assets file. For more information, see https://aka.ms/dotnet/nuget/why#older-project-format.
         /// </summary>
-        internal static string WhyCommand_Error_InvalidAssetsFile {
+        internal static string WhyCommand_Error_InvalidAssetsFile_WithoutProject {
             get {
-                return ResourceManager.GetString("WhyCommand_Error_InvalidAssetsFile", resourceCulture);
+                return ResourceManager.GetString("WhyCommand_Error_InvalidAssetsFile_WithoutProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file &apos;{0}&apos; does not appear to be a NuGet assets file. Please run restore for project &apos;{1}&apos; before running this command..
+        /// </summary>
+        internal static string WhyCommand_Error_InvalidAssetsFile_WithProject {
+            get {
+                return ResourceManager.GetString("WhyCommand_Error_InvalidAssetsFile_WithProject", resourceCulture);
             }
         }
         
@@ -2314,7 +2332,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to run &apos;dotnet nuget why&apos; for project &apos;{0}&apos;. This command only works on SDK-style projects..
+        ///   Looks up a localized string similar to Unable to run &apos;dotnet nuget why&apos; for project &apos;{0}&apos;. See https://aka.ms/dotnet/nuget/why#older-project-format.
         /// </summary>
         internal static string WhyCommand_Message_NonSDKStyleProjectsAreNotSupported {
             get {

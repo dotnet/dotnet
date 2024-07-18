@@ -678,7 +678,7 @@ This option can be used to specify the password for the certificate. If no passw
     <value>File path to the certificate to be used while signing the package.</value>
   </data>
   <data name="SignCommandCertificateFingerprintDescription" xml:space="preserve">
-    <value>SHA-1 fingerprint of the certificate used to search a local certificate store for the certificate.
+    <value>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</value>
   </data>
   <data name="SignCommandCertificateSubjectNameDescription" xml:space="preserve">
@@ -936,5 +936,8 @@ nuget client-certs List</value>
   </data>
   <data name="SourcesCommandAllowInsecureConnectionsDescription" xml:space="preserve">
     <value>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</value>
+  </data>
+  <data name="SignCommandInvalidCertificateFingerprint" xml:space="preserve">
+    <value>Invalid value for 'CertificateFingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</value>
   </data>
 </root>

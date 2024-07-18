@@ -292,9 +292,9 @@ namespace Dotnet.Integration.Test
                 }
                 else
                 {
-                    result.ExitCode.Should().Be(
-                        1,
-                        "{0} {1} should have failed with exit code 1 but returned exit code {2} after {3:N1}s with the following output:{4}{5}",
+                    result.ExitCode.Should().NotBe(
+                        0,
+                        "{0} {1} should have failed with a non-zero exit code but returned exit code {2} after {3:N1}s with the following output:{4}{5}",
                         TestDotnetCli,
                         args,
                         result.ExitCode,
