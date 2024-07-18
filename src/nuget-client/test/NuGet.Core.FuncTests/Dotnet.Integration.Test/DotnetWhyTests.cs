@@ -2,6 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.IO;
+using System.Threading.Tasks;
+using FluentAssertions;
 using NuGet.CommandLine.XPlat;
 using NuGet.Test.Utility;
 using NuGet.XPlat.FuncTest;
@@ -252,6 +254,55 @@ namespace Dotnet.Integration.Test
             // Assert
             Assert.Equal(ExitCodes.Success, result.ExitCode);
             Assert.Contains($"Project '{ProjectName}' has the following dependency graph(s) for '{packageY.Id}'", result.AllOutput);
+        }
+
+        [Fact]
+        public async Task WhyCommand_AssetsFileWithoutProject_Succeeds()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var projectFramework = "net7.0";
+            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, projectFramework);
+
+            var packageX = XPlatTestUtils.CreatePackage("PackageX", "1.0.0", projectFramework);
+            var packageY = XPlatTestUtils.CreatePackage("PackageY", "1.0.1", projectFramework);
+
+            packageX.Dependencies.Add(packageY);
+
+            project.AddPackageToFramework(projectFramework, packageX);
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                packageX,
+                packageY);
+
+            string addPackageCommandArgs = $"add {project.ProjectPath} package {packageX.Id}";
+            CommandRunnerResult addPackageResult = _testFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, addPackageCommandArgs);
+
+            var assetsFile = Path.Combine(Path.GetDirectoryName(project.ProjectPath), "obj", "project.assets.json");
+
+            // Act
+            string whyCommandArgs = $"nuget why {assetsFile} {packageY.Id}";
+            CommandRunnerResult result = _testFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, whyCommandArgs);
+
+            // Assert
+            result.AllOutput.Should().Contain(packageX.Id);
+        }
+
+        [Fact]
+        public void WhyCommand_EmptyJsonFile_OutputsError()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+            var jsonFilePath = Path.Combine(testDirectory, "test.json");
+            File.WriteAllText(jsonFilePath, "{}");
+
+            // Act
+            string whyCommandArgs = $"nuget why {jsonFilePath} packageId";
+            CommandRunnerResult result = _testFixture.RunDotnetExpectFailure(testDirectory, whyCommandArgs);
+
+            // Assert
+            result.AllOutput.Should().Contain("https://aka.ms/dotnet/nuget/why");
         }
     }
 }

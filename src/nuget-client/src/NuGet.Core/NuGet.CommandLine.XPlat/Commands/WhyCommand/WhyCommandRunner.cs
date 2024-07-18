@@ -30,10 +30,10 @@ namespace NuGet.CommandLine.XPlat
             }
 
             string targetPackage = whyCommandArgs.Package;
-            IEnumerable<string> projectPaths;
+            IEnumerable<(string assetsFilePath, string? projectPath)> assetsFiles;
             try
             {
-                projectPaths = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(whyCommandArgs.Path);
+                assetsFiles = FindAssetsFiles(whyCommandArgs.Path, whyCommandArgs.Logger);
             }
             catch (ArgumentException ex)
             {
@@ -46,57 +46,103 @@ namespace NuGet.CommandLine.XPlat
                 return ExitCodes.InvalidArguments;
             }
 
-            foreach (var projectPath in projectPaths)
+            bool anyErrors = false;
+            foreach ((string assetsFilePath, string? projectPath) in assetsFiles)
             {
-                Project project = MSBuildAPIUtility.GetProject(projectPath);
+                LockFile? assetsFile = GetProjectAssetsFile(assetsFilePath, projectPath, whyCommandArgs.Logger);
 
-                string usingNetSdk = project.GetPropertyValue("UsingMicrosoftNETSdk");
-
-                if (!string.IsNullOrEmpty(usingNetSdk))
+                if (assetsFile != null)
                 {
-                    LockFile? assetsFile = GetProjectAssetsFile(project, whyCommandArgs.Logger);
+                    ValidateFrameworksOptionsExistInAssetsFile(assetsFile, whyCommandArgs.Frameworks, whyCommandArgs.Logger);
 
-                    if (assetsFile != null)
+                    Dictionary<string, List<DependencyNode>?>? dependencyGraphPerFramework = DependencyGraphFinder.GetAllDependencyGraphsForTarget(
+                        assetsFile,
+                        whyCommandArgs.Package,
+                        whyCommandArgs.Frameworks);
+
+                    if (dependencyGraphPerFramework != null)
                     {
-                        ValidateFrameworksOptionsExistInAssetsFile(assetsFile, whyCommandArgs.Frameworks, whyCommandArgs.Logger);
+                        whyCommandArgs.Logger.LogMinimal(
+                            string.Format(
+                                Strings.WhyCommand_Message_DependencyGraphsFoundInProject,
+                                assetsFile.PackageSpec.Name,
+                                targetPackage));
 
-                        Dictionary<string, List<DependencyNode>?>? dependencyGraphPerFramework = DependencyGraphFinder.GetAllDependencyGraphsForTarget(
-                            assetsFile,
-                            whyCommandArgs.Package,
-                            whyCommandArgs.Frameworks);
-
-                        if (dependencyGraphPerFramework != null)
-                        {
-                            whyCommandArgs.Logger.LogMinimal(
-                                string.Format(
-                                    Strings.WhyCommand_Message_DependencyGraphsFoundInProject,
-                                    assetsFile.PackageSpec.Name,
-                                    targetPackage));
-
-                            DependencyGraphPrinter.PrintAllDependencyGraphs(dependencyGraphPerFramework, targetPackage, whyCommandArgs.Logger);
-                        }
-                        else
-                        {
-                            whyCommandArgs.Logger.LogMinimal(
-                                string.Format(
-                                    Strings.WhyCommand_Message_NoDependencyGraphsFoundInProject,
-                                    assetsFile.PackageSpec.Name,
-                                    targetPackage));
-                        }
+                        DependencyGraphPrinter.PrintAllDependencyGraphs(dependencyGraphPerFramework, targetPackage, whyCommandArgs.Logger);
+                    }
+                    else
+                    {
+                        whyCommandArgs.Logger.LogMinimal(
+                            string.Format(
+                                Strings.WhyCommand_Message_NoDependencyGraphsFoundInProject,
+                                assetsFile.PackageSpec.Name,
+                                targetPackage));
                     }
                 }
                 else
                 {
-                    whyCommandArgs.Logger.LogMinimal(
-                            string.Format(
-                                Strings.WhyCommand_Message_NonSDKStyleProjectsAreNotSupported,
-                                project.GetPropertyValue("MSBuildProjectName")));
+                    anyErrors = true;
                 }
-
-                ProjectCollection.GlobalProjectCollection.UnloadProject(project);
             }
 
-            return ExitCodes.Success;
+            return anyErrors ? ExitCodes.Error : ExitCodes.Success;
+        }
+
+        private static IEnumerable<(string assetsFilePath, string? projectPath)> FindAssetsFiles(string path, ILoggerWithColor logger)
+        {
+            if (XPlatUtility.IsJsonFile(path))
+            {
+                yield return (path, null);
+                yield break;
+            }
+
+            var projectPaths = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(path);
+            foreach (string projectPath in projectPaths.NoAllocEnumerate())
+            {
+                Project project = MSBuildAPIUtility.GetProject(projectPath);
+                try
+                {
+                    string usingNetSdk = project.GetPropertyValue("UsingMicrosoftNETSdk");
+                    if (bool.TryParse(usingNetSdk, out bool b) && b)
+                    {
+                        if (!MSBuildAPIUtility.IsPackageReferenceProject(project))
+                        {
+                            logger.LogError(
+                                string.Format(
+                                    CultureInfo.CurrentCulture,
+                                    Strings.Error_NotPRProject,
+                                    project.FullPath));
+
+                            continue;
+                        }
+
+                        string? assetsFilePath = project.GetPropertyValue(ProjectAssetsFile);
+                        if (string.IsNullOrEmpty(assetsFilePath) || !File.Exists(assetsFilePath))
+                        {
+                            logger.LogError(
+                                string.Format(
+                                    CultureInfo.CurrentCulture,
+                                    Strings.Error_AssetsFileNotFound,
+                                    project.FullPath));
+                            continue;
+                        }
+
+                        yield return (assetsFilePath, projectPath);
+                    }
+                    else
+                    {
+                        logger.LogMinimal(
+                                string.Format(
+                                    CultureInfo.CurrentCulture,
+                                    Strings.WhyCommand_Message_NonSDKStyleProjectsAreNotSupported,
+                                    project.GetPropertyValue("MSBuildProjectName")));
+                    }
+                }
+                finally
+                {
+                    ProjectCollection.GlobalProjectCollection.UnloadProject(project);
+                }
+            }
         }
 
         /// <summary>
@@ -133,7 +179,7 @@ namespace NuGet.CommandLine.XPlat
             // Check that the path is a directory, solution file or project file
             if (Directory.Exists(fullPath)
                 || (File.Exists(fullPath)
-                    && (XPlatUtility.IsSolutionFile(fullPath) || XPlatUtility.IsProjectFile(fullPath))))
+                    && (XPlatUtility.IsSolutionFile(fullPath) || XPlatUtility.IsProjectFile(fullPath) || XPlatUtility.IsJsonFile(fullPath))))
             {
                 return true;
             }
@@ -184,51 +230,60 @@ namespace NuGet.CommandLine.XPlat
         }
 
         /// <summary>
-        /// Validates and returns the assets file for the given project.
+        /// Returns the path to an assets file for the given project.
         /// </summary>
         /// <param name="project">Evaluated MSBuild project</param>
         /// <param name="logger">Logger for the 'why' command</param>
         /// <returns>Assets file for the given project. Returns null if there was any issue finding or parsing the assets file.</returns>
-        private static LockFile? GetProjectAssetsFile(Project project, ILoggerWithColor logger)
+        private static LockFile? GetProjectAssetsFile(string assetsFilePath, string? projectPath, ILoggerWithColor logger)
         {
-            if (!MSBuildAPIUtility.IsPackageReferenceProject(project))
+            if (!File.Exists(assetsFilePath))
             {
-                logger.LogError(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        Strings.Error_NotPRProject,
-                        project.FullPath));
-
-                return null;
-            }
-
-            string assetsPath = project.GetPropertyValue(ProjectAssetsFile);
-
-            if (!File.Exists(assetsPath))
-            {
-                logger.LogError(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        Strings.Error_AssetsFileNotFound,
-                        project.FullPath));
+                if (!string.IsNullOrEmpty(projectPath))
+                {
+                    logger.LogError(
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            Strings.Error_AssetsFileNotFound,
+                            projectPath));
+                }
+                else
+                {
+                    logger.LogError(
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            Strings.Error_PathIsMissingOrInvalid,
+                            assetsFilePath));
+                }
 
                 return null;
             }
 
             var lockFileFormat = new LockFileFormat();
-            LockFile assetsFile = lockFileFormat.Read(assetsPath);
+            LockFile assetsFile = lockFileFormat.Read(assetsFilePath);
 
             // assets file validation
             if (assetsFile.PackageSpec == null
                 || assetsFile.Targets == null
                 || assetsFile.Targets.Count == 0)
             {
-                logger.LogError(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        Strings.WhyCommand_Error_InvalidAssetsFile,
-                        assetsFile.Path,
-                        project.FullPath));
+                if (string.IsNullOrEmpty(projectPath))
+                {
+                    logger.LogError(
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            Strings.WhyCommand_Error_InvalidAssetsFile_WithoutProject,
+                            assetsFilePath));
+                }
+                else
+                {
+                    logger.LogError(
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            Strings.WhyCommand_Error_InvalidAssetsFile_WithProject,
+                            assetsFilePath,
+                            projectPath));
+                }
 
                 return null;
             }

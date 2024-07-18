@@ -3,6 +3,7 @@
 
 using System;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using Moq;
 using NuGet.Commands;
 using NuGet.Common;
@@ -18,6 +19,7 @@ namespace NuGet.CommandLine.Test
         private const string _multipleCertificateException = "Multiple options were used to specify a certificate. For a list of accepted ways to provide a certificate, please visit https://docs.nuget.org/docs/reference/command-line-reference";
         private const string _noCertificateException = "No certificate was provided. For a list of accepted ways to provide a certificate, please visit https://docs.nuget.org/docs/reference/command-line-reference";
         private const string _missingArgumentException = "No value provided for '{0}', which is needed when using the '{1}' option. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference";
+        private const string _sha1Hash = "89967D1DD995010B6C66AE24FF8E66885E6E03A8";
 
         [Fact]
         public void SignCommandArgParsing_NoPackagePath()
@@ -82,7 +84,7 @@ namespace NuGet.CommandLine.Test
             // Arrange
             var packagePath = @"\\path\package.nupkg";
             var timestamper = "https://timestamper.test";
-            var certificateFingerprint = new Guid().ToString();
+            var certificateFingerprint = _sha1Hash;
             var parsable = Enum.TryParse(storeName, ignoreCase: true, result: out StoreName parsedStoreName);
             var mockConsole = new Mock<IConsole>();
             var signCommand = new SignCommand
@@ -107,7 +109,7 @@ namespace NuGet.CommandLine.Test
             // Arrange
             var packagePath = @"\\path\package.nupkg";
             var timestamper = "https://timestamper.test";
-            var certificateFingerprint = new Guid().ToString();
+            var certificateFingerprint = _sha1Hash;
             var storeName = "random_store";
             var mockConsole = new Mock<IConsole>();
             var signCommand = new SignCommand
@@ -135,7 +137,7 @@ namespace NuGet.CommandLine.Test
             // Arrange
             var packagePath = @"\\path\package.nupkg";
             var timestamper = "https://timestamper.test";
-            var certificateFingerprint = new Guid().ToString();
+            var certificateFingerprint = _sha1Hash;
             var parsable = Enum.TryParse(storeLocation, ignoreCase: true, result: out StoreLocation parsedStoreLocation);
             var mockConsole = new Mock<IConsole>();
             var signCommand = new SignCommand
@@ -161,7 +163,7 @@ namespace NuGet.CommandLine.Test
             // Arrange
             var packagePath = @"\\path\package.nupkg";
             var timestamper = "https://timestamper.test";
-            var certificateFingerprint = new Guid().ToString();
+            var certificateFingerprint = _sha1Hash;
             var storeLocation = "random_location";
             var mockConsole = new Mock<IConsole>();
             var signCommand = new SignCommand
@@ -299,7 +301,7 @@ namespace NuGet.CommandLine.Test
             // Arrange
             var packagePath = @"\\path\package.nupkg";
             var timestamper = "https://timestamper.test";
-            var certificateFingerprint = new Guid().ToString();
+            var certificateFingerprint = _sha1Hash;
             var hashAlgorithm = "sha256";
             Enum.TryParse(hashAlgorithm, ignoreCase: true, result: out HashAlgorithmName parsedHashAlgorithm);
             var timestampHashAlgorithm = "sha512";
@@ -458,6 +460,63 @@ namespace NuGet.CommandLine.Test
         public void SignCommand_Failure_InvalidArguments(string cmd)
         {
             Util.TestCommandInvalidArguments(cmd);
+        }
+
+        [Fact]
+        public void SignCommandArgParsing_LogsAWarningForInsecureCertificateFingerprint()
+        {
+            //Arrange
+            var logMessages = new StringBuilder();
+            var signCommand = ArrangeSignCommand(_sha1Hash, logMessages);
+
+            // Act
+            _ = signCommand.GetSignArgs();
+
+            //Assert
+            Assert.Equal(expected: NuGetCommand.SignCommandInvalidCertificateFingerprint, actual: logMessages.ToString().Trim());
+        }
+
+        [Theory]
+        [InlineData("89967D1DD995010B6C66AE24FF8E66885E6E03")] // 39 characters long not SHA-1
+        [InlineData("invalid-certificate-fingerprint")]
+        public void SignCommandArgParsing_ThrowsAnExceptionWarningForInsecureCertificateFingerprint(string certificateFingerprint)
+        {
+            var signCommand = ArrangeSignCommand(certificateFingerprint);
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentException>(() => signCommand.GetSignArgs());
+            Assert.True(ex.Message.Contains(NuGetCommand.SignCommandInvalidCertificateFingerprint));
+        }
+
+        private static SignCommand ArrangeSignCommand(string certificateFingerprint, StringBuilder logMessages = null)
+        {
+            var packagePath = @"\\path\package.nupkg";
+            var timestamper = "https://timestamper.test";
+            var hashAlgorithm = "sha256";
+            var timestampHashAlgorithm = "sha512";
+            var outputDir = @".\test\output\path";
+            var mockConsole = new Mock<IConsole>();
+            mockConsole.Setup(c => c.Verbosity).Returns(Verbosity.Detailed);
+            mockConsole.Setup(c => c.Log(It.IsAny<ILogMessage>())).Callback<ILogMessage>((message) =>
+            {
+                logMessages?.AppendLine($"{message.Message}");
+            });
+
+            var signCommand = new SignCommand
+            {
+                Console = mockConsole.Object,
+                Timestamper = timestamper,
+                CertificateFingerprint = certificateFingerprint,
+                HashAlgorithm = hashAlgorithm,
+                TimestampHashAlgorithm = timestampHashAlgorithm,
+                OutputDirectory = outputDir,
+                NonInteractive = true,
+                Overwrite = true,
+            };
+
+            signCommand.Arguments.Add(packagePath);
+
+            return signCommand;
         }
     }
 }

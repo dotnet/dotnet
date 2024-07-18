@@ -385,7 +385,7 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. Please refer to https://aka.ms/nuget-https-everywhere for more information..
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information..
         /// </summary>
         internal static string Error_HttpSource_Single {
             get {
@@ -394,7 +394,7 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source: {1}. NuGet requires HTTPS sources. Please refer to https://aka.ms/nuget-https-everywhere for more information..
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source: {1}. NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information..
         /// </summary>
         internal static string Error_HttpSource_Single_Short {
             get {
@@ -403,7 +403,7 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with &apos;HTTP&apos; sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. Please refer to https://aka.ms/nuget-https-everywhere for more information..
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with &apos;HTTP&apos; sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information..
         /// </summary>
         internal static string Error_HttpSources_Multiple {
             get {
@@ -2520,9 +2520,8 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} depends on {1} but {2} was not found. {3} was resolved instead..
         ///   Looks up a localized string similar to The following is a &apos;Non-HTTPS&apos; source: {0}
-        ///NuGet requires HTTPS sources. Please refer to https://aka.ms/nuget-https-everywhere for more information..
+        ///NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information..
         /// </summary>
         internal static string Warning_List_HttpSource {
             get {
@@ -2532,7 +2531,7 @@ namespace NuGet.Commands {
         
         /// <summary>
         ///   Looks up a localized string similar to The following are &apos;Non-HTTPS&apos; sources: {0}
-        ///NuGet requires HTTPS sources. Please refer to https://aka.ms/nuget-https-everywhere for more information..
+        ///NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information..
         /// </summary>
         internal static string Warning_List_HttpSources {
             get {
@@ -2541,7 +2540,7 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} depends on {1} but {2} was not found. An approximate best match of {3} was resolved..
+        ///   Looks up a localized string similar to {0} depends on {1} but {2} was not found. {3} was resolved instead..
         /// </summary>
         internal static string Warning_MinVersionDoesNotExist {
             get {
