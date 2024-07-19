@@ -67,6 +67,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         public static string JsonWebKeySetBadUriFile = @"OpenIdConnectMetadataJsonWebKeySetBadUri.json";
         public static string JsonAllValues =
                                             @"{ ""acr_values_supported"": [""acr_value1"", ""acr_value2"", ""acr_value3""],
+                                                ""authorization_details_types_supported"": [""payment_initiation"", ""account_information""],
                                                 ""authorization_endpoint"": ""https://login.windows.net/d062b2b0-9aca-4ff7-b32a-ba47231a4002/oauth2/authorize"",
                                                 ""authorization_encryption_alg_values_supported"": [""A192KW"", ""A256KW""],
                                                 ""authorization_encryption_enc_values_supported"": [""A128CBC-HS256"", ""A256CBC-HS512""],
@@ -613,6 +614,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         private static OpenIdConnectConfiguration SetDefaultConfiguration(OpenIdConnectConfiguration config)
         {
             AddToCollection(config.AcrValuesSupported, "acr_value1", "acr_value2", "acr_value3");
+            AddToCollection(config.AuthorizationDetailsTypesSupported, "payment_initiation", "account_information");
             config.AuthorizationEndpoint = "https://login.windows.net/d062b2b0-9aca-4ff7-b32a-ba47231a4002/oauth2/authorize";
             AddToCollection(config.AuthorizationEncryptionAlgValuesSupported, "A192KW", "A256KW");
             AddToCollection(config.AuthorizationEncryptionEncValuesSupported, "A128CBC-HS256", "A256CBC-HS512");

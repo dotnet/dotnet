@@ -145,7 +145,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <param name="securityKey">the key that is used to by the crypto provider.</param>
         /// <param name="algorithm">the algorithm that is used by the crypto provider.</param>
         /// <param name="typeofProvider">the typeof the crypto provider obtained by calling object.GetType().</param>
-        /// <param name="willCreateSignatures">a bool to indicate if the <see cref="SignatureProvider"/> will be used to sign.</param>
+        /// <param name="willCreateSignatures">If true, the provider will be used for creating signatures.</param>
         /// <param name="signatureProvider">the <see cref="SignatureProvider"/> if found.</param>
         /// <exception cref="ArgumentNullException">if securityKey is null.</exception>
         /// <exception cref="ArgumentNullException">if algorithm is null or empty string.</exception>

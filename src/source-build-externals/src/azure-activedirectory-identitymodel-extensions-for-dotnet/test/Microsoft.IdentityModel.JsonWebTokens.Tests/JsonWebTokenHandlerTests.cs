@@ -30,7 +30,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         [Fact]
         public void JsonWebTokenHandler_CreateToken_SameTypeMultipleValues()
         {
-            var identity = new ClaimsIdentity("Test");
+            var identity = new CaseSensitiveClaimsIdentity("Test");
 
             var claimValues = new List<string> { "value1", "value2", "value3", "value4" };
 
@@ -118,7 +118,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             var tokenHandler = new JsonWebTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(Default.PayloadClaims),
+                Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims),
                 SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
             };
 
@@ -142,7 +142,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 
             tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(Default.PayloadAllShortClaims),
+                Subject = new CaseSensitiveClaimsIdentity(Default.PayloadAllShortClaims),
                 SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
             };
             accessToken = tokenHandler.CreateToken(tokenDescriptor);
@@ -223,7 +223,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             var tokenHandler = new JsonWebTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(Default.PayloadClaims),
+                Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims),
                 SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
             };
             var accessToken = tokenHandler.CreateToken(tokenDescriptor);
@@ -486,7 +486,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         {
                             SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
                             EncryptingCredentials = encryptionCredentials,
-                            Subject = new ClaimsIdentity(Default.PayloadClaims),
+                            Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims),
                             TokenType = "TokenType"
                         },
                         JsonWebTokenHandler = new JsonWebTokenHandler(),
@@ -506,7 +506,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         {
                             SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
                             EncryptingCredentials = KeyingMaterial.DefaultSymmetricEncryptingCreds_AesGcm256,
-                            Subject = new ClaimsIdentity(Default.PayloadClaims),
+                            Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims),
                             TokenType = "TokenType"
                         },
                         JsonWebTokenHandler = new JsonWebTokenHandler(),
@@ -520,7 +520,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         {
                             SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
                             EncryptingCredentials = encryptionCredentials,
-                            Subject = new ClaimsIdentity(Default.PayloadClaims),
+                            Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims),
                             TokenType = "TokenType"
                         },
                         JsonWebTokenHandler = new JsonWebTokenHandler(),
@@ -606,7 +606,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         {
                             SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
                             EncryptingCredentials = KeyingMaterial.DefaultSymmetricEncryptingCreds_Aes256_Sha512_512,
-                            Subject = new ClaimsIdentity(Default.PayloadClaims),
+                            Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims),
                             TokenType = "TokenType",
                         },
                         JsonWebTokenHandler = new JsonWebTokenHandler(),
@@ -626,7 +626,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         {
                             SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
                             EncryptingCredentials = KeyingMaterial.DefaultSymmetricEncryptingCreds_Aes256_Sha512_512,
-                            Subject = new ClaimsIdentity(Default.PayloadClaims),
+                            Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims),
                         },
                         JsonWebTokenHandler = new JsonWebTokenHandler(),
                         JwtSecurityTokenHandler = tokenHandler,
@@ -645,7 +645,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         {
                             SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
                             EncryptingCredentials = KeyingMaterial.DefaultSymmetricEncryptingCreds_Aes256_Sha512_512,
-                            Subject = new ClaimsIdentity(Default.PayloadClaims),
+                            Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims),
                         },
                         JsonWebTokenHandler = new JsonWebTokenHandler(),
                         JwtSecurityTokenHandler = tokenHandler,
@@ -801,6 +801,12 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         {
             var context = TestUtilities.WriteHeader($"{this}.CreateJWEUsingSecurityTokenDescriptor", theoryData);
             theoryData.ValidationParameters.ValidateLifetime = false;
+            if (theoryData.TokenDescriptor != null && !theoryData.AudiencesForSecurityTokenDescriptor.IsNullOrEmpty())
+            {
+                foreach (var audience in theoryData.AudiencesForSecurityTokenDescriptor)
+                    theoryData.TokenDescriptor.Audiences.Add(audience);
+            }
+
             try
             {
                 string jweFromSecurityTokenDescriptor = theoryData.JsonWebTokenHandler.CreateToken(theoryData.TokenDescriptor);
@@ -889,6 +895,35 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                             TokenDecryptionKey = KeyingMaterial.DefaultSymmetricSecurityKey_512,
                             ValidAudience = Default.Audience,
                             ValidIssuer = Default.Issuer
+                        }
+                    },
+                    new CreateTokenTheoryData
+                    {
+                        TestId = "SecurityTokenDescriptorMultipleAudiences",
+                        Payload = Default.PayloadStringMultipleAudiences,
+                        TokenDescriptor =  new SecurityTokenDescriptor
+                        {
+                            SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
+                            EncryptingCredentials = KeyingMaterial.DefaultSymmetricEncryptingCreds_Aes256_Sha512_512,
+                            Claims = Default.PayloadDictionaryMultipleAudiences
+                        },
+                        AudiencesForSecurityTokenDescriptor = Default.Audiences,
+                        JsonWebTokenHandler = new JsonWebTokenHandler(),
+                        ValidationParameters = new TokenValidationParameters
+                        {
+                            IssuerSigningKey = KeyingMaterial.JsonWebKeyRsa256SigningCredentials.Key,
+                            TokenDecryptionKey = KeyingMaterial.DefaultSymmetricSecurityKey_512,
+                            ValidAudiences = Default.Audiences,
+                            ValidIssuer = Default.Issuer
+                        },
+
+                        // There is a known difference in the 'Aud' claim between the two tokens. Since the JsonWebTokenHandler
+                        // will only include the SecurityTokenDescriptor Audience and Audiences members if one or both are set in
+                        // the 'Aud' claim, while the JwtSecurityTokenHandler will also include any aud claims set in either the
+                        // Claims or Subject members even if Audience/Audiences is defined (not both, Claims takes precedence).
+                        PropertiesToIgnoreWhenComparing = new Dictionary<Type, List<string>>
+                        {
+                            { typeof(JsonWebToken), new List<string> {"EncodedPayload", "EncodedSignature"} },
                         }
                     },
                     new CreateTokenTheoryData
@@ -1210,7 +1245,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         TokenDescriptor = new SecurityTokenDescriptor
                         {
                             SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
-                            Subject = new ClaimsIdentity(Default.PayloadClaims),
+                            Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims),
                             TokenType = "TokenType"
                         },
                         JsonWebTokenHandler = new JsonWebTokenHandler(),
@@ -1229,7 +1264,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         TokenDescriptor = new SecurityTokenDescriptor
                         {
                             SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
-                            Subject = new ClaimsIdentity(Default.PayloadClaims)
+                            Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims)
                         },
                         JsonWebTokenHandler = new JsonWebTokenHandler(),
                         JwtSecurityTokenHandler = tokenHandler,
@@ -1247,7 +1282,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         TokenDescriptor =  new SecurityTokenDescriptor
                         {
                             SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
-                            Subject = new ClaimsIdentity(Default.PayloadClaims)
+                            Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims)
                         },
                         JsonWebTokenHandler = new JsonWebTokenHandler(),
                         JwtSecurityTokenHandler = tokenHandler,
@@ -1266,7 +1301,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         TokenDescriptor =  new SecurityTokenDescriptor
                         {
                             SigningCredentials = signingCredentialsNoKeyId,
-                            Subject = new ClaimsIdentity(Default.PayloadClaims)
+                            Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims)
                         },
                         JsonWebTokenHandler = new JsonWebTokenHandler(),
                         JwtSecurityTokenHandler = tokenHandler,
@@ -1890,6 +1925,11 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             try
             {
                 JsonWebTokenHandler6x jsonWebTokenHandler6x = new JsonWebTokenHandler6x();
+                if (theoryData.TokenDescriptor != null && !theoryData.AudiencesForSecurityTokenDescriptor.IsNullOrEmpty())
+                {
+                    foreach (var audience in theoryData.AudiencesForSecurityTokenDescriptor)
+                        theoryData.TokenDescriptor.Audiences.Add(audience);
+                }
 
                 string jwtFromSecurityTokenDescriptor6x = jwtFromSecurityTokenDescriptor6x = jsonWebTokenHandler6x.CreateToken(theoryData.TokenDescriptor6x ?? theoryData.TokenDescriptor);
                 string jwtFromSecurityTokenDescriptor = theoryData.JsonWebTokenHandler.CreateToken(theoryData.TokenDescriptor);
@@ -2036,7 +2076,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                                 { JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(Default.NotBefore).ToString()},
                                 { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(Default.Expires).ToString() },
                             },
-                            Subject = new ClaimsIdentity(new List<Claim>()
+                            Subject = new CaseSensitiveClaimsIdentity(new List<Claim>()
                             {
                                 new Claim(JwtRegisteredClaimNames.Email, "Bob@contoso.com", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
                                 new Claim(JwtRegisteredClaimNames.GivenName, "Bob", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
@@ -2061,7 +2101,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                                 { JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(Default.NotBefore).ToString()},
                                 { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(Default.Expires).ToString() },
                             },
-                            Subject = new ClaimsIdentity(new List<Claim>()
+                            Subject = new CaseSensitiveClaimsIdentity(new List<Claim>()
                             {
                                 new Claim(JwtRegisteredClaimNames.Email, "Bob@contoso.com", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
                                 new Claim(JwtRegisteredClaimNames.GivenName, "Bob", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
@@ -2095,6 +2135,23 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         {
                             IssuerSigningKey = KeyingMaterial.JsonWebKeyRsa256SigningCredentials.Key,
                             ValidAudience = Default.Audience,
+                            ValidIssuer = Default.Issuer
+                        }
+                    },
+                    new CreateTokenTheoryData("ValidUsingMultipleAudiences")
+                    {
+                        Payload = Default.PayloadStringMultipleAudiences,
+                        TokenDescriptor =  new SecurityTokenDescriptor
+                        {
+                            SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
+                            Claims = Default.PayloadDictionaryMultipleAudiences
+                        },
+                        AudiencesForSecurityTokenDescriptor = Default.Audiences,
+                        JsonWebTokenHandler = new JsonWebTokenHandler(),
+                        ValidationParameters = new TokenValidationParameters
+                        {
+                            IssuerSigningKey = KeyingMaterial.JsonWebKeyRsa256SigningCredentials.Key,
+                            ValidAudiences = Default.Audiences,
                             ValidIssuer = Default.Issuer
                         }
                     },
@@ -2383,7 +2440,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             };
 
             // This ClaimsIdentity has two duplicate claims (with different case): "aud"/"AUD" and "iat"/"IAT".
-            var payloadClaimsIdentity = new ClaimsIdentity(new List<Claim>()
+            var payloadClaimsIdentity = new CaseSensitiveClaimsIdentity(new List<Claim>()
             {
                 new Claim(JwtRegisteredClaimNames.Email, "Bob@contoso.com", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
                 new Claim(JwtRegisteredClaimNames.GivenName, "Bob", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
@@ -2874,7 +2931,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             var tokenHandler = new JsonWebTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(Default.PayloadClaims),
+                Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims),
                 SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
             };
 
@@ -2948,7 +3005,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             var jsonWebTokenHandler = new JsonWebTokenHandler() { MapInboundClaims = false };
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(Default.PayloadAllShortClaims),
+                Subject = new CaseSensitiveClaimsIdentity(Default.PayloadAllShortClaims),
                 SigningCredentials = KeyingMaterial.DefaultSymmetricSigningCreds_256_Sha2,
                 EncryptingCredentials = new EncryptingCredentials(KeyingMaterial.DefaultX509Key_2048, SecurityAlgorithms.RsaPKCS1, SecurityAlgorithms.Aes128CbcHmacSha256),
             };
@@ -3012,7 +3069,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             var jsonWebTokenHandler = new JsonWebTokenHandler() { MapInboundClaims = true };
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(Default.PayloadAllShortClaims),
+                Subject = new CaseSensitiveClaimsIdentity(Default.PayloadAllShortClaims),
                 SigningCredentials = KeyingMaterial.DefaultSymmetricSigningCreds_256_Sha2,
                 EncryptingCredentials = new EncryptingCredentials(KeyingMaterial.DefaultX509Key_2048, SecurityAlgorithms.RsaPKCS1, SecurityAlgorithms.Aes128CbcHmacSha256),
             };
@@ -4055,7 +4112,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     TestId = "TokenExpired",
                     TokenDescriptor = new SecurityTokenDescriptor
                     {
-                        Subject = new ClaimsIdentity(Default.PayloadClaimsExpired),
+                        Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaimsExpired),
                         Expires = DateTime.UtcNow.Subtract(new TimeSpan(0, 10, 0)),
                         IssuedAt = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0)),
                         NotBefore = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0)),
@@ -4073,7 +4130,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     TestId = "InvalidIssuer",
                     TokenDescriptor = new SecurityTokenDescriptor
                     {
-                        Subject = new ClaimsIdentity(Default.PayloadClaims),
+                        Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims),
                         SigningCredentials = Default.AsymmetricSigningCredentials,
                     },
                     ValidationParameters = new TokenValidationParameters
@@ -4087,7 +4144,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     TestId = "InvalidIssuerAndExpired",
                     TokenDescriptor = new SecurityTokenDescriptor
                     {
-                        Subject = new ClaimsIdentity(Default.PayloadClaimsExpired),
+                        Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaimsExpired),
                         Expires = DateTime.UtcNow.Subtract(new TimeSpan(0, 10, 0)),
                         IssuedAt = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0)),
                         NotBefore = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0)),
@@ -4104,7 +4161,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     TestId = "KeysDontMatch-ValidLifeTimeAndIssuer",
                     TokenDescriptor = new SecurityTokenDescriptor
                     {
-                        Subject = new ClaimsIdentity(Default.PayloadClaims),
+                        Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims),
                         SigningCredentials = Default.AsymmetricSigningCredentials,
                     },
                     ValidationParameters = new TokenValidationParameters
@@ -4155,7 +4212,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     TestId = "TokenExpiredIncludeTokenOnFailedValidation",
                     TokenDescriptor = new SecurityTokenDescriptor
                     {
-                        Subject = new ClaimsIdentity(Default.PayloadClaimsExpired),
+                        Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaimsExpired),
                         Expires = DateTime.UtcNow.Subtract(new TimeSpan(0, 10, 0)),
                         IssuedAt = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0)),
                         NotBefore = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0)),
@@ -4174,7 +4231,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     TestId = "TokenExpiredNotIncludeTokenOnFailedValidation",
                     TokenDescriptor = new SecurityTokenDescriptor
                     {
-                        Subject = new ClaimsIdentity(Default.PayloadClaimsExpired),
+                        Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaimsExpired),
                         Expires = DateTime.UtcNow.Subtract(new TimeSpan(0, 10, 0)),
                         IssuedAt = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0)),
                         NotBefore = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0)),
@@ -4326,6 +4383,8 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         public IEnumerable<SecurityKey> ExpectedDecryptionKeys { get; set; }
 
         public Dictionary<string, object> ExpectedClaims { get; set; }
+
+        public List<string> AudiencesForSecurityTokenDescriptor { get; set; }
     }
 
     // Overrides CryptoProviderFactory.CreateAuthenticatedEncryptionProvider to create AuthenticatedEncryptionProviderMock that provides AesGcm encryption.

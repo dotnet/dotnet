@@ -121,7 +121,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// This must be overridden to deserialize token with the provided <see cref="TokenValidationParameters"/>.
         /// </summary>
         /// <param name="reader"><see cref="XmlReader"/>.</param>
-        /// <param name="validationParameters">the current <see cref="TokenValidationParameters"/>.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <remarks>SecurityToken instance which represents the serialized token.</remarks>
         public abstract SecurityToken ReadToken(XmlReader reader, TokenValidationParameters validationParameters);
 
@@ -129,7 +129,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// This must be overridden to validate a token passed as a string using <see cref="TokenValidationParameters"/>
         /// </summary>
         /// <param name="securityToken">A token of type <see cref="TokenType"/>.</param>
-        /// <param name="validationParameters">the current <see cref="TokenValidationParameters"/>.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <param name="validatedToken">The token of type <see cref="TokenType"/> that was validated.</param>
         public virtual ClaimsPrincipal ValidateToken(string securityToken, TokenValidationParameters validationParameters, out SecurityToken validatedToken)
         {
@@ -140,7 +140,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// Reads and validates a token using a xmlReader and <see cref="TokenValidationParameters"/>
         /// </summary>
         /// <param name="reader">A <see cref="XmlReader"/> pointing at the start element of the token.</param>
-        /// <param name="validationParameters">Contains data and information needed for validation.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <param name="validatedToken">The <see cref="SecurityToken"/> that was validated.</param>
         public virtual ClaimsPrincipal ValidateToken(XmlReader reader, TokenValidationParameters validationParameters, out SecurityToken validatedToken)
         {

@@ -16,17 +16,17 @@ namespace Microsoft.IdentityModel.Tokens
         private bool _willUnwrap;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="RsaKeyWrapProvider"/> used for wrapping and un-wrappping keys.
-        /// These keys are usually symmetric session keys that are wrapped using the recipients public key.
-        /// <param name="key">The <see cref="SecurityKey"/> that will be used for cryptographic operations.</param>
-        /// <param name="algorithm">The KeyWrap algorithm to apply.</param>
-        /// <param name="willUnwrap">Whether this <see cref="RsaKeyWrapProvider"/> is required to un-wrap keys. If true, the private key is required.</param>
-        /// <exception cref="ArgumentNullException">'key' is null.</exception>
-        /// <exception cref="ArgumentNullException">'algorithm' is null.</exception>
-        /// <exception cref="ArgumentException">The key size doesn't match the algorithm.</exception>
-        /// <exception cref="ArgumentException">If <see cref="SecurityKey"/> and algorithm pair are not supported.</exception>
-        /// <exception cref="NotSupportedException">Failed to create RSA algorithm with provided key and algorithm.</exception>
+        /// Initializes a new instance of the <see cref="RsaKeyWrapProvider"/> class used for wrapping and unwrapping keys.
+        /// These keys are usually symmetric session keys that are wrapped using the recipient's public key.
         /// </summary>
+        /// <param name="key">The <see cref="SecurityKey"/> that will be used for cryptographic operations.</param>
+        /// <param name="algorithm">The KeyWrap algorithm to be used.</param>
+        /// <param name="willUnwrap">Whether this <see cref="RsaKeyWrapProvider"/> is required to unwrap keys. If true, the private key is required.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="key"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="algorithm"/> is null.</exception>
+        /// <exception cref="ArgumentException">Thrown if the key size doesn't match the algorithm.</exception>
+        /// <exception cref="ArgumentException">Thrown if the <see cref="SecurityKey"/> and <paramref name="algorithm"/> pair are not supported.</exception>
+        /// <exception cref="NotSupportedException">Thrown if failed to create RSA algorithm with the provided key and algorithm.</exception>
         public RsaKeyWrapProvider(SecurityKey key, string algorithm, bool willUnwrap)
         {
             if (key == null)
@@ -66,9 +66,9 @@ namespace Microsoft.IdentityModel.Tokens
         public override SecurityKey Key { get; }
 
         /// <summary>
-        /// Disposes of internal components.
+        /// Releases the resources used by the current instance.
         /// </summary>
-        /// <param name="disposing">true, if called from Dispose(), false, if invoked inside a finalizer.</param>
+        /// <param name="disposing">If true, release both managed and unmanaged resources; otherwise, release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -82,10 +82,10 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Checks if an algorithm is supported.
+        /// Checks if the specified algorithm is supported.
         /// </summary>
-        /// <param name="key">The <see cref="SecurityKey"/> that will be used for crypto operations.</param>
-        /// <param name="algorithm">The KeyWrap algorithm to apply.</param>
+        /// <param name="key">The <see cref="SecurityKey"/> that will be used for cryptographic operations.</param>
+        /// <param name="algorithm">The KeyWrap algorithm to be used.</param>
         /// <returns>true if the algorithm is supported; otherwise, false.</returns>
         protected virtual bool IsSupportedAlgorithm(SecurityKey key, string algorithm)
         {
@@ -93,14 +93,14 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Unwrap a key using RSA decryption.
+        /// Unwraps a key using RSA decryption.
         /// </summary>
-        /// <param name="keyBytes">the bytes to unwrap.</param>
-        /// <returns>Unwrapped key</returns>
-        /// <exception cref="ArgumentNullException">'keyBytes' is null or length == 0.</exception>
-        /// <exception cref="ObjectDisposedException">If <see cref="RsaKeyWrapProvider.Dispose(bool)"/> has been called.</exception>
-        /// <exception cref="SecurityTokenKeyWrapException">Failed to unwrap the wrappedKey.</exception>
-        /// <exception cref="InvalidOperationException">If the internal RSA algorithm is null.</exception>
+        /// <param name="keyBytes">The bytes to unwrap.</param>
+        /// <returns>The unwrapped key.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="keyBytes"/> is null or has a length of 0.</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if <see cref="RsaKeyWrapProvider.Dispose(bool)"/> has been called.</exception>
+        /// <exception cref="SecurityTokenKeyWrapException">Thrown if the key unwrapping operation fails.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the internal RSA algorithm is null.</exception>
         public override byte[] UnwrapKey(byte[] keyBytes)
         {
             if (keyBytes == null || keyBytes.Length == 0)
@@ -120,14 +120,14 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Wrap a key using RSA encryption.
+        /// Wraps a key using RSA encryption.
         /// </summary>
-        /// <param name="keyBytes">the key to be wrapped</param>
-        /// <returns>A wrapped key</returns>
-        /// <exception cref="ArgumentNullException">'keyBytes' is null or has length == 0.</exception>
-        /// <exception cref="ObjectDisposedException">If <see cref="RsaKeyWrapProvider.Dispose(bool)"/> has been called.</exception>
-        /// <exception cref="SecurityTokenKeyWrapException">Failed to wrap the 'keyBytes'.</exception>
-        /// <exception cref="InvalidOperationException">If the internal RSA algorithm is null.</exception>
+        /// <param name="keyBytes">The key to be wrapped.</param>
+        /// <returns>A wrapped key.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="keyBytes"/> is null or has a length of 0.</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if <see cref="RsaKeyWrapProvider.Dispose(bool)"/> has been called.</exception>
+        /// <exception cref="SecurityTokenKeyWrapException">Thrown if the key wrapping operation fails.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the internal RSA algorithm is null.</exception>
         public override byte[] WrapKey(byte[] keyBytes)
         {
             if (keyBytes == null || keyBytes.Length == 0)

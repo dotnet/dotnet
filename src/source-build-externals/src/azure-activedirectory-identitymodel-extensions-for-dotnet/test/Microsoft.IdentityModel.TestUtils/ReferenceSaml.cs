@@ -1291,7 +1291,7 @@ namespace Microsoft.IdentityModel.TestUtils
                 string name = ClaimTypes.Country.Substring(index + 1);
                 var statement = new SamlAttributeStatement(ReferenceSaml.SamlSubject, new SamlAttribute(ns, name, Default.Country));
 
-                var identity = new ClaimsIdentity(TokenValidationParameters.DefaultAuthenticationType, ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+                var identity = new CaseSensitiveClaimsIdentity(TokenValidationParameters.DefaultAuthenticationType, ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
                 identity.AddClaim(claim);
                 identity.AddClaim(claim);
                 return new SamlTokenTestSet
@@ -1312,12 +1312,12 @@ namespace Microsoft.IdentityModel.TestUtils
                 string name = ClaimTypes.Country.Substring(index + 1);
                 var attrStatement1 = new SamlAttribute(ns, name, Default.Country);
                 var statement1 = new SamlAttributeStatement(ReferenceSaml.SamlSubject, attrStatement1);
-                var identity1 = new ClaimsIdentity(TokenValidationParameters.DefaultAuthenticationType, ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+                var identity1 = new CaseSensitiveClaimsIdentity(TokenValidationParameters.DefaultAuthenticationType, ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
                 identity1.AddClaim(claim1);
 
                 // statement2 has different subject with statement1
                 var statement2 = new SamlAttributeStatement(new SamlSubject(Default.NameIdentifierFormat, Default.NameQualifier, Default.AttributeName), attrStatement1);
-                var identity2 = new ClaimsIdentity(TokenValidationParameters.DefaultAuthenticationType, ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+                var identity2 = new CaseSensitiveClaimsIdentity(TokenValidationParameters.DefaultAuthenticationType, ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
                 identity2.AddClaim(claim1);
 
                 var claim2 = new Claim(ClaimTypes.NameIdentifier, Default.AttributeName, ClaimValueTypes.String, Default.Issuer);

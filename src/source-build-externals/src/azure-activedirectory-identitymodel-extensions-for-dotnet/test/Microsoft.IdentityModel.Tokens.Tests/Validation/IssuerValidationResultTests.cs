@@ -32,6 +32,8 @@ namespace Microsoft.IdentityModel.Tokens.Validation.Tests
 
                 if (issuerValidationResult.Exception != null)
                     theoryData.ExpectedException.ProcessException(issuerValidationResult.Exception, context);
+                else
+                    theoryData.ExpectedException.ProcessNoException();
 
                 IdentityComparer.AreIssuerValidationResultsEqual(
                     issuerValidationResult,

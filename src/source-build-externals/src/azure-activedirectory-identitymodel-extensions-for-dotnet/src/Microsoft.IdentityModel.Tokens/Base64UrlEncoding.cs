@@ -26,19 +26,19 @@ namespace Microsoft.IdentityModel.Tokens
         private const uint IntUnderscore = '_';
 
         private static readonly char[] Base64Table =
-            {
-                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-                'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
-                'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
-                't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
-                '8', '9', '-', '_',
-            };
+        {
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+            'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
+            'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+            't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
+            '8', '9', '-', '_',
+        };
 
         /// <summary>
-        /// Decodes a Base64UrlEncoded string into a byte array.
+        /// Decodes a base64url encoded string into a byte array.
         /// </summary>
-        /// <param name="inputString">The string to decode.</param>
-        /// <returns>Decoded bytes.</returns>
+        /// <param name="inputString">The base64url encoded string to decode.</param>
+        /// <returns>The decoded bytes.</returns>
         public static byte[] Decode(string inputString)
         {
             _ = inputString ?? throw LogHelper.LogArgumentNullException(nameof(inputString));
@@ -47,12 +47,12 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Decodes a Base64UrlEncoded string into a byte array.
+        /// Decodes a base64url encoded substring of a string into a byte array.
         /// </summary>
-        /// <param name="input">String to decode.</param>
-        /// <param name="offset">Index of char in <paramref name="input"/> to start decode operation.</param>
-        /// <param name="length">Number of chars in <paramref name="input"/> to decode.</param>
-        /// <returns>Decoded bytes.</returns>
+        /// <param name="input">The base64url encoded string to decode.</param>
+        /// <param name="offset">The index of the character in <paramref name="input"/> to start decoding.</param>
+        /// <param name="length">The number of characters in <paramref name="input"/> to decode.</param>
+        /// <returns>The decoded bytes.</returns>
         public static byte[] Decode(string input, int offset, int length)
         {
             _ = input ?? throw LogHelper.LogArgumentNullException(nameof(input));
@@ -65,19 +65,19 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Decodes a Base64UrlEncoded string and then performs an action.
+        /// Decodes a base64url encoded substring of a string and then performs an action on the decoded bytes.
         /// </summary>
-        /// <param name="input">String to decode.</param>
-        /// <param name="offset">Index of char in <paramref name="input"/> to start decode operation.</param>
-        /// <param name="length">Number of chars in <paramref name="input"/> to decode from <paramref name="offset"/>.</param>
-        /// <param name="argx">Input parameter to action.</param>
-        /// <param name="action">Action to perform on decoded bytes.</param>
-        /// <typeparam name="T">Output type of decoding action.</typeparam>
-        /// <typeparam name="TX">Type of Input parameter to action.</typeparam>
-        /// <returns>Instance of {T}.</returns>
+        /// <typeparam name="T">The output type of the decoding action.</typeparam>
+        /// <typeparam name="TX">The type of the input parameter to the action.</typeparam>
+        /// <param name="input">The base64url encoded string to decode.</param>
+        /// <param name="offset">The index of the character in <paramref name="input"/> to start decoding.</param>
+        /// <param name="length">The number of characters in <paramref name="input"/> to decode from <paramref name="offset"/>.</param>
+        /// <param name="argx">The input parameter to the action.</param>
+        /// <param name="action">The action to perform on the decoded bytes.</param>
+        /// <returns>An instance of {T}.</returns>
         /// <remarks>
-        /// The buffer for the decode operation uses shared memory pool to avoid allocations.
-        /// The length of the rented array of bytes may be larger than the decoded bytes, therefore the action needs to know the actual length to use.
+        /// The buffer for the decode operation uses a shared memory pool to avoid allocations.
+        /// The length of the rented array of bytes may be larger than the decoded bytes; therefore, the action needs to know the actual length to use.
         /// The result of <see cref="ValidateAndGetOutputSize(ReadOnlySpan{char}, int, int)"/> is passed to the action.
         /// </remarks>
         public static T Decode<T, TX>(string input, int offset, int length, TX argx, Func<byte[], int, TX, T> action)
@@ -99,17 +99,17 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Decodes a Base64UrlEncoded string and then performs an action.
+        /// Decodes a base64url encoded substring of a string and then performs an action on the decoded bytes.
         /// </summary>
-        /// <param name="input">The string to decode.</param>
-        /// <param name="offset">Index of char in <paramref name="input"/> to start decode operation from.</param>
-        /// <param name="length">Count of char in <paramref name="input"/> to decode.</param>
-        /// <param name="action">Action to perform on decoded bytes.</param>
-        /// <typeparam name="T">Return type of operation.</typeparam>
-        /// <returns>Instance of {T}.</returns>
+        /// <typeparam name="T">The return type of the operation.</typeparam>
+        /// <param name="input">The base64url encoded string to decode.</param>
+        /// <param name="offset">The index of the character in <paramref name="input"/> to start decoding from.</param>
+        /// <param name="length">The number of characters in <paramref name="input"/> to decode from <paramref name="offset"/>.</param>
+        /// <param name="action">The action to perform on the decoded bytes.</param>
+        /// <returns>An instance of {T}.</returns>
         /// <remarks>
-        /// The buffer for the decode operation uses shared memory pool to avoid allocations.
-        /// The length of the rented array of bytes may be larger than the decoded bytes, therefore the action needs to know the actual length to use.
+        /// The buffer for the decode operation uses a shared memory pool to avoid allocations.
+        /// The length of the rented array of bytes may be larger than the decoded bytes; therefore, the action needs to know the actual length to use.
         /// The result of <see cref="ValidateAndGetOutputSize(ReadOnlySpan{char}, int, int)"/> is passed to the action.
         /// </remarks>
         public static T Decode<T>(string input, int offset, int length, Func<byte[], int, T> action)
@@ -132,23 +132,23 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Decodes a Base64UrlEncoded string and then performs an action.
+        /// Decodes a base64url encoded substring of a string and then performs an action on the decoded bytes.
         /// </summary>
-        /// <param name="input">The string to decode.</param>
-        /// <param name="offset">Index of char in <paramref name="input"/> to start decode operation from.</param>
-        /// <param name="length">Count of char in <paramref name="input"/> to decode.</param>
-        /// <param name="argx">Input parameter 1 to action.</param>
-        /// <param name="argy">Input parameter 2 to action.</param>
-        /// <param name="argz">Input parameter 3 to action.</param>
-        /// <param name="action">Action to perform on decoded bytes.</param>
-        /// <typeparam name="T">Output type of decoding action.</typeparam>
-        /// <typeparam name="TX">Type of Input parameter 1 to action.</typeparam>
-        /// <typeparam name="TY">Type of Input parameter 2 to action.</typeparam>
-        /// <typeparam name="TZ">Type of Input parameter 3 to action.</typeparam>
-        /// <returns>Instance of {T}.</returns>
+        /// <typeparam name="T">The return type of the operation.</typeparam>
+        /// <typeparam name="TX">The type of input parameter 1 to the action.</typeparam>
+        /// <typeparam name="TY">The type of input parameter 2 to the action.</typeparam>
+        /// <typeparam name="TZ">The type of input parameter 3 to the action.</typeparam>
+        /// <param name="input">The base64url encoded string to decode.</param>
+        /// <param name="offset">The index of the character in <paramref name="input"/> to start decoding from.</param>
+        /// <param name="length">The number of characters in <paramref name="input"/> to decode from <paramref name="offset"/>.</param>
+        /// <param name="argx">Input parameter 1 to the action.</param>
+        /// <param name="argy">Input parameter 2 to the action.</param>
+        /// <param name="argz">Input parameter 3 to the action.</param>
+        /// <param name="action">The action to perform on the decoded bytes.</param>
+        /// <returns>An instance of {T}.</returns>
         /// <remarks>
-        /// The buffer for the decode operation uses shared memory pool to avoid allocations.
-        /// The length of the rented array of bytes may be larger than the decoded bytes, therefore the action needs to know the actual length to use.
+        /// The buffer for the decode operation uses a shared memory pool to avoid allocations.
+        /// The length of the rented array of bytes may be larger than the decoded bytes; therefore, the action needs to know the actual length to use.
         /// The result of <see cref="ValidateAndGetOutputSize(ReadOnlySpan{char}, int, int)"/> is passed to the action.
         /// </remarks>
         public static T Decode<T, TX, TY, TZ>(
@@ -177,14 +177,14 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Decodes a Base64UrlEncoded string into a byte array.
+        /// Decodes a Base64Url encoded substring of a string into a byte array.
         /// </summary>
-        /// <param name="input">String represented as a span to decode.</param>
-        /// <param name="offset">Index of char in <paramref name="input"/> to start decode operation.</param>
-        /// <param name="length">Number of chars beginning from <paramref name="offset"/> to decode.</param>
-        /// <param name="output">byte array to place results.</param>
+        /// <param name="input">The string represented as a span to decode.</param>
+        /// <param name="offset">The index of the character in <paramref name="input"/> to start decoding from.</param>
+        /// <param name="length">The number of characters beginning from <paramref name="offset"/> to decode.</param>
+        /// <param name="output">The byte array to place the decoded results into.</param>
         /// <remarks>
-        /// Changes from Base64UrlEncoder implementation
+        /// Changes from Base64UrlEncoder implementation:
         /// 1. Padding is optional.
         /// 2. '+' and '-' are treated the same.
         /// 3. '/' and '_' are treated the same.
@@ -266,10 +266,10 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Encode byte array to Base64UrlEncoded string.
+        /// Encodes a byte array into a base64url encoded string.
         /// </summary>
-        /// <param name="bytes">Bytes to encode.</param>
-        /// <returns>Base64Url encoded string.</returns>
+        /// <param name="bytes">The bytes to encode.</param>
+        /// <returns>base64url encoded string.</returns>
         public static string Encode(byte[] bytes)
         {
             _ = bytes ?? throw LogHelper.LogArgumentNullException(nameof(bytes));
@@ -277,11 +277,11 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Encode byte array to Base64UrlEncoded string.
+        /// Encodes a subset of a byte array into a Base64Url encoded string.
         /// </summary>
-        /// <param name="input">Bytes to encode.</param>
-        /// <param name="offset">Index into <paramref name="input"/> to start encode operation.</param>
-        /// <param name="length">Number of bytes in <paramref name="input"/> to encode, starting from offset.</param>
+        /// <param name="input">The byte array to encode.</param>
+        /// <param name="offset">The index into <paramref name="input"/> to start the encode operation.</param>
+        /// <param name="length">The number of bytes in <paramref name="input"/> to encode, starting from <paramref name="offset"/>.</param>
         /// <returns>Base64Url encoded string.</returns>
         public static string Encode(byte[] input, int offset, int length)
         {
@@ -332,12 +332,12 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Validates the input span for decode operation.
+        /// Validates the input span for a decode operation.
         /// </summary>
-        /// <param name="strSpan">String represented by a span to validate.</param>
-        /// <param name="offset">Index of char in <paramref name="strSpan"/> to start decode operation.</param>
-        /// <param name="length">Number of chars in <paramref name="strSpan"/> to decode, starting from offset.</param>
-        /// <returns>Size of the decoded bytes arrays.</returns>
+        /// <param name="strSpan">The string represented by a span to validate.</param>
+        /// <param name="offset">The index of the character in <paramref name="strSpan"/> to start the decode operation.</param>
+        /// <param name="length">The number of characters in <paramref name="strSpan"/> to decode, starting from <paramref name="offset"/>.</param>
+        /// <returns>The size of the decoded bytes array.</returns>
         internal static int ValidateAndGetOutputSize(ReadOnlySpan<char> strSpan, int offset, int length)
         {
             if (strSpan.IsEmpty)

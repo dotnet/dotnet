@@ -122,13 +122,13 @@ namespace Microsoft.IdentityModel.TestUtils
             claims.AddRange(DefaultClaims);
             DefaultDuplicatedClaims = claims;
 
-            DefaultClaimsIdentity = new ClaimsIdentity(DefaultClaims, Default.AuthenticationType);
+            DefaultClaimsIdentity = new CaseSensitiveClaimsIdentity(DefaultClaims, Default.AuthenticationType);
             DefaultClaimsIdentity.Label = Default.ClaimsIdentityLabel;
-            DefaultClaimsIdentityClaimsDuplicated = new ClaimsIdentity(DefaultDuplicatedClaims, Default.AuthenticationType);
+            DefaultClaimsIdentityClaimsDuplicated = new CaseSensitiveClaimsIdentity(DefaultDuplicatedClaims, Default.AuthenticationType);
             DefaultClaimsIdentityClaimsDuplicated.Label = Default.ClaimsIdentityLabelDup;
-            ClaimsIdentityDerivedClaims = new ClaimsIdentity(DerivedClaims, Default.AuthenticationType);
-            DerivedClaimsIdentityDefaultClaims = new ClaimsIdentity(DefaultClaims);
-            DerivedClaimsIdentityDerivedClaims = new ClaimsIdentity(DerivedClaims);
+            ClaimsIdentityDerivedClaims = new CaseSensitiveClaimsIdentity(DerivedClaims, Default.AuthenticationType);
+            DerivedClaimsIdentityDefaultClaims = new CaseSensitiveClaimsIdentity(DefaultClaims);
+            DerivedClaimsIdentityDerivedClaims = new CaseSensitiveClaimsIdentity(DerivedClaims);
             DefaultClaimsPrincipal = new ClaimsPrincipal(DefaultClaimsIdentity);
         }
 

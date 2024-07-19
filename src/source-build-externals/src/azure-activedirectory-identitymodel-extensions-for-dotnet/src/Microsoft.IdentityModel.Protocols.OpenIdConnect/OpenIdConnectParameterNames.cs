@@ -6,7 +6,7 @@ using System;
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
 {
     /// <summary>
-    /// Parameter names for OpenIdConnect Request/Response messages.
+    /// Parameter names for OpenID Connect Request/Response messages.
     /// </summary>
     public static class OpenIdConnectParameterNames
     {

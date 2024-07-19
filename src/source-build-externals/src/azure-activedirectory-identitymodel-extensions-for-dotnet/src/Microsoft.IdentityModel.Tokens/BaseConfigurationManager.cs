@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,29 +39,30 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// 12 hours is the default time interval that afterwards will obtain new configuration.
+        /// Default time interval (12 hours) after which a new configuration is obtained automatically.
         /// </summary>
         public static readonly TimeSpan DefaultAutomaticRefreshInterval = new TimeSpan(0, 12, 0, 0);
 
         /// <summary>
-        /// 1 hour is the default time interval that a last known good configuration will last for.
+        /// Default time interval (1 hour) for which the last known good configuration remains valid.
         /// </summary>
         public static readonly TimeSpan DefaultLastKnownGoodConfigurationLifetime = new TimeSpan(0, 1, 0, 0);
 
         /// <summary>
-        /// 5 minutes is the default time interval that must pass for <see cref="RequestRefresh"/> to obtain a new configuration.
+        /// Default time interval (5 minutes) that must pass for <see cref="RequestRefresh"/> to obtain a new configuration.
         /// </summary>
         public static readonly TimeSpan DefaultRefreshInterval = new TimeSpan(0, 0, 5, 0);
 
         /// <summary>
-        /// The default constructor.
+        /// Initializes a new instance of the <see cref="BaseConfigurationManager"/> class.
         /// </summary>
-        public BaseConfigurationManager() : this(new LKGConfigurationCacheOptions())
+        public BaseConfigurationManager()
+            : this(new LKGConfigurationCacheOptions())
         {
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="BaseConfigurationManager"/> class.
         /// </summary>
         /// <param name="options">The event queue task creation option.</param>
         public BaseConfigurationManager(LKGConfigurationCacheOptions options)
@@ -81,13 +81,18 @@ namespace Microsoft.IdentityModel.Tokens
         /// Obtains an updated version of <see cref="BaseConfiguration"/> if the appropriate refresh interval has passed.
         /// This method may return a cached version of the configuration.
         /// </summary>
-        /// <param name="cancel">CancellationToken</param>
+        /// <param name="cancel">A cancellation token that can be used to cancel the asynchronous operation.</param>
         /// <returns>Configuration of type Configuration.</returns>
-        /// <remarks>This method on the base class throws a <see cref="NotImplementedException"/> as it is meant to be
-        /// overridden by the class that extends it.</remarks>
+        /// <remarks>This method on the base class throws a <see cref="NotImplementedException"/>
+        /// as it is meant to be overridden by the class that extends it.</remarks>
         public virtual Task<BaseConfiguration> GetBaseConfigurationAsync(CancellationToken cancel)
         {
-            throw new NotImplementedException();
+            throw LogHelper.LogExceptionMessage(
+                new NotImplementedException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10267,
+                        LogHelper.MarkAsNonPII("public virtual Task<BaseConfiguration> GetBaseConfigurationAsync(CancellationToken cancel)"),
+                        LogHelper.MarkAsNonPII(GetType().FullName))));
         }
 
         /// <summary>
@@ -139,12 +144,12 @@ namespace Microsoft.IdentityModel.Tokens
         public string MetadataAddress { get; set; }
 
         /// <summary>
-        /// 5 minutes is the minimum value for automatic refresh. <see cref="AutomaticRefreshInterval"/> can not be set less than this value.
+        /// Minimum time interval (5 minutes) for automatic refresh. <see cref="AutomaticRefreshInterval"/> cannot be set to less than this value.
         /// </summary>
         public static readonly TimeSpan MinimumAutomaticRefreshInterval = new TimeSpan(0, 0, 5, 0);
 
         /// <summary>
-        /// 1 second is the minimum time interval that must pass for <see cref="RequestRefresh"/> to  obtain new configuration.
+        /// Minimum time interval (1 second) that must pass before calling <see cref="RequestRefresh"/> to obtain new configuration.
         /// </summary>
         public static readonly TimeSpan MinimumRefreshInterval = new TimeSpan(0, 0, 0, 1);
 
@@ -164,12 +169,12 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Indicates whether the last known good feature should be used, true by default.
+        /// Gets or sets a value indicating whether to use the last known good configuration. Default is true.
         /// </summary>
         public bool UseLastKnownGoodConfiguration { get; set; } = true;
 
         /// <summary>
-        /// Indicates whether the last known good configuration is still fresh, depends on when the LKG was first used and it's lifetime.
+        /// Gets a value indicating whether the last known good configuration is still valid, depends on when the LKG was first used and it's lifetime.
         /// </summary>
         // The _lastKnownGoodConfiguration private variable is accessed rather than the property (LastKnownGoodConfiguration) as we do not want this access
         // to trigger a change in _lastKnownGoodConfigFirstUse.

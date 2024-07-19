@@ -1090,14 +1090,14 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 
             DateTime utcNow = DateTime.UtcNow;
             DateTime expire = utcNow + TimeSpan.FromHours(1);
-            ClaimsIdentity subject = new ClaimsIdentity(claims: ClaimSets.GetDefaultRoleClaims(null));
+            ClaimsIdentity subject = new CaseSensitiveClaimsIdentity(claims: ClaimSets.GetDefaultRoleClaims(null));
             JwtSecurityToken jwtToken = handler.CreateJwtSecurityToken(Default.Issuer, Default.Audience, subject, utcNow, expire, utcNow);
 
             SecurityToken securityToken;
             ClaimsPrincipal principal = handler.ValidateToken(jwtToken.RawData, validationParameters, out securityToken);
             CheckForRoles(ClaimSets.GetDefaultRoles(), new string[] { Guid.NewGuid().ToString(), Guid.NewGuid().ToString() }, principal);
             ClaimsIdentity expectedIdentity =
-                new ClaimsIdentity(
+                new CaseSensitiveClaimsIdentity(
                     authenticationType: "Federation",
                     claims: ClaimSets.GetDefaultRoleClaims(handler)
                     );
@@ -1179,7 +1179,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             };
 
             ClaimsIdentity subject =
-                new ClaimsIdentity(
+                new CaseSensitiveClaimsIdentity(
                     new List<Claim>
                     {   new Claim(_nameClaimTypeForDelegate, delegateName),
                         new Claim(validationParametersNameClaimType, validationParameterName),

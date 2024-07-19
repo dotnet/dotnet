@@ -4,29 +4,33 @@
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
 {
     /// <summary>
-    /// Prompt types for OpenIdConnect.
+    /// Defines prompt types for OpenID Connect.
     /// </summary>
     public static class OpenIdConnectPrompt
     {
         /// <summary>
-        /// Indicates 'none' prompt type see: http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest.
+        /// Indicates the 'none' prompt type. See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest"/>.
         /// </summary>
         public const string None = "none";
 
         /// <summary>
-        /// Indicates 'login' prompt type see: http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest.
+        /// Indicates the 'create' prompt type. See: <see href="https://openid.net/specs/openid-connect-prompt-create-1_0.html"/>.
+        /// </summary>
+        public const string Create = "create";
+
+        /// <summary>
+        /// Indicates the 'login' prompt type. See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest"/>.
         /// </summary>
         public const string Login = "login";
 
         /// <summary>
-        /// Indicates 'consent' prompt type see: http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest.
+        /// Indicates the 'consent' prompt type. See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest"/>.
         /// </summary>
         public const string Consent = "consent";
 
         /// <summary>
-        /// Indicates 'select_account' prompt type see: http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest.
+        /// Indicates the 'select_account' prompt type. See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest"/>.
         /// </summary>
         public const string SelectAccount = "select_account";
     }
 }
-

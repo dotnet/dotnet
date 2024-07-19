@@ -13,10 +13,10 @@
       "commitSha": "a6e341ebbf956bbcec0dda304109815fcbae70c9"
     },
     {
-      "packageVersion": "9.0.0-preview.7.24366.8",
+      "packageVersion": "9.0.0-preview.7.24368.11",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "ec1594438c33702e564c36252ed11d024b5e6aad"
+      "commitSha": "662d200bc4feb11a01895e675fbfee8517c6fe2a"
     },
     {
       "packageVersion": "0.11.5-alpha.24324.1",
@@ -106,13 +106,13 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "fc00a432c27d8dd00be0aa3681309f536b76c7d3"
+      "commitSha": "53896c37b237ae83878a91365eca60712f3b4c42"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24365.1",
+      "packageVersion": "9.0.0-alpha.1.24367.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "65c96a16071bd74ad3c2d455cc235a6f5806376a"
+      "commitSha": "ff7fd0e205df9f2e3651716f92a15b2bb82b80ba"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24365.1",
@@ -215,7 +215,7 @@
     {
       "path": "source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
       "remoteUri": "https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git",
-      "commitSha": "0183521b0f127a214aa28cfb8385acfef8c4aa22"
+      "commitSha": "2e7c701881d3d67aff7bf54f22063a49bc4727d2"
     },
     {
       "path": "source-build-externals/src/cssparser",

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
+#nullable enable
 namespace Microsoft.IdentityModel.Tokens
 {
     /// <summary>
@@ -49,18 +50,18 @@ namespace Microsoft.IdentityModel.Tokens
         /// <param name="stackFrame"></param>
         public void AddStackFrame(StackFrame stackFrame)
         {
-            ExceptionDetail.StackFrames.Add(stackFrame);
+            ExceptionDetail?.StackFrames.Add(stackFrame);
         }
 
         /// <summary>
         /// Gets the <see cref="Exception"/> that occurred during validation.
         /// </summary>
-        public abstract Exception Exception { get; }
+        public abstract Exception? Exception { get; }
 
         /// <summary>
         /// Gets the <see cref="ExceptionDetail"/> that occurred during validation.
         /// </summary>
-        public ExceptionDetail ExceptionDetail { get; }
+        public ExceptionDetail? ExceptionDetail { get; }
 
         /// <summary>
         /// True if the token was successfully validated, false otherwise.
@@ -108,3 +109,4 @@ namespace Microsoft.IdentityModel.Tokens
         } = ValidationFailureType.ValidationNotEvaluated;
     }
 }
+#nullable disable

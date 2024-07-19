@@ -16,14 +16,13 @@ namespace Microsoft.IdentityModel.Tokens
         private int _sizeLimit = DefaultSizeLimit;
 
         /// <summary>
-        /// Default value for <see cref="SizeLimit"/>.
+        /// Default value for the cache size limit (<see cref="SizeLimit"/>). Default is 1000.
         /// </summary>
         public static readonly int DefaultSizeLimit = 1000;
 
         /// <summary>
-        /// Gets or sets the size of the cache (in number of items). 
-        /// 20% of the cache will be evicted whenever the cache gets to 95% of this size.
-        /// Items will be evicted from least recently used to most recently used.
+        /// Gets or sets the size limit of the cache (in number of items). 
+        /// When the cache reaches 95% of this size, 20% of the least recently used items will be evicted.
         /// </summary>
         public int SizeLimit
         {

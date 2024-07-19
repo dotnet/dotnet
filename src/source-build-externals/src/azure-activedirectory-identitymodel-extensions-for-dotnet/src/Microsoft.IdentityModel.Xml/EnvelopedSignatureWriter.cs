@@ -282,14 +282,10 @@ namespace Microsoft.IdentityModel.Xml
             base.WriteStartElement(prefix, localName, @namespace);
         }
 
-#region IDisposable Members
         /// <summary>
-        /// Releases the unmanaged resources used by the System.IdentityModel.Protocols.XmlSignature.EnvelopedSignatureWriter and optionally
-        /// releases the managed resources.
+        /// Releases the resources used by the current instance.
         /// </summary>
-        /// <param name="disposing">
-        /// True to release both managed and unmanaged resources; false to release only unmanaged resources.
-        /// </param>
+        /// <param name="disposing">If true, release both managed and unmanaged resources; otherwise, release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -316,6 +312,5 @@ namespace Microsoft.IdentityModel.Xml
                 }
             }
         }
-#endregion
     }
 }

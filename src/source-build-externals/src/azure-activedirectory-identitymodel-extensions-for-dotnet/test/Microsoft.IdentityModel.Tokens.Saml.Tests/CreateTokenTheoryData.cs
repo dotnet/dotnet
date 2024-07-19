@@ -34,6 +34,8 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
         public string SamlToken { get; set; }
 
         public TokenValidationParameters ValidationParameters { get; set; }
+
+        public List<string> AudiencesForSecurityTokenDescriptor { get; set; }
     }
 }
 

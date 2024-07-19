@@ -24,7 +24,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// Returns a <see cref="SecurityKey"/> to use when validating the signature of a token.
         /// </summary>
         /// <param name="tokenKeyInfo">The <see cref="KeyInfo"/> field of the token being validated</param>
-        /// <param name="validationParameters">A <see cref="TokenValidationParameters"/> required for validation.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <returns>Returns a <see cref="SecurityKey"/> to use for signature validation.</returns>
         /// <remarks>If key fails to resolve, then null is returned</remarks>
         internal static SecurityKey ResolveTokenSigningKey(KeyInfo tokenKeyInfo, TokenValidationParameters validationParameters)

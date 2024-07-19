@@ -28,14 +28,14 @@ namespace Microsoft.IdentityModel.Tokens.Json
         internal static string False = "false";
 
         /// <summary>
-        /// Creates a JsonException that provides information on what went wrong
+        /// Creates a <see cref="JsonException"/> that provides information on what went wrong.
         /// </summary>
-        /// <param name="reader">the <see cref="Utf8JsonReader"/>.</param>
-        /// <param name="expectedType">the type the reader was expecting to find.</param>
-        /// <param name="className">the name of the type being read.</param>
-        /// <param name="propertyName">the property name being read.</param>
-        /// <param name="innerException">inner exception if any.</param>
-        /// <returns></returns>
+        /// <param name="reader">The <see cref="Utf8JsonReader"/> instance.</param>
+        /// <param name="expectedType">The expected type the reader was looking for.</param>
+        /// <param name="className">The name of the type being read.</param>
+        /// <param name="propertyName">The property name being read.</param>
+        /// <param name="innerException">The optional inner exception if available.</param>
+        /// <returns>A <see cref="JsonException"/> instance.</returns>
         public static JsonException CreateJsonReaderException(
             ref Utf8JsonReader reader,
             string expectedType,
@@ -591,7 +591,6 @@ namespace Microsoft.IdentityModel.Tokens.Json
 
         internal static List<object> ReadArrayOfObjects(ref Utf8JsonReader reader, string propertyName, string className)
         {
-
             // returning null keeps the same logic as JsonSerialization.ReadObject
             if (IsReaderPositionedOnNull(ref reader, false, true))
                 return null;
@@ -679,13 +678,13 @@ namespace Microsoft.IdentityModel.Tokens.Json
         }
 
         /// <summary>
-        /// This method allows a JsonTokenType to be string or number but, it will always return it as a string.
+        /// Reads a JSON token value from a <see cref="Utf8JsonReader"/>, treating it as a string regardless of its actual type (string or number).
         /// </summary>
-        /// <param name="reader">The<see cref="Utf8JsonReader"/></param>
-        /// <param name="propertyName">The property name that is being read.</param>
-        /// <param name="className">The type that is being deserialized.</param>
-        /// <param name="read">If true reader.Read() will be called.</param>
-        /// <returns>Value from reader as string.</returns>
+        /// <param name="reader">The <see cref="Utf8JsonReader"/> instance.</param>
+        /// <param name="propertyName">The property name being read.</param>
+        /// <param name="className">The type being deserialized.</param>
+        /// <param name="read">If true, the reader will advance to the next token using <see cref="Utf8JsonReader.Read"/>.</param>
+        /// <returns>The JSON token value as a string.</returns>
         internal static string ReadStringOrNumberAsString(ref Utf8JsonReader reader, string propertyName, string className, bool read = false)
         {
             // returning null keeps the same logic as JsonSerialization.ReadObject
@@ -952,14 +951,13 @@ namespace Microsoft.IdentityModel.Tokens.Json
         }
 
         /// <summary>
-        /// This method is called when deserializing a property value as an object.
-        /// Normally, we put the object into a Dictionary[string, object].
+        /// Reads a property value from a <see cref="Utf8JsonReader"/> as an object during deserialization.
         /// </summary>
-        /// <param name="reader">The <see cref="Utf8JsonReader"/></param>
-        /// <param name="propertyName">The property name that is being read.</param>
-        /// <param name="className">The type that is being deserialized.</param>
-        /// <param name="read">If true reader.Read() will be called.</param>
-        /// <returns>Value from reader as an object.</returns>
+        /// <param name="reader">The <see cref="Utf8JsonReader"/> instance.</param>
+        /// <param name="propertyName">The property name being read.</param>
+        /// <param name="className">The type being deserialized.</param>
+        /// <param name="read">If true, the reader will advance to the next token using <see cref="Utf8JsonReader.Read"/>.</param>
+        /// <returns>The property value from the reader as an object.</returns>
         internal static object ReadPropertyValueAsObject(ref Utf8JsonReader reader, string propertyName, string className, bool read = false)
         {
             // The parameter 'read' can be used by callers reader position the reader to the next token.
@@ -1089,10 +1087,10 @@ namespace Microsoft.IdentityModel.Tokens.Json
         }
 
         /// <summary>
-        /// Writes an 'object' as a JsonProperty.
+        /// Writes an object as a <see cref="JsonProperty"/>.
         /// This was written to support what IdentityModel6x supported and is not meant to be a
         /// general object serializer.
-        /// If a user needs to serialize a special value, then serialize the value into a JsonElement.
+        /// If a user needs to serialize a special value, then serialize the value into a <see cref="JsonElement"/>.
         /// </summary>
         public static void WriteObject(ref Utf8JsonWriter writer, string key, object obj)
         {
@@ -1120,6 +1118,8 @@ namespace Microsoft.IdentityModel.Tokens.Json
                 writer.WriteBoolean(key, b);
             else if (obj is DateTime dt)
                 writer.WriteString(key, dt.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture));
+            else if (obj is byte[] byteArray)
+                writer.WriteBase64String(key, byteArray);
             else if (typeof(IDictionary).IsAssignableFrom(objType))
             {
                 IDictionary dictionary = (IDictionary)obj;
@@ -1152,7 +1152,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
 #if NET6_0_OR_GREATER
                 writer.WriteNumber(key, dub);
 #else
-                #pragma warning disable CA1031 // Do not catch general exception types, we have seen TryParse fault.
+#pragma warning disable CA1031 // Do not catch general exception types, we have seen TryParse fault.
                 try
                 {
                     if (decimal.TryParse(dub.ToString(CultureInfo.InvariantCulture), out decimal dec))
@@ -1164,7 +1164,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
                 {
                     writer.WriteNumber(key, dub);
                 }
-                #pragma warning restore CA1031
+#pragma warning restore CA1031
 #endif
             else if (obj is decimal d)
                 writer.WriteNumber(key, d);
@@ -1174,7 +1174,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
 #if NET6_0_OR_GREATER
                 writer.WriteNumber(key, f);
 #else
-                #pragma warning disable CA1031 // Do not catch general exception types, we have seen TryParse fault.
+#pragma warning disable CA1031 // Do not catch general exception types, we have seen TryParse fault.
                 try
                 {
                     if (decimal.TryParse(f.ToString(CultureInfo.InvariantCulture), out decimal dec))
@@ -1186,7 +1186,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
                 {
                     writer.WriteNumber(key, f);
                 }
-                #pragma warning restore CA1031
+#pragma warning restore CA1031
 #endif
             else if (obj is Guid g)
                 writer.WriteString(key, g);
@@ -1197,7 +1197,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
                             LogMessages.IDX11025,
                             LogHelper.MarkAsNonPII(objType.ToString()),
                             LogHelper.MarkAsNonPII(key))));
-        }
+    }
 
         /// <summary>
         /// Writes values into an array.
@@ -1318,6 +1318,16 @@ namespace Microsoft.IdentityModel.Tokens.Json
 
             writer.WriteEndArray();
         }
-#endregion
+
+        public static void WriteStrings(ref Utf8JsonWriter writer, ReadOnlySpan<byte> propertyName, IList<string> strings, string extraString)
+        {
+            writer.WriteStartArray(propertyName);
+            foreach (string str in strings)
+                writer.WriteStringValue(str);
+
+            writer.WriteStringValue(extraString);
+            writer.WriteEndArray();
+        }
+        #endregion
     }
 }

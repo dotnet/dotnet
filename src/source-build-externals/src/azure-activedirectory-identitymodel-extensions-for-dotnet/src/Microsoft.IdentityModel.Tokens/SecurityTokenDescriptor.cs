@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading;
 
 namespace Microsoft.IdentityModel.Tokens
 {
@@ -12,10 +13,19 @@ namespace Microsoft.IdentityModel.Tokens
     /// </summary>
     public class SecurityTokenDescriptor
     {
+        private List<string> _audiences;
+
         /// <summary>
-        /// Gets or sets the value of the 'audience' claim.
+        /// Gets or sets the value of the {"": audience} claim. Will be combined with <see cref="Audiences"/> and any "Aud" claims in
+        /// <see cref="Claims"/> or <see cref="Subject"/> when creating a token.
         /// </summary>
         public string Audience { get; set; }
+
+        /// <summary>
+        /// Gets the list audiences to include in the token's 'Aud' claim. Will be combined with <see cref="Audiences"/> and any
+        /// "Aud" claims in <see cref="Claims"/> or <see cref="Subject"/> when creating a token.
+        /// </summary>
+        public IList<string> Audiences => _audiences ?? Interlocked.CompareExchange(ref _audiences, [], null) ?? _audiences;
 
         /// <summary>
         /// Defines the compression algorithm that will be used to compress the JWT token payload.

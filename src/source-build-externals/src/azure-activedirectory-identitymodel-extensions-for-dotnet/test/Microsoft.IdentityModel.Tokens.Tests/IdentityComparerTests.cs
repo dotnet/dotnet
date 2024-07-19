@@ -127,7 +127,7 @@ namespace Microsoft.IdentityModel.TestUtils
             var originalRoleType = Guid.NewGuid().ToString();
             var originalBootstrapContext = Guid.NewGuid().ToString();
             var originalLabel = Guid.NewGuid().ToString();
-            var originalActor = new ClaimsIdentity(Guid.NewGuid().ToString());
+            var originalActor = new CaseSensitiveClaimsIdentity(Guid.NewGuid().ToString());
 
             // Base ClaimsIdentity to use for all future comparisons.
             var originalClaimsIdentity = CreateClaimsIdentity(originalClaims, originalAuthenticationType,
@@ -189,7 +189,7 @@ namespace Microsoft.IdentityModel.TestUtils
             string nameType, string roleType,
             string label, object bootstrapContext, ClaimsIdentity actor)
         {
-            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, authenticationType, nameType, roleType);
+            ClaimsIdentity claimsIdentity = new CaseSensitiveClaimsIdentity(claims, authenticationType, nameType, roleType);
             claimsIdentity.Label = label;
             claimsIdentity.BootstrapContext = bootstrapContext;
             claimsIdentity.Actor = actor;
@@ -202,7 +202,7 @@ namespace Microsoft.IdentityModel.TestUtils
         {
             TestUtilities.WriteHeader($"{this}.CompareClaimsPrincipals", true);
             var context = new CompareContext($"{this}.CompareClaimsPrincipals");
-            var claimsPrincipal1 = new ClaimsPrincipal(new List<ClaimsIdentity> { new ClaimsIdentity(Guid.NewGuid().ToString()) });
+            var claimsPrincipal1 = new ClaimsPrincipal(new List<ClaimsIdentity> { new CaseSensitiveClaimsIdentity(Guid.NewGuid().ToString()) });
             var claimsPrincipal2 = new ClaimsPrincipal();
             IdentityComparer.AreEqual(claimsPrincipal1, claimsPrincipal2, context);
 

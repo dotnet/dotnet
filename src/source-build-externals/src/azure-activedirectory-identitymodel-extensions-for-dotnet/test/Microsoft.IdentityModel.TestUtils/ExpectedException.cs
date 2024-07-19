@@ -265,6 +265,11 @@ namespace Microsoft.IdentityModel.TestUtils
             return new ExpectedException(typeof(SecurityTokenInvalidSignatureException), substringExpected, innerTypeExpected);
         }
 
+        public static ExpectedException SecurityTokenInvalidTypeException(string substringExpected = null, Type innerTypeExpected = null)
+        {
+            return new ExpectedException(typeof(SecurityTokenInvalidTypeException), substringExpected, innerTypeExpected);
+        }
+
         public static ExpectedException SecurityTokenNoExpirationException(string substringExpected = null, Type innerTypeExpected = null)
         {
             return new ExpectedException(typeof(SecurityTokenNoExpirationException), substringExpected, innerTypeExpected);

@@ -12,14 +12,14 @@ namespace Microsoft.IdentityModel.Tokens
     public class CallContext : LoggerContext
     {
         /// <summary>
-        /// Instantiates a new <see cref="CallContext"/> with a default activityId.
+        /// Instantiates a new <see cref="CallContext"/> with a default activity identifier.
         /// </summary>
         public CallContext() : base()
         {
         }
 
         /// <summary>
-        /// Instantiates a new <see cref="CallContext"/> with an activityId.
+        /// Instantiates a new <see cref="CallContext"/> with an activity identifier.
         /// </summary>
         public CallContext(Guid activityId) : base(activityId)
         {

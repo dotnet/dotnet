@@ -11,12 +11,15 @@ using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Saml2;
 using Xunit;
 
 #pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
 
 namespace Microsoft.IdentityModel.Validators.Tests
 {
+    // Serialize as one of the tests depends on static state (app context)
+    [Collection(nameof(AadSigningKeyIssuerValidatorTests))]
     public class AadSigningKeyIssuerValidatorTests
     {
         [Theory, MemberData(nameof(EnableAadSigningKeyIssuerValidationTestCases))]
@@ -167,6 +170,7 @@ namespace Microsoft.IdentityModel.Validators.Tests
 
             try
             {
+                theoryData.SetupAction?.Invoke();
                 var result = AadTokenValidationParametersExtension.ValidateIssuerSigningKey(theoryData.SecurityKey, theoryData.SecurityToken, theoryData.OpenIdConnectConfiguration);
                 theoryData.ExpectedException.ProcessNoException(context);
                 Assert.True(result);
@@ -174,6 +178,10 @@ namespace Microsoft.IdentityModel.Validators.Tests
             catch (Exception ex)
             {
                 theoryData.ExpectedException.ProcessException(ex, context);
+            }
+            finally
+            {
+                theoryData.TearDownAction?.Invoke();
             }
 
             TestUtilities.AssertFailIfErrors(context);
@@ -294,7 +302,17 @@ namespace Microsoft.IdentityModel.Validators.Tests
                     TestId = "MissingTenantIdClaimInToken",
                     SecurityKey = KeyingMaterial.JsonWebKeyP256,
                     SecurityToken = new JwtSecurityToken(),
-                    OpenIdConnectConfiguration = mockConfiguration
+                    OpenIdConnectConfiguration = mockConfiguration,
+                    ExpectedException = ExpectedException.SecurityTokenInvalidIssuerException("IDX40009")
+                });
+
+                theoryData.Add(new AadSigningKeyIssuerTheoryData
+                {
+                    TestId = "WrongSecurityKeyType",
+                    SecurityKey = KeyingMaterial.JsonWebKeyP256,
+                    SecurityToken = new Saml2SecurityToken(new Saml2Assertion(new Saml2NameIdentifier("nameIdentifier"))),
+                    OpenIdConnectConfiguration = mockConfiguration,
+                    ExpectedException = ExpectedException.SecurityTokenInvalidIssuerException("IDX40010")
                 });
 
                 theoryData.Add(new AadSigningKeyIssuerTheoryData
@@ -319,6 +337,94 @@ namespace Microsoft.IdentityModel.Validators.Tests
                     SecurityToken = jsonWebToken,
                     OpenIdConnectConfiguration = mockConfiguration,
                     ExpectedException = ExpectedException.SecurityTokenInvalidIssuerException("IDX40004")
+                });
+
+                theoryData.Add(new AadSigningKeyIssuerTheoryData
+                {
+                    TestId = "Doesnt_Fail_With_Switch",
+                    SecurityKey = KeyingMaterial.JsonWebKeyP256,
+                    SecurityToken = new JwtSecurityToken(),
+                    OpenIdConnectConfiguration = mockConfiguration,
+                    SetupAction = () => AppContext.SetSwitch(AadTokenValidationParametersExtension.DontFailOnMissingTidSwitch, true),
+                    TearDownAction = () => AppContext.SetSwitch(AadTokenValidationParametersExtension.DontFailOnMissingTidSwitch, false)
+                });
+
+                theoryData.Add(new AadSigningKeyIssuerTheoryData
+                {
+                    TestId = "Fail_With_Switch_False",
+                    SecurityKey = KeyingMaterial.JsonWebKeyP256,
+                    SecurityToken = new JwtSecurityToken(),
+                    OpenIdConnectConfiguration = mockConfiguration,
+                    ExpectedException = ExpectedException.SecurityTokenInvalidIssuerException("IDX40009"),
+                    SetupAction = () => AppContext.SetSwitch(AadTokenValidationParametersExtension.DontFailOnMissingTidSwitch, false),
+                    TearDownAction = () => AppContext.SetSwitch(AadTokenValidationParametersExtension.DontFailOnMissingTidSwitch, isEnabled: false)
+                });
+
+                theoryData.Add(new AadSigningKeyIssuerTheoryData
+                {
+                    TestId = "Doesnt_Fail_With_Switch",
+                    SecurityKey = KeyingMaterial.JsonWebKeyP256,
+                    SecurityToken = new JwtSecurityToken(),
+                    OpenIdConnectConfiguration = mockConfiguration,
+                    SetupAction = () => AppContext.SetSwitch(AadTokenValidationParametersExtension.DontFailOnMissingTidSwitch, true),
+                    TearDownAction = () => AppContext.SetSwitch(AadTokenValidationParametersExtension.DontFailOnMissingTidSwitch, false)
+                });
+
+                theoryData.Add(new AadSigningKeyIssuerTheoryData
+                {
+                    TestId = "Fail_With_Switch_False_JsonWebToken",
+                    SecurityKey = KeyingMaterial.JsonWebKeyP256,
+                    SecurityToken = new JsonWebToken(Default.Jwt(Default.SecurityTokenDescriptor(Default.SymmetricSigningCredentials, [issClaim]))),
+                    OpenIdConnectConfiguration = mockConfiguration,
+                    ExpectedException = ExpectedException.SecurityTokenInvalidIssuerException("IDX40009"),
+                    SetupAction = () => AppContext.SetSwitch(AadTokenValidationParametersExtension.DontFailOnMissingTidSwitch, false),
+                    TearDownAction = () => AppContext.SetSwitch(AadTokenValidationParametersExtension.DontFailOnMissingTidSwitch, isEnabled: false)
+                });
+
+                theoryData.Add(new AadSigningKeyIssuerTheoryData
+                {
+                    TestId = "Doesnt_Fail_With_Switch_JsonWebToken",
+                    SecurityKey = KeyingMaterial.JsonWebKeyP256,
+                    SecurityToken = new JsonWebToken(Default.Jwt(Default.SecurityTokenDescriptor(Default.SymmetricSigningCredentials, [issClaim]))),
+                    OpenIdConnectConfiguration = mockConfiguration,
+                    SetupAction = () => AppContext.SetSwitch(AadTokenValidationParametersExtension.DontFailOnMissingTidSwitch, true),
+                    TearDownAction = () => AppContext.SetSwitch(AadTokenValidationParametersExtension.DontFailOnMissingTidSwitch, false)
+                });
+
+                theoryData.Add(new AadSigningKeyIssuerTheoryData
+                {
+                    TestId = "Fails_With_Multiple_tids",
+                    SecurityKey = KeyingMaterial.JsonWebKeyP256,
+                    SecurityToken = new JsonWebToken(
+                        Default.Jwt(Default.SecurityTokenDescriptor(
+                            Default.SymmetricSigningCredentials,
+                            [tidClaim, issClaim, new Claim("TID", Guid.NewGuid().ToString())]))),
+                    ExpectedException = ExpectedException.SecurityTokenInvalidIssuerException("IDX40011"),
+                    OpenIdConnectConfiguration = mockConfiguration
+                });
+
+                theoryData.Add(new AadSigningKeyIssuerTheoryData
+                {
+                    TestId = "Fails_With_Multiple_tids_alternate_order",
+                    SecurityKey = KeyingMaterial.JsonWebKeyP256,
+                    SecurityToken = new JsonWebToken(
+                        Default.Jwt(Default.SecurityTokenDescriptor(
+                            Default.SymmetricSigningCredentials,
+                            [issClaim, new Claim("TID", Guid.NewGuid().ToString()), tidClaim]))),
+                    ExpectedException = ExpectedException.SecurityTokenInvalidIssuerException("IDX40011"),
+                    OpenIdConnectConfiguration = mockConfiguration
+                });
+
+                theoryData.Add(new AadSigningKeyIssuerTheoryData
+                {
+                    TestId = "Fails_With_no standard_tid",
+                    SecurityKey = KeyingMaterial.JsonWebKeyP256,
+                    SecurityToken = new JsonWebToken(
+                        Default.Jwt(Default.SecurityTokenDescriptor(
+                            Default.SymmetricSigningCredentials,
+                            [issClaim, new Claim("TID", Guid.NewGuid().ToString())]))),
+                    ExpectedException = ExpectedException.SecurityTokenInvalidIssuerException("IDX40009"),
+                    OpenIdConnectConfiguration = mockConfiguration
                 });
 
                 return theoryData;
@@ -346,6 +452,10 @@ namespace Microsoft.IdentityModel.Validators.Tests
             public bool SetDelegateUsingConfig { get; set; } = false;
 
             public bool SetDelegateWithoutConfig { get; set; } = false;
+
+            public Action SetupAction { get; set; }
+
+            public Action TearDownAction { get; set; }
         }
     }
 }

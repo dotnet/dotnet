@@ -4,7 +4,7 @@
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
 {
     /// <summary>
-    /// Defines a set of properties names 
+    /// Defines a set of properties names.
     /// </summary>
     public static class OpenIdConnectSessionProperties
     {
@@ -12,7 +12,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// Property defined for 'check_session_iframe'.
         /// </summary>
         public const string CheckSessionIFrame = ".checkSessionIFrame";
-   
+
         /// <summary>
         /// Property defined for 'redirect_uri' set in the request for a 'code'
         /// </summary>
@@ -22,6 +22,5 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// Property defined for 'session state'
         /// </summary>
         public const string SessionState = ".sessionState";
-
     }
 }

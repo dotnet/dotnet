@@ -19,12 +19,12 @@ namespace Microsoft.IdentityModel.Tokens
         /// <summary>
         /// Initializes a new instance of the <see cref="EncryptingCredentials"/> class.
         /// </summary>
-        /// <param name="certificate"><see cref="X509Certificate2"/>.</param>
+        /// <param name="certificate">The <see cref="X509Certificate2"/> used to encrypt data.</param>
         /// <param name="alg">A key wrap algorithm to use when encrypting a session key.</param>
-        /// <param name="enc">Data encryption algorithm to apply.</param>
-        /// <exception cref="ArgumentNullException">if 'certificate' is null.</exception>
-        /// <exception cref="ArgumentNullException">if 'alg' is null or empty.</exception>
-        /// <exception cref="ArgumentNullException">if 'enc' is null or empty.</exception>
+        /// <param name="enc">The encryption algorithm to be used.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="certificate"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="alg"/> is null or empty.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="enc"/> is null or empty.</exception>
         protected EncryptingCredentials(X509Certificate2 certificate, string alg, string enc)
         {
             if (certificate == null)
@@ -38,12 +38,12 @@ namespace Microsoft.IdentityModel.Tokens
         /// <summary>
         /// Initializes a new instance of the <see cref="EncryptingCredentials"/> class.
         /// </summary>
-        /// <param name="key"><see cref="SecurityKey"/> to use when encrypting a session key.</param>
+        /// <param name="key">The <see cref="SecurityKey"/> to use for encryption.</param>
         /// <param name="alg">A key wrap algorithm to use when encrypting a session key.</param>
-        /// <param name="enc">Data encryption algorithm to apply.</param>
-        /// <exception cref="ArgumentNullException">if 'key' is null.</exception>
-        /// <exception cref="ArgumentNullException">if 'alg' is null or empty.</exception>
-        /// <exception cref="ArgumentNullException">if 'enc' is null or empty.</exception>
+        /// <param name="enc">The encryption algorithm to be used.</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="key"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">if <paramref name="alg"/> is null or empty.</exception>
+        /// <exception cref="ArgumentNullException">if <paramref name="enc"/> is null or empty.</exception>
         public EncryptingCredentials(SecurityKey key, string alg, string enc)
         {
             Key = key;
@@ -54,14 +54,15 @@ namespace Microsoft.IdentityModel.Tokens
         /// <summary>
         /// Initializes a new instance of the <see cref="EncryptingCredentials"/> class.
         /// </summary>
-        /// <remarks> Used in scenarios when a key represents a 'shared' symmetric key.
+        /// <remarks>
+        /// Used in scenarios when a key represents a 'shared' symmetric key.
         /// For example, SAML 2.0 Assertion will be encrypted using a provided symmetric key
         /// which won't be serialized to a SAML token.
         /// </remarks>
-        /// <param name="key"><see cref="SymmetricSecurityKey"/> to apply.</param>
-        /// <param name="enc">Data encryption algorithm to apply.</param>
-        /// <exception cref="ArgumentException">If the <see cref="SecurityKey"/> is not a <see cref="SymmetricSecurityKey"/>.</exception>
-        /// <exception cref="ArgumentNullException">if 'enc' is null or empty.</exception>
+        /// <param name="key">The <see cref="SymmetricSecurityKey"/> to use for encryption.</param>
+        /// <param name="enc">The encryption algorithm to be used.</param>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="key"/> is not a <see cref="SymmetricSecurityKey"/>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="enc"/> is null or empty.</exception>
         public EncryptingCredentials(SymmetricSecurityKey key, string enc)
             : this(key, SecurityAlgorithms.None, enc)
         {
@@ -86,7 +87,7 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Public key used in Key Agreement Algorithms
+        /// Gets or sets the public key used in Key Agreement Algorithms.
         /// </summary>
         public SecurityKey KeyExchangePublicKey { get; set; }
 
@@ -97,10 +98,10 @@ namespace Microsoft.IdentityModel.Tokens
 
         /// <summary>
         /// Gets or sets a bool that controls if the encrypted token creation will set default 'cty' if not specified.
+        /// </summary>
         /// <remarks>
         /// Applies to only JWT tokens.
         /// </remarks>
-        /// </summary>
         public bool SetDefaultCtyClaim { get; set; } = true;
 
         /// <summary>

@@ -20,7 +20,8 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     TestId = "TokenExpired",
                     TokenDescriptor = new SecurityTokenDescriptor
                     {
-                        Subject = new ClaimsIdentity(Default.SamlClaims),
+                        Audience = Default.Audience,
+                        Subject = new CaseSensitiveClaimsIdentity(Default.SamlClaims),
                         Expires = DateTime.UtcNow.Subtract(new TimeSpan(0, 10, 0)),
                         IssuedAt = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0)),
                         NotBefore = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0)),
@@ -39,7 +40,8 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     TestId = "InvalidIssuer",
                     TokenDescriptor = new SecurityTokenDescriptor
                     {
-                        Subject = new ClaimsIdentity(Default.SamlClaims),
+                        Audience = Default.Audience,
+                        Subject = new CaseSensitiveClaimsIdentity(Default.SamlClaims),
                         SigningCredentials = Default.AsymmetricSigningCredentials,
                         Issuer = Default.Issuer,
                     },
@@ -54,7 +56,8 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     TestId = "ExpiredAndInvalidIssuer",
                     TokenDescriptor = new SecurityTokenDescriptor
                     {
-                        Subject = new ClaimsIdentity(Default.SamlClaims),
+                        Audience = Default.Audience,
+                        Subject = new CaseSensitiveClaimsIdentity(Default.SamlClaims),
                         Expires = DateTime.UtcNow.Subtract(new TimeSpan(0, 10, 0)),
                         IssuedAt = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0)),
                         NotBefore = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0)),
@@ -74,7 +77,8 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     TestId = "KeysDontMatchValidLifetimeAndIssuer",
                     TokenDescriptor = new SecurityTokenDescriptor
                     {
-                        Subject = new ClaimsIdentity(Default.SamlClaims),
+                        Audience = Default.Audience,
+                        Subject = new CaseSensitiveClaimsIdentity(Default.SamlClaims),
                         SigningCredentials = Default.AsymmetricSigningCredentials,
                         Issuer = Default.Issuer,
                     },

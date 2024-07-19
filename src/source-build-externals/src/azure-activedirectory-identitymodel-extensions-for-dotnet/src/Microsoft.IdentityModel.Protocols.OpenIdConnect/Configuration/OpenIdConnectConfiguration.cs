@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Text.Json.Serialization;
 using System.Threading;
 using Microsoft.IdentityModel.Abstractions;
@@ -23,6 +24,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         // these are used to lazy create
         private Dictionary<string, object> _additionalData;
         private ICollection<string> _acrValuesSupported;
+        private ICollection<string> _authorizationDetailsTypesSupported;
         private ICollection<string> _authorizationEncryptionAlgValuesSupported;
         private ICollection<string> _authorizationEncryptionEncValuesSupported;
         private ICollection<string> _authorizationSigningAlgValuesSupported;
@@ -62,8 +64,8 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// </summary>
         /// <param name="json">json string representing the configuration.</param>
         /// <returns><see cref="OpenIdConnectConfiguration"/> object representing the configuration.</returns>
-        /// <exception cref="ArgumentNullException">If 'json' is null or empty.</exception>
-        /// <exception cref="ArgumentException">If 'json' fails to deserialize.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="json"/> is null or empty.</exception>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="json"/> fails to deserialize.</exception>
         public static OpenIdConnectConfiguration Create(string json)
         {
             if (string.IsNullOrEmpty(json))
@@ -80,7 +82,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// </summary>
         /// <param name="configuration"><see cref="OpenIdConnectConfiguration"/> object to serialize.</param>
         /// <returns>json string representing the configuration object.</returns>
-        /// <exception cref="ArgumentNullException">If 'configuration' is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="configuration"/> is <see langword="null"/>.</exception>
         public static string Write(OpenIdConnectConfiguration configuration)
         {
             if (configuration == null)
@@ -90,6 +92,27 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
                 LogHelper.LogVerbose(LogMessages.IDX21809);
 
             return OpenIdConnectConfigurationSerializer.Write(configuration);
+        }
+
+        /// <summary>
+        /// Writes an <see cref="OpenIdConnectConfiguration"/> as JSON to the <paramref name="stream"/>.
+        /// </summary>
+        /// <param name="configuration">The <see cref="OpenIdConnectConfiguration"/> to serialize.</param>
+        /// <param name="stream">The <see cref="Stream"/> to write to.</param>
+        /// <remarks>Because a <see cref="Stream"/> is provided, this method does not return a value.</remarks>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="configuration"/> or <paramref name="stream"/> is <see langword="null"/>.</exception>
+        public static void Write(OpenIdConnectConfiguration configuration, Stream stream)
+        {
+            if (configuration == null)
+                throw LogHelper.LogArgumentNullException(nameof(configuration));
+
+            if (stream == null)
+                throw LogHelper.LogArgumentNullException(nameof(stream));
+
+            if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                LogHelper.LogVerbose(LogMessages.IDX21809);
+
+            OpenIdConnectConfigurationSerializer.Write(configuration, stream);
         }
 
         /// <summary>
@@ -103,7 +126,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// Initializes an new instance of <see cref="OpenIdConnectConfiguration"/> from a json string.
         /// </summary>
         /// <param name="json">a json string containing the metadata</param>
-        /// <exception cref="ArgumentNullException">If 'json' is null or empty.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="json"/> is null or empty.</exception>
         public OpenIdConnectConfiguration(string json)
         {
             if (string.IsNullOrEmpty(json))
@@ -139,6 +162,15 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
             _acrValuesSupported ??
             Interlocked.CompareExchange(ref _acrValuesSupported, new Collection<string>(), null) ??
             _acrValuesSupported;
+
+        /// <summary>
+        /// Gets the collection of 'authorization_details_types_supported'
+        /// </summary>
+        [JsonPropertyName(OpenIdProviderMetadataNames.AuthorizationDetailsTypesSupported)]
+        public ICollection<string> AuthorizationDetailsTypesSupported =>
+            _authorizationDetailsTypesSupported ??
+            Interlocked.CompareExchange(ref _authorizationDetailsTypesSupported, new Collection<string>(), null) ??
+            _authorizationDetailsTypesSupported;
 
         /// <summary>
         /// Gets or sets the 'authorization_endpoint'.
@@ -721,6 +753,17 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         }
 
         /// <summary>
+        /// Gets a bool that determines if the 'authorization_details_types_supported' (AuthorizationDetailsTypesSupported) property should be serialized.
+        /// This is used by Json.NET in order to conditionally serialize properties.
+        /// </summary>
+        /// <return>true if 'authorization_details_types_supported' (AuthorizationDetailsTypesSupported) is not empty; otherwise, false.</return>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public bool ShouldSerializeAuthorizationDetailsTypesSupported()
+        {
+            return AuthorizationDetailsTypesSupported.Count > 0;
+        }
+
+        /// <summary>
         /// Gets a bool that determines if the 'authorization_encryption_alg_values_supported' (AuthorizationEncryptionAlgValuesSupported) property should be serialized.
         /// This is used by Json.NET in order to conditionally serialize properties.
         /// </summary>
@@ -1093,6 +1136,6 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         {
             return UserInfoEndpointSigningAlgValuesSupported.Count > 0;
         }
-#endregion shouldserialize
+        #endregion shouldserialize
     }
 }
