@@ -17,6 +17,28 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
     public class JwtSecurityTokenTests
     {
         [Fact]
+        public void ByteArrayClaimsEncodedAsExpected()
+        {
+            var value = new byte[] { 0x21, 0x62, 0x36, 0x34 };
+            var tokenPayload = new JwtPayload
+            {
+                ["byteArray"] = value,
+            };
+
+            var token = new JwtSecurityToken(new JwtHeader(), tokenPayload);
+
+            var handler = new JwtSecurityTokenHandler();
+
+            var tokenString = handler.WriteToken(token);
+            var parsedToken = new JwtSecurityToken(tokenString);
+            var expectedValue = System.Text.Json.JsonSerializer.Serialize(value).Trim('"');
+
+            // Will throw if can't find.
+            var testClaim = parsedToken.Claims.First(c => c.Type == "byteArray");
+            Assert.Equal(expectedValue, testClaim.Value);
+        }
+
+        [Fact]
         public void BoolClaimsEncodedAsExpected()
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(new string('a', 128)));

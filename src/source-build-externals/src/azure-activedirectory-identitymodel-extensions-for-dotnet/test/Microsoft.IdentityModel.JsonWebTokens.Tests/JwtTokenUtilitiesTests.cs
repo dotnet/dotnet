@@ -38,7 +38,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             var jwsTokenDescriptor = new SecurityTokenDescriptor
             {
                 SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
-                Subject = new ClaimsIdentity(Default.PayloadClaims)
+                Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims)
             };
 
             string stringJwe = new JsonWebTokenHandler().CreateToken(jweTokenDescriptor);

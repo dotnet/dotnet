@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Json;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TokenLogMessages = Microsoft.IdentityModel.Tokens.LogMessages;
@@ -358,42 +359,49 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             if (tokenDescriptor.Claims != null && tokenDescriptor.Claims.Count > 0)
                 payload.Merge(JObject.FromObject(tokenDescriptor.Claims), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Replace });
 
-            if (tokenDescriptor.Audience != null)
+            if (tokenDescriptor.Audiences.Count > 0)
             {
-                if (LogHelper.IsEnabled(EventLogLevel.Informational) && payload.ContainsKey(JwtRegisteredClaimNames.Aud))
-                    LogHelper.LogInformation(LogHelper.FormatInvariant(LogMessages.IDX14113, LogHelper.MarkAsNonPII(nameof(tokenDescriptor.Audience))));
+                if (payload.ContainsKey(JwtRegisteredClaimNames.Aud))
+                    LogDuplicatedClaim(nameof(tokenDescriptor.Audiences));
+
+                payload[JwtRegisteredClaimNames.Aud] = JArray.FromObject(tokenDescriptor.Audiences);
+            }
+            else if (!string.IsNullOrEmpty(tokenDescriptor.Audience))
+            {
+                if (payload.ContainsKey(JwtRegisteredClaimNames.Aud))
+                    LogDuplicatedClaim(nameof(tokenDescriptor.Audience));
 
                 payload[JwtRegisteredClaimNames.Aud] = tokenDescriptor.Audience;
             }
 
             if (tokenDescriptor.Expires.HasValue)
             {
-                if (LogHelper.IsEnabled(EventLogLevel.Informational) && payload.ContainsKey(JwtRegisteredClaimNames.Exp))
-                    LogHelper.LogInformation(LogHelper.FormatInvariant(LogMessages.IDX14113, LogHelper.MarkAsNonPII(nameof(tokenDescriptor.Expires))));
+                if (payload.ContainsKey(JwtRegisteredClaimNames.Exp))
+                    LogDuplicatedClaim(nameof(tokenDescriptor.Expires));
 
                 payload[JwtRegisteredClaimNames.Exp] = EpochTime.GetIntDate(tokenDescriptor.Expires.Value);
             }
 
             if (tokenDescriptor.Issuer != null)
             {
-                if (LogHelper.IsEnabled(EventLogLevel.Informational) && payload.ContainsKey(JwtRegisteredClaimNames.Iss))
-                    LogHelper.LogInformation(LogHelper.FormatInvariant(LogMessages.IDX14113, LogHelper.MarkAsNonPII(nameof(tokenDescriptor.Issuer))));
+                if (payload.ContainsKey(JwtRegisteredClaimNames.Iss))
+                    LogDuplicatedClaim(nameof(tokenDescriptor.Issuer));
 
                 payload[JwtRegisteredClaimNames.Iss] = tokenDescriptor.Issuer;
             }
 
             if (tokenDescriptor.IssuedAt.HasValue)
             {
-                if (LogHelper.IsEnabled(EventLogLevel.Informational) && payload.ContainsKey(JwtRegisteredClaimNames.Iat))
-                    LogHelper.LogInformation(LogHelper.FormatInvariant(LogMessages.IDX14113, LogHelper.MarkAsNonPII(nameof(tokenDescriptor.IssuedAt))));
+                if (payload.ContainsKey(JwtRegisteredClaimNames.Iat))
+                    LogDuplicatedClaim(nameof(tokenDescriptor.IssuedAt));
 
                 payload[JwtRegisteredClaimNames.Iat] = EpochTime.GetIntDate(tokenDescriptor.IssuedAt.Value);
             }
 
             if (tokenDescriptor.NotBefore.HasValue)
             {
-                if (LogHelper.IsEnabled(EventLogLevel.Informational) && payload.ContainsKey(JwtRegisteredClaimNames.Nbf))
-                    LogHelper.LogInformation(LogHelper.FormatInvariant(LogMessages.IDX14113, LogHelper.MarkAsNonPII(nameof(tokenDescriptor.NotBefore))));
+                if (payload.ContainsKey(JwtRegisteredClaimNames.Nbf))
+                    LogDuplicatedClaim(nameof(tokenDescriptor.NotBefore));
 
                 payload[JwtRegisteredClaimNames.Nbf] = EpochTime.GetIntDate(tokenDescriptor.NotBefore.Value);
             }
@@ -406,6 +414,12 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 tokenDescriptor.AdditionalHeaderClaims,
                 tokenDescriptor.AdditionalInnerHeaderClaims,
                 tokenDescriptor.TokenType);
+        }
+
+        private void LogDuplicatedClaim(string claimType)
+        {
+            if (LogHelper.IsEnabled(EventLogLevel.Informational))
+                LogHelper.LogInformation(LogHelper.FormatInvariant(LogMessages.IDX14113, LogHelper.MarkAsNonPII(claimType)));
         }
 
         /// <summary>

@@ -13,7 +13,7 @@ using JsonPrimitives = Microsoft.IdentityModel.Tokens.Json.JsonSerializerPrimiti
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
 {
     /// <summary>
-    /// Provides access to common OpenIdConnect parameters.
+    /// Provides access to common OpenID Connect parameters.
     /// </summary>
     public class OpenIdConnectMessage : AuthenticationProtocolMessage
     {
@@ -25,7 +25,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         public OpenIdConnectMessage() { }
 
         /// <summary>
-        /// Initializes an instance of <see cref="OpenIdConnectMessage"/> class with a json string.
+        /// Initializes a new instance of <see cref="OpenIdConnectMessage"/> class with a json string.
         /// </summary>
         public OpenIdConnectMessage(string json)
         {
@@ -46,7 +46,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// Initializes a new instance of the <see cref="OpenIdConnectMessage"/> class.
         /// </summary>
         /// <param name="other"> an <see cref="OpenIdConnectMessage"/> to copy.</param>
-        /// <exception cref="ArgumentNullException">If 'other' is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="other"/> is null.</exception>
         protected OpenIdConnectMessage(OpenIdConnectMessage other)
         {
             if (other == null)

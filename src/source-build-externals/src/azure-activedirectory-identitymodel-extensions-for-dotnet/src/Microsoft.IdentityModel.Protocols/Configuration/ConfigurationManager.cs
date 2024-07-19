@@ -142,7 +142,7 @@ namespace Microsoft.IdentityModel.Protocols
         /// <param name="cancel">CancellationToken</param>
         /// <returns>Configuration of type T.</returns>
         /// <remarks>If the time since the last call is less than <see cref="BaseConfigurationManager.AutomaticRefreshInterval"/> then <see cref="IConfigurationRetriever{T}.GetConfigurationAsync"/> is not called and the current Configuration is returned.</remarks>
-        public async Task<T> GetConfigurationAsync(CancellationToken cancel)
+        public virtual async Task<T> GetConfigurationAsync(CancellationToken cancel)
         {
             if (_currentConfiguration != null && _syncAfter > DateTimeOffset.UtcNow)
             {

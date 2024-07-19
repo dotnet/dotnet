@@ -283,9 +283,9 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Calls to release managed resources.
+        /// Releases the resources used by the current instance.
         /// </summary>
-        /// <param name="disposing">true, if called from Dispose(), false, if invoked inside a finalizer.</param>
+        /// <param name="disposing">If true, release both managed and unmanaged resources; otherwise, release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (!_disposed)

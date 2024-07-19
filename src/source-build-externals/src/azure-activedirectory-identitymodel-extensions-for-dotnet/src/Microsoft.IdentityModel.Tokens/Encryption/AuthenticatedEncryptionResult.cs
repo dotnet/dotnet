@@ -9,12 +9,12 @@ namespace Microsoft.IdentityModel.Tokens
     public class AuthenticatedEncryptionResult
     {
         /// <summary>
-        /// Initializes a new <see cref="AuthenticatedEncryptionResult"/>
+        /// Initializes a new instance of the <see cref="AuthenticatedEncryptionResult"/> class.
         /// </summary>
-        /// <param name="key">the <see cref="SecurityKey"/> used during <see cref="AuthenticatedEncryptionProvider.Encrypt(byte[], byte[])"/></param>
-        /// <param name="ciphertext">protected text.</param>
-        /// <param name="iv">the initialization vector used.</param>
-        /// <param name="authenticationTag">the bytes that need be passed to <see cref="AuthenticatedEncryptionProvider.Decrypt(byte[], byte[], byte[], byte[])"/>.</param>
+        /// <param name="key">The <see cref="SecurityKey"/> used during <see cref="AuthenticatedEncryptionProvider.Encrypt(byte[], byte[])"/>.</param>
+        /// <param name="ciphertext">The encrypted text.</param>
+        /// <param name="iv">The initialization vector used.</param>
+        /// <param name="authenticationTag">The authentication tag that was created during the encyption and needs <see cref="AuthenticatedEncryptionProvider.Decrypt(byte[], byte[], byte[], byte[])"/>.</param>
         public AuthenticatedEncryptionResult(SecurityKey key, byte[] ciphertext, byte[] iv, byte[] authenticationTag)
         {
             Key = key;
@@ -39,7 +39,7 @@ namespace Microsoft.IdentityModel.Tokens
         public byte[] IV { get; private set; }
 
         /// <summary>
-        /// Gets the authentication tag
+        /// Gets the authentication tag.
         /// </summary>
         public byte[] AuthenticationTag { get; private set; }
     }

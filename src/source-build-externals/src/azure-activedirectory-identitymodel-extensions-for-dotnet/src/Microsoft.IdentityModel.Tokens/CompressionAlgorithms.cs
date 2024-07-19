@@ -10,7 +10,9 @@ namespace Microsoft.IdentityModel.Tokens
     /// </summary>
     public class CompressionAlgorithms
     {
-        // See: https://datatracker.ietf.org/doc/html/rfc1951
+        /// <summary>
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc1951"/>.
+        /// </summary>
         public const string Deflate = "DEF";
     }
 }

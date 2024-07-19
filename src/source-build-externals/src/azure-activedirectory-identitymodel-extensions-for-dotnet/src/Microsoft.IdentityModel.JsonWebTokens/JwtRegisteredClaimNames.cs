@@ -6,10 +6,10 @@ using System;
 namespace Microsoft.IdentityModel.JsonWebTokens
 {
     /// <summary>
-    /// List of registered claims from different sources
-    /// https://datatracker.ietf.org/doc/html/rfc7519#section-4
-    /// http://openid.net/specs/openid-connect-core-1_0.html#IDToken
-    /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+    /// Defines the standard claim names as per the JWT (JSON Web Token) specification. 
+    /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7519#section-4"/>.
+    /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#IDToken"/>.
+    /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
     /// </summary>
     public struct JwtRegisteredClaimNames
     {
@@ -20,107 +20,107 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         public const string Actort = "actort";
 
         /// <summary>
-        /// http://openid.net/specs/openid-connect-core-1_0.html#IDToken
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#IDToken"/>.
         /// </summary>
         public const string Acr = "acr";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string Address = "address";
 
         /// <summary>
-        /// http://openid.net/specs/openid-connect-core-1_0.html#IDToken
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#IDToken"/>.
         /// </summary>
         public const string Amr = "amr";
 
         /// <summary>
-        /// https://datatracker.ietf.org/doc/html/rfc7519#section-4
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7519#section-4"/>.
         /// </summary>
         public const string Aud = "aud";
 
         /// <summary>
-        /// http://openid.net/specs/openid-connect-core-1_0.html#IDToken
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#IDToken"/>.
         /// </summary>
         public const string AuthTime = "auth_time";
 
         /// <summary>
-        /// http://openid.net/specs/openid-connect-core-1_0.html#IDToken
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#IDToken"/>.
         /// </summary>
         public const string Azp = "azp";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string Birthdate = "birthdate";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken"/>.
         /// </summary>
         public const string CHash = "c_hash";
 
         /// <summary>
-        /// http://openid.net/specs/openid-connect-core-1_0.html#CodeIDToken
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#CodeIDToken"/>.
         /// </summary>
         public const string AtHash = "at_hash";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string Email = "email";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string EmailVerified = "email_verified";
 
         /// <summary>
-        /// https://datatracker.ietf.org/doc/html/rfc7519#section-4
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7519#section-4"/>.
         /// </summary>
         public const string Exp = "exp";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string Gender = "gender";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string FamilyName = "family_name";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string GivenName = "given_name";
 
         /// <summary>
-        /// https://datatracker.ietf.org/doc/html/rfc7519#section-4
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7519#section-4"/>.
         /// </summary>
         public const string Iat = "iat";
 
         /// <summary>
-        /// https://datatracker.ietf.org/doc/html/rfc7519#section-4
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7519#section-4"/>.
         /// </summary>
         public const string Iss = "iss";
 
         /// <summary>
-        /// https://datatracker.ietf.org/doc/html/rfc7519#section-4
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7519#section-4"/>.
         /// </summary>
         public const string Jti = "jti";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string Locale = "locale";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string MiddleName = "middle_name";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string Name = "name";
 
@@ -129,32 +129,32 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         public const string NameId = "nameid";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string Nickname = "nickname";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest"/>.
         /// </summary>
         public const string Nonce = "nonce";
 
         /// <summary>
-        /// https://datatracker.ietf.org/doc/html/rfc7519#section-4
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7519#section-4"/>.
         /// </summary>
         public const string Nbf = "nbf";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string PhoneNumber = "phone_number";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string PhoneNumberVerified = "phone_number_verified";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string Picture = "picture";
 
@@ -163,27 +163,27 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         public const string Prn = "prn";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string PreferredUsername = "preferred_username";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string Profile = "profile";
 
         /// <summary>
-        /// http://openid.net/specs/openid-connect-frontchannel-1_0.html#OPLogout
+        /// See: <see href="https://openid.net/specs/openid-connect-frontchannel-1_0.html#OPLogout"/>.
         /// </summary>
         public const string Sid = "sid";
 
         /// <summary>
-        /// https://datatracker.ietf.org/doc/html/rfc7519#section-4
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7519#section-4"/>.
         /// </summary>
         public const string Sub = "sub";
 
         /// <summary>
-        /// https://datatracker.ietf.org/doc/html/rfc7519#section-5
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7519#section-5"/>.
         /// </summary>
         public const string Typ = "typ";
 
@@ -192,17 +192,17 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         public const string UniqueName = "unique_name";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string UpdatedAt = "updated_at";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string Website = "website";
 
         /// <summary>
-        /// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+        /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"/>.
         /// </summary>
         public const string ZoneInfo = "zoneinfo";
     }

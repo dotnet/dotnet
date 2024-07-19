@@ -112,7 +112,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <summary>
         /// Checks if <see cref="SecurityKey.CryptoProviderFactory"/> can perform the cryptographic operation specified by the <paramref name="algorithm"/> with this <see cref="SecurityKey"/>.
         /// </summary>
-        /// <param name="algorithm">the algorithm to apply.</param>
+        /// <param name="algorithm">the algorithm to be used.</param>
         /// <returns>true if <see cref="SecurityKey.CryptoProviderFactory"/> can perform the cryptographic operation sepecified by the <paramref name="algorithm"/> with this <see cref="SecurityKey"/>.</returns>
         public virtual bool IsSupportedAlgorithm(string algorithm)
         {

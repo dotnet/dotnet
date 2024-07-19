@@ -357,7 +357,7 @@ namespace Microsoft.IdentityModel.TestExtensions
         {
             var securityTokenDescriptor = new SecurityTokenDescriptor()
             {
-                Subject = new ClaimsIdentity(_payloadClaims),
+                Subject = ClaimsIdentityFactory.Create(_payloadClaims),
             };
 
             if (!string.IsNullOrEmpty(Issuer))

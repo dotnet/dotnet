@@ -61,7 +61,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// </summary>
         /// <param name="key">The <see cref="SecurityKey"/> that will be used for signature operations.</param>
         /// <param name="algorithm">The signature algorithm to use.</param>
-        /// <param name="willCreateSignatures">indicates if this <see cref="SymmetricSignatureProvider"/> will be used to create signatures.</param>
+        /// <param name="willCreateSignatures">If true, the provider will be used for creating signatures.</param>
         /// <exception cref="ArgumentNullException">'key' is null.</exception>
         /// <exception cref="ArgumentNullException">'algorithm' is null or empty.</exception>
         /// <exception cref="NotSupportedException">If <see cref="SecurityKey"/> and algorithm pair are not supported.</exception>
@@ -480,12 +480,10 @@ namespace Microsoft.IdentityModel.Tokens
             }
         }
 
-        #region IDisposable Members
-
         /// <summary>
-        /// Disposes of internal components.
+        /// Releases the resources used by the current instance.
         /// </summary>
-        /// <param name="disposing">true, if called from Dispose(), false, if invoked inside a finalizer.</param>
+        /// <param name="disposing">If true, release both managed and unmanaged resources; otherwise, release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -501,6 +499,5 @@ namespace Microsoft.IdentityModel.Tokens
                 }
             }
         }
-        #endregion
     }
 }

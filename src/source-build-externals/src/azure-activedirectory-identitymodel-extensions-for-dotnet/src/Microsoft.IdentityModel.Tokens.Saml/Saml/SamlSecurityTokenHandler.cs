@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.IdentityModel.Abstractions;
@@ -322,7 +321,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// </summary>
         /// <param name="samlToken">A <see cref="SamlSecurityToken"/> that will be used to create the claims.</param>
         /// <param name="issuer">The value to set <see cref="Claim.Issuer"/></param>
-        /// <param name="validationParameters"> Contains parameters for validating the securityToken.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <returns>A <see cref="IEnumerable{ClaimsIdentity}"/> containing the claims from the <see cref="SamlSecurityToken"/>.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="samlToken"/> is null.</exception>
         /// <exception cref="ArgumentNullException">if <see cref="SamlSecurityToken.Assertion"/> is null.</exception>
@@ -354,7 +353,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// <exception cref="ArgumentNullException">if <paramref name="tokenDescriptor"/> is null.</exception>
         protected virtual SamlConditions CreateConditions(SecurityTokenDescriptor tokenDescriptor)
         {
-            if (null == tokenDescriptor)
+            if (tokenDescriptor == null)
                 throw LogArgumentNullException(nameof(tokenDescriptor));
 
             var conditions = new SamlConditions();
@@ -368,11 +367,40 @@ namespace Microsoft.IdentityModel.Tokens.Saml
             else if (SetDefaultTimesOnTokenCreation)
                 conditions.NotOnOrAfter = DateTime.UtcNow + TimeSpan.FromMinutes(TokenLifetimeInMinutes);
 
-            if (!string.IsNullOrEmpty(tokenDescriptor.Audience))
+            if (tokenDescriptor.Audiences.Count > 0)
+            {
+                if (!string.IsNullOrEmpty(tokenDescriptor.Audience))
+                    conditions.Conditions.Add(CreateAudienceRestrictionCondition(tokenDescriptor.Audience, tokenDescriptor.Audiences));
+                else
+                    conditions.Conditions.Add(CreateAudienceRestrictionCondition(tokenDescriptor.Audiences));
+            }
+            else if (!string.IsNullOrEmpty(tokenDescriptor.Audience))
+            {
                 conditions.Conditions.Add(new SamlAudienceRestrictionCondition(new Uri(tokenDescriptor.Audience)));
+            }
 
             return conditions;
         }
+
+
+        private static SamlAudienceRestrictionCondition CreateAudienceRestrictionCondition(IList<string> audiences)
+        {
+            SamlAudienceRestrictionCondition audRestrictionCondition = new();
+            for (int i = 0; i < audiences.Count; i++)
+                audRestrictionCondition.Audiences.Add(new Uri(audiences[i]));
+
+            return audRestrictionCondition;
+        }
+
+        private static SamlCondition CreateAudienceRestrictionCondition(string audience, IList<string> audiences)
+        {
+            SamlAudienceRestrictionCondition audRestrictionCondition = new(new Uri(audience));
+            for (int i = 0; i < audiences.Count; i++)
+                audRestrictionCondition.Audiences.Add(new Uri(audiences[i]));
+
+            return audRestrictionCondition;
+        }
+
 
         /// <summary>
         /// Generates an enumeration of SamlStatements from a SecurityTokenDescriptor.
@@ -629,7 +657,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// </summary>
         /// <param name="samlToken">A <see cref="SamlSecurityToken"/> that will be used to create the claims.</param>
         /// <param name="issuer">The issuer.</param>
-        /// <param name="validationParameters"> Contains parameters for validating the securityToken.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <returns>A <see cref="IEnumerable{ClaimsIdentity}"/> containing the claims from the <see cref="SamlSecurityToken"/>.</returns>
         /// <exception cref="SamlSecurityTokenException">if the statement is not a <see cref="SamlSubjectStatement"/>.</exception>
         protected virtual IEnumerable<ClaimsIdentity> ProcessStatements(SamlSecurityToken samlToken, string issuer, TokenValidationParameters validationParameters)
@@ -769,7 +797,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// </summary>
         /// <param name="reader">An XML reader positioned at the token's start 
         /// element.</param>
-        /// <param name="validationParameters"> validation parameters for the <see cref="SamlSecurityToken"/>.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <returns>An instance of <see cref="SamlSecurityToken"/>.</returns>
         public override SecurityToken ReadToken(XmlReader reader, TokenValidationParameters validationParameters)
         {
@@ -781,7 +809,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// </summary>
         /// <param name="token">The <see cref="string"/> representation of the token that is being validated.</param>
         /// <param name="securityToken">The <see cref="SamlSecurityToken"/> that is being validated.</param>
-        /// <param name="validationParameters"><see cref="TokenValidationParameters"/> that will be used during validation.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <returns>Returns a <see cref="SecurityKey"/> to use for signature validation.</returns>
         /// <exception cref="ArgumentNullException">If <paramref name="securityToken"/> is null.</exception>
         /// <exception cref="ArgumentNullException">If <paramref name="validationParameters"/> is null.</exception>
@@ -870,7 +898,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
                 }
             }
 
-            subject.Actor = new ClaimsIdentity(claims, "Federation");
+            subject.Actor = ClaimsIdentityFactory.Create(claims, "Federation");
             SetDelegateFromAttribute(actingAsAttribute, subject.Actor, issuer);
         }
 
@@ -879,8 +907,8 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// </summary>
         /// <param name="audiences"><see cref="IEnumerable{String}"/>.</param>
         /// <param name="securityToken">The <see cref="SamlSecurityToken"/> being validated.</param>
-        /// <param name="validationParameters"><see cref="TokenValidationParameters"/> required for validation.</param>
-        /// <remarks>see <see cref="Validators.ValidateAudience"/> for additional details.</remarks>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
+        /// <remarks>see <see cref="Validators.ValidateAudience(IEnumerable{string}, SecurityToken, TokenValidationParameters)"/> for additional details.</remarks>
         protected virtual void ValidateAudience(IEnumerable<string> audiences, SecurityToken securityToken, TokenValidationParameters validationParameters)
         {
             Validators.ValidateAudience(audiences, securityToken, validationParameters);
@@ -890,7 +918,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// Validates the Lifetime and Audience conditions.
         /// </summary>
         /// <param name="securityToken">a <see cref="SamlSecurityToken"/> that contains the <see cref="SamlConditions"/>.</param>
-        /// <param name="validationParameters"><see cref="TokenValidationParameters"/> required for validation.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <exception cref="ArgumentNullException">If <paramref name="securityToken"/> is null or empty.</exception>
         /// <exception cref="ArgumentNullException">If <paramref name="validationParameters"/> is null.</exception>
         /// <exception cref="ArgumentNullException">If <see cref="SamlSecurityToken.Assertion"/> is null.</exception>
@@ -938,7 +966,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// </summary>
         /// <param name="issuer">The issuer to validate</param>
         /// <param name="securityToken">The <see cref="SamlSecurityToken"/> that is being validated.</param>
-        /// <param name="validationParameters"><see cref="TokenValidationParameters"/> required for validation.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <returns>The issuer to use when creating the <see cref="Claim"/>(s) in the <see cref="ClaimsIdentity"/>.</returns>
         /// <remarks><see cref="Validators.ValidateIssuer(string, SecurityToken, TokenValidationParameters)"/> for additional details.</remarks>
         protected virtual string ValidateIssuer(string issuer, SecurityToken securityToken, TokenValidationParameters validationParameters)
@@ -951,7 +979,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// </summary>
         /// <param name="securityKey">The <see cref="SecurityKey"/> that signed the <see cref="SecurityToken"/>.</param>
         /// <param name="securityToken">The <see cref="SecurityToken"/> being validated.</param>
-        /// <param name="validationParameters">The current <see cref="TokenValidationParameters"/>.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         protected virtual void ValidateIssuerSecurityKey(SecurityKey securityKey, SecurityToken securityToken, TokenValidationParameters validationParameters)
         {
            Validators.ValidateIssuerSecurityKey(securityKey, securityToken, validationParameters);
@@ -963,8 +991,8 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// <param name="notBefore">The <see cref="DateTime"/> value found in the <see cref="SamlSecurityToken"/>.</param>
         /// <param name="expires">The <see cref="DateTime"/> value found in the <see cref="SamlSecurityToken"/>.</param>
         /// <param name="securityToken">The <see cref="SamlSecurityToken"/> being validated.</param>
-        /// <param name="validationParameters"><see cref="TokenValidationParameters"/> required for validation.</param>
-        /// <remarks><see cref="Validators.ValidateLifetime"/> for additional details.</remarks>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
+        /// <remarks><see cref="Validators.ValidateLifetime(DateTime?, DateTime?, SecurityToken, TokenValidationParameters)"/> for additional details.</remarks>
         protected virtual void ValidateLifetime(DateTime? notBefore, DateTime? expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
         {
             Validators.ValidateLifetime(notBefore, expires, securityToken, validationParameters);
@@ -974,7 +1002,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// Validates that the signature, if found is valid.
         /// </summary>
         /// <param name="token">A Saml token.</param>
-        /// <param name="validationParameters"><see cref="TokenValidationParameters"/> that will be used during validation.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <exception cref="ArgumentNullException">If <paramref name="token"/> is null or whitespace.</exception>
         /// <exception cref="ArgumentNullException">If <paramref name="validationParameters"/> is null.</exception>
         /// <exception cref="SecurityTokenValidationException">If <see cref="ReadSamlToken(string)"/> returns null"/>.</exception>
@@ -1104,7 +1132,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// </summary>
         /// <param name="key">The <see cref="SecurityKey"/> that signed the <see cref="SecurityToken"/>.</param>
         /// <param name="securityToken">The <see cref="SamlSecurityToken"/> to validate.</param>
-        /// <param name="validationParameters">The current <see cref="TokenValidationParameters"/>.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <remarks>If the <see cref="SamlSecurityToken.SigningKey"/> is a <see cref="X509SecurityKey"/> then the X509Certificate2 will be validated using the CertificateValidator.</remarks>
         protected virtual void ValidateIssuerSecurityKey(SecurityKey key, SamlSecurityToken securityToken, TokenValidationParameters validationParameters)
         {
@@ -1116,7 +1144,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// </summary>
         /// <param name="expiration">expiration time of the <see cref="SamlSecurityToken"/></param>
         /// <param name="token"><see cref="SamlSecurityToken"/> to validate</param>
-        /// <param name="validationParameters"><see cref="TokenValidationParameters"/> that will be used during validation</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         protected virtual void ValidateTokenReplay(DateTime? expiration, string token, TokenValidationParameters validationParameters)
         {
             Validators.ValidateTokenReplay(expiration, token, validationParameters);
@@ -1126,7 +1154,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// Reads and validates a well formed <see cref="SamlSecurityToken"/>.
         /// </summary>
         /// <param name="reader">A <see cref="XmlReader"/> reader positioned at a saml assertion element.</param>
-        /// <param name="validationParameters">Contains data and information needed for validation.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <param name="validatedToken">The <see cref="SecurityToken"/> that was validated.</param>
         /// <returns>A <see cref="ClaimsPrincipal"/> generated from the claims in the saml assertion.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="reader"/> is null.</exception>
@@ -1196,7 +1224,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// Reads and validates a well formed <see cref="SamlSecurityToken"/>.
         /// </summary>
         /// <param name="token">A string containing a well formed securityToken.</param>
-        /// <param name="validationParameters">Contains data and information needed for validation.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <param name="validatedToken">The <see cref="SecurityToken"/> that was validated.</param>
         /// <returns>A <see cref="ClaimsPrincipal"/> generated from the claims in the Saml securityToken.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="token"/> is null or whitespace.</exception>

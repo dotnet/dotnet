@@ -8,7 +8,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
 {
     /// <summary>
     /// A context that is used by a <see cref="OpenIdConnectProtocolValidator"/> when validating an OpenIdConnect Response
-    /// to ensure it compliant with http://openid.net/specs/openid-connect-core-1_0.html.
+    /// to ensure it's compliant with <see href="https://openid.net/specs/openid-connect-core-1_0.html"/>.
     /// </summary>
     public class OpenIdConnectProtocolValidationContext
     {

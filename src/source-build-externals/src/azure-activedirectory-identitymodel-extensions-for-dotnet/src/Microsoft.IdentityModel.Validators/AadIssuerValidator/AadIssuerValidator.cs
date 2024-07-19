@@ -171,7 +171,7 @@ namespace Microsoft.IdentityModel.Validators
         /// </summary>
         /// <param name="issuer">Issuer to validate (will be tenanted).</param>
         /// <param name="securityToken">Received security token.</param>
-        /// <param name="validationParameters">Token validation parameters.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <example><code>
         /// AadIssuerValidator aadIssuerValidator = AadIssuerValidator.GetAadIssuerValidator(authority, httpClient);
         /// TokenValidationParameters.IssuerValidator = aadIssuerValidator.Validate;
@@ -200,7 +200,7 @@ namespace Microsoft.IdentityModel.Validators
         /// </summary>
         /// <param name="issuer">Issuer to validate (will be tenanted).</param>
         /// <param name="securityToken">Received security token.</param>
-        /// <param name="validationParameters">Token validation parameters.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <example><code>
         /// AadIssuerValidator aadIssuerValidator = AadIssuerValidator.GetAadIssuerValidator(authority, httpClient);
         /// TokenValidationParameters.IssuerValidator = aadIssuerValidator.Validate;

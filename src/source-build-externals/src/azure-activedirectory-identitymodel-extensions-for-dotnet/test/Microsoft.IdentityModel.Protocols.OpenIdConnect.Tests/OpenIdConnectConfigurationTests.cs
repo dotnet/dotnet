@@ -5,7 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
@@ -75,6 +78,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         {
             OpenIdConnectConfiguration configuration = new OpenIdConnectConfiguration();
             Assert.NotNull(configuration.AcrValuesSupported);
+            Assert.NotNull(configuration.AuthorizationDetailsTypesSupported);
             Assert.NotNull(configuration.AuthorizationEncryptionAlgValuesSupported);
             Assert.NotNull(configuration.AuthorizationEncryptionEncValuesSupported);
             Assert.NotNull(configuration.AuthorizationSigningAlgValuesSupported);
@@ -145,8 +149,8 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             OpenIdConnectConfiguration configuration = new OpenIdConnectConfiguration();
             Type type = typeof(OpenIdConnectConfiguration);
             PropertyInfo[] properties = type.GetProperties();
-            if (properties.Length != 67)
-                Assert.True(false, "Number of properties has changed from 67 to: " + properties.Length + ", adjust tests");
+            if (properties.Length != 68)
+                Assert.True(false, "Number of properties has changed from 68 to: " + properties.Length + ", adjust tests");
 
             TestUtilities.CallAllPublicInstanceAndStaticPropertyGets(configuration, "OpenIdConnectConfiguration_GetSets");
 
@@ -155,6 +159,8 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
                 {
                     PropertyNamesAndSetGetValue = new List<KeyValuePair<string, List<object>>>
                         {
+                            new KeyValuePair<string, List<object>>("AcrValuesSupported", new List<object>{ false, true, true }),
+                            new KeyValuePair<string, List<object>>("AuthorizationDetailsTypesSupported", new List<object>{ false, true, true }),
                             new KeyValuePair<string, List<object>>("AuthorizationEndpoint", new List<object>{ (string)null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString() }),
                             new KeyValuePair<string, List<object>>("AuthorizationEncryptionAlgValuesSupported", new List<object>{ false, true, true }),
                             new KeyValuePair<string, List<object>>("AuthorizationEncryptionEncValuesSupported", new List<object>{ false, true, true }),
@@ -274,6 +280,32 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         }
 
         [Fact]
+        public void RoundTripFromJsonWithStream()
+        {
+            using MemoryStream stream = new();
+
+            var context = new CompareContext { Title = "RoundTripFromJson" };
+            var oidcConfig1 = OpenIdConnectConfiguration.Create(OpenIdConfigData.JsonAllValues);
+            var oidcConfig2 = new OpenIdConnectConfiguration(OpenIdConfigData.JsonAllValues);
+
+            OpenIdConnectConfiguration.Write(oidcConfig1, stream);
+            var oidcJson1 = Encoding.UTF8.GetString(stream.ToArray());
+            var oidcConfig3 = OpenIdConnectConfiguration.Create(oidcJson1);
+            stream.SetLength(0);
+
+            OpenIdConnectConfiguration.Write(oidcConfig2, stream);
+            var oidcJson2 = Encoding.UTF8.GetString(stream.ToArray());
+            var oidcConfig4 = new OpenIdConnectConfiguration(oidcJson2);
+
+            IdentityComparer.AreEqual(oidcConfig1, oidcConfig2, context);
+            IdentityComparer.AreEqual(oidcConfig1, oidcConfig3, context);
+            IdentityComparer.AreEqual(oidcConfig1, oidcConfig4, context);
+            IdentityComparer.AreEqual(oidcJson1, oidcJson2, context);
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        [Fact]
         public void EmptyCollectionSerialization()
         {
             var context = new CompareContext {Title = "EmptyCollectionSerialization"};
@@ -282,6 +314,22 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             var oidcWithEmptyCollectionsJson = OpenIdConnectConfiguration.Write(oidcWithEmptyCollections);
 
             IdentityComparer.AreEqual(oidcWithEmptyCollectionsJson, "{}", context);
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        [Fact]
+        public void EmptyCollectionSerializationWithStream()
+        {
+            using MemoryStream stream = new();
+
+            var context = new CompareContext {Title = "EmptyCollectionSerialization"};
+            // Initialize an OpenIdConnectConfiguration object with all collections empty.
+            var oidcWithEmptyCollections = new OpenIdConnectConfiguration();
+            OpenIdConnectConfiguration.Write(oidcWithEmptyCollections, stream);
+            var emptyCollectionBytes = Encoding.UTF8.GetBytes("{}");
+
+            IdentityComparer.AreEqual(stream.ToArray(), emptyCollectionBytes, context);
 
             TestUtilities.AssertFailIfErrors(context);
         }
@@ -297,6 +345,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             var collectionNames = new List<string>
             {
                 "acr_values_supported",
+                "authorization_details_types_supported",
                 "authorization_encryption_alg_values_supported",
                 "authorization_encryption_enc_values_supported",
                 "authorization_signing_alg_values_supported",
@@ -339,6 +388,24 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
                 if (!oidcWithAllCollectionsJson.Contains(collection))
                     context.Diffs.Add(collection + " should be serialized.");
             }
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        [Fact]
+        public void NonemptyCollectionSerializationWithStream()
+        {
+            using MemoryStream stream = new();
+
+            var context = new CompareContext { Title = "NonemptyCollectionSerialization" };
+            // Initialize an OpenIdConnectConfiguration object that has at least one element in each Collection.
+            var oidcWithAllCollections = OpenIdConnectConfiguration.Create(OpenIdConfigData.JsonAllValues);
+            var oidcWithAllCollectionsJson = OpenIdConnectConfiguration.Write(oidcWithAllCollections);
+            var oidcWithAllCollectionsBytes = Encoding.UTF8.GetBytes(oidcWithAllCollectionsJson);
+
+            OpenIdConnectConfiguration.Write(oidcWithAllCollections, stream);
+
+            IdentityComparer.AreBytesEqual(oidcWithAllCollectionsBytes, stream.GetBuffer(), context);
+                
             TestUtilities.AssertFailIfErrors(context);
         }
     }

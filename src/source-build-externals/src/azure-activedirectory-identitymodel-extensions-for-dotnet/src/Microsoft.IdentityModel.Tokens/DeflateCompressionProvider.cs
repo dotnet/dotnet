@@ -47,7 +47,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <summary>
         /// Gets and sets the maximum deflate size in chars that will be processed.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">'value' less than 1.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if the value is less than 1.</exception>
         public int MaximumDeflateSize
         {
             get => _maximumTokenSizeInBytes;
@@ -58,10 +58,10 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Decompress the value using DEFLATE algorithm.
+        /// Decompresses the value using Deflate algorithm.
         /// </summary>
-        /// <param name="value">the bytes to decompress.</param>
-        /// <returns>the decompressed bytes.</returns>
+        /// <param name="value">The bytes to decompress.</param>
+        /// <returns>The decompressed bytes.</returns>
         public byte[] Decompress(byte[] value)
         {
             if (value == null)
@@ -101,10 +101,10 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Compress the value using the DEFLATE algorithm.
+        /// Compresses the value using the Deflate algorithm.
         /// </summary>
-        /// <param name="value">the bytes to compress.</param>
-        /// <returns>the compressed bytes.</returns>
+        /// <param name="value">The bytes to compress.</param>
+        /// <returns>The compressed bytes.</returns>
         public byte[] Compress(byte[] value)
         {
             if (value == null)
@@ -125,10 +125,10 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Answers if a compression algorithm is supported.
+        /// Determines whether the specified compression algorithm is supported.
         /// </summary>
-        /// <param name="algorithm">the name of the compression algorithm.</param>
-        /// <returns>true if the compression algorithm is supported, false otherwise.</returns>
+        /// <param name="algorithm">The name of the compression algorithm.</param>
+        /// <returns><see langword="true"/> if the compression algorithm is supported; otherwise, <see langword="false"/>.</returns>
         public bool IsSupportedAlgorithm(string algorithm)
         {
             return Algorithm.Equals(algorithm);

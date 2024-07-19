@@ -4,7 +4,7 @@
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
 {
     /// <summary>
-    /// Well known endpoints for AzureActiveDirectory
+    /// Well-known endpoints for Microsoft Entra ID.
     /// </summary>
     public static class ActiveDirectoryOpenIdConnectEndpoints
     {

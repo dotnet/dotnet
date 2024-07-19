@@ -9,15 +9,15 @@ namespace Microsoft.IdentityModel.Tokens
     /// <summary>
     /// A class which contains useful methods for processing collections.
     /// </summary>
-    public static class CollectionUtilities
+    internal static class CollectionUtilities
     {
         /// <summary>
-        /// Checks whether <paramref name="enumerable"/> is null or empty.
+        /// Checks whether the specified <paramref name="enumerable"/> is null or empty.
         /// </summary>
-        /// <typeparam name="T">The type of the <paramref name="enumerable"/>.</typeparam>
+        /// <typeparam name="T">The type of the elements in the <paramref name="enumerable"/>.</typeparam>
         /// <param name="enumerable">The <see cref="IEnumerable{T}"/> to be checked.</param>
-        /// <returns>True if <paramref name="enumerable"/> is null or empty, false otherwise.</returns>
-        public static bool IsNullOrEmpty<T>(this IEnumerable<T> enumerable)
+        /// <returns>True if the <paramref name="enumerable"/> is null or contains no elements; otherwise, false.</returns>
+        internal static bool IsNullOrEmpty<T>(this IEnumerable<T> enumerable)
         {
             return enumerable == null || !enumerable.Any();
         }

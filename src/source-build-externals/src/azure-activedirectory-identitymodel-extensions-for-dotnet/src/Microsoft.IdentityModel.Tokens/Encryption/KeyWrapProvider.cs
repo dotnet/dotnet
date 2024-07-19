@@ -6,7 +6,7 @@ using System;
 namespace Microsoft.IdentityModel.Tokens
 {
     /// <summary>
-    /// Provides Wrap key and Unwrap key services.
+    /// Provides Wrap and Unwrap key services.
     /// </summary>
     public abstract class KeyWrapProvider : IDisposable
     {
@@ -27,7 +27,7 @@ namespace Microsoft.IdentityModel.Tokens
         public abstract SecurityKey Key { get; }
 
         /// <summary>
-        /// Calls <see cref="Dispose(bool)"/> and <see cref="GC.SuppressFinalize"/>
+        /// Calls <see cref="Dispose(bool)"/> and <see cref="GC.SuppressFinalize"/>.
         /// </summary>
         public void Dispose()
         {
@@ -36,23 +36,23 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Can be over written in descendants to dispose of internal components.
+        /// Can be overridden in descendants to dispose of internal components.
         /// </summary>
-        /// <param name="disposing">true, if called from Dispose(), false, if invoked inside a finalizer</param>     
+        /// <param name="disposing">true if called from Dispose(), false if invoked inside a finalizer.</param>
         protected abstract void Dispose(bool disposing);
 
         /// <summary>
-        /// Unwrap a key.
+        /// Unwraps a key.
         /// </summary>
-        /// <param name="keyBytes">key to unwrap.</param>
-        /// <returns>Unwrapped key.</returns>
+        /// <param name="keyBytes">The key to unwrap.</param>
+        /// <returns>The unwrapped key.</returns>
         public abstract byte[] UnwrapKey(byte[] keyBytes);
 
         /// <summary>
-        /// Wrap a key.
+        /// Wraps a key.
         /// </summary>
-        /// <param name="keyBytes">the key to be wrapped</param>
-        /// <returns>wrapped key.</returns>
+        /// <param name="keyBytes">The key to be wrapped.</param>
+        /// <returns>The wrapped key.</returns>
         public abstract byte[] WrapKey(byte[] keyBytes);
     }
 }

@@ -1,7 +1,40 @@
 See the [releases](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/releases) for details on bug fixes and added features.
 
+8.0.0
+=====
+### CVE package updates
+[CVE-2024-30105](https://github.com/advisories/GHSA-hh2w-p6rv-4g7w)
+- See PR [#2707](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2707) for details.
+
+### Breaking change:
+[Full list](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/wiki/IdentityModel-8x) of breaking changes.
+- A derived `ClaimsIdentity` where claim retrieval is case-sensitive. The current `ClaimsIdentity`, in .NET, retrieves claims in a case-insensitive manner which is different than querying the underlying `SecurityToken`. The new `CaseSensitiveClaimsIdentity` class provides consistent retrieval logic with `SecurityToken`. Fallback to previous behavior via an AppContext switch. See PR [#2700](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2700) for details.
+- Make `CollectionUtilities.IsNullOrEmpty` internal. See issues [#2651](**https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2651) and [#1722](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/1722) for details. 
+
+### Overall improvements to the validation in IdentityModel:
+- See design proposal [#2711](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2711) for details, all work internal for now. Please comment in the GitHub issue and provide feedback there.
+
+### New Features:
+- Allow users to provide a `Stream` to `Write` in `OIDCConfigurationSerializer`. See PR [#2698](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2698) for details.
+
+### Bug fixes:
+- Remove dependency on `AadIssuerValidator.GetTenantIdFromToken` in `ValidateIssuerSigningKey`, to only consider the `tid`. An AppContext switch enables fallbacking to the previous behavior, which should not be needed. See PR [#2680](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2680) for details.
+- Continuation of #2637 and #2646. Add the metadata `authorization_details_types_supported` from [RFC 9396 - OAuth 2.0 Rich Authorization Requests](https://datatracker.ietf.org/doc/html/rfc9396) to `OpenIdConnectConfiguration`.
+- The class `OpenIdConnectPrompt` now has the `create` prompt from [Initiating User Registration via OpenID Connect 1.0
+](https://openid.net/specs/openid-connect-prompt-create-1_0.html)
+-  The following grant types are now included in `OpenIdConnectGrantTypes`:  `urn:ietf:params:oauth:grant-type:saml2-bearer` from [RFC 7522 - Security Assertion Markup Language (SAML) 2.0 Profile for OAuth 2.0 Client Authentication and Authorization Grants](https://datatracker.ietf.org/doc/html/rfc7522), `urn:ietf:params:oauth:grant-type:jwt-bearer` from [RFC 7523 - JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants](https://datatracker.ietf.org/doc/html/rfc7523), `urn:ietf:params:oauth:grant-type:device_code` from [RFC 8628 - OAuth 2.0 Device Authorization Grant](https://datatracker.ietf.org/doc/html/rfc8628), `urn:ietf:params:oauth:grant-type:token-exchange` from [RFC 8693 - OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html), `urn:openid:params:grant-type:ciba` from [OpenID Connect Client-Initiated Backchannel Authentication Flow - Core 1.0](https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html)
+-  Serialize byte arrays as base64 strings in Json tokens. This was the behavior in 6.x releases. See issue [#2524](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2524) for details.
+- When we added virtuals to abstract methods that threw in the base class, we then called those methods that were implemented in user derived classes. The user code would fault with a `NotImplementedException`. Now a message is returned that the user can act on to fix the issue. See issue [#1970](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/1970).
+
+### Fundamentals
+- Remove code that was used in target frameworks that got removed. See PR [#2673](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2673) for details.
+- Rename local variables for better readability. See PR [#2674](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2674) for details.
+- Refactor XML comments for improved clarity. See PR [#2676](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2676), [#2677](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2677), [#2678](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2678), [#2689](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2689) and [#2703](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2703) for details.
+- Fix flaky test. See issue [#2683](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2683) for details.
+- Made `ConfigurationManager.GetConfigurationAsync` a virtual method. See PR [#2661](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2661)
+
 8.0.0-preview1
-====
+=====
 ### Breaking changes:
 - IdentityModel 8x no longer supports .net461, which has reached end of life and is no longer supported. See issue [#2544](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2544) for details.
 - Two IdentityModel extension dlls `Microsoft.IdentityModel.KeyVaultExtensions` and `Microsoft.IdentityModel.ManagedKeyVaultSecurityKey` were using ADAL, which is no longer supported . The affected packages have been removed, as the replacement is to use [Microsoft.Identity.Web](https://github.com/AzureAD/microsoft-identity-web/wiki/Certificates). See issue [#2454](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2454) for details.
@@ -10,14 +43,15 @@ See the [releases](https://github.com/AzureAD/azure-activedirectory-identitymode
 7.6.1
 =====
 ### New Features:
+- Added an Audiences member to the SecurityTokenDescriptor to make it easier to define multiple audiences in JWT and SAML tokens. Addresses issue [#1479](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/1479) with PR [#2575](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2575)
 - Add  missing metadata parameters to OpenIdConnectConfiguration. See issue [#2498](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2498) for details. 
+
 
 ### Bug Fixes:
 - Fix over-reporting of `IDX14100`. See issue [#2058](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2058) and PR [#2618](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2618) for details.
 - `JwtRegisteredClaimNames` now contains previously missing Standard OpenIdConnect claims. See issue [#1598](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/1598) for details.
 
 ### Performance Improvements:
-- Reduced allocations in `AadIssuerValidator` by not using `string.Replace` where appropriate. See issue [#2595](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2595) and PR [#2597](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2597) for more details.
 - No longer for every string claim, calling DateTime.TryParse on each value, whether it is expected to be a DateTime or not. See issue [#2615](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2615) for details.
 
 7.6.0

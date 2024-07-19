@@ -4,25 +4,25 @@
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
 {
     /// <summary>
-    /// RequestTypes for OpenIdConnect.
+    /// Defines request types for OpenID Connect.
     /// </summary>
-    /// <remarks>Can be used to determine the message type by consumers of an <see cref="OpenIdConnectMessage"/>.
-    /// For example: <see cref="OpenIdConnectMessage.CreateAuthenticationRequestUrl"/> sets <see cref="OpenIdConnectMessage.RequestType"/>
-    /// to <see cref="OpenIdConnectRequestType.Authentication"/>.</remarks>
+    /// <remarks>
+    /// Can be used to determine the message type in an <see cref="OpenIdConnectMessage"/>.
+    /// </remarks>
     public enum OpenIdConnectRequestType
     {
         /// <summary>
-        /// Indicates an Authentication Request see: http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest.
+        /// Indicates an Authentication Request. See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest"/>.
         /// </summary>
         Authentication,
 
         /// <summary>
-        /// Indicates a Logout Request see:http://openid.net/specs/openid-connect-frontchannel-1_0.html#RPLogout.
+        /// Indicates a Logout Request. See: <see href="https://openid.net/specs/openid-connect-frontchannel-1_0.html#RPLogout"/>.
         /// </summary>
         Logout,
 
         /// <summary>
-        /// Indicates a Token Request see: http://openid.net/specs/openid-connect-core-1_0.html#TokenRequest.
+        /// Indicates a Token Request. See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#TokenRequest"/>.
         /// </summary>
         Token,
     }

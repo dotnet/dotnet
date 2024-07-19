@@ -2,7 +2,11 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
@@ -41,6 +45,13 @@ namespace Microsoft.IdentityModel.Validators
             };
         }
 
+        internal const string DontFailOnMissingTidSwitch = "Switch.Microsoft.IdentityModel.DontFailOnMissingTidValidateIssuerSigning";
+
+        private static bool DontFailOnMissingTid()
+        {
+            return (AppContext.TryGetSwitch(DontFailOnMissingTidSwitch, out bool dontFailOnMissingTid) && dontFailOnMissingTid);
+        }
+
         /// <summary>
         /// Validates the issuer signing key.
         /// </summary>
@@ -67,9 +78,14 @@ namespace Microsoft.IdentityModel.Validators
                 if (string.IsNullOrWhiteSpace(signingKeyIssuer))
                     return true;
 
-                var tenantIdFromToken = AadIssuerValidator.GetTenantIdFromToken(securityToken);
+                var tenantIdFromToken = GetTid(securityToken);
                 if (string.IsNullOrEmpty(tenantIdFromToken))
-                    return true;
+                {
+                    if (DontFailOnMissingTid())
+                        return true; 
+                    
+                    throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidIssuerException(LogMessages.IDX40009));
+                }
 
                 var tokenIssuer = securityToken.Issuer;
 
@@ -91,7 +107,7 @@ namespace Microsoft.IdentityModel.Validators
 
                 // comparing effectiveSigningKeyIssuer with v2TokenIssuer is required as well because of the following scenario:
                 // 1. service trusts /common/v2.0 endpoint 
-                // 2. service receieves a v1 token that has issuer like sts.windows.net
+                // 2. service receives a v1 token that has issuer like sts.windows.net
                 // 3. signing key issuers will never match sts.windows.net as v1 endpoint doesn't have issuers attached to keys
                 // v2TokenIssuer is the representation of Token.Issuer (if it was a v2 issuer)
                 if (effectiveSigningKeyIssuer != tokenIssuer && effectiveSigningKeyIssuer != v2TokenIssuer)
@@ -99,6 +115,48 @@ namespace Microsoft.IdentityModel.Validators
             }
 
             return true;
+        }
+
+        private static string GetTid(SecurityToken securityToken)
+        {
+            switch (securityToken)
+            {
+                case JsonWebToken jsonWebToken:
+                    if (jsonWebToken.TryGetPayloadValue<string>(AadIssuerValidatorConstants.Tid, out string tid))
+                    {
+                        EnforceSingleClaimCaseInsensitive(jsonWebToken.PayloadClaimNames, AadIssuerValidatorConstants.Tid);
+                        return tid;
+                    }
+
+                    return string.Empty;
+
+                case JwtSecurityToken jwtSecurityToken:
+                    if ((jwtSecurityToken.Payload.TryGetValue(AadIssuerValidatorConstants.Tid, out object tidObject) && tidObject is string jwtTid))
+                    {
+                        EnforceSingleClaimCaseInsensitive(jwtSecurityToken.Payload.Keys, AadIssuerValidatorConstants.Tid);
+                        return jwtTid;
+                    }
+
+                    return string.Empty;
+
+                default:
+                    throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidIssuerException(LogMessages.IDX40010));
+            }
+        }
+
+        private static void EnforceSingleClaimCaseInsensitive(IEnumerable<string> keys, string claimType)
+        {
+            bool claimSeen = false;
+            foreach (var key in keys)
+            {
+                if (string.Equals(key, claimType, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (claimSeen)
+                        throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidIssuerException(LogHelper.FormatInvariant(LogMessages.IDX40011, claimType)));
+
+                    claimSeen = true;
+                }
+            }
         }
 
         /// <summary>

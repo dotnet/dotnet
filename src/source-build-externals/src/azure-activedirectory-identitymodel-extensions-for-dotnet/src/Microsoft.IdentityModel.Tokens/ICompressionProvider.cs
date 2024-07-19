@@ -4,32 +4,34 @@
 namespace Microsoft.IdentityModel.Tokens
 {
     /// <summary>
-    /// Compression provider interface.
+    /// Provides methods for compressing and decompressing data.
     /// </summary>
     public interface ICompressionProvider
     {
         /// <summary>
-        /// Gets the compression algorithm.
+        /// Gets the compression algorithm used by the provider.
         /// </summary>
         string Algorithm { get; }
 
         /// <summary>
-        /// Called to determine if an algorithm is supported.
+        /// Determines if a specified algorithm is supported by the provider.
         /// </summary>
-        /// <param name="algorithm">the algorithm that defines the compression method.</param>
-        /// <returns>true if supported</returns>
+        /// <param name="algorithm">The compression algorithm to check.</param>
+        /// <returns><see langword="true"/> if the algorithm is supported; otherwise, <see langword="false"/>.</returns>
         bool IsSupportedAlgorithm(string algorithm);
 
         /// <summary>
-        /// Decompress.
+        /// Decompresses the specified byte array.
         /// </summary>
-        /// <param name="value">the value to decompress.</param>
+        /// <param name="value">The byte array to decompress.</param>
+        /// <returns>A byte array containing the decompressed data.</returns>
         byte[] Decompress(byte[] value);
 
         /// <summary>
-        /// Compress.
+        /// Compresses the specified byte array.
         /// </summary>
-        /// <param name="value">the value to decompress.</param>
+        /// <param name="value">The byte array to compress.</param>
+        /// <returns>A byte array containing the compressed data.</returns>
         byte[] Compress(byte[] value);
     }
 }

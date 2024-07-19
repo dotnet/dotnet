@@ -7,86 +7,84 @@ using System.Text;
 namespace Microsoft.IdentityModel.JsonWebTokens
 {
     /// <summary>
-    /// List of header parameter names see: https://datatracker.ietf.org/doc/html/rfc7519#section-5.
+    /// Defines JOSE header parameter names. See: <see href="https://datatracker.ietf.org/doc/html/rfc7519#section-5"/>.
     /// </summary>
     public struct JwtHeaderParameterNames
     {
         // Please keep this alphabetical order
 
         /// <summary>
-        /// See: https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.1
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.1"/>.
         /// </summary>
         public const string Alg = "alg";
 
         /// <summary>
-        /// See: https://datatracker.ietf.org/doc/html/rfc7518#section-4.6.1.2
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7518#section-4.6.1.2"/>.
         /// </summary>
         public const string Apu = "apu";
 
         /// <summary>
-        /// See: https://datatracker.ietf.org/doc/html/rfc7518#section-4.6.1.3
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7518#section-4.6.1.3"/>.
         /// </summary>
         public const string Apv = "apv";
 
         /// <summary>
-        /// See: https://datatracker.ietf.org/doc/html/rfc7518#section-4.6.1.1
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7518#section-4.6.1.1"/>.
         /// </summary>
         public const string Epk = "epk";
 
         /// <summary>
-        /// See: https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.10
-        /// Also: https://datatracker.ietf.org/doc/html/rfc7519#section-5.2
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.10"/> and <see href="https://datatracker.ietf.org/doc/html/rfc7519#section-5.2"/>.
         /// </summary>
         public const string Cty = "cty";
 
         /// <summary>
-        /// See: https://datatracker.ietf.org/doc/html/rfc7516#section-4.1.2
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7516#section-4.1.2"/>.
         /// </summary>
         public const string Enc = "enc";
 
         /// <summary>
-        /// See: https://datatracker.ietf.org/doc/html/rfc7518#section-4.7.1.1
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7518#section-4.7.1.1"/>.
         /// </summary>
         public const string IV = "iv";
 
         /// <summary>
-        /// See: https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.2
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.2"/>.
         /// </summary>
         public const string Jku = "jku";
 
         /// <summary>
-        /// See: https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.3
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.3"/>.
         /// </summary>
         public const string Jwk = "jwk";
 
         /// <summary>
-        /// See: https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.4
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.4"/>.
         /// </summary>
         public const string Kid = "kid";
 
         /// <summary>
-        /// See: https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.9
-        /// Also: https://datatracker.ietf.org/doc/html/rfc7519#section-5.1
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.9"/> and <see href="https://datatracker.ietf.org/doc/html/rfc7519#section-5.1"/>.
         /// </summary>
         public const string Typ = "typ";
 
         /// <summary>
-        /// See: https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.6
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.6"/>.
         /// </summary>
         public const string X5c = "x5c";
 
         /// <summary>
-        /// See: https://datatracker.ietf.org/doc/html/rfc7515#page-12
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7515#page-12"/>.
         /// </summary>
         public const string X5t = "x5t";
 
         /// <summary>
-        /// See: https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.5
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.5"/>.
         /// </summary>
         public const string X5u = "x5u";
 
         /// <summary>
-        /// See: https://datatracker.ietf.org/doc/html/rfc7516#section-4.1.3
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7516#section-4.1.3"/>.
         /// </summary>
         public const string Zip = "zip";
     }
@@ -115,5 +113,4 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         public static ReadOnlySpan<byte> X5u =>"x5u"u8;
         public static ReadOnlySpan<byte> Zip =>"zip"u8;
     }
-
 }

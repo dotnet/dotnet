@@ -12,7 +12,7 @@ using Microsoft.IdentityModel.Logging;
 namespace Microsoft.IdentityModel.Tokens
 {
     /// <summary>
-    /// Encodes and Decodes strings as Base64Url encoding.
+    /// Encodes and Decodes strings as base64url encoding.
     /// </summary>
     public static class Base64UrlEncoder
     {
@@ -23,13 +23,13 @@ namespace Microsoft.IdentityModel.Tokens
         private const char base64UrlCharacter63 = '_';
 
         /// <summary>
-        /// The following functions perform base64url encoding which differs from regular base64 encoding as follows
-        /// * padding is skipped so the pad character '=' doesn't have to be percent encoded
-        /// * the 62nd and 63rd regular base64 encoding characters ('+' and '/') are replace with ('-' and '_')
-        /// The changes make the encoding alphabet file and URL safe.
+        /// Performs base64url encoding, which differs from regular base64 encoding as follows:
+        /// * Padding is skipped so the pad character '=' doesn't have to be percent encoded.
+        /// * The 62nd and 63rd regular base64 encoding characters ('+' and '/') are replaced with ('-' and '_').
+        /// This makes the encoding alphabet URL safe.
         /// </summary>
-        /// <param name="arg">string to encode.</param>
-        /// <returns>Base64Url encoding of the UTF8 bytes.</returns>
+        /// <param name="arg">The string to encode.</param>
+        /// <returns>The base64url encoding of the UTF8 bytes.</returns>
         public static string Encode(string arg)
         {
             _ = arg ?? throw LogHelper.LogArgumentNullException(nameof(arg));
@@ -38,12 +38,12 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Converts a subset of an array of 8-bit unsigned integers to its equivalent string representation which is encoded with base-64-url digits.
+        /// Converts a subset of an array of 8-bit unsigned integers to its equivalent string representation encoded with base64url digits.
         /// </summary>
         /// <param name="inArray">An array of 8-bit unsigned integers.</param>
-        /// <returns>The string representation in base 64 url encoding of length elements of inArray, starting at position offset.</returns>
-        /// <exception cref="ArgumentNullException">'inArray' is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">offset or length is negative OR offset plus length is greater than the length of inArray.</exception>
+        /// <returns>The base64url encoded string representation of the elements in inArray.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if inArray is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if offset or length is negative, or if offset plus length is greater than the length of inArray.</exception>
         public static string Encode(byte[] inArray)
         {
             _ = inArray ?? throw LogHelper.LogArgumentNullException(nameof(inArray));
@@ -52,15 +52,15 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Converts a subset of an array of 8-bit unsigned integers to its equivalent string representation which is encoded with base-64-url digits. Parameters specify
-        /// the subset as an offset in the input array, and the number of elements in the array to convert.
+        /// Converts a subset of an array of 8-bit unsigned integers to its equivalent string representation encoded with base64url digits.
+        /// Parameters specify the subset as an offset in the input array and the number of elements in the array to convert.
         /// </summary>
         /// <param name="inArray">An array of 8-bit unsigned integers.</param>
-        /// <param name="length">An offset in inArray.</param>
-        /// <param name="offset">The number of elements of inArray to convert.</param>
-        /// <returns>The string representation in base 64 url encoding of length elements of inArray, starting at position offset.</returns>
-        /// <exception cref="ArgumentNullException">'inArray' is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">offset or length is negative OR offset plus length is greater than the length of inArray.</exception>
+        /// <param name="offset">An offset in inArray.</param>
+        /// <param name="length">The number of elements of inArray to convert.</param>
+        /// <returns>The base64url encoded string representation of length elements of inArray, starting at position offset.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if inArray is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if offset or length is negative, or if offset plus length is greater than the length of inArray.</exception>
         public static string Encode(byte[] inArray, int offset, int length)
         {
             _ = inArray ?? throw LogHelper.LogArgumentNullException(nameof(inArray));
@@ -105,12 +105,11 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Populates a <see cref="ReadOnlySpan{T}"/>Converts a <see cref="Span{T}"/> encoded with base-64-url digits. Parameters specify
-        /// the subset as an offset in the input array, and the number of elements in the array to convert.
+        /// Populates a <see cref="Span{T}"/> with the base64url encoded representation of a <see cref="ReadOnlySpan{T}"/> of bytes.
         /// </summary>
-        /// <param name="inArray">A span of bytes.</param>
-        /// <param name="output">output for encoding.</param>
-        /// <returns>The number of chars written to the output.</returns>
+        /// <param name="inArray">A read-only span of bytes to encode.</param>
+        /// <param name="output">The span of characters to write the encoded output.</param>
+        /// <returns>The number of characters written to the output span.</returns>
         public static int Encode(ReadOnlySpan<byte> inArray, Span<char> output)
         {
             int lengthmod3 = inArray.Length % 3;
@@ -167,9 +166,10 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Converts the specified string, base-64-url encoded to utf8 bytes.</summary>
-        /// <param name="str">base64Url encoded string.</param>
-        /// <returns>UTF8 bytes.</returns>
+        /// Converts the specified base64url encoded string to UTF-8 bytes.
+        /// </summary>
+        /// <param name="str">The base64url encoded string.</param>
+        /// <returns>The UTF-8 bytes.</returns>
         public static byte[] DecodeBytes(string str)
         {
             _ = str ?? throw LogHelper.LogExceptionMessage(new ArgumentNullException(nameof(str)));
@@ -357,10 +357,10 @@ namespace Microsoft.IdentityModel.Tokens
 #endif
 
         /// <summary>
-        /// Decodes the string from Base64UrlEncoded to UTF8.
+        /// Decodes the specified base64url encoded string to UTF-8.
         /// </summary>
-        /// <param name="arg">string to decode.</param>
-        /// <returns>UTF8 string.</returns>
+        /// <param name="arg">The base64url encoded string to decode.</param>
+        /// <returns>The UTF-8 decoded string.</returns>
         public static string Decode(string arg)
         {
             return Encoding.UTF8.GetString(DecodeBytes(arg));

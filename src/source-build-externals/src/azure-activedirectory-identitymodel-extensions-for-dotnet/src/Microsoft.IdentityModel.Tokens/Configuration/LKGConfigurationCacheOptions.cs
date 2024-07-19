@@ -22,7 +22,7 @@ namespace Microsoft.IdentityModel.Tokens.Configuration
         public static readonly int DefaultLKGConfigurationSizeLimit = 10;
 
         /// <summary>
-        /// Gets or sets the BaseConfgiurationComparer that to compare <see cref="BaseConfiguration"/>.
+        /// Gets or sets the <see cref="IEqualityComparer{T}"/> that is used to determine equality of values for <see cref="BaseConfiguration"/>.
         /// </summary>
         public IEqualityComparer<BaseConfiguration> BaseConfigurationComparer
         {
@@ -31,7 +31,7 @@ namespace Microsoft.IdentityModel.Tokens.Configuration
         }
 
         /// <summary>
-        /// The size limit of the cache (in number of items) for last known good configuration.
+        /// Gets or sets the size limit of the cache (in number of items) for last known good configuration.
         /// </summary>
         public int LastKnownGoodConfigurationSizeLimit
         {

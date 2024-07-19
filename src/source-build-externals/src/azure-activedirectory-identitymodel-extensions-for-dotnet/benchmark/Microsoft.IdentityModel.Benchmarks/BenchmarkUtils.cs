@@ -16,6 +16,14 @@ namespace Microsoft.IdentityModel.Benchmarks
 
         public const string Audience = "http://www.contoso.com/protected";
 
+        public readonly static IList<string> Audiences = new string[] {
+            "http://www.contoso.com/protected",
+            "http://www.contoso.com/protected1",
+            "http://www.contoso.com/protected2",
+            "http://www.contoso.com/protected3",
+            "http://www.contoso.com/protected4"
+        };
+
         private static RSA _rsa;
         private static SymmetricSecurityKey _symmetricKey;
 
@@ -56,6 +64,43 @@ namespace Microsoft.IdentityModel.Benchmarks
                     { JwtRegisteredClaimNames.GivenName, "Bob" },
                     { JwtRegisteredClaimNames.Iss, Issuer },
                     { JwtRegisteredClaimNames.Aud, Audience }
+                };
+            }
+        }
+
+        public static Dictionary<string, object> ClaimsNoAudience
+        {
+            get
+            {
+                DateTime now = DateTime.UtcNow;
+                return new Dictionary<string, object>()
+                {
+                    { "role", new List<string>() { "role1", "Developer", "Sales"} },
+                    { JwtRegisteredClaimNames.Email, "Bob@contoso.com" },
+                    { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(now + TimeSpan.FromDays(1)) },
+                    { JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(now) },
+                    { JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(now) },
+                    { JwtRegisteredClaimNames.GivenName, "Bob" },
+                    { JwtRegisteredClaimNames.Iss, Issuer },
+                };
+            }
+        }
+
+        public static Dictionary<string, object> ClaimsMultipleAudiences
+        {
+            get
+            {
+                DateTime now = DateTime.UtcNow;
+                return new Dictionary<string, object>()
+                {
+                    { "role", new List<string>() { "role1", "Developer", "Sales"} },
+                    { JwtRegisteredClaimNames.Email, "Bob@contoso.com" },
+                    { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(now + TimeSpan.FromDays(1)) },
+                    { JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(now) },
+                    { JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(now) },
+                    { JwtRegisteredClaimNames.GivenName, "Bob" },
+                    { JwtRegisteredClaimNames.Iss, Issuer },
+                    { JwtRegisteredClaimNames.Aud, Audiences }
                 };
             }
         }

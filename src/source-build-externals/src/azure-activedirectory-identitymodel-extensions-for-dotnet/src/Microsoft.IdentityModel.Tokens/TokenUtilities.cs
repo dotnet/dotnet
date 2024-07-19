@@ -186,7 +186,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// Returns all <see cref="SecurityKey"/> provided in <paramref name="configuration"/> and <paramref name="validationParameters"/>.
         /// </summary>
         /// <param name="configuration">The <see cref="BaseConfiguration"/> that contains signing keys used for validation.</param>
-        /// <param name="validationParameters">A <see cref="TokenValidationParameters"/> required for validation.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <returns>Returns all <see cref="SecurityKey"/> provided in provided in <paramref name="configuration"/> and <paramref name="validationParameters"/>.</returns>
         internal static IEnumerable<SecurityKey> GetAllSigningKeys(BaseConfiguration configuration = null, TokenValidationParameters validationParameters = null)
         {

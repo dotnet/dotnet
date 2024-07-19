@@ -7,5 +7,6 @@
     <NewtonsoftVersion>13.0.3</NewtonsoftVersion>
     <SystemSecurityClaimsVersion>4.3.0</SystemSecurityClaimsVersion>
     <XunitVersion>2.4.0</XunitVersion>
+    <SystemTextJson>8.0.4</SystemTextJson>
   </PropertyGroup>
 </Project>

@@ -34,6 +34,36 @@ namespace Microsoft.IdentityModel.Tokens
         private class IssuerValidationFailure : ValidationFailureType { internal IssuerValidationFailure(string name) : base(name) { } }
 
         /// <summary>
+        /// Defines a type that represents that audience validation failed.
+        /// </summary>
+        public static readonly ValidationFailureType AudienceValidationFailed = new AudienceValidationFailure("AudienceValidationFailed");
+        private class AudienceValidationFailure : ValidationFailureType { internal AudienceValidationFailure(string name) : base(name) { } }
+
+        /// <summary>
+        /// Defines a type that represents that token type validation failed.
+        /// </summary>
+        public static readonly ValidationFailureType TokenTypeValidationFailed = new TokenTypeValidationFailure("TokenTypeValidationFailed");
+        private class TokenTypeValidationFailure : ValidationFailureType { internal TokenTypeValidationFailure(string name) : base(name) { } }
+
+        /// <summary>
+        /// Defines a type that represents that signing key validation failed.
+        /// </summary>
+        public static readonly ValidationFailureType SigningKeyValidationFailed = new SigningKeyValidationFailure("SigningKeyValidationFailed");
+        private class SigningKeyValidationFailure : ValidationFailureType { internal SigningKeyValidationFailure(string name) : base(name) { } }
+
+        /// <summary>
+        /// Defines a type that represents that lifetime validation failed.
+        /// </summary>
+        public static readonly ValidationFailureType LifetimeValidationFailed = new LifetimeValidationFailure("LifetimeValidationFailed");
+        private class LifetimeValidationFailure : ValidationFailureType { internal LifetimeValidationFailure(string name) : base(name) { } }
+
+        /// <summary>
+        /// Defines a type that represents that token replay validation failed.
+        /// </summary>
+        public static readonly ValidationFailureType TokenReplayValidationFailed = new TokenReplayValidationFailure("TokenReplayValidationFailed");
+        private class TokenReplayValidationFailure : ValidationFailureType { internal TokenReplayValidationFailure(string name) : base(name) { } }
+
+        /// <summary>
         /// Defines a type that represents that no evaluation has taken place.
         /// </summary>
         public static readonly ValidationFailureType ValidationNotEvaluated = new NotEvaluated("NotEvaluated");

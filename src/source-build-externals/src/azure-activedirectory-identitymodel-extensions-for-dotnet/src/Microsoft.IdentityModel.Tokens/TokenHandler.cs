@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.IdentityModel.Logging;
 using System;
 using System.ComponentModel;
 using System.Security.Claims;
@@ -31,8 +30,8 @@ namespace Microsoft.IdentityModel.Tokens
         /// <exception cref="ArgumentOutOfRangeException">'value' less than 1.</exception>
         public virtual int MaximumTokenSizeInBytes
         {
-            get => _maximumTokenSizeInBytes; 
-            set => _maximumTokenSizeInBytes =  (value < 1) ? throw LogExceptionMessage(new ArgumentOutOfRangeException(nameof(value), FormatInvariant(LogMessages.IDX10101, LogHelper.MarkAsNonPII(value)))) : value;
+            get => _maximumTokenSizeInBytes;
+            set => _maximumTokenSizeInBytes = (value < 1) ? throw LogExceptionMessage(new ArgumentOutOfRangeException(nameof(value), FormatInvariant(LogMessages.IDX10101, MarkAsNonPII(value)))) : value;
         }
 
         /// <summary>
@@ -50,20 +49,27 @@ namespace Microsoft.IdentityModel.Tokens
         public int TokenLifetimeInMinutes
         {
             get => _defaultTokenLifetimeInMinutes;
-            set => _defaultTokenLifetimeInMinutes = (value < 1) ? throw LogExceptionMessage(new ArgumentOutOfRangeException(nameof(value), FormatInvariant(LogMessages.IDX10104, LogHelper.MarkAsNonPII(value)))) : value;
+            set => _defaultTokenLifetimeInMinutes = (value < 1) ? throw LogExceptionMessage(new ArgumentOutOfRangeException(nameof(value), FormatInvariant(LogMessages.IDX10104, MarkAsNonPII(value)))) : value;
         }
 
         #region methods
-
         /// <summary>
         /// Validates a token.
         /// On a validation failure, no exception will be thrown; instead, the exception will be set in the returned TokenValidationResult.Exception property.
         /// Callers should always check the TokenValidationResult.IsValid property to verify the validity of the result.
         /// </summary>
         /// <param name="token">The token to be validated.</param>
-        /// <param name="validationParameters">A <see cref="TokenValidationParameters"/> required for validation.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <returns>A <see cref="TokenValidationResult"/></returns>
-        public virtual Task<TokenValidationResult> ValidateTokenAsync(string token, TokenValidationParameters validationParameters) => throw new NotImplementedException();
+        public virtual Task<TokenValidationResult> ValidateTokenAsync(string token, TokenValidationParameters validationParameters)
+        {
+            throw LogExceptionMessage(
+                new NotImplementedException(
+                    FormatInvariant(
+                        LogMessages.IDX10267,
+                        MarkAsNonPII("public virtual Task<TokenValidationResult> ValidateTokenAsync(string token, TokenValidationParameters validationParameters)"),
+                        MarkAsNonPII(GetType().FullName))));
+        }
 
         /// <summary>
         /// Validates a token.
@@ -71,9 +77,17 @@ namespace Microsoft.IdentityModel.Tokens
         /// Callers should always check the TokenValidationResult.IsValid property to verify the validity of the result.
         /// </summary>
         /// <param name="token">The <see cref="SecurityToken"/> to be validated.</param>
-        /// <param name="validationParameters">A <see cref="TokenValidationParameters"/> required for validation.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <returns>A <see cref="TokenValidationResult"/></returns>
-        public virtual Task<TokenValidationResult> ValidateTokenAsync(SecurityToken token, TokenValidationParameters validationParameters) => throw new NotImplementedException();
+        public virtual Task<TokenValidationResult> ValidateTokenAsync(SecurityToken token, TokenValidationParameters validationParameters)
+        {
+            throw LogExceptionMessage(
+                new NotImplementedException(
+                    FormatInvariant(
+                        LogMessages.IDX10267,
+                        MarkAsNonPII("public virtual Task<TokenValidationResult> ValidateTokenAsync(SecurityToken token, TokenValidationParameters validationParameters)"),
+                        MarkAsNonPII(GetType().FullName))));
+        }
 
         /// <summary>
         /// Converts a string into an instance of <see cref="SecurityToken"/>.
@@ -82,7 +96,15 @@ namespace Microsoft.IdentityModel.Tokens
         /// <exception cref="ArgumentNullException"><paramref name="token"/> is null or empty.</exception>
         /// <exception cref="ArgumentException">'token.Length' is greater than <see cref="TokenHandler.MaximumTokenSizeInBytes"/>.</exception>
         /// <returns>A <see cref="SecurityToken"/>.</returns>
-        public virtual SecurityToken ReadToken(string token) => throw new NotImplementedException();
+        public virtual SecurityToken ReadToken(string token)
+        {
+            throw LogExceptionMessage(
+                new NotImplementedException(
+                    FormatInvariant(
+                        LogMessages.IDX10267,
+                        MarkAsNonPII("public virtual SecurityToken ReadToken(string token)"),
+                        MarkAsNonPII(GetType().FullName))));
+        }
 
         /// <summary>
         /// Called by base class to create a <see cref="ClaimsIdentity"/>.
@@ -93,8 +115,15 @@ namespace Microsoft.IdentityModel.Tokens
         /// <param name="issuer">the 'issuer' to use by default when creating a Claim.</param>
         /// <returns>A <see cref="ClaimsIdentity"/>.</returns>
         /// <exception cref="NotImplementedException"></exception>
-        internal virtual ClaimsIdentity CreateClaimsIdentityInternal(SecurityToken securityToken, TokenValidationParameters tokenValidationParameters, string issuer) => throw new NotImplementedException();
-
+        internal virtual ClaimsIdentity CreateClaimsIdentityInternal(SecurityToken securityToken, TokenValidationParameters tokenValidationParameters, string issuer)
+        {
+            throw LogExceptionMessage(
+                new NotImplementedException(
+                    FormatInvariant(
+                        LogMessages.IDX10267,
+                        MarkAsNonPII("internal virtual ClaimsIdentity CreateClaimsIdentityInternal(SecurityToken securityToken, TokenValidationParameters tokenValidationParameters, string issuer)"),
+                        MarkAsNonPII(GetType().FullName))));
+        }
         #endregion
     }
 }

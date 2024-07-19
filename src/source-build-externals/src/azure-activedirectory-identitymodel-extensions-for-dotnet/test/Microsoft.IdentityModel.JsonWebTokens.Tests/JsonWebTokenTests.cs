@@ -44,6 +44,33 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         };
 
         [Fact]
+        public void ByteArrayClaimsEncodedAsExpected()
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(new string('a', 128)));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var value = new byte[] { 0x21, 0x62, 0x36, 0x34 };
+
+            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+            {
+                SigningCredentials = creds,
+                Claims = new Dictionary<string, object>
+                {
+                    ["byteArray"] = value
+                },
+            };
+
+            JsonWebTokenHandler handler = new();
+            string tokenString = handler.CreateToken(tokenDescriptor);
+            JsonWebToken jsonWebToken = new JsonWebToken(tokenString);
+            var claimSet = jsonWebToken.Claims;
+            var expectedValue = System.Text.Json.JsonSerializer.Serialize(value).Trim('"');
+
+            // Will throw if can't find.
+            var testClaim = claimSet.First(c => c.Type == "byteArray");
+            Assert.Equal(expectedValue, testClaim.Value);
+        }
+
+        [Fact]
         public void BoolClaimsEncodedAsExpected()
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(new string('a', 128)));
@@ -53,7 +80,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
                 SigningCredentials = creds,
-                Subject = new ClaimsIdentity(claims),
+                Subject = new CaseSensitiveClaimsIdentity(claims),
                 Expires = (new DateTime(2038, 1, 20)).ToUniversalTime(),
             };
 
@@ -81,7 +108,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
                 SigningCredentials = creds,
-                Subject = new ClaimsIdentity(claims),
+                Subject = new CaseSensitiveClaimsIdentity(claims),
                 Expires = (new DateTime(2038, 1, 20)).ToUniversalTime(),
             };
 
@@ -103,7 +130,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             {
                 SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
                 EncryptingCredentials = KeyingMaterial.DefaultSymmetricEncryptingCreds_Aes256_Sha512_512,
-                Subject = new ClaimsIdentity(Default.PayloadClaims),
+                Subject = new CaseSensitiveClaimsIdentity(Default.PayloadClaims),
                 TokenType = "TokenType"
             };
 

@@ -37,7 +37,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// Initializes a new instance of the <see cref="SigningCredentials"/> class.
         /// </summary>
         /// <param name="certificate"><see cref="X509Certificate2"/> that will be used for signing.</param>
-        /// <param name="algorithm">The signature algorithm to apply.</param>
+        /// <param name="algorithm">The signature algorithm to be used.</param>
         /// <remarks>the 'digest method' if needed may be implied from the algorithm. For example <see cref="SecurityAlgorithms.RsaSha256"/> implies Sha256.</remarks>
         /// <exception cref="ArgumentNullException">if 'certificate' is null.</exception>
         /// <exception cref="ArgumentNullException">if 'algorithm' is null or empty.</exception>
@@ -55,7 +55,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// Initializes a new instance of the <see cref="SigningCredentials"/> class.
         /// </summary>
         /// <param name="key"><see cref="SecurityKey"/>.</param>
-        /// <param name="algorithm">The signature algorithm to apply.</param>
+        /// <param name="algorithm">The signature algorithm to be used.</param>
         /// <remarks>the 'digest method' if needed may be implied from the algorithm. For example <see cref="SecurityAlgorithms.HmacSha256Signature"/> implies Sha256.</remarks>
         /// <exception cref="ArgumentNullException">if 'key' is null.</exception>
         /// <exception cref="ArgumentNullException">if 'algorithm' is null or empty.</exception>
@@ -69,8 +69,8 @@ namespace Microsoft.IdentityModel.Tokens
         /// Initializes a new instance of the <see cref="SigningCredentials"/> class.
         /// </summary>
         /// <param name="key"><see cref="SecurityKey"/>.</param>
-        /// <param name="algorithm">The signature algorithm to apply.</param>
-        /// <param name="digest">The digest algorithm to apply.</param>
+        /// <param name="algorithm">The signature algorithm to be used.</param>
+        /// <param name="digest">The digest algorithm to be used.</param>
         /// <exception cref="ArgumentNullException">if 'key' is null.</exception>
         /// <exception cref="ArgumentNullException">if 'algorithm' is null or empty.</exception>
         /// <exception cref="ArgumentNullException">if 'digest' is null or empty.</exception>

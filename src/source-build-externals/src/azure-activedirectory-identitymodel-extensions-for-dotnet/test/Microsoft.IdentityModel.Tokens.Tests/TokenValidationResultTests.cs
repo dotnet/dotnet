@@ -29,7 +29,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 {
                     PropertyNamesAndSetGetValue = new List<KeyValuePair<string, List<object>>>
                     {
-                        new KeyValuePair<string, List<object>>("ClaimsIdentity", new List<object>{(ClaimsIdentity)null, new ClaimsIdentity(), new ClaimsIdentity()}),
+                        new KeyValuePair<string, List<object>>("ClaimsIdentity", new List<object>{(CaseSensitiveClaimsIdentity)null, new CaseSensitiveClaimsIdentity(), new CaseSensitiveClaimsIdentity()}),
                         new KeyValuePair<string, List<object>>("Exception", new List<object>{(Exception)null, new Exception(), new Exception()}),
                         new KeyValuePair<string, List<object>>("Issuer",  new List<object>{(string)null, "issuer", "issuer2"}),
                         new KeyValuePair<string, List<object>>("IsValid", new List<object>{false, false, true}),
