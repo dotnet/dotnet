@@ -35,8 +35,8 @@ extends:
         name: $(DncEngInternalBuildPool)
         image: 1es-windows-2022
         os: windows
-      suppression:
-          suppressionFile: $(Build.SourcesDirectory)\.vsts.pipelines\guardian\.gdnsuppress
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)/.config/CredScanSuppressions.json
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
