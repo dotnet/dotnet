@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Moq" Version="$(MoqVersion)" />
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\src\Microsoft.Deployment.DotNet.Releases.csproj" />
   </ItemGroup>
 

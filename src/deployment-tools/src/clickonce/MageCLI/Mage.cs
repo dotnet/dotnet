@@ -9,10 +9,6 @@ using System.Runtime.Versioning;
 using Microsoft.Build.Tasks.Deployment.ManifestUtilities;
 using Microsoft.Deployment.Utilities;
 
-#if !RUNTIME_TYPE_NETCORE
-using System.Diagnostics;
-#endif
-
 namespace Microsoft.Deployment.MageCLI
 {
     /// <summary>
@@ -217,19 +213,12 @@ namespace Microsoft.Deployment.MageCLI
                 manifest.AssemblyIdentity.Culture = defaultCulture;
             }
 
-#if RUNTIME_TYPE_NETCORE
             // TrustInfo is always Full-trust on .NET (Core)
             if (manifest.TrustInfo == null)
             {
                 // TrustInfo object is initialized as Full-trust for all apps running on .NET (Core)
                 manifest.TrustInfo = new Microsoft.Build.Tasks.Deployment.ManifestUtilities.TrustInfo();
             }
-#else
-            if (trustLevel != Command.TrustLevels.None)
-            {
-                SetTrustLevel(manifest, trustLevel);
-            }
-#endif
 
             if (iconFile != null)
             {
@@ -262,13 +251,13 @@ namespace Microsoft.Deployment.MageCLI
                 }
                 else
                 {
-#if RUNTIME_TYPE_NETCORE
                     // GetRegisteredOrganization() is a Windows-only API
                     manifest.Publisher = string.Empty;
                     if (OperatingSystem.IsWindows())
-#endif
-                    // Get the default publisher name
-                    manifest.Publisher = Utilities.Misc.GetRegisteredOrganization();
+                    {
+                        // Get the default publisher name
+                        manifest.Publisher = Utilities.Misc.GetRegisteredOrganization();
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(supportUrl))
@@ -367,13 +356,13 @@ namespace Microsoft.Deployment.MageCLI
             }
             else
             {
-#if RUNTIME_TYPE_NETCORE
                 // GetRegisteredOrganization() is a Windows-only API
                 manifest.Publisher = string.Empty;
                 if (OperatingSystem.IsWindows())
-#endif
-                // Get the default publisher name
-                manifest.Publisher = Utilities.Misc.GetRegisteredOrganization();
+                {
+                    // Get the default publisher name
+                    manifest.Publisher = Utilities.Misc.GetRegisteredOrganization();
+                }
             }
 
             // Ensure Publisher is not empty (otherwise ClickOnce runtime will refuse to load the manifest)
@@ -548,31 +537,5 @@ namespace Microsoft.Deployment.MageCLI
                 collection.Add(ar);
             }
         }
-
-#if !RUNTIME_TYPE_NETCORE
-        /// <summary>
-        /// Set the application's trust information
-        /// </summary>
-        /// <param name="manifest">ApplicationManifest object</param>
-        /// <param name="trustLevel">Trust level</param>
-        private static void SetTrustLevel(ApplicationManifest manifest, Command.TrustLevels trustLevel)
-        {
-            if (trustLevel != Command.TrustLevels.None)
-            {
-                TrustInfo ti = new Microsoft.Build.Tasks.Deployment.ManifestUtilities.TrustInfo();
-                manifest.TrustInfo = ti;
-
-                if (trustLevel == Command.TrustLevels.FullTrust)
-                {
-                    ti.IsFullTrust = true;
-                }
-                else
-                {
-                    ti.PermissionSet = SecurityUtilities.ComputeZonePermissionSet(trustLevel.ToString(), null, null);
-                    ti.IsFullTrust = false;
-                }
-            }
-        }
-#endif
     }
 }

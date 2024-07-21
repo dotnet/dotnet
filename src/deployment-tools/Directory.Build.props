@@ -2,12 +2,6 @@
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
-  <PropertyGroup>
-    <InstallerProjectRoot>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'src', 'installer'))</InstallerProjectRoot>
-    <ClickOnceProjectRoot>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'src', 'clickonce'))</ClickOnceProjectRoot>
-    <DotNetReleasesProjectRoot>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'src', 'Microsoft.Deployment.DotNet.Releases'))</DotNetReleasesProjectRoot>
-  </PropertyGroup>
-
   <!-- Provides a way to override ClickOnce configuration. -->
   <PropertyGroup>
     <ClickOnceConfiguration Condition="'$(ClickOnceConfiguration)' == ''">$(Configuration)</ClickOnceConfiguration>

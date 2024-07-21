@@ -6,15 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(DotNetBuild)' != 'true'">
-    <ClickOnceProjectToBuild Include="$(ClickOnceProjectRoot)**\*.csproj" Pack="true" />
-    <ClickOnceProjectToBuild Include="$(ClickOnceProjectRoot)native\build-native.proj" Pack="false" />
+    <ClickOnceProjectToBuild Include="src/clickonce/**/*.csproj" Pack="true" />
+    <ClickOnceProjectToBuild Include="src/clickonce/native/build-native.proj" Pack="false" />
     <ProjectReference Include="@(ClickOnceProjectToBuild)"
                       BuildInParallel="true"
                       Test="false">
       <AdditionalProperties Condition="'$(ClickOnceConfiguration)' != ''">Configuration=$(ClickOnceConfiguration)</AdditionalProperties>
     </ProjectReference>
 
-    <ProjectReference Include="$(ClickOnceProjectRoot)NetCoreCheck\*.pkgproj"
+    <ProjectReference Include="src/clickonce/NetCoreCheck/*.pkgproj"
                       Pack="true"
                       Test="false"
                       BuildInParallel="false"
