@@ -196,6 +196,10 @@ namespace Xunit.Sdk
 			if (x == null || y == null)
 				return false;
 
+			// If you point at the same thing, you're equal
+			if (ReferenceEquals(x, y))
+				return true;
+
 			// Implements IEquatable<T>?
 			var equatable = x as IEquatable<T>;
 			if (equatable != null)

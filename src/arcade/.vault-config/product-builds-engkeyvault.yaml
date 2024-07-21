@@ -10,12 +10,6 @@ references:
     parameters:
       subscription: a4fc5514-21a9-4296-bfaf-5c7ee7fa35d1
       name: helixkv
-      
-  dotnetbuildskeys:
-    type: azure-key-vault
-    parameters:
-      subscription: 11c6037b-227b-4d63-bee1-18c7b68c3a40
-      name: dotnetbuildskeys
 
 secrets:
   BotAccount-dotnet-maestro-bot:
@@ -59,19 +53,10 @@ secrets:
       organizations: dnceng
       scopes: build_execute code_write
 
-  akams:
-    type: ad-application
-
-  publishing-dnceng-devdiv-code-r-build-re:
-    type: azure-devops-access-token
+  akams-client-id:
+    type: text
     parameters:
-      domainAccountName: dn-bot
-      domainAccountSecret:
-          location: helixkv
-          name: dn-bot-account-redmond
-      name: publishing-dnceng-devdiv-code
-      organizations: dnceng devdiv
-      scopes: code build_execute 
+      description: Client id for akams app
 
   dn-bot-dotnet-build-rw-code-rw:
     type: azure-devops-access-token
@@ -186,42 +171,6 @@ secrets:
     type: base64-encoder
     parameters:
       secret: dotnetfeedmsrc-read-sas-token
-
-  dotnetbuilds-internal-container-read-token:
-    type: azure-storage-container-sas-token
-    parameters:
-      connectionString:
-        name: dotnetbuilds-connection-string
-        location: dotnetbuildskeys
-      permissions: rl
-      container: internal
-
-  dotnetbuilds-public-container-read-token:
-    type: azure-storage-container-sas-token
-    parameters:
-      connectionString:
-        name: dotnetbuilds-connection-string
-        location: dotnetbuildskeys
-      permissions: rl
-      container: public
-
-  dotnetbuilds-internal-checksums-container-read-token:
-    type: azure-storage-container-sas-token
-    parameters:
-      connectionString:
-        name: dotnetbuilds-connection-string
-        location: dotnetbuildskeys
-      permissions: rl
-      container: internal-checksums
-
-  dotnetbuilds-public-checksums-container-read-token:
-    type: azure-storage-container-sas-token
-    parameters:
-      connectionString:
-        name: dotnetbuilds-connection-string
-        location: dotnetbuildskeys
-      permissions: rl
-      container: public-checksums
 
   #OneLocBuildVariables
   dn-bot-ceapex-package-r:
