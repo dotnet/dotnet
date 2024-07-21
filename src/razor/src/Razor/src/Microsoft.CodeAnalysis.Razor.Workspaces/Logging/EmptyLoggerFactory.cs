@@ -2,9 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.CodeAnalysis.Razor.Logging;
 
-namespace Microsoft.CodeAnalysis.Remote.Razor.Logging;
+namespace Microsoft.CodeAnalysis.Razor.Logging;
 
 internal sealed class EmptyLoggerFactory : ILoggerFactory
 {

@@ -85,7 +85,7 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         RazorRequestContext = new RazorRequestContext(documentContext.Object, null!, "lsp/method", uri: null);
         VersionedDocumentContext = documentContext.Object;
 
-        var loggerFactory = BuildLoggerFactory();
+        var loggerFactory = EmptyLoggerFactory.Instance;
         var languageServerFeatureOptions = BuildFeatureOptions();
         var languageServer = new ClientNotifierService(Diagnostics!);
         var documentMappingService = BuildRazorDocumentMappingService();
@@ -146,11 +146,6 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
 
         return razorDocumentMappingService.Object;
     }
-
-    private ILoggerFactory BuildLoggerFactory() => Mock.Of<ILoggerFactory>(
-        r => r.GetOrCreateLogger(
-            It.IsAny<string>()) == new NoopLogger(),
-        MockBehavior.Strict);
 
     private string GetFileContents()
         => """

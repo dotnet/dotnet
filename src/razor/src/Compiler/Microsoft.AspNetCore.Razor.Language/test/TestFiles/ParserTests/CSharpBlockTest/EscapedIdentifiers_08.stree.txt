@@ -58,7 +58,7 @@
                 MarkupStartTag - [96..110)::14 - [< @context;LF}] - Gen<Markup>
                     OpenAngle;[<];
                     Text;[<Missing>];
-                    MarkupMiscAttributeContent - [97..110)::13
+                    MarkupMiscAttributeContent - [97..106)::9
                         MarkupTextLiteral - [97..98)::1 - [ ] - Gen<Markup>
                             Whitespace;[ ];
                         CSharpCodeBlock - [98..106)::8
@@ -69,9 +69,13 @@
                                     CSharpCodeBlock - [99..106)::7
                                         CSharpExpressionLiteral - [99..106)::7 - [context] - Gen<Expr>
                                             Identifier;[context];
-                        MarkupTextLiteral - [106..110)::4 - [;LF}] - Gen<Markup>
+                    MarkupMinimizedAttributeBlock - [106..107)::1 - [;]
+                        MarkupTextLiteral - [106..107)::1 - [;] - Gen<Markup>
                             Text;[;];
+                    MarkupMinimizedAttributeBlock - [107..110)::3 - [LF}]
+                        MarkupTextLiteral - [107..109)::2 - [LF] - Gen<Markup>
                             NewLine;[LF];
+                        MarkupTextLiteral - [109..110)::1 - [}] - Gen<Markup>
                             Text;[}];
                     CloseAngle;[<Missing>];
     EndOfFile;[];

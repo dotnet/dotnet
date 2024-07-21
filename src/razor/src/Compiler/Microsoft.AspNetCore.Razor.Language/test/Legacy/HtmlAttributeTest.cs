@@ -5,6 +5,7 @@
 
 using System;
 using System.Linq;
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -297,6 +298,78 @@ public class HtmlAttributeTest() : ParserTestBase(layer: TestProject.Layer.Compi
     public void ConditionalAttributesWithWeirdSpacingAreDisabledForDataAttributesInDocument()
     {
         ParseDocumentTest("@{<span data-foo=@foo ></span>}");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10586")]
+    public void ConditionalAttribute_DynamicContentAfter()
+    {
+        ParseDocumentTest("""<p class="@c" @x />""");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10586")]
+    public void ConditionalAttribute_DynamicContentBefore()
+    {
+        ParseDocumentTest("""<p @x class="@c" />""");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10586")]
+    public void ConditionalAttribute_DynamicContentBefore_02()
+    {
+        ParseDocumentTest("""<p @(x + y) class="@c" />""");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10586")]
+    public void ConditionalAttribute_DynamicContentBefore_03()
+    {
+        ParseDocumentTest("""<p @{if (x) { @x }} class="@c" />""");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10586")]
+    public void ConditionalAttribute_DynamicContentBefore_04()
+    {
+        ParseDocumentTest("""<p @@x class="@c" />""");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10586")]
+    public void ConditionalAttribute_InvalidContentBefore()
+    {
+        ParseDocumentTest("""<p "ab" class="@c" />""");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10586")]
+    public void ConditionalAttribute_CommentAfter()
+    {
+        ParseDocumentTest("""<p class="@c" @* comment *@ />""");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10586")]
+    public void ConditionalAttribute_CommentBefore()
+    {
+        ParseDocumentTest("""<p @* comment *@ class="@c" />""");
+    }
+
+    [Fact]
+    public void EscapedAttributeName_WithValue()
+    {
+        ParseDocumentTest("""<p @@attr="value" />""");
+    }
+
+    [Fact]
+    public void EscapedAttributeName_Minimized()
+    {
+        ParseDocumentTest("""<p @@attr />""");
+    }
+
+    [Fact]
+    public void EscapedAttributeName_Eof()
+    {
+        ParseDocumentTest("""<p @@""");
+    }
+
+    [Fact]
+    public void EscapedAttributeName_InvalidName()
+    {
+        ParseDocumentTest("""<p @@"invalid" />""");
     }
 
     [Fact]

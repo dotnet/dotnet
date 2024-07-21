@@ -14,14 +14,17 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.DynamicFiles;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 // These tests are really integration tests. There isn't a good way to unit test this functionality since
 // the only thing in here is threading.
@@ -219,27 +222,32 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     [UIFact]
     public async Task ProcessWorkAndRestart()
     {
+        var hostProject1 = TestProjectData.SomeProject;
+        var hostProject2 = TestProjectData.AnotherProject;
+        var hostDocument1 = TestProjectData.SomeProjectFile1;
+        var hostDocument2 = TestProjectData.SomeProjectFile2;
+
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(s_hostProject1);
-            updater.ProjectAdded(s_hostProject2);
-            updater.DocumentAdded(s_hostProject1.Key, s_documents[0], null!);
-            updater.DocumentAdded(s_hostProject1.Key, s_documents[1], null!);
+            updater.ProjectAdded(hostProject1);
+            updater.ProjectAdded(hostProject2);
+            updater.DocumentAdded(hostProject1.Key, hostDocument1, null!);
+            updater.DocumentAdded(hostProject1.Key, hostDocument2, null!);
         });
 
-        var project = projectManager.GetLoadedProject(s_hostProject1.Key);
-        var documentKey1 = new DocumentKey(project.Key, s_documents[0].FilePath);
-        var documentKey2 = new DocumentKey(project.Key, s_documents[1].FilePath);
+        var project = projectManager.GetLoadedProject(hostProject1.Key);
+        var documentKey1 = new DocumentKey(project.Key, hostDocument1.FilePath);
+        var documentKey2 = new DocumentKey(project.Key, hostDocument2.FilePath);
 
         using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, LoggerFactory);
 
         // Act & Assert
 
         // First, enqueue some work.
-        generator.Enqueue(project, project.GetDocument(s_documents[0].FilePath).AssumeNotNull());
+        generator.Enqueue(project, project.GetDocument(hostDocument1.FilePath).AssumeNotNull());
 
         // Wait for the work to complete.
         await generator.WaitUntilCurrentBatchCompletesAsync();
@@ -248,14 +256,14 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         Assert.Single(generator.CompletedWork, documentKey1);
 
         // Enqueue more work.
-        generator.Enqueue(project, project.GetDocument(s_documents[1].FilePath).AssumeNotNull());
+        generator.Enqueue(project, project.GetDocument(hostDocument2.FilePath).AssumeNotNull());
 
         // Wait for the work to complete.
         await generator.WaitUntilCurrentBatchCompletesAsync();
 
         Assert.Collection(generator.CompletedWork.OrderBy(key => key.DocumentFilePath),
-            key => Assert.Equal(documentKey2, key),
-            key => Assert.Equal(documentKey1, key));
+            key => Assert.Equal(documentKey1, key),
+            key => Assert.Equal(documentKey2, key));
     }
 
     [UIFact]

@@ -77,6 +77,8 @@ public abstract class IntegrationTestBase
 
     protected bool NullableEnable { get; set; }
 
+    protected Dictionary<SourceLocation, string>? ExpectedMissingSourceMappings { get; set; }
+
     /// <summary>
     /// Gets the
     /// </summary>
@@ -91,7 +93,7 @@ public abstract class IntegrationTestBase
 
     protected string TestProjectRoot { get; }
 
-    public virtual string GetTestFileName(string? testName)
+    public virtual string GetTestFileName([CallerMemberName] string? testName = null)
     {
         return $"TestFiles/IntegrationTests/{this.GetType().Name}/{testName}";
     }
@@ -507,12 +509,32 @@ public abstract class IntegrationTestBase
                 }
             }
 
-            if (!found)
+            if (ExpectedMissingSourceMappings?.TryGetValue(SourceLocation.FromSpan(sourceSpan), out var expectedMissingSpan) == true)
+            {
+                if (found)
+                {
+                    throw new XunitException($"Remove {sourceSpan} from {nameof(ExpectedMissingSourceMappings)}.");
+                }
+                else if (expectedSpan != expectedMissingSpan)
+                {
+                    throw new XunitException($"Missing span {sourceSpan} has different content '{EscapeWhitespace(expectedSpan)}' " +
+                        $"than expected '{EscapeWhitespace(expectedMissingSpan)}'.");
+                }
+
+                ExpectedMissingSourceMappings.Remove(SourceLocation.FromSpan(sourceSpan));
+            }
+            else if (!found)
             {
                 throw new XunitException(
                     $"Could not find the span {sourceSpan} - containing '{EscapeWhitespace(expectedSpan)}' " +
                     $"in the output.");
             }
+        }
+
+        if (ExpectedMissingSourceMappings?.Count > 0)
+        {
+            throw new XunitException($"Found unused {nameof(ExpectedMissingSourceMappings)} ({ExpectedMissingSourceMappings.Count}), " +
+                $"for example {ExpectedMissingSourceMappings.First()}.");
         }
     }
 

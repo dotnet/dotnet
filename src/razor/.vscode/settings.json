@@ -1,5 +1,6 @@
 {
   "files.trimTrailingWhitespace": true,
+  "files.trimTrailingWhitespaceInRegexAndStrings": false,
   "files.associations": {
     "*.*proj": "xml",
     "*.props": "xml",

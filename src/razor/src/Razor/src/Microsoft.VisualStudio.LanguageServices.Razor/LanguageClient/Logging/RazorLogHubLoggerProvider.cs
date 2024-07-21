@@ -17,8 +17,4 @@ internal sealed class RazorLogHubLoggerProvider(RazorLogHubTraceProvider tracePr
     {
         return new RazorLogHubLogger(categoryName, _traceProvider);
     }
-
-    public void Dispose()
-    {
-    }
 }

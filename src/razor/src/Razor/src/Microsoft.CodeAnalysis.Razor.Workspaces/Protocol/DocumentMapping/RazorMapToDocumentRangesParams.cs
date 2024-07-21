@@ -4,6 +4,7 @@
 using System;
 using System.Text.Json.Serialization;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.CodeAnalysis.Razor.Protocol.DocumentMapping;
 

@@ -5,10 +5,10 @@ using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.LanguageClient.Extensions;
@@ -58,17 +58,18 @@ internal class CohostUriPresentationEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(VSInternalUriPresentationParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override async Task<WorkspaceEdit?> HandleRequestAsync(VSInternalUriPresentationParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
+    protected override Task<WorkspaceEdit?> HandleRequestAsync(VSInternalUriPresentationParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
+        => HandleRequestAsync(request, context.TextDocument.AssumeNotNull(), cancellationToken);
+
+    private async Task<WorkspaceEdit?> HandleRequestAsync(VSInternalUriPresentationParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        var razorDocument = context.TextDocument.AssumeNotNull();
+        var data = await _remoteServiceInvoker.TryInvokeAsync<IRemoteUriPresentationService, IRemoteUriPresentationService.Response>(
+                    razorDocument.Project.Solution,
+                    (service, solutionInfo, cancellationToken) => service.GetPresentationAsync(solutionInfo, razorDocument.Id, request.Range.ToLinePositionSpan(), request.Uris, cancellationToken),
+                    cancellationToken).ConfigureAwait(false);
 
-        var data = await _remoteServiceInvoker.TryInvokeAsync<IRemoteUriPresentationService, TextChange?>(
-            razorDocument.Project.Solution,
-            (service, solutionInfo, cancellationToken) => service.GetPresentationAsync(solutionInfo, razorDocument.Id, request.Range.ToLinePositionSpan(), request.Uris, cancellationToken),
-            cancellationToken).ConfigureAwait(false);
-
-        // If we got a response back, then either Razor or C# wants to do something with this, so we're good to go
-        if (data is { } textChange)
+        // If we got a response back, then we're good to go
+        if (data.TextChange is { } textChange)
         {
             var sourceText = await razorDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
 
@@ -76,19 +77,24 @@ internal class CohostUriPresentationEndpoint(
             {
                 DocumentChanges = new TextDocumentEdit[]
                 {
-                        new TextDocumentEdit
+                    new TextDocumentEdit
+                    {
+                        TextDocument = new()
                         {
-                            TextDocument = new()
-                            {
-                                Uri = request.TextDocument.Uri
-                            },
-                            Edits = [textChange.ToTextEdit(sourceText)]
-                        }
+                            Uri = request.TextDocument.Uri
+                        },
+                        Edits = [textChange.ToTextEdit(sourceText)]
+                    }
                 }
             };
         }
 
-        // If we didn't get anything from Razor or Roslyn, lets ask Html what they want to do
+        // If we didn't get anything from our logic, we might need to go and ask Html, but we also might have determined not to
+        if (!data.CallHtml)
+        {
+            return null;
+        }
+
         var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
         if (htmlDocument is null)
         {
@@ -133,5 +139,13 @@ internal class CohostUriPresentationEndpoint(
         }
 
         return workspaceEdit;
+    }
+
+    internal TestAccessor GetTestAccessor() => new(this);
+
+    internal readonly struct TestAccessor(CohostUriPresentationEndpoint instance)
+    {
+        public Task<WorkspaceEdit?> HandleRequestAsync(VSInternalUriPresentationParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+            => instance.HandleRequestAsync(request, razorDocument, cancellationToken);
     }
 }

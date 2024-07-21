@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.Logging;
 using Microsoft.ServiceHub.Framework;
@@ -62,7 +63,9 @@ internal abstract partial class RazorBrokeredServiceBase
 
             var pipe = stream.UsePipe();
 
-            var descriptor = RazorServices.Descriptors.GetDescriptorForServiceFactory(typeof(TService));
+            var descriptor = typeof(IRemoteJsonService).IsAssignableFrom(typeof(TService))
+                ? RazorServices.JsonDescriptors.GetDescriptorForServiceFactory(typeof(TService))
+                : RazorServices.Descriptors.GetDescriptorForServiceFactory(typeof(TService));
             var serverConnection = descriptor.WithTraceSource(traceSource).ConstructRpcConnection(pipe);
 
             var args = new ServiceArgs(serviceBroker, exportProvider, targetLoggerFactory, serverConnection, brokeredServiceData?.Interceptor);

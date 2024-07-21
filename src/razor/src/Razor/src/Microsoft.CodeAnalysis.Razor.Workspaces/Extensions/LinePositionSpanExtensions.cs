@@ -2,13 +2,14 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
 internal static class LinePositionSpanExtensions
 {
     public static Range ToRange(this LinePositionSpan linePositionSpan)
-        => new Range
+        => new()
         {
             Start = linePositionSpan.Start.ToPosition(),
             End = linePositionSpan.End.ToPosition()

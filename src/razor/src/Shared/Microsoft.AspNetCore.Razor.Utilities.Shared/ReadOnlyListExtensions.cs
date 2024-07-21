@@ -2,8 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace System.Collections.Generic;
 
@@ -169,7 +169,7 @@ internal static class ReadOnlyListExtensions
     ///  The list is empty.
     /// </exception>
     public static T First<T>(this IReadOnlyList<T> list)
-        => list.Count > 0 ? list[0] : ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_no_elements);
+        => list.Count > 0 ? list[0] : ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_no_elements);
 
     /// <summary>
     ///  Returns the first element in a list that satisfies a specified condition.
@@ -196,7 +196,7 @@ internal static class ReadOnlyListExtensions
             }
         }
 
-        return ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_no_matching_elements);
+        return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_no_matching_elements);
     }
 
     /// <summary>
@@ -227,7 +227,7 @@ internal static class ReadOnlyListExtensions
             }
         }
 
-        return ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_no_matching_elements);
+        return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_no_matching_elements);
     }
 
     /// <summary>
@@ -329,7 +329,7 @@ internal static class ReadOnlyListExtensions
     ///  The list is empty.
     /// </exception>
     public static T Last<T>(this IReadOnlyList<T> list)
-        => list.Count > 0 ? list[^1] : ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_no_elements);
+        => list.Count > 0 ? list[^1] : ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_no_elements);
 
     /// <summary>
     ///  Returns the last element of a list that satisfies a specified condition.
@@ -356,7 +356,7 @@ internal static class ReadOnlyListExtensions
             }
         }
 
-        return ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_no_matching_elements);
+        return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_no_matching_elements);
     }
 
     /// <summary>
@@ -387,7 +387,7 @@ internal static class ReadOnlyListExtensions
             }
         }
 
-        return ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_no_matching_elements);
+        return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_no_matching_elements);
     }
 
     /// <summary>
@@ -559,8 +559,8 @@ internal static class ReadOnlyListExtensions
         return list.Count switch
         {
             1 => list[0],
-            0 => ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_no_elements),
-            _ => ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_more_than_one_element)
+            0 => ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_no_elements),
+            _ => ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_more_than_one_element)
         };
     }
 
@@ -594,7 +594,7 @@ internal static class ReadOnlyListExtensions
             {
                 if (firstSeen)
                 {
-                    return ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_more_than_one_matching_element);
+                    return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_more_than_one_matching_element);
                 }
 
                 firstSeen = true;
@@ -604,7 +604,7 @@ internal static class ReadOnlyListExtensions
 
         if (!firstSeen)
         {
-            return ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_no_matching_elements);
+            return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_no_matching_elements);
         }
 
         return result!;
@@ -643,7 +643,7 @@ internal static class ReadOnlyListExtensions
             {
                 if (firstSeen)
                 {
-                    return ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_more_than_one_matching_element);
+                    return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_more_than_one_matching_element);
                 }
 
                 firstSeen = true;
@@ -653,7 +653,7 @@ internal static class ReadOnlyListExtensions
 
         if (!firstSeen)
         {
-            return ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_no_matching_elements);
+            return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_no_matching_elements);
         }
 
         return result!;
@@ -679,7 +679,7 @@ internal static class ReadOnlyListExtensions
         {
             1 => list[0],
             0 => default,
-            _ => ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_more_than_one_element)
+            _ => ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_more_than_one_element)
         };
     }
 
@@ -706,7 +706,7 @@ internal static class ReadOnlyListExtensions
         {
             1 => list[0],
             0 => defaultValue,
-            _ => ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_more_than_one_element)
+            _ => ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_more_than_one_element)
         };
     }
 
@@ -738,7 +738,7 @@ internal static class ReadOnlyListExtensions
             {
                 if (firstSeen)
                 {
-                    return ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_more_than_one_matching_element);
+                    return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_more_than_one_matching_element);
                 }
 
                 firstSeen = true;
@@ -780,7 +780,7 @@ internal static class ReadOnlyListExtensions
             {
                 if (firstSeen)
                 {
-                    return ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_more_than_one_matching_element);
+                    return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_more_than_one_matching_element);
                 }
 
                 firstSeen = true;
@@ -822,7 +822,7 @@ internal static class ReadOnlyListExtensions
             {
                 if (firstSeen)
                 {
-                    return ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_more_than_one_matching_element);
+                    return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_more_than_one_matching_element);
                 }
 
                 firstSeen = true;
@@ -867,7 +867,7 @@ internal static class ReadOnlyListExtensions
             {
                 if (firstSeen)
                 {
-                    return ThrowHelper.ThrowInvalidOperation<T>(SR.Contains_more_than_one_matching_element);
+                    return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_more_than_one_matching_element);
                 }
 
                 firstSeen = true;

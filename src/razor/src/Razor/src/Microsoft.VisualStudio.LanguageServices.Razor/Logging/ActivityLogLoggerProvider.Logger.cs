@@ -4,9 +4,8 @@
 using System;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.VisualStudio.Razor.Logging;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.Logging;
+namespace Microsoft.VisualStudio.Razor.Logging;
 
 internal sealed partial class ActivityLogLoggerProvider
 {

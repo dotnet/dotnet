@@ -14,8 +14,4 @@ internal partial class MemoryLoggerProvider : ILoggerProvider
 
     public ILogger CreateLogger(string categoryName)
         => new Logger(_buffer, categoryName);
-
-    public void Dispose()
-    {
-    }
 }

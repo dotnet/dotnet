@@ -29,11 +29,11 @@ public class TagHelperParseTreeRewriterTest : TagHelperRewritingTestBase
             return new TheoryData<string, IEnumerable<KeyValuePair<string, string>>>
             {
                 { "<a>", empty },
-                { "<a @{ } href='~/home'>", empty },
+                { "<a @{ } href='~/home'>", new[] { kvp("href", "~/home") } },
                 { "<a href=\"@true\">", new[] { kvp("href", csharp) } },
                 { "<a href=\"prefix @true suffix\">", new[] { kvp("href", $"prefix{csharp} suffix") } },
                 { "<a href=~/home>", new[] { kvp("href", "~/home") } },
-                { "<a href=~/home @{ } nothing='something'>", new[] { kvp("href", "~/home") } },
+                { "<a href=~/home @{ } nothing='something'>", new[] { kvp("href", "~/home"), kvp("nothing", "something") } },
                 {
                     "<a href=\"@DateTime.Now::0\" class='btn btn-success' random>",
                     new[] { kvp("href", $"{csharp}::0"), kvp("class", "btn btn-success"), kvp("random", "") }

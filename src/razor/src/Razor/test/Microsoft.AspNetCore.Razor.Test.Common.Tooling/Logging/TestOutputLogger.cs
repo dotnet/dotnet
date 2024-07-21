@@ -3,80 +3,31 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.CodeAnalysis.Razor.Logging;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.Logging;
 
-internal partial class TestOutputLogger : ILogger
+internal partial class TestOutputLogger(TestOutputLoggerProvider provider, string categoryName, LogLevel logLevel = LogLevel.Trace) : ILogger
 {
-    [ThreadStatic]
-    private static StringBuilder? g_builder;
-
-    private readonly TestOutputLoggerProvider _provider;
-
-    public string? CategoryName { get; }
-    public LogLevel LogLevel { get; }
-
-    public TestOutputLogger(
-        TestOutputLoggerProvider provider,
-        string? categoryName = null,
-        LogLevel logLevel = LogLevel.Trace)
-    {
-        _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-        CategoryName = categoryName;
-        LogLevel = logLevel;
-    }
+    private readonly TestOutputLoggerProvider _provider = provider;
+    private readonly string _categoryName = categoryName;
+    private readonly LogLevel _logLevel = logLevel;
 
     public bool IsEnabled(LogLevel logLevel)
-        => logLevel >= LogLevel;
+        => logLevel >= _logLevel;
 
     public void Log(LogLevel logLevel, string message, Exception? exception)
     {
-        if (!IsEnabled(logLevel) || _provider.TestOutputHelper is null)
+        if (!IsEnabled(logLevel))
         {
             return;
         }
 
-        var builder = GetEmptyBuilder();
-
-        var time = DateTime.Now.TimeOfDay;
-        var leadingTimeStamp = $"[{time:hh\\:mm\\:ss\\.fffffff}] ";
-        var leadingSpaces = new string(' ', leadingTimeStamp.Length);
-        var lines = message.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-
-        var isFirstLine = true;
-
-        builder.Append(leadingTimeStamp);
-
-        if (CategoryName is { } categoryName)
-        {
-            builder.Append($"[{categoryName}] ");
-            isFirstLine = lines.Length == 1;
-        }
-
-        foreach (var line in lines)
-        {
-            if (!isFirstLine)
-            {
-                builder.AppendLine();
-                builder.Append(leadingSpaces);
-            }
-
-            builder.Append(line);
-
-            isFirstLine = false;
-        }
-
-        var finalMessage = builder.ToString();
+        var formattedMessage = LogMessageFormatter.FormatMessage(message, _categoryName, exception);
 
         try
         {
-            _provider.TestOutputHelper.WriteLine(finalMessage);
-        }
-        catch (InvalidOperationException iex) when (iex.Message == "There is no currently active test.")
-        {
-            // Ignore, something is logging a message outside of a test. Other loggers will capture it.
+            _provider.Output.WriteLine(formattedMessage);
         }
         catch (Exception ex)
         {
@@ -95,22 +46,8 @@ internal partial class TestOutputLogger : ILogger
                 innerExceptions.Add(exception);
             }
 
-            var aggregateException = new AggregateException($"An exception occurred while logging: {finalMessage}", innerExceptions);
+            var aggregateException = new AggregateException($"An exception occurred while logging: {formattedMessage}", innerExceptions);
             throw aggregateException.Flatten();
         }
-    }
-
-    private static StringBuilder GetEmptyBuilder()
-    {
-        if (g_builder is null)
-        {
-            g_builder = new();
-        }
-        else
-        {
-            g_builder.Clear();
-        }
-
-        return g_builder;
     }
 }

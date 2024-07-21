@@ -9,7 +9,7 @@
                 MarkupStartTag - [3..20)::17 - [< @DateTime.Now >] - Gen<Markup>
                     OpenAngle;[<];
                     Text;[<Missing>];
-                    MarkupMiscAttributeContent - [4..19)::15
+                    MarkupMiscAttributeContent - [4..18)::14
                         MarkupTextLiteral - [4..5)::1 - [ ] - Gen<Markup>
                             Whitespace;[ ];
                         CSharpCodeBlock - [5..18)::13
@@ -22,6 +22,7 @@
                                             Identifier;[DateTime];
                                             Dot;[.];
                                             Identifier;[Now];
+                    MarkupMiscAttributeContent - [18..19)::1
                         MarkupTextLiteral - [18..19)::1 - [ ] - Gen<Markup>
                             Whitespace;[ ];
                     CloseAngle;[>];

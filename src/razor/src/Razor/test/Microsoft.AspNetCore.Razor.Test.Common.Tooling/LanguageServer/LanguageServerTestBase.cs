@@ -24,7 +24,6 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Moq;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
@@ -129,23 +128,6 @@ public abstract class LanguageServerTestBase : ToolingTestBase
     private protected static VersionedDocumentContext CreateDocumentContext(Uri uri, IDocumentSnapshot snapshot)
     {
         return new VersionedDocumentContext(uri, snapshot, projectContext: null, version: 0);
-    }
-
-    protected static TextLoader CreateTextLoader(string filePath, string text)
-    {
-        return CreateTextLoader(filePath, SourceText.From(text));
-    }
-
-    protected static TextLoader CreateTextLoader(string filePath, SourceText text)
-    {
-        var mock = new StrictMock<TextLoader>();
-
-        var textAndVersion = TextAndVersion.Create(text, VersionStamp.Create(), filePath);
-
-        mock.Setup(x => x.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(textAndVersion);
-
-        return mock.Object;
     }
 
     private protected static RazorLSPOptionsMonitor GetOptionsMonitor(bool enableFormatting = true, bool autoShowCompletion = true, bool autoListParams = true, bool formatOnType = true, bool autoInsertAttributeQuotes = true, bool colorBackground = false, bool codeBlockBraceOnNextLine = false, bool commitElementsWithSpace = true)

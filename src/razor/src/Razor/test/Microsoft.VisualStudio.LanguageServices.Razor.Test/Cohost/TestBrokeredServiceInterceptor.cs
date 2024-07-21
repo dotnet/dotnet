@@ -4,21 +4,19 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Remote.Razor;
+using Xunit;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 internal sealed class TestBrokeredServiceInterceptor : IRazorBrokeredServiceInterceptor
 {
-    private Solution? _solution;
+    private readonly TestSolutionStore _solutionStore = new();
 
-    public void UpdateSolution(Solution solution)
-    {
-        _solution = solution;
-    }
+    public Task<RazorPinnedSolutionInfoWrapper> GetSolutionInfoAsync(Solution solution, CancellationToken cancellationToken)
+        => _solutionStore.AddAsync(solution, cancellationToken);
 
     public ValueTask RunServiceAsync(
         Func<CancellationToken, ValueTask> implementation,
@@ -29,5 +27,11 @@ internal sealed class TestBrokeredServiceInterceptor : IRazorBrokeredServiceInte
         RazorPinnedSolutionInfoWrapper solutionInfo,
         Func<Solution, ValueTask<T>> implementation,
         CancellationToken cancellationToken)
-        => implementation(_solution.AssumeNotNull());
+    {
+        var solution = _solutionStore.Get(solutionInfo);
+
+        Assert.NotNull(solution);
+
+        return implementation(solution);
+    }
 }

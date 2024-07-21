@@ -42,15 +42,12 @@ internal class LspLogger(string categoryName, LogLevel logLevel, IClientConnecti
             _ => throw new NotImplementedException(),
         };
 
-        if (exception is not null)
-        {
-            message += Environment.NewLine + exception.ToString();
-        }
+        var formattedMessage = LogMessageFormatter.FormatMessage(message, _categoryName, exception, includeTimeStamp: false);
 
         var @params = new LogMessageParams
         {
             MessageType = messageType,
-            Message = $"[{_categoryName}] {message}",
+            Message = formattedMessage,
         };
 
         _clientConnection.SendNotificationAsync(Methods.WindowLogMessageName, @params, CancellationToken.None).Forget();

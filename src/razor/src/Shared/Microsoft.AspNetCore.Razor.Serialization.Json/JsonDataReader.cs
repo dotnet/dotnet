@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.Extensions.ObjectPool;
 using Newtonsoft.Json;
-using SR = Microsoft.AspNetCore.Razor.Serialization.Json.Internal.SR;
+using SR = Microsoft.AspNetCore.Razor.Serialization.Json.Internal.Strings;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.Json;
 

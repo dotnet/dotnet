@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using static System.StringExtensions;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
@@ -100,10 +101,7 @@ public sealed partial class CodeWriter : IDisposable
         get => _indentSize;
         set
         {
-            if (value < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(value));
-            }
+            ArgHelper.ThrowIfNegative(value);
 
             if (_indentSize != value)
             {
@@ -126,10 +124,7 @@ public sealed partial class CodeWriter : IDisposable
     [MemberNotNull(nameof(_newLine))]
     private void SetNewLine(string value)
     {
-        if (value == null)
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
+        ArgHelper.ThrowIfNull(value);
 
         if (value != "\r\n" && value != "\n")
         {
@@ -219,10 +214,7 @@ public sealed partial class CodeWriter : IDisposable
 
     public CodeWriter Write(string value)
     {
-        if (value == null)
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
+        ArgHelper.ThrowIfNull(value);
 
         return WriteCore(value.AsMemory());
     }
@@ -232,25 +224,10 @@ public sealed partial class CodeWriter : IDisposable
 
     public CodeWriter Write(string value, int startIndex, int count)
     {
-        if (value == null)
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
-
-        if (startIndex < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(startIndex));
-        }
-
-        if (count < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(count));
-        }
-
-        if (startIndex > value.Length - count)
-        {
-            throw new ArgumentOutOfRangeException(nameof(startIndex));
-        }
+        ArgHelper.ThrowIfNull(value);
+        ArgHelper.ThrowIfNegative(startIndex);
+        ArgHelper.ThrowIfNegative(count);
+        ArgHelper.ThrowIfGreaterThan(startIndex, value.Length - count);
 
         return WriteCore(value.AsMemory(startIndex, count));
     }
@@ -259,7 +236,7 @@ public sealed partial class CodeWriter : IDisposable
         => this;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private unsafe CodeWriter WriteCore(ReadOnlyMemory<char> value, bool allowIndent = true)
+    private CodeWriter WriteCore(ReadOnlyMemory<char> value, bool allowIndent = true)
     {
         if (value.IsEmpty)
         {
@@ -323,10 +300,7 @@ public sealed partial class CodeWriter : IDisposable
 
     public CodeWriter WriteLine(string value)
     {
-        if (value == null)
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
+        ArgHelper.ThrowIfNull(value);
 
         return WriteCore(value.AsMemory()).WriteLine();
     }
@@ -336,50 +310,29 @@ public sealed partial class CodeWriter : IDisposable
 
     public string GenerateCode()
     {
-        unsafe
+        // Eventually, we need to remove this and not return a giant string, which can
+        // easily be allocated on the LOH. The work to remove this is tracked by
+        // https://github.com/dotnet/razor/issues/8076.
+        return CreateString(Length, _pages, static (span, pages) =>
         {
-            // This might look a bit scary, but it's pretty simple. We allocate our string
-            // with the correct length up front and then use simple pointer math to copy
-            // the pages of ReadOnlyMemory<char> directly into it.
-
-            // Eventually, we need to remove this and not return a giant string, which can
-            // easily be allocated on the LOH. The work to remove this is tracked by
-            // https://github.com/dotnet/razor/issues/8076.
-
-            var length = Length;
-            var result = new string('\0', length);
-
-            fixed (char* stringPtr = result)
+            foreach (var page in pages)
             {
-                var destination = stringPtr;
-
-                // destinationSize and sourceSize track the number of bytes (not chars).
-                var destinationSize = length * sizeof(char);
-
-                foreach (var page in _pages)
+                foreach (var chars in page)
                 {
-                    foreach (var chars in page)
+                    if (chars.IsEmpty)
                     {
-                        var source = chars.Span;
-                        var sourceSize = source.Length * sizeof(char);
-
-                        fixed (char* srcPtr = source)
-                        {
-                            Buffer.MemoryCopy(srcPtr, destination, destinationSize, sourceSize);
-                        }
-
-                        destination += source.Length;
-                        destinationSize -= sourceSize;
-
-                        Debug.Assert(destinationSize >= 0);
+                        return;
                     }
-                }
 
-                Debug.Assert(destinationSize == 0, "We didn't exhaust our destination pointer!");
+                    chars.Span.CopyTo(span);
+                    span = span[chars.Length..];
+
+                    Debug.Assert(span.Length >= 0);
+                }
             }
 
-            return result;
-        }
+            Debug.Assert(span.Length == 0, "We didn't fill the whole span!");
+        });
     }
 
     public void Dispose()

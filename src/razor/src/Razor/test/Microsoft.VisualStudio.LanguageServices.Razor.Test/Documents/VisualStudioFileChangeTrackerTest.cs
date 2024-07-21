@@ -79,6 +79,7 @@ public class VisualStudioFileChangeTrackerTest(ITestOutputHelper testOutput) : V
             .Verifiable();
         fileChangeService
             .Setup(f => f.UnadviseFileChangeAsync(123, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(TestProjectData.SomeProjectImportFile.FilePath)
             .Verifiable();
         var tracker = new VisualStudioFileChangeTracker(
             TestProjectData.SomeProjectImportFile.FilePath,

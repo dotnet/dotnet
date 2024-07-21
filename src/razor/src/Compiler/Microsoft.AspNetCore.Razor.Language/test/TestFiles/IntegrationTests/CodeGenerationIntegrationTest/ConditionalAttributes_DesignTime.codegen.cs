@@ -200,6 +200,21 @@ namespace AspNetCore
 #nullable restore
 #line 14 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml"
                                                                                                                    
+    
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 15 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml"
+         __o = null;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 15 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml"
+                       
 
 #line default
 #line hidden

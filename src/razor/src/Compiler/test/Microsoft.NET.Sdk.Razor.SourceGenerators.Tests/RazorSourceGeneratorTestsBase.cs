@@ -209,7 +209,7 @@ public abstract class RazorSourceGeneratorTestsBase
         }
     }
 
-    protected static async Task VerifyRazorPageMatchesBaselineAsync(Compilation compilation, string name,
+    protected static async Task<string> VerifyRazorPageMatchesBaselineAsync(Compilation compilation, string name,
         [CallerFilePath] string testPath = "", [CallerMemberName] string testName = "", string suffix = "")
     {
         var html = await RenderRazorPageAsync(compilation, name);
@@ -220,6 +220,7 @@ public abstract class RazorSourceGeneratorTestsBase
             testPath: testPath,
             testName: testName,
             suffix: suffix);
+        return html;
     }
 
     protected static Project CreateTestProject(

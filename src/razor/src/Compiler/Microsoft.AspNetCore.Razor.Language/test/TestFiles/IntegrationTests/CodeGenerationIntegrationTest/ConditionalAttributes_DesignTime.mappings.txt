@@ -129,10 +129,22 @@ Generated Location: (6616:193,112 [6] )
 |
     |
 
-Source Location: (638:13,115 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+Source Location: (638:13,115 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|
+    |
+Generated Location: (6906:201,115 [6] )
+|
+    |
+
+Source Location: (655:14,15 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|null|
+Generated Location: (7096:209,15 [4] )
+|null|
+
+Source Location: (663:14,23 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
 |
 |
-Generated Location: (6906:201,115 [2] )
+Generated Location: (7293:216,23 [2] )
 |
 |
 

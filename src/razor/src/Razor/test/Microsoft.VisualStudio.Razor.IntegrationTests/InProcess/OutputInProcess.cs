@@ -4,9 +4,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common.Logging;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.Razor.IntegrationTests.Extensions;
+using Microsoft.VisualStudio.Razor.IntegrationTests.Logging;
 using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -20,7 +20,7 @@ internal partial class OutputInProcess
 {
     private const string RazorPaneName = "Razor Logger Output";
 
-    private TestOutputLoggerProvider? _testLoggerProvider;
+    private IntegrationTestOutputLoggerProvider? _testLoggerProvider;
 
     public async Task<ILogger> SetupIntegrationTestLoggerAsync(ITestOutputHelper testOutputHelper, CancellationToken cancellationToken)
     {
@@ -28,25 +28,25 @@ internal partial class OutputInProcess
         var clientSettingsManager = await TestServices.Shell.GetComponentModelServiceAsync<IClientSettingsManager>(cancellationToken);
         clientSettingsManager.Update(clientSettingsManager.GetClientSettings().AdvancedSettings with { LogLevel = LogLevel.Trace });
 
-        var logger = await TestServices.Shell.GetComponentModelServiceAsync<ILoggerFactory>(cancellationToken);
+        var loggerFactory = await TestServices.Shell.GetComponentModelServiceAsync<ILoggerFactory>(cancellationToken);
 
         // We can't remove logging providers, so we just keep track of ours so we can make sure it points to the right test output helper
         if (_testLoggerProvider is null)
         {
-            _testLoggerProvider = new TestOutputLoggerProvider(testOutputHelper);
-            logger.AddLoggerProvider(_testLoggerProvider);
+            _testLoggerProvider = new IntegrationTestOutputLoggerProvider(testOutputHelper);
+            loggerFactory.AddLoggerProvider(_testLoggerProvider);
         }
         else
         {
-            _testLoggerProvider.SetTestOutputHelper(testOutputHelper);
+            _testLoggerProvider.SetOutput(testOutputHelper);
         }
 
-        return logger.GetOrCreateLogger(GetType().Name);
+        return loggerFactory.GetOrCreateLogger(GetType().Name);
     }
 
     public void ClearIntegrationTestLogger()
     {
-        _testLoggerProvider?.SetTestOutputHelper(null);
+        _testLoggerProvider?.SetOutput(null);
     }
 
     public async Task<bool> HasErrorsAsync(CancellationToken cancellationToken)
@@ -108,20 +108,6 @@ internal partial class OutputInProcess
             }
 
             return textView;
-        }
-    }
-
-    private class NullLogger : ILogger
-    {
-        public static ILogger Instance { get; } = new NullLogger();
-
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            return false;
-        }
-
-        public void Log(LogLevel logLevel, string message, Exception? exception)
-        {
         }
     }
 }
