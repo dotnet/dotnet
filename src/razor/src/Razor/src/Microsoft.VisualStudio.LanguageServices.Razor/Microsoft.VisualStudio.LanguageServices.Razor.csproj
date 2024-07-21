@@ -8,6 +8,7 @@
     <IsShippingPackage>false</IsShippingPackage>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
     <IsPackable Condition="'$(OS)' != 'Windows_NT'">false</IsPackable>
+    <RootNamespace>Microsoft.VisualStudio.Razor</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

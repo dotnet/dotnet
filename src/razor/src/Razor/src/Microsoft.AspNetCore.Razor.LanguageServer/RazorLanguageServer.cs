@@ -178,7 +178,6 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
             services.AddTransient<IOnInitialized>(sp => sp.GetRequiredService<RazorConfigurationEndpoint>());
 
             services.AddHandlerWithCapabilities<ImplementationEndpoint>();
-            services.AddHandlerWithCapabilities<SignatureHelpEndpoint>();
             services.AddHandlerWithCapabilities<DocumentHighlightEndpoint>();
             services.AddHandlerWithCapabilities<OnAutoInsertEndpoint>();
 
@@ -187,6 +186,7 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
 
             if (!featureOptions.UseRazorCohostServer)
             {
+                services.AddHandlerWithCapabilities<SignatureHelpEndpoint>();
                 services.AddHandlerWithCapabilities<LinkedEditingRangeEndpoint>();
                 services.AddHandlerWithCapabilities<FoldingRangeEndpoint>();
             }

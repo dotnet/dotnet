@@ -15,8 +15,4 @@ internal class LoggerProvider(LogLevel logLevel, IClientConnection clientConnect
     {
         return new LspLogger(categoryName, _logLevel, _clientConnection);
     }
-
-    public void Dispose()
-    {
-    }
 }

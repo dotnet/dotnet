@@ -93,3 +93,20 @@ Source Location: (527:13,4 [111] TestFiles/IntegrationTests/CodeGenerationIntegr
 Generated Location: (527:13,4 [111] )
 |<script src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>|
 
+Source Location: (644:14,4 [10] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|<p class="|
+Generated Location: (644:14,4 [10] )
+|<p class="|
+
+Source Location: (659:14,19 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|" />|
+Generated Location: (659:14,19 [4] )
+|" />|
+
+Source Location: (666:15,1 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|
+|
+Generated Location: (666:15,1 [2] )
+|
+|
+

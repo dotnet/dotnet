@@ -21,7 +21,7 @@ internal class OutputWindowLoggerProvider(
     // or used anything that does logging, so make sure everything of ours is imported lazily
     Lazy<IClientSettingsManager> clientSettingsManager,
     JoinableTaskContext joinableTaskContext)
-    : ILoggerProvider
+    : ILoggerProvider, IDisposable
 {
     private readonly Lazy<IClientSettingsManager> _clientSettingsManager = clientSettingsManager;
     private readonly OutputPane _outputPane = new OutputPane(joinableTaskContext);
@@ -58,11 +58,8 @@ internal class OutputWindowLoggerProvider(
         {
             if (IsEnabled(logLevel))
             {
-                _outputPane.WriteLine($"{DateTime.Now:h:mm:ss.fff} [{_categoryName}] {message}");
-                if (exception is not null)
-                {
-                    _outputPane.WriteLine(exception.ToString());
-                }
+                var formattedMessage = LogMessageFormatter.FormatMessage(message, _categoryName, exception);
+                _outputPane.WriteLine(formattedMessage);
             }
         }
     }

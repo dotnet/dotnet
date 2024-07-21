@@ -1,0 +1,30 @@
+﻿RazorDocument - [0..21)::21 - [<p "ab" class="@c" />]
+    MarkupBlock - [0..21)::21
+        MarkupElement - [0..21)::21
+            MarkupStartTag - [0..21)::21 - [<p "ab" class="@c" />] - Gen<Markup>
+                OpenAngle;[<];
+                Text;[p];
+                MarkupMiscAttributeContent - [2..19)::17
+                    MarkupTextLiteral - [2..15)::13 - [ "ab" class="] - Gen<Markup>
+                        Whitespace;[ ];
+                        DoubleQuote;["];
+                        Text;[ab];
+                        DoubleQuote;["];
+                        Whitespace;[ ];
+                        Text;[class];
+                        Equals;[=];
+                        DoubleQuote;["];
+                    CSharpCodeBlock - [15..17)::2
+                        CSharpImplicitExpression - [15..17)::2
+                            CSharpTransition - [15..16)::1 - Gen<None>
+                                Transition;[@];
+                            CSharpImplicitExpressionBody - [16..17)::1
+                                CSharpCodeBlock - [16..17)::1
+                                    CSharpExpressionLiteral - [16..17)::1 - [c] - Gen<Expr>
+                                        Identifier;[c];
+                    MarkupTextLiteral - [17..19)::2 - [" ] - Gen<Markup>
+                        DoubleQuote;["];
+                        Whitespace;[ ];
+                ForwardSlash;[/];
+                CloseAngle;[>];
+    EndOfFile;[];

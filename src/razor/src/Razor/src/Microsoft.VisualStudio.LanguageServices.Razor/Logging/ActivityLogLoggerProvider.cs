@@ -3,9 +3,8 @@
 
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.VisualStudio.Razor.Logging;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.Logging;
+namespace Microsoft.VisualStudio.Razor.Logging;
 
 /// <summary>
 /// An <see cref="ILoggerProvider"/> that logs any warnings or errors to the Visual Studio Activity Log.

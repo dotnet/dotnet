@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Roslyn.Test.Utilities;
@@ -374,7 +375,7 @@ There is no xml, but I got you this < and the >.
         {
             updater.ProjectAdded(hostProject);
             updater.ProjectWorkspaceStateChanged(hostProject.Key, projectWorkspaceState);
-            updater.DocumentAdded(hostProject.Key, hostDocument, CreateTextLoader(hostDocument.FilePath, text: ""));
+            updater.DocumentAdded(hostProject.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
         });
 
         var service = new TestTagHelperToolTipFactory(projectManager);
@@ -419,11 +420,11 @@ There is no xml, but I got you this < and the >.
         {
             updater.ProjectAdded(hostProject1);
             updater.ProjectWorkspaceStateChanged(hostProject1.Key, projectWorkspaceState);
-            updater.DocumentAdded(hostProject1.Key, hostDocument, CreateTextLoader(hostDocument.FilePath, text: ""));
+            updater.DocumentAdded(hostProject1.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
 
             updater.ProjectAdded(hostProject2);
             updater.ProjectWorkspaceStateChanged(hostProject2.Key, projectWorkspaceState);
-            updater.DocumentAdded(hostProject2.Key, hostDocument, CreateTextLoader(hostDocument.FilePath, text: ""));
+            updater.DocumentAdded(hostProject2.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
         });
 
         var service = new TestTagHelperToolTipFactory(projectManager);
@@ -468,10 +469,10 @@ There is no xml, but I got you this < and the >.
         {
             updater.ProjectAdded(hostProject1);
             updater.ProjectWorkspaceStateChanged(hostProject1.Key, projectWorkspaceState);
-            updater.DocumentAdded(hostProject1.Key, hostDocument, CreateTextLoader(hostDocument.FilePath, text: ""));
+            updater.DocumentAdded(hostProject1.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
 
             updater.ProjectAdded(hostProject2);
-            updater.DocumentAdded(hostProject2.Key, hostDocument, CreateTextLoader(hostDocument.FilePath, text: ""));
+            updater.DocumentAdded(hostProject2.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
         });
 
         var service = new TestTagHelperToolTipFactory(projectManager);
@@ -512,10 +513,10 @@ There is no xml, but I got you this < and the >.
         await projectManager.UpdateAsync(updater =>
         {
             updater.ProjectAdded(hostProject1);
-            updater.DocumentAdded(hostProject1.Key, hostDocument, CreateTextLoader(hostDocument.FilePath, text: ""));
+            updater.DocumentAdded(hostProject1.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
 
             updater.ProjectAdded(hostProject2);
-            updater.DocumentAdded(hostProject2.Key, hostDocument, CreateTextLoader(hostDocument.FilePath, text: ""));
+            updater.DocumentAdded(hostProject2.Key, hostDocument, TestMocks.CreateTextLoader(hostDocument.FilePath, text: ""));
         });
 
         var service = new TestTagHelperToolTipFactory(projectManager);

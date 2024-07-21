@@ -155,6 +155,22 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
     [IntegrationTestFact]
     public void ConditionalAttributes() => RunTest();
 
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/10586")]
+    public void ConditionalAttributes2()
+    {
+        if (designTime)
+        {
+            // An error scenario: tag helper + C# dynamic content (a razor error is reported,
+            // so it is fine there is a missing mapping for the C# dynamic content).
+            ExpectedMissingSourceMappings = new()
+            {
+                { new(base.GetTestFileName() + ".cshtml", 328, 11, 8), "s" }
+            };
+        }
+
+        RunTest();
+    }
+
     [IntegrationTestFact]
     public void CodeBlockWithTextElement() => RunTest();
 

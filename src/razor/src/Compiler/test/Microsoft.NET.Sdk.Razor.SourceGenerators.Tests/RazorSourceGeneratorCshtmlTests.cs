@@ -2,6 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Roslyn.Test.Utilities;
 using Xunit;
 
@@ -67,5 +69,51 @@ public sealed class RazorSourceGeneratorCshtmlTests : RazorSourceGeneratorTestsB
         Assert.Empty(result.Diagnostics);
         Assert.Single(result.GeneratedSources);
         await VerifyRazorPageMatchesBaselineAsync(compilation, "Pages_Index");
+    }
+
+    [Theory, CombinatorialData, WorkItem("https://github.com/dotnet/razor/issues/10586")]
+    public async Task ConditionalAttributes([CombinatorialValues("@null", "@n")] string value)
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Pages/Index.cshtml"] = $$"""
+                @page
+                @{ var s = "str"; string? n = null; }
+                <div class="@s" style="{{value}}">x</div>
+                <div @s style="{{value}}">x</div>
+                <div style="{{value}}" class="@s">x</div>
+                <div style="{{value}}" @s>x</div>
+                <div @s style="{{value}}" @s>x</div>
+
+                <div @* comment *@ style="{{value}}">x</div>
+                <div style="{{value}}" @* comment *@>x</div>
+                
+                <div @* comment *@ @s style="{{value}}">x</div>
+                
+                <div @(s + s) style="{{value}}">x</div>
+                <div @{if (s.Length != 0) { @s } } style="{{value}}">x</div>
+                <div @@s style="{{value}}">x</div>
+
+                <div @s {{value}}>x</div>
+                <div {{value}} @s>x</div>
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        compilation = compilation.WithOptions(compilation.Options.WithSpecificDiagnosticOptions([.. compilation.Options.SpecificDiagnosticOptions,
+            // warning CS0219: The variable 'n' is assigned but its value is never used
+            new("CS0219", ReportDiagnostic.Suppress)]));
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver, out compilation);
+
+        // Assert
+        Assert.Empty(result.Diagnostics);
+        Assert.Single(result.GeneratedSources);
+        var html = await VerifyRazorPageMatchesBaselineAsync(compilation, "Pages_Index");
+
+        // The style attribute should not be rendered at all.
+        Assert.DoesNotContain("style", html);
     }
 }

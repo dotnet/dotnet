@@ -13,6 +13,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Range = VisualStudio.LanguageServer.Protocol.Range;
 
 internal static class RazorSyntaxNodeExtensions
 {

@@ -40,6 +40,19 @@ internal static class VSInternalServerCapabilitiesExtensions
         return options;
     }
 
+    public static void EnableSignatureHelp(this VSInternalServerCapabilities serverCapabilities)
+    {
+        serverCapabilities.SignatureHelpProvider = new SignatureHelpOptions().EnableSignatureHelp();
+    }
+
+    public static SignatureHelpOptions EnableSignatureHelp(this SignatureHelpOptions options)
+    {
+        options.TriggerCharacters = ["(", ",", "<"];
+        options.RetriggerCharacters = [">", ")"];
+
+        return options;
+    }
+
     public static void EnableHoverProvider(this VSInternalServerCapabilities serverCapabilities)
     {
         serverCapabilities.HoverProvider = new HoverOptions()

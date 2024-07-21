@@ -19,7 +19,7 @@ internal static class ArgHelper
 #else
         if (argument is null)
         {
-            ThrowArgumentNullException(paramName);
+            ThrowHelper.ThrowArgumentNullException(paramName);
         }
 #endif
     }
@@ -31,19 +31,10 @@ internal static class ArgHelper
 #else
         if (argument is null)
         {
-            ThrowArgumentNullException(paramName);
+            ThrowHelper.ThrowArgumentNullException(paramName);
         }
 #endif
     }
-
-#if !NET8_0_OR_GREATER
-    [DoesNotReturn]
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    private static void ThrowArgumentNullException(string? paramName)
-    {
-        throw new ArgumentNullException(paramName);
-    }
-#endif
 
     public static void ThrowIfNullOrEmpty([NotNull] string? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
     {
@@ -52,15 +43,8 @@ internal static class ArgHelper
 #else
         if (argument.IsNullOrEmpty())
         {
-            ThrowException(argument, paramName);
-        }
-
-        [DoesNotReturn]
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        static void ThrowException(string? argument, string? paramName)
-        {
             ThrowIfNull(argument, paramName);
-            throw new ArgumentException(SR.The_value_cannot_be_an_empty_string, paramName);
+            ThrowHelper.ThrowArgumentException(paramName, SR.The_value_cannot_be_an_empty_string);
         }
 #endif
     }
@@ -73,15 +57,8 @@ internal static class ArgHelper
 
         if (argument.IsNullOrWhiteSpace())
         {
-            ThrowException(argument, paramName);
-        }
-
-        [DoesNotReturn]
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        static void ThrowException(string? argument, string? paramName)
-        {
             ThrowIfNull(argument, paramName);
-            throw new ArgumentException(SR.The_value_cannot_be_an_empty_string_composed_entirely_of_whitespace, paramName);
+            ThrowHelper.ThrowArgumentException(paramName, SR.The_value_cannot_be_an_empty_string_composed_entirely_of_whitespace);
         }
 #endif
     }
@@ -93,14 +70,7 @@ internal static class ArgHelper
 #else
         if (value == 0)
         {
-            ThrowException(value, paramName);
-        }
-
-        [DoesNotReturn]
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        static void ThrowException(int value, string? paramName)
-        {
-            throw new ArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_a_non_zero_value(paramName, value));
+            ThrowHelper.ThrowArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_a_non_zero_value(paramName, value));
         }
 #endif
     }
@@ -112,14 +82,7 @@ internal static class ArgHelper
 #else
         if (value < 0)
         {
-            ThrowException(value, paramName);
-        }
-
-        [DoesNotReturn]
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        static void ThrowException(int value, string? paramName)
-        {
-            throw new ArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_a_non_negative_value(paramName, value));
+            ThrowHelper.ThrowArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_a_non_negative_value(paramName, value));
         }
 #endif
     }
@@ -131,14 +94,7 @@ internal static class ArgHelper
 #else
         if (value <= 0)
         {
-            ThrowException(value, paramName);
-        }
-
-        [DoesNotReturn]
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        static void ThrowException(int value, string? paramName)
-        {
-            throw new ArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_a_non_negative_and_non_zero_value(paramName, value));
+            ThrowHelper.ThrowArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_a_non_negative_and_non_zero_value(paramName, value));
         }
 #endif
     }
@@ -151,14 +107,7 @@ internal static class ArgHelper
 #else
         if (EqualityComparer<T>.Default.Equals(value, other))
         {
-            ThrowException(value, other, paramName);
-        }
-
-        [DoesNotReturn]
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        static void ThrowException(T value, T other, string? paramName)
-        {
-            throw new ArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_not_be_equal_to_2(paramName, (object?)value ?? "null", (object?)other ?? "null"));
+            ThrowHelper.ThrowArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_not_be_equal_to_2(paramName, (object?)value ?? "null", (object?)other ?? "null"));
         }
 #endif
     }
@@ -171,14 +120,7 @@ internal static class ArgHelper
 #else
         if (!EqualityComparer<T>.Default.Equals(value, other))
         {
-            ThrowException(value, other, paramName);
-        }
-
-        [DoesNotReturn]
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        static void ThrowException(T value, T other, string? paramName)
-        {
-            throw new ArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_equal_to_2(paramName, (object?)value ?? "null", (object?)other ?? "null"));
+            ThrowHelper.ThrowArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_equal_to_2(paramName, (object?)value ?? "null", (object?)other ?? "null"));
         }
 #endif
     }
@@ -191,14 +133,7 @@ internal static class ArgHelper
 #else
         if (value.CompareTo(other) > 0)
         {
-            ThrowException(value, other, paramName);
-        }
-
-        [DoesNotReturn]
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        static void ThrowException(T value, T other, string? paramName)
-        {
-            throw new ArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_less_than_or_equal_to_2(paramName, value, other));
+            ThrowHelper.ThrowArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_less_than_or_equal_to_2(paramName, value, other));
         }
 #endif
     }
@@ -211,14 +146,7 @@ internal static class ArgHelper
 #else
         if (value.CompareTo(other) >= 0)
         {
-            ThrowException(value, other, paramName);
-        }
-
-        [DoesNotReturn]
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        static void ThrowException(T value, T other, string? paramName)
-        {
-            throw new ArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_less_than_2(paramName, value, other));
+            ThrowHelper.ThrowArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_less_than_2(paramName, value, other));
         }
 #endif
     }
@@ -231,14 +159,7 @@ internal static class ArgHelper
 #else
         if (value.CompareTo(other) < 0)
         {
-            ThrowException(value, other, paramName);
-        }
-
-        [DoesNotReturn]
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        static void ThrowException(T value, T other, string? paramName)
-        {
-            throw new ArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_greater_than_or_equal_to_2(paramName, value, other));
+            ThrowHelper.ThrowArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_greater_than_or_equal_to_2(paramName, value, other));
         }
 #endif
     }
@@ -251,14 +172,7 @@ internal static class ArgHelper
 #else
         if (value.CompareTo(other) <= 0)
         {
-            ThrowException(value, other, paramName);
-        }
-
-        [DoesNotReturn]
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        static void ThrowException(T value, T other, string? paramName)
-        {
-            throw new ArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_greater_than_2(paramName, value, other));
+            ThrowHelper.ThrowArgumentOutOfRangeException(paramName, value, SR.Format0_1_must_be_greater_than_2(paramName, value, other));
         }
 #endif
     }

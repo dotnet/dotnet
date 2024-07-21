@@ -37,7 +37,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Extensibility.Testing.Xunit" />
     <PackageReference Include="Microsoft.VisualStudio.Extensibility.Testing.SourceGenerator" />
     <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" />
-    <PackageReference Include="NuGet.SolutionRestoreManager.Interop" />
+    <PackageReference Include="NuGet.VisualStudio" />
     <PackageReference Include="Microsoft.Internal.VisualStudio.Shell.Framework" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.utility" />

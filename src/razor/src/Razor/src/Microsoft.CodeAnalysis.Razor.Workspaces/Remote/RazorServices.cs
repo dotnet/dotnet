@@ -25,4 +25,13 @@ internal static class RazorServices
             (typeof(IRemoteUriPresentationService), null),
             (typeof(IRemoteFoldingRangeService), null)
         ]);
+
+    public static readonly RazorServiceDescriptorsWrapper JsonDescriptors = new(
+        ComponentName, // Needs to match the above because so much of our ServiceHub infrastructure is convention based
+        featureDisplayNameProvider: feature => $"Razor {feature} Feature",
+        jsonConverters: RazorServiceDescriptorsWrapper.GetLspConverters(),
+        interfaces:
+        [
+            (typeof(IRemoteSignatureHelpService), null),
+        ]);
 }

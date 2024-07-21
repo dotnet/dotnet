@@ -103,10 +103,10 @@
     <PackageVersion Include="Microsoft.WebTools.Languages.Shared.Editor" Version="$(_MicrosoftWebToolsPackageVersion)" />
     <PackageVersion Include="Microsoft.WebTools.Languages.Shared.VS" Version="$(_MicrosoftWebToolsPackageVersion)" />
     <PackageVersion Include="Microsoft.WebTools.Shared" Version="$(_MicrosoftWebToolsPackageVersion)" />
-    <PackageVersion Include="Moq" Version="4.16.0" />
+    <PackageVersion Include="Moq" Version="4.18.4" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="Nerdbank.Streams" Version="2.11.74" />
-    <PackageVersion Include="NuGet.SolutionRestoreManager.Interop" Version="4.8.0" />
+    <PackageVersion Include="NuGet.VisualStudio" Version="17.9.1" />
     <PackageVersion Include="Roslyn.Diagnostics.Analyzers" Version="$(_MicrosoftCodeAnalysisAnalyzersPackageVersion)" />
     <PackageVersion Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutablePackageVersion)" />
     <PackageVersion Include="System.Resources.Extensions" Version="6.0.0" />

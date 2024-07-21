@@ -18,11 +18,8 @@ internal partial class MemoryLoggerProvider
 
         public void Log(LogLevel logLevel, string message, Exception? exception)
         {
-            _buffer.Append($"{DateTime.Now:h:mm:ss.fff} [{_categoryName}] {message}");
-            if (exception is not null)
-            {
-                _buffer.Append(exception.ToString());
-            }
+            var formattedMessage = LogMessageFormatter.FormatMessage(message, _categoryName, exception);
+            _buffer.Append(formattedMessage);
         }
     }
 }

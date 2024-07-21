@@ -40,10 +40,6 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
 
         Assert.True(await synchronizer.TrySynchronizeAsync(document, DisposalToken));
 
-        var version = await RazorDocumentVersion.CreateAsync(document, DisposalToken);
-
-        Assert.Equal(1, version.WorkspaceVersion);
-
         Assert.Collection(publisher.Publishes,
             i =>
             {

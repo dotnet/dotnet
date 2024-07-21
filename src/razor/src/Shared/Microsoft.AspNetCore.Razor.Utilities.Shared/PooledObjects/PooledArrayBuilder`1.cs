@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
@@ -1306,7 +1307,7 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
     /// </summary>
     [DoesNotReturn]
     private static T ThrowInvalidOperation(string message)
-        => ThrowHelper.ThrowInvalidOperation<T>(message);
+        => ThrowHelper.ThrowInvalidOperationException<T>(message);
 
     [MemberNotNull(nameof(_builder))]
     private void MoveInlineItemsToBuilder()

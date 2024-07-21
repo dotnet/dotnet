@@ -5,9 +5,9 @@ using System;
 using System.Collections.Immutable;
 using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Logging;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
@@ -62,6 +62,6 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
     {
         return new ProjectSnapshotManager(
             projectEngineFactoryProvider: StaticProjectEngineFactoryProvider.Instance,
-            loggerFactory: EmptyLoggingFactory.Instance);
+            loggerFactory: EmptyLoggerFactory.Instance);
     }
 }

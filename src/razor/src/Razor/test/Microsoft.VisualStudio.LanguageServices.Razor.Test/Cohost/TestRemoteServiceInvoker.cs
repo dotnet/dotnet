@@ -53,11 +53,7 @@ internal sealed class TestRemoteServiceInvoker(
     {
         var service = await GetOrCreateServiceAsync<TService>();
 
-        // In an ideal world we'd be able to maintain a dictionary of solution checksums in TestServiceBroker, and use
-        // the RazorPinnedSolutionInfoWrapper properly, but we need Roslyn changes for that. For now, this works fine
-        // as we don't have any code that makes multiple parallel calls to TryInvokeAsync in the same test.
-        var solutionInfo = new RazorPinnedSolutionInfoWrapper();
-        _serviceInterceptor.UpdateSolution(solution);
+        var solutionInfo = await _serviceInterceptor.GetSolutionInfoAsync(solution, cancellationToken);
         return await invocation(service, solutionInfo, cancellationToken);
     }
 

@@ -1085,16 +1085,53 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         // http://dev.w3.org/html5/spec/tokenization.html#attribute-name-state
         // Read the 'name' (i.e. read until the '=' or whitespace/newline)
         using var nameTokens = new PooledArrayBuilder<SyntaxToken>();
-        if (!TryParseAttributeName(ref nameTokens.AsRef()))
+        var nameParsingResult = TryParseAttributeName(out SyntaxToken? ephemeralToken, ref nameTokens.AsRef());
+
+        switch (nameParsingResult)
         {
+            // Parse C# and return to attribute parsing afterwards.
+            case AttributeNameParsingResult.CSharp:
+                {
+                    Accept(in attributePrefixWhitespace);
+                    PutCurrentBack();
+                    using var pooledResult = Pool.Allocate<RazorSyntaxNode>();
+                    var dynamicAttributeValueBuilder = pooledResult.Builder;
+                    OtherParserBlock(dynamicAttributeValueBuilder);
+                    var value = SyntaxFactory.MarkupMiscAttributeContent(dynamicAttributeValueBuilder.ToList());
+                    builder.Add(value);
+                    return;
+                }
+
+            // Parse razor comment and return to attribute parsing afterwards.
+            case AttributeNameParsingResult.RazorComment:
+                {
+                    Accept(in attributePrefixWhitespace);
+                    PutCurrentBack();
+                    ParseRazorCommentWithLeadingAndTrailingWhitespace(builder);
+                    return;
+                }
+
             // Unexpected character in tag, enter recovery
-            Accept(in attributePrefixWhitespace);
-            ParseMiscAttribute(builder);
-            return;
+            case AttributeNameParsingResult.Other:
+                {
+                    Accept(in attributePrefixWhitespace);
+                    ParseMiscAttribute(builder);
+                    return;
+                }
         }
 
+        Debug.Assert(nameParsingResult is AttributeNameParsingResult.Success);
         Accept(in attributePrefixWhitespace); // Whitespace before attribute name
         var namePrefix = OutputAsMarkupLiteral();
+
+        if (ephemeralToken is not null)
+        {
+            builder.Add(namePrefix);
+            Accept(ephemeralToken);
+            builder.Add(OutputAsMarkupEphemeralLiteral());
+            namePrefix = null;
+        }
+
         Accept(in nameTokens); // Attribute name
         var name = OutputAsMarkupLiteralRequired();
 
@@ -1113,18 +1150,44 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         }
     }
 
-    private bool TryParseAttributeName(ref PooledArrayBuilder<SyntaxToken> nameTokens)
+    private enum AttributeNameParsingResult
     {
+        Success,
+        Other,
+        CSharp,
+        RazorComment,
+    }
+
+    private AttributeNameParsingResult TryParseAttributeName(out SyntaxToken? ephemeralToken, ref PooledArrayBuilder<SyntaxToken> nameTokens)
+    {
+        ephemeralToken = null;
+
         //
         // We are currently here <input |name="..." />
         // If we encounter a transition (@) here, it can be parsed as CSharp or Markup depending on the feature flag.
         // For example, in Components, we want to parse it as Markup so we can support directive attributes.
         //
-        if (Context.FeatureFlags.AllowCSharpInMarkupAttributeArea &&
-            (At(SyntaxKind.Transition) || At(SyntaxKind.RazorCommentTransition)))
+        if (Context.FeatureFlags.AllowCSharpInMarkupAttributeArea)
         {
-            // If we get here, there is CSharp in the attribute area. Don't try to parse the name.
-            return false;
+            if (At(SyntaxKind.Transition))
+            {
+                if (NextIs(SyntaxKind.Transition))
+                {
+                    // The attribute name is escaped (@@), eat the first @ sign.
+                    ephemeralToken = CurrentToken;
+                    NextToken();
+                }
+                else
+                {
+                    // There is CSharp in the attribute area. Don't try to parse the name.
+                    return AttributeNameParsingResult.CSharp;
+                }
+            }
+            else if (At(SyntaxKind.RazorCommentTransition))
+            {
+                // There is razor comment in the attribute area. Don't try to parse the name.
+                return AttributeNameParsingResult.RazorComment;
+            }
         }
 
         if (IsValidAttributeNameToken(CurrentToken))
@@ -1140,10 +1203,10 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 this,
                 ref nameTokens);
 
-            return true;
+            return AttributeNameParsingResult.Success;
         }
 
-        return false;
+        return AttributeNameParsingResult.Other;
     }
 
     private MarkupAttributeBlockSyntax ParseRemainingAttribute(MarkupTextLiteralSyntax? namePrefix, MarkupTextLiteralSyntax name)
