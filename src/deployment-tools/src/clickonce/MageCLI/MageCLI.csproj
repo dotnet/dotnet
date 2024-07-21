@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>$(NetMinimum)</TargetFramework>
     <AssemblyName>dotnet-mage</AssemblyName>
     <OutputType>Exe</OutputType>
     <SignAssemblyAttribute>true</SignAssemblyAttribute>
@@ -9,7 +9,6 @@
     <AssemblyAttributeClsCompliant>false</AssemblyAttributeClsCompliant>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    <DefineConstants>$(DefineConstants);RUNTIME_TYPE_NETCORE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -33,9 +32,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
-    <PackageReference Include="System.Security.Cryptography.Cng" Version="$(SystemSecurityCryptographyCngVersion)" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" />
-    <PackageReference Include="System.Drawing.Common" Version="$(SystemDrawingCommonVersion)" />
   </ItemGroup>
 
   <ItemGroup>

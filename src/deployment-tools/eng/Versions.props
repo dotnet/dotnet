@@ -14,16 +14,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Runtime dependencies -->
-    <SystemTextJsonVersion>7.0.1</SystemTextJsonVersion>
-    <SystemSecurityCryptographyCngVersion>4.7.0</SystemSecurityCryptographyCngVersion>
-    <SystemSecurityCryptographyXmlVersion>4.7.1</SystemSecurityCryptographyXmlVersion>
-    <SystemDrawingCommonVersion>4.7.2</SystemDrawingCommonVersion>
+    <SystemTextJsonVersion>8.0.4</SystemTextJsonVersion>
+    <SystemSecurityCryptographyXmlVersion>8.0.0</SystemSecurityCryptographyXmlVersion>
     <!-- MSBuild dependencies -->
-    <MicrosoftBuildTasksCoreVersion>17.0.0</MicrosoftBuildTasksCoreVersion>
-    <!-- Testing -->
-    <XUnitVersion>2.4.1</XUnitVersion>
-    <XUnitRunnerVisualStudioVersion>2.4.2</XUnitRunnerVisualStudioVersion>
-    <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
-    <MoqVersion>4.14.1</MoqVersion>
+    <MicrosoftBuildTasksCoreVersion>17.8.3</MicrosoftBuildTasksCoreVersion>
   </PropertyGroup>
 </Project>
