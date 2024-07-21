@@ -8,6 +8,7 @@
 #pragma warning disable CS8604
 #pragma warning disable CS8621
 #pragma warning disable CS8625
+#pragma warning disable CS8767
 #endif
 
 using System;
@@ -90,6 +91,8 @@ namespace Xunit.Internal
 #endif
 		});
 
+		static readonly IEqualityComparer<object> referenceEqualityComparer = new ReferenceEqualityComparer();
+
 		[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2111: Method 'lambda expression' with parameters or return value with `DynamicallyAccessedMembersAttribute` is accessed via reflection. Trimmer can't guarantee availability of the requirements of the method.", Justification = "The lambda will only be called by the value in the type parameter, which has the same requirements.")]
 #if XUNIT_NULLABLE
 		static Dictionary<string, Func<object?, object?>> GetGettersForType([DynamicallyAccessedMembers(
@@ -124,7 +127,15 @@ namespace Xunit.Internal
 				var propertyGetters =
 					_type
 						.GetRuntimeProperties()
-						.Where(p => p.CanRead && p.GetMethod != null && p.GetMethod.IsPublic && !p.GetMethod.IsStatic && p.GetIndexParameters().Length == 0)
+						.Where(p =>
+							p.CanRead
+							&& p.GetMethod != null
+							&& p.GetMethod.IsPublic
+							&& !p.GetMethod.IsStatic
+							&& p.GetIndexParameters().Length == 0
+							&& !p.GetCustomAttributes(typeof(ObsoleteAttribute)).Any()
+							&& !p.GetMethod.GetCustomAttributes(typeof(ObsoleteAttribute)).Any()
+						)
 #if XUNIT_NULLABLE
 						.Select(p => new { name = p.Name, getter = (Func<object?, object?>)p.GetValue });
 #else
@@ -307,7 +318,7 @@ namespace Xunit.Internal
 #endif
 			bool strict)
 		{
-			return VerifyEquivalence(expected, actual, strict, string.Empty, new HashSet<object>(), new HashSet<object>(), 1);
+			return VerifyEquivalence(expected, actual, strict, string.Empty, new HashSet<object>(referenceEqualityComparer), new HashSet<object>(referenceEqualityComparer), 1);
 		}
 
 #if XUNIT_NULLABLE
@@ -614,5 +625,25 @@ namespace Xunit.Internal
 		}
 
 #endif
+	}
+
+	sealed class ReferenceEqualityComparer : IEqualityComparer<object>
+	{
+		public new bool Equals(
+#if XUNIT_NULLABLE
+			object? x,
+			object? y) =>
+#else
+			object x,
+			object y) =>
+#endif
+				ReferenceEquals(x, y);
+
+#if XUNIT_NULLABLE
+		public int GetHashCode([DisallowNull] object obj) =>
+#else
+		public int GetHashCode(object obj) =>
+#endif
+			obj.GetHashCode();
 	}
 }

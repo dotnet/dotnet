@@ -24,7 +24,9 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links
             AkaMSLinkManager manager;
             if (!string.IsNullOrEmpty(ClientCertificate))
             {
+#pragma warning disable SYSLIB0057 // https://github.com/dotnet/arcade/issues/14936
                 manager = new AkaMSLinkManager(ClientId, new X509Certificate2(Convert.FromBase64String(File.ReadAllText(ClientCertificate))), Tenant, Log);
+#pragma warning restore
             }
             else if (!string.IsNullOrEmpty(ClientSecret))
             {

@@ -964,8 +964,8 @@ There are a few common parameters available on every command:
   checked. This setting overrides whatever GitHub PAT was provided through
   `darc authenticate`.
 - `--azdev-pat` - Personal access token used to authenticate to Azure DevOps.
-  This token should have Code Read permissions. This setting overrides whatever
-  Azure DevOps PAT was provided through `darc authenticate`.
+  This token should have Build Execute and Code Read permissions. This setting overrides whatever
+  Azure DevOps PAT was provided through `darc authenticate`. If no PAT is set, local credentials are used.
 - `--bar-uri` - URI of the build asset registry service to use.  Typically left
   as its default (https://maestro.dot.net) This setting
   overrides the Build Asset Registry URI provided through `darc authenticate`.
