@@ -24,7 +24,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/command-line-api`  
 *[dotnet/command-line-api@803d859](https://github.com/dotnet/command-line-api/tree/803d8598f98fb4efd94604b32627ee9407f246db)*
 - `src/deployment-tools`  
-*[dotnet/deployment-tools@790d2fd](https://github.com/dotnet/deployment-tools/tree/790d2fd96379448c91306c67768b41521a4c130f)*
+*[dotnet/deployment-tools@6935df1](https://github.com/dotnet/deployment-tools/tree/6935df19a5042d9e0c286122973a76ef7c66242b)*
 - `src/diagnostics`  
 *[dotnet/diagnostics@33d8bf2](https://github.com/dotnet/diagnostics/tree/33d8bf23a6566cd3fb9055acfc9f1141391d5421)*
 - `src/efcore`  
@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@54700bb](https://github.com/dotnet/scenario-tests/tree/54700bbee86f660d37bd519a905b62bb50adc8c8)*
 - `src/sdk`  
-*[dotnet/sdk@2761a3f](https://github.com/dotnet/sdk/tree/2761a3f990e9f15754d3ffbe138521e5411b9422)*
+*[dotnet/sdk@4a66665](https://github.com/dotnet/sdk/tree/4a66665b132e59edbd0e6722049cba614d3fc272)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@26c52d0](https://github.com/dotnet/source-build-externals/tree/26c52d02b67816269e647cc584f6b5db9a91970f)*
     - `src/source-build-externals/src/abstractions-xunit`  

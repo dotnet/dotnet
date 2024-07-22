@@ -272,13 +272,6 @@
       ]
     },
     {
-      "_justification": "Common infrastructure.",
-      "file": [
-        "/src/deployment-tools/eng/common/internal-feed-operations.ps1",
-        "/src/deployment-tools/eng/common/internal-feed-operations.sh"
-      ]
-    },
-    {
       "_justification": "New certificate file with private key used only for testing",
       "file": [
         "/src/msbuild/src/Tasks.UnitTests/TestResources/mycert.pfx"
