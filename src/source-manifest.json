@@ -103,10 +103,10 @@
       "commitSha": "08338fcaa5c9b9a8190abb99222fed12aaba956c"
     },
     {
-      "packageVersion": "8.0.108-servicing.24367.16",
+      "packageVersion": "8.0.108-servicing.24369.10",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "d5cd19d7e39ec04e07a98bc663f82552b780f633"
+      "commitSha": "0ea3de9bc7ffabcdcb090eee475eae763e42dd89"
     },
     {
       "packageVersion": "8.0.0-alpha.1.24361.1",
