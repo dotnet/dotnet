@@ -58,8 +58,12 @@ internal class RemoteDocumentSnapshot(TextDocument textDocument, RemoteProjectSn
 
         var projectEngine = _projectSnapshot.GetProjectEngine_CohostOnly();
         var tagHelpers = await _projectSnapshot.GetTagHelpersAsync(CancellationToken.None).ConfigureAwait(false);
-        var imports = await DocumentState.ComputedStateTracker.GetImportsAsync(this, projectEngine).ConfigureAwait(false);
-        _codeDocument = await DocumentState.ComputedStateTracker.GenerateCodeDocumentAsync(tagHelpers, projectEngine, this, imports).ConfigureAwait(false);
+        var imports = await DocumentState.GetImportsAsync(this, projectEngine).ConfigureAwait(false);
+
+        // TODO: Get the configuration for forceRuntimeCodeGeneration
+        // var forceRuntimeCodeGeneration = _projectSnapshot.Configuration.LanguageServerFlags?.ForceRuntimeCodeGeneration ?? false;
+
+        _codeDocument = await DocumentState.GenerateCodeDocumentAsync(tagHelpers, projectEngine, this, imports, forceRuntimeCodeGeneration: false).ConfigureAwait(false);
 
         return _codeDocument;
     }

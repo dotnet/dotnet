@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.LanguageClient.Extensions;
@@ -63,13 +64,13 @@ internal class CohostUriPresentationEndpoint(
 
     private async Task<WorkspaceEdit?> HandleRequestAsync(VSInternalUriPresentationParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        var data = await _remoteServiceInvoker.TryInvokeAsync<IRemoteUriPresentationService, IRemoteUriPresentationService.Response>(
+        var data = await _remoteServiceInvoker.TryInvokeAsync<IRemoteUriPresentationService, RemoteResponse<TextChange?>>(
                     razorDocument.Project.Solution,
                     (service, solutionInfo, cancellationToken) => service.GetPresentationAsync(solutionInfo, razorDocument.Id, request.Range.ToLinePositionSpan(), request.Uris, cancellationToken),
                     cancellationToken).ConfigureAwait(false);
 
         // If we got a response back, then we're good to go
-        if (data.TextChange is { } textChange)
+        if (data.Result is { } textChange)
         {
             var sourceText = await razorDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
 
@@ -90,7 +91,7 @@ internal class CohostUriPresentationEndpoint(
         }
 
         // If we didn't get anything from our logic, we might need to go and ask Html, but we also might have determined not to
-        if (!data.CallHtml)
+        if (data.StopHandling)
         {
             return null;
         }
