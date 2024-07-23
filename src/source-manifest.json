@@ -79,10 +79,10 @@
       "commitSha": "27e921a6992ebe18d44fe59ffb860f032cd9f98a"
     },
     {
-      "packageVersion": "4.12.0-1.24372.10",
+      "packageVersion": "4.12.0-1.24372.18",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "9d7489b84a998578f62fadb382550bf71c078397"
+      "commitSha": "aea9e82da403c397265f7fd0fefee5ebbb886179"
     },
     {
       "packageVersion": "3.11.0-beta1.24324.1",
