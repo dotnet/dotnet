@@ -59,22 +59,22 @@
       </trans-unit>
       <trans-unit id="Contains_more_than_one_element">
         <source>Contains more than one element</source>
-        <target state="new">Contains more than one element</target>
+        <target state="translated">Obsahuje více než jeden prvek.</target>
         <note />
       </trans-unit>
       <trans-unit id="Contains_more_than_one_matching_element">
         <source>Contains more than one matching element</source>
-        <target state="new">Contains more than one matching element</target>
+        <target state="translated">Obsahuje více než jeden odpovídající prvek.</target>
         <note />
       </trans-unit>
       <trans-unit id="Contains_no_elements">
         <source>Contains no elements</source>
-        <target state="new">Contains no elements</target>
+        <target state="translated">Neobsahuje žádné prvky.</target>
         <note />
       </trans-unit>
       <trans-unit id="Contains_no_matching_elements">
         <source>Contains no matching elements</source>
-        <target state="new">Contains no matching elements</target>
+        <target state="translated">Neobsahuje žádné odpovídající prvky.</target>
         <note />
       </trans-unit>
       <trans-unit id="Destination_is_too_short">
