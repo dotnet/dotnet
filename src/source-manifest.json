@@ -13,10 +13,10 @@
       "commitSha": "a6e341ebbf956bbcec0dda304109815fcbae70c9"
     },
     {
-      "packageVersion": "9.0.0-preview.7.24369.10",
+      "packageVersion": "9.0.0-preview.7.24372.9",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "0e1746baca1748e2d197b17533af6e122dcfdc28"
+      "commitSha": "ed7ea4042be01dad1d45397173df5a3738a2e650"
     },
     {
       "packageVersion": "0.11.5-alpha.24324.1",
@@ -182,6 +182,11 @@
     }
   ],
   "submodules": [
+    {
+      "path": "aspnetcore/src/submodules/BlazorMinifiedJs",
+      "remoteUri": "https://github.com/dotnet/BlazorMinifiedJs",
+      "commitSha": "42f116d7c126fe087db17b15c8365c27616e1acb"
+    },
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
