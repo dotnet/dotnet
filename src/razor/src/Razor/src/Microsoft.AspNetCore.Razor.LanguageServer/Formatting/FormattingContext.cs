@@ -266,7 +266,7 @@ internal class FormattingContext : IDisposable
 
         var changedSnapshot = OriginalSnapshot.WithText(changedText);
 
-        var codeDocument = await changedSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
+        var codeDocument = await changedSnapshot.GetFormatterCodeDocumentAsync().ConfigureAwait(false);
 
         DEBUG_ValidateComponents(CodeDocument, codeDocument);
 
