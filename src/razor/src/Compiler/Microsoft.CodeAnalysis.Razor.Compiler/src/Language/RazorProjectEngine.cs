@@ -52,7 +52,7 @@ public class RazorProjectEngine
 
     public RazorCodeDocument Process(
         RazorSourceDocument source,
-        string fileKind,
+        string? fileKind,
         ImmutableArray<RazorSourceDocument> importSources,
         IReadOnlyList<TagHelperDescriptor> tagHelpers)
     {
@@ -109,9 +109,7 @@ public class RazorProjectEngine
             throw new ArgumentNullException(nameof(projectItem));
         }
 
-        var codeDocument = Configuration.LanguageServerFlags?.ForceRuntimeCodeGeneration == true
-            ? CreateCodeDocumentCore(projectItem)
-            : CreateCodeDocumentDesignTimeCore(projectItem);
+        var codeDocument = CreateCodeDocumentDesignTimeCore(projectItem);
         ProcessCore(codeDocument);
         return codeDocument;
     }
@@ -127,9 +125,7 @@ public class RazorProjectEngine
             throw new ArgumentNullException(nameof(source));
         }
 
-        var codeDocument = Configuration.LanguageServerFlags?.ForceRuntimeCodeGeneration == true
-            ? CreateCodeDocumentCore(source, fileKind, importSources, tagHelpers, configureParser: null, configureCodeGeneration: null)
-            : CreateCodeDocumentDesignTimeCore(source, fileKind, importSources, tagHelpers, configureParser: null, configureCodeGeneration: null);
+        var codeDocument = CreateCodeDocumentDesignTimeCore(source, fileKind, importSources, tagHelpers, configureParser: null, configureCodeGeneration: null);
         ProcessCore(codeDocument);
         return codeDocument;
     }

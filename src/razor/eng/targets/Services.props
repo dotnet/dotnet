@@ -23,5 +23,6 @@
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.UriPresentation" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteUriPresentationService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.FoldingRange" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteFoldingRangeService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.SignatureHelp" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteSignatureHelpService+Factory" />
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.DocumentHighlight" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteDocumentHighlightService+Factory" />
   </ItemGroup>
 </Project>

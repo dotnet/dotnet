@@ -5,6 +5,7 @@ using System;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
+using RLSP = Roslyn.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
@@ -108,6 +109,9 @@ internal static class RangeExtensions
         => sourceText.GetTextSpan(range.Start.Line, range.Start.Character, range.End.Line, range.End.Character);
 
     public static LinePositionSpan ToLinePositionSpan(this Range range)
+        => new LinePositionSpan(range.Start.ToLinePosition(), range.End.ToLinePosition());
+
+    public static LinePositionSpan ToLinePositionSpan(this RLSP.Range range)
         => new LinePositionSpan(range.Start.ToLinePosition(), range.End.ToLinePosition());
 
     public static bool IsUndefined(this Range range)

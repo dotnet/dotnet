@@ -50,6 +50,12 @@ public static class TestProject
         return projectDirectory;
     }
 
+    public static string GetRepoRoot(bool useCurrentDirectory = false)
+    {
+        var baseDir = useCurrentDirectory ? Directory.GetCurrentDirectory() : AppContext.BaseDirectory;
+        return SearchUp(baseDir, "global.json");
+    }
+
     public static string GetProjectDirectory(Type type, Layer layer, bool useCurrentDirectory = false)
     {
         var baseDir = useCurrentDirectory ? Directory.GetCurrentDirectory() : AppContext.BaseDirectory;
@@ -57,8 +63,8 @@ public static class TestProject
         var repoRoot = SearchUp(baseDir, "global.json");
         var assemblyName = type.Assembly.GetName().Name;
         var projectDirectory = layer == Layer.Compiler
-            ?  Path.Combine(repoRoot, "src", layerFolderName, assemblyName, "test")
-            :  Path.Combine(repoRoot, "src", layerFolderName, "test", assemblyName);
+            ? Path.Combine(repoRoot, "src", layerFolderName, assemblyName, "test")
+            : Path.Combine(repoRoot, "src", layerFolderName, "test", assemblyName);
 
         if (string.Equals(assemblyName, "Microsoft.AspNetCore.Razor.Language.Test", StringComparison.Ordinal))
         {

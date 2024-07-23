@@ -5,7 +5,8 @@
       "dotnet": [
         "2.1.30",
         "$(MicrosoftNETCoreBrowserDebugHostTransportPackageVersion)",
-        "3.1.30"
+        "3.1.30",
+        "8.0.7"
       ]
     },
     "vs": {

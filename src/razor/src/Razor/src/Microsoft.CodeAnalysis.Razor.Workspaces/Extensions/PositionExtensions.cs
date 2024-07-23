@@ -7,12 +7,16 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using RLSP = Roslyn.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
 internal static class PositionExtensions
 {
     public static LinePosition ToLinePosition(this Position position)
+        => new LinePosition(position.Line, position.Character);
+
+    public static LinePosition ToLinePosition(this RLSP.Position position)
         => new LinePosition(position.Line, position.Character);
 
     public static bool TryGetAbsoluteIndex(this Position position, SourceText sourceText, ILogger? logger, out int absoluteIndex)
