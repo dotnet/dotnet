@@ -944,49 +944,23 @@ internal sealed partial class SolutionState
     }
 
     /// <summary>
-    /// Creates a new solution instance with the document specified updated to have the specified name.
+    /// Creates a new solution instance with an attribute of the document updated, if its value has changed.
     /// </summary>
-    public StateChange WithDocumentName(DocumentId documentId, string name)
+    public StateChange WithDocumentAttributes<TArg>(
+        DocumentId documentId,
+        TArg arg,
+        Func<DocumentInfo.DocumentAttributes, TArg, DocumentInfo.DocumentAttributes> updateAttributes)
     {
         var oldDocument = GetRequiredDocumentState(documentId);
-        if (oldDocument.Attributes.Name == name)
+
+        var newDocument = oldDocument.WithAttributes(updateAttributes(oldDocument.Attributes, arg));
+        if (ReferenceEquals(oldDocument, newDocument))
         {
             var oldProject = GetRequiredProjectState(documentId.ProjectId);
             return new(this, oldProject, oldProject);
         }
 
-        return UpdateDocumentState(oldDocument.UpdateName(name), contentChanged: false);
-    }
-
-    /// <summary>
-    /// Creates a new solution instance with the document specified updated to be contained in
-    /// the sequence of logical folders.
-    /// </summary>
-    public StateChange WithDocumentFolders(DocumentId documentId, IReadOnlyList<string> folders)
-    {
-        var oldDocument = GetRequiredDocumentState(documentId);
-        if (oldDocument.Folders.SequenceEqual(folders))
-        {
-            var oldProject = GetRequiredProjectState(documentId.ProjectId);
-            return new(this, oldProject, oldProject);
-        }
-
-        return UpdateDocumentState(oldDocument.UpdateFolders(folders), contentChanged: false);
-    }
-
-    /// <summary>
-    /// Creates a new solution instance with the document specified updated to have the specified file path.
-    /// </summary>
-    public StateChange WithDocumentFilePath(DocumentId documentId, string? filePath)
-    {
-        var oldDocument = GetRequiredDocumentState(documentId);
-        if (oldDocument.FilePath == filePath)
-        {
-            var oldProject = GetRequiredProjectState(documentId.ProjectId);
-            return new(this, oldProject, oldProject);
-        }
-
-        return UpdateDocumentState(oldDocument.UpdateFilePath(filePath), contentChanged: false);
+        return UpdateDocumentState(newDocument, contentChanged: false);
     }
 
     /// <summary>
@@ -1163,7 +1137,7 @@ internal sealed partial class SolutionState
 
     private StateChange UpdateAdditionalDocumentState(AdditionalDocumentState newDocument, bool contentChanged)
     {
-        var oldProject = GetProjectState(newDocument.Id.ProjectId)!;
+        var oldProject = GetRequiredProjectState(newDocument.Id.ProjectId);
         var newProject = oldProject.UpdateAdditionalDocument(newDocument, contentChanged);
 
         // This method shouldn't have been called if the document has not changed.
@@ -1174,7 +1148,7 @@ internal sealed partial class SolutionState
 
     private StateChange UpdateAnalyzerConfigDocumentState(AnalyzerConfigDocumentState newDocument)
     {
-        var oldProject = GetProjectState(newDocument.Id.ProjectId)!;
+        var oldProject = GetRequiredProjectState(newDocument.Id.ProjectId);
         var newProject = oldProject.UpdateAnalyzerConfigDocument(newDocument);
 
         // This method shouldn't have been called if the document has not changed.
