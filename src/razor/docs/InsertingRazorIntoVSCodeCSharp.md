@@ -41,7 +41,7 @@ When ready to insert you will follow the steps listed in each below section in o
 4. Find the "defaults.razor" property.
 5. Update the value of that property to the version you found in the CI build
 6. Run `npm i' to install tools needed locally
-7. Run `npx gulp updateRazorDependencies` to download the nuget packages for all platforms and make sure they are available in the downstream nuget feed.
+7. Run `npx gulp updateRazorVersion` to download the nuget packages for all platforms and make sure they are available in the downstream nuget feed.
     - This is the step that will fail if you do not have the correct dependencies. Likely you'll get a 401 from the nuget command trying to pull the packages from upstream.
 8. Update `CHANGELOG.md` with the changes from these updates.
 9. Commit all files, push your branch, and create a PR.
