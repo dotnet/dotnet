@@ -14,7 +14,7 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.Internal.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
@@ -146,14 +146,14 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
         Assumes.Present(settingsManager);
 
         var useLegacyEditor = settingsManager.GetValueOrDefault<bool>(WellKnownSettingNames.UseLegacyASPNETCoreEditor);
-        Assert.AreEqual(false, useLegacyEditor, "Expected the Legacy Razor Editor to be disabled, but it was enabled");
+        Assert.False(useLegacyEditor, "Expected the Legacy Razor Editor to be disabled, but it was enabled");
     }
 
     private async Task EnsureTextViewRolesAsync(CancellationToken cancellationToken)
     {
         var textView = await TestServices.Editor.GetActiveTextViewAsync(cancellationToken);
         var contentType = textView.TextSnapshot.ContentType;
-        Assert.AreEqual("Razor", contentType.TypeName);
+        Assert.Equal("Razor", contentType.TypeName);
     }
 
     private async Task EnsureExtensionInstalledAsync(CancellationToken cancellationToken)

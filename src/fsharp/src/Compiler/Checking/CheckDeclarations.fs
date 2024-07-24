@@ -428,6 +428,7 @@ module TcRecdUnionAndEnumDeclarations =
         let g = cenv.g
         let m = id.idRange
         let attrs, _ = TcAttributesWithPossibleTargets false cenv env AttributeTargets.FieldDecl synAttrs
+
         let attrsForProperty, attrsForField = attrs |> List.partition (fun (attrTargets, _) -> (attrTargets &&& AttributeTargets.Property) <> enum 0) 
         let attrsForProperty = (List.map snd attrsForProperty) 
         let attrsForField = (List.map snd attrsForField)
@@ -776,7 +777,7 @@ module AddAugmentationDeclarations =
             let tcaug = tycon.TypeContents
             let ty = if tcref.Deref.IsFSharpException then g.exn_ty else generalizedTyconRef g tcref
             let m = tycon.Range
-            let genericIComparableTy = mkAppTy g.system_GenericIComparable_tcref [ty]
+            let genericIComparableTy = mkWoNullAppTy g.system_GenericIComparable_tcref [ty]
 
 
             let hasExplicitIComparable = tycon.HasInterface g g.mk_IComparable_ty 
@@ -866,7 +867,7 @@ module AddAugmentationDeclarations =
             let m = tycon.Range
 
             // Note: tycon.HasOverride only gives correct results after we've done the type augmentation 
-            let hasExplicitObjectEqualsOverride = tycon.HasOverride g "Equals" [g.obj_ty]
+            let hasExplicitObjectEqualsOverride = tycon.HasOverride g "Equals" [g.obj_ty_ambivalent]
             let hasExplicitGenericIEquatable = tcaugHasNominalInterface g tcaug g.system_GenericIEquatable_tcref
 
             if hasExplicitGenericIEquatable then 
@@ -880,7 +881,7 @@ module AddAugmentationDeclarations =
                  let vspec1, vspec2 = AugmentTypeDefinitions.MakeValsForEqualsAugmentation g tcref
                  tcaug.SetEquals (mkLocalValRef vspec1, mkLocalValRef vspec2)
                  if not tycon.IsFSharpException then 
-                    PublishInterface cenv env.DisplayEnv tcref m true (mkAppTy g.system_GenericIEquatable_tcref [ty])
+                    PublishInterface cenv env.DisplayEnv tcref m true (mkWoNullAppTy g.system_GenericIEquatable_tcref [ty])
                  PublishValueDefn cenv env ModuleOrMemberBinding vspec1
                  PublishValueDefn cenv env ModuleOrMemberBinding vspec2
                  AugmentTypeDefinitions.MakeBindingsForEqualsAugmentation g tycon
@@ -1591,7 +1592,7 @@ module MutRecBindingChecking =
                             if tcref.IsStructOrEnumTycon then 
                                 Some (incrCtorInfo, mkUnit g tcref.Range, false), defnCs
                             else
-                                let inheritsExpr, _ = TcNewExpr cenv envForDecls tpenv g.obj_ty None true (SynExpr.Const (SynConst.Unit, tcref.Range)) tcref.Range
+                                let inheritsExpr, _ = TcNewExpr cenv envForDecls tpenv g.obj_ty_noNulls None true (SynExpr.Const (SynConst.Unit, tcref.Range)) tcref.Range
 
                                 // If there is no 'inherits' and no simple non-static 'let' of a non-method then add a debug point at the entry to the constructor over the type name itself.
                                 let addDebugPointAtImplicitCtorArguments =
@@ -1973,8 +1974,8 @@ let TcMutRecDefns_Phase2 (cenv: cenv) envInitial mBinds scopem mutRecNSInfo (env
                   
                   if (generatedCompareToValues && typeEquiv g intfTyR g.mk_IComparable_ty) || 
                       (generatedCompareToWithComparerValues && typeEquiv g intfTyR g.mk_IStructuralComparable_ty) ||
-                      (generatedCompareToValues && typeEquiv g intfTyR (mkAppTy g.system_GenericIComparable_tcref [ty])) ||
-                      (generatedHashAndEqualsWithComparerValues && typeEquiv g intfTyR (mkAppTy g.system_GenericIEquatable_tcref [ty])) ||
+                      (generatedCompareToValues && typeEquiv g intfTyR (mkWoNullAppTy g.system_GenericIComparable_tcref [ty])) ||
+                      (generatedHashAndEqualsWithComparerValues && typeEquiv g intfTyR (mkWoNullAppTy g.system_GenericIEquatable_tcref [ty])) ||
                       (generatedHashAndEqualsWithComparerValues && typeEquiv g intfTyR g.mk_IStructuralEquatable_ty) then
                       errorR(Error(FSComp.SR.tcDefaultImplementationForInterfaceHasAlreadyBeenAdded(), intfTy.Range))
            
@@ -2840,6 +2841,7 @@ module EstablishTypeDefinitionCores =
         // Allow failure of constructor resolution because Vals for members in the same recursive group are not yet available
         let attrs, getFinalAttrs = TcAttributesCanFail cenv envinner AttributeTargets.TyconDecl synAttrs
         let hasMeasureAttr = HasFSharpAttribute g g.attrib_MeasureAttribute attrs
+        let hasStructAttr = HasFSharpAttribute g g.attrib_StructAttribute attrs
 
         let isStructRecordOrUnionType = 
             match synTyconRepr with
@@ -2877,6 +2879,12 @@ module EstablishTypeDefinitionCores =
 
                 // Run InferTyconKind to raise errors on inconsistent attribute sets
                 InferTyconKind g (SynTypeDefnKind.Union, attrs, [], [], inSig, true, m) |> ignore
+                
+                if g.langVersion.SupportsFeature(LanguageFeature.EnforceAttributeTargets) then
+                    if hasStructAttr then
+                        TcAttributesWithPossibleTargets false cenv envinner AttributeTargets.Struct synAttrs |> ignore
+                    else
+                        TcAttributesWithPossibleTargets false cenv envinner AttributeTargets.Class synAttrs |> ignore
 
                 // Note: the table of union cases is initially empty
                 Construct.MakeUnionRepr []
@@ -2896,6 +2904,12 @@ module EstablishTypeDefinitionCores =
 
                 // Run InferTyconKind to raise errors on inconsistent attribute sets
                 InferTyconKind g (SynTypeDefnKind.Record, attrs, [], [], inSig, true, m) |> ignore
+                
+                if g.langVersion.SupportsFeature(LanguageFeature.EnforceAttributeTargets) then
+                    if hasStructAttr then
+                        TcAttributesWithPossibleTargets false cenv envinner AttributeTargets.Struct synAttrs |> ignore
+                    else
+                        TcAttributesWithPossibleTargets false cenv envinner AttributeTargets.Class synAttrs |> ignore
 
                 // Note: the table of record fields is initially empty
                 TFSharpTyconRepr (Construct.NewEmptyFSharpTyconData TFSharpRecord)
@@ -3297,7 +3311,7 @@ module EstablishTypeDefinitionCores =
                           if isTyparTy g ty then 
                               if firstPass then 
                                   errorR(Error(FSComp.SR.tcCannotInheritFromVariableType(), m)) 
-                              Some g.obj_ty // a "super" that is a variable type causes grief later
+                              Some g.obj_ty_noNulls // a "super" that is a variable type causes grief later
                           else                          
                               Some ty 
                       | _ -> 
@@ -3312,7 +3326,7 @@ module EstablishTypeDefinitionCores =
                   super |> Option.map (fun ty -> 
                      if isFunTy g ty then  
                          let a,b = destFunTy g ty
-                         mkAppTy g.fastFunc_tcr [a; b] 
+                         mkWoNullAppTy g.fastFunc_tcr [a; b] 
                      else ty)
 
               // Publish the super type
@@ -3362,7 +3376,6 @@ module EstablishTypeDefinitionCores =
                 if hasAllowNullLiteralAttr then 
                     tycon.TypeContents.tcaug_super |> Option.iter (fun ty -> if not (TypeNullIsExtraValue g m ty) then errorR (Error(FSComp.SR.tcAllowNullTypesMayOnlyInheritFromAllowNullTypes(), m)))
                     tycon.ImmediateInterfaceTypesOfFSharpTycon |> List.iter (fun ty -> if not (TypeNullIsExtraValue g m ty) then errorR (Error(FSComp.SR.tcAllowNullTypesMayOnlyInheritFromAllowNullTypes(), m)))
-                
                 
             let structLayoutAttributeCheck allowed = 
                 let explicitKind = int32 System.Runtime.InteropServices.LayoutKind.Explicit
@@ -3715,7 +3728,7 @@ module EstablishTypeDefinitionCores =
             // validate ConditionalAttribute, should it be applied (it's only valid on a type if the type is an attribute type)
             match attrs |> List.tryFind (IsMatchingFSharpAttribute g g.attrib_ConditionalAttribute) with
             | Some _ ->
-                if not(ExistsInEntireHierarchyOfType (fun t -> typeEquiv g t (mkAppTy g.tcref_System_Attribute [])) g cenv.amap m AllowMultiIntfInstantiations.Yes thisTy) then
+                if not(ExistsInEntireHierarchyOfType (fun t -> typeEquiv g t (mkWoNullAppTy g.tcref_System_Attribute [])) g cenv.amap m AllowMultiIntfInstantiations.Yes thisTy) then
                     errorR(Error(FSComp.SR.tcConditionalAttributeUsage(), m))
             | _ -> ()         
                    
