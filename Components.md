@@ -54,7 +54,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@0d7a9fe](https://github.com/dotnet/sdk/tree/0d7a9fec222f4b9e4683f0345102de06fac4a023)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@26c52d0](https://github.com/dotnet/source-build-externals/tree/26c52d02b67816269e647cc584f6b5db9a91970f)*
+*[dotnet/source-build-externals@220c684](https://github.com/dotnet/source-build-externals/tree/220c6842488eb669f80b40d7de251a44dd183e9d)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  
