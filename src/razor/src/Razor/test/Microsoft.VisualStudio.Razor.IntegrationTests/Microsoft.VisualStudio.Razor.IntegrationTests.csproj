@@ -6,7 +6,7 @@
     <RootNamespace>Microsoft.VisualStudio.Razor.IntegrationTests</RootNamespace>
 
     <!-- Must use "dotnet test" to get blame-hang options -->
-    <TestRunnerName>MSTest</TestRunnerName>
+    <UseVSTestRunner>true</UseVSTestRunner>
     <TestRunnerAdditionalArguments>"--blame-hang-dump-type:full" "--blame-hang-timeout:20m"</TestRunnerAdditionalArguments>
   </PropertyGroup>
 
@@ -39,19 +39,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" />
     <PackageReference Include="NuGet.VisualStudio" />
     <PackageReference Include="Microsoft.Internal.VisualStudio.Shell.Framework" />
-    <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.utility" />
-
-    <!--
-      We need to reference XUnit, but Arcade won't import it because the test runner above is MSTest,
-      and we can't just reference the package we need because they are implicit references in Arcade
-      for other projects, and CPM doesn't play nicely with those. We could try to manually import
-      the Arcade XUnit.targets file, but finding that file is a pain, so instead we can just manually
-      import the package ourselves, but as an implicit definition to stop Nuget complaining.
-      TL;DR: MSBuild was designed to cause pain.
-    -->
     <PackageReference Include="xunit.runner.console" Version="$(XUnitRunnerConsoleVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="$(XUnitRunnerVisualStudioVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
   </ItemGroup>
 
   <ItemGroup>
