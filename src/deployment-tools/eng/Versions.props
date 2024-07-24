@@ -14,7 +14,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Runtime dependencies -->
-    <SystemTextJsonVersion>8.0.4</SystemTextJsonVersion>
+    <SystemTextJsonVersion>8.0.3</SystemTextJsonVersion>
     <SystemSecurityCryptographyXmlVersion>8.0.0</SystemSecurityCryptographyXmlVersion>
     <!-- MSBuild dependencies -->
     <MicrosoftBuildTasksCoreVersion>17.8.3</MicrosoftBuildTasksCoreVersion>
