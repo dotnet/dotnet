@@ -111,7 +111,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
         newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
     }
     
-    //[Theory]
+    [Theory]
     [InlineData(DotNetLanguage.CSharp)]
     [InlineData(DotNetLanguage.VB)]
     [Trait("Category", "Offline")]
@@ -218,7 +218,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
         newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot, "wasm-tools");
     }
 
-    //[Fact]
+    [Fact(Skip="https://github.com/dotnet/scenario-tests/issues/103")]
     [Trait("Category", "Workload")]
     [Trait("Category", "InProgress")]
     public void VerifyAspireTemplate()
