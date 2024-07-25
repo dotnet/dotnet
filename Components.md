@@ -12,11 +12,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@a6e341e](https://github.com/dotnet/aspire/tree/a6e341ebbf956bbcec0dda304109815fcbae70c9)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@e7fa345](https://github.com/dotnet/aspnetcore/tree/e7fa345782a0e705c05a863f11a131dbff06265d)*
+*[dotnet/aspnetcore@d98caa8](https://github.com/dotnet/aspnetcore/tree/d98caa89946c95d1a283ac11d4d2d060539eb604)*
     - `src/aspnetcore/src/submodules/BlazorMinifiedJs`  
     *[dotnet/BlazorMinifiedJs@4cc83c3](https://github.com/dotnet/BlazorMinifiedJs/tree/4cc83c376bb0d472d0c923a45f7dec7af6426d4c)*
     - `src/aspnetcore/src/submodules/googletest`  
-    *[google/googletest@b4aaf97](https://github.com/google/googletest/tree/b4aaf97d8f7eaffab79aa15e10a91b331b941fe2)*
+    *[google/googletest@9ff2450](https://github.com/google/googletest/tree/9ff2450a56aed4f7f124f5104d9e3088bf791ee9)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
     *[aspnet/MessagePack-CSharp@ecc4e18](https://github.com/aspnet/MessagePack-CSharp/tree/ecc4e18ad7a0c7db51cd7e3d2997a291ed01444d)*
     - `src/aspnetcore/src/submodules/Node-Externals`  
