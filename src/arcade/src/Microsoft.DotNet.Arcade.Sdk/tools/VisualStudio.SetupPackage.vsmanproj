@@ -24,7 +24,7 @@
     <ImportDirectoryBuildTargets>false</ImportDirectoryBuildTargets>
   </PropertyGroup>
 
-  <Import Project="$(SwixBuildPath)build\MicroBuild.Plugins.*.props" />
+  <Import Project="$(SwixBuildPath)build\MicroBuild.Plugins.*.props" Condition="'$(SwixBuildPath)' != ''" />
 
   <PropertyGroup>
     <FinalizeManifest>true</FinalizeManifest>
@@ -44,7 +44,7 @@
     <_PackageStubFiles Include="$(ComponentIntermediateOutputPath)*.stub"/>
   </ItemGroup>
 
-  <Import Project="$(SwixBuildPath)build\Microsoft.VisualStudioEng.MicroBuild.Plugins.SwixBuild.targets" />
+  <Import Project="$(SwixBuildPath)build\Microsoft.VisualStudioEng.MicroBuild.Plugins.SwixBuild.targets" Condition="'$(SwixBuildPath)' != ''" />
 
   <Target Name="_BuildManifest" DependsOnTargets="_GetVsixFileInfo;_GenerateSbomForVsixAndAddManifestItem;_GenerateVSManifest;GenerateSetupManifest" />
 
@@ -99,6 +99,9 @@
           DependsOnTargets="_GetVsixFileInfo"
           Condition="'$(GenerateSbom)' != 'false'">
     <Message Text="Generating SBOM manifest for '%(_VsixFileInfo.Identity)'" Importance="high"/>
+
+    <Error Text="Internal tool not found: 'microsoft.manifesttool.crossplatform'. Run restore on '$(RepositoryEngineeringDir)common\internal\Tools.csproj'."
+           Condition="!Exists('$(ManifestTool)')" />
 
     <MakeDir Directories="%(_VsixFileInfo.SbomDir);%(_VsixFileInfo.UnpackDir)"/>
     <Copy SourceFiles="%(_VsixFileInfo.VsixPath)" DestinationFolder="%(_VsixFileInfo.UnpackDir)" Condition = "'%(_VsixFileInfo.Extension)' == '.exe'" />
