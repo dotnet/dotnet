@@ -41,7 +41,7 @@ packages are for exceptional cases only and require approval from
 [dotnet/source-build-internal](https://github.com/orgs/dotnet/teams/source-build-internal).
 
 **Note:** Reference packages should only be added to this repo if they are required during the product
-source build (e.g. a [VMR](https://github.com/dotnet/dotnet) build). Reference packages that are only 
+source build (e.g. a [VMR](https://github.com/dotnet/dotnet) build). Reference packages that are only
 required for building a repo level source build should not be added to this repo. In this case, it is
 appropriate to add these types of package as allowed prebuilt via the `eng/SourceBuildPrebuiltBaseline.xml`
 file. See the [Eliminating pre-builts documentation](https://github.com/dotnet/source-build/blob/main/Documentation/eliminating-pre-builts.md)
@@ -110,13 +110,24 @@ packages were manually upgraded.
 
 ## Filing Issues
 
-This repo does not accept issues. Please file issues in 
+This repo does not accept issues. Please file issues in
 [dotnet/source-build](https://github.com/dotnet/source-build/issues/new/choose).
 
 ## Cleanup
 
-Periodically, a query is ran in a source-built environment to detect unused reference packages. These
-unreferenced packages will be deleted.
+Periodically, packages that are unreferenced by the product source build should be deleted. The number of
+unreferenced packages build up over time as the product repositories upgrade their dependencies to newer
+versions. Ideally this cleanup would be performed around RC1 timeframe as the product locks down in preparation
+for the GA release. To find which packages are unreferenced, you can run a VMR build with the `ReportSbrpUsage`
+option to generate an SBRP package usage report. The resulting report will be written to
+`artifacts/log/<configuration>/sbrpPackageUsage.json`.
+
+``` bash
+./build.sh -sb /p:ReportSbrpUsage=true
+```
+
+The VMR CI runs with the `ReportSbrpUsage` option set therefore you can grab the usage report from any build's
+artifacts.
 
 ## License
 
