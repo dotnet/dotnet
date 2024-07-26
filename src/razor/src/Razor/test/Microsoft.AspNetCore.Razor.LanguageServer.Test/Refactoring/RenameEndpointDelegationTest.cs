@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
@@ -73,14 +73,13 @@ public class RenameEndpointDelegationTest(ITestOutputHelper testOutput) : Single
             languageServer,
             LoggerFactory);
 
-        codeDocument.GetSourceText().GetLineAndOffset(cursorPosition, out var line, out var offset);
         var request = new RenameParams
         {
             TextDocument = new TextDocumentIdentifier
             {
                 Uri = new Uri(razorFilePath)
             },
-            Position = new Position(line, offset),
+            Position = codeDocument.Source.Text.GetPosition(cursorPosition),
             NewName = newName
         };
         Assert.True(DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument, out var documentContext));
@@ -90,8 +89,8 @@ public class RenameEndpointDelegationTest(ITestOutputHelper testOutput) : Single
         var result = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
-        var edits = result.DocumentChanges.Value.First.FirstOrDefault().Edits.Select(e => e.ToTextChange(codeDocument.GetSourceText()));
-        var newText = codeDocument.GetSourceText().WithChanges(edits).ToString();
+        var edits = result.DocumentChanges.Value.First.FirstOrDefault().Edits.Select(codeDocument.Source.Text.GetTextChange);
+        var newText = codeDocument.Source.Text.WithChanges(edits).ToString();
         Assert.Equal(expected, newText);
     }
 }

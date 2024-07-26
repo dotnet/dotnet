@@ -19,11 +19,7 @@ public class TextEditResponseRewriterTest(ITestOutputHelper testOutput)
         // Arrange
         var getCompletionsAt = 1;
         var documentContent = "<";
-        var textEditRange = new Range()
-        {
-            Start = new Position(0, 0),
-            End = new Position(0, 1),
-        };
+        var textEditRange = VsLspFactory.CreateSingleLineRange(start: (0, 0), length: 1);
         var delegatedCompletionList = GenerateCompletionList(textEditRange);
 
         // Act
@@ -40,18 +36,10 @@ public class TextEditResponseRewriterTest(ITestOutputHelper testOutput)
         // Arrange
         var getCompletionsAt = 1;
         var documentContent = "@DateTime";
-        var textEditRange = new Range()
-        {
-            // Line 19: __o = DateTime
-            Start = new Position(19, 6),
-            End = new Position(19, 14),
-        };
+        // Line 19: __o = DateTime
+        var textEditRange = VsLspFactory.CreateSingleLineRange(line: 19, character: 6, length: 8);
         var delegatedCompletionList = GenerateCompletionList(textEditRange);
-        var expectedRange = new Range()
-        {
-            Start = new Position(0, 1),
-            End = new Position(0, 9),
-        };
+        var expectedRange = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 8);
 
         // Act
         var rewrittenCompletionList = await GetRewrittenCompletionListAsync(
@@ -67,22 +55,14 @@ public class TextEditResponseRewriterTest(ITestOutputHelper testOutput)
         // Arrange
         var getCompletionsAt = 1;
         var documentContent = "@DateTime";
-        var textEditRange = new Range()
-        {
-            // Line 19: __o = DateTime
-            Start = new Position(19, 6),
-            End = new Position(19, 14),
-        };
+        // Line 19: __o = DateTime
+        var textEditRange = VsLspFactory.CreateSingleLineRange(line: 19, character: 6, length: 8);
         var delegatedCompletionList = GenerateCompletionList(textEditRange);
         delegatedCompletionList.ItemDefaults = new CompletionListItemDefaults()
         {
             EditRange = textEditRange,
         };
-        var expectedRange = new Range()
-        {
-            Start = new Position(0, 1),
-            End = new Position(0, 9),
-        };
+        var expectedRange = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 8);
 
         // Act
         var rewrittenCompletionList = await GetRewrittenCompletionListAsync(
@@ -96,17 +76,12 @@ public class TextEditResponseRewriterTest(ITestOutputHelper testOutput)
     {
         return new VSInternalCompletionList()
         {
-            Items = new[]
-            {
+            Items = [
                 new VSInternalCompletionItem()
                 {
-                    TextEdit = new TextEdit()
-                    {
-                        NewText = "Hello",
-                        Range = textEditRange,
-                    }
+                    TextEdit = VsLspFactory.CreateTextEdit(textEditRange, "Hello")
                 }
-            }
+            ]
         };
     }
 }

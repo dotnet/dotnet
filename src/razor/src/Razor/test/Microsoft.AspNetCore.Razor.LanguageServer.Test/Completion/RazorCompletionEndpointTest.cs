@@ -21,14 +21,14 @@ public class RazorCompletionEndpointTest(ITestOutputHelper testOutput) : Languag
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
         var optionsMonitor = GetOptionsMonitor();
-        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, telemetryReporter: null, optionsMonitor, LoggerFactory);
+        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, telemetryReporter: null, optionsMonitor);
         var request = new CompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()
             {
                 Uri = new Uri(documentPath)
             },
-            Position = new Position(0, 1),
+            Position = VsLspFactory.CreatePosition(0, 1),
             Context = new VSInternalCompletionContext(),
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -49,14 +49,14 @@ public class RazorCompletionEndpointTest(ITestOutputHelper testOutput) : Languag
         var uri = new Uri(documentPath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var optionsMonitor = GetOptionsMonitor(autoShowCompletion: false);
-        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, telemetryReporter: null, optionsMonitor, LoggerFactory);
+        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, telemetryReporter: null, optionsMonitor);
         var request = new CompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()
             {
                 Uri = uri
             },
-            Position = new Position(0, 1),
+            Position = VsLspFactory.CreatePosition(0, 1),
             Context = new VSInternalCompletionContext() { InvokeKind = VSInternalCompletionInvokeKind.Typing },
         };
         var requestContext = CreateRazorRequestContext(documentContext);

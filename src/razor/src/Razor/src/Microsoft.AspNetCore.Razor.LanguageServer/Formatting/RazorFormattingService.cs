@@ -11,9 +11,9 @@ using Microsoft.AspNetCore.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
@@ -59,10 +59,10 @@ internal class RazorFormattingService : IRazorFormattingService
         // Razor diagnostics, not the C# diagnostics 🤦‍
         if (range is not null)
         {
-            var sourceText = codeDocument.GetSourceText();
-            if (codeDocument.GetCSharpDocument().Diagnostics.Any(d => d.Span != SourceSpan.Undefined && range.ToLinePositionSpan().OverlapsWith(d.Span.ToLinePositionSpan(sourceText))))
+            var sourceText = codeDocument.Source.Text;
+            if (codeDocument.GetCSharpDocument().Diagnostics.Any(d => d.Span != SourceSpan.Undefined && range.OverlapsWith(sourceText.GetRange(d.Span))))
             {
-                return Array.Empty<TextEdit>();
+                return [];
             }
         }
 
@@ -72,7 +72,7 @@ internal class RazorFormattingService : IRazorFormattingService
         using var context = FormattingContext.Create(uri, documentSnapshot, codeDocument, options, _workspaceFactory);
         var originalText = context.SourceText;
 
-        var result = new FormattingResult(Array.Empty<TextEdit>());
+        var result = new FormattingResult([]);
         foreach (var pass in _formattingPasses)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -89,7 +89,7 @@ internal class RazorFormattingService : IRazorFormattingService
     private static TextEdit[] GetMinimalEdits(SourceText originalText, IEnumerable<TextEdit> filteredEdits)
     {
         // Make sure the edits actually change something, or its not worth responding
-        var textChanges = filteredEdits.Select(e => e.ToTextChange(originalText));
+        var textChanges = filteredEdits.Select(originalText.GetTextChange);
         var changedText = originalText.WithChanges(textChanges);
         if (changedText.ContentEquals(originalText))
         {
@@ -98,7 +98,7 @@ internal class RazorFormattingService : IRazorFormattingService
 
         // Only send back the minimum edits
         var minimalChanges = SourceTextDiffer.GetMinimalTextChanges(originalText, changedText, DiffKind.Char);
-        var finalEdits = minimalChanges.Select(f => f.ToTextEdit(originalText)).ToArray();
+        var finalEdits = minimalChanges.Select(originalText.GetTextEdit).ToArray();
 
         return finalEdits;
     }
@@ -176,8 +176,7 @@ internal class RazorFormattingService : IRazorFormattingService
         {
             var collapsedEdit = MergeEdits(edits, originalText);
             if (collapsedEdit.NewText.Length == 0 &&
-                collapsedEdit.Range.Start.Line == collapsedEdit.Range.End.Line &&
-                collapsedEdit.Range.Start.Character == collapsedEdit.Range.End.Character)
+                collapsedEdit.Range.IsZeroWidth())
             {
                 return Array.Empty<TextEdit>();
             }
@@ -199,7 +198,7 @@ internal class RazorFormattingService : IRazorFormattingService
         var textChanges = new List<TextChange>();
         foreach (var edit in edits)
         {
-            var change = new TextChange(edit.Range.ToTextSpan(sourceText), edit.NewText);
+            var change = new TextChange(sourceText.GetTextSpan(edit.Range), edit.NewText);
             textChanges.Add(change);
         }
 
@@ -211,7 +210,7 @@ internal class RazorFormattingService : IRazorFormattingService
 
         var encompassingChange = new TextChange(spanBeforeChange, newText);
 
-        return encompassingChange.ToTextEdit(sourceText);
+        return sourceText.GetTextEdit(encompassingChange);
     }
 
     private static void WrapCSharpSnippets(TextEdit[] snippetEdits)

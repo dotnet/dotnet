@@ -41,7 +41,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var request = new RazorLanguageQueryParams()
         {
             Uri = documentPath,
-            Position = new Position(0, 1),
+            Position = VsLspFactory.CreatePosition(0, 1),
         };
 
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -68,7 +68,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var request = new RazorLanguageQueryParams()
         {
             Uri = documentPath,
-            Position = new Position(0, 2),
+            Position = VsLspFactory.CreatePosition(0, 2),
         };
 
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -98,7 +98,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var request = new RazorLanguageQueryParams()
         {
             Uri = documentPath,
-            Position = new Position(0, 1),
+            Position = VsLspFactory.CreatePosition(0, 1),
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -129,7 +129,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var request = new RazorLanguageQueryParams()
         {
             Uri = documentPath,
-            Position = new Position(0, 1),
+            Position = VsLspFactory.CreatePosition(0, 1),
         };
 
         var requestContext = CreateRazorRequestContext(documentContext);

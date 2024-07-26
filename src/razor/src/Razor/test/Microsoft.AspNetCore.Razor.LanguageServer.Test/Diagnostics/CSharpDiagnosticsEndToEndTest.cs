@@ -9,7 +9,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -57,7 +56,7 @@ public class CSharpDiagnosticsEndToEndTest(ITestOutputHelper testOutput) : Singl
         TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spans);
 
         var codeDocument = CreateCodeDocument(input, filePath: filePath);
-        var sourceText = codeDocument.GetSourceText();
+        var sourceText = codeDocument.Source.Text;
         var razorFilePath = "file://C:/path/test.razor";
         var uri = new Uri(razorFilePath);
         var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
@@ -82,7 +81,7 @@ public class CSharpDiagnosticsEndToEndTest(ITestOutputHelper testOutput) : Singl
         {
             // If any future test requires multiple diagnostics of the same type, please change this code :)
             var diagnostic = Assert.Single(actual, d => d.Code == code);
-            Assert.Equal(span.First(), diagnostic.Range.ToTextSpan(sourceText));
+            Assert.Equal(span.First(), sourceText.GetTextSpan(diagnostic.Range));
         }
     }
 }

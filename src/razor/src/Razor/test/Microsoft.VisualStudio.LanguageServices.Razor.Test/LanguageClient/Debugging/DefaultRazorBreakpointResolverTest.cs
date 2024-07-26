@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.Text;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
+using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Debugging;
 
@@ -131,11 +132,7 @@ public class DefaultRazorBreakpointResolverTest : ToolingTestBase
     {
         // Arrange
         var hostDocumentPosition = GetPosition(ValidBreakpointCSharp, _hostTextbuffer);
-        var hostBreakpointRange = new Range()
-        {
-            Start = hostDocumentPosition,
-            End = new Position(hostDocumentPosition.Line, hostDocumentPosition.Character + ValidBreakpointCSharp.Length),
-        };
+        var hostBreakpointRange = VsLspFactory.CreateSingleLineRange(start: hostDocumentPosition, length: ValidBreakpointCSharp.Length);
         var projectionProvider = new TestLSPBreakpointSpanProvider(
             _documentUri,
             new Dictionary<Position, Range>()
@@ -186,6 +183,6 @@ public class DefaultRazorBreakpointResolverTest : ToolingTestBase
         }
 
         var line = textBuffer.CurrentSnapshot.GetLineFromPosition(index);
-        return new Position(line.LineNumber, index - line.Start.Position);
+        return VsLspFactory.CreatePosition(line.LineNumber, index - line.Start.Position);
     }
 }

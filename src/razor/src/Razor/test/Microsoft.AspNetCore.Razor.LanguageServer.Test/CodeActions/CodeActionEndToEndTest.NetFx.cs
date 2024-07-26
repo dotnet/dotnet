@@ -701,7 +701,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
         TestFileMarkupParser.GetSpan(input, out input, out var textSpan);
         var razorFilePath = "file://C:/path/test.razor";
         var codeDocument = CreateCodeDocument(input, filePath: razorFilePath);
-        var razorSourceText = codeDocument.GetSourceText();
+        var razorSourceText = codeDocument.Source.Text;
         var uri = new Uri(razorFilePath);
         var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
@@ -740,7 +740,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
         TestFileMarkupParser.GetSpan(input, out input, out var textSpan);
         var razorFilePath = "file://C:/path/test.razor";
         var codeDocument = CreateCodeDocument(input, filePath: razorFilePath);
-        var razorSourceText = codeDocument.GetSourceText();
+        var razorSourceText = codeDocument.Source.Text;
         var uri = new Uri(razorFilePath);
         var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
@@ -1021,7 +1021,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
 
         TestFileMarkupParser.GetSpan(input, out input, out var textSpan);
         var codeDocument = CreateCodeDocument(input, filePath: razorFilePath, rootNamespace: "Test");
-        var razorSourceText = codeDocument.GetSourceText();
+        var razorSourceText = codeDocument.Source.Text;
         var uri = new Uri(razorFilePath);
         var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
@@ -1059,11 +1059,11 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
             {
                 if (FilePathNormalizer.Normalize(change.TextDocument.Uri.GetAbsoluteOrUNCPath()) == codeBehindFilePath)
                 {
-                    codeBehindEdits.AddRange(change.Edits.Select(e => e.ToTextChange(codeBehindSourceText)));
+                    codeBehindEdits.AddRange(change.Edits.Select(codeBehindSourceText.GetTextChange));
                 }
                 else
                 {
-                    razorEdits.AddRange(change.Edits.Select(e => e.ToTextChange(razorSourceText)));
+                    razorEdits.AddRange(change.Edits.Select(razorSourceText.GetTextChange));
                 }
             }
 
@@ -1105,7 +1105,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
 
         var razorFilePath = "C:/path/test.razor";
         var codeDocument = CreateCodeDocument(input, filePath: razorFilePath);
-        var sourceText = codeDocument.GetSourceText();
+        var sourceText = codeDocument.Source.Text;
         var uri = new Uri(razorFilePath);
         var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
@@ -1141,7 +1141,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
         var edits = new List<TextChange>();
         foreach (var change in changes)
         {
-            edits.AddRange(change.Edits.Select(e => e.ToTextChange(sourceText)));
+            edits.AddRange(change.Edits.Select(sourceText.GetTextChange));
         }
 
         var actual = sourceText.WithChanges(edits).ToString();
@@ -1197,7 +1197,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
         var @params = new VSCodeActionParams
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = uri },
-            Range = textSpan.ToRange(sourceText),
+            Range = sourceText.GetRange(textSpan),
             Context = new VSInternalCodeActionContext() { Diagnostics = diagnostics ?? [] }
         };
 
@@ -1264,7 +1264,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
             }
 
             var projectWorkspaceState = ProjectWorkspaceState.Create(_tagHelperDescriptors.ToImmutableArray());
-            var testDocumentSnapshot = TestDocumentSnapshot.Create(FilePath, CodeDocument.GetSourceText().ToString(), CodeAnalysis.VersionStamp.Default, projectWorkspaceState);
+            var testDocumentSnapshot = TestDocumentSnapshot.Create(FilePath, CodeDocument.Source.Text.ToString(), CodeAnalysis.VersionStamp.Default, projectWorkspaceState);
             testDocumentSnapshot.With(CodeDocument);
 
             context = CreateDocumentContext(new Uri(FilePath), testDocumentSnapshot);

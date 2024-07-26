@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.FoldingRanges;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -238,7 +237,7 @@ public class FoldingEndpointTest(ITestOutputHelper testOutput) : SingleServerDel
 
         for (var i = 0; i < expected.Length; i++)
         {
-            var expectedRange = expected[i].ToRange(inputText);
+            var expectedRange = inputText.GetRange(expected[i]);
             var foldingRange = resultArray[i];
             Assert.Equal(expectedRange.Start.Line, foldingRange.StartLine);
             Assert.Equal(expectedRange.End.Line, foldingRange.EndLine);

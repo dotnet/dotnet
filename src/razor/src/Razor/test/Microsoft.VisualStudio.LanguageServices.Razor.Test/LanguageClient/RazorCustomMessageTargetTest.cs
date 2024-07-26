@@ -17,7 +17,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol.SemanticTokens;
-using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -215,7 +214,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 {
                     Uri = new Uri("C:/path/to/file.razor")
                 },
-                Range = new Range(),
+                Range = VsLspFactory.DefaultRange,
                 Context = new VSInternalCodeActionContext()
             }
         };
@@ -296,7 +295,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 {
                     Uri = testDocUri
                 },
-                Range = new Range(),
+                Range = VsLspFactory.DefaultRange,
                 Context = new VSInternalCodeActionContext()
             }
         };
@@ -421,7 +420,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 Uri = new Uri("C:/path/to/file.razor")
             },
             requiredHostDocumentVersion: 1,
-            ranges: new[] { new Range() },
+            ranges: [VsLspFactory.DefaultRange],
             correlationId: Guid.Empty);
 
         // Act
@@ -470,7 +469,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 Uri = new Uri("C:/path/to/file.razor")
             },
             requiredHostDocumentVersion: 0,
-            ranges: new[] { new Range() },
+            ranges: [VsLspFactory.DefaultRange],
             correlationId: Guid.Empty);
 
         // Act
@@ -547,7 +546,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 Uri = new Uri("C:/path/to%20-%20project/file.razor")
             },
             requiredHostDocumentVersion: 0,
-            ranges: new[] { new Range() { Start = It.IsAny<Position>(), End = It.IsAny<Position>() } },
+            ranges: [VsLspFactory.DefaultRange],
             correlationId: Guid.Empty);
 
         // Act
@@ -625,7 +624,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 Uri = new Uri("C:/path/to%20-%20project/file.razor")
             },
             requiredHostDocumentVersion: 0,
-            ranges: new[] { new Range() },
+            ranges: [VsLspFactory.DefaultRange],
             correlationId: Guid.Empty);
         var expectedResults = new ProvideSemanticTokensResponse(null, documentVersion);
 

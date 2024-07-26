@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -150,7 +149,7 @@ public class CohostDocumentHighlightEndpointTest(ITestOutputHelper testOutputHel
         TestFileMarkupParser.GetPositionAndSpans(input, out var source, out int cursorPosition, out ImmutableArray<TextSpan> spans);
         var document = CreateProjectAndRazorDocument(source);
         var inputText = await document.GetTextAsync(DisposalToken);
-        inputText.GetLineAndOffset(cursorPosition, out var lineIndex, out var characterIndex);
+        var position = inputText.GetPosition(cursorPosition);
 
         var requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentDocumentHighlightName, htmlResponse)]);
 
@@ -159,7 +158,7 @@ public class CohostDocumentHighlightEndpointTest(ITestOutputHelper testOutputHel
         var request = new DocumentHighlightParams()
         {
             TextDocument = new TextDocumentIdentifier() { Uri = document.CreateUri() },
-            Position = new Position(lineIndex, characterIndex)
+            Position = position
         };
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(request, document, DisposalToken);
@@ -172,7 +171,7 @@ public class CohostDocumentHighlightEndpointTest(ITestOutputHelper testOutputHel
 
         Assert.NotNull(result);
 
-        var actual = TestFileMarkupParser.CreateTestFile(source, cursorPosition, result.SelectAsArray(h => h.Range.ToTextSpan(inputText)));
+        var actual = TestFileMarkupParser.CreateTestFile(source, cursorPosition, result.SelectAsArray(h => inputText.GetTextSpan(h.Range)));
 
         AssertEx.EqualOrDiff(input, actual);
     }

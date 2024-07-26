@@ -42,6 +42,6 @@ internal sealed class RemoteLinkedEditingRangeService(in ServiceArgs args) : Raz
 
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        return LinkedEditingRangeHelper.GetLinkedSpans(linePosition, codeDocument, Logger);
+        return LinkedEditingRangeHelper.GetLinkedSpans(linePosition, codeDocument);
     }
 }

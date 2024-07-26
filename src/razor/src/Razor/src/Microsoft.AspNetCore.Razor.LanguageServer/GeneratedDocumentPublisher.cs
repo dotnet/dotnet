@@ -16,6 +16,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -96,7 +97,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
         {
             HostDocumentFilePath = filePath,
             ProjectKeyId = projectKey.Id,
-            Changes = textChanges.Select(t => t.ToRazorTextChange()).ToArray(),
+            Changes = textChanges.Select(static t => t.ToRazorTextChange()).ToArray(),
             HostDocumentVersion = hostDocumentVersion,
             PreviousWasEmpty = previouslyPublishedData.SourceText.Length == 0
         };
@@ -139,7 +140,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
         {
             HostDocumentFilePath = filePath,
             ProjectKeyId = projectKey.Id,
-            Changes = textChanges.Select(t => t.ToRazorTextChange()).ToArray(),
+            Changes = textChanges.Select(static t => t.ToRazorTextChange()).ToArray(),
             HostDocumentVersion = hostDocumentVersion,
             PreviousWasEmpty = previouslyPublishedData.SourceText.Length == 0
         };

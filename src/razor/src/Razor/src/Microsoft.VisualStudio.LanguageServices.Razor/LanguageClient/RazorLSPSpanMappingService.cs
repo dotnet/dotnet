@@ -12,9 +12,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.DocumentMapping;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.LanguageClient.DocumentMapping;
 using Microsoft.VisualStudio.Text;
 
@@ -55,7 +55,7 @@ internal sealed class RazorLSPSpanMappingService : IRazorSpanMappingService
             throw new ArgumentNullException(nameof(spans));
         }
 
-        var projectedRanges = spans.Select(span => span.ToRange(sourceTextGenerated)).ToArray();
+        var projectedRanges = spans.Select(sourceTextGenerated.GetRange).ToArray();
 
         var mappedResult = await _lspDocumentMappingProvider.MapToDocumentRangesAsync(
             RazorLanguageKind.CSharp,
@@ -77,12 +77,13 @@ internal sealed class RazorLSPSpanMappingService : IRazorSpanMappingService
     {
         if (mappedResult is null)
         {
-            return ImmutableArray<RazorMappedSpanResult>.Empty;
+            return [];
         }
 
-        using var results = new PooledArrayBuilder<RazorMappedSpanResult>();
+        var ranges = mappedResult.Ranges;
+        using var results = new PooledArrayBuilder<RazorMappedSpanResult>(capacity: ranges.Length);
 
-        foreach (var mappedRange in mappedResult.Ranges)
+        foreach (var mappedRange in ranges)
         {
             if (mappedRange.IsUndefined())
             {
@@ -91,8 +92,8 @@ internal sealed class RazorLSPSpanMappingService : IRazorSpanMappingService
                 continue;
             }
 
-            var mappedSpan = mappedRange.AsTextSpan(sourceTextRazor);
-            var linePositionSpan = sourceTextRazor.Lines.GetLinePositionSpan(mappedSpan);
+            var mappedSpan = sourceTextRazor.GetTextSpan(mappedRange);
+            var linePositionSpan = sourceTextRazor.GetLinePositionSpan(mappedSpan);
             results.Add(new RazorMappedSpanResult(localFilePath, linePositionSpan, mappedSpan));
         }
 

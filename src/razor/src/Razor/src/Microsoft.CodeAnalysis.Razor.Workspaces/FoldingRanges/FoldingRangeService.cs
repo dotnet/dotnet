@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -86,7 +85,7 @@ internal class FoldingRangeService(
     {
         Debug.Assert(range.StartLine < range.EndLine);
 
-        var sourceText = codeDocument.GetSourceText();
+        var sourceText = codeDocument.Source.Text;
         var startLine = range.StartLine;
 
         if (startLine >= sourceText.Lines.Count)
@@ -101,13 +100,11 @@ internal class FoldingRangeService(
 
         // Search from the end of the line to the beginning for the first non whitespace character. We want that
         // to be the offset for the range
-        var offset = sourceText.GetLastNonWhitespaceOffset(lineSpan, out _);
-
-        if (offset.HasValue)
+        if (sourceText.TryGetLastNonWhitespaceOffset(lineSpan, out var offset))
         {
             // +1 to the offset value because the helper goes to the character position
             // that we want to be after. Make sure we don't exceed the line end
-            var newCharacter = Math.Min(offset.Value + 1, lineSpan.Length);
+            var newCharacter = Math.Min(offset + 1, lineSpan.Length);
 
             range.StartCharacter = newCharacter;
             range.CollapsedText = null; // Let the client decide what to show

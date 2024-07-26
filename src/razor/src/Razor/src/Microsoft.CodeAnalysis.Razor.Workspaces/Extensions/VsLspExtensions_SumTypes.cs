@@ -1,13 +1,13 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces;
+namespace Microsoft.VisualStudio.LanguageServer.Protocol;
 
-internal static class SumTypeExtensions
+internal static partial class VsLspExtensions
 {
     internal static int Count(this SumType<TextDocumentEdit[], SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[]> sumType)
     {
@@ -15,14 +15,13 @@ internal static class SumTypeExtensions
         {
             return textDocumentEdit.Length;
         }
-        else if (sumType.TryGetSecond(out var edits))
+
+        if (sumType.TryGetSecond(out var edits))
         {
             return edits.Length;
         }
-        else
-        {
-            throw new NotImplementedException("Shouldn't be possible");
-        }
+
+        return Assumed.Unreachable<int>();
     }
 
     internal static SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile> ElementAt(this SumType<TextDocumentEdit[], SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[]> sumType, int elementIndex)
@@ -31,14 +30,13 @@ internal static class SumTypeExtensions
         {
             return textDocumentEdits[elementIndex];
         }
-        else if (sumType.TryGetSecond(out var edits))
+
+        if (sumType.TryGetSecond(out var edits))
         {
             return edits[elementIndex];
         }
-        else
-        {
-            throw new NotImplementedException("Shouldn't be possible");
-        }
+
+        return Assumed.Unreachable<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
     }
 
     internal static SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[] ToArray(this SumType<TextDocumentEdit[], SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[]> sumType)
@@ -47,14 +45,13 @@ internal static class SumTypeExtensions
         {
             return textDocumentEdit.Select(s => (SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>)s).ToArray();
         }
-        else if (sumType.TryGetSecond(out var edits))
+
+        if (sumType.TryGetSecond(out var edits))
         {
             return edits.ToArray();
         }
-        else
-        {
-            throw new NotImplementedException("Shouldn't be possible");
-        }
+
+        return Assumed.Unreachable<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[]>();
     }
 
     internal static SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile> First(this SumType<TextDocumentEdit[], SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[]> sumType)
@@ -63,14 +60,13 @@ internal static class SumTypeExtensions
         {
             return textDocumentEdits.First();
         }
-        else if (sumType.TryGetSecond(out var edits))
+
+        if (sumType.TryGetSecond(out var edits))
         {
             return edits.First();
         }
-        else
-        {
-            throw new NotImplementedException("Shouldn't be possible");
-        }
+
+        return Assumed.Unreachable<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
     }
 
     internal static SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile> Last(this SumType<TextDocumentEdit[], SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[]> sumType)
@@ -79,13 +75,12 @@ internal static class SumTypeExtensions
         {
             return textDocumentEdits.Last();
         }
-        else if (sumType.TryGetSecond(out var edits))
+
+        if (sumType.TryGetSecond(out var edits))
         {
             return edits.Last();
         }
-        else
-        {
-            throw new NotImplementedException("Shouldn't be possible");
-        }
+
+        return Assumed.Unreachable<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
     }
 }

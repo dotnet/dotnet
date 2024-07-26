@@ -22,6 +22,7 @@ using DefinitionResult = Microsoft.VisualStudio.LanguageServer.Protocol.SumType<
     Microsoft.VisualStudio.LanguageServer.Protocol.VSInternalLocation,
     Microsoft.VisualStudio.LanguageServer.Protocol.VSInternalLocation[],
     Microsoft.VisualStudio.LanguageServer.Protocol.DocumentLink[]>;
+using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 using SyntaxKind = Microsoft.AspNetCore.Razor.Language.SyntaxKind;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Definition;
@@ -263,7 +264,7 @@ internal sealed class DefinitionEndpoint(
         // If we were trying to navigate to a property, and we couldn't find it, we can at least take
         // them to the file for the component. If the property was defined in a partial class they can
         // at least then press F7 to go there.
-        return new Range { Start = new Position(0, 0), End = new Position(0, 0) };
+        return VsLspFactory.DefaultRange;
     }
 
     internal static async Task<Range?> TryGetPropertyRangeAsync(RazorCodeDocument codeDocument, string propertyName, IRazorDocumentMappingService documentMappingService, ILogger logger, CancellationToken cancellationToken)
@@ -301,7 +302,7 @@ internal sealed class DefinitionEndpoint(
                 return null;
             }
 
-            var range = property.Identifier.Span.ToRange(csharpText);
+            var range = csharpText.GetRange(property.Identifier.Span);
             if (documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), range, out var originalRange))
             {
                 return originalRange;

@@ -5,7 +5,6 @@
 
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
@@ -27,24 +26,16 @@ public class Foo{}
         var sourceText = SourceText.From(source);
         var edits = new[]
         {
-            new TextEdit()
-            {
-                NewText = "Bar",
-                Range = new Range{ Start = new Position(2, 13), End = new Position(2, 16) }
-            },
-            new TextEdit()
-            {
-                NewText = "    ",
-                Range = new Range{Start = new Position(2, 0),End = new Position(2, 0)}
-            },
+            VsLspFactory.CreateTextEdit(VsLspFactory.CreateSingleLineRange(line: 2, character: 13, length: 3), "Bar"),
+            VsLspFactory.CreateTextEdit(2, 0, "    ")
         };
 
         // Act
         var collapsedEdit = RazorFormattingService.MergeEdits(edits, sourceText);
 
         // Assert
-        var multiEditChange = sourceText.WithChanges(edits.Select(e => e.ToTextChange(sourceText)));
-        var singleEditChange = sourceText.WithChanges(collapsedEdit.ToTextChange(sourceText));
+        var multiEditChange = sourceText.WithChanges(edits.Select(sourceText.GetTextChange));
+        var singleEditChange = sourceText.WithChanges(sourceText.GetTextChange(collapsedEdit));
 
         Assert.Equal(multiEditChange.ToString(), singleEditChange.ToString());
     }

@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 
@@ -14,8 +13,8 @@ public class RangeExtensionsTests
     public void CompareTo_StartAndEndAreSame_ReturnsZero()
     {
         // Arrange
-        var range1 = new Range() { Start = new Position(1, 2), End = new Position(3, 4) };
-        var range2 = new Range() { Start = new Position(1, 2), End = new Position(3, 4) };
+        var range1 = VsLspFactory.CreateRange(1, 2, 3, 4);
+        var range2 = VsLspFactory.CreateRange(1, 2, 3, 4);
 
         // Act
         var result = range1.CompareTo(range2);
@@ -28,8 +27,8 @@ public class RangeExtensionsTests
     public void CompareTo_StartOfThisRangeIsBeforeOther_ReturnsNegative()
     {
         // Arrange
-        var range1 = new Range() { Start = new Position(1, 2), End = new Position(3, 4) };
-        var range2 = new Range() { Start = new Position(2, 2), End = new Position(3, 4) };
+        var range1 = VsLspFactory.CreateRange(1, 2, 3, 4);
+        var range2 = VsLspFactory.CreateRange(2, 2, 3, 4);
 
         // Act
         var result = range1.CompareTo(range2);
@@ -42,8 +41,8 @@ public class RangeExtensionsTests
     public void CompareTo_EndOfThisRangeIsBeforeOther_ReturnsNegative()
     {
         // Arrange
-        var range1 = new Range() { Start = new Position(1, 2), End = new Position(3, 4) };
-        var range2 = new Range() { Start = new Position(1, 2), End = new Position(4, 4) };
+        var range1 = VsLspFactory.CreateRange(1, 2, 3, 4);
+        var range2 = VsLspFactory.CreateRange(1, 2, 4, 4);
 
         // Act
         var result = range1.CompareTo(range2);
@@ -56,8 +55,8 @@ public class RangeExtensionsTests
     public void CompareTo_StartOfThisRangeIsAfterOther_ReturnsPositive()
     {
         // Arrange
-        var range1 = new Range() { Start = new Position(2, 2), End = new Position(3, 4) };
-        var range2 = new Range() { Start = new Position(1, 2), End = new Position(3, 4) };
+        var range1 = VsLspFactory.CreateRange(2, 2, 3, 4);
+        var range2 = VsLspFactory.CreateRange(1, 2, 3, 4);
 
         // Act
         var result = range1.CompareTo(range2);
@@ -70,8 +69,8 @@ public class RangeExtensionsTests
     public void CompareTo_EndOfThisRangeIsAfterOther_ReturnsPositive()
     {
         // Arrange
-        var range1 = new Range() { Start = new Position(1, 2), End = new Position(4, 4) };
-        var range2 = new Range() { Start = new Position(1, 2), End = new Position(3, 4) };
+        var range1 = VsLspFactory.CreateRange(1, 2, 4, 4);
+        var range2 = VsLspFactory.CreateRange(1, 2, 3, 4);
 
         // Act
         var result = range1.CompareTo(range2);

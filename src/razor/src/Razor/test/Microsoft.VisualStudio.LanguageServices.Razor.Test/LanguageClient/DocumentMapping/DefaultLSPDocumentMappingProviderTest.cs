@@ -47,13 +47,7 @@ public class DefaultLSPDocumentMappingProviderTest : ToolingTestBase
 
         var response = new RazorMapToDocumentRangesResponse()
         {
-            Ranges = new[] {
-                new Range()
-                {
-                    Start = new Position(1, 1),
-                    End = new Position(3, 3),
-                }
-            },
+            Ranges = [VsLspFactory.CreateRange(1, 1, 3, 3)],
             HostDocumentVersion = 1
         };
         var requestInvoker = new Mock<LSPRequestInvoker>(MockBehavior.Strict);
@@ -67,11 +61,7 @@ public class DefaultLSPDocumentMappingProviderTest : ToolingTestBase
             .ReturnsAsync(new ReinvocationResponse<RazorMapToDocumentRangesResponse>("TestLanguageClient", response));
 
         var mappingProvider = new DefaultLSPDocumentMappingProvider(requestInvoker.Object, _documentManager);
-        var projectedRange = new Range()
-        {
-            Start = new Position(10, 10),
-            End = new Position(15, 15)
-        };
+        var projectedRange = VsLspFactory.CreateRange(10, 10, 15, 15);
 
         // Act
         var result = await mappingProvider.MapToDocumentRangesAsync(RazorLanguageKind.CSharp, uri, new[] { projectedRange }, DisposalToken);
@@ -80,7 +70,7 @@ public class DefaultLSPDocumentMappingProviderTest : ToolingTestBase
         Assert.NotNull(result);
         Assert.Equal(1, result.HostDocumentVersion);
         var actualRange = result.Ranges[0];
-        Assert.Equal(new Position(1, 1), actualRange.Start);
-        Assert.Equal(new Position(3, 3), actualRange.End);
+        Assert.Equal(VsLspFactory.CreatePosition(1, 1), actualRange.Start);
+        Assert.Equal(VsLspFactory.CreatePosition(3, 3), actualRange.End);
     }
 }

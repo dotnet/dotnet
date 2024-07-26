@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,11 +42,7 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
             Code = "TestCode",
             Severity = DiagnosticSeverity.Error,
             Message = "TestMessage",
-            Range = new Range()
-            {
-                Start = new Position(0,0),
-                End = new Position(0, 1)
-            }
+            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 0, length: 1)
         }
     ];
 
@@ -160,11 +155,7 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
                 Code = "TestCode",
                 Severity = DiagnosticSeverity.Error,
                 Message = "TestMessage",
-                Range = new Range()
-                {
-                    Start = new Position(0,0),
-                    End = new Position(0, 1)
-                }
+                Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 0, length: 1)
             }
         };
 

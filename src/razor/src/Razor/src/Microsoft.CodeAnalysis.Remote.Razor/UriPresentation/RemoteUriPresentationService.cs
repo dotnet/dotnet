@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.DocumentPresentation;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -45,7 +46,7 @@ internal sealed partial class RemoteUriPresentationService(in ServiceArgs args) 
         CancellationToken cancellationToken)
     {
         var sourceText = await context.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        if (!sourceText.TryGetAbsoluteIndex(span.Start.Line, span.Start.Character, out var index))
+        if (!sourceText.TryGetAbsoluteIndex(span.Start, out var index))
         {
             // If the position is invalid then we shouldn't expect to be able to handle a Html response
             return Response.NoFurtherHandling;
@@ -100,6 +101,6 @@ internal sealed partial class RemoteUriPresentationService(in ServiceArgs args) 
             return Response.CallHtml;
         }
 
-        return Response.Results(new TextChange(span.ToTextSpan(sourceText), tag));
+        return Response.Results(new TextChange(sourceText.GetTextSpan(span), tag));
     }
 }

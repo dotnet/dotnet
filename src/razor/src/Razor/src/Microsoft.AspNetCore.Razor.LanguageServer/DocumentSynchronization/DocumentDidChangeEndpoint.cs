@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -70,17 +69,14 @@ internal class DocumentDidChangeEndpoint(
     {
         foreach (var change in contentChanges)
         {
-            if (change.Range is null)
-            {
-                throw new ArgumentNullException(nameof(change.Range), "Range of change should not be null.");
-            }
+            var range = change.Range.AssumeNotNull();
 
-            if (!change.Range.Start.TryGetAbsoluteIndex(sourceText, _logger, out var startPosition))
+            if (!sourceText.TryGetAbsoluteIndex(range.Start, out var startPosition))
             {
                 continue;
             }
 
-            if (!change.Range.End.TryGetAbsoluteIndex(sourceText, _logger, out var endPosition))
+            if (!sourceText.TryGetAbsoluteIndex(range.End, out var endPosition))
             {
                 continue;
             }

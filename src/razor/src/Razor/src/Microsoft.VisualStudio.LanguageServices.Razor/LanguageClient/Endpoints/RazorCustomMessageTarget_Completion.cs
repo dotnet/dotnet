@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.LanguageClient.Extensions;
@@ -182,29 +181,22 @@ internal partial class RazorCustomMessageTarget
     private static TextEdit BuildRevertedEdit(TextEdit provisionalTextEdit)
     {
         TextEdit? revertedProvisionalTextEdit;
-        if (provisionalTextEdit.Range.Start == provisionalTextEdit.Range.End)
+
+        var range = provisionalTextEdit.Range;
+
+        if (range.Start == range.End)
         {
             // Insertion
-            revertedProvisionalTextEdit = new TextEdit()
-            {
-                Range = new Range()
-                {
-                    Start = provisionalTextEdit.Range.Start,
-
-                    // We're making an assumption that provisional text edits do not span more than 1 line.
-                    End = new Position(provisionalTextEdit.Range.End.Line, provisionalTextEdit.Range.End.Character + provisionalTextEdit.NewText.Length),
-                },
-                NewText = string.Empty
-            };
+            revertedProvisionalTextEdit = VsLspFactory.CreateTextEdit(
+                range: VsLspFactory.CreateSingleLineRange(
+                    range.Start,
+                    length: range.End.Character + provisionalTextEdit.NewText.Length),
+                newText: string.Empty);
         }
         else
         {
             // Replace
-            revertedProvisionalTextEdit = new TextEdit()
-            {
-                Range = provisionalTextEdit.Range,
-                NewText = string.Empty
-            };
+            revertedProvisionalTextEdit = VsLspFactory.CreateTextEdit(range, string.Empty);
         }
 
         return revertedProvisionalTextEdit;

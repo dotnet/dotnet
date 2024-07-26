@@ -39,7 +39,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var request = new RazorProximityExpressionsParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0),
+            Position = VsLspFactory.CreatePosition(1, 0),
         };
         codeDocument.SetUnsupported();
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -64,7 +64,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var request = new RazorProximityExpressionsParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 8),
+            Position = VsLspFactory.CreatePosition(1, 8),
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -89,7 +89,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var request = new RazorProximityExpressionsParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0),
+            Position = VsLspFactory.CreatePosition(1, 0),
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -114,7 +114,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var request = new RazorProximityExpressionsParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0),
+            Position = VsLspFactory.CreatePosition(1, 0),
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -141,7 +141,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var request = new RazorProximityExpressionsParams()
         {
             Uri = documentPath,
-            Position = new Position(0, 0),
+            Position = VsLspFactory.DefaultPosition,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 

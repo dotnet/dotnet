@@ -20,6 +20,7 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 
@@ -78,9 +79,9 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
         DocumentSnapshot = await GetDocumentSnapshotAsync(projectFilePath, _filePath, targetPath);
         DocumentText = await DocumentSnapshot.GetTextAsync();
 
-        RazorCodeActionRange = ToRange(razorCodeActionIndex);
-        CSharpCodeActionRange = ToRange(csharpCodeActionIndex);
-        HtmlCodeActionRange = ToRange(htmlCodeActionIndex);
+        RazorCodeActionRange = DocumentText.GetZeroWidthRange(razorCodeActionIndex);
+        CSharpCodeActionRange = DocumentText.GetZeroWidthRange(csharpCodeActionIndex);
+        HtmlCodeActionRange = DocumentText.GetZeroWidthRange(htmlCodeActionIndex);
 
         var documentContext = new VersionedDocumentContext(DocumentUri, DocumentSnapshot, projectContext: null, 1);
 
@@ -89,16 +90,6 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
         codeDocument.SetCodeGenerationOptions(RazorCodeGenerationOptions.Create(c => c.RootNamespace = "Root.Namespace"));
 
         RazorRequestContext = new RazorRequestContext(documentContext, RazorLanguageServerHost.GetRequiredService<ILspServices>(), "lsp/method", uri: null);
-
-        Range ToRange(int index)
-        {
-            DocumentText.GetLineAndOffset(index, out var line, out var offset);
-            return new Range
-            {
-                Start = new Position(line, offset),
-                End = new Position(line, offset)
-            };
-        }
     }
 
     private string GetFileContents(FileTypes fileType)

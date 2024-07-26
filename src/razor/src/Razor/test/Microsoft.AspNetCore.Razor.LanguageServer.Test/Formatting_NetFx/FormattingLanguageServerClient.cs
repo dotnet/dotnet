@@ -17,7 +17,6 @@ using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Formatting;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text;
@@ -45,7 +44,7 @@ internal class FormattingLanguageServerClient(ILoggerFactory loggerFactory) : IC
     {
         var generatedHtml = GetGeneratedHtml(@params.TextDocument.Uri);
         var generatedHtmlSource = SourceText.From(generatedHtml, Encoding.UTF8);
-        var absoluteIndex = @params.Position.GetRequiredAbsoluteIndex(generatedHtmlSource, logger: null);
+        var absoluteIndex = generatedHtmlSource.GetRequiredAbsoluteIndex(@params.Position);
 
         var request = $$"""
             {
@@ -129,18 +128,8 @@ internal class FormattingLanguageServerClient(ILoggerFactory loggerFactory) : IC
 
         foreach (var textChange in response.TextChanges)
         {
-            var startLinePosition = sourceText.Lines.GetLinePosition(textChange.Position);
-            var endLinePosition = sourceText.Lines.GetLinePosition(textChange.Position + textChange.Length);
-
-            var edit = new TextEdit()
-            {
-                Range = new()
-                {
-                    Start = new(startLinePosition.Line, startLinePosition.Character),
-                    End = new(endLinePosition.Line, endLinePosition.Character)
-                },
-                NewText = textChange.NewText
-            };
+            var span = new TextSpan(textChange.Position, textChange.Length);
+            var edit = VsLspFactory.CreateTextEdit(sourceText.GetRange(span), textChange.NewText);
 
             edits.Add(edit);
         }

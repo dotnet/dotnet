@@ -5,6 +5,7 @@ using System;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.LanguageServer.MapCode;
 using Microsoft.AspNetCore.Razor.Telemetry;
@@ -12,14 +13,12 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
-using LSP = Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.MapCode;
 
@@ -278,7 +277,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         string[] codeToMap,
         string expectedCode,
         string razorFilePath = RazorFilePath,
-        LSP.Location[][]? locations = null)
+        Location[][]? locations = null)
     {
         // Arrange
         TestFileMarkupParser.GetPositionAndSpans(originalCode, out var output, out int cursorPosition, out ImmutableArray<TextSpan> spans);
@@ -302,8 +301,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         capabilitiesProvider.ApplyCapabilities(serverCapabilities, new());
         Assert.True(serverCapabilities.MapCodeProvider);
 
-        var sourceText = codeDocument.GetSourceText();
-        sourceText.GetLineAndOffset(cursorPosition, out var line, out var offset);
+        var sourceText = codeDocument.Source.Text;
 
         var mappings = new VSInternalMapCodeMapping[]
         {
@@ -317,11 +315,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
                     [
                         new Location
                         {
-                            Range = new Range
-                            {
-                                Start = new Position(line, offset),
-                                End = new Position(line, offset)
-                            },
+                            Range = sourceText.GetZeroWidthRange(cursorPosition),
                             Uri = new Uri(razorFilePath)
                         }
                     ]
@@ -402,7 +396,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
 
             foreach (var currentEdit in edit.Edits)
             {
-                sourceText = sourceText.WithChanges(currentEdit.ToTextChange(sourceText));
+                sourceText = sourceText.WithChanges(sourceText.GetTextChange(currentEdit));
             }
         }
 

@@ -16,11 +16,11 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text.Adornments;
-using VisualStudioMarkupKind = Microsoft.VisualStudio.LanguageServer.Protocol.MarkupKind;
+using MarkupKind = Microsoft.VisualStudio.LanguageServer.Protocol.MarkupKind;
+using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 
@@ -72,7 +72,7 @@ internal sealed partial class HoverService(
         if (RazorSyntaxFacts.TryGetFullAttributeNameSpan(codeDocument, positionInfo.HostDocumentIndex, out var originalAttributeRange))
         {
             var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-            response.Range = originalAttributeRange.ToRange(sourceText);
+            response.Range = sourceText.GetRange(originalAttributeRange);
         }
         else if (positionInfo.LanguageKind == RazorLanguageKind.CSharp)
         {
@@ -118,7 +118,6 @@ internal sealed partial class HoverService(
             owner = owner.Parent;
         }
 
-        var position = new Position(location.LineIndex, location.CharacterIndex);
         var tagHelperDocumentContext = codeDocument.GetTagHelperContext();
 
         // We want to find the parent tag, but looking up ancestors in the tree can find other things,
@@ -342,10 +341,10 @@ internal sealed partial class HoverService(
         return hover;
     }
 
-    private static VisualStudioMarkupKind GetHoverContentFormat(ClientCapabilities clientCapabilities)
+    private static MarkupKind GetHoverContentFormat(ClientCapabilities clientCapabilities)
     {
         var hoverContentFormat = clientCapabilities.TextDocument?.Hover?.ContentFormat;
-        var hoverKind = hoverContentFormat?.Contains(VisualStudioMarkupKind.Markdown) == true ? VisualStudioMarkupKind.Markdown : VisualStudioMarkupKind.PlainText;
+        var hoverKind = hoverContentFormat?.Contains(MarkupKind.Markdown) == true ? MarkupKind.Markdown : MarkupKind.PlainText;
         return hoverKind;
     }
 }

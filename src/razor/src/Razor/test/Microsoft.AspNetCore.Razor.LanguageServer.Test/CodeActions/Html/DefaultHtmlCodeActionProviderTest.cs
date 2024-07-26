@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -35,7 +34,7 @@ public class DefaultHtmlCodeActionProviderTest(ITestOutputHelper testOutput) : L
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -68,7 +67,7 @@ public class DefaultHtmlCodeActionProviderTest(ITestOutputHelper testOutput) : L
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
 
@@ -80,13 +79,13 @@ public class DefaultHtmlCodeActionProviderTest(ITestOutputHelper testOutput) : L
         {
             DocumentChanges = new TextDocumentEdit[]
             {
-                new TextDocumentEdit
-                {
-                    TextDocument = new OptionalVersionedTextDocumentIdentifier { Uri= new Uri(documentPath), Version = 1 },
-                    Edits = new TextEdit[]
+                new() {
+                    TextDocument = new OptionalVersionedTextDocumentIdentifier
                     {
-                        new TextEdit { NewText = "Goo ~~~~~~~~~~~~~~~ Bar", Range = span.ToRange(context.SourceText) }
-                    }
+                        Uri = new Uri(documentPath),
+                        Version = 1
+                    },
+                    Edits = [VsLspFactory.CreateTextEdit(context.SourceText.GetRange(span), "Goo ~~~~~~~~~~~~~~~ Bar")]
                 }
             }
         };
@@ -107,13 +106,13 @@ public class DefaultHtmlCodeActionProviderTest(ITestOutputHelper testOutput) : L
                 {
                     DocumentChanges = new TextDocumentEdit[]
                     {
-                        new TextDocumentEdit
-                        {
-                            TextDocument = new OptionalVersionedTextDocumentIdentifier { Uri= new Uri("c:/Test.razor.html"), Version = 1 },
-                            Edits = new TextEdit[]
+                        new() {
+                            TextDocument = new OptionalVersionedTextDocumentIdentifier
                             {
-                                new TextEdit { NewText = "Goo" }
-                            }
+                                Uri = new Uri("c:/Test.razor.html"),
+                                Version = 1
+                            },
+                            Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), "Goo")]
                         }
                     }
                 }
@@ -155,7 +154,7 @@ public class DefaultHtmlCodeActionProviderTest(ITestOutputHelper testOutput) : L
 
         var documentSnapshot = Mock.Of<IDocumentSnapshot>(document =>
             document.GetGeneratedOutputAsync() == Task.FromResult(codeDocument) &&
-            document.GetTextAsync() == Task.FromResult(codeDocument.GetSourceText()) &&
+            document.GetTextAsync() == Task.FromResult(codeDocument.Source.Text) &&
             document.Project.GetTagHelpersAsync(It.IsAny<CancellationToken>()) == new ValueTask<ImmutableArray<TagHelperDescriptor>>(tagHelpers), MockBehavior.Strict);
 
         var sourceText = SourceText.From(text);

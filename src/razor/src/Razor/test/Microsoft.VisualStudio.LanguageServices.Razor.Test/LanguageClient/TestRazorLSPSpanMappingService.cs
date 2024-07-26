@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.LanguageClient.DocumentMapping;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient;
@@ -40,7 +40,7 @@ internal class TestRazorLSPSpanMappingService : IRazorSpanMappingService
 
     public async Task<ImmutableArray<RazorMappedSpanResult>> MapSpansAsync(Document document, IEnumerable<TextSpan> spans, CancellationToken cancellationToken)
     {
-        var projectedRanges = spans.Select(span => span.ToRange(_csharpSourceText)).ToArray();
+        var projectedRanges = spans.Select(_csharpSourceText.GetRange).ToArray();
         var mappedResult = await _mappingProvider.MapToDocumentRangesAsync(
             RazorLanguageKind.CSharp, _razorUri, projectedRanges, _cancellationToken);
 

@@ -2,12 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.DocumentPresentation;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -79,14 +76,7 @@ internal class TextDocumentUriPresentationEndpoint(
                     {
                         Uri = request.TextDocument.Uri
                     },
-                    Edits =
-                    [
-                        new TextEdit
-                        {
-                            NewText = componentTagText,
-                            Range = request.Range
-                        }
-                    ]
+                    Edits = [VsLspFactory.CreateTextEdit(request.Range, componentTagText)]
                 }
             }
         };

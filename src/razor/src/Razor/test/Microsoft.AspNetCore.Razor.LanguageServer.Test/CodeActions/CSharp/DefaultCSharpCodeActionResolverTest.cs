@@ -4,7 +4,6 @@
 using System;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
@@ -16,7 +15,6 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
@@ -33,26 +31,15 @@ public class DefaultCSharpCodeActionResolverTest(ITestOutputHelper testOutput) :
         Edit = new WorkspaceEdit()
         {
             DocumentChanges = new TextDocumentEdit[] {
-                new TextDocumentEdit()
+                new()
                 {
-                    Edits = [
-                        new TextEdit()
-                        {
-                            NewText = "Generated C# Based Edit"
-                        }
-                    ]
+                    Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), "Generated C# Based Edit")]
                 }
             }
         }
     };
 
-    private static readonly TextEdit[] s_defaultFormattedEdits =
-    [
-        new TextEdit()
-        {
-            NewText = "Remapped & Formatted Edit"
-        }
-    ];
+    private static readonly TextEdit[] s_defaultFormattedEdits = [VsLspFactory.CreateTextEdit(position: (0, 0), "Remapped & Formatted Edit")];
 
     private static readonly CodeAction s_defaultUnresolvedCodeAction = new CodeAction()
     {
@@ -114,26 +101,17 @@ public class DefaultCSharpCodeActionResolverTest(ITestOutputHelper testOutput) :
             Data = JsonSerializer.SerializeToElement(new object()),
             Edit = new WorkspaceEdit()
             {
-                DocumentChanges = new TextDocumentEdit[] {
-                        new TextDocumentEdit()
-                        {
-                            Edits = new TextEdit[] {
-                                new TextEdit()
-                                {
-                                    NewText = "1. Generated C# Based Edit"
-                                }
-                            }
-                        },
-                        new TextDocumentEdit()
-                        {
-                            Edits = new TextEdit[] {
-                                new TextEdit()
-                                {
-                                    NewText = "2. Generated C# Based Edit"
-                                }
-                            }
-                        }
+                DocumentChanges = new TextDocumentEdit[]
+                {
+                    new TextDocumentEdit()
+                    {
+                        Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), "1. Generated C# Based Edit")]
+                    },
+                    new TextDocumentEdit()
+                    {
+                        Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), "2. Generated C# Based Edit")]
                     }
+                }
             }
         };
 

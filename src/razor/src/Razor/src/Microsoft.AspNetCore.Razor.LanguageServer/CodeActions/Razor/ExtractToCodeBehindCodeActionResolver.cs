@@ -21,6 +21,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
@@ -84,13 +85,7 @@ internal sealed class ExtractToCodeBehindCodeActionResolver(
         var codeBlockContent = text.GetSubTextString(new CodeAnalysis.Text.TextSpan(actionParams.ExtractStart, actionParams.ExtractEnd - actionParams.ExtractStart)).Trim();
         var codeBehindContent = await GenerateCodeBehindClassAsync(documentContext.Project, codeBehindUri, className, actionParams.Namespace, codeBlockContent, codeDocument, cancellationToken).ConfigureAwait(false);
 
-        var start = codeDocument.Source.Text.Lines.GetLinePosition(actionParams.RemoveStart);
-        var end = codeDocument.Source.Text.Lines.GetLinePosition(actionParams.RemoveEnd);
-        var removeRange = new Range
-        {
-            Start = new Position(start.Line, start.Character),
-            End = new Position(end.Line, end.Character)
-        };
+        var removeRange = codeDocument.Source.Text.GetRange(actionParams.RemoveStart, actionParams.RemoveEnd);
 
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier { Uri = actionParams.Uri };
         var codeBehindDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier { Uri = codeBehindUri };
@@ -101,30 +96,12 @@ internal sealed class ExtractToCodeBehindCodeActionResolver(
             new TextDocumentEdit
             {
                 TextDocument = codeDocumentIdentifier,
-                Edits =
-                [
-                    new TextEdit
-                    {
-                        NewText = string.Empty,
-                        Range = removeRange,
-                    }
-                ],
+                Edits = [VsLspFactory.CreateTextEdit(removeRange, string.Empty)]
             },
             new TextDocumentEdit
             {
                 TextDocument = codeBehindDocumentIdentifier,
-                Edits =
-                [
-                    new TextEdit
-                    {
-                        NewText = codeBehindContent,
-                        Range = new Range
-                        {
-                            Start = new Position(0, 0),
-                            End = new Position(0, 0)
-                        },
-                    }
-                ],
+                Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), codeBehindContent)]
             }
         };
 
