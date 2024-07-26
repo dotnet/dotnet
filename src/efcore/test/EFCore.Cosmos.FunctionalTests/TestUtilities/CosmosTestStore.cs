@@ -531,7 +531,7 @@ public class CosmosTestStore : TestStore
         public object GetCurrentValue(IPropertyBase propertyBase)
             => throw new NotImplementedException();
 
-        public object GetOriginalOrCurrentValue(IPropertyBase propertyBase)
+        public bool CanHaveOriginalValue(IPropertyBase propertyBase)
             => throw new NotImplementedException();
 
         public TProperty GetCurrentValue<TProperty>(IPropertyBase propertyBase)
@@ -544,6 +544,9 @@ public class CosmosTestStore : TestStore
             => throw new NotImplementedException();
 
         public bool HasTemporaryValue(IProperty property)
+            => throw new NotImplementedException();
+
+        public bool HasExplicitValue(IProperty property)
             => throw new NotImplementedException();
 
         public bool HasStoreGeneratedValue(IProperty property)
