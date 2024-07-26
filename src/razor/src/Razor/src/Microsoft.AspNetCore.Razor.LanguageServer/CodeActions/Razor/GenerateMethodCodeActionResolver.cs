@@ -112,12 +112,10 @@ internal sealed class GenerateMethodCodeActionResolver(
             classLocationLineSpan.StartLinePosition.Character,
             content);
 
-        var insertPosition = new Position(classLocationLineSpan.EndLinePosition.Line, 0);
-        var edit = new TextEdit()
-        {
-            Range = new Range { Start = insertPosition, End = insertPosition },
-            NewText = $"{formattedMethod}{Environment.NewLine}"
-        };
+        var edit = VsLspFactory.CreateTextEdit(
+            line: classLocationLineSpan.EndLinePosition.Line,
+            character: 0,
+            $"{formattedMethod}{Environment.NewLine}");
 
         var delegatedParams = new DelegatedSimplifyMethodParams(
             new TextDocumentIdentifierAndVersion(new TextDocumentIdentifier() { Uri = codeBehindUri }, 1),
@@ -163,12 +161,10 @@ internal sealed class GenerateMethodCodeActionResolver(
             // just get the simplified text that comes back from Roslyn.
 
             var classLocationLineSpan = @class.GetLocation().GetLineSpan();
-            var insertPosition = new Position(classLocationLineSpan.EndLinePosition.Line, 0);
-            var tempTextEdit = new TextEdit()
-            {
-                NewText = editToSendToRoslyn.NewText,
-                Range = new Range() { Start = insertPosition, End = insertPosition }
-            };
+            var tempTextEdit = VsLspFactory.CreateTextEdit(
+                line: classLocationLineSpan.EndLinePosition.Line,
+                character: 0,
+                editToSendToRoslyn.NewText);
 
             var delegatedParams = new DelegatedSimplifyMethodParams(documentContext.Identifier, RequiresVirtualDocument: true, tempTextEdit);
             var result = await _clientConnection.SendRequestAsync<DelegatedSimplifyMethodParams, TextEdit[]?>(
@@ -196,11 +192,7 @@ internal sealed class GenerateMethodCodeActionResolver(
                 .Replace(FormattingUtilities.InitialIndent, string.Empty)
                 .Replace(FormattingUtilities.Indent, string.Empty);
 
-            var remappedEdit = new TextEdit()
-            {
-                NewText = unformattedMethodSignature,
-                Range = remappedRange
-            };
+            var remappedEdit = VsLspFactory.CreateTextEdit(remappedRange, unformattedMethodSignature);
 
             var delegatedParams = new DelegatedSimplifyMethodParams(documentContext.Identifier, RequiresVirtualDocument: true, remappedEdit);
             var result = await _clientConnection.SendRequestAsync<DelegatedSimplifyMethodParams, TextEdit[]?>(

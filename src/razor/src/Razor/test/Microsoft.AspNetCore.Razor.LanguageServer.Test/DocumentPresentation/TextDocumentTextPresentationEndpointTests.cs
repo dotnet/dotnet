@@ -51,11 +51,7 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
             {
                 Uri = uri
             },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            },
+            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Text = "Hi there"
         };
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -94,11 +90,7 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
             {
                 Uri = uri
             },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            },
+            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Text = "Hi there"
         };
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -139,11 +131,7 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
             {
                 Uri = uri
             },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            },
+            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Text = "Hi there"
         };
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -185,11 +173,7 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
             {
                 Uri = uri
             },
-            Range = new Range
-            {
-                Start = new Position(0, 1),
-                End = new Position(0, 2)
-            },
+            Range = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Text = "Hi there"
         };
         var requestContext = CreateRazorRequestContext(documentContext);

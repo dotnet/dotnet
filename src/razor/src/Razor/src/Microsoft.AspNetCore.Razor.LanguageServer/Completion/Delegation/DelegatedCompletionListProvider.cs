@@ -214,19 +214,11 @@ internal class DelegatedCompletionListProvider
 
         // Edit the CSharp projected document to contain a '.'. This allows C# completion to provide valid
         // completion items for moments when a user has typed a '.' that's typically interpreted as Html.
-        var addProvisionalDot = new TextEdit()
-        {
-            Range = new Range()
-            {
-                Start = previousPosition,
-                End = previousPosition,
-            },
-            NewText = ".",
-        };
+        var addProvisionalDot = VsLspFactory.CreateTextEdit(previousPosition, ".");
 
         var provisionalPositionInfo = new DocumentPositionInfo(
             RazorLanguageKind.CSharp,
-            new Position(
+            VsLspFactory.CreatePosition(
                 previousPosition.Line,
                 previousPosition.Character + 1),
             previousCharacterPositionInfo.HostDocumentIndex + 1);

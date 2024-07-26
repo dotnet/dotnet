@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.DocumentSymbols;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -143,8 +142,7 @@ public class DocumentSymbolEndpointTest(ITestOutputHelper testOutput) : SingleSe
             foreach (var symbolInformation in symbolsInformations)
             {
                 Assert.True(spansDict.TryGetValue(symbolInformation.Name, out var spans), $"Expected {symbolInformation.Name} to be in test provided markers");
-                Assert.Single(spans);
-                var expectedRange = spans.Single().ToRange(sourceText);
+                var expectedRange = sourceText.GetRange(Assert.Single(spans));
                 Assert.Equal(expectedRange, symbolInformation.Location.Range);
             }
         }
@@ -156,8 +154,7 @@ public class DocumentSymbolEndpointTest(ITestOutputHelper testOutput) : SingleSe
         {
             seen++;
             Assert.True(spansDict.TryGetValue(symbol.Detail.AssumeNotNull(), out var spans), $"Expected {symbol.Name} to be in test provided markers");
-            Assert.Single(spans);
-            var expectedRange = spans.Single().ToRange(sourceText);
+            var expectedRange = sourceText.GetRange(Assert.Single(spans));
             Assert.Equal(expectedRange, symbol.SelectionRange);
 
             if (symbol.Children is not null)

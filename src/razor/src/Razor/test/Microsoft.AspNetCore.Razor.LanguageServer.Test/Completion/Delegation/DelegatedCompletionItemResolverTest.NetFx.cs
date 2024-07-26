@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -53,8 +52,8 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         };
 
         var documentContext = TestDocumentContext.From("C:/path/to/file.cshtml", hostDocumentVersion: 0);
-        _csharpCompletionParams = new DelegatedCompletionParams(documentContext.Identifier, new Position(10, 6), RazorLanguageKind.CSharp, new VSInternalCompletionContext(), ProvisionalTextEdit: null, ShouldIncludeSnippets: false, CorrelationId: Guid.Empty);
-        _htmlCompletionParams = new DelegatedCompletionParams(documentContext.Identifier, new Position(0, 0), RazorLanguageKind.Html, new VSInternalCompletionContext(), ProvisionalTextEdit: null, ShouldIncludeSnippets: false, CorrelationId: Guid.Empty);
+        _csharpCompletionParams = new DelegatedCompletionParams(documentContext.Identifier, VsLspFactory.CreatePosition(10, 6), RazorLanguageKind.CSharp, new VSInternalCompletionContext(), ProvisionalTextEdit: null, ShouldIncludeSnippets: false, CorrelationId: Guid.Empty);
+        _htmlCompletionParams = new DelegatedCompletionParams(documentContext.Identifier, VsLspFactory.DefaultPosition, RazorLanguageKind.Html, new VSInternalCompletionContext(), ProvisionalTextEdit: null, ShouldIncludeSnippets: false, CorrelationId: Guid.Empty);
         _documentContextFactory = new TestDocumentContextFactory();
         _formattingService = new AsyncLazy<IRazorFormattingService>(() => TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory));
     }
@@ -174,7 +173,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         var resolvedItem = await ResolveCompletionItemAsync(input, itemToResolve: "await", DisposalToken);
 
         // Assert
-        var textChange = resolvedItem.TextEdit.Value.First.ToTextChange(originalSourceText);
+        var textChange = originalSourceText.GetTextChange(resolvedItem.TextEdit.Value.First);
         var actualSourceText = originalSourceText.WithChanges(textChange);
         Assert.True(expectedSourceText.ContentEquals(actualSourceText));
     }

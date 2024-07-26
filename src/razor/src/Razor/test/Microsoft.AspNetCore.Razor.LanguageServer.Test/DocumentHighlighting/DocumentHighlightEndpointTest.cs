@@ -8,6 +8,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
@@ -125,14 +126,13 @@ public class DocumentHighlightEndpointTest(ITestOutputHelper testOutput) : Langu
         var endpoint = new DocumentHighlightEndpoint(
             languageServerFeatureOptions, documentMappingService, languageServer, LoggerFactory);
 
-        codeDocument.GetSourceText().GetLineAndOffset(cursorPosition, out var line, out var offset);
         var request = new DocumentHighlightParams
         {
             TextDocument = new TextDocumentIdentifier
             {
                 Uri = new Uri(razorFilePath)
             },
-            Position = new Position(line, offset)
+            Position = codeDocument.Source.Text.GetPosition(cursorPosition)
         };
 
         var documentContext = CreateDocumentContext(request.TextDocument.Uri, codeDocument);
@@ -142,9 +142,9 @@ public class DocumentHighlightEndpointTest(ITestOutputHelper testOutput) : Langu
         var result = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
-        var sourceText = codeDocument.GetSourceText();
+        var sourceText = codeDocument.Source.Text;
         var expected = spans
-            .Select(s => s.ToRange(sourceText))
+            .Select(sourceText.GetRange)
             .OrderBy(s => s.Start.Line)
             .ThenBy(s => s.Start.Character)
             .ToArray();

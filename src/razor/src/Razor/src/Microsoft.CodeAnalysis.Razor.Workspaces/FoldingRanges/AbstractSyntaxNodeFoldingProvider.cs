@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.FoldingRanges;
@@ -15,21 +15,20 @@ internal abstract class AbstractSyntaxNodeFoldingProvider<TNode> : IRazorFolding
 {
     public ImmutableArray<FoldingRange> GetFoldingRanges(RazorCodeDocument codeDocument)
     {
-        var sourceText = codeDocument.GetSourceText();
+        var sourceText = codeDocument.Source.Text;
         var syntaxTree = codeDocument.GetSyntaxTree();
         var nodes = GetFoldableNodes(syntaxTree);
 
         using var builder = new PooledArrayBuilder<FoldingRange>(nodes.Length);
         foreach (var node in nodes)
         {
-            sourceText.GetLineAndOffset(node.Span.Start, out var startLine, out var startOffset);
-            sourceText.GetLineAndOffset(node.Span.End, out var endLine, out var endOffset);
+            var (start, end) = sourceText.GetLinePositionSpan(node.Span);
             var foldingRange = new FoldingRange()
             {
-                StartCharacter = startOffset,
-                StartLine = startLine,
-                EndCharacter = endOffset,
-                EndLine = endLine,
+                StartCharacter = start.Character,
+                StartLine = start.Line,
+                EndCharacter = end.Character,
+                EndLine = end.Line,
 
                 // Directives remove the "@" but for collapsing we want to keep it for users.
                 // Shows "@code" instead of "code".

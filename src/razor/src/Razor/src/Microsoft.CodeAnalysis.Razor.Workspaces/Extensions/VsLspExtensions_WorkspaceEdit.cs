@@ -3,11 +3,10 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces;
+namespace Microsoft.VisualStudio.LanguageServer.Protocol;
 
-internal static class WorkspaceEditExtensions
+internal static partial class VsLspExtensions
 {
     public static bool TryGetDocumentChanges(this WorkspaceEdit workspaceEdit, [NotNullWhen(true)] out TextDocumentEdit[]? documentChanges)
     {

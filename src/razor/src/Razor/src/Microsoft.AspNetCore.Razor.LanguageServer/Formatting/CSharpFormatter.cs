@@ -12,11 +12,10 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
@@ -81,13 +80,13 @@ internal sealed class CSharpFormatter(IRazorDocumentMappingService documentMappi
     private static async Task<TextEdit[]> GetFormattingEditsAsync(FormattingContext context, Range projectedRange, CancellationToken cancellationToken)
     {
         var csharpSourceText = context.CodeDocument.GetCSharpSourceText();
-        var spanToFormat = projectedRange.ToTextSpan(csharpSourceText);
+        var spanToFormat = csharpSourceText.GetTextSpan(projectedRange);
         var root = await context.CSharpWorkspaceDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
         Assumes.NotNull(root);
 
         var changes = RazorCSharpFormattingInteractionService.GetFormattedTextChanges(context.CSharpWorkspace.Services, root, spanToFormat, context.Options.GetIndentationOptions(), cancellationToken);
 
-        var edits = changes.Select(c => c.ToTextEdit(csharpSourceText)).ToArray();
+        var edits = changes.Select(csharpSourceText.GetTextEdit).ToArray();
         return edits;
     }
 
@@ -265,8 +264,8 @@ internal sealed class CSharpFormatter(IRazorDocumentMappingService documentMappi
 
         static bool SpansMultipleLines(SyntaxNode node, SourceText text)
         {
-            var range = node.Span.ToRange(text);
-            return range.Start.Line != range.End.Line;
+            var range = text.GetRange(node.Span);
+            return range.SpansMultipleLines();
         }
     }
 

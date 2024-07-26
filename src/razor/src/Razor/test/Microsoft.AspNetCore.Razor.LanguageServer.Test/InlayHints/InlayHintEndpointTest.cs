@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -106,11 +105,7 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
             {
                 Uri = new Uri(razorFilePath)
             },
-            Range = new()
-            {
-                Start = new(0, 0),
-                End = new(codeDocument.Source.Text.Lines.Count, 0)
-            }
+            Range = VsLspFactory.CreateRange(0, 0, codeDocument.Source.Text.Lines.Count, 0)
         };
         Assert.True(DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -130,7 +125,7 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
             Assert.True(spansDict.TryGetValue(label, out var spans), $"Expected {label} to be in test provided markers");
 
             var span = Assert.Single(spans);
-            var expectedRange = span.ToRange(sourceText);
+            var expectedRange = sourceText.GetRange(span);
             // Inlay hints only have a position, so we ignore the end of the range that comes from the test input
             Assert.Equal(expectedRange.Start, hint.Position);
 
@@ -161,7 +156,7 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
             .ToArray();
         foreach (var edit in edits)
         {
-            var change = edit.ToTextChange(sourceText);
+            var change = sourceText.GetTextChange(edit);
             sourceText = sourceText.WithChanges(change);
         }
 

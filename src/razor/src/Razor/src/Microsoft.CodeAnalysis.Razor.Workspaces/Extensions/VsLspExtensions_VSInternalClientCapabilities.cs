@@ -1,11 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+namespace Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces;
-
-internal static class VSInternalClientCapabilitiesExtensions
+internal static partial class VsLspExtensions
 {
     internal static VSInternalClientCapabilities ToVSInternalClientCapabilities(this ClientCapabilities clientCapabilities)
     {

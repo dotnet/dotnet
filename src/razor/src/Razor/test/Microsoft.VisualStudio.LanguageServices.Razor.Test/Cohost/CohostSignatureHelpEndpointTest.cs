@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Settings;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServices.Razor.LanguageClient.Cohost;
 using Microsoft.VisualStudio.Razor.Settings;
@@ -93,7 +93,6 @@ public class CohostSignatureHelpEndpointTest(ITestOutputHelper testOutputHelper)
         TestFileMarkupParser.GetPosition(input, out input, out var cursorPosition);
         var document = CreateProjectAndRazorDocument(input);
         var sourceText = await document.GetTextAsync(DisposalToken);
-        sourceText.GetLineAndOffset(cursorPosition, out var lineIndex, out var characterIndex);
 
         var clientSettingsManager = new ClientSettingsManager([], null, null);
         clientSettingsManager.Update(ClientCompletionSettings.Default with { AutoListParams = autoListParams });
@@ -113,11 +112,7 @@ public class CohostSignatureHelpEndpointTest(ITestOutputHelper testOutputHelper)
             {
                 Uri = document.CreateUri()
             },
-            Position = new Position()
-            {
-                Line = lineIndex,
-                Character = characterIndex
-            },
+            Position = sourceText.GetPosition(cursorPosition),
             Context = signatureHelpContext
         };
 

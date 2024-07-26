@@ -48,11 +48,11 @@ internal sealed class RemoteFoldingRangeService(in ServiceArgs args) : RazorDocu
         var csharpRanges = await ExternalHandlers.FoldingRanges.GetFoldingRangesAsync(generatedDocument, cancellationToken).ConfigureAwait(false);
 
         var convertedCSharp = csharpRanges.SelectAsArray(ToFoldingRange);
-        var convertedHtml = htmlRanges.SelectAsArray(RemoteFoldingRange.ToLspFoldingRange);
+        var convertedHtml = htmlRanges.SelectAsArray(RemoteFoldingRange.ToVsFoldingRange);
 
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         return _foldingRangeService.GetFoldingRanges(codeDocument, convertedCSharp, convertedHtml, cancellationToken)
-            .SelectAsArray(RemoteFoldingRange.FromLspFoldingRange);
+            .SelectAsArray(RemoteFoldingRange.FromVsFoldingRange);
     }
 
     public static FoldingRange ToFoldingRange(Roslyn.LanguageServer.Protocol.FoldingRange r)

@@ -2,12 +2,12 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics;
+using System.Buffers;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces;
+namespace Microsoft.CodeAnalysis.Text;
 
 internal static class SourceTextExtensions
 {
@@ -16,16 +16,6 @@ internal static class SourceTextExtensions
     /// </summary>
     public static TextChangeRange GetEncompassingTextChangeRange(this SourceText newText, SourceText oldText)
     {
-        if (newText is null)
-        {
-            throw new ArgumentNullException(nameof(newText));
-        }
-
-        if (oldText is null)
-        {
-            throw new ArgumentNullException(nameof(oldText));
-        }
-
         var ranges = newText.GetChangeRanges(oldText);
         if (ranges.Count == 0)
         {
@@ -41,82 +31,39 @@ internal static class SourceTextExtensions
         return TextChangeRange.Collapse(ranges);
     }
 
-    public static void GetLineAndOffset(this SourceText source, int position, out int lineNumber, out int offset)
+    public static LinePosition GetLinePosition(this SourceText text, int position)
+        => text.Lines.GetLinePosition(position);
+
+    public static LinePositionSpan GetLinePositionSpan(this SourceText text, TextSpan span)
+        => text.Lines.GetLinePositionSpan(span);
+
+    public static LinePositionSpan GetLinePositionSpan(this SourceText text, SourceSpan span)
+        => text.GetLinePositionSpan(span.ToTextSpan());
+
+    public static LinePositionSpan GetLinePositionSpan(this SourceText text, int start, int end)
+        => text.GetLinePositionSpan(TextSpan.FromBounds(start, end));
+
+    public static int GetPosition(this SourceText text, LinePosition position)
+        => text.Lines.GetPosition(position);
+
+    public static int GetPosition(this SourceText text, int line, int character)
+        => text.GetPosition(new LinePosition(line, character));
+
+    public static string GetSubTextString(this SourceText text, TextSpan span)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        using var _ = ArrayPool<char>.Shared.GetPooledArray(span.Length, out var charBuffer);
 
-        var line = source.Lines.GetLineFromPosition(position);
-
-        lineNumber = line.LineNumber;
-        offset = position - line.Start;
+        text.CopyTo(span.Start, charBuffer, 0, span.Length);
+        return new string(charBuffer, 0, span.Length);
     }
 
-    public static void GetLinesAndOffsets(
-        this SourceText source,
-        TextSpan textSpan,
-        out int startLineNumber,
-        out int startOffset,
-        out int endLineNumber,
-        out int endOffset)
+    public static bool NonWhitespaceContentEquals(this SourceText text, SourceText other)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        source.GetLineAndOffset(textSpan.Start, out startLineNumber, out startOffset);
-        source.GetLineAndOffset(textSpan.End, out endLineNumber, out endOffset);
-    }
-
-    public static void GetLinesAndOffsets(
-        this SourceText source,
-        SourceSpan sourceSpan,
-        out int startLineNumber,
-        out int startOffset,
-        out int endLineNumber,
-        out int endOffset)
-    {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        source.GetLineAndOffset(sourceSpan.AbsoluteIndex, out startLineNumber, out startOffset);
-        source.GetLineAndOffset(sourceSpan.AbsoluteIndex + sourceSpan.Length, out endLineNumber, out endOffset);
-    }
-
-    public static string GetSubTextString(this SourceText source, TextSpan span)
-    {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        var charBuffer = new char[span.Length];
-        source.CopyTo(span.Start, charBuffer, 0, span.Length);
-        return new string(charBuffer);
-    }
-
-    public static bool NonWhitespaceContentEquals(this SourceText source, SourceText other)
-    {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        if (other is null)
-        {
-            throw new ArgumentNullException(nameof(other));
-        }
-
         var i = 0;
         var j = 0;
-        while (i < source.Length && j < other.Length)
+        while (i < text.Length && j < other.Length)
         {
-            if (char.IsWhiteSpace(source[i]))
+            if (char.IsWhiteSpace(text[i]))
             {
                 i++;
                 continue;
@@ -126,7 +73,7 @@ internal static class SourceTextExtensions
                 j++;
                 continue;
             }
-            else if (source[i] != other[j])
+            else if (text[i] != other[j])
             {
                 return false;
             }
@@ -135,7 +82,7 @@ internal static class SourceTextExtensions
             j++;
         }
 
-        while (i < source.Length && char.IsWhiteSpace(source[i]))
+        while (i < text.Length && char.IsWhiteSpace(text[i]))
         {
             i++;
         }
@@ -145,149 +92,181 @@ internal static class SourceTextExtensions
             j++;
         }
 
-        return i == source.Length && j == other.Length;
+        return i == text.Length && j == other.Length;
     }
 
-    public static int? GetFirstNonWhitespaceOffset(this SourceText source, TextSpan? span, out int newLineCount)
+    public static bool TryGetFirstNonWhitespaceOffset(this SourceText text, out int offset)
+        => text.TryGetFirstNonWhitespaceOffset(new TextSpan(0, text.Length), out offset);
+
+    public static bool TryGetFirstNonWhitespaceOffset(this SourceText text, TextSpan span, out int offset)
     {
-        if (source is null)
+        for (var i = span.Start; i < span.End; i++)
         {
-            throw new ArgumentNullException(nameof(source));
+            if (!char.IsWhiteSpace(text[i]))
+            {
+                offset = i - span.Start;
+                return true;
+            }
         }
 
-        span ??= new TextSpan(0, source.Length);
+        offset = -1;
+        return false;
+    }
+
+    public static bool TryGetFirstNonWhitespaceOffset(this SourceText text, TextSpan span, out int offset, out int newLineCount)
+    {
         newLineCount = 0;
 
-        for (var i = span.Value.Start; i < span.Value.End; i++)
+        for (var i = span.Start; i < span.End; i++)
         {
-            if (!char.IsWhiteSpace(source[i]))
+            if (!char.IsWhiteSpace(text[i]))
             {
-                return i - span.Value.Start;
+                offset = i - span.Start;
+                return true;
             }
-            else if (source[i] == '\n')
+            else if (text[i] == '\n')
             {
                 newLineCount++;
             }
         }
 
-        return null;
+        offset = -1;
+        newLineCount = -1;
+        return false;
     }
 
-    // Given the source text and the current span, we start at the ending span location and iterate towards the start
-    // until we've reached a non-whitespace character.
-    // For instance "  abcdef  " would have a last non-whitespace offset of 7 to correspond to the charcter 'f'.
-    public static int? GetLastNonWhitespaceOffset(this SourceText source, TextSpan? span, out int newLineCount)
+    /// <summary>
+    ///  <para>
+    ///   Given the source text and the current span, we start at the ending span location and iterate towards the start
+    ///   until we've reached a non-whitespace character.
+    ///  </para>
+    ///  <para>
+    ///   For instance, "  abcdef  " would have a last non-whitespace offset of 7 to correspond to the character 'f'.
+    ///  </para>
+    /// </summary>
+    public static bool TryGetLastNonWhitespaceOffset(this SourceText text, TextSpan span, out int offset)
     {
-        if (source is null)
+        // If the span is at the end of the document, it's common for the "End" to represent 1 past the end of the source
+        var indexableSpanEnd = Math.Min(span.End, text.Length - 1);
+
+        for (var i = indexableSpanEnd; i >= span.Start; i--)
         {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        span ??= new TextSpan(0, source.Length);
-        newLineCount = 0;
-
-        // If the span is at the end of the document it's common for the "End" to represent 1 past the end of the source
-        var indexableSpanEnd = Math.Min(span.Value.End, source.Length - 1);
-
-        for (var i = indexableSpanEnd; i >= span.Value.Start; i--)
-        {
-            if (!char.IsWhiteSpace(source[i]))
+            if (!char.IsWhiteSpace(text[i]))
             {
-                return i - span.Value.Start;
-            }
-            else if (source[i] == '\n')
-            {
-                newLineCount++;
+                offset = i - span.Start;
+                return true;
             }
         }
 
-        return null;
+        offset = -1;
+        return false;
     }
 
-    public static bool TryGetAbsoluteIndex(this SourceText sourceText, int line, int character, out int absoluteIndex)
-    {
-        return sourceText.TryGetAbsoluteIndex(line, character, logger: null, out absoluteIndex);
-    }
+    public static bool IsValidPosition(this SourceText text, LinePosition lspPosition)
+        => text.TryGetAbsoluteIndex(lspPosition, out _);
 
-    public static bool TryGetAbsoluteIndex(this SourceText sourceText, int line, int character, ILogger? logger, out int absoluteIndex)
+    public static bool IsValidPosition(this SourceText text, (int line, int character) lspPosition)
+        => text.TryGetAbsoluteIndex(lspPosition, out _);
+
+    public static bool IsValidPosition(this SourceText text, int line, int character)
+        => text.TryGetAbsoluteIndex(line, character, out _);
+
+    public static bool TryGetAbsoluteIndex(this SourceText text, LinePosition position, out int absoluteIndex)
+        => text.TryGetAbsoluteIndex(position.Line, position.Character, out absoluteIndex);
+
+    public static bool TryGetAbsoluteIndex(this SourceText text, (int line, int character) position, out int absoluteIndex)
+        => text.TryGetAbsoluteIndex(position.line, position.character, out absoluteIndex);
+
+    public static bool TryGetAbsoluteIndex(this SourceText text, int line, int character, out int absoluteIndex)
     {
         absoluteIndex = 0;
-        var lineCount = sourceText.Lines.Count;
-        if (line > lineCount ||
-            (line == lineCount && character > 0))
+
+        if (character < 0)
         {
-            if (logger != null)
+            return false;
+        }
+
+        var lineCount = text.Lines.Count;
+
+        if (line > lineCount)
+        {
+            return false;
+        }
+
+        // The LSP spec allows the end of a range to be after the last line at character 0.
+        // SourceText doesn't allow that, so we adjust to SourceText.Length.
+        if (line == lineCount)
+        {
+            if (character == 0)
             {
-                logger?.Log(LogLevel.Error, SR.FormatPositionLine_Outside_Range(line, nameof(sourceText), sourceText.Lines.Count), exception: null);
-                Debug.Fail(SR.FormatPositionLine_Outside_Range(line, nameof(sourceText), sourceText.Lines.Count));
+                absoluteIndex = text.Length;
+                return true;
             }
 
             return false;
         }
 
-        // LSP spec allowed a Range to end one line past the end, and character 0. SourceText does not, so we adjust to the final char position
-        if (line == lineCount)
-        {
-            absoluteIndex = sourceText.Length;
-        }
-        else
-        {
-            var sourceLine = sourceText.Lines[line];
-            var lineLengthIncludingLineBreak = sourceLine.SpanIncludingLineBreak.Length;
-            if (character > lineLengthIncludingLineBreak)
-            {
-                if (logger != null)
-                {
-                    var errorMessage = SR.FormatPositionCharacter_Outside_Range(character, nameof(sourceText), lineLengthIncludingLineBreak);
-                    logger?.Log(LogLevel.Error, errorMessage, exception: null);
-                    Debug.Fail(errorMessage);
-                }
+        var textLine = text.Lines[line];
 
-                return false;
-            }
-
-            absoluteIndex = sourceLine.Start + character;
+        if (character > textLine.SpanIncludingLineBreak.Length)
+        {
+            return false;
         }
 
+        absoluteIndex = textLine.Start + character;
         return true;
     }
 
-    public static int GetRequiredAbsoluteIndex(this SourceText sourceText, int line, int character, ILogger? logger = null)
+    public static int GetRequiredAbsoluteIndex(this SourceText text, LinePosition position)
+        => text.GetRequiredAbsoluteIndex(position.Line, position.Character);
+
+    public static int GetRequiredAbsoluteIndex(this SourceText text, (int line, int character) position)
+        => text.GetRequiredAbsoluteIndex(position.line, position.character);
+
+    public static int GetRequiredAbsoluteIndex(this SourceText text, int line, int character)
+        => text.TryGetAbsoluteIndex(line, character, out var absolutionPosition)
+            ? absolutionPosition
+            : ThrowHelper.ThrowInvalidOperationException<int>($"({line},{character}) matches or exceeds SourceText boundary {text.Lines.Count}.");
+
+    public static TextSpan GetTextSpan(this SourceText text, LinePosition start, LinePosition end)
+        => text.GetTextSpan(start.Line, start.Character, end.Line, end.Character);
+
+    public static TextSpan GetTextSpan(this SourceText text, LinePositionSpan span)
+        => text.GetTextSpan(span.Start, span.End);
+
+    public static TextSpan GetTextSpan(this SourceText text, int startLine, int startCharacter, int endLine, int endCharacter)
     {
-        if (!sourceText.TryGetAbsoluteIndex(line, character, logger, out var absolutePosition))
-        {
-            throw new ArgumentOutOfRangeException($"({line},{character}) matches or exceeds SourceText boundary {sourceText.Lines.Count}.");
-        }
-
-        return absolutePosition;
-    }
-
-    public static TextSpan GetTextSpan(this SourceText sourceText, int startLine, int startCharacter, int endLine, int endCharacter)
-    {
-        if (sourceText is null)
-        {
-            throw new ArgumentNullException(nameof(sourceText));
-        }
-
-        var start = GetAbsoluteIndex(startLine, startCharacter, sourceText, "Start");
-        var end = GetAbsoluteIndex(endLine, endCharacter, sourceText, "End");
+        var start = GetAbsoluteIndex(text, startLine, startCharacter, "Start");
+        var end = GetAbsoluteIndex(text, endLine, endCharacter, "End");
 
         var length = end - start;
         if (length < 0)
         {
-            throw new ArgumentOutOfRangeException($"({startLine},{startCharacter})-({endLine},{endCharacter}) resolved to zero or negative length.");
+            return ThrowHelper.ThrowInvalidOperationException<TextSpan>($"({startLine},{startCharacter})-({endLine},{endCharacter}) resolved to zero or negative length.");
         }
 
         return new TextSpan(start, length);
 
-        static int GetAbsoluteIndex(int line, int character, SourceText sourceText, string argName)
+        static int GetAbsoluteIndex(SourceText text, int line, int character, string name)
         {
-            if (!sourceText.TryGetAbsoluteIndex(line, character, out var absolutePosition))
-            {
-                throw new ArgumentOutOfRangeException($"{argName} ({line},{character}) matches or exceeds SourceText boundary {sourceText.Lines.Count}.");
-            }
-
-            return absolutePosition;
+            return text.TryGetAbsoluteIndex(line, character, out var absolutePosition)
+                ? absolutePosition
+                : ThrowHelper.ThrowInvalidOperationException<int>($"{name}: ({line},{character}) matches or exceeds SourceText boundary {text.Lines.Count}.");
         }
+    }
+
+    public static bool TryGetSourceLocation(this SourceText text, LinePosition position, out SourceLocation location)
+        => text.TryGetSourceLocation(position.Line, position.Character, out location);
+
+    public static bool TryGetSourceLocation(this SourceText text, int line, int character, out SourceLocation location)
+    {
+        if (text.TryGetAbsoluteIndex(line, character, out var absoluteIndex))
+        {
+            location = new SourceLocation(absoluteIndex, line, character);
+            return true;
+        }
+
+        location = default;
+        return false;
     }
 }

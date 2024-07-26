@@ -88,7 +88,7 @@ internal class CohostFoldingRangeEndpoint(
         {
             _logger.LogDebug($"Got a total of {allRanges.Length} ranges back from OOP");
 
-            return allRanges.Select(RemoteFoldingRange.ToLspFoldingRange).ToArray();
+            return allRanges.Select(RemoteFoldingRange.ToVsFoldingRange).ToArray();
         }
 
         return null;
@@ -122,7 +122,7 @@ internal class CohostFoldingRangeEndpoint(
             return null;
         }
 
-        return result.Response.SelectAsArray(RemoteFoldingRange.FromLspFoldingRange);
+        return result.Response.SelectAsArray(RemoteFoldingRange.FromVsFoldingRange);
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

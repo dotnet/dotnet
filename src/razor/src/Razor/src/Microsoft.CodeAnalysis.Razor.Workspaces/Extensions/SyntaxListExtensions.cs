@@ -1,15 +1,11 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.CodeAnalysis;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces;
-
-// Inside namespace, to avoid ambiguity with Microsoft.CodeAnalysis.*
-using Microsoft.AspNetCore.Razor.Language.Syntax;
+namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
 internal static class SyntaxListExtensions
 {
@@ -17,36 +13,24 @@ internal static class SyntaxListExtensions
     {
         var index = syntaxList.IndexOf(syntaxNode);
 
-        if (index == 0)
+        return index switch
         {
-            return syntaxNode;
-        }
-        else if (index == -1)
-        {
-            throw new ArgumentException("The provided node was not in the SyntaxList");
-        }
-        else
-        {
-            return syntaxList[index - 1];
-        }
+            0 => syntaxNode,
+            -1 => ThrowHelper.ThrowInvalidOperationException<SyntaxNode>("The provided node was not in the SyntaxList"),
+            _ => syntaxList[index - 1]
+        };
     }
 
     internal static SyntaxNode NextSiblingOrSelf(this SyntaxList<RazorSyntaxNode> syntaxList, RazorSyntaxNode syntaxNode)
     {
         var index = syntaxList.IndexOf(syntaxNode);
 
-        if (index == syntaxList.Count - 1)
+        return index switch
         {
-            return syntaxNode;
-        }
-        else if (index == -1)
-        {
-            throw new ArgumentException("The provided node was not in the SyntaxList");
-        }
-        else
-        {
-            return syntaxList[index + 1];
-        }
+            var i when i == syntaxList.Count - 1 => syntaxNode,
+            -1 => ThrowHelper.ThrowInvalidOperationException<SyntaxNode>("The provided node was not in the SyntaxList"),
+            _ => syntaxList[index + 1]
+        };
     }
 
     internal static bool TryGetOpenBraceNode(this SyntaxList<RazorSyntaxNode> children, [NotNullWhen(true)] out RazorMetaCodeSyntax? brace)
@@ -54,9 +38,10 @@ internal static class SyntaxListExtensions
         // If there is no whitespace between the directive and the brace then there will only be
         // three children and the brace should be the first child
         brace = null;
-        if (children.FirstOrDefault(c => c.Kind == SyntaxKind.RazorMetaCode) is RazorMetaCodeSyntax metaCode)
+
+        if (children.FirstOrDefault(static c => c.Kind == SyntaxKind.RazorMetaCode) is RazorMetaCodeSyntax metaCode)
         {
-            var token = metaCode.MetaCode.SingleOrDefault(m => m.Kind == SyntaxKind.LeftBrace);
+            var token = metaCode.MetaCode.SingleOrDefault(static m => m.Kind == SyntaxKind.LeftBrace);
             if (token != null)
             {
                 brace = metaCode;
@@ -65,14 +50,16 @@ internal static class SyntaxListExtensions
 
         return brace != null;
     }
+
     internal static bool TryGetCloseBraceNode(this SyntaxList<RazorSyntaxNode> children, [NotNullWhen(true)] out RazorMetaCodeSyntax? brace)
     {
         // If there is no whitespace between the directive and the brace then there will only be
         // three children and the brace should be the last child
         brace = null;
-        if (children.LastOrDefault(c => c.Kind == SyntaxKind.RazorMetaCode) is RazorMetaCodeSyntax metaCode)
+
+        if (children.LastOrDefault(static c => c.Kind == SyntaxKind.RazorMetaCode) is RazorMetaCodeSyntax metaCode)
         {
-            var token = metaCode.MetaCode.SingleOrDefault(m => m.Kind == SyntaxKind.RightBrace);
+            var token = metaCode.MetaCode.SingleOrDefault(static m => m.Kind == SyntaxKind.RightBrace);
             if (token != null)
             {
                 brace = metaCode;
@@ -81,12 +68,14 @@ internal static class SyntaxListExtensions
 
         return brace != null;
     }
+
     internal static bool TryGetOpenBraceToken(this SyntaxList<RazorSyntaxNode> children, [NotNullWhen(true)] out SyntaxToken? brace)
     {
         brace = null;
+
         if (children.TryGetOpenBraceNode(out var metacode))
         {
-            var token = metacode.MetaCode.SingleOrDefault(m => m.Kind == SyntaxKind.LeftBrace);
+            var token = metacode.MetaCode.SingleOrDefault(static m => m.Kind == SyntaxKind.LeftBrace);
             if (token != null)
             {
                 brace = token;
@@ -99,9 +88,10 @@ internal static class SyntaxListExtensions
     internal static bool TryGetCloseBraceToken(this SyntaxList<RazorSyntaxNode> children, [NotNullWhen(true)] out SyntaxToken? brace)
     {
         brace = null;
+
         if (children.TryGetCloseBraceNode(out var metacode))
         {
-            var token = metacode.MetaCode.SingleOrDefault(m => m.Kind == SyntaxKind.RightBrace);
+            var token = metacode.MetaCode.SingleOrDefault(static m => m.Kind == SyntaxKind.RightBrace);
             if (token != null)
             {
                 brace = token;

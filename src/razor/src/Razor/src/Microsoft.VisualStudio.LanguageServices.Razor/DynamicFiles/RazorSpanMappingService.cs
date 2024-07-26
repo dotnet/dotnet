@@ -86,7 +86,7 @@ internal class RazorSpanMappingService(IDocumentSnapshot document) : IRazorSpanM
             {
                 // This span mapping contains the span.
                 mappedSpan = new TextSpan(original.Start + leftOffset, (original.End + rightOffset) - (original.Start + leftOffset));
-                linePositionSpan = source.Lines.GetLinePositionSpan(mappedSpan);
+                linePositionSpan = source.GetLinePositionSpan(mappedSpan);
                 return true;
             }
         }

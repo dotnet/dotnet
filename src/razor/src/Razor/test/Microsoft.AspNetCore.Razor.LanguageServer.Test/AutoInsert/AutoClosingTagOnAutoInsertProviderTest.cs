@@ -5,7 +5,6 @@ using System;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
@@ -952,7 +951,7 @@ expected: @"
         var configService = StrictMock.Of<IConfigurationSyncService>();
         var optionsMonitor = new RazorLSPOptionsMonitor(configService, Options);
 
-        var provider = new AutoClosingTagOnAutoInsertProvider(optionsMonitor, LoggerFactory);
+        var provider = new AutoClosingTagOnAutoInsertProvider(optionsMonitor);
         return provider;
     }
 }
