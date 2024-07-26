@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Formatting;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -69,10 +68,9 @@ internal class HtmlFormatter
             return Array.Empty<TextEdit>();
         }
 
-        context.SourceText.GetLineAndOffset(context.HostDocumentIndex, out var line, out var col);
         var @params = new RazorDocumentOnTypeFormattingParams()
         {
-            Position = new Position(line, col),
+            Position = context.SourceText.GetPosition(context.HostDocumentIndex),
             Character = context.TriggerCharacter.ToString(),
             TextDocument = new TextDocumentIdentifier { Uri = context.Uri },
             Options = context.Options,
@@ -100,12 +98,12 @@ internal class HtmlFormatter
             return edits;
 
         // First we apply the edits that the Html language server wanted, to the Html document
-        var textChanges = edits.Select(e => e.ToTextChange(htmlSourceText));
+        var textChanges = edits.Select(htmlSourceText.GetTextChange);
         var changedText = htmlSourceText.WithChanges(textChanges);
 
         // Now we use our minimal text differ algorithm to get the bare minimum of edits
         var minimalChanges = SourceTextDiffer.GetMinimalTextChanges(htmlSourceText, changedText, DiffKind.Char);
-        var minimalEdits = minimalChanges.Select(f => f.ToTextEdit(htmlSourceText)).ToArray();
+        var minimalEdits = minimalChanges.Select(htmlSourceText.GetTextEdit).ToArray();
 
         return minimalEdits;
     }

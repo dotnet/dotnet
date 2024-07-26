@@ -39,7 +39,7 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0)
+            Position = VsLspFactory.CreatePosition(1, 0)
         };
         codeDocument.SetUnsupported();
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -64,9 +64,9 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0)
+            Position = VsLspFactory.CreatePosition(1, 0)
         };
-        var expectedRange = new Range { Start = new Position(1, 5), End = new Position(1, 19) };
+        var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 5, length: 14);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -89,9 +89,9 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0)
+            Position = VsLspFactory.CreatePosition(1, 0)
         };
-        var expectedRange = new Range { Start = new Position(1, 4), End = new Position(1, 16) };
+        var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 4, length: 12);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -114,9 +114,9 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0)
+            Position = VsLspFactory.CreatePosition(1, 0)
         };
-        var expectedRange = new Range { Start = new Position(1, 5), End = new Position(1, 19) };
+        var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 5, length: 14);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -139,9 +139,9 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0)
+            Position = VsLspFactory.CreatePosition(1, 0)
         };
-        var expectedRange = new Range { Start = new Position(1, 4), End = new Position(1, 16) };
+        var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 4, length: 12);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -165,7 +165,7 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0)
+            Position = VsLspFactory.CreatePosition(1, 0)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -189,7 +189,7 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0)
+            Position = VsLspFactory.CreatePosition(1, 0)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -216,7 +216,7 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(1, 0)
+            Position = VsLspFactory.CreatePosition(1, 0)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -243,7 +243,7 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
         var request = new RazorBreakpointSpanParams()
         {
             Uri = documentPath,
-            Position = new Position(2, 0)
+            Position = VsLspFactory.CreatePosition(2, 0)
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 

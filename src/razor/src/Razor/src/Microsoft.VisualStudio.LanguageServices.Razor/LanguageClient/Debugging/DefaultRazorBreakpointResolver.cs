@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Debugging;
 using Microsoft.VisualStudio.Text;
+using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Debugging;
 
@@ -95,8 +96,8 @@ internal class DefaultRazorBreakpointResolver : RazorBreakpointResolver
             return cachedRange;
         }
 
-        var lspPosition = new Position(lineIndex, characterIndex);
-        var hostDocumentRange = await _breakpointSpanProvider.GetBreakpointSpanAsync(documentSnapshot, lspPosition, cancellationToken).ConfigureAwait(false);
+        var position = VsLspFactory.CreatePosition(lineIndex, characterIndex);
+        var hostDocumentRange = await _breakpointSpanProvider.GetBreakpointSpanAsync(documentSnapshot, position, cancellationToken).ConfigureAwait(false);
         if (hostDocumentRange is null)
         {
             // can't map the position, invalid breakpoint location.

@@ -12,9 +12,9 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using TextSpan = Microsoft.CodeAnalysis.Text.TextSpan;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
@@ -38,7 +38,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
         // 2. The indentation due to Razor and HTML constructs
 
         var text = context.SourceText;
-        range ??= TextSpan.FromBounds(0, text.Length).ToRange(text);
+        range ??= text.GetRange(TextSpan.FromBounds(0, text.Length));
 
         // To help with figuring out the correct indentation, first we will need the indentation
         // that the C# formatter wants to apply in the following locations,
@@ -521,8 +521,8 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             // `|@{ foo }` - true
             //
             if (owner is { Parent.Parent.Parent: CSharpExplicitExpressionSyntax explicitExpression } &&
-                explicitExpression.Span.ToRange(context.SourceText) is { } exprRange &&
-                exprRange.Start.Line == exprRange.End.Line)
+                context.SourceText.GetRange(explicitExpression.Span) is { } exprRange &&
+                exprRange.IsSingleLine())
             {
                 return true;
             }

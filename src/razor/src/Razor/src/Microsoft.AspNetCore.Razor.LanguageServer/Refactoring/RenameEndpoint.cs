@@ -320,19 +320,11 @@ internal sealed class RenameEndpoint(
     {
         using var _ = ListPool<TextEdit>.GetPooledObject(out var edits);
 
-        edits.Add(new()
-        {
-            Range = element.StartTag.Name.GetRange(codeDocument.Source),
-            NewText = newName
-        });
+        edits.Add(VsLspFactory.CreateTextEdit(element.StartTag.Name.GetRange(codeDocument.Source), newName));
 
         if (element.EndTag is MarkupTagHelperEndTagSyntax endTag)
         {
-            edits.Add(new TextEdit()
-            {
-                Range = endTag.Name.GetRange(codeDocument.Source),
-                NewText = newName,
-            });
+            edits.Add(VsLspFactory.CreateTextEdit(endTag.Name.GetRange(codeDocument.Source), newName));
         }
 
         return [.. edits];

@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using static Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer.RazorSemanticTokensBenchmark;
+using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 
@@ -54,19 +55,9 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
         DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, projectContext: null, version: 1);
 
         var text = await DocumentSnapshot.GetTextAsync().ConfigureAwait(false);
-        Range = new Range
-        {
-            Start = new Position
-            {
-                Line = 0,
-                Character = 0
-            },
-            End = new Position
-            {
-                Line = text.Lines.Count - 1,
-                Character = 0
-            }
-        };
+        Range = VsLspFactory.CreateRange(
+            start: (0, 0),
+            end: (text.Lines.Count - 1, 0));
     }
 
     private const int WindowSize = 10;

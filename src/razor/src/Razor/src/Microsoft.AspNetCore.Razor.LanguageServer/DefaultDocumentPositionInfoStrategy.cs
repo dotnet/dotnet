@@ -4,9 +4,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -15,10 +14,14 @@ internal class DefaultDocumentPositionInfoStrategy : IDocumentPositionInfoStrate
 {
     public static IDocumentPositionInfoStrategy Instance { get; } = new DefaultDocumentPositionInfoStrategy();
 
-    public async Task<DocumentPositionInfo?> TryGetPositionInfoAsync(IRazorDocumentMappingService documentMappingService, DocumentContext documentContext, Position position, ILogger logger, CancellationToken cancellationToken)
+    public async Task<DocumentPositionInfo?> TryGetPositionInfoAsync(
+        IRazorDocumentMappingService documentMappingService,
+        DocumentContext documentContext,
+        Position position,
+        CancellationToken cancellationToken)
     {
         var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        if (!position.TryGetAbsoluteIndex(sourceText, logger, out var absoluteIndex))
+        if (!sourceText.TryGetAbsoluteIndex(position, out var absoluteIndex))
         {
             return null;
         }

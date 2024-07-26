@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -197,7 +196,7 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
 
         // We can still expect the character to be correct, even if the line won't match
         var surveyPromptSourceText = SourceText.From(surveyPrompt);
-        var range = expectedSpan.ToRange(surveyPromptSourceText);
+        var range = surveyPromptSourceText.GetRange(expectedSpan);
         Assert.Equal(range.Start.Character, location.Range.Start.Character);
     }
 
@@ -218,7 +217,7 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
         var location = Assert.Single(locations);
         Assert.Equal(new Uri(razorFilePath), location.Uri);
 
-        var expectedRange = expectedSpan.ToRange(codeDocument.GetSourceText());
+        var expectedRange = codeDocument.Source.Text.GetRange(expectedSpan);
         Assert.Equal(expectedRange, location.Range);
     }
 
@@ -245,14 +244,13 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
 
         var endpoint = new DefinitionEndpoint(searchEngine, DocumentMappingService, LanguageServerFeatureOptions, languageServer, LoggerFactory);
 
-        codeDocument.GetSourceText().GetLineAndOffset(cursorPosition, out var line, out var offset);
         var request = new TextDocumentPositionParams
         {
             TextDocument = new TextDocumentIdentifier
             {
                 Uri = new Uri(razorFilePath)
             },
-            Position = new Position(line, offset)
+            Position = codeDocument.Source.Text.GetPosition(cursorPosition)
         };
 
         return await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);

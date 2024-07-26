@@ -6,7 +6,6 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
@@ -65,17 +64,13 @@ public class RazorDiagnosticConverterTest(ITestOutputHelper testOutput) : Langua
         // Arrange
         var sourceSpan = new SourceSpan(3, 0, 3, 4);
         var sourceText = SourceText.From("Hello World");
-        var expectedRange = new Range
-        {
-            Start = new Position(0, 3),
-            End = new Position(0, 7)
-        };
+        var expectedRange = VsLspFactory.CreateSingleLineRange(line: 0, character: 3, length: 4);
 
         // Act
         var range = RazorDiagnosticConverter.ConvertSpanToRange(sourceSpan, sourceText);
 
         // Assert
-        Assert.Equal("lo W", sourceText.GetSubTextString(range.ToTextSpan(sourceText)));
+        Assert.Equal("lo W", sourceText.GetSubTextString(sourceText.GetTextSpan(range)));
         Assert.Equal(expectedRange, range);
     }
 
@@ -85,17 +80,13 @@ public class RazorDiagnosticConverterTest(ITestOutputHelper testOutput) : Langua
         // Arrange
         var sourceText = SourceText.From(string.Empty);
         var sourceSpan = new SourceSpan(5, 0, 5, 4);
-        var expectedRange = new Range
-        {
-            Start = new Position(0, 0),
-            End = new Position(0, 0)
-        };
+        var expectedRange = VsLspFactory.DefaultRange;
 
         // Act
         var range = RazorDiagnosticConverter.ConvertSpanToRange(sourceSpan, sourceText);
 
         // Assert
-        Assert.Equal("", sourceText.GetSubTextString(range.ToTextSpan(sourceText)));
+        Assert.Equal("", sourceText.GetSubTextString(sourceText.GetTextSpan(range)));
         Assert.Equal(expectedRange, range);
     }
 
@@ -105,17 +96,13 @@ public class RazorDiagnosticConverterTest(ITestOutputHelper testOutput) : Langua
         // Arrange
         var sourceText = SourceText.From("Hello World");
         var sourceSpan = new SourceSpan(sourceText.Length + 5, 0, sourceText.Length + 5, 4);
-        var expectedRange = new Range
-        {
-            Start = new Position(0, 11),
-            End = new Position(0, 11)
-        };
+        var expectedRange = VsLspFactory.CreateZeroWidthRange(0, 11);
 
         // Act
         var range = RazorDiagnosticConverter.ConvertSpanToRange(sourceSpan, sourceText);
 
         // Assert
-        Assert.Equal("", sourceText.GetSubTextString(range.ToTextSpan(sourceText)));
+        Assert.Equal("", sourceText.GetSubTextString(sourceText.GetTextSpan(range)));
         Assert.Equal(expectedRange, range);
     }
 
@@ -125,17 +112,13 @@ public class RazorDiagnosticConverterTest(ITestOutputHelper testOutput) : Langua
         // Arrange
         var sourceText = SourceText.From("Hello World");
         var sourceSpan = new SourceSpan(6, 0, 6, 15);
-        var expectedRange = new Range
-        {
-            Start = new Position(0, 6),
-            End = new Position(0, 11)
-        };
+        var expectedRange = VsLspFactory.CreateSingleLineRange(line: 0, character: 6, length: 5);
 
         // Act
         var range = RazorDiagnosticConverter.ConvertSpanToRange(sourceSpan, sourceText);
 
         // Assert
-        Assert.Equal("World", sourceText.GetSubTextString(range.ToTextSpan(sourceText)));
+        Assert.Equal("World", sourceText.GetSubTextString(sourceText.GetTextSpan(range)));
         Assert.Equal(expectedRange, range);
     }
 

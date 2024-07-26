@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
@@ -54,7 +54,8 @@ internal class WrapWithTagEndpoint(
         }
 
         var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        if (request.Range?.Start.TryGetAbsoluteIndex(sourceText, _logger, out var hostDocumentIndex) != true)
+        if (request.Range?.Start is not { } start ||
+            !sourceText.TryGetAbsoluteIndex(start, out var hostDocumentIndex))
         {
             return null;
         }
@@ -81,13 +82,13 @@ internal class WrapWithTagEndpoint(
             // <p>[|@currentCount|]</p>
 
             var tree = await documentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-            var requestSpan = request.Range.ToTextSpan(sourceText);
+            var requestSpan = sourceText.GetTextSpan(request.Range);
             var node = tree.Root.FindNode(requestSpan, includeWhitespace: false, getInnermostNodeForTie: true);
             if (node?.FirstAncestorOrSelf<CSharpImplicitExpressionSyntax>() is { Parent: CSharpCodeBlockSyntax codeBlock } &&
                 (requestSpan == codeBlock.FullSpan || requestSpan.Length == 0))
             {
                 // Pretend we're in Html so the rest of the logic can continue
-                request.Range = codeBlock.FullSpan.ToRange(sourceText);
+                request.Range = sourceText.GetRange(codeBlock.FullSpan);
                 languageKind = RazorLanguageKind.Html;
             }
         }

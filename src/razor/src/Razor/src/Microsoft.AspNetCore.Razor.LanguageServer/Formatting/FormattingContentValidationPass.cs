@@ -1,16 +1,14 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
@@ -40,7 +38,7 @@ internal sealed class FormattingContentValidationPass(
 
         var text = context.SourceText;
         var edits = result.Edits;
-        var changes = edits.Select(e => e.ToTextChange(text));
+        var changes = edits.Select(text.GetTextChange);
         var changedText = text.WithChanges(changes);
 
         if (!text.NonWhitespaceContentEquals(changedText))
@@ -56,10 +54,9 @@ internal sealed class FormattingContentValidationPass(
                 {
                     _logger.LogWarning($"{SR.FormatEdit_at_adds(edit.Range.ToDisplayString(), edit.NewText)}");
                 }
-                else if (text.GetSubText(edit.Range.ToTextSpan(text)) is { } subText &&
-                    subText.GetFirstNonWhitespaceOffset(span: null, out _) is not null)
+                else if (text.TryGetFirstNonWhitespaceOffset(text.GetTextSpan(edit.Range), out _))
                 {
-                    _logger.LogWarning($"{SR.FormatEdit_at_deletes(edit.Range.ToDisplayString(), subText.ToString())}");
+                    _logger.LogWarning($"{SR.FormatEdit_at_deletes(edit.Range.ToDisplayString(), text.ToString(text.GetTextSpan(edit.Range)))}");
                 }
             }
 

@@ -6,10 +6,9 @@ using System.Linq;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
-internal static class IEnumerableExtensions
+internal static class EnumerableExtensions
 {
-    internal static IEnumerable<T> WithoutNull<T>(this IEnumerable<T?> ts)
-    {
-        return ts.Where(t => t != null).Select(t => t!);
-    }
+    internal static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
+        where T : class
+        => source.Where(static t => t is not null)!;
 }

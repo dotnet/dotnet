@@ -43,8 +43,7 @@ internal sealed class RazorLanguageQueryEndpoint(IRazorDocumentMappingService do
 
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
         var sourceText = await documentSnapshot.GetTextAsync().ConfigureAwait(false);
-        var linePosition = new LinePosition(request.Position.Line, request.Position.Character);
-        var hostDocumentIndex = sourceText.Lines.GetPosition(linePosition);
+        var hostDocumentIndex = sourceText.GetPosition(request.Position);
         var responsePosition = request.Position;
 
         if (codeDocument.IsUnsupported())

@@ -1,100 +1,71 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Diagnostics;
 using System.Linq;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces;
+namespace Microsoft.AspNetCore.Razor.Language;
 
 internal static class RazorCodeDocumentExtensions
 {
-    private static readonly object s_cSharpSourceTextKey = new();
+    private static readonly object s_csharpSourceTextKey = new();
     private static readonly object s_htmlSourceTextKey = new();
-
-    public static SourceText GetSourceText(this RazorCodeDocument document)
-    {
-        if (document is null)
-        {
-            throw new ArgumentNullException(nameof(document));
-        }
-
-        return document.Source.Text;
-    }
 
     public static SourceText GetCSharpSourceText(this RazorCodeDocument document)
     {
-        if (document is null)
-        {
-            throw new ArgumentNullException(nameof(document));
-        }
-
-        var sourceTextObj = document.Items[s_cSharpSourceTextKey];
-        if (sourceTextObj is null)
+        if (!document.Items.TryGetValue(s_csharpSourceTextKey, out SourceText? sourceText))
         {
             var csharpDocument = document.GetCSharpDocument();
-            var sourceText = SourceText.From(csharpDocument.GeneratedCode);
-            document.Items[s_cSharpSourceTextKey] = sourceText;
+            sourceText = SourceText.From(csharpDocument.GeneratedCode);
+            document.Items[s_csharpSourceTextKey] = sourceText;
 
             return sourceText;
         }
 
-        return (SourceText)sourceTextObj;
+        return sourceText.AssumeNotNull();
     }
 
     public static SourceText GetHtmlSourceText(this RazorCodeDocument document)
     {
-        if (document is null)
-        {
-            throw new ArgumentNullException(nameof(document));
-        }
-
-        var sourceTextObj = document.Items[s_htmlSourceTextKey];
-        if (sourceTextObj is null)
+        if (!document.Items.TryGetValue(s_htmlSourceTextKey, out SourceText? sourceText))
         {
             var htmlDocument = document.GetHtmlDocument();
-            var sourceText = SourceText.From(htmlDocument.GeneratedCode);
+            sourceText = SourceText.From(htmlDocument.GeneratedCode);
             document.Items[s_htmlSourceTextKey] = sourceText;
 
             return sourceText;
         }
 
-        return (SourceText)sourceTextObj;
+        return sourceText.AssumeNotNull();
     }
 
     public static SourceText GetGeneratedSourceText(this RazorCodeDocument document, IRazorGeneratedDocument generatedDocument)
-    {
-        if (generatedDocument is RazorCSharpDocument)
+        => generatedDocument switch
         {
-            return GetCSharpSourceText(document);
-        }
-        else if (generatedDocument is RazorHtmlDocument)
-        {
-            return GetHtmlSourceText(document);
-        }
-
-        throw new InvalidOperationException("Unknown generated document type");
-    }
+            RazorCSharpDocument => document.GetCSharpSourceText(),
+            RazorHtmlDocument => document.GetHtmlSourceText(),
+            _ => ThrowHelper.ThrowInvalidOperationException<SourceText>("Unknown generated document type"),
+        };
 
     public static IRazorGeneratedDocument GetGeneratedDocument(this RazorCodeDocument document, RazorLanguageKind languageKind)
-      => languageKind switch
-      {
-          RazorLanguageKind.CSharp => document.GetCSharpDocument(),
-          RazorLanguageKind.Html => document.GetHtmlDocument(),
-          _ => throw new System.InvalidOperationException(),
-      };
+        => languageKind switch
+        {
+            RazorLanguageKind.CSharp => document.GetCSharpDocument(),
+            RazorLanguageKind.Html => document.GetHtmlDocument(),
+            _ => ThrowHelper.ThrowInvalidOperationException<IRazorGeneratedDocument>($"Unexpected language kind: {languageKind}"),
+        };
 
     public static bool TryGetMinimalCSharpRange(this RazorCodeDocument codeDocument, LinePositionSpan razorRange, out LinePositionSpan csharpRange)
     {
         SourceSpan? minGeneratedSpan = null;
         SourceSpan? maxGeneratedSpan = null;
 
-        var sourceText = codeDocument.GetSourceText();
-        var textSpan = razorRange.ToTextSpan(sourceText);
+        var sourceText = codeDocument.Source.Text;
+        var textSpan = sourceText.GetTextSpan(razorRange);
         var csharpDoc = codeDocument.GetCSharpDocument();
 
         // We want to find the min and max C# source mapping that corresponds with our Razor range.
@@ -121,8 +92,8 @@ internal static class RazorCodeDocumentExtensions
         if (minGeneratedSpan is not null && maxGeneratedSpan is not null)
         {
             var csharpSourceText = codeDocument.GetCSharpSourceText();
-            var startRange = minGeneratedSpan.Value.ToLinePositionSpan(csharpSourceText);
-            var endRange = maxGeneratedSpan.Value.ToLinePositionSpan(csharpSourceText);
+            var startRange = csharpSourceText.GetLinePositionSpan(minGeneratedSpan.Value);
+            var endRange = csharpSourceText.GetLinePositionSpan(maxGeneratedSpan.Value);
 
             csharpRange = new LinePositionSpan(startRange.Start, endRange.End);
             Debug.Assert(csharpRange.Start.CompareTo(csharpRange.End) <= 0, "Range.Start should not be larger than Range.End");
@@ -139,7 +110,7 @@ internal static class RazorCodeDocumentExtensions
         var namespaceNode = (NamespaceDeclarationIntermediateNode)razorCodeDocument
             .GetDocumentIntermediateNode()
             .FindDescendantNodes<IntermediateNode>()
-            .First(n => n is NamespaceDeclarationIntermediateNode);
+            .First(static n => n is NamespaceDeclarationIntermediateNode);
 
         return namespaceNode.Content == fullyQualifiedNamespace;
     }

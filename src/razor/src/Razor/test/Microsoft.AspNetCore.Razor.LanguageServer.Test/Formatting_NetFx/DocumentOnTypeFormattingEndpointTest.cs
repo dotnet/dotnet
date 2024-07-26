@@ -62,7 +62,7 @@ public class DocumentOnTypeFormattingEndpointTest(ITestOutputHelper testOutput) 
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
             Character = ".",
-            Position = new Position(2, 11),
+            Position = VsLspFactory.CreatePosition(2, 11),
             Options = new FormattingOptions { InsertSpaces = true, TabSize = 4 }
         };
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -97,7 +97,7 @@ public class DocumentOnTypeFormattingEndpointTest(ITestOutputHelper testOutput) 
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
             Character = ".",
-            Position = new Position(2, 11),
+            Position = VsLspFactory.CreatePosition(2, 11),
             Options = new FormattingOptions { InsertSpaces = true, TabSize = 4 },
         };
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -133,7 +133,7 @@ public class DocumentOnTypeFormattingEndpointTest(ITestOutputHelper testOutput) 
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
             Character = "}",
-            Position = new Position(2, 11),
+            Position = VsLspFactory.CreatePosition(2, 11),
             Options = new FormattingOptions { InsertSpaces = true, TabSize = 4 },
         };
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -169,7 +169,7 @@ public class DocumentOnTypeFormattingEndpointTest(ITestOutputHelper testOutput) 
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
             Character = "}",
-            Position = new Position(2, 11),
+            Position = VsLspFactory.CreatePosition(2, 11),
             Options = new FormattingOptions { InsertSpaces = true, TabSize = 4 }
         };
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -204,7 +204,7 @@ public class DocumentOnTypeFormattingEndpointTest(ITestOutputHelper testOutput) 
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
             Character = ".",
-            Position = new Position(2, 11),
+            Position = VsLspFactory.CreatePosition(2, 11),
             Options = new FormattingOptions { InsertSpaces = true, TabSize = 4 }
         };
         Assert.True(documentContextFactory.TryCreateForOpenDocument(uri, out var documentContext));

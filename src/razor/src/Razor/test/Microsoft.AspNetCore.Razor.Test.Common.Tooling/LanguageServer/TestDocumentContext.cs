@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 
@@ -22,7 +21,7 @@ internal static class TestDocumentContext
 
     public static VersionedDocumentContext From(string filePath, RazorCodeDocument codeDocument, int hostDocumentVersion)
     {
-        var content = codeDocument.GetSourceText().ToString();
+        var content = codeDocument.Source.Text.ToString();
         var documentSnapshot = TestDocumentSnapshot.Create(filePath, content);
         documentSnapshot.With(codeDocument);
         var uri = new Uri(filePath);
@@ -31,7 +30,7 @@ internal static class TestDocumentContext
 
     public static DocumentContext From(string filePath, RazorCodeDocument codeDocument)
     {
-        var content = codeDocument.GetSourceText().ToString();
+        var content = codeDocument.Source.Text.ToString();
         var documentSnapshot = TestDocumentSnapshot.Create(filePath, content);
         documentSnapshot.With(codeDocument);
         var uri = new Uri(filePath);

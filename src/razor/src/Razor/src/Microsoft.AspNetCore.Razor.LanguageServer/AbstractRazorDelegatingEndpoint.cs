@@ -113,7 +113,7 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
             return default;
         }
 
-        var positionInfo = await DocumentPositionInfoStrategy.TryGetPositionInfoAsync(_documentMappingService, documentContext, request.Position, Logger, cancellationToken).ConfigureAwait(false);
+        var positionInfo = await DocumentPositionInfoStrategy.TryGetPositionInfoAsync(_documentMappingService, documentContext, request.Position, cancellationToken).ConfigureAwait(false);
         if (positionInfo is null)
         {
             return default;

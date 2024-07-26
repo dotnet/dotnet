@@ -7,7 +7,6 @@ using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -104,14 +103,13 @@ public class SignatureHelpEndpointTest(ITestOutputHelper testOutput) : SingleSer
         var endpoint = new SignatureHelpEndpoint(
             LanguageServerFeatureOptions, DocumentMappingService, languageServer, optionsMonitor, LoggerFactory);
 
-        codeDocument.GetSourceText().GetLineAndOffset(cursorPosition, out var line, out var offset);
         var request = new SignatureHelpParams
         {
             TextDocument = new TextDocumentIdentifier
             {
                 Uri = new Uri(razorFilePath)
             },
-            Position = new Position(line, offset),
+            Position = codeDocument.Source.Text.GetPosition(cursorPosition),
             Context = signatureHelpContext
         };
 

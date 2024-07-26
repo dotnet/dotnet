@@ -35,8 +35,7 @@ public abstract class RazorOnAutoInsertProviderTestBase : LanguageServerTestBase
         TestFileMarkupParser.GetPosition(input, out input, out var location);
 
         var source = SourceText.From(input);
-        source.GetLineAndOffset(location, out var line, out var column);
-        var position = new Position(line, column);
+        var position = source.GetPosition(location);
 
         var path = "file:///path/to/document.razor";
         var uri = new Uri(path);
@@ -64,7 +63,7 @@ public abstract class RazorOnAutoInsertProviderTestBase : LanguageServerTestBase
 
     private static SourceText ApplyEdit(SourceText source, TextEdit edit)
     {
-        var change = edit.ToTextChange(source);
+        var change = source.GetTextChange(edit);
         return source.WithChanges(change);
     }
 

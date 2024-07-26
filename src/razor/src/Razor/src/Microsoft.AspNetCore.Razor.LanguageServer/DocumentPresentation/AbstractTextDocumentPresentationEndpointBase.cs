@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -18,6 +17,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.DocumentPresentation;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
@@ -36,10 +36,10 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
         IFilePathService filePathService,
         ILogger logger)
     {
-        _razorDocumentMappingService = razorDocumentMappingService ?? throw new ArgumentNullException(nameof(razorDocumentMappingService));
-        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-        _filePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _razorDocumentMappingService = razorDocumentMappingService;
+        _clientConnection = clientConnection;
+        _filePathService = filePathService;
+        _logger = logger;
     }
 
     public abstract string EndpointName { get; }
@@ -74,7 +74,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
         }
 
         var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        if (request.Range.Start.TryGetAbsoluteIndex(sourceText, _logger, out var hostDocumentIndex) != true)
+        if (sourceText.TryGetAbsoluteIndex(request.Range.Start, out var hostDocumentIndex) != true)
         {
             return null;
         }
@@ -238,11 +238,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
                 return [];
             }
 
-            var newEdit = new TextEdit()
-            {
-                NewText = edit.NewText,
-                Range = newRange
-            };
+            var newEdit = VsLspFactory.CreateTextEdit(newRange, edit.NewText);
             mappedEdits.Add(newEdit);
         }
 

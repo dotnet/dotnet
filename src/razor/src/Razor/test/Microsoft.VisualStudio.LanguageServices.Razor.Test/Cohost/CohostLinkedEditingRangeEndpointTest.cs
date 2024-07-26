@@ -5,7 +5,6 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.LinkedEditingRange;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -162,7 +161,6 @@ public class CohostLinkedEditingRangeEndpointTest(ITestOutputHelper testOutputHe
         TestFileMarkupParser.GetPositionAndSpans(input, out input, out int cursorPosition, out ImmutableArray<TextSpan> spans);
         var document = CreateProjectAndRazorDocument(input);
         var sourceText = await document.GetTextAsync(DisposalToken);
-        sourceText.GetLineAndOffset(cursorPosition, out var lineIndex, out var characterIndex);
 
         var endpoint = new CohostLinkedEditingRangeEndpoint(RemoteServiceInvoker, LoggerFactory);
 
@@ -172,11 +170,7 @@ public class CohostLinkedEditingRangeEndpointTest(ITestOutputHelper testOutputHe
             {
                 Uri = document.CreateUri()
             },
-            Position = new Position()
-            {
-                Line = lineIndex,
-                Character = characterIndex
-            }
+            Position = sourceText.GetPosition(cursorPosition)
         };
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(request, document, DisposalToken);
@@ -189,7 +183,7 @@ public class CohostLinkedEditingRangeEndpointTest(ITestOutputHelper testOutputHe
 
         Assert.NotNull(result);
         Assert.Equal(LinkedEditingRangeHelper.WordPattern, result.WordPattern);
-        Assert.Equal(spans[0], result.Ranges[0].ToTextSpan(sourceText));
-        Assert.Equal(spans[1], result.Ranges[1].ToTextSpan(sourceText));
+        Assert.Equal(spans[0], sourceText.GetTextSpan(result.Ranges[0]));
+        Assert.Equal(spans[1], sourceText.GetTextSpan(result.Ranges[1]));
     }
 }

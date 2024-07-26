@@ -31,7 +31,7 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
-            Position = new Position(0, 0),
+            Position = VsLspFactory.DefaultPosition,
             Character = "!",
             Options = new FormattingOptions
             {
@@ -66,7 +66,7 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
-            Position = new Position(0, 0),
+            Position = VsLspFactory.DefaultPosition,
             Character = ">",
             Options = new FormattingOptions
             {
@@ -101,7 +101,7 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
-            Position = new Position(0, 0),
+            Position = VsLspFactory.DefaultPosition,
             Character = ">",
             Options = new FormattingOptions
             {
@@ -135,7 +135,7 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
-            Position = new Position(1, 3),
+            Position = VsLspFactory.CreatePosition(1, 3),
             Character = "/",
             Options = new FormattingOptions
             {

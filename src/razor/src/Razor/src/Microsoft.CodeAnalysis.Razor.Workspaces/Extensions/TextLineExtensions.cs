@@ -1,10 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-using Microsoft.CodeAnalysis.Text;
+using Microsoft.AspNetCore.Razor;
+using Microsoft.CodeAnalysis.Razor;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces;
+namespace Microsoft.CodeAnalysis.Text;
 
 internal static class TextLineExtensions
 {
@@ -15,9 +15,7 @@ internal static class TextLineExtensions
 
     public static int GetIndentationSize(this TextLine line, long tabSize)
     {
-        var text = line.Text;
-
-        Assumes.NotNull(text);
+        var text = line.Text.AssumeNotNull();
 
         var indentation = 0;
         for (var i = line.Start; i < line.End; i++)
@@ -53,9 +51,11 @@ internal static class TextLineExtensions
     {
         if (startOffset > line.SpanIncludingLineBreak.Length)
         {
-            throw new ArgumentOutOfRangeException(nameof(startOffset), SR.Invalid_Offset);
+            return ThrowHelper.ThrowArgumentOutOfRangeException<int?>(nameof(startOffset), SR.Invalid_Offset);
         }
 
-        return line.Text!.GetFirstNonWhitespaceOffset(TextSpan.FromBounds(line.Start + startOffset, line.EndIncludingLineBreak), out _);
+        return line.Text!.TryGetFirstNonWhitespaceOffset(TextSpan.FromBounds(line.Start + startOffset, line.EndIncludingLineBreak), out var offset)
+            ? offset
+            : null;
     }
 }

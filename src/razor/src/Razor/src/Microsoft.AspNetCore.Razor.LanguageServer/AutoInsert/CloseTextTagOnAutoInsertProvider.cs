@@ -8,32 +8,14 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
-using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
 
-internal sealed class CloseTextTagOnAutoInsertProvider : IOnAutoInsertProvider
+internal sealed class CloseTextTagOnAutoInsertProvider(RazorLSPOptionsMonitor optionsMonitor) : IOnAutoInsertProvider
 {
-    private readonly RazorLSPOptionsMonitor _optionsMonitor;
-    private readonly ILogger _logger;
-
-    public CloseTextTagOnAutoInsertProvider(RazorLSPOptionsMonitor optionsMonitor, ILoggerFactory loggerFactory)
-    {
-        if (optionsMonitor is null)
-        {
-            throw new ArgumentNullException(nameof(optionsMonitor));
-        }
-
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        _optionsMonitor = optionsMonitor;
-        _logger = loggerFactory.GetOrCreateLogger<IOnAutoInsertProvider>();
-    }
+    private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
 
     public string TriggerCharacter => ">";
 
@@ -47,7 +29,7 @@ internal sealed class CloseTextTagOnAutoInsertProvider : IOnAutoInsertProvider
             return false;
         }
 
-        if (!IsAtTextTag(context, position, _logger))
+        if (!IsAtTextTag(context, position))
         {
             format = default;
             edit = default;
@@ -56,20 +38,16 @@ internal sealed class CloseTextTagOnAutoInsertProvider : IOnAutoInsertProvider
 
         // This is a text tag.
         format = InsertTextFormat.Snippet;
-        edit = new TextEdit()
-        {
-            NewText = $"$0</{SyntaxConstants.TextTagName}>",
-            Range = new Range { Start = position, End = position },
-        };
+        edit = VsLspFactory.CreateTextEdit(position, $"$0</{SyntaxConstants.TextTagName}>");
 
         return true;
     }
 
-    private static bool IsAtTextTag(FormattingContext context, Position position, ILogger logger)
+    private static bool IsAtTextTag(FormattingContext context, Position position)
     {
         var syntaxTree = context.CodeDocument.GetSyntaxTree();
 
-        if (!position.TryGetAbsoluteIndex(context.SourceText, logger, out var absoluteIndex))
+        if (!context.SourceText.TryGetAbsoluteIndex(position, out var absoluteIndex))
         {
             return false;
         }

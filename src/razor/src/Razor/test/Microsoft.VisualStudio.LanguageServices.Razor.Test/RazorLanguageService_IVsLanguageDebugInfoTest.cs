@@ -9,6 +9,7 @@ using System.Threading;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.VisualStudio.Editor;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Debugging;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.TextManager.Interop;
@@ -16,7 +17,6 @@ using Microsoft.VisualStudio.Utilities;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
-using Position = Microsoft.VisualStudio.LanguageServer.Protocol.Position;
 
 namespace Microsoft.VisualStudio.Razor;
 
@@ -69,11 +69,7 @@ public class RazorLanguageService_IVsLanguageDebugInfoTest(ITestOutputHelper tes
     public void ValidateBreakpointLocation_ValidBreakpointRange_ReturnsSOK()
     {
         // Arrange
-        var breakpointRange = new Range()
-        {
-            Start = new Position(2, 4),
-            End = new Position(3, 5),
-        };
+        var breakpointRange = VsLspFactory.CreateRange(2, 4, 3, 5);
         var breakpointResolver = Mock.Of<RazorBreakpointResolver>(resolver => resolver.TryResolveBreakpointRangeAsync(It.IsAny<ITextBuffer>(), 0, 0, It.IsAny<CancellationToken>()) == System.Threading.Tasks.Task.FromResult(breakpointRange), MockBehavior.Strict);
         var languageService = CreateLanguageServiceWith(breakpointResolver);
 
