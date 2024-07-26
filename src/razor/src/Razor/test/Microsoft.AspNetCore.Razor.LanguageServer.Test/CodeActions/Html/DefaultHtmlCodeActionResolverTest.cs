@@ -3,7 +3,6 @@
 
 using System;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
@@ -15,6 +14,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
@@ -39,14 +39,14 @@ public class DefaultHtmlCodeActionResolverTest(ITestOutputHelper testOutput) : L
         var remappedEdit = new WorkspaceEdit
         {
             DocumentChanges = new TextDocumentEdit[]
-           {
-                new TextDocumentEdit
-                {
-                    TextDocument = new OptionalVersionedTextDocumentIdentifier { Uri= documentUri, Version = 1 },
-                    Edits = new TextEdit[]
+            {
+                new() {
+                    TextDocument = new OptionalVersionedTextDocumentIdentifier
                     {
-                        new TextEdit { NewText = "Goo ~~~~~~~~~~~~~~~ Bar", Range = span.ToRange(sourceText) }
-                    }
+                        Uri = documentUri,
+                        Version = 1
+                    },
+                    Edits = [VsLspFactory.CreateTextEdit(sourceText.GetRange(span), "Goo ~~~~~~~~~~~~~~~ Bar")]
                 }
            }
         };
@@ -70,13 +70,14 @@ public class DefaultHtmlCodeActionResolverTest(ITestOutputHelper testOutput) : L
             {
                 DocumentChanges = new TextDocumentEdit[]
                         {
-                            new TextDocumentEdit
+                            new()
                             {
-                                TextDocument = new OptionalVersionedTextDocumentIdentifier { Uri= new Uri("c:/Test.razor.html"), Version = 1 },
-                                Edits = new TextEdit[]
+                                TextDocument = new OptionalVersionedTextDocumentIdentifier
                                 {
-                                    new TextEdit { NewText = "Goo" }
-                                }
+                                    Uri = new Uri("c:/Test.razor.html"),
+                                    Version = 1
+                                },
+                                Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), "Goo")]
                             }
                         }
             }

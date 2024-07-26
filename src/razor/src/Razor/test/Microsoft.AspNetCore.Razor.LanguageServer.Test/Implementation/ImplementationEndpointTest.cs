@@ -8,7 +8,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -98,14 +97,13 @@ public class ImplementationEndpointTest(ITestOutputHelper testOutput) : SingleSe
         var endpoint = new ImplementationEndpoint(
             LanguageServerFeatureOptions, DocumentMappingService, languageServer, LoggerFactory);
 
-        codeDocument.GetSourceText().GetLineAndOffset(cursorPosition, out var line, out var offset);
         var request = new TextDocumentPositionParams
         {
             TextDocument = new TextDocumentIdentifier
             {
                 Uri = new Uri(razorFilePath)
             },
-            Position = new Position(line, offset)
+            Position = codeDocument.Source.Text.GetPosition(cursorPosition)
         };
         Assert.True(DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -124,7 +122,7 @@ public class ImplementationEndpointTest(ITestOutputHelper testOutput) : SingleSe
         {
             Assert.Equal(new Uri(razorFilePath), location.Uri);
 
-            var expectedRange = expectedSpans[i].ToRange(codeDocument.GetSourceText());
+            var expectedRange = codeDocument.Source.Text.GetRange(expectedSpans[i]);
             Assert.Equal(expectedRange, location.Range);
 
             i++;

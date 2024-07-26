@@ -68,7 +68,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var textSpan = span.ToTextSpan(codeDocument.Source.Text);
+        var textSpan = codeDocument.Source.Text.GetTextSpan(span);
         var razorSemanticRanges = SemanticTokensVisitor.GetSemanticRanges(codeDocument, textSpan, _semanticTokensLegendService, colorBackground);
         ImmutableArray<SemanticRange>? csharpSemanticRangesResult = null;
 
@@ -184,7 +184,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
         razorRanges.SetCapacityIfLarger(csharpResponse.Length / TokenSize);
 
         var textClassification = _semanticTokensLegendService.TokenTypes.MarkupTextLiteral;
-        var razorSource = codeDocument.GetSourceText();
+        var razorSource = codeDocument.Source.Text;
 
         SemanticRange previousSemanticRange = default;
         LinePositionSpan? previousRazorSemanticRange = null;
@@ -205,7 +205,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
                     if (colorBackground)
                     {
                         tokenModifiers |= _semanticTokensLegendService.TokenModifiers.RazorCodeModifier;
-                        AddAdditionalCSharpWhitespaceRanges(razorRanges, textClassification, razorSource, previousRazorSemanticRange, originalRange, _logger);
+                        AddAdditionalCSharpWhitespaceRanges(razorRanges, textClassification, razorSource, previousRazorSemanticRange, originalRange);
                     }
 
                     razorRanges.Add(new SemanticRange(semanticRange.Kind, originalRange.Start.Line, originalRange.Start.Character, originalRange.End.Line, originalRange.End.Character, tokenModifiers, fromRazor: false));
@@ -220,14 +220,14 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
         return razorRanges.DrainToImmutable();
     }
 
-    private void AddAdditionalCSharpWhitespaceRanges(ImmutableArray<SemanticRange>.Builder razorRanges, int textClassification, SourceText razorSource, LinePositionSpan? previousRazorSemanticRange, LinePositionSpan originalRange, ILogger logger)
+    private void AddAdditionalCSharpWhitespaceRanges(ImmutableArray<SemanticRange>.Builder razorRanges, int textClassification, SourceText razorSource, LinePositionSpan? previousRazorSemanticRange, LinePositionSpan originalRange)
     {
         var startLine = originalRange.Start.Line;
         var startChar = originalRange.Start.Character;
         if (previousRazorSemanticRange is { } previousRange &&
             previousRange.End.Line == startLine &&
             previousRange.End.Character < startChar &&
-            previousRange.End.TryGetAbsoluteIndex(razorSource, logger, out var previousSpanEndIndex) &&
+            razorSource.TryGetAbsoluteIndex(previousRange.End, out var previousSpanEndIndex) &&
             ContainsOnlySpacesOrTabs(razorSource, previousSpanEndIndex + 1, startChar - previousRange.End.Character - 1))
         {
             // we're on the same line as previous, lets extend ours to include whitespace between us and the proceeding range
@@ -235,7 +235,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
         }
         else if (startChar > 0 &&
             previousRazorSemanticRange?.End.Line != startLine &&
-            originalRange.Start.TryGetAbsoluteIndex(razorSource, logger, out var originalRangeStartIndex) &&
+            razorSource.TryGetAbsoluteIndex(originalRange.Start, out var originalRangeStartIndex) &&
             ContainsOnlySpacesOrTabs(razorSource, originalRangeStartIndex - startChar + 1, startChar - 1))
         {
             // We're on a new line, and the start of the line is only whitespace, so give that a background color too
@@ -262,8 +262,8 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
     {
         using var _ = ArrayBuilderPool<LinePositionSpan>.GetPooledObject(out var csharpRanges);
         var csharpSourceText = codeDocument.GetCSharpSourceText();
-        var sourceText = codeDocument.GetSourceText();
-        var textSpan = razorRange.ToTextSpan(sourceText);
+        var sourceText = codeDocument.Source.Text;
+        var textSpan = sourceText.GetTextSpan(razorRange);
         var csharpDoc = codeDocument.GetCSharpDocument();
 
         // We want to find the min and max C# source mapping that corresponds with our Razor range.
@@ -273,7 +273,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
 
             if (textSpan.OverlapsWith(mappedTextSpan))
             {
-                var mappedRange = mapping.GeneratedSpan.ToLinePositionSpan(csharpSourceText);
+                var mappedRange = csharpSourceText.GetLinePositionSpan(mapping.GeneratedSpan);
                 csharpRanges.Add(mappedRange);
             }
         }
@@ -327,7 +327,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
     {
         SemanticRange previousResult = default;
 
-        var sourceText = razorCodeDocument.GetSourceText();
+        var sourceText = razorCodeDocument.Source.Text;
 
         // We don't bother filtering out duplicate ranges (eg, where C# and Razor both have opinions), but instead take advantage of
         // our sort algorithm to be correct, so we can skip duplicates here. That means our final array may end up smaller than the

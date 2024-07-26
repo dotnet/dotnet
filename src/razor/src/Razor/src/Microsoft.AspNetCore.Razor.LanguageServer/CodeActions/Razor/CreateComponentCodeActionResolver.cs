@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -78,8 +77,7 @@ internal sealed class CreateComponentCodeActionResolver(IDocumentContextFactory 
         var namespaceDirective = syntaxTree.Root.DescendantNodes()
             .Where(n => n.Kind == SyntaxKind.RazorDirective)
             .Cast<RazorDirectiveSyntax>()
-            .Where(n => n.DirectiveDescriptor == NamespaceDirective.Directive)
-            .FirstOrDefault();
+            .FirstOrDefault(static n => n.DirectiveDescriptor == NamespaceDirective.Directive);
 
         if (namespaceDirective != null)
         {
@@ -87,14 +85,7 @@ internal sealed class CreateComponentCodeActionResolver(IDocumentContextFactory 
             documentChanges.Add(new TextDocumentEdit
             {
                 TextDocument = documentIdentifier,
-                Edits =
-                [
-                    new TextEdit()
-                    {
-                        NewText = namespaceDirective.GetContent(),
-                        Range = new Range{ Start = new Position(0, 0), End = new Position(0, 0) },
-                    }
-                ]
+                Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), namespaceDirective.GetContent())]
             });
         }
     }

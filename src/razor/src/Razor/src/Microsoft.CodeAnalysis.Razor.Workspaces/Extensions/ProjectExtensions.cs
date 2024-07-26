@@ -1,31 +1,15 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
+using Microsoft.AspNetCore.Razor;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces;
+namespace Microsoft.CodeAnalysis;
 
 internal static class ProjectExtensions
 {
     internal static Document GetRequiredDocument(this Project project, DocumentId documentId)
     {
-        if (project is null)
-        {
-            throw new ArgumentNullException(nameof(project));
-        }
-
-        if (documentId is null)
-        {
-            throw new ArgumentNullException(nameof(documentId));
-        }
-
-        var document = project.GetDocument(documentId);
-
-        if (document is null)
-        {
-            throw new InvalidOperationException($"The document {documentId} did  not exist in {project.Name}");
-        }
-
-        return document;
+        return project.GetDocument(documentId)
+            ?? ThrowHelper.ThrowInvalidOperationException<Document>($"The document {documentId} did not exist in {project.Name}");
     }
 }

@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -21,9 +20,9 @@ internal class PreferHtmlInAttributeValuesDocumentPositionInfoStrategy : IDocume
 {
     public static IDocumentPositionInfoStrategy Instance { get; } = new PreferHtmlInAttributeValuesDocumentPositionInfoStrategy();
 
-    public async Task<DocumentPositionInfo?> TryGetPositionInfoAsync(IRazorDocumentMappingService documentMappingService, DocumentContext documentContext, Position position, ILogger logger, CancellationToken cancellationToken)
+    public async Task<DocumentPositionInfo?> TryGetPositionInfoAsync(IRazorDocumentMappingService documentMappingService, DocumentContext documentContext, Position position, CancellationToken cancellationToken)
     {
-        var defaultDocumentPositionInfo = await DefaultDocumentPositionInfoStrategy.Instance.TryGetPositionInfoAsync(documentMappingService, documentContext, position, logger, cancellationToken).ConfigureAwait(false);
+        var defaultDocumentPositionInfo = await DefaultDocumentPositionInfoStrategy.Instance.TryGetPositionInfoAsync(documentMappingService, documentContext, position, cancellationToken).ConfigureAwait(false);
         if (defaultDocumentPositionInfo is null)
         {
             return null;

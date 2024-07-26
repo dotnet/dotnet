@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
@@ -15,6 +14,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
+using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
@@ -133,7 +133,7 @@ public class ValidateBreakpointRangeEndpointTest(ITestOutputHelper testOutput) :
         Assert.True(spans.TryGetValue("expected", out var expectedSpans), "Expected at least one span named 'expected'.");
         Assert.True(expectedSpans.Length == 1, "Expected only one 'expected' span.");
 
-        var expectedRange = expectedSpans[0].ToRange(codeDocument.GetSourceText());
+        var expectedRange = codeDocument.Source.Text.GetRange(expectedSpans[0]);
         Assert.Equal(expectedRange, result);
     }
 
@@ -149,7 +149,7 @@ public class ValidateBreakpointRangeEndpointTest(ITestOutputHelper testOutput) :
             {
                 Uri = new Uri(razorFilePath)
             },
-            Range = breakpointSpan.ToRange(codeDocument.GetSourceText())
+            Range = codeDocument.Source.Text.GetRange(breakpointSpan)
         };
 
         Assert.True(DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument, out var documentContext));

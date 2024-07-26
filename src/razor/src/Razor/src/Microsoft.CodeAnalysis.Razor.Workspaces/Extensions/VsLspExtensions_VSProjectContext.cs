@@ -2,11 +2,10 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces;
+namespace Microsoft.VisualStudio.LanguageServer.Protocol;
 
-internal static class VSProjectContextExtensions
+internal static partial class VsLspExtensions
 {
     internal static ProjectKey ToProjectKey(this VSProjectContext projectContext)
     {

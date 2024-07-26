@@ -14,6 +14,8 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
+using static Microsoft.VisualStudio.LanguageServer.Protocol.VsLspExtensions;
+using static Roslyn.LanguageServer.Protocol.RoslynLspExtensions;
 using Response = Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Microsoft.CodeAnalysis.Razor.Protocol.DocumentHighlight.RemoteDocumentHighlight[]?>;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -46,7 +48,7 @@ internal sealed partial class RemoteDocumentHighlightService(in ServiceArgs args
         CancellationToken cancellationToken)
     {
         var sourceText = await context.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        if (!sourceText.TryGetAbsoluteIndex(position.Line, position.Character, out var index))
+        if (!sourceText.TryGetAbsoluteIndex(position, out var index))
         {
             return Response.NoFurtherHandling;
         }
@@ -78,8 +80,8 @@ internal sealed partial class RemoteDocumentHighlightService(in ServiceArgs args
                 {
                     if (_documentMappingService.TryMapToHostDocumentRange(csharpDocument, highlight.Range.ToLinePositionSpan(), out var mappedRange))
                     {
-                        highlight.Range = mappedRange.ToRLSPRange();
-                        results.Add(RemoteDocumentHighlight.FromRLSPDocumentHighlight(highlight));
+                        highlight.Range = Roslyn.LanguageServer.Protocol.RoslynLspExtensions.ToRange(mappedRange);
+                        results.Add(RemoteDocumentHighlight.FromRoslynDocumentHighlight(highlight));
                     }
                 }
 

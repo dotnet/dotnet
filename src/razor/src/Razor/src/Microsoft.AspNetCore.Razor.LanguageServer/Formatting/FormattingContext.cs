@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -51,7 +50,7 @@ internal class FormattingContext : IDisposable
     public int HostDocumentIndex { get; }
     public char TriggerCharacter { get; }
 
-    public SourceText SourceText => CodeDocument.GetSourceText();
+    public SourceText SourceText => CodeDocument.Source.Text;
 
     public SourceText CSharpSourceText => CodeDocument.GetCSharpSourceText();
 

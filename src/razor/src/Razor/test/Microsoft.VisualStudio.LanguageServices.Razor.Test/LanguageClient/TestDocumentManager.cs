@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient;
@@ -72,11 +73,7 @@ internal class TestDocumentManager(CSharpTestLspServer testLspServer = null) : T
         var rangesAndTexts = changes.Select(c =>
         {
             GetLinesAndOffsets(virtualSourceText, c.OldSpan, out var startLine, out var startCharacter, out var endLine, out var endCharacter);
-            var range = new Range
-            {
-                Start = new LanguageServer.Protocol.Position { Line = startLine, Character = startCharacter },
-                End = new LanguageServer.Protocol.Position { Line = endLine, Character = endCharacter }
-            };
+            var range = VsLspFactory.CreateRange(startLine, startCharacter, endLine, endCharacter);
 
             return (range, c.NewText);
         }).ToArray();

@@ -225,14 +225,13 @@ public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) 
         var htmlRanges = htmlSpans
             .Select(span =>
                 {
-                    inputText.GetLineAndOffset(span.Start, out var startLine, out var startCharacter);
-                    inputText.GetLineAndOffset(span.End, out var endLine, out var endCharacter);
+                    var (start, end) = inputText.GetLinePositionSpan(span);
                     return new FoldingRange()
                     {
-                        StartLine = startLine,
-                        StartCharacter = startCharacter,
-                        EndLine = endLine,
-                        EndCharacter = endCharacter
+                        StartLine = start.Line,
+                        StartCharacter = start.Character,
+                        EndLine = end.Line,
+                        EndCharacter = end.Character
                     };
                 })
             .ToArray();

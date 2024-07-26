@@ -3,7 +3,6 @@
 
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -44,7 +43,7 @@ expected: @"
         var configService = StrictMock.Of<IConfigurationSyncService>();
         var optionsMonitor = new RazorLSPOptionsMonitor(configService, RazorLSPOptions.Default);
 
-        var provider = new CloseTextTagOnAutoInsertProvider(optionsMonitor, LoggerFactory);
+        var provider = new CloseTextTagOnAutoInsertProvider(optionsMonitor);
         return provider;
     }
 }

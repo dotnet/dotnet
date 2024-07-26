@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
@@ -37,8 +36,7 @@ internal static class IRazorDocumentMappingServiceExtensions
         SourceText sourceText,
         int hostDocumentIndex)
     {
-        sourceText.GetLineAndOffset(hostDocumentIndex, out var line, out var character);
-        var position = new Position(line, character);
+        var position = sourceText.GetPosition(hostDocumentIndex);
 
         var languageKind = service.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: false);
         if (languageKind is not RazorLanguageKind.Razor)

@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
@@ -35,7 +34,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
             {
                 // Even though the DTO declares this as non-null, we want to make sure we behave
@@ -72,7 +71,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = new Diagnostic[] {
@@ -116,7 +115,6 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
 
         // Assert
         Assert.Empty(results);
-
     }
 
     [Fact]
@@ -128,7 +126,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = new Diagnostic[] {
@@ -168,7 +166,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = new Diagnostic[] {
@@ -181,10 +179,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                     {
                         Severity = DiagnosticSeverity.Error,
                         Code = errorCode,
-                        Range = new Range{
-                            Start = new Position(0, 8),
-                            End = new Position(0, 12),
-                        }
+                        Range = VsLspFactory.CreateRange(0, 8, 0, 12)
                     },
                     new Diagnostic()
                     {
@@ -219,7 +214,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
 
         // Assert
         Assert.Collection(results,
-            r =>
+        r =>
             {
                 Assert.Equal("@using System.IO", r.Title);
                 Assert.Null(r.Edit);
@@ -247,7 +242,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = Array.Empty<Diagnostic>()
@@ -299,7 +294,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = Array.Empty<Diagnostic>()
@@ -357,7 +352,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var request = new VSCodeActionParams()
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
-            Range = new Range(),
+            Range = VsLspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = new Diagnostic[] {
@@ -370,10 +365,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
                     {
                         Severity = DiagnosticSeverity.Error,
                         Code = "CS0246",
-                        Range = new Range{
-                            Start = new Position(0, 8),
-                            End = new Position(0, 12)
-                        }
+                        Range = VsLspFactory.CreateRange(0, 8, 0, 12)
                     },
                     new Diagnostic()
                     {
@@ -468,12 +460,12 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var cSharpDocument = codeDocument.GetCSharpDocument();
         var diagnosticDescriptor = new RazorDiagnosticDescriptor("RZ10012", "diagnostic", RazorDiagnosticSeverity.Error);
         var diagnostic = RazorDiagnostic.Create(diagnosticDescriptor, componentSourceSpan);
-        var cSharpDocumentWithDiagnostic = RazorCSharpDocument.Create(codeDocument, cSharpDocument.GeneratedCode, cSharpDocument.Options, new[] { diagnostic });
+        var cSharpDocumentWithDiagnostic = RazorCSharpDocument.Create(codeDocument, cSharpDocument.GeneratedCode, cSharpDocument.Options, [diagnostic]);
         codeDocument.SetCSharpDocument(cSharpDocumentWithDiagnostic);
 
         var documentSnapshot = Mock.Of<IDocumentSnapshot>(document =>
             document.GetGeneratedOutputAsync() == Task.FromResult(codeDocument) &&
-            document.GetTextAsync() == Task.FromResult(codeDocument.GetSourceText()) &&
+            document.GetTextAsync() == Task.FromResult(codeDocument.Source.Text) &&
             document.Project.GetTagHelpersAsync(It.IsAny<CancellationToken>()) == new ValueTask<ImmutableArray<TagHelperDescriptor>>(tagHelpers), MockBehavior.Strict);
 
         var sourceText = SourceText.From(text);

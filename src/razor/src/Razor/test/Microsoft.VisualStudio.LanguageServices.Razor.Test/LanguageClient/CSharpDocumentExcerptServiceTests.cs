@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.DynamicFiles;
 using Xunit;
 using Xunit.Abstractions;
@@ -39,7 +40,7 @@ public class CSharpDocumentExcerptServiceTest : DocumentExcerptServiceTestBase
 #pragma warning disable CS0618 // Type or member is obsolete
         var excerptService = new CSharpDocumentExcerptService();
 #pragma warning restore CS0618 // Type or member is obsolete
-        var mappedLinePositionSpan = razorSourceText.Lines.GetLinePositionSpan(primarySpan);
+        var mappedLinePositionSpan = razorSourceText.GetLinePositionSpan(primarySpan);
 
         // Act
         var options = RazorClassificationOptionsWrapper.Default;
@@ -127,7 +128,7 @@ public class CSharpDocumentExcerptServiceTest : DocumentExcerptServiceTestBase
 #pragma warning disable CS0618 // Type or member is obsolete
         var excerptService = new CSharpDocumentExcerptService();
 #pragma warning restore CS0618 // Type or member is obsolete
-        var mappedLinePositionSpan = razorSourceText.Lines.GetLinePositionSpan(primarySpan);
+        var mappedLinePositionSpan = razorSourceText.GetLinePositionSpan(primarySpan);
 
         // Act
         var options = RazorClassificationOptionsWrapper.Default;
@@ -173,7 +174,7 @@ public class CSharpDocumentExcerptServiceTest : DocumentExcerptServiceTestBase
 #pragma warning disable CS0618 // Type or member is obsolete
         var excerptService = new CSharpDocumentExcerptService();
 #pragma warning restore CS0618 // Type or member is obsolete
-        var mappedLinePositionSpan = razorSourceText.Lines.GetLinePositionSpan(primarySpan);
+        var mappedLinePositionSpan = razorSourceText.GetLinePositionSpan(primarySpan);
 
         // Act
         var options = RazorClassificationOptionsWrapper.Default;
@@ -220,7 +221,7 @@ public class CSharpDocumentExcerptServiceTest : DocumentExcerptServiceTestBase
 #pragma warning disable CS0618 // Type or member is obsolete
         var excerptService = new CSharpDocumentExcerptService();
 #pragma warning restore CS0618 // Type or member is obsolete
-        var mappedLinePositionSpan = razorSourceText.Lines.GetLinePositionSpan(primarySpan);
+        var mappedLinePositionSpan = razorSourceText.GetLinePositionSpan(primarySpan);
 
         // Act
         var options = RazorClassificationOptionsWrapper.Default;
@@ -266,7 +267,7 @@ public class CSharpDocumentExcerptServiceTest : DocumentExcerptServiceTestBase
 #pragma warning disable CS0618 // Type or member is obsolete
         var excerptService = new CSharpDocumentExcerptService();
 #pragma warning restore CS0618 // Type or member is obsolete
-        var mappedLinePositionSpan = razorSourceText.Lines.GetLinePositionSpan(primarySpan);
+        var mappedLinePositionSpan = razorSourceText.GetLinePositionSpan(primarySpan);
 
         // Act
         var options = RazorClassificationOptionsWrapper.Default;

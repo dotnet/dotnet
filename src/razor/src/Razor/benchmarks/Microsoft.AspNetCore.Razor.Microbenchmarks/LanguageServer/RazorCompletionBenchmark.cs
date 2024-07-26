@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -49,7 +48,7 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
         var configurationService = new DefaultRazorConfigurationService(clientConnection, loggerFactory);
         var optionsMonitor = new RazorLSPOptionsMonitor(configurationService, RazorLSPOptions.Default);
 
-        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider, telemetryReporter: null, optionsMonitor, loggerFactory);
+        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider, telemetryReporter: null, optionsMonitor);
 
         var clientCapabilities = new VSInternalClientCapabilities
         {
@@ -78,16 +77,10 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
         DocumentSnapshot = await GetDocumentSnapshotAsync(projectFilePath, _filePath, targetPath);
         DocumentText = await DocumentSnapshot.GetTextAsync();
 
-        RazorPosition = ToPosition(razorCodeActionIndex);
+        RazorPosition = DocumentText.GetPosition(razorCodeActionIndex);
 
         var documentContext = new VersionedDocumentContext(DocumentUri, DocumentSnapshot, projectContext: null, 1);
         RazorRequestContext = new RazorRequestContext(documentContext, RazorLanguageServerHost.GetRequiredService<ILspServices>(), "lsp/method", uri: null);
-
-        Position ToPosition(int index)
-        {
-            DocumentText.GetLineAndOffset(index, out var line, out var offset);
-            return new Position(line, offset);
-        }
     }
 
     private static string GetFileContents()

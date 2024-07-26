@@ -6,7 +6,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
@@ -62,7 +61,7 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
                         {
                             Uri = FileUri("File1.razor.g.html")
                         },
-                        Edits = [new() { NewText = htmlTag}]
+                        Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), htmlTag)]
                     }
                 }
             },
@@ -126,7 +125,7 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
                         {
                             Uri = FileUri("File1.razor.g.html")
                         },
-                        Edits = [new() { NewText = htmlTag}]
+                        Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), htmlTag)]
                     }
                 }
             },
@@ -280,7 +279,7 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
             {
                 Uri = document.CreateUri()
             },
-            Range = span.ToRange(sourceText),
+            Range = sourceText.GetRange(span),
             Uris = uris
         };
 

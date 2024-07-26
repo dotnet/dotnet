@@ -65,9 +65,9 @@ internal class CohostUriPresentationEndpoint(
     private async Task<WorkspaceEdit?> HandleRequestAsync(VSInternalUriPresentationParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         var data = await _remoteServiceInvoker.TryInvokeAsync<IRemoteUriPresentationService, RemoteResponse<TextChange?>>(
-                    razorDocument.Project.Solution,
-                    (service, solutionInfo, cancellationToken) => service.GetPresentationAsync(solutionInfo, razorDocument.Id, request.Range.ToLinePositionSpan(), request.Uris, cancellationToken),
-                    cancellationToken).ConfigureAwait(false);
+            razorDocument.Project.Solution,
+            (service, solutionInfo, cancellationToken) => service.GetPresentationAsync(solutionInfo, razorDocument.Id, request.Range.ToLinePositionSpan(), request.Uris, cancellationToken),
+            cancellationToken).ConfigureAwait(false);
 
         // If we got a response back, then we're good to go
         if (data.Result is { } textChange)
@@ -84,7 +84,7 @@ internal class CohostUriPresentationEndpoint(
                         {
                             Uri = request.TextDocument.Uri
                         },
-                        Edits = [textChange.ToTextEdit(sourceText)]
+                        Edits = [sourceText.GetTextEdit(textChange)]
                     }
                 }
             };

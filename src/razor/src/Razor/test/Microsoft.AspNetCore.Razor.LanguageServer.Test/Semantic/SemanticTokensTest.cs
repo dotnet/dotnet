@@ -878,7 +878,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             for (var i = 0; i < csharpRanges.Length; i++)
             {
                 var csharpRange = csharpRanges[i];
-                var textSpan = csharpRange.ToTextSpan(csharpSourceText);
+                var textSpan = csharpSourceText.GetTextSpan(csharpRange);
                 Assert.Equal(spans[i].Length, textSpan.Length);
             }
         }
@@ -887,7 +887,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             // Note that the expected lengths are different on Windows vs. Unix.
             var expectedCsharpRangeLength = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? 945 : 911;
             Assert.True(codeDocument.TryGetMinimalCSharpRange(razorRange, out var csharpRange));
-            var textSpan = csharpRange.ToTextSpan(csharpSourceText);
+            var textSpan = csharpSourceText.GetTextSpan(csharpRange);
             Assert.Equal(expectedCsharpRangeLength, textSpan.Length);
         }
     }
@@ -945,7 +945,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             .Returns(projectSnapshot.Object);
 
         documentContext.Setup(d => d.GetSourceTextAsync(It.IsAny<CancellationToken>()))
-            .Returns(Task.FromResult(document.GetSourceText()));
+            .Returns(Task.FromResult(document.Source.Text));
 
         documentContext.Setup(d => d.Uri)
             .Returns(new Uri($"c:\\${(isRazorFile ? RazorFile : CSHtmlFile)}"));

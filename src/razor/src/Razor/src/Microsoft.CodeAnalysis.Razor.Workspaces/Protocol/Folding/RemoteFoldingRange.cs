@@ -20,8 +20,8 @@ internal readonly record struct RemoteFoldingRange(
         return $"({StartLine}, {StartCharacter})-({EndLine}, {EndCharacter}), {Kind}, {CollapsedText}";
     }
 
-    public static RemoteFoldingRange FromLspFoldingRange(FoldingRange r)
-        => new RemoteFoldingRange(
+    public static RemoteFoldingRange FromVsFoldingRange(FoldingRange r)
+        => new(
             r.StartLine,
             r.StartCharacter,
             r.EndLine,
@@ -29,8 +29,8 @@ internal readonly record struct RemoteFoldingRange(
             r.Kind?.Value,
             r.CollapsedText);
 
-    public static FoldingRange ToLspFoldingRange(RemoteFoldingRange r)
-        => new FoldingRange
+    public static FoldingRange ToVsFoldingRange(RemoteFoldingRange r)
+        => new()
         {
             StartLine = r.StartLine,
             StartCharacter = r.StartCharacter,
