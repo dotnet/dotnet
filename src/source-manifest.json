@@ -13,10 +13,10 @@
       "commitSha": "a6e341ebbf956bbcec0dda304109815fcbae70c9"
     },
     {
-      "packageVersion": "9.0.0-rc.1.24375.2",
+      "packageVersion": "9.0.0-rc.1.24375.10",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "d98caa89946c95d1a283ac11d4d2d060539eb604"
+      "commitSha": "98ee50279acfacff2b4ae4b6863956f3c65f34b2"
     },
     {
       "packageVersion": "0.11.5-alpha.24324.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "03793788aae2f10fe46ec1e81413e625cbff29b2"
+      "commitSha": "788dc6a59e8063ce664877c38c636cd554c00a8a"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24372.3",
@@ -183,11 +183,6 @@
   ],
   "submodules": [
     {
-      "path": "aspnetcore/src/submodules/BlazorMinifiedJs",
-      "remoteUri": "https://github.com/dotnet/BlazorMinifiedJs",
-      "commitSha": "4cc83c376bb0d472d0c923a45f7dec7af6426d4c"
-    },
-    {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
       "commitSha": "9ff2450a56aed4f7f124f5104d9e3088bf791ee9"
@@ -196,11 +191,6 @@
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
       "remoteUri": "https://github.com/aspnet/MessagePack-CSharp.git",
       "commitSha": "ecc4e18ad7a0c7db51cd7e3d2997a291ed01444d"
-    },
-    {
-      "path": "aspnetcore/src/submodules/Node-Externals",
-      "remoteUri": "https://github.com/dotnet/Node-Externals",
-      "commitSha": "eb33ea21fa1013d5e97951725e9d5c52c5a6a026"
     },
     {
       "path": "nuget-client/submodules/NuGet.Build.Localization",

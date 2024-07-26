@@ -12,15 +12,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@a6e341e](https://github.com/dotnet/aspire/tree/a6e341ebbf956bbcec0dda304109815fcbae70c9)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@d98caa8](https://github.com/dotnet/aspnetcore/tree/d98caa89946c95d1a283ac11d4d2d060539eb604)*
-    - `src/aspnetcore/src/submodules/BlazorMinifiedJs`  
-    *[dotnet/BlazorMinifiedJs@4cc83c3](https://github.com/dotnet/BlazorMinifiedJs/tree/4cc83c376bb0d472d0c923a45f7dec7af6426d4c)*
+*[dotnet/aspnetcore@98ee502](https://github.com/dotnet/aspnetcore/tree/98ee50279acfacff2b4ae4b6863956f3c65f34b2)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@9ff2450](https://github.com/google/googletest/tree/9ff2450a56aed4f7f124f5104d9e3088bf791ee9)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
     *[aspnet/MessagePack-CSharp@ecc4e18](https://github.com/aspnet/MessagePack-CSharp/tree/ecc4e18ad7a0c7db51cd7e3d2997a291ed01444d)*
-    - `src/aspnetcore/src/submodules/Node-Externals`  
-    *[dotnet/Node-Externals@eb33ea2](https://github.com/dotnet/Node-Externals/tree/eb33ea21fa1013d5e97951725e9d5c52c5a6a026)*
 - `src/cecil`  
 *[dotnet/cecil@7e4af02](https://github.com/dotnet/cecil/tree/7e4af02521473d89d6144b3da58fef253e498974)*
 - `src/command-line-api`  
@@ -52,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@d92413b](https://github.com/dotnet/scenario-tests/tree/d92413b87d36250859d8cb51ff69a03b5f5c4cab)*
 - `src/sdk`  
-*[dotnet/sdk@0379378](https://github.com/dotnet/sdk/tree/03793788aae2f10fe46ec1e81413e625cbff29b2)*
+*[dotnet/sdk@788dc6a](https://github.com/dotnet/sdk/tree/788dc6a59e8063ce664877c38c636cd554c00a8a)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@220c684](https://github.com/dotnet/source-build-externals/tree/220c6842488eb669f80b40d7de251a44dd183e9d)*
     - `src/source-build-externals/src/abstractions-xunit`  
