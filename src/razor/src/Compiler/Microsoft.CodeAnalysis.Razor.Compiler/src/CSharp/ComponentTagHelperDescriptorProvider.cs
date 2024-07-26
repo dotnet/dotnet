@@ -207,6 +207,8 @@ internal partial class ComponentTagHelperDescriptorProvider : RazorEngineFeature
                 pb.IsEditorRequired = property.GetAttributes().Any(
                     static a => a.AttributeClass.HasFullName("Microsoft.AspNetCore.Components.EditorRequiredAttribute"));
 
+                pb.CaseSensitive = false;
+
                 metadata.Add(PropertyName(property.Name));
                 metadata.Add(GloballyQualifiedTypeName(property.Type.ToDisplayString(GloballyQualifiedFullNameTypeDisplayFormat)));
 

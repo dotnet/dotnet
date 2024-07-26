@@ -26,7 +26,7 @@ public static class SourceMappingsSerializer
             var generatedCode = GetCodeForSpan(sourceMapping.GeneratedSpan, csharpDocument.GeneratedCode);
             AppendMappingLocation(builder, sourceMapping.GeneratedSpan, generatedCode);
 
-            Assert.Equal(sourceCode, generatedCode);
+            Assert.Equal(sourceCode, generatedCode, ignoreCase: true);
             builder.AppendLine();
         }
 
