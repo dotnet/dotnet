@@ -13,16 +13,16 @@
       "commitSha": "a6e341ebbf956bbcec0dda304109815fcbae70c9"
     },
     {
-      "packageVersion": "9.0.0-rc.1.24375.10",
+      "packageVersion": "9.0.0-rc.1.24376.4",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "98ee50279acfacff2b4ae4b6863956f3c65f34b2"
+      "commitSha": "25db9495d1c3a84667f62fe62d9b7c0c6db5dcb9"
     },
     {
-      "packageVersion": "0.11.5-alpha.24324.1",
+      "packageVersion": "0.11.5-alpha.24365.1",
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "7e4af02521473d89d6144b3da58fef253e498974"
+      "commitSha": "e05101e694b7c86f03f767014fc203cec5dc7f18"
     },
     {
       "packageVersion": "0.1.532403",
@@ -43,16 +43,16 @@
       "commitSha": "33d8bf23a6566cd3fb9055acfc9f1141391d5421"
     },
     {
-      "packageVersion": "9.0.0-preview.7.24366.2",
+      "packageVersion": "9.0.0-rc.1.24374.2",
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "66fc2aa66ae1167cc4bccc748a5c128278d8c869"
+      "commitSha": "8b6956d731cff085ccb91767a74987db5a9e3b93"
     },
     {
-      "packageVersion": "9.0.0-preview.7.24365.1",
+      "packageVersion": "9.0.0-rc.1.24373.3",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "99ea0c06b84d3084d090da537080dd35d2a193cf"
+      "commitSha": "40781ca2fc6be1dd81143d8773105a0f9f77d923"
     },
     {
       "packageVersion": "8.0.400-beta.24351.2",
@@ -91,10 +91,10 @@
       "commitSha": "43709af7570da7140fb3e9a5237f55ffb24677e7"
     },
     {
-      "packageVersion": "9.0.0-preview.7.24366.18",
+      "packageVersion": "9.0.0-rc.1.24376.16",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "1f70f0cc663b5d45f77840e9728386e5fa7944f9"
+      "commitSha": "827c83497bf4eb9816de2c223ea5c054e19954af"
     },
     {
       "packageVersion": "9.0.0-preview.24372.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "74dafbfb0c0d311595da6fc61d24ca57e6d3f80d"
+      "commitSha": "1b87a11061f4447cf0437aa7193df545c749f352"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24372.3",
