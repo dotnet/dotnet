@@ -8,6 +8,7 @@
     <InstallerRuntimeIdentifiers>win-x64;win-x86;win-arm64</InstallerRuntimeIdentifiers>
     <VSInsertionShortComponentName>WindowsDesktop.TargetingPack</VSInsertionShortComponentName>
     <CreatePlatformManifest Condition="'$(PreReleaseVersionLabel)' == 'servicing'">false</CreatePlatformManifest>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <!-- 
