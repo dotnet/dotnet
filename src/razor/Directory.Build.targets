@@ -6,6 +6,21 @@
     <PackageVersion Condition=" '$(PackageVersion)' == '' ">$(Version)</PackageVersion>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!--
+      Disable nullable warnings when targeting anything other than our supported .NET core version(s).
+      This condition will be evaluated multiple times in multi-targeted projects hence need to be careful
+      to only set in the inner builds, not the outer build where only $(TargetFrameworks) is defined.
+      We still check $(TargetFrameworks) for empty though, because for single-targeted builds we want to
+      allow nullable warnings regardless of target framework.
+    -->
+    <DisableNullableWarnings Condition="'$(DisableNullableWarnings)' == '' AND  '$(TargetFrameworks)' != '' AND '$(TargetFramework)' != '' AND '$(TargetFrameworkIdentifier)' != '.NETCoreApp'">true</DisableNullableWarnings>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DisableNullableWarnings)' == 'true'">
+    <NoWarn>$(NoWarn);Nullable</NoWarn>
+  </PropertyGroup>
+
   <Import Project="eng\targets\Packaging.targets" />
 
   <!-- Workaround https://github.com/dotnet/cli/issues/10528 -->
