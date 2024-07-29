@@ -11,8 +11,8 @@
     <cecilOutputPackageVersion>0.11.5-alpha.24365.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>803d8598f98fb4efd94604b32627ee9407f246db</commandlineapiGitCommitHash>
     <commandlineapiOutputPackageVersion>0.1.532403</commandlineapiOutputPackageVersion>
-    <deploymenttoolsGitCommitHash>cdb868d5cddb35c5d46f46c16e694985df148fe8</deploymenttoolsGitCommitHash>
-    <deploymenttoolsOutputPackageVersion>9.0.0-preview.1.24373.2</deploymenttoolsOutputPackageVersion>
+    <deploymenttoolsGitCommitHash>22e58912805b6e31f11a6f6753635c007829cc07</deploymenttoolsGitCommitHash>
+    <deploymenttoolsOutputPackageVersion>9.0.0-preview.1.24373.3</deploymenttoolsOutputPackageVersion>
     <diagnosticsGitCommitHash>33d8bf23a6566cd3fb9055acfc9f1141391d5421</diagnosticsGitCommitHash>
     <diagnosticsOutputPackageVersion>8.0.0-preview.24307.1</diagnosticsOutputPackageVersion>
     <efcoreGitCommitHash>8b6956d731cff085ccb91767a74987db5a9e3b93</efcoreGitCommitHash>
