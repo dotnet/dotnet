@@ -25,17 +25,17 @@
     <msbuildOutputPackageVersion>17.12.0-preview-24374-02</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>6b9e4481b9c23665ceb3192b9964921bcbb67c30</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.12.0-preview.1.32</nugetclientOutputPackageVersion>
-    <razorGitCommitHash>1d3de6295cec2e069850e8c0915636f4f0a77a7f</razorGitCommitHash>
-    <razorOutputPackageVersion>9.0.0-preview.24374.1</razorOutputPackageVersion>
+    <razorGitCommitHash>6cf62038c2c42e72901b9fb759f1be7b2779fd3e</razorGitCommitHash>
+    <razorOutputPackageVersion>9.0.0-preview.24376.2</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>43709af7570da7140fb3e9a5237f55ffb24677e7</roslynanalyzersGitCommitHash>
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.24324.1</roslynanalyzersOutputPackageVersion>
-    <roslynGitCommitHash>dabd07189684b5cda34b3072326a12b18301a012</roslynGitCommitHash>
-    <roslynOutputPackageVersion>4.12.0-1.24375.11</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>eedf30ebac80ca81b88c4c452614522a5ece1b27</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>9.0.0-preview.7.24374.12</runtimeOutputPackageVersion>
+    <roslynGitCommitHash>e8c1ac069182453b2274f48109024f2d884bb312</roslynGitCommitHash>
+    <roslynOutputPackageVersion>4.12.0-1.24378.2</roslynOutputPackageVersion>
+    <runtimeGitCommitHash>bdcf3ef75e11d22e4973bf37f2d5b660b73aa266</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>9.0.0-preview.7.24376.15</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>54700bbee86f660d37bd519a905b62bb50adc8c8</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24279.2</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>8a99913f3b4eca9f1a6e2db12ff6da7cfc5e37b4</sdkGitCommitHash>
+    <sdkGitCommitHash>c9d11793c324fe6c75bbd780cd589b8b72e84e42</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>26c52d02b67816269e647cc584f6b5db9a91970f</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24369.5</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>f60ae9384727109f9edade8f32eb9d59dabf7def</sourcebuildreferencepackagesGitCommitHash>

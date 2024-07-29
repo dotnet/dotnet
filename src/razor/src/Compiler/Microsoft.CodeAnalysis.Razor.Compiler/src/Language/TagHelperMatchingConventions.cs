@@ -271,7 +271,7 @@ internal static class TagHelperMatchingConventions
         }
     }
 
-    private static StringComparison GetComparison(this BoundAttributeDescriptor descriptor)
+    internal static StringComparison GetComparison(this BoundAttributeDescriptor descriptor)
         => descriptor.CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
     private static StringComparison GetComparison(this BoundAttributeParameterDescriptor descriptor)
