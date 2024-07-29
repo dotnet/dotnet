@@ -1142,6 +1142,25 @@ namespace Test
     }
 
     [IntegrationTestFact]
+    public void Component_WithEditorRequiredParameter_ValueSpecified_DifferentCasing()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+            namespace Test;
+            public class ComponentWithEditorRequiredParameters : ComponentBase
+            {
+                [Parameter, EditorRequired] public string Property1 { get; set; }
+            }
+            """));
+        var generated = CompileToCSharp("""
+            <ComponentWithEditorRequiredParameters property1="Some Value" />
+            """);
+        generated.RazorDiagnostics.Verify(
+            // x:\dir\subdir\Test\TestComponent.cshtml(1,1): warning RZ2012: Component 'ComponentWithEditorRequiredParameters' expects a value for the parameter 'Property1', but a value may not have been provided.
+            Diagnostic("RZ2012").WithLocation(1, 1));
+    }
+
+    [IntegrationTestFact]
     public void Component_WithEditorRequiredParameter_ValuesSpecifiedUsingSplatting()
     {
         AdditionalSyntaxTrees.Add(Parse(@"
@@ -1196,6 +1215,25 @@ namespace Test
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
         CompileToAssembly(generated);
         Assert.Empty(generated.RazorDiagnostics);
+    }
+
+    [IntegrationTestFact]
+    public void Component_WithEditorRequiredParameter_ValueSpecifiedUsingBind_DifferentCasing()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+            namespace Test;
+            public class ComponentWithEditorRequiredParameters : ComponentBase
+            {
+                [Parameter, EditorRequired] public string Property1 { get; set; }
+            }
+            """));
+        var generated = CompileToCSharp("""
+            <ComponentWithEditorRequiredParameters @bind-property1="Some Value" />
+            """);
+        generated.RazorDiagnostics.Verify(
+            // x:\dir\subdir\Test\TestComponent.cshtml(1,1): warning RZ2012: Component 'ComponentWithEditorRequiredParameters' expects a value for the parameter 'Property1', but a value may not have been provided.
+            Diagnostic("RZ2012").WithLocation(1, 1));
     }
 
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/10553")]
@@ -1255,6 +1293,28 @@ namespace Test
 
         CompileToAssembly(generated);
         Assert.Empty(generated.RazorDiagnostics);
+    }
+
+    [IntegrationTestFact]
+    public void Component_WithEditorRequiredParameter_ValueSpecifiedUsingBindGet_DifferentCasing()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+            namespace Test;
+            public class ComponentWithEditorRequiredParameters : ComponentBase
+            {
+                [Parameter, EditorRequired] public string Property1 { get; set; }
+            }
+            """));
+        var generated = CompileToCSharp("""
+            <ComponentWithEditorRequiredParameters @bind-property1:get="myField" />
+            @code {
+                private string myField = "Some Value";
+            }
+            """);
+        generated.RazorDiagnostics.Verify(
+            // x:\dir\subdir\Test\TestComponent.cshtml(1,1): warning RZ2012: Component 'ComponentWithEditorRequiredParameters' expects a value for the parameter 'Property1', but a value may not have been provided.
+            Diagnostic("RZ2012").WithLocation(1, 1));
     }
 
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/10553")]
@@ -1725,6 +1785,178 @@ namespace Test
 
             @code {
                 private MyClass<string> c = new();
+            }
+            """);
+
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/48778")]
+    public void ImplicitStringConversion_ParameterCasing_AddAttribute()
+    {
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 };
+
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+
+            namespace Test;
+
+            public class MyClass
+            {
+                public static implicit operator string(MyClass c) => "";
+            }
+
+            public class MyComponent : ComponentBase
+            {
+                [Parameter] public string Placeholder { get; set; } = "";
+            }
+            """));
+
+        var generated = CompileToCSharp("""
+            <MyComponent PlaceHolder="@(new MyClass())" />
+            """);
+
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/48778")]
+    public void ImplicitStringConversion_ParameterCasing_AddComponentParameter()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+
+            namespace Test;
+
+            public class MyClass
+            {
+                public static implicit operator string(MyClass c) => "";
+            }
+
+            public class MyComponent : ComponentBase
+            {
+                [Parameter] public string Placeholder { get; set; } = "";
+            }
+            """));
+
+        var generated = CompileToCSharp("""
+            <MyComponent PlaceHolder="@(new MyClass())" />
+            """);
+
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/48778")]
+    public void ImplicitStringConversion_ParameterCasing_Multiple()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+
+            namespace Test;
+
+            public class MyClass
+            {
+                public static implicit operator string(MyClass c) => "";
+            }
+
+            public class MyComponent : ComponentBase
+            {
+                [Parameter] public string Placeholder { get; set; } = "";
+                [Parameter] public string PlaceHolder { get; set; } = "";
+            }
+            """));
+
+        var generated = CompileToCSharp("""
+            <MyComponent PlaceHolder="@(new MyClass())" />
+            """);
+
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/48778")]
+    public void ImplicitStringConversion_ParameterCasing_Bind()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+
+            namespace Test;
+
+            public class MyComponent : ComponentBase
+            {
+                [Parameter] public string Placeholder { get; set; } = "";
+                [Parameter] public EventCallback<string> PlaceholderChanged { get; set; }
+            }
+            """));
+
+        var generated = CompileToCSharp("""
+            <MyComponent @bind-PlaceHolder="s" />
+
+            @code {
+                private string s = "abc";
+            }
+            """);
+
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/48778")]
+    public void ImplicitStringConversion_ParameterCasing_Bind_02()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+
+            namespace Test;
+
+            public class MyComponent : ComponentBase
+            {
+                [Parameter] public string Placeholder { get; set; } = "";
+                [Parameter] public EventCallback<string> PlaceholderChanged { get; set; }
+            }
+            """));
+
+        var generated = CompileToCSharp("""
+            <MyComponent @Bind-Placeholder="@s" />
+
+            @code {
+                private string s = "abc";
+            }
+            """);
+
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/48778")]
+    public void ImplicitStringConversion_ParameterCasing_Bind_03()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+
+            namespace Test;
+
+            public class MyComponent : ComponentBase
+            {
+                [Parameter] public string Placeholder { get; set; } = "";
+                [Parameter] public EventCallback<string> PlaceholderChanged { get; set; }
+            }
+            """));
+
+        var generated = CompileToCSharp("""
+            <MyComponent @bind-Placeholder:Get="s" @bind-Placeholder:set="Changed" />
+
+            @code {
+                private string s = "abc";
+                private void Changed(string s) { }
             }
             """);
 
