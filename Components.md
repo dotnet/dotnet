@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@02adf13](https://github.com/dotnet/fsharp/tree/02adf13f8d69e0105fff4d68dbd5fb1d43bc0e17)*
 - `src/msbuild`  
-*[dotnet/msbuild@43dd7c2](https://github.com/dotnet/msbuild/tree/43dd7c2f6b0771b277c22e3a68107bb1f6a8a958)*
+*[dotnet/msbuild@87ffcb5](https://github.com/dotnet/msbuild/tree/87ffcb5c1611d98f911fc2058a649b99a93bf8e6)*
 - `src/nuget-client`  
 *[nuget/nuget.client@5485ea6](https://github.com/nuget/nuget.client/tree/5485ea697de98eee58746e0b0054cd478e33a1a5)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
@@ -40,15 +40,15 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@6cf6203](https://github.com/dotnet/razor/tree/6cf62038c2c42e72901b9fb759f1be7b2779fd3e)*
 - `src/roslyn`  
-*[dotnet/roslyn@e8c1ac0](https://github.com/dotnet/roslyn/tree/e8c1ac069182453b2274f48109024f2d884bb312)*
+*[dotnet/roslyn@b2a6fc8](https://github.com/dotnet/roslyn/tree/b2a6fc8eca8d3332845b142717166303d18362c7)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@81d9b5d](https://github.com/dotnet/roslyn-analyzers/tree/81d9b5d58e3d384ed4a91b75f4a1ece6352e76d9)*
 - `src/runtime`  
-*[dotnet/runtime@3471de7](https://github.com/dotnet/runtime/tree/3471de7ffda7105f395a25a57094097a7cc0dc88)*
+*[dotnet/runtime@0912e94](https://github.com/dotnet/runtime/tree/0912e94a6c81f4743946831137ba6c3ec3f1a179)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@d92413b](https://github.com/dotnet/scenario-tests/tree/d92413b87d36250859d8cb51ff69a03b5f5c4cab)*
 - `src/sdk`  
-*[dotnet/sdk@ca25372](https://github.com/dotnet/sdk/tree/ca25372b839913f565a3d63ddb33fa5f890efb9e)*
+*[dotnet/sdk@c5d66ed](https://github.com/dotnet/sdk/tree/c5d66ed86ccb1aea1f70c05b65de55554f6ee082)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@d6e05f9](https://github.com/dotnet/source-build-externals/tree/d6e05f9c80394626ffb7af82d0e84547ddd265c0)*
     - `src/source-build-externals/src/abstractions-xunit`  
