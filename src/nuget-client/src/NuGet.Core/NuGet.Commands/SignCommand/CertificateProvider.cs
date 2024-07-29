@@ -32,6 +32,9 @@ namespace NuGet.Commands
 
         private const int MACOS_INVALID_CERT = -25257;
 
+#if NET9_0_OR_GREATER
+        private const int CRYPT_E_BAD_DECODE = unchecked((int)0x80092002);
+#endif
 
 #if IS_SIGNING_SUPPORTED && IS_CORECLR
         //Generic exception ASN1 corrupted data
@@ -83,6 +86,9 @@ namespace NuGet.Commands
                                     options.CertificatePath)));
 
                         case CRYPT_E_NO_MATCH_HRESULT:
+#if NET9_0_OR_GREATER
+                        case CRYPT_E_BAD_DECODE:
+#endif
 #if IS_SIGNING_SUPPORTED && IS_CORECLR
                         case OPENSSL_ASN1_CORRUPTED_DATA_ERROR:
 #else
@@ -122,7 +128,12 @@ namespace NuGet.Commands
 
             if (!string.IsNullOrEmpty(options.CertificatePassword))
             {
-                cert = new X509Certificate2(options.CertificatePath, options.CertificatePassword); // use the password if the user provided it.
+                // use the password if the user provided it
+#if NET9_0_OR_GREATER
+                cert = X509CertificateLoader.LoadPkcs12FromFile(options.CertificatePath, options.CertificatePassword);
+#else
+                cert = new X509Certificate2(options.CertificatePath, options.CertificatePassword);
+#endif
             }
             else
             {
@@ -148,7 +159,11 @@ namespace NuGet.Commands
                     }
                 }
 #else
+#if NET9_0_OR_GREATER
+                cert = X509CertificateLoader.LoadPkcs12FromFile(options.CertificatePath, null);
+#else
                 cert = new X509Certificate2(options.CertificatePath);
+#endif
 #endif
             }
 
