@@ -42,7 +42,7 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
             ProductRelease release = GetProductRelease("2.1", "2.1.8");
 
             Assert.Equal(33, release.Files.Count);
-            Assert.Empty(release.Files.Where(f => f.FileName.Contains("-gs")));
+            Assert.DoesNotContain(release.Files, f => f.FileName.Contains("-gs"));
         }
 
         [Fact]
