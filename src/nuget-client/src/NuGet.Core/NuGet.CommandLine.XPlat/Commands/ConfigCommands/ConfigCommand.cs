@@ -7,6 +7,7 @@ using System.CommandLine.Help;
 using System.CommandLine.Parsing;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.CommandLineUtils;
 using NuGet.Common;
 
 namespace NuGet.CommandLine.XPlat
@@ -82,6 +83,14 @@ namespace NuGet.CommandLine.XPlat
             var tokenList = parseResult.Tokens.TakeWhile(token => token.Type == CliTokenType.Argument || token.Type == CliTokenType.Command || token.Type == CliTokenType.Directive).Select(t => t.Value).ToList();
             tokenList.Add("-h");
             cmd.Parse(tokenList).Invoke();
+        }
+
+        internal static void Register(CommandLineApplication app)
+        {
+            app.Command("config", configCmd =>
+            {
+                configCmd.Description = Strings.Config_Description;
+            });
         }
 
         internal static CliCommand Register(CliCommand app, Func<ILogger> getLogger)

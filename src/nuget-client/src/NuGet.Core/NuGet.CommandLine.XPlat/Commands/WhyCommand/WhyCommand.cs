@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Help;
+using Microsoft.Extensions.CommandLineUtils;
 
 namespace NuGet.CommandLine.XPlat
 {
@@ -32,6 +33,14 @@ namespace NuGet.CommandLine.XPlat
         {
             Arity = ArgumentArity.Zero
         };
+
+        internal static void Register(CommandLineApplication app)
+        {
+            app.Command("why", whyCmd =>
+            {
+                whyCmd.Description = Strings.WhyCommand_Description;
+            });
+        }
 
         internal static void Register(CliCommand rootCommand, Func<ILoggerWithColor> getLogger)
         {
