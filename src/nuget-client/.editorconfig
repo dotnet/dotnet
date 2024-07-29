@@ -283,3 +283,4 @@ dotnet_diagnostic.VSTHRD103.severity = none
 dotnet_diagnostic.VSTHRD104.severity = none
 dotnet_diagnostic.VSTHRD105.severity = none
 dotnet_diagnostic.VSTHRD106.severity = none
+dotnet_diagnostic.IDE0055.severity = warning

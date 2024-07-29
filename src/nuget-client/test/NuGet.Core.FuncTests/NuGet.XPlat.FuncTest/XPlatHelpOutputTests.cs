@@ -8,6 +8,7 @@ using System.Linq;
 using NuGet.CommandLine.XPlat;
 using Xunit;
 using Xunit.Abstractions;
+using System.Text.RegularExpressions;
 
 namespace NuGet.XPlat.FuncTest
 {
@@ -42,6 +43,24 @@ namespace NuGet.XPlat.FuncTest
                 yield return new object[] { new string[] { "add", "Test", "Case" } };
             }
         }
+
+        public static IEnumerable<string> HelpCommands => new List<string>
+        {
+            "add",
+            "config",
+            "delete",
+            "disable",
+            "enable",
+            "list",
+            "locals",
+            "push",
+            "remove",
+            "sign",
+            "trust",
+            "update",
+            "verify",
+            "why"
+        };
 
         [Theory]
         [MemberData(nameof(FailParsing))]
@@ -81,6 +100,29 @@ namespace NuGet.XPlat.FuncTest
             var output = consoleOutput.ToString();
             Assert.DoesNotContain("Usage", output);
             Assert.Equal(1, exitCode);
+        }
+
+        [Fact]
+        public void MainInternal_ShowsHelp()
+        {
+            // Arrange
+            var originalConsoleOut = Console.Out;
+            using var consoleOutput = new StringWriter();
+            Console.SetOut(consoleOutput);
+            var log = new TestCommandOutputLogger(_testOutputHelper);
+
+            // Act
+            var exitCode = Program.MainInternal(Array.Empty<string>(), log);
+            Console.SetOut(originalConsoleOut);
+
+            // Assert
+            var output = consoleOutput.ToString();
+
+            var commandPattern = @"^\s{2}(\w+)\s{2,}"; // Matches lines starting with two spaces, a word (command), followed by at least two spaces
+            IEnumerable<string> matches = Regex.Matches(output, commandPattern, RegexOptions.Multiline).Select(m => m.ToString().Trim());
+
+            Assert.Equal(HelpCommands, matches);
+            Assert.Equal(0, exitCode);
         }
     }
 }
