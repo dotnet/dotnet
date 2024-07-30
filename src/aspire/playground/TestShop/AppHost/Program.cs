@@ -1,6 +1,7 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 var catalogDb = builder.AddPostgres("postgres")
+                       .WithDataVolume()
                        .WithPgAdmin()
                        .AddDatabase("catalogdb");
 
@@ -15,8 +16,7 @@ var catalogService = builder.AddProject<Projects.CatalogService>("catalogservice
                             .WithReference(catalogDb)
                             .WithReplicas(2);
 
-var rabbitMqPassword = builder.AddParameter("rabbitmq-password", secret: true);
-var messaging = builder.AddRabbitMQ("messaging", password: rabbitMqPassword)
+var messaging = builder.AddRabbitMQ("messaging")
                        .WithDataVolume()
                        .WithManagementPlugin()
                        .PublishAsContainer();

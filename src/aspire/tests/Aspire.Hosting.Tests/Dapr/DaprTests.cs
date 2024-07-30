@@ -14,10 +14,7 @@ public class DaprTests
     [Fact]
     public async Task WithDaprSideCarAddsAnnotationAndSidecarResource()
     {
-        using var builder = TestDistributedApplicationBuilder.Create(new DistributedApplicationOptions
-        {
-            DisableDashboard = true
-        });
+        using var builder = TestDistributedApplicationBuilder.Create();
 
         builder.AddDapr(o =>
         {
@@ -57,7 +54,7 @@ public class DaprTests
             e.AllocatedEndpoint = new(e, "localhost", ports[e.Name], targetPortExpression: $$$"""{{- portForServing "{{{e.Name}}}" -}}""");
         }
 
-        var config = await EnvironmentVariableEvaluator.GetEnvironmentVariablesAsync(container);
+        var config = await EnvironmentVariableEvaluator.GetEnvironmentVariablesAsync(container, DistributedApplicationOperation.Run, TestServiceProvider.Instance);
         var sidecarArgs = await ArgumentEvaluator.GetArgumentListAsync(sideCarCli);
 
         Assert.Equal("http://localhost:3500", config["DAPR_HTTP_ENDPOINT"]);
@@ -95,10 +92,7 @@ public class DaprTests
     [InlineData("https", "http", null, "https", "localhost", 8000)]
     public async Task WithDaprSideCarAddsAnnotationBasedOnTheSidecarAppOptions(string? schema, string? endPoint, int? port, string expectedSchema, string expectedChannelAddress, int expectedPort)
     {
-        using var builder = TestDistributedApplicationBuilder.Create(new DistributedApplicationOptions
-        {
-            DisableDashboard = true
-        });
+        using var builder = TestDistributedApplicationBuilder.Create();
 
         builder.AddDapr(o =>
         {
@@ -156,7 +150,7 @@ public class DaprTests
             e.AllocatedEndpoint = new(e, "localhost", ports[e.Name], targetPortExpression: $$$"""{{- portForServing "{{{e.Name}}}" -}}""");
         }
 
-        var config = await EnvironmentVariableEvaluator.GetEnvironmentVariablesAsync(container);
+        var config = await EnvironmentVariableEvaluator.GetEnvironmentVariablesAsync(container, DistributedApplicationOperation.Run, TestServiceProvider.Instance);
         var sidecarArgs = await ArgumentEvaluator.GetArgumentListAsync(sideCarCli);
 
         Assert.Equal("http://localhost:3500", config["DAPR_HTTP_ENDPOINT"]);

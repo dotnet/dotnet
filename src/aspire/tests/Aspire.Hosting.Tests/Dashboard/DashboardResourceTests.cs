@@ -19,7 +19,7 @@ public class DashboardResourceTests
     [Fact]
     public async Task DashboardIsAutomaticallyAddedAsHiddenResource()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        using var builder = TestDistributedApplicationBuilder.Create(options => options.DisableDashboard = false);
 
         // Ensure any ambient configuration doesn't impact this test.
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
@@ -34,7 +34,7 @@ public class DashboardResourceTests
             o.DashboardPath = dashboardPath;
         });
 
-        var app = builder.Build();
+        using var app = builder.Build();
 
         await app.ExecuteBeforeStartHooksAsync(default);
 
@@ -52,11 +52,11 @@ public class DashboardResourceTests
     [Fact]
     public async Task DashboardIsAddedFirst()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        using var builder = TestDistributedApplicationBuilder.Create(options => options.DisableDashboard = false);
 
         builder.AddContainer("my-container", "my-image");
 
-        var app = builder.Build();
+        using var app = builder.Build();
 
         await app.ExecuteBeforeStartHooksAsync(default);
 
@@ -71,7 +71,7 @@ public class DashboardResourceTests
     [Fact]
     public async Task DashboardDoesNotAddResource_ConfiguresExistingDashboard()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        using var builder = TestDistributedApplicationBuilder.Create(options => options.DisableDashboard = false);
 
         builder.Services.AddSingleton<IDashboardEndpointProvider, MockDashboardEndpointProvider>();
 
@@ -85,7 +85,7 @@ public class DashboardResourceTests
 
         var container = builder.AddContainer(KnownResourceNames.AspireDashboard, "my-image");
 
-        var app = builder.Build();
+        using var app = builder.Build();
 
         await app.ExecuteBeforeStartHooksAsync(default);
 
@@ -95,7 +95,7 @@ public class DashboardResourceTests
 
         Assert.Same(container.Resource, dashboard);
 
-        var config = await EnvironmentVariableEvaluator.GetEnvironmentVariablesAsync(dashboard);
+        var config = await EnvironmentVariableEvaluator.GetEnvironmentVariablesAsync(dashboard, DistributedApplicationOperation.Run, TestServiceProvider.Instance);
 
         Assert.Collection(config,
             e =>
@@ -144,7 +144,7 @@ public class DashboardResourceTests
     [Fact]
     public async Task DashboardWithDllPathLaunchesDotnet()
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        using var builder = TestDistributedApplicationBuilder.Create(options => options.DisableDashboard = false);
 
         var dashboardPath = Path.GetFullPath("dashboard.dll");
 
@@ -173,7 +173,7 @@ public class DashboardResourceTests
     public async Task DashboardAuthConfigured_EnvVarsPresent()
     {
         // Arrange
-        using var builder = TestDistributedApplicationBuilder.Create();
+        using var builder = TestDistributedApplicationBuilder.Create(options => options.DisableDashboard = false);
 
         builder.Services.AddSingleton<IDashboardEndpointProvider, MockDashboardEndpointProvider>();
 
@@ -187,7 +187,7 @@ public class DashboardResourceTests
             ["AppHost:OtlpApiKey"] = "TestOtlpApiKey!"
         });
 
-        var app = builder.Build();
+        using var app = builder.Build();
 
         await app.ExecuteBeforeStartHooksAsync(default);
 
@@ -195,7 +195,7 @@ public class DashboardResourceTests
 
         var dashboard = Assert.Single(model.Resources);
 
-        var config = await EnvironmentVariableEvaluator.GetEnvironmentVariablesAsync(dashboard);
+        var config = await EnvironmentVariableEvaluator.GetEnvironmentVariablesAsync(dashboard, DistributedApplicationOperation.Run, TestServiceProvider.Instance);
 
         Assert.Equal("BrowserToken", config.Single(e => e.Key == DashboardConfigNames.DashboardFrontendAuthModeName.EnvVarName).Value);
         Assert.Equal("TestBrowserToken!", config.Single(e => e.Key == DashboardConfigNames.DashboardFrontendBrowserTokenName.EnvVarName).Value);
@@ -208,7 +208,7 @@ public class DashboardResourceTests
     public async Task DashboardAuthRemoved_EnvVarsUnsecured()
     {
         // Arrange
-        using var builder = TestDistributedApplicationBuilder.Create();
+        using var builder = TestDistributedApplicationBuilder.Create(options => options.DisableDashboard = false);
 
         builder.Services.AddSingleton<IDashboardEndpointProvider, MockDashboardEndpointProvider>();
 
@@ -220,7 +220,7 @@ public class DashboardResourceTests
             ["DOTNET_DASHBOARD_OTLP_ENDPOINT_URL"] = "http://localhost"
         });
 
-        var app = builder.Build();
+        using var app = builder.Build();
 
         await app.ExecuteBeforeStartHooksAsync(default);
 
@@ -228,7 +228,7 @@ public class DashboardResourceTests
 
         var dashboard = Assert.Single(model.Resources);
 
-        var config = await EnvironmentVariableEvaluator.GetEnvironmentVariablesAsync(dashboard);
+        var config = await EnvironmentVariableEvaluator.GetEnvironmentVariablesAsync(dashboard, DistributedApplicationOperation.Run, TestServiceProvider.Instance);
 
         Assert.Equal("Unsecured", config.Single(e => e.Key == DashboardConfigNames.DashboardFrontendAuthModeName.EnvVarName).Value);
         Assert.Equal("Unsecured", config.Single(e => e.Key == DashboardConfigNames.DashboardOtlpAuthModeName.EnvVarName).Value);
@@ -238,7 +238,7 @@ public class DashboardResourceTests
     public async Task DashboardResourceServiceUriIsSet()
     {
         // Arrange
-        using var builder = TestDistributedApplicationBuilder.Create();
+        using var builder = TestDistributedApplicationBuilder.Create(options => options.DisableDashboard = false);
 
         builder.Services.AddSingleton<IDashboardEndpointProvider, MockDashboardEndpointProvider>();
 
@@ -250,7 +250,7 @@ public class DashboardResourceTests
             ["DOTNET_DASHBOARD_OTLP_ENDPOINT_URL"] = "http://localhost"
         });
 
-        var app = builder.Build();
+        using var app = builder.Build();
 
         await app.ExecuteBeforeStartHooksAsync(default);
 
@@ -258,7 +258,7 @@ public class DashboardResourceTests
 
         var dashboard = Assert.Single(model.Resources);
 
-        var config = await EnvironmentVariableEvaluator.GetEnvironmentVariablesAsync(dashboard);
+        var config = await EnvironmentVariableEvaluator.GetEnvironmentVariablesAsync(dashboard, DistributedApplicationOperation.Run, TestServiceProvider.Instance);
 
         Assert.Equal("http://localhost:5000", config.Single(e => e.Key == DashboardConfigNames.ResourceServiceUrlName.EnvVarName).Value);
     }
@@ -266,9 +266,13 @@ public class DashboardResourceTests
     [Fact]
     public async Task DashboardIsNotAddedInPublishMode()
     {
-        using var builder = TestDistributedApplicationBuilder.Create(DistributedApplicationOperation.Publish);
+        using var builder = TestDistributedApplicationBuilder.Create(options =>
+        {
+            options.DisableDashboard = false;
+            options.Args = ["--publisher", "manifest"];
+        });
 
-        var app = builder.Build();
+        using var app = builder.Build();
 
         await app.ExecuteBeforeStartHooksAsync(default);
 
@@ -280,7 +284,7 @@ public class DashboardResourceTests
     [Fact]
     public async Task DashboardIsNotAddedIfDisabled()
     {
-        using var builder = TestDistributedApplicationBuilder.Create(new DistributedApplicationOptions { DisableDashboard = true });
+        using var builder = TestDistributedApplicationBuilder.Create(options => options.DisableDashboard = true);
 
         var app = builder.Build();
 
@@ -295,12 +299,11 @@ public class DashboardResourceTests
     public void ContainerIsValidWithDashboardIsDisabled()
     {
         // Set the host environment to "Development" so that the container validates services.
-        using var builder = TestDistributedApplicationBuilder.Create(new DistributedApplicationOptions
+        using var builder = TestDistributedApplicationBuilder.Create(options =>
         {
-            DisableDashboard = true,
-            Args = ["--environment", "Development"]
-        }
-        );
+            options.DisableDashboard = true;
+            options.Args = ["--environment", "Development"];
+        });
 
         // Container validation logic runs when the service provider is built.
         using var app = builder.Build();
@@ -315,7 +318,7 @@ public class DashboardResourceTests
     [InlineData(LogLevel.Trace)]
     public async Task DashboardLifecycleHookWatchesLogs(LogLevel logLevel)
     {
-        using var builder = TestDistributedApplicationBuilder.Create();
+        using var builder = TestDistributedApplicationBuilder.Create(o => o.DisableDashboard = false);
 
         var loggerProvider = new TestLoggerProvider();
 
@@ -334,11 +337,22 @@ public class DashboardResourceTests
 
         var app = builder.Build();
 
-        await app.ExecuteBeforeStartHooksAsync(default);
+        var resourceLoggerService = app.Services.GetRequiredService<ResourceLoggerService>();
+        var watchForLogSubs = Task.Run(async () =>
+        {
+            await foreach (var sub in resourceLoggerService.WatchAnySubscribersAsync())
+            {
+                if (sub.AnySubscribers)
+                {
+                    break;
+                }
+            }
+        });
+
+        await app.ExecuteBeforeStartHooksAsync(default).WaitAsync(TimeSpan.FromSeconds(15));
 
         var model = app.Services.GetRequiredService<DistributedApplicationModel>();
-        var resourceNotifcationService = app.Services.GetRequiredService<ResourceNotificationService>();
-        var resourceLoggerService = app.Services.GetRequiredService<ResourceLoggerService>();
+        var resourceNotificationService = app.Services.GetRequiredService<ResourceNotificationService>();
 
         var dashboard = Assert.Single(model.Resources.OfType<ExecutableResource>());
 
@@ -346,7 +360,10 @@ public class DashboardResourceTests
         Assert.Equal("aspire-dashboard", dashboard.Name);
 
         // Push a notification through to the dashboard resource.
-        await resourceNotifcationService.PublishUpdateAsync(dashboard, "aspire-dashboard-0", s => s with { State = "Running" });
+        await resourceNotificationService.PublishUpdateAsync(dashboard, "aspire-dashboard-0", s => s with { State = "Running" });
+
+        // Wait for logs to be subscribed to
+        await watchForLogSubs.WaitAsync(TimeSpan.FromSeconds(15));
 
         // Push some logs through to the dashboard resource.
         var logger = resourceLoggerService.GetLogger("aspire-dashboard-0");
@@ -367,11 +384,12 @@ public class DashboardResourceTests
         Assert.NotNull(testLogger);
 
         // Get the first log message that was logged
-        var log = await testLogger.FirstLogTask.WaitAsync(TimeSpan.FromSeconds(30));
+        var log = await testLogger.FirstLogTask.WaitAsync(TimeSpan.FromSeconds(15));
 
         Assert.Equal("Test dashboard message", log.Message);
         Assert.Equal(logLevel, log.LogLevel);
 
+        await app.DisposeAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(15));
     }
 
     [Fact]

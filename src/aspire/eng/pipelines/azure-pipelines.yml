@@ -9,13 +9,10 @@ trigger:
     include:
       - '*'
     exclude:
+      - '**.md'
       - eng/Version.Details.xml
       - .github/*
       - docs/*
-      - CODE_OF_CONDUCT.md
-      - CONTRIBUTING.md
-      - README.md
-      - SECURITY.md
       - LICENSE.TXT
       - PATENTS.TXT
       - THIRD-PARTY-NOTICES.TXT
@@ -31,13 +28,10 @@ pr:
     include:
       - '*'
     exclude:
+      - '**.md'
       - eng/Version.Details.xml
       - .github/*
       - docs/*
-      - CODE_OF_CONDUCT.md
-      - CONTRIBUTING.md
-      - README.md
-      - SECURITY.md
       - LICENSE.TXT
       - PATENTS.TXT
       - THIRD-PARTY-NOTICES.TXT
@@ -101,6 +95,9 @@ extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
     sdl:
+      policheck:
+        enabled: true
+        exclusionsFile: $(Build.SourcesDirectory)\.config\PoliCheckExclusions.xml
       eslint:
         enabled: false
         justificationForDisabling: 'see https://portal.microsofticm.com/imp/v3/incidents/incident/482258316/summary'
@@ -128,7 +125,8 @@ extends:
           enablePublishBuildAssets: true
           enableTelemetry: true
           enableSourceBuild: true
-          enableSourceIndex: false
+          enableSourceIndex: true
+          publishAssetsImmediately: true
           # Publish build logs
           enablePublishBuildArtifacts: true
           # Publish test logs
@@ -140,7 +138,7 @@ extends:
 
           - job: Windows
             # timeout accounts for wait times for helix agents up to 30mins
-            timeoutInMinutes: 90
+            timeoutInMinutes: 120
 
             pool:
               name: NetCore1ESPool-Internal
@@ -170,7 +168,7 @@ extends:
           - ${{ if eq(variables._RunAsPublic, True) }}:
             - job: Linux
               # timeout accounts for wait times for helix agents up to 30mins
-              timeoutInMinutes: 90
+              timeoutInMinutes: 120
 
               pool:
                 name: NetCore1ESPool-Internal
@@ -204,28 +202,4 @@ extends:
             LclPackageId: 'LCL-JUNO-PROD-ASPIRE'
             MirrorRepo: aspire
             MirrorBranch: main
-
-    - template: /eng/common/templates-official/post-build/post-build.yml@self
-      parameters:
-        validateDependsOn:
-        - build
-        publishingInfraVersion: 3
-        enableSymbolValidation: false
-        enableSigningValidation: false
-        enableNugetValidation: false
-        enableSourceLinkValidation: false
-        # these param values come from the DotNet-Winforms-SDLValidation-Params azdo variable group
-        SDLValidationParameters:
-          enable: false
-          params: ' -SourceToolsList $(_TsaSourceToolsList)
-            -TsaInstanceURL $(_TsaInstanceURL)
-            -TsaProjectName $(_TsaProjectName)
-            -TsaNotificationEmail $(_TsaNotificationEmail)
-            -TsaCodebaseAdmin $(_TsaCodebaseAdmin)
-            -TsaBugAreaPath $(_TsaBugAreaPath)
-            -TsaIterationPath $(_TsaIterationPath)
-            -TsaRepositoryName $(_TsaRepositoryName)
-            -TsaCodebaseName $(_TsaCodebaseName)
-            -TsaOnboard $(_TsaOnboard)
-            -TsaPublish $(_TsaPublish)'
 

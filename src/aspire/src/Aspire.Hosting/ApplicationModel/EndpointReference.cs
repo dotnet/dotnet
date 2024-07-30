@@ -68,8 +68,6 @@ public sealed class EndpointReference : IManifestExpressionProvider, IValueProvi
     /// <returns>An <see cref="EndpointReferenceExpression"/> representing the specified <see cref="EndpointProperty"/>.</returns>
     public EndpointReferenceExpression Property(EndpointProperty property)
     {
-        ArgumentNullException.ThrowIfNull(property);
-
         return new(this, property);
     }
 
@@ -184,6 +182,12 @@ public class EndpointReferenceExpression(EndpointReference endpointReference, En
 
     private string? ComputeTargetPort()
     {
+        // We have a target port, so we can return it directly.
+        if (Endpoint.TargetPort is int port)
+        {
+            return port.ToString(CultureInfo.InvariantCulture);
+        }
+
         // There is no way to resolve the value of the target port until runtime. Even then, replicas make this very complex because
         // the target port is not known until the replica is allocated.
         // Instead, we return an expression that will be resolved at runtime by the orchestrator.

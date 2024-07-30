@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Globalization;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Lifecycle;
 using Aspire.Hosting.Redis;
@@ -84,7 +85,7 @@ public static class RedisBuilderExtensions
     /// </summary>
     /// <remarks>
     /// Use <see cref="WithPersistence(IResourceBuilder{RedisResource}, TimeSpan?, long)"/> to adjust Redis persistence configuration, e.g.:
-    /// <code>
+    /// <code lang="csharp">
     /// var cache = builder.AddRedis("cache")
     ///                    .WithDataVolume()
     ///                    .WithPersistence(TimeSpan.FromSeconds(10), 5);
@@ -112,9 +113,9 @@ public static class RedisBuilderExtensions
     /// </summary>
     /// <remarks>
     /// Use <see cref="WithPersistence(IResourceBuilder{RedisResource}, TimeSpan?, long)"/> to adjust Redis persistence configuration, e.g.:
-    /// <code>
+    /// <code lang="csharp">
     /// var cache = builder.AddRedis("cache")
-    ///                    .WithDataBindMount()
+    ///                    .WithDataBindMount("myredisdata")
     ///                    .WithPersistence(TimeSpan.FromSeconds(10), 5);
     /// </code>
     /// </remarks>
@@ -141,7 +142,7 @@ public static class RedisBuilderExtensions
     /// <remarks>
     /// Use with <see cref="WithDataBindMount(IResourceBuilder{RedisResource}, string, bool)"/>
     /// or <see cref="WithDataVolume(IResourceBuilder{RedisResource}, string?, bool)"/> to persist Redis data across sessions with custom persistence configuration, e.g.:
-    /// <code>
+    /// <code lang="csharp">
     /// var cache = builder.AddRedis("cache")
     ///                    .WithDataVolume()
     ///                    .WithPersistence(TimeSpan.FromSeconds(10), 5);
@@ -152,5 +153,11 @@ public static class RedisBuilderExtensions
     /// <param name="keysChangedThreshold">The number of key change operations required to trigger a snapshot at the interval. Defaults to 1.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
     public static IResourceBuilder<RedisResource> WithPersistence(this IResourceBuilder<RedisResource> builder, TimeSpan? interval = null, long keysChangedThreshold = 1)
-        => builder.WithAnnotation(new RedisPersistenceCommandLineArgsCallbackAnnotation(interval ?? TimeSpan.FromSeconds(60), keysChangedThreshold), ResourceAnnotationMutationBehavior.Replace);
+        => builder.WithAnnotation(new CommandLineArgsCallbackAnnotation(context =>
+        {
+            context.Args.Add("--save");
+            context.Args.Add((interval ?? TimeSpan.FromSeconds(60)).TotalSeconds.ToString(CultureInfo.InvariantCulture));
+            context.Args.Add(keysChangedThreshold.ToString(CultureInfo.InvariantCulture));
+            return Task.CompletedTask;
+        }), ResourceAnnotationMutationBehavior.Replace);
 }
