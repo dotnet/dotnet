@@ -13,6 +13,10 @@ if (!resourcesToSkip.HasFlag(TestResourceNames.sqlserver))
 {
     builder.AddSqlServerClient("tempdb");
 }
+if (!resourcesToSkip.HasFlag(TestResourceNames.efsqlserver))
+{
+    builder.AddSqlServerDbContext<EFCoreSqlServerDbContext>("tempdb");
+}
 if (!resourcesToSkip.HasFlag(TestResourceNames.mysql) || !resourcesToSkip.HasFlag(TestResourceNames.efmysql))
 {
     builder.AddMySqlDataSource("mysqldb", settings =>
@@ -32,7 +36,11 @@ if (!resourcesToSkip.HasFlag(TestResourceNames.efmysql))
 }
 if (!resourcesToSkip.HasFlag(TestResourceNames.redis))
 {
-    builder.AddRedisClient("redis");
+    builder.AddKeyedRedisClient("redis");
+}
+if (!resourcesToSkip.HasFlag(TestResourceNames.garnet))
+{
+    builder.AddKeyedRedisClient("garnet");
 }
 if (!resourcesToSkip.HasFlag(TestResourceNames.postgres) || !resourcesToSkip.HasFlag(TestResourceNames.efnpgsql))
 {
@@ -50,23 +58,42 @@ if (!resourcesToSkip.HasFlag(TestResourceNames.mongodb))
 {
     builder.AddMongoDBClient("mymongodb");
 }
+if (!resourcesToSkip.HasFlag(TestResourceNames.eventhubs))
+{
+    builder.AddAzureEventHubProducerClient("eventhubsns", settings => settings.EventHubName = "hub");
+    builder.AddAzureEventHubConsumerClient("eventhubsns", settings => settings.EventHubName = "hub");
+}
 if (!resourcesToSkip.HasFlag(TestResourceNames.oracledatabase))
 {
     builder.AddOracleDatabaseDbContext<MyDbContext>("freepdb1");
 }
-if (!resourcesToSkip.HasFlag(TestResourceNames.kafka))
+
+if (!resourcesToSkip.HasFlag(TestResourceNames.cosmos) || !resourcesToSkip.HasFlag(TestResourceNames.efcosmos))
 {
-    builder.AddKafkaProducer<string, string>("kafka");
-    builder.AddKafkaConsumer<string, string>("kafka", consumerBuilder =>
+    builder.AddAzureCosmosClient("cosmos");
+}
+
+if (!resourcesToSkip.HasFlag(TestResourceNames.efcosmos))
+{
+    builder.AddCosmosDbContext<EFCoreCosmosDbContext>("cosmos", "cosmos");
+}
+
+if (!resourcesToSkip.HasFlag(TestResourceNames.eventhubs))
+{
+    builder.AddAzureEventHubProducerClient("eventhubns", settings =>
     {
-        consumerBuilder.Config.GroupId = "aspire-consumer-group";
-        consumerBuilder.Config.AutoOffsetReset = AutoOffsetReset.Earliest;
+        settings.EventHubName = "hub";
+    });
+
+    builder.AddAzureEventHubConsumerClient("eventhubns", settings =>
+    {
+        settings.EventHubName = "hub";
     });
 }
 
-if (!resourcesToSkip.HasFlag(TestResourceNames.cosmos))
+if (!resourcesToSkip.HasFlag(TestResourceNames.milvus))
 {
-    builder.AddAzureCosmosClient("cosmos");
+    builder.AddMilvusClient("milvus");
 }
 
 // Ensure healthChecks are added. Some components like Cosmos
@@ -84,6 +111,11 @@ app.MapGet("/pid", () => Environment.ProcessId);
 if (!resourcesToSkip.HasFlag(TestResourceNames.redis))
 {
     app.MapRedisApi();
+}
+
+if (!resourcesToSkip.HasFlag(TestResourceNames.garnet))
+{
+    app.MapGarnetApi();
 }
 
 if (!resourcesToSkip.HasFlag(TestResourceNames.mongodb))
@@ -115,6 +147,11 @@ if (!resourcesToSkip.HasFlag(TestResourceNames.sqlserver))
     app.MapSqlServerApi();
 }
 
+if (!resourcesToSkip.HasFlag(TestResourceNames.efsqlserver))
+{
+    app.MapEFCoreSqlServerApi();
+}
+
 if (!resourcesToSkip.HasFlag(TestResourceNames.rabbitmq))
 {
     app.MapRabbitMQApi();
@@ -125,14 +162,24 @@ if (!resourcesToSkip.HasFlag(TestResourceNames.oracledatabase))
     app.MapOracleDatabaseApi();
 }
 
-if (!resourcesToSkip.HasFlag(TestResourceNames.kafka))
-{
-    app.MapKafkaApi();
-}
-
 if (!resourcesToSkip.HasFlag(TestResourceNames.cosmos))
 {
     app.MapCosmosApi();
+}
+
+if (!resourcesToSkip.HasFlag(TestResourceNames.efcosmos))
+{
+    app.MapEFCoreCosmosApi();
+}
+
+if (!resourcesToSkip.HasFlag(TestResourceNames.eventhubs))
+{
+    app.MapEventHubsApi();
+}
+
+if (!resourcesToSkip.HasFlag(TestResourceNames.milvus))
+{
+    app.MapMilvusApi();
 }
 
 app.Run();

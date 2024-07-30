@@ -4,6 +4,17 @@ trigger:
     include:
     - main
     - release/*
+  paths:
+    include:
+      - '*'
+    exclude:
+      - '**.md'
+      - eng/Version.Details.xml
+      - .github/*
+      - docs/*
+      - LICENSE.TXT
+      - PATENTS.TXT
+      - THIRD-PARTY-NOTICES.TXT
 
 pr:
   branches:
@@ -11,6 +22,17 @@ pr:
     - main
     - release/*
     - feature/*
+  paths:
+    include:
+      - '*'
+    exclude:
+      - '**.md'
+      - eng/Version.Details.xml
+      - .github/*
+      - docs/*
+      - LICENSE.TXT
+      - PATENTS.TXT
+      - THIRD-PARTY-NOTICES.TXT
 
 variables:
   - template: /eng/common/templates/variables/pool-providers.yml

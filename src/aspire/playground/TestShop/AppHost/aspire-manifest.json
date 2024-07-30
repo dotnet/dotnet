@@ -1,9 +1,17 @@
 {
+  "$schema": "https://json.schemastore.org/aspire-8.0.json",
   "resources": {
     "postgres": {
       "type": "container.v0",
       "connectionString": "Host={postgres.bindings.tcp.host};Port={postgres.bindings.tcp.port};Username=postgres;Password={postgres-password.value}",
-      "image": "postgres:16.2",
+      "image": "docker.io/library/postgres:16.2",
+      "volumes": [
+        {
+          "name": "TestShop.AppHost-postgres-data",
+          "target": "/var/lib/postgresql/data",
+          "readOnly": false
+        }
+      ],
       "env": {
         "POSTGRES_HOST_AUTH_METHOD": "scram-sha-256",
         "POSTGRES_INITDB_ARGS": "--auth-host=scram-sha-256 --auth-local=scram-sha-256",
@@ -26,7 +34,7 @@
     "basketcache": {
       "type": "container.v0",
       "connectionString": "{basketcache.bindings.tcp.host}:{basketcache.bindings.tcp.port}",
-      "image": "redis:7.2.4",
+      "image": "docker.io/library/redis:7.2",
       "args": [
         "--save",
         "60",
@@ -54,7 +62,9 @@
       "env": {
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY": "in_memory",
         "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true",
+        "HTTP_PORTS": "{catalogservice.bindings.http.targetPort}",
         "ConnectionStrings__catalogdb": "{catalogdb.connectionString}"
       },
       "bindings": {
@@ -70,20 +80,10 @@
         }
       }
     },
-    "rabbitmq-password": {
-      "type": "parameter.v0",
-      "value": "{rabbitmq-password.inputs.value}",
-      "inputs": {
-        "value": {
-          "type": "string",
-          "secret": true
-        }
-      }
-    },
     "messaging": {
       "type": "container.v0",
-      "connectionString": "amqp://guest:{rabbitmq-password.value}@{messaging.bindings.tcp.host}:{messaging.bindings.tcp.port}",
-      "image": "rabbitmq:3-management",
+      "connectionString": "amqp://guest:{messaging-password.value}@{messaging.bindings.tcp.host}:{messaging.bindings.tcp.port}",
+      "image": "docker.io/library/rabbitmq:3.13-management",
       "volumes": [
         {
           "name": "TestShop.AppHost-messaging-data",
@@ -93,7 +93,7 @@
       ],
       "env": {
         "RABBITMQ_DEFAULT_USER": "guest",
-        "RABBITMQ_DEFAULT_PASS": "{rabbitmq-password.value}"
+        "RABBITMQ_DEFAULT_PASS": "{messaging-password.value}"
       },
       "bindings": {
         "tcp": {
@@ -116,7 +116,9 @@
       "env": {
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY": "in_memory",
         "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true",
+        "HTTP_PORTS": "{basketservice.bindings.http.targetPort}",
         "ConnectionStrings__basketcache": "{basketcache.connectionString}",
         "ConnectionStrings__messaging": "{messaging.connectionString}"
       },
@@ -139,7 +141,9 @@
       "env": {
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY": "in_memory",
         "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true",
+        "HTTP_PORTS": "{frontend.bindings.http.targetPort}",
         "services__basketservice__http__0": "{basketservice.bindings.http.url}",
         "services__basketservice__https__0": "{basketservice.bindings.https.url}",
         "services__catalogservice__http__0": "{catalogservice.bindings.http.url}",
@@ -166,6 +170,7 @@
       "env": {
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY": "in_memory",
         "ConnectionStrings__messaging": "{messaging.connectionString}"
       }
     },
@@ -175,7 +180,9 @@
       "env": {
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY": "in_memory",
         "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true",
+        "HTTP_PORTS": "{apigateway.bindings.http.targetPort}",
         "services__basketservice__http__0": "{basketservice.bindings.http.url}",
         "services__basketservice__https__0": "{basketservice.bindings.https.url}",
         "services__catalogservice__http__0": "{catalogservice.bindings.http.url}",
@@ -200,7 +207,9 @@
       "env": {
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
         "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY": "in_memory",
         "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true",
+        "HTTP_PORTS": "{catalogdbapp.bindings.http.targetPort}",
         "ConnectionStrings__catalogdb": "{catalogdb.connectionString}"
       },
       "bindings": {
@@ -226,6 +235,22 @@
           "default": {
             "generate": {
               "minLength": 22
+            }
+          }
+        }
+      }
+    },
+    "messaging-password": {
+      "type": "parameter.v0",
+      "value": "{messaging-password.inputs.value}",
+      "inputs": {
+        "value": {
+          "type": "string",
+          "secret": true,
+          "default": {
+            "generate": {
+              "minLength": 22,
+              "special": false
             }
           }
         }

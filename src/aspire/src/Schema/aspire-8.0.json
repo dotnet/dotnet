@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://json.schemastore.org/aspire-8.0.json",
   "type": "object",
   "description": "Defines the .NET Aspire 8.0 deployment manifest JSON schema.",
   "required": [ "resources" ],
@@ -21,7 +22,9 @@
             "description": "A resource that represents a Dockerfile that will be built into a container duing deployment.",
             "required": [ "type", "path", "context" ],
             "properties": {
-              "type": { "const": "dockerfile.v0" },
+              "type": {
+                "const": "dockerfile.v0"
+              },
               "path": {
                 "type": "string",
                 "description": "The file path to the Dockerfile to be built into a container image."
@@ -30,8 +33,12 @@
                 "type": "string",
                 "description": "A directory path used as the context for building the Dockerfile into a container image."
               },
-              "env": { "$ref": "#/definitions/env" },
-              "bindings": { "$ref": "#/definitions/bindings" }
+              "env": {
+                "$ref": "#/definitions/env"
+              },
+              "bindings": {
+                "$ref": "#/definitions/bindings"
+              }
             },
             "additionalProperties": false
           },
@@ -40,7 +47,9 @@
             "description": "A generic container resource.",
             "required": [ "type", "image" ],
             "properties": {
-              "type": { "const": "container.v0" },
+              "type": {
+                "const": "container.v0"
+              },
               "image": {
                 "type": "string",
                 "description": "A string representing the container image to be used."
@@ -49,12 +58,72 @@
                 "type": "string",
                 "description": "The entrypoint to use for the container image when executed."
               },
-              "args": { "$ref": "#/definitions/args" },
-              "connectionString": { "$ref": "#/definitions/connectionString" },
-              "env": { "$ref": "#/definitions/env" },
-              "bindings": { "$ref": "#/definitions/bindings" },
-              "bindMounts": { "$ref": "#/definitions/bindMounts" },
-              "volumes": { "$ref": "#/definitions/volumes" }
+              "args": {
+                "$ref": "#/definitions/args"
+              },
+              "connectionString": {
+                "$ref": "#/definitions/connectionString"
+              },
+              "env": {
+                "$ref": "#/definitions/env"
+              },
+              "bindings": {
+                "$ref": "#/definitions/bindings"
+              },
+              "bindMounts": {
+                "$ref": "#/definitions/bindMounts"
+              },
+              "volumes": {
+                "$ref": "#/definitions/volumes"
+              },
+              "build": false
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "A generic container resource.",
+            "oneOf": [
+              {
+                "required": [ "type", "build" ]
+              },
+              {
+                "required": [ "type", "image" ]
+              }
+            ],
+            "properties": {
+              "type": {
+                "const": "container.v1"
+              },
+              "image": {
+                "type": "string",
+                "description": "A string representing the container image to be used."
+              },
+              "entrypoint": {
+                "type": "string",
+                "description": "The entrypoint to use for the container image when executed."
+              },
+              "args": {
+                "$ref": "#/definitions/args"
+              },
+              "build": {
+                "$ref": "#/definitions/build"
+              },
+              "connectionString": {
+                "$ref": "#/definitions/connectionString"
+              },
+              "env": {
+                "$ref": "#/definitions/env"
+              },
+              "bindings": {
+                "$ref": "#/definitions/bindings"
+              },
+              "bindMounts": {
+                "$ref": "#/definitions/bindMounts"
+              },
+              "volumes": {
+                "$ref": "#/definitions/volumes"
+              }
             },
             "additionalProperties": false
           },
@@ -63,14 +132,22 @@
             "description": "Represents a .NET project resource.",
             "required": [ "type", "path" ],
             "properties": {
-              "type": { "const": "project.v0" },
+              "type": {
+                "const": "project.v0"
+              },
               "path": {
                 "type": "string",
-                "description": "The path to the project file. Relative paths are interpretted as being relative to the location of the manifest file."
+                "description": "The path to the project file. Relative paths are interpreted as being relative to the location of the manifest file."
               },
-              "args": { "$ref": "#/definitions/args" },
-              "env": { "$ref": "#/definitions/env" },
-              "bindings": { "$ref": "#/definitions/bindings" }
+              "args": {
+                "$ref": "#/definitions/args"
+              },
+              "env": {
+                "$ref": "#/definitions/env"
+              },
+              "bindings": {
+                "$ref": "#/definitions/bindings"
+              }
             },
             "additionalProperties": false
           },
@@ -79,18 +156,26 @@
             "description": "Represents an executable resource.",
             "required": [ "type", "command", "workingDirectory" ],
             "properties": {
-              "type": { "const": "executable.v0" },
+              "type": {
+                "const": "executable.v0"
+              },
               "workingDirectory": {
                 "type": "string",
-                "description": "The path to the working directory. Should be intepretted as being relative to the AppHost directory."
+                "description": "The path to the working directory. Should be intepreted as being relative to the AppHost directory."
               },
               "command": {
                 "type": "string",
-                "description": "The path to the command. Should be interpretted as being relative to the AppHost directory."
+                "description": "The path to the command. Should be interpreted as being relative to the AppHost directory."
               },
-              "args": { "$ref": "#/definitions/args" },
-              "env": { "$ref": "#/definitions/env" },
-              "bindings": { "$ref": "#/definitions/bindings" }
+              "args": {
+                "$ref": "#/definitions/args"
+              },
+              "env": {
+                "$ref": "#/definitions/env"
+              },
+              "bindings": {
+                "$ref": "#/definitions/bindings"
+              }
             },
             "additionalProperties": false
           },
@@ -99,8 +184,12 @@
             "required": [ "connectionString" ],
             "description": "Represents a value resource. Typically used to perform string concatenation (e.g. for connection strings).",
             "properties": {
-              "type": { "const": "value.v0" },
-              "connectionString": { "$ref": "#/definitions/connectionString" }
+              "type": {
+                "const": "value.v0"
+              },
+              "connectionString": {
+                "$ref": "#/definitions/connectionString"
+              }
             },
             "additionalProperties": false
           },
@@ -109,9 +198,15 @@
             "description": "Represents a parameter resource. Parameter resources are used to represent external configuration values that should be provided at deployment time.",
             "required": [ "value", "inputs" ],
             "properties": {
-              "type": { "const": "parameter.v0" },
-              "value": { "$ref": "#/definitions/value" },
-              "connectionString": { "$ref": "#/definitions/connectionString" },
+              "type": {
+                "const": "parameter.v0"
+              },
+              "value": {
+                "$ref": "#/definitions/value"
+              },
+              "connectionString": {
+                "$ref": "#/definitions/connectionString"
+              },
               "inputs": {
                 "type": "object",
                 "description": "Defines a set of input values which need to be either generated or prompted by the deployment tool. This is typically used for environment specific configuration values or secrets.",
@@ -190,14 +285,20 @@
             "description": "Represents a Dapr resource in the manifest.",
             "required": [ "dapr" ],
             "properties": {
-              "type": { "const": "dapr.v0" },
+              "type": {
+                "const": "dapr.v0"
+              },
               "dapr": {
                 "type": "object",
                 "description": "Dapr specific configuration.",
                 "required": [ "application", "appId", "components" ],
                 "properties": {
-                  "application": { "type": "string" },
-                  "appId": { "type": "string" },
+                  "application": {
+                    "type": "string"
+                  },
+                  "appId": {
+                    "type": "string"
+                  },
                   "components": {
                     "type": "array",
                     "items": {
@@ -214,11 +315,15 @@
             "type": "object",
             "required": [ "daprComponent" ],
             "properties": {
-              "type": { "const": "dapr.component.v0" },
+              "type": {
+                "const": "dapr.component.v0"
+              },
               "daprComponent": {
                 "type": "object",
                 "properties": {
-                  "type": { "type": "string" }
+                  "type": {
+                    "type": "string"
+                  }
                 },
                 "additionalProperties": false
               }
@@ -230,17 +335,27 @@
             "default": "Represents a resource that is deployed using Azure Bicep.",
             "required": [ "path" ],
             "properties": {
-              "type": { "const": "azure.bicep.v0" },
+              "type": {
+                "const": "azure.bicep.v0"
+              },
               "path": {
                 "type": "string",
                 "description": "Path to the Bicep file to be used for deployment."
               },
-              "connectionString": { "$ref": "#/definitions/connectionString" },
+              "connectionString": {
+                "$ref": "#/definitions/connectionString"
+              },
               "params": {
                 "type": "object",
                 "description": "A list of parameters which are passed to Azure deployment.",
                 "additionalProperties": {
-                  "type": "string"
+                  "oneOf": [
+                    { "type": "array" },
+                    { "type": "boolean" },
+                    { "type": "number" },
+                    { "type": "object" },
+                    { "type": "string"}
+                  ]
                 }
               }
             },
@@ -250,14 +365,20 @@
             "type": "object",
             "required": [ "type", "stack-name" ],
             "properties": {
-              "type": { "const": "aws.cloudformation.stack.v0" },
-              "stack-name": { "type": "string" },
+              "type": {
+                "const": "aws.cloudformation.stack.v0"
+              },
+              "stack-name": {
+                "type": "string"
+              },
               "references": {
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "target-resource": { "type": "string" }
+                    "target-resource": {
+                      "type": "string"
+                    }
                   },
                   "additionalProperties": false
                 }
@@ -269,15 +390,23 @@
             "type": "object",
             "required": [ "type", "stack-name", "template-path" ],
             "properties": {
-              "type": { "const": "aws.cloudformation.template.v0" },
-              "stack-name": { "type": "string" },
-              "template-path": { "type": "string" },
+              "type": {
+                "const": "aws.cloudformation.template.v0"
+              },
+              "stack-name": {
+                "type": "string"
+              },
+              "template-path": {
+                "type": "string"
+              },
               "references": {
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "target-resource": { "type": "string" }
+                    "target-resource": {
+                      "type": "string"
+                    }
                   },
                   "additionalProperties": false
                 }
@@ -296,6 +425,7 @@
                   "enum": [
                     "parameter.v0",
                     "container.v0",
+                    "container.v1",
                     "dockerfile.v0",
                     "project.v0",
                     "value.v0",
@@ -310,7 +440,9 @@
               }
             },
             "properties": {
-              "type": { "type": "string" },
+              "type": {
+                "type": "string"
+              }
             }
           }
         ]
@@ -329,7 +461,68 @@
     "args": {
       "type": "array",
       "description": "List of arguments to used when launched.",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
+    },
+    "build": {
+      "type": "object",
+      "description": "An object that captures properties that control the building of a container image.",
+      "required": [ "context", "dockerfile" ],
+      "properties": {
+        "context": {
+          "type": "string",
+          "description": "The path to the context directory for the container build. Can be relative of absolute. If relative it is relative to the location of the manifest file."
+        },
+        "dockerfile": {
+          "type": "string",
+          "description": "The path to the Dockerfile. Can be relative or absolute. If relative it is relative to the manifest file."
+        },
+        "args": {
+          "type": "object",
+          "description": "A list of build arguments which are used during container build.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "secrets": {
+          "type": "object",
+          "description": "A list of build arguments which are used during container build.",
+          "additionalProperties": {
+            "type": "object",
+            "required": [ "type" ],
+            "oneOf": [
+              {
+                "required": [ "type", "value" ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "env"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "If provided use as the value for the environment variable when docker build is run."
+                  }
+                }
+              },
+              {
+                "required": [ "type", "source" ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "file"
+                  },
+                  "source": {
+                    "type": "string",
+                    "description": "Path to secret file. If relative, the path is relative to the manifest file."
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "bindings": {
       "type": "object",

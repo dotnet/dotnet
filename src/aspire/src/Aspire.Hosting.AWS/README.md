@@ -36,9 +36,13 @@ builder.AddProject<Projects.Frontend>("Frontend")
         .WithReference(awsConfig)
 ```
 
+If a project has a reference to an AWS resource like the AWS CloudFormation resources that have an AWS SDK configuration
+the project will infer the AWS SDK configuration from the AWS resource. For example if you call the `WithReference` passing
+in the CloudFormation resource then a second `WithReference` call passing in the AWS SDK configuration is not necessary.
+
 ## Provisioning application resources with AWS CloudFormation
 
-AWS application resources like Amazon DynamoDB tables or Amazon Simple Queue Service (SQS) queues can be provisioning during AppHost
+AWS application resources like Amazon DynamoDB tables or Amazon Simple Queue Service (SQS) queues can be provisioned during AppHost
 startup using a CloudFormation template.
 
 In the AppHost project create either a JSON or YAML CloudFormation template. Here is an example template called `app-resources.template` that creates a queue and topic.
@@ -62,7 +66,7 @@ In the AppHost project create either a JSON or YAML CloudFormation template. Her
             "Type" : "AWS::SNS::Topic",
             "Properties" : {
                 "Subscription" : [
-                    {"Protocol" : "sqs", "Endpoint" : {"Fn::GetAtt" : [ "ChatMessagesQueue", "Arn"]}}
+                    { "Protocol" : "sqs", "Endpoint" : { "Fn::GetAtt" : [ "ChatMessagesQueue", "Arn" ] } }
                 ]
             }
         }

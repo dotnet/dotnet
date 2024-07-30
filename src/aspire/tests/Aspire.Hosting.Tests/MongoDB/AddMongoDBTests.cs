@@ -8,7 +8,7 @@ using Aspire.Hosting.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace Aspire.Hosting.Tests;
+namespace Aspire.Hosting.Tests.MongoDB;
 
 public class AddMongoDBTests
 {
@@ -146,7 +146,7 @@ public class AddMongoDBTests
 
         var mongoExpress = Assert.Single(builder.Resources.OfType<MongoExpressContainerResource>());
 
-        var env = await EnvironmentVariableEvaluator.GetEnvironmentVariablesAsync(mongoExpress);
+        var env = await EnvironmentVariableEvaluator.GetEnvironmentVariablesAsync(mongoExpress, DistributedApplicationOperation.Run, TestServiceProvider.Instance);
 
         Assert.Collection(env,
             e =>

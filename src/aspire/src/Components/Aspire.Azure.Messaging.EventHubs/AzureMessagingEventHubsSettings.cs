@@ -162,3 +162,4 @@ public sealed class AzureMessagingEventHubsPartitionReceiverSettings : AzureMess
     /// </summary>
     public EventPosition EventPosition { get; set; } = EventPosition.Earliest;
 }
+
