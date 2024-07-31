@@ -35,7 +35,7 @@ internal class NetClientCrashDumper : ICrashDumper
     {
         return _fileHelper.DirectoryExists(_outputDirectory)
             ? _fileHelper.GetFiles(_outputDirectory, "*_crashdump*.dmp", SearchOption.AllDirectories)
-            : Array.Empty<string>();
+            : [];
     }
 
     public void WaitForDumpToFinish()

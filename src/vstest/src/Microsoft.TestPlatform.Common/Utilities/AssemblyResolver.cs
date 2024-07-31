@@ -40,7 +40,7 @@ internal class AssemblyResolver : IDisposable
 
     private readonly IAssemblyLoadContext _platformAssemblyLoadContext;
 
-    private static readonly string[] SupportedFileExtensions = { ".dll", ".exe" };
+    private static readonly string[] SupportedFileExtensions = [".dll", ".exe"];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AssemblyResolver"/> class.

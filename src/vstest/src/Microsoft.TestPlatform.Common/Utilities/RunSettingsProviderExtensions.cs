@@ -89,7 +89,7 @@ internal static class RunSettingsProviderExtensions
     /// <summary>
     /// Matches with test run parameter node pattern and returns that match.
     /// </summary>
-    /// <param name="runSettingsProvider"></param>
+    /// <param name="_"></param>
     /// <param name="node"></param>
     /// <returns></returns>
     public static Match GetTestRunParameterNodeMatch(this IRunSettingsProvider _, string node)

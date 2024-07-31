@@ -95,7 +95,7 @@ public class RunSettingsUtilitiesTests
     public void GetTestAdaptersPaths()
     {
         string settingXml = @"<RunSettings><RunConfiguration><TestAdaptersPaths>C:\testadapterpath;D:\secondtestadapterpath</TestAdaptersPaths></RunConfiguration ></RunSettings>";
-        string[] expectedResult = new string[] { @"C:\testadapterpath", @"D:\secondtestadapterpath" };
+        string[] expectedResult = [@"C:\testadapterpath", @"D:\secondtestadapterpath"];
 
         string[] result = (string[])RunSettingsUtilities.GetTestAdaptersPaths(settingXml);
 

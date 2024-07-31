@@ -250,7 +250,7 @@ public class InternalTestLoggerEventsBehaviors
     public void RaiseDiscoveredTestsShouldThrowExceptionIfAlreadyDisposed()
     {
         var loggerEvents = GetDisposedLoggerEvents();
-        List<TestCase> testCases = new() { new TestCase("This is a string.", new Uri("some://uri"), "DummySourceFileName") };
+        List<TestCase> testCases = [new TestCase("This is a string.", new Uri("some://uri"), "DummySourceFileName")];
         DiscoveredTestsEventArgs discoveredTestsEventArgs = new(testCases);
 
         Assert.ThrowsException<ObjectDisposedException>(() => loggerEvents.RaiseDiscoveredTests(discoveredTestsEventArgs));
@@ -266,7 +266,7 @@ public class InternalTestLoggerEventsBehaviors
         DiscoveredTestsEventArgs? receivedEventArgs = null;
         EventWaitHandle waitHandle = new AutoResetEvent(false);
 
-        List<TestCase> testCases = new() { new TestCase("This is a string.", new Uri("some://uri"), "DummySourceFileName") };
+        List<TestCase> testCases = [new TestCase("This is a string.", new Uri("some://uri"), "DummySourceFileName")];
         DiscoveredTestsEventArgs discoveredTestsEventArgs = new(testCases);
 
         // Register for the discovered tests event.

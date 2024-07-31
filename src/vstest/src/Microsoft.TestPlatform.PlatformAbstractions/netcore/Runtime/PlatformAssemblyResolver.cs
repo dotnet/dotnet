@@ -22,7 +22,6 @@ public class PlatformAssemblyResolver : IAssemblyResolver
     /// <summary>
     /// Initializes a new instance of the <see cref="PlatformAssemblyResolver"/> class.
     /// </summary>
-    /// <param name="directories"> The search directories. </param>
     public PlatformAssemblyResolver()
     {
         AssemblyLoadContext.Default.Resolving += AssemblyResolverEvent;

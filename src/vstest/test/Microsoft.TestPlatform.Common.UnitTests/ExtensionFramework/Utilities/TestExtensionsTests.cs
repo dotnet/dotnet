@@ -287,28 +287,28 @@ public class TestExtensionsTests
         var first = new Dictionary<string, HashSet<string>>
         {
             // Merged with "key1" from the next set.
-            { "key1", new HashSet<string>(new List<string>() { "ext1", "ext2", "ext3" }) },
+            { "key1", ["ext1", "ext2", "ext3"] },
             // Empty hashset, will be removed from the result.
-            { "key2", new HashSet<string>() },
+            { "key2", [] },
             // Added as is.
-            { "key5", new HashSet<string>(new List<string>() { "ext1", "ext2" }) }
+            { "key5", ["ext1", "ext2"] }
         };
         var second = new Dictionary<string, HashSet<string>>
         {
             // Merged with "key1" from the previous set.
-            { "key1", new HashSet<string>(new List<string>() { "ext2", "ext3", "ext3", "ext4", "ext5" }) },
+            { "key1", ["ext2", "ext3", "ext3", "ext4", "ext5"] },
             // Empty hashset, will be removed from the result.
-            { "key2", new HashSet<string>() },
+            { "key2", [] },
             // Empty hashset, will be removed from the result.
-            { "key3", new HashSet<string>() },
+            { "key3", [] },
             // Added as is.
-            { "key4", new HashSet<string>(new List<string>() { "ext1" }) }
+            { "key4", ["ext1"] }
         };
         var expected = new Dictionary<string, HashSet<string>>
         {
-            { "key1", new HashSet<string>(new List<string>() { "ext1", "ext2", "ext3", "ext4", "ext5" }) },
-            { "key4", new HashSet<string>(new List<string>() { "ext1" }) },
-            { "key5", new HashSet<string>(new List<string>() { "ext1", "ext2" }) }
+            { "key1", ["ext1", "ext2", "ext3", "ext4", "ext5"] },
+            { "key4", ["ext1"] },
+            { "key5", ["ext1", "ext2"] }
         };
 
         // Merge the two dictionaries.
@@ -329,9 +329,9 @@ public class TestExtensionsTests
         var telemetryData = new Dictionary<string, object>();
         var extensions = new Dictionary<string, HashSet<string>>
         {
-            { "key1", new HashSet<string>(new List<string>() { "ext1", "ext2", "ext3", "ext4", "ext5" }) },
-            { "key4", new HashSet<string>(new List<string>() { "ext1" }) },
-            { "key5", new HashSet<string>(new List<string>() { "ext1", "ext2" }) }
+            { "key1", ["ext1", "ext2", "ext3", "ext4", "ext5"] },
+            { "key4", ["ext1"] },
+            { "key5", ["ext1", "ext2"] }
         };
 
         var expectedTelemetry =

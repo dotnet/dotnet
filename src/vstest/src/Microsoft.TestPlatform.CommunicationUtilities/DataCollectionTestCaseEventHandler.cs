@@ -35,6 +35,7 @@ internal class DataCollectionTestCaseEventHandler : IDataCollectionTestCaseEvent
     /// <summary>
     /// Initializes a new instance of the <see cref="DataCollectionTestCaseEventHandler"/> class.
     /// </summary>
+    /// <param name="messageSink">Sink for messages</param>
     /// <param name="communicationManager">Communication manager implementation.</param>
     /// <param name="dataCollectionManager">Data collection manager implementation.</param>
     /// <param name="dataSerializer">Serializer for serialization and deserialization of the messages.</param>

@@ -64,10 +64,10 @@ public class ArtifactProcessingPostProcessModeProcessorTest
     public void ArtifactProcessingPostProcessMode_ContainsPostProcessCommand()
     {
         _featureFlagMock.Setup(x => x.IsSet(It.IsAny<string>())).Returns(false);
-        Assert.IsTrue(ArtifactProcessingPostProcessModeProcessor.ContainsPostProcessCommand(new string[] { "--artifactsProcessingMode-postprocess" }, _featureFlagMock.Object));
-        Assert.IsTrue(ArtifactProcessingPostProcessModeProcessor.ContainsPostProcessCommand(new string[] { "--ARTIfactsProcessingMode-postprocess" }, _featureFlagMock.Object));
-        Assert.IsFalse(ArtifactProcessingPostProcessModeProcessor.ContainsPostProcessCommand(new string[] { "-ARTIfactsProcessingMode-postprocess" }, _featureFlagMock.Object));
-        Assert.IsFalse(ArtifactProcessingPostProcessModeProcessor.ContainsPostProcessCommand(new string[] { "--ARTIfactsProcessingMode-postproces" }, _featureFlagMock.Object));
+        Assert.IsTrue(ArtifactProcessingPostProcessModeProcessor.ContainsPostProcessCommand(["--artifactsProcessingMode-postprocess"], _featureFlagMock.Object));
+        Assert.IsTrue(ArtifactProcessingPostProcessModeProcessor.ContainsPostProcessCommand(["--ARTIfactsProcessingMode-postprocess"], _featureFlagMock.Object));
+        Assert.IsFalse(ArtifactProcessingPostProcessModeProcessor.ContainsPostProcessCommand(["-ARTIfactsProcessingMode-postprocess"], _featureFlagMock.Object));
+        Assert.IsFalse(ArtifactProcessingPostProcessModeProcessor.ContainsPostProcessCommand(["--ARTIfactsProcessingMode-postproces"], _featureFlagMock.Object));
         Assert.IsFalse(ArtifactProcessingPostProcessModeProcessor.ContainsPostProcessCommand(null, _featureFlagMock.Object));
     }
 }

@@ -909,6 +909,20 @@ internal class ConsoleLogger : ITestLoggerWithParameters
             Outcome = testResult.Outcome;
             StartTime = testResult.StartTime;
             EndTime = testResult.EndTime;
+
+            // When the test framework (e.g. xUnit 2.x.x) does not report start or end time
+            // we assign it to UTC now when constructing the test result. But that does not
+            // work for our logger, because we take the earliest StartTime and oldest EndTime
+            // to calculate the duration and this makes the first test to be "missing" from the
+            // duration.
+            //
+            // Instead we subtract the duration to get a more accurate result. We also
+            // don't compare the times for equality because the times in the TestResult are assigned
+            // on two different lines so they don't have to be the same.
+            if (EndTime - StartTime < testResult.Duration)
+            {
+                StartTime = EndTime - testResult.Duration;
+            }
         }
 
         public TestCase TestCase { get; }

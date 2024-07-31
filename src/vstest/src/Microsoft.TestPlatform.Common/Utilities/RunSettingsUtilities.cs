@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities;
@@ -170,18 +169,17 @@ public static class RunSettingsUtilities
     /// Gets the test adapters path from the run configuration
     /// </summary>
     /// <param name="runSettings">Test run settings</param>
-    /// <param name="returnNullIfNotSet">True to return null, if adapter paths is not set.</param>
     /// <returns>Test adapters paths</returns>
     public static IEnumerable<string> GetTestAdaptersPaths(string? runSettings)
     {
         var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runSettings);
 
-        IEnumerable<string> testAdaptersPaths = Enumerable.Empty<string>();
+        IEnumerable<string> testAdaptersPaths = [];
         if (runConfiguration != null)
         {
             if (runConfiguration.TestAdaptersPathsSet)
             {
-                testAdaptersPaths = runConfiguration.TestAdaptersPaths.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                testAdaptersPaths = runConfiguration.TestAdaptersPaths.Split([';'], StringSplitOptions.RemoveEmptyEntries);
             }
         }
 

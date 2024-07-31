@@ -141,6 +141,8 @@ internal class TestDiscovererMetadata : ITestDiscovererCapabilities
     /// </summary>
     /// <param name="fileExtensions"> The file Extensions. </param>
     /// <param name="defaultExecutorUri"> The default Executor Uri. </param>
+    /// <param name="assemblyType">Type of the assembly.</param>
+    /// <param name="isDirectoryBased">True when the discoverer is based on directories.</param>
     public TestDiscovererMetadata(IReadOnlyCollection<string>? fileExtensions, string? defaultExecutorUri, AssemblyType assemblyType = default, bool isDirectoryBased = false)
     {
         if (fileExtensions != null && fileExtensions.Count > 0)

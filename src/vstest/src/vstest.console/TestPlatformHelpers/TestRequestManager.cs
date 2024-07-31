@@ -1278,7 +1278,6 @@ internal class TestRequestManager : ITestRequestManager
     /// This method either looks at runsettings directly when running as a server (DesignMode / IDE / via VSTestConsoleWrapper, or how you wanna call it)
     /// or uses the pre-parsed runsettings when in console mode.
     /// </summary>
-    /// <param name="navigator"></param>
     /// <returns></returns>
     private bool IsFrameworkSetByRunSettings(
         XPathNavigator navigator,
@@ -1314,7 +1313,6 @@ internal class TestRequestManager : ITestRequestManager
     /// This method either looks at runsettings directly when running as a server (DesignMode / IDE / via VSTestConsoleWrapper, or how you wanna call it)
     /// or uses the pre-parsed runsettings when in console mode.
     /// </summary>
-    /// <param name="navigator"></param>
     /// <returns></returns>
     private bool IsPlatformSetByRunSettings(
         XPathNavigator navigator, out Architecture chosenPlatform)

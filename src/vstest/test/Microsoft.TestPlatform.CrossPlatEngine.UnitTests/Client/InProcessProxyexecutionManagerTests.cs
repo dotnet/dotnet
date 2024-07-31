@@ -44,7 +44,7 @@ public class InProcessProxyExecutionManagerTests
         var mockTestMessageEventHandler = new Mock<ITestMessageEventHandler>();
         _inProcessProxyExecutionManager.StartTestRun(testRunCriteria, null!);
 
-        _mockExecutionManager.Verify(o => o.Initialize(Enumerable.Empty<string>(), It.IsAny<ITestMessageEventHandler>()), Times.Once, "StartTestRun should call Initialize if not already initialized");
+        _mockExecutionManager.Verify(o => o.Initialize(Array.Empty<string>(), It.IsAny<ITestMessageEventHandler>()), Times.Once, "StartTestRun should call Initialize if not already initialized");
     }
 
     [TestMethod]

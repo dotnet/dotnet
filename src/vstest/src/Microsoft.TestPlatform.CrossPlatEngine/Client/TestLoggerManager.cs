@@ -543,7 +543,7 @@ internal class TestLoggerManager : ITestLoggerManager
 
             // Create logger instance
             var constructorInfo = loggerType?.GetConstructor(Type.EmptyTypes);
-            var logger = constructorInfo?.Invoke(new object[] { });
+            var logger = constructorInfo?.Invoke([]);
 
             // Handle logger null scenario.
             if (logger == null)

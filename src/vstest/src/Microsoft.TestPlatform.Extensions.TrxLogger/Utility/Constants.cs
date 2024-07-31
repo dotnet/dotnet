@@ -76,6 +76,11 @@ internal static class Constants
     public const string TmiTestIdPropertyIdentifier = "MSTestDiscoverer.TmiTestId";
 
     /// <summary>
+    /// Warn when overwriting the trx file.
+    /// </summary>
+    public static string WarnOnFileOverwrite = "WarnOnFileOverwrite";
+
+    /// <summary>
     /// Mstest adapter string
     /// </summary>
     public const string MstestAdapterString = "mstestadapter";

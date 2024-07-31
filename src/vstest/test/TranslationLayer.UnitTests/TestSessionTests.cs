@@ -22,12 +22,12 @@ namespace Microsoft.TestPlatform.VsTestConsole.TranslationLayer.UnitTests;
 public class TestSessionTests
 {
     private readonly string _testSettings = "TestSettings";
-    private readonly List<string> _testSources = new() { "Hello", "World" };
-    private readonly List<TestCase> _testCases = new()
-    {
+    private readonly List<string> _testSources = ["Hello", "World"];
+    private readonly List<TestCase> _testCases =
+    [
         new TestCase("a.b.c", new Uri("d://uri"), "a.dll"),
         new TestCase("d.e.f", new Uri("g://uri"), "d.dll")
-    };
+    ];
 
     private readonly TestSessionInfo _testSessionInfo;
     private readonly ITestSession _testSession;

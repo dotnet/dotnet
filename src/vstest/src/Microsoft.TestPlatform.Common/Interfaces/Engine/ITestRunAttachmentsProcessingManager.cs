@@ -19,6 +19,7 @@ internal interface ITestRunAttachmentsProcessingManager
     /// Processes attachments and provides results through handler
     /// </summary>
     /// <param name="runSettingsXml">RunSettings</param>
+    /// <param name="requestData">Data in the request.</param>
     /// <param name="attachments">Collection of attachments</param>
     /// <param name="invokedDataCollector">Collection of invoked data collectors</param>
     /// <param name="eventHandler">EventHandler for handling test run attachments processing event</param>
@@ -29,6 +30,7 @@ internal interface ITestRunAttachmentsProcessingManager
     /// Processes attachments
     /// </summary>
     /// <param name="runSettingsXml">RunSettings</param>
+    /// <param name="requestData">Data in the request.</param>
     /// <param name="attachments">Collection of attachments</param>
     /// <param name="invokedDataCollector">Collection of invoked data collectors</param>
     /// <param name="cancellationToken">Cancellation token</param>

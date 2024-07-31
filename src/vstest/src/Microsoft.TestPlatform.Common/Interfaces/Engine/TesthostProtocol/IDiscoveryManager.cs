@@ -16,6 +16,7 @@ public interface IDiscoveryManager
     /// Initializes the discovery manager.
     /// </summary>
     /// <param name="pathToAdditionalExtensions"> The path to additional extensions. </param>
+    /// <param name="eventHandler">The discovery handler.</param>
     void Initialize(IEnumerable<string> pathToAdditionalExtensions, ITestDiscoveryEventsHandler2? eventHandler);
 
     /// <summary>

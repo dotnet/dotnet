@@ -132,6 +132,7 @@ public interface IFileHelper
     /// <param name="directoryPath">
     /// The directory path.
     /// </param>
+    /// <param name="recursive">If we should delete recursively.</param>
     void DeleteDirectory(string directoryPath, bool recursive);
 
     /// <summary>
@@ -152,7 +153,6 @@ public interface IFileHelper
     /// <summary>
     /// Get temporary file path
     /// </summary>
-    /// <param name="path"></param>
     public string GetTempPath();
 
     /// <summary>

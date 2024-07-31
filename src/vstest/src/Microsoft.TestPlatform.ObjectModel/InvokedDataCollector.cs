@@ -12,6 +12,7 @@ public sealed class InvokedDataCollector : IEquatable<InvokedDataCollector>
     /// Initialize an InvokedDataCollector
     /// </summary>
     /// <param name="uri">Data collector Uri</param>
+    /// <param name="friendlyName">Friendly name of the datacollector.</param>
     /// <param name="assemblyQualifiedName">Data collector assembly qualified name</param>
     /// <param name="filePath">Data collector file path</param>
     /// <param name="hasAttachmentProcessor">True if data collector registers an attachment processor</param>

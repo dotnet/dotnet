@@ -96,7 +96,7 @@ public class ConverterTests
 
         var unitTestElement = Converter.ToTestElement(testCase.Id, Guid.Empty, Guid.Empty, testCase.DisplayName, TrxLoggerConstants.UnitTestType, testCase);
 
-        object[] expected = new[] { "MethodLevel", "ClassLevel", "AsmLevel" };
+        object[] expected = ["MethodLevel", "ClassLevel", "AsmLevel"];
 
         CollectionAssert.AreEqual(expected, unitTestElement.TestCategories.ToArray().OrderByDescending(x => x).ToArray());
     }
@@ -112,7 +112,7 @@ public class ConverterTests
 
         var unitTestElement = Converter.ToTestElement(testCase.Id, Guid.Empty, Guid.Empty, testCase.DisplayName, TrxLoggerConstants.UnitTestType, testCase);
 
-        int[] expected = new[] { 0, 3, 99999 };
+        int[] expected = [0, 3, 99999];
 
         CollectionAssert.AreEquivalent(expected, unitTestElement.WorkItems.ToArray());
     }
@@ -227,10 +227,7 @@ public class ConverterTests
             new(new Uri(new Uri("file://"), coverageFilePath1), "Description 1");
         UriDataAttachment uriDataAttachment2 =
             new(new Uri(new Uri("file://"), coverageFilePath2), "Description 2");
-        attachmentSets = new List<AttachmentSet>
-        {
-            new(new Uri("datacollector://microsoft/CodeCoverage/2.0"), "Code Coverage")
-        };
+        attachmentSets = [new(new Uri("datacollector://microsoft/CodeCoverage/2.0"), "Code Coverage")];
 
         testRun = new TestRun(Guid.NewGuid());
         testRun.RunConfiguration = new TestRunConfiguration("Testrun 1", new TrxFileHelper());

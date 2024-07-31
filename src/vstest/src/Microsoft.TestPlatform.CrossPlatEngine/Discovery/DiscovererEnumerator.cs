@@ -45,6 +45,7 @@ internal class DiscovererEnumerator
     /// </summary>
     /// <param name="requestData">The request data for providing discovery services and data.</param>
     /// <param name="discoveryResultCache"> The discovery result cache. </param>
+    /// <param name="token">Cancellation token.</param>
     public DiscovererEnumerator(IRequestData requestData, DiscoveryResultCache discoveryResultCache, CancellationToken token)
         : this(requestData, discoveryResultCache, TestPlatformEventSource.Instance, token)
     {
@@ -346,6 +347,7 @@ internal class DiscovererEnumerator
     /// <param name="extensionAssembly"> The extension assembly. </param>
     /// <param name="sources"> The sources. </param>
     /// <param name="logger"> The logger instance. </param>
+    /// <param name="assemblyProperties">Assembly properties</param>
     /// <returns> The map between an extension type and a source. </returns>
     internal static Dictionary<LazyExtension<ITestDiscoverer, ITestDiscovererCapabilities>, IEnumerable<string>>? GetDiscovererToSourcesMap(
         string extensionAssembly,
@@ -448,7 +450,7 @@ internal class DiscovererEnumerator
     /// Get assembly type to sources map.
     /// </summary>
     /// <param name="sources">Sources.</param>
-    /// <param name="assemblyType">Assembly type.</param>
+    /// <param name="assemblyProperties">Assembly properties.</param>
     /// <returns>Sources with matching assembly type.</returns>
     private static IDictionary<AssemblyType, IList<string>> GetAssemblyTypeToSoucesMap(IEnumerable<string> sources, IAssemblyProperties assemblyProperties)
     {

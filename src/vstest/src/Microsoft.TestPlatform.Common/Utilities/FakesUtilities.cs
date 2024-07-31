@@ -90,6 +90,7 @@ public static class FakesUtilities
     /// </summary>
     /// <param name="runSettings">runsettings</param>
     /// <param name="sources">test sources</param>
+    /// <param name="framework">version of the framework</param>
     /// <returns>true if runSettings was modified; false otherwise.</returns>
     private static bool TryAddFakesDataCollectorSettings(
         XmlDocument runSettings,
@@ -231,7 +232,7 @@ public static class FakesUtilities
         {
             var assembly = LoadTestPlatformAssembly();
             var type = assembly?.GetType(ConfiguratorAssemblyQualifiedName, false);
-            var method = type?.GetMethod(NetFrameworkConfiguratorMethodName, new Type[] { typeof(IEnumerable<string>) });
+            var method = type?.GetMethod(NetFrameworkConfiguratorMethodName, [typeof(IEnumerable<string>)]);
             if (method != null)
             {
                 return (Func<IEnumerable<string>, string>)method.CreateDelegate(typeof(Func<IEnumerable<string>, string>));
@@ -251,7 +252,7 @@ public static class FakesUtilities
         {
             var assembly = LoadTestPlatformAssembly();
             var type = assembly?.GetType(ConfiguratorAssemblyQualifiedName, false, false);
-            var method = type?.GetMethod(CrossPlatformConfiguratorMethodName, new Type[] { typeof(IDictionary<string, FrameworkVersion>) });
+            var method = type?.GetMethod(CrossPlatformConfiguratorMethodName, [typeof(IDictionary<string, FrameworkVersion>)]);
             if (method != null)
             {
                 return (Func<IDictionary<string, FrameworkVersion>, DataCollectorSettings>)method.CreateDelegate(typeof(Func<IDictionary<string, FrameworkVersion>, DataCollectorSettings>));

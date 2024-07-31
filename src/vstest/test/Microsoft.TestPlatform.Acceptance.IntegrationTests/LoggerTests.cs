@@ -233,7 +233,7 @@ public class LoggerTests : AcceptanceTestBase
         }
 
         string filePathContent = sb.ToString();
-        string[] divs = { "Total tests", "Passed", "Failed", "Skipped", "Run duration", "Pass percentage", "PassingTest" };
+        string[] divs = ["Total tests", "Passed", "Failed", "Skipped", "Run duration", "Pass percentage", "PassingTest"];
         foreach (string str in divs)
         {
             StringAssert.Contains(filePathContent, str);

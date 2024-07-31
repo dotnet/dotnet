@@ -105,7 +105,7 @@ internal class Program
         //    var processStartInfo = new ProcessStartInfo
         //    {
         //        FileName = console,
-        //        Arguments = $"{string.Join(" ", sources)} --settings:{settingsFile} --listtests",
+        //        Arguments = $"{string.Join(" ", sources)} --settings:{settingsFile} --logger:trx;LogFileName=my.trx;WarnOnFileOverwrite=false",
         //        UseShellExecute = false,
         //    };
         //    EnvironmentVariables.Variables.ToList().ForEach(processStartInfo.Environment.Add);

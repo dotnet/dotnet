@@ -1,3 +1,4 @@
+
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
@@ -58,6 +59,7 @@ public class ProxyOperationManager
     /// <param name="requestData">Request data instance.</param>
     /// <param name="requestSender">Request sender instance.</param>
     /// <param name="testHostManager">Test host manager instance.</param>
+    /// <param name="testhostManagerFramework">Testhost manager framework</param>
     public ProxyOperationManager(
         IRequestData? requestData,
         ITestRequestSender requestSender,
@@ -78,6 +80,7 @@ public class ProxyOperationManager
     /// <param name="requestData">Request data instance.</param>
     /// <param name="requestSender">Request sender instance.</param>
     /// <param name="testHostManager">Test host manager instance.</param>
+    /// <param name="testhostManagerFramework">Testhost manager framework</param>
     /// <param name="baseProxy">The base proxy.</param>
     public ProxyOperationManager(
         IRequestData? requestData,
@@ -395,6 +398,7 @@ public class ProxyOperationManager
     /// </summary>
     ///
     /// <param name="runsettingsXml">Run settings string.</param>
+    /// <param name="logMessage">Message logger.</param>
     ///
     /// <returns>The run settings after removing non-required nodes.</returns>
     public string? RemoveNodesFromRunsettingsIfRequired(string? runsettingsXml, Action<TestMessageLevel, string> logMessage)

@@ -42,7 +42,7 @@ internal static class MetadataReaderExtensionsHelper
 {
     private const string TestExtensionTypesAttributeV2 = "Microsoft.VisualStudio.TestPlatform.TestExtensionTypesV2Attribute";
     private static readonly ConcurrentDictionary<string, Type[]> AssemblyCache = new();
-    private static readonly Type[] EmptyTypeArray = new Type[0];
+    private static readonly Type[] EmptyTypeArray = [];
 
     public static Type[] DiscoverTestExtensionTypesV2Attribute(Assembly loadedAssembly, string assemblyFilePath)
         => AssemblyCache.GetOrAdd(assemblyFilePath, DiscoverTestExtensionTypesV2AttributeInternal(loadedAssembly, assemblyFilePath));

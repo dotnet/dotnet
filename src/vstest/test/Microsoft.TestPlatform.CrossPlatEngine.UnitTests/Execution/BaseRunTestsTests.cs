@@ -91,7 +91,7 @@ public class BaseRunTestsTests
             new PlatformThread(),
             _mockDataSerializer.Object);
 
-        TestPluginCacheHelper.SetupMockExtensions(new string[] { typeof(BaseRunTestsTests).Assembly.Location }, () => { });
+        TestPluginCacheHelper.SetupMockExtensions([typeof(BaseRunTestsTests).Assembly.Location], () => { });
     }
 
     [TestCleanup]
@@ -809,7 +809,7 @@ public class BaseRunTestsTests
             _mockThread.Object,
             _mockDataSerializer.Object);
 
-        TestPluginCacheHelper.SetupMockExtensions(new string[] { typeof(BaseRunTestsTests).Assembly.Location }, () => { });
+        TestPluginCacheHelper.SetupMockExtensions([typeof(BaseRunTestsTests).Assembly.Location], () => { });
         var assemblyLocation = typeof(BaseRunTestsTests).Assembly.Location;
         var executorUriExtensionMap = new List<Tuple<Uri, string>>
         {

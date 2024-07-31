@@ -121,7 +121,7 @@ public class ExtensionDecoratorTests
             testCases.Add(new TestCase() { Id = Guid.NewGuid() });
         }
 
-        string[] sourcesName = new string[] { "testSource.dll" };
+        string[] sourcesName = ["testSource.dll"];
 
         _settingsMock.Setup(x => x.SettingsXml).Returns(nullRunSettings ? null : runsettings);
         _contextMock.Setup(x => x.RunSettings).Returns(_settingsMock.Object);

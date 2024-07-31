@@ -25,14 +25,14 @@ public class FakesUtilitiesTests
     [TestMethod]
     public void FakesSettingsShouldThrowExceptionIfRunSettingsIsPassedAsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => FakesUtilities.GenerateFakesSettingsForRunConfiguration(Array.Empty<string>(), null!));
+        Assert.ThrowsException<ArgumentNullException>(() => FakesUtilities.GenerateFakesSettingsForRunConfiguration([], null!));
     }
 
     [TestMethod]
     public void FakesSettingsShouldBeNotGeneratedIfFakeConfiguratorAssemblyIsNotPresent()
     {
         string runSettingsXml = @"<RunSettings><RunConfiguration></RunConfiguration></RunSettings>";
-        var generatedRunSettings = FakesUtilities.GenerateFakesSettingsForRunConfiguration(new string[] { @"C:\temp\UT.dll" }, runSettingsXml);
+        var generatedRunSettings = FakesUtilities.GenerateFakesSettingsForRunConfiguration([@"C:\temp\UT.dll"], runSettingsXml);
         Assert.AreEqual(generatedRunSettings, runSettingsXml);
     }
 

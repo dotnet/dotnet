@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
@@ -50,7 +49,7 @@ internal class PostProcessingTestRunAttachmentsProcessingEventsHandler : ITestRu
 
     public void HandleTestRunAttachmentsProcessingComplete(TestRunAttachmentsProcessingCompleteEventArgs attachmentsProcessingCompleteEventArgs, IEnumerable<AttachmentSet>? lastChunk)
     {
-        foreach (var attachment in lastChunk ?? Enumerable.Empty<AttachmentSet>())
+        foreach (var attachment in lastChunk ?? [])
         {
             _attachmentsSet.Add(attachment);
         }

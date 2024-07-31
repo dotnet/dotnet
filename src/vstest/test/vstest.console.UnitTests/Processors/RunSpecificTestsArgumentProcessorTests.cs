@@ -191,11 +191,11 @@ public class RunSpecificTestsArgumentProcessorTests
 
         ResetAndAddSourceToCommandLineOptions();
 
-        List<TestCase> list = new()
-        {
+        List<TestCase> list =
+        [
             new TestCase("Test1", new Uri("http://FooTestUri1"), "Source1"),
             new TestCase("Test2", new Uri("http://FooTestUri1"), "Source1")
-        };
+        ];
         mockDiscoveryRequest.Setup(dr => dr.DiscoverAsync()).Raises(dr => dr.OnDiscoveredTests += null, new DiscoveredTestsEventArgs(list));
 
         mockTestPlatform.Setup(tp => tp.CreateTestRunRequest(It.IsAny<IRequestData>(), It.IsAny<TestRunCriteria>(), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>())).Returns(mockTestRunRequest.Object);
@@ -275,11 +275,11 @@ public class RunSpecificTestsArgumentProcessorTests
         var mockTestRunRequest = new Mock<ITestRunRequest>();
         var mockDiscoveryRequest = new Mock<IDiscoveryRequest>();
 
-        List<TestCase> list = new()
-        {
+        List<TestCase> list =
+        [
             new TestCase("Test1", new Uri("http://FooTestUri1"), "Source1"),
             new TestCase("Test2", new Uri("http://FooTestUri2"), "Source2")
-        };
+        ];
         mockDiscoveryRequest.Setup(dr => dr.DiscoverAsync()).Raises(dr => dr.OnDiscoveredTests += null, new DiscoveredTestsEventArgs(list));
 
         mockTestRunRequest.Setup(dr => dr.ExecuteAsync()).Throws(new TestPlatformException("DummyTestPlatformException"));
@@ -302,11 +302,11 @@ public class RunSpecificTestsArgumentProcessorTests
         var mockTestRunRequest = new Mock<ITestRunRequest>();
         var mockDiscoveryRequest = new Mock<IDiscoveryRequest>();
 
-        List<TestCase> list = new()
-        {
+        List<TestCase> list =
+        [
             new TestCase("Test1", new Uri("http://FooTestUri1"), "Source1"),
             new TestCase("Test2", new Uri("http://FooTestUri2"), "Source2")
-        };
+        ];
         mockDiscoveryRequest.Setup(dr => dr.DiscoverAsync()).Raises(dr => dr.OnDiscoveredTests += null, new DiscoveredTestsEventArgs(list));
 
         mockTestRunRequest.Setup(dr => dr.ExecuteAsync()).Throws(new SettingsException("DummySettingsException"));
@@ -329,11 +329,11 @@ public class RunSpecificTestsArgumentProcessorTests
         var mockTestRunRequest = new Mock<ITestRunRequest>();
         var mockDiscoveryRequest = new Mock<IDiscoveryRequest>();
 
-        List<TestCase> list = new()
-        {
+        List<TestCase> list =
+        [
             new TestCase("Test1", new Uri("http://FooTestUri1"), "Source1"),
             new TestCase("Test2", new Uri("http://FooTestUri2"), "Source2")
-        };
+        ];
         mockDiscoveryRequest.Setup(dr => dr.DiscoverAsync()).Raises(dr => dr.OnDiscoveredTests += null, new DiscoveredTestsEventArgs(list));
 
         mockTestRunRequest.Setup(dr => dr.ExecuteAsync()).Throws(new InvalidOperationException("DummySettingsException"));
@@ -359,7 +359,7 @@ public class RunSpecificTestsArgumentProcessorTests
         ResetAndAddSourceToCommandLineOptions();
 
         // Setting some test adapter path
-        CommandLineOptions.Instance.TestAdapterPath = new[] { @"C:\Foo" };
+        CommandLineOptions.Instance.TestAdapterPath = [@"C:\Foo"];
 
         mockDiscoveryRequest.Setup(dr => dr.DiscoverAsync()).Raises(dr => dr.OnDiscoveredTests += null, new DiscoveredTestsEventArgs(new List<TestCase>()));
         mockTestPlatform.Setup(tp => tp.CreateDiscoveryRequest(It.IsAny<IRequestData>(), It.IsAny<DiscoveryCriteria>(), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>())).Returns(mockDiscoveryRequest.Object);
@@ -404,10 +404,7 @@ public class RunSpecificTestsArgumentProcessorTests
 
         ResetAndAddSourceToCommandLineOptions();
 
-        List<TestCase> list = new()
-        {
-            new TestCase("Test1", new Uri("http://FooTestUri1"), "Source1")
-        };
+        List<TestCase> list = [new TestCase("Test1", new Uri("http://FooTestUri1"), "Source1")];
         mockDiscoveryRequest.Setup(dr => dr.DiscoverAsync()).Raises(dr => dr.OnDiscoveredTests += null, new DiscoveredTestsEventArgs(list));
 
         mockTestPlatform.Setup(tp => tp.CreateTestRunRequest(It.IsAny<IRequestData>(), It.IsAny<TestRunCriteria>(), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>())).Returns(mockTestRunRequest.Object);
@@ -431,11 +428,11 @@ public class RunSpecificTestsArgumentProcessorTests
 
         ResetAndAddSourceToCommandLineOptions();
 
-        List<TestCase> list = new()
-        {
+        List<TestCase> list =
+        [
             new TestCase("Test1", new Uri("http://FooTestUri1"), "Source1"),
             new TestCase("Test2", new Uri("http://FooTestUri1"), "Source1")
-        };
+        ];
         mockDiscoveryRequest.Setup(dr => dr.DiscoverAsync()).Raises(dr => dr.OnDiscoveredTests += null, new DiscoveredTestsEventArgs(list));
 
         mockTestPlatform.Setup(tp => tp.CreateTestRunRequest(It.IsAny<IRequestData>(), It.IsAny<TestRunCriteria>(), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>())).Returns(mockTestRunRequest.Object);
@@ -460,11 +457,11 @@ public class RunSpecificTestsArgumentProcessorTests
 
         ResetAndAddSourceToCommandLineOptions();
 
-        List<TestCase> list = new()
-        {
+        List<TestCase> list =
+        [
             new TestCase("Test1", new Uri("http://FooTestUri1"), "Source1"),
             new TestCase("Test2", new Uri("http://FooTestUri1"), "Source1")
-        };
+        ];
         mockDiscoveryRequest.Setup(dr => dr.DiscoverAsync()).Raises(dr => dr.OnDiscoveredTests += null, new DiscoveredTestsEventArgs(list));
 
         mockTestPlatform.Setup(tp => tp.CreateTestRunRequest(It.IsAny<IRequestData>(), It.IsAny<TestRunCriteria>(), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>())).Returns(mockTestRunRequest.Object);
@@ -489,10 +486,7 @@ public class RunSpecificTestsArgumentProcessorTests
 
         ResetAndAddSourceToCommandLineOptions();
 
-        List<TestCase> list = new()
-        {
-            new TestCase("Test2", new Uri("http://FooTestUri1"), "Source1")
-        };
+        List<TestCase> list = [new TestCase("Test2", new Uri("http://FooTestUri1"), "Source1")];
         mockDiscoveryRequest.Setup(dr => dr.DiscoverAsync()).Raises(dr => dr.OnDiscoveredTests += null, new DiscoveredTestsEventArgs(list));
 
         mockTestPlatform.Setup(tp => tp.CreateTestRunRequest(It.IsAny<IRequestData>(), It.IsAny<TestRunCriteria>(), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>())).Returns(mockTestRunRequest.Object);
@@ -517,11 +511,11 @@ public class RunSpecificTestsArgumentProcessorTests
 
         ResetAndAddSourceToCommandLineOptions();
 
-        List<TestCase> list = new()
-        {
+        List<TestCase> list =
+        [
             new TestCase("Test1(a,b)", new Uri("http://FooTestUri1"), "Source1"),
             new TestCase("Test2(c,d)", new Uri("http://FooTestUri1"), "Source1")
-        };
+        ];
         mockDiscoveryRequest.Setup(dr => dr.DiscoverAsync()).Raises(dr => dr.OnDiscoveredTests += null, new DiscoveredTestsEventArgs(list));
 
         mockTestPlatform.Setup(tp => tp.CreateTestRunRequest(It.IsAny<IRequestData>(), It.IsAny<TestRunCriteria>(), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>())).Returns(mockTestRunRequest.Object);
@@ -545,11 +539,11 @@ public class RunSpecificTestsArgumentProcessorTests
         var mockDiscoveryRequest = new Mock<IDiscoveryRequest>();
         var mockTestRunStats = new Mock<ITestRunStatistics>();
 
-        List<TestCase> list = new()
-        {
+        List<TestCase> list =
+        [
             new TestCase("Test1", new Uri("http://FooTestUri1"), "Source1"),
             new TestCase("Test2", new Uri("http://FooTestUri2"), "Source2")
-        };
+        ];
         mockDiscoveryRequest.Setup(dr => dr.DiscoverAsync()).Raises(dr => dr.OnDiscoveredTests += null, new DiscoveredTestsEventArgs(list));
 
         mockTestRunRequest.Setup(tr => tr.ExecuteAsync()).Returns(1).Raises(tr => tr.OnRunCompletion += null,
@@ -576,11 +570,11 @@ public class RunSpecificTestsArgumentProcessorTests
         var mockDiscoveryRequest = new Mock<IDiscoveryRequest>();
         var testRunStats = new TestRunStatistics(1, new Dictionary<TestOutcome, long> { { TestOutcome.Passed, 1 } });
 
-        List<TestCase> list = new()
-        {
+        List<TestCase> list =
+        [
             new TestCase("Test1", new Uri("http://FooTestUri1"), "Source1"),
             new TestCase("Test2", new Uri("http://FooTestUri2"), "Source2")
-        };
+        ];
         mockDiscoveryRequest.Setup(dr => dr.DiscoverAsync()).Raises(dr => dr.OnDiscoveredTests += null, new DiscoveredTestsEventArgs(list));
 
         mockTestRunRequest.Setup(tr => tr.ExecuteAsync()).Returns(1).Raises(tr => tr.OnRunCompletion += null,

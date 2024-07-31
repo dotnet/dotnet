@@ -78,7 +78,7 @@ public class ExecutionManagerTests
         var commonAssemblyLocation = typeof(ExecutionManagerTests).Assembly.Location;
         var mockTestMessageEventHandler = new Mock<ITestMessageEventHandler>();
         TestPluginCacheHelper.SetupMockExtensions(
-            new string[] { commonAssemblyLocation },
+            [commonAssemblyLocation],
             () => { });
 
 
@@ -142,7 +142,7 @@ public class ExecutionManagerTests
     {
         var assemblyLocation = typeof(ExecutionManagerTests).Assembly.Location;
         TestPluginCacheHelper.SetupMockExtensions(
-            new string[] { assemblyLocation },
+            [assemblyLocation],
             () => { });
         TestPluginCache.Instance.DiscoverTestExtensions<TestExecutorPluginInformation, ITestExecutor>(TestPlatformConstants.TestAdapterEndsWithPattern);
         TestPluginCache.Instance.DiscoverTestExtensions<TestDiscovererPluginInformation, ITestDiscoverer>(TestPlatformConstants.TestAdapterEndsWithPattern);
@@ -205,7 +205,7 @@ public class ExecutionManagerTests
                         "A.dll"));
             fh!.RecordResult(tr);
         };
-        TestPluginCacheHelper.SetupMockExtensions(new string[] { assemblyLocation }, () => { });
+        TestPluginCacheHelper.SetupMockExtensions([assemblyLocation], () => { });
 
 
         _executionManager.StartTestRun(tests, null, null, _testExecutionContext, null, mockTestRunEventsHandler.Object);

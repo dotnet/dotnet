@@ -46,7 +46,6 @@ internal class FakeTestDllBuilder
     /// <summary>
     /// Use this to get basic test batch, or use WithTestBatches together with TestBatchBuilder, to get a custom batch.
     /// </summary>
-    /// <param name="testBatches"></param>
     /// <returns></returns>
     internal FakeTestDllBuilder WithTestCount(int totalCount, int? batchSize = null)
     {

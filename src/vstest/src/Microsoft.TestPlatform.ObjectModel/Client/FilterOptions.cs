@@ -20,7 +20,7 @@ public class FilterOptions
     public string? FilterRegEx { get; set; }
 
     /// <summary>
-    /// Gets or sets the optional regular expression replacement string. When this property is set, <see cref="System.Text.RegularExpressions.Regex.Replace(string)"/>
+    /// Gets or sets the optional regular expression replacement string. When this property is set, <see cref="System.Text.RegularExpressions.Regex.Replace(string, string, string)"/>
     /// will be called upon property value instead of <see cref="System.Text.RegularExpressions.Regex.Match(string)"/> before matching.
     /// </summary>
     [DataMember]

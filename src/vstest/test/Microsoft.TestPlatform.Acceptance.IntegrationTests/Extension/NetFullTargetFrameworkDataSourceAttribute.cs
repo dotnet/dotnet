@@ -65,7 +65,7 @@ public class NetFullTargetFrameworkDataSourceAttribute : Attribute, ITestDataSou
                 DebugDataCollector = DebugDataCollector,
                 DebugStopAtEntrypoint = DebugStopAtEntrypoint,
             };
-            dataRows.Add(new object[] { runnerInfo });
+            dataRows.Add([runnerInfo]);
         }
 
         if (_useDesktopRunner && isWindows)
@@ -85,7 +85,7 @@ public class NetFullTargetFrameworkDataSourceAttribute : Attribute, ITestDataSou
                     DebugDataCollector = DebugDataCollector,
                     DebugStopAtEntrypoint = DebugStopAtEntrypoint,
                 };
-                dataRows.Add(new object[] { runnerInfo });
+                dataRows.Add([runnerInfo]);
             }
 
             if (_inProcess)
@@ -103,7 +103,7 @@ public class NetFullTargetFrameworkDataSourceAttribute : Attribute, ITestDataSou
                     DebugDataCollector = DebugDataCollector,
                     DebugStopAtEntrypoint = DebugStopAtEntrypoint,
                 };
-                dataRows.Add(new object[] { runnerInfo });
+                dataRows.Add([runnerInfo]);
             }
         }
 
@@ -112,6 +112,6 @@ public class NetFullTargetFrameworkDataSourceAttribute : Attribute, ITestDataSou
 
     public string GetDisplayName(MethodInfo methodInfo, object?[]? data)
     {
-        return string.Format(CultureInfo.CurrentCulture, "{0} ({1})", methodInfo.Name, string.Join(",", data ?? Array.Empty<string>()));
+        return string.Format(CultureInfo.CurrentCulture, "{0} ({1})", methodInfo.Name, string.Join(",", data ?? []));
     }
 }

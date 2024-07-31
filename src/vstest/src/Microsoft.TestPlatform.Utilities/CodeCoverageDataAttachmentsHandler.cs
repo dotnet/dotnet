@@ -129,7 +129,7 @@ public class CodeCoverageDataAttachmentsHandler : IDataCollectorAttachmentProces
 
         TPDebug.Assert(s_mergeOperationEnumValues != null);
 
-        var task = (Task)s_mergeMethodInfo.Invoke(s_classInstance, new object[] { files[0], files, s_mergeOperationEnumValues.GetValue(0)!, true, cancellationToken })!;
+        var task = (Task)s_mergeMethodInfo.Invoke(s_classInstance, [files[0], files, s_mergeOperationEnumValues.GetValue(0)!, true, cancellationToken])!;
         await task.ConfigureAwait(false);
 
         if (task.GetType().GetProperty("Result")!.GetValue(task, null) is not IList<string> mergedResults)
@@ -176,6 +176,6 @@ public class CodeCoverageDataAttachmentsHandler : IDataCollectorAttachmentProces
         var types = s_codeCoverageAssembly.GetTypes();
         var mergeOperationEnum = Array.Find(types, d => d.Name == CoverageMergeOperationName)!;
         s_mergeOperationEnumValues = Enum.GetValues(mergeOperationEnum);
-        s_mergeMethodInfo = classType.GetMethod(MergeMethodName, new[] { typeof(string), typeof(IList<string>), mergeOperationEnum, typeof(bool), typeof(CancellationToken) })!;
+        s_mergeMethodInfo = classType.GetMethod(MergeMethodName, [typeof(string), typeof(IList<string>), mergeOperationEnum, typeof(bool), typeof(CancellationToken)])!;
     }
 }

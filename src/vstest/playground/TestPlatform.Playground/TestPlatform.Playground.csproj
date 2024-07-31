@@ -32,6 +32,7 @@
     <ProjectReference Include="$(RepoRoot)src\AttachVS\AttachVS.csproj" />
     <ProjectReference Include="$(RepoRoot)src\Microsoft.TestPlatform.Build\Microsoft.TestPlatform.Build.csproj" />
     <ProjectReference Include="$(RepoRoot)src\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.TestPlatform.Extensions.TrxLogger\Microsoft.TestPlatform.Extensions.TrxLogger.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) AND '$(OS)' != 'Windows_NT' ">
     <Reference Include="System" />
@@ -74,6 +75,7 @@
 
       <!-- copy loggers -->
       <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.Extensions.HtmlLogger\$(Configuration)\$(NetFrameworkMinimum)\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger*" SubFolder="netfx\Extensions\" />
+      <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.Extensions.TrxLogger\$(Configuration)\$(NetFrameworkMinimum)\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger*" SubFolder="netfx\Extensions\" />
 
       <!-- .NET console -->
       <FileToCopy Include="$(SourcePath)bin\vstest.console\$(Configuration)\$(NetCoreAppMinimum)\**\*.*" SubFolder="net" />

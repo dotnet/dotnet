@@ -30,7 +30,7 @@ public class ParallelProxyDiscoveryManagerTests
     private readonly List<Mock<IProxyDiscoveryManager>> _usedMockManagers;
     private readonly Func<TestRuntimeProviderInfo, DiscoveryCriteria, IProxyDiscoveryManager> _createMockManager;
     private readonly Mock<ITestDiscoveryEventsHandler2> _mockEventHandler;
-    private readonly List<string> _sources = new() { "1.dll", "2.dll" };
+    private readonly List<string> _sources = ["1.dll", "2.dll"];
     private readonly DiscoveryCriteria _discoveryCriteriaWith2Sources;
     private readonly List<TestRuntimeProviderInfo> _runtimeProviders;
     private int _createMockManagerCalled;
@@ -70,11 +70,10 @@ public class ParallelProxyDiscoveryManagerTests
         _mockEventHandler = new Mock<ITestDiscoveryEventsHandler2>();
         _discoveryCriteriaWith2Sources = new DiscoveryCriteria(_sources, 100, null);
         _runtimeProviders = new List<TestRuntimeProviderInfo> {
-            new(typeof(ITestRuntimeProvider), false, "<RunSettings></RunSettings>", new List<SourceDetail>
-            {
+            new(typeof(ITestRuntimeProvider), false, "<RunSettings></RunSettings>", [
                 new() { Source = _sources[0], Architecture = Architecture.X86, Framework = Framework.DefaultFramework },
                 new() { Source = _sources[1], Architecture = Architecture.X86, Framework = Framework.DefaultFramework }
-            })
+            ])
         };
 
         // This event is Set by callback from _mockEventHandler in SetupDiscoveryManager

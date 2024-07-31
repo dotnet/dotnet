@@ -56,7 +56,7 @@ public class RunTestsWithSourcesTests
         _mockRequestData.Setup(rd => rd.MetricsCollection).Returns(_mockMetricsCollection.Object);
 
         TestPluginCacheHelper.SetupMockExtensions(
-            new string[] { typeof(RunTestsWithSourcesTests).Assembly.Location },
+            [typeof(RunTestsWithSourcesTests).Assembly.Location],
             () => { });
 
         TestPluginCache.Instance.DiscoverTestExtensions<TestExecutorPluginInformation, ITestExecutor>(TestPlatformConstants.TestAdapterEndsWithPattern);

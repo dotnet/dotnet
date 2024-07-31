@@ -8,8 +8,8 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Processors.Utilities;
 
 internal class ArgumentProcessorUtilities
 {
-    public static readonly char[] SemiColonArgumentSeparator = { ';' };
-    public static readonly char[] EqualNameValueSeparator = { '=' };
+    public static readonly char[] SemiColonArgumentSeparator = [';'];
+    public static readonly char[] EqualNameValueSeparator = ['='];
 
     /// <summary>
     /// Get argument list from raw argument using argument separator.

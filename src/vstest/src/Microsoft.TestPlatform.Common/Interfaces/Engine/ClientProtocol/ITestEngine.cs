@@ -20,8 +20,9 @@ public interface ITestEngine
     /// <param name="requestData">
     /// The request data for providing discovery services and data.
     /// </param>
-    /// <param name="testHostManager">Test host manager for the current test discovery.</param>
     /// <param name="discoveryCriteria">The discovery criteria.</param>
+    /// <param name="sourceToSourceDetailMap">Details of every source.</param>
+    /// <param name="warningLogger">Logger of warnings.</param>
     ///
     /// <returns>An IProxyDiscoveryManager object that can do discovery.</returns>
     IProxyDiscoveryManager GetDiscoveryManager(
@@ -38,7 +39,8 @@ public interface ITestEngine
     /// <param name="requestData">
     /// The request data for providing common execution services and data.
     /// </param>
-    /// <param name="testHostManager">Test host manager for the current test run.</param>
+    /// <param name="sourceToSourceDetailMap">Details of every source.</param>
+    /// <param name="warningLogger">Logger of warnings.</param>
     /// <param name="testRunCriteria">Test run criteria of the current test run.</param>
     ///
     /// <returns>An IProxyExecutionManager object that can do execution.</returns>
@@ -59,6 +61,8 @@ public interface ITestEngine
     /// <param name="testSessionCriteria">
     /// Test session criteria of the current test session.
     /// </param>
+    /// <param name="sourceToSourceDetailMap">Details of every source.</param>
+    /// <param name="warningLogger">Logger of warnings.</param>
     ///
     /// <returns>An IProxyTestSessionManager object that can manage test sessions.</returns>
     IProxyTestSessionManager? GetTestSessionManager(

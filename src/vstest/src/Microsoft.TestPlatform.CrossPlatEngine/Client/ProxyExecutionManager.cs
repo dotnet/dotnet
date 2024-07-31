@@ -100,6 +100,7 @@ internal class ProxyExecutionManager : IProxyExecutionManager, IBaseProxy, IInte
     /// </param>
     /// <param name="requestSender">Test request sender instance.</param>
     /// <param name="testHostManager">Test host manager for this proxy.</param>
+    /// <param name="testHostManagerFramework">Framework of testhost</param>
     public ProxyExecutionManager(
         IRequestData requestData,
         ITestRequestSender requestSender,
@@ -126,6 +127,7 @@ internal class ProxyExecutionManager : IProxyExecutionManager, IBaseProxy, IInte
     /// <param name="requestData">The request data for common services and data for run.</param>
     /// <param name="requestSender">Request sender instance.</param>
     /// <param name="testHostManager">Test host manager instance.</param>
+    /// <param name="testHostManagerFramework">Framework of testhost</param>
     /// <param name="dataSerializer">Data serializer instance.</param>
     /// <param name="fileHelper">File helper instance.</param>
     internal ProxyExecutionManager(

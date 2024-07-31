@@ -27,7 +27,7 @@ public class FilePatternParser
 {
     private readonly Matcher _matcher;
     private readonly IFileHelper _fileHelper;
-    private readonly char[] _wildCardCharacters = { '*' };
+    private readonly char[] _wildCardCharacters = ['*'];
 
     public FilePatternParser()
         : this(new Matcher(), new FileHelper())

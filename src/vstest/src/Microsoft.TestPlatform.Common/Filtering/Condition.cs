@@ -167,7 +167,7 @@ internal class Condition
     }
 
     /// <summary>
-    /// Returns a condition object after parsing input string of format '<propertyName>Operation<propertyValue>'
+    /// Returns a condition object after parsing input string of format '<propertyName>Operation</propertyName>'
     /// </summary>
     internal static Condition Parse(string? conditionString)
     {

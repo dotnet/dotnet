@@ -102,12 +102,12 @@ internal class TestObjectConverter7 : JsonConverter
 {
     // Empty is not present everywhere
 #pragma warning disable CA1825 // Avoid zero-length array allocations
-    private static readonly object[] EmptyObjectArray = new object[0];
+    private static readonly object[] EmptyObjectArray = [];
 #pragma warning restore CA1825 // Avoid zero-length array allocations
 
     public TestObjectConverter7()
     {
-        TestPropertyCtor = typeof(TestProperty).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[0], null);
+        TestPropertyCtor = typeof(TestProperty).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [], null);
     }
 
     /// <inheritdoc/>

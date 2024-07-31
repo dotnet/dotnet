@@ -17,6 +17,6 @@ internal static class EnumerableExtensions
 
     public static List<T> AsList<T>(this T value)
     {
-        return new List<T> { value };
+        return [value];
     }
 }

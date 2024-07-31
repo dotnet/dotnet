@@ -334,7 +334,7 @@ public class DesignModeClient : IDesignModeClient
             // Even if TP has a timeout here, there is no way TP can abort or stop the thread/task that is hung in IDE or LUT
             // Even if TP can abort the API somehow, TP is essentially putting IDEs or Clients in inconsistent state without having info on
             // Since the IDEs own user-UI-experience here, TP will let the custom host launch as much time as IDEs define it for their users
-            WaitHandle.WaitAny(new WaitHandle[] { waitHandle, cancellationToken.WaitHandle });
+            WaitHandle.WaitAny([waitHandle, cancellationToken.WaitHandle]);
 
             cancellationToken.ThrowTestPlatformExceptionIfCancellationRequested();
 
@@ -387,7 +387,7 @@ public class DesignModeClient : IDesignModeClient
                 _communicationManager.SendMessage(MessageType.EditorAttachDebugger2, payload);
             }
 
-            WaitHandle.WaitAny(new WaitHandle[] { waitHandle, cancellationToken.WaitHandle });
+            WaitHandle.WaitAny([waitHandle, cancellationToken.WaitHandle]);
 
             cancellationToken.ThrowTestPlatformExceptionIfCancellationRequested();
             onAttachDebuggerAckRecieved = null;

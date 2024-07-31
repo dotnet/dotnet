@@ -136,7 +136,7 @@ public class DiscoveryRequestTests
     {
         var eventsHandler = _discoveryRequest as ITestDiscoveryEventsHandler2;
 
-        eventsHandler.HandleDiscoveryComplete(new DiscoveryCompleteEventArgs(1, false), Enumerable.Empty<TestCase>());
+        eventsHandler.HandleDiscoveryComplete(new DiscoveryCompleteEventArgs(1, false), []);
         _discoveryManager.Verify(dm => dm.Close(), Times.Once);
     }
 
@@ -148,7 +148,7 @@ public class DiscoveryRequestTests
         _discoveryRequest.OnDiscoveryComplete += (s, e) => events.Add("complete");
         var eventsHandler = _discoveryRequest as ITestDiscoveryEventsHandler2;
 
-        eventsHandler.HandleDiscoveryComplete(new DiscoveryCompleteEventArgs(1, false), Enumerable.Empty<TestCase>());
+        eventsHandler.HandleDiscoveryComplete(new DiscoveryCompleteEventArgs(1, false), []);
 
         Assert.AreEqual(2, events.Count);
         Assert.AreEqual("close", events[0]);
@@ -198,7 +198,7 @@ public class DiscoveryRequestTests
         discoveryCompleteEventArgs.Metrics = dict;
 
         // Act
-        eventsHandler.HandleDiscoveryComplete(discoveryCompleteEventArgs, Enumerable.Empty<TestCase>());
+        eventsHandler.HandleDiscoveryComplete(discoveryCompleteEventArgs, []);
 
         // Verify.
         mockMetricsCollector.Verify(rd => rd.Add(TelemetryDataConstants.TimeTakenInSecForDiscovery, It.IsAny<double>()), Times.Once);
@@ -247,7 +247,7 @@ public class DiscoveryRequestTests
             {
                 TotalTests = 1,
                 IsAborted = false,
-                LastDiscoveredTests = Enumerable.Empty<TestCase>()
+                LastDiscoveredTests = []
             });
 
         _discoveryRequest.HandleRawMessage(string.Empty);
@@ -260,7 +260,7 @@ public class DiscoveryRequestTests
     {
         var discoveryCompleteEventArgs = new DiscoveryCompleteEventArgs(1, false);
         var eventsHandler = _discoveryRequest as ITestDiscoveryEventsHandler2;
-        eventsHandler.HandleDiscoveryComplete(discoveryCompleteEventArgs, Enumerable.Empty<TestCase>());
+        eventsHandler.HandleDiscoveryComplete(discoveryCompleteEventArgs, []);
 
         _loggerManager.Verify(lm => lm.HandleDiscoveryComplete(discoveryCompleteEventArgs), Times.Once);
     }
@@ -270,7 +270,7 @@ public class DiscoveryRequestTests
     {
         var discoveryCompleteEventArgs = new DiscoveryCompleteEventArgs(1, false);
         var eventsHandler = _discoveryRequest as ITestDiscoveryEventsHandler2;
-        eventsHandler.HandleDiscoveryComplete(discoveryCompleteEventArgs, Enumerable.Empty<TestCase>());
+        eventsHandler.HandleDiscoveryComplete(discoveryCompleteEventArgs, []);
 
         _loggerManager.Verify(lm => lm.HandleDiscoveredTests(It.IsAny<DiscoveredTestsEventArgs>()), Times.Never);
     }

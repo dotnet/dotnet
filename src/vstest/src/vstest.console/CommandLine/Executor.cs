@@ -141,7 +141,7 @@ internal class Executor
         if (args == null || args.Length == 0 || args.Any(StringUtils.IsNullOrWhiteSpace))
         {
             Output.Error(true, CommandLineResources.NoArgumentsProvided);
-            args = new string[] { HelpArgumentProcessor.CommandName };
+            args = [HelpArgumentProcessor.CommandName];
             exitCode = 1;
         }
 

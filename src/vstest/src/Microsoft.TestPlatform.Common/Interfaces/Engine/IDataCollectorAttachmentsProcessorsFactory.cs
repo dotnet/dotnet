@@ -17,7 +17,7 @@ internal interface IDataCollectorAttachmentsProcessorsFactory
     /// <summary>
     /// Creates and return a list of available attachments processor
     /// </summary>
-    /// <param name="invokedDataCollector">List of invoked data collectors</param>
+    /// <param name="invokedDataCollectors">List of invoked data collectors</param>
     /// <param name="logger">Message logger</param>
     /// <returns>List of attachments processors</returns>
     DataCollectorAttachmentProcessor[] Create(InvokedDataCollector[]? invokedDataCollectors, IMessageLogger logger);

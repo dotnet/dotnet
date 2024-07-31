@@ -108,14 +108,14 @@ public class ProxyTestSessionManagerTests
 
         _fakeTestSourcesToRuntimeProviderMap = new Dictionary<string, TestRuntimeProviderInfo>
         {
-            [_fakeTestSources[0]] = new TestRuntimeProviderInfo(typeof(ITestRuntimeProvider), false, _fakeRunSettings, new List<SourceDetail>
-            {
-                new() {
+            [_fakeTestSources[0]] = new TestRuntimeProviderInfo(typeof(ITestRuntimeProvider), false, _fakeRunSettings, [
+                new()
+                {
                     Source = _fakeTestSources[0],
                     Architecture = Architecture.X86,
                     Framework = Framework.DefaultFramework
                 }
-            })
+            ])
         };
     }
 

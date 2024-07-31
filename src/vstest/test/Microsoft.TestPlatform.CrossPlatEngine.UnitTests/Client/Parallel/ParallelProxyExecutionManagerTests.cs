@@ -73,13 +73,12 @@ public class ParallelProxyExecutionManagerTests
         _processedSources = new List<string>();
         _testRunCriteriaWith2Sources = new TestRunCriteria(_sources, 100, false, string.Empty, TimeSpan.MaxValue, null, "Name~Test", new FilterOptions() { FilterRegEx = @"^[^\s\(]+" });
         _runtimeProviders = new List<TestRuntimeProviderInfo> {
-            new(typeof(ITestRuntimeProvider), false, "<RunSettings></RunSettings>", new List<SourceDetail>
-            {
+            new(typeof(ITestRuntimeProvider), false, "<RunSettings></RunSettings>", [
                 new() { Source = "1.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework },
                 new() { Source = "2.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework },
                 // For testcases on the bottom.
-                new() { Source = "3.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework },
-            })
+                new() { Source = "3.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework }
+            ])
         };
 
         // Configure testcases
