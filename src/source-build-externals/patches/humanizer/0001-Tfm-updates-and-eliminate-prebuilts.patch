@@ -3,6 +3,7 @@ From: Michael Simons <msimons@microsoft.com>
 Date: Fri, 26 Jul 2024 14:09:52 +0000
 Subject: [PATCH] Tfm updates and eliminate prebuilts
 
+Backport: Drop NetStandard 1.x support - https://github.com/Humanizr/Humanizer/issues/1530
 ---
  NuSpecs/Humanizer.Core.af.nuspec         |  3 +--
  NuSpecs/Humanizer.Core.ar.nuspec         |  3 +--
