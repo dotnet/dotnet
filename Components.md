@@ -18,7 +18,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
     *[aspnet/MessagePack-CSharp@ecc4e18](https://github.com/aspnet/MessagePack-CSharp/tree/ecc4e18ad7a0c7db51cd7e3d2997a291ed01444d)*
 - `src/cecil`  
-*[dotnet/cecil@e05101e](https://github.com/dotnet/cecil/tree/e05101e694b7c86f03f767014fc203cec5dc7f18)*
+*[dotnet/cecil@085c55c](https://github.com/dotnet/cecil/tree/085c55c477228926915f7cadfd28cee55a18850e)*
 - `src/command-line-api`  
 *[dotnet/command-line-api@803d859](https://github.com/dotnet/command-line-api/tree/803d8598f98fb4efd94604b32627ee9407f246db)*
 - `src/deployment-tools`  
@@ -44,11 +44,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@81d9b5d](https://github.com/dotnet/roslyn-analyzers/tree/81d9b5d58e3d384ed4a91b75f4a1ece6352e76d9)*
 - `src/runtime`  
-*[dotnet/runtime@0912e94](https://github.com/dotnet/runtime/tree/0912e94a6c81f4743946831137ba6c3ec3f1a179)*
+*[dotnet/runtime@c86bcbb](https://github.com/dotnet/runtime/tree/c86bcbb7a573bb09fcb1f4fcd7bc24323e9d6f44)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@d92413b](https://github.com/dotnet/scenario-tests/tree/d92413b87d36250859d8cb51ff69a03b5f5c4cab)*
 - `src/sdk`  
-*[dotnet/sdk@e927fd8](https://github.com/dotnet/sdk/tree/e927fd8615de1c308525da886865b8a4e925d33c)*
+*[dotnet/sdk@4a98f2a](https://github.com/dotnet/sdk/tree/4a98f2a3a4712d267d2a000657f80116b133fef1)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@abec570](https://github.com/dotnet/source-build-externals/tree/abec570b33d209dde31bd81c412ec8f4f0ecc587)*
     - `src/source-build-externals/src/abstractions-xunit`  
