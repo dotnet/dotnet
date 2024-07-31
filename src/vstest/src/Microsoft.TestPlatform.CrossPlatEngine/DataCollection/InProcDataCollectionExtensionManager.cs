@@ -50,6 +50,7 @@ internal class InProcDataCollectionExtensionManager
     /// <param name="defaultCodeBase">
     /// The default code base to be used by in-proc data collector
     /// </param>
+    /// <param name="testPluginCache">The cache of test plugins.</param>
     public InProcDataCollectionExtensionManager(string? runSettings, ITestEventsPublisher testEventsPublisher, string? defaultCodeBase, TestPluginCache testPluginCache)
         : this(runSettings, testEventsPublisher, defaultCodeBase, testPluginCache, new FileHelper())
     { }
@@ -90,12 +91,6 @@ internal class InProcDataCollectionExtensionManager
     /// <summary>
     /// Creates data collector instance based on datacollector settings provided.
     /// </summary>
-    /// <param name="dataCollectorSettings">
-    /// Settings to be used for creating DataCollector.
-    /// </param>
-    /// <param name="interfaceTypeInfo">
-    /// TypeInfo of datacollector.
-    /// </param>
     /// <returns>
     /// The <see cref="IInProcDataCollector"/>.
     /// </returns>

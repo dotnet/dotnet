@@ -312,7 +312,7 @@ internal sealed class ParallelOperationManager<TManager, TEventHandler, TWorkloa
 
     private static string GetSourcesForSlotExpensive(ParallelOperationManager<TManager, TEventHandler, TWorkload>.Slot slot)
     {
-        return string.Join(", ", (slot.Work as DiscoveryCriteria)?.Sources ?? (slot.Work as TestRunCriteria)?.Sources ?? Array.Empty<string>());
+        return string.Join(", ", (slot.Work as DiscoveryCriteria)?.Sources ?? (slot.Work as TestRunCriteria)?.Sources ?? []);
     }
 
     public void DoActionOnAllManagers(Action<TManager> action, bool doActionsInParallel = false)

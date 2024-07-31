@@ -55,7 +55,11 @@ public class InferRunSettingsHelper
     private const string LegacyElementsString = "Elements";
     private const string DeploymentAttributesString = "DeploymentAttributes";
     private const string ExecutionAttributesString = "ExecutionAttributes";
-    private static readonly List<string> ExecutionNodesPaths = new() { @"/RunSettings/LegacySettings/Execution/TestTypeSpecific/UnitTestRunConfig/AssemblyResolution", @"/RunSettings/LegacySettings/Execution/Timeouts", @"/RunSettings/LegacySettings/Execution/Hosts" };
+    private static readonly List<string> ExecutionNodesPaths =
+    [
+        @"/RunSettings/LegacySettings/Execution/TestTypeSpecific/UnitTestRunConfig/AssemblyResolution",
+        @"/RunSettings/LegacySettings/Execution/Timeouts", @"/RunSettings/LegacySettings/Execution/Hosts"
+    ];
 
     /// <summary>
     /// Make runsettings compatible with testhost of version 15.0.0-preview
@@ -398,7 +402,7 @@ public class InferRunSettingsHelper
     /// <summary>
     /// Returns a dictionary of environment variables given in run settings
     /// </summary>
-    /// <param name="runsettingsXml">The run settings xml string</param>
+    /// <param name="runSettings">The run settings xml string</param>
     /// <returns>Environment Variables Dictionary</returns>
     public static Dictionary<string, string?>? GetEnvironmentVariables(string? runSettings)
     {

@@ -80,7 +80,7 @@ public class RunSettings : IRunSettings
         }
 
         using var stringReader = new StringReader(settings);
-        var reader = XmlReader.Create(stringReader, XmlRunSettingsUtilities.ReaderSettings);
+        using var reader = XmlReader.Create(stringReader, XmlRunSettingsUtilities.ReaderSettings);
         ValidateAndSaveSettings(reader);
     }
 
@@ -91,7 +91,7 @@ public class RunSettings : IRunSettings
     public void InitializeSettingsProviders(string settings)
     {
         using var stringReader = new StringReader(settings);
-        var reader = XmlReader.Create(stringReader, XmlRunSettingsUtilities.ReaderSettings);
+        using var reader = XmlReader.Create(stringReader, XmlRunSettingsUtilities.ReaderSettings);
         ReadRunSettings(reader);
     }
 

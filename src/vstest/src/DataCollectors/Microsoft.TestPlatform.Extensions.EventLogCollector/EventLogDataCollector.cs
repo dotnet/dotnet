@@ -326,7 +326,7 @@ public class EventLogDataCollector : DataCollector
     private static ISet<string> ParseCommaSeparatedList(string commaSeparatedList)
     {
         ISet<string> strings = new HashSet<string>();
-        string[] items = commaSeparatedList.Split(new char[] { ',' });
+        string[] items = commaSeparatedList.Split([',']);
         foreach (string item in items)
         {
             strings.Add(item.Trim());

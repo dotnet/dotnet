@@ -117,6 +117,7 @@ internal static class TestPluginDiscoverer
     /// </summary>
     /// <param name="assembly">Assembly to check for test extension availability</param>
     /// <param name="pluginInfos">Test extensions collection to add to.</param>
+    /// <param name="filePath">File path of the assembly.</param>
     /// <typeparam name="TPluginInfo">
     /// Type of Test Plugin Information.
     /// </typeparam>
@@ -201,6 +202,7 @@ internal static class TestPluginDiscoverer
     /// <param name="extensionCollection">
     /// Test extensions collection to add to.
     /// </param>
+    /// <param name="filePath">File path of the assembly.</param>
     private static void GetTestExtensionFromType<TPluginInfo>(
         Type type,
         Type extensionType,

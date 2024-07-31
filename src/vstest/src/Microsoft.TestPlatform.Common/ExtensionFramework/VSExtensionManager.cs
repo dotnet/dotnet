@@ -85,7 +85,7 @@ public class VSExtensionManager : IVSExtensionManager
         var resolutionPaths = installContext.GetVisualStudioCommonLocations(vsInstallPath);
         using (var assemblyResolver = new AssemblyResolver(resolutionPaths))
         {
-            var settingsManager = SettingsManagerType.GetMethod("CreateForApplication", new Type[] { typeof(string) })?.Invoke(null, new object[] { installContext.GetVisualStudioPath(vsInstallPath) });
+            var settingsManager = SettingsManagerType.GetMethod("CreateForApplication", [typeof(string)])?.Invoke(null, [installContext.GetVisualStudioPath(vsInstallPath)]);
             if (settingsManager == null)
             {
                 EqtTrace.Warning("VSExtensionManager : Unable to create settings manager");
@@ -99,8 +99,8 @@ public class VSExtensionManager : IVSExtensionManager
 
                 if (extensionManager != null)
                 {
-                    installedExtensions = ExtensionManagerServiceType.GetMethod("GetEnabledExtensionContentLocations", new Type[] { typeof(string) })?.Invoke(
-                        extensionManager, new object[] { extensionType }) as IEnumerable<string>;
+                    installedExtensions = ExtensionManagerServiceType.GetMethod("GetEnabledExtensionContentLocations", [typeof(string)])?.Invoke(
+                        extensionManager, [extensionType]) as IEnumerable<string>;
                 }
                 else
                 {

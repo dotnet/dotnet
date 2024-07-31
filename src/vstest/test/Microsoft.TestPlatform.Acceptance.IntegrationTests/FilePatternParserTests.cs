@@ -67,7 +67,7 @@ public class FilePatternParserTests : AcceptanceTestBase
         var testAssembly = GetSampleTestAssembly();
         testAssembly = testAssembly.Replace("SimpleTestProject.dll", "*TestProj*.dll");
 
-        var wildCardIndex = testAssembly.IndexOfAny(new char[] { '*' });
+        var wildCardIndex = testAssembly.IndexOfAny(['*']);
         var testAssemblyDirectory = testAssembly.Substring(0, wildCardIndex);
         testAssembly = testAssembly.Substring(wildCardIndex);
 

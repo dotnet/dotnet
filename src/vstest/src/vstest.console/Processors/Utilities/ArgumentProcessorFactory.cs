@@ -23,13 +23,11 @@ internal class ArgumentProcessorFactory
     private Dictionary<string, IArgumentProcessor>? _commandToProcessorMap;
     private Dictionary<string, IArgumentProcessor>? _specialCommandToProcessorMap;
 
+    /// <summary>
     /// Initializes the argument processor factory.
     /// </summary>
     /// <param name="argumentProcessors">
     /// The argument Processors.
-    /// </param>
-    /// <param name="featureFlag">
-    /// The feature flag support.
     /// </param>
     /// <remarks>
     /// This is not public because the static Create method should be used to access the instance.
@@ -298,7 +296,7 @@ internal class ArgumentProcessorFactory
     /// Decorates a lazy argument processor so that the real processor is initialized when the lazy value is obtained.
     /// </summary>
     /// <param name="processor">The lazy processor.</param>
-    /// <param name="initArg">The argument with which the real processor should be initialized.</param>
+    /// <param name="initArgs">The argument with which the real processor should be initialized.</param>
     /// <returns>The decorated lazy processor.</returns>
     private static IArgumentProcessor WrapLazyProcessorToInitializeOnInstantiation(
         IArgumentProcessor processor,

@@ -6,7 +6,7 @@ using System;
 namespace Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 /// <summary>
-/// This attribute is applied to <see cref="ITestDiscoverer"/>s. It indicates the test discoverer discovers tests
+/// This attribute is applied to <see cref="Adapter.ITestDiscoverer"/>s. It indicates the test discoverer discovers tests
 /// present inside a directory (as opposed to the <see cref="FileExtensionAttribute"/> which indicates that the
 /// discoverer discovers tests present in files with a specified extension).
 /// </summary>

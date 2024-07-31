@@ -241,7 +241,7 @@ internal class CollectArgumentExecutor : IArgumentExecutor
 
     internal static void AddDataCollectorToRunSettings(string arguments, IRunSettingsProvider runSettingsManager, IFileHelper fileHelper)
     {
-        AddDataCollectorToRunSettings(new string[] { arguments }, runSettingsManager, fileHelper, string.Empty);
+        AddDataCollectorToRunSettings([arguments], runSettingsManager, fileHelper, string.Empty);
     }
 
     internal static void AddDataCollectorToRunSettings(string[] arguments, IRunSettingsProvider runSettingsManager, IFileHelper fileHelper, string exceptionMessage)

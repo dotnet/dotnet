@@ -47,13 +47,12 @@ public class RunsettingsTests : AcceptanceTestBase
 
         var runSettingsArgs = string.Join(
             " ",
-            new string[]
-            {
+            [
                 "RunConfiguration.MaxCpuCount=1",
                 string.Concat("RunConfiguration.TargetPlatform=",targetPlatform),
                 string.Concat("RunConfiguration.TargetFrameworkVersion=" , GetTargetFrameworkForRunsettings()),
                 string.Concat("RunConfiguration.TestAdaptersPaths=" , GetTestAdapterPath())
-            });
+            ]);
 
         RunTestWithRunSettings(runConfigurationDictionary, runSettingsArgs, additionalArgs, testhostProcessName, expectedNumOfProcessCreated);
     }
@@ -82,13 +81,12 @@ public class RunsettingsTests : AcceptanceTestBase
         // Pass non parallel
         var runSettingsArgs = string.Join(
             " ",
-            new string[]
-            {
+            [
                 "RunConfiguration.MaxCpuCount=1",
                 string.Concat("RunConfiguration.TargetPlatform=",targetPlatform),
                 string.Concat("RunConfiguration.TargetFrameworkVersion=" , GetTargetFrameworkForRunsettings()),
                 string.Concat("RunConfiguration.TestAdaptersPaths=" , GetTestAdapterPath())
-            });
+            ]);
 
         RunTestWithRunSettings(null, runSettingsArgs, additionalArgs, testhostProcessName, expectedNumOfProcessCreated);
     }
@@ -96,9 +94,6 @@ public class RunsettingsTests : AcceptanceTestBase
     /// <summary>
     /// Command line switches should have high precedence if runsetting file and command line switch specified
     /// </summary>
-    /// <param name="runnerFramework"></param>
-    /// <param name="targetFramework"></param>
-    /// <param name="targetRuntime"></param>
     [TestMethod]
     [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
@@ -170,13 +165,12 @@ public class RunsettingsTests : AcceptanceTestBase
 
         var runSettingsArgs = string.Join(
             " ",
-            new string[]
-            {
+            [
                 "RunConfiguration.MaxCpuCount=1",
                 string.Concat("RunConfiguration.TargetPlatform=",targetPlatform),
                 string.Concat("RunConfiguration.TargetFrameworkVersion=" , GetTargetFrameworkForRunsettings()),
                 string.Concat("RunConfiguration.TestAdaptersPaths=" , GetTestAdapterPath())
-            });
+            ]);
 
         RunTestWithRunSettings(null, runSettingsArgs, null, testhostProcessName, expectedNumOfProcessCreated);
     }
@@ -206,13 +200,12 @@ public class RunsettingsTests : AcceptanceTestBase
 
         var runSettingsArgs = string.Join(
             " ",
-            new string[]
-            {
+            [
                 "RunConfiguration.MaxCpuCount=1",
                 string.Concat("RunConfiguration.TargetPlatform=",targetPlatform),
                 string.Concat("RunConfiguration.TargetFrameworkVersion=" , GetTargetFrameworkForRunsettings()),
                 string.Concat("RunConfiguration.TestAdaptersPaths=" , GetTestAdapterPath())
-            });
+            ]);
 
         RunTestWithRunSettings(runConfigurationDictionary, runSettingsArgs, null, testhostProcessName, expectedNumOfProcessCreated);
     }

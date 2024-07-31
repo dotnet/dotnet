@@ -19,9 +19,9 @@ function Verify-Nuget-Packages {
     $expectedNumOfFiles = @{
         "Microsoft.CodeCoverage"                      = 59;
         "Microsoft.NET.Test.Sdk"                      = 15;
-        "Microsoft.TestPlatform"                      = 607;
+        "Microsoft.TestPlatform"                      = 608;
         "Microsoft.TestPlatform.Build"                = 20;
-        "Microsoft.TestPlatform.CLI"                  = 470;
+        "Microsoft.TestPlatform.CLI"                  = 471;
         "Microsoft.TestPlatform.Extensions.TrxLogger" = 34;
         "Microsoft.TestPlatform.ObjectModel"          = 92;
         "Microsoft.TestPlatform.AdapterUtilities"     = 75;
@@ -98,9 +98,9 @@ function Verify-Nuget-Packages {
             }
         }
         finally {
-            if ($null -ne $unzipNugetPackageDir -and (Test-Path $unzipNugetPackageDir)) {
-                Remove-Item -Force -Recurse $unzipNugetPackageDir | Out-Null
-            }
+            # if ($null -ne $unzipNugetPackageDir -and (Test-Path $unzipNugetPackageDir)) {
+            #     Remove-Item -Force -Recurse $unzipNugetPackageDir | Out-Null
+            # }
         }
     }
 
@@ -109,6 +109,7 @@ function Verify-Nuget-Packages {
     }
 
     Write-Host "Completed Verify-Nuget-Packages."
+    $unzipNugetPackageDirs
 }
 
 function Unzip {
@@ -156,4 +157,150 @@ function Verify-Version {
     Match-VersionAgainstBranch -vsTestVersion $vsTestProductVersion -branchName $currentBranch -errors $errors
 }
 
-Verify-Nuget-Packages
+function Verify-NugetPackageExe {
+    param(
+        [Parameter(Mandatory)]
+        [ValidateSet("Debug", "Release")]
+        [string] $configuration,
+        $UnzipNugetPackages
+    )
+
+
+    $exclusions = @{
+        "CodeCoverage\CodeCoverage.exe"                = "x86"
+        "Dynamic Code Coverage Tools\CodeCoverage.exe" = "x86"
+        "amd64\CodeCoverage.exe"                       = "x64"
+
+        "IntelliTrace.exe"                             = "x86"
+        "ProcessSnapshotCleanup.exe"                   = "x86-64"
+        "TDEnvCleanup.exe"                             = "x86"
+
+        "TestPlatform\SettingsMigrator.exe"            = "x86"
+
+        "dump\DumpMinitool.exe"                        = "x86-64"
+
+        "QTAgent32.exe"                                = "x86"
+        "QTAgent32_35.exe"                             = "x86"
+        "QTAgent32_40.exe"                             = "x86"
+        "QTDCAgent32.exe"                              = "x86"
+
+        "V1\VSTestVideoRecorder.exe"                   = "x86"
+        "VideoRecorder\VSTestVideoRecorder.exe"        = "x86"
+    }
+
+    $errs = @()
+    $exes = $UnzipNugetPackages | Get-ChildItem -Filter *.exe -Recurse -Force 
+    if (0 -eq @($exes).Length) { 
+        throw "No exe files were found."
+    }
+
+    # use wow programfiles because they always point to x64 programfiles where VS is installed
+    $dumpBin =  Get-ChildItem -Recurse -Force -Filter dumpbin.exe -path "$env:ProgramW6432\Microsoft Visual Studio\2022\Enterprise" | Select-Object -First 1
+    if (-not $dumpBin) {
+        throw "Did not find dumpbin.exe in '$env:ProgramW6432\Microsoft Visual Studio\2022\Enterprise'."
+    }
+
+    $corFlags = Get-ChildItem -Recurse -Force -Filter CorFlags.exe -path "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows" | Select-Object -First 1
+    if (-not $corFlags) {
+        throw "Did not find CorFlags.exe in '${env:ProgramFiles(x86)}\Microsoft SDKs\Windows'."
+    }
+
+    $exes | ForEach-Object {
+        $m = & $dumpBin /headers $_.FullName | Select-String "machine \((.*)\)"
+        if (-not $m.Matches.Success) {
+            $err = "Did not find the platform of the exe $fullName)."
+        }
+
+        $platform = $m.Matches.Groups[1].Value
+        $fullName = $_.FullName
+        $name = $_.Name
+
+        if ("x86" -eq $platform) { 
+            $corFlagsOutput = & $corFlags $fullName
+            # this is an native x86 exe or a .net x86 that requires of prefers 32bit
+            $platform = if ($corFlagsOutput -like "*does not have a valid managed header*" -or $corFlagsOutput -like "*32BITREQ  : 1*" -or $corFlagsOutput -like "*32BITPREF : 1*") {
+                # this is an native x86 exe or a .net x86 that requires of prefers 32bit
+                "x86" } else {
+                # this is a x86 executable that is built as AnyCpu and does not prefer 32-bit so it will run as x64 on 64-bit system.
+                "x86-64" }
+        }
+
+        if (($pair = $exclusions.GetEnumerator() | Where-Object { $fullName -like "*$($_.Name)" })) {
+            if (1 -lt $($pair).Count) {
+                $err = "Too many paths matched the query, only one match is allowed. Matches: $($pair.Name)"
+                $errs += $err
+                Write-Host -ForegroundColor Red Error: $err
+            }
+
+            if ($platform -ne $pair.Value) {
+                $err = "$fullName must have architecture $($pair.Value), but it was $platform."
+                $errs += $err
+                Write-Host -ForegroundColor Red Error: $err
+            }
+        }
+        elseif ("x86" -eq $platform) {
+            if ($name -notlike "*x86*") {
+                $err = "$fullName has architecture $platform, and must contain x86 in the name of the executable."
+                $errs += $err
+                Write-Host -ForegroundColor Red Error: $err
+            }
+        }
+        elseif ($platform -in  "x64", "x86-64") {
+            if ($name -like "*x86*" -or $name -like "*arm64*") {
+                $err = "$fullName has architecture $platform, and must NOT contain x86 or arm64 in the name of the executable."
+                $errs += $err
+                Write-Host -ForegroundColor Red Error: $err
+            }
+        }
+        elseif ("arm64" -eq $platform) {
+            if ($name -notlike "*arm64*") {
+                $err = "$fullName has architecture $platform, and must contain arm64 in the name of the executable."
+                $errs += $err
+                Write-Host -ForegroundColor Red Error: $err
+            }
+        }
+        else {
+            $err = "$fullName has unknown architecture $platform."
+            $errs += $err
+            Write-Host -ForegroundColor Red $err
+        }
+
+        "Success: $name is $platform - $fullName"
+    }
+
+    if ($errs) { 
+        throw "Fail!:`n$($errs -join "`n")"
+    }
+}
+
+function Verify-NugetPackageVersion {
+    param(
+        [Parameter(Mandatory)]
+        [ValidateSet("Debug", "Release")]
+        [string] $configuration,
+        $UnzipNugetPackages
+    )
+
+    # look for vstest.console.dll because unified build for .NET does not produce vstest.console.exe
+    $exes = $UnzipNugetPackages | Get-ChildItem -Filter vstest.console.dll -Recurse -Force 
+    if (0 -eq @($exes).Length) {
+        throw "No vstest.console.dll files were found."
+    }
+
+    $exes | ForEach-Object {
+        if ($_.VersionInfo.ProductVersion.Contains("+")) {
+            throw "$_ contains '+' in the ProductVersion $($_.VersionInfo.ProductVersion), this breaks DTAAgent in AzDO."
+        }
+        else {
+            "$_ version $($_.VersionInfo.ProductVersion) is ok."
+        }
+    } 
+
+}
+
+
+$unzipNugetPackages = Verify-Nuget-Packages
+Start-sleep -Seconds 10
+# skipped, it is hard to find the right dumpbin.exe and corflags tools on server
+# Verify-NugetPackageExe -configuration $configuration -UnzipNugetPackages $unzipNugetPackages
+Verify-NugetPackageVersion -configuration $configuration -UnzipNugetPackages $unzipNugetPackages

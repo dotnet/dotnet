@@ -37,7 +37,7 @@ public class GenerateFakesUtilitiesTests
         CommandLineOptions.Instance.DisableAutoFakes = true;
         string runSettingsXml = @"<RunSettings><RunConfiguration><TargetFrameworkVersion>.netstandard,Version=5.0</TargetFrameworkVersion></RunConfiguration ></RunSettings>";
 
-        runSettingsXml = GenerateFakesUtilities.GenerateFakesSettings(CommandLineOptions.Instance, System.Array.Empty<string>(), runSettingsXml);
+        runSettingsXml = GenerateFakesUtilities.GenerateFakesSettings(CommandLineOptions.Instance, [], runSettingsXml);
         Assert.AreEqual(runSettingsXml, _runSettings);
     }
 

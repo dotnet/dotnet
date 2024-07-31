@@ -62,7 +62,7 @@ public class Runner
                     // Declaring type cannot be really null for types you define in C#
                     // without doing any reflection magic.
                     var instance = Activator.CreateInstance(method.DeclaringType!);
-                    var testResult = method.Invoke(instance, Array.Empty<object>());
+                    var testResult = method.Invoke(instance, []);
                     if (testResult is Task task)
                     {
                         // When the result is a task we need to await it.

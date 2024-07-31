@@ -95,6 +95,8 @@ public class ProxyDiscoveryManager : IProxyDiscoveryManager, IBaseProxy, ITestDi
     /// </param>
     /// <param name="requestSender">The request sender.</param>
     /// <param name="testHostManager">Test host manager instance.</param>
+    /// <param name="testhostManagerFramework">Framework of the manager.</param>
+    /// <param name="discoveryDataAggregator">Aggregator of discovery data.</param>
     /// <param name="dataSerializer">The data serializer.</param>
     /// <param name="fileHelper">The file helper.</param>
     internal ProxyDiscoveryManager(

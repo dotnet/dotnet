@@ -56,11 +56,10 @@ public class TestRunAttachmentsProcessingManagerTests
         _mockAttachmentHandler1.Setup(h => h.GetExtensionUris()).Returns(new[] { new Uri(Uri1) });
         _mockAttachmentHandler2.Setup(h => h.GetExtensionUris()).Returns(new[] { new Uri(Uri2) });
         _mockDataCollectorAttachmentsProcessorsFactory.Setup(p => p.Create(It.IsAny<InvokedDataCollector[]>(), It.IsAny<IMessageLogger>()))
-            .Returns(new DataCollectorAttachmentProcessor[]
-            {
+            .Returns([
                 new( "friendlyNameA", _mockAttachmentHandler1.Object ),
                 new( "friendlyNameB"  ,_mockAttachmentHandler2.Object )
-            });
+            ]);
 
         _manager = new TestRunAttachmentsProcessingManager(_mockEventSource.Object, _mockDataCollectorAttachmentsProcessorsFactory.Object);
 
@@ -114,10 +113,7 @@ public class TestRunAttachmentsProcessingManagerTests
     public async Task ProcessTestRunAttachmentsAsync_ShouldReturn1NotProcessedAttachmentThroughEventsHandler_If1NotRelatedAttachmentOnInput()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
-            new AttachmentSet(new Uri(Uri3), "uri3_input")
-        };
+        List<AttachmentSet> inputAttachments = [new AttachmentSet(new Uri(Uri3), "uri3_input")];
 
         // act
         await _manager.ProcessTestRunAttachmentsAsync(Constants.EmptyRunSettings, _mockRequestData.Object, inputAttachments, Array.Empty<InvokedDataCollector>(), _mockEventsHandler.Object, _cancellationTokenSource.Token);
@@ -138,10 +134,7 @@ public class TestRunAttachmentsProcessingManagerTests
     public async Task ProcessTestRunAttachmentsAsync_ShouldReturn1NotProcessedAttachment_If1NotRelatedAttachmentOnInput()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
-            new AttachmentSet(new Uri(Uri3), "uri3_input")
-        };
+        List<AttachmentSet> inputAttachments = [new AttachmentSet(new Uri(Uri3), "uri3_input")];
 
         // act
         var result = await _manager.ProcessTestRunAttachmentsAsync(Constants.EmptyRunSettings, _mockRequestData.Object, inputAttachments, Array.Empty<InvokedDataCollector>(), _cancellationTokenSource.Token);
@@ -161,15 +154,9 @@ public class TestRunAttachmentsProcessingManagerTests
     public async Task ProcessTestRunAttachmentsAsync_ShouldReturn1ProcessedAttachmentThroughEventsHandler_IfRelatedAttachmentOnInput()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
-            new AttachmentSet(new Uri(Uri1), "uri1_input")
-        };
+        List<AttachmentSet> inputAttachments = [new AttachmentSet(new Uri(Uri1), "uri1_input")];
 
-        List<AttachmentSet> outputAttachments = new()
-        {
-            new AttachmentSet(new Uri(Uri1), "uri1_output")
-        };
+        List<AttachmentSet> outputAttachments = [new AttachmentSet(new Uri(Uri1), "uri1_output")];
 
         _mockAttachmentHandler1.Setup(h => h.ProcessAttachmentSetsAsync(It.IsAny<XmlElement>(), It.IsAny<ICollection<AttachmentSet>>(), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), It.IsAny<CancellationToken>())).ReturnsAsync(outputAttachments);
 
@@ -192,15 +179,9 @@ public class TestRunAttachmentsProcessingManagerTests
     public async Task ProcessTestRunAttachmentsAsync_ShouldReturn1ProcessedAttachment_IfRelatedAttachmentOnInput()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
-            new AttachmentSet(new Uri(Uri1), "uri1_input")
-        };
+        List<AttachmentSet> inputAttachments = [new AttachmentSet(new Uri(Uri1), "uri1_input")];
 
-        List<AttachmentSet> outputAttachments = new()
-        {
-            new AttachmentSet(new Uri(Uri1), "uri1_output")
-        };
+        List<AttachmentSet> outputAttachments = [new AttachmentSet(new Uri(Uri1), "uri1_output")];
 
         _mockAttachmentHandler1.Setup(h => h.ProcessAttachmentSetsAsync(It.IsAny<XmlElement>(), It.IsAny<ICollection<AttachmentSet>>(), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), It.IsAny<CancellationToken>())).ReturnsAsync(outputAttachments);
 
@@ -224,10 +205,7 @@ public class TestRunAttachmentsProcessingManagerTests
     public async Task ProcessTestRunAttachmentsAsync_ShouldReturnInitialAttachmentsThroughEventsHandler_IfRelatedAttachmentOnInputButHandlerThrowsException()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
-            new AttachmentSet(new Uri(Uri1), "uri1_input")
-        };
+        List<AttachmentSet> inputAttachments = [new AttachmentSet(new Uri(Uri1), "uri1_input")];
 
         var exceptionToThrow = new Exception("exception message");
         _mockAttachmentHandler1.Setup(h => h.ProcessAttachmentSetsAsync(It.IsAny<XmlElement>(), It.IsAny<ICollection<AttachmentSet>>(), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), It.IsAny<CancellationToken>())).Throws(exceptionToThrow);
@@ -251,10 +229,7 @@ public class TestRunAttachmentsProcessingManagerTests
     public async Task ProcessTestRunAttachmentsAsync_ShouldReturnInitialAttachments_IfRelatedAttachmentOnInputButHandlerThrowsException()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
-            new AttachmentSet(new Uri(Uri1), "uri1_input")
-        };
+        List<AttachmentSet> inputAttachments = [new AttachmentSet(new Uri(Uri1), "uri1_input")];
 
         _mockAttachmentHandler1.Setup(h => h.ProcessAttachmentSetsAsync(It.IsAny<XmlElement>(), It.IsAny<ICollection<AttachmentSet>>(), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), It.IsAny<CancellationToken>())).Throws(new Exception("exception message"));
 
@@ -277,10 +252,7 @@ public class TestRunAttachmentsProcessingManagerTests
     {
         // arrange
         _cancellationTokenSource.Cancel();
-        List<AttachmentSet> inputAttachments = new()
-        {
-            new AttachmentSet(new Uri(Uri1), "uri1_input")
-        };
+        List<AttachmentSet> inputAttachments = [new AttachmentSet(new Uri(Uri1), "uri1_input")];
 
         // act
         await _manager.ProcessTestRunAttachmentsAsync(Constants.EmptyRunSettings, _mockRequestData.Object, inputAttachments, Array.Empty<InvokedDataCollector>(), _mockEventsHandler.Object, _cancellationTokenSource.Token);
@@ -301,10 +273,7 @@ public class TestRunAttachmentsProcessingManagerTests
     {
         // arrange
         _cancellationTokenSource.Cancel();
-        List<AttachmentSet> inputAttachments = new()
-        {
-            new AttachmentSet(new Uri(Uri1), "uri1_input")
-        };
+        List<AttachmentSet> inputAttachments = [new AttachmentSet(new Uri(Uri1), "uri1_input")];
 
         // act
         var result = await _manager.ProcessTestRunAttachmentsAsync(Constants.EmptyRunSettings, _mockRequestData.Object, inputAttachments, Array.Empty<InvokedDataCollector>(), _cancellationTokenSource.Token);
@@ -324,24 +293,18 @@ public class TestRunAttachmentsProcessingManagerTests
     public async Task ProcessTestRunAttachmentsAsync_ShouldReturnProcessedAttachmentsThroughEventsHandler_IfRelatedAttachmentsOnInput()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
+        List<AttachmentSet> inputAttachments =
+        [
             new AttachmentSet(new Uri(Uri1), "uri1_input1"),
             new AttachmentSet(new Uri(Uri1), "uri1_input2"),
             new AttachmentSet(new Uri(Uri2), "uri2_input1"),
             new AttachmentSet(new Uri(Uri2), "uri2_input2"),
-            new AttachmentSet(new Uri(Uri3), "uri3_input1"),
-        };
+            new AttachmentSet(new Uri(Uri3), "uri3_input1")
+        ];
 
-        List<AttachmentSet> outputAttachmentsForHandler1 = new()
-        {
-            new AttachmentSet(new Uri(Uri1), "uri1_output")
-        };
+        List<AttachmentSet> outputAttachmentsForHandler1 = [new AttachmentSet(new Uri(Uri1), "uri1_output")];
 
-        List<AttachmentSet> outputAttachmentsForHandler2 = new()
-        {
-            new AttachmentSet(new Uri(Uri2), "uri2_output")
-        };
+        List<AttachmentSet> outputAttachmentsForHandler2 = [new AttachmentSet(new Uri(Uri2), "uri2_output")];
 
         _mockAttachmentHandler1.Setup(h => h.ProcessAttachmentSetsAsync(null!, It.IsAny<ICollection<AttachmentSet>>(), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), It.IsAny<CancellationToken>())).ReturnsAsync(outputAttachmentsForHandler1);
         _mockAttachmentHandler2.Setup(h => h.ProcessAttachmentSetsAsync(null!, It.IsAny<ICollection<AttachmentSet>>(), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), It.IsAny<CancellationToken>())).ReturnsAsync(outputAttachmentsForHandler2);
@@ -365,24 +328,18 @@ public class TestRunAttachmentsProcessingManagerTests
     public async Task ProcessTestRunAttachmentsAsync_ShouldReturnProcessedAttachments_IfRelatedAttachmentsOnInput()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
+        List<AttachmentSet> inputAttachments =
+        [
             new AttachmentSet(new Uri(Uri1), "uri1_input1"),
             new AttachmentSet(new Uri(Uri1), "uri1_input2"),
             new AttachmentSet(new Uri(Uri2), "uri2_input1"),
             new AttachmentSet(new Uri(Uri2), "uri2_input2"),
-            new AttachmentSet(new Uri(Uri3), "uri3_input1"),
-        };
+            new AttachmentSet(new Uri(Uri3), "uri3_input1")
+        ];
 
-        List<AttachmentSet> outputAttachmentsForHandler1 = new()
-        {
-            new AttachmentSet(new Uri(Uri1), "uri1_output")
-        };
+        List<AttachmentSet> outputAttachmentsForHandler1 = [new AttachmentSet(new Uri(Uri1), "uri1_output")];
 
-        List<AttachmentSet> outputAttachmentsForHandler2 = new()
-        {
-            new AttachmentSet(new Uri(Uri2), "uri2_output")
-        };
+        List<AttachmentSet> outputAttachmentsForHandler2 = [new AttachmentSet(new Uri(Uri2), "uri2_output")];
 
         _mockAttachmentHandler1.Setup(h => h.ProcessAttachmentSetsAsync(It.IsAny<XmlElement>(), It.IsAny<ICollection<AttachmentSet>>(), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), It.IsAny<CancellationToken>())).ReturnsAsync(outputAttachmentsForHandler1);
         _mockAttachmentHandler2.Setup(h => h.ProcessAttachmentSetsAsync(It.IsAny<XmlElement>(), It.IsAny<ICollection<AttachmentSet>>(), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), It.IsAny<CancellationToken>())).ReturnsAsync(outputAttachmentsForHandler2);
@@ -407,10 +364,7 @@ public class TestRunAttachmentsProcessingManagerTests
     public async Task ProcessTestRunAttachmentsAsync_ShouldReturnInitialAttachmentsThroughEventsHandler_IfOperationCancelled()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
-            new AttachmentSet(new Uri(Uri1), "uri1_input")
-        };
+        List<AttachmentSet> inputAttachments = [new AttachmentSet(new Uri(Uri1), "uri1_input")];
 
         ICollection<AttachmentSet> outputAttachments = new List<AttachmentSet>
         {
@@ -491,10 +445,7 @@ public class TestRunAttachmentsProcessingManagerTests
     public async Task ProcessTestRunAttachmentsAsync_ShouldReturnInitialAttachments_IfOperationCancelled()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
-            new AttachmentSet(new Uri(Uri1), "uri1_input")
-        };
+        List<AttachmentSet> inputAttachments = [new AttachmentSet(new Uri(Uri1), "uri1_input")];
 
         ICollection<AttachmentSet> outputAttachments = new List<AttachmentSet>
         {
@@ -552,11 +503,11 @@ public class TestRunAttachmentsProcessingManagerTests
     public async Task ProcessTestRunAttachmentsAsync_ShouldReturnProperlySendProgressEvents_IfHandlersPropagesEvents()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
+        List<AttachmentSet> inputAttachments =
+        [
             new AttachmentSet(new Uri(Uri1), "uri1_input"),
             new AttachmentSet(new Uri(Uri2), "uri2_input")
-        };
+        ];
 
         ICollection<AttachmentSet> outputAttachments1 = new List<AttachmentSet>
         {
@@ -628,11 +579,11 @@ public class TestRunAttachmentsProcessingManagerTests
     public async Task ProcessTestRunAttachmentsAsync_ShouldNotFailIfRunsettingsIsNull()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
+        List<AttachmentSet> inputAttachments =
+        [
             new AttachmentSet(new Uri(Uri1), "uri1_input"),
             new AttachmentSet(new Uri(Uri2), "uri2_input")
-        };
+        ];
         ICollection<AttachmentSet> outputAttachments = new List<AttachmentSet>
         {
             new(new Uri(Uri2), "uri2_output")
@@ -658,16 +609,16 @@ public class TestRunAttachmentsProcessingManagerTests
     public async Task ProcessTestRunAttachmentsAsync_ShouldFlowCorrectDataCollectorConfiguration(bool withConfig)
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
+        List<AttachmentSet> inputAttachments =
+        [
             new AttachmentSet(new Uri(Uri1), "uri1_input"),
             new AttachmentSet(new Uri(Uri2), "uri2_input")
-        };
+        ];
 
-        List<InvokedDataCollector> invokedDataCollectors = new()
-        {
+        List<InvokedDataCollector> invokedDataCollectors =
+        [
             new InvokedDataCollector(new Uri(Uri1), withConfig ? "friendlyNameA" : "friendlyNameB", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, false)
-        };
+        ];
 
         string runSettingsXml =
             $@"
@@ -716,10 +667,7 @@ public class TestRunAttachmentsProcessingManagerTests
     public async Task ProcessTestRunAttachmentsAsync_ShouldNotConsumeAttachmentsIfProcessorFails()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
-            new AttachmentSet(new Uri(Uri1), "uri1_input_1")
-        };
+        List<AttachmentSet> inputAttachments = [new AttachmentSet(new Uri(Uri1), "uri1_input_1")];
         inputAttachments[0].Attachments.Add(UriDataAttachment.CreateFrom("file1", "Sample1"));
         inputAttachments[0].Attachments.Add(UriDataAttachment.CreateFrom("file2", "Sample2"));
         inputAttachments[0].Attachments.Add(UriDataAttachment.CreateFrom("file3", "Sample3"));
@@ -778,10 +726,10 @@ public class TestRunAttachmentsProcessingManagerTests
     public async Task ProcessTestRunAttachmentsAsync_ShouldNotConsumeAttachmentsIfAllProcessorsFail()
     {
         // arrange
-        List<AttachmentSet> inputAttachments = new()
-        {
-            new AttachmentSet(new Uri(Uri1), "uri1_input_1"),
-        };
+        List<AttachmentSet> inputAttachments =
+        [
+            new AttachmentSet(new Uri(Uri1), "uri1_input_1")
+        ];
         inputAttachments[0].Attachments.Add(UriDataAttachment.CreateFrom("file1", "Sample1"));
         inputAttachments[0].Attachments.Add(UriDataAttachment.CreateFrom("file2", "Sample2"));
         inputAttachments[0].Attachments.Add(UriDataAttachment.CreateFrom("file3", "Sample3"));

@@ -415,6 +415,11 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                         // 2) making sure we still make the project executable (and so we actually do get runtimeconfig unless the user tries hard to not make the test and EXE).
                         var suffix = _targetFramework.Version == "1.0.0.0" ? "latest" : $"{new Version(_targetFramework.Version).Major}.{new Version(_targetFramework.Version).Minor}";
                         var testhostRuntimeConfig = Path.Combine(Path.GetDirectoryName(testHostNextToRunner)!, $"testhost-{suffix}.runtimeconfig.json");
+                        if (!_fileHelper.Exists(testhostRuntimeConfig))
+                        {
+                            testhostRuntimeConfig = Path.Combine(Path.GetDirectoryName(testHostNextToRunner)!, $"testhost-latest.runtimeconfig.json");
+                        }
+
                         argsToAdd = " --runtimeconfig " + testhostRuntimeConfig.AddDoubleQuote();
                         args += argsToAdd;
                         EqtTrace.Verbose("DotnetTestHostmanager: Adding {0} in args", argsToAdd);

@@ -20,7 +20,7 @@ public class DiaSession : INavigationSession
     /// <summary>
     /// Characters that should be stripped off the end of test names.
     /// </summary>
-    private static readonly char[] TestNameStripChars = { '(', ')', ' ' };
+    private static readonly char[] TestNameStripChars = ['(', ')', ' '];
 
     /// <summary>
     /// The symbol reader.

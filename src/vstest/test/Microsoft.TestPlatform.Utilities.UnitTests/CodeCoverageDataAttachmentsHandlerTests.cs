@@ -86,7 +86,7 @@ public class CodeCoverageDataAttachmentsHandlerTests
         var attachmentSet = new AttachmentSet(new Uri("datacollector://microsoft/CodeCoverage/2.0"), string.Empty);
         attachmentSet.Attachments.Add(new UriDataAttachment(new Uri("C:\\temp\\aa.coverage"), "coverage"));
 
-        Collection<AttachmentSet> attachment = new() { attachmentSet };
+        Collection<AttachmentSet> attachment = [attachmentSet];
         ICollection<AttachmentSet> resultAttachmentSets = await
             _coverageDataAttachmentsHandler.ProcessAttachmentSetsAsync(_configurationElement, attachment, _mockProgressReporter.Object, null, CancellationToken.None);
 
@@ -106,7 +106,7 @@ public class CodeCoverageDataAttachmentsHandlerTests
         attachmentSet.Attachments.Add(new UriDataAttachment(new Uri(file1Path), "coverage"));
         attachmentSet.Attachments.Add(new UriDataAttachment(new Uri(file2Path), "coverage"));
 
-        Collection<AttachmentSet> attachment = new() { attachmentSet };
+        Collection<AttachmentSet> attachment = [attachmentSet];
         ICollection<AttachmentSet> resultAttachmentSets = await
             _coverageDataAttachmentsHandler.ProcessAttachmentSetsAsync(_configurationElement, attachment, _mockProgressReporter.Object, null, CancellationToken.None);
 
@@ -127,7 +127,7 @@ public class CodeCoverageDataAttachmentsHandlerTests
         attachmentSet.Attachments.Add(new UriDataAttachment(new Uri(file1Path), "coverage"));
         attachmentSet.Attachments.Add(new UriDataAttachment(new Uri(file1Path), "coverage"));
 
-        Collection<AttachmentSet> attachment = new() { attachmentSet };
+        Collection<AttachmentSet> attachment = [attachmentSet];
         ICollection<AttachmentSet> resultAttachmentSets = await
             _coverageDataAttachmentsHandler.ProcessAttachmentSetsAsync(_configurationElement, attachment, _mockProgressReporter.Object, null, CancellationToken.None);
 
@@ -144,7 +144,7 @@ public class CodeCoverageDataAttachmentsHandlerTests
         var attachmentSet = new AttachmentSet(new Uri("datacollector://microsoft/CodeCoverage/2.0"), string.Empty);
         attachmentSet.Attachments.Add(new UriDataAttachment(new Uri("C:\\temp\\aa.logs"), "coverage"));
 
-        Collection<AttachmentSet> attachment = new() { attachmentSet };
+        Collection<AttachmentSet> attachment = [attachmentSet];
         ICollection<AttachmentSet> resultAttachmentSets = await
             _coverageDataAttachmentsHandler.ProcessAttachmentSetsAsync(_configurationElement, attachment, _mockProgressReporter.Object, null, CancellationToken.None);
 
@@ -165,7 +165,7 @@ public class CodeCoverageDataAttachmentsHandlerTests
         attachmentSet1.Attachments.Add(new UriDataAttachment(new Uri("C:\\temp\\aa.logs"), "coverage"));
         attachmentSet1.Attachments.Add(new UriDataAttachment(new Uri("C:\\temp\\bb.logs"), "coverage"));
 
-        Collection<AttachmentSet> attachment = new() { attachmentSet, attachmentSet1 };
+        Collection<AttachmentSet> attachment = [attachmentSet, attachmentSet1];
         ICollection<AttachmentSet> resultAttachmentSets = await
             _coverageDataAttachmentsHandler.ProcessAttachmentSetsAsync(_configurationElement, attachment, _mockProgressReporter.Object, null, CancellationToken.None);
 
@@ -183,11 +183,11 @@ public class CodeCoverageDataAttachmentsHandlerTests
         CancellationTokenSource cts = new();
         cts.Cancel();
 
-        Collection<AttachmentSet> attachment = new()
-        {
+        Collection<AttachmentSet> attachment =
+        [
             attachmentSet,
             attachmentSet
-        };
+        ];
 
         await Assert.ThrowsExceptionAsync<OperationCanceledException>(async () => await _coverageDataAttachmentsHandler.ProcessAttachmentSetsAsync(_configurationElement, attachment, _mockProgressReporter.Object, null, cts.Token));
 

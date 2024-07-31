@@ -107,6 +107,8 @@ internal class ListFullyQualifiedTestsArgumentExecutor : IArgumentExecutor
     /// <param name="options">
     /// The options.
     /// </param>
+    /// <param name="runSettingsProvider">Runsettings provider.</param>
+    /// <param name="testRequestManager">Test request manager.</param>
     public ListFullyQualifiedTestsArgumentExecutor(
         CommandLineOptions options,
         IRunSettingsProvider runSettingsProvider,
@@ -121,6 +123,9 @@ internal class ListFullyQualifiedTestsArgumentExecutor : IArgumentExecutor
     /// <param name="options">
     /// The options.
     /// </param>
+    /// <param name="runSettingsProvider">Runsettings provider.</param>
+    /// <param name="testRequestManager">Test request manager.</param>
+    /// <param name="output">Output such as console.</param>
     internal ListFullyQualifiedTestsArgumentExecutor(
         CommandLineOptions options,
         IRunSettingsProvider runSettingsProvider,

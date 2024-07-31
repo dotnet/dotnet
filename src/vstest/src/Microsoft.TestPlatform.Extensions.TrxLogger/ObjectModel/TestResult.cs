@@ -212,12 +212,18 @@ internal class TestResult : ITestResult, IXmlTestStore
     /// <param name="runId">
     /// The run id.
     /// </param>
-    /// <param name="test">
-    /// The test.
+    /// <param name="executionId">Execution id.</param>
+    /// <param name="parentExecutionId">Parent execution id.</param>
+    /// <param name="resultName">Result name.</param>
+    /// <param name="testId">
+    /// The test id.
     /// </param>
     /// <param name="outcome">
     /// The outcome.
     /// </param>
+    /// <param name="testType"></param>
+    /// <param name="testCategoryId"></param>
+    /// <param name="trxFileHelper"></param>
     public TestResult(
         Guid runId,
         Guid testId,

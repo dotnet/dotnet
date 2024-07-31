@@ -61,6 +61,7 @@ public class CommandLineArgumentsHelper
     /// </summary>
     /// <param name="argsDictionary">Dictionary of all arguments Ex: <c>{ "--port":"12312", "--parentprocessid":"2312" }</c></param>
     /// <param name="fullname">The full name for required argument. Ex: "--port"</param>
+    /// <param name="value">The output value.</param>
     /// <returns>Value of the argument.</returns>
     /// <exception cref="ArgumentException">Thrown if value of an argument is not an integer.</exception>
     public static bool TryGetIntArgFromDict(IDictionary<string, string?> argsDictionary, string fullname, out int value)

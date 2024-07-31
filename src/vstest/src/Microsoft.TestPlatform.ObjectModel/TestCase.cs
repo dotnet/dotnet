@@ -339,7 +339,7 @@ public static class TestCaseProperties
     public static readonly TestProperty LineNumber = TestProperty.Register("TestCase.LineNumber", LineNumberLabel, typeof(int), TestPropertyAttributes.Hidden, typeof(TestCase));
 
     internal static TestProperty[] Properties { get; } =
-    {
+    [
         CodeFilePath,
         DisplayName,
         ExecutorUri,
@@ -347,7 +347,7 @@ public static class TestCaseProperties
         Id,
         LineNumber,
         Source
-    };
+    ];
 
     private static bool ValidateName(object? value)
     {

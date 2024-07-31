@@ -42,7 +42,7 @@ public class DotnetTestHostManagerTests
     private readonly Mock<IEnvironment> _mockEnvironment;
     private readonly Mock<IRunSettingsHelper> _mockRunsettingHelper;
     private readonly TestRunnerConnectionInfo _defaultConnectionInfo;
-    private readonly string[] _testSource = { "test.dll" };
+    private readonly string[] _testSource = ["test.dll"];
     private readonly string _defaultTestHostPath;
     private readonly TestProcessStartInfo _defaultTestProcessStartInfo;
     private readonly TestableDotnetTestHostManager _dotnetHostManager;
@@ -548,7 +548,7 @@ public class DotnetTestHostManagerTests
     public void GetTestPlatformExtensionsShouldReturnEmptySetIfSourceDirectoryDoesNotExist()
     {
         _mockFileHelper.Setup(fh => fh.DirectoryExists(It.IsAny<string>())).Returns(false);
-        var extensions = _dotnetHostManager.GetTestPlatformExtensions(new[] { $".{Path.DirectorySeparatorChar}foo.dll" }, Enumerable.Empty<string>());
+        var extensions = _dotnetHostManager.GetTestPlatformExtensions(new[] { $".{Path.DirectorySeparatorChar}foo.dll" }, []);
 
         Assert.AreEqual(0, extensions.Count());
     }
@@ -558,7 +558,7 @@ public class DotnetTestHostManagerTests
     {
         _mockFileHelper.Setup(fh => fh.DirectoryExists(It.IsAny<string>())).Returns(true);
         _mockFileHelper.Setup(fh => fh.EnumerateFiles(It.IsAny<string>(), SearchOption.TopDirectoryOnly, It.IsAny<string[]>())).Returns(new[] { "foo.TestAdapter.dll" });
-        var extensions = _dotnetHostManager.GetTestPlatformExtensions(new[] { $".{Path.DirectorySeparatorChar}foo.dll" }, Enumerable.Empty<string>());
+        var extensions = _dotnetHostManager.GetTestPlatformExtensions(new[] { $".{Path.DirectorySeparatorChar}foo.dll" }, []);
 
         CollectionAssert.AreEqual(new[] { "foo.TestAdapter.dll" }, extensions.ToArray());
     }
@@ -569,7 +569,7 @@ public class DotnetTestHostManagerTests
         // Parent directory is empty since the input source is file "test.dll"
         _mockFileHelper.Setup(fh => fh.DirectoryExists(It.IsAny<string>())).Returns(true);
         _mockFileHelper.Setup(fh => fh.EnumerateFiles(It.IsAny<string>(), SearchOption.TopDirectoryOnly, It.IsAny<string[]>())).Returns(new[] { "foo.dll" });
-        var extensions = _dotnetHostManager.GetTestPlatformExtensions(_testSource, Enumerable.Empty<string>());
+        var extensions = _dotnetHostManager.GetTestPlatformExtensions(_testSource, []);
 
         Assert.AreEqual(0, extensions.Count());
     }
@@ -579,7 +579,7 @@ public class DotnetTestHostManagerTests
     {
         _mockFileHelper.Setup(fh => fh.DirectoryExists(It.IsAny<string>())).Returns(true);
         _mockFileHelper.Setup(fh => fh.EnumerateFiles(It.IsAny<string>(), SearchOption.TopDirectoryOnly, It.IsAny<string[]>())).Returns(new[] { "foo.dll" });
-        var extensions = _dotnetHostManager.GetTestPlatformExtensions(_testSource, new List<string> { "abc.dataollector.dll" });
+        var extensions = _dotnetHostManager.GetTestPlatformExtensions(_testSource, ["abc.dataollector.dll"]);
 
         Assert.AreEqual(0, extensions.Count());
     }
@@ -669,14 +669,15 @@ public class DotnetTestHostManagerTests
     // we can't put in a "default" value, and we don't have other way to determine if this provided value is the
     // runtime default or the actual value that user provided, so right now the default will use the latest, instead
     // or the more correct 1.0, it should be okay, as that version is not supported anymore anyway
-    [DataRow("netcoreapp3.1", "3.1")]
-    [DataRow("net5.0", "5.0")]
+    [DataRow("netcoreapp3.1", "3.1", true)]
+    [DataRow("net5.0", "5.0", true)]
 
     // net6.0 is currently the latest released version, but it still has it's own runtime config, it is not the same as
     // "latest" which means the latest you have on system. So if you have only 5.0 SDK then net6.0 will fail because it can't find net6.0,
     // but latest would use net5.0 because that is the latest one on your system.
-    [DataRow("net6.0", "6.0")]
-    public void GetTestHostProcessStartInfoShouldIncludeTestHostPathNextToTestRunnerIfTesthostDllIsNoFoundAndDepsFileNotFoundWithTheCorrectTfm(string tfm, string suffix)
+    [DataRow("net6.0", "6.0", true)]
+    [DataRow("net6.0", "latest", false)]
+    public void GetTestHostProcessStartInfoShouldIncludeTestHostPathNextToTestRunnerIfTesthostDllIsNoFoundAndDepsFileNotFoundWithTheCorrectTfm(string tfm, string suffix, bool runtimeConfigExists)
     {
         // Absolute path to the source directory
         var sourcePath = Path.Combine(_temp, "test.dll");
@@ -686,6 +687,8 @@ public class DotnetTestHostManagerTests
         var here = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
         var testhostNextToRunner = Path.Combine(here, "testhost.dll");
         _mockFileHelper.Setup(ph => ph.Exists(testhostNextToRunner)).Returns(true);
+
+        _mockFileHelper.Setup(ph => ph.Exists(It.Is<string>(s => s.Contains($"{suffix}.runtimeconfig.json")))).Returns(runtimeConfigExists);
 
         _dotnetHostManager.Initialize(_mockMessageLogger.Object, $"<RunSettings><RunConfiguration><TargetFrameworkVersion>{tfm}</TargetFrameworkVersion></RunConfiguration></RunSettings>");
         var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);

@@ -183,8 +183,9 @@ public class DataCollectionRunSettings : TestRunSettings
     /// <param name="reader">
     /// The reader.
     /// </param>
+    /// <param name="dataCollectorsName">Name of the datacollector.</param>
     /// <returns>
-    /// The <see cref="List"/>.
+    /// The <see cref="List{T}"/>.
     /// </returns>
     /// <exception cref="SettingsException">
     /// </exception>

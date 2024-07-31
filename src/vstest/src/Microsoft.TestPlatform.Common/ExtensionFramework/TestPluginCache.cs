@@ -82,6 +82,7 @@ public class TestPluginCache
     /// Gets a list of all extension paths filtered by input string.
     /// </summary>
     /// <param name="endsWithPattern">Pattern to filter extension paths.</param>
+    /// <param name="skipDefaultExtensions">True when default extensions should be skipped.</param>
     public List<string> GetExtensionPaths(string endsWithPattern, bool skipDefaultExtensions = false)
     {
         var extensions = GetFilteredExtensions(_filterableExtensionPaths, endsWithPattern);
@@ -115,7 +116,7 @@ public class TestPluginCache
     /// Pattern used to select files using String.EndsWith
     /// </param>
     /// <returns>
-    /// The <see cref="Dictionary"/>. of test plugin info.
+    /// The <see cref="Dictionary{TKey, TValue}"/>. of test plugin info.
     /// </returns>
     public Dictionary<string, TPluginInfo>? DiscoverTestExtensions<TPluginInfo, TExtension>(
         string endsWithPattern)
@@ -306,7 +307,7 @@ public class TestPluginCache
     /// Type of extension.
     /// </typeparam>
     /// <returns>
-    /// The <see cref="Dictionary"/>.
+    /// The <see cref="Dictionary{TKey, TValue>"/>.
     /// </returns>
     internal Dictionary<string, TPluginInfo> GetTestExtensions<TPluginInfo, TExtension>(
         string extensionAssembly,

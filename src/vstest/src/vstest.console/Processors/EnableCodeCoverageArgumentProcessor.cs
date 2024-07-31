@@ -77,7 +77,8 @@ internal class EnableCodeCoverageArgumentExecutor : IArgumentExecutor
     internal const string FriendlyName = "Code Coverage";
 
     private static readonly string XPathSeperator = "/";
-    private static readonly string[] NodeNames = new string[] { Constants.RunSettingsName, Constants.DataCollectionRunSettingsName, Constants.DataCollectorsSettingName, Constants.DataCollectorSettingName };
+    private static readonly string[] NodeNames = [Constants.RunSettingsName, Constants.DataCollectionRunSettingsName, Constants.DataCollectorsSettingName, Constants.DataCollectorSettingName
+    ];
 
     #region Default  CodeCoverage Settings String
 
@@ -191,7 +192,6 @@ internal class EnableCodeCoverageArgumentExecutor : IArgumentExecutor
     /// <summary>
     /// Updates with code coverage settings if not configured.
     /// </summary>
-    /// <param name="runSettingsDocument"> The run settings document. </param>
     private void UpdateWithCodeCoverageSettingsIfNotConfigured()
     {
         var runsettingsXml = _runSettingsManager.ActiveRunSettings?.SettingsXml;
@@ -258,7 +258,7 @@ internal class EnableCodeCoverageArgumentExecutor : IArgumentExecutor
     {
         var xmlText = "{0}";
         var nonExistingPath = fullpath.Substring(existingPath.Length);
-        var requiredNodeNames = nonExistingPath.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        var requiredNodeNames = nonExistingPath.Split(['/'], StringSplitOptions.RemoveEmptyEntries);
         var format = "<{0}>{1}</{0}>";
 
         foreach (var nodeName in requiredNodeNames)

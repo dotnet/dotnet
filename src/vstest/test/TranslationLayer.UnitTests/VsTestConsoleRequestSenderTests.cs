@@ -436,13 +436,13 @@ public class VsTestConsoleRequestSenderTests
 
         var mockHandler = new Mock<ITestDiscoveryEventsHandler2>();
 
-        List<string> sources = new() { "1.dll" };
+        List<string> sources = ["1.dll"];
 
         var testCase = new TestCase("hello", new Uri("world://how"), source: sources[0]);
         var testsFound = new Message()
         {
             MessageType = MessageType.TestCasesFound,
-            Payload = JToken.FromObject(new List<TestCase>() { testCase })
+            Payload = JToken.FromObject(new List<TestCase> { testCase })
         };
 
         var payload = new DiscoveryCompletePayload() { TotalTests = 1, LastDiscoveredTests = null, IsAborted = false, FullyDiscoveredSources = sources };
@@ -476,7 +476,7 @@ public class VsTestConsoleRequestSenderTests
 
         var mockHandler = new Mock<ITestDiscoveryEventsHandler2>();
 
-        List<string> sources = new() { "1.dll" };
+        List<string> sources = ["1.dll"];
 
         var testCase = new TestCase("hello", new Uri("world://how"), source: sources[0]);
         var testsFound = new Message()

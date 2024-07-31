@@ -9,12 +9,6 @@ using Microsoft.TestPlatform.TestUtilities;
 
 namespace Microsoft.TestPlatform.AcceptanceTests;
 
-/// <summary>
-///
-/// </summary>
-/// <param name="RunnerFramework"></param>
-/// <param name="TargetFramework"></param>
-/// <param name="InIsolationValue">Supported value = <c>/InIsolation</c>.</param>
 [Serializable] // Type should be serializable to allow the tree-view behavior of test discovery in Test Explorer
 public class RunnerInfo
 {

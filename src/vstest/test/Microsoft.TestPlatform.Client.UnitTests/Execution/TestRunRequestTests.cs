@@ -508,7 +508,7 @@ public class TestRunRequestTests
         bool attachmentsFound = false;
         _testRunRequest.OnRunCompletion += (s, e) => attachmentsFound = e.AttachmentSets != null && e.AttachmentSets.Count == 1;
 
-        List<AttachmentSet> attachmentSets = new() { new AttachmentSet(new Uri("datacollector://attachment"), "datacollectorAttachment") };
+        List<AttachmentSet> attachmentSets = [new AttachmentSet(new Uri("datacollector://attachment"), "datacollectorAttachment")];
 
         _testRunRequest.ExecuteAsync();
         var testRunCompleteEventsArgs = new TestRunCompleteEventArgs(

@@ -35,11 +35,11 @@
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>3.11.0-beta1.23525.2</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>3.11.0-beta1.23525.2</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <MicrosoftCodeCoverageIOVersion>17.7.0</MicrosoftCodeCoverageIOVersion>
-    <MicrosoftDiagnosticsNETCoreClientVersion>0.2.0-preview.24307.1</MicrosoftDiagnosticsNETCoreClientVersion>
+    <MicrosoftDiagnosticsNETCoreClientVersion>0.2.0-preview.24360.1</MicrosoftDiagnosticsNETCoreClientVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>3.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftFakesVersion>17.9.0-beta.24058.4</MicrosoftFakesVersion>
-    <MicrosoftInternalCodeCoverageVersion>17.11.3</MicrosoftInternalCodeCoverageVersion>
+    <MicrosoftInternalCodeCoverageVersion>17.12.0-preview.24368.5</MicrosoftInternalCodeCoverageVersion>
     <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.10.34924.118</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
     <MicrosoftVisualStudioInteropVersion>17.10.525-preview.1</MicrosoftVisualStudioInteropVersion>
@@ -66,9 +66,10 @@
     <MicrosoftCodeCoverageVersion>17.9.0</MicrosoftCodeCoverageVersion>
     <!-- These versions are used for running unit tests, and running acceptance tests. They are also used as the default version for projects
     in TestAssets.sln to allow running and debugging tests in that solution directly in VS without having to run them via AcceptanceTests. -->
-    <MSTestTestFrameworkVersion>3.3.1</MSTestTestFrameworkVersion>
-    <MSTestTestAdapterVersion>3.3.1</MSTestTestAdapterVersion>
+    <MSTestTestFrameworkVersion>3.4.3</MSTestTestFrameworkVersion>
+    <MSTestTestAdapterVersion>3.4.3</MSTestTestAdapterVersion>
     <MSTestAssertExtensionVersion>1.0.3-preview</MSTestAssertExtensionVersion>
+    <!-- This is the newest version of XUnit that still supports netcoreapp3.1 that we also use to run tests -->
     <XUnitFrameworkVersion>2.4.2</XUnitFrameworkVersion>
     <XUnitAdapterVersion>2.4.5</XUnitAdapterVersion>
     <XUnitConsoleRunnerVersion>2.4.2</XUnitConsoleRunnerVersion>
@@ -81,9 +82,9 @@
       These versions need to be "statically" readable because we read this file as xml in our build and tests.
     -->
     <!-- <MSTestFrameworkLatestVersion></MSTestFrameworkLatestVersion> is not here, because we don't build MSTest locally, so we don't have access to the latest version. -->
-    <MSTestFrameworkLatestPreviewVersion>[3.3.1]</MSTestFrameworkLatestPreviewVersion>
-    <MSTestFrameworkLatestStableVersion>[3.3.1]</MSTestFrameworkLatestStableVersion>
-    <MSTestFrameworkRecentStableVersion>[3.2.2]</MSTestFrameworkRecentStableVersion>
+    <MSTestFrameworkLatestPreviewVersion>[3.4.3]</MSTestFrameworkLatestPreviewVersion>
+    <MSTestFrameworkLatestStableVersion>[3.4.3]</MSTestFrameworkLatestStableVersion>
+    <MSTestFrameworkRecentStableVersion>[3.3.1]</MSTestFrameworkRecentStableVersion>
     <MSTestFrameworkMostDownloadedVersion>[2.2.10]</MSTestFrameworkMostDownloadedVersion>
     <MSTestFrameworkPreviousStableVersion>[2.2.10]</MSTestFrameworkPreviousStableVersion>
     <MSTestFrameworkLegacyStableVersion>[1.4.0]</MSTestFrameworkLegacyStableVersion>
@@ -91,9 +92,9 @@
     See Invoke-TestAssetsBuild in scripts/build.ps1. Exact versions are used to avoid Nuget substituting them by closest match, if we make a typo.
     These versions need to be "statically" readable because we read this file as xml in our build and tests. -->
     <!-- <VSTestConsoleLatestVersion></VSTestConsoleLatestVersion> is not here, NETTestSdkVersion is used instead, because that is the version of the locally built latest package.  -->
-    <VSTestConsoleLatestPreviewVersion>[17.10.0-release-24177-07]</VSTestConsoleLatestPreviewVersion>
-    <VSTestConsoleLatestStableVersion>[17.9.0]</VSTestConsoleLatestStableVersion>
-    <VSTestConsoleRecentStableVersion>[17.8.0]</VSTestConsoleRecentStableVersion>
+    <VSTestConsoleLatestPreviewVersion>[17.10.0]</VSTestConsoleLatestPreviewVersion>
+    <VSTestConsoleLatestStableVersion>[17.10.0]</VSTestConsoleLatestStableVersion>
+    <VSTestConsoleRecentStableVersion>[17.9.0]</VSTestConsoleRecentStableVersion>
     <VSTestConsoleMostDownloadedVersion>[17.6.2]</VSTestConsoleMostDownloadedVersion>
     <VSTestConsolePreviousStableVersion>[16.11.0]</VSTestConsolePreviousStableVersion>
     <VSTestConsoleLegacyStableVersion>[15.9.2]</VSTestConsoleLegacyStableVersion>

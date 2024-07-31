@@ -60,7 +60,7 @@ public class DefaultTestHostManagerTests
 
         _testHostManager = new DefaultTestHostManager(_mockProcessHelper.Object, _mockFileHelper.Object, _mockDotnetHostHelper.Object, _mockEnvironment.Object, _mockEnvironmentVariable.Object);
         _testHostManager.Initialize(_mockMessageLogger.Object, $"<?xml version=\"1.0\" encoding=\"utf-8\"?><RunSettings> <RunConfiguration> <TargetPlatform>{Architecture.X64}</TargetPlatform> <TargetFrameworkVersion>{Framework.DefaultFramework}</TargetFrameworkVersion> <DisableAppDomain>{false}</DisableAppDomain> </RunConfiguration> </RunSettings>");
-        _startInfo = _testHostManager.GetTestHostProcessStartInfo(Enumerable.Empty<string>(), null, default);
+        _startInfo = _testHostManager.GetTestHostProcessStartInfo([], null, default);
     }
 
     [TestMethod]
@@ -68,7 +68,7 @@ public class DefaultTestHostManagerTests
     {
         _testHostManager.Initialize(_mockMessageLogger.Object, $"<?xml version=\"1.0\" encoding=\"utf-8\"?><RunSettings> <RunConfiguration> <TargetPlatform>{Architecture.X86}</TargetPlatform> <TargetFrameworkVersion>{Framework.DefaultFramework}</TargetFrameworkVersion> <DisableAppDomain>{false}</DisableAppDomain> </RunConfiguration> </RunSettings>");
 
-        var info = _testHostManager.GetTestHostProcessStartInfo(Enumerable.Empty<string>(), null, default);
+        var info = _testHostManager.GetTestHostProcessStartInfo([], null, default);
 
         StringAssert.EndsWith(info.FileName, "testhost.x86.exe");
     }
@@ -84,7 +84,7 @@ public class DefaultTestHostManagerTests
     {
         _mockProcessHelper.Setup(ph => ph.GetCurrentProcessFileName()).Returns("dotnet.exe");
         _mockFileHelper.Setup(x => x.Exists(It.IsAny<string>())).Returns(false);
-        var startInfo = _testHostManager.GetTestHostProcessStartInfo(Enumerable.Empty<string>(), null, default);
+        var startInfo = _testHostManager.GetTestHostProcessStartInfo([], null, default);
 
         Assert.IsTrue(startInfo.FileName!.EndsWith(Path.Combine("TestHostNetFramework", "testhost.exe")));
     }
@@ -94,7 +94,7 @@ public class DefaultTestHostManagerTests
     {
         _mockProcessHelper.Setup(ph => ph.GetCurrentProcessFileName()).Returns("dotnet.exe");
         _mockFileHelper.Setup(x => x.Exists(It.IsAny<string>())).Returns(true);
-        var startInfo = _testHostManager.GetTestHostProcessStartInfo(Enumerable.Empty<string>(), null, default);
+        var startInfo = _testHostManager.GetTestHostProcessStartInfo([], null, default);
 
         Assert.IsFalse(startInfo.FileName!.EndsWith(Path.Combine("TestHost", "testhost.exe")));
         Assert.IsTrue(startInfo.FileName!.EndsWith("testhost.exe"));
@@ -104,7 +104,7 @@ public class DefaultTestHostManagerTests
     public void GetTestHostProcessStartInfoShouldNotIncludeFileNameFromSubFolderTestHostWhenCurrentProcessIsIde()
     {
         _mockProcessHelper.Setup(ph => ph.GetCurrentProcessFileName()).Returns("devenv.exe");
-        var startInfo = _testHostManager.GetTestHostProcessStartInfo(Enumerable.Empty<string>(), null, default);
+        var startInfo = _testHostManager.GetTestHostProcessStartInfo([], null, default);
 
         Assert.IsFalse(startInfo.FileName!.EndsWith(Path.Combine("TestHost", "testhost.exe")));
         Assert.IsTrue(startInfo.FileName!.EndsWith("testhost.exe"));
@@ -115,7 +115,7 @@ public class DefaultTestHostManagerTests
     {
         var connectionInfo = new TestRunnerConnectionInfo { Port = 123, ConnectionInfo = new TestHostConnectionInfo { Endpoint = "127.0.0.0:123", Role = ConnectionRole.Client, Transport = Transport.Sockets }, RunnerProcessId = 101 };
         var info = _testHostManager.GetTestHostProcessStartInfo(
-            Enumerable.Empty<string>(),
+            [],
             null,
             connectionInfo);
 
@@ -148,7 +148,7 @@ public class DefaultTestHostManagerTests
     {
         var environmentVariables = new Dictionary<string, string?> { { "k1", "v1" } };
 
-        var info = _testHostManager.GetTestHostProcessStartInfo(Enumerable.Empty<string>(), environmentVariables, default);
+        var info = _testHostManager.GetTestHostProcessStartInfo([], environmentVariables, default);
 
         Assert.AreEqual(environmentVariables, info.EnvironmentVariables);
     }
@@ -213,7 +213,7 @@ public class DefaultTestHostManagerTests
     public void GetTestPlatformExtensionsShouldReturnExtensionsListAsIsIfSourcesListIsEmpty()
     {
         _testHostManager.Initialize(_mockMessageLogger.Object, $"<?xml version=\"1.0\" encoding=\"utf-8\"?><RunSettings> <RunConfiguration></RunConfiguration> </RunSettings>");
-        List<string> currentList = new() { @"FooExtension.dll" };
+        List<string> currentList = [@"FooExtension.dll"];
 
         // Act
         var resultExtensions = _testHostManager.GetTestPlatformExtensions(new List<string>(), currentList).ToList();
@@ -226,7 +226,7 @@ public class DefaultTestHostManagerTests
     public void GetTestPlatformExtensionsShouldReturnExtensionsListAsIsIfSourcesListIsNull()
     {
         _testHostManager.Initialize(_mockMessageLogger.Object, $"<?xml version=\"1.0\" encoding=\"utf-8\"?><RunSettings> <RunConfiguration></RunConfiguration> </RunSettings>");
-        List<string> currentList = new() { @"FooExtension.dll" };
+        List<string> currentList = [@"FooExtension.dll"];
 
         // Act
         var resultExtensions = _testHostManager.GetTestPlatformExtensions(null, currentList).ToList();
@@ -238,17 +238,17 @@ public class DefaultTestHostManagerTests
     [TestMethod]
     public void GetTestPlatformExtensionsShouldNotExcludeOutputDirectoryExtensionsIfTestAdapterPathIsSet()
     {
-        List<string> sourcesDir = new() { @"C:\Source1" };
-        List<string> sources = new() { @"C:\Source1\source1.dll" };
+        List<string> sourcesDir = [@"C:\Source1"];
+        List<string> sources = [@"C:\Source1\source1.dll"];
 
-        List<string> extensionsList1 = new() { @"C:\Source1\ext1.TestAdapter.dll", @"C:\Source1\ext2.TestAdapter.dll" };
+        List<string> extensionsList1 = [@"C:\Source1\ext1.TestAdapter.dll", @"C:\Source1\ext2.TestAdapter.dll"];
         _mockFileHelper.Setup(fh => fh.EnumerateFiles(sourcesDir[0], SearchOption.TopDirectoryOnly, "TestAdapter.dll")).Returns(extensionsList1);
 
         _mockFileHelper.Setup(fh => fh.GetFileVersion(extensionsList1[0])).Returns(new Version(2, 0));
         _mockFileHelper.Setup(fh => fh.GetFileVersion(extensionsList1[1])).Returns(new Version(5, 5));
 
         _testHostManager.Initialize(_mockMessageLogger.Object, $"<?xml version=\"1.0\" encoding=\"utf-8\"?><RunSettings> <RunConfiguration><TestAdaptersPaths>C:\\Foo</TestAdaptersPaths></RunConfiguration> </RunSettings>");
-        List<string> currentList = new() { @"FooExtension.dll", @"C:\Source1\ext1.TestAdapter.dll", @"C:\Source1\ext2.TestAdapter.dll" };
+        List<string> currentList = [@"FooExtension.dll", @"C:\Source1\ext1.TestAdapter.dll", @"C:\Source1\ext2.TestAdapter.dll"];
 
         // Act
         var resultExtensions = _testHostManager.GetTestPlatformExtensions(sources, currentList).ToList();
@@ -261,11 +261,11 @@ public class DefaultTestHostManagerTests
     [TestCategory("Windows")]
     public void GetTestPlatformExtensionsShouldIncludeOutputDirectoryExtensionsIfTestAdapterPathIsNotSet()
     {
-        List<string> sourcesDir = new() { "C:\\Source1", "C:\\Source2" };
-        List<string> sources = new() { @"C:\Source1\source1.dll", @"C:\Source2\source2.dll" };
+        List<string> sourcesDir = ["C:\\Source1", "C:\\Source2"];
+        List<string> sources = [@"C:\Source1\source1.dll", @"C:\Source2\source2.dll"];
 
-        List<string> extensionsList1 = new() { @"C:\Source1\ext1.TestAdapter.dll", @"C:\Source1\ext2.TestAdapter.dll" };
-        List<string> extensionsList2 = new() { @"C:\Source2\ext1.TestAdapter.dll", @"C:\Source2\ext2.TestAdapter.dll" };
+        List<string> extensionsList1 = [@"C:\Source1\ext1.TestAdapter.dll", @"C:\Source1\ext2.TestAdapter.dll"];
+        List<string> extensionsList2 = [@"C:\Source2\ext1.TestAdapter.dll", @"C:\Source2\ext2.TestAdapter.dll"];
 
         _mockFileHelper.Setup(fh => fh.GetFileVersion(extensionsList1[0])).Returns(new Version(2, 0));
         _mockFileHelper.Setup(fh => fh.GetFileVersion(extensionsList1[1])).Returns(new Version(5, 5));
@@ -281,7 +281,7 @@ public class DefaultTestHostManagerTests
         var resultExtensions = _testHostManager.GetTestPlatformExtensions(sources, new List<string>()).ToList();
 
         // Verify
-        List<string> expectedList = new() { @"C:\Source2\ext1.TestAdapter.dll", @"C:\Source1\ext2.TestAdapter.dll" };
+        List<string> expectedList = [@"C:\Source2\ext1.TestAdapter.dll", @"C:\Source1\ext2.TestAdapter.dll"];
         CollectionAssert.AreEqual(expectedList, resultExtensions);
         _mockMessageLogger.Verify(ml => ml.SendMessage(TestMessageLevel.Warning, "Multiple versions of same extension found. Selecting the highest version." + Environment.NewLine + "  ext1.TestAdapter : 2.2\n  ext2.TestAdapter : 5.5"), Times.Once);
     }
@@ -290,11 +290,11 @@ public class DefaultTestHostManagerTests
     [TestCategory("Windows")]
     public void GetTestPlatformExtensionsShouldReturnPathTheHigherVersionedFileExtensions()
     {
-        List<string> sourcesDir = new() { "C:\\Source1", "C:\\Source2" };
-        List<string> sources = new() { @"C:\Source1\source1.dll", @"C:\Source2\source2.dll" };
+        List<string> sourcesDir = ["C:\\Source1", "C:\\Source2"];
+        List<string> sources = [@"C:\Source1\source1.dll", @"C:\Source2\source2.dll"];
 
-        List<string> extensionsList1 = new() { @"C:\Source1\ext1.TestAdapter.dll" };
-        List<string> extensionsList2 = new() { @"C:\Source2\ext1.TestAdapter.dll" };
+        List<string> extensionsList1 = [@"C:\Source1\ext1.TestAdapter.dll"];
+        List<string> extensionsList2 = [@"C:\Source2\ext1.TestAdapter.dll"];
 
         _mockFileHelper.Setup(fh => fh.GetFileVersion(extensionsList1[0])).Returns(new Version(2, 0));
         _mockFileHelper.Setup(fh => fh.GetFileVersion(extensionsList2[0])).Returns(new Version(2, 2));
@@ -316,11 +316,11 @@ public class DefaultTestHostManagerTests
     [TestCategory("Windows")]
     public void GetTestPlatformExtensionsShouldReturnPathToSingleFileExtensionOfATypeIfVersionsAreSame()
     {
-        List<string> sourcesDir = new() { "C:\\Source1", "C:\\Source2" };
-        List<string> sources = new() { @"C:\Source1\source1.dll", @"C:\Source2\source2.dll" };
+        List<string> sourcesDir = ["C:\\Source1", "C:\\Source2"];
+        List<string> sources = [@"C:\Source1\source1.dll", @"C:\Source2\source2.dll"];
 
-        List<string> extensionsList1 = new() { @"C:\Source1\ext1.TestAdapter.dll" };
-        List<string> extensionsList2 = new() { @"C:\Source2\ext1.TestAdapter.dll" };
+        List<string> extensionsList1 = [@"C:\Source1\ext1.TestAdapter.dll"];
+        List<string> extensionsList2 = [@"C:\Source2\ext1.TestAdapter.dll"];
 
         _mockFileHelper.Setup(fh => fh.GetFileVersion(extensionsList1[0])).Returns(new Version(2, 0));
         _mockFileHelper.Setup(fh => fh.GetFileVersion(extensionsList2[0])).Returns(new Version(2, 0));
@@ -353,7 +353,7 @@ public class DefaultTestHostManagerTests
                     It.IsAny<Action<object?, string?>>())).Returns(Process.GetCurrentProcess());
 
         _testHostManager.Initialize(_mockMessageLogger.Object, $"<?xml version=\"1.0\" encoding=\"utf-8\"?><RunSettings> <RunConfiguration> <TargetPlatform>{Architecture.X64}</TargetPlatform> <TargetFrameworkVersion>{Framework.DefaultFramework}</TargetFrameworkVersion> <DisableAppDomain>{false}</DisableAppDomain> </RunConfiguration> </RunSettings>");
-        var startInfo = _testHostManager.GetTestHostProcessStartInfo(Enumerable.Empty<string>(), null, default);
+        var startInfo = _testHostManager.GetTestHostProcessStartInfo([], null, default);
 
         _testHostManager.HostLaunched += TestHostManagerHostLaunched;
 

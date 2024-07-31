@@ -183,7 +183,7 @@ internal class TrxFileHelper
         path = Path.GetFullPath(path);
         basePath = Path.GetFullPath(basePath);
 
-        char[] delimiters = new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar };
+        char[] delimiters = [Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar];
 
         basePath = basePath.TrimEnd(delimiters);
         path = path.TrimEnd(delimiters);

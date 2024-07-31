@@ -124,6 +124,7 @@
 #include "ExpressionNode.h"
 #include "WatchCmd.h"
 #include "tls.h"
+#include "clrma/managedanalysis.h"
 
 typedef struct _VM_COUNTERS {
     SIZE_T PeakVirtualSize;
@@ -3966,9 +3967,6 @@ DECLARE_API(DumpModule)
     DMLOut("Assembly:                %s\n", DMLAssembly(module.Assembly));
 
     ExtOut("BaseAddress:             %p\n", SOS_PTR(module.ilBase));
-    ExtOut("PEAssembly:              %p\n", SOS_PTR(module.PEAssembly));
-    ExtOut("ModuleId:                %p\n", SOS_PTR(module.dwModuleID));
-    ExtOut("ModuleIndex:             %p\n", SOS_PTR(module.dwModuleIndex));
     ExtOut("LoaderHeap:              %p\n", SOS_PTR(module.pLookupTableHeap));
     ExtOut("TypeDefToMethodTableMap: %p\n", SOS_PTR(module.TypeDefToMethodTableMap));
     ExtOut("TypeRefToMethodTableMap: %p\n", SOS_PTR(module.TypeRefToMethodTableMap));
@@ -4952,7 +4950,7 @@ void IssueDebuggerBPCommand ( CLRDATA_ADDRESS addr )
         sprintf_s(buffer, ARRAY_SIZE(buffer), "breakpoint set --address 0x%p", SOS_PTR(addr));
 #endif
         ExtOut("Setting breakpoint: %s [%S]\n", buffer, wszNameBuffer);
-        g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, buffer, 0);
+        g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, buffer, 0);
 
         if (curLimit < MaxBPsCached)
         {
@@ -5713,7 +5711,7 @@ public:
 #else
                 sprintf_s(buffer, ARRAY_SIZE(buffer), "breakpoint set --one-shot --address 0x%p", SOS_PTR(startAddr+catcherNativeOffset));
 #endif
-                g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, buffer, 0);
+                g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, buffer, 0);
             }
             g_stopOnNextCatch = FALSE;
         }
@@ -5812,7 +5810,7 @@ HRESULT HandleCLRNotificationEvent()
         ExtOut("Expecting first chance CLRN exception\n");
         return E_FAIL;
 #else
-        g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, "process continue", 0);
+        g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, "process continue", 0);
         return S_OK;
 #endif
     }
@@ -5833,9 +5831,9 @@ HRESULT HandleCLRNotificationEvent()
             case DEBUG_STATUS_GO_HANDLED:
             case DEBUG_STATUS_GO_NOT_HANDLED:
 #ifndef FEATURE_PAL
-                g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, "g", 0);
+                g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, "g", 0);
 #else
-                g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, "process continue", 0);
+                g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, "process continue", 0);
 #endif
                 break;
             default:
@@ -5869,7 +5867,7 @@ HRESULT HandleRuntimeLoadedNotification(IDebugClient* client)
 {
     INIT_API_EFN();
     EnableModuleLoadUnloadCallbacks();
-    return g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, "sxe -c \"!SOSHandleCLRN\" clrn", 0);
+    return g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, "sxe -c \"!SOSHandleCLRN\" clrn", 0);
 }
 
 #else // FEATURE_PAL
@@ -6224,7 +6222,7 @@ DECLARE_API(bpmd)
                 SOS_PTR(MethodDescData.AddressOfNativeCodeSlot),
                 SOS_PTR(MethodDescData.AddressOfNativeCodeSlot));
 
-            Status = g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, buffer, 0);
+            Status = g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, buffer, 0);
             if (FAILED(Status))
             {
                 ExtOut("Unable to set breakpoint with IDebugControl::Execute: %x\n",Status);
@@ -6256,7 +6254,7 @@ DECLARE_API(bpmd)
     {
         ExtOut("Adding pending breakpoints...\n");
 #ifndef FEATURE_PAL
-        Status = g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, "sxe -c \"!SOSHandleCLRN\" clrn", 0);
+        Status = g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, "sxe -c \"!SOSHandleCLRN\" clrn", 0);
 #else
         Status = g_ExtServices->SetExceptionCallback(HandleExceptionNotification);
 #endif // FEATURE_PAL
@@ -8624,7 +8622,7 @@ DECLARE_API(FindRoots)
         idp2->SetGcNotification(gea);
         // ... and register the notification handler
 #ifndef FEATURE_PAL
-        g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, "sxe -c \"!SOSHandleCLRN\" clrn", 0);
+        g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, "sxe -c \"!SOSHandleCLRN\" clrn", 0);
 #else
         g_ExtServices->SetExceptionCallback(HandleExceptionNotification);
 #endif // FEATURE_PAL
@@ -9143,7 +9141,7 @@ DECLARE_API(TraceToCode)
         }
         else
         {
-            Status = g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, "thr; .echo wait" ,0);
+            Status = g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, "thr; .echo wait" ,0);
             if (FAILED(Status))
             {
                 ExtOut("Error tracing instruction\n");
@@ -9197,7 +9195,7 @@ DECLARE_API(GetCodeTypeFlags)
     sprintf_s(buffer, ARRAY_SIZE(buffer),
         "r$t%d=0",
         preg);
-    Status = g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, buffer ,0);
+    Status = g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, buffer ,0);
     if (FAILED(Status))
     {
         ExtOut("Error initialized register $t%d to zero\n", preg);
@@ -9248,7 +9246,7 @@ DECLARE_API(GetCodeTypeFlags)
     sprintf_s(buffer, ARRAY_SIZE(buffer),
         "r$t%d=%x",
         preg, codeType);
-    Status = g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, buffer, 0);
+    Status = g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, buffer, 0);
     if (FAILED(Status))
     {
         ExtOut("Error setting register $t%d\n", preg);
@@ -9317,7 +9315,7 @@ DECLARE_API(StopOnException)
     sprintf_s(buffer, ARRAY_SIZE(buffer),
         "r$t%d=0",
         preg);
-    Status = g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, buffer, 0);
+    Status = g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, buffer, 0);
     if (FAILED(Status))
     {
         ExtOut("Error initialized register $t%d to zero\n", preg);
@@ -9337,7 +9335,7 @@ DECLARE_API(StopOnException)
             EXCEPTION_COMPLUS
             );
 
-        Status = g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, buffer, 0);
+        Status = g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, buffer, 0);
         if (FAILED(Status))
         {
             ExtOut("Error setting breakpoint: %s\n", buffer);
@@ -9383,7 +9381,7 @@ DECLARE_API(StopOnException)
                 sprintf_s(buffer, ARRAY_SIZE(buffer),
                     "r$t%d=1",
                     preg);
-                Status = g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, buffer, 0);
+                Status = g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, buffer, 0);
                 if (FAILED(Status))
                 {
                     ExtOut("Failed to execute the following command: %s\n", buffer);
@@ -12655,7 +12653,6 @@ HRESULT ImplementEFNGetManagedExcepStack(
 DECLARE_API(VerifyStackTrace)
 {
     INIT_API();
-    ONLY_SUPPORTED_ON_WINDOWS_TARGET();
 
     BOOL bVerifyManagedExcepStack = FALSE;
     CMDOption option[] =
@@ -12925,7 +12922,7 @@ DECLARE_API(SuppressJitOptimization)
         else
         {
             g_fAllowJitOptimization = FALSE;
-            g_ExtControl->Execute(DEBUG_EXECUTE_NOT_LOGGED, "sxe -c \"!SOSHandleCLRN\" clrn", 0);
+            g_ExtControl->Execute(DEBUG_OUTCTL_NOT_LOGGED, "sxe -c \"!SOSHandleCLRN\" clrn", 0);
             ExtOut("JIT optimization will be suppressed\n");
         }
     }
@@ -13441,6 +13438,7 @@ DECLARE_API(SetHostRuntime)
     BOOL bNetCore = FALSE;
     BOOL bNone = FALSE;
     BOOL bClear = FALSE;
+    DWORD_PTR majorRuntimeVersion = 0;
     CMDOption option[] =
     {   // name, vptr, type, hasValue
         {"-netfx", &bNetFx, COBOOL, FALSE},
@@ -13449,6 +13447,7 @@ DECLARE_API(SetHostRuntime)
         {"-c", &bNetCore, COBOOL, FALSE},
         {"-none", &bNone, COBOOL, FALSE},
         {"-clear", &bClear, COBOOL, FALSE},
+        {"-major", &majorRuntimeVersion, COSIZE_T, TRUE},
     };
     StringHolder hostRuntimeDirectory;
     CMDValue arg[] =
@@ -13460,56 +13459,55 @@ DECLARE_API(SetHostRuntime)
     {
         return E_INVALIDARG;
     }
-    if (narg > 0 || bNetCore || bNetFx || bNone)
+    HostRuntimeFlavor flavor = HostRuntimeFlavor::NetCore;
+    int major = 0, minor = 0;
+    if (narg > 0 || majorRuntimeVersion > 0 || bClear || bNetCore || bNetFx || bNone)
     {
         if (IsHostingInitialized())
         {
             ExtErr("Runtime hosting already initialized\n");
             goto exit;
         }
-    }
-    if (bClear)
-    {
-        SetHostRuntimeDirectory(nullptr);
-    }
-    else if (bNone)
-    {
-        SetHostRuntimeFlavor(HostRuntimeFlavor::None);
-    }
-    else if (bNetCore)
-    {
-        SetHostRuntimeFlavor(HostRuntimeFlavor::NetCore);
-    }
-    else if (bNetFx)
-    {
-        SetHostRuntimeFlavor(HostRuntimeFlavor::NetFx);
-    }
-    if (narg > 0)
-    {
-        if (!SetHostRuntimeDirectory(hostRuntimeDirectory.data))
+        if (bClear)
+        {
+            SetHostRuntime(HostRuntimeFlavor::NetCore, 0, 0, nullptr);
+        }
+        if (bNone)
+        {
+            flavor = HostRuntimeFlavor::None;
+        }
+        else if (bNetCore)
+        {
+            flavor = HostRuntimeFlavor::NetCore;
+        }
+        else if (bNetFx)
+        {
+            flavor = HostRuntimeFlavor::NetFx;
+        }
+        major = (int)majorRuntimeVersion;
+        if (!SetHostRuntime(flavor, major, minor, hostRuntimeDirectory.data))
         {
             ExtErr("Invalid host runtime path %s\n", hostRuntimeDirectory.data);
             return E_FAIL;
         }
     }
 exit:
-    const char* flavor = "<unknown>";
-    switch (GetHostRuntimeFlavor())
+    LPCSTR directory = nullptr;
+    GetHostRuntime(flavor, major, minor, directory);
+    switch (flavor)
     {
         case HostRuntimeFlavor::None:
-            flavor = "no";
+            ExtOut("Using no runtime to host the managed SOS code\n");
             break;
         case HostRuntimeFlavor::NetCore:
-            flavor = ".NET Core";
+            ExtOut("Using .NET Core runtime (version %d.%d) to host the managed SOS code\n", major, minor);
             break;
         case HostRuntimeFlavor::NetFx:
-            flavor = "desktop .NET Framework";
+            ExtOut("Using desktop .NET Framework runtime to host the managed SOS code\n");
             break;
         default:
             break;
     }
-    ExtOut("Using %s runtime to host the managed SOS code\n", flavor);
-    const char* directory = GetHostRuntimeDirectory();
     if (directory != nullptr)
     {
         ExtOut("Host runtime path: %s\n", directory);
@@ -13558,7 +13556,7 @@ DECLARE_API(SetClrPath)
 //
 DECLARE_API(runtimes)
 {
-    INIT_API_NOEE_PROBE_MANAGED("runtimes");
+    INIT_API_NODAC_PROBE_MANAGED("runtimes");
 
     BOOL bNetFx = FALSE;
     BOOL bNetCore = FALSE;

@@ -48,7 +48,7 @@ public class VSTestTask2 : ToolTask, ITestTask
     protected override Encoding StandardOutputEncoding => _disableUtf8ConsoleEncoding ? base.StandardOutputEncoding : Encoding.UTF8;
 
     private readonly string _messageSplitter = "||||";
-    private readonly string[] _messageSplitterArray = new[] { "||||" };
+    private readonly string[] _messageSplitterArray = ["||||"];
     private readonly string _ansiReset = "\x1b[39;49m";
 
     private readonly bool _disableUtf8ConsoleEncoding;
@@ -271,7 +271,7 @@ public class VSTestTask2 : ToolTask, ITestTask
         }
 
         name = string.Empty;
-        data = Array.Empty<string>();
+        data = [];
         return false;
     }
 

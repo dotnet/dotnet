@@ -171,7 +171,7 @@ public class ExecutorUnitTests
     [TestMethod]
     public void ExecuteShouldExitWithErrorOnResponseFileException()
     {
-        string[] args = { "@FileDoesNotExist.rsp" };
+        string[] args = ["@FileDoesNotExist.rsp"];
         var mockOutput = new MockOutput();
 
         var exitCode = new Executor(mockOutput, _mockTestPlatformEventSource.Object, new ProcessHelper(), new PlatformEnvironment()).Execute(args);
@@ -226,7 +226,7 @@ public class ExecutorUnitTests
             File.WriteAllText(runSettingsFile, fileContents);
 
             var testSourceDllPath = Path.GetTempFileName();
-            string[] args = { testSourceDllPath, "/settings:" + runSettingsFile };
+            string[] args = [testSourceDllPath, "/settings:" + runSettingsFile];
             var mockOutput = new MockOutput();
 
             var exitCode = new Executor(mockOutput, _mockTestPlatformEventSource.Object, new ProcessHelper(), new PlatformEnvironment()).Execute(args);
@@ -264,7 +264,7 @@ public class ExecutorUnitTests
 
             File.WriteAllText(runSettingsFile, fileContents);
 
-            string[] args = { "/settings:" + runSettingsFile };
+            string[] args = ["/settings:" + runSettingsFile];
             var mockOutput = new MockOutput();
 
             var exitCode = new Executor(mockOutput, _mockTestPlatformEventSource.Object, new ProcessHelper(), new PlatformEnvironment()).Execute(args);
@@ -299,7 +299,7 @@ public class ExecutorUnitTests
 
             File.WriteAllText(runSettingsFile, fileContents);
 
-            string[] args = { "/settings:" + runSettingsFile };
+            string[] args = ["/settings:" + runSettingsFile];
             var mockOutput = new MockOutput();
 
             var exitCode = new Executor(mockOutput, _mockTestPlatformEventSource.Object, new ProcessHelper(), new PlatformEnvironment()).Execute(args);

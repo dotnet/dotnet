@@ -42,7 +42,6 @@ public static class XmlReaderUtilities
     /// <summary>
     /// Reads to the root node of the run settings and verifies that it is a "RunSettings" node.
     /// </summary>
-    /// <param name="path">Path to the file.</param>
     /// <param name="reader">XmlReader for the file.</param>
     public static void ReadToRootNode(XmlReader reader)
     {

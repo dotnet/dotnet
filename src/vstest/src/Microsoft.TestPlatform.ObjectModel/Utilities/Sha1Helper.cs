@@ -44,17 +44,17 @@ internal static class Sha1Helper
 
         /// <summary>
         /// A sequence of logical functions to be used in SHA-1.
-        /// Each f(t), 0 <= t <= 79, operates on three 32-bit words B, C, D and produces a 32-bit word as output.
+        /// Each f(t), 0 &lt;= t &lt;= 79, operates on three 32-bit words B, C, D and produces a 32-bit word as output.
         /// </summary>
-        /// <param name="t">Function index. 0 <= t <= 79</param>
+        /// <param name="t">Function index. 0 &lt;= t &lt;= 79</param>
         /// <param name="b">Word B</param>
         /// <param name="c">Word C</param>
         /// <param name="d">Word D</param>
         /// <returns>
-        /// f(t;B,C,D) = (B AND C) OR ((NOT B) AND D)         ( 0 <= t <= 19)
-        /// f(t;B,C,D) = B XOR C XOR D                        (20 <= t <= 39)
-        /// f(t;B,C,D) = (B AND C) OR (B AND D) OR (C AND D)  (40 <= t <= 59)
-        /// f(t;B,C,D) = B XOR C XOR D                        (60 <= t <= 79)
+        /// f(t;B,C,D) = (B AND C) OR ((NOT B) AND D)         ( 0 &lt;= t &lt;= 19)
+        /// f(t;B,C,D) = B XOR C XOR D                        (20 &lt;= t &lt;= 39)
+        /// f(t;B,C,D) = (B AND C) OR (B AND D) OR (C AND D)  (40 &lt;= t &lt;= 59)
+        /// f(t;B,C,D) = B XOR C XOR D                        (60 &lt;= t &lt;= 79)
         /// </returns>
         private static uint F(int t, uint b, uint c, uint d)
         {
@@ -73,10 +73,10 @@ internal static class Sha1Helper
         /// </summary>
         /// <param name="t">Word index.</param>
         /// <returns>
-        /// K(t) = 0x5A827999 ( 0 <= t <= 19)
-        /// K(t) = 0x6ED9EBA1 (20 <= t <= 39)
-        /// K(t) = 0x8F1BBCDC (40 <= t <= 59)
-        /// K(t) = 0xCA62C1D6 (60 <= t <= 79)
+        /// K(t) = 0x5A827999 ( 0 &lt;= t &lt;= 19)
+        /// K(t) = 0x6ED9EBA1 (20 &lt;= t &lt;= 39)
+        /// K(t) = 0x8F1BBCDC (40 &lt;= t &lt;= 59)
+        /// K(t) = 0xCA62C1D6 (60 &lt;= t &lt;= 79)
         /// </returns>
         private static uint K(int t)
         {
@@ -95,8 +95,8 @@ internal static class Sha1Helper
         /// The circular left shift operation.
         /// </summary>
         /// <param name="x">An uint word.</param>
-        /// <param name="n">0 <= n < 32</param>
-        /// <returns>S^n(X)  =  (X << n) OR (X >> 32-n)</returns>
+        /// <param name="n">0 &lt;= n &lt; 32</param>
+        /// <returns>S^n(X)  =  (X &lt;&lt; n) OR (X >> 32-n)</returns>
         private static uint S(uint x, byte n)
         {
             return n > 32 ? throw new ArgumentOutOfRangeException(nameof(n)) : (x << n) | (x >> (32 - n));

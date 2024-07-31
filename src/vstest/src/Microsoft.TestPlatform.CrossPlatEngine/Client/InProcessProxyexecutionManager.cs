@@ -28,7 +28,7 @@ internal class InProcessProxyExecutionManager : IProxyExecutionManager
     public bool IsInitialized { get; private set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="InProcessProxyexecutionManager"/> class.
+    /// Initializes a new instance of the <see cref="InProcessProxyExecutionManager"/> class.
     /// </summary>
     /// <param name="testHostManager">
     /// The test Host Manager.
@@ -135,7 +135,7 @@ internal class InProcessProxyExecutionManager : IProxyExecutionManager
 
     private void InitializeExtensions(IEnumerable<string> sources)
     {
-        var extensionsFromSource = _testHostManager.GetTestPlatformExtensions(sources, Enumerable.Empty<string>());
+        var extensionsFromSource = _testHostManager.GetTestPlatformExtensions(sources, []);
         if (extensionsFromSource.Any())
         {
             TestPluginCache.Instance.UpdateExtensions(extensionsFromSource, false);
@@ -143,7 +143,7 @@ internal class InProcessProxyExecutionManager : IProxyExecutionManager
 
         // We don't need to pass list of extension as we are running inside vstest.console and
         // it will use TestPluginCache of vstest.console
-        _executionManager.Initialize(Enumerable.Empty<string>(), null);
+        _executionManager.Initialize([], null);
     }
 
     public void InitializeTestRun(TestRunCriteria testRunCriteria, IInternalTestRunEventsHandler eventHandler)

@@ -40,7 +40,7 @@ public class InProcessProxyDiscoveryManagerTests
     public void DiscoverTestsShouldCallInitialize()
     {
         var manualResetEvent = new ManualResetEvent(false);
-        _mockDiscoveryManager.Setup(o => o.Initialize(Enumerable.Empty<string>(), null)).Callback(
+        _mockDiscoveryManager.Setup(o => o.Initialize(Array.Empty<string>(), null)).Callback(
             () => manualResetEvent.Set());
 
         var discoveryCriteria = new DiscoveryCriteria(new[] { "test.dll" }, 1, string.Empty);
@@ -53,7 +53,7 @@ public class InProcessProxyDiscoveryManagerTests
     public void DiscoverTestsShouldUpdateTestPluginCacheWithExtensionsReturnByTestHost()
     {
         var manualResetEvent = new ManualResetEvent(false);
-        _mockDiscoveryManager.Setup(o => o.Initialize(Enumerable.Empty<string>(), null)).Callback(
+        _mockDiscoveryManager.Setup(o => o.Initialize(Array.Empty<string>(), null)).Callback(
             () => manualResetEvent.Set());
 
         var path = Path.Combine(Path.GetTempPath(), "DiscoveryDummy.dll");

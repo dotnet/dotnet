@@ -55,6 +55,6 @@ public static class UnitTestClient
                 parmChars[index] = '\n';
         }
 
-        return (new string(parmChars)).Split(new[] { '\n' });
+        return (new string(parmChars)).Split(['\n']);
     }
 }

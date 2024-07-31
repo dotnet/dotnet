@@ -89,6 +89,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     /// <param name="processHelper">Process helper instance.</param>
     /// <param name="fileHelper">File helper instance.</param>
     /// <param name="environment">Instance of platform environment.</param>
+    /// <param name="environmentVariableHelper">The environment helper.</param>
     /// <param name="dotnetHostHelper">Instance of dotnet host helper.</param>
     internal DefaultTestHostManager(
         IProcessHelper processHelper,

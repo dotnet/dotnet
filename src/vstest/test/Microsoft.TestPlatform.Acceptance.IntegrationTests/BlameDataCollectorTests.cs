@@ -305,7 +305,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
 
     private void ValidateDump(int expectedDumpCount = 1)
     {
-        var attachments = StdOutWithWhiteSpace.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+        var attachments = StdOutWithWhiteSpace.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries)
             .SkipWhile(l => !l.Contains("Attachments:")).Skip(1)
             .Where(l => !string.IsNullOrWhiteSpace(l))
             .ToList();

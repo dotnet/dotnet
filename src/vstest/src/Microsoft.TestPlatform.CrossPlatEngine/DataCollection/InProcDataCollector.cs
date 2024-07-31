@@ -57,12 +57,13 @@ internal class InProcDataCollector : IInProcDataCollector
     /// </param>
     /// <param name="assemblyQualifiedName">
     /// </param>
-    /// <param name="interfaceTypeInfo">
+    /// <param name="interfaceType">
     /// </param>
     /// <param name="configXml">
     /// </param>
     /// <param name="assemblyLoadContext">
     /// </param>
+    /// <param name="testPluginCache"></param>
     internal InProcDataCollector(string codeBase, string assemblyQualifiedName, Type interfaceType, string? configXml, IAssemblyLoadContext assemblyLoadContext, TestPluginCache testPluginCache)
     {
         _configXml = configXml;
@@ -79,7 +80,7 @@ internal class InProcDataCollector : IInProcDataCollector
 
             // Coverlet collector is consumed as nuget package we need to add assemblies directory to resolver to correctly load references.
             TPDebug.Assert(Path.IsPathRooted(codeBase), "Absolute path expected");
-            testPluginCache.AddResolverSearchDirectories(new string[] { Path.GetDirectoryName(codeBase)! });
+            testPluginCache.AddResolverSearchDirectories([Path.GetDirectoryName(codeBase)!]);
         }
         else
         {
@@ -112,24 +113,24 @@ internal class InProcDataCollector : IInProcDataCollector
     /// <param name="methodArg">Arguments for the method</param>
     public void TriggerInProcDataCollectionMethod(string methodName, InProcDataCollectionArgs methodArg)
     {
-        var methodInfo = GetMethodInfoFromType(_dataCollectorObject?.GetType(), methodName, new[] { methodArg.GetType() });
+        var methodInfo = GetMethodInfoFromType(_dataCollectorObject?.GetType(), methodName, [methodArg.GetType()]);
 
         if (methodName.Equals(Constants.TestSessionStartMethodName))
         {
             var testSessionStartArgs = (TestSessionStartArgs)methodArg;
             testSessionStartArgs.Configuration = _configXml!;
-            methodInfo?.Invoke(_dataCollectorObject, new object[] { testSessionStartArgs });
+            methodInfo?.Invoke(_dataCollectorObject, [testSessionStartArgs]);
         }
         else
         {
-            methodInfo?.Invoke(_dataCollectorObject, new object[] { methodArg });
+            methodInfo?.Invoke(_dataCollectorObject, [methodArg]);
         }
     }
 
     private static void InitializeDataCollector(object? obj, IDataCollectionSink inProcDataCollectionSink)
     {
-        var initializeMethodInfo = GetMethodInfoFromType(obj?.GetType(), "Initialize", new Type[] { typeof(IDataCollectionSink) });
-        initializeMethodInfo?.Invoke(obj, new object[] { inProcDataCollectionSink });
+        var initializeMethodInfo = GetMethodInfoFromType(obj?.GetType(), "Initialize", [typeof(IDataCollectionSink)]);
+        initializeMethodInfo?.Invoke(obj, [inProcDataCollectionSink]);
     }
 
     private static MethodInfo? GetMethodInfoFromType(Type? type, string funcName, Type[] argumentTypes)
@@ -140,7 +141,7 @@ internal class InProcDataCollector : IInProcDataCollector
     private static object? CreateObjectFromType(Type? type)
     {
         var constructorInfo = type?.GetConstructor(Type.EmptyTypes);
-        object? obj = constructorInfo?.Invoke(new object[] { });
+        object? obj = constructorInfo?.Invoke([]);
         return obj;
     }
 

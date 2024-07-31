@@ -111,6 +111,7 @@ public class DataCollectorMetadata : IDataCollectorCapabilities
     /// </param>
     /// <param name="friendlyName">
     /// The friendly Name.
+    /// </param>
     /// <param name="hasAttachmentProcessor">
     /// Indicates if the current data collector registers an attachment processor
     /// </param>

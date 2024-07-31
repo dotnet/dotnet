@@ -57,7 +57,7 @@ public class NetCoreTargetFrameworkDataSourceAttribute : Attribute, ITestDataSou
             DebugVSTestConsole = DebugVSTestConsole,
             DebugStopAtEntrypoint = DebugStopAtEntrypoint,
         };
-        dataRows.Add(new object[] { runnerInfo });
+        dataRows.Add([runnerInfo]);
     }
 
     public IEnumerable<object[]> GetData(MethodInfo methodInfo)
@@ -83,6 +83,6 @@ public class NetCoreTargetFrameworkDataSourceAttribute : Attribute, ITestDataSou
 
     public string GetDisplayName(MethodInfo methodInfo, object?[]? data)
     {
-        return string.Format(CultureInfo.CurrentCulture, "{0} ({1})", methodInfo.Name, string.Join(",", data ?? Array.Empty<string>()));
+        return string.Format(CultureInfo.CurrentCulture, "{0} ({1})", methodInfo.Name, string.Join(",", data ?? []));
     }
 }

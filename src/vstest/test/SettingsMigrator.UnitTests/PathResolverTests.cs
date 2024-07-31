@@ -22,49 +22,49 @@ public class PathResolverTests
     [TestMethod]
     public void PathResolverShouldReturnNullForEmptyArguments()
     {
-        var newFilePath = _pathResolver.GetTargetPath(Array.Empty<string>());
+        var newFilePath = _pathResolver.GetTargetPath([]);
         Assert.IsNull(newFilePath, "Empty arguments should return null");
     }
 
     [TestMethod]
     public void PathResolverShouldReturnNullForInvalidArguments()
     {
-        var newFilePath = _pathResolver.GetTargetPath(new string[] { "asd", "asd", "asd" });
+        var newFilePath = _pathResolver.GetTargetPath(["asd", "asd", "asd"]);
         Assert.IsNull(newFilePath, "Invalid arguments should return null");
     }
 
     [TestMethod]
     public void PathResolverShouldReturnNullForRelativePaths()
     {
-        var newFilePath = _pathResolver.GetTargetPath(new string[] { "asd.testsettings" });
+        var newFilePath = _pathResolver.GetTargetPath(["asd.testsettings"]);
         Assert.IsNull(newFilePath, "Relative paths should return null");
     }
 
     [TestMethod]
     public void PathResolverShouldReturnNullForRelativePathsWithTwoArguments()
     {
-        var newFilePath = _pathResolver.GetTargetPath(new string[] { "asd.Testsettings", "C:\\asd.runsettings" });
+        var newFilePath = _pathResolver.GetTargetPath(["asd.Testsettings", "C:\\asd.runsettings"]);
         Assert.IsNull(newFilePath, "Relative paths should return null");
     }
 
     [TestMethod]
     public void PathResolverShouldNotReturnNullForPathsWithExtensionInCapitals()
     {
-        var newFilePath = _pathResolver.GetTargetPath(new string[] { "C:\\asd.TestSEettings", "C:\\asd.RuNSettings" });
+        var newFilePath = _pathResolver.GetTargetPath(["C:\\asd.TestSEettings", "C:\\asd.RuNSettings"]);
         Assert.IsNotNull(newFilePath, "Relative paths should not return null");
     }
 
     [TestMethod]
     public void PathResolverShouldReturnNullForRelativePathsForRunsettings()
     {
-        var newFilePath = _pathResolver.GetTargetPath(new string[] { "C:\\asd.testsettings", "asd.runsettings" });
+        var newFilePath = _pathResolver.GetTargetPath(["C:\\asd.testsettings", "asd.runsettings"]);
         Assert.IsNull(newFilePath, "Relative paths should return null");
     }
 
     [TestMethod]
     public void PathResolverShouldReturnRunsettingsPathOfSameLocationAsTestSettings()
     {
-        var newFilePath = _pathResolver.GetTargetPath(new string[] { "C:\\asd.testsettings" });
+        var newFilePath = _pathResolver.GetTargetPath(["C:\\asd.testsettings"]);
         Assert.IsNotNull(newFilePath, "File path should not be null.");
         Assert.IsTrue(string.Equals(Path.GetExtension(newFilePath), ".runsettings"), "File path should be .runsettings");
         Assert.IsTrue(newFilePath!.Contains("C:\\asd_"), "File should be of same name as testsettings");

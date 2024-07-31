@@ -40,7 +40,7 @@ public class ArgumentProcessorUtilitiesTests
     }
 
     [TestMethod]
-    [DataRow(new string[] { "key1=value1", "invalidPair", "key2=value2" })]
+    [DataRow(["key1=value1", "invalidPair", "key2=value2"])]
     public void GetArgumentParametersShouldThrowErrorOnInvalidParameters(string[] parameterArgs)
     {
         try
