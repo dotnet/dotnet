@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
@@ -96,7 +95,7 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
 
         var service = new InlayHintService(DocumentMappingService);
 
-        var endpoint = new InlayHintEndpoint(TestLanguageServerFeatureOptions.Instance, service, languageServer);
+        var endpoint = new InlayHintEndpoint(service, languageServer);
         var resolveEndpoint = new InlayHintResolveEndpoint(service, languageServer);
 
         var request = new InlayHintParams()

@@ -27,6 +27,7 @@ internal static class RazorServices
     internal static readonly IEnumerable<(Type, Type?)> JsonServices =
         [
             (typeof(IRemoteSignatureHelpService), null),
+            (typeof(IRemoteInlayHintService), null),
         ];
 
     private const string ComponentName = "Razor";

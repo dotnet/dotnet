@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -18,8 +19,8 @@ internal class TestDocumentMappingService : IRazorDocumentMappingService
     public LinePosition? GeneratedPosition { get; set; }
     public int GeneratedIndex { get; set; }
 
-    public TextEdit[] GetHostDocumentEdits(IRazorGeneratedDocument generatedDocument, TextEdit[] generatedDocumentEdits)
-        => Array.Empty<TextEdit>();
+    public IEnumerable<TextChange> GetHostDocumentEdits(IRazorGeneratedDocument generatedDocument, IEnumerable<TextChange> generatedDocumentEdits)
+        => [];
 
     public RazorLanguageKind GetLanguageKind(RazorCodeDocument codeDocument, int hostDocumentIndex, bool rightAssociative)
         => LanguageKind;

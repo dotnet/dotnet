@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj" />
     <PackageReference Include="BenchmarkDotNet" />
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="System.Security.Cryptography.Xml" />
   </ItemGroup>
 
   <ItemGroup>

@@ -13,7 +13,6 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.Razor.LanguageClient.Extensions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 

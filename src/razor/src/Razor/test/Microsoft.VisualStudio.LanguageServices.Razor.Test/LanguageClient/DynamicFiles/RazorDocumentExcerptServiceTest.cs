@@ -249,6 +249,188 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
     }
 
     [Fact]
+    public async Task TryGetExcerptInternalAsync_MultiLine_MultilineString()
+    {
+        // Arrange
+        var razorSource = """
+            <html>
+            @{
+                [|string|] bigString = @"
+                    Razor shows 3 lines in a
+                    tooltip maximum, so this
+                    multi-line verbatim
+                    string must be longer
+                    than that.
+                    ";
+            }
+            </html>
+            """;
+
+        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource);
+
+        var service = CreateExcerptService(primary);
+
+        // Act
+        var options = RazorClassificationOptionsWrapper.Default;
+        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, ExcerptModeInternal.Tooltip, options, DisposalToken);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(secondarySpan, result.Value.Span);
+        Assert.Same(secondary, result.Value.Document);
+
+        // Verifies that the right part of the primary document will be highlighted.
+        Assert.Equal(
+            (await secondary.GetTextAsync()).GetSubText(secondarySpan).ToString(),
+            result.Value.Content.GetSubText(result.Value.MappedSpan).ToString(),
+            ignoreLineEndingDifferences: true);
+
+        Assert.Equal("""
+            <html>
+            @{
+                string bigString = @"
+                    Razor shows 3 lines in a
+                    tooltip maximum, so this
+                    multi-line verbatim
+            """,
+            result.Value.Content.ToString(), ignoreLineEndingDifferences: true);
+
+        Assert.Collection(
+            result.Value.ClassifiedSpans,
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.Text, c.ClassificationType);
+                Assert.Equal("""
+                    <html>
+                    @{
+                    """,
+                    result.Value.Content.GetSubText(c.TextSpan).ToString(),
+                    ignoreLineEndingDifferences: true);
+            },
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.Text, c.ClassificationType);
+                Assert.Equal("\r\n    ", result.Value.Content.GetSubText(c.TextSpan).ToString(), ignoreLineEndingDifferences: true);
+            },
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.Keyword, c.ClassificationType);
+                Assert.Equal("string", result.Value.Content.GetSubText(c.TextSpan).ToString());
+            },
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.Text, c.ClassificationType);
+                Assert.Equal(" ", result.Value.Content.GetSubText(c.TextSpan).ToString());
+            },
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.LocalName, c.ClassificationType);
+                Assert.Equal("bigString", result.Value.Content.GetSubText(c.TextSpan).ToString());
+            },
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.Text, c.ClassificationType);
+                Assert.Equal(" ", result.Value.Content.GetSubText(c.TextSpan).ToString());
+            },
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.Operator, c.ClassificationType);
+                Assert.Equal("=", result.Value.Content.GetSubText(c.TextSpan).ToString());
+            },
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.Text, c.ClassificationType);
+                Assert.Equal(" ", result.Value.Content.GetSubText(c.TextSpan).ToString());
+            },
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.VerbatimStringLiteral, c.ClassificationType);
+                Assert.Equal("""
+                    @"
+                            Razor shows 3 lines in a
+                            tooltip maximum, so this
+                            multi-line verbatim
+                    """, result.Value.Content.GetSubText(c.TextSpan).ToString());
+            });
+    }
+
+    [Fact]
+    public async Task TryGetExcerptInternalAsync_SingleLine_MultilineString()
+    {
+        // Arrange
+        var razorSource = """
+            <html>
+            @{
+                [|string|] bigString = @"
+                    This is a
+                    multi-line verbatim
+                    string.
+                    ";
+            }
+            </html>
+            """;
+
+        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource);
+
+        var service = CreateExcerptService(primary);
+
+        // Act
+        var options = RazorClassificationOptionsWrapper.Default;
+        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, ExcerptModeInternal.SingleLine, options, DisposalToken);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(secondarySpan, result.Value.Span);
+        Assert.Same(secondary, result.Value.Document);
+
+        // Verifies that the right part of the primary document will be highlighted.
+        Assert.Equal(
+            (await secondary.GetTextAsync()).GetSubText(secondarySpan).ToString(),
+            result.Value.Content.GetSubText(result.Value.MappedSpan).ToString(),
+            ignoreLineEndingDifferences: true);
+
+        Assert.Equal("string bigString = @\"", result.Value.Content.ToString(), ignoreLineEndingDifferences: true);
+
+        Assert.Collection(
+            result.Value.ClassifiedSpans,
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.Keyword, c.ClassificationType);
+                Assert.Equal("string", result.Value.Content.GetSubText(c.TextSpan).ToString());
+            },
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.Text, c.ClassificationType);
+                Assert.Equal(" ", result.Value.Content.GetSubText(c.TextSpan).ToString());
+            },
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.LocalName, c.ClassificationType);
+                Assert.Equal("bigString", result.Value.Content.GetSubText(c.TextSpan).ToString());
+            },
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.Text, c.ClassificationType);
+                Assert.Equal(" ", result.Value.Content.GetSubText(c.TextSpan).ToString());
+            },
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.Operator, c.ClassificationType);
+                Assert.Equal("=", result.Value.Content.GetSubText(c.TextSpan).ToString());
+            },
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.Text, c.ClassificationType);
+                Assert.Equal(" ", result.Value.Content.GetSubText(c.TextSpan).ToString());
+            },
+            c =>
+            {
+                Assert.Equal(ClassificationTypeNames.VerbatimStringLiteral, c.ClassificationType);
+                Assert.Equal("@\"", result.Value.Content.GetSubText(c.TextSpan).ToString());
+            });
+    }
+
+    [Fact]
     public async Task TryGetExcerptInternalAsync_MultiLine_CanClassifyCSharp()
     {
         // Arrange

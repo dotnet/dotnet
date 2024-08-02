@@ -11,7 +11,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.Razor.LanguageClient.Extensions;
 using Microsoft.VisualStudio.Razor.Snippets;
 using StreamJsonRpc;
 

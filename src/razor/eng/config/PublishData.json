@@ -31,15 +31,6 @@
       "insertionCreateDraftPR": true,
       "insertionTitlePrefix": "[d17.12 P2]"
     },
-    "release/dev17.5": {
-      "nugetKind": [
-        "Shipping",
-        "NonShipping"
-      ],
-      "vsBranch": "rel/d17.5",
-      "vsMajorVersion": 17,
-      "insertionTitlePrefix": "[17.5]"
-    },
     "release/dev17.6": {
       "nugetKind": [
         "Shipping",
@@ -105,6 +96,6 @@
       "vsMajorVersion": 17,
       "insertionCreateDraftPR": false,
       "insertionTitlePrefix": "[d17.12 P1]"
-    },
+    }
   }
 }
