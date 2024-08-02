@@ -21,27 +21,28 @@
   </PropertyGroup>
   <!-- Packages that come from https://github.com/dotnet/winforms -->
   <PropertyGroup>
-    <MicrosoftPrivateWinformsVersion>9.0.0-preview.7.24379.1</MicrosoftPrivateWinformsVersion>
+    <MicrosoftPrivateWinformsVersion>9.0.0-preview.7.24402.2</MicrosoftPrivateWinformsVersion>
   </PropertyGroup>
   <!-- Packages that come from https://github.com/dotnet/runtime -->
   <PropertyGroup>
-    <VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>9.0.0-preview.7.24376.15</VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>
-    <MicrosoftNETCoreAppRefVersion>9.0.0-preview.7.24376.15</MicrosoftNETCoreAppRefVersion>
-    <MicrosoftNETCoreAppRuntimewinx64Version>9.0.0-preview.7.24376.15</MicrosoftNETCoreAppRuntimewinx64Version>
-    <MicrosoftNETCorePlatformsVersion>9.0.0-preview.7.24376.15</MicrosoftNETCorePlatformsVersion>
-    <SystemCodeDomPackageVersion>9.0.0-preview.7.24376.15</SystemCodeDomPackageVersion>
-    <SystemConfigurationConfigurationManagerPackageVersion>9.0.0-preview.7.24376.15</SystemConfigurationConfigurationManagerPackageVersion>
-    <SystemDiagnosticsEventLogPackageVersion>9.0.0-preview.7.24376.15</SystemDiagnosticsEventLogPackageVersion>
-    <SystemDrawingCommonVersion>9.0.0-preview.7.24379.1</SystemDrawingCommonVersion>
-    <SystemDirectoryServicesVersion>9.0.0-preview.7.24376.15</SystemDirectoryServicesVersion>
-    <SystemIOPackagingVersion>9.0.0-preview.7.24376.15</SystemIOPackagingVersion>
-    <SystemReflectionMetadataLoadContextVersion>9.0.0-preview.7.24376.15</SystemReflectionMetadataLoadContextVersion>
+    <VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>9.0.0-preview.7.24401.8</VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>
+    <MicrosoftNETCoreAppRefVersion>9.0.0-preview.7.24401.8</MicrosoftNETCoreAppRefVersion>
+    <MicrosoftNETCoreAppRuntimewinx64Version>9.0.0-preview.7.24401.8</MicrosoftNETCoreAppRuntimewinx64Version>
+    <MicrosoftNETCorePlatformsVersion>9.0.0-preview.7.24401.8</MicrosoftNETCorePlatformsVersion>
+    <SystemCodeDomPackageVersion>9.0.0-preview.7.24401.8</SystemCodeDomPackageVersion>
+    <SystemConfigurationConfigurationManagerPackageVersion>9.0.0-preview.7.24401.8</SystemConfigurationConfigurationManagerPackageVersion>
+    <SystemDiagnosticsEventLogPackageVersion>9.0.0-preview.7.24401.8</SystemDiagnosticsEventLogPackageVersion>
+    <SystemDrawingCommonVersion>9.0.0-preview.7.24402.2</SystemDrawingCommonVersion>
+    <SystemDirectoryServicesVersion>9.0.0-preview.7.24401.8</SystemDirectoryServicesVersion>
+    <SystemFormatsNrbfVersion>9.0.0-preview.7.24401.8</SystemFormatsNrbfVersion>
+    <SystemIOPackagingVersion>9.0.0-preview.7.24401.8</SystemIOPackagingVersion>
+    <SystemReflectionMetadataLoadContextVersion>9.0.0-preview.7.24401.8</SystemReflectionMetadataLoadContextVersion>
     <SystemReflectionTypeExtensionsPackageVersion>4.6.0-preview4.19176.11</SystemReflectionTypeExtensionsPackageVersion>
-    <SystemResourcesExtensionsVersion>9.0.0-preview.7.24376.15</SystemResourcesExtensionsVersion>
-    <SystemRuntimeSerializationFormattersPackageVersion>9.0.0-preview.7.24376.15</SystemRuntimeSerializationFormattersPackageVersion>
-    <SystemSecurityCryptographyXmlPackageVersion>9.0.0-preview.7.24376.15</SystemSecurityCryptographyXmlPackageVersion>
-    <SystemSecurityPermissionsPackageVersion>9.0.0-preview.7.24376.15</SystemSecurityPermissionsPackageVersion>
-    <SystemWindowsExtensionsPackageVersion>9.0.0-preview.7.24376.15</SystemWindowsExtensionsPackageVersion>
+    <SystemResourcesExtensionsVersion>9.0.0-preview.7.24401.8</SystemResourcesExtensionsVersion>
+    <SystemRuntimeSerializationFormattersPackageVersion>9.0.0-preview.7.24401.8</SystemRuntimeSerializationFormattersPackageVersion>
+    <SystemSecurityCryptographyXmlPackageVersion>9.0.0-preview.7.24401.8</SystemSecurityCryptographyXmlPackageVersion>
+    <SystemSecurityPermissionsPackageVersion>9.0.0-preview.7.24401.8</SystemSecurityPermissionsPackageVersion>
+    <SystemWindowsExtensionsPackageVersion>9.0.0-preview.7.24401.8</SystemWindowsExtensionsPackageVersion>
   </PropertyGroup>
   <!-- Docs / Intellisense -->
   <PropertyGroup>
@@ -66,14 +67,14 @@
   <PropertyGroup>
     <MicrosoftBuildFrameworkPackageVersion>15.9.20</MicrosoftBuildFrameworkPackageVersion>
     <MicrosoftBuildUtilitiesCorePackageVersion>15.9.20</MicrosoftBuildUtilitiesCorePackageVersion>
-    <!-- 
-        Also in global.json 
-        Used in Wpf.Cpp.PrivateTools.props/targets 
+    <!--
+        Also in global.json
+        Used in Wpf.Cpp.PrivateTools.props/targets
     <MsvcurtC1xxVersion>0.0.1.2</MsvcurtC1xxVersion>
     -->
     <!--
     This is the version of the test infrastructure package is compiled against. This should be
-    removed as part of https://github.com/dotnet/wpf/issues/816 
+    removed as part of https://github.com/dotnet/wpf/issues/816
     -->
     <MicrosoftDotNetWpfTestPackageVersion>1.0.0-beta.19263.1</MicrosoftDotNetWpfTestPackageVersion>
     <!-- These versions are specified in global.json -->
@@ -86,10 +87,10 @@
   </PropertyGroup>
   <!-- XUnit-related (not extensions) -->
   <PropertyGroup>
-    <XUnitVersion>2.4.0</XUnitVersion>
+    <XUnitVersion>2.9.0</XUnitVersion>
     <XUnitAssertVersion>$(XUnitVersion)</XUnitAssertVersion>
     <XUnitRunnerConsoleVersion>$(XUnitVersion)</XUnitRunnerConsoleVersion>
-    <XUnitRunnerVisualStudioVersion>2.4.0</XUnitRunnerVisualStudioVersion>
+    <XUnitRunnerVisualStudioVersion>2.8.1</XUnitRunnerVisualStudioVersion>
     <XUnitExtensibilityExecutionVersion>$(XUnitVersion)</XUnitExtensibilityExecutionVersion>
     <XUnitStaFactPackageVersion>1.2.46-alpha</XUnitStaFactPackageVersion>
   </PropertyGroup>
