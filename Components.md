@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@54700bb](https://github.com/dotnet/scenario-tests/tree/54700bbee86f660d37bd519a905b62bb50adc8c8)*
 - `src/sdk`  
-*[dotnet/sdk@a2751b2](https://github.com/dotnet/sdk/tree/a2751b25c70dd5648cdba2499bdc588401faf79c)*
+*[dotnet/sdk@da9aa2f](https://github.com/dotnet/sdk/tree/da9aa2fcbde0bbc7400111266123f7429cc6d4e8)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@26c52d0](https://github.com/dotnet/source-build-externals/tree/26c52d02b67816269e647cc584f6b5db9a91970f)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -92,11 +92,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/vstest`  
 *[microsoft/vstest@a1f5a65](https://github.com/microsoft/vstest/tree/a1f5a6500b8cfefa81adbb652a84ad0ba884c140)*
 - `src/windowsdesktop`  
-*[dotnet/windowsdesktop@e191e3f](https://github.com/dotnet/windowsdesktop/tree/e191e3f48c461ccc7faa84501a6b3f3a34c9048e)*
+*[dotnet/windowsdesktop@20c6a3d](https://github.com/dotnet/windowsdesktop/tree/20c6a3d53c5ca02ade3dde61c475e241a83fd2eb)*
 - `src/winforms`  
-*[dotnet/winforms@e3a9c20](https://github.com/dotnet/winforms/tree/e3a9c20c64d351352cc426a314ba412a96003938)*
+*[dotnet/winforms@bd3bc08](https://github.com/dotnet/winforms/tree/bd3bc0832981d8f1a1421d4f4cb368cd9564fdac)*
 - `src/wpf`  
-*[dotnet/wpf@60837b4](https://github.com/dotnet/wpf/tree/60837b484dd51a1322835416da3253470946c5fe)*
+*[dotnet/wpf@b03e617](https://github.com/dotnet/wpf/tree/b03e617ee084d52436558b95fbd3c94c39e60391)*
 - `src/xdt`  
 *[dotnet/xdt@0d51607](https://github.com/dotnet/xdt/tree/0d51607fb791c51a14b552ed24fe3430c252148b)*
 - `src/xliff-tasks`  
