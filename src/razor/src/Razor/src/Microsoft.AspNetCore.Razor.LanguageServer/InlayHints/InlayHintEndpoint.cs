@@ -6,16 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Threading;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.InlayHints;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentInlayHintName)]
-internal sealed class InlayHintEndpoint(LanguageServerFeatureOptions featureOptions, IInlayHintService inlayHintService, IClientConnection clientConnection)
+internal sealed class InlayHintEndpoint(IInlayHintService inlayHintService, IClientConnection clientConnection)
     : IRazorRequestHandler<InlayHintParams, InlayHint[]?>, ICapabilitiesProvider
 {
-    private readonly LanguageServerFeatureOptions _featureOptions = featureOptions;
     private readonly IInlayHintService _inlayHintService = inlayHintService;
     private readonly IClientConnection _clientConnection = clientConnection;
 

@@ -135,9 +135,13 @@ internal class RazorDocumentExcerptService(
             var offset = primarySpan.Start - secondarySpan.Start;
             foreach (var classifiedSecondarySpan in classifiedSecondarySpans)
             {
-                Debug.Assert(secondarySpan.Contains(classifiedSecondarySpan.TextSpan));
+                // It's possible for the classified span to extend past our secondary span, so we cap it
+                var classifiedSpan = classifiedSecondarySpan.TextSpan.End > secondarySpan.End
+                    ? TextSpan.FromBounds(classifiedSecondarySpan.TextSpan.Start, secondarySpan.End)
+                    : classifiedSecondarySpan.TextSpan;
+                Debug.Assert(secondarySpan.Contains(classifiedSpan));
 
-                var updated = new TextSpan(classifiedSecondarySpan.TextSpan.Start + offset, classifiedSecondarySpan.TextSpan.Length);
+                var updated = new TextSpan(classifiedSpan.Start + offset, classifiedSpan.Length);
                 Debug.Assert(primarySpan.Contains(updated));
 
                 // Make sure that we're not introducing a gap. Remember, we need to fill in the whitespace.

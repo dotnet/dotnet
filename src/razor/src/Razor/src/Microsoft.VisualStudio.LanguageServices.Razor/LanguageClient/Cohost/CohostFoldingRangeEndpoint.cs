@@ -15,7 +15,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol.Folding;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.Razor.LanguageClient.Extensions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 

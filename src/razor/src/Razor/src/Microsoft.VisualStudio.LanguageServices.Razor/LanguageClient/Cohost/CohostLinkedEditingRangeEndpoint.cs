@@ -8,12 +8,10 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.LinkedEditingRange;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.Razor.LanguageClient.Extensions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -24,11 +22,10 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [ExportCohostStatelessLspService(typeof(CohostLinkedEditingRangeEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal class CohostLinkedEditingRangeEndpoint(IRemoteServiceInvoker remoteServiceInvoker, ILoggerFactory loggerFactory)
+internal class CohostLinkedEditingRangeEndpoint(IRemoteServiceInvoker remoteServiceInvoker)
     : AbstractRazorCohostDocumentRequestHandler<LinkedEditingRangeParams, LinkedEditingRanges?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
-    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostLinkedEditingRangeEndpoint>();
 
     protected override bool MutatesSolutionState => false;
 
