@@ -19,6 +19,12 @@ internal static class DocumentContextExtensions
         Debug.Assert(documentContext.Snapshot is RemoteDocumentSnapshot, "This method only works on document contexts created in the OOP process");
 
         var snapshot = (RemoteDocumentSnapshot)documentContext.Snapshot;
+
+        if (snapshot.TryGetGeneratedDocument(out var generatedDocument))
+        {
+            return generatedDocument;
+        }
+
         var razorDocument = snapshot.TextDocument;
         var solution = razorDocument.Project.Solution;
 
@@ -27,13 +33,25 @@ internal static class DocumentContextExtensions
         var projectKey = razorDocument.Project.ToProjectKey();
         var generatedFilePath = filePathService.GetRazorCSharpFilePath(projectKey, razorDocument.FilePath.AssumeNotNull());
         var generatedDocumentId = solution.GetDocumentIdsWithFilePath(generatedFilePath).First(d => d.ProjectId == razorDocument.Project.Id);
-        var generatedDocument = solution.GetDocument(generatedDocumentId).AssumeNotNull();
+        generatedDocument = solution.GetRequiredDocument(generatedDocumentId);
 
         var csharpSourceText = await documentContext.GetCSharpSourceTextAsync(cancellationToken).ConfigureAwait(false);
 
         // HACK: We're not in the same solution fork as the LSP server that provides content for this document
         generatedDocument = generatedDocument.WithText(csharpSourceText);
 
-        return generatedDocument;
+        // Obviously this lock is not sufficient to avoid wasted work, but it does at least avoid mutating the snapshot
+        // any more than just a once of caching of the generated document, which is what is really happening with the set
+        // method call below.
+        lock (snapshot)
+        {
+            if (snapshot.TryGetGeneratedDocument(out var generatedDocument2))
+            {
+                return generatedDocument2;
+            }
+
+            snapshot.SetGeneratedDocument(generatedDocument);
+            return generatedDocument;
+        }
     }
 }

@@ -189,6 +189,10 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
                 services.AddHandlerWithCapabilities<SignatureHelpEndpoint>();
                 services.AddHandlerWithCapabilities<LinkedEditingRangeEndpoint>();
                 services.AddHandlerWithCapabilities<FoldingRangeEndpoint>();
+
+                services.AddSingleton<IInlayHintService, InlayHintService>();
+                services.AddHandlerWithCapabilities<InlayHintEndpoint>();
+                services.AddHandler<InlayHintResolveEndpoint>();
             }
 
             services.AddHandler<WrapWithTagEndpoint>();
@@ -204,11 +208,6 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
             services.AddHandlerWithCapabilities<ProjectContextsEndpoint>();
             services.AddHandlerWithCapabilities<DocumentSymbolEndpoint>();
             services.AddHandlerWithCapabilities<MapCodeEndpoint>();
-
-            services.AddSingleton<IInlayHintService, InlayHintService>();
-
-            services.AddHandlerWithCapabilities<InlayHintEndpoint>();
-            services.AddHandler<InlayHintResolveEndpoint>();
         }
     }
 }

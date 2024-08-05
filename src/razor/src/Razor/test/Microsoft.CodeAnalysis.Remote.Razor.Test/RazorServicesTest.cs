@@ -5,9 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Remote.Razor;
 using Roslyn.Test.Utilities;
 using Xunit;
@@ -17,6 +19,9 @@ namespace Microsoft.CodeAnalysis.Razor.Remote;
 
 public class RazorServicesTest(ITestOutputHelper testOutputHelper) : ToolingTestBase(testOutputHelper)
 {
+    private const string Prefix = "IRemote";
+    private const string Suffix = "Service";
+
     private readonly static XmlDocument s_servicesFile = LoadServicesFile();
 
     [Theory]
@@ -32,6 +37,32 @@ public class RazorServicesTest(ITestOutputHelper testOutputHelper) : ToolingTest
     {
         Assert.True(typeof(IRemoteJsonService).IsAssignableFrom(serviceType));
         VerifyService(serviceType, callbackType);
+    }
+
+    [Theory]
+    [MemberData(nameof(JsonServices))]
+    public void JsonServicesHaveTheRightParameters(Type serviceType, Type? _)
+    {
+        Assert.True(typeof(IRemoteJsonService).IsAssignableFrom(serviceType));
+
+        var found = false;
+        foreach (var method in serviceType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
+        {
+            if (method.Name != "RunServiceAsync" &&
+                method.GetParameters() is [{ ParameterType: { } parameterType }, ..])
+            {
+                if (typeof(RazorPinnedSolutionInfoWrapper).IsAssignableFrom(parameterType))
+                {
+                    Assert.Fail($"Method {method.Name} in a Json service has a pinned solution info wrapper parameter that isn't Json serializable");
+                }
+                else if (typeof(JsonSerializableRazorPinnedSolutionInfoWrapper).IsAssignableFrom(parameterType))
+                {
+                    found = true;
+                }
+            }
+        }
+
+        Assert.True(found, "Didn't find a method to validate, which means maybe this test is invalid");
     }
 
     [Fact]
@@ -82,16 +113,13 @@ public class RazorServicesTest(ITestOutputHelper testOutputHelper) : ToolingTest
 
     private static void VerifyService(Type serviceType, Type? callbackType)
     {
-        const string prefix = "IRemote";
-        const string suffix = "Service";
-
         Assert.Null(callbackType);
 
         var serviceName = serviceType.Name;
-        Assert.StartsWith(prefix, serviceName);
-        Assert.EndsWith(suffix, serviceName);
+        Assert.StartsWith(Prefix, serviceName);
+        Assert.EndsWith(Suffix, serviceName);
 
-        var shortName = serviceName.Substring(prefix.Length, serviceName.Length - prefix.Length - suffix.Length);
+        var shortName = serviceName.Substring(Prefix.Length, serviceName.Length - Prefix.Length - Suffix.Length);
         var servicePropsEntry = $"Microsoft.VisualStudio.Razor.{shortName}";
 
         var serviceNode = s_servicesFile.SelectSingleNode($"/Project/ItemGroup/ServiceHubService[@Include='{servicePropsEntry}']");

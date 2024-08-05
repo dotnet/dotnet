@@ -3,11 +3,10 @@
 
 using System;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.VisualStudio.Razor.LanguageClient.Extensions;
+namespace Roslyn.LanguageServer.Protocol;
 
-internal static class TextDocumentExtensions
+internal static partial class RoslynLspExtensions
 {
     /// <summary>
     /// Returns a copy of the passed in <see cref="TextDocumentIdentifier"/> with the passed in <see cref="Uri"/>.
