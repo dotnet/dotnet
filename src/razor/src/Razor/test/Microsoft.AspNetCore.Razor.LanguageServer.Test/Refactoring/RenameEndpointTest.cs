@@ -671,7 +671,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         await projectService.UpdateDocumentAsync(s_componentFilePath4, SourceText.From(ComponentText4), version: 42, DisposalToken);
         await projectService.UpdateDocumentAsync(s_componentWithParamFilePath, SourceText.From(ComponentWithParamText), version: 42, DisposalToken);
 
-        var searchEngine = new DefaultRazorComponentSearchEngine(projectManager, LoggerFactory);
+        var searchEngine = new RazorComponentSearchEngine(projectManager, LoggerFactory);
         options ??= StrictMock.Of<LanguageServerFeatureOptions>(o =>
             o.SupportsFileManipulation == true &&
             o.SingleServerSupport == false &&

@@ -7,15 +7,15 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer;
+namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
-internal class DefaultRazorComponentSearchEngine(
-    IProjectSnapshotManager projectManager,
+internal class RazorComponentSearchEngine(
+    IProjectCollectionResolver projectCollectionResolver,
     ILoggerFactory loggerFactory)
-    : RazorComponentSearchEngine
+    : IRazorComponentSearchEngine
 {
-    private readonly IProjectSnapshotManager _projectManager = projectManager;
-    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<DefaultRazorComponentSearchEngine>();
+    private readonly IProjectCollectionResolver _projectResolver = projectCollectionResolver;
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorComponentSearchEngine>();
 
     /// <summary>Search for a component in a project based on its tag name and fully qualified name.</summary>
     /// <remarks>
@@ -24,10 +24,11 @@ internal class DefaultRazorComponentSearchEngine(
     /// component is present in has the same name as the assembly its corresponding tag helper is loaded from.
     /// Implicitly, this method inherits any assumptions made by TrySplitNamespaceAndType.
     /// </remarks>
+    /// <param name="contextSnapshot">A document snapshot that provides context to enumerate project snapshots</param>
     /// <param name="tagHelper">A TagHelperDescriptor to find the corresponding Razor component for.</param>
     /// <returns>The corresponding DocumentSnapshot if found, null otherwise.</returns>
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="tagHelper"/> is null.</exception>
-    public override async Task<IDocumentSnapshot?> TryLocateComponentAsync(TagHelperDescriptor tagHelper)
+    public async Task<IDocumentSnapshot?> TryLocateComponentAsync(IDocumentSnapshot contextSnapshot, TagHelperDescriptor tagHelper)
     {
         if (tagHelper is null)
         {
@@ -44,7 +45,7 @@ internal class DefaultRazorComponentSearchEngine(
 
         var lookupSymbolName = RemoveGenericContent(typeName.AsMemory());
 
-        var projects = _projectManager.GetProjects();
+        var projects = _projectResolver.EnumerateProjects(contextSnapshot);
 
         foreach (var project in projects)
         {

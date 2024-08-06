@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer;
+namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
-internal abstract class RazorComponentSearchEngine
+internal interface IRazorComponentSearchEngine
 {
-    public abstract Task<IDocumentSnapshot?> TryLocateComponentAsync(TagHelperDescriptor tagHelper);
+    Task<IDocumentSnapshot?> TryLocateComponentAsync(IDocumentSnapshot contextSnapshot, TagHelperDescriptor tagHelper);
 }

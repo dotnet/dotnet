@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Moq;
 using Xunit;
@@ -20,7 +22,7 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
-public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
+public class RazorComponentSearchEngineTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
     private static readonly string s_project1BasePath = PathUtilities.CreateRootedPath("First");
     private static readonly string s_project2BasePath = PathUtilities.CreateRootedPath("Second");
@@ -99,11 +101,12 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
         // Arrange
         var tagHelperDescriptor1 = CreateRazorComponentTagHelperDescriptor("First", RootNamespace1, "Component1", typeName: "Component1<TItem>");
         var tagHelperDescriptor2 = CreateRazorComponentTagHelperDescriptor("Second", RootNamespace2, "Component3", typeName: "Component3<TItem>");
-        var searchEngine = new DefaultRazorComponentSearchEngine(_projectManager, LoggerFactory);
+        var searchEngine = new RazorComponentSearchEngine(_projectManager, LoggerFactory);
+        var snapshot = StrictMock.Of<IDocumentSnapshot>();
 
         // Act
-        var documentSnapshot1 = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor1);
-        var documentSnapshot2 = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor2);
+        var documentSnapshot1 = await searchEngine.TryLocateComponentAsync(snapshot, tagHelperDescriptor1);
+        var documentSnapshot2 = await searchEngine.TryLocateComponentAsync(snapshot, tagHelperDescriptor2);
 
         // Assert
         Assert.NotNull(documentSnapshot1);
@@ -118,11 +121,12 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
         // Arrange
         var tagHelperDescriptor1 = CreateRazorComponentTagHelperDescriptor("First", RootNamespace1, "Component1");
         var tagHelperDescriptor2 = CreateRazorComponentTagHelperDescriptor("Second", RootNamespace2, "Component3");
-        var searchEngine = new DefaultRazorComponentSearchEngine(_projectManager, LoggerFactory);
+        var searchEngine = new RazorComponentSearchEngine(_projectManager, LoggerFactory);
+        var snapshot = StrictMock.Of<IDocumentSnapshot>();
 
         // Act
-        var documentSnapshot1 = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor1);
-        var documentSnapshot2 = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor2);
+        var documentSnapshot1 = await searchEngine.TryLocateComponentAsync(snapshot, tagHelperDescriptor1);
+        var documentSnapshot2 = await searchEngine.TryLocateComponentAsync(snapshot, tagHelperDescriptor2);
 
         // Assert
         Assert.NotNull(documentSnapshot1);
@@ -136,10 +140,11 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var tagHelperDescriptor = CreateRazorComponentTagHelperDescriptor("First", "Test", "Component2");
-        var searchEngine = new DefaultRazorComponentSearchEngine(_projectManager, LoggerFactory);
+        var searchEngine = new RazorComponentSearchEngine(_projectManager, LoggerFactory);
+        var snapshot = StrictMock.Of<IDocumentSnapshot>();
 
         // Act
-        var documentSnapshot = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor);
+        var documentSnapshot = await searchEngine.TryLocateComponentAsync(snapshot, tagHelperDescriptor);
 
         // Assert
         Assert.NotNull(documentSnapshot);
@@ -151,10 +156,11 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var tagHelperDescriptor = CreateRazorComponentTagHelperDescriptor("Third", RootNamespace1, "Component3");
-        var searchEngine = new DefaultRazorComponentSearchEngine(_projectManager, LoggerFactory);
+        var searchEngine = new RazorComponentSearchEngine(_projectManager, LoggerFactory);
+        var snapshot = StrictMock.Of<IDocumentSnapshot>();
 
         // Act
-        var documentSnapshot = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor);
+        var documentSnapshot = await searchEngine.TryLocateComponentAsync(snapshot, tagHelperDescriptor);
 
         // Assert
         Assert.Null(documentSnapshot);
@@ -165,10 +171,11 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var tagHelperDescriptor = CreateRazorComponentTagHelperDescriptor("First", RootNamespace1, "Component2");
-        var searchEngine = new DefaultRazorComponentSearchEngine(_projectManager, LoggerFactory);
+        var searchEngine = new RazorComponentSearchEngine(_projectManager, LoggerFactory);
+        var snapshot = StrictMock.Of<IDocumentSnapshot>();
 
         // Act
-        var documentSnapshot = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor);
+        var documentSnapshot = await searchEngine.TryLocateComponentAsync(snapshot, tagHelperDescriptor);
 
         // Assert
         Assert.Null(documentSnapshot);
@@ -179,10 +186,11 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var tagHelperDescriptor = CreateRazorComponentTagHelperDescriptor("First", RootNamespace1, "Component3");
-        var searchEngine = new DefaultRazorComponentSearchEngine(_projectManager, LoggerFactory);
+        var searchEngine = new RazorComponentSearchEngine(_projectManager, LoggerFactory);
+        var snapshot = StrictMock.Of<IDocumentSnapshot>();
 
         // Act
-        var documentSnapshot = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor);
+        var documentSnapshot = await searchEngine.TryLocateComponentAsync(snapshot, tagHelperDescriptor);
 
         // Assert
         Assert.Null(documentSnapshot);
@@ -193,10 +201,11 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var tagHelperDescriptor = CreateRazorComponentTagHelperDescriptor("AssemblyName", "Test", "Component2");
-        var searchEngine = new DefaultRazorComponentSearchEngine(_projectManager, LoggerFactory);
+        var searchEngine = new RazorComponentSearchEngine(_projectManager, LoggerFactory);
+        var snapshot = StrictMock.Of<IDocumentSnapshot>();
 
         // Act
-        var documentSnapshot = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor);
+        var documentSnapshot = await searchEngine.TryLocateComponentAsync(snapshot, tagHelperDescriptor);
 
         // Assert
         Assert.NotNull(documentSnapshot);
