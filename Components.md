@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@d304c5f](https://github.com/dotnet/aspire/tree/d304c5f6f15bcd4f34f1841b33870cfab88e6937)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@0fd7ef1](https://github.com/dotnet/aspnetcore/tree/0fd7ef105555330171e642d26d43cd09e0174238)*
+*[dotnet/aspnetcore@eb626ad](https://github.com/dotnet/aspnetcore/tree/eb626ad8577ac295416f645ee020f6f4024d4565)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@5bcb2d7](https://github.com/google/googletest/tree/5bcb2d78a16edd7110e72ef694d229815aa29542)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -42,13 +42,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn`  
 *[dotnet/roslyn@b2a6fc8](https://github.com/dotnet/roslyn/tree/b2a6fc8eca8d3332845b142717166303d18362c7)*
 - `src/roslyn-analyzers`  
-*[dotnet/roslyn-analyzers@b70b320](https://github.com/dotnet/roslyn-analyzers/tree/b70b32099c2365092974f6786636e25ae507c8fa)*
+*[dotnet/roslyn-analyzers@3211f48](https://github.com/dotnet/roslyn-analyzers/tree/3211f48253bc18560156d90dc5e710d35f7d03fa)*
 - `src/runtime`  
 *[dotnet/runtime@1cc0186](https://github.com/dotnet/runtime/tree/1cc0186c3e120ee4ed0494cf74fef0a3ef0118d6)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@d92413b](https://github.com/dotnet/scenario-tests/tree/d92413b87d36250859d8cb51ff69a03b5f5c4cab)*
 - `src/sdk`  
-*[dotnet/sdk@799e6f1](https://github.com/dotnet/sdk/tree/799e6f1140cf4b5204d6982f2557593605d293b3)*
+*[dotnet/sdk@88c6473](https://github.com/dotnet/sdk/tree/88c64736ff7039536fc2546d5026d8b78e840e49)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@abec570](https://github.com/dotnet/source-build-externals/tree/abec570b33d209dde31bd81c412ec8f4f0ecc587)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -92,11 +92,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/vstest`  
 *[microsoft/vstest@b1e15e5](https://github.com/microsoft/vstest/tree/b1e15e51243982a3396d0136f4fd889a707e1d0e)*
 - `src/windowsdesktop`  
-*[dotnet/windowsdesktop@8a1320f](https://github.com/dotnet/windowsdesktop/tree/8a1320ffe042f990c4151e59a00920ccc265b0a6)*
+*[dotnet/windowsdesktop@e936cca](https://github.com/dotnet/windowsdesktop/tree/e936cca800580f89751152f8495faa23265372e4)*
 - `src/winforms`  
-*[dotnet/winforms@ff2acdf](https://github.com/dotnet/winforms/tree/ff2acdf41abfdc9d6557c545cb61906158fe9976)*
+*[dotnet/winforms@aef1eac](https://github.com/dotnet/winforms/tree/aef1eaca434a40b51743c2b1ac41ed3a2ea3387c)*
 - `src/wpf`  
-*[dotnet/wpf@570b992](https://github.com/dotnet/wpf/tree/570b9927c49b4649c9c3de675df74af527f307bd)*
+*[dotnet/wpf@d9b45ec](https://github.com/dotnet/wpf/tree/d9b45ec3fba6ed2902ea16c81c5491ee6725207f)*
 - `src/xdt`  
 *[dotnet/xdt@0d51607](https://github.com/dotnet/xdt/tree/0d51607fb791c51a14b552ed24fe3430c252148b)*
 - `src/xliff-tasks`  

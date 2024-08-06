@@ -13,10 +13,10 @@
       "commitSha": "d304c5f6f15bcd4f34f1841b33870cfab88e6937"
     },
     {
-      "packageVersion": "9.0.0-rc.1.24405.8",
+      "packageVersion": "9.0.0-rc.1.24406.1",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "0fd7ef105555330171e642d26d43cd09e0174238"
+      "commitSha": "eb626ad8577ac295416f645ee020f6f4024d4565"
     },
     {
       "packageVersion": "0.11.5-alpha.24379.1",
@@ -85,10 +85,10 @@
       "commitSha": "b2a6fc8eca8d3332845b142717166303d18362c7"
     },
     {
-      "packageVersion": "3.11.0-beta1.24402.1",
+      "packageVersion": "3.11.0-beta1.24405.1",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "b70b32099c2365092974f6786636e25ae507c8fa"
+      "commitSha": "3211f48253bc18560156d90dc5e710d35f7d03fa"
     },
     {
       "packageVersion": "9.0.0-rc.1.24403.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "799e6f1140cf4b5204d6982f2557593605d293b3"
+      "commitSha": "88c64736ff7039536fc2546d5026d8b78e840e49"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24380.1",
@@ -151,22 +151,22 @@
       "commitSha": "b1e15e51243982a3396d0136f4fd889a707e1d0e"
     },
     {
-      "packageVersion": "9.0.0-rc.1.24404.1",
+      "packageVersion": "9.0.0-rc.1.24406.1",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "8a1320ffe042f990c4151e59a00920ccc265b0a6"
+      "commitSha": "e936cca800580f89751152f8495faa23265372e4"
     },
     {
-      "packageVersion": "9.0.0-rc.1.24403.2",
+      "packageVersion": "9.0.0-rc.1.24405.3",
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "ff2acdf41abfdc9d6557c545cb61906158fe9976"
+      "commitSha": "aef1eaca434a40b51743c2b1ac41ed3a2ea3387c"
     },
     {
-      "packageVersion": "9.0.0-rc.1.24404.1",
+      "packageVersion": "9.0.0-rc.1.24405.1",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "570b9927c49b4649c9c3de675df74af527f307bd"
+      "commitSha": "d9b45ec3fba6ed2902ea16c81c5491ee6725207f"
     },
     {
       "packageVersion": "9.0.0-preview.24317.2",
