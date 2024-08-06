@@ -19,8 +19,8 @@
     <efcoreOutputPackageVersion>9.0.0-preview.7.24402.3</efcoreOutputPackageVersion>
     <emsdkGitCommitHash>75567e63c265cb0a69bb11f8024349eda83f0878</emsdkGitCommitHash>
     <emsdkOutputPackageVersion>9.0.0-preview.7.24373.5</emsdkOutputPackageVersion>
-    <fsharpGitCommitHash>db079bbe0dfc808a87a5ad355e3a10be63d8fd21</fsharpGitCommitHash>
-    <fsharpOutputPackageVersion>9.0.100-beta.24381.1</fsharpOutputPackageVersion>
+    <fsharpGitCommitHash>24116f01e59a6e66931ca517f99107b41d34117a</fsharpGitCommitHash>
+    <fsharpOutputPackageVersion>9.0.100-beta.24406.3</fsharpOutputPackageVersion>
     <msbuildGitCommitHash>48e81c6f136e6ee3c568d0a38180cfea151129dd</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.12.0-preview-24374-02</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>5485ea697de98eee58746e0b0054cd478e33a1a5</nugetclientGitCommitHash>
