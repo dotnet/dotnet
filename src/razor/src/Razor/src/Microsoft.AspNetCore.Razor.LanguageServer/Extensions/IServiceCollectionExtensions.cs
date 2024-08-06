@@ -226,6 +226,7 @@ internal static class IServiceCollectionExtensions
         // Add project snapshot manager
         services.AddSingleton<IProjectEngineFactoryProvider, LspProjectEngineFactoryProvider>();
         services.AddSingleton<IProjectSnapshotManager, LspProjectSnapshotManager>();
+        services.AddSingleton<IProjectCollectionResolver>(sp => (LspProjectSnapshotManager)sp.GetRequiredService<IProjectSnapshotManager>());
     }
 
     public static void AddHandlerWithCapabilities<T>(this IServiceCollection services)

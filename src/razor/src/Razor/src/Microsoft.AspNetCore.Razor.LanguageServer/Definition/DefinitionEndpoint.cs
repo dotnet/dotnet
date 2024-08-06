@@ -29,14 +29,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Definition;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentDefinitionName)]
 internal sealed class DefinitionEndpoint(
-    RazorComponentSearchEngine componentSearchEngine,
+    IRazorComponentSearchEngine componentSearchEngine,
     IRazorDocumentMappingService documentMappingService,
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IClientConnection clientConnection,
     ILoggerFactory loggerFactory)
     : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, DefinitionResult?>(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.GetOrCreateLogger<DefinitionEndpoint>()), ICapabilitiesProvider
 {
-    private readonly RazorComponentSearchEngine _componentSearchEngine = componentSearchEngine ?? throw new ArgumentNullException(nameof(componentSearchEngine));
+    private readonly IRazorComponentSearchEngine _componentSearchEngine = componentSearchEngine ?? throw new ArgumentNullException(nameof(componentSearchEngine));
     private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
 
     protected override bool PreferCSharpOverHtmlIfPossible => true;
@@ -73,7 +73,7 @@ internal sealed class DefinitionEndpoint(
             return default;
         }
 
-        var originComponentDocumentSnapshot = await _componentSearchEngine.TryLocateComponentAsync(originTagDescriptor).ConfigureAwait(false);
+        var originComponentDocumentSnapshot = await _componentSearchEngine.TryLocateComponentAsync(documentContext.Snapshot, originTagDescriptor).ConfigureAwait(false);
         if (originComponentDocumentSnapshot is null)
         {
             Logger.LogInformation($"Origin TagHelper document snapshot is null.");

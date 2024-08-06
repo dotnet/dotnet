@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -63,7 +64,7 @@ public class RenameEndpointDelegationTest(ITestOutputHelper testOutput) : Single
                 rootNamespace: "project"));
         });
 
-        var searchEngine = new DefaultRazorComponentSearchEngine(projectManager, LoggerFactory);
+        var searchEngine = new RazorComponentSearchEngine(projectManager, LoggerFactory);
 
         var endpoint = new RenameEndpoint(
             searchEngine,

@@ -27,8 +27,8 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Refactoring;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentRenameName)]
 internal sealed class RenameEndpoint(
-    RazorComponentSearchEngine componentSearchEngine,
-    IProjectSnapshotManager projectManager,
+    IRazorComponentSearchEngine componentSearchEngine,
+    IProjectCollectionResolver projectResolver,
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IRazorDocumentMappingService documentMappingService,
     IClientConnection clientConnection,
@@ -39,8 +39,8 @@ internal sealed class RenameEndpoint(
         clientConnection,
         loggerFactory.GetOrCreateLogger<RenameEndpoint>()), ICapabilitiesProvider
 {
-    private readonly IProjectSnapshotManager _projectManager = projectManager;
-    private readonly RazorComponentSearchEngine _componentSearchEngine = componentSearchEngine;
+    private readonly IProjectCollectionResolver _projectResolver = projectResolver;
+    private readonly IRazorComponentSearchEngine _componentSearchEngine = componentSearchEngine;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
 
@@ -117,7 +117,7 @@ internal sealed class RenameEndpoint(
             return null;
         }
 
-        var originComponentDocumentSnapshot = await _componentSearchEngine.TryLocateComponentAsync(originTagHelpers.First()).ConfigureAwait(false);
+        var originComponentDocumentSnapshot = await _componentSearchEngine.TryLocateComponentAsync(documentContext.Snapshot, originTagHelpers.First()).ConfigureAwait(false);
         if (originComponentDocumentSnapshot is null)
         {
             return null;
@@ -162,7 +162,7 @@ internal sealed class RenameEndpoint(
         using var documentSnapshots = new PooledArrayBuilder<IDocumentSnapshot?>();
         using var _ = StringHashSetPool.GetPooledObject(out var documentPaths);
 
-        var projects = _projectManager.GetProjects();
+        var projects = _projectResolver.EnumerateProjects(skipDocumentContext.Snapshot);
 
         foreach (var project in projects)
         {

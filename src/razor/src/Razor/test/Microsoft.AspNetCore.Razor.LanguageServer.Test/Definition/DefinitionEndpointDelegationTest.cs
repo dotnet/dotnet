@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -236,7 +237,7 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
                 rootNamespace: "project"));
         });
 
-        var searchEngine = new DefaultRazorComponentSearchEngine(projectManager, LoggerFactory);
+        var searchEngine = new RazorComponentSearchEngine(projectManager, LoggerFactory);
 
         var razorUri = new Uri(razorFilePath);
         Assert.True(DocumentContextFactory.TryCreateForOpenDocument(razorUri, out var documentContext));
