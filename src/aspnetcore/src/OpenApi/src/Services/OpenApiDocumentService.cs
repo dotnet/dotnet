@@ -99,9 +99,9 @@ internal sealed class OpenApiDocumentService(
                     continue;
                 }
 
-                if (operation.Extensions.TryGetValue(OpenApiConstants.DescriptionId, out var descriptionIdExtension) &&
-                    descriptionIdExtension is ScrubbedOpenApiAny { Value: string descriptionId } &&
-                    TryGetCachedOperationTransformerContext(descriptionId, out var operationContext))
+                if (operation.Annotations.TryGetValue(OpenApiConstants.DescriptionId, out var descriptionId) &&
+                    descriptionId is string descriptionIdString &&
+                    TryGetCachedOperationTransformerContext(descriptionIdString, out var operationContext))
                 {
                     await callback(operation, operationContext, cancellationToken);
                 }
@@ -169,7 +169,8 @@ internal sealed class OpenApiDocumentService(
         foreach (var description in descriptions)
         {
             var operation = await GetOperationAsync(description, capturedTags, cancellationToken);
-            operation.Extensions.Add(OpenApiConstants.DescriptionId, new ScrubbedOpenApiAny(description.ActionDescriptor.Id));
+            operation.Annotations ??= new Dictionary<string, object>();
+            operation.Annotations.Add(OpenApiConstants.DescriptionId, description.ActionDescriptor.Id);
 
             var operationContext = new OpenApiOperationTransformerContext
             {
@@ -381,7 +382,10 @@ internal sealed class OpenApiDocumentService(
 
         var requestBody = new OpenApiRequestBody
         {
-            Required = formParameters.Any(IsRequired),
+            // Form bodies are always required because the framework doesn't support
+            // serializing a form collection from an empty body. Instead, requiredness
+            // must be set on a per-parameter basis. See below.
+            Required = true,
             Content = new Dictionary<string, OpenApiMediaType>()
         };
 
@@ -410,6 +414,10 @@ internal sealed class OpenApiDocumentService(
                 // as a property in the schema.
                 if (description.Type == typeof(IFormFile) || description.Type == typeof(IFormFileCollection))
                 {
+                    if (IsRequired(description))
+                    {
+                        schema.Required.Add(description.Name);
+                    }
                     if (hasMultipleFormParameters)
                     {
                         schema.AllOf.Add(new OpenApiSchema
@@ -444,6 +452,10 @@ internal sealed class OpenApiDocumentService(
                         }
                         else
                         {
+                            if (IsRequired(description))
+                            {
+                                schema.Required.Add(description.Name);
+                            }
                             schema.AllOf.Add(new OpenApiSchema
                             {
                                 Type = "object",
@@ -462,6 +474,10 @@ internal sealed class OpenApiDocumentService(
                         }
                         else
                         {
+                            if (IsRequired(description))
+                            {
+                                schema.Required.Add(description.Name);
+                            }
                             schema.Properties[description.Name] = parameterSchema;
                         }
                     }
