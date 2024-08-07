@@ -14,18 +14,18 @@
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24375.3">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24401.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>3e18bd4f62388b829d0b9dcd1ee131431674aa5f</Sha>
+      <Sha>a3dae8d4fd5a17c147cbecfd31e61463731ac0cc</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24375.3">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24401.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>3e18bd4f62388b829d0b9dcd1ee131431674aa5f</Sha>
+      <Sha>a3dae8d4fd5a17c147cbecfd31e61463731ac0cc</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.GenAPI.Task" Version="9.0.100-rc.1.24378.3">
+    <Dependency Name="Microsoft.DotNet.GenAPI.Task" Version="9.0.100-rc.1.24404.4">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>e028762ceb5ccaa05a8c93c29ce5bbcae926533a</Sha>
+      <Sha>d62d71160844b8dfb6f3a4062c39ce4682fbfff4</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.ILAsm" Version="5.0.0-preview.4.20202.18">
       <Uri>https://github.com/dotnet/runtime</Uri>
