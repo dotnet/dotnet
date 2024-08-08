@@ -29,6 +29,7 @@ stages:
         arguments: >
           -BuildId ${{ parameters.BARBuildId }}
           -PromoteToChannelIds ${{ parameters.PromoteToChannelIds }}
+          -DarcVersion $(DarcVersion)
 
     - task: DownloadBuildArtifacts@0
       displayName: Download Build Assets
