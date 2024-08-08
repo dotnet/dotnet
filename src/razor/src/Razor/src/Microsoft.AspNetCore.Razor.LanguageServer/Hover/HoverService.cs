@@ -27,12 +27,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 internal sealed partial class HoverService(
     LSPTagHelperTooltipFactory lspTagHelperTooltipFactory,
     VSLSPTagHelperTooltipFactory vsLspTagHelperTooltipFactory,
-    IRazorDocumentMappingService mappingService,
+    IDocumentMappingService documentMappingService,
     IClientCapabilitiesService clientCapabilitiesService) : IHoverService
 {
     private readonly LSPTagHelperTooltipFactory _lspTagHelperTooltipFactory = lspTagHelperTooltipFactory;
     private readonly VSLSPTagHelperTooltipFactory _vsLspTagHelperTooltipFactory = vsLspTagHelperTooltipFactory;
-    private readonly IRazorDocumentMappingService _mappingService = mappingService;
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
 
     public async Task<VSInternalHover?> GetRazorHoverInfoAsync(VersionedDocumentContext documentContext, DocumentPositionInfo positionInfo, Position position, CancellationToken cancellationToken)
@@ -48,7 +48,7 @@ internal sealed partial class HoverService(
 
         // Sometimes what looks like a html attribute can actually map to C#, in which case its better to let Roslyn try to handle this.
         // We can only do this if we're in single server mode though, otherwise we won't be delegating to Roslyn at all
-        if (_mappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), positionInfo.HostDocumentIndex, out _, out _))
+        if (_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), positionInfo.HostDocumentIndex, out _, out _))
         {
             return null;
         }
@@ -76,7 +76,7 @@ internal sealed partial class HoverService(
         }
         else if (positionInfo.LanguageKind == RazorLanguageKind.CSharp)
         {
-            if (_mappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), response.Range, out var projectedRange))
+            if (_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), response.Range, out var projectedRange))
             {
                 response.Range = projectedRange;
             }

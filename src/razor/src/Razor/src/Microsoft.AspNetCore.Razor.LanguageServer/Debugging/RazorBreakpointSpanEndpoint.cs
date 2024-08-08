@@ -21,13 +21,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 [RazorLanguageServerEndpoint(LanguageServerConstants.RazorBreakpointSpanEndpoint)]
 internal class RazorBreakpointSpanEndpoint : IRazorDocumentlessRequestHandler<RazorBreakpointSpanParams, RazorBreakpointSpanResponse?>, ITextDocumentIdentifierHandler<RazorBreakpointSpanParams, Uri>
 {
-    private readonly IRazorDocumentMappingService _documentMappingService;
+    private readonly IDocumentMappingService _documentMappingService;
     private readonly ILogger _logger;
 
     public bool MutatesSolutionState => false;
 
     public RazorBreakpointSpanEndpoint(
-        IRazorDocumentMappingService documentMappingService,
+        IDocumentMappingService documentMappingService,
         ILoggerFactory loggerFactory)
     {
         if (loggerFactory is null)

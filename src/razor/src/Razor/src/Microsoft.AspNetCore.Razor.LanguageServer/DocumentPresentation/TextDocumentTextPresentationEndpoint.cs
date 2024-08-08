@@ -15,11 +15,11 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 
 internal class TextDocumentTextPresentationEndpoint(
-    IRazorDocumentMappingService razorDocumentMappingService,
+    IDocumentMappingService documentMappingService,
     IClientConnection clientConnection,
     IFilePathService filePathService,
     ILoggerFactory loggerFactory)
-    : AbstractTextDocumentPresentationEndpointBase<TextPresentationParams>(razorDocumentMappingService, clientConnection, filePathService, loggerFactory.GetOrCreateLogger<TextDocumentTextPresentationEndpoint>()), ITextDocumentTextPresentationHandler
+    : AbstractTextDocumentPresentationEndpointBase<TextPresentationParams>(documentMappingService, clientConnection, filePathService, loggerFactory.GetOrCreateLogger<TextDocumentTextPresentationEndpoint>()), ITextDocumentTextPresentationHandler
 {
     public override string EndpointName => CustomMessageNames.RazorTextPresentationEndpoint;
 

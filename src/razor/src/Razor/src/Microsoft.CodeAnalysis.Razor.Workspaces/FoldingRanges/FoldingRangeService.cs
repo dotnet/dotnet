@@ -17,12 +17,12 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.CodeAnalysis.Razor.FoldingRanges;
 
 internal class FoldingRangeService(
-    IRazorDocumentMappingService documentMappingService,
+    IDocumentMappingService documentMappingService,
     IEnumerable<IRazorFoldingRangeProvider> foldingRangeProviders,
     ILoggerFactory loggerFactory)
     : IFoldingRangeService
 {
-    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
     private readonly IEnumerable<IRazorFoldingRangeProvider> _foldingRangeProviders = foldingRangeProviders;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<FoldingRangeService>();
 

@@ -37,12 +37,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.MapCode;
 /// </remarks>
 [RazorLanguageServerEndpoint(VSInternalMethods.WorkspaceMapCodeName)]
 internal sealed class MapCodeEndpoint(
-    IRazorDocumentMappingService documentMappingService,
+    IDocumentMappingService documentMappingService,
     IDocumentContextFactory documentContextFactory,
     IClientConnection clientConnection,
     ITelemetryReporter telemetryReporter) : IRazorDocumentlessRequestHandler<VSInternalMapCodeParams, WorkspaceEdit?>, ICapabilitiesProvider
 {
-    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
     private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
     private readonly IClientConnection _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter ?? throw new ArgumentNullException(nameof(telemetryReporter));
@@ -202,7 +202,7 @@ internal sealed class MapCodeEndpoint(
                         }
 
                         var csharpMappingSuccessful = await TrySendCSharpDelegatedMappingRequestAsync(
-                            documentContext.Identifier,
+                            documentContext.GetTextDocumentIdentifierAndVersion(),
                             csharpBody,
                             csharpFocusLocations,
                             mapCodeCorrelationId,

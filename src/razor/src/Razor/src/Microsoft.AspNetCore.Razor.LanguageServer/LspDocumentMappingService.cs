@@ -2,32 +2,26 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Composition;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.CodeAnalysis.Remote.Razor.DocumentMapping;
+namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-[Export(typeof(IDocumentMappingService)), Shared]
-[method: ImportingConstructor]
-internal sealed class RemoteDocumentMappingService(
+internal sealed class LspDocumentMappingService(
     IFilePathService filePathService,
-    DocumentSnapshotFactory documentSnapshotFactory,
+    IDocumentContextFactory documentContextFactory,
     ILoggerFactory loggerFactory)
-    : AbstractDocumentMappingService(filePathService, loggerFactory.GetOrCreateLogger<RemoteDocumentMappingService>())
+    : AbstractDocumentMappingService(filePathService, loggerFactory.GetOrCreateLogger<LspDocumentMappingService>())
 {
-    private readonly DocumentSnapshotFactory _documentSnapshotFactory = documentSnapshotFactory;
+    private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
 
     public async Task<(Uri MappedDocumentUri, LinePositionSpan MappedRange)> MapToHostDocumentUriAndRangeAsync(
-        RemoteDocumentSnapshot originSnapshot,
         Uri generatedDocumentUri,
         LinePositionSpan generatedDocumentRange,
         CancellationToken cancellationToken)
@@ -46,28 +40,14 @@ internal sealed class RemoteDocumentMappingService(
             return (generatedDocumentUri, generatedDocumentRange);
         }
 
-        var solution = originSnapshot.TextDocument.Project.Solution;
-
-        var razorDocumentId = solution.GetDocumentIdsWithUri(razorDocumentUri).FirstOrDefault();
-
-        // If we couldn't locate the .razor file, just return the generated file.
-        if (razorDocumentId is null ||
-            solution.GetAdditionalDocument(razorDocumentId) is not TextDocument razorDocument)
+        if (!_documentContextFactory.TryCreate(razorDocumentUri, out var documentContext))
         {
             return (generatedDocumentUri, generatedDocumentRange);
         }
 
-        var razorDocumentSnapshot = _documentSnapshotFactory.GetOrCreate(razorDocument);
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        var razorCodeDocument = await razorDocumentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
-        cancellationToken.ThrowIfCancellationRequested();
-
-        if (razorCodeDocument is null)
-        {
-            return (generatedDocumentUri, generatedDocumentRange);
-        }
-
-        if (!razorCodeDocument.TryGetGeneratedDocument(generatedDocumentUri, FilePathService, out var generatedDocument))
+        if (!codeDocument.TryGetGeneratedDocument(generatedDocumentUri, FilePathService, out var generatedDocument))
         {
             return Assumed.Unreachable<(Uri, LinePositionSpan)>();
         }

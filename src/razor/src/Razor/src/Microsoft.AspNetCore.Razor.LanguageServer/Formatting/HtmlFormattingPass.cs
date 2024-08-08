@@ -17,7 +17,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
 internal sealed class HtmlFormattingPass(
-    IRazorDocumentMappingService documentMappingService,
+    IDocumentMappingService documentMappingService,
     IClientConnection clientConnection,
     IDocumentVersionCache documentVersionCache,
     ILoggerFactory loggerFactory)

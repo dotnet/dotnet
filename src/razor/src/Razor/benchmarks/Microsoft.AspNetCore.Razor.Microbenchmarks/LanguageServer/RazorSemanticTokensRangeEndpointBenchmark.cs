@@ -140,7 +140,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
     {
         public TestCustomizableRazorSemanticTokensInfoService(
             LanguageServerFeatureOptions languageServerFeatureOptions,
-            IRazorDocumentMappingService documentMappingService,
+            IDocumentMappingService documentMappingService,
             RazorSemanticTokensLegendService razorSemanticTokensLegendService,
             ILoggerFactory loggerFactory)
             : base(documentMappingService, razorSemanticTokensLegendService, csharpSemanticTokensProvider: null!, languageServerFeatureOptions, loggerFactory)

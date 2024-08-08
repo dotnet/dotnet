@@ -19,11 +19,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentHighlighting;
 [RazorLanguageServerEndpoint(Methods.TextDocumentDocumentHighlightName)]
 internal class DocumentHighlightEndpoint : AbstractRazorDelegatingEndpoint<DocumentHighlightParams, DocumentHighlight[]?>, ICapabilitiesProvider
 {
-    private readonly IRazorDocumentMappingService _documentMappingService;
+    private readonly IDocumentMappingService _documentMappingService;
 
     public DocumentHighlightEndpoint(
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        IRazorDocumentMappingService documentMappingService,
+        IDocumentMappingService documentMappingService,
         IClientConnection clientConnection,
         ILoggerFactory loggerFactory)
         : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.GetOrCreateLogger<DocumentHighlightEndpoint>())
@@ -56,9 +56,9 @@ internal class DocumentHighlightEndpoint : AbstractRazorDelegatingEndpoint<Docum
         }
 
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(
-                documentContext.Identifier,
-                positionInfo.Position,
-                positionInfo.LanguageKind));
+            documentContext.GetTextDocumentIdentifierAndVersion(),
+            positionInfo.Position,
+            positionInfo.LanguageKind));
     }
 
     protected override async Task<DocumentHighlight[]?> HandleDelegatedResponseAsync(DocumentHighlight[]? response, DocumentHighlightParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)

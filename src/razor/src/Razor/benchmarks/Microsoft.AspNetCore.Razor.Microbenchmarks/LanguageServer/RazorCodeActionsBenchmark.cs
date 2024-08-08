@@ -49,7 +49,7 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
     public async Task SetupAsync()
     {
         CodeActionEndpoint = new CodeActionEndpoint(
-            documentMappingService: RazorLanguageServerHost.GetRequiredService<IRazorDocumentMappingService>(),
+            documentMappingService: RazorLanguageServerHost.GetRequiredService<IDocumentMappingService>(),
             razorCodeActionProviders: RazorLanguageServerHost.GetRequiredService<IEnumerable<IRazorCodeActionProvider>>(),
             csharpCodeActionProviders: RazorLanguageServerHost.GetRequiredService<IEnumerable<ICSharpCodeActionProvider>>(),
             htmlCodeActionProviders: RazorLanguageServerHost.GetRequiredService<IEnumerable<IHtmlCodeActionProvider>>(),

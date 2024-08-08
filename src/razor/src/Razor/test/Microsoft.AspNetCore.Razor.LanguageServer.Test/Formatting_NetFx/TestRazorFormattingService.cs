@@ -27,7 +27,7 @@ internal static class TestRazorFormattingService
         codeDocument ??= TestRazorCodeDocument.CreateEmpty();
 
         var filePathService = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
-        var mappingService = new RazorDocumentMappingService(filePathService, new TestDocumentContextFactory(), loggerFactory);
+        var mappingService = new LspDocumentMappingService(filePathService, new TestDocumentContextFactory(), loggerFactory);
 
         var projectManager = StrictMock.Of<IProjectSnapshotManager>();
         var versionCache = new DocumentVersionCache(projectManager);

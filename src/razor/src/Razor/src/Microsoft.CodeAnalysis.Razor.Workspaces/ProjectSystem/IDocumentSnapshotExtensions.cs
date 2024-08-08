@@ -82,6 +82,6 @@ internal static class IDocumentSnapshotExtensions
         var tagHelpers = await project.GetTagHelpersAsync(CancellationToken.None).ConfigureAwait(false);
         var projectEngine = project.GetProjectEngine();
         var imports = await DocumentState.GetImportsAsync(documentSnapshot, projectEngine).ConfigureAwait(false);
-        return await DocumentState.GenerateCodeDocumentAsync(tagHelpers, project.GetProjectEngine(), documentSnapshot, imports, false).ConfigureAwait(false);
+        return await DocumentState.GenerateCodeDocumentAsync(documentSnapshot, project.GetProjectEngine(), imports, tagHelpers, false).ConfigureAwait(false);
     }
 }

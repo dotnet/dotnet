@@ -9,11 +9,10 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
-internal class TestDocumentMappingService : IRazorDocumentMappingService
+internal class TestDocumentMappingService : IDocumentMappingService
 {
     public RazorLanguageKind LanguageKind { get; set; }
     public LinePosition? GeneratedPosition { get; set; }
@@ -26,11 +25,6 @@ internal class TestDocumentMappingService : IRazorDocumentMappingService
         => LanguageKind;
 
     public Task<(Uri MappedDocumentUri, LinePositionSpan MappedRange)> MapToHostDocumentUriAndRangeAsync(Uri generatedDocumentUri, LinePositionSpan generatedDocumentRange, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<WorkspaceEdit> RemapWorkspaceEditAsync(WorkspaceEdit workspaceEdit, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

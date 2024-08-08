@@ -20,13 +20,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 [RazorLanguageServerEndpoint(Methods.TextDocumentOnTypeFormattingName)]
 internal class DocumentOnTypeFormattingEndpoint(
     IRazorFormattingService razorFormattingService,
-    IRazorDocumentMappingService razorDocumentMappingService,
+    IDocumentMappingService documentMappingService,
     RazorLSPOptionsMonitor optionsMonitor,
     ILoggerFactory loggerFactory)
     : IRazorRequestHandler<DocumentOnTypeFormattingParams, TextEdit[]?>, ICapabilitiesProvider
 {
     private readonly IRazorFormattingService _razorFormattingService = razorFormattingService ?? throw new ArgumentNullException(nameof(razorFormattingService));
-    private readonly IRazorDocumentMappingService _razorDocumentMappingService = razorDocumentMappingService ?? throw new ArgumentNullException(nameof(razorDocumentMappingService));
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
     private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor ?? throw new ArgumentNullException(nameof(optionsMonitor));
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<DocumentOnTypeFormattingEndpoint>();
 
@@ -95,7 +95,7 @@ internal class DocumentOnTypeFormattingEndpoint(
             return null;
         }
 
-        var triggerCharacterKind = _razorDocumentMappingService.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: false);
+        var triggerCharacterKind = _documentMappingService.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: false);
         if (triggerCharacterKind is not (RazorLanguageKind.CSharp or RazorLanguageKind.Html))
         {
             _logger.LogInformation($"Unsupported trigger character language {triggerCharacterKind:G}.");

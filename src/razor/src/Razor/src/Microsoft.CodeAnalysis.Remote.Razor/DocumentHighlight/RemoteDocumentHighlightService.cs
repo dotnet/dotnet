@@ -28,7 +28,7 @@ internal sealed partial class RemoteDocumentHighlightService(in ServiceArgs args
             => new RemoteDocumentHighlightService(in args);
     }
 
-    private readonly IRazorDocumentMappingService _documentMappingService = args.ExportProvider.GetExportedValue<IRazorDocumentMappingService>();
+    private readonly IDocumentMappingService _documentMappingService = args.ExportProvider.GetExportedValue<IDocumentMappingService>();
     private readonly IFilePathService _filePathService = args.ExportProvider.GetExportedValue<IFilePathService>();
 
     public ValueTask<Response> GetHighlightsAsync(

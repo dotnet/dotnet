@@ -13,7 +13,7 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
 [Export(typeof(IRazorSemanticTokensInfoService)), Shared]
 [method: ImportingConstructor]
 internal class RazorSemanticTokensInfoService(
-    IRazorDocumentMappingService documentMappingService,
+    IDocumentMappingService documentMappingService,
     ISemanticTokensLegendService semanticTokensLegendService,
     ICSharpSemanticTokensProvider csharpSemanticTokensProvider,
     LanguageServerFeatureOptions languageServerFeatureOptions,

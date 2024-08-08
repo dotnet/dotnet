@@ -21,11 +21,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Implementation;
 [RazorLanguageServerEndpoint(Methods.TextDocumentImplementationName)]
 internal sealed class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, ImplementationResult>, ICapabilitiesProvider
 {
-    private readonly IRazorDocumentMappingService _documentMappingService;
+    private readonly IDocumentMappingService _documentMappingService;
 
     public ImplementationEndpoint(
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        IRazorDocumentMappingService documentMappingService,
+        IDocumentMappingService documentMappingService,
         IClientConnection clientConnection,
         ILoggerFactory loggerFactory)
         : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.GetOrCreateLogger<ImplementationEndpoint>())
@@ -53,9 +53,9 @@ internal sealed class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<T
         }
 
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(
-                documentContext.Identifier,
-                positionInfo.Position,
-                positionInfo.LanguageKind));
+            documentContext.GetTextDocumentIdentifierAndVersion(),
+            positionInfo.Position,
+            positionInfo.LanguageKind));
     }
 
     protected async override Task<ImplementationResult> HandleDelegatedResponseAsync(ImplementationResult delegatedResponse, TextDocumentPositionParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)

@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -42,7 +43,7 @@ public class DefaultHtmlCodeActionProviderTest(ITestOutputHelper testOutput) : L
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents);
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(MockBehavior.Strict);
+        var documentMappingService = StrictMock.Of<IEditMappingService>();
         var provider = new DefaultHtmlCodeActionProvider(documentMappingService);
 
         ImmutableArray<RazorVSInternalCodeAction> codeActions = [ new RazorVSInternalCodeAction() { Name = "Test" } ];
@@ -90,12 +91,12 @@ public class DefaultHtmlCodeActionProviderTest(ITestOutputHelper testOutput) : L
             }
         };
 
-        var documentMappingServiceMock = new Mock<IRazorDocumentMappingService>(MockBehavior.Strict);
-        documentMappingServiceMock
-            .Setup(c => c.RemapWorkspaceEditAsync(It.IsAny<WorkspaceEdit>(), It.IsAny<CancellationToken>()))
+        var editMappingServiceMock = new StrictMock<IEditMappingService>();
+        editMappingServiceMock
+            .Setup(x => x.RemapWorkspaceEditAsync(It.IsAny<WorkspaceEdit>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(remappedEdit);
 
-        var provider = new DefaultHtmlCodeActionProvider(documentMappingServiceMock.Object);
+        var provider = new DefaultHtmlCodeActionProvider(editMappingServiceMock.Object);
 
         ImmutableArray<RazorVSInternalCodeAction> codeActions =
         [

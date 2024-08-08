@@ -7,18 +7,11 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-internal class VersionedDocumentContext : DocumentContext
+internal class VersionedDocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectContext? projectContext, int version)
+    : DocumentContext(uri, snapshot, projectContext)
 {
-    public virtual int Version { get; }
+    public int Version { get; } = version;
 
-    public VersionedDocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectContext? projectContext, int version)
-        : base(uri, snapshot, projectContext)
-    {
-        Version = version;
-    }
-
-    // Sadly we target net472 which doesn't support covariant return types, so this can't override.
-    public new TextDocumentIdentifierAndVersion Identifier => new TextDocumentIdentifierAndVersion(
-        base.Identifier,
-        Version);
+    public TextDocumentIdentifierAndVersion GetTextDocumentIdentifierAndVersion()
+        => new(GetTextDocumentIdentifier(), Version);
 }

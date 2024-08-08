@@ -121,7 +121,7 @@ public class DocumentHighlightEndpointTest(ITestOutputHelper testOutput) : Langu
             MockBehavior.Strict);
 
         var languageServer = new DocumentHighlightServer(csharpServer, csharpDocumentUri);
-        var documentMappingService = new RazorDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
+        var documentMappingService = new LspDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
 
         var endpoint = new DocumentHighlightEndpoint(
             languageServerFeatureOptions, documentMappingService, languageServer, LoggerFactory);

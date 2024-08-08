@@ -15,7 +15,7 @@ internal static class RemoteWorkspaceAccessor
     /// process that is explicitly denied via an exception. This method serves as a workaround when a workspace is
     /// needed (eg, the Go To Definition API requires one).
     ///
-    /// This should be used sparingly nad carefully, and no updates should be made to the workspace.
+    /// This should be used sparingly and carefully, and no updates should be made to the workspace.
     /// </remarks>
     public static Workspace GetWorkspace()
         => RazorBrokeredServiceImplementation.GetWorkspace();

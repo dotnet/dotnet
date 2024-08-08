@@ -23,10 +23,10 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 internal sealed class UnformattedRemappingCSharpCodeActionResolver(
     IDocumentContextFactory documentContextFactory,
     IClientConnection clientConnection,
-    IRazorDocumentMappingService documentMappingService) : CSharpCodeActionResolver(clientConnection)
+    IDocumentMappingService documentMappingService) : CSharpCodeActionResolver(clientConnection)
 {
     private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
-    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
 
     public override string Action => LanguageServerConstants.CodeActions.UnformattedRemap;
 

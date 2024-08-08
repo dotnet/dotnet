@@ -27,7 +27,7 @@ internal sealed partial class RemoteInlayHintService(in ServiceArgs args) : Razo
             => new RemoteInlayHintService(in args);
     }
 
-    private readonly IRazorDocumentMappingService _documentMappingService = args.ExportProvider.GetExportedValue<IRazorDocumentMappingService>();
+    private readonly IDocumentMappingService _documentMappingService = args.ExportProvider.GetExportedValue<IDocumentMappingService>();
     private readonly IFilePathService _filePathService = args.ExportProvider.GetExportedValue<IFilePathService>();
 
     public ValueTask<InlayHint[]?> GetInlayHintsAsync(JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo, JsonSerializableDocumentId razorDocumentId, InlayHintParams inlayHintParams, bool displayAllOverride, CancellationToken cancellationToken)

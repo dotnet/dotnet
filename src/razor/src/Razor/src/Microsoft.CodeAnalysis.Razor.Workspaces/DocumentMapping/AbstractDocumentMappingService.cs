@@ -6,15 +6,12 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
@@ -22,15 +19,10 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
-internal abstract class AbstractRazorDocumentMappingService(
-    IFilePathService filePathService,
-    IDocumentContextFactory documentContextFactory,
-    ILogger logger)
-    : IRazorDocumentMappingService
+internal abstract class AbstractDocumentMappingService(IFilePathService filePathService, ILogger logger) : IDocumentMappingService
 {
-    private readonly IFilePathService _documentFilePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
-    private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
-    private readonly ILogger _logger = logger;
+    protected readonly IFilePathService FilePathService = filePathService;
+    protected readonly ILogger Logger = logger;
 
     public IEnumerable<TextChange> GetHostDocumentEdits(IRazorGeneratedDocument generatedDocument, IEnumerable<TextChange> generatedDocumentChanges)
     {
@@ -202,7 +194,7 @@ internal abstract class AbstractRazorDocumentMappingService(
             (hostDocumentRange.End.Line == hostDocumentRange.Start.Line &&
              hostDocumentRange.End.Character < hostDocumentRange.Start.Character))
         {
-            _logger.LogWarning($"RazorDocumentMappingService:TryMapToGeneratedDocumentRange original range end < start '{hostDocumentRange}'");
+            Logger.LogWarning($"RazorDocumentMappingService:TryMapToGeneratedDocumentRange original range end < start '{hostDocumentRange}'");
             Debug.Fail($"RazorDocumentMappingService:TryMapToGeneratedDocumentRange original range end < start '{hostDocumentRange}'");
             return false;
         }
@@ -357,64 +349,6 @@ internal abstract class AbstractRazorDocumentMappingService(
         var languageKind = GetLanguageKindCore(classifiedSpans, tagHelperSpans, hostDocumentIndex, documentLength, rightAssociative);
 
         return languageKind;
-    }
-
-    public async Task<WorkspaceEdit> RemapWorkspaceEditAsync(WorkspaceEdit workspaceEdit, CancellationToken cancellationToken)
-    {
-        if (workspaceEdit.TryGetDocumentChanges(out var documentChanges))
-        {
-            // The LSP spec says, we should prefer `DocumentChanges` property over `Changes` if available.
-            var remappedEdits = await RemapVersionedDocumentEditsAsync(documentChanges, cancellationToken).ConfigureAwait(false);
-            return new WorkspaceEdit()
-            {
-                DocumentChanges = remappedEdits
-            };
-        }
-        else if (workspaceEdit.Changes != null)
-        {
-            var remappedEdits = await RemapDocumentEditsAsync(workspaceEdit.Changes, cancellationToken).ConfigureAwait(false);
-            return new WorkspaceEdit()
-            {
-                Changes = remappedEdits
-            };
-        }
-
-        return workspaceEdit;
-    }
-
-    public async Task<(Uri MappedDocumentUri, LinePositionSpan MappedRange)> MapToHostDocumentUriAndRangeAsync(Uri generatedDocumentUri, LinePositionSpan generatedDocumentRange, CancellationToken cancellationToken)
-    {
-        var razorDocumentUri = _documentFilePathService.GetRazorDocumentUri(generatedDocumentUri);
-
-        // For Html we just map the Uri, the range will be the same
-        if (_documentFilePathService.IsVirtualHtmlFile(generatedDocumentUri))
-        {
-            return (razorDocumentUri, generatedDocumentRange);
-        }
-
-        // We only map from C# files
-        if (!_documentFilePathService.IsVirtualCSharpFile(generatedDocumentUri))
-        {
-            return (generatedDocumentUri, generatedDocumentRange);
-        }
-
-        if (!_documentContextFactory.TryCreate(razorDocumentUri, out var documentContext))
-        {
-            return (generatedDocumentUri, generatedDocumentRange);
-        }
-
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        var generatedDocument = GetGeneratedDocumentFromGeneratedDocumentUri(generatedDocumentUri, codeDocument);
-
-        // We already checked that the uri was for a generated document, above
-        Assumes.NotNull(generatedDocument);
-
-        if (TryMapToHostDocumentRange(generatedDocument, generatedDocumentRange, MappingBehavior.Strict, out var mappedRange))
-        {
-            return (razorDocumentUri, mappedRange);
-        }
-
-        return (generatedDocumentUri, generatedDocumentRange);
     }
 
     // Internal for testing
@@ -722,7 +656,7 @@ internal abstract class AbstractRazorDocumentMappingService(
         {
             s_haveAsserted = true;
             var sourceTextLinesCount = sourceText.Lines.Count;
-            _logger.LogWarning($"Attempted to map a range ({range.Start.Line},{range.Start.Character})-({range.End.Line},{range.End.Character}) outside of the Source (line count {sourceTextLinesCount}.) This could happen if the Roslyn and Razor LSP servers are not in sync.");
+            Logger.LogWarning($"Attempted to map a range ({range.Start.Line},{range.Start.Character})-({range.End.Line},{range.End.Character}) outside of the Source (line count {sourceTextLinesCount}.) This could happen if the Roslyn and Razor LSP servers are not in sync.");
         }
 
         return result;
@@ -730,127 +664,6 @@ internal abstract class AbstractRazorDocumentMappingService(
         static bool IsPositionWithinDocument(LinePosition linePosition, SourceText sourceText)
         {
             return sourceText.TryGetAbsoluteIndex(linePosition, out _);
-        }
-    }
-
-    private async Task<TextDocumentEdit[]> RemapVersionedDocumentEditsAsync(TextDocumentEdit[] documentEdits, CancellationToken cancellationToken)
-    {
-        using var _ = ListPool<TextDocumentEdit>.GetPooledObject(out var remappedDocumentEdits);
-        foreach (var entry in documentEdits)
-        {
-            var generatedDocumentUri = entry.TextDocument.Uri;
-
-            // Check if the edit is actually for a generated document, because if not we don't need to do anything
-            if (!_documentFilePathService.IsVirtualDocumentUri(generatedDocumentUri))
-            {
-                // This location doesn't point to a background razor file. No need to remap.
-                remappedDocumentEdits.Add(entry);
-                continue;
-            }
-
-            var razorDocumentUri = _documentFilePathService.GetRazorDocumentUri(generatedDocumentUri);
-
-            if (!_documentContextFactory.TryCreateForOpenDocument(razorDocumentUri, entry.TextDocument.GetProjectContext(), out var documentContext))
-            {
-                continue;
-            }
-
-            var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-
-            var remappedEdits = RemapTextEditsCore(generatedDocumentUri, codeDocument, entry.Edits);
-            if (remappedEdits.Length == 0)
-            {
-                // Nothing to do.
-                continue;
-            }
-
-            remappedDocumentEdits.Add(new TextDocumentEdit()
-            {
-                TextDocument = new OptionalVersionedTextDocumentIdentifier()
-                {
-                    Uri = razorDocumentUri,
-                    Version = documentContext.Version
-                },
-                Edits = remappedEdits
-            });
-        }
-
-        return [.. remappedDocumentEdits];
-    }
-
-    private async Task<Dictionary<string, TextEdit[]>> RemapDocumentEditsAsync(Dictionary<string, TextEdit[]> changes, CancellationToken cancellationToken)
-    {
-        var remappedChanges = new Dictionary<string, TextEdit[]>();
-        foreach (var entry in changes)
-        {
-            var uri = new Uri(entry.Key);
-            var edits = entry.Value;
-
-            // Check if the edit is actually for a generated document, because if not we don't need to do anything
-            if (!_documentFilePathService.IsVirtualDocumentUri(uri))
-            {
-                remappedChanges[entry.Key] = entry.Value;
-                continue;
-            }
-
-            if (!_documentContextFactory.TryCreate(uri, out var documentContext))
-            {
-                continue;
-            }
-
-            var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-            var remappedEdits = RemapTextEditsCore(uri, codeDocument, edits);
-            if (remappedEdits.Length == 0)
-            {
-                // Nothing to do.
-                continue;
-            }
-
-            var razorDocumentUri = _documentFilePathService.GetRazorDocumentUri(uri);
-            remappedChanges[razorDocumentUri.AbsoluteUri] = remappedEdits;
-        }
-
-        return remappedChanges;
-    }
-
-    private TextEdit[] RemapTextEditsCore(Uri generatedDocumentUri, RazorCodeDocument codeDocument, TextEdit[] edits)
-    {
-        var generatedDocument = GetGeneratedDocumentFromGeneratedDocumentUri(generatedDocumentUri, codeDocument);
-        if (generatedDocument is null)
-        {
-            return edits;
-        }
-
-        using var _ = ListPool<TextEdit>.GetPooledObject(out var remappedEdits);
-        for (var i = 0; i < edits.Length; i++)
-        {
-            var generatedRange = edits[i].Range;
-            if (!this.TryMapToHostDocumentRange(generatedDocument, generatedRange, MappingBehavior.Strict, out var originalRange))
-            {
-                // Can't map range. Discard this edit.
-                continue;
-            }
-
-            var edit = VsLspFactory.CreateTextEdit(originalRange, edits[i].NewText);
-            remappedEdits.Add(edit);
-        }
-
-        return [.. remappedEdits];
-    }
-
-    private IRazorGeneratedDocument? GetGeneratedDocumentFromGeneratedDocumentUri(Uri generatedDocumentUri, RazorCodeDocument codeDocument)
-    {
-        if (_documentFilePathService.IsVirtualCSharpFile(generatedDocumentUri))
-        {
-            return codeDocument.GetCSharpDocument();
-        }
-        else if (_documentFilePathService.IsVirtualHtmlFile(generatedDocumentUri))
-        {
-            return codeDocument.GetHtmlDocument();
-        }
-        else
-        {
-            return null;
         }
     }
 

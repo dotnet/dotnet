@@ -30,14 +30,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Definition;
 [RazorLanguageServerEndpoint(Methods.TextDocumentDefinitionName)]
 internal sealed class DefinitionEndpoint(
     IRazorComponentSearchEngine componentSearchEngine,
-    IRazorDocumentMappingService documentMappingService,
+    IDocumentMappingService documentMappingService,
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IClientConnection clientConnection,
     ILoggerFactory loggerFactory)
     : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, DefinitionResult?>(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.GetOrCreateLogger<DefinitionEndpoint>()), ICapabilitiesProvider
 {
-    private readonly IRazorComponentSearchEngine _componentSearchEngine = componentSearchEngine ?? throw new ArgumentNullException(nameof(componentSearchEngine));
-    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
+    private readonly IRazorComponentSearchEngine _componentSearchEngine = componentSearchEngine;
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
 
     protected override bool PreferCSharpOverHtmlIfPossible => true;
 
@@ -112,9 +112,9 @@ internal sealed class DefinitionEndpoint(
         }
 
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(
-                documentContext.Identifier,
-                positionInfo.Position,
-                positionInfo.LanguageKind));
+            documentContext.GetTextDocumentIdentifierAndVersion(),
+            positionInfo.Position,
+            positionInfo.LanguageKind));
     }
 
     protected async override Task<DefinitionResult?> HandleDelegatedResponseAsync(DefinitionResult? response, TextDocumentPositionParams originalRequest, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
@@ -267,7 +267,7 @@ internal sealed class DefinitionEndpoint(
         return VsLspFactory.DefaultRange;
     }
 
-    internal static async Task<Range?> TryGetPropertyRangeAsync(RazorCodeDocument codeDocument, string propertyName, IRazorDocumentMappingService documentMappingService, ILogger logger, CancellationToken cancellationToken)
+    internal static async Task<Range?> TryGetPropertyRangeAsync(RazorCodeDocument codeDocument, string propertyName, IDocumentMappingService documentMappingService, ILogger logger, CancellationToken cancellationToken)
     {
         // Parse the C# file and find the property that matches the name.
         // We don't worry about parameter attributes here for two main reasons:

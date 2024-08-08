@@ -18,7 +18,7 @@ public sealed class DocumentPullDiagnosticsEndpointTest(ITestOutputHelper testOu
     public void ApplyCapabilities_AddsExpectedCapabilities()
     {
         // Arrange
-        var documentMappingService = new RazorDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory);
+        var documentMappingService = new LspDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory);
         var razorTranslate = new Mock<RazorTranslateDiagnosticsService>(MockBehavior.Strict,
             documentMappingService,
             LoggerFactory);

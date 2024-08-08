@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
 internal class RazorSemanticTokensInfoService(
-    IRazorDocumentMappingService documentMappingService,
+    IDocumentMappingService documentMappingService,
     ISemanticTokensLegendService semanticTokensLegendService,
     ICSharpSemanticTokensProvider csharpSemanticTokensProvider,
     LanguageServerFeatureOptions languageServerFeatureOptions,

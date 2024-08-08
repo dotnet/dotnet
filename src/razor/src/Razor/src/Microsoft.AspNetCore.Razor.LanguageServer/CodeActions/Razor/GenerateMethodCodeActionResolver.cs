@@ -29,13 +29,13 @@ internal sealed class GenerateMethodCodeActionResolver(
     IDocumentContextFactory documentContextFactory,
     RazorLSPOptionsMonitor razorLSPOptionsMonitor,
     IClientConnection clientConnection,
-    IRazorDocumentMappingService razorDocumentMappingService,
+    IDocumentMappingService documentMappingService,
     IRazorFormattingService razorFormattingService) : IRazorCodeActionResolver
 {
     private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
     private readonly RazorLSPOptionsMonitor _razorLSPOptionsMonitor = razorLSPOptionsMonitor;
     private readonly IClientConnection _clientConnection = clientConnection;
-    private readonly IRazorDocumentMappingService _documentMappingService = razorDocumentMappingService;
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
     private readonly IRazorFormattingService _razorFormattingService = razorFormattingService;
 
     private const string ReturnType = "$$ReturnType$$";
@@ -166,7 +166,7 @@ internal sealed class GenerateMethodCodeActionResolver(
                 character: 0,
                 editToSendToRoslyn.NewText);
 
-            var delegatedParams = new DelegatedSimplifyMethodParams(documentContext.Identifier, RequiresVirtualDocument: true, tempTextEdit);
+            var delegatedParams = new DelegatedSimplifyMethodParams(documentContext.GetTextDocumentIdentifierAndVersion(), RequiresVirtualDocument: true, tempTextEdit);
             var result = await _clientConnection.SendRequestAsync<DelegatedSimplifyMethodParams, TextEdit[]?>(
                 CustomMessageNames.RazorSimplifyMethodEndpointName,
                 delegatedParams,
@@ -194,7 +194,7 @@ internal sealed class GenerateMethodCodeActionResolver(
 
             var remappedEdit = VsLspFactory.CreateTextEdit(remappedRange, unformattedMethodSignature);
 
-            var delegatedParams = new DelegatedSimplifyMethodParams(documentContext.Identifier, RequiresVirtualDocument: true, remappedEdit);
+            var delegatedParams = new DelegatedSimplifyMethodParams(documentContext.GetTextDocumentIdentifierAndVersion(), RequiresVirtualDocument: true, remappedEdit);
             var result = await _clientConnection.SendRequestAsync<DelegatedSimplifyMethodParams, TextEdit[]?>(
                 CustomMessageNames.RazorSimplifyMethodEndpointName,
                 delegatedParams,

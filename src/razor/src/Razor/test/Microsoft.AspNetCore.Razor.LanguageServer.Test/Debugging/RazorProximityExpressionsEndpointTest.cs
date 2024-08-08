@@ -15,12 +15,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
 public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
 {
-    private readonly IRazorDocumentMappingService _mappingService;
+    private readonly IDocumentMappingService _mappingService;
 
     public RazorProximityExpressionsEndpointTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _mappingService = new RazorDocumentMappingService(
+        _mappingService = new LspDocumentMappingService(
             FilePathService,
             new TestDocumentContextFactory(),
             LoggerFactory);

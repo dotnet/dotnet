@@ -35,7 +35,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
             .Setup(l => l.SendRequestAsync<WrapWithTagParams, WrapWithTagResponse>(LanguageServerConstants.RazorWrapWithTagEndpoint, It.IsAny<WrapWithTagParams>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
+        var documentMappingService = Mock.Of<IDocumentMappingService>(
             s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
         var endpoint = new WrapWithTagEndpoint(
             clientConnection.Object,
@@ -70,7 +70,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
             .Setup(l => l.SendRequestAsync<WrapWithTagParams, WrapWithTagResponse>(LanguageServerConstants.RazorWrapWithTagEndpoint, It.IsAny<WrapWithTagParams>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
+        var documentMappingService = Mock.Of<IDocumentMappingService>(
             s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.CSharp, MockBehavior.Strict);
         var endpoint = new WrapWithTagEndpoint(
             clientConnection.Object,
@@ -105,7 +105,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
             .Setup(l => l.SendRequestAsync<WrapWithTagParams, WrapWithTagResponse>(LanguageServerConstants.RazorWrapWithTagEndpoint, It.IsAny<WrapWithTagParams>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
+        var documentMappingService = Mock.Of<IDocumentMappingService>(
             s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.CSharp, MockBehavior.Strict);
         var endpoint = new WrapWithTagEndpoint(
             clientConnection.Object,
@@ -140,7 +140,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
             .Setup(l => l.SendRequestAsync<WrapWithTagParams, WrapWithTagResponse>(LanguageServerConstants.RazorWrapWithTagEndpoint, It.IsAny<WrapWithTagParams>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
+        var documentMappingService = Mock.Of<IDocumentMappingService>(
             s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.CSharp, MockBehavior.Strict);
         var endpoint = new WrapWithTagEndpoint(
             clientConnection.Object,
@@ -175,7 +175,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
             .Setup(l => l.SendRequestAsync<WrapWithTagParams, WrapWithTagResponse>(LanguageServerConstants.RazorWrapWithTagEndpoint, It.IsAny<WrapWithTagParams>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
+        var documentMappingService = Mock.Of<IDocumentMappingService>(
             s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.CSharp, MockBehavior.Strict);
         var endpoint = new WrapWithTagEndpoint(
             clientConnection.Object,
@@ -206,7 +206,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
 
         var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
 
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
+        var documentMappingService = Mock.Of<IDocumentMappingService>(
             s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
         var endpoint = new WrapWithTagEndpoint(clientConnection.Object, documentMappingService, LoggerFactory);
 
@@ -234,7 +234,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
 
         var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
 
-        var documentMappingService = Mock.Of<IRazorDocumentMappingService>(
+        var documentMappingService = Mock.Of<IDocumentMappingService>(
             s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
         var endpoint = new WrapWithTagEndpoint(clientConnection.Object, documentMappingService, LoggerFactory);
 

@@ -20,9 +20,9 @@ internal sealed class RazorMapToDocumentRangesEndpoint :
     IRazorDocumentlessRequestHandler<RazorMapToDocumentRangesParams, RazorMapToDocumentRangesResponse?>,
     ITextDocumentIdentifierHandler<RazorMapToDocumentRangesParams, Uri>
 {
-    private readonly IRazorDocumentMappingService _documentMappingService;
+    private readonly IDocumentMappingService _documentMappingService;
 
-    public RazorMapToDocumentRangesEndpoint(IRazorDocumentMappingService documentMappingService)
+    public RazorMapToDocumentRangesEndpoint(IDocumentMappingService documentMappingService)
     {
         _documentMappingService = documentMappingService;
     }
