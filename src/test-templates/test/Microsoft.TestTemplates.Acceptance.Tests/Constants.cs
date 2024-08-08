@@ -8,7 +8,7 @@ internal static class Constants
 #if DEBUG
     public const string BuildConfiguration = "Debug";
 #else
-public const string BuildConfiguration = "Release";
+    public const string BuildConfiguration = "Release";
 #endif
 
     public static readonly string ArtifactsTempDirectory = Path.Combine(FindRepoRoot(), "artifacts", "tmp", BuildConfiguration);

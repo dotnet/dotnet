@@ -17,6 +17,11 @@ variables:
   value: True
 - name: _RunAsPublic
   value: False
+# _SignType and _Sign are required for signing even if not used directly here
+- name: _SignType
+  value: real
+- name: _Sign
+  value: True
 
 # Group gives access to $microsoft-symbol-server-pat and $symweb-symbol-server-pat
 - group: DotNet-Symbol-Server-Pats
@@ -25,24 +30,8 @@ variables:
 # Group gives access to $dn-bot-devdiv-drop-rw-code-rw and dn-bot-dnceng-build-rw-code-rw
 - group: DotNet-VSTS-Infra-Access
 - group: DotNet-DevDiv-Insertion-Workflow-Variables
-- name: _SignType
-  value: real
-- name: _SignArgs
-  value: /p:DotNetSignType=$(_SignType) /p:TeamName=$(_TeamName) /p:Sign=$(_Sign)
-- name: _Sign
-  value: True
-- name: _VisualStudioDropName
+- name: VisualStudioDropName
   value: Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)
-- name: _InternalBuildArgs
-  value: /p:DotNetSignType=$(_SignType)
-    /p:TeamName=$(_TeamName)
-    /p:VisualStudioDropName=$(_VisualStudioDropName)
-    /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
-    /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
-    /p:DotNetPublishUsingPipelines=true
-    /p:DotNetArtifactsCategory=.NETCore
-    /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
-    /p:GenerateSbom=true
 - name: _BuildConfig
   value: Release
 
@@ -86,17 +75,27 @@ extends:
               name: netcore1espool-internal
               image: windows.vs2022preview.amd64
               os: windows
-              
+
             steps:
             - checkout: self
               clean: true
 
-            - template: /eng/restore-internal-tools.yml
+            - task: NuGetAuthenticate@1
+              inputs:
+                nuGetServiceConnections: 'devdiv/dotnet-core-internal-tooling'
+                forceReinstallCredentialProvider: true
 
             - script: eng\common\cibuild.cmd
                 -configuration $(_BuildConfig)
                 -prepareMachine
-                $(_InternalBuildArgs)
+                /p:TeamName=$(_TeamName)
+                /p:VisualStudioDropName=$(VisualStudioDropName)
+                /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
+                /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
+                /p:DotNetPublishUsingPipelines=true
+                /p:DotNetArtifactsCategory=.NETCore
+                /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+                /p:GenerateSbom=true
               displayName: Build
 
             - task: 1ES.PublishBuildArtifacts@1
@@ -110,6 +109,15 @@ extends:
               inputs:
                 command: test
                 projects: 'test\Microsoft.TestTemplates.Acceptance.Tests.sln'
+                publishTestResults: false
+                arguments: '--configuration $(_BuildConfig) --logger trx --results-directory $(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)'
+
+            - task: 1ES.PublishBuildArtifacts@1
+              displayName: 'Publish acceptance tests logs'
+              inputs:
+                PathtoPublish: '$(Build.SourcesDirectory)/artifacts/bin/Microsoft.TestTemplates.Acceptance.Tests/Debug/net9.0/TestResults/Microsoft.TestTemplates.Acceptance.Tests_net9.0_x64.log'
+                ArtifactName: AcceptanceTestsLogs
+              condition: failed()
 
             - script: dir /S artifacts\VSSetup\$(_BuildConfig)\Insertion
               displayName: 'List Insertion files to upload'
@@ -117,7 +125,7 @@ extends:
             - task: 1ES.MicroBuildVstsDrop@1
               displayName: Upload Azure DevOps Drop
               inputs:
-                dropName: $(_VisualStudioDropName)
+                dropName: $(VisualStudioDropName)
                 dropFolder: 'artifacts\VSSetup\$(_BuildConfig)\Insertion'
                 accessToken: $(dn-bot-devdiv-drop-rw-code-rw)
               condition: succeeded()

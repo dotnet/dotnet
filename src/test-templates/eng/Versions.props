@@ -20,6 +20,6 @@
   <PropertyGroup Label="Testing settings">
     <!-- Arcade is messing up with the properties of MSTest.Sdk so we need to set explicitely MicrosoftNetTestSdkVersion and MSTestVersion -->
     <MicrosoftNetTestSdkVersion>17.10.0</MicrosoftNetTestSdkVersion>
-    <MSTestVersion>3.4.3</MSTestVersion>
+    <MSTestVersion>3.5.0</MSTestVersion>
   </PropertyGroup>
 </Project>

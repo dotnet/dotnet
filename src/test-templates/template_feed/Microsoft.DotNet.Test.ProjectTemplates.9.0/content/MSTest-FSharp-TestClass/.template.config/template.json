@@ -13,23 +13,61 @@
     "language": "F#",
     "type": "item"
   },
-  "sourceName": "UnitTest1",
+  "sourceName": "Test1",
   "preferDefaultName": true,
-  "defaultName": "UnitTest1",
+  "defaultName": "Test1",
   "primaryOutputs": [
-    { "path": "UnitTest1.fs" }
+    { "path": "Test1.fs" }
   ],
   "symbols": {
     "DefaultNamespace": {
       "type": "bind",
       "binding": "msbuild:RootNamespace",
       "replaces": "Company.TestProject1"
+    },
+    "Fixture": {
+      "type": "parameter",
+      "datatype": "choice",
+      "description": "Select the fixture kinds to include in the project.",
+      "allowMultipleValues": true,
+      "enableQuotelessLiterals": true,
+      "defaultValue": "None",
+      "choices": [
+        {
+          "choice": "None",
+          "description": "No fixture methods"
+        },
+        {
+          "choice": "AssemblyInitialize",
+          "description": "AssemblyInitialize fixture method"
+        },
+        {
+          "choice": "AssemblyCleanup",
+          "description": "AssemblyCleanup fixture method"
+        },
+        {
+          "choice": "ClassInitialize",
+          "description": "ClassInitialize fixture method"
+        },
+        {
+          "choice": "ClassCleanup",
+          "description": "ClassCleanup fixture method"
+        },
+        {
+          "choice": "TestInitialize",
+          "description": "TestInitialize fixture method"
+        },
+        {
+          "choice": "TestCleanup",
+          "description": "TestCleanup fixture method"
+        }
+      ]
     }
   },
   "postActions": [
     {
       "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
-      "description": "Opens UnitTest1.cs in the editor.",
+      "description": "Opens Test1.cs in the editor.",
       "manualInstructions": [ ],
       "actionId": "84C0DA21-51C8-4541-9940-6CA19AF04EE6",
       "id": "openInEditor",

@@ -1,16 +1,27 @@
-﻿<Project Sdk="MSTest.Sdk/3.4.3">
+﻿<Project Sdk="MSTest.Sdk/3.5.1">
 
   <PropertyGroup>
     <RootNamespace>Company.TestProject1</RootNamespace>
     <TargetFramework Condition="'$(TargetFrameworkOverride)' == ''">net9.0</TargetFramework>
     <TargetFramework Condition="'$(TargetFrameworkOverride)' != ''">TargetFrameworkOverride</TargetFramework>
     <LangVersion Condition="'$(langVersion)' != ''">$(ProjectLanguageVersion)</LangVersion>
+<!--#if (TestRunner == "VSTest")-->
+    <UseVSTest>true</UseVSTest>
+  </PropertyGroup>
+<!--#if (CoverageTool == "coverlet")-->
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+  </ItemGroup>
+<!--#endif-->
+<!--#else-->
     <!--
       Displays error on console in addition to the log file. Note that this feature comes with a performance impact.
       For more information, visit https://learn.microsoft.com/dotnet/core/testing/unit-testing-platform-integration-dotnet-test#show-failure-per-test
       -->
     <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
-    <UseVSTest Condition=" '$(UseVSTest)' == 'true' ">true</UseVSTest>
+    <TestingExtensionsProfile Condition=" '$(ExtensionsProfile)' != 'Default' ">$(ExtensionsProfile)</TestingExtensionsProfile>
   </PropertyGroup>
+<!--#endif-->
 
 </Project>
