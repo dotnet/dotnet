@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace MSTestv2UnitTestExtension
@@ -46,24 +46,10 @@ namespace MSTestv2UnitTestExtension
             {
                 throw new ArgumentNullException("unitTestProject");
             }
-
-            TraceLogger.LogInfo("MSTestv2SolutionManager.OnUnitTestProjectCreated: Adding reference to MSTestv2 assemblies through nuget.");
-
+            
             base.OnUnitTestProjectCreated(unitTestProject, sourceMethod);
 
-            this.EnsureNuGetReference(unitTestProject, "MSTest.TestAdapter", "2.2.10");
-            this.EnsureNuGetReference(unitTestProject, "MSTest.TestFramework", "2.2.10");
-
-            VSProject2 vsp = unitTestProject.Object as VSProject2;
-            if (vsp != null)
-            {
-                Reference reference = vsp.References.Find(GlobalConstants.MSTestAssemblyName);
-                if (reference != null)
-                {
-                    TraceLogger.LogInfo("MSTestv2SolutionManager.OnUnitTestProjectCreated: Removing reference to {0}", reference.Name);
-                    reference.Remove();
-                }
-            }
+            // Note: we don't add the test framework reference since it is already included in the test project template
         }
     }
 }

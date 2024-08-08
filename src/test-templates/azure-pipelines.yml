@@ -17,12 +17,6 @@ variables:
   value: False
 - name: _RunAsPublic
   value: True
-- name: _SignType
-  value: test
-- name: _SignArgs
-  value: ''
-- name: _Sign
-  value: False
 
 stages:
 - stage: build
@@ -58,6 +52,7 @@ stages:
         - script: eng\common\cibuild.cmd
             -configuration $(_BuildConfig)
             -prepareMachine
+            /p:Test=false
           displayName: Build
 
         - task: PublishBuildArtifacts@1
@@ -71,3 +66,12 @@ stages:
           inputs:
             command: test
             projects: 'test\Microsoft.TestTemplates.Acceptance.Tests.sln'
+            publishTestResults: false
+            arguments: '--configuration $(_BuildConfig) --logger trx --results-directory $(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)'
+
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish acceptance tests logs'
+          inputs:
+            PathtoPublish: '$(Build.SourcesDirectory)/artifacts/bin/Microsoft.TestTemplates.Acceptance.Tests/Debug/net9.0/TestResults/Microsoft.TestTemplates.Acceptance.Tests_net9.0_x64.log'
+            ArtifactName: AcceptanceTestsLogs
+          condition: failed()

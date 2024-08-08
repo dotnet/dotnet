@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json.schemastore.org/ide.host",
+  "symbolInfo": [
+    {
+      "id": "TestRunner",
+      "name": {
+        "text": "Test runner"
+      },
+      "isVisible": true,
+      "persistenceScope": "shared"
+    },
+    {
+      "id": "ExtensionsProfile",
+      "name": {
+        "text": "Testing extensions profile"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "CoverageTool",
+      "name": {
+        "text": "Coverage tool"
+      },
+      "isVisible": true,
+      "persistenceScope": "shared"
+    },
+    {
+      "id": "Fixture",
+      "isVisible": true
+    }
+  ]
+}

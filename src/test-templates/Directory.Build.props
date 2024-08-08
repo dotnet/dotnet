@@ -19,6 +19,8 @@
   <!-- Test config -->
   <PropertyGroup>
     <TestRunnerName>TestingPlatformRunner</TestRunnerName>
+    <!-- We use MSTest.Sdk so we don't need arcade to add the Microsoft.NET.Test.Sdk package -->
+    <ExcludeMicrosoftNetTestSdk>true</ExcludeMicrosoftNetTestSdk>
   </PropertyGroup>
 
 </Project>
