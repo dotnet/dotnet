@@ -14376,6 +14376,13 @@ HRESULT gc_heap::initialize_gc (size_t soh_segment_size,
 
     original_spin_count_unit = yp_spin_count_unit;
 
+#if (defined(MULTIPLE_HEAPS) && defined(DYNAMIC_HEAP_COUNT))
+    if ((dynamic_adaptation_mode == dynamic_adaptation_to_application_sizes) && (!gc_heap::spin_count_unit_config_p))
+    {
+        yp_spin_count_unit = 10;
+    }
+#endif // MULTIPLE_HEAPS && DYNAMIC_HEAP_COUNT
+
 #if defined(__linux__)
     GCToEEInterface::UpdateGCEventStatus(static_cast<int>(GCEventStatus::GetEnabledLevel(GCEventProvider_Default)),
                                          static_cast<int>(GCEventStatus::GetEnabledKeywords(GCEventProvider_Default)),
@@ -22910,6 +22917,12 @@ size_t gc_heap::get_total_soh_stable_size()
         {
             gc_heap* hp = g_heaps[i];
             total_stable_size += hp->generation_size (max_generation - 1) / 2;
+        }
+
+        if (!total_stable_size)
+        {
+            // Setting a temp value before a GC naturally happens (ie, due to allocation).
+            total_stable_size = dd_min_size (g_heaps[0]->dynamic_data_of (max_generation - 1));
         }
 
         return total_stable_size;
