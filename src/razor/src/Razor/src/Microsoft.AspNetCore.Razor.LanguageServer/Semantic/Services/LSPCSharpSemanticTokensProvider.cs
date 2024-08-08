@@ -41,7 +41,12 @@ internal class LSPCSharpSemanticTokensProvider(LanguageServerFeatureOptions lang
 
         var csharpRanges = csharpRangeList.ToArray();
 
-        var parameter = new ProvideSemanticTokensRangesParams(documentContext.Identifier.TextDocumentIdentifier, documentVersion, csharpRanges, correlationId);
+        var parameter = new ProvideSemanticTokensRangesParams(
+            documentContext.GetTextDocumentIdentifierAndVersion().TextDocumentIdentifier,
+            documentVersion,
+            csharpRanges,
+            correlationId);
+
         ProvideSemanticTokensResponse? csharpResponse;
         if (_languageServerFeatureOptions.UsePreciseSemanticTokenRanges)
         {

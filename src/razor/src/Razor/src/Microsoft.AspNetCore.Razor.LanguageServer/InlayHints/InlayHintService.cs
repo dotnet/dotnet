@@ -18,9 +18,9 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.InlayHints;
 
-internal sealed class InlayHintService(IRazorDocumentMappingService documentMappingService) : IInlayHintService
+internal sealed class InlayHintService(IDocumentMappingService documentMappingService) : IInlayHintService
 {
-    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
 
     public async Task<InlayHint[]?> GetInlayHintsAsync(IClientConnection clientConnection, VersionedDocumentContext documentContext, Range range, CancellationToken cancellationToken)
     {
@@ -42,7 +42,7 @@ internal sealed class InlayHintService(IRazorDocumentMappingService documentMapp
         // For now we only support C# inlay hints. Once Web Tools adds support we'll need to request from both servers and combine
         // the results, much like folding ranges.
         var delegatedRequest = new DelegatedInlayHintParams(
-            Identifier: documentContext.Identifier,
+            Identifier: documentContext.GetTextDocumentIdentifierAndVersion(),
             ProjectedRange: projectedLinePositionSpan.ToRange(),
             ProjectedKind: RazorLanguageKind.CSharp
         );
@@ -78,7 +78,7 @@ internal sealed class InlayHintService(IRazorDocumentMappingService documentMapp
 
                 hint.Data = new RazorInlayHintWrapper
                 {
-                    TextDocument = documentContext.Identifier,
+                    TextDocument = documentContext.GetTextDocumentIdentifierAndVersion(),
                     OriginalData = hint.Data,
                     OriginalPosition = hint.Position
                 };

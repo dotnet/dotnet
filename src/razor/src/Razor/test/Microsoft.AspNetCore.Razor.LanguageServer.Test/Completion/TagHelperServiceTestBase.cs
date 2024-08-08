@@ -248,14 +248,17 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
         RazorTagHelperCompletionService = new LspTagHelperCompletionService();
     }
 
+    protected static string GetFileName(bool isRazorFile)
+        => isRazorFile ? RazorFile : CSHtmlFile;
+
     internal static RazorCodeDocument CreateCodeDocument(string text, bool isRazorFile, ImmutableArray<TagHelperDescriptor> tagHelpers)
     {
-        return CreateCodeDocument(text, isRazorFile ? RazorFile : CSHtmlFile, tagHelpers);
+        return CreateCodeDocument(text, GetFileName(isRazorFile), tagHelpers);
     }
 
     internal static RazorCodeDocument CreateCodeDocument(string text, bool isRazorFile, params TagHelperDescriptor[] tagHelpers)
     {
-        return CreateCodeDocument(text, isRazorFile ? RazorFile : CSHtmlFile, tagHelpers);
+        return CreateCodeDocument(text, GetFileName(isRazorFile), tagHelpers);
     }
 
     internal static RazorCodeDocument CreateCodeDocument(string text, string filePath, ImmutableArray<TagHelperDescriptor> tagHelpers)

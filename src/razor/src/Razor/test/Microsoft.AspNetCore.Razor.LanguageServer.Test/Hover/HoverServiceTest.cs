@@ -725,7 +725,7 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
             .Setup(c => c.SendRequestAsync<IDelegatedParams, VSInternalHover>(CustomMessageNames.RazorHoverEndpointName, It.IsAny<DelegatedPositionParams>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(delegatedHover);
 
-        var documentMappingServiceMock = new Mock<IRazorDocumentMappingService>(MockBehavior.Strict);
+        var documentMappingServiceMock = new Mock<IDocumentMappingService>(MockBehavior.Strict);
         documentMappingServiceMock
             .Setup(c => c.GetLanguageKind(It.IsAny<RazorCodeDocument>(), It.IsAny<int>(), It.IsAny<bool>()))
             .Returns(RazorLanguageKind.CSharp);
@@ -880,7 +880,7 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
             options.UseRazorCohostServer == false
             , MockBehavior.Strict);
         var languageServer = new HoverLanguageServer(csharpServer, csharpDocumentUri, DisposalToken);
-        var documentMappingService = new RazorDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
+        var documentMappingService = new LspDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
 
         var service = GetHoverService(documentMappingService);
 
@@ -936,12 +936,12 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
 
     private HoverEndpoint CreateEndpoint(
         LanguageServerFeatureOptions languageServerFeatureOptions = null,
-        IRazorDocumentMappingService documentMappingService = null,
+        IDocumentMappingService documentMappingService = null,
         IClientConnection clientConnection = null)
     {
         languageServerFeatureOptions ??= Mock.Of<LanguageServerFeatureOptions>(options => options.SupportsFileManipulation == true && options.SingleServerSupport == false, MockBehavior.Strict);
 
-        var documentMappingServiceMock = new Mock<IRazorDocumentMappingService>(MockBehavior.Strict);
+        var documentMappingServiceMock = new Mock<IDocumentMappingService>(MockBehavior.Strict);
         documentMappingServiceMock
             .Setup(c => c.GetLanguageKind(It.IsAny<RazorCodeDocument>(), It.IsAny<int>(), It.IsAny<bool>()))
             .Returns(RazorLanguageKind.Html);
@@ -961,7 +961,7 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
         return endpoint;
     }
 
-    private HoverService GetHoverService(IRazorDocumentMappingService mappingService = null)
+    private HoverService GetHoverService(IDocumentMappingService mappingService = null)
     {
         var projectManager = CreateProjectSnapshotManager();
         var lspTagHelperTooltipFactory = new DefaultLSPTagHelperTooltipFactory(projectManager);

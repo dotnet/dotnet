@@ -55,7 +55,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
                     new GenerateMethodResolverDocumentContextFactory(filePath, codeDocument),
                     optionsMonitor ?? TestRazorLSPOptionsMonitor.Create(),
                     clientConnection,
-                    new RazorDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory),
+                    new LspDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory),
                     razorFormattingService)
             ];
 

@@ -105,7 +105,13 @@ internal class DelegatedCompletionItemResolver : CompletionItemResolver
             return resolvedCompletionItem;
         }
 
-        var formattingOptions = await _clientConnection.SendRequestAsync<TextDocumentIdentifierAndVersion, FormattingOptions?>(CodeAnalysis.Razor.Protocol.LanguageServerConstants.RazorGetFormattingOptionsEndpointName, documentContext.Identifier, cancellationToken).ConfigureAwait(false);
+        var formattingOptions = await _clientConnection
+            .SendRequestAsync<TextDocumentIdentifierAndVersion, FormattingOptions?>(
+                LanguageServerConstants.RazorGetFormattingOptionsEndpointName,
+                documentContext.GetTextDocumentIdentifierAndVersion(),
+                cancellationToken)
+            .ConfigureAwait(false);
+
         if (formattingOptions is null)
         {
             return resolvedCompletionItem;

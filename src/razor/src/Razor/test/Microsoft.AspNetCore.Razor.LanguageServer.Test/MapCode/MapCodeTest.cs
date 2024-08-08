@@ -290,7 +290,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
 
         var documentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument, version: 1337);
         var languageServer = new MapCodeServer(csharpServer, csharpDocumentUri);
-        var documentMappingService = new RazorDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
+        var documentMappingService = new LspDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
 
         var endpoint = new MapCodeEndpoint(documentMappingService, documentContextFactory, languageServer, NoOpTelemetryReporter.Instance);
 

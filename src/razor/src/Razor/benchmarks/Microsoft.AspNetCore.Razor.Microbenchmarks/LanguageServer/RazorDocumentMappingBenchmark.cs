@@ -19,7 +19,7 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
 {
     private string _filePath;
 
-    private IRazorDocumentMappingService DocumentMappingService { get; set; }
+    private IDocumentMappingService DocumentMappingService { get; set; }
 
     private IDocumentSnapshot DocumentSnapshot { get; set; }
 
@@ -171,6 +171,6 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
 
     private void EnsureServicesInitialized()
     {
-        DocumentMappingService = RazorLanguageServerHost.GetRequiredService<IRazorDocumentMappingService>();
+        DocumentMappingService = RazorLanguageServerHost.GetRequiredService<IDocumentMappingService>();
     }
 }

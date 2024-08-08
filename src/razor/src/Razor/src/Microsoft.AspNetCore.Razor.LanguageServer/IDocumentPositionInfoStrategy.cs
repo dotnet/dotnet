@@ -12,7 +12,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal interface IDocumentPositionInfoStrategy
 {
     Task<DocumentPositionInfo?> TryGetPositionInfoAsync(
-        IRazorDocumentMappingService documentMappingService,
+        IDocumentMappingService documentMappingService,
         DocumentContext documentContext,
         Position position,
         CancellationToken cancellationToken);

@@ -13,7 +13,7 @@ public class StrictMock<T> : Mock<T>
     {
     }
 
-    public StrictMock(params object[] args)
+    public StrictMock(params object?[] args)
         : base(MockBehavior.Strict, args)
     {
     }

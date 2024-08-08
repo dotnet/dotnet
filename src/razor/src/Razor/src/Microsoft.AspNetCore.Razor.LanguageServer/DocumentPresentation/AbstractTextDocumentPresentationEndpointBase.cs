@@ -25,18 +25,18 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : IRazorRequestHandler<TParams, WorkspaceEdit?>, ICapabilitiesProvider
     where TParams : IPresentationParams
 {
-    private readonly IRazorDocumentMappingService _razorDocumentMappingService;
+    private readonly IDocumentMappingService _documentMappingService;
     private readonly IClientConnection _clientConnection;
     private readonly IFilePathService _filePathService;
     private readonly ILogger _logger;
 
     protected AbstractTextDocumentPresentationEndpointBase(
-        IRazorDocumentMappingService razorDocumentMappingService,
+        IDocumentMappingService documentMappingService,
         IClientConnection clientConnection,
         IFilePathService filePathService,
         ILogger logger)
     {
-        _razorDocumentMappingService = razorDocumentMappingService;
+        _documentMappingService = documentMappingService;
         _clientConnection = clientConnection;
         _filePathService = filePathService;
         _logger = logger;
@@ -79,7 +79,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
             return null;
         }
 
-        var languageKind = _razorDocumentMappingService.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: false);
+        var languageKind = _documentMappingService.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: false);
         // See if we can handle this directly in Razor. If not, we'll let things flow to the below delegated handling.
         var result = await TryGetRazorWorkspaceEditAsync(languageKind, request, cancellationToken).ConfigureAwait(false);
         if (result is not null)
@@ -107,7 +107,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
         // For CSharp we need to map the range to the generated document
         if (languageKind == RazorLanguageKind.CSharp)
         {
-            if (!_razorDocumentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetCSharpDocument(), request.Range, out var projectedRange))
+            if (!_documentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetCSharpDocument(), request.Range, out var projectedRange))
             {
                 return null;
             }
@@ -233,7 +233,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
         using var mappedEdits = new PooledArrayBuilder<TextEdit>();
         foreach (var edit in edits)
         {
-            if (!_razorDocumentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), edit.Range, out var newRange))
+            if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), edit.Range, out var newRange))
             {
                 return [];
             }

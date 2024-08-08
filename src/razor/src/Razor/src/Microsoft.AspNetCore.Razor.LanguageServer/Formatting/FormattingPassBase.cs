@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-internal abstract class FormattingPassBase(IRazorDocumentMappingService documentMappingService) : IFormattingPass
+internal abstract class FormattingPassBase(IDocumentMappingService documentMappingService) : IFormattingPass
 {
     protected static readonly int DefaultOrder = 1000;
 
@@ -20,7 +20,7 @@ internal abstract class FormattingPassBase(IRazorDocumentMappingService document
 
     public virtual int Order => DefaultOrder;
 
-    protected IRazorDocumentMappingService DocumentMappingService { get; } = documentMappingService;
+    protected IDocumentMappingService DocumentMappingService { get; } = documentMappingService;
 
     public abstract Task<FormattingResult> ExecuteAsync(FormattingContext context, FormattingResult result, CancellationToken cancellationToken);
 

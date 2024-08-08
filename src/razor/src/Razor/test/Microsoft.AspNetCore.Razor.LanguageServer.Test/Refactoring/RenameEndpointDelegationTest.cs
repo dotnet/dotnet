@@ -71,6 +71,7 @@ public class RenameEndpointDelegationTest(ITestOutputHelper testOutput) : Single
             projectManager,
             LanguageServerFeatureOptions,
             DocumentMappingService,
+            EditMappingService,
             languageServer,
             LoggerFactory);
 

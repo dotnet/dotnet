@@ -15,7 +15,7 @@ internal class DefaultDocumentPositionInfoStrategy : IDocumentPositionInfoStrate
     public static IDocumentPositionInfoStrategy Instance { get; } = new DefaultDocumentPositionInfoStrategy();
 
     public async Task<DocumentPositionInfo?> TryGetPositionInfoAsync(
-        IRazorDocumentMappingService documentMappingService,
+        IDocumentMappingService documentMappingService,
         DocumentContext documentContext,
         Position position,
         CancellationToken cancellationToken)

@@ -26,7 +26,7 @@ internal sealed class RemoteSignatureHelpService(in ServiceArgs args) : RazorDoc
     }
 
     private readonly IFilePathService _filePathService = args.ExportProvider.GetExportedValue<IFilePathService>();
-    private readonly IRazorDocumentMappingService _documentMappingService = args.ExportProvider.GetExportedValue<IRazorDocumentMappingService>();
+    private readonly IDocumentMappingService _documentMappingService = args.ExportProvider.GetExportedValue<IDocumentMappingService>();
 
     public ValueTask<SignatureHelp?> GetSignatureHelpAsync(JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo, JsonSerializableDocumentId documentId, Position position, CancellationToken cancellationToken)
         => RunServiceAsync(

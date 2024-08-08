@@ -153,7 +153,7 @@ internal class RazorFormattingService : IRazorFormattingService
         collapseEdits |= formattedEdits.Length == 1;
 
         var documentSnapshot = documentContext.Snapshot;
-        var uri = documentContext.Identifier.Uri;
+        var uri = documentContext.Uri;
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
         using var context = FormattingContext.CreateForOnTypeFormatting(uri, documentSnapshot, codeDocument, options, _workspaceFactory, automaticallyAddUsings: automaticallyAddUsings, hostDocumentIndex, triggerCharacter);
         var result = new FormattingResult(formattedEdits, kind);

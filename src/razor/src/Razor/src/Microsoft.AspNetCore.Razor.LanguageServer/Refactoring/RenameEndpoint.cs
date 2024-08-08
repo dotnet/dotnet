@@ -30,7 +30,8 @@ internal sealed class RenameEndpoint(
     IRazorComponentSearchEngine componentSearchEngine,
     IProjectCollectionResolver projectResolver,
     LanguageServerFeatureOptions languageServerFeatureOptions,
-    IRazorDocumentMappingService documentMappingService,
+    IDocumentMappingService documentMappingService,
+    IEditMappingService editMappingService,
     IClientConnection clientConnection,
     ILoggerFactory loggerFactory)
     : AbstractRazorDelegatingEndpoint<RenameParams, WorkspaceEdit?>(
@@ -42,7 +43,7 @@ internal sealed class RenameEndpoint(
     private readonly IProjectCollectionResolver _projectResolver = projectResolver;
     private readonly IRazorComponentSearchEngine _componentSearchEngine = componentSearchEngine;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
-    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly IEditMappingService _editMappingService = editMappingService;
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
@@ -91,10 +92,10 @@ internal sealed class RenameEndpoint(
         }
 
         return Task.FromResult<IDelegatedParams?>(new DelegatedRenameParams(
-                documentContext.Identifier,
-                positionInfo.Position,
-                positionInfo.LanguageKind,
-                request.NewName));
+            documentContext.GetTextDocumentIdentifierAndVersion(),
+            positionInfo.Position,
+            positionInfo.LanguageKind,
+            request.NewName));
     }
 
     protected override async Task<WorkspaceEdit?> HandleDelegatedResponseAsync(WorkspaceEdit? response, RenameParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
@@ -104,7 +105,7 @@ internal sealed class RenameEndpoint(
             return null;
         }
 
-        return await _documentMappingService.RemapWorkspaceEditAsync(response, cancellationToken).ConfigureAwait(false);
+        return await _editMappingService.RemapWorkspaceEditAsync(response, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<WorkspaceEdit?> TryGetRazorComponentRenameEditsAsync(RenameParams request, int absoluteIndex, DocumentContext documentContext, CancellationToken cancellationToken)

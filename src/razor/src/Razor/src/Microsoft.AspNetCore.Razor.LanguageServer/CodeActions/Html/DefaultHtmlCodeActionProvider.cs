@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,9 +13,9 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal sealed class DefaultHtmlCodeActionProvider(IRazorDocumentMappingService documentMappingService) : IHtmlCodeActionProvider
+internal sealed class DefaultHtmlCodeActionProvider(IEditMappingService editMappingService) : IHtmlCodeActionProvider
 {
-    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly IEditMappingService _editMappingService = editMappingService;
 
     public async Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(
         RazorCodeActionContext context,
@@ -28,7 +27,7 @@ internal sealed class DefaultHtmlCodeActionProvider(IRazorDocumentMappingService
         {
             if (codeAction.Edit is not null)
             {
-                await RemapAndFixHtmlCodeActionEditAsync(_documentMappingService, context.CodeDocument, codeAction, cancellationToken).ConfigureAwait(false);
+                await RemapAndFixHtmlCodeActionEditAsync(_editMappingService, context.CodeDocument, codeAction, cancellationToken).ConfigureAwait(false);
 
                 results.Add(codeAction);
             }
@@ -41,11 +40,11 @@ internal sealed class DefaultHtmlCodeActionProvider(IRazorDocumentMappingService
         return results.ToImmutable();
     }
 
-    public static async Task RemapAndFixHtmlCodeActionEditAsync(IRazorDocumentMappingService documentMappingService, RazorCodeDocument codeDocument, CodeAction codeAction, CancellationToken cancellationToken)
+    public static async Task RemapAndFixHtmlCodeActionEditAsync(IEditMappingService editMappingService, RazorCodeDocument codeDocument, CodeAction codeAction, CancellationToken cancellationToken)
     {
         Assumes.NotNull(codeAction.Edit);
 
-        codeAction.Edit = await documentMappingService.RemapWorkspaceEditAsync(codeAction.Edit, cancellationToken).ConfigureAwait(false);
+        codeAction.Edit = await editMappingService.RemapWorkspaceEditAsync(codeAction.Edit, cancellationToken).ConfigureAwait(false);
 
         if (codeAction.Edit.TryGetDocumentChanges(out var documentEdits) == true)
         {

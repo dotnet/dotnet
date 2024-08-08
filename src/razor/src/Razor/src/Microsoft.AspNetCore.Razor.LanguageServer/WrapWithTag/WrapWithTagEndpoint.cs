@@ -20,12 +20,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
 [RazorLanguageServerEndpoint(LanguageServerConstants.RazorWrapWithTagEndpoint)]
 internal class WrapWithTagEndpoint(
     IClientConnection clientConnection,
-    IRazorDocumentMappingService razorDocumentMappingService,
+    IDocumentMappingService documentMappingService,
     ILoggerFactory loggerFactory)
     : IRazorRequestHandler<WrapWithTagParams, WrapWithTagResponse?>
 {
     private readonly IClientConnection _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-    private readonly IRazorDocumentMappingService _razorDocumentMappingService = razorDocumentMappingService ?? throw new ArgumentNullException(nameof(razorDocumentMappingService));
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<WrapWithTagEndpoint>();
 
     public bool MutatesSolutionState => false;
@@ -69,7 +69,7 @@ internal class WrapWithTagEndpoint(
         //
         // Instead of C#, which certainly would be expected to go in an if statement, we'll see HTML, which obviously
         // is the better choice for this operation.
-        var languageKind = _razorDocumentMappingService.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: true);
+        var languageKind = _documentMappingService.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: true);
         if (languageKind is not RazorLanguageKind.Html)
         {
             // In general, we don't support C# for obvious reasons, but we can support implicit expressions. ie

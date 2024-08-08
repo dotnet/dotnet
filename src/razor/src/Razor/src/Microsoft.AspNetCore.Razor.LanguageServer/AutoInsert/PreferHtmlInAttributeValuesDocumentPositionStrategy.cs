@@ -20,7 +20,7 @@ internal class PreferHtmlInAttributeValuesDocumentPositionInfoStrategy : IDocume
 {
     public static IDocumentPositionInfoStrategy Instance { get; } = new PreferHtmlInAttributeValuesDocumentPositionInfoStrategy();
 
-    public async Task<DocumentPositionInfo?> TryGetPositionInfoAsync(IRazorDocumentMappingService documentMappingService, DocumentContext documentContext, Position position, CancellationToken cancellationToken)
+    public async Task<DocumentPositionInfo?> TryGetPositionInfoAsync(IDocumentMappingService documentMappingService, DocumentContext documentContext, Position position, CancellationToken cancellationToken)
     {
         var defaultDocumentPositionInfo = await DefaultDocumentPositionInfoStrategy.Instance.TryGetPositionInfoAsync(documentMappingService, documentContext, position, cancellationToken).ConfigureAwait(false);
         if (defaultDocumentPositionInfo is null)

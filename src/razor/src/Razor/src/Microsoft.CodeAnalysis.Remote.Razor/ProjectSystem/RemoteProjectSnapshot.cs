@@ -25,22 +25,23 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 
 internal class RemoteProjectSnapshot : IProjectSnapshot
 {
+    public ProjectKey Key { get; }
+
     private readonly Project _project;
     private readonly DocumentSnapshotFactory _documentSnapshotFactory;
     private readonly ITelemetryReporter _telemetryReporter;
-    private readonly ProjectKey _projectKey;
     private readonly Lazy<RazorConfiguration> _lazyConfiguration;
     private readonly Lazy<RazorProjectEngine> _lazyProjectEngine;
     private readonly Lazy<ImmutableDictionary<string, ImmutableArray<string>>> _importsToRelatedDocumentsLazy;
 
-    private ImmutableArray<TagHelperDescriptor>? _tagHelpers;
+    private ImmutableArray<TagHelperDescriptor> _tagHelpers;
 
     public RemoteProjectSnapshot(Project project, DocumentSnapshotFactory documentSnapshotFactory, ITelemetryReporter telemetryReporter)
     {
         _project = project;
         _documentSnapshotFactory = documentSnapshotFactory;
         _telemetryReporter = telemetryReporter;
-        _projectKey = _project.ToProjectKey();
+        Key = _project.ToProjectKey();
 
         _lazyConfiguration = new Lazy<RazorConfiguration>(CreateRazorConfiguration);
         _lazyProjectEngine = new Lazy<RazorProjectEngine>(() =>
@@ -59,24 +60,39 @@ internal class RemoteProjectSnapshot : IProjectSnapshot
         _importsToRelatedDocumentsLazy = new Lazy<ImmutableDictionary<string, ImmutableArray<string>>>(() =>
         {
             var importsToRelatedDocuments = ImmutableDictionary.Create<string, ImmutableArray<string>>(FilePathNormalizingComparer.Instance);
-            foreach (var document in DocumentFilePaths)
+            foreach (var documentFilePath in DocumentFilePaths)
             {
-                var importTargetPaths = ProjectState.GetImportDocumentTargetPaths(document, FileKinds.GetFileKindFromFilePath(document), _lazyProjectEngine.Value);
-                importsToRelatedDocuments = ProjectState.AddToImportsToRelatedDocuments(importsToRelatedDocuments, document, importTargetPaths);
+                var importTargetPaths = ProjectState.GetImportDocumentTargetPaths(documentFilePath, FileKinds.GetFileKindFromFilePath(documentFilePath), _lazyProjectEngine.Value);
+                importsToRelatedDocuments = ProjectState.AddToImportsToRelatedDocuments(importsToRelatedDocuments, documentFilePath, importTargetPaths);
             }
 
             return importsToRelatedDocuments;
         });
     }
 
-    public ProjectKey Key => _projectKey;
-
     public RazorConfiguration Configuration => throw new InvalidOperationException("Should not be called for cohosted projects.");
 
     public IEnumerable<string> DocumentFilePaths
-        => _project.AdditionalDocuments
-            .Where(d => d.FilePath!.EndsWith(".razor", StringComparison.OrdinalIgnoreCase) || d.FilePath.EndsWith(".cshtml", StringComparison.OrdinalIgnoreCase))
-            .Select(d => d.FilePath.AssumeNotNull());
+    {
+        get
+        {
+            foreach (var additionalDocument in _project.AdditionalDocuments)
+            {
+                if (additionalDocument.FilePath is not string filePath)
+                {
+                    continue;
+                }
+
+                if (!filePath.EndsWith(".razor", StringComparison.OrdinalIgnoreCase) &&
+                    !filePath.EndsWith(".cshtml", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                yield return filePath;
+            }
+        }
+    }
 
     public string FilePath => _project.FilePath!;
 
@@ -92,13 +108,23 @@ internal class RemoteProjectSnapshot : IProjectSnapshot
 
     public async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken)
     {
-        if (_tagHelpers is null)
+        if (_tagHelpers.IsDefault)
         {
-            var resolver = new CompilationTagHelperResolver(_telemetryReporter);
-            _tagHelpers = await resolver.GetTagHelpersAsync(_project, _lazyProjectEngine.Value, cancellationToken).ConfigureAwait(false);
+            var computedTagHelpers = await ComputeTagHelpersAsync(_project, _lazyProjectEngine.Value, _telemetryReporter, cancellationToken);
+            ImmutableInterlocked.InterlockedInitialize(ref _tagHelpers, computedTagHelpers);
         }
 
-        return _tagHelpers.GetValueOrDefault();
+        return _tagHelpers;
+
+        static ValueTask<ImmutableArray<TagHelperDescriptor>> ComputeTagHelpersAsync(
+            Project project,
+            RazorProjectEngine projectEngine,
+            ITelemetryReporter telemetryReporter,
+            CancellationToken cancellationToken)
+        {
+            var resolver = new CompilationTagHelperResolver(telemetryReporter);
+            return resolver.GetTagHelpersAsync(project, projectEngine, cancellationToken);
+        }
     }
 
     public ProjectWorkspaceState ProjectWorkspaceState => throw new InvalidOperationException("Should not be called for cohosted projects.");
@@ -134,26 +160,26 @@ internal class RemoteProjectSnapshot : IProjectSnapshot
 
         if (!_importsToRelatedDocumentsLazy.Value.TryGetValue(targetPath, out var relatedDocuments))
         {
-            return ImmutableArray<IDocumentSnapshot>.Empty;
+            return [];
         }
 
-        using var _ = ArrayBuilderPool<IDocumentSnapshot>.GetPooledObject(out var builder);
-        builder.SetCapacityIfLarger(relatedDocuments.Length);
+        using var builder = new PooledArrayBuilder<IDocumentSnapshot>(relatedDocuments.Length);
 
         foreach (var relatedDocumentFilePath in relatedDocuments)
         {
-            if (GetDocument(relatedDocumentFilePath) is { } relatedDocument)
+            if (TryGetDocument(relatedDocumentFilePath, out var relatedDocument))
             {
                 builder.Add(relatedDocument);
             }
         }
 
-        return builder.ToImmutableArray();
+        return builder.DrainToImmutable();
     }
 
     public bool IsImportDocument(IDocumentSnapshot document)
     {
-        return document.TargetPath is { } targetPath && _importsToRelatedDocumentsLazy.Value.ContainsKey(targetPath);
+        return document.TargetPath is { } targetPath &&
+               _importsToRelatedDocumentsLazy.Value.ContainsKey(targetPath);
     }
 
     private RazorConfiguration CreateRazorConfiguration()

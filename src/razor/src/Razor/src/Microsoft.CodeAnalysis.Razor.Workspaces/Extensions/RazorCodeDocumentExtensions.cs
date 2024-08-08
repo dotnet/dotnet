@@ -1,11 +1,14 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -41,6 +44,28 @@ internal static class RazorCodeDocumentExtensions
         }
 
         return sourceText.AssumeNotNull();
+    }
+
+    public static bool TryGetGeneratedDocument(
+        this RazorCodeDocument codeDocument,
+        Uri generatedDocumentUri,
+        IFilePathService filePathService,
+        [NotNullWhen(true)] out IRazorGeneratedDocument? generatedDocument)
+    {
+        if (filePathService.IsVirtualCSharpFile(generatedDocumentUri))
+        {
+            generatedDocument = codeDocument.GetCSharpDocument();
+            return true;
+        }
+
+        if (filePathService.IsVirtualHtmlFile(generatedDocumentUri))
+        {
+            generatedDocument = codeDocument.GetHtmlDocument();
+            return true;
+        }
+
+        generatedDocument = null;
+        return false;
     }
 
     public static SourceText GetGeneratedSourceText(this RazorCodeDocument document, IRazorGeneratedDocument generatedDocument)

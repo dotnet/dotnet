@@ -265,7 +265,7 @@ internal partial class DocumentState
         return imports.ToImmutable();
     }
 
-    internal static async Task<RazorCodeDocument> GenerateCodeDocumentAsync(ImmutableArray<TagHelperDescriptor> tagHelpers, RazorProjectEngine projectEngine, IDocumentSnapshot document, ImmutableArray<ImportItem> imports, bool forceRuntimeCodeGeneration)
+    internal static async Task<RazorCodeDocument> GenerateCodeDocumentAsync(IDocumentSnapshot document, RazorProjectEngine projectEngine, ImmutableArray<ImportItem> imports, ImmutableArray<TagHelperDescriptor> tagHelpers, bool forceRuntimeCodeGeneration)
     {
         // OK we have to generate the code.
         using var importSources = new PooledArrayBuilder<RazorSourceDocument>(imports.Length);
@@ -286,9 +286,6 @@ internal partial class DocumentState
 
         return projectEngine.ProcessDesignTime(documentSource, fileKind: document.FileKind, importSources.DrainToImmutable(), tagHelpers);
     }
-
-    internal static Task<RazorCodeDocument> GenerateFormattingCodeDocumentAsync(ImmutableArray<TagHelperDescriptor> tagHelpers, RazorProjectEngine projectEngine, IDocumentSnapshot document, ImmutableArray<ImportItem> imports)
-        => GenerateCodeDocumentAsync(tagHelpers, projectEngine, document, imports, forceRuntimeCodeGeneration: false);
 
     internal static async Task<ImmutableArray<ImportItem>> GetImportsAsync(IDocumentSnapshot document, RazorProjectEngine projectEngine)
     {

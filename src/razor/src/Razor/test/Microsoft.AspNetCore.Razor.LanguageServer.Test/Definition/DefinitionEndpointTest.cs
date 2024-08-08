@@ -395,7 +395,7 @@ public class DefinitionEndpointTest(ITestOutputHelper testOutput) : TagHelperSer
         SetupDocument(out var codeDocument, out _, content);
         var expectedRange = codeDocument.Source.Text.GetRange(selection);
 
-        var mappingService = new RazorDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory);
+        var mappingService = new LspDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory);
 
         var range = await DefinitionEndpoint.TryGetPropertyRangeAsync(codeDocument, propertyName, mappingService, Logger, DisposalToken);
         Assert.NotNull(range);

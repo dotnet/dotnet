@@ -23,7 +23,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
 [RazorLanguageServerEndpoint(VSInternalMethods.OnAutoInsertName)]
 internal class OnAutoInsertEndpoint(
     LanguageServerFeatureOptions languageServerFeatureOptions,
-    IRazorDocumentMappingService documentMappingService,
+    IDocumentMappingService documentMappingService,
     IClientConnection clientConnection,
     IEnumerable<IOnAutoInsertProvider> onAutoInsertProvider,
     RazorLSPOptionsMonitor optionsMonitor,
@@ -170,7 +170,7 @@ internal class OnAutoInsertEndpoint(
         }
 
         return Task.FromResult<IDelegatedParams?>(new DelegatedOnAutoInsertParams(
-            documentContext.Identifier,
+            documentContext.GetTextDocumentIdentifierAndVersion(),
             positionInfo.Position,
             positionInfo.LanguageKind,
             request.Character,

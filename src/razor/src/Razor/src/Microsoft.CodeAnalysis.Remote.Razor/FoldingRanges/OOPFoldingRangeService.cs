@@ -12,7 +12,7 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.FoldingRanges;
 [Export(typeof(IFoldingRangeService)), Shared]
 [method: ImportingConstructor]
 internal sealed class OOPFoldingRangeService(
-    IRazorDocumentMappingService documentMappingService,
+    IDocumentMappingService documentMappingService,
     [ImportMany] IEnumerable<IRazorFoldingRangeProvider> foldingRangeProviders,
     ILoggerFactory loggerFactory)
     : FoldingRangeService(documentMappingService, foldingRangeProviders, loggerFactory)
