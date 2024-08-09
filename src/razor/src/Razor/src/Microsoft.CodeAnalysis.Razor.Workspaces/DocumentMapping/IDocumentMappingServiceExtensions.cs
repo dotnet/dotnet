@@ -36,17 +36,16 @@ internal static class IDocumentMappingServiceExtensions
     public static async Task<DocumentPositionInfo> GetPositionInfoAsync(this IDocumentMappingService service, DocumentContext documentContext, int hostDocumentIndex, CancellationToken cancellationToken)
     {
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
 
-        return service.GetPositionInfo(codeDocument, sourceText, hostDocumentIndex);
+        return service.GetPositionInfo(codeDocument, hostDocumentIndex);
     }
 
     public static DocumentPositionInfo GetPositionInfo(
         this IDocumentMappingService service,
         RazorCodeDocument codeDocument,
-        SourceText sourceText,
         int hostDocumentIndex)
     {
+        var sourceText = codeDocument.Source.Text;
         var position = sourceText.GetPosition(hostDocumentIndex);
 
         var languageKind = service.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: false);
