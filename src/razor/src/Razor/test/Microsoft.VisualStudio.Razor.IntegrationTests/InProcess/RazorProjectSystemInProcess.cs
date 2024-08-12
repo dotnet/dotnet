@@ -12,6 +12,7 @@ using Xunit;
 using Microsoft.VisualStudio.Razor.LanguageClient;
 using Microsoft.AspNetCore.Razor.Threading;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Microsoft.VisualStudio.Extensibility.Testing;
 
@@ -50,6 +51,29 @@ internal partial class RazorProjectSystemInProcess
             }
 
             return Task.FromResult(projectManager.TryGetLoadedProject(projectKeys[0], out _));
+        }, TimeSpan.FromMilliseconds(100), cancellationToken);
+    }
+
+    public async Task WaitForComponentTagNameAsync(string projectName, string componentName, CancellationToken cancellationToken)
+    {
+        var projectFileName = await TestServices.SolutionExplorer.GetProjectFileNameAsync(projectName, cancellationToken);
+        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManager>(cancellationToken);
+        Assert.NotNull(projectManager);
+        await Helper.RetryAsync(async ct =>
+        {
+            var projectKeys = projectManager.GetAllProjectKeys(projectFileName);
+            if (projectKeys.Length == 0)
+            {
+                return false;
+            }
+
+            if (!projectManager.TryGetLoadedProject(projectKeys[0], out var project))
+            {
+                return false;
+            }
+
+            var tagHelpers = await project.GetTagHelpersAsync(cancellationToken);
+            return tagHelpers.Any(tagHelper => tagHelper.TagMatchingRules.Any(r => r.TagName.Equals(componentName, StringComparison.Ordinal)));
         }, TimeSpan.FromMilliseconds(100), cancellationToken);
     }
 

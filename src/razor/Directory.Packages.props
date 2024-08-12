@@ -16,7 +16,7 @@
     <_MicrosoftCodeAnalysisAnalyzersPackageVersion>3.11.0-beta1.24170.2</_MicrosoftCodeAnalysisAnalyzersPackageVersion>
     <_MicrosoftVisualStudioLanguageServicesPackageVersion>$(MicrosoftVisualStudioLanguageServicesPackageVersion)</_MicrosoftVisualStudioLanguageServicesPackageVersion>
     <_XunitPackageVersion>2.6.3</_XunitPackageVersion>
-    <_MicrosoftBuildPackageVersion>17.3.0-preview-22364-05</_MicrosoftBuildPackageVersion>
+    <_MicrosoftBuildPackageVersion>17.11.0-preview-24309-01</_MicrosoftBuildPackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -89,7 +89,7 @@
     <PackageVersion Include="Microsoft.VisualStudio.RpcContracts" Version="17.11.8" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.Framework" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
-    <PackageVersion Include="Microsoft.VisualStudio.Telemetry" Version="17.9.102" />
+    <PackageVersion Include="Microsoft.VisualStudio.Telemetry" Version="17.11.8" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Data" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Implementation" Version="$(_MicrosoftVisualStudioPackagesVersion)" NoWarn="NU1701" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Logic" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
@@ -109,13 +109,13 @@
     <PackageVersion Include="NuGet.VisualStudio" Version="17.9.1" />
     <PackageVersion Include="Roslyn.Diagnostics.Analyzers" Version="$(_MicrosoftCodeAnalysisAnalyzersPackageVersion)" />
     <PackageVersion Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutablePackageVersion)" />
-    <PackageVersion Include="System.Resources.Extensions" Version="6.0.0" />
-    <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="6.0.0" />
+    <PackageVersion Include="System.Resources.Extensions" Version="8.0.0" />
+    <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="8.0.0" />
     <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
     <PackageVersion Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataPackageVersion)" />
-    <PackageVersion Include="System.Security.Cryptography.Xml" Version="6.0.1" />
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="7.0.1" />
     <PackageVersion Include="System.Text.Encodings.Web" Version="8.0.0" />
-    <PackageVersion Include="System.Text.Json" Version="6.0.0" />
+    <PackageVersion Include="System.Text.Json" Version="8.0.4" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageVersion Include="xunit" Version="$(_XunitPackageVersion)" />
     <PackageVersion Include="Xunit.Combinatorial" Version="1.5.25" />

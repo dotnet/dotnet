@@ -155,24 +155,6 @@ internal partial class SolutionExplorerInProcess
         }
     }
 
-    internal async Task WaitForComponentAsync(string projectName, string componentName, CancellationToken cancellationToken)
-    {
-        var project = await GetProjectAsync(projectName, cancellationToken);
-
-        var localPath = (string)project.Properties.Item("LocalPath").Value;
-        var style = "Debug";
-        var framework = "net6.0";
-
-        var razorJsonPath = Path.Combine(localPath, "obj", style, framework, "project.razor.vs.bin");
-
-        await Helper.RetryAsync(ct =>
-        {
-            var jsonContents = File.ReadAllText(razorJsonPath);
-
-            return Task.FromResult(jsonContents.Contains($"TypeNameIdentifier\":\"{componentName}\""));
-        }, TimeSpan.FromSeconds(1), cancellationToken);
-    }
-
     /// <returns>
     /// The summary line for the build, which generally looks something like this:
     ///
@@ -292,6 +274,13 @@ internal partial class SolutionExplorerInProcess
 
     public async Task<string> GetAbsolutePathForProjectRelativeFilePathAsync(string projectName, string relativeFilePath, CancellationToken cancellationToken)
     {
+        var projectFileName = await GetProjectFileNameAsync(projectName, cancellationToken);
+        var projectPath = Path.GetDirectoryName(projectFileName);
+        return Path.Combine(projectPath, relativeFilePath);
+    }
+
+    public async Task<string> GetProjectFileNameAsync(string projectName, CancellationToken cancellationToken)
+    {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
         var dte = await GetRequiredGlobalServiceAsync<SDTE, EnvDTE.DTE>(cancellationToken);
@@ -306,8 +295,7 @@ internal partial class SolutionExplorerInProcess
         }
 
         Assert.NotNull(project);
-        var projectPath = Path.GetDirectoryName(project.FullName);
-        return Path.Combine(projectPath, relativeFilePath);
+        return project.FullName;
     }
 
     public async Task<string> GetDirectoryNameAsync(CancellationToken cancellationToken)
