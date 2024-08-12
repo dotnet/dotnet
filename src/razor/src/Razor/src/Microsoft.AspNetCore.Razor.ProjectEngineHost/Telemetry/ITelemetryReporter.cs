@@ -19,7 +19,7 @@ internal interface ITelemetryReporter
     void ReportEvent(string name, Severity severity, Property property);
     void ReportEvent(string name, Severity severity, Property property1, Property property2);
     void ReportEvent(string name, Severity severity, Property property1, Property property2, Property property3);
-    void ReportEvent(string name, Severity severity, params Property[] properties);
+    void ReportEvent(string name, Severity severity, params ReadOnlySpan<Property> properties);
 
     void ReportFault(Exception exception, string? message, params object?[] @params);
 }

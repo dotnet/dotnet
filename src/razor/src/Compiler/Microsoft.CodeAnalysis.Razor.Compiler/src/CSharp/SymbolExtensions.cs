@@ -13,6 +13,9 @@ internal static class SymbolExtensions
             .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted)
             .RemoveMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
+    internal static bool HasFullName(this AttributeData attribute, string fullName)
+        => attribute.AttributeClass is { } attributeClass && attributeClass.HasFullName(fullName);
+
     /// <summary>
     /// Checks if <paramref name="typeSymbol"/> has the same fully qualified name as <paramref name="fullName"/>.
     /// </summary>

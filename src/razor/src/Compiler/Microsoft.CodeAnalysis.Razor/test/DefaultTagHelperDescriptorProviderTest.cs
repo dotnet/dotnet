@@ -3,10 +3,8 @@
 
 #nullable disable
 
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
@@ -25,9 +23,10 @@ public class DefaultTagHelperDescriptorProviderTest
         var compilation = TestCompilation.Create(_assembly);
         var descriptorProvider = new DefaultTagHelperDescriptorProvider();
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-        context.ExcludeHidden = true;
+        var context = new TagHelperDescriptorProviderContext(compilation)
+        {
+            ExcludeHidden = true
+        };
 
         // Act
         descriptorProvider.Execute(context);
@@ -38,21 +37,6 @@ public class DefaultTagHelperDescriptorProviderTest
         Assert.Empty(nullDescriptors);
         var editorBrowsableDescriptor = context.Results.Where(descriptor => descriptor.GetTypeName() == editorBrowsableTypeName);
         Assert.Empty(editorBrowsableDescriptor);
-    }
-
-    [Fact]
-    public void Execute_NoOpsIfCompilationIsNotSet()
-    {
-        // Arrange
-        var descriptorProvider = new DefaultTagHelperDescriptorProvider();
-
-        var context = TagHelperDescriptorProviderContext.Create();
-
-        // Act
-        descriptorProvider.Execute(context);
-
-        // Assert
-        Assert.Empty(context.Results);
     }
 
     [Fact]
@@ -73,8 +57,7 @@ namespace TestAssembly
         var compilation = TestCompilation.Create(_assembly, CSharpSyntaxTree.ParseText(csharp));
         var descriptorProvider = new DefaultTagHelperDescriptorProvider();
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
+        var context = new TagHelperDescriptorProviderContext(compilation);
 
         // Act
         descriptorProvider.Execute(context);
@@ -104,9 +87,10 @@ namespace TestAssembly
         var compilation = TestCompilation.Create(_assembly, CSharpSyntaxTree.ParseText(csharp));
         var descriptorProvider = new DefaultTagHelperDescriptorProvider();
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-        context.Items.SetTargetSymbol((IAssemblySymbol)compilation.GetAssemblyOrModuleSymbol(compilation.References.First(r => r.Display.Contains("Microsoft.CodeAnalysis.Razor.Test.dll"))));
+        var targetSymbol = (IAssemblySymbol)compilation.GetAssemblyOrModuleSymbol(
+            compilation.References.First(static r => r.Display.Contains("Microsoft.CodeAnalysis.Razor.Test.dll")));
+
+        var context = new TagHelperDescriptorProviderContext(compilation, targetSymbol);
 
         // Act
         descriptorProvider.Execute(context);

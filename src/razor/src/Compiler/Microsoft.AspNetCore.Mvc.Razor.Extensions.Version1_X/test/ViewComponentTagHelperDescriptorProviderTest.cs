@@ -6,7 +6,6 @@
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Razor;
 using Xunit;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
@@ -28,8 +27,7 @@ public class ViewComponentTagHelperDescriptorProviderTest
 
         var compilation = MvcShim.BaseCompilation.AddSyntaxTrees(CSharpSyntaxTree.ParseText(code));
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
+        var context = new TagHelperDescriptorProviderContext(compilation);
 
         var provider = new ViewComponentTagHelperDescriptorProvider()
         {

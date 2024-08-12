@@ -16,9 +16,7 @@ public class KeyTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTes
     public void Execute_CreatesDescriptor()
     {
         // Arrange
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(BaseCompilation);
-
+        var context = new TagHelperDescriptorProviderContext(BaseCompilation);
         var provider = new KeyTagHelperDescriptorProvider();
 
         // Act

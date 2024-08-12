@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
@@ -12,12 +10,12 @@ namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 internal class ViewComponentTypeVisitor : SymbolVisitor
 {
     private readonly INamedTypeSymbol _viewComponentAttribute;
-    private readonly INamedTypeSymbol _nonViewComponentAttribute;
+    private readonly INamedTypeSymbol? _nonViewComponentAttribute;
     private readonly List<INamedTypeSymbol> _results;
 
     public ViewComponentTypeVisitor(
         INamedTypeSymbol viewComponentAttribute,
-        INamedTypeSymbol nonViewComponentAttribute,
+        INamedTypeSymbol? nonViewComponentAttribute,
         List<INamedTypeSymbol> results)
     {
         _viewComponentAttribute = viewComponentAttribute;
@@ -75,7 +73,7 @@ internal class ViewComponentTypeVisitor : SymbolVisitor
             AttributeIsDefined(symbol, _viewComponentAttribute);
     }
 
-    private static bool AttributeIsDefined(INamedTypeSymbol type, INamedTypeSymbol queryAttribute)
+    private static bool AttributeIsDefined(INamedTypeSymbol? type, INamedTypeSymbol? queryAttribute)
     {
         if (type == null || queryAttribute == null)
         {

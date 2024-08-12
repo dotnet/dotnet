@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -12,21 +13,14 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
+// Run after the component tag helper provider, because we need to see the results.
+internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorProviderBase(order: 1000)
 {
-    private static TagHelperDescriptor? s_fallbackBindTagHelper;
+    private static readonly Lazy<TagHelperDescriptor> s_fallbackBindTagHelper = new(CreateFallbackBindTagHelper);
 
-    // Run after the component tag helper provider, because we need to see the results.
-    public int Order { get; set; } = 1000;
-
-    public RazorEngine? Engine { get; set; }
-
-    public void Execute(TagHelperDescriptorProviderContext context)
+    public override void Execute(TagHelperDescriptorProviderContext context)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgHelper.ThrowIfNull(context);
 
         // This provider returns tag helper information for 'bind' which doesn't necessarily
         // map to any real component. Bind behaviors more like a macro, which can map a single LValue to
@@ -91,11 +85,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
         // we have. Case #4 is data-driven based on component definitions.
         //
         // We provide a good set of attributes that map to the HTML dom. This set is user extensible.
-        var compilation = context.GetCompilation();
-        if (compilation == null)
-        {
-            return;
-        }
+        var compilation = context.Compilation;
 
         var bindMethods = compilation.GetTypeByMetadataName(ComponentsApi.BindConverter.FullTypeName);
         if (bindMethods == null)
@@ -105,14 +95,13 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             return;
         }
 
-        var targetSymbol = context.Items.GetTargetSymbol();
-        if (targetSymbol is not null && !SymbolEqualityComparer.Default.Equals(targetSymbol, bindMethods.ContainingAssembly))
+        if (context.TargetSymbol is { } targetSymbol && !SymbolEqualityComparer.Default.Equals(targetSymbol, bindMethods.ContainingAssembly))
         {
             return;
         }
 
         // Tag Helper definition for case #1. This is the most general case.
-        context.Results.Add(GetOrCreateFallbackBindTagHelper());
+        context.Results.Add(s_fallbackBindTagHelper.Value);
 
         var bindElementAttribute = compilation.GetTypeByMetadataName(ComponentsApi.BindElementAttribute.FullTypeName);
         var bindInputElementAttribute = compilation.GetTypeByMetadataName(ComponentsApi.BindInputElementAttribute.FullTypeName);
@@ -129,112 +118,107 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
         collector.Collect(context);
     }
 
-    private static TagHelperDescriptor GetOrCreateFallbackBindTagHelper()
+    private static TagHelperDescriptor CreateFallbackBindTagHelper()
     {
-        return s_fallbackBindTagHelper ??= CreateFallbackBindTagHelper();
+        using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
+            ComponentMetadata.Bind.TagHelperKind, "Bind", ComponentsApi.AssemblyName,
+            out var builder);
 
-        static TagHelperDescriptor CreateFallbackBindTagHelper()
+        builder.CaseSensitive = true;
+        builder.SetDocumentation(DocumentationDescriptor.BindTagHelper_Fallback);
+
+        builder.SetMetadata(
+            SpecialKind(ComponentMetadata.Bind.TagHelperKind),
+            MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
+            RuntimeName(ComponentMetadata.Bind.RuntimeName),
+            MakeTrue(ComponentMetadata.Bind.FallbackKey),
+            TypeName("Microsoft.AspNetCore.Components.Bind"),
+            TypeNamespace("Microsoft.AspNetCore.Components"),
+            TypeNameIdentifier("Bind"));
+
+        builder.TagMatchingRule(rule =>
         {
-            using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-                ComponentMetadata.Bind.TagHelperKind, "Bind", ComponentsApi.AssemblyName,
-                out var builder);
-
-            builder.CaseSensitive = true;
-            builder.SetDocumentation(DocumentationDescriptor.BindTagHelper_Fallback);
-
-            builder.SetMetadata(
-                SpecialKind(ComponentMetadata.Bind.TagHelperKind),
-                MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
-                RuntimeName(ComponentMetadata.Bind.RuntimeName),
-                MakeTrue(ComponentMetadata.Bind.FallbackKey),
-                TypeName("Microsoft.AspNetCore.Components.Bind"),
-                TypeNamespace("Microsoft.AspNetCore.Components"),
-                TypeNameIdentifier("Bind"));
-
-            builder.TagMatchingRule(rule =>
+            rule.TagName = "*";
+            rule.Attribute(attribute =>
             {
-                rule.TagName = "*";
-                rule.Attribute(attribute =>
-                {
-                    attribute.Name = "@bind-";
-                    attribute.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch;
-                    attribute.SetMetadata(Attributes.IsDirectiveAttribute);
-                });
+                attribute.Name = "@bind-";
+                attribute.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch;
+                attribute.SetMetadata(Attributes.IsDirectiveAttribute);
+            });
+        });
+
+        builder.BindAttribute(attribute =>
+        {
+            attribute.SetDocumentation(DocumentationDescriptor.BindTagHelper_Fallback);
+
+            var attributeName = "@bind-...";
+            attribute.Name = attributeName;
+            attribute.AsDictionary("@bind-", typeof(object).FullName);
+
+            attribute.SetMetadata(
+                PropertyName("Bind"),
+                IsDirectiveAttribute);
+
+            attribute.TypeName = "System.Collections.Generic.Dictionary<string, object>";
+
+            attribute.BindAttributeParameter(parameter =>
+            {
+                parameter.Name = "format";
+                parameter.TypeName = typeof(string).FullName;
+                parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Fallback_Format);
+
+                parameter.SetMetadata(Parameters.Format);
             });
 
-            builder.BindAttribute(attribute =>
+            attribute.BindAttributeParameter(parameter =>
             {
-                attribute.SetDocumentation(DocumentationDescriptor.BindTagHelper_Fallback);
+                parameter.Name = "event";
+                parameter.TypeName = typeof(string).FullName;
+                parameter.SetDocumentation(
+                    DocumentationDescriptor.From(
+                        DocumentationId.BindTagHelper_Fallback_Event, attributeName));
 
-                var attributeName = "@bind-...";
-                attribute.Name = attributeName;
-                attribute.AsDictionary("@bind-", typeof(object).FullName);
-
-                attribute.SetMetadata(
-                    PropertyName("Bind"),
-                    IsDirectiveAttribute);
-
-                attribute.TypeName = "System.Collections.Generic.Dictionary<string, object>";
-
-                attribute.BindAttributeParameter(parameter =>
-                {
-                    parameter.Name = "format";
-                    parameter.TypeName = typeof(string).FullName;
-                    parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Fallback_Format);
-
-                    parameter.SetMetadata(Parameters.Format);
-                });
-
-                attribute.BindAttributeParameter(parameter =>
-                {
-                    parameter.Name = "event";
-                    parameter.TypeName = typeof(string).FullName;
-                    parameter.SetDocumentation(
-                        DocumentationDescriptor.From(
-                            DocumentationId.BindTagHelper_Fallback_Event, attributeName));
-
-                    parameter.SetMetadata(Parameters.Event);
-                });
-
-                attribute.BindAttributeParameter(parameter =>
-                {
-                    parameter.Name = "culture";
-                    parameter.TypeName = typeof(CultureInfo).FullName;
-                    parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_Culture);
-
-                    parameter.SetMetadata(Parameters.Culture);
-                });
-
-                attribute.BindAttributeParameter(parameter =>
-                {
-                    parameter.Name = "get";
-                    parameter.TypeName = typeof(object).FullName;
-                    parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_Get);
-
-                    parameter.SetMetadata(Parameters.Get);
-                });
-
-                attribute.BindAttributeParameter(parameter =>
-                {
-                    parameter.Name = "set";
-                    parameter.TypeName = typeof(Delegate).FullName;
-                    parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_Set);
-
-                    parameter.SetMetadata(Parameters.Set);
-                });
-
-                attribute.BindAttributeParameter(parameter =>
-                {
-                    parameter.Name = "after";
-                    parameter.TypeName = typeof(Delegate).FullName;
-                    parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_After);
-
-                    parameter.SetMetadata(Parameters.After);
-                });
+                parameter.SetMetadata(Parameters.Event);
             });
 
-            return builder.Build();
-        }
+            attribute.BindAttributeParameter(parameter =>
+            {
+                parameter.Name = "culture";
+                parameter.TypeName = typeof(CultureInfo).FullName;
+                parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_Culture);
+
+                parameter.SetMetadata(Parameters.Culture);
+            });
+
+            attribute.BindAttributeParameter(parameter =>
+            {
+                parameter.Name = "get";
+                parameter.TypeName = typeof(object).FullName;
+                parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_Get);
+
+                parameter.SetMetadata(Parameters.Get);
+            });
+
+            attribute.BindAttributeParameter(parameter =>
+            {
+                parameter.Name = "set";
+                parameter.TypeName = typeof(Delegate).FullName;
+                parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_Set);
+
+                parameter.SetMetadata(Parameters.Set);
+            });
+
+            attribute.BindAttributeParameter(parameter =>
+            {
+                parameter.Name = "after";
+                parameter.TypeName = typeof(Delegate).FullName;
+                parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_After);
+
+                parameter.SetMetadata(Parameters.After);
+            });
+        });
+
+        return builder.Build();
     }
 
     private class Collector(
