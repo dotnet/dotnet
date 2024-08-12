@@ -50,7 +50,7 @@ namespace NuGet.Packaging.FuncTest
                 StoreLocation storeLocation = CertificateStoreUtilities.GetTrustedCertificateStoreLocation();
 
                 using (var trustedServerRoot = TrustedTestCert.Create(
-                    new X509Certificate2(rootCa.Certificate.GetEncoded()),
+                    new X509Certificate2(rootCa.Certificate),
                     X509StorePurpose.Timestamping,
                     StoreName.Root,
                     storeLocation))

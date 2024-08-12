@@ -871,6 +871,15 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Owner.
+        /// </summary>
+        public static string Hyperlink_Owner {
+            get {
+                return ResourceManager.GetString("Hyperlink_Owner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configure.
         /// </summary>
         public static string Hyperlink_PackageSourceMappingSettings {

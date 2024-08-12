@@ -61,13 +61,17 @@ stages:
     visualStudioSigning: Test
     testMachineConfigurationJobTimeoutInMinutes: 30
     testMachineCleanUpStrategy: ${{parameters.testMachineCleanUpStrategy}}
+
+##############################
+## preTestMachineConfigurationStepList
+##############################
     preTestMachineConfigurationStepList:
     - task: PowerShell@2
       displayName: Set 'VisualStudio.InstallationUnderTest.SetupParameters'
       inputs:
         filePath: $(DartLab.Path)\Scripts\VisualStudio\Installation\Get-VisualStudioSetupParameters.ps1
         arguments: -RunSettingsURI '$(runSettingsURI)' -InstallPath 'C:\Test\VisualStudio' -NoRestart -Quiet -Wait -OutVariableName 'VisualStudio.InstallationUnderTest.SetupParameters'
-    
+
     - template: '\steps\powershell\execute-script.yml@DartLabTemplates'
       parameters:
         displayName: Get Baseline Build ID using CloudBuild Session ID
@@ -85,7 +89,7 @@ stages:
         script: |
           try {
           Write-Host "Getting Baseline build commit ids for build: '$(BaselineBuildID)'"
-          
+
           $artifactName = 'BuildArtifacts'
           $baselineBuildsFile = Join-Path $(Agent.TempDirectory) "BaselineBuilds.json"
 
@@ -128,6 +132,10 @@ stages:
           $buildDrop = "${{parameters.baseBuildDrop}}" -split "/"
           $dropName = "Products/DevDiv/VS/$($buildDrop[-2])/$($buildDrop[-1])"
           Write-Host "##vso[task.setvariable variable=VisualStudio.BaseBuild.ProductsDropName]$dropName"
+
+##############################
+## deployAndRunTestsStepList
+##############################
     deployAndRunTestsStepList:
     - task: PowerShell@1
       displayName: "Define variables"
@@ -147,41 +155,38 @@ stages:
     - task: DownloadPipelineArtifact@2
       displayName: "Download Build artifacts"
       inputs:
-        artifactName: "VS15"
-        downloadPath: "$(Build.Repository.LocalPath)/artifacts"
+        artifactName: "E2ETests"
+        downloadPath: "$(Build.StagingDirectory)\\E2ETests"
 
     - powershell: |
-        $zipPath = "$(Build.Repository.Localpath)/artifacts/VS15/EndToEnd.zip"
+        $zipPath = "$(Build.StagingDirectory)/E2ETests/EndToEnd.zip"
         $dest = "$(System.DefaultWorkingDirectory)/artifacts/EndToEnd/"
         Write-Output "Extracting '$zipPath' to '$dest'"
         Expand-Archive -Path "$zipPath" -DestinationPath "$dest"
-        $nugetExePath = "$(Build.Repository.Localpath)/artifacts/VS15/NuGet.exe"
+        $nugetExePath = "$(Build.StagingDirectory)/E2ETests/NuGet.exe"
         Write-Output "Copying '$nugetExePath' to '$dest'"
         Copy-Item -Path "$nugetExePath" -Destination "$dest"
       displayName: "Extract EndToEnd.zip"
 
+    - task: DownloadPipelineArtifact@2
+      displayName: "Download scripts"
+      inputs:
+        artifactName: "scripts"
+        downloadPath: "$(Build.StagingDirectory)/scripts"
+
     - task: PowerShell@1
       displayName: "SetupFunctionalTests.ps1"
       inputs:
-        scriptName: "$(System.DefaultWorkingDirectory)/artifacts/EndToEnd/scripts/SetupFunctionalTests.ps1"
+        scriptName: "$(Build.StagingDirectory)/scripts/e2etests/SetupFunctionalTests.ps1"
 
     - task: PowerShell@1
-      displayName: "RunFunctionalTests.ps1 (stop on error)"
+      displayName: "RunFunctionalTests.ps1"
       timeoutInMinutes: 75
       continueOnError: "false"
       inputs:
-        scriptName: "$(System.DefaultWorkingDirectory)/artifacts/EndToEnd/scripts/RunFunctionalTests.ps1"
+        scriptName: "$(Build.StagingDirectory)/scripts/e2etests/RunFunctionalTests.ps1"
         arguments: "-PMCCommand $(EndToEndTestCommandToRunPart) -PMCLaunchWaitTimeInSecs 30 -EachTestTimoutInSecs 600 -NuGetDropPath $(System.DefaultWorkingDirectory)\\artifacts -FuncTestRoot $(System.DefaultWorkingDirectory)\\artifacts -RunCounter $(Build.BuildNumber)"
       condition: "and(succeeded(), not(eq(variables['IsOfficialBuild'], 'true')))"
-
-    - task: PowerShell@1
-      displayName: "RunFunctionalTests.ps1 (continue on error)"
-      timeoutInMinutes: 75
-      continueOnError: "true"
-      inputs:
-        scriptName: "$(System.DefaultWorkingDirectory)/artifacts/EndToEnd/scripts/RunFunctionalTests.ps1"
-        arguments: "-PMCCommand $(EndToEndTestCommandToRunPart) -PMCLaunchWaitTimeInSecs 30 -EachTestTimoutInSecs 600 -NuGetDropPath $(System.DefaultWorkingDirectory)\\artifacts -FuncTestRoot $(System.DefaultWorkingDirectory)\\artifacts -RunCounter $(Build.BuildNumber)"
-      condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
 
     - task: PublishTestResults@2
       displayName: "Publish Test Results"
@@ -192,12 +197,3 @@ stages:
         mergeTestResults: "true"
         testRunTitle: "NuGet.Client EndToEnd Tests On Windows"
       condition: "succeededOrFailed()"
-
-    - task: PowerShell@1
-      displayName: "Initialize Git Commit Status on GitHub"
-      inputs:
-        scriptType: "inlineScript"
-        inlineScript: |
-          . $(System.DefaultWorkingDirectory)\\artifacts\\EndToEnd\\scripts\\PostGitCommitStatus.ps1
-          SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -VstsPersonalAccessToken $(System.AccessToken) -CommitSha $(Build.SourceVersion) -TestName "$(GitHubStatusName)"
-      condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"

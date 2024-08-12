@@ -289,9 +289,10 @@ Copyright (c) .NET Foundation. All rights reserved.
           DependsOnTargets="InitializeSourceControlInformation"
           Condition="'$(SourceControlInformationFeatureSupported)' == 'true'">
     <PropertyGroup>
-      <!-- The project must specify PublishRepositoryUrl=true in order to publish the URL, in order to prevent inadvertent leak of internal URL. -->
+      <!-- The project must specify PublishRepositoryUrl=true in order to publish the URL or branch, in order to prevent inadvertent leak of internal data. -->
       <RepositoryUrl Condition="'$(RepositoryUrl)' == '' and '$(PublishRepositoryUrl)' == 'true'">$(PrivateRepositoryUrl)</RepositoryUrl>
       <RepositoryCommit Condition="'$(RepositoryCommit)' == ''">$(SourceRevisionId)</RepositoryCommit>
+      <RepositoryBranch Condition="'$(RepositoryBranch)' == '' and '$(PublishRepositoryUrl)' == 'true' and '$(SourceBranchName)' != ''">$(SourceBranchName)</RepositoryBranch>
     </PropertyGroup>
   </Target>
 

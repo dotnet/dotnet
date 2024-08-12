@@ -53,7 +53,7 @@ namespace NuGet.MSSigning.Extensions
         {
             ValidatePackagePath();
             WarnIfNoTimestamper(Console);
-            ValidateCertificateInputs();
+            ValidateCertificateInputs(Console);
             EnsureOutputDirectory();
             ValidatePackageOwners();
 

@@ -51,7 +51,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
         };
 
 
-        public static TheoryData TestData => new TheoryData<SearchResultContextInfo>
+        public static TheoryData<SearchResultContextInfo> TestData => new()
             {
                 { new SearchResultContextInfo() },
                 { new SearchResultContextInfo(Guid.NewGuid()) },

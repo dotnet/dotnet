@@ -4034,12 +4034,11 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         public async Task GetInstalledAndTransitivePackagesAsync_ProjectReferenceWithSinglePackage_EmptyInstalledAndTransitivePackagesAsync()
         {
             // Project2 -> Project1 -> PackageB (1.0.0)
-            // PackageA (1.0.0) -> PackageB (1.0.0)
 
             // Arrange
             using var rootDir = new SimpleTestPathContext();
 
-            await CreatePackagesAsync(rootDir, packageAVersion: "1.0.0");
+            await CreatePackagesAsync(rootDir, packageBVersion: "1.0.0");
 
             PackageSpec prj1Spec = ProjectTestHelpers.GetPackageSpec("Project1", rootDir.SolutionRoot, framework: "netstandard2.0", dependencyName: "PackageB");
             PackageSpec prj2Spec = ProjectTestHelpers.GetPackageSpec("Project2", rootDir.SolutionRoot, framework: "netstandard2.0").WithTestProjectReference(prj1Spec);
@@ -4053,9 +4052,77 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
             // Assert
             Assert.Empty(result.InstalledPackages); // No installed packages
-            // Foreign transitive packages in assets file don't have dependencies.
-            // Those are not considered transitive packages
+            Assert.Equal(1, result.TransitivePackages.Count);
+
+            var origins = result.TransitivePackages[0].TransitiveOrigins.Select(transitivePackage => transitivePackage.PackageIdentity.Id);
+            Assert.Contains("Project1", origins);
+        }
+
+        [Fact]
+        public async Task GetInstalledAndTransitivePackagesAsync_ProjectReferencesWithSamePackage_InstalledAndEmptyTransitivePackagesAsync()
+        {
+            // Project2 -> PackageB (1.0.0)
+            //          -> Project1 -> PackageB (1.0.0)
+
+            // Arrange
+            using var rootDir = new SimpleTestPathContext();
+
+            await CreatePackagesAsync(rootDir, packageAVersion: "1.0.0");
+
+            PackageSpec prj1Spec = ProjectTestHelpers.GetPackageSpec("Project1", rootDir.SolutionRoot, framework: "netstandard2.0", dependencyName: "PackageB");
+            PackageSpec prj2Spec = ProjectTestHelpers.GetPackageSpec("Project2", rootDir.SolutionRoot, framework: "netstandard2.0", dependencyName: "PackageB").WithTestProjectReference(prj1Spec);
+
+            await RestorePackageSpecsAsync(rootDir, output: null, prj1Spec, prj2Spec);
+
+            CpsPackageReferenceProject project2 = PrepareCpsRestoredProject(prj2Spec);
+
+            // Act
+            ProjectPackages result = await project2.GetInstalledAndTransitivePackagesAsync(includeTransitiveOrigins: true, CancellationToken.None);
+
+            // Assert
+            Assert.Equal(1, result.InstalledPackages.Count); // No installed packages
             Assert.Empty(result.TransitivePackages);
+        }
+
+        [Fact]
+        public async Task GetInstalledAndTransitivePackagesAsync_MutipleProjectReferencesWithSamePackage_EmptyInstalledAndTransitivePackagesAsync()
+        {
+            // Project3 -> Project2 ->  PackageA (1.0.0) -> PackageB (1.0.0)
+            //                          Project1 -> PackageB (1.0.0)
+
+            // Arrange
+            using var rootDir = new SimpleTestPathContext();
+
+            await CreatePackagesAsync(rootDir, packageAVersion: "1.0.0");
+
+            PackageSpec prj1Spec = ProjectTestHelpers.GetPackageSpec("Project1", rootDir.SolutionRoot, framework: "netstandard2.0", dependencyName: "PackageB");
+            PackageSpec prj2Spec = ProjectTestHelpers.GetPackageSpec("Project2", rootDir.SolutionRoot, framework: "netstandard2.0", dependencyName: "PackageA").WithTestProjectReference(prj1Spec);
+            PackageSpec prj3Spec = ProjectTestHelpers.GetPackageSpec("Project3", rootDir.SolutionRoot, framework: "netstandard2.0").WithTestProjectReference(prj2Spec);
+
+            await RestorePackageSpecsAsync(rootDir, output: null, prj1Spec, prj2Spec, prj3Spec);
+
+            CpsPackageReferenceProject project3 = PrepareCpsRestoredProject(prj3Spec);
+
+            // Act
+            ProjectPackages result = await project3.GetInstalledAndTransitivePackagesAsync(includeTransitiveOrigins: true, CancellationToken.None);
+
+            // Assert
+            Assert.Empty(result.InstalledPackages); // No installed packages
+            Assert.Equal(2, result.TransitivePackages.Count);
+
+            foreach (var transitivePackage in result.TransitivePackages)
+            {
+                var origins = transitivePackage.TransitiveOrigins.Select(transitivePackage => transitivePackage.PackageIdentity.Id).ToList();
+                if (transitivePackage.PackageIdentity.Id.Equals("PackageB") && origins.Count == 2)
+                {
+                    Assert.Contains("Project1", origins[0]);
+                    Assert.Contains("Project2", origins[1]);
+                }
+                if (transitivePackage.PackageIdentity.Id.Equals("PackageA") && origins.Count == 1)
+                {
+                    Assert.Contains("Project2", origins);
+                }
+            }
         }
 
         [Fact]

@@ -1,0 +1,168 @@
+# This is a pipeline that will run NuGet.Client's Visual Studio integration tests
+
+pr: none
+trigger:
+  branches:
+    include:
+    - dev-*
+
+parameters:
+# build parameters
+- name: NuGetLocalizationType
+  displayName: Whether to do production-ready localization (Full), or pseudo-localization, aka PLOC, (Pseudo) for testing.
+  type: string
+  default: Full
+  values:
+  - Full
+  - Pseudo
+
+# Specific tests
+- name: RunApexTests
+  displayName: Run Apex tests
+  type: boolean
+  default: true
+- name: RunEndToEndTests
+  displayName: Run end-to-end tests
+  type: boolean
+  default: true
+
+# Dartlab options
+- name: DartLabEnvironment
+  displayName: DartLab Environment
+  type: string
+  default: Production
+  values:
+  - Production
+  - Staging
+- name: E2EPart1AgentCleanup
+  displayName: Delete or keep E2E Part 1 machine for debugging
+  type: string
+  default: delete
+  values:
+  - delete
+  - stop
+- name: E2EPart2AgentCleanup
+  displayName: Delete or keep E2E Part 2 machine for debugging
+  type: string
+  default: delete
+  values:
+  - delete
+  - stop
+- name: ApexAgentCleanup
+  displayName: Delete or keep VS Apex test machine for debugging
+  type: string
+  default: delete
+  values:
+  - delete
+  - stop
+
+resources:
+  pipelines:
+  - pipeline: DartLab
+    source: DartLab
+    branch: main
+  repositories:
+  - repository: DartLabTemplates
+    type: git
+    name: DartLab.Templates
+    ref: refs/heads/main
+
+variables:
+  DOTNET_NOLOGO: 1
+  CI: true
+  Codeql.Enabled: false
+
+stages:
+- stage: Build
+  displayName: Build NuGet and tests
+  jobs:
+  - job: Build
+    timeoutInMinutes: 170
+    pool:
+      name: VSEngSS-MicroBuild2022-1ES
+    steps:
+    - template: vs-test/build.yml
+      parameters:
+        NuGetLocalizationType: ${{ parameters.NuGetLocalizationType }}
+
+# Dartlab's template defines this in its own stage
+- template: vs-test/end_to_end.yml
+  parameters:
+    stageName: VS_EndToEnd_Part1
+    stageDisplayName: Part 1
+    condition: "and(succeeded(), ne(variables['RunEndToEndTests'], 'false'))"
+    dependsOn:
+    - Build
+    variables:
+    - name: VsBootstrapperUrl
+      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.bootstrapperUrl']]
+    - name: VsBaseBuildDrop
+      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.BaseBuildDrop']]
+    - name: QBuildSessionId
+      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.QBuildSessionId']]
+    - name: RunSettingsDrop
+      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.RunSettingsDrop']]
+    - name: GitHubStatusName
+      value: End_To_End_Tests_On_Windows Part1
+    baseBuildDrop: $(VsBaseBuildDrop)
+    bootstrapperUrl: $(VsBootstrapperUrl)
+    DartLabEnvironment: ${{parameters.DartLabEnvironment}}
+    part: "InstallPackageTest.ps1,UninstallPackageTest.ps1,UpdatePackageTest.ps1"
+    QBuildSessionId: $(QBuildSessionId)
+    runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
+    testExecutionJobTimeoutInMinutes: 100
+    testMachineCleanUpStrategy: ${{parameters.E2EPart1AgentCleanup}}
+
+# Dartlab's template defines this in its own stage
+- template: vs-test/end_to_end.yml
+  parameters:
+    stageName: VS_EndToEnd_Part2
+    stageDisplayName: Part 2
+    condition: "and(succeeded(), ne(variables['RunEndToEndTests'], 'false'))"
+    dependsOn:
+    - Build
+    variables:
+    - name: VsBootstrapperUrl
+      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.bootstrapperUrl']]
+    - name: VsBaseBuildDrop
+      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.BaseBuildDrop']]
+    - name: QBuildSessionId
+      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.QBuildSessionId']]
+    - name: RunSettingsDrop
+      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.RunSettingsDrop']]
+    - name: GitHubStatusName
+      value: End_To_End_Tests_On_Windows Part2
+    baseBuildDrop: $(VsBaseBuildDrop)
+    bootstrapperUrl: $(VsBootstrapperUrl)
+    DartLabEnvironment: ${{parameters.DartLabEnvironment}}
+    part: "A-TopDownloadedPackages.ps1,BuildIntegratedTest.ps1,ExecuteInitScriptTest.ps1,FindPackageTest.ps1,GetPackageTest.ps1,GetProjectTest.ps1,LegacyPackageRefProjectTest.ps1,NativeProjectTest.ps1,NetCoreProjectTest.ps1,PackTest.ps1,ProjectRetargeting.ps1,ServicesTest.ps1,Settings.ps1,SyncPackageTest.ps1,TabExpansionTest.ps1,UniversalWindowsProjectTest.ps1"
+    QBuildSessionId: $(QBuildSessionId)
+    runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
+    testExecutionJobTimeoutInMinutes: 100
+    testMachineCleanUpStrategy: ${{parameters.E2EPart2AgentCleanup}}
+
+# Dartlab's template defines this in its own stage
+- template: vs-test/apex.yml
+  parameters:
+    condition: "and(succeeded(), ne(variables['RunApexTests'], 'false'))"
+    dependsOn:
+    - Build
+    variables:
+    - name: VsBootstrapperUrl
+      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.bootstrapperUrl']]
+    - name: VsBaseBuildDrop
+      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.BaseBuildDrop']]
+    - name: QBuildSessionId
+      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.QBuildSessionId']]
+    - name: RunSettingsDrop
+      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.RunSettingsDrop']]
+    - name: GitHubStatusName
+      value: Apex Tests On Windows
+    baseBuildDrop: $(VsBaseBuildDrop)
+    bootstrapperUrl: $(VsBootstrapperUrl)
+    dartLabEnvironment: ${{parameters.DartLabEnvironment}}
+    isOfficialBuild: false
+    QBuildSessionId: $(QBuildSessionId)
+    runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
+    testExecutionJobTimeoutInMinutes: 150
+    testMachineCleanUpStrategy: ${{parameters.ApexAgentCleanup}}

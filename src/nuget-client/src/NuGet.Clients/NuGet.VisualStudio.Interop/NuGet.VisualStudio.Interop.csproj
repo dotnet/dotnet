@@ -17,6 +17,16 @@
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" />
     <PackageReference Include="Newtonsoft.Json" ExcludeAssets="all" />
   </ItemGroup>
+
+  <ItemGroup Label="transitive package pinning">
+    <!--
+      These packages are dependencies of Microsoft.VisualStudio.Shell.15.0
+      When it is upgraded to a newer version, try deleting the below PackageReferences
+      -->
+    <PackageReference Include="Microsoft.IO.Redist" />
+    <PackageReference Include="System.Text.Json" />
+  </ItemGroup>
+
   <ItemGroup>
     <Reference Include="System.ComponentModel.Composition" />
   </ItemGroup>

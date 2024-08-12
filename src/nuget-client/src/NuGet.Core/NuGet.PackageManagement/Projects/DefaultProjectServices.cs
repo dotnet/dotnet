@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Frameworks;
@@ -60,6 +59,12 @@ namespace NuGet.ProjectManagement
             CancellationToken __)
         {
             return TaskResult.EmptyEnumerable<ProjectRestoreReference>();
+        }
+
+        public Task<IReadOnlyList<(string id, string[] metadata)>> GetItemsAsync(string itemTypeName, params string[] metadataNames)
+        {
+            IReadOnlyList<(string, string[])> items = Array.Empty<(string, string[])>();
+            return Task.FromResult(items);
         }
 
         public string GetPropertyValue(string propertyName)

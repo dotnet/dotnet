@@ -34,6 +34,15 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup Label="NuGet Shared">
+    <Compile Include="$(SharedDirectory)\EncodingUtility.cs" />
+    <Compile Include="$(SharedDirectory)\NullableAttributes.cs" />
+    <Compile Include="$(SharedDirectory)\SimplePool.cs" />
+    <Compile Include="$(SharedDirectory)\StringBuilderPool.cs" />
+    <Compile Include="$(SharedDirectory)\TaskResult.cs" />
+    <Compile Include="$(SharedDirectory)\XmlUtility.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Update="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>

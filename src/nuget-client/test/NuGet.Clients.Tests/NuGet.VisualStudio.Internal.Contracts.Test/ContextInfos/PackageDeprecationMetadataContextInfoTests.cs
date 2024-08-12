@@ -28,7 +28,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult.Reasons, actualResult.Reasons);
         }
 
-        public static TheoryData TestData => new TheoryData<PackageDeprecationMetadataContextInfo>
+        public static TheoryData<PackageDeprecationMetadataContextInfo> TestData => new()
             {
                 {
                     new PackageDeprecationMetadataContextInfo(

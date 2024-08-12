@@ -39,6 +39,11 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup Label="NuGet Shared">
+    <Compile Include="$(SharedDirectory)\DeconstructionExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\TaskResult.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Update="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

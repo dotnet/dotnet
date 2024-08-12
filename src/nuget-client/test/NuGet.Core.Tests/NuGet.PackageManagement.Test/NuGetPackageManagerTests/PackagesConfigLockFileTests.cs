@@ -7,16 +7,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Configuration;
-using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
 using NuGet.Test.Utility;
-using NuGet.Versioning;
 using Test.Utility;
 using Xunit;
 
-namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests.PackagesConfigProjectTests
+namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
 {
-    public class PackagesLockTests
+    public class PackagesConfigLockFileTests
     {
         [Fact]
         public async Task DoNotCreateLockFileWhenFeatureDisabled()

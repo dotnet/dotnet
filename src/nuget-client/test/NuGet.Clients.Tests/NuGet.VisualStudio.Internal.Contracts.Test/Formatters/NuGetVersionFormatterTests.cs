@@ -25,7 +25,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult.ToString(), actualResult.ToString());
         }
 
-        public static TheoryData Versions => new TheoryData<NuGetVersion>
+        public static TheoryData<NuGetVersion> Versions => new()
             {
                 { PackageVersion },
                 { PackageVersionWithPrerelease },

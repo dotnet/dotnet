@@ -17,7 +17,15 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.ServiceHub.Framework" />
+  </ItemGroup>
+  <ItemGroup Label="transitive package pinning">
+    <!--
+      These packages are dependencies of directly referenced PackageReferences.
+      When the above PackageReferences are upgraded to newer versions, try deleting the below PackageReferences
+      -->
     <!-- We do this to avoid the warning our build raises about keeping a consistent newtonsoft.json version. We don't need newtonsonft.json type in here, we don't use it. -->
     <PackageReference Include="Newtonsoft.Json" PrivateAssets="all" ExcludeAssets="all" />
+    <!-- System.Text.Json is a dependency of Microsoft.ServiceHub.Framework. Remove the PackageReference once it no longer depends on a vulnerable version -->
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 </Project>

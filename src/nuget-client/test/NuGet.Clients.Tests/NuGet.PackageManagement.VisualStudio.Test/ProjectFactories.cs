@@ -157,11 +157,11 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
         internal static async Task CreatePackagesAsync(SimpleTestPathContext rootDir, string packageAVersion = "2.15.3", string packageBVersion = "1.0.0")
         {
-            await SimpleTestPackageUtility.CreateFullPackageAsync(rootDir.PackageSource, "packageB", packageBVersion);
-            await SimpleTestPackageUtility.CreateFullPackageAsync(rootDir.PackageSource, "packageA", packageAVersion,
+            await SimpleTestPackageUtility.CreateFullPackageAsync(rootDir.PackageSource, "PackageB", packageBVersion);
+            await SimpleTestPackageUtility.CreateFullPackageAsync(rootDir.PackageSource, "PackageA", packageAVersion,
                 new Packaging.Core.PackageDependency[]
                 {
-                    new Packaging.Core.PackageDependency("packageB", VersionRange.Parse(packageBVersion))
+                    new Packaging.Core.PackageDependency("PackageB", VersionRange.Parse(packageBVersion))
                 });
         }
 

@@ -36,7 +36,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        public static TheoryData EqualsRepositoryMetadataData
+        public static TheoryData<RepositoryMetadata, RepositoryMetadata, bool> EqualsRepositoryMetadataData
         {
             get
             {

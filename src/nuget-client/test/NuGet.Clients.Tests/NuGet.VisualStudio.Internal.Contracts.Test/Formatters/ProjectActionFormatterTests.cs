@@ -29,7 +29,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult, actualResult);
         }
 
-        public static TheoryData ProjectActions => new TheoryData<ProjectAction>
+        public static TheoryData<ProjectAction> ProjectActions => new()
             {
                 { new ProjectAction(Id, ProjectId, PackageIdentityWithoutVersion, NuGetProjectActionType.Uninstall, implicitActions: null) },
                 { new ProjectAction(Id, ProjectId, PackageIdentity, NuGetProjectActionType.Install, ImplicitProjectActions) }

@@ -75,7 +75,7 @@ namespace NuGet.Frameworks.Test
             Assert.Equal(expectedTpm, framework.DotNetPlatformName);
         }
 
-        public static TheoryData EqualsFrameworkData
+        public static TheoryData<string, string> EqualsFrameworkData
         {
             get
             {
@@ -166,7 +166,7 @@ namespace NuGet.Frameworks.Test
             Assert.False(framework2 != framework1);
         }
 
-        public static TheoryData InequalsFrameworkData
+        public static TheoryData<string, string> InequalsFrameworkData
         {
             get
             {
@@ -195,7 +195,7 @@ namespace NuGet.Frameworks.Test
             Assert.False(framework2 == framework1);
         }
 
-        public static TheoryData FrameworkEqualityWithNullData
+        public static TheoryData<string> FrameworkEqualityWithNullData
         {
             get
             {

@@ -43,6 +43,18 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup Label="NuGet Shared">
+    <Compile Include="$(SharedDirectory)\DeconstructionExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\EqualityUtility.cs" />
+    <Compile Include="$(SharedDirectory)\HashCodeCombiner.cs" />
+    <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\NullableAttributes.cs" />
+    <Compile Include="$(SharedDirectory)\SharedExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\TaskResult.cs" />
+    <Compile Include="$(SharedDirectory)\TaskResultCache.cs" />
+    <Compile Include="$(SharedDirectory)\XmlUtility.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Update="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -64,7 +76,7 @@
     <InternalsVisibleTo Include="NuGet.ProjectModel.Test" />
     <InternalsVisibleTo Include="NuGet.SolutionRestoreManager.Test" />
     <InternalsVisibleTo Include="Test.Utility" />
-    <InternalsVisibleTo Include="NuGet.Commands.FuncTest"/>
+    <InternalsVisibleTo Include="NuGet.Commands.FuncTest" />
     <InternalsVisibleTo Include="Dotnet.Integration.Test" />
   </ItemGroup>
 </Project>

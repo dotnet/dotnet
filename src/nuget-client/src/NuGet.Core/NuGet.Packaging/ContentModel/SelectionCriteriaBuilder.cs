@@ -56,7 +56,7 @@ namespace NuGet.ContentModel
                 else
                 {
                     object valueLookup;
-                    if (propertyDefinition.TryLookup(value, table: null, value: out valueLookup))
+                    if (propertyDefinition.TryLookup(value.AsMemory(), table: null, matchOnly: false, value: out valueLookup))
                     {
                         Entry.Properties[key] = valueLookup;
                     }

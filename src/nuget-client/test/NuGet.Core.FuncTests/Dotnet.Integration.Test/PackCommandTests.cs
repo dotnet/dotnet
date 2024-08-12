@@ -3667,6 +3667,7 @@ namespace ClassLibrary
         <PropertyGroup>
             <SourceRevisionId>e1c65e4524cd70ee6e22abe33e6cb6ec73938cb1</SourceRevisionId>
             <PrivateRepositoryUrl>https://github.com/NuGet/NuGet.Client.git</PrivateRepositoryUrl>
+            <SourceBranchName>refs/heads/main</SourceBranchName>
         </PropertyGroup>
     </Target>
 </Project>");
@@ -3693,8 +3694,10 @@ namespace ClassLibrary
             }
         }
 
-        [PlatformFact(Platform.Windows)]
-        public void PackCommand_PackWithSourceControlInformation_PrivateUrl_VerifyNuspec()
+        [PlatformTheory(Platform.Windows)]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void PackCommand_PackWithSourceControlInformation_PrivateUrl_VerifyNuspec(bool shouldEmitPublishProperty)
         {
             using (var testDirectory = _dotnetFixture.CreateTestDirectory())
             {
@@ -3711,6 +3714,10 @@ namespace ClassLibrary
                     var ns = xml.Root.Name.Namespace;
 
                     ProjectFileUtils.AddProperty(xml, "RepositoryType", "git");
+                    if (shouldEmitPublishProperty)
+                    {
+                        ProjectFileUtils.AddProperty(xml, "PublishRepositoryUrl", "false");
+                    }
 
                     xml.Root.Add(
                         new XElement(ns + "PropertyGroup",
@@ -3725,6 +3732,7 @@ namespace ClassLibrary
     <PropertyGroup>
       <SourceRevisionId>e1c65e4524cd70ee6e22abe33e6cb6ec73938cb1</SourceRevisionId>
       <PrivateRepositoryUrl>https://github.com/NuGet/NuGet.Client.git</PrivateRepositoryUrl>
+      <SourceBranchName>refs/heads/abc</SourceBranchName>
     </PropertyGroup>
 </Target>
 </Project>";
@@ -3787,6 +3795,7 @@ namespace ClassLibrary
     <PropertyGroup>
       <SourceRevisionId>e1c65e4524cd70ee6e22abe33e6cb6ec73938cb1</SourceRevisionId>
       <PrivateRepositoryUrl>https://github.com/NuGet/NuGet.Client.git</PrivateRepositoryUrl>
+      <SourceBranchName>refs/heads/main</SourceBranchName>
     </PropertyGroup>
 </Target>
 </Project>";
@@ -3809,7 +3818,7 @@ namespace ClassLibrary
                     var repositoryMetadata = nuspecReader.GetRepositoryMetadata();
                     repositoryMetadata.Type.Should().Be("git");
                     repositoryMetadata.Url.Should().Be("https://github.com/NuGet/NuGet.Client.git");
-                    repositoryMetadata.Branch.Should().Be("");
+                    repositoryMetadata.Branch.Should().Be("refs/heads/main");
                     repositoryMetadata.Commit.Should().Be("e1c65e4524cd70ee6e22abe33e6cb6ec73938cb1");
                 }
             }
@@ -3836,6 +3845,7 @@ namespace ClassLibrary
                     ProjectFileUtils.AddProperty(xml, "PublishRepositoryUrl", "true");
                     ProjectFileUtils.AddProperty(xml, "RepositoryCommit", "1111111111111111111111111111111111111111");
                     ProjectFileUtils.AddProperty(xml, "RepositoryUrl", "https://github.com/Overridden");
+                    ProjectFileUtils.AddProperty(xml, "RepositoryBranch", "refs/heads/overwritten");
 
                     // mock implementation of InitializeSourceControlInformation common targets:
                     xml.Root.Add(
@@ -3843,7 +3853,8 @@ namespace ClassLibrary
                             new XAttribute("Name", "InitializeSourceControlInformation"),
                             new XElement(ns + "PropertyGroup",
                                 new XElement("SourceRevisionId", "e1c65e4524cd70ee6e22abe33e6cb6ec73938cb1"),
-                                new XElement("PrivateRepositoryUrl", "https://github.com/NuGet/NuGet.Client"))));
+                                new XElement("PrivateRepositoryUrl", "https://github.com/NuGet/NuGet.Client"),
+                                new XElement("SourceBranchName", "refs/heads/main"))));
 
                     xml.Root.Add(
                         new XElement(ns + "PropertyGroup",
@@ -3868,7 +3879,7 @@ namespace ClassLibrary
                     var repositoryMetadata = nuspecReader.GetRepositoryMetadata();
                     repositoryMetadata.Type.Should().Be("git");
                     repositoryMetadata.Url.Should().Be("https://github.com/Overridden");
-                    repositoryMetadata.Branch.Should().Be("");
+                    repositoryMetadata.Branch.Should().Be("refs/heads/overwritten");
                     repositoryMetadata.Commit.Should().Be("1111111111111111111111111111111111111111");
                 }
             }

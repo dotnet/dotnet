@@ -5,7 +5,9 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+#if IS_SIGNING_SUPPORTED
 using System.Text;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -15,7 +17,9 @@ using NuGet.Packaging.Core;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
+#if IS_SIGNING_SUPPORTED
 using Test.Utility.Signing;
+#endif
 using Xunit;
 
 namespace NuGet.Packaging.Test
@@ -899,7 +903,7 @@ namespace NuGet.Packaging.Test
                    root,
                    identity.Id,
                    identity.Version.ToString(),
-                   DateTimeOffset.UtcNow.LocalDateTime,
+                   entryModifiedTime: DateTimeOffset.Now,
                    "../../A.dll",
                    "content/net40/B.nuspec");
 
@@ -931,7 +935,7 @@ namespace NuGet.Packaging.Test
                    root,
                    identity.Id,
                    identity.Version.ToString(),
-                   DateTimeOffset.UtcNow.LocalDateTime,
+                   entryModifiedTime: DateTimeOffset.Now,
                    $"{rootPath}/A.dll",
                    "content/net40/B.nuspec");
 
@@ -962,7 +966,7 @@ namespace NuGet.Packaging.Test
                    root,
                    identity.Id,
                    identity.Version.ToString(),
-                   DateTimeOffset.UtcNow.LocalDateTime,
+                   entryModifiedTime: DateTimeOffset.Now,
                    ".",
                    "content/net40/B.nuspec");
 
@@ -1016,7 +1020,7 @@ namespace NuGet.Packaging.Test
                        root,
                        identity.Id,
                        identity.Version.ToString(),
-                       DateTimeOffset.UtcNow.LocalDateTime,
+                       entryModifiedTime: DateTimeOffset.Now,
                        @"readme~.txt");
 
                     using (var packageStream = File.OpenRead(packageFileInfo.FullName))
@@ -1055,7 +1059,7 @@ namespace NuGet.Packaging.Test
                        root,
                        identity.Id,
                        identity.Version.ToString(),
-                       DateTimeOffset.UtcNow.LocalDateTime,
+                       entryModifiedTime: DateTimeOffset.Now,
                        @"readme~.txt");
 
                     using (var packageStream = File.OpenRead(packageFileInfo.FullName))
@@ -1701,7 +1705,7 @@ namespace NuGet.Packaging.Test
                    root,
                    identity.Id,
                    identity.Version.ToString(),
-                   DateTimeOffset.UtcNow.LocalDateTime,
+                   entryModifiedTime: DateTimeOffset.Now,
                    "../../A.dll",
                    "content/net40/B.nuspec");
 
@@ -1728,7 +1732,7 @@ namespace NuGet.Packaging.Test
                    root,
                    identity.Id,
                    identity.Version.ToString(),
-                   DateTimeOffset.UtcNow.LocalDateTime,
+                   entryModifiedTime: DateTimeOffset.Now,
                    $"{rootPath}/A.dll",
                    "content/net40/B.nuspec");
 
@@ -1755,7 +1759,7 @@ namespace NuGet.Packaging.Test
                    root,
                    identity.Id,
                    identity.Version.ToString(),
-                   DateTimeOffset.UtcNow.LocalDateTime,
+                   entryModifiedTime: DateTimeOffset.Now,
                    ".",
                    "content/net40/B.nuspec");
 
@@ -1780,7 +1784,7 @@ namespace NuGet.Packaging.Test
                    root,
                    identity.Id,
                    identity.Version.ToString(),
-                   DateTimeOffset.UtcNow.LocalDateTime,
+                   entryModifiedTime: DateTimeOffset.Now,
                    "C++.dll",
                    "content/net40/B&#A.txt",
                    "content/net40/B.nuspec");
@@ -1807,7 +1811,7 @@ namespace NuGet.Packaging.Test
                    root,
                    identity.Id,
                    identity.Version.ToString(),
-                   DateTimeOffset.UtcNow.LocalDateTime,
+                   entryModifiedTime: DateTimeOffset.Now,
                    "lib/net40/A.dll",
                    "content/net40/B.nuspec");
 

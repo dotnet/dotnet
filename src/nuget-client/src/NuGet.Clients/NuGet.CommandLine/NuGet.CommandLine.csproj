@@ -37,6 +37,14 @@
     </ItemGroup>
   </Target>
 
+  <ItemGroup Label="NuGet Shared">
+    <Compile Include="$(SharedDirectory)\DeconstructionExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\SharedExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\TaskResult.cs" />
+    <Compile Include="$(SharedDirectory)\XmlUtility.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="Microsoft.CSharp" />

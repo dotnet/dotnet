@@ -1,12 +1,13 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using NuGet.ContentModel;
 using NuGet.Frameworks;
 using Xunit;
 
-namespace NuGet.Client.Test
+namespace NuGet.Packaging.Test.ContentModelTests
 {
     public class PatternTableTests
     {
@@ -18,7 +19,7 @@ namespace NuGet.Client.Test
 
             // Act
             object obj;
-            var b = table.TryLookup("tfm", "any", out obj);
+            var b = table.TryLookup("tfm", "any".AsMemory(), out obj);
 
             // Assert
             Assert.False(b);
@@ -39,7 +40,7 @@ namespace NuGet.Client.Test
 
             // Act
             object obj;
-            var b = table.TryLookup("tfm", "any", out obj);
+            var b = table.TryLookup("tfm", "any".AsMemory(), out obj);
 
             // Assert
             Assert.True(b);
@@ -59,7 +60,7 @@ namespace NuGet.Client.Test
 
             // Act
             object obj;
-            var b = table.TryLookup("tfm", "any", out obj);
+            var b = table.TryLookup("tfm", "any".AsMemory(), out obj);
 
             // Assert
             Assert.False(b);

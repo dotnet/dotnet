@@ -60,38 +60,30 @@ namespace NuGet.PackageManagement.VisualStudio.Utility
         }
 
         /// <summary>
-        /// Gets the dependencies of a top level package and caches these if the assets file has changed
+        /// Get the dependencies from the assets file and updates the packages cache.
         /// </summary>
-        /// <param name="library">Library from the project file.</param>
-        /// <param name="targetFramework">Target framework from the project file.</param>
-        /// <param name="targets">Target assets file with the package information.</param>
+        /// <param name="libraries">Libraries from the project file.</param>
         /// <param name="installedPackages">Cached installed package information</param>
         /// <param name="transitivePackages">Cached transitive package information</param>
-        internal static IReadOnlyList<PackageIdentity> UpdateTransitiveDependencies(LockFileTargetLibrary library, NuGetFramework targetFramework, IList<LockFileTarget> targets, Dictionary<string, ProjectInstalledPackage> installedPackages, Dictionary<string, ProjectInstalledPackage> transitivePackages)
+        internal static IReadOnlyList<PackageIdentity> UpdateTransitiveDependencies(IList<LockFileTargetLibrary> libraries, Dictionary<string, ProjectInstalledPackage> installedPackages, Dictionary<string, ProjectInstalledPackage> transitivePackages)
         {
             NuGetVersion resolvedVersion = default;
 
             var packageIdentities = new List<PackageIdentity>();
 
             // get the dependencies for this target framework
-            IReadOnlyList<PackageDependency> transitiveDependencies = GetTransitivePackagesForLibrary(library, targetFramework, targets);
-
-            if (transitiveDependencies != null)
+            if (libraries != null)
             {
-                foreach (PackageDependency package in transitiveDependencies)
+                foreach (LockFileTargetLibrary package in libraries)
                 {
                     // don't add transitive packages if they are also top level packages
-                    if (!installedPackages.ContainsKey(package.Id))
+                    // don't add transitive packages if they are not packages
+                    if (!installedPackages.ContainsKey(package.Name) && package.Type == LibraryType.Package.Value)
                     {
-                        resolvedVersion = GetInstalledVersion(package.Id, targetFramework, targets);
+                        resolvedVersion = package.Version ?? new NuGetVersion(0, 0, 0);
 
-                        if (resolvedVersion == null)
-                        {
-                            resolvedVersion = package.VersionRange?.MinVersion ?? new NuGetVersion(0, 0, 0);
-                        }
-
-                        var packageIdentity = new PackageIdentity(package.Id, resolvedVersion);
-                        transitivePackages[package.Id] = new ProjectInstalledPackage(package.VersionRange, packageIdentity);
+                        var packageIdentity = new PackageIdentity(package.Name, resolvedVersion);
+                        transitivePackages[package.Name] = new ProjectInstalledPackage(new VersionRange(package.Version), packageIdentity);
                         packageIdentities.Add(packageIdentity);
                     }
                 }
@@ -131,45 +123,6 @@ namespace NuGet.PackageManagement.VisualStudio.Utility
 
             return null;
         }
-
-        private static IReadOnlyList<PackageDependency> GetTransitivePackagesForLibrary(LockFileTargetLibrary library, NuGetFramework targetFramework, IList<LockFileTarget> targets)
-        {
-            // PERF: Intentionally avoiding LINQ and foreach to avoid allocating capture classes and enumerators
-            if (targets != null)
-            {
-                LockFileTarget target = default;
-                for (int i = 0; i < targets.Count; ++i)
-                {
-                    LockFileTarget t = targets[i];
-                    if (t.TargetFramework.Equals(targetFramework) && string.IsNullOrEmpty(t.RuntimeIdentifier))
-                    {
-                        target = t;
-                        break;
-                    }
-                }
-
-                if (target != null && target.Libraries != null)
-                {
-                    var packageDependencies = new List<PackageDependency>();
-                    for (int i = 0; i < target.Libraries.Count; ++i)
-                    {
-                        LockFileTargetLibrary lib = target.Libraries[i];
-                        if (lib.Name.Equals(library.Name, StringComparison.OrdinalIgnoreCase))
-                        {
-                            if (lib.Dependencies != null)
-                            {
-                                packageDependencies.AddRange(lib.Dependencies);
-                            }
-                        }
-                    }
-
-                    return packageDependencies;
-                }
-            }
-
-            return null;
-        }
-
         internal static int ComparePackageReferenceByIdentity(PackageReference a, PackageReference b)
         {
             if (a?.PackageIdentity == null && b?.PackageIdentity == null)

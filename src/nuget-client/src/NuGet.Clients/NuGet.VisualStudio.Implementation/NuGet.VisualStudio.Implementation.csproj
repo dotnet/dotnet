@@ -69,6 +69,13 @@
       <DependentUpon>VsResources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
+
+  <ItemGroup Label="NuGet Shared">
+    <Compile Include="$(SharedDirectory)\DeconstructionExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\NullableAttributes.cs" />
+    <Compile Include="$(SharedDirectory)\XmlUtility.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="NuGet.VisualStudio.Implementation.Test" />
   </ItemGroup>

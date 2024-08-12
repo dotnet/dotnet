@@ -33,7 +33,15 @@
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
     <Reference Include="Microsoft.Build.Utilities.v4.0" Aliases="MicrosoftBuildUtilitiesv4" />
   </ItemGroup>
-  
+
+  <ItemGroup Label="transitive package pinning">
+    <!--
+      These packages are dependencies of MSBuild
+      When it is upgraded to a newer version, try deleting the below PackageReferences
+      -->
+    <PackageReference Include="Microsoft.IO.Redist" Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' " />
+  </ItemGroup>
+
   <ItemGroup>
     <None Include="App.config" Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' " />
     <None Include="app.manifest" />

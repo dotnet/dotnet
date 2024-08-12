@@ -3,11 +3,15 @@
 
 using System;
 using System.Collections.Concurrent;
+#if IS_SIGNING_SUPPORTED
 using System.Net;
 using System.Threading;
+#endif
 using System.Threading.Tasks;
+#if IS_SIGNING_SUPPORTED
 using NuGet.Common;
 using NuGet.Test.Server;
+#endif
 
 namespace Test.Utility.Signing
 {
@@ -154,21 +158,17 @@ namespace Test.Utility.Signing
         {
             private readonly ConcurrentDictionary<string, IHttpResponder> _responders;
             private readonly string _key;
-            private readonly IHttpResponder _responder;
 
             internal Responder(ConcurrentDictionary<string, IHttpResponder> responders, string key, IHttpResponder responder)
             {
                 _responders = responders;
                 _key = key;
-                _responder = responder;
                 _responders[key] = responder;
             }
 
             public void Dispose()
             {
-                IHttpResponder value;
-
-                _responders.TryRemove(_key, out value);
+                _responders.TryRemove(_key, out IHttpResponder _);
             }
         }
     }

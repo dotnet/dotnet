@@ -40,7 +40,7 @@ stages:
         - ${{if gt(length(parameters.variables), 0)}}:
           - ${{parameters.variables}}
       runSettingsURI: ${{parameters.runSettingsURI}}
-      visualStudioBootstrapperURI: $(bootstrapperUrl)      
+      visualStudioBootstrapperURI: $(bootstrapperUrl)
       baseVisualStudioBootstrapperURI: https://vsdrop.microsoft.com/file/v1/$(VisualStudio.BaseBuild.ProductsDropName);bootstrappers/Enterprise/vs_enterprise.exe
       candidateBaselineBuilds: $(BaselineBuildCommitIds)
       testLabPoolName: VS-Platform
@@ -56,6 +56,10 @@ stages:
       testExecutionJobTimeoutInMinutes: ${{parameters.testExecutionJobTimeoutInMinutes}}
       testMachineCleanUpStrategy: ${{parameters.testMachineCleanUpStrategy}}
       testAgentElevated: true
+
+##############################
+## preTestMachineConfigurationStepList
+##############################
       preTestMachineConfigurationStepList:
         - template: \steps\powershell\execute-script.yml@DartLabTemplates
           parameters:
@@ -63,7 +67,7 @@ stages:
             continueOnError: true
             filePath: $(DartLab.Path)\Scripts\AzureDevOps\Build\Get-BuildIdFromCloudBuildSessionID.ps1
             arguments: -ClientSecret (ConvertTo-SecureString '$(CloudBuild-ClientSecret)' -AsPlainText -Force) -ClientID '$(CloudBuild-ClientID)' -SessionID '${{ parameters.QBuildSessionId }}' -OutVariableName 'BaselineBuildID'
-        
+
         - task: PowerShell@2
           displayName: "Get Baseline build commit ids"
           name: "getbaselinebuildcommitids"
@@ -74,7 +78,7 @@ stages:
             script: |
               try {
               Write-Host "Getting Baseline build commit ids for build: '$(BaselineBuildID)'"
-              
+
               $artifactName = 'BuildArtifacts'
               $baselineBuildsFile = Join-Path $(Agent.TempDirectory) "BaselineBuilds.json"
 
@@ -117,6 +121,10 @@ stages:
               $buildDrop = "${{parameters.baseBuildDrop}}" -split "/"
               $dropName = "Products/DevDiv/VS/$($buildDrop[-2])/$($buildDrop[-1])"
               Write-Host "##vso[task.setvariable variable=VisualStudio.BaseBuild.ProductsDropName]$dropName"
+
+##############################
+## preDeployAndRunTestsStepList
+##############################
       preDeployAndRunTestsStepList:
         - task: PowerShell@1
           displayName: "Print Environment Variables"
@@ -125,32 +133,13 @@ stages:
             inlineScript: |
               Get-ChildItem Env: | Sort-Object Name | Format-Table -Wrap -AutoSize
 
-        - task: DownloadPipelineArtifact@0
-          displayName: "Download Pipeline artifacts"
+        - task: DownloadPipelineArtifact@2
+          displayName: "Download scripts"
           inputs:
-            artifactName: "VS15"
-            downloadPath: "$(Build.Repository.LocalPath)/artifacts"
-
-        - powershell: |
-            $zipPath = "$(Build.Repository.Localpath)/artifacts/VS15/EndToEnd.zip"
-            $dest = "$(System.DefaultWorkingDirectory)/artifacts/EndToEnd/"
-            Write-Output "Extracting '$zipPath' to '$dest'"
-            Expand-Archive -Path "$zipPath" -DestinationPath "$dest"
-            $nugetExePath = "$(Build.Repository.Localpath)/artifacts/VS15/NuGet.exe"
-            Write-Output "Copying '$nugetExePath' to '$dest'"
-            Copy-Item -Path "$nugetExePath" -Destination "$dest"
-          displayName: "Extract EndToEnd.zip"
+            artifactName: "scripts"
+            downloadPath: "$(Build.StagingDirectory)/scripts"
 
         - task: PowerShell@1
           displayName: "SetupFunctionalTests.ps1"
           inputs:
-            scriptName: "$(System.DefaultWorkingDirectory)/artifacts/EndToEnd/scripts/SetupFunctionalTests.ps1"
-      postDeployAndRunTestsStepList:
-        - task: PowerShell@1
-          displayName: "Initialize Git Commit Status on GitHub"
-          inputs:
-            scriptType: "inlineScript"
-            inlineScript: |
-              . $(System.DefaultWorkingDirectory)\\artifacts\\EndToEnd\\scripts\\PostGitCommitStatus.ps1
-              SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -VstsPersonalAccessToken $(System.AccessToken) -CommitSha $(Build.SourceVersion) -TestName "$(GitHubStatusName)"
-          condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"
+            scriptName: "$(Build.StagingDirectory)/scripts/e2etests/SetupFunctionalTests.ps1"

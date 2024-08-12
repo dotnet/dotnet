@@ -38,5 +38,13 @@ namespace NuGet.ProjectManagement
         Task<IEnumerable<ProjectRestoreReference>> GetProjectReferencesAsync(
             Common.ILogger logger,
             CancellationToken token);
+
+        /// <summary>
+        /// Returns a collection of items of the specified item type name.
+        /// </summary>
+        /// <param name="itemTypeName"></param>
+        /// <param name="metadataNames"></param>
+        /// <returns></returns>
+        Task<IReadOnlyList<(string id, string[] metadata)>> GetItemsAsync(string itemTypeName, params string[] metadataNames);
     }
 }

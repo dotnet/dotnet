@@ -60,7 +60,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult.Vulnerabilities, actualResult.Vulnerabilities);
         }
 
-        public static TheoryData TestData => new TheoryData<PackageSearchMetadataContextInfo>
+        public static TheoryData<PackageSearchMetadataContextInfo> TestData => new()
             {
                 { PackageSearchMetadataContextInfo.Create(new PackageSearchMetadataBuilder.ClonedPackageSearchMetadata()
                     {

@@ -2016,6 +2016,11 @@ namespace NuGet.Test
 
                 return Task.FromResult(projectRefs);
             }
+
+            public Task<IReadOnlyList<(string id, string[] metadata)>> GetItemsAsync(string itemTypeName, params string[] metadataNames)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         private class TestNonBuildIntegratedNuGetProject : NuGetProject, IDependencyGraphProject

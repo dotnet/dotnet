@@ -67,6 +67,7 @@
   <!-- Defaults -->
   <PropertyGroup>
     <TreatWarningsAsErrors Condition=" '$(TreatWarningsAsErrors)' == '' ">true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
     <!-- Treat all warnings as errors, except on official builds since we don't want new warnings to break servicing branches -->
     <MSBuildTreatWarningsAsErrors Condition=" '$(MSBuildTreatWarningsAsErrors)' == '' And '$(IsOfficialBuild)' != 'true' ">true</MSBuildTreatWarningsAsErrors>
   </PropertyGroup>

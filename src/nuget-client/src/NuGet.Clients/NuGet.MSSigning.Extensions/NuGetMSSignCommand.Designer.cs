@@ -19,7 +19,7 @@ namespace NuGet.MSSigning.Extensions {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class NuGetMSSignCommand {
@@ -70,7 +70,7 @@ namespace NuGet.MSSigning.Extensions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SHA-1 fingerprint of the certificate used to search a p7b file for the certificate..
+        ///   Looks up a localized string similar to SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a p7b file for the certificate..
         /// </summary>
         internal static string MSSignCommandCertificateFingerprintDescription {
             get {
@@ -106,11 +106,20 @@ namespace NuGet.MSSigning.Extensions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid value provided for &apos;{0}&apos;. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference.
+        ///   Looks up a localized string similar to Invalid value provided for &apos;{0}&apos;. For a list of accepted values, please visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign.
         /// </summary>
         internal static string MSSignCommandInvalidArgumentException {
             get {
                 return ResourceManager.GetString("MSSignCommandInvalidArgumentException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid value for &apos;CertificateFingerprint&apos; option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal)..
+        /// </summary>
+        internal static string MSSignCommandInvalidCertificateFingerprint {
+            get {
+                return ResourceManager.GetString("MSSignCommandInvalidCertificateFingerprint", resourceCulture);
             }
         }
         

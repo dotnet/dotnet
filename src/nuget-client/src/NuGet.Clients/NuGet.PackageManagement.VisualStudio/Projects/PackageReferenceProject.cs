@@ -20,6 +20,7 @@ using NuGet.ProjectManagement;
 using NuGet.ProjectManagement.Projects;
 using NuGet.ProjectModel;
 using NuGet.Shared;
+using NuGet.Versioning;
 using NuGet.VisualStudio.Internal.Contracts;
 using TransitiveEntry = System.Collections.Generic.IDictionary<NuGet.Frameworks.FrameworkRuntimePair, System.Collections.Generic.IList<NuGet.Packaging.PackageReference>>;
 
@@ -218,7 +219,28 @@ namespace NuGet.PackageManagement.VisualStudio
                             targetsList = await GetTargetsListAsync(assetsFilePath, token);
                         }
 
-                        transitiveOrigins = calculatedTransitivePackages.Any() ? ComputeTransitivePackageOrigins(calculatedInstalledPackages, targetsList, token) : new Dictionary<string, TransitiveEntry>();
+                        // If the project has project references, we need to compute transitive origins for their packages
+                        List<LockFileTargetLibrary> projectReferences = targetsList.SelectMany(t => t.Libraries).Where(l => l.Type == LibraryType.Project).ToList();
+                        List<PackageReference> calculatedLibraryReferences = new List<PackageReference>(projectReferences.Count + calculatedInstalledPackages.Count);
+                        if (projectReferences.Count > 0)
+                        {
+                            foreach (var projectReference in projectReferences)
+                            {
+                                var packageReference = new PackageReference(
+                                    identity: new PackageIdentity(projectReference.Name, projectReference.Version),
+                                    targetFramework: new NuGetFramework(projectReference.Framework),
+                                    userInstalled: false,
+                                    developmentDependency: false,
+                                    requireReinstallation: false,
+                                    allowedVersions: new VersionRange(projectReference.Version));
+                                calculatedLibraryReferences.Add(packageReference);
+                            }
+                        }
+
+                        calculatedLibraryReferences.AddRange(calculatedInstalledPackages);
+
+                        // Compute Transitive Origins
+                        transitiveOrigins = calculatedTransitivePackages.Any() ? ComputeTransitivePackageOrigins(calculatedLibraryReferences, targetsList, token) : new Dictionary<string, TransitiveEntry>();
                     }
                     else
                     {
@@ -322,9 +344,8 @@ namespace NuGet.PackageManagement.VisualStudio
             else
             {
                 return targets
-                    .SelectMany(target => target.Libraries)
-                    .Where(library => library.Type == LibraryType.Package)
-                    .SelectMany(library => GetPackageReferenceUtility.UpdateTransitiveDependencies(library, targetFramework, targets, installedPackages, transitivePackages))
+                    .Where(target => target.TargetFramework.Equals(targetFramework))
+                    .SelectMany(target => GetPackageReferenceUtility.UpdateTransitiveDependencies(target.Libraries, installedPackages, transitivePackages))
                     .Select(packageIdentity => new PackageReference(packageIdentity, targetFramework))
                     .ToList();
             }
@@ -434,7 +455,7 @@ namespace NuGet.PackageManagement.VisualStudio
             // Find first target node that matches current
             foreach (LockFileTargetLibrary lib in graph.Libraries)
             {
-                if (lib.Type == LibraryType.Package.Value
+                if ((lib.Type == LibraryType.Package.Value || lib.Type == LibraryType.Project.Value)
                     && string.Equals(lib.Name, current.PackageIdentity.Id, StringComparison.OrdinalIgnoreCase)
                     && ((current.HasAllowedVersions && current.AllowedVersions.Satisfies(lib.Version)) ||
                         (current.PackageIdentity.HasVersion && current.PackageIdentity.Version.Equals(lib.Version))))

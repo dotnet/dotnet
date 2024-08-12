@@ -121,7 +121,7 @@
     <value>File path to the p7b file to be used while signing the package.</value>
   </data>
   <data name="MSSignCommandCertificateFingerprintDescription" xml:space="preserve">
-    <value>SHA-1 fingerprint of the certificate used to search a p7b file for the certificate.</value>
+    <value>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a p7b file for the certificate.</value>
   </data>
   <data name="MSSignCommandCSPNameDescription" xml:space="preserve">
     <value>Name of the cryptographic service provider which contains the private key container.</value>
@@ -133,7 +133,7 @@
     <value>Hash algorithm to be used while generating the package manifest file. Defaults to SHA256.</value>
   </data>
   <data name="MSSignCommandInvalidArgumentException" xml:space="preserve">
-    <value>Invalid value provided for '{0}'. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <value>Invalid value provided for '{0}'. For a list of accepted values, please visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</value>
     <comment>{0} - argument name</comment>
   </data>
   <data name="MSSignCommandInvalidCngKeyException" xml:space="preserve">
@@ -201,5 +201,8 @@ nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -Certificate
   </data>
   <data name="RepoSignCommandV3ServiceIndexUrlDescription" xml:space="preserve">
     <value>Repository V3 service index URL.</value>
+  </data>
+  <data name="MSSignCommandInvalidCertificateFingerprint" xml:space="preserve">
+    <value>Invalid value for 'CertificateFingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</value>
   </data>
 </root>

@@ -4,35 +4,28 @@
 using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using NuGet.Common;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Generators;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Security;
-using Xunit;
-using X509Certificate = Org.BouncyCastle.X509.X509Certificate;
 
 namespace Test.Utility.Signing
 {
     public static class CertificateUtilities
     {
-        internal static AsymmetricCipherKeyPair CreateKeyPair(int strength = 2048)
+        internal static RSA CreateKeyPair(int strength = 2048)
         {
-            var generator = new RsaKeyPairGenerator();
-
-            generator.Init(new KeyGenerationParameters(new SecureRandom(), strength));
-
-            return generator.GenerateKeyPair();
+            return RSA.Create(strength);
         }
 
-        internal static string GenerateFingerprint(X509Certificate certificate)
+        internal static string GenerateFingerprint(X509Certificate2 certificate)
         {
-            using (var hashAlgorithm = NuGet.Common.HashAlgorithmName.SHA256.GetHashProvider())
+#if NETFRAMEWORK
+            using (SHA256 sha256 = SHA256.Create())
             {
-                var hash = hashAlgorithm.ComputeHash(certificate.GetEncoded());
+                byte[] hash = sha256.ComputeHash(certificate.RawData);
 
                 return BitConverter.ToString(hash).Replace("-", "");
             }
+#else
+            return certificate.GetCertHashString(HashAlgorithmName.SHA256);
+#endif
         }
 
         internal static string GenerateRandomId()
@@ -40,32 +33,17 @@ namespace Test.Utility.Signing
             return Guid.NewGuid().ToString();
         }
 
-        public static X509Certificate2 GetCertificateWithPrivateKey(X509Certificate bcCertificate, AsymmetricCipherKeyPair keyPair)
+        public static X509Certificate2 GetCertificateWithPrivateKey(X509Certificate2 certificate, RSA keyPair)
         {
-            Assert.IsType<RsaPrivateCrtKeyParameters>(keyPair.Private);
-
-            var privateKeyParameters = (RsaPrivateCrtKeyParameters)keyPair.Private;
-#if IS_DESKTOP
-            RSA privateKey = DotNetUtilities.ToRSA(privateKeyParameters);
-
-            var certificate = new X509Certificate2(bcCertificate.GetEncoded());
-
-            certificate.PrivateKey = privateKey;
+            X509Certificate2 certificateWithPrivateKey = certificate.CopyWithPrivateKey(keyPair);
+#if NET
+            return certificateWithPrivateKey;
 #else
-            RSAParameters rsaParameters = DotNetUtilities.ToRSAParameters(privateKeyParameters);
-
-            var privateKey = new RSACryptoServiceProvider();
-
-            privateKey.ImportParameters(rsaParameters);
-
-            X509Certificate2 certificate;
-
-            using (var certificateTmp = new X509Certificate2(bcCertificate.GetEncoded()))
+            using (certificateWithPrivateKey)
             {
-                certificate = RSACertificateExtensions.CopyWithPrivateKey(certificateTmp, privateKey);
+                return new X509Certificate2(certificateWithPrivateKey.Export(X509ContentType.Pfx));
             }
 #endif
-            return certificate;
         }
     }
 }

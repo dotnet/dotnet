@@ -19,10 +19,10 @@ namespace NuGet.ContentModel.Infrastructure
         {
             _table = pattern.Table;
             _defaults = pattern.Defaults.ToDictionary(p => p.Key, p => p.Value);
-            Initialize(pattern.Pattern);
+            Initialize(pattern.Pattern, pattern.PreserveRawValues);
         }
 
-        private void Initialize(string pattern)
+        private void Initialize(string pattern, bool preserveRawValues)
         {
             for (var scanIndex = 0; scanIndex < pattern.Length;)
             {
@@ -58,7 +58,7 @@ namespace NuGet.ContentModel.Infrastructure
                     var endName = endToken - (matchOnly ? 1 : 0);
 
                     var tokenName = pattern.Substring(beginName, endName - beginName);
-                    _segments.Add(new TokenSegment(tokenName, delimiter, matchOnly, _table));
+                    _segments.Add(new TokenSegment(tokenName, delimiter, matchOnly, _table, preserveRawValues));
                 }
                 scanIndex = endToken + 1;
             }
@@ -151,13 +151,20 @@ namespace NuGet.ContentModel.Infrastructure
             private readonly char _delimiter;
             private readonly bool _matchOnly;
             private readonly PatternTable _table;
+            private readonly bool _preserveRawValue = false;
+            private readonly string _rawToken;
 
-            public TokenSegment(string token, char delimiter, bool matchOnly, PatternTable table)
+            public TokenSegment(string token, char delimiter, bool matchOnly, PatternTable table, bool preserveRawValues)
             {
                 _token = token;
                 _delimiter = delimiter;
                 _matchOnly = matchOnly;
                 _table = table;
+                _preserveRawValue = preserveRawValues;
+                if (_preserveRawValue)
+                {
+                    _rawToken = $"{token}_raw";
+                }
             }
 
             internal override bool TryMatch(
@@ -190,9 +197,9 @@ namespace NuGet.ContentModel.Infrastructure
                     {
                         break;
                     }
-                    var substring = path.Substring(startIndex, delimiterIndex - startIndex);
+                    ReadOnlyMemory<char> substring = path.AsMemory(startIndex, delimiterIndex - startIndex);
                     object value;
-                    if (propertyDefinition.TryLookup(substring, _table, out value))
+                    if (propertyDefinition.TryLookup(substring, _table, _matchOnly, out value))
                     {
                         if (!_matchOnly)
                         {
@@ -204,9 +211,9 @@ namespace NuGet.ContentModel.Infrastructure
                                     Path = path
                                 };
                             }
-                            if (StringComparer.Ordinal.Equals(_token, "tfm"))
+                            if (_preserveRawValue)
                             {
-                                item.Properties.Add("tfm_raw", substring);
+                                item.Properties.Add(_rawToken, substring.ToString());
                             }
                             item.Properties.Add(_token, value);
                         }

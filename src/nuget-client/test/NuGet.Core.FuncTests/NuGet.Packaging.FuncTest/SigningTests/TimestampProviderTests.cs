@@ -266,7 +266,7 @@ namespace NuGet.Packaging.FuncTest
 
             certificateAuthority.Revoke(
                 timestampService.Certificate,
-                RevocationReason.KeyCompromise,
+                X509RevocationReason.KeyCompromise,
                 DateTimeOffset.UtcNow);
 
             VerifyTimestampData(
@@ -348,11 +348,12 @@ namespace NuGet.Packaging.FuncTest
         [CIOnlyFact]
         public async Task GetTimestampAsync_WhenCertificateSignatureAlgorithmIsSha1_ThrowsAsync()
         {
+            Oid sha1 = new(Oids.Sha1);
             var testServer = await _testFixture.GetSigningTestServerAsync();
             var certificateAuthority = await _testFixture.GetDefaultTrustedCertificateAuthorityAsync();
-            var timestampServiceOptions = new TimestampServiceOptions() { SignatureHashAlgorithm = new Oid(Oids.Sha1) };
+            var timestampServiceOptions = new TimestampServiceOptions() { SignatureHashAlgorithm = sha1 };
             var issueCertificateOptions = IssueCertificateOptions.CreateDefaultForTimestampService();
-            issueCertificateOptions.SignatureAlgorithmName = "SHA1WITHRSA";
+            issueCertificateOptions.SignatureAlgorithm = sha1;
 
             var timestampService = TimestampService.Create(certificateAuthority, timestampServiceOptions, issueCertificateOptions);
 

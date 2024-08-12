@@ -8,11 +8,6 @@
     <DefineConstants Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' Or ('$(TargetFrameworkIdentifier)' == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), 5.0)))">$(DefineConstants);IS_SIGNING_SUPPORTED</DefineConstants>
   </PropertyGroup>
 
-  <!-- Include shared files for netcore projects -->
-  <ItemGroup Condition=" ('$(IsNetCoreProject)' == 'true' AND '$(SkipShared)' != 'true' AND '$(TestProject)' != 'true') OR '$(IncludeNuGetSharedFiles)' == 'true'">
-    <Compile Include="$(SharedDirectory)\*.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
-  </ItemGroup>
-
   <!-- Include shared files for test netcore projects -->
   <ItemGroup Condition=" '$(IsNetCoreProject)' == 'true' AND '$(SkipShared)' != 'true' AND '$(TestProject)' == 'true' ">
     <Compile Include="$(BuildCommonDirectory)TestShared\*.cs" />
@@ -78,7 +73,7 @@
   <ImportGroup Condition=" '$(TestProject)' == 'true' ">
     <Import Project="test.targets" />
   </ImportGroup>
-  
+
 
   <!-- Allow WPF projects to run under NETCore SDK -->
   <!-- Errors occur if the output path is not set correctly -->
@@ -146,11 +141,11 @@
   <!--
     ============================================================
     GetSymbolsToIndex - depends on targets that gather symbols that
-    need to be indexed on the symbol server.  
+    need to be indexed on the symbol server.
     ============================================================
   -->
   <Target Name="GetSymbolsToIndex" DependsOnTargets="$(GetSymbolsToIndexDependsOn)" Returns="@(SymbolFilesToIndex)" />
-  
+
   <Target Name="GetSymbolsToIndexDefault" DependsOnTargets="GetTargetFrameworkSet" Returns="@(SymbolFilesToIndex)" Condition=" '$(Shipping)' == 'true' ">
     <MSBuild
       Projects="$(MSBuildProjectFullPath)"
@@ -172,7 +167,7 @@
     ============================================================
   -->
   <Target Name="GetSigningInputs" DependsOnTargets="$(GetSigningInputsDependsOn)" Returns="@(DllsToSign)" />
- 
+
  <!--
     ============================================================
     The default target to get signing inputs for a particular project

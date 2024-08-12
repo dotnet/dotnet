@@ -12,6 +12,14 @@
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
   </ItemGroup>
 
+  <ItemGroup Label="transitive package pinning">
+    <!--
+      These packages are dependencies of the VS SDK
+      When it is upgraded to a newer version, try deleting the below PackageReference
+      -->
+    <PackageReference Include="Microsoft.IO.Redist" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
   </ItemGroup>
@@ -22,6 +30,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup Label="NuGet Shared">
+    <Compile Include="$(SharedDirectory)\HashCodeCombiner.cs" />
+    <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>

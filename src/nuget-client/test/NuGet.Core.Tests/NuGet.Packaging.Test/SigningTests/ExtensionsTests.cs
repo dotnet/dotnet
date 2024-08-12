@@ -1,18 +1,18 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.Formats.Asn1;
 using System.Security.Cryptography;
 using NuGet.Packaging.Signing;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.X509;
 using Xunit;
 
 namespace NuGet.Packaging.Test
 {
     public class ExtensionsTests
     {
-        private readonly Oid _oid = new Oid("1.2.3");
+        private readonly Oid _oid = new("1.2.3");
         private readonly byte[] _value = new byte[] { 0, 1, 2 };
 
         [Fact]
@@ -27,25 +27,13 @@ namespace NuGet.Packaging.Test
         [InlineData(true)]
         public void Read_WithCritical_ReturnsInstance(bool isCritical)
         {
-            Verify(new[] { new TestExtension(_oid, isCritical, _value) });
+            Verify(new[] { new TestExtension(_oid, _value, isCritical) });
         }
 
         [Fact]
         public void Read_WithFalseDefaultForCritical_ReturnsInstance()
         {
-            var bcExtensions = new DerSequence(
-                new DerSequence(new DerObjectIdentifier(_oid.Value), new DerOctetString(_value)));
-            var bytes = bcExtensions.GetDerEncoded();
-
-            var extensions = Extensions.Read(bytes);
-
-            Assert.Equal(1, extensions.ExtensionsList.Count);
-
-            var extension = extensions.ExtensionsList[0];
-
-            Assert.Equal(_oid.Value, extension.Id.Value);
-            Assert.False(extension.Critical);
-            Assert.Equal(_value, extension.Value);
+            Verify(new[] { new TestExtension(_oid, _value) });
         }
 
         [Fact]
@@ -53,60 +41,67 @@ namespace NuGet.Packaging.Test
         {
             var testExtensions = new[]
             {
-                new TestExtension(_oid, isCritical: true, value: _value),
-                new TestExtension(new Oid(_oid.Value + ".4"),  isCritical: false, value: _value)
+                new TestExtension(_oid, _value, critical: true),
+                new TestExtension(new Oid(_oid.Value + ".4"), _value, critical: false)
             };
 
             Verify(testExtensions);
         }
 
-        private static void Verify(IReadOnlyList<TestExtension> testExtensions)
+        private static void Verify(IReadOnlyList<TestExtension> expectedExtensions)
         {
-            var bcExtensionsGenerator = new X509ExtensionsGenerator();
+            AsnWriter writer = new(AsnEncodingRules.DER);
 
-            foreach (var testExtension in testExtensions)
+            using (writer.PushSequence())
             {
-                bcExtensionsGenerator.AddExtension(
-                    new DerObjectIdentifier(testExtension.Id.Value), testExtension.IsCritical, testExtension.Value);
+                foreach (TestExtension expectedExtension in expectedExtensions)
+                {
+                    expectedExtension.Encode(writer);
+                }
             }
 
-            var bcExtensions = bcExtensionsGenerator.Generate();
+            byte[] bytes = writer.Encode();
+            Extensions actualExtensions = Extensions.Read(bytes);
 
-            var extensions = Extensions.Read(bcExtensions.GetDerEncoded());
+            Assert.Equal(expectedExtensions.Count, actualExtensions.ExtensionsList.Count);
 
-            Assert.Equal(testExtensions.Count, extensions.ExtensionsList.Count);
-
-            var i = 0;
-
-            foreach (var extensionOid in bcExtensions.GetExtensionOids())
+            for (var i = 0; i < expectedExtensions.Count; ++i)
             {
-                var bcExtension = bcExtensions.GetExtension(extensionOid);
-                var testExtension = testExtensions[i];
-                var extension = extensions.ExtensionsList[i];
+                TestExtension expectedExtension = expectedExtensions[i];
+                Extension actualExtension = actualExtensions.ExtensionsList[i];
 
-                Assert.Equal(testExtension.Id.Value, extension.Id.Value);
-                Assert.Equal(testExtension.IsCritical, extension.Critical);
-                Assert.Equal(testExtension.Value, extension.Value);
-
-                Assert.Equal(extensionOid.Id, extension.Id.Value);
-                Assert.Equal(bcExtension.IsCritical, extension.Critical);
-                Assert.Equal(bcExtension.Value.GetOctets(), extension.Value);
-
-                ++i;
+                Assert.Equal(expectedExtension.Oid.Value, actualExtension.Id.Value);
+                Assert.Equal(expectedExtension.Critical, actualExtension.Critical);
+                Assert.Equal(expectedExtension.Value.Span.ToArray(), actualExtension.Value);
             }
         }
 
         private sealed class TestExtension
         {
-            internal Oid Id { get; }
-            internal bool IsCritical { get; }
-            internal byte[] Value { get; }
+            internal Oid Oid { get; }
+            internal bool? Critical { get; }
+            internal ReadOnlyMemory<byte> Value { get; }
 
-            internal TestExtension(Oid id, bool isCritical, byte[] value)
+            internal TestExtension(Oid oid, ReadOnlyMemory<byte> value, bool? critical = false)
             {
-                Id = id;
-                IsCritical = isCritical;
+                Oid = oid;
+                Critical = critical;
                 Value = value;
+            }
+
+            internal void Encode(AsnWriter writer)
+            {
+                using (writer.PushSequence())
+                {
+                    writer.WriteObjectIdentifier(Oid.Value);
+
+                    if (Critical.HasValue)
+                    {
+                        writer.WriteBoolean(Critical.Value);
+                    }
+
+                    writer.WriteOctetString(Value.Span);
+                }
             }
         }
     }
