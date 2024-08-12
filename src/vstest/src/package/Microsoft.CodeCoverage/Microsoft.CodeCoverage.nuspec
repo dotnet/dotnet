@@ -33,34 +33,34 @@
     <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\codecoveragemessages.dll" target="build\netstandard2.0\CodeCoverage\codecoveragemessages.dll" />
     <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\covrun32.dll" target="build\netstandard2.0\CodeCoverage\" />
     <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\msdia140.dll" target="build\netstandard2.0\CodeCoverage\" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\VanguardInstrumentationProfiler_x86.config" target="build\netstandard2.0\CodeCoverage\" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\Cov_x86.config" target="build\netstandard2.0\CodeCoverage\" />
 
     <file src="net462\Microsoft.Internal.CodeCoverage\Shim\netcoreapp1.0\Microsoft.VisualStudio.CodeCoverage.Shim.dll" target="build\netstandard2.0\CodeCoverage\coreclr\" />
 
     <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\amd64\CodeCoverage.exe" target="build\netstandard2.0\CodeCoverage\amd64\" />
     <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\amd64\covrun64.dll" target="build\netstandard2.0\CodeCoverage\amd64\" />
     <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\amd64\msdia140.dll" target="build\netstandard2.0\CodeCoverage\amd64\" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\amd64\VanguardInstrumentationProfiler_x64.config" target="build\netstandard2.0\CodeCoverage\amd64\" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\amd64\Cov_x64.config" target="build\netstandard2.0\CodeCoverage\amd64\" />
 
     <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\arm64\covrunarm64.dll" target="build\netstandard2.0\CodeCoverage\arm64\" />
     <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\arm64\msdia140.dll" target="build\netstandard2.0\CodeCoverage\arm64\" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\arm64\VanguardInstrumentationProfiler_arm64.config" target="build\netstandard2.0\CodeCoverage\arm64\" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\arm64\Cov_arm64.config" target="build\netstandard2.0\CodeCoverage\arm64\" />
 
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\x86\MicrosoftInstrumentationEngine_x86.dll"	target="build\netstandard2.0\InstrumentationEngine\x86\MicrosoftInstrumentationEngine_x86.dll" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\x64\MicrosoftInstrumentationEngine_x64.dll"	target="build\netstandard2.0\InstrumentationEngine\x64\MicrosoftInstrumentationEngine_x64.dll" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\arm64\MicrosoftInstrumentationEngine_arm64.dll"	target="build\netstandard2.0\InstrumentationEngine\arm64\MicrosoftInstrumentationEngine_arm64.dll" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\x86\MicrosoftInstrumentationEngine_x86.dll"	target="build\netstandard2.0\x86\MicrosoftInstrumentationEngine_x86.dll" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\x64\MicrosoftInstrumentationEngine_x64.dll"	target="build\netstandard2.0\x64\MicrosoftInstrumentationEngine_x64.dll" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\arm64\MicrosoftInstrumentationEngine_arm64.dll"	target="build\netstandard2.0\arm64\MicrosoftInstrumentationEngine_arm64.dll" />
 
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\ubuntu\x64\libCoverageInstrumentationMethod.so"	target="build\netstandard2.0\InstrumentationEngine\ubuntu\x64\libCoverageInstrumentationMethod.so" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\ubuntu\x64\libInstrumentationEngine.so"	target="build\netstandard2.0\InstrumentationEngine\ubuntu\x64\libInstrumentationEngine.so" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\ubuntu\x64\VanguardInstrumentationProfiler_x64.config"	target="build\netstandard2.0\InstrumentationEngine\ubuntu\x64\VanguardInstrumentationProfiler_x64.config" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\ubuntu\x64\libCoverageInstrumentationMethod.so"	target="build\netstandard2.0\ubuntu\x64\libCoverageInstrumentationMethod.so" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\ubuntu\x64\libInstrumentationEngine.so"	target="build\netstandard2.0\ubuntu\x64\libInstrumentationEngine.so" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\ubuntu\x64\Cov_x64.config"	target="build\netstandard2.0\ubuntu\x64\Cov_x64.config" />
 
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\alpine\x64\libCoverageInstrumentationMethod.so"	target="build\netstandard2.0\InstrumentationEngine\alpine\x64\libCoverageInstrumentationMethod.so" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\alpine\x64\libInstrumentationEngine.so"	target="build\netstandard2.0\InstrumentationEngine\alpine\x64\libInstrumentationEngine.so" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\alpine\x64\VanguardInstrumentationProfiler_x64.config"	target="build\netstandard2.0\InstrumentationEngine\alpine\x64\VanguardInstrumentationProfiler_x64.config" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\alpine\x64\libCoverageInstrumentationMethod.so"	target="build\netstandard2.0\alpine\x64\libCoverageInstrumentationMethod.so" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\alpine\x64\libInstrumentationEngine.so"	target="build\netstandard2.0\alpine\x64\libInstrumentationEngine.so" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\alpine\x64\Cov_x64.config"	target="build\netstandard2.0\alpine\x64\Cov_x64.config" />
 
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\macos\x64\libCoverageInstrumentationMethod.dylib"	target="build\netstandard2.0\InstrumentationEngine\macos\x64\libCoverageInstrumentationMethod.dylib" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\macos\x64\libInstrumentationEngine.dylib"	target="build\netstandard2.0\InstrumentationEngine\macos\x64\libInstrumentationEngine.dylib" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\macos\x64\VanguardInstrumentationProfiler_x64.config"	target="build\netstandard2.0\InstrumentationEngine\macos\x64\VanguardInstrumentationProfiler_x64.config" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\macos\x64\libCoverageInstrumentationMethod.dylib"	target="build\netstandard2.0\macos\x64\libCoverageInstrumentationMethod.dylib" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\macos\x64\libInstrumentationEngine.dylib"	target="build\netstandard2.0\macos\x64\libInstrumentationEngine.dylib" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\macos\x64\Cov_x64.config"	target="build\netstandard2.0\macos\x64\Cov_x64.config" />
 
     <file src="net462\Microsoft.Internal.CodeCoverage\Shim\netcoreapp1.0\Microsoft.VisualStudio.CodeCoverage.Shim.dll" target="lib\netcoreapp3.1\" />
     <file src="net462\Microsoft.Internal.CodeCoverage\Shim\net45\Microsoft.VisualStudio.CodeCoverage.Shim.dll" target="lib\net462\" />

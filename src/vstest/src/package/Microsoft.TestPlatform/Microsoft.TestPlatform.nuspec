@@ -448,16 +448,16 @@
     <file src="net472\CodeCoverage\codecoveragemessages.dll" target="tools\net462\Team Tools\Dynamic Code Coverage Tools\codecoveragemessages.dll" />
     <file src="net472\CodeCoverage\covrun32.dll" target="tools\net462\Team Tools\Dynamic Code Coverage Tools\" />
     <file src="net472\CodeCoverage\msdia140.dll" target="tools\net462\Team Tools\Dynamic Code Coverage Tools\" />
-    <file src="net472\CodeCoverage\VanguardInstrumentationProfiler_x86.config" target="tools\net462\Team Tools\Dynamic Code Coverage Tools\" />
+    <file src="net472\CodeCoverage\Cov_x86.config" target="tools\net462\Team Tools\Dynamic Code Coverage Tools\" />
 
     <file src="net472\CodeCoverage\amd64\CodeCoverage.exe" target="tools\net462\Team Tools\Dynamic Code Coverage Tools\amd64\" />
     <file src="net472\CodeCoverage\amd64\covrun64.dll" target="tools\net462\Team Tools\Dynamic Code Coverage Tools\amd64\" />
     <file src="net472\CodeCoverage\amd64\msdia140.dll" target="tools\net462\Team Tools\Dynamic Code Coverage Tools\amd64\" />
-    <file src="net472\CodeCoverage\amd64\VanguardInstrumentationProfiler_x64.config" target="tools\net462\Team Tools\Dynamic Code Coverage Tools\amd64\" />
+    <file src="net472\CodeCoverage\amd64\Cov_x64.config" target="tools\net462\Team Tools\Dynamic Code Coverage Tools\amd64\" />
 
     <file src="net472\CodeCoverage\arm64\covrunarm64.dll" target="tools\net462\Team Tools\Dynamic Code Coverage Tools\arm64\" />
     <file src="net472\CodeCoverage\arm64\msdia140.dll" target="tools\net462\Team Tools\Dynamic Code Coverage Tools\arm64\" />
-    <file src="net472\CodeCoverage\arm64\VanguardInstrumentationProfiler_arm64.config" target="tools\net462\Team Tools\Dynamic Code Coverage Tools\arm64\" />
+    <file src="net472\CodeCoverage\arm64\Cov_arm64.config" target="tools\net462\Team Tools\Dynamic Code Coverage Tools\arm64\" />
 
     <file src="net472\Microsoft.VisualStudio.Telemetry.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.Telemetry.dll" />
     <file src="net472\Microsoft.VisualStudio.Utilities.Internal.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.Utilities.Internal.dll" />
