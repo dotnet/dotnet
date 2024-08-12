@@ -72,7 +72,7 @@ internal abstract class TelemetryReporter : ITelemetryReporter
         Report(telemetryEvent);
     }
 
-    public void ReportEvent(string name, Severity severity, params Property[] properties)
+    public void ReportEvent(string name, Severity severity, params ReadOnlySpan<Property> properties)
     {
         var telemetryEvent = new TelemetryEvent(GetEventName(name), ConvertSeverity(severity));
 

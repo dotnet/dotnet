@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 {
@@ -22,13 +21,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 return;
             }
 
-            var context = TagHelperDescriptorProviderContext.Create(results);
-            context.SetCompilation(compilation);
-
-            if (targetSymbol is not null)
-            {
-                context.Items.SetTargetSymbol(targetSymbol);
-            }
+            var context = new TagHelperDescriptorProviderContext(compilation, targetSymbol, results);
 
             foreach (var provider in _providers)
             {

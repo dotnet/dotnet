@@ -16,9 +16,7 @@ public class RefTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTes
     public void Execute_CreatesDescriptor()
     {
         // Arrange
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(BaseCompilation);
-
+        var context = new TagHelperDescriptorProviderContext(BaseCompilation);
         var provider = new RefTagHelperDescriptorProvider();
 
         // Act

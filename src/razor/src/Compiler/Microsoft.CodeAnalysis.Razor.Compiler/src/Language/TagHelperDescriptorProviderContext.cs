@@ -1,49 +1,27 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
 using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public abstract class TagHelperDescriptorProviderContext
+public sealed class TagHelperDescriptorProviderContext(Compilation compilation, ISymbol? targetSymbol, ICollection<TagHelperDescriptor> results)
 {
-    public virtual bool ExcludeHidden { get; set; }
+    public Compilation Compilation { get; } = compilation;
+    public ISymbol? TargetSymbol { get; } = targetSymbol;
+    public ICollection<TagHelperDescriptor> Results { get; } = results;
 
-    public virtual bool IncludeDocumentation { get; set; }
+    public bool ExcludeHidden { get; init; }
+    public bool IncludeDocumentation { get; init; }
 
-    public abstract ItemCollection Items { get; }
-
-    public abstract ICollection<TagHelperDescriptor> Results { get; }
-
-    public static TagHelperDescriptorProviderContext Create()
+    public TagHelperDescriptorProviderContext(Compilation compilation, ISymbol? targetSymbol = null)
+        : this(compilation, targetSymbol, results: [])
     {
-        return new DefaultContext(new List<TagHelperDescriptor>());
     }
 
-    public static TagHelperDescriptorProviderContext Create(ICollection<TagHelperDescriptor> results)
+    public TagHelperDescriptorProviderContext(Compilation compilation, ICollection<TagHelperDescriptor> results)
+        : this(compilation, targetSymbol: null, results)
     {
-        if (results == null)
-        {
-            throw new ArgumentNullException(nameof(results));
-        }
-
-        return new DefaultContext(results);
-    }
-
-    private class DefaultContext : TagHelperDescriptorProviderContext
-    {
-        public DefaultContext(ICollection<TagHelperDescriptor> results)
-        {
-            Results = results;
-
-            Items = new ItemCollection();
-        }
-
-        public override ItemCollection Items { get; }
-
-        public override ICollection<TagHelperDescriptor> Results { get; }
     }
 }

@@ -1,8 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
+using System.Buffers;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
@@ -15,68 +14,54 @@ using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.AspNetCore.Razor;
 
-internal class CompilationTagHelperResolver(ITelemetryReporter? telemetryReporter)
+internal sealed class CompilationTagHelperResolver(ITelemetryReporter telemetryReporter)
 {
-    private readonly ITelemetryReporter? _telemetryReporter = telemetryReporter;
+    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
     public async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(
-        Project workspaceProject,
+        Project project,
         RazorProjectEngine projectEngine,
         CancellationToken cancellationToken)
     {
-        if (workspaceProject is null)
+        var providers = projectEngine.Engine.Features
+            .OfType<ITagHelperDescriptorProvider>()
+            .OrderBy(static f => f.Order)
+            .ToImmutableArray();
+
+        if (providers is [])
         {
-            throw new ArgumentNullException(nameof(workspaceProject));
+            return [];
         }
 
-        if (projectEngine is null)
+        var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+        if (compilation is null || !CompilationTagHelperFeature.IsValidCompilation(compilation))
         {
-            throw new ArgumentNullException(nameof(projectEngine));
+            return [];
         }
 
-        var providers = projectEngine.Engine.Features.OfType<ITagHelperDescriptorProvider>().OrderBy(f => f.Order).ToArray();
-        if (providers.Length == 0)
+        using var pooledHashSet = HashSetPool<TagHelperDescriptor>.GetPooledObject(out var results);
+        using var pooledWatch = StopwatchPool.GetPooledObject(out var watch);
+        using var pooledSpan = ArrayPool<Property>.Shared.GetPooledArraySpan(minimumLength: providers.Length, out var properties);
+
+        var context = new TagHelperDescriptorProviderContext(compilation, results)
         {
-            return ImmutableArray<TagHelperDescriptor>.Empty;
+            ExcludeHidden = true,
+            IncludeDocumentation = true
+        };
+
+        for (var i = 0; i < providers.Length; i++)
+        {
+            var provider = providers[i];
+
+            watch.Restart();
+            provider.Execute(context);
+            watch.Stop();
+
+            properties[i] = new($"{provider.GetType().Name}.elapsedtimems", watch.ElapsedMilliseconds);
         }
 
-        using var _ = HashSetPool<TagHelperDescriptor>.GetPooledObject(out var results);
-        var context = TagHelperDescriptorProviderContext.Create(results);
-        context.ExcludeHidden = true;
-        context.IncludeDocumentation = true;
+        _telemetryReporter.ReportEvent("taghelperresolver/gettaghelpers", Severity.Normal, properties);
 
-        var compilation = await workspaceProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
-        if (CompilationTagHelperFeature.IsValidCompilation(compilation))
-        {
-            context.SetCompilation(compilation);
-        }
-
-        ExecuteProviders(providers, context, _telemetryReporter);
-
-        return results.ToImmutableArray();
-
-        static void ExecuteProviders(ITagHelperDescriptorProvider[] providers, TagHelperDescriptorProviderContext context, ITelemetryReporter? telemetryReporter)
-        {
-            using var _ = StopwatchPool.GetPooledObject(out var watch);
-
-            Property[]? properties = null;
-
-            for (var i = 0; i < providers.Length; i++)
-            {
-                var provider = providers[i];
-                watch.Restart();
-                provider.Execute(context);
-                watch.Stop();
-
-                if (telemetryReporter is not null)
-                {
-                    properties ??= new Property[providers.Length];
-                    var propertyName = $"{provider.GetType().Name}.elapsedtimems";
-                    properties[i] = new(propertyName, watch.ElapsedMilliseconds);
-                }
-            }
-
-            telemetryReporter?.ReportEvent("taghelperresolver/gettaghelpers", Severity.Normal, properties.AssumeNotNull());
-        }
+        return [.. results];
     }
 }

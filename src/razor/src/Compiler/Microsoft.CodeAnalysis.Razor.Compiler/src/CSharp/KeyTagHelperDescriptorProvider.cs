@@ -1,36 +1,24 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-internal class KeyTagHelperDescriptorProvider : ITagHelperDescriptorProvider
+// Run after the component tag helper provider
+internal sealed class KeyTagHelperDescriptorProvider() : TagHelperDescriptorProviderBase(order: 1000)
 {
-    private static TagHelperDescriptor s_keyTagHelper;
+    private static readonly Lazy<TagHelperDescriptor> s_keyTagHelper = new(CreateKeyTagHelper);
 
-    // Run after the component tag helper provider
-    public int Order { get; set; } = 1000;
-
-    public RazorEngine Engine { get; set; }
-
-    public void Execute(TagHelperDescriptorProviderContext context)
+    public override void Execute(TagHelperDescriptorProviderContext context)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgHelper.ThrowIfNull(context);
 
-        var compilation = context.GetCompilation();
-        if (compilation == null)
-        {
-            return;
-        }
+        var compilation = context.Compilation;
 
         var renderTreeBuilderType = compilation.GetTypeByMetadataName(ComponentsApi.RenderTreeBuilder.FullTypeName);
         if (renderTreeBuilderType == null)
@@ -40,56 +28,50 @@ internal class KeyTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             return;
         }
 
-        var targetSymbol = context.Items.GetTargetSymbol();
-        if (targetSymbol is not null && !SymbolEqualityComparer.Default.Equals(targetSymbol, renderTreeBuilderType.ContainingAssembly))
+        if (context.TargetSymbol is { } targetSymbol && !SymbolEqualityComparer.Default.Equals(targetSymbol, renderTreeBuilderType.ContainingAssembly))
         {
             return;
         }
 
-        context.Results.Add(GetOrCreateKeyTagHelper());
+        context.Results.Add(s_keyTagHelper.Value);
     }
 
-    private static TagHelperDescriptor GetOrCreateKeyTagHelper()
+    private static TagHelperDescriptor CreateKeyTagHelper()
     {
-        return s_keyTagHelper ??= CreateKeyTagHelper();
+        using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
+            ComponentMetadata.Key.TagHelperKind, "Key", ComponentsApi.AssemblyName,
+            out var builder);
 
-        static TagHelperDescriptor CreateKeyTagHelper()
+        builder.CaseSensitive = true;
+        builder.SetDocumentation(DocumentationDescriptor.KeyTagHelper);
+
+        builder.SetMetadata(
+            SpecialKind(ComponentMetadata.Key.TagHelperKind),
+            MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
+            RuntimeName(ComponentMetadata.Key.RuntimeName),
+            TypeName("Microsoft.AspNetCore.Components.Key"));
+
+        builder.TagMatchingRule(rule =>
         {
-            using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-                ComponentMetadata.Key.TagHelperKind, "Key", ComponentsApi.AssemblyName,
-                out var builder);
-
-            builder.CaseSensitive = true;
-            builder.SetDocumentation(DocumentationDescriptor.KeyTagHelper);
-
-            builder.SetMetadata(
-                SpecialKind(ComponentMetadata.Key.TagHelperKind),
-                MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
-                RuntimeName(ComponentMetadata.Key.RuntimeName),
-                TypeName("Microsoft.AspNetCore.Components.Key"));
-
-            builder.TagMatchingRule(rule =>
+            rule.TagName = "*";
+            rule.Attribute(attribute =>
             {
-                rule.TagName = "*";
-                rule.Attribute(attribute =>
-                {
-                    attribute.Name = "@key";
-                    attribute.SetMetadata(Attributes.IsDirectiveAttribute);
-                });
-            });
-
-            builder.BindAttribute(attribute =>
-            {
-                attribute.SetDocumentation(DocumentationDescriptor.KeyTagHelper);
                 attribute.Name = "@key";
-
-                attribute.TypeName = typeof(object).FullName;
-                attribute.SetMetadata(
-                    PropertyName("Key"),
-                    IsDirectiveAttribute);
+                attribute.SetMetadata(Attributes.IsDirectiveAttribute);
             });
+        });
 
-            return builder.Build();
-        }
+        builder.BindAttribute(attribute =>
+        {
+            attribute.SetDocumentation(DocumentationDescriptor.KeyTagHelper);
+            attribute.Name = "@key";
+
+            attribute.TypeName = typeof(object).FullName;
+            attribute.SetMetadata(
+                PropertyName("Key"),
+                IsDirectiveAttribute);
+        });
+
+        return builder.Build();
     }
 }

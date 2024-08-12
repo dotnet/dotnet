@@ -17,14 +17,14 @@ public sealed class CompilationTagHelperFeature : RazorEngineFeatureBase, ITagHe
 
     public IReadOnlyList<TagHelperDescriptor> GetDescriptors()
     {
-        var results = new List<TagHelperDescriptor>();
-
-        var context = TagHelperDescriptorProviderContext.Create(results);
         var compilation = CSharpCompilation.Create("__TagHelpers", references: _referenceFeature.References);
-        if (IsValidCompilation(compilation))
+        if (!IsValidCompilation(compilation))
         {
-            context.SetCompilation(compilation);
+            return [];
         }
+
+        var results = new List<TagHelperDescriptor>();
+        var context = new TagHelperDescriptorProviderContext(compilation, results);
 
         for (var i = 0; i < _providers.Length; i++)
         {

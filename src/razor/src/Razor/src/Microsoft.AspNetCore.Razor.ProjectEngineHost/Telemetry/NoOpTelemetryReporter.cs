@@ -44,7 +44,7 @@ internal class NoOpTelemetryReporter : ITelemetryReporter
     {
     }
 
-    public void ReportEvent(string name, Severity severity, params Property[] properties)
+    public void ReportEvent(string name, Severity severity, params ReadOnlySpan<Property> properties)
     {
     }
 

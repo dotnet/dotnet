@@ -41,9 +41,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -166,9 +164,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -230,9 +226,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -272,9 +266,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -312,9 +304,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -352,9 +342,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -405,9 +393,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -453,9 +439,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -501,9 +485,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -565,9 +547,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -640,9 +620,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -690,9 +668,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -752,9 +728,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -803,9 +777,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -858,9 +830,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -921,9 +891,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -978,9 +946,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1053,9 +1019,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1125,9 +1089,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1207,9 +1169,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1289,9 +1249,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1375,9 +1333,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1461,9 +1417,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1553,9 +1507,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1609,9 +1561,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1669,9 +1619,10 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
-        context.Items.SetTargetSymbol((IAssemblySymbol)compilation.GetAssemblyOrModuleSymbol(compilation.References.First(r => r.Display.Contains("Microsoft.CodeAnalysis.Razor.Test.dll"))));
+        var targetSymbol = (IAssemblySymbol)compilation.GetAssemblyOrModuleSymbol(
+            compilation.References.First(static r => r.Display.Contains("Microsoft.CodeAnalysis.Razor.Test.dll")));
+
+        var context = new TagHelperDescriptorProviderContext(compilation, targetSymbol);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
@@ -1715,8 +1666,7 @@ namespace Test
 
         Assert.Empty(compilation.GetDiagnostics());
 
-        var context = TagHelperDescriptorProviderContext.Create();
-        context.SetCompilation(compilation);
+        var context = new TagHelperDescriptorProviderContext(compilation);
         var provider = new ComponentTagHelperDescriptorProvider();
 
         // Act
