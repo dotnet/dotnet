@@ -115,6 +115,15 @@ namespace NuGet.Commands
         private const string AuditDurationOutput = "Audit.Duration.Output";
         private const string AuditDurationTotal = "Audit.Duration.Total";
 
+        private readonly static Lazy<bool> EnableNewDependencyResolverLazy = new Lazy<bool>(() =>
+        {
+            string value = Environment.GetEnvironmentVariable("RESTORE_ENABLE_NEW_RESOLVER");
+
+            return !string.Equals(value, bool.FalseString, StringComparison.OrdinalIgnoreCase);
+        });
+
+        private readonly bool _enableNewDependencyResolver = EnableNewDependencyResolverLazy.Value;
+
         public RestoreCommand(RestoreRequest request)
         {
             _request = request ?? throw new ArgumentNullException(nameof(request));
@@ -140,6 +149,11 @@ namespace NuGet.Commands
             ParentId = request.ParentId;
 
             _success = !request.AdditionalMessages?.Any(m => m.Level == LogLevel.Error) ?? true;
+
+            if (request.Project.RestoreMetadata.ProjectStyle != ProjectStyle.PackageReference || request.Project.RestoreMetadata.CentralPackageTransitivePinningEnabled)
+            {
+                _enableNewDependencyResolver = false;
+            }
         }
 
         public Task<RestoreResult> ExecuteAsync()
@@ -297,15 +311,21 @@ namespace NuGet.Commands
                 {
                     using (telemetry.StartIndependentInterval(GenerateRestoreGraphDuration))
                     {
-                        // Restore
-                        if (NuGetEventSource.IsEnabled) TraceEvents.BuildRestoreGraphStart(_request.Project.FilePath);
-                        graphs = await ExecuteRestoreAsync(
-                        _request.DependencyProviders.GlobalPackages,
-                        _request.DependencyProviders.FallbackPackageFolders,
-                        contextForProject,
-                        token,
-                        telemetry);
-                        if (NuGetEventSource.IsEnabled) TraceEvents.BuildRestoreGraphStop(_request.Project.FilePath);
+                        if (NuGetEventSource.IsEnabled)
+                            TraceEvents.BuildRestoreGraphStart(_request.Project.FilePath);
+
+                        if (_enableNewDependencyResolver)
+                        {
+                            graphs = await ExecuteRestoreAsync(_request.DependencyProviders.GlobalPackages, _request.DependencyProviders.FallbackPackageFolders, contextForProject, token, telemetry);
+                        }
+                        else
+                        {
+                            // Restore using the legacy code path if the optimized dependency resolution is disabled.
+                            graphs = await ExecuteLegacyRestoreAsync(_request.DependencyProviders.GlobalPackages, _request.DependencyProviders.FallbackPackageFolders, contextForProject, token, telemetry);
+                        }
+
+                        if (NuGetEventSource.IsEnabled)
+                            TraceEvents.BuildRestoreGraphStop(_request.Project.FilePath);
                     }
                 }
                 else
@@ -1134,7 +1154,7 @@ namespace NuGet.Commands
             return checkResults;
         }
 
-        private async Task<IEnumerable<RestoreTargetGraph>> ExecuteRestoreAsync(
+        private async Task<IEnumerable<RestoreTargetGraph>> ExecuteLegacyRestoreAsync(
             NuGetv3LocalRepository userPackageFolder,
             IReadOnlyList<NuGetv3LocalRepository> fallbackPackageFolders,
             RemoteWalkContext context,
@@ -1154,7 +1174,7 @@ namespace NuGet.Commands
             // Get external project references
             // If the top level project already exists, update the package spec provided
             // with the RestoreRequest spec.
-            var updatedExternalProjects = GetProjectReferences();
+            var updatedExternalProjects = GetProjectReferences(_request);
 
             // Load repositories
             // the external project provider is specific to the current restore project
@@ -1206,6 +1226,10 @@ namespace NuGet.Commands
                         telemetryPrefix: string.Empty);
                 }
                 catch (FatalProtocolException)
+                {
+                    failed = true;
+                }
+                catch (AggregateException e) when (e.InnerException is FatalProtocolException)
                 {
                     failed = true;
                 }
@@ -1301,30 +1325,142 @@ namespace NuGet.Commands
             return allGraphs;
         }
 
-        private List<ExternalProjectReference> GetProjectReferences()
+        private async Task<IEnumerable<RestoreTargetGraph>> ExecuteRestoreAsync(
+            NuGetv3LocalRepository userPackageFolder,
+            IReadOnlyList<NuGetv3LocalRepository> fallbackPackageFolders,
+            RemoteWalkContext context,
+            CancellationToken token,
+            TelemetryActivity telemetryActivity)
+        {
+            if (_request.Project.TargetFrameworks.Count == 0)
+            {
+                var message = string.Format(CultureInfo.CurrentCulture, Strings.Log_ProjectDoesNotSpecifyTargetFrameworks, _request.Project.Name, _request.Project.FilePath);
+                await _logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1001, message));
+
+                _success = false;
+
+                return Enumerable.Empty<RestoreTargetGraph>();
+            }
+
+            var projectRestoreRequest = new ProjectRestoreRequest(
+             _request,
+             _request.Project,
+             _request.ExistingLockFile,
+             _logger)
+            {
+                ParentId = _operationId
+            };
+
+            var projectRestoreCommand = new ProjectRestoreCommand(projectRestoreRequest);
+
+            var localRepositories = new List<NuGetv3LocalRepository>();
+            localRepositories.Add(userPackageFolder);
+            localRepositories.AddRange(fallbackPackageFolders);
+
+            _logger.LogInformation(string.Format(CultureInfo.CurrentCulture, Strings.Log_RestoringPackages, _request.Project.FilePath));
+
+            // Get external project references
+            // If the top level project already exists, update the package spec provided
+            // with the RestoreRequest spec.
+            var updatedExternalProjects = GetProjectReferences(_request);
+
+            // Load repositories
+            // the external project provider is specific to the current restore project
+            context.ProjectLibraryProviders.Add(
+                    new PackageSpecReferenceDependencyProvider(updatedExternalProjects, _logger));
+
+            DependencyGraphResolver dependencyGraphResolver = new(_logger, _request, telemetryActivity, _operationId);
+
+            List<RestoreTargetGraph> graphs = null;
+            RuntimeGraph runtimes = null;
+
+            bool failed = false;
+            using (telemetryActivity.StartIndependentInterval(CreateRestoreTargetGraphDuration))
+            {
+                try
+                {
+                    (bool Success, List<RestoreTargetGraph> Graphs, RuntimeGraph Runtimes) result = await dependencyGraphResolver.ResolveAsync(userPackageFolder, fallbackPackageFolders, context, projectRestoreCommand, localRepositories, token);
+
+                    _success &= result.Success;
+
+                    graphs = result.Graphs;
+
+                    runtimes = result.Runtimes;
+                }
+                catch (FatalProtocolException)
+                {
+                    failed = true;
+                }
+                catch (AggregateException e) when (e.InnerException is FatalProtocolException)
+                {
+                    failed = true;
+                }
+            }
+
+            if (failed)
+            {
+                graphs = new List<RestoreTargetGraph>();
+
+                // When we fail to create the graphs, we want to write a `target` for each target framework
+                // in order to avoid missing target errors from the SDK build tasks and ensure that NuGet errors don't get cleared.
+                foreach (FrameworkRuntimePair frameworkRuntimePair in CreateFrameworkRuntimePairs(_request.Project, RequestRuntimeUtility.GetRestoreRuntimes(_request)))
+                {
+                    graphs.Add(RestoreTargetGraph.Create(_request.Project.RuntimeGraph, Enumerable.Empty<GraphNode<RemoteResolveResult>>(), context, _logger, frameworkRuntimePair.Framework, frameworkRuntimePair.RuntimeIdentifier));
+                }
+            }
+
+            // Calculate compatibility profiles to check by merging those defined in the project with any from the command line
+            foreach (var profile in _request.Project.RuntimeGraph.Supports)
+            {
+                CompatibilityProfile compatProfile;
+                if (profile.Value.RestoreContexts.Any())
+                {
+                    // Just use the contexts from the project definition
+                    compatProfile = profile.Value;
+                }
+                else if (!runtimes.Supports.TryGetValue(profile.Value.Name, out compatProfile))
+                {
+                    // No definition of this profile found, so just continue to the next one
+                    var message = string.Format(CultureInfo.CurrentCulture, Strings.Log_UnknownCompatibilityProfile, profile.Key);
+
+                    await _logger.LogAsync(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1502, message));
+                    continue;
+                }
+
+                foreach (var pair in compatProfile.RestoreContexts)
+                {
+                    _logger.LogDebug($" {profile.Value.Name} -> +{pair}");
+                    _request.CompatibilityProfiles.Add(pair);
+                }
+            }
+
+            return graphs;
+        }
+
+        internal static List<ExternalProjectReference> GetProjectReferences(RestoreRequest request)
         {
             // External references
             var updatedExternalProjects = new List<ExternalProjectReference>();
 
-            if (_request.ExternalProjects.Count == 0)
+            if (request.ExternalProjects.Count == 0)
             {
                 // If no projects exist add the current project.json file to the project
                 // list so that it can be resolved.
-                updatedExternalProjects.Add(ToExternalProjectReference(_request.Project));
+                updatedExternalProjects.Add(ToExternalProjectReference(request.Project));
             }
-            else if (_request.ExternalProjects.Count > 0)
+            else if (request.ExternalProjects.Count > 0)
             {
                 // There should be at most one match in the external projects.
-                var rootProjectMatches = _request.ExternalProjects.Where(proj =>
+                var rootProjectMatches = request.ExternalProjects.Where(proj =>
                         string.Equals(
-                            _request.Project.Name,
+                            request.Project.Name,
                             proj.PackageSpecProjectName,
                             StringComparison.OrdinalIgnoreCase))
                         .ToList();
 
                 if (rootProjectMatches.Count > 1)
                 {
-                    throw new InvalidOperationException($"Ambiguous project name '{_request.Project.Name}'.");
+                    throw new InvalidOperationException($"Ambiguous project name '{request.Project.Name}'.");
                 }
 
                 var rootProject = rootProjectMatches.SingleOrDefault();
@@ -1334,13 +1470,13 @@ namespace NuGet.Commands
                     // Replace the project spec with the passed in package spec,
                     // for installs which are done in memory first this will be
                     // different from the one on disk
-                    updatedExternalProjects.AddRange(_request.ExternalProjects
+                    updatedExternalProjects.AddRange(request.ExternalProjects
                         .Where(project =>
                             !project.UniqueName.Equals(rootProject.UniqueName, StringComparison.Ordinal)));
 
                     var updatedReference = new ExternalProjectReference(
                         rootProject.UniqueName,
-                        _request.Project,
+                        request.Project,
                         rootProject.MSBuildProjectPath,
                         rootProject.ExternalProjectReferences);
 
@@ -1353,13 +1489,13 @@ namespace NuGet.Commands
                 // This is always due to an internal issue and typically caused by errors
                 // building the project closure.
                 Debug.Fail("RestoreRequest.ExternalProjects contains references, but does not contain the top level references. Add the project we are restoring for.");
-                throw new InvalidOperationException($"Missing external reference metadata for {_request.Project.Name}");
+                throw new InvalidOperationException($"Missing external reference metadata for {request.Project.Name}");
             }
 
             return updatedExternalProjects;
         }
 
-        private static IEnumerable<FrameworkRuntimePair> CreateFrameworkRuntimePairs(
+        internal static IEnumerable<FrameworkRuntimePair> CreateFrameworkRuntimePairs(
             PackageSpec packageSpec,
             ISet<string> runtimeIds)
         {
@@ -1368,7 +1504,10 @@ namespace NuGet.Commands
             {
                 // We care about TFM only and null RID for compilation purposes
                 projectFrameworkRuntimePairs.Add(new FrameworkRuntimePair(framework.FrameworkName, null));
+            }
 
+            foreach (var framework in packageSpec.TargetFrameworks)
+            {
                 foreach (var runtimeId in runtimeIds)
                 {
                     projectFrameworkRuntimePairs.Add(new FrameworkRuntimePair(framework.FrameworkName, runtimeId));

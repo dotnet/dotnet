@@ -35,6 +35,11 @@ namespace NuGet.ProjectModel
 
             foreach (var existingDependency in existing)
             {
+                if (spec.RestoreMetadata?.CentralPackageVersionsEnabled == true && !existingDependency.VersionCentrallyManaged && existingDependency.VersionOverride is not null)
+                {
+                    existingDependency.VersionOverride = range;
+                }
+
                 existingDependency.LibraryRange.VersionRange = range;
             }
 
