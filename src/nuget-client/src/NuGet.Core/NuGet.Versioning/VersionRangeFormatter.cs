@@ -36,14 +36,14 @@ namespace NuGet.Versioning
                 format = "N";
             }
 
-            var builder = StringBuilderPool.Shared.Rent(256);
+            var builder = SharedStringBuilder.Instance.Rent(256);
 
             for (var i = 0; i < format!.Length; i++)
             {
                 Format(builder, format[i], range);
             }
 
-            return StringBuilderPool.Shared.ToStringAndReturn(builder);
+            return SharedStringBuilder.Instance.ToStringAndReturn(builder);
         }
 
         /// <summary>

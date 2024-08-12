@@ -1017,19 +1017,21 @@ namespace NuGet.Build.Tasks.Console
                                 // Suppresses an error that a target does not exist because it may or may not contain the targets that we're running
                                 BuildRequestDataFlags.SkipNonexistentTargets));
 
-                        BuildResult result = buildSubmission.Execute();
-
-                        if (result.OverallResult == BuildResultCode.Failure)
+                        buildSubmission.ExecuteAsync((submission) =>
                         {
-                            failedBuildSubmissionCount++;
-                        }
+                            BuildResult result = submission.BuildResult;
+                            if (result.OverallResult == BuildResultCode.Failure)
+                            {
+                                failedBuildSubmissionCount++;
+                            }
 
-                        buildCount++;
+                            buildCount++;
 
-                        projects.AddOrUpdate(
-                            projectInstance.FullPath,
-                            key => new ProjectWithInnerNodes(targetFramework, new MSBuildProjectInstance(projectInstance)),
-                            (_, item) => item.Add(targetFramework, new MSBuildProjectInstance(projectInstance)));
+                            projects.AddOrUpdate(
+                                projectInstance.FullPath,
+                                key => new ProjectWithInnerNodes(targetFramework, new MSBuildProjectInstance(projectInstance)),
+                                (_, item) => item.Add(targetFramework, new MSBuildProjectInstance(projectInstance)));
+                        }, context: null);
                     }
                 }
                 finally

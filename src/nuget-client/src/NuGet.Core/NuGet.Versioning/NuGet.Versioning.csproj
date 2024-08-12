@@ -31,6 +31,7 @@
     <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
     <Compile Include="$(SharedDirectory)\NullableAttributes.cs" />
     <Compile Include="$(SharedDirectory)\SharedExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\SharedStringBuilder.cs" />
     <Compile Include="$(SharedDirectory)\SimplePool.cs" />
     <Compile Include="$(SharedDirectory)\StringBuilderPool.cs" />
   </ItemGroup>

@@ -14,7 +14,7 @@ namespace NuGet.DependencyResolver
         {
         }
 
-        internal GraphNode(LibraryRange key, bool hasInnerNodes, bool hasParentNodes)
+        public GraphNode(LibraryRange key, bool hasInnerNodes, bool hasParentNodes)
         {
             Key = key;
             Disposition = Disposition.Acceptable;
