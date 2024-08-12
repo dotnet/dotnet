@@ -34,6 +34,12 @@ namespace Microsoft.IdentityModel.Tokens
         private class IssuerValidationFailure : ValidationFailureType { internal IssuerValidationFailure(string name) : base(name) { } }
 
         /// <summary>
+        /// Defines a type that represents an algorithm validation failed.
+        /// </summary>
+        public static readonly ValidationFailureType AlgorithmValidationFailed = new AlgorithmValidationFailure("AlgorithmValidationFailed");
+        private class AlgorithmValidationFailure : ValidationFailureType { internal AlgorithmValidationFailure(string name) : base(name) { } }
+
+        /// <summary>
         /// Defines a type that represents that audience validation failed.
         /// </summary>
         public static readonly ValidationFailureType AudienceValidationFailed = new AudienceValidationFailure("AudienceValidationFailed");
@@ -62,6 +68,12 @@ namespace Microsoft.IdentityModel.Tokens
         /// </summary>
         public static readonly ValidationFailureType TokenReplayValidationFailed = new TokenReplayValidationFailure("TokenReplayValidationFailed");
         private class TokenReplayValidationFailure : ValidationFailureType { internal TokenReplayValidationFailure(string name) : base(name) { } }
+
+        /// <summary>
+        /// Defines a type that represents that a token could not be read.
+        /// </summary>
+        public static readonly ValidationFailureType TokenReadingFailed = new TokenReadingFailure("TokenReadingFailed");
+        private class TokenReadingFailure : ValidationFailureType { internal TokenReadingFailure(string name) : base(name) { } }
 
         /// <summary>
         /// Defines a type that represents that no evaluation has taken place.

@@ -1,9 +1,13 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.Packaging;
 using NuGet.Versioning;
 using NuGet.VisualStudio.Internal.Contracts;
@@ -12,18 +16,20 @@ namespace NuGet.PackageManagement.UI
 {
     public class DetailedPackageMetadata
     {
-        public DetailedPackageMetadata()
+        internal DetailedPackageMetadata()
         {
+            Id = string.Empty;
         }
 
-        public DetailedPackageMetadata(PackageSearchMetadataContextInfo serverData, PackageDeprecationMetadataContextInfo deprecationMetadata, long? downloadCount)
+        public DetailedPackageMetadata(PackageSearchMetadataContextInfo serverData, PackageDeprecationMetadataContextInfo deprecationMetadata, ImmutableList<KnownOwnerViewModel>? knownOwnerViewModels, long? downloadCount)
         {
-            Id = serverData.Identity.Id;
-            Version = serverData.Identity.Version;
+            Id = serverData.Identity?.Id ?? string.Empty;
+            Version = serverData.Identity?.Version;
             Summary = serverData.Summary;
             Description = serverData.Description;
             Authors = serverData.Authors;
             Owners = serverData.Owners;
+            KnownOwnerViewModels = knownOwnerViewModels;
             IconUrl = serverData.IconUrl;
             LicenseUrl = serverData.LicenseUrl;
             ProjectUrl = serverData.ProjectUrl;
@@ -35,7 +41,7 @@ namespace NuGet.PackageManagement.UI
             DownloadCount = downloadCount;
             Published = serverData.Published;
 
-            IEnumerable<PackageDependencyGroup> dependencySets = serverData.DependencySets;
+            IEnumerable<PackageDependencyGroup>? dependencySets = serverData.DependencySets;
             if (dependencySets != null && dependencySets.Any())
             {
                 DependencySets = dependencySets.Select(e => new PackageDependencySetMetadata(e)).ToArray();
@@ -73,50 +79,50 @@ namespace NuGet.PackageManagement.UI
 
         public string Id { get; set; }
 
-        public NuGetVersion Version { get; set; }
+        public NuGetVersion? Version { get; set; }
 
-        public string Summary { get; set; }
+        public string? Summary { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        public string Authors { get; set; }
+        public string? Authors { get; set; }
 
-        public string Owners { get; set; }
+        public string? Owners { get; set; }
+        public IReadOnlyList<KnownOwnerViewModel>? KnownOwnerViewModels { get; private set; }
+        public Uri? IconUrl { get; set; }
 
-        public Uri IconUrl { get; set; }
+        public Uri? LicenseUrl { get; set; }
 
-        public Uri LicenseUrl { get; set; }
+        public Uri? ProjectUrl { get; set; }
 
-        public Uri ProjectUrl { get; set; }
+        public Uri? ReadmeUrl { get; set; }
 
-        public Uri ReadmeUrl { get; set; }
+        public Uri? ReportAbuseUrl { get; set; }
 
-        public Uri ReportAbuseUrl { get; set; }
+        public Uri? PackageDetailsUrl { get; set; }
 
-        public Uri PackageDetailsUrl { get; set; }
+        public string? PackageDetailsText { get; set; }
 
-        public string PackageDetailsText { get; set; }
-
-        public string Tags { get; set; }
+        public string? Tags { get; set; }
 
         public long? DownloadCount { get; set; }
 
         public DateTimeOffset? Published { get; set; }
 
-        public IEnumerable<PackageDependencySetMetadata> DependencySets { get; set; }
+        public IEnumerable<PackageDependencySetMetadata>? DependencySets { get; set; }
 
         public bool PrefixReserved { get; set; }
 
-        public LicenseMetadata LicenseMetadata { get; set; }
+        public LicenseMetadata? LicenseMetadata { get; set; }
 
-        public PackageDeprecationMetadataContextInfo DeprecationMetadata { get; set; }
+        public PackageDeprecationMetadataContextInfo? DeprecationMetadata { get; set; }
 
-        public IEnumerable<PackageVulnerabilityMetadataContextInfo> Vulnerabilities { get; set; }
+        public IEnumerable<PackageVulnerabilityMetadataContextInfo>? Vulnerabilities { get; set; }
 
-        public IReadOnlyList<IText> LicenseLinks => PackageLicenseUtilities.GenerateLicenseLinks(this);
+        public IReadOnlyList<IText>? LicenseLinks => PackageLicenseUtilities.GenerateLicenseLinks(this);
 
         private static readonly IReadOnlyList<PackageDependencySetMetadata> NoDependenciesPlaceholder = new PackageDependencySetMetadata[] { new PackageDependencySetMetadata(dependencyGroup: null) };
 
-        public string PackagePath { get; set; }
+        public string? PackagePath { get; set; }
     }
 }

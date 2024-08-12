@@ -243,7 +243,7 @@ namespace NuGet.PackageManagement.UI
             }
 
             // Get the list of available versions, ignoring null versions
-            _allPackageVersions = versions
+            _allPackageVersions = versions?
                 .Where(v => v?.Version != null)
                 .Select(GetVersion)
                 .ToList();
@@ -266,6 +266,7 @@ namespace NuGet.PackageManagement.UI
                 var detailedPackageMetadata = new DetailedPackageMetadata(
                     packageSearchMetadata,
                     packageDeprecationMetadata,
+                    searchResultPackage.KnownOwnerViewModels,
                     searchResultPackage.DownloadCount);
 
                 _metadataDict[detailedPackageMetadata.Version] = detailedPackageMetadata;
@@ -649,6 +650,7 @@ namespace NuGet.PackageManagement.UI
                 PackageMetadata = new DetailedPackageMetadata(
                     packageSearchMetadata,
                     packageDeprecationMetadata,
+                    packageItemViewModel.KnownOwnerViewModels,
                     packageItemViewModel.DownloadCount);
             }
             else
@@ -668,6 +670,7 @@ namespace NuGet.PackageManagement.UI
                     var detailedPackageMetadata = new DetailedPackageMetadata(
                         searchMetadata,
                         deprecationData,
+                        knownOwnerViewModels: null,
                         searchMetadata.DownloadCount);
 
                     _metadataDict[detailedPackageMetadata.Version] = detailedPackageMetadata;

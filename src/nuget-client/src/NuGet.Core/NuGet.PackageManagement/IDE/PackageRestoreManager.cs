@@ -196,10 +196,13 @@ namespace NuGet.PackageManagement
                     var nuGetProjectName = (string)msbuildProject.GetMetadataOrNull(NuGetProjectMetadataKeys.Name);
                     var nugetAudit = (string)msbuildProject.GetMetadataOrNull(ProjectBuildProperties.NuGetAudit);
                     var auditLevel = (string)msbuildProject.GetMetadataOrNull(ProjectBuildProperties.NuGetAuditLevel);
+                    var suppressions = await GetSuppressionsAsync(msbuildProject);
+
                     var auditProperties = new RestoreAuditProperties()
                     {
                         EnableAudit = nugetAudit,
                         AuditLevel = auditLevel,
+                        SuppressedAdvisories = suppressions
                     };
                     // Here be dragons.
                     // The key here, nuGetProjectName, needs to match the key in the dictionary in GetPackagesReferencesDictionaryAsync and all the constructors of PackageRestoreData.
@@ -214,6 +217,23 @@ namespace NuGet.PackageManagement
             }
 
             return restoreAuditProperties;
+
+            async Task<HashSet<string>> GetSuppressionsAsync(MSBuildNuGetProject msbuildProject)
+            {
+                var items = await msbuildProject.ProjectServices.ReferencesReader.GetItemsAsync(ProjectItems.NuGetAuditSuppress);
+                if (items?.Count > 0)
+                {
+                    var suppressions = new HashSet<string>();
+                    for (int i = 0; i < items.Count; i++)
+                    {
+                        (string url, _) = items[i];
+                        suppressions.Add(url);
+                    }
+                    return suppressions;
+                }
+
+                return null;
+            }
         }
 
         /// <summary>

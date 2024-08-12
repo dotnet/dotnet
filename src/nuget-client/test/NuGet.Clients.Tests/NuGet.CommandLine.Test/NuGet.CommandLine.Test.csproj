@@ -24,6 +24,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="Runtime" />
     <PackageReference Include="Microsoft.NET.StringTools" ExcludeAssets="Runtime" />
+    <PackageReference Include="Microsoft.TestPlatform.Portable" IncludeAssets="None" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +36,8 @@
              CopyToOutputDirectory="PreserveNewest"
              Visible="false"
              Condition="'$(PkgMicrosoft_TestPlatform_Portable)' != ''" />
+    <None Include="xunit.runner.json"
+          CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

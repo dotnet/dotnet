@@ -24,7 +24,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult.SupportedFrameworks, actualResult.SupportedFrameworks);
         }
 
-        public static TheoryData TestData => new TheoryData<SearchFilter>
+        public static TheoryData<SearchFilter> TestData => new()
             {
                 {
                     new SearchFilter(includePrerelease: true, SearchFilterType.IsAbsoluteLatestVersion)

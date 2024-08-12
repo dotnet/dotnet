@@ -340,6 +340,33 @@ namespace NuGet.PackageManagement.VisualStudio
 #pragma warning restore CS0618 // Type or member is obsolete
         }
 
+        public async Task<IReadOnlyList<(string id, string[] metadata)>> GetItemsAsync(string itemTypeName, params string[] metadataNames)
+        {
+            await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
+            return GetItems(_vsProjectAdapter, itemTypeName, metadataNames);
+        }
+
+        internal static IReadOnlyList<(string id, string[] metadata)> GetItems(IVsProjectAdapter projectAdapter, string itemTypeName, params string[] metadataNames)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            IEnumerable<(string ItemId, string[] ItemMetadata)> items = projectAdapter.GetBuildItemInformation(itemTypeName, metadataNames);
+            var enumerator = items.GetEnumerator();
+            if (!enumerator.MoveNext())
+            {
+                return Array.Empty<(string, string[])>();
+            }
+
+            List<(string, string[])> result = items is ICollection<(string, string[])> itemCollection ? new(itemCollection.Count) : new();
+
+            do
+            {
+                result.Add(enumerator.Current);
+            } while (enumerator.MoveNext());
+
+            return result;
+        }
+
         private class ProjectReference
         {
             public ProjectReference(string uniqueName, Array metadataElements, Array metadataValues)

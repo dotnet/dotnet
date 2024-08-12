@@ -7,6 +7,7 @@ using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using NuGet.Common;
 using NuGet.ProjectModel;
 
 namespace NuGet.VisualStudio.SolutionExplorer.Models
@@ -16,7 +17,7 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
     /// </summary>
     internal sealed class AssetsFileTargetLibrary
     {
-        public static bool TryCreate(LockFile lockFile, LockFileTargetLibrary lockFileLibrary, [NotNullWhen(returnValue: true)] out AssetsFileTargetLibrary? targetLibrary)
+        public static bool TryCreate(LockFile lockFile, LockFileTargetLibrary lockFileLibrary, LogLevel? logLevel, [NotNullWhen(returnValue: true)] out AssetsFileTargetLibrary? targetLibrary)
         {
             AssetsFileLibraryType type;
             if (lockFileLibrary.Type == "package")
@@ -35,7 +36,7 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
 
             LockFileLibrary? library = lockFile.Libraries.FirstOrDefault(lib => lib.Name == lockFileLibrary.Name);
 
-            targetLibrary = new AssetsFileTargetLibrary(library, lockFileLibrary, type);
+            targetLibrary = new AssetsFileTargetLibrary(library, lockFileLibrary, type, logLevel);
             return true;
         }
 
@@ -66,11 +67,12 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
             DocumentationFiles = ImmutableArray<string>.Empty;
         }
 
-        private AssetsFileTargetLibrary(LockFileLibrary? library, LockFileTargetLibrary targetLibrary, AssetsFileLibraryType type)
+        private AssetsFileTargetLibrary(LockFileLibrary? library, LockFileTargetLibrary targetLibrary, AssetsFileLibraryType type, LogLevel? logLevel)
         {
             Name = targetLibrary.Name!;
             Version = targetLibrary.Version!.ToNormalizedString();
             Type = type;
+            LogLevel = logLevel;
 
             Dependencies = targetLibrary.Dependencies.Select(dep => dep.Id).ToImmutableArray();
 
@@ -147,6 +149,7 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
         public ImmutableArray<string> BuildFiles { get; }
         public ImmutableArray<string> BuildMultiTargetingFiles { get; }
         public ImmutableArray<string> DocumentationFiles { get; }
+        public LogLevel? LogLevel { get; }
 
         public override string ToString() => $"{Type} {Name} ({Version ?? "Unknown"}) {Dependencies.Length} {(Dependencies.Length == 1 ? "dependency" : "dependencies")}";
     }

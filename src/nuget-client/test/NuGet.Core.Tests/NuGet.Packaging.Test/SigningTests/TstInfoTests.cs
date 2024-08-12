@@ -1,27 +1,30 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
+using System.Formats.Asn1;
+using System.Numerics;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using NuGet.Common;
-using NuGet.Packaging.Signing;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Math;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Utilities;
+using Test.Utility.Signing;
 using Xunit;
-using BcAccuracy = Org.BouncyCastle.Asn1.Tsp.Accuracy;
-using BcAlgorithmIdentifier = Org.BouncyCastle.Asn1.X509.AlgorithmIdentifier;
-using BcGeneralName = Org.BouncyCastle.Asn1.X509.GeneralName;
-using BcMessageImprint = Org.BouncyCastle.Asn1.Tsp.MessageImprint;
-using BcTstInfo = Org.BouncyCastle.Asn1.Tsp.TstInfo;
+using TstInfo = NuGet.Packaging.Signing.TstInfo;
+using TestAccuracy = Test.Utility.Signing.Accuracy;
+using TestAlgorithmIdentifier = Test.Utility.Signing.AlgorithmIdentifier;
+using TestGeneralName = Test.Utility.Signing.GeneralName;
+using TestMessageImprint = Test.Utility.Signing.MessageImprint;
+using TestTstInfo = Test.Utility.Signing.TstInfo;
 
 namespace NuGet.Packaging.Test
 {
     public class TstInfoTests
     {
+        private static readonly Random Random = new();
+
         [Fact]
         public void Read_WithInvalidAsn1_Throws()
         {
@@ -32,13 +35,9 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Read_WithOnlyRequiredFields_ReturnsInstance()
         {
-            var test = new Test();
-            var bcTstInfo = test.CreateBcTstInfo();
+            TestTstInfo testTstInfo = CreateTestTstInfo();
 
-            var tstInfo = TstInfo.Read(bcTstInfo.GetDerEncoded());
-
-            Verify(test, tstInfo);
-            Verify(bcTstInfo, tstInfo);
+            Verify(testTstInfo);
         }
 
         [Theory]
@@ -49,327 +48,195 @@ namespace NuGet.Packaging.Test
         [InlineData(1, 2, 3)]
         public void Read_WithAccuracy_ReturnsInstance(int? seconds, int? milliseconds, int? microseconds)
         {
-            var test = new Test() { Accuracy = GetBcAccuracy(seconds, milliseconds, microseconds) };
-            var bcTstInfo = test.CreateBcTstInfo();
+            TestAccuracy testAccuracy = new(seconds, milliseconds, microseconds);
+            TestTstInfo testTstInfo = CreateTestTstInfo(accuracy: testAccuracy);
 
-            var tstInfo = TstInfo.Read(bcTstInfo.GetDerEncoded());
-
-            Verify(test, tstInfo);
-            Verify(bcTstInfo, tstInfo);
+            Verify(testTstInfo);
         }
 
         [Theory]
-        [InlineData(null)]
         [InlineData(false)]
         [InlineData(true)]
-        public void Read_WithOrdering_ReturnsInstance(bool? ordering)
+        public void Read_WithOrdering_ReturnsInstance(bool ordering)
         {
-            var test = new Test() { Ordering = ordering };
-            var bcTstInfo = test.CreateBcTstInfo();
+            TestTstInfo testTstInfo = CreateTestTstInfo(ordering: ordering);
 
-            var tstInfo = TstInfo.Read(bcTstInfo.GetDerEncoded());
-
-            Verify(test, tstInfo);
-            Verify(bcTstInfo, tstInfo);
+            Verify(testTstInfo);
         }
 
         [Fact]
         public void Read_WithNonce_ReturnsInstance()
         {
-            var test = new Test() { Nonce = GetRandomInteger().ToByteArray() };
-            var bcTstInfo = test.CreateBcTstInfo();
+            BigInteger nonce = GetRandomInteger();
+            TestTstInfo testTstInfo = CreateTestTstInfo(nonce: nonce);
 
-            var tstInfo = TstInfo.Read(bcTstInfo.GetDerEncoded());
-
-            Verify(test, tstInfo);
-            Verify(bcTstInfo, tstInfo);
+            Verify(testTstInfo);
         }
 
         [Fact]
         public void Read_WithTsa_ReturnsInstance()
         {
-            var tsa = new BcGeneralName(new X509Name("C=US,ST=WA,L=Redmond,O=NuGet,CN=NuGet Test Certificate"));
-            var test = new Test() { Tsa = tsa };
-            var bcTstInfo = test.CreateBcTstInfo();
+            TestGeneralName tsa = new(
+                directoryName: new X500DistinguishedName("CN=\"NuGet Test Certificate\", O=NuGet, L=Redmond, S=WA, C=US").RawData);
+            TestTstInfo testTstInfo = CreateTestTstInfo(tsa: tsa);
 
-            var tstInfo = TstInfo.Read(bcTstInfo.GetDerEncoded());
-
-            Verify(test, tstInfo);
-            Verify(bcTstInfo, tstInfo);
+            Verify(testTstInfo);
         }
 
         [Fact]
         public void Read_WithExtensions_ReturnsInstance()
         {
-            var extensionsGenerator = new X509ExtensionsGenerator();
+            X509ExtensionCollection extensions = new()
+            {
+                new X509Extension(new Oid("1.2.3.4.5.1"), new byte[1] { 1 }, critical: true),
+                new X509Extension(new Oid("1.2.3.4.5.2"), new byte[1] { 2 }, critical: false)
+            };
+            TestTstInfo testTstInfo = CreateTestTstInfo(extensions: extensions);
 
-            extensionsGenerator.AddExtension(
-                new DerObjectIdentifier("1.2.3.4.5.1"), critical: true, extValue: new byte[1] { 1 });
-            extensionsGenerator.AddExtension(
-                new DerObjectIdentifier("1.2.3.4.5.2"), critical: false, extValue: new byte[1] { 2 });
-
-            var extensions = extensionsGenerator.Generate();
-            var test = new Test() { Extensions = extensions };
-            var bcTstInfo = test.CreateBcTstInfo();
-
-            var tstInfo = TstInfo.Read(bcTstInfo.GetDerEncoded());
-
-            Verify(test, tstInfo);
-            Verify(bcTstInfo, tstInfo);
+            Verify(testTstInfo);
         }
 
-        private static void Verify(Test test, TstInfo tstInfo)
+        private static void Verify(TestTstInfo expectedTstInfo)
         {
-            Assert.Equal(test.Version, tstInfo.Version);
-            Assert.Equal(test.Policy, tstInfo.Policy.Value);
-            Assert.Equal(test.HashAlgorithm.Value, tstInfo.MessageImprint.HashAlgorithm.Algorithm.Value);
-            Assert.Equal(test.Hash, tstInfo.MessageImprint.HashedMessage);
-            Assert.Equal(test.SerialNumber, tstInfo.SerialNumber);
-            Assert.Equal(test.GenTime, tstInfo.GenTime);
-            Assert.Equal(test.Accuracy == null, tstInfo.Accuracy == null);
+            AsnWriter writer = new(AsnEncodingRules.DER);
 
-            if (test.Accuracy != null)
-            {
-                Assert.Equal(test.Accuracy == null, tstInfo.Accuracy == null);
-                Assert.Equal(test.Accuracy.Seconds == null, tstInfo.Accuracy.Seconds == null);
+            expectedTstInfo.Encode(writer);
+            byte[] bytes = writer.Encode();
+            TstInfo actualTstInfo = TstInfo.Read(bytes);
 
-                if (test.Accuracy.Seconds != null)
-                {
-                    Assert.Equal(test.Accuracy.Seconds.Value.IntValue, tstInfo.Accuracy.Seconds.Value);
-                }
-
-                Assert.Equal(test.Accuracy.Millis == null, tstInfo.Accuracy.Milliseconds == null);
-
-                if (test.Accuracy.Millis != null)
-                {
-                    Assert.Equal(test.Accuracy.Millis.Value.IntValue, tstInfo.Accuracy.Milliseconds.Value);
-                }
-
-                Assert.Equal(test.Accuracy.Micros == null, tstInfo.Accuracy.Microseconds == null);
-
-                if (test.Accuracy.Micros != null)
-                {
-                    Assert.Equal(test.Accuracy.Micros.Value.IntValue, tstInfo.Accuracy.Microseconds.Value);
-                }
-            }
-
-            Assert.Equal(test.Ordering ?? false, tstInfo.Ordering);
-            Assert.Equal(test.Nonce, tstInfo.Nonce);
-
-            Assert.Equal(test.Tsa == null, tstInfo.Tsa == null);
-
-            if (test.Tsa != null)
-            {
-                Assert.Equal(test.Tsa.GetDerEncoded(), tstInfo.Tsa);
-            }
-
-            VerifyExtensions(test.Extensions, tstInfo);
+            Assert.Equal(expectedTstInfo.Version, actualTstInfo.Version);
+            Assert.Equal(expectedTstInfo.Policy.Value, actualTstInfo.Policy.Value);
+            Assert.Equal(expectedTstInfo.MessageImprint.HashAlgorithm.Algorithm.Value, actualTstInfo.MessageImprint.HashAlgorithm.Algorithm.Value);
+            Assert.Equal(expectedTstInfo.MessageImprint.HashedMessage.ToArray(), actualTstInfo.MessageImprint.HashedMessage);
+            SigningTestUtility.VerifySerialNumber(expectedTstInfo.SerialNumber, actualTstInfo.SerialNumber);
+            Assert.Equal(expectedTstInfo.Timestamp, actualTstInfo.GenTime);
+            Verify(expectedTstInfo.Accuracy, actualTstInfo.Accuracy);
+            Assert.Equal(expectedTstInfo.Ordering, actualTstInfo.Ordering);
+            Verify(expectedTstInfo.Nonce, actualTstInfo.Nonce);
+            Verify(expectedTstInfo.Tsa, actualTstInfo.Tsa);
+            Verify(expectedTstInfo.Extensions, actualTstInfo.Extensions);
         }
 
-        private static void Verify(BcTstInfo bcTstInfo, TstInfo tstInfo)
+        private static void Verify(TestGeneralName? expectedTsa, byte[] actualTsa)
         {
-            Assert.Equal(bcTstInfo.Version.Value.IntValue, tstInfo.Version);
-            Assert.Equal(bcTstInfo.Policy.Id, tstInfo.Policy.Value);
-            Assert.Equal(bcTstInfo.MessageImprint.HashAlgorithm.Algorithm.Id, tstInfo.MessageImprint.HashAlgorithm.Algorithm.Value);
-            Assert.Equal(bcTstInfo.MessageImprint.GetHashedMessage(), tstInfo.MessageImprint.HashedMessage);
-            Assert.Equal(bcTstInfo.SerialNumber.Value.ToByteArray(), tstInfo.SerialNumber);
-            Assert.Equal(bcTstInfo.GenTime.ToDateTime(), tstInfo.GenTime);
+            Assert.Equal(expectedTsa is null, actualTsa is null);
 
-            Assert.Equal(bcTstInfo.Accuracy == null, tstInfo.Accuracy == null);
-
-            if (bcTstInfo.Accuracy != null)
+            if (expectedTsa is not null && actualTsa is not null)
             {
-                Assert.Equal(bcTstInfo.Accuracy == null, tstInfo.Accuracy == null);
-                Assert.Equal(bcTstInfo.Accuracy.Seconds == null, tstInfo.Accuracy.Seconds == null);
+                Assert.NotNull(expectedTsa.DirectoryName);
 
-                if (bcTstInfo.Accuracy.Seconds != null)
-                {
-                    Assert.Equal(bcTstInfo.Accuracy.Seconds.Value.IntValue, tstInfo.Accuracy.Seconds.Value);
-                }
+                AsnWriter writer = new(AsnEncodingRules.DER);
 
-                Assert.Equal(bcTstInfo.Accuracy.Millis == null, tstInfo.Accuracy.Milliseconds == null);
+                expectedTsa.Encode(writer);
 
-                if (bcTstInfo.Accuracy.Millis != null)
-                {
-                    Assert.Equal(bcTstInfo.Accuracy.Millis.Value.IntValue, tstInfo.Accuracy.Milliseconds.Value);
-                }
-
-                Assert.Equal(bcTstInfo.Accuracy.Micros == null, tstInfo.Accuracy.Microseconds == null);
-
-                if (bcTstInfo.Accuracy.Micros != null)
-                {
-                    Assert.Equal(bcTstInfo.Accuracy.Micros.Value.IntValue, tstInfo.Accuracy.Microseconds.Value);
-                }
-            }
-
-            Assert.Equal(bcTstInfo.Ordering?.IsTrue ?? false, tstInfo.Ordering);
-            Assert.Equal(bcTstInfo.Nonce == null, tstInfo.Nonce == null);
-
-            if (bcTstInfo.Nonce != null)
-            {
-                Assert.Equal(bcTstInfo.Nonce.Value.ToByteArray(), tstInfo.Nonce);
-            }
-
-            Assert.Equal(bcTstInfo.Tsa == null, tstInfo.Tsa == null);
-
-            if (bcTstInfo.Tsa != null)
-            {
-                Assert.Equal(bcTstInfo.Tsa.GetDerEncoded(), tstInfo.Tsa);
-            }
-
-            VerifyExtensions(bcTstInfo.Extensions, tstInfo);
-        }
-
-        private static void VerifyExtensions(X509Extensions expectedExtensions, TstInfo tstInfo)
-        {
-            Assert.Equal(expectedExtensions == null, tstInfo.Extensions == null);
-
-            if (expectedExtensions != null)
-            {
-                Assert.Equal(expectedExtensions.GetExtensionOids().Length, tstInfo.Extensions.Count);
-
-                foreach (var extensionOid in expectedExtensions.GetExtensionOids())
-                {
-                    var expectedExtension = expectedExtensions.GetExtension(extensionOid);
-                    var actualExtension = tstInfo.Extensions[extensionOid.Id];
-
-                    Assert.Equal(extensionOid.Id, actualExtension.Oid.Value);
-                    Assert.Equal(expectedExtension.IsCritical, actualExtension.Critical);
-                    Assert.Equal(expectedExtension.Value.GetOctets(), actualExtension.RawData);
-                }
+                Assert.Equal(writer.Encode(), actualTsa);
             }
         }
 
-        private static BcAccuracy GetBcAccuracy(int? seconds, int? milliseconds, int? microseconds)
+        private static void Verify(TestAccuracy? expectedAccuracy, Signing.Accuracy? actualAccuracy)
         {
-            var derSeconds = GetOptionalInteger(seconds);
-            var derMilliseconds = GetOptionalInteger(milliseconds);
-            var derMicroseconds = GetOptionalInteger(microseconds);
+            Assert.Equal(expectedAccuracy is null, actualAccuracy is null);
 
-            return new BcAccuracy(derSeconds, derMilliseconds, derMicroseconds);
-        }
-
-        private static DerInteger GetOptionalInteger(long? value)
-        {
-            if (value == null)
+            if (expectedAccuracy is not null && actualAccuracy is not null)
             {
-                return null;
+                Assert.Equal(expectedAccuracy.Seconds, actualAccuracy.Seconds);
+                Assert.Equal(expectedAccuracy.Milliseconds, actualAccuracy.Milliseconds);
+                Assert.Equal(expectedAccuracy.Microseconds, actualAccuracy.Microseconds);
             }
-
-            return new DerInteger(BigInteger.ValueOf(value.Value));
         }
 
-        private static BigInteger GetRandomInteger()
+        private static void Verify(BigInteger? expectedNonce, byte[]? actualNonce)
         {
-            var random = new SecureRandom();
+            if (expectedNonce is null)
+            {
+                Assert.Null(actualNonce);
+            }
+            else
+            {
+                Assert.NotNull(actualNonce);
+                byte[] expected = expectedNonce.Value.ToByteArray();
+                Array.Reverse(expected);
+                Assert.Equal(expected, actualNonce);
+            }
+        }
 
-            return BigIntegers.CreateRandomInRange(BigInteger.One, BigInteger.ValueOf(long.MaxValue), random);
+        private static void Verify(X509ExtensionCollection? expectedExtensions, X509ExtensionCollection? actualExtensions)
+        {
+            Assert.Equal(expectedExtensions is null, actualExtensions is null);
+
+            if (expectedExtensions is not null && actualExtensions is not null)
+            {
+                Assert.Equal(expectedExtensions.Count, actualExtensions.Count);
+
+                foreach (X509Extension expectedExtension in expectedExtensions)
+                {
+                    X509Extension? actualExtension = actualExtensions[expectedExtension.Oid!.Value!];
+
+                    Assert.NotNull(actualExtension);
+                    Assert.NotNull(actualExtension.Oid);
+                    Assert.Equal(expectedExtension.Oid.Value, actualExtension.Oid.Value);
+                    Assert.Equal(expectedExtension.Critical, actualExtension.Critical);
+                    Assert.Equal(expectedExtension.RawData, actualExtension.RawData);
+                }
+            }
         }
 
         private static byte[] GetDefaultSha256Hash()
         {
-            var data = Encoding.UTF8.GetBytes("peach");
+            byte[] data = Encoding.UTF8.GetBytes("peach");
 
             return Common.HashAlgorithmName.SHA256.ComputeHash(data);
         }
 
-        private sealed class Test
+        private static TestTstInfo CreateTestTstInfo(
+            TestAccuracy? accuracy = null,
+            bool ordering = false,
+            BigInteger? nonce = null,
+            TestGeneralName? tsa = null,
+            X509ExtensionCollection? extensions = null)
         {
-            internal int Version { get; set; }
-            internal string Policy { get; set; }
-            internal Oid HashAlgorithm { get; }
-            internal byte[] Hash { get; }
-            internal byte[] SerialNumber { get; }
-            internal DateTime GenTime { get; }
-            internal BcAccuracy Accuracy { get; set; }
-            internal bool? Ordering { get; set; }
-            internal byte[] Nonce { get; set; }
-            internal BcGeneralName Tsa { get; set; }
-            internal X509Extensions Extensions { get; set; }
+            Random random = new();
+            byte[] data = Encoding.UTF8.GetBytes("peach");
+            ReadOnlyMemory<byte> hash = Common.HashAlgorithmName.SHA256.ComputeHash(data);
+            TestMessageImprint messageImprint = new(new TestAlgorithmIdentifier(TestOids.Sha256), hash);
+            BigInteger serialNumber = GetRandomInteger();
+            DateTimeOffset timestamp = GetRoundedTimestamp();
 
-            internal Test()
-            {
-                Version = 1;
-                Policy = "1.2.3.4.5";
-                HashAlgorithm = new Oid(Oids.Sha256);
+            TestTstInfo tstInfo = new(
+                BigInteger.One,
+                new Oid("1.2.3.4.5"),
+                messageImprint,
+                serialNumber,
+                timestamp,
+                accuracy,
+                ordering,
+                nonce,
+                tsa,
+                extensions);
 
-                var data = Encoding.UTF8.GetBytes("peach");
+            return tstInfo;
+        }
 
-                Hash = Common.HashAlgorithmName.SHA256.ComputeHash(data);
-                SerialNumber = GetRandomInteger().ToByteArray();
-                var now = DateTime.UtcNow;
+        private static DateTimeOffset GetRoundedTimestamp()
+        {
+            DateTimeOffset now = DateTimeOffset.UtcNow;
 
-                // Round to milliseconds
-                GenTime = new DateTime(
-                    now.Year,
-                    now.Month,
-                    now.Day,
-                    now.Hour,
-                    now.Minute,
-                    now.Second,
-                    now.Millisecond,
-                    DateTimeKind.Utc);
-            }
+            return new DateTimeOffset(
+                now.Year,
+                now.Month,
+                now.Day,
+                now.Hour,
+                now.Minute,
+                now.Second,
+                now.Millisecond,
+                TimeSpan.Zero);
+        }
 
-            internal BcTstInfo CreateBcTstInfo()
-            {
-                var bcAlgorithmIdentifier = new BcAlgorithmIdentifier(new DerObjectIdentifier(HashAlgorithm.Value));
-                var bcMessageImprint = new BcMessageImprint(bcAlgorithmIdentifier, Hash);
-                var serialNumber = new BigInteger(SerialNumber);
-                var ordering = GetOrdering();
-                var nonce = GetNonce();
+        private static BigInteger GetRandomInteger()
+        {
+            int nonce = Random.Next(minValue: 1, maxValue: int.MaxValue);
 
-                var bcTstInfo = new BcTstInfo(
-                    new DerObjectIdentifier(Policy),
-                    bcMessageImprint,
-                    new DerInteger(serialNumber),
-                    GetGenTime(),
-                    Accuracy,
-                    ordering,
-                    nonce,
-                    Tsa,
-                    Extensions);
-
-                return bcTstInfo;
-            }
-
-            private DerGeneralizedTime GetGenTime()
-            {
-                var genTime = new StringBuilder();
-
-                genTime.Append(GenTime.ToString("yyyyMMddHHmmss"));
-
-                if (GenTime.Millisecond > 0)
-                {
-                    var milliseconds = GenTime.Millisecond.ToString().PadLeft(3, '0').TrimEnd('0');
-
-                    genTime.Append($".{milliseconds}");
-                }
-
-                genTime.Append("Z");
-
-                return new DerGeneralizedTime(genTime.ToString());
-            }
-
-            private DerBoolean GetOrdering()
-            {
-                if (Ordering == null)
-                {
-                    return null;
-                }
-
-                return Ordering.Value ? DerBoolean.True : DerBoolean.False;
-            }
-
-            private DerInteger GetNonce()
-            {
-                if (Nonce == null)
-                {
-                    return null;
-                }
-
-                return new DerInteger(new BigInteger(Nonce));
-            }
+            return new BigInteger(nonce);
         }
     }
 }

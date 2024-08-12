@@ -4,10 +4,7 @@
 using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using NuGet.Common;
 using NuGet.Packaging.Signing;
-using NuGet.Test.Utility;
-using Org.BouncyCastle.Asn1.X509;
 using Test.Utility.Signing;
 using Xunit;
 
@@ -215,7 +212,7 @@ namespace NuGet.Packaging.Test
             using (var certificate = SigningTestUtility.GenerateCertificate("test",
                 generator =>
                 {
-                    var usages = new OidCollection { new Oid(TestOids.IdKpEmailProtection) };
+                    var usages = new OidCollection { TestOids.EmailProtectionEku };
 
                     generator.Extensions.Add(
                         new X509EnhancedKeyUsageExtension(
@@ -234,7 +231,7 @@ namespace NuGet.Packaging.Test
             using (var certificate = SigningTestUtility.GenerateCertificate("test",
                 generator =>
                 {
-                    var usages = new OidCollection { new Oid(TestOids.IdKpEmailProtection), new Oid(TestOids.AnyExtendedKeyUsage) };
+                    var usages = new OidCollection { TestOids.EmailProtectionEku, TestOids.AnyEku };
 
                     generator.Extensions.Add(
                         new X509EnhancedKeyUsageExtension(

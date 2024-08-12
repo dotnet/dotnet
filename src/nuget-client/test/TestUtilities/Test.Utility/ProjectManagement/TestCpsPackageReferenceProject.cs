@@ -240,5 +240,10 @@ namespace Test.Utility
         {
             return base.GetCacheFilePathAsync();
         }
+
+        public Task<IReadOnlyList<(string id, string[] metadata)>> GetItemsAsync(string itemTypeName, params string[] metadataNames)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -2,15 +2,15 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.X509;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using NuGet.Packaging.Signing;
 
 namespace Test.Utility.Signing
 {
     public sealed class IssueCertificateOptions
     {
-        public Action<X509V3CertificateGenerator> CustomizeCertificate { get; set; }
+        public Action<CertificateRequest> CustomizeCertificate { get; set; }
         public DateTimeOffset NotAfter { get; set; }
         public DateTimeOffset NotBefore { get; set; }
 
@@ -25,31 +25,31 @@ namespace Test.Utility.Signing
         ///     *  If the issue certificate request is for any other (non-root) certificate, <see cref="IssuerPrivateKey" />
         ///        should be null, indicating that the private key for the issuing certificate authority should be used.
         /// </remarks>
-        public AsymmetricKeyParameter IssuerPrivateKey { get; set; }
+        public RSA IssuerPrivateKey { get; set; }
 
-        public AsymmetricCipherKeyPair KeyPair { get; set; }
+        public RSA KeyPair { get; set; }
 
-        public X509Name SubjectName { get; set; }
+        public X500DistinguishedName SubjectName { get; set; }
 
-        public string SignatureAlgorithmName { get; set; }
+        public Oid SignatureAlgorithm { get; set; }
 
         public IssueCertificateOptions()
         {
             NotBefore = DateTimeOffset.UtcNow;
             NotAfter = NotBefore.AddHours(2);
-            SignatureAlgorithmName = "SHA256WITHRSA";
+            SignatureAlgorithm = new Oid(Oids.Sha256WithRSAEncryption);
         }
 
         public static IssueCertificateOptions CreateDefaultForRootCertificateAuthority()
         {
             var keyPair = CertificateUtilities.CreateKeyPair();
             var id = CertificateUtilities.GenerateRandomId();
-            var subjectName = new X509Name($"C=US,ST=WA,L=Redmond,O=NuGet,CN=NuGet Test Root Certificate Authority ({id})");
+            var subjectName = new X500DistinguishedName($"CN=NuGet Test Root Certificate Authority ({id}),O=NuGet,L=Redmond,S=WA,C=US");
 
             return new IssueCertificateOptions()
             {
                 KeyPair = keyPair,
-                IssuerPrivateKey = keyPair.Private,
+                IssuerPrivateKey = keyPair,
                 SubjectName = subjectName
             };
         }
@@ -58,7 +58,7 @@ namespace Test.Utility.Signing
         {
             var keyPair = CertificateUtilities.CreateKeyPair();
             var id = CertificateUtilities.GenerateRandomId();
-            var subjectName = new X509Name($"C=US,ST=WA,L=Redmond,O=NuGet,CN=NuGet Test Intermediate Certificate Authority ({id})");
+            var subjectName = new X500DistinguishedName($"CN=NuGet Test Intermediate Certificate Authority ({id}),O=NuGet,L=Redmond,S=WA,C=US");
 
             return new IssueCertificateOptions()
             {
@@ -71,7 +71,7 @@ namespace Test.Utility.Signing
         {
             var keyPair = CertificateUtilities.CreateKeyPair();
             var id = CertificateUtilities.GenerateRandomId();
-            var subjectName = new X509Name($"C=US,ST=WA,L=Redmond,O=NuGet,CN=NuGet Test Certificate ({id})");
+            var subjectName = new X500DistinguishedName($"CN=NuGet Test Certificate ({id}),O=NuGet,L=Redmond,S=WA,C=US");
 
             return new IssueCertificateOptions()
             {
@@ -84,7 +84,7 @@ namespace Test.Utility.Signing
         {
             var keyPair = CertificateUtilities.CreateKeyPair();
             var id = Guid.NewGuid().ToString();
-            var subjectName = new X509Name($"C=US,ST=WA,L=Redmond,O=NuGet,CN=NuGet Test Timestamp Service ({id})");
+            var subjectName = new X500DistinguishedName($"CN=NuGet Test Timestamp Service ({id}),O=NuGet,L=Redmond,S=WA,C=US");
 
             return new IssueCertificateOptions()
             {

@@ -14,7 +14,7 @@ parameters:
   type: boolean
   default: true
 - name: RunCrossFrameworkTestsOnWindows
-  displayName: Run cross framweork tests on Windows
+  displayName: Run cross framework tests on Windows
   type: boolean
   default: true
 - name: RunUnitTestsOnWindows
@@ -470,7 +470,7 @@ stages:
       TestRunCommandLineArguments: "--mono-tests"
     pool:
       name: 'Azure Pipelines'
-      vmImage: macos-13
+      vmImage: macos-latest
       os: macOS
     templateContext:
       outputs:

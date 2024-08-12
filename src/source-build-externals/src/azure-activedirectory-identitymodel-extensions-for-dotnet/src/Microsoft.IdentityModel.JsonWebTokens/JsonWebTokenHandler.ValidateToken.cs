@@ -33,7 +33,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         {
             try
             {
-                TokenValidationResult tokenValidationResult = ReadToken(DecryptToken(jwtToken, validationParameters), validationParameters);
+                TokenValidationResult tokenValidationResult = ReadToken(DecryptToken(jwtToken, validationParameters, configuration), validationParameters);
                 if (!tokenValidationResult.IsValid)
                     return tokenValidationResult;
 

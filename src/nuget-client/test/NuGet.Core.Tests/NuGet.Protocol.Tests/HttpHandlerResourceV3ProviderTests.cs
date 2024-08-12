@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Security;
-using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -15,8 +14,9 @@ using Moq;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
 using NuGet.Test.Server;
+#if IS_DESKTOP
 using NuGet.Test.Utility;
-using Org.BouncyCastle.Asn1.X509;
+#endif
 using Xunit;
 
 namespace NuGet.Protocol.Tests

@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
-using Org.BouncyCastle.Cms;
 using Test.Utility.Signing;
 using Xunit;
 
@@ -87,25 +86,10 @@ namespace NuGet.Packaging.FuncTest
 
         private static byte[] GetRepositoryCountersignatureSignatureValue(SignedCms signedCms)
         {
-            var cmsSignedData = new CmsSignedData(signedCms.Encode());
-            var signerInfoStore = cmsSignedData.GetSignerInfos();
-            var primarySignerInfo = GetFirstSignerInfo(signerInfoStore);
-
-            signerInfoStore = primarySignerInfo.GetCounterSignatures();
-
-            var counterSignerInfo = GetFirstSignerInfo(signerInfoStore);
+            SignerInfo primarySignerInfo = signedCms.SignerInfos[0];
+            SignerInfo counterSignerInfo = primarySignerInfo.CounterSignerInfos[0];
 
             return counterSignerInfo.GetSignature();
-        }
-
-        private static SignerInformation GetFirstSignerInfo(SignerInformationStore store)
-        {
-            var signers = store.GetSigners();
-            var enumerator = signers.GetEnumerator();
-
-            enumerator.MoveNext();
-
-            return (SignerInformation)enumerator.Current;
         }
 
         private sealed class Test : IDisposable

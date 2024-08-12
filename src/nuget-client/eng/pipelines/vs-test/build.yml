@@ -1,0 +1,350 @@
+parameters:
+- name: NuGetLocalizationType
+  type: string
+
+steps:
+- task: MicroBuildLocalizationPlugin@4
+  displayName: "Install Localization Plugin"
+
+- task: MicroBuildSigningPlugin@4
+  inputs:
+    signType: "Test"
+  displayName: "Install Signing Plugin"
+
+- task: MicroBuildSwixPlugin@4
+  displayName: "Install Swix Plugin"
+  inputs:
+    dropName: "Tests/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)"
+
+- task: PowerShell@1
+  displayName: "Run Configure.ps1"
+  inputs:
+    scriptName: "$(Build.Repository.LocalPath)\\configure.ps1"
+    arguments: "-Force"
+
+- task: PowerShell@1
+  displayName: "Set build variables"
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      try {
+        $buildNumber = dotnet msbuild -getProperty:PreReleaseVersion $(Build.Repository.LocalPath)\build\config.props
+        Write-Host "Setting build number to: $buildNumber"
+        Write-Host "##vso[task.setvariable variable=BuildNumber]$buildNumber"
+
+        $version = dotnet msbuild -getProperty:AssemblyVersion $(Build.Repository.LocalPath)\src\NuGet.Clients\NuGet.VisualStudio.Client\
+        Write-Host "Setting NuGet version to: $version"
+        Write-Host "##vso[task.setvariable variable=NuGetVersion]$version"
+
+        $VsTargetChannelForTests = dotnet msbuild -getProperty:VsTargetChannelForTests $(Build.Repository.LocalPath)\src\NuGet.Clients\NuGet.VisualStudio.Client\
+        Write-Host "Setting VsTargetChannelForTests to: $VsTargetChannelForTests"
+        Write-Host "##vso[task.setvariable variable=VsTargetChannelForTests]$VsTargetChannelForTests"
+
+        $VsTargetMajorVersion = dotnet msbuild -getProperty:VsTargetMajorVersion $(Build.Repository.LocalPath)\src\NuGet.Clients\NuGet.VisualStudio.Client\
+        Write-Host "Setting VsTargetMajorVersion to: $VsTargetMajorVersion"
+        Write-Host "##vso[task.setvariable variable=VsTargetMajorVersion]$VsTargetMajorVersion"
+      } catch {
+        throw $_
+      }
+
+
+- task: PowerShell@1
+  inputs:
+    scriptName: "$(Build.Repository.LocalPath)\\scripts\\cibuild\\ConfigureVstsBuild.ps1"
+    arguments: "-BuildRTM false -RepositoryPath $(Build.Repository.LocalPath) -BranchName $(Build.SourceBranchName) -CommitHash $(Build.SourceVersion) -BuildNumber $(NuGetVersion)"
+  displayName: "Configure VSTS CI Environment"
+
+- task: PowerShell@1
+  displayName: "Print Environment Variables"
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      Get-ChildItem Env: | Sort-Object Name | Format-Table -Wrap -AutoSize
+  condition: "always()"
+
+# NuGet.Client's official repo is on github, hence the source link metadata should use the github URL.
+# However, our official builds are built from a mirror in Azure DevOps, hence without any extra help, the SourceLink.GitHub package
+# won't be able to determine the URL to embed in the pdbs.
+# Therefore, we need to add the GitHub repo URL as a remote, and tell SourceLink.GitHub what that remote name is.
+# We do this even when github is the origin URL, to avoid warnings in the CI logs.
+- task: PowerShell@1
+  displayName: "Prepare for source link"
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      try {
+        $nugetUrl = "https://github.com/NuGet/NuGet.Client.git"
+        if (@(& git remote).Contains("github"))
+        {
+          $currentGitHubRemoteUrl = & git remote get-url github
+          Write-Host "Current github remote URL: $currentGitHubRemoteUrl"
+          if ($currentGitHubRemoteUrl -ne $nugetUrl)
+          {
+            Write-Host "git remote set-url github $nugetUrl"
+            & git remote set-url github $nugetUrl
+          }
+          else
+          {
+            Write-Host "Git remote url already correct"
+          }
+        }
+        else
+        {
+          Write-Host "git remote add github $nugetUrl"
+          & git remote add github $nugetUrl
+        }
+      } catch {
+        Write-Host "##vso[task.LogIssue type=error;]$Error[0]"
+        exit 1
+      }
+
+- task: MSBuild@1
+  displayName: "Restore"
+  inputs:
+    solution: "NuGet.sln"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/restore:false /target:Restore /binarylogger:$(Build.StagingDirectory)\\binlog\\01.Restore.binlog"
+
+- task: MSBuild@1
+  displayName: "Build"
+  inputs:
+    solution: "NuGet.sln"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/restore:false /target:Build /property:SkipILMergeOfNuGetExe=true /property:GitRepositoryRemoteName=github /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog /property:MicroBuild_SigningEnabled=false"
+
+- task: MSBuild@1
+  displayName: "Localize Assemblies"
+  inputs:
+    solution: "build\\loc.proj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/restore /property:LocType=${{parameters.NuGetLocalizationType}} /binarylogger:$(Build.StagingDirectory)\\binlog\\03.Localize.binlog"
+
+- task: MSBuild@1
+  displayName: "Build NuGet.exe Localized"
+  inputs:
+    solution: "src\\NuGet.Clients\\NuGet.CommandLine\\NuGet.CommandLine.csproj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/restore:false /t:Build /p:SkipILMergeOfNuGetExe=true /bl:$(Build.StagingDirectory)\\binlog\\04.BuildNuGetExe.binlog"
+
+- task: MSBuild@1
+  displayName: "ILMerge NuGet.exe"
+  inputs:
+    solution: "src\\NuGet.Clients\\NuGet.CommandLine\\NuGet.CommandLine.csproj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/restore:false /target:ILMergeNuGetExe /binarylogger:$(Build.StagingDirectory)\\binlog\\05.ILMergeNuGetExe.binlog"
+
+- task: MSBuild@1
+  displayName: "Sign Assemblies"
+  inputs:
+    solution: "build\\sign.proj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/restore /binarylogger:$(Build.StagingDirectory)\\binlog\\06.SignAssemblies.binlog"
+
+- task: MSBuild@1
+  displayName: "Pack VSIX"
+  inputs:
+    solution: "build\\build.proj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/restore:false /target:BuildVSIX /property:ExcludeTestProjects=false /property:IsCIBuild=true /binarylogger:$(Build.StagingDirectory)\\binlog\\07.PackVSIX.binlog"
+
+- template: /eng/common/templates/steps/generate-sbom.yml@self
+  parameters:
+    PackageName: 'NuGet.Client'
+    PackageVersion: "$(NuGetVersion)"
+
+- task: MSBuild@1
+  displayName: "Generate Build Tools package"
+  inputs:
+    solution: "setup\\Microsoft.VisualStudio.NuGet.BuildTools\\Microsoft.VisualStudio.NuGet.BuildTools.vsmanproj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/property:BuildNumber=$(BuildNumber) /property:IsVsixBuild=true /binarylogger:$(Build.StagingDirectory)\\binlog\\08.BuildToolsVSIX.binlog"
+
+- task: MSBuild@1
+  displayName: "Sign Nupkgs and VSIX"
+  inputs:
+    solution: "build\\sign.proj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/restore /property:SignPackages=true /binarylogger:$(Build.StagingDirectory)\\binlog\\09.SignPackages.binlog"
+
+- task: MicroBuildCodesignVerify@3
+  displayName: Verify Assembly Signatures and StrongName for the VSIX & exes
+  inputs:
+    TargetFolders: '$(Build.Repository.LocalPath)\\artifacts\\VS15'
+    ApprovalListPathForCerts: '$(Build.Repository.LocalPath)\\build\\ignorecodesign.csv'
+    ApprovalListPathForSigs: '$(Build.Repository.LocalPath)\\build\\ignorecodesign.csv'
+
+- task: MSBuild@1
+  displayName: "Generate VSMAN file for NuGet Core VSIX"
+  inputs:
+    solution: "setup\\Microsoft.VisualStudio.NuGet.Core\\Microsoft.VisualStudio.NuGet.Core.vsmanproj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/property:ManifestDirPath=$(Build.StagingDirectory)/sbom /binarylogger:$(Build.StagingDirectory)\\binlog\\10.GenerateVSManifestForVSIX.binlog"
+
+- task: MSBuild@1
+  displayName: "Generate VSMAN file for Build Tools VSIX"
+  inputs:
+    solution: "setup\\Microsoft.VisualStudio.NuGet.BuildTools\\Microsoft.VisualStudio.NuGet.BuildTools.vsmanproj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/property:IsVsixBuild=false /property:ManifestDirPath=$(Build.StagingDirectory)/sbom /binarylogger:$(Build.StagingDirectory)\\binlog\\11.GenerateVSManifestForToolsVSIX.binlog"
+
+- task: MSBuild@1
+  displayName: "Create EndToEnd Test Package"
+  inputs:
+    solution: "$(Build.Repository.LocalPath)\\test\\TestUtilities\\CreateEndToEndTestPackage\\CreateEndToEndTestPackage.proj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/property:EndToEndPackageOutputPath=$(Build.StagingDirectory)\\E2ETests /property:BuildProjectReferences=false /binarylogger:$(Build.StagingDirectory)\\binlog\\12.CreateEndToEndTestPackage.binlog"
+
+- task: CopyFiles@2
+  displayName: "Copy NuGet.exe for E2E Tests"
+  inputs:
+    SourceFolder: "$(Build.Repository.LocalPath)\\artifacts\\VS15"
+    Contents: "NuGet.exe"
+    TargetFolder: "$(Build.StagingDirectory)\\E2ETests"
+
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  displayName: 'Add the VSEng package source'
+  inputs:
+    command: 'custom'
+    arguments: 'sources add -Name VS -Source $(VsPackageFeedUrl) -UserName $(VsPackageFeedUsername) -Password $(VsPackageFeedPassword) -ConfigFile $(System.DefaultWorkingDirectory)\NuGet.config'
+
+- task: NuGetCommand@2
+  displayName: 'Install the NuGet package for building .runsettingsproj files'
+  inputs:
+    command: 'custom'
+    arguments: 'install Microsoft.DevDiv.Validation.TestPlatform.Settings.Tasks -Version 1.0.655 -Source $(VsPackageFeedUrl) -ConfigFile $(System.DefaultWorkingDirectory)\NuGet.config -OutputDirectory $(System.DefaultWorkingDirectory)\packages'
+
+- task: MicroBuildBuildVSBootstrapper@3
+  displayName: 'Build a Visual Studio bootstrapper for tests'
+  inputs:
+    channelName: "$(VsTargetChannelForTests)"
+    vsMajorVersion: "$(VsTargetMajorVersion)"
+    manifests: '$(Build.Repository.LocalPath)\artifacts\VS15\Microsoft.VisualStudio.NuGet.Core.vsman'
+    outputFolder: '$(Build.Repository.LocalPath)\artifacts\VS15'
+
+- task: PowerShell@1
+  displayName: "Set DartLab variables for tests"
+  name: "dartlab_variables"
+  inputs:
+    scriptType: "inlineScript"
+    # MicroBuildOutputFolderOverride defined by template and redirects MicroBuildBuildVSBootstrapper output https://dev.azure.com/devdiv/1ESPipelineTemplates/_git/MicroBuildTemplate?path=/azure-pipelines/Jobs/Job.yml&version=GBrelease&line=21&lineEnd=22&lineStartColumn=1&lineEndColumn=36&lineStyle=plain&_a=contents
+    inlineScript: |
+      try {
+        $json = Get-Content "${env:Build_StagingDirectory}\MicroBuild\Output\Bootstrapperinfo.json" | ConvertFrom-Json
+
+        $bootstrapperUrl = $json[0].bootstrapperUrl;
+        Write-Host "Bootstrapper URL: $bootstrapperUrl"
+        Write-Host "##vso[task.setvariable variable=bootstrapperUrl;isOutput=true]$bootstrapperUrl"
+
+        $qBuildSessionId = $json[0].QBuildSessionId;
+        Write-Host "CloudBuild Session ID: $qBuildSessionId"
+        Write-Host "##vso[task.setvariable variable=QBuildSessionId;isOutput=true]$qBuildSessionId"
+
+        $buildDrop = $json[0].BuildDrop;
+        Write-Host "Base Build Drop: $buildDrop"
+        Write-Host "##vso[task.setvariable variable=BaseBuildDrop;isOutput=true]$buildDrop"
+
+        $runSettingsDrop = "RunSettings/${env:System_TeamProject}/${env:Build_DefinitionName}/${env:Build_SourceBranchName}/${env:Build_BuildId}"
+        Write-Host "Run Settings Drop: $runSettingsDrop"
+        Write-Host "##vso[task.setvariable variable=RunSettingsDrop]$runSettingsDrop"
+        Write-Host "##vso[task.setvariable variable=RunSettingsDrop;isOutput=true]$runSettingsDrop"
+      } catch {
+        Write-Host "##vso[task.LogIssue type=error;]Unable to set variables for DartLab: $_"
+        exit 1
+      }
+
+- task: MSBuild@1
+  displayName: 'Generate .runsettings files'
+  inputs:
+    solution: 'build\runsettings.proj'
+    msbuildArguments: '/restore:false /property:OutputPath="$(Build.StagingDirectory)\RunSettings" /property:TestDrop="$(RunSettingsDrop)" /binarylogger:$(Build.StagingDirectory)\\binlog\\13.GenerateRunSettings.binlog'
+
+- task: PowerShell@1
+  displayName: 'Copy VS integration test binaries'
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      try {
+        Write-Output "Copying NuGet.OptProf binaries"
+        Copy-Item "test\NuGet.Tests.Apex\NuGet.OptProf\bin\$(BuildConfiguration)" "$(Build.StagingDirectory)\RunSettings\NuGet.OptProf\" -Recurse -ErrorAction Stop
+        Write-Output "Copying NuGet.Tests.Apex binaries"
+        Copy-Item "test\NuGet.Tests.Apex\NuGet.Tests.Apex\bin\$(BuildConfiguration)" "$(Build.StagingDirectory)\RunSettings\NuGet.Tests.Apex\" -Recurse -ErrorAction Stop
+        Write-Output "Copying NuGet.Tests.Apex.Daily binaries"
+        Copy-Item "test\NuGet.Tests.Apex\NuGet.Tests.Apex.Daily\bin\$(BuildConfiguration)" "$(Build.StagingDirectory)\RunSettings\NuGet.Tests.Apex.Daily\" -Recurse -ErrorAction Stop
+      } catch {
+        Write-Host "##vso[task.LogIssue type=error;]$_"
+        exit 1
+      }
+
+- task: MSBuild@1
+  displayName: "Collect Build Symbols"
+  inputs:
+    solution: "build\\symbols.proj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/restore:false /property:BuildProjectReferences=false /property:IsSymbolBuild=true /binarylogger:$(Build.StagingDirectory)\\binlog\\14.CollectBuildSymbols.binlog"
+    maximumCpuCount: true
+  condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
+
+- task: MSBuild@1
+  displayName: "LocValidation: Verify VSIX"
+  inputs:
+    solution: "build\\BuildValidator.proj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/target:ValidateVsix /property:LogsBasePath=$(Build.Repository.LocalPath)\\logs\\BuildValidatorLogs /property:TempDirectory=$(Agent.TempDirectory) /binarylogger:$(Build.StagingDirectory)\\binlog\\15.ValidateVsixLocalization.binlog"
+
+- task: MSBuild@1
+  displayName: "LocValidation: Verify Artifacts"
+  inputs:
+    solution: "build\\BuildValidator.proj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/target:ValidateArtifacts /property:LogsBasePath=$(Build.Repository.LocalPath)\\logs\\BuildValidatorLogs /property:TempDirectory=$(Agent.TempDirectory) /binarylogger:$(Build.StagingDirectory)\\binlog\\16.ValidateArtifactsLocalization.binlog"
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish BootstrapperInfo.json as a build artifact'
+  inputs:
+    PathtoPublish: $(Build.StagingDirectory)\MicroBuild\Output
+    ArtifactName: MicroBuildOutputs
+    ArtifactType: Container
+
+- task: artifactDropTask@0
+  displayName: "Upload VS bootstapper Drop"
+  inputs:
+    dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
+    buildNumber: '$(MicroBuild.ManifestDropName)'
+    sourcePath: "$(Build.Repository.LocalPath)\\artifacts\\VS15"
+    toLowerCase: false
+    usePat: true
+    dropMetadataContainerName: "DropMetadata-Product"
+
+- task: artifactDropTask@0
+  displayName: 'Publish the .runsettings files to artifact services'
+  inputs:
+    dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
+    buildNumber: '$(RunSettingsDrop)'
+    sourcePath: '$(Build.StagingDirectory)\RunSettings'
+    toLowerCase: false
+    usePat: true
+    dropMetadataContainerName: 'DropMetadata-RunSettings'
+
+- task: PublishPipelineArtifact@1
+  displayName: "Publish E2E tests"
+  inputs:
+    artifactName: "E2ETests"
+    targetPath: "$(Build.StagingDirectory)\\E2ETests"
+
+- task: PublishPipelineArtifact@1
+  displayName: "Publish scripts"
+  inputs:
+    artifactName: "scripts"
+    targetPath: "$(Build.Repository.LocalPath)\\scripts"
+
+- task: PublishPipelineArtifact@1
+  displayName: "Publish binlogs"
+  inputs:
+    artifactName: binlog - $(System.JobDisplayName) - Attempt $(System.JobAttempt)
+    targetPath: $(Build.StagingDirectory)\binlog
+  condition: " or(failed(), eq(variables['System.debug'], 'true')) "
+
+- task: MicroBuildCleanup@1
+  displayName: "Perform Cleanup Tasks"

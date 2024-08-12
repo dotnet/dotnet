@@ -24,7 +24,7 @@ namespace Dotnet.Integration.Test
         }
 
         [Fact]
-        public async void WhyCommand_ProjectHasTransitiveDependency_DependencyPathExists()
+        public async Task WhyCommand_ProjectHasTransitiveDependency_DependencyPathExists()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -57,7 +57,7 @@ namespace Dotnet.Integration.Test
         }
 
         [Fact]
-        public async void WhyCommand_ProjectHasNoDependencyOnTargetPackage_PathDoesNotExist()
+        public async Task WhyCommand_ProjectHasNoDependencyOnTargetPackage_PathDoesNotExist()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -88,7 +88,7 @@ namespace Dotnet.Integration.Test
         }
 
         [Fact]
-        public async void WhyCommand_WithFrameworksOption_OptionParsedSuccessfully()
+        public async Task WhyCommand_WithFrameworksOption_OptionParsedSuccessfully()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -121,7 +121,7 @@ namespace Dotnet.Integration.Test
         }
 
         [Fact]
-        public async void WhyCommand_WithFrameworksOptionAlias_OptionParsedSuccessfully()
+        public async Task WhyCommand_WithFrameworksOptionAlias_OptionParsedSuccessfully()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -188,7 +188,7 @@ namespace Dotnet.Integration.Test
         }
 
         [Fact]
-        public async void WhyCommand_InvalidFrameworksOption_WarnsCorrectly()
+        public async Task WhyCommand_InvalidFrameworksOption_WarnsCorrectly()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -223,7 +223,7 @@ namespace Dotnet.Integration.Test
         }
 
         [Fact]
-        public async void WhyCommand_DirectoryWithProject_HasTransitiveDependency_DependencyPathExists()
+        public async Task WhyCommand_DirectoryWithProject_HasTransitiveDependency_DependencyPathExists()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();

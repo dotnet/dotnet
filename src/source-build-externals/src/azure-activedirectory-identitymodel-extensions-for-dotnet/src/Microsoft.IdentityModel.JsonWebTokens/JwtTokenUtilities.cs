@@ -609,7 +609,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
         internal static string GetStringClaimValueType(string str, string claimType)
         {
-            if (!string.IsNullOrEmpty(claimType) && !JsonSerializerPrimitives.TryAllStringClaimsAsDateTime() && JsonSerializerPrimitives.IsKnownToNotBeDateTime(claimType))
+            if (!string.IsNullOrEmpty(claimType) && !AppContextSwitches.TryAllStringClaimsAsDateTime && JsonSerializerPrimitives.IsKnownToNotBeDateTime(claimType))
                 return ClaimValueTypes.String;
 
             if (DateTime.TryParse(str, out DateTime dateTimeValue))

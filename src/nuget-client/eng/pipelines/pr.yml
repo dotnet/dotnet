@@ -42,17 +42,11 @@ trigger:
   branches:
     include:
     - dev
-  paths:
-    exclude:
-    - '*.md'
 
 pr:
   branches:
     include:
     - '*'
-  paths:
-    exclude:
-    - '*.md'
 
 stages:
 - ${{ if eq(parameters.RunUnitTestsOnWindows, true) }}:

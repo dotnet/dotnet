@@ -207,16 +207,16 @@ namespace NuGet.Packaging.Rules
 
             var frameworkPatterns = new List<PatternSet>()
             {
-                patterns.RuntimeAssemblies,
-                patterns.CompileRefAssemblies,
-                patterns.CompileLibAssemblies,
-                patterns.NativeLibraries,
-                patterns.ResourceAssemblies,
-                patterns.MSBuildFiles,
-                patterns.ContentFiles,
-                patterns.ToolsAssemblies,
-                patterns.EmbedAssemblies,
-                patterns.MSBuildTransitiveFiles
+                GetPatternSetThatPreservesRawValues(patterns.RuntimeAssemblies),
+                GetPatternSetThatPreservesRawValues(patterns.CompileRefAssemblies),
+                GetPatternSetThatPreservesRawValues(patterns.CompileLibAssemblies),
+                GetPatternSetThatPreservesRawValues(patterns.NativeLibraries),
+                GetPatternSetThatPreservesRawValues(patterns.ResourceAssemblies),
+                GetPatternSetThatPreservesRawValues(patterns.MSBuildFiles),
+                GetPatternSetThatPreservesRawValues(patterns.ContentFiles),
+                GetPatternSetThatPreservesRawValues(patterns.ToolsAssemblies),
+                GetPatternSetThatPreservesRawValues(patterns.EmbedAssemblies),
+                GetPatternSetThatPreservesRawValues(patterns.MSBuildTransitiveFiles)
             };
             var warnPaths = new HashSet<string>();
 
@@ -257,6 +257,13 @@ namespace NuGet.Packaging.Rules
             }
 
             return messages;
+        }
+
+        private static PatternSet GetPatternSetThatPreservesRawValues(PatternSet patternSet)
+        {
+            var groupPatterns = patternSet.GroupPatterns.Select(e => new PatternDefinition(e.Pattern, e.Table, e.Defaults) { PreserveRawValues = true });
+            var pathPatterns = patternSet.PathPatterns.Select(e => new PatternDefinition(e.Pattern, e.Table, e.Defaults) { PreserveRawValues = true });
+            return new PatternSet(patternSet.PropertyDefinitions, groupPatterns, pathPatterns);
         }
 
         private static XDocument LoadXml(Stream stream)

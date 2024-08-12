@@ -3,14 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
-using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Packaging.Rules;
-using NuGet.Test.Utility;
 using Xunit;
 
 namespace NuGet.Packaging.Test

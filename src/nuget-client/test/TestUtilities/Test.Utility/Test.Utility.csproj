@@ -63,7 +63,6 @@
 
   <ItemGroup>
     <PackageReference Include="Moq" />
-    <PackageReference Include="Portable.BouncyCastle" />
     <PackageReference Include="xunit" />
   </ItemGroup>
 
@@ -74,6 +73,7 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.VisualStudio.ProjectSystem" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
+    <PackageReference Include="System.Formats.Asn1" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
@@ -98,5 +98,19 @@
     <Compile Remove="ProjectManagement\TestProjectThreadingService.cs" />
     <Compile Remove="Threading\*.cs" />
     <Compile Remove="VisualStudio\*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Signing\Asn.1\SR.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Signing\Asn.1\SR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <CustomToolNamespace>Test.Utility.Signing</CustomToolNamespace>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

@@ -716,7 +716,8 @@ namespace NuGet.SolutionRestoreManager
                     {
                         using SourceCacheContext sourceCacheContext = new();
                         List<SourceRepository> sourceRepositories = _sourceRepositoryProvider.GetRepositories().AsList();
-                        Dictionary<string, RestoreAuditProperties> auditProperties = GetRestoreAuditProperties(allProjects);
+
+                        Dictionary<string, RestoreAuditProperties> auditProperties = await GetRestoreAuditProperties(allProjects, token);
 
                         AuditChecker auditChecker = new(sourceRepositories, sourceCacheContext, _logger);
                         AuditCheckResult result = await auditChecker.CheckPackageVulnerabilitiesAsync(packages, auditProperties, token);
@@ -752,28 +753,50 @@ namespace NuGet.SolutionRestoreManager
                 token);
         }
 
-        private static Dictionary<string, RestoreAuditProperties> GetRestoreAuditProperties(IEnumerable<NuGetProject> projects)
+        private static async Task<Dictionary<string, RestoreAuditProperties>> GetRestoreAuditProperties(IEnumerable<NuGetProject> projects, CancellationToken cancellationToken)
         {
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+
             var restoreAuditProperties = new Dictionary<string, RestoreAuditProperties>(PathUtility.GetStringComparerBasedOnOS());
 
             foreach (var nuGetProject in projects.NoAllocEnumerate())
             {
                 if (nuGetProject.ProjectStyle == ProjectStyle.PackagesConfig)
                 {
-                    var msbuildProject = (MSBuildNuGetProject)nuGetProject;
+                    var msbuildProject = (VsMSBuildNuGetProject)nuGetProject;
                     var nuGetProjectName = (string)msbuildProject.GetMetadataOrNull(NuGetProjectMetadataKeys.Name);
                     var nugetAudit = (string)msbuildProject.GetMetadataOrNull(ProjectBuildProperties.NuGetAudit);
                     var auditLevel = (string)msbuildProject.GetMetadataOrNull(ProjectBuildProperties.NuGetAuditLevel);
+                    var suppressions = GetSuppressions(msbuildProject);
+
                     var auditProperties = new RestoreAuditProperties()
                     {
                         EnableAudit = nugetAudit,
                         AuditLevel = auditLevel,
+                        SuppressedAdvisories = suppressions,
                     };
                     restoreAuditProperties.Add(nuGetProjectName, auditProperties);
                 }
             }
 
             return restoreAuditProperties;
+
+            static HashSet<string> GetSuppressions(VsMSBuildNuGetProject msbuildProject)
+            {
+                var items = msbuildProject.GetItems(ProjectItems.NuGetAuditSuppress);
+                if (items?.Count > 0)
+                {
+                    var suppressions = new HashSet<string>(items.Count, StringComparer.Ordinal);
+                    for (int i = 0; i < items.Count; i++)
+                    {
+                        suppressions.Add(items[0].id);
+                    }
+                    return suppressions;
+                }
+
+                return null;
+            }
         }
 
         private void ValidatePackagesConfigLockFiles(IEnumerable<NuGetProject> allProjects, CancellationToken token)

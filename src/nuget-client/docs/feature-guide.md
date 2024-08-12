@@ -32,10 +32,11 @@ For completeness, the feature life-cycle can be divided in a few phases. Note th
 Given that the guide is written with engineers in mind, we will not elaborate on the first phase.
 
 1. Problem statement
-2. Initial design
-3. Design review
-4. Implementation
-5. Shipping and adoption
+1. Initial design
+1. Design review
+1. Threat modeling
+1. Implementation
+1. Shipping and adoption
 
 ### Problem statement
 
@@ -55,6 +56,14 @@ Always follow the [Design Review Guide](design-review-guide.md).
 As the design evolves, ensure you expand the audience as necessary. Review it with the NuGet team first, then with partners and customers as necessary.
 
 When a design is finalized, it is merged in the Home repo.
+
+## Threat modeling
+
+Threat modeling is a process conducted during the design phase for a feature or design change request (DCR) to ensure that potential security threats have been considered.
+It involves analyzing use cases, creating a data flow diagram that includes assets, flows, and trust boundaries, and identifying threats and their mitigations.
+This exercise is crucial for maintaining customer trust.
+The engineering team performs this process internally and stores all artifacts in the NuGet team's SharePoint.
+Please follow DevDiv guidance on the threat modeling process.
 
 ### Implementation
 
@@ -90,6 +99,9 @@ These considerations are also useful for smaller changes that might not require 
 * Partner dependencies considered
   * Partner to NuGet asks
   * NuGet to partner asks
+* Threat model document
+  * Reviewed by the Engineering team
+  * Reviewed by the Security experts
 * Implementation considerations
   * Accessibility considerations
   * Performance considerations

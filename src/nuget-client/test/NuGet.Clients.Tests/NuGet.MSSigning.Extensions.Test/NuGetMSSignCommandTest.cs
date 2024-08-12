@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using Moq;
@@ -11,9 +10,11 @@ namespace NuGet.MSSigning.Extensions.Test
 {
     public class NuGetMSSignCommandTest
     {
-        private const string _noPackageException = "No package was provided. For a list of accepted ways to provide a package, please visit https://docs.nuget.org/docs/reference/command-line-reference";
-        private const string _invalidArgException = "Invalid value provided for '{0}'. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference";
-        private const string _noCertificateException = "No {0} provided or provided file is not a p7b file.";
+        private const string NoPackageException = "No package was provided. For a list of accepted ways to provide a package, please visit https://docs.nuget.org/docs/reference/command-line-reference";
+        private const string InvalidArgException = "Invalid value provided for '{0}'. For a list of accepted values, please visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign";
+        private const string NoCertificateException = "No {0} provided or provided file is not a p7b file.";
+        private const string InvalidCertificateFingerprint = "Invalid value for 'CertificateFingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).";
+        private const string Sha256Hash = "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b55b046cbb7f506fb";
 
         [Fact]
         public void MSSignCommandArgParsing_NoPackagePath()
@@ -41,7 +42,7 @@ namespace NuGet.MSSigning.Extensions.Test
 
                 // Act & Assert
                 var ex = Assert.Throws<ArgumentException>(() => signCommand.GetAuthorSignRequest());
-                Assert.Equal(_noPackageException, ex.Message);
+                Assert.Equal(NoPackageException, ex.Message);
             }
         }
 
@@ -70,7 +71,7 @@ namespace NuGet.MSSigning.Extensions.Test
 
                 // Act & Assert
                 var ex = Assert.Throws<ArgumentException>(() => signCommand.GetAuthorSignRequest());
-                Assert.Equal(string.Format(_noCertificateException, nameof(signCommand.CertificateFile)), ex.Message);
+                Assert.Equal(string.Format(NoCertificateException, nameof(signCommand.CertificateFile)), ex.Message);
             }
         }
 
@@ -83,7 +84,7 @@ namespace NuGet.MSSigning.Extensions.Test
                 var packagePath = Path.Combine(dir, "package.nupkg");
                 var timestamper = "https://timestamper.test";
                 var certFile = Path.Combine(dir, "cert.p7b");
-                var certificateFingerprint = new Guid().ToString();
+                var certificateFingerprint = Sha256Hash;
                 var keyContainer = new Guid().ToString();
 
                 var mockConsole = new Mock<IConsole>();
@@ -100,7 +101,7 @@ namespace NuGet.MSSigning.Extensions.Test
 
                 // Act & Assert
                 var ex = Assert.Throws<ArgumentException>(() => signCommand.GetAuthorSignRequest());
-                Assert.Equal(string.Format(_invalidArgException, nameof(signCommand.CSPName)), ex.Message);
+                Assert.Equal(string.Format(InvalidArgException, nameof(signCommand.CSPName)), ex.Message);
             }
         }
 
@@ -113,7 +114,7 @@ namespace NuGet.MSSigning.Extensions.Test
                 var packagePath = Path.Combine(dir, "package.nupkg");
                 var timestamper = "https://timestamper.test";
                 var certFile = Path.Combine(dir, "cert.p7b");
-                var certificateFingerprint = new Guid().ToString();
+                var certificateFingerprint = Sha256Hash;
                 var cspName = "cert provider";
 
                 var mockConsole = new Mock<IConsole>();
@@ -130,7 +131,7 @@ namespace NuGet.MSSigning.Extensions.Test
 
                 // Act & Assert
                 var ex = Assert.Throws<ArgumentException>(() => signCommand.GetAuthorSignRequest());
-                Assert.Equal(string.Format(_invalidArgException, nameof(signCommand.KeyContainer)), ex.Message);
+                Assert.Equal(string.Format(InvalidArgException, nameof(signCommand.KeyContainer)), ex.Message);
             }
         }
 
@@ -160,7 +161,40 @@ namespace NuGet.MSSigning.Extensions.Test
 
                 // Act & Assert
                 var ex = Assert.Throws<ArgumentException>(() => signCommand.GetAuthorSignRequest());
-                Assert.Equal(string.Format(_invalidArgException, nameof(signCommand.CertificateFingerprint)), ex.Message);
+                Assert.Equal(InvalidCertificateFingerprint, ex.Message);
+            }
+        }
+
+        [Theory]
+        [InlineData("89967D1DD995010B6C66AE24FF8E66885E6E03")] // 39 characters long not SHA-1
+        [InlineData("invalid-certificate-fingerprint")]
+        public void MSSignCommandArgParsing_InvalidCertificateFingerprint_Throws_Exception(string certificateFingerprint)
+        {
+            using (var dir = TestDirectory.Create())
+            {
+                // Arrange
+                var packagePath = Path.Combine(dir, "package.nupkg");
+                var timestamper = "https://timestamper.test";
+                var certFile = Path.Combine(dir, "cert.p7b");
+                var keyContainer = new Guid().ToString();
+                var cspName = "cert provider";
+
+                var mockConsole = new Mock<IConsole>();
+                var signCommand = new MSSignCommand
+                {
+                    Console = mockConsole.Object,
+                    Timestamper = timestamper,
+                    CertificateFile = certFile,
+                    CertificateFingerprint = certificateFingerprint,
+                    CSPName = cspName,
+                    KeyContainer = keyContainer,
+                };
+
+                signCommand.Arguments.Add(packagePath);
+
+                // Act & Assert
+                var ex = Assert.Throws<ArgumentException>(() => signCommand.GetAuthorSignRequest());
+                Assert.Equal(InvalidCertificateFingerprint, ex.Message);
             }
         }
 
@@ -180,7 +214,7 @@ namespace NuGet.MSSigning.Extensions.Test
                 var packagePath = Path.Combine(dir, "package.nupkg");
                 var timestamper = "https://timestamper.test";
                 var certFile = Path.Combine(dir, "cert.p7b");
-                var certificateFingerprint = new Guid().ToString();
+                var certificateFingerprint = Sha256Hash;
                 var keyContainer = new Guid().ToString();
                 var cspName = "cert provider";
                 var parsable = Enum.TryParse(hashAlgorithm, ignoreCase: true, result: out Common.HashAlgorithmName parsedHashAlgorithm);
@@ -201,7 +235,7 @@ namespace NuGet.MSSigning.Extensions.Test
                 // Act & Assert
                 Assert.True(parsable);
                 var ex = Assert.Throws<CryptographicException>(() => signCommand.GetAuthorSignRequest());
-                Assert.NotEqual(string.Format(_invalidArgException, nameof(signCommand.HashAlgorithm)), ex.Message);
+                Assert.NotEqual(string.Format(InvalidArgException, nameof(signCommand.HashAlgorithm)), ex.Message);
             }
         }
 
@@ -214,7 +248,7 @@ namespace NuGet.MSSigning.Extensions.Test
                 var packagePath = Path.Combine(dir, "package.nupkg");
                 var timestamper = "https://timestamper.test";
                 var certFile = Path.Combine(dir, "cert.p7b");
-                var certificateFingerprint = new Guid().ToString();
+                var certificateFingerprint = Sha256Hash;
                 var keyContainer = new Guid().ToString();
                 var cspName = "cert provider";
                 var hashAlgorithm = "MD5";
@@ -235,7 +269,7 @@ namespace NuGet.MSSigning.Extensions.Test
 
                 // Act & Assert
                 var ex = Assert.Throws<ArgumentException>(() => signCommand.GetAuthorSignRequest());
-                Assert.Equal(string.Format(_invalidArgException, nameof(signCommand.HashAlgorithm)), ex.Message);
+                Assert.Equal(string.Format(InvalidArgException, nameof(signCommand.HashAlgorithm)), ex.Message);
             }
         }
 
@@ -255,7 +289,7 @@ namespace NuGet.MSSigning.Extensions.Test
                 var packagePath = Path.Combine(dir, "package.nupkg");
                 var timestamper = "https://timestamper.test";
                 var certFile = Path.Combine(dir, "cert.p7b");
-                var certificateFingerprint = new Guid().ToString();
+                var certificateFingerprint = Sha256Hash;
                 var keyContainer = new Guid().ToString();
                 var cspName = "cert provider";
                 var parsable = Enum.TryParse(timestampHashAlgorithm, ignoreCase: true, result: out Common.HashAlgorithmName parsedHashAlgorithm);
@@ -276,7 +310,7 @@ namespace NuGet.MSSigning.Extensions.Test
                 // Act & Assert
                 Assert.True(parsable);
                 var ex = Assert.Throws<CryptographicException>(() => signCommand.GetAuthorSignRequest());
-                Assert.NotEqual(string.Format(_invalidArgException, nameof(signCommand.TimestampHashAlgorithm)), ex.Message);
+                Assert.NotEqual(string.Format(InvalidArgException, nameof(signCommand.TimestampHashAlgorithm)), ex.Message);
             }
         }
 
@@ -289,7 +323,7 @@ namespace NuGet.MSSigning.Extensions.Test
                 var packagePath = Path.Combine(dir, "package.nupkg");
                 var timestamper = "https://timestamper.test";
                 var certFile = Path.Combine(dir, "cert.p7b");
-                var certificateFingerprint = new Guid().ToString();
+                var certificateFingerprint = Sha256Hash;
                 var keyContainer = new Guid().ToString();
                 var cspName = "cert provider";
                 var timestampHashAlgorithm = "MD5";
@@ -310,7 +344,7 @@ namespace NuGet.MSSigning.Extensions.Test
 
                 // Act & Assert
                 var ex = Assert.Throws<ArgumentException>(() => signCommand.GetAuthorSignRequest());
-                Assert.Equal(string.Format(_invalidArgException, nameof(signCommand.TimestampHashAlgorithm)), ex.Message);
+                Assert.Equal(string.Format(InvalidArgException, nameof(signCommand.TimestampHashAlgorithm)), ex.Message);
             }
         }
     }

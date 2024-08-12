@@ -116,26 +116,22 @@ namespace Test.Utility.Signing
                 X509StoreUtilities.AddCertificateToStore(StoreLocation, StoreName, TrustedCert, storePurpose);
             }
 
-            ExportCrl();
+            PublishCrl();
         }
 
-        private void ExportCrl()
+        private void PublishCrl()
         {
-            var testCertificate = Source as TestCertificate;
-
-            if (testCertificate != null && testCertificate.Crl != null)
+            if (Source is TestCertificate testCertificate)
             {
-                testCertificate.Crl.ExportCrl();
+                testCertificate.Crl?.Publish();
             }
         }
 
         private void DisposeCrl()
         {
-            var testCertificate = Source as TestCertificate;
-
-            if (testCertificate != null && testCertificate.Crl != null)
+            if (Source is TestCertificate testCertificate)
             {
-                testCertificate.Crl.Dispose();
+                testCertificate.Crl?.Dispose();
             }
         }
 

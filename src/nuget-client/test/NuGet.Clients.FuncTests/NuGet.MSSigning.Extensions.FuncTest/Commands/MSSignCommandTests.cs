@@ -24,12 +24,15 @@ namespace NuGet.MSSigning.Extensions.FuncTest.Commands
     public class MSSignCommandTests
     {
         private readonly string _noTimestamperWarningCode = NuGetLogCode.NU3002.ToString();
+        private readonly string _invalidCertificateFingerprintCode = NuGetLogCode.NU3043.ToString();
+        private const string Sha1Hash = "89967D1DD995010B6C66AE24FF8E66885E6E03A8";
+        private const string Sha256Hash = "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b55b046cbb7f506fb";
 
-        private TrustedTestCert<TestCertificate> _trustedTestCertWithPrivateKey;
-        private TrustedTestCert<TestCertificate> _trustedTestCertWithoutPrivateKey;
+        private readonly TrustedTestCert<TestCertificate> _trustedTestCertWithPrivateKey;
+        private readonly TrustedTestCert<TestCertificate> _trustedTestCertWithoutPrivateKey;
 
         private MSSignCommandTestFixture _testFixture;
-        private string _nugetExePath;
+        private readonly string _nugetExePath;
 
         public MSSignCommandTests(MSSignCommandTestFixture fixture)
         {
@@ -120,8 +123,10 @@ namespace NuGet.MSSigning.Extensions.FuncTest.Commands
             }
         }
 
-        [CIOnlyFact]
-        public void GetAuthorSignRequest_InvalidFingerprint()
+        [CIOnlyTheory]
+        [InlineData(Sha1Hash)]
+        [InlineData(Sha256Hash)]
+        public void GetAuthorSignRequest_InvalidFingerprint(string certificateFingerPrint)
         {
             var mockConsole = new Mock<IConsole>();
             var timestampUri = "http://timestamp.test/url";
@@ -137,7 +142,7 @@ namespace NuGet.MSSigning.Extensions.FuncTest.Commands
                     CertificateFile = test.CertificatePath,
                     CSPName = test.CertificateCSPName,
                     KeyContainer = test.CertificateKeyContainer,
-                    CertificateFingerprint = "invalid-fingerprint",
+                    CertificateFingerprint = certificateFingerPrint,
                 };
                 signCommand.Arguments.Add(Path.Combine(dir, "package.nupkg"));
 
@@ -281,5 +286,48 @@ namespace NuGet.MSSigning.Extensions.FuncTest.Commands
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
             }
         }
+
+        [CIOnlyFact]
+        public async Task MSSignCommand_SignPackageWithSHA1CertificateFingerprint_Raises_WarningAsync()
+        {
+            var result = await ExecuteMSSignCommandAsync(Common.HashAlgorithmName.SHA1);
+
+            result.Success.Should().BeTrue();
+            result.AllOutput.Should().Contain(_invalidCertificateFingerprintCode);
+        }
+
+        [CIOnlyTheory]
+        [InlineData(Common.HashAlgorithmName.SHA256)]
+        [InlineData(Common.HashAlgorithmName.SHA384)]
+        [InlineData(Common.HashAlgorithmName.SHA512)]
+        public async Task MSSignCommand_SignPackageWithSecureCertificateFingerprint_SucceedsAsync(Common.HashAlgorithmName hashAlgorithmName)
+        {
+            var result = await ExecuteMSSignCommandAsync(hashAlgorithmName);
+
+            result.Success.Should().BeTrue();
+            result.AllOutput.Should().NotContain(_invalidCertificateFingerprintCode);
+        }
+
+        private async Task<CommandRunnerResult> ExecuteMSSignCommandAsync(Common.HashAlgorithmName hashAlgorithmName)
+        {
+            var timestampService = await _testFixture.GetDefaultTrustedTimestampServiceAsync();
+            var package = new SimpleTestPackageContext();
+
+            // Arrange
+            using var test = new MSSignCommandTestContext(_trustedTestCertWithPrivateKey.TrustedCert);
+            var unsignedPackageFile = await package.CreateAsFileAsync(test.Directory, Guid.NewGuid().ToString());
+            string certificateFingerprint = hashAlgorithmName == Common.HashAlgorithmName.SHA1
+                ? test.Cert.Thumbprint
+                : SignatureTestUtility.GetFingerprint(test.Cert, hashAlgorithmName);
+            var command = $"mssign {unsignedPackageFile} -Timestamper {timestampService.Url} -CertificateFile {test.CertificatePath} -CSPName \"{test.CertificateCSPName}\" -KeyContainer \"{test.CertificateKeyContainer}\" -CertificateFingerprint {certificateFingerprint}";
+
+            var result = CommandRunner.Run(
+                _nugetExePath,
+                test.Directory,
+                command);
+
+            return result;
+        }
+
     }
 }

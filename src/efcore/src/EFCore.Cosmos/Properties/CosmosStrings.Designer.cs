@@ -32,6 +32,14 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
                 ttl1, entityType1, entityType2, ttl2, container);
 
         /// <summary>
+        ///     The type '{givenType}' cannot be mapped as a dictionary because it does not implement '{dictionaryType}'.
+        /// </summary>
+        public static string BadDictionaryType(object? givenType, object? dictionaryType)
+            => string.Format(
+                GetString("BadDictionaryType", nameof(givenType), nameof(dictionaryType)),
+                givenType, dictionaryType);
+
+        /// <summary>
         ///     The Cosmos database does not support 'CanConnect' or 'CanConnectAsync'.
         /// </summary>
         public static string CanConnectNotSupported
@@ -56,6 +64,14 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
             => string.Format(
                 GetString("ContainerContainingPropertyConflict", nameof(entityType), nameof(container), nameof(property)),
                 entityType, container, property);
+
+        /// <summary>
+        ///     An Azure Cosmos DB container name is defined on entity type '{entityType}', which inherits from '{baseEntityType}'. Container names must be defined on the root entity type of a hierarchy.
+        /// </summary>
+        public static string ContainerNotOnRoot(object? entityType, object? baseEntityType)
+            => string.Format(
+                GetString("ContainerNotOnRoot", nameof(entityType), nameof(baseEntityType)),
+                entityType, baseEntityType);
 
         /// <summary>
         ///     Cosmos-specific methods can only be used when the context is using the Cosmos provider.
@@ -84,6 +100,14 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
             => string.Format(
                 GetString("DuplicateDiscriminatorValue", nameof(entityType1), nameof(discriminatorValue), nameof(entityType2), nameof(container)),
                 entityType1, discriminatorValue, entityType2, container);
+
+        /// <summary>
+        ///     The property '{propertyType} {structuralType}.{property}' has element type '{elementType}', which requires a value converter. Elements types requiring value converters are not currently supported with the Azure Cosmos DB database provider.
+        /// </summary>
+        public static string ElementWithValueConverter(object? propertyType, object? structuralType, object? property, object? elementType)
+            => string.Format(
+                GetString("ElementWithValueConverter", nameof(propertyType), nameof(structuralType), nameof(property), nameof(elementType)),
+                propertyType, structuralType, property, elementType);
 
         /// <summary>
         ///     The type of the etag property '{property}' on '{entityType}' is '{propertyType}'. All etag properties must be strings or have a string value converter.
@@ -342,6 +366,14 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
             => string.Format(
                 GetString("PartitionKeyBadValueType", nameof(propertyType), nameof(entityType), nameof(property), nameof(valueType)),
                 propertyType, entityType, property, valueType);
+
+        /// <summary>
+        ///     A partition key is defined on entity type '{entityType}', which inherits from '{baseEntityType}'. Partition keys must be defined on the root entity type of a hierarchy.
+        /// </summary>
+        public static string PartitionKeyNotOnRoot(object? entityType, object? baseEntityType)
+            => string.Format(
+                GetString("PartitionKeyNotOnRoot", nameof(entityType), nameof(baseEntityType)),
+                entityType, baseEntityType);
 
         /// <summary>
         ///     Unable to execute a 'ReadItem' query since the partition key value is missing. Consider using the 'WithPartitionKey' method on the query to specify partition key to use.

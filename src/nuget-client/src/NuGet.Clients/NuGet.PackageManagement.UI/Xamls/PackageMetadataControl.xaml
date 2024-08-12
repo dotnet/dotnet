@@ -146,7 +146,7 @@
 
       <!-- Owner(s) -->
       <TextBlock
-        Visibility="{Binding Path=Owners,Converter={StaticResource NullToVisibilityConverter}}"
+        Visibility="{Binding Path=KnownOwnerViewModels,Converter={StaticResource NullToVisibilityConverter}}"
         Grid.Row="1"
         Grid.Column="0"
         Margin="0,8,0,0"
@@ -154,15 +154,43 @@
         x:Name="_ownersLabel"
         AutomationProperties.Name="{Binding Text}"
         Text="{x:Static nuget:Resources.Label_Owners}" />
-      <TextBox
-        Style="{DynamicResource SelectableTextBlockStyle}" 
-        Visibility="{Binding Path=Owners,Converter={StaticResource NullToVisibilityConverter}}"
-        AutomationProperties.LabeledBy="{Binding ElementName=_ownersLabel}"
-        Text="{Binding Path=Owners}"
-        Margin="8,8,0,0"
-        TextWrapping="Wrap"
+      <ItemsControl
+        x:Name="_panelOwners"
         Grid.Row="1"
-        Grid.Column="1" />
+        Grid.Column="1"
+        ItemsSource="{Binding KnownOwnerViewModels}"
+        Visibility="{Binding Path=KnownOwnerViewModels,Converter={StaticResource NullToVisibilityConverter}}"
+        AutomationProperties.LabeledBy="{Binding ElementName=_ownersLabel}"
+        Focusable="False"
+        Margin="8,8,0,0"
+        AlternationCount="{Binding RelativeSource={RelativeSource Self}, Path=Items.Count}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel Orientation="Horizontal" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <TextBlock TextWrapping="Wrap">
+              <Hyperlink
+                NavigateUri="{Binding Link, Mode=OneWay}"
+                ToolTip="{Binding Link, Mode=OneWay}"
+                Style="{StaticResource HyperlinkStyle}"
+                AutomationProperties.Name="{x:Static nuget:Resources.Hyperlink_Owner}"
+                Command="{x:Static nuget:PackageManagerControlCommands.OpenExternalLink}">
+                <Run Text="{Binding Name, Mode=OneTime}" />
+              </Hyperlink><TextBlock Margin="0,0,2,0" Text=",">
+                <TextBlock.Visibility>
+                  <MultiBinding Converter="{StaticResource LastItemToVisibilityConverter}">
+                    <Binding RelativeSource="{RelativeSource Mode=TemplatedParent}" Path="(ItemsControl.AlternationIndex)" />
+                    <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}" Path="Items.Count" />
+                  </MultiBinding>
+                </TextBlock.Visibility>
+              </TextBlock>
+            </TextBlock>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
 
       <!-- Author(s) -->
       <TextBlock

@@ -9,8 +9,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NuGet.Test.Utility;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Security;
 using Test.Utility.Signing;
 using Xunit;
 using Xunit.Abstractions;
@@ -24,14 +22,14 @@ namespace NuGet.CommandLine.FuncTest.Commands
     [Collection(SignCommandTestCollection.Name)]
     public class InstallCommandTests
     {
-        private static readonly string _NU3008Message = "The package integrity check failed. The package has changed since it was signed. Try clearing the local http-cache and run nuget operation again.";
-        private static readonly string _NU3008 = "NU3008: {0}";
-        private static readonly string _NU3027Message = "The signature should be timestamped to enable long-term signature validity after the certificate has expired.";
-        private static readonly string _NU3027 = "NU3027: {0}";
-        private static readonly string _NU3012Message = "The author primary signature found a chain building issue: Revoked: The certificate is revoked.";
-        private static readonly string _NU3012 = "NU3012: {0}";
-        private static readonly string _NU3018Message = "The author primary signature's signing certificate is not trusted by the trust provider.";
-        private static readonly string _NU3018 = "NU3018: {0}";
+        private static readonly string NU3008Message = "The package integrity check failed. The package has changed since it was signed. Try clearing the local http-cache and run nuget operation again.";
+        private static readonly string NU3008 = "NU3008: {0}";
+        private static readonly string NU3027Message = "The signature should be timestamped to enable long-term signature validity after the certificate has expired.";
+        private static readonly string NU3027 = "NU3027: {0}";
+        private static readonly string NU3012Message = "The author primary signature found a chain building issue: Revoked: The certificate is revoked.";
+        private static readonly string NU3012 = "NU3012: {0}";
+        private static readonly string NU3018Message = "The author primary signature's signing certificate is not trusted by the trust provider.";
+        private static readonly string NU3018 = "NU3018: {0}";
 
         private SignCommandTestFixture _testFixture;
         private readonly ITestOutputHelper _testOutputHelper;
@@ -75,7 +73,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
                 // Assert
                 result.ExitCode.Should().Be(0);
-                result.AllOutput.Should().Contain($"WARNING: {string.Format(_NU3027, SigningTestUtility.AddSignatureLogPrefix(_NU3027Message, nupkg.Identity, context.WorkingDirectory))}");
+                result.AllOutput.Should().Contain($"WARNING: {string.Format(NU3027, SigningTestUtility.AddSignatureLogPrefix(NU3027Message, nupkg.Identity, context.WorkingDirectory))}");
             }
         }
 
@@ -108,7 +106,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
                 // Assert
                 result.ExitCode.Should().Be(0);
-                result.AllOutput.Should().Contain($"WARNING: {string.Format(_NU3027, SigningTestUtility.AddSignatureLogPrefix(_NU3027Message, nupkg.Identity, context.WorkingDirectory))}");
+                result.AllOutput.Should().Contain($"WARNING: {string.Format(NU3027, SigningTestUtility.AddSignatureLogPrefix(NU3027Message, nupkg.Identity, context.WorkingDirectory))}");
             }
         }
 
@@ -141,8 +139,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
                 // Assert
                 result.ExitCode.Should().Be(0);
-                result.AllOutput.Should().Contain($"WARNING: {string.Format(_NU3018, SigningTestUtility.AddSignatureLogPrefix(_NU3018Message, nupkg.Identity, context.WorkingDirectory))}");
-                result.AllOutput.Should().Contain($"WARNING: {string.Format(_NU3027, SigningTestUtility.AddSignatureLogPrefix(_NU3027Message, nupkg.Identity, context.WorkingDirectory))}");
+                result.AllOutput.Should().Contain($"WARNING: {string.Format(NU3018, SigningTestUtility.AddSignatureLogPrefix(NU3018Message, nupkg.Identity, context.WorkingDirectory))}");
+                result.AllOutput.Should().Contain($"WARNING: {string.Format(NU3027, SigningTestUtility.AddSignatureLogPrefix(NU3027Message, nupkg.Identity, context.WorkingDirectory))}");
             }
         }
 
@@ -176,8 +174,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
                 // Assert
                 result.ExitCode.Should().Be(1);
-                result.Errors.Should().Contain(string.Format(_NU3008, SigningTestUtility.AddSignatureLogPrefix(_NU3008Message, nupkg.Identity, context.WorkingDirectory)));
-                result.AllOutput.Should().Contain($"WARNING: {string.Format(_NU3027, SigningTestUtility.AddSignatureLogPrefix(_NU3027Message, nupkg.Identity, context.WorkingDirectory))}");
+                result.Errors.Should().Contain(string.Format(NU3008, SigningTestUtility.AddSignatureLogPrefix(NU3008Message, nupkg.Identity, context.WorkingDirectory)));
+                result.AllOutput.Should().Contain($"WARNING: {string.Format(NU3027, SigningTestUtility.AddSignatureLogPrefix(NU3027Message, nupkg.Identity, context.WorkingDirectory))}");
             }
         }
 
@@ -189,20 +187,17 @@ namespace NuGet.CommandLine.FuncTest.Commands
             var testServer = await _testFixture.GetSigningTestServerAsync();
             var certificateAuthority = await _testFixture.GetDefaultTrustedCertificateAuthorityAsync();
             var issueOptions = IssueCertificateOptions.CreateDefaultForEndCertificate();
-            var bcCertificate = certificateAuthority.IssueCertificate(issueOptions);
 
             using (var context = new SimpleTestPathContext())
-            using (var testCertificate = new X509Certificate2(bcCertificate.GetEncoded()))
+            using (X509Certificate2 testCertificate = certificateAuthority.IssueCertificate(issueOptions))
             {
-                testCertificate.PrivateKey = DotNetUtilities.ToRSA(issueOptions.KeyPair.Private as RsaPrivateCrtKeyParameters);
-
                 var signedPackagePath = await SignedArchiveTestUtility.AuthorSignPackageAsync(testCertificate, nupkg, context.WorkingDirectory);
                 SignedArchiveTestUtility.TamperWithPackage(signedPackagePath);
 
-                await certificateAuthority.OcspResponder.WaitForResponseExpirationAsync(bcCertificate);
+                await certificateAuthority.OcspResponder.WaitForResponseExpirationAsync(testCertificate);
                 certificateAuthority.Revoke(
-                    bcCertificate,
-                    RevocationReason.KeyCompromise,
+                    testCertificate,
+                    X509RevocationReason.KeyCompromise,
                     DateTimeOffset.UtcNow.AddSeconds(-1));
 
                 var args = new string[]
@@ -223,9 +218,9 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
                 // Assert
                 result.ExitCode.Should().Be(1);
-                result.Errors.Should().Contain(string.Format(_NU3008, SigningTestUtility.AddSignatureLogPrefix(_NU3008Message, nupkg.Identity, context.WorkingDirectory)));
-                result.Errors.Should().Contain(string.Format(_NU3012, SigningTestUtility.AddSignatureLogPrefix(_NU3012Message, nupkg.Identity, context.WorkingDirectory)));
-                result.AllOutput.Should().Contain($"WARNING: {string.Format(_NU3027, SigningTestUtility.AddSignatureLogPrefix(_NU3027Message, nupkg.Identity, context.WorkingDirectory))}");
+                result.Errors.Should().Contain(string.Format(NU3008, SigningTestUtility.AddSignatureLogPrefix(NU3008Message, nupkg.Identity, context.WorkingDirectory)));
+                result.Errors.Should().Contain(string.Format(NU3012, SigningTestUtility.AddSignatureLogPrefix(NU3012Message, nupkg.Identity, context.WorkingDirectory)));
+                result.AllOutput.Should().Contain($"WARNING: {string.Format(NU3027, SigningTestUtility.AddSignatureLogPrefix(NU3027Message, nupkg.Identity, context.WorkingDirectory))}");
             }
         }
 

@@ -50,7 +50,12 @@ namespace NuGet.VisualStudio.SolutionExplorer
 
         public override int Priority => AttachedItemPriority.Package;
 
-        public override ImageMoniker IconMoniker => KnownMonikers.NuGetNoColor;
+        public override ImageMoniker IconMoniker => Library.LogLevel switch
+        {
+            NuGet.Common.LogLevel.Warning => KnownMonikers.NuGetNoColorWarning,
+            NuGet.Common.LogLevel.Error => KnownMonikers.NuGetNoColorError,
+            _ => KnownMonikers.NuGetNoColor
+        };
 
         protected override IContextMenuController? ContextMenuController => MenuController.TransitivePackage;
 

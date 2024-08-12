@@ -4,7 +4,7 @@ parameters:
   type: boolean
   default: true
 - name: RunCrossFrameworkTestsOnWindows
-  displayName: Run cross framweork tests on Windows
+  displayName: Run cross framework tests on Windows
   type: boolean
   default: true
 - name: RunFunctionalTestsOnWindows

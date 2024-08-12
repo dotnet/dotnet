@@ -13,12 +13,17 @@ using System.Text.Json;
 using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Json;
 using JsonPrimitives = Microsoft.IdentityModel.Tokens.Json.JsonSerializerPrimitives;
 using TokenLogMessages = Microsoft.IdentityModel.Tokens.LogMessages;
 
 namespace Microsoft.IdentityModel.JsonWebTokens
 {
-    /// <remarks>This partial class contains methods and logic related to the creation of tokens.</remarks>
+    /// <summary>
+    /// A <see cref="SecurityTokenHandler"/> designed for creating and validating Json Web Tokens.
+    /// See: https://datatracker.ietf.org/doc/html/rfc7519 and http://www.rfc-editor.org/info/rfc7515.
+    /// </summary>
+    /// <remarks>This partial class is focused on TokenCreation.</remarks>
     public partial class JsonWebTokenHandler : TokenHandler
     {
         /// <summary>
@@ -1055,8 +1060,32 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                     writer.WriteString(JwtHeaderUtf8Bytes.Alg, encryptingCredentials.Alg);
                     writer.WriteString(JwtHeaderUtf8Bytes.Enc, encryptingCredentials.Enc);
 
-                    if (encryptingCredentials.Key.KeyId != null)
-                        writer.WriteString(JwtHeaderUtf8Bytes.Kid, encryptingCredentials.Key.KeyId);
+                    // Since developers may have already worked around this issue, implicitly taking a dependency on the
+                    // old behavior, we guard the new behavior behind an AppContext switch. The new/RFC-conforming behavior
+                    // is treated as opt-in. When the library is at the point where it is able to make breaking changes
+                    // (such as the next major version update) we should consider whether or not this app-compat switch
+                    // needs to be maintained.
+                    if (AppContext.TryGetSwitch(AppCompatSwitches.UseRfcDefinitionOfEpkAndKid, out bool isEnabled) && isEnabled)
+                    {
+                        if (encryptingCredentials.KeyExchangePublicKey.KeyId != null)
+                            writer.WriteString(JwtHeaderUtf8Bytes.Kid, encryptingCredentials.KeyExchangePublicKey.KeyId);
+
+                        if (SupportedAlgorithms.EcdsaWrapAlgorithms.Contains(encryptingCredentials.Alg))
+                        {
+                            writer.WritePropertyName(JwtHeaderUtf8Bytes.Epk);
+                            string publicJwk = JsonWebKeyConverter.ConvertFromSecurityKey(encryptingCredentials.Key).RepresentAsAsymmetricPublicJwk();
+#if NET6_0_OR_GREATER
+                            writer.WriteRawValue(publicJwk);
+#else
+                            JsonPrimitives.WriteAsJsonElement(ref writer, publicJwk);
+#endif
+                        }
+                    }
+                    else
+                    {
+                        if (encryptingCredentials.Key.KeyId != null)
+                            writer.WriteString(JwtHeaderUtf8Bytes.Kid, encryptingCredentials.Key.KeyId);
+                    }
 
                     if (!string.IsNullOrEmpty(compressionAlgorithm))
                         writer.WriteString(JwtHeaderUtf8Bytes.Zip, compressionAlgorithm);
@@ -1360,10 +1389,27 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 #if NET472 || NET6_0_OR_GREATER
                     if (SupportedAlgorithms.EcdsaWrapAlgorithms.Contains(jwtToken.Alg))
                     {
-                        // on decryption we get the public key from the EPK value see: https://datatracker.ietf.org/doc/html/rfc7518#appendix-C
+                        ECDsaSecurityKey publicKey;
+
+                        // Since developers may have already worked around this issue, implicitly taking a dependency on the
+                        // old behavior, we guard the new behavior behind an AppContext switch. The new/RFC-conforming behavior
+                        // is treated as opt-in. When the library is at the point where it is able to make breaking changes
+                        // (such as the next major version update) we should consider whether or not this app-compat switch
+                        // needs to be maintained.
+                        if (AppContext.TryGetSwitch(AppCompatSwitches.UseRfcDefinitionOfEpkAndKid, out bool isEnabled) && isEnabled)
+                        {
+                            // on decryption we get the public key from the EPK value see: https://datatracker.ietf.org/doc/html/rfc7518#appendix-C
+                            jwtToken.TryGetHeaderValue(JwtHeaderParameterNames.Epk, out string epk);
+                            publicKey = new ECDsaSecurityKey(new JsonWebKey(epk), false);
+                        }
+                        else
+                        {
+                            publicKey = validationParameters.TokenDecryptionKey as ECDsaSecurityKey;
+                        }
+
                         var ecdhKeyExchangeProvider = new EcdhKeyExchangeProvider(
                             key as ECDsaSecurityKey,
-                            validationParameters.TokenDecryptionKey as ECDsaSecurityKey,
+                            publicKey,
                             jwtToken.Alg,
                             jwtToken.Enc);
                         jwtToken.TryGetHeaderValue(JwtHeaderParameterNames.Apu, out string apu);

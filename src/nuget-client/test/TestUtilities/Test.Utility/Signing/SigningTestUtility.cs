@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
@@ -14,14 +15,7 @@ using NuGet.Common;
 using NuGet.Packaging.Core;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Generators;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.X509.Extension;
 using Xunit;
-using X509Extension = System.Security.Cryptography.X509Certificates.X509Extension;
 
 namespace Test.Utility.Signing
 {
@@ -36,7 +30,7 @@ namespace Test.Utility.Signing
         public static Action<TestCertificateGenerator> CertificateModificationGeneratorForInvalidEkuCert = delegate (TestCertificateGenerator gen)
         {
             // any EKU besides CodeSigning
-            var usages = new OidCollection { new Oid(TestOids.IdKpClientAuth) };
+            var usages = new OidCollection { TestOids.ClientAuthenticationEku };
 
             gen.Extensions.Add(
                  new X509EnhancedKeyUsageExtension(
@@ -384,29 +378,23 @@ namespace Test.Utility.Signing
                     issuer = chainCertificateRequest?.Issuer;
 
                     notAfter = issuer.NotAfter.Subtract(TimeSpan.FromMinutes(5));
-                    var publicKey = DotNetUtilities.GetRsaPublicKey(issuer.GetRSAPublicKey());
+                    X509AuthorityKeyIdentifierExtension extension = X509AuthorityKeyIdentifierExtension.CreateFromCertificate(
+                        chainCertificateRequest.Issuer,
+                        includeKeyIdentifier: true,
+                        includeIssuerAndSerial: false);
 
-                    certGen.Extensions.Add(
-                        new X509Extension(
-                            Oids.AuthorityKeyIdentifier,
-                            new AuthorityKeyIdentifierStructure(publicKey).GetEncoded(),
-                            critical: false));
+                    certGen.Extensions.Add(extension);
                 }
 
                 if (chainCertificateRequest.ConfigureCrl)
                 {
                     // for a certificate in a chain create CRL distribution point extension
                     var issuerDN = chainCertificateRequest?.Issuer?.Subject ?? subjectDN;
-                    var crlServerUri = $"{chainCertificateRequest.CrlServerBaseUri}{issuerDN}.crl";
-                    var generalName = new Org.BouncyCastle.Asn1.X509.GeneralName(Org.BouncyCastle.Asn1.X509.GeneralName.UniformResourceIdentifier, new DerIA5String(crlServerUri));
-                    var distPointName = new DistributionPointName(new GeneralNames(generalName));
-                    var distPoint = new DistributionPoint(distPointName, null, null);
+                    var crlServerUri = new Uri($"{chainCertificateRequest.CrlServerBaseUri}{issuerDN}.crl");
+                    string[] uris = new[] { crlServerUri.AbsoluteUri };
+                    X509Extension extension = CertificateRevocationListBuilder.BuildCrlDistributionPointExtension(uris);
 
-                    certGen.Extensions.Add(
-                        new X509Extension(
-                            TestOids.CrlDistributionPoints,
-                            new DerSequence(distPoint).GetDerEncoded(),
-                            critical: false));
+                    certGen.Extensions.Add(extension);
                 }
 
                 if (chainCertificateRequest.IsCA)
@@ -565,16 +553,14 @@ namespace Test.Utility.Signing
                     keyUsages |= X509KeyUsageFlags.KeyCertSign;
                 }
 
-                request.CertificateExtensions.Add(
-                    new X509SubjectKeyIdentifierExtension(request.PublicKey, critical: false));
+                var skiExtension = new X509SubjectKeyIdentifierExtension(request.PublicKey, critical: false);
 
-                var publicKey = DotNetUtilities.GetRsaPublicKey(rsa);
+                request.CertificateExtensions.Add(skiExtension);
 
-                request.CertificateExtensions.Add(
-                    new X509Extension(
-                        Oids.AuthorityKeyIdentifier,
-                        new AuthorityKeyIdentifierStructure(publicKey).GetEncoded(),
-                        critical: false));
+                ReadOnlySpan<byte> skidBytes = HexConverter.ToByteArray(skiExtension.SubjectKeyIdentifier);
+                X509AuthorityKeyIdentifierExtension akiExtension = X509AuthorityKeyIdentifierExtension.CreateFromSubjectKeyIdentifier(skidBytes);
+
+                request.CertificateExtensions.Add(akiExtension);
                 request.CertificateExtensions.Add(
                     new X509BasicConstraintsExtension(certificateAuthority: isCa, hasPathLengthConstraint: false, pathLengthConstraint: 0, critical: true));
                 request.CertificateExtensions.Add(
@@ -591,30 +577,9 @@ namespace Test.Utility.Signing
             }
         }
 
-        private static X509SubjectKeyIdentifierExtension GetSubjectKeyIdentifier(X509Certificate2 issuer)
+        public static RSA GenerateKeyPair(int publicKeyLength)
         {
-            var subjectKeyIdentifierOid = "2.5.29.14";
-
-            foreach (var extension in issuer.Extensions)
-            {
-                if (string.Equals(extension.Oid.Value, subjectKeyIdentifierOid))
-                {
-                    return extension as X509SubjectKeyIdentifierExtension;
-                }
-            }
-
-            return null;
-        }
-
-        public static AsymmetricCipherKeyPair GenerateKeyPair(int publicKeyLength)
-        {
-            var random = new SecureRandom();
-            var keyPairGenerator = new RsaKeyPairGenerator();
-            var parameters = new KeyGenerationParameters(random, publicKeyLength);
-
-            keyPairGenerator.Init(parameters);
-
-            return keyPairGenerator.GenerateKeyPair();
+            return RSA.Create(publicKeyLength);
         }
 
         /// <summary>
@@ -799,12 +764,25 @@ namespace Test.Utility.Signing
 
         public static void VerifySerialNumber(X509Certificate2 certificate, NuGet.Packaging.Signing.IssuerSerial issuerSerial)
         {
-            var serialNumber = certificate.GetSerialNumber();
+            ReadOnlySpan<byte> serialNumber = certificate.GetSerialNumberBigEndian();
 
-            // Convert from little endian to big endian.
-            Array.Reverse(serialNumber);
+            VerifyByteArrays(serialNumber.ToArray(), issuerSerial.SerialNumber);
+        }
 
-            VerifyByteArrays(serialNumber, issuerSerial.SerialNumber);
+        internal static void VerifySerialNumber(BigInteger serialNumber1, byte[] serialNumber2)
+        {
+            byte[] expected = serialNumber1.ToByteArray();
+
+            Array.Reverse(expected);
+
+            VerifyByteArrays(expected, serialNumber2);
+        }
+
+        public static void VerifyByteSequences(ReadOnlyMemory<byte> expected, ReadOnlyMemory<byte> actual)
+        {
+            Assert.Equal(expected.Length, actual.Length);
+
+            VerifyByteArrays(expected.Span.ToArray(), actual.Span.ToArray());
         }
 
         public static void VerifyByteArrays(byte[] expected, byte[] actual)

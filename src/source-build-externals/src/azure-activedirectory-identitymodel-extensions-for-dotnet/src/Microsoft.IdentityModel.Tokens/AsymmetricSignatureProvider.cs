@@ -208,15 +208,13 @@ namespace Microsoft.IdentityModel.Tokens
             catch
             {
                 CryptoProviderCache?.TryRemove(this);
-                Dispose(true);
                 throw;
             }
             finally
             {
-                if (!_disposed)
+                if (asym != null)
                     _asymmetricAdapterObjectPool.Free(asym);
             }
-
         }
 #endif
 
@@ -248,12 +246,11 @@ namespace Microsoft.IdentityModel.Tokens
             catch
             {
                 CryptoProviderCache?.TryRemove(this);
-                Dispose(true);
                 throw;
             }
             finally
             {
-                if (!_disposed)
+                if (asym != null)
                     _asymmetricAdapterObjectPool.Free(asym);
             }
         }
@@ -279,12 +276,11 @@ namespace Microsoft.IdentityModel.Tokens
             catch
             {
                 CryptoProviderCache?.TryRemove(this);
-                Dispose(true);
                 throw;
             }
             finally
             {
-                if (!_disposed)
+                if (asym != null)
                     _asymmetricAdapterObjectPool.Free(asym);
             }
         }
@@ -380,12 +376,11 @@ namespace Microsoft.IdentityModel.Tokens
             catch
             {
                 CryptoProviderCache?.TryRemove(this);
-                Dispose(true);
                 throw;
             }
             finally
             {
-                if (!_disposed)
+                if (asym != null)
                     _asymmetricAdapterObjectPool.Free(asym);
             }
         }
@@ -474,15 +469,14 @@ namespace Microsoft.IdentityModel.Tokens
             }
             catch
             {
-                Dispose(true);
+                CryptoProviderCache?.TryRemove(this);
                 throw;
             }
             finally
             {
-                if (!_disposed)
+                if (asym != null)
                     _asymmetricAdapterObjectPool.Free(asym);
             }
-
         }
 
         /// <summary>

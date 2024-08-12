@@ -23,7 +23,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult, actualResult);
         }
 
-        public static TheoryData ImplicitProjectActions => new TheoryData<ImplicitProjectAction>
+        public static TheoryData<ImplicitProjectAction> ImplicitProjectActions => new()
             {
                 { new ImplicitProjectAction(Id, PackageIdentity, NuGetProjectActionType.Install) }
             };

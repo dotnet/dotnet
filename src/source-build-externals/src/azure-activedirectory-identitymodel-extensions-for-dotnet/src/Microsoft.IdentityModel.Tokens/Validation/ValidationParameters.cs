@@ -476,7 +476,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// If set to a non-empty collection, only the algorithms listed will be considered valid.
         /// The default is <c>null</c>.
         /// </remarks>
-        public IList<string> ValidAlgorithms { get; }
+        public IList<string> ValidAlgorithms { get; set; }
 
         /// <summary>
         /// Gets the <see cref="IList{String}"/> that contains valid audiences that will be used to check against the token's audience.

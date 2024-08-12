@@ -303,7 +303,7 @@ namespace NuGet.Commands.Test
                 Assert.True(success, "Failed: " + string.Join(Environment.NewLine, logger.Messages));
 
                 // Verify only packages
-                Assert.Empty(projects[0].AssetsFile.Libraries.Where(e => e.Type != "package"));
+                Assert.DoesNotContain(projects[0].AssetsFile.Libraries, e => e.Type != "package");
             }
         }
 

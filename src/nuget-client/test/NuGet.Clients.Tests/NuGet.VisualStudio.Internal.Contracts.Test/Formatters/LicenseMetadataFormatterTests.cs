@@ -39,7 +39,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult.WarningsAndErrors, actualResult.WarningsAndErrors);
         }
 
-        public static TheoryData TestData => new TheoryData<LicenseMetadata>
+        public static TheoryData<LicenseMetadata> TestData => new()
             {
                 new LicenseMetadata(LicenseType.Expression,
                     "MIT",

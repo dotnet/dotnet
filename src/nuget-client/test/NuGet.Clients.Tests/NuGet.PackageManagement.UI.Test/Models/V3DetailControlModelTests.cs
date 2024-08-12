@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -16,6 +17,7 @@ using Microsoft.VisualStudio.Shell.ServiceBroker;
 using Moq;
 using NuGet.Configuration;
 using NuGet.Frameworks;
+using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -625,9 +627,9 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [InlineData("3.0.0", "3.0.0", true, false)]
         [InlineData("3", "3.0.0", true, false)]
         [InlineData("3.0.1-beta", "3.0.1-beta", true, true)]
-        public async void WhenPackageStyleIsPackageReference_And_CustomVersion_InstalledTab_IsSelectedVersionCorrect(string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
+        public async Task WhenPackageStyleIsPackageReference_And_CustomVersion_InstalledTab_IsSelectedVersionCorrect(string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
         {
-            // Arange project
+            // Arrange project
             Mock<IServiceBroker> mockServiceBroker = new Mock<IServiceBroker>();
             Mock<INuGetSearchService> mockSearchService = new Mock<INuGetSearchService>();
 
@@ -730,13 +732,13 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [Theory]
         [MemberData(nameof(FloatingVersions_TestCases))]
 
-        public async void WhenPackageStyleIsPackageReference_And_CustomVersion_UpdatesTab_IsSelectedVersionCorrect(string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
+        public async Task WhenPackageStyleIsPackageReference_And_CustomVersion_UpdatesTab_IsSelectedVersionCorrect(string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
         {
             // Assert
             // Updates Tab wont show package if it is latest
             Assert.Equal(isLatest, false);
 
-            // Arange project
+            // Arrange project
             Mock<IServiceBroker> mockServiceBroker = new Mock<IServiceBroker>();
             Mock<INuGetSearchService> mockSearchService = new Mock<INuGetSearchService>();
 
@@ -855,9 +857,9 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [InlineData("3.0.0", "3.0.0", true, false)]
         [InlineData("3", "3.0.0", true, false)]
         [InlineData("3.0.1-beta", "3.0.1-beta", true, true)]
-        public async void WhenPackageStyleIsPackageReference_And_CustomVersion_BrowseTab_IsSelectedVersionCorrect(string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
+        public async Task WhenPackageStyleIsPackageReference_And_CustomVersion_BrowseTab_IsSelectedVersionCorrect(string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
         {
-            // Arange project
+            // Arrange project
             Mock<IServiceBroker> mockServiceBroker = new Mock<IServiceBroker>();
             Mock<INuGetSearchService> mockSearchService = new Mock<INuGetSearchService>();
 
@@ -1065,9 +1067,9 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [InlineData(NuGetProjectKind.ProjectK, ProjectModel.ProjectStyle.ProjectJson, "[3,)", "3", true, false)]
         [InlineData(NuGetProjectKind.ProjectK, ProjectModel.ProjectStyle.ProjectJson, "[3.0,)", "3.0", true, false)]
         [InlineData(NuGetProjectKind.ProjectK, ProjectModel.ProjectStyle.ProjectJson, "[3.0.0,)", "3.0.0", true, false)]
-        public async void WhenPackageStyleIsNotPackageReference_And_CustomVersion_InstalledTab_IsSelectedVersionCorrect(NuGetProjectKind projectKind, ProjectModel.ProjectStyle projectStyle, string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
+        public async Task WhenPackageStyleIsNotPackageReference_And_CustomVersion_InstalledTab_IsSelectedVersionCorrect(NuGetProjectKind projectKind, ProjectModel.ProjectStyle projectStyle, string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
         {
-            // Arange project
+            // Arrange project
             Mock<IServiceBroker> mockServiceBroker = new Mock<IServiceBroker>();
             Mock<INuGetSearchService> mockSearchService = new Mock<INuGetSearchService>();
 
@@ -1168,9 +1170,9 @@ namespace NuGet.PackageManagement.UI.Test.Models
         [InlineData(NuGetProjectKind.ProjectK, ProjectModel.ProjectStyle.ProjectJson, "[3,)", "3", true, false)]
         [InlineData(NuGetProjectKind.ProjectK, ProjectModel.ProjectStyle.ProjectJson, "[3.0,)", "3.0", true, false)]
         [InlineData(NuGetProjectKind.ProjectK, ProjectModel.ProjectStyle.ProjectJson, "[3.0.0,)", "3.0.0", true, false)]
-        public async void WhenPackageStyleIsNotPackageReference_And_CustomVersion_BrowseTab_IsSelectedVersionCorrect(NuGetProjectKind projectKind, ProjectModel.ProjectStyle projectStyle, string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
+        public async Task WhenPackageStyleIsNotPackageReference_And_CustomVersion_BrowseTab_IsSelectedVersionCorrect(NuGetProjectKind projectKind, ProjectModel.ProjectStyle projectStyle, string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
         {
-            // Arange project
+            // Arrange project
             Mock<IServiceBroker> mockServiceBroker = new Mock<IServiceBroker>();
             Mock<INuGetSearchService> mockSearchService = new Mock<INuGetSearchService>();
 
@@ -1271,7 +1273,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
 
         [Theory]
         [MemberData(nameof(FloatingVersions_TestCases_NonPackageReferenceProject))]
-        public async void WhenPackageStyleIsNotPackageReference_And_CustomVersion_UpdatesTab_IsSelectedVersionCorrect(NuGetProjectKind projectKind, ProjectModel.ProjectStyle projectStyle, string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
+        public async Task WhenPackageStyleIsNotPackageReference_And_CustomVersion_UpdatesTab_IsSelectedVersionCorrect(NuGetProjectKind projectKind, ProjectModel.ProjectStyle projectStyle, string allowedVersions, string installedVersion, bool isLatest, bool includePrerelease)
         {
             // Arrange project
             Mock<IServiceBroker> mockServiceBroker = new Mock<IServiceBroker>();
@@ -1728,6 +1730,51 @@ namespace NuGet.PackageManagement.UI.Test.Models
             Assert.True(afterSetInstalledOrUpdateButtonIsEnabled_CanUninstall_RaisedPropertyChanged,
                 nameof(PackageSolutionDetailControlModel.CanUninstall) + " should have raised a PropertyChanged when calling "
                 + nameof(DetailControlModel.SetInstalledOrUpdateButtonIsEnabled) + " and the value should become true.");
+        }
+
+
+        [Fact]
+        public async Task SetCurrentPackageAsync_WithKnownOwnerViewModels_PropagatedToDetailedPackageMetadata()
+        {
+            // Arrange
+            NuGetVersion installedVersion = NuGetVersion.Parse("1.0.0");
+            PackageIdentity packageIdentity = new PackageIdentity("package", installedVersion);
+
+            var mockPropertyChangedEventHandler = new Mock<IPropertyChangedEventHandler>();
+
+            ImmutableList<KnownOwnerViewModel> knownOwnerViewModels = new List<KnownOwnerViewModel>(capacity: 3)
+            {
+                new KnownOwnerViewModel(new KnownOwner("a", new Uri("https://dev.nugettest.org/profiles/a"))),
+                new KnownOwnerViewModel(new KnownOwner("b", new Uri("https://dev.nugettest.org/profiles/b"))),
+                new KnownOwnerViewModel(new KnownOwner("c", new Uri("https://dev.nugettest.org/profiles/c")))
+            }.ToImmutableList();
+
+            var packageSearchMetadata = PackageSearchMetadataContextInfo.Create(_testData.TestData);
+
+            var mockSearchService = new Mock<INuGetSearchService>();
+            mockSearchService.Setup(s => s.GetPackageMetadataAsync(packageIdentity,
+                It.IsAny<ReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((packageSearchMetadata, It.IsAny<PackageDeprecationMetadataContextInfo>()));
+
+            var packageItemViewModel = new PackageItemViewModel(mockSearchService.Object)
+            {
+                Id = "package",
+                InstalledVersion = installedVersion,
+                Version = installedVersion,
+                KnownOwnerViewModels = knownOwnerViewModels
+            };
+
+            // Act
+            await _testInstance.SetCurrentPackageAsync(
+                packageItemViewModel,
+                ItemFilter.All,
+                () => packageItemViewModel);
+
+            // Assert
+            var resultKnownOwnerViewModels = _testInstance.PackageMetadata.KnownOwnerViewModels;
+            resultKnownOwnerViewModels.Should().NotBeNull();
+            resultKnownOwnerViewModels.Count.Should().Be(3);
+            resultKnownOwnerViewModels.Should().ContainInOrder(knownOwnerViewModels);
         }
     }
 

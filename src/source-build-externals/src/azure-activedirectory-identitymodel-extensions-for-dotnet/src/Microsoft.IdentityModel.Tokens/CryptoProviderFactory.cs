@@ -18,6 +18,8 @@ namespace Microsoft.IdentityModel.Tokens
         private static readonly ConcurrentDictionary<string, string> _typeToAlgorithmMap = new ConcurrentDictionary<string, string>();
         private static readonly object _cacheLock = new object();
         private static int _defaultSignatureProviderObjectPoolCacheSize = Environment.ProcessorCount * 4;
+        private static string _typeofAsymmetricSignatureProvider = typeof(AsymmetricSignatureProvider).ToString();
+        private static string _typeofSymmetricSignatureProvider = typeof(SymmetricSignatureProvider).ToString();
         private int _signatureProviderObjectPoolCacheSize = _defaultSignatureProviderObjectPoolCacheSize;
 
         /// <summary>
@@ -513,7 +515,13 @@ namespace Microsoft.IdentityModel.Tokens
             {
                 signatureProvider = CustomCryptoProvider.Create(algorithm, key, willCreateSignatures) as SignatureProvider;
                 if (signatureProvider == null)
-                    throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(LogMessages.IDX10646, LogHelper.MarkAsNonPII(algorithm), key, LogHelper.MarkAsNonPII(typeof(SignatureProvider)))));
+                    throw LogHelper.LogExceptionMessage(
+                        new InvalidOperationException(
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX10646,
+                                LogHelper.MarkAsNonPII(algorithm),
+                                key,
+                                LogHelper.MarkAsNonPII(typeof(SignatureProvider)))));
 
                 return signatureProvider;
             }
@@ -523,7 +531,7 @@ namespace Microsoft.IdentityModel.Tokens
             bool createAsymmetric = true;
             if (key is AsymmetricSecurityKey)
             {
-                typeofSignatureProvider = typeof(AsymmetricSignatureProvider).ToString();
+                typeofSignatureProvider = _typeofAsymmetricSignatureProvider;
             }
             else if (key is JsonWebKey jsonWebKey)
             {
@@ -533,11 +541,11 @@ namespace Microsoft.IdentityModel.Tokens
                     {
                         if (convertedSecurityKey is AsymmetricSecurityKey)
                         {
-                            typeofSignatureProvider = typeof(AsymmetricSignatureProvider).ToString();
+                            typeofSignatureProvider = _typeofAsymmetricSignatureProvider;
                         }
                         else if (convertedSecurityKey is SymmetricSecurityKey)
                         {
-                            typeofSignatureProvider = typeof(SymmetricSignatureProvider).ToString();
+                            typeofSignatureProvider = _typeofSymmetricSignatureProvider;
                             createAsymmetric = false;
                         }
                     }
@@ -545,10 +553,10 @@ namespace Microsoft.IdentityModel.Tokens
                     else
                     {
                         if (jsonWebKey.Kty == JsonWebAlgorithmsKeyTypes.RSA || jsonWebKey.Kty == JsonWebAlgorithmsKeyTypes.EllipticCurve)
-                            typeofSignatureProvider = typeof(AsymmetricSignatureProvider).ToString();
+                            typeofSignatureProvider = _typeofAsymmetricSignatureProvider;
                         else if (jsonWebKey.Kty == JsonWebAlgorithmsKeyTypes.Octet)
                         {
-                            typeofSignatureProvider = typeof(SymmetricSignatureProvider).ToString();
+                            typeofSignatureProvider = _typeofSymmetricSignatureProvider;
                             createAsymmetric = false;
                         }
                     }
@@ -560,12 +568,20 @@ namespace Microsoft.IdentityModel.Tokens
             }
             else if (key is SymmetricSecurityKey)
             {
-                typeofSignatureProvider = typeof(SymmetricSignatureProvider).ToString();
+                typeofSignatureProvider = _typeofSymmetricSignatureProvider;
                 createAsymmetric = false;
             }
 
             if (typeofSignatureProvider == null)
-                throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10621, LogHelper.MarkAsNonPII(typeof(SymmetricSignatureProvider)), LogHelper.MarkAsNonPII(typeof(SecurityKey)), LogHelper.MarkAsNonPII(typeof(AsymmetricSecurityKey)), LogHelper.MarkAsNonPII(typeof(SymmetricSecurityKey)), LogHelper.MarkAsNonPII(key.GetType()))));
+                throw LogHelper.LogExceptionMessage(
+                    new NotSupportedException(
+                        LogHelper.FormatInvariant(
+                            LogMessages.IDX10621,
+                            LogHelper.MarkAsNonPII(typeof(SymmetricSignatureProvider)),
+                            LogHelper.MarkAsNonPII(typeof(SecurityKey)),
+                            LogHelper.MarkAsNonPII(typeof(AsymmetricSecurityKey)),
+                            LogHelper.MarkAsNonPII(typeof(SymmetricSecurityKey)),
+                            LogHelper.MarkAsNonPII(key.GetType()))));
 
             if (CacheSignatureProviders && cacheProvider)
             {
@@ -592,7 +608,7 @@ namespace Microsoft.IdentityModel.Tokens
                         signatureProvider = new SymmetricSignatureProvider(key, algorithm, willCreateSignatures);
 
                     if (ShouldCacheSignatureProvider(signatureProvider))
-                        CryptoProviderCache.TryAdd(signatureProvider);
+                        signatureProvider.IsCached = CryptoProviderCache.TryAdd(signatureProvider);
                 }
             }
             else
@@ -737,7 +753,7 @@ namespace Microsoft.IdentityModel.Tokens
             signatureProvider.Release();
             if (CustomCryptoProvider != null && CustomCryptoProvider.IsSupportedAlgorithm(signatureProvider.Algorithm))
                 CustomCryptoProvider.Release(signatureProvider);
-            else if (signatureProvider.CryptoProviderCache == null && signatureProvider.RefCount == 0)
+            else if (signatureProvider.CryptoProviderCache == null && signatureProvider.RefCount == 0 && !signatureProvider.IsCached)
                 signatureProvider.Dispose();
         }
     }

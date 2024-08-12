@@ -23,7 +23,12 @@ public class DotnetTestMSBuildOutputTests : AcceptanceTestBase
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
         var projectPath = GetIsolatedTestAsset("TerminalLoggerTestProject.csproj");
-        InvokeDotnetTest($@"{projectPath} -nodereuse:false /p:VsTestUseMSBuildOutput=true /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}");
+        InvokeDotnetTest($@"{projectPath} -nodereuse:false /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}", new Dictionary<string, string?>
+        {
+            // Setting this temporarily, until we upgrade to final net9, which has this option set automatically in the MSBUILD sdk.
+            // Without this option we don't produce any output to the terminal logger.
+            ["_MSBUILDTLENABLED"] = "1"
+        });
 
         // The output:
         // Determining projects to restore...

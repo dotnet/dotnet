@@ -1,26 +1,24 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
+#if IS_SIGNING_SUPPORTED
+using System.Formats.Asn1;
 using System.Net;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.Cmp;
-using Org.BouncyCastle.Asn1.Ess;
-using Org.BouncyCastle.Asn1.Pkcs;
-using Org.BouncyCastle.Asn1.Tsp;
-using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Cms;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Math;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Tsp;
-using Org.BouncyCastle.X509;
-using Org.BouncyCastle.X509.Extension;
-using Org.BouncyCastle.X509.Store;
-using BcAttribute = Org.BouncyCastle.Asn1.Cms.Attribute;
-using BcAttributeTable = Org.BouncyCastle.Asn1.Cms.AttributeTable;
-using BcContentInfo = Org.BouncyCastle.Asn1.Cms.ContentInfo;
+#endif
+using System.Numerics;
+using System.Security.Cryptography;
+#if IS_SIGNING_SUPPORTED
+using System.Security.Cryptography.Pkcs;
+#endif
+using System.Security.Cryptography.X509Certificates;
+using NuGet.Packaging.Signing;
+#if IS_SIGNING_SUPPORTED
+using TestTstInfo = Test.Utility.Signing.TstInfo;
+#endif
 
 namespace Test.Utility.Signing
 {
@@ -30,7 +28,6 @@ namespace Test.Utility.Signing
         private const string RequestContentType = "application/timestamp-query";
         private const string ResponseContentType = "application/timestamp-response";
 
-        private readonly AsymmetricCipherKeyPair _keyPair;
         private readonly TimestampServiceOptions _options;
         private readonly HashSet<BigInteger> _serialNumbers;
         private BigInteger _nextSerialNumber;
@@ -38,7 +35,7 @@ namespace Test.Utility.Signing
         /// <summary>
         /// Gets this certificate authority's certificate.
         /// </summary>
-        public X509Certificate Certificate { get; }
+        public X509Certificate2 Certificate { get; }
 
         /// <summary>
         /// Gets the base URI specific to this HTTP responder.
@@ -52,14 +49,12 @@ namespace Test.Utility.Signing
 
         private TimestampService(
             CertificateAuthority certificateAuthority,
-            X509Certificate certificate,
-            AsymmetricCipherKeyPair keyPair,
+            X509Certificate2 certificate,
             Uri uri,
             TimestampServiceOptions options)
         {
             CertificateAuthority = certificateAuthority;
             Certificate = certificate;
-            _keyPair = keyPair;
             Url = uri;
             _serialNumbers = new HashSet<BigInteger>();
             _nextSerialNumber = BigInteger.One;
@@ -68,8 +63,8 @@ namespace Test.Utility.Signing
 
         public static TimestampService Create(
             CertificateAuthority certificateAuthority,
-            TimestampServiceOptions serviceOptions = null,
-            IssueCertificateOptions issueCertificateOptions = null)
+            TimestampServiceOptions? serviceOptions = null,
+            IssueCertificateOptions? issueCertificateOptions = null)
         {
             if (certificateAuthority == null)
             {
@@ -83,36 +78,31 @@ namespace Test.Utility.Signing
                 issueCertificateOptions = IssueCertificateOptions.CreateDefaultForTimestampService();
             }
 
-            void customizeCertificate(X509V3CertificateGenerator generator)
+            void customizeCertificate(CertificateRequest certificateRequest)
             {
-                generator.AddExtension(
-                    X509Extensions.AuthorityInfoAccess,
-                    critical: false,
-                    extensionValue: new DerSequence(
-                        new AccessDescription(AccessDescription.IdADOcsp,
-                            new GeneralName(GeneralName.UniformResourceIdentifier, certificateAuthority.OcspResponderUri.OriginalString)),
-                        new AccessDescription(AccessDescription.IdADCAIssuers,
-                            new GeneralName(GeneralName.UniformResourceIdentifier, certificateAuthority.CertificateUri.OriginalString))));
-                generator.AddExtension(
-                    X509Extensions.AuthorityKeyIdentifier,
-                    critical: false,
-                    extensionValue: new AuthorityKeyIdentifierStructure(certificateAuthority.Certificate));
-                generator.AddExtension(
-                    X509Extensions.SubjectKeyIdentifier,
-                    critical: false,
-                    extensionValue: new SubjectKeyIdentifierStructure(issueCertificateOptions.KeyPair.Public));
-                generator.AddExtension(
-                    X509Extensions.BasicConstraints,
-                    critical: true,
-                    extensionValue: new BasicConstraints(cA: false));
-                generator.AddExtension(
-                    X509Extensions.KeyUsage,
-                    critical: true,
-                    extensionValue: new KeyUsage(KeyUsage.DigitalSignature));
-                generator.AddExtension(
-                    X509Extensions.ExtendedKeyUsage,
-                    critical: true,
-                    extensionValue: ExtendedKeyUsage.GetInstance(new DerSequence(KeyPurposeID.IdKPTimeStamping)));
+                certificateRequest.CertificateExtensions.Add(
+                    new X509AuthorityInformationAccessExtension(
+                        certificateAuthority.OcspResponderUri,
+                        certificateAuthority.CertificateUri));
+                certificateRequest.CertificateExtensions.Add(
+                    X509AuthorityKeyIdentifierExtension.CreateFromCertificate(
+                        certificateAuthority.Certificate,
+                        includeKeyIdentifier: true,
+                        includeIssuerAndSerial: true));
+                certificateRequest.CertificateExtensions.Add(
+                    new X509SubjectKeyIdentifierExtension(certificateRequest.PublicKey, critical: false));
+                certificateRequest.CertificateExtensions.Add(
+                    new X509BasicConstraintsExtension(
+                        certificateAuthority: false,
+                        hasPathLengthConstraint: false,
+                        pathLengthConstraint: 0,
+                        critical: true));
+                certificateRequest.CertificateExtensions.Add(
+                    new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, critical: true));
+                certificateRequest.CertificateExtensions.Add(
+                    new X509EnhancedKeyUsageExtension(
+                        new OidCollection() { new Oid(Oids.TimeStampingEku) },
+                        critical: true));
             }
 
             if (issueCertificateOptions.CustomizeCertificate == null)
@@ -130,10 +120,10 @@ namespace Test.Utility.Signing
                 issueCertificateOptions.NotAfter = serviceOptions.IssuedCertificateNotAfter.Value;
             }
 
-            var certificate = certificateAuthority.IssueCertificate(issueCertificateOptions);
-            var uri = certificateAuthority.GenerateRandomUri();
+            X509Certificate2 certificate = certificateAuthority.IssueCertificate(issueCertificateOptions);
+            Uri uri = certificateAuthority.GenerateRandomUri();
 
-            return new TimestampService(certificateAuthority, certificate, issueCertificateOptions.KeyPair, uri, serviceOptions);
+            return new TimestampService(certificateAuthority, certificate, uri, serviceOptions);
         }
 
 #if IS_SIGNING_SUPPORTED
@@ -151,21 +141,18 @@ namespace Test.Utility.Signing
                 return;
             }
 
-            var bytes = ReadRequestBody(context.Request);
-            var request = new TimeStampRequest(bytes);
+            byte[] bytes = ReadRequestBody(context.Request);
+            TimeStampReq request = TimeStampReq.Decode(bytes);
             PkiStatusInfo statusInfo;
-            BcContentInfo timeStampToken = null;
+            SignedCms? timestamp = null;
 
             if (_options.ReturnFailure)
             {
-                statusInfo = new PkiStatusInfo(
-                    (int)PkiStatus.Rejection,
-                    new PkiFreeText(new DerUtf8String("Unsupported algorithm")),
-                    new PkiFailureInfo(PkiFailureInfo.BadAlg));
+                statusInfo = new PkiStatusInfo(PkiStatus.Rejection, "Unsupported algorithm", PkiFailureInfo.BadAlg);
             }
             else
             {
-                statusInfo = new PkiStatusInfo((int)PkiStatus.Granted);
+                statusInfo = new PkiStatusInfo(PkiStatus.Granted);
 
                 var generalizedTime = DateTime.UtcNow;
 
@@ -174,90 +161,114 @@ namespace Test.Utility.Signing
                     generalizedTime = _options.GeneralizedTime.Value.UtcDateTime;
                 }
 
-                CmsSignedData timestamp = GenerateTimestamp(request, _nextSerialNumber, generalizedTime);
-
-                timeStampToken = timestamp.ContentInfo;
+                timestamp = GenerateTimestamp(request, _nextSerialNumber, generalizedTime);
             }
 
             _serialNumbers.Add(_nextSerialNumber);
-            _nextSerialNumber = _nextSerialNumber.Add(BigInteger.One);
+            _nextSerialNumber += BigInteger.One;
 
             context.Response.ContentType = ResponseContentType;
 
-            var response = new TimeStampResp(statusInfo, timeStampToken);
+            var response = new TimeStampResp(statusInfo, timestamp);
+            ReadOnlyMemory<byte> encodedResponse = response.Encode();
 
-            WriteResponseBody(context.Response, response.GetEncoded());
+            WriteResponseBody(context.Response, encodedResponse);
         }
 
-        private CmsSignedData GenerateTimestamp(
-            TimeStampRequest request,
+        private SignedCms GenerateTimestamp(
+            TimeStampReq request,
             BigInteger serialNumber,
             DateTime generalizedTime)
         {
-            var messageImprint = new MessageImprint(
-                new AlgorithmIdentifier(
-                    new DerObjectIdentifier(request.MessageImprintAlgOid)), request.GetMessageImprintDigest());
-            DerInteger nonce = request.Nonce == null ? null : new DerInteger(request.Nonce);
+            AsnWriter writer = new(AsnEncodingRules.DER);
+            Accuracy? accuracy = FromTimeSpan(_options.Accuracy);
+            TestTstInfo tstInfo = new(
+                BigInteger.One,
+                _options.Policy,
+                request.MessageImprint,
+                serialNumber,
+                generalizedTime,
+                accuracy,
+                nonce: request.Nonce);
 
-            var tstInfo = new TstInfo(
-                new DerObjectIdentifier(_options.Policy.Value),
-                messageImprint,
-                new DerInteger(serialNumber),
-                new DerGeneralizedTime(generalizedTime),
-                _options.Accuracy,
-                DerBoolean.False,
-                nonce,
-                tsa: null,
-                extensions: null);
+            tstInfo.Encode(writer, omitFractionalSeconds: true);
 
-            var content = new CmsProcessableByteArray(tstInfo.GetEncoded());
-            var signedAttributes = new Asn1EncodableVector();
-            var certificateBytes = new Lazy<byte[]>(() => Certificate.GetEncoded());
+            byte[] encodedTstInfo = writer.Encode();
+            ContentInfo contentInfo = new(new Oid(Oids.TSTInfoContentType), encodedTstInfo);
+            SignedCms signedCms = new(contentInfo);
+            CmsSigner cmsSigner;
+
+            if (Certificate.Extensions[Oids.SubjectKeyIdentifier] is null)
+            {
+                cmsSigner = new CmsSigner(SubjectIdentifierType.IssuerAndSerialNumber, Certificate);
+            }
+            else
+            {
+                cmsSigner = new CmsSigner(SubjectIdentifierType.SubjectKeyIdentifier, Certificate);
+            }
+
+            var certificateBytes = new Lazy<byte[]>(() => Certificate.GetRawCertData());
 
             if (_options.SigningCertificateUsage.HasFlag(SigningCertificateUsage.V1))
             {
-                byte[] hash = _options.SigningCertificateV1Hash ?? DigestUtilities.CalculateDigest("SHA-1", certificateBytes.Value);
-                var signingCertificate = new SigningCertificate(new EssCertID(hash));
-                var attributeValue = new DerSet(signingCertificate);
-                var attribute = new BcAttribute(PkcsObjectIdentifiers.IdAASigningCertificate, attributeValue);
+                SigningCertificate signingCertificate = SigningCertificate.Create(_options.SigningCertificateV1Hash ?? Certificate.GetCertHash(), Certificate);
 
-                signedAttributes.Add(attribute);
+                writer.Reset();
+                signingCertificate.Encode(writer);
+
+                cmsSigner.SignedAttributes.Add(new AsnEncodedData(Oids.SigningCertificate, writer.Encode()));
             }
 
             if (_options.SigningCertificateUsage.HasFlag(SigningCertificateUsage.V2))
             {
-                byte[] hash = DigestUtilities.CalculateDigest("SHA-256", certificateBytes.Value);
-                var signingCertificateV2 = new SigningCertificateV2(new EssCertIDv2(hash));
-                var attributeValue = new DerSet(signingCertificateV2);
-                var attribute = new BcAttribute(PkcsObjectIdentifiers.IdAASigningCertificateV2, attributeValue);
+                SigningCertificateV2 signingCertificate = SigningCertificateV2.Create(HashAlgorithmName.SHA256, Certificate);
 
-                signedAttributes.Add(attribute);
+                writer.Reset();
+                signingCertificate.Encode(writer);
+
+                byte[] bytes = writer.Encode();
+
+                cmsSigner.SignedAttributes.Add(new AsnEncodedData(Oids.SigningCertificateV2, bytes));
             }
-
-            var generator = new CmsSignedDataGenerator();
 
             if (_options.ReturnSigningCertificate)
             {
-                var certificates = X509StoreFactory.Create(
-                    "Certificate/Collection",
-                    new X509CollectionStoreParameters(new[] { Certificate }));
-
-                generator.AddCertificates(certificates);
+                cmsSigner.IncludeOption = X509IncludeOption.EndCertOnly;
+            }
+            else
+            {
+                cmsSigner.IncludeOption = X509IncludeOption.None;
             }
 
-            generator.AddSigner(
-                _keyPair.Private,
-                Certificate,
-                _options.SignatureHashAlgorithm.Value,
-                new BcAttributeTable(signedAttributes),
-                new BcAttributeTable(DerSet.Empty));
+            cmsSigner.DigestAlgorithm = _options.SignatureHashAlgorithm;
 
-            CmsSignedData signedCms = generator.Generate(
-                PkcsObjectIdentifiers.IdCTTstInfo.Id,
-                content,
-                encapsulate: true);
+            signedCms.ComputeSignature(cmsSigner);
 
             return signedCms;
+        }
+
+        private static Accuracy? FromTimeSpan(TimeSpan? timespan)
+        {
+            if (timespan is null)
+            {
+                return null;
+            }
+
+            int? seconds = (int)timespan.Value.TotalSeconds;
+            int? milliseconds = timespan.Value.Milliseconds;
+            int? microseconds = (int)((double)(timespan.Value.Ticks % 10000) * 0.1);
+
+            if (microseconds == 0)
+            {
+                microseconds = null;
+
+                if (milliseconds == 0)
+                {
+                    milliseconds = null;
+                }
+            }
+
+            return new Accuracy(seconds, milliseconds, microseconds);
         }
 #endif
     }

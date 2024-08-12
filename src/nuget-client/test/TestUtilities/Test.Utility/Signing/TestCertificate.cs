@@ -3,7 +3,6 @@
 
 using System;
 using System.Security.Cryptography.X509Certificates;
-using NuGet.Packaging.Signing;
 
 namespace Test.Utility.Signing
 {
@@ -131,7 +130,7 @@ namespace Test.Utility.Signing
             // create a crl only if the certificate is part of a chain and it is a CA and ConfigureCrl is true
             if (chainCertificateRequest != null && chainCertificateRequest.IsCA && chainCertificateRequest.ConfigureCrl)
             {
-                crl = CertificateRevocationList.CreateCrl(cert, chainCertificateRequest.CrlLocalBaseUri);
+                crl = new CertificateRevocationList(cert, chainCertificateRequest.CrlLocalBaseUri);
             }
 
             var testCertificate = new TestCertificate(storePurpose)

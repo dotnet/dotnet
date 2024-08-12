@@ -29,7 +29,15 @@ namespace Test.Utility
             var level = message.Level.ToString().ToLowerInvariant();
             level = level.Substring(0, Math.Min(level.Length, 4));
 
-            Output.WriteLine($"[test] {level}: {message.Message}");
+            try
+            {
+                Output.WriteLine($"[test] {level}: {message.Message}");
+            }
+            catch (InvalidOperationException)
+            {
+                // Under some circumstances, the output helper may throw an System.InvalidOperationException : There is no currently active test so fall back to writing to the console instead of failing the test.
+                Console.WriteLine($"[test] {level}: {message.Message}");
+            }
         }
 
         public override Task LogAsync(ILogMessage message)

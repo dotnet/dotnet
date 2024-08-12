@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using NuGet.CommandLine.XPlat;
 using NuGet.Packaging;
 using NuGet.Test.Utility;
@@ -22,7 +23,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public async void WhyCommand_ProjectHasTransitiveDependency_DependencyPathExists()
+        public async Task WhyCommand_ProjectHasTransitiveDependency_DependencyPathExists()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -66,7 +67,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public async void WhyCommand_ProjectHasNoDependencyOnTargetPackage_PathDoesNotExist()
+        public async Task WhyCommand_ProjectHasNoDependencyOnTargetPackage_PathDoesNotExist()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -211,7 +212,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public async void WhyCommand_InvalidFrameworksOption_WarnsCorrectly()
+        public async Task WhyCommand_InvalidFrameworksOption_WarnsCorrectly()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();

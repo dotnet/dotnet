@@ -151,7 +151,7 @@ namespace Microsoft.IdentityModel.Tokens
         public const string IDX10640 = "IDX10640: Algorithm is not supported: '{0}'.";
         // public const string IDX10641 = "IDX10641:";
         public const string IDX10642 = "IDX10642: Creating signature using the input: '{0}'.";
-        public const string IDX10643 = "IDX10643: Comparing the signature created over the input with the token signature: '{0}'.";
+        // public const string IDX10643 = "IDX10643:";
         // public const string IDX10644 = "IDX10644:";
         public const string IDX10645 = "IDX10645: Elliptical Curve not supported for curveId: '{0}'";
         public const string IDX10646 = "IDX10646: A CustomCryptoProvider was set and returned 'true' for IsSupportedAlgorithm(Algorithm: '{0}', Key: '{1}'), but Create.(algorithm, args) as '{2}' == NULL.";
@@ -255,7 +255,8 @@ namespace Microsoft.IdentityModel.Tokens
         //EventBasedLRUCache errors
         public const string IDX10900 = "IDX10900: EventBasedLRUCache._eventQueue encountered an error while processing a cache operation. Exception '{0}'.";
         public const string IDX10901 = "IDX10901: CryptoProviderCacheOptions.SizeLimit must be greater than 10. Value: '{0}'";
-        public const string IDX10902 = "IDX10902: Object disposed exception in '{0}': '{1}'";
+        public const string IDX10902 = "IDX10902: Exception caught while removing expired items: '{0}', Exception: '{1}'";
+        public const string IDX10906 = "IDX10906: Exception caught while compacting items: '{0}', Exception: '{1}'";
 
         // Crypto Errors
         public const string IDX11000 = "IDX11000: Cannot create EcdhKeyExchangeProvider. '{0}'\'s Curve '{1}' does not match with '{2}'\'s curve '{3}'.";

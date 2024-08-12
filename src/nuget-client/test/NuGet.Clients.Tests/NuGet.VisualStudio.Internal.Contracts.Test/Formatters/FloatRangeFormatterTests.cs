@@ -22,7 +22,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResult.OriginalReleasePrefix, actualResult!.OriginalReleasePrefix);
         }
 
-        public static TheoryData FloatRanges => new TheoryData<FloatRange>
+        public static TheoryData<FloatRange> FloatRanges => new()
             {
                 { new FloatRange(NuGetVersionFloatBehavior.AbsoluteLatest, NuGetVersion.Parse("0.0.0"), "*") },
                 { new FloatRange(NuGetVersionFloatBehavior.PrereleaseMajor, MinVersion, "*") },

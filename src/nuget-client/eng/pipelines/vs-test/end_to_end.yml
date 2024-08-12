@@ -1,0 +1,199 @@
+parameters:
+- name: part
+  type: string
+- name: stageName
+  type: string
+- name: stageDisplayName
+  type: string
+- name: dependsOn
+  type: object
+- name: bootstrapperUrl
+  type: string
+- name: baseBuildDrop
+  type: string
+- name: runSettingsURI
+  type: string
+- name: DartLabEnvironment
+  type: string
+- name: condition
+  type: string
+- name: variables
+  type: object
+- name: testExecutionJobTimeoutInMinutes
+  type: number
+- name: testMachineCleanUpStrategy
+  type: string
+  default: delete
+  values:
+  - delete
+  - stop
+- name: QBuildSessionId
+  type: string
+
+stages:
+- template: stages\visual-studio\build-to-build-upgrade\agent.yml@DartLabTemplates
+  parameters:
+    name: ${{parameters.stageName}}
+    displayName: 'E2E Tests ${{parameters.stageDisplayName}}'
+    condition: ${{parameters.condition}}
+    dependsOn: ${{parameters.dependsOn}}
+    testMachineConfigurationJobDisplayName: 'E2E ${{parameters.stageDisplayName}} Machine Configuration'
+    testMachineDeploymentJobDisplayName: 'E2E ${{parameters.stageDisplayName}} Machine Deployment'
+    testExecutionJobDisplayName: 'E2E ${{parameters.stageDisplayName}} Test Execution'
+    testMachineCleanUpJobDisplayName: 'E2E ${{parameters.stageDisplayName}} Machine Clean Up'
+    testMachineDeploymentJobTimeoutInMinutes: 240
+    testExecutionJobTimeoutInMinutes: ${{parameters.testExecutionJobTimeoutInMinutes}}
+    variables:
+    - name: bootstrapperUrl
+      value: ${{parameters.bootstrapperUrl}}
+    - name: runSettingsURI
+      value: ${{parameters.runSettingsURI}}
+    - name: Part
+      value: ${{parameters.part}}
+    - ${{if gt(length(parameters.variables), 0)}}:
+      - ${{parameters.variables}}
+    baseVisualStudioBootstrapperURI: https://vsdrop.microsoft.com/file/v1/$(VisualStudio.BaseBuild.ProductsDropName);bootstrappers/Enterprise/vs_enterprise.exe
+    candidateBaselineBuilds: $(BaselineBuildCommitIds)
+    visualStudioBootstrapperURI: $(bootstrapperUrl)
+    visualStudioInstallationParameters: $(VisualStudio.InstallationUnderTest.SetupParameters)
+    testLabPoolName: VS-Platform
+    dartLabEnvironment: ${{parameters.DartLabEnvironment}}
+    visualStudioSigning: Test
+    testMachineConfigurationJobTimeoutInMinutes: 30
+    testMachineCleanUpStrategy: ${{parameters.testMachineCleanUpStrategy}}
+
+##############################
+## preTestMachineConfigurationStepList
+##############################
+    preTestMachineConfigurationStepList:
+    - task: PowerShell@2
+      displayName: Set 'VisualStudio.InstallationUnderTest.SetupParameters'
+      inputs:
+        filePath: $(DartLab.Path)\Scripts\VisualStudio\Installation\Get-VisualStudioSetupParameters.ps1
+        arguments: -RunSettingsURI '$(runSettingsURI)' -InstallPath 'C:\Test\VisualStudio' -NoRestart -Quiet -Wait -OutVariableName 'VisualStudio.InstallationUnderTest.SetupParameters'
+
+    - template: '\steps\powershell\execute-script.yml@DartLabTemplates'
+      parameters:
+        displayName: Get Baseline Build ID using CloudBuild Session ID
+        continueOnError: true
+        filePath: $(DartLab.Path)\Scripts\AzureDevOps\Build\Get-BuildIdFromCloudBuildSessionID.ps1
+        arguments: -ClientSecret (ConvertTo-SecureString '$(CloudBuild-ClientSecret)' -AsPlainText -Force) -ClientID '$(CloudBuild-ClientID)' -SessionID '${{ parameters.QBuildSessionId }}' -OutVariableName 'BaselineBuildID'
+
+    - task: PowerShell@2
+      displayName: "Get Baseline build commit ids"
+      name: "getbaselinebuildcommitids"
+      retryCountOnTaskFailure: 3
+      continueOnError: true
+      inputs:
+        targetType: 'inline'
+        script: |
+          try {
+          Write-Host "Getting Baseline build commit ids for build: '$(BaselineBuildID)'"
+
+          $artifactName = 'BuildArtifacts'
+          $baselineBuildsFile = Join-Path $(Agent.TempDirectory) "BaselineBuilds.json"
+
+          $artifact = Get-BuildArtifact -InstanceURL 'https://dev.azure.com/devdiv' -ProjectName 'DevDiv' -BuildID $(BaselineBuildID)  -ArtifactName $artifactName -OAuthAccessToken (ConvertTo-SecureString '$(System.AccessToken)' -AsPlainText -Force)
+          $containerName = $artifact.Resource.Data -Split '/' | Select-Object -Last 1
+          $fileName = Join-Path $containerName 'BaselineBuilds.json'
+          $jsonString = Read-BuildArtifactFile -InstanceURL 'https://dev.azure.com/devdiv' -ProjectName 'DevDiv' -BuildID $(BaselineBuildID) -ArtifactName $artifactName -FileName $fileName -OAuthAccessToken (ConvertTo-SecureString '$(System.AccessToken)' -AsPlainText -Force)
+
+          $jsonString | Out-File -FilePath $baselineBuildsFile
+
+          $(DartLab.Path)\Scripts\VisualStudio\Build\Get-BaselineBuildCommitIDs.ps1 -BuildJson $baselineBuildsFile -OutVariableName "BaselineBuildCommitIds"
+          } catch {
+            Write-Host "Unable to get Baseline build commit ids: $_"
+          }
+    - task: PowerShell@2
+      name: SetVisualStudioBaseBuildID
+      displayName: Set 'VisualStudio.BaseBuild.ID'
+      retryCountOnTaskFailure: 3
+      condition: ne(variables['BaselineBuildCommitIds'], '')
+      continueOnError: true
+      inputs:
+        filePath: $(DartLab.Path)\Scripts\VisualStudio\Build\Get-BaselineBuildID.ps1
+        arguments: -OAuthAccessToken (ConvertTo-SecureString '$(System.AccessToken)' -AsPlainText -Force) -InstanceURL '$(System.CollectionUri)' -RepositoryName 'VS' -ProjectName '$(System.TeamProject)' -CommitIDs $(BaselineBuildCommitIds) -BuildDefinitionIDs 10289 -OutVariableName 'VisualStudio.BaseBuild.ID'
+    - task: PowerShell@2
+      name: SetVisualStudioBaseBuildProductsDropName
+      displayName: Set 'VisualStudio.BaseBuild.ProductsDropName'
+      retryCountOnTaskFailure: 3
+      condition: ne(variables['VisualStudio.BaseBuild.ID'], '')
+      inputs:
+        filePath: $(DartLab.Path)\Scripts\VisualStudio\Build\Get-VisualStudioDropName.ps1
+        arguments: -AccessToken (ConvertTo-SecureString '$(System.AccessToken)' -AsPlainText -Force) -DropNamePrefix 'Products' -AccountURL '$(System.CollectionUri)' -ProjectName '$(System.TeamProject)' -BuildID $(VisualStudio.BaseBuild.ID) -OutVariableName 'VisualStudio.BaseBuild.ProductsDropName'
+    - task: PowerShell@2
+      name: SetBaseProductsDropNameToTarget
+      displayName: Set 'VisualStudio.BaseBuild.ProductsDropName' to drop from target build
+      retryCountOnTaskFailure: 3
+      condition: eq(variables['VisualStudio.BaseBuild.ID'], '')
+      inputs:
+        targetType: 'inline'
+        script: |
+          $buildDrop = "${{parameters.baseBuildDrop}}" -split "/"
+          $dropName = "Products/DevDiv/VS/$($buildDrop[-2])/$($buildDrop[-1])"
+          Write-Host "##vso[task.setvariable variable=VisualStudio.BaseBuild.ProductsDropName]$dropName"
+
+##############################
+## deployAndRunTestsStepList
+##############################
+    deployAndRunTestsStepList:
+    - task: PowerShell@1
+      displayName: "Define variables"
+      inputs:
+        scriptType: "inlineScript"
+        inlineScript: |
+          $EndToEndTestCommandToRunPart = '"' + "Run-Test -Exclude '${env:PART}' -Verbose *>&1 | Tee-Object $(System.DefaultWorkingDirectory)\artifacts\EndToEnd\FullLog_$(Build.BuildNumber).txt" +'"'
+          Write-Host "##vso[task.setvariable variable=EndToEndTestCommandToRunPart]$EndToEndTestCommandToRunPart"
+
+    - task: PowerShell@1
+      displayName: "Print Environment Variables"
+      inputs:
+        scriptType: "inlineScript"
+        inlineScript: |
+          Get-ChildItem Env: | Sort-Object Name | Format-Table -Wrap -AutoSize
+
+    - task: DownloadPipelineArtifact@2
+      displayName: "Download Build artifacts"
+      inputs:
+        artifactName: "E2ETests"
+        downloadPath: "$(Build.StagingDirectory)\\E2ETests"
+
+    - powershell: |
+        $zipPath = "$(Build.StagingDirectory)/E2ETests/EndToEnd.zip"
+        $dest = "$(System.DefaultWorkingDirectory)/artifacts/EndToEnd/"
+        Write-Output "Extracting '$zipPath' to '$dest'"
+        Expand-Archive -Path "$zipPath" -DestinationPath "$dest"
+        $nugetExePath = "$(Build.StagingDirectory)/E2ETests/NuGet.exe"
+        Write-Output "Copying '$nugetExePath' to '$dest'"
+        Copy-Item -Path "$nugetExePath" -Destination "$dest"
+      displayName: "Extract EndToEnd.zip"
+
+    - task: DownloadPipelineArtifact@2
+      displayName: "Download scripts"
+      inputs:
+        artifactName: "scripts"
+        downloadPath: "$(Build.StagingDirectory)/scripts"
+
+    - task: PowerShell@1
+      displayName: "SetupFunctionalTests.ps1"
+      inputs:
+        scriptName: "$(Build.StagingDirectory)/scripts/e2etests/SetupFunctionalTests.ps1"
+
+    - task: PowerShell@1
+      displayName: "RunFunctionalTests.ps1"
+      timeoutInMinutes: 75
+      continueOnError: "false"
+      inputs:
+        scriptName: "$(Build.StagingDirectory)/scripts/e2etests/RunFunctionalTests.ps1"
+        arguments: "-PMCCommand $(EndToEndTestCommandToRunPart) -PMCLaunchWaitTimeInSecs 30 -EachTestTimoutInSecs 600 -NuGetDropPath $(System.DefaultWorkingDirectory)\\artifacts -FuncTestRoot $(System.DefaultWorkingDirectory)\\artifacts -RunCounter $(Build.BuildNumber)"
+      condition: "and(succeeded(), not(eq(variables['IsOfficialBuild'], 'true')))"
+
+    - task: PublishTestResults@2
+      displayName: "Publish Test Results"
+      inputs:
+        testRunner: "JUnit"
+        testResultsFiles: "*.xml"
+        searchFolder: "$(System.DefaultWorkingDirectory)\\testresults"
+        mergeTestResults: "true"
+        testRunTitle: "NuGet.Client EndToEnd Tests On Windows"
+      condition: "succeededOrFailed()"

@@ -47,6 +47,14 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" GeneratePathProperty="true" />
   </ItemGroup>
 
+  <ItemGroup Label="transitive package pinning">
+    <!--
+      This package is a dependency of Microsoft.Build.Tasks.Core
+      When it is upgraded to a newer version, try deleting the below PackageReference
+      -->
+    <PackageReference Include="System.Security.Cryptography.Xml" GeneratePathProperty="true" Condition=" '$(TargetFramework)' != '$(NETFXTargetFramework)' " />
+  </ItemGroup>
+
   <ItemGroup>
     <Compile Update="Strings.Designer.cs">
       <DesignTime>True</DesignTime>
