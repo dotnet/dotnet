@@ -91,8 +91,7 @@ public class MigrationsScaffolderTest
                     services.GetRequiredService<CommandBatchPreparerDependencies>()),
                 idGenerator,
                 new MigrationsCodeGeneratorSelector(
-                    new[]
-                    {
+                    [
                         new CSharpMigrationsGenerator(
                             new MigrationsCodeGeneratorDependencies(
                                 sqlServerTypeMappingSource,
@@ -105,7 +104,7 @@ public class MigrationsScaffolderTest
                                 new CSharpSnapshotGenerator(
                                     new CSharpSnapshotGeneratorDependencies(
                                         code, sqlServerTypeMappingSource, sqlServerAnnotationCodeGenerator))))
-                    }),
+                    ]),
                 historyRepository,
                 reporter,
                 new MockProvider(),
@@ -123,7 +122,10 @@ public class MigrationsScaffolderTest
                     services.GetRequiredService<IModelRuntimeInitializer>(),
                     services.GetRequiredService<IDiagnosticsLogger<DbLoggerCategory.Migrations>>(),
                     services.GetRequiredService<IRelationalCommandDiagnosticsLogger>(),
-                    services.GetRequiredService<IDatabaseProvider>())));
+                    services.GetRequiredService<IDatabaseProvider>(),
+                    services.GetServices<IMigratorPlugin>(),
+                    services.GetRequiredService<IMigrationsModelDiffer>(),
+                    services.GetRequiredService<IDesignTimeModel>())));
     }
 
     // ReSharper disable once UnusedTypeParameter
