@@ -24,6 +24,11 @@ namespace System.IdentityModel.Tokens.Jwt
         public const string Acr = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames.Acr;
 
         /// <summary>
+        /// https://datatracker.ietf.org/doc/html/rfc7519#section-4
+        /// </summary>
+        public const string Alg = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames.Alg;
+
+        /// <summary>
         /// http://openid.net/specs/openid-connect-core-1_0.html#IDToken
         /// </summary>
         public const string Amr = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames.Amr;

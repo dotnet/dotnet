@@ -581,6 +581,16 @@ namespace Microsoft.IdentityModel.TestUtils
         }
 
         [Fact]
+        public void CompareStringsWithTimestamps()
+        {
+            TestUtilities.WriteHeader($"{this}.{nameof(CompareStringsWithTimestamps)}", true);
+            var context = new CompareContext($"{this}.{nameof(CompareStringsWithTimestamps)}");
+            DateTime now = DateTime.UtcNow;
+            IdentityComparer.AreEqual($"{now:HH:mm:ss} {now.AddSeconds(1):HH:mm:ss}", $"{now.AddSeconds(1):HH:mm:ss} {now:HH:mm:ss}", context);
+            Assert.Empty(context.Diffs);
+        }
+
+        [Fact]
         public void CompareSymmetricSecurityKeys()
         {
             TestUtilities.WriteHeader($"{this}.CompareSymmetricSecurityKeys", true);

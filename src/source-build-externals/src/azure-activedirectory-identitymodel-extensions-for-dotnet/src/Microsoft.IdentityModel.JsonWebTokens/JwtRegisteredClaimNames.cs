@@ -30,6 +30,11 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         public const string Address = "address";
 
         /// <summary>
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7519#section-4"/>.
+        /// </summary>
+        public const string Alg = "alg";
+
+        /// <summary>
         /// See: <see href="https://openid.net/specs/openid-connect-core-1_0.html#IDToken"/>.
         /// </summary>
         public const string Amr = "amr";

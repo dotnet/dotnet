@@ -68,6 +68,8 @@ namespace Microsoft.IdentityModel.Tokens
         /// <param name="disposing">true, if called from Dispose(), false, if invoked inside a finalizer</param>
         protected abstract void Dispose(bool disposing);
 
+        internal bool IsCached { get; set; }
+
         /// <summary>
         /// Gets the <see cref="SecurityKey"/>.
         /// </summary>

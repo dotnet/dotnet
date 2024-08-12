@@ -95,7 +95,7 @@ namespace System.IdentityModel.Tokens.Jwt
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="MapInboundClaims"/> property which is used when determining whether or not to map claim types that are extracted when validating a <see cref="JwtSecurityToken"/>. 
+        /// Gets or sets the <see cref="MapInboundClaims"/> property which is used when determining whether or not to map claim types that are extracted when validating a <see cref="JwtSecurityToken"/>.
         /// <para>If this is set to true, the <see cref="Claim.Type"/> is set to the JSON claim 'name' after translating using this mapping. Otherwise, no mapping occurs.</para>
         /// <para>The default value is true.</para>
         /// </summary>
@@ -112,12 +112,12 @@ namespace System.IdentityModel.Tokens.Jwt
                 if (!_mapInboundClaims && value && _inboundClaimTypeMap.Count == 0)
                     _inboundClaimTypeMap = new Dictionary<string, string>(DefaultInboundClaimTypeMap);
 
-                _mapInboundClaims = value;            
+                _mapInboundClaims = value;
             }
-        } 
+        }
 
         /// <summary>
-        /// Gets or sets the <see cref="InboundClaimTypeMap"/> which is used when setting the <see cref="Claim.Type"/> for claims in the <see cref="ClaimsPrincipal"/> extracted when validating a <see cref="JwtSecurityToken"/>. 
+        /// Gets or sets the <see cref="InboundClaimTypeMap"/> which is used when setting the <see cref="Claim.Type"/> for claims in the <see cref="ClaimsPrincipal"/> extracted when validating a <see cref="JwtSecurityToken"/>.
         /// <para>The <see cref="Claim.Type"/> is set to the JSON claim 'name' after translating using this mapping.</para>
         /// <para>The default value is ClaimTypeMapping.InboundClaimTypeMap.</para>
         /// </summary>
@@ -823,7 +823,7 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             return ReadJwtToken(token);
         }
-        
+
         /// <summary>
         /// Deserializes token with the provided <see cref="TokenValidationParameters"/>.
         /// </summary>
@@ -861,7 +861,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// <exception cref="SecurityTokenReplayAddFailedException"><paramref name="token"/> could not be added to the <see cref="TokenValidationParameters.TokenReplayCache"/>.</exception>
         /// <exception cref="SecurityTokenReplayDetectedException"><paramref name="token"/> is found in the cache.</exception>
         /// <returns> A <see cref="ClaimsPrincipal"/> from the JWT. Does not include claims found in the JWT header.</returns>
-        /// <remarks> 
+        /// <remarks>
         /// Many of the exceptions listed above are not thrown directly from this method. See <see cref="Validators"/> to examine the call graph.
         /// </remarks>
         public override ClaimsPrincipal ValidateToken(string token, TokenValidationParameters validationParameters, out SecurityToken validatedToken)
@@ -1483,7 +1483,7 @@ namespace System.IdentityModel.Tokens.Jwt
                         (object)exceptionStrings ?? "",
                         jwtToken)));
                 }
-            }         
+            }
 
             throw LogHelper.LogExceptionMessage(new SecurityTokenSignatureKeyNotFoundException(TokenLogMessages.IDX10500));
         }
@@ -1521,7 +1521,7 @@ namespace System.IdentityModel.Tokens.Jwt
 
                 actualIssuer = ClaimsIdentity.DefaultIssuer;
             }
-            
+
             return MapInboundClaims ? CreateClaimsIdentityWithMapping(jwtToken, actualIssuer, validationParameters) : CreateClaimsIdentityWithoutMapping(jwtToken, actualIssuer, validationParameters);
         }
 
@@ -1613,8 +1613,8 @@ namespace System.IdentityModel.Tokens.Jwt
         /// <remarks>If <see cref="ClaimsIdentity.BootstrapContext"/> is not null:
         /// <para>&#160;&#160;If 'type' is 'string', return as string.</para>
         /// <para>&#160;&#160;if 'type' is 'BootstrapContext' and 'BootstrapContext.SecurityToken' is 'JwtSecurityToken'</para>
-        /// <para>&#160;&#160;&#160;&#160;if 'JwtSecurityToken.RawData' != null, return RawData.</para>        
-        /// <para>&#160;&#160;&#160;&#160;else return <see cref="JwtSecurityTokenHandler.WriteToken( SecurityToken )"/>.</para>        
+        /// <para>&#160;&#160;&#160;&#160;if 'JwtSecurityToken.RawData' != null, return RawData.</para>
+        /// <para>&#160;&#160;&#160;&#160;else return <see cref="JwtSecurityTokenHandler.WriteToken( SecurityToken )"/>.</para>
         /// <para>&#160;&#160;if 'BootstrapContext.Token' != null, return 'Token'.</para>
         /// <para>default: <see cref="JwtSecurityTokenHandler.WriteToken(SecurityToken)"/> new ( <see cref="JwtSecurityToken"/>( actor.Claims ).</para>
         /// </remarks>
@@ -1741,7 +1741,7 @@ namespace System.IdentityModel.Tokens.Jwt
 
             if (!string.IsNullOrEmpty(jwtToken.Header.Kid))
             {
-                if (validationParameters.TokenDecryptionKey != null 
+                if (validationParameters.TokenDecryptionKey != null
                     && string.Equals(validationParameters.TokenDecryptionKey.KeyId, jwtToken.Header.Kid, validationParameters.TokenDecryptionKey is X509SecurityKey ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
                     return validationParameters.TokenDecryptionKey;
 
@@ -1785,7 +1785,7 @@ namespace System.IdentityModel.Tokens.Jwt
         }
 
         /// <summary>
-        /// Decrypts a JWE and returns the clear text 
+        /// Decrypts a JWE and returns the clear text
         /// </summary>
         /// <param name="jwtToken">the JWE that contains the cypher text.</param>
         /// <param name="validationParameters">contains crypto material.</param>
@@ -1858,10 +1858,27 @@ namespace System.IdentityModel.Tokens.Jwt
 #if NET472 || NET6_0_OR_GREATER
                     if (SupportedAlgorithms.EcdsaWrapAlgorithms.Contains(jwtToken.Header.Alg))
                     {
-                        //// on decryption we get the public key from the EPK value see: https://datatracker.ietf.org/doc/html/rfc7518#appendix-C
+                        ECDsaSecurityKey publicKey;
+
+                        // Since developers may have already worked around this issue, implicitly taking a dependency on the
+                        // old behavior, we guard the new behavior behind an AppContext switch. The new/RFC-conforming behavior
+                        // is treated as opt-in. When the library is at the point where it is able to make breaking changes
+                        // (such as the next major version update) we should consider whether or not this app-compat switch
+                        // needs to be maintained.
+                        if (AppContext.TryGetSwitch(AppCompatSwitches.UseRfcDefinitionOfEpkAndKid, out bool isEnabled) && isEnabled)
+                        {
+                            //// on decryption we get the public key from the EPK value see: https://datatracker.ietf.org/doc/html/rfc7518#appendix-C
+                            string epk = jwtToken.Header.GetStandardClaim(JwtHeaderParameterNames.Epk);
+                            publicKey = new ECDsaSecurityKey(new JsonWebKey(epk), false);
+                        }
+                        else
+                        {
+                            publicKey = validationParameters.TokenDecryptionKey as ECDsaSecurityKey;
+                        }
+
                         var ecdhKeyExchangeProvider = new EcdhKeyExchangeProvider(
                             key as ECDsaSecurityKey,
-                            validationParameters.TokenDecryptionKey as ECDsaSecurityKey,
+                            publicKey,
                             jwtToken.Header.Alg,
                             jwtToken.Header.Enc);
                         string apu = jwtToken.Header.GetStandardClaim(JwtHeaderParameterNames.Apu);

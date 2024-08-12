@@ -5,7 +5,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Abstractions;
@@ -29,62 +28,73 @@ namespace Microsoft.IdentityModel.Tokens
     /// <typeparam name="TValue">The value type to be used by the cache</typeparam>
     internal class EventBasedLRUCache<TKey, TValue>
     {
+        internal delegate void ItemCompacted(TValue Value);
+        internal delegate void ItemExpired(TValue Value);
         internal delegate void ItemRemoved(TValue Value);
+        internal delegate bool ShouldRemove(TValue Value);
 
         private readonly int _capacity;
-
+        private List<LRUCacheItem<TKey, TValue>> _compactedItems = new List<LRUCacheItem<TKey, TValue>>();
         // The percentage of the cache to be removed when _maxCapacityPercentage is reached.
         private readonly double _compactionPercentage = .20;
         private LinkedList<LRUCacheItem<TKey, TValue>> _doubleLinkedList = new LinkedList<LRUCacheItem<TKey, TValue>>();
         private ConcurrentQueue<Action> _eventQueue = new ConcurrentQueue<Action>();
+        private readonly TaskCreationOptions _options;
+        // if true, then items will be maintained in a LRU fashion, moving to front of list when accessed in the cache.
+        private readonly bool _maintainLRU;
         private ConcurrentDictionary<TKey, LRUCacheItem<TKey, TValue>> _map;
-
         // When the current cache size gets to this percentage of _capacity, _compactionPercentage% of the cache will be removed.
         private readonly double _maxCapacityPercentage = .95;
+        private readonly int _compactIntervalInSeconds;
 
         // if true, expired values will not be added to the cache and clean-up of expired values will occur on a 5 minute interval
         private readonly bool _removeExpiredValues;
         private readonly int _removeExpiredValuesIntervalInSeconds;
-        // if true, then items will be maintained in a LRU fashion, moving to front of list when accessed in the cache.
-        private readonly bool _maintainLRU;
-
-        private readonly TaskCreationOptions _options;
-        private DateTime _dueForExpiredValuesRemoval;
-
         // for testing purpose only to verify the task count
         private int _taskCount = 0;
+        private DateTime _timeForNextExpiredValuesRemoval;
+        private DateTime _timeForNextCompaction;
 
         #region event queue
-  
         private int _eventQueuePollingInterval = 50;
-
         // The idle timeout, the _eventQueueTask will end after being idle for the specified time interval (execution continues even if the queue is empty to reduce the task startup overhead), default to 120 seconds.
         // TODO: consider implementing a better algorithm that tracks and predicts the usage patterns and adjusts this value dynamically.
         private long _eventQueueTaskIdleTimeoutInSeconds = 120;
-
         // The time when the _eventQueueTask should end. The intent is to reduce the overhead costs of starting/ending tasks too frequently
         // but at the same time keep the _eventQueueTask a short running task.
         // Since Task is based on thread pool the overhead should be reasonable.
         private DateTime _eventQueueTaskStopTime;
-
         // task states used to ensure thread safety (Interlocked.CompareExchange)
         private const int EventQueueTaskStopped = 0; // task not started yet
         private const int EventQueueTaskRunning = 1; // task is running
         private const int EventQueueTaskDoNotStop = 2; // force the task to continue even it has past the _eventQueueTaskStopTime, see StartEventQueueTaskIfNotRunning() for more details.
         private int _eventQueueTaskState = EventQueueTaskStopped;
 
-        private const int CompactionNotQueued = 0; // compaction action not in the event queue
-        private const int CompactionQueuedOrRunning = 1; // compaction action in the event queue or currently in progress
-        private int _compactionState = CompactionNotQueued;
+        private const int ActionNotQueued = 0; // compaction action not in the event queue
+        private const int ActionQueuedOrRunning = 1; // compaction action in the event queue or currently in progress
+        private int _compactValuesState = ActionNotQueued;
+        private int _removeExpiredValuesState = ActionNotQueued;
+        private int _processCompactedValuesState = ActionNotQueued;
 
         // set to true when the AppDomain is to be unloaded or the default AppDomain process is ready to exit
         private bool _shouldStopImmediately = false;
 
-        internal ItemRemoved OnItemRemoved
+        internal ItemExpired OnItemExpired { get; set; }
+
+        /// <summary>
+        /// For back compat any friend would be broken, this is the same as OnItemExpired.
+        /// </summary>
+        internal ItemExpired OnItemRemoved
         {
-            get;
-            set;
+            get { return OnItemExpired; }
+            set { OnItemExpired = value; }
         }
+
+        internal ItemCompacted OnItemMovedToCompactedList { get; set; }
+
+        internal ItemRemoved OnItemRemovedFromCompactedList { get; set; }
+
+        internal ShouldRemove OnShouldRemoveFromCompactedList { get; set; }
 
         internal long EventQueueTaskIdleTimeoutInSeconds
         {
@@ -96,20 +106,6 @@ namespace Microsoft.IdentityModel.Tokens
                 _eventQueueTaskIdleTimeoutInSeconds = value;
             }
         }
-
-        // If the task operating on the _eventQueue has not timed out and the _eventQueue is empty, this polling interval will be used
-        // to determine how often the cache should be checked for the presence of a new action.
-        private int EventQueuePollingInterval
-        {
-            get => _eventQueuePollingInterval;
-            set
-            {
-                if (value <= 0)
-                    throw new ArgumentOutOfRangeException(nameof(value), "EventQueuePollingInterval must be positive.");
-                _eventQueuePollingInterval = value;
-            }
-        }
-
         #endregion
 
         /// <summary>
@@ -121,22 +117,26 @@ namespace Microsoft.IdentityModel.Tokens
         /// <param name="removeExpiredValues">Whether or not to remove expired items.</param>
         /// <param name="removeExpiredValuesIntervalInSeconds">The period to wait to remove expired items, in seconds.</param>
         /// <param name="maintainLRU">Whether or not to maintain items in a LRU fashion, moving to front of list when accessed in the cache.</param>
+        /// <param name="compactIntervalInSeconds">The period to wait to compact items, in seconds.</param>
         internal EventBasedLRUCache(
             int capacity,
             TaskCreationOptions options = TaskCreationOptions.None,
             IEqualityComparer<TKey> comparer = null,
             bool removeExpiredValues = false,
             int removeExpiredValuesIntervalInSeconds = 300,
-            bool maintainLRU = false)
+            bool maintainLRU = false,
+            int compactIntervalInSeconds = 20)
         {
             _capacity = capacity > 0 ? capacity : throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(nameof(capacity)));
             _options = options;
             _map = new ConcurrentDictionary<TKey, LRUCacheItem<TKey, TValue>>(comparer ?? EqualityComparer<TKey>.Default);
             _removeExpiredValuesIntervalInSeconds = removeExpiredValuesIntervalInSeconds;
             _removeExpiredValues = removeExpiredValues;
+            _compactIntervalInSeconds = compactIntervalInSeconds;
+            _timeForNextExpiredValuesRemoval = DateTime.UtcNow.AddSeconds(_removeExpiredValuesIntervalInSeconds);
+            _timeForNextCompaction = DateTime.UtcNow.AddSeconds(_compactIntervalInSeconds);
             _eventQueueTaskStopTime = DateTime.UtcNow;
             _maintainLRU = maintainLRU;
-            _dueForExpiredValuesRemoval = DateTime.UtcNow.AddSeconds(_removeExpiredValuesIntervalInSeconds);
         }
 
         /// <summary>
@@ -168,6 +168,7 @@ namespace Microsoft.IdentityModel.Tokens
         private void AddActionToEventQueue(Action action)
         {
             _eventQueue.Enqueue(action);
+
             // start the event queue task if it is not running
             StartEventQueueTaskIfNotRunning();
         }
@@ -186,88 +187,97 @@ namespace Microsoft.IdentityModel.Tokens
         private void EventQueueTaskAction()
         {
             Interlocked.Increment(ref _taskCount);
-            // Keep running until the queue is empty or the AppDomain is about to be unloaded or the application is ready to exit.
-            while (!_shouldStopImmediately)
+            try
             {
-                // always set the state to EventQueueTaskRunning in case it was set to EventQueueTaskDoNotStop
-                Interlocked.Exchange(ref _eventQueueTaskState, EventQueueTaskRunning);
-
-                try
+                // Keep running until the queue is empty or the AppDomain is about to be unloaded or the application is ready to exit.
+                while (!_shouldStopImmediately)
                 {
-                    // remove expired items if needed
-                    if (_removeExpiredValues && DateTime.UtcNow >= _dueForExpiredValuesRemoval)
-                    {
-                        if (_maintainLRU)
-                            RemoveExpiredValuesLRU();
-                        else
-                            RemoveExpiredValues();
+                    // always set the state to EventQueueTaskRunning in case it was set to EventQueueTaskDoNotStop
+                    Interlocked.Exchange(ref _eventQueueTaskState, EventQueueTaskRunning);
 
-                        _dueForExpiredValuesRemoval = DateTime.UtcNow.AddSeconds(_removeExpiredValuesIntervalInSeconds);
-                    }
+                    try
+                    {
+                        // remove expired items if needed
+                        if (_removeExpiredValues && DateTime.UtcNow >= _timeForNextExpiredValuesRemoval)
+                        {
+                            if (Interlocked.CompareExchange(ref _removeExpiredValuesState, ActionNotQueued, ActionQueuedOrRunning) == ActionQueuedOrRunning)
+                            {
+                                if (_maintainLRU)
+                                    RemoveExpiredValuesLRU();
+                                else
+                                    RemoveExpiredValues();
+                            }
+                        }
 
-                    // process all events in the queue and exit
-                    if (_eventQueue.TryDequeue(out var action))
-                    {
-                        action?.Invoke();
-                    }
-                    else if (DateTime.UtcNow > _eventQueueTaskStopTime) // no more event to be processed, exit if expired
-                    {
-                        // Setting _eventQueueTaskState = EventQueueTaskStopped if the _eventQueueTaskEndTime has past and _eventQueueTaskState == EventQueueTaskRunning.
-                        // This means no other thread came in and it is safe to end this task.
-                        // If another thread adds new events while this task is still running, it will set the _eventQueueTaskState = EventQueueTaskDoNotStop instead of starting a new task.
-                        // The Interlocked.CompareExchange() call below will not succeed and the loop continues (until the event queue is empty and the _eventQueueTaskEndTime expires again).
-                        // This should prevent a rare (but theoretically possible) scenario caused by context switching.
-                        if (Interlocked.CompareExchange(ref _eventQueueTaskState, EventQueueTaskStopped, EventQueueTaskRunning) == EventQueueTaskRunning)
-                            break;
+                        // process all events in the queue and exit
+                        if (_eventQueue.TryDequeue(out var action))
+                        {
+                            action?.Invoke();
+                        }
+                        else if (DateTime.UtcNow > _eventQueueTaskStopTime) // no more event to be processed, exit if expired
+                        {
+                            // Setting _eventQueueTaskState = EventQueueTaskStopped if the _eventQueueStopTime has past and _eventQueueTaskState == EventQueueTaskRunning.
+                            // This means no other thread came in and it is safe to end this task.
+                            // If another thread adds new events while this task is still running, it will set the _eventQueueTaskState = EventQueueTaskDoNotStop instead of starting a new task.
+                            // The Interlocked.CompareExchange() call below will not succeed and the loop continues (until the event queue is empty and the _eventQueueTaskEndTime expires again).
+                            // This should prevent a rare (but theoretically possible) scenario caused by context switching.
+                            if (Interlocked.CompareExchange(ref _eventQueueTaskState, EventQueueTaskStopped, EventQueueTaskRunning) == EventQueueTaskRunning)
+                                break;
 
+                        }
+                        else // if empty, let the thread sleep for a specified number of milliseconds before attempting to retrieve another value from the queue
+                        {
+                            Thread.Sleep(_eventQueuePollingInterval);
+                        }
                     }
-                    else // if empty, let the thread sleep for a specified number of milliseconds before attempting to retrieve another value from the queue
+                    catch (Exception ex)
                     {
-                        Thread.Sleep(_eventQueuePollingInterval);
+                        if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                            LogHelper.LogWarning(LogHelper.FormatInvariant(LogMessages.IDX10900, ex));
                     }
-                }
-                catch (Exception ex)
-                {
-                    if (LogHelper.IsEnabled(EventLogLevel.Warning))
-                        LogHelper.LogWarning(LogHelper.FormatInvariant(LogMessages.IDX10900, ex));
                 }
             }
-
-            Interlocked.Decrement(ref _taskCount);
+            finally
+            {
+                Interlocked.Decrement(ref _taskCount);
+                Interlocked.Exchange(ref _eventQueueTaskState, EventQueueTaskStopped);
+            }
         }
 
         /// <summary>
         /// Remove all expired cache items from _doubleLinkedList and _map.
         /// </summary>
         /// <returns>Number of items removed.</returns>
-        internal int RemoveExpiredValuesLRU()
+        internal void RemoveExpiredValuesLRU()
         {
-            int numItemsRemoved = 0;
+#pragma warning disable CA1031 // Do not catch general exception types
             try
             {
-                var node = _doubleLinkedList.First;
+                LinkedListNode<LRUCacheItem<TKey, TValue>> node = _doubleLinkedList.First;
                 while (node != null)
                 {
-                    var nextNode = node.Next;
+                    LinkedListNode<LRUCacheItem<TKey, TValue>> nextNode = node.Next;
                     if (node.Value.ExpirationTime < DateTime.UtcNow)
                     {
                         _doubleLinkedList.Remove(node);
-                        if (_map.TryRemove(node.Value.Key, out var cacheItem))
-                            OnItemRemoved?.Invoke(cacheItem.Value);
-
-                        numItemsRemoved++;
+                        if (_map.TryRemove(node.Value.Key, out LRUCacheItem<TKey, TValue> cacheItem))
+                            OnItemExpired?.Invoke(cacheItem.Value);
                     }
 
                     node = nextNode;
                 }
             }
-            catch (ObjectDisposedException ex)
+            catch(Exception ex)
             {
                 if (LogHelper.IsEnabled(EventLogLevel.Warning))
                     LogHelper.LogWarning(LogHelper.FormatInvariant(LogMessages.IDX10902, LogHelper.MarkAsNonPII(nameof(RemoveExpiredValuesLRU)), ex));
             }
-
-            return numItemsRemoved;
+            finally
+            {
+                _removeExpiredValuesState = ActionNotQueued;
+                _timeForNextExpiredValuesRemoval = DateTime.UtcNow.AddSeconds(_removeExpiredValuesIntervalInSeconds);
+            }
+#pragma warning restore CA1031 // Do not catch general exception types
         }
 
         /// <summary>
@@ -275,29 +285,64 @@ namespace Microsoft.IdentityModel.Tokens
         /// The enumerator returned from the dictionary is safe to use concurrently with reads and writes to the dictionary, according to the MS document.
         /// </summary>
         /// <returns>Number of items removed.</returns>
-        internal int RemoveExpiredValues()
+        internal void RemoveExpiredValues()
         {
-            int numItemsRemoved = 0;
+#pragma warning disable CA1031 // Do not catch general exception types
             try
             {
-                foreach (var node in _map)
+                foreach (KeyValuePair<TKey, LRUCacheItem<TKey, TValue>> node in _map)
                 {
                     if (node.Value.ExpirationTime < DateTime.UtcNow)
                     {
                         if (_map.TryRemove(node.Value.Key, out var cacheItem))
-                            OnItemRemoved?.Invoke(cacheItem.Value);
-
-                        numItemsRemoved++;
+                            OnItemExpired?.Invoke(cacheItem.Value);
                     }
                 }
             }
-            catch (ObjectDisposedException ex)
+            catch(Exception ex)
             {
                 if (LogHelper.IsEnabled(EventLogLevel.Warning))
-                    LogHelper.LogWarning(LogHelper.FormatInvariant(LogMessages.IDX10902, LogHelper.MarkAsNonPII(nameof(RemoveExpiredValues)), ex));
+                    LogHelper.LogWarning(LogHelper.FormatInvariant(LogMessages.IDX10902, LogHelper.MarkAsNonPII(nameof(ProcessCompactedValues)), ex));
+
+            }
+            finally
+            {
+                _removeExpiredValuesState = ActionNotQueued;
+                _timeForNextExpiredValuesRemoval = DateTime.UtcNow.AddSeconds(_removeExpiredValuesIntervalInSeconds);
             }
 
-            return numItemsRemoved;
+#pragma warning restore CA1031 // Do not catch general exception types
+        }
+
+        /// <summary>
+        /// Remove all compacted items.
+        /// </summary>
+        internal void ProcessCompactedValues()
+        {
+#pragma warning disable CA1031 // Do not catch general exception types
+            try
+            {
+                for (int i = _compactedItems.Count - 1; i >= 0; i--)
+                {
+                    if ((OnShouldRemoveFromCompactedList == null) || OnShouldRemoveFromCompactedList(_compactedItems[i].Value))
+                    {
+                        OnItemRemovedFromCompactedList?.Invoke(_compactedItems[i].Value);
+                        _compactedItems.RemoveAt(i);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                    LogHelper.LogWarning(LogHelper.FormatInvariant(LogMessages.IDX10906, LogHelper.MarkAsNonPII(nameof(ProcessCompactedValues)), ex));
+            }
+            finally
+            {
+                _processCompactedValuesState = ActionNotQueued;
+                _timeForNextCompaction = DateTime.UtcNow.AddSeconds(_compactIntervalInSeconds);
+            }
+
+#pragma warning restore CA1031 // Do not catch general exception types
         }
 
         /// <summary>
@@ -306,18 +351,23 @@ namespace Microsoft.IdentityModel.Tokens
         /// </summary>
         private void CompactLRU()
         {
-            var newCacheSize = CalculateNewCacheSize();
-            while (_map.Count > newCacheSize && _doubleLinkedList.Count > 0)
+            try
             {
-                var lru = _doubleLinkedList.Last;
-                if (_map.TryRemove(lru.Value.Key, out var cacheItem))
-                    OnItemRemoved?.Invoke(cacheItem.Value);
+                int newCacheSize = CalculateNewCacheSize();
+                while (_map.Count > newCacheSize && _doubleLinkedList.Count > 0)
+                {
+                    LinkedListNode<LRUCacheItem<TKey, TValue>> node = _doubleLinkedList.Last;
+                    if (_map.TryRemove(node.Value.Key, out LRUCacheItem<TKey, TValue> cacheItem))
+                        OnItemMovedToCompactedList?.Invoke(cacheItem.Value);
 
-                _doubleLinkedList.RemoveLast();
+                    _compactedItems.Add(cacheItem);
+                    _doubleLinkedList.RemoveLast();
+                }
             }
-
-            // reset _compactionState so the compaction action can be queued again when needed
-            _compactionState = CompactionNotQueued;
+            finally
+            {
+                _compactValuesState = ActionNotQueued;
+            }
         }
 
         /// <summary>
@@ -326,21 +376,28 @@ namespace Microsoft.IdentityModel.Tokens
         /// </summary>
         private void Compact()
         {
-            var newCacheSize = CalculateNewCacheSize();
-            while (_map.Count > newCacheSize)
+            try
             {
-                // Since all items could have been removed by the public TryRemove() method, leaving the map empty, we need to check if a default value is returned.
-                // Remove the item from the map only if the returned item is NOT default value.
-                var item = _map.FirstOrDefault();
-                if (!item.Equals(default))
+                int newCacheSize = CalculateNewCacheSize();
+                while (_map.Count > newCacheSize)
                 {
-                    if (_map.TryRemove(item.Key, out var cacheItem))
-                        OnItemRemoved?.Invoke(cacheItem.Value);
+                    // Since all items could have been removed by the public TryRemove() method, leaving the map empty, we need to check if a default value is returned.
+                    // Remove the item from the map only if the returned item is NOT default value.
+                    KeyValuePair<TKey, LRUCacheItem<TKey, TValue>> item = _map.FirstOrDefault();
+                    if (!item.Equals(default))
+                    {
+                        if (_map.TryRemove(item.Key, out LRUCacheItem<TKey, TValue> cacheItem))
+                        {
+                            OnItemMovedToCompactedList?.Invoke(cacheItem.Value);
+                            _compactedItems.Add(cacheItem);
+                        }
+                    }
                 }
             }
-
-            // reset _compactionState so the compaction action can be queued again when needed
-            _compactionState = CompactionNotQueued;
+            finally
+            {
+                _compactValuesState = ActionNotQueued;
+            }
         }
 
         /// <summary>
@@ -408,12 +465,20 @@ namespace Microsoft.IdentityModel.Tokens
                 // if cache is at _maxCapacityPercentage, trim it by _compactionPercentage
                 if ((double)_map.Count / _capacity >= _maxCapacityPercentage)
                 {
-                    if (Interlocked.CompareExchange(ref _compactionState, CompactionQueuedOrRunning, CompactionNotQueued) == CompactionNotQueued)
+                    if (Interlocked.CompareExchange(ref _compactValuesState, ActionQueuedOrRunning, ActionNotQueued) == ActionNotQueued)
                     {
                         if (_maintainLRU)
                             AddActionToEventQueue(CompactLRU);
                         else
                             AddActionToEventQueue(Compact);
+
+                        if (DateTime.UtcNow >= _timeForNextCompaction)
+                        {
+                            if (Interlocked.CompareExchange(ref _processCompactedValuesState, ActionQueuedOrRunning, ActionNotQueued) == ActionNotQueued)
+                            {
+                                _eventQueue.Enqueue(ProcessCompactedValues);
+                            }
+                        }
                     }
                 }
 
@@ -476,8 +541,7 @@ namespace Microsoft.IdentityModel.Tokens
             // the caller's TaskScheduler (if there is one) as some custom TaskSchedulers might be single-threaded and its execution can be blocked.
             if (Interlocked.CompareExchange(ref _eventQueueTaskState, EventQueueTaskRunning, EventQueueTaskStopped) == EventQueueTaskStopped)
             {
-                // EventQueueTaskAction manages its own state.
-                _ = Task.Run(EventQueueTaskAction);
+                _  = Task.Run(EventQueueTaskAction);
             }
         }
 
@@ -514,6 +578,23 @@ namespace Microsoft.IdentityModel.Tokens
             return cacheItem != null;
         }
 
+        // These Try methods are not thread safe and they rely on the SignatureProviders to have logic to dispose of important objects.
+        // A better design would be to have TryRemove move the SignatureProvider to the compacted list.
+        // This would need a new action in LRUCache, AddItemToCompactedList.
+
+        /// Removes a particular key from the cache.
+        public bool TryRemove(TKey key)
+        {
+            if (key == null)
+                throw LogHelper.LogArgumentNullException(nameof(key));
+
+            if (!_map.TryRemove(key, out var cacheItem))
+                return false;
+
+            OnItemMovedToCompactedList?.Invoke(cacheItem.Value);
+            return true;
+        }
+
         /// Removes a particular key from the cache.
         public bool TryRemove(TKey key, out TValue value)
         {
@@ -534,7 +615,7 @@ namespace Microsoft.IdentityModel.Tokens
             }
 
             value = cacheItem.Value;
-            OnItemRemoved?.Invoke(cacheItem.Value);
+            OnItemMovedToCompactedList?.Invoke(cacheItem.Value);
 
             return true;
         }
@@ -579,7 +660,9 @@ namespace Microsoft.IdentityModel.Tokens
         /// </summary>
         internal void WaitForProcessing()
         {
-            while (!_eventQueue.IsEmpty);
+            while (!_eventQueue.IsEmpty)
+            {
+            };
         }
 
         #endregion
@@ -613,4 +696,3 @@ namespace Microsoft.IdentityModel.Tokens
         public override int GetHashCode() => 990326508 + EqualityComparer<TKey>.Default.GetHashCode(Key);
     }
 }
-

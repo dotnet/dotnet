@@ -193,13 +193,11 @@ namespace Microsoft.IdentityModel.Tokens
             catch
             {
                 CryptoProviderCache?.TryRemove(this);
-                Dispose(true);
                 throw;
             }
             finally
             {
-                if (!_disposed)
-                    ReleaseKeyedHashAlgorithm(keyedHashAlgorithm);
+                ReleaseKeyedHashAlgorithm(keyedHashAlgorithm);
             }
         }
 
@@ -225,13 +223,11 @@ namespace Microsoft.IdentityModel.Tokens
             catch
             {
                 CryptoProviderCache?.TryRemove(this);
-                Dispose(true);
                 throw;
             }
             finally
             {
-                if (!_disposed)
-                    ReleaseKeyedHashAlgorithm(keyedHashAlgorithm);
+                ReleaseKeyedHashAlgorithm(keyedHashAlgorithm);
             }
         }
 #endif
@@ -260,13 +256,11 @@ namespace Microsoft.IdentityModel.Tokens
             catch
             {
                 CryptoProviderCache?.TryRemove(this);
-                Dispose(true);
                 throw;
             }
             finally
             {
-                if (!_disposed)
-                    ReleaseKeyedHashAlgorithm(keyedHashAlgorithm);
+                ReleaseKeyedHashAlgorithm(keyedHashAlgorithm);
             }
         }
 
@@ -301,9 +295,6 @@ namespace Microsoft.IdentityModel.Tokens
                 throw LogHelper.LogExceptionMessage(new ObjectDisposedException(GetType().ToString()));
             }
 
-            if (LogHelper.IsEnabled(EventLogLevel.Informational))
-                LogHelper.LogInformation(LogMessages.IDX10643, input);
-
             KeyedHashAlgorithm keyedHashAlgorithm = GetKeyedHashAlgorithm(GetKeyBytes(Key), Algorithm);
             try
             {
@@ -312,13 +303,11 @@ namespace Microsoft.IdentityModel.Tokens
             catch
             {
                 CryptoProviderCache?.TryRemove(this);
-                Dispose(true);
                 throw;
             }
             finally
             {
-                if (!_disposed)
-                    ReleaseKeyedHashAlgorithm(keyedHashAlgorithm);
+                ReleaseKeyedHashAlgorithm(keyedHashAlgorithm);
             }
         }
 
@@ -449,9 +438,6 @@ namespace Microsoft.IdentityModel.Tokens
                 throw LogHelper.LogExceptionMessage(new ObjectDisposedException(GetType().ToString()));
             }
 
-            if (LogHelper.IsEnabled(EventLogLevel.Informational))
-                LogHelper.LogInformation(LogMessages.IDX10643, input);
-
             KeyedHashAlgorithm keyedHashAlgorithm = null;
             try
             {
@@ -465,18 +451,16 @@ namespace Microsoft.IdentityModel.Tokens
 #else
                 hash = keyedHashAlgorithm.ComputeHash(input, inputOffset, inputLength).AsSpan();
 #endif
-
                 return Utility.AreEqual(signature, hash, signatureLength);
             }
             catch
             {
-                Dispose(true);
+                CryptoProviderCache?.TryRemove(this);
                 throw;
             }
             finally
             {
-                if (!_disposed)
-                    ReleaseKeyedHashAlgorithm(keyedHashAlgorithm);
+                ReleaseKeyedHashAlgorithm(keyedHashAlgorithm);
             }
         }
 

@@ -47,13 +47,13 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 {
                     var disposeCalled = GetSignatureProviderIsDisposedByReflect(signatureProvider);
                     if (!disposeCalled)
-                        context.Diffs.Add("Dispose wasn't called on the AsymmetricSignatureProvider.");
+                        context.Diffs.Add("Dispose was supposed to be called on the AsymmetricSignatureProvider.");
                 }
                 else // signatureProvider.GetType().Equals(typeof(SymmetricSignatureProvider))
                 {
                     var disposeCalled = GetSignatureProviderIsDisposedByReflect(signatureProvider);
                     if (!disposeCalled)
-                        context.Diffs.Add("Dispose wasn't called on the SymmetricSignatureProvider.");
+                        context.Diffs.Add("Dispose was supposed to be called on the SymmetricSignatureProvider.");
                 }
             }
             catch (Exception ex)
@@ -917,8 +917,8 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
             cryptoProviderFactory.ReleaseSignatureProvider(signing);
 
-            if (!GetSignatureProviderIsDisposedByReflect(signing))
-                context.AddDiff($"{nameof(signing2)} should have been disposed");
+            if (GetSignatureProviderIsDisposedByReflect(signing))
+                context.AddDiff($"{nameof(signing)} should not have been disposed");
 
             TestUtilities.AssertFailIfErrors(context);
         }

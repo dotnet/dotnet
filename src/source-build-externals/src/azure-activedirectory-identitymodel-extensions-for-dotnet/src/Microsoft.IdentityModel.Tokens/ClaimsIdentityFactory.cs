@@ -13,7 +13,7 @@ namespace Microsoft.IdentityModel.Tokens
     {
         internal static ClaimsIdentity Create(IEnumerable<Claim> claims)
         {
-            if (AppContextSwitches.UseClaimsIdentityType())
+            if (AppContextSwitches.UseClaimsIdentityType)
                 return new ClaimsIdentity(claims);
 
             return new CaseSensitiveClaimsIdentity(claims);
@@ -21,7 +21,7 @@ namespace Microsoft.IdentityModel.Tokens
 
         internal static ClaimsIdentity Create(IEnumerable<Claim> claims, string authenticationType)
         {
-            if (AppContextSwitches.UseClaimsIdentityType())
+            if (AppContextSwitches.UseClaimsIdentityType)
                 return new ClaimsIdentity(claims, authenticationType);
 
             return new CaseSensitiveClaimsIdentity(claims, authenticationType);
@@ -29,7 +29,7 @@ namespace Microsoft.IdentityModel.Tokens
 
         internal static ClaimsIdentity Create(string authenticationType, string nameType, string roleType, SecurityToken securityToken)
         {
-            if (AppContextSwitches.UseClaimsIdentityType())
+            if (AppContextSwitches.UseClaimsIdentityType)
                 return new ClaimsIdentity(authenticationType: authenticationType, nameType: nameType, roleType: roleType);
 
             return new CaseSensitiveClaimsIdentity(authenticationType: authenticationType, nameType: nameType, roleType: roleType)

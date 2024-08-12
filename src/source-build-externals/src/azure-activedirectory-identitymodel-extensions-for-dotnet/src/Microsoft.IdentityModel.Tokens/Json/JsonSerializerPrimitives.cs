@@ -146,7 +146,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
 
             if (jsonElement.ValueKind == JsonValueKind.String)
             {
-                if (!string.IsNullOrEmpty(claimType) && !TryAllStringClaimsAsDateTime() && IsKnownToNotBeDateTime(claimType))
+                if (!string.IsNullOrEmpty(claimType) && !AppContextSwitches.TryAllStringClaimsAsDateTime && IsKnownToNotBeDateTime(claimType))
                     return jsonElement.GetString();
 
                 if (DateTime.TryParse(jsonElement.GetString(), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime dateTime))
@@ -705,13 +705,6 @@ namespace Microsoft.IdentityModel.Tokens.Json
             return retVal;
         }
 
-        internal const string TryToCreateDateTimeClaimsSwitch = "Switch.Microsoft.IdentityModel.TryAllStringClaimsAsDateTime";
-
-        public static bool TryAllStringClaimsAsDateTime()
-        {
-            return (AppContext.TryGetSwitch(TryToCreateDateTimeClaimsSwitch, out bool tryAsDateTime) && tryAsDateTime);
-        }
-
         /// <summary>
         /// This is a non-exhaustive list of claim types that are not expected to be DateTime values
         /// sourced from expected Entra V1 and V2 claims, OpenID Connect claims, and a selection of
@@ -833,7 +826,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
 
             string originalString = reader.GetString();
 
-            if (!TryAllStringClaimsAsDateTime() && IsKnownToNotBeDateTime(propertyName))
+            if (!AppContextSwitches.TryAllStringClaimsAsDateTime && IsKnownToNotBeDateTime(propertyName))
             {
                 reader.Read();
                 return originalString;

@@ -1,5 +1,16 @@
 See the [releases](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/releases) for details on bug fixes and added features.
 
+8.0.1
+=====
+### Bug fixes
+- IdentityModel now resolves the public key to EPK. See issue [#1951](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/1951) for details.
+- Fix a race condition where `SignatureProvider` was disposed but still able to leverage the cache and `SignatureProvider` now disposes when compacting. See PR [#2682](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2682) for details.
+- For JWE, `JsonWebTokenHandler.ValidateJWEAsync` now considers the decrypt keys in the configuration. See issue [#2737](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2737) for details.
+
+### Performance improvement
+- `AppContext.TryGetSwitch` [statically caches internally](https://source.dot.net/#System.Private.CoreLib/src/libraries/System.Private.CoreLib/src/System/AppContext.cs,0a1f341850c88646) but takes out a lock. 
+.NET almost always [caches these values](https://github.com/dotnet/aspnetcore/blob/79f745dfd906db54916bf3da2430720eaeda6254/src/Servers/Kestrel/Core/src/KestrelServerOptions.cs#L34-L38). They're not expected to change while the process is running unlike normal config. IdentityModel now caches the value. See issue [#2722](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2722) for details.
+
 8.0.0
 =====
 ### CVE package updates

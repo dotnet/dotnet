@@ -377,7 +377,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
                 context.Diffs.Add("!object.ReferenceEquals(configuration, configuration2)");
 
             // get configuration from http address, should throw
-            configManager = new ConfigurationManager<OpenIdConnectConfiguration>("http://someaddress.com", new OpenIdConnectConfigurationRetriever());
+            configManager = new ConfigurationManager<OpenIdConnectConfiguration>("http://127.0.0.1", new OpenIdConnectConfigurationRetriever());
             var ee = new ExpectedException(typeof(InvalidOperationException), "IDX20803:", typeof(ArgumentException));
             try
             {
@@ -397,7 +397,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             }
 
             // get configuration from https address, should throw
-            configManager = new ConfigurationManager<OpenIdConnectConfiguration>("https://someaddress.com", new OpenIdConnectConfigurationRetriever());
+            configManager = new ConfigurationManager<OpenIdConnectConfiguration>("https://127.0.0.1", new OpenIdConnectConfigurationRetriever());
             ee = new ExpectedException(typeof(InvalidOperationException), "IDX20803:", typeof(IOException));
             try
             {
@@ -441,7 +441,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             configuration = configManager.GetConfigurationAsync().Result;
             TestUtilities.SetField(configManager, "_lastRefresh", DateTimeOffset.UtcNow - TimeSpan.FromHours(1));
             configManager.RequestRefresh();
-            configManager.MetadataAddress = "http://someaddress.com";
+            configManager.MetadataAddress = "http://127.0.0.1";
             configuration2 = configManager.GetConfigurationAsync().Result;
             IdentityComparer.AreEqual(configuration, configuration2, context);
             if (!object.ReferenceEquals(configuration, configuration2))
