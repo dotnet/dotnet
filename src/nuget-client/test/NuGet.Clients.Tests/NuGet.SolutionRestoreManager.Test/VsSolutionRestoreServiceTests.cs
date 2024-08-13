@@ -2566,6 +2566,54 @@ namespace NuGet.SolutionRestoreManager.Test
             exception.Message.Should().Contain(ProjectItems.NuGetAuditSuppress);
         }
 
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_WithProjectRestoreMetadataProperties(bool isV2Nominate)
+        {
+            IVsTargetFrameworkInfo vstfms = FrameworkWithProperty(isV2Nominate, ProjectBuildProperties.RestoreUseLegacyDependencyResolver, "true");
+
+            var cps = NewCpsProject("{ }");
+            var projectFullPath = cps.ProjectFullPath;
+            var builder = cps.Builder
+                .WithTargetFrameworkInfo(vstfms);
+
+            // Act
+            var actualRestoreSpec = isV2Nominate ?
+                    await CaptureNominateResultAsync(projectFullPath, builder.ProjectRestoreInfo2) :
+                    await CaptureNominateResultAsync(projectFullPath, builder.ProjectRestoreInfo);
+
+            // Assert
+            SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
+
+            var actualProjectSpec = actualRestoreSpec.GetProjectSpec(projectFullPath);
+            Assert.NotNull(actualProjectSpec);
+            actualProjectSpec.RestoreMetadata.UseLegacyDependencyResolver.Should().BeTrue();
+        }
+
+        private static IVsTargetFrameworkInfo FrameworkWithProperty(bool isV2Nominate, string propertyName, string propertyValue)
+        {
+            return isV2Nominate ?
+                            (IVsTargetFrameworkInfo)
+                            new VsTargetFrameworkInfo2(
+                                    "netcoreapp1.0",
+                                    Enumerable.Empty<IVsReferenceItem>(),
+                                    Enumerable.Empty<IVsReferenceItem>(),
+                                    Enumerable.Empty<IVsReferenceItem>(),
+                                    Enumerable.Empty<IVsReferenceItem>(),
+                                    new[] {
+                            new VsProjectProperty(propertyName, propertyValue)
+                                         })
+                            :
+                            new VsTargetFrameworkInfo(
+                                    "netcoreapp1.0",
+                                    Enumerable.Empty<IVsReferenceItem>(),
+                                    Enumerable.Empty<IVsReferenceItem>(),
+                                    new[] {
+                            new VsProjectProperty(propertyName, propertyValue)
+                                         });
+        }
+
         private async Task<DependencyGraphSpec> CaptureNominateResultAsync(
             string projectFullPath,
             IVsProjectRestoreInfo pri,
