@@ -1789,6 +1789,38 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             await Assert.ThrowsAsync<ArgumentException>(async () => await testProject.GetPackageSpecsAsync(testDependencyGraphCacheContext));
         }
 
+        [Theory]
+        [InlineData("False", false)]
+        [InlineData("true", true)]
+        [InlineData(null, false)]
+        public async Task GetPackageSpec_WithUseLegacyDependencyResolver(string restoreUseLegacyDependencyResolver, bool expected)
+        {
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            // Arrange
+            using var testDirectory = TestDirectory.Create();
+            var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
+            projectBuildProperties.Setup(b => b.GetPropertyValue(ProjectBuildProperties.RestoreUseLegacyDependencyResolver))
+                .Returns(restoreUseLegacyDependencyResolver);
+            var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
+
+            var testProject = new LegacyPackageReferenceProject(
+                projectAdapter,
+                Guid.NewGuid().ToString(),
+                new TestProjectSystemServices(),
+                _threadingService);
+
+            // Act
+            var packageSpecs = await testProject.GetPackageSpecsAsync(new DependencyGraphCacheContext(NullLogger.Instance, NullSettings.Instance));
+
+            // Assert
+            Assert.NotNull(packageSpecs);
+            var actualRestoreSpec = packageSpecs.Single();
+            SpecValidationUtility.ValidateProjectSpec(actualRestoreSpec);
+
+            actualRestoreSpec.RestoreMetadata.UseLegacyDependencyResolver.Should().Be(expected);
+        }
+
         private LegacyPackageReferenceProject CreateLegacyPackageReferenceProject(TestDirectory testDirectory, string range)
         {
             return ProjectFactories.CreateLegacyPackageReferenceProject(testDirectory, Guid.NewGuid().ToString(), range, _threadingService);

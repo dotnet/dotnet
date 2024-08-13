@@ -1155,7 +1155,9 @@ Copyright (c) .NET Foundation. All rights reserved.
         <CLRSupport>$(CLRSupport)</CLRSupport>
         <RuntimeIdentifierGraphPath>$(RuntimeIdentifierGraphPath)</RuntimeIdentifierGraphPath>
         <WindowsTargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</WindowsTargetPlatformMinVersion>
-      </_RestoreGraphEntry>
+        <RestoreUseLegacyDependencyResolver>$(RestoreUseLegacyDependencyResolver)</RestoreUseLegacyDependencyResolver>
+      
+    </_RestoreGraphEntry>
     </ItemGroup>
   </Target>
 

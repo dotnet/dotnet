@@ -559,6 +559,7 @@ namespace NuGet.PackageManagement.VisualStudio
                     RestoreAuditProperties = auditProperties,
                     SdkAnalysisLevel = MSBuildRestoreUtility.GetSdkAnalysisLevel(skdAnalysisLevelString),
                     UsingMicrosoftNETSdk = MSBuildRestoreUtility.GetUsingMicrosoftNETSdk(usingNetSdk),
+                    UseLegacyDependencyResolver = MSBuildStringUtility.IsTrue(_vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.RestoreUseLegacyDependencyResolver)),
                 }
             };
         }

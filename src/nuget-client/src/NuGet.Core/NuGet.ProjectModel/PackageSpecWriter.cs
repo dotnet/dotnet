@@ -214,6 +214,7 @@ namespace NuGet.ProjectModel
             SetValueIfTrue(writer, "centralPackageVersionOverrideDisabled", msbuildMetadata.CentralPackageVersionOverrideDisabled);
             SetValueIfTrue(writer, "CentralPackageTransitivePinningEnabled", msbuildMetadata.CentralPackageTransitivePinningEnabled);
             SetValueIfFalse(writer, "UsingMicrosoftNETSdk", msbuildMetadata.UsingMicrosoftNETSdk);
+            SetValueIfTrue(writer, "restoreUseLegacyDependencyResolver ", msbuildMetadata.UseLegacyDependencyResolver);
         }
 
 

@@ -307,6 +307,11 @@ namespace NuGet.SolutionRestoreManager
             return GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.CentralPackageTransitivePinningEnabled, MSBuildStringUtility.IsTrue);
         }
 
+        internal static bool GetUseLegacyDependencyResolver(IReadOnlyList<IVsTargetFrameworkInfo4> tfms)
+        {
+            return GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.RestoreUseLegacyDependencyResolver, MSBuildStringUtility.IsTrue);
+        }
+
         internal static RestoreAuditProperties? GetRestoreAuditProperties(IReadOnlyList<IVsTargetFrameworkInfo4> tfms)
         {
             string? enableAudit = GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.NuGetAudit, s => s);
