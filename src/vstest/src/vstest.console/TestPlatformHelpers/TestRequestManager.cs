@@ -78,6 +78,13 @@ internal class TestRequestManager : ITestRequestManager
     /// Assumption: There can only be one active discovery request.
     /// </summary>
     private IDiscoveryRequest? _currentDiscoveryRequest;
+    /// <summary>
+    /// Guards cancellation of the current discovery request, by resetting when the request is received,
+    /// because the request needs time to setup and populate the _currentTestRunRequest. This might take a relatively
+    /// long time when the machine is slow, because the setup is called as an async task, so it needs to be processed by thread pool
+    /// and there might be a queue of existing tasks.
+    /// </summary>
+    private readonly ManualResetEvent _discoveryStarting = new(true);
 
     /// <summary>
     /// Maintains the current active test run attachments processing cancellation token source.
@@ -163,105 +170,118 @@ internal class TestRequestManager : ITestRequestManager
         ITestDiscoveryEventsRegistrar discoveryEventsRegistrar,
         ProtocolConfig protocolConfig)
     {
-        EqtTrace.Info("TestRequestManager.DiscoverTests: Discovery tests started.");
-
-        // TODO: Normalize rest of the data on the request as well
-        discoveryPayload.Sources = KnownPlatformSourceFilter.FilterKnownPlatformSources(discoveryPayload.Sources?.Distinct().ToList());
-        discoveryPayload.RunSettings ??= "<RunSettings></RunSettings>";
-
-        var runsettings = discoveryPayload.RunSettings;
-
-        if (discoveryPayload.TestPlatformOptions != null)
+        try
         {
-            _telemetryOptedIn = discoveryPayload.TestPlatformOptions.CollectMetrics;
-        }
+            // Flag that that discovery is being initialized, so all requests to cancel discovery will wait till we set the discovery up.
+            _discoveryStarting.Reset();
 
-        var requestData = GetRequestData(protocolConfig);
-        if (UpdateRunSettingsIfRequired(
-                runsettings,
-                discoveryPayload.Sources.ToList(),
-                discoveryEventsRegistrar,
-                isDiscovery: true,
-                out string updatedRunsettings,
-                out IDictionary<string, Architecture> sourceToArchitectureMap,
-                out IDictionary<string, Framework> sourceToFrameworkMap))
-        {
-            runsettings = updatedRunsettings;
-        }
-
-        var sourceToSourceDetailMap = discoveryPayload.Sources.Select(source => new SourceDetail
-        {
-            Source = source,
-            Architecture = sourceToArchitectureMap[source],
-            Framework = sourceToFrameworkMap[source],
-        }).ToDictionary(k => k.Source!);
-
-        var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runsettings);
-        var batchSize = runConfiguration.BatchSize;
-        var testCaseFilterFromRunsettings = runConfiguration.TestCaseFilter;
-
-        if (requestData.IsTelemetryOptedIn)
-        {
-            // Collect metrics.
-            CollectMetrics(requestData, runConfiguration);
-
-            // Collect commands.
-            LogCommandsTelemetryPoints(requestData);
-        }
-
-        // Create discovery request.
-        var criteria = new DiscoveryCriteria(
-            discoveryPayload.Sources,
-            batchSize,
-            _commandLineOptions.TestStatsEventTimeout,
-            runsettings,
-            discoveryPayload.TestSessionInfo)
-        {
-            TestCaseFilter = _commandLineOptions.TestCaseFilterValue
-                             ?? testCaseFilterFromRunsettings
-        };
-
-        // Make sure to run the run request inside a lock as the below section is not thread-safe.
-        // There can be only one discovery or execution request at a given point in time.
-        lock (_syncObject)
-        {
-            try
+            // Make sure to run the run request inside a lock as the below section is not thread-safe.
+            // There can be only one discovery or execution request at a given point in time.
+            lock (_syncObject)
             {
-                EqtTrace.Info("TestRequestManager.DiscoverTests: Synchronization context taken");
+                EqtTrace.Info("TestRequestManager.DiscoverTests: Discovery tests started.");
 
-                _currentDiscoveryRequest = _testPlatform.CreateDiscoveryRequest(
-                    requestData,
-                    criteria,
-                    discoveryPayload.TestPlatformOptions,
-                    sourceToSourceDetailMap,
-                    new EventRegistrarToWarningLoggerAdapter(discoveryEventsRegistrar));
-                discoveryEventsRegistrar?.RegisterDiscoveryEvents(_currentDiscoveryRequest);
+                // TODO: Normalize rest of the data on the request as well
+                discoveryPayload.Sources = KnownPlatformSourceFilter.FilterKnownPlatformSources(discoveryPayload.Sources?.Distinct().ToList());
+                discoveryPayload.RunSettings ??= "<RunSettings></RunSettings>";
 
-                // Notify start of discovery start.
-                _testPlatformEventSource.DiscoveryRequestStart();
+                var runsettings = discoveryPayload.RunSettings;
 
-                // Start the discovery of tests and wait for completion.
-                _currentDiscoveryRequest.DiscoverAsync();
-                _currentDiscoveryRequest.WaitForCompletion();
-            }
-            finally
-            {
-                if (_currentDiscoveryRequest != null)
+                if (discoveryPayload.TestPlatformOptions != null)
                 {
-                    // Dispose the discovery request and unregister for events.
-                    discoveryEventsRegistrar?.UnregisterDiscoveryEvents(_currentDiscoveryRequest);
-                    _currentDiscoveryRequest.Dispose();
-                    _currentDiscoveryRequest = null;
+                    _telemetryOptedIn = discoveryPayload.TestPlatformOptions.CollectMetrics;
                 }
 
-                EqtTrace.Info("TestRequestManager.DiscoverTests: Discovery tests completed.");
-                _testPlatformEventSource.DiscoveryRequestStop();
+                var requestData = GetRequestData(protocolConfig);
+                if (UpdateRunSettingsIfRequired(
+                        runsettings,
+                        discoveryPayload.Sources.ToList(),
+                        discoveryEventsRegistrar,
+                        isDiscovery: true,
+                        out string updatedRunsettings,
+                        out IDictionary<string, Architecture> sourceToArchitectureMap,
+                        out IDictionary<string, Framework> sourceToFrameworkMap))
+                {
+                    runsettings = updatedRunsettings;
+                }
 
-                // Posts the discovery complete event.
-                _metricsPublisher.Result.PublishMetrics(
-                    TelemetryDataConstants.TestDiscoveryCompleteEvent,
-                    requestData.MetricsCollection.Metrics!);
+                var sourceToSourceDetailMap = discoveryPayload.Sources.Select(source => new SourceDetail
+                {
+                    Source = source,
+                    Architecture = sourceToArchitectureMap[source],
+                    Framework = sourceToFrameworkMap[source],
+                }).ToDictionary(k => k.Source!);
+
+                var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runsettings);
+                var batchSize = runConfiguration.BatchSize;
+                var testCaseFilterFromRunsettings = runConfiguration.TestCaseFilter;
+
+                if (requestData.IsTelemetryOptedIn)
+                {
+                    // Collect metrics.
+                    CollectMetrics(requestData, runConfiguration);
+
+                    // Collect commands.
+                    LogCommandsTelemetryPoints(requestData);
+                }
+
+                // Create discovery request.
+                var criteria = new DiscoveryCriteria(
+                    discoveryPayload.Sources,
+                    batchSize,
+                    _commandLineOptions.TestStatsEventTimeout,
+                    runsettings,
+                    discoveryPayload.TestSessionInfo)
+                {
+                    TestCaseFilter = _commandLineOptions.TestCaseFilterValue
+                                     ?? testCaseFilterFromRunsettings
+                };
+
+
+                try
+                {
+                    EqtTrace.Info("TestRequestManager.DiscoverTests: Synchronization context taken");
+
+                    _currentDiscoveryRequest = _testPlatform.CreateDiscoveryRequest(
+                        requestData,
+                        criteria,
+                        discoveryPayload.TestPlatformOptions,
+                        sourceToSourceDetailMap,
+                        new EventRegistrarToWarningLoggerAdapter(discoveryEventsRegistrar));
+                    // Discovery started, allow cancellations to proceed.
+                    _currentDiscoveryRequest.OnDiscoveryStart += (s, e) => _discoveryStarting.Set();
+                    discoveryEventsRegistrar?.RegisterDiscoveryEvents(_currentDiscoveryRequest);
+
+                    // Notify start of discovery start.
+                    _testPlatformEventSource.DiscoveryRequestStart();
+
+                    // Start the discovery of tests and wait for completion.
+                    _currentDiscoveryRequest.DiscoverAsync();
+                    _currentDiscoveryRequest.WaitForCompletion();
+                }
+                finally
+                {
+                    if (_currentDiscoveryRequest != null)
+                    {
+                        // Dispose the discovery request and unregister for events.
+                        discoveryEventsRegistrar?.UnregisterDiscoveryEvents(_currentDiscoveryRequest);
+                        _currentDiscoveryRequest.Dispose();
+                        _currentDiscoveryRequest = null;
+                    }
+
+                    EqtTrace.Info("TestRequestManager.DiscoverTests: Discovery tests completed.");
+                    _testPlatformEventSource.DiscoveryRequestStop();
+
+                    // Posts the discovery complete event.
+                    _metricsPublisher.Result.PublishMetrics(
+                        TelemetryDataConstants.TestDiscoveryCompleteEvent,
+                        requestData.MetricsCollection.Metrics!);
+                }
             }
+        }
+        finally
+        {
+            _discoveryStarting.Set();
         }
     }
 
@@ -624,6 +644,12 @@ internal class TestRequestManager : ITestRequestManager
     public void CancelDiscovery()
     {
         EqtTrace.Info("TestRequestManager.CancelDiscovery: Sending cancel request.");
+
+        // Wait for discovery request to initialize, before cancelling it, otherwise the
+        // _currentDiscoveryRequest might be null, because discovery did not have enough time to
+        // initialize and did not manage to populate _currentDiscoveryRequest yet, leading to hanging run
+        // that "ignores" the cancellation.
+        _discoveryStarting.WaitOne(3000);
         _currentDiscoveryRequest?.Abort();
     }
 
