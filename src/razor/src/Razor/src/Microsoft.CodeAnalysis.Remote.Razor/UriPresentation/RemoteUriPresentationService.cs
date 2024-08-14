@@ -71,17 +71,7 @@ internal sealed partial class RemoteUriPresentationService(in ServiceArgs args) 
         }
 
         var solution = context.TextDocument.Project.Solution;
-
-        // Make sure we go through Roslyn to go from the Uri the client sent us, to one that it has a chance of finding in the solution
-        var ids = solution.GetDocumentIdsWithUri(razorFileUri);
-        if (ids.Length == 0)
-        {
-            return Response.CallHtml;
-        }
-
-        // We assume linked documents would produce the same component tag so just take the first
-        var otherDocument = solution.GetAdditionalDocument(ids[0]);
-        if (otherDocument is null)
+        if (!solution.TryGetRazorDocument(razorFileUri, out var otherDocument))
         {
             return Response.CallHtml;
         }

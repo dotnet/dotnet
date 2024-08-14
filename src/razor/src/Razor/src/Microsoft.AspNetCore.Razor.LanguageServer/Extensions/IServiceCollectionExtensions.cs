@@ -203,7 +203,7 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IRazorStartupService>((services) => (RazorProjectService)services.GetRequiredService<IRazorProjectService>());
         services.AddSingleton<IRazorStartupService, OpenDocumentGenerator>();
         services.AddSingleton<IDocumentMappingService, LspDocumentMappingService>();
-        services.AddSingleton<IEditMappingService, EditMappingService>();
+        services.AddSingleton<IEditMappingService, LspEditMappingService>();
         services.AddSingleton<RazorFileChangeDetectorManager>();
         services.AddSingleton<IOnInitialized>(sp => sp.GetRequiredService<RazorFileChangeDetectorManager>());
 
