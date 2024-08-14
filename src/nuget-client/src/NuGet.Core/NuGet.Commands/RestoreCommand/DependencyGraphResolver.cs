@@ -820,7 +820,8 @@ namespace NuGet.Commands
                                 newGraphNode.OuterNode = currentGraphNode;
                                 currentGraphNode.InnerNodes.Add(newGraphNode);
                             }
-                            if (isCentralPackageTransitivePinningEnabled && !downgrades.ContainsKey(chosenItemRangeIndex) && !RemoteDependencyWalker.IsGreaterThanOrEqualTo(chosenItem.LibraryDependency.LibraryRange.VersionRange, dep.LibraryRange.VersionRange))
+
+                            if (dep.SuppressParent != LibraryIncludeFlags.All && isCentralPackageTransitivePinningEnabled && !downgrades.ContainsKey(chosenItemRangeIndex) && !RemoteDependencyWalker.IsGreaterThanOrEqualTo(chosenItem.LibraryDependency.LibraryRange.VersionRange, dep.LibraryRange.VersionRange))
                             {
                                 downgrades.Add(chosenItem.LibraryRangeIndex, (currentGraphNode, dep));
                             }
