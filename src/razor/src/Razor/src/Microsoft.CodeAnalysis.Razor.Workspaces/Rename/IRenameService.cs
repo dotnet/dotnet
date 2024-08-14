@@ -3,12 +3,13 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
+namespace Microsoft.CodeAnalysis.Razor.Rename;
 
-internal interface IEditMappingService
+internal interface IRenameService
 {
-    Task<WorkspaceEdit> RemapWorkspaceEditAsync(IDocumentSnapshot contextDocumentSnapshot, WorkspaceEdit workspaceEdit, CancellationToken cancellationToken);
+    Task<WorkspaceEdit?> TryGetRazorRenameEditsAsync(VersionedDocumentContext documentContext, DocumentPositionInfo positionInfo, string newName, CancellationToken cancellationToken);
 }
