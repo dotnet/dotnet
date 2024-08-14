@@ -22,21 +22,6 @@
       Format:
       <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Options.5.0.0.csproj" />
     -->
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Diagnostics.DiagnosticSource.8.0.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.NET.StringTools.17.3.4.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.Framework.17.3.4.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.17.3.4.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.Utilities.Core.17.3.4.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.Tasks.Core.17.3.4.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Text.Encodings.Web.8.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Text.Json.8.0.4.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Formats.Asn1.6.0.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.Pks.6.0.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.Pks.6.0.4.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Text.Json.8.0.3.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(BuildDependencyPackageProjects)' == 'true'">
