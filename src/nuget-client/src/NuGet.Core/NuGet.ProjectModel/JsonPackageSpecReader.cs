@@ -954,7 +954,6 @@ namespace NuGet.ProjectModel
             bool useMacros = MSBuildStringUtility.IsTrue(environmentVariableReader.GetEnvironmentVariable(MacroStringsUtility.NUGET_ENABLE_EXPERIMENTAL_MACROS));
             var userSettingsDirectory = NuGetEnvironment.GetFolderPath(NuGetFolderPath.UserSettingsDirectory);
             bool usingMicrosoftNetSdk = true;
-            bool restoreUseLegacyDependencyResolver = false;
             NuGetVersion sdkAnalysisLevel = null;
 
             jsonReader.ReadObject(propertyName =>
@@ -1157,7 +1156,6 @@ namespace NuGet.ProjectModel
 
                         warningProperties = new WarningProperties(warnAsError, noWarn, allWarningsAsErrors, warningsNotAsErrors);
                         break;
-
                     case "SdkAnalysisLevel":
                         string skdAnalysisLevelString = jsonReader.ReadNextTokenAsString();
 
@@ -1175,6 +1173,7 @@ namespace NuGet.ProjectModel
                         break;
 
                     case "UsingMicrosoftNETSdk":
+
                         try
                         {
                             usingMicrosoftNetSdk = jsonReader.ReadAsBoolean() ?? usingMicrosoftNetSdk;
@@ -1189,10 +1188,6 @@ namespace NuGet.ProjectModel
                                     jsonReader.ReadNextTokenAsString(),
                                     "false"), ex);
                         }
-                        break;
-
-                    case "restoreUseLegacyDependencyResolver":
-                        restoreUseLegacyDependencyResolver = ReadNextTokenAsBoolOrFalse(jsonReader, packageSpec.FilePath);
                         break;
                 }
             });
@@ -1216,7 +1211,6 @@ namespace NuGet.ProjectModel
             msbuildMetadata.RestoreAuditProperties = auditProperties;
             msbuildMetadata.UsingMicrosoftNETSdk = usingMicrosoftNetSdk;
             msbuildMetadata.SdkAnalysisLevel = sdkAnalysisLevel;
-            msbuildMetadata.UseLegacyDependencyResolver = restoreUseLegacyDependencyResolver;
 
             if (configFilePaths != null)
             {

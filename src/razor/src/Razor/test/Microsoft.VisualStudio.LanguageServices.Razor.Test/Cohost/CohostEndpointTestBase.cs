@@ -54,8 +54,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
             HtmlVirtualDocumentSuffix = ".g.html",
             IncludeProjectKeyInGeneratedFilePath = false,
             UsePreciseSemanticTokenRanges = false,
-            UseRazorCohostServer = true,
-            ReturnCodeActionAndRenamePathsWithPrefixedSlash = false,
+            UseRazorCohostServer = true
         };
         UpdateClientInitializationOptions(c => c);
 

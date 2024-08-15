@@ -1390,12 +1390,9 @@ class C
         private static string[] GetLocalNames(EvaluationContext context)
         {
             string unused;
-            var locals = ArrayBuilder<LocalAndMethod>.GetInstance();
+            var locals = new ArrayBuilder<LocalAndMethod>();
             context.CompileGetLocals(locals, argumentsOnly: false, typeName: out unused, testData: null);
-            var result = locals.Select(l => l.LocalName).ToArray();
-
-            locals.Free();
-            return result;
+            return locals.Select(l => l.LocalName).ToArray();
         }
     }
 }

@@ -22,7 +22,4 @@ internal struct RemoteClientInitializationOptions
 
     [DataMember(Order = 4)]
     internal required bool IncludeProjectKeyInGeneratedFilePath;
-
-    [DataMember(Order = 5)]
-    internal required bool ReturnCodeActionAndRenamePathsWithPrefixedSlash;
 }

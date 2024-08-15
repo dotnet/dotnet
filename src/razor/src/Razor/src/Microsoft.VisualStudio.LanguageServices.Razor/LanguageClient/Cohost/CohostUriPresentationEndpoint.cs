@@ -123,7 +123,7 @@ internal class CohostUriPresentationEndpoint(
             return null;
         }
 
-        if (!workspaceEdit.TryGetTextDocumentEdits(out var edits))
+        if (!workspaceEdit.TryGetDocumentChanges(out var edits))
         {
             return null;
         }

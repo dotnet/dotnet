@@ -26,7 +26,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.FoldingRanges;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.Rename;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
@@ -178,13 +177,11 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
             services.AddHandlerWithCapabilities<ImplementationEndpoint>();
             services.AddHandlerWithCapabilities<OnAutoInsertEndpoint>();
 
+            services.AddHandlerWithCapabilities<RenameEndpoint>();
             services.AddHandlerWithCapabilities<DefinitionEndpoint>();
 
             if (!featureOptions.UseRazorCohostServer)
             {
-                services.AddSingleton<IRenameService, RenameService>();
-                services.AddHandlerWithCapabilities<RenameEndpoint>();
-
                 services.AddHandlerWithCapabilities<DocumentHighlightEndpoint>();
                 services.AddHandlerWithCapabilities<SignatureHelpEndpoint>();
                 services.AddHandlerWithCapabilities<LinkedEditingRangeEndpoint>();

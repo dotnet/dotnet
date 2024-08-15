@@ -4,18 +4,21 @@
 
 #nullable disable
 
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
-using Roslyn.Utilities;
+using System.Threading;
+using Microsoft.CodeAnalysis.Collections;
+using Microsoft.CodeAnalysis.PooledObjects;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols.PublicModel
 {
     internal abstract class AssemblySymbol : Symbol, IAssemblySymbol
     {
-        private IEnumerable<IModuleSymbol> _lazyModules;
-
         internal abstract Symbols.AssemblySymbol UnderlyingAssemblySymbol { get; }
 
         INamespaceSymbol IAssemblySymbol.GlobalNamespace
@@ -30,10 +33,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.PublicModel
         {
             get
             {
-                return InterlockedOperations.Initialize(
-                    ref _lazyModules,
-                    static self => self.UnderlyingAssemblySymbol.Modules.SelectAsArray(static module => module.GetPublicSymbol()),
-                    this);
+                foreach (var module in UnderlyingAssemblySymbol.Modules)
+                {
+                    yield return module.GetPublicSymbol();
+                }
             }
         }
 

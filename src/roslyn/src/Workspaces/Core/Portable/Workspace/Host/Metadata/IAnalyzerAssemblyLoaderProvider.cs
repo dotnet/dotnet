@@ -6,5 +6,5 @@ namespace Microsoft.CodeAnalysis.Host;
 
 internal interface IAnalyzerAssemblyLoaderProvider : IWorkspaceService
 {
-    IAnalyzerAssemblyLoader GetShadowCopyLoader();
+    IAnalyzerAssemblyLoader GetLoader(bool shadowCopy);
 }
