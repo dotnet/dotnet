@@ -542,7 +542,22 @@ namespace NuGet.Commands
                             }
                             suppressions.Add(depIndex);
                         }
-                        if (dep.VersionOverride != null)
+
+                        if (isCentralPackageTransitivePinningEnabled)
+                        {
+                            bool isTransitive = currentRefRangeIndex != rootProjectRefItem.LibraryRangeIndex && dep.LibraryRange.TypeConstraint == LibraryDependencyTarget.Package;
+                            bool isPinned = pinnedPackageVersions != null && pinnedPackageVersions.ContainsKey(depIndex);
+
+                            if (dep.VersionOverride != null && (!isTransitive || !isPinned))
+                            {
+                                if (newOverrides == null)
+                                {
+                                    newOverrides = new Dictionary<LibraryDependencyIndex, VersionRange>(OverridesDictionarySize);
+                                }
+                                newOverrides[depIndex] = dep.VersionOverride;
+                            }
+                        }
+                        else if (dep.VersionOverride != null)
                         {
                             if (newOverrides == null)
                             {
@@ -607,7 +622,7 @@ namespace NuGet.Commands
 
                             isCentrallyPinnedTransitiveDependency = true;
 
-                            rangeIndex = libraryRangeInterningTable.Intern(dep.LibraryRange);
+                            rangeIndex = libraryRangeInterningTable.Intern(actualLibraryDependency.LibraryRange);
                         }
                         else
                         {
