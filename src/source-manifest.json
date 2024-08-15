@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.24408.2",
+      "packageVersion": "9.0.0-beta.24414.3",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "60ae233c3d77f11c5fdb53e570b64d503b13ba59"
+      "commitSha": "4d15f8d1f2d61f6513b70f0bcd4bd3c1828a3a68"
     },
     {
       "packageVersion": "8.1.0-preview.1.24373.2",
@@ -67,10 +67,10 @@
       "commitSha": "6bc91d5e2d3d8a199fdbe367ed015b55daf57046"
     },
     {
-      "packageVersion": "6.12.0-preview.1.68",
+      "packageVersion": "6.12.0-preview.1.69",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "5faea74048cff4b2cfe3957a1360c2a7dd581386"
+      "commitSha": "7ca037b450fffbae993f65367e29b9c37da7a012"
     },
     {
       "packageVersion": "9.0.0-preview.24413.5",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "11023a11d23166a63d30578716b925c4de24b927"
+      "commitSha": "3af20240c0ecb485d1be95f8fa16d0c713237bd1"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24412.1",
@@ -115,10 +115,10 @@
       "commitSha": "ee22054b44ec9615dc3481c4decc1b007a83a2b0"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24413.1",
+      "packageVersion": "9.0.0-alpha.1.24414.4",
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "1b838a42e4952b8fdf212cb1b43c5ce4d69f27b3"
+      "commitSha": "d2f2ae0b652c2379c4b1f0b1d31cfb24a6cfa900"
     },
     {
       "packageVersion": "9.0.0-beta.24413.2",
@@ -133,10 +133,10 @@
       "commitSha": "0710a7892d89999956e8808c28e9dd0512bd53f3"
     },
     {
-      "packageVersion": "9.0.100-rc.1.24414.1",
+      "packageVersion": "9.0.100-rc.1.24415.1",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "fe50b5a0714afec941b483d977e253a37d1f5b2e"
+      "commitSha": "f4de925adeee6df42a4224f057242d8735fc8bb3"
     },
     {
       "packageVersion": "1.1.0-rc.24409.1",
