@@ -111,7 +111,6 @@ namespace NuGet.ProjectModel
         private static readonly byte[] EmptyStringPropertyName = Encoding.UTF8.GetBytes(string.Empty);
         private static readonly byte[] SdkAnalysisLevel = Encoding.UTF8.GetBytes("SdkAnalysisLevel");
         private static readonly byte[] UsingMicrosoftNETSdk = Encoding.UTF8.GetBytes("UsingMicrosoftNETSdk");
-        private static readonly byte[] UseLegacyDependencyResolverPropertyName = Encoding.UTF8.GetBytes("restoreUseLegacyDependencyResolver");
 
         internal static PackageSpec GetPackageSpecUtf8JsonStreamReader(Stream stream, string name, string packageSpecPath, IEnvironmentVariableReader environmentVariableReader, string snapshotValue = null)
         {
@@ -950,7 +949,6 @@ namespace NuGet.ProjectModel
             var userSettingsDirectory = NuGetEnvironment.GetFolderPath(NuGetFolderPath.UserSettingsDirectory);
             bool usingMicrosoftNetSdk = true;
             NuGetVersion sdkAnalysisLevel = null;
-            bool useLegacyDependencyResolver = false;
 
             if (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.StartObject)
             {
@@ -1201,10 +1199,6 @@ namespace NuGet.ProjectModel
                             }
                         }
                     }
-                    else if (jsonReader.ValueTextEquals(UseLegacyDependencyResolverPropertyName))
-                    {
-                        useLegacyDependencyResolver = jsonReader.ReadNextTokenAsBoolOrThrowAnException(UseLegacyDependencyResolverPropertyName);
-                    }
                     else
                     {
                         jsonReader.Skip();
@@ -1231,7 +1225,6 @@ namespace NuGet.ProjectModel
             msbuildMetadata.RestoreAuditProperties = auditProperties;
             msbuildMetadata.SdkAnalysisLevel = sdkAnalysisLevel;
             msbuildMetadata.UsingMicrosoftNETSdk = usingMicrosoftNetSdk;
-            msbuildMetadata.UseLegacyDependencyResolver = useLegacyDependencyResolver;
 
             if (configFilePaths != null)
             {

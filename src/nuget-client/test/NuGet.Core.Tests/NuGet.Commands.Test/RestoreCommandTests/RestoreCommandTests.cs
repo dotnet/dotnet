@@ -2892,8 +2892,6 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 ["Audit.DataSources"] = value => value.Should().Be(0),
                 ["Audit.Duration.Download"] = value => value.Should().BeOfType<double>(),
                 ["Audit.Duration.Total"] = value => value.Should().BeOfType<double>(),
-                ["UseLegacyDependencyResolver"] = value => value.Should().BeOfType<bool>(),
-                ["UsedLegacyDependencyResolver"] = value => value.Should().BeOfType<bool>(),
             };
 
             HashSet<string> actualProperties = new();
@@ -2965,7 +2963,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(24);
+            projectInformationEvent.Count.Should().Be(22);
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(true);
             projectInformationEvent["IsCentralVersionManagementEnabled"].Should().Be(false);
@@ -2988,8 +2986,6 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             projectInformationEvent["FallbackFoldersCount"].Should().Be(0);
             projectInformationEvent["IsLockFileEnabled"].Should().Be(false);
             projectInformationEvent["NoOpCacheFileAgeDays"].Should().NotBeNull();
-            projectInformationEvent["UseLegacyDependencyResolver"].Should().BeOfType<bool>();
-            projectInformationEvent["UsedLegacyDependencyResolver"].Should().BeOfType<bool>();
         }
 
         [Fact]
@@ -3047,7 +3043,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(31);
+            projectInformationEvent.Count.Should().Be(29);
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(false);
             projectInformationEvent["TotalUniquePackagesCount"].Should().Be(2);
@@ -3314,27 +3310,6 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 fileInfo.Exists.Should().BeTrue();
                 return fileInfo.LastWriteTimeUtc;
             }
-        }
-
-        [Fact]
-        public async Task ExecuteAsync_WithLegacyAlgorithmOptIn_ExecutesLegacyAlgorithm()
-        {
-            // Arrange
-            using var pathContext = new SimpleTestPathContext();
-            var projectName = "TestProject";
-            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec(projectName, pathContext.SolutionRoot, "net472");
-            packageSpec.RestoreMetadata.UseLegacyDependencyResolver = true;
-
-            var logger = new TestLogger();
-
-            // aCT
-            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
-            var restoreCommand = new RestoreCommand(request);
-            RestoreResult result = await restoreCommand.ExecuteAsync();
-            result.Success.Should().BeTrue(because: logger.ShowMessages());
-
-            // Assert
-            result.LockFile.PackageSpec.RestoreMetadata.UseLegacyDependencyResolver.Should().BeTrue();
         }
 
         private static TargetFrameworkInformation CreateTargetFrameworkInformation(List<LibraryDependency> dependencies, List<CentralPackageVersion> centralVersionsDependencies, NuGetFramework framework = null)
