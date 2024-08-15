@@ -40,15 +40,15 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@29658c1](https://github.com/dotnet/razor/tree/29658c14e9ff617171862968dd4d8ed47d656589)*
 - `src/roslyn`  
-*[dotnet/roslyn@bba7cea](https://github.com/dotnet/roslyn/tree/bba7ceac50f68468ec9733a6a66f2314227101d4)*
+*[dotnet/roslyn@dee1a4f](https://github.com/dotnet/roslyn/tree/dee1a4f1c1c5f8feeb6de94f30ce5aa3eab4e0e1)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@3211f48](https://github.com/dotnet/roslyn-analyzers/tree/3211f48253bc18560156d90dc5e710d35f7d03fa)*
 - `src/runtime`  
-*[dotnet/runtime@605ff6f](https://github.com/dotnet/runtime/tree/605ff6f6485101d4bd1eabb9ab97af345eee67a1)*
+*[dotnet/runtime@0fbd814](https://github.com/dotnet/runtime/tree/0fbd81404d1f211572387498474063bc6f407f0f)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@d92413b](https://github.com/dotnet/scenario-tests/tree/d92413b87d36250859d8cb51ff69a03b5f5c4cab)*
 - `src/sdk`  
-*[dotnet/sdk@3af2024](https://github.com/dotnet/sdk/tree/3af20240c0ecb485d1be95f8fa16d0c713237bd1)*
+*[dotnet/sdk@70064ae](https://github.com/dotnet/sdk/tree/70064ae6fc29ae05888271918512cfb5679a3cc2)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@ee22054](https://github.com/dotnet/source-build-externals/tree/ee22054b44ec9615dc3481c4decc1b007a83a2b0)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -82,7 +82,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/source-build-reference-packages`  
 *[dotnet/source-build-reference-packages@d2f2ae0](https://github.com/dotnet/source-build-reference-packages/tree/d2f2ae0b652c2379c4b1f0b1d31cfb24a6cfa900)*
 - `src/sourcelink`  
-*[dotnet/sourcelink@e4452d9](https://github.com/dotnet/sourcelink/tree/e4452d9265baeeb0467c3ef81e853c763d519aef)*
+*[dotnet/sourcelink@10984a4](https://github.com/dotnet/sourcelink/tree/10984a4802e09f75802ccf1914257e539027b819)*
 - `src/symreader`  
 *[dotnet/symreader@0710a78](https://github.com/dotnet/symreader/tree/0710a7892d89999956e8808c28e9dd0512bd53f3)*
 - `src/templating`  
