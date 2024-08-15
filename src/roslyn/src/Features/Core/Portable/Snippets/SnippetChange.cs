@@ -19,20 +19,20 @@ internal readonly struct SnippetChange
     public readonly ImmutableArray<TextChange> TextChanges;
 
     /// <summary>
+    /// The position that the cursor should end up on
+    /// </summary>
+    public readonly int CursorPosition;
+
+    /// <summary>
     /// The items that we will want to rename as well as the ordering
     /// in which to visit those items.
     /// </summary>
     public readonly ImmutableArray<SnippetPlaceholder> Placeholders;
 
-    /// <summary>
-    /// The position that the caret should end up on
-    /// </summary>
-    public readonly int FinalCaretPosition;
-
     public SnippetChange(
         ImmutableArray<TextChange> textChanges,
-        ImmutableArray<SnippetPlaceholder> placeholders,
-        int finalCaretPosition)
+        int cursorPosition,
+        ImmutableArray<SnippetPlaceholder> placeholders)
     {
         if (textChanges.IsEmpty)
         {
@@ -40,7 +40,7 @@ internal readonly struct SnippetChange
         }
 
         TextChanges = textChanges;
+        CursorPosition = cursorPosition;
         Placeholders = placeholders;
-        FinalCaretPosition = finalCaretPosition;
     }
 }

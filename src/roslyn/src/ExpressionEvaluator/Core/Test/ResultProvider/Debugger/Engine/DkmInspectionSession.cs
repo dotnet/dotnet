@@ -71,7 +71,7 @@ namespace Microsoft.VisualStudio.Debugger.Evaluation
             internal Dispatcher(ImmutableArray<TInterface> items)
             {
                 _implementations = items;
-                _calls = ArrayBuilder<InstanceAndMethod>.GetInstance();
+                _calls = new ArrayBuilder<InstanceAndMethod>();
             }
 
             internal TResult Invoke<TResult>(object instance, MethodId method, Func<TInterface, TResult> f)

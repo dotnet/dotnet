@@ -188,7 +188,7 @@ internal sealed class GlobalOptionService(
 
     private bool SetGlobalOptions(OneOrMany<KeyValuePair<OptionKey2, object?>> options)
     {
-        using var _ = ArrayBuilder<(OptionKey2, object?)>.GetInstance(options.Count, out var changedOptions);
+        var changedOptions = new ArrayBuilder<(OptionKey2, object?)>(options.Count);
         var persisters = GetOptionPersisters();
 
         lock (_gate)

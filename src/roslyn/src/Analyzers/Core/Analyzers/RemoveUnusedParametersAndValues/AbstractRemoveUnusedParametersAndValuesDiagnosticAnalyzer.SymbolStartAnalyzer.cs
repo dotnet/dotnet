@@ -2,6 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+#nullable disable
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -22,19 +24,19 @@ internal abstract partial class AbstractRemoveUnusedParametersAndValuesDiagnosti
 {
     private sealed partial class SymbolStartAnalyzer(
         AbstractRemoveUnusedParametersAndValuesDiagnosticAnalyzer compilationAnalyzer,
-        INamedTypeSymbol? eventArgsType,
+        INamedTypeSymbol eventArgsTypeOpt,
         ImmutableHashSet<INamedTypeSymbol> attributeSetForMethodsToIgnore,
         DeserializationConstructorCheck deserializationConstructorCheck,
-        INamedTypeSymbol? iCustomMarshaler,
+        INamedTypeSymbol iCustomMarshaler,
         SymbolStartAnalysisContext symbolStartAnalysisContext)
     {
         private readonly AbstractRemoveUnusedParametersAndValuesDiagnosticAnalyzer _compilationAnalyzer = compilationAnalyzer;
 
-        private readonly INamedTypeSymbol? _eventArgsType = eventArgsType;
+        private readonly INamedTypeSymbol _eventArgsTypeOpt = eventArgsTypeOpt;
         private readonly ImmutableHashSet<INamedTypeSymbol> _attributeSetForMethodsToIgnore = attributeSetForMethodsToIgnore;
         private readonly DeserializationConstructorCheck _deserializationConstructorCheck = deserializationConstructorCheck;
         private readonly ConcurrentDictionary<IMethodSymbol, bool> _methodsUsedAsDelegates = [];
-        private readonly INamedTypeSymbol? _iCustomMarshaler = iCustomMarshaler;
+        private readonly INamedTypeSymbol _iCustomMarshaler = iCustomMarshaler;
         private readonly SymbolStartAnalysisContext _symbolStartAnalysisContext = symbolStartAnalysisContext;
 
         /// <summary>
@@ -108,11 +110,9 @@ internal abstract partial class AbstractRemoveUnusedParametersAndValuesDiagnosti
 
         private void OnSymbolEnd(SymbolAnalysisContext context)
         {
-            var interpolatedStringHandlerAttribute = context.Compilation.InterpolatedStringHandlerAttributeType();
-
             foreach (var (parameter, hasReference) in _unusedParameters)
             {
-                ReportUnusedParameterDiagnostic(parameter, hasReference, context.ReportDiagnostic, context.Options, interpolatedStringHandlerAttribute, context.CancellationToken);
+                ReportUnusedParameterDiagnostic(parameter, hasReference, context.ReportDiagnostic, context.Options, context.CancellationToken);
             }
         }
 
@@ -121,16 +121,15 @@ internal abstract partial class AbstractRemoveUnusedParametersAndValuesDiagnosti
             bool hasReference,
             Action<Diagnostic> reportDiagnostic,
             AnalyzerOptions analyzerOptions,
-            INamedTypeSymbol? interpolatedStringHandlerAttributeType,
             CancellationToken cancellationToken)
         {
-            if (!IsUnusedParameterCandidate(parameter, interpolatedStringHandlerAttributeType, cancellationToken))
+            if (!IsUnusedParameterCandidate(parameter, cancellationToken))
             {
                 return;
             }
 
             var location = parameter.Locations[0];
-            var option = analyzerOptions.GetAnalyzerOptions(location.SourceTree!).UnusedParameters;
+            var option = analyzerOptions.GetAnalyzerOptions(location.SourceTree).UnusedParameters;
             if (option.Notification.Severity == ReportDiagnostic.Suppress ||
                 !ShouldReportUnusedParameters(parameter.ContainingSymbol, option.Value, option.Notification.Severity))
             {
@@ -174,7 +173,7 @@ internal abstract partial class AbstractRemoveUnusedParametersAndValuesDiagnosti
             return new DiagnosticHelper.LocalizableStringWithArguments(messageFormat, parameterName);
         }
 
-        private static IEnumerable<INamedTypeSymbol?> GetAttributesForMethodsToIgnore(Compilation compilation)
+        private static IEnumerable<INamedTypeSymbol> GetAttributesForMethodsToIgnore(Compilation compilation)
         {
             // Ignore conditional methods (One conditional will often call another conditional method as its only use of a parameter)
             yield return compilation.ConditionalAttribute();
@@ -193,7 +192,7 @@ internal abstract partial class AbstractRemoveUnusedParametersAndValuesDiagnosti
             yield return compilation.SystemComponentModelCompositionImportingConstructorAttribute();
         }
 
-        private bool IsUnusedParameterCandidate(IParameterSymbol parameter, INamedTypeSymbol? interpolatedStringHandlerAttributeType, CancellationToken cancellationToken)
+        private bool IsUnusedParameterCandidate(IParameterSymbol parameter, CancellationToken cancellationToken)
         {
             // Ignore certain special parameters/methods.
             // Note that "method.ExplicitOrImplicitInterfaceImplementations" check below is not a complete check,
@@ -229,16 +228,16 @@ internal abstract partial class AbstractRemoveUnusedParametersAndValuesDiagnosti
             // Ignore event handler methods "Handler(object, MyEventArgs)"
             // as event handlers are required to match this signature
             // regardless of whether or not the parameters are used.
-            if (_eventArgsType != null &&
+            if (_eventArgsTypeOpt != null &&
                 method.Parameters is [{ Type.SpecialType: SpecialType.System_Object }, var secondParam] &&
-                secondParam.Type.InheritsFromOrEquals(_eventArgsType))
+                secondParam.Type.InheritsFromOrEquals(_eventArgsTypeOpt))
             {
                 return false;
             }
 
             // Ignore flagging parameters for methods with certain well-known attributes,
             // which are known to have unused parameters in real world code.
-            if (method.GetAttributes().Any(static (a, self) => a.AttributeClass is { } attributeClass && self._attributeSetForMethodsToIgnore.Contains(attributeClass), this))
+            if (method.GetAttributes().Any(static (a, self) => self._attributeSetForMethodsToIgnore.Contains(a.AttributeClass), this))
             {
                 return false;
             }
@@ -266,51 +265,16 @@ internal abstract partial class AbstractRemoveUnusedParametersAndValuesDiagnosti
                 return false;
             }
 
-            if (method.ContainingType is { } containingType)
+            // Don't report on valid GetInstance method of ICustomMarshaler.
+            // See https://docs.microsoft.com/dotnet/api/system.runtime.interopservices.icustommarshaler#implementing-the-getinstance-method
+            if (method is { MetadataName: "GetInstance", IsStatic: true, Parameters.Length: 1, ContainingType: { } containingType } methodSymbol &&
+                methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_String &&
+                containingType.AllInterfaces.Any((@interface, marshaler) => @interface.Equals(marshaler), _iCustomMarshaler))
             {
-                // Don't report on valid GetInstance method of ICustomMarshaler.
-                // See https://docs.microsoft.com/dotnet/api/system.runtime.interopservices.icustommarshaler#implementing-the-getinstance-method
-                if (method is { MetadataName: "GetInstance", IsStatic: true, Parameters: [{ Type.SpecialType: SpecialType.System_String }] } &&
-                    containingType.AllInterfaces.Any((@interface, marshaler) => @interface.Equals(marshaler), _iCustomMarshaler))
-                {
-                    return false;
-                }
-
-                // 2 first `int` parameters of an interpolated string handler
-                // constructor are mandatory. Therefore, do not report them as unused
-                if (IsInterpolatedStringHandlerMandatoryConstructorParameter(parameter, method, containingType, interpolatedStringHandlerAttributeType))
-                {
-                    return false;
-                }
+                return false;
             }
 
             return true;
-
-            static bool IsInterpolatedStringHandlerMandatoryConstructorParameter(
-                IParameterSymbol parameter,
-                IMethodSymbol method,
-                ITypeSymbol containingType,
-                INamedTypeSymbol? interpolatedStringHandlerAttributeType)
-            {
-                if (parameter.Type.SpecialType != SpecialType.System_Int32)
-                    return false;
-
-                if (method.MethodKind != MethodKind.Constructor)
-                    return false;
-
-                if (!(method.Parameters is [var firstParameter, ..] && firstParameter == parameter))
-                {
-                    if (!(method.Parameters is [_, var secondParameter, ..] && secondParameter == parameter))
-                    {
-                        return false;
-                    }
-                }
-
-                if (!containingType.GetAttributes().Any(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, interpolatedStringHandlerAttributeType)))
-                    return false;
-
-                return true;
-            }
         }
     }
 }
