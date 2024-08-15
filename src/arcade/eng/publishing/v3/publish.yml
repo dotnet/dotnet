@@ -79,7 +79,9 @@ stages:
         scriptType: ps
         scriptLocation: inlineScript
         inlineScript: |
-          $token = (az account get-access-token --resource "$env:servicePrincipalId" | ConvertFrom-Json).accessToken
+          # MaestroAppClientId provided by Publish-Build-Assets
+          $token = (az account get-access-token --resource "$(MaestroAppClientId)" | ConvertFrom-Json).accessToken
+          
           echo "##vso[task.setvariable variable=MaestroToken;isOutput=true;isSecret=true]$token"
 
     - task: AzureCLI@2
