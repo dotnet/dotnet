@@ -630,27 +630,67 @@ internal partial class SolutionExplorerInProcess
     }
 
     /// <returns>
-    /// true if build succeeds, otherwise false.
+    /// The summary line for the build, which generally looks something like this:
+    ///
+    /// <code>
+    /// ========== Build: 1 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========
+    /// </code>
     /// </returns>
-    public async Task<bool> BuildSolutionAndWaitAsync(CancellationToken cancellationToken)
+    public async Task<string> BuildSolutionAndWaitAsync(CancellationToken cancellationToken)
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var buildOutputWindowPane = await GetBuildOutputWindowPaneAsync(cancellationToken);
+        buildOutputWindowPane.Clear();
 
         var buildManager = await GetRequiredGlobalServiceAsync<SVsSolutionBuildManager, IVsSolutionBuildManager2>(cancellationToken);
         using var solutionEvents = new UpdateSolutionEvents(buildManager);
         var buildCompleteTaskCompletionSource = new TaskCompletionSource<bool>();
 
-        void HandleUpdateSolutionDone(bool buildSucceed) => buildCompleteTaskCompletionSource.SetResult(buildSucceed);
+        void HandleUpdateSolutionDone() => buildCompleteTaskCompletionSource.SetResult(true);
         solutionEvents.OnUpdateSolutionDone += HandleUpdateSolutionDone;
         try
         {
-            ErrorHandler.ThrowOnFailure(buildManager.StartSimpleUpdateSolutionConfiguration((uint)VSSOLNBUILDUPDATEFLAGS.SBF_OPERATION_BUILD, 0, 0));
-            return await buildCompleteTaskCompletionSource.Task;
+            await TestServices.Shell.ExecuteCommandAsync(VSConstants.VSStd97CmdID.BuildSln, cancellationToken);
+
+            await buildCompleteTaskCompletionSource.Task;
         }
         finally
         {
             solutionEvents.OnUpdateSolutionDone -= HandleUpdateSolutionDone;
         }
+
+        // Force the error list to update
+        ErrorHandler.ThrowOnFailure(buildOutputWindowPane.FlushToTaskList());
+
+        var textView = (IVsTextView)buildOutputWindowPane;
+        var wpfTextViewHost = await textView.GetTextViewHostAsync(JoinableTaskFactory, cancellationToken);
+        var lines = wpfTextViewHost.TextView.TextViewLines;
+        if (lines.Count < 1)
+        {
+            return string.Empty;
+        }
+
+        // Find the build summary line
+        for (var index = lines.Count - 1; index >= 0; index--)
+        {
+            var lineText = lines[index].Extent.GetText();
+            if (lineText.StartsWith("========== Build:"))
+            {
+                return lineText;
+            }
+        }
+
+        return string.Empty;
+    }
+
+    public async Task<IVsOutputWindowPane> GetBuildOutputWindowPaneAsync(CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var outputWindow = await GetRequiredGlobalServiceAsync<SVsOutputWindow, IVsOutputWindow>(cancellationToken);
+        ErrorHandler.ThrowOnFailure(outputWindow.GetPane(VSConstants.OutputWindowPaneGuid.BuildOutputPane_guid, out var pane));
+        return pane;
     }
 
     private static string ConvertLanguageName(string languageName)
@@ -762,7 +802,7 @@ internal sealed class UpdateSolutionEvents : IVsUpdateSolutionEvents, IDisposabl
     private uint _cookie;
     private readonly IVsSolutionBuildManager2 _solutionBuildManager;
 
-    public event Action<bool>? OnUpdateSolutionDone;
+    public event Action? OnUpdateSolutionDone;
 
     internal UpdateSolutionEvents(IVsSolutionBuildManager2 solutionBuildManager)
     {
@@ -779,9 +819,8 @@ internal sealed class UpdateSolutionEvents : IVsUpdateSolutionEvents, IDisposabl
 
     int IVsUpdateSolutionEvents.UpdateSolution_Done(int fSucceeded, int fModified, int fCancelCommand)
     {
-        var buildSucceeded = fSucceeded == 1;
-        OnUpdateSolutionDone?.Invoke(buildSucceeded);
-        return VSConstants.S_OK;
+        OnUpdateSolutionDone?.Invoke();
+        return 0;
     }
 
     void IDisposable.Dispose()

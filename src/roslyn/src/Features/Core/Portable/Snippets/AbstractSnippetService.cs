@@ -42,8 +42,8 @@ internal abstract class AbstractSnippetService(IEnumerable<Lazy<ISnippetProvider
         using var _ = ArrayBuilder<SnippetData>.GetInstance(out var arrayBuilder);
         foreach (var provider in GetSnippetProviders(context.Document))
         {
-            if (await provider.IsValidSnippetLocationAsync(in context, cancellationToken).ConfigureAwait(false))
-                arrayBuilder.Add(new(provider.Identifier, provider.Description, provider.AdditionalFilterTexts));
+            var snippetData = await provider.GetSnippetDataAsync(context, cancellationToken).ConfigureAwait(false);
+            arrayBuilder.AddIfNotNull(snippetData);
         }
 
         return arrayBuilder.ToImmutableAndClear();
