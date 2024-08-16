@@ -2,8 +2,14 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.CommandLine;
+using System.CommandLine.Parsing;
+using System.IO;
+using System.Linq;
+using Microsoft.Deployment.DotNet.Releases;
 using Microsoft.DotNet.Cli.Utils;
+using Microsoft.DotNet.Configurer;
 using Microsoft.DotNet.Workloads.Workload;
+using Microsoft.DotNet.Workloads.Workload.Install;
 using Microsoft.DotNet.Workloads.Workload.List;
 using Microsoft.NET.Sdk.WorkloadManifestReader;
 using Microsoft.TemplateEngine.Cli.Commands;
@@ -39,27 +45,20 @@ namespace Microsoft.DotNet.Cli
         {
             workloadInfoHelper ??= new WorkloadInfoHelper(false);
 
-            return workloadInfoHelper.ManifestProvider.GetWorkloadVersion().Version;
+            return workloadInfoHelper.ManifestProvider.GetWorkloadVersion();
         }
 
         internal static void ShowWorkloadsInfo(ParseResult parseResult = null, WorkloadInfoHelper workloadInfoHelper = null, IReporter reporter = null, string dotnetDir = null, bool showVersion = true)
         {
             workloadInfoHelper ??= new WorkloadInfoHelper(parseResult != null ? parseResult.HasOption(SharedOptions.InteractiveOption) : false);
-            reporter ??= Utils.Reporter.Output;
-            var globalJsonInformation = workloadInfoHelper.ManifestProvider.GetGlobalJsonInformation();
-            if (globalJsonInformation?.WorkloadVersionInstalled == false)
-            {
-                reporter.WriteLine(string.Format(Workloads.Workload.List.LocalizableStrings.WorkloadSetFromGlobalJsonNotInstalled, globalJsonInformation.GlobalJsonVersion, globalJsonInformation.GlobalJsonPath));
-                return;
-            }
-
             IEnumerable<WorkloadId> installedList = workloadInfoHelper.InstalledSdkWorkloadIds;
             InstalledWorkloadsCollection installedWorkloads = workloadInfoHelper.AddInstalledVsWorkloads(installedList);
+            reporter ??= Utils.Reporter.Output;
             string dotnetPath = dotnetDir ?? Path.GetDirectoryName(Environment.ProcessPath);
 
             if (showVersion)
             {
-                reporter.WriteLine($" Workload version: {workloadInfoHelper.ManifestProvider.GetWorkloadVersion().Version}");
+                reporter.WriteLine($" Workload version: {workloadInfoHelper.ManifestProvider.GetWorkloadVersion()}");
             }
 
             var useWorkloadSets = InstallStateContents.FromPath(Path.Combine(WorkloadInstallType.GetInstallStateFolder(workloadInfoHelper._currentSdkFeatureBand, workloadInfoHelper.UserLocalPath), "default.json")).UseWorkloadSets;
@@ -94,7 +93,7 @@ namespace Microsoft.DotNet.Cli
                 reporter.WriteLine($"       {workloadManifest.ManifestPath,align}");
 
                 reporter.Write($"{separator}{CommonStrings.WorkloadInstallTypeColumn}:");
-                reporter.WriteLine($"       {WorkloadInstallType.GetWorkloadInstallType(new SdkFeatureBand(Utils.Product.Version), dotnetPath).ToString(),align}"
+                reporter.WriteLine($"       {WorkloadInstallType.GetWorkloadInstallType(new SdkFeatureBand(workloadFeatureBand), dotnetPath).ToString(),align}"
                 );
                 reporter.WriteLine("");
             }
