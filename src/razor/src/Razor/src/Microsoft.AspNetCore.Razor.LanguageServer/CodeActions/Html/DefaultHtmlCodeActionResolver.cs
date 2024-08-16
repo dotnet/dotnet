@@ -40,7 +40,8 @@ internal sealed class DefaultHtmlCodeActionResolver(
             return codeAction;
         }
 
-        await DefaultHtmlCodeActionProvider.RemapAndFixHtmlCodeActionEditAsync(_editMappingService, documentContext.Snapshot, resolvedCodeAction, cancellationToken).ConfigureAwait(false);
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+        await DefaultHtmlCodeActionProvider.RemapAndFixHtmlCodeActionEditAsync(_editMappingService, codeDocument, resolvedCodeAction, cancellationToken).ConfigureAwait(false);
 
         return resolvedCodeAction;
     }
