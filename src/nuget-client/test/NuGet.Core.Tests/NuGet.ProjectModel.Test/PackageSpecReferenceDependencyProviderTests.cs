@@ -17,15 +17,11 @@ namespace NuGet.ProjectModel.Test
     public class PackageSpecReferenceDependencyProviderTests
     {
         [Theory]
-        [InlineData(false, false, false)]
-        [InlineData(false, true, false)]
-        [InlineData(true, false, false)]
-        [InlineData(true, true, false)]
-        [InlineData(false, false, true)]
-        [InlineData(false, true, true)]
-        [InlineData(true, false, true)]
-        [InlineData(true, true, true)]
-        public void GetSpecDependencies_AddsCentralPackageVersionsIfDefined(bool cpvmEnabled, bool CentralPackageTransitivePinningEnabled, bool useLegacyDependencyGraphResolution)
+        [InlineData(false, false)]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public void GetSpecDependencies_AddsCentralPackageVersionsIfDefined(bool cpvmEnabled, bool CentralPackageTransitivePinningEnabled)
         {
             // Arrange
             var dependencyFoo = new LibraryDependency(
@@ -47,12 +43,12 @@ namespace NuGet.ProjectModel.Test
             var dependencyGraphSpec = CreateDependencyGraphSpecWithCentralDependencies(cpvmEnabled, CentralPackageTransitivePinningEnabled, tfi);
             var packSpec = dependencyGraphSpec.Projects[0];
 
-            var dependencyProvider = new PackageSpecReferenceDependencyProvider(new List<ExternalProjectReference>(), NullLogger.Instance, useLegacyDependencyGraphResolution);
+            var dependencyProvider = new PackageSpecReferenceDependencyProvider(new List<ExternalProjectReference>(), NullLogger.Instance);
             // Act
             var dependencies = dependencyProvider.GetSpecDependencies(packSpec, tfi.FrameworkName);
 
             // Assert
-            if (cpvmEnabled && CentralPackageTransitivePinningEnabled && useLegacyDependencyGraphResolution)
+            if (cpvmEnabled && CentralPackageTransitivePinningEnabled)
             {
                 Assert.Equal(2, dependencies.Count);
                 var barDep = dependencies.Where(d => d.Name == "bar").First();
