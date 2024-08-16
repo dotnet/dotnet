@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -145,8 +146,6 @@ namespace NuGet.ProjectModel
         /// </summary>
         public bool UsingMicrosoftNETSdk { get; set; }
 
-        public bool UseLegacyDependencyResolver { get; set; }
-
         public override int GetHashCode()
         {
             StringComparer osStringComparer = PathUtility.GetStringComparerBasedOnOS();
@@ -179,7 +178,6 @@ namespace NuGet.ProjectModel
             hashCode.AddObject(RestoreAuditProperties);
             hashCode.AddObject(UsingMicrosoftNETSdk);
             hashCode.AddObject(SdkAnalysisLevel);
-            hashCode.AddObject(UseLegacyDependencyResolver);
 
             return hashCode.CombinedHash;
         }
@@ -227,8 +225,7 @@ namespace NuGet.ProjectModel
                    EqualityUtility.EqualsWithNullCheck(CentralPackageTransitivePinningEnabled, other.CentralPackageTransitivePinningEnabled) &&
                    RestoreAuditProperties == other.RestoreAuditProperties &&
                    UsingMicrosoftNETSdk == other.UsingMicrosoftNETSdk &&
-                   EqualityUtility.EqualsWithNullCheck(SdkAnalysisLevel, other.SdkAnalysisLevel) &&
-                   UseLegacyDependencyResolver == other.UseLegacyDependencyResolver;
+                   EqualityUtility.EqualsWithNullCheck(SdkAnalysisLevel, other.SdkAnalysisLevel);
         }
 
         private HashSet<string> GetSources(IList<PackageSource> sources)
@@ -281,7 +278,6 @@ namespace NuGet.ProjectModel
             clone.RestoreAuditProperties = RestoreAuditProperties?.Clone();
             clone.SdkAnalysisLevel = SdkAnalysisLevel;
             clone.UsingMicrosoftNETSdk = UsingMicrosoftNETSdk;
-            clone.UseLegacyDependencyResolver = UseLegacyDependencyResolver;
         }
     }
 }

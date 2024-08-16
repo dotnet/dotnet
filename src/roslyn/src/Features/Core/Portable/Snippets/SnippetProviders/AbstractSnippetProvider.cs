@@ -27,7 +27,7 @@ internal abstract class AbstractSnippetProvider<TSnippetSyntax> : ISnippetProvid
 
     public virtual ImmutableArray<string> AdditionalFilterTexts => [];
 
-    protected static readonly SyntaxAnnotation FindSnippetAnnotation = new();
+    protected readonly SyntaxAnnotation FindSnippetAnnotation = new();
 
     /// <summary>
     /// Implemented by each SnippetProvider to determine if that particular position is a valid
@@ -50,16 +50,25 @@ internal abstract class AbstractSnippetProvider<TSnippetSyntax> : ISnippetProvid
     /// </summary>
     protected abstract ImmutableArray<SnippetPlaceholder> GetPlaceHolderLocationsList(TSnippetSyntax node, ISyntaxFacts syntaxFacts, CancellationToken cancellationToken);
 
-    public ValueTask<bool> IsValidSnippetLocationAsync(in SnippetContext context, CancellationToken cancellationToken)
+    /// <summary>
+    /// Determines if the location is valid for a snippet,
+    /// if so, then it creates a SnippetData.
+    /// </summary>
+    public ValueTask<SnippetData?> GetSnippetDataAsync(SnippetContext context, CancellationToken cancellationToken)
     {
         var syntaxFacts = context.Document.GetRequiredLanguageService<ISyntaxFactsService>();
         var syntaxTree = context.SyntaxContext.SyntaxTree;
         if (syntaxFacts.IsInNonUserCode(syntaxTree, context.Position, cancellationToken))
         {
-            return ValueTaskFactory.FromResult(false);
+            return ValueTaskFactory.FromResult<SnippetData?>(null);
         }
 
-        return ValueTaskFactory.FromResult(IsValidSnippetLocation(in context, cancellationToken));
+        if (!IsValidSnippetLocation(in context, cancellationToken))
+        {
+            return ValueTaskFactory.FromResult<SnippetData?>(null);
+        }
+
+        return ValueTaskFactory.FromResult<SnippetData?>(new SnippetData(Description, Identifier, AdditionalFilterTexts));
     }
 
     /// <summary>
@@ -67,7 +76,7 @@ internal abstract class AbstractSnippetProvider<TSnippetSyntax> : ISnippetProvid
     /// Reformats the document with the snippet TextChange and annotates 
     /// appropriately for the cursor to get the target cursor position.
     /// </summary>
-    public async Task<SnippetChange> GetSnippetChangeAsync(Document document, int position, CancellationToken cancellationToken)
+    public async Task<SnippetChange> GetSnippetAsync(Document document, int position, CancellationToken cancellationToken)
     {
         var syntaxFacts = document.GetRequiredLanguageService<ISyntaxFactsService>();
 
@@ -110,8 +119,8 @@ internal abstract class AbstractSnippetProvider<TSnippetSyntax> : ISnippetProvid
 
         return new SnippetChange(
             textChanges: changesArray,
-            placeholders: placeholders,
-            finalCaretPosition: GetTargetCaretPosition(mainChangeNode, sourceText));
+            cursorPosition: GetTargetCaretPosition(mainChangeNode, sourceText),
+            placeholders: placeholders);
     }
 
     /// <summary>
@@ -136,7 +145,7 @@ internal abstract class AbstractSnippetProvider<TSnippetSyntax> : ISnippetProvid
         return nodeWithTrivia;
     }
 
-    private static async Task<Document> CleanupDocumentAsync(
+    private async Task<Document> CleanupDocumentAsync(
         Document document, CancellationToken cancellationToken)
     {
         if (document.SupportsSyntaxTree)

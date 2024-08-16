@@ -14,20 +14,8 @@ namespace Microsoft.NET.Sdk.WorkloadManifestReader
 
         string GetSdkFeatureBand();
 
-        WorkloadVersion GetWorkloadVersion();
+        string? GetWorkloadVersion();
 
         Dictionary<string, WorkloadSet> GetAvailableWorkloadSets();
-    }
-
-    public record WorkloadVersion
-    {
-        public enum Type
-        {
-            WorkloadSet,
-            LooseManifest
-        }
-
-        public string? Version;
-        public Type WorkloadInstallType;
     }
 }

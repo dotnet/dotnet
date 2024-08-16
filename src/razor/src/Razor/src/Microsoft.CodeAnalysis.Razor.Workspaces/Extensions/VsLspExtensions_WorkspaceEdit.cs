@@ -1,40 +1,40 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.VisualStudio.LanguageServer.Protocol;
 
 internal static partial class VsLspExtensions
 {
-    public static bool TryGetTextDocumentEdits(this WorkspaceEdit workspaceEdit, [NotNullWhen(true)] out TextDocumentEdit[]? textDocumentEdits)
+    public static bool TryGetDocumentChanges(this WorkspaceEdit workspaceEdit, [NotNullWhen(true)] out TextDocumentEdit[]? documentChanges)
     {
         if (workspaceEdit.DocumentChanges?.Value is TextDocumentEdit[] documentEdits)
         {
-            textDocumentEdits = documentEdits;
+            documentChanges = documentEdits;
             return true;
         }
 
         if (workspaceEdit.DocumentChanges?.Value is SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[] sumTypeArray)
         {
-            using var builder = new PooledArrayBuilder<TextDocumentEdit>();
+            var documentEditList = new List<TextDocumentEdit>();
             foreach (var sumType in sumTypeArray)
             {
                 if (sumType.Value is TextDocumentEdit textDocumentEdit)
                 {
-                    builder.Add(textDocumentEdit);
+                    documentEditList.Add(textDocumentEdit);
                 }
             }
 
-            if (builder.Count > 0)
+            if (documentEditList.Count > 0)
             {
-                textDocumentEdits = builder.ToArray();
+                documentChanges = documentEditList.ToArray();
                 return true;
             }
         }
 
-        textDocumentEdits = null;
+        documentChanges = null;
         return false;
     }
 }

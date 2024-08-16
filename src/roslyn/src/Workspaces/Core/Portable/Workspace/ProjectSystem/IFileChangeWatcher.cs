@@ -9,7 +9,7 @@ namespace Microsoft.CodeAnalysis.ProjectSystem;
 
 internal interface IFileChangeWatcher
 {
-    IFileChangeContext CreateContext(ImmutableArray<WatchedDirectory> watchedDirectories);
+    IFileChangeContext CreateContext(params WatchedDirectory[] watchedDirectories);
 }
 
 /// <summary>

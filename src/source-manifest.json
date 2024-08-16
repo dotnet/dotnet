@@ -67,22 +67,22 @@
       "commitSha": "6bc91d5e2d3d8a199fdbe367ed015b55daf57046"
     },
     {
-      "packageVersion": "6.12.0-preview.1.68",
+      "packageVersion": "6.12.0-preview.1.64",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "5faea74048cff4b2cfe3957a1360c2a7dd581386"
+      "commitSha": "e68fb0f2d96800ad4b78461fd491886e9e5084b2"
     },
     {
-      "packageVersion": "9.0.0-preview.24413.5",
+      "packageVersion": "9.0.0-preview.24412.1",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "29658c14e9ff617171862968dd4d8ed47d656589"
+      "commitSha": "3920563359e73a7b8d3c8d7a1bba61bbf1c9efe5"
     },
     {
-      "packageVersion": "4.12.0-2.24414.1",
+      "packageVersion": "4.12.0-2.24408.4",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "bba7ceac50f68468ec9733a6a66f2314227101d4"
+      "commitSha": "c098e96e5470fccc9c8e9f32189f408d086c984e"
     },
     {
       "packageVersion": "3.11.0-beta1.24405.1",
@@ -106,25 +106,25 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "8833ba5f03a6a366e048fd38075bbc9c2ba76566"
+      "commitSha": "7d94ac96b2a563d6a1cae79fb5da312fa69b3b0a"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24412.1",
+      "packageVersion": "9.0.0-alpha.1.24407.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "ee22054b44ec9615dc3481c4decc1b007a83a2b0"
+      "commitSha": "51b029e3272f35af0af337823cd122725f316c69"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24413.1",
+      "packageVersion": "9.0.0-alpha.1.24405.2",
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "1b838a42e4952b8fdf212cb1b43c5ce4d69f27b3"
+      "commitSha": "0d066e61a30c2599d0ced871ea45acf0e10571af"
     },
     {
-      "packageVersion": "9.0.0-beta.24413.2",
+      "packageVersion": "9.0.0-beta.24407.2",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "e4452d9265baeeb0467c3ef81e853c763d519aef"
+      "commitSha": "85fb5b9ab7a4d308ccac2c376fb4661df5e752ce"
     },
     {
       "packageVersion": "2.2.0-beta.24327.2",
@@ -133,10 +133,10 @@
       "commitSha": "0710a7892d89999956e8808c28e9dd0512bd53f3"
     },
     {
-      "packageVersion": "9.0.100-rc.1.24414.1",
+      "packageVersion": "9.0.100-rc.1.24412.1",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "fe50b5a0714afec941b483d977e253a37d1f5b2e"
+      "commitSha": "2aad6193928e85f0ecffa0590d55baa4b2f84323"
     },
     {
       "packageVersion": "1.1.0-rc.24409.1",
@@ -145,16 +145,16 @@
       "commitSha": "0b1b52e10bf70c53ed9fc63da52281b7d10ddd48"
     },
     {
-      "packageVersion": "17.12.0-preview-24413-01",
+      "packageVersion": "17.12.0-preview-24412-03",
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "80af388e851d0d8b88f93d07d46d47054acb9951"
+      "commitSha": "c5c8ee586c6bd58eee6e845aee32e88f789c127d"
     },
     {
-      "packageVersion": "9.0.0-rc.1.24414.1",
+      "packageVersion": "9.0.0-rc.1.24409.3",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "c0ab3a32c9db80be32683900a2c958cdbf3c473e"
+      "commitSha": "e2d37ff24309778391e4a1d2038ad47e200ef6a2"
     },
     {
       "packageVersion": "9.0.0-rc.1.24407.3",
@@ -163,10 +163,10 @@
       "commitSha": "7006c1c2c5515bc4b648e5b3c2ea6a604867e0b9"
     },
     {
-      "packageVersion": "9.0.0-rc.1.24413.3",
+      "packageVersion": "9.0.0-rc.1.24409.1",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "aa7c73eab8ed50131272c18613d7e3133619c9f1"
+      "commitSha": "e7ddcf41e1342d889aa7273b836909bdf15154e2"
     },
     {
       "packageVersion": "9.0.0-preview.24317.2",
