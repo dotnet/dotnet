@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@3c8202d](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC3c8202d88deea14a87c7665190286d2a67e464c0)*
 - `src/sdk`  
-*[_git/dotnet-sdk@0ea3de9](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC0ea3de9bc7ffabcdcb090eee475eae763e42dd89)*
+*[_git/dotnet-sdk@b405dfb](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GCb405dfbea175100cf15ade51220fc38ea27bf82f)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@fb970ec](https://github.com/dotnet/source-build-externals/tree/fb970eccb0a9cae3092464e29cbabda0d4115049)*
     - `src/source-build-externals/src/abstractions-xunit`  
