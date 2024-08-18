@@ -279,7 +279,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         IMaestroApi client = MaestroApiFactory.GetAuthenticated(
                             MaestroApiEndpoint,
                             BuildAssetRegistryToken,
-                            MaestroApiFederatedToken,
                             MaestroManagedIdentityId,
                             !AllowInteractiveAuthentication);
                         Maestro.Client.Models.Build buildInformation = await client.Builds.GetBuildAsync(BARBuildId);

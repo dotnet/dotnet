@@ -94,7 +94,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 IMaestroApi client = MaestroApiFactory.GetAuthenticated(
                     MaestroApiEndpoint,
                     BuildAssetRegistryToken,
-                    MaestroApiFederatedToken,
                     MaestroManagedIdentityId,
                     disableInteractiveAuth: !AllowInteractiveAuthentication);
 
