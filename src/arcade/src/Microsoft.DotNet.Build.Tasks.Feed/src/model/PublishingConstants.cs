@@ -94,7 +94,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
 
         private const string FeedDotNet8Shipping = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet8/nuget/v3/index.json";
         private const string FeedDotNet8Transport = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet8-transport/nuget/v3/index.json";
-
         private const string FeedDotNet8Workloads = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet8-workloads/nuget/v3/index.json";
 
         private const string FeedDotNet8InternalShipping = "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet8-internal/nuget/v3/index.json";
@@ -102,11 +101,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
 
         private const string FeedDotNet9Shipping = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v3/index.json";
         private const string FeedDotNet9Transport = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9-transport/nuget/v3/index.json";
+        private const string FeedDotNet9Workloads = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9-workloads/nuget/v3/index.json";
 
         private const string FeedDotNet9InternalShipping = "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet9-internal/nuget/v3/index.json";
         private const string FeedDotNet9InternalTransport = "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet9-internal-transport/nuget/v3/index.json";
 
-        private const string FeedDotNet9Workloads = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9-workloads/nuget/v3/index.json";
+        private const string FeedDotNet10Shipping = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet10/nuget/v3/index.json";
+        private const string FeedDotNet10Transport = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet10-transport/nuget/v3/index.json";
+        private const string FeedDotNet10Workloads = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet10-workloads/nuget/v3/index.json";
 
         private const string FeedDotNetLibrariesShipping = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-libraries/nuget/v3/index.json";
         private const string FeedDotNetLibrariesTransport = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-libraries-transport/nuget/v3/index.json";
@@ -199,6 +201,22 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
         {
             (TargetFeedContentType.Package, FeedDotNet9Workloads, AssetSelection.ShippingOnly),
             (TargetFeedContentType.Package, FeedDotNet9Workloads, AssetSelection.NonShippingOnly),
+            (InstallersAndSymbols, FeedStagingForInstallers),
+            (TargetFeedContentType.Checksum, FeedStagingForChecksums),
+        };
+
+        private static TargetFeedSpecification[] DotNet10Feeds =
+        {
+            (TargetFeedContentType.Package, FeedDotNet10Shipping, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNet10Transport, AssetSelection.NonShippingOnly),
+            (InstallersAndSymbols, FeedStagingForInstallers),
+            (TargetFeedContentType.Checksum, FeedStagingForChecksums),
+        };
+
+        private static TargetFeedSpecification[] DotNet10WorkloadFeeds =
+        {
+            (TargetFeedContentType.Package, FeedDotNet10Workloads, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNet10Workloads, AssetSelection.NonShippingOnly),
             (InstallersAndSymbols, FeedStagingForInstallers),
             (TargetFeedContentType.Checksum, FeedStagingForChecksums),
         };
@@ -838,6 +856,36 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 akaMSChannelNames: new List<string>() { "internal/9.0-rc2", "internal/9.0.1xx-rc2" },
                 targetFeeds: DotNet9InternalFeeds,
                 symbolTargetType: InternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude),
+
+            // .NET 10,
+            new TargetChannelConfig(
+                id: 5172,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>() { "10.0" },
+                targetFeeds: DotNet10Feeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude),
+
+            // .NET 10 Workload Release,
+            new TargetChannelConfig(
+                id: 5174,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>() { "10.0-workloads" },
+                targetFeeds: DotNet10WorkloadFeeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude),
+
+            // .NET 10.0.1xx SDK,
+            new TargetChannelConfig(
+                id: 5173,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>() { "10.0.1xx", "10.0" },
+                targetFeeds: DotNet10Feeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
                 filenamesToExclude: FilenamesToExclude),
 
             // .NET Core Experimental,
