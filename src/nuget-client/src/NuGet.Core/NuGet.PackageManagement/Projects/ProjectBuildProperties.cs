@@ -65,5 +65,6 @@ namespace NuGet.ProjectManagement
         public const string CentralPackageFloatingVersionsEnabled = nameof(CentralPackageFloatingVersionsEnabled);
         public const string SdkAnalysisLevel = nameof(SdkAnalysisLevel);
         public const string UsingMicrosoftNETSdk = nameof(UsingMicrosoftNETSdk);
+        public const string RestoreUseLegacyDependencyResolver = nameof(RestoreUseLegacyDependencyResolver);
     }
 }

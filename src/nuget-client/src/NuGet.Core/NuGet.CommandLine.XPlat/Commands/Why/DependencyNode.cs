@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using NuGet.Shared;
 
-namespace NuGet.CommandLine.XPlat
+namespace NuGet.CommandLine.XPlat.Commands.Why
 {
     /// <summary>
     /// Represents a node in the package dependency graph.

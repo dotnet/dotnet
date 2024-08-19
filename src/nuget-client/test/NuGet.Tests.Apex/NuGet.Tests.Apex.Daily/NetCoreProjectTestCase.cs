@@ -12,9 +12,13 @@ namespace NuGet.Tests.Apex.Daily
     public class NetCoreProjectTestCase : SharedVisualStudioHostTestClass
     {
         [DataTestMethod]
-        [DynamicData(nameof(GetNetCoreTemplates), DynamicDataSourceType.Method)]
+        [DataRow(ProjectTemplate.NetCoreConsoleApp)]
+        [DataRow(ProjectTemplate.NetCoreClassLib)]
+        [DataRow(ProjectTemplate.NetCoreXUnitTest)]
+        [DataRow(ProjectTemplate.NetStandardClassLib)]
+        [DataRow(ProjectTemplate.ASPNETCoreWebApplication)]
         [Timeout(DefaultTimeout)]
-        public async Task InstallPackageToNetCoreProjectFromUI(ProjectTemplate projectTemplate)
+        public async Task InstallPackageToSDKBasedProjectFromUI(ProjectTemplate projectTemplate)
         {
             EnsureVisualStudioHost();
 
@@ -40,9 +44,13 @@ namespace NuGet.Tests.Apex.Daily
         }
 
         [DataTestMethod]
-        [DynamicData(nameof(GetNetCoreTemplates), DynamicDataSourceType.Method)]
+        [DataRow(ProjectTemplate.NetCoreConsoleApp)]
+        [DataRow(ProjectTemplate.NetCoreClassLib)]
+        [DataRow(ProjectTemplate.NetCoreXUnitTest)]
+        [DataRow(ProjectTemplate.NetStandardClassLib)]
+        [DataRow(ProjectTemplate.ASPNETCoreWebApplication)]
         [Timeout(DefaultTimeout)]
-        public async Task UpdatePackageToNetCoreProjectFromUI(ProjectTemplate projectTemplate)
+        public async Task UpdatePackageToSDKBasedProjectFromUI(ProjectTemplate projectTemplate)
         {
             EnsureVisualStudioHost();
 
@@ -77,9 +85,13 @@ namespace NuGet.Tests.Apex.Daily
         }
 
         [DataTestMethod]
-        [DynamicData(nameof(GetNetCoreTemplates), DynamicDataSourceType.Method)]
+        [DataRow(ProjectTemplate.NetCoreConsoleApp)]
+        [DataRow(ProjectTemplate.NetCoreClassLib)]
+        [DataRow(ProjectTemplate.NetCoreXUnitTest)]
+        [DataRow(ProjectTemplate.NetStandardClassLib)]
+        [DataRow(ProjectTemplate.ASPNETCoreWebApplication)]
         [Timeout(DefaultTimeout)]
-        public async Task UninstallPackageFromNetCoreProjectFromUI(ProjectTemplate projectTemplate)
+        public async Task UninstallPackageFromSDKBasedProjectFromUI(ProjectTemplate projectTemplate)
         {
             EnsureVisualStudioHost();
 

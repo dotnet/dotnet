@@ -142,12 +142,15 @@ namespace NuGet.Packaging.Test
                 "contentFiles/any/net50/b.csv",
                 "lib/net5.0/c.pdb",
                 "lib/net50-windows7.0/d.dll",
+                "runtimes/win-x86/lib/net50/a.dll",
+
             };
             var results = new List<PackagingLogMessage>(InvalidUndottedFrameworkRule.ValidateFiles(files));
             Assert.Equal(1, results.Count());
             Assert.Equal(NuGetLogCode.NU5501, results[0].Code);
             Assert.True(results[0].Message.Contains("contentFiles/any/net50/b.csv"));
             Assert.True(results[0].Message.Contains("lib/net50-windows7.0/d.dll"));
+            Assert.True(results[0].Message.Contains("runtimes/win-x86/lib/net50/a.dll"));
         }
     }
 }
