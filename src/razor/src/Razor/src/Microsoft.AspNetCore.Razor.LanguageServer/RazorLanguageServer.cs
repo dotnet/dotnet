@@ -193,16 +193,15 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
                 services.AddSingleton<IInlayHintService, InlayHintService>();
                 services.AddHandlerWithCapabilities<InlayHintEndpoint>();
                 services.AddHandler<InlayHintResolveEndpoint>();
+
+                services.AddHandlerWithCapabilities<DocumentColorEndpoint>();
+                services.AddHandler<ColorPresentationEndpoint>();
             }
 
             services.AddHandler<WrapWithTagEndpoint>();
             services.AddHandler<RazorBreakpointSpanEndpoint>();
             services.AddHandler<RazorProximityExpressionsEndpoint>();
 
-            services.AddHandlerWithCapabilities<DocumentColorEndpoint>();
-            services.AddSingleton<IDocumentColorService, DocumentColorService>();
-
-            services.AddHandler<ColorPresentationEndpoint>();
             services.AddHandlerWithCapabilities<ValidateBreakpointRangeEndpoint>();
             services.AddHandlerWithCapabilities<FindAllReferencesEndpoint>();
             services.AddHandlerWithCapabilities<ProjectContextsEndpoint>();

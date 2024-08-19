@@ -614,7 +614,7 @@ namespace NuGet.Commands
             lockFile.PackageFolders.AddRange(packageFolders.Select(path => new LockFileItem(path)));
         }
 
-        private static LockFileLibrary CreateLockFileLibrary(LocalPackageInfo package, string sha512, string path)
+        internal static LockFileLibrary CreateLockFileLibrary(LocalPackageInfo package, string sha512, string path)
         {
             var lockFileLib = new LockFileLibrary
             {

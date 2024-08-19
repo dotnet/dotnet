@@ -17,11 +17,6 @@ internal static class VSInternalServerCapabilitiesExtensions
         };
     }
 
-    public static void EnableDocumentColorProvider(this VSInternalServerCapabilities serverCapabilities)
-    {
-        serverCapabilities.DocumentColorProvider = new DocumentColorOptions();
-    }
-
     public static void EnableSemanticTokens(this VSInternalServerCapabilities serverCapabilities, ISemanticTokensLegendService legend)
     {
         serverCapabilities.SemanticTokensOptions = new SemanticTokensOptions().EnableSemanticTokens(legend);

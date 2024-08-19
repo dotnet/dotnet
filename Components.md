@@ -30,15 +30,15 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/emsdk`  
 *[dotnet/emsdk@edf3e90](https://github.com/dotnet/emsdk/tree/edf3e90fa25b1fc4f7f63ceb45ef70f49c6b121a)*
 - `src/fsharp`  
-*[dotnet/fsharp@02adf13](https://github.com/dotnet/fsharp/tree/02adf13f8d69e0105fff4d68dbd5fb1d43bc0e17)*
+*[dotnet/fsharp@54464f5](https://github.com/dotnet/fsharp/tree/54464f520298ad6e436619a381e43c79694bb19a)*
 - `src/msbuild`  
 *[dotnet/msbuild@6bc91d5](https://github.com/dotnet/msbuild/tree/6bc91d5e2d3d8a199fdbe367ed015b55daf57046)*
 - `src/nuget-client`  
-*[nuget/nuget.client@7ca037b](https://github.com/nuget/nuget.client/tree/7ca037b450fffbae993f65367e29b9c37da7a012)*
+*[nuget/nuget.client@0539e8e](https://github.com/nuget/nuget.client/tree/0539e8e2516f708c834cb606340c7c9a110f96b3)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/tree/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@29658c1](https://github.com/dotnet/razor/tree/29658c14e9ff617171862968dd4d8ed47d656589)*
+*[dotnet/razor@bc0b702](https://github.com/dotnet/razor/tree/bc0b702171653667ce651cdeb3cf844e1b63602f)*
 - `src/roslyn`  
 *[dotnet/roslyn@dee1a4f](https://github.com/dotnet/roslyn/tree/dee1a4f1c1c5f8feeb6de94f30ce5aa3eab4e0e1)*
 - `src/roslyn-analyzers`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@d92413b](https://github.com/dotnet/scenario-tests/tree/d92413b87d36250859d8cb51ff69a03b5f5c4cab)*
 - `src/sdk`  
-*[dotnet/sdk@1fcf726](https://github.com/dotnet/sdk/tree/1fcf726d58b3e0250d20d5af3f865a2d4de53299)*
+*[dotnet/sdk@c43b4db](https://github.com/dotnet/sdk/tree/c43b4dbed393f5ce6271a6d9788ea136016b52cc)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@2cef086](https://github.com/dotnet/source-build-externals/tree/2cef086137a68586fdd69848261e2a8cf8c48b73)*
     - `src/source-build-externals/src/abstractions-xunit`  

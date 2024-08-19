@@ -101,18 +101,13 @@ internal class CohostUriPresentationEndpoint(
             return null;
         }
 
-        var presentationParams = new VSInternalUriPresentationParams
-        {
-            Range = request.Range,
-            Uris = request.Uris,
-            TextDocument = new TextDocumentIdentifier { Uri = htmlDocument.Uri }
-        };
+        request.TextDocument = request.TextDocument.WithUri(htmlDocument.Uri);
 
         var result = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalUriPresentationParams, WorkspaceEdit?>(
             htmlDocument.Buffer,
             VSInternalMethods.TextDocumentUriPresentationName,
             RazorLSPConstants.HtmlLanguageServerName,
-            presentationParams,
+            request,
             cancellationToken).ConfigureAwait(false);
 
         // TODO: We _really_ should go back to OOP to remap the response to razor, but the fact is, Razor and Html are 1:1 mappings, so we're

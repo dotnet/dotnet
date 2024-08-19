@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.Feed.PushToAzureDevOpsArtifacts" AssemblyFile="$(PkgMicrosoft_DotNet_Build_Tasks_Feed)\tools\netcoreapp2.1\Microsoft.DotNet.Build.Tasks.Feed.dll" />
-  <UsingTask TaskName="Microsoft.DotNet.Maestro.Tasks.PushMetadataToBuildAssetRegistry" AssemblyFile="$(PkgMicrosoft_DotNet_Maestro_Tasks)\tools\netcoreapp3.1\Microsoft.DotNet.Maestro.Tasks.dll" />
+  <UsingTask TaskName="Microsoft.DotNet.Maestro.Tasks.PushMetadataToBuildAssetRegistry" AssemblyFile="$(PkgMicrosoft_DotNet_Maestro_Tasks)\tools\net6.0\Microsoft.DotNet.Maestro.Tasks.dll" />
 
 
   <Target Name="PublishToBuildAssetRegistry">
@@ -38,8 +38,6 @@
     <Error Condition="'$(BUILD_SOURCEBRANCH)' == ''" Text="The BUILD_SOURCEBRANCH property is required." />
     <Error Condition="'$(BUILD_SOURCEVERSION)' == ''" Text="The BUILD_SOURCEVERSION property is required." />
     <Error Condition="'$(BUILD_REPOSITORY_URI)' == ''" Text="The BUILD_REPOSITORY_URI property is required." />
-    <Error Condition="'$(MaestroAccessToken)' == ''" Text="The MaestroAccessToken property is required." />
-    <Error Condition="'$(MaestroApiEndpoint)' == ''" Text="The MaestroApiEndpoint property is required." />
     <Error Condition="'$(SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)' == ''" Text="The SYSTEM_TEAMFOUNDATIONCOLLECTIONURI property is required." />
     <Error Condition="'$(SYSTEM_TEAMPROJECT)' == ''" Text="The SYSTEM_TEAMPROJECT property is required." />
     <Error Condition="'$(BUILD_BUILDID)' == ''" Text="The BUILD_BUILDID property is required." />
@@ -68,7 +66,6 @@
       PublishingVersion="3" />
 
     <PushMetadataToBuildAssetRegistry
-      BuildAssetRegistryToken="$(MaestroAccessToken)"
       MaestroApiEndpoint="$(MaestroApiEndpoint)"
       ManifestsPath="$(ArtifactsLogDir)AssetManifest\"
       AssetVersion="$(Version)" />

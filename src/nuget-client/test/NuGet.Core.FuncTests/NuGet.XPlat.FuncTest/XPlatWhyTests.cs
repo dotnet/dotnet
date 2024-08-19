@@ -3,6 +3,7 @@
 
 using System.Threading.Tasks;
 using NuGet.CommandLine.XPlat;
+using NuGet.CommandLine.XPlat.Commands.Why;
 using NuGet.Packaging;
 using NuGet.Test.Utility;
 using Xunit;
