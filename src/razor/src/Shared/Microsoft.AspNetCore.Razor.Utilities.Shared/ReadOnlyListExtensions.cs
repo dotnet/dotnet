@@ -2,8 +2,10 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace System.Collections.Generic;
 
@@ -31,6 +33,47 @@ internal static class ReadOnlyListExtensions
             }
 
             return results.DrainToImmutable();
+        }
+    }
+
+    public static T[] ToArray<T>(this IReadOnlyList<T> list)
+    {
+        return list switch
+        {
+            [] => [],
+            [var item] => [item],
+            [var item1, var item2] => [item1, item2],
+            [var item1, var item2, var item3] => [item1, item2, item3],
+            [var item1, var item2, var item3, var item4] => [item1, item2, item3, item4],
+            var items => BuildResult(items)
+        };
+
+        static T[] BuildResult(IReadOnlyList<T> items)
+        {
+            var result = new T[items.Count];
+            items.CopyTo(result);
+
+            return result;
+        }
+    }
+
+    public static ImmutableArray<T> ToImmutableArray<T>(this IReadOnlyList<T> list)
+    {
+        return list switch
+        {
+            [] => [],
+            [var item] => [item],
+            [var item1, var item2] => [item1, item2],
+            [var item1, var item2, var item3] => [item1, item2, item3],
+            [var item1, var item2, var item3, var item4] => [item1, item2, item3, item4],
+            var items => BuildResult(items)
+        };
+
+        static ImmutableArray<T> BuildResult(IReadOnlyList<T> items)
+        {
+            var result = items.ToArray();
+
+            return ImmutableCollectionsMarshal.AsImmutableArray(result);
         }
     }
 
@@ -951,5 +994,334 @@ internal static class ReadOnlyListExtensions
             _index = _list.Count - 1;
             _current = default!;
         }
+    }
+
+    /// <summary>
+    ///  Copies the contents of the list to a destination <see cref="Span{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the list.</typeparam>
+    /// <param name="list">The list to copy items from.</param>
+    /// <param name="destination">The span to copy items into.</param>
+    /// <exception cref="ArgumentException">
+    ///  The destination span is shorter than the source list.
+    /// </exception>
+    public static void CopyTo<T>(this IReadOnlyList<T> list, Span<T> destination)
+    {
+        ArgHelper.ThrowIfDestinationTooShort(destination, list.Count);
+
+        switch (list)
+        {
+            case ImmutableArray<T> array:
+                array.CopyTo(destination);
+                break;
+
+            case ImmutableArray<T>.Builder builder:
+                builder.CopyTo(destination);
+                break;
+
+            case List<T> listOfT:
+                ListExtensions.CopyTo(listOfT, destination);
+                break;
+
+            case T[] array:
+                MemoryExtensions.CopyTo(array, destination);
+                break;
+
+            default:
+                var count = list.Count;
+
+                for (var i = 0; i < count; i++)
+                {
+                    destination[i] = list[i];
+                }
+
+                break;
+        }
+    }
+
+    /// <summary>
+    ///  Sorts the elements of an <see cref="IReadOnlyList{T}"/> in ascending order.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="list"/>.</typeparam>
+    /// <param name="list">An <see cref="IReadOnlyList{T}"/> to ordered.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in ascending order.
+    /// </returns>
+    public static ImmutableArray<T> OrderAsArray<T>(this IReadOnlyList<T> list)
+    {
+        if (list is ImmutableArray<T> array)
+        {
+            return ImmutableArrayExtensions.OrderAsArray(array);
+        }
+
+        var sortHelper = new SortHelper<T>(comparer: null, descending: false);
+        return list.OrderAsArrayCore(in sortHelper);
+    }
+
+    /// <summary>
+    ///  Sorts the elements of an <see cref="IReadOnlyList{T}"/> in ascending order.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="list"/>.</typeparam>
+    /// <param name="list">An <see cref="IReadOnlyList{T}"/> to ordered.</param>
+    /// <param name="comparer">An <see cref="IComparer{T}"/> to compare elements.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in ascending order.
+    /// </returns>
+    public static ImmutableArray<T> OrderAsArray<T>(this IReadOnlyList<T> list, IComparer<T> comparer)
+    {
+        if (list is ImmutableArray<T> array)
+        {
+            return ImmutableArrayExtensions.OrderAsArray(array, comparer);
+        }
+
+        var sortHelper = new SortHelper<T>(comparer, descending: false);
+        return list.OrderAsArrayCore(in sortHelper);
+    }
+
+    /// <summary>
+    ///  Sorts the elements of an <see cref="IReadOnlyList{T}"/> in ascending order.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="list"/>.</typeparam>
+    /// <param name="list">An <see cref="IReadOnlyList{T}"/> to ordered.</param>
+    /// <param name="comparison">An <see cref="Comparison{T}"/> to compare elements.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in ascending order.
+    /// </returns>
+    public static ImmutableArray<T> OrderAsArray<T>(this IReadOnlyList<T> list, Comparison<T> comparison)
+    {
+        if (list is ImmutableArray<T> array)
+        {
+            return ImmutableArrayExtensions.OrderAsArray(array, comparison);
+        }
+
+        var sortHelper = new SortHelper<T>(comparison, descending: false);
+        return list.OrderAsArrayCore(in sortHelper);
+    }
+
+    /// <summary>
+    ///  Sorts the elements of an <see cref="IReadOnlyList{T}"/> in descending order.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="list"/>.</typeparam>
+    /// <param name="list">An <see cref="IReadOnlyList{T}"/> to ordered.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in descending order.
+    /// </returns>
+    public static ImmutableArray<T> OrderDescendingAsArray<T>(this IReadOnlyList<T> list)
+    {
+        if (list is ImmutableArray<T> array)
+        {
+            return ImmutableArrayExtensions.OrderDescendingAsArray(array);
+        }
+
+        var sortHelper = new SortHelper<T>(comparer: null, descending: true);
+        return list.OrderAsArrayCore(in sortHelper);
+    }
+
+    /// <summary>
+    ///  Sorts the elements of an <see cref="IReadOnlyList{T}"/> in descending order.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="list"/>.</typeparam>
+    /// <param name="list">An <see cref="IReadOnlyList{T}"/> to ordered.</param>
+    /// <param name="comparer">An <see cref="IComparer{T}"/> to compare elements.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in descending order.
+    /// </returns>
+    public static ImmutableArray<T> OrderDescendingAsArray<T>(this IReadOnlyList<T> list, IComparer<T> comparer)
+    {
+        if (list is ImmutableArray<T> array)
+        {
+            return ImmutableArrayExtensions.OrderDescendingAsArray(array, comparer);
+        }
+
+        var sortHelper = new SortHelper<T>(comparer, descending: true);
+        return list.OrderAsArrayCore(in sortHelper);
+    }
+
+    /// <summary>
+    ///  Sorts the elements of an <see cref="IReadOnlyList{T}"/> in descending order.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="list"/>.</typeparam>
+    /// <param name="list">An <see cref="IReadOnlyList{T}"/> to ordered.</param>
+    /// <param name="comparison">An <see cref="Comparison{T}"/> to compare elements.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in descending order.
+    /// </returns>
+    public static ImmutableArray<T> OrderDescendingAsArray<T>(this IReadOnlyList<T> list, Comparison<T> comparison)
+    {
+        if (list is ImmutableArray<T> array)
+        {
+            return ImmutableArrayExtensions.OrderDescendingAsArray(array, comparison);
+        }
+
+        var sortHelper = new SortHelper<T>(comparison, descending: true);
+        return list.OrderAsArrayCore(in sortHelper);
+    }
+
+    /// <summary>
+    ///  Sorts the elements of an <see cref="IReadOnlyList{T}"/> in ascending order according to a key.
+    /// </summary>
+    /// <typeparam name="TElement">The type of the elements in <paramref name="list"/>.</typeparam>
+    /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
+    /// <param name="list">An <see cref="IReadOnlyList{T}"/> to ordered.</param>
+    /// <param name="keySelector">A function to extract a key from an element.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in ascending order according to a key.
+    /// </returns>
+    public static ImmutableArray<TElement> OrderByAsArray<TElement, TKey>(
+        this IReadOnlyList<TElement> list, Func<TElement, TKey> keySelector)
+    {
+        if (list is ImmutableArray<TElement> array)
+        {
+            return ImmutableArrayExtensions.OrderByAsArray(array, keySelector);
+        }
+
+        var sortHelper = new SortHelper<TKey>(comparer: null, descending: false);
+        return list.OrderByAsArrayCore(keySelector, in sortHelper);
+    }
+
+    /// <summary>
+    ///  Sorts the elements of an <see cref="IReadOnlyList{T}"/> in ascending order according to a key.
+    /// </summary>
+    /// <typeparam name="TElement">The type of the elements in <paramref name="list"/>.</typeparam>
+    /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
+    /// <param name="list">An <see cref="IReadOnlyList{T}"/> to ordered.</param>
+    /// <param name="keySelector">A function to extract a key from an element.</param>
+    /// <param name="comparer">An <see cref="IComparer{T}"/> to compare keys.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in ascending order according to a key.
+    /// </returns>
+    public static ImmutableArray<TElement> OrderByAsArray<TElement, TKey>(
+        this IReadOnlyList<TElement> list, Func<TElement, TKey> keySelector, IComparer<TKey> comparer)
+    {
+        if (list is ImmutableArray<TElement> array)
+        {
+            return ImmutableArrayExtensions.OrderByAsArray(array, keySelector, comparer);
+        }
+
+        var sortHelper = new SortHelper<TKey>(comparer, descending: false);
+        return list.OrderByAsArrayCore(keySelector, in sortHelper);
+    }
+
+    /// <summary>
+    ///  Sorts the elements of an <see cref="IReadOnlyList{T}"/> in ascending order according to a key.
+    /// </summary>
+    /// <typeparam name="TElement">The type of the elements in <paramref name="list"/>.</typeparam>
+    /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
+    /// <param name="list">An <see cref="IReadOnlyList{T}"/> to ordered.</param>
+    /// <param name="keySelector">A function to extract a key from an element.</param>
+    /// <param name="comparison">An <see cref="Comparison{T}"/> to compare keys.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in ascending order according to a key.
+    /// </returns>
+    public static ImmutableArray<TElement> OrderByAsArray<TElement, TKey>(
+        this IReadOnlyList<TElement> list, Func<TElement, TKey> keySelector, Comparison<TKey> comparison)
+    {
+        if (list is ImmutableArray<TElement> array)
+        {
+            return ImmutableArrayExtensions.OrderByAsArray(array, keySelector, comparison);
+        }
+
+        var sortHelper = new SortHelper<TKey>(comparison, descending: false);
+        return list.OrderByAsArrayCore(keySelector, in sortHelper);
+    }
+
+    /// <summary>
+    ///  Sorts the elements of an <see cref="IReadOnlyList{T}"/> in descending order according to a key.
+    /// </summary>
+    /// <typeparam name="TElement">The type of the elements in <paramref name="list"/>.</typeparam>
+    /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
+    /// <param name="list">An <see cref="IReadOnlyList{T}"/> to ordered.</param>
+    /// <param name="keySelector">A function to extract a key from an element.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in descending order according to a key.
+    /// </returns>
+    public static ImmutableArray<TElement> OrderByDescendingAsArray<TElement, TKey>(
+        this IReadOnlyList<TElement> list, Func<TElement, TKey> keySelector)
+    {
+        if (list is ImmutableArray<TElement> array)
+        {
+            return ImmutableArrayExtensions.OrderByDescendingAsArray(array, keySelector);
+        }
+
+        var sortHelper = new SortHelper<TKey>(comparer: null, descending: true);
+        return list.OrderByAsArrayCore(keySelector, in sortHelper);
+    }
+
+    /// <summary>
+    ///  Sorts the elements of an <see cref="IReadOnlyList{T}"/> in descending order according to a key.
+    /// </summary>
+    /// <typeparam name="TElement">The type of the elements in <paramref name="list"/>.</typeparam>
+    /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
+    /// <param name="list">An <see cref="IReadOnlyList{T}"/> to ordered.</param>
+    /// <param name="keySelector">A function to extract a key from an element.</param>
+    /// <param name="comparer">An <see cref="IComparer{T}"/> to compare keys.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in descending order according to a key.
+    /// </returns>
+    public static ImmutableArray<TElement> OrderByDescendingAsArray<TElement, TKey>(
+        this IReadOnlyList<TElement> list, Func<TElement, TKey> keySelector, IComparer<TKey> comparer)
+    {
+        if (list is ImmutableArray<TElement> array)
+        {
+            return ImmutableArrayExtensions.OrderByDescendingAsArray(array, keySelector, comparer);
+        }
+
+        var sortHelper = new SortHelper<TKey>(comparer, descending: true);
+        return list.OrderByAsArrayCore(keySelector, in sortHelper);
+    }
+
+    /// <summary>
+    ///  Sorts the elements of an <see cref="IReadOnlyList{T}"/> in descending order according to a key.
+    /// </summary>
+    /// <typeparam name="TElement">The type of the elements in <paramref name="list"/>.</typeparam>
+    /// <typeparam name="TKey">The type of key returned by <paramref name="keySelector"/>.</typeparam>
+    /// <param name="list">An <see cref="IReadOnlyList{T}"/> to ordered.</param>
+    /// <param name="keySelector">A function to extract a key from an element.</param>
+    /// <param name="comparison">An <see cref="Comparison{T}"/> to compare keys.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are sorted in descending order according to a key.
+    /// </returns>
+    public static ImmutableArray<TElement> OrderByDescendingAsArray<TElement, TKey>(
+        this IReadOnlyList<TElement> list, Func<TElement, TKey> keySelector, Comparison<TKey> comparison)
+    {
+        if (list is ImmutableArray<TElement> array)
+        {
+            return ImmutableArrayExtensions.OrderByDescendingAsArray(array, keySelector, comparison);
+        }
+
+        var sortHelper = new SortHelper<TKey>(comparison, descending: true);
+        return list.OrderByAsArrayCore(keySelector, in sortHelper);
+    }
+
+    private static ImmutableArray<T> OrderAsArrayCore<T>(
+        this IReadOnlyList<T> list, ref readonly SortHelper<T> sortHelper)
+        => list.OrderByAsArrayCore(SortHelper<T>.IdentityFunc, in sortHelper);
+
+    private static ImmutableArray<TElement> OrderByAsArrayCore<TElement, TKey>(
+        this IReadOnlyList<TElement> list, Func<TElement, TKey> keySelector, ref readonly SortHelper<TKey> sortHelper)
+    {
+        switch (list.Count)
+        {
+            case 0:
+                return [];
+            case 1:
+                return [list[0]];
+        }
+
+        var length = list.Count;
+
+        using var keys = SortKey<TKey>.GetPooledArray(minimumLength: length);
+
+        if (sortHelper.ComputeKeys(list, keySelector, keys.Span))
+        {
+            // The keys are already ordered, so we don't need to create a new array and sort it.
+            return ImmutableCollectionsMarshal.AsImmutableArray(list.ToArray());
+        }
+
+        var newArray = list.ToArray();
+
+        Array.Sort(keys.Array, newArray, 0, length, sortHelper.GetOrCreateComparer());
+
+        return ImmutableCollectionsMarshal.AsImmutableArray(newArray);
     }
 }

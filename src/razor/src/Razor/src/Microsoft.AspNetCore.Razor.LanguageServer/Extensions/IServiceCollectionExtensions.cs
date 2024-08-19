@@ -159,9 +159,9 @@ internal static class IServiceCollectionExtensions
 
     public static void AddTextDocumentServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
     {
-        services.AddHandlerWithCapabilities<TextDocumentTextPresentationEndpoint>();
         if (!featureOptions.UseRazorCohostServer)
         {
+            services.AddHandlerWithCapabilities<TextDocumentTextPresentationEndpoint>();
             services.AddHandlerWithCapabilities<TextDocumentUriPresentationEndpoint>();
         }
 
