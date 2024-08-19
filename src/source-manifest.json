@@ -61,10 +61,10 @@
       "commitSha": "02adf13f8d69e0105fff4d68dbd5fb1d43bc0e17"
     },
     {
-      "packageVersion": "17.12.0-preview-24407-03",
+      "packageVersion": "17.12.0-preview-24415-04",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "6bc91d5e2d3d8a199fdbe367ed015b55daf57046"
+      "commitSha": "f422d8d7dfe0a7115b11b31470215ad6b7723138"
     },
     {
       "packageVersion": "6.12.0-preview.1.64",
@@ -79,10 +79,10 @@
       "commitSha": "3920563359e73a7b8d3c8d7a1bba61bbf1c9efe5"
     },
     {
-      "packageVersion": "4.12.0-2.24408.4",
+      "packageVersion": "4.12.0-2.24417.1",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "c098e96e5470fccc9c8e9f32189f408d086c984e"
+      "commitSha": "75b26a2088e76855528483674a1fbeea0137241b"
     },
     {
       "packageVersion": "3.11.0-beta1.24405.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "46f37f98ef74db497f13b9da9f7164266ba5444b"
+      "commitSha": "b11a1fd949bf51e3bdde0c4bd478de5605336136"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24407.1",
