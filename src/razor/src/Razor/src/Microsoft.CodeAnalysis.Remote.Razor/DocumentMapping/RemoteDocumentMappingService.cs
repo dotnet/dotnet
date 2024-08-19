@@ -3,7 +3,6 @@
 
 using System;
 using System.Composition;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
@@ -47,12 +46,7 @@ internal sealed class RemoteDocumentMappingService(
         }
 
         var solution = originSnapshot.TextDocument.Project.Solution;
-
-        var razorDocumentId = solution.GetDocumentIdsWithUri(razorDocumentUri).FirstOrDefault();
-
-        // If we couldn't locate the .razor file, just return the generated file.
-        if (razorDocumentId is null ||
-            solution.GetAdditionalDocument(razorDocumentId) is not TextDocument razorDocument)
+        if (!solution.TryGetRazorDocument(razorDocumentUri, out var razorDocument))
         {
             return (generatedDocumentUri, generatedDocumentRange);
         }

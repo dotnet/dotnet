@@ -22,25 +22,17 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 
-internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : IRazorRequestHandler<TParams, WorkspaceEdit?>, ICapabilitiesProvider
-    where TParams : IPresentationParams
+internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
+    IDocumentMappingService documentMappingService,
+    IClientConnection clientConnection,
+    IFilePathService filePathService,
+    ILogger logger) : IRazorRequestHandler<TParams, WorkspaceEdit?>, ICapabilitiesProvider
+        where TParams : IPresentationParams
 {
-    private readonly IDocumentMappingService _documentMappingService;
-    private readonly IClientConnection _clientConnection;
-    private readonly IFilePathService _filePathService;
-    private readonly ILogger _logger;
-
-    protected AbstractTextDocumentPresentationEndpointBase(
-        IDocumentMappingService documentMappingService,
-        IClientConnection clientConnection,
-        IFilePathService filePathService,
-        ILogger logger)
-    {
-        _documentMappingService = documentMappingService;
-        _clientConnection = clientConnection;
-        _filePathService = filePathService;
-        _logger = logger;
-    }
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly IClientConnection _clientConnection = clientConnection;
+    private readonly IFilePathService _filePathService = filePathService;
+    private readonly ILogger _logger = logger;
 
     public abstract string EndpointName { get; }
 
@@ -128,36 +120,6 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
         return edit;
     }
 
-    private static bool TryGetDocumentChanges(WorkspaceEdit workspaceEdit, [NotNullWhen(true)] out TextDocumentEdit[]? documentChanges)
-    {
-        if (workspaceEdit.DocumentChanges?.Value is TextDocumentEdit[] documentEditArray)
-        {
-            documentChanges = documentEditArray;
-            return true;
-        }
-
-        if (workspaceEdit.DocumentChanges?.Value is SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[] sumTypeArray)
-        {
-            using var documentEdits = new PooledArrayBuilder<TextDocumentEdit>();
-            foreach (var sumType in sumTypeArray)
-            {
-                if (sumType.Value is TextDocumentEdit textDocumentEdit)
-                {
-                    documentEdits.Add(textDocumentEdit);
-                }
-            }
-
-            if (documentEdits.Count > 0)
-            {
-                documentChanges = documentEdits.ToArray();
-                return true;
-            }
-        }
-
-        documentChanges = null;
-        return false;
-    }
-
     private Dictionary<string, TextEdit[]> MapChanges(Dictionary<string, TextEdit[]> changes, bool mapRanges, RazorCodeDocument codeDocument)
     {
         var remappedChanges = new Dictionary<string, TextEdit[]>();
@@ -216,7 +178,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
                     Uri = razorDocumentUri,
                     Version = hostDocumentVersion
                 },
-                Edits = remappedEdits.ToArray()
+                Edits = [.. remappedEdits]
             });
         }
 
@@ -247,10 +209,10 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
 
     private WorkspaceEdit? MapWorkspaceEdit(WorkspaceEdit workspaceEdit, bool mapRanges, RazorCodeDocument codeDocument, int hostDocumentVersion)
     {
-        if (TryGetDocumentChanges(workspaceEdit, out var documentChanges))
+        if (workspaceEdit.TryGetTextDocumentEdits(out var documentEdits))
         {
             // The LSP spec says, we should prefer `DocumentChanges` property over `Changes` if available.
-            var remappedEdits = MapDocumentChanges(documentChanges, mapRanges, codeDocument, hostDocumentVersion);
+            var remappedEdits = MapDocumentChanges(documentEdits, mapRanges, codeDocument, hostDocumentVersion);
             return new WorkspaceEdit()
             {
                 DocumentChanges = remappedEdits

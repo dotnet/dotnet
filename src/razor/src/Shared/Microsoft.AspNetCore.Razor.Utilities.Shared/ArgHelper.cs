@@ -176,4 +176,13 @@ internal static class ArgHelper
         }
 #endif
     }
+
+    public static void ThrowIfDestinationTooShort<T>(
+        Span<T> destination, int expectedLength, [CallerArgumentExpression(nameof(destination))] string? paramName = null)
+    {
+        if (destination.Length < expectedLength)
+        {
+            ThrowHelper.ThrowArgumentException(paramName, SR.Destination_is_too_short);
+        }
+    }
 }

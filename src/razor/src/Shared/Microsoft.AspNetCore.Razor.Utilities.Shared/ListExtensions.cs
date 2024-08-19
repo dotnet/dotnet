@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 
 namespace Microsoft.AspNetCore.Razor;
@@ -33,4 +34,33 @@ internal static class ListExtensions
 
     public static bool Any<T>(this List<T> list)
         => list.Count > 0;
+
+    /// <summary>
+    ///  Copies the contents of the list to a destination <see cref="Span{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the list.</typeparam>
+    /// <param name="list">The list to copy items from.</param>
+    /// <param name="destination">The span to copy items into.</param>
+    /// <exception cref="ArgumentNullException">
+    ///  The <paramref name="list"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    ///  The destination span is shorter than the source list.
+    /// </exception>
+    public static void CopyTo<T>(this List<T> list, Span<T> destination)
+    {
+#if NET8_0_OR_GREATER
+        CollectionExtensions.CopyTo(list, destination);
+#else
+        ArgHelper.ThrowIfNull(list);
+        ArgHelper.ThrowIfDestinationTooShort(destination, list.Count);
+
+        var index = 0;
+
+        foreach (var item in list)
+        {
+            destination[index++] = item;
+        }
+#endif
+    }
 }

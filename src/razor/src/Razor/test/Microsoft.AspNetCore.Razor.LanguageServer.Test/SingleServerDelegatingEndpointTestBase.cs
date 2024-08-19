@@ -66,7 +66,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase(ITestOutput
             MockBehavior.Strict);
 
         DocumentMappingService = new LspDocumentMappingService(FilePathService, DocumentContextFactory, LoggerFactory);
-        EditMappingService = new EditMappingService(DocumentMappingService, FilePathService, DocumentContextFactory);
+        EditMappingService = new LspEditMappingService(DocumentMappingService, FilePathService, DocumentContextFactory);
 
         var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
             csharpFiles,

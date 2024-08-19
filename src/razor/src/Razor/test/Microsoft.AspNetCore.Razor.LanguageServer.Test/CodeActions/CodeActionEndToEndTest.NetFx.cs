@@ -1228,9 +1228,9 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
         Assert.NotNull(resolveResult.Edit);
 
         var workspaceEdit = resolveResult.Edit;
-        Assert.True(workspaceEdit.TryGetDocumentChanges(out var changes));
+        Assert.True(workspaceEdit.TryGetTextDocumentEdits(out var documentEdits));
 
-        return changes;
+        return documentEdits;
     }
 
     private class GenerateMethodResolverDocumentContextFactory : TestDocumentContextFactory
