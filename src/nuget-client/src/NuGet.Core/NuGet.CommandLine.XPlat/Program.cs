@@ -3,15 +3,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Parsing;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using Microsoft.Extensions.CommandLineUtils;
 using NuGet.Commands;
 using NuGet.Common;
-using System.CommandLine;
-using System.Threading;
-using System.CommandLine.Parsing;
 
 namespace NuGet.CommandLine.XPlat
 {
@@ -101,7 +101,7 @@ namespace NuGet.CommandLine.XPlat
                     rootCommand = new CliCommand("nuget");
 
                     ConfigCommand.Register(rootCommand, getHidePrefixLogger);
-                    WhyCommand.Register(rootCommand, getHidePrefixLogger);
+                    Commands.Why.WhyCommand.Register(rootCommand, getHidePrefixLogger);
                 }
 
                 CancellationTokenSource tokenSource = new CancellationTokenSource();
@@ -277,7 +277,7 @@ namespace NuGet.CommandLine.XPlat
                 SignCommand.Register(app, getHidePrefixLogger, setLogLevel, () => new SignCommandRunner());
                 // The commands below are implemented with System.CommandLine, and are here only for `dotnet nuget --help`
                 ConfigCommand.Register(app);
-                WhyCommand.Register(app);
+                Commands.Why.WhyCommand.Register(app);
             }
 
             app.FullName = Strings.App_FullName;

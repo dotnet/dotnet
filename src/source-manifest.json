@@ -61,22 +61,22 @@
       "commitSha": "02adf13f8d69e0105fff4d68dbd5fb1d43bc0e17"
     },
     {
-      "packageVersion": "17.12.0-preview-24407-03",
+      "packageVersion": "17.12.0-preview-24415-04",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "6bc91d5e2d3d8a199fdbe367ed015b55daf57046"
+      "commitSha": "f422d8d7dfe0a7115b11b31470215ad6b7723138"
     },
     {
-      "packageVersion": "6.12.0-preview.1.64",
+      "packageVersion": "6.12.0-preview.1.77",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "e68fb0f2d96800ad4b78461fd491886e9e5084b2"
+      "commitSha": "0539e8e2516f708c834cb606340c7c9a110f96b3"
     },
     {
-      "packageVersion": "9.0.0-preview.24412.1",
+      "packageVersion": "9.0.0-preview.24415.3",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "3920563359e73a7b8d3c8d7a1bba61bbf1c9efe5"
+      "commitSha": "bc0b702171653667ce651cdeb3cf844e1b63602f"
     },
     {
       "packageVersion": "4.12.0-2.24417.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "5760d059d5f15bb5d6ef1afd1420810df7e72093"
+      "commitSha": "a333924687280e1849982aaa1ffa83fae1aca63c"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24407.1",

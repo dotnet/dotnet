@@ -76,6 +76,18 @@ namespace NuGet.Test.Utility
             Save();
         }
 
+        /// <summary>
+        /// Set default package management format to PackageReference.
+        /// </summary>
+        public void SetPackageFormatToPackageReference()
+        {
+            var section = GetOrAddSection(XML, "packageManagement");
+
+            AddEntry(section, "format", "1");
+            AddEntry(section, "disabled", "False");
+            Save();
+        }
+
         private static XDocument GetDefault(string userPackagesFolder, string packagesV2, string fallbackFolder, string packageSource)
         {
             var doc = GetEmptyConfig();

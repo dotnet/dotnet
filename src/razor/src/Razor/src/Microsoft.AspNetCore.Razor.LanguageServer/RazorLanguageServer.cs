@@ -26,6 +26,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.FoldingRanges;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Rename;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
@@ -177,11 +178,13 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
             services.AddHandlerWithCapabilities<ImplementationEndpoint>();
             services.AddHandlerWithCapabilities<OnAutoInsertEndpoint>();
 
-            services.AddHandlerWithCapabilities<RenameEndpoint>();
             services.AddHandlerWithCapabilities<DefinitionEndpoint>();
 
             if (!featureOptions.UseRazorCohostServer)
             {
+                services.AddSingleton<IRenameService, RenameService>();
+                services.AddHandlerWithCapabilities<RenameEndpoint>();
+
                 services.AddHandlerWithCapabilities<DocumentHighlightEndpoint>();
                 services.AddHandlerWithCapabilities<SignatureHelpEndpoint>();
                 services.AddHandlerWithCapabilities<LinkedEditingRangeEndpoint>();
@@ -190,16 +193,15 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
                 services.AddSingleton<IInlayHintService, InlayHintService>();
                 services.AddHandlerWithCapabilities<InlayHintEndpoint>();
                 services.AddHandler<InlayHintResolveEndpoint>();
+
+                services.AddHandlerWithCapabilities<DocumentColorEndpoint>();
+                services.AddHandler<ColorPresentationEndpoint>();
             }
 
             services.AddHandler<WrapWithTagEndpoint>();
             services.AddHandler<RazorBreakpointSpanEndpoint>();
             services.AddHandler<RazorProximityExpressionsEndpoint>();
 
-            services.AddHandlerWithCapabilities<DocumentColorEndpoint>();
-            services.AddSingleton<IDocumentColorService, DocumentColorService>();
-
-            services.AddHandler<ColorPresentationEndpoint>();
             services.AddHandlerWithCapabilities<ValidateBreakpointRangeEndpoint>();
             services.AddHandlerWithCapabilities<FindAllReferencesEndpoint>();
             services.AddHandlerWithCapabilities<ProjectContextsEndpoint>();

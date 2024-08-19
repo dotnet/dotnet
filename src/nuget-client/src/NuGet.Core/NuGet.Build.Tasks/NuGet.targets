@@ -928,6 +928,7 @@ Copyright (c) .NET Foundation. All rights reserved.
         <NuGetAuditMode>$(NuGetAuditMode)</NuGetAuditMode>
         <SdkAnalysisLevel>$(SdkAnalysisLevel)</SdkAnalysisLevel>
         <UsingMicrosoftNETSdk>$(UsingMicrosoftNETSdk)</UsingMicrosoftNETSdk>
+        <RestoreUseLegacyDependencyResolver>$(RestoreUseLegacyDependencyResolver)</RestoreUseLegacyDependencyResolver>
       </_RestoreGraphEntry>
     </ItemGroup>
 
@@ -1154,8 +1155,8 @@ Copyright (c) .NET Foundation. All rights reserved.
         <TargetPlatformMinVersion>$(TargetPlatformMinVersion)</TargetPlatformMinVersion>
         <CLRSupport>$(CLRSupport)</CLRSupport>
         <RuntimeIdentifierGraphPath>$(RuntimeIdentifierGraphPath)</RuntimeIdentifierGraphPath>
-        <WindowsTargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</WindowsTargetPlatformMinVersion>
-      </_RestoreGraphEntry>
+        <WindowsTargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</WindowsTargetPlatformMinVersion>      
+    </_RestoreGraphEntry>
     </ItemGroup>
   </Target>
 

@@ -1,10 +1,14 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using NuGet.Client;
+using NuGet.Shared;
 
 namespace NuGet.ContentModel
 {
@@ -14,8 +18,8 @@ namespace NuGet.ContentModel
         private static readonly ReadOnlyMemory<char> Exe = ".exe".AsMemory();
         private static readonly ReadOnlyMemory<char> Winmd = ".winmd".AsMemory();
 
-        private List<Asset> _assets;
-        private ConcurrentDictionary<ReadOnlyMemory<char>, string> _assemblyRelatedExtensions;
+        private List<Asset>? _assets;
+        private ConcurrentDictionary<ReadOnlyMemory<char>, string?>? _assemblyRelatedExtensions;
         /// <summary>
         /// True if lib/contract exists
         /// </summary>
@@ -23,6 +27,10 @@ namespace NuGet.ContentModel
 
         public void Load(IEnumerable<string> paths)
         {
+            if (paths == null)
+            {
+                throw new ArgumentNullException(nameof(paths));
+            }
             // Cache for assembly and it's related file extensions.
             _assemblyRelatedExtensions = new();
 
@@ -54,17 +62,29 @@ namespace NuGet.ContentModel
 
         public IEnumerable<ContentItem> FindItems(PatternSet definition)
         {
-            return FindItemsImplementation(definition, _assets);
+            if (definition == null)
+            {
+                throw new ArgumentNullException(nameof(definition));
+            }
+            if (_assets != null)
+            {
+                return FindItemsImplementation(definition, _assets);
+            }
+            return Enumerable.Empty<ContentItem>();
         }
 
         [Obsolete("This method causes excessive memory allocation with yield return. Use ContentItemCollection.PopulateItemGroups instead.")]
         public IEnumerable<ContentItemGroup> FindItemGroups(PatternSet definition)
         {
-            if (_assets.Count > 0)
+            if (definition == null)
+            {
+                throw new ArgumentNullException(nameof(definition));
+            }
+            if (_assets != null && _assets.Count > 0)
             {
                 var groupPatterns = definition.GroupExpressions;
 
-                List<(ContentItem Item, Asset Asset)> groupAssets = null;
+                List<(ContentItem Item, Asset Asset)>? groupAssets = null;
 
                 foreach (var asset in _assets)
                 {
@@ -84,13 +104,12 @@ namespace NuGet.ContentModel
                     foreach (var grouping in groupAssets.GroupBy(key => key.Item, GroupComparer.DefaultComparer))
                     {
                         yield return new ContentItemGroup(
-                            properties: new Dictionary<string, object>(grouping.Key.Properties),
+                            properties: grouping.Key.Properties,
                             items: FindItemsImplementation(definition, grouping.Select(match => match.Asset)));
                     }
                 }
             }
         }
-
         /// <summary>
         /// Populate the provided list with ContentItemGroups based on a provided pattern set.
         /// </summary>
@@ -98,11 +117,19 @@ namespace NuGet.ContentModel
         /// <param name="contentItemGroupList">The list that will be mutated and populated with the item groups</param>
         public void PopulateItemGroups(PatternSet definition, IList<ContentItemGroup> contentItemGroupList)
         {
-            if (_assets.Count > 0)
+            if (definition == null)
+            {
+                throw new ArgumentNullException(nameof(definition));
+            }
+            if (contentItemGroupList == null)
+            {
+                throw new ArgumentNullException(nameof(contentItemGroupList));
+            }
+            if (_assets != null && _assets.Count > 0)
             {
                 var groupPatterns = definition.GroupExpressions;
 
-                List<(ContentItem Item, Asset Asset)> groupAssets = null;
+                List<(ContentItem Item, Asset Asset)>? groupAssets = null;
 
                 foreach (var asset in _assets)
                 {
@@ -122,7 +149,7 @@ namespace NuGet.ContentModel
                     foreach (var grouping in groupAssets.GroupBy(key => key.Item, GroupComparer.DefaultComparer))
                     {
                         contentItemGroupList.Add(new ContentItemGroup(
-                            properties: new Dictionary<string, object>(grouping.Key.Properties),
+                            properties: grouping.Key.Properties,
                             items: FindItemsImplementation(definition, grouping.Select(match => match.Asset))));
                     }
                 }
@@ -135,7 +162,7 @@ namespace NuGet.ContentModel
             return FindBestItemGroup(criteria, definitions) != null;
         }
 
-        public ContentItemGroup FindBestItemGroup(SelectionCriteria criteria, params PatternSet[] definitions)
+        public ContentItemGroup? FindBestItemGroup(SelectionCriteria criteria, params PatternSet[] definitions)
         {
             if (criteria is null)
             {
@@ -153,7 +180,7 @@ namespace NuGet.ContentModel
                 PopulateItemGroups(definition, itemGroups);
                 foreach (var criteriaEntry in criteria.Entries.NoAllocEnumerate())
                 {
-                    ContentItemGroup bestGroup = null;
+                    ContentItemGroup? bestGroup = null;
                     var bestAmbiguity = false;
 
                     foreach (var itemGroup in itemGroups)
@@ -171,13 +198,13 @@ namespace NuGet.ContentModel
                             }
                             else
                             {
-                                object itemProperty;
+                                object? itemProperty;
                                 if (!itemGroup.Properties.TryGetValue(criteriaProperty.Key, out itemProperty))
                                 {
                                     groupIsValid = false;
                                     break;
                                 }
-                                ContentPropertyDefinition propertyDefinition;
+                                ContentPropertyDefinition? propertyDefinition;
                                 if (!definition.PropertyDefinitions.TryGetValue(criteriaProperty.Key, out propertyDefinition))
                                 {
                                     groupIsValid = false;
@@ -258,12 +285,12 @@ namespace NuGet.ContentModel
                     if (contentItem != null)
                     {
                         //If the item is assembly, populate the "related files extensions property".
-                        if (contentItem.Properties.ContainsKey("assembly"))
+                        if (contentItem.TryGetValue(ManagedCodeConventions.PropertyNames.ManagedAssembly, out _))
                         {
-                            string relatedFileExtensionsProperty = GetRelatedFileExtensionProperty(contentItem.Path, assets);
+                            string? relatedFileExtensionsProperty = GetRelatedFileExtensionProperty(contentItem.Path, assets);
                             if (relatedFileExtensionsProperty is not null)
                             {
-                                contentItem.Properties.Add("related", relatedFileExtensionsProperty);
+                                contentItem.Add("related", relatedFileExtensionsProperty);
                             }
                         }
                         items.Add(contentItem);
@@ -275,17 +302,17 @@ namespace NuGet.ContentModel
             return items;
         }
 
-        internal string GetRelatedFileExtensionProperty(string assemblyPath, IEnumerable<Asset> assets)
+        internal string? GetRelatedFileExtensionProperty(string assemblyPath, IEnumerable<Asset> assets)
         {
             //E.g. if path is "lib/net472/A.B.C.dll", the prefix will be "lib/net472/A.B.C."
             ReadOnlyMemory<char> assemblyPrefix = assemblyPath.AsMemory(0, assemblyPath.LastIndexOf('.') + 1);
 
-            if (_assemblyRelatedExtensions.TryGetValue(assemblyPrefix, out string relatedProperty))
+            if (_assemblyRelatedExtensions != null && _assemblyRelatedExtensions.TryGetValue(assemblyPrefix, out string? relatedProperty))
             {
                 return relatedProperty;
             }
 
-            List<string> relatedFileExtensionList = null;
+            List<string>? relatedFileExtensionList = null;
             foreach (Asset asset in assets.NoAllocEnumerate())
             {
                 if (asset.Path is not null)
@@ -314,14 +341,20 @@ namespace NuGet.ContentModel
             // If no related files found.
             if (relatedFileExtensionList is null || relatedFileExtensionList.Count == 0)
             {
-                _assemblyRelatedExtensions.TryAdd(assemblyPrefix, null);
+                if (_assemblyRelatedExtensions != null)
+                {
+                    _assemblyRelatedExtensions.TryAdd(assemblyPrefix, null);
+                }
                 return null;
             }
             else
             {
                 relatedFileExtensionList.Sort();
                 string relatedFileExtensionsProperty = string.Join(";", relatedFileExtensionList);
-                _assemblyRelatedExtensions.TryAdd(assemblyPrefix, relatedFileExtensionsProperty);
+                if (_assemblyRelatedExtensions != null)
+                {
+                    _assemblyRelatedExtensions.TryAdd(assemblyPrefix, relatedFileExtensionsProperty);
+                }
                 return relatedFileExtensionsProperty;
             }
 
@@ -358,69 +391,155 @@ namespace NuGet.ContentModel
             return false;
         }
 
-        private class GroupComparer : IEqualityComparer<ContentItem>
+        internal class GroupComparer : IEqualityComparer<ContentItem>
         {
             public static readonly GroupComparer DefaultComparer = new GroupComparer();
 
             public int GetHashCode(ContentItem obj)
             {
                 var hashCode = 0;
-                foreach (var property in obj.Properties)
+                if (obj._properties != null)
                 {
-                    if (property.Key.Equals("tfm_raw", StringComparison.Ordinal))
+                    foreach (var property in obj._properties)
                     {
-                        // We store the raw version of the TFM, but we don't want it to affect the result.
-                        continue;
-                    }
 #if NETFRAMEWORK || NETSTANDARD
-                    hashCode ^= property.Key.GetHashCode();
+                        hashCode ^= property.Key.GetHashCode();
 #else
-                    hashCode ^= property.Key.GetHashCode(StringComparison.Ordinal);
+                        hashCode ^= property.Key.GetHashCode(StringComparison.Ordinal);
 #endif
-                    hashCode ^= property.Value.GetHashCode();
+                        hashCode ^= property.Value.GetHashCode();
+                    }
+                }
+                else
+                {
+                    if (obj._assembly != null)
+                    {
+                        hashCode ^= obj._assembly.GetHashCode();
+                    }
+                    if (obj._locale != null)
+                    {
+                        hashCode ^= obj._locale.GetHashCode();
+                    }
+                    if (obj._related != null)
+                    {
+                        hashCode ^= obj._related.GetHashCode();
+                    }
+                    if (obj._msbuild != null)
+                    {
+                        hashCode ^= obj._msbuild.GetHashCode();
+                    }
+                    if (obj._tfm != null)
+                    {
+                        hashCode ^= obj._tfm.GetHashCode();
+                    }
+                    if (obj._rid != null)
+                    {
+                        hashCode ^= obj._rid.GetHashCode();
+                    }
+                    if (obj._any != null)
+                    {
+                        hashCode ^= obj._any.GetHashCode();
+                    }
+                    if (obj._satelliteAssembly != null)
+                    {
+                        hashCode ^= obj._satelliteAssembly.GetHashCode();
+                    }
+                    if (obj._codeLanguage != null)
+                    {
+                        hashCode ^= obj._codeLanguage.GetHashCode();
+                    }
                 }
                 return hashCode;
             }
 
-            public bool Equals(ContentItem x, ContentItem y)
+            public bool Equals(ContentItem? x, ContentItem? y)
             {
                 if (ReferenceEquals(x, y))
                 {
                     return true;
                 }
-
-                if (x.Properties.Count != y.Properties.Count)
+                if (x is null || y is null)
                 {
                     return false;
                 }
 
-                foreach (var xProperty in x.Properties)
+                if (x._properties == null && y._properties != null)
                 {
-                    if (xProperty.Key.Equals("tfm_raw", StringComparison.Ordinal))
+                    return false;
+                }
+
+                if (x._properties != null && y._properties == null)
+                {
+                    return false;
+                }
+
+                if (x._properties?.Count != y._properties?.Count)
+                {
+                    return false;
+                }
+
+                if (x._properties != null && y._properties != null)
+                {
+                    foreach (var xProperty in x._properties)
                     {
-                        // We store the raw version of the TFM, but we don't want it to affect the result.
-                        continue;
+                        object? yValue;
+                        if (!y._properties.TryGetValue(xProperty.Key, out yValue))
+                        {
+                            return false;
+                        }
+                        if (!Equals(xProperty.Value, yValue))
+                        {
+                            return false;
+                        }
                     }
-                    object yValue;
-                    if (!y.Properties.TryGetValue(xProperty.Key, out yValue))
+                    foreach (var yProperty in y._properties)
+                    {
+                        object? xValue;
+                        if (!x._properties.TryGetValue(yProperty.Key, out xValue))
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    if (!EqualityUtility.EqualsWithNullCheck(x._assembly, y._assembly))
                     {
                         return false;
                     }
-                    if (!Equals(xProperty.Value, yValue))
+                    if (!EqualityUtility.EqualsWithNullCheck(x._locale, y._locale))
+                    {
+                        return false;
+                    }
+                    if (!EqualityUtility.EqualsWithNullCheck(x._related, y._related))
+                    {
+                        return false;
+                    }
+                    if (!EqualityUtility.EqualsWithNullCheck(x._msbuild, y._msbuild))
+                    {
+                        return false;
+                    }
+                    if (!EqualityUtility.EqualsWithNullCheck(x._tfm, y._tfm))
+                    {
+                        return false;
+                    }
+                    if (!EqualityUtility.EqualsWithNullCheck(x._rid, y._rid))
+                    {
+                        return false;
+                    }
+                    if (!EqualityUtility.EqualsWithNullCheck(x._any, y._any))
+                    {
+                        return false;
+                    }
+                    if (!EqualityUtility.EqualsWithNullCheck(x._satelliteAssembly, y._satelliteAssembly))
+                    {
+                        return false;
+                    }
+                    if (!EqualityUtility.EqualsWithNullCheck(x._codeLanguage, y._codeLanguage))
                     {
                         return false;
                     }
                 }
-
-                foreach (var yProperty in y.Properties)
-                {
-                    object xValue;
-                    if (!x.Properties.TryGetValue(yProperty.Key, out xValue))
-                    {
-                        return false;
-                    }
-                }
-
                 return true;
             }
         }

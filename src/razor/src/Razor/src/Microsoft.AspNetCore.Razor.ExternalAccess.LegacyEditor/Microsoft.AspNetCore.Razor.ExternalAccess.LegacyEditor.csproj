@@ -10,6 +10,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.ComponentModelHost" PrivateAssets="all" />
     <PackageReference Include="Microsoft.VisualStudio.Shell.Framework" PrivateAssets="all"/>
+    <!-- Manually upgrade to address CG alert. When the VS packages
+         pull in the right version, this can be removed. -->
+    <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'" PrivateAssets="all"/>
   </ItemGroup>
 
   <ItemGroup>
