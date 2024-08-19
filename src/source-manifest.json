@@ -109,10 +109,10 @@
       "commitSha": "7363b6fc90fd302a2b99507db6681212bc59c437"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24407.1",
+      "packageVersion": "10.0.0-alpha.1.24415.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "51b029e3272f35af0af337823cd122725f316c69"
+      "commitSha": "2cef086137a68586fdd69848261e2a8cf8c48b73"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24405.2",
