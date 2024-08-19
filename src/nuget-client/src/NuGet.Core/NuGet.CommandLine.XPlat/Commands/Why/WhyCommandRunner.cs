@@ -10,7 +10,7 @@ using System.IO;
 using Microsoft.Build.Evaluation;
 using NuGet.ProjectModel;
 
-namespace NuGet.CommandLine.XPlat
+namespace NuGet.CommandLine.XPlat.Commands.Why
 {
     internal static class WhyCommandRunner
     {
@@ -63,7 +63,7 @@ namespace NuGet.CommandLine.XPlat
                     if (dependencyGraphPerFramework != null)
                     {
                         whyCommandArgs.Logger.LogMinimal(
-                            string.Format(
+                            string.Format(CultureInfo.CurrentCulture,
                                 Strings.WhyCommand_Message_DependencyGraphsFoundInProject,
                                 assetsFile.PackageSpec.Name,
                                 targetPackage));
@@ -73,7 +73,7 @@ namespace NuGet.CommandLine.XPlat
                     else
                     {
                         whyCommandArgs.Logger.LogMinimal(
-                            string.Format(
+                            string.Format(CultureInfo.CurrentCulture,
                                 Strings.WhyCommand_Message_NoDependencyGraphsFoundInProject,
                                 assetsFile.PackageSpec.Name,
                                 targetPackage));

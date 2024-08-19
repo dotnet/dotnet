@@ -21,6 +21,7 @@ using NuGet.Versioning;
 
 using LibraryDependencyIndex = NuGet.Commands.DependencyGraphResolver.LibraryDependencyInterningTable.LibraryDependencyIndex;
 using LibraryRangeIndex = NuGet.Commands.DependencyGraphResolver.LibraryRangeInterningTable.LibraryRangeIndex;
+using System.Diagnostics;
 
 namespace NuGet.Commands
 {
@@ -52,6 +53,8 @@ namespace NuGet.Commands
 #pragma warning restore CA1505
         {
             bool _success = true;
+            bool isCentralPackageTransitivePinningEnabled = _request.Project.RestoreMetadata != null && _request.Project.RestoreMetadata.CentralPackageVersionsEnabled & _request.Project.RestoreMetadata.CentralPackageTransitivePinningEnabled;
+
             var uniquePackages = new HashSet<LibraryIdentity>();
 
             var projectRange = new LibraryRange()
@@ -88,6 +91,8 @@ namespace NuGet.Commands
                     hasInstallBeenCalledAlready = true;
                 }
 
+                TargetFrameworkInformation? projectTargetFramework = _request.Project.TargetFrameworks.FirstOrDefault(i => NuGetFramework.Comparer.Equals(i.FrameworkName, pair.Framework));
+
                 //Build up our new RestoreTargetGraph.
                 //This is done by making everything on RTG setable.  We should move to using a normal constructor.
                 var newRTG = new RestoreTargetGraph();
@@ -112,8 +117,7 @@ namespace NuGet.Commands
                     // This is guaranteed to be computed before any graph with a RID, so we can assume this will return a value.
 
                     // PCL Projects with Supports have a runtime graph but no matching framework.
-                    var runtimeGraphPath = _request.Project.TargetFrameworks.
-                            FirstOrDefault(e => NuGetFramework.Comparer.Equals(e.FrameworkName, tfmNonRidGraph.Framework))?.RuntimeIdentifierGraphPath;
+                    var runtimeGraphPath = projectTargetFramework?.RuntimeIdentifierGraphPath;
 
                     RuntimeGraph? projectProviderRuntimeGraph = default;
                     if (runtimeGraphPath != null)
@@ -150,6 +154,21 @@ namespace NuGet.Commands
 
                 Dictionary<LibraryRangeIndex, (LibraryRangeIndex[], LibraryDependencyIndex, LibraryDependencyTarget)> evictions = new Dictionary<LibraryRangeIndex, (LibraryRangeIndex[], LibraryDependencyIndex, LibraryDependencyTarget)>(EvictionsDictionarySize);
 
+
+                Dictionary<LibraryDependencyIndex, VersionRange>? pinnedPackageVersions = null;
+
+                if (isCentralPackageTransitivePinningEnabled && projectTargetFramework != null && projectTargetFramework.CentralPackageVersions != null)
+                {
+                    pinnedPackageVersions = new Dictionary<LibraryDependencyIndex, VersionRange>(capacity: projectTargetFramework.CentralPackageVersions.Count);
+
+                    foreach (var item in projectTargetFramework.CentralPackageVersions)
+                    {
+                        LibraryDependencyIndex depIndex = libraryDependencyInterningTable.Intern(item.Value);
+
+                        pinnedPackageVersions[depIndex] = item.Value.VersionRange;
+                    }
+                }
+
                 DependencyGraphItem rootProjectRefItem = new DependencyGraphItem()
                 {
                     LibraryDependency = initialProject,
@@ -176,6 +195,7 @@ namespace NuGet.Commands
                     var pathToCurrentRef = importRefItem.Path;
                     var currentSuppressions = importRefItem.Suppressions;
                     var currentOverrides = importRefItem.VersionOverrides!;
+                    var isCentrallyPinnedTransitivePackage = importRefItem.IsCentrallyPinnedTransitivePackage;
                     var directPackageReferenceFromRootProject = importRefItem.IsDirectPackageReferenceFromRootProject;
                     LibraryRangeIndex libraryRangeOfCurrentRef = importRefItem.LibraryRangeIndex;
 
@@ -204,12 +224,13 @@ namespace NuGet.Commands
                     }
 
                     //else if we've seen this ref (but maybe not version) before check to see if we need to upgrade
-                    if (chosenResolvedItems.TryGetValue(currentRefDependencyIndex, out var chosenResolvedItem))
+                    if (chosenResolvedItems.TryGetValue(currentRefDependencyIndex, out ResolvedDependencyGraphItem chosenResolvedItem))
                     {
                         LibraryDependency chosenRef = chosenResolvedItem.LibraryDependency;
                         LibraryRangeIndex chosenRefRangeIndex = chosenResolvedItem.LibraryRangeIndex;
                         LibraryRangeIndex[] pathChosenRef = chosenResolvedItem.Path;
                         bool packageReferenceFromRootProject = chosenResolvedItem.IsDirectPackageReferenceFromRootProject;
+                        bool isChosenItemCentrallyPinnedTransitivePackage = chosenResolvedItem.IsCentrallyPinnedTransitivePackage;
                         List<SuppressionsAndVersionOverrides> chosenSuppressions = chosenResolvedItem.SuppressionsAndVersionOverrides;
 
                         if (packageReferenceFromRootProject)
@@ -317,7 +338,9 @@ namespace NuGet.Commands
                                 {
                                     LibraryDependency = currentRef,
                                     LibraryRangeIndex = currentRefRangeIndex,
+                                    Parents = isChosenItemCentrallyPinnedTransitivePackage ? new HashSet<LibraryRangeIndex>() { pathToCurrentRef[pathToCurrentRef.Length - 1] } : null,
                                     Path = pathToCurrentRef,
+                                    IsCentrallyPinnedTransitivePackage = isChosenItemCentrallyPinnedTransitivePackage,
                                     IsDirectPackageReferenceFromRootProject = directPackageReferenceFromRootProject,
                                     SuppressionsAndVersionOverrides = new List<SuppressionsAndVersionOverrides>
                                     {
@@ -349,6 +372,8 @@ namespace NuGet.Commands
                         else
                         //we are looking at same.  consider if its an upgrade.
                         {
+                            chosenResolvedItem.Parents?.Add(pathToCurrentRef[pathToCurrentRef.Length - 1]);
+
                             //If the one we already have chosen is pure, then we can skip this one.  Processing it wont bring any new info
                             if ((chosenSuppressions.Count == 1) && (chosenSuppressions[0].Suppressions.Count == 0) &&
                                 (chosenSuppressions[0].VersionOverrides.Count == 0))
@@ -359,6 +384,7 @@ namespace NuGet.Commands
                             else if ((currentSuppressions!.Count == 0) && (currentOverrides.Count == 0))
                             {
                                 chosenResolvedItems.Remove(currentRefDependencyIndex);
+
                                 //slightly evil, but works.. we should just shift to the current thing as ref?
                                 chosenResolvedItems.Add(
                                     currentRefDependencyIndex,
@@ -366,7 +392,9 @@ namespace NuGet.Commands
                                     {
                                         LibraryDependency = currentRef,
                                         LibraryRangeIndex = currentRefRangeIndex,
+                                        Parents = chosenResolvedItem.Parents,
                                         Path = pathToCurrentRef,
+                                        IsCentrallyPinnedTransitivePackage = isChosenItemCentrallyPinnedTransitivePackage,
                                         IsDirectPackageReferenceFromRootProject = packageReferenceFromRootProject,
                                         SuppressionsAndVersionOverrides = new List<SuppressionsAndVersionOverrides>
                                         {
@@ -410,6 +438,8 @@ namespace NuGet.Commands
                                     }
                                 }
 
+                                chosenResolvedItem.Parents?.Add(pathToCurrentRef[pathToCurrentRef.Length - 1]);
+
                                 if (isEqualOrSuperSetDisposition)
                                 {
                                     continue;
@@ -435,7 +465,9 @@ namespace NuGet.Commands
                                         {
                                             LibraryDependency = currentRef,
                                             LibraryRangeIndex = currentRefRangeIndex,
+                                            Parents = chosenResolvedItem.Parents,
                                             Path = pathToCurrentRef,
+                                            IsCentrallyPinnedTransitivePackage = isChosenItemCentrallyPinnedTransitivePackage,
                                             IsDirectPackageReferenceFromRootProject = packageReferenceFromRootProject,
                                             SuppressionsAndVersionOverrides = newImportDisposition
                                         });
@@ -452,7 +484,9 @@ namespace NuGet.Commands
                             {
                                 LibraryDependency = currentRef,
                                 LibraryRangeIndex = currentRefRangeIndex,
+                                Parents = isCentrallyPinnedTransitivePackage ? new HashSet<LibraryRangeIndex>() { pathToCurrentRef[pathToCurrentRef.Length - 1] } : null,
                                 Path = pathToCurrentRef,
+                                IsCentrallyPinnedTransitivePackage = isCentrallyPinnedTransitivePackage,
                                 IsDirectPackageReferenceFromRootProject = directPackageReferenceFromRootProject,
                                 SuppressionsAndVersionOverrides = new List<SuppressionsAndVersionOverrides>
                                 {
@@ -483,6 +517,13 @@ namespace NuGet.Commands
                             libraryRangeInterningTable);
 
                         findLibraryEntryCache.Add(libraryRangeOfCurrentRef, refItemResult);
+
+                        // If the package came from a remote library provider, it needs to be installed locally.
+                        var isRemote = context.RemoteLibraryProviders.Contains(refItem.Data.Match.Provider);
+                        if (isRemote)
+                        {
+                            newRTG.Install.Add(refItem.Data.Match);
+                        }
                     }
 
                     HashSet<LibraryDependencyIndex>? suppressions = default;
@@ -501,7 +542,22 @@ namespace NuGet.Commands
                             }
                             suppressions.Add(depIndex);
                         }
-                        if (dep.VersionOverride != null)
+
+                        if (isCentralPackageTransitivePinningEnabled)
+                        {
+                            bool isTransitive = currentRefRangeIndex != rootProjectRefItem.LibraryRangeIndex && dep.LibraryRange.TypeConstraint == LibraryDependencyTarget.Package;
+                            bool isPinned = pinnedPackageVersions != null && pinnedPackageVersions.ContainsKey(depIndex);
+
+                            if (dep.VersionOverride != null && (!isTransitive || !isPinned))
+                            {
+                                if (newOverrides == null)
+                                {
+                                    newOverrides = new Dictionary<LibraryDependencyIndex, VersionRange>(OverridesDictionarySize);
+                                }
+                                newOverrides[depIndex] = dep.VersionOverride;
+                            }
+                        }
+                        else if (dep.VersionOverride != null)
                         {
                             if (newOverrides == null)
                             {
@@ -551,15 +607,38 @@ namespace NuGet.Commands
                             continue;
                         }
 
+                        bool isCentrallyPinnedTransitiveDependency = false;
+                        bool isDirectPackageReferenceFromRootProject = (currentRefRangeIndex == rootProjectRefItem.LibraryRangeIndex) && (dep.LibraryRange.TypeConstraint == LibraryDependencyTarget.Package);
+
+                        LibraryRangeIndex rangeIndex = LibraryRangeIndex.Invalid;
+
+                        LibraryDependency actualLibraryDependency = dep;
+
+                        if (!isDirectPackageReferenceFromRootProject && isCentralPackageTransitivePinningEnabled && pinnedPackageVersions?.TryGetValue(depIndex, out VersionRange? pinnedPackageVersion) == true)
+                        {
+                            actualLibraryDependency = dep.Clone();
+
+                            actualLibraryDependency.LibraryRange.VersionRange = pinnedPackageVersion;
+
+                            isCentrallyPinnedTransitiveDependency = true;
+
+                            rangeIndex = libraryRangeInterningTable.Intern(actualLibraryDependency.LibraryRange);
+                        }
+                        else
+                        {
+                            rangeIndex = refItemResult.GetRangeIndexForDependency(i);
+                        }
+
                         refImport.Enqueue(new DependencyGraphItem()
                         {
-                            LibraryDependency = dep,
+                            LibraryDependency = actualLibraryDependency,
                             LibraryDependencyIndex = depIndex,
-                            LibraryRangeIndex = refItemResult.GetRangeIndexForDependency(i),
+                            LibraryRangeIndex = rangeIndex,
                             Path = LibraryRangeInterningTable.CreatePathToRef(pathToCurrentRef, libraryRangeOfCurrentRef),
                             Suppressions = suppressions,
                             VersionOverrides = finalVersionOverrides,
-                            IsDirectPackageReferenceFromRootProject = (currentRefRangeIndex == rootProjectRefItem.LibraryRangeIndex) && (dep.LibraryRange.TypeConstraint == LibraryDependencyTarget.Package),
+                            IsDirectPackageReferenceFromRootProject = isDirectPackageReferenceFromRootProject,
+                            IsCentrallyPinnedTransitivePackage = isCentrallyPinnedTransitiveDependency
                         });
                     }
 
@@ -659,13 +738,6 @@ namespace NuGet.Commands
                     {
                         newFlattened.Add(node.Item);
 
-                        // If the package came from a remote library provider, it needs to be installed locally.
-                        var isRemote = context.RemoteLibraryProviders.Contains(node.Item.Data.Match.Provider);
-                        if (isRemote)
-                        {
-                            newRTG.Install.Add(node.Item.Data.Match);
-                        }
-
                         for (int i = 0; i < node.Item.Data.Dependencies.Count; i++)
                         {
                             var dep = node.Item.Data.Dependencies[i];
@@ -750,10 +822,26 @@ namespace NuGet.Commands
 
                             var newGraphNode = new GraphNode<RemoteResolveResult>(actualDep.LibraryRange);
                             newGraphNode.Item = findLibraryEntryCache[chosenItemRangeIndex].Item;
-                            currentGraphNode.InnerNodes.Add(newGraphNode);
-                            newGraphNode.OuterNode = currentGraphNode;
 
-                            if (newGraphNode.Item.Key.Type != LibraryType.Project && newGraphNode.Item.Key.Type != LibraryType.ExternalProject && newGraphNode.Item.Key.Type != LibraryType.Unresolved && !versionConflicts.ContainsKey(chosenItemRangeIndex) && dep.SuppressParent != LibraryIncludeFlags.All && dep.LibraryRange.VersionRange != null && !dep.LibraryRange.VersionRange!.Satisfies(newGraphNode.Item.Key.Version))
+                            if (chosenItem.IsCentrallyPinnedTransitivePackage)
+                            {
+                                newGraphNode.Disposition = Disposition.Accepted;
+                                newGraphNode.Item.IsCentralTransitive = true;
+                                newGraphNode.OuterNode = rootGraphNode;
+                                rootGraphNode.InnerNodes.Add(newGraphNode);
+                            }
+                            else
+                            {
+                                newGraphNode.OuterNode = currentGraphNode;
+                                currentGraphNode.InnerNodes.Add(newGraphNode);
+                            }
+
+                            if (dep.SuppressParent != LibraryIncludeFlags.All && isCentralPackageTransitivePinningEnabled && !downgrades.ContainsKey(chosenItemRangeIndex) && !RemoteDependencyWalker.IsGreaterThanOrEqualTo(chosenItem.LibraryDependency.LibraryRange.VersionRange, dep.LibraryRange.VersionRange))
+                            {
+                                downgrades.Add(chosenItem.LibraryRangeIndex, (currentGraphNode, dep));
+                            }
+
+                            if (newGraphNode.Item.Key.Type != LibraryType.Project && newGraphNode.Item.Key.Type != LibraryType.ExternalProject && newGraphNode.Item.Key.Type != LibraryType.Unresolved && !versionConflicts.ContainsKey(chosenItemRangeIndex) && dep.SuppressParent != LibraryIncludeFlags.All && dep.LibraryRange.VersionRange != null && !dep.LibraryRange.VersionRange!.Satisfies(newGraphNode.Item.Key.Version) && !downgrades.ContainsKey(chosenItemRangeIndex))
                             {
                                 currentGraphNode.InnerNodes.Remove(newGraphNode);
 
@@ -827,6 +915,30 @@ namespace NuGet.Commands
                             DowngradedFrom = downgradedFrom,
                             DowngradedTo = downgradedTo
                         });
+                    }
+                }
+
+                if (isCentralPackageTransitivePinningEnabled)
+                {
+                    foreach (KeyValuePair<LibraryDependencyIndex, ResolvedDependencyGraphItem> item in chosenResolvedItems)
+                    {
+                        ResolvedDependencyGraphItem chosenResolvedItem = item.Value;
+
+                        if (!chosenResolvedItem.IsCentrallyPinnedTransitivePackage || chosenResolvedItem.Parents == null || chosenResolvedItem.Parents.Count == 0)
+                        {
+                            continue;
+                        }
+
+                        if (nodesById.TryGetValue(chosenResolvedItem.LibraryRangeIndex, out GraphNode<RemoteResolveResult>? currentNode))
+                        {
+                            foreach (LibraryRangeIndex parent in chosenResolvedItem.Parents)
+                            {
+                                if (nodesById.TryGetValue(parent, out GraphNode<RemoteResolveResult>? parentNode))
+                                {
+                                    currentNode.ParentNodes.Add(parentNode);
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -962,11 +1074,15 @@ namespace NuGet.Commands
 
         private struct ResolvedDependencyGraphItem
         {
+            public bool IsCentrallyPinnedTransitivePackage { get; set; }
+
             public bool IsDirectPackageReferenceFromRootProject { get; set; }
 
             public LibraryDependency LibraryDependency { get; set; }
 
             public LibraryRangeIndex LibraryRangeIndex { get; set; }
+
+            public HashSet<LibraryRangeIndex>? Parents { get; set; }
 
             public LibraryRangeIndex[] Path { get; set; }
 
@@ -993,6 +1109,18 @@ namespace NuGet.Commands
             public LibraryDependencyIndex Intern(LibraryDependency libraryDependency)
             {
                 string key = libraryDependency.Name;
+                if (!_table.TryGetValue(key, out LibraryDependencyIndex index))
+                {
+                    index = (LibraryDependencyIndex)_nextIndex++;
+                    _table.Add(key, index);
+                }
+
+                return index;
+            }
+
+            public LibraryDependencyIndex Intern(CentralPackageVersion centralPackageVersion)
+            {
+                string key = centralPackageVersion.Name;
                 if (!_table.TryGetValue(key, out LibraryDependencyIndex index))
                 {
                     index = (LibraryDependencyIndex)_nextIndex++;
@@ -1035,8 +1163,11 @@ namespace NuGet.Commands
             }
         }
 
+        [DebuggerDisplay("{LibraryDependency}")]
         private class DependencyGraphItem
         {
+            public bool IsCentrallyPinnedTransitivePackage { get; set; }
+
             public bool IsDirectPackageReferenceFromRootProject { get; set; }
 
             public LibraryDependency? LibraryDependency { get; set; }

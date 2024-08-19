@@ -4,17 +4,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using NuGet.CommandLine.XPlat;
+using NuGet.CommandLine.XPlat.Commands.Why;
 using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 using Test.Utility;
 using Xunit;
 
-namespace NuGet.CommandLine.Xplat.Tests
+namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
 {
-    public class XPlatWhyUnitTests
+    public class DependencyGraphFinderTests
     {
         [Fact]
-        public void WhyCommand_DependencyGraphFinder_MultipleDependencyPathsForTargetPackage_AllPathsFound()
+        public void MultipleDependencyPathsForTargetPackage_AllPathsFound()
         {
             // Arrange
             var lockFileFormat = new LockFileFormat();
@@ -45,7 +46,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public void WhyCommand_DependencyGraphFinder_DependencyOnTargetProject_AllPathsFound()
+        public void DependencyOnTargetProject_AllPathsFound()
         {
             // Arrange
             var lockFileFormat = new LockFileFormat();
@@ -73,7 +74,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public void WhyCommand_DependencyGraphFinder_NoDependencyOnTargetPackage_ReturnsNullGraph()
+        public void NoDependencyOnTargetPackage_ReturnsNullGraph()
         {
             // Arrange
             var lockFileFormat = new LockFileFormat();
@@ -98,7 +99,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public void WhyCommand_DependencyGraphFinder_DependencyOnTargetPackageForOnlyOneFramework_ReturnsCorrectGraphs()
+        public void DependencyOnTargetPackageForOnlyOneFramework_ReturnsCorrectGraphs()
         {
             // Arrange
             var lockFileFormat = new LockFileFormat();
@@ -126,7 +127,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public void WhyCommand_DependencyGraphFinder_DependencyOnTargetPackage_FrameworkOptionSpecified_PathIsFound()
+        public void DependencyOnTargetPackage_FrameworkOptionSpecified_PathIsFound()
         {
             // Arrange
             var lockFileFormat = new LockFileFormat();
@@ -151,7 +152,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public void WhyCommand_DependencyGraphFinder_DependencyOnTargetPackageForOnlyOneFramework_DifferentFrameworkSpecified_ReturnsNullGraph()
+        public void DependencyOnTargetPackageForOnlyOneFramework_DifferentFrameworkSpecified_ReturnsNullGraph()
         {
             // Arrange
             var lockFileFormat = new LockFileFormat();
@@ -176,7 +177,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public void WhyCommand_DependencyGraphFinder_DifferentCaseUsedForTargetPackageId_MatchesAreCaseInsensitive_AllPathsFound()
+        public void DifferentCaseUsedForTargetPackageId_MatchesAreCaseInsensitive_AllPathsFound()
         {
             // Arrange
             var lockFileFormat = new LockFileFormat();

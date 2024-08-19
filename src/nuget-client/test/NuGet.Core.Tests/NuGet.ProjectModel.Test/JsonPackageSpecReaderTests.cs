@@ -4236,6 +4236,23 @@ namespace NuGet.ProjectModel.Test
             metadata.FallbackFolders.Should().Contain(@$"{userSettingsDirectory}fallbackFolder");
         }
 
+        [Theory]
+        [MemberData(nameof(TestEnvironmentVariableReader), true, MemberType = typeof(LockFileParsingEnvironmentVariable))]
+        [MemberData(nameof(TestEnvironmentVariableReader), false, MemberType = typeof(LockFileParsingEnvironmentVariable))]
+        public void GetPackageSpec_WithRestoreUseLegacyDependencyResolver_ReturnsUseLegacyDependencyResolver(
+            IEnvironmentVariableReader environmentVariableReader,
+            bool useLegacyDependencyResolver)
+        {
+            // Arrange
+            var json = $"{{\"restore\":{{\"restoreUseLegacyDependencyResolver\":{useLegacyDependencyResolver.ToString().ToLowerInvariant()}}}}}";
+
+            // Act
+            PackageSpec packageSpec = GetPackageSpec(json, environmentVariableReader);
+
+            // Assert
+            packageSpec.RestoreMetadata.UseLegacyDependencyResolver.Should().Be(useLegacyDependencyResolver);
+        }
+
         private static PackageSpec GetPackageSpec(string json)
         {
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(json)))

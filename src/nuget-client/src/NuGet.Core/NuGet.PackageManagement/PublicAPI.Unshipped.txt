@@ -1,4 +1,5 @@
 #nullable enable
+~const NuGet.ProjectManagement.ProjectBuildProperties.RestoreUseLegacyDependencyResolver = "RestoreUseLegacyDependencyResolver" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.SdkAnalysisLevel = "SdkAnalysisLevel" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.UsingMicrosoftNETSdk = "UsingMicrosoftNETSdk" -> string
 NuGet.PackageManagement.AuditChecker.AuditChecker(System.Collections.Generic.List<NuGet.Protocol.Core.Types.SourceRepository!>! packageSources, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository!>? auditSources, NuGet.Protocol.Core.Types.SourceCacheContext! sourceCacheContext, NuGet.Common.ILogger! logger) -> void

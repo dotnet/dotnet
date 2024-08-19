@@ -389,6 +389,7 @@ namespace NuGet.SolutionRestoreManager
                     RestoreAuditProperties = VSNominationUtilities.GetRestoreAuditProperties(targetFrameworks),
                     SdkAnalysisLevel = VSNominationUtilities.GetSdkAnalysisLevel(targetFrameworks),
                     UsingMicrosoftNETSdk = VSNominationUtilities.GetUsingMicrosoftNETSdk(targetFrameworks),
+                    UseLegacyDependencyResolver = VSNominationUtilities.GetUseLegacyDependencyResolver(targetFrameworks),
                 },
                 RuntimeGraph = VSNominationUtilities.GetRuntimeGraph(targetFrameworks),
                 RestoreSettings = new ProjectRestoreSettings() { HideWarningsAndErrors = true },

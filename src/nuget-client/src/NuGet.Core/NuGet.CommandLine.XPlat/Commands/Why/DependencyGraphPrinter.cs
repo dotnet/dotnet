@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NuGet.Shared;
 
-namespace NuGet.CommandLine.XPlat
+namespace NuGet.CommandLine.XPlat.Commands.Why
 {
     internal static class DependencyGraphPrinter
     {

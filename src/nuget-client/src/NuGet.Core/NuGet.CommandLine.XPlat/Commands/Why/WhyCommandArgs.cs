@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace NuGet.CommandLine.XPlat
+namespace NuGet.CommandLine.XPlat.Commands.Why
 {
     internal class WhyCommandArgs
     {

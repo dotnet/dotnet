@@ -84,6 +84,8 @@ namespace NuGet.Commands
         private const string ValidateRestoreGraphsDuration = nameof(ValidateRestoreGraphsDuration);
         private const string CreateRestoreResultDuration = nameof(CreateRestoreResultDuration);
         private const string IsCentralPackageTransitivePinningEnabled = nameof(IsCentralPackageTransitivePinningEnabled);
+        private const string UseLegacyDependencyResolver = nameof(UseLegacyDependencyResolver);
+        private const string UsedLegacyDependencyResolver = nameof(UsedLegacyDependencyResolver);
 
         // PackageSourceMapping names
         private const string PackageSourceMappingIsMappingEnabled = "PackageSourceMapping.IsMappingEnabled";
@@ -115,14 +117,7 @@ namespace NuGet.Commands
         private const string AuditDurationOutput = "Audit.Duration.Output";
         private const string AuditDurationTotal = "Audit.Duration.Total";
 
-        private readonly static Lazy<bool> EnableNewDependencyResolverLazy = new Lazy<bool>(() =>
-        {
-            string value = Environment.GetEnvironmentVariable("RESTORE_ENABLE_NEW_RESOLVER");
-
-            return !string.Equals(value, bool.FalseString, StringComparison.OrdinalIgnoreCase);
-        });
-
-        private readonly bool _enableNewDependencyResolver = EnableNewDependencyResolverLazy.Value;
+        private readonly bool _enableNewDependencyResolver;
 
         public RestoreCommand(RestoreRequest request)
         {
@@ -150,10 +145,8 @@ namespace NuGet.Commands
 
             _success = !request.AdditionalMessages?.Any(m => m.Level == LogLevel.Error) ?? true;
 
-            if (request.Project.RestoreMetadata.ProjectStyle != ProjectStyle.PackageReference || request.Project.RestoreMetadata.CentralPackageTransitivePinningEnabled)
-            {
-                _enableNewDependencyResolver = false;
-            }
+            // Enable the new dependency resolver if the project is using PackageReference, transitive pinning is disabled, and the user has not explicitly opted out of using it
+            _enableNewDependencyResolver = request.Project.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference && !_request.Project.RestoreMetadata.CentralPackageTransitivePinningEnabled && !_request.Project.RestoreMetadata.UseLegacyDependencyResolver;
         }
 
         public Task<RestoreResult> ExecuteAsync()
@@ -176,6 +169,8 @@ namespace NuGet.Commands
                 telemetry.TelemetryEvent[FallbackFoldersCount] = _request.DependencyProviders.FallbackPackageFolders.Count;
                 bool isLockFileEnabled = PackagesLockFileUtilities.IsNuGetLockFileEnabled(_request.Project);
                 telemetry.TelemetryEvent[IsLockFileEnabled] = isLockFileEnabled;
+                telemetry.TelemetryEvent[UseLegacyDependencyResolver] = _request.Project.RestoreMetadata.UseLegacyDependencyResolver;
+                telemetry.TelemetryEvent[UsedLegacyDependencyResolver] = !_enableNewDependencyResolver;
 
                 _operationId = telemetry.OperationId;
 
@@ -1179,7 +1174,7 @@ namespace NuGet.Commands
             // Load repositories
             // the external project provider is specific to the current restore project
             context.ProjectLibraryProviders.Add(
-                    new PackageSpecReferenceDependencyProvider(updatedExternalProjects, _logger));
+                    new PackageSpecReferenceDependencyProvider(updatedExternalProjects, _logger, useLegacyDependencyGraphResolution: true));
 
             var remoteWalker = new RemoteDependencyWalker(context);
 

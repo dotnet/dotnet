@@ -97,7 +97,7 @@ namespace NuGet.ContentModel.Infrastructure
                     // item already created, append defaults
                     foreach (var pair in _defaults)
                     {
-                        item.Properties[pair.Key] = pair.Value;
+                        item.Add(pair.Key, pair.Value);
                     }
                 }
                 return item;
@@ -213,9 +213,9 @@ namespace NuGet.ContentModel.Infrastructure
                             }
                             if (_preserveRawValue)
                             {
-                                item.Properties.Add(_rawToken, substring.ToString());
+                                item.Add(_rawToken, substring.ToString());
                             }
-                            item.Properties.Add(_token, value);
+                            item.Add(_token, value);
                         }
                         endIndex = delimiterIndex;
                         return true;
