@@ -351,5 +351,50 @@ namespace NuGet.SolutionRestoreManager.Test
             Assert.Throws<ArgumentException>(() => VSNominationUtilities.GetUsingMicrosoftNETSdk(TargetFrameworkWithUsingMicrosoftNetSdk(usingMicrosoftNETSdk)));
         }
 
+        [Theory]
+        [InlineData("true", true)]
+        [InlineData("falSe", false)]
+        [InlineData(null, false)]
+        public void GetPackageSpec_WithUseLegacyDependencyResolver(string useLegacyDependencyResolver, bool expected)
+        {
+            // Arrange
+            var targetFrameworks = new VsTargetFrameworkInfo4[]
+            {
+                new VsTargetFrameworkInfo4(
+                    items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase),
+                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectBuildProperties.RestoreUseLegacyDependencyResolver] = useLegacyDependencyResolver
+                    })
+            };
+
+            // Act & Assert
+            VSNominationUtilities.GetUseLegacyDependencyResolver(targetFrameworks).Should().Be(expected);
+        }
+
+        [Fact]
+        public void GetPackageSpec_WithUseLegacyDependencyResolver_DoesNotSupportPerFrameworkConfiguration()
+        {
+            // Arrange
+            var targetFrameworks = new VsTargetFrameworkInfo4[]
+            {
+                new VsTargetFrameworkInfo4(
+                    items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase),
+                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectBuildProperties.RestoreUseLegacyDependencyResolver] = "true"
+                    }),
+                 new VsTargetFrameworkInfo4(
+                    items: new Dictionary<string, IReadOnlyList<IVsReferenceItem2>>(StringComparer.OrdinalIgnoreCase),
+                    properties: new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [ProjectBuildProperties.RestoreUseLegacyDependencyResolver] = "false"
+                    })
+            };
+
+            // Act & Assert
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => VSNominationUtilities.GetUseLegacyDependencyResolver(targetFrameworks));
+            exception.Message.Should().Contain(ProjectBuildProperties.RestoreUseLegacyDependencyResolver);
+        }
     }
 }

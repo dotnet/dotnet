@@ -1822,5 +1822,45 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             // Assert
             result.Success.Should().BeTrue();
         }
+
+        [PlatformTheory(Platform.Windows)]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task MsbuildRestore_WithRestoreUseLegacyDependencyResolver_RunsLegacyAlgorithm(bool isStaticGraphRestore)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            // Set up solution, project, and packages
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+
+            var project = SimpleTestProjectContext.CreateLegacyPackageReference(
+                "a",
+                pathContext.SolutionRoot,
+                NuGetFramework.Parse("net472"));
+
+            var packageX = new SimpleTestPackageContext()
+            {
+                Id = "x",
+                Version = "1.0.0"
+            };
+
+            project.AddPackageToAllFrameworks(packageX);
+            solution.Projects.Add(project);
+            solution.Create(pathContext.SolutionRoot);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                packageX);
+
+            // Act
+            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath} /p:RestoreUseLegacyDependencyResolver=true" +
+                (isStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=true" : string.Empty),
+                ignoreExitCode: true,
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            result.Success.Should().BeTrue(because: result.AllOutput);
+            project.AssetsFile.PackageSpec.RestoreMetadata.UseLegacyDependencyResolver.Should().BeTrue(because: result.AllOutput);
+        }
     }
 }

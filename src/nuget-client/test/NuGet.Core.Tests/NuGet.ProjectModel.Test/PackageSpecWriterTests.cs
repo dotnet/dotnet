@@ -189,6 +189,7 @@ namespace NuGet.ProjectModel.Test
     ""outputPath"": ""outputPath"",
     ""projectStyle"": ""PackageReference"",
     ""crossTargeting"": true,
+    ""restoreUseLegacyDependencyResolver"": true,
     ""fallbackFolders"": [
       ""b"",
       ""a"",
@@ -817,7 +818,6 @@ namespace NuGet.ProjectModel.Test
             var actual = PackageSpecTestUtility.RoundTripJson(json, environmentReader);
 
             // Assert
-
             var metadata = actual.RestoreMetadata;
             var userSettingsDirectory = NuGetEnvironment.GetFolderPath(NuGetFolderPath.UserSettingsDirectory);
 
