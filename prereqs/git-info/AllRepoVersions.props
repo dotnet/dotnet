@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>9.0.0-rc.1.24414.5</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>d92413b87d36250859d8cb51ff69a03b5f5c4cab</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24372.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>2212610f2a8110588f76ce2ddc2d416894097b50</sdkGitCommitHash>
+    <sdkGitCommitHash>46f37f98ef74db497f13b9da9f7164266ba5444b</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>51b029e3272f35af0af337823cd122725f316c69</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24407.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>0d066e61a30c2599d0ced871ea45acf0e10571af</sourcebuildreferencepackagesGitCommitHash>
@@ -44,10 +44,10 @@
     <sourcelinkOutputPackageVersion>9.0.0-beta.24407.2</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>0710a7892d89999956e8808c28e9dd0512bd53f3</symreaderGitCommitHash>
     <symreaderOutputPackageVersion>2.2.0-beta.24327.2</symreaderOutputPackageVersion>
-    <templatingGitCommitHash>2aad6193928e85f0ecffa0590d55baa4b2f84323</templatingGitCommitHash>
-    <templatingOutputPackageVersion>9.0.100-rc.1.24412.1</templatingOutputPackageVersion>
-    <testtemplatesGitCommitHash>0b1b52e10bf70c53ed9fc63da52281b7d10ddd48</testtemplatesGitCommitHash>
-    <testtemplatesOutputPackageVersion>1.1.0-rc.24409.1</testtemplatesOutputPackageVersion>
+    <templatingGitCommitHash>83d11abd203c9f393ced01af4fc2802ef3faf83d</templatingGitCommitHash>
+    <templatingOutputPackageVersion>10.0.100-alpha.1.24418.4</templatingOutputPackageVersion>
+    <testtemplatesGitCommitHash>241e32893a8e9558ac30a017fa72b0a165445c04</testtemplatesGitCommitHash>
+    <testtemplatesOutputPackageVersion>1.1.0-rc.24415.1</testtemplatesOutputPackageVersion>
     <vstestGitCommitHash>c5c8ee586c6bd58eee6e845aee32e88f789c127d</vstestGitCommitHash>
     <vstestOutputPackageVersion>17.12.0-preview-24412-03</vstestOutputPackageVersion>
     <windowsdesktopGitCommitHash>e2d37ff24309778391e4a1d2038ad47e200ef6a2</windowsdesktopGitCommitHash>
