@@ -39,8 +39,10 @@ internal sealed partial class ProjectSystemProjectFactory
     public Workspace Workspace { get; }
     public IAsynchronousOperationListener WorkspaceListener { get; }
     public IFileChangeWatcher FileChangeWatcher { get; }
+
     public FileWatchedPortableExecutableReferenceFactory FileWatchedReferenceFactory { get; }
-    public SolutionServices SolutionServices { get; }
+
+    public SolutionServices SolutionServices => this.Workspace.Services.SolutionServices;
 
     private readonly Func<bool, ImmutableArray<string>, Task> _onDocumentsAddedMaybeAsync;
     private readonly Action<Project> _onProjectRemoved;
@@ -74,8 +76,6 @@ internal sealed partial class ProjectSystemProjectFactory
         Workspace = workspace;
         WorkspaceListener = workspace.Services.GetRequiredService<IWorkspaceAsynchronousOperationListenerProvider>().GetListener();
 
-        SolutionServices = workspace.Services.SolutionServices;
-
         FileChangeWatcher = fileChangeWatcher;
         FileWatchedReferenceFactory = new FileWatchedPortableExecutableReferenceFactory(fileChangeWatcher);
         FileWatchedReferenceFactory.ReferenceChanged += this.StartRefreshingMetadataReferencesForFile;
@@ -85,7 +85,7 @@ internal sealed partial class ProjectSystemProjectFactory
     }
 
     public FileTextLoader CreateFileTextLoader(string fullPath)
-        => new WorkspaceFileTextLoader(this.Workspace.Services.SolutionServices, fullPath, defaultEncoding: null);
+        => new WorkspaceFileTextLoader(this.SolutionServices, fullPath, defaultEncoding: null);
 
     public async Task<ProjectSystemProject> CreateAndAddToWorkspaceAsync(string projectSystemName, string language, ProjectSystemProjectCreationInfo creationInfo, ProjectSystemHostInfo hostInfo)
     {
@@ -102,8 +102,7 @@ internal sealed partial class ProjectSystemProjectFactory
             assemblyName,
             creationInfo.CompilationOptions,
             creationInfo.FilePath,
-            creationInfo.ParseOptions,
-            creationInfo.CompilationOutputAssemblyFilePath);
+            creationInfo.ParseOptions);
 
         var versionStamp = creationInfo.FilePath != null
             ? VersionStamp.Create(File.GetLastWriteTimeUtc(creationInfo.FilePath))
@@ -163,6 +162,15 @@ internal sealed partial class ProjectSystemProjectFactory
                 onBeforeUpdate: null,
                 onAfterUpdate: null);
         }).ConfigureAwait(false);
+
+        // Set this value early after solution is created so it is available to Razor.  This will get updated
+        // when the command line is set, but we want a non-null value to be available as soon as possible.
+        //
+        // Set the property in a batch; if we set the property directly we'll be taking a synchronous lock here and
+        // potentially block up thread pool threads. Doing this in a batch means the global lock will be acquired asynchronously.
+        var disposableBatchScope = await project.CreateBatchScopeAsync(CancellationToken.None).ConfigureAwait(false);
+        await using var _ = disposableBatchScope.ConfigureAwait(false);
+        project.CompilationOutputAssemblyFilePath = creationInfo.CompilationOutputAssemblyFilePath;
 
         return project;
     }
@@ -400,37 +408,17 @@ internal sealed partial class ProjectSystemProjectFactory
     {
         Contract.ThrowIfFalse(_gate.CurrentCount == 0);
 
-        UpdateReferenceFileWatchers(projectUpdateState.RemovedReferences, projectUpdateState.AddedReferences);
+        // Now that we've removed the references from the sln, we can stop watching them.
+        foreach (var reference in projectUpdateState.RemovedMetadataReferences)
+            FileWatchedReferenceFactory.StopWatchingReference(reference);
+
+        // Now that we've added the references to the sln, we can start watching them.
+        foreach (var reference in projectUpdateState.AddedMetadataReferences)
+            FileWatchedReferenceFactory.StartWatchingReference(reference, reference.FilePath!);
 
         // Clear the state from the this update in preparation for the next.
         projectUpdateState = projectUpdateState.ClearIncrementalState();
         _projectUpdateState = projectUpdateState;
-        return;
-
-        void UpdateReferenceFileWatchers(
-            ImmutableArray<PortableExecutableReference> removedReferences,
-            ImmutableArray<PortableExecutableReference> addedReferences)
-        {
-            // Remove file watchers for any references we're no longer watching.
-            if (removedReferences.Count() > 0)
-            {
-                // Now that we've removed the references from the sln, we can stop watching them.
-                foreach (var reference in removedReferences)
-                {
-                    FileWatchedReferenceFactory.StopWatchingReference(reference);
-                }
-            }
-
-            // Add file watchers for any references we are now watching.
-            if (addedReferences.Count() > 0)
-            {
-                // Now that we've added the references to the sln, we can start watching them.
-                foreach (var reference in addedReferences)
-                {
-                    FileWatchedReferenceFactory.StartWatchingReference(reference, reference.FilePath!);
-                }
-            }
-        }
     }
 
     internal void RemoveSolution_NoLock()
@@ -526,9 +514,11 @@ internal sealed partial class ProjectSystemProjectFactory
     }
 
     /// <summary>
-    /// Attempts to convert all metadata references to <paramref name="outputPath"/> to a project reference to <paramref name="projectIdToReference"/>.
+    /// Attempts to convert all metadata references to <paramref name="outputPath"/> to a project reference to <paramref
+    /// name="projectIdToReference"/>.
     /// </summary>
-    /// <param name="projectIdToReference">The <see cref="ProjectId"/> of the project that could be referenced in place of the output path.</param>
+    /// <param name="projectIdToReference">The <see cref="ProjectId"/> of the project that could be referenced in place
+    /// of the output path.</param>
     /// <param name="outputPath">The output path to replace.</param>
     [PerformanceSensitive("https://github.com/dotnet/roslyn/issues/31306",
         Constraint = "Avoid calling " + nameof(CodeAnalysis.Solution.GetProject) + " to avoid realizing all projects.")]
@@ -542,13 +532,14 @@ internal sealed partial class ProjectSystemProjectFactory
         {
             if (CanConvertMetadataReferenceToProjectReference(solutionChanges.Solution, projectIdToRetarget, referencedProjectId: projectIdToReference))
             {
-                // PERF: call GetProjectState instead of GetProject, otherwise creating a new project might force all
-                // Project instances to get created.
-                foreach (PortableExecutableReference reference in solutionChanges.Solution.GetProjectState(projectIdToRetarget)!.MetadataReferences)
+                // PERF: call GetRequiredProjectState instead of GetRequiredProject, otherwise creating a new project
+                // might force all Project instances to get created.
+                var projectState = solutionChanges.Solution.GetRequiredProjectState(projectIdToRetarget);
+                foreach (var reference in projectState.MetadataReferences.OfType<PortableExecutableReference>())
                 {
                     if (string.Equals(reference.FilePath, outputPath, StringComparison.OrdinalIgnoreCase))
                     {
-                        projectUpdateState = projectUpdateState.WithIncrementalReferenceRemoved(reference);
+                        projectUpdateState = projectUpdateState.WithIncrementalMetadataReferenceRemoved(reference);
 
                         var projectReference = new ProjectReference(projectIdToReference, reference.Properties.Aliases, reference.Properties.EmbedInteropTypes);
                         var newSolution = solutionChanges.Solution.RemoveMetadataReference(projectIdToRetarget, reference)
@@ -560,8 +551,8 @@ internal sealed partial class ProjectSystemProjectFactory
                         projectUpdateState = projectUpdateState.WithProjectReferenceInfo(projectIdToRetarget,
                             projectInfo.WithConvertedProjectReference(reference.FilePath!, projectReference));
 
-                        // We have converted one, but you could have more than one reference with different aliases
-                        // that we need to convert, so we'll keep going
+                        // We have converted one, but you could have more than one reference with different aliases that
+                        // we need to convert, so we'll keep going
                     }
                 }
             }
@@ -640,14 +631,13 @@ internal sealed partial class ProjectSystemProjectFactory
                 if (string.Equals(convertedReference.path, outputPath, StringComparison.OrdinalIgnoreCase) &&
                     convertedReference.ProjectReference.ProjectId == projectId)
                 {
-                    var metadataReference =
-                        CreateReference_NoLock(
-                            convertedReference.path,
-                            new MetadataReferenceProperties(
-                                aliases: convertedReference.ProjectReference.Aliases,
-                                embedInteropTypes: convertedReference.ProjectReference.EmbedInteropTypes),
-                            solutionServices);
-                    projectUpdateState = projectUpdateState.WithIncrementalReferenceAdded(metadataReference);
+                    var metadataReference = CreateMetadataReference_NoLock(
+                        convertedReference.path,
+                        new MetadataReferenceProperties(
+                            aliases: convertedReference.ProjectReference.Aliases,
+                            embedInteropTypes: convertedReference.ProjectReference.EmbedInteropTypes),
+                        solutionServices);
+                    projectUpdateState = projectUpdateState.WithIncrementalMetadataReferenceAdded(metadataReference);
 
                     var newSolution = solutionChanges.Solution.RemoveProjectReference(projectIdToRetarget, convertedReference.ProjectReference)
                                                               .AddMetadataReference(projectIdToRetarget, metadataReference);
@@ -797,50 +787,57 @@ internal sealed partial class ProjectSystemProjectFactory
     /// Gets or creates a PortableExecutableReference instance for the given file path and properties.
     /// Calls to this are expected to be serialized by the caller.
     /// </summary>
-    public static PortableExecutableReference CreateReference_NoLock(string fullFilePath, MetadataReferenceProperties properties, SolutionServices solutionServices)
+    public static PortableExecutableReference CreateMetadataReference_NoLock(string fullFilePath, MetadataReferenceProperties properties, SolutionServices solutionServices)
     {
         var reference = solutionServices.GetRequiredService<IMetadataService>().GetReference(fullFilePath, properties);
         return reference;
     }
 
-#pragma warning disable VSTHRD100 // Avoid async void methods
-    private async void StartRefreshingMetadataReferencesForFile(object? sender, string fullFilePath)
-#pragma warning restore VSTHRD100 // Avoid async void methods
+    private void StartRefreshingMetadataReferencesForFile(object? sender, string fullFilePath)
     {
-        using var asyncToken = WorkspaceListener.BeginAsyncOperation(nameof(StartRefreshingMetadataReferencesForFile));
+        var asyncToken = WorkspaceListener.BeginAsyncOperation(nameof(StartRefreshingMetadataReferencesForFile));
 
-        await ApplyBatchChangeToWorkspaceAsync((solutionChanges, projectUpdateState) =>
+        var task = StartRefreshingMetadataReferencesForFileAsync(sender, fullFilePath);
+        task.CompletesAsyncOperation(asyncToken);
+
+        return;
+
+        async Task StartRefreshingMetadataReferencesForFileAsync(object? sender, string fullFilePath)
         {
-            // Access the current update state under the workspace sync.
-            foreach (var project in Workspace.CurrentSolution.Projects)
+            await ApplyBatchChangeToWorkspaceAsync((solutionChanges, projectUpdateState) =>
             {
-                // Loop to find each reference with the given path. It's possible that there might be multiple references of the same path;
-                // the project system could concievably add the same reference multiple times but with different aliases. It's also possible
-                // we might not find the path at all: when we receive the file changed event, we aren't checking if the file is still
-                // in the workspace at that time; it's possible it might have already been removed.
-                foreach (var portableExecutableReference in project.MetadataReferences.OfType<PortableExecutableReference>())
+                // Access the current update state under the workspace sync.
+                foreach (var project in Workspace.CurrentSolution.Projects)
                 {
-                    if (portableExecutableReference.FilePath == fullFilePath)
+                    // Loop to find each reference with the given path. It's possible that there might be multiple references of the same path;
+                    // the project system could concievably add the same reference multiple times but with different aliases. It's also possible
+                    // we might not find the path at all: when we receive the file changed event, we aren't checking if the file is still
+                    // in the workspace at that time; it's possible it might have already been removed.
+                    foreach (var portableExecutableReference in project.MetadataReferences.OfType<PortableExecutableReference>())
                     {
-                        projectUpdateState = projectUpdateState.WithIncrementalReferenceRemoved(portableExecutableReference);
+                        if (portableExecutableReference.FilePath == fullFilePath)
+                        {
+                            projectUpdateState = projectUpdateState.WithIncrementalMetadataReferenceRemoved(portableExecutableReference);
 
-                        var newPortableExecutableReference =
-                            CreateReference_NoLock(
+                            var newPortableExecutableReference = CreateMetadataReference_NoLock(
                                 portableExecutableReference.FilePath,
                                 portableExecutableReference.Properties,
                                 SolutionServices);
 
-                        projectUpdateState = projectUpdateState.WithIncrementalReferenceAdded(newPortableExecutableReference);
+                            projectUpdateState = projectUpdateState.WithIncrementalMetadataReferenceAdded(newPortableExecutableReference);
 
-                        var newSolution = solutionChanges.Solution.RemoveMetadataReference(project.Id, portableExecutableReference)
-                                                                    .AddMetadataReference(project.Id, newPortableExecutableReference);
+                            var newSolution = solutionChanges.Solution
+                                .RemoveMetadataReference(project.Id, portableExecutableReference)
+                                .AddMetadataReference(project.Id, newPortableExecutableReference);
 
-                        solutionChanges.UpdateSolutionForProjectAction(project.Id, newSolution);
+                            solutionChanges.UpdateSolutionForProjectAction(project.Id, newSolution);
+                        }
                     }
                 }
-            }
-            return projectUpdateState;
-        }, onAfterUpdateAlways: null).ConfigureAwait(false);
+
+                return projectUpdateState;
+            }, onAfterUpdateAlways: null).ConfigureAwait(false);
+        }
     }
 
     internal Task RaiseOnDocumentsAddedMaybeAsync(bool useAsync, ImmutableArray<string> filePaths)
