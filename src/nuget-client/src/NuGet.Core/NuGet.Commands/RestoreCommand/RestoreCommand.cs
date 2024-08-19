@@ -145,8 +145,8 @@ namespace NuGet.Commands
 
             _success = !request.AdditionalMessages?.Any(m => m.Level == LogLevel.Error) ?? true;
 
-            // Disable the new dependency resolver if the project is not using PackageReference or if the user has explicitly opted out of using it
-            _enableNewDependencyResolver = request.Project.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference && !_request.Project.RestoreMetadata.UseLegacyDependencyResolver;
+            // Enable the new dependency resolver if the project is using PackageReference, transitive pinning is disabled, and the user has not explicitly opted out of using it
+            _enableNewDependencyResolver = request.Project.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference && !_request.Project.RestoreMetadata.CentralPackageTransitivePinningEnabled && !_request.Project.RestoreMetadata.UseLegacyDependencyResolver;
         }
 
         public Task<RestoreResult> ExecuteAsync()

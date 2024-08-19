@@ -709,9 +709,9 @@ namespace NuGet.Commands
                     {
                         var newItem = new LockFileItem(item.Path);
                         object locale;
-                        if (item.Properties.TryGetValue("locale", out locale))
+                        if (item.Properties.TryGetValue(ManagedCodeConventions.PropertyNames.Locale, out locale))
                         {
-                            newItem.Properties["locale"] = (string)locale;
+                            newItem.Properties[ManagedCodeConventions.PropertyNames.Locale] = (string)locale;
                         }
                         object related;
                         if (item.Properties.TryGetValue("related", out related))
