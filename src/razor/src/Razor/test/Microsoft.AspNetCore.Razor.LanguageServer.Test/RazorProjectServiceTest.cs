@@ -734,6 +734,47 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     }
 
     [Fact]
+    public async Task AddDocumentToMiscProjectAsync_IgnoresKnownDocument()
+    {
+        // Arrange
+        const string ProjectFilePath = "C:/path/to/project.csproj";
+        const string IntermediateOutputPath = "C:/path/to/obj";
+        const string RootNamespace = "TestRootNamespace";
+        const string DocumentFilePath = "C:/path/to/document.cshtml";
+
+        await _projectService.AddProjectAsync(
+            ProjectFilePath, IntermediateOutputPath, RazorConfiguration.Default, RootNamespace, displayName: null, DisposalToken);
+        await _projectService.AddDocumentToPotentialProjectsAsync(DocumentFilePath, DisposalToken);
+
+        // Act
+        using var listener = _projectManager.ListenToNotifications();
+
+        // Act
+        await _projectService.AddDocumentToMiscProjectAsync(DocumentFilePath, DisposalToken);
+
+        // Assert
+        listener.AssertNoNotifications();
+    }
+
+    [Fact]
+    public async Task AddDocumentToMiscProjectAsync_IgnoresKnownDocument_InMiscFiles()
+    {
+        // Arrange
+        const string DocumentFilePath = "C:/path/to/document.cshtml";
+
+        await _projectService.AddDocumentToMiscProjectAsync(DocumentFilePath, DisposalToken);
+
+        // Act
+        using var listener = _projectManager.ListenToNotifications();
+
+        // Act
+        await _projectService.AddDocumentToMiscProjectAsync(DocumentFilePath, DisposalToken);
+
+        // Assert
+        listener.AssertNoNotifications();
+    }
+
+    [Fact]
     public async Task RemoveDocument_RemovesDocumentFromOwnerProject()
     {
         // Arrange

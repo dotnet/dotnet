@@ -93,7 +93,7 @@ public class DefaultHtmlCodeActionProviderTest(ITestOutputHelper testOutput) : L
 
         var editMappingServiceMock = new StrictMock<IEditMappingService>();
         editMappingServiceMock
-            .Setup(x => x.RemapWorkspaceEditAsync(It.IsAny<WorkspaceEdit>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.RemapWorkspaceEditAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<WorkspaceEdit>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(remappedEdit);
 
         var provider = new DefaultHtmlCodeActionProvider(editMappingServiceMock.Object);
@@ -126,10 +126,10 @@ public class DefaultHtmlCodeActionProviderTest(ITestOutputHelper testOutput) : L
         // Assert
         var action = Assert.Single(providedCodeActions);
         Assert.NotNull(action.Edit);
-        Assert.True(action.Edit.TryGetDocumentChanges(out var changes));
-        Assert.Equal(documentPath, changes[0].TextDocument.Uri.AbsolutePath);
+        Assert.True(action.Edit.TryGetTextDocumentEdits(out var documentEdits));
+        Assert.Equal(documentPath, documentEdits[0].TextDocument.Uri.AbsolutePath);
         // Edit should be converted to 2 edits, to remove the tags
-        Assert.Collection(changes[0].Edits,
+        Assert.Collection(documentEdits[0].Edits,
             e =>
             {
                 Assert.Equal("", e.NewText);

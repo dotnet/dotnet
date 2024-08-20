@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
@@ -27,7 +28,7 @@ internal sealed class DefaultHtmlCodeActionProvider(IEditMappingService editMapp
         {
             if (codeAction.Edit is not null)
             {
-                await RemapAndFixHtmlCodeActionEditAsync(_editMappingService, context.CodeDocument, codeAction, cancellationToken).ConfigureAwait(false);
+                await RemapAndFixHtmlCodeActionEditAsync(_editMappingService, context.DocumentSnapshot, codeAction, cancellationToken).ConfigureAwait(false);
 
                 results.Add(codeAction);
             }
@@ -40,14 +41,15 @@ internal sealed class DefaultHtmlCodeActionProvider(IEditMappingService editMapp
         return results.ToImmutable();
     }
 
-    public static async Task RemapAndFixHtmlCodeActionEditAsync(IEditMappingService editMappingService, RazorCodeDocument codeDocument, CodeAction codeAction, CancellationToken cancellationToken)
+    public static async Task RemapAndFixHtmlCodeActionEditAsync(IEditMappingService editMappingService, IDocumentSnapshot documentSnapshot, CodeAction codeAction, CancellationToken cancellationToken)
     {
         Assumes.NotNull(codeAction.Edit);
 
-        codeAction.Edit = await editMappingService.RemapWorkspaceEditAsync(codeAction.Edit, cancellationToken).ConfigureAwait(false);
+        codeAction.Edit = await editMappingService.RemapWorkspaceEditAsync(documentSnapshot, codeAction.Edit, cancellationToken).ConfigureAwait(false);
 
-        if (codeAction.Edit.TryGetDocumentChanges(out var documentEdits) == true)
+        if (codeAction.Edit.TryGetTextDocumentEdits(out var documentEdits))
         {
+            var codeDocument = await documentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
             var htmlSourceText = codeDocument.GetHtmlSourceText();
 
             foreach (var edit in documentEdits)

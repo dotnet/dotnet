@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
@@ -68,44 +67,15 @@ internal partial class ParserContext
 [DebuggerDisplay("{" + nameof(DebuggerToString) + "(),nq}")]
 internal partial class ParserContext
 {
-    private const int InfiniteLoopCountThreshold = 1000;
-    private int _infiniteLoopGuardCount;
-    private SourceLocation? _infiniteLoopGuardLocation;
-
-    internal string Unparsed
+    private string Unparsed
     {
         get
         {
-            var remaining = ((TextReader)Source).ReadToEnd();
-            Source.Position -= remaining.Length;
+            var bookmark = Source.Position;
+            var remaining = Source.ReadToEnd();
+            Source.Position = bookmark;
             return remaining;
         }
-    }
-
-    private bool CheckInfiniteLoop()
-    {
-        // Infinite loop guard
-        //  Basically, if this property is accessed 1000 times in a row without having advanced the source reader to the next position, we
-        //  cause a parser error
-        if (_infiniteLoopGuardLocation != null)
-        {
-            if (Source.Location.Equals(_infiniteLoopGuardLocation.Value))
-            {
-                _infiniteLoopGuardCount++;
-                if (_infiniteLoopGuardCount > InfiniteLoopCountThreshold)
-                {
-                    Debug.Fail("An internal parser error is causing an infinite loop at this location.");
-
-                    return true;
-                }
-            }
-            else
-            {
-                _infiniteLoopGuardCount = 0;
-            }
-        }
-        _infiniteLoopGuardLocation = Source.Location;
-        return false;
     }
 
     private string DebuggerToString()
