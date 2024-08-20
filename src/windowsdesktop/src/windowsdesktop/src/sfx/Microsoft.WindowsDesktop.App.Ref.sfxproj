@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <Sdk Name="Microsoft.DotNet.SharedFramework.Sdk" />
+
   <PropertyGroup>
     <PlatformPackageType>TargetingPack</PlatformPackageType>
     <RuntimePackProjectPath>$(MSBuildThisFileDirectory)Microsoft.WindowsDesktop.App.Runtime.sfxproj</RuntimePackProjectPath>
@@ -11,6 +13,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
   </PropertyGroup>
+
   <ItemGroup>
     <None Include="PACKAGE.md" Pack="true" PackagePath=""/>
   </ItemGroup>
@@ -33,4 +36,5 @@
   <ItemGroup Condition="'$(CreatePlatformManifest)' == 'false'">
     <FilesToPackage Include="PlatformManifest.txt" TargetPath="data" GeneratedBuildFile="true" />
   </ItemGroup>
+
 </Project>
