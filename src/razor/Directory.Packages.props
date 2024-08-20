@@ -122,5 +122,13 @@
     <PackageVersion Include="xunit.extensibility.execution" Version="$(_XunitPackageVersion)" />
     <PackageVersion Include="xunit.runner.utility" Version="2.4.1" />
     <PackageVersion Include="Xunit.StaFact" Version="1.2.46-alpha" />
+
+    <!--
+      These package references exist solely to fix component governance issues. Referencing them here
+      at the appropriate version, in combination with using CentralPackageTransitivePinningEnabled, will
+      ensure the correct version is used in all places
+    -->
+    <PackageVersion Include="Microsoft.IO.Redist" Version="6.0.1" />
+    <PackageVersion Include="System.Formats.Asn1" Version="8.0.1" />
   </ItemGroup>
 </Project>

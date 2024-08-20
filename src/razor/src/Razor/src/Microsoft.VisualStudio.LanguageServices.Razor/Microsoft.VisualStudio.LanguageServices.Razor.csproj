@@ -24,6 +24,9 @@
 
     <PackageReference Include="Microsoft.VisualStudio.LiveShare" />
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" />
+    <!-- Manually upgrade to address CG alert. When the VS packages
+         pull in the right version, this can be removed. -->
+    <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'" />
 
     <!--
       Pinning packages to avoid misaligned reference CI failures.
