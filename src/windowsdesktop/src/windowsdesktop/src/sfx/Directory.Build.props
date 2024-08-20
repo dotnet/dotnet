@@ -1,5 +1,11 @@
 <Project>
 
+  <!-- Don't use MSBuildProjectName for the output paths to reduce path lengths. -->
+  <PropertyGroup>
+    <OutDirName Condition="'$(MSBuildProjectName)' == 'Microsoft.WindowsDesktop.App.Ref'">windowsdesktop-ref</OutDirName>
+    <OutDirName Condition="'$(MSBuildProjectName)' == 'Microsoft.WindowsDesktop.App.Runtime'">windowsdesktop-runtime</OutDirName>
+  </PropertyGroup>
+
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory).., Directory.Build.props))\Directory.Build.props" />
 
   <PropertyGroup>
@@ -76,4 +82,5 @@
     <FrameworkListFileClass Include="UIAutomationTypes.dll" Profile="WPF" />
     <FrameworkListFileClass Include="WindowsBase.dll" Profile="WPF" />
   </ItemGroup>
+
 </Project>
