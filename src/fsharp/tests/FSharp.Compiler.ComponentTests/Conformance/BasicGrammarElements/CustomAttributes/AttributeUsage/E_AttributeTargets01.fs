@@ -20,15 +20,13 @@ type A() =
 
     [<DefaultValue; M>]
     val mutable m_Index : int
-
+    
     [<DefaultValue; field: M>]
     val mutable m_Name : string
-
+    
     [<method: M>]
     member this.Index with [<method: M>] get () = 5
                        and [<method: M>] set (x : int) = ()
                        
     [<method: M>]
     static member (+) (op1 : A, op2 : A) = new A()
-
-    member this.DoIt() = someVal

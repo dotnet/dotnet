@@ -389,6 +389,7 @@ let ApplyAllOptimizations
                 importMap,
                 prevFile.FirstLoopRes.OptEnv,
                 isIncrementalFragment,
+                tcConfig.fsiMultiAssemblyEmit,
                 tcConfig.emitTailcalls,
                 prevFile.FirstLoopRes.HidingInfo,
                 file
@@ -435,6 +436,7 @@ let ApplyAllOptimizations
                 importMap,
                 prevFile.OptEnvExtraLoop,
                 isIncrementalFragment,
+                tcConfig.fsiMultiAssemblyEmit,
                 tcConfig.emitTailcalls,
                 prevPhase.FirstLoopRes.HidingInfo,
                 file
@@ -505,6 +507,7 @@ let ApplyAllOptimizations
                 importMap,
                 prevFile.OptEnvFinalSimplify,
                 isIncrementalFragment,
+                tcConfig.fsiMultiAssemblyEmit,
                 tcConfig.emitTailcalls,
                 prevPhase.FirstLoopRes.HidingInfo,
                 file

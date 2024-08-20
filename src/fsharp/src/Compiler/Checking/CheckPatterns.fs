@@ -27,7 +27,6 @@ open FSharp.Compiler.Text.Range
 open FSharp.Compiler.TypedTree
 open FSharp.Compiler.TypedTreeBasics
 open FSharp.Compiler.TypedTreeOps
-open FSharp.Compiler.CheckExpressionsOps
 
 type cenv = TcFileState
 
@@ -447,7 +446,7 @@ and TcRecordPat warnOnUpper cenv env vFlags patEnv ty fieldPats m =
     | None -> (fun _ -> TPat_error m), patEnv
     | Some(tinst, tcref, fldsmap, _fldsList) ->
 
-    let gtyp = mkWoNullAppTy tcref tinst
+    let gtyp = mkAppTy tcref tinst
     let inst = List.zip (tcref.Typars m) tinst
 
     UnifyTypes cenv env m ty gtyp
@@ -655,8 +654,8 @@ and TcPatLongIdentUnionCaseOrExnCase warnOnUpper cenv env ad vFlags patEnv ty (m
                     CallNameResolutionSink cenv.tcSink (id.idRange, env.NameEnv, argItem, emptyTyparInst, ItemOccurence.Pattern, ad)
 
                     match box result[idx] with
-                    | null -> result[idx] <- pat
-                    | _ ->
+                    | Null -> result[idx] <- pat
+                    | NonNull _ ->
                         extraPatterns.Add pat
                         errorR (Error (FSComp.SR.tcUnionCaseFieldCannotBeUsedMoreThanOnce id.idText, id.idRange))
 
@@ -788,3 +787,4 @@ and TcPatLongIdentLiteral warnOnUpper (cenv: cenv) env vFlags patEnv ty (mLongId
 and TcPatterns warnOnUpper cenv env vFlags s argTys args =
     assert (List.length args = List.length argTys)
     List.mapFold (fun s (ty, pat) -> TcPat warnOnUpper cenv env None vFlags s ty pat) s (List.zip argTys args)
+

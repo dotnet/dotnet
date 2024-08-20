@@ -440,13 +440,7 @@ module Option =
     /// </code>
     /// </example>
     [<CompiledName("OfObj")>]
-#if BUILDING_WITH_LKG || NO_NULLCHECKING_LIB_SUPPORT
-    val inline ofObj: value: 'T -> 'T option  when 'T : null
-#else
-    // TODO NULLNESS: assess this change - is it a breaking change?
-    [<WarnOnWithoutNullArgument("tcPassingWithoutNullToOptionOfObj", Localize=true)>]
-    val inline ofObj: value: 'T | null -> 'T option  when 'T : not null and 'T : not struct
-#endif
+    val inline ofObj: value: 'T -> 'T option when 'T: null
 
     /// <summary>Convert an option to a potentially null value.</summary>
     ///
@@ -461,42 +455,7 @@ module Option =
     /// </code>
     /// </example>
     [<CompiledName("ToObj")>]
-#if BUILDING_WITH_LKG || NO_NULLCHECKING_LIB_SUPPORT
-    val inline toObj: value: 'T option -> 'T when 'T : null
-#else
-    // TODO NULLNESS: assess this change - is it a breaking change?
-    val inline toObj: value: 'T option -> 'T | null when 'T : not struct (* and 'T : not null *)
-#endif
-
-    /// <summary>Convert a value option to an option.</summary>
-    ///
-    /// <param name="voption">The input value option.</param>
-    ///
-    /// <returns>The resulting option.</returns>
-    ///
-    /// <example id="ofValueOption-1">
-    /// <code lang="fsharp">
-    /// ValueSome 42 |> Option.ofValueOption // evaluates to Some 42
-    /// (ValueNone: int voption) |> Option.ofValueOption // evaluates to None
-    /// </code>
-    /// </example>
-    [<CompiledName("OfValueOption")>]
-    val inline ofValueOption: voption: 'T voption -> 'T option
-
-    /// <summary>Convert an option to a value option.</summary>
-    ///
-    /// <param name="option">The input option.</param>
-    ///
-    /// <returns>The resulting value option.</returns>
-    ///
-    /// <example id="toValueOption-1">
-    /// <code lang="fsharp">
-    /// Some 42 |> Option.toValueOption // evaluates to ValueSome 42
-    /// (None: int option) |> Option.toValueOption // evaluates to ValueNone
-    /// </code>
-    /// </example>
-    [<CompiledName("ToValueOption")>]
-    val inline toValueOption: option: 'T option -> 'T voption
+    val inline toObj: value: 'T option -> 'T when 'T: null
 
 /// <summary>Contains operations for working with value options.</summary>
 ///
@@ -929,13 +888,7 @@ module ValueOption =
     /// </code>
     /// </example>
     [<CompiledName("OfObj")>]
-#if BUILDING_WITH_LKG || NO_NULLCHECKING_LIB_SUPPORT
-    val inline ofObj: value: 'T -> 'T voption  when 'T : null
-#else
-    // TODO NULLNESS: assess this change - is it a breaking change?
-    [<WarnOnWithoutNullArgument("tcPassingWithoutNullToValueOptionOfObj", Localize=true)>]
-    val inline ofObj: value: 'T | null -> 'T voption  when 'T : not struct and 'T : not null
-#endif
+    val inline ofObj: value: 'T -> 'T voption when 'T: null
 
     /// <summary>Convert an option to a potentially null value.</summary>
     ///
@@ -950,39 +903,4 @@ module ValueOption =
     /// </code>
     /// </example>
     [<CompiledName("ToObj")>]
-#if BUILDING_WITH_LKG || NO_NULLCHECKING_LIB_SUPPORT
-    val inline toObj: value: 'T voption -> 'T when 'T : null
-#else
-    // TODO NULLNESS: assess this change - is it a breaking change?
-    val inline toObj: value: 'T voption -> 'T | null when 'T : not struct (* and 'T : not null *)
-#endif
-
-    /// <summary>Convert an option to a value option.</summary>
-    ///
-    /// <param name="option">The input option.</param>
-    ///
-    /// <returns>The resulting value option.</returns>
-    ///
-    /// <example id="ofOption-1">
-    /// <code lang="fsharp">
-    /// Some 42 |> ValueOption.ofOption // evaluates to ValueSome 42
-    /// (None: int option) |> ValueOption.ofOption // evaluates to ValueNone
-    /// </code>
-    /// </example>
-    [<CompiledName("OfOption")>]
-    val inline ofOption: option: 'T option -> 'T voption
-
-    /// <summary>Convert a value option to an option.</summary>
-    ///
-    /// <param name="voption">The input value option.</param>
-    ///
-    /// <returns>The resulting option.</returns>
-    ///
-    /// <example id="toOption-1">
-    /// <code lang="fsharp">
-    /// ValueSome 42 |> ValueOption.toOption // evaluates to Some 42
-    /// (ValueNone: int voption) |> ValueOption.toOption // evaluates to None
-    /// </code>
-    /// </example>
-    [<CompiledName("ToOption")>]
-    val inline toOption: voption: 'T voption -> 'T option
+    val inline toObj: value: 'T voption -> 'T when 'T: null

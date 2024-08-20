@@ -10,8 +10,7 @@ SigFile
                 ([], SynIdent (v, None), SynValTyparDecls (None, true),
                  LongIdent (SynLongIdent ([string], [], [None])),
                  SynValInfo ([], SynArgInfo ([], false, None)), false, false,
-                 PreXmlDoc ((4,0), FSharp.Compiler.Xml.XmlDocCollector),
-                 Single None,
+                 PreXmlDoc ((4,0), FSharp.Compiler.Xml.XmlDocCollector), None,
                  Some
                    (Const
                       (String

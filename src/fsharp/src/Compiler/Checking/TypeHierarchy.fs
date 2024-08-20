@@ -9,7 +9,6 @@ open FSharp.Compiler
 open FSharp.Compiler.AbstractIL.IL
 open FSharp.Compiler.DiagnosticsLogger
 open FSharp.Compiler.Import
-open FSharp.Compiler.Import.Nullness
 open FSharp.Compiler.Features
 open FSharp.Compiler.Syntax
 open FSharp.Compiler.SyntaxTreeOps
@@ -56,10 +55,7 @@ let GetSuperTypeOfType g amap m ty =
             let tinst = argsOfAppTy g ty
             match tdef.Extends with
             | None -> None
-            | Some ilTy ->   // 'inherit' can refer to a type which has nullable type arguments (e.g. List<string?>)
-                let typeAttrs = AttributesFromIL(tdef.MetadataIndex,tdef.CustomAttrsStored)
-                let nullness = {DirectAttributes = typeAttrs; Fallback = FromClass typeAttrs}
-                Some (RescopeAndImportILType scoref amap m tinst nullness ilTy)
+            | Some ilTy -> Some (RescopeAndImportILType scoref amap m tinst ilTy)
 
         | FSharpOrArrayOrByrefOrTupleOrExnTypeMetadata ->
             if isFSharpObjModelTy g ty || isFSharpExceptionTy g ty then
@@ -68,7 +64,7 @@ let GetSuperTypeOfType g amap m ty =
             elif isArrayTy g ty then
                 Some g.system_Array_ty
             elif isRefTy g ty && not (isObjTy g ty) then
-                Some g.obj_ty_noNulls
+                Some g.obj_ty
             elif isStructTupleTy g ty then
                 Some g.system_Value_ty
             elif isFSharpStructOrEnumTy g ty then
@@ -79,19 +75,13 @@ let GetSuperTypeOfType g amap m ty =
             elif isStructAnonRecdTy g ty then
                 Some g.system_Value_ty
             elif isAnonRecdTy g ty then
-                Some g.obj_ty_noNulls
+                Some g.obj_ty
             elif isRecdTy g ty || isUnionTy g ty then
-                Some g.obj_ty_noNulls
+                Some g.obj_ty
             else
                 None
 
-    match resBeforeNull with 
-    | Some superTy ->
-        let nullness = nullnessOfTy g ty
-        let superTyWithNull = addNullnessToTy nullness superTy
-        Some superTyWithNull
-    | None -> 
-        None
+    resBeforeNull
 
 /// Make a type for System.Collections.Generic.IList<ty>
 let mkSystemCollectionsGenericIListTy (g: TcGlobals) ty =
@@ -117,17 +107,9 @@ let GetImmediateInterfacesOfMetadataType g amap m skipUnref ty (tcref: TyconRef)
             // succeeded with more reported. There are pathological corner cases where this
             // doesn't apply: e.g. for mscorlib interfaces like IComparable, but we can always
             // assume those are present.
-            match tdef.ImplementsCustomAttrs with
-            | Some attrsList when g.langFeatureNullness && g.checkNullness ->
-                for (attrs,attrsIdx),intfTy in tdef.Implements |> List.zip attrsList do
-                    if skipUnref = SkipUnrefInterfaces.No || CanRescopeAndImportILType scoref amap m intfTy then
-                        let typeAttrs = AttributesFromIL(attrsIdx,attrs)
-                        let nullness = {DirectAttributes = typeAttrs; Fallback = FromClass typeAttrs}
-                        RescopeAndImportILType scoref amap m tinst nullness intfTy
-            | _ ->
-                for intfTy in tdef.Implements do
-                    if skipUnref = SkipUnrefInterfaces.No || CanRescopeAndImportILType scoref amap m intfTy then
-                        RescopeAndImportILTypeSkipNullness scoref amap m tinst intfTy
+            for intfTy in tdef.Implements do
+                if skipUnref = SkipUnrefInterfaces.No || CanRescopeAndImportILType scoref amap m intfTy then
+                    RescopeAndImportILType scoref amap m tinst intfTy
         | FSharpOrArrayOrByrefOrTupleOrExnTypeMetadata ->
             for intfTy in tcref.ImmediateInterfaceTypesOfFSharpTycon do
                instType (mkInstForAppTy g ty) intfTy ]
@@ -201,10 +183,10 @@ and GetImmediateInterfacesOfMeasureAnnotatedType skipUnref g amap m ty reprTy =
         // However since F# 2.0 we have always reported these interfaces for all measure-annotated types.
 
         //if ExistsInInterfaceHierarchy (typeEquiv g (mkAppTy g.system_GenericIComparable_tcref [reprTy])) skipUnref g amap m ty then
-        mkWoNullAppTy g.system_GenericIComparable_tcref [ty]
+        mkAppTy g.system_GenericIComparable_tcref [ty]
 
         //if ExistsInInterfaceHierarchy (typeEquiv g (mkAppTy g.system_GenericIEquatable_tcref [reprTy])) skipUnref g amap m ty then
-        mkWoNullAppTy g.system_GenericIEquatable_tcref [ty]
+        mkAppTy g.system_GenericIEquatable_tcref [ty]
     ]
 
 // Check for any System.Numerics type in the interface hierarchy
@@ -267,11 +249,11 @@ let FoldHierarchyOfTypeAux followInterfaces allowMultiIntfInst skipUnref visitor
                 List.foldBack
                    (loop (ndeep+1))
                    (GetImmediateInterfacesOfType skipUnref g amap m ty)
-                      (loop ndeep g.obj_ty_noNulls state)
+                      (loop ndeep g.obj_ty state)
             else
                 match tryDestTyparTy g ty with
                 | ValueSome tp ->
-                    let state = loop (ndeep+1) g.obj_ty_noNulls state
+                    let state = loop (ndeep+1) g.obj_ty state
                     List.foldBack
                         (fun x vacc ->
                           match x with
@@ -282,7 +264,6 @@ let FoldHierarchyOfTypeAux followInterfaces allowMultiIntfInst skipUnref visitor
                           | TyparConstraint.IsEnum _
                           | TyparConstraint.IsDelegate _
                           | TyparConstraint.SupportsNull _
-                          | TyparConstraint.NotSupportsNull _
                           | TyparConstraint.IsNonNullableStruct _
                           | TyparConstraint.IsUnmanaged _
                           | TyparConstraint.IsReferenceType _
@@ -368,38 +349,33 @@ let ExistsHeadTypeInEntireHierarchy g amap m typeToSearchFrom tcrefToLookFor =
     ExistsInEntireHierarchyOfType (HasHeadType g tcrefToLookFor) g amap m AllowMultiIntfInstantiations.Yes typeToSearchFrom
 
 /// Read an Abstract IL type from metadata and convert to an F# type.
-let ImportILTypeFromMetadata amap m scoref tinst minst nullnessSource ilTy =
-    RescopeAndImportILType scoref amap m (tinst@minst) nullnessSource ilTy
-
-/// Read an Abstract IL type from metadata and convert to an F# type, ignoring nullness checking.
-let ImportILTypeFromMetadataSkipNullness amap m scoref tinst minst ilTy =
-    RescopeAndImportILTypeSkipNullness scoref amap m (tinst@minst) ilTy
+let ImportILTypeFromMetadata amap m scoref tinst minst ilTy =
+    RescopeAndImportILType scoref amap m (tinst@minst) ilTy
 
 /// Read an Abstract IL type from metadata, including any attributes that may affect the type itself, and convert to an F# type.
-let ImportILTypeFromMetadataWithAttributes amap m scoref tinst minst nullnessSource ilTy =
-    let ty = RescopeAndImportILType scoref amap m (tinst@minst) nullnessSource ilTy
-
+let ImportILTypeFromMetadataWithAttributes amap m scoref tinst minst ilTy getCattrs =
+    let ty = RescopeAndImportILType scoref amap m (tinst@minst) ilTy
     // If the type is a byref and one of attributes from a return or parameter has
     // - a `IsReadOnlyAttribute` - it's an inref
     // - a `RequiresLocationAttribute` (in which case it's a `ref readonly`) which we treat as inref,
     // latter is an ad-hoc fix for https://github.com/dotnet/runtime/issues/94317.
     if isByrefTy amap.g ty
-       && (TryFindILAttribute amap.g.attrib_IsReadOnlyAttribute (nullnessSource.DirectAttributes.Read())
-           || TryFindILAttribute amap.g.attrib_RequiresLocationAttribute (nullnessSource.DirectAttributes.Read())) then
+       && (TryFindILAttribute amap.g.attrib_IsReadOnlyAttribute (getCattrs ())
+           || TryFindILAttribute amap.g.attrib_RequiresLocationAttribute (getCattrs ())) then
         mkInByrefTy amap.g (destByrefTy amap.g ty)
     else
         ty
 
 /// Get the parameter type of an IL method.
-let ImportParameterTypeFromMetadata amap m nullnessSource ilTy scoref tinst mist =   
-    ImportILTypeFromMetadataWithAttributes amap m scoref tinst mist nullnessSource ilTy
+let ImportParameterTypeFromMetadata amap m ilTy getCattrs scoref tinst mist =
+    ImportILTypeFromMetadataWithAttributes amap m scoref tinst mist ilTy getCattrs
 
 /// Get the return type of an IL method, taking into account instantiations for type, return attributes and method generic parameters, and
 /// translating 'void' to 'None'.
-let ImportReturnTypeFromMetadata amap m nullnessSource ilTy scoref tinst minst =  
+let ImportReturnTypeFromMetadata amap m ilTy getCattrs scoref tinst minst =
     match ilTy with
     | ILType.Void -> None
-    | retTy -> Some(ImportILTypeFromMetadataWithAttributes amap m scoref tinst minst nullnessSource retTy )
+    | retTy -> Some(ImportILTypeFromMetadataWithAttributes amap m scoref tinst minst retTy getCattrs)
 
 
 /// Copy constraints.  If the constraint comes from a type parameter associated
@@ -424,8 +400,6 @@ let CopyTyparConstraints m tprefInst (tporig: Typar) =
                TyparConstraint.IsEnum (instType tprefInst underlyingTy, m)
            | TyparConstraint.SupportsComparison _ ->
                TyparConstraint.SupportsComparison m
-           | TyparConstraint.NotSupportsNull _ -> 
-               TyparConstraint.NotSupportsNull m
            | TyparConstraint.SupportsEquality _ ->
                TyparConstraint.SupportsEquality m
            | TyparConstraint.IsDelegate(argTys, retTy, _) ->

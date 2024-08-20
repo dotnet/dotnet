@@ -363,8 +363,6 @@ let IsOperatorDisplayName (name: string) =
 
 let IsPossibleOpName (name: string) = name.StartsWithOrdinal(opNamePrefix)
 
-let ordinalStringComparer: IEqualityComparer<string> = StringComparer.Ordinal
-
 /// Compiles a custom operator into a mangled operator name.
 /// For example, "!%" becomes "op_DereferencePercent".
 /// This function should only be used for custom operators
@@ -389,7 +387,7 @@ let compileCustomOpName =
 
     /// Memoize compilation of custom operators.
     /// They're typically used more than once so this avoids some CPU and GC overhead.
-    let compiledOperators = ConcurrentDictionary<string, string> ordinalStringComparer
+    let compiledOperators = ConcurrentDictionary<_, string> StringComparer.Ordinal
 
     // Cache this as a delegate.
     let compiledOperatorsAddDelegate =
@@ -418,7 +416,7 @@ let compileCustomOpName =
 
 /// Maps the built-in F# operators to their mangled operator names.
 let standardOpNames =
-    let opNames = Dictionary<_, _>(opNameTable.Length, ordinalStringComparer)
+    let opNames = Dictionary<_, _>(opNameTable.Length, StringComparer.Ordinal)
 
     for x, y in opNameTable do
         opNames.Add(x, y)
@@ -442,7 +440,7 @@ let CompileOpName op =
 let decompileCustomOpName =
     // Memoize this operation. Custom operators are typically used more than once
     // so this avoids repeating decompilation.
-    let decompiledOperators = ConcurrentDictionary<_, _> ordinalStringComparer
+    let decompiledOperators = ConcurrentDictionary<_, _> StringComparer.Ordinal
 
     /// The minimum length of the name for a custom operator character.
     /// This value is used when initializing StringBuilders to avoid resizing.
@@ -509,7 +507,7 @@ let decompileCustomOpName =
 
 /// Maps the mangled operator names of built-in F# operators back to the operators.
 let standardOpsDecompile =
-    let ops = Dictionary<string, string>(opNameTable.Length, ordinalStringComparer)
+    let ops = Dictionary<string, string>(opNameTable.Length, StringComparer.Ordinal)
 
     for x, y in opNameTable do
         ops.Add(y, x)
@@ -626,7 +624,7 @@ let IsValidPrefixOperatorUse s =
     if String.IsNullOrEmpty s then
         false
     else
-        match !!s with
+        match s with
         | "?+"
         | "?-"
         | "+"
@@ -637,13 +635,12 @@ let IsValidPrefixOperatorUse s =
         | "%%"
         | "&"
         | "&&" -> true
-        | s -> s[0] = '!' || isTildeOnlyString s
+        | _ -> s[0] = '!' || isTildeOnlyString s
 
 let IsValidPrefixOperatorDefinitionName s =
     if String.IsNullOrEmpty s then
         false
     else
-        let s = !!s
 
         match s[0] with
         | '~' ->
@@ -670,8 +667,8 @@ let IsLogicalPrefixOperator logicalName =
     if String.IsNullOrEmpty logicalName then
         false
     else
-        let displayName = ConvertValLogicalNameToDisplayNameCore !!logicalName
-        displayName <> !!logicalName && IsValidPrefixOperatorDefinitionName displayName
+        let displayName = ConvertValLogicalNameToDisplayNameCore logicalName
+        displayName <> logicalName && IsValidPrefixOperatorDefinitionName displayName
 
 let IsLogicalTernaryOperator logicalName =
     let displayName = ConvertValLogicalNameToDisplayNameCore logicalName
@@ -1101,20 +1098,11 @@ let FSharpOptimizationDataResourceName = "FSharpOptimizationData."
 
 let FSharpSignatureDataResourceName = "FSharpSignatureData."
 
-let FSharpOptimizationDataResourceNameB = "FSharpOptimizationDataB."
-
-let FSharpSignatureDataResourceNameB = "FSharpSignatureDataB."
-
 // Compressed OptimizationData/SignatureData name for embedded resource
 let FSharpOptimizationCompressedDataResourceName =
     "FSharpOptimizationCompressedData."
 
 let FSharpSignatureCompressedDataResourceName = "FSharpSignatureCompressedData."
-
-let FSharpOptimizationCompressedDataResourceNameB =
-    "FSharpOptimizationCompressedDataB."
-
-let FSharpSignatureCompressedDataResourceNameB = "FSharpSignatureCompressedDataB."
 
 // For historical reasons, we use a different resource name for FSharp.Core, so older F# compilers
 // don't complain when they see the resource. The prefix of these names must not be 'FSharpOptimizationData'

@@ -958,7 +958,7 @@ type Map<[<EqualityConditionalOn>] 'Key, [<EqualityConditionalOn; ComparisonCond
         member m.Count = m.Count
 
     interface System.IComparable with
-        member m.CompareTo(obj: objnull) =
+        member m.CompareTo(obj: obj) =
             match obj with
             | :? Map<'Key, 'Value> as m2 ->
                 Seq.compareWith

@@ -122,7 +122,7 @@ Here are the steps for creating benchmarks:
 
               match sourceOpt with
               | None ->
-                  sourceOpt <- Some <| SourceText.ofString(File.ReadAllText("""C:\Users\vlza\code\fsharp\src\Compiler\Checking\Expressions\CheckExpressions.fs"""))
+                  sourceOpt <- Some <| SourceText.ofString(File.ReadAllText("""C:\Users\vlza\code\fsharp\src\Compiler\Checking\CheckExpressions.fs"""))
               | _ -> ()
 
           [<Benchmark>]
@@ -196,3 +196,4 @@ Here are the steps for creating benchmarks:
 
 8. Repeat for any number of changes you would like to test.
 9. **Optionally:** benchmark code and results can be included as part of the PR for future reference.
+

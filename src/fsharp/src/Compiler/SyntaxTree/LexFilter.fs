@@ -555,7 +555,6 @@ let (|TyparsCloseOp|_|) (txt: string) =
                 | Equals "$" -> ValueSome DOLLAR
                 | Equals "%" -> ValueSome (PERCENT_OP "%")
                 | Equals "%%" -> ValueSome (PERCENT_OP "%%")
-                | Equals "" -> ValueNone
                 | StartsWith "="
                 | StartsWith "!="
                 | StartsWith "<"
@@ -1145,9 +1144,7 @@ type LexFilterImpl (
                     //      f<{| C : int |}>x
                     //      f<x # x>x
                     //      f<x ' x>x
-                    //      f<x | null>x
                     | DEFAULT | COLON | COLON_GREATER | STRUCT | NULL | DELEGATE | AND | WHEN | AMP
-                    | BAR_JUST_BEFORE_NULL | BAR
                     | DOT_DOT
                     | NEW
                     | LBRACE_BAR
@@ -2484,9 +2481,6 @@ type LexFilterImpl (
             if debug then dprintf "skipping dummy token as no offside rules apply\n"
             pool.Return tokenTup
             hwTokenFetch useBlockRule
-
-        | BAR, _ when (lexbuf.SupportsFeature(LanguageFeature.NullnessChecking) && match peekNextToken() with NULL -> true | _ -> false) ->
-            returnToken tokenLexbufState BAR_JUST_BEFORE_NULL            
 
         // Ordinary tokens start a vanilla block
         | _, CtxtSeqBlock _ :: _ ->

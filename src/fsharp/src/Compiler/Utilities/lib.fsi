@@ -228,24 +228,24 @@ type Graph<'Data, 'Id when 'Id: comparison> =
 /// This is an unsafe trick, as it relies on the fact that the type of values
 /// being placed into the slot never utilizes "null" as a representation. To be used with
 /// with care.
-type NonNullSlot<'T when 'T: not struct> = 'T
+type NonNullSlot<'T> = 'T
 
-val nullableSlotEmpty: unit -> NonNullSlot<'T>
+val nullableSlotEmpty: unit -> 'T
 
-val nullableSlotFull: x: 'a -> NonNullSlot<'a>
+val nullableSlotFull: x: 'a -> 'a
 
 /// Caches, mainly for free variables
-type cache<'T when 'T: not struct> = { mutable cacheVal: NonNullSlot<'T> }
+type cache<'T> = { mutable cacheVal: NonNullSlot<'T> }
 
-val newCache: unit -> cache<'a> when 'a: not struct
+val newCache: unit -> cache<'a>
 
-val inline cached: cache: cache<'a> -> resF: (unit -> 'a) -> 'a when 'a: not struct
+val inline cached: cache: cache<'a> -> resF: (unit -> 'a) -> 'a
 
 val inline cacheOptByref: cache: byref<'T option> -> f: (unit -> 'T) -> 'T
 
 val inline cacheOptRef: cache: 'a option ref -> f: (unit -> 'a) -> 'a
 
-val inline tryGetCacheValue: cache: cache<'a> -> NonNullSlot<'a> voption when 'a: not struct
+val inline tryGetCacheValue: cache: cache<'a> -> NonNullSlot<'a> voption
 
 [<RequireQualifiedAccess>]
 type MaybeLazy<'T> =

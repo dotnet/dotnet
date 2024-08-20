@@ -140,6 +140,7 @@ type Foo () =
 let x = {strToPrint}
 printfn "%%s" x
         """
+        |> withLangVersionPreview
         |> compileExeAndRun
         |> shouldSucceed
         |> withStdOutContains "abcde"
@@ -150,6 +151,7 @@ printfn "%%s" x
 let x = {strToPrint}
 printfn "%%s" x
         """
+        |> withLangVersionPreview
         |> compileExeAndRun
         |> shouldSucceed
         |> withStdOutContains """a
@@ -168,6 +170,7 @@ let x = {formattableStr} : System.FormattableString
 assert(x.ArgumentCount = {argCount})
 printfn "%%s" (System.Globalization.CultureInfo "en-US" |> x.ToString)
         """
+        |> withLangVersionPreview
         |> compileExeAndRun
         |> shouldSucceed
         |> withStdOutContains "abcde"

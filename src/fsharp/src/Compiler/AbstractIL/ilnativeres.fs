@@ -1000,7 +1000,7 @@ type Directory(name, id) =
     member val ID = id
     member val NumberOfNamedEntries = Unchecked.defaultof<uint16> with get, set
     member val NumberOfIdEntries = Unchecked.defaultof<uint16> with get, set
-    member val Entries = List<objnull>()
+    member val Entries = List<obj>()
 
 type NativeResourceWriter() =
     static member private CompareResources (left: Win32Resource) (right: Win32Resource) =
@@ -1149,12 +1149,7 @@ type NativeResourceWriter() =
                             dataWriter.WriteByte 0uy
 
                         false
-                    | e ->
-                        failwithf
-                            "Unknown entry %s"
-                            (match e with
-                             | null -> "<NULL>"
-                             | e -> e.GetType().FullName)
+                    | e -> failwithf "Unknown entry %s" (if isNull e then "<NULL>" else e.GetType().FullName)
 
                 if id >= 0 then
                     writer.WriteInt32 id

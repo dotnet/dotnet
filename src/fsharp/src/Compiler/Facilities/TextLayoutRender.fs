@@ -63,7 +63,6 @@ module WordL =
     let leftAngle = wordL TaggedText.leftAngle
     let keywordModule = wordL TaggedText.keywordModule
     let keywordNamespace = wordL TaggedText.keywordNamespace
-    let keywordReturn = wordL TaggedText.keywordReturn
 
 module LeftL =
     let leftParen = leftL TaggedText.leftParen

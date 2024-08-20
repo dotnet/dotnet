@@ -208,9 +208,6 @@ type DiagnosticsLogger =
     /// Checks if ErrorCount > 0
     member CheckForErrors: unit -> bool
 
-    abstract CheckForRealErrorsIgnoringWarnings: bool
-    default CheckForRealErrorsIgnoringWarnings: bool
-
 /// Represents a DiagnosticsLogger that discards diagnostics
 val DiscardErrorsLogger: DiagnosticsLogger
 

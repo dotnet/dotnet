@@ -6,8 +6,6 @@ open System
 open System.Diagnostics
 open System.IO
 open System.Text
-open Internal.Utilities.Library
-
 
 module ActivityNames =
     [<Literal>]
@@ -69,21 +67,20 @@ module internal Activity =
     module Events =
         let cacheHit = "cacheHit"
 
-    type Diagnostics.Activity with
+    type System.Diagnostics.Activity with
 
         member this.RootId =
             let rec rootID (act: Activity) =
-                match act.Parent with
-                | null -> act.Id
-                | parent -> rootID parent
+                if isNull act.ParentId then act.Id else rootID act.Parent
 
             rootID this
 
         member this.Depth =
             let rec depth (act: Activity) acc =
-                match act.Parent with
-                | null -> acc
-                | parent -> depth parent (acc + 1)
+                if isNull act.ParentId then
+                    acc
+                else
+                    depth act.Parent (acc + 1)
 
             depth this 0
 
@@ -103,10 +100,8 @@ module internal Activity =
     let startNoTags (name: string) : IDisposable = activitySource.StartActivity name
 
     let addEvent name =
-        match Activity.Current with
-        | null -> ()
-        | activity when activity.Source = activitySource -> activity.AddEvent(ActivityEvent name) |> ignore
-        | _ -> ()
+        if (not (isNull Activity.Current)) && Activity.Current.Source = activitySource then
+            Activity.Current.AddEvent(ActivityEvent name) |> ignore
 
     module Profiling =
 
@@ -139,17 +134,16 @@ module internal Activity =
                     ActivityStarted = (fun a -> a.AddTag(gcStatsInnerTag, collectGCStats ()) |> ignore),
                     ActivityStopped =
                         (fun a ->
+                            let statsBefore = a.GetTagItem(gcStatsInnerTag) :?> GCStats
                             let statsAfter = collectGCStats ()
                             let p = Process.GetCurrentProcess()
                             a.AddTag(Tags.workingSetMB, p.WorkingSet64 / 1_000_000L) |> ignore
                             a.AddTag(Tags.handles, p.HandleCount) |> ignore
                             a.AddTag(Tags.threads, p.Threads.Count) |> ignore
 
-                            match a.GetTagItem(gcStatsInnerTag) with
-                            | :? GCStats as statsBefore ->
-                                for i = 0 to statsAfter.Length - 1 do
-                                    a.AddTag($"gc{i}", statsAfter[i] - statsBefore[i]) |> ignore
-                            | _ -> ())
+                            for i = 0 to statsAfter.Length - 1 do
+                                a.AddTag($"gc{i}", statsAfter[i] - statsBefore[i]) |> ignore)
+
                 )
 
             ActivitySource.AddActivityListener(l)
@@ -200,11 +194,11 @@ module internal Activity =
 
     module CsvExport =
 
-        let private escapeStringForCsv (o: obj MaybeNull) =
-            match o with
-            | null -> ""
-            | o ->
-                let mutable txtVal = match o.ToString() with | null -> "" | s -> s
+        let private escapeStringForCsv (o: obj) =
+            if isNull o then
+                ""
+            else
+                let mutable txtVal = o.ToString()
                 let hasComma = txtVal.IndexOf(',') > -1
                 let hasQuote = txtVal.IndexOf('"') > -1
 
@@ -219,7 +213,7 @@ module internal Activity =
         let private createCsvRow (a: Activity) =
             let sb = new StringBuilder(128)
 
-            let appendWithLeadingComma (s: string MaybeNull) =
+            let appendWithLeadingComma (s: string) =
                 sb.Append(',') |> ignore
                 sb.Append(s) |> ignore
 
@@ -237,7 +231,7 @@ module internal Activity =
 
             sb.ToString()
 
-        let addCsvFileListener (pathToFile:string) =
+        let addCsvFileListener pathToFile =
             if pathToFile |> File.Exists |> not then
                 File.WriteAllLines(
                     pathToFile,
@@ -259,7 +253,7 @@ module internal Activity =
 
             let l =
                 new ActivityListener(
-                    ShouldListenTo = (fun a ->ActivityNames.AllRelevantNames |> Array.contains a.Name),
+                    ShouldListenTo = (fun a -> ActivityNames.AllRelevantNames |> Array.contains a.Name),
                     Sample = (fun _ -> ActivitySamplingResult.AllData),
                     ActivityStopped = (fun a -> msgQueue.Post(createCsvRow a))
                 )

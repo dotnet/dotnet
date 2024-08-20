@@ -46,13 +46,11 @@ type IRawFSharpAssemblyData =
 
     /// Get the raw F# signature data in the assembly, if any
     abstract GetRawFSharpSignatureData:
-        m: range * ilShortAssemName: string * fileName: string ->
-            (string * ((unit -> ReadOnlyByteMemory) * (unit -> ReadOnlyByteMemory) option)) list
+        m: range * ilShortAssemName: string * fileName: string -> (string * (unit -> ReadOnlyByteMemory)) list
 
     /// Get the raw F# optimization data in the assembly, if any
     abstract GetRawFSharpOptimizationData:
-        m: range * ilShortAssemName: string * fileName: string ->
-            (string * ((unit -> ReadOnlyByteMemory) * (unit -> ReadOnlyByteMemory) option)) list
+        m: range * ilShortAssemName: string * fileName: string -> (string * (unit -> ReadOnlyByteMemory)) list
 
     /// Get the table of type forwarders in the assembly
     abstract GetRawTypeForwarders: unit -> ILExportedTypesAndForwarders
@@ -289,8 +287,6 @@ type TcConfigBuilder =
         mutable diagnosticsOptions: FSharpDiagnosticOptions
 
         mutable mlCompatibility: bool
-
-        mutable checkNullness: bool
 
         mutable checkOverflow: bool
 
@@ -629,8 +625,6 @@ type TcConfig =
     member diagnosticsOptions: FSharpDiagnosticOptions
 
     member mlCompatibility: bool
-
-    member checkNullness: bool
 
     member checkOverflow: bool
 

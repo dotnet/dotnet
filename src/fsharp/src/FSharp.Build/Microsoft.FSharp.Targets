@@ -412,8 +412,7 @@ this file.
               WarnOn="$(WarnOn)"
               Win32IconFile="$(ApplicationIcon)"
               Win32ManifestFile="$(Win32Manifest)"
-              Win32ResourceFile="$(Win32Resource)"
-              Nullable="$(Nullable)">
+              Win32ResourceFile="$(Win32Resource)">
           <Output TaskParameter="CommandLineArgs" ItemName="FscCommandLineArgs" />
         </Fsc>
 

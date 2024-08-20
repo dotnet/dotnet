@@ -209,7 +209,7 @@ type FSharpValue =
     /// <returns>The field from the record.</returns>
     ///
     /// <example-tbd></example-tbd>
-    static member GetRecordField: record: obj * info: PropertyInfo -> objnull
+    static member GetRecordField: record: obj * info: PropertyInfo -> obj
 
     /// <summary>Precompute a function for reading a particular field from a record.
     /// Assumes the given type is a RecordType with a field of the given name.
@@ -226,7 +226,7 @@ type FSharpValue =
     /// <returns>A function to read the specified field from the record.</returns>
     ///
     /// <example-tbd></example-tbd>
-    static member PreComputeRecordFieldReader: info: PropertyInfo -> (obj -> objnull)
+    static member PreComputeRecordFieldReader: info: PropertyInfo -> (obj -> obj)
 
     /// <summary>Creates an instance of a record type.</summary>
     ///
@@ -243,7 +243,7 @@ type FSharpValue =
     /// <example-tbd></example-tbd>
     static member MakeRecord:
         [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] recordType: Type *
-        values: objnull array *
+        values: obj array *
         ?bindingFlags: BindingFlags ->
             obj
 
@@ -258,7 +258,7 @@ type FSharpValue =
     /// <returns>The array of fields from the record.</returns>
     ///
     /// <example-tbd></example-tbd>
-    static member GetRecordFields: record: obj * ?bindingFlags: BindingFlags -> objnull array
+    static member GetRecordFields: record: obj * ?bindingFlags: BindingFlags -> obj array
 
     /// <summary>Precompute a function for reading all the fields from a record. The fields are returned in the
     /// same order as the fields reported by a call to Microsoft.FSharp.Reflection.Type.GetInfo for
@@ -282,7 +282,7 @@ type FSharpValue =
     static member PreComputeRecordReader:
         [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] recordType: Type *
         ?bindingFlags: BindingFlags ->
-            (obj -> objnull array)
+            (obj -> obj array)
 
     /// <summary>Precompute a function for constructing a record value. </summary>
     ///
@@ -300,7 +300,7 @@ type FSharpValue =
     static member PreComputeRecordConstructor:
         [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] recordType: Type *
         ?bindingFlags: BindingFlags ->
-            (objnull array -> obj)
+            (obj array -> obj)
 
     /// <summary>Get a ConstructorInfo for a record type</summary>
     ///
@@ -324,7 +324,7 @@ type FSharpValue =
     /// <returns>The constructed union case.</returns>
     ///
     /// <example-tbd></example-tbd>
-    static member MakeUnion: unionCase: UnionCaseInfo * args: objnull array * ?bindingFlags: BindingFlags -> objnull
+    static member MakeUnion: unionCase: UnionCaseInfo * args: obj array * ?bindingFlags: BindingFlags -> obj
 
     /// <summary>Identify the union case and its fields for an object</summary>
     ///
@@ -343,10 +343,10 @@ type FSharpValue =
     ///
     /// <example-tbd></example-tbd>
     static member GetUnionFields:
-        value: objnull *
+        value: obj *
         [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] unionType: Type *
         ?bindingFlags: BindingFlags ->
-            UnionCaseInfo * objnull array
+            UnionCaseInfo * obj array
 
     /// <summary>Assumes the given type is a union type.
     /// If not, <see cref="T:System.ArgumentException" /> is raised during pre-computation.</summary>
@@ -363,7 +363,7 @@ type FSharpValue =
     /// <example-tbd></example-tbd>
     static member PreComputeUnionTagReader:
         [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] unionType: Type * ?bindingFlags: BindingFlags ->
-            (objnull -> int)
+            (obj -> int)
 
     /// <summary>Precompute a property or static method for reading an integer representing the case tag of a union type.</summary>
     ///
@@ -387,8 +387,7 @@ type FSharpValue =
     /// <returns>A function to for reading the fields of the given union case.</returns>
     ///
     /// <example-tbd></example-tbd>
-    static member PreComputeUnionReader:
-        unionCase: UnionCaseInfo * ?bindingFlags: BindingFlags -> (objnull -> objnull array)
+    static member PreComputeUnionReader: unionCase: UnionCaseInfo * ?bindingFlags: BindingFlags -> (obj -> obj array)
 
     /// <summary>Precompute a function for constructing a discriminated union value for a particular union case. </summary>
     ///
@@ -399,7 +398,7 @@ type FSharpValue =
     ///
     /// <example-tbd></example-tbd>
     static member PreComputeUnionConstructor:
-        unionCase: UnionCaseInfo * ?bindingFlags: BindingFlags -> (objnull array -> objnull)
+        unionCase: UnionCaseInfo * ?bindingFlags: BindingFlags -> (obj array -> obj)
 
     /// <summary>A method that constructs objects of the given case</summary>
     ///
@@ -423,7 +422,7 @@ type FSharpValue =
     /// <returns>The fields from the given exception.</returns>
     ///
     /// <example-tbd></example-tbd>
-    static member GetExceptionFields: exn: obj * ?bindingFlags: BindingFlags -> objnull array
+    static member GetExceptionFields: exn: obj * ?bindingFlags: BindingFlags -> obj array
 
     /// <summary>Creates an instance of a tuple type</summary>
     ///
@@ -437,7 +436,7 @@ type FSharpValue =
     /// <returns>An instance of the tuple type with the given elements.</returns>
     ///
     /// <example-tbd></example-tbd>
-    static member MakeTuple: tupleElements: objnull array * tupleType: Type -> obj
+    static member MakeTuple: tupleElements: obj array * tupleType: Type -> obj
 
     /// <summary>Reads a field from a tuple value.</summary>
     ///
@@ -449,7 +448,7 @@ type FSharpValue =
     /// <returns>The value of the field.</returns>
     ///
     /// <example-tbd></example-tbd>
-    static member GetTupleField: tuple: obj * index: int -> objnull
+    static member GetTupleField: tuple: obj * index: int -> obj
 
     /// <summary>Reads all fields from a tuple.</summary>
     ///
@@ -462,7 +461,7 @@ type FSharpValue =
     /// <returns>An array of the fields from the given tuple.</returns>
     ///
     /// <example-tbd></example-tbd>
-    static member GetTupleFields: tuple: obj -> objnull array
+    static member GetTupleFields: tuple: obj -> obj array
 
     /// <summary>Precompute a function for reading the values of a particular tuple type</summary>
     ///
@@ -477,7 +476,7 @@ type FSharpValue =
     ///
     /// <example-tbd></example-tbd>
     static member PreComputeTupleReader:
-        [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] tupleType: Type -> (obj -> objnull array)
+        [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] tupleType: Type -> (obj -> obj array)
 
     /// <summary>Gets information that indicates how to read a field of a tuple</summary>
     ///
@@ -504,7 +503,7 @@ type FSharpValue =
     ///
     /// <example-tbd></example-tbd>
     static member PreComputeTupleConstructor:
-        [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] tupleType: Type -> (objnull array -> obj)
+        [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] tupleType: Type -> (obj array -> obj)
 
     /// <summary>Gets a method that constructs objects of the given tuple type.
     /// For small tuples, no additional type will be returned.</summary>
@@ -536,7 +535,7 @@ type FSharpValue =
     /// <example-tbd></example-tbd>
     static member MakeFunction:
         [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] functionType: Type *
-        implementation: (objnull -> objnull) ->
+        implementation: (obj -> obj) ->
             obj
 
 /// <summary>Contains operations associated with constructing and analyzing F# types such as records, unions and tuples</summary>
@@ -746,7 +745,7 @@ module FSharpReflectionExtensions =
         /// <example-tbd></example-tbd>
         static member MakeRecord:
             [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] recordType: Type *
-            values: objnull array *
+            values: obj array *
             ?allowAccessToPrivateRepresentation: bool ->
                 obj
 
@@ -765,7 +764,7 @@ module FSharpReflectionExtensions =
         static member GetRecordFields:
             [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] record: obj *
             ?allowAccessToPrivateRepresentation: bool ->
-                objnull array
+                obj array
 
         /// <summary>Precompute a function for reading all the fields from a record. The fields are returned in the
         /// same order as the fields reported by a call to Microsoft.FSharp.Reflection.Type.GetInfo for
@@ -789,7 +788,7 @@ module FSharpReflectionExtensions =
         static member PreComputeRecordReader:
             [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] recordType: Type *
             ?allowAccessToPrivateRepresentation: bool ->
-                (obj -> objnull array)
+                (obj -> obj array)
 
         /// <summary>Precompute a function for constructing a record value. </summary>
         ///
@@ -807,7 +806,7 @@ module FSharpReflectionExtensions =
         static member PreComputeRecordConstructor:
             [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] recordType: Type *
             ?allowAccessToPrivateRepresentation: bool ->
-                (objnull array -> obj)
+                (obj array -> obj)
 
         /// <summary>Get a ConstructorInfo for a record type</summary>
         ///
@@ -832,7 +831,7 @@ module FSharpReflectionExtensions =
         ///
         /// <example-tbd></example-tbd>
         static member MakeUnion:
-            unionCase: UnionCaseInfo * args: objnull array * ?allowAccessToPrivateRepresentation: bool -> objnull
+            unionCase: UnionCaseInfo * args: obj array * ?allowAccessToPrivateRepresentation: bool -> obj
 
         /// <summary>Identify the union case and its fields for an object</summary>
         ///
@@ -852,10 +851,10 @@ module FSharpReflectionExtensions =
         ///
         /// <example-tbd></example-tbd>
         static member GetUnionFields:
-            value: objnull *
+            value: obj *
             [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] unionType: Type *
             ?allowAccessToPrivateRepresentation: bool ->
-                UnionCaseInfo * objnull array
+                UnionCaseInfo * obj array
 
         /// <summary>Assumes the given type is a union type.
         /// If not, <see cref="T:System.ArgumentException" /> is raised during pre-computation.</summary>
@@ -873,7 +872,7 @@ module FSharpReflectionExtensions =
         static member PreComputeUnionTagReader:
             [<DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)>] unionType: Type *
             ?allowAccessToPrivateRepresentation: bool ->
-                (objnull -> int)
+                (obj -> int)
 
         /// <summary>Precompute a property or static method for reading an integer representing the case tag of a union type.</summary>
         ///
@@ -899,7 +898,7 @@ module FSharpReflectionExtensions =
         ///
         /// <example-tbd></example-tbd>
         static member PreComputeUnionReader:
-            unionCase: UnionCaseInfo * ?allowAccessToPrivateRepresentation: bool -> (objnull -> objnull array)
+            unionCase: UnionCaseInfo * ?allowAccessToPrivateRepresentation: bool -> (obj -> obj array)
 
         /// <summary>Precompute a function for constructing a discriminated union value for a particular union case. </summary>
         ///
@@ -910,7 +909,7 @@ module FSharpReflectionExtensions =
         ///
         /// <example-tbd></example-tbd>
         static member PreComputeUnionConstructor:
-            unionCase: UnionCaseInfo * ?allowAccessToPrivateRepresentation: bool -> (objnull array -> objnull)
+            unionCase: UnionCaseInfo * ?allowAccessToPrivateRepresentation: bool -> (obj array -> obj)
 
         /// <summary>A method that constructs objects of the given case</summary>
         ///
@@ -935,7 +934,7 @@ module FSharpReflectionExtensions =
         /// <returns>The fields from the given exception.</returns>
         ///
         /// <example-tbd></example-tbd>
-        static member GetExceptionFields: exn: obj * ?allowAccessToPrivateRepresentation: bool -> objnull array
+        static member GetExceptionFields: exn: obj * ?allowAccessToPrivateRepresentation: bool -> obj array
 
     type FSharpType with
 

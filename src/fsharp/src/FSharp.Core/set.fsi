@@ -13,9 +13,6 @@ open Microsoft.FSharp.Collections
 /// <remarks>See the <see cref="T:Microsoft.FSharp.Collections.SetModule"/> module for further operations on sets.
 ///
 /// All members of this class are thread-safe and may be used concurrently from multiple threads.</remarks>
-#if NETSTANDARD2_1_OR_GREATER
-[<System.Runtime.CompilerServices.CollectionBuilder(typeof<Set>, "Create")>]
-#endif
 [<Sealed>]
 [<CompiledName("FSharpSet`1")>]
 type Set<[<EqualityConditionalOn>] 'T when 'T: comparison> =
@@ -234,22 +231,7 @@ type Set<[<EqualityConditionalOn>] 'T when 'T: comparison> =
     interface System.IComparable
     interface System.Collections.IStructuralEquatable
     interface IReadOnlyCollection<'T>
-    override Equals: objnull -> bool
-
-#if NETSTANDARD2_1_OR_GREATER
-/// <summary>Contains methods for compiler use related to sets.</summary>
-and [<CompilerMessage("This type is for compiler use and should not be used directly", 1204, IsHidden = true);
-      Sealed;
-      AbstractClass;
-      CompiledName("FSharpSet")>] Set =
-    /// <summary>Creates a set with the specified items.</summary>
-    ///
-    /// <param name="items">The items to store in the set.</param>
-    ///
-    /// <returns>A set containing the specified items.</returns>
-    [<CompilerMessage("This method is for compiler use and should not be used directly", 1204, IsHidden = true)>]
-    static member Create: [<System.Runtime.CompilerServices.ScopedRef>] items: System.ReadOnlySpan<'T> -> Set<'T>
-#endif
+    override Equals: obj -> bool
 
 namespace Microsoft.FSharp.Collections
 

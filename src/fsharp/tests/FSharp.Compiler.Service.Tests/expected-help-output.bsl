@@ -109,8 +109,6 @@
 --nowarn:<warn;...>                      Disable specific warning messages
 --warnon:<warn;...>                      Enable specific warnings that may be
                                          off by default
---checknulls[+|-]                        Enable nullness declarations and
-                                         checks
 --consolecolors[+|-]                     Output warning and error messages in
                                          color
 

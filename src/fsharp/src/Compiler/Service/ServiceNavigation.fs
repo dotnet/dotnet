@@ -332,21 +332,13 @@ module NavigationImpl =
                          [
                              createMember (rcid, NavigationItemKind.Field, FSharpGlyph.Field, range, enclosingEntityKind, false, access)
                          ]
-                     | SynMemberDefn.AutoProperty(ident = id; accessibility = access; propKind = propKind) ->
-                         let getterAccessibility, setterAccessibility = access.GetSetAccessNoCheck()
-
+                     | SynMemberDefn.AutoProperty(ident = id; accessibility = access) ->
                          [
-                             match propKind with
-                             | SynMemberKind.PropertyGetSet ->
-                                 yield createMember (id, NavigationItemKind.Field, FSharpGlyph.Field, id.idRange, enclosingEntityKind, false, getterAccessibility)
-                                 yield createMember (id, NavigationItemKind.Field, FSharpGlyph.Field, id.idRange, enclosingEntityKind, false, setterAccessibility)
-                             | SynMemberKind.PropertySet ->
-                                 yield createMember (id, NavigationItemKind.Field, FSharpGlyph.Field, id.idRange, enclosingEntityKind, false, setterAccessibility)
-                             | _ -> yield createMember (id, NavigationItemKind.Field, FSharpGlyph.Field, id.idRange, enclosingEntityKind, false, getterAccessibility)
+                             createMember (id, NavigationItemKind.Field, FSharpGlyph.Field, id.idRange, enclosingEntityKind, false, access)
                          ]
                      | SynMemberDefn.AbstractSlot(slotSig = SynValSig(ident = SynIdent(id, _); synType = ty; accessibility = access)) ->
                          [
-                             createMember (id, NavigationItemKind.Method, FSharpGlyph.OverridenMethod, ty.Range, enclosingEntityKind, true, access.SingleAccess())
+                             createMember (id, NavigationItemKind.Method, FSharpGlyph.OverridenMethod, ty.Range, enclosingEntityKind, true, access)
                          ]
                      | SynMemberDefn.NestedType _ -> failwith "tycon as member????" //processTycon tycon
                      | SynMemberDefn.Interface(members = Some(membs)) -> processMembers membs enclosingEntityKind |> snd
@@ -572,18 +564,10 @@ module NavigationImpl =
             [
                 for memb in members do
                     match memb with
-                    | SynMemberSig.Member(memberSig = SynValSig.SynValSig(ident = SynIdent(id, _); accessibility = access; range = m); flags = { MemberKind = propKind }) ->
-                        let getterAccessibility, setterAccessibility = access.GetSetAccessNoCheck()
-
-                        match propKind with
-                        | SynMemberKind.PropertyGetSet ->
-                            yield createMember (id, NavigationItemKind.Method, FSharpGlyph.Method, m, NavigationEntityKind.Class, false, getterAccessibility)
-                            yield createMember (id, NavigationItemKind.Method, FSharpGlyph.Method, m, NavigationEntityKind.Class, false, setterAccessibility)
-                        | SynMemberKind.PropertySet ->
-                            yield createMember (id, NavigationItemKind.Method, FSharpGlyph.Method, m, NavigationEntityKind.Class, false, setterAccessibility)
-                        | _ -> yield createMember (id, NavigationItemKind.Method, FSharpGlyph.Method, m, NavigationEntityKind.Class, false, getterAccessibility)
+                    | SynMemberSig.Member(memberSig = SynValSig.SynValSig(ident = SynIdent(id, _); accessibility = access; range = m)) ->
+                        createMember (id, NavigationItemKind.Method, FSharpGlyph.Method, m, NavigationEntityKind.Class, false, access)
                     | SynMemberSig.ValField(SynField(idOpt = Some rcid; fieldType = ty; accessibility = access), _) ->
-                        yield createMember (rcid, NavigationItemKind.Field, FSharpGlyph.Field, ty.Range, NavigationEntityKind.Class, false, access)
+                        createMember (rcid, NavigationItemKind.Field, FSharpGlyph.Field, ty.Range, NavigationEntityKind.Class, false, access)
                     | _ -> ()
             ]
 
@@ -593,7 +577,7 @@ module NavigationImpl =
                 for decl in decls do
                     match decl with
                     | SynModuleSigDecl.Val(SynValSig.SynValSig(ident = SynIdent(id, _); accessibility = access; range = m), _) ->
-                        createMember (id, NavigationItemKind.Method, FSharpGlyph.Method, m, NavigationEntityKind.Module, false, access.SingleAccess())
+                        createMember (id, NavigationItemKind.Method, FSharpGlyph.Method, m, NavigationEntityKind.Module, false, access)
                     | _ -> ()
             ]
 

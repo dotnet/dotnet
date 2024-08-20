@@ -28,10 +28,10 @@ module NumericLiterals =
 
     module NumericLiteralI =
 
-        let tab64 = new System.Collections.Generic.Dictionary<int64, objnull>()
-        let tabParse = new System.Collections.Generic.Dictionary<string, objnull>()
+        let tab64 = new System.Collections.Generic.Dictionary<int64, obj>()
+        let tabParse = new System.Collections.Generic.Dictionary<string, obj>()
 
-        let FromInt64Dynamic (value: int64) : objnull =
+        let FromInt64Dynamic (value: int64) : obj =
             lock tab64 (fun () ->
                 let mutable res = Unchecked.defaultof<_>
                 let ok = tab64.TryGetValue(value, &res)
@@ -82,7 +82,7 @@ module NumericLiterals =
                     tabParse.[s] <- res
                     res)
 
-        let FromStringDynamic (text: string) : objnull =
+        let FromStringDynamic (text: string) : obj =
             getParse text
 
         let FromString (text: string) : 'T =

@@ -169,11 +169,5 @@
     <type fullname="Microsoft.FSharp.Core.CompilerServices.TypeProviderXmlDocAttribute">
       <attribute internal="RemoveAttributeInstances" />
     </type>
-    <type fullname="System.Runtime.CompilerServices.NullableAttribute">
-      <attribute internal="RemoveAttributeInstances" />
-    </type>
-    <type fullname="System.Runtime.CompilerServices.NullableContextAttribute">
-      <attribute internal="RemoveAttributeInstances" />
-    </type>
   </assembly>
 </linker>

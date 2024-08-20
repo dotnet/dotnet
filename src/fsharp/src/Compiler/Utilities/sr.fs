@@ -6,7 +6,6 @@ open System
 open Microsoft.FSharp.Core
 open Microsoft.FSharp.Collections
 open Microsoft.FSharp.Reflection
-open Internal.Utilities.Library
 
 module internal SR =
     let private resources =
@@ -21,7 +20,7 @@ module internal SR =
         if isNull s then
             System.Diagnostics.Debug.Assert(false, sprintf "**RESOURCE ERROR**: Resource token %s does not exist!" name)
 #endif
-        !!s
+        s
 
 module internal DiagnosticMessage =
 
@@ -54,7 +53,7 @@ module internal DiagnosticMessage =
         // PERF: this technique is a bit slow (e.g. in simple cases, like 'sprintf "%x"')
         mkFunctionValue tys (fun inp -> impl rty inp)
 
-    let capture1 (fmt: string) i args ty (go: objnull list -> System.Type -> int -> obj) : obj =
+    let capture1 (fmt: string) i args ty (go: obj list -> System.Type -> int -> obj) : obj =
         match fmt[i] with
         | '%' -> go args ty (i + 1)
         | 'd'
@@ -76,7 +75,7 @@ module internal DiagnosticMessage =
             if i >= len || (fmt[i] = '%' && i + 1 >= len) then
                 let b = System.Text.StringBuilder()
                 b.AppendFormat(messageString, (Array.ofList (List.rev args))) |> ignore
-                !!(box (b.ToString()))
+                box (b.ToString())
             // REVIEW: For these purposes, this should be a nop, but I'm leaving it
             // in case we ever decide to support labels for the error format string
             // E.g., "<name>%s<foo>%d"
@@ -100,7 +99,7 @@ module internal DiagnosticMessage =
         // validate that the message string exists
         let fmtString = fmt.Value
 
-        if isNull (box messageString) then
+        if isNull messageString then
             System.Diagnostics.Debug.Assert(false, sprintf "**DECLARED MESSAGE ERROR** String resource %s does not exist" messageID)
             messageString <- ""
 
@@ -150,7 +149,7 @@ module internal DiagnosticMessage =
 
                 nFmt
 
-        let nHoles, holes = countFormatHoles !!messageString
+        let nHoles, holes = countFormatHoles messageString
         let nPlaceholders = countFormatPlaceholders fmtString
 
         // first, verify that the number of holes in the message string does not exceed the
@@ -173,5 +172,5 @@ module internal DiagnosticMessage =
             )
 
 #endif
-        messageString <- postProcessString !!messageString
-        new ResourceString<'T>(!!messageString, fmt)
+        messageString <- postProcessString messageString
+        new ResourceString<'T>(messageString, fmt)

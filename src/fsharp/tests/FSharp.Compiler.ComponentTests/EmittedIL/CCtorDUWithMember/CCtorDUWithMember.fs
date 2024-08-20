@@ -105,6 +105,7 @@ type ILArrayShape =
     | One
         """))
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -131,6 +132,7 @@ type ILArrayShape =
     | One
 """
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [

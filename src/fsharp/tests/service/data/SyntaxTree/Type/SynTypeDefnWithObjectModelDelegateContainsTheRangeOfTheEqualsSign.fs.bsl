@@ -34,7 +34,7 @@ ImplFile
                             SynValInfo
                               ([[SynArgInfo ([], false, None)]],
                                SynArgInfo ([], false, None)), false, false,
-                            PreXmlDocEmpty, Single None, None, (2,9--2,37),
+                            PreXmlDocEmpty, None, None, (2,9--2,37),
                             { LeadingKeyword = Synthetic
                               InlineKeyword = None
                               WithKeyword = None

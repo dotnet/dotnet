@@ -158,7 +158,7 @@ let StaticLinkILModules
                     match depILModule.Manifest with
                     | Some m ->
                         for ca in m.CustomAttrs.AsArray() do
-                            if ca.Method.MethodRef.DeclaringTypeRef.FullName = !!typeof<CompilationMappingAttribute>.FullName then
+                            if ca.Method.MethodRef.DeclaringTypeRef.FullName = typeof<CompilationMappingAttribute>.FullName then
                                 ca
                     | _ -> ()
             ]
@@ -184,8 +184,7 @@ let StaticLinkILModules
 
             // Save only the interface/optimization attributes of generated data
             let intfDataResources, others =
-                allResources
-                |> List.partition (fun (_, r) -> IsSignatureDataResource r || IsSignatureDataResourceB r)
+                allResources |> List.partition (snd >> IsSignatureDataResource)
 
             let intfDataResources =
                 [
@@ -195,8 +194,7 @@ let StaticLinkILModules
                 ]
 
             let optDataResources, others =
-                others
-                |> List.partition (fun (_, r) -> IsOptimizationDataResource r || IsOptimizationDataResourceB r)
+                others |> List.partition (snd >> IsOptimizationDataResource)
 
             let optDataResources =
                 [

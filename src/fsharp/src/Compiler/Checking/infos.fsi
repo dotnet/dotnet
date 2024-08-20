@@ -178,19 +178,13 @@ type ILTypeInfo =
 
     member TypeInstOfRawMetadata: TypeInst
 
-[<NoComparison; NoEquality>]
-type ILMethParentTypeInfo =
-    | IlType of ILTypeInfo
-    | CSharpStyleExtension of declaring: TyconRef * apparent: TType
-
-    member ToType: TType
-
 /// Describes an F# use of an IL method.
 [<NoComparison; NoEquality>]
 type ILMethInfo =
     | ILMethInfo of
         g: TcGlobals *
-        ilType: ILMethParentTypeInfo *
+        ilApparentType: TType *
+        ilDeclaringTyconRefOpt: TyconRef option *
         ilMethodDef: ILMethodDef *
         ilGenericMethodTyArgs: Typars
 
@@ -821,12 +815,6 @@ type PropInfo =
 
     /// Indicates if this property has an associated setter method.
     member HasSetter: bool
-
-    member GetterAccessibility: Accessibility option
-
-    member SetterAccessibility: Accessibility option
-
-    member IsProtectedAccessibility: struct (bool * bool)
 
     /// Indidcates whether IL property has an init-only setter (i.e. has the `System.Runtime.CompilerServices.IsExternalInit` modifer)
     member IsSetterInitOnly: bool

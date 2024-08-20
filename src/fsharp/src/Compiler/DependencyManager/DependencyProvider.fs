@@ -15,11 +15,8 @@ open System.Collections.Concurrent
 module Option =
 
     /// Convert string into Option string where null and String.Empty result in None
-    let ofString (s: string MaybeNull) =
-        match s with
-        | null -> None
-        | "" -> None
-        | s -> Some s
+    let ofString s =
+        if String.IsNullOrEmpty(s) then None else Some(s)
 
 [<AutoOpen>]
 module ReflectionHelper =
@@ -60,27 +57,31 @@ module ReflectionHelper =
             let instanceFlags =
                 BindingFlags.Public ||| BindingFlags.NonPublic ||| BindingFlags.Instance
 
-            match theType.GetProperty(propertyName, instanceFlags, null, typeof<'T>, [||], [||]) with
-            | null -> None
-            | property ->
-                match property.GetGetMethod() with
-                | null -> None
-                | getMethod when getMethod.IsStatic -> None
-                | _ -> Some property
+            let property =
+                theType.GetProperty(propertyName, instanceFlags, null, typeof<'T>, [||], [||])
+
+            if isNull property then
+                None
+            else
+                let getMethod = property.GetGetMethod()
+
+                if not (isNull getMethod) && not getMethod.IsStatic then
+                    Some property
+                else
+                    None
         with _ ->
             None
 
     let getInstanceMethod<'T> (theType: Type) (parameterTypes: Type[]) methodName =
         try
-            match theType.GetMethod(methodName, parameterTypes) with
-            | null -> None
-            | theMethod -> Some theMethod
+            let theMethod = theType.GetMethod(methodName, parameterTypes)
+            if isNull theMethod then None else Some theMethod
         with _ ->
             None
 
     let stripTieWrapper (e: Exception) =
         match e with
-        | :? TargetInvocationException as e when isNotNull e.InnerException -> !!e.InnerException
+        | :? TargetInvocationException as e -> e.InnerException
         | _ -> e
 
 /// Indicate the type of error to report
@@ -123,9 +124,7 @@ type IResolveDependenciesResult =
     ///     #I @"c:\somepath\to\packages\1.1.1\ResolvedPackage"
     abstract Roots: seq<string>
 
-#if NO_CHECKNULLS
 [<AllowNullLiteral>]
-#endif
 type IDependencyManagerProvider =
     abstract Name: string
     abstract Key: string
@@ -499,7 +498,7 @@ type DependencyProvider
                 let assemblyLocation =
                     typeof<IDependencyManagerProvider>.GetTypeInfo().Assembly.Location
 
-                yield !!(Path.GetDirectoryName assemblyLocation)
+                yield Path.GetDirectoryName assemblyLocation
                 yield AppDomain.CurrentDomain.BaseDirectory
             ])
 

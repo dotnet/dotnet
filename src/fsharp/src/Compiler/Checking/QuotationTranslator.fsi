@@ -53,3 +53,5 @@ val (|SimpleArrayLoopBody|_|): TcGlobals -> Expr -> (Expr * TType * Expr) voptio
 
 [<return: Struct>]
 val (|ObjectInitializationCheck|_|): TcGlobals -> Expr -> unit voption
+
+val isSplice: TcGlobals -> ValRef -> bool
