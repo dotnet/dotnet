@@ -170,11 +170,7 @@ let splitTypeNameRight nm =
 // --------------------------------------------------------------------
 
 /// This is used to store event, property and field maps.
-type LazyOrderedMultiMap<'Key, 'Data when 'Key: equality
-#if !NO_CHECKNULLS
-    and 'Key:not null
-#endif
-    >(keyf: 'Data -> 'Key, lazyItems: InterruptibleLazy<'Data list>) =
+type LazyOrderedMultiMap<'Key, 'Data when 'Key: equality>(keyf: 'Data -> 'Key, lazyItems: InterruptibleLazy<'Data list>) =
 
     let quickMap =
         lazyItems
@@ -519,8 +515,7 @@ type ILAssemblyRef(data) =
 
         let retargetable = aname.Flags = AssemblyNameFlags.Retargetable
 
-        let name = match aname.Name with | null -> aname.FullName | name -> name
-        ILAssemblyRef.Create(name, None, publicKey, retargetable, version, locale)
+        ILAssemblyRef.Create(aname.Name, None, publicKey, retargetable, version, locale)
 
     member aref.QualifiedName =
         let b = StringBuilder(100)
@@ -828,7 +823,7 @@ type ILTypeRef =
     member x.DebugText = x.ToString()
 
     /// For debugging
-    override x.ToString() : string = x.FullName
+    override x.ToString() = x.FullName
 
 and [<StructuralEquality; StructuralComparison; StructuredFormatDisplay("{DebugText}")>] ILTypeSpec =
     {
@@ -880,7 +875,7 @@ and [<StructuralEquality; StructuralComparison; StructuredFormatDisplay("{DebugT
         && (x.GenericArgs = y.GenericArgs)
 
     override x.ToString() =
-        x.TypeRef.FullName + if isNil x.GenericArgs then "" else "<...>"
+        x.TypeRef.ToString() + if isNil x.GenericArgs then "" else "<...>"
 
 and [<RequireQualifiedAccess; StructuralEquality; StructuralComparison; StructuredFormatDisplay("{DebugText}")>] ILType =
     | Void
@@ -1022,9 +1017,8 @@ type ILMethodRef =
     [<DebuggerBrowsable(DebuggerBrowsableState.Never)>]
     member x.DebugText = x.ToString()
 
-    member x.FullName = x.DeclaringTypeRef.FullName + "::" + x.Name + "(...)"
-
-    override x.ToString() = x.FullName
+    override x.ToString() =
+        x.DeclaringTypeRef.ToString() + "::" + x.Name + "(...)"
 
 [<StructuralEquality; StructuralComparison; StructuredFormatDisplay("{DebugText}")>]
 type ILFieldRef =
@@ -1039,7 +1033,7 @@ type ILFieldRef =
     member x.DebugText = x.ToString()
 
     override x.ToString() =
-        x.DeclaringTypeRef.FullName + "::" + x.Name
+        x.DeclaringTypeRef.ToString() + "::" + x.Name
 
 [<StructuralEquality; StructuralComparison; StructuredFormatDisplay("{DebugText}")>]
 type ILMethodSpec =
@@ -1078,7 +1072,7 @@ type ILMethodSpec =
     [<DebuggerBrowsable(DebuggerBrowsableState.Never)>]
     member x.DebugText = x.ToString()
 
-    override x.ToString() = x.MethodRef.FullName + "(...)"
+    override x.ToString() = x.MethodRef.ToString() + "(...)"
 
 [<StructuralEquality; StructuralComparison; StructuredFormatDisplay("{DebugText}")>]
 type ILFieldSpec =
@@ -1219,7 +1213,7 @@ type ILAttribute =
     [<DebuggerBrowsable(DebuggerBrowsableState.Never)>]
     member x.DebugText = x.ToString()
 
-    override x.ToString() = x.Method.MethodRef.FullName
+    override x.ToString() = x.Method.ToString() + "(...)"
 
 [<NoEquality; NoComparison; Struct>]
 type ILAttributes(array: ILAttribute[]) =
@@ -1577,7 +1571,7 @@ type ILFieldInit =
         | ILFieldInit.UInt64 u64 -> box u64
         | ILFieldInit.Single ieee32 -> box ieee32
         | ILFieldInit.Double ieee64 -> box ieee64
-        | ILFieldInit.Null -> (null :> objnull)
+        | ILFieldInit.Null -> (null :> Object)
 
 // --------------------------------------------------------------------
 // Native Types, for marshalling to the native C interface.
@@ -2635,7 +2629,6 @@ type ILTypeDef
         attributes: TypeAttributes,
         layout: ILTypeDefLayout,
         implements: ILTypes,
-        implementsCustomAttrs: (ILAttributesStored * int) list option,
         genericParams: ILGenericParameterDefs,
         extends: ILType option,
         methods: ILMethodDefs,
@@ -2658,7 +2651,6 @@ type ILTypeDef
         attributes,
         layout,
         implements,
-        implementsCustomAttrs,
         genericParams,
         extends,
         methods,
@@ -2675,7 +2667,6 @@ type ILTypeDef
             attributes,
             layout,
             implements,
-            implementsCustomAttrs,
             genericParams,
             extends,
             methods,
@@ -2701,8 +2692,6 @@ type ILTypeDef
     member _.NestedTypes = nestedTypes
 
     member _.Implements = implements
-
-    member _.ImplementsCustomAttrs = implementsCustomAttrs
 
     member _.Extends = extends
 
@@ -2743,8 +2732,7 @@ type ILTypeDef
             ?properties,
             ?newAdditionalFlags,
             ?customAttrs,
-            ?securityDecls,
-            ?implementsCustomAttrs
+            ?securityDecls
         ) =
         ILTypeDef(
             name = defaultArg name x.Name,
@@ -2753,7 +2741,6 @@ type ILTypeDef
             genericParams = defaultArg genericParams x.GenericParams,
             nestedTypes = defaultArg nestedTypes x.NestedTypes,
             implements = defaultArg implements x.Implements,
-            implementsCustomAttrs = defaultArg implementsCustomAttrs x.ImplementsCustomAttrs,
             extends = defaultArg extends x.Extends,
             methods = defaultArg methods x.Methods,
             securityDecls = defaultArg securityDecls x.SecurityDecls,
@@ -2762,7 +2749,7 @@ type ILTypeDef
             events = defaultArg events x.Events,
             properties = defaultArg properties x.Properties,
             additionalFlags = defaultArg newAdditionalFlags additionalFlags,
-            customAttrs = defaultArg customAttrs (x.CustomAttrsStored)
+            customAttrs = defaultArg customAttrs (storeILCustomAttrs x.CustomAttrs)
         )
 
     member x.CustomAttrs: ILAttributes =
@@ -3452,11 +3439,6 @@ type ILGlobals(primaryScopeRef: ILScopeRef, equivPrimaryAssemblyRefs: ILAssembly
 
     let mkSysILTypeRef nm = mkILTyRef (primaryScopeRef, nm)
 
-    let byteIlType = ILType.Value(mkILNonGenericTySpec (mkSysILTypeRef tname_Byte))
-
-    let stringIlType =
-        mkILBoxedType (mkILNonGenericTySpec (mkSysILTypeRef tname_String))
-
     member _.primaryAssemblyScopeRef = primaryScopeRef
 
     member x.primaryAssemblyRef =
@@ -3474,7 +3456,7 @@ type ILGlobals(primaryScopeRef: ILScopeRef, equivPrimaryAssemblyRefs: ILAssembly
 
     member val typ_Object = mkILBoxedType (mkILNonGenericTySpec (mkSysILTypeRef tname_Object))
 
-    member val typ_String = stringIlType
+    member val typ_String = mkILBoxedType (mkILNonGenericTySpec (mkSysILTypeRef tname_String))
 
     member val typ_Array = mkILBoxedType (mkILNonGenericTySpec (mkSysILTypeRef tname_Array))
 
@@ -3488,11 +3470,7 @@ type ILGlobals(primaryScopeRef: ILScopeRef, equivPrimaryAssemblyRefs: ILAssembly
 
     member val typ_Int64 = ILType.Value(mkILNonGenericTySpec (mkSysILTypeRef tname_Int64))
 
-    member val typ_Byte = byteIlType
-
-    member val typ_ByteArray = ILType.Array(ILArrayShape.SingleDimensional, byteIlType)
-
-    member val typ_StringArray = ILType.Array(ILArrayShape.SingleDimensional, stringIlType)
+    member val typ_Byte = ILType.Value(mkILNonGenericTySpec (mkSysILTypeRef tname_Byte))
 
     member val typ_UInt16 = ILType.Value(mkILNonGenericTySpec (mkSysILTypeRef tname_UInt16))
 
@@ -4253,7 +4231,6 @@ let mkILGenericClass (nm, access, genparams, extends, impl, methods, fields, nes
         attributes = attributes,
         genericParams = genparams,
         implements = impl,
-        implementsCustomAttrs = None,
         layout = ILTypeDefLayout.Auto,
         extends = Some extends,
         methods = methods,
@@ -4278,7 +4255,6 @@ let mkRawDataValueTypeDef (iltyp_ValueType: ILType) (nm, size, pack) =
              ||| TypeAttributes.BeforeFieldInit
              ||| TypeAttributes.AnsiClass),
         implements = [],
-        implementsCustomAttrs = None,
         extends = Some iltyp_ValueType,
         layout = ILTypeDefLayout.Explicit { Size = Some size; Pack = Some pack },
         methods = emptyILMethods,

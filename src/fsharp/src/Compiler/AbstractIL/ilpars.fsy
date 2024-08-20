@@ -3,7 +3,6 @@
 %{
 
 #nowarn "1182"  // the generated code often has unused variable "parseState"
-#nowarn "3261"  // the generated code would need to properly annotate nulls, e.g. changing System.Object to `obj|null`
 
 open Internal.Utilities.Library
 

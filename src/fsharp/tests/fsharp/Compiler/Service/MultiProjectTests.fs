@@ -86,14 +86,14 @@ let test() =
             try File.Delete(outputFilePath) with | _ -> ()
             reraise()
 
-    let createOnDisk (src: string) =
+    let createOnDisk src =
         let tmpFilePath = tryCreateTemporaryFileName ()
         let tmpRealFilePath = Path.ChangeExtension(tmpFilePath, ".fs")
         try File.Delete(tmpFilePath) with | _ -> ()
         File.WriteAllText(tmpRealFilePath, src)
         tmpRealFilePath
 
-    let createOnDiskCompiledAsDll checker (src: string) =
+    let createOnDiskCompiledAsDll checker src =
         let tmpFilePath = tryCreateTemporaryFileName ()
         let tmpRealFilePath = Path.ChangeExtension(tmpFilePath, ".fs")
         try File.Delete(tmpFilePath) with | _ -> ()
@@ -107,7 +107,7 @@ let test() =
         finally
             try File.Delete(tmpRealFilePath) with | _ -> ()
 
-    let updateFileOnDisk filePath (src: string) =
+    let updateFileOnDisk filePath src =
         File.WriteAllText(filePath, src)
 
     let updateCompiledDllOnDisk checker (dllPath: string) src =

@@ -25,6 +25,7 @@ type public TypeThree private () = class end
 type public TypeFour () = class end
 """
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -72,6 +73,7 @@ type private TypeThree private () = class end
 type private TypeFour () = class end
 """
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -159,6 +161,7 @@ type public TestType () =
     member _.DefaultMethod() = ()
 """
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -248,6 +251,7 @@ type public TestType () =
     member _.DefaultMethod() = ()
 """
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -337,6 +341,7 @@ type public TestType () =
     member val DefaultProperty = 0 with get, set
 """
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -562,6 +567,7 @@ type public TestType () =
     member val DefaultProperty = 0 with get, set
 """
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -795,6 +801,7 @@ type public TestType () =
     member _.MixedPropertyTwelve with private get() = 0 and set (_:int) = ()
 """
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -1236,6 +1243,7 @@ type private TestType () =
     member _.MixedPropertyTwelve with private get() = 0 and set (_:int) = ()
 """
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -1669,6 +1677,7 @@ type public TestType () =
     static member DefaultMethod() = ()
 """
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -1758,6 +1767,7 @@ type public TestType () =
     static member DefaultMethod() = ()
 """
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -1846,6 +1856,7 @@ type public TestType () =
     static member val private PrivateProperty = 0 with get, set
     static member val DefaultProperty = 0 with get, set"""
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -2182,6 +2193,7 @@ type private TestType () =
     static member val private PrivateProperty = 0 with get, set
     static member val DefaultProperty = 0 with get, set"""
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -2415,6 +2427,7 @@ type public TestType () =
     static member MixedPropertyTwelve with private get() = 0 and set (_:int) = ()
 """
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -2856,6 +2869,7 @@ type private TestType () =
     static member MixedPropertyTwelve with private get() = 0 and set (_:int) = ()
 """
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [

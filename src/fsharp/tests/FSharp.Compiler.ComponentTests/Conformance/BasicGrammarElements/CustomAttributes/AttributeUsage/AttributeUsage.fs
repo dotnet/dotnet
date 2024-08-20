@@ -59,31 +59,31 @@ module CustomAttributes_AttributeUsage =
 
     // SOURCE=AttributeTargetsIsMethod01.fs				# AttributeTargetsIsMethod01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsMethod01.fs"|])>]
-    let ``AttributeTargetsIsMethod01_fs 8.0`` compilation =
+    let ``AttributeTargetsIsMethod01_fs`` compilation =
         compilation
-        |> withLangVersion80
         |> verifyCompileAndRun
         |> shouldSucceed
 
     // SOURCE=AttributeTargetsIsMethod01.fs				# AttributeTargetsIsMethod01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsMethod01.fs"|])>]
-    let ``AttributeTargetsIsMethod01_fs`` compilation =
+    let ``AttributeTargetsIsMethod01_fs preview`` compilation =
         compilation
+        |> withLangVersionPreview
         |> verifyCompileAndRun
-        |> shouldSucceed
-        
-    // SOURCE=AttributeTargetsIsProperty.fs	# AttributeTargetsIsProperty.fs
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsProperty.fs"|])>]
-    let ``AttributeTargetsIsProperty_fs 8.0`` compilation =
-        compilation
-        |> withLangVersion80
-        |> verifyCompile
         |> shouldSucceed
         
     // SOURCE=AttributeTargetsIsProperty.fs	# AttributeTargetsIsProperty.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsProperty.fs"|])>]
     let ``AttributeTargetsIsProperty_fs`` compilation =
         compilation
+        |> verifyCompile
+        |> shouldSucceed
+        
+    // SOURCE=AttributeTargetsIsProperty.fs	# AttributeTargetsIsProperty.fs
+    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsProperty.fs"|])>]
+    let ``AttributeTargetsIsProperty_fs preview`` compilation =
+        compilation
+        |> withLangVersionPreview
         |> verifyCompile
         |> shouldSucceed
 
@@ -98,14 +98,12 @@ module CustomAttributes_AttributeUsage =
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargets01.fs"|])>]
     let ``E_AttributeTargets01_fs`` compilation =
         compilation
-        |> withLangVersionPreview
         |> verifyCompile
         |> shouldFail
         |> withDiagnostics [
             (Error 842, Line 21, Col 21, Line 21, Col 22, "This attribute is not valid for use on this language element")
             (Error 842, Line 24, Col 21, Line 24, Col 29, "This attribute is not valid for use on this language element")
             (Error 842, Line 27, Col 7, Line 27, Col 16, "This attribute is not valid for use on this language element")
-            (Error 842, Line 18, Col 7, Line 18, Col 8, "This attribute is not valid for use on this language element")
         ]
 
     // SOURCE=E_AttributeTargets02.fs					# E_AttributeTargets02.fs
@@ -122,7 +120,7 @@ module CustomAttributes_AttributeUsage =
         
     // SOURCE=E_AttributeTargetIsField01.fs					# E_AttributeTargetIsField01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsField01.fs"|])>]
-    let ``E_AttributeTargetIsField01_fs 8_0`` compilation =
+    let ``E_AttributeTargetIsField01_fs`` compilation =
         compilation
         |> withLangVersion80
         |> withOptions ["--nowarn:25"]
@@ -131,10 +129,10 @@ module CustomAttributes_AttributeUsage =
         
     // SOURCE=E_AttributeTargetIsField01.fs					# E_AttributeTargetIsField01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsField01.fs"|])>]
-    let ``E_AttributeTargetIsField01_fs`` compilation =
+    let ``E_AttributeTargetIsField01_fs preview`` compilation =
         compilation
-        |> withOptions ["--nowarn:25"]
         |> withLangVersionPreview
+        |> withOptions ["--nowarn:25"]
         |> verifyCompile
         |> shouldFail
         |> withDiagnostics [
@@ -159,7 +157,7 @@ module CustomAttributes_AttributeUsage =
         
     // SOURCE=E_AttributeTargetIsField02.fs					# E_AttributeTargetIsField02.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsField02.fs"|])>]
-    let ``E_AttributeTargetIsField02_fs 8.0`` compilation =
+    let ``E_AttributeTargetIsField02_fs`` compilation =
         compilation
         |> withLangVersion80
         |> withOptions ["--nowarn:25"]
@@ -168,15 +166,16 @@ module CustomAttributes_AttributeUsage =
         
     // SOURCE=E_AttributeTargetIsField02.fs					# E_AttributeTargetIsField02.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsField02.fs"|])>]
-    let ``E_AttributeTargetIsField02_fs`` compilation =
+    let ``E_AttributeTargetIsField02_fs preview`` compilation =
         compilation
+        |> withLangVersionPreview
         |> withOptions ["--nowarn:25"]
         |> verifyCompile
         |> shouldSucceed
         
     // SOURCE=E_AttributeTargetIsMethod02.fs					# E_AttributeTargetIsMethod02.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsMethod02.fs"|])>]
-    let ``E_AttributeTargetIsMethod02_fs 8_0`` compilation =
+    let ``E_AttributeTargetIsMethod02_fs`` compilation =
         compilation
         |> withLangVersion80
         |> withOptions ["--nowarn:25"]
@@ -185,7 +184,7 @@ module CustomAttributes_AttributeUsage =
         
     // SOURCE=E_AttributeTargetIsMethod02.fs					# E_AttributeTargetIsMethod02.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsMethod02.fs"|])>]
-    let ``E_AttributeTargetIsMethod02_fs`` compilation =
+    let ``E_AttributeTargetIsMethod02_fs preview`` compilation =
         compilation
         |> withLangVersionPreview
         |> withOptions ["--nowarn:25"]
@@ -207,7 +206,7 @@ module CustomAttributes_AttributeUsage =
         
     // SOURCE=E_AttributeTargetIsMethod03.fs					# E_AttributeTargetIsMethod03.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsMethod03.fs"|])>]
-    let ``E_AttributeTargetIsMethod03_fs 8_0`` compilation =
+    let ``E_AttributeTargetIsMethod03_fs`` compilation =
         compilation
         |> withLangVersion80
         |> withOptions ["--nowarn:25"]
@@ -216,7 +215,7 @@ module CustomAttributes_AttributeUsage =
         
     // SOURCE=E_AttributeTargetIsMethod03.fs					# E_AttributeTargetIsMethod03.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsMethod03.fs"|])>]
-    let ``E_AttributeTargetIsMethod03_fs`` compilation =
+    let ``E_AttributeTargetIsMethod03_fs preview`` compilation =
         compilation
         |> withLangVersionPreview
         |> withOptions ["--nowarn:25"]
@@ -296,24 +295,16 @@ module CustomAttributes_AttributeUsage =
         
     // SOURCE=AttributeTargetIsStruct.fs 	# AttributeTargetIsStruct.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsStruct.fs"|])>]
-    let ``AttributeTargetIsStruct_fs 8.0`` compilation =
-        compilation
-        |> withLangVersion80
-        |> verifyCompile
-        |> shouldSucceed
-        
-    // SOURCE=AttributeTargetIsStruct.fs 	# AttributeTargetIsStruct.fs
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsStruct.fs"|])>]
     let ``AttributeTargetIsStruct_fs`` compilation =
         compilation
         |> verifyCompile
         |> shouldSucceed
         
-    // SOURCE=AttributeTargetIsClass.fs 	# AttributeTargetIsClass.fs
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsClass.fs"|])>]
-    let ``AttributeTargetIsClass_fs 8.0`` compilation =
+    // SOURCE=AttributeTargetIsStruct.fs 	# AttributeTargetIsStruct.fs
+    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsStruct.fs"|])>]
+    let ``AttributeTargetIsStruct_fs preview`` compilation =
         compilation
-        |> withLangVersion80
+        |> withLangVersionPreview
         |> verifyCompile
         |> shouldSucceed
         
@@ -324,17 +315,24 @@ module CustomAttributes_AttributeUsage =
         |> verifyCompile
         |> shouldSucceed
         
-    // SOURCE=E_AttributeTargetIsStruct.fs 	# E_AttributeTargetIsStruct.fs
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsStruct.fs"|])>]
-    let ``E_AttributeTargetIsStruct_fs 8.0`` compilation =
+    // SOURCE=AttributeTargetIsClass.fs 	# AttributeTargetIsClass.fs
+    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsClass.fs"|])>]
+    let ``AttributeTargetIsClass_fs preview`` compilation =
         compilation
-        |> withLangVersion80
+        |> withLangVersionPreview
         |> verifyCompile
         |> shouldSucceed
         
     // SOURCE=E_AttributeTargetIsStruct.fs 	# E_AttributeTargetIsStruct.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsStruct.fs"|])>]
     let ``E_AttributeTargetIsStruct_fs`` compilation =
+        compilation
+        |> verifyCompile
+        |> shouldSucceed
+        
+    // SOURCE=E_AttributeTargetIsStruct.fs 	# E_AttributeTargetIsStruct.fs
+    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsStruct.fs"|])>]
+    let ``E_AttributeTargetIsStruct_fs preview`` compilation =
         compilation
         |> withLangVersionPreview
         |> verifyCompile
@@ -344,27 +342,25 @@ module CustomAttributes_AttributeUsage =
             (Error 842, Line 19, Col 3, Line 19, Col 14, "This attribute is not valid for use on this language element")
             (Error 842, Line 22, Col 11, Line 22, Col 22, "This attribute is not valid for use on this language element")
             (Error 842, Line 25, Col 3, Line 25, Col 14, "This attribute is not valid for use on this language element")
-            (Error 842, Line 34, Col 3, Line 34, Col 18, "This attribute is not valid for use on this language element")
-            (Error 842, Line 35, Col 3, Line 35, Col 15, "This attribute is not valid for use on this language element")
-            (Error 842, Line 40, Col 3, Line 40, Col 14, "This attribute is not valid for use on this language element")
-            (Error 842, Line 41, Col 3, Line 41, Col 18, "This attribute is not valid for use on this language element")
-            (Error 842, Line 49, Col 3, Line 49, Col 18, "This attribute is not valid for use on this language element")
-            (Error 842, Line 50, Col 3, Line 50, Col 15, "This attribute is not valid for use on this language element")
-            (Error 842, Line 53, Col 3, Line 53, Col 14, "This attribute is not valid for use on this language element")
-            (Error 842, Line 54, Col 3, Line 54, Col 18, "This attribute is not valid for use on this language element")
         ]
 
     // SOURCE=E_AttributeTargetIsClass.fs 	# E_AttributeTargetIsClass.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsClass.fs"|])>]
-    let ``E_AttributeTargetIsClass_fs 8_0`` compilation =
+    let ``E_AttributeTargetIsClass_fs`` compilation =
         compilation
-        |> withLangVersion80
+        |> verifyCompile
+        |> shouldSucceed
+        
+    // SOURCE=E_AttributeTargetIsClass01.fs 	# E_AttributeTargetIsClass01.fs
+    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsClass01.fs"|])>]
+    let ``E_AttributeTargetIsClass01_fs`` compilation =
+        compilation
         |> verifyCompile
         |> shouldSucceed
         
     // SOURCE=E_AttributeTargetIsClass.fs 	# E_AttributeTargetIsClass.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsClass.fs"|])>]
-    let ``E_AttributeTargetIsClass_fs`` compilation =
+    let ``E_AttributeTargetIsClass_fs preview`` compilation =
         compilation
         |> withLangVersionPreview
         |> verifyCompile
@@ -377,15 +373,7 @@ module CustomAttributes_AttributeUsage =
         
     // SOURCE=E_AttributeTargetIsClass01.fs 	# E_AttributeTargetIsClass01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsClass01.fs"|])>]
-    let ``E_AttributeTargetIsClass01_fs 8_0`` compilation =
-        compilation
-        |> withLangVersion80
-        |> verifyCompile
-        |> shouldSucceed
-        
-    // SOURCE=E_AttributeTargetIsClass01.fs 	# E_AttributeTargetIsClass01.fs
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsClass01.fs"|])>]
-    let ``E_AttributeTargetIsClass01_fs`` compilation =
+    let ``E_AttributeTargetIsClass01_fs preview`` compilation =
         compilation
         |> withLangVersionPreview
         |> verifyCompile
@@ -472,9 +460,8 @@ module CustomAttributes_AttributeUsage =
         
     // SOURCE=E_AttributeTargetIsField03.fs	# E_AttributeTargetIsField03.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsField03.fs"|])>]
-    let ``E_AttributeTargetIsField03_fs 8_0`` compilation =
+    let ``E_AttributeTargetIsField03_fs`` compilation =
         compilation
-        |> withLangVersion80
         |> verifyCompile
         |> shouldFail
         |> withDiagnostics [
@@ -483,7 +470,7 @@ module CustomAttributes_AttributeUsage =
     
     // SOURCE=E_AttributeTargetIsField03.fs	# E_AttributeTargetIsField03.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsField03.fs"|])>]
-    let ``E_AttributeTargetIsField03_fs`` compilation =
+    let ``E_AttributeTargetIsField03_fs preview`` compilation =
         compilation
         |> withLangVersionPreview
         |> verifyCompile
@@ -495,15 +482,14 @@ module CustomAttributes_AttributeUsage =
         
     // SOURCE=E_AttributeTargetIsProperty01.fs	# E_AttributeTargetIsField03.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsProperty01.fs"|])>]
-    let ``E_AttributeTargetIsProperty01_fs 8_0`` compilation =
+    let ``E_AttributeTargetIsProperty01_fs`` compilation =
         compilation
-        |> withLangVersion80
         |> verifyCompile
         |> shouldSucceed
     
     // SOURCE=E_AttributeTargetIsProperty01.fs	# E_AttributeTargetIsField03.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsProperty01.fs"|])>]
-    let ``E_AttributeTargetIsProperty01_fs`` compilation =
+    let ``E_AttributeTargetIsProperty01_fs preview`` compilation =
         compilation
         |> withLangVersionPreview
         |> verifyCompile
@@ -515,15 +501,14 @@ module CustomAttributes_AttributeUsage =
         
     // SOURCE=E_AttributeTargetIsCtor01.fs	# E_AttributeTargetIsCtor01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsCtor01.fs"|])>]
-    let ``E_AttributeTargetIsCtor01_fs 8_0`` compilation =
+    let ``E_AttributeTargetIsCtor01_fs`` compilation =
         compilation
-        |> withLangVersion80
         |> verifyCompile
         |> shouldSucceed
     
     // SOURCE=E_AttributeTargetIsCtor01.fs	# E_AttributeTargetIsCtor01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsCtor01.fs"|])>]
-    let ``E_AttributeTargetIsCtor01_fs`` compilation =
+    let ``E_AttributeTargetIsCtor01_fs preview`` compilation =
         compilation
         |> withLangVersionPreview
         |> verifyCompile
@@ -537,30 +522,29 @@ module CustomAttributes_AttributeUsage =
         
     // SOURCE=AttributeTargetsIsEnum01.fs	# AttributeTargetsIsEnum01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsEnum01.fs"|])>]
-    let ``AttributeTargetsIsEnum01_fs 8.0`` compilation =
+    let ``AttributeTargetsIsEnum01_fs`` compilation =
         compilation
-        |> withLangVersion80
         |> verifyCompile
         |> shouldSucceed
     
     // SOURCE=AttributeTargetsIsEnum01.fs	# AttributeTargetsIsEnum01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsEnum01.fs"|])>]
-    let ``AttributeTargetsIsEnum01_fs`` compilation =
+    let ``AttributeTargetsIsEnum01_fs preview`` compilation =
         compilation
+        |> withLangVersionPreview
         |> verifyCompile
         |> shouldSucceed
         
     // SOURCE=E_AttributeTargetIsEnum01.fs	# E_AttributeTargetIsEnum01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsEnum01.fs"|])>]
-    let ``E_AttributeTargetIsEnum01_fs 8_0`` compilation =
+    let ``E_AttributeTargetIsEnum01_fs`` compilation =
         compilation
-        |> withLangVersion80
         |> verifyCompile
         |> shouldSucceed
     
     // SOURCE=E_AttributeTargetIsEnum01.fs	# E_AttributeTargetIsEnum01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsEnum01.fs"|])>]
-    let ``E_AttributeTargetIsEnum01_fs`` compilation =
+    let ``E_AttributeTargetIsEnum01_fs preview`` compilation =
         compilation
         |> withLangVersionPreview
         |> verifyCompile
@@ -570,34 +554,33 @@ module CustomAttributes_AttributeUsage =
             (Error 842, Line 20, Col 3, Line 20, Col 14, "This attribute is not valid for use on this language element")
             (Error 842, Line 21, Col 3, Line 21, Col 18, "This attribute is not valid for use on this language element")
             (Error 842, Line 22, Col 3, Line 22, Col 17, "This attribute is not valid for use on this language element")
-        ]        
-
+        ]
+        
      // SOURCE=AttributeTargetsIsDelegate01.fs	# AttributeTargetsIsDelegate01.fs
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsDelegate01.fs"|])>]
-    let ``AttributeTargetsIsDelegate01_fs 8.0`` compilation =
-        compilation
-        |> withLangVersion80
-        |> verifyCompile
-        |> shouldSucceed
-    
-    // SOURCE=AttributeTargetsIsDelegate01.fs	# AttributeTargetsIsDelegate01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsDelegate01.fs"|])>]
     let ``AttributeTargetsIsDelegate01_fs`` compilation =
         compilation
         |> verifyCompile
         |> shouldSucceed
+    
+    // SOURCE=AttributeTargetsIsDelegate01.fs	# AttributeTargetsIsDelegate01.fs
+    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsDelegate01.fs"|])>]
+    let ``AttributeTargetsIsDelegate01_fs preview`` compilation =
+        compilation
+        |> withLangVersionPreview
+        |> verifyCompile
+        |> shouldSucceed
         
     // SOURCE=E_AttributeTargetIsDelegate01.fs	# E_AttributeTargetIsDelegate01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsDelegate01.fs"|])>]
-    let ``E_AttributeTargetIsDelegate01_fs 8.0`` compilation =
+    let ``E_AttributeTargetIsDelegate01_fs`` compilation =
         compilation
-        |> withLangVersion80
         |> verifyCompile
         |> shouldSucceed
     
     // SOURCE=E_AttributeTargetIsDelegate01.fs	# E_AttributeTargetIsDelegate01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsDelegate01.fs"|])>]
-    let ``E_AttributeTargetsIsDelegate01_fs`` compilation =
+    let ``E_AttributeTargetsIsDelegate01_fs preview`` compilation =
         compilation
         |> withLangVersionPreview
         |> verifyCompile
@@ -617,36 +600,35 @@ type InterruptibleLazy<'T> private (valueFactory: unit -> 'T) =
     [<VolatileField>]
     let mutable valueFactory = valueFactory
         """
+        |> withLangVersionPreview
         |> compile
         |> shouldSucceed
         
      // SOURCE=AttributeTargetsIsInterface.fs	# AttributeTargetsIsInterface.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsInterface.fs"|])>]
-    let ``AttributeTargetsIsInterface_fs 8.0`` compilation =
+    let ``AttributeTargetsIsInterface_fs`` compilation =
         compilation
-        |> withLangVersion80
         |> verifyCompile
         |> shouldSucceed
     
     // SOURCE=AttributeTargetsIsInterface.fs	# AttributeTargetsIsInterface.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"AttributeTargetsIsInterface.fs"|])>]
-    let ``AttributeTargetsIsInterface_fs`` compilation =
+    let ``AttributeTargetsIsInterface_fs preview`` compilation =
         compilation
-        |> withLangVersion90
+        |> withLangVersionPreview
         |> verifyCompile
         |> shouldSucceed
         
     // SOURCE=E_AttributeTargetIsInterface.fs	# E_AttributeTargetIsInterface.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsInterface.fs"|])>]
-    let ``E_AttributeTargetIsInterface_fs 8_0`` compilation =
+    let ``E_AttributeTargetIsInterface_fs`` compilation =
         compilation
-        |> withLangVersion80
         |> verifyCompile
         |> shouldSucceed
     
     // SOURCE=E_AttributeTargetIsInterface.fs	# E_AttributeTargetIsInterface.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsInterface.fs"|])>]
-    let ``E_AttributeTargetIsInterface_fs`` compilation =
+    let ``E_AttributeTargetIsInterface_fs preview`` compilation =
         compilation
         |> withLangVersionPreview
         |> verifyCompile
@@ -656,34 +638,4 @@ type InterruptibleLazy<'T> private (valueFactory: unit -> 'T) =
             (Error 842, Line 14, Col 3, Line 14, Col 15, "This attribute is not valid for use on this language element")
             (Error 842, Line 18, Col 3, Line 18, Col 14, "This attribute is not valid for use on this language element")
             (Error 842, Line 19, Col 3, Line 19, Col 15, "This attribute is not valid for use on this language element")
-        ]
-
-    // SOURCE= E_AttributeTargetIsClass02.fs	# E_AttributeTargetIsClass02.fs
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsClass02.fs"|])>]
-    let ``E_AttributeTargetIsClass02_fs 8.0`` compilation =
-        compilation
-        |> withLangVersion80
-        |> verifyCompile
-        |> shouldSucceed
-    
-    // SOURCE=E_AttributeTargetIsClass02.fs	# E_AttributeTargetIsClass02.fs
-    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeTargetIsClass02.fs"|])>]
-    let ``E_AttributeTargetIsClass02_fs`` compilation =
-        compilation
-        |> withLangVersionPreview
-        |> verifyCompile
-        |> shouldFail
-        |> withDiagnostics [
-            (Error 842, Line 15, Col 3, Line 15, Col 18, "This attribute is not valid for use on this language element");
-            (Error 842, Line 16, Col 3, Line 16, Col 15, "This attribute is not valid for use on this language element")
-            (Error 842, Line 20, Col 3, Line 20, Col 14, "This attribute is not valid for use on this language element")
-            (Error 842, Line 21, Col 3, Line 21, Col 18, "This attribute is not valid for use on this language element")
-            (Error 842, Line 26, Col 3, Line 26, Col 14, "This attribute is not valid for use on this language element")
-            (Error 842, Line 27, Col 3, Line 27, Col 18, "This attribute is not valid for use on this language element")
-            (Error 842, Line 34, Col 3, Line 34, Col 14, "This attribute is not valid for use on this language element")
-            (Error 842, Line 35, Col 3, Line 35, Col 18, "This attribute is not valid for use on this language element")
-            (Error 842, Line 43, Col 3, Line 43, Col 18, "This attribute is not valid for use on this language element")
-            (Error 842, Line 44, Col 3, Line 44, Col 15, "This attribute is not valid for use on this language element")
-            (Error 842, Line 47, Col 3, Line 47, Col 14, "This attribute is not valid for use on this language element")
-            (Error 842, Line 48, Col 3, Line 48, Col 18, "This attribute is not valid for use on this language element")
         ]

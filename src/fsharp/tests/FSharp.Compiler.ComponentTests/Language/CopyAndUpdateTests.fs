@@ -29,6 +29,7 @@ type RecTy = { D: NestdRecTy; E: string option }
 
 let t2 x = { x with D.B = "a"; D.B = "b"; D.B = "c" }
     """
+    |> withLangVersionPreview
     |> typecheck
     |> shouldFail
     |> withDiagnostics [
@@ -45,6 +46,7 @@ type RecTy = { D: NestdRecTy; E: string option }
 
 let t2 x = { x with D.B = "a"; D.C = ""; D.B = "c" ; D.C = "d" }
     """
+    |> withLangVersionPreview
     |> typecheck
     |> shouldFail
     |> withDiagnostics [

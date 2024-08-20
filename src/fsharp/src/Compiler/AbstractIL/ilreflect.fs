@@ -163,12 +163,7 @@ type TypeBuilder with
         if logRefEmitCalls then
             printfn "typeBuilder%d.CreateType()" (abs <| hash typB)
 
-        //Buggy annotation in ns20, will not be fixed.
-#if NETSTANDARD && !NO_CHECKNULLS
-        !!(typB.CreateTypeInfo()) :> Type
-#else
         typB.CreateTypeInfo() :> Type
-#endif
 
     member typB.DefineNestedTypeAndLog(name, attrs) =
         let res = typB.DefineNestedType(name, attrs)
@@ -275,9 +270,10 @@ type TypeBuilder with
             else
                 null
 
-        match m with
-        | null -> raise (MissingMethodException nm)
-        | m -> m.Invoke(null, args)
+        if not (isNull m) then
+            m.Invoke(null, args)
+        else
+            raise (MissingMethodException nm)
 
     member typB.SetCustomAttributeAndLog(cinfo, bytes) =
         if logRefEmitCalls then
@@ -288,12 +284,9 @@ type TypeBuilder with
 type OpCode with
 
     member opcode.RefEmitName =
-        match opcode.Name with
-        | null -> ""
-        | name ->
-            (string (Char.ToUpper(name[0])) + name[1..])
-                .Replace(".", "_")
-                .Replace("_i4", "_I4")
+        (string (Char.ToUpper(opcode.Name[0])) + opcode.Name[1..])
+            .Replace(".", "_")
+            .Replace("_i4", "_I4")
 
 type ILGenerator with
 
@@ -327,7 +320,7 @@ type ILGenerator with
 
         ilG.BeginFinallyBlock()
 
-    member ilG.BeginCatchBlockAndLog(ty: Type) =
+    member ilG.BeginCatchBlockAndLog ty =
         if logRefEmitCalls then
             printfn "ilg%d.BeginCatchBlock(%A)" (abs <| hash ilG) ty
 
@@ -403,7 +396,7 @@ type ILGenerator with
 
     member x.EmitAndLog(op: OpCode, v: ConstructorInfo) =
         if logRefEmitCalls then
-            printfn "ilg%d.Emit(OpCodes.%s, constructor_%s)" (abs <| hash x) op.RefEmitName (!!v.DeclaringType).Name
+            printfn "ilg%d.Emit(OpCodes.%s, constructor_%s)" (abs <| hash x) op.RefEmitName v.DeclaringType.Name
 
         x.Emit(op, v)
 
@@ -700,7 +693,7 @@ let rec convTypeSpec cenv emEnv preferCreated (tspec: ILTypeSpec) =
     let typT = convTypeRef cenv emEnv preferCreated tspec.TypeRef
     let tyargs = List.map (convTypeAux cenv emEnv preferCreated) tspec.GenericArgs
 
-    let res: Type MaybeNull =
+    let res =
         match isNil tyargs, typT.IsGenericType with
         | _, true -> typT.MakeGenericType(List.toArray tyargs)
         | true, false -> typT
@@ -713,7 +706,7 @@ let rec convTypeSpec cenv emEnv preferCreated (tspec: ILTypeSpec) =
 
 and convTypeAux cenv emEnv preferCreated ty =
     match ty with
-    | ILType.Void -> !! Type.GetType("System.Void")
+    | ILType.Void -> Type.GetType("System.Void")
     | ILType.Array(shape, eltType) ->
         let baseT = convTypeAux cenv emEnv preferCreated eltType
         let nDims = shape.Rank
@@ -851,10 +844,26 @@ let queryableTypeGetField _emEnv (parentT: Type) (fref: ILFieldRef) =
     | NonNull res -> res
 
 let nonQueryableTypeGetField (parentTI: Type) (fieldInfo: FieldInfo) : FieldInfo =
-    if parentTI.IsGenericType then
-        TypeBuilder.GetField(parentTI, fieldInfo)
-    else
-        fieldInfo
+    let res =
+        if parentTI.IsGenericType then
+            TypeBuilder.GetField(parentTI, fieldInfo)
+        else
+            fieldInfo
+
+    match res with
+    | Null ->
+        error (
+            Error(
+                FSComp.SR.itemNotFoundInTypeDuringDynamicCodeGen (
+                    "field",
+                    fieldInfo.Name,
+                    parentTI.AssemblyQualifiedName,
+                    parentTI.Assembly.FullName
+                ),
+                range0
+            )
+        )
+    | NonNull res -> res
 
 let convFieldSpec cenv emEnv fspec =
     let fref = fspec.FieldRef
@@ -1003,16 +1012,21 @@ let queryableTypeGetMethod cenv emEnv parentT (mref: ILMethodRef) : MethodInfo =
 
         let methInfo =
             try
-                parentT.GetMethod(mref.Name, cconv ||| BindingFlags.Public ||| BindingFlags.NonPublic, null, argTs, null)
+                parentT.GetMethod(
+                    mref.Name,
+                    cconv ||| BindingFlags.Public ||| BindingFlags.NonPublic,
+                    null,
+                    argTs,
+                    (null: ParameterModifier[] MaybeNull)
+                )
             // This can fail if there is an ambiguity w.r.t. return type
             with _ ->
                 null
 
-        match methInfo with
-        | null -> queryableTypeGetMethodBySearch cenv emEnv parentT mref
-        | m when equalTypes resT m.ReturnType -> m
-        | _ -> queryableTypeGetMethodBySearch cenv emEnv parentT mref
-
+        if (isNotNull methInfo && equalTypes resT methInfo.ReturnType) then
+            methInfo
+        else
+            queryableTypeGetMethodBySearch cenv emEnv parentT mref
     else
         queryableTypeGetMethodBySearch cenv emEnv parentT mref
 
@@ -1048,12 +1062,7 @@ let convMethodRef cenv emEnv (parentTI: Type) (mref: ILMethodRef) =
     | Null ->
         error (
             Error(
-                FSComp.SR.itemNotFoundInTypeDuringDynamicCodeGen (
-                    "method",
-                    mref.Name,
-                    parentTI.FullName |> string,
-                    parentTI.Assembly.FullName |> string
-                ),
+                FSComp.SR.itemNotFoundInTypeDuringDynamicCodeGen ("method", mref.Name, parentTI.FullName, parentTI.Assembly.FullName),
                 range0
             )
         )
@@ -1094,12 +1103,7 @@ let queryableTypeGetConstructor cenv emEnv (parentT: Type) (mref: ILMethodRef) =
     | Null ->
         error (
             Error(
-                FSComp.SR.itemNotFoundInTypeDuringDynamicCodeGen (
-                    "constructor",
-                    mref.Name,
-                    parentT.FullName |> string,
-                    parentT.Assembly.FullName |> string
-                ),
+                FSComp.SR.itemNotFoundInTypeDuringDynamicCodeGen ("constructor", mref.Name, parentT.FullName, parentT.Assembly.FullName),
                 range0
             )
         )
@@ -1134,12 +1138,7 @@ let convConstructorSpec cenv emEnv (mspec: ILMethodSpec) =
     | Null ->
         error (
             Error(
-                FSComp.SR.itemNotFoundInTypeDuringDynamicCodeGen (
-                    "constructor",
-                    "",
-                    parentTI.FullName |> string,
-                    parentTI.Assembly.FullName |> string
-                ),
+                FSComp.SR.itemNotFoundInTypeDuringDynamicCodeGen ("constructor", "", parentTI.FullName, parentTI.Assembly.FullName),
                 range0
             )
         )
@@ -1491,7 +1490,7 @@ let rec emitInstr cenv (modB: ModuleBuilder) emEnv (ilG: ILGenerator) instr =
             ilG.EmitAndLog(OpCodes.Ldelema, convType cenv emEnv ty)
         else
             let arrayTy = convType cenv emEnv (ILType.Array(shape, ty))
-            let elemTy = !! arrayTy.GetElementType()
+            let elemTy = arrayTy.GetElementType()
             let argTys = Array.create shape.Rank typeof<int>
             let retTy = elemTy.MakeByRefType()
 
@@ -1517,7 +1516,7 @@ let rec emitInstr cenv (modB: ModuleBuilder) emEnv (ilG: ILGenerator) instr =
             ilG.EmitAndLog(OpCodes.Stelem, convType cenv emEnv ty)
         else
             let arrayTy = convType cenv emEnv (ILType.Array(shape, ty))
-            let elemTy = !! arrayTy.GetElementType()
+            let elemTy = arrayTy.GetElementType()
 
             let meth =
                 modB.GetArrayMethodAndLog(
@@ -1625,7 +1624,7 @@ let emitCode cenv modB emEnv (ilG: ILGenerator) (code: ILCode) =
 
         | ILExceptionClause.FilterCatch((startFilter, _), (startHandler, endHandler)) ->
             add startFilter ilG.BeginExceptFilterBlockAndLog
-            add startHandler (fun () -> ilG.BeginCatchBlockAndLog Unchecked.defaultof<_>)
+            add startHandler (fun () -> ilG.BeginCatchBlockAndLog null)
             add endHandler ilG.EndExceptionBlockAndLog
 
         | ILExceptionClause.TypeCatch(ty, (startHandler, endHandler)) ->
@@ -1831,25 +1830,24 @@ let rec buildMethodPass2 cenv tref (typB: TypeBuilder) emEnv (mdef: ILMethodDef)
         let methB =
             System.Diagnostics.Debug.Assert(not (isNull definePInvokeMethod), "Runtime does not have DefinePInvokeMethod") // Absolutely can't happen
 
-            (!!definePInvokeMethod)
-                .Invoke(
-                    typB,
-                    [|
-                        mdef.Name
-                        p.Where.Name
-                        p.Name
-                        attrs
-                        cconv
-                        retTy
-                        null
-                        null
-                        argTys
-                        null
-                        null
-                        pcc
-                        pcs
-                    |]
-                )
+            definePInvokeMethod.Invoke(
+                typB,
+                [|
+                    mdef.Name
+                    p.Where.Name
+                    p.Name
+                    attrs
+                    cconv
+                    retTy
+                    null
+                    null
+                    argTys
+                    null
+                    null
+                    pcc
+                    pcs
+                |]
+            )
             :?> MethodBuilder
 
         methB.SetImplementationFlagsAndLog implflags
@@ -2475,7 +2473,7 @@ let defineDynamicAssemblyAndLog (asmName, flags, asmDir: string) =
 
     asmB
 
-let mkDynamicAssemblyAndModule (assemblyName: string, optimize, collectible) =
+let mkDynamicAssemblyAndModule (assemblyName, optimize, collectible) =
     let asmDir = "."
     let asmName = AssemblyName()
     asmName.Name <- assemblyName
@@ -2492,7 +2490,7 @@ let mkDynamicAssemblyAndModule (assemblyName: string, optimize, collectible) =
         let daType = typeof<System.Diagnostics.DebuggableAttribute>
 
         let daCtor =
-            !! daType.GetConstructor([| typeof<System.Diagnostics.DebuggableAttribute.DebuggingModes> |])
+            daType.GetConstructor [| typeof<System.Diagnostics.DebuggableAttribute.DebuggingModes> |]
 
         let daBuilder =
             CustomAttributeBuilder(

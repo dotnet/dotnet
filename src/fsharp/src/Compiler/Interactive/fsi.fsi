@@ -8,7 +8,6 @@ open System.Threading
 open FSharp.Compiler.CodeAnalysis
 open FSharp.Compiler.Diagnostics
 open FSharp.Compiler.Symbols
-open Internal.Utilities.Library
 
 /// Represents an evaluated F# value
 [<Class>]
@@ -63,7 +62,7 @@ type public FsiEvaluationSessionHostConfig =
     abstract FloatingPointFormat: string
 
     /// Called by the evaluation session to ask the host for parameters to format text for output
-    abstract AddedPrinters: Choice<Type * (objnull -> string), Type * (objnull -> objnull)> list
+    abstract AddedPrinters: Choice<Type * (obj -> string), Type * (obj -> obj)> list
 
     /// Called by the evaluation session to ask the host for parameters to format text for output
     abstract ShowDeclarationValues: bool
@@ -397,7 +396,7 @@ module Settings =
         /// <summary>Register a print transformer that controls the output of the interactive session.</summary>
         member AddPrintTransformer: ('T -> obj) -> unit
 
-        member internal AddedPrinters: Choice<Type * (objnull -> string), Type * (objnull -> objnull)> list
+        member internal AddedPrinters: Choice<Type * (obj -> string), Type * (obj -> obj)> list
 
         /// <summary>The command line arguments after ignoring the arguments relevant to the interactive
         /// environment and replacing the first argument with the name of the last script file,

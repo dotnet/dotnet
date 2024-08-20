@@ -85,7 +85,7 @@ val internal pickleCcuInfo: pickler<PickledCcuInfo>
 
 /// Serialize an arbitrary object using the given pickler
 val pickleObjWithDanglingCcus:
-    inMem: bool -> file: string -> TcGlobals -> scope: CcuThunk -> pickler<'T> -> 'T -> ByteBuffer * ByteBuffer
+    inMem: bool -> file: string -> TcGlobals -> scope: CcuThunk -> pickler<'T> -> 'T -> ByteBuffer
 
 /// The type of state unpicklers read from
 type ReaderState
@@ -151,6 +151,5 @@ val internal unpickleObjWithDanglingCcus:
     viewedScope: ILScopeRef ->
     ilModule: ILModuleDef option ->
     'T unpickler ->
-    ReadOnlyByteMemory ->
     ReadOnlyByteMemory ->
         PickledDataWithReferences<'T>

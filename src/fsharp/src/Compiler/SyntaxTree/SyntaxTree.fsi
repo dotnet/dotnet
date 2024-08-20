@@ -408,9 +408,6 @@ type SynTypeConstraint =
     /// F# syntax is 'typar: null
     | WhereTyparSupportsNull of typar: SynTypar * range: range
 
-    /// F# syntax is 'typar : null
-    | WhereTyparNotSupportsNull of genericName: SynTypar * range: range
-
     /// F# syntax is 'typar: comparison
     | WhereTyparIsComparable of typar: SynTypar * range: range
 
@@ -518,16 +515,11 @@ type SynType =
     /// For the dimensionless units i.e. 1, and static parameters to provided types
     | StaticConstant of constant: SynConst * range: range
 
-    /// F# syntax: null, used in parameters to type providers
-    | StaticConstantNull of range: range
-
     /// F# syntax: const expr, used in static parameters to type providers
     | StaticConstantExpr of expr: SynExpr * range: range
 
     /// F# syntax: ident=1 etc., used in static parameters to type providers
     | StaticConstantNamed of ident: SynType * value: SynType * range: range
-
-    | WithNull of innerType: SynType * ambivalent: bool * range: range
 
     | Paren of innerType: SynType * range: range
 
@@ -1489,18 +1481,6 @@ type SynComponentInfo =
     /// Gets the syntax range of this construct
     member Range: range
 
-/// Represents one or two access modifier(s) in a property signature
-[<NoEquality; NoComparison; RequireQualifiedAccess>]
-type SynValSigAccess =
-    | Single of accessibility: SynAccess option
-    | GetSet of
-        accessibility: SynAccess option *
-        getterAccessibility: SynAccess option *
-        setterAccessibility: SynAccess option
-
-    member SingleAccess: unit -> SynAccess option
-    member GetSetAccessNoCheck: unit -> SynAccess option * SynAccess option
-
 /// Represents the syntax tree for a 'val' definition in an abstract slot or a signature file
 [<NoEquality; NoComparison>]
 type SynValSig =
@@ -1513,7 +1493,7 @@ type SynValSig =
         isInline: bool *
         isMutable: bool *
         xmlDoc: PreXmlDoc *
-        accessibility: SynValSigAccess *
+        accessibility: SynAccess option *
         synExpr: SynExpr option *
         range: range *
         trivia: SynValSigTrivia
@@ -1679,7 +1659,7 @@ type SynMemberDefn =
         memberFlags: SynMemberFlags *
         memberFlagsForSet: SynMemberFlags *
         xmlDoc: PreXmlDoc *
-        accessibility: SynValSigAccess *
+        accessibility: SynAccess option *
         synExpr: SynExpr *
         range: range *
         trivia: SynMemberDefnAutoPropertyTrivia

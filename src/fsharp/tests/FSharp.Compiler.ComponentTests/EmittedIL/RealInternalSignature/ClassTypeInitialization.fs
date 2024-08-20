@@ -33,6 +33,7 @@ module MyModule =
         printfn "Hello from main method"
         0
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -59,6 +60,7 @@ type MySecondType =
 
 printfn "Hello from implicit main method"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -90,6 +92,7 @@ module MyModule =
         printfn "Hello from main method"
         0
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> withStdOutContainsAllInOrder [
@@ -129,6 +132,7 @@ module doit =
     FSharpSource.CreateFromFile("Hello") |> ignore
     printfn "Main program"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -167,6 +171,7 @@ module doit =
     FSharpSource.CreateFromFile("Hello") |> ignore
     printfn "Main program"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -205,6 +210,7 @@ module doit =
     FSharpSource.CreateFromFile("Hello") |> ignore
     printfn "Main program"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -242,6 +248,7 @@ module doit =
     FSharpSource.CreateFromFile("Hello") |> ignore
     printfn "Main program"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -279,6 +286,7 @@ module doit =
     FSharpSource.CreateFromFile("Hello") |> ignore
     printfn "Main program"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -317,6 +325,7 @@ module doit =
     FSharpSource.CreateFromFile("Hello") |> ignore
     printfn "Main program"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> withStdOutContainsAllInOrder [
@@ -361,6 +370,7 @@ type FSharpSource with
 module doit =
     printfn "Main program"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -398,6 +408,7 @@ module doit =
     FSharpSource.CreateFromFile("Hello") |> ignore
     printfn "Main program"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -438,6 +449,7 @@ let message = FSharpSourceFromFile.SetIt ("Here is something")
 
 printfn $"{message}"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -475,6 +487,7 @@ type MyClass =
 
 printfn "%A" (MyClass.result())
 """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> withNoOptimize
         |> compileExeAndRun
@@ -841,6 +854,7 @@ namespace Microsoft.FSharp.Core.CompilerServices
         loop ()
 """
         |> asExe
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> withOptimize
         |> compileAndRun

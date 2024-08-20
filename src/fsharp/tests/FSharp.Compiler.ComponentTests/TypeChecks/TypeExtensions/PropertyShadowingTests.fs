@@ -20,6 +20,7 @@ let [<Literal>] folder = __SOURCE_DIRECTORY__ + "/Shadowing"
 let PropertyHidding compilation =
     compilation
     |> asFsx
+    |> withOptions ["--langversion:preview"]
     |> verifyBaselines
     |> compileAndRun
     |> shouldSucceed
@@ -59,6 +60,7 @@ let ``PropertyHiding v7.0`` compilation =
 let ``PropertyHiding fails`` compilation =
     compilation
     |> asFsx
+    |> withOptions ["--langversion:preview"]
     |> verifyBaselines
     |> compile
     |> shouldFail

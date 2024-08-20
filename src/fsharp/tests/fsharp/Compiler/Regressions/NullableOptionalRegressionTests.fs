@@ -8,8 +8,7 @@ open FSharp.Test.Compiler
 [<TestFixture()>]
 module NullableOptionalRegressionTests =
 
-    //Disabled, see RFC for nullable
-    //[<Test(Enabled=false)>]
+    [<Test>]
     let ``Should compile with generic overloaded nullable methods``() =
         Fsx """
 open System

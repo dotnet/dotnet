@@ -71,21 +71,21 @@ module LeafExpressionConverter =
     /// </summary>
     ///
     /// <example-tbd></example-tbd>
-    val EvaluateQuotation: Expr -> objnull
+    val EvaluateQuotation: Expr -> obj
 
     /// <summary>
     /// A runtime helper used to evaluate nested quotation literals.
     /// </summary>
     ///
     /// <example-tbd></example-tbd>
-    val SubstHelper: Expr * Var array * objnull array -> Expr<'T>
+    val SubstHelper: Expr * Var array * obj array -> Expr<'T>
 
     /// <summary>
     /// A runtime helper used to evaluate nested quotation literals.
     /// </summary>
     ///
     /// <example-tbd></example-tbd>
-    val SubstHelperRaw: Expr * Var array * objnull array -> Expr
+    val SubstHelperRaw: Expr * Var array * obj array -> Expr
 
     val internal (|SpecificCallToMethod|_|):
         System.RuntimeMethodHandle -> (Expr -> (Expr option * Reflection.MethodInfo * Expr list) option)

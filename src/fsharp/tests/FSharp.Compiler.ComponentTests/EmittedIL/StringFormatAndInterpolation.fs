@@ -41,6 +41,7 @@ module StringFormatAndInterpolation
 
 let f (s: string) = $"ab{{s}}"
         """
+        |> withLangVersionPreview
         |> compile
         |> shouldSucceed
         |> verifyIL ["""
@@ -59,6 +60,7 @@ module StringFormatAndInterpolation
 let c = "c"
 let str = $"ab{{c}}d"
         """
+        |> withLangVersionPreview
         |> compile
         |> shouldSucceed
         |> verifyIL ["""
@@ -77,6 +79,7 @@ module StringFormatAndInterpolation
 
 let str () = {str}
         """
+        |> withLangVersionPreview
         |> compile
         |> shouldSucceed
         |> verifyIL ["""

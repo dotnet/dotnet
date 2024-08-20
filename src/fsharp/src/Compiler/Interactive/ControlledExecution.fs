@@ -13,7 +13,6 @@ open System.Reflection
 open System.Threading
 
 open Internal.Utilities.FSharpEnvironment
-open Internal.Utilities.Library
 
 open Unchecked
 
@@ -25,20 +24,21 @@ type internal ControlledExecution(isInteractive: bool) =
     static let ceType: Type option =
         Option.ofObj (Type.GetType("System.Runtime.ControlledExecution, System.Private.CoreLib", false))
 
-    static let threadType: Type option = typeof<Threading.Thread> |> Option.ofObj
+    static let threadType: Type option = Option.ofObj (typeof<Threading.Thread>)
 
     static let ceRun: MethodInfo option =
         match ceType with
         | None -> None
         | Some t ->
-            t.GetMethod(
-                "Run",
-                BindingFlags.Static ||| BindingFlags.Public,
-                defaultof<Binder>,
-                [| typeof<System.Action>; typeof<System.Threading.CancellationToken> |],
-                [||]
+            Option.ofObj (
+                t.GetMethod(
+                    "Run",
+                    BindingFlags.Static ||| BindingFlags.Public,
+                    defaultof<Binder>,
+                    [| typeof<System.Action>; typeof<System.Threading.CancellationToken> |],
+                    [||]
+                )
             )
-            |> Option.ofObj
 
     static let threadResetAbort: MethodInfo option =
         match isRunningOnCoreClr, threadType with
@@ -67,8 +67,6 @@ type internal ControlledExecution(isInteractive: bool) =
 
     static member StripTargetInvocationException(exn: Exception) =
         match exn with
-        | :? TargetInvocationException as e ->
-            match e.InnerException with
-            | null -> exn
-            | innerEx -> ControlledExecution.StripTargetInvocationException(innerEx)
+        | :? TargetInvocationException as e when not (isNull e.InnerException) ->
+            ControlledExecution.StripTargetInvocationException(e.InnerException)
         | _ -> exn

@@ -85,8 +85,7 @@ ImplFile
                                                           ([], false, None)),
                                                      false, false,
                                                      PreXmlDoc ((3,55), FSharp.Compiler.Xml.XmlDocCollector),
-                                                     Single None, None,
-                                                     (3,55--3,91),
+                                                     None, None, (3,55--3,91),
                                                      { LeadingKeyword =
                                                         StaticMember
                                                           ((3,55--3,61),
@@ -159,7 +158,7 @@ ImplFile
                                            SynArgInfo ([], false, None)), false,
                                         false,
                                         PreXmlDoc ((4,15), FSharp.Compiler.Xml.XmlDocCollector),
-                                        Single None, None, (4,15--4,51),
+                                        None, None, (4,15--4,51),
                                         { LeadingKeyword =
                                            StaticMember
                                              ((4,15--4,21), (4,22--4,28))

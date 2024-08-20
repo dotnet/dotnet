@@ -31,7 +31,7 @@ SigFile
                             SynValInfo
                               ([[SynArgInfo ([], false, None)]],
                                SynArgInfo ([], false, None)), false, false,
-                            PreXmlDocEmpty, Single None, None, (4,4--4,29),
+                            PreXmlDocEmpty, None, None, (4,4--4,29),
                             { LeadingKeyword = Synthetic
                               InlineKeyword = None
                               WithKeyword = None

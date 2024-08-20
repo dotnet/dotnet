@@ -34,7 +34,7 @@
   <PropertyGroup>
     <NoOptimizationData>true</NoOptimizationData>
     <NoInterfaceData>false</NoInterfaceData>
-    <CompressMetadata>true</CompressMetadata>
+    <CompressMetadata>false</CompressMetadata>
   </PropertyGroup>
 
 </Project>

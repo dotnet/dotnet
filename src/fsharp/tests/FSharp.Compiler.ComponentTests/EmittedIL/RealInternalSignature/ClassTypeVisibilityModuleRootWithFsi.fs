@@ -33,6 +33,7 @@ type TypeFour () = class end
 type HiddenType () = class end
         """))
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -251,6 +252,7 @@ type TypeFour () = class end
 type HiddenType () = class end
         """))
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -459,6 +461,7 @@ type TestType () =
     member _.DefaultMethod() = ()
     member _.HiddenMethod() = ()"""))
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -500,6 +503,7 @@ type TestType () =
     member _.DefaultMethod() = ()
     member _.HiddenMethod() = ()"""))
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -543,6 +547,7 @@ type TestType () =
     member val PrivateProperty = 0 with get, set
     member val DefaultProperty = 0 with get, set"""))
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -595,6 +600,7 @@ type TestType () =
     member val DefaultProperty = 0 with get, set
     member val HiddenProperty = 0 with get, set"""))
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -674,6 +680,7 @@ type public TestType () =
     member _.MixedPropertyEleven with get() = 0 and set (_:int) = ()
     member _.MixedPropertyTwelve with get() = 0 and set (_:int) = ()"""))
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -781,6 +788,7 @@ type public TestType () =
     member _.MixedPropertyEleven with get() = 0 and set (_:int) = ()
     member _.MixedPropertyTwelve with get() = 0 and set (_:int) = ()"""))
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -895,6 +903,7 @@ type public TestType () =
     static member DefaultMethod() = ()
 """
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -939,6 +948,7 @@ type TestType () =
     static member val DefaultProperty = 0 with get, set
     static member val HiddenProperty = 0 with get, set"""))
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -994,6 +1004,7 @@ type TestType () =
     static member val PrivateProperty = 0 with get, set
     static member val DefaultProperty = 0 with get, set"""))
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -1070,6 +1081,7 @@ type public TestType () =
     static member MixedPropertyEleven with internal get() = 0 and set (_:int) = ()
     static member MixedPropertyTwelve with private get() = 0 and set (_:int) = ()"""))
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [
@@ -1179,6 +1191,7 @@ type private TestType () =
     static member MixedPropertyEleven with internal get() = 0 and set (_:int) = ()
     static member MixedPropertyTwelve with private get() = 0 and set (_:int) = ()"""))
         |> asLibrary
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compile
         |> withILContains [

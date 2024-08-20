@@ -359,10 +359,10 @@ let parseFormatStringInternal
             let acc = if widthArg then (Option.map ((+)1) posi, g.int_ty) :: acc else acc
 
             let checkOtherFlags c =
-                if info.precision then failwith (FSComp.SR.forFormatDoesntSupportPrecision(c.ToString() |> string))
-                if info.addZeros then failwith (FSComp.SR.forDoesNotSupportZeroFlag(c.ToString() |> string))
+                if info.precision then failwith (FSComp.SR.forFormatDoesntSupportPrecision(c.ToString()))
+                if info.addZeros then failwith (FSComp.SR.forDoesNotSupportZeroFlag(c.ToString()))
                 match info.numPrefixIfPos with
-                | Some n -> failwith (FSComp.SR.forDoesNotSupportPrefixFlag(c.ToString() |> string, n.ToString()))
+                | Some n -> failwith (FSComp.SR.forDoesNotSupportPrefixFlag(c.ToString(), n.ToString()))
                 | None -> ()
 
             let skipPossibleInterpolationHole pos = Parse.skipPossibleInterpolationHole isInterpolated isFormattableString fmt pos
@@ -449,8 +449,7 @@ let parseFormatStringInternal
                 checkOtherFlags ch
                 collectSpecifierLocation fragLine fragCol 1
                 let i = skipPossibleInterpolationHole (i+1)
-                let stringTy = if g.checkNullness && g.langFeatureNullness then g.string_ty_ambivalent else g.string_ty
-                parseLoop ((posi, stringTy) :: acc) (i, fragLine, fragCol+1) fragments
+                parseLoop ((posi, g.string_ty)  :: acc) (i, fragLine, fragCol+1) fragments
 
             | 'O' ->
                 checkOtherFlags ch

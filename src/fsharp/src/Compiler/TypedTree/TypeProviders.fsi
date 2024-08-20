@@ -9,7 +9,6 @@ module internal rec FSharp.Compiler.TypeProviders
 open System
 open System.Collections.Concurrent
 open System.Collections.Generic
-open Internal.Utilities.Library
 open FSharp.Core.CompilerServices
 open FSharp.Compiler.AbstractIL.IL
 open FSharp.Compiler.Text
@@ -91,10 +90,7 @@ type ProvidedTypeContext =
     /// Map the TyconRef objects, if any
     member RemapTyconRefs: (obj -> obj) -> ProvidedTypeContext
 
-[<Sealed; Class>] 
-#if NO_CHECKNULLS
-[<AllowNullLiteral>]
-#endif
+[<AllowNullLiteral; Sealed; Class>]
 type ProvidedType =
     inherit ProvidedMemberInfo
 
@@ -114,7 +110,7 @@ type ProvidedType =
 
     member Assembly: ProvidedAssembly
 
-    member BaseType: ProvidedType MaybeNull
+    member BaseType: ProvidedType
 
     member GetNestedType: string -> ProvidedType
 
@@ -208,24 +204,21 @@ type ProvidedType =
 
     static member TaintedEquals: Tainted<ProvidedType> * Tainted<ProvidedType> -> bool
 
-#if NO_CHECKNULLS
 [<AllowNullLiteral>]
-#endif
 type IProvidedCustomAttributeProvider =
+
     abstract GetHasTypeProviderEditorHideMethodsAttribute: provider: ITypeProvider -> bool
 
-    abstract GetDefinitionLocationAttribute: provider: ITypeProvider -> (string MaybeNull * int * int) option
+    abstract GetDefinitionLocationAttribute: provider: ITypeProvider -> (string * int * int) option
 
     abstract GetXmlDocAttributes: provider: ITypeProvider -> string[]
 
     abstract GetAttributeConstructorArgs:
         provider: ITypeProvider * attribName: string -> (obj option list * (string * obj option) list) option
-    
-[<Sealed; Class>] 
-#if NO_CHECKNULLS
-[<AllowNullLiteral>]
-#endif
-type ProvidedAssembly = 
+
+[<AllowNullLiteral; Sealed; Class>]
+type ProvidedAssembly =
+
     member GetName: unit -> System.Reflection.AssemblyName
 
     member FullName: string
@@ -234,23 +227,18 @@ type ProvidedAssembly =
 
     member Handle: System.Reflection.Assembly
 
-[<AbstractClass>] 
-#if NO_CHECKNULLS
-[<AllowNullLiteral>]
-#endif
-type ProvidedMemberInfo = 
+[<AllowNullLiteral; AbstractClass>]
+type ProvidedMemberInfo =
 
     member Name: string
 
-    member DeclaringType: ProvidedType MaybeNull
+    member DeclaringType: ProvidedType
 
-    interface IProvidedCustomAttributeProvider 
+    interface IProvidedCustomAttributeProvider
 
-[<AbstractClass>] 
-#if NO_CHECKNULLS
-[<AllowNullLiteral>]
-#endif
-type ProvidedMethodBase = 
+[<AllowNullLiteral; AbstractClass>]
+type ProvidedMethodBase =
+
     inherit ProvidedMemberInfo
 
     member IsGenericMethod: bool
@@ -285,11 +273,8 @@ type ProvidedMethodBase =
 
     static member TaintedEquals: Tainted<ProvidedMethodBase> * Tainted<ProvidedMethodBase> -> bool
 
-[<Sealed; Class>] 
-#if NO_CHECKNULLS
-[<AllowNullLiteral>]
-#endif
-type ProvidedMethodInfo = 
+[<AllowNullLiteral; Sealed; Class>]
+type ProvidedMethodInfo =
 
     inherit ProvidedMethodBase
 
@@ -297,11 +282,8 @@ type ProvidedMethodInfo =
 
     member MetadataToken: int
 
-[<Sealed; Class>] 
-#if NO_CHECKNULLS
-[<AllowNullLiteral>]
-#endif
-type ProvidedParameterInfo = 
+[<AllowNullLiteral; Sealed; Class>]
+type ProvidedParameterInfo =
 
     member Name: string
 
@@ -313,17 +295,14 @@ type ProvidedParameterInfo =
 
     member IsOptional: bool
 
-    member RawDefaultValue: objnull
+    member RawDefaultValue: obj
 
     member HasDefaultValue: bool
 
     interface IProvidedCustomAttributeProvider
 
-[<Sealed; Class>] 
-#if NO_CHECKNULLS
-[<AllowNullLiteral>]
-#endif
-type ProvidedFieldInfo = 
+[<AllowNullLiteral; Class; Sealed>]
+type ProvidedFieldInfo =
 
     inherit ProvidedMemberInfo
 
@@ -351,11 +330,8 @@ type ProvidedFieldInfo =
 
     static member TaintedEquals: Tainted<ProvidedFieldInfo> * Tainted<ProvidedFieldInfo> -> bool
 
-[<Sealed; Class>] 
-#if NO_CHECKNULLS
-[<AllowNullLiteral>]
-#endif
-type ProvidedPropertyInfo = 
+[<AllowNullLiteral; Class; Sealed>]
+type ProvidedPropertyInfo =
 
     inherit ProvidedMemberInfo
 
@@ -375,11 +351,8 @@ type ProvidedPropertyInfo =
 
     static member TaintedEquals: Tainted<ProvidedPropertyInfo> * Tainted<ProvidedPropertyInfo> -> bool
 
-[<Sealed; Class>] 
-#if NO_CHECKNULLS
-[<AllowNullLiteral>]
-#endif
-type ProvidedEventInfo = 
+[<AllowNullLiteral; Class; Sealed>]
+type ProvidedEventInfo =
 
     inherit ProvidedMemberInfo
 
@@ -393,11 +366,8 @@ type ProvidedEventInfo =
 
     static member TaintedEquals: Tainted<ProvidedEventInfo> * Tainted<ProvidedEventInfo> -> bool
 
-[<Sealed; Class>] 
-#if NO_CHECKNULLS
-[<AllowNullLiteral>]
-#endif
-type ProvidedConstructorInfo = 
+[<AllowNullLiteral; Class; Sealed>]
+type ProvidedConstructorInfo =
     inherit ProvidedMethodBase
 
 type ProvidedExprType =
@@ -441,11 +411,8 @@ type ProvidedExprType =
     | ProvidedIfThenElseExpr of ProvidedExpr * ProvidedExpr * ProvidedExpr
 
     | ProvidedVarExpr of ProvidedVar
-    
-[<RequireQualifiedAccess; Sealed; Class>] 
-#if NO_CHECKNULLS
-[<AllowNullLiteral>]
-#endif
+
+[<RequireQualifiedAccess; Class; Sealed; AllowNullLiteral>]
 type ProvidedExpr =
 
     member Type: ProvidedType
@@ -455,10 +422,7 @@ type ProvidedExpr =
 
     member GetExprType: unit -> ProvidedExprType option
 
-[<RequireQualifiedAccess; Sealed; Class>] 
-#if NO_CHECKNULLS
-[<AllowNullLiteral>]
-#endif
+[<RequireQualifiedAccess; Class; Sealed; AllowNullLiteral>]
 type ProvidedVar =
 
     member Type: ProvidedType
@@ -482,12 +446,12 @@ val ValidateProvidedTypeAfterStaticInstantiation:
 /// to check the type name is as expected (this function is called by the caller of TryApplyProvidedType
 /// after other checks are made).
 val TryApplyProvidedType:
-    typeBeforeArguments: Tainted<ProvidedType> * optGeneratedTypePath: string list option * staticArgs: objnull[] * range ->
+    typeBeforeArguments: Tainted<ProvidedType> * optGeneratedTypePath: string list option * staticArgs: obj[] * range ->
         (Tainted<ProvidedType> * (unit -> unit)) option
 
 /// Try to apply a provided method to the given static arguments.
 val TryApplyProvidedMethod:
-    methBeforeArgs: Tainted<ProvidedMethodBase> * staticArgs: objnull[] * range -> Tainted<ProvidedMethodBase> option
+    methBeforeArgs: Tainted<ProvidedMethodBase> * staticArgs: obj[] * range -> Tainted<ProvidedMethodBase> option
 
 /// Try to resolve a type in the given extension type resolver
 val TryResolveProvidedType: Tainted<ITypeProvider> * range * string[] * typeName: string -> Tainted<ProvidedType> option

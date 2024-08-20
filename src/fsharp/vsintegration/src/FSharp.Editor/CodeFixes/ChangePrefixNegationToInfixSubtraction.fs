@@ -18,13 +18,10 @@ type internal ChangePrefixNegationToInfixSubtractionCodeFixProvider() =
     static let title = SR.ChangePrefixNegationToInfixSubtraction()
 
     static let rec findNextNonWhitespacePos (sourceText: SourceText) pos =
-        if pos < sourceText.Length - 1 then
-            if Char.IsWhiteSpace sourceText[pos] then
-                findNextNonWhitespacePos sourceText (pos + 1)
-            else
-                ValueSome pos
+        if pos < sourceText.Length && Char.IsWhiteSpace sourceText[pos] then
+            findNextNonWhitespacePos sourceText (pos + 1)
         else
-            ValueNone
+            pos
 
     override _.FixableDiagnosticIds = ImmutableArray.Create "FS0003"
 
@@ -37,15 +34,16 @@ type internal ChangePrefixNegationToInfixSubtractionCodeFixProvider() =
 
                 // in a line like "... x  -1 ...",
                 // squiggly goes for "x", not for "-", hence we search for "-"
-                let fix =
-                    findNextNonWhitespacePos sourceText (context.Span.End + 1)
-                    |> ValueOption.filter (fun pos -> sourceText[pos] = '-')
-                    |> ValueOption.map (fun pos ->
-                        {
-                            Name = CodeFix.ChangePrefixNegationToInfixSubtraction
-                            Message = title
-                            Changes = [ TextChange(TextSpan(pos + 1, 0), " ") ]
-                        })
+                let pos = findNextNonWhitespacePos sourceText (context.Span.End + 1)
 
-                return fix
+                if sourceText[pos] <> '-' then
+                    return ValueNone
+                else
+                    return
+                        ValueSome
+                            {
+                                Name = CodeFix.ChangePrefixNegationToInfixSubtraction
+                                Message = title
+                                Changes = [ TextChange(TextSpan(pos + 1, 0), " ") ]
+                            }
             }

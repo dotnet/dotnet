@@ -334,6 +334,7 @@ type MyType =
     static let x1 = 1100 + System.Random().Next(0)
     static let _ = printfn "Hello, World from MyLibrary.MyType"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -366,6 +367,7 @@ type MyType =
                     printfn $"{{C.P2}}"
                     if C.P2 <> 6 then failwith $"Invalid result:  C.P2 <> 6 - actual: {{C.P2}}"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> withOptions [ "--nowarn:3370"; "--debug+"; "--optimize-" ]
         |> compileExeAndRun
@@ -397,6 +399,7 @@ module {recursive} MyModule =
 
     printfn "Hello from main method"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -446,6 +449,7 @@ module {{recursive}} MyModule =
         printfn "Hello from main method"
         0
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -503,6 +507,7 @@ module rec MyModule =
         0
             """
         |> withFlavor release
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -538,6 +543,7 @@ module internal PrintfImpl
     printfn $"FormatParser.prefix: {FormatParser().GetStepsForCapturedFormat()}"
     printfn "Main program"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -573,6 +579,7 @@ module doit =
     createFromFile("Hello") |> ignore
     printfn "Main program"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -596,6 +603,7 @@ module private TestReferences =
 module doSomething =
     printfn $"{TestReferences.NetStandard20.Files.netStandard.Value}"
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> compileExeAndRun
         |> shouldSucceed
@@ -630,6 +638,7 @@ module Test6
 
         let public getInt (data:Data): int = HelperModule.handle data.Thing               
         """
+        |> withLangVersionPreview
         |> withRealInternalSignature realSig
         |> asLibrary
         |> compile

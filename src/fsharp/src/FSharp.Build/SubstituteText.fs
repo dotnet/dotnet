@@ -24,7 +24,7 @@ type SubstituteText() =
     override _.Execute() =
         copiedFiles.Clear()
 
-        if not (isNull (box embeddedResources)) then // this check can't fail, the type is non-nullable
+        if not (isNull embeddedResources) then
             for item in embeddedResources do
                 // Update ITaskItem metadata to point to new location
                 let sourcePath = item.GetMetadata("FullPath")
