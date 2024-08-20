@@ -159,16 +159,16 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
     private void AddDocumentToMiscProjectCore(ProjectSnapshotManager.Updater updater, string filePath)
     {
         var textDocumentPath = FilePathNormalizer.Normalize(filePath);
+        _logger.LogDebug($"Asked to add {textDocumentPath} to the miscellaneous files project, because we don't have project info (yet?)");
 
-        _logger.LogDebug($"Adding {filePath} to the miscellaneous files project, because we don't have project info (yet?)");
-        var miscFilesProject = _projectManager.GetMiscellaneousProject();
-
-        if (miscFilesProject.GetDocument(FilePathNormalizer.Normalize(textDocumentPath)) is not null)
+        if (_projectManager.TryResolveDocumentInAnyProject(textDocumentPath, _logger, out var document))
         {
-            // Document already added. This usually occurs when VSCode has already pre-initialized
-            // open documents and then we try to manually add all known razor documents.
+            // Already in a known project, so we don't want it in the misc files project
+            _logger.LogDebug($"File {textDocumentPath} is already in {document.Project.Key}, so we're not adding it to the miscellaneous files project");
             return;
         }
+
+        var miscFilesProject = _projectManager.GetMiscellaneousProject();
 
         // Representing all of our host documents with a re-normalized target path to workaround GetRelatedDocument limitations.
         var normalizedTargetFilePath = textDocumentPath.Replace('/', '\\').TrimStart('\\');
@@ -176,7 +176,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
         var hostDocument = new HostDocument(textDocumentPath, normalizedTargetFilePath);
         var textLoader = _remoteTextLoaderFactory.Create(textDocumentPath);
 
-        _logger.LogInformation($"Adding document '{filePath}' to project '{miscFilesProject.Key}'.");
+        _logger.LogInformation($"Adding document '{textDocumentPath}' to project '{miscFilesProject.Key}'.");
 
         updater.DocumentAdded(miscFilesProject.Key, hostDocument, textLoader);
     }
