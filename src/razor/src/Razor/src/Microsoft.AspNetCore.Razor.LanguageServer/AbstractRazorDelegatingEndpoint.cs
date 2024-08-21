@@ -113,11 +113,13 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
             return default;
         }
 
-        var positionInfo = await DocumentPositionInfoStrategy.TryGetPositionInfoAsync(_documentMappingService, documentContext, request.Position, cancellationToken).ConfigureAwait(false);
-        if (positionInfo is null)
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+        if (!codeDocument.Source.Text.TryGetAbsoluteIndex(request.Position, out var absoluteIndex))
         {
             return default;
         }
+
+        var positionInfo = DocumentPositionInfoStrategy.GetPositionInfo(_documentMappingService, codeDocument, absoluteIndex);
 
         var response = await TryHandleAsync(request, requestContext, positionInfo, cancellationToken).ConfigureAwait(false);
         if (response is not null && response is not ISumType { Value: null })
@@ -141,7 +143,6 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
             // Sometimes Html can actually be mapped to C#, like for example component attributes, which map to
             // C# properties, even though they appear entirely in a Html context. Since remapping is pretty cheap
             // it's easier to just try mapping, and see what happens, rather than checking for specific syntax nodes.
-            var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
             if (_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), positionInfo.HostDocumentIndex, out Position? csharpPosition, out _))
             {
                 // We're just gonna pretend this mapped perfectly normally onto C#. Moving this logic to the actual position info

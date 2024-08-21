@@ -17,29 +17,9 @@
         <target state="translated">Komponente aus Tag erstellen</target>
         <note />
       </trans-unit>
-      <trans-unit id="Diagnostics_after">
-        <source>Diagnostics after:</source>
-        <target state="translated">Diagnose nach:</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Diagnostics_before">
-        <source>Diagnostics before:</source>
-        <target state="translated">Diagnose vor:</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Document_Not_Found">
         <source>Document {0} was not found.</source>
         <target state="translated">Dokument „{0}“ wurde nicht gefunden.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Edit_at_adds">
-        <source>Edit at {0} adds the non-whitespace content '{1}'.</source>
-        <target state="translated">Das Bearbeiten bei {0} fügt den Nicht-Leerraum-Inhalt "{1}" hinzu.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Edit_at_deletes">
-        <source>Edit at {0} deletes the non-whitespace content '{1}'.</source>
-        <target state="translated">Das Bearbeiten bei {0} löscht den Nicht-Leerraum-Inhalt "{1}".</target>
         <note />
       </trans-unit>
       <trans-unit id="ExtractTo_CodeBehind_Title">
@@ -52,16 +32,6 @@
         <target state="translated">Datei wurde extern modifiziert: {0}.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Format_operation_changed_diagnostics">
-        <source>A format operation is being abandoned because it would introduce or remove one of more diagnostics.</source>
-        <target state="translated">Ein Formatierungsvorgang wird abgebrochen, weil er eine oder mehrere Diagnosen einführen oder entfernen würde.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Format_operation_changed_nonwhitespace">
-        <source>A format operation is being abandoned because it would add or delete non-whitespace content.</source>
-        <target state="translated">Ein Formatierungsvorgang wird abgebrochen, da er Nicht-Leerraum-Inhalte hinzufügen oder löschen würde.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
         <target state="translated">Asynchronen Ereignishandler "{0}" generieren</target>
@@ -70,11 +40,6 @@
       <trans-unit id="Generate_Event_Handler_Title">
         <source>Generate Event Handler '{0}'</source>
         <target state="translated">Ereignishandler "{0}" generieren</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Language_Services_Missing_Service">
-        <source>Razor language services not configured properly, missing language service '{0}'.</source>
-        <target state="translated">Razor-Sprachdienste sind nicht ordnungsgemäß konfiguriert, der Sprachdienst "{0}" fehlt.</target>
         <note />
       </trans-unit>
       <trans-unit id="Not_Available_In">

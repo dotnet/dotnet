@@ -17,29 +17,9 @@
         <target state="translated">Crea componente da tag</target>
         <note />
       </trans-unit>
-      <trans-unit id="Diagnostics_after">
-        <source>Diagnostics after:</source>
-        <target state="translated">Diagnostica dopo:</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Diagnostics_before">
-        <source>Diagnostics before:</source>
-        <target state="translated">Diagnostica prima di:</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Document_Not_Found">
         <source>Document {0} was not found.</source>
         <target state="translated">Impossibile trovare il documento{0}.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Edit_at_adds">
-        <source>Edit at {0} adds the non-whitespace content '{1}'.</source>
-        <target state="translated">La modifica in {0} aggiunge contenuti diversi da spazi vuoti '{1}'.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Edit_at_deletes">
-        <source>Edit at {0} deletes the non-whitespace content '{1}'.</source>
-        <target state="translated">La modifica in {0} elimina contenuti diversi da spazi vuoti '{1}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExtractTo_CodeBehind_Title">
@@ -52,16 +32,6 @@
         <target state="translated">Il file è stato modificato esternamente: {0}</target>
         <note />
       </trans-unit>
-      <trans-unit id="Format_operation_changed_diagnostics">
-        <source>A format operation is being abandoned because it would introduce or remove one of more diagnostics.</source>
-        <target state="translated">È in corso l'abbandono di un'operazione di formato perché comporterebbe l'introduzione o la rimozione di una o più operazioni di diagnostica.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Format_operation_changed_nonwhitespace">
-        <source>A format operation is being abandoned because it would add or delete non-whitespace content.</source>
-        <target state="translated">È in corso l'abbandono di un'operazione di formattazione perché aggiungerebbe o eliminerebbe contenuto diverso da spazi vuoti.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
         <target state="translated">Genera gestore dell'evento '{0}' asincrono</target>
@@ -70,11 +40,6 @@
       <trans-unit id="Generate_Event_Handler_Title">
         <source>Generate Event Handler '{0}'</source>
         <target state="translated">Genera gestore dell'evento '{0}'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Language_Services_Missing_Service">
-        <source>Razor language services not configured properly, missing language service '{0}'.</source>
-        <target state="translated">I servizi di linguaggio Razor non sono configurati correttamente. Manca il servizio di linguaggio '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Not_Available_In">

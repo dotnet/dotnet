@@ -18,6 +18,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -107,7 +108,8 @@ internal sealed class GenerateMethodCodeActionResolver(
         var classLocationLineSpan = @class.GetLocation().GetLineSpan();
         var formattedMethod = FormattingUtilities.AddIndentationToMethod(
             templateWithMethodSignature,
-            _razorLSPOptionsMonitor.CurrentValue,
+            _razorLSPOptionsMonitor.CurrentValue.TabSize,
+            _razorLSPOptionsMonitor.CurrentValue.InsertSpaces,
             @class.SpanStart,
             classLocationLineSpan.StartLinePosition.Character,
             content);

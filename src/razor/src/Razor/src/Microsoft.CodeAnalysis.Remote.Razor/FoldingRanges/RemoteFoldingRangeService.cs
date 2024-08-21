@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.FoldingRanges;
 using Microsoft.CodeAnalysis.Razor.Protocol.Folding;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
@@ -25,7 +24,6 @@ internal sealed class RemoteFoldingRangeService(in ServiceArgs args) : RazorDocu
     }
 
     private readonly IFoldingRangeService _foldingRangeService = args.ExportProvider.GetExportedValue<IFoldingRangeService>();
-    private readonly IFilePathService _filePathService = args.ExportProvider.GetExportedValue<IFilePathService>();
 
     public ValueTask<ImmutableArray<RemoteFoldingRange>> GetFoldingRangesAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,
@@ -43,7 +41,7 @@ internal sealed class RemoteFoldingRangeService(in ServiceArgs args) : RazorDocu
         ImmutableArray<RemoteFoldingRange> htmlRanges,
         CancellationToken cancellationToken)
     {
-        var generatedDocument = await context.GetGeneratedDocumentAsync(_filePathService, cancellationToken).ConfigureAwait(false);
+        var generatedDocument = await context.Snapshot.GetGeneratedDocumentAsync().ConfigureAwait(false);
 
         var csharpRanges = await ExternalHandlers.FoldingRanges.GetFoldingRangesAsync(generatedDocument, cancellationToken).ConfigureAwait(false);
 

@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
@@ -63,10 +64,10 @@ internal static class IServiceCollectionExtensions
         // Formatting Passes
         services.AddSingleton<IFormattingPass, HtmlFormattingPass>();
         services.AddSingleton<IFormattingPass, CSharpFormattingPass>();
-        services.AddSingleton<IFormattingPass, CSharpOnTypeFormattingPass>();
+        services.AddSingleton<IFormattingPass, LspCSharpOnTypeFormattingPass>();
         services.AddSingleton<IFormattingPass, FormattingDiagnosticValidationPass>();
         services.AddSingleton<IFormattingPass, FormattingContentValidationPass>();
-        services.AddSingleton<IFormattingPass, RazorFormattingPass>();
+        services.AddSingleton<IFormattingPass, LspRazorFormattingPass>();
 
         services.AddHandlerWithCapabilities<DocumentFormattingEndpoint>();
         services.AddHandlerWithCapabilities<DocumentOnTypeFormattingEndpoint>();
