@@ -7,6 +7,16 @@
         <target state="translated">值不能為 Null 或空字串。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Diagnostics_after">
+        <source>Diagnostics after:</source>
+        <target state="new">Diagnostics after:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Diagnostics_before">
+        <source>Diagnostics before:</source>
+        <target state="new">Diagnostics before:</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Directive">
         <source>directive</source>
         <target state="translated">指示詞</target>
@@ -19,9 +29,34 @@
 [Tab] 在元素之間瀏覽，[Enter] 完成</target>
         <note />
       </trans-unit>
+      <trans-unit id="Edit_at_adds">
+        <source>Edit at {0} adds the non-whitespace content '{1}'.</source>
+        <target state="new">Edit at {0} adds the non-whitespace content '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Edit_at_deletes">
+        <source>Edit at {0} deletes the non-whitespace content '{1}'.</source>
+        <target state="new">Edit at {0} deletes the non-whitespace content '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Format_operation_changed_diagnostics">
+        <source>A format operation is being abandoned because it would introduce or remove one of more diagnostics.</source>
+        <target state="new">A format operation is being abandoned because it would introduce or remove one of more diagnostics.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Format_operation_changed_nonwhitespace">
+        <source>A format operation is being abandoned because it would add or delete non-whitespace content.</source>
+        <target state="new">A format operation is being abandoned because it would add or delete non-whitespace content.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Invalid_Offset">
         <source>Invalid offset.</source>
         <target state="translated">位移無效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Language_Services_Missing_Service">
+        <source>Razor language services not configured properly, missing language service '{0}'.</source>
+        <target state="new">Razor language services not configured properly, missing language service '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="PositionCharacter_Outside_Range">
