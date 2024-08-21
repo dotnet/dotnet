@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -48,7 +50,7 @@ internal static class CodeBlockService
             || !csharpCodeBlock.Children.TryGetCloseBraceNode(out var closeBrace))
         {
             // No well-formed @code block exists. Generate the method within an @code block at the end of the file and conduct manual formatting.
-            var indentedMethod = FormattingUtilities.AddIndentationToMethod(templateWithMethodSignature, options, startingIndent: 0);
+            var indentedMethod = FormattingUtilities.AddIndentationToMethod(templateWithMethodSignature, options.TabSize, options.InsertSpaces, startingIndent: 0);
             var codeBlockStartText = "@code {" + Environment.NewLine;
             var sourceText = code.Source.Text;
             var lastCharacterLocation = sourceText.Lines[^1];
@@ -111,7 +113,8 @@ internal static class CodeBlockService
         var numCharacterBefore = codeBlockSourceLocation.CharacterIndex - 5;
         var formattedGeneratedMethod = FormattingUtilities.AddIndentationToMethod(
             method,
-            options,
+            options.TabSize,
+            options.InsertSpaces,
             codeBlockStartAbsoluteIndex,
             numCharacterBefore,
             source);

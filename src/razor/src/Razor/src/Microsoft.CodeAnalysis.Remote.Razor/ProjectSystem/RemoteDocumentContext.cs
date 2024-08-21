@@ -8,7 +8,9 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 
 internal class RemoteDocumentContext : VersionedDocumentContext
 {
-    public TextDocument TextDocument => ((RemoteDocumentSnapshot)Snapshot).TextDocument;
+    public TextDocument TextDocument => Snapshot.TextDocument;
+
+    public new RemoteDocumentSnapshot Snapshot => (RemoteDocumentSnapshot)base.Snapshot;
 
     public RemoteDocumentContext(Uri uri, RemoteDocumentSnapshot snapshot)
         // HACK: Need to revisit version and projectContext here I guess

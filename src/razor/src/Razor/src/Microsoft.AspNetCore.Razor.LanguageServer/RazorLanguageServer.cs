@@ -25,7 +25,9 @@ using Microsoft.AspNetCore.Razor.LanguageServer.SignatureHelp;
 using Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.FoldingRanges;
+using Microsoft.CodeAnalysis.Razor.GoToDefinition;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Protocol.DocumentSymbols;
 using Microsoft.CodeAnalysis.Razor.Rename;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
@@ -178,10 +180,11 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
             services.AddHandlerWithCapabilities<ImplementationEndpoint>();
             services.AddHandlerWithCapabilities<OnAutoInsertEndpoint>();
 
-            services.AddHandlerWithCapabilities<DefinitionEndpoint>();
-
             if (!featureOptions.UseRazorCohostServer)
             {
+                services.AddSingleton<IRazorComponentDefinitionService, RazorComponentDefinitionService>();
+                services.AddHandlerWithCapabilities<DefinitionEndpoint>();
+
                 services.AddSingleton<IRenameService, RenameService>();
                 services.AddHandlerWithCapabilities<RenameEndpoint>();
 
@@ -194,6 +197,9 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
                 services.AddHandlerWithCapabilities<InlayHintEndpoint>();
                 services.AddHandler<InlayHintResolveEndpoint>();
 
+                services.AddHandlerWithCapabilities<DocumentSymbolEndpoint>();
+                services.AddSingleton<IDocumentSymbolService, DocumentSymbolService>();
+
                 services.AddHandlerWithCapabilities<DocumentColorEndpoint>();
                 services.AddHandler<ColorPresentationEndpoint>();
             }
@@ -205,7 +211,6 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
             services.AddHandlerWithCapabilities<ValidateBreakpointRangeEndpoint>();
             services.AddHandlerWithCapabilities<FindAllReferencesEndpoint>();
             services.AddHandlerWithCapabilities<ProjectContextsEndpoint>();
-            services.AddHandlerWithCapabilities<DocumentSymbolEndpoint>();
             services.AddHandlerWithCapabilities<MapCodeEndpoint>();
         }
     }
