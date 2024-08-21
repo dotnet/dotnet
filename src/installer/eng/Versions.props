@@ -79,8 +79,8 @@
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/sdk -->
     <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.109</MicrosoftDotNetCommonItemTemplatesPackageVersion>
-    <MicrosoftNETSdkPackageVersion>8.0.109-servicing.24416.18</MicrosoftNETSdkPackageVersion>
-    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.109-servicing.24416.18</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
+    <MicrosoftNETSdkPackageVersion>8.0.109-servicing.24420.10</MicrosoftNETSdkPackageVersion>
+    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.109-servicing.24420.10</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
     <MicrosoftNETBuildExtensionsPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETBuildExtensionsPackageVersion>
     <MicrosoftDotnetToolsetInternalPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetToolsetInternalPackageVersion>
     <MicrosoftDotnetTemplateLocatorPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetTemplateLocatorPackageVersion>
