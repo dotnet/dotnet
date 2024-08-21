@@ -5,7 +5,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.DocumentPresentation;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -24,8 +23,6 @@ internal sealed partial class RemoteUriPresentationService(in ServiceArgs args) 
         protected override IRemoteUriPresentationService CreateService(in ServiceArgs args)
             => new RemoteUriPresentationService(in args);
     }
-
-    private readonly IDocumentMappingService _documentMappingService = args.ExportProvider.GetExportedValue<IDocumentMappingService>();
 
     public ValueTask<Response> GetPresentationAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,
@@ -54,7 +51,7 @@ internal sealed partial class RemoteUriPresentationService(in ServiceArgs args) 
 
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        var languageKind = _documentMappingService.GetLanguageKind(codeDocument, index, rightAssociative: true);
+        var languageKind = DocumentMappingService.GetLanguageKind(codeDocument, index, rightAssociative: true);
         if (languageKind is not RazorLanguageKind.Html)
         {
             // Roslyn doesn't currently support Uri presentation, and whilst it might seem counter intuitive,
