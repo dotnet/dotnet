@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-    Microsoft ResX Schema
-
+  <!-- 
+    Microsoft ResX Schema 
+    
     Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
     associated with the data types.
-
+    
     Example:
-
+    
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-
-    There are any number of "resheader" rows that contain simple
+                
+    There are any number of "resheader" rows that contain simple 
     name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
     mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
     extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
     read any of the formats listed below.
-
+    
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-
+    
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
+    value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -186,6 +186,12 @@
   </data>
   <data name="ConflictingTypeMappingsInferredForColumn" xml:space="preserve">
     <value>Conflicting type mappings were inferred for column '{column}'.</value>
+  </data>
+  <data name="ContainerTypeOnNestedOwnedEntityType" xml:space="preserve">
+    <value>The entity type '{entityType}' has a container column type configured, but is nested in another owned type. The container column type can only be specified on a top-level owned type mapped to a container.</value>
+  </data>
+  <data name="ContainerTypeOnNonContainer" xml:space="preserve">
+    <value>The entity type '{entityType}' has a container column type configured, but is not mapped to a container column, such as for JSON. The container column type can only be specified on a top-level owned type mapped to a container.</value>
   </data>
   <data name="CreateIndexOperationWithInvalidSortOrder" xml:space="preserve">
     <value>{numSortOrderProperties} values were provided in CreateIndexOperations.IsDescending, but the operation has {numColumns} columns.</value>
@@ -514,6 +520,9 @@
   <data name="JsonCantNavigateToParentEntity" xml:space="preserve">
     <value>Can't navigate from JSON-mapped entity '{jsonEntity}' to its parent entity '{parentEntity}' using navigation '{navigation}'. Entities mapped to JSON can only navigate to their children.</value>
   </data>
+  <data name="JsonEmptyString" xml:space="preserve">
+    <value>The database returned the empty string when a JSON object was expected.</value>
+  </data>
   <data name="JsonEntityMappedToDifferentTableOrViewThanOwner" xml:space="preserve">
     <value>Entity '{jsonType}' is mapped to JSON and also to a table or view '{tableOrViewName}', but its owner '{ownerType}' is mapped to a different table or view '{ownerTableOrViewName}'. Every entity mapped to JSON must also map to the same table or view as its owner.</value>
   </data>
@@ -588,6 +597,10 @@
   </data>
   <data name="LastUsedWithoutOrderBy" xml:space="preserve">
     <value>Queries performing '{method}' operation must have a deterministic sort order. Rewrite the query to apply an 'OrderBy' operation on the sequence before calling '{method}'.</value>
+  </data>
+  <data name="LogAcquiringMigrationLock" xml:space="preserve">
+    <value>Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.</value>
+    <comment>Information RelationalEventId.AcquiringMigrationLock</comment>
   </data>
   <data name="LogAmbientTransaction" xml:space="preserve">
     <value>An ambient transaction has been detected, but the current provider does not support ambient transactions. See https://go.microsoft.com/fwlink/?LinkId=800142</value>
@@ -1003,6 +1016,9 @@
   </data>
   <data name="OneOfThreeValuesMustBeSet" xml:space="preserve">
     <value>Exactly one of '{param1}', '{param2}' or '{param3}' must be set.</value>
+  </data>
+  <data name="OneOfTwoValuesMustBeSet" xml:space="preserve">
+    <value>Exactly one of '{param1}' or '{param2}' must be set.</value>
   </data>
   <data name="OnlyConstantsSupportedInInlineCollectionQueryRoots" xml:space="preserve">
     <value>Only constants are supported inside inline collection query roots.</value>

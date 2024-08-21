@@ -332,7 +332,7 @@ FROM [JsonEntitiesBasic] AS [j]
 
         AssertSql(
             """
-@p0='2111-11-11T00:00:00' (Nullable = false) (Size = 19)
+@p0='2111-11-11T00:00:00' (Nullable = false) (Size = 4000)
 @p1='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -603,7 +603,7 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='t' (Nullable = false) (Size = 1)
+@p0='t' (Nullable = false) (Size = 4000)
 @p1='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -626,8 +626,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='3000-01-01T12:34:56' (Nullable = false) (Size = 19)
-@p1='3000-01-01T12:34:56' (Nullable = false) (Size = 19)
+@p0='3000-01-01T12:34:56' (Nullable = false) (Size = 4000)
+@p1='3000-01-01T12:34:56' (Nullable = false) (Size = 4000)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -650,8 +650,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='3000-01-01T12:34:56-04:00' (Nullable = false) (Size = 25)
-@p1='3000-01-01T12:34:56-04:00' (Nullable = false) (Size = 25)
+@p0='3000-01-01T12:34:56-04:00' (Nullable = false) (Size = 4000)
+@p1='3000-01-01T12:34:56-04:00' (Nullable = false) (Size = 4000)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -722,8 +722,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='12345678-1234-4321-5555-987654321000' (Nullable = false) (Size = 36)
-@p1='12345678-1234-4321-5555-987654321000' (Nullable = false) (Size = 36)
+@p0='12345678-1234-4321-5555-987654321000' (Nullable = false) (Size = 4000)
+@p1='12345678-1234-4321-5555-987654321000' (Nullable = false) (Size = 4000)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -866,8 +866,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='10:01:01.007' (Nullable = false) (Size = 12)
-@p1='10:01:01.007' (Nullable = false) (Size = 12)
+@p0='10:01:01.007' (Nullable = false) (Size = 4000)
+@p1='10:01:01.007' (Nullable = false) (Size = 4000)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1315,7 +1315,7 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='True' (Nullable = false) (Size = 5)
+@p0='True' (Nullable = false) (Size = 4000)
 @p1='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1338,7 +1338,7 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='N' (Nullable = false) (Size = 1)
+@p0='N' (Nullable = false) (Size = 4000)
 @p1='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1432,8 +1432,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[1024,2048]' (Nullable = false) (Size = 4000)
-@p1='[999,997]' (Nullable = false) (Size = 4000)
+@p0='[1024,2048]' (Nullable = false) (Size = 11)
+@p1='[999,997]' (Nullable = false) (Size = 9)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1455,8 +1455,8 @@ FROM [JsonEntitiesBasic] AS [j]
 
         AssertSql(
             """
-@p0='[true,true,true,false]' (Nullable = false) (Size = 4000)
-@p1='[true,true,false]' (Nullable = false) (Size = 4000)
+@p0='[true,true,true,false]' (Nullable = false) (Size = 22)
+@p1='[true,true,false]' (Nullable = false) (Size = 17)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1479,8 +1479,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='Dg==' (Nullable = false) (Size = 4)
-@p1='GRo=' (Nullable = false) (Size = 4)
+@p0='Dg==' (Nullable = false) (Size = 4000)
+@p1='GRo=' (Nullable = false) (Size = 4000)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1503,8 +1503,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='["A","B","\u0022","\u0000"]' (Nullable = false) (Size = 4000)
-@p1='["E","F","C","\u00F6","r","E","\u0022","\\"]' (Nullable = false) (Size = 4000)
+@p0='["A","B","\u0022","\u0000"]' (Nullable = false) (Size = 27)
+@p1='["E","F","C","\u00F6","r","E","\u0022","\\"]' (Nullable = false) (Size = 44)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1527,8 +1527,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='["2000-01-01T12:34:56","3000-01-01T12:34:56","3000-01-01T12:34:56"]' (Nullable = false) (Size = 4000)
-@p1='["2000-01-01T12:34:56","3000-01-01T12:34:56","3000-01-01T12:34:56"]' (Nullable = false) (Size = 4000)
+@p0='["2000-01-01T12:34:56","3000-01-01T12:34:56","3000-01-01T12:34:56"]' (Nullable = false) (Size = 67)
+@p1='["2000-01-01T12:34:56","3000-01-01T12:34:56","3000-01-01T12:34:56"]' (Nullable = false) (Size = 67)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1551,8 +1551,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='["3000-01-01T12:34:56-04:00"]' (Nullable = false) (Size = 4000)
-@p1='["3000-01-01T12:34:56-04:00"]' (Nullable = false) (Size = 4000)
+@p0='["3000-01-01T12:34:56-04:00"]' (Nullable = false) (Size = 29)
+@p1='["3000-01-01T12:34:56-04:00"]' (Nullable = false) (Size = 29)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1575,8 +1575,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[-13579.01]' (Nullable = false) (Size = 4000)
-@p1='[-13579.01]' (Nullable = false) (Size = 4000)
+@p0='[-13579.01]' (Nullable = false) (Size = 11)
+@p1='[-13579.01]' (Nullable = false) (Size = 11)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1599,8 +1599,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[-1.23456789,1.23456789,0,-1.23579]' (Nullable = false) (Size = 4000)
-@p1='[-1.23456789,1.23456789,0,-1.23579]' (Nullable = false) (Size = 4000)
+@p0='[-1.23456789,1.23456789,0,-1.23579]' (Nullable = false) (Size = 35)
+@p1='[-1.23456789,1.23456789,0,-1.23579]' (Nullable = false) (Size = 35)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1623,8 +1623,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='["12345678-1234-4321-5555-987654321000"]' (Nullable = false) (Size = 4000)
-@p1='["12345678-1234-4321-5555-987654321000"]' (Nullable = false) (Size = 4000)
+@p0='["12345678-1234-4321-5555-987654321000"]' (Nullable = false) (Size = 40)
+@p1='["12345678-1234-4321-5555-987654321000"]' (Nullable = false) (Size = 40)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1647,8 +1647,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[-3234]' (Nullable = false) (Size = 4000)
-@p1='[-3234]' (Nullable = false) (Size = 4000)
+@p0='[-3234]' (Nullable = false) (Size = 7)
+@p1='[-3234]' (Nullable = false) (Size = 7)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1671,8 +1671,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[-3234]' (Nullable = false) (Size = 4000)
-@p1='[-3234]' (Nullable = false) (Size = 4000)
+@p0='[-3234]' (Nullable = false) (Size = 7)
+@p1='[-3234]' (Nullable = false) (Size = 7)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1695,8 +1695,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[]' (Nullable = false) (Size = 4000)
-@p1='[]' (Nullable = false) (Size = 4000)
+@p0='[]' (Nullable = false) (Size = 2)
+@p1='[]' (Nullable = false) (Size = 2)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1719,8 +1719,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[-108]' (Nullable = false) (Size = 4000)
-@p1='[-108]' (Nullable = false) (Size = 4000)
+@p0='[-108]' (Nullable = false) (Size = 6)
+@p1='[-108]' (Nullable = false) (Size = 6)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1743,8 +1743,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[-1.234,-1.234]' (Nullable = false) (Size = 4000)
-@p1='[0,-1.234]' (Nullable = false) (Size = 4000)
+@p0='[-1.234,-1.234]' (Nullable = false) (Size = 15)
+@p1='[0,-1.234]' (Nullable = false) (Size = 10)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1767,8 +1767,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='["10:09:08.007","10:01:01.007"]' (Nullable = false) (Size = 4000)
-@p1='["10:01:01.007","-9:50:51.993"]' (Nullable = false) (Size = 4000)
+@p0='["10:09:08.007","10:01:01.007"]' (Nullable = false) (Size = 31)
+@p1='["10:01:01.007","-9:50:51.993"]' (Nullable = false) (Size = 31)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1791,8 +1791,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='["3234-01-23","0001-01-07"]' (Nullable = false) (Size = 4000)
-@p1='["0001-01-07","4321-01-21"]' (Nullable = false) (Size = 4000)
+@p0='["3234-01-23","0001-01-07"]' (Nullable = false) (Size = 27)
+@p1='["0001-01-07","4321-01-21"]' (Nullable = false) (Size = 27)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1815,8 +1815,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='["13:42:23.0000000","01:01:07.0000000"]' (Nullable = false) (Size = 4000)
-@p1='["01:01:07.0000000","07:17:27.0000000"]' (Nullable = false) (Size = 4000)
+@p0='["13:42:23.0000000","01:01:07.0000000"]' (Nullable = false) (Size = 39)
+@p1='["01:01:07.0000000","07:17:27.0000000"]' (Nullable = false) (Size = 39)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1839,8 +1839,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[1534]' (Nullable = false) (Size = 4000)
-@p1='[1534]' (Nullable = false) (Size = 4000)
+@p0='[1534]' (Nullable = false) (Size = 6)
+@p1='[1534]' (Nullable = false) (Size = 6)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1863,8 +1863,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[1237775789]' (Nullable = false) (Size = 4000)
-@p1='[1237775789]' (Nullable = false) (Size = 4000)
+@p0='[1237775789]' (Nullable = false) (Size = 12)
+@p1='[1237775789]' (Nullable = false) (Size = 12)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1887,8 +1887,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[1234555555123456789]' (Nullable = false) (Size = 4000)
-@p1='[1234555555123456789]' (Nullable = false) (Size = 4000)
+@p0='[1234555555123456789]' (Nullable = false) (Size = 21)
+@p1='[1234555555123456789]' (Nullable = false) (Size = 21)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1911,8 +1911,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[null,77]' (Nullable = false) (Size = 4000)
-@p1='[null,-2147483648,0,null,2147483647,null,77,null]' (Nullable = false) (Size = 4000)
+@p0='[null,77]' (Nullable = false) (Size = 9)
+@p1='[null,-2147483648,0,null,2147483647,null,77,null]' (Nullable = false) (Size = 49)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1959,8 +1959,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[-3]' (Nullable = false) (Size = 4000)
-@p1='[-3]' (Nullable = false) (Size = 4000)
+@p0='[-3]' (Nullable = false) (Size = 4)
+@p1='[-3]' (Nullable = false) (Size = 4)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -1983,8 +1983,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[-3]' (Nullable = false) (Size = 4000)
-@p1='[-3]' (Nullable = false) (Size = 4000)
+@p0='[-3]' (Nullable = false) (Size = 4)
+@p1='[-3]' (Nullable = false) (Size = 4)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -2007,8 +2007,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[-3]' (Nullable = false) (Size = 4000)
-@p1='[-3]' (Nullable = false) (Size = 4000)
+@p0='[-3]' (Nullable = false) (Size = 4)
+@p1='[-3]' (Nullable = false) (Size = 4)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -2055,8 +2055,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[-1,null,-7,2]' (Nullable = false) (Size = 4000)
-@p1='[-1,-3,-7,2]' (Nullable = false) (Size = 4000)
+@p0='[-1,null,-7,2]' (Nullable = false) (Size = 14)
+@p1='[-1,-3,-7,2]' (Nullable = false) (Size = 12)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -2103,8 +2103,8 @@ WHERE [j].[Id] = 1
 
         AssertSql(
             """
-@p0='[-3]' (Nullable = false) (Size = 4000)
-@p1='[-1]' (Nullable = false) (Size = 4000)
+@p0='[-3]' (Nullable = false) (Size = 4)
+@p1='[-1]' (Nullable = false) (Size = 4)
 @p2='1'
 
 SET IMPLICIT_TRANSACTIONS OFF;
@@ -2419,6 +2419,13 @@ WHERE [j].[Id] = 2
             _ => "1557"
         };
 
+        string updateParameterSize = value switch
+        {
+            true => "4000",
+            false => "5",
+            _ => "2"
+        };
+
         string updateParameter = value switch
         {
             true => "NULL",
@@ -2467,7 +2474,7 @@ WHERE [j].[Id] = 7624
 """,
                 //
 
-"@p0=" + updateParameter + @" (Nullable = false) (Size = 4000)
+"@p0=" + updateParameter + @" (Nullable = false) (Size = " + updateParameterSize  + @")
 @p1='7624'
 
 SET IMPLICIT_TRANSACTIONS OFF;
