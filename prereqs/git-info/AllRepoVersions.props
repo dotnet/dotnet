@@ -29,19 +29,19 @@
     <razorOutputPackageVersion>9.0.0-preview.24420.5</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>fdb9965ce68c1f4e1c0ff301488adf9caa958615</roslynanalyzersGitCommitHash>
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.24415.1</roslynanalyzersOutputPackageVersion>
-    <roslynGitCommitHash>75b26a2088e76855528483674a1fbeea0137241b</roslynGitCommitHash>
-    <roslynOutputPackageVersion>4.12.0-2.24417.1</roslynOutputPackageVersion>
+    <roslynGitCommitHash>63a2cf641e32073c432a505dd899d9e2ea7abbd2</roslynGitCommitHash>
+    <roslynOutputPackageVersion>4.12.0-2.24419.4</roslynOutputPackageVersion>
     <runtimeGitCommitHash>0fbd81404d1f211572387498474063bc6f407f0f</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>9.0.0-rc.1.24414.5</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>d92413b87d36250859d8cb51ff69a03b5f5c4cab</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24372.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>cb1ff67bf7acbcdd95f83070b6e017c69f800659</sdkGitCommitHash>
-    <sourcebuildexternalsGitCommitHash>2cef086137a68586fdd69848261e2a8cf8c48b73</sourcebuildexternalsGitCommitHash>
-    <sourcebuildexternalsOutputPackageVersion>10.0.0-alpha.1.24415.1</sourcebuildexternalsOutputPackageVersion>
+    <sdkGitCommitHash>0118b3dfa58c46e32a2d0480a4c31835a6bfdf78</sdkGitCommitHash>
+    <sourcebuildexternalsGitCommitHash>ee22054b44ec9615dc3481c4decc1b007a83a2b0</sourcebuildexternalsGitCommitHash>
+    <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24420.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>0d066e61a30c2599d0ced871ea45acf0e10571af</sourcebuildreferencepackagesGitCommitHash>
     <sourcebuildreferencepackagesOutputPackageVersion>9.0.0-alpha.1.24405.2</sourcebuildreferencepackagesOutputPackageVersion>
-    <sourcelinkGitCommitHash>aeb2830c11db6fd2a81b82700afba2525549bef7</sourcelinkGitCommitHash>
-    <sourcelinkOutputPackageVersion>9.0.0-beta.24416.2</sourcelinkOutputPackageVersion>
+    <sourcelinkGitCommitHash>7cba97552a48dc288063d2cb2d56d52160fbc2a8</sourcelinkGitCommitHash>
+    <sourcelinkOutputPackageVersion>9.0.0-beta.24419.1</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>0710a7892d89999956e8808c28e9dd0512bd53f3</symreaderGitCommitHash>
     <symreaderOutputPackageVersion>2.2.0-beta.24327.2</symreaderOutputPackageVersion>
     <templatingGitCommitHash>0ae441fe922548f88da27f54edbe99e3a3e08948</templatingGitCommitHash>
