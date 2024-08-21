@@ -11,19 +11,19 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 [method: ImportingConstructor]
 internal class ProjectSnapshotFactory(DocumentSnapshotFactory documentSnapshotFactory, ITelemetryReporter telemetryReporter)
 {
-    private static readonly ConditionalWeakTable<Project, RemoteProjectSnapshot> _projectSnapshots = new();
+    private static readonly ConditionalWeakTable<Project, RemoteProjectSnapshot> s_projectSnapshots = new();
 
     private readonly DocumentSnapshotFactory _documentSnapshotFactory = documentSnapshotFactory;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
     public RemoteProjectSnapshot GetOrCreate(Project project)
     {
-        lock (_projectSnapshots)
+        lock (s_projectSnapshots)
         {
-            if (!_projectSnapshots.TryGetValue(project, out var projectSnapshot))
+            if (!s_projectSnapshots.TryGetValue(project, out var projectSnapshot))
             {
                 projectSnapshot = new RemoteProjectSnapshot(project, _documentSnapshotFactory, _telemetryReporter);
-                _projectSnapshots.Add(project, projectSnapshot);
+                s_projectSnapshots.Add(project, projectSnapshot);
             }
 
             return projectSnapshot;

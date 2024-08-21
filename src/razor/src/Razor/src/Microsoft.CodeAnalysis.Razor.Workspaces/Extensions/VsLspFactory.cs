@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
@@ -159,6 +160,18 @@ internal static class VsLspFactory
     public static Range CreateSingleLineRange((int line, int character) start, int length)
         => CreateRange(CreatePosition(start), CreatePosition(start.line, start.character + length));
 
+    public static Location CreateLocation(string filePath, LinePositionSpan span)
+        => CreateLocation(CreateFilePathUri(filePath), CreateRange(span));
+
+    public static Location CreateLocation(Uri uri, LinePositionSpan span)
+        => CreateLocation(uri, CreateRange(span));
+
+    public static Location CreateLocation(string filePath, Range range)
+        => CreateLocation(CreateFilePathUri(filePath), range);
+
+    public static Location CreateLocation(Uri uri, Range range)
+        => new() { Uri = uri, Range = range };
+
     public static TextEdit CreateTextEdit(Range range, string newText)
         => new() { Range = range, NewText = newText };
 
@@ -185,4 +198,16 @@ internal static class VsLspFactory
 
     public static TextEdit CreateTextEdit((int line, int character) position, string newText)
         => CreateTextEdit(CreateZeroWidthRange(position), newText);
+
+    public static Uri CreateFilePathUri(string filePath)
+    {
+        var builder = new UriBuilder
+        {
+            Path = filePath,
+            Scheme = Uri.UriSchemeFile,
+            Host = string.Empty,
+        };
+
+        return builder.Uri;
+    }
 }

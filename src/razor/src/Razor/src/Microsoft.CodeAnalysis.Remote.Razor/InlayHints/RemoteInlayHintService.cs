@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
-using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol.InlayHints;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -26,9 +25,6 @@ internal sealed partial class RemoteInlayHintService(in ServiceArgs args) : Razo
         protected override IRemoteInlayHintService CreateService(in ServiceArgs args)
             => new RemoteInlayHintService(in args);
     }
-
-    private readonly IDocumentMappingService _documentMappingService = args.ExportProvider.GetExportedValue<IDocumentMappingService>();
-    private readonly IFilePathService _filePathService = args.ExportProvider.GetExportedValue<IFilePathService>();
 
     public ValueTask<InlayHint[]?> GetInlayHintsAsync(JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo, JsonSerializableDocumentId razorDocumentId, InlayHintParams inlayHintParams, bool displayAllOverride, CancellationToken cancellationToken)
        => RunServiceAsync(
@@ -47,14 +43,14 @@ internal sealed partial class RemoteInlayHintService(in ServiceArgs args) : Razo
         // We are given a range by the client, but our mapping only succeeds if the start and end of the range can both be mapped
         // to C#. Since that doesn't logically match what we want from inlay hints, we instead get the minimum range of mappable
         // C# to get hints for. We'll filter that later, to remove the sections that can't be mapped back.
-        if (!_documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, span, out var projectedLinePositionSpan) &&
+        if (!DocumentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, span, out var projectedLinePositionSpan) &&
             !codeDocument.TryGetMinimalCSharpRange(span, out projectedLinePositionSpan))
         {
             // There's no C# in the range.
             return null;
         }
 
-        var generatedDocument = await context.GetGeneratedDocumentAsync(_filePathService, cancellationToken).ConfigureAwait(false);
+        var generatedDocument = await context.Snapshot.GetGeneratedDocumentAsync().ConfigureAwait(false);
 
         var textDocument = inlayHintParams.TextDocument.WithUri(generatedDocument.CreateUri());
         var range = projectedLinePositionSpan.ToRange();
@@ -73,7 +69,7 @@ internal sealed partial class RemoteInlayHintService(in ServiceArgs args) : Razo
         foreach (var hint in hints)
         {
             if (csharpSourceText.TryGetAbsoluteIndex(hint.Position.ToLinePosition(), out var absoluteIndex) &&
-                _documentMappingService.TryMapToHostDocumentPosition(csharpDocument, absoluteIndex, out var hostDocumentPosition, out var hostDocumentIndex))
+                DocumentMappingService.TryMapToHostDocumentPosition(csharpDocument, absoluteIndex, out var hostDocumentPosition, out var hostDocumentIndex))
             {
                 // We know this C# maps to Razor, but does it map to Razor that we like?
                 var node = syntaxTree.Root.FindInnermostNode(hostDocumentIndex);
@@ -85,7 +81,7 @@ internal sealed partial class RemoteInlayHintService(in ServiceArgs args) : Razo
                 if (hint.TextEdits is not null)
                 {
                     var changes = hint.TextEdits.Select(csharpSourceText.GetTextChange);
-                    var mappedChanges = _documentMappingService.GetHostDocumentEdits(csharpDocument, changes);
+                    var mappedChanges = DocumentMappingService.GetHostDocumentEdits(csharpDocument, changes);
                     hint.TextEdits = mappedChanges.Select(razorSourceText.GetTextEdit).ToArray();
                 }
 
@@ -108,7 +104,7 @@ internal sealed partial class RemoteInlayHintService(in ServiceArgs args) : Razo
 
     private async ValueTask<InlayHint> ResolveInlayHintAsync(RemoteDocumentContext context, InlayHint inlayHint, CancellationToken cancellationToken)
     {
-        var generatedDocument = await context.GetGeneratedDocumentAsync(_filePathService, cancellationToken).ConfigureAwait(false);
+        var generatedDocument = await context.Snapshot.GetGeneratedDocumentAsync().ConfigureAwait(false);
 
         return await InlayHints.ResolveInlayHintAsync(generatedDocument, inlayHint, cancellationToken).ConfigureAwait(false);
     }

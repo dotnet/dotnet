@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Moq;
@@ -56,8 +57,8 @@ internal static class TestRazorFormattingService
         {
             new HtmlFormattingPass(mappingService, client, versionCache, loggerFactory),
             new CSharpFormattingPass(mappingService, loggerFactory),
-            new CSharpOnTypeFormattingPass(mappingService, loggerFactory),
-            new RazorFormattingPass(mappingService, optionsMonitor),
+            new LspCSharpOnTypeFormattingPass(mappingService, loggerFactory),
+            new LspRazorFormattingPass(mappingService, optionsMonitor),
             new FormattingDiagnosticValidationPass(mappingService, loggerFactory),
             new FormattingContentValidationPass(mappingService, loggerFactory),
         };

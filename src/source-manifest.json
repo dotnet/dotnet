@@ -13,10 +13,10 @@
       "commitSha": "d304c5f6f15bcd4f34f1841b33870cfab88e6937"
     },
     {
-      "packageVersion": "9.0.0-rc.2.24420.8",
+      "packageVersion": "9.0.0-rc.2.24420.12",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "387b17b4b22d7c3abd03e5ad623e03aa2d9a7157"
+      "commitSha": "36332c8183f0205ec098822545dbe65d17d93405"
     },
     {
       "packageVersion": "0.11.5-alpha.24379.1",
@@ -43,10 +43,10 @@
       "commitSha": "5838149521e80185e0dbe79720bd9ce6e81d2d35"
     },
     {
-      "packageVersion": "9.0.0-rc.1.24418.2",
+      "packageVersion": "9.0.0-rc.2.24419.9",
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "76e0a920b841cbf7201394c8ace4da790b29b1f2"
+      "commitSha": "d18b30f63dd3473c0d2bc61683eb997a1e8ef6ca"
     },
     {
       "packageVersion": "9.0.0-rc.1.24402.2",
@@ -73,10 +73,10 @@
       "commitSha": "0539e8e2516f708c834cb606340c7c9a110f96b3"
     },
     {
-      "packageVersion": "9.0.0-preview.24418.1",
+      "packageVersion": "9.0.0-preview.24420.5",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "da79940a3af779e3dc973baa1e4e6ebfa100abe1"
+      "commitSha": "2723187736b3610e04d92f007b9cf0d819f7d494"
     },
     {
       "packageVersion": "4.12.0-2.24417.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "d3d2c55c780fe88f269d1389a83a6c94f2da4f91"
+      "commitSha": "cb1ff67bf7acbcdd95f83070b6e017c69f800659"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24415.1",

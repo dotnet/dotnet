@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Telemetry;
@@ -11,6 +12,7 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
@@ -27,7 +29,9 @@ internal class RemoteCSharpSemanticTokensProvider(IFilePathService filePathServi
         using var _ = _telemetryReporter.TrackLspRequest(nameof(SemanticTokensRange.GetSemanticTokensAsync), Constants.ExternalAccessServerName, correlationId);
 
         // We have a razor document, lets find the generated C# document
-        var generatedDocument = await documentContext.GetGeneratedDocumentAsync(_filePathService, cancellationToken).ConfigureAwait(false);
+        Debug.Assert(documentContext is RemoteDocumentContext, "This method only works on document snapshots created in the OOP process");
+        var snapshot = (RemoteDocumentSnapshot)documentContext.Snapshot;
+        var generatedDocument = await snapshot.GetGeneratedDocumentAsync().ConfigureAwait(false);
 
         var data = await SemanticTokensRange.GetSemanticTokensAsync(
             generatedDocument,
