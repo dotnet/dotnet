@@ -24,6 +24,14 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
             = new ResourceManager("Microsoft.EntityFrameworkCore.SqlServer.Properties.SqlServerStrings", typeof(SqlServerStrings).Assembly);
 
         /// <summary>
+        ///     Cannot configure engine type '{newEngineType}', because engine type was already configured as '{oldEngineType}'.
+        /// </summary>
+        public static string AlreadyConfiguredEngineType(object? newEngineType, object? oldEngineType)
+            => string.Format(
+                GetString("AlreadyConfiguredEngineType", nameof(newEngineType), nameof(oldEngineType)),
+                newEngineType, oldEngineType);
+
+        /// <summary>
         ///     To change the IDENTITY property of a column, the column needs to be dropped and recreated.
         /// </summary>
         public static string AlterIdentityColumn
@@ -206,6 +214,14 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
         /// </summary>
         public static string InvalidColumnNameForFreeText
             => GetString("InvalidColumnNameForFreeText");
+
+        /// <summary>
+        ///     Engine type was not configured. Use one of {methods} to configure it.
+        /// </summary>
+        public static string InvalidEngineType(object? methods)
+            => string.Format(
+                GetString("InvalidEngineType", nameof(methods)),
+                methods);
 
         /// <summary>
         ///     The specified table '{table}' is not in a valid format. Specify tables using the format '[schema].[table]'.
@@ -800,6 +816,31 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
             }
 
             return (EventDefinition<string, string>)definition;
+        }
+
+        /// <summary>
+        ///     The entity type '{entityType}' makes use of the SQL Server native 'json' type. Please note that support for this type in EF Core 9 is experimental and may change in future releases.
+        /// </summary>
+        public static EventDefinition<string> LogJsonTypeExperimental(IDiagnosticsLogger logger)
+        {
+            var definition = ((Diagnostics.Internal.SqlServerLoggingDefinitions)logger.Definitions).LogJsonTypeExperimental;
+            if (definition == null)
+            {
+                definition = NonCapturingLazyInitializer.EnsureInitialized(
+                    ref ((Diagnostics.Internal.SqlServerLoggingDefinitions)logger.Definitions).LogJsonTypeExperimental,
+                    logger,
+                    static logger => new EventDefinition<string>(
+                        logger.Options,
+                        SqlServerEventId.JsonTypeExperimental,
+                        LogLevel.Warning,
+                        "SqlServerEventId.JsonTypeExperimental",
+                        level => LoggerMessage.Define<string>(
+                            level,
+                            SqlServerEventId.JsonTypeExperimental,
+                            _resourceManager.GetString("LogJsonTypeExperimental")!)));
+            }
+
+            return (EventDefinition<string>)definition;
         }
 
         /// <summary>

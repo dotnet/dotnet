@@ -1,18 +1,15 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.IO;
 using System.Text;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.MSBuild;
-using Microsoft.CodeAnalysis.Simplification;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.Query.Design;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.EntityFrameworkCore.Scaffolding.Internal;
 
@@ -135,7 +132,13 @@ public class DbContextOperations
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     public virtual IReadOnlyList<string> Optimize(
-        string? outputDir, string? modelNamespace, string? contextTypeName, string? suffix, bool scaffoldModel, bool precompileQueries)
+        string? outputDir,
+        string? modelNamespace,
+        string? contextTypeName,
+        string? suffix,
+        bool scaffoldModel,
+        bool precompileQueries,
+        bool nativeAot)
     {
         var optimizeAllInAssembly = contextTypeName == "*";
         var contexts = optimizeAllInAssembly ? CreateAllContexts() : [CreateContext(contextTypeName)];
@@ -155,6 +158,7 @@ public class DbContextOperations
                     precompileQueries,
                     context,
                     optimizeAllInAssembly,
+                    nativeAot,
                     generatedFiles,
                     generatedFileNames);
                 contextOptimized = true;
@@ -185,6 +189,7 @@ public class DbContextOperations
         bool precompileQueries,
         DbContext context,
         bool optimizeAllInAssembly,
+        bool nativeAot,
         List<string> generatedFiles,
         HashSet<string> generatedFileNames)
     {
@@ -196,7 +201,8 @@ public class DbContextOperations
         if (scaffoldModel
             && (!optimizeAllInAssembly || contextType.Assembly == _assembly))
         {
-            generatedFiles.AddRange(ScaffoldCompiledModel(outputDir, modelNamespace, context, suffix, services, generatedFileNames));
+            generatedFiles.AddRange(ScaffoldCompiledModel(
+                outputDir, modelNamespace, context, suffix, nativeAot, services, generatedFileNames));
             if (precompileQueries)
             {
                 memberAccessReplacements = ((IRuntimeModel)context.GetService<IDesignTimeModel>().Model).GetUnsafeAccessors();
@@ -220,6 +226,7 @@ public class DbContextOperations
         string? modelNamespace,
         DbContext context,
         string? suffix,
+        bool nativeAot,
         IServiceProvider services,
         ISet<string> generatedFileNames)
     {
@@ -258,6 +265,7 @@ public class DbContextOperations
                 Language = _language,
                 UseNullableReferenceTypes = _nullable,
                 Suffix = suffix,
+                ForNativeAot = nativeAot,
                 GeneratedFileNames = generatedFileNames
             });
 

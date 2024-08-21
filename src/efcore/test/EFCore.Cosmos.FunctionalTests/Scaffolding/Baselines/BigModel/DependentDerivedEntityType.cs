@@ -115,15 +115,15 @@ namespace TestNamespace
 
         public static void CreateAnnotations(RuntimeEntityType runtimeEntityType)
         {
-            var principalId = runtimeEntityType.FindProperty("PrincipalId")!;
-            var principalAlternateId = runtimeEntityType.FindProperty("PrincipalAlternateId")!;
-            var enumDiscriminator = runtimeEntityType.FindProperty("EnumDiscriminator")!;
-            var id = runtimeEntityType.FindProperty("Id")!;
-            var __id = runtimeEntityType.FindProperty("__id")!;
-            var __jObject = runtimeEntityType.FindProperty("__jObject")!;
-            var data = runtimeEntityType.FindProperty("Data")!;
-            var money = runtimeEntityType.FindProperty("Money")!;
-            var principal = runtimeEntityType.FindNavigation("Principal")!;
+            var principalId = runtimeEntityType.FindProperty("PrincipalId");
+            var principalAlternateId = runtimeEntityType.FindProperty("PrincipalAlternateId");
+            var enumDiscriminator = runtimeEntityType.FindProperty("EnumDiscriminator");
+            var id = runtimeEntityType.FindProperty("Id");
+            var __id = runtimeEntityType.FindProperty("__id");
+            var __jObject = runtimeEntityType.FindProperty("__jObject");
+            var data = runtimeEntityType.FindProperty("Data");
+            var money = runtimeEntityType.FindProperty("Money");
+            var principal = runtimeEntityType.FindNavigation("Principal");
             runtimeEntityType.SetOriginalValuesFactory(
                 ISnapshot (InternalEntityEntry source) =>
                 {
@@ -142,7 +142,7 @@ namespace TestNamespace
                 ISnapshot (InternalEntityEntry source) =>
                 {
                     var entity5 = ((CompiledModelTestBase.DependentDerived<byte?>)(source.Entity));
-                    return ((ISnapshot)(new Snapshot<long, Guid, string, object>(((ValueComparer<long>)(((IProperty)principalId).GetKeyValueComparer())).Snapshot(source.GetCurrentValue<long>(principalId)), ((ValueComparer<Guid>)(((IProperty)principalAlternateId).GetKeyValueComparer())).Snapshot(source.GetCurrentValue<Guid>(principalAlternateId)), (source.GetCurrentValue<string>(__id) == null ? null : ((ValueComparer<string>)(((IProperty)__id).GetKeyValueComparer())).Snapshot(source.GetCurrentValue<string>(__id))), DependentBaseUnsafeAccessors<byte?>.Principal(entity5))));
+                    return ((ISnapshot)(new Snapshot<long, Guid, object>(((ValueComparer<long>)(((IProperty)principalId).GetKeyValueComparer())).Snapshot(source.GetCurrentValue<long>(principalId)), ((ValueComparer<Guid>)(((IProperty)principalAlternateId).GetKeyValueComparer())).Snapshot(source.GetCurrentValue<Guid>(principalAlternateId)), DependentBaseUnsafeAccessors<byte?>.Principal(entity5))));
                 });
             runtimeEntityType.Counts = new PropertyCounts(
                 propertyCount: 8,
@@ -150,7 +150,7 @@ namespace TestNamespace
                 complexPropertyCount: 0,
                 originalValueCount: 8,
                 shadowCount: 6,
-                relationshipCount: 4,
+                relationshipCount: 3,
                 storeGeneratedCount: 2);
             runtimeEntityType.AddAnnotation("DiscriminatorMappingComplete", false);
 

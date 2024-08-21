@@ -39,7 +39,7 @@ public class NorthwindWhereQueryCosmosTest : NorthwindWhereQueryTestBase<Northwi
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] + 10) = 10258))
+WHERE ((c["$type"] = "Order") AND ((c["OrderID"] + 10) = 10258))
 """);
             });
 
@@ -57,7 +57,7 @@ WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] + 10) = 10258))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] - 10) = 10238))
+WHERE ((c["$type"] = "Order") AND ((c["OrderID"] - 10) = 10238))
 """);
             });
 
@@ -75,7 +75,7 @@ WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] - 10) = 10238))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] * 1) = 10248))
+WHERE ((c["$type"] = "Order") AND ((c["OrderID"] * 1) = 10248))
 """);
             });
 
@@ -93,7 +93,7 @@ WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] * 1) = 10248))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] / 1) = 10248))
+WHERE ((c["$type"] = "Order") AND ((c["OrderID"] / 1) = 10248))
 """);
             });
 
@@ -111,7 +111,7 @@ WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] / 1) = 10248))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] % 10248) = 0))
+WHERE ((c["$type"] = "Order") AND ((c["OrderID"] % 10248) = 0))
 """);
             });
 
@@ -130,7 +130,7 @@ WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] % 10248) = 0))
                         """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ((c["CustomerID"] = "ALFKI") | (c["CustomerID"] = "ANATR")))
+WHERE ((c["id"] = "ALFKI") | (c["id"] = "ANATR"))
 """);
                 });
         }
@@ -146,7 +146,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ((c["CustomerID"] = "ALFKI") | (c["
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ((c["CustomerID"] = "ALFKI") & (c["CustomerID"] = "ANATR")))
+WHERE ((c["id"] = "ALFKI") & (c["id"] = "ANATR"))
 """);
             });
 
@@ -162,7 +162,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ((c["CustomerID"] = "ALFKI") & (c["
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ((c["CustomerID"] = "ALFKI") != true))
+WHERE ((c["id"] = "ALFKI") != true)
 """);
             });
 
@@ -180,7 +180,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ((c["CustomerID"] = "ALFKI") != tru
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] << 1) = 20496))
+WHERE ((c["$type"] = "Order") AND ((c["OrderID"] << 1) = 20496))
 """);
             });
 
@@ -198,7 +198,7 @@ WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] << 1) = 20496))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] >> 1) = 5124))
+WHERE ((c["$type"] = "Order") AND ((c["OrderID"] >> 1) = 5124))
 """);
             });
 
@@ -216,7 +216,7 @@ WHERE ((c["Discriminator"] = "Order") AND ((c["OrderID"] >> 1) = 5124))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ((c["City"] = "Seattle") AND (c["ContactTitle"] = "Owner")))
+WHERE ((c["City"] = "Seattle") AND (c["ContactTitle"] = "Owner"))
 """);
             });
 
@@ -234,7 +234,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ((c["City"] = "Seattle") AND (c["Co
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ((c["CustomerID"] = "ALFKI") OR (c["CustomerID"] = "ANATR")))
+WHERE ((c["id"] = "ALFKI") OR (c["id"] = "ANATR"))
 """);
             });
 
@@ -252,7 +252,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ((c["CustomerID"] = "ALFKI") OR (c[
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND NOT((c["City"] != "Seattle")))
+WHERE NOT((c["City"] != "Seattle"))
 """);
             });
 
@@ -270,7 +270,7 @@ WHERE ((c["Discriminator"] = "Customer") AND NOT((c["City"] != "Seattle")))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] = 2))
+WHERE (c["ReportsTo"] = 2)
 """);
             });
 
@@ -288,7 +288,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] = 2))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] != 2))
+WHERE (c["ReportsTo"] != 2)
 """);
             });
 
@@ -306,7 +306,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] != 2))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] > 2))
+WHERE (c["ReportsTo"] > 2)
 """);
             });
 
@@ -324,7 +324,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] > 2))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] >= 2))
+WHERE (c["ReportsTo"] >= 2)
 """);
             });
 
@@ -342,7 +342,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] >= 2))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] < 3))
+WHERE (c["ReportsTo"] < 3)
 """);
             });
 
@@ -360,7 +360,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] < 3))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] <= 2))
+WHERE (c["ReportsTo"] <= 2)
 """);
             });
 
@@ -378,7 +378,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] <= 2))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ((c["CustomerID"] || "END") = "ALFKIEND"))
+WHERE ((c["id"] || "END") = "ALFKIEND")
 """);
             });
 
@@ -396,7 +396,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ((c["CustomerID"] || "END") = "ALFK
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (-(c["OrderID"]) = -10248))
+WHERE ((c["$type"] = "Order") AND (-(c["OrderID"]) = -10248))
 """);
             });
 
@@ -414,7 +414,7 @@ WHERE ((c["Discriminator"] = "Order") AND (-(c["OrderID"]) = -10248))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (~(c["OrderID"]) = -10249))
+WHERE ((c["$type"] = "Order") AND (~(c["OrderID"]) = -10249))
 """);
             });
 
@@ -434,7 +434,7 @@ WHERE ((c["Discriminator"] = "Order") AND (~(c["OrderID"]) = -10249))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (((c["Region"] != null) ? c["Region"] : "SP") = "BC"))
+WHERE (((c["Region"] != null) ? c["Region"] : "SP") = "BC")
 """);
             });
 
@@ -452,7 +452,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (((c["Region"] != null) ? c["Region
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (((c["Region"] != null) ? c["Region"] : "SP") = "BC"))
+WHERE (((c["Region"] != null) ? c["Region"] : "SP") = "BC")
 """);
             });
 
@@ -466,7 +466,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (((c["Region"] != null) ? c["Region
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
+WHERE (c["City"] = "London")
 """);
             });
 
@@ -493,7 +493,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_0))
+WHERE (c["City"] = @__city_0)
 """);
             });
 
@@ -512,7 +512,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_0))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__p_0))
+WHERE (c["City"] = @__p_0)
 """);
             });
 
@@ -528,7 +528,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__p_0))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__get_Item_0))
+WHERE (c["City"] = @__get_Item_0)
 """);
             });
 
@@ -544,7 +544,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__get_Item_0))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__predicateTuple_Item2_0))
+WHERE (c["City"] = @__predicateTuple_Item2_0)
 """);
             });
 
@@ -560,7 +560,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__predicateTuple_Item
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__predicateTuple_Item2_0))
+WHERE (c["City"] = @__predicateTuple_Item2_0)
 """);
             });
 
@@ -576,7 +576,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__predicateTuple_Item
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND @__predicate_0)
+WHERE @__predicate_0
 """);
             });
 
@@ -592,7 +592,7 @@ WHERE ((c["Discriminator"] = "Customer") AND @__predicate_0)
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_0))
+WHERE (c["City"] = @__city_0)
 """,
                     //
                     """
@@ -600,7 +600,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_0))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_0))
+WHERE (c["City"] = @__city_0)
 """);
             });
 
@@ -632,7 +632,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_0))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__GetCity_0))
+WHERE (c["City"] = @__GetCity_0)
 """,
                     //
                     """
@@ -640,7 +640,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__GetCity_0))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__GetCity_0))
+WHERE (c["City"] = @__GetCity_0)
 """);
             });
 
@@ -656,7 +656,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__GetCity_0))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_InstanceFieldValue_0))
+WHERE (c["City"] = @__city_InstanceFieldValue_0)
 """,
                     //
                     """
@@ -664,7 +664,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_InstanceFieldV
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_InstanceFieldValue_0))
+WHERE (c["City"] = @__city_InstanceFieldValue_0)
 """);
             });
 
@@ -680,7 +680,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_InstanceFieldV
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_InstancePropertyValue_0))
+WHERE (c["City"] = @__city_InstancePropertyValue_0)
 """,
                     //
                     """
@@ -688,7 +688,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_InstanceProper
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_InstancePropertyValue_0))
+WHERE (c["City"] = @__city_InstancePropertyValue_0)
 """);
             });
 
@@ -704,7 +704,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_InstanceProper
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__StaticFieldValue_0))
+WHERE (c["City"] = @__StaticFieldValue_0)
 """,
                     //
                     """
@@ -712,7 +712,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__StaticFieldValue_0)
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__StaticFieldValue_0))
+WHERE (c["City"] = @__StaticFieldValue_0)
 """);
             });
 
@@ -728,7 +728,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__StaticFieldValue_0)
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__StaticPropertyValue_0))
+WHERE (c["City"] = @__StaticPropertyValue_0)
 """,
                     //
                     """
@@ -736,7 +736,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__StaticPropertyValue
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__StaticPropertyValue_0))
+WHERE (c["City"] = @__StaticPropertyValue_0)
 """);
             });
 
@@ -752,7 +752,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__StaticPropertyValue
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_Nested_InstanceFieldValue_0))
+WHERE (c["City"] = @__city_Nested_InstanceFieldValue_0)
 """,
                     //
                     """
@@ -760,7 +760,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_Nested_Instanc
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_Nested_InstanceFieldValue_0))
+WHERE (c["City"] = @__city_Nested_InstanceFieldValue_0)
 """);
             });
 
@@ -776,7 +776,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_Nested_Instanc
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_Nested_InstancePropertyValue_0))
+WHERE (c["City"] = @__city_Nested_InstancePropertyValue_0)
 """,
                     //
                     """
@@ -784,7 +784,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_Nested_Instanc
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_Nested_InstancePropertyValue_0))
+WHERE (c["City"] = @__city_Nested_InstancePropertyValue_0)
 """);
             });
 
@@ -800,7 +800,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__city_Nested_Instanc
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__InstanceFieldValue_0))
+WHERE (c["City"] = @__InstanceFieldValue_0)
 """,
                     //
                     """
@@ -808,7 +808,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__InstanceFieldValue_
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__InstanceFieldValue_0))
+WHERE (c["City"] = @__InstanceFieldValue_0)
 """);
             });
 
@@ -824,7 +824,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__InstanceFieldValue_
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__InstanceFieldValue_0))
+WHERE (c["City"] = @__InstanceFieldValue_0)
 """,
                     //
                     """
@@ -832,7 +832,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__InstanceFieldValue_
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__InstanceFieldValue_0))
+WHERE (c["City"] = @__InstanceFieldValue_0)
 """);
             });
 
@@ -866,7 +866,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = @__InstanceFieldValue_
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (c["Title"] = "Sales Representative"))
+WHERE (c["Title"] = "Sales Representative")
 """);
             });
 
@@ -880,7 +880,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (c["Title"] = "Sales Representative
                     """
 SELECT VALUE c["Title"]
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (c["Title"] = "Sales Representative"))
+WHERE (c["Title"] = "Sales Representative")
 """);
             });
 
@@ -957,7 +957,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (c["Title"] = "Sales Representative
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
+WHERE (c["City"] = "London")
 """);
             });
 
@@ -971,7 +971,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND STRINGEQUALS(c["City"], "London", true))
+WHERE STRINGEQUALS(c["City"], "London", true)
 """);
             });
 
@@ -981,7 +981,7 @@ WHERE ((c["Discriminator"] = "Customer") AND STRINGEQUALS(c["City"], "London", t
             {
                 await base.Where_equals_method_int(a);
 
-                AssertSql("ReadItem(None, Employee|1)");
+                AssertSql("ReadItem(None, 1)");
             });
 
     public override Task Where_equals_using_object_overload_on_mismatched_types(bool async)
@@ -1004,7 +1004,7 @@ WHERE false
             {
                 await base.Where_equals_using_int_overload_on_mismatched_types(a);
 
-                AssertSql("ReadItem(None, Employee|1)");
+                AssertSql("ReadItem(None, 1)");
             });
 
     public override Task Where_equals_on_mismatched_types_nullable_int_long(bool async)
@@ -1059,7 +1059,7 @@ WHERE false
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] = @__intPrm_0))
+WHERE (c["ReportsTo"] = @__intPrm_0)
 """,
                     //
                     """
@@ -1067,7 +1067,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] = @__intPrm_0))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (@__intPrm_0 = c["ReportsTo"]))
+WHERE (@__intPrm_0 = c["ReportsTo"])
 """);
             });
 
@@ -1083,7 +1083,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (@__intPrm_0 = c["ReportsTo"]))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (@__nullableIntPrm_0 = c["ReportsTo"]))
+WHERE (@__nullableIntPrm_0 = c["ReportsTo"])
 """,
                     //
                     """
@@ -1091,7 +1091,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (@__nullableIntPrm_0 = c["ReportsTo
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] = @__nullableIntPrm_0))
+WHERE (c["ReportsTo"] = @__nullableIntPrm_0)
 """);
             });
 
@@ -1107,7 +1107,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] = @__nullableIntPrm
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (@__nullableIntPrm_0 = c["ReportsTo"]))
+WHERE (@__nullableIntPrm_0 = c["ReportsTo"])
 """,
                     //
                     """
@@ -1115,7 +1115,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (@__nullableIntPrm_0 = c["ReportsTo
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] = @__nullableIntPrm_0))
+WHERE (c["ReportsTo"] = @__nullableIntPrm_0)
 """);
             });
 
@@ -1129,7 +1129,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] = @__nullableIntPrm
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] = 2))
+WHERE (c["ReportsTo"] = 2)
 """);
             });
 
@@ -1143,7 +1143,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] = 2))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] = null))
+WHERE (c["ReportsTo"] = null)
 """);
             });
 
@@ -1157,7 +1157,7 @@ WHERE ((c["Discriminator"] = "Employee") AND (c["ReportsTo"] = null))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (LENGTH(c["City"]) = 6))
+WHERE (LENGTH(c["City"]) = 6)
 """);
             });
 
@@ -1171,7 +1171,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (LENGTH(c["City"]) = 6))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (INDEX_OF(c["City"], "Sea") != -1))
+WHERE (INDEX_OF(c["City"], "Sea") != -1)
 """);
             });
 
@@ -1185,7 +1185,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (INDEX_OF(c["City"], "Sea") != -1))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (REPLACE(c["City"], "Sea", "Rea") = "Reattle"))
+WHERE (REPLACE(c["City"], "Sea", "Rea") = "Reattle")
 """);
             });
 
@@ -1199,7 +1199,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (REPLACE(c["City"], "Sea", "Rea") =
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (SUBSTRING(c["City"], 1, 2) = "ea"))
+WHERE (SUBSTRING(c["City"], 1, 2) = "ea")
 """);
             });
 
@@ -1223,7 +1223,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (SUBSTRING(c["City"], 1, 2) = "ea")
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (GetCurrentDateTime() != @__myDatetime_0))
+WHERE (GetCurrentDateTime() != @__myDatetime_0)
 """);
             });
 
@@ -1239,7 +1239,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (GetCurrentDateTime() != @__myDatet
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (GetCurrentDateTime() != @__myDatetimeOffset_0))
+WHERE (GetCurrentDateTime() != @__myDatetimeOffset_0)
 """);
             });
 
@@ -1269,7 +1269,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (GetCurrentDateTime() != @__myDatet
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("yyyy", DateTimeAdd("yyyy", -1, c["OrderDate"])) = 1997))
+WHERE ((c["$type"] = "Order") AND (DateTimePart("yyyy", DateTimeAdd("yyyy", -1, c["OrderDate"])) = 1997))
 """);
             });
 
@@ -1283,7 +1283,7 @@ WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("yyyy", DateTimeAdd("yyy
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("yyyy", c["OrderDate"]) = 1998))
+WHERE ((c["$type"] = "Order") AND (DateTimePart("yyyy", c["OrderDate"]) = 1998))
 """);
             });
 
@@ -1297,7 +1297,7 @@ WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("yyyy", c["OrderDate"]) 
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("mm", c["OrderDate"]) = 4))
+WHERE ((c["$type"] = "Order") AND (DateTimePart("mm", c["OrderDate"]) = 4))
 """);
             });
 
@@ -1319,7 +1319,7 @@ WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("mm", c["OrderDate"]) = 
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("dd", c["OrderDate"]) = 4))
+WHERE ((c["$type"] = "Order") AND (DateTimePart("dd", c["OrderDate"]) = 4))
 """);
             });
 
@@ -1333,7 +1333,7 @@ WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("dd", c["OrderDate"]) = 
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("hh", c["OrderDate"]) = 0))
+WHERE ((c["$type"] = "Order") AND (DateTimePart("hh", c["OrderDate"]) = 0))
 """);
             });
 
@@ -1347,7 +1347,7 @@ WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("hh", c["OrderDate"]) = 
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("mi", c["OrderDate"]) = 0))
+WHERE ((c["$type"] = "Order") AND (DateTimePart("mi", c["OrderDate"]) = 0))
 """);
             });
 
@@ -1361,7 +1361,7 @@ WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("mi", c["OrderDate"]) = 
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("ss", c["OrderDate"]) = 0))
+WHERE ((c["$type"] = "Order") AND (DateTimePart("ss", c["OrderDate"]) = 0))
 """);
             });
 
@@ -1375,7 +1375,7 @@ WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("ss", c["OrderDate"]) = 
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("ms", c["OrderDate"]) = 0))
+WHERE ((c["$type"] = "Order") AND (DateTimePart("ms", c["OrderDate"]) = 0))
 """);
             });
 
@@ -1405,7 +1405,7 @@ WHERE ((c["Discriminator"] = "Order") AND (DateTimePart("ms", c["OrderDate"]) = 
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ("London" = c["City"]))
+WHERE ("London" = c["City"])
 """);
             });
 
@@ -1419,7 +1419,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ("London" = c["City"]))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["Region"] = null))
+WHERE (c["Region"] = null)
 """);
             });
 
@@ -1433,7 +1433,6 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["Region"] = null))
                     """
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 """);
             });
 
@@ -1456,12 +1455,11 @@ WHERE false
             async, async a =>
             {
                 await base.Where_is_not_null(a);
-
-                AssertSql(
-                    """
+AssertSql(
+    """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] != null))
+WHERE (c["City"] != null)
 """);
             });
 
@@ -1484,12 +1482,10 @@ WHERE false
             async, async a =>
             {
                 await base.Where_constant_is_not_null(a);
-
-                AssertSql(
-                    """
+AssertSql(
+    """
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 """);
             });
 
@@ -1503,7 +1499,7 @@ WHERE (c["Discriminator"] = "Customer")
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = c["City"]))
+WHERE (c["City"] = c["City"])
 """);
             });
 
@@ -1570,7 +1566,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = c["City"]))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND c["Discontinued"])
+WHERE ((c["$type"] = "Product") AND c["Discontinued"])
 """);
             });
 
@@ -1584,7 +1580,7 @@ WHERE ((c["Discriminator"] = "Product") AND c["Discontinued"])
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND NOT(c["Discontinued"]))
+WHERE ((c["$type"] = "Product") AND NOT(c["Discontinued"]))
 """);
             });
 
@@ -1606,7 +1602,7 @@ WHERE ((c["Discriminator"] = "Product") AND NOT(c["Discontinued"]))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND NOT(NOT((c["Discontinued"] = true))))
+WHERE ((c["$type"] = "Product") AND NOT(NOT((c["Discontinued"] = true))))
 """);
             });
 
@@ -1620,7 +1616,7 @@ WHERE ((c["Discriminator"] = "Product") AND NOT(NOT((c["Discontinued"] = true)))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND c["Discontinued"])
+WHERE ((c["$type"] = "Product") AND c["Discontinued"])
 """);
             });
 
@@ -1634,7 +1630,7 @@ WHERE ((c["Discriminator"] = "Product") AND c["Discontinued"])
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND NOT(c["Discontinued"]))
+WHERE ((c["$type"] = "Product") AND NOT(c["Discontinued"]))
 """);
             });
 
@@ -1648,7 +1644,7 @@ WHERE ((c["Discriminator"] = "Product") AND NOT(c["Discontinued"]))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (c["Discontinued"] = true))
+WHERE ((c["$type"] = "Product") AND (c["Discontinued"] = true))
 """);
             });
 
@@ -1662,7 +1658,7 @@ WHERE ((c["Discriminator"] = "Product") AND (c["Discontinued"] = true))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (((c["ProductID"] > 100) AND c["Discontinued"]) OR (c["Discontinued"] = true)))
+WHERE ((c["$type"] = "Product") AND (((c["ProductID"] > 100) AND c["Discontinued"]) OR (c["Discontinued"] = true)))
 """);
             });
 
@@ -1676,7 +1672,7 @@ WHERE ((c["Discriminator"] = "Product") AND (((c["ProductID"] > 100) AND c["Disc
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (c["Discontinued"] = (c["ProductID"] > 50)))
+WHERE ((c["$type"] = "Product") AND (c["Discontinued"] = (c["ProductID"] > 50)))
 """);
             });
 
@@ -1690,7 +1686,7 @@ WHERE ((c["Discriminator"] = "Product") AND (c["Discontinued"] = (c["ProductID"]
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (NOT(c["Discontinued"]) = NOT(c["Discontinued"])))
+WHERE ((c["$type"] = "Product") AND (NOT(c["Discontinued"]) = NOT(c["Discontinued"])))
 """);
             });
 
@@ -1704,7 +1700,7 @@ WHERE ((c["Discriminator"] = "Product") AND (NOT(c["Discontinued"]) = NOT(c["Dis
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (NOT((c["ProductID"] > 50)) = NOT((c["ProductID"] > 20))))
+WHERE ((c["$type"] = "Product") AND (NOT((c["ProductID"] > 50)) = NOT((c["ProductID"] > 20))))
 """);
             });
 
@@ -1718,7 +1714,7 @@ WHERE ((c["Discriminator"] = "Product") AND (NOT((c["ProductID"] > 50)) = NOT((c
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (NOT(c["Discontinued"]) = (c["ProductID"] > 50)))
+WHERE ((c["$type"] = "Product") AND (NOT(c["Discontinued"]) = (c["ProductID"] > 50)))
 """);
             });
 
@@ -1734,7 +1730,7 @@ WHERE ((c["Discriminator"] = "Product") AND (NOT(c["Discontinued"]) = (c["Produc
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND @__prm_0)
+WHERE ((c["$type"] = "Product") AND @__prm_0)
 """);
             });
 
@@ -1750,7 +1746,7 @@ WHERE ((c["Discriminator"] = "Product") AND @__prm_0)
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND ((c["ProductID"] > 50) != @__prm_0))
+WHERE ((c["$type"] = "Product") AND ((c["ProductID"] > 50) != @__prm_0))
 """);
             });
 
@@ -1766,7 +1762,7 @@ WHERE ((c["Discriminator"] = "Product") AND ((c["ProductID"] > 50) != @__prm_0))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (c["Discontinued"] = ((c["ProductID"] > 50) != @__prm_0)))
+WHERE ((c["$type"] = "Product") AND (c["Discontinued"] = ((c["ProductID"] > 50) != @__prm_0)))
 """);
             });
 
@@ -1780,7 +1776,7 @@ WHERE ((c["Discriminator"] = "Product") AND (c["Discontinued"] = ((c["ProductID"
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND NOT((c["Discontinued"] OR (c["ProductID"] < 20))))
+WHERE ((c["$type"] = "Product") AND NOT((c["Discontinued"] OR (c["ProductID"] < 20))))
 """);
             });
 
@@ -1794,7 +1790,7 @@ WHERE ((c["Discriminator"] = "Product") AND NOT((c["Discontinued"] OR (c["Produc
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND NOT((c["Discontinued"] AND (c["ProductID"] < 20))))
+WHERE ((c["$type"] = "Product") AND NOT((c["Discontinued"] AND (c["ProductID"] < 20))))
 """);
             });
 
@@ -1808,7 +1804,7 @@ WHERE ((c["Discriminator"] = "Product") AND NOT((c["Discontinued"] AND (c["Produ
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND NOT((NOT((NOT(c["Discontinued"]) AND (c["ProductID"] < 60))) OR NOT((c["ProductID"] > 30)))))
+WHERE ((c["$type"] = "Product") AND NOT((NOT((NOT(c["Discontinued"]) AND (c["ProductID"] < 60))) OR NOT((c["ProductID"] > 30)))))
 """);
             });
 
@@ -1822,7 +1818,7 @@ WHERE ((c["Discriminator"] = "Product") AND NOT((NOT((NOT(c["Discontinued"]) AND
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (c["UnitsInStock"] > 10))
+WHERE ((c["$type"] = "Product") AND (c["UnitsInStock"] > 10))
 """);
             });
 
@@ -1831,12 +1827,11 @@ WHERE ((c["Discriminator"] = "Product") AND (c["UnitsInStock"] > 10))
             async, async a =>
             {
                 await base.Where_comparison_to_nullable_bool(a);
-
-                AssertSql(
-                    """
+AssertSql(
+    """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (ENDSWITH(c["CustomerID"], "KI") = true))
+WHERE (ENDSWITH(c["id"], "KI") = true)
 """);
             });
 
@@ -1845,12 +1840,10 @@ WHERE ((c["Discriminator"] = "Customer") AND (ENDSWITH(c["CustomerID"], "KI") = 
             async, async a =>
             {
                 await base.Where_true(a);
-
-                AssertSql(
-                    """
+AssertSql(
+    """
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 """);
             });
 
@@ -1873,7 +1866,6 @@ WHERE false
             async, async a =>
             {
                 await base.Where_bool_closure(a);
-
                 AssertSql(
                     """
 SELECT VALUE c
@@ -1881,14 +1873,13 @@ FROM root c
 WHERE false
 """,
                     //
-                    "ReadItem(None, Customer|ALFKI)",
+                    "ReadItem(None, ALFKI)",
                     //
-                    "ReadItem(None, Customer|ALFKI)",
+                    "ReadItem(None, ALFKI)",
                     //
                     """
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 """);
             });
 
@@ -1902,7 +1893,7 @@ WHERE (c["Discriminator"] = "Customer")
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["Fax"] = null))
+WHERE (c["Fax"] = null)
 """);
             });
 
@@ -1912,7 +1903,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["Fax"] = null))
             {
                 await base.Where_expression_invoke_1(a);
 
-                AssertSql("ReadItem(None, Customer|ALFKI)");
+                AssertSql("ReadItem(None, ALFKI)");
             });
 
     public override async Task Where_expression_invoke_2(bool async)
@@ -1929,7 +1920,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["Fax"] = null))
             {
                 await base.Where_expression_invoke_3(a);
 
-                AssertSql("ReadItem(None, Customer|ALFKI)");
+                AssertSql("ReadItem(None, ALFKI)");
             });
 
     public override async Task Where_concat_string_int_comparison1(bool async)
@@ -1961,7 +1952,8 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["Fax"] = null))
         // Cosmos client evaluation. Issue #17246.
         await AssertTranslationFailed(() => base.Where_concat_string_int_comparison4(async));
 
-        AssertSql();
+        AssertSql(
+);
     }
 
     public override Task Where_string_concat_method_comparison(bool async)
@@ -1974,9 +1966,9 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["Fax"] = null))
                     """
 @__i_0='A'
 
-SELECT VALUE c["CustomerID"]
+SELECT VALUE c["id"]
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ((@__i_0 || c["CustomerID"]) = "AAROUT"))
+WHERE ((@__i_0 || c["id"]) = "AAROUT")
 """);
             });
 
@@ -1991,9 +1983,9 @@ WHERE ((c["Discriminator"] = "Customer") AND ((@__i_0 || c["CustomerID"]) = "AAR
 @__i_0='A'
 @__j_1='B'
 
-SELECT VALUE c["CustomerID"]
+SELECT VALUE c["id"]
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ((@__i_0 || (@__j_1 || c["CustomerID"])) = "ABANATR"))
+WHERE ((@__i_0 || (@__j_1 || c["id"])) = "ABANATR")
 """);
             });
 
@@ -2009,9 +2001,9 @@ WHERE ((c["Discriminator"] = "Customer") AND ((@__i_0 || (@__j_1 || c["CustomerI
 @__j_1='B'
 @__k_2='C'
 
-SELECT VALUE c["CustomerID"]
+SELECT VALUE c["id"]
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ((@__i_0 || (@__j_1 || (@__k_2 || c["CustomerID"]))) = "ABCANTON"))
+WHERE ((@__i_0 || (@__j_1 || (@__k_2 || c["id"]))) = "ABCANTON")
 """);
             });
 
@@ -2025,7 +2017,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ((@__i_0 || (@__j_1 || (@__k_2 || c
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (c["UnitsInStock"] >= 20))
+WHERE ((c["$type"] = "Product") AND (c["UnitsInStock"] >= 20))
 """);
             });
 
@@ -2039,7 +2031,7 @@ WHERE ((c["Discriminator"] = "Product") AND (c["UnitsInStock"] >= 20))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (c["UnitsInStock"] < 20))
+WHERE ((c["$type"] = "Product") AND (c["UnitsInStock"] < 20))
 """);
             });
 
@@ -2055,7 +2047,7 @@ WHERE ((c["Discriminator"] = "Product") AND (c["UnitsInStock"] < 20))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND ((c["ProductID"] < @__productId_0) AND (c["UnitsInStock"] >= 20)))
+WHERE ((c["$type"] = "Product") AND ((c["ProductID"] < @__productId_0) AND (c["UnitsInStock"] >= 20)))
 """);
             });
 
@@ -2069,7 +2061,7 @@ WHERE ((c["Discriminator"] = "Product") AND ((c["ProductID"] < @__productId_0) A
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (c["UnitsInStock"] >= 20))
+WHERE ((c["$type"] = "Product") AND (c["UnitsInStock"] >= 20))
 """);
             });
 
@@ -2097,7 +2089,7 @@ WHERE false
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND NOT(((c["UnitsInStock"] >= 20) ? false : true)))
+WHERE ((c["$type"] = "Product") AND NOT(((c["UnitsInStock"] >= 20) ? false : true)))
 """);
             });
 
@@ -2183,7 +2175,7 @@ WHERE ((c["Discriminator"] = "Product") AND NOT(((c["UnitsInStock"] >= 20) ? fal
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ((c["Region"] = null) AND (c["Country"] = "UK")))
+WHERE ((c["Region"] = null) AND (c["Country"] = "UK"))
 """);
             });
 
@@ -2197,7 +2189,6 @@ WHERE ((c["Discriminator"] = "Customer") AND ((c["Region"] = null) AND (c["Count
                     """
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 """);
             });
 
@@ -2211,7 +2202,7 @@ WHERE (c["Discriminator"] = "Customer")
                     """
 SELECT VALUE c
 FROM root c
-WHERE (((c["Discriminator"] = "Order") AND (c["CustomerID"] = "QUICK")) AND (c["OrderDate"] > "1998-01-01T00:00:00"))
+WHERE (((c["$type"] = "Order") AND (c["CustomerID"] = "QUICK")) AND (c["OrderDate"] > "1998-01-01T00:00:00"))
 """);
             });
 
@@ -2234,7 +2225,7 @@ WHERE (((c["Discriminator"] = "Order") AND (c["CustomerID"] = "QUICK")) AND (c["
             {
                 await base.Where_array_index(a);
 
-                AssertSql("ReadItem(None, Customer|ALFKI)");
+                AssertSql("ReadItem(None, ALFKI)");
             });
 
     public override async Task Where_multiple_contains_in_subquery_with_or(bool async)
@@ -2242,7 +2233,8 @@ WHERE (((c["Discriminator"] = "Order") AND (c["CustomerID"] = "QUICK")) AND (c["
         // Cosmos client evaluation. Issue #17246.
         await AssertTranslationFailed(() => base.Where_multiple_contains_in_subquery_with_or(async));
 
-        AssertSql();
+        AssertSql(
+);
     }
 
     public override async Task Where_multiple_contains_in_subquery_with_and(bool async)
@@ -2287,7 +2279,7 @@ WHERE (((c["Discriminator"] = "Order") AND (c["CustomerID"] = "QUICK")) AND (c["
                     """
 SELECT VALUE c["OrderDate"]
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
             });
 
@@ -2303,7 +2295,7 @@ WHERE (c["Discriminator"] = "Order")
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND @__p_0)
+WHERE ((c["$type"] = "Order") AND @__p_0)
 """);
             });
 
@@ -2325,7 +2317,7 @@ WHERE ((c["Discriminator"] = "Order") AND @__p_0)
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (true ? false : true))
+WHERE ((c["$type"] = "Product") AND (true ? false : true))
 """);
             });
 
@@ -2509,7 +2501,7 @@ WHERE ((c["Discriminator"] = "Product") AND (true ? false : true))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND ARRAY_CONTAINS(@__orderIds_0, c["OrderID"]))
+WHERE ((c["$type"] = "Order") AND ARRAY_CONTAINS(@__orderIds_0, c["OrderID"]))
 """);
             });
 
@@ -2525,7 +2517,7 @@ WHERE ((c["Discriminator"] = "Order") AND ARRAY_CONTAINS(@__orderIds_0, c["Order
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND ARRAY_CONTAINS(@__orderIds_0, c["OrderID"]))
+WHERE ((c["$type"] = "Order") AND ARRAY_CONTAINS(@__orderIds_0, c["OrderID"]))
 """);
             });
 
@@ -2535,7 +2527,7 @@ WHERE ((c["Discriminator"] = "Order") AND ARRAY_CONTAINS(@__orderIds_0, c["Order
             {
                 await base.Filter_with_EF_Property_using_closure_for_property_name(a);
 
-                AssertSql("ReadItem(None, Customer|ALFKI)");
+                AssertSql("ReadItem(None, ALFKI)");
            });
 
     public override Task Filter_with_EF_Property_using_function_for_property_name(bool async)
@@ -2544,7 +2536,7 @@ WHERE ((c["Discriminator"] = "Order") AND ARRAY_CONTAINS(@__orderIds_0, c["Order
             {
                 await base.Filter_with_EF_Property_using_function_for_property_name(a);
 
-                AssertSql("ReadItem(None, Customer|ALFKI)");
+                AssertSql("ReadItem(None, ALFKI)");
             });
 
     public override async Task FirstOrDefault_over_scalar_projection_compared_to_null(bool async)
@@ -2687,7 +2679,7 @@ WHERE ((c["Discriminator"] = "Order") AND ARRAY_CONTAINS(@__orderIds_0, c["Order
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (ARRAY_CONTAINS(@__customerIds_0, c["CustomerID"]) AND (c["City"] = "Seattle")))
+WHERE (ARRAY_CONTAINS(@__customerIds_0, c["id"]) AND (c["City"] = "Seattle"))
 """);
             });
 
@@ -2703,7 +2695,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (ARRAY_CONTAINS(@__customerIds_0, c
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (ARRAY_CONTAINS(@__customerIds_0, c["CustomerID"]) OR (c["City"] = "Seattle")))
+WHERE (ARRAY_CONTAINS(@__customerIds_0, c["id"]) OR (c["City"] = "Seattle"))
 """);
             });
 
@@ -2718,7 +2710,8 @@ WHERE ((c["Discriminator"] = "Customer") AND (ARRAY_CONTAINS(@__customerIds_0, c
     {
         await AssertTranslationFailed(() => base.Where_Like_or_comparison(async));
 
-        AssertSql();
+        AssertSql(
+);
     }
 
     public override Task GetType_on_non_hierarchy1(bool async)
@@ -2731,7 +2724,6 @@ WHERE ((c["Discriminator"] = "Customer") AND (ARRAY_CONTAINS(@__customerIds_0, c
                     """
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 """);
             });
 
@@ -2768,12 +2760,10 @@ WHERE false
             async, async a =>
             {
                 await base.GetType_on_non_hierarchy4(a);
-
-                AssertSql(
-                    """
+AssertSql(
+    """
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 """);
             });
 
@@ -2782,12 +2772,11 @@ WHERE (c["Discriminator"] = "Customer")
             async, async a =>
             {
                 await base.Case_block_simplification_works_correctly(a);
-
-                AssertSql(
-                    """
+AssertSql(
+    """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (((c["Region"] = null) ? "OR" : c["Region"]) = "OR"))
+WHERE (((c["Region"] = null) ? "OR" : c["Region"]) = "OR")
 """);
             });
 
@@ -2801,7 +2790,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (((c["Region"] = null) ? "OR" : c["
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["Region"] = null))
+WHERE (c["Region"] = null)
 """);
             });
 
@@ -2815,7 +2804,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["Region"] = null))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
+WHERE (c["City"] = "London")
 """);
             });
 
@@ -2829,7 +2818,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
                     """
 SELECT VALUE c["CompanyName"]
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
+WHERE (c["City"] = "London")
 """);
             });
 
@@ -2868,14 +2857,13 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
             async, async a =>
             {
                 await base.Generic_Ilist_contains_translates_to_server(a);
-
-                AssertSql(
-                    """
+AssertSql(
+    """
 @__cities_0='["Seattle"]'
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__cities_0, c["City"]))
+WHERE ARRAY_CONTAINS(@__cities_0, c["City"])
 """);
             });
 
@@ -2889,7 +2877,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__cities_0, c["City
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ((((c["CustomerID"] = "ALFKI") OR (c["CustomerID"] = "ANATR")) OR (c["CustomerID"] = "ANTON")) OR (c["CustomerID"] = "ANATR")))
+WHERE ((((c["id"] = "ALFKI") OR (c["id"] = "ANATR")) OR (c["id"] = "ANTON")) OR (c["id"] = "ANATR"))
 """);
             });
 
@@ -2898,12 +2886,11 @@ WHERE ((c["Discriminator"] = "Customer") AND ((((c["CustomerID"] = "ALFKI") OR (
             async, async a =>
             {
                 await base.Multiple_OrElse_on_same_column_with_null_constant_comparison_converted_to_in(a);
-
-                AssertSql(
-                    """
+AssertSql(
+    """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ((((c["Region"] = "WA") OR (c["Region"] = "OR")) OR (c["Region"] = null)) OR (c["Region"] = "BC")))
+WHERE ((((c["Region"] = "WA") OR (c["Region"] = "OR")) OR (c["Region"] = null)) OR (c["Region"] = "BC"))
 """);
             });
 
@@ -2912,12 +2899,11 @@ WHERE ((c["Discriminator"] = "Customer") AND ((((c["Region"] = "WA") OR (c["Regi
             async, async a =>
             {
                 await base.Constant_array_Contains_OrElse_comparison_with_constant_gets_combined_to_one_in(a);
-
-                AssertSql(
-                    """
+AssertSql(
+    """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] IN ("ALFKI", "ANATR") OR (c["CustomerID"] = "ANTON")))
+WHERE (c["id"] IN ("ALFKI", "ANATR") OR (c["id"] = "ANTON"))
 """);
             });
 
@@ -2931,7 +2917,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] IN ("ALFKI", "ANAT
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (((c["CustomerID"] = "ANTON") OR c["CustomerID"] IN ("ALFKI", "ANATR")) OR (c["CustomerID"] = "ALFKI")))
+WHERE (((c["id"] = "ANTON") OR c["id"] IN ("ALFKI", "ANATR")) OR (c["id"] = "ALFKI"))
 """);
             });
 
@@ -2945,7 +2931,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (((c["CustomerID"] = "ANTON") OR c[
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] IN ("ALFKI", "ANATR") OR c["CustomerID"] IN ("ALFKI", "ANTON")))
+WHERE (c["id"] IN ("ALFKI", "ANATR") OR c["id"] IN ("ALFKI", "ANTON"))
 """);
             });
 
@@ -2959,7 +2945,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] IN ("ALFKI", "ANAT
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] NOT IN ("ALFKI", "ANATR") AND c["CustomerID"] NOT IN ("ALFKI", "ANTON")))
+WHERE (c["id"] NOT IN ("ALFKI", "ANATR") AND c["id"] NOT IN ("ALFKI", "ANTON"))
 """);
             });
 
@@ -2977,7 +2963,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] NOT IN ("ALFKI", "
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (((c["CustomerID"] != @__prm1_0) AND (c["CustomerID"] != @__prm2_1)) AND (c["CustomerID"] != @__prm3_2)))
+WHERE (((c["id"] != @__prm1_0) AND (c["id"] != @__prm2_1)) AND (c["id"] != @__prm3_2))
 """);
             });
 
@@ -2994,7 +2980,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (((c["CustomerID"] != @__prm1_0) AN
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] IN (@__prm1_0, @__prm2_1) OR (c["CustomerID"] = "ANTON")))
+WHERE (c["id"] IN (@__prm1_0, @__prm2_1) OR (c["id"] = "ANTON"))
 """);
             });
 
@@ -3010,7 +2996,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] IN (@__prm1_0, @__
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ((((c["Region"] = "WA") OR (c["Region"] = "OR")) OR (c["Region"] = @__prm_0)) OR (c["Region"] = "BC")))
+WHERE ((((c["Region"] = "WA") OR (c["Region"] = "OR")) OR (c["Region"] = @__prm_0)) OR (c["Region"] = "BC"))
 """);
             });
 
@@ -3026,7 +3012,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ((((c["Region"] = "WA") OR (c["Regi
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (ARRAY_CONTAINS(@__array_0, c["CustomerID"]) OR (c["CustomerID"] = "ANTON")))
+WHERE (ARRAY_CONTAINS(@__array_0, c["id"]) OR (c["id"] = "ANTON"))
 """);
             });
 
@@ -3044,7 +3030,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (ARRAY_CONTAINS(@__array_0, c["Cust
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (((c["CustomerID"] = @__prm1_0) OR ARRAY_CONTAINS(@__array_1, c["CustomerID"])) OR (c["CustomerID"] = @__prm2_2)))
+WHERE (((c["id"] = @__prm1_0) OR ARRAY_CONTAINS(@__array_1, c["id"])) OR (c["id"] = @__prm2_2))
 """);
             });
 
@@ -3058,7 +3044,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (((c["CustomerID"] = @__prm1_0) OR 
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] IN ("ALFKI", "ANATR") AND ((c["CustomerID"] = "ANATR") OR (c["CustomerID"] = "ANTON"))))
+WHERE (c["id"] IN ("ALFKI", "ANATR") AND ((c["id"] = "ANATR") OR (c["id"] = "ANTON")))
 """);
             });
 
@@ -3072,7 +3058,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] IN ("ALFKI", "ANAT
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ((((c["Region"] != "WA") AND (c["Region"] != "OR")) AND (c["Region"] != null)) OR ((c["Region"] != "WA") AND (c["Region"] != null))))
+WHERE ((((c["Region"] != "WA") AND (c["Region"] != "OR")) AND (c["Region"] != null)) OR ((c["Region"] != "WA") AND (c["Region"] != null)))
 """);
             });
 
@@ -3086,7 +3072,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ((((c["Region"] != "WA") AND (c["Re
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["Region"] = null))
+WHERE (c["Region"] = null)
 """);
             });
 
@@ -3118,7 +3104,7 @@ SELECT VALUE
     "Title" : c["Title"]
 }
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND (c["Title"] = "Sales Representative"))
+WHERE (c["Title"] = "Sales Representative")
 """);
             });
 
@@ -3137,22 +3123,21 @@ WHERE ((c["Discriminator"] = "Employee") AND (c["Title"] = "Sales Representative
             async, async a =>
             {
                 await base.Where_poco_closure(a);
-
-                AssertSql(
-                    """
+AssertSql(
+    """
 @__entity_equality_customer_0_CustomerID='ALFKI'
 
-SELECT VALUE c["CustomerID"]
+SELECT VALUE c["id"]
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = @__entity_equality_customer_0_CustomerID))
+WHERE (c["id"] = @__entity_equality_customer_0_CustomerID)
 """,
-                    //
-                    """
+    //
+    """
 @__entity_equality_customer_0_CustomerID='ANATR'
 
-SELECT VALUE c["CustomerID"]
+SELECT VALUE c["id"]
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = @__entity_equality_customer_0_CustomerID))
+WHERE (c["id"] = @__entity_equality_customer_0_CustomerID)
 """);
             });
 
@@ -3166,49 +3151,41 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = @__entity_equali
                     """
 @__i_0='A'
 
-SELECT VALUE c["CustomerID"]
+SELECT VALUE c["id"]
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ((@__i_0 || c["CustomerID"]) = "AALFKI"))
+WHERE ((@__i_0 || c["id"]) = "AALFKI")
 """);
             });
 
-    public override Task EF_Constant(bool async)
-        => Fixture.NoSyncTest(
-            async, async a =>
-            {
-                await base.EF_Constant(a);
+    public override async Task EF_Constant(bool async)
+    {
+        // #34327
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => base.EF_Constant(async));
+        Assert.Equal(CoreStrings.EFConstantNotSupported, exception.Message);
+    }
 
-                AssertSql("ReadItem(None, Customer|ALFKI)");
-            });
+    public override async Task EF_Constant_with_subtree(bool async)
+    {
+        // #34327
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => base.EF_Constant_with_subtree(async));
+        Assert.Equal(CoreStrings.EFConstantNotSupported, exception.Message);
+    }
 
-    public override Task EF_Constant_with_subtree(bool async)
-        => Fixture.NoSyncTest(
-            async, async a =>
-            {
-                await base.EF_Constant_with_subtree(a);
-
-                AssertSql("ReadItem(None, Customer|ALFKI)");
-            });
-
-    public override Task EF_Constant_does_not_parameterized_as_part_of_bigger_subtree(bool async)
-        => Fixture.NoSyncTest(
-            async, async a =>
-            {
-                await base.EF_Constant_does_not_parameterized_as_part_of_bigger_subtree(a);
-
-                AssertSql(
-                    """
-SELECT VALUE c
-FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = ("ALF" || "KI")))
-""");
-            });
+    public override async Task EF_Constant_does_not_parameterized_as_part_of_bigger_subtree(bool async)
+    {
+        // #34327
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => base.EF_Constant_does_not_parameterized_as_part_of_bigger_subtree(async));
+        Assert.Equal(CoreStrings.EFConstantNotSupported, exception.Message);
+    }
 
     public override async Task EF_Constant_with_non_evaluatable_argument_throws(bool async)
     {
         await base.EF_Constant_with_non_evaluatable_argument_throws(async);
-
-        AssertSql();
+AssertSql(
+);
     }
 
     public override Task EF_Parameter(bool async)
@@ -3217,7 +3194,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = ("ALF" || "KI"))
             {
                 await base.EF_Parameter(a);
 
-                AssertSql("ReadItem(None, Customer|ALFKI)");
+                AssertSql("ReadItem(None, ALFKI)");
             });
 
     public override Task EF_Parameter_with_subtree(bool async)
@@ -3226,7 +3203,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = ("ALF" || "KI"))
             {
                 await base.EF_Parameter_with_subtree(a);
 
-                AssertSql("ReadItem(None, Customer|ALFKI)");
+                AssertSql("ReadItem(None, ALFKI)");
             });
 
     public override Task EF_Parameter_does_not_parameterized_as_part_of_bigger_subtree(bool async)
@@ -3241,7 +3218,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = ("ALF" || "KI"))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = (@__id_0 || "KI")))
+WHERE (c["id"] = (@__id_0 || "KI"))
 """);
             });
 
@@ -3262,7 +3239,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = (@__id_0 || "KI"
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = "1337"))
+WHERE ((c["$type"] = "Order") AND (c["CustomerID"] = "1337"))
 """,
                     //
                     """
@@ -3270,7 +3247,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = "1337"))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = @__prm_Value_0))
+WHERE ((c["$type"] = "Order") AND (c["CustomerID"] = @__prm_Value_0))
 """,
                     //
                     """
@@ -3278,7 +3255,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = @__prm_Value_0))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = @__ToString_0))
+WHERE ((c["$type"] = "Order") AND (c["CustomerID"] = @__ToString_0))
 """,
                     //
                     """
@@ -3286,13 +3263,13 @@ WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = @__ToString_0))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = @__p_0))
+WHERE ((c["$type"] = "Order") AND (c["CustomerID"] = @__p_0))
 """,
                     //
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = "1337"))
+WHERE ((c["$type"] = "Order") AND (c["CustomerID"] = "1337"))
 """);
             });
 
@@ -3308,25 +3285,25 @@ WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = "1337"))
 
 SELECT VALUE c["OrderID"]
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = @__id_0))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] = @__id_0))
 """,
                     //
                     """
 SELECT VALUE c["OrderID"]
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = 10252))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] = 10252))
 """,
                     //
                     """
 SELECT VALUE c["OrderID"]
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = 10252))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] = 10252))
 """,
                     //
                     """
 SELECT VALUE c["OrderID"]
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = 10252))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] = 10252))
 """);
             });
 
