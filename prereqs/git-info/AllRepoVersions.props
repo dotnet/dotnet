@@ -18,7 +18,7 @@
     <efcoreGitCommitHash>d94cc5a79cb9d557485a95fba59ee3738c46aa81</efcoreGitCommitHash>
     <efcoreOutputPackageVersion>9.0.0-rc.1.24402.2</efcoreOutputPackageVersion>
     <emsdkGitCommitHash>459c92904b224d125a350a3f3e431fe90152a95e</emsdkGitCommitHash>
-    <emsdkOutputPackageVersion>9.0.0-rc.1.24416.2</emsdkOutputPackageVersion>
+    <emsdkOutputPackageVersion>9.0.0-rc.1.24420.5</emsdkOutputPackageVersion>
     <fsharpGitCommitHash>1ead6f4b7d263e63550fb8635f72211ad728a42a</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>9.0.100-beta.24420.10</fsharpOutputPackageVersion>
     <msbuildGitCommitHash>c07c23be2d07a7f65f3696ec6b7398b702aec2b9</msbuildGitCommitHash>
@@ -31,11 +31,11 @@
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.24415.1</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>c63e7b69c8a24803129f63b382c0ab1558112cf6</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.12.0-2.24420.10</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>fe0cfd55339cc2a0d745f742a48d5e880c112ec2</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>9.0.0-rc.1.24420.11</runtimeOutputPackageVersion>
+    <runtimeGitCommitHash>c4a79875fcb2c76b2e92ff50940d4ea9264e2eeb</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>9.0.0-rc.1.24421.1</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>d92413b87d36250859d8cb51ff69a03b5f5c4cab</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24372.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>1854762845800fc53d6395c35e24fc1f27e8ce35</sdkGitCommitHash>
+    <sdkGitCommitHash>ef463e74e398f798bfcca8f469a207738c7fbd64</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>51b029e3272f35af0af337823cd122725f316c69</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24407.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>0d066e61a30c2599d0ced871ea45acf0e10571af</sourcebuildreferencepackagesGitCommitHash>
