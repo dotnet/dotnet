@@ -15,8 +15,8 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 using DefinitionResult = Microsoft.VisualStudio.LanguageServer.Protocol.SumType<
-    Microsoft.VisualStudio.LanguageServer.Protocol.VSInternalLocation,
-    Microsoft.VisualStudio.LanguageServer.Protocol.VSInternalLocation[],
+    Microsoft.VisualStudio.LanguageServer.Protocol.Location,
+    Microsoft.VisualStudio.LanguageServer.Protocol.Location[],
     Microsoft.VisualStudio.LanguageServer.Protocol.DocumentLink[]>;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Definition;
@@ -27,17 +27,17 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
     public async Task Handle_SingleServer_CSharp_Method()
     {
         var input = """
-                <div></div>
-                @{
-                    var x = Ge$$tX();
-                }
-                @functions
+            <div></div>
+            @{
+                var x = Ge$$tX();
+            }
+            @functions
+            {
+                void [|GetX|]()
                 {
-                    void [|GetX|]()
-                    {
-                    }
                 }
-                """;
+            }
+            """;
 
         await VerifyCSharpGoToDefinitionAsync(input);
     }
@@ -46,19 +46,19 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
     public async Task Handle_SingleServer_CSharp_Local()
     {
         var input = """
-                <div></div>
-                @{
-                    var x = GetX();
-                }
-                @functions
+            <div></div>
+            @{
+                var x = GetX();
+            }
+            @functions
+            {
+                private string [|_name|];
+                string GetX()
                 {
-                    private string [|_name|];
-                    string GetX()
-                    {
-                        return _na$$me;
-                    }
+                    return _na$$me;
                 }
-                """;
+            }
+            """;
 
         await VerifyCSharpGoToDefinitionAsync(input);
     }
@@ -67,12 +67,12 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
     public async Task Handle_SingleServer_CSharp_MetadataReference()
     {
         var input = """
-                <div></div>
-                @functions
-                {
-                    private stri$$ng _name;
-                }
-                """;
+            <div></div>
+            @functions
+            {
+                private stri$$ng _name;
+            }
+            """;
 
         // Arrange
         TestFileMarkupParser.GetPosition(input, out var output, out var cursorPosition);
@@ -104,15 +104,15 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
     public async Task Handle_SingleServer_Attribute_SameFile(string method)
     {
         var input = $$"""
-                <button @onclick="{{method}}"></div>
+            <button @onclick="{{method}}"></div>
 
-                @code
+            @code
+            {
+                void [|IncrementCount|]()
                 {
-                    void [|IncrementCount|]()
-                    {
-                    }
                 }
-                """;
+            }
+            """;
 
         await VerifyCSharpGoToDefinitionAsync(input, "test.razor");
     }
@@ -146,30 +146,30 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
     public async Task Handle_SingleServer_ComponentAttribute_OtherRazorFile(string attribute)
     {
         var input = $$"""
-                <SurveyPrompt {{attribute}}="InputValue" />
+            <SurveyPrompt {{attribute}}="InputValue" />
 
-                @code
+            @code
+            {
+                private string? InputValue { get; set; }
+
+                private void BindAfter()
                 {
-                    private string? InputValue { get; set; }
-
-                    private void BindAfter()
-                    {
-                    }
                 }
-                """;
+            }
+            """;
 
         // Need to put this in the right namespace, to match the tag helper defined in our test json
         var surveyPrompt = """
-                @namespace BlazorApp1.Shared
+            @namespace BlazorApp1.Shared
 
-                <div></div>
+            <div></div>
 
-                @code
-                {
-                    [Parameter]
-                    public string [|Title|] { get; set; }
-                }
-                """;
+            @code
+            {
+                [Parameter]
+                public string [|Title|] { get; set; }
+            }
+            """;
 
         TestFileMarkupParser.GetSpan(surveyPrompt, out surveyPrompt, out var expectedSpan);
         var additionalRazorDocuments = new[]
@@ -237,13 +237,14 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
                 rootNamespace: "project"));
         });
 
-        var searchEngine = new RazorComponentSearchEngine(projectManager, LoggerFactory);
+        var componentSearchEngine = new RazorComponentSearchEngine(projectManager, LoggerFactory);
+        var componentDefinitionService = new RazorComponentDefinitionService(componentSearchEngine, DocumentMappingService, LoggerFactory);
 
         var razorUri = new Uri(razorFilePath);
         Assert.True(DocumentContextFactory.TryCreateForOpenDocument(razorUri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
-        var endpoint = new DefinitionEndpoint(searchEngine, DocumentMappingService, LanguageServerFeatureOptions, languageServer, LoggerFactory);
+        var endpoint = new DefinitionEndpoint(componentDefinitionService, DocumentMappingService, LanguageServerFeatureOptions, languageServer, LoggerFactory);
 
         var request = new TextDocumentPositionParams
         {

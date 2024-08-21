@@ -266,6 +266,29 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
     }
 
     [Fact]
+    public async Task Handle_Rename_OnComponentEndTag_ReturnsResult()
+    {
+        // Arrange
+        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync();
+        var uri = PathUtilities.GetUri(s_componentWithParamFilePath);
+        var request = new RenameParams
+        {
+            TextDocument = new() { Uri = uri },
+            Position = VsLspFactory.CreatePosition(1, 36),
+            NewName = "Test2"
+        };
+
+        Assert.True(documentContextFactory.TryCreateForOpenDocument(uri, out var documentContext));
+        var requestContext = CreateRazorRequestContext(documentContext);
+
+        // Act
+        var result = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
+
+        // Assert
+        Assert.NotNull(result);
+    }
+
+    [Fact]
     public async Task Handle_Rename_OnComponentNameTrailingEdge_ReturnsResult()
     {
         // Arrange

@@ -126,20 +126,8 @@
   <data name="Create_Component_FromTag_Title" xml:space="preserve">
     <value>Create component from tag</value>
   </data>
-  <data name="Diagnostics_after" xml:space="preserve">
-    <value>Diagnostics after:</value>
-  </data>
-  <data name="Diagnostics_before" xml:space="preserve">
-    <value>Diagnostics before:</value>
-  </data>
   <data name="Document_Not_Found" xml:space="preserve">
     <value>Document {0} was not found.</value>
-  </data>
-  <data name="Edit_at_adds" xml:space="preserve">
-    <value>Edit at {0} adds the non-whitespace content '{1}'.</value>
-  </data>
-  <data name="Edit_at_deletes" xml:space="preserve">
-    <value>Edit at {0} deletes the non-whitespace content '{1}'.</value>
   </data>
   <data name="ExtractTo_CodeBehind_Title" xml:space="preserve">
     <value>Extract block to code behind</value>
@@ -147,20 +135,11 @@
   <data name="File_Externally_Modified" xml:space="preserve">
     <value>File was externally modified: {0}</value>
   </data>
-  <data name="Format_operation_changed_diagnostics" xml:space="preserve">
-    <value>A format operation is being abandoned because it would introduce or remove one of more diagnostics.</value>
-  </data>
-  <data name="Format_operation_changed_nonwhitespace" xml:space="preserve">
-    <value>A format operation is being abandoned because it would add or delete non-whitespace content.</value>
-  </data>
   <data name="Generate_Async_Event_Handler_Title" xml:space="preserve">
     <value>Generate Async Event Handler '{0}'</value>
   </data>
   <data name="Generate_Event_Handler_Title" xml:space="preserve">
     <value>Generate Event Handler '{0}'</value>
-  </data>
-  <data name="Language_Services_Missing_Service" xml:space="preserve">
-    <value>Razor language services not configured properly, missing language service '{0}'.</value>
   </data>
   <data name="Not_Available_In" xml:space="preserve">
     <value>Not available in</value>

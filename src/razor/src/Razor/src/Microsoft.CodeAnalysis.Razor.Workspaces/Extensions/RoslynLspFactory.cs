@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
@@ -158,6 +159,18 @@ internal static class RoslynLspFactory
 
     public static Range CreateSingleLineRange((int line, int character) start, int length)
         => CreateRange(CreatePosition(start), CreatePosition(start.line, start.character + length));
+
+    public static Location CreateLocation(Uri uri, Range range)
+        => new() { Uri = uri, Range = range };
+
+    public static Location CreateLocation(Uri uri, LinePositionSpan span)
+        => new() { Uri = uri, Range = CreateRange(span) };
+
+    public static DocumentLink CreateDocumentLink(Uri target, Range range)
+        => new() { Target = target, Range = range };
+
+    public static DocumentLink CreateDocumentLink(Uri target, LinePositionSpan span)
+        => new() { Target = target, Range = CreateRange(span) };
 
     public static TextEdit CreateTextEdit(Range range, string newText)
         => new() { Range = range, NewText = newText };

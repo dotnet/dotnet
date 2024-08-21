@@ -16,8 +16,8 @@ using Microsoft.CodeAnalysis.Razor.Protocol.Folding;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using DefinitionResult = Microsoft.VisualStudio.LanguageServer.Protocol.SumType<
-    Microsoft.VisualStudio.LanguageServer.Protocol.VSInternalLocation,
-    Microsoft.VisualStudio.LanguageServer.Protocol.VSInternalLocation[],
+    Microsoft.VisualStudio.LanguageServer.Protocol.Location,
+    Microsoft.VisualStudio.LanguageServer.Protocol.Location[],
     Microsoft.VisualStudio.LanguageServer.Protocol.DocumentLink[]>;
 using ImplementationResult = Microsoft.VisualStudio.LanguageServer.Protocol.SumType<
     Microsoft.VisualStudio.LanguageServer.Protocol.Location[],
