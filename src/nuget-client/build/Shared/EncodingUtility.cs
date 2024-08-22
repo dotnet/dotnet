@@ -3,8 +3,6 @@
 
 #nullable enable
 
-using System;
-
 namespace NuGet.Shared
 {
     internal static class EncodingUtility

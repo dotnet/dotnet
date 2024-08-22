@@ -5,19 +5,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.Packaging.Core;
-using NuGet.Protocol;
-using NuGet.Protocol.Model;
-using NuGet.Versioning;
-using NuGet.Protocol.Core.Types;
-using System.Diagnostics;
 using NuGet.ProjectModel;
+using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
+using NuGet.Protocol.Model;
 using NuGet.Shared;
-using System.Globalization;
+using NuGet.Versioning;
 
 namespace NuGet.PackageManagement
 {

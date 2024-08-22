@@ -3,8 +3,8 @@
 
 #nullable enable
 
-using System.Globalization;
 using System;
+using System.Globalization;
 using System.IO;
 using NuGet.Common;
 using NuGet.Configuration;

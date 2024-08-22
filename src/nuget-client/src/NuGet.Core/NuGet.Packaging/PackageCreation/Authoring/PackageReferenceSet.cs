@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using NuGet.Frameworks;
 using NuGet.Packaging.PackageCreation.Resources;

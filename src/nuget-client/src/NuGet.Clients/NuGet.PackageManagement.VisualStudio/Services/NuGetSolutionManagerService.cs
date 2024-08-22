@@ -5,7 +5,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft;

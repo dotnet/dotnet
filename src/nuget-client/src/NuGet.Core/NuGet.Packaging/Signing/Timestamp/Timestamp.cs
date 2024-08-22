@@ -2,11 +2,11 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using NuGet.Common;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Security.Cryptography.X509Certificates;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using NuGet.Common;
 
 #if IS_SIGNING_SUPPORTED
 using System.Security.Cryptography.Pkcs;
