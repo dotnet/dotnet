@@ -53,8 +53,7 @@
                         LeftParenthesis;[(];
                     CSharpCodeBlock - [74..81)::7
                         CSharpExpressionLiteral - [74..81)::7 - [@string] - Gen<Expr>
-                            Transition;[@];
-                            Keyword;[string];
+                            Identifier;[@string];
                     RazorMetaCode - [81..82)::1 - Gen<None>
                         RightParenthesis;[)];
         MarkupTextLiteral - [82..82)::0 - [] - Gen<Markup>

@@ -27,8 +27,7 @@
                                                 Whitespace;[ ];
                                                 Keyword;[string];
                                                 LeftParenthesis;[(];
-                                                Transition;[@];
-                                                Identifier;[x];
+                                                Identifier;[@x];
                                                 LeftParenthesis;[(];
                                                 StringLiteral;["1 2"];
                                                 RightParenthesis;[)];

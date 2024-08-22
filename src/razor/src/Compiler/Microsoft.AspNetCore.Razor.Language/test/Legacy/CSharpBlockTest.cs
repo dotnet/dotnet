@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -877,6 +878,31 @@ catch(bar) { baz(); }");
             @{
                 @@string.Format("1{0}", DateTime.Now)
             }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/sdk/issues/42730")]
+    public void EscapedIdentifiers_11()
+    {
+        ParseDocumentTest("""
+             @{ var validationMessage = @Html.ValidationMessage(Model.Binding, "", new { @@class = "invalid-feedback" }, "div"); }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/sdk/issues/42730")]
+    public void EscapedIdentifiers_12()
+    {
+        ParseDocumentTest("""
+            @{
+                @@
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/sdk/issues/42730")]
+    public void EscapedIdentifiers_13()
+    {
+        ParseDocumentTest("""
+             @{ var validationMessage = new { @@
             """);
     }
 
