@@ -31,8 +31,8 @@ using NuGet.Protocol.Core.Types;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Common.Telemetry.PowerShell;
 using NuGet.VisualStudio.Telemetry;
-using Task = System.Threading.Tasks.Task;
 using LocalResources = NuGet.PackageManagement.PowerShellCmdlets.Resources;
+using Task = System.Threading.Tasks.Task;
 
 namespace NuGetConsole.Host.PowerShell.Implementation
 {

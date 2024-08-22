@@ -8,7 +8,6 @@ using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Packaging;
 using ILogger = NuGet.Common.ILogger;
-using PackageSpecificWarningProperties = NuGet.Commands.PackCommand.PackageSpecificWarningProperties;
 
 namespace NuGet.Build.Tasks.Pack
 {

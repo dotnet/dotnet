@@ -3,7 +3,6 @@
 
 using System;
 using System.IO;
-using System.Reflection;
 
 namespace NuGet.Test.Utility
 {

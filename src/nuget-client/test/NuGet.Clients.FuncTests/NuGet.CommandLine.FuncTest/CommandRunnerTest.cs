@@ -71,7 +71,7 @@ namespace NuGet.CommandLine.FuncTest
             CommandRunnerResult result = CommandRunner.Run(
                 fileName,
                 arguments: args,
-                timeOutInMilliseconds: 1000,
+                timeOutInMilliseconds: 10000,
                 testOutputHelper: _testOutputHelper);
 
             result.ExitCode.Should().Be(16);

@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using NuGet.Test.Utility;
 
 namespace NuGet.CommandLine.Test.Caching

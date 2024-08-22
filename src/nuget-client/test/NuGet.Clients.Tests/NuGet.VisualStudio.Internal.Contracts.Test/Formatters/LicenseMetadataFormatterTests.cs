@@ -2,17 +2,11 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using MessagePack;
 using MessagePack.Formatters;
 using MessagePack.Resolvers;
-using NuGet.Frameworks;
 using NuGet.Packaging;
-using NuGet.Packaging.Core;
 using NuGet.Packaging.Licenses;
-using NuGet.Protocol;
-using NuGet.Protocol.Core.Types;
-using NuGet.Versioning;
 using Xunit;
 
 namespace NuGet.VisualStudio.Internal.Contracts.Test

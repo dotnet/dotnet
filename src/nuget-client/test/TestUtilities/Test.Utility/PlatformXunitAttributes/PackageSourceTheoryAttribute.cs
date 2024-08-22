@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using NuGet.Common;
 using NuGet.Configuration;
 using Xunit;
 using Xunit.Abstractions;
