@@ -1466,6 +1466,8 @@
     <NetCoreReference Include="System.Threading.Timer" />
     <NetCoreReference Include="System.Xml.ReaderWriter" />
     <NetCoreReference Include="netstandard" />
+    <NetCoreReference Include="System.Reflection.Metadata" />
+    <NetCoreReference Include="System.Collections.Immutable" />
   </ItemGroup>
 
   <ItemGroup>
