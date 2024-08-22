@@ -17,7 +17,7 @@
                 Transition;[@];
             CSharpStatementLiteral - [12..28)::16 - [@@@class.Foo() }] - Gen<Stmt>
                 Transition;[@];
-                Identifier;[@];
+                Transition;[@];
                 Identifier;[@class];
                 Dot;[.];
                 Identifier;[Foo];

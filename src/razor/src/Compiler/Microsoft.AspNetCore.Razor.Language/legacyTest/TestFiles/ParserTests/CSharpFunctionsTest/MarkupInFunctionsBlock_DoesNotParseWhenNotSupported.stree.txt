@@ -34,8 +34,7 @@
                                 LessThan;[<];
                                 Identifier;[h3];
                                 GreaterThan;[>];
-                                Transition;[@];
-                                Identifier;[message];
+                                Identifier;[@message];
                                 LessThan;[<];
                                 Slash;[/];
                                 Identifier;[h3];
