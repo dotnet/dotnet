@@ -1,13 +1,13 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using NuGet.ProjectManagement;
-using System.Collections.Generic;
 using System;
-using Xunit;
-using FluentAssertions;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using FluentAssertions;
+using NuGet.ProjectManagement;
 using NuGet.Versioning;
+using Xunit;
 
 namespace NuGet.SolutionRestoreManager.Test
 {

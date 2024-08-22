@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -558,80 +559,85 @@ namespace NuGet.Commands
 
             if (rootProjectStyle == ProjectStyle.PackageReference)
             {
-                // Add files under asset groups
-                object filesObject;
-                object msbuildPath;
-                if (localMatch.LocalLibrary.Items.TryGetValue(KnownLibraryProperties.MSBuildProjectPath, out msbuildPath))
+                if (localMatch.LocalLibrary.Items.TryGetValue(KnownLibraryProperties.MSBuildProjectPath, out object msbuildPath))
                 {
-                    var files = new List<ProjectRestoreMetadataFile>();
-                    var fileLookup = new Dictionary<string, ProjectRestoreMetadataFile>(StringComparer.OrdinalIgnoreCase);
-
                     // Find the project path, this is provided by the resolver
                     var msbuildFilePathInfo = new FileInfo((string)msbuildPath);
 
                     // Ensure a trailing slash for the relative path helper.
                     var projectDir = PathUtility.EnsureTrailingSlash(msbuildFilePathInfo.Directory.FullName);
 
-                    // Read files from the project if they were provided.
-                    if (localMatch.LocalLibrary.Items.TryGetValue(KnownLibraryProperties.ProjectRestoreMetadataFiles, out filesObject))
-                    {
-                        files.AddRange((List<ProjectRestoreMetadataFile>)filesObject);
-                    }
-
-                    var targetFrameworkShortName = targetGraph.Framework.GetShortFolderName();
-                    var libAnyPath = $"lib/{targetFrameworkShortName}/any.dll";
-
-                    if (files.Count == 0)
-                    {
-                        // If the project did not provide a list of assets, add in default ones.
-                        // These are used to detect transitive vs non-transitive project references.
-                        var absolutePath = Path.Combine(projectDir, "bin", "placeholder", $"{localMatch.Library.Name}.dll");
-
-                        files.Add(new ProjectRestoreMetadataFile(libAnyPath, absolutePath));
-                    }
-
-                    // Process and de-dupe files
-                    for (var i = 0; i < files.Count; i++)
-                    {
-                        var path = files[i].PackagePath;
-
-                        // LIBANY avoid compatibility checks and will always be used.
-                        if (LIBANY.Equals(path, StringComparison.Ordinal))
-                        {
-                            path = libAnyPath;
-                        }
-
-                        if (!fileLookup.ContainsKey(path))
-                        {
-                            fileLookup.Add(path, files[i]);
-                        }
-                    }
-
-                    var contentItems = new ContentItemCollection();
-                    contentItems.Load(fileLookup.Keys);
-
                     // Create an ordered list of selection criteria. Each will be applied, if the result is empty
                     // fallback frameworks from "imports" will be tried.
                     // These are only used for framework/RID combinations where content model handles everything.
                     var orderedCriteria = CreateCriteria(targetGraph.Conventions, targetGraph.Framework, targetGraph.RuntimeIdentifier);
 
-                    // Compile
-                    // ref takes precedence over lib
-                    var compileGroup = GetLockFileItems(
-                        orderedCriteria,
-                        contentItems,
-                        targetGraph.Conventions.Patterns.CompileRefAssemblies,
-                        targetGraph.Conventions.Patterns.CompileLibAssemblies);
+                    string libAnyPath = $"lib/{targetGraph.Framework.GetShortFolderName()}/any.dll";
+                    var contentItems = new ContentItemCollection();
 
-                    projectLib.CompileTimeAssemblies = ConvertToProjectPaths(fileLookup, projectDir, compileGroup);
+                    if (localMatch.LocalLibrary.Items.TryGetValue(KnownLibraryProperties.ProjectRestoreMetadataFiles, out object filesObject))
+                    {
+                        List<ProjectRestoreMetadataFile> files = (List<ProjectRestoreMetadataFile>)filesObject;
+                        if (files.Count > 0)
+                        {
+                            var fileLookup = new Dictionary<string, ProjectRestoreMetadataFile>(StringComparer.OrdinalIgnoreCase);
+                            // Process and de-dupe files
+                            for (var i = 0; i < files.Count; i++)
+                            {
+                                var path = files[i].PackagePath;
 
-                    // Runtime
-                    var runtimeGroup = GetLockFileItems(
-                        orderedCriteria,
-                        contentItems,
-                        targetGraph.Conventions.Patterns.RuntimeAssemblies);
+                                // LIBANY avoid compatibility checks and will always be used.
+                                if (LIBANY.Equals(path, StringComparison.Ordinal))
+                                {
+                                    path = libAnyPath;
+                                }
 
-                    projectLib.RuntimeAssemblies = ConvertToProjectPaths(fileLookup, projectDir, runtimeGroup);
+                                if (!fileLookup.ContainsKey(path))
+                                {
+                                    fileLookup.Add(path, files[i]);
+                                }
+                            }
+
+                            contentItems.Load(fileLookup.Keys);
+
+                            // Compile
+                            // ref takes precedence over lib
+                            var compileGroup = GetLockFileItems(
+                                orderedCriteria,
+                                contentItems,
+                                targetGraph.Conventions.Patterns.CompileRefAssemblies,
+                                targetGraph.Conventions.Patterns.CompileLibAssemblies);
+
+                            projectLib.CompileTimeAssemblies = ConvertToProjectPaths(fileLookup, projectDir, compileGroup);
+
+                            // Runtime
+                            var runtimeGroup = GetLockFileItems(
+                                orderedCriteria,
+                                contentItems,
+                                targetGraph.Conventions.Patterns.RuntimeAssemblies);
+
+                            projectLib.RuntimeAssemblies = ConvertToProjectPaths(fileLookup, projectDir, runtimeGroup);
+                        }
+                        else
+                        {
+                            // If the project did not provide a list of assets, add in default ones.
+                            contentItems.Load([libAnyPath]);
+
+                            // When there's only lib assets, compile and runtime groups are always equivalent.
+                            var compileGroup = GetLockFileItems(
+                                orderedCriteria,
+                                contentItems,
+                                targetGraph.Conventions.Patterns.CompileLibAssemblies);
+
+                            if (compileGroup.Count > 0)
+                            {
+                                string relativePath = PathUtility.GetPathWithForwardSlashes(Path.Combine("bin", "placeholder", $"{localMatch.Library.Name}.dll"));
+                                var lockFileItem = new LockFileItem(relativePath);
+                                projectLib.CompileTimeAssemblies = new List<LockFileItem>() { lockFileItem };
+                                projectLib.RuntimeAssemblies = new List<LockFileItem>() { lockFileItem };
+                            }
+                        }
+                    }
                 }
             }
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using FluentAssertions;
 using Newtonsoft.Json;
 using NuGet.Common;
@@ -17,7 +18,6 @@ using NuGet.RuntimeModel;
 using NuGet.Versioning;
 using Test.Utility;
 using Xunit;
-using System.Text.Json;
 
 namespace NuGet.ProjectModel.Test
 {

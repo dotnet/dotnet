@@ -13,8 +13,8 @@ using NuGet.Common;
 using NuGet.Packaging.Signing;
 using Test.Utility.Signing;
 using Xunit;
-using SigningCertificateV2 = NuGet.Packaging.Signing.SigningCertificateV2;
 using EssCertIdV2 = NuGet.Packaging.Signing.EssCertIdV2;
+using SigningCertificateV2 = NuGet.Packaging.Signing.SigningCertificateV2;
 
 namespace NuGet.Packaging.Test
 {

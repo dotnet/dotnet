@@ -10,7 +10,6 @@ using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.PackageManagement;
 using NuGet.Packaging.Core;
-using NuGet.ProjectManagement;
 using NuGet.Protocol.Core.Types;
 using NuGet.Resolver;
 using NuGet.Versioning;

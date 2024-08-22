@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Test.Apex.VisualStudio.Solution;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NuGet.Configuration;
 using NuGet.Test.Utility;
 
 namespace NuGet.Tests.Apex

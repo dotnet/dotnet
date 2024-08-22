@@ -4,9 +4,9 @@
 #if NET5_0_OR_GREATER
 
 using System;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Cryptography;
 using System.IO;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using NuGet.Test.Utility;
 using Test.Utility.Signing;
 

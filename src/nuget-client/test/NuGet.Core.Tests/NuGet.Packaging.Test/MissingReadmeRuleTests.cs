@@ -7,7 +7,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Packaging.Rules;
 using NuGet.Test.Utility;

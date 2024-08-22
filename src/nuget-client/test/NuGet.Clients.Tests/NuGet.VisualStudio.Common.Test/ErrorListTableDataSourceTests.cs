@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
 using Moq;

@@ -5,10 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NuGet.CommandLine.XPlat;
 using Xunit;
 using Xunit.Abstractions;
-using System.Text.RegularExpressions;
 
 namespace NuGet.XPlat.FuncTest
 {
