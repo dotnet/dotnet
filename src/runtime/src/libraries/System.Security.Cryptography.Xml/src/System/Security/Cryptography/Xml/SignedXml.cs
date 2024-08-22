@@ -914,7 +914,7 @@ namespace System.Security.Cryptography.Xml
             }
             foreach (Reference reference in sortedReferences)
             {
-                // If no DigestMethod has yet been set, default it to sha1
+                // If no DigestMethod has yet been set, default it to sha256
                 reference.DigestMethod ??= Reference.DefaultDigestMethod;
 
                 SignedXmlDebugLog.LogSigningReference(this, reference);
