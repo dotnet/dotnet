@@ -3,8 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using NuGet.Common;
 using NuGet.Shared;
 
 namespace NuGet.ProjectModel

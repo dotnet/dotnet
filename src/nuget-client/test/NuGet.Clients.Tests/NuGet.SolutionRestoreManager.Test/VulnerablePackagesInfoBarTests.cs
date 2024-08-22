@@ -6,14 +6,14 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
+using Moq;
 using NuGet.VisualStudio;
 using Test.Utility;
 using Xunit;
-using Microsoft.VisualStudio.Sdk.TestFramework;
-using Microsoft.VisualStudio.Shell.Interop;
-using Moq;
 
 namespace NuGet.SolutionRestoreManager.Test
 {

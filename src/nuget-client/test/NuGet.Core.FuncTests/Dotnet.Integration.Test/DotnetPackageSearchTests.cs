@@ -5,7 +5,6 @@ using NuGet.CommandLine.Xplat.Tests;
 using NuGet.Test.Utility;
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace Dotnet.Integration.Test
 {

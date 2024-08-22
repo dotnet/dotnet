@@ -11,7 +11,6 @@ using Microsoft.VisualStudio.Utilities;
 using NuGet.ProjectManagement;
 using NuGet.ProjectModel;
 using NuGet.VisualStudio;
-using IAsyncServiceProvider = Microsoft.VisualStudio.Shell.IAsyncServiceProvider;
 
 namespace NuGet.PackageManagement.VisualStudio
 {

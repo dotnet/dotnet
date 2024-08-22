@@ -3,8 +3,6 @@
 
 using System;
 using System.Globalization;
-using System.Linq;
-using NuGet.Credentials;
 
 namespace NuGet.Credentials
 {

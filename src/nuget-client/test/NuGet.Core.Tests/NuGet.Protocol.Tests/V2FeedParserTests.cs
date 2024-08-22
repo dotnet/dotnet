@@ -7,7 +7,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Moq;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Packaging.Core;

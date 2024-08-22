@@ -6,7 +6,6 @@ using System.Linq;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace NuGet.Resolver.Test
 {

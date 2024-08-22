@@ -7,7 +7,6 @@ using System.Threading;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using NuGet.VisualStudio;
-using NuGet.VisualStudio.Internal.Contracts;
 using IBrokeredServiceContainer = Microsoft.VisualStudio.Shell.ServiceBroker.IBrokeredServiceContainer;
 // Duplicate type declarations due to Microsoft.Internal.VisualStudio.Shell.Embeddable.
 using ProvideBrokeredServiceAttribute = Microsoft.VisualStudio.Shell.ServiceBroker.ProvideBrokeredServiceAttribute;

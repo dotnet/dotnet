@@ -3,8 +3,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Globalization;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;

@@ -5,7 +5,6 @@ using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using NuGet.Common;
 using NuGet.Configuration;
 
 namespace NuGet.Credentials

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol;

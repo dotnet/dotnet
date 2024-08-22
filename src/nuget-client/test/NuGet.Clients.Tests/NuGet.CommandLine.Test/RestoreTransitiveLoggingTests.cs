@@ -3,14 +3,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NuGet.Frameworks;
 using NuGet.Packaging.Core;
 using NuGet.Test.Utility;
-using Test.Utility;
 using Xunit;
 
 namespace NuGet.CommandLine.Test

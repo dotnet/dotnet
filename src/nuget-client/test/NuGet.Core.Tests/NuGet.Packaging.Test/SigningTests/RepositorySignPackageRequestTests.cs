@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
-using NuGet.Test.Utility;
 using Xunit;
 
 namespace NuGet.Packaging.Test

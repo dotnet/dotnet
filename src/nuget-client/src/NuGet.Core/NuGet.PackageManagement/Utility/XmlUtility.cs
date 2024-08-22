@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
-using XmlUtility = NuGet.Shared.XmlUtility;
 
 namespace NuGet.ProjectManagement
 {

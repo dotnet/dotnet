@@ -4,7 +4,6 @@
 using System;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
-using NuGet.Test.Utility;
 using Xunit;
 
 namespace NuGet.Packaging.Test

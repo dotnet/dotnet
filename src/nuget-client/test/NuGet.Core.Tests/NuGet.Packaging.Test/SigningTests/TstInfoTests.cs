@@ -12,12 +12,12 @@ using System.Text;
 using NuGet.Common;
 using Test.Utility.Signing;
 using Xunit;
-using TstInfo = NuGet.Packaging.Signing.TstInfo;
 using TestAccuracy = Test.Utility.Signing.Accuracy;
 using TestAlgorithmIdentifier = Test.Utility.Signing.AlgorithmIdentifier;
 using TestGeneralName = Test.Utility.Signing.GeneralName;
 using TestMessageImprint = Test.Utility.Signing.MessageImprint;
 using TestTstInfo = Test.Utility.Signing.TstInfo;
+using TstInfo = NuGet.Packaging.Signing.TstInfo;
 
 namespace NuGet.Packaging.Test
 {

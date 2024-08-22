@@ -3,7 +3,6 @@ using System.Net;
 using System.Security;
 using System.Threading;
 using System.Threading.Tasks;
-using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
 

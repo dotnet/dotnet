@@ -2,7 +2,6 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.VisualStudio.Shell;
-using NuGet.Common;
 using NuGet.PackageManagement.UI;
 using Task = System.Threading.Tasks.Task;
 
