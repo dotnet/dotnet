@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.Packaging.Core;
-using NuGet.Repositories;
 using NuGet.Test.Utility;
 using Xunit;
 

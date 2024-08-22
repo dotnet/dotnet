@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using MessagePack;
 using MessagePack.Formatters;
-using Microsoft;
 
 namespace NuGet.VisualStudio.Internal.Contracts
 {

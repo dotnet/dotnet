@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
-using NuGet.Common;
 using NuGet.VisualStudio;
 using NuGetConsole;
 using NuGetConsole.Implementation;

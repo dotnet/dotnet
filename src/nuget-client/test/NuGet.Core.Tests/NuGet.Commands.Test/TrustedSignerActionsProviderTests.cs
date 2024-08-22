@@ -17,7 +17,6 @@ using NuGet.Configuration;
 using NuGet.Configuration.Test;
 using NuGet.Packaging;
 using NuGet.Packaging.Signing;
-using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Test.Utility;
 using Test.Utility;

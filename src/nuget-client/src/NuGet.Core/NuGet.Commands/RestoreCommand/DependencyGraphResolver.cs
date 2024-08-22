@@ -5,23 +5,22 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Threading;
-using NuGet.Common;
-using NuGet.Repositories;
-using NuGet.DependencyResolver;
-using NuGet.ProjectModel;
-using NuGet.Packaging;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using NuGet.LibraryModel;
+using System.Threading;
+using System.Threading.Tasks;
+using NuGet.Common;
+using NuGet.DependencyResolver;
 using NuGet.Frameworks;
+using NuGet.LibraryModel;
+using NuGet.Packaging;
+using NuGet.ProjectModel;
+using NuGet.Repositories;
 using NuGet.RuntimeModel;
 using NuGet.Versioning;
-
 using LibraryDependencyIndex = NuGet.Commands.DependencyGraphResolver.LibraryDependencyInterningTable.LibraryDependencyIndex;
 using LibraryRangeIndex = NuGet.Commands.DependencyGraphResolver.LibraryRangeInterningTable.LibraryRangeIndex;
-using System.Diagnostics;
 
 namespace NuGet.Commands
 {

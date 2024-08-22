@@ -1,19 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Moq;
-using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Packaging.Rules;
-using NuGet.Test.Utility;
 using Xunit;
 
 namespace NuGet.Packaging.Test

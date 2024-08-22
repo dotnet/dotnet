@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Reflection;
 using System.Runtime.InteropServices;
 
 // We're not really importing anything from a type library. This is just to make VS happy so we can embed interop types when 

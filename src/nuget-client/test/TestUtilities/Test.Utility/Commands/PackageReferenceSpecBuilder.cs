@@ -9,8 +9,6 @@ using NuGet.Commands.Test;
 using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.ProjectModel;
-using NuGet.RuntimeModel;
-using NuGet.Versioning;
 
 namespace Test.Utility.Commands
 {

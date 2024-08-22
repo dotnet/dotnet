@@ -4,11 +4,9 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.ProjectModel;
 using NuGet.Test.Utility;
-using Test.Utility;
 using Xunit;
 
 namespace NuGet.CommandLine.Test
