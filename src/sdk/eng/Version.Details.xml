@@ -83,14 +83,14 @@
       <Sha>6bc91d5e2d3d8a199fdbe367ed015b55daf57046</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.9.100-beta.24420.10">
+    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.9.100-beta.24421.4">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>1ead6f4b7d263e63550fb8635f72211ad728a42a</Sha>
+      <Sha>0892320aec499f75c7c3c6c3b0c62002eb78f0b5</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="9.0.100-beta.24420.10">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="9.0.100-beta.24421.4">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>1ead6f4b7d263e63550fb8635f72211ad728a42a</Sha>
+      <Sha>0892320aec499f75c7c3c6c3b0c62002eb78f0b5</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.12.0-2.24420.10">
@@ -375,14 +375,14 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>49c9ad01f057b3c6352bbec12b117acc2224493c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rc.24419.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rc.24421.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>983f1ebe67a7d37762132790c4384151c177a655</Sha>
+      <Sha>3fb5ae40a6e504c8163861ed2c7353e353263222</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.test-templates" Version="1.1.0-rc.24419.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.test-templates" Version="1.1.0-rc.24421.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>983f1ebe67a7d37762132790c4384151c177a655</Sha>
+      <Sha>3fb5ae40a6e504c8163861ed2c7353e353263222</Sha>
       <SourceBuild RepoName="test-templates" ManagedOnly="true" />
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
@@ -456,34 +456,34 @@
       <Uri>https://github.com/dotnet/deployment-tools</Uri>
       <Sha>7871ee378dce87b64d930d4f33dca9c888f4034d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Tasks.Git" Version="9.0.0-beta.24419.1">
+    <Dependency Name="Microsoft.Build.Tasks.Git" Version="9.0.0-beta.24420.3">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>7cba97552a48dc288063d2cb2d56d52160fbc2a8</Sha>
+      <Sha>5ecef467b59203293f27068135f094759d93168e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Common" Version="9.0.0-beta.24419.1">
+    <Dependency Name="Microsoft.SourceLink.Common" Version="9.0.0-beta.24420.3">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>7cba97552a48dc288063d2cb2d56d52160fbc2a8</Sha>
+      <Sha>5ecef467b59203293f27068135f094759d93168e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="9.0.0-beta.24419.1">
+    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="9.0.0-beta.24420.3">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>7cba97552a48dc288063d2cb2d56d52160fbc2a8</Sha>
+      <Sha>5ecef467b59203293f27068135f094759d93168e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitHub" Version="9.0.0-beta.24419.1">
+    <Dependency Name="Microsoft.SourceLink.GitHub" Version="9.0.0-beta.24420.3">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>7cba97552a48dc288063d2cb2d56d52160fbc2a8</Sha>
+      <Sha>5ecef467b59203293f27068135f094759d93168e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitLab" Version="9.0.0-beta.24419.1">
+    <Dependency Name="Microsoft.SourceLink.GitLab" Version="9.0.0-beta.24420.3">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>7cba97552a48dc288063d2cb2d56d52160fbc2a8</Sha>
+      <Sha>5ecef467b59203293f27068135f094759d93168e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="9.0.0-beta.24419.1">
+    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="9.0.0-beta.24420.3">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>7cba97552a48dc288063d2cb2d56d52160fbc2a8</Sha>
+      <Sha>5ecef467b59203293f27068135f094759d93168e</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.sourcelink" Version="9.0.0-beta.24419.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.sourcelink" Version="9.0.0-beta.24420.3">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>7cba97552a48dc288063d2cb2d56d52160fbc2a8</Sha>
+      <Sha>5ecef467b59203293f27068135f094759d93168e</Sha>
       <SourceBuild RepoName="sourcelink" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
