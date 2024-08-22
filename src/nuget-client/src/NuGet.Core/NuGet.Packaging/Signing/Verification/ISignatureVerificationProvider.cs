@@ -3,7 +3,6 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using NuGet.Common;
 
 namespace NuGet.Packaging.Signing
 {

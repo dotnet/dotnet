@@ -4,7 +4,6 @@
 using System;
 using System.Diagnostics;
 using FluentAssertions;
-using NuGet.Common;
 using Xunit;
 
 namespace NuGet.Protocol.Plugins.Tests

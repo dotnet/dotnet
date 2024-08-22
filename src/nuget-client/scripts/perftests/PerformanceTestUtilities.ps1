@@ -102,12 +102,13 @@ Function DownloadRepository([string] $repository, [string] $commitHash, [string]
 {
     If (Test-Path $sourceFolderPath)
     {
-        Log "Skipping the cloning of $repository as $sourceFolderPath is not empty" -color "Yellow"
+        Log "Skipping the cloning of $repository as $sourceFolderPath is not empty. Running git clean" -color "Yellow"
+        git -C $sourceFolderPath clean -xdf | out-null
     }
     Else
     {
         git clone $repository $sourceFolderPath
-        git -C $sourceFolderPath checkout $commitHash
+        git -C $sourceFolderPath checkout $commitHash | out-null
     }
 }
 
@@ -124,7 +125,7 @@ Function GetSolutionFilePath([string] $repository, [string] $sourceFolderPath)
     }
     Else
     {
-        $possibleSln = Get-ChildItem $sourceFolderPath *.sln
+        $possibleSln = Get-ChildItem $sourceFolderPath *.sln  | Where-Object{$_.FullName -notlike '*.slnf'}
         If ($possibleSln.Length -eq 0)
         {
             Log "No solution files found in $sourceFolderPath" "red"
@@ -180,7 +181,7 @@ Function GetClientVersion([string] $nugetClientFilePath)
     ElseIf($(IsClientMSBuildExe $nugetClientFilePath))
     {
         $clientDir = Split-Path -Path $nugetClientFilePath
-        $nugetClientPath = Resolve-Path (Join-Path -Path $clientDir -ChildPath "../../../Common7/IDE/CommonExtensions/Microsoft/NuGet/NuGet.Build.Tasks.dll")
+        $nugetClientPath = Resolve-Path (Join-Path -Path $clientDir -ChildPath "../../../../Common7/IDE/CommonExtensions/Microsoft/NuGet/NuGet.Build.Tasks.dll")
         $versionInfo = Get-ChildItem $nugetClientPath | % versioninfo | Select-Object FileVersion
         Return $(($versionInfo -split '\n')[0]).TrimStart("@{").TrimEnd('}').Substring("FileVersion=".Length)
     }
@@ -224,7 +225,7 @@ Function SetupNuGetFolders([string] $nugetClientFilePath, [string] $nugetFolders
 # This should only be invoked by the the performance tests
 Function CleanNuGetFolders([string] $nugetClientFilePath, [string] $nugetFoldersPath)
 {
-    Log "Cleanup up the NuGet folders - global packages folder, http/plugins caches. Client: $nugetClientFilePath. Folders: $nugetFoldersPath"
+    Log "Cleanup the NuGet folders - global packages folder, http/plugins caches. Client: $nugetClientFilePath. Folders: $nugetFoldersPath"
 
     LocalsClearAll $nugetClientFilePath
 
@@ -242,25 +243,20 @@ Function CleanNuGetFolders([string] $nugetClientFilePath, [string] $nugetFolders
 Function RunPerformanceTestsOnGitRepository(
     [string] $nugetClientFilePath,
     [string] $sourceRootFolderPath,
-    [string] $testCaseName,
     [string] $repoUrl,
     [string] $commitHash,
-    [string] $resultsFilePath,
+    [string] $resultsFolderPath,
     [string] $nugetFoldersPath,
     [string] $logsFolderPath,
     [int] $iterationCount,
-    [switch] $staticGraphRestore)
+    [string] $additionalOptions)
 {
+    $testCaseName = GenerateNameFromGitUrl $repoUrl
+    $resultsFilePath = [System.IO.Path]::Combine($resultsFolderPath, "$testCaseName.csv")
     $solutionFilePath = SetupGitRepository -repository $repoUrl -commitHash $commitHash -sourceFolderPath $([System.IO.Path]::Combine($sourceRootFolderPath, $testCaseName))
+    $sb = [scriptblock]::Create("$PSScriptRoot\RunPerformanceTests.ps1 -nugetClientFilePath ""$nugetClientFilePath"" -solutionFilePath $solutionFilePath -resultsFilePath $resultsFilePath -logsFolderPath $logsFolderPath -nugetFoldersPath $nugetFoldersPath -iterationCount $iterationCount " + $additionalOptions)
     SetupNuGetFolders $nugetClientFilePath $nugetFoldersPath
-    . "$PSScriptRoot\RunPerformanceTests.ps1" `
-        -nugetClientFilePath $nugetClientFilePath `
-        -solutionFilePath $solutionFilePath `
-        -resultsFilePath $resultsFilePath `
-        -logsFolderPath $logsFolderPath `
-        -nugetFoldersPath $nugetFoldersPath `
-        -iterationCount $iterationCount `
-        -staticGraphRestore:$staticGraphRestore
+    & $sb
 }
 
 Function GetProcessorInfo()
@@ -350,7 +346,10 @@ Function RunRestore(
     [switch] $cleanPluginsCache,
     [switch] $killMsBuildAndDotnetExeProcesses,
     [switch] $force,
-    [switch] $staticGraphRestore)
+    [switch] $staticGraphRestore,
+    [switch] $cleanRepository,
+    [switch] $useLocallyBuiltNuGet,
+    [switch] $forceLegacyResolverFallback)
 {
     $isClientDotnetExe = IsClientDotnetExe $nugetClientFilePath
     $isClientMSBuild = IsClientMSBuildExe $nugetClientFilePath
@@ -362,7 +361,7 @@ Function RunRestore(
         Return
     }
 
-    Log "Running $nugetClientFilePath restore with cleanGlobalPackagesFolder:$cleanGlobalPackagesFolder cleanHttpCache:$cleanHttpCache cleanPluginsCache:$cleanPluginsCache killMsBuildAndDotnetExeProcesses:$killMsBuildAndDotnetExeProcesses force:$force"
+    Log "Running $nugetClientFilePath restore with cleanGlobalPackagesFolder:$cleanGlobalPackagesFolder cleanHttpCache:$cleanHttpCache cleanPluginsCache:$cleanPluginsCache killMsBuildAndDotnetExeProcesses:$killMsBuildAndDotnetExeProcesses force:$force staticGraphRestore:$staticGraphRestore cleanRepository:$cleanRepository"
 
     $solutionPackagesFolderPath = $Env:NUGET_SOLUTION_PACKAGES_FOLDER_PATH
 
@@ -408,6 +407,12 @@ Function RunRestore(
             Remove-Item $solutionPackagesFolderPath -Recurse -Force -ErrorAction Ignore > $Null
             mkdir $solutionPackagesFolderPath > $Null
         }
+    }
+
+    if($cleanRepository)
+    {
+        $repositoryPath = [System.IO.Path]::GetDirectoryName($solutionFilePath)
+        git -C $repositoryPath clean -xdf | out-null
     }
 
     if($killMsBuildAndDotnetExeProcesses)
@@ -479,9 +484,44 @@ Function RunRestore(
         $staticGraphOutputValue = "N/A"
     }
 
-    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+    If($isClientDotnetExe -Or $isClientMSBuild)
+    {
+        # Always disable NuGetAudit. It's something impacted by the time of execution, and not helpful in these type of performance tests.
+        $arguments.Add("/p:NuGetAudit=false")   
+    }
 
+    if(($isClientDotnetExe -Or $isClientMSBuild) -And $forceLegacyResolverFallback)
+    {
+        $arguments.Add("/p:RestoreUseLegacyDependencyResolver=true")
+    }
+
+    if($useLocallyBuiltNuGet)
+    {
+        if($isClientMSBuild)
+        {
+            $NETFramework = "net472"
+            $Configuration = "release"
+            $packDllPath = Join-Path $NuGetClientRoot "artifacts\NuGet.Build.Tasks.Pack\bin\$Configuration\$NETFramework\NuGet.Build.Tasks.Pack.dll"
+            $packTargetsPath = Join-Path $NuGetClientRoot "artifacts\NuGet.Build.Tasks.Pack\bin\$Configuration\$NETFramework\NuGet.Build.Tasks.Pack.targets"
+            $nugetRestoreTargetsPath = Join-Path $NuGetClientRoot "artifacts\NuGet.Build.Tasks\bin\$Configuration\$NETFramework\NuGet.targets"
+            $nugetPropsPath = Join-Path $NuGetClientRoot "artifacts\NuGet.Build.Tasks\bin\$Configuration\$NETFramework\NuGet.props"
+            $consoleExePath = Join-Path $NuGetClientRoot "artifacts\NuGet.Build.Tasks.Console\bin\$Configuration\$NETFramework\NuGet.Build.Tasks.Console.exe"            
+            $arguments.Add("/p:NuGetRestoreTargets=$nugetRestoreTargetsPath");
+            $arguments.Add("/p:NuGetPropsFile=$nugetPropsPath");
+            $arguments.Add("/p:NuGetBuildTasksPackTargets=$packTargetsPath");
+            $arguments.Add("/p:NuGetConsoleProcessFileName=$consoleExePath");
+            $arguments.Add("/p:ImportNuGetBuildTasksPackTargetsFromSdk=true");
+            $arguments.Add("/p:NuGetPackTaskAssemblyFile=$packDllPath");
+        } 
+        else 
+        {
+            Log "Locally built NuGet can only be used with msbuild.exe" "red"
+        }
+    }
+
+    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
     $logs = . $nugetClientFilePath $arguments | Out-String
+
     if($LASTEXITCODE -ne 0)
     { 
         throw "The command `"$nugetClientFilePath $arguments`" finished with exit code $LASTEXITCODE.`n" + $logs
@@ -516,20 +556,20 @@ Function RunRestore(
 
     If (!(Test-Path $resultsFilePath))
     {
-        $columnHeaders = "Client Name,Client Version,Solution Name,Test Run ID,Scenario Name,Total Time (seconds),Core Restore Time (seconds),Force,Static Graph," + `
+        $columnHeaders = "Client Name,Client Version,Locally Built NuGet,Solution Name,Test Run ID,Scenario Name,Total Time (seconds),Core Restore Time (seconds),Force,Static Graph," + `
             "Global Packages Folder .nupkg Count,Global Packages Folder .nupkg Size (MB),Global Packages Folder File Count,Global Packages Folder File Size (MB),Clean Global Packages Folder," + `
-            "HTTP Cache File Count,HTTP Cache File Size (MB),Clean HTTP Cache,Plugins Cache File Count,Plugins Cache File Size (MB),Clean Plugins Cache,Kill MSBuild and dotnet Processes," + `
+            "HTTP Cache File Count,HTTP Cache File Size (MB),Clean HTTP Cache,Plugins Cache File Count,Plugins Cache File Size (MB),Clean Plugins Cache,Kill MSBuild and dotnet Processes,Clean git repo,Force Legacy resolver," + `
             "Processor Name,Processor Physical Core Count,Processor Logical Core Count"
 
         OutFileWithCreateFolders $resultsFilePath $columnHeaders
     }
 
-    $data = "$clientName,$clientVersion,$solutionName,$testRunId,$scenarioName,$totalTime,$restoreCoreTime,$force,$staticGraphOutputValue," + `
+    $data = "$clientName,$clientVersion,$useLocallyBuiltNuGet,$solutionName,$testRunId,$scenarioName,$totalTime,$restoreCoreTime,$force,$staticGraphOutputValue," + `
         "$($globalPackagesFolderNupkgFilesInfo.Count),$($globalPackagesFolderNupkgFilesInfo.TotalSizeInMB),$($globalPackagesFolderFilesInfo.Count),$($globalPackagesFolderFilesInfo.TotalSizeInMB),$cleanGlobalPackagesFolder," + `
-        "$($httpCacheFilesInfo.Count),$($httpCacheFilesInfo.TotalSizeInMB),$cleanHttpCache,$($pluginsCacheFilesInfo.Count),$($pluginsCacheFilesInfo.TotalSizeInMB),$cleanPluginsCache,$killMsBuildAndDotnetExeProcesses," + `
+        "$($httpCacheFilesInfo.Count),$($httpCacheFilesInfo.TotalSizeInMB),$cleanHttpCache,$($pluginsCacheFilesInfo.Count),$($pluginsCacheFilesInfo.TotalSizeInMB),$cleanPluginsCache,$killMsBuildAndDotnetExeProcesses,$cleanRepository,$forceLegacyResolverFallback," + `
         "$($processorInfo.Name),$($processorInfo.NumberOfCores),$($processorInfo.NumberOfLogicalProcessors)"
 
     Add-Content -Path $resultsFilePath -Value $data
 
-    Log "Finished measuring."
+    Log "Finished measuring in $totalTime sec"
 }

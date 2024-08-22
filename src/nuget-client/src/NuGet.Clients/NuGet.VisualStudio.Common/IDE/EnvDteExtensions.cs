@@ -3,7 +3,6 @@
 
 using System;
 using Microsoft.VisualStudio.Shell;
-using NuGet.VisualStudio.Common;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
 

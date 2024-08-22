@@ -7,11 +7,11 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
-using NuGet.Protocol.Core.Types;
 using NuGet.Protocol;
-using NuGet.Commands;
+using NuGet.Protocol.Core.Types;
 
 namespace NuGet.CommandLine.XPlat
 {

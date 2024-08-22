@@ -171,18 +171,18 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/nuget/nuget.client -->
-    <NuGetBuildTasksPackageVersion>6.12.0-preview.1.77</NuGetBuildTasksPackageVersion>
-    <NuGetBuildTasksConsolePackageVersion>6.12.0-preview.1.77</NuGetBuildTasksConsolePackageVersion>
-    <NuGetLocalizationPackageVersion>6.12.0-preview.1.77</NuGetLocalizationPackageVersion>
-    <NuGetBuildTasksPackPackageVersion>6.12.0-preview.1.77</NuGetBuildTasksPackPackageVersion>
-    <NuGetCommandLineXPlatPackageVersion>6.12.0-preview.1.77</NuGetCommandLineXPlatPackageVersion>
-    <NuGetProjectModelPackageVersion>6.12.0-preview.1.77</NuGetProjectModelPackageVersion>
-    <MicrosoftBuildNuGetSdkResolverPackageVersion>6.12.0-preview.1.77</MicrosoftBuildNuGetSdkResolverPackageVersion>
-    <NuGetCommonPackageVersion>6.12.0-preview.1.77</NuGetCommonPackageVersion>
-    <NuGetConfigurationPackageVersion>6.12.0-preview.1.77</NuGetConfigurationPackageVersion>
-    <NuGetFrameworksPackageVersion>6.12.0-preview.1.77</NuGetFrameworksPackageVersion>
-    <NuGetPackagingPackageVersion>6.12.0-preview.1.77</NuGetPackagingPackageVersion>
-    <NuGetVersioningPackageVersion>6.12.0-preview.1.77</NuGetVersioningPackageVersion>
+    <NuGetBuildTasksPackageVersion>6.12.0-preview.1.81</NuGetBuildTasksPackageVersion>
+    <NuGetBuildTasksConsolePackageVersion>6.12.0-preview.1.81</NuGetBuildTasksConsolePackageVersion>
+    <NuGetLocalizationPackageVersion>6.12.0-preview.1.81</NuGetLocalizationPackageVersion>
+    <NuGetBuildTasksPackPackageVersion>6.12.0-preview.1.81</NuGetBuildTasksPackPackageVersion>
+    <NuGetCommandLineXPlatPackageVersion>6.12.0-preview.1.81</NuGetCommandLineXPlatPackageVersion>
+    <NuGetProjectModelPackageVersion>6.12.0-preview.1.81</NuGetProjectModelPackageVersion>
+    <MicrosoftBuildNuGetSdkResolverPackageVersion>6.12.0-preview.1.81</MicrosoftBuildNuGetSdkResolverPackageVersion>
+    <NuGetCommonPackageVersion>6.12.0-preview.1.81</NuGetCommonPackageVersion>
+    <NuGetConfigurationPackageVersion>6.12.0-preview.1.81</NuGetConfigurationPackageVersion>
+    <NuGetFrameworksPackageVersion>6.12.0-preview.1.81</NuGetFrameworksPackageVersion>
+    <NuGetPackagingPackageVersion>6.12.0-preview.1.81</NuGetPackagingPackageVersion>
+    <NuGetVersioningPackageVersion>6.12.0-preview.1.81</NuGetVersioningPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/Microsoft/vstest -->
@@ -210,8 +210,8 @@
          then use that in Directory.Packages.props.
 
          At usage sites, either we use MicrosoftBuildMinimumVersion, or MicrosoftBuildVersion in source-only modes. -->
-    <MicrosoftBuildVersion>17.12.0-preview-24421-01</MicrosoftBuildVersion>
-    <MicrosoftBuildLocalizationVersion>17.12.0-preview-24421-01</MicrosoftBuildLocalizationVersion>
+    <MicrosoftBuildVersion>17.12.0-preview-24421-03</MicrosoftBuildVersion>
+    <MicrosoftBuildLocalizationVersion>17.12.0-preview-24421-03</MicrosoftBuildLocalizationVersion>
     <MicrosoftBuildMinimumVersion Condition="Exists('$(RepoRoot)src\Layout\redist\minimumMSBuildVersion') and '$(DotNetBuildSourceOnly)' != 'true'">$([System.IO.File]::ReadAllText('$(RepoRoot)src\Layout\redist\minimumMSBuildVersion').Trim())</MicrosoftBuildMinimumVersion>
   </PropertyGroup>
   <PropertyGroup>
@@ -229,18 +229,18 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/Microsoft/visualfsharp -->
-    <MicrosoftFSharpCompilerPackageVersion>12.9.100-beta.24420.10</MicrosoftFSharpCompilerPackageVersion>
+    <MicrosoftFSharpCompilerPackageVersion>12.9.100-beta.24421.4</MicrosoftFSharpCompilerPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/roslyn -->
-    <MicrosoftNetCompilersToolsetVersion>4.12.0-2.24421.5</MicrosoftNetCompilersToolsetVersion>
-    <MicrosoftNetCompilersToolsetFrameworkPackageVersion>4.12.0-2.24421.5</MicrosoftNetCompilersToolsetFrameworkPackageVersion>
-    <MicrosoftCodeAnalysisPackageVersion>4.12.0-2.24421.5</MicrosoftCodeAnalysisPackageVersion>
-    <MicrosoftCodeAnalysisCSharpPackageVersion>4.12.0-2.24421.5</MicrosoftCodeAnalysisCSharpPackageVersion>
-    <MicrosoftCodeAnalysisCSharpCodeStylePackageVersion>4.12.0-2.24421.5</MicrosoftCodeAnalysisCSharpCodeStylePackageVersion>
-    <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>4.12.0-2.24421.5</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>4.12.0-2.24421.5</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
-    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>4.12.0-2.24421.5</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
+    <MicrosoftNetCompilersToolsetVersion>4.12.0-2.24421.9</MicrosoftNetCompilersToolsetVersion>
+    <MicrosoftNetCompilersToolsetFrameworkPackageVersion>4.12.0-2.24421.9</MicrosoftNetCompilersToolsetFrameworkPackageVersion>
+    <MicrosoftCodeAnalysisPackageVersion>4.12.0-2.24421.9</MicrosoftCodeAnalysisPackageVersion>
+    <MicrosoftCodeAnalysisCSharpPackageVersion>4.12.0-2.24421.9</MicrosoftCodeAnalysisCSharpPackageVersion>
+    <MicrosoftCodeAnalysisCSharpCodeStylePackageVersion>4.12.0-2.24421.9</MicrosoftCodeAnalysisCSharpCodeStylePackageVersion>
+    <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>4.12.0-2.24421.9</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>4.12.0-2.24421.9</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
+    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>4.12.0-2.24421.9</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/aspnet/AspNetCore -->

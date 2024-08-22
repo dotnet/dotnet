@@ -4,7 +4,6 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Test.Apex.VisualStudio.Solution;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NuGet.Test.Utility;

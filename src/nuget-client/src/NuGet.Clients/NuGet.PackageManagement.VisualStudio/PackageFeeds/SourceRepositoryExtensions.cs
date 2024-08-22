@@ -11,7 +11,6 @@ using NuGet.Packaging.Core;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Model;
-using NuGet.Protocol.Resources;
 using NuGet.Versioning;
 using NuGet.VisualStudio.Internal.Contracts;
 

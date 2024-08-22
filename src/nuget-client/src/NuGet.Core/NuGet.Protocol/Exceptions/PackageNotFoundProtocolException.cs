@@ -4,7 +4,6 @@
 using System;
 using System.Globalization;
 using NuGet.Packaging.Core;
-using NuGet.Protocol.Core.Types;
 
 namespace NuGet.Protocol
 {
