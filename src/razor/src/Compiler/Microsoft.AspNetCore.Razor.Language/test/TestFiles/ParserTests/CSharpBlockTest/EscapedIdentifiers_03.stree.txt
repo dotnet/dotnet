@@ -15,7 +15,7 @@
                             Whitespace;[    ];
                             Identifier;[var];
                             Whitespace;[ ];
-                            Identifier;[@];
+                            Transition;[@];
                             Identifier;[@class];
                             Whitespace;[ ];
                             Assign;[=];
@@ -30,7 +30,7 @@
                             Whitespace;[ ];
                             Assign;[=];
                             Whitespace;[ ];
-                            Identifier;[@];
+                            Transition;[@];
                             Identifier;[@class];
                             Semicolon;[;];
                             NewLine;[LF];

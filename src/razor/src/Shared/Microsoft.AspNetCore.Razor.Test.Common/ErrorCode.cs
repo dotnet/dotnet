@@ -36,4 +36,5 @@ public enum ErrorCode
     WRN_NullReferenceReceiver = 8602,
     WRN_UninitializedNonNullableField = 8618,
     WRN_MissingNonNullTypesContextForAnnotationInGeneratedCode = 8669,
+    ERR_IllegalAtSequence = 9008,
 }
