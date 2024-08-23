@@ -79,10 +79,10 @@
       "commitSha": "fc8332fdd7a535acc5dfe8254429c1e8e4a1487e"
     },
     {
-      "packageVersion": "4.12.0-2.24420.10",
+      "packageVersion": "4.12.0-2.24421.9",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "c63e7b69c8a24803129f63b382c0ab1558112cf6"
+      "commitSha": "08a167c19e5e04742b0922bdb1ea8046e9364f4b"
     },
     {
       "packageVersion": "3.11.0-beta1.24415.1",
@@ -106,13 +106,13 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "3afee6ed261832f935a86ad2d5546dc60afe5572"
+      "commitSha": "36bfc2f99b98aab278e7cdb1a94a3363df7a3863"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24420.1",
+      "packageVersion": "9.0.0-alpha.1.24421.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "ee22054b44ec9615dc3481c4decc1b007a83a2b0"
+      "commitSha": "457ff6ef4705a0aa8de628a1f2a15474a05b7150"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24405.2",
@@ -151,22 +151,22 @@
       "commitSha": "c5c8ee586c6bd58eee6e845aee32e88f789c127d"
     },
     {
-      "packageVersion": "9.0.0-rc.2.24421.7",
+      "packageVersion": "9.0.0-rc.2.24422.5",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "e03263147ef39a5b992d8b636ada0fdd3fe04c16"
+      "commitSha": "817e9a027c0994a21cf3f368674bc4c17e8b6e15"
     },
     {
-      "packageVersion": "9.0.0-rc.2.24420.8",
+      "packageVersion": "9.0.0-rc.2.24421.10",
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "8cd1fac027b9ada49e4b249f6038a23dff8c5e2b"
+      "commitSha": "aa95eacb53c196215284130aaec121c2b5c9a2c1"
     },
     {
-      "packageVersion": "9.0.0-rc.2.24421.7",
+      "packageVersion": "9.0.0-rc.2.24422.2",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "241ca8801d775a1feb07124952359762613edda2"
+      "commitSha": "16d553e5b9e2c6fd8c96696760a1d67b50d8db28"
     },
     {
       "packageVersion": "9.0.0-preview.24317.2",
