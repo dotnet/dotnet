@@ -19,10 +19,10 @@
       "commitSha": "36332c8183f0205ec098822545dbe65d17d93405"
     },
     {
-      "packageVersion": "0.11.5-alpha.24379.1",
+      "packageVersion": "0.11.5-alpha.24419.1",
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "b9d928a9d65ed39b9257846e1b8e853cea609c00"
+      "commitSha": "c667bfea9cdbc5b5493e49e7ddc8dd635a217891"
     },
     {
       "packageVersion": "0.1.532403",
@@ -49,10 +49,10 @@
       "commitSha": "d18b30f63dd3473c0d2bc61683eb997a1e8ef6ca"
     },
     {
-      "packageVersion": "9.0.0-rc.1.24402.2",
+      "packageVersion": "9.0.0-rc.2.24421.3",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "edf3e90fa25b1fc4f7f63ceb45ef70f49c6b121a"
+      "commitSha": "099439b38815c2f6a7821d54dfdc4a3fa16537d1"
     },
     {
       "packageVersion": "9.0.100-beta.24421.6",
@@ -91,10 +91,10 @@
       "commitSha": "fdb9965ce68c1f4e1c0ff301488adf9caa958615"
     },
     {
-      "packageVersion": "9.0.0-rc.1.24414.5",
+      "packageVersion": "9.0.0-rc.2.24422.6",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "0fbd81404d1f211572387498474063bc6f407f0f"
+      "commitSha": "7384dc4b40071052d38fef092cefca9f66d3df65"
     },
     {
       "packageVersion": "9.0.0-preview.24372.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "36bfc2f99b98aab278e7cdb1a94a3363df7a3863"
+      "commitSha": "4b123a7034c25bbabca8b0a0c229ceff487b5272"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24421.1",
