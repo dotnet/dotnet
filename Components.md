@@ -24,7 +24,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/deployment-tools`  
 *[dotnet/deployment-tools@7871ee3](https://github.com/dotnet/deployment-tools/tree/7871ee378dce87b64d930d4f33dca9c888f4034d)*
 - `src/diagnostics`  
-*[dotnet/diagnostics@5838149](https://github.com/dotnet/diagnostics/tree/5838149521e80185e0dbe79720bd9ce6e81d2d35)*
+*[dotnet/diagnostics@513150c](https://github.com/dotnet/diagnostics/tree/513150c2f25077b1fcb194407e53c433c975f39b)*
 - `src/efcore`  
 *[dotnet/efcore@d94cc5a](https://github.com/dotnet/efcore/tree/d94cc5a79cb9d557485a95fba59ee3738c46aa81)*
 - `src/emsdk`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@d92413b](https://github.com/dotnet/scenario-tests/tree/d92413b87d36250859d8cb51ff69a03b5f5c4cab)*
 - `src/sdk`  
-*[dotnet/sdk@95dad63](https://github.com/dotnet/sdk/tree/95dad63ea24d24657475fcda7ba34a5dc17d2a1a)*
+*[dotnet/sdk@5bc89ea](https://github.com/dotnet/sdk/tree/5bc89ea2eec1383f2a0f3f169e74f69ada86b14c)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@ee22054](https://github.com/dotnet/source-build-externals/tree/ee22054b44ec9615dc3481c4decc1b007a83a2b0)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -88,11 +88,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/templating`  
 *[dotnet/templating@2a6daa0](https://github.com/dotnet/templating/tree/2a6daa04823543b47854e80f2282516fcec1f914)*
 - `src/test-templates`  
-*[dotnet/test-templates@3fb5ae4](https://github.com/dotnet/test-templates/tree/3fb5ae40a6e504c8163861ed2c7353e353263222)*
+*[dotnet/test-templates@7cbbaaa](https://github.com/dotnet/test-templates/tree/7cbbaaa72a9c5609d11b3203518feb4de640f731)*
 - `src/vstest`  
-*[microsoft/vstest@80af388](https://github.com/microsoft/vstest/tree/80af388e851d0d8b88f93d07d46d47054acb9951)*
+*[microsoft/vstest@54964cd](https://github.com/microsoft/vstest/tree/54964cdbcd254cbce066d3a2afa2b3908db51abd)*
 - `src/windowsdesktop`  
-*[dotnet/windowsdesktop@d1077d2](https://github.com/dotnet/windowsdesktop/tree/d1077d2fb9cead90745fe5dd622430925cb78b9e)*
+*[dotnet/windowsdesktop@8c14079](https://github.com/dotnet/windowsdesktop/tree/8c14079b75db3b56c8cfdcee3c2698c563ccd4db)*
 - `src/winforms`  
 *[dotnet/winforms@e4085eb](https://github.com/dotnet/winforms/tree/e4085eb08ceef38d44b0bcdae0bc02e374794979)*
 - `src/wpf`  

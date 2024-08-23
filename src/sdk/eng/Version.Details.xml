@@ -208,22 +208,22 @@
       <Uri>https://github.com/nuget/nuget.client</Uri>
       <Sha>15991039d603b8da5d2603315fc9c5c2cfb91a07</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.12.0-preview-24413-01">
+    <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.12.0-preview-24422-02">
       <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>80af388e851d0d8b88f93d07d46d47054acb9951</Sha>
+      <Sha>54964cdbcd254cbce066d3a2afa2b3908db51abd</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TestPlatform.CLI" Version="17.12.0-preview-24413-01">
+    <Dependency Name="Microsoft.TestPlatform.CLI" Version="17.12.0-preview-24422-02">
       <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>80af388e851d0d8b88f93d07d46d47054acb9951</Sha>
+      <Sha>54964cdbcd254cbce066d3a2afa2b3908db51abd</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TestPlatform.Build" Version="17.12.0-preview-24413-01">
+    <Dependency Name="Microsoft.TestPlatform.Build" Version="17.12.0-preview-24422-02">
       <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>80af388e851d0d8b88f93d07d46d47054acb9951</Sha>
+      <Sha>54964cdbcd254cbce066d3a2afa2b3908db51abd</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.vstest" Version="17.12.0-preview-24413-01">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.vstest" Version="17.12.0-preview-24422-02">
       <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>80af388e851d0d8b88f93d07d46d47054acb9951</Sha>
+      <Sha>54964cdbcd254cbce066d3a2afa2b3908db51abd</Sha>
       <SourceBuild RepoName="vstest" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="9.0.0-rc.1.24414.5">
@@ -250,22 +250,22 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>0fbd81404d1f211572387498474063bc6f407f0f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="10.0.0-alpha.1.24421.3">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="10.0.0-alpha.1.24422.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>d1077d2fb9cead90745fe5dd622430925cb78b9e</Sha>
+      <Sha>8c14079b75db3b56c8cfdcee3c2698c563ccd4db</Sha>
       <SourceBuildTarball RepoName="windowsdesktop" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.10.0" Version="10.0.0-alpha.1.24421.3">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.10.0" Version="10.0.0-alpha.1.24422.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>d1077d2fb9cead90745fe5dd622430925cb78b9e</Sha>
+      <Sha>8c14079b75db3b56c8cfdcee3c2698c563ccd4db</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="10.0.0-alpha.1.24421.3">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="10.0.0-alpha.1.24422.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>d1077d2fb9cead90745fe5dd622430925cb78b9e</Sha>
+      <Sha>8c14079b75db3b56c8cfdcee3c2698c563ccd4db</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.10.0" Version="10.0.0-alpha.1.24421.3">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.10.0" Version="10.0.0-alpha.1.24422.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>d1077d2fb9cead90745fe5dd622430925cb78b9e</Sha>
+      <Sha>8c14079b75db3b56c8cfdcee3c2698c563ccd4db</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="10.0.0-alpha.1.24415.2" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
       <Uri>https://github.com/dotnet/wpf</Uri>
@@ -375,14 +375,14 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>49c9ad01f057b3c6352bbec12b117acc2224493c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rc.24421.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rc.24422.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>3fb5ae40a6e504c8163861ed2c7353e353263222</Sha>
+      <Sha>7cbbaaa72a9c5609d11b3203518feb4de640f731</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.test-templates" Version="1.1.0-rc.24421.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.test-templates" Version="1.1.0-rc.24422.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>3fb5ae40a6e504c8163861ed2c7353e353263222</Sha>
+      <Sha>7cbbaaa72a9c5609d11b3203518feb4de640f731</Sha>
       <SourceBuild RepoName="test-templates" ManagedOnly="true" />
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
