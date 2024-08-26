@@ -69,28 +69,28 @@
       <Sha>099439b38815c2f6a7821d54dfdc4a3fa16537d1</Sha>
       <SourceBuild RepoName="emsdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Build" Version="17.12.0-preview-24422-01">
+    <Dependency Name="Microsoft.Build" Version="17.12.0-preview-24423-08">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>314cf24eab4fbfbd1ec7318afae73588a7a5fe6f</Sha>
+      <Sha>c44ed28e73ca2581ad496b6b279df5d61c859029</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Localization" Version="17.12.0-preview-24422-01">
+    <Dependency Name="Microsoft.Build.Localization" Version="17.12.0-preview-24423-08">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>314cf24eab4fbfbd1ec7318afae73588a7a5fe6f</Sha>
+      <Sha>c44ed28e73ca2581ad496b6b279df5d61c859029</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.12.0-preview-24422-01">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.12.0-preview-24423-08">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>314cf24eab4fbfbd1ec7318afae73588a7a5fe6f</Sha>
+      <Sha>c44ed28e73ca2581ad496b6b279df5d61c859029</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.9.100-beta.24422.2">
+    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.9.100-beta.24423.5">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>60fc17ddcf7eac31e4e91a02324bee1e14a1c225</Sha>
+      <Sha>14bc02fdcd9936541c07d4f31f4660ed09a60fda</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="9.0.100-beta.24422.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="9.0.100-beta.24423.5">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>60fc17ddcf7eac31e4e91a02324bee1e14a1c225</Sha>
+      <Sha>14bc02fdcd9936541c07d4f31f4660ed09a60fda</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.12.0-2.24421.9">
