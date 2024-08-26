@@ -170,8 +170,12 @@
       "description": "Select the fixture kinds to include in the project.",
       "allowMultipleValues": true,
       "enableQuotelessLiterals": true,
-      "defaultValue": "",
+      "defaultValue": "None",
       "choices": [
+        {
+          "choice": "None",
+          "description": "No fixture methods"
+        },
         {
           "choice": "AssemblyInitialize",
           "description": "AssemblyInitialize fixture method"
@@ -212,20 +216,6 @@
   ],
   "defaultName": "TestProject1",
   "postActions": [
-    {
-      "description": "Add MSTest.Sdk entry to global.json",
-      "manualInstructions": [ { "text": "Add a new property 'MSTest.Sdk' under 'msbuild-sdks' section of the 'global.json' file." }],
-      "actionId": "695A3659-EB40-4FF5-A6A6-C9C4E629FCB0",
-      "args": {
-        "jsonFileName": "global.json",
-        "parentPropertyPath": "msbuild-sdks",
-        "newJsonPropertyName": "MSTest.Sdk",
-        "newJsonPropertyValue": "3.5.0",
-        "allowFileCreation": true,
-        "allowPathCreation": true
-      },
-      "continueOnError": true
-    },
     {
       "condition": "(!skipRestore)",
       "description": "Restore NuGet packages required by this project.",
