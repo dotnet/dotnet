@@ -7,6 +7,7 @@
     <Shipping>true</Shipping>
     <PackProject>true</PackProject>
     <XPLATProject>true</XPLATProject>
+    <UseMSBuildLocator Condition=" '$(UseMSBuildLocator)' == '' And '$(Configuration)' == 'Debug' and '$(CI)' != 'true' ">true</UseMSBuildLocator>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,11 +20,17 @@
     <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
-<!-- Microsoft.Build.Locator is only used when debugging, and the compiler will skip copying this dependency from Release assemblies we insert because we only refer to it conditionally with the DEBUG configuration.
-  Uncomment the following when debugging. Also uncomment the MSBuildLocator code from Program.cs -->
-  <!-- <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Locator" PrivateAssets="All" />
-  </ItemGroup> -->
+  <!-- Microsoft.Build.Locator is needed when debugging, but should not be used in the assemblies we insert. -->
+  <Choose>
+    <When Condition=" '$(UseMSBuildLocator)' == 'true' ">
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);USEMSBUILDLOCATOR</DefineConstants>
+      </PropertyGroup>
+      <ItemGroup>
+        <PackageReference Include="Microsoft.Build.Locator" PrivateAssets="All" />
+      </ItemGroup>
+    </When>
+  </Choose>
 
   <ItemGroup>
     <Compile Remove="external\*" />

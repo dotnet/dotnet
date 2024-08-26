@@ -1060,4 +1060,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   <data name="Hyperlink_Owner" xml:space="preserve">
     <value>Owner</value>
   </data>
+  <data name="ToolTip_TransitivePathHelp" xml:space="preserve">
+    <value>To learn more about transitive paths, see</value>
+  </data>
 </root>

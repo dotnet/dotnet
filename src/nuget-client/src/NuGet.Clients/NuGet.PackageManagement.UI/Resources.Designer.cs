@@ -2349,6 +2349,15 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to To learn more about transitive paths, see.
+        /// </summary>
+        public static string ToolTip_TransitivePathHelp {
+            get {
+                return ResourceManager.GetString("ToolTip_TransitivePathHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Uninstall this package..
         /// </summary>
         public static string ToolTip_UninstallButton {
