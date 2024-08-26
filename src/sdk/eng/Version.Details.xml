@@ -93,43 +93,43 @@
       <Sha>14bc02fdcd9936541c07d4f31f4660ed09a60fda</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.12.0-2.24421.9">
+    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.12.0-2.24425.4">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>08a167c19e5e04742b0922bdb1ea8046e9364f4b</Sha>
+      <Sha>13b65d3b5638457d94c83b545235f47f0d11e483</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.roslyn" Version="4.12.0-2.24421.9">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.roslyn" Version="4.12.0-2.24425.4">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>08a167c19e5e04742b0922bdb1ea8046e9364f4b</Sha>
+      <Sha>13b65d3b5638457d94c83b545235f47f0d11e483</Sha>
       <SourceBuild RepoName="roslyn" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Net.Compilers.Toolset.Framework" Version="4.12.0-2.24421.9">
+    <Dependency Name="Microsoft.Net.Compilers.Toolset.Framework" Version="4.12.0-2.24425.4">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>08a167c19e5e04742b0922bdb1ea8046e9364f4b</Sha>
+      <Sha>13b65d3b5638457d94c83b545235f47f0d11e483</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis" Version="4.12.0-2.24421.9">
+    <Dependency Name="Microsoft.CodeAnalysis" Version="4.12.0-2.24425.4">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>08a167c19e5e04742b0922bdb1ea8046e9364f4b</Sha>
+      <Sha>13b65d3b5638457d94c83b545235f47f0d11e483</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp" Version="4.12.0-2.24421.9">
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp" Version="4.12.0-2.24425.4">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>08a167c19e5e04742b0922bdb1ea8046e9364f4b</Sha>
+      <Sha>13b65d3b5638457d94c83b545235f47f0d11e483</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="4.12.0-2.24421.9">
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="4.12.0-2.24425.4">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>08a167c19e5e04742b0922bdb1ea8046e9364f4b</Sha>
+      <Sha>13b65d3b5638457d94c83b545235f47f0d11e483</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp.Features" Version="4.12.0-2.24421.9">
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp.Features" Version="4.12.0-2.24425.4">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>08a167c19e5e04742b0922bdb1ea8046e9364f4b</Sha>
+      <Sha>13b65d3b5638457d94c83b545235f47f0d11e483</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.12.0-2.24421.9">
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.12.0-2.24425.4">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>08a167c19e5e04742b0922bdb1ea8046e9364f4b</Sha>
+      <Sha>13b65d3b5638457d94c83b545235f47f0d11e483</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.12.0-2.24421.9">
+    <Dependency Name="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.12.0-2.24425.4">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>08a167c19e5e04742b0922bdb1ea8046e9364f4b</Sha>
+      <Sha>13b65d3b5638457d94c83b545235f47f0d11e483</Sha>
     </Dependency>
     <Dependency Name="Microsoft.AspNetCore.DeveloperCertificates.XPlat" Version="9.0.0-rc.2.24422.3">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
@@ -452,34 +452,34 @@
       <Uri>https://github.com/dotnet/deployment-tools</Uri>
       <Sha>7871ee378dce87b64d930d4f33dca9c888f4034d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Tasks.Git" Version="9.0.0-beta.24421.2">
+    <Dependency Name="Microsoft.Build.Tasks.Git" Version="9.0.0-beta.24422.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>3f60d7363bb74fbd64cc98c18e566c929e1f5a22</Sha>
+      <Sha>7b0d5e684c4d646b1b71866cdc6abfbba7026619</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Common" Version="9.0.0-beta.24421.2">
+    <Dependency Name="Microsoft.SourceLink.Common" Version="9.0.0-beta.24422.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>3f60d7363bb74fbd64cc98c18e566c929e1f5a22</Sha>
+      <Sha>7b0d5e684c4d646b1b71866cdc6abfbba7026619</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="9.0.0-beta.24421.2">
+    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="9.0.0-beta.24422.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>3f60d7363bb74fbd64cc98c18e566c929e1f5a22</Sha>
+      <Sha>7b0d5e684c4d646b1b71866cdc6abfbba7026619</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitHub" Version="9.0.0-beta.24421.2">
+    <Dependency Name="Microsoft.SourceLink.GitHub" Version="9.0.0-beta.24422.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>3f60d7363bb74fbd64cc98c18e566c929e1f5a22</Sha>
+      <Sha>7b0d5e684c4d646b1b71866cdc6abfbba7026619</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitLab" Version="9.0.0-beta.24421.2">
+    <Dependency Name="Microsoft.SourceLink.GitLab" Version="9.0.0-beta.24422.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>3f60d7363bb74fbd64cc98c18e566c929e1f5a22</Sha>
+      <Sha>7b0d5e684c4d646b1b71866cdc6abfbba7026619</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="9.0.0-beta.24421.2">
+    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="9.0.0-beta.24422.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>3f60d7363bb74fbd64cc98c18e566c929e1f5a22</Sha>
+      <Sha>7b0d5e684c4d646b1b71866cdc6abfbba7026619</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.sourcelink" Version="9.0.0-beta.24421.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.sourcelink" Version="9.0.0-beta.24422.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>3f60d7363bb74fbd64cc98c18e566c929e1f5a22</Sha>
+      <Sha>7b0d5e684c4d646b1b71866cdc6abfbba7026619</Sha>
       <SourceBuild RepoName="sourcelink" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
