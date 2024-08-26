@@ -19,10 +19,10 @@
     <efcoreOutputPackageVersion>9.0.0-rc.2.24419.9</efcoreOutputPackageVersion>
     <emsdkGitCommitHash>099439b38815c2f6a7821d54dfdc4a3fa16537d1</emsdkGitCommitHash>
     <emsdkOutputPackageVersion>9.0.0-rc.2.24421.3</emsdkOutputPackageVersion>
-    <fsharpGitCommitHash>60fc17ddcf7eac31e4e91a02324bee1e14a1c225</fsharpGitCommitHash>
-    <fsharpOutputPackageVersion>9.0.100-beta.24422.2</fsharpOutputPackageVersion>
-    <msbuildGitCommitHash>314cf24eab4fbfbd1ec7318afae73588a7a5fe6f</msbuildGitCommitHash>
-    <msbuildOutputPackageVersion>17.12.0-preview-24422-01</msbuildOutputPackageVersion>
+    <fsharpGitCommitHash>14bc02fdcd9936541c07d4f31f4660ed09a60fda</fsharpGitCommitHash>
+    <fsharpOutputPackageVersion>9.0.100-beta.24423.5</fsharpOutputPackageVersion>
+    <msbuildGitCommitHash>c44ed28e73ca2581ad496b6b279df5d61c859029</msbuildGitCommitHash>
+    <msbuildOutputPackageVersion>17.12.0-preview-24423-08</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>15991039d603b8da5d2603315fc9c5c2cfb91a07</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.12.0-preview.1.81</nugetclientOutputPackageVersion>
     <razorGitCommitHash>fc8332fdd7a535acc5dfe8254429c1e8e4a1487e</razorGitCommitHash>
@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>9.0.0-rc.2.24422.6</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>d92413b87d36250859d8cb51ff69a03b5f5c4cab</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24372.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>4acdc967ec12e657c429164146efaab814d34761</sdkGitCommitHash>
+    <sdkGitCommitHash>38928e2335ba2f4b211085aa1aefa92d4791bf7f</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>457ff6ef4705a0aa8de628a1f2a15474a05b7150</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24421.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>0d066e61a30c2599d0ced871ea45acf0e10571af</sourcebuildreferencepackagesGitCommitHash>
