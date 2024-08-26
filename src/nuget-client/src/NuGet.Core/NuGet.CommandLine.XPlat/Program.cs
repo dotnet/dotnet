@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Parsing;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -36,9 +35,8 @@ namespace NuGet.CommandLine.XPlat
         /// </summary>
         public static int MainInternal(string[] args, CommandOutputLogger log)
         {
-#if DEBUG
-            // Uncomment the following when debugging. Also uncomment the PackageReference for Microsoft.Build.Locator.
-            /*try
+#if USEMSBUILDLOCATOR
+            try
             {
                 // .NET JIT compiles one method at a time. If this method calls `MSBuildLocator` directly, the
                 // try block is never entered if Microsoft.Build.Locator.dll can't be found. So, run it in a
@@ -49,14 +47,16 @@ namespace NuGet.CommandLine.XPlat
             {
                 // MSBuildLocator is used only to enable Visual Studio debugging.
                 // It's not needed when using a patched dotnet sdk, so it doesn't matter if it fails.
-            }*/
+            }
+#endif
 
+#if DEBUG
             var debugNuGetXPlat = Environment.GetEnvironmentVariable("DEBUG_NUGET_XPLAT");
 
             if (args.Contains(DebugOption) || string.Equals(bool.TrueString, debugNuGetXPlat, StringComparison.OrdinalIgnoreCase))
             {
                 args = args.Where(arg => !StringComparer.OrdinalIgnoreCase.Equals(arg, DebugOption)).ToArray();
-                Debugger.Launch();
+                System.Diagnostics.Debugger.Launch();
             }
 #endif
 
