@@ -20,7 +20,7 @@
     <PackageVersion Include="System.Reflection.Emit" Version="$(SystemReflectionEmitVersion)" />
 
     <!-- NuGet dependencies -->
-    <PackageVersion Include="NuGet.Packaging" Version="$(NugetPackagingVersion)" />
+    <PackageVersion Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
 
     <!-- Runtime dependencies -->
     <PackageVersion Include="Microsoft.Win32.Registry.AccessControl" Version="$(MicrosoftWin32RegistryAccessControlVersion)" />

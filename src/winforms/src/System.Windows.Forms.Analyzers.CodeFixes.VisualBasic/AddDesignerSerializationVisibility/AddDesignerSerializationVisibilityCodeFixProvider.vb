@@ -91,21 +91,16 @@ Namespace Global.System.Windows.Forms.VisualBasic.CodeFixes.AddDesignerSerializa
 
             ' Make sure, we keep the white spaces before and after the property
             Dim leadingTrivia As SyntaxTriviaList = propertyDeclarationSyntax.GetLeadingTrivia()
-            Dim trailingTrivia As SyntaxTriviaList = propertyDeclarationSyntax.GetTrailingTrivia()
+            Dim newProperty = propertyDeclarationSyntax.WithoutLeadingTrivia()
 
             ' Add the attribute to the property:
-            Dim newProperty As PropertyStatementSyntax = propertyDeclarationSyntax.AddAttributeLists(
+            newProperty = newProperty.AddAttributeLists(
                 SyntaxFactory.AttributeList(
                     SyntaxFactory.SingletonSeparatedList(designerSerializationVisibilityAttribute)))
 
-            ' Let's format the property, so the attribute is on top of it:
-            newProperty = newProperty.NormalizeWhitespace()
-
             ' Let's restore the original trivia:
             newProperty = newProperty.
-                WithLeadingTrivia(leadingTrivia).
-                WithTrailingTrivia(trailingTrivia).
-                WithAdditionalAnnotations(Formatter.Annotation)
+                WithLeadingTrivia(leadingTrivia)
 
             ' Let's check, if we already have the imports statement or if we need to add it:
             ' (Remember: We can't throw here, as we are in a code fixer. But this also cannot be null.)
@@ -116,25 +111,60 @@ Namespace Global.System.Windows.Forms.VisualBasic.CodeFixes.AddDesignerSerializa
             ' Produce a new root, which has the updated property with the attribute.
             root = root.ReplaceNode(propertyDeclarationSyntax, newProperty)
 
-            ' Let's check if we already have the imports statement:
-            If Not root.DescendantNodes().OfType(Of ImportsStatementSyntax)().
-                    Any(Function(u) u.ImportsClauses.OfType(Of SimpleImportsClauseSyntax)().
-                        Any(Function(i) i.Name.ToString() = SystemComponentModelName)) Then
+            ' Let's check if we already have the Imports directive:
+            If root.DescendantNodes().
+                OfType(Of ImportsStatementSyntax)().
+                Any(Function(i) i?.ImportsClauses.FirstOrDefault()?.ToString() = SystemComponentModelName) Then
 
-                Dim importsStatement As ImportsStatementSyntax = SyntaxFactory.
+                document = document.WithSyntaxRoot(root)
+                Return document
+            End If
+
+            ' Let's check if we have _an_ Imports directive:
+            Dim hasImports As Boolean = root.DescendantNodes().
+                OfType(Of ImportsStatementSyntax)().
+                FirstOrDefault() IsNot Nothing
+
+            ' Get the compilation unit:
+            Dim compilationUnit As CompilationUnitSyntax = root.
+                DescendantNodesAndSelf().
+                OfType(Of CompilationUnitSyntax)().
+                First()
+
+            Dim originalCompilationUnit = compilationUnit
+
+            If Not hasImports Then
+
+                ' We need to add a new line before the namespace/file-scoped-namespace declaration:
+                Dim firstNodesLeadingTrivia As SyntaxTriviaList? = compilationUnit.
+                    DescendantNodes().
+                    FirstOrDefault().
+                    GetLeadingTrivia()
+
+                compilationUnit = If(
+                    firstNodesLeadingTrivia IsNot Nothing,
+                    compilationUnit.WithLeadingTrivia(firstNodesLeadingTrivia.Value.
+                            Add(SyntaxFactory.CarriageReturnLineFeed)),
+                    compilationUnit.WithLeadingTrivia(SyntaxFactory.CarriageReturnLineFeed))
+            End If
+
+            Dim importsStatement As ImportsStatementSyntax = SyntaxFactory.
                     ImportsStatement(SyntaxFactory.SingletonSeparatedList(Of ImportsClauseSyntax)(
                         SyntaxFactory.SimpleImportsClause(
                             SyntaxFactory.ParseName(SystemComponentModelName)))).
                     WithAdditionalAnnotations(Simplifier.Annotation, Formatter.Annotation)
 
-                ' We need to add the imports statement:
-                Dim firstNode As SyntaxNode = root.DescendantNodes().First()
-                root = root.InsertNodesBefore(firstNode, {importsStatement})
-            End If
-
-            document = document.WithSyntaxRoot(root)
+            importsStatement = importsStatement.
+                NormalizeWhitespace().
+                WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed).
+                WithAdditionalAnnotations(Formatter.Annotation)
 
             ' Generate the new document:
+            document = document.WithSyntaxRoot(
+                root.ReplaceNode(
+                    originalCompilationUnit,
+                    compilationUnit.AddImports(importsStatement)))
+
             Return document
         End Function
     End Class
