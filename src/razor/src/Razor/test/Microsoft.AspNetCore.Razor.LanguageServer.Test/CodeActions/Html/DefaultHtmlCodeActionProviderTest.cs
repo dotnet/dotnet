@@ -84,7 +84,6 @@ public class DefaultHtmlCodeActionProviderTest(ITestOutputHelper testOutput) : L
                     TextDocument = new OptionalVersionedTextDocumentIdentifier
                     {
                         Uri = new Uri(documentPath),
-                        Version = 1
                     },
                     Edits = [VsLspFactory.CreateTextEdit(context.SourceText.GetRange(span), "Goo ~~~~~~~~~~~~~~~ Bar")]
                 }
@@ -111,7 +110,6 @@ public class DefaultHtmlCodeActionProviderTest(ITestOutputHelper testOutput) : L
                             TextDocument = new OptionalVersionedTextDocumentIdentifier
                             {
                                 Uri = new Uri("c:/Test.razor.html"),
-                                Version = 1
                             },
                             Edits = [VsLspFactory.CreateTextEdit(position: (0, 0), "Goo")]
                         }

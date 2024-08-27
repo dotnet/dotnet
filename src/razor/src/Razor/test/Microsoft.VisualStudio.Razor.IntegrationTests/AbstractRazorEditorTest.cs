@@ -44,6 +44,9 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
 
         VisualStudioLogging.AddCustomLoggers();
 
+        // Our expected test results have spaces not tabs
+        await TestServices.Shell.SetInsertSpacesAsync(ControlledHangMitigatingCancellationToken);
+
         _projectFilePath = await CreateAndOpenBlazorProjectAsync(ControlledHangMitigatingCancellationToken);
 
         await TestServices.SolutionExplorer.RestoreNuGetPackagesAsync(ControlledHangMitigatingCancellationToken);

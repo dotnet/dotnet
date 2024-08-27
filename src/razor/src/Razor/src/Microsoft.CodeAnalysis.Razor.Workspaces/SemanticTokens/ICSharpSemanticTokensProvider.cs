@@ -13,7 +13,7 @@ namespace Microsoft.CodeAnalysis.Razor.SemanticTokens;
 internal interface ICSharpSemanticTokensProvider
 {
     Task<int[]?> GetCSharpSemanticTokensResponseAsync(
-        VersionedDocumentContext documentContext,
+        DocumentContext documentContext,
         ImmutableArray<LinePositionSpan> csharpSpans,
         Guid correlationId,
         CancellationToken cancellationToken);

@@ -18,7 +18,7 @@ public class InstrumentationPassTest
         // Arrange
         var document = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDesignTimeDefault(),
+            Options = RazorCodeGenerationOptions.DesignTimeDefault,
         };
 
         var builder = IntermediateNodeBuilder.Create(document);
@@ -50,7 +50,7 @@ public class InstrumentationPassTest
         // Arrange
         var document = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var builder = IntermediateNodeBuilder.Create(document);
@@ -89,7 +89,7 @@ public class InstrumentationPassTest
         // Arrange
         var document = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var builder = IntermediateNodeBuilder.Create(document);
@@ -121,7 +121,7 @@ public class InstrumentationPassTest
         // Arrange
         var document = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var builder = IntermediateNodeBuilder.Create(document);
@@ -157,7 +157,7 @@ public class InstrumentationPassTest
         // Arrange
         var document = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var builder = IntermediateNodeBuilder.Create(document);
@@ -188,7 +188,7 @@ public class InstrumentationPassTest
         // Arrange
         var document = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var builder = IntermediateNodeBuilder.Create(document);
@@ -239,7 +239,7 @@ public class InstrumentationPassTest
         // Arrange
         var document = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var builder = IntermediateNodeBuilder.Create(document);
@@ -290,7 +290,7 @@ public class InstrumentationPassTest
         // Arrange
         var document = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var builder = IntermediateNodeBuilder.Create(document);
@@ -321,7 +321,7 @@ public class InstrumentationPassTest
         // Arrange
         var document = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var builder = IntermediateNodeBuilder.Create(document);

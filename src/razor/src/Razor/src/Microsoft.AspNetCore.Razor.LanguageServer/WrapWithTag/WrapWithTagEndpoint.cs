@@ -104,7 +104,7 @@ internal class WrapWithTagEndpoint(
         var versioned = new VersionedTextDocumentIdentifier
         {
             Uri = request.TextDocument.Uri,
-            Version = documentContext.Version,
+            Version = documentContext.Snapshot.Version,
         };
         var parameter = new DelegatedWrapWithTagParams(versioned, request);
 

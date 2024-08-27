@@ -34,7 +34,7 @@ public abstract class ExtensionIntermediateNode : IntermediateNode
         }
 
         var documentKind = context.DocumentKind ?? string.Empty;
-        context.Diagnostics.Add(
+        context.AddDiagnostic(
             RazorDiagnosticFactory.CreateCodeTarget_UnsupportedExtension(
                 documentKind,
                 typeof(TDependency)));

@@ -273,6 +273,6 @@ __tagHelperExecutionContext.AddTagHelperAttribute(_tagHelper1);
 
     private static void Push(CodeRenderingContext context, TagHelperIntermediateNode node)
     {
-        ((DefaultCodeRenderingContext)context).AncestorsInternal.Push(node);
+        context.PushAncestor(node);
     }
 }

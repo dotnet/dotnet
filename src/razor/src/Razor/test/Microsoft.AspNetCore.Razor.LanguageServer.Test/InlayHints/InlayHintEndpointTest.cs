@@ -106,7 +106,7 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
             },
             Range = VsLspFactory.CreateRange(0, 0, codeDocument.Source.Text.Lines.Count, 0)
         };
-        Assert.True(DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument, out var documentContext));
+        Assert.True(DocumentContextFactory.TryCreate(request.TextDocument, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act

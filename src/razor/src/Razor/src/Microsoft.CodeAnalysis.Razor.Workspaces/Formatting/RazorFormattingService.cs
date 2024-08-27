@@ -37,7 +37,7 @@ internal class RazorFormattingService : IRazorFormattingService
     }
 
     public async Task<TextEdit[]> FormatAsync(
-        VersionedDocumentContext documentContext,
+        DocumentContext documentContext,
         Range? range,
         FormattingOptions options,
         CancellationToken cancellationToken)
@@ -69,7 +69,7 @@ internal class RazorFormattingService : IRazorFormattingService
 
         var uri = documentContext.Uri;
         var documentSnapshot = documentContext.Snapshot;
-        var hostDocumentVersion = documentContext.Version;
+        var hostDocumentVersion = documentContext.Snapshot.Version;
         using var context = FormattingContext.Create(uri, documentSnapshot, codeDocument, options, _workspaceFactory);
         var originalText = context.SourceText;
 

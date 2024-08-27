@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -25,32 +26,41 @@ internal class ComponentInjectDirectivePass : IntermediateNodePassBase, IRazorDi
         for (var i = visitor.Directives.Count - 1; i >= 0; i--)
         {
             var directive = visitor.Directives[i];
-            var tokens = directive.Tokens.ToArray();
-            if (tokens.Length < 2)
+            var tokens = directive.Children.OfType<DirectiveTokenIntermediateNode>().ToArray();
+            var isMalformed = directive is MalformedDirectiveIntermediateNode;
+
+            var hasType = tokens.Length > 0 && !string.IsNullOrWhiteSpace(tokens[0].Content);
+            Debug.Assert(hasType || isMalformed);
+            var typeName = hasType ? tokens[0].Content : string.Empty;
+            var typeSpan = hasType ? tokens[0].Source : directive.Source?.GetZeroWidthEndSpan();
+
+            var hasMemberName = tokens.Length > 1 && !string.IsNullOrWhiteSpace(tokens[1].Content);
+            Debug.Assert(hasMemberName || isMalformed);
+            var memberName = hasMemberName ? tokens[1].Content : null;
+            var memberSpan = hasMemberName ? tokens[1].Source : null;
+
+            if (hasMemberName && !properties.Add(memberName))
             {
                 continue;
             }
 
-            var typeName = tokens[0].Content;
-            var typeSpan = tokens[0].Source;
-            var memberName = tokens[1].Content;
-            var memberSpan = tokens[1].Source;
-
-            if (!properties.Add(memberName))
-            {
-                continue;
-            }
-
-            classNode.Children.Add(new ComponentInjectIntermediateNode(typeName, memberName, typeSpan, memberSpan));
+            classNode.Children.Add(new ComponentInjectIntermediateNode(typeName, memberName, typeSpan, memberSpan, isMalformed));
         }
     }
 
     private class Visitor : IntermediateNodeWalker
     {
-        public IList<DirectiveIntermediateNode> Directives { get; }
-            = new List<DirectiveIntermediateNode>();
+        public IList<IntermediateNode> Directives { get; } = [];
 
         public override void VisitDirective(DirectiveIntermediateNode node)
+        {
+            if (node.Directive == ComponentInjectDirective.Directive)
+            {
+                Directives.Add(node);
+            }
+        }
+
+        public override void VisitMalformedDirective(MalformedDirectiveIntermediateNode node)
         {
             if (node.Directive == ComponentInjectDirective.Directive)
             {

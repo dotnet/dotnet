@@ -1,53 +1,195 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
-public abstract class CodeRenderingContext : IDisposable
+public sealed class CodeRenderingContext : IDisposable
 {
-    internal static readonly object NewLineString = "NewLineString";
+    private readonly record struct ScopeInternal(IntermediateNodeWriter Writer);
 
-    internal static readonly object SuppressUniqueIds = "SuppressUniqueIds";
+    public RazorSourceDocument SourceDocument { get; }
+    public RazorCodeGenerationOptions Options { get; }
+    public CodeWriter CodeWriter { get; }
 
-    public abstract IEnumerable<IntermediateNode> Ancestors { get; }
+    private readonly DocumentIntermediateNode _documentNode;
 
-    public abstract CodeWriter CodeWriter { get; }
+    private readonly Stack<IntermediateNode> _ancestorStack;
+    private readonly Stack<ScopeInternal> _scopeStack;
 
-    public abstract RazorDiagnosticCollection Diagnostics { get; }
+    private readonly ImmutableArray<RazorDiagnostic>.Builder _diagnostics;
+    private readonly ImmutableArray<SourceMapping>.Builder _sourceMappings;
+    private readonly ImmutableArray<LinePragma>.Builder _linePragmas;
 
-    public abstract string DocumentKind { get; }
+    private IntermediateNodeVisitor? _visitor;
+    public IntermediateNodeVisitor Visitor => _visitor.AssumeNotNull();
 
-    public abstract ItemCollection Items { get; }
+    public string DocumentKind => _documentNode.DocumentKind;
 
-    public abstract IntermediateNodeWriter NodeWriter { get; }
-
-    public abstract RazorCodeGenerationOptions Options { get; }
-
-    public abstract IntermediateNode Parent { get; }
-
-    public abstract RazorSourceDocument SourceDocument { get; }
-
-    public abstract void AddSourceMappingFor(IntermediateNode node);
-
-    public abstract void AddSourceMappingFor(SourceSpan node, int offset = 0);
-
-    public abstract void RenderNode(IntermediateNode node);
-
-    public abstract void RenderNode(IntermediateNode node, IntermediateNodeWriter writer);
-
-    public abstract void RenderChildren(IntermediateNode node);
-
-    public abstract void RenderChildren(IntermediateNode node, IntermediateNodeWriter writer);
-
-    public virtual void AddLinePragma(LinePragma linePragma)
+    public CodeRenderingContext(
+        IntermediateNodeWriter nodeWriter,
+        RazorSourceDocument sourceDocument,
+        DocumentIntermediateNode documentNode,
+        RazorCodeGenerationOptions options)
     {
+        ArgHelper.ThrowIfNull(nodeWriter);
+        ArgHelper.ThrowIfNull(sourceDocument);
+        ArgHelper.ThrowIfNull(documentNode);
+        ArgHelper.ThrowIfNull(options);
+
+        SourceDocument = sourceDocument;
+        _documentNode = documentNode;
+        Options = options;
+
+        _ancestorStack = StackPool<IntermediateNode>.Default.Get();
+        _scopeStack = StackPool<ScopeInternal>.Default.Get();
+        _scopeStack.Push(new(nodeWriter));
+
+        _diagnostics = ArrayBuilderPool<RazorDiagnostic>.Default.Get();
+
+        foreach (var diagnostic in _documentNode.GetAllDiagnostics())
+        {
+            _diagnostics.Add(diagnostic);
+        }
+
+        _linePragmas = ArrayBuilderPool<LinePragma>.Default.Get();
+        _sourceMappings = ArrayBuilderPool<SourceMapping>.Default.Get();
+
+        CodeWriter = new CodeWriter(options);
     }
 
-    public abstract void Dispose();
+    public void Dispose()
+    {
+        StackPool<IntermediateNode>.Default.Return(_ancestorStack);
+        StackPool<ScopeInternal>.Default.Return(_scopeStack);
+
+        ArrayBuilderPool<RazorDiagnostic>.Default.Return(_diagnostics);
+        ArrayBuilderPool<LinePragma>.Default.Return(_linePragmas);
+        ArrayBuilderPool<SourceMapping>.Default.Return(_sourceMappings);
+
+        CodeWriter.Dispose();
+    }
+
+    // This will be called by the document writer when the context is 'live'.
+    public void SetVisitor(IntermediateNodeVisitor visitor)
+    {
+        _visitor = visitor;
+    }
+
+    public IntermediateNodeWriter NodeWriter => _scopeStack.Peek().Writer;
+
+    public IntermediateNode? Parent
+        => _ancestorStack.Count == 0 ? null : _ancestorStack.Peek();
+
+    public void AddDiagnostic(RazorDiagnostic diagnostic)
+    {
+        _diagnostics.Add(diagnostic);
+    }
+
+    public ImmutableArray<RazorDiagnostic> GetDiagnostics()
+        => _diagnostics.ToImmutableOrderedBy(static d => d.Span.AbsoluteIndex);
+
+    public void AddSourceMappingFor(IntermediateNode node)
+    {
+        ArgHelper.ThrowIfNull(node);
+
+        if (node.Source == null)
+        {
+            return;
+        }
+
+        AddSourceMappingFor(node.Source.Value);
+    }
+
+    public void AddSourceMappingFor(SourceSpan source, int offset = 0)
+    {
+        if (SourceDocument.FilePath != null &&
+            !string.Equals(SourceDocument.FilePath, source.FilePath, StringComparison.OrdinalIgnoreCase))
+        {
+            // We don't want to generate line mappings for imports.
+            return;
+        }
+
+        var currentLocation = CodeWriter.Location with
+        {
+            AbsoluteIndex = CodeWriter.Location.AbsoluteIndex + offset,
+            CharacterIndex = CodeWriter.Location.CharacterIndex + offset
+        };
+
+        var generatedLocation = new SourceSpan(currentLocation, source.Length);
+        var sourceMapping = new SourceMapping(source, generatedLocation);
+
+        _sourceMappings.Add(sourceMapping);
+    }
+
+    public ImmutableArray<SourceMapping> GetSourceMappings()
+        => _sourceMappings.DrainToImmutable();
+
+    public void RenderChildren(IntermediateNode node)
+    {
+        ArgHelper.ThrowIfNull(node);
+
+        _ancestorStack.Push(node);
+
+        for (var i = 0; i < node.Children.Count; i++)
+        {
+            Visitor.Visit(node.Children[i]);
+        }
+
+        _ancestorStack.Pop();
+    }
+
+    public void RenderChildren(IntermediateNode node, IntermediateNodeWriter writer)
+    {
+        ArgHelper.ThrowIfNull(node);
+        ArgHelper.ThrowIfNull(writer);
+
+        _scopeStack.Push(new ScopeInternal(writer));
+        _ancestorStack.Push(node);
+
+        for (var i = 0; i < node.Children.Count; i++)
+        {
+            Visitor.Visit(node.Children[i]);
+        }
+
+        _ancestorStack.Pop();
+        _scopeStack.Pop();
+    }
+
+    public void RenderNode(IntermediateNode node)
+    {
+        ArgHelper.ThrowIfNull(node);
+
+        Visitor.Visit(node);
+    }
+
+    public void RenderNode(IntermediateNode node, IntermediateNodeWriter writer)
+    {
+        ArgHelper.ThrowIfNull(node);
+        ArgHelper.ThrowIfNull(writer);
+
+        _scopeStack.Push(new ScopeInternal(writer));
+
+        Visitor.Visit(node);
+
+        _scopeStack.Pop();
+    }
+
+    public void AddLinePragma(LinePragma linePragma)
+    {
+        _linePragmas.Add(linePragma);
+    }
+
+    public ImmutableArray<LinePragma> GetLinePragmas()
+        => _linePragmas.DrainToImmutable();
+
+    public void PushAncestor(IntermediateNode node)
+    {
+        _ancestorStack.Push(node);
+    }
 }

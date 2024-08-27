@@ -21,13 +21,11 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
     private static readonly string s_baseDirectory = PathUtilities.CreateRootedPath("path", "to");
 
     private readonly TestProjectSnapshotManager _projectManager;
-    private readonly IDocumentVersionCache _documentVersionCache;
 
     public DocumentContextFactoryTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
         _projectManager = CreateProjectSnapshotManager();
-        _documentVersionCache = new DocumentVersionCache(_projectManager);
     }
 
     [Fact]
@@ -37,7 +35,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var filePath = FilePathNormalizer.Normalize(Path.Combine(s_baseDirectory, "file.cshtml"));
         var uri = new Uri(filePath);
 
-        var factory = new DocumentContextFactory(_projectManager, _documentVersionCache, LoggerFactory);
+        var factory = new DocumentContextFactory(_projectManager, LoggerFactory);
 
         // Act
         Assert.False(factory.TryCreate(uri, out _));
@@ -50,30 +48,10 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var filePath = FilePathNormalizer.Normalize(Path.Combine(s_baseDirectory, "file.cshtml"));
         var uri = new Uri(filePath);
 
-        var factory = new DocumentContextFactory(_projectManager, _documentVersionCache, LoggerFactory);
+        var factory = new DocumentContextFactory(_projectManager, LoggerFactory);
 
         // Act
-        Assert.False(factory.TryCreateForOpenDocument(uri, out _));
-    }
-
-    [Fact]
-    public async Task TryCreateForOpenDocumentAsync_CanNotResolveVersion_ReturnsNull()
-    {
-        // Arrange
-        var filePath = FilePathNormalizer.Normalize(Path.Combine(s_baseDirectory, "file.cshtml"));
-        var uri = new Uri(filePath);
-
-        var hostDocument = new HostDocument(filePath, "file.cshtml");
-
-        await _projectManager.UpdateAsync(updater =>
-        {
-            updater.DocumentAdded(MiscFilesHostProject.Instance.Key, hostDocument, TestMocks.CreateTextLoader(filePath, ""));
-        });
-
-        var factory = new DocumentContextFactory(_projectManager, _documentVersionCache, LoggerFactory);
-
-        // Act
-        Assert.False(factory.TryCreateForOpenDocument(uri, out _));
+        Assert.False(factory.TryCreate(uri, out _));
     }
 
     [Fact]
@@ -94,7 +72,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var documentSnapshot = miscFilesProject.GetDocument(filePath);
         Assert.NotNull(documentSnapshot);
 
-        var factory = new DocumentContextFactory(_projectManager, _documentVersionCache, LoggerFactory);
+        var factory = new DocumentContextFactory(_projectManager, LoggerFactory);
 
         // Act
         Assert.True(factory.TryCreate(uri, out var documentContext));
@@ -113,7 +91,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var projectFilePath = Path.Combine(s_baseDirectory, "project.csproj");
         var uri = new Uri(filePath);
 
-        var factory = new DocumentContextFactory(_projectManager, _documentVersionCache, LoggerFactory);
+        var factory = new DocumentContextFactory(_projectManager, LoggerFactory);
 
         var hostProject = new HostProject(projectFilePath, intermediateOutputPath, RazorConfiguration.Default, rootNamespace: null);
         var hostDocument = new HostDocument(filePath, "file.cshtml");
@@ -149,14 +127,13 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var documentSnapshot = miscFilesProject.GetDocument(filePath);
         Assert.NotNull(documentSnapshot);
 
-        _documentVersionCache.TrackDocumentVersion(documentSnapshot, version: 1337);
-        var factory = new DocumentContextFactory(_projectManager, _documentVersionCache, LoggerFactory);
+        var factory = new DocumentContextFactory(_projectManager, LoggerFactory);
 
         // Act
-        Assert.True(factory.TryCreateForOpenDocument(uri, out var documentContext));
+        Assert.True(factory.TryCreate(uri, out var documentContext));
 
         // Assert
-        Assert.Equal(1337, documentContext.Version);
+        Assert.Equal(1, documentContext.Snapshot.Version);
         Assert.Equal(uri, documentContext.Uri);
         Assert.Same(documentSnapshot, documentContext.Snapshot);
     }

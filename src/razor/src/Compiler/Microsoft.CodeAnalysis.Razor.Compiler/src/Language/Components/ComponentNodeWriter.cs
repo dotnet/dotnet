@@ -58,7 +58,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         //
         // We provide an error for this case just to be friendly.
         var content = string.Join("", node.Children.OfType<IntermediateToken>().Select(t => t.Content));
-        context.Diagnostics.Add(ComponentDiagnosticFactory.Create_CodeBlockInAttribute(node.Source, content));
+        context.AddDiagnostic(ComponentDiagnosticFactory.Create_CodeBlockInAttribute(node.Source, content));
         return;
     }
 

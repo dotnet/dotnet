@@ -27,7 +27,7 @@ public abstract class ResponseRewriterTestBase : LanguageServerTestBase
     {
         var completionContext = new VSInternalCompletionContext();
         var codeDocument = CreateCodeDocument(documentContent);
-        var documentContext = TestDocumentContext.From("C:/path/to/file.cshtml", codeDocument, hostDocumentVersion: 0);
+        var documentContext = TestDocumentContext.From("C:/path/to/file.cshtml", codeDocument);
         var provider = TestDelegatedCompletionListProvider.Create(initialCompletionList, LoggerFactory, rewriter ?? Rewriter);
         var clientCapabilities = new VSInternalClientCapabilities();
         var completionList = await provider.GetCompletionListAsync(absoluteIndex, completionContext, documentContext, clientCapabilities, correlationId: Guid.Empty, cancellationToken: DisposalToken);

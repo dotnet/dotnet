@@ -33,7 +33,7 @@ internal class RenameService(
     private readonly IProjectCollectionResolver _projectCollectionResolver = projectCollectionResolver;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
 
-    public async Task<WorkspaceEdit?> TryGetRazorRenameEditsAsync(VersionedDocumentContext documentContext, DocumentPositionInfo positionInfo, string newName, CancellationToken cancellationToken)
+    public async Task<WorkspaceEdit?> TryGetRazorRenameEditsAsync(DocumentContext documentContext, DocumentPositionInfo positionInfo, string newName, CancellationToken cancellationToken)
     {
         // We only support renaming of .razor components, not .cshtml tag helpers
         if (!FileKinds.IsComponent(documentContext.FileKind))

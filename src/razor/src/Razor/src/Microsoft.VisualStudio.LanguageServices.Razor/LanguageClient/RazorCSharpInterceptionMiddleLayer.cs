@@ -16,15 +16,10 @@ using Newtonsoft.Json.Linq;
 namespace Microsoft.VisualStudio.Razor.LanguageClient;
 
 [Export(typeof(IRazorCSharpInterceptionMiddleLayer))]
-internal class RazorCSharpInterceptionMiddleLayer : IRazorCSharpInterceptionMiddleLayer
+[method: ImportingConstructor]
+internal class RazorCSharpInterceptionMiddleLayer(LSPRequestInvoker requestInvoker) : IRazorCSharpInterceptionMiddleLayer
 {
-    private readonly LSPRequestInvoker _requestInvoker;
-
-    [ImportingConstructor]
-    public RazorCSharpInterceptionMiddleLayer(LSPRequestInvoker requestInvoker)
-    {
-        _requestInvoker = requestInvoker;
-    }
+    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
 
     public bool CanHandle(string methodName)
         => methodName.Equals(Methods.WorkspaceSemanticTokensRefreshName);

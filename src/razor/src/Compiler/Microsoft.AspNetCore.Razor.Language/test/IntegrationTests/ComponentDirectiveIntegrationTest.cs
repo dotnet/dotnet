@@ -100,6 +100,23 @@ public class ComponentDirectiveIntegrationTest : RazorIntegrationTestBase
             s => AssertEx.Equal("private TestNamespace.IMyService2 Test.TestComponent.MyService2 { get; set; }", s.ToTestDisplayString()));
     }
 
+    [Fact]
+    public void SupportsIncompleteInjectDirectives()
+    {
+        var component = CompileToComponent("""
+            @inject 
+            @inject DateTime 
+            @inject DateTime Value
+            """);
+
+        // Assert 1: Compiled type has correct properties
+        var injectableProperties = component.GetMembers().OfType<IPropertySymbol>()
+            .Where(p => p.GetAttributes().Any(a => a.AttributeClass.Name == "InjectAttribute"));
+        Assert.Collection(injectableProperties.OrderBy(p => p.Name),
+            s => AssertEx.Equal("private System.DateTime Test.TestComponent.Member___UniqueIdSuppressedForTesting__ { get; set; }", s.ToTestDisplayString()),
+            s => AssertEx.Equal("private System.DateTime Test.TestComponent.Value { get; set; }", s.ToTestDisplayString()));
+    }
+
     private const string AdditionalCode =
     """
     using Microsoft.AspNetCore.Components;

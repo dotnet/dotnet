@@ -36,7 +36,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
     private readonly ILogger _logger = logger;
 
     public async Task<int[]?> GetSemanticTokensAsync(
-        VersionedDocumentContext documentContext,
+        DocumentContext documentContext,
         LinePositionSpan span,
         bool colorBackground,
         Guid correlationId,
@@ -58,7 +58,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
     }
 
     private async Task<int[]?> GetSemanticTokensAsync(
-        VersionedDocumentContext documentContext,
+        DocumentContext documentContext,
         LinePositionSpan span,
         Guid correlationId,
         bool colorBackground,
@@ -89,7 +89,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
         // We return null (which to the LSP is a no-op) to prevent flashing of CSharp elements.
         if (csharpSemanticRangesResult is not { } csharpSemanticRanges)
         {
-            _logger.LogDebug($"Couldn't get C# tokens for version {documentContext.Version} of {documentContext.Uri}. Returning null");
+            _logger.LogDebug($"Couldn't get C# tokens for version {documentContext.Snapshot.Version} of {documentContext.Uri}. Returning null");
             return null;
         }
 
@@ -134,7 +134,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
 
     // Virtual for benchmarks
     protected virtual async Task<ImmutableArray<SemanticRange>?> GetCSharpSemanticRangesAsync(
-        VersionedDocumentContext documentContext,
+        DocumentContext documentContext,
         RazorCodeDocument codeDocument,
         LinePositionSpan razorSpan,
         bool colorBackground,
@@ -169,6 +169,8 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
 
             csharpRanges = [csharpRange];
         }
+
+        _logger.LogDebug($"Requesting C# semantic tokens for host version {documentContext.Snapshot.Version}, correlation ID {correlationId}, and the server thinks there are {codeDocument.GetCSharpSourceText().Lines.Count} lines of C#");
 
         var csharpResponse = await _csharpSemanticTokensProvider.GetCSharpSemanticTokensResponseAsync(documentContext, csharpRanges, correlationId, cancellationToken).ConfigureAwait(false);
 

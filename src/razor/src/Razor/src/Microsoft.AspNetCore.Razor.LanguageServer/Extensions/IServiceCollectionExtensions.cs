@@ -196,9 +196,6 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IDocumentContextFactory, DocumentContextFactory>();
         services.AddSingleton(sp => new Lazy<IDocumentContextFactory>(sp.GetRequiredService<IDocumentContextFactory>));
 
-        services.AddSingleton<IDocumentVersionCache, DocumentVersionCache>();
-        services.AddSingleton((services) => (IRazorStartupService)services.GetRequiredService<IDocumentVersionCache>());
-
         services.AddSingleton<RemoteTextLoaderFactory, DefaultRemoteTextLoaderFactory>();
         services.AddSingleton<IRazorProjectService, RazorProjectService>();
         services.AddSingleton<IRazorStartupService>((services) => (RazorProjectService)services.GetRequiredService<IRazorProjectService>());

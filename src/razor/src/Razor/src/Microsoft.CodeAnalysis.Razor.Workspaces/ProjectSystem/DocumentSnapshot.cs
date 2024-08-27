@@ -19,6 +19,8 @@ internal class DocumentSnapshot : IDocumentSnapshot
     public IProjectSnapshot Project => ProjectInternal;
     public bool SupportsOutput => true;
 
+    public int Version => State.Version;
+
     public ProjectSnapshot ProjectInternal { get; }
     public DocumentState State { get; }
 

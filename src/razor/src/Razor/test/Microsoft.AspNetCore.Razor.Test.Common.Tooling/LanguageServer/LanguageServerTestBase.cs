@@ -58,7 +58,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
             initializer: static updater => updater.ProjectAdded(MiscFilesHostProject.Instance));
 
     private protected static RazorRequestContext CreateRazorRequestContext(
-        VersionedDocumentContext? documentContext,
+        DocumentContext? documentContext,
         ILspServices? lspServices = null)
         => new(documentContext, lspServices ?? StrictMock.Of<ILspServices>(), "lsp/method", uri: null);
 
@@ -108,9 +108,9 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         return CreateDocumentContextFactory(documentPath, codeDocument);
     }
 
-    private protected static VersionedDocumentContext CreateDocumentContext(Uri documentPath, RazorCodeDocument codeDocument)
+    private protected static DocumentContext CreateDocumentContext(Uri documentPath, RazorCodeDocument codeDocument)
     {
-        return TestDocumentContext.From(documentPath.GetAbsoluteOrUNCPath(), codeDocument, hostDocumentVersion: 1337);
+        return TestDocumentContext.From(documentPath.GetAbsoluteOrUNCPath(), codeDocument);
     }
 
     private protected static IDocumentContextFactory CreateDocumentContextFactory(
@@ -119,15 +119,15 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         bool documentFound = true)
     {
         var documentContextFactory = documentFound
-            ? new TestDocumentContextFactory(documentPath.GetAbsoluteOrUNCPath(), codeDocument, version: 1337)
+            ? new TestDocumentContextFactory(documentPath.GetAbsoluteOrUNCPath(), codeDocument)
             : new TestDocumentContextFactory();
 
         return documentContextFactory;
     }
 
-    private protected static VersionedDocumentContext CreateDocumentContext(Uri uri, IDocumentSnapshot snapshot)
+    private protected static DocumentContext CreateDocumentContext(Uri uri, IDocumentSnapshot snapshot)
     {
-        return new VersionedDocumentContext(uri, snapshot, projectContext: null, version: 0);
+        return new DocumentContext(uri, snapshot, projectContext: null);
     }
 
     private protected static RazorLSPOptionsMonitor GetOptionsMonitor(bool enableFormatting = true, bool autoShowCompletion = true, bool autoListParams = true, bool formatOnType = true, bool autoInsertAttributeQuotes = true, bool colorBackground = false, bool codeBlockBraceOnNextLine = false, bool commitElementsWithSpace = true)

@@ -20,16 +20,16 @@ internal class TestDocumentSnapshot : DocumentSnapshot
     public static TestDocumentSnapshot Create(string filePath)
         => Create(filePath, string.Empty);
 
-    public static TestDocumentSnapshot Create(string filePath, VersionStamp version)
-        => Create(filePath, string.Empty, version);
+    public static TestDocumentSnapshot Create(string filePath, VersionStamp textVersion)
+        => Create(filePath, string.Empty, textVersion);
 
-    public static TestDocumentSnapshot Create(string filePath, string text)
-        => Create(filePath, text, VersionStamp.Default);
+    public static TestDocumentSnapshot Create(string filePath, string text, int version = 0)
+        => Create(filePath, text, VersionStamp.Default, version: version);
 
-    public static TestDocumentSnapshot Create(string filePath, string text, VersionStamp version, ProjectWorkspaceState? projectWorkspaceState = null)
-        => Create(filePath, text, version, TestProjectSnapshot.Create(filePath + ".csproj", projectWorkspaceState));
+    public static TestDocumentSnapshot Create(string filePath, string text, VersionStamp textVersion, ProjectWorkspaceState? projectWorkspaceState = null, int version = 0)
+        => Create(filePath, text, textVersion, TestProjectSnapshot.Create(filePath + ".csproj", projectWorkspaceState), version);
 
-    public static TestDocumentSnapshot Create(string filePath, string text, VersionStamp version, TestProjectSnapshot projectSnapshot)
+    public static TestDocumentSnapshot Create(string filePath, string text, VersionStamp textVersion, TestProjectSnapshot projectSnapshot, int version)
     {
         var targetPath = Path.GetDirectoryName(projectSnapshot.FilePath) is string projectDirectory && filePath.StartsWith(projectDirectory)
             ? filePath[projectDirectory.Length..]
@@ -40,8 +40,9 @@ internal class TestDocumentSnapshot : DocumentSnapshot
         var documentState = new DocumentState(
             hostDocument,
             SourceText.From(text),
+            textVersion,
             version,
-            () => Task.FromResult(TextAndVersion.Create(sourceText, version)));
+            () => Task.FromResult(TextAndVersion.Create(sourceText, textVersion)));
         var testDocument = new TestDocumentSnapshot(projectSnapshot, documentState);
 
         return testDocument;
@@ -64,6 +65,7 @@ internal class TestDocumentSnapshot : DocumentSnapshot
             hostDocument,
             SourceText.From(text),
             version,
+            version: 1,
             () => Task.FromResult(TextAndVersion.Create(sourceText, version.Value)));
         var testDocument = new TestDocumentSnapshot(projectSnapshot, documentState);
 
