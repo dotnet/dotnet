@@ -78,6 +78,9 @@
             Inject - 
             Inject - 
             Inject - 
+            Inject - 
+            Inject - 
+            Inject - 
             CSharpCode - 
                 IntermediateToken -  - CSharp - #nullable restore\npublic global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_IncompleteDirectives> ViewData => (global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_IncompleteDirectives>)PageContext?.ViewData!;\n#nullable disable
             CSharpCode - 

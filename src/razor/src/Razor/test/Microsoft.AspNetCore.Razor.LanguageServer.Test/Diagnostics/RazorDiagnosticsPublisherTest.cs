@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -523,10 +525,10 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
         Assert.True(publisherAccessor.IsWaitingToClearClosedDocuments);
     }
 
-    private static RazorCodeDocument CreateCodeDocument(RazorDiagnostic[] diagnostics)
+    private static RazorCodeDocument CreateCodeDocument(IEnumerable<RazorDiagnostic> diagnostics)
     {
         var codeDocument = TestRazorCodeDocument.Create("hello");
-        var razorCSharpDocument = RazorCSharpDocument.Create(codeDocument, "hello", RazorCodeGenerationOptions.CreateDefault(), diagnostics);
+        var razorCSharpDocument = new RazorCSharpDocument(codeDocument, "hello", RazorCodeGenerationOptions.Default, diagnostics.ToImmutableArray());
         codeDocument.SetCSharpDocument(razorCSharpDocument);
 
         return codeDocument;

@@ -51,6 +51,22 @@ namespace AspNetCore
         }
         #pragma warning restore 1998
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
+        public 
+#line (12,9)-(12,18) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml"
+MyService<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_IncompleteDirectives>
+
+#line default
+#line hidden
+         Member___UniqueIdSuppressedForTesting__ { get; private set; }
+#line (11,9)-(11,9) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml"
+
+#line default
+#line hidden
+#line (10,8)-(10,8) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml"
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.IUrlHelper Url { get; private set; }

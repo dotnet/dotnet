@@ -93,7 +93,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
 
         var requestParams = CreateRazorRequestParameters(request);
 
-        requestParams.HostDocumentVersion = documentContext.Version;
+        requestParams.HostDocumentVersion = documentContext.Snapshot.Version;
         requestParams.Kind = languageKind;
 
         // For CSharp we need to map the range to the generated document
@@ -115,7 +115,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
 
         // The responses we get back will be for virtual documents, so we have to map them back to the real
         // document, and in the case of C#, map the returned ranges too
-        var edit = MapWorkspaceEdit(response, mapRanges: languageKind == RazorLanguageKind.CSharp, codeDocument, documentContext.Version);
+        var edit = MapWorkspaceEdit(response, mapRanges: languageKind == RazorLanguageKind.CSharp, codeDocument);
 
         return edit;
     }
@@ -149,7 +149,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
         return remappedChanges;
     }
 
-    private TextDocumentEdit[] MapDocumentChanges(TextDocumentEdit[] documentEdits, bool mapRanges, RazorCodeDocument codeDocument, int hostDocumentVersion)
+    private TextDocumentEdit[] MapDocumentChanges(TextDocumentEdit[] documentEdits, bool mapRanges, RazorCodeDocument codeDocument)
     {
         using var remappedDocumentEdits = new PooledArrayBuilder<TextDocumentEdit>(documentEdits.Length);
         foreach (var entry in documentEdits)
@@ -176,7 +176,6 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
                 TextDocument = new OptionalVersionedTextDocumentIdentifier()
                 {
                     Uri = razorDocumentUri,
-                    Version = hostDocumentVersion
                 },
                 Edits = [.. remappedEdits]
             });
@@ -207,12 +206,12 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
         return mappedEdits.ToArray();
     }
 
-    private WorkspaceEdit? MapWorkspaceEdit(WorkspaceEdit workspaceEdit, bool mapRanges, RazorCodeDocument codeDocument, int hostDocumentVersion)
+    private WorkspaceEdit? MapWorkspaceEdit(WorkspaceEdit workspaceEdit, bool mapRanges, RazorCodeDocument codeDocument)
     {
         if (workspaceEdit.TryGetTextDocumentEdits(out var documentEdits))
         {
             // The LSP spec says, we should prefer `DocumentChanges` property over `Changes` if available.
-            var remappedEdits = MapDocumentChanges(documentEdits, mapRanges, codeDocument, hostDocumentVersion);
+            var remappedEdits = MapDocumentChanges(documentEdits, mapRanges, codeDocument);
             return new WorkspaceEdit()
             {
                 DocumentChanges = remappedEdits

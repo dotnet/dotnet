@@ -33,6 +33,8 @@ internal class ImportDocumentSnapshot : IDocumentSnapshot
         _version = VersionStamp.Default;
     }
 
+    public int Version => 1;
+
     public Task<RazorCodeDocument> GetGeneratedOutputAsync()
         => throw new NotSupportedException();
 

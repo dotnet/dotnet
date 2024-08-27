@@ -871,7 +871,7 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
         await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString());
 
         var razorFilePath = "C:/path/to/file.razor";
-        var documentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument, version: 1337);
+        var documentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument);
         var languageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(options =>
             options.SupportsFileManipulation == true &&
             options.SingleServerSupport == true &&
@@ -906,7 +906,7 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
         return await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
     }
 
-    private VersionedDocumentContext CreateDefaultDocumentContext()
+    private DocumentContext CreateDefaultDocumentContext()
     {
         var txt = """
                 @addTagHelper *, TestAssembly
@@ -927,9 +927,10 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
             d.FilePath == path &&
             d.FileKind == FileKinds.Component &&
             d.GetTextAsync() == Task.FromResult(sourceText) &&
+            d.Version == 0 &&
             d.Project == projectSnapshot, MockBehavior.Strict);
 
-        var documentContext = new VersionedDocumentContext(new Uri(path), snapshot, projectContext: null, 1337);
+        var documentContext = new DocumentContext(new Uri(path), snapshot, projectContext: null);
 
         return documentContext;
     }

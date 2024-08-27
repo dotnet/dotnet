@@ -9,33 +9,35 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class GeneratedDocumentSynchronizer(
     IGeneratedDocumentPublisher publisher,
-    IDocumentVersionCache documentVersionCache,
-    LanguageServerFeatureOptions languageServerFeatureOptions) : IDocumentProcessedListener
+    LanguageServerFeatureOptions languageServerFeatureOptions,
+    IProjectSnapshotManager projectManager) : IDocumentProcessedListener
 {
     private readonly IGeneratedDocumentPublisher _publisher = publisher;
-    private readonly IDocumentVersionCache _documentVersionCache = documentVersionCache;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
+    private readonly IProjectSnapshotManager _projectManager = projectManager;
 
     public void DocumentProcessed(RazorCodeDocument codeDocument, IDocumentSnapshot document)
     {
-        if (!_documentVersionCache.TryGetDocumentVersion(document, out var hostDocumentVersion))
+        var hostDocumentVersion = document.Version;
+        var filePath = document.FilePath.AssumeNotNull();
+
+        // If the document isn't open, and we're not updating buffers for closed documents, then we don't need to do anything.
+        if (!_projectManager.IsDocumentOpen(document.FilePath) &&
+            !_languageServerFeatureOptions.UpdateBuffersForClosedDocuments)
         {
-            // Could not resolve document version
             return;
         }
-
-        var filePath = document.FilePath.AssumeNotNull();
 
         // If cohosting is on, then it is responsible for updating the Html buffer
         if (!_languageServerFeatureOptions.UseRazorCohostServer)
         {
             var htmlText = codeDocument.GetHtmlSourceText();
 
-            _publisher.PublishHtml(document.Project.Key, filePath, htmlText, hostDocumentVersion.Value);
+            _publisher.PublishHtml(document.Project.Key, filePath, htmlText, hostDocumentVersion);
         }
 
         var csharpText = codeDocument.GetCSharpSourceText();
 
-        _publisher.PublishCSharp(document.Project.Key, filePath, csharpText, hostDocumentVersion.Value);
+        _publisher.PublishCSharp(document.Project.Key, filePath, csharpText, hostDocumentVersion);
     }
 }

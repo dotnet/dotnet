@@ -11,5 +11,5 @@ namespace Microsoft.CodeAnalysis.Razor.Rename;
 
 internal interface IRenameService
 {
-    Task<WorkspaceEdit?> TryGetRazorRenameEditsAsync(VersionedDocumentContext documentContext, DocumentPositionInfo positionInfo, string newName, CancellationToken cancellationToken);
+    Task<WorkspaceEdit?> TryGetRazorRenameEditsAsync(DocumentContext documentContext, DocumentPositionInfo positionInfo, string newName, CancellationToken cancellationToken);
 }

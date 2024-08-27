@@ -53,7 +53,7 @@ internal sealed class RazorMapToDocumentRangesEndpoint :
             return new RazorMapToDocumentRangesResponse()
             {
                 Ranges = request.ProjectedRanges,
-                HostDocumentVersion = documentContext.Version,
+                HostDocumentVersion = documentContext.Snapshot.Version,
             };
         }
 
@@ -76,7 +76,7 @@ internal sealed class RazorMapToDocumentRangesEndpoint :
         return new RazorMapToDocumentRangesResponse()
         {
             Ranges = ranges,
-            HostDocumentVersion = documentContext.Version,
+            HostDocumentVersion = documentContext.Snapshot.Version,
         };
     }
 }

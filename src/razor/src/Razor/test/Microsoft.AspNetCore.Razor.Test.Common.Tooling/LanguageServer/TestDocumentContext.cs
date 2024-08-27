@@ -19,13 +19,13 @@ internal static class TestDocumentContext
         return new DocumentContext(uri, snapshot, projectContext: null);
     }
 
-    public static VersionedDocumentContext From(string filePath, RazorCodeDocument codeDocument, int hostDocumentVersion)
+    public static DocumentContext From(string filePath, RazorCodeDocument codeDocument, int hostDocumentVersion)
     {
         var content = codeDocument.Source.Text.ToString();
-        var documentSnapshot = TestDocumentSnapshot.Create(filePath, content);
+        var documentSnapshot = TestDocumentSnapshot.Create(filePath, content, hostDocumentVersion);
         documentSnapshot.With(codeDocument);
         var uri = new Uri(filePath);
-        return new VersionedDocumentContext(uri, documentSnapshot, projectContext: null, hostDocumentVersion);
+        return new DocumentContext(uri, documentSnapshot, projectContext: null);
     }
 
     public static DocumentContext From(string filePath, RazorCodeDocument codeDocument)
@@ -45,7 +45,7 @@ internal static class TestDocumentContext
         return From(filePath, codeDocument);
     }
 
-    public static VersionedDocumentContext From(string filePath, int hostDocumentVersion)
+    public static DocumentContext From(string filePath, int hostDocumentVersion)
     {
         var properties = RazorSourceDocumentProperties.Create(filePath, filePath);
         var sourceDocument = RazorSourceDocument.Create(content: string.Empty, properties);

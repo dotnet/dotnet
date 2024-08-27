@@ -24,7 +24,7 @@ internal class RemoteCSharpSemanticTokensProvider(IFilePathService filePathServi
     private readonly IFilePathService _filePathService = filePathService;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
-    public async Task<int[]?> GetCSharpSemanticTokensResponseAsync(VersionedDocumentContext documentContext, ImmutableArray<LinePositionSpan> csharpRanges, Guid correlationId, CancellationToken cancellationToken)
+    public async Task<int[]?> GetCSharpSemanticTokensResponseAsync(DocumentContext documentContext, ImmutableArray<LinePositionSpan> csharpRanges, Guid correlationId, CancellationToken cancellationToken)
     {
         using var _ = _telemetryReporter.TrackLspRequest(nameof(SemanticTokensRange.GetSemanticTokensAsync), Constants.ExternalAccessServerName, correlationId);
 

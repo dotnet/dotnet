@@ -26,7 +26,7 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
         var documentNode = new DocumentIntermediateNode()
         {
             DocumentKind = "ignore",
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var pass = new TestDocumentClassifierPass();
@@ -46,7 +46,7 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
         // Arrange
         var documentNode = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var pass = new TestDocumentClassifierPass()
@@ -69,7 +69,7 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
         // Arrange
         var documentNode = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var expected = new ICodeTargetExtension[]
@@ -104,7 +104,7 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
         // Arrange
         var documentNode = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var pass = new TestDocumentClassifierPass();
@@ -129,7 +129,7 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
         // Arrange
         var documentNode = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var builder = IntermediateNodeBuilder.Create(documentNode);
@@ -155,7 +155,7 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
         // Arrange
         var documentNode = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var builder = IntermediateNodeBuilder.Create(documentNode);
@@ -184,7 +184,7 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
         // Arrange
         var documentNode = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var builder = IntermediateNodeBuilder.Create(documentNode);
@@ -219,7 +219,7 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
         // Arrange
         var documentNode = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var builder = IntermediateNodeBuilder.Create(documentNode);

@@ -919,7 +919,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         AssertSemanticTokensMatchesBaseline(sourceText, tokens, testName.AssumeNotNull());
     }
 
-    private static VersionedDocumentContext CreateDocumentContext(
+    private static DocumentContext CreateDocumentContext(
         string documentText,
         bool isRazorFile,
         ImmutableArray<TagHelperDescriptor> tagHelpers,
@@ -942,16 +942,18 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         documentSnapshotMock
             .Setup(x => x.GetTextAsync())
             .ReturnsAsync(document.Source.Text);
+        documentSnapshotMock
+            .SetupGet(x => x.Version)
+            .Returns(version);
 
-        return new VersionedDocumentContext(
+        return new DocumentContext(
             uri: new Uri($@"c:\${GetFileName(isRazorFile)}"),
             snapshot: documentSnapshotMock.Object,
-            projectContext: null,
-            version);
+            projectContext: null);
     }
 
     private async Task<IRazorSemanticTokensInfoService> CreateServiceAsync(
-        VersionedDocumentContext documentSnapshot,
+        DocumentContext documentSnapshot,
         ProvideSemanticTokensResponse? csharpTokens,
         bool withCSharpBackground,
         bool serverSupportsPreciseRanges,
@@ -1198,12 +1200,11 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         return builder.ToString();
     }
 
-    private class TestDocumentContextFactory(VersionedDocumentContext? documentContext = null) : IDocumentContextFactory
+    private class TestDocumentContextFactory(DocumentContext? documentContext = null) : IDocumentContextFactory
     {
         public bool TryCreate(
             Uri documentUri,
             VSProjectContext? projectContext,
-            bool versioned,
             [NotNullWhen(true)] out DocumentContext? context)
         {
             context = documentContext;

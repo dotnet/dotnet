@@ -58,7 +58,7 @@ public class DesignTimeNodeWriterTest : RazorProjectEngineTestBase
         writer.WriteUsingDirective(context, node);
 
         // Assert
-        var mapping = Assert.Single(((DefaultCodeRenderingContext)context).SourceMappings);
+        var mapping = Assert.Single(context.GetSourceMappings());
         Assert.Equal(expectedSourceMapping, mapping);
         var csharp = context.CodeWriter.GenerateCode();
         Assert.Equal(
@@ -94,7 +94,7 @@ using System;
         writer.WriteUsingDirective(context, node);
 
         // Assert
-        var mapping = Assert.Single(((DefaultCodeRenderingContext)context).SourceMappings);
+        var mapping = Assert.Single(context.GetSourceMappings());
         Assert.Equal(expectedSourceMapping, mapping);
         var csharp = context.CodeWriter.GenerateCode();
         Assert.Equal(
@@ -587,7 +587,7 @@ Render Children
             csharp,
             ignoreLineEndingDifferences: true);
 
-        Assert.Single(((DefaultCodeRenderingContext)context).SourceMappings);
+        Assert.Single(context.GetSourceMappings());
     }
 
 

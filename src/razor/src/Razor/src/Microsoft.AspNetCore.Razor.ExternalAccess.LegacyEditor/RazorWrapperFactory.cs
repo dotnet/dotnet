@@ -58,26 +58,6 @@ internal static partial class RazorWrapperFactory
         return builder.DrainToImmutable();
     }
 
-    private static ImmutableArray<TResult> WrapAll<TInner, TResult>(IReadOnlyList<TInner> list, Func<TInner, TResult> createWrapper)
-        where TInner : class
-        where TResult : class
-    {
-        var count = list.Count;
-        if (count == 0)
-        {
-            return ImmutableArray<TResult>.Empty;
-        }
-
-        using var builder = new PooledArrayBuilder<TResult>(capacity: count);
-
-        for (var i = 0; i < count; i++)
-        {
-            builder.Add(createWrapper(list[i]));
-        }
-
-        return builder.DrainToImmutable();
-    }
-
     private static ImmutableArray<TResult> WrapAll<TInner, TResult>(IEnumerable<TInner> items, Func<TInner, TResult> createWrapper)
         where TInner : class
         where TResult : class

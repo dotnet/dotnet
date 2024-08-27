@@ -19,7 +19,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         // Arrange
         var irDocument = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var pass = new AssemblyAttributeInjectionPass
@@ -40,7 +40,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         // Arrange
         var irDocument = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
         var builder = IntermediateNodeBuilder.Create(irDocument);
         var @namespace = new NamespaceDeclarationIntermediateNode() { Content = string.Empty };
@@ -66,7 +66,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         // Arrange
         var irDocument = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var builder = IntermediateNodeBuilder.Create(irDocument);
@@ -93,7 +93,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         // Arrange
         var irDocument = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
         var builder = IntermediateNodeBuilder.Create(irDocument);
         var @namespace = new NamespaceDeclarationIntermediateNode
@@ -134,7 +134,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var irDocument = new DocumentIntermediateNode
         {
             DocumentKind = "Default",
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
         var builder = IntermediateNodeBuilder.Create(irDocument);
         var @namespace = new NamespaceDeclarationIntermediateNode() { Content = "SomeNamespace" };
@@ -170,7 +170,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var irDocument = new DocumentIntermediateNode
         {
             DocumentKind = MvcViewDocumentClassifierPass.MvcViewDocumentKind,
-            Options = RazorCodeGenerationOptions.CreateDesignTimeDefault(),
+            Options = RazorCodeGenerationOptions.DesignTimeDefault,
         };
         var builder = IntermediateNodeBuilder.Create(irDocument);
         var @namespace = new NamespaceDeclarationIntermediateNode
@@ -217,7 +217,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var irDocument = new DocumentIntermediateNode
         {
             DocumentKind = MvcViewDocumentClassifierPass.MvcViewDocumentKind,
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
         var builder = IntermediateNodeBuilder.Create(irDocument);
         var @namespace = new NamespaceDeclarationIntermediateNode
@@ -270,7 +270,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var irDocument = new DocumentIntermediateNode
         {
             DocumentKind = MvcViewDocumentClassifierPass.MvcViewDocumentKind,
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
         var builder = IntermediateNodeBuilder.Create(irDocument);
         var @namespace = new NamespaceDeclarationIntermediateNode
@@ -323,7 +323,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var irDocument = new DocumentIntermediateNode
         {
             DocumentKind = RazorPageDocumentClassifierPass.RazorPageDocumentKind,
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
         var builder = IntermediateNodeBuilder.Create(irDocument);
         var pageDirective = new DirectiveIntermediateNode
@@ -383,7 +383,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var irDocument = new DocumentIntermediateNode
         {
             DocumentKind = MvcViewDocumentClassifierPass.MvcViewDocumentKind,
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
         var builder = IntermediateNodeBuilder.Create(irDocument);
         var @namespace = new NamespaceDeclarationIntermediateNode

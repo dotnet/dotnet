@@ -27,7 +27,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
     private readonly RazorCompletionListProvider _razorCompletionProvider;
     private readonly DelegatedCompletionListProvider _delegatedCompletionProvider;
     private readonly VSInternalCompletionContext _completionContext;
-    private readonly VersionedDocumentContext _documentContext;
+    private readonly DocumentContext _documentContext;
     private readonly VSInternalClientCapabilities _clientCapabilities;
 
     public CompletionListProviderTest(ITestOutputHelper testOutput)
@@ -38,7 +38,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
         _razorCompletionProvider = new TestRazorCompletionListProvider(_completionList1, new[] { SharedTriggerCharacter, }, LoggerFactory);
         _delegatedCompletionProvider = new TestDelegatedCompletionListProvider(_completionList2, new[] { SharedTriggerCharacter, CompletionList2OnlyTriggerCharacter });
         _completionContext = new VSInternalCompletionContext();
-        _documentContext = TestDocumentContext.From("C:/path/to/file.cshtml", hostDocumentVersion: 0);
+        _documentContext = TestDocumentContext.From("C:/path/to/file.cshtml");
         _clientCapabilities = new VSInternalClientCapabilities();
     }
 
@@ -89,7 +89,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
         public override Task<VSInternalCompletionList> GetCompletionListAsync(
             int absoluteIndex,
             VSInternalCompletionContext completionContext,
-            VersionedDocumentContext documentContext,
+            DocumentContext documentContext,
             VSInternalClientCapabilities clientCapabilities,
             Guid correlationId,
             CancellationToken cancellationToken)
@@ -117,7 +117,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
         public override Task<VSInternalCompletionList> GetCompletionListAsync(
             int absoluteIndex,
             VSInternalCompletionContext completionContext,
-            VersionedDocumentContext documentContext,
+            DocumentContext documentContext,
             VSInternalClientCapabilities clientCapabilities,
             HashSet<string> existingCompletions,
             CancellationToken cancellationToken)

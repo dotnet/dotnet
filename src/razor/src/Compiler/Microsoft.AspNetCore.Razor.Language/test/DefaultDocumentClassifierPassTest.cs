@@ -23,7 +23,7 @@ public class DefaultDocumentClassifierPassTest : RazorProjectEngineTestBase
         var documentNode = new DocumentIntermediateNode()
         {
             DocumentKind = "ignore",
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var pass = new DefaultDocumentClassifierPass();
@@ -43,7 +43,7 @@ public class DefaultDocumentClassifierPassTest : RazorProjectEngineTestBase
         // Arrange
         var documentNode = new DocumentIntermediateNode()
         {
-            Options = RazorCodeGenerationOptions.CreateDefault(),
+            Options = RazorCodeGenerationOptions.Default,
         };
 
         var pass = new DefaultDocumentClassifierPass();

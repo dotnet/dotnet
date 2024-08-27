@@ -43,13 +43,13 @@ public sealed partial class CodeWriter : IDisposable
     private int _currentLineCharacterIndex;
 
     public CodeWriter()
-        : this(Environment.NewLine, RazorCodeGenerationOptions.CreateDefault())
+        : this(RazorCodeGenerationOptions.Default)
     {
     }
 
-    public CodeWriter(string newLine, RazorCodeGenerationOptions options)
+    public CodeWriter(RazorCodeGenerationOptions options)
     {
-        SetNewLine(newLine);
+        SetNewLine(options.NewLine);
         IndentWithTabs = options.IndentWithTabs;
         TabSize = options.IndentSize;
 

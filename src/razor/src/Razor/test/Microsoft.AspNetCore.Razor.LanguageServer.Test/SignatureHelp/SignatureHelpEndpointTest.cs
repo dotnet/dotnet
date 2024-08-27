@@ -113,7 +113,7 @@ public class SignatureHelpEndpointTest(ITestOutputHelper testOutput) : SingleSer
             Context = signatureHelpContext
         };
 
-        Assert.True(DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument, out var documentContext));
+        Assert.True(DocumentContextFactory.TryCreate(request.TextDocument, out var documentContext));
 
         var requestContext = CreateRazorRequestContext(documentContext);
 

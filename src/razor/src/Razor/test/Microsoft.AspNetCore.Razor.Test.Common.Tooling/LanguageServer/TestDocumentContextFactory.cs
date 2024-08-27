@@ -13,41 +13,26 @@ internal class TestDocumentContextFactory : IDocumentContextFactory
 {
     private protected readonly string? FilePath;
     private protected readonly RazorCodeDocument? CodeDocument;
-    private readonly int? _version;
 
     public TestDocumentContextFactory()
     {
     }
 
-    public TestDocumentContextFactory(string filePath, RazorCodeDocument codeDocument, int? version = null)
+    public TestDocumentContextFactory(string filePath, RazorCodeDocument codeDocument)
     {
         FilePath = filePath;
         CodeDocument = codeDocument;
-        _version = version;
     }
 
     public virtual bool TryCreate(
         Uri documentUri,
         VSProjectContext? projectContext,
-        bool versioned,
         [NotNullWhen(true)] out DocumentContext? context)
     {
         if (FilePath is null || CodeDocument is null)
         {
             context = null;
             return false;
-        }
-
-        if (versioned)
-        {
-            if (_version is null)
-            {
-                context = null;
-                return false;
-            }
-
-            context = TestDocumentContext.From(FilePath, CodeDocument, _version.Value);
-            return true;
         }
 
         context = TestDocumentContext.From(FilePath, CodeDocument);

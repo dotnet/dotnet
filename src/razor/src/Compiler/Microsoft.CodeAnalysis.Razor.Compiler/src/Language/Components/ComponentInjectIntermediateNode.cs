@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
+using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
@@ -18,13 +19,14 @@ internal class ComponentInjectIntermediateNode : ExtensionIntermediateNode
             "private" // Encapsulation is the default
         };
 
-    public ComponentInjectIntermediateNode(string typeName, string memberName, SourceSpan? typeSpan, SourceSpan? memberSpan)
+    public ComponentInjectIntermediateNode(string typeName, string memberName, SourceSpan? typeSpan, SourceSpan? memberSpan, bool isMalformed)
     {
         TypeName = typeName;
         MemberName = memberName;
         TypeSpan = typeSpan;
         MemberSpan = memberSpan;
-    }
+        IsMalformed = isMalformed;
+     }
 
     public string TypeName { get; }
 
@@ -34,8 +36,9 @@ internal class ComponentInjectIntermediateNode : ExtensionIntermediateNode
 
     public SourceSpan? MemberSpan { get; }
 
-    public override IntermediateNodeCollection Children => IntermediateNodeCollection.ReadOnly;
+    public bool IsMalformed { get; }
 
+    public override IntermediateNodeCollection Children => IntermediateNodeCollection.ReadOnly;
 
     public override void Accept(IntermediateNodeVisitor visitor)
     {
@@ -59,13 +62,26 @@ internal class ComponentInjectIntermediateNode : ExtensionIntermediateNode
             throw new ArgumentNullException(nameof(context));
         }
 
-        context.CodeWriter.WriteAutoPropertyDeclaration(
-            _injectedPropertyModifiers,
-            TypeName,
-            MemberName,
-            TypeSpan,
-            MemberSpan,
-            context,
-            defaultValue: true);
+        if (TypeName == string.Empty && TypeSpan.HasValue && !context.Options.DesignTime)
+        {
+            // if we don't even have a type name, just emit an empty mapped region so that intellisense still works
+            context.CodeWriter.BuildEnhancedLinePragma(TypeSpan.Value, context).Dispose();
+        }
+        else
+        {
+            var memberName = MemberName ?? "Member_" + DefaultTagHelperTargetExtension.GetDeterministicId(context);
+
+            if (!context.Options.DesignTime || !IsMalformed)
+            {
+                context.CodeWriter.WriteAutoPropertyDeclaration(
+                    _injectedPropertyModifiers,
+                    TypeName,
+                    memberName,
+                    TypeSpan,
+                    MemberSpan,
+                    context,
+                    defaultValue: true);
+            }
+        }
     }
 }
