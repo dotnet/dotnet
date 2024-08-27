@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
@@ -32,6 +33,9 @@ internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectCon
             Uri = Uri,
             ProjectContext = _projectContext,
         };
+
+    public TextDocumentIdentifierAndVersion GetTextDocumentIdentifierAndVersion()
+       => new(GetTextDocumentIdentifier(), Snapshot.Version);
 
     private bool TryGetCodeDocument([NotNullWhen(true)] out RazorCodeDocument? codeDocument)
     {

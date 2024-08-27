@@ -21,7 +21,7 @@ internal sealed class RemoteEditMappingService(
 {
     private readonly DocumentSnapshotFactory _documentSnapshotFactory = documentSnapshotFactory;
 
-    protected override bool TryGetVersionedDocumentContext(IDocumentSnapshot contextDocumentSnapshot, Uri razorDocumentUri, VSProjectContext? projectContext, [NotNullWhen(true)] out VersionedDocumentContext? documentContext)
+    protected override bool TryGetDocumentContext(IDocumentSnapshot contextDocumentSnapshot, Uri razorDocumentUri, VSProjectContext? projectContext, [NotNullWhen(true)] out DocumentContext? documentContext)
     {
         if (contextDocumentSnapshot is not RemoteDocumentSnapshot originSnapshot)
         {
@@ -39,13 +39,5 @@ internal sealed class RemoteEditMappingService(
 
         documentContext = new RemoteDocumentContext(razorDocumentUri, razorDocumentSnapshot);
         return true;
-    }
-
-    protected override bool TryGetDocumentContext(IDocumentSnapshot contextDocumentSnapshot, Uri razorDocumentUri, [NotNullWhen(true)] out DocumentContext? documentContext)
-    {
-        // In OOP there is no difference between versioned and unversioned document contexts.
-        var result = TryGetVersionedDocumentContext(contextDocumentSnapshot, razorDocumentUri, projectContext: null, out var versionedDocumentContext);
-        documentContext = versionedDocumentContext;
-        return result;
     }
 }

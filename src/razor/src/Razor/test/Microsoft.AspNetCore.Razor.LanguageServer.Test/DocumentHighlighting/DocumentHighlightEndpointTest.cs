@@ -112,7 +112,7 @@ public class DocumentHighlightEndpointTest(ITestOutputHelper testOutput) : Langu
         await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString());
 
         var razorFilePath = "C:/path/to/file.razor";
-        var documentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument, version: 1337);
+        var documentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument);
         var languageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(options =>
             options.SupportsFileManipulation == true &&
             options.SingleServerSupport == true &&

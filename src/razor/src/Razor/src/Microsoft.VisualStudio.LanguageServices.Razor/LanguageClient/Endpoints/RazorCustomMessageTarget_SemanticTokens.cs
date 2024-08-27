@@ -1,11 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol.SemanticTokens;
@@ -57,46 +56,16 @@ internal partial class RazorCustomMessageTarget
         SemanticTokensParams requestParams,
         CancellationToken cancellationToken)
     {
-        if (semanticTokensParams is null)
-        {
-            throw new ArgumentNullException(nameof(semanticTokensParams));
-        }
-
-        if (semanticTokensParams.Ranges is null)
-        {
-            throw new ArgumentNullException(nameof(semanticTokensParams.Ranges));
-        }
+        _logger.LogDebug($"Semantic tokens request for {semanticTokensParams.Ranges.Max(static r => r.End.Line)} max line number, host version {semanticTokensParams.RequiredHostDocumentVersion}, correlation ID {semanticTokensParams.CorrelationId}");
 
         var (synchronized, csharpDoc) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
-            (int)semanticTokensParams.RequiredHostDocumentVersion,
+            semanticTokensParams.RequiredHostDocumentVersion,
             semanticTokensParams.TextDocument,
             cancellationToken);
 
         if (csharpDoc is null)
         {
             return null;
-        }
-
-        if (synchronized && csharpDoc.HostDocumentSyncVersion == 1)
-        {
-            // HACK: Workaround for https://github.com/dotnet/razor/issues/9197 to stop Roslyn NFWs
-            // Sometimes we get asked for semantic tokens on v1, and we have sent a v1 to Roslyn, but its the wrong v1.
-            // To prevent Roslyn throwing, let's validate the range we're asking about with the generated document they
-            // would have seen.
-            var lastGeneratedDocumentLine = requestParams switch
-            {
-                SemanticTokensRangeParams range => range.Range.End.Line,
-                SemanticTokensRangesParams ranges => ranges.Ranges[^1].End.Line,
-                _ => Assumed.Unreachable<int>()
-            };
-
-            if (csharpDoc.Snapshot.LineCount < lastGeneratedDocumentLine)
-            {
-                // We report this as a fail to synchronize, as that's essentially what it is: We were asked for v1, with X lines
-                // and whilst we have v1, we don't have X lines, so we need to wait for a future update to arrive and give us
-                // more content.
-                return new ProvideSemanticTokensResponse(tokens: null, -1);
-            }
         }
 
         if (!synchronized)
@@ -106,8 +75,10 @@ internal partial class RazorCustomMessageTarget
             return new ProvideSemanticTokensResponse(tokens: null, hostDocumentSyncVersion: csharpDoc.HostDocumentSyncVersion ?? -1);
         }
 
-        semanticTokensParams.TextDocument.Uri = csharpDoc.Uri;
+        requestParams.TextDocument.Uri = csharpDoc.Uri;
         var textBuffer = csharpDoc.Snapshot.TextBuffer;
+
+        _logger.LogDebug($"Requesting semantic tokens for {csharpDoc.Uri}, for buffer version {textBuffer.CurrentSnapshot.Version.VersionNumber} and snapshot version {csharpDoc.Snapshot.Version.VersionNumber}, host version {semanticTokensParams.RequiredHostDocumentVersion}, correlation ID {semanticTokensParams.CorrelationId}");
 
         cancellationToken.ThrowIfCancellationRequested();
         var languageServerName = RazorLSPConstants.RazorCSharpLanguageServerName;
@@ -115,14 +86,22 @@ internal partial class RazorCustomMessageTarget
         SemanticTokens? response;
         using (var disposable = _telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, semanticTokensParams.CorrelationId))
         {
-            var result = await _requestInvoker.ReinvokeRequestOnServerAsync<SemanticTokensParams, SemanticTokens?>(
-                textBuffer,
-                lspMethodName,
-                languageServerName,
-                requestParams,
-                cancellationToken).ConfigureAwait(false);
+            try
+            {
+                var result = await _requestInvoker.ReinvokeRequestOnServerAsync<SemanticTokensParams, SemanticTokens?>(
+                    textBuffer,
+                    lspMethodName,
+                    languageServerName,
+                    requestParams,
+                    cancellationToken).ConfigureAwait(false);
 
-            response = result?.Response;
+                response = result?.Response;
+            }
+            catch
+            {
+                _logger.LogWarning($"Error getting semantic tokens from Roslyn for host version {semanticTokensParams.RequiredHostDocumentVersion}, correlation ID {semanticTokensParams.CorrelationId}");
+                throw;
+            }
         }
 
         if (response?.Data is null)

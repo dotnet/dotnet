@@ -14,7 +14,7 @@ public class DefaultCodeTargetTest
     public void Constructor_CreatesDefensiveCopy()
     {
         // Arrange
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var extensions = new ICodeTargetExtension[]
         {
@@ -33,7 +33,7 @@ public class DefaultCodeTargetTest
     public void CreateWriter_DesignTime_CreatesDesignTimeNodeWriter()
     {
         // Arrange
-        var options = RazorCodeGenerationOptions.CreateDesignTimeDefault();
+        var options = RazorCodeGenerationOptions.DesignTimeDefault;
         var target = new DefaultCodeTarget(options, Enumerable.Empty<ICodeTargetExtension>());
 
         // Act
@@ -47,7 +47,7 @@ public class DefaultCodeTargetTest
     public void CreateWriter_Runtime_CreatesRuntimeNodeWriter()
     {
         // Arrange
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
         var target = new DefaultCodeTarget(options, Enumerable.Empty<ICodeTargetExtension>());
 
         // Act
@@ -61,7 +61,7 @@ public class DefaultCodeTargetTest
     public void HasExtension_ReturnsTrue_WhenExtensionFound()
     {
         // Arrange
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var extensions = new ICodeTargetExtension[]
         {
@@ -82,7 +82,7 @@ public class DefaultCodeTargetTest
     public void HasExtension_ReturnsFalse_WhenExtensionNotFound()
     {
         // Arrange
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var extensions = new ICodeTargetExtension[]
         {
@@ -103,7 +103,7 @@ public class DefaultCodeTargetTest
     public void GetExtension_ReturnsExtension_WhenExtensionFound()
     {
         // Arrange
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var extensions = new ICodeTargetExtension[]
         {
@@ -124,7 +124,7 @@ public class DefaultCodeTargetTest
     public void GetExtension_ReturnsFirstMatch_WhenExtensionFound()
     {
         // Arrange
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var extensions = new ICodeTargetExtension[]
         {
@@ -148,7 +148,7 @@ public class DefaultCodeTargetTest
     public void GetExtension_ReturnsNull_WhenExtensionNotFound()
     {
         // Arrange
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var extensions = new ICodeTargetExtension[]
         {

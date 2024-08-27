@@ -101,12 +101,8 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
 
             // Assign a unique ID for this instance of the source HTML tag. This must be unique
             // per call site, e.g. if the tag is on the view twice, there should be two IDs.
-            var uniqueId = (string)context.Items[CodeRenderingContext.SuppressUniqueIds];
-            if (uniqueId == null)
-            {
-                uniqueId = GetDeterministicId(context);
-            }
-
+            var uniqueId = GetDeterministicId(context);
+            
             context.CodeWriter.WriteStringLiteral(node.TagName)
                 .WriteParameterSeparator()
                 .Write(TagModeTypeName)
@@ -584,13 +580,13 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
         else if (node is CSharpCodeIntermediateNode)
         {
             var diagnostic = RazorDiagnosticFactory.CreateTagHelper_CodeBlocksNotSupportedInAttributes(span);
-            context.Diagnostics.Add(diagnostic);
+            context.AddDiagnostic(diagnostic);
         }
         else if (node is TemplateIntermediateNode)
         {
             var expectedTypeName = property.IsIndexerNameMatch ? property.BoundAttribute.IndexerTypeName : property.BoundAttribute.TypeName;
             var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InlineMarkupBlocksNotSupportedInAttributes(span, expectedTypeName);
-            context.Diagnostics.Add(diagnostic);
+            context.AddDiagnostic(diagnostic);
         }
     }
 
@@ -650,10 +646,13 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
     // Internal for testing
     internal static string GetDeterministicId(CodeRenderingContext context)
     {
-        // Use the file checksum along with the absolute position in the generated code to create a unique id for each tag helper call site.
-        var checksum = ChecksumUtilities.BytesToString(context.SourceDocument.Text.GetChecksum());
-        var uniqueId = checksum + context.CodeWriter.Location.AbsoluteIndex;
-
+        var uniqueId = context.Options.SuppressUniqueIds;
+        if (uniqueId is null)
+        {
+            // Use the file checksum along with the absolute position in the generated code to create a unique id for each tag helper call site.
+            var checksum = ChecksumUtilities.BytesToString(context.SourceDocument.Text.GetChecksum());
+            uniqueId = checksum + context.CodeWriter.Location.AbsoluteIndex;
+        }
         return uniqueId;
     }
 

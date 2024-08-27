@@ -22,7 +22,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
-public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
+public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
 {
     private static readonly HostDocument[] s_documents =
     [
@@ -52,7 +52,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
     private readonly TestProjectSnapshotManager _projectManager;
     private readonly SourceText _sourceText;
 
-    public DefaultProjectSnapshotManagerTest(ITestOutputHelper testOutput)
+    public ProjectSnapshotManagerTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
         var someTagHelpers = ImmutableArray.Create(
@@ -191,6 +191,8 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             filePath => filePath == s_documents[0].FilePath);
 
         listener.AssertNoNotifications();
+
+        Assert.Equal(1, project.GetDocument(s_documents[0].FilePath)!.Version);
     }
 
     [UIFact]
@@ -469,6 +471,8 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         Assert.Same(_sourceText, text);
 
         Assert.True(_projectManager.IsDocumentOpen(s_documents[0].FilePath));
+
+        Assert.Equal(2, document.Version);
     }
 
     [UIFact]
@@ -505,6 +509,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         var text = await document.GetTextAsync();
         Assert.Same(expected, text);
         Assert.False(_projectManager.IsDocumentOpen(s_documents[0].FilePath));
+        Assert.Equal(3, document.Version);
     }
 
     [UIFact]
@@ -569,6 +574,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         Assert.NotNull(document);
         var text = await document.GetTextAsync();
         Assert.Same(expected, text);
+        Assert.Equal(3, document.Version);
     }
 
     [UIFact]
@@ -602,6 +608,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         Assert.NotNull(document);
         var text = await document.GetTextAsync();
         Assert.Same(expected, text);
+        Assert.Equal(3, document.Version);
     }
 
     [UIFact]
@@ -747,6 +754,29 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         Assert.Empty(_projectManager.GetProjects());
 
         listener.AssertNoNotifications();
+    }
+
+    [UIFact]
+    public async Task ProjectWorkspaceStateChanged_UpdateDocuments()
+    {
+        // Arrange
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectAdded(s_hostProject);
+            updater.DocumentAdded(s_hostProject.Key, s_documents[0], null!);
+        });
+
+        // Act
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectWorkspaceStateChanged(s_hostProject.Key, _projectWorkspaceStateWithTagHelpers);
+        });
+
+        // Assert
+        var document = _projectManager.GetLoadedProject(s_hostProject.Key).GetDocument(s_documents[0].FilePath);
+
+        Assert.NotNull(document);
+        Assert.Equal(2, document.Version);
     }
 
     [UIFact]

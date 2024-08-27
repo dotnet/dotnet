@@ -36,7 +36,7 @@ internal sealed partial class HoverService(
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
 
-    public async Task<VSInternalHover?> GetRazorHoverInfoAsync(VersionedDocumentContext documentContext, DocumentPositionInfo positionInfo, Position position, CancellationToken cancellationToken)
+    public async Task<VSInternalHover?> GetRazorHoverInfoAsync(DocumentContext documentContext, DocumentPositionInfo positionInfo, Position position, CancellationToken cancellationToken)
     {
         // HTML can still sometimes be handled by razor. For example hovering over
         // a component tag like <Counter /> will still be in an html context
@@ -58,7 +58,7 @@ internal sealed partial class HoverService(
         return await GetHoverInfoAsync(documentContext.FilePath, codeDocument, location, _clientCapabilitiesService.ClientCapabilities, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<VSInternalHover?> TranslateDelegatedResponseAsync(VSInternalHover? response, VersionedDocumentContext documentContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
+    public async Task<VSInternalHover?> TranslateDelegatedResponseAsync(VSInternalHover? response, DocumentContext documentContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
         if (response?.Range is null)
         {

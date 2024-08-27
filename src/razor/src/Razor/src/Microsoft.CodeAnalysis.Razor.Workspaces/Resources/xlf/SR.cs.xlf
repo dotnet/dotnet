@@ -9,12 +9,12 @@
       </trans-unit>
       <trans-unit id="Diagnostics_after">
         <source>Diagnostics after:</source>
-        <target state="new">Diagnostics after:</target>
+        <target state="translated">Diagnostika po:</target>
         <note />
       </trans-unit>
       <trans-unit id="Diagnostics_before">
         <source>Diagnostics before:</source>
-        <target state="new">Diagnostics before:</target>
+        <target state="translated">Diagnostika před:</target>
         <note />
       </trans-unit>
       <trans-unit id="Directive">
@@ -31,22 +31,22 @@
       </trans-unit>
       <trans-unit id="Edit_at_adds">
         <source>Edit at {0} adds the non-whitespace content '{1}'.</source>
-        <target state="new">Edit at {0} adds the non-whitespace content '{1}'.</target>
+        <target state="translated">Úprava na {0} přidá neprázdný obsah {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Edit_at_deletes">
         <source>Edit at {0} deletes the non-whitespace content '{1}'.</source>
-        <target state="new">Edit at {0} deletes the non-whitespace content '{1}'.</target>
+        <target state="translated">Úprava na {0} odstraní neprázdný obsah {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Format_operation_changed_diagnostics">
         <source>A format operation is being abandoned because it would introduce or remove one of more diagnostics.</source>
-        <target state="new">A format operation is being abandoned because it would introduce or remove one of more diagnostics.</target>
+        <target state="translated">Operace formátování je ukončována, protože by zavedla nebo odebrala jednu z více diagnostik.</target>
         <note />
       </trans-unit>
       <trans-unit id="Format_operation_changed_nonwhitespace">
         <source>A format operation is being abandoned because it would add or delete non-whitespace content.</source>
-        <target state="new">A format operation is being abandoned because it would add or delete non-whitespace content.</target>
+        <target state="translated">Operace formátování je ukončována, protože by přidala nebo odstranila neprázdný obsah.</target>
         <note />
       </trans-unit>
       <trans-unit id="Invalid_Offset">
@@ -56,7 +56,7 @@
       </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
-        <target state="new">Razor language services not configured properly, missing language service '{0}'.</target>
+        <target state="translated">Služby jazyka Razor nejsou správně nakonfigurované, chybí služba jazyka {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="PositionCharacter_Outside_Range">

@@ -37,12 +37,12 @@ internal sealed class UnformattedRemappingCSharpCodeActionResolver(
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (!_documentContextFactory.TryCreateForOpenDocument(csharpParams.RazorFileIdentifier, out var documentContext))
+        if (!_documentContextFactory.TryCreate(csharpParams.RazorFileIdentifier, out var documentContext))
         {
             return codeAction;
         }
 
-        var resolvedCodeAction = await ResolveCodeActionWithServerAsync(csharpParams.RazorFileIdentifier, documentContext.Version, RazorLanguageKind.CSharp, codeAction, cancellationToken).ConfigureAwait(false);
+        var resolvedCodeAction = await ResolveCodeActionWithServerAsync(csharpParams.RazorFileIdentifier, documentContext.Snapshot.Version, RazorLanguageKind.CSharp, codeAction, cancellationToken).ConfigureAwait(false);
         if (resolvedCodeAction?.Edit?.DocumentChanges is null)
         {
             // Unable to resolve code action with server, return original code action
@@ -87,7 +87,6 @@ internal sealed class UnformattedRemappingCSharpCodeActionResolver(
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier()
         {
             Uri = csharpParams.RazorFileIdentifier.Uri,
-            Version = documentContext.Version,
         };
         resolvedCodeAction.Edit = new WorkspaceEdit()
         {

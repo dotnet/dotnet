@@ -141,7 +141,7 @@ public class ComponentDuplicateAttributeDiagnosticPassTest
         var diagnostics = documentNode.GetAllDiagnostics();
         var nodes = documentNode.FindDescendantNodes<HtmlAttributeIntermediateNode>().Where(n => n.HasDiagnostics).ToArray();
 
-        Assert.Equal(2, diagnostics.Count);
+        Assert.Equal(2, diagnostics.Length);
         Assert.Equal(2, nodes.Length);
 
         for (var i = 0; i < 2; i++)

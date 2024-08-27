@@ -22,7 +22,7 @@ internal sealed class InlayHintService(IDocumentMappingService documentMappingSe
 {
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
 
-    public async Task<InlayHint[]?> GetInlayHintsAsync(IClientConnection clientConnection, VersionedDocumentContext documentContext, Range range, CancellationToken cancellationToken)
+    public async Task<InlayHint[]?> GetInlayHintsAsync(IClientConnection clientConnection, DocumentContext documentContext, Range range, CancellationToken cancellationToken)
     {
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var csharpDocument = codeDocument.GetCSharpDocument();

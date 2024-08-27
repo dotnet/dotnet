@@ -79,7 +79,7 @@ internal sealed class DocumentSpellCheckEndpoint : IRazorRequestHandler<VSIntern
             };
     }
 
-    private static async Task AddRazorSpellCheckRangesAsync(List<SpellCheckRange> ranges, VersionedDocumentContext documentContext, CancellationToken cancellationToken)
+    private static async Task AddRazorSpellCheckRangesAsync(List<SpellCheckRange> ranges, DocumentContext documentContext, CancellationToken cancellationToken)
     {
         var tree = await documentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
 
@@ -127,7 +127,7 @@ internal sealed class DocumentSpellCheckEndpoint : IRazorRequestHandler<VSIntern
         }
     }
 
-    private async Task AddCSharpSpellCheckRangesAsync(List<SpellCheckRange> ranges, VersionedDocumentContext documentContext, CancellationToken cancellationToken)
+    private async Task AddCSharpSpellCheckRangesAsync(List<SpellCheckRange> ranges, DocumentContext documentContext, CancellationToken cancellationToken)
     {
         var delegatedParams = new DelegatedSpellCheckParams(documentContext.GetTextDocumentIdentifierAndVersion());
         var delegatedResponse = await _clientConnection.SendRequestAsync<DelegatedSpellCheckParams, VSInternalSpellCheckableRangeReport[]?>(

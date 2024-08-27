@@ -241,7 +241,7 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
         var componentDefinitionService = new RazorComponentDefinitionService(componentSearchEngine, DocumentMappingService, LoggerFactory);
 
         var razorUri = new Uri(razorFilePath);
-        Assert.True(DocumentContextFactory.TryCreateForOpenDocument(razorUri, out var documentContext));
+        Assert.True(DocumentContextFactory.TryCreate(razorUri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         var endpoint = new DefinitionEndpoint(componentDefinitionService, DocumentMappingService, LanguageServerFeatureOptions, languageServer, LoggerFactory);

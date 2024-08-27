@@ -14,7 +14,7 @@ public class DefaultCodeTargetBuilderTest
     {
         // Arrange
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var builder = new DefaultCodeTargetBuilder(codeDocument, options);
 

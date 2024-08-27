@@ -33,7 +33,7 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
         };
 
         // Act
-        var result = endpoint.ApplyContentChanges(new[] { change }, sourceText);
+        var result = endpoint.ApplyContentChanges([change], sourceText);
 
         // Assert
         Assert.Equal("Hello! World", result.ToString());
@@ -98,13 +98,12 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var projectService = new StrictMock<IRazorProjectService>();
         projectService
-            .Setup(service => service.UpdateDocumentAsync(It.IsAny<string>(), It.IsAny<SourceText>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .Setup(service => service.UpdateDocumentAsync(It.IsAny<string>(), It.IsAny<SourceText>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
-            .Callback((string path, SourceText text, int version, CancellationToken cancellationToken) =>
+            .Callback((string path, SourceText text, CancellationToken cancellationToken) =>
             {
                 Assert.Equal("<p></p>", text.ToString());
                 Assert.Equal(documentPath.OriginalString, path);
-                Assert.Equal(1337, version);
             });
         var endpoint = new DocumentDidChangeEndpoint(projectService.Object, LoggerFactory);
         var change = new TextDocumentContentChangeEvent()

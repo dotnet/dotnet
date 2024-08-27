@@ -371,7 +371,7 @@ public partial class OnAutoInsertEndpointTest
                 InsertSpaces = true
             },
         };
-        Assert.True(DocumentContextFactory.TryCreateForOpenDocument(@params.TextDocument, out var documentContext));
+        Assert.True(DocumentContextFactory.TryCreate(@params.TextDocument, out var documentContext));
 
         var requestContext = CreateRazorRequestContext(documentContext);
 

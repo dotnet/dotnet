@@ -105,7 +105,7 @@ public class ImplementationEndpointTest(ITestOutputHelper testOutput) : SingleSe
             },
             Position = codeDocument.Source.Text.GetPosition(cursorPosition)
         };
-        Assert.True(DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument, out var documentContext));
+        Assert.True(DocumentContextFactory.TryCreate(request.TextDocument, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act

@@ -152,13 +152,13 @@ public class ValidateBreakpointRangeEndpointTest(ITestOutputHelper testOutput) :
             Range = codeDocument.Source.Text.GetRange(breakpointSpan)
         };
 
-        Assert.True(DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument, out var documentContext));
+        Assert.True(DocumentContextFactory.TryCreate(request.TextDocument, out var documentContext));
         var requestContext = CreateValidateBreakpointRangeRequestContext(documentContext);
 
         return await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
     }
 
-    private RazorRequestContext CreateValidateBreakpointRangeRequestContext(VersionedDocumentContext documentContext)
+    private RazorRequestContext CreateValidateBreakpointRangeRequestContext(DocumentContext documentContext)
     {
         var lspServices = new Mock<ILspServices>(MockBehavior.Strict);
 

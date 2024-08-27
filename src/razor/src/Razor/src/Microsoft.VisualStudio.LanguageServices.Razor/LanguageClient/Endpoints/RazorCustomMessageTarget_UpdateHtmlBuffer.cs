@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using StreamJsonRpc;
 
@@ -35,6 +36,9 @@ internal partial class RazorCustomMessageTarget
         }
 
         var hostDocumentUri = new Uri(request.HostDocumentFilePath);
+
+        _logger.LogDebug($"UpdateHtmlBuffer for {request.HostDocumentVersion} of {hostDocumentUri} in {request.ProjectKeyId}");
+
         _documentManager.UpdateVirtualDocument<HtmlVirtualDocument>(
             hostDocumentUri,
             request.Changes.Select(change => change.ToVisualStudioTextChange()).ToArray(),

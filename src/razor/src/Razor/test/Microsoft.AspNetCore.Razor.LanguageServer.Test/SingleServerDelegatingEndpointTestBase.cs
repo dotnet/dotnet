@@ -56,7 +56,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase(ITestOutput
             }
         }
 
-        DocumentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument, version: 1337);
+        DocumentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument);
 
         LanguageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(options =>
             options.SupportsFileManipulation == true &&

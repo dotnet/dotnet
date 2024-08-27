@@ -35,6 +35,29 @@ namespace AspNetCore
             WriteLiteral("\r\n");
         }
         #pragma warning restore 1998
+        [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
+        public 
+#nullable restore
+#line (12,9)-(12,18) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml"
+MyService<TestFiles_IntegrationTests_CodeGenerationIntegrationTest_IncompleteDirectives>
+
+#line default
+#line hidden
+#nullable disable
+         Member___UniqueIdSuppressedForTesting__ { get; private set; }
+         = default!;
+#nullable restore
+#line (11,9)-(11,9) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml"
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line (10,8)-(10,8) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml"
+
+#line default
+#line hidden
+#nullable disable
         #nullable restore
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; } = default!;

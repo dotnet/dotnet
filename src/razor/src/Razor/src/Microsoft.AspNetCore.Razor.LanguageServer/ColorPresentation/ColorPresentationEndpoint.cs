@@ -33,7 +33,7 @@ internal sealed class ColorPresentationEndpoint(IClientConnection clientConnecti
 
         var delegatedRequest = new DelegatedColorPresentationParams
         {
-            RequiredHostDocumentVersion = documentContext.Version,
+            RequiredHostDocumentVersion = documentContext.Snapshot.Version,
             Color = request.Color,
             Range = request.Range,
             TextDocument = request.TextDocument

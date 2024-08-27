@@ -63,7 +63,7 @@ namespace AspNetCore
                 WriteLiteral("\r\n    <div>This is in Section 1</div>\r\n    ");
                 EndContext();
                 BeginContext(205, 25, false);
-                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input-test", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
+                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input-test", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "__UniqueIdSuppressedForTesting__", async() => {
                 }
                 );
                 __InputTestTagHelper = CreateTagHelper<global::InputTestTagHelper>();

@@ -39,7 +39,7 @@ public class CodeGenerationBenchmark
         var codeDocument = ProjectEngine.ProcessDesignTime(MSN);
         var generated = codeDocument.GetCSharpDocument();
 
-        if (generated.Diagnostics.Count != 0)
+        if (generated.Diagnostics.Length > 0)
         {
             throw new Exception("Error!" + Environment.NewLine + string.Join(Environment.NewLine, generated.Diagnostics));
         }
@@ -51,7 +51,7 @@ public class CodeGenerationBenchmark
         var codeDocument = ProjectEngine.Process(MSN);
         var generated = codeDocument.GetCSharpDocument();
 
-        if (generated.Diagnostics.Count != 0)
+        if (generated.Diagnostics.Length > 0)
         {
             throw new Exception("Error!" + Environment.NewLine + string.Join(Environment.NewLine, generated.Diagnostics));
         }

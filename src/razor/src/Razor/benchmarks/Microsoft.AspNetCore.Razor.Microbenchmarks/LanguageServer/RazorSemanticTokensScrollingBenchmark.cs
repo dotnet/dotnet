@@ -8,7 +8,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
-using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Text;
@@ -23,9 +22,7 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
 {
     private IRazorSemanticTokensInfoService RazorSemanticTokenService { get; set; }
 
-    private IDocumentVersionCache VersionCache { get; set; }
-
-    private VersionedDocumentContext DocumentContext { get; set; }
+    private DocumentContext DocumentContext { get; set; }
 
     private Uri DocumentUri => DocumentContext.Uri;
 
@@ -52,7 +49,7 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
 
         var documentUri = new Uri(filePath);
         var documentSnapshot = await GetDocumentSnapshotAsync(ProjectFilePath, filePath, TargetPath);
-        DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, projectContext: null, version: 1);
+        DocumentContext = new DocumentContext(documentUri, documentSnapshot, projectContext: null);
 
         var text = await DocumentSnapshot.GetTextAsync().ConfigureAwait(false);
         Range = VsLspFactory.CreateRange(
@@ -66,9 +63,6 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
     public async Task RazorSemanticTokensRangeScrollingAsync()
     {
         var cancellationToken = CancellationToken.None;
-        var documentVersion = 1;
-
-        VersionCache!.TrackDocumentVersion(DocumentSnapshot, documentVersion);
 
         var documentLineCount = Range.End.Line;
 
@@ -105,6 +99,5 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
     private void EnsureServicesInitialized()
     {
         RazorSemanticTokenService = RazorLanguageServerHost.GetRequiredService<IRazorSemanticTokensInfoService>();
-        VersionCache = RazorLanguageServerHost.GetRequiredService<IDocumentVersionCache>();
     }
 }
