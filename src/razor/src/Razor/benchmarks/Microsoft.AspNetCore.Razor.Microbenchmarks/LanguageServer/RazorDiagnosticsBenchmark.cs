@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
@@ -36,7 +35,7 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
     private ImmutableArray<SourceMapping> SourceMappings { get; set; }
     private string? GeneratedCode { get; set; }
     private object? Diagnostics { get; set; }
-    private VersionedDocumentContext? VersionedDocumentContext { get; set; }
+    private DocumentContext? DocumentContext { get; set; }
     private VSInternalDocumentDiagnosticsParams? Request { get; set; }
     private IEnumerable<VSInternalDiagnosticReport?>? Response { get; set; }
 
@@ -58,14 +57,13 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         var stringSourceDocument = RazorSourceDocument.Create(GetFileContents(), UTF8Encoding.UTF8, RazorSourceDocumentProperties.Default);
         var mockRazorCodeDocument = new Mock<RazorCodeDocument>(MockBehavior.Strict);
 
-        var mockRazorCSharpDocument = RazorCSharpDocument.Create(
+        var mockRazorCSharpDocument = new RazorCSharpDocument(
             mockRazorCodeDocument.Object,
             GeneratedCode,
-            RazorCodeGenerationOptions.CreateDesignTimeDefault(),
-            Array.Empty<RazorDiagnostic>(),
+            RazorCodeGenerationOptions.DesignTimeDefault,
+            diagnostics: [],
             SourceMappings,
-            new List<LinePragma>()
-        );
+            linePragmas: []);
 
         var itemCollection = new ItemCollection();
         itemCollection[typeof(RazorCSharpDocument)] = mockRazorCSharpDocument;
@@ -74,17 +72,17 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         RazorCodeDocument = mockRazorCodeDocument.Object;
 
         SourceText = RazorCodeDocument.Source.Text;
-        var documentContext = new Mock<VersionedDocumentContext>(
+        var documentContext = new Mock<DocumentContext>(
             MockBehavior.Strict,
             new object[] { It.IsAny<Uri>(), It.IsAny<IDocumentSnapshot>(), It.IsAny<VSProjectContext>(), It.IsAny<int>() });
         documentContext
             .Setup(r => r.GetCodeDocumentAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(RazorCodeDocument);
         documentContext.Setup(r => r.Uri).Returns(It.IsAny<Uri>());
-        documentContext.Setup(r => r.Version).Returns(It.IsAny<int>());
+        documentContext.Setup(r => r.Snapshot.Version).Returns(It.IsAny<int>());
         documentContext.Setup(r => r.GetSourceTextAsync(It.IsAny<CancellationToken>())).ReturnsAsync(It.IsAny<SourceText>());
         RazorRequestContext = new RazorRequestContext(documentContext.Object, null!, "lsp/method", uri: null);
-        VersionedDocumentContext = documentContext.Object;
+        DocumentContext = documentContext.Object;
 
         var loggerFactory = EmptyLoggerFactory.Instance;
         var languageServerFeatureOptions = BuildFeatureOptions();

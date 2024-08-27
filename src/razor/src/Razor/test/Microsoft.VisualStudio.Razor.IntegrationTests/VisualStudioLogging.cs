@@ -89,7 +89,14 @@ internal static class VisualStudioLogging
         var files = new List<string>();
         foreach (var feedbackFileProvider in feedbackFileProviders)
         {
-            files.AddRange(feedbackFileProvider.GetFiles());
+            try
+            {
+                files.AddRange(feedbackFileProvider.GetFiles());
+            }
+            catch
+            {
+                // If one of the providers has issues, we don't want it causing us to not be able to report our stuff properly
+            }
         }
 
         _ = CollectFeedbackItemsAsync(files, filePath, expectedFileParts);

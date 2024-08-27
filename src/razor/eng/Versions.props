@@ -30,7 +30,7 @@
     imported. This OK because we want to just have an obvious salt for a local build.
   -->
   <PropertyGroup>
-    <VsixVersionPrefix>17.12.2</VsixVersionPrefix>
+    <VsixVersionPrefix>17.12.3</VsixVersionPrefix>
     <AddinMajorVersion>17.12</AddinMajorVersion>
     <AddinVersion>$(AddinMajorVersion)</AddinVersion>
     <AddinVersion Condition="'$(OfficialBuildId)' != ''">$(AddinVersion).$(OfficialBuildId)</AddinVersion>
@@ -50,7 +50,7 @@
     <MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>6.0.2-servicing.22064.6</MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>6.0.1</MicrosoftNETCorePlatformsPackageVersion>
     <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>9.0.0-alpha.1.24304.1</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
-    <MicrosoftSourceBuildIntermediatearcadePackageVersion>9.0.0-beta.24352.2</MicrosoftSourceBuildIntermediatearcadePackageVersion>
+    <MicrosoftSourceBuildIntermediatearcadePackageVersion>9.0.0-beta.24426.3</MicrosoftSourceBuildIntermediatearcadePackageVersion>
     <MicrosoftDotNetXliffTasksPackageVersion>1.0.0-beta.23475.1</MicrosoftDotNetXliffTasksPackageVersion>
     <MicrosoftSourceBuildIntermediatexlifftasksPackageVersion>1.0.0-beta.23475.1</MicrosoftSourceBuildIntermediatexlifftasksPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>4.12.0-2.24419.3</MicrosoftNetCompilersToolsetPackageVersion>

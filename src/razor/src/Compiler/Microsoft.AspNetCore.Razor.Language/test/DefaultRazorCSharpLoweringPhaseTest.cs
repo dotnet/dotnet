@@ -66,7 +66,7 @@ public class DefaultRazorCSharpLoweringPhaseTest
         var phase = new DefaultRazorCSharpLoweringPhase();
         var engine = RazorProjectEngine.CreateEmpty(b => b.Phases.Add(phase));
         var codeDocument = TestRazorCodeDocument.Create("<p class=@(");
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
         var irDocument = new DocumentIntermediateNode()
         {
             DocumentKind = "test",

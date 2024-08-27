@@ -1000,8 +1000,6 @@ public class ProjectStateTest : WorkspaceTestBase
         {
             return new TestDocumentState(
                 hostDocument,
-                null,
-                null,
                 loader,
                 onTextChange,
                 onTextLoaderChange,
@@ -1018,15 +1016,13 @@ public class ProjectStateTest : WorkspaceTestBase
 
         private TestDocumentState(
             HostDocument hostDocument,
-            SourceText? text,
-            VersionStamp? version,
             Func<Task<TextAndVersion>>? loader,
             Action? onTextChange,
             Action? onTextLoaderChange,
             Action? onConfigurationChange,
             Action? onImportsChange,
             Action? onProjectWorkspaceStateChange)
-            : base(hostDocument, text, version, loader)
+            : base(hostDocument, text: null, textVersion: null, version: 1, loader)
         {
             _onTextChange = onTextChange;
             _onTextLoaderChange = onTextLoaderChange;
@@ -1035,10 +1031,10 @@ public class ProjectStateTest : WorkspaceTestBase
             _onProjectWorkspaceStateChange = onProjectWorkspaceStateChange;
         }
 
-        public override DocumentState WithText(SourceText sourceText, VersionStamp version)
+        public override DocumentState WithText(SourceText sourceText, VersionStamp textVersion)
         {
             _onTextChange?.Invoke();
-            return base.WithText(sourceText, version);
+            return base.WithText(sourceText, textVersion);
         }
 
         public override DocumentState WithTextLoader(Func<Task<TextAndVersion>> loader)

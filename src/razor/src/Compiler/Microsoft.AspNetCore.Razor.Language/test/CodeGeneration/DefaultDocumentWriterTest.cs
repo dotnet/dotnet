@@ -20,7 +20,7 @@ public class DefaultDocumentWriterTest
         var document = new DocumentIntermediateNode();
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -51,7 +51,7 @@ public class DefaultDocumentWriterTest
         var document = new DocumentIntermediateNode();
 
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -82,7 +82,7 @@ public class DefaultDocumentWriterTest
         var document = new DocumentIntermediateNode();
 
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -110,7 +110,7 @@ public class DefaultDocumentWriterTest
         var document = new DocumentIntermediateNode();
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var optionsBuilder = new DefaultRazorCodeGenerationOptionsBuilder(designTime: false)
+        var optionsBuilder = new RazorCodeGenerationOptionsBuilder(designTime: false)
         {
             SuppressChecksum = true
         };
@@ -144,7 +144,7 @@ public class DefaultDocumentWriterTest
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -192,7 +192,7 @@ public class DefaultDocumentWriterTest
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -243,7 +243,7 @@ public class DefaultDocumentWriterTest
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -292,7 +292,7 @@ public class DefaultDocumentWriterTest
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -355,7 +355,7 @@ public class DefaultDocumentWriterTest
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -399,7 +399,7 @@ public class DefaultDocumentWriterTest
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);
@@ -439,7 +439,7 @@ public class DefaultDocumentWriterTest
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.CreateDefault();
+        var options = RazorCodeGenerationOptions.Default;
 
         var target = CodeTarget.CreateDefault(codeDocument, options);
         var writer = new DefaultDocumentWriter(target, options);

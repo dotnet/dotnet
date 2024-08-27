@@ -402,7 +402,7 @@ public class CSharpCodeWriterTest
             o.IndentSize = 4;
         });
 
-        using var writer = new CodeWriter(Environment.NewLine, options);
+        using var writer = new CodeWriter(options);
 
         // Act
         writer.BuildClassDeclaration(Array.Empty<string>(), "C", "", Array.Empty<string>(), Array.Empty<TypeParameter>(), context: null);
@@ -428,7 +428,7 @@ public class CSharpCodeWriterTest
             o.IndentSize = 4;
         });
 
-        using var writer = new CodeWriter(Environment.NewLine, options);
+        using var writer = new CodeWriter(options);
 
         // Act
         writer.BuildClassDeclaration(Array.Empty<string>(), "C", "", Array.Empty<string>(), Array.Empty<TypeParameter>(), context: null);

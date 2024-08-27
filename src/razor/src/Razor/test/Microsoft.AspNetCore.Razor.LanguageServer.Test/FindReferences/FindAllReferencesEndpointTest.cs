@@ -64,7 +64,7 @@ public class FindAllReferencesEndpointTest(ITestOutputHelper testOutput) : Singl
             },
             Position = sourceText.GetPosition(cursorPosition)
         };
-        Assert.True(DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument, out var documentContext));
+        Assert.True(DocumentContextFactory.TryCreate(request.TextDocument, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act

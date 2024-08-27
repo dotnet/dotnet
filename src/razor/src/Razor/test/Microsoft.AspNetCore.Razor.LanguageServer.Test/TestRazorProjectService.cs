@@ -19,13 +19,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
 internal class TestRazorProjectService(
     RemoteTextLoaderFactory remoteTextLoaderFactory,
-    IDocumentVersionCache documentVersionCache,
     IProjectSnapshotManager projectManager,
     ILoggerFactory loggerFactory)
     : RazorProjectService(
         projectManager,
         CreateProjectInfoDriver(),
-        documentVersionCache,
         remoteTextLoaderFactory,
         loggerFactory)
 {

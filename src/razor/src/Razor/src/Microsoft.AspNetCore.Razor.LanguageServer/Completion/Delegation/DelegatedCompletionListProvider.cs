@@ -52,7 +52,7 @@ internal class DelegatedCompletionListProvider
     public virtual async Task<VSInternalCompletionList?> GetCompletionListAsync(
         int absoluteIndex,
         VSInternalCompletionContext completionContext,
-        VersionedDocumentContext documentContext,
+        DocumentContext documentContext,
         VSInternalClientCapabilities clientCapabilities,
         Guid correlationId,
         CancellationToken cancellationToken)
@@ -120,7 +120,7 @@ internal class DelegatedCompletionListProvider
         return rewrittenResponse;
     }
 
-    private async Task<bool> ShouldIncludeSnippetsAsync(VersionedDocumentContext documentContext, int absoluteIndex, CancellationToken cancellationToken)
+    private async Task<bool> ShouldIncludeSnippetsAsync(DocumentContext documentContext, int absoluteIndex, CancellationToken cancellationToken)
     {
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var tree = codeDocument.GetSyntaxTree();
@@ -183,7 +183,7 @@ internal class DelegatedCompletionListProvider
     }
 
     private async Task<ProvisionalCompletionInfo?> TryGetProvisionalCompletionInfoAsync(
-        VersionedDocumentContext documentContext,
+        DocumentContext documentContext,
         VSInternalCompletionContext completionContext,
         DocumentPositionInfo positionInfo,
         CancellationToken cancellationToken)

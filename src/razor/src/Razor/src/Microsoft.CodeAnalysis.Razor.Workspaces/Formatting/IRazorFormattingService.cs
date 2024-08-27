@@ -12,7 +12,7 @@ namespace Microsoft.CodeAnalysis.Razor.Formatting;
 internal interface IRazorFormattingService
 {
     Task<TextEdit[]> FormatAsync(
-       VersionedDocumentContext documentContext,
+       DocumentContext documentContext,
        Range? range,
        FormattingOptions options,
        CancellationToken cancellationToken);

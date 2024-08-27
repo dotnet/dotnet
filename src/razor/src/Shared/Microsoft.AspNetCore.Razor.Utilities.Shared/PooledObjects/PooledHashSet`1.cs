@@ -67,10 +67,13 @@ internal ref struct PooledHashSet<T>
         => _set?.Contains(item) ?? false;
 
     public readonly T[] ToArray()
-        => _set?.ToArray() ?? Array.Empty<T>();
+        => _set?.ToArray() ?? [];
 
     public readonly ImmutableArray<T> ToImmutableArray()
-        => _set?.ToImmutableArray() ?? ImmutableArray<T>.Empty;
+        => _set?.ToImmutableArray() ?? [];
+
+    public readonly ImmutableArray<T> OrderByAsArray<TKey>(Func<T, TKey> keySelector)
+        => _set?.OrderByAsArray(keySelector) ?? [];
 
     public void UnionWith(IList<T>? other)
     {

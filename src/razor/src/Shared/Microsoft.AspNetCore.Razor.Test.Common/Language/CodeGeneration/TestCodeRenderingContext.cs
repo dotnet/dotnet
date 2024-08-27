@@ -15,32 +15,14 @@ public static class TestCodeRenderingContext
         RazorSourceDocument source = null,
         IntermediateNodeWriter nodeWriter = null)
     {
+        nodeWriter ??= new RuntimeNodeWriter();
+        source ??= TestRazorSourceDocument.Create();
         var documentNode = new DocumentIntermediateNode();
-        var options = RazorCodeGenerationOptions.CreateDesignTimeDefault();
 
-        if (source == null)
-        {
-            source = TestRazorSourceDocument.Create();
-        }
+        var options = ConfigureOptions(RazorCodeGenerationOptions.DesignTimeDefault, newLineString, suppressUniqueIds);
 
-        var codeDocument = RazorCodeDocument.Create(source);
-        if (newLineString != null)
-        {
-            codeDocument.Items[CodeRenderingContext.NewLineString] = newLineString;
-        }
-
-        if (suppressUniqueIds != null)
-        {
-            codeDocument.Items[CodeRenderingContext.SuppressUniqueIds] = suppressUniqueIds;
-        }
-
-        if (nodeWriter == null)
-        {
-            nodeWriter = new DesignTimeNodeWriter();
-        }
-
-        var context = new DefaultCodeRenderingContext(nodeWriter, codeDocument, documentNode, options);
-        context.Visitor = new RenderChildrenVisitor(context);
+        var context = new CodeRenderingContext(nodeWriter, source, documentNode, options);
+        context.SetVisitor(new RenderChildrenVisitor(context.CodeWriter));
 
         return context;
     }
@@ -51,47 +33,45 @@ public static class TestCodeRenderingContext
         RazorSourceDocument source = null,
         IntermediateNodeWriter nodeWriter = null)
     {
+        nodeWriter ??= new RuntimeNodeWriter();
+        source ??= TestRazorSourceDocument.Create();
         var documentNode = new DocumentIntermediateNode();
-        var options = RazorCodeGenerationOptions.CreateDefault();
 
-        if (source == null)
-        {
-            source = TestRazorSourceDocument.Create();
-        }
+        var options = ConfigureOptions(RazorCodeGenerationOptions.Default, newLineString, suppressUniqueIds);
 
-        var codeDocument = RazorCodeDocument.Create(source);
-        if (newLineString != null)
-        {
-            codeDocument.Items[CodeRenderingContext.NewLineString] = newLineString;
-        }
-
-        if (suppressUniqueIds != null)
-        {
-            codeDocument.Items[CodeRenderingContext.SuppressUniqueIds] = suppressUniqueIds;
-        }
-
-        if (nodeWriter == null)
-        {
-            nodeWriter = new RuntimeNodeWriter();
-        }
-
-        var context = new DefaultCodeRenderingContext(nodeWriter, codeDocument, documentNode, options);
-        context.Visitor = new RenderChildrenVisitor(context);
+        var context = new CodeRenderingContext(nodeWriter, source, documentNode, options);
+        context.SetVisitor(new RenderChildrenVisitor(context.CodeWriter));
 
         return context;
     }
 
-    private class RenderChildrenVisitor : IntermediateNodeVisitor
+    private static RazorCodeGenerationOptions ConfigureOptions(RazorCodeGenerationOptions options, string newLine, string suppressUniqueIds)
     {
-        private readonly CodeRenderingContext _context;
-        public RenderChildrenVisitor(CodeRenderingContext context)
+        if (newLine is null && suppressUniqueIds is null)
         {
-            _context = context;
+            return options;
         }
 
+        var builder = options.ToBuilder();
+
+        if (newLine is not null)
+        {
+            builder.NewLine = newLine;
+        }
+
+        if (suppressUniqueIds is not null)
+        {
+            builder.SuppressUniqueIds = suppressUniqueIds;
+        }
+
+        return builder.Build();
+    }
+
+    private class RenderChildrenVisitor(CodeWriter writer) : IntermediateNodeVisitor
+    {
         public override void VisitDefault(IntermediateNode node)
         {
-            _context.CodeWriter.WriteLine("Render Children");
+            writer.WriteLine("Render Children");
         }
     }
 }

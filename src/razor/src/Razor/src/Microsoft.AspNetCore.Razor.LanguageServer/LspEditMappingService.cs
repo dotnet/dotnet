@@ -22,19 +22,9 @@ internal class LspEditMappingService(
 {
     private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
 
-    protected override bool TryGetVersionedDocumentContext(IDocumentSnapshot contextDocumentSnapshot, Uri razorDocumentUri, VSProjectContext? projectContext, [NotNullWhen(true)] out VersionedDocumentContext? documentContext)
+    protected override bool TryGetDocumentContext(IDocumentSnapshot contextDocumentSnapshot, Uri razorDocumentUri, VSProjectContext? projectContext, [NotNullWhen(true)] out DocumentContext? documentContext)
     {
-        if (!_documentContextFactory.TryCreateForOpenDocument(razorDocumentUri, projectContext, out documentContext))
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    protected override bool TryGetDocumentContext(IDocumentSnapshot contextDocumentSnapshot, Uri razorDocumentUri, [NotNullWhen(true)] out DocumentContext? documentContext)
-    {
-        if (!_documentContextFactory.TryCreate(razorDocumentUri, out documentContext))
+        if (!_documentContextFactory.TryCreate(razorDocumentUri, projectContext, out documentContext))
         {
             return false;
         }

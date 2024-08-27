@@ -8,10 +8,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -121,8 +119,10 @@ public class RazorIntegrationTestBase
 
             if (LineEnding != null)
             {
-                b.Phases.Insert(0, new ForceLineEndingPhase(LineEnding));
+                b.Features.Add(new SetNewLineOptionFeature(LineEnding));
             }
+
+            b.Features.Add(new SuppressUniqueIdsPhase());
 
             b.Features.Add(new CompilationTagHelperFeature());
             b.Features.Add(new DefaultMetadataReferenceFeature()
@@ -489,20 +489,23 @@ public class RazorIntegrationTestBase
         }
     }
 
-    private class ForceLineEndingPhase : RazorEnginePhaseBase
+    private sealed class SetNewLineOptionFeature(string newLine) : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
     {
-        public ForceLineEndingPhase(string lineEnding)
+        public int Order { get; }
+
+        public void Configure(RazorCodeGenerationOptionsBuilder options)
         {
-            LineEnding = lineEnding;
+            options.NewLine = newLine;
         }
+    }
 
-        public string LineEnding { get; }
+    private sealed class SuppressUniqueIdsPhase : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
+    {
+        public int Order { get; }
 
-        protected override void ExecuteCore(RazorCodeDocument codeDocument)
+        public void Configure(RazorCodeGenerationOptionsBuilder options)
         {
-            var field = typeof(CodeRenderingContext).GetField("NewLineString", BindingFlags.Static | BindingFlags.NonPublic);
-            var key = field.GetValue(null);
-            codeDocument.Items[key] = LineEnding;
+            options.SuppressUniqueIds = "__UniqueIdSuppressedForTesting__";
         }
     }
 

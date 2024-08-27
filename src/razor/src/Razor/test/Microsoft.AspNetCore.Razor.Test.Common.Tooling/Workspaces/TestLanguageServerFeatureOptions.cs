@@ -7,7 +7,8 @@ namespace Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 
 internal class TestLanguageServerFeatureOptions(
     bool includeProjectKeyInGeneratedFilePath = false,
-    bool forceRuntimeCodeGeneration = false) : LanguageServerFeatureOptions
+    bool forceRuntimeCodeGeneration = false,
+    bool updateBuffersForClosedDocuments = false) : LanguageServerFeatureOptions
 {
     public static readonly LanguageServerFeatureOptions Instance = new TestLanguageServerFeatureOptions();
 
@@ -27,7 +28,7 @@ internal class TestLanguageServerFeatureOptions(
 
     public override bool UsePreciseSemanticTokenRanges => true;
 
-    public override bool UpdateBuffersForClosedDocuments => false;
+    public override bool UpdateBuffersForClosedDocuments => updateBuffersForClosedDocuments;
 
     public override bool IncludeProjectKeyInGeneratedFilePath => includeProjectKeyInGeneratedFilePath;
 

@@ -28,12 +28,12 @@ internal sealed class DefaultHtmlCodeActionResolver(
         CodeAction codeAction,
         CancellationToken cancellationToken)
     {
-        if (!_documentContextFactory.TryCreateForOpenDocument(resolveParams.RazorFileIdentifier, out var documentContext))
+        if (!_documentContextFactory.TryCreate(resolveParams.RazorFileIdentifier, out var documentContext))
         {
             return codeAction;
         }
 
-        var resolvedCodeAction = await ResolveCodeActionWithServerAsync(resolveParams.RazorFileIdentifier, documentContext.Version, RazorLanguageKind.Html, codeAction, cancellationToken).ConfigureAwait(false);
+        var resolvedCodeAction = await ResolveCodeActionWithServerAsync(resolveParams.RazorFileIdentifier, documentContext.Snapshot.Version, RazorLanguageKind.Html, codeAction, cancellationToken).ConfigureAwait(false);
         if (resolvedCodeAction?.Edit?.DocumentChanges is null)
         {
             // Unable to resolve code action with server, return original code action

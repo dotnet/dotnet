@@ -13,64 +13,11 @@ internal static class IDocumentContextFactoryExtensions
         this IDocumentContextFactory service,
         TextDocumentIdentifier documentIdentifier,
         [NotNullWhen(true)] out DocumentContext? context)
-        => service.TryCreate(documentIdentifier.Uri, documentIdentifier.GetProjectContext(), versioned: false, out context);
+            => service.TryCreate(documentIdentifier.Uri, documentIdentifier.GetProjectContext(), out context);
 
     public static bool TryCreate(
         this IDocumentContextFactory service,
         Uri documentUri,
         [NotNullWhen(true)] out DocumentContext? context)
-        => service.TryCreate(documentUri, projectContext: null, versioned: false, out context);
-
-    public static bool TryCreate(
-        this IDocumentContextFactory service,
-        Uri documentUri,
-        VSProjectContext? projectContext,
-        [NotNullWhen(true)] out DocumentContext? context)
-        => service.TryCreate(documentUri, projectContext, versioned: false, out context);
-
-    public static bool TryCreateForOpenDocument(
-        this IDocumentContextFactory service,
-        Uri documentUri,
-        [NotNullWhen(true)] out VersionedDocumentContext? context)
-    {
-        if (service.TryCreate(documentUri, projectContext: null, versioned: true, out var documentContext))
-        {
-            context = (VersionedDocumentContext)documentContext;
-            return true;
-        }
-
-        context = null;
-        return false;
-    }
-
-    public static bool TryCreateForOpenDocument(
-        this IDocumentContextFactory service,
-        TextDocumentIdentifier documentIdentifier,
-        [NotNullWhen(true)] out VersionedDocumentContext? context)
-    {
-        if (service.TryCreate(documentIdentifier.Uri, documentIdentifier.GetProjectContext(), versioned: true, out var documentContext))
-        {
-            context = (VersionedDocumentContext)documentContext;
-            return true;
-        }
-
-        context = null;
-        return false;
-    }
-
-    public static bool TryCreateForOpenDocument(
-        this IDocumentContextFactory service,
-        Uri documentUri,
-        VSProjectContext? projectContext,
-        [NotNullWhen(true)] out VersionedDocumentContext? context)
-    {
-        if (service.TryCreate(documentUri, projectContext, versioned: true, out var documentContext))
-        {
-            context = (VersionedDocumentContext)documentContext;
-            return true;
-        }
-
-        context = null;
-        return false;
-    }
+            => service.TryCreate(documentUri, projectContext: null, out context);
 }

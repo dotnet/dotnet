@@ -32,13 +32,9 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
 
     private SemanticTokensRangeEndpoint SemanticTokensRangeEndpoint { get; set; }
 
-    private IDocumentVersionCache VersionCache { get; set; }
-
     private Uri DocumentUri => DocumentContext.Uri;
 
-    private IDocumentSnapshot DocumentSnapshot => DocumentContext.Snapshot;
-
-    private VersionedDocumentContext DocumentContext { get; set; }
+    private DocumentContext DocumentContext { get; set; }
 
     private Range Range { get; set; }
 
@@ -70,8 +66,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
 
         var documentUri = new Uri(filePath);
         var documentSnapshot = await GetDocumentSnapshotAsync(ProjectFilePath, filePath, TargetPath);
-        var version = 1;
-        DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, projectContext: null, version);
+        DocumentContext = new DocumentContext(documentUri, documentSnapshot, projectContext: null);
 
         var razorOptionsMonitor = RazorLanguageServerHost.GetRequiredService<RazorLSPOptionsMonitor>();
         var clientCapabilitiesService = new BenchmarkClientCapabilitiesService(new VSInternalClientCapabilities() { SupportsVisualStudioExtensions = true });
@@ -82,9 +77,6 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
         Range = VsLspFactory.CreateRange(
             start: (0, 0),
             end: (text.Lines.Count - 1, text.Lines[^1].Span.Length - 1));
-
-        var documentVersion = 1;
-        VersionCache.TrackDocumentVersion(DocumentSnapshot, documentVersion);
 
         RequestContext = new RazorRequestContext(DocumentContext, RazorLanguageServerHost.GetRequiredService<ILspServices>(), "lsp/method", uri: null);
 
@@ -133,7 +125,6 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
     private void EnsureServicesInitialized()
     {
         RazorSemanticTokenService = RazorLanguageServerHost.GetRequiredService<IRazorSemanticTokensInfoService>();
-        VersionCache = RazorLanguageServerHost.GetRequiredService<IDocumentVersionCache>();
     }
 
     internal class TestCustomizableRazorSemanticTokensInfoService : RazorSemanticTokensInfoService
@@ -149,7 +140,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
 
         // We can't get C# responses without significant amounts of extra work, so let's just shim it for now, any non-Null result is fine.
         protected override Task<ImmutableArray<SemanticRange>?> GetCSharpSemanticRangesAsync(
-            VersionedDocumentContext documentContext,
+            DocumentContext documentContext,
             RazorCodeDocument codeDocument,
             LinePositionSpan razorSpan,
             bool colorBackground,

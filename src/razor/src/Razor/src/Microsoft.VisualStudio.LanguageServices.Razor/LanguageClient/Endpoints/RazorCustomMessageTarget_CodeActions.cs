@@ -21,11 +21,6 @@ internal partial class RazorCustomMessageTarget
     [JsonRpcMethod(CustomMessageNames.RazorProvideCodeActionsEndpoint, UseSingleObjectParameterDeserialization = true)]
     public async Task<IReadOnlyList<VSInternalCodeAction>?> ProvideCodeActionsAsync(DelegatedCodeActionParams codeActionParams, CancellationToken cancellationToken)
     {
-        if (codeActionParams is null)
-        {
-            throw new ArgumentNullException(nameof(codeActionParams));
-        }
-
         bool synchronized;
         VirtualDocumentSnapshot virtualDocumentSnapshot;
         string languageServerName;
@@ -35,7 +30,7 @@ internal partial class RazorCustomMessageTarget
                 codeActionParams.HostDocumentVersion,
                 codeActionParams.CodeActionParams.TextDocument,
                 cancellationToken).ConfigureAwait(false);
-            languageServerName = RazorLSPConstants.RazorCSharpLanguageServerName;
+            languageServerName = RazorLSPConstants.HtmlLanguageServerName;
         }
         else if (codeActionParams.LanguageKind == RazorLanguageKind.CSharp)
         {
@@ -43,7 +38,7 @@ internal partial class RazorCustomMessageTarget
                 codeActionParams.HostDocumentVersion,
                 codeActionParams.CodeActionParams.TextDocument,
                 cancellationToken).ConfigureAwait(false);
-            languageServerName = RazorLSPConstants.HtmlLanguageServerName;
+            languageServerName = RazorLSPConstants.RazorCSharpLanguageServerName;
         }
         else
         {

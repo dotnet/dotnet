@@ -23,6 +23,6 @@ internal class DocumentDidOpenEndpoint(IRazorProjectService razorProjectService)
         var sourceText = SourceText.From(request.TextDocument.Text);
 
         return _projectService.OpenDocumentAsync(
-            request.TextDocument.Uri.GetAbsoluteOrUNCPath(), sourceText, request.TextDocument.Version, cancellationToken);
+            request.TextDocument.Uri.GetAbsoluteOrUNCPath(), sourceText, cancellationToken);
     }
 }

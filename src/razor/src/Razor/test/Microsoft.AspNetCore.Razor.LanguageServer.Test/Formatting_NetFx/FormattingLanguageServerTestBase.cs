@@ -1,13 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.Formatting;
@@ -21,13 +18,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
 public abstract class FormattingLanguageServerTestBase(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    internal static RazorCodeDocument CreateCodeDocument(string content, IReadOnlyList<SourceMapping> sourceMappings)
+    internal static RazorCodeDocument CreateCodeDocument(string content, ImmutableArray<SourceMapping> sourceMappings)
     {
         var sourceDocument = TestRazorSourceDocument.Create(content);
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
         var syntaxTree = RazorSyntaxTree.Parse(sourceDocument, RazorParserOptions.CreateDefault());
-        var razorCSharpDocument = RazorCSharpDocument.Create(
-            codeDocument, content, RazorCodeGenerationOptions.CreateDefault(), Array.Empty<RazorDiagnostic>(), sourceMappings.ToImmutableArray(), Array.Empty<LinePragma>());
+        var razorCSharpDocument = new RazorCSharpDocument(
+            codeDocument, content, RazorCodeGenerationOptions.Default, diagnostics: [], sourceMappings, linePragmas: []);
         codeDocument.SetSyntaxTree(syntaxTree);
         codeDocument.SetCSharpDocument(razorCSharpDocument);
 
@@ -38,7 +35,7 @@ public abstract class FormattingLanguageServerTestBase(ITestOutputHelper testOut
     {
         public bool Called { get; private set; }
 
-        public Task<TextEdit[]> FormatAsync(VersionedDocumentContext documentContext, Range? range, FormattingOptions options, CancellationToken cancellationToken)
+        public Task<TextEdit[]> FormatAsync(DocumentContext documentContext, Range? range, FormattingOptions options, CancellationToken cancellationToken)
         {
             Called = true;
             return SpecializedTasks.EmptyArray<TextEdit>();

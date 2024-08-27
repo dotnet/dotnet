@@ -33,7 +33,7 @@ internal class CompletionListProvider
     public async Task<VSInternalCompletionList?> GetCompletionListAsync(
         int absoluteIndex,
         VSInternalCompletionContext completionContext,
-        VersionedDocumentContext documentContext,
+        DocumentContext documentContext,
         VSInternalClientCapabilities clientCapabilities,
         Guid correlationId,
         CancellationToken cancellationToken)

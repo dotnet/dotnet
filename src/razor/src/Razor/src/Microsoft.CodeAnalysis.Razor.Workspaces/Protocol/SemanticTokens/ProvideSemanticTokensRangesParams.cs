@@ -11,7 +11,7 @@ namespace Microsoft.CodeAnalysis.Razor.Workspaces.Protocol.SemanticTokens;
 internal class ProvideSemanticTokensRangesParams : SemanticTokensParams
 {
     [JsonPropertyName("requiredHostDocumentVersion")]
-    public long RequiredHostDocumentVersion { get; }
+    public int RequiredHostDocumentVersion { get; }
 
     [JsonPropertyName("ranges")]
     public Range[] Ranges { get; }
@@ -19,7 +19,7 @@ internal class ProvideSemanticTokensRangesParams : SemanticTokensParams
     [JsonPropertyName("correlationId")]
     public Guid CorrelationId { get; }
 
-    public ProvideSemanticTokensRangesParams(TextDocumentIdentifier textDocument, long requiredHostDocumentVersion, Range[] ranges, Guid correlationId)
+    public ProvideSemanticTokensRangesParams(TextDocumentIdentifier textDocument, int requiredHostDocumentVersion, Range[] ranges, Guid correlationId)
     {
         TextDocument = textDocument;
         RequiredHostDocumentVersion = requiredHostDocumentVersion;

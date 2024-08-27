@@ -86,7 +86,7 @@ public class RenameEndpointDelegationTest(ITestOutputHelper testOutput) : Single
             Position = codeDocument.Source.Text.GetPosition(cursorPosition),
             NewName = newName
         };
-        Assert.True(DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument, out var documentContext));
+        Assert.True(DocumentContextFactory.TryCreate(request.TextDocument, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act

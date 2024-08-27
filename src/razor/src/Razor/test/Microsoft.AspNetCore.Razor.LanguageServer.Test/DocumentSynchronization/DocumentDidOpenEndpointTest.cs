@@ -25,13 +25,12 @@ public class DocumentDidOpenEndpointTest(ITestOutputHelper testOutput) : Languag
         var documentPath = "C:/path/to/document.cshtml";
         var projectService = new StrictMock<IRazorProjectService>();
         projectService
-            .Setup(service => service.OpenDocumentAsync(It.IsAny<string>(), It.IsAny<SourceText>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .Setup(service => service.OpenDocumentAsync(It.IsAny<string>(), It.IsAny<SourceText>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
-            .Callback((string path, SourceText text, int version, CancellationToken cancellationToken) =>
+            .Callback((string path, SourceText text, CancellationToken cancellationToken) =>
             {
                 Assert.Equal("hello", text.ToString());
                 Assert.Equal(documentPath, path);
-                Assert.Equal(1337, version);
             });
         var endpoint = new DocumentDidOpenEndpoint(projectService.Object);
         var request = new DidOpenTextDocumentParams()

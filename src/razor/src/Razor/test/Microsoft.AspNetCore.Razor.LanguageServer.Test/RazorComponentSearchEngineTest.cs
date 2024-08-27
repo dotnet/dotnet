@@ -48,8 +48,6 @@ public class RazorComponentSearchEngineTest(ITestOutputHelper testOutput) : Lang
     {
         _projectManager = CreateProjectSnapshotManager();
 
-        var documentVersionCache = new DocumentVersionCache(_projectManager);
-
         var remoteTextLoaderFactoryMock = new StrictMock<RemoteTextLoaderFactory>();
         remoteTextLoaderFactoryMock
             .Setup(x => x.Create(It.IsAny<string>()))
@@ -65,7 +63,6 @@ public class RazorComponentSearchEngineTest(ITestOutputHelper testOutput) : Lang
 
         var projectService = new TestRazorProjectService(
             remoteTextLoaderFactoryMock.Object,
-            documentVersionCache,
             _projectManager,
             LoggerFactory);
 
@@ -78,10 +75,10 @@ public class RazorComponentSearchEngineTest(ITestOutputHelper testOutput) : Lang
             DisposalToken);
 
         await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath1, DisposalToken);
-        await projectService.UpdateDocumentAsync(s_componentFilePath1, SourceText.From(""), version: 1, DisposalToken);
+        await projectService.UpdateDocumentAsync(s_componentFilePath1, SourceText.From(""), DisposalToken);
 
         await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath2, DisposalToken);
-        await projectService.UpdateDocumentAsync(s_componentFilePath2, SourceText.From("@namespace Test"), version: 1, DisposalToken);
+        await projectService.UpdateDocumentAsync(s_componentFilePath2, SourceText.From("@namespace Test"), DisposalToken);
 
         await projectService.AddProjectAsync(
             s_projectFilePath2,
@@ -92,7 +89,7 @@ public class RazorComponentSearchEngineTest(ITestOutputHelper testOutput) : Lang
             DisposalToken);
 
         await projectService.AddDocumentToPotentialProjectsAsync(s_componentFilePath3, DisposalToken);
-        await projectService.UpdateDocumentAsync(s_componentFilePath3, SourceText.From(""), version: 1, DisposalToken);
+        await projectService.UpdateDocumentAsync(s_componentFilePath3, SourceText.From(""), DisposalToken);
     }
 
     [Fact]

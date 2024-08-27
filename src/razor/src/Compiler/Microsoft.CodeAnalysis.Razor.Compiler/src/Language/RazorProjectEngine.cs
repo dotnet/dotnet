@@ -185,7 +185,7 @@ public class RazorProjectEngine
             ConfigureParserOptions(builder);
             configureParser?.Invoke(builder);
         });
-        var codeGenerationOptions = GetRequiredFeature<IRazorCodeGenerationOptionsFactoryProjectFeature>().Create(fileKind, builder =>
+        var codeGenerationOptions = GetRequiredFeature<IRazorCodeGenerationOptionsFactoryProjectFeature>().Create(builder =>
         {
             ConfigureCodeGenerationOptions(builder);
             configureCodeGeneration?.Invoke(builder);
@@ -261,7 +261,7 @@ public class RazorProjectEngine
             ConfigureDesignTimeParserOptions(builder);
             configureParser?.Invoke(builder);
         });
-        var codeGenerationOptions = GetRequiredFeature<IRazorCodeGenerationOptionsFactoryProjectFeature>().Create(fileKind, builder =>
+        var codeGenerationOptions = GetRequiredFeature<IRazorCodeGenerationOptionsFactoryProjectFeature>().Create(builder =>
         {
             ConfigureDesignTimeCodeGenerationOptions(builder);
             configureCodeGeneration?.Invoke(builder);

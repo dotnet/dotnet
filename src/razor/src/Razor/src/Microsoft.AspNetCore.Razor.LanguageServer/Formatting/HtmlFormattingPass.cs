@@ -20,11 +20,10 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 internal sealed class HtmlFormattingPass(
     IDocumentMappingService documentMappingService,
     IClientConnection clientConnection,
-    IDocumentVersionCache documentVersionCache,
     ILoggerFactory loggerFactory)
     : FormattingPassBase(documentMappingService)
 {
-    private readonly HtmlFormatter _htmlFormatter = new HtmlFormatter(clientConnection, documentVersionCache);
+    private readonly HtmlFormatter _htmlFormatter = new HtmlFormatter(clientConnection);
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<HtmlFormattingPass>();
 
     // We want this to run first because it uses the client HTML formatter.

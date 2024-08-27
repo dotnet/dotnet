@@ -47,12 +47,12 @@ internal sealed class DefaultCSharpCodeActionResolver(
         CodeAction codeAction,
         CancellationToken cancellationToken)
     {
-        if (!_documentContextFactory.TryCreateForOpenDocument(csharpParams.RazorFileIdentifier, out var documentContext))
+        if (!_documentContextFactory.TryCreate(csharpParams.RazorFileIdentifier, out var documentContext))
         {
             return codeAction;
         }
 
-        var resolvedCodeAction = await ResolveCodeActionWithServerAsync(csharpParams.RazorFileIdentifier, documentContext.Version, RazorLanguageKind.CSharp, codeAction, cancellationToken).ConfigureAwait(false);
+        var resolvedCodeAction = await ResolveCodeActionWithServerAsync(csharpParams.RazorFileIdentifier, documentContext.Snapshot.Version, RazorLanguageKind.CSharp, codeAction, cancellationToken).ConfigureAwait(false);
         if (resolvedCodeAction?.Edit?.DocumentChanges is null)
         {
             // Unable to resolve code action with server, return original code action
@@ -89,12 +89,9 @@ internal sealed class DefaultCSharpCodeActionResolver(
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var documentVersion = documentContext.Version;
-
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier()
         {
-            Uri = csharpParams.RazorFileIdentifier.Uri,
-            Version = documentVersion,
+            Uri = csharpParams.RazorFileIdentifier.Uri
         };
         resolvedCodeAction.Edit = new WorkspaceEdit()
         {

@@ -60,7 +60,7 @@ internal class DocumentDidChangeEndpoint(
         sourceText = ApplyContentChanges(request.ContentChanges, sourceText);
 
         await _projectService
-            .UpdateDocumentAsync(documentContext.FilePath, sourceText, request.TextDocument.Version, cancellationToken)
+            .UpdateDocumentAsync(documentContext.FilePath, sourceText, cancellationToken)
             .ConfigureAwait(false);
     }
 

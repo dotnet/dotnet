@@ -155,11 +155,7 @@ internal partial class RazorDiagnosticsPublisher : IDocumentProcessedListener, I
 
         PublishDiagnosticsForFilePath(document.FilePath, combinedDiagnostics);
 
-        if (_logger.IsEnabled(LogLevel.Trace))
-        {
-            var diagnosticString = string.Join(", ", razorDiagnostics.Select(diagnostic => diagnostic.Id));
-            _logger.LogTrace($"Publishing diagnostics for document '{document.FilePath}': {diagnosticString}");
-        }
+        _logger.LogTrace($"Publishing diagnostics for document '{document.FilePath}': {string.Join(", ", razorDiagnostics.Select(diagnostic => diagnostic.Id))}");
 
         async Task<Diagnostic[]?> GetCSharpDiagnosticsAsync(IDocumentSnapshot document, CancellationToken token)
         {
