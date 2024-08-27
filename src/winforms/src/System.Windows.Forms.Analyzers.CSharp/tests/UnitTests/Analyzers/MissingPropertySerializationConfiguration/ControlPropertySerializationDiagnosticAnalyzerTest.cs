@@ -11,10 +11,12 @@ namespace System.Windows.Forms.Analyzers.Test;
 
 public class ControlPropertySerializationDiagnosticAnalyzerTest
 {
-    private const string ProblematicCode = """
-        using System.Drawing;
-        using System.Windows.Forms;
+    private const string GlobalUsingCode = """
+        global using System.Drawing;
+        global using System.Windows.Forms;
+        """;
 
+    private const string ProblematicCode = """
         namespace CSharpControls;
 
         public static class Program
@@ -34,10 +36,23 @@ public class ControlPropertySerializationDiagnosticAnalyzerTest
         // since this is nothing our code fix touches.
         public class ScalableControl : System.Windows.Forms.Control
         {
+            private SizeF _scaleSize = new SizeF(3, 14);
+
+            /// <Summary>
+            ///  Sets or gets the scaled size of some foo bar thing.
+            /// </Summary>
+            [System.ComponentModel.Description("Sets or gets the scaled size of some foo bar thing.")]
+            public SizeF [|ScaledSize|]
+            {
+                get => _scaleSize;
+                set => _scaleSize = value;
+            }
+
             public float [|ScaleFactor|] { get; set; } = 1.0f;
 
-            public SizeF [|ScaledSize|] { get; set; }
-
+            /// <Summary>
+            ///  Sets or gets the scaled location of some foo bar thing.
+            /// </Summary>
             public PointF [|ScaledLocation|] { get; set; }
         }
 
@@ -45,67 +60,93 @@ public class ControlPropertySerializationDiagnosticAnalyzerTest
 
     private const string CorrectCode = """
         using System.ComponentModel;
-        using System.Drawing;
-        using System.Windows.Forms;
 
         namespace CSharpControls;
-
+        
         public static class Program
         {
             public static void Main()
             {
                 var control = new ScalableControl();
         
-                control.ScaleFactor = 1.5f;
-                control.ScaledSize = new SizeF(100, 100);
-                control.ScaledLocation = new PointF(10, 10);
-            }
-        }
-        
-        public class ScalableControl : Control
-        {
-            [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-            public float ScaleFactor { get; set; } = 1.0f;
-
-            [DefaultValue(typeof(SizeF), "0,0")]
-            public SizeF ScaledSize { get; set; }
-
-            public PointF ScaledLocation { get; set; }
-            private bool ShouldSerializeScaledLocation() => this.ScaledLocation != PointF.Empty;
-        }
-        
-        """;
-
-    private const string FixedCode = """
-        using System.ComponentModel;
-        using System.Drawing;
-        using System.Windows.Forms;
-
-        namespace CSharpControls;
-
-        public static class Program
-        {
-            public static void Main()
-            {
-                var control = new ScalableControl();
-
          // We deliberately format this weirdly, to make sure we only format code our code fix touches.
          control.ScaleFactor = 1.5f;
             control.ScaledSize = new SizeF(100, 100);
                control.ScaledLocation = new PointF(10, 10);
             }
         }
-
+        
         // We are writing the fully-qualified name here to make sure, the Simplifier doesn't remove it,
         // since this is nothing our code fix touches.
         public class ScalableControl : System.Windows.Forms.Control
         {
+            private SizeF _scaleSize = new SizeF(3, 14);
+        
+            /// <Summary>
+            ///  Sets or gets the scaled size of some foo bar thing.
+            /// </Summary>
+            [System.ComponentModel.Description("Sets or gets the scaled size of some foo bar thing.")]
+            [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+            public SizeF ScaledSize
+            {
+                get => _scaleSize;
+                set => _scaleSize = value;
+            }
+        
+            [DefaultValue(1.0f)]
+            public float ScaleFactor { get; set; } = 1.0f;
+        
+            /// <Summary>
+            ///  Sets or gets the scaled location of some foo bar thing.
+            /// </Summary>
+            public PointF ScaledLocation { get; set; }
+
+            private bool ShouldSerializeScaledLocation() => false;
+        }
+                
+        """;
+
+    private const string FixedCode = """
+        using System.ComponentModel;
+
+        namespace CSharpControls;
+        
+        public static class Program
+        {
+            public static void Main()
+            {
+                var control = new ScalableControl();
+        
+         // We deliberately format this weirdly, to make sure we only format code our code fix touches.
+         control.ScaleFactor = 1.5f;
+            control.ScaledSize = new SizeF(100, 100);
+               control.ScaledLocation = new PointF(10, 10);
+            }
+        }
+        
+        // We are writing the fully-qualified name here to make sure, the Simplifier doesn't remove it,
+        // since this is nothing our code fix touches.
+        public class ScalableControl : System.Windows.Forms.Control
+        {
+            private SizeF _scaleSize = new SizeF(3, 14);
+        
+            /// <Summary>
+            ///  Sets or gets the scaled size of some foo bar thing.
+            /// </Summary>
+            [System.ComponentModel.Description("Sets or gets the scaled size of some foo bar thing.")]
+            [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+            public SizeF ScaledSize
+            {
+                get => _scaleSize;
+                set => _scaleSize = value;
+            }
+        
             [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             public float ScaleFactor { get; set; } = 1.0f;
-
-            [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-            public SizeF ScaledSize { get; set; }
-
+        
+            /// <Summary>
+            ///  Sets or gets the scaled location of some foo bar thing.
+            /// </Summary>
             [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             public PointF ScaledLocation { get; set; }
         }
@@ -123,7 +164,31 @@ public class ControlPropertySerializationDiagnosticAnalyzerTest
 
     [Theory]
     [MemberData(nameof(GetReferenceAssemblies))]
-    public async Task CS_ControlPropertySerializationConfigurationAnalyzer(ReferenceAssemblies referenceAssemblies)
+    public async Task CS_ControlPropertySerializationConfigurationDiagnosticsEngage(ReferenceAssemblies referenceAssemblies)
+    {
+        var context = new CSharpAnalyzerTest
+            <MissingPropertySerializationConfigurationAnalyzer,
+             DefaultVerifier>
+        {
+            // Note: The ProblematicCode includes the expected Diagnostic's span in the areas
+            // where the code is enclosed in limiting characters ("[|...|]"),
+            // like `public SizeF [|ScaledSize|]`.
+            TestCode = ProblematicCode,
+            TestState =
+                {
+                    OutputKind = OutputKind.WindowsApplication,
+                },
+            ReferenceAssemblies = referenceAssemblies
+        };
+
+        context.TestState.Sources.Add(GlobalUsingCode);
+
+        await context.RunAsync();
+    }
+
+    [Theory]
+    [MemberData(nameof(GetReferenceAssemblies))]
+    public async Task CS_ControlPropertySerializationConfigurationDiagnosticPass(ReferenceAssemblies referenceAssemblies)
     {
         var context = new CSharpAnalyzerTest
             <MissingPropertySerializationConfigurationAnalyzer,
@@ -137,24 +202,7 @@ public class ControlPropertySerializationDiagnosticAnalyzerTest
             ReferenceAssemblies = referenceAssemblies
         };
 
-        await context.RunAsync();
-    }
-
-    [Theory]
-    [MemberData(nameof(GetReferenceAssemblies))]
-    public async Task CS_MissingControlPropertySerializationConfigurationAnalyzer(ReferenceAssemblies referenceAssemblies)
-    {
-        var context = new CSharpAnalyzerTest
-            <MissingPropertySerializationConfigurationAnalyzer,
-             DefaultVerifier>
-        {
-            TestCode = ProblematicCode,
-            TestState =
-                {
-                    OutputKind = OutputKind.WindowsApplication,
-                },
-            ReferenceAssemblies = referenceAssemblies
-        };
+        context.TestState.Sources.Add(GlobalUsingCode);
 
         await context.RunAsync();
     }
@@ -173,9 +221,14 @@ public class ControlPropertySerializationDiagnosticAnalyzerTest
             TestState =
                 {
                     OutputKind = OutputKind.WindowsApplication,
+                    Sources = { GlobalUsingCode }
                 },
             ReferenceAssemblies = referenceAssemblies,
-            NumberOfFixAllIterations = 2
+            NumberOfFixAllIterations = 2,
+            FixedState =
+                {
+                    Sources = { GlobalUsingCode }
+                },
         };
 
         await context.RunAsync();
