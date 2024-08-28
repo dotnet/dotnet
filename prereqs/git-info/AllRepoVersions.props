@@ -19,8 +19,8 @@
     <efcoreOutputPackageVersion>9.0.0-rc.1.24402.2</efcoreOutputPackageVersion>
     <emsdkGitCommitHash>edf3e90fa25b1fc4f7f63ceb45ef70f49c6b121a</emsdkGitCommitHash>
     <emsdkOutputPackageVersion>9.0.0-rc.1.24402.2</emsdkOutputPackageVersion>
-    <fsharpGitCommitHash>478d3327cb34751aeb8ca308cf4d0e0d80d506dd</fsharpGitCommitHash>
-    <fsharpOutputPackageVersion>9.0.100-beta.24426.4</fsharpOutputPackageVersion>
+    <fsharpGitCommitHash>a5feb419073e74562fde38768898988334f379a1</fsharpGitCommitHash>
+    <fsharpOutputPackageVersion>9.0.100-beta.24427.4</fsharpOutputPackageVersion>
     <msbuildGitCommitHash>6bc91d5e2d3d8a199fdbe367ed015b55daf57046</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.12.0-preview-24407-03</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>c8d14f3c28e3af3bdc3dcd38b23a212a91d13234</nugetclientGitCommitHash>
@@ -35,11 +35,11 @@
     <runtimeOutputPackageVersion>9.0.0-rc.1.24414.5</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>f1715bf842371d15ecb5fc52d7dc87ab2e47df30</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>10.0.0-preview.24423.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>1339016bd45470c38f98f4ec04ba41f137511bc7</sdkGitCommitHash>
-    <sourcebuildexternalsGitCommitHash>ee22054b44ec9615dc3481c4decc1b007a83a2b0</sourcebuildexternalsGitCommitHash>
-    <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24420.1</sourcebuildexternalsOutputPackageVersion>
-    <sourcebuildreferencepackagesGitCommitHash>bdd698774daa248301c236f09b97015610ca2842</sourcebuildreferencepackagesGitCommitHash>
-    <sourcebuildreferencepackagesOutputPackageVersion>10.0.0-alpha.1.24421.1</sourcebuildreferencepackagesOutputPackageVersion>
+    <sdkGitCommitHash>c8086039126149a364b5d9ee17701d57090c5fde</sdkGitCommitHash>
+    <sourcebuildexternalsGitCommitHash>f08c68bfc6c6e065f72e56dcd4dc15d3ea1f43a4</sourcebuildexternalsGitCommitHash>
+    <sourcebuildexternalsOutputPackageVersion>10.0.0-alpha.1.24426.1</sourcebuildexternalsOutputPackageVersion>
+    <sourcebuildreferencepackagesGitCommitHash>6c26545ca7999a4192df6899ea9ed4eaa950d367</sourcebuildreferencepackagesGitCommitHash>
+    <sourcebuildreferencepackagesOutputPackageVersion>10.0.0-alpha.1.24426.2</sourcebuildreferencepackagesOutputPackageVersion>
     <sourcelinkGitCommitHash>7b0d5e684c4d646b1b71866cdc6abfbba7026619</sourcelinkGitCommitHash>
     <sourcelinkOutputPackageVersion>9.0.0-beta.24422.2</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>0710a7892d89999956e8808c28e9dd0512bd53f3</symreaderGitCommitHash>
