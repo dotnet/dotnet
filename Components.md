@@ -80,7 +80,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/xunit/tools/media`  
     *[xunit/media@5738b6e](https://github.com/xunit/media/tree/5738b6e86f08e0389c4392b939c20e3eca2d9822)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@bdd6987](https://github.com/dotnet/source-build-reference-packages/tree/bdd698774daa248301c236f09b97015610ca2842)*
+*[dotnet/source-build-reference-packages@6c26545](https://github.com/dotnet/source-build-reference-packages/tree/6c26545ca7999a4192df6899ea9ed4eaa950d367)*
 - `src/sourcelink`  
 *[dotnet/sourcelink@7b0d5e6](https://github.com/dotnet/sourcelink/tree/7b0d5e684c4d646b1b71866cdc6abfbba7026619)*
 - `src/symreader`  

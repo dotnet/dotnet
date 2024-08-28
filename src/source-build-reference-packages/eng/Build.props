@@ -22,6 +22,18 @@
       Format:
       <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Options.5.0.0.csproj" />
     -->
+
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Frameworks.6.11.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Common.6.11.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Configuration.6.11.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Versioning.6.11.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Packaging.6.11.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Nuget.LibraryModel.6.11.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Nuget.Protocol.6.11.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Nuget.DependencyResolver.core.6.11.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Nuget.Credentials.6.11.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Nuget.ProjectModel.6.11.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Nuget.Commands.6.11.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(BuildDependencyPackageProjects)' == 'true'">
