@@ -83,14 +83,14 @@
       <Sha>6bc91d5e2d3d8a199fdbe367ed015b55daf57046</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.9.100-beta.24426.4">
+    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.9.100-beta.24427.4">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>478d3327cb34751aeb8ca308cf4d0e0d80d506dd</Sha>
+      <Sha>a5feb419073e74562fde38768898988334f379a1</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="9.0.100-beta.24426.4">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="9.0.100-beta.24427.4">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>478d3327cb34751aeb8ca308cf4d0e0d80d506dd</Sha>
+      <Sha>a5feb419073e74562fde38768898988334f379a1</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.12.0-2.24421.9">
@@ -441,15 +441,15 @@
       <SourceBuild RepoName="command-line-api" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="9.0.0-alpha.1.24420.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="10.0.0-alpha.1.24426.1">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>ee22054b44ec9615dc3481c4decc1b007a83a2b0</Sha>
+      <Sha>f08c68bfc6c6e065f72e56dcd4dc15d3ea1f43a4</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.0-alpha.1.24421.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.0-alpha.1.24426.2">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>bdd698774daa248301c236f09b97015610ca2842</Sha>
+      <Sha>6c26545ca7999a4192df6899ea9ed4eaa950d367</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="2.0.0-preview.1.24406.1">
