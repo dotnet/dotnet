@@ -25,7 +25,7 @@ public class DocumentSymbolEndpointTest(ITestOutputHelper testOutput) : SingleSe
         => VerifyDocumentSymbolsAsync(
             """
             @functions {
-                class {|AspNetCore.test.C:C|}
+                class {|AspNetCoreGeneratedDocument.test.C:C|}
                 {
                     private void {|HandleString(string s):HandleString|}(string s)
                     {

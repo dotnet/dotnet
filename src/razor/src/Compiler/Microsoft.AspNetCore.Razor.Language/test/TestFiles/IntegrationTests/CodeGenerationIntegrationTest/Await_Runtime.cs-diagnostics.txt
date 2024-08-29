@@ -9,7 +9,7 @@ Diagnostic(ErrorCode.ERR_InvalidExprTerm, "").WithArguments(")").WithLocation(14
 Diagnostic(ErrorCode.ERR_BadArgCount, "Foo").WithArguments("Foo", "2").WithLocation(19, 49),
 // TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml(20,58): error CS0119: 'TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Await.Foo()' is a method, which is not valid in the given context
 // await Foo.Bar(1, 2)
-Diagnostic(ErrorCode.ERR_BadSKunknown, "Foo").WithArguments("AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Await.Foo()", "method").WithLocation(20, 58),
+Diagnostic(ErrorCode.ERR_BadSKunknown, "Foo").WithArguments("AspNetCoreGeneratedDocument.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Await.Foo()", "method").WithLocation(20, 58),
 // TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml(21,48): error CS1501: No overload for method 'Foo' takes 2 arguments
 // await Foo("bob", true)
 Diagnostic(ErrorCode.ERR_BadArgCount, "Foo").WithArguments("Foo", "2").WithLocation(21, 48),
@@ -18,7 +18,7 @@ Diagnostic(ErrorCode.ERR_BadArgCount, "Foo").WithArguments("Foo", "2").WithLocat
 Diagnostic(ErrorCode.ERR_NameNotInContext, "something").WithArguments("something").WithLocation(22, 54),
 // TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml(23,59): error CS0119: 'TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Await.Foo()' is a method, which is not valid in the given context
 //  await Foo.Bar(1, 2) 
-Diagnostic(ErrorCode.ERR_BadSKunknown, "Foo").WithArguments("AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Await.Foo()", "method").WithLocation(23, 59),
+Diagnostic(ErrorCode.ERR_BadSKunknown, "Foo").WithArguments("AspNetCoreGeneratedDocument.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Await.Foo()", "method").WithLocation(23, 59),
 // TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml(23,72): error CS1002: ; expected
 //  await Foo.Bar(1, 2) 
 Diagnostic(ErrorCode.ERR_SemicolonExpected, "").WithLocation(23, 72),
