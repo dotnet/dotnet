@@ -44,11 +44,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@fdb9965](https://github.com/dotnet/roslyn-analyzers/tree/fdb9965ce68c1f4e1c0ff301488adf9caa958615)*
 - `src/runtime`  
-*[dotnet/runtime@fc775d2](https://github.com/dotnet/runtime/tree/fc775d2cb27fe6c3fb2461f72a284306063aa2d1)*
+*[dotnet/runtime@d5e6369](https://github.com/dotnet/runtime/tree/d5e636923fb1670597b536fa8a6fce4a06822e87)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@d92413b](https://github.com/dotnet/scenario-tests/tree/d92413b87d36250859d8cb51ff69a03b5f5c4cab)*
 - `src/sdk`  
-*[dotnet/sdk@8e17fb3](https://github.com/dotnet/sdk/tree/8e17fb3db3e2df81dca1125814493de9769d0a3d)*
+*[dotnet/sdk@b899f4e](https://github.com/dotnet/sdk/tree/b899f4e4089a43882dcb51e7428dd1262a385ef4)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@59b98ae](https://github.com/dotnet/source-build-externals/tree/59b98ae5bd04e1eebc8ed323193c62ab9e15efe1)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -82,11 +82,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/source-build-reference-packages`  
 *[dotnet/source-build-reference-packages@0d066e6](https://github.com/dotnet/source-build-reference-packages/tree/0d066e61a30c2599d0ced871ea45acf0e10571af)*
 - `src/sourcelink`  
-*[dotnet/sourcelink@d91b262](https://github.com/dotnet/sourcelink/tree/d91b2625fce85a7e7a130923490c577ae1a73ae7)*
+*[dotnet/sourcelink@9b94576](https://github.com/dotnet/sourcelink/tree/9b94576f3e56ee55c818ff611065c8acb3fdf2e2)*
 - `src/symreader`  
 *[dotnet/symreader@0710a78](https://github.com/dotnet/symreader/tree/0710a7892d89999956e8808c28e9dd0512bd53f3)*
 - `src/templating`  
-*[dotnet/templating@500dcaf](https://github.com/dotnet/templating/tree/500dcaf2ad1b38ee681f4a6ddc869b4d4eeb6474)*
+*[dotnet/templating@133c2a9](https://github.com/dotnet/templating/tree/133c2a92258a1d4047eb077e39aa82b445dd57f5)*
 - `src/test-templates`  
 *[dotnet/test-templates@9fea743](https://github.com/dotnet/test-templates/tree/9fea743e85a24984211f854d44f1f6debea8285d)*
 - `src/vstest`  
