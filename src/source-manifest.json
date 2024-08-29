@@ -73,10 +73,10 @@
       "commitSha": "c8d14f3c28e3af3bdc3dcd38b23a212a91d13234"
     },
     {
-      "packageVersion": "9.0.0-preview.24427.4",
+      "packageVersion": "9.0.0-preview.24428.5",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "d0be044d78b76aac2b05fcccb5c513371cb0024f"
+      "commitSha": "562be1a2201aa08b09970966224de44d40636d86"
     },
     {
       "packageVersion": "4.12.0-2.24421.9",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "f7ddf14b40532bc67f0412ff1720a6ffd48778ba"
+      "commitSha": "4aa45270ad479a4d7f022f370761e57757c9344c"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24426.1",
@@ -151,10 +151,10 @@
       "commitSha": "54964cdbcd254cbce066d3a2afa2b3908db51abd"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24427.3",
+      "packageVersion": "10.0.0-alpha.1.24427.5",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "49046c1df574379075520a18ae77ad1288801b78"
+      "commitSha": "6c45e7d678a9af55b5e792a3528648aee5f4c4c7"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24426.5",
@@ -163,10 +163,10 @@
       "commitSha": "3b37d24254fe96bc6ad3fd63c6adea21c04f7024"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24426.3",
+      "packageVersion": "10.0.0-alpha.1.24427.3",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "c7f15de273faa85aecb61c5d32a6d2456a74912a"
+      "commitSha": "a13bb634c1dcdf0bf7cda9a02c448b53366b8550"
     },
     {
       "packageVersion": "9.0.0-preview.24317.2",
