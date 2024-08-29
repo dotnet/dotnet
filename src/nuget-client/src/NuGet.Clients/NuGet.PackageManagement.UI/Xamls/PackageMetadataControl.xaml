@@ -5,6 +5,7 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+  xmlns:nugettel="clr-namespace:NuGet.PackageManagement.Telemetry;assembly=NuGet.PackageManagement.VisualStudio"
   xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
   xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
   xmlns:glob="clr-namespace:System.Globalization;assembly=mscorlib"
@@ -177,7 +178,8 @@
                 ToolTip="{Binding Link, Mode=OneWay}"
                 Style="{StaticResource HyperlinkStyle}"
                 AutomationProperties.Name="{x:Static nuget:Resources.Hyperlink_Owner}"
-                Command="{x:Static nuget:PackageManagerControlCommands.OpenExternalLink}">
+                Command="{x:Static nuget:PackageManagerControlCommands.OpenExternalLink}"
+                CommandParameter="{x:Static nugettel:HyperlinkType.OwnerProfileDetailsPane}">
                 <Run Text="{Binding Name, Mode=OneTime}" />
               </Hyperlink><TextBlock Margin="0,0,2,0" Text=",">
                 <TextBlock.Visibility>

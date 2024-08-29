@@ -67,10 +67,10 @@
       "commitSha": "6bc91d5e2d3d8a199fdbe367ed015b55daf57046"
     },
     {
-      "packageVersion": "6.12.0-preview.1.83",
+      "packageVersion": "6.12.0-preview.1.85",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "c8d14f3c28e3af3bdc3dcd38b23a212a91d13234"
+      "commitSha": "9cb26528a73dce163a0288268c6139ee8519d85f"
     },
     {
       "packageVersion": "9.0.0-preview.24428.5",
@@ -79,10 +79,10 @@
       "commitSha": "562be1a2201aa08b09970966224de44d40636d86"
     },
     {
-      "packageVersion": "4.12.0-2.24421.9",
+      "packageVersion": "4.12.0-3.24427.16",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "08a167c19e5e04742b0922bdb1ea8046e9364f4b"
+      "commitSha": "a3dbd808a5ee9b8010d38f37726eeb596e2f3aaa"
     },
     {
       "packageVersion": "3.11.0-beta1.24405.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "4aa45270ad479a4d7f022f370761e57757c9344c"
+      "commitSha": "0c26a95612f94ab1c448f5e2c14e0b5e1cd9c68d"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24426.1",

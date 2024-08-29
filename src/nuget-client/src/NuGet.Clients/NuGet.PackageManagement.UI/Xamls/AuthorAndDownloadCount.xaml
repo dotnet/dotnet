@@ -4,6 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+             xmlns:nugettel="clr-namespace:NuGet.PackageManagement.Telemetry;assembly=NuGet.PackageManagement.VisualStudio"
              mc:Ignorable="d"
              x:Name="_self"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -40,7 +41,8 @@
               NavigateUri="{Binding Link, Mode=OneWay}"
               ToolTip="{Binding Link, Mode=OneWay}"
               Style="{StaticResource HyperlinkSelectorAware}"
-              Command="{x:Static nuget:PackageManagerControlCommands.OpenExternalLink}">
+              Command="{x:Static nuget:PackageManagerControlCommands.OpenExternalLink}"
+              CommandParameter="{x:Static nugettel:HyperlinkType.OwnerProfile}">
               <Run Text="{Binding Name, Mode=OneTime}" />
             </Hyperlink><TextBlock Margin="0,0,2,0" Text=",">
               <TextBlock.Visibility>
