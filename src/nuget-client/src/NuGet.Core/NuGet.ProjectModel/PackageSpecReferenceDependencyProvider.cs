@@ -27,31 +27,17 @@ namespace NuGet.ProjectModel
 
         private readonly bool _useLegacyAssetTargetFallbackBehavior;
 
-        private readonly bool _useLegacyDependencyGraphResolution = false;
-
         public PackageSpecReferenceDependencyProvider(
             IEnumerable<ExternalProjectReference> externalProjects,
             ILogger logger) :
             this(externalProjects,
-                environmentVariableReader: EnvironmentVariableWrapper.Instance,
-                useLegacyDependencyGraphResolution: false)
-        {
-        }
-
-        public PackageSpecReferenceDependencyProvider(
-            IEnumerable<ExternalProjectReference> externalProjects,
-            ILogger logger,
-            bool useLegacyDependencyGraphResolution) :
-            this(externalProjects,
-                environmentVariableReader: EnvironmentVariableWrapper.Instance,
-                useLegacyDependencyGraphResolution)
+                environmentVariableReader: EnvironmentVariableWrapper.Instance)
         {
         }
 
         internal PackageSpecReferenceDependencyProvider(
             IEnumerable<ExternalProjectReference> externalProjects,
-            IEnvironmentVariableReader environmentVariableReader,
-            bool useLegacyDependencyGraphResolution = false)
+            IEnvironmentVariableReader environmentVariableReader)
         {
             if (externalProjects == null)
             {
@@ -84,7 +70,6 @@ namespace NuGet.ProjectModel
                 }
             }
             _useLegacyAssetTargetFallbackBehavior = MSBuildStringUtility.IsTrue(environmentVariableReader.GetEnvironmentVariable("NUGET_USE_LEGACY_ASSET_TARGET_FALLBACK_DEPENDENCY_RESOLUTION"));
-            _useLegacyDependencyGraphResolution = useLegacyDependencyGraphResolution;
         }
 
         public bool SupportsType(LibraryDependencyTarget libraryType)
@@ -359,8 +344,7 @@ namespace NuGet.ProjectModel
 
                 dependencies.AddRange(targetFrameworkInfo.Dependencies);
 
-                if (_useLegacyDependencyGraphResolution && packageSpec.RestoreMetadata?.CentralPackageVersionsEnabled == true &&
-                    packageSpec.RestoreMetadata?.CentralPackageTransitivePinningEnabled == true)
+                if (packageSpec.RestoreMetadata?.CentralPackageVersionsEnabled == true && packageSpec.RestoreMetadata?.CentralPackageTransitivePinningEnabled == true)
                 {
                     var dependencyNamesSet = new HashSet<string>(targetFrameworkInfo.Dependencies.Select(d => d.Name), StringComparer.OrdinalIgnoreCase);
                     dependencies.AddRange(targetFrameworkInfo.CentralPackageVersions
