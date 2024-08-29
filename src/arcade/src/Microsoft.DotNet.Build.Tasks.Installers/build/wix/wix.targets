@@ -132,7 +132,7 @@
 
   <Target Name="PublishFilesForWixInstaller">
     <PropertyGroup>
-      <FilesOutputPathRoot>$(IntermediateOutputPath)output/</FilesOutputPathRoot>
+      <FilesOutputPathRoot>$(IntermediateOutputPath)o/</FilesOutputPathRoot>
       </PropertyGroup>
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"

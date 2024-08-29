@@ -39,8 +39,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         return new AzureStorageContainerAssetTokenCredentialPublisher(
                             new Uri(feedConfig.TargetURL),
                             new DefaultAzureCredential(
-                                new DefaultAzureCredentialOptions 
-                                {  
+                                new DefaultAzureCredentialOptions
+                                {
+                                    ExcludeVisualStudioCodeCredential = true,
+                                    ExcludeVisualStudioCredential = true,
+                                    ExcludeAzureDeveloperCliCredential = true,
+                                    ExcludeInteractiveBrowserCredential = true,
                                     ManagedIdentityClientId = task.ManagedIdentityClientId,
                                     CredentialProcessTimeout = TimeSpan.FromSeconds(60.0)
                                 }),
