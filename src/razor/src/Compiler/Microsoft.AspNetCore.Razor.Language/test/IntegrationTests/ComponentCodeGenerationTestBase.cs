@@ -2743,6 +2743,36 @@ namespace Test
         CompileToAssembly(generated);
     }
 
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/10609")]
+    public void BindToComponent_SpecifiesValue_WithMatchingProperties_GlobalNamespaceComponent()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse(@"
+using System;
+using Microsoft.AspNetCore.Components;
+
+public class MyComponent : ComponentBase
+{
+    [Parameter]
+    public int Value { get; set; }
+
+    [Parameter]
+    public Action<int> ValueChanged { get; set; }
+}"));
+
+        // Act
+        var generated = CompileToCSharp(@"
+<MyComponent @bind-Value=""ParentValue"" />
+@code {
+    public int ParentValue { get; set; } = 42;
+}");
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
     [IntegrationTestFact]
     public void BindToElement_WritesAttributes()
     {

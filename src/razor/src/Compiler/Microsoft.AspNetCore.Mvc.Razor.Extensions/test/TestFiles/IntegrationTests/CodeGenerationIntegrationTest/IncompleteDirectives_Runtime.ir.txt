@@ -1,6 +1,6 @@
 ﻿Document - 
     RazorCompiledItemAttribute - 
-    NamespaceDeclaration -  - AspNetCore
+    NamespaceDeclaration -  - AspNetCoreGeneratedDocument
         UsingDirective - (1:0,1 [22] ) - global::System
         UsingDirective - (24:1,1 [42] ) - global::System.Collections.Generic
         UsingDirective - (67:2,1 [27] ) - global::System.Linq
@@ -11,7 +11,7 @@
         RazorSourceChecksumAttribute - 
         RazorCompiledItemMetadataAttribute - 
         CreateNewOnMetadataUpdateAttribute - 
-        ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_IncompleteDirectives - global::Microsoft.AspNetCore.Mvc.RazorPages.Page - 
+        ClassDeclaration -  - internal sealed - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_IncompleteDirectives - global::Microsoft.AspNetCore.Mvc.RazorPages.Page - 
             MethodDeclaration -  - public async override - global::System.Threading.Tasks.Task - ExecuteAsync
                 HtmlContent - (85:1,0 [2] IncompleteDirectives.cshtml)
                     LazyIntermediateToken - (85:1,0 [2] IncompleteDirectives.cshtml) - Html - \n

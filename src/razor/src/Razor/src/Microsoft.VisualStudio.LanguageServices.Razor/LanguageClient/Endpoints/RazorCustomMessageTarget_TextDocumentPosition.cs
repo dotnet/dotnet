@@ -29,10 +29,6 @@ internal partial class RazorCustomMessageTarget
     public Task<SumType<Location[], VSInternalReferenceItem[]>> ImplementationAsync(DelegatedPositionParams request, CancellationToken cancellationToken)
         => DelegateTextDocumentPositionAndProjectContextAsync<SumType<Location[], VSInternalReferenceItem[]>>(request, Methods.TextDocumentImplementationName, cancellationToken);
 
-    [JsonRpcMethod(CustomMessageNames.RazorReferencesEndpointName, UseSingleObjectParameterDeserialization = true)]
-    public Task<VSInternalReferenceItem[]?> ReferencesAsync(DelegatedPositionParams request, CancellationToken cancellationToken)
-        => DelegateTextDocumentPositionAndProjectContextAsync<VSInternalReferenceItem[]>(request, Methods.TextDocumentReferencesName, cancellationToken);
-
     [JsonRpcMethod(CustomMessageNames.RazorSignatureHelpEndpointName, UseSingleObjectParameterDeserialization = true)]
     public Task<SignatureHelp?> SignatureHelpAsync(DelegatedPositionParams request, CancellationToken cancellationToken)
         => DelegateTextDocumentPositionAndProjectContextAsync<SignatureHelp>(request, Methods.TextDocumentSignatureHelpName, cancellationToken);

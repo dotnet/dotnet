@@ -189,7 +189,7 @@ internal partial class RazorCustomMessageTarget
             revertedProvisionalTextEdit = VsLspFactory.CreateTextEdit(
                 range: VsLspFactory.CreateSingleLineRange(
                     range.Start,
-                    length: range.End.Character + provisionalTextEdit.NewText.Length),
+                    length: provisionalTextEdit.NewText.Length),
                 newText: string.Empty);
         }
         else
