@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <AssemblyName>NuGet.Common</AssemblyName>
+    <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="NuGet.Frameworks" Version="6.11.0" />
+  </ItemGroup>
+
+</Project>
