@@ -12,14 +12,14 @@ public sealed record class RazorConfiguration(
     string ConfigurationName,
     ImmutableArray<RazorExtension> Extensions,
     LanguageServerFlags? LanguageServerFlags = null,
-    bool UseConsolidatedMvcViews = false)
+    bool UseConsolidatedMvcViews = true)
 {
     public static readonly RazorConfiguration Default = new(
         RazorLanguageVersion.Latest,
         ConfigurationName: "unnamed",
         Extensions: [],
         LanguageServerFlags: null,
-        UseConsolidatedMvcViews: false);
+        UseConsolidatedMvcViews: true);
 
     public bool Equals(RazorConfiguration? other)
         => other is not null &&

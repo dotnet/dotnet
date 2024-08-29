@@ -55,14 +55,22 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
                 var shortNameMatchingDescriptor = CreateShortNameMatchingDescriptor(type, properties);
                 results.Add(shortNameMatchingDescriptor);
 
-                var fullyQualifiedNameMatchingDescriptor = CreateFullyQualifiedNameMatchingDescriptor(type, properties);
-                results.Add(fullyQualifiedNameMatchingDescriptor);
+                // If the component is in the global namespace, skip adding this descriptor which will be the same as the short name one.
+                TagHelperDescriptor? fullyQualifiedNameMatchingDescriptor = null;
+                if (!type.ContainingNamespace.IsGlobalNamespace)
+                {
+                    fullyQualifiedNameMatchingDescriptor = CreateFullyQualifiedNameMatchingDescriptor(type, properties);
+                    results.Add(fullyQualifiedNameMatchingDescriptor);
+                }
 
                 foreach (var childContent in shortNameMatchingDescriptor.GetChildContentProperties())
                 {
                     // Synthesize a separate tag helper for each child content property that's declared.
                     results.Add(CreateChildContentDescriptor(shortNameMatchingDescriptor, childContent));
-                    results.Add(CreateChildContentDescriptor(fullyQualifiedNameMatchingDescriptor, childContent));
+                    if (fullyQualifiedNameMatchingDescriptor is not null)
+                    {
+                        results.Add(CreateChildContentDescriptor(fullyQualifiedNameMatchingDescriptor, childContent));
+                    }
                 }
             }
         }
@@ -111,8 +119,7 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
 
                 metadata.Add(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch);
             }
-            // If the component is in the global namespace, skip adding this rule which is the same as the fully qualified one.
-            else if (!type.ContainingNamespace.IsGlobalNamespace)
+            else
             {
                 builder.TagMatchingRule(r =>
                 {

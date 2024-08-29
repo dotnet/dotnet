@@ -1,15 +1,15 @@
 ﻿// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml(3,2): error CS0103: The name 'foo' does not exist in the current context
 // foo()
 Diagnostic(ErrorCode.ERR_NameNotInContext, "foo").WithArguments("foo").WithLocation(3, 2),
-// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml(21,86): error CS0246: The type or namespace name 'foo' could not be found (are you missing a using directive or an assembly reference?)
-//     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Inherits : foo.bar<baz<biz>>.boz
-Diagnostic(ErrorCode.ERR_SingleTypeNameNotFound, "foo").WithArguments("foo").WithLocation(21, 86),
-// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml(21,94): error CS0246: The type or namespace name 'baz<>' could not be found (are you missing a using directive or an assembly reference?)
-//     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Inherits : foo.bar<baz<biz>>.boz
-Diagnostic(ErrorCode.ERR_SingleTypeNameNotFound, "baz<biz>").WithArguments("baz<>").WithLocation(21, 94),
-// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml(21,98): error CS0246: The type or namespace name 'biz' could not be found (are you missing a using directive or an assembly reference?)
-//     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Inherits : foo.bar<baz<biz>>.boz
-Diagnostic(ErrorCode.ERR_SingleTypeNameNotFound, "biz").WithArguments("biz").WithLocation(21, 98),
+// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml(21,95): error CS0246: The type or namespace name 'foo' could not be found (are you missing a using directive or an assembly reference?)
+//     internal sealed class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Inherits : foo.bar<baz<biz>>.boz
+Diagnostic(ErrorCode.ERR_SingleTypeNameNotFound, "foo").WithArguments("foo").WithLocation(21, 95),
+// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml(21,103): error CS0246: The type or namespace name 'baz<>' could not be found (are you missing a using directive or an assembly reference?)
+//     internal sealed class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Inherits : foo.bar<baz<biz>>.boz
+Diagnostic(ErrorCode.ERR_SingleTypeNameNotFound, "baz<biz>").WithArguments("baz<>").WithLocation(21, 103),
+// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml(21,107): error CS0246: The type or namespace name 'biz' could not be found (are you missing a using directive or an assembly reference?)
+//     internal sealed class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Inherits : foo.bar<baz<biz>>.boz
+Diagnostic(ErrorCode.ERR_SingleTypeNameNotFound, "biz").WithArguments("biz").WithLocation(21, 107),
 // TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml(27,13): error CS0103: The name 'WriteLiteral' does not exist in the current context
 //             WriteLiteral("\r\n");
 Diagnostic(ErrorCode.ERR_NameNotInContext, "WriteLiteral").WithArguments("WriteLiteral").WithLocation(27, 13),

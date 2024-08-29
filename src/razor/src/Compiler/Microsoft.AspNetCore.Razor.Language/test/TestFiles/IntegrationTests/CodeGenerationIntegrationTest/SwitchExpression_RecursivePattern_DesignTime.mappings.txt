@@ -3,7 +3,7 @@
 {
     case { Year: 2022 }:
         |
-Generated Location: (1509:33,1 [69] )
+Generated Location: (1535:33,1 [69] )
 |switch (DateTimeOffset.UtcNow)
 {
     case { Year: 2022 }:
@@ -19,7 +19,7 @@ Source Location: (159:3,97 [180] TestFiles/IntegrationTests/CodeGenerationIntegr
     case global::Test:
         break;
 }|
-Generated Location: (1855:43,97 [180] )
+Generated Location: (1881:43,97 [180] )
 |
         break;
     case [{ Test: true }]:
