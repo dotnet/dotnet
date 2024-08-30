@@ -123,15 +123,15 @@ The easiest way to test the pack functionality with dotnet.exe is to install the
 
 If you want to test dotnet.exe explicitly, so you don't have to worry about whether you installed the correct package in the project, refer to [Patching dotnet.exe to test the NuGet functionality](#patching-dotnetexe-to-test-the-nuget-functionality).
 
-### Debugging NuGet Command Xplat Functionality (add-package/remove-package/list package)
+### Debugging NuGet's integrated `dotnet` CLI commands
 
-Functionality such as `dotnet.exe add package` or `dotnet list package`, is implemented in [NuGet.CommandLine.XPlat](../src/NuGet.Core/NuGet.CommandLine.XPlat/NuGet.CommandLine.XPlat.csproj).
-
-To debug with `MSBuildLocator`, you need to un-comment the `PackageReference` for `Microsoft.Build.Locator` in `NuGet.CommandLine.XPlat.csproj`. Additionally, un-comment the code utilizing `MSBuildLocator` in that project's `Program.cs`.
+All of the `dotnet nuget` commands, in addition to some others, such as `dotnet add package`, `dotnet list package`, and `dotnet search`, are implemented in [NuGet.CommandLine.XPlat](../src/NuGet.Core/NuGet.CommandLine.XPlat/NuGet.CommandLine.XPlat.csproj).
 
 There are 2 ways to debug this project:
 
-* Given that [NuGet.CommandLine.XPlat](../src/NuGet.Core/NuGet.CommandLine.XPlat/NuGet.CommandLine.XPlat.csproj) is an exe, you can set it as the startup project and run it as you would any other command line project in Visual Studio. Note that some commands list arguments in a different order to the dotnet cli.
+* Given that [NuGet.CommandLine.XPlat](../src/NuGet.Core/NuGet.CommandLine.XPlat/NuGet.CommandLine.XPlat.csproj) is an exe, you can set it as the startup project and run it as you would any other command line project in Visual Studio.
+   However, if that is not working, please make sure `UseMSBuildLocator` is set to true.
+   **Note**: some commands list arguments in a different order to the dotnet cli.
 
 * Patch the SDK by referring to [Patching dotnet.exe to test the NuGet functionality](#patching-dotnetexe-to-test-the-nuget-functionality).
 
