@@ -38,6 +38,7 @@
     <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
     <PackageVersion Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
+    <PackageVersion Include="Microsoft.IO.Redist" Version="6.0.1" /> <!-- Pin transitive dependency to avoid vulnerable 6.0.0 version. -->
     <!-- nuget -->
     <PackageVersion Include="NuGet.Commands" Version="$(NuGetCommandsVersion)" />
     <PackageVersion Include="NuGet.Frameworks" Version="$(NuGetFrameworksVersion)" />
@@ -61,14 +62,15 @@
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" />
     <PackageVersion Include="System.Text.Encodings.Web" Version="$(SystemTextEncodingsWebVersion)" />
     <PackageVersion Include="System.Text.Json" Version="$(SystemTextJsonVersion)" />
+    <PackageVersion Include="System.Formats.Asn1" Version="$(SystemFormatsAsn1Version)" />
     <!-- sdk -->
     <PackageVersion Include="Microsoft.NET.Sdk.WorkloadManifestReader" Version="$(MicrosoftNetSdkWorkloadManifestReaderVersion)" />
   </ItemGroup>
 
   <!-- external -->
   <ItemGroup>
-    <PackageVersion Include="Azure.Core" Version="1.39.0" />
-    <PackageVersion Include="Azure.Identity" Version="1.11.4" />
+    <PackageVersion Include="Azure.Core" Version="1.41.0" />
+    <PackageVersion Include="Azure.Identity" Version="1.12.0" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.19.1" />
     <PackageVersion Include="CommandLineParser" Version="2.5.0" />
     <PackageVersion Include="coverlet.collector" Version="1.0.1" />
