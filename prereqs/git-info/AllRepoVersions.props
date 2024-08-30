@@ -50,8 +50,8 @@
     <testtemplatesOutputPackageVersion>1.1.0-rc.24429.1</testtemplatesOutputPackageVersion>
     <vstestGitCommitHash>54964cdbcd254cbce066d3a2afa2b3908db51abd</vstestGitCommitHash>
     <vstestOutputPackageVersion>17.12.0-preview-24422-02</vstestOutputPackageVersion>
-    <windowsdesktopGitCommitHash>916daab03c2155c6dd827649d88c3f5ad5e2767b</windowsdesktopGitCommitHash>
-    <windowsdesktopOutputPackageVersion>9.0.0-rc.2.24428.1</windowsdesktopOutputPackageVersion>
+    <windowsdesktopGitCommitHash>b03ef02ae6a26c4d77054b95b72ddf7e25e2f5f9</windowsdesktopGitCommitHash>
+    <windowsdesktopOutputPackageVersion>9.0.0-rc.2.24429.3</windowsdesktopOutputPackageVersion>
     <winformsGitCommitHash>28b79a28c8fcc016d319ce6b0f3b8c3463192a5c</winformsGitCommitHash>
     <winformsOutputPackageVersion>9.0.0-rc.2.24427.3</winformsOutputPackageVersion>
     <wpfGitCommitHash>06d898c6fe61c847cfa792e83c2254d8aabbeb70</wpfGitCommitHash>
