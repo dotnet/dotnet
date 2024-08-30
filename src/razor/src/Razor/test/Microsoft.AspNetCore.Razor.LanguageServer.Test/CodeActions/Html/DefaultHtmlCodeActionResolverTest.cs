@@ -44,7 +44,7 @@ public class DefaultHtmlCodeActionResolverTest(ITestOutputHelper testOutput) : L
                     {
                         Uri = documentUri,
                     },
-                    Edits = [VsLspFactory.CreateTextEdit(sourceText.GetRange(span), "Goo ~~~~~~~~~~~~~~~ Bar")]
+                    Edits = [VsLspFactory.CreateTextEdit(sourceText.GetRange(span), "Goo /*~~~~~~~~~~~*/ Bar")]
                 }
            }
         };
