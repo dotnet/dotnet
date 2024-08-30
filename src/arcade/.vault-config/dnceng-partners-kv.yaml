@@ -58,7 +58,7 @@ secrets:
       gitHubBotAccountSecret:
         name: BotAccount-dotnet-bot
         location: EngKeyVault
-      gitHubBotAccountName: BotAccount-dotnet-build-bot
+      gitHubBotAccountName: BotAccount-dotnet-bot
       requiredScopes: content
       description: "This pat is under the beta fine-grained tokens using dotnet as owner and repository specific for vscode-csharp and roslyn. The permissions are: Content - Read and write."
 

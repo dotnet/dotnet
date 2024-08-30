@@ -94,7 +94,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
 
         private const string FeedDotNet8Shipping = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet8/nuget/v3/index.json";
         private const string FeedDotNet8Transport = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet8-transport/nuget/v3/index.json";
-
         private const string FeedDotNet8Workloads = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet8-workloads/nuget/v3/index.json";
 
         private const string FeedDotNet8InternalShipping = "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet8-internal/nuget/v3/index.json";
@@ -102,8 +101,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
 
         private const string FeedDotNet9Shipping = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v3/index.json";
         private const string FeedDotNet9Transport = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9-transport/nuget/v3/index.json";
-
         private const string FeedDotNet9Workloads = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9-workloads/nuget/v3/index.json";
+
+        private const string FeedDotNet9InternalShipping = "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet9-internal/nuget/v3/index.json";
+        private const string FeedDotNet9InternalTransport = "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet9-internal-transport/nuget/v3/index.json";
+
+        private const string FeedDotNet10Shipping = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet10/nuget/v3/index.json";
+        private const string FeedDotNet10Transport = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet10-transport/nuget/v3/index.json";
+        private const string FeedDotNet10Workloads = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet10-workloads/nuget/v3/index.json";
 
         private const string FeedDotNetLibrariesShipping = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-libraries/nuget/v3/index.json";
         private const string FeedDotNetLibrariesTransport = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-libraries-transport/nuget/v3/index.json";
@@ -184,10 +189,34 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
             (TargetFeedContentType.Checksum, FeedStagingForChecksums),
         };
 
+        private static TargetFeedSpecification[] DotNet9InternalFeeds =
+        {
+            (TargetFeedContentType.Package, FeedDotNet9InternalShipping, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNet9InternalTransport, AssetSelection.NonShippingOnly),
+            (InstallersAndSymbols, FeedStagingInternalForInstallers),
+            (TargetFeedContentType.Checksum, FeedStagingInternalForChecksums),
+        };
+
         private static TargetFeedSpecification[] DotNet9WorkloadFeeds =
         {
             (TargetFeedContentType.Package, FeedDotNet9Workloads, AssetSelection.ShippingOnly),
             (TargetFeedContentType.Package, FeedDotNet9Workloads, AssetSelection.NonShippingOnly),
+            (InstallersAndSymbols, FeedStagingForInstallers),
+            (TargetFeedContentType.Checksum, FeedStagingForChecksums),
+        };
+
+        private static TargetFeedSpecification[] DotNet10Feeds =
+        {
+            (TargetFeedContentType.Package, FeedDotNet10Shipping, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNet10Transport, AssetSelection.NonShippingOnly),
+            (InstallersAndSymbols, FeedStagingForInstallers),
+            (TargetFeedContentType.Checksum, FeedStagingForChecksums),
+        };
+
+        private static TargetFeedSpecification[] DotNet10WorkloadFeeds =
+        {
+            (TargetFeedContentType.Package, FeedDotNet10Workloads, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNet10Workloads, AssetSelection.NonShippingOnly),
             (InstallersAndSymbols, FeedStagingForInstallers),
             (TargetFeedContentType.Checksum, FeedStagingForChecksums),
         };
@@ -699,6 +728,46 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 symbolTargetType: PublicAndInternalSymbolTargets,
                 filenamesToExclude: FilenamesToExclude),
 
+            // .NET 9 Eng,
+            new TargetChannelConfig(
+                id: 5175,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>() { "eng/net9" },
+                targetFeeds: DotNetEngFeeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude),
+
+            // .NET 9 Eng - Validation,
+            new TargetChannelConfig(
+                id: 5176,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>() { "eng/net9validation" },
+                targetFeeds: DotNetEngFeeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                flatten: false),
+
+            // .NET 9 Internal,
+            new TargetChannelConfig(
+                id: 5128,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>() { "internal/9.0" },
+                targetFeeds: DotNet9InternalFeeds,
+                symbolTargetType: InternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude),
+
+            // .NET 9 Private,
+            new TargetChannelConfig(
+                id: 5129,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>() { "internal/9.0-private" },
+                targetFeeds: DotNet9InternalFeeds,
+                symbolTargetType: InternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude),
+
             // .NET 9 Workload Release,
             new TargetChannelConfig(
                 id: 4611,
@@ -719,143 +788,123 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 symbolTargetType: PublicAndInternalSymbolTargets,
                 filenamesToExclude: FilenamesToExclude),
 
-            // .NET 9 Preview 1
+            // .NET 9.0.1xx SDK Internal,
             new TargetChannelConfig(
-                id: 4289,
+                id: 5127,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>() { "internal/9.0.1xx", "internal/9.0" },
+                targetFeeds: DotNet9InternalFeeds,
+                symbolTargetType: InternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude),
+
+            // .NET 9 RC 1
+            new TargetChannelConfig(
+                id: 5119,
                 isInternal: false,
                 publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: new List<string>() { "9.0-preview1" },
+                akaMSChannelNames: new List<string>() { "9.0-rc1" },
                 targetFeeds: DotNet9Feeds,
                 symbolTargetType: PublicAndInternalSymbolTargets,
                 filenamesToExclude: FilenamesToExclude),
 
-            // .NET 9 Preview 2
+            // .NET 9 RC 1 Internal
             new TargetChannelConfig(
-                id: 4290,
+                id: 5120,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>() { "internal/9.0-rc1" },
+                targetFeeds: DotNet9InternalFeeds,
+                symbolTargetType: InternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude),
+
+            // .NET 9 RC 2
+            new TargetChannelConfig(
+                id: 5122,
                 isInternal: false,
                 publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: new List<string>() { "9.0-preview2" },
+                akaMSChannelNames: new List<string>() { "9.0-rc2" },
                 targetFeeds: DotNet9Feeds,
                 symbolTargetType: PublicAndInternalSymbolTargets,
                 filenamesToExclude: FilenamesToExclude),
 
-            // .NET 9 Preview 3
+            // .NET 9 RC 2 Internal
             new TargetChannelConfig(
-                id: 4291,
+                id: 5121,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>() { "internal/9.0-rc2" },
+                targetFeeds: DotNet9InternalFeeds,
+                symbolTargetType: InternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude),
+
+            // .NET 9.0.1xx SDK RC 1
+            new TargetChannelConfig(
+                id: 5123,
                 isInternal: false,
                 publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: new List<string>() { "9.0-preview3" },
+                akaMSChannelNames: new List<string>() { "9.0-rc1", "9.0.1xx-rc1" },
                 targetFeeds: DotNet9Feeds,
                 symbolTargetType: PublicAndInternalSymbolTargets,
                 filenamesToExclude: FilenamesToExclude),
 
-            // .NET 9 Preview 4
+            // .NET 9.0.1xx SDK RC 1 Internal
             new TargetChannelConfig(
-                id: 4292,
+                id: 5126,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>() { "internal/9.0-rc1", "internal/9.0.1xx-rc1" },
+                targetFeeds: DotNet9InternalFeeds,
+                symbolTargetType: InternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude),
+
+            // .NET 9.0.1xx SDK RC 2
+            new TargetChannelConfig(
+                id: 5124,
                 isInternal: false,
                 publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: new List<string>() { "9.0-preview4" },
+                akaMSChannelNames: new List<string>() { "9.0-rc2", "9.0.1xx-rc2" },
                 targetFeeds: DotNet9Feeds,
                 symbolTargetType: PublicAndInternalSymbolTargets,
                 filenamesToExclude: FilenamesToExclude),
 
-            // .NET 9 Preview 5
+            // .NET 9.0.1xx SDK RC 2 Internal
             new TargetChannelConfig(
-                id: 4293,
+                id: 5125,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>() { "internal/9.0-rc2", "internal/9.0.1xx-rc2" },
+                targetFeeds: DotNet9InternalFeeds,
+                symbolTargetType: InternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude),
+
+            // .NET 10,
+            new TargetChannelConfig(
+                id: 5172,
                 isInternal: false,
                 publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: new List<string>() { "9.0-preview5" },
-                targetFeeds: DotNet9Feeds,
+                akaMSChannelNames: new List<string>() { "10.0" },
+                targetFeeds: DotNet10Feeds,
                 symbolTargetType: PublicAndInternalSymbolTargets,
                 filenamesToExclude: FilenamesToExclude),
 
-            // .NET 9 Preview 6
+            // .NET 10 Workload Release,
             new TargetChannelConfig(
-                id: 4294,
+                id: 5174,
                 isInternal: false,
                 publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: new List<string>() { "9.0-preview6" },
-                targetFeeds: DotNet9Feeds,
+                akaMSChannelNames: new List<string>() { "10.0-workloads" },
+                targetFeeds: DotNet10WorkloadFeeds,
                 symbolTargetType: PublicAndInternalSymbolTargets,
                 filenamesToExclude: FilenamesToExclude),
 
-            // .NET 9 Preview 7
+            // .NET 10.0.1xx SDK,
             new TargetChannelConfig(
-                id: 4295,
+                id: 5173,
                 isInternal: false,
                 publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: new List<string>() { "9.0-preview7" },
-                targetFeeds: DotNet9Feeds,
-                symbolTargetType: PublicAndInternalSymbolTargets,
-                filenamesToExclude: FilenamesToExclude),
-
-            // .NET 9.0.1xx SDK Preview 1
-            new TargetChannelConfig(
-                id: 4296,
-                isInternal: false,
-                publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: new List<string>() { "9.0-preview1", "9.0.1xx-preview1" },
-                targetFeeds: DotNet9Feeds,
-                symbolTargetType: PublicAndInternalSymbolTargets,
-                filenamesToExclude: FilenamesToExclude),
-
-            // .NET 9.0.1xx SDK Preview 2
-            new TargetChannelConfig(
-                id: 4297,
-                isInternal: false,
-                publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: new List<string>() { "9.0-preview2", "9.0.1xx-preview2" },
-                targetFeeds: DotNet9Feeds,
-                symbolTargetType: PublicAndInternalSymbolTargets,
-                filenamesToExclude: FilenamesToExclude),
-
-            // .NET 9.0.1xx SDK Preview 3
-            new TargetChannelConfig(
-                id: 4298,
-                isInternal: false,
-                publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: new List<string>() { "9.0-preview3", "9.0.1xx-preview3" },
-                targetFeeds: DotNet9Feeds,
-                symbolTargetType: PublicAndInternalSymbolTargets,
-                filenamesToExclude: FilenamesToExclude),
-
-            // .NET 9.0.1xx SDK Preview 4
-            new TargetChannelConfig(
-                id: 4299,
-                isInternal: false,
-                publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: new List<string>() { "9.0-preview4", "9.0.1xx-preview4" },
-                targetFeeds: DotNet9Feeds,
-                symbolTargetType: PublicAndInternalSymbolTargets,
-                filenamesToExclude: FilenamesToExclude),
-
-            // .NET 9.0.1xx SDK Preview 5
-            new TargetChannelConfig(
-                id: 4300,
-                isInternal: false,
-                publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: new List<string>() { "9.0-preview5", "9.0.1xx-preview5" },
-                targetFeeds: DotNet9Feeds,
-                symbolTargetType: PublicAndInternalSymbolTargets,
-                filenamesToExclude: FilenamesToExclude),
-
-            // .NET 9.0.1xx SDK Preview 6
-            new TargetChannelConfig(
-                id: 4301,
-                isInternal: false,
-                publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: new List<string>() { "9.0-preview6", "9.0.1xx-preview6" },
-                targetFeeds: DotNet9Feeds,
-                symbolTargetType: PublicAndInternalSymbolTargets,
-                filenamesToExclude: FilenamesToExclude),
-
-            // .NET 9.0.1xx SDK Preview 7
-            new TargetChannelConfig(
-                id: 4302,
-                isInternal: false,
-                publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: new List<string>() { "9.0-preview7", "9.0.1xx-preview7" },
-                targetFeeds: DotNet9Feeds,
+                akaMSChannelNames: new List<string>() { "10.0.1xx", "10.0" },
+                targetFeeds: DotNet10Feeds,
                 symbolTargetType: PublicAndInternalSymbolTargets,
                 filenamesToExclude: FilenamesToExclude),
 
