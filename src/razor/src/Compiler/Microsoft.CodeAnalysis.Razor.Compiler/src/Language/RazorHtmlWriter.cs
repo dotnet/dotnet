@@ -37,6 +37,12 @@ internal class RazorHtmlWriter : SyntaxWalker, IDisposable
     private SourceSpan _lastOriginalSourceSpan = SourceSpan.Undefined;
     private SourceSpan _lastGeneratedSourceSpan = SourceSpan.Undefined;
 
+    // Rather than writing out C# characters as we find them (as '~') we keep a count so that consecutive characters
+    // can be written as a block, allowing any block of 4 characters or more to be written as a comment (ie '/**/`)
+    // which takes pressure off the TypeScript/JavaScript compiler. Doing this per token means we can end up with
+    // "@className" being written as '~/*~~~~~*/', which means Html formatting will insert a space which breaks things.
+    private int _csharpCharacterCount;
+
     private RazorHtmlWriter(RazorSourceDocument source)
     {
         if (source is null)
@@ -96,6 +102,8 @@ internal class RazorHtmlWriter : SyntaxWalker, IDisposable
     public void Visit(RazorSyntaxTree syntaxTree)
     {
         Visit(syntaxTree.Root);
+
+        WriteDeferredCSharpContent();
 
         if (_lastGeneratedSourceSpan != SourceSpan.Undefined)
         {
@@ -192,6 +200,8 @@ internal class RazorHtmlWriter : SyntaxWalker, IDisposable
         var content = token.Content;
         if (_isHtml)
         {
+            WriteDeferredCSharpContent();
+
             var source = token.GetSourceSpan(Source);
 
             // No point source mapping an empty token
@@ -256,12 +266,52 @@ internal class RazorHtmlWriter : SyntaxWalker, IDisposable
         {
             if (char.IsWhiteSpace(c))
             {
+                WriteDeferredCSharpContent();
                 Builder.Write(c.ToString());
             }
             else
             {
-                Builder.Write("~");
+                _csharpCharacterCount++;
             }
+        }
+    }
+
+    private void WriteDeferredCSharpContent()
+    {
+        if (_csharpCharacterCount == 0)
+        {
+            return;
+        }
+
+        Builder.Write(_csharpCharacterCount switch
+        {
+            // Less than 4 chars, just use tildes. We can't do anything more fancy in a small space
+            1 => "~",
+            2 => "~~",
+            3 => "~~~",
+
+            // Special case for unquoted attributes that appear at the end of a tag. eg `<div class=@className>`
+            // Without this special handling, our replacement would result in `<div class=/*~~~~~*/>` which differs
+            // from the original meaning, as the div is now self-closing.
+            // Note that we don't actually know if we're in an attribute here, or some other construct, but false
+            // positives are totally fine in this scenario.
+            _ when NextCharacterIsGreaterThanSymbol() => new string('~', _csharpCharacterCount),
+
+            // All other cases, use a comment to relieve pressure on the JS/TS compiler
+            _ => "/*" + new string('~', _csharpCharacterCount - 4) + "*/",
+        });
+        _csharpCharacterCount = 0;
+
+        bool NextCharacterIsGreaterThanSymbol()
+        {
+            var sourceText = Source.Text;
+            var index = Builder.Location.AbsoluteIndex + _csharpCharacterCount;
+            if (sourceText.Length <= index)
+            {
+                return false;
+            }
+
+            return sourceText[index] == '>';
         }
     }
 

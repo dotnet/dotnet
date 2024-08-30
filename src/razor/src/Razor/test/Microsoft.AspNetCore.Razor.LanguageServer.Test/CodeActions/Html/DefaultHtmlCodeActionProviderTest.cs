@@ -85,7 +85,7 @@ public class DefaultHtmlCodeActionProviderTest(ITestOutputHelper testOutput) : L
                     {
                         Uri = new Uri(documentPath),
                     },
-                    Edits = [VsLspFactory.CreateTextEdit(context.SourceText.GetRange(span), "Goo ~~~~~~~~~~~~~~~ Bar")]
+                    Edits = [VsLspFactory.CreateTextEdit(context.SourceText.GetRange(span), "Goo /*~~~~~~~~~~~*/ Bar")]
                 }
             }
         };
