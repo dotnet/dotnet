@@ -4,39 +4,49 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
 internal interface IRazorFormattingService
 {
-    Task<TextEdit[]> FormatAsync(
+    Task<TextEdit[]> GetDocumentFormattingEditsAsync(
        DocumentContext documentContext,
+       TextEdit[] htmlEdits,
        Range? range,
-       FormattingOptions options,
+       RazorFormattingOptions options,
        CancellationToken cancellationToken);
 
-    Task<TextEdit[]> FormatOnTypeAsync(
+    Task<TextEdit[]> GetHtmlOnTypeFormattingEditsAsync(
       DocumentContext documentContext,
-      RazorLanguageKind kind,
-      TextEdit[] formattedEdits,
-      FormattingOptions options,
+      TextEdit[] htmlEdits,
+      RazorFormattingOptions options,
       int hostDocumentIndex,
       char triggerCharacter,
       CancellationToken cancellationToken);
 
-    Task<TextEdit[]> FormatCodeActionAsync(
+    Task<TextEdit[]> GetCSharpOnTypeFormattingEditsAsync(
+      DocumentContext documentContext,
+      RazorFormattingOptions options,
+      int hostDocumentIndex,
+      char triggerCharacter,
+      CancellationToken cancellationToken);
+
+    Task<TextEdit?> GetSingleCSharpEditAsync(
+        DocumentContext documentContext,
+        TextEdit csharpEdit,
+        RazorFormattingOptions options,
+        CancellationToken cancellationToken);
+
+    Task<TextEdit?> GetCSharpCodeActionEditAsync(
        DocumentContext documentContext,
-       RazorLanguageKind kind,
-       TextEdit[] formattedEdits,
-       FormattingOptions options,
+       TextEdit[] csharpEdits,
+       RazorFormattingOptions options,
        CancellationToken cancellationToken);
 
-    Task<TextEdit[]> FormatSnippetAsync(
+    Task<TextEdit?> GetCSharpSnippetFormattingEditAsync(
        DocumentContext documentContext,
-       RazorLanguageKind kind,
-       TextEdit[] edits,
-       FormattingOptions options,
+       TextEdit[] csharpEdits,
+       RazorFormattingOptions options,
        CancellationToken cancellationToken);
 }

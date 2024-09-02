@@ -127,4 +127,43 @@ internal partial class RazorProjectSystemInProcess
 
         }, TimeSpan.FromMilliseconds(100), cancellationToken);
     }
+
+    public async Task WaitForCSharpVirtualDocumentUpdateAsync(string projectName, string relativeFilePath, Func<Task> updater, CancellationToken cancellationToken)
+    {
+        var filePath = await TestServices.SolutionExplorer.GetAbsolutePathForProjectRelativeFilePathAsync(projectName, relativeFilePath, cancellationToken);
+
+        var documentManager = await TestServices.Shell.GetComponentModelServiceAsync<LSPDocumentManager>(cancellationToken);
+
+        var uri = new Uri(filePath, UriKind.Absolute);
+
+        long? desiredVersion = null;
+
+        await Helper.RetryAsync(async ct =>
+        {
+            if (documentManager.TryGetDocument(uri, out var snapshot))
+            {
+                if (snapshot.TryGetVirtualDocument<CSharpVirtualDocumentSnapshot>(out var virtualDocument))
+                {
+                    if (!virtualDocument.ProjectKey.IsUnknown &&
+                        virtualDocument.Snapshot.Length > 0)
+                    {
+                        if (desiredVersion is null)
+                        {
+                            desiredVersion = virtualDocument.HostDocumentSyncVersion + 1;
+                            await updater();
+                        }
+                        else if (virtualDocument.HostDocumentSyncVersion == desiredVersion)
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+            }
+
+            return false;
+
+        }, TimeSpan.FromMilliseconds(100), cancellationToken);
+    }
 }

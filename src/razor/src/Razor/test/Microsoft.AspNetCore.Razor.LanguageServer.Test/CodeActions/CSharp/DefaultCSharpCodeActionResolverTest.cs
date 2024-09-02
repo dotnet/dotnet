@@ -39,7 +39,7 @@ public class DefaultCSharpCodeActionResolverTest(ITestOutputHelper testOutput) :
         }
     };
 
-    private static readonly TextEdit[] s_defaultFormattedEdits = [VsLspFactory.CreateTextEdit(position: (0, 0), "Remapped & Formatted Edit")];
+    private static readonly TextEdit s_defaultFormattedEdit = VsLspFactory.CreateTextEdit(position: (0, 0), "Remapped & Formatted Edit");
 
     private static readonly CodeAction s_defaultUnresolvedCodeAction = new CodeAction()
     {
@@ -63,7 +63,7 @@ public class DefaultCSharpCodeActionResolverTest(ITestOutputHelper testOutput) :
         var returnedEdits = returnedCodeAction.Edit.DocumentChanges.Value;
         Assert.True(returnedEdits.TryGetFirst(out var textDocumentEdits));
         var returnedTextDocumentEdit = Assert.Single(textDocumentEdits[0].Edits);
-        Assert.Equal(s_defaultFormattedEdits.First(), returnedTextDocumentEdit);
+        Assert.Equal(s_defaultFormattedEdit, returnedTextDocumentEdit);
     }
 
     [Fact]
@@ -188,12 +188,11 @@ public class DefaultCSharpCodeActionResolverTest(ITestOutputHelper testOutput) :
     private static IRazorFormattingService CreateRazorFormattingService(Uri documentUri)
     {
         var razorFormattingService = Mock.Of<IRazorFormattingService>(
-                        rfs => rfs.FormatCodeActionAsync(
+                        rfs => rfs.GetCSharpCodeActionEditAsync(
                             It.Is<DocumentContext>(c => c.Uri == documentUri),
-                            RazorLanguageKind.CSharp,
                             It.IsAny<TextEdit[]>(),
-                            It.IsAny<FormattingOptions>(),
-                            It.IsAny<CancellationToken>()) == Task.FromResult(s_defaultFormattedEdits), MockBehavior.Strict);
+                            It.IsAny<RazorFormattingOptions>(),
+                            It.IsAny<CancellationToken>()) == Task.FromResult(s_defaultFormattedEdit), MockBehavior.Strict);
         return razorFormattingService;
     }
 

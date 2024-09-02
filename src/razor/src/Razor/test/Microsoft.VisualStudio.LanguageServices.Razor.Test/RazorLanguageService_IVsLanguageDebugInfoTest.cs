@@ -70,7 +70,7 @@ public class RazorLanguageService_IVsLanguageDebugInfoTest(ITestOutputHelper tes
     {
         // Arrange
         var breakpointRange = VsLspFactory.CreateRange(2, 4, 3, 5);
-        var breakpointResolver = Mock.Of<RazorBreakpointResolver>(resolver => resolver.TryResolveBreakpointRangeAsync(It.IsAny<ITextBuffer>(), 0, 0, It.IsAny<CancellationToken>()) == System.Threading.Tasks.Task.FromResult(breakpointRange), MockBehavior.Strict);
+        var breakpointResolver = Mock.Of<IRazorBreakpointResolver>(resolver => resolver.TryResolveBreakpointRangeAsync(It.IsAny<ITextBuffer>(), 0, 0, It.IsAny<CancellationToken>()) == System.Threading.Tasks.Task.FromResult(breakpointRange), MockBehavior.Strict);
         var languageService = CreateLanguageServiceWith(breakpointResolver);
 
         // Act
@@ -146,7 +146,7 @@ public class RazorLanguageService_IVsLanguageDebugInfoTest(ITestOutputHelper tes
     {
         // Arrange
         IReadOnlyList<string> expressions = new[] { "something" };
-        var resolver = Mock.Of<RazorProximityExpressionResolver>(resolver => resolver.TryResolveProximityExpressionsAsync(It.IsAny<ITextBuffer>(), 0, 0, It.IsAny<CancellationToken>()) == System.Threading.Tasks.Task.FromResult(expressions), MockBehavior.Strict);
+        var resolver = Mock.Of<IRazorProximityExpressionResolver>(resolver => resolver.TryResolveProximityExpressionsAsync(It.IsAny<ITextBuffer>(), 0, 0, It.IsAny<CancellationToken>()) == System.Threading.Tasks.Task.FromResult(expressions), MockBehavior.Strict);
         var languageService = CreateLanguageServiceWith(proximityExpressionResolver: resolver);
 
         // Act
@@ -174,14 +174,14 @@ public class RazorLanguageService_IVsLanguageDebugInfoTest(ITestOutputHelper tes
     }
 
     private RazorLanguageService CreateLanguageServiceWith(
-        RazorBreakpointResolver breakpointResolver = null,
-        RazorProximityExpressionResolver proximityExpressionResolver = null,
+        IRazorBreakpointResolver breakpointResolver = null,
+        IRazorProximityExpressionResolver proximityExpressionResolver = null,
         IUIThreadOperationExecutor uiThreadOperationExecutor = null,
         IVsEditorAdaptersFactoryService editorAdaptersFactory = null)
     {
         if (breakpointResolver is null)
         {
-            breakpointResolver = new Mock<RazorBreakpointResolver>(MockBehavior.Strict).Object;
+            breakpointResolver = new Mock<IRazorBreakpointResolver>(MockBehavior.Strict).Object;
             Mock.Get(breakpointResolver)
                 .Setup(r => r.TryResolveBreakpointRangeAsync(
                     It.IsAny<ITextBuffer>(),
@@ -193,7 +193,7 @@ public class RazorLanguageService_IVsLanguageDebugInfoTest(ITestOutputHelper tes
 
         if (proximityExpressionResolver is null)
         {
-            proximityExpressionResolver = new Mock<RazorProximityExpressionResolver>(MockBehavior.Strict).Object;
+            proximityExpressionResolver = new Mock<IRazorProximityExpressionResolver>(MockBehavior.Strict).Object;
             Mock.Get(proximityExpressionResolver)
                 .Setup(r => r.TryResolveProximityExpressionsAsync(
                     It.IsAny<ITextBuffer>(),

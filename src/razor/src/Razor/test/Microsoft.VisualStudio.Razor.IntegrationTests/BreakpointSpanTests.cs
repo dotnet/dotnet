@@ -17,13 +17,15 @@ public class BreakpointSpanTests(ITestOutputHelper testOutputHelper) : AbstractR
 
         // Wait for classifications to indicate Razor LSP is up and running
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
-        await TestServices.Editor.SetTextAsync("<p>@{ var abc = 123; }</p>", ControlledHangMitigatingCancellationToken);
 
-        // Act
-        await TestServices.Debugger.SetBreakpointAsync(RazorProjectConstants.CounterRazorFile, line: 1, character: 1, ControlledHangMitigatingCancellationToken);
+        await TestServices.RazorProjectSystem.WaitForCSharpVirtualDocumentUpdateAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.CounterRazorFile, async () =>
+        {
+            await TestServices.Editor.SetTextAsync("<p>@{ var abc = 123; }</p>", ControlledHangMitigatingCancellationToken);
+        }, ControlledHangMitigatingCancellationToken);
 
-        // Assert
-        await TestServices.Debugger.VerifyBreakpointAsync(RazorProjectConstants.CounterRazorFile, line: 1, character: 7, ControlledHangMitigatingCancellationToken);
+        Assert.True(await TestServices.Debugger.SetBreakpointAsync(RazorProjectConstants.CounterRazorFile, line: 1, character: 1, ControlledHangMitigatingCancellationToken));
+
+        Assert.True(await TestServices.Debugger.VerifyBreakpointAsync(RazorProjectConstants.CounterRazorFile, line: 1, character: 7, ControlledHangMitigatingCancellationToken));
     }
 
     [IdeFact]
@@ -34,15 +36,17 @@ public class BreakpointSpanTests(ITestOutputHelper testOutputHelper) : AbstractR
 
         // Wait for classifications to indicate Razor LSP is up and running
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
-        await TestServices.Editor.SetTextAsync(@"<p>@{
-    var abc = 123;
-}</p>", ControlledHangMitigatingCancellationToken);
 
-        // Act
-        var result = await TestServices.Debugger.SetBreakpointAsync(RazorProjectConstants.CounterRazorFile, line: 1, character: 1, ControlledHangMitigatingCancellationToken);
+        await TestServices.RazorProjectSystem.WaitForCSharpVirtualDocumentUpdateAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.CounterRazorFile, async () =>
+        {
+            await TestServices.Editor.SetTextAsync("""
+                <p>@{
+                    var abc = 123;
+                }</p>
+                """, ControlledHangMitigatingCancellationToken);
+        }, ControlledHangMitigatingCancellationToken);
 
-        // Assert
-        Assert.False(result);
+        Assert.False(await TestServices.Debugger.SetBreakpointAsync(RazorProjectConstants.CounterRazorFile, line: 1, character: 1, ControlledHangMitigatingCancellationToken));
     }
 
     [IdeFact]
@@ -53,14 +57,18 @@ public class BreakpointSpanTests(ITestOutputHelper testOutputHelper) : AbstractR
 
         // Wait for classifications to indicate Razor LSP is up and running
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
-        await TestServices.Editor.SetTextAsync(@"<p>@{
-    var abc = 123;
-}</p>", ControlledHangMitigatingCancellationToken);
 
-        // Act
-        await TestServices.Debugger.SetBreakpointAsync(RazorProjectConstants.CounterRazorFile, line: 2, character: 1, ControlledHangMitigatingCancellationToken);
+        await TestServices.RazorProjectSystem.WaitForCSharpVirtualDocumentUpdateAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.CounterRazorFile, async () =>
+        {
+            await TestServices.Editor.SetTextAsync("""
+                <p>@{
+                    var abc = 123;
+                }</p>
+                """, ControlledHangMitigatingCancellationToken);
+        }, ControlledHangMitigatingCancellationToken);
 
-        // Assert
-        await TestServices.Debugger.VerifyBreakpointAsync(RazorProjectConstants.CounterRazorFile, line: 2, character: 4, ControlledHangMitigatingCancellationToken);
+        Assert.True(await TestServices.Debugger.SetBreakpointAsync(RazorProjectConstants.CounterRazorFile, line: 2, character: 1, ControlledHangMitigatingCancellationToken));
+
+        Assert.True(await TestServices.Debugger.VerifyBreakpointAsync(RazorProjectConstants.CounterRazorFile, line: 2, character: 5, ControlledHangMitigatingCancellationToken));
     }
 }

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -50,169 +52,91 @@ internal sealed class AddUsingsCodeActionResolver(IDocumentContextFactory docume
         }
 
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = actionParams.Uri };
-        return CreateAddUsingWorkspaceEdit(actionParams.Namespace, actionParams.AdditionalEdit, codeDocument, codeDocumentIdentifier);
+        return AddUsingsHelper.CreateAddUsingWorkspaceEdit(actionParams.Namespace, actionParams.AdditionalEdit, codeDocument, codeDocumentIdentifier);
     }
 
-    internal static WorkspaceEdit CreateAddUsingWorkspaceEdit(string @namespace, TextDocumentEdit? additionalEdit, RazorCodeDocument codeDocument, OptionalVersionedTextDocumentIdentifier codeDocumentIdentifier)
+    internal static bool TryCreateAddUsingResolutionParams(string fullyQualifiedName, Uri uri, TextDocumentEdit? additionalEdit, [NotNullWhen(true)] out string? @namespace, [NotNullWhen(true)] out RazorCodeActionResolutionParams? resolutionParams)
     {
-        /* The heuristic is as follows:
-         *
-         * - If no @using, @namespace, or @page directives are present, insert the statements at the top of the
-         *   file in alphabetical order.
-         * - If a @namespace or @page are present, the statements are inserted after the last line-wise in
-         *   alphabetical order.
-         * - If @using directives are present and alphabetized with System directives at the top, the statements
-         *   will be placed in the correct locations according to that ordering.
-         * - Otherwise it's kind of undefined; it's only geared to insert based on alphabetization.
-         *
-         * This is generally sufficient for our current situation (inserting a single @using statement to include a
-         * component), however it has holes if we eventually use it for other purposes. If we want to deal with
-         * that now I can come up with a more sophisticated heuristic (something along the lines of checking if
-         * there's already an ordering, etc.).
-         */
-        using var documentChanges = new PooledArrayBuilder<TextDocumentEdit>();
-
-        // Need to add the additional edit first, as the actual usings go at the top of the file, and would
-        // change the ranges needed in the additional edit if they went in first
-        if (additionalEdit is not null)
+        @namespace = GetNamespaceFromFQN(fullyQualifiedName);
+        if (string.IsNullOrEmpty(@namespace))
         {
-            documentChanges.Add(additionalEdit);
+            @namespace = null;
+            resolutionParams = null;
+            return false;
         }
 
-        using var usingDirectives = new PooledArrayBuilder<RazorUsingDirective>();
-        CollectUsingDirectives(codeDocument, ref usingDirectives.AsRef());
-        if (usingDirectives.Count > 0)
+        var actionParams = new AddUsingsCodeActionParams
         {
-            // Interpolate based on existing @using statements
-            var edits = GenerateSingleUsingEditsInterpolated(codeDocument, codeDocumentIdentifier, @namespace, in usingDirectives);
-            documentChanges.Add(edits);
-        }
-        else
-        {
-            // Just throw them at the top
-            var edits = GenerateSingleUsingEditsAtTop(codeDocument, codeDocumentIdentifier, @namespace);
-            documentChanges.Add(edits);
-        }
-
-        return new WorkspaceEdit()
-        {
-            DocumentChanges = documentChanges.ToArray(),
+            Uri = uri,
+            Namespace = @namespace,
+            AdditionalEdit = additionalEdit
         };
+
+        resolutionParams = new RazorCodeActionResolutionParams
+        {
+            Action = LanguageServerConstants.CodeActions.AddUsing,
+            Language = LanguageServerConstants.CodeActions.Languages.Razor,
+            Data = actionParams,
+        };
+
+        return true;
     }
 
-    private static TextDocumentEdit GenerateSingleUsingEditsInterpolated(
-        RazorCodeDocument codeDocument,
-        OptionalVersionedTextDocumentIdentifier codeDocumentIdentifier,
-        string newUsingNamespace,
-        ref readonly PooledArrayBuilder<RazorUsingDirective> existingUsingDirectives)
+    // Internal for testing
+    internal static string GetNamespaceFromFQN(string fullyQualifiedName)
     {
-        Debug.Assert(existingUsingDirectives.Count > 0);
-
-        using var edits = new PooledArrayBuilder<TextEdit>();
-        var newText = $"@using {newUsingNamespace}{Environment.NewLine}";
-
-        foreach (var usingDirective in existingUsingDirectives)
+        if (!TrySplitNamespaceAndType(fullyQualifiedName.AsSpan(), out var namespaceName, out _))
         {
-            // Skip System directives; if they're at the top we don't want to insert before them
-            var usingDirectiveNamespace = usingDirective.Statement.ParsedNamespace;
-            if (usingDirectiveNamespace.StartsWith("System", StringComparison.Ordinal))
-            {
-                continue;
-            }
+            return string.Empty;
+        }
 
-            if (string.CompareOrdinal(newUsingNamespace, usingDirectiveNamespace) < 0)
+        return namespaceName.ToString();
+    }
+
+    private static bool TrySplitNamespaceAndType(ReadOnlySpan<char> fullTypeName, out ReadOnlySpan<char> @namespace, out ReadOnlySpan<char> typeName)
+    {
+        @namespace = default;
+        typeName = default;
+
+        if (fullTypeName.IsEmpty)
+        {
+            return false;
+        }
+
+        var nestingLevel = 0;
+        var splitLocation = -1;
+        for (var i = fullTypeName.Length - 1; i >= 0; i--)
+        {
+            var c = fullTypeName[i];
+            if (c == Type.Delimiter && nestingLevel == 0)
             {
-                var usingDirectiveLineIndex = codeDocument.Source.Text.GetLinePosition(usingDirective.Node.Span.Start).Line;
-                var edit = VsLspFactory.CreateTextEdit(line: usingDirectiveLineIndex, character: 0, newText);
-                edits.Add(edit);
+                splitLocation = i;
                 break;
             }
-        }
-
-        // If we haven't actually found a place to insert the using directive, do so at the end
-        if (edits.Count == 0)
-        {
-            var endIndex = existingUsingDirectives[^1].Node.Span.End;
-            var lineIndex = GetLineIndexOrEnd(codeDocument, endIndex - 1) + 1;
-            var edit = VsLspFactory.CreateTextEdit(line: lineIndex, character: 0, newText);
-            edits.Add(edit);
-        }
-
-        return new TextDocumentEdit()
-        {
-            TextDocument = codeDocumentIdentifier,
-            Edits = edits.ToArray()
-        };
-    }
-
-    private static TextDocumentEdit GenerateSingleUsingEditsAtTop(
-        RazorCodeDocument codeDocument,
-        OptionalVersionedTextDocumentIdentifier codeDocumentIdentifier,
-        string newUsingNamespace)
-    {
-        var insertPosition = (0, 0);
-
-        // If we don't have usings, insert after the last namespace or page directive, which ever comes later
-        var syntaxTreeRoot = codeDocument.GetSyntaxTree().Root;
-        var lastNamespaceOrPageDirective = syntaxTreeRoot
-            .DescendantNodes()
-            .LastOrDefault(IsNamespaceOrPageDirective);
-
-        if (lastNamespaceOrPageDirective != null)
-        {
-            var lineIndex = GetLineIndexOrEnd(codeDocument, lastNamespaceOrPageDirective.Span.End - 1) + 1;
-            insertPosition = (lineIndex, 0);
-        }
-
-        // Insert all usings at the given point
-        return new TextDocumentEdit
-        {
-            TextDocument = codeDocumentIdentifier,
-            Edits = [VsLspFactory.CreateTextEdit(insertPosition, newText: $"@using {newUsingNamespace}{Environment.NewLine}")]
-        };
-    }
-
-    private static int GetLineIndexOrEnd(RazorCodeDocument codeDocument, int endIndex)
-    {
-        if (endIndex < codeDocument.Source.Text.Length)
-        {
-            return codeDocument.Source.Text.GetLinePosition(endIndex).Line;
-        }
-        else
-        {
-            return codeDocument.Source.Text.Lines.Count;
-        }
-    }
-
-    private static void CollectUsingDirectives(RazorCodeDocument codeDocument, ref PooledArrayBuilder<RazorUsingDirective> directives)
-    {
-        var syntaxTreeRoot = codeDocument.GetSyntaxTree().Root;
-        foreach (var node in syntaxTreeRoot.DescendantNodes())
-        {
-            if (node is RazorDirectiveSyntax directiveNode)
+            else if (c == '>')
             {
-                foreach (var child in directiveNode.DescendantNodes())
-                {
-                    if (child.GetChunkGenerator() is AddImportChunkGenerator { IsStatic: false } usingStatement)
-                    {
-                        directives.Add(new RazorUsingDirective(directiveNode, usingStatement));
-                    }
-                }
+                nestingLevel++;
+            }
+            else if (c == '<')
+            {
+                nestingLevel--;
             }
         }
-    }
 
-    private static bool IsNamespaceOrPageDirective(SyntaxNode node)
-    {
-        if (node is RazorDirectiveSyntax directiveNode)
+        if (splitLocation == -1)
         {
-            return directiveNode.DirectiveDescriptor == ComponentPageDirective.Directive ||
-                directiveNode.DirectiveDescriptor == NamespaceDirective.Directive ||
-                directiveNode.DirectiveDescriptor == PageDirective.Directive;
+            typeName = fullTypeName;
+            return true;
         }
 
-        return false;
-    }
+        @namespace = fullTypeName[..splitLocation];
 
-    private readonly record struct RazorUsingDirective(RazorDirectiveSyntax Node, AddImportChunkGenerator Statement);
+        var typeNameStartLocation = splitLocation + 1;
+        if (typeNameStartLocation < fullTypeName.Length)
+        {
+            typeName = fullTypeName[typeNameStartLocation..];
+        }
+
+        return true;
+    }
 }

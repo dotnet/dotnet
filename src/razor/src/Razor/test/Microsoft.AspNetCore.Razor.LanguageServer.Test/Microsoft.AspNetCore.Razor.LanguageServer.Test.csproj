@@ -6,18 +6,6 @@
     <!-- To generate baselines, run tests with /p:GenerateBaselines=true -->
     <DefineConstants Condition="'$(GenerateBaselines)'=='true'">$(DefineConstants);GENERATE_BASELINES</DefineConstants>
     <DefineConstants>$(DefineConstants);__RemoveThisBitTo__GENERATE_BASELINES</DefineConstants>
-
-    <!--
-      Some tests instantiate and run handlers from the webtools packages.
-      However, the webtools packages currently require the binary version of clasp (they haven't been updated yet).
-      In order to run them, we need to ensure that the clasp binary version is available.  Below we use the PackageDownload
-      feature to download the package and include it in the output (we can't use a package reference because it would conflict with the source package version).
-
-      We also reference the package in this project using an alias - some of the webtools types we instantiate take clasp binary types as parameter, which we have to create.
-
-      This should be removed once we can upgrade to new webtools package versions that use the source package version of clasp.
-    -->
-    <LegacyClaspVersion>4.7.0-1.23178.15</LegacyClaspVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,19 +23,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Shell.Framework" />
     <PackageReference Include="Microsoft.VisualStudio.Web" />
     <PackageReference Include="Microsoft.WebTools.Shared" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
-
-  <!-- Ensure the legacy clasp binary package is available downloaded so we can drop it in the output folder. -->
-  <ItemGroup>
-    <PackageDownload Include="Microsoft.CommonLanguageServerProtocol.Framework" Version="[$(LegacyClaspVersion)]" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="$(NuGetPackageRoot)\microsoft.commonlanguageserverprotocol.framework\$(LegacyClaspVersion)\lib\netstandard2.0\Microsoft.CommonLanguageServerProtocol.Framework.dll">
-      <Private>true</Private>
-      <Aliases>LegacyClasp</Aliases>
-    </Reference>
-  </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj" />
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Microsoft.AspNetCore.Razor.Test.Common.Tooling.csproj" />

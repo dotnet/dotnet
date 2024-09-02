@@ -80,7 +80,8 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
     {
         // Arrange
         var server = TestDelegatedCompletionItemResolverServer.Create();
-        var resolver = new DelegatedCompletionItemResolver(_documentContextFactory, _formattingService.GetValue(), server);
+        var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
+        var resolver = new DelegatedCompletionItemResolver(_documentContextFactory, _formattingService.GetValue(), optionsMonitor, server);
         var item = new VSInternalCompletionItem();
         var notContainingCompletionList = new VSInternalCompletionList();
         var originalRequestContext = new object();
@@ -98,7 +99,8 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
     {
         // Arrange
         var server = TestDelegatedCompletionItemResolverServer.Create();
-        var resolver = new DelegatedCompletionItemResolver(_documentContextFactory, _formattingService.GetValue(), server);
+        var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
+        var resolver = new DelegatedCompletionItemResolver(_documentContextFactory, _formattingService.GetValue(), optionsMonitor, server);
         var item = new VSInternalCompletionItem();
         var containingCompletionList = new VSInternalCompletionList() { Items = new[] { item, } };
         var originalRequestContext = new object();
@@ -116,7 +118,8 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
     {
         // Arrange
         var server = TestDelegatedCompletionItemResolverServer.Create();
-        var resolver = new DelegatedCompletionItemResolver(_documentContextFactory, _formattingService.GetValue(), server);
+        var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
+        var resolver = new DelegatedCompletionItemResolver(_documentContextFactory, _formattingService.GetValue(), optionsMonitor, server);
         var expectedData = new object();
         var item = new VSInternalCompletionItem()
         {
@@ -138,7 +141,8 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
     {
         // Arrange
         var server = TestDelegatedCompletionItemResolverServer.Create();
-        var resolver = new DelegatedCompletionItemResolver(_documentContextFactory, _formattingService.GetValue(), server);
+        var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
+        var resolver = new DelegatedCompletionItemResolver(_documentContextFactory, _formattingService.GetValue(), optionsMonitor, server);
         var item = new VSInternalCompletionItem();
         var containingCompletionList = new VSInternalCompletionList() { Items = new[] { item, }, Data = new object() };
         var expectedData = new object();
@@ -201,7 +205,8 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         // Arrange
         var expectedResolvedItem = new VSInternalCompletionItem();
         var server = TestDelegatedCompletionItemResolverServer.Create(expectedResolvedItem);
-        var resolver = new DelegatedCompletionItemResolver(_documentContextFactory, _formattingService.GetValue(), server);
+        var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
+        var resolver = new DelegatedCompletionItemResolver(_documentContextFactory, _formattingService.GetValue(), optionsMonitor, server);
         var item = new VSInternalCompletionItem();
         var containingCompletionList = new VSInternalCompletionList() { Items = new[] { item, } };
         var originalRequestContext = new DelegatedCompletionResolutionContext(_htmlCompletionParams, new object());
@@ -224,7 +229,8 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
 
         var server = TestDelegatedCompletionItemResolverServer.Create(csharpServer, DisposalToken);
         var documentContextFactory = new TestDocumentContextFactory("C:/path/to/file.razor", codeDocument);
-        var resolver = new DelegatedCompletionItemResolver(documentContextFactory, _formattingService.GetValue(), server);
+        var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
+        var resolver = new DelegatedCompletionItemResolver(documentContextFactory, _formattingService.GetValue(), optionsMonitor, server);
         var (containingCompletionList, csharpCompletionParams) = await GetCompletionListAndOriginalParamsAsync(
             cursorPosition, codeDocument, csharpServer);
 
