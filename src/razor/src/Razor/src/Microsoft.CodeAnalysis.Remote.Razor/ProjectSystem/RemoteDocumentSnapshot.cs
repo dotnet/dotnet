@@ -46,7 +46,7 @@ internal class RemoteDocumentSnapshot(TextDocument textDocument, RemoteProjectSn
 
     public bool TryGetTextVersion(out VersionStamp result) => _textDocument.TryGetTextVersion(out result);
 
-    public async Task<RazorCodeDocument> GetGeneratedOutputAsync()
+    public async Task<RazorCodeDocument> GetGeneratedOutputAsync(bool _)
     {
         // TODO: We don't need to worry about locking if we get called from the didOpen/didChange LSP requests, as CLaSP
         //       takes care of that for us, and blocks requests until those are complete. If that doesn't end up happening,

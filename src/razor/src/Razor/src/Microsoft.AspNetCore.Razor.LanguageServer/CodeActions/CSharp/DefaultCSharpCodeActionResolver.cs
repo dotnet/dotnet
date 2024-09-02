@@ -22,21 +22,6 @@ internal sealed class DefaultCSharpCodeActionResolver(
     IClientConnection clientConnection,
     IRazorFormattingService razorFormattingService) : CSharpCodeActionResolver(clientConnection)
 {
-    // Usually when we need to format code, we utilize the formatting options provided
-    // by the platform. However, we aren't provided such options in the case of code actions
-    // so we use a default (and commonly used) configuration.
-    private static readonly FormattingOptions s_defaultFormattingOptions = new FormattingOptions()
-    {
-        TabSize = 4,
-        InsertSpaces = true,
-        OtherOptions = new Dictionary<string, object>
-        {
-            { "trimTrailingWhitespace", true },
-            { "insertFinalNewline", true },
-            { "trimFinalNewlines", true },
-        },
-    };
-
     private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
     private readonly IRazorFormattingService _razorFormattingService = razorFormattingService;
 
@@ -80,11 +65,10 @@ internal sealed class DefaultCSharpCodeActionResolver(
 
         // Remaps the text edits from the generated C# to the razor file,
         // as well as applying appropriate formatting.
-        var formattedEdits = await _razorFormattingService.FormatCodeActionAsync(
+        var formattedEdit = await _razorFormattingService.GetCSharpCodeActionEditAsync(
             documentContext,
-            RazorLanguageKind.CSharp,
             csharpTextEdits,
-            s_defaultFormattingOptions,
+            RazorFormattingOptions.Default,
             cancellationToken).ConfigureAwait(false);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -99,7 +83,7 @@ internal sealed class DefaultCSharpCodeActionResolver(
                 new TextDocumentEdit()
                 {
                     TextDocument = codeDocumentIdentifier,
-                    Edits = formattedEdits,
+                    Edits = formattedEdit is null ? [] : [formattedEdit],
                 }
             }
         };

@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -76,12 +77,19 @@ public class FormattingTestBase : RazorToolingIntegrationTestBase
             TabSize = tabSize,
             InsertSpaces = insertSpaces,
         };
+        var razorOptions = RazorFormattingOptions.From(options, codeBlockBraceOnNextLine: razorLSPOptions?.CodeBlockBraceOnNextLine ?? false);
 
         var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, codeDocument, razorLSPOptions);
         var documentContext = new DocumentContext(uri, documentSnapshot, projectContext: null);
 
+        var client = new FormattingLanguageServerClient(LoggerFactory);
+        client.AddCodeDocument(codeDocument);
+
+        var htmlFormatter = new HtmlFormatter(client);
+        var htmlEdits = await htmlFormatter.GetDocumentFormattingEditsAsync(documentSnapshot, uri, options, DisposalToken);
+
         // Act
-        var edits = await formattingService.FormatAsync(documentContext, range, options, DisposalToken);
+        var edits = await formattingService.GetDocumentFormattingEditsAsync(documentContext, htmlEdits, range, razorOptions, DisposalToken);
 
         // Assert
         var edited = ApplyEdits(source, edits);
@@ -127,10 +135,25 @@ public class FormattingTestBase : RazorToolingIntegrationTestBase
             TabSize = tabSize,
             InsertSpaces = insertSpaces,
         };
+        var razorOptions = RazorFormattingOptions.From(options, codeBlockBraceOnNextLine: razorLSPOptions?.CodeBlockBraceOnNextLine ?? false);
+
         var documentContext = new DocumentContext(uri, documentSnapshot, projectContext: null);
 
         // Act
-        var edits = await formattingService.FormatOnTypeAsync(documentContext, languageKind, Array.Empty<TextEdit>(), options, hostDocumentIndex: positionAfterTrigger, triggerCharacter: triggerCharacter, DisposalToken);
+        TextEdit[] edits;
+        if (languageKind == RazorLanguageKind.CSharp)
+        {
+            edits = await formattingService.GetCSharpOnTypeFormattingEditsAsync(documentContext, razorOptions, hostDocumentIndex: positionAfterTrigger, triggerCharacter: triggerCharacter, DisposalToken);
+        }
+        else
+        {
+            var client = new FormattingLanguageServerClient(LoggerFactory);
+            client.AddCodeDocument(codeDocument);
+
+            var htmlFormatter = new HtmlFormatter(client);
+            var htmlEdits = await htmlFormatter.GetDocumentFormattingEditsAsync(documentSnapshot, uri, options, DisposalToken);
+            edits = await formattingService.GetHtmlOnTypeFormattingEditsAsync(documentContext, htmlEdits, razorOptions, hostDocumentIndex: positionAfterTrigger, triggerCharacter: triggerCharacter, DisposalToken);
+        }
 
         // Assert
         var edited = ApplyEdits(razorSourceText, edits);
@@ -190,7 +213,7 @@ public class FormattingTestBase : RazorToolingIntegrationTestBase
         }
 
         var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, codeDocument);
-        var options = new FormattingOptions()
+        var options = new RazorFormattingOptions()
         {
             TabSize = tabSize,
             InsertSpaces = insertSpaces,
@@ -198,10 +221,10 @@ public class FormattingTestBase : RazorToolingIntegrationTestBase
         var documentContext = new DocumentContext(uri, documentSnapshot, projectContext: null);
 
         // Act
-        var edits = await formattingService.FormatCodeActionAsync(documentContext, languageKind, codeActionEdits, options, DisposalToken);
+        var edit = await formattingService.GetCSharpCodeActionEditAsync(documentContext, codeActionEdits, options, DisposalToken);
 
         // Assert
-        var edited = ApplyEdits(razorSourceText, edits);
+        var edited = ApplyEdits(razorSourceText, [edit]);
         var actual = edited.ToString();
 
         AssertEx.EqualOrDiff(expected, actual);
@@ -260,7 +283,7 @@ public class FormattingTestBase : RazorToolingIntegrationTestBase
             ]);
 
         var projectEngine = RazorProjectEngine.Create(
-            new RazorConfiguration(RazorLanguageVersion.Latest, "TestConfiguration", ImmutableArray<RazorExtension>.Empty, new LanguageServerFlags(forceRuntimeCodeGeneration)),
+            new RazorConfiguration(RazorLanguageVersion.Latest, "TestConfiguration", Extensions: [], new LanguageServerFlags(forceRuntimeCodeGeneration)),
             projectFileSystem,
             builder =>
             {
@@ -269,7 +292,7 @@ public class FormattingTestBase : RazorToolingIntegrationTestBase
                 RazorExtensions.Register(builder);
             });
 
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, ImmutableArray.Create(importsDocument), tagHelpers);
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, [importsDocument], tagHelpers);
 
         if (!allowDiagnostics)
         {
@@ -287,7 +310,7 @@ public class FormattingTestBase : RazorToolingIntegrationTestBase
     {
         var documentSnapshot = new Mock<IDocumentSnapshot>(MockBehavior.Strict);
         documentSnapshot
-            .Setup(d => d.GetGeneratedOutputAsync())
+            .Setup(d => d.GetGeneratedOutputAsync(It.IsAny<bool>()))
             .ReturnsAsync(codeDocument);
         documentSnapshot
             .Setup(d => d.FilePath)

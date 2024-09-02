@@ -5,7 +5,7 @@
     here should be _ prefixed to indicate that they are not meant to be used outside this file.
   -->
   <PropertyGroup>
-    <_MicrosoftWebToolsPackageVersion>17.9.67-preview-0001</_MicrosoftWebToolsPackageVersion>
+    <_MicrosoftWebToolsPackageVersion>17.11.11-preview-0001</_MicrosoftWebToolsPackageVersion>
     <_MicrosoftVisualStudioShellPackagesVersion>17.11.39721</_MicrosoftVisualStudioShellPackagesVersion>
     <_MicrosoftVisualStudioPackagesVersion>17.11.191</_MicrosoftVisualStudioPackagesVersion>
     <_VisualStudioLanguageServerProtocolVersion>17.12.1-preview</_VisualStudioLanguageServerProtocolVersion>

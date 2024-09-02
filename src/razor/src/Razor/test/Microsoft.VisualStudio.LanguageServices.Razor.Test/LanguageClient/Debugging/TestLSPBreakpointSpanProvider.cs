@@ -15,7 +15,7 @@ using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Debugging;
 
-internal class TestLSPBreakpointSpanProvider : LSPBreakpointSpanProvider
+internal class TestLSPBreakpointSpanProvider : ILSPBreakpointSpanProvider
 {
     private readonly Uri _documentUri;
     private readonly IReadOnlyDictionary<Position, Range> _mappings;
@@ -36,7 +36,7 @@ internal class TestLSPBreakpointSpanProvider : LSPBreakpointSpanProvider
         _mappings = mappings;
     }
 
-    public override Task<Range> GetBreakpointSpanAsync(LSPDocumentSnapshot documentSnapshot, Position position, CancellationToken cancellationToken)
+    public Task<Range> GetBreakpointSpanAsync(LSPDocumentSnapshot documentSnapshot, long hostDocumentSyncVersion, Position position, CancellationToken cancellationToken)
     {
         if (documentSnapshot.Uri != _documentUri)
         {

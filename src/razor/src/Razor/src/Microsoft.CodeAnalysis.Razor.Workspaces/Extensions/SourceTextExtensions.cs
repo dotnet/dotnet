@@ -3,9 +3,12 @@
 
 using System;
 using System.Buffers;
+using System.Linq;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Text;
 
@@ -268,5 +271,29 @@ internal static class SourceTextExtensions
 
         location = default;
         return false;
+    }
+
+    /// <summary>
+    /// Applies the set of edits specified, and returns the minimal set needed to make the same changes
+    /// </summary>
+    public static TextEdit[] MinimizeTextEdits(this SourceText text, TextEdit[] edits)
+        => MinimizeTextEdits(text, edits, out _);
+
+    /// <summary>
+    /// Applies the set of edits specified, and returns the minimal set needed to make the same changes
+    /// </summary>
+    public static TextEdit[] MinimizeTextEdits(this SourceText text, TextEdit[] edits, out SourceText originalTextWithChanges)
+    {
+        var changes = edits.Select(text.GetTextChange);
+        originalTextWithChanges = text.WithChanges(changes);
+
+        if (text.ContentEquals(originalTextWithChanges))
+        {
+            return [];
+        }
+
+        var cleanChanges = SourceTextDiffer.GetMinimalTextChanges(text, originalTextWithChanges, DiffKind.Char);
+        var cleanEdits = cleanChanges.Select(text.GetTextEdit).ToArray();
+        return cleanEdits;
     }
 }

@@ -16,16 +16,16 @@ namespace Microsoft.VisualStudio.Razor;
 
 internal partial class RazorLanguageService : IVsLanguageDebugInfo
 {
-    private readonly RazorBreakpointResolver _breakpointResolver;
-    private readonly RazorProximityExpressionResolver _proximityExpressionResolver;
+    private readonly IRazorBreakpointResolver _breakpointResolver;
+    private readonly IRazorProximityExpressionResolver _proximityExpressionResolver;
     private readonly ILspServerActivationTracker _lspServerActivationTracker;
     private readonly IUIThreadOperationExecutor _uiThreadOperationExecutor;
     private readonly IVsEditorAdaptersFactoryService _editorAdaptersFactory;
     private readonly JoinableTaskFactory _joinableTaskFactory;
 
     public RazorLanguageService(
-        RazorBreakpointResolver breakpointResolver,
-        RazorProximityExpressionResolver proximityExpressionResolver,
+        IRazorBreakpointResolver breakpointResolver,
+        IRazorProximityExpressionResolver proximityExpressionResolver,
         ILspServerActivationTracker lspServerActivationTracker,
         IUIThreadOperationExecutor uiThreadOperationExecutor,
         IVsEditorAdaptersFactoryService editorAdaptersFactory,

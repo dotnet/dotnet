@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-extern alias LegacyClasp;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -10,7 +8,8 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.VisualStudio.Settings.Internal;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 using Microsoft.WebTools.Languages.Shared.Editor.Composition;
@@ -32,6 +31,7 @@ internal static class WebTools
     private const string ApplyFormatEditsParamTypeName = "Microsoft.WebTools.Languages.Shared.Editor.LanguageServer.ContainedLanguage.ApplyFormatEditsParam";
     private const string ApplyFormatEditsResponseTypeName = "Microsoft.WebTools.Languages.Shared.Editor.LanguageServer.ContainedLanguage.ApplyFormatEditsResponse";
     private const string TextChangeTypeName = "Microsoft.WebTools.Languages.Shared.Editor.EditorHelpers.TextChange";
+    private const string LspLoggerTypeName = "Microsoft.WebTools.Languages.LanguageServer.Server.Shared.Clasp.LspLogger";
 
     private static Assembly? s_serverAssembly;
     private static Assembly? s_editorAssembly;
@@ -240,29 +240,56 @@ internal static class WebTools
         public static ApplyFormatEditsHandler New(
             ITextBufferFactoryService3 textBufferFactoryService,
             BufferManager bufferManager,
-            ILspLogger logger)
+            ILogger logger)
         {
-            var instance = CreateInstance(Type, textBufferFactoryService, bufferManager.Instance, new LegacyClaspILspLogger(logger));
+            var instance = CreateInstance(Type, textBufferFactoryService, bufferManager.Instance, LspLogger.New(logger).Instance);
+            return new(instance);
+        }
+    }
+
+    public sealed class LspLogger(object instance) : ReflectedObject(instance)
+    {
+        private static Type? s_type;
+
+        public static Type Type
+            => s_type ?? InterlockedOperations.Initialize(ref s_type,
+                WebTools.GetType(ServerAssembly, LspLoggerTypeName));
+
+        public static RequestContext New(ILogger logger)
+        {
+            var instance = CreateInstance(Type, new MicrosoftExtensionsLoggerWrapper(logger));
             return new(instance);
         }
 
-        /// <summary>
-        /// Wraps the razor logger (from the clasp source package) into the binary clasp logger that webtools uses.
-        /// </summary>
-        /// <param name="logger"></param>
-        private class LegacyClaspILspLogger(ILspLogger logger) : LegacyClasp.Microsoft.CommonLanguageServerProtocol.Framework.ILspLogger
+        private class MicrosoftExtensionsLoggerWrapper(ILogger logger) : Microsoft.Extensions.Logging.ILogger
         {
-            public void LogEndContext(string message, params object[] @params) => logger.LogEndContext(message, @params);
+            public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+            {
+                return NoOpDisposable.Instance;
+            }
 
-            public void LogError(string message, params object[] @params) => logger.LogError(message, @params);
+            public bool IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel)
+            {
+                return true;
+            }
 
-            public void LogException(Exception exception, string? message = null, params object[] @params) => logger.LogException(exception, message, @params);
+            public void Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+            {
+                var message = formatter(state, exception);
+                var level = logLevel switch
+                {
+                    Microsoft.Extensions.Logging.LogLevel.Trace => LogLevel.Trace,
+                    Microsoft.Extensions.Logging.LogLevel.Debug => LogLevel.Debug,
+                    Microsoft.Extensions.Logging.LogLevel.Information => LogLevel.Information,
+                    Microsoft.Extensions.Logging.LogLevel.Warning => LogLevel.Warning,
+                    Microsoft.Extensions.Logging.LogLevel.Error => LogLevel.Error,
+                    Microsoft.Extensions.Logging.LogLevel.Critical => LogLevel.Critical,
+                    Microsoft.Extensions.Logging.LogLevel.None => LogLevel.None,
+                    _ => throw new NotImplementedException()
+                };
 
-            public void LogInformation(string message, params object[] @params) => logger.LogInformation(message, @params);
-
-            public void LogStartContext(string message, params object[] @params) => logger.LogStartContext(message, @params);
-
-            public void LogWarning(string message, params object[] @params) => logger.LogWarning(message, @params);
+                logger.Log(level, message);
+            }
         }
     }
 }

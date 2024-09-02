@@ -19,36 +19,29 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
 [RazorLanguageServerEndpoint(LanguageServerConstants.RazorBreakpointSpanEndpoint)]
-internal class RazorBreakpointSpanEndpoint : IRazorDocumentlessRequestHandler<RazorBreakpointSpanParams, RazorBreakpointSpanResponse?>, ITextDocumentIdentifierHandler<RazorBreakpointSpanParams, Uri>
+internal class RazorBreakpointSpanEndpoint(
+    IDocumentMappingService documentMappingService,
+    ILoggerFactory loggerFactory) : IRazorDocumentlessRequestHandler<RazorBreakpointSpanParams, RazorBreakpointSpanResponse?>, ITextDocumentIdentifierHandler<RazorBreakpointSpanParams, Uri>
 {
-    private readonly IDocumentMappingService _documentMappingService;
-    private readonly ILogger _logger;
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorBreakpointSpanEndpoint>();
 
     public bool MutatesSolutionState => false;
 
-    public RazorBreakpointSpanEndpoint(
-        IDocumentMappingService documentMappingService,
-        ILoggerFactory loggerFactory)
-    {
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
-        _logger = loggerFactory.GetOrCreateLogger<RazorBreakpointSpanEndpoint>();
-    }
-
     public Uri GetTextDocumentIdentifier(RazorBreakpointSpanParams request)
-    {
-        return request.Uri;
-    }
+        => request.Uri;
 
     public async Task<RazorBreakpointSpanResponse?> HandleRequestAsync(RazorBreakpointSpanParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
+            return null;
+        }
+
+        if (documentContext.Snapshot.Version != request.HostDocumentSyncVersion)
+        {
+            // Whether we are being asked about an old version of the C# document, or somehow a future one, we can't rely on the result.
             return null;
         }
 
