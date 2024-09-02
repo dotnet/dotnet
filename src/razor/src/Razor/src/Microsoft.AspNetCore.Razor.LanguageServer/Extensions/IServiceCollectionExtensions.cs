@@ -59,15 +59,8 @@ internal static class IServiceCollectionExtensions
     public static void AddFormattingServices(this IServiceCollection services)
     {
         // Formatting
+        services.AddSingleton<IHtmlFormatter, HtmlFormatter>();
         services.AddSingleton<IRazorFormattingService, RazorFormattingService>();
-
-        // Formatting Passes
-        services.AddSingleton<IFormattingPass, HtmlFormattingPass>();
-        services.AddSingleton<IFormattingPass, CSharpFormattingPass>();
-        services.AddSingleton<IFormattingPass, LspCSharpOnTypeFormattingPass>();
-        services.AddSingleton<IFormattingPass, FormattingDiagnosticValidationPass>();
-        services.AddSingleton<IFormattingPass, FormattingContentValidationPass>();
-        services.AddSingleton<IFormattingPass, LspRazorFormattingPass>();
 
         services.AddHandlerWithCapabilities<DocumentFormattingEndpoint>();
         services.AddHandlerWithCapabilities<DocumentOnTypeFormattingEndpoint>();

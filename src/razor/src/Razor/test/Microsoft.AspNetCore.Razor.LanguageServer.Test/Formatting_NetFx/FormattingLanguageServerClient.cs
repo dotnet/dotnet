@@ -102,12 +102,12 @@ internal class FormattingLanguageServerClient(ILoggerFactory loggerFactory) : IC
 
         if (!contentTypeService.ContentTypes.Any(t => t.TypeName == HtmlContentTypeDefinition.HtmlContentType))
         {
-            contentTypeService.AddContentType(HtmlContentTypeDefinition.HtmlContentType, new[] { StandardContentTypeNames.Text });
+            contentTypeService.AddContentType(HtmlContentTypeDefinition.HtmlContentType, [StandardContentTypeNames.Text]);
         }
 
         var textBufferFactoryService = (ITextBufferFactoryService3)exportProvider.GetExportedValue<ITextBufferFactoryService>();
         var bufferManager = WebTools.BufferManager.New(contentTypeService, textBufferFactoryService, []);
-        var logger = new ClaspLoggingBridge(_loggerFactory);
+        var logger = _loggerFactory.GetOrCreateLogger("ApplyFormattedEditsHandler");
         var applyFormatEditsHandler = WebTools.ApplyFormatEditsHandler.New(textBufferFactoryService, bufferManager, logger);
 
         // Make sure the buffer manager knows about the source document

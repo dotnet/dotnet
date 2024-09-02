@@ -21,7 +21,7 @@ internal interface IDocumentSnapshot
 
     Task<SourceText> GetTextAsync();
     Task<VersionStamp> GetTextVersionAsync();
-    Task<RazorCodeDocument> GetGeneratedOutputAsync();
+    Task<RazorCodeDocument> GetGeneratedOutputAsync(bool forceDesignTimeGeneratedOutput);
 
     /// <summary>
     /// Gets the Roslyn syntax tree for the generated C# for this Razor document

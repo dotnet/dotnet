@@ -64,8 +64,8 @@ internal sealed class RazorPackage : AsyncPackage
         container.AddService(typeof(RazorLanguageService), (container, type) =>
         {
             var componentModel = (IComponentModel)GetGlobalService(typeof(SComponentModel));
-            var breakpointResolver = componentModel.GetService<RazorBreakpointResolver>();
-            var proximityExpressionResolver = componentModel.GetService<RazorProximityExpressionResolver>();
+            var breakpointResolver = componentModel.GetService<IRazorBreakpointResolver>();
+            var proximityExpressionResolver = componentModel.GetService<IRazorProximityExpressionResolver>();
             var uiThreadOperationExecutor = componentModel.GetService<IUIThreadOperationExecutor>();
             var editorAdaptersFactory = componentModel.GetService<IVsEditorAdaptersFactoryService>();
             var lspServerActivationTracker = componentModel.GetService<ILspServerActivationTracker>();

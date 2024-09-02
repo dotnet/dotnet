@@ -39,7 +39,7 @@ internal partial class DebuggerInProcess
 
         foreach (EnvDTE.Breakpoint breakpoint in debugger.Breakpoints)
         {
-            if (breakpoint.File == fileName &&
+            if (breakpoint.File.EndsWith(fileName) &&
                 breakpoint.FileLine == line &&
                 breakpoint.FileColumn == character)
             {

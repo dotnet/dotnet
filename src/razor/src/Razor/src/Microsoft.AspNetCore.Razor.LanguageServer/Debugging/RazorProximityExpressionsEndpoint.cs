@@ -20,41 +20,29 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
 [RazorLanguageServerEndpoint(LanguageServerConstants.RazorProximityExpressionsEndpoint)]
-internal class RazorProximityExpressionsEndpoint : IRazorDocumentlessRequestHandler<RazorProximityExpressionsParams, RazorProximityExpressionsResponse?>, ITextDocumentIdentifierHandler<RazorProximityExpressionsParams, Uri>
+internal class RazorProximityExpressionsEndpoint(
+    IDocumentMappingService documentMappingService,
+    ILoggerFactory loggerFactory) : IRazorDocumentlessRequestHandler<RazorProximityExpressionsParams, RazorProximityExpressionsResponse?>, ITextDocumentIdentifierHandler<RazorProximityExpressionsParams, Uri>
 {
-    private readonly IDocumentMappingService _documentMappingService;
-    private readonly ILogger _logger;
-
-    public RazorProximityExpressionsEndpoint(
-        IDocumentMappingService documentMappingService,
-        ILoggerFactory loggerFactory)
-    {
-        if (documentMappingService is null)
-        {
-            throw new ArgumentNullException(nameof(documentMappingService));
-        }
-
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        _documentMappingService = documentMappingService;
-        _logger = loggerFactory.GetOrCreateLogger<RazorBreakpointSpanEndpoint>();
-    }
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorBreakpointSpanEndpoint>();
 
     public bool MutatesSolutionState => false;
 
     public Uri GetTextDocumentIdentifier(RazorProximityExpressionsParams request)
-    {
-        return request.Uri;
-    }
+        => request.Uri;
 
     public async Task<RazorProximityExpressionsResponse?> HandleRequestAsync(RazorProximityExpressionsParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
+            return null;
+        }
+
+        if (documentContext.Snapshot.Version != request.HostDocumentSyncVersion)
+        {
+            // Whether we are being asked about an old version of the C# document, or somehow a future one, we can't rely on the result.
             return null;
         }
 

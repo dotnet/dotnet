@@ -59,29 +59,9 @@ internal static class IDocumentSnapshotExtensions
         return fileName.AsSpan().Equals(path.Span, FilePathComparison.Instance);
     }
 
-    public static Task<RazorCodeDocument> GetFormatterCodeDocumentAsync(this IDocumentSnapshot documentSnapshot)
+    public static Task<RazorCodeDocument> GetGeneratedOutputAsync(this IDocumentSnapshot documentSnapshot)
     {
-        var forceRuntimeCodeGeneration = documentSnapshot.Project.Configuration.LanguageServerFlags?.ForceRuntimeCodeGeneration ?? false;
-        if (!forceRuntimeCodeGeneration)
-        {
-            return documentSnapshot.GetGeneratedOutputAsync();
-        }
-
-        // if forceRuntimeCodeGeneration is on, GetGeneratedOutputAsync will get runtime code. As of now
-        // the formatting service doesn't expect the form of code generated to be what the compiler does with
-        // runtime. For now force usage of design time and avoid the cache. There may be a slight perf hit
-        // but either the user is typing (which will invalidate the cache) or the user is manually attempting to
-        // format. We expect formatting to invalidate the cache if it changes things and consider this an
-        // acceptable overhead for now.
-        return GetDesignTimeDocumentAsync(documentSnapshot);
+        return documentSnapshot.GetGeneratedOutputAsync(forceDesignTimeGeneratedOutput: false);
     }
 
-    private static async Task<RazorCodeDocument> GetDesignTimeDocumentAsync(IDocumentSnapshot documentSnapshot)
-    {
-        var project = documentSnapshot.Project;
-        var tagHelpers = await project.GetTagHelpersAsync(CancellationToken.None).ConfigureAwait(false);
-        var projectEngine = project.GetProjectEngine();
-        var imports = await DocumentState.GetImportsAsync(documentSnapshot, projectEngine).ConfigureAwait(false);
-        return await DocumentState.GenerateCodeDocumentAsync(documentSnapshot, project.GetProjectEngine(), imports, tagHelpers, false).ConfigureAwait(false);
-    }
 }

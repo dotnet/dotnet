@@ -923,7 +923,7 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
         var sourceText = SourceText.From(txt);
 
         var snapshot = Mock.Of<IDocumentSnapshot>(d =>
-            d.GetGeneratedOutputAsync() == Task.FromResult(codeDocument) &&
+            d.GetGeneratedOutputAsync(It.IsAny<bool>()) == Task.FromResult(codeDocument) &&
             d.FilePath == path &&
             d.FileKind == FileKinds.Component &&
             d.GetTextAsync() == Task.FromResult(sourceText) &&

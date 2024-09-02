@@ -2,13 +2,16 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -21,19 +24,23 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 [RazorLanguageServerEndpoint(Methods.TextDocumentOnTypeFormattingName)]
 internal class DocumentOnTypeFormattingEndpoint(
     IRazorFormattingService razorFormattingService,
+    IHtmlFormatter htmlFormatter,
     IDocumentMappingService documentMappingService,
     RazorLSPOptionsMonitor optionsMonitor,
     ILoggerFactory loggerFactory)
     : IRazorRequestHandler<DocumentOnTypeFormattingParams, TextEdit[]?>, ICapabilitiesProvider
 {
-    private readonly IRazorFormattingService _razorFormattingService = razorFormattingService ?? throw new ArgumentNullException(nameof(razorFormattingService));
-    private readonly IDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
-    private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor ?? throw new ArgumentNullException(nameof(optionsMonitor));
+    private readonly IRazorFormattingService _razorFormattingService = razorFormattingService;
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
+    private readonly IHtmlFormatter _htmlFormatter = htmlFormatter;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<DocumentOnTypeFormattingEndpoint>();
 
-    private static readonly IReadOnlyList<string> s_csharpTriggerCharacters = new[] { "}", ";" };
-    private static readonly IReadOnlyList<string> s_htmlTriggerCharacters = new[] { "\n", "{", "}", ";" };
-    private static readonly IReadOnlyList<string> s_allTriggerCharacters = s_csharpTriggerCharacters.Concat(s_htmlTriggerCharacters).ToArray();
+    private static readonly ImmutableArray<string> s_allTriggerCharacters = ["}", ";", "\n", "{"];
+
+    private static readonly FrozenSet<string> s_csharpTriggerCharacterSet = FrozenSet.ToFrozenSet(["}", ";"], StringComparer.Ordinal);
+    private static readonly FrozenSet<string> s_htmlTriggerCharacterSet = FrozenSet.ToFrozenSet(["\n", "{", "}", ";"], StringComparer.Ordinal);
+    private static readonly FrozenSet<string> s_allTriggerCharacterSet = s_allTriggerCharacters.ToFrozenSet(StringComparer.Ordinal);
 
     public bool MutatesSolutionState => false;
 
@@ -42,7 +49,7 @@ internal class DocumentOnTypeFormattingEndpoint(
         serverCapabilities.DocumentOnTypeFormattingProvider = new DocumentOnTypeFormattingOptions
         {
             FirstTriggerCharacter = s_allTriggerCharacters[0],
-            MoreTriggerCharacter = s_allTriggerCharacters.Skip(1).ToArray(),
+            MoreTriggerCharacter = s_allTriggerCharacters.AsSpan()[1..].ToArray(),
         };
     }
 
@@ -67,14 +74,13 @@ internal class DocumentOnTypeFormattingEndpoint(
             return null;
         }
 
-        if (!s_allTriggerCharacters.Contains(request.Character, StringComparer.Ordinal))
+        if (!s_allTriggerCharacterSet.Contains(request.Character))
         {
             _logger.LogWarning($"Unexpected trigger character '{request.Character}'.");
             return null;
         }
 
         var documentContext = requestContext.DocumentContext;
-
         if (documentContext is null)
         {
             _logger.LogWarning($"Failed to find document {request.TextDocument.Uri}.");
@@ -114,7 +120,24 @@ internal class DocumentOnTypeFormattingEndpoint(
 
         Debug.Assert(request.Character.Length > 0);
 
-        var formattedEdits = await _razorFormattingService.FormatOnTypeAsync(documentContext, triggerCharacterKind, Array.Empty<TextEdit>(), request.Options, hostDocumentIndex, request.Character[0], cancellationToken).ConfigureAwait(false);
+        var options = RazorFormattingOptions.From(request.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
+
+        TextEdit[] formattedEdits;
+        if (triggerCharacterKind == RazorLanguageKind.CSharp)
+        {
+            formattedEdits = await _razorFormattingService.GetCSharpOnTypeFormattingEditsAsync(documentContext, options, hostDocumentIndex, request.Character[0], cancellationToken).ConfigureAwait(false);
+        }
+        else if (triggerCharacterKind == RazorLanguageKind.Html)
+        {
+            var htmlEdits = await _htmlFormatter.GetOnTypeFormattingEditsAsync(documentContext.Snapshot, documentContext.Uri, request.Position, request.Character, request.Options, cancellationToken).ConfigureAwait(false);
+            formattedEdits = await _razorFormattingService.GetHtmlOnTypeFormattingEditsAsync(documentContext, htmlEdits, options, hostDocumentIndex, request.Character[0], cancellationToken).ConfigureAwait(false);
+        }
+        else
+        {
+            Assumed.Unreachable();
+            return null;
+        }
+
         if (formattedEdits.Length == 0)
         {
             _logger.LogInformation($"No formatting changes were necessary");
@@ -129,14 +152,21 @@ internal class DocumentOnTypeFormattingEndpoint(
     {
         if (languageKind == RazorLanguageKind.CSharp)
         {
-            return s_csharpTriggerCharacters.Contains(triggerCharacter);
+            return s_csharpTriggerCharacterSet.Contains(triggerCharacter);
         }
         else if (languageKind == RazorLanguageKind.Html)
         {
-            return s_htmlTriggerCharacters.Contains(triggerCharacter);
+            return s_htmlTriggerCharacterSet.Contains(triggerCharacter);
         }
 
         // Unknown trigger character.
         return false;
+    }
+
+    internal static class TestAccessor
+    {
+        public static ImmutableArray<string> GetAllTriggerCharacters() => s_allTriggerCharacters;
+        public static FrozenSet<string> GetCSharpTriggerCharacterSet() => s_csharpTriggerCharacterSet;
+        public static FrozenSet<string> GetHtmlTriggerCharacterSet() => s_htmlTriggerCharacterSet;
     }
 }
