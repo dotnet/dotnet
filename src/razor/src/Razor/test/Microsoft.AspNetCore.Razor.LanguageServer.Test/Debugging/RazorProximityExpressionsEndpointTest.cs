@@ -40,6 +40,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         {
             Uri = documentPath,
             Position = VsLspFactory.CreatePosition(1, 0),
+            HostDocumentSyncVersion = 0,
         };
         codeDocument.SetUnsupported();
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -65,6 +66,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         {
             Uri = documentPath,
             Position = VsLspFactory.CreatePosition(1, 8),
+            HostDocumentSyncVersion = 0,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -90,6 +92,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         {
             Uri = documentPath,
             Position = VsLspFactory.CreatePosition(1, 0),
+            HostDocumentSyncVersion = 0,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -115,6 +118,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         {
             Uri = documentPath,
             Position = VsLspFactory.CreatePosition(1, 0),
+            HostDocumentSyncVersion = 0,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -142,6 +146,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         {
             Uri = documentPath,
             Position = VsLspFactory.DefaultPosition,
+            HostDocumentSyncVersion = 0,
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 

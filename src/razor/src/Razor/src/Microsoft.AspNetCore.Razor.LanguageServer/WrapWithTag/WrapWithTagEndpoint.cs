@@ -116,7 +116,7 @@ internal class WrapWithTagEndpoint(
         if (htmlResponse.TextEdits is not null)
         {
             var htmlSourceText = await documentContext.GetHtmlSourceTextAsync(cancellationToken).ConfigureAwait(false);
-            htmlResponse.TextEdits = HtmlFormatter.FixHtmlTestEdits(htmlSourceText, htmlResponse.TextEdits);
+            htmlResponse.TextEdits = HtmlFormatter.FixHtmlTextEdits(htmlSourceText, htmlResponse.TextEdits);
         }
 
         return htmlResponse;

@@ -2,7 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +14,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Threading;
+using Microsoft.CodeAnalysis.Razor.AutoInsert;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -26,21 +29,18 @@ internal class OnAutoInsertEndpoint(
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IDocumentMappingService documentMappingService,
     IClientConnection clientConnection,
-    IEnumerable<IOnAutoInsertProvider> onAutoInsertProvider,
+    IAutoInsertService autoInsertService,
     RazorLSPOptionsMonitor optionsMonitor,
     IAdhocWorkspaceFactory workspaceFactory,
     IRazorFormattingService razorFormattingService,
     ILoggerFactory loggerFactory)
     : AbstractRazorDelegatingEndpoint<VSInternalDocumentOnAutoInsertParams, VSInternalDocumentOnAutoInsertResponseItem?>(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.GetOrCreateLogger<OnAutoInsertEndpoint>()), ICapabilitiesProvider
 {
-    private static readonly HashSet<string> s_htmlAllowedTriggerCharacters = new(StringComparer.Ordinal) { "=", };
-    private static readonly HashSet<string> s_cSharpAllowedTriggerCharacters = new(StringComparer.Ordinal) { "'", "/", "\n" };
-
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
     private readonly IAdhocWorkspaceFactory _workspaceFactory = workspaceFactory;
     private readonly IRazorFormattingService _razorFormattingService = razorFormattingService;
-    private readonly List<IOnAutoInsertProvider> _onAutoInsertProviders = onAutoInsertProvider.ToList();
+    private readonly IAutoInsertService _autoInsertService = autoInsertService;
 
     protected override string CustomMessageTarget => CustomMessageNames.RazorOnAutoInsertEndpointName;
 
@@ -53,17 +53,17 @@ internal class OnAutoInsertEndpoint(
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        var triggerCharacters = _onAutoInsertProviders.Select(provider => provider.TriggerCharacter);
+        var triggerCharacters = _autoInsertService.TriggerCharacters;
 
         if (_languageServerFeatureOptions.SingleServerSupport)
         {
-            triggerCharacters = triggerCharacters.Concat(s_htmlAllowedTriggerCharacters).Concat(s_cSharpAllowedTriggerCharacters);
+            triggerCharacters = [
+                .. triggerCharacters,
+                .. AutoInsertService.HtmlAllowedAutoInsertTriggerCharacters,
+                .. AutoInsertService.CSharpAllowedAutoInsertTriggerCharacters];
         }
 
-        serverCapabilities.OnAutoInsertProvider = new VSInternalDocumentOnAutoInsertOptions()
-        {
-            TriggerCharacters = triggerCharacters.Distinct().ToArray()
-        };
+        serverCapabilities.EnableOnAutoInsert(triggerCharacters);
     }
 
     protected override async Task<VSInternalDocumentOnAutoInsertResponseItem?> TryHandleAsync(VSInternalDocumentOnAutoInsertParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
@@ -84,36 +84,18 @@ internal class OnAutoInsertEndpoint(
 
         var character = request.Character;
 
-        using var applicableProviders = new PooledArrayBuilder<IOnAutoInsertProvider>();
-        foreach (var provider in _onAutoInsertProviders)
+        if (_autoInsertService.TryResolveInsertion(
+                codeDocument,
+                request.Position,
+                character,
+                _optionsMonitor.CurrentValue.AutoClosingTags,
+                out var insertTextEdit))
         {
-            if (provider.TriggerCharacter == character)
+            return new VSInternalDocumentOnAutoInsertResponseItem()
             {
-                applicableProviders.Add(provider);
-            }
-        }
-
-        if (applicableProviders.Count == 0)
-        {
-            // There's currently a bug in the LSP platform where other language clients OnAutoInsert trigger characters influence every language clients trigger characters.
-            // To combat this we need to preemptively return so we don't try having our providers handle characters that they can't.
-            return null;
-        }
-
-        var uri = request.TextDocument.Uri;
-        var position = request.Position;
-
-        using var formattingContext = FormattingContext.Create(uri, documentContext.Snapshot, codeDocument, request.Options, _workspaceFactory);
-        foreach (var provider in applicableProviders)
-        {
-            if (provider.TryResolveInsertion(position, formattingContext, out var textEdit, out var format))
-            {
-                return new VSInternalDocumentOnAutoInsertResponseItem()
-                {
-                    TextEdit = textEdit,
-                    TextEditFormat = format,
-                };
-            }
+                TextEdit = insertTextEdit.TextEdit,
+                TextEditFormat = insertTextEdit.TextEditFormat,
+            };
         }
 
         // No provider could handle the text edit.
@@ -130,7 +112,7 @@ internal class OnAutoInsertEndpoint(
 
         if (positionInfo.LanguageKind == RazorLanguageKind.Html)
         {
-            if (!s_htmlAllowedTriggerCharacters.Contains(request.Character))
+            if (!AutoInsertService.HtmlAllowedAutoInsertTriggerCharacters.Contains(request.Character))
             {
                 Logger.LogInformation($"Inapplicable HTML trigger char {request.Character}.");
                 return SpecializedTasks.Null<IDelegatedParams>();
@@ -146,7 +128,7 @@ internal class OnAutoInsertEndpoint(
         }
         else if (positionInfo.LanguageKind == RazorLanguageKind.CSharp)
         {
-            if (!s_cSharpAllowedTriggerCharacters.Contains(request.Character))
+            if (!AutoInsertService.CSharpAllowedAutoInsertTriggerCharacters.Contains(request.Character))
             {
                 Logger.LogInformation($"Inapplicable C# trigger char {request.Character}.");
                 return SpecializedTasks.Null<IDelegatedParams>();
@@ -203,19 +185,21 @@ internal class OnAutoInsertEndpoint(
         }
 
         // For C# we run the edit through our formatting engine
-        var edits = new[] { delegatedResponse.TextEdit };
+        Debug.Assert(positionInfo.LanguageKind == RazorLanguageKind.CSharp);
 
-        var mappedEdits = delegatedResponse.TextEditFormat == InsertTextFormat.Snippet
-            ? await _razorFormattingService.FormatSnippetAsync(documentContext, positionInfo.LanguageKind, edits, originalRequest.Options, cancellationToken).ConfigureAwait(false)
-            : await _razorFormattingService.FormatOnTypeAsync(documentContext, positionInfo.LanguageKind, edits, originalRequest.Options, hostDocumentIndex: 0, triggerCharacter: '\0', cancellationToken).ConfigureAwait(false);
-        if (mappedEdits is not [{ } edit])
+        var options = RazorFormattingOptions.From(originalRequest.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
+
+        var mappedEdit = delegatedResponse.TextEditFormat == InsertTextFormat.Snippet
+            ? await _razorFormattingService.GetCSharpSnippetFormattingEditAsync(documentContext, [delegatedResponse.TextEdit], options, cancellationToken).ConfigureAwait(false)
+            : await _razorFormattingService.GetSingleCSharpEditAsync(documentContext, delegatedResponse.TextEdit, options, cancellationToken).ConfigureAwait(false);
+        if (mappedEdit is null)
         {
             return null;
         }
 
         return new VSInternalDocumentOnAutoInsertResponseItem()
         {
-            TextEdit = edit,
+            TextEdit = mappedEdit,
             TextEditFormat = delegatedResponse.TextEditFormat,
         };
     }

@@ -54,7 +54,7 @@ internal sealed class DefaultHtmlCodeActionProvider(IEditMappingService editMapp
 
             foreach (var edit in documentEdits)
             {
-                edit.Edits = HtmlFormatter.FixHtmlTestEdits(htmlSourceText, edit.Edits);
+                edit.Edits = HtmlFormatter.FixHtmlTextEdits(htmlSourceText, edit.Edits);
             }
 
             codeAction.Edit = new WorkspaceEdit

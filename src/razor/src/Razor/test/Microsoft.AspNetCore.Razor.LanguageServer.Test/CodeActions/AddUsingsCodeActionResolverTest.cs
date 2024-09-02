@@ -21,6 +21,48 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     private readonly IDocumentContextFactory _emptyDocumentContextFactory = new TestDocumentContextFactory();
 
     [Fact]
+    public void GetNamespaceFromFQN_Invalid_ReturnsEmpty()
+    {
+        // Arrange
+        var fqn = "Abc";
+
+        // Act
+        var namespaceName = AddUsingsCodeActionResolver.GetNamespaceFromFQN(fqn);
+
+        // Assert
+        Assert.Empty(namespaceName);
+    }
+
+    [Fact]
+    public void GetNamespaceFromFQN_Valid_ReturnsNamespace()
+    {
+        // Arrange
+        var fqn = "Abc.Xyz";
+
+        // Act
+        var namespaceName = AddUsingsCodeActionResolver.GetNamespaceFromFQN(fqn);
+
+        // Assert
+        Assert.Equal("Abc", namespaceName);
+    }
+
+    [Fact]
+    public void TryCreateAddUsingResolutionParams_CreatesResolutionParams()
+    {
+        // Arrange
+        var fqn = "Abc.Xyz";
+        var docUri = new Uri("c:/path");
+
+        // Act
+        var result = AddUsingsCodeActionResolver.TryCreateAddUsingResolutionParams(fqn, docUri, additionalEdit: null, out var @namespace, out var resolutionParams);
+
+        // Assert
+        Assert.True(result);
+        Assert.Equal("Abc", @namespace);
+        Assert.NotNull(resolutionParams);
+    }
+
+    [Fact]
     public async Task Handle_MissingFile()
     {
         // Arrange

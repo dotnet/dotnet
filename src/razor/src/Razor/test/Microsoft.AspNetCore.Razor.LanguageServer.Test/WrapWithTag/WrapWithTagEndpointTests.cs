@@ -282,7 +282,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
         };
 
         var htmlSourceText = await context!.GetHtmlSourceTextAsync(DisposalToken);
-        var edits = HtmlFormatter.FixHtmlTestEdits(htmlSourceText, computedEdits);
+        var edits = HtmlFormatter.FixHtmlTextEdits(htmlSourceText, computedEdits);
         Assert.Same(computedEdits, edits);
 
         var finalText = inputSourceText.WithChanges(edits.Select(inputSourceText.GetTextChange));
@@ -322,7 +322,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
         };
 
         var htmlSourceText = await context!.GetHtmlSourceTextAsync(DisposalToken);
-        var edits = HtmlFormatter.FixHtmlTestEdits(htmlSourceText, computedEdits);
+        var edits = HtmlFormatter.FixHtmlTextEdits(htmlSourceText, computedEdits);
         Assert.NotSame(computedEdits, edits);
 
         var finalText = inputSourceText.WithChanges(edits.Select(inputSourceText.GetTextChange));
@@ -362,7 +362,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
         };
 
         var htmlSourceText = await context.GetHtmlSourceTextAsync(DisposalToken);
-        var edits = HtmlFormatter.FixHtmlTestEdits(htmlSourceText, computedEdits);
+        var edits = HtmlFormatter.FixHtmlTextEdits(htmlSourceText, computedEdits);
         Assert.NotSame(computedEdits, edits);
 
         var finalText = inputSourceText.WithChanges(edits.Select(inputSourceText.GetTextChange));
