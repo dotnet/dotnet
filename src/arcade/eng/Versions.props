@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <!-- This repo version -->
-    <VersionPrefix>9.0.0</VersionPrefix>
+    <VersionPrefix>10.0.0</VersionPrefix>
     <PreReleaseVersionLabel>beta</PreReleaseVersionLabel>
     <!-- Opt-out repo features -->
     <UsingToolXliff>false</UsingToolXliff>
@@ -79,7 +79,10 @@
     <MicrosoftApplicationInsightsVersion>2.22.0</MicrosoftApplicationInsightsVersion>
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
     <!-- symreader-converter -->
+    <MicrosoftDiaSymReaderConverterVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterVersion>
     <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbVersion>
+    <!-- diagnostics -->
+    <MicrosoftSymbolManifestGeneratorVersion>8.0.0-preview.24326.1</MicrosoftSymbolManifestGeneratorVersion>
     <!-- templating -->
     <MicrosoftTemplateEngineAuthoringTasksVersion>10.0.100-alpha.1.24418.4</MicrosoftTemplateEngineAuthoringTasksVersion>
     <!-- vstest -->

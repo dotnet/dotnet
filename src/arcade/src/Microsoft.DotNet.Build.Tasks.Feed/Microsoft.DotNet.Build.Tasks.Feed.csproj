@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <SignAssembly>true</SignAssembly>
-    <Description>This package provides support for publishing assets to a NuGet protocol based feed.</Description>
+    <Description>This package provides support for publishing assets to appropriate channels.</Description>
     <DevelopmentDependency>true</DevelopmentDependency>
     <IsBuildTaskProject>true</IsBuildTaskProject>
     <PackageType>MSBuildSdk</PackageType>
@@ -18,26 +18,22 @@
     <PackageReference Include="Azure.Identity" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <PackageReference Include="Azure.Storage.Blobs" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" />
-
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-    <PackageReference Include="Microsoft.SymbolUploader" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
-  </ItemGroup>
-
-  <!-- Upgrade SymbolUploader's transitive NETStandard.Library dependency to avoid .NET Standard 1.x dependencies. -->
-  <ItemGroup>
-    <PackageReference Include="NETStandard.Library"
-                      IsImplicitlyDefined="false"
-                      PrivateAssets="all"
-                      ExcludeAssets="runtime"
-                      VersionOverride="2.0.3"
-                      Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and '$(DotNetBuildSourceOnly)' != 'true'">
     <!-- Maestro.Client stopped supporting .NET 4.7.2 long ago.
-         This functionality should eventually be moved into an arcade-services package,
-         but for users consuming other functionality we'll still support 4.7.2 by ifdefing it out. -->
+    This functionality should eventually be moved into an arcade-services package,
+    but for users consuming other functionality we'll still support 4.7.2 by ifdefing it out. -->
     <PackageReference Include="Microsoft.DotNet.Maestro.Client" />
+    <!-- SymbolUploadHelper uses Azure SDKs, S.T.Json, and several other dependencies that can't be downgraded safely.
+    On .NET Core/.NET these deps come from the shared framework and we don't need try to do version fixups, and 
+    the symbol publishing doesn't run on framework anyway (this project has a throwing stub for .NET framework in that path
+    due to the reliance in maestro). Until we really need to multitarget, this is the better path. -->
+    <ProjectReference Include="..\Microsoft.DotNet.Internal.SymbolHelper\Microsoft.DotNet.Internal.SymbolHelper.csproj" />
+    <!-- Additionally, SymbolHelper relies on Microsoft.DiaSymReader which brings NS.Library 1.6.1 and the slew of
+    old packages with it. Upgrade to keep CG happy. -->
+    <PackageReference Include="NETStandard.Library" IsImplicitlyDefined="false" PrivateAssets="all" ExcludeAssets="runtime" VersionOverride="2.0.3" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
@@ -64,6 +60,7 @@
     <Compile Remove="src\AzureStorageContainerAssetTokenCredentialPublisher.cs" />
     <Compile Remove="src\AzureStorageExtensions.cs" />
     <Compile Remove="src\BlobFeedAction.cs" />
+    <Compile Remove="src\IAssetPublisher.cs" />
     <Compile Remove="src\common\AssetComparer.cs" />
     <Compile Remove="src\common\AzureConnectionStringBuildTask.cs" />
     <Compile Remove="src\common\AzureStorageUtils.cs" />
@@ -72,18 +69,18 @@
     <Compile Remove="src\common\CreateNewAzureContainer.cs" />
     <Compile Remove="src\common\LatestLinksManager.cs" />
     <Compile Remove="src\common\UploadToAzure.cs" />
+    <Compile Remove="src\CreateAzureDevOpsFeed.cs" />
     <Compile Remove="src\model\PublishingConstants.cs" />
     <Compile Remove="src\model\SetupTargetFeedConfigBase.cs" />
     <Compile Remove="src\model\SetupTargetFeedConfigV3.cs" />
     <Compile Remove="src\model\TargetChannelConfig.cs" />
     <Compile Remove="src\model\TargetFeedConfig.cs" />
+    <Compile Remove="src\PATCredential.cs" />
     <Compile Remove="src\PublishArtifactsInManifest.cs" />
     <Compile Remove="src\PublishArtifactsInManifestBase.cs" />
     <Compile Remove="src\PublishArtifactsInManifestV3.cs" />
     <Compile Remove="src\PublishSignedAssets.cs" />
-    <Compile Remove="src\PublishSymbolsHelper.cs" />
-    <Compile Remove="src\IAssetPublisher.cs" />
-    <Compile Remove="src\CreateAzureDevOpsFeed.cs" />
+    <Compile Remove="src\TaskTracer.cs" />
   </ItemGroup>
 
 </Project>

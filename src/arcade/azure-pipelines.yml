@@ -42,6 +42,11 @@ extends:
       name: $(DncEngInternalBuildPool)
       image: windows.vs2019.amd64
       os: windows
+    sdl:
+      policheck:
+        enabled: true
+      tsa:
+        enabled: true
 
     stages:
     - stage: build
@@ -107,19 +112,3 @@ extends:
         publishDependsOn:
         - Validate
         - ValidateSdk
-        # This is to enable SDL runs part of Post-Build Validation Stage 
-        SDLValidationParameters:
-          enable: true
-          publishGdn: true
-          continueOnError: false
-          params: ' -SourceToolsList @("policheck","credscan")
-          -TsaInstanceURL $(_TsaInstanceURL)
-          -TsaProjectName $(_TsaProjectName)
-          -TsaNotificationEmail $(_TsaNotificationEmail)
-          -TsaCodebaseAdmin $(_TsaCodebaseAdmin)
-          -TsaBugAreaPath $(_TsaBugAreaPath)
-          -TsaIterationPath $(_TsaIterationPath)
-          -TsaRepositoryName "Arcade"
-          -TsaCodebaseName "Arcade"
-          -TsaPublish $True
-          -PoliCheckAdditionalRunConfigParams @("UserExclusionPath < $(Build.SourcesDirectory)/eng/PoliCheckExclusions.xml")'

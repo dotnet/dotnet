@@ -188,20 +188,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     return false;
                 }
 
-                string temporarySymbolsLocation = "";
-                if (!UseStreamingPublishing)
-                {
-                    temporarySymbolsLocation =
-                        Path.GetFullPath(Path.Combine(BlobAssetsBasePath, @"..\", "tempSymbols"));
-
-                    EnsureTemporaryDirectoryExists(temporarySymbolsLocation);
-                    DeleteTemporaryFiles(temporarySymbolsLocation);
-
-                    // Copying symbol files to temporary location is required because the symUploader API needs read/write access to the files,
-                    // since we publish blobs and symbols in parallel this will cause IO exceptions.
-                    CopySymbolFilesToTemporaryLocation(BuildModel, temporarySymbolsLocation);
-                }
-
                 using var clientThrottle = new SemaphoreSlim(MaxClients, MaxClients);
 
                 await Task.WhenAll(new Task[]
@@ -209,18 +195,15 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     HandlePackagePublishingAsync(buildAssets, clientThrottle),
                     HandleBlobPublishingAsync(buildAssets, clientThrottle),
                     HandleSymbolPublishingAsync(
+                        buildInformation,
+                        buildAssets,
                         PdbArtifactsBasePath,
                         MsdlToken,
                         SymWebToken,
                         SymbolPublishingExclusionsFile,
                         PublishSpecialClrFiles,
-                        buildAssets,
-                        clientThrottle,
-                        temporarySymbolsLocation)
+                        clientThrottle)
                 });
-
-                DeleteTemporaryFiles(temporarySymbolsLocation);
-                DeleteTemporaryDirectory(temporarySymbolsLocation);
 
                 await PersistPendingAssetLocationAsync(client);
             }
@@ -235,27 +218,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
 
             return !Log.HasLoggedErrors;
-        }
-
-
-        /// <summary>
-        /// Copying symbol files to temporary location.
-        /// </summary>
-        /// <param name="buildModel"></param>
-        /// <param name="symbolTemporaryLocation"></param>
-        private void CopySymbolFilesToTemporaryLocation(BuildModel buildModel, string symbolTemporaryLocation)
-        {
-            foreach (var blobAsset in buildModel.Artifacts.Blobs)
-            {
-                if (GeneralUtils.IsSymbolPackage(blobAsset.Id))
-                {
-                    var sourceFile = Path.Combine(BlobAssetsBasePath, Path.GetFileName(blobAsset.Id));
-                    var destinationFile = Path.Combine(symbolTemporaryLocation, Path.GetFileName(blobAsset.Id));
-                    File.Copy(sourceFile, destinationFile);
-                    Log.LogMessage(MessageImportance.Low,
-                        $"Successfully copied file {sourceFile} to {destinationFile}.");
-                }
-            }
         }
 
         public string GetFeed(string feed, string feedOverride)

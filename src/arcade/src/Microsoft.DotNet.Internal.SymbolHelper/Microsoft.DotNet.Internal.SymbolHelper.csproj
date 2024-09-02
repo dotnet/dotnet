@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetToolCurrent)</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
+    <!-- Upgrade Microsoft.DiaSymReader.Converter's transitive NETStandard.Library
+        dependency to avoid .NET Standard 1.x dependencies. -->
+    <PackageReference Include="NETStandard.Library"
+                      IsImplicitlyDefined="false"
+                      PrivateAssets="all"
+                      ExcludeAssets="runtime"
+                      VersionOverride="2.0.3" />
+
+    <PackageReference Include="Azure.Core" />
+    <PackageReference Include="Azure.Identity" />
+    <PackageReference Include="Microsoft.DiaSymReader.Converter" />
+    <PackageReference Include="Microsoft.SymbolManifestGenerator" />
+    <PackageReference Include="Polly.Core" />
+  </ItemGroup>
+</Project>
