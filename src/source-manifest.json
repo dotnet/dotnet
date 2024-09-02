@@ -61,10 +61,10 @@
       "commitSha": "a5feb419073e74562fde38768898988334f379a1"
     },
     {
-      "packageVersion": "17.12.0-preview-24428-06",
+      "packageVersion": "17.12.0-preview-24429-01",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "b82694a16d4963b5765e36fdc89d270fa00dde8e"
+      "commitSha": "01e53f4161996ce73408117d012f24c2c1737e58"
     },
     {
       "packageVersion": "6.12.0-preview.1.87",
@@ -79,10 +79,10 @@
       "commitSha": "1f45c70f4f631c06db78bd0fdb450b9a8ab7d039"
     },
     {
-      "packageVersion": "4.12.0-3.24428.8",
+      "packageVersion": "4.12.0-3.24430.8",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "14f5b27c7206557c9054ba6ce59cb9c819d5b473"
+      "commitSha": "5cba0ce666766b1db7cd75009575c7e12c4be72c"
     },
     {
       "packageVersion": "3.11.0-beta1.24415.1",
@@ -91,10 +91,10 @@
       "commitSha": "fdb9965ce68c1f4e1c0ff301488adf9caa958615"
     },
     {
-      "packageVersion": "9.0.0-rc.2.24428.8",
+      "packageVersion": "9.0.0-rc.2.24429.19",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "0a5cccb57942c0493ef680f559f69866f3b1eb7d"
+      "commitSha": "d0f3235d312f7cf9683012b3fe96b2c6f20a1743"
     },
     {
       "packageVersion": "9.0.0-preview.24372.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "4b4d9f442ff91fd58f86f1ed39ca1abe93a8c6b8"
+      "commitSha": "6fe842f60f280fcc5e863aa016209625c8581d5a"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24426.2",
@@ -121,10 +121,10 @@
       "commitSha": "f22b1078535aa38f914c2304a02303e92de0adc0"
     },
     {
-      "packageVersion": "9.0.0-beta.24428.1",
+      "packageVersion": "9.0.0-beta.24429.2",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "9b94576f3e56ee55c818ff611065c8acb3fdf2e2"
+      "commitSha": "303af3b605542acb8dd111f7a01ce4deaedd34df"
     },
     {
       "packageVersion": "2.2.0-beta.24327.2",
