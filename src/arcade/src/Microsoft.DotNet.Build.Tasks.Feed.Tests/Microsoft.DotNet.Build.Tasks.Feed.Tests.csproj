@@ -16,16 +16,13 @@
     <ProjectReference Include="..\Common\Microsoft.Arcade.Test.Common\Microsoft.Arcade.Test.Common.csproj" />
     <ProjectReference Include="..\Microsoft.DotNet.Build.Tasks.Feed\Microsoft.DotNet.Build.Tasks.Feed.csproj" />
     <ProjectReference Include="..\Microsoft.DotNet.Internal.DependencyInjection.Testing\Microsoft.DotNet.Internal.DependencyInjection.Testing.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.XUnitExtensions\src\Microsoft.DotNet.XUnitExtensions.csproj" />
     <ProjectReference Include="..\VersionTools\Microsoft.DotNet.VersionTools\Microsoft.DotNet.VersionTools.csproj" />
   </ItemGroup>
 
-  <!-- Upgrade SymbolUploader's transitive NETStandard.Library dependency to avoid .NET Standard 1.x dependencies. -->
+  <!-- Upgrade transitive NETStandard.Library dependency to avoid .NET Standard 1.x dependencies from symbol uploading. -->
   <ItemGroup>
-    <PackageReference Include="NETStandard.Library"
-                      IsImplicitlyDefined="false"
-                      PrivateAssets="all"
-                      ExcludeAssets="runtime"
-                      VersionOverride="2.0.3" />
+    <PackageReference Include="NETStandard.Library" IsImplicitlyDefined="false" PrivateAssets="all" ExcludeAssets="runtime" VersionOverride="2.0.3" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -22,12 +23,27 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         private const string MsdlToken = "msdlToken";
         private const string SymWebToken = "SymWebToken";
         private const string TargetUrl = "TargetUrl";
-        private const string Msdl = "https://microsoftpublicsymbols.artifacts.visualstudio.com/DefaultCollection";
-        private const string SymWeb = "https://microsoft.artifacts.visualstudio.com/DefaultCollection";
+        private const string MsdlAzdoOrg = "microsoftpublicsymbols";
+        private const string SymwebAzdoOrg = "microsoft";
+
+        [Fact]
+        public void TemporarySymbolsDirectoryTest()
+        {
+            var buildEngine = new MockBuildEngine();
+            var publishTask = new PublishArtifactsInManifestV3()
+            {
+                BuildEngine = buildEngine,
+            };
+            var path = TestInputs.GetFullPath("Test");
+            publishTask.EnsureTemporaryDirectoryExists(path);
+            Assert.True(Directory.Exists(path));
+            publishTask.DeleteTemporaryDirectory(path);
+            Assert.False(Directory.Exists(path));
+        }
 
         [Theory]
-        [InlineData(SymbolTargetType.Msdl, Msdl)]
-        [InlineData(SymbolTargetType.SymWeb, SymWeb)]
+        [InlineData(SymbolTargetType.Msdl, MsdlAzdoOrg)]
+        [InlineData(SymbolTargetType.SymWeb, SymwebAzdoOrg)]
         public void PublishToSymbolServersTest(SymbolTargetType symbolTargetType , string symbolServer)
         {
             var publishTask = new PublishArtifactsInManifestV3();
@@ -43,11 +59,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 @internal: false,
                 allowOverwrite: true,
                 symbolTargetType));
-            Dictionary<string, string> test =
-                publishTask.GetTargetSymbolServers(feedConfigsForSymbols, MsdlToken, SymWebToken);
-            Assert.True(
-                test.ContainsKey(symbolServer));
-            Assert.True(test.Count == 1);
+            List<(string AzdoOrg, string Token)> servers = publishTask.GetTargetSymbolServers(feedConfigsForSymbols, MsdlToken, SymWebToken);
+            Assert.Single(servers);
+            Assert.Contains(servers, x => x.AzdoOrg == symbolServer);
         }
 
         [Fact]
@@ -77,75 +91,132 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 @internal: false,
                 allowOverwrite: true,
                 SymbolTargetType.Msdl));
-            Dictionary<string, string> test =
-                publishTask.GetTargetSymbolServers(feedConfigsForSymbols, MsdlToken, SymWebToken);
-            Assert.True(
-                test.ContainsKey(Msdl));
-            Assert.True(test.ContainsKey(SymWeb));
-            Assert.True(test.Count == 2);
+            List<(string Tenant, string Token)> servers = publishTask.GetTargetSymbolServers(feedConfigsForSymbols, MsdlToken, SymWebToken);
+            Assert.Contains(servers, x => x.Tenant == MsdlAzdoOrg);
+            Assert.Contains(servers, x => x.Tenant == SymwebAzdoOrg);
+            Assert.Equal(2, servers.Count);
         }
 
         [Fact]
-        public async Task TemporarySymbolDirectoryDoesNotExists()
+        public async Task NoAssetsToPublishFound()
         {
-            var buildEngine = new MockBuildEngine();
-            var task = new PublishArtifactsInManifestV3()
-            {
-                BuildEngine = buildEngine,
-            };
+            (var buildEngine, var task, _, _, _, var buildInfo) = GetCanonicalSymbolTestAssets();
+
             var path = TestInputs.GetFullPath("Symbol");
-            var buildAsset = new Dictionary<string, Asset>().AsReadOnly();
-            await task.HandleSymbolPublishingAsync(path, MsdlToken, SymWebToken, "", false, buildAsset, null, path);
-            Assert.True(task.Log.HasLoggedErrors);
+            var buildAsset = ReadOnlyDictionary<string, Asset>.Empty;
+
+            await task.HandleSymbolPublishingAsync(
+                buildInfo: buildInfo,
+                buildAssets: buildAsset,
+                pdbArtifactsBasePath: path,
+                msdlToken: MsdlToken,
+                symWebToken: SymWebToken,
+                symbolPublishingExclusionsFile: "",
+                publishSpecialClrFiles: false,
+                clientThrottle: null);
+
+            // TODO: Should this be a warning at least? it used to be an error but it doesn't make as much sense.
+            // This isn't the best type of test as it tests specifics and not behavior, but the task doesn't
+            // have interesting observable state.
+            Assert.Contains(buildEngine.BuildMessageEvents, x => x.Message.StartsWith("No assets to publish"));
         }
 
         [Fact]
-        public void TemporarySymbolsDirectoryTest()
+        public async Task NoServersToPublishFound()
         {
-            var buildEngine = new MockBuildEngine();
-            var publishTask = new PublishArtifactsInManifestV3()
+            (var buildEngine, var task, var symbolPackages, _, _, var buildInfo) = GetCanonicalSymbolTestAssets(SymbolTargetType.None);
+
+            await task.HandleSymbolPublishingAsync(
+                buildInfo: buildInfo,
+                symbolPackages,
+                pdbArtifactsBasePath: null,
+                msdlToken: MsdlToken,
+                symWebToken: SymWebToken,
+                symbolPublishingExclusionsFile: "",
+                publishSpecialClrFiles: false,
+                clientThrottle: null);
+
+            // This isn't the best type of test as it tests implementation specifics and not behavior, but the task doesn't
+            // have interesting observable state. It's also a big perf hit to try to not go down this path.
+            Assert.Contains(buildEngine.BuildMessageEvents, x => x.Message.StartsWith("No target symbol servers"));
+        }
+
+        [WindowsOnlyFact]
+        public async Task PublishSymbolsBasicScenarioTest()
+        {
+            (var buildEngine, var task, var symbolPackages, var symbolFilesDir, var exclusionFile, var buildInfo) = GetCanonicalSymbolTestAssets(SymbolTargetType.Msdl | SymbolTargetType.SymWeb);
+
+            await task.HandleSymbolPublishingAsync(
+                buildInfo: buildInfo,
+                symbolPackages,
+                pdbArtifactsBasePath: symbolFilesDir,
+                msdlToken: MsdlToken,
+                symWebToken: SymWebToken,
+                symbolPublishingExclusionsFile: exclusionFile,
+                publishSpecialClrFiles: false,
+                clientThrottle: null,
+                dryRun: true);
+
+            task.UseStreamingPublishing = true;
+
+            Assert.Empty(buildEngine.BuildErrorEvents);
+            Assert.Empty(buildEngine.BuildWarningEvents);
+
+            // This isn't the best type of test as it tests implementation specifics and not behavior, but the task doesn't
+            // have interesting observable state.
+            Assert.Contains(buildEngine.BuildMessageEvents, x => x.Message.StartsWith("Publishing Symbols to Symbol server"));
+            var message = buildEngine.BuildMessageEvents.Single(x => x.Message.StartsWith("Publishing Symbols to Symbol server"));
+            Assert.Contains("Symbol package count: 1", message.Message);
+            Assert.Contains("Loose symbol file count: 1", message.Message);
+
+            Assert.Equal(2, buildEngine.BuildMessageEvents.Where(x => x.Message.Contains("Creating symbol request")).Count());
+            Assert.Equal(2, buildEngine.BuildMessageEvents.Where(x => x.Message.Contains("Adding files to request")).Count());
+
+            // Message per package per server
+            Assert.Equal(2 * symbolPackages.Keys.Count, buildEngine.BuildMessageEvents.Where(x => x.Message.Contains($"Extracting symbol package")).Count());
+            Assert.Equal(2 * symbolPackages.Keys.Count, buildEngine.BuildMessageEvents.Where(x => x.Message.Contains($"Adding package")).Count());
+
+            // Make sure exclusions are tracked this should change in conjunction with the exclusion file in the symbols test directory.
+            Assert.Contains(buildEngine.BuildMessageEvents , x => x.Message.Contains("Skipping lib/net8.0/aztoken.dll"));
+            Assert.Contains(buildEngine.BuildMessageEvents, x => x.Message.StartsWith("Finalizing publishing to the appropriate symbol servers."));
+            Assert.Contains(buildEngine.BuildMessageEvents, x => x.Message.StartsWith("Finished publishing symbols."));
+        }
+
+        private static (MockBuildEngine, PublishArtifactsInManifestV3, ReadOnlyDictionary<string, Asset>, string, string, Maestro.Client.Models.Build) GetCanonicalSymbolTestAssets(SymbolTargetType targetServer = SymbolTargetType.SymWeb | SymbolTargetType.Msdl)
+        {
+            var symbolPackages = new Dictionary<string, Asset>()
             {
-                BuildEngine = buildEngine,
-            };
-            var path = TestInputs.GetFullPath("Test");
-            publishTask.EnsureTemporaryDirectoryExists(path);
-            Assert.True(Directory.Exists(path));
-            publishTask.DeleteTemporaryDirectory(path);
-            Assert.False(Directory.Exists(path));
-        }
+                { "test-package-a.1.0.0.symbols.nupkg",  new(id: 0, buildId: 0, nonShipping: true, name: "test-package-a.1.0.0.symbols.nupkg", version: "1.0.0", locations: [])}
+            }.AsReadOnly();
+            var exclusionFile = TestInputs.GetFullPath("Symbols/SymbolPublishingExclusionsFile.txt");
+            var symbolFilesDir = TestInputs.GetFullPath("Symbols");
 
-        [Fact]
-        public void PublishSymbolApiIsCalledTest()
-        {
-            var path = TestInputs.GetFullPath("Symbols");
-            string[] fileEntries = Directory.GetFiles(path);
-            var feedConfigsForSymbols = new HashSet<TargetFeedConfig>();
-            feedConfigsForSymbols.Add(new TargetFeedConfig(
+            var buildEngine = new MockBuildEngine();
+
+            HashSet<TargetFeedConfig> feedConfigsForSymbols = [
+                new TargetFeedConfig(
                 TargetFeedContentType.Symbols,
                 TargetUrl,
                 FeedType.AzDoNugetFeed,
                 SymWebToken,
-                new List<string>(),
+                latestLinkShortUrlPrefixes: [],
                 AssetSelection.All,
                 isolated: true,
                 @internal: false,
                 allowOverwrite: true,
-                SymbolTargetType.SymWeb));
-            Assert.True(PublishSymbolsHelper.PublishAsync(
-                log: null,
-                symbolServerPath: path,
-                personalAccessToken: SymWebToken,
-                inputPackages: fileEntries,
-                inputFiles: fileEntries,
-                packageExcludeFiles: null,
-                expirationInDays: 365,
-                convertPortablePdbsToWindowsPdbs: false,
-                publishSpecialClrFiles: false,
-                pdbConversionTreatAsWarning: null,
-                treatPdbConversionIssuesAsInfo: false,
-                dryRun: false,
-                timer: false,
-                verboseLogging: false).IsCompleted);
+                targetServer)
+            ];
+
+            var task = new PublishArtifactsInManifestV3()
+            {
+                BuildEngine = buildEngine,
+                BlobAssetsBasePath = symbolFilesDir
+            };
+            task.FeedConfigs.Add(TargetFeedContentType.Symbols, feedConfigsForSymbols);
+
+            Maestro.Client.Models.Build buildInfo = new(id: 4242, DateTimeOffset.Now, staleness: 0, released: false, stable: true, commit: "abcd", [], [], [], []);
+
+            return (buildEngine, task, symbolPackages, symbolFilesDir, exclusionFile, buildInfo);
         }
 
         [Fact]
