@@ -16,6 +16,7 @@ namespace Microsoft.EntityFrameworkCore.Query.Internal;
 public class QueryableMethodNormalizingExpressionVisitor : ExpressionVisitor
 {
     private readonly QueryCompilationContext _queryCompilationContext;
+    private readonly bool _isEfConstantSupported;
     private readonly SelectManyVerifyingExpressionVisitor _selectManyVerifyingExpressionVisitor = new();
     private readonly GroupJoinConvertingExpressionVisitor _groupJoinConvertingExpressionVisitor = new();
 
@@ -25,9 +26,10 @@ public class QueryableMethodNormalizingExpressionVisitor : ExpressionVisitor
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public QueryableMethodNormalizingExpressionVisitor(QueryCompilationContext queryCompilationContext)
+    public QueryableMethodNormalizingExpressionVisitor(QueryCompilationContext queryCompilationContext, bool isEfConstantSupported)
     {
         _queryCompilationContext = queryCompilationContext;
+        _isEfConstantSupported = isEfConstantSupported;
     }
 
     /// <summary>
@@ -108,6 +110,31 @@ public class QueryableMethodNormalizingExpressionVisitor : ExpressionVisitor
             && ExtractQueryMetadata(methodCallExpression) is Expression expression)
         {
             return expression;
+        }
+
+        if (method.DeclaringType == typeof(EF))
+        {
+            switch (method.Name)
+            {
+                case nameof(EF.Constant):
+                {
+                    if (!_isEfConstantSupported)
+                    {
+                        throw new InvalidOperationException(CoreStrings.EFConstantNotSupported);
+                    }
+
+                    var parameterExpression = (ParameterExpression)Visit(methodCallExpression.Arguments[0]);
+                    _queryCompilationContext.ParametersToConstantize.Add(parameterExpression.Name!);
+                    return parameterExpression;
+                }
+
+                case nameof(EF.Parameter):
+                {
+                    var parameterExpression = (ParameterExpression)Visit(methodCallExpression.Arguments[0]);
+                    _queryCompilationContext.ParametersToNotConstantize.Add(parameterExpression.Name!);
+                    return parameterExpression;
+                }
+            }
         }
 
         // Normalize list[x] to list.ElementAt(x)
@@ -198,7 +225,10 @@ public class QueryableMethodNormalizingExpressionVisitor : ExpressionVisitor
             && visitedMethodCall.Method.DeclaringType == typeof(Queryable)
             && visitedMethodCall.Method.IsGenericMethod)
         {
-            return TryFlattenGroupJoinSelectMany(visitedMethodCall);
+            visitedMethodCall = TryNormalizeOrderAndOrderDescending(visitedMethodCall);
+            visitedMethodCall = TryFlattenGroupJoinSelectMany(visitedMethodCall);
+
+            return visitedMethodCall;
         }
 
         return visitedExpression;
@@ -488,6 +518,26 @@ public class QueryableMethodNormalizingExpressionVisitor : ExpressionVisitor
 
         return enumerableType == typeof(IEnumerable<>) && queryableType == typeof(IQueryable<>)
             || enumerableType == typeof(IOrderedEnumerable<>) && queryableType == typeof(IOrderedQueryable<>);
+    }
+
+    private MethodCallExpression TryNormalizeOrderAndOrderDescending(MethodCallExpression methodCallExpression)
+    {
+        var genericMethod = methodCallExpression.Method.GetGenericMethodDefinition();
+        if (genericMethod == QueryableMethods.Order
+            || genericMethod == QueryableMethods.OrderDescending)
+        {
+            var sourceType = methodCallExpression.Method.GetGenericArguments()[0];            
+            var parameter = Expression.Parameter(sourceType);
+
+            return Expression.Call(
+                genericMethod == QueryableMethods.Order
+                    ? QueryableMethods.OrderBy.MakeGenericMethod(sourceType, sourceType)
+                    : QueryableMethods.OrderByDescending.MakeGenericMethod(sourceType, sourceType),
+                methodCallExpression.Arguments[0],
+                Expression.Quote(Expression.Lambda(parameter, parameter)));
+        }
+
+        return methodCallExpression;
     }
 
     private MethodCallExpression TryFlattenGroupJoinSelectMany(MethodCallExpression methodCallExpression)

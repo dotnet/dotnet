@@ -3,13 +3,13 @@
 
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using Azure;
 using Azure.Core;
 using Azure.ResourceManager;
 using Azure.ResourceManager.CosmosDB;
 using Azure.ResourceManager.CosmosDB.Models;
 using Microsoft.Azure.Cosmos;
+using Microsoft.EntityFrameworkCore.Cosmos.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Cosmos.Storage.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -75,7 +75,7 @@ public class CosmosTestStore : TestStore
     }
 
     private static string CreateName(string name)
-        => TestEnvironment.IsEmulator || name == "Northwind"
+        => TestEnvironment.IsEmulator || name == "Northwind" || name == "Northwind2" || name == "Northwind3"
             ? name
             : name + _runId;
 
@@ -188,6 +188,8 @@ public class CosmosTestStore : TestStore
                         if (reader.TokenType == JsonToken.StartObject)
                         {
                             string? entityName = null;
+                            string? containerName = null;
+                            bool? discriminatorInId = null;
                             while (reader.Read())
                             {
                                 if (reader.TokenType == JsonToken.PropertyName)
@@ -198,6 +200,14 @@ public class CosmosTestStore : TestStore
                                             reader.Read();
                                             entityName = (string)reader.Value;
                                             break;
+                                        case "Container":
+                                            reader.Read();
+                                            containerName = (string)reader.Value;
+                                            break;
+                                        case "DiscriminatorInId":
+                                            reader.Read();
+                                            discriminatorInId = (bool)reader.Value;
+                                            break;
                                         case "Data":
                                             while (reader.Read())
                                             {
@@ -205,11 +215,14 @@ public class CosmosTestStore : TestStore
                                                 {
                                                     var document = serializer.Deserialize<JObject>(reader)!;
 
-                                                    document["id"] = $"{entityName}|{document["id"]}";
-                                                    document["Discriminator"] = entityName;
+                                                    document["id"] = discriminatorInId == true
+                                                        ? $"{entityName}|{document["id"]}"
+                                                        : $"{document["id"]}";
+
+                                                    document["$type"] = entityName;
 
                                                     await cosmosClient.CreateItemAsync(
-                                                        "NorthwindContext", document, new FakeUpdateEntry()).ConfigureAwait(false);
+                                                        containerName!, document, new FakeUpdateEntry()).ConfigureAwait(false);
                                                 }
                                                 else if (reader.TokenType == JsonToken.EndObject)
                                                 {
@@ -378,12 +391,15 @@ public class CosmosTestStore : TestStore
             mappedTypes.Add(entityType);
         }
 
+#pragma warning disable EF9103
         foreach (var (containerName, mappedTypes) in containers)
         {
             IReadOnlyList<string> partitionKeyStoreNames = Array.Empty<string>();
             int? analyticalTtl = null;
             int? defaultTtl = null;
             ThroughputProperties? throughput = null;
+            var indexes = new List<IIndex>();
+            var vectors = new List<(IProperty Property, CosmosVectorType VectorType)>();
 
             foreach (var entityType in mappedTypes)
             {
@@ -394,14 +410,26 @@ public class CosmosTestStore : TestStore
                 analyticalTtl ??= entityType.GetAnalyticalStoreTimeToLive();
                 defaultTtl ??= entityType.GetDefaultTimeToLive();
                 throughput ??= entityType.GetThroughput();
+                indexes.AddRange(entityType.GetIndexes());
+
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.FindTypeMapping() is CosmosVectorTypeMapping vectorTypeMapping)
+                    {
+                        vectors.Add((property, vectorTypeMapping.VectorType));
+                    }
+                }
             }
+#pragma warning restore EF9103
 
             yield return new(
                 containerName,
                 partitionKeyStoreNames,
                 analyticalTtl,
                 defaultTtl,
-                throughput);
+                throughput,
+                indexes,
+                vectors);
         }
     }
 
@@ -474,7 +502,8 @@ public class CosmosTestStore : TestStore
     private static async Task SeedAsync(DbContext context)
     {
         var creator = (CosmosDatabaseCreator)context.GetService<IDatabaseCreator>();
-        await creator.SeedAsync().ConfigureAwait(false);
+        await creator.InsertDataAsync().ConfigureAwait(false);
+        await creator.SeedDataAsync(created: true).ConfigureAwait(false);
     }
 
     public override void Dispose()
@@ -649,6 +678,9 @@ public class CosmosTestStore : TestStore
             => throw new NotImplementedException();
 
         public IIndex FindIndex(IReadOnlyList<IReadOnlyProperty> properties)
+            => throw new NotImplementedException();
+
+        public string GetEmbeddedDiscriminatorName()
             => throw new NotImplementedException();
 
         public PropertyInfo FindIndexerPropertyInfo()

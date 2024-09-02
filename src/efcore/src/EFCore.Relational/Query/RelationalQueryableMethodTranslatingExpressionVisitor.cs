@@ -2,8 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
@@ -239,7 +243,8 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
             && method.GetGenericMethodDefinition() == QueryableMethods.Contains
             && methodCallExpression.Arguments[0] is ParameterQueryRootExpression parameterSource
             && TranslateExpression(methodCallExpression.Arguments[1]) is SqlExpression item
-            && _sqlTranslator.Visit(parameterSource.ParameterExpression) is SqlParameterExpression sqlParameterExpression)
+            && _sqlTranslator.Visit(parameterSource.ParameterExpression) is SqlParameterExpression sqlParameterExpression
+            && !QueryCompilationContext.ParametersToNotConstantize.Contains(sqlParameterExpression.Name))
         {
             var inExpression = _sqlExpressionFactory.In(item, sqlParameterExpression);
             var selectExpression = new SelectExpression(inExpression, _sqlAliasManager);
@@ -291,7 +296,26 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
 
         Check.DebugAssert(sqlParameterExpression is not null, "sqlParameterExpression is not null");
 
+        var primitiveCollectionsBehavior = RelationalOptionsExtension.Extract(QueryCompilationContext.ContextOptions)
+            .ParameterizedCollectionTranslationMode;
+
         var tableAlias = _sqlAliasManager.GenerateTableAlias(sqlParameterExpression.Name.TrimStart('_'));
+        if (QueryCompilationContext.ParametersToConstantize.Contains(sqlParameterExpression.Name)
+            || (primitiveCollectionsBehavior == ParameterizedCollectionTranslationMode.Constantize
+                && !QueryCompilationContext.ParametersToNotConstantize.Contains(sqlParameterExpression.Name)))
+        {
+            var valuesExpression = new ValuesExpression(
+                tableAlias,
+                sqlParameterExpression,
+                [ValuesOrderingColumnName, ValuesValueColumnName]);
+            return CreateShapedQueryExpressionForValuesExpression(
+                valuesExpression,
+                tableAlias,
+                parameterQueryRootExpression.ElementType,
+                sqlParameterExpression.TypeMapping,
+                sqlParameterExpression.IsNullable);
+        }
+
         return TranslatePrimitiveCollection(sqlParameterExpression, property: null, tableAlias);
     }
 
@@ -378,7 +402,6 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         for (var i = 0; i < sqlExpressions.Length; i++)
         {
             var sqlExpression = sqlExpressions[i];
-
             rowExpressions[i] =
                 new RowValueExpression(
                     new[]
@@ -394,45 +417,15 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
                             : sqlExpression
                     });
         }
-
         var alias = _sqlAliasManager.GenerateTableAlias("values");
         var valuesExpression = new ValuesExpression(alias, rowExpressions, new[] { ValuesOrderingColumnName, ValuesValueColumnName });
 
-        // Note: we leave the element type mapping null, to allow it to get inferred based on queryable operators composed on top.
-        var valueColumn = new ColumnExpression(
-            ValuesValueColumnName,
+        return CreateShapedQueryExpressionForValuesExpression(
+            valuesExpression,
             alias,
-            elementType.UnwrapNullableType(),
-            typeMapping: inferredTypeMaping,
-            nullable: encounteredNull);
-        var orderingColumn = new ColumnExpression(
-            ValuesOrderingColumnName,
-            alias,
-            typeof(int),
-            typeMapping: intTypeMapping,
-            nullable: false);
-
-        var selectExpression = new SelectExpression(
-            [valuesExpression],
-            valueColumn,
-            identifier: [(orderingColumn, orderingColumn.TypeMapping!.Comparer)],
-            _sqlAliasManager);
-
-        selectExpression.AppendOrdering(new OrderingExpression(orderingColumn, ascending: true));
-
-        Expression shaperExpression = new ProjectionBindingExpression(
-            selectExpression, new ProjectionMember(), encounteredNull ? elementType.MakeNullable() : elementType);
-
-        if (elementType != shaperExpression.Type)
-        {
-            Check.DebugAssert(
-                elementType.MakeNullable() == shaperExpression.Type,
-                "expression.Type must be nullable of targetType");
-
-            shaperExpression = Expression.Convert(shaperExpression, elementType);
-        }
-
-        return new ShapedQueryExpression(selectExpression, shaperExpression);
+            elementType,
+            inferredTypeMaping,
+            encounteredNull);
     }
 
     /// <inheritdoc />
@@ -478,6 +471,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         {
             subquery.ClearOrdering();
         }
+        subquery.IsDistinct = false;
 
         translation = _sqlExpressionFactory.Not(_sqlExpressionFactory.Exists(subquery));
         subquery = new SelectExpression(translation, _sqlAliasManager);
@@ -509,6 +503,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         {
             subquery.ClearOrdering();
         }
+        subquery.IsDistinct = false;
 
         var translation = _sqlExpressionFactory.Exists(subquery);
         var selectExpression = new SelectExpression(translation, _sqlAliasManager);
@@ -575,9 +570,14 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         }
 
         // Pattern-match Contains over ValuesExpression, translating to simplified 'item IN (1, 2, 3)' with constant elements
-        if (TryExtractBareInlineCollectionValues(source, out var values))
+        if (TryExtractBareInlineCollectionValues(source, out var values, out var valuesParameter))
         {
-            var inExpression = _sqlExpressionFactory.In(translatedItem, values);
+            var inExpression = (values, valuesParameter) switch
+            {
+                (not null, null) => _sqlExpressionFactory.In(translatedItem, values),
+                (null, not null) => _sqlExpressionFactory.In(translatedItem, valuesParameter),
+                _ => throw new UnreachableException(),
+            };
             return source.Update(new SelectExpression(inExpression, _sqlAliasManager), source.ShaperExpression);
         }
 
@@ -589,6 +589,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         {
             subquery.ClearOrdering();
         }
+        subquery.IsDistinct = false;
 
         subquery.ReplaceProjection(new List<Expression> { projection });
         subquery.ApplyProjection();
@@ -1786,22 +1787,15 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
             return source.CreateEFPropertyExpression(property);
         }
 
-        private sealed class AnnotationApplyingExpressionVisitor : ExpressionVisitor
+        private sealed class AnnotationApplyingExpressionVisitor(IReadOnlyList<IAnnotation> annotations) : ExpressionVisitor
         {
-            private readonly IReadOnlyList<IAnnotation> _annotations;
-
-            public AnnotationApplyingExpressionVisitor(IReadOnlyList<IAnnotation> annotations)
-            {
-                _annotations = annotations;
-            }
-
             [return: NotNullIfNotNull(nameof(expression))]
             public override Expression? Visit(Expression? expression)
             {
                 if (expression is TableExpression te)
                 {
                     TableExpressionBase ownedTable = te;
-                    foreach (var annotation in _annotations)
+                    foreach (var annotation in annotations)
                     {
                         ownedTable = ownedTable.AddAnnotation(annotation.Name, annotation.Value);
                     }
@@ -2078,8 +2072,10 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         projection = null;
         return false;
     }
-
     private bool TryExtractBareInlineCollectionValues(ShapedQueryExpression shapedQuery, [NotNullWhen(true)] out SqlExpression[]? values)
+        => TryExtractBareInlineCollectionValues(shapedQuery, out values, out _);
+
+    private bool TryExtractBareInlineCollectionValues(ShapedQueryExpression shapedQuery, out SqlExpression[]? values, out SqlParameterExpression? valuesParameter)
     {
         if (TryGetProjection(shapedQuery, out var projection)
             && shapedQuery.QueryExpression is SelectExpression
@@ -2100,19 +2096,74 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
             && projection is ColumnExpression { TableAlias: var tableAlias }
             && tableAlias == valuesExpression.Alias)
         {
-            values = new SqlExpression[valuesExpression.RowValues.Count];
-
-            for (var i = 0; i < values.Length; i++)
+            switch (valuesExpression)
             {
-                // Skip the first value (_ord) - this function assumes ordering doesn't matter
-                values[i] = valuesExpression.RowValues[i].Values[1];
-            }
+                case { RowValues: not null }:
+                    values = new SqlExpression[valuesExpression.RowValues.Count];
 
-            return true;
+                    for (var i = 0; i < values.Length; i++)
+                    {
+                        // Skip the first value (_ord) - this function assumes ordering doesn't matter
+                        values[i] = valuesExpression.RowValues[i].Values[1];
+                    }
+
+                    valuesParameter = null;
+                    return true;
+
+                case { ValuesParameter: not null }:
+                    valuesParameter = valuesExpression.ValuesParameter;
+                    values = null;
+                    return true;
+            }
         }
 
         values = null;
+        valuesParameter = null;
         return false;
+    }
+
+    private ShapedQueryExpression CreateShapedQueryExpressionForValuesExpression(
+        ValuesExpression valuesExpression,
+        string tableAlias,
+        Type elementType,
+        RelationalTypeMapping? inferredTypeMapping,
+        bool encounteredNull)
+    {
+        // Note: we leave the element type mapping null, to allow it to get inferred based on queryable operators composed on top.
+        var valueColumn = new ColumnExpression(
+            ValuesValueColumnName,
+            tableAlias,
+            elementType.UnwrapNullableType(),
+            typeMapping: inferredTypeMapping,
+            nullable: encounteredNull);
+        var orderingColumn = new ColumnExpression(
+            ValuesOrderingColumnName,
+            tableAlias,
+            typeof(int),
+            typeMapping: _typeMappingSource.FindMapping(typeof(int), RelationalDependencies.Model),
+            nullable: false);
+
+        var selectExpression = new SelectExpression(
+            [valuesExpression],
+            valueColumn,
+            identifier: [(orderingColumn, orderingColumn.TypeMapping!.Comparer)],
+            _sqlAliasManager);
+
+        selectExpression.AppendOrdering(new OrderingExpression(orderingColumn, ascending: true));
+
+        Expression shaperExpression = new ProjectionBindingExpression(
+        selectExpression, new ProjectionMember(), encounteredNull ? elementType.MakeNullable() : elementType);
+
+        if (elementType != shaperExpression.Type)
+        {
+            Check.DebugAssert(
+                elementType.MakeNullable() == shaperExpression.Type,
+                "expression.Type must be nullable of targetType");
+
+            shaperExpression = Expression.Convert(shaperExpression, elementType);
+        }
+
+        return new ShapedQueryExpression(selectExpression, shaperExpression);
     }
 
     /// <summary>
