@@ -229,7 +229,7 @@ public class DbContextOperationsTest
         Assert.Equal(
             DesignStrings.NoContextsToOptimize,
             Assert.Throws<OperationException>(() =>
-                operations.Optimize(null, null, contextTypeName: "*", null, scaffoldModel: true, precompileQueries: false)).Message);
+                operations.Optimize(null, null, contextTypeName: "*", null, scaffoldModel: true, precompileQueries: false, nativeAot: false)).Message);
 
         Assert.DoesNotContain(reporter.Messages, m => m.Level == LogLevel.Critical);
         Assert.DoesNotContain(reporter.Messages, m => m.Level == LogLevel.Error);
@@ -253,7 +253,7 @@ public class DbContextOperationsTest
             args: [],
             new TestAppServiceProviderFactory(assembly, reporter, throwOnCreate: true));
 
-        operations.Optimize(null, null, contextTypeName: "*", null, scaffoldModel: true, precompileQueries: false);
+        operations.Optimize(null, null, contextTypeName: "*", null, scaffoldModel: true, precompileQueries: false, nativeAot: false);
 
         Assert.DoesNotContain(reporter.Messages, m => m.Level == LogLevel.Critical);
         Assert.DoesNotContain(reporter.Messages, m => m.Level == LogLevel.Error);
@@ -270,7 +270,7 @@ public class DbContextOperationsTest
 
         Assert.Equal("Test", info.DatabaseName);
         Assert.Equal(@"(localdb)\mssqllocaldb", info.DataSource);
-        Assert.Equal("None", info.Options);
+        Assert.Equal("EngineType=SqlServer", info.Options);
         Assert.Equal("Microsoft.EntityFrameworkCore.SqlServer", info.ProviderName);
     }
 
@@ -291,7 +291,7 @@ public class DbContextOperationsTest
 
         Assert.Equal(DesignStrings.BadConnection(expected.Message), info.DatabaseName);
         Assert.Equal(DesignStrings.BadConnection(expected.Message), info.DataSource);
-        Assert.Equal("None", info.Options);
+        Assert.Equal("EngineType=SqlServer", info.Options);
         Assert.Equal("Microsoft.EntityFrameworkCore.SqlServer", info.ProviderName);
     }
 

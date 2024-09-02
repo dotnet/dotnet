@@ -5,6 +5,7 @@ using System.Buffers;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore.Internal;
 using static System.Linq.Expressions.Expression;
 
 namespace Microsoft.EntityFrameworkCore.Query.Internal;
@@ -925,13 +926,12 @@ public class ExpressionTreeFuncletizer : ExpressionVisitor
                         throw new InvalidOperationException(CoreStrings.EFConstantWithNonEvaluatableArgument);
                     }
 
-                    argumentState = argumentState with
-                    {
-                        StateType = StateType.EvaluatableWithoutCapturedVariable, ForceConstantization = true
-                    };
+                    // Even EF.Constant will be parameter here.
+                    // To have a query cache hit, the constantization will happen later in pipeline.
+                    argumentState = argumentState with { StateType = StateType.EvaluatableWithCapturedVariable };
                     var evaluatedArgument = ProcessEvaluatableRoot(argument, ref argumentState);
                     _state = argumentState;
-                    return evaluatedArgument;
+                    return Call(method, evaluatedArgument);
                 }
 
                 case nameof(EF.Parameter):
@@ -944,9 +944,9 @@ public class ExpressionTreeFuncletizer : ExpressionVisitor
                     }
 
                     argumentState = argumentState with { StateType = StateType.EvaluatableWithCapturedVariable };
-                    var evaluatedArgument = ProcessEvaluatableRoot(argument, ref argumentState);
+                    var evaluatedArgument = ProcessEvaluatableRoot(argument, ref argumentState, forceEvaluation: true);
                     _state = argumentState;
-                    return evaluatedArgument;
+                    return Call(method, evaluatedArgument);
                 }
             }
         }
@@ -1827,7 +1827,7 @@ public class ExpressionTreeFuncletizer : ExpressionVisitor
     }
 
     [return: NotNullIfNotNull(nameof(evaluatableRoot))]
-    private Expression? ProcessEvaluatableRoot(Expression? evaluatableRoot, ref State state)
+    private Expression? ProcessEvaluatableRoot(Expression? evaluatableRoot, ref State state, bool forceEvaluation = false)
     {
         if (evaluatableRoot is null)
         {
@@ -1849,7 +1849,7 @@ public class ExpressionTreeFuncletizer : ExpressionVisitor
         // We have some cases where a node is evaluatable, but only as part of a larger subtree, and should not be evaluated as a tree root.
         // For these cases, the node's state has a notEvaluatableAsRootHandler lambda, which we can invoke to make evaluate the node's
         // children (as needed), but not itself.
-        if (TryHandleNonEvaluatableAsRoot(evaluatableRoot, state, evaluateAsParameter, out var result))
+        if (!forceEvaluation && TryHandleNonEvaluatableAsRoot(evaluatableRoot, state, evaluateAsParameter, out var result))
         {
             return result;
         }

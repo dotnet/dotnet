@@ -121,13 +121,8 @@ public class RelationalEventIdTest : EventIdTestBase
             => throw new NotImplementedException();
     }
 
-    private class FakeSqlExpression : SqlExpression
+    private class FakeSqlExpression() : SqlExpression(typeof(object), null)
     {
-        public FakeSqlExpression()
-            : base(typeof(object), null)
-        {
-        }
-
         public override Expression Quote()
             => throw new NotSupportedException();
 
@@ -147,15 +142,6 @@ public class RelationalEventIdTest : EventIdTestBase
             string fromMigration = null,
             string toMigration = null,
             MigrationsSqlGenerationOptions options = MigrationsSqlGenerationOptions.Default)
-            => throw new NotImplementedException();
-
-        public void Migrate(Action<DbContext, IMigratorData> seed, string targetMigration, TimeSpan? lockTimeout)
-            => throw new NotImplementedException();
-
-        public Task MigrateAsync(Func<DbContext, IMigratorData, CancellationToken, Task> seed,
-            string targetMigration,
-            TimeSpan? lockTimeout,
-            CancellationToken cancellationToken = default)
             => throw new NotImplementedException();
 
         public bool HasPendingModelChanges()
@@ -180,13 +166,7 @@ public class RelationalEventIdTest : EventIdTestBase
             => throw new NotImplementedException();
     }
 
-    private class FakeMigrationCommand : MigrationCommand
-    {
-        public FakeMigrationCommand()
-            : base(new FakeRelationalCommand(), null, new FakeRelationalCommandDiagnosticsLogger())
-        {
-        }
-    }
+    private class FakeMigrationCommand() : MigrationCommand(new FakeRelationalCommand(), null, new FakeRelationalCommandDiagnosticsLogger());
 
     private class FakeRelationalCommand : IRelationalCommand
     {

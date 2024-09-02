@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore.Cosmos.Internal;
 using Newtonsoft.Json.Linq;
 
@@ -44,25 +45,6 @@ public class CosmosModelValidatorTest : ModelValidatorTestBase
             });
 
         VerifyError(CosmosStrings.NoIdProperty(nameof(Order)), modelBuilder);
-    }
-
-    [ConditionalFact]
-    public virtual void Detects_non_key_id_property()
-    {
-        var modelBuilder = CreateConventionlessModelBuilder();
-        modelBuilder.Entity<Order>(
-            b =>
-            {
-                b.Property(o => o.Id);
-                b.HasKey(o => o.Id);
-                b.Property<string>("id");
-                b.Ignore(o => o.PartitionId);
-                b.Ignore(o => o.Customer);
-                b.Ignore(o => o.OrderDetails);
-                b.Ignore(o => o.Products);
-            });
-
-        VerifyError(CosmosStrings.NoIdKey(nameof(Order), "id"), modelBuilder);
     }
 
     [ConditionalFact]
@@ -113,26 +95,6 @@ public class CosmosModelValidatorTest : ModelValidatorTestBase
             });
 
         Validate(modelBuilder);
-    }
-
-    [ConditionalFact]
-    public virtual void Detects_non_key_partition_key_property()
-    {
-        var modelBuilder = CreateConventionlessModelBuilder();
-        modelBuilder.Entity<Order>(
-            b =>
-            {
-                b.Property(o => o.Id);
-                b.Property<string>("id");
-                b.HasKey("id");
-                b.Property(o => o.PartitionId);
-                b.HasPartitionKey(o => o.PartitionId);
-                b.Ignore(o => o.Customer);
-                b.Ignore(o => o.OrderDetails);
-                b.Ignore(o => o.Products);
-            });
-
-        VerifyError(CosmosStrings.NoPartitionKeyKey(nameof(Order), nameof(Order.PartitionId), "id"), modelBuilder);
     }
 
     [ConditionalFact]
@@ -403,11 +365,16 @@ public class CosmosModelValidatorTest : ModelValidatorTestBase
         var modelBuilder = CreateConventionModelBuilder();
         modelBuilder.Entity<Customer>();
         modelBuilder.Entity<Order>(
-            ob =>
+            ob => ob.OwnsOne(o => o.OrderDetails, b =>
             {
-                var ownedType = ob.OwnsOne(o => o.OrderDetails).OwnedEntityType;
-                ownedType.SetContainer("Details");
-            });
+                b.Property<string>(CosmosJsonIdConvention.DefaultIdPropertyName)
+                    .ToJsonProperty(CosmosJsonIdConvention.IdPropertyJsonName);
+            }));
+
+        modelBuilder.Model
+            .GetEntityTypes()
+            .Single(e => e.ClrType == typeof(OrderDetails))
+            .SetContainer("Details");
 
         VerifyError(
             CosmosStrings.OwnedTypeDifferentContainer(
@@ -502,28 +469,78 @@ public class CosmosModelValidatorTest : ModelValidatorTestBase
         VerifyError(CosmosStrings.ETagNonStringStoreType("_etag", nameof(Customer), "int"), modelBuilder);
     }
 
+#pragma warning disable EF9103
+    [ConditionalFact]
+    public virtual void Detects_multi_property_vector_index()
+    {
+        var modelBuilder = CreateConventionModelBuilder();
+        modelBuilder.Entity<Customer>(
+            b =>
+            {
+                b.HasIndex(e => new { e.Name, e.OtherName }).ForVectors(VectorIndexType.Flat);
+            });
+
+        VerifyError(CosmosStrings.CompositeVectorIndex(nameof(Customer), "Name,OtherName"), modelBuilder);
+    }
+
+    [ConditionalFact]
+    public virtual void Detects_vector_index_on_non_vector_property()
+    {
+        var modelBuilder = CreateConventionModelBuilder();
+        modelBuilder.Entity<Customer>(
+            b =>
+            {
+                b.HasIndex(e => new { e.Name }).ForVectors(VectorIndexType.Flat);
+            });
+
+        VerifyError(CosmosStrings.VectorIndexOnNonVector(nameof(Customer), "Name"), modelBuilder);
+    }
+#pragma warning restore EF9103
+
+
+    [ConditionalFact]
+    public virtual void Detects_vector_property_with_unknown_data_type()
+    {
+        var modelBuilder = CreateConventionModelBuilder();
+        modelBuilder.Entity<NonVector>(
+            b =>
+            {
+#pragma warning disable EF9103
+                b.Property(e => e.Vector).IsVector(DistanceFunction.Cosine, dimensions: 10);
+#pragma warning restore EF9103
+            });
+
+        VerifyError(CosmosStrings.BadVectorDataType("double[]"), modelBuilder);
+    }
+
+    private class NonVector
+    {
+        public Guid Id { get; set; }
+        public double[] Vector { get; set; }
+    }
+
     [ConditionalFact]
     public virtual void Detects_unmappable_property()
     {
         var modelBuilder = CreateConventionModelBuilder();
-        modelBuilder.Entity<RememberMyName<ReadOnlyMemory<float>>>().ToContainer("Orders");
+        modelBuilder.Entity<RememberMyName<Memory<float>>>().ToContainer("Orders");
 
         VerifyError(CoreStrings.PropertyNotAdded(
-            typeof(RememberMyName<ReadOnlyMemory<float>>).ShortDisplayName(),
+            typeof(RememberMyName<Memory<float>>).ShortDisplayName(),
             nameof(RememberMyName<float>.ForgetMeNot),
-            typeof(ReadOnlyMemory<float>).ShortDisplayName()), modelBuilder);
+            typeof(Memory<float>).ShortDisplayName()), modelBuilder);
     }
 
     [ConditionalFact]
     public virtual void Detects_unmappable_list_property()
     {
         var modelBuilder = CreateConventionModelBuilder();
-        modelBuilder.Entity<RememberMyName<ReadOnlyMemory<float>[]>>().ToContainer("Orders");
+        modelBuilder.Entity<RememberMyName<Memory<float>[]>>().ToContainer("Orders");
 
         VerifyError(CoreStrings.PropertyNotAdded(
-            typeof(RememberMyName<ReadOnlyMemory<float>[]>).ShortDisplayName(),
+            typeof(RememberMyName<Memory<float>[]>).ShortDisplayName(),
             nameof(RememberMyName<float>.ForgetMeNot),
-            typeof(ReadOnlyMemory<float>[]).ShortDisplayName()), modelBuilder);
+            typeof(Memory<float>[]).ShortDisplayName()), modelBuilder);
     }
 
     private class RememberMyName<T>
