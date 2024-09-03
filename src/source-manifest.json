@@ -31,10 +31,10 @@
       "commitSha": "803d8598f98fb4efd94604b32627ee9407f246db"
     },
     {
-      "packageVersion": "9.0.0-preview.1.24406.1",
+      "packageVersion": "9.0.0-preview.1.24427.4",
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "7871ee378dce87b64d930d4f33dca9c888f4034d"
+      "commitSha": "57d7baec5f331a145174d0e8f00d7bbfdf2b77d4"
     },
     {
       "packageVersion": "8.0.0-preview.24416.1",
@@ -61,10 +61,10 @@
       "commitSha": "bb453b34bf66c45af0520f807556f23c966cc6ca"
     },
     {
-      "packageVersion": "17.12.0-preview-24429-01",
+      "packageVersion": "17.12.0-preview-24452-05",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "01e53f4161996ce73408117d012f24c2c1737e58"
+      "commitSha": "c93cb12d050da1c5e2ed6b6f57ffc3bff57469a2"
     },
     {
       "packageVersion": "6.12.0-preview.1.87",
@@ -73,10 +73,10 @@
       "commitSha": "3db80da582371f1387cd0b3ea029198c76cb78ff"
     },
     {
-      "packageVersion": "9.0.0-preview.24430.2",
+      "packageVersion": "9.0.0-preview.24452.1",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "f01a5a8f30ca7257cf7be500c3fceca01eaaceab"
+      "commitSha": "8bddfe9971d754f736d360f16a340e2a8e3e2c55"
     },
     {
       "packageVersion": "4.12.0-3.24430.8",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "70462153e80cb24e4104b596efd8d03b4e83bbfe"
+      "commitSha": "be24fb0a40e5de61802d0bb71202923844fb6424"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24426.1",
@@ -133,10 +133,10 @@
       "commitSha": "0710a7892d89999956e8808c28e9dd0512bd53f3"
     },
     {
-      "packageVersion": "10.0.100-alpha.2.24430.4",
+      "packageVersion": "10.0.100-alpha.2.24452.1",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "27be11dc32a94f1689ae1e755268e45444a04c29"
+      "commitSha": "14ee12379ebc47c4432293231d73e122bfc36e05"
     },
     {
       "packageVersion": "1.1.0-rc.24429.1",
