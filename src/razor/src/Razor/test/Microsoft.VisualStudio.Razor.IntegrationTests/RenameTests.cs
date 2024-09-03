@@ -60,7 +60,7 @@ public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdit
         await TestServices.Editor.VerifyTextContainsAsync("@ZooperDooper", ControlledHangMitigatingCancellationToken);
     }
 
-    [IdeFact]
+    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/10820")]
     public async Task Rename_ComponentAttribute_FromCSharpInCSharp()
     {
         // Create the file
