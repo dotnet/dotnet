@@ -188,7 +188,7 @@ namespace System.IdentityModel.Tokens.Jwt
         }
 
         /// <summary>
-        /// Gets the 'value' of the 'actor' claim { actort, 'value' }.
+        /// Gets the 'value' of the 'actor' claim { actor, 'value' }.
         /// </summary>
         /// <remarks>If the 'actor' claim is not found, null is returned.</remarks> 
         public string Actor
@@ -196,7 +196,7 @@ namespace System.IdentityModel.Tokens.Jwt
             get
             {
                 if (Payload != null)
-                    return Payload.Actort;
+                    return Payload.Actor;
                 return string.Empty;
             }
         }
