@@ -132,22 +132,37 @@ namespace NuGet.CommandLine.XPlat
             PackageDependency packageDependency = default;
             if (packageReferenceArgs.NoVersion)
             {
-                var latestVersion = await GetLatestVersionAsync(originalPackageSpec, packageReferenceArgs.PackageId, packageReferenceArgs.Logger, packageReferenceArgs.Prerelease);
-
-                if (latestVersion == null)
+                if (originalPackageSpec.RestoreMetadata.CentralPackageVersionsEnabled)
                 {
-                    if (!packageReferenceArgs.Prerelease)
+                    var centralVersion = originalPackageSpec
+                        .TargetFrameworks
+                        .Where(tf => tf.CentralPackageVersions.ContainsKey(packageReferenceArgs.PackageId))
+                        .Select(tf => tf.CentralPackageVersions[packageReferenceArgs.PackageId])
+                        .FirstOrDefault();
+                    if (centralVersion != null)
                     {
-                        latestVersion = await GetLatestVersionAsync(originalPackageSpec, packageReferenceArgs.PackageId, packageReferenceArgs.Logger, !packageReferenceArgs.Prerelease);
-                        if (latestVersion != null)
-                        {
-                            throw new CommandException(string.Format(CultureInfo.CurrentCulture, Strings.PrereleaseVersionsAvailable, latestVersion));
-                        }
+                        packageDependency = new PackageDependency(packageReferenceArgs.PackageId, centralVersion.VersionRange);
                     }
-                    throw new CommandException(string.Format(CultureInfo.CurrentCulture, Strings.Error_NoVersionsAvailable, packageReferenceArgs.PackageId));
                 }
+                if (packageDependency == null)
+                {
+                    var latestVersion = await GetLatestVersionAsync(originalPackageSpec, packageReferenceArgs.PackageId, packageReferenceArgs.Logger, packageReferenceArgs.Prerelease);
 
-                packageDependency = new PackageDependency(packageReferenceArgs.PackageId, new VersionRange(minVersion: latestVersion, includeMinVersion: true));
+                    if (latestVersion == null)
+                    {
+                        if (!packageReferenceArgs.Prerelease)
+                        {
+                            latestVersion = await GetLatestVersionAsync(originalPackageSpec, packageReferenceArgs.PackageId, packageReferenceArgs.Logger, !packageReferenceArgs.Prerelease);
+                            if (latestVersion != null)
+                            {
+                                throw new CommandException(string.Format(CultureInfo.CurrentCulture, Strings.PrereleaseVersionsAvailable, latestVersion));
+                            }
+                        }
+                        throw new CommandException(string.Format(CultureInfo.CurrentCulture, Strings.Error_NoVersionsAvailable, packageReferenceArgs.PackageId));
+                    }
+
+                    packageDependency = new PackageDependency(packageReferenceArgs.PackageId, new VersionRange(minVersion: latestVersion, includeMinVersion: true));
+                }
             }
             else
             {

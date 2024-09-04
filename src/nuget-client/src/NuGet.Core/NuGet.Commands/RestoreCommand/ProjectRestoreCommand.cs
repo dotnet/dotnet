@@ -183,9 +183,7 @@ namespace NuGet.Commands
                         return runtimeGraph;
                     }
                 }
-#pragma warning disable CA1031 // Do not catch general exception types. Any exception that occurs while reading the runtime graph is a fatal error.
                 catch (Exception e)
-#pragma warning restore CA1031 // Do not catch general exception types
                 {
                     logger.Log(
                      RestoreLogMessage.CreateError(
@@ -212,13 +210,13 @@ namespace NuGet.Commands
         {
             telemetryActivity.StartIntervalMeasure();
 
-            List<Task<DownloadDependencyResolutionResult>> downloadDependencyResolutionTasks = new(capacity: packageSpec.TargetFrameworks.Count);
-
-            foreach (TargetFrameworkInformation targetFrameworkInformation in packageSpec.TargetFrameworks.NoAllocEnumerate())
+            var downloadDependencyResolutionTasks = new List<Task<DownloadDependencyResolutionResult>>();
+            foreach (var targetFrameworkInformation in packageSpec.TargetFrameworks)
             {
-                Task<DownloadDependencyResolutionResult> task = ResolveDownloadDependenciesAsync(context, targetFrameworkInformation, cancellationToken);
-
-                downloadDependencyResolutionTasks.Add(task);
+                downloadDependencyResolutionTasks.Add(ResolveDownloadDependenciesAsync(
+                context,
+                    targetFrameworkInformation,
+                    cancellationToken));
             }
 
             DownloadDependencyResolutionResult[] downloadDependencyResolutionResults = await Task.WhenAll(downloadDependencyResolutionTasks);
@@ -229,19 +227,10 @@ namespace NuGet.Commands
 
             async Task<DownloadDependencyResolutionResult> ResolveDownloadDependenciesAsync(RemoteWalkContext context, TargetFrameworkInformation targetFrameworkInformation, CancellationToken token)
             {
-                if (targetFrameworkInformation.DownloadDependencies.Count == 0)
-                {
-                    return DownloadDependencyResolutionResult.Create(targetFrameworkInformation.FrameworkName, Array.Empty<Tuple<LibraryRange, RemoteMatch>>(), context.RemoteLibraryProviders);
-                }
+                var packageDownloadTasks = targetFrameworkInformation.DownloadDependencies.Select(downloadDependency =>
+                ResolverUtility.FindPackageLibraryMatchCachedAsync(downloadDependency, context, token));
 
-                List<Task<Tuple<LibraryRange, RemoteMatch>>> packageDownloadTasks = new(capacity: targetFrameworkInformation.DownloadDependencies.Count);
-
-                foreach (var downloadDependency in targetFrameworkInformation.DownloadDependencies.NoAllocEnumerate())
-                {
-                    packageDownloadTasks.Add(ResolverUtility.FindPackageLibraryMatchCachedAsync(downloadDependency, context, token));
-                }
-
-                Tuple<LibraryRange, RemoteMatch>[] packageDownloadMatches = await Task.WhenAll(packageDownloadTasks);
+                var packageDownloadMatches = await Task.WhenAll(packageDownloadTasks);
 
                 return DownloadDependencyResolutionResult.Create(targetFrameworkInformation.FrameworkName, packageDownloadMatches, context.RemoteLibraryProviders);
             }
