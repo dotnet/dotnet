@@ -4,7 +4,7 @@
     <TargetFrameworks>$(NetCurrent);netstandard2.0</TargetFrameworks>
     <PackageId>Microsoft.Web.Xdt</PackageId>
     <IsPackable>true</IsPackable>
-    <IsShipping>false</IsShipping>
+    <IsShippingPackage>false</IsShippingPackage>
   </PropertyGroup>
 
   <ItemGroup>
