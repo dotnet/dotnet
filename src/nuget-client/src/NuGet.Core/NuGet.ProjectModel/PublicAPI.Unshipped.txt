@@ -10,6 +10,7 @@ NuGet.ProjectModel.LockFileReadFlags.ProjectFileDependencyGroups = 4 -> NuGet.Pr
 NuGet.ProjectModel.LockFileReadFlags.Targets = 2 -> NuGet.ProjectModel.LockFileReadFlags
 NuGet.ProjectModel.ProjectRestoreMetadata.UseLegacyDependencyResolver.get -> bool
 NuGet.ProjectModel.ProjectRestoreMetadata.UseLegacyDependencyResolver.set -> void
+~NuGet.ProjectModel.PackageSpecReferenceDependencyProvider.PackageSpecReferenceDependencyProvider(System.Collections.Generic.IEnumerable<NuGet.ProjectModel.ExternalProjectReference> externalProjects, NuGet.Common.ILogger logger, bool useLegacyDependencyGraphResolution) -> void
 ~static NuGet.ProjectModel.LockFileUtilities.GetLockFile(string lockFilePath, NuGet.Common.ILogger logger, NuGet.ProjectModel.LockFileReadFlags flags) -> NuGet.ProjectModel.LockFile
 ~NuGet.ProjectModel.ProjectRestoreMetadata.SdkAnalysisLevel.get -> NuGet.Versioning.NuGetVersion
 ~NuGet.ProjectModel.ProjectRestoreMetadata.SdkAnalysisLevel.set -> void

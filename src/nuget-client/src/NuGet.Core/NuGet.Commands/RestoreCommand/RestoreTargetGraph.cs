@@ -17,48 +17,52 @@ namespace NuGet.Commands
         /// <summary>
         /// Gets the runtime identifier used during the restore operation on this graph
         /// </summary>
-        public string RuntimeIdentifier { get; }
+        public string RuntimeIdentifier { get; internal set; }
 
         /// <summary>
         /// Gets the <see cref="NuGetFramework" /> used during the restore operation on this graph
         /// </summary>
-        public NuGetFramework Framework { get; }
+        public NuGetFramework Framework { get; internal set; }
 
         /// <summary>
         /// Gets the <see cref="ManagedCodeConventions" /> used to resolve assets from packages in this graph
         /// </summary>
-        public ManagedCodeConventions Conventions { get; }
+        public ManagedCodeConventions Conventions { get; internal set; }
 
         /// <summary>
         /// Gets the <see cref="RuntimeGraph" /> that defines runtimes and their relationships for this graph
         /// </summary>
-        public RuntimeGraph RuntimeGraph { get; }
+        public RuntimeGraph RuntimeGraph { get; internal set; }
 
         /// <summary>
         /// Gets the resolved dependency graph
         /// </summary>
-        public IEnumerable<GraphNode<RemoteResolveResult>> Graphs { get; }
+        public IEnumerable<GraphNode<RemoteResolveResult>> Graphs { get; internal set; }
 
-        public ISet<RemoteMatch> Install { get; }
+        public ISet<RemoteMatch> Install { get; internal set; }
 
-        public ISet<GraphItem<RemoteResolveResult>> Flattened { get; }
+        public ISet<GraphItem<RemoteResolveResult>> Flattened { get; internal set; }
 
-        public ISet<LibraryRange> Unresolved { get; }
+        public ISet<LibraryRange> Unresolved { get; internal set; }
 
-        public bool InConflict { get; }
+        public bool InConflict { get; internal set; }
 
-        public string Name { get; }
+        public string Name { get; internal set; }
 
-        public string TargetGraphName { get; }
+        public string TargetGraphName { get; internal set; }
 
         // TODO: Move conflicts to AnalyzeResult
-        public IEnumerable<ResolverConflict> Conflicts { get; }
+        public IEnumerable<ResolverConflict> Conflicts { get; internal set; }
 
-        public AnalyzeResult<RemoteResolveResult> AnalyzeResult { get; }
+        public AnalyzeResult<RemoteResolveResult> AnalyzeResult { get; internal set; }
 
-        public ISet<ResolvedDependencyKey> ResolvedDependencies { get; }
+        public ISet<ResolvedDependencyKey> ResolvedDependencies { get; internal set; }
 
-        internal RestoreTargetGraph(IEnumerable<ResolverConflict> conflicts,
+        internal RestoreTargetGraph()
+        {
+        }
+
+        private RestoreTargetGraph(IEnumerable<ResolverConflict> conflicts,
                                    NuGetFramework framework,
                                    string runtimeIdentifier,
                                    RuntimeGraph runtimeGraph,
