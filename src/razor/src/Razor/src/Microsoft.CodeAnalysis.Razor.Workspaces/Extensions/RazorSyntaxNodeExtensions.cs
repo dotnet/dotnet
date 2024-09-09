@@ -308,4 +308,16 @@ internal static class RazorSyntaxNodeExtensions
             return node is CSharpCodeBlockSyntax;
         }
     }
+
+    public static bool IsAnyAttributeSyntax(this SyntaxNode node)
+    {
+        return node is 
+            MarkupAttributeBlockSyntax or
+            MarkupMinimizedAttributeBlockSyntax or
+            MarkupTagHelperAttributeSyntax or
+            MarkupMinimizedTagHelperAttributeSyntax or
+            MarkupTagHelperDirectiveAttributeSyntax or
+            MarkupMinimizedTagHelperDirectiveAttributeSyntax or
+            MarkupMiscAttributeContentSyntax;
+    }
 }

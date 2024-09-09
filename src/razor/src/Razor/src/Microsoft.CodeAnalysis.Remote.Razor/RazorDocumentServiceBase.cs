@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -24,11 +25,34 @@ internal abstract class RazorDocumentServiceBase(in ServiceArgs args) : RazorBro
     protected virtual IDocumentPositionInfoStrategy DocumentPositionInfoStrategy { get; } = DefaultDocumentPositionInfoStrategy.Instance;
 
     protected DocumentPositionInfo GetPositionInfo(RazorCodeDocument codeDocument, int hostDocumentIndex)
+        => GetPositionInfo(codeDocument, hostDocumentIndex, preferCSharpOverHtml: false);
+
+    protected DocumentPositionInfo GetPositionInfo(RazorCodeDocument codeDocument, int hostDocumentIndex, bool preferCSharpOverHtml)
     {
-        return DocumentPositionInfoStrategy.GetPositionInfo(DocumentMappingService, codeDocument, hostDocumentIndex);
+        var positionInfo = DocumentPositionInfoStrategy.GetPositionInfo(DocumentMappingService, codeDocument, hostDocumentIndex);
+
+        if (preferCSharpOverHtml && positionInfo.LanguageKind == RazorLanguageKind.Html)
+        {
+            // Sometimes Html can actually be mapped to C#, like for example component attributes, which map to
+            // C# properties, even though they appear entirely in a Html context. Since remapping is pretty cheap
+            // it's easier to just try mapping, and see what happens, rather than checking for specific syntax nodes.
+            if (DocumentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), positionInfo.HostDocumentIndex, out VsPosition? csharpPosition, out _))
+            {
+                // We're just gonna pretend this mapped perfectly normally onto C#. Moving this logic to the actual position info
+                // calculating code is possible, but could have untold effects, so opt-in is better (for now?)
+
+                // TODO: Not using a with operator here because it doesn't work in OOP for some reason.
+                positionInfo = new DocumentPositionInfo(RazorLanguageKind.CSharp, csharpPosition, positionInfo.HostDocumentIndex);
+            }
+        }
+
+        return positionInfo;
     }
 
     protected bool TryGetDocumentPositionInfo(RazorCodeDocument codeDocument, RoslynPosition position, out DocumentPositionInfo positionInfo)
+        => TryGetDocumentPositionInfo(codeDocument, position, preferCSharpOverHtml: false, out positionInfo);
+
+    protected bool TryGetDocumentPositionInfo(RazorCodeDocument codeDocument, RoslynPosition position, bool preferCSharpOverHtml, out DocumentPositionInfo positionInfo)
     {
         if (!codeDocument.Source.Text.TryGetAbsoluteIndex(position, out var hostDocumentIndex))
         {
@@ -36,11 +60,14 @@ internal abstract class RazorDocumentServiceBase(in ServiceArgs args) : RazorBro
             return false;
         }
 
-        positionInfo = GetPositionInfo(codeDocument, hostDocumentIndex);
+        positionInfo = GetPositionInfo(codeDocument, hostDocumentIndex, preferCSharpOverHtml);
         return true;
     }
 
     protected bool TryGetDocumentPositionInfo(RazorCodeDocument codeDocument, VsPosition position, out DocumentPositionInfo positionInfo)
+        => TryGetDocumentPositionInfo(codeDocument, position, preferCSharpOverHtml: false, out positionInfo);
+
+    protected bool TryGetDocumentPositionInfo(RazorCodeDocument codeDocument, VsPosition position, bool preferCSharpOverHtml, out DocumentPositionInfo positionInfo)
     {
         if (!codeDocument.Source.Text.TryGetAbsoluteIndex(position, out var hostDocumentIndex))
         {
@@ -48,7 +75,7 @@ internal abstract class RazorDocumentServiceBase(in ServiceArgs args) : RazorBro
             return false;
         }
 
-        positionInfo = GetPositionInfo(codeDocument, hostDocumentIndex);
+        positionInfo = GetPositionInfo(codeDocument, hostDocumentIndex, preferCSharpOverHtml);
         return true;
     }
 

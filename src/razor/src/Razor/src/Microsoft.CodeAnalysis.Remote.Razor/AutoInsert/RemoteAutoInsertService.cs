@@ -11,13 +11,13 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.AutoInsert;
+using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.LanguageServer.Protocol;
 using Response = Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Microsoft.CodeAnalysis.Razor.Protocol.AutoInsert.RemoteAutoInsertTextEdit?>;
-using RoslynFormattingOptions = Roslyn.LanguageServer.Protocol.FormattingOptions;
 using RoslynInsertTextFormat = Roslyn.LanguageServer.Protocol.InsertTextFormat;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -42,10 +42,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
         DocumentId documentId,
         LinePosition linePosition,
         string character,
-        bool autoCloseTags,
-        bool formatOnType,
-        bool indentWithTabs,
-        int indentSize,
+        RemoteAutoInsertOptions options,
         CancellationToken cancellationToken)
         => RunServiceAsync(
             solutionInfo,
@@ -54,10 +51,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
                 context,
                 linePosition,
                 character,
-                autoCloseTags,
-                formatOnType,
-                indentWithTabs,
-                indentSize,
+                options,
                 cancellationToken),
             cancellationToken);
 
@@ -65,10 +59,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
         RemoteDocumentContext remoteDocumentContext,
         LinePosition linePosition,
         string character,
-        bool autoCloseTags,
-        bool formatOnType,
-        bool indentWithTabs,
-        int indentSize,
+        RemoteAutoInsertOptions options,
         CancellationToken cancellationToken)
     {
         var sourceText = await remoteDocumentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
@@ -86,7 +77,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
                 codeDocument,
                 VsLspExtensions.ToPosition(linePosition),
                 character,
-                autoCloseTags,
+                options.EnableAutoClosingTags,
                 out var insertTextEdit))
         {
             return Response.Results(RemoteAutoInsertTextEdit.FromLspInsertTextEdit(insertTextEdit));
@@ -110,9 +101,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
                         remoteDocumentContext,
                         mappedPosition,
                         character,
-                        formatOnType,
-                        indentWithTabs,
-                        indentSize,
+                        options,
                         cancellationToken);
             default:
                 Logger.LogError($"Unsupported language {languageKind} in {nameof(RemoteAutoInsertService)}");
@@ -124,9 +113,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
         RemoteDocumentContext remoteDocumentContext,
         LinePosition mappedPosition,
         string character,
-        bool formatOnType,
-        bool indentWithTabs,
-        int indentSize,
+        RemoteAutoInsertOptions options,
         CancellationToken cancellationToken)
     {
         // Special case for C# where we use AutoInsert for two purposes:
@@ -140,7 +127,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
         // Therefore we are just going to no-op if the user has turned off on type formatting. Maybe one day we can make this
         // smarter, but at least the user can always turn the setting back on, type their "///", and turn it back off, without
         // having to restart VS. Not the worst compromise (hopefully!)
-        if (!formatOnType)
+        if (!options.FormatOnType)
         {
             return Response.NoFurtherHandling;
         }
@@ -151,17 +138,12 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
         }
 
         var generatedDocument = await remoteDocumentContext.Snapshot.GetGeneratedDocumentAsync().ConfigureAwait(false);
-        var formattingOptions = new RoslynFormattingOptions()
-        {
-            InsertSpaces = !indentWithTabs,
-            TabSize = indentSize
-        };
 
         var autoInsertResponseItem = await OnAutoInsert.GetOnAutoInsertResponseAsync(
             generatedDocument,
             mappedPosition,
             character,
-            formattingOptions,
+            options.FormattingOptions.ToRoslynFormattingOptions(),
             cancellationToken
         );
 
@@ -170,11 +152,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
             return Response.NoFurtherHandling;
         }
 
-        var razorFormattingOptions = new RazorFormattingOptions()
-        {
-            InsertSpaces = !indentWithTabs,
-            TabSize = indentSize
-        };
+        var razorFormattingOptions = options.FormattingOptions;
 
         var vsLspTextEdit = VsLspFactory.CreateTextEdit(
             autoInsertResponseItem.TextEdit.Range.ToLinePositionSpan(),

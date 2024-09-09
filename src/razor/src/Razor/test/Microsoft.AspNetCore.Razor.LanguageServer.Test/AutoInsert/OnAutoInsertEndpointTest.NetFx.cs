@@ -4,7 +4,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
-using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.CodeAnalysis.Razor.AutoInsert;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Testing;
@@ -34,7 +33,6 @@ public partial class OnAutoInsertEndpointTest
             languageServer,
             new AutoInsertService([insertProvider]),
             optionsMonitor,
-            TestAdhocWorkspaceFactory.Instance,
             formattingService,
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
@@ -84,7 +82,6 @@ public partial class OnAutoInsertEndpointTest
             languageServer,
             new AutoInsertService([insertProvider1, insertProvider2]),
             optionsMonitor,
-            TestAdhocWorkspaceFactory.Instance,
             formattingService,
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
@@ -137,7 +134,6 @@ public partial class OnAutoInsertEndpointTest
             languageServer,
             new AutoInsertService([insertProvider1, insertProvider2]),
             optionsMonitor,
-            TestAdhocWorkspaceFactory.Instance,
             formattingService,
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
@@ -182,7 +178,6 @@ public partial class OnAutoInsertEndpointTest
             languageServer,
             new AutoInsertService([insertProvider]),
             optionsMonitor,
-            TestAdhocWorkspaceFactory.Instance,
             formattingService,
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
@@ -225,7 +220,6 @@ public partial class OnAutoInsertEndpointTest
             languageServer,
             new AutoInsertService([insertProvider]),
             optionsMonitor,
-            TestAdhocWorkspaceFactory.Instance,
             formattingService,
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
@@ -266,7 +260,6 @@ public partial class OnAutoInsertEndpointTest
             languageServer,
             new AutoInsertService([insertProvider]),
             optionsMonitor,
-            TestAdhocWorkspaceFactory.Instance,
             formattingService,
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
@@ -412,7 +405,6 @@ public partial class OnAutoInsertEndpointTest
             languageServer,
             new AutoInsertService([insertProvider]),
             optionsMonitor,
-            TestAdhocWorkspaceFactory.Instance,
             formattingService,
             LoggerFactory);
 
