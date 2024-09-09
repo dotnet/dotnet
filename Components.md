@@ -34,7 +34,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/msbuild`  
 *[dotnet/msbuild@2206a05](https://github.com/dotnet/msbuild/tree/2206a054f2c82e91918809ea27d1ef5b3f7cfc4b)*
 - `src/nuget-client`  
-*[nuget/nuget.client@38010e5](https://github.com/nuget/nuget.client/tree/38010e5968f1afc9c210866bd2089957906a2492)*
+*[nuget/nuget.client@5d08fbd](https://github.com/nuget/nuget.client/tree/5d08fbd496ee2ce63b50dfe0803edbd9701e1b35)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/tree/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@f1715bf](https://github.com/dotnet/scenario-tests/tree/f1715bf842371d15ecb5fc52d7dc87ab2e47df30)*
 - `src/sdk`  
-*[dotnet/sdk@59b0ee6](https://github.com/dotnet/sdk/tree/59b0ee66abf2077c5543954b5f03c7295bfafa49)*
+*[dotnet/sdk@0dd1f6e](https://github.com/dotnet/sdk/tree/0dd1f6e418e0f865d137252fb3ed05e74e3307ac)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@fb56fcf](https://github.com/dotnet/source-build-externals/tree/fb56fcf997fa59ede9c5fbafbb4d2d8a22d392ac)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -88,7 +88,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/templating`  
 *[dotnet/templating@75cf65b](https://github.com/dotnet/templating/tree/75cf65b0c85a704e977ef56ff962d8f8045cfa4a)*
 - `src/test-templates`  
-*[dotnet/test-templates@e833d46](https://github.com/dotnet/test-templates/tree/e833d4684ffa6144968f530a0b3250c540fae026)*
+*[dotnet/test-templates@cb42ab5](https://github.com/dotnet/test-templates/tree/cb42ab507e76aff8bdbf990c6eea2aa74a10f26a)*
 - `src/vstest`  
 *[microsoft/vstest@07acde2](https://github.com/microsoft/vstest/tree/07acde22b65497e72de145d57167b83609a7f7fb)*
 - `src/windowsdesktop`  

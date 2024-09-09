@@ -9,7 +9,6 @@ namespace NuGet.PackageManagement.Telemetry
         License,
         ProjectUri,
         ReportAbuse,
-        FeedHome,
         Readme,
         DeprecationMoreInfo,
         DeprecationAlternativeDetails,

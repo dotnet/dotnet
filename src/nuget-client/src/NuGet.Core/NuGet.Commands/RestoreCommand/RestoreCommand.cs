@@ -146,7 +146,9 @@ namespace NuGet.Commands
             _success = !request.AdditionalMessages?.Any(m => m.Level == LogLevel.Error) ?? true;
 
             // Enable the new dependency resolver if the project is using PackageReference, transitive pinning is disabled, and the user has not explicitly opted out of using it
-            _enableNewDependencyResolver = request.Project.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference && !_request.Project.RestoreMetadata.CentralPackageTransitivePinningEnabled && !_request.Project.RestoreMetadata.UseLegacyDependencyResolver;
+            _enableNewDependencyResolver = request.Project.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference
+                && !(_request.Project.RestoreMetadata?.CentralPackageVersionsEnabled == true && _request.Project.RestoreMetadata?.CentralPackageTransitivePinningEnabled == true)
+                && !_request.Project.RestoreMetadata.UseLegacyDependencyResolver;
         }
 
         public Task<RestoreResult> ExecuteAsync()
@@ -1191,11 +1193,7 @@ namespace NuGet.Commands
             var projectFrameworkRuntimePairs = CreateFrameworkRuntimePairs(_request.Project, runtimeIds);
             var hasSupports = _request.Project.RuntimeGraph.Supports.Count > 0;
 
-            var projectRestoreRequest = new ProjectRestoreRequest(
-                _request,
-                _request.Project,
-                _request.ExistingLockFile,
-                _logger)
+            var projectRestoreRequest = new ProjectRestoreRequest(_request, _request.Project, _request.ExistingLockFile, _logger)
             {
                 ParentId = _operationId
             };
@@ -1221,10 +1219,6 @@ namespace NuGet.Commands
                         telemetryPrefix: string.Empty);
                 }
                 catch (FatalProtocolException)
-                {
-                    failed = true;
-                }
-                catch (AggregateException e) when (e.InnerException is FatalProtocolException)
                 {
                     failed = true;
                 }
@@ -1337,11 +1331,7 @@ namespace NuGet.Commands
                 return Enumerable.Empty<RestoreTargetGraph>();
             }
 
-            var projectRestoreRequest = new ProjectRestoreRequest(
-             _request,
-             _request.Project,
-             _request.ExistingLockFile,
-             _logger)
+            var projectRestoreRequest = new ProjectRestoreRequest(_request, _request.Project, _request.ExistingLockFile, _logger)
             {
                 ParentId = _operationId
             };
@@ -1383,10 +1373,6 @@ namespace NuGet.Commands
                     runtimes = result.Runtimes;
                 }
                 catch (FatalProtocolException)
-                {
-                    failed = true;
-                }
-                catch (AggregateException e) when (e.InnerException is FatalProtocolException)
                 {
                     failed = true;
                 }
@@ -1490,20 +1476,26 @@ namespace NuGet.Commands
             return updatedExternalProjects;
         }
 
-        internal static IEnumerable<FrameworkRuntimePair> CreateFrameworkRuntimePairs(
-            PackageSpec packageSpec,
-            ISet<string> runtimeIds)
+        /// <summary>
+        /// Gets the list of framework/runtime pairs to restore for the project.  The list is sorted by frameworks first, then frameworks with runtimes.
+        /// </summary>
+        /// <param name="packageSpec">The <see cref="PackageSpec" /> with information about the project.</param>
+        /// <param name="runtimeIds">An <see cref="ISet{T}" /> containing the list of runtime identifiers.</param>
+        /// <returns>A <see cref="List{T}" /> containing <see cref="FrameworkRuntimePair" /> objects with the frameworks with empty runtime identifiers followed by frameworks with the specified runtime identifiers.</returns>
+        internal static List<FrameworkRuntimePair> CreateFrameworkRuntimePairs(PackageSpec packageSpec, ISet<string> runtimeIds)
         {
-            var projectFrameworkRuntimePairs = new List<FrameworkRuntimePair>();
-            foreach (var framework in packageSpec.TargetFrameworks)
+            // Create a list with capacity for each framework with no runtime and each framework/runtime
+            List<FrameworkRuntimePair> projectFrameworkRuntimePairs = new(capacity: packageSpec.TargetFrameworks.Count * (runtimeIds.Count + 1));
+
+            foreach (TargetFrameworkInformation framework in packageSpec.TargetFrameworks.NoAllocEnumerate())
             {
                 // We care about TFM only and null RID for compilation purposes
                 projectFrameworkRuntimePairs.Add(new FrameworkRuntimePair(framework.FrameworkName, null));
             }
 
-            foreach (var framework in packageSpec.TargetFrameworks)
+            foreach (TargetFrameworkInformation framework in packageSpec.TargetFrameworks.NoAllocEnumerate())
             {
-                foreach (var runtimeId in runtimeIds)
+                foreach (string runtimeId in runtimeIds.NoAllocEnumerate())
                 {
                     projectFrameworkRuntimePairs.Add(new FrameworkRuntimePair(framework.FrameworkName, runtimeId));
                 }
