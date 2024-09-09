@@ -310,7 +310,7 @@ Try
     {
         Log "Running $($iterationCount)x no-op restores"
 
-        $enabledSwitches = @("")
+        [string[]]$enabledSwitches = @()
         If ($staticGraphRestore)
         {
             $enabledSwitches += "staticGraphRestore"
