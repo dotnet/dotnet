@@ -100,7 +100,7 @@ public static class KnownResourceStateStyles
     public static readonly string Error = "error";
 
     /// <summary>
-    /// The info state. Useful for infomational messages.
+    /// The info state. Useful for informational messages.
     /// </summary>
     public static readonly string Info = "info";
 
@@ -131,7 +131,7 @@ public static class KnownResourceStates
     public static readonly string Running = nameof(Running);
 
     /// <summary>
-    /// The finished state. Useful for showing the resource has failed to start successully.
+    /// The finished state. Useful for showing the resource has failed to start successfully.
     /// </summary>
     public static readonly string FailedToStart = nameof(FailedToStart);
 
@@ -149,4 +149,14 @@ public static class KnownResourceStates
     /// The finished state. Useful for showing the resource has finished.
     /// </summary>
     public static readonly string Finished = nameof(Finished);
+
+    /// <summary>
+    /// The waiting state. Useful for showing the resource is waiting for a dependency.
+    /// </summary>
+    public static readonly string Waiting = nameof(Waiting);
+
+    /// <summary>
+    /// List of terminal states.
+    /// </summary>
+    public static readonly IReadOnlyList<string> TerminalStates = [Finished, FailedToStart, Exited];
 }

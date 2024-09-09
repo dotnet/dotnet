@@ -11,9 +11,4 @@
     <ProjectReference Include="..\Aspire.Hosting.Tests\Aspire.Hosting.Tests.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="$(SharedDir)SecretsStore.cs" Link="Utils\SecretsStore.cs" />
-    <Compile Include="$(RepoRoot)src\Aspire.Hosting\ApplicationModel\UserSecretsParameterDefault.cs" Link="Utils\UserSecretsParameterDefault.cs" />
-  </ItemGroup>
-
 </Project>
