@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics;
+using System.Text;
 using System.Threading.Channels;
 using Microsoft.AspNetCore.Mvc;
 using Stress.ApiService;
@@ -11,13 +12,44 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 builder.Services.AddOpenTelemetry()
-    .WithTracing(tracing => tracing.AddSource(TraceCreator.ActivitySourceName, ProducerConsumer.ActivitySourceName));
+    .WithTracing(tracing => tracing.AddSource(TraceCreator.ActivitySourceName, ProducerConsumer.ActivitySourceName))
+    .WithMetrics(metrics => metrics.AddMeter(TestMetrics.MeterName));
+builder.Services.AddSingleton<TestMetrics>();
 
 var app = builder.Build();
 
 app.Lifetime.ApplicationStarted.Register(ConsoleStresser.Stress);
 
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    _ = app.Services.GetRequiredService<TestMetrics>();
+});
+
 app.MapGet("/", () => "Hello world");
+
+app.MapGet("/write-console", () =>
+{
+    for (var i = 0; i < 5000; i++)
+    {
+        if (i % 500 == 0)
+        {
+            Console.Error.WriteLine($"{i} Error");
+        }
+        else
+        {
+            Console.Out.WriteLine($"{i} Out");
+        }
+    }
+
+    return "Console written";
+});
+
+app.MapGet("/increment-counter", (TestMetrics metrics) =>
+{
+    metrics.IncrementCounter(1, new TagList([new KeyValuePair<string, object?>("add-tag", "1")]));
+
+    return "Counter incremented";
+});
 
 app.MapGet("/big-trace", async () =>
 {
@@ -44,6 +76,19 @@ app.MapGet("/trace-limit", async () =>
     Activity.Current = current;
 
     return $"Created {TraceCount} traces.";
+});
+
+app.MapGet("/http-client-requests", async (HttpClient client) =>
+{
+    var urls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS")!.Split(';');
+
+    foreach (var url in urls)
+    {
+        var response = await client.GetAsync(url);
+        await response.Content.ReadAsStringAsync();
+    }
+
+    return $"Sent requests to {string.Join(';', urls)}";
 });
 
 app.MapGet("/log-message-limit", ([FromServices] ILogger<Program> logger) =>
@@ -126,6 +171,41 @@ app.MapGet("/producer-consumer", async () =>
     await producerConsumer.ProduceAndConsumeAsync(count: 5);
 
     return "Produced and consumed";
+});
+
+app.MapGet("/log-formatting", (ILoggerFactory loggerFactory) =>
+{
+    var logger = loggerFactory.CreateLogger("LogAttributes");
+
+    // From https://learn.microsoft.com/previous-versions/windows/desktop/ms762271(v=vs.85)
+    var xmlLarge = File.ReadAllText(Path.Combine("content", "books.xml"));
+
+    var xmlWithComments = @"<hello><!-- world --></hello>";
+
+    // From https://microsoftedge.github.io/Demos/json-dummy-data/
+    var jsonLarge = File.ReadAllText(Path.Combine("content", "example.json"));
+
+    var jsonWithComments = @"
+// line comment
+[
+    /* block comment */
+    1
+]";
+
+    var sb = new StringBuilder();
+    for (int i = 0; i < 26; i++)
+    {
+        var line = new string((char)('a' + i), 256);
+        sb.AppendLine(line);
+    }
+
+    logger.LogInformation(@"XML large content: {XmlLarge}
+XML comment content: {XmlComment}
+JSON large content: {JsonLarge}
+JSON comment content: {JsonComment}
+Long line content: {LongLines}", xmlLarge, xmlWithComments, jsonLarge, jsonWithComments, sb.ToString());
+
+    return "Log with formatted data";
 });
 
 app.Run();
