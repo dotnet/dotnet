@@ -483,6 +483,36 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         context.CodeWriter.WriteLine();
     }
 
+    protected static void WriteGloballyQualifiedTypeName(CodeRenderingContext context, ComponentAttributeIntermediateNode node)
+    {
+        var explicitType = (bool?)node.Annotations[ComponentMetadata.Component.ExplicitTypeNameKey];
+        if (explicitType == true)
+        {
+            context.CodeWriter.Write(node.TypeName);
+        }
+        else if (node.BoundAttribute?.GetGloballyQualifiedTypeName() is string typeName)
+        {
+            context.CodeWriter.Write(typeName);
+        }
+        else
+        {
+            TypeNameHelper.WriteGloballyQualifiedName(context.CodeWriter, node.TypeName);
+        }
+    }
+
+    protected static void WriteGloballyQualifiedTypeName(CodeRenderingContext context, ComponentChildContentIntermediateNode node)
+    {
+        if (node.BoundAttribute?.GetGloballyQualifiedTypeName() is string typeName &&
+            !node.BoundAttribute.IsGenericTypedProperty())
+        {
+            context.CodeWriter.Write(typeName);
+        }
+        else
+        {
+            TypeNameHelper.WriteGloballyQualifiedName(context.CodeWriter, node.TypeName);
+        }
+    }
+
     protected class TypeInferenceMethodParameter
     {
         public string SeqName { get; private set; }

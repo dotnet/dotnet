@@ -68,7 +68,7 @@ internal sealed class DefaultCSharpCodeActionResolver(
         var formattedEdit = await _razorFormattingService.GetCSharpCodeActionEditAsync(
             documentContext,
             csharpTextEdits,
-            RazorFormattingOptions.Default,
+            new RazorFormattingOptions(),
             cancellationToken).ConfigureAwait(false);
 
         cancellationToken.ThrowIfCancellationRequested();

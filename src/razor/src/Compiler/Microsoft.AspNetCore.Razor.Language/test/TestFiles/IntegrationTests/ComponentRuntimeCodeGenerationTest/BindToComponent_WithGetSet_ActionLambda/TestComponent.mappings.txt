@@ -10,14 +10,14 @@ Generated Location: (1144:31,0 [11] )
 
 Source Location: (60:0,60 [28] x:\dir\subdir\Test\TestComponent.cshtml)
 |value => ParentValue = value|
-Generated Location: (1440:40,0 [28] )
+Generated Location: (1448:40,0 [28] )
 |value => ParentValue = value|
 
 Source Location: (101:1,7 [50] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     public int ParentValue { get; set; } = 42;
 |
-Generated Location: (1707:51,0 [50] )
+Generated Location: (1715:51,0 [50] )
 |
     public int ParentValue { get; set; } = 42;
 |

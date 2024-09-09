@@ -15,11 +15,11 @@ Generated Location: (1492:44,87 [2] )
 
 Source Location: (113:1,21 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |header|
-Generated Location: (1731:52,21 [6] )
+Generated Location: (1739:52,21 [6] )
 |header|
 
 Source Location: (105:1,13 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |Header|
-Generated Location: (2145:65,13 [6] )
+Generated Location: (2153:65,13 [6] )
 |Header|
 

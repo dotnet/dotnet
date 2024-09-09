@@ -1,10 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -26,23 +24,19 @@ internal class DefaultDirectiveSyntaxTreePass : RazorEngineFeatureBase, IRazorSy
         return sectionVerifier.Verify();
     }
 
-    private class NestedSectionVerifier : SyntaxRewriter
+    private sealed class NestedSectionVerifier(RazorSyntaxTree syntaxTree) : SyntaxRewriter
     {
-        private int _nestedLevel;
-        private readonly RazorSyntaxTree _syntaxTree;
-        private readonly List<RazorDiagnostic> _diagnostics;
+        private readonly RazorSyntaxTree _syntaxTree = syntaxTree;
 
-        public NestedSectionVerifier(RazorSyntaxTree syntaxTree)
-        {
-            _syntaxTree = syntaxTree;
-            _diagnostics = new List<RazorDiagnostic>(syntaxTree.Diagnostics);
-        }
+        private ImmutableArray<RazorDiagnostic>.Builder? _diagnostics;
+        private int _nestedLevel;
 
         public RazorSyntaxTree Verify()
         {
             var root = Visit(_syntaxTree.Root);
-            var rewrittenTree = new DefaultRazorSyntaxTree(root, _syntaxTree.Source, _diagnostics, _syntaxTree.Options);
-            return rewrittenTree;
+            var diagnostics = _diagnostics?.DrainToImmutable() ?? _syntaxTree.Diagnostics;
+
+            return new RazorSyntaxTree(root, _syntaxTree.Source, diagnostics, _syntaxTree.Options);
         }
 
         public override SyntaxNode Visit(SyntaxNode node)
@@ -55,6 +49,7 @@ internal class DefaultDirectiveSyntaxTreePass : RazorEngineFeatureBase, IRazorSy
             {
                 // We're very close to reaching the stack limit. Let's not go any deeper.
                 // It's okay to not show nested section errors in deeply nested cases instead of crashing.
+                _diagnostics ??= _syntaxTree.Diagnostics.ToBuilder();
                 _diagnostics.Add(RazorDiagnosticFactory.CreateRewriter_InsufficientStack());
 
                 return node;

@@ -27,12 +27,6 @@ internal static class IDocumentSnapshotExtensions
 
         var project = documentSnapshot.Project;
 
-        // If the document is an import document, then it can't be a component
-        if (project.IsImportDocument(documentSnapshot))
-        {
-            return null;
-        }
-
         // If we got this far, we can check for tag helpers
         var tagHelpers = await project.GetTagHelpersAsync(cancellationToken).ConfigureAwait(false);
         foreach (var tagHelper in tagHelpers)

@@ -26,7 +26,7 @@ OnClick
 #line default
 #line hidden
 #nullable disable
-            ), (global::System.Action<System.EventArgs>)(
+            ), (global::System.Action<global::System.EventArgs>)(
 #nullable restore
 #line (1,25)-(1,46) "x:\dir\subdir\Test\TestComponent.cshtml"
 e => { Increment(); }

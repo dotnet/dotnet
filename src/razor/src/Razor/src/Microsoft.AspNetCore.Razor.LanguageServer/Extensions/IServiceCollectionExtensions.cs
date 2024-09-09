@@ -56,15 +56,19 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IOnInitialized>(clientConnection);
     }
 
-    public static void AddFormattingServices(this IServiceCollection services)
+    public static void AddFormattingServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
     {
         // Formatting
-        services.AddSingleton<IHtmlFormatter, HtmlFormatter>();
         services.AddSingleton<IRazorFormattingService, RazorFormattingService>();
 
-        services.AddHandlerWithCapabilities<DocumentFormattingEndpoint>();
-        services.AddHandlerWithCapabilities<DocumentOnTypeFormattingEndpoint>();
-        services.AddHandlerWithCapabilities<DocumentRangeFormattingEndpoint>();
+        if (!featureOptions.UseRazorCohostServer)
+        {
+            services.AddSingleton<IHtmlFormatter, HtmlFormatter>();
+
+            services.AddHandlerWithCapabilities<DocumentFormattingEndpoint>();
+            services.AddHandlerWithCapabilities<DocumentOnTypeFormattingEndpoint>();
+            services.AddHandlerWithCapabilities<DocumentRangeFormattingEndpoint>();
+        }
     }
 
     public static void AddCompletionServices(this IServiceCollection services)

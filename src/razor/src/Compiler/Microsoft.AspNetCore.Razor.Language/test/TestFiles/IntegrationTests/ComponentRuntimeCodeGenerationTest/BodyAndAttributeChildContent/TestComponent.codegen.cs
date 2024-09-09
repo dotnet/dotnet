@@ -55,7 +55,7 @@ Header
 #line default
 #line hidden
 #nullable disable
-            ), (global::Microsoft.AspNetCore.Components.RenderFragment<System.String>)(
+            ), (global::Microsoft.AspNetCore.Components.RenderFragment<global::System.String>)(
 #nullable restore
 #line (2,22)-(2,28) "x:\dir\subdir\Test\TestComponent.cshtml"
 header

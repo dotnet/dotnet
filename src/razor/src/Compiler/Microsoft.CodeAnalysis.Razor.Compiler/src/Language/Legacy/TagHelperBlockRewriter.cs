@@ -292,7 +292,6 @@ internal static class TagHelperBlockRewriter
             rewritten = rewritten.WithTagHelperAttributeInfo(
                 new TagHelperAttributeInfo(result.AttributeName, parameterName: null, result.AttributeStructure, result.IsBoundAttribute, isDirectiveAttribute: false));
 
-
             result.RewrittenAttribute = rewritten;
 
             return result;

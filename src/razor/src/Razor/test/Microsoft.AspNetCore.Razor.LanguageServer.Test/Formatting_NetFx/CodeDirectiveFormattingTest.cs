@@ -1699,7 +1699,8 @@ public class CodeDirectiveFormattingTest(ITestOutputHelper testOutput) : Formatt
                         private IEnumerable<int> _items = new[] { 1, 2, 3, 4, 5 };
                     }
                     """,
-            tagHelpers: GetComponentWithCascadingTypeParameter());
+            tagHelpers: GetComponentWithCascadingTypeParameter(),
+            skipFlipLineEndingTest: true);
     }
 
     [Fact]
@@ -1789,7 +1790,8 @@ public class CodeDirectiveFormattingTest(ITestOutputHelper testOutput) : Formatt
                         private IEnumerable<long> _items2 = new long[] { 1, 2, 3, 4, 5 };
                     }
                     """,
-            tagHelpers: GetComponentWithTwoCascadingTypeParameter());
+            tagHelpers: GetComponentWithTwoCascadingTypeParameter(),
+            skipFlipLineEndingTest: true); // tracked by https://github.com/dotnet/razor/issues/10836
     }
 
     [Fact]

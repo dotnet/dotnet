@@ -10,14 +10,14 @@ Generated Location: (1144:31,0 [11] )
 
 Source Location: (62:0,62 [36] x:\dir\subdir\Test\TestComponent.cshtml)
 |() => { return Task.CompletedTask; }|
-Generated Location: (1615:40,0 [36] )
+Generated Location: (1631:40,0 [36] )
 |() => { return Task.CompletedTask; }|
 
 Source Location: (111:1,7 [50] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     public int ParentValue { get; set; } = 42;
 |
-Generated Location: (1894:51,0 [50] )
+Generated Location: (1910:51,0 [50] )
 |
     public int ParentValue { get; set; } = 42;
 |

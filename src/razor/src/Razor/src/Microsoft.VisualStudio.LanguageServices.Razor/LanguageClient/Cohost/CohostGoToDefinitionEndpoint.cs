@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using static Roslyn.LanguageServer.Protocol.RoslynLspExtensions;
@@ -30,12 +31,14 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 internal sealed class CohostGoToDefinitionEndpoint(
     IRemoteServiceInvoker remoteServiceInvoker,
     IHtmlDocumentSynchronizer htmlDocumentSynchronizer,
-    LSPRequestInvoker requestInvoker)
+    LSPRequestInvoker requestInvoker,
+    IFilePathService filePathService)
     : AbstractRazorCohostDocumentRequestHandler<TextDocumentPositionParams, SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?>, IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
     private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
+    private readonly IFilePathService _filePathService = filePathService;
 
     protected override bool MutatesSolutionState => false;
 
@@ -115,11 +118,11 @@ internal sealed class CohostGoToDefinitionEndpoint(
 
         if (response.TryGetFirst(out var singleLocation))
         {
-            return RoslynLspFactory.CreateLocation(singleLocation.Uri, singleLocation.Range.ToLinePositionSpan());
+            return RoslynLspFactory.CreateLocation(RemapVirtualHtmlUri(singleLocation.Uri), singleLocation.Range.ToLinePositionSpan());
         }
         else if (response.TryGetSecond(out var multipleLocations))
         {
-            return Array.ConvertAll(multipleLocations, static l => RoslynLspFactory.CreateLocation(l.Uri, l.Range.ToLinePositionSpan()));
+            return Array.ConvertAll(multipleLocations, l => RoslynLspFactory.CreateLocation(RemapVirtualHtmlUri(l.Uri), l.Range.ToLinePositionSpan()));
         }
         else if (response.TryGetThird(out var documentLinks))
         {
@@ -129,7 +132,7 @@ internal sealed class CohostGoToDefinitionEndpoint(
             {
                 if (documentLink.Target is Uri target)
                 {
-                    builder.Add(RoslynLspFactory.CreateDocumentLink(target, documentLink.Range.ToLinePositionSpan()));
+                    builder.Add(RoslynLspFactory.CreateDocumentLink(RemapVirtualHtmlUri(target), documentLink.Range.ToLinePositionSpan()));
                 }
             }
 
@@ -138,6 +141,17 @@ internal sealed class CohostGoToDefinitionEndpoint(
 
         return null;
     }
+
+    private Uri RemapVirtualHtmlUri(Uri uri)
+    {
+        if (_filePathService.IsVirtualHtmlFile(uri))
+        {
+            return _filePathService.GetRazorDocumentUri(uri);
+        }
+
+        return uri;
+    }
+
 
     internal TestAccessor GetTestAccessor() => new(this);
 

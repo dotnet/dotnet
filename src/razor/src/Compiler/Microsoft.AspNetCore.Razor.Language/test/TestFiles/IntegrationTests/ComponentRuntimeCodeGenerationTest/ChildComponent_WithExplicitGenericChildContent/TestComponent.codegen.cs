@@ -18,7 +18,7 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent>(0);
-            __builder.AddAttribute(1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment<System.String>)((context) => (__builder2) => {
+            __builder.AddAttribute(1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment<global::System.String>)((context) => (__builder2) => {
                 __builder2.AddContent(2, 
 #nullable restore
 #line (1,29)-(1,36) "x:\dir\subdir\Test\TestComponent.cshtml"

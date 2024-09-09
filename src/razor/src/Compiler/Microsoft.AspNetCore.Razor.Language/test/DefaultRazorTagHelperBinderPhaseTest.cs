@@ -604,7 +604,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var expectedRewritingError = RazorDiagnosticFactory.CreateParsing_TagHelperFoundMalformedTagHelper(
             new SourceSpan(new SourceLocation((Environment.NewLine.Length * 2) + 30, 2, 1), contentLength: 4), "form");
 
-        var erroredOriginalTree = RazorSyntaxTree.Create(originalTree.Root, originalTree.Source, [initialError], originalTree.Options);
+        var erroredOriginalTree = new RazorSyntaxTree(originalTree.Root, originalTree.Source, [initialError], originalTree.Options);
         codeDocument.SetSyntaxTree(erroredOriginalTree);
 
         // Act
@@ -615,7 +615,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var outputTree = codeDocument.GetSyntaxTree();
         Assert.Empty(originalTree.Diagnostics);
         Assert.NotSame(erroredOriginalTree, outputTree);
-        Assert.Equal([initialError, expectedRewritingError], outputTree.Diagnostics);
+        Assert.Equal<RazorDiagnostic>([initialError, expectedRewritingError], outputTree.Diagnostics);
     }
 
     private static string AssemblyA => "TestAssembly";

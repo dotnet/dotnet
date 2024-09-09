@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
 
@@ -33,6 +34,8 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
     /// </summary>
     private const int InlineCapacity = 4;
 
+    private ObjectPool<ImmutableArray<T>.Builder>? _builderPool;
+
     /// <summary>
     ///  A builder to be used as storage after the first time that the number
     ///  of items exceeds <see cref="InlineCapacity"/>. Once the builder is used,
@@ -56,9 +59,10 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
     /// </summary>
     private int _inlineCount;
 
-    public PooledArrayBuilder(int? capacity = null)
+    public PooledArrayBuilder(int? capacity = null, ObjectPool<ImmutableArray<T>.Builder>? builderPool = null)
     {
         _capacity = capacity is > InlineCapacity ? capacity : null;
+        _builderPool = builderPool;
         _element0 = default!;
         _element1 = default!;
         _element2 = default!;
@@ -79,11 +83,48 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
         // Return _builder to the pool if necessary. Note that we don't need to clear the inline elements here
         // because this type is intended to be allocated on the stack and the GC can reclaim objects from the
         // stack after the last use of a reference to them.
-        if (_builder is { } builder)
+        if (_builder is { } innerBuilder)
         {
-            ArrayBuilderPool<T>.Default.Return(builder);
+            _builderPool?.Return(innerBuilder);
             _builder = null;
         }
+    }
+
+    /// <summary>
+    ///  Retrieves the inner <see cref="_builder"/>.
+    /// </summary>
+    /// <returns>
+    ///  Returns <see langword="true"/> if <see cref="_builder"/> is available; otherwise <see langword="false"/>
+    /// </returns>
+    /// <remarks>
+    ///  This should only be used by methods that will not add to the inner <see cref="_builder"/>.
+    /// </remarks>
+    private readonly bool TryGetBuilder([NotNullWhen(true)] out ImmutableArray<T>.Builder? builder)
+    {
+        builder = _builder;
+        return builder is not null;
+    }
+
+    /// <summary>
+    ///  Retrieves the inner <see cref="_builder"/> and resets its capacity if necessary.
+    /// </summary>
+    /// <returns>
+    ///  Returns <see langword="true"/> if <see cref="_builder"/> is available; otherwise <see langword="false"/>
+    /// </returns>
+    /// <remarks>
+    ///  This should only be used by methods that will add to the inner <see cref="_builder"/>.
+    /// </remarks>
+    private readonly bool TryGetBuilderAndEnsureCapacity([NotNullWhen(true)] out ImmutableArray<T>.Builder? builder)
+    {
+        if (TryGetBuilder(out builder))
+        {
+            if (builder.Capacity == 0 && _capacity is int capacity)
+            {
+                builder.Capacity = capacity;
+            }
+        }
+
+        return builder is not null;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -108,7 +149,7 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly get
         {
-            if (_builder is { } builder)
+            if (TryGetBuilder(out var builder))
             {
                 return builder[index];
             }
@@ -124,7 +165,7 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         set
         {
-            if (_builder is { } builder)
+            if (TryGetBuilder(out var builder))
             {
                 builder[index] = value;
                 return;
@@ -194,7 +235,7 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
 
     public void Add(T item)
     {
-        if (_builder is { } builder)
+        if (TryGetBuilderAndEnsureCapacity(out var builder))
         {
             builder.Add(item);
         }
@@ -229,7 +270,7 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
             return;
         }
 
-        if (_builder is { } builder)
+        if (TryGetBuilderAndEnsureCapacity(out var builder))
         {
             builder.AddRange(items);
         }
@@ -250,7 +291,7 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
 
     public void AddRange(IEnumerable<T> items)
     {
-        if (_builder is { } builder)
+        if (TryGetBuilderAndEnsureCapacity(out var builder))
         {
             builder.AddRange(items);
             return;
@@ -292,7 +333,7 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
 
     public void Clear()
     {
-        if (_builder is { } builder)
+        if (TryGetBuilder(out var builder))
         {
             // Keep using a real builder to avoid churn in the object pool.
             builder.Clear();
@@ -310,7 +351,7 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
 
     public void RemoveAt(int index)
     {
-        if (_builder is { } builder)
+        if (TryGetBuilderAndEnsureCapacity(out var builder))
         {
             builder.RemoveAt(index);
             return;
@@ -380,7 +421,7 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
     /// <returns>An immutable array.</returns>
     public ImmutableArray<T> DrainToImmutable()
     {
-        if (_builder is { } builder)
+        if (TryGetBuilder(out var builder))
         {
             return builder.DrainToImmutable();
         }
@@ -396,7 +437,7 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
 
     public readonly ImmutableArray<T> ToImmutable()
     {
-        if (_builder is { } builder)
+        if (TryGetBuilder(out var builder))
         {
             return builder.ToImmutable();
         }
@@ -420,7 +461,7 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
 
     public readonly T[] ToArray()
     {
-        if (_builder is { } builder)
+        if (TryGetBuilder(out var builder))
         {
             return builder.ToArray();
         }
@@ -1314,7 +1355,8 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
     {
         Debug.Assert(_builder is null);
 
-        var builder = ArrayBuilderPool<T>.Default.Get();
+        _builderPool ??= ArrayBuilderPool<T>.Default;
+        var builder = _builderPool.Get();
 
         if (_capacity is int capacity)
         {
@@ -1332,5 +1374,206 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
 
         // Since _inlineCount tracks the number of inline items used, we zero it out here.
         _inlineCount = 0;
+    }
+
+    public readonly ImmutableArray<T> ToImmutableOrdered()
+    {
+        var result = ToImmutable();
+        result.Unsafe().Order();
+
+        return result;
+    }
+
+    public readonly ImmutableArray<T> ToImmutableOrdered(IComparer<T> comparer)
+    {
+        var result = ToImmutable();
+        result.Unsafe().Order(comparer);
+
+        return result;
+    }
+
+    public readonly ImmutableArray<T> ToImmutableOrdered(Comparison<T> comparison)
+    {
+        var result = ToImmutable();
+        result.Unsafe().Order(comparison);
+
+        return result;
+    }
+
+    public readonly ImmutableArray<T> ToImmutableOrderedDescending()
+    {
+        var result = ToImmutable();
+        result.Unsafe().OrderDescending();
+
+        return result;
+    }
+
+    public readonly ImmutableArray<T> ToImmutableOrderedDescending(IComparer<T> comparer)
+    {
+        var result = ToImmutable();
+        result.Unsafe().OrderDescending(comparer);
+
+        return result;
+    }
+
+    public readonly ImmutableArray<T> ToImmutableOrderedDescending(Comparison<T> comparison)
+    {
+        var result = ToImmutable();
+        result.Unsafe().OrderDescending(comparison);
+
+        return result;
+    }
+
+    public readonly ImmutableArray<T> ToImmutableOrderedBy<TKey>(Func<T, TKey> keySelector)
+    {
+        var result = ToImmutable();
+        result.Unsafe().OrderBy(keySelector);
+
+        return result;
+    }
+
+    public readonly ImmutableArray<T> ToImmutableOrderedBy<TKey>(Func<T, TKey> keySelector, IComparer<TKey> comparer)
+    {
+        var result = ToImmutable();
+        result.Unsafe().OrderBy(keySelector, comparer);
+
+        return result;
+    }
+
+    public readonly ImmutableArray<T> ToImmutableOrderedBy<TKey>(Func<T, TKey> keySelector, Comparison<TKey> comparison)
+    {
+        var result = ToImmutable();
+        result.Unsafe().OrderBy(keySelector, comparison);
+
+        return result;
+    }
+
+    public readonly ImmutableArray<T> ToImmutableOrderedByDescending<TKey>(Func<T, TKey> keySelector)
+    {
+        var result = ToImmutable();
+        result.Unsafe().OrderByDescending(keySelector);
+
+        return result;
+    }
+
+    public readonly ImmutableArray<T> ToImmutableOrderedByDescending<TKey>(Func<T, TKey> keySelector, IComparer<TKey> comparer)
+    {
+        var result = ToImmutable();
+        result.Unsafe().OrderByDescending(keySelector, comparer);
+
+        return result;
+    }
+
+    public readonly ImmutableArray<T> ToImmutableOrderedByDescending<TKey>(Func<T, TKey> keySelector, Comparison<TKey> comparison)
+    {
+        var result = ToImmutable();
+        result.Unsafe().OrderByDescending(keySelector, comparison);
+
+        return result;
+    }
+
+    public ImmutableArray<T> DrainToImmutableOrdered()
+    {
+        var result = DrainToImmutable();
+        result.Unsafe().Order();
+
+        return result;
+    }
+
+    public ImmutableArray<T> DrainToImmutableOrdered(IComparer<T> comparer)
+    {
+        var result = DrainToImmutable();
+        result.Unsafe().Order(comparer);
+
+        return result;
+    }
+
+    public ImmutableArray<T> DrainToImmutableOrdered(Comparison<T> comparison)
+    {
+        var result = DrainToImmutable();
+        result.Unsafe().Order(comparison);
+
+        return result;
+    }
+
+    public ImmutableArray<T> DrainToImmutableOrderedDescending()
+    {
+        var result = DrainToImmutable();
+        result.Unsafe().OrderDescending();
+
+        return result;
+    }
+
+    public ImmutableArray<T> DrainToImmutableOrderedDescending(IComparer<T> comparer)
+    {
+        var result = DrainToImmutable();
+        result.Unsafe().OrderDescending(comparer);
+
+        return result;
+    }
+
+    public ImmutableArray<T> DrainToImmutableOrderedDescending(Comparison<T> comparison)
+    {
+        var result = DrainToImmutable();
+        result.Unsafe().OrderDescending(comparison);
+
+        return result;
+    }
+
+    public ImmutableArray<T> DrainToImmutableOrderedBy<TKey>(Func<T, TKey> keySelector)
+    {
+        var result = DrainToImmutable();
+        result.Unsafe().OrderBy(keySelector);
+
+        return result;
+    }
+
+    public ImmutableArray<T> DrainToImmutableOrderedBy<TKey>(Func<T, TKey> keySelector, IComparer<TKey> comparer)
+    {
+        var result = DrainToImmutable();
+        result.Unsafe().OrderBy(keySelector, comparer);
+
+        return result;
+    }
+
+    public ImmutableArray<T> DrainToImmutableOrderedBy<TKey>(Func<T, TKey> keySelector, Comparison<TKey> comparison)
+    {
+        var result = DrainToImmutable();
+        result.Unsafe().OrderBy(keySelector, comparison);
+
+        return result;
+    }
+
+    public ImmutableArray<T> DrainToImmutableOrderedByDescending<TKey>(Func<T, TKey> keySelector)
+    {
+        var result = DrainToImmutable();
+        result.Unsafe().OrderByDescending(keySelector);
+
+        return result;
+    }
+
+    public ImmutableArray<T> DrainToImmutableOrderedByDescending<TKey>(Func<T, TKey> keySelector, IComparer<TKey> comparer)
+    {
+        var result = DrainToImmutable();
+        result.Unsafe().OrderByDescending(keySelector, comparer);
+
+        return result;
+    }
+
+    public ImmutableArray<T> DrainToImmutableOrderedByDescending<TKey>(Func<T, TKey> keySelector, Comparison<TKey> comparison)
+    {
+        var result = DrainToImmutable();
+        result.Unsafe().OrderByDescending(keySelector, comparison);
+
+        return result;
+    }
+
+    internal readonly TestAccessor GetTestAccessor() => new(in this);
+
+    internal readonly struct TestAccessor(ref readonly PooledArrayBuilder<T> builder)
+    {
+        public ImmutableArray<T>.Builder? InnerArrayBuilder { get; } = builder._builder;
+        public int? Capacity { get; } = builder._capacity;
+        public int InlineItemCount { get; } = builder._inlineCount;
     }
 }

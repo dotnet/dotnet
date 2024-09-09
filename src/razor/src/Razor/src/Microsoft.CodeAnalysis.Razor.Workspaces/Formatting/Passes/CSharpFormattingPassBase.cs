@@ -133,7 +133,10 @@ internal abstract class CSharpFormattingPassBase(IDocumentMappingService documen
             }
 
             var scopeOwner = syntaxTreeRoot.FindInnermostNode(originalLocation);
-            sourceMappingIndentations[originalLocation] = new IndentationData(indentation);
+            if (!sourceMappingIndentations.ContainsKey(originalLocation))
+            {
+                sourceMappingIndentations[originalLocation] = new IndentationData(indentation);
+            }
 
             // For @section blocks we have special handling to add a fake source mapping/significant location at the end of the
             // section, to return the indentation back to before the start of the section block.

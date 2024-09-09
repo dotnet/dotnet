@@ -4,6 +4,7 @@
     <TargetFrameworks>$(DefaultNetCoreTargetFrameworks)</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);$(DefaultNetFxTargetFramework)</TargetFrameworks>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <IsShipping>false</IsShipping>
   </PropertyGroup>
 
   <ItemGroup>

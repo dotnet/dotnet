@@ -3,9 +3,9 @@
 
 #nullable disable
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -52,8 +52,16 @@ internal static class GreenNodeExtensions
         }
     }
 
-    public static TNode WithDiagnosticsGreen<TNode>(this TNode node, params RazorDiagnostic[] diagnostics) where TNode : GreenNode
+    public static TNode WithDiagnosticsGreen<TNode>(this TNode node, RazorDiagnostic[] diagnostics)
+        where TNode : GreenNode
     {
         return (TNode)node.SetDiagnostics(diagnostics);
+    }
+
+    public static TNode WithDiagnosticsGreen<TNode>(this TNode node, params ImmutableArray<RazorDiagnostic> diagnostics)
+        where TNode : GreenNode
+    {
+        var array = ImmutableCollectionsMarshal.AsArray(diagnostics);
+        return node.WithDiagnosticsGreen(array);
     }
 }

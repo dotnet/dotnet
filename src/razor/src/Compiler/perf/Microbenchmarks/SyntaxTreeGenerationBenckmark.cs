@@ -52,7 +52,7 @@ public class SyntaxTreeGenerationBenchmark
         });
         var syntaxTree = RazorSyntaxTree.Parse(MSN, options);
 
-        if (syntaxTree.Diagnostics.Count != 0)
+        if (syntaxTree.Diagnostics.Length != 0)
         {
             throw new Exception("Error!" + Environment.NewLine + string.Join(Environment.NewLine, syntaxTree.Diagnostics));
         }
@@ -70,7 +70,7 @@ public class SyntaxTreeGenerationBenchmark
         });
         var syntaxTree = RazorSyntaxTree.Parse(MSN, options);
 
-        if (syntaxTree.Diagnostics.Count != 0)
+        if (syntaxTree.Diagnostics.Length != 0)
         {
             throw new Exception("Error!" + Environment.NewLine + string.Join(Environment.NewLine, syntaxTree.Diagnostics));
         }
