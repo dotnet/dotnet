@@ -31,14 +31,12 @@ internal class OnAutoInsertEndpoint(
     IClientConnection clientConnection,
     IAutoInsertService autoInsertService,
     RazorLSPOptionsMonitor optionsMonitor,
-    IAdhocWorkspaceFactory workspaceFactory,
     IRazorFormattingService razorFormattingService,
     ILoggerFactory loggerFactory)
     : AbstractRazorDelegatingEndpoint<VSInternalDocumentOnAutoInsertParams, VSInternalDocumentOnAutoInsertResponseItem?>(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.GetOrCreateLogger<OnAutoInsertEndpoint>()), ICapabilitiesProvider
 {
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
-    private readonly IAdhocWorkspaceFactory _workspaceFactory = workspaceFactory;
     private readonly IRazorFormattingService _razorFormattingService = razorFormattingService;
     private readonly IAutoInsertService _autoInsertService = autoInsertService;
 

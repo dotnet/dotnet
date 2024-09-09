@@ -10,6 +10,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Common;
 
 internal readonly struct TestCode
 {
+    public string OriginalInput { get; }
     public string Text { get; }
     public ImmutableArray<int> Positions { get; }
 
@@ -17,6 +18,8 @@ internal readonly struct TestCode
 
     public TestCode(string input, bool treatPositionIndicatorsAsCode = false)
     {
+        OriginalInput = input;
+
         if (treatPositionIndicatorsAsCode)
         {
             TestFileMarkupParser.GetSpans(input, treatPositionIndicatorsAsCode, out var text, out var nameToSpanMap);

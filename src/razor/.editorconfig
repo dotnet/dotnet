@@ -39,6 +39,9 @@ dotnet_separate_import_directive_groups = false
 # IDE0005 - Remove unnecessary imports
 dotnet_diagnostic.IDE0005.severity = warning
 
+# IDE0052 - Private member can be removed
+dotnet_diagnostic.IDE0052.severity = warning
+
 # IDE0046: If expression can be simplified
 dotnet_style_prefer_conditional_expression_over_return = false:silent
 

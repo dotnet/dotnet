@@ -4,6 +4,7 @@
 using System.Runtime.Serialization;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using RoslynFormattingOptions = Roslyn.LanguageServer.Protocol.FormattingOptions;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
@@ -36,4 +37,11 @@ internal readonly record struct RazorFormattingOptions
             UseTabs: !InsertSpaces,
             TabSize: TabSize,
             IndentationSize: TabSize);
+
+    public RoslynFormattingOptions ToRoslynFormattingOptions()
+        => new RoslynFormattingOptions()
+        {
+            InsertSpaces = InsertSpaces,
+            TabSize = TabSize
+        };
 }

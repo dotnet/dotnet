@@ -29,8 +29,6 @@ internal class SnippetService
     private readonly IAdvancedSettingsStorage _advancedSettingsStorage;
     private IVsExpansionManager? _vsExpansionManager;
 
-    private readonly object _cacheGuard = new();
-
     private static readonly Guid s_CSharpLanguageId = new("694dd9b6-b865-4c5b-ad85-86356e9c88dc");
     private static readonly Guid s_HtmlLanguageId = new("9bbfd173-9770-47dc-b191-651b7ff493cd");
 

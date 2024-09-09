@@ -184,10 +184,10 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
             // Transient because it should only be used once and I'm hoping it doesn't stick around.
             services.AddTransient<IOnInitialized>(sp => sp.GetRequiredService<RazorConfigurationEndpoint>());
 
-            services.AddHandlerWithCapabilities<ImplementationEndpoint>();
-
             if (!featureOptions.UseRazorCohostServer)
             {
+                services.AddHandlerWithCapabilities<ImplementationEndpoint>();
+
                 services.AddSingleton<IRazorComponentDefinitionService, RazorComponentDefinitionService>();
                 services.AddHandlerWithCapabilities<DefinitionEndpoint>();
 

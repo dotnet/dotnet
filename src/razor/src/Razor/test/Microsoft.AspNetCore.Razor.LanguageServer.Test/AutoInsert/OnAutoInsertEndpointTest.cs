@@ -5,7 +5,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.CodeAnalysis.Razor.AutoInsert;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
@@ -34,7 +33,6 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
             languageServer,
             autoInsertService,
             optionsMonitor,
-            TestAdhocWorkspaceFactory.Instance,
             null!,
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
@@ -76,7 +74,6 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
             languageServer,
             new AutoInsertService([insertProvider]),
             optionsMonitor,
-            TestAdhocWorkspaceFactory.Instance,
             null!,
             LoggerFactory);
         var uri = new Uri("file://path/test.razor");
@@ -120,7 +117,6 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
             languageServer,
             new AutoInsertService([insertProvider]),
             optionsMonitor,
-            TestAdhocWorkspaceFactory.Instance,
             razorFormattingService: null!,
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
@@ -161,7 +157,7 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
             DocumentMappingService,
             languageServer,
             new AutoInsertService([insertProvider]),
-            optionsMonitor, TestAdhocWorkspaceFactory.Instance,
+            optionsMonitor,
             razorFormattingService: null!,
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()

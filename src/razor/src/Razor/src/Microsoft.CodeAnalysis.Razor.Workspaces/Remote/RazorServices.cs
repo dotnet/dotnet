@@ -23,6 +23,7 @@ internal static class RazorServices
             (typeof(IRemoteDocumentHighlightService), null),
             (typeof(IRemoteAutoInsertService), null),
             (typeof(IRemoteFormattingService), null),
+            (typeof(IRemoteSpellCheckService), null),
         ];
 
     // Internal for testing
@@ -33,6 +34,7 @@ internal static class RazorServices
             (typeof(IRemoteInlayHintService), null),
             (typeof(IRemoteDocumentSymbolService), null),
             (typeof(IRemoteRenameService), null),
+            (typeof(IRemoteGoToImplementationService), null),
         ];
 
     private const string ComponentName = "Razor";
