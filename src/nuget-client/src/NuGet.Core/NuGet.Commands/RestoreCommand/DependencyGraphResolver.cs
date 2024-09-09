@@ -90,24 +90,13 @@ namespace NuGet.Commands
                     hasInstallBeenCalledAlready = true;
                 }
 
-                TargetFrameworkInformation? projectTargetFramework = _request.Project.TargetFrameworks.FirstOrDefault(i => NuGetFramework.Comparer.Equals(i.FrameworkName, pair.Framework));
+                TargetFrameworkInformation? projectTargetFramework = _request.Project.GetTargetFramework(pair.Framework);
 
-                //Build up our new RestoreTargetGraph.
-                //This is done by making everything on RTG setable.  We should move to using a normal constructor.
-                var newRTG = new RestoreTargetGraph();
-                //Set the statically setable stuff
-                newRTG.AnalyzeResult = new AnalyzeResult<RemoteResolveResult>();
-                newRTG.Conflicts = new List<ResolverConflict>();
-                newRTG.InConflict = false; //its never set for substrate fwiw...
-                newRTG.Install = new HashSet<RemoteMatch>();
-                newRTG.ResolvedDependencies = new HashSet<ResolvedDependencyKey>();
-                newRTG.Unresolved = new HashSet<LibraryRange>();
+                var packagesToInstall = new HashSet<RemoteMatch>();
 
-                //Set the natively settable things.
-                newRTG.Framework = pair.Framework;
-                newRTG.RuntimeIdentifier = (pair.RuntimeIdentifier == "" ? null : pair.RuntimeIdentifier);
-                newRTG.Name = FrameworkRuntimePair.GetName(newRTG.Framework, newRTG.RuntimeIdentifier);
-                newRTG.TargetGraphName = FrameworkRuntimePair.GetTargetGraphName(newRTG.Framework, newRTG.RuntimeIdentifier);
+                var unresolvedPackages = new HashSet<LibraryRange>();
+
+                var resolvedDependencies = new HashSet<ResolvedDependencyKey>();
 
                 RuntimeGraph? runtimeGraph = default;
                 if (!string.IsNullOrEmpty(pair.RuntimeIdentifier) && graphByTFM.TryGetValue(pair.Framework, out var tfmNonRidGraph))
@@ -127,8 +116,6 @@ namespace NuGet.Commands
                     runtimeGraph = ProjectRestoreCommand.GetRuntimeGraph(tfmNonRidGraph, localRepositories, projectRuntimeGraph: projectProviderRuntimeGraph, _logger);
                     allRuntimes = RuntimeGraph.Merge(allRuntimes, runtimeGraph);
                 }
-
-                newRTG.Conventions = new Client.ManagedCodeConventions(runtimeGraph);
 
                 //Now build up our new flattened graph
                 var initialProject = new LibraryDependency(new LibraryRange()
@@ -502,7 +489,7 @@ namespace NuGet.Commands
                     {
                         GraphItem<RemoteResolveResult> refItem = ResolverUtility.FindLibraryEntryAsync(
                                 currentRef.LibraryRange,
-                                newRTG.Framework,
+                                pair.Framework,
                                 runtimeIdentifier: null,
                                 context,
                                 CancellationToken.None).GetAwaiter().GetResult();
@@ -521,7 +508,7 @@ namespace NuGet.Commands
                         var isRemote = context.RemoteLibraryProviders.Contains(refItem.Data.Match.Provider);
                         if (isRemote)
                         {
-                            newRTG.Install.Add(refItem.Data.Match);
+                            packagesToInstall.Add(refItem.Data.Match);
                         }
                     }
 
@@ -699,10 +686,10 @@ namespace NuGet.Commands
                 }
 
                 //Now that we've completed import, figure out the short real flattened list
-                var newFlattened = new HashSet<GraphItem<RemoteResolveResult>>();
+                var flattenedGraphItems = new HashSet<GraphItem<RemoteResolveResult>>();
                 HashSet<LibraryDependencyIndex> visitedItems = new HashSet<LibraryDependencyIndex>();
                 Queue<(LibraryDependencyIndex, GraphNode<RemoteResolveResult>)> itemsToFlatten = new Queue<(LibraryDependencyIndex, GraphNode<RemoteResolveResult>)>();
-                var nGraph = new List<GraphNode<RemoteResolveResult>>();
+                var graphNodes = new List<GraphNode<RemoteResolveResult>>();
 
                 LibraryDependencyIndex initialProjectIndex = rootProjectRefItem.LibraryDependencyIndex;
                 var cri = chosenResolvedItems[initialProjectIndex];
@@ -711,8 +698,9 @@ namespace NuGet.Commands
                 var rootGraphNode = new GraphNode<RemoteResolveResult>(startRef.LibraryRange);
                 LibraryRangeIndex startRefLibraryRangeIndex = cri.LibraryRangeIndex;
                 rootGraphNode.Item = findLibraryEntryCache[startRefLibraryRangeIndex].Item;
-                nGraph.Add(rootGraphNode);
+                graphNodes.Add(rootGraphNode);
 
+                var analyzeResult = new AnalyzeResult<RemoteResolveResult>();
                 var nodesById = new Dictionary<LibraryRangeIndex, GraphNode<RemoteResolveResult>>();
 
                 var downgrades = new Dictionary<LibraryRangeIndex, (GraphNode<RemoteResolveResult> OuterNode, LibraryDependency LibraryDependency)>();
@@ -735,7 +723,7 @@ namespace NuGet.Commands
 
                     if (findLibraryEntryCache.TryGetValue(chosenRefRangeIndex, out var node))
                     {
-                        newFlattened.Add(node.Item);
+                        flattenedGraphItems.Add(node.Item);
 
                         for (int i = 0; i < node.Item.Data.Dependencies.Count; i++)
                         {
@@ -749,7 +737,7 @@ namespace NuGet.Commands
                                     Disposition = Disposition.Cycle
                                 };
 
-                                newRTG.AnalyzeResult.Cycles.Add(nodeWithCycle);
+                                analyzeResult.Cycles.Add(nodeWithCycle);
 
                                 continue;
                             }
@@ -774,7 +762,7 @@ namespace NuGet.Commands
                                     var nodeWithCycle = new GraphNode<RemoteResolveResult>(dep.LibraryRange);
                                     nodeWithCycle.OuterNode = currentGraphNode;
                                     nodeWithCycle.Disposition = Disposition.Cycle;
-                                    newRTG.AnalyzeResult.Cycles.Add(nodeWithCycle);
+                                    analyzeResult.Cycles.Add(nodeWithCycle);
 
                                     continue;
                                 }
@@ -864,14 +852,14 @@ namespace NuGet.Commands
 
                             if (newGraphNode.Item.Key.Type == LibraryType.Unresolved)
                             {
-                                newRTG.Unresolved.Add(actualDep.LibraryRange);
+                                unresolvedPackages.Add(actualDep.LibraryRange);
 
                                 _success = false;
 
                                 continue;
                             }
 
-                            newRTG.ResolvedDependencies.Add(new ResolvedDependencyKey(
+                            resolvedDependencies.Add(new ResolvedDependencyKey(
                                 parent: newGraphNode.OuterNode.Item.Key,
                                 range: newGraphNode.Key.VersionRange,
                                 child: newGraphNode.Item.Key));
@@ -885,7 +873,7 @@ namespace NuGet.Commands
                     {
                         if (nodesById.TryGetValue(versionConflict.Key, out var selected))
                         {
-                            newRTG.AnalyzeResult.VersionConflicts.Add(new VersionConflictResult<RemoteResolveResult>
+                            analyzeResult.VersionConflicts.Add(new VersionConflictResult<RemoteResolveResult>
                             {
                                 Conflicting = versionConflict.Value,
                                 Selected = selected
@@ -909,7 +897,7 @@ namespace NuGet.Commands
                             OuterNode = downgrade.Value.OuterNode
                         };
 
-                        newRTG.AnalyzeResult.Downgrades.Add(new DowngradeResult<RemoteResolveResult>
+                        analyzeResult.Downgrades.Add(new DowngradeResult<RemoteResolveResult>
                         {
                             DowngradedFrom = downgradedFrom,
                             DowngradedTo = downgradedTo
@@ -941,20 +929,28 @@ namespace NuGet.Commands
                     }
                 }
 
-                newRTG.Flattened = newFlattened;
+                var restoreTargetGraph = new RestoreTargetGraph(
+                    Array.Empty<ResolverConflict>(),
+                    pair.Framework,
+                    string.IsNullOrWhiteSpace(pair.RuntimeIdentifier) ? null : pair.RuntimeIdentifier,
+                    runtimeGraph,
+                    graphNodes,
+                    install: packagesToInstall,
+                    flattened: flattenedGraphItems,
+                    unresolved: unresolvedPackages,
+                    analyzeResult,
+                    resolvedDependencies: resolvedDependencies);
 
-                newRTG.Graphs = nGraph;
-
-                allGraphs.Add(newRTG);
+                allGraphs.Add(restoreTargetGraph);
 
                 if (!string.IsNullOrWhiteSpace(pair.RuntimeIdentifier))
                 {
-                    runtimeGraphs.Add(newRTG);
+                    runtimeGraphs.Add(restoreTargetGraph);
                 }
 
                 if (string.IsNullOrEmpty(pair.RuntimeIdentifier))
                 {
-                    graphByTFM.Add(pair.Framework, newRTG);
+                    graphByTFM.Add(pair.Framework, restoreTargetGraph);
                 }
             }
 

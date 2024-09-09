@@ -19,7 +19,8 @@
 
     <!-- ** Change for each new preview/rc -->
     <!-- Check the VS schedule and manually enter a preview number here that makes sense. -->
-    <ReleaseLabel Condition=" '$(ReleaseLabel)' == '' ">preview.1</ReleaseLabel>
+    <!-- Preview 3 is typically the last "main branch" preview, so we start using rc at this time -->
+    <ReleaseLabel Condition=" '$(ReleaseLabel)' == '' ">rc</ReleaseLabel>
 
     <IsEscrowMode>false</IsEscrowMode>
 
