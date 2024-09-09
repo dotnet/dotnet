@@ -66,7 +66,7 @@ Template
 #line default
 #line hidden
 #nullable disable
-            ), (global::Microsoft.AspNetCore.Components.RenderFragment<Test.Context>)(
+            ), (global::Microsoft.AspNetCore.Components.RenderFragment<global::Test.Context>)(
 #nullable restore
 #line (2,25)-(2,33) "x:\dir\subdir\Test\TestComponent.cshtml"
 template

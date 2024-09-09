@@ -801,7 +801,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                 if (canTypeCheck)
                 {
                     context.CodeWriter.Write("new ");
-                    TypeNameHelper.WriteGloballyQualifiedName(context.CodeWriter, node.TypeName);
+                    WriteGloballyQualifiedTypeName(context, node);
                     context.CodeWriter.Write("(");
                 }
                 context.CodeWriter.WriteLine();
@@ -883,15 +883,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                 {
                     context.CodeWriter.Write(ComponentsApi.RuntimeHelpers.TypeCheck);
                     context.CodeWriter.Write("<");
-                    var explicitType = (bool?)node.Annotations[ComponentMetadata.Component.ExplicitTypeNameKey];
-                    if (explicitType == true)
-                    {
-                        context.CodeWriter.Write(node.TypeName);
-                    }
-                    else
-                    {
-                        TypeNameHelper.WriteGloballyQualifiedName(context.CodeWriter, node.TypeName);
-                    }
+                    WriteGloballyQualifiedTypeName(context, node);
                     context.CodeWriter.Write(">");
                     context.CodeWriter.Write("(");
                 }
@@ -964,7 +956,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         BeginWriteAttribute(context, node.AttributeName);
         context.CodeWriter.WriteParameterSeparator();
         context.CodeWriter.Write("(");
-        TypeNameHelper.WriteGloballyQualifiedName(context.CodeWriter, node.TypeName);
+        WriteGloballyQualifiedTypeName(context, node);
         context.CodeWriter.Write(")(");
 
         WriteComponentChildContentInnards(context, node);

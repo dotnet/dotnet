@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit.Abstractions;
 using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
@@ -31,7 +32,7 @@ public abstract class FormattingLanguageServerTestBase(ITestOutputHelper testOut
         return codeDocument;
     }
 
-    internal class DummyRazorFormattingService : IRazorFormattingService
+    internal class DummyRazorFormattingService(RazorLanguageKind? languageKind = null) : IRazorFormattingService
     {
         public bool Called { get; private set; }
 
@@ -64,6 +65,12 @@ public abstract class FormattingLanguageServerTestBase(ITestOutputHelper testOut
         public Task<TextEdit?> GetSingleCSharpEditAsync(DocumentContext documentContext, TextEdit initialEdit, RazorFormattingOptions options, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
+        }
+
+        public bool TryGetOnTypeFormattingTriggerKind(RazorCodeDocument codeDocument, int hostDocumentIndex, string triggerCharacter, out RazorLanguageKind triggerCharacterKind)
+        {
+            triggerCharacterKind = languageKind.GetValueOrDefault();
+            return languageKind is not null;
         }
     }
 }

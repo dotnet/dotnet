@@ -378,7 +378,7 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
         Assert.Equal(PartialParseResultInternal.Accepted | additionalFlags, result);
 
         var newSource = TestRazorSourceDocument.Create(edit.NewSnapshot.GetText());
-        var newSyntaxTree = RazorSyntaxTree.Create(parser.ModifiedSyntaxTreeRoot, newSource, parser.OriginalSyntaxTree.Diagnostics, parser.OriginalSyntaxTree.Options);
+        var newSyntaxTree = new RazorSyntaxTree(parser.ModifiedSyntaxTreeRoot, newSource, parser.OriginalSyntaxTree.Diagnostics, parser.OriginalSyntaxTree.Options);
         BaselineTest(newSyntaxTree);
     }
 

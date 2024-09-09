@@ -1,6 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -11,6 +13,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -20,7 +23,15 @@ namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
 internal class RazorFormattingService : IRazorFormattingService
 {
+    public static readonly string FirstTriggerCharacter = "}";
+    public static readonly ImmutableArray<string> MoreTriggerCharacters = [";", "\n", "{"];
+    public static readonly FrozenSet<string> AllTriggerCharacterSet = FrozenSet.ToFrozenSet([FirstTriggerCharacter, .. MoreTriggerCharacters], StringComparer.Ordinal);
+
+    private static readonly FrozenSet<string> s_csharpTriggerCharacterSet = FrozenSet.ToFrozenSet(["}", ";"], StringComparer.Ordinal);
+    private static readonly FrozenSet<string> s_htmlTriggerCharacterSet = FrozenSet.ToFrozenSet(["\n", "{", "}", ";"], StringComparer.Ordinal);
+
     private readonly IFormattingCodeDocumentProvider _codeDocumentProvider;
+    private readonly IDocumentMappingService _documentMappingService;
     private readonly IAdhocWorkspaceFactory _workspaceFactory;
 
     private readonly ImmutableArray<IFormattingPass> _documentFormattingPasses;
@@ -35,6 +46,7 @@ internal class RazorFormattingService : IRazorFormattingService
         ILoggerFactory loggerFactory)
     {
         _codeDocumentProvider = codeDocumentProvider;
+        _documentMappingService = documentMappingService;
         _workspaceFactory = workspaceFactory;
 
         _htmlOnTypeFormattingPass = new HtmlOnTypeFormattingPass(loggerFactory);
@@ -108,7 +120,8 @@ internal class RazorFormattingService : IRazorFormattingService
             ? result
             : result.Where(e => range.LineOverlapsWith(e.Range)).ToArray();
 
-        return originalText.MinimizeTextEdits(filteredEdits);
+        var normalizedEdits = NormalizeLineEndings(originalText, filteredEdits);
+        return originalText.MinimizeTextEdits(normalizedEdits);
     }
 
     public Task<TextEdit[]> GetCSharpOnTypeFormattingEditsAsync(DocumentContext documentContext, RazorFormattingOptions options, int hostDocumentIndex, char triggerCharacter, CancellationToken cancellationToken)
@@ -185,6 +198,18 @@ internal class RazorFormattingService : IRazorFormattingService
         return razorEdits.SingleOrDefault();
     }
 
+    public bool TryGetOnTypeFormattingTriggerKind(RazorCodeDocument codeDocument, int hostDocumentIndex, string triggerCharacter, out RazorLanguageKind triggerCharacterKind)
+    {
+        triggerCharacterKind = _documentMappingService.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: false);
+
+        return triggerCharacterKind switch
+        {
+            RazorLanguageKind.CSharp => s_csharpTriggerCharacterSet.Contains(triggerCharacter),
+            RazorLanguageKind.Html => s_htmlTriggerCharacterSet.Contains(triggerCharacter),
+            _ => false,
+        };
+    }
+
     private async Task<TextEdit[]> ApplyFormattedEditsAsync(
         DocumentContext documentContext,
         TextEdit[] generatedDocumentEdits,
@@ -202,7 +227,7 @@ internal class RazorFormattingService : IRazorFormattingService
 
         var documentSnapshot = documentContext.Snapshot;
         var uri = documentContext.Uri;
-        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
+        var codeDocument = await _codeDocumentProvider.GetCodeDocumentAsync(documentSnapshot).ConfigureAwait(false);
         using var context = FormattingContext.CreateForOnTypeFormatting(
             uri,
             documentSnapshot,
@@ -278,5 +303,29 @@ internal class RazorFormattingService : IRazorFormattingService
             // So, let's avoid the error by wrapping the cursor marker in a comment.
             edit.NewText = edit.NewText.Replace("/*$0*/", "$0");
         }
+    }
+
+    /// <summary>
+    /// This method counts the occurrences of CRLF and LF line endings in the original text. 
+    /// If LF line endings are more prevalent, it removes any CR characters from the text edits 
+    /// to ensure consistency with the LF style.
+    /// </summary>
+    private static TextEdit[] NormalizeLineEndings(SourceText originalText, TextEdit[] edits)
+    {
+        if (originalText.HasLFLineEndings())
+        {
+            foreach (var edit in edits)
+            {
+                edit.NewText = edit.NewText.Replace("\r", "");
+            }
+        }
+
+        return edits;
+    }
+
+    internal static class TestAccessor
+    {
+        public static FrozenSet<string> GetCSharpTriggerCharacterSet() => s_csharpTriggerCharacterSet;
+        public static FrozenSet<string> GetHtmlTriggerCharacterSet() => s_htmlTriggerCharacterSet;
     }
 }

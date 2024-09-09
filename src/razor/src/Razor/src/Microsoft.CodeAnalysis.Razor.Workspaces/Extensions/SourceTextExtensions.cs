@@ -296,4 +296,33 @@ internal static class SourceTextExtensions
         var cleanEdits = cleanChanges.Select(text.GetTextEdit).ToArray();
         return cleanEdits;
     }
+
+    /// <summary>
+    /// Determines if the given <see cref="SourceText"/> has more LF line endings ('\n') than CRLF line endings ('\r\n').
+    /// </summary>
+    /// <param name="text">The <see cref="SourceText"/> to examine.</param>
+    /// <returns>
+    /// <c>true</c> if the <see cref="SourceText"/> is deemed to use LF line endings; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool HasLFLineEndings(this SourceText text)
+    {
+        var crlfCount = 0;
+        var lfCount = 0;
+
+        foreach (var line in text.Lines)
+        {
+            var lineBreakSpan = TextSpan.FromBounds(line.End, line.EndIncludingLineBreak);
+            var lineBreak = line.Text?.ToString(lineBreakSpan) ?? string.Empty;
+            if (lineBreak == "\r\n")
+            {
+                crlfCount++;
+            }
+            else if (lineBreak == "\n")
+            {
+                lfCount++;
+            }
+        }
+
+        return lfCount > crlfCount;
+    }
 }

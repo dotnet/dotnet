@@ -112,7 +112,7 @@ public class RazorCSharpFormattingBenchmark : RazorLanguageServerBenchmarkBase
     {
         var documentContext = new DocumentContext(DocumentUri, DocumentSnapshot, projectContext: null);
 
-        var edits = await RazorFormattingService.GetDocumentFormattingEditsAsync(documentContext, htmlEdits: [], range: null, RazorFormattingOptions.Default, CancellationToken.None);
+        var edits = await RazorFormattingService.GetDocumentFormattingEditsAsync(documentContext, htmlEdits: [], range: null, new RazorFormattingOptions(), CancellationToken.None);
 
 #if DEBUG
         // For debugging purposes only.

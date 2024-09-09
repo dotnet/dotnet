@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -81,6 +82,14 @@ internal static class LspInitializationHelpers
         IEnumerable<string> triggerCharacters)
     {
         options.TriggerCharacters = triggerCharacters.Distinct().ToArray();
+
+        return options;
+    }
+
+    public static DocumentOnTypeFormattingOptions EnableOnTypeFormattingTriggerCharacters(this DocumentOnTypeFormattingOptions options)
+    {
+        options.FirstTriggerCharacter = RazorFormattingService.FirstTriggerCharacter;
+        options.MoreTriggerCharacter = RazorFormattingService.MoreTriggerCharacters.ToArray();
 
         return options;
     }

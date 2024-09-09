@@ -53,7 +53,7 @@ message
 #nullable disable
             ));
             __builder.AddComponentParameter(3, nameof(global::Test.MyComponent.MessageChanged), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<global::System.String>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.String>(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => message = __value, message))));
-            __builder.AddComponentParameter(4, nameof(global::Test.MyComponent.MessageExpression), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Linq.Expressions.Expression<System.Action<System.String>>>(() => message));
+            __builder.AddComponentParameter(4, nameof(global::Test.MyComponent.MessageExpression), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Linq.Expressions.Expression<global::System.Action<global::System.String>>>(() => message));
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

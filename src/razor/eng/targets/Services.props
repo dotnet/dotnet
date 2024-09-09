@@ -29,5 +29,6 @@
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.GoToDefinition" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteGoToDefinitionService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.Rename" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteRenameService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.AutoInsert" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteAutoInsertService+Factory" />
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.Formatting" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteFormattingService+Factory" />
   </ItemGroup>
 </Project>

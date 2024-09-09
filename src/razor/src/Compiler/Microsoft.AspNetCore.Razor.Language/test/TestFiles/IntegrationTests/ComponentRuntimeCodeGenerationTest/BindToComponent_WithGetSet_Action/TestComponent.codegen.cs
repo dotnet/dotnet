@@ -35,7 +35,7 @@ ParentValue
 #line hidden
 #nullable disable
             ));
-            __builder.AddComponentParameter(2, nameof(global::Test.MyComponent.ValueChanged), (global::System.Action<System.Int32>)(
+            __builder.AddComponentParameter(2, nameof(global::Test.MyComponent.ValueChanged), (global::System.Action<global::System.Int32>)(
 #nullable restore
 #line (1,61)-(1,72) "x:\dir\subdir\Test\TestComponent.cshtml"
 UpdateValue

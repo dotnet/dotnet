@@ -62,43 +62,6 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
     }
 
     [Fact]
-    public void IsImportDocument_NonImportDocument_ReturnsFalse()
-    {
-        // Arrange
-        var state = ProjectState.Create(ProjectEngineFactoryProvider, _hostProject, _projectWorkspaceState)
-            .WithAddedHostDocument(_documents[0], DocumentState.EmptyLoader);
-        var snapshot = new ProjectSnapshot(state);
-
-        var document = snapshot.GetDocument(_documents[0].FilePath);
-        Assert.NotNull(document);
-
-        // Act
-        var result = snapshot.IsImportDocument(document);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsImportDocument_ImportDocument_ReturnsTrue()
-    {
-        // Arrange
-        var state = ProjectState.Create(ProjectEngineFactoryProvider, _hostProject, _projectWorkspaceState)
-            .WithAddedHostDocument(_documents[0], DocumentState.EmptyLoader)
-            .WithAddedHostDocument(TestProjectData.SomeProjectImportFile, DocumentState.EmptyLoader);
-        var snapshot = new ProjectSnapshot(state);
-
-        var document = snapshot.GetDocument(TestProjectData.SomeProjectImportFile.FilePath);
-        Assert.NotNull(document);
-
-        // Act
-        var result = snapshot.IsImportDocument(document);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
     public void GetRelatedDocuments_NonImportDocument_ReturnsEmpty()
     {
         // Arrange

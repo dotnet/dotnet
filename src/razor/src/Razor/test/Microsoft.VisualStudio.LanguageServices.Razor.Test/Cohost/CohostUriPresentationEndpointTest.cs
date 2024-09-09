@@ -98,6 +98,26 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
     }
 
     [Fact]
+    public async Task ImportsFile()
+    {
+        await VerifyUriPresentationAsync(
+            input: """
+                This is a Razor document.
+
+                <div>
+                    [||]
+                </div>
+
+                The end.
+                """,
+            additionalFiles: [
+                (File("_Imports.razor"), "")
+            ],
+            uris: [FileUri("_Imports.razor")],
+            expected: null);
+    }
+
+    [Fact]
     public async Task Html_IntoCSharp_NoTag()
     {
         var siteCssFileUriString = "file:///C:/path/to/site.css";

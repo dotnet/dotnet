@@ -39,14 +39,4 @@ internal interface IProjectSnapshot
     RazorProjectEngine GetProjectEngine();
     IDocumentSnapshot? GetDocument(string filePath);
     bool TryGetDocument(string filePath, [NotNullWhen(true)] out IDocumentSnapshot? document);
-    bool IsImportDocument(IDocumentSnapshot document);
-
-    /// <summary>
-    /// If the provided document is an import document, gets the other documents in the project
-    /// that include directives specified by the provided document. Otherwise returns an empty
-    /// list.
-    /// </summary>
-    /// <param name="document">The document.</param>
-    /// <returns>A list of related documents.</returns>
-    ImmutableArray<IDocumentSnapshot> GetRelatedDocuments(IDocumentSnapshot document);
 }

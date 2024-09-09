@@ -52,7 +52,7 @@ public class TagHelperParseTreeRewriterTest : TagHelperRewritingTestBase
         IEnumerable<KeyValuePair<string, string>> expectedPairs)
     {
         // Arrange
-        var errorSink = new ErrorSink();
+        using var errorSink = new ErrorSink();
         var parseResult = ParseDocument(documentContent);
         var document = parseResult.Root;
 
@@ -61,7 +61,7 @@ public class TagHelperParseTreeRewriterTest : TagHelperRewritingTestBase
         var rootMarkup = Assert.IsType<MarkupBlockSyntax>(rootBlock.Document);
         var childBlock = Assert.Single(rootMarkup.Children);
         var element = Assert.IsType<MarkupElementSyntax>(childBlock);
-        Assert.Empty(errorSink.Errors);
+        Assert.Empty(errorSink.GetErrorsAndClear());
 
         // Act
         var pairs = TagHelperParseTreeRewriter.Rewriter.GetAttributeNameValuePairs(element.StartTag);

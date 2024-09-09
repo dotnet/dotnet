@@ -22,6 +22,7 @@ internal static class RazorServices
             (typeof(IRemoteFoldingRangeService), null),
             (typeof(IRemoteDocumentHighlightService), null),
             (typeof(IRemoteAutoInsertService), null),
+            (typeof(IRemoteFormattingService), null),
         ];
 
     // Internal for testing

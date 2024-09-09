@@ -10,7 +10,7 @@ Generated Location: (1144:31,0 [11] )
 
 Source Location: (60:0,60 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |UpdateValue|
-Generated Location: (1467:40,0 [11] )
+Generated Location: (1483:40,0 [11] )
 |UpdateValue|
 
 Source Location: (84:1,7 [144] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -19,7 +19,7 @@ Source Location: (84:1,7 [144] x:\dir\subdir\Test\TestComponent.cshtml)
 
     public Task UpdateValue(int value) { ParentValue = value; return Task.CompletedTask; }
 |
-Generated Location: (1717:51,0 [144] )
+Generated Location: (1733:51,0 [144] )
 |
     public int ParentValue { get; set; } = 42;
 

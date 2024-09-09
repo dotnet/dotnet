@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Text;
-using Microsoft.Data.SqlClient;
 
 namespace Microsoft.EntityFrameworkCore.SqlServer.Migrations.Internal;
 
@@ -60,8 +59,18 @@ public class SqlServerHistoryRepository : HistoryRepository
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public override IDisposable GetDatabaseLock()
+    public override LockReleaseBehavior LockReleaseBehavior => LockReleaseBehavior.Connection;
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    public override IMigrationsDatabaseLock AcquireDatabaseLock()
     {
+        Dependencies.MigrationsLogger.AcquiringMigrationLock();
+
         var dbLock = CreateMigrationDatabaseLock();
         int result;
         try
@@ -92,8 +101,10 @@ public class SqlServerHistoryRepository : HistoryRepository
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public override async Task<IAsyncDisposable> GetDatabaseLockAsync(CancellationToken cancellationToken = default)
+    public override async Task<IMigrationsDatabaseLock> AcquireDatabaseLockAsync(CancellationToken cancellationToken = default)
     {
+        Dependencies.MigrationsLogger.AcquiringMigrationLock();
+
         var dbLock = CreateMigrationDatabaseLock();
         int result;
         try
@@ -120,7 +131,8 @@ public class SqlServerHistoryRepository : HistoryRepository
     }
 
     private IRelationalCommand CreateGetLockCommand()
-        => Dependencies.RawSqlCommandBuilder.Build("""
+        => Dependencies.RawSqlCommandBuilder.Build(
+            """
 DECLARE @result int;
 EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
 SELECT @result
@@ -129,12 +141,14 @@ SELECT @result
 
     private SqlServerMigrationDatabaseLock CreateMigrationDatabaseLock()
         => new(
-            Dependencies.RawSqlCommandBuilder.Build("""
+            Dependencies.RawSqlCommandBuilder.Build(
+                """
 DECLARE @result int;
 EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
 SELECT @result
 """),
-            CreateRelationalCommandParameters());
+            CreateRelationalCommandParameters(),
+            this);
 
     private RelationalCommandParameterObject CreateRelationalCommandParameters()
         => new(

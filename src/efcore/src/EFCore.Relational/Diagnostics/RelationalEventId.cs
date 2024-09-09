@@ -80,6 +80,7 @@ public static class RelationalEventId
         PendingModelChangesWarning,
         NonTransactionalMigrationOperationWarning,
         AcquiringMigrationLock,
+        MigrationsUserTransactionWarning,
 
         // Query events
         QueryClientEvaluationWarning = CoreEventId.RelationalBaseId + 500,
@@ -748,7 +749,8 @@ public static class RelationalEventId
     ///         This event uses the <see cref="MigrationCommandEventData" /> payload when used with a <see cref="DiagnosticSource" />.
     ///     </para>
     /// </remarks>
-    public static readonly EventId NonTransactionalMigrationOperationWarning = MakeMigrationsId(Id.NonTransactionalMigrationOperationWarning);
+    public static readonly EventId NonTransactionalMigrationOperationWarning =
+        MakeMigrationsId(Id.NonTransactionalMigrationOperationWarning);
 
     /// <summary>
     ///     A migration lock is being acquired.
@@ -762,7 +764,20 @@ public static class RelationalEventId
     ///     </para>
     /// </remarks>
     public static readonly EventId AcquiringMigrationLock = MakeMigrationsId(Id.AcquiringMigrationLock);
-    
+
+    /// <summary>
+    ///     A migration lock is being acquired.
+    /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///         This event is in the <see cref="DbLoggerCategory.Migrations" /> category.
+    ///     </para>
+    ///     <para>
+    ///         This event uses the <see cref="EventData" /> payload when used with a <see cref="DiagnosticSource" />.
+    ///     </para>
+    /// </remarks>
+    public static readonly EventId MigrationsUserTransactionWarning = MakeMigrationsId(Id.MigrationsUserTransactionWarning);
+
     private static readonly string _queryPrefix = DbLoggerCategory.Query.Name + ".";
 
     private static EventId MakeQueryId(Id id)

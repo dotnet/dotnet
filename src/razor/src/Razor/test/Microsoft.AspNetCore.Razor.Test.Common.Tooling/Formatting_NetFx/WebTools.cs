@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.Settings.Internal;
@@ -16,7 +17,7 @@ using Microsoft.WebTools.Languages.Shared.Editor.Composition;
 using Microsoft.WebTools.Languages.Shared.Editor.Text;
 using Newtonsoft.Json;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
+namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
 /// <summary>
 ///  Provides reflection-based access to the Web Tools LSP infrastructure needed for tests.

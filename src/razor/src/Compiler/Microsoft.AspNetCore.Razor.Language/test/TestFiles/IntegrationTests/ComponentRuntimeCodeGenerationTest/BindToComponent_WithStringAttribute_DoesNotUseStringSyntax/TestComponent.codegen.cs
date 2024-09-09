@@ -35,7 +35,7 @@ person.Name
 #line hidden
 #nullable disable
             ));
-            __builder.AddComponentParameter(2, nameof(global::Test.InputText.ValueChanged), (global::System.Action<System.String>)(__value => person.Name = __value));
+            __builder.AddComponentParameter(2, nameof(global::Test.InputText.ValueChanged), (global::System.Action<global::System.String>)(__value => person.Name = __value));
             __builder.CloseComponent();
         }
         #pragma warning restore 1998
