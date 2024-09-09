@@ -42,14 +42,13 @@ internal static class SyntaxNodeExtensions
         return (TNode)node.Green.SetDiagnostics(diagnostics).CreateRed(node.Parent, node.Position);
     }
 
-    public static TNode AppendDiagnostic<TNode>(this TNode node, params RazorDiagnostic[] diagnostics) where TNode : SyntaxNode
+    public static TNode AppendDiagnostic<TNode>(this TNode node, params ReadOnlySpan<RazorDiagnostic> diagnostics) where TNode : SyntaxNode
     {
-        var existingDiagnostics = node.GetDiagnostics();
-        var allDiagnostics = new RazorDiagnostic[diagnostics.Length + existingDiagnostics.Length];
-        Array.Copy(existingDiagnostics, allDiagnostics, existingDiagnostics.Length);
-        Array.Copy(diagnostics, 0, allDiagnostics, existingDiagnostics.Length, diagnostics.Length);
+        RazorDiagnostic[] allDiagnostics = [
+            .. node.GetDiagnostics(),
+            .. diagnostics];
 
-        return (TNode)node.WithDiagnostics(allDiagnostics);
+        return node.WithDiagnostics(allDiagnostics);
     }
 
     /// <summary>
@@ -57,13 +56,13 @@ internal static class SyntaxNodeExtensions
     /// </summary>
     /// <typeparam name="TNode">The type of syntax node.</typeparam>
     /// <param name="node">The syntax node.</param>
-    /// <returns>The list of <see cref="RazorDiagnostic"/>s.</returns>
-    public static IReadOnlyList<RazorDiagnostic> GetAllDiagnostics<TNode>(this TNode node) where TNode : SyntaxNode
+    /// <param name="list"></param>
+    /// <returns>The list of <see cref="RazorDiagnostic">RazorDiagnostics</see>.</returns>
+    public static void CollectAllDiagnostics<TNode>(this TNode node, List<RazorDiagnostic> list)
+        where TNode : SyntaxNode
     {
-        var walker = new DiagnosticSyntaxWalker();
+        var walker = new DiagnosticSyntaxWalker(list);
         walker.Visit(node);
-
-        return walker.Diagnostics;
     }
 
     public static SourceLocation GetSourceLocation(this SyntaxNode node, RazorSourceDocument source)
@@ -211,16 +210,9 @@ internal static class SyntaxNodeExtensions
         return writer.ToString();
     }
 
-    private class DiagnosticSyntaxWalker : SyntaxWalker
+    private sealed class DiagnosticSyntaxWalker(List<RazorDiagnostic> diagnostics) : SyntaxWalker
     {
-        private readonly List<RazorDiagnostic> _diagnostics;
-
-        public DiagnosticSyntaxWalker()
-        {
-            _diagnostics = new List<RazorDiagnostic>();
-        }
-
-        public IReadOnlyList<RazorDiagnostic> Diagnostics => _diagnostics;
+        private readonly List<RazorDiagnostic> _diagnostics = diagnostics ?? [];
 
         public override void Visit(SyntaxNode node)
         {

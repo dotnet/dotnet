@@ -27,7 +27,7 @@ MyAttr
 #line hidden
 #nullable disable
             ), "abc");
-            __builder.AddAttribute(2, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment<System.String>)((item) => (__builder2) => {
+            __builder.AddAttribute(2, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment<global::System.String>)((item) => (__builder2) => {
                 __builder2.AddMarkupContent(3, "\r\n    Some text");
                 __builder2.OpenElement(4, "some-child");
                 __builder2.AddAttribute(5, "a", "1");

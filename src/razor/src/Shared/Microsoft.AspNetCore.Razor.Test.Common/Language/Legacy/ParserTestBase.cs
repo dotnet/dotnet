@@ -192,13 +192,13 @@ public abstract class ParserTestBase : IParserTest
 
     internal virtual RazorSyntaxTree ParseDocument(RazorLanguageVersion version, string document, IEnumerable<DirectiveDescriptor> directives, bool designTime = false, RazorParserFeatureFlags featureFlags = null, string fileKind = null)
     {
-        directives = directives ?? Array.Empty<DirectiveDescriptor>();
+        directives = directives ?? [];
 
         var source = TestRazorSourceDocument.Create(document, filePath: null, relativePath: null, normalizeNewLines: true);
 
         var options = CreateParserOptions(version, directives, designTime, _validateSpanEditHandlers, featureFlags, fileKind);
-        var context = new ParserContext(source, options);
 
+        using var context = new ParserContext(source, options);
         var codeParser = new CSharpCodeParser(directives, context);
         var markupParser = new HtmlMarkupParser(context);
 
@@ -207,11 +207,11 @@ public abstract class ParserTestBase : IParserTest
 
         var root = markupParser.ParseDocument().CreateRed();
 
-        var diagnostics = context.ErrorSink.Errors;
+        var diagnostics = context.ErrorSink.GetErrorsAndClear();
 
         var codeDocument = RazorCodeDocument.Create(source);
 
-        var syntaxTree = RazorSyntaxTree.Create(root, source, diagnostics, options);
+        var syntaxTree = new RazorSyntaxTree(root, source, diagnostics, options);
         codeDocument.SetSyntaxTree(syntaxTree);
 
         var defaultDirectivePass = new DefaultDirectiveSyntaxTreePass();

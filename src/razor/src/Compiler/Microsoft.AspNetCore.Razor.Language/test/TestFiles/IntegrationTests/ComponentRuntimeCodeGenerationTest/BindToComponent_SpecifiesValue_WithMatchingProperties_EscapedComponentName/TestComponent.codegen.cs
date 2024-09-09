@@ -35,7 +35,7 @@ ParentValue
 #line hidden
 #nullable disable
             ));
-            __builder.AddComponentParameter(2, nameof(global::Test.@int.ValueChanged), (global::System.Action<System.Int32>)(__value => ParentValue = __value));
+            __builder.AddComponentParameter(2, nameof(global::Test.@int.ValueChanged), (global::System.Action<global::System.Int32>)(__value => ParentValue = __value));
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

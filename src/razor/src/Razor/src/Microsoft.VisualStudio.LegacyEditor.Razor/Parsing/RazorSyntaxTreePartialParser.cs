@@ -44,7 +44,7 @@ internal class RazorSyntaxTreePartialParser
 
         // Remember if this was provisionally accepted for next partial parse.
         _lastResultProvisional = (result & PartialParseResultInternal.Provisional) == PartialParseResultInternal.Provisional;
-        var newSyntaxTree = RazorSyntaxTree.Create(ModifiedSyntaxTreeRoot, OriginalSyntaxTree.Source, OriginalSyntaxTree.Diagnostics, OriginalSyntaxTree.Options);
+        var newSyntaxTree = new RazorSyntaxTree(ModifiedSyntaxTreeRoot, OriginalSyntaxTree.Source, OriginalSyntaxTree.Diagnostics, OriginalSyntaxTree.Options);
 
         return (result, newSyntaxTree);
     }

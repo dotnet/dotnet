@@ -3,12 +3,7 @@
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-internal abstract class ParserBase
+internal abstract class ParserBase(ParserContext context)
 {
-    public ParserBase(ParserContext context)
-    {
-        Context = context;
-    }
-
-    public ParserContext Context { get; }
+    public ParserContext Context { get; } = context;
 }

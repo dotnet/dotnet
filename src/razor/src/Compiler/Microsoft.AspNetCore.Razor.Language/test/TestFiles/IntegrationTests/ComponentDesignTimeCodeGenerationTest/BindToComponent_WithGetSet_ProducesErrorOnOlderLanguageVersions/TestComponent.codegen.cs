@@ -33,7 +33,7 @@ namespace Test
 #line hidden
 #nullable disable
             );
-            __o = new global::System.Action<System.Int32>(
+            __o = new global::System.Action<global::System.Int32>(
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
                                                             UpdateValue

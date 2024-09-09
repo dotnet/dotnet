@@ -1,12 +1,14 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Remote.Razor;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
@@ -14,6 +16,7 @@ using Xunit.Abstractions;
 using RoslynDocumentLink = Roslyn.LanguageServer.Protocol.DocumentLink;
 using RoslynLocation = Roslyn.LanguageServer.Protocol.Location;
 using RoslynLspExtensions = Roslyn.LanguageServer.Protocol.RoslynLspExtensions;
+using TextDocument = Microsoft.CodeAnalysis.TextDocument;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -295,26 +298,74 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         Assert.Equal(range, location.Range);
     }
 
+    [Fact]
+    public async Task Html()
+    {
+        // This really just validates Uri remapping, the actual response is largely arbitrary
+
+        TestCode input = """
+            <div></div>
+
+            <script>
+                function [|foo|]() {
+                    f$$oo();
+                }
+            </script>
+            """;
+
+        var document = CreateProjectAndRazorDocument(input.Text);
+        var inputText = await document.GetTextAsync(DisposalToken);
+
+        var htmlResponse = new SumType<Location, Location[], DocumentLink[]>?(new Location[]
+        {
+            new Location
+            {
+                Uri = new Uri(document.CreateUri(), document.Name + FeatureOptions.HtmlVirtualDocumentSuffix),
+                Range = inputText.GetRange(input.Span),
+            },
+        });
+
+        await VerifyGoToDefinitionAsync(input, htmlResponse: htmlResponse);
+    }
+
     private static string FileName(string projectRelativeFileName)
         => Path.Combine(TestProjectData.SomeProjectPath, projectRelativeFileName);
 
-    private async Task VerifyGoToDefinitionAsync(TestCode input, string? fileKind = null, params (string fileName, string contents)[]? additionalFiles)
+    private async Task VerifyGoToDefinitionAsync(TestCode input, string? fileKind = null, SumType<Location, Location[], DocumentLink[]>? htmlResponse = null)
     {
-        var result = await GetGoToDefinitionResultAsync(input, fileKind, additionalFiles);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind);
+        var result = await GetGoToDefinitionResultAsync(document, input, htmlResponse);
 
         Assumes.NotNull(result);
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        var text = SourceText.From(input.Text);
+        var range = RoslynLspExtensions.GetRange(text, input.Span);
+        Assert.Equal(range, location.Range);
+
+        Assert.Equal(document.CreateUri(), location.Uri);
     }
 
-    private async Task<SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?> GetGoToDefinitionResultAsync(
+    private Task<SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?> GetGoToDefinitionResultAsync(
         TestCode input, string? fileKind = null, params (string fileName, string contents)[]? additionalFiles)
     {
         var document = CreateProjectAndRazorDocument(input.Text, fileKind, additionalFiles);
+        return GetGoToDefinitionResultAsync(document, input, htmlResponse: null);
+    }
+
+    private async Task<SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?> GetGoToDefinitionResultAsync(
+        TextDocument document, TestCode input, SumType<Location, Location[], DocumentLink[]>? htmlResponse)
+    {
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);
 
-        var requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentDefinitionName, null)]);
+        var requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentDefinitionName, htmlResponse)]);
 
-        var endpoint = new CohostGoToDefinitionEndpoint(RemoteServiceInvoker, TestHtmlDocumentSynchronizer.Instance, requestInvoker);
+        var filePathService = new VisualStudioFilePathService(FeatureOptions);
+        var endpoint = new CohostGoToDefinitionEndpoint(RemoteServiceInvoker, TestHtmlDocumentSynchronizer.Instance, requestInvoker, filePathService);
 
         var textDocumentPositionParams = new TextDocumentPositionParams
         {

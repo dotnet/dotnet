@@ -13,19 +13,6 @@
     <Compile Include="..\OSSkipConditionFactAttribute.cs" LinkBase="Shared" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'">
-    <PackageReference Include="Microsoft.WebTools.Languages.Html" />
-    <PackageReference Include="Microsoft.WebTools.Languages.Html.Editor" />
-    <PackageReference Include="Microsoft.WebTools.Languages.LanguageServer.Server" />
-    <PackageReference Include="Microsoft.WebTools.Languages.Shared" />
-    <PackageReference Include="Microsoft.WebTools.Languages.Shared.Editor" />
-    <PackageReference Include="Microsoft.WebTools.Languages.Shared.VS" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.Framework" />
-    <PackageReference Include="Microsoft.VisualStudio.Web" />
-    <PackageReference Include="Microsoft.WebTools.Shared" />
-    <PackageReference Include="Microsoft.Extensions.Logging" />
-  </ItemGroup>
-  
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj" />
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Microsoft.AspNetCore.Razor.Test.Common.Tooling.csproj" />

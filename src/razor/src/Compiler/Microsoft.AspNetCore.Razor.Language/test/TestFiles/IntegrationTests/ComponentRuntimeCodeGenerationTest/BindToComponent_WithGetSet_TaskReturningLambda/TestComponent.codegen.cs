@@ -35,7 +35,7 @@ ParentValue
 #line hidden
 #nullable disable
             ));
-            __builder.AddComponentParameter(2, nameof(global::Test.MyComponent.ValueChanged), (global::System.Func<System.Int32, System.Threading.Tasks.Task>)(
+            __builder.AddComponentParameter(2, nameof(global::Test.MyComponent.ValueChanged), (global::System.Func<global::System.Int32, global::System.Threading.Tasks.Task>)(
 #nullable restore
 #line (1,61)-(1,121) "x:\dir\subdir\Test\TestComponent.cshtml"
 value => { ParentValue = value; return Task.CompletedTask; }

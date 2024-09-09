@@ -1,72 +1,80 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public abstract class RazorSyntaxTree
+public sealed class RazorSyntaxTree
 {
-    internal static RazorSyntaxTree Create(
+    internal SyntaxNode Root { get; }
+    public RazorParserOptions Options { get; }
+    public RazorSourceDocument Source { get; }
+
+    private readonly ImmutableArray<RazorDiagnostic> _diagnostics;
+    private ImmutableArray<RazorDiagnostic> _allDiagnostics;
+
+    internal RazorSyntaxTree(
         SyntaxNode root,
         RazorSourceDocument source,
-        IEnumerable<RazorDiagnostic> diagnostics,
+        ImmutableArray<RazorDiagnostic> diagnostics,
         RazorParserOptions options)
     {
-        if (root == null)
-        {
-            throw new ArgumentNullException(nameof(root));
-        }
+        ArgHelper.ThrowIfNull(root);
+        ArgHelper.ThrowIfNull(source);
+        ArgHelper.ThrowIfNull(options);
 
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        if (diagnostics == null)
-        {
-            throw new ArgumentNullException(nameof(diagnostics));
-        }
-
-        if (options == null)
-        {
-            throw new ArgumentNullException(nameof(options));
-        }
-
-        return new DefaultRazorSyntaxTree(root, source, new List<RazorDiagnostic>(diagnostics), options);
+        Root = root;
+        Source = source;
+        _diagnostics = diagnostics.NullToEmpty();
+        Options = options;
     }
 
-    public static RazorSyntaxTree Parse(RazorSourceDocument source)
+    public ImmutableArray<RazorDiagnostic> Diagnostics
     {
-        if (source == null)
+        get
         {
-            throw new ArgumentNullException(nameof(source));
-        }
+            if (_allDiagnostics.IsDefault)
+            {
+                ImmutableInterlocked.InterlockedInitialize(ref _allDiagnostics, ComputeAllDiagnostics(_diagnostics, Root));
+            }
 
-        return Parse(source, options: null);
+            return _allDiagnostics;
+
+            static ImmutableArray<RazorDiagnostic> ComputeAllDiagnostics(ImmutableArray<RazorDiagnostic> treeDiagnostics, SyntaxNode root)
+            {
+                using var pooledList = ListPool<RazorDiagnostic>.GetPooledObject(out var rootDiagnostics);
+                using var diagnosticSet = new PooledHashSet<RazorDiagnostic>();
+
+                foreach (var diagnostic in treeDiagnostics)
+                {
+                    diagnosticSet.Add(diagnostic);
+                }
+
+                root.CollectAllDiagnostics(rootDiagnostics);
+
+                if (rootDiagnostics.Count > 0)
+                {
+                    foreach (var diagnostic in rootDiagnostics)
+                    {
+                        diagnosticSet.Add(diagnostic);
+                    }
+                }
+
+                return diagnosticSet.OrderByAsArray(static d => d.Span.AbsoluteIndex);
+            }
+        }
     }
 
-    public static RazorSyntaxTree Parse(RazorSourceDocument source, RazorParserOptions options)
+    public static RazorSyntaxTree Parse(RazorSourceDocument source, RazorParserOptions? options = null)
     {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        ArgHelper.ThrowIfNull(source);
 
-        var parser = new RazorParser(options ?? RazorParserOptions.CreateDefault());
+        options ??= RazorParserOptions.CreateDefault();
+        var parser = new RazorParser(options);
         return parser.Parse(source);
     }
-
-    public abstract IReadOnlyList<RazorDiagnostic> Diagnostics { get; }
-
-    public abstract RazorParserOptions Options { get; }
-
-    internal abstract SyntaxNode Root { get; }
-
-    public abstract RazorSourceDocument Source { get; }
 }

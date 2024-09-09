@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Threading;
@@ -49,5 +50,15 @@ internal static class IProjectSnapshotExtensions
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
         return tagHelperTask.Result;
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
+    }
+
+    public static ImmutableArray<IDocumentSnapshot> GetRelatedDocuments(this IProjectSnapshot projectSnapshot, IDocumentSnapshot document)
+    {
+        if (projectSnapshot is not ProjectSnapshot project)
+        {
+            throw new InvalidOperationException("This method can only be called with a ProjectSnapshot.");
+        }
+
+        return project.GetRelatedDocuments(document);
     }
 }

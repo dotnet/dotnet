@@ -12,7 +12,7 @@ internal sealed class LspFormattingCodeDocumentProvider : IFormattingCodeDocumen
 {
     public Task<RazorCodeDocument> GetCodeDocumentAsync(IDocumentSnapshot snapshot)
     {
-        var useDesignTimeGeneratedOutput = snapshot.Project.Configuration.LanguageServerFlags?.ForceRuntimeCodeGeneration ?? false;
-        return snapshot.GetGeneratedOutputAsync(useDesignTimeGeneratedOutput);
+        // Formatting always uses design time
+        return snapshot.GetGeneratedOutputAsync(forceDesignTimeGeneratedOutput: true);
     }
 }

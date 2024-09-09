@@ -3,7 +3,9 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
@@ -49,4 +51,10 @@ internal interface IRazorFormattingService
        TextEdit[] csharpEdits,
        RazorFormattingOptions options,
        CancellationToken cancellationToken);
+
+    bool TryGetOnTypeFormattingTriggerKind(
+        RazorCodeDocument codeDocument,
+        int hostDocumentIndex,
+        string triggerCharacter,
+        out RazorLanguageKind triggerCharacterKind);
 }
