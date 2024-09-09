@@ -141,12 +141,18 @@ internal sealed class VolumeMount
     // True if the mounted file system is supposed to be read-only
     [JsonPropertyName("readOnly")]
     public bool IsReadOnly { get; set; } = false;
+
+    /// <summary>
+    /// Health probes to be run for the container.
+    /// </summary>
+    [JsonPropertyName("healthProbes")]
+    public List<HealthProbe>? HealthProbes { get; set; }
 }
 
 internal sealed class ContainerNetworkConnection
 {
     // DCP Resource name of a ContainerNetwork to connect to
-    // A container won't start running until it can be conneced to all specified networks
+    // A container won't start running until it can be connected to all specified networks
     [JsonPropertyName("name")]
 	public string? Name { get; set; }
 
@@ -286,6 +292,18 @@ internal sealed class ContainerStatus : V1Status
     // Any ContainerNetworks this container is attached to
     [JsonPropertyName("networks")]
     public List<string>? Networks { get; set; }
+
+    /// <summary>
+    /// The health status of the container <see cref="HealthStatus"/> for allowed values.
+    /// </summary>
+    [JsonPropertyName("healthStatus")]
+    public string? HealthStatus { get; set; }
+
+    /// <summary>
+    /// Latest results for health probes configured for the container.
+    /// </summary>
+    [JsonPropertyName("healthProbeResults")]
+    public List<HealthProbeResult>? HealthProbeResults { get; set;}
 
     // Note: the ContainerStatus has "Message" property that represents a human-readable information about Container state.
     // It is provided by V1Status base class.
