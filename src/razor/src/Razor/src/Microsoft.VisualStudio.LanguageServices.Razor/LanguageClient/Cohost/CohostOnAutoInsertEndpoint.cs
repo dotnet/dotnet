@@ -44,7 +44,6 @@ internal class CohostOnAutoInsertEndpoint(
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
-    private readonly IEnumerable<IOnAutoInsertTriggerCharacterProvider> _onAutoInsertTriggerCharacterProviders = onAutoInsertTriggerCharacterProviders;
     private readonly IHtmlDocumentSynchronizer _htmlDocumentSynchronizer = htmlDocumentSynchronizer;
     private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostOnAutoInsertEndpoint>();
@@ -55,12 +54,12 @@ internal class CohostOnAutoInsertEndpoint(
     {
         var providerTriggerCharacters = onAutoInsertTriggerCharacterProviders.Select((provider) => provider.TriggerCharacter).Distinct();
 
-        ImmutableArray<string> _triggerCharacters = [
+        ImmutableArray<string> triggerCharacters = [
             .. providerTriggerCharacters,
             .. AutoInsertService.HtmlAllowedAutoInsertTriggerCharacters,
             .. AutoInsertService.CSharpAllowedAutoInsertTriggerCharacters ];
 
-        return _triggerCharacters;
+        return triggerCharacters;
     }
 
     protected override bool MutatesSolutionState => false;
@@ -85,17 +84,15 @@ internal class CohostOnAutoInsertEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(VSInternalDocumentOnAutoInsertParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override async Task<VSInternalDocumentOnAutoInsertResponseItem?> HandleRequestAsync(VSInternalDocumentOnAutoInsertParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
-    {
-        var razorDocument = context.TextDocument.AssumeNotNull();
+    protected override Task<VSInternalDocumentOnAutoInsertResponseItem?> HandleRequestAsync(VSInternalDocumentOnAutoInsertParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
+        => HandleRequestAsync(request, context.TextDocument.AssumeNotNull(), cancellationToken);
 
+    private async Task<VSInternalDocumentOnAutoInsertResponseItem?> HandleRequestAsync(VSInternalDocumentOnAutoInsertParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    {
         _logger.LogDebug($"Resolving auto-insertion for {razorDocument.FilePath}");
 
         var clientSettings = _clientSettingsManager.GetClientSettings();
-        var enableAutoClosingTags = clientSettings.AdvancedSettings.AutoClosingTags;
-        var formatOnType = clientSettings.AdvancedSettings.FormatOnType;
-        var indentWithTabs = clientSettings.ClientSpaceSettings.IndentWithTabs;
-        var indentSize = clientSettings.ClientSpaceSettings.IndentSize;
+        var autoInsertOptions = RemoteAutoInsertOptions.From(clientSettings, request.Options);
 
         _logger.LogDebug($"Calling OOP to resolve insertion at {request.Position} invoked by typing '{request.Character}'");
         var data = await _remoteServiceInvoker.TryInvokeAsync<IRemoteAutoInsertService, Response>(
@@ -106,10 +103,7 @@ internal class CohostOnAutoInsertEndpoint(
                         razorDocument.Id,
                         request.Position.ToLinePosition(),
                         request.Character,
-                        enableAutoClosingTags,
-                        formatOnType,
-                        indentWithTabs,
-                        indentSize,
+                        autoInsertOptions,
                         cancellationToken),
             cancellationToken).ConfigureAwait(false);
 
@@ -172,5 +166,16 @@ internal class CohostOnAutoInsertEndpoint(
         }
 
         return result.Response;
+    }
+
+    internal TestAccessor GetTestAccessor() => new(this);
+
+    internal readonly struct TestAccessor(CohostOnAutoInsertEndpoint instance)
+    {
+        public Task<VSInternalDocumentOnAutoInsertResponseItem?> HandleRequestAsync(
+            VSInternalDocumentOnAutoInsertParams request,
+            TextDocument razorDocument,
+            CancellationToken cancellationToken)
+                => instance.HandleRequestAsync(request, razorDocument, cancellationToken);
     }
 }

@@ -4,19 +4,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Text;
-
-using Response = Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Microsoft.CodeAnalysis.Razor.Protocol.AutoInsert.RemoteAutoInsertTextEdit?>;
 
 namespace Microsoft.CodeAnalysis.Razor.Remote;
 
-internal interface IRemoteAutoInsertService
+internal interface IRemoteSpellCheckService
 {
-    ValueTask<Response> GetAutoInsertTextEditAsync(
+    ValueTask<int[]> GetSpellCheckRangeTriplesAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,
-        DocumentId documentId,
-        LinePosition position,
-        string character,
-        RemoteAutoInsertOptions options,
+        DocumentId razorDocumentId,
         CancellationToken cancellationToken);
 }

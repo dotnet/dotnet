@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol.DocumentSymbols;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
@@ -24,7 +23,6 @@ internal sealed partial class RemoteDocumentSymbolService(in ServiceArgs args) :
     }
 
     private readonly IDocumentSymbolService _documentSymbolService = args.ExportProvider.GetExportedValue<IDocumentSymbolService>();
-    private readonly IFilePathService _filePathService = args.ExportProvider.GetExportedValue<IFilePathService>();
 
     public ValueTask<SumType<DocumentSymbol[], SymbolInformation[]>?> GetDocumentSymbolsAsync(JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo, JsonSerializableDocumentId razorDocumentId, bool useHierarchicalSymbols, CancellationToken cancellationToken)
        => RunServiceAsync(
