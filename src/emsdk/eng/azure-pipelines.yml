@@ -184,7 +184,7 @@ extends:
           ############ Windows BUILD ############
           - job: Build_win_x64
             displayName: Windows_x64
-            timeoutInMinutes: 150
+            timeoutInMinutes: 240
             pool:
               name: $(DncEngInternalBuildPool)
               image: $(WindowsImage)
@@ -215,7 +215,7 @@ extends:
 
           - job: Build_win_arm64
             displayName: Windows_arm64
-            timeoutInMinutes: 150
+            timeoutInMinutes: 240
             pool:
               name: $(DncEngInternalBuildPool)
               image: $(WindowsImage)
