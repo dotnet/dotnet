@@ -19,10 +19,10 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     private static readonly char[] ValidAfterTypeAttributeNameCharacters = { ' ', '\t', '\r', '\n', '\f', '=' };
     private static readonly SyntaxToken[] nonAllowedHtmlCommentEnding = new[]
     {
-            SyntaxFactory.Token(SyntaxKind.Text, "-"),
-            SyntaxFactory.Token(SyntaxKind.Bang, "!"),
-            SyntaxFactory.Token(SyntaxKind.OpenAngle, "<"),
-        };
+        SyntaxFactory.Token(SyntaxKind.Text, "-"),
+        SyntaxFactory.Token(SyntaxKind.Bang, "!"),
+        SyntaxFactory.Token(SyntaxKind.OpenAngle, "<"),
+    };
 
     private Stack<TagTracker> _tagTracker = new Stack<TagTracker>();
 

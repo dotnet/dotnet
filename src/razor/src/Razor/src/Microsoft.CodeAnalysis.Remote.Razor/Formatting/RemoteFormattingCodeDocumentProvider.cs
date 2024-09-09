@@ -14,6 +14,7 @@ internal sealed class RemoteFormattingCodeDocumentProvider : IFormattingCodeDocu
 {
     public Task<RazorCodeDocument> GetCodeDocumentAsync(IDocumentSnapshot snapshot)
     {
-        return snapshot.GetGeneratedOutputAsync();
+        // Formatting always uses design time
+        return snapshot.GetGeneratedOutputAsync(forceDesignTimeGeneratedOutput: true);
     }
 }

@@ -437,7 +437,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
     private static bool CheckIfDocumentHasRazorDiagnostic(RazorCodeDocument codeDocument, string razorDiagnosticCode)
     {
-        return codeDocument.GetSyntaxTree().Diagnostics.Any(d => d.Id.Equals(razorDiagnosticCode, StringComparison.Ordinal));
+        return codeDocument.GetSyntaxTree().Diagnostics.Any(razorDiagnosticCode, static (d, code) => d.Id == code);
     }
 
     private bool TryGetOriginalDiagnosticRange(Diagnostic diagnostic, RazorCodeDocument codeDocument, [NotNullWhen(true)] out Range? originalRange)

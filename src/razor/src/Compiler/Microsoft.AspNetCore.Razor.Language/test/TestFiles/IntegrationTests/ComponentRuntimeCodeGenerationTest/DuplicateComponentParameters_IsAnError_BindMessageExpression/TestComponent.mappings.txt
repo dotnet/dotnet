@@ -5,24 +5,24 @@ Generated Location: (884:23,0 [17] )
 
 Source Location: (59:0,59 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 |(s) => {}|
-Generated Location: (1208:31,0 [9] )
+Generated Location: (1224:31,0 [9] )
 |(s) => {}|
 
 Source Location: (19:0,19 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |Message|
-Generated Location: (1449:40,0 [7] )
+Generated Location: (1465:40,0 [7] )
 |Message|
 
 Source Location: (29:0,29 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |message|
-Generated Location: (1712:48,0 [7] )
+Generated Location: (1728:48,0 [7] )
 |message|
 
 Source Location: (87:1,12 [30] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     string message = "hi";
 |
-Generated Location: (2736:61,0 [30] )
+Generated Location: (2768:61,0 [30] )
 |
     string message = "hi";
 |

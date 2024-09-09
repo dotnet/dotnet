@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Microsoft.AspNetCore.Razor.Utilities.Shared.Test;
+namespace Microsoft.AspNetCore.Razor.Utilities.Shared.Test.TestData;
 
 public sealed class StringHolder(string? text) : IComparable<StringHolder>
 {

@@ -86,6 +86,61 @@ public class PooledArrayBuilderTests
         }
     }
 
+    [Fact]
+    public void UseDrainAndReuse()
+    {
+        var builderPool = TestArrayBuilderPool<int>.Create();
+        using var builder = new PooledArrayBuilder<int>(capacity: 10, builderPool);
+
+        for (var i = 0; i < 10; i++)
+        {
+            builder.Add(i);
+        }
+
+        // Verify that the builder contains 10 items within its inner array builder.
+        builder.Validate(static t =>
+        {
+            Assert.Equal(0, t.InlineItemCount);
+            Assert.Equal(10, t.Capacity);
+            Assert.NotNull(t.InnerArrayBuilder);
+
+            Assert.Equal(10, t.InnerArrayBuilder.Count);
+            Assert.Equal(10, t.InnerArrayBuilder.Capacity);
+        });
+
+        var result = builder.DrainToImmutable();
+
+        // After draining, the builder should contain 0 items in its inner array builder
+        // and the capacity should have been set to 0.
+        builder.Validate(static t =>
+        {
+            Assert.Equal(0, t.InlineItemCount);
+            Assert.Equal(10, t.Capacity);
+            Assert.NotNull(t.InnerArrayBuilder);
+
+            Assert.Empty(t.InnerArrayBuilder);
+            Assert.Equal(0, t.InnerArrayBuilder.Capacity);
+        });
+
+        // Add another 10 items to the builder. At the end, the inner array builder
+        // should hold 10 items with a capacity of 10.
+        for (var i = 0; i < 10; i++)
+        {
+            builder.Add(i);
+        }
+
+        // Verify that the builder contains 10 items within its inner array builder.
+        builder.Validate(static t =>
+        {
+            Assert.Equal(0, t.InlineItemCount);
+            Assert.Equal(10, t.Capacity);
+            Assert.NotNull(t.InnerArrayBuilder);
+
+            Assert.Equal(10, t.InnerArrayBuilder.Count);
+            Assert.Equal(10, t.InnerArrayBuilder.Capacity);
+        });
+    }
+
     private static Func<int, bool> IsEven => x => x % 2 == 0;
     private static Func<int, bool> IsOdd => x => x % 2 != 0;
 

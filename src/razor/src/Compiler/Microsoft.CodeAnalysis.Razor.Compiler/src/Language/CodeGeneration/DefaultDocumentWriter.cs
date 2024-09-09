@@ -71,6 +71,7 @@ internal class DefaultDocumentWriter(CodeTarget codeTarget, RazorCodeGenerationO
                 }
                 else
                 {
+                    // CodeQL [SM02196] This is supported by the underlying Roslyn APIs and as consumers we must also support it.
                     string?[] supportedAlgorithms = [HashAlgorithmName.SHA1.Name, HashAlgorithmName.SHA256.Name];
 
                     var message = Resources.FormatUnsupportedChecksumAlgorithm(

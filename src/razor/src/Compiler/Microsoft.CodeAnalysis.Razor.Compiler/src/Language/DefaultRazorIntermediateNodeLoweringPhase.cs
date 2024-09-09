@@ -130,18 +130,18 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         // The document should contain all errors that currently exist in the system. This involves
         // adding the errors from the primary and imported syntax trees.
-        for (var i = 0; i < syntaxTree.Diagnostics.Count; i++)
+        foreach (var diagnostic in syntaxTree.Diagnostics)
         {
-            document.Diagnostics.Add(syntaxTree.Diagnostics[i]);
+            document.Diagnostics.Add(diagnostic);
         }
 
         if (imports is { IsDefault: false } importsArray)
         {
             foreach (var import in importsArray)
             {
-                for (var j = 0; j < import.Diagnostics.Count; j++)
+                foreach (var diagnostic in import.Diagnostics)
                 {
-                    document.Diagnostics.Add(import.Diagnostics[j]);
+                    document.Diagnostics.Add(diagnostic);
                 }
             }
         }

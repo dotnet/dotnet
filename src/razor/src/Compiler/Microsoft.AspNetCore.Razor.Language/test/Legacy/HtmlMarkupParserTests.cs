@@ -53,7 +53,7 @@ public class HtmlMarkupParserTests
     public void AcceptAllButLastDoubleHypens_ReturnsTheOnlyDoubleHyphenToken()
     {
         // Arrange
-        var sut = CreateTestParserForContent("-->");
+        using var sut = CreateTestParserForContent("-->");
 
         // Act
         var token = sut.AcceptAllButLastDoubleHyphens();
@@ -68,7 +68,7 @@ public class HtmlMarkupParserTests
     public void AcceptAllButLastDoubleHypens_ReturnsTheDoubleHyphenTokenAfterAcceptingTheDash()
     {
         // Arrange
-        var sut = CreateTestParserForContent("--->");
+        using var sut = CreateTestParserForContent("--->");
 
         // Act
         var token = sut.AcceptAllButLastDoubleHyphens();
@@ -83,7 +83,7 @@ public class HtmlMarkupParserTests
     public void IsHtmlCommentAhead_ReturnsTrueForEmptyCommentTag()
     {
         // Arrange
-        var sut = CreateTestParserForContent("<!---->");
+        using var sut = CreateTestParserForContent("<!---->");
 
         // Act & Assert
         Assert.True(sut.IsHtmlCommentAhead());
@@ -93,7 +93,7 @@ public class HtmlMarkupParserTests
     public void IsHtmlCommentAhead_ReturnsTrueForValidCommentTag()
     {
         // Arrange
-        var sut = CreateTestParserForContent("<!-- Some comment content in here -->");
+        using var sut = CreateTestParserForContent("<!-- Some comment content in here -->");
 
         // Act & Assert
         Assert.True(sut.IsHtmlCommentAhead());
@@ -103,7 +103,7 @@ public class HtmlMarkupParserTests
     public void IsHtmlCommentAhead_ReturnsTrueForValidCommentTagWithExtraDashesAtClosingTag()
     {
         // Arrange
-        var sut = CreateTestParserForContent("<!-- Some comment content in here ----->");
+        using var sut = CreateTestParserForContent("<!-- Some comment content in here ----->");
 
         // Act & Assert
         Assert.True(sut.IsHtmlCommentAhead());
@@ -113,7 +113,7 @@ public class HtmlMarkupParserTests
     public void IsHtmlCommentAhead_ReturnsFalseForContentWithBadEndingAndExtraDash()
     {
         // Arrange
-        var sut = CreateTestParserForContent("<!-- Some comment content in here <!--->");
+        using var sut = CreateTestParserForContent("<!-- Some comment content in here <!--->");
 
         // Act & Assert
         Assert.False(sut.IsHtmlCommentAhead());
@@ -123,7 +123,7 @@ public class HtmlMarkupParserTests
     public void IsHtmlCommentAhead_ReturnsTrueForValidCommentTagWithExtraInfoAfter()
     {
         // Arrange
-        var sut = CreateTestParserForContent("<!-- comment --> the first part is a valid comment without the Open angle and bang tokens");
+        using var sut = CreateTestParserForContent("<!-- comment --> the first part is a valid comment without the Open angle and bang tokens");
 
         // Act & Assert
         Assert.True(sut.IsHtmlCommentAhead());
@@ -133,7 +133,7 @@ public class HtmlMarkupParserTests
     public void IsHtmlCommentAhead_ReturnsFalseForNotClosedComment()
     {
         // Arrange
-        var sut = CreateTestParserForContent("<!-- not closed comment");
+        using var sut = CreateTestParserForContent("<!-- not closed comment");
 
         // Act & Assert
         Assert.False(sut.IsHtmlCommentAhead());
@@ -143,7 +143,7 @@ public class HtmlMarkupParserTests
     public void IsHtmlCommentAhead_ReturnsFalseForCommentWithoutLastClosingAngle()
     {
         // Arrange
-        var sut = CreateTestParserForContent("<!-- not closed comment--");
+        using var sut = CreateTestParserForContent("<!-- not closed comment--");
 
         // Act & Assert
         Assert.False(sut.IsHtmlCommentAhead());
@@ -153,7 +153,7 @@ public class HtmlMarkupParserTests
     public void IsHtmlCommentAhead_ReturnsTrueForCommentWithCodeInside()
     {
         // Arrange
-        var sut = CreateTestParserForContent("<!-- not closed @DateTime.Now comment-->");
+        using var sut = CreateTestParserForContent("<!-- not closed @DateTime.Now comment-->");
 
         // Act & Assert
         Assert.True(sut.IsHtmlCommentAhead());
@@ -195,8 +195,19 @@ public class HtmlMarkupParserTests
         Assert.False(HtmlMarkupParser.IsCommentContentEndingInvalid(sequence));
     }
 
-    private class TestHtmlMarkupParser : HtmlMarkupParser
+    private class TestHtmlMarkupParser : HtmlMarkupParser, IDisposable
     {
+        public TestHtmlMarkupParser(ParserContext context)
+            : base(context)
+        {
+            EnsureCurrent();
+        }
+
+        public void Dispose()
+        {
+            Context.Dispose();
+        }
+
         public new SyntaxToken PreviousToken
         {
             get => base.PreviousToken;
@@ -205,11 +216,6 @@ public class HtmlMarkupParserTests
         public new bool IsHtmlCommentAhead()
         {
             return base.IsHtmlCommentAhead();
-        }
-
-        public TestHtmlMarkupParser(ParserContext context) : base(context)
-        {
-            EnsureCurrent();
         }
 
         public new SyntaxToken AcceptAllButLastDoubleHyphens()

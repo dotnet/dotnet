@@ -12,7 +12,7 @@ Source Location: (56:3,1 [37] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     Person person = new Person();
 |
-Generated Location: (1559:43,0 [37] )
+Generated Location: (1567:43,0 [37] )
 |
     Person person = new Person();
 |

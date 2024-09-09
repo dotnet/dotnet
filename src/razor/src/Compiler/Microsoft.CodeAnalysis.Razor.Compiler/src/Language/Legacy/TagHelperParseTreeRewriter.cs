@@ -16,7 +16,7 @@ internal static class TagHelperParseTreeRewriter
 {
     public static RazorSyntaxTree Rewrite(RazorSyntaxTree syntaxTree, TagHelperBinder binder, out ISet<TagHelperDescriptor> usedDescriptors)
     {
-        var errorSink = new ErrorSink();
+        using var errorSink = new ErrorSink();
 
         var rewriter = new Rewriter(
             syntaxTree.Source,
@@ -26,25 +26,26 @@ internal static class TagHelperParseTreeRewriter
 
         var rewritten = rewriter.Visit(syntaxTree.Root);
 
-        var errorList = new List<RazorDiagnostic>();
-        errorList.AddRange(errorSink.Errors);
-        errorList.AddRange(binder.TagHelpers.SelectMany(d => d.GetAllDiagnostics()));
+        var treeDiagnostics = syntaxTree.Diagnostics;
+        var sinkDiagnostics = errorSink.GetErrorsAndClear();
 
-        var diagnostics = CombineErrors(syntaxTree.Diagnostics, errorList).OrderBy(error => error.Span.AbsoluteIndex);
+        using var builder = new PooledArrayBuilder<RazorDiagnostic>(capacity: treeDiagnostics.Length + sinkDiagnostics.Length);
+
+        builder.AddRange(treeDiagnostics);
+        builder.AddRange(sinkDiagnostics);
+
+        foreach (var tagHelper in binder.TagHelpers)
+        {
+            foreach (var diagnostic in tagHelper.GetAllDiagnostics())
+            {
+                builder.Add(diagnostic);
+            }
+        }
+
+        var diagnostics = builder.ToImmutableOrderedBy(static d => d.Span.AbsoluteIndex);
 
         usedDescriptors = rewriter.UsedDescriptors;
-
-        var newSyntaxTree = RazorSyntaxTree.Create(rewritten, syntaxTree.Source, diagnostics, syntaxTree.Options);
-        return newSyntaxTree;
-    }
-
-    private static IReadOnlyList<RazorDiagnostic> CombineErrors(IReadOnlyList<RazorDiagnostic> errors1, IReadOnlyList<RazorDiagnostic> errors2)
-    {
-        var combinedErrors = new List<RazorDiagnostic>(errors1.Count + errors2.Count);
-        combinedErrors.AddRange(errors1);
-        combinedErrors.AddRange(errors2);
-
-        return combinedErrors;
+        return new RazorSyntaxTree(rewritten, syntaxTree.Source, diagnostics, syntaxTree.Options);
     }
 
     // Internal for testing.

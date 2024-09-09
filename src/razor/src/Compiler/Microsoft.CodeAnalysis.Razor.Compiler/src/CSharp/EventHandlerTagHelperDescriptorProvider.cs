@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
@@ -54,14 +55,14 @@ internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescrip
                 {
                     if (SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, _eventHandlerAttribute))
                     {
-                        if (!AttributeArgs.TryGet(attribute, out var values))
+                        if (!AttributeArgs.TryGet(attribute, out var args))
                         {
-                            // If this occurs, the EventHandlerAttribute type has been broken.
-                            Assumed.Unreachable();
+                            // If this occurs, the [EventHandler] was defined incorrectly, so we can't create a tag helper.
+                            continue;
                         }
 
                         var (typeName, namespaceName) = displayNames.GetNames();
-                        results.Add(CreateTagHelper(typeName, namespaceName, type.Name, values));
+                        results.Add(CreateTagHelper(typeName, namespaceName, type.Name, args));
                     }
                 }
             }
@@ -70,8 +71,8 @@ internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescrip
         private readonly record struct AttributeArgs(
             string Attribute,
             INamedTypeSymbol EventArgsType,
-            bool EnableStopPropagation,
-            bool EnablePreventDefault)
+            bool EnableStopPropagation = false,
+            bool EnablePreventDefault = false)
         {
             public static bool TryGet(AttributeData attribute, out AttributeArgs args)
             {
@@ -80,34 +81,49 @@ internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescrip
                 // - EventHandlerAttribute(string attributeName, Type eventArgsType);
                 // - EventHandlerAttribute(string attributeName, Type eventArgsType, bool enableStopPropagation, bool enablePreventDefault);
 
-                args = default;
-
                 var arguments = attribute.ConstructorArguments;
 
-                if (arguments.Length is not (2 or 4))
+                return TryGetFromTwoArguments(arguments, out args) ||
+                       TryGetFromFourArguments(arguments, out args);
+
+                static bool TryGetFromTwoArguments(ImmutableArray<TypedConstant> arguments, out AttributeArgs args)
                 {
+                    // Ctor 1: EventHandlerAttribute(string attributeName, Type eventArgsType);
+
+                    if (arguments is [
+                        { Value: string attributeName },
+                        { Value: INamedTypeSymbol eventArgsType }])
+                    {
+                        args = new(attributeName, eventArgsType);
+                        return true;
+                    }
+
+                    args = default;
                     return false;
                 }
 
-                if (arguments[0] is not { Value: string attributeName } ||
-                    arguments[1] is not { Value: INamedTypeSymbol eventArgsType })
+                static bool TryGetFromFourArguments(ImmutableArray<TypedConstant> arguments, out AttributeArgs args)
                 {
+                    // Ctor 2: EventHandlerAttribute(string attributeName, Type eventArgsType, bool enableStopPropagation, bool enablePreventDefault);
+
+                    // TODO: The enablePreventDefault and enableStopPropagation arguments are incorrectly swapped!
+                    // However, they have been that way since the 4-argument constructor variant was introduced
+                    // in https://github.com/dotnet/razor/commit/7635bba6ef2d3e6798d0846ceb96da6d5908e1b0.
+                    // Fixing this is tracked be https://github.com/dotnet/razor/issues/10497
+
+                    if (arguments is [
+                        { Value: string attributeName },
+                        { Value: INamedTypeSymbol eventArgsType },
+                        { Value: bool enablePreventDefault },
+                        { Value: bool enableStopPropagation }])
+                    {
+                        args = new(attributeName, eventArgsType, enableStopPropagation, enablePreventDefault);
+                        return true;
+                    }
+
+                    args = default;
                     return false;
                 }
-
-                // TODO: The enablePreventDefault and enableStopPropagation arguments are incorrectly swapped!
-                // However, they have been that way since the 4-argument constructor variant was introduced
-                // in https://github.com/dotnet/razor/commit/7635bba6ef2d3e6798d0846ceb96da6d5908e1b0.
-                // Fixing this is tracked be https://github.com/dotnet/razor/issues/10497
-
-                if (arguments is not [.., { Value: bool enablePreventDefault }, { Value: bool enableStopPropagation }])
-                {
-                    enableStopPropagation = false;
-                    enablePreventDefault = false;
-                }
-
-                args = new(attributeName, eventArgsType, enableStopPropagation, enablePreventDefault);
-                return true;
             }
         }
 

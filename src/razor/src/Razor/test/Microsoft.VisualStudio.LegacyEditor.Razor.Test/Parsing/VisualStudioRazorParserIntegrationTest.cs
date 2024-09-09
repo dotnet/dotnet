@@ -551,7 +551,7 @@ public class VisualStudioRazorParserIntegrationTest : VisualStudioTestBase
         }
 
         var sourceDocument = TestRazorSourceDocument.Create(content);
-        var syntaxTree = RazorSyntaxTree.Create(manager.PartialParsingSyntaxTreeRoot, sourceDocument, manager.CurrentSyntaxTree!.Diagnostics, manager.CurrentSyntaxTree.Options);
+        var syntaxTree = new RazorSyntaxTree(manager.PartialParsingSyntaxTreeRoot, sourceDocument, manager.CurrentSyntaxTree!.Diagnostics, manager.CurrentSyntaxTree.Options);
         BaselineTest(syntaxTree);
     }
 
