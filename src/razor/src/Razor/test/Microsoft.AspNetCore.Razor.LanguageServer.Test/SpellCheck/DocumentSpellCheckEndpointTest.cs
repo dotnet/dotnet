@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.CodeAnalysis.Razor.SpellCheck;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -174,7 +175,9 @@ public class DocumentSpellCheckEndpointTest(ITestOutputHelper testOutput) : Sing
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var requestContext = new RazorRequestContext(documentContext, null!, "lsp/method", uri: null);
 
-        var endpoint = new DocumentSpellCheckEndpoint(DocumentMappingService, LanguageServerFeatureOptions, languageServer);
+        var csharpSpellCheckService = new LspCSharpSpellCheckRangeProvider(LanguageServerFeatureOptions, languageServer);
+        var spellCheckService = new SpellCheckService(csharpSpellCheckService, DocumentMappingService);
+        var endpoint = new DocumentSpellCheckEndpoint(spellCheckService);
 
         var request = new VSInternalDocumentSpellCheckableParams
         {

@@ -30,5 +30,7 @@
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.Rename" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteRenameService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.AutoInsert" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteAutoInsertService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.Formatting" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteFormattingService+Factory" />
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.GoToImplementation" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteGoToImplementationService+Factory" />
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.SpellCheck" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteSpellCheckService+Factory" />
   </ItemGroup>
 </Project>

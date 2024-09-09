@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
-using Microsoft.CodeAnalysis.Razor.GoToDefinition;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.DocumentMapping;
@@ -22,19 +21,17 @@ using RoslynPosition = Roslyn.LanguageServer.Protocol.Position;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-internal sealed class RemoteGoToDefinitionService(in ServiceArgs args) : RazorDocumentServiceBase(in args), IRemoteGoToDefinitionService
+internal sealed class RemoteGoToImplementationService(in ServiceArgs args) : RazorDocumentServiceBase(in args), IRemoteGoToImplementationService
 {
-    internal sealed class Factory : FactoryBase<IRemoteGoToDefinitionService>
+    internal sealed class Factory : FactoryBase<IRemoteGoToImplementationService>
     {
-        protected override IRemoteGoToDefinitionService CreateService(in ServiceArgs args)
-            => new RemoteGoToDefinitionService(in args);
+        protected override IRemoteGoToImplementationService CreateService(in ServiceArgs args)
+            => new RemoteGoToImplementationService(in args);
     }
-
-    private readonly IRazorComponentDefinitionService _componentDefinitionService = args.ExportProvider.GetExportedValue<IRazorComponentDefinitionService>();
 
     protected override IDocumentPositionInfoStrategy DocumentPositionInfoStrategy => PreferAttributeNameDocumentPositionInfoStrategy.Instance;
 
-    public ValueTask<RemoteResponse<RoslynLocation[]?>> GetDefinitionAsync(
+    public ValueTask<RemoteResponse<RoslynLocation[]?>> GetImplementationAsync(
         JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
         JsonSerializableDocumentId documentId,
         RoslynPosition position,
@@ -42,10 +39,10 @@ internal sealed class RemoteGoToDefinitionService(in ServiceArgs args) : RazorDo
         => RunServiceAsync(
             solutionInfo,
             documentId,
-            context => GetDefinitionAsync(context, position, cancellationToken),
+            context => GetImplementationAsync(context, position, cancellationToken),
             cancellationToken);
 
-    private async ValueTask<RemoteResponse<RoslynLocation[]?>> GetDefinitionAsync(
+    private async ValueTask<RemoteResponse<RoslynLocation[]?>> GetImplementationAsync(
         RemoteDocumentContext context,
         RoslynPosition position,
         CancellationToken cancellationToken)
@@ -59,17 +56,13 @@ internal sealed class RemoteGoToDefinitionService(in ServiceArgs args) : RazorDo
 
         var positionInfo = GetPositionInfo(codeDocument, hostDocumentIndex, preferCSharpOverHtml: true);
 
-        if (positionInfo.LanguageKind is RazorLanguageKind.Html or RazorLanguageKind.Razor)
+        if (positionInfo.LanguageKind is RazorLanguageKind.Razor)
         {
-            // First, see if this is a Razor component. We ignore attributes here, because they're better served by the C# handler.
-            var componentLocation = await _componentDefinitionService.GetDefinitionAsync(context.Snapshot, positionInfo, ignoreAttributes: true, cancellationToken).ConfigureAwait(false);
-            if (componentLocation is not null)
-            {
-                // Convert from VS LSP Location to Roslyn. This can be removed when Razor moves fully onto Roslyn's LSP types.
-                return Results([RoslynLspFactory.CreateLocation(componentLocation.Uri, componentLocation.Range.ToLinePositionSpan())]);
-            }
+            return NoFurtherHandling;
+        }
 
-            // If it isn't a Razor component, and it isn't C#, let the server know to delegate to HTML.
+        if (positionInfo.LanguageKind is RazorLanguageKind.Html)
+        {
             return CallHtml;
         }
 
@@ -82,12 +75,11 @@ internal sealed class RemoteGoToDefinitionService(in ServiceArgs args) : RazorDo
         // Finally, call into C#.
         var generatedDocument = await context.Snapshot.GetGeneratedDocumentAsync().ConfigureAwait(false);
 
-        var locations = await ExternalHandlers.GoToDefinition
-            .GetDefinitionsAsync(
-                RemoteWorkspaceAccessor.GetWorkspace(),
+        var locations = await ExternalHandlers.GoToImplementation
+            .FindImplementationsAsync(
                 generatedDocument,
-                typeOnly: false,
                 mappedPosition,
+                supportsVisualStudioExtensions: true,
                 cancellationToken)
             .ConfigureAwait(false);
 

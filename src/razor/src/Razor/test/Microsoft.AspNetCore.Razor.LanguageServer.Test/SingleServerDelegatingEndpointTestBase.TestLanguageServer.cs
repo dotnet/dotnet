@@ -216,17 +216,18 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
         private Task<VSInternalReferenceItem[]> HandleReferencesAsync<TParams>(TParams @params)
         {
             var delegatedParams = Assert.IsType<DelegatedPositionParams>(@params);
-            var delegatedRequest = new TextDocumentPositionParams()
+            var delegatedRequest = new ReferenceParams()
             {
                 TextDocument = new VSTextDocumentIdentifier()
                 {
                     Uri = _csharpDocumentUri,
                     ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
-                Position = delegatedParams.ProjectedPosition
+                Position = delegatedParams.ProjectedPosition,
+                Context = new ReferenceContext()
             };
 
-            return _csharpServer.ExecuteRequestAsync<TextDocumentPositionParams, VSInternalReferenceItem[]>(
+            return _csharpServer.ExecuteRequestAsync<ReferenceParams, VSInternalReferenceItem[]>(
                 Methods.TextDocumentReferencesName,
                 delegatedRequest,
                 _cancellationToken);
