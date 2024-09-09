@@ -2,15 +2,15 @@
 <Dependencies>
   <ProductDependencies>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="10.0.0-alpha.1.24426.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="10.0.0-alpha.1.24454.1">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>f08c68bfc6c6e065f72e56dcd4dc15d3ea1f43a4</Sha>
+      <Sha>fb56fcf997fa59ede9c5fbafbb4d2d8a22d392ac</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.0-alpha.1.24428.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.0-alpha.1.24454.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>6bcf90f99d13da86c5e9753a6f34b6484673d0a0</Sha>
+      <Sha>36a1bd05cb92c5935f76ea3beb146dc43030eab5</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.0-beta4.24324.3">
