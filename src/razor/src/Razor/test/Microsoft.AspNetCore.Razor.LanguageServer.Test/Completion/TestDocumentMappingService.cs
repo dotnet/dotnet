@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -18,7 +19,7 @@ internal class TestDocumentMappingService : IDocumentMappingService
     public LinePosition? GeneratedPosition { get; set; }
     public int GeneratedIndex { get; set; }
 
-    public IEnumerable<TextChange> GetHostDocumentEdits(IRazorGeneratedDocument generatedDocument, IEnumerable<TextChange> generatedDocumentEdits)
+    public IEnumerable<TextChange> GetHostDocumentEdits(IRazorGeneratedDocument generatedDocument, ImmutableArray<TextChange> generatedDocumentEdits)
         => [];
 
     public RazorLanguageKind GetLanguageKind(RazorCodeDocument codeDocument, int hostDocumentIndex, bool rightAssociative)

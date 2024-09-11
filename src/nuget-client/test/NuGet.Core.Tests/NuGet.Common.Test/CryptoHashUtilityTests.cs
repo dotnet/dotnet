@@ -2,10 +2,13 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Reflection;
 using System.Security.Cryptography;
 using NuGet.Packaging.Signing;
 using Xunit;
+
+#if !IS_CORECLR
+using System.Reflection;
+#endif
 
 namespace NuGet.Common.Test
 {

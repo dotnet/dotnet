@@ -71,7 +71,7 @@ namespace NuGet.Commands.Test
 
         /// <summary>
         /// Add restore metadata only if not already set.
-        /// Sets the project style to PackageReference.
+        /// Sets the project style to ProjectJson.
         /// </summary>
         public static PackageSpec EnsureProjectJsonRestoreMetadata(this PackageSpec spec)
         {

@@ -56,6 +56,11 @@ namespace NuGet.Versioning
 
         internal static IVersionRangeComparer VersionReleaseMetadata { get; } = new VersionRangeComparer(VersionComparer.VersionReleaseMetadata);
 
+        /// <summary>
+        /// Gets the appropriate version range comparer based on the specified version comparison.
+        /// </summary>
+        /// <param name="versionComparison">The version comparison to use.</param>
+        /// <returns>An instance of <see cref="IVersionRangeComparer"/>.</returns>
         public static IVersionRangeComparer Get(VersionComparison versionComparison)
         {
             return versionComparison switch

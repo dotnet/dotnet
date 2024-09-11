@@ -26,7 +26,7 @@ namespace NuGet.CommandLine.XPlat
         /// Adds a message for a source, if search is unsuccessful.
         /// </summary>
         /// <param name="source">The source</param>
-        /// <param name="error">The error message to be rendered</param>
+        /// <param name="packageSearchProblem"></param>
         /// <returns></returns>
         void Add(PackageSource source, PackageSearchProblem packageSearchProblem);
 

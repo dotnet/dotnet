@@ -1,13 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -38,60 +35,21 @@ internal sealed class RemoteFormattingService(in ServiceArgs args) : RazorDocume
         => RunServiceAsync(
             solutionInfo,
             documentId,
-            context => GetDocumentFormattingEditsAsync(context, htmlChanges, options, cancellationToken),
+            context => new ValueTask<ImmutableArray<TextChange>>(_formattingService.GetDocumentFormattingChangesAsync(context, htmlChanges, span: null, options, cancellationToken)),
             cancellationToken);
 
-    private async ValueTask<ImmutableArray<TextChange>> GetDocumentFormattingEditsAsync(
-        RemoteDocumentContext context,
-        ImmutableArray<TextChange> htmlChanges,
-        RazorFormattingOptions options,
-        CancellationToken cancellationToken)
-    {
-        var sourceText = await context.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        var htmlEdits = htmlChanges.Select(sourceText.GetTextEdit).ToArray();
-
-        var edits = await _formattingService.GetDocumentFormattingEditsAsync(context, htmlEdits, range: null, options, cancellationToken).ConfigureAwait(false);
-
-        if (edits is null)
-        {
-            return [];
-        }
-
-        return edits.SelectAsArray(sourceText.GetTextChange);
-    }
-
     public ValueTask<ImmutableArray<TextChange>> GetRangeFormattingEditsAsync(
-         RazorPinnedSolutionInfoWrapper solutionInfo,
-         DocumentId documentId,
-         ImmutableArray<TextChange> htmlChanges,
-         LinePositionSpan linePositionSpan,
-         RazorFormattingOptions options,
-         CancellationToken cancellationToken)
-            => RunServiceAsync(
-                solutionInfo,
-                documentId,
-                context => GetRangeFormattingEditsAsync(context, htmlChanges, linePositionSpan, options, cancellationToken),
-                cancellationToken);
-
-    private async ValueTask<ImmutableArray<TextChange>> GetRangeFormattingEditsAsync(
-        RemoteDocumentContext context,
+        RazorPinnedSolutionInfoWrapper solutionInfo,
+        DocumentId documentId,
         ImmutableArray<TextChange> htmlChanges,
         LinePositionSpan linePositionSpan,
         RazorFormattingOptions options,
         CancellationToken cancellationToken)
-    {
-        var sourceText = await context.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        var htmlEdits = htmlChanges.Select(sourceText.GetTextEdit).ToArray();
-
-        var edits = await _formattingService.GetDocumentFormattingEditsAsync(context, htmlEdits, range: linePositionSpan.ToRange(), options, cancellationToken).ConfigureAwait(false);
-
-        if (edits is null)
-        {
-            return [];
-        }
-
-        return edits.SelectAsArray(sourceText.GetTextChange);
-    }
+        => RunServiceAsync(
+            solutionInfo,
+            documentId,
+            context => new ValueTask<ImmutableArray<TextChange>>(_formattingService.GetDocumentFormattingChangesAsync(context, htmlChanges, linePositionSpan, options, cancellationToken)),
+            cancellationToken);
 
     public ValueTask<ImmutableArray<TextChange>> GetOnTypeFormattingEditsAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,
@@ -121,22 +79,13 @@ internal sealed class RemoteFormattingService(in ServiceArgs args) : RazorDocume
             return [];
         }
 
-        TextEdit[] result;
         if (triggerCharacterKind is RazorLanguageKind.Html)
         {
-            var htmlEdits = htmlChanges.Select(sourceText.GetTextEdit).ToArray();
-            result = await _formattingService.GetHtmlOnTypeFormattingEditsAsync(context, htmlEdits, options, hostDocumentIndex, triggerCharacter[0], cancellationToken).ConfigureAwait(false);
-        }
-        else if (triggerCharacterKind is RazorLanguageKind.CSharp)
-        {
-            result = await _formattingService.GetCSharpOnTypeFormattingEditsAsync(context, options, hostDocumentIndex, triggerCharacter[0], cancellationToken).ConfigureAwait(false);
-        }
-        else
-        {
-            return Assumed.Unreachable<ImmutableArray<TextChange>>();
+            return await _formattingService.GetHtmlOnTypeFormattingChangesAsync(context, htmlChanges, options, hostDocumentIndex, triggerCharacter[0], cancellationToken).ConfigureAwait(false);
         }
 
-        return result.SelectAsArray(sourceText.GetTextChange);
+        Debug.Assert(triggerCharacterKind is RazorLanguageKind.CSharp);
+        return await _formattingService.GetCSharpOnTypeFormattingChangesAsync(context, options, hostDocumentIndex, triggerCharacter[0], cancellationToken).ConfigureAwait(false);
     }
 
     public ValueTask<Response> GetOnTypeFormattingTriggerKindAsync(

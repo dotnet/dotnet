@@ -106,7 +106,7 @@ internal sealed class CohostOnTypeFormattingEndpoint(
         if (triggerKind == IRemoteFormattingService.TriggerKind.ValidHtml)
         {
             _logger.LogDebug($"Getting Html formatting changes for {razorDocument.FilePath}");
-            var htmlResult = await GetHtmlFormattingEditsAsync(request, razorDocument, cancellationToken).ConfigureAwait(false);
+            var htmlResult = await TryGetHtmlFormattingEditsAsync(request, razorDocument, cancellationToken).ConfigureAwait(false);
 
             if (htmlResult is not { } htmlEdits)
             {
@@ -136,7 +136,7 @@ internal sealed class CohostOnTypeFormattingEndpoint(
         return null;
     }
 
-    private async Task<TextEdit[]?> GetHtmlFormattingEditsAsync(DocumentOnTypeFormattingParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    private async Task<TextEdit[]?> TryGetHtmlFormattingEditsAsync(DocumentOnTypeFormattingParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
         if (htmlDocument is null)

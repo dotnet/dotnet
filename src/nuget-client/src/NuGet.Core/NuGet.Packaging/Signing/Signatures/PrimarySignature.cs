@@ -2,12 +2,13 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+
+#if IS_SIGNING_SUPPORTED
 using System.IO;
 using System.Security.Cryptography;
-#if IS_SIGNING_SUPPORTED
 using System.Security.Cryptography.Pkcs;
-#endif
 using NuGet.Common;
+#endif
 
 namespace NuGet.Packaging.Signing
 {

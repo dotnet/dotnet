@@ -95,12 +95,13 @@ namespace NuGet.Build.Tasks
         {
             try
             {
-#if DEBUG
-                if (string.Equals(Environment.GetEnvironmentVariable(DebugEnvironmentVariableName), bool.TrueString, StringComparison.OrdinalIgnoreCase))
+                string debugEnvironmentVariable = Environment.GetEnvironmentVariable(DebugEnvironmentVariableName);
+                if (string.Equals(debugEnvironmentVariable, bool.TrueString, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(debugEnvironmentVariable, "1", StringComparison.OrdinalIgnoreCase))
                 {
                     Debugger.Launch();
                 }
-#endif
+
                 MSBuildLogger logger = new MSBuildLogger(Log);
 
                 Dictionary<string, string> globalProperties = GetGlobalProperties();

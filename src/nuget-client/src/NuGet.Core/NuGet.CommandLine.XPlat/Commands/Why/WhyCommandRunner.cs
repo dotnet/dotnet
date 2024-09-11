@@ -232,7 +232,8 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         /// <summary>
         /// Returns the path to an assets file for the given project.
         /// </summary>
-        /// <param name="project">Evaluated MSBuild project</param>
+        /// <param name="assetsFilePath"></param>
+        /// <param name="projectPath"></param>
         /// <param name="logger">Logger for the 'why' command</param>
         /// <returns>Assets file for the given project. Returns null if there was any issue finding or parsing the assets file.</returns>
         private static LockFile? GetProjectAssetsFile(string assetsFilePath, string? projectPath, ILoggerWithColor logger)

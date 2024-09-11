@@ -3,9 +3,6 @@
 
 #if !NET7_0_OR_GREATER
 
-using System;
-using System.Diagnostics;
-
 namespace System.Security.Cryptography.X509Certificates
 {
     /// <summary>

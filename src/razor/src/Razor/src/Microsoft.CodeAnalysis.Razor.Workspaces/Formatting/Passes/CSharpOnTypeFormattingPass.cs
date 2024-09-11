@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -18,7 +19,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
@@ -32,18 +32,18 @@ internal sealed class CSharpOnTypeFormattingPass(
 {
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CSharpOnTypeFormattingPass>();
 
-    public async override Task<TextEdit[]> ExecuteAsync(FormattingContext context, TextEdit[] edits, CancellationToken cancellationToken)
+    public async override Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
         // Normalize and re-map the C# edits.
         var codeDocument = context.CodeDocument;
         var csharpText = codeDocument.GetCSharpSourceText();
 
-        if (edits.Length == 0)
+        if (changes.Length == 0)
         {
             if (!DocumentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), context.HostDocumentIndex, out _, out var projectedIndex))
             {
                 _logger.LogWarning($"Failed to map to projected position for document {context.Uri}.");
-                return edits;
+                return changes;
             }
 
             // Ask C# for formatting changes.
@@ -62,60 +62,58 @@ internal sealed class CSharpOnTypeFormattingPass(
             if (formattingChanges.IsEmpty)
             {
                 _logger.LogInformation($"Received no results.");
-                return edits;
+                return changes;
             }
 
-            edits = formattingChanges.Select(csharpText.GetTextEdit).ToArray();
-            _logger.LogInformation($"Received {edits.Length} results from C#.");
+            changes = formattingChanges;
+            _logger.LogInformation($"Received {changes.Length} results from C#.");
         }
 
         // Sometimes the C# document is out of sync with our document, so Roslyn can return edits to us that will throw when we try
         // to normalize them. Instead of having this flow up and log a NFW, we just capture it here. Since this only happens when typing
         // very quickly, it is a safe assumption that we'll get another chance to do on type formatting, since we know the user is typing.
         // The proper fix for this is https://github.com/dotnet/razor-tooling/issues/6650 at which point this can be removed
-        foreach (var edit in edits)
+        foreach (var edit in changes)
         {
-            var startLine = edit.Range.Start.Line;
-            var endLine = edit.Range.End.Line;
-            var count = csharpText.Lines.Count;
-            if (startLine >= count || endLine >= count)
+            var startPos = edit.Span.Start;
+            var endPos = edit.Span.End;
+            var count = csharpText.Length;
+            if (startPos >= count || endPos >= count)
             {
-                _logger.LogWarning($"Got a bad edit that couldn't be applied. Edit is {startLine}-{endLine} but there are only {count} lines in C#.");
-                return edits;
+                _logger.LogWarning($"Got a bad edit that couldn't be applied. Edit is {startPos}-{endPos} but there are only {count} characters in C#.");
+                return changes;
             }
         }
 
-        var normalizedEdits = csharpText.MinimizeTextEdits(edits, out var originalTextWithChanges);
-        var mappedEdits = RemapTextEdits(codeDocument, normalizedEdits);
-        var filteredEdits = FilterCSharpTextEdits(context, mappedEdits);
-        if (filteredEdits.Length == 0)
+        var normalizedChanges = csharpText.MinimizeTextChanges(changes, out var originalTextWithChanges);
+        var mappedChanges = RemapTextChanges(codeDocument, normalizedChanges);
+        var filteredChanges = FilterCSharpTextChanges(context, mappedChanges);
+        if (filteredChanges.Length == 0)
         {
             // There are no C# edits for us to apply that could be mapped, but we might still need to check for using statements
             // because they are non mappable, but might be the only thing changed (eg from the Add Using code action)
             //
             // If there aren't any edits that are likely to contain using statement changes, this call will no-op.
-            filteredEdits = await AddUsingStatementEditsIfNecessaryAsync(context, codeDocument, csharpText, edits, originalTextWithChanges, filteredEdits, cancellationToken).ConfigureAwait(false);
+            filteredChanges = await AddUsingStatementEditsIfNecessaryAsync(context, codeDocument, csharpText, changes, originalTextWithChanges, filteredChanges, cancellationToken).ConfigureAwait(false);
 
-            return filteredEdits;
+            return filteredChanges;
         }
 
         // Find the lines that were affected by these edits.
         var originalText = codeDocument.Source.Text;
         _logger.LogTestOnly($"Original text:\r\n{originalText}");
 
-        var changes = filteredEdits.Select(originalText.GetTextChange);
-
         // Apply the format on type edits sent over by the client.
-        var formattedText = ApplyChangesAndTrackChange(originalText, changes, out _, out var spanAfterFormatting);
+        var formattedText = ApplyChangesAndTrackChange(originalText, filteredChanges, out _, out var spanAfterFormatting);
         _logger.LogTestOnly($"After C# changes:\r\n{formattedText}");
 
         var changedContext = await context.WithTextAsync(formattedText).ConfigureAwait(false);
-        var rangeAfterFormatting = formattedText.GetRange(spanAfterFormatting);
+        var linePositionSpanAfterFormatting = formattedText.GetLinePositionSpan(spanAfterFormatting);
 
         cancellationToken.ThrowIfCancellationRequested();
 
         // We make an optimistic attempt at fixing corner cases.
-        var cleanupChanges = CleanupDocument(changedContext, rangeAfterFormatting);
+        var cleanupChanges = CleanupDocument(changedContext, linePositionSpanAfterFormatting);
         var cleanedText = formattedText.WithChanges(cleanupChanges);
         _logger.LogTestOnly($"After CleanupDocument:\r\n{cleanedText}");
 
@@ -128,7 +126,7 @@ internal sealed class CSharpOnTypeFormattingPass(
 
         // We only want to adjust the range that was affected.
         // We need to take into account the lines affected by formatting as well as cleanup.
-        var lineDelta = LineDelta(formattedText, cleanupChanges, out var firstPosition, out var lastPosition);
+        var lineDelta = LineDelta(formattedText, cleanupChanges, out var firstLine, out var lastLine);
 
         // Okay hear me out, I know this looks lazy, but it totally makes sense.
         // This method is called with edits that the C# formatter wants to make, and from those edits we work out which
@@ -146,7 +144,7 @@ internal sealed class CSharpOnTypeFormattingPass(
         //
         // We'll happy format lines 1 and 2, and ignore the closing brace altogether. So, by looking one line further
         // we won't have that problem.
-        if (rangeAfterFormatting.End.Line + lineDelta < cleanedText.Lines.Count - 1)
+        if (linePositionSpanAfterFormatting.End.Line + lineDelta < cleanedText.Lines.Count - 1)
         {
             lineDelta++;
         }
@@ -164,25 +162,13 @@ internal sealed class CSharpOnTypeFormattingPass(
         // we'd format line 6 and call it a day, even though the formatter made an edit on line 3. To fix this we use the
         // first and last position of edits made above, and make sure our range encompasses them as well. For convenience
         // we calculate these positions in the LineDelta method called above.
-        // This is essentially: rangeToAdjust = new Range(Math.Min(firstFormattingEdit, userEdit), Math.Max(lastFormattingEdit, userEdit))
-        var start = rangeAfterFormatting.Start;
-        if (firstPosition is not null && firstPosition.CompareTo(start) < 0)
-        {
-            start = firstPosition;
-        }
+        var startLine = Math.Min(firstLine, linePositionSpanAfterFormatting.Start.Line);
+        var endLineInclusive = Math.Max(lastLine, linePositionSpanAfterFormatting.End.Line + lineDelta);
 
-        var end = VsLspFactory.CreatePosition(rangeAfterFormatting.End.Line + lineDelta, 0);
-        if (lastPosition is not null && lastPosition.CompareTo(start) < 0)
-        {
-            end = lastPosition;
-        }
+        Debug.Assert(cleanedText.Lines.Count > endLineInclusive, "Invalid range. This is unexpected.");
 
-        var rangeToAdjust = VsLspFactory.CreateRange(start, end);
-
-        Debug.Assert(cleanedText.IsValidPosition(rangeToAdjust.End), "Invalid range. This is unexpected.");
-
-        var indentationChanges = await AdjustIndentationAsync(changedContext, cancellationToken, rangeToAdjust).ConfigureAwait(false);
-        if (indentationChanges.Count > 0)
+        var indentationChanges = await AdjustIndentationAsync(changedContext, startLine, endLineInclusive, cancellationToken).ConfigureAwait(false);
+        if (indentationChanges.Length > 0)
         {
             // Apply the edits that modify indentation.
             cleanedText = cleanedText.WithChanges(indentationChanges);
@@ -191,39 +177,39 @@ internal sealed class CSharpOnTypeFormattingPass(
         }
 
         // Now that we have made all the necessary changes to the document. Let's diff the original vs final version and return the diff.
-        var finalChanges = cleanedText.GetTextChanges(originalText);
-        var finalEdits = finalChanges.Select(originalText.GetTextEdit).ToArray();
+        var finalChanges = cleanedText.GetTextChangesArray(originalText);
 
-        finalEdits = await AddUsingStatementEditsIfNecessaryAsync(context, codeDocument, csharpText, edits, originalTextWithChanges, finalEdits, cancellationToken).ConfigureAwait(false);
+        finalChanges = await AddUsingStatementEditsIfNecessaryAsync(context, codeDocument, csharpText, changes, originalTextWithChanges, finalChanges, cancellationToken).ConfigureAwait(false);
 
-        return finalEdits;
+        return finalChanges;
     }
 
-    private TextEdit[] RemapTextEdits(RazorCodeDocument codeDocument, TextEdit[] projectedTextEdits)
+    private ImmutableArray<TextChange> RemapTextChanges(RazorCodeDocument codeDocument, ImmutableArray<TextChange> projectedTextChanges)
     {
         if (codeDocument.IsUnsupported())
         {
             return [];
         }
 
-        var edits = DocumentMappingService.GetHostDocumentEdits(codeDocument.GetCSharpDocument(), projectedTextEdits);
+        var changes = DocumentMappingService.GetHostDocumentEdits(codeDocument.GetCSharpDocument(), projectedTextChanges);
 
-        return edits;
+        return changes.ToImmutableArray();
     }
 
-    private static async Task<TextEdit[]> AddUsingStatementEditsIfNecessaryAsync(FormattingContext context, RazorCodeDocument codeDocument, SourceText csharpText, TextEdit[] textEdits, SourceText originalTextWithChanges, TextEdit[] finalEdits, CancellationToken cancellationToken)
+    private static async Task<ImmutableArray<TextChange>> AddUsingStatementEditsIfNecessaryAsync(FormattingContext context, RazorCodeDocument codeDocument, SourceText csharpText, ImmutableArray<TextChange> changes, SourceText originalTextWithChanges, ImmutableArray<TextChange> finalChanges, CancellationToken cancellationToken)
     {
         if (context.AutomaticallyAddUsings)
         {
             // Because we need to parse the C# code twice for this operation, lets do a quick check to see if its even necessary
-            if (textEdits.Any(static e => e.NewText.IndexOf("using") != -1))
+            if (changes.Any(static e => e.NewText is not null && e.NewText.IndexOf("using") != -1))
             {
                 var usingStatementEdits = await AddUsingsHelper.GetUsingStatementEditsAsync(codeDocument, csharpText, originalTextWithChanges, cancellationToken).ConfigureAwait(false);
-                finalEdits = [.. usingStatementEdits, .. finalEdits];
+                var usingStatementChanges = usingStatementEdits.Select(codeDocument.Source.Text.GetTextChange);
+                finalChanges = [.. usingStatementChanges, .. finalChanges];
             }
         }
 
-        return finalEdits;
+        return finalChanges;
     }
 
     // Returns the minimal TextSpan that encompasses all the differences between the old and the new text.
@@ -238,21 +224,15 @@ internal sealed class CSharpOnTypeFormattingPass(
         return newText;
     }
 
-    private static TextEdit[] FilterCSharpTextEdits(FormattingContext context, TextEdit[] edits)
+    private static ImmutableArray<TextChange> FilterCSharpTextChanges(FormattingContext context, ImmutableArray<TextChange> changes)
     {
-        var filteredEdits = edits.Where(e =>
-        {
-            var span = context.SourceText.GetTextSpan(e.Range);
-            return ShouldFormat(context, span, allowImplicitStatements: false);
-        }).ToArray();
-
-        return filteredEdits;
+        return changes.WhereAsArray(e => ShouldFormat(context, e.Span, allowImplicitStatements: false));
     }
 
-    private static int LineDelta(SourceText text, IEnumerable<TextChange> changes, out Position? firstPosition, out Position? lastPosition)
+    private static int LineDelta(SourceText text, IEnumerable<TextChange> changes, out int firstLine, out int lastLine)
     {
-        firstPosition = null;
-        lastPosition = null;
+        firstLine = 0;
+        lastLine = 0;
 
         // Let's compute the number of newlines added/removed by the incoming changes.
         var delta = 0;
@@ -261,20 +241,11 @@ internal sealed class CSharpOnTypeFormattingPass(
         {
             var newLineCount = change.NewText is null ? 0 : change.NewText.Split('\n').Length - 1;
 
-            var range = text.GetRange(change.Span);
-            Debug.Assert(range.Start.Line <= range.End.Line, "Invalid range.");
-
             // For convenience, since we're already iterating through things, we also find the extremes
             // of the range of edits that were made.
-            if (firstPosition is null || firstPosition.CompareTo(range.Start) > 0)
-            {
-                firstPosition = range.Start;
-            }
-
-            if (lastPosition is null || lastPosition.CompareTo(range.End) < 0)
-            {
-                lastPosition = range.End;
-            }
+            var range = text.GetLinePositionSpan(change.Span);
+            firstLine = Math.Min(firstLine, range.Start.Line);
+            lastLine = Math.Max(lastLine, range.End.Line);
 
             // The number of lines added/removed will be,
             // the number of lines added by the change  - the number of lines the change span represents
@@ -284,32 +255,31 @@ internal sealed class CSharpOnTypeFormattingPass(
         return delta;
     }
 
-    private static List<TextChange> CleanupDocument(FormattingContext context, Range? range = null)
+    private static ImmutableArray<TextChange> CleanupDocument(FormattingContext context, LinePositionSpan spanAfterFormatting)
     {
         var text = context.SourceText;
-        range ??= text.GetRange(TextSpan.FromBounds(0, text.Length));
         var csharpDocument = context.CodeDocument.GetCSharpDocument();
 
-        var changes = new List<TextChange>();
+        using var changes = new PooledArrayBuilder<TextChange>();
         foreach (var mapping in csharpDocument.SourceMappings)
         {
             var mappingSpan = new TextSpan(mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
-            var mappingRange = text.GetRange(mappingSpan);
-            if (!range.LineOverlapsWith(mappingRange))
+            var mappingLinePositionSpan = text.GetLinePositionSpan(mappingSpan);
+            if (!spanAfterFormatting.LineOverlapsWith(mappingLinePositionSpan))
             {
                 // We don't care about this range. It didn't change.
                 continue;
             }
 
-            CleanupSourceMappingStart(context, mappingRange, changes, out var newLineAdded);
+            CleanupSourceMappingStart(context, mappingLinePositionSpan, ref changes.AsRef(), out var newLineAdded);
 
-            CleanupSourceMappingEnd(context, mappingRange, changes, newLineAdded);
+            CleanupSourceMappingEnd(context, mappingLinePositionSpan, ref changes.AsRef(), newLineAdded);
         }
 
-        return changes;
+        return changes.ToImmutable();
     }
 
-    private static void CleanupSourceMappingStart(FormattingContext context, Range sourceMappingRange, List<TextChange> changes, out bool newLineAdded)
+    private static void CleanupSourceMappingStart(FormattingContext context, LinePositionSpan sourceMappingRange, ref PooledArrayBuilder<TextChange> changes, out bool newLineAdded)
     {
         newLineAdded = false;
 
@@ -432,7 +402,7 @@ internal sealed class CSharpOnTypeFormattingPass(
         return builder.ToString();
     }
 
-    private static void CleanupSourceMappingEnd(FormattingContext context, Range sourceMappingRange, List<TextChange> changes, bool newLineWasAddedAtStart)
+    private static void CleanupSourceMappingEnd(FormattingContext context, LinePositionSpan sourceMappingRange, ref PooledArrayBuilder<TextChange> changes, bool newLineWasAddedAtStart)
     {
         //
         // We look through every source mapping that intersects with the affected range and

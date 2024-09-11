@@ -29,7 +29,8 @@ public class DocumentRangeFormattingEndpointTest(ITestOutputHelper testOutput) :
         var @params = new DocumentRangeFormattingParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
-            Options = new FormattingOptions()
+            Options = new FormattingOptions(),
+            Range = VsLspFactory.DefaultRange
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 

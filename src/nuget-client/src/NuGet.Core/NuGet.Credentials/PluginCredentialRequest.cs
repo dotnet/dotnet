@@ -8,12 +8,24 @@ namespace NuGet.Credentials
     /// </summary>
     public class PluginCredentialRequest
     {
+        /// <summary>
+        /// Gets or sets the package source URI for the credential request.
+        /// </summary>
         public string Uri { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the request is non-interactive.
+        /// </summary>
         public bool NonInteractive { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the request is a retry.
+        /// </summary>
         public bool IsRetry { get; set; }
 
+        /// <summary>
+        /// Gets or sets the verbosity level for the request.
+        /// </summary>
         public string Verbosity { get; set; }
     }
 }

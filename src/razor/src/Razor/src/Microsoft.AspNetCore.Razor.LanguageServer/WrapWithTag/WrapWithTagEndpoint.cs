@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -9,7 +8,6 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
@@ -18,14 +16,9 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
 
 [RazorLanguageServerEndpoint(LanguageServerConstants.RazorWrapWithTagEndpoint)]
-internal class WrapWithTagEndpoint(
-    IClientConnection clientConnection,
-    IDocumentMappingService documentMappingService,
-    ILoggerFactory loggerFactory)
-    : IRazorRequestHandler<WrapWithTagParams, WrapWithTagResponse?>
+internal class WrapWithTagEndpoint(IClientConnection clientConnection, ILoggerFactory loggerFactory) : IRazorRequestHandler<WrapWithTagParams, WrapWithTagResponse?>
 {
-    private readonly IClientConnection _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-    private readonly IDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
+    private readonly IClientConnection _clientConnection = clientConnection;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<WrapWithTagEndpoint>();
 
     public bool MutatesSolutionState => false;
@@ -69,7 +62,7 @@ internal class WrapWithTagEndpoint(
         //
         // Instead of C#, which certainly would be expected to go in an if statement, we'll see HTML, which obviously
         // is the better choice for this operation.
-        var languageKind = _documentMappingService.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: true);
+        var languageKind = codeDocument.GetLanguageKind(hostDocumentIndex, rightAssociative: true);
         if (languageKind is not RazorLanguageKind.Html)
         {
             // In general, we don't support C# for obvious reasons, but we can support implicit expressions. ie

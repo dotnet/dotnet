@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.AutoInsert;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol.AutoInsert;
 using Microsoft.CodeAnalysis.Razor.Remote;
@@ -92,7 +93,8 @@ internal class CohostOnAutoInsertEndpoint(
         _logger.LogDebug($"Resolving auto-insertion for {razorDocument.FilePath}");
 
         var clientSettings = _clientSettingsManager.GetClientSettings();
-        var autoInsertOptions = RemoteAutoInsertOptions.From(clientSettings, request.Options);
+        var razorFormattingOptions = RazorFormattingOptions.From(request.Options, codeBlockBraceOnNextLine: false);
+        var autoInsertOptions = RemoteAutoInsertOptions.From(clientSettings, razorFormattingOptions);
 
         _logger.LogDebug($"Calling OOP to resolve insertion at {request.Position} invoked by typing '{request.Character}'");
         var data = await _remoteServiceInvoker.TryInvokeAsync<IRemoteAutoInsertService, Response>(

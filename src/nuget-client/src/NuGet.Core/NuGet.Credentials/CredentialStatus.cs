@@ -9,8 +9,19 @@ namespace NuGet.Credentials
     /// </summary>
     public enum CredentialStatus
     {
+        /// <summary>
+        /// Credentials were successfully acquired.
+        /// </summary>
         Success,
+
+        /// <summary>
+        /// The provider was not applicable for acquiring credentials.
+        /// </summary>
         ProviderNotApplicable,
+
+        /// <summary>
+        /// The user canceled the credential acquisition process.
+        /// </summary>
         UserCanceled
     }
 }

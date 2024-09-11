@@ -1,54 +1,55 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
 internal interface IRazorFormattingService
 {
-    Task<TextEdit[]> GetDocumentFormattingEditsAsync(
+    Task<ImmutableArray<TextChange>> GetDocumentFormattingChangesAsync(
        DocumentContext documentContext,
-       TextEdit[] htmlEdits,
-       Range? range,
+       ImmutableArray<TextChange> htmlEdits,
+       LinePositionSpan? span,
        RazorFormattingOptions options,
        CancellationToken cancellationToken);
 
-    Task<TextEdit[]> GetHtmlOnTypeFormattingEditsAsync(
+    Task<ImmutableArray<TextChange>> GetHtmlOnTypeFormattingChangesAsync(
       DocumentContext documentContext,
-      TextEdit[] htmlEdits,
+      ImmutableArray<TextChange> htmlEdits,
       RazorFormattingOptions options,
       int hostDocumentIndex,
       char triggerCharacter,
       CancellationToken cancellationToken);
 
-    Task<TextEdit[]> GetCSharpOnTypeFormattingEditsAsync(
+    Task<ImmutableArray<TextChange>> GetCSharpOnTypeFormattingChangesAsync(
       DocumentContext documentContext,
       RazorFormattingOptions options,
       int hostDocumentIndex,
       char triggerCharacter,
       CancellationToken cancellationToken);
 
-    Task<TextEdit?> GetSingleCSharpEditAsync(
+    Task<TextChange?> TryGetSingleCSharpEditAsync(
         DocumentContext documentContext,
-        TextEdit csharpEdit,
+        TextChange csharpEdit,
         RazorFormattingOptions options,
         CancellationToken cancellationToken);
 
-    Task<TextEdit?> GetCSharpCodeActionEditAsync(
+    Task<TextChange?> TryGetCSharpCodeActionEditAsync(
        DocumentContext documentContext,
-       TextEdit[] csharpEdits,
+       ImmutableArray<TextChange> csharpEdits,
        RazorFormattingOptions options,
        CancellationToken cancellationToken);
 
-    Task<TextEdit?> GetCSharpSnippetFormattingEditAsync(
+    Task<TextChange?> TryGetCSharpSnippetFormattingEditAsync(
        DocumentContext documentContext,
-       TextEdit[] csharpEdits,
+       ImmutableArray<TextChange> csharpEdits,
        RazorFormattingOptions options,
        CancellationToken cancellationToken);
 

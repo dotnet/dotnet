@@ -34,6 +34,8 @@ namespace NuGet.CommandLine.XPlat
         private const string IncludeAssets = "IncludeAssets";
         private const string PrivateAssets = "PrivateAssets";
         private const string CollectPackageReferences = "CollectPackageReferences";
+        private const string CollectCentralPackageVersions = "CollectCentralPackageVersions";
+
         /// <summary>
         /// The name of the MSBuild property that represents the path to the central package management file, usually Directory.Packages.props.
         /// </summary>
@@ -694,7 +696,7 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="transitive">Include transitive packages/projects in the result</param>
         /// <returns>FrameworkPackages collection with top-level and transitive package/project
         /// references for each framework, or null on error</returns>
-        internal List<FrameworkPackages> GetResolvedVersions(
+        internal static List<FrameworkPackages> GetResolvedVersions(
             Project project, IEnumerable<string> userInputFrameworks, LockFile assetsFile, bool transitive)
         {
             if (userInputFrameworks == null)
@@ -791,23 +793,7 @@ namespace NuGet.CommandLine.XPlat
                         {
                             try
                             { // In case proj and assets file are not in sync and some refs were deleted
-                                var projectPackage = projectPackages.Where(p => p.Name.Equals(topLevelPackage.Name, StringComparison.Ordinal)).First();
-
-                                // If the project is using CPM and it's not using VersionOverride, get the version from Directory.Package.props file
-                                if (assetsFile.PackageSpec.RestoreMetadata.CentralPackageVersionsEnabled && !projectPackage.IsVersionOverride)
-                                {
-                                    ProjectRootElement directoryBuildPropsRootElement = GetDirectoryBuildPropsRootElement(project);
-                                    ProjectItemElement packageInCPM = directoryBuildPropsRootElement.Items.Where(i => (i.ItemType == PACKAGE_VERSION_TYPE_TAG || i.ItemType.Equals("GlobalPackageReference")) && i.Include.Equals(topLevelPackage.Name, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-
-                                    installedPackage = new InstalledPackageReference(topLevelPackage.Name)
-                                    {
-                                        OriginalRequestedVersion = packageInCPM.Metadata.FirstOrDefault(i => i.Name.Equals("Version", StringComparison.OrdinalIgnoreCase)).Value,
-                                    };
-                                }
-                                else
-                                {
-                                    installedPackage = projectPackage;
-                                }
+                                installedPackage = projectPackages.Where(p => p.Name.Equals(topLevelPackage.Name, StringComparison.Ordinal)).First();
                             }
                             catch (Exception)
                             {
@@ -912,18 +898,51 @@ namespace NuGet.CommandLine.XPlat
             var globalProperties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 { { "TargetFramework", framework } };
             var newProject = new ProjectInstance(projectPath, globalProperties, null);
-            newProject.Build(new[] { CollectPackageReferences }, new List<Microsoft.Build.Framework.ILogger> { }, out var targetOutputs);
+            newProject.Build(new[] { CollectPackageReferences, CollectCentralPackageVersions }, new List<Microsoft.Build.Framework.ILogger> { }, out var targetOutputs);
 
-            return targetOutputs.First(e => e.Key.Equals(CollectPackageReferences, StringComparison.OrdinalIgnoreCase)).Value.Items.Select(p =>
+            // Find the first target output that matches `CollectPackageReferences`
+            var matchingTargetOutputReference = targetOutputs.First(
+                e => e.Key.Equals(CollectPackageReferences, StringComparison.OrdinalIgnoreCase)
+            );
+
+            // Target that matches `CollectCentralPackageVersions`. This will be used to get the versions of `GlobalPackageReference` packages
+            var matchingTargetOutputVersion = targetOutputs.First(
+                e => e.Key.Equals(CollectCentralPackageVersions, StringComparison.OrdinalIgnoreCase)
+            );
+
+            var referenceItems = matchingTargetOutputReference.Value.Items;
+            var versionItems = matchingTargetOutputVersion.Value.Items;
+
+            // Transform each item into an InstalledPackageReference
+            var installedPackageReferences = referenceItems.Select(p =>
             {
-                var isVersionOverride = p.GetMetadata("VersionOverride") != string.Empty;
-                var originalRequestedVersion = isVersionOverride ? p.GetMetadata("VersionOverride") : p.GetMetadata("version");
+                // Find the matching version item for the current reference item
+                var versionItem = versionItems.FirstOrDefault(v =>
+                    v.ItemSpec.Equals(p.ItemSpec, StringComparison.OrdinalIgnoreCase)
+                );
+
+                // Check if there is a version override
+                bool isVersionOverride = !string.IsNullOrEmpty(p.GetMetadata("VersionOverride"));
+
+                // Determine the original requested version
+                // if versionOverride -> get versionOverride
+                // Otherwise take the version defined in CPM versions if available
+                // Otherwise take the packageReference version
+                string originalRequestedVersion = isVersionOverride
+                    ? p.GetMetadata("VersionOverride")
+                    : (versionItem != null
+                    ? versionItem.GetMetadata("Version")
+                    : p.GetMetadata("Version"));
+
                 return new InstalledPackageReference(p.ItemSpec)
                 {
                     OriginalRequestedVersion = originalRequestedVersion,
                     IsVersionOverride = isVersionOverride,
                 };
             });
+
+            return installedPackageReferences;
+
         }
 
         /// <summary>
