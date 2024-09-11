@@ -133,10 +133,10 @@
       "commitSha": "0710a7892d89999956e8808c28e9dd0512bd53f3"
     },
     {
-      "packageVersion": "9.0.100-rc.2.24460.5",
+      "packageVersion": "9.0.100-rc.2.24460.7",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "e120505269e45dab63ee769121faf8c1e94b3b73"
+      "commitSha": "cc48d74c849e7f89653cdfcf1a37ed0f5b7577c8"
     },
     {
       "packageVersion": "1.1.0-rc.24459.2",
