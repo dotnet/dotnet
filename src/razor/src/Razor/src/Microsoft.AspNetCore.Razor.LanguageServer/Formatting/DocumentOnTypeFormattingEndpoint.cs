@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Frozen;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
@@ -12,7 +11,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -100,15 +98,15 @@ internal class DocumentOnTypeFormattingEndpoint(
 
         var options = RazorFormattingOptions.From(request.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
 
-        TextEdit[] formattedEdits;
+        ImmutableArray<TextChange> formattedChanges;
         if (triggerCharacterKind == RazorLanguageKind.CSharp)
         {
-            formattedEdits = await _razorFormattingService.GetCSharpOnTypeFormattingEditsAsync(documentContext, options, hostDocumentIndex, request.Character[0], cancellationToken).ConfigureAwait(false);
+            formattedChanges = await _razorFormattingService.GetCSharpOnTypeFormattingChangesAsync(documentContext, options, hostDocumentIndex, request.Character[0], cancellationToken).ConfigureAwait(false);
         }
         else if (triggerCharacterKind == RazorLanguageKind.Html)
         {
-            var htmlEdits = await _htmlFormatter.GetOnTypeFormattingEditsAsync(documentContext.Snapshot, documentContext.Uri, request.Position, request.Character, request.Options, cancellationToken).ConfigureAwait(false);
-            formattedEdits = await _razorFormattingService.GetHtmlOnTypeFormattingEditsAsync(documentContext, htmlEdits, options, hostDocumentIndex, request.Character[0], cancellationToken).ConfigureAwait(false);
+            var htmlChanges = await _htmlFormatter.GetOnTypeFormattingEditsAsync(documentContext.Snapshot, documentContext.Uri, request.Position, request.Character, request.Options, cancellationToken).ConfigureAwait(false);
+            formattedChanges = await _razorFormattingService.GetHtmlOnTypeFormattingChangesAsync(documentContext, htmlChanges, options, hostDocumentIndex, request.Character[0], cancellationToken).ConfigureAwait(false);
         }
         else
         {
@@ -116,13 +114,13 @@ internal class DocumentOnTypeFormattingEndpoint(
             return null;
         }
 
-        if (formattedEdits.Length == 0)
+        if (formattedChanges.Length == 0)
         {
             _logger.LogInformation($"No formatting changes were necessary");
             return null;
         }
 
-        _logger.LogInformation($"Returning {formattedEdits.Length} final formatted results.");
-        return formattedEdits;
+        _logger.LogInformation($"Returning {formattedChanges.Length} final formatted results.");
+        return [.. formattedChanges.Select(sourceText.GetTextEdit)];
     }
 }

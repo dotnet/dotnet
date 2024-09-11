@@ -3,13 +3,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
@@ -20,12 +21,11 @@ internal sealed class FormattingDiagnosticValidationPass(ILoggerFactory loggerFa
     // Internal for testing.
     internal bool DebugAssertsEnabled { get; set; } = true;
 
-    public async Task<TextEdit[]> ExecuteAsync(FormattingContext context, TextEdit[] edits, CancellationToken cancellationToken)
+    public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
         var originalDiagnostics = context.CodeDocument.GetSyntaxTree().Diagnostics;
 
         var text = context.SourceText;
-        var changes = edits.Select(text.GetTextChange);
         var changedText = text.WithChanges(changes);
         var changedContext = await context.WithTextAsync(changedText).ConfigureAwait(false);
         var changedDiagnostics = changedContext.CodeDocument.GetSyntaxTree().Diagnostics;
@@ -58,7 +58,7 @@ internal sealed class FormattingDiagnosticValidationPass(ILoggerFactory loggerFa
             return [];
         }
 
-        return edits;
+        return changes;
     }
 
     private class LocationIgnoringDiagnosticComparer : IEqualityComparer<RazorDiagnostic>

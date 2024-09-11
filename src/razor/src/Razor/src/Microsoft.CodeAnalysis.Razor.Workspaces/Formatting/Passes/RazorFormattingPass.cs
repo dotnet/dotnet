@@ -1,10 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
@@ -23,15 +21,14 @@ namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
 internal sealed class RazorFormattingPass : IFormattingPass
 {
-    public async Task<TextEdit[]> ExecuteAsync(FormattingContext context, TextEdit[] edits, CancellationToken cancellationToken)
+    public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
         // Apply previous edits if any.
         var originalText = context.SourceText;
         var changedText = originalText;
         var changedContext = context;
-        if (edits.Length > 0)
+        if (changes.Length > 0)
         {
-            var changes = edits.Select(originalText.GetTextChange);
             changedText = changedText.WithChanges(changes);
             changedContext = await context.WithTextAsync(changedText).ConfigureAwait(false);
 
@@ -40,46 +37,42 @@ internal sealed class RazorFormattingPass : IFormattingPass
 
         // Format the razor bits of the file
         var syntaxTree = changedContext.CodeDocument.GetSyntaxTree();
-        var razorEdits = FormatRazor(changedContext, syntaxTree);
+        var razorChanges = FormatRazor(changedContext, syntaxTree);
 
         // Compute the final combined set of edits
-        var formattingChanges = razorEdits.Select(changedText.GetTextChange);
-        changedText = changedText.WithChanges(formattingChanges);
+        changedText = changedText.WithChanges(razorChanges);
 
-        var finalChanges = changedText.GetTextChanges(originalText);
-        var finalEdits = finalChanges.Select(originalText.GetTextEdit).ToArray();
-
-        return finalEdits;
+        return changedText.GetTextChangesArray(originalText);
     }
 
-    private static ImmutableArray<TextEdit> FormatRazor(FormattingContext context, RazorSyntaxTree syntaxTree)
+    private static ImmutableArray<TextChange> FormatRazor(FormattingContext context, RazorSyntaxTree syntaxTree)
     {
-        using var edits = new PooledArrayBuilder<TextEdit>();
+        using var changes = new PooledArrayBuilder<TextChange>();
         var source = syntaxTree.Source;
 
         foreach (var node in syntaxTree.Root.DescendantNodes())
         {
             // Disclaimer: CSharpCodeBlockSyntax is used a _lot_ in razor so these methods are probably
             // being overly careful to only try to format syntax forms they care about.
-            TryFormatCSharpBlockStructure(context, ref edits.AsRef(), source, node);
-            TryFormatSingleLineDirective(ref edits.AsRef(), source, node);
-            TryFormatBlocks(context, ref edits.AsRef(), source, node);
+            TryFormatCSharpBlockStructure(context, ref changes.AsRef(), source, node);
+            TryFormatSingleLineDirective(ref changes.AsRef(), node);
+            TryFormatBlocks(context, ref changes.AsRef(), source, node);
         }
 
-        return edits.ToImmutable();
+        return changes.ToImmutable();
     }
 
-    private static void TryFormatBlocks(FormattingContext context, ref PooledArrayBuilder<TextEdit> edits, RazorSourceDocument source, RazorSyntaxNode node)
+    private static void TryFormatBlocks(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
     {
         // We only want to run one of these
-        _ = TryFormatFunctionsBlock(context, ref edits, source, node) ||
-            TryFormatCSharpExplicitTransition(context, ref edits, source, node) ||
-            TryFormatHtmlInCSharp(context, ref edits, source, node) ||
-            TryFormatComplexCSharpBlock(context, ref edits, source, node) ||
-            TryFormatSectionBlock(context, ref edits, source, node);
+        _ = TryFormatFunctionsBlock(context, ref changes, source, node) ||
+            TryFormatCSharpExplicitTransition(context, ref changes, source, node) ||
+            TryFormatHtmlInCSharp(context, ref changes, source, node) ||
+            TryFormatComplexCSharpBlock(context, ref changes, source, node) ||
+            TryFormatSectionBlock(context, ref changes, source, node);
     }
 
-    private static bool TryFormatSectionBlock(FormattingContext context, ref PooledArrayBuilder<TextEdit> edits, RazorSourceDocument source, RazorSyntaxNode node)
+    private static bool TryFormatSectionBlock(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
     {
         // @section Goo {
         // }
@@ -98,16 +91,15 @@ internal sealed class RazorFormattingPass : IFormattingPass
             if (TryGetWhitespace(children, out var whitespaceBeforeSectionName, out var whitespaceAfterSectionName))
             {
                 // For whitespace we normalize it differently depending on if its multi-line or not
-                FormatWhitespaceBetweenDirectiveAndBrace(whitespaceBeforeSectionName, directive, ref edits, source, context, forceNewLine: false);
-                FormatWhitespaceBetweenDirectiveAndBrace(whitespaceAfterSectionName, directive, ref edits, source, context, forceNewLine: false);
+                FormatWhitespaceBetweenDirectiveAndBrace(whitespaceBeforeSectionName, directive, ref changes, source, context, forceNewLine: false);
+                FormatWhitespaceBetweenDirectiveAndBrace(whitespaceAfterSectionName, directive, ref changes, source, context, forceNewLine: false);
 
                 return true;
             }
             else if (children.TryGetOpenBraceToken(out var brace))
             {
                 // If there is no whitespace at all we normalize to a single space
-                var edit = VsLspFactory.CreateTextEdit(brace.GetRange(source).Start, " ");
-                edits.Add(edit);
+                changes.Add(new TextChange(new TextSpan(brace.SpanStart, 0), " "));
 
                 return true;
             }
@@ -136,7 +128,7 @@ internal sealed class RazorFormattingPass : IFormattingPass
         }
     }
 
-    private static bool TryFormatFunctionsBlock(FormattingContext context, ref PooledArrayBuilder<TextEdit> edits, RazorSourceDocument source, RazorSyntaxNode node)
+    private static bool TryFormatFunctionsBlock(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
     {
         // @functions
         // {
@@ -168,13 +160,13 @@ internal sealed class RazorFormattingPass : IFormattingPass
             var codeNode = code.AssumeNotNull();
             var closeBraceNode = closeBrace;
 
-            return FormatBlock(context, source, directive, openBraceNode, codeNode, closeBraceNode, ref edits);
+            return FormatBlock(context, source, directive, openBraceNode, codeNode, closeBraceNode, ref changes);
         }
 
         return false;
     }
 
-    private static bool TryFormatCSharpExplicitTransition(FormattingContext context, ref PooledArrayBuilder<TextEdit> edits, RazorSourceDocument source, RazorSyntaxNode node)
+    private static bool TryFormatCSharpExplicitTransition(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
     {
         // We're looking for a code block like this:
         //
@@ -189,13 +181,13 @@ internal sealed class RazorFormattingPass : IFormattingPass
             var codeNode = csharpStatementBody.CSharpCode;
             var closeBraceNode = csharpStatementBody.CloseBrace;
 
-            return FormatBlock(context, source, directiveNode: null, openBraceNode, codeNode, closeBraceNode, ref edits);
+            return FormatBlock(context, source, directiveNode: null, openBraceNode, codeNode, closeBraceNode, ref changes);
         }
 
         return false;
     }
 
-    private static bool TryFormatComplexCSharpBlock(FormattingContext context, ref PooledArrayBuilder<TextEdit> edits, RazorSourceDocument source, RazorSyntaxNode node)
+    private static bool TryFormatComplexCSharpBlock(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
     {
         // complex situations like
         // @{
@@ -211,13 +203,13 @@ internal sealed class RazorFormattingPass : IFormattingPass
             var openBraceNode = outerCodeBlock.Children.PreviousSiblingOrSelf(innerCodeBlock);
             var closeBraceNode = outerCodeBlock.Children.NextSiblingOrSelf(innerCodeBlock);
 
-            return FormatBlock(context, source, directiveNode: null, openBraceNode, codeNode, closeBraceNode, ref edits);
+            return FormatBlock(context, source, directiveNode: null, openBraceNode, codeNode, closeBraceNode, ref changes);
         }
 
         return false;
     }
 
-    private static bool TryFormatHtmlInCSharp(FormattingContext context, ref PooledArrayBuilder<TextEdit> edits, RazorSourceDocument source, RazorSyntaxNode node)
+    private static bool TryFormatHtmlInCSharp(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
     {
         // void Method()
         // {
@@ -229,13 +221,13 @@ internal sealed class RazorFormattingPass : IFormattingPass
             var openBraceNode = cSharpCodeBlock.Children.PreviousSiblingOrSelf(markupBlockNode);
             var closeBraceNode = cSharpCodeBlock.Children.NextSiblingOrSelf(markupBlockNode);
 
-            return FormatBlock(context, source, directiveNode: null, openBraceNode, markupBlockNode, closeBraceNode, ref edits);
+            return FormatBlock(context, source, directiveNode: null, openBraceNode, markupBlockNode, closeBraceNode, ref changes);
         }
 
         return false;
     }
 
-    private static void TryFormatCSharpBlockStructure(FormattingContext context, ref PooledArrayBuilder<TextEdit> edits, RazorSourceDocument source, RazorSyntaxNode node)
+    private static void TryFormatCSharpBlockStructure(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
     {
         // We're looking for a code block like this:
         //
@@ -263,19 +255,17 @@ internal sealed class RazorFormattingPass : IFormattingPass
             if (TryGetLeadingWhitespace(children, out var whitespace))
             {
                 // For whitespace we normalize it differently depending on if its multi-line or not
-                FormatWhitespaceBetweenDirectiveAndBrace(whitespace, directive, ref edits, source, context, forceNewLine);
+                FormatWhitespaceBetweenDirectiveAndBrace(whitespace, directive, ref changes, source, context, forceNewLine);
             }
             else if (children.TryGetOpenBraceToken(out var brace))
             {
                 // If there is no whitespace at all we normalize to a single space
-                var edit = VsLspFactory.CreateTextEdit(
-                    brace.GetRange(source).Start,
-                    forceNewLine
-                        ? context.NewLineString + FormattingUtilities.GetIndentationString(
-                            directive.GetLinePositionSpan(source).Start.Character, context.Options.InsertSpaces, context.Options.TabSize)
-                        : " ");
+                var newText = forceNewLine
+                    ? context.NewLineString + FormattingUtilities.GetIndentationString(
+                        directive.GetLinePositionSpan(source).Start.Character, context.Options.InsertSpaces, context.Options.TabSize)
+                    : " ";
 
-                edits.Add(edit);
+                changes.Add(new TextChange(new TextSpan(brace.SpanStart, 0), newText));
             }
         }
 
@@ -295,7 +285,7 @@ internal sealed class RazorFormattingPass : IFormattingPass
         }
     }
 
-    private static void TryFormatSingleLineDirective(ref PooledArrayBuilder<TextEdit> edits, RazorSourceDocument source, RazorSyntaxNode node)
+    private static void TryFormatSingleLineDirective(ref PooledArrayBuilder<TextChange> changes, RazorSyntaxNode node)
     {
         // Looking for single line directives like
         //
@@ -311,7 +301,7 @@ internal sealed class RazorFormattingPass : IFormattingPass
             {
                 if (child.ContainsOnlyWhitespace(includingNewLines: false))
                 {
-                    ShrinkToSingleSpace(child, ref edits, source);
+                    ShrinkToSingleSpace(child, ref changes);
                 }
             }
         }
@@ -331,45 +321,43 @@ internal sealed class RazorFormattingPass : IFormattingPass
         }
     }
 
-    private static void FormatWhitespaceBetweenDirectiveAndBrace(RazorSyntaxNode node, RazorDirectiveSyntax directive, ref PooledArrayBuilder<TextEdit> edits, RazorSourceDocument source, FormattingContext context, bool forceNewLine)
+    private static void FormatWhitespaceBetweenDirectiveAndBrace(RazorSyntaxNode node, RazorDirectiveSyntax directive, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, FormattingContext context, bool forceNewLine)
     {
         if (node.ContainsOnlyWhitespace(includingNewLines: false) && !forceNewLine)
         {
-            ShrinkToSingleSpace(node, ref edits, source);
+            ShrinkToSingleSpace(node, ref changes);
         }
         else
         {
             // If there is a newline then we want to have just one newline after the directive
             // and indent the { to match the @
-            var edit = VsLspFactory.CreateTextEdit(
-                node.GetRange(source),
-                context.NewLineString + FormattingUtilities.GetIndentationString(
-                    directive.GetLinePositionSpan(source).Start.Character, context.Options.InsertSpaces, context.Options.TabSize));
+            var newText = context.NewLineString + FormattingUtilities.GetIndentationString(
+                    directive.GetLinePositionSpan(source).Start.Character, context.Options.InsertSpaces, context.Options.TabSize);
 
-            edits.Add(edit);
+            changes.Add(new TextChange(node.Span, newText));
         }
     }
 
-    private static void ShrinkToSingleSpace(RazorSyntaxNode node, ref PooledArrayBuilder<TextEdit> edits, RazorSourceDocument source)
+    private static void ShrinkToSingleSpace(RazorSyntaxNode node, ref PooledArrayBuilder<TextChange> changes)
     {
         // If there is anything other than one single space then we replace with one space between directive and brace.
         //
         // ie, "@code     {" will become "@code {"
-        var edit = VsLspFactory.CreateTextEdit(node.GetRange(source), " ");
-        edits.Add(edit);
+        changes.Add(new TextChange(node.Span, " "));
     }
 
-    private static bool FormatBlock(FormattingContext context, RazorSourceDocument source, RazorSyntaxNode? directiveNode, RazorSyntaxNode openBraceNode, RazorSyntaxNode codeNode, RazorSyntaxNode closeBraceNode, ref PooledArrayBuilder<TextEdit> edits)
+    private static bool FormatBlock(FormattingContext context, RazorSourceDocument source, RazorSyntaxNode? directiveNode, RazorSyntaxNode openBraceNode, RazorSyntaxNode codeNode, RazorSyntaxNode closeBraceNode, ref PooledArrayBuilder<TextChange> changes)
     {
         var didFormat = false;
 
-        var openBraceRange = openBraceNode.GetRangeWithoutWhitespace(source);
-        var codeRange = codeNode.GetRangeWithoutWhitespace(source);
+        if (!codeNode.TryGetLinePositionSpanWithoutWhitespace(source, out var codeRange))
+        {
+            return didFormat;
+        }
 
-        if (openBraceRange is not null &&
-            codeRange is not null &&
+        if (openBraceNode.TryGetLinePositionSpanWithoutWhitespace(source, out var openBraceRange) &&
             openBraceRange.End.Line == codeRange.Start.Line &&
-            !RangeHasBeenModified(ref edits, codeRange))
+            !RangeHasBeenModified(ref changes, source.Text, codeRange))
         {
             var additionalIndentationLevel = GetAdditionalIndentationLevel(context, openBraceRange, openBraceNode, codeNode);
             var newText = context.NewLineString;
@@ -378,49 +366,46 @@ internal sealed class RazorFormattingPass : IFormattingPass
                 newText += FormattingUtilities.GetIndentationString(additionalIndentationLevel, context.Options.InsertSpaces, context.Options.TabSize);
             }
 
-            var edit = VsLspFactory.CreateTextEdit(openBraceRange.End, newText);
-            edits.Add(edit);
+            changes.Add(new TextChange(source.Text.GetTextSpan(openBraceRange.End, openBraceRange.End), newText));
             didFormat = true;
         }
 
-        var closeBraceRange = closeBraceNode.GetRangeWithoutWhitespace(source);
-        if (codeRange is not null &&
-            closeBraceRange is not null &&
-            !RangeHasBeenModified(ref edits, codeRange))
+        if (closeBraceNode.TryGetLinePositionSpanWithoutWhitespace(source, out var closeBraceRange) &&
+            !RangeHasBeenModified(ref changes, source.Text, codeRange))
         {
             if (directiveNode is not null &&
                 directiveNode.GetRange(source).Start.Character < closeBraceRange.Start.Character)
             {
                 // If we have a directive, then we line the close brace up with it, and ensure
                 // there is a close brace
-                var edit = VsLspFactory.CreateTextEdit(start: codeRange.End, end: closeBraceRange.Start,
-                    context.NewLineString + FormattingUtilities.GetIndentationString(
-                        directiveNode.GetRange(source).Start.Character, context.Options.InsertSpaces, context.Options.TabSize));
+                var span = new LinePositionSpan(codeRange.End, closeBraceRange.Start);
+                var newText = context.NewLineString + FormattingUtilities.GetIndentationString(
+                        directiveNode.GetRange(source).Start.Character, context.Options.InsertSpaces, context.Options.TabSize);
 
-                edits.Add(edit);
+                changes.Add(new TextChange(source.Text.GetTextSpan(span), newText));
                 didFormat = true;
             }
             else if (codeRange.End.Line == closeBraceRange.Start.Line)
             {
                 // Add a Newline between the content and the "}" if one doesn't already exist.
-                var edit = VsLspFactory.CreateTextEdit(codeRange.End, context.NewLineString);
-                edits.Add(edit);
+                changes.Add(new TextChange(source.Text.GetTextSpan(codeRange.End, codeRange.End), context.NewLineString));
                 didFormat = true;
             }
         }
 
         return didFormat;
 
-        static bool RangeHasBeenModified(ref readonly PooledArrayBuilder<TextEdit> edits, Range range)
+        static bool RangeHasBeenModified(ref readonly PooledArrayBuilder<TextChange> changes, SourceText sourceText, LinePositionSpan span)
         {
             // Because we don't always know what kind of Razor object we're operating on we have to do this to avoid duplicate edits.
             // The other way to accomplish this would be to apply the edits after every node and function, but that's not in scope for my current work.
-            var hasBeenModified = edits.Any(e => e.Range.End == range.End);
+            var endIndex = sourceText.GetRequiredAbsoluteIndex(span.End);
+            var hasBeenModified = changes.Any(e => e.Span.End == endIndex);
 
             return hasBeenModified;
         }
 
-        static int GetAdditionalIndentationLevel(FormattingContext context, Range range, RazorSyntaxNode openBraceNode, RazorSyntaxNode codeNode)
+        static int GetAdditionalIndentationLevel(FormattingContext context, LinePositionSpan range, RazorSyntaxNode openBraceNode, RazorSyntaxNode codeNode)
         {
             if (!context.TryGetIndentationLevel(codeNode.Position, out var desiredIndentationLevel))
             {

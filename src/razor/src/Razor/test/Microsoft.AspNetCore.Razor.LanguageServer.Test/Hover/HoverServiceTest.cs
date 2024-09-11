@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Linq;
 using System.Threading;
@@ -13,6 +11,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 using Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
@@ -20,7 +19,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text.Adornments;
@@ -56,21 +54,22 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_Element()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <$$test1></test1>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <$$test1></test1>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreateMarkDownCapabilities(), DisposalToken);
 
         // Assert
+        Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("**Test1TagHelper**", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5);
         Assert.Equal(expectedRange, hover.Range);
@@ -80,23 +79,24 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_Element_WithParent()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <test1>
-                    <Som$$eChild></SomeChild>
-                </test1>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <test1>
+                <Som$$eChild></SomeChild>
+            </test1>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreateMarkDownCapabilities(), DisposalToken);
 
         // Assert
+        Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("**SomeChild**", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 2, character: 5, length: 9);
         Assert.Equal(expectedRange, hover.Range);
@@ -106,25 +106,26 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_Attribute_WithParent()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <test1>
-                    <SomeChild [|att$$ribute|]="test"></SomeChild>
-                </test1>
-                """;
-        TestFileMarkupParser.GetPositionAndSpan(txt, out txt, out var cursorPosition, out var span);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <test1>
+                <SomeChild [|att$$ribute|]="test"></SomeChild>
+            </test1>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreateMarkDownCapabilities(), DisposalToken);
 
         // Assert
+        Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("**Attribute**", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
-        var expectedRange = codeDocument.Source.Text.GetRange(span);
+        var expectedRange = codeDocument.Source.Text.GetRange(code.Span);
         Assert.Equal(expectedRange, hover.Range);
     }
 
@@ -132,21 +133,22 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_Element_EndTag()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <test1></$$test1>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <test1></$$test1>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreateMarkDownCapabilities(), DisposalToken);
 
         // Assert
+        Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("**Test1TagHelper**", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 9, length: 5);
         Assert.Equal(expectedRange, hover.Range);
@@ -156,21 +158,22 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_Attribute()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <test1 $$bool-val='true'></test1>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <test1 $$bool-val='true'></test1>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreateMarkDownCapabilities(), DisposalToken);
 
         // Assert
+        Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("**BoolVal**", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         Assert.DoesNotContain("**IntVal**", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 7, length: 8);
@@ -181,22 +184,23 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_AttributeTrailingEdge()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <test1 bool-val$$ minimized></test1>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <test1 bool-val$$ minimized></test1>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var edgeLocation = cursorPosition;
-        var location = new SourceLocation(edgeLocation, 0, edgeLocation);
+        var edgeLocation = code.Position;
+        var location = new SourceLocation(edgeLocation, lineIndex: 0, edgeLocation);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreateMarkDownCapabilities(), DisposalToken);
 
         // Assert
+        Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("**BoolVal**", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         Assert.DoesNotContain("**IntVal**", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 7, length: 8);
@@ -207,16 +211,15 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_AttributeValue_ReturnsNull()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <test1 bool-val='$$true'></test1>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <test1 bool-val='$$true'></test1>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreateMarkDownCapabilities(), DisposalToken);
@@ -229,16 +232,15 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_AfterAttributeEquals_ReturnsNull()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <test1 bool-val=$$'true'></test1>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <test1 bool-val=$$'true'></test1>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreateMarkDownCapabilities(), DisposalToken);
@@ -251,16 +253,15 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_AttributeEnd_ReturnsNull()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <test1 bool-val='true'$$></test1>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <test1 bool-val='true'$$></test1>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreateMarkDownCapabilities(), DisposalToken);
@@ -273,21 +274,22 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_MinimizedAttribute()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <test1 $$bool-val></test1>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <test1 $$bool-val></test1>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreateMarkDownCapabilities(), DisposalToken);
 
         // Assert
+        Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("**BoolVal**", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         Assert.DoesNotContain("**IntVal**", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 7, length: 8);
@@ -298,26 +300,26 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_DirectiveAttribute_HasResult()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <any @t$$est="Increment" />
-                @code{
-                    public void Increment(){
-                    }
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <any @t$$est="Increment" />
+            @code{
+                public void Increment(){
                 }
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+            }
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, "text.razor", DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, "text.razor", DefaultTagHelpers);
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreateMarkDownCapabilities(), DisposalToken);
 
         // Assert
         Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("**Test**", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 5, length: 5);
         Assert.Equal(expectedRange, hover.Range);
@@ -327,21 +329,22 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_MalformedElement()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <$$test1<hello
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <$$test1<hello
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreateMarkDownCapabilities(), DisposalToken);
 
         // Assert
+        Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("**Test1TagHelper**", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5);
         Assert.Equal(expectedRange, hover.Range);
@@ -351,21 +354,22 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_MalformedAttribute()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <test1 $$bool-val=\"aslj alsk<strong>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <test1 $$bool-val=\"aslj alsk<strong>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreateMarkDownCapabilities(), DisposalToken);
 
         // Assert
+        Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("**BoolVal**", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         Assert.DoesNotContain("**IntVal**", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 7, length: 8);
@@ -376,16 +380,15 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_HTML_MarkupElement()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <p><$$strong></strong></p>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <p><$$strong></strong></p>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false);
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreateMarkDownCapabilities(), DisposalToken);
@@ -398,22 +401,23 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_PlainTextElement()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <$$test1></test1>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <$$test1></test1>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
 
-        var service =  GetHoverService();
+        var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreatePlainTextCapabilities(), DisposalToken);
 
         // Assert
+        Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("Test1TagHelper", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         Assert.Equal(MarkupKind.PlainText, ((MarkupContent)hover.Contents).Kind);
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5);
@@ -424,22 +428,23 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_PlainTextElement_EndTag()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <test1></$$test1>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <test1></$$test1>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
 
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreatePlainTextCapabilities(), DisposalToken);
 
         // Assert
+        Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("Test1TagHelper", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         Assert.Equal(MarkupKind.PlainText, ((MarkupContent)hover.Contents).Kind);
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 9, length: 5);
@@ -450,21 +455,22 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_TextComponent()
     {
         // Arrange
-        var txt = """
-                <$$Text></Text>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            <$$Text></Text>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: true, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: true, DefaultTagHelpers);
 
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.razor", codeDocument, location, CreatePlainTextCapabilities(), DisposalToken);
 
         // Assert
+        Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("Text", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         Assert.Equal(MarkupKind.PlainText, ((MarkupContent)hover.Contents).Kind);
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 0, character: 1, length: 4);
@@ -475,23 +481,24 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_TextComponent_NestedInHtml()
     {
         // Arrange
-        var txt = """
-                <div>
-                    <$$Text></Text>
-                </div>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            <div>
+                <$$Text></Text>
+            </div>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: true, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: true, DefaultTagHelpers);
 
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.razor", codeDocument, location, CreatePlainTextCapabilities(), DisposalToken);
 
         // Assert
+        Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("Text", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         Assert.Equal(MarkupKind.PlainText, ((MarkupContent)hover.Contents).Kind);
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 5, length: 4);
@@ -502,19 +509,18 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_TextComponent_NestedInCSharp()
     {
         // Arrange
-        var txt = """
-                @if (true)
-                {
-                    <$$Text></Text>
-                }
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @if (true)
+            {
+                <$$Text></Text>
+            }
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: true, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: true, DefaultTagHelpers);
 
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.razor", codeDocument, location, CreatePlainTextCapabilities(), DisposalToken);
@@ -527,26 +533,27 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_TextComponent_NestedInCSharpAndText()
     {
         // Arrange
-        var txt = """
-                @if (true)
-                {
-                    <text>
-                        <$$Text></Text>
-                    </text>
-                }
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @if (true)
+            {
+                <text>
+                    <$$Text></Text>
+                </text>
+            }
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: true, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: true, DefaultTagHelpers);
 
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.razor", codeDocument, location, CreatePlainTextCapabilities(), DisposalToken);
 
         // Assert
+        Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("Text", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         Assert.Equal(MarkupKind.PlainText, ((MarkupContent)hover.Contents).Kind);
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 3, character: 9, length: 4);
@@ -557,22 +564,23 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_PlainTextAttribute()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <test1 $$bool-val></test1>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <test1 $$bool-val></test1>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
 
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreatePlainTextCapabilities(), DisposalToken);
 
         // Assert
+        Assert.NotNull(hover);
+        Assert.NotNull(hover.Contents);
         Assert.Contains("BoolVal", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         Assert.DoesNotContain("IntVal", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
         Assert.Equal(MarkupKind.PlainText, ((MarkupContent)hover.Contents).Kind);
@@ -584,17 +592,16 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_HTML_PlainTextElement()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <p><$$strong></strong></p>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <p><$$strong></strong></p>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false);
 
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreatePlainTextCapabilities(), DisposalToken);
@@ -607,18 +614,17 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_HTML_PlainTextAttribute()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <p><strong class="$$weak"></strong></p>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <p><strong class="$$weak"></strong></p>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false);
 
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
 
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
 
         // Act
         var hover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, CreatePlainTextCapabilities(), DisposalToken);
@@ -631,16 +637,15 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_Element_VSClient_ReturnVSHover()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <$$test1></test1>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <$$test1></test1>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
         var clientCapabilities = CreateMarkDownCapabilities();
         clientCapabilities.SupportsVisualStudioExtensions = true;
 
@@ -648,11 +653,14 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
         var vsHover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, clientCapabilities, DisposalToken);
 
         // Assert
+        Assert.NotNull(vsHover);
+        Assert.NotNull(vsHover.Contents);
         Assert.False(vsHover.Contents.Value.TryGetFourth(out var _));
         Assert.True(vsHover.Contents.Value.TryGetThird(out var _) && !vsHover.Contents.Value.Third.Any());
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 1, length: 5);
         Assert.Equal(expectedRange, vsHover.Range);
 
+        Assert.NotNull(vsHover.RawContent);
         var container = (ContainerElement)vsHover.RawContent;
         var containerElements = container.Elements.ToList();
         Assert.Equal(ContainerElementStyle.Stacked, container.Style);
@@ -671,17 +679,16 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task GetHoverInfo_TagHelper_Attribute_VSClient_ReturnVSHover()
     {
         // Arrange
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <test1 $$bool-val='true'></test1>
-                """;
-        TestFileMarkupParser.GetPosition(txt, out txt, out var cursorPosition);
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <test1 $$bool-val='true'></test1>
+            """;
 
-        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, isRazorFile: false, DefaultTagHelpers);
 
         var service = GetHoverService();
         var serviceAccessor = service.GetTestAccessor();
-        var location = new SourceLocation(cursorPosition, -1, -1);
+        var location = new SourceLocation(code.Position, lineIndex: -1, characterIndex: -1);
         var clientCapabilities = CreateMarkDownCapabilities();
         clientCapabilities.SupportsVisualStudioExtensions = true;
 
@@ -689,11 +696,14 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
         var vsHover = await serviceAccessor.GetHoverInfoAsync("file.cshtml", codeDocument, location, clientCapabilities, DisposalToken);
 
         // Assert
-        Assert.False(vsHover.Contents.Value.TryGetFourth(out var _));
+        Assert.NotNull(vsHover);
+        Assert.NotNull(vsHover.Contents);
+        Assert.False(vsHover.Contents.Value.TryGetFourth(out _));
         Assert.True(vsHover.Contents.Value.TryGetThird(out var markedStrings) && !markedStrings.Any());
         var expectedRange = VsLspFactory.CreateSingleLineRange(line: 1, character: 7, length: 8);
         Assert.Equal(expectedRange, vsHover.Range);
 
+        Assert.NotNull(vsHover.RawContent);
         var container = (ContainerElement)vsHover.RawContent;
         var containerElements = container.Elements.ToList();
         Assert.Equal(ContainerElementStyle.Stacked, container.Style);
@@ -716,43 +726,40 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task Handle_Hover_SingleServer_CallsDelegatedLanguageServer()
     {
         // Arrange
-        var languageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(options => options.SingleServerSupport == true && options.UseRazorCohostServer == false, MockBehavior.Strict);
+        var languageServerFeatureOptions = StrictMock.Of<LanguageServerFeatureOptions>(options =>
+            options.SingleServerSupport == true &&
+            options.UseRazorCohostServer == false);
 
         var delegatedHover = new VSInternalHover();
 
-        var clientConnectionMock = new Mock<IClientConnection>(MockBehavior.Strict);
-        clientConnectionMock
-            .Setup(c => c.SendRequestAsync<IDelegatedParams, VSInternalHover>(CustomMessageNames.RazorHoverEndpointName, It.IsAny<DelegatedPositionParams>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(delegatedHover);
+        var clientConnection = TestMocks.CreateClientConnection(builder =>
+        {
+            builder.SetupSendRequest<IDelegatedParams, VSInternalHover>(CustomMessageNames.RazorHoverEndpointName, response: delegatedHover);
+        });
 
-        var documentMappingServiceMock = new Mock<IDocumentMappingService>(MockBehavior.Strict);
-        documentMappingServiceMock
-            .Setup(c => c.GetLanguageKind(It.IsAny<RazorCodeDocument>(), It.IsAny<int>(), It.IsAny<bool>()))
-            .Returns(RazorLanguageKind.CSharp);
+        var documentMappingServiceMock = new StrictMock<IDocumentMappingService>();
 
         var outRange = new LinePositionSpan();
         documentMappingServiceMock
-            .Setup(c => c.TryMapToGeneratedDocumentRange(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<LinePositionSpan>(), out outRange))
+            .Setup(x => x.TryMapToGeneratedDocumentRange(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<LinePositionSpan>(), out outRange))
             .Returns(true);
 
         var projectedPosition = new LinePosition(1, 1);
         var projectedIndex = 1;
-        documentMappingServiceMock.Setup(
-            c => c.TryMapToGeneratedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
+        documentMappingServiceMock
+            .Setup(x => x.TryMapToGeneratedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
             .Returns(true);
 
-        var endpoint = CreateEndpoint(languageServerFeatureOptions, documentMappingServiceMock.Object, clientConnectionMock.Object);
+        var endpoint = CreateEndpoint(languageServerFeatureOptions, documentMappingServiceMock.Object, clientConnection);
+
+        var (documentContext, position) = CreateDefaultDocumentContext();
+        var requestContext = CreateRazorRequestContext(documentContext);
 
         var request = new TextDocumentPositionParams
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = new Uri("C:/text.razor")
-            },
-            Position = VsLspFactory.CreatePosition(1, 0),
+            TextDocument = new() { Uri = new Uri("C:/text.razor") },
+            Position = position,
         };
-        var documentContext = CreateDefaultDocumentContext();
-        var requestContext = CreateRazorRequestContext(documentContext: documentContext);
 
         // Act
         var result = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
@@ -765,25 +772,27 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task Handle_Hover_SingleServer_CSharpVariable()
     {
         // Arrange
-        var input = """
-                <div></div>
+        TestCode code = """
+            <div></div>
 
-                @{
-                    var $$myVariable = "Hello";
+            @{
+                var $$myVariable = "Hello";
 
-                    var length = myVariable.Length;
-                }
-                """;
+                var length = myVariable.Length;
+            }
+            """;
 
         // Act
-        var result = await GetResultFromSingleServerEndpointAsync(input);
+        var result = await GetResultFromSingleServerEndpointAsync(code);
 
         // Assert
+        Assert.NotNull(result);
         var range = result.Range;
         var expected = VsLspFactory.CreateSingleLineRange(line: 3, character: 8, length: 10);
 
         Assert.Equal(expected, range);
 
+        Assert.NotNull(result.RawContent);
         var rawContainer = (ContainerElement)result.RawContent;
         var embeddedContainerElement = (ContainerElement)rawContainer.Elements.Single();
 
@@ -799,21 +808,23 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task Handle_Hover_SingleServer_Component()
     {
         // Arrange
-        var input = """
-                @addTagHelper *, TestAssembly
+        TestCode code = """
+            @addTagHelper *, TestAssembly
 
-                <$$test1></test1>
-                """;
+            <$$test1></test1>
+            """;
 
         // Act
-        var result = await GetResultFromSingleServerEndpointAsync(input);
+        var result = await GetResultFromSingleServerEndpointAsync(code);
 
         // Assert
+        Assert.NotNull(result);
         var range = result.Range;
         var expected = VsLspFactory.CreateSingleLineRange(line: 2, character: 1, length: 5);
 
         Assert.Equal(expected, range);
 
+        Assert.NotNull(result.RawContent);
         var rawContainer = (ContainerElement)result.RawContent;
         var embeddedContainerElement = (ContainerElement)rawContainer.Elements.Single();
 
@@ -826,21 +837,23 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
     public async Task Handle_Hover_SingleServer_AddTagHelper()
     {
         // Arrange
-        var input = """
+        TestCode code = """
             @addTagHelper *, Test$$Assembly
 
             <test1></test1>
             """;
 
         // Act
-        var result = await GetResultFromSingleServerEndpointAsync(input);
+        var result = await GetResultFromSingleServerEndpointAsync(code);
 
         // Assert
 
         // Roslyn returns us a range that is outside of our source mappings, so we expect the endpoint
         // to return null, so as not to confuse the client
+        Assert.NotNull(result);
         Assert.Null(result.Range);
 
+        Assert.NotNull(result.RawContent);
         var rawContainer = (ContainerElement)result.RawContent;
         var embeddedContainerElement = (ContainerElement)rawContainer.Elements.Single();
 
@@ -855,10 +868,9 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
         Assert.StartsWith("class System.String", text);
     }
 
-    private async Task<VSInternalHover> GetResultFromSingleServerEndpointAsync(string input)
+    private async Task<VSInternalHover?> GetResultFromSingleServerEndpointAsync(TestCode code)
     {
-        TestFileMarkupParser.GetPosition(input, out var output, out var cursorPosition);
-        var codeDocument = CreateCodeDocument(output, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, DefaultTagHelpers);
         var csharpSourceText = codeDocument.GetCSharpSourceText();
         var csharpDocumentUri = new Uri("C:/path/to/file.razor__virtual.g.cs");
         var serverCapabilities = new VSInternalServerCapabilities()
@@ -872,13 +884,12 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
 
         var razorFilePath = "C:/path/to/file.razor";
         var documentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument);
-        var languageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(options =>
+        var languageServerFeatureOptions = StrictMock.Of<LanguageServerFeatureOptions>(options =>
             options.SupportsFileManipulation == true &&
             options.SingleServerSupport == true &&
             options.CSharpVirtualDocumentSuffix == ".g.cs" &&
             options.HtmlVirtualDocumentSuffix == ".g.html" &&
-            options.UseRazorCohostServer == false
-            , MockBehavior.Strict);
+            options.UseRazorCohostServer == false);
         var languageServer = new HoverLanguageServer(csharpServer, csharpDocumentUri, DisposalToken);
         var documentMappingService = new LspDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
 
@@ -894,61 +905,70 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
         var razorFileUri = new Uri(razorFilePath);
         var request = new TextDocumentPositionParams
         {
-            TextDocument = new TextDocumentIdentifier
-            {
-                Uri = razorFileUri,
-            },
-            Position = codeDocument.Source.Text.GetPosition(cursorPosition)
+            TextDocument = new() { Uri = razorFileUri, },
+            Position = codeDocument.Source.Text.GetPosition(code.Position)
         };
+
         var documentContext = CreateDocumentContext(razorFileUri, codeDocument);
         var requestContext = CreateRazorRequestContext(documentContext: documentContext);
 
         return await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
     }
 
-    private DocumentContext CreateDefaultDocumentContext()
+    private (DocumentContext, Position) CreateDefaultDocumentContext()
     {
-        var txt = """
-                @addTagHelper *, TestAssembly
-                <any @test="Increment" />
-                @code{
-                    public void Increment(){
-                    }
+        TestCode code = """
+            @addTagHelper *, TestAssembly
+            <any @test="Increment" />
+            @code{
+                public void $$Increment(){
                 }
-                """;
+            }
+            """;
+
         var path = "C:/text.razor";
-        var codeDocument = CreateCodeDocument(txt, path, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument(code.Text, path, DefaultTagHelpers);
         var projectWorkspaceState = ProjectWorkspaceState.Create(DefaultTagHelpers);
         var projectSnapshot = TestProjectSnapshot.Create("C:/project.csproj", projectWorkspaceState);
-        var sourceText = SourceText.From(txt);
 
-        var snapshot = Mock.Of<IDocumentSnapshot>(d =>
-            d.GetGeneratedOutputAsync(It.IsAny<bool>()) == Task.FromResult(codeDocument) &&
-            d.FilePath == path &&
-            d.FileKind == FileKinds.Component &&
-            d.GetTextAsync() == Task.FromResult(sourceText) &&
-            d.Version == 0 &&
-            d.Project == projectSnapshot, MockBehavior.Strict);
+        var documentSnapshotMock = new StrictMock<IDocumentSnapshot>();
+        documentSnapshotMock
+            .Setup(x => x.GetGeneratedOutputAsync(It.IsAny<bool>()))
+            .ReturnsAsync(codeDocument);
+        documentSnapshotMock
+            .Setup(x => x.GetTextAsync())
+            .ReturnsAsync(codeDocument.Source.Text);
+        documentSnapshotMock
+            .SetupGet(x => x.FilePath)
+            .Returns(path);
+        documentSnapshotMock
+            .SetupGet(x => x.FileKind)
+            .Returns(FileKinds.Component);
+        documentSnapshotMock
+            .SetupGet(x => x.Version)
+            .Returns(0);
+        documentSnapshotMock
+            .SetupGet(x => x.Project)
+            .Returns(projectSnapshot);
 
-        var documentContext = new DocumentContext(new Uri(path), snapshot, projectContext: null);
+        var documentContext = new DocumentContext(new Uri(path), documentSnapshotMock.Object, projectContext: null);
+        var position = codeDocument.Source.Text.GetPosition(code.Position);
 
-        return documentContext;
+        return (documentContext, position);
     }
 
     private HoverEndpoint CreateEndpoint(
-        LanguageServerFeatureOptions languageServerFeatureOptions = null,
-        IDocumentMappingService documentMappingService = null,
-        IClientConnection clientConnection = null)
+        LanguageServerFeatureOptions? languageServerFeatureOptions = null,
+        IDocumentMappingService? documentMappingService = null,
+        IClientConnection? clientConnection = null)
     {
-        languageServerFeatureOptions ??= Mock.Of<LanguageServerFeatureOptions>(options => options.SupportsFileManipulation == true && options.SingleServerSupport == false, MockBehavior.Strict);
+        languageServerFeatureOptions ??= StrictMock.Of<LanguageServerFeatureOptions>(options =>
+            options.SupportsFileManipulation == true &&
+            options.SingleServerSupport == false);
 
-        var documentMappingServiceMock = new Mock<IDocumentMappingService>(MockBehavior.Strict);
-        documentMappingServiceMock
-            .Setup(c => c.GetLanguageKind(It.IsAny<RazorCodeDocument>(), It.IsAny<int>(), It.IsAny<bool>()))
-            .Returns(RazorLanguageKind.Html);
-        documentMappingService ??= documentMappingServiceMock.Object;
+        documentMappingService ??= StrictMock.Of<IDocumentMappingService>();
 
-        clientConnection ??= Mock.Of<IClientConnection>(MockBehavior.Strict);
+        clientConnection ??= StrictMock.Of<IClientConnection>();
 
         var service = GetHoverService();
 
@@ -962,7 +982,7 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
         return endpoint;
     }
 
-    private HoverService GetHoverService(IDocumentMappingService mappingService = null)
+    private HoverService GetHoverService(IDocumentMappingService? mappingService = null)
     {
         var projectManager = CreateProjectSnapshotManager();
         var lspTagHelperTooltipFactory = new DefaultLSPTagHelperTooltipFactory(projectManager);
@@ -971,6 +991,9 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
         var clientCapabilities = CreateMarkDownCapabilities();
         clientCapabilities.SupportsVisualStudioExtensions = true;
         var clientCapabilitiesService = new TestClientCapabilitiesService(clientCapabilities);
+
+        mappingService ??= StrictMock.Of<IDocumentMappingService>();
+
         return new HoverService(lspTagHelperTooltipFactory, vsLspTagHelperTooltipFactory, mappingService, clientCapabilitiesService);
     }
 
@@ -1007,14 +1030,11 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
 
             var hoverRequest = new TextDocumentPositionParams()
             {
-                TextDocument = new VSTextDocumentIdentifier()
-                {
-                    Uri = _csharpDocumentUri,
-                },
+                TextDocument = new() { Uri = _csharpDocumentUri, },
                 Position = hoverParams.ProjectedPosition
             };
 
-            var result = await _csharpServer.ExecuteRequestAsync<VisualStudio.LanguageServer.Protocol.TextDocumentPositionParams, TResponse>(
+            var result = await _csharpServer.ExecuteRequestAsync<TextDocumentPositionParams, TResponse>(
                 Methods.TextDocumentHoverName, hoverRequest, _cancellationToken);
 
             return result;

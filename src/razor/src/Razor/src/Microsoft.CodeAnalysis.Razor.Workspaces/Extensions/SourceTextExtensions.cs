@@ -3,12 +3,12 @@
 
 using System;
 using System.Buffers;
-using System.Linq;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Text;
 
@@ -276,15 +276,14 @@ internal static class SourceTextExtensions
     /// <summary>
     /// Applies the set of edits specified, and returns the minimal set needed to make the same changes
     /// </summary>
-    public static TextEdit[] MinimizeTextEdits(this SourceText text, TextEdit[] edits)
-        => MinimizeTextEdits(text, edits, out _);
+    public static ImmutableArray<TextChange> MinimizeTextChanges(this SourceText text, ImmutableArray<TextChange> changes)
+        => MinimizeTextChanges(text, changes, out _);
 
     /// <summary>
     /// Applies the set of edits specified, and returns the minimal set needed to make the same changes
     /// </summary>
-    public static TextEdit[] MinimizeTextEdits(this SourceText text, TextEdit[] edits, out SourceText originalTextWithChanges)
+    public static ImmutableArray<TextChange> MinimizeTextChanges(this SourceText text, ImmutableArray<TextChange> changes, out SourceText originalTextWithChanges)
     {
-        var changes = edits.Select(text.GetTextChange);
         originalTextWithChanges = text.WithChanges(changes);
 
         if (text.ContentEquals(originalTextWithChanges))
@@ -292,9 +291,7 @@ internal static class SourceTextExtensions
             return [];
         }
 
-        var cleanChanges = SourceTextDiffer.GetMinimalTextChanges(text, originalTextWithChanges, DiffKind.Char);
-        var cleanEdits = cleanChanges.Select(text.GetTextEdit).ToArray();
-        return cleanEdits;
+        return SourceTextDiffer.GetMinimalTextChanges(text, originalTextWithChanges, DiffKind.Char);
     }
 
     /// <summary>
@@ -324,5 +321,18 @@ internal static class SourceTextExtensions
         }
 
         return lfCount > crlfCount;
+    }
+
+    public static ImmutableArray<TextChange> GetTextChangesArray(this SourceText newText, SourceText oldText)
+    {
+        var list = newText.GetTextChanges(oldText);
+
+        // Fast path for the common case. The base SourceText.GetTextChanges method returns an ImmutableArray
+        if (list is ImmutableArray<TextChange> array)
+        {
+            return array;
+        }
+
+        return list.ToImmutableArray();
     }
 }

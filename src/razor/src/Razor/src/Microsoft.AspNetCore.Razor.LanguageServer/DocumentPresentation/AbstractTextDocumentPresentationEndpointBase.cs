@@ -3,8 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -71,7 +69,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
             return null;
         }
 
-        var languageKind = _documentMappingService.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: false);
+        var languageKind = codeDocument.GetLanguageKind(hostDocumentIndex, rightAssociative: false);
         // See if we can handle this directly in Razor. If not, we'll let things flow to the below delegated handling.
         var result = await TryGetRazorWorkspaceEditAsync(languageKind, request, cancellationToken).ConfigureAwait(false);
         if (result is not null)

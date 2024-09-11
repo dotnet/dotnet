@@ -5,14 +5,12 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 
@@ -112,11 +110,11 @@ public class RazorCSharpFormattingBenchmark : RazorLanguageServerBenchmarkBase
     {
         var documentContext = new DocumentContext(DocumentUri, DocumentSnapshot, projectContext: null);
 
-        var edits = await RazorFormattingService.GetDocumentFormattingEditsAsync(documentContext, htmlEdits: [], range: null, new RazorFormattingOptions(), CancellationToken.None);
+        var changes = await RazorFormattingService.GetDocumentFormattingChangesAsync(documentContext, htmlEdits: [], span: null, new RazorFormattingOptions(), CancellationToken.None);
 
 #if DEBUG
         // For debugging purposes only.
-        var changedText = DocumentText.WithChanges(edits.Select(DocumentText.GetTextChange));
+        var changedText = DocumentText.WithChanges(changes);
         _ = changedText.ToString();
 #endif
     }

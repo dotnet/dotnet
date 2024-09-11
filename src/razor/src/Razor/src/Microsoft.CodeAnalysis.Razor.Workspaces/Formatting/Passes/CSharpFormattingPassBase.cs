@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -11,10 +12,10 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
@@ -25,9 +26,9 @@ internal abstract class CSharpFormattingPassBase(IDocumentMappingService documen
 
     protected IDocumentMappingService DocumentMappingService { get; } = documentMappingService;
 
-    public abstract Task<TextEdit[]> ExecuteAsync(FormattingContext context, TextEdit[] edits, CancellationToken cancellationToken);
+    public abstract Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken);
 
-    protected async Task<List<TextChange>> AdjustIndentationAsync(FormattingContext context, CancellationToken cancellationToken, Range? range = null)
+    protected async Task<ImmutableArray<TextChange>> AdjustIndentationAsync(FormattingContext context, int startLine, int endLineInclusive, CancellationToken cancellationToken)
     {
         // In this method, the goal is to make final adjustments to the indentation of each line.
         // We will take into account the following,
@@ -35,7 +36,6 @@ internal abstract class CSharpFormattingPassBase(IDocumentMappingService documen
         // 2. The indentation due to Razor and HTML constructs
 
         var text = context.SourceText;
-        range ??= text.GetRange(TextSpan.FromBounds(0, text.Length));
 
         // To help with figuring out the correct indentation, first we will need the indentation
         // that the C# formatter wants to apply in the following locations,
@@ -45,7 +45,7 @@ internal abstract class CSharpFormattingPassBase(IDocumentMappingService documen
         // Due to perf concerns, we only want to invoke the real C# formatter once.
         // So, let's collect all the significant locations that we want to obtain the CSharpDesiredIndentations for.
 
-        var significantLocations = new HashSet<int>();
+        using var _1 = HashSetPool<int>.GetPooledObject(out var significantLocations);
 
         // First, collect all the locations at the beginning and end of each source mapping.
         var sourceMappingMap = new Dictionary<int, int>();
@@ -53,7 +53,7 @@ internal abstract class CSharpFormattingPassBase(IDocumentMappingService documen
         {
             var mappingSpan = new TextSpan(mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
 #if DEBUG
-            var spanText = context.SourceText.GetSubText(mappingSpan).ToString();
+            var spanText = context.SourceText.GetSubTextString(mappingSpan);
 #endif
 
             var options = new ShouldFormatOptions(
@@ -87,7 +87,7 @@ internal abstract class CSharpFormattingPassBase(IDocumentMappingService documen
         // Next, collect all the line starts that start in C# context
         var indentations = context.GetIndentations();
         var lineStartMap = new Dictionary<int, int>();
-        for (var i = range.Start.Line; i <= range.End.Line; i++)
+        for (var i = startLine; i <= endLineInclusive; i++)
         {
             if (indentations[i].EmptyOrWhitespaceLine)
             {
@@ -172,7 +172,7 @@ internal abstract class CSharpFormattingPassBase(IDocumentMappingService documen
 
         // Now, let's combine the C# desired indentation with the Razor and HTML indentation for each line.
         var newIndentations = new Dictionary<int, int>();
-        for (var i = range.Start.Line; i <= range.End.Line; i++)
+        for (var i = startLine; i <= endLineInclusive; i++)
         {
             if (indentations[i].EmptyOrWhitespaceLine)
             {
@@ -275,7 +275,7 @@ internal abstract class CSharpFormattingPassBase(IDocumentMappingService documen
         }
 
         // Now that we have collected all the indentations for each line, let's convert them to text edits.
-        var changes = new List<TextChange>();
+        using var changes = new PooledArrayBuilder<TextChange>(capacity: newIndentations.Count);
         foreach (var item in newIndentations)
         {
             var line = item.Key;
@@ -288,7 +288,7 @@ internal abstract class CSharpFormattingPassBase(IDocumentMappingService documen
             changes.Add(new TextChange(spanToReplace, effectiveDesiredIndentation));
         }
 
-        return changes;
+        return changes.DrainToImmutable();
     }
 
     protected static bool ShouldFormat(FormattingContext context, TextSpan mappingSpan, bool allowImplicitStatements)
