@@ -9,8 +9,9 @@ using NuGet.Protocol.Core.Types;
 namespace NuGet.Protocol.Resources
 {
     /// <summary>Owner Details Uri Template for NuGet V3 HTTP feeds.</summary>
-    /// <remarks>Not intended to be created directly. Use <see cref="SourceRepository.GetResourceAsync{T}(CancellationToken)"/>
+    /// <remarks>Not intended to be created directly. Use <see cref="SourceRepository.GetResourceAsync{T}(System.Threading.CancellationToken)"/>
     /// with <see cref="OwnerDetailsUriTemplateResourceV3"/> for T, and typecast to this class.
+    /// </remarks>
     public class OwnerDetailsUriTemplateResourceV3 : INuGetResource
     {
         private readonly string _template;

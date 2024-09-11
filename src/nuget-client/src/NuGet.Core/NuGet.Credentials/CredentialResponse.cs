@@ -5,7 +5,9 @@ using System.Net;
 
 namespace NuGet.Credentials
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class CredentialResponse
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     {
         /// <summary>
         /// Creates a credential response object without giving credentials. This constructor is used only if the
@@ -39,7 +41,11 @@ namespace NuGet.Credentials
             Status = status;
         }
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public ICredentials Credentials { get; }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public CredentialStatus Status { get; }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 }

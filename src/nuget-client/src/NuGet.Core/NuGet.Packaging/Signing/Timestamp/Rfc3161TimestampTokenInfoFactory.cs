@@ -3,7 +3,6 @@
 
 #if IS_SIGNING_SUPPORTED
 using System;
-using System.Security.Cryptography;
 
 namespace NuGet.Packaging.Signing
 {

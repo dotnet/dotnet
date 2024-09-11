@@ -3,9 +3,7 @@
 
 using System;
 using System.CommandLine;
-using System.CommandLine.Parsing;
 using FluentAssertions;
-using NuGet.CommandLine.XPlat;
 using NuGet.CommandLine.XPlat.Commands.Why;
 using Xunit;
 

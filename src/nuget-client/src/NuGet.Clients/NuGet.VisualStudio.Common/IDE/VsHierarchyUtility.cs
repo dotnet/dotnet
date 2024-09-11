@@ -190,7 +190,7 @@ namespace NuGet.VisualStudio
         /// <summary>
         /// Gets all the hierarchies of all the NuGet compatible projects
         /// </summary>
-        /// <param name="vsSolution">The VS Solution instance. Must not be <see cref="null"/>. </param>
+        /// <param name="vsSolution">The VS Solution instance. Must not be <c>null</c>. </param>
         /// <returns>Hierarchies of the NuGet compatible projects</returns>
         /// <remarks>This method assumes the solution is open.</remarks>
         public static List<IVsHierarchy> GetAllLoadedProjects(IVsSolution vsSolution)

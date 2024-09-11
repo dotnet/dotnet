@@ -4,11 +4,14 @@
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
+
+#if IS_DESKTOP
+using System.Net;
+#endif
 
 namespace NuGet.Protocol
 {

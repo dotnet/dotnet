@@ -21,7 +21,7 @@ namespace NuGet.VisualStudio
 
         /// <summary>
         /// The environment variable used to override the enabled or disabled state of this feature.
-        /// Might be <see cref="null"/>.
+        /// Might be <c>null</c>.
         /// </summary>
         internal string EnvironmentVariable { get; }
 

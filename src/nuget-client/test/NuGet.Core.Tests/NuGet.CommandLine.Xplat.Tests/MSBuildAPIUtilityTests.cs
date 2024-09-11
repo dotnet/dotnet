@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Build.Definition;
@@ -10,6 +11,7 @@ using Microsoft.Build.Locator;
 using NuGet.CommandLine.XPlat;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
+using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Xunit;
@@ -561,6 +563,150 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             // Act & Assert
             Assert.Throws<ArgumentException>(() => MSBuildAPIUtility.GetListOfProjectsFromPathArgument(pathContext.SolutionRoot));
+        }
+
+        [Fact]
+        public void GetResolvedVersions_WithAPackageInDirectoryBuildProps_GetsVersion()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var net8 = NuGetFramework.Parse("net8.0");
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+            var projectOptions = new ProjectOptions();
+
+            var BuildPropsFile =
+@$"<Project>
+    <ItemGroup>
+    <GlobalPackageReference Include=""myPackage"" Version=""1.1.1"" />
+  </ItemGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Build.props"), BuildPropsFile);
+
+            var project = Project.FromFile(projectA.ProjectPath, projectOptions);
+            var lockFile = new LockFile
+            {
+                Version = 3,
+                Targets = new List<LockFileTarget>
+                {
+                    new LockFileTarget()
+                    {
+                        TargetFramework = net8,
+                        Libraries = new List<LockFileTargetLibrary>
+                        {
+                            new LockFileTargetLibrary()
+                            {
+                                Name = "myPackage",
+                                Version = new NuGetVersion("1.2.3")
+                            }
+                        }
+                    }
+                },
+
+                PackageSpec = new PackageSpec(new[]
+                {
+                    new TargetFrameworkInformation
+                    {
+                        FrameworkName = net8,
+                        Dependencies = new[]
+                        {
+                            new LibraryDependency
+                            {
+                                LibraryRange = new LibraryRange("myPackage")
+                            }
+                        }
+                    }
+                })
+                {
+                    Version = new NuGetVersion("1.0.0"),
+                    RestoreMetadata = new ProjectRestoreMetadata
+                    {
+                        CentralPackageVersionsEnabled = true
+                    }
+                }
+            };
+
+            // Act
+            var result = MSBuildAPIUtility.GetResolvedVersions(project: project, new List<string>(), lockFile, false);
+
+            // Assert
+            var version = result.First().TopLevelPackages.First().OriginalRequestedVersion;
+            Assert.Equal("1.1.1", version);
+        }
+
+        [Fact]
+        public void GetResolvedVersions_WithAPackageInDirectoryPackageProps_GetsVersion()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var net8 = NuGetFramework.Parse("net8.0");
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+            var projectOptions = new ProjectOptions();
+
+            var PackagePropsFile =
+@$"<Project>
+    <ItemGroup>
+    <GlobalPackageReference Include=""myPackage"" Version=""1.1.1"" />
+  </ItemGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), PackagePropsFile);
+
+            var project = Project.FromFile(projectA.ProjectPath, projectOptions);
+            var lockFile = new LockFile
+            {
+                Version = 3,
+                Targets = new List<LockFileTarget>
+                {
+                    new LockFileTarget()
+                    {
+                        TargetFramework = net8,
+                        Libraries = new List<LockFileTargetLibrary>
+                        {
+                            new LockFileTargetLibrary()
+                            {
+                                Name = "myPackage",
+                                Version = new NuGetVersion("1.2.3")
+                            }
+                        }
+                    }
+                },
+
+                PackageSpec = new PackageSpec(new[]
+                {
+                    new TargetFrameworkInformation
+                    {
+                        FrameworkName = net8,
+                        Dependencies = new[]
+                        {
+                            new LibraryDependency
+                            {
+                                LibraryRange = new LibraryRange("myPackage")
+                            }
+                        }
+                    }
+                })
+                {
+                    Version = new NuGetVersion("1.0.0"),
+                    RestoreMetadata = new ProjectRestoreMetadata
+                    {
+                        CentralPackageVersionsEnabled = true
+                    }
+                }
+            };
+
+            // Act
+            var result = MSBuildAPIUtility.GetResolvedVersions(project: project, new List<string>(), lockFile, false);
+
+            // Assert
+            var version = result.First().TopLevelPackages.First().OriginalRequestedVersion;
+            Assert.Equal("1.1.1", version);
         }
     }
 }

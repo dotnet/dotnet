@@ -4,20 +4,23 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.Protocol.Plugins;
+using Xunit.Abstractions;
+
+#if IS_DESKTOP
+using System.Globalization;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using NuGet.Packaging;
-using NuGet.Protocol.Plugins;
 using NuGet.Test.Utility;
 using Xunit;
-using Xunit.Abstractions;
 using PluginProtocolConstants = NuGet.Protocol.Plugins.ProtocolConstants;
+#endif
 
 namespace NuGet.Protocol.FuncTest
 {

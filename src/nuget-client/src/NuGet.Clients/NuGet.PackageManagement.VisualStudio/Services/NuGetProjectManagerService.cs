@@ -18,7 +18,6 @@ using NuGet.Frameworks;
 using NuGet.PackageManagement.Telemetry;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
-using NuGet.Packaging.Signing;
 using NuGet.ProjectManagement;
 using NuGet.ProjectManagement.Projects;
 using NuGet.Protocol.Core.Types;

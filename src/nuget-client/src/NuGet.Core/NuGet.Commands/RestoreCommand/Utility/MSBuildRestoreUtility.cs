@@ -1124,7 +1124,7 @@ namespace NuGet.Commands
         /// </summary>
         /// <param name="projectSpecItem">The <see cref="IMSBuildItem" /> to get the central package management settings from.</param>
         /// <param name="projectStyle">The <see cref="ProjectStyle?" /> of the specified project.  Specify <see langword="null" /> when the project does not define a restore style.</param>
-        /// <returns>A <see cref="Tuple{T1, T2, T3, T4}" /> containing values indicating whether or not central package management is enabled, if the ability to override a package version 
+        /// <returns>A <see cref="Tuple{T1, T2, T3, T4}" /> containing values indicating whether or not central package management is enabled, if the ability to override a package version </returns>
         public static (bool IsEnabled, bool IsVersionOverrideDisabled, bool IsCentralPackageTransitivePinningEnabled, bool isCentralPackageFloatingVersionsEnabled) GetCentralPackageManagementSettings(IMSBuildItem projectSpecItem, ProjectStyle projectStyle)
         {
             if (projectStyle == ProjectStyle.PackageReference)
