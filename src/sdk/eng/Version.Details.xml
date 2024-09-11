@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="9.0.100-rc.2.24453.2">
+    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="9.0.100-rc.2.24460.5">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>90d52f21f86cded2998c882c61dd8452ef6a9f5f</Sha>
+      <Sha>e120505269e45dab63ee769121faf8c1e94b3b73</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Mocks" Version="9.0.100-rc.2.24453.2">
+    <Dependency Name="Microsoft.TemplateEngine.Mocks" Version="9.0.100-rc.2.24460.5">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>90d52f21f86cded2998c882c61dd8452ef6a9f5f</Sha>
+      <Sha>e120505269e45dab63ee769121faf8c1e94b3b73</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.templating" Version="9.0.100-rc.2.24453.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.templating" Version="9.0.100-rc.2.24460.5">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>90d52f21f86cded2998c882c61dd8452ef6a9f5f</Sha>
+      <Sha>e120505269e45dab63ee769121faf8c1e94b3b73</Sha>
       <SourceBuild RepoName="templating" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Ref" Version="9.0.0-rc.2.24459.11">
@@ -83,14 +83,14 @@
       <Sha>371d00f5c10a15b0858c411aafa11aac74596b06</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.9.100-beta.24452.1">
+    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.9.100-beta.24460.3">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>20cca61a546fe378948f0550a0026ec6077c1600</Sha>
+      <Sha>c48797152b3717e9c78873001bb15a2f969b0b71</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="9.0.100-beta.24452.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="9.0.100-beta.24460.3">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>20cca61a546fe378948f0550a0026ec6077c1600</Sha>
+      <Sha>c48797152b3717e9c78873001bb15a2f969b0b71</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.12.0-3.24460.1">
@@ -585,34 +585,34 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24453.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24459.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>dd332f2d4e21daa8b79f84251ab156af9a0b11b2</Sha>
+      <Sha>65260b148c869ada772a5843863c54737cd2361e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="9.0.0-beta.24453.1">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="9.0.0-beta.24459.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>dd332f2d4e21daa8b79f84251ab156af9a0b11b2</Sha>
+      <Sha>65260b148c869ada772a5843863c54737cd2361e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="9.0.0-beta.24453.1">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="9.0.0-beta.24459.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>dd332f2d4e21daa8b79f84251ab156af9a0b11b2</Sha>
+      <Sha>65260b148c869ada772a5843863c54737cd2361e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.SignTool" Version="9.0.0-beta.24453.1">
+    <Dependency Name="Microsoft.DotNet.SignTool" Version="9.0.0-beta.24459.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>dd332f2d4e21daa8b79f84251ab156af9a0b11b2</Sha>
+      <Sha>65260b148c869ada772a5843863c54737cd2361e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XUnitExtensions" Version="9.0.0-beta.24453.1">
+    <Dependency Name="Microsoft.DotNet.XUnitExtensions" Version="9.0.0-beta.24459.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>dd332f2d4e21daa8b79f84251ab156af9a0b11b2</Sha>
+      <Sha>65260b148c869ada772a5843863c54737cd2361e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.24453.1">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.24459.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>dd332f2d4e21daa8b79f84251ab156af9a0b11b2</Sha>
+      <Sha>65260b148c869ada772a5843863c54737cd2361e</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24453.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24459.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>dd332f2d4e21daa8b79f84251ab156af9a0b11b2</Sha>
+      <Sha>65260b148c869ada772a5843863c54737cd2361e</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="System.Reflection.MetadataLoadContext" Version="9.0.0-rc.2.24459.11">
