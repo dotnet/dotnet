@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text.Json;
 using System.Threading.Channels;
-using Aspire.Dashboard.ConsoleLogs;
 using Aspire.Dashboard.Model;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Dashboard;
@@ -287,6 +286,14 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
                         {
                             logStream.Cancellation.Cancel();
                         }
+
+                        if (_containersMap.TryGetValue(entry.ResourceName, out var _) ||
+                            _executablesMap.TryGetValue(entry.ResourceName, out var _))
+                        {
+                            // Clear out the backlog for containers and executables after the last subscriber leaves.
+                            // When a new subscriber is added, the full log will be replayed.
+                            loggerService.ClearBacklog(entry.ResourceName);
+                        }
                     }
                 }
 
@@ -487,16 +494,13 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
                     {
                         foreach (var (content, isError) in batch)
                         {
-                            DateTime? timestamp = null;
-                            var resolvedContent = content;
-
-                            if (TimestampParser.TryParseConsoleTimestamp(resolvedContent, out var result))
+                            if (!ResourceLoggerService.TryParseContentLineDate(content, out var dateTimeUtc))
                             {
-                                resolvedContent = result.Value.ModifiedText;
-                                timestamp = result.Value.Timestamp.UtcDateTime;
+                                // If a date can't be read from the line content then use the current date.
+                                dateTimeUtc = DateTime.UtcNow;
                             }
 
-                            logger(timestamp, resolvedContent, isError);
+                            logger(dateTimeUtc, content, isError);
                         }
                     }
                 }
@@ -1331,23 +1335,11 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger,
                 throw new InvalidOperationException();
             }
 
-            var nameSuffix = string.Empty;
-
-            if (container.GetContainerLifetimeType() == ContainerLifetimeType.Default)
-            {
-                nameSuffix = GetRandomNameSuffix();
-            }
-
+            var nameSuffix = GetRandomNameSuffix();
             var containerObjectName = GetObjectNameForResource(container, nameSuffix);
             var ctr = Container.Create(containerObjectName, containerImageName);
 
             ctr.Spec.ContainerName = containerObjectName; // Use the same name for container orchestrator (Docker, Podman) resource and DCP object name.
-
-            if (container.GetContainerLifetimeType() == ContainerLifetimeType.Persistent)
-            {
-                ctr.Spec.Persistent = true;
-            }
-
             ctr.Annotate(CustomResource.ResourceNameAnnotation, container.Name);
             ctr.Annotate(CustomResource.OtelServiceNameAnnotation, container.Name);
             ctr.Annotate(CustomResource.OtelServiceInstanceIdAnnotation, nameSuffix);

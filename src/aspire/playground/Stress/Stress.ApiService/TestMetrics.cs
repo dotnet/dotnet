@@ -15,42 +15,15 @@ public class TestMetrics : IDisposable
 
     public TestMetrics()
     {
-        _meter = new Meter(MeterName, "1.0.0",
-        [
-            new KeyValuePair<string, object?>("meter-tag", Guid.NewGuid().ToString())
-        ]);
-
-        _counter = _meter.CreateCounter<int>("test-counter", unit: null, description: null, tags:
-        [
-            new KeyValuePair<string, object?>("instrument-tag", Guid.NewGuid().ToString())
-        ]);
-
-        var uploadSpeed = new List<double>();
-
-        Task.Run(async () =>
+        _meter = new Meter(MeterName, "1.0.0", new[]
         {
-            while (true)
-            {
-                lock (uploadSpeed)
-                {
-                    uploadSpeed.Add(Random.Shared.Next(5, 10));
-                }
-                await Task.Delay(1000);
-            }
+            new KeyValuePair<string, object?>("meter-tag", Guid.NewGuid().ToString())
         });
 
-        _meter.CreateObservableGauge<double>("observable-gauge", () =>
+        _counter = _meter.CreateCounter<int>("test-counter", unit: null, description: null, tags: new[]
         {
-            lock (uploadSpeed)
-            {
-                var sum = 0d;
-                for (var i = 0; i < uploadSpeed.Count; i++)
-                {
-                    sum += uploadSpeed[i];
-                }
-                return new Measurement<double>(sum / uploadSpeed.Count);
-            }
-        }, unit: "By/s");
+            new KeyValuePair<string, object?>("instrument-tag", Guid.NewGuid().ToString())
+        });
     }
 
     public void IncrementCounter(int value, in TagList tags)

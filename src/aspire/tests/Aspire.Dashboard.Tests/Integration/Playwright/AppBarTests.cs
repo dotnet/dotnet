@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Aspire.Dashboard.Resources;
-using Aspire.Dashboard.Tests.Integration.Playwright.Infrastructure;
 using Aspire.Workload.Tests;
 using Microsoft.Playwright;
 using Xunit;
@@ -10,14 +9,15 @@ using Xunit;
 namespace Aspire.Dashboard.Tests.Integration.Playwright;
 
 [ActiveIssue("https://github.com/dotnet/aspire/issues/4623", typeof(PlaywrightProvider), nameof(PlaywrightProvider.DoesNotHavePlaywrightSupport))]
-public class AppBarTests : PlaywrightTestsBase<DashboardServerFixture>
+public class AppBarTests : PlaywrightTestsBase
 {
-    public AppBarTests(DashboardServerFixture dashboardServerFixture)
-        : base(dashboardServerFixture)
+    public AppBarTests(DashboardServerFixture dashboardServerFixture, PlaywrightFixture playwrightFixture)
+        : base(dashboardServerFixture, playwrightFixture)
     {
     }
 
     [Fact]
+    [ActiveIssue("https://github.com/dotnet/aspire/issues/4851")]
     public async Task AppBar_Change_Theme()
     {
         // Arrange

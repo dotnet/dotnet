@@ -18,8 +18,9 @@ internal static class ConsoleLogsConfigurationExtensions
             // Enable ANSI Control Sequences for colors in Output Redirection
             context.EnvironmentVariables["DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION"] = "true";
 
-            // Enable Simple Console Logger Formatting
+            // Enable Simple Console Logger Formatting with a UTC timestamp similar to RFC3339Nano that Docker generates
             context.EnvironmentVariables["LOGGING__CONSOLE__FORMATTERNAME"] = "simple";
+            context.EnvironmentVariables["LOGGING__CONSOLE__FORMATTEROPTIONS__TIMESTAMPFORMAT"] = $"{KnownFormats.ConsoleLogsTimestampFormat} ";
         });
     }
 }
