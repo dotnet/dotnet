@@ -19,6 +19,7 @@ namespace NuGet.Configuration
         /// <summary>
         /// Supports the disabling of saving to disk for any <see cref="ISettings"/> changes.
         /// </summary>
+        /// <param name="settings">The settings to be used by the provider.</param>
         /// <param name="shouldSkipSave">True to avoid saving any changes to disk and only modify the <see cref="ISettings"/> in memory.
         /// Default is false.</param>
         public PackageSourceMappingProvider(ISettings settings, bool shouldSkipSave)

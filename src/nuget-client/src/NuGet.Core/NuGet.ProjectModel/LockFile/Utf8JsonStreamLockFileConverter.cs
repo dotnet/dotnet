@@ -21,7 +21,7 @@ namespace NuGet.ProjectModel
     ///     "libraries": { <see cref="Utf8JsonStreamLockFileLibraryConverter"/> },
     ///     "projectFileDependencyGroups": { <see cref="Utf8JsonStreamProjectFileDependencyGroupConverter"/> },
     ///     "packageFolders": { <see cref="Utf8JsonStreamLockFileItemConverter{T}"/> },
-    ///     "project": { <see cref="JsonPackageSpecReader.GetPackageSpec(ref Utf8JsonStreamReader, string, string, string)"/> },
+    ///     "project": { <see cref="JsonPackageSpecReader.GetPackageSpec(ref Utf8JsonStreamReader, string, string, IEnvironmentVariableReader, string)"/> },
     ///     "logs": [ <see cref="Utf8JsonStreamIAssetsLogMessageConverter"/> ]
     /// }
     /// </example>

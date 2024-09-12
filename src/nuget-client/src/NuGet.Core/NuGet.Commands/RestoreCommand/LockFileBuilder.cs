@@ -511,7 +511,6 @@ namespace NuGet.Commands
         /// </summary>
         /// <param name="targetGraph">The <see cref="RestoreTargetGraph" /> to get centrally defined transitive dependencies for.</param>
         /// <param name="targetFrameworkInformation">The <see cref="TargetFrameworkInformation" /> for the target framework to get centrally defined transitive dependencies for.</param>
-        /// <param name="centralPackageTransitivePinningEnabled">A value indicating whether or not central transitive dependency version pinning is enabled.</param>
         /// <returns>An <see cref="IEnumerable{LibraryDependency}" /> representing the centrally defined transitive dependencies for the specified <see cref="RestoreTargetGraph" />.</returns>
         private IEnumerable<LibraryDependency> GetLibraryDependenciesForCentralTransitiveDependencies(RestoreTargetGraph targetGraph, TargetFrameworkInformation targetFrameworkInformation)
         {

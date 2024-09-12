@@ -3,12 +3,15 @@
 
 #nullable enable
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace NuGet.SolutionRestoreManager
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public interface IVsSolutionRestoreService5 : IVsSolutionRestoreService4
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     {
         /// <summary>
         /// An entry point used by CPS to indicate given project needs to be restored.

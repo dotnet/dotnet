@@ -27,7 +27,9 @@ using NuGet.Versioning;
 using Test.Utility;
 using Test.Utility.Commands;
 using Test.Utility.ProjectManagement;
+#if IS_SIGNING_SUPPORTED
 using Test.Utility.Signing;
+#endif
 using Xunit;
 
 namespace NuGet.Commands.Test.RestoreCommandTests

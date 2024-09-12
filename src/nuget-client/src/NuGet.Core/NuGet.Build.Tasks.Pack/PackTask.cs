@@ -2,12 +2,15 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics;
 using Microsoft.Build.Framework;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Packaging;
 using ILogger = NuGet.Common.ILogger;
+
+#if DEBUG
+using System.Diagnostics;
+#endif
 
 namespace NuGet.Build.Tasks.Pack
 {

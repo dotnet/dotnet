@@ -4,8 +4,11 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Security.Cryptography;
+
+#if !IS_CORECLR
+using System.Reflection;
+#endif
 
 namespace NuGet.Common
 {

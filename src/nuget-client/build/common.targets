@@ -29,13 +29,7 @@
     <SymbolTargetsToGetPdbs Condition="'$(SymbolTargetsToGetPdbs)' == ''">GetDebugSymbolsProjectOutput</SymbolTargetsToGetPdbs>
     <LocTargets>GetBuildOutputWithLocMetadata</LocTargets>
   </PropertyGroup>
-
-  <!-- Write out .XML files for projects that will be packed. -->
-  <PropertyGroup Condition=" '$(PackProject)' == 'true' ">
-    <GenerateDocumentationFile Condition=" '$(GenerateDocumentationFile)' == '' ">true</GenerateDocumentationFile>
-    <DocumentationFile Condition=" '$(DocumentationFile)' == '' AND '$(GenerateDocumentationFile)' == 'true' AND '$(IsNetCoreProject)' != 'true' ">$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
-  </PropertyGroup>
-
+  
   <ImportGroup Condition=" '$(PackProject)' == 'true' AND '$(NuGetBuildTasksPackTargets)' != '' ">
       <Import Project="$(NuGetBuildTasksPackTargets)" />
   </ImportGroup>
@@ -43,6 +37,10 @@
   <!-- Readme file in shipping packages -->
   <PropertyGroup Condition=" '$(PackProject)' == 'true' ">
     <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(PackProject)' != 'true' ">
+    <NoWarn>$(NoWarn);CS0419;CS1570;CS1572;CS1573;CS1574;CS1584;CS1587;CS1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(PackProject)' == 'true' ">

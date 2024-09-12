@@ -3,10 +3,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+#if IS_SIGNING_SUPPORTED
+using System.Linq;
 using NuGet.Common;
+#endif
 
 namespace NuGet.Packaging.Signing
 {

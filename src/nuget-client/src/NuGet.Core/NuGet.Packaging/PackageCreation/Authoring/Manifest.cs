@@ -7,12 +7,15 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using System.Xml.Schema;
 using NuGet.Common;
 using NuGet.Packaging.Core;
 using NuGet.Packaging.PackageCreation.Resources;
 using NuGet.Packaging.Xml;
 using static NuGet.Shared.XmlUtility;
+
+#if !IS_CORECLR
+using System.Xml.Schema;
+#endif
 
 namespace NuGet.Packaging
 {

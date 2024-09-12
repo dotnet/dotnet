@@ -3,10 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
-using System.Reflection;
-using System.Runtime.InteropServices;
 
 #if IS_DESKTOP
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.Pkcs;
 #endif
 

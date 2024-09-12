@@ -26,6 +26,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         /// </summary>
         /// <param name="dependencyGraphPerFramework">A dictionary mapping target frameworks to their dependency graphs.</param>
         /// <param name="targetPackage">The package we want the dependency paths for.</param>
+        /// <param name="logger"></param>
         public static void PrintAllDependencyGraphs(Dictionary<string, List<DependencyNode>?> dependencyGraphPerFramework, string targetPackage, ILoggerWithColor logger)
         {
             // print empty line
@@ -49,6 +50,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         /// <param name="frameworks">The list of frameworks that share this dependency graph.</param>
         /// <param name="topLevelNodes">The top-level package nodes of the dependency graph.</param>
         /// <param name="targetPackage">The package we want the dependency paths for.</param>
+        /// <param name="logger"></param>
         private static void PrintDependencyGraphPerFramework(List<string> frameworks, List<DependencyNode>? topLevelNodes, string targetPackage, ILoggerWithColor logger)
         {
             // print framework header

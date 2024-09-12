@@ -244,7 +244,9 @@ namespace NuGet.Credentials
             }
         }
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public virtual int Execute(ProcessStartInfo startInfo, CancellationToken cancellationToken, out string stdOut)
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
         {
             var outBuffer = new StringBuilder();
 

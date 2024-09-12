@@ -23,6 +23,7 @@ namespace NuGet.CommandLine.XPlat.Utility
         /// <param name="logger">Logger</param>
         /// <param name="packageId">Package to look for</param>
         /// <param name="prerelease">Whether to include prerelease versions</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>Return the latest version available from multiple sources and if no version is found returns null.</returns>
 
         public static async Task<NuGetVersion> GetLatestVersionFromSourcesAsync(IList<PackageSource> sources, ILogger logger, string packageId, bool prerelease, CancellationToken cancellationToken)
@@ -63,6 +64,7 @@ namespace NuGet.CommandLine.XPlat.Utility
         /// <param name="logger">Logger</param>
         /// <param name="packageId">Package to look for</param>
         /// <param name="prerelease">Whether to include prerelease versions</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>Returns the latest version available from a source or a null if non is found.</returns>
         public static async Task<NuGetVersion> GetLatestVersionFromSourceAsync(PackageSource source, ILogger logger, string packageId, bool prerelease, CancellationToken cancellationToken)
         {

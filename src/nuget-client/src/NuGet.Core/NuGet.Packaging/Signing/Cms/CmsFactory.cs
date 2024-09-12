@@ -2,7 +2,10 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+
+#if IS_SIGNING_SUPPORTED && !IS_DESKTOP
 using System.Security.Cryptography.Pkcs;
+#endif
 
 namespace NuGet.Packaging.Signing
 {
