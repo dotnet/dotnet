@@ -61,18 +61,20 @@ internal sealed class DefaultCSharpCodeActionResolver(
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var csharpTextEdits = textDocumentEdit.Edits;
+        var csharpSourceText = await documentContext.GetCSharpSourceTextAsync(cancellationToken).ConfigureAwait(false);
+        var csharpTextChanges = textDocumentEdit.Edits.SelectAsArray(csharpSourceText.GetTextChange);
 
         // Remaps the text edits from the generated C# to the razor file,
         // as well as applying appropriate formatting.
-        var formattedEdit = await _razorFormattingService.GetCSharpCodeActionEditAsync(
+        var formattedChange = await _razorFormattingService.TryGetCSharpCodeActionEditAsync(
             documentContext,
-            csharpTextEdits,
+            csharpTextChanges,
             new RazorFormattingOptions(),
             cancellationToken).ConfigureAwait(false);
 
         cancellationToken.ThrowIfCancellationRequested();
 
+        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier()
         {
             Uri = csharpParams.RazorFileIdentifier.Uri
@@ -83,7 +85,7 @@ internal sealed class DefaultCSharpCodeActionResolver(
                 new TextDocumentEdit()
                 {
                     TextDocument = codeDocumentIdentifier,
-                    Edits = formattedEdit is null ? [] : [formattedEdit],
+                    Edits = formattedChange is { } change ? [sourceText.GetTextEdit(change)] : [],
                 }
             }
         };

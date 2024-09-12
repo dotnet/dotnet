@@ -187,13 +187,19 @@ internal class OnAutoInsertEndpoint(
 
         var options = RazorFormattingOptions.From(originalRequest.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
 
-        var mappedEdit = delegatedResponse.TextEditFormat == InsertTextFormat.Snippet
-            ? await _razorFormattingService.GetCSharpSnippetFormattingEditAsync(documentContext, [delegatedResponse.TextEdit], options, cancellationToken).ConfigureAwait(false)
-            : await _razorFormattingService.GetSingleCSharpEditAsync(documentContext, delegatedResponse.TextEdit, options, cancellationToken).ConfigureAwait(false);
-        if (mappedEdit is null)
+        var csharpSourceText = await documentContext.GetCSharpSourceTextAsync(cancellationToken).ConfigureAwait(false);
+        var textChange = csharpSourceText.GetTextChange(delegatedResponse.TextEdit);
+
+        var mappedChange = delegatedResponse.TextEditFormat == InsertTextFormat.Snippet
+            ? await _razorFormattingService.TryGetCSharpSnippetFormattingEditAsync(documentContext, [textChange], options, cancellationToken).ConfigureAwait(false)
+            : await _razorFormattingService.TryGetSingleCSharpEditAsync(documentContext, textChange, options, cancellationToken).ConfigureAwait(false);
+        if (mappedChange is not { } change)
         {
             return null;
         }
+
+        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
+        var mappedEdit = sourceText.GetTextEdit(change);
 
         return new VSInternalDocumentOnAutoInsertResponseItem()
         {

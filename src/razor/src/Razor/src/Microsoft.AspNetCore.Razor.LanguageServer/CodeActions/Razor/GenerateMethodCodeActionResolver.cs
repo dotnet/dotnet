@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -21,6 +22,7 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using CSharpSyntaxFactory = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -211,13 +213,13 @@ internal sealed class GenerateMethodCodeActionResolver(
                     CodeBlockBraceOnNextLine = _razorLSPOptionsMonitor.CurrentValue.CodeBlockBraceOnNextLine
                 };
 
-                var formattedEdit = await _razorFormattingService.GetCSharpCodeActionEditAsync(
+                var formattedChange = await _razorFormattingService.TryGetCSharpCodeActionEditAsync(
                     documentContext,
-                    result,
+                    result.SelectAsArray(code.Source.Text.GetTextChange),
                     formattingOptions,
                     cancellationToken).ConfigureAwait(false);
 
-                edits = formattedEdit is null ? [] : [formattedEdit];
+                edits = formattedChange is { } change ? [code.Source.Text.GetTextEdit(change)] : [];
             }
         }
 

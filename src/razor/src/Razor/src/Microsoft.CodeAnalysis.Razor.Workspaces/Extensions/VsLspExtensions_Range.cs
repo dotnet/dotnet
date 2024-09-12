@@ -61,7 +61,6 @@ internal static partial class VsLspExtensions
 
     public static bool Contains(this Range range, Range other)
     {
-
         return range.Start.CompareTo(other.Start) <= 0 && range.End.CompareTo(other.End) >= 0;
     }
 

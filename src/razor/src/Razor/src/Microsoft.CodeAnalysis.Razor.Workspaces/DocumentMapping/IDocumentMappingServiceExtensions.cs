@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -22,7 +23,7 @@ internal static class IDocumentMappingServiceExtensions
         var generatedDocumentSourceText = generatedDocument.GetGeneratedSourceText();
         var documentText = generatedDocument.CodeDocument.AssumeNotNull().Source.Text;
 
-        var changes = generatedDocumentEdits.Select(generatedDocumentSourceText.GetTextChange);
+        var changes = generatedDocumentEdits.SelectAsArray(generatedDocumentSourceText.GetTextChange);
         var mappedChanges = service.GetHostDocumentEdits(generatedDocument, changes);
         return mappedChanges.Select(documentText.GetTextEdit).ToArray();
     }
@@ -48,7 +49,7 @@ internal static class IDocumentMappingServiceExtensions
         var sourceText = codeDocument.Source.Text;
         var position = sourceText.GetPosition(hostDocumentIndex);
 
-        var languageKind = service.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: false);
+        var languageKind = codeDocument.GetLanguageKind(hostDocumentIndex, rightAssociative: false);
         if (languageKind is not RazorLanguageKind.Razor)
         {
             var generatedDocument = languageKind is RazorLanguageKind.CSharp

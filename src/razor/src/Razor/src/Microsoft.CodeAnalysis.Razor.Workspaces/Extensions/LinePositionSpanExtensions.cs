@@ -28,4 +28,22 @@ internal static class LinePositionSpanExtensions
         // Empty ranges do not overlap with any range.
         return overlapStart.CompareTo(overlapEnd) < 0;
     }
+
+    public static bool LineOverlapsWith(this LinePositionSpan span, LinePositionSpan other)
+    {
+        var overlapStart = span.Start.Line < other.Start.Line
+            ? other.Start.Line
+            : span.Start.Line;
+
+        var overlapEnd = span.End.Line > other.End.Line
+            ? other.End.Line
+            : span.End.Line;
+
+        return overlapStart <= overlapEnd;
+    }
+
+    public static bool Contains(this LinePositionSpan span, LinePositionSpan other)
+    {
+        return span.Start <= other.Start && span.End >= other.End;
+    }
 }
