@@ -177,7 +177,7 @@ internal sealed class CodeActionEndpoint(
 
     private async Task<ImmutableArray<RazorVSInternalCodeAction>> GetDelegatedCodeActionsAsync(DocumentContext documentContext, RazorCodeActionContext context, Guid correlationId, CancellationToken cancellationToken)
     {
-        var languageKind = _documentMappingService.GetLanguageKind(context.CodeDocument, context.Location.AbsoluteIndex, rightAssociative: false);
+        var languageKind = context.CodeDocument.GetLanguageKind(context.Location.AbsoluteIndex, rightAssociative: false);
 
         // No point delegating if we're in a Razor context
         if (languageKind == RazorLanguageKind.Razor)

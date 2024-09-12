@@ -71,7 +71,7 @@ internal sealed class CohostRangeFormattingEndpoint(
     private async Task<TextEdit[]?> HandleRequestAsync(DocumentRangeFormattingParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         _logger.LogDebug($"Getting Html formatting changes for {razorDocument.FilePath}");
-        var htmlResult = await GetHtmlFormattingEditsAsync(request, razorDocument, cancellationToken).ConfigureAwait(false);
+        var htmlResult = await TryGetHtmlFormattingEditsAsync(request, razorDocument, cancellationToken).ConfigureAwait(false);
 
         if (htmlResult is not { } htmlEdits)
         {
@@ -101,7 +101,7 @@ internal sealed class CohostRangeFormattingEndpoint(
         return null;
     }
 
-    private async Task<TextEdit[]?> GetHtmlFormattingEditsAsync(DocumentRangeFormattingParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    private async Task<TextEdit[]?> TryGetHtmlFormattingEditsAsync(DocumentRangeFormattingParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         var htmlDocument = await _htmlDocumentSynchronizer.TryGetSynchronizedHtmlDocumentAsync(razorDocument, cancellationToken).ConfigureAwait(false);
         if (htmlDocument is null)

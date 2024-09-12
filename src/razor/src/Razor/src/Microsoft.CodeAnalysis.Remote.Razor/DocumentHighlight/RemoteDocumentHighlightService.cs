@@ -53,7 +53,7 @@ internal sealed partial class RemoteDocumentHighlightService(in ServiceArgs args
 
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        var languageKind = _documentMappingService.GetLanguageKind(codeDocument, index, rightAssociative: true);
+        var languageKind = codeDocument.GetLanguageKind(index, rightAssociative: true);
         if (languageKind is RazorLanguageKind.Html)
         {
             return Response.CallHtml;

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -62,7 +63,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
             : new DocumentKey(ProjectKey.Unknown, filePath);
 
         PublishData? previouslyPublishedData;
-        IReadOnlyList<TextChange> textChanges;
+        ImmutableArray<TextChange> textChanges;
 
         lock (_publishedCSharpData)
         {
@@ -80,7 +81,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
             }
 
             textChanges = SourceTextDiffer.GetMinimalTextChanges(previouslyPublishedData.SourceText, sourceText);
-            if (textChanges.Count == 0 && hostDocumentVersion == previouslyPublishedData.HostDocumentVersion)
+            if (textChanges.Length == 0 && hostDocumentVersion == previouslyPublishedData.HostDocumentVersion)
             {
                 // Source texts match along with host document versions. We've already published something that looks like this. No-op.
                 return;
@@ -89,7 +90,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
             _logger.LogDebug(
                 $"Updating C# buffer of {filePath} for project {documentKey.ProjectKey} to correspond with host document " +
                 $"version {hostDocumentVersion}. {previouslyPublishedData.SourceText.Length} -> {sourceText.Length} = Change delta of " +
-                $"{sourceText.Length - previouslyPublishedData.SourceText.Length} via {textChanges.Count} text changes.");
+                $"{sourceText.Length - previouslyPublishedData.SourceText.Length} via {textChanges.Length} text changes.");
 
             _publishedCSharpData[documentKey] = new PublishData(sourceText, hostDocumentVersion);
         }
@@ -109,7 +110,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
     public void PublishHtml(ProjectKey projectKey, string filePath, SourceText sourceText, int hostDocumentVersion)
     {
         PublishData? previouslyPublishedData;
-        IReadOnlyList<TextChange> textChanges;
+        ImmutableArray<TextChange> textChanges;
 
         lock (_publishedHtmlData)
         {
@@ -126,14 +127,14 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
             }
 
             textChanges = SourceTextDiffer.GetMinimalTextChanges(previouslyPublishedData.SourceText, sourceText);
-            if (textChanges.Count == 0 && hostDocumentVersion == previouslyPublishedData.HostDocumentVersion)
+            if (textChanges.Length == 0 && hostDocumentVersion == previouslyPublishedData.HostDocumentVersion)
             {
                 // Source texts match along with host document versions. We've already published something that looks like this. No-op.
                 return;
             }
 
             _logger.LogDebug(
-                $"Updating HTML buffer of {filePath} to correspond with host document version {hostDocumentVersion}. {previouslyPublishedData.SourceText.Length} -> {sourceText.Length} = Change delta of {sourceText.Length - previouslyPublishedData.SourceText.Length} via {textChanges.Count} text changes.");
+                $"Updating HTML buffer of {filePath} to correspond with host document version {hostDocumentVersion}. {previouslyPublishedData.SourceText.Length} -> {sourceText.Length} = Change delta of {sourceText.Length - previouslyPublishedData.SourceText.Length} via {textChanges.Length} text changes.");
 
             _publishedHtmlData[filePath] = new PublishData(sourceText, hostDocumentVersion);
         }

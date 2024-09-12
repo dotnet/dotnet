@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -80,7 +81,7 @@ internal sealed partial class RemoteInlayHintService(in ServiceArgs args) : Razo
 
                 if (hint.TextEdits is not null)
                 {
-                    var changes = hint.TextEdits.Select(csharpSourceText.GetTextChange);
+                    var changes = hint.TextEdits.SelectAsArray(csharpSourceText.GetTextChange);
                     var mappedChanges = DocumentMappingService.GetHostDocumentEdits(csharpDocument, changes);
                     hint.TextEdits = mappedChanges.Select(razorSourceText.GetTextEdit).ToArray();
                 }

@@ -1,13 +1,13 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
@@ -18,10 +18,9 @@ internal sealed class FormattingContentValidationPass(ILoggerFactory loggerFacto
     // Internal for testing.
     internal bool DebugAssertsEnabled { get; set; } = true;
 
-    public Task<TextEdit[]> ExecuteAsync(FormattingContext context, TextEdit[] edits, CancellationToken cancellationToken)
+    public Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
         var text = context.SourceText;
-        var changes = edits.Select(text.GetTextChange);
         var changedText = text.WithChanges(changes);
 
         if (!text.NonWhitespaceContentEquals(changedText))
@@ -31,15 +30,15 @@ internal sealed class FormattingContentValidationPass(ILoggerFactory loggerFacto
 
             _logger.LogWarning($"{SR.Format_operation_changed_nonwhitespace}");
 
-            foreach (var edit in edits)
+            foreach (var change in changes)
             {
-                if (edit.NewText.Any(c => !char.IsWhiteSpace(c)))
+                if (change.NewText?.Any(c => !char.IsWhiteSpace(c)) ?? false)
                 {
-                    _logger.LogWarning($"{SR.FormatEdit_at_adds(edit.Range.ToDisplayString(), edit.NewText)}");
+                    _logger.LogWarning($"{SR.FormatEdit_at_adds(text.GetLinePositionSpan(change.Span), change.NewText)}");
                 }
-                else if (text.TryGetFirstNonWhitespaceOffset(text.GetTextSpan(edit.Range), out _))
+                else if (text.TryGetFirstNonWhitespaceOffset(change.Span, out _))
                 {
-                    _logger.LogWarning($"{SR.FormatEdit_at_deletes(edit.Range.ToDisplayString(), text.ToString(text.GetTextSpan(edit.Range)))}");
+                    _logger.LogWarning($"{SR.FormatEdit_at_deletes(text.GetLinePositionSpan(change.Span), text.ToString(change.Span))}");
                 }
             }
 
@@ -48,9 +47,9 @@ internal sealed class FormattingContentValidationPass(ILoggerFactory loggerFacto
                 Debug.Fail("A formatting result was rejected because it was going to change non-whitespace content in the document.");
             }
 
-            return Task.FromResult<TextEdit[]>([]);
+            return Task.FromResult<ImmutableArray<TextChange>>([]);
         }
 
-        return Task.FromResult(edits);
+        return Task.FromResult(changes);
     }
 }

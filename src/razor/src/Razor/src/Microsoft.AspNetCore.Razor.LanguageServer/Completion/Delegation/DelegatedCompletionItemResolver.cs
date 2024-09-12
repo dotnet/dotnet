@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -114,17 +115,24 @@ internal class DelegatedCompletionItemResolver(
 
         var options = RazorFormattingOptions.From(formattingOptions, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
 
+        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
+        var csharpSourceText = await documentContext.GetCSharpSourceTextAsync(cancellationToken).ConfigureAwait(false);
+
         if (resolvedCompletionItem.TextEdit is not null)
         {
             if (resolvedCompletionItem.TextEdit.Value.TryGetFirst(out var textEdit))
             {
-                var formattedTextEdit = await _formattingService.GetCSharpSnippetFormattingEditAsync(
+                var textChange = csharpSourceText.GetTextChange(textEdit);
+                var formattedTextChange = await _formattingService.TryGetCSharpSnippetFormattingEditAsync(
                     documentContext,
-                    [textEdit],
+                    [textChange],
                     options,
                     cancellationToken).ConfigureAwait(false);
 
-                resolvedCompletionItem.TextEdit = formattedTextEdit;
+                if (formattedTextChange is { } change)
+                {
+                    resolvedCompletionItem.TextEdit = sourceText.GetTextEdit(change);
+                }
             }
             else
             {
@@ -136,13 +144,14 @@ internal class DelegatedCompletionItemResolver(
 
         if (resolvedCompletionItem.AdditionalTextEdits is not null)
         {
-            var formattedTextEdit = await _formattingService.GetCSharpSnippetFormattingEditAsync(
+            var additionalChanges = resolvedCompletionItem.AdditionalTextEdits.SelectAsArray(csharpSourceText.GetTextChange);
+            var formattedTextChange = await _formattingService.TryGetCSharpSnippetFormattingEditAsync(
                 documentContext,
-                resolvedCompletionItem.AdditionalTextEdits,
+                additionalChanges,
                 options,
                 cancellationToken).ConfigureAwait(false);
 
-            resolvedCompletionItem.AdditionalTextEdits = formattedTextEdit is null ? null : [formattedTextEdit];
+            resolvedCompletionItem.AdditionalTextEdits = formattedTextChange is { } change ? [sourceText.GetTextEdit(change)] : null;
         }
 
         return resolvedCompletionItem;
