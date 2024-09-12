@@ -251,7 +251,7 @@ namespace NuGet.DependencyResolver
             return rootNode;
         }
 
-        public static void EvaluateRuntimeDependencies(ref LibraryRange libraryRange, string runtimeName, RuntimeGraph runtimeGraph, ref HashSet<LibraryDependency> runtimeDependencies)
+        public static bool EvaluateRuntimeDependencies(ref LibraryRange libraryRange, string runtimeName, RuntimeGraph runtimeGraph, ref HashSet<LibraryDependency> runtimeDependencies)
         {
             // HACK(davidfowl): This is making runtime.json support package redirects
 
@@ -275,6 +275,8 @@ namespace NuGet.DependencyResolver
                         libraryRange.VersionRange.MinVersion < runtimeDependency.VersionRange.MinVersion)
                     {
                         libraryRange = libraryDependency.LibraryRange;
+
+                        return true;
                     }
                 }
                 else
@@ -284,6 +286,8 @@ namespace NuGet.DependencyResolver
                     runtimeDependencies.Add(libraryDependency);
                 }
             }
+
+            return false;
         }
 
         public static void MergeRuntimeDependencies(HashSet<LibraryDependency> runtimeDependencies, GraphNode<RemoteResolveResult> node)

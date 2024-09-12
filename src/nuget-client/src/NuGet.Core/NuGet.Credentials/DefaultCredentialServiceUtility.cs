@@ -12,7 +12,9 @@ using NuGet.Protocol.Plugins;
 
 namespace NuGet.Credentials
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public static class DefaultCredentialServiceUtility
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     {
         /// <summary>
         /// Sets-up the CredentialService and all of its providers.

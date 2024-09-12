@@ -17,7 +17,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// Add or Update the dependencies in the spec. If the package exists in any of the dependencies list, only those will be updated.
         /// If the package does not exist in any of dependencies lists,
-        /// if the <see cref="PackageSpec.RestoreMetadata.ProjectStyle" /> is <see cref="ProjectStyle.PackageReference"/>
+        /// if the <see cref="ProjectRestoreMetadata.ProjectStyle" /> is <see cref="ProjectStyle.PackageReference"/>
         /// then the <see cref="TargetFrameworkInformation"/> will be updated,
         /// otherwise, the generic dependencies will be updated.
         /// </summary>
@@ -62,7 +62,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// Add or Update the dependencies in the spec. If the package exists in any of the dependencies list, only those will be updated.
         /// If the package does not exist in any of dependencies lists,
-        /// if the <see cref="PackageSpec.RestoreMetadata.ProjectStyle" /> is <see cref="ProjectStyle.PackageReference"/>
+        /// if the <see cref="ProjectRestoreMetadata.ProjectStyle" /> is <see cref="ProjectStyle.PackageReference"/>
         /// then the <see cref="TargetFrameworkInformation"/> will be updated,
         /// otherwise, the generic dependencies will be updated.
         /// </summary>

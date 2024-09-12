@@ -9,12 +9,15 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using NuGet.Common;
 using NuGet.Protocol;
 using NuGet.Test.Server;
 using NuGet.Test.Utility;
 using Test.Utility;
 using Xunit;
+
+#if IS_CORECLR
+using NuGet.Common;
+#endif
 
 namespace NuGet.Core.FuncTest
 {

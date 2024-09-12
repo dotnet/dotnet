@@ -98,13 +98,13 @@ namespace NuGet.Build.Tasks
 
         public override bool Execute()
         {
-#if DEBUG
             var debugRestoreTask = Environment.GetEnvironmentVariable("DEBUG_RESTORE_TASK");
-            if (!string.IsNullOrEmpty(debugRestoreTask) && debugRestoreTask.Equals(bool.TrueString, StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(debugRestoreTask) &&
+                (debugRestoreTask.Equals(bool.TrueString, StringComparison.OrdinalIgnoreCase) || debugRestoreTask == "1"))
             {
                 Debugger.Launch();
             }
-#endif
+
             var log = new MSBuildLogger(Log);
 
             NuGet.Common.Migrations.MigrationRunner.Run();

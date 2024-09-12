@@ -238,7 +238,6 @@ namespace NuGet.DependencyResolver
         /// <summary>
         /// Resolves the library from the given sources. Note that it does not download the package.
         /// </summary>
-        /// <param name="cache">Cache of requests per library</param>
         /// <param name="libraryRange">The library requested</param>
         /// <param name="remoteWalkContext">remote Providers (all sources, including file sources)</param>
         /// <param name="cancellationToken">cancellation token</param>

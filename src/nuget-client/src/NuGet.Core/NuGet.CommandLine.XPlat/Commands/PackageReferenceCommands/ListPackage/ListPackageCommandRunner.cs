@@ -118,7 +118,7 @@ namespace NuGet.CommandLine.XPlat
                     List<FrameworkPackages> frameworks;
                     try
                     {
-                        frameworks = msBuild.GetResolvedVersions(project, listPackageArgs.Frameworks, assetsFile, listPackageArgs.IncludeTransitive);
+                        frameworks = MSBuildAPIUtility.GetResolvedVersions(project, listPackageArgs.Frameworks, assetsFile, listPackageArgs.IncludeTransitive);
                     }
                     catch (InvalidOperationException ex)
                     {
@@ -514,8 +514,7 @@ namespace NuGet.CommandLine.XPlat
         /// </summary>
         /// <param name="package">The package to get the latest version for</param>
         /// <param name="listPackageArgs">List args for the token and source provider></param>
-        /// <param name="packagesVersionsDict">A reference to the unique packages in the project
-        /// to be able to handle different sources having different latest versions</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>A list of tasks for all latest versions for packages from all sources</returns>
         private async Task<KeyValuePair<string, List<IPackageSearchMetadata>>> GetPackageVersionsAsync(
             string package,
@@ -573,8 +572,7 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="packageSource">The source to look for packages at</param>
         /// <param name="listPackageArgs">The list args for the cancellation token</param>
         /// <param name="package">Package to look for updates for</param>
-        /// <param name="packagesVersionsDict">A reference to the unique packages in the project
-        /// to be able to handle different sources having different latest versions</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>An updated package with the highest version at a single source</returns>
         private async Task<IEnumerable<IPackageSearchMetadata>> GetLatestVersionPerSourceAsync(
             PackageSource packageSource,

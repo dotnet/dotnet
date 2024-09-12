@@ -22,6 +22,7 @@ namespace NuGet.CommandLine.XPlat
         /// </summary>
         /// <param name="sourceProvider">The provider for package sources.</param>
         /// <param name="packageSearchArgs">Package search arguments</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<int> RunAsync(
             IPackageSourceProvider sourceProvider,

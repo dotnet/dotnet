@@ -3,14 +3,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
+using NuGet.Packaging.Signing.Utility;
+
 #if IS_SIGNING_SUPPORTED
+using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
 #endif
-using System.Security.Cryptography.X509Certificates;
-using NuGet.Packaging.Signing.Utility;
 
 namespace NuGet.Packaging.Signing
 {

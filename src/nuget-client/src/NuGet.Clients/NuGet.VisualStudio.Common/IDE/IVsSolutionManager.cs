@@ -98,7 +98,7 @@ namespace NuGet.PackageManagement.VisualStudio
         IReadOnlyList<object> GetAllProjectRestoreInfoSources();
 
         /// <summary>
-        /// Gets the current open solution directory. <see cref="null"/> if the there's no open solution.
+        /// Gets the current open solution directory. <c>null</c> if the there's no open solution.
         /// </summary>
         Task<string> GetSolutionDirectoryAsync();
 

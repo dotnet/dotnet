@@ -3,15 +3,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Resources;
 using FluentAssertions;
 using Moq;
 using NuGet.Common;
 using NuGet.Test.Utility;
 using Xunit;
+
+#if IS_DESKTOP
+using System.Globalization;
+using System.Resources;
+#endif
 
 namespace NuGet.Configuration.Test
 {

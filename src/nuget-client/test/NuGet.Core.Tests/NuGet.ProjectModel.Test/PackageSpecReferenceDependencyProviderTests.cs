@@ -44,7 +44,7 @@ namespace NuGet.ProjectModel.Test
             var centralVersionBar = new CentralPackageVersion("bar", VersionRange.Parse("2.0.0"));
 
             var tfi = CreateTargetFrameworkInformation(new List<LibraryDependency>() { dependencyFoo }, new List<CentralPackageVersion>() { centralVersionFoo, centralVersionBar }, cpvmEnabled);
-            var dependencyGraphSpec = CreateDependencyGraphSpecWithCentralDependencies(cpvmEnabled, CentralPackageTransitivePinningEnabled, tfi);
+            var dependencyGraphSpec = CreateDependencyGraphSpecWithCentralDependencies(cpvmEnabled, CentralPackageTransitivePinningEnabled, true, tfi);
             var packSpec = dependencyGraphSpec.Projects[0];
 
             var dependencyProvider = new PackageSpecReferenceDependencyProvider(new List<ExternalProjectReference>(), NullLogger.Instance, useLegacyDependencyGraphResolution);
@@ -79,6 +79,8 @@ namespace NuGet.ProjectModel.Test
                 Assert.Equal(LibraryDependencyReferenceType.Direct, fooDep.ReferenceType);
             }
         }
+
+        // TODO - Add a test verifying that the new algorithm *doesn't* require packages to be added as top level
 
         [Theory]
         [InlineData(null, 1)]
@@ -131,7 +133,7 @@ namespace NuGet.ProjectModel.Test
             return tfi;
         }
 
-        private static DependencyGraphSpec CreateDependencyGraphSpecWithCentralDependencies(bool cpvmEnabled, bool tdpEnabled, params TargetFrameworkInformation[] tfis)
+        private static DependencyGraphSpec CreateDependencyGraphSpecWithCentralDependencies(bool cpvmEnabled, bool tdpEnabled, bool legacyAlgorithmEnabled, params TargetFrameworkInformation[] tfis)
         {
             var packageSpec = new PackageSpec(tfis);
             packageSpec.RestoreMetadata = new ProjectRestoreMetadata
@@ -139,6 +141,7 @@ namespace NuGet.ProjectModel.Test
                 ProjectUniqueName = "a",
                 CentralPackageVersionsEnabled = cpvmEnabled,
                 CentralPackageTransitivePinningEnabled = tdpEnabled,
+                UseLegacyDependencyResolver = legacyAlgorithmEnabled,
             };
             var dgSpec = new DependencyGraphSpec();
             dgSpec.AddRestore("a");

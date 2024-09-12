@@ -5,14 +5,17 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
 using Test.Utility.Signing;
 using Xunit;
+
+#if IS_SIGNING_SUPPORTED
+using System.Security.Cryptography.X509Certificates;
+using System.Threading;
+using System.Threading.Tasks;
+#endif
 
 namespace NuGet.Packaging.Test
 {
