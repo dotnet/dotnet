@@ -40,7 +40,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@062682d](https://github.com/dotnet/razor/tree/062682d3219ef06d0f9ff4c4581455deb733b072)*
 - `src/roslyn`  
-*[dotnet/roslyn@a69841b](https://github.com/dotnet/roslyn/tree/a69841b8ca9751bee0fe9fdeedc705e198e195d9)*
+*[dotnet/roslyn@9941c1f](https://github.com/dotnet/roslyn/tree/9941c1fb15e4c7d9dbdd2b61faac9d975f96627a)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@a7c74cf](https://github.com/dotnet/roslyn-analyzers/tree/a7c74cf887abe4a38240bc4ead0b221d9d42434f)*
 - `src/runtime`  
