@@ -4,23 +4,19 @@
 #nullable disable
 
 using System.Linq;
-using System.Reflection;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-public class DefaultTagHelperDescriptorProviderTest
+public class DefaultTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTestBase
 {
-    private static readonly Assembly _assembly = typeof(DefaultTagHelperDescriptorProviderTest).GetTypeInfo().Assembly;
-
     [Fact]
     public void Execute_DoesNotAddEditorBrowsableNeverDescriptorsAtDesignTime()
     {
         // Arrange
-        var editorBrowsableTypeName = "Microsoft.CodeAnalysis.Razor.Workspaces.Test.EditorBrowsableTagHelper";
-        var compilation = TestCompilation.Create(_assembly);
+        var editorBrowsableTypeName = "TestNamespace.EditorBrowsableTagHelper";
+        var compilation = BaseCompilation;
         var descriptorProvider = new DefaultTagHelperDescriptorProvider();
 
         var context = new TagHelperDescriptorProviderContext(compilation)
@@ -44,7 +40,7 @@ public class DefaultTagHelperDescriptorProviderTest
     {
         // Arrange
         var testTagHelper = "TestAssembly.TestTagHelper";
-        var enumTagHelper = "Microsoft.CodeAnalysis.Razor.Workspaces.Test.EnumTagHelper";
+        var enumTagHelper = "TestNamespace.EnumTagHelper";
         var csharp = @"
 using Microsoft.AspNetCore.Razor.TagHelpers;
 namespace TestAssembly
@@ -54,7 +50,7 @@ namespace TestAssembly
         public override void Process(TagHelperContext context, TagHelperOutput output) {}
     }
 }";
-        var compilation = TestCompilation.Create(_assembly, CSharpSyntaxTree.ParseText(csharp));
+        var compilation = BaseCompilation.AddSyntaxTrees(Parse(csharp));
         var descriptorProvider = new DefaultTagHelperDescriptorProvider();
 
         var context = new TagHelperDescriptorProviderContext(compilation);
@@ -74,7 +70,7 @@ namespace TestAssembly
     {
         // Arrange
         var testTagHelper = "TestAssembly.TestTagHelper";
-        var enumTagHelper = "Microsoft.CodeAnalysis.Razor.Workspaces.Test.EnumTagHelper";
+        var enumTagHelper = "TestNamespace.EnumTagHelper";
         var csharp = @"
 using Microsoft.AspNetCore.Razor.TagHelpers;
 namespace TestAssembly
@@ -84,11 +80,11 @@ namespace TestAssembly
         public override void Process(TagHelperContext context, TagHelperOutput output) {}
     }
 }";
-        var compilation = TestCompilation.Create(_assembly, CSharpSyntaxTree.ParseText(csharp));
+        var compilation = BaseCompilation.AddSyntaxTrees(Parse(csharp));
         var descriptorProvider = new DefaultTagHelperDescriptorProvider();
 
         var targetSymbol = (IAssemblySymbol)compilation.GetAssemblyOrModuleSymbol(
-            compilation.References.First(static r => r.Display.Contains("Microsoft.CodeAnalysis.Razor.Test.dll")));
+            compilation.References.First(static r => r.Display.Contains("Microsoft.CodeAnalysis.Razor.Test")));
 
         var context = new TagHelperDescriptorProviderContext(compilation, targetSymbol);
 
