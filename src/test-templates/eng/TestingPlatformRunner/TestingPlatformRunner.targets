@@ -1,4 +1,0 @@
-<Project>
-  <Import Project="$(NuGetPackageRoot)\microsoft.dotnet.arcade.sdk\$(ArcadeSdkVersion)\tools\VSTest.targets" Condition=" '$(UseVSTestRunner)' == 'true' "/>
-  <Import Project=".\TestingPlatform.Runner.targets" Condition=" '$(UseVSTestRunner)' != 'true' " />
-</Project>
