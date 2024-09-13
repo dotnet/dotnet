@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSTest.Sdk/3.5.2">
+﻿<Project Sdk="MSTest.Sdk/3.6.0">
 
   <PropertyGroup>
     <RootNamespace>Company.TestProject1</RootNamespace>
