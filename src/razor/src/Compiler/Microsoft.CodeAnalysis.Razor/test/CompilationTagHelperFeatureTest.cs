@@ -5,7 +5,7 @@
 
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.TagHelpers;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.CSharp;
 using Moq;
 using Xunit;
@@ -20,8 +20,8 @@ public class CompilationTagHelperFeatureTest
         // Arrange
         var references = new[]
         {
-                MetadataReference.CreateFromFile(typeof(string).Assembly.Location),
-            };
+            ReferenceUtil.NetLatestSystemRuntime,
+        };
         var compilation = CSharpCompilation.Create("Test", references: references);
 
         // Act
@@ -37,8 +37,8 @@ public class CompilationTagHelperFeatureTest
         // Arrange
         var references = new[]
         {
-                MetadataReference.CreateFromFile(typeof(ITagHelper).Assembly.Location),
-            };
+            ReferenceUtil.AspNetLatestRazor,
+        };
         var compilation = CSharpCompilation.Create("Test", references: references);
 
         // Act
@@ -54,9 +54,9 @@ public class CompilationTagHelperFeatureTest
         // Arrange
         var references = new[]
         {
-                MetadataReference.CreateFromFile(typeof(string).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(ITagHelper).Assembly.Location),
-            };
+            ReferenceUtil.NetLatestSystemRuntime,
+            ReferenceUtil.AspNetLatestRazor,
+        };
         var compilation = CSharpCompilation.Create("Test", references: references);
 
         // Act
@@ -104,9 +104,9 @@ public class CompilationTagHelperFeatureTest
 
         var references = new[]
         {
-                MetadataReference.CreateFromFile(typeof(string).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(ITagHelper).Assembly.Location),
-            };
+            ReferenceUtil.NetLatestSystemRuntime,
+            ReferenceUtil.AspNetLatestRazor,
+        };
 
         var engine = RazorProjectEngine.Create(
             configure =>

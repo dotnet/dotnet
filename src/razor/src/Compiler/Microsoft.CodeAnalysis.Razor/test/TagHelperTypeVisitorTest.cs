@@ -4,26 +4,28 @@
 #nullable disable
 
 using System.Collections.Generic;
-using System.Reflection;
-using Microsoft.AspNetCore.Razor.TagHelpers;
 using Xunit;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
-public class TagHelperTypeVisitorTest
+public class TagHelperTypeVisitorTest : TagHelperDescriptorProviderTestBase
 {
-    private static readonly Assembly _assembly = typeof(TagHelperTypeVisitorTest).GetTypeInfo().Assembly;
+    public TagHelperTypeVisitorTest() : base(AdditionalCode)
+    {
+        Compilation = BaseCompilation;
+        ITagHelperSymbol = Compilation.GetTypeByMetadataName(TagHelperTypes.ITagHelper);
+    }
 
-    private static Compilation Compilation { get; } = TestCompilation.Create(_assembly);
+    private Compilation Compilation { get; }
 
-    private static INamedTypeSymbol ITagHelperSymbol { get; } = Compilation.GetTypeByMetadataName(TagHelperTypes.ITagHelper);
+    private INamedTypeSymbol ITagHelperSymbol { get; }
 
     [Fact]
     public void IsTagHelper_PlainTagHelper_ReturnsTrue()
     {
         // Arrange
         var testVisitor = new TagHelperTypeVisitor(ITagHelperSymbol, new List<INamedTypeSymbol>());
-        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Valid_PlainTagHelper).FullName);
+        var tagHelperSymbol = Compilation.GetTypeByMetadataName("TestNamespace.Valid_PlainTagHelper");
 
         // Act
         var isTagHelper = testVisitor.IsTagHelper(tagHelperSymbol);
@@ -37,7 +39,7 @@ public class TagHelperTypeVisitorTest
     {
         // Arrange
         var testVisitor = new TagHelperTypeVisitor(ITagHelperSymbol, new List<INamedTypeSymbol>());
-        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Valid_InheritedTagHelper).FullName);
+        var tagHelperSymbol = Compilation.GetTypeByMetadataName("TestNamespace.Valid_InheritedTagHelper");
 
         // Act
         var isTagHelper = testVisitor.IsTagHelper(tagHelperSymbol);
@@ -51,7 +53,7 @@ public class TagHelperTypeVisitorTest
     {
         // Arrange
         var testVisitor = new TagHelperTypeVisitor(ITagHelperSymbol, new List<INamedTypeSymbol>());
-        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Invalid_AbstractTagHelper).FullName);
+        var tagHelperSymbol = Compilation.GetTypeByMetadataName("TestNamespace.Invalid_AbstractTagHelper");
 
         // Act
         var isTagHelper = testVisitor.IsTagHelper(tagHelperSymbol);
@@ -65,7 +67,7 @@ public class TagHelperTypeVisitorTest
     {
         // Arrange
         var testVisitor = new TagHelperTypeVisitor(ITagHelperSymbol, new List<INamedTypeSymbol>());
-        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Invalid_GenericTagHelper<>).FullName);
+        var tagHelperSymbol = Compilation.GetTypeByMetadataName("TestNamespace.Invalid_GenericTagHelper`1");
 
         // Act
         var isTagHelper = testVisitor.IsTagHelper(tagHelperSymbol);
@@ -79,7 +81,7 @@ public class TagHelperTypeVisitorTest
     {
         // Arrange
         var testVisitor = new TagHelperTypeVisitor(ITagHelperSymbol, new List<INamedTypeSymbol>());
-        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Invalid_InternalTagHelper).FullName);
+        var tagHelperSymbol = Compilation.GetTypeByMetadataName("TestNamespace.Invalid_InternalTagHelper");
 
         // Act
         var isTagHelper = testVisitor.IsTagHelper(tagHelperSymbol);
@@ -88,32 +90,40 @@ public class TagHelperTypeVisitorTest
         Assert.False(isTagHelper);
     }
 
-    public class Invalid_NestedPublicTagHelper : TagHelper
-    {
-    }
+    private const string AdditionalCode =
+        """
+        using Microsoft.AspNetCore.Razor.TagHelpers;
 
-    public class Valid_NestedPublicViewComponent
-    {
-        public string Invoke(string foo) => null;
-    }
-}
+        namespace TestNamespace
+        {
+            public class Invalid_NestedPublicTagHelper : TagHelper
+            {
+            }
 
-public abstract class Invalid_AbstractTagHelper : TagHelper
-{
-}
+            public class Valid_NestedPublicViewComponent
+            {
+                public string Invoke(string foo) => null;
+            }
 
-public class Invalid_GenericTagHelper<T> : TagHelper
-{
-}
+            public abstract class Invalid_AbstractTagHelper : TagHelper
+            {
+            }
 
-internal class Invalid_InternalTagHelper : TagHelper
-{
-}
+            public class Invalid_GenericTagHelper<T> : TagHelper
+            {
+            }
 
-public class Valid_PlainTagHelper : TagHelper
-{
-}
+            internal class Invalid_InternalTagHelper : TagHelper
+            {
+            }
 
-public class Valid_InheritedTagHelper : Valid_PlainTagHelper
-{
+            public class Valid_PlainTagHelper : TagHelper
+            {
+            }
+
+            public class Valid_InheritedTagHelper : Valid_PlainTagHelper
+            {
+            }
+        }
+        """;
 }

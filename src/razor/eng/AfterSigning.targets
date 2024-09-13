@@ -1,6 +1,6 @@
 ﻿<Project>
 
-  <Target Name="_EnsureVSIXWasGenerated" AfterTargets="GenerateVisualStudioInsertionManifests" Condition="'$(OS)'=='WINDOWS_NT' AND '$(ArcadeBuildFromSource)' != 'true'">
+  <Target Name="_EnsureVSIXWasGenerated" AfterTargets="GenerateVisualStudioInsertionManifests" Condition="'$(OS)'=='WINDOWS_NT' AND '$(DotNetBuildSourceOnly)' != 'true'">
     <PropertyGroup>
       <VSSetupDir>$(ArtifactsDir)VSSetup\</VSSetupDir>
       <RazorExtensionVSIXName>Microsoft.VisualStudio.RazorExtension.vsix</RazorExtensionVSIXName>
@@ -27,7 +27,7 @@
           AfterTargets="GenerateVisualStudioInsertionManifests"
           Inputs="$(_RazorAssemblyVersion)"
           Outputs="$(_DependentAssemblyVersionsFile)"
-          Condition="'$(OS)'=='WINDOWS_NT' AND '$(ArcadeBuildFromSource)' != 'true'">
+          Condition="'$(OS)'=='WINDOWS_NT' AND '$(DotNetBuildSourceOnly)' != 'true'">
     <ItemGroup>
       <_AssemblyVersionEntry Include="RazorRuntimeAssembly" />
       <_AssemblyVersionEntry Include="RazorToolingAssembly" />

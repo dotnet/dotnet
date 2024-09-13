@@ -24,7 +24,7 @@
     <GenerateResxSourceEmitFormatMethods>true</GenerateResxSourceEmitFormatMethods>
     <ExcludeFromSourceBuild Condition="'$(IsUnitTestProject)' == 'true'">true</ExcludeFromSourceBuild>
     <RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
-    <EnableWindowsTargeting Condition="'$(DotNetBuildFromSource)' != 'true'">true</EnableWindowsTargeting>
+    <EnableWindowsTargeting Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</EnableWindowsTargeting>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
 
@@ -43,12 +43,6 @@
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
 
     <DefaultNetFxTargetFramework>net472</DefaultNetFxTargetFramework>
-
-    <!--
-      Needed to avoid error NU1010: The PackageReference items Microsoft.Net.Compilers.Toolset.Framework do not have corresponding PackageVersion.
-      Related to https://github.com/dotnet/sdk/issues/41791.
-    -->
-    <BuildWithNetFrameworkHostedCompiler>false</BuildWithNetFrameworkHostedCompiler>
   </PropertyGroup>
 
   <!--
@@ -61,7 +55,7 @@
         necessary as the output of this leg is used in other CI source build legs. Those could be
         targeting NetCurrent or NetPrevious hence we must produce both.
     -->
-    <When Condition="'$(DotNetBuildFromSource)' == 'true' AND '$(DotNetBuildFromSourceFlavor)' != 'Product'">
+    <When Condition="'$(DotNetBuildSourceOnly)' == 'true' AND '$(DotNetBuildOrchestrator)' != 'true'">
       <PropertyGroup>
         <DefaultNetCoreTargetFramework>$(NetCurrent)</DefaultNetCoreTargetFramework>
         <DefaultNetCoreTargetFrameworks>$(DefaultNetCoreTargetFramework);$(NetPrevious)</DefaultNetCoreTargetFrameworks>
@@ -71,7 +65,7 @@
     <!--
       2. Source build the product: this is the all up build of the product which needs only NetCurrent
     -->
-    <When Condition="'$(DotNetBuildFromSource)' == 'true' AND '$(DotNetBuildFromSourceFlavor)' == 'Product'">
+    <When Condition="'$(DotNetBuildSourceOnly)' == 'true' AND '$(DotNetBuildOrchestrator)' == 'true'">
       <PropertyGroup>
         <DefaultNetCoreTargetFramework>$(NetCurrent)</DefaultNetCoreTargetFramework>
         <DefaultNetCoreTargetFrameworks>$(DefaultNetCoreTargetFramework)</DefaultNetCoreTargetFrameworks>
