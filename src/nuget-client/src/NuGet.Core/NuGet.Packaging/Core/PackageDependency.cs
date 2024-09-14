@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Newtonsoft.Json;
 using NuGet.Versioning;
 
 namespace NuGet.Packaging.Core
@@ -34,6 +35,7 @@ namespace NuGet.Packaging.Core
         /// <summary>
         /// Range of versions allowed for the depenency
         /// </summary>
+        [JsonProperty(PropertyName = "range")]
         public VersionRange VersionRange
         {
             get { return _versionRange; }
@@ -44,6 +46,7 @@ namespace NuGet.Packaging.Core
         {
         }
 
+        [JsonConstructor]
         public PackageDependency(string id, VersionRange versionRange)
             : this(id, versionRange, include: null, exclude: null)
         {

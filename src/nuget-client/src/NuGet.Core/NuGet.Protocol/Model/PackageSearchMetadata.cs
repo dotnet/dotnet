@@ -22,7 +22,7 @@ namespace NuGet.Protocol
         [JsonConverter(typeof(MetadataFieldConverter))]
         public string Authors { get; private set; }
 
-        [JsonProperty(PropertyName = JsonProperties.DependencyGroups, ItemConverterType = typeof(PackageDependencyGroupConverter))]
+        [JsonProperty(PropertyName = JsonProperties.DependencyGroups)]
         public IEnumerable<PackageDependencyGroup> DependencySetsInternal { get; private set; }
 
         [JsonIgnore]

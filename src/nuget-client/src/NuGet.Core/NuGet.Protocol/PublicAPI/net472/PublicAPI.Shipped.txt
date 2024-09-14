@@ -721,8 +721,6 @@ NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentCacheI
 ~NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentCacheInfo.ServiceDocument.get -> NuGet.Protocol.ODataServiceDocumentResourceV2
 ~NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentCacheInfo.ServiceDocument.set -> void
 NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentResourceV2Provider() -> void
-NuGet.Protocol.PackageDependencyGroupConverter
-NuGet.Protocol.PackageDependencyGroupConverter.PackageDependencyGroupConverter() -> void
 NuGet.Protocol.PackageDeprecationMetadata
 ~NuGet.Protocol.PackageDeprecationMetadata.AlternatePackage.get -> NuGet.Protocol.AlternatePackageMetadata
 ~NuGet.Protocol.PackageDeprecationMetadata.Message.get -> string
@@ -1775,10 +1773,6 @@ override NuGet.Protocol.Model.PackageVulnerabilityInfo.GetHashCode() -> int
 ~override NuGet.Protocol.NuGetVersionConverter.ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer) -> object
 ~override NuGet.Protocol.NuGetVersionConverter.WriteJson(Newtonsoft.Json.JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer) -> void
 ~override NuGet.Protocol.ODataServiceDocumentResourceV2Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.PackageDependencyGroupConverter.CanConvert(System.Type objectType) -> bool
-override NuGet.Protocol.PackageDependencyGroupConverter.CanWrite.get -> bool
-~override NuGet.Protocol.PackageDependencyGroupConverter.ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer) -> object
-~override NuGet.Protocol.PackageDependencyGroupConverter.WriteJson(Newtonsoft.Json.JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer) -> void
 ~override NuGet.Protocol.PackageDetailsUriResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
 ~override NuGet.Protocol.PackageMetadataResourceV2Feed.GetMetadataAsync(NuGet.Packaging.Core.PackageIdentity package, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata>
 ~override NuGet.Protocol.PackageMetadataResourceV2Feed.GetMetadataAsync(string packageId, bool includePrerelease, bool includeUnlisted, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>>

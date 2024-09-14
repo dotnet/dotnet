@@ -26,6 +26,7 @@ namespace NuGet.PackageManagement.VisualStudio
     public sealed class NuGetPackageFileService : INuGetPackageFileService, IDisposable
     {
         public static readonly string IconPrefix = "icon:";
+        public static readonly string LocalIconPrefix = "localIcon:";
         public static readonly string LicensePrefix = "license:";
 
         private ServiceActivationOptions? _options;
@@ -52,6 +53,15 @@ namespace NuGet.PackageManagement.VisualStudio
         public static void AddIconToCache(PackageIdentity packageIdentity, Uri iconUri)
         {
             string key = NuGetPackageFileService.IconPrefix + packageIdentity.ToString();
+            if (iconUri != null)
+            {
+                IdentityToUriCache.Set(key, iconUri, CacheItemPolicy);
+            }
+        }
+
+        public static void AddLocalIconToCache(PackageIdentity packageIdentity, Uri iconUri)
+        {
+            string key = NuGetPackageFileService.LocalIconPrefix + packageIdentity.ToString();
             if (iconUri != null)
             {
                 IdentityToUriCache.Set(key, iconUri, CacheItemPolicy);
@@ -92,7 +102,9 @@ namespace NuGet.PackageManagement.VisualStudio
         public async ValueTask<Stream?> GetPackageIconAsync(PackageIdentity packageIdentity, CancellationToken cancellationToken)
         {
             Assumes.NotNull(packageIdentity);
-            string key = NuGetPackageFileService.IconPrefix + packageIdentity.ToString();
+            string packageId = packageIdentity.ToString();
+            string key = NuGetPackageFileService.IconPrefix + packageId;
+
             Uri? uri = IdentityToUriCache.Get(key) as Uri;
 
             if (uri == null)
@@ -102,17 +114,38 @@ namespace NuGet.PackageManagement.VisualStudio
                 return null;
             }
 
-            Stream? stream;
+            Stream? stream = null;
             if (IsEmbeddedUri(uri))
             {
                 stream = await GetEmbeddedFileAsync(uri, cancellationToken);
             }
             else
             {
-                stream = await GetStream(uri);
+                Uri? localUri = GetLocalEmbeddedIconUri(packageId);
+                if (localUri is not null)
+                {
+                    stream = await GetEmbeddedFileAsync(localUri, cancellationToken);
+                }
+
+                if (stream == null)
+                {
+                    stream = await GetStream(uri);
+                }
             }
 
             return stream;
+        }
+
+        private static Uri? GetLocalEmbeddedIconUri(string packageId)
+        {
+            string localIconKey = NuGetPackageFileService.LocalIconPrefix + packageId;
+            Uri? localUri = IdentityToUriCache.Get(localIconKey) as Uri;
+            if (localUri is not null && IsEmbeddedUri(localUri))
+            {
+                return localUri;
+            }
+
+            return null;
         }
 
         public async ValueTask<Stream?> GetEmbeddedLicenseAsync(PackageIdentity packageIdentity, CancellationToken cancellationToken)
@@ -146,7 +179,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 // use GetFullPath to normalize "..", so that zip slip attack cannot allow a user to walk up the file directory
                 if (Path.GetFullPath(extractedIconPath).StartsWith(dirPath, StringComparison.OrdinalIgnoreCase) && File.Exists(extractedIconPath))
                 {
-                    Stream fileStream = new FileStream(extractedIconPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    Stream fileStream = File.OpenRead(extractedIconPath);
                     return fileStream;
                 }
                 else
@@ -180,7 +213,7 @@ namespace NuGet.PackageManagement.VisualStudio
             {
                 if (File.Exists(uri.LocalPath))
                 {
-                    return new FileStream(uri.LocalPath, FileMode.Open);
+                    return File.OpenRead(uri.LocalPath);
                 }
                 else
                 {
