@@ -59,6 +59,65 @@ namespace NuGet.Commands.FuncTest
         }
 
         [Fact]
+        // Project 1 -> a 1.0.0 -> b 1.0.0
+        //                      -> c 1.0.0 -> -> d 1.0.0 -> b 2.0.0
+        public async Task RestoreCommand_WithPackageDrivenDowngrade_RespectsDowngrade_AndRaisesWarningAgain()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var packageA = new SimpleTestPackageContext("a", "1.0.0")
+            {
+                Dependencies = new()
+                {
+                    new SimpleTestPackageContext("b", "1.0.0"),
+                    new SimpleTestPackageContext("c", "1.0.0")
+                    {
+                        Dependencies = new()
+                        {
+                            new SimpleTestPackageContext("d", "1.0.0")
+                            {
+                                Dependencies = new()
+                                {
+                                    new SimpleTestPackageContext("b", "2.0.0")
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageA);
+
+            var project1spec = ProjectTestHelpers.GetPackageSpec("Project1",
+                pathContext.SolutionRoot,
+                framework: "net472",
+                dependencyName: "a");
+
+            // Act & Assert
+            (var result, _) = await ValidateRestoreAlgorithmEquivalency(pathContext, project1spec);
+
+            // Additional assert
+            result.Success.Should().BeTrue();
+            result.LogMessages.Select(e => e.Code).Should().BeEquivalentTo([NuGetLogCode.NU1605]);
+            result.LockFile.Targets.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(4);
+            result.LockFile.Targets[0].Libraries[0].Name.Should().Be("a");
+            result.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0"));
+
+            result.LockFile.Targets[0].Libraries[1].Name.Should().Be("b");
+            result.LockFile.Targets[0].Libraries[1].Version.Should().Be(new NuGetVersion("1.0.0"));
+
+            result.LockFile.Targets[0].Libraries[2].Name.Should().Be("c");
+            result.LockFile.Targets[0].Libraries[2].Version.Should().Be(new NuGetVersion("1.0.0"));
+
+            result.LockFile.Targets[0].Libraries[3].Name.Should().Be("d");
+            result.LockFile.Targets[0].Libraries[3].Version.Should().Be(new NuGetVersion("1.0.0"));
+        }
+
+        [Fact]
         // Project 1 -> d 1.0.0 -> b 1.0.0
         // Project 1 -> a 1.0.0 -> b 1.0.0
         //                      -> c 1.0.0 -> b 2.0.0
