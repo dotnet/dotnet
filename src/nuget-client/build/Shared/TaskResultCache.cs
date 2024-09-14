@@ -59,6 +59,11 @@ namespace NuGet
         }
 
         /// <summary>
+        /// Gets a collection containing the keys in the cache.
+        /// </summary>
+        public ICollection<TKey> Keys => _cache.Keys;
+
+        /// <summary>
         /// Gets the cached async operation associated with the specified key, or runs the operation asynchronously and returns <see cref="Task{TValue}" /> that the caller can await.
         /// </summary>
         /// <param name="key">The key for the async operation to get or store in the cache.</param>
