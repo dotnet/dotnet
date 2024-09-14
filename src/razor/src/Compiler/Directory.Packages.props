@@ -1,7 +1,7 @@
 ﻿<Project>
   <PropertyGroup>
     <_RoslynPackageVersion>4.9.2</_RoslynPackageVersion>
-    <_RoslynPackageVersion Condition="'$(DotNetBuildFromSource)' == 'true'">$(MicrosoftCodeAnalysisCommonPackageVersion)</_RoslynPackageVersion>
+    <_RoslynPackageVersion Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(MicrosoftCodeAnalysisCommonPackageVersion)</_RoslynPackageVersion>
   </PropertyGroup>
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Packages.props, $(MSBuildThisFileDirectory)..))" />

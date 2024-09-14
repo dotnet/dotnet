@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyModel;
 using Xunit;
@@ -58,6 +59,8 @@ public static class TestCompilation
 
     public static string AssemblyName => "TestAssembly";
 
+    // When we use Basic.Reference.Assemblies everywhere, this overload should be removed.
+    // Tracked by https://github.com/dotnet/razor/issues/10343.
     public static CSharpCompilation Create(Assembly assembly, SyntaxTree syntaxTree = null)
     {
         IEnumerable<SyntaxTree> syntaxTrees = null;
@@ -74,6 +77,19 @@ public static class TestCompilation
         }
 
         var compilation = CSharpCompilation.Create(AssemblyName, syntaxTrees, metadataReferences, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        EnsureValidCompilation(compilation);
+
+        return compilation;
+    }
+
+    public static CSharpCompilation Create(IEnumerable<SyntaxTree> syntaxTrees, IEnumerable<MetadataReference> references)
+    {
+        var compilation = CSharpCompilation.Create(
+            AssemblyName,
+            syntaxTrees,
+            [..references, ..ReferenceUtil.AspNetLatestAll],
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
         EnsureValidCompilation(compilation);
 
