@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.24462.3",
+      "packageVersion": "9.0.0-beta.24463.2",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "91b9734abbad751d575c002b30778c88d978993c"
+      "commitSha": "bcba6939456aa552554eae9ea9538a039cc98d96"
     },
     {
       "packageVersion": "8.2.0-preview.1.24428.5",
@@ -13,10 +13,10 @@
       "commitSha": "75fdcff28495bdd643f6323133a7d411df71ab70"
     },
     {
-      "packageVersion": "9.0.0-rc.2.24463.6",
+      "packageVersion": "9.0.0-rc.2.24466.2",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "4f2a59c5352e399830e09b22ecbcfd5d5312c5b3"
+      "commitSha": "9b3ca0b29a32cce87ec14d6c707d406e52834412"
     },
     {
       "packageVersion": "0.11.5-alpha.24419.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "cc77d9b660049cabc7dcbcf4ed183302bc08d57c"
+      "commitSha": "098314e58ec1d859790180b0517b73dfaff3694e"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24459.2",
