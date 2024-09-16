@@ -30,4 +30,8 @@
     <EmbeddedResource Include="TestFiles\**\*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Test\XunitAssemblyInfo.cs" Link="XunitAssemblyInfo.cs" />
+  </ItemGroup>
+
 </Project>

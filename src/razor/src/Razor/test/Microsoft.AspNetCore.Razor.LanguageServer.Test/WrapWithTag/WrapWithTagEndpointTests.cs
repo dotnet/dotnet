@@ -68,7 +68,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
 
         var wrapWithDivParams = new WrapWithTagParams(new() { Uri = uri })
         {
-            Range = VsLspFactory.CreateSingleLineRange(start: (0, 0), length: 2),
+            Range = VsLspFactory.CreateSingleLineRange(start: (0, 1), length: 2),
         };
 
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -102,6 +102,42 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
             Range = VsLspFactory.CreateSingleLineRange(start: (0, 0), length: 8),
         };
 
+        var requestContext = CreateRazorRequestContext(documentContext);
+
+        // Act
+        var result = await endpoint.HandleRequestAsync(wrapWithDivParams, requestContext, DisposalToken);
+
+        // Assert
+        Assert.NotNull(result);
+        Mock.Get(clientConnection).Verify();
+    }
+
+    [Fact]
+    public async Task Handle_RazorBlockStart_ReturnsResult()
+    {
+        // Arrange
+        var input = new TestCode("""
+            [|@if (true) { }
+            <div>
+            </div>|]
+            """);
+        var codeDocument = CreateCodeDocument(input.Text);
+        var uri = new Uri("file://path/test.razor");
+        var documentContext = CreateDocumentContext(uri, codeDocument);
+        var response = new WrapWithTagResponse();
+
+        var clientConnection = TestMocks.CreateClientConnection(builder =>
+        {
+            builder.SetupSendRequest<WrapWithTagParams, WrapWithTagResponse>(LanguageServerConstants.RazorWrapWithTagEndpoint, response: new(), verifiable: true);
+        });
+
+        var endpoint = new WrapWithTagEndpoint(clientConnection, LoggerFactory);
+
+        var range = codeDocument.Source.Text.GetRange(input.Span);
+        var wrapWithDivParams = new WrapWithTagParams(new TextDocumentIdentifier { Uri = uri })
+        {
+            Range = range
+        };
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
