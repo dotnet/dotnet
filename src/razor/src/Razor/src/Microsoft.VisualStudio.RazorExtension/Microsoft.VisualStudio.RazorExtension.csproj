@@ -18,7 +18,7 @@
 
     <!-- Update the VSToolsPath to ensure VSIX builds -->
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <IsPackable>false</IsPackable>
 
     <GenerateResourceUsePreserializedResources Condition="'$(MSBuildRuntimeType)' == 'Core'">true</GenerateResourceUsePreserializedResources>
@@ -44,7 +44,7 @@
     <Compile Include="..\..\..\Compiler\shared\JsonReaderExtensions.cs" LinkBase="Shared" />
     <Compile Include="..\..\..\Compiler\shared\TagHelperDescriptorJsonConverter.cs" LinkBase="Shared" />
   </ItemGroup>
-  
+
   <!-- Include Razor SDK design time assets in the VSIX -->
   <ItemGroup>
     <Content Include="$(PkgMicrosoft_NET_Sdk_Razor)\build\netstandard2.0\Microsoft.NET.Sdk.Razor.DesignTime.targets">
