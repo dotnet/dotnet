@@ -126,8 +126,8 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
             return new ServiceClientModel(
                 options.ClientName,
                 options.Namespace,
-                document.Servers.First().Url,
-                _types.Values.Concat(_enumTypeModels.Values).OrderBy(m => m.Name),
+                document.Servers?.FirstOrDefault()?.Url,
+                _types.Values?.Concat(_enumTypeModels.Values).OrderBy(m => m.Name),
                 methodGroups);
         }
 
