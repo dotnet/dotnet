@@ -119,7 +119,7 @@ target the broadest set of frameworks.
 - Microsoft.AspNetCore.Razor.Test.MvcShim (`net8.0`;`net472`)
 - Microsoft.AspNetCore.Razor.Test.MvcShim.ClassLib (`netstandard2.0`)
 - Microsoft.AspNetCore.Razor.Test.MvcShim.Version1_X (`net8.0`;`net472`)
-- Microsoft.AspNetCore.Razor.Test.MvcShim.Version2_X (`net8.0`;`net4720`)
+- Microsoft.AspNetCore.Razor.Test.MvcShim.Version2_X (`net8.0`;`net472`)
 
 ### Tooling Core Tests
 

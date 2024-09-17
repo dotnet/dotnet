@@ -5,7 +5,7 @@
     <Description>This package contains the Visual Studio Language Server infrastructure for interacting with contained languages.</Description>
     <EnableApiCheck>false</EnableApiCheck>
     <IsShippingPackage>false</IsShippingPackage>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <IsPackable Condition="'$(OS)' != 'Windows_NT'">false</IsPackable>
   </PropertyGroup>
 
@@ -45,5 +45,5 @@
     <InternalsVisibleTo Include="Microsoft.WebTools.Languages.LanguageServer.IntegrationTests" Key="$(VisualStudioKey)" />
     <InternalsVisibleTo Include="Microsoft.WebTools.Languages.TestServices" Key="$(VisualStudioKey)" />
   </ItemGroup>
-  
+
 </Project>
