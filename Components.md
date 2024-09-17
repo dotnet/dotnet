@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@15c05bd](https://github.com/dotnet/fsharp/tree/15c05bd87541c8ac023aa2c3a0d86a5da7f1b918)*
 - `src/msbuild`  
-*[dotnet/msbuild@8500d97](https://github.com/dotnet/msbuild/tree/8500d97af62549fb2eeb9691d8e2ba1714ea07b4)*
+*[dotnet/msbuild@ccee590](https://github.com/dotnet/msbuild/tree/ccee590f48b56d8e984dc41d53ae80fd955a1d97)*
 - `src/nuget-client`  
 *[nuget/nuget.client@2982dbf](https://github.com/nuget/nuget.client/tree/2982dbfc1bac22d71234d8498af6ad43e129a49c)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@f1715bf](https://github.com/dotnet/scenario-tests/tree/f1715bf842371d15ecb5fc52d7dc87ab2e47df30)*
 - `src/sdk`  
-*[dotnet/sdk@ae525fb](https://github.com/dotnet/sdk/tree/ae525fbbca81815de427332b16d778a8adbce8d0)*
+*[dotnet/sdk@ac17e09](https://github.com/dotnet/sdk/tree/ac17e09385c9ccabccff970f5892d28f52d81b77)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@2a2ecbf](https://github.com/dotnet/source-build-externals/tree/2a2ecbfbee3f87786d9de50e886a72773f0ba449)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -82,7 +82,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/source-build-reference-packages`  
 *[dotnet/source-build-reference-packages@08649fe](https://github.com/dotnet/source-build-reference-packages/tree/08649fed58d668737a54913f7d4c649a8da5dc6e)*
 - `src/sourcelink`  
-*[dotnet/sourcelink@bf1a571](https://github.com/dotnet/sourcelink/tree/bf1a5712940d4eb08d9640b70bc0a2e065da4ac7)*
+*[dotnet/sourcelink@1099a67](https://github.com/dotnet/sourcelink/tree/1099a677155d9d4c1a81a612dffccbcf0d94f8e9)*
 - `src/symreader`  
 *[dotnet/symreader@0710a78](https://github.com/dotnet/symreader/tree/0710a7892d89999956e8808c28e9dd0512bd53f3)*
 - `src/templating`  
