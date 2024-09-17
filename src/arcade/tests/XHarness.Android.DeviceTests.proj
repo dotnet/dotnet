@@ -5,7 +5,7 @@
     <XHarnessAndroidProject Include="$(MSBuildThisFileDirectory)XHarness/XHarness.TestApks.proj">
       <AdditionalProperties>XHarnessTestARM64_V8A=true</AdditionalProperties>
     </XHarnessAndroidProject>
-    <HelixTargetQueue Include="windows.10.amd64.android.open" />
+    <HelixTargetQueue Include="windows.11.amd64.android.open" />
   </ItemGroup>
 
   <Target Name="Pack"/>

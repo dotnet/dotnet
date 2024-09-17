@@ -7,6 +7,8 @@ using Azure.Identity;
 using System;
 using Microsoft.Build.Utilities;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
+using Azure.Core;
+using System.Collections.Concurrent;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
@@ -38,12 +40,34 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     {
                         return new AzureStorageContainerAssetTokenCredentialPublisher(
                             new Uri(feedConfig.TargetURL),
-                            new DefaultAzureCredential(new DefaultAzureCredentialOptions {  ManagedIdentityClientId = task.ManagedIdentityClientId }),
+                            GetAzureTokenCredential(task.ManagedIdentityClientId),
                             _log);
                     }
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        private ConcurrentDictionary<string, TokenCredential> _tokenCredentialsPerManagedIdentity = new ConcurrentDictionary<string, TokenCredential>(-1, 10);
+
+        private TokenCredential GetAzureTokenCredential(string managedIdentityClientId)
+        {
+            TokenCredential tokenCredential = _tokenCredentialsPerManagedIdentity.GetOrAdd(managedIdentityClientId ?? string.Empty, static (mi) =>
+                new TokenCredentialShortCache(
+                    new DefaultAzureCredential(
+                        new DefaultAzureCredentialOptions
+                        {
+                            ExcludeVisualStudioCodeCredential = true,
+                            ExcludeVisualStudioCredential = true,
+                            ExcludeAzureDeveloperCliCredential = true,
+                            ExcludeInteractiveBrowserCredential = true,
+                            ManagedIdentityClientId = string.IsNullOrEmpty(mi) ? null : mi,
+                            CredentialProcessTimeout = TimeSpan.FromSeconds(60.0)
+                        }
+                    )
+                )
+            );
+            return tokenCredential;
         }
     }
 }

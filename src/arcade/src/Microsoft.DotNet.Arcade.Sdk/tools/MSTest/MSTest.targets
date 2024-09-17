@@ -1,10 +1,32 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.TestPlatform" Version="$(MicrosoftTestPlatformVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true"/>
-    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestTestFrameworkVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true"/>
-    <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestTestAdapterVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true"/>
+
+  <PropertyGroup>
+    <UseMSTestMetaPackage Condition=" '$(UseMSTestMetaPackage)' == '' ">false</UseMSTestMetaPackage>
+    <UseMSTestSdk Condition=" '$(UseMSTestSdk)' == '' ">false</UseMSTestSdk>
+    <UseMSTestRunner Condition=" '$(UseMSTestRunner)' == '' ">false</UseMSTestRunner>
+  </PropertyGroup>
+
+  <Target Name="_MSTestValidatePackageDeps" BeforeTargets="Build">
+    <Error Condition=" '$(UseMSTestMetaPackage)' == 'true' AND '$(UseMSTestSdk)' == 'true' " Text="Cannot use 'MSTest' metapackage and 'MSTest.Sdk' simultaneously." />
+  </Target>
+
+  <ItemGroup Condition=" '$(UseMSTestMetaPackage)' == 'false' AND '$(UseMSTestSdk)' == 'false' ">
+    <PackageReference Include="Microsoft.TestPlatform" Version="$(MicrosoftTestPlatformVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
+    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestTestFrameworkVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
+    <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestTestAdapterVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
   </ItemGroup>
 
-  <Import Project="..\VSTest.targets"/>
+  <!-- Tests.props will force adding Microsoft.NET.Test.Sdk which we don't want when using MSTest SDK or meta package -->
+  <ItemGroup Condition=" '$(IsTestProject)' == 'true' AND '$(ExcludeMicrosoftNetTestSdk)' != 'true' AND ('$(UseMSTestMetaPackage)' == 'true' OR '$(UseMSTestSdk)' == 'true') ">
+    <PackageReference Remove="Microsoft.NET.Test.Sdk" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(UseMSTestMetaPackage)' == 'true' ">    
+    <PackageReference Include="MSTest" Version="$(MSTestVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
+  </ItemGroup>  
+
+  <Import Project="..\VSTest.targets" Condition=" '$(UseMSTestRunner)' == 'false' " />
+  <Import Project="..\Microsoft.Testing.Platform.targets" Condition=" '$(UseMSTestRunner)' == 'true' " />
+
 </Project>
