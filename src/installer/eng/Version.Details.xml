@@ -87,20 +87,20 @@
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.110">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>f3d2fa744f14930eb9abb8385b7b4eeddd2764fd</Sha>
+      <Sha>4c39715004ce10463ca599a45aaa47f8416b5215</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.110-servicing.24466.8">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.110-servicing.24467.27">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>f3d2fa744f14930eb9abb8385b7b4eeddd2764fd</Sha>
+      <Sha>4c39715004ce10463ca599a45aaa47f8416b5215</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.110-servicing.24466.8">
+    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.110-servicing.24467.27">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>f3d2fa744f14930eb9abb8385b7b4eeddd2764fd</Sha>
+      <Sha>4c39715004ce10463ca599a45aaa47f8416b5215</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.110-servicing.24466.8">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.110-servicing.24467.27">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>f3d2fa744f14930eb9abb8385b7b4eeddd2764fd</Sha>
+      <Sha>4c39715004ce10463ca599a45aaa47f8416b5215</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.2.1" Version="1.0.2-beta4.22406.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
