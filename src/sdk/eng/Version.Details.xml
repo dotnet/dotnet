@@ -321,22 +321,22 @@
       <Sha>42af9fe6ddd7c3f9cde04ac003bf97509881873b</Sha>
       <SourceBuild RepoName="aspnetcore" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.Razor.Tooling.Internal" Version="9.0.0-preview.24465.1">
+    <Dependency Name="Microsoft.CodeAnalysis.Razor.Tooling.Internal" Version="9.0.0-preview.24467.1">
       <Uri>https://github.com/dotnet/razor</Uri>
-      <Sha>bc0e2afe46c55eae20b0760ea4e013bb99c2c8e0</Sha>
+      <Sha>4467256ff7f08a5b0a2b9965823b8d6f44df3fcc</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Mvc.Razor.Extensions.Tooling.Internal" Version="9.0.0-preview.24465.1">
+    <Dependency Name="Microsoft.AspNetCore.Mvc.Razor.Extensions.Tooling.Internal" Version="9.0.0-preview.24467.1">
       <Uri>https://github.com/dotnet/razor</Uri>
-      <Sha>bc0e2afe46c55eae20b0760ea4e013bb99c2c8e0</Sha>
+      <Sha>4467256ff7f08a5b0a2b9965823b8d6f44df3fcc</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk.Razor.SourceGenerators.Transport" Version="9.0.0-preview.24465.1">
+    <Dependency Name="Microsoft.NET.Sdk.Razor.SourceGenerators.Transport" Version="9.0.0-preview.24467.1">
       <Uri>https://github.com/dotnet/razor</Uri>
-      <Sha>bc0e2afe46c55eae20b0760ea4e013bb99c2c8e0</Sha>
+      <Sha>4467256ff7f08a5b0a2b9965823b8d6f44df3fcc</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.razor" Version="9.0.0-preview.24465.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.razor" Version="9.0.0-preview.24467.1">
       <Uri>https://github.com/dotnet/razor</Uri>
-      <Sha>bc0e2afe46c55eae20b0760ea4e013bb99c2c8e0</Sha>
+      <Sha>4467256ff7f08a5b0a2b9965823b8d6f44df3fcc</Sha>
       <SourceBuild RepoName="razor" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.0-rc.1.24414.4">
@@ -447,9 +447,9 @@
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.0-alpha.1.24459.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.0-alpha.1.24466.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>08649fed58d668737a54913f7d4c649a8da5dc6e</Sha>
+      <Sha>dde12f4d0a8f1662209e3f8dfd00719f4c61af09</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="2.0.0-preview.1.24427.4">
