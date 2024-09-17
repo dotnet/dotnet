@@ -29,6 +29,9 @@ function xharness() {
     dotnet exec $Env:XHARNESS_CLI_PATH @args
 }
 
+dotnet exec $Env:XHARNESS_CLI_PATH android adb -- shell settings put global verifier_verify_adb_installs 0
+dotnet exec $Env:XHARNESS_CLI_PATH android adb -- shell settings put global package_verifier_enable 0
+
 # User can call this when they detect a problem they think is caused by the infrastructure
 function report_infrastructure_failure($message) {
     Write-Output "Infrastructural problem reported by the user, requesting retry+reboot: $message"

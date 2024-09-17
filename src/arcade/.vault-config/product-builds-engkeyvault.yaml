@@ -58,17 +58,6 @@ secrets:
       appName: akams
       description: set to never expire
 
-  publishing-dnceng-devdiv-code-r-build-re:
-    type: azure-devops-access-token
-    parameters:
-      domainAccountName: dn-bot
-      domainAccountSecret:
-          location: helixkv
-          name: dn-bot-account-redmond
-      name: publishing-dnceng-devdiv-code
-      organizations: dnceng devdiv
-      scopes: code build_execute 
-
   dn-bot-dotnet-build-rw-code-rw:
     type: azure-devops-access-token
     parameters:
