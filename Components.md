@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[_git/dotnet-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/dotnet-aspire/?version=GC48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@c65d335](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GCc65d3350a9a305eec3162c2d18dc4b1d0cd267c7)*
+*[_git/dotnet-aspnetcore@c2a4429](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GCc2a442982e736e17ae6bcadbfd8ccba278ee1be6)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@ff233bd](https://github.com/google/googletest/tree/ff233bdd4cac0a0bf6e5cd45bda3406814cb2796)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@1747095](https://github.com/dotnet/installer/tree/1747095b6c7db8caba1a76a5e947092290ad53d3)*
+*[dotnet/installer@8f0c6f1](https://github.com/dotnet/installer/tree/8f0c6f14cc5041ade4fc3e6838f52f64c75773df)*
 - `src/msbuild`  
 *[dotnet/msbuild@b5265ef](https://github.com/dotnet/msbuild/tree/b5265ef370a651f8c3458110b804e5cbf869eeb5)*
 - `src/nuget-client`  
@@ -46,9 +46,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@223fa62](https://github.com/dotnet/roslyn-analyzers/tree/223fa62ea09457588b4b0f88ee8ac62ea5ab5db5)*
 - `src/runtime`  
-*[_git/dotnet-runtime@a8108c9](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GCa8108c906081c3c0198f250fb210c1dd275b2f01)*
+*[_git/dotnet-runtime@81cabf2](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC81cabf2857a01351e5ab578947c7403a5b128ad1)*
 - `src/sdk`  
-*[_git/dotnet-sdk@4c39715](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC4c39715004ce10463ca599a45aaa47f8416b5215)*
+*[_git/dotnet-sdk@db993d2](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GCdb993d275a12f1daa73db230ebb7cc70485cd770)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@fb970ec](https://github.com/dotnet/source-build-externals/tree/fb970eccb0a9cae3092464e29cbabda0d4115049)*
     - `src/source-build-externals/src/abstractions-xunit`  
