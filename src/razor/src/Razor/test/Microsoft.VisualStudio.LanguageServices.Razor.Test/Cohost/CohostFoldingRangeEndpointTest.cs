@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -218,7 +217,7 @@ public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) 
     private async Task VerifyFoldingRangesAsync(string input, string? fileKind = null)
     {
         TestFileMarkupParser.GetSpans(input, out var source, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spans);
-        var document = CreateProjectAndRazorDocument(source, fileKind);
+        var document = await CreateProjectAndRazorDocumentAsync(source, fileKind);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var htmlSpans = spans.GetValueOrDefault("html").NullToEmpty();

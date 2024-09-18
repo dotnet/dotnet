@@ -286,7 +286,7 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
     private async Task VerifyUriPresentationAsync(string input, Uri[] uris, string? expected, WorkspaceEdit? htmlResponse = null, (string fileName, string contents)[]? additionalFiles = null)
     {
         TestFileMarkupParser.GetSpan(input, out input, out var span);
-        var document = CreateProjectAndRazorDocument(input, additionalFiles: additionalFiles);
+        var document = await CreateProjectAndRazorDocumentAsync(input, additionalFiles: additionalFiles);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var requestInvoker = new TestLSPRequestInvoker([(VSInternalMethods.TextDocumentUriPresentationName, htmlResponse)]);
