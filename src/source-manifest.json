@@ -67,10 +67,10 @@
       "commitSha": "988196b1c64418351f46da7d3a9ff403560a4270"
     },
     {
-      "packageVersion": "6.12.0-rc.106",
+      "packageVersion": "6.12.0-rc.108",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "2982dbfc1bac22d71234d8498af6ad43e129a49c"
+      "commitSha": "e082545cbba30ec8dc9b759f2d9beea8aabc6215"
     },
     {
       "packageVersion": "9.0.0-preview.24465.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "4c3711f7abd735f03f7f196a8351981ab7dee988"
+      "commitSha": "5cd704ee49a3bdbae2676daab54e654e5eb26957"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24466.2",
@@ -151,10 +151,10 @@
       "commitSha": "07acde22b65497e72de145d57167b83609a7f7fb"
     },
     {
-      "packageVersion": "9.0.0-rtm.24467.4",
+      "packageVersion": "9.0.0-rtm.24467.8",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "455ad31ec0111bc2b7db558ea09339722a706af2"
+      "commitSha": "f37a996ae93c3aaad652c36d43a6245ad090d775"
     },
     {
       "packageVersion": "9.0.0-rc.2.24466.1",
@@ -163,10 +163,10 @@
       "commitSha": "f1676f5dcec5d4a84228406113fcad5fe31025af"
     },
     {
-      "packageVersion": "9.0.0-rc.2.24467.2",
+      "packageVersion": "9.0.0-rtm.24467.10",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "bd0f4320a7469c789d4e3081927753eb412b1024"
+      "commitSha": "d8b93d9e0c5ca81cfae3ff691824c3cdef74f5b3"
     },
     {
       "packageVersion": "9.0.0-preview.24453.1",

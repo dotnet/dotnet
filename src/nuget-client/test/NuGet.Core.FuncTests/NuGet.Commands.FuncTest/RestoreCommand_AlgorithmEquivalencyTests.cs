@@ -494,6 +494,190 @@ namespace NuGet.Commands.FuncTest
             result2.LockFile.Targets[0].Libraries[1].Version.Should().Be(new NuGetVersion("1.0.0"));
         }
 
+        // P1 -> P2 -> A (VersionOverride) 1.0.0
+        // P1 -> P2 -> B (VersionOverride) 1.0.0
+        // P1 and P2 centrally manages A to 2.0.0-preview.1, but not B.
+        [Fact]
+        public async Task RestoreCommand_WithVersionOverrideOfNotCentrallyManagedPackageAndTransitivePinning_VerifiesEquivalency()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Setup packages
+            var packageA = new SimpleTestPackageContext("a", "1.0.0")
+            {
+                Dependencies = [new SimpleTestPackageContext("b", "1.0.0")]
+            };
+            var packageA200 = new SimpleTestPackageContext("a", "2.0.0-preview.1")
+            {
+                Dependencies = [new SimpleTestPackageContext("b", "2.0.0-preview.1")]
+            };
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageA,
+                packageA200);
+
+            var project1 = @"
+                {
+                    ""restore"": {
+                                    ""centralPackageVersionsManagementEnabled"": true,
+                                    ""CentralPackageTransitivePinningEnabled"": true,
+                    },
+                  ""frameworks"": {
+                    ""net472"": {
+                        ""dependencies"": {
+                        },
+                        ""centralPackageVersions"": {
+                            ""a"": ""2.0.0-preview.1"",
+                        }
+                    }
+                  }
+                }";
+
+            var project2 = @"
+                {
+                    ""restore"": {
+                                    ""centralPackageVersionsManagementEnabled"": true,
+                                    ""CentralPackageTransitivePinningEnabled"": true,
+                    },
+                  ""frameworks"": {
+                    ""net472"": {
+                        ""dependencies"": {
+                                ""a"": {
+                                    ""version"": ""[1.0.0,)"",
+                                    ""target"": ""Package"",
+                                    ""versionOverride"": ""[1.0.0, )"",
+                                },
+                                ""b"": {
+                                    ""version"": ""[1.0.0,)"",
+                                    ""target"": ""Package"",
+                                    ""versionOverride"": ""[1.0.0, )"",
+                                }
+                        },
+                        ""centralPackageVersions"": {
+                            ""a"": ""2.0.0-preview.1"",
+                        }
+                    }
+                  }
+                }";
+
+            // Setup project
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, project1);
+            var projectSpec2 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project2", pathContext.SolutionRoot, project2);
+            projectSpec = projectSpec.WithTestProjectReference(projectSpec2);
+
+            // Act & Assert
+            (var result, _) = await ValidateRestoreAlgorithmEquivalency(pathContext, projectSpec, projectSpec2);
+            result.LockFile.Targets.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(3);
+            result.LockFile.Targets[0].Libraries[0].Name.Should().Be("a");
+            result.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("2.0.0-preview.1"));
+            result.LockFile.Targets[0].Libraries[1].Name.Should().Be("b");
+            result.LockFile.Targets[0].Libraries[1].Version.Should().Be(new NuGetVersion("2.0.0-preview.1"));
+            result.LockFile.Targets[0].Libraries[2].Name.Should().Be("Project2");
+            result.LockFile.Targets[0].Libraries[2].Version.Should().Be(new NuGetVersion("1.0.0"));
+
+            (var result2, _) = await ValidateRestoreAlgorithmEquivalency(pathContext, projectSpec2);
+            result2.LockFile.Targets.Should().HaveCount(1);
+            result2.LockFile.Targets[0].Libraries.Should().HaveCount(2);
+            result2.LockFile.Targets[0].Libraries[0].Name.Should().Be("a");
+            result2.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0"));
+            result2.LockFile.Targets[0].Libraries[1].Name.Should().Be("b");
+            result2.LockFile.Targets[0].Libraries[1].Version.Should().Be(new NuGetVersion("1.0.0"));
+        }
+
+        // P1 -> P2 -> A (VersionOverride) 1.0.0
+        // P1 -> P2 -> B (VersionOverride) 1.0.0
+        // P1 and P2 centrally manages A to 2.0.0-preview.1, but not B. No pinning means, only the version override versions are used.
+        [Fact]
+        public async Task RestoreCommand_WithVersionOverrideOfNotCentrallyManagedPackage_VerifiesEquivalency()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Setup packages
+            var packageA = new SimpleTestPackageContext("a", "1.0.0")
+            {
+                Dependencies = [new SimpleTestPackageContext("b", "1.0.0")]
+            };
+            var packageA200 = new SimpleTestPackageContext("a", "2.0.0-preview.1")
+            {
+                Dependencies = [new SimpleTestPackageContext("b", "2.0.0-preview.1")]
+            };
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageA,
+                packageA200);
+
+            var project1 = @"
+                {
+                    ""restore"": {
+                                    ""centralPackageVersionsManagementEnabled"": true,
+                    },
+                  ""frameworks"": {
+                    ""net472"": {
+                        ""dependencies"": {
+                        },
+                        ""centralPackageVersions"": {
+                            ""a"": ""2.0.0-preview.1"",
+                        }
+                    }
+                  }
+                }";
+
+            var project2 = @"
+                {
+                    ""restore"": {
+                                    ""centralPackageVersionsManagementEnabled"": true,
+                    },
+                  ""frameworks"": {
+                    ""net472"": {
+                        ""dependencies"": {
+                                ""a"": {
+                                    ""version"": ""[1.0.0,)"",
+                                    ""target"": ""Package"",
+                                    ""versionOverride"": ""[1.0.0, )"",
+                                },
+                                ""b"": {
+                                    ""version"": ""[1.0.0,)"",
+                                    ""target"": ""Package"",
+                                    ""versionOverride"": ""[1.0.0, )"",
+                                }
+                        },
+                        ""centralPackageVersions"": {
+                            ""a"": ""2.0.0-preview.1"",
+                        }
+                    }
+                  }
+                }";
+
+            // Setup project
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, project1);
+            var projectSpec2 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project2", pathContext.SolutionRoot, project2);
+            projectSpec = projectSpec.WithTestProjectReference(projectSpec2);
+
+            // Act & Assert
+            (var result, _) = await ValidateRestoreAlgorithmEquivalency(pathContext, projectSpec, projectSpec2);
+            result.LockFile.Targets.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(3);
+            result.LockFile.Targets[0].Libraries[0].Name.Should().Be("a");
+            result.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0"));
+            result.LockFile.Targets[0].Libraries[1].Name.Should().Be("b");
+            result.LockFile.Targets[0].Libraries[1].Version.Should().Be(new NuGetVersion("1.0.0"));
+            result.LockFile.Targets[0].Libraries[2].Name.Should().Be("Project2");
+            result.LockFile.Targets[0].Libraries[2].Version.Should().Be(new NuGetVersion("1.0.0"));
+
+            (var result2, _) = await ValidateRestoreAlgorithmEquivalency(pathContext, projectSpec2);
+            result2.LockFile.Targets.Should().HaveCount(1);
+            result2.LockFile.Targets[0].Libraries.Should().HaveCount(2);
+            result2.LockFile.Targets[0].Libraries[0].Name.Should().Be("a");
+            result2.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0"));
+            result2.LockFile.Targets[0].Libraries[1].Name.Should().Be("b");
+            result2.LockFile.Targets[0].Libraries[1].Version.Should().Be(new NuGetVersion("1.0.0"));
+        }
+
         // P1 -> P2 -> A (VersionOverride) -> B
         // P1 -> P2 -> B (PrivateAssets) VersionOverride
         // P1 has 2.0.0 for both packages, P2 has 1.0.0 for both packages
@@ -882,6 +1066,69 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.Targets[0].Libraries[0].Name.Should().Be("D");
             result.LockFile.Targets[0].Libraries[1].Name.Should().Be("E");
             result.LockFile.Targets[0].Libraries[2].Name.Should().Be("X");
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        // Project 1 -> Project 2 -> a (null)
+        public async Task RestoreCommand_WithNullPackageVersion_AndRaisesErrorForOneProjectAndNotTheOther(bool isCPMEnabled)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var packageA = new SimpleTestPackageContext("a", "1.0.0");
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageA);
+
+            var project2spec = ProjectTestHelpers.GetPackageSpec("Project2",
+                pathContext.SolutionRoot,
+                framework: "net472");
+
+            project2spec.TargetFrameworks[0].Dependencies.Add(new LibraryDependency(
+                new LibraryRange(
+                    "a",
+                    versionRange: isCPMEnabled ? null : VersionRange.All,
+                    LibraryDependencyTarget.PackageProjectExternal)));
+
+            var project1spec = ProjectTestHelpers.GetPackageSpec("Project1",
+                pathContext.SolutionRoot,
+                framework: "net472")
+                .WithTestProjectReference(project2spec);
+
+            project1spec.RestoreMetadata.CentralPackageVersionsEnabled = isCPMEnabled;
+            project2spec.RestoreMetadata.CentralPackageVersionsEnabled = isCPMEnabled;
+
+            // Act & Assert
+            (var result, _) = await ValidateRestoreAlgorithmEquivalency(pathContext, project1spec, project2spec);
+
+            if (isCPMEnabled)
+            {
+                // Additional assert
+                result.Success.Should().BeTrue();
+                result.LogMessages.Should().BeEmpty();
+
+                result.LockFile.Targets.Should().HaveCount(1);
+                result.LockFile.Targets[0].Libraries.Should().HaveCount(1);
+                result.LockFile.Targets[0].Libraries[0].Name.Should().Be("Project2");
+                result.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0"));
+            }
+            else
+            {
+
+                result.Success.Should().BeTrue();
+                result.LogMessages.Select(e => e.Code).Should().BeEquivalentTo([NuGetLogCode.NU1602]);
+
+                result.LockFile.Targets.Should().HaveCount(1);
+                result.LockFile.Targets[0].Libraries.Should().HaveCount(2);
+                result.LockFile.Targets[0].Libraries[0].Name.Should().Be("a");
+                result.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0"));
+
+                result.LockFile.Targets[0].Libraries[1].Name.Should().Be("Project2");
+                result.LockFile.Targets[0].Libraries[1].Version.Should().Be(new NuGetVersion("1.0.0"));
+            }
         }
 
         // Here's why package driven dependencies should flow.
