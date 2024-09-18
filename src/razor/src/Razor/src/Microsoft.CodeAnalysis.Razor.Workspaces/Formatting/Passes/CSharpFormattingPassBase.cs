@@ -13,22 +13,31 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
-internal abstract class CSharpFormattingPassBase(IDocumentMappingService documentMappingService, bool isFormatOnType) : IFormattingPass
+internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService documentMappingService, IHostServicesProvider hostServicesProvider, bool isFormatOnType) : IFormattingPass
 {
     private readonly bool _isFormatOnType = isFormatOnType;
 
     protected IDocumentMappingService DocumentMappingService { get; } = documentMappingService;
 
-    public abstract Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken);
+    public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
+    {
+        using var roslynWorkspaceHelper = new RoslynWorkspaceHelper(hostServicesProvider);
 
-    protected async Task<ImmutableArray<TextChange>> AdjustIndentationAsync(FormattingContext context, int startLine, int endLineInclusive, CancellationToken cancellationToken)
+        return await ExecuteCoreAsync(context, roslynWorkspaceHelper, changes, cancellationToken).ConfigureAwait(false);
+    }
+
+    protected abstract Task<ImmutableArray<TextChange>> ExecuteCoreAsync(FormattingContext context, RoslynWorkspaceHelper roslynWorkspaceHelper, ImmutableArray<TextChange> changes, CancellationToken cancellationToken);
+
+    protected async Task<ImmutableArray<TextChange>> AdjustIndentationAsync(FormattingContext context, int startLine, int endLineInclusive, HostWorkspaceServices hostWorkspaceServices, CancellationToken cancellationToken)
     {
         // In this method, the goal is to make final adjustments to the indentation of each line.
         // We will take into account the following,
@@ -113,7 +122,7 @@ internal abstract class CSharpFormattingPassBase(IDocumentMappingService documen
         }
 
         // Now, invoke the C# formatter to obtain the CSharpDesiredIndentation for all significant locations.
-        var significantLocationIndentation = await CSharpFormatter.GetCSharpIndentationAsync(context, significantLocations, cancellationToken).ConfigureAwait(false);
+        var significantLocationIndentation = await CSharpFormatter.GetCSharpIndentationAsync(context, significantLocations, hostWorkspaceServices, cancellationToken).ConfigureAwait(false);
 
         // Build source mapping indentation scopes.
         var sourceMappingIndentations = new SortedDictionary<int, IndentationData>();

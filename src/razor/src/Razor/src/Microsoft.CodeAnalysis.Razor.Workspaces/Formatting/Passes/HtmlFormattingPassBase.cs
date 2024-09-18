@@ -30,7 +30,9 @@ internal abstract class HtmlFormattingPassBase(ILogger logger) : IFormattingPass
 
         if (changes.Length > 0)
         {
-            changedText = originalText.WithChanges(changes);
+            var filteredChanges = FilterIncomingChanges(changedContext, changes);
+
+            changedText = originalText.WithChanges(filteredChanges);
             // Create a new formatting context for the changed razor document.
             changedContext = await context.WithTextAsync(changedText).ConfigureAwait(false);
 
@@ -46,6 +48,27 @@ internal abstract class HtmlFormattingPassBase(ILogger logger) : IFormattingPass
         }
 
         return changedText.GetTextChangesArray(originalText);
+    }
+
+    private static ImmutableArray<TextChange> FilterIncomingChanges(FormattingContext context, ImmutableArray<TextChange> changes)
+    {
+        var syntaxTree = context.CodeDocument.GetSyntaxTree();
+
+        using var changesToKeep = new PooledArrayBuilder<TextChange>(capacity: changes.Length);
+
+        foreach (var change in changes)
+        {
+            // Don't keep changes that start inside of a razor comment block.
+            var comment = syntaxTree.Root.FindInnermostNode(change.Span.Start)?.FirstAncestorOrSelf<RazorCommentBlockSyntax>();
+            if (comment is not null)
+            {
+                continue;
+            }
+
+            changesToKeep.Add(change);
+        }
+
+        return changesToKeep.DrainToImmutable();
     }
 
     private static ImmutableArray<TextChange> AdjustRazorIndentation(FormattingContext context)
