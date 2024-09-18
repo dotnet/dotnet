@@ -12,7 +12,6 @@ using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
@@ -22,7 +21,6 @@ using Xunit.Sdk;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
-[UseExportProvider]
 public class RazorToolingIntegrationTestBase : ToolingTestBase
 {
     internal const string ArbitraryWindowsPath = "x:\\dir\\subdir\\Test";

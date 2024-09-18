@@ -198,7 +198,7 @@ public class CohostRenameEndpointTest(ITestOutputHelper testOutputHelper) : Coho
     private async Task VerifyRenamesAsync(string input, string newName, string expected, string? fileKind = null, (string fileName, string contents)[]? additionalFiles = null, (string oldName, string newName)[]? renames = null)
     {
         TestFileMarkupParser.GetPosition(input, out var source, out var cursorPosition);
-        var document = CreateProjectAndRazorDocument(source, fileKind, additionalFiles);
+        var document = await CreateProjectAndRazorDocumentAsync(source, fileKind, additionalFiles);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(cursorPosition);
 

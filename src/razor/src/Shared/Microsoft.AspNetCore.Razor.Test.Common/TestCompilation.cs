@@ -60,7 +60,7 @@ public static class TestCompilation
     public static string AssemblyName => "TestAssembly";
 
     // When we use Basic.Reference.Assemblies everywhere, this overload should be removed.
-    // Tracked by https://github.com/dotnet/razor/issues/10343.
+    // See also https://github.com/dotnet/razor/issues/10343.
     public static CSharpCompilation Create(Assembly assembly, SyntaxTree syntaxTree = null)
     {
         IEnumerable<SyntaxTree> syntaxTrees = null;
@@ -82,6 +82,8 @@ public static class TestCompilation
 
         return compilation;
     }
+
+    public static CSharpCompilation Create() => Create(syntaxTrees: [], references: []);
 
     public static CSharpCompilation Create(IEnumerable<SyntaxTree> syntaxTrees, IEnumerable<MetadataReference> references)
     {

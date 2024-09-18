@@ -25,7 +25,7 @@ public class ViewComponentTagHelperDescriptorProviderTest
         }
 ";
 
-        var compilation = MvcShim.BaseCompilation.AddSyntaxTrees(CSharpSyntaxTree.ParseText(code));
+        var compilation = TestCompilation.Create().AddSyntaxTrees(CSharpSyntaxTree.ParseText(code));
 
         var context = new TagHelperDescriptorProviderContext(compilation);
 

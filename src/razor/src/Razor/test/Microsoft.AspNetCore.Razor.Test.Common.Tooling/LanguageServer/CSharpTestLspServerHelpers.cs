@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,9 +13,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
@@ -109,8 +106,7 @@ internal static class CSharpTestLspServerHelpers
         IRazorSpanMappingService razorSpanMappingService,
         bool multiTargetProject)
     {
-        var hostServices = MefHostServices.Create(exportProvider.AsCompositionContext());
-        var workspace = TestWorkspace.Create(hostServices);
+        var workspace = TestWorkspace.CreateWithDiagnosticAnalyzers(exportProvider);
 
         // Add project and solution to workspace
         var projectInfoNet60 = ProjectInfo.Create(
@@ -135,14 +131,10 @@ internal static class CSharpTestLspServerHelpers
             ? [projectInfoNet60, projectInfoNet80]
             : [projectInfoNet80];
 
-        var solutionInfo = SolutionInfo.Create(
-            id: SolutionId.CreateNewId("TestSolution"),
-            version: VersionStamp.Default,
-            projects: projectInfos);
-
-        workspace.AddSolution(solutionInfo);
-
-        AddAnalyzersToWorkspace(workspace, exportProvider);
+        foreach (var projectInfo in projectInfos)
+        {
+            workspace.AddProject(projectInfo);
+        }
 
         // Add document to workspace. We use an IVT method to create the DocumentInfo variable because there's
         // a special constructor in Roslyn that will help identify the document as belonging to Razor.
@@ -170,30 +162,6 @@ internal static class CSharpTestLspServerHelpers
         }
 
         return workspace;
-    }
-
-    private static void AddAnalyzersToWorkspace(Workspace workspace, ExportProvider exportProvider)
-    {
-        var analyzerLoader = RazorTestAnalyzerLoader.CreateAnalyzerAssemblyLoader();
-
-        var analyzerPaths = new DirectoryInfo(AppContext.BaseDirectory).GetFiles("*.dll")
-            .Where(f => f.Name.StartsWith("Microsoft.CodeAnalysis.", StringComparison.Ordinal) && !f.Name.Contains("LanguageServer") && !f.Name.Contains("Test.Utilities"))
-            .Select(f => f.FullName)
-            .ToImmutableArray();
-        var references = new List<AnalyzerFileReference>();
-        foreach (var analyzerPath in analyzerPaths)
-        {
-            if (File.Exists(analyzerPath))
-            {
-                references.Add(new AnalyzerFileReference(analyzerPath, analyzerLoader));
-            }
-        }
-
-        workspace.TryApplyChanges(workspace.CurrentSolution.WithAnalyzerReferences(references));
-
-        // Make sure Roslyn is producing diagnostics for our workspace
-        var razorTestAnalyzerLoader = exportProvider.GetExportedValue<RazorTestAnalyzerLoader>();
-        razorTestAnalyzerLoader.InitializeDiagnosticsServices(workspace);
     }
 
     private record CSharpFile(Uri DocumentUri, SourceText CSharpSourceText);

@@ -196,7 +196,7 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
         bool formatOnType = true,
         bool autoClosingTags = true)
     {     
-        var document = CreateProjectAndRazorDocument(input.Text);
+        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var clientSettingsManager = new ClientSettingsManager([], null, null);

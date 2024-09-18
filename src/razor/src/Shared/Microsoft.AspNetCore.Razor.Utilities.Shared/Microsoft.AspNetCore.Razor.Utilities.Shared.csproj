@@ -5,7 +5,7 @@
     <Description>Razor is a markup syntax for adding server-side logic to web pages. This package contains the language server library assets.</Description>
     <EnableApiCheck>false</EnableApiCheck>
     <IsShippingPackage>false</IsShippingPackage>
-    <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>false</ExcludeFromSourceOnlyBuild>
     <RootNamespace>Microsoft.AspNetCore.Razor</RootNamespace>
     <IsPackable Condition="'$(OS)' != 'Windows_NT'">false</IsPackable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

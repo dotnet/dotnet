@@ -5,12 +5,15 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-public class CodeDirectiveFormattingTest(ITestOutputHelper testOutput) : FormattingTestBase(testOutput)
+[Collection(HtmlFormattingCollection.Name)]
+public class CodeDirectiveFormattingTest(HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
+    : FormattingTestBase(fixture.Service, testOutput)
 {
     internal override bool UseTwoPhaseCompilation => true;
 

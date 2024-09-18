@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -14,6 +15,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 internal sealed class TestBrokeredServiceInterceptor : IRazorBrokeredServiceInterceptor
 {
     private readonly TestSolutionStore _solutionStore = new();
+    private readonly Dictionary<SolutionId, Solution> _localToRemoteSolutionMap = [];
 
     public Task<RazorPinnedSolutionInfoWrapper> GetSolutionInfoAsync(Solution solution, CancellationToken cancellationToken)
         => _solutionStore.AddAsync(solution, cancellationToken);
@@ -32,6 +34,18 @@ internal sealed class TestBrokeredServiceInterceptor : IRazorBrokeredServiceInte
 
         Assert.NotNull(solution);
 
+        // Rather than actually syncing assets, we just let the test author directly map from a local solution
+        // to a remote solution;
+        if (_localToRemoteSolutionMap.TryGetValue(solution.Id, out var remoteSolution))
+        {
+            solution = remoteSolution;
+        }
+
         return implementation(solution);
+    }
+
+    internal void MapSolutionIdToRemote(SolutionId localSolutionId, Solution remoteSolution)
+    {
+        _localToRemoteSolutionMap.Add(localSolutionId, remoteSolution);
     }
 }
