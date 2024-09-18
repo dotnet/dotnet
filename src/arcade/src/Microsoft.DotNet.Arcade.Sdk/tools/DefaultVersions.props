@@ -103,7 +103,7 @@
     <MicrosoftVisualStudioEngMicroBuildCoreVersion Condition="'$(MicrosoftVisualStudioEngMicroBuildCoreVersion)' == ''">1.0.0</MicrosoftVisualStudioEngMicroBuildCoreVersion>
     <MicrosoftManifestToolCrossPlatformVersion Condition="'$(MicrosoftManifestToolCrossPlatformVersion)' == ''">2.1.3</MicrosoftManifestToolCrossPlatformVersion>
     <MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion Condition="'$(MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion)' == ''">1.1.286</MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion>
-    <MicrosoftSignedWixVersion Condition="'$(MicrosoftSignedWixVersion)' == ''">3.14.1-8722.20240403.1</MicrosoftSignedWixVersion>
+    <MicrosoftSignedWixVersion Condition="'$(MicrosoftSignedWixVersion)' == ''">3.14.1-9313.2537997</MicrosoftSignedWixVersion>
   </PropertyGroup>
 
   <!-- RestoreSources overrides - defines DotNetRestoreSources variable if available -->
