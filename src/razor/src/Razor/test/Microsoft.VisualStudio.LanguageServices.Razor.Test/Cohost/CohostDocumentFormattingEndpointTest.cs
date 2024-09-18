@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Formatting;
@@ -19,8 +18,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-[UseExportProvider]
-public class CohostDocumentFormattingEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
+[Collection(HtmlFormattingCollection.Name)]
+public class CohostDocumentFormattingEndpointTest(HtmlFormattingFixture htmlFormattingFixture, ITestOutputHelper testOutputHelper)
+    : CohostEndpointTestBase(testOutputHelper)
 {
     // All of the formatting tests in the language server exercise the formatting engine and cover various edge cases
     // and provide regression prevention. The tests here are not exhaustive, but they validate the the cohost endpoints
@@ -108,7 +108,7 @@ public class CohostDocumentFormattingEndpointTest(ITestOutputHelper testOutputHe
 
     private async Task VerifyDocumentFormattingAsync(string input, string expected)
     {
-        var document = CreateProjectAndRazorDocument(input);
+        var document = await CreateProjectAndRazorDocumentAsync(input);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var htmlDocumentPublisher = new HtmlDocumentPublisher(RemoteServiceInvoker, StrictMock.Of<TrackingLSPDocumentManager>(), StrictMock.Of<JoinableTaskContext>(), LoggerFactory);
@@ -116,7 +116,7 @@ public class CohostDocumentFormattingEndpointTest(ITestOutputHelper testOutputHe
         Assert.NotNull(generatedHtml);
 
         var uri = new Uri(document.CreateUri(), $"{document.FilePath}{FeatureOptions.HtmlVirtualDocumentSuffix}");
-        var htmlEdits = await HtmlFormatting.GetDocumentFormattingEditsAsync(LoggerFactory, uri, generatedHtml, insertSpaces: true, tabSize: 4);
+        var htmlEdits = await htmlFormattingFixture.Service.GetDocumentFormattingEditsAsync(LoggerFactory, uri, generatedHtml, insertSpaces: true, tabSize: 4);
 
         var requestInvoker = new TestLSPRequestInvoker([(Methods.TextDocumentFormattingName, htmlEdits)]);
 

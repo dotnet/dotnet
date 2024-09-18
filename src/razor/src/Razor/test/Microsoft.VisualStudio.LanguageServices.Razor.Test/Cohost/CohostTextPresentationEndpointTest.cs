@@ -55,7 +55,7 @@ public class CohostTextPresentationEndpointTest(ITestOutputHelper testOutputHelp
     private async Task VerifyUriPresentationAsync(string input, string text, string? expected, WorkspaceEdit? htmlResponse = null)
     {
         TestFileMarkupParser.GetSpan(input, out input, out var span);
-        var document = CreateProjectAndRazorDocument(input);
+        var document = await CreateProjectAndRazorDocumentAsync(input);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var requestInvoker = new TestLSPRequestInvoker([(VSInternalMethods.TextDocumentTextPresentationName, htmlResponse)]);

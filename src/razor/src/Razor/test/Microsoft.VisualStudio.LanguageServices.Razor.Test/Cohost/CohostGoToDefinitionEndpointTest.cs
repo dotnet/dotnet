@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Remote.Razor;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
@@ -313,7 +312,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
             </script>
             """;
 
-        var document = CreateProjectAndRazorDocument(input.Text);
+        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var htmlResponse = new SumType<Location, Location[], DocumentLink[]>?(new Location[]
@@ -333,7 +332,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
 
     private async Task VerifyGoToDefinitionAsync(TestCode input, string? fileKind = null, SumType<Location, Location[], DocumentLink[]>? htmlResponse = null)
     {
-        var document = CreateProjectAndRazorDocument(input.Text, fileKind);
+        var document = await CreateProjectAndRazorDocumentAsync(input.Text, fileKind);
         var result = await GetGoToDefinitionResultAsync(document, input, htmlResponse);
 
         Assumes.NotNull(result);
@@ -349,11 +348,11 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         Assert.Equal(document.CreateUri(), location.Uri);
     }
 
-    private Task<SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?> GetGoToDefinitionResultAsync(
+    private async Task<SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?> GetGoToDefinitionResultAsync(
         TestCode input, string? fileKind = null, params (string fileName, string contents)[]? additionalFiles)
     {
-        var document = CreateProjectAndRazorDocument(input.Text, fileKind, additionalFiles);
-        return GetGoToDefinitionResultAsync(document, input, htmlResponse: null);
+        var document = await CreateProjectAndRazorDocumentAsync(input.Text, fileKind, additionalFiles);
+        return await GetGoToDefinitionResultAsync(document, input, htmlResponse: null);
     }
 
     private async Task<SumType<RoslynLocation, RoslynLocation[], RoslynDocumentLink[]>?> GetGoToDefinitionResultAsync(

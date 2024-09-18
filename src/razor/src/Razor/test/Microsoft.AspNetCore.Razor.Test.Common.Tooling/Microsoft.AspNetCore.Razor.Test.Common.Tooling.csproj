@@ -89,10 +89,6 @@
     <InternalsVisibleTo Include="rzls" Key="$(RazorKey)" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Resources\Benchmarking\" />
-  </ItemGroup>
-
   <Import Condition="'$(TargetFramework)' != '$(DefaultNetFxTargetFramework)'" Project="..\..\..\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems" Label="Shared" />
 
 </Project>

@@ -8,8 +8,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
@@ -19,13 +21,14 @@ namespace Microsoft.CodeAnalysis.Razor.Formatting;
 /// </summary>
 internal sealed class CSharpFormattingPass(
     IDocumentMappingService documentMappingService,
+    IHostServicesProvider hostServicesProvider,
     ILoggerFactory loggerFactory)
-    : CSharpFormattingPassBase(documentMappingService, isFormatOnType: false)
+    : CSharpFormattingPassBase(documentMappingService, hostServicesProvider, isFormatOnType: false)
 {
-    private readonly CSharpFormatter _csharpFormatter = new CSharpFormatter(documentMappingService);
+    private readonly CSharpFormatter _csharpFormatter = new(documentMappingService);
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CSharpFormattingPass>();
 
-    public async override Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
+    protected async override Task<ImmutableArray<TextChange>> ExecuteCoreAsync(FormattingContext context, RoslynWorkspaceHelper roslynWorkspaceHelper, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
         // Apply previous edits if any.
         var originalText = context.SourceText;
@@ -40,7 +43,8 @@ internal sealed class CSharpFormattingPass(
         cancellationToken.ThrowIfCancellationRequested();
 
         // Apply original C# edits
-        var csharpChanges = await FormatCSharpAsync(changedContext, cancellationToken).ConfigureAwait(false);
+        var csharpDocument = roslynWorkspaceHelper.CreateCSharpDocument(changedContext.CodeDocument);
+        var csharpChanges = await FormatCSharpAsync(changedContext, roslynWorkspaceHelper.HostWorkspaceServices, csharpDocument, cancellationToken).ConfigureAwait(false);
         if (csharpChanges.Length > 0)
         {
             changedText = changedText.WithChanges(csharpChanges);
@@ -51,7 +55,7 @@ internal sealed class CSharpFormattingPass(
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var indentationChanges = await AdjustIndentationAsync(changedContext, startLine: 0, endLineInclusive: changedText.Lines.Count - 1, cancellationToken).ConfigureAwait(false);
+        var indentationChanges = await AdjustIndentationAsync(changedContext, startLine: 0, endLineInclusive: changedText.Lines.Count - 1, roslynWorkspaceHelper.HostWorkspaceServices, cancellationToken).ConfigureAwait(false);
         if (indentationChanges.Length > 0)
         {
             // Apply the edits that modify indentation.
@@ -65,7 +69,7 @@ internal sealed class CSharpFormattingPass(
         return changedText.GetTextChangesArray(originalText);
     }
 
-    private async Task<ImmutableArray<TextChange>> FormatCSharpAsync(FormattingContext context, CancellationToken cancellationToken)
+    private async Task<ImmutableArray<TextChange>> FormatCSharpAsync(FormattingContext context, HostWorkspaceServices hostWorkspaceServices, Document csharpDocument, CancellationToken cancellationToken)
     {
         var sourceText = context.SourceText;
 
@@ -81,7 +85,8 @@ internal sealed class CSharpFormattingPass(
 
             // These should already be remapped.
             var spanToFormat = sourceText.GetLinePositionSpan(span);
-            var changes = await _csharpFormatter.FormatAsync(context, spanToFormat, cancellationToken).ConfigureAwait(false);
+
+            var changes = await _csharpFormatter.FormatAsync(hostWorkspaceServices, csharpDocument, context, spanToFormat, cancellationToken).ConfigureAwait(false);
             csharpChanges.AddRange(changes.Where(e => spanToFormat.Contains(sourceText.GetLinePositionSpan(e.Span))));
         }
 

@@ -9,7 +9,7 @@
     <IsPackable>false</IsPackable>
     <!-- No need to track public APIs of this tool. -->
     <AddPublicApiAnalyzers>false</AddPublicApiAnalyzers>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
   </PropertyGroup>
 
 </Project>

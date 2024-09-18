@@ -6,7 +6,7 @@
     <EnableApiCheck>false</EnableApiCheck>
     <RulesDirectory>$(PkgMicrosoft_NET_Sdk_Razor)\build\netstandard2.0\Rules\</RulesDirectory>
     <IsShippingPackage>false</IsShippingPackage>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <IsPackable Condition="'$(OS)' != 'Windows_NT'">false</IsPackable>
     <RootNamespace>Microsoft.VisualStudio.Razor</RootNamespace>
   </PropertyGroup>

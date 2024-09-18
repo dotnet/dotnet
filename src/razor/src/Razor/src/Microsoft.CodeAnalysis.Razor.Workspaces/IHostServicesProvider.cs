@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Host;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
-internal interface IAdhocWorkspaceFactory
+internal interface IHostServicesProvider
 {
-    AdhocWorkspace Create(params IWorkspaceService[] workspaceServices);
+    HostServices GetServices();
 }

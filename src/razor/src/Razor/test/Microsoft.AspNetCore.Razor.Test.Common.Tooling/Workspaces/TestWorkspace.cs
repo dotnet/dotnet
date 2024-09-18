@@ -2,8 +2,17 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
+using System.Linq;
+using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Host;
+using Microsoft.CodeAnalysis.Host.Mef;
+using Microsoft.VisualStudio.Composition;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 
@@ -13,6 +22,17 @@ public static class TestWorkspace
 
     public static Workspace Create(Action<AdhocWorkspace>? configure = null)
         => Create(services: null, configure: configure);
+
+    public static AdhocWorkspace CreateWithDiagnosticAnalyzers(ExportProvider exportProvider)
+    {
+        var hostServices = MefHostServices.Create(exportProvider.AsCompositionContext());
+
+        var workspace = Create(hostServices);
+
+        AddAnalyzersToWorkspace(workspace, exportProvider);
+
+        return workspace;
+    }
 
     public static AdhocWorkspace Create(HostServices? services, Action<AdhocWorkspace>? configure = null)
     {
@@ -26,5 +46,25 @@ public static class TestWorkspace
 
             return workspace;
         }
+    }
+
+    private static void AddAnalyzersToWorkspace(Workspace workspace, ExportProvider exportProvider)
+    {
+        var analyzerLoader = RazorTestAnalyzerLoader.CreateAnalyzerAssemblyLoader();
+
+        var analyzerPaths = new DirectoryInfo(AppContext.BaseDirectory).GetFiles("*.dll")
+            .Where(f => f.Name.StartsWith("Microsoft.CodeAnalysis.", StringComparison.Ordinal) && !f.Name.Contains("LanguageServer") && !f.Name.Contains("Test.Utilities"))
+            .Select(f => f.FullName)
+            .ToImmutableArray();
+        var references = new List<AnalyzerFileReference>();
+        foreach (var analyzerPath in analyzerPaths)
+        {
+            if (File.Exists(analyzerPath))
+            {
+                references.Add(new AnalyzerFileReference(analyzerPath, analyzerLoader));
+            }
+        }
+
+        workspace.TryApplyChanges(workspace.CurrentSolution.WithAnalyzerReferences(references));
     }
 }
