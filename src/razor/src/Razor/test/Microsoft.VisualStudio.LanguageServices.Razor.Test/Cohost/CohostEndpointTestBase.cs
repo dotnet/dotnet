@@ -9,10 +9,13 @@ using Basic.Reference.Assemblies;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.Mef;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor;
+using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Composition;
 using Xunit.Abstractions;
@@ -68,7 +71,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         FeatureOptions.SetOptions(_clientInitializationOptions);
     }
 
-    protected TextDocument CreateProjectAndRazorDocument(string contents, string? fileKind = null, (string fileName, string contents)[]? additionalFiles = null)
+    protected Task<TextDocument> CreateProjectAndRazorDocumentAsync(string contents, string? fileKind = null, (string fileName, string contents)[]? additionalFiles = null, bool createSeparateRemoteAndLocalWorkspaces = false)
     {
         // Using IsLegacy means null == component, so easier for test authors
         var isComponent = !FileKinds.IsLegacy(fileKind);
@@ -82,6 +85,56 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         var projectId = ProjectId.CreateNewId(debugName: projectName);
         var documentId = DocumentId.CreateNewId(projectId, debugName: documentFilePath);
 
+        var remoteWorkspace = RemoteWorkspaceAccessor.GetWorkspace();
+        var remoteDocument = CreateProjectAndRazorDocument(remoteWorkspace, projectId, projectName, documentId, documentFilePath, contents, additionalFiles);
+
+        if (createSeparateRemoteAndLocalWorkspaces)
+        {
+            // Usually its fine to just use the remote workspace, but sometimes we need to also have things available in the
+            // "devenv" side of Roslyn, which is a different workspace with a different set of services. We don't have any
+            // actual solution syncing set up for testing, and don't really use a service broker, but since we also would
+            // expect to never make changes to a workspace, it should be fine to simply create duplicated solutions as part
+            // of test setup.
+            return CreateLocalProjectAndRazorDocumentAsync(remoteDocument.Project.Solution, projectId, projectName, documentId, documentFilePath, contents, additionalFiles);
+        }
+
+        // If we're just creating one workspace, then its the remote one and we just return the remote document
+        // and assume that the endpoint under test doesn't need to do anything on the devenv side. This makes it
+        // easier for tests to mutate solutions
+        return Task.FromResult(remoteDocument);
+    }
+
+    private async Task<TextDocument> CreateLocalProjectAndRazorDocumentAsync(Solution remoteSolution, ProjectId projectId, string projectName, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles)
+    {
+        var exportProvider = TestComposition.Roslyn.ExportProviderFactory.CreateExportProvider();
+        AddDisposable(exportProvider);
+        var workspace = TestWorkspace.CreateWithDiagnosticAnalyzers(exportProvider);
+        AddDisposable(workspace);
+
+        var razorDocument = CreateProjectAndRazorDocument(workspace, projectId, projectName, documentId, documentFilePath, contents, additionalFiles);
+
+        // Until the source generator is hooked up, the workspace representing "local" projects doesn't have anything
+        // to actually compile the Razor to C#, so we just do it now at creation
+        var solution = razorDocument.Project.Solution;
+        // We're cheating a bit here and using the remote export provider to get something to do the compilation
+        var factory = _exportProvider.AssumeNotNull().GetExportedValue<DocumentSnapshotFactory>();
+        var snapshot = factory.GetOrCreate(razorDocument);
+        // Compile the Razor file
+        var codeDocument = await snapshot.GetGeneratedOutputAsync(false);
+        // Update the generated doc contents
+        var generatedDocumentIds = solution.GetDocumentIdsWithFilePath(documentFilePath + CSharpVirtualDocumentSuffix);
+        solution = solution.WithDocumentText(generatedDocumentIds, codeDocument.GetCSharpSourceText());
+        razorDocument = solution.GetAdditionalDocument(documentId).AssumeNotNull();
+
+        // If we're creating remote and local workspaces, then we'll return the local document, and have to allow
+        // the remote service invoker to map from the local solution to the remote one.
+        RemoteServiceInvoker.MapSolutionIdToRemote(razorDocument.Project.Solution.Id, remoteSolution);
+
+        return razorDocument;
+    }
+
+    private static TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, string projectName, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles)
+    {
         var projectInfo = ProjectInfo
             .Create(
                 projectId,
@@ -93,9 +146,6 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
             .WithDefaultNamespace(TestProjectData.SomeProject.RootNamespace)
             .WithMetadataReferences(AspNet80.ReferenceInfos.All.Select(r => r.Reference));
 
-        // Importantly, we use Roslyn's remote workspace here so that when our OOP services call into Roslyn, their code
-        // will be able to access their services.
-        var workspace = RemoteWorkspaceAccessor.GetWorkspace();
         var solution = workspace.CurrentSolution.AddProject(projectInfo);
 
         solution = solution

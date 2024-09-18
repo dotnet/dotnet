@@ -76,7 +76,7 @@ public class RazorComponentDefinitionServiceTest(ITestOutputHelper testOutputHel
 
     private async Task VerifyDefinitionAsync(TestCode input, TestCode expectedDocument, params (string fileName, string contents)[]? additionalFiles)
     {
-        var document = CreateProjectAndRazorDocument(input.Text, FileKinds.Component, additionalFiles);
+        var document = await CreateProjectAndRazorDocumentAsync(input.Text, FileKinds.Component, additionalFiles);
 
         var service = OOPExportProvider.GetExportedValue<IRazorComponentDefinitionService>();
         var documentSnapshotFactory = OOPExportProvider.GetExportedValue<DocumentSnapshotFactory>();

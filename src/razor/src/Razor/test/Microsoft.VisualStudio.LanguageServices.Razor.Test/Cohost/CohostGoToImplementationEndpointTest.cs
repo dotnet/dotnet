@@ -100,7 +100,7 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
             </script>
             """;
 
-        var document = CreateProjectAndRazorDocument(input.Text);
+        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var htmlResponse = new SumType<LspLocation[], VSInternalReferenceItem[]>?(new LspLocation[]
@@ -119,7 +119,7 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
 
     private async Task VerifyCSharpGoToImplementationAsync(TestCode input)
     {
-        var document = CreateProjectAndRazorDocument(input.Text);
+        var document = await CreateProjectAndRazorDocumentAsync(input.Text);
 
         var requestInvoker = new TestLSPRequestInvoker();
 

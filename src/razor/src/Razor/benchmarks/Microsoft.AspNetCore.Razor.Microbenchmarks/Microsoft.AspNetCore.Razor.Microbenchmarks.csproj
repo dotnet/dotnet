@@ -43,6 +43,9 @@
     <Compile Include="..\..\test\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Workspaces\TestWorkspaceServices.cs">
       <Link>TestServices\%(FileName)%(Extension)</Link>
     </Compile>
+    <Compile Include="..\..\test\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Mef\ExportProviderExtensions.cs">
+      <Link>TestServices\%(FileName)%(Extension)</Link>
+    </Compile>
 
     <None Remove=".gitignore" />
     <None Remove="BenchmarkDotNet.Artifacts\**" />

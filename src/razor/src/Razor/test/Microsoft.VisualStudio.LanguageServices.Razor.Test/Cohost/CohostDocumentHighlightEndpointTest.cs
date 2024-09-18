@@ -147,7 +147,7 @@ public class CohostDocumentHighlightEndpointTest(ITestOutputHelper testOutputHel
     private async Task VerifyDocumentHighlightsAsync(string input, DocumentHighlight[]? htmlResponse = null)
     {
         TestFileMarkupParser.GetPositionAndSpans(input, out var source, out int cursorPosition, out ImmutableArray<TextSpan> spans);
-        var document = CreateProjectAndRazorDocument(source);
+        var document = await CreateProjectAndRazorDocumentAsync(source);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(cursorPosition);
 
