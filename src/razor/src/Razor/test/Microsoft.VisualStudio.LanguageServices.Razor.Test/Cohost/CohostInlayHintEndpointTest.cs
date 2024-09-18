@@ -131,7 +131,7 @@ public class CohostInlayHintEndpointTest(ITestOutputHelper testOutputHelper) : C
     private async Task VerifyInlayHintsAsync(string input, Dictionary<string, string> toolTipMap, string output, bool displayAllOverride = false)
     {
         TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spansDict);
-        var document = CreateProjectAndRazorDocument(input);
+        var document = await CreateProjectAndRazorDocumentAsync(input);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var endpoint = new CohostInlayHintEndpoint(RemoteServiceInvoker);

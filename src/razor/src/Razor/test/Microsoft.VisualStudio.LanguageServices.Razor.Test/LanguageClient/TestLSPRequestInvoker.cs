@@ -111,7 +111,8 @@ internal class TestLSPRequestInvoker : LSPRequestInvoker
             return new ReinvocationResponse<TOut>(languageClientName: RazorLSPConstants.RazorCSharpLanguageServerName, result);
         }
 
-        if (_htmlResponses.TryGetValue(method, out var response))
+        if (_htmlResponses is not null &&
+            _htmlResponses.TryGetValue(method, out var response))
         {
             return new ReinvocationResponse<TOut>(languageClientName: "html", (TOut)response);
         }

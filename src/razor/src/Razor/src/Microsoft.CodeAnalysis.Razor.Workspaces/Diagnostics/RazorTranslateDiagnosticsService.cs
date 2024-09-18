@@ -6,7 +6,6 @@ using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
@@ -18,12 +17,14 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Diagnostic = Microsoft.VisualStudio.LanguageServer.Protocol.Diagnostic;
-using DiagnosticSeverity = Microsoft.VisualStudio.LanguageServer.Protocol.DiagnosticSeverity;
-using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
-using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
+using LspDiagnostic = Microsoft.VisualStudio.LanguageServer.Protocol.Diagnostic;
+using LspDiagnosticSeverity = Microsoft.VisualStudio.LanguageServer.Protocol.DiagnosticSeverity;
+using LspRange = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
+namespace Microsoft.CodeAnalysis.Razor.Diagnostics;
+
+using RazorDiagnosticFactory = AspNetCore.Razor.Language.RazorDiagnosticFactory;
+using SyntaxNode = AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 /// <summary>
 /// Contains several methods for mapping and filtering Razor and C# diagnostics. It allows for
@@ -48,16 +49,14 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
     /// </summary>
     /// <param name="diagnosticKind">The `RazorLanguageKind` of the `Diagnostic` objects included in `diagnostics`.</param>
     /// <param name="diagnostics">An array of `Diagnostic` objects to translate.</param>
-    /// <param name="documentContext">The `DocumentContext` for the code document associated with the diagnostics.</param>
-    /// <param name="cancellationToken">A `CancellationToken` to observe while waiting for the task to complete.</param>
+    /// <param name="documentSnapshot">The `DocumentContext` for the code document associated with the diagnostics.</param>
     /// <returns>An array of translated diagnostics</returns>
-    internal async Task<Diagnostic[]> TranslateAsync(
+    internal async Task<LspDiagnostic[]> TranslateAsync(
         RazorLanguageKind diagnosticKind,
-        Diagnostic[] diagnostics,
-        DocumentContext documentContext,
-        CancellationToken cancellationToken)
+        LspDiagnostic[] diagnostics,
+        IDocumentSnapshot documentSnapshot)
     {
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
         if (codeDocument.IsUnsupported() != false)
         {
             _logger.LogInformation($"Unsupported code document.");
@@ -78,20 +77,20 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         var mappedDiagnostics = MapDiagnostics(
             diagnosticKind,
             filteredDiagnostics,
-            documentContext.Snapshot,
+            documentSnapshot,
             codeDocument);
 
         return mappedDiagnostics;
     }
 
-    private Diagnostic[] FilterCSharpDiagnostics(Diagnostic[] unmappedDiagnostics, RazorCodeDocument codeDocument)
+    private LspDiagnostic[] FilterCSharpDiagnostics(LspDiagnostic[] unmappedDiagnostics, RazorCodeDocument codeDocument)
     {
         return unmappedDiagnostics.Where(d =>
             !ShouldFilterCSharpDiagnosticBasedOnErrorCode(d, codeDocument)).ToArray();
     }
 
-    private static Diagnostic[] FilterHTMLDiagnostics(
-        Diagnostic[] unmappedDiagnostics,
+    private static LspDiagnostic[] FilterHTMLDiagnostics(
+        LspDiagnostic[] unmappedDiagnostics,
         RazorCodeDocument codeDocument)
     {
         var syntaxTree = codeDocument.GetSyntaxTree();
@@ -110,14 +109,14 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         return filteredDiagnostics;
     }
 
-    private Diagnostic[] MapDiagnostics(
+    private LspDiagnostic[] MapDiagnostics(
         RazorLanguageKind languageKind,
-        Diagnostic[] diagnostics,
+        LspDiagnostic[] diagnostics,
         IDocumentSnapshot documentSnapshot,
         RazorCodeDocument codeDocument)
     {
         var projects = RazorDiagnosticConverter.GetProjectInformation(documentSnapshot);
-        using var mappedDiagnostics = new PooledArrayBuilder<Diagnostic>();
+        using var mappedDiagnostics = new PooledArrayBuilder<LspDiagnostic>();
 
         foreach (var diagnostic in diagnostics)
         {
@@ -146,7 +145,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
     }
 
     private static bool InCSharpLiteral(
-        Diagnostic d,
+        LspDiagnostic d,
         SourceText sourceText,
         RazorSyntaxTree syntaxTree)
     {
@@ -177,7 +176,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
                 or SyntaxKind.CSharpEphemeralTextLiteral;
     }
 
-    private static bool AppliesToTagHelperTagName(Diagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
+    private static bool AppliesToTagHelperTagName(LspDiagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
     {
         // Goal of this method is to filter diagnostics that touch TagHelper tag names. Reason being is TagHelpers can output anything. Meaning
         // If you have a TagHelper like:
@@ -214,7 +213,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         return true;
     }
 
-    private static bool ShouldFilterHtmlDiagnosticBasedOnErrorCode(Diagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
+    private static bool ShouldFilterHtmlDiagnosticBasedOnErrorCode(LspDiagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
     {
         if (!diagnostic.Code.HasValue)
         {
@@ -235,7 +234,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
             _ => false,
         };
 
-        static bool IsCSharpInStyleBlock(Diagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
+        static bool IsCSharpInStyleBlock(LspDiagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
         {
             // C# in a style block causes diagnostics because the HTML background document replaces C# with "~"
             var owner = syntaxTree.FindInnermostNode(sourceText, diagnostic.Range.Start);
@@ -253,7 +252,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
         // Ideally this would be solved instead by not emitting the "!" at the HTML backing file,
         // but we don't currently have a system to accomplish that
-        static bool IsAnyFilteredTooFewElementsError(Diagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
+        static bool IsAnyFilteredTooFewElementsError(LspDiagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
         {
             var owner = syntaxTree.FindInnermostNode(sourceText, diagnostic.Range.Start);
             if (owner is null)
@@ -282,7 +281,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
         // Ideally this would be solved instead by not emitting the "!" at the HTML backing file,
         // but we don't currently have a system to accomplish that
-        static bool IsHtmlWithBangAndMatchingTags(Diagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
+        static bool IsHtmlWithBangAndMatchingTags(LspDiagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
         {
             var owner = syntaxTree.FindInnermostNode(sourceText, diagnostic.Range.Start);
             if (owner is null)
@@ -306,11 +305,11 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
             return haveBang && namesEquivalent;
         }
 
-        static bool IsAnyFilteredInvalidNestingError(Diagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
+        static bool IsAnyFilteredInvalidNestingError(LspDiagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
             => IsInvalidNestingWarningWithinComponent(diagnostic, sourceText, syntaxTree) ||
                IsInvalidNestingFromBody(diagnostic, sourceText, syntaxTree);
 
-        static bool IsInvalidNestingWarningWithinComponent(Diagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
+        static bool IsInvalidNestingWarningWithinComponent(LspDiagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
         {
             var owner = syntaxTree.FindInnermostNode(sourceText, diagnostic.Range.Start);
             if (owner is null)
@@ -325,7 +324,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
         // Ideally this would be solved instead by not emitting the "!" at the HTML backing file,
         // but we don't currently have a system to accomplish that
-        static bool IsInvalidNestingFromBody(Diagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
+        static bool IsInvalidNestingFromBody(LspDiagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
         {
             var owner = syntaxTree.FindInnermostNode(sourceText, diagnostic.Range.Start);
             if (owner is null)
@@ -350,7 +349,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
     }
 
     private static bool InAttributeContainingCSharp(
-        Diagnostic diagnostic,
+        LspDiagnostic diagnostic,
         SourceText sourceText,
         RazorSyntaxTree syntaxTree,
         Dictionary<TextSpan, bool> processedAttributes)
@@ -400,7 +399,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         }
     }
 
-    private bool ShouldFilterCSharpDiagnosticBasedOnErrorCode(Diagnostic diagnostic, RazorCodeDocument codeDocument)
+    private bool ShouldFilterCSharpDiagnosticBasedOnErrorCode(LspDiagnostic diagnostic, RazorCodeDocument codeDocument)
     {
         if (diagnostic.Code is not { } code ||
             !code.TryGetSecond(out var str) ||
@@ -413,10 +412,10 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         {
             "CS1525" => ShouldIgnoreCS1525(diagnostic, codeDocument),
             _ => s_cSharpDiagnosticsToIgnore.Contains(str) &&
-                diagnostic.Severity != DiagnosticSeverity.Error
+                diagnostic.Severity != LspDiagnosticSeverity.Error
         };
 
-        bool ShouldIgnoreCS1525(Diagnostic diagnostic, RazorCodeDocument codeDocument)
+        bool ShouldIgnoreCS1525(LspDiagnostic diagnostic, RazorCodeDocument codeDocument)
         {
             if (CheckIfDocumentHasRazorDiagnostic(codeDocument, RazorDiagnosticFactory.TagHelper_EmptyBoundAttribute.Id) &&
                 TryGetOriginalDiagnosticRange(diagnostic, codeDocument, out var originalRange) &&
@@ -440,7 +439,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         return codeDocument.GetSyntaxTree().Diagnostics.Any(razorDiagnosticCode, static (d, code) => d.Id == code);
     }
 
-    private bool TryGetOriginalDiagnosticRange(Diagnostic diagnostic, RazorCodeDocument codeDocument, [NotNullWhen(true)] out Range? originalRange)
+    private bool TryGetOriginalDiagnosticRange(LspDiagnostic diagnostic, RazorCodeDocument codeDocument, [NotNullWhen(true)] out LspRange? originalRange)
     {
         if (IsRudeEditDiagnostic(diagnostic))
         {
@@ -460,7 +459,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         {
             // Couldn't remap the range correctly.
             // If this isn't an `Error` Severity Diagnostic we can discard it.
-            if (diagnostic.Severity != DiagnosticSeverity.Error)
+            if (diagnostic.Severity != LspDiagnosticSeverity.Error)
             {
                 return false;
             }
@@ -474,14 +473,14 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         return true;
     }
 
-    private static bool IsRudeEditDiagnostic(Diagnostic diagnostic)
+    private static bool IsRudeEditDiagnostic(LspDiagnostic diagnostic)
     {
         return diagnostic.Code.HasValue &&
             diagnostic.Code.Value.TryGetSecond(out var str) &&
             str.StartsWith("ENC");
     }
 
-    private bool TryRemapRudeEditRange(Range diagnosticRange, RazorCodeDocument codeDocument, [NotNullWhen(true)] out Range? remappedRange)
+    private bool TryRemapRudeEditRange(LspRange diagnosticRange, RazorCodeDocument codeDocument, [NotNullWhen(true)] out LspRange? remappedRange)
     {
         // This is a rude edit diagnostic that has already been mapped to the Razor document. The mapping isn't absolutely correct though,
         // it's based on the runtime code generation of the Razor document therefore we need to re-map the already mapped diagnostic in a

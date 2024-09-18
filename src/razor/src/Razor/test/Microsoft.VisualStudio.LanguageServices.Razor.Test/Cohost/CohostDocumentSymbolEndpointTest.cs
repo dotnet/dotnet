@@ -69,7 +69,7 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
     private async Task VerifyDocumentSymbolsAsync(string input, bool hierarchical = false)
     {
         TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spansDict);
-        var document = CreateProjectAndRazorDocument(input);
+        var document = await CreateProjectAndRazorDocumentAsync(input);
 
         var endpoint = new CohostDocumentSymbolEndpoint(RemoteServiceInvoker);
 

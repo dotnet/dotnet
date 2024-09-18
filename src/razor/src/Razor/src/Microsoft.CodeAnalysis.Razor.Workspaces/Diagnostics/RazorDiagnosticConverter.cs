@@ -2,15 +2,17 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
+using LspDiagnostic = Microsoft.VisualStudio.LanguageServer.Protocol.Diagnostic;
+using LspDiagnosticSeverity = Microsoft.VisualStudio.LanguageServer.Protocol.DiagnosticSeverity;
+using LspRange = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
+namespace Microsoft.CodeAnalysis.Razor.Diagnostics;
 
 internal static class RazorDiagnosticConverter
 {
@@ -46,9 +48,9 @@ internal static class RazorDiagnosticConverter
                 }];
     }
 
-    internal static Diagnostic[] Convert(IReadOnlyList<RazorDiagnostic> diagnostics, SourceText sourceText, IDocumentSnapshot documentSnapshot)
+    internal static LspDiagnostic[] Convert(ImmutableArray<RazorDiagnostic> diagnostics, SourceText sourceText, IDocumentSnapshot documentSnapshot)
     {
-        var convertedDiagnostics = new Diagnostic[diagnostics.Count];
+        var convertedDiagnostics = new LspDiagnostic[diagnostics.Length];
 
         var i = 0;
         foreach (var diagnostic in diagnostics)
@@ -60,18 +62,18 @@ internal static class RazorDiagnosticConverter
     }
 
     // Internal for testing
-    internal static DiagnosticSeverity ConvertSeverity(RazorDiagnosticSeverity severity)
+    internal static LspDiagnosticSeverity ConvertSeverity(RazorDiagnosticSeverity severity)
     {
         return severity switch
         {
-            RazorDiagnosticSeverity.Error => DiagnosticSeverity.Error,
-            RazorDiagnosticSeverity.Warning => DiagnosticSeverity.Warning,
-            _ => DiagnosticSeverity.Information,
+            RazorDiagnosticSeverity.Error => LspDiagnosticSeverity.Error,
+            RazorDiagnosticSeverity.Warning => LspDiagnosticSeverity.Warning,
+            _ => LspDiagnosticSeverity.Information,
         };
     }
 
     // Internal for testing
-    internal static Range? ConvertSpanToRange(SourceSpan sourceSpan, SourceText sourceText)
+    internal static LspRange? ConvertSpanToRange(SourceSpan sourceSpan, SourceText sourceText)
     {
         if (sourceSpan == SourceSpan.Undefined)
         {
