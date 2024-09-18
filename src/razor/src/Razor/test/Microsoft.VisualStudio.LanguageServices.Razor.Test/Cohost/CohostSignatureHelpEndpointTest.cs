@@ -91,7 +91,7 @@ public class CohostSignatureHelpEndpointTest(ITestOutputHelper testOutputHelper)
     private async Task VerifySignatureHelpAsync(string input, string expected, bool autoListParams = true, SignatureHelpTriggerKind? triggerKind = null)
     {
         TestFileMarkupParser.GetPosition(input, out input, out var cursorPosition);
-        var document = CreateProjectAndRazorDocument(input);
+        var document = await CreateProjectAndRazorDocumentAsync(input);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var clientSettingsManager = new ClientSettingsManager([], null, null);

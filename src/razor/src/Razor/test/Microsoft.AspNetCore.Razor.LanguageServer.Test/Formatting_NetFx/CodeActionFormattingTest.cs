@@ -4,12 +4,15 @@
 #nullable disable
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-public class CodeActionFormattingTest(ITestOutputHelper testOutput) : FormattingTestBase(testOutput)
+[Collection(HtmlFormattingCollection.Name)]
+public class CodeActionFormattingTest(HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
+    : FormattingTestBase(fixture.Service, testOutput)
 {
     [Fact]
     public async Task AddDebuggerDisplay()

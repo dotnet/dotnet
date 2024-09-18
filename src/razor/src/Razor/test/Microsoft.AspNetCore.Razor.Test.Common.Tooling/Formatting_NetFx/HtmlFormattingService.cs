@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.Composition;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
@@ -17,9 +18,21 @@ using Microsoft.WebTools.Languages.Shared.ContentTypes;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
-internal static class HtmlFormatting
+internal sealed class HtmlFormattingService : IDisposable
 {
-    public static Task<TextEdit[]?> GetDocumentFormattingEditsAsync(ILoggerFactory loggerFactory, Uri uri, string generatedHtml, bool insertSpaces, int tabSize)
+    private ExportProvider? _exportProvider;
+
+    private ExportProvider ExportProvider => _exportProvider ?? (_exportProvider = TestComposition.Editor.ExportProviderFactory.CreateExportProvider());
+
+    public void Dispose()
+    {
+        if (_exportProvider is not null)
+        {
+            _exportProvider.Dispose();
+        }
+    }
+
+    public Task<TextEdit[]?> GetDocumentFormattingEditsAsync(ILoggerFactory loggerFactory, Uri uri, string generatedHtml, bool insertSpaces, int tabSize)
     {
         var request = $$"""
             {
@@ -37,7 +50,7 @@ internal static class HtmlFormatting
         return CallWebToolsApplyFormattedEditsHandlerAsync(loggerFactory, request, uri, generatedHtml);
     }
 
-    public static Task<TextEdit[]?> GetOnTypeFormattingEditsAsync(ILoggerFactory loggerFactory, Uri uri, string generatedHtml, Position position, bool insertSpaces, int tabSize)
+    public Task<TextEdit[]?> GetOnTypeFormattingEditsAsync(ILoggerFactory loggerFactory, Uri uri, string generatedHtml, Position position, bool insertSpaces, int tabSize)
     {
         var generatedHtmlSource = SourceText.From(generatedHtml, Encoding.UTF8);
         var absoluteIndex = generatedHtmlSource.GetRequiredAbsoluteIndex(position);
@@ -64,10 +77,9 @@ internal static class HtmlFormatting
         return CallWebToolsApplyFormattedEditsHandlerAsync(loggerFactory, request, uri, generatedHtml);
     }
 
-    private static async Task<TextEdit[]?> CallWebToolsApplyFormattedEditsHandlerAsync(ILoggerFactory loggerFactory, string serializedValue, Uri documentUri, string generatedHtml)
+    private async Task<TextEdit[]?> CallWebToolsApplyFormattedEditsHandlerAsync(ILoggerFactory loggerFactory, string serializedValue, Uri documentUri, string generatedHtml)
     {
-        var exportProvider = TestComposition.Editor.ExportProviderFactory.CreateExportProvider();
-        var contentTypeService = exportProvider.GetExportedValue<IContentTypeRegistryService>();
+        var contentTypeService = ExportProvider.GetExportedValue<IContentTypeRegistryService>();
 
         lock (contentTypeService)
         {
@@ -77,7 +89,7 @@ internal static class HtmlFormatting
             }
         }
 
-        var textBufferFactoryService = (ITextBufferFactoryService3)exportProvider.GetExportedValue<ITextBufferFactoryService>();
+        var textBufferFactoryService = (ITextBufferFactoryService3)ExportProvider.GetExportedValue<ITextBufferFactoryService>();
         var bufferManager = WebTools.BufferManager.New(contentTypeService, textBufferFactoryService, []);
         var logger = loggerFactory.GetOrCreateLogger("ApplyFormattedEditsHandler");
         var applyFormatEditsHandler = WebTools.ApplyFormatEditsHandler.New(textBufferFactoryService, bufferManager, logger);
