@@ -5,7 +5,6 @@ using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.Formatting;
@@ -27,7 +26,7 @@ public class FormattingDiagnosticValidationPassTest(ITestOutputHelper testOutput
             [||]public class Foo { }
             }
             """;
-        using var context = CreateFormattingContext(source);
+        var context = CreateFormattingContext(source);
         var edits = ImmutableArray.Create(new TextChange(source.Span, "    "));
         var input = edits;
         var pass = GetPass();
@@ -49,7 +48,7 @@ public class FormattingDiagnosticValidationPassTest(ITestOutputHelper testOutput
             public class Foo { }
             }
             """;
-        using var context = CreateFormattingContext(source);
+        var context = CreateFormattingContext(source);
         var badEdit = new TextChange(source.Span, "@ "); // Creates a diagnostic
         var pass = GetPass();
 
@@ -83,12 +82,10 @@ public class FormattingDiagnosticValidationPassTest(ITestOutputHelper testOutput
         };
 
         var context = FormattingContext.Create(
-            uri,
             documentSnapshot,
             codeDocument,
             options,
-            new LspFormattingCodeDocumentProvider(),
-            TestAdhocWorkspaceFactory.Instance);
+            new LspFormattingCodeDocumentProvider());
         return context;
     }
 

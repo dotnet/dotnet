@@ -705,6 +705,31 @@ public class RazorFormattingTest(ITestOutputHelper testOutput) : FormattingTestB
             fileKind: FileKinds.Legacy);
     }
 
+    [Fact]
+    public async Task MultiLineComment_WithinHtml ()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <div>
+                    @* <div>
+                    This comment's opening at-star will be aligned, and the
+                    indentation of the rest of its lines will be preserved.
+                            </div>
+                        *@
+                    </div>
+                    """,
+            expected: """
+                    <div>
+                        @* <div>
+                    This comment's opening at-star will be aligned, and the
+                    indentation of the rest of its lines will be preserved.
+                            </div>
+                        *@
+                    </div>
+                    """,
+            fileKind: FileKinds.Legacy);
+    }
+
     // Regression prevention tests:
     [Fact]
     public async Task Using()
