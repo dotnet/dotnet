@@ -27,7 +27,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-      <WixVersion>3.14.1.8722</WixVersion>
+      <WixVersion>3.14.1-9313.2537997</WixVersion>
       <WixToolsDir>$(BaseIntermediateOutputPath)WixTools.$(WixVersion)/</WixToolsDir>
       <!-- Used in WiX targets to locate files. -->
       <WixInstallPath>$(WixToolsDir)</WixInstallPath>
@@ -127,6 +127,7 @@
       <WixExtensions Include="WixUtilExtension.dll" />
 
       <WixSrcFile Include="$(MSBuildThisFileDirectory)bundle/bundle.wxs" />
+      <WixSrcFile Include="$(MSBuildThisFileDirectory)bundle/upgradePolicies.wxs" />
     </ItemGroup>
   </Target>
 
@@ -187,6 +188,8 @@
       <LocFile Include="$(BundleThemeDirectory)\theme\**\bundle.wxl" />
       <LocDirName Include="$([System.String]::new('%(LocFile.RecursiveDir)').TrimEnd('\'))" />
 
+      <CandleVariables Include="MajorVersion" Value="$(MajorVersion)" />
+      <CandleVariables Include="MinorVersion" Value="$(MinorVersion)" />
       <CandleVariables Include="DisplayVersion" Value="$(MajorVersion).$(MinorVersion).$(PatchVersion).$(BuildNumberMajor)" />
       <CandleVariables Include="LcidList" Value="@(LocDirName)" />
       <CandleVariables Include="BundleThmDir" Value="$(BundleThemeDirectory)" />

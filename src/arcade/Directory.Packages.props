@@ -12,7 +12,7 @@
     <MicrosoftCciVersion>4.0.0-rc3-24214-00</MicrosoftCciVersion>
     <!-- Keep Microsoft.Data.Services.Client package version in sync with Microsoft.Data.OData -->
     <MicrosoftDataServicesClientVersion>5.8.4</MicrosoftDataServicesClientVersion>
-    <MicrosoftSignedWixVersion>3.14.1-8722.20240403.1</MicrosoftSignedWixVersion>
+    <MicrosoftSignedWixVersion>3.14.1-9313.2537997</MicrosoftSignedWixVersion>
     <!-- Overwrite XUnitVersion/XUnitAnalyzersVersion/XUnitAnalyzersVersion that comes from the Arcade SDK to be in sync as Arcade doesn't use a live Arcade SDK.
          Keep in sync with DefaultVersions.props. -->
     <XUnitVersion>2.9.0</XUnitVersion>
