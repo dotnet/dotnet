@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Formatting;
@@ -40,7 +39,8 @@ internal static class TestRazorFormattingService
         }
 
         var formattingCodeDocumentProvider = new LspFormattingCodeDocumentProvider();
+        var hostServicesProvider = new DefaultHostServicesProvider();
 
-        return new RazorFormattingService(formattingCodeDocumentProvider, mappingService, TestAdhocWorkspaceFactory.Instance, loggerFactory);
+        return new RazorFormattingService(formattingCodeDocumentProvider, mappingService, hostServicesProvider, loggerFactory);
     }
 }
