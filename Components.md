@@ -28,11 +28,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/emsdk`  
 *[dotnet/emsdk@d667257](https://github.com/dotnet/emsdk/tree/d6672570f0fde2a4a3c7e65d60cec9f8406b039c)*
 - `src/format`  
-*[dotnet/format@b252c60](https://github.com/dotnet/format/tree/b252c608794019761c3f0eb50d142db1ff1b6a2e)*
+*[_git/dotnet-format@27f1865](https://dev.azure.com/dnceng/internal/_git/dotnet-format/?version=GC27f18656aab37d71839f562c0653afce07a2d2fd)*
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@8f0c6f1](https://github.com/dotnet/installer/tree/8f0c6f14cc5041ade4fc3e6838f52f64c75773df)*
+*[dotnet/installer@fe5161d](https://github.com/dotnet/installer/tree/fe5161d5cb8bc09c2e0e17fbd48ea3b36373bbbb)*
 - `src/msbuild`  
 *[dotnet/msbuild@b5265ef](https://github.com/dotnet/msbuild/tree/b5265ef370a651f8c3458110b804e5cbf869eeb5)*
 - `src/nuget-client`  
@@ -42,13 +42,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@d135dd8](https://github.com/dotnet/razor/tree/d135dd8d2ec1c2fbdee220e8656b308694e17a4b)*
 - `src/roslyn`  
-*[dotnet/roslyn@d8282e3](https://github.com/dotnet/roslyn/tree/d8282e36f9e389ee9eaad96b5aba66b83b9a37fd)*
+*[_git/dotnet-roslyn@def8864](https://dev.azure.com/dnceng/internal/_git/dotnet-roslyn/?version=GCdef88648f7e78a44bf300acd0a4e2009c44a6b39)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@223fa62](https://github.com/dotnet/roslyn-analyzers/tree/223fa62ea09457588b4b0f88ee8ac62ea5ab5db5)*
 - `src/runtime`  
 *[_git/dotnet-runtime@81cabf2](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC81cabf2857a01351e5ab578947c7403a5b128ad1)*
 - `src/sdk`  
-*[_git/dotnet-sdk@db993d2](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GCdb993d275a12f1daa73db230ebb7cc70485cd770)*
+*[_git/dotnet-sdk@d90806d](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GCd90806d013db39755cda355f42015d6a248456f5)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@fb970ec](https://github.com/dotnet/source-build-externals/tree/fb970eccb0a9cae3092464e29cbabda0d4115049)*
     - `src/source-build-externals/src/abstractions-xunit`  
