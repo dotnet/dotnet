@@ -34,19 +34,16 @@ namespace NuGet.Commands
         private const int DependencyGraphItemQueueSize = 4096;
         private const int EvictionsDictionarySize = 1024;
         private const int FindLibraryEntryResultCacheSize = 2048;
-        private const int OverridesDictionarySize = 1024;
         private const int ResolvedDependencyGraphItemQueueSize = 2048;
         private readonly RestoreCollectorLogger _logger;
-        private readonly Guid _operationId;
         private readonly RestoreRequest _request;
         private readonly TelemetryActivity _telemetryActivity;
 
-        public DependencyGraphResolver(RestoreCollectorLogger logger, RestoreRequest restoreRequest, TelemetryActivity telemetryActivity, Guid operationId)
+        public DependencyGraphResolver(RestoreCollectorLogger logger, RestoreRequest restoreRequest, TelemetryActivity telemetryActivity)
         {
             _logger = logger;
             _request = restoreRequest;
             _telemetryActivity = telemetryActivity;
-            _operationId = operationId;
         }
 
 #pragma warning disable CA1505 // 'ResolveAsync' has a maintainability index of '0'. Rewrite or refactor the code to increase its maintainability index (MI) above '9'.  This will be refactored in a future change.
@@ -161,7 +158,6 @@ namespace NuGet.Commands
                     LibraryDependencyIndex = libraryDependencyInterningTable.Intern(initialProject),
                     LibraryRangeIndex = libraryRangeInterningTable.Intern(initialProject.LibraryRange),
                     Suppressions = new HashSet<LibraryDependencyIndex>(),
-                    VersionOverrides = new Dictionary<LibraryDependencyIndex, VersionRange>(),
                     IsDirectPackageReferenceFromRootProject = false,
                 };
 
@@ -202,7 +198,6 @@ namespace NuGet.Commands
                     LibraryRangeIndex currentRefRangeIndex = importRefItem.LibraryRangeIndex;
                     LibraryRangeIndex[] pathToCurrentRef = importRefItem.Path;
                     HashSet<LibraryDependencyIndex>? currentSuppressions = importRefItem.Suppressions;
-                    IReadOnlyDictionary<LibraryDependencyIndex, VersionRange> currentOverrides = importRefItem.VersionOverrides!;
                     bool directPackageReferenceFromRootProject = importRefItem.IsDirectPackageReferenceFromRootProject;
 
                     if (!findLibraryEntryCache.TryGetValue(currentRefRangeIndex, out Task<FindLibraryEntryResult>? refItemTask))
@@ -271,7 +266,7 @@ namespace NuGet.Commands
                         LibraryRangeIndex chosenRefRangeIndex = chosenResolvedItem.LibraryRangeIndex;
                         LibraryRangeIndex[] pathChosenRef = chosenResolvedItem.Path;
                         bool packageReferenceFromRootProject = chosenResolvedItem.IsDirectPackageReferenceFromRootProject;
-                        List<SuppressionsAndVersionOverrides> chosenSuppressions = chosenResolvedItem.SuppressionsAndVersionOverrides;
+                        List<HashSet<LibraryDependencyIndex>> chosenSuppressions = chosenResolvedItem.Suppressions;
 
                         if (packageReferenceFromRootProject) // direct dependencies always win.
                         {
@@ -457,13 +452,9 @@ namespace NuGet.Commands
                                     Path = pathToCurrentRef,
                                     IsCentrallyPinnedTransitivePackage = isCentrallyPinnedTransitivePackage,
                                     IsDirectPackageReferenceFromRootProject = directPackageReferenceFromRootProject,
-                                    SuppressionsAndVersionOverrides = new List<SuppressionsAndVersionOverrides>
+                                    Suppressions = new List<HashSet<LibraryDependencyIndex>>
                                     {
-                                        new SuppressionsAndVersionOverrides
-                                        {
-                                            Suppressions = currentSuppressions!,
-                                            VersionOverrides = currentOverrides
-                                        }
+                                        currentSuppressions!
                                     }
                                 });
 
@@ -507,13 +498,12 @@ namespace NuGet.Commands
                             chosenResolvedItem.Parents?.Add(pathToCurrentRef[pathToCurrentRef.Length - 1]);
 
                             //If the one we already have chosen is pure, then we can skip this one.  Processing it wont bring any new info
-                            if ((chosenSuppressions.Count == 1) && (chosenSuppressions[0].Suppressions.Count == 0) &&
-                                (chosenSuppressions[0].VersionOverrides.Count == 0))
+                            if (chosenSuppressions.Count == 1 && chosenSuppressions[0].Count == 0)
                             {
                                 continue;
                             }
                             //if the one we are now looking at is pure, then we should replace the one we have chosen because if we're here it isnt pure.
-                            else if ((currentSuppressions!.Count == 0) && (currentOverrides.Count == 0))
+                            else if (currentSuppressions!.Count == 0)
                             {
                                 chosenResolvedItems.Remove(currentRefDependencyIndex);
 
@@ -530,13 +520,9 @@ namespace NuGet.Commands
                                         Path = pathToCurrentRef,
                                         IsCentrallyPinnedTransitivePackage = isCentrallyPinnedTransitivePackage,
                                         IsDirectPackageReferenceFromRootProject = packageReferenceFromRootProject,
-                                        SuppressionsAndVersionOverrides = new List<SuppressionsAndVersionOverrides>
+                                        Suppressions = new List<HashSet<LibraryDependencyIndex>>
                                         {
-                                            new SuppressionsAndVersionOverrides
-                                            {
-                                                Suppressions = currentSuppressions,
-                                                VersionOverrides = currentOverrides
-                                            }
+                                            currentSuppressions,
                                         }
                                     });
                             }
@@ -546,27 +532,7 @@ namespace NuGet.Commands
                                 bool isEqualOrSuperSetDisposition = false;
                                 foreach (var chosenImportDisposition in chosenSuppressions)
                                 {
-                                    bool localIsEqualOrSuperSetDisposition = currentSuppressions.IsSupersetOf(chosenImportDisposition.Suppressions);
-
-                                    bool localIsEqualOrSuperSetOverride = currentOverrides.Count >= chosenImportDisposition.VersionOverrides.Count;
-                                    if (localIsEqualOrSuperSetOverride)
-                                    {
-                                        foreach (var chosenOverride in chosenImportDisposition.VersionOverrides)
-                                        {
-                                            if (!currentOverrides.TryGetValue(chosenOverride.Key, out VersionRange? currentOverride))
-                                            {
-                                                localIsEqualOrSuperSetOverride = false;
-                                                break;
-                                            }
-                                            if (!VersionRangePreciseEquals(currentOverride, chosenOverride.Value))
-                                            {
-                                                localIsEqualOrSuperSetOverride = false;
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                    if (localIsEqualOrSuperSetDisposition && localIsEqualOrSuperSetOverride)
+                                    if (currentSuppressions.IsSupersetOf(chosenImportDisposition))
                                     {
                                         isEqualOrSuperSetDisposition = true;
                                     }
@@ -583,14 +549,11 @@ namespace NuGet.Commands
                                     //case of differently restrictive dispositions or less restrictive... we should technically be able to remove
                                     //a disposition if its less restrictive than another.  But we'll just add it to the list.
                                     chosenResolvedItems.Remove(currentRefDependencyIndex);
-                                    var newImportDisposition =
-                                        new List<SuppressionsAndVersionOverrides> {
-                                            new SuppressionsAndVersionOverrides
-                                            {
-                                                Suppressions = currentSuppressions,
-                                                VersionOverrides = currentOverrides
-                                            }
-                                        };
+                                    List<HashSet<LibraryDependencyIndex>> newImportDisposition = new()
+                                    {
+                                            currentSuppressions
+                                    };
+
                                     newImportDisposition.AddRange(chosenSuppressions);
                                     //slightly evil, but works.. we should just shift to the current thing as ref?
                                     chosenResolvedItems.Add(
@@ -603,7 +566,7 @@ namespace NuGet.Commands
                                             Path = pathToCurrentRef,
                                             IsCentrallyPinnedTransitivePackage = isCentrallyPinnedTransitivePackage,
                                             IsDirectPackageReferenceFromRootProject = packageReferenceFromRootProject,
-                                            SuppressionsAndVersionOverrides = newImportDisposition
+                                            Suppressions = newImportDisposition
                                         });
                                 }
                             }
@@ -624,21 +587,15 @@ namespace NuGet.Commands
                                 Path = pathToCurrentRef,
                                 IsCentrallyPinnedTransitivePackage = isCentrallyPinnedTransitivePackage,
                                 IsDirectPackageReferenceFromRootProject = directPackageReferenceFromRootProject,
-                                SuppressionsAndVersionOverrides = new List<SuppressionsAndVersionOverrides>
+                                Suppressions = new List<HashSet<LibraryDependencyIndex>>
                                 {
-                                    new SuppressionsAndVersionOverrides
-                                    {
-                                        Suppressions = currentSuppressions!,
-                                        VersionOverrides = currentOverrides
-                                    }
+                                    currentSuppressions!
                                 }
                             });
                     }
 
                     HashSet<LibraryDependencyIndex>? suppressions = default;
-                    IReadOnlyDictionary<LibraryDependencyIndex, VersionRange>? finalVersionOverrides = default;
-                    Dictionary<LibraryDependencyIndex, VersionRange>? newOverrides = default;
-                    //Scan for suppressions and overrides
+                    //Scan for suppressions
                     for (int i = 0; i < refItemResult.Item.Data.Dependencies.Count; i++)
                     {
                         var dep = refItemResult.Item.Data.Dependencies[i];
@@ -657,47 +614,6 @@ namespace NuGet.Commands
                             }
                             suppressions.Add(depIndex);
                         }
-
-                        if (isCentralPackageTransitivePinningEnabled)
-                        {
-                            bool isTransitive = currentRefRangeIndex != rootProjectRefItem.LibraryRangeIndex && dep.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package);
-                            bool isPinned = pinnedPackageVersions != null && pinnedPackageVersions.ContainsKey(depIndex);
-
-                            if (dep.VersionOverride != null && (!isTransitive || !isPinned))
-                            {
-                                if (newOverrides == null)
-                                {
-                                    newOverrides = new Dictionary<LibraryDependencyIndex, VersionRange>(OverridesDictionarySize);
-                                }
-                                newOverrides[depIndex] = dep.VersionOverride;
-                            }
-                        }
-                        else if (dep.VersionOverride != null)
-                        {
-                            if (newOverrides == null)
-                            {
-                                newOverrides = new Dictionary<LibraryDependencyIndex, VersionRange>(OverridesDictionarySize);
-                            }
-                            newOverrides[depIndex] = dep.VersionOverride;
-                        }
-                    }
-
-                    // If the override set has been mutated, then add the rest of the overrides.
-                    // Otherwise, just use the incoming set of overrides.
-                    if (newOverrides != null)
-                    {
-                        Dictionary<LibraryDependencyIndex, VersionRange> allOverrides =
-                            new Dictionary<LibraryDependencyIndex, VersionRange>(currentOverrides.Count + newOverrides.Count);
-                        allOverrides.AddRange(currentOverrides);
-                        foreach (var overridePair in newOverrides)
-                        {
-                            allOverrides[overridePair.Key] = overridePair.Value;
-                        }
-                        finalVersionOverrides = allOverrides;
-                    }
-                    else
-                    {
-                        finalVersionOverrides = currentOverrides;
                     }
 
                     // If the suppressions have been mutated, then add the rest of the suppressions.
@@ -758,7 +674,6 @@ namespace NuGet.Commands
                             LibraryRangeIndex = rangeIndex,
                             Path = LibraryRangeInterningTable.CreatePathToRef(pathToCurrentRef, currentRefRangeIndex),
                             Suppressions = suppressions,
-                            VersionOverrides = finalVersionOverrides,
                             IsDirectPackageReferenceFromRootProject = isDirectPackageReferenceFromRootProject,
                             IsCentrallyPinnedTransitivePackage = isCentrallyPinnedTransitiveDependency
                         };
@@ -830,7 +745,6 @@ namespace NuGet.Commands
                                     LibraryRangeIndex = findLibraryCachedAsyncResult.GetRangeIndexForDependency(runtimeDependencyIndex),
                                     Path = LibraryRangeInterningTable.CreatePathToRef(pathToCurrentRef, currentRefRangeIndex),
                                     Suppressions = suppressions,
-                                    VersionOverrides = finalVersionOverrides,
                                     IsDirectPackageReferenceFromRootProject = false,
                                 };
 
@@ -899,7 +813,7 @@ namespace NuGet.Commands
                     LibraryRangeIndex chosenRefRangeIndex = foundItem.LibraryRangeIndex;
                     LibraryRangeIndex[] pathToChosenRef = foundItem.Path;
                     bool directPackageReferenceFromRootProject = foundItem.IsDirectPackageReferenceFromRootProject;
-                    List<SuppressionsAndVersionOverrides> chosenSuppressions = foundItem.SuppressionsAndVersionOverrides;
+                    List<HashSet<LibraryDependencyIndex>> chosenSuppressions = foundItem.Suppressions;
 
                     if (findLibraryEntryCache.TryGetValue(chosenRefRangeIndex, out Task<FindLibraryEntryResult>? nodeTask))
                     {
@@ -962,7 +876,7 @@ namespace NuGet.Commands
                                         continue;
                                     }
 
-                                    if (chosenSuppressions.Count > 0 && chosenSuppressions[0].Suppressions.Contains(depIndex))
+                                    if (chosenSuppressions.Count > 0 && chosenSuppressions[0].Contains(depIndex))
                                     {
                                         continue;
                                     }
@@ -1354,14 +1268,7 @@ namespace NuGet.Commands
 
             public required LibraryRangeIndex[] Path { get; set; }
 
-            public required List<SuppressionsAndVersionOverrides> SuppressionsAndVersionOverrides { get; set; }
-        }
-
-        private struct SuppressionsAndVersionOverrides
-        {
-            public HashSet<LibraryDependencyIndex> Suppressions { get; set; }
-
-            public IReadOnlyDictionary<LibraryDependencyIndex, VersionRange> VersionOverrides { get; set; }
+            public required List<HashSet<LibraryDependencyIndex>> Suppressions { get; set; }
         }
 
         internal sealed class LibraryDependencyInterningTable
@@ -1454,8 +1361,6 @@ namespace NuGet.Commands
             public LibraryRangeIndex[] Path { get; set; } = Array.Empty<LibraryRangeIndex>();
 
             public HashSet<LibraryDependencyIndex>? Suppressions { get; set; }
-
-            public IReadOnlyDictionary<LibraryDependencyIndex, VersionRange>? VersionOverrides { get; set; }
         }
 
         private class FindLibraryEntryResult
