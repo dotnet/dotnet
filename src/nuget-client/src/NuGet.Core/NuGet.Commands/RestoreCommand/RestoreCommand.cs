@@ -1351,7 +1351,7 @@ namespace NuGet.Commands
             context.ProjectLibraryProviders.Add(
                     new PackageSpecReferenceDependencyProvider(updatedExternalProjects, _logger));
 
-            DependencyGraphResolver dependencyGraphResolver = new(_logger, _request, telemetryActivity, _operationId);
+            DependencyGraphResolver dependencyGraphResolver = new(_logger, _request, telemetryActivity);
 
             List<RestoreTargetGraph> graphs = null;
             RuntimeGraph runtimes = null;
