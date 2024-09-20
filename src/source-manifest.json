@@ -61,16 +61,16 @@
       "commitSha": "3044166cd923167204853d1d9f975bc26864f86f"
     },
     {
-      "packageVersion": "17.12.0-preview-24469-01",
+      "packageVersion": "17.12.0-preview-24469-05",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "d9969c69af69f62d628a263b82e3aa637776a4c3"
+      "commitSha": "fea15fbd1fdb509ee69db79420c6cc10044b6b09"
     },
     {
-      "packageVersion": "6.12.0-rc.108",
+      "packageVersion": "6.12.0-rc.110",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "e082545cbba30ec8dc9b759f2d9beea8aabc6215"
+      "commitSha": "c36ca8ffc76879296441df65ab90adbcdfddfae1"
     },
     {
       "packageVersion": "9.0.0-preview.24469.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "170e7d65e448486e156d158492e25c8cdfe78582"
+      "commitSha": "ea5cb00f7509feca644354373f090f18beabf505"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24459.2",
