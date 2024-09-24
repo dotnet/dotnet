@@ -21,7 +21,7 @@ public static class RazorExtensions
         }
 
         FunctionsDirective.Register(builder);
-        InjectDirective.Register(builder);
+        InjectDirective.Register(builder, considerNullabilityEnforcement: false);
         ModelDirective.Register(builder);
         NamespaceDirective.Register(builder);
         PageDirective.Register(builder);

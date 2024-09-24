@@ -22,7 +22,7 @@ public static class RazorExtensions
             throw new ArgumentNullException(nameof(builder));
         }
 
-        InjectDirective.Register(builder);
+        InjectDirective.Register(builder, considerNullabilityEnforcement: true);
         ModelDirective.Register(builder);
         PageDirective.Register(builder);
 

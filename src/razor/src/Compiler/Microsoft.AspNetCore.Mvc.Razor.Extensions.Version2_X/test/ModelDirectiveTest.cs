@@ -250,11 +250,14 @@ public class ModelDirectiveTest : RazorProjectEngineTestBase
     {
         return CreateProjectEngine(b =>
         {
-                // Notice we're not registering the ModelDirective.Pass here so we can run it on demand.
-                b.AddDirective(ModelDirective.Directive);
+            // Notice we're not registering the ModelDirective.Pass here so we can run it on demand.
+            b.AddDirective(ModelDirective.Directive);
 
-                // There's some special interaction with the inherits directive
-                InheritsDirective.Register(b);
+            // There's some special interaction with the inherits directive
+            InheritsDirective.Register(b);
+
+            b.Features.Add(new RazorPageDocumentClassifierPass());
+            b.Features.Add(new MvcViewDocumentClassifierPass());
 
             b.Features.Add(new DesignTimeOptionsFeature(designTime));
         }).Engine;

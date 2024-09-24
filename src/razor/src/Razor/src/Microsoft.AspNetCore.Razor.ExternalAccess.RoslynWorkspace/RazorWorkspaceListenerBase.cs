@@ -279,7 +279,7 @@ public abstract class RazorWorkspaceListenerBase : IDisposable
     private static async Task ReportUpdateProjectAsync(Stream stream, Project project, ILogger logger, CancellationToken cancellationToken)
     {
         logger.LogTrace("Serializing information for {projectId}", project.Id);
-        var projectInfo = await RazorProjectInfoFactory.ConvertAsync(project, logger, cancellationToken).ConfigureAwait(false);
+        var projectInfo = await RazorProjectInfoFactory.ConvertAsync(project, cancellationToken).ConfigureAwait(false);
         if (projectInfo is null)
         {
             logger.LogTrace("Skipped writing data for {projectId}", project.Id);

@@ -159,6 +159,10 @@ public sealed class RazorCodeGenerationOptionsBuilder
         ArgHelper.ThrowIfNull(configuration);
 
         Configuration = configuration;
+        if (configuration.SuppressAddComponentParameter)
+        {
+            _flags.SetFlag(RazorCodeGenerationOptionsFlags.SuppressAddComponentParameter);
+        }
     }
 
     public RazorCodeGenerationOptionsBuilder(RazorCodeGenerationOptionsFlags flags)
