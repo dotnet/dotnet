@@ -12,8 +12,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- arcade -->
-    <MicrosoftDotNetBuildTasksArchivesVersion>9.0.0-beta.24466.2</MicrosoftDotNetBuildTasksArchivesVersion>
-    <MicrosoftDotNetBuildTasksInstallersVersion>9.0.0-beta.24466.2</MicrosoftDotNetBuildTasksInstallersVersion>
+    <MicrosoftDotNetBuildTasksArchivesVersion>9.0.0-beta.24473.1</MicrosoftDotNetBuildTasksArchivesVersion>
+    <MicrosoftDotNetBuildTasksInstallersVersion>9.0.0-beta.24473.1</MicrosoftDotNetBuildTasksInstallersVersion>
     <!-- corefx -->
     <SystemDataDataSetExtensionsVersion>4.5.0</SystemDataDataSetExtensionsVersion>
     <SystemDataSqlClientVersion>4.8.6</SystemDataSqlClientVersion>
@@ -63,9 +63,9 @@
     <!-- wcf -->
     <SystemServiceModelVersion>4.10.0</SystemServiceModelVersion>
     <!-- winforms -->
-    <MicrosoftPrivateWinformsVersion>9.0.0-rtm.24472.2</MicrosoftPrivateWinformsVersion>
-    <SystemDrawingCommonVersion>9.0.0-rtm.24472.2</SystemDrawingCommonVersion>
+    <MicrosoftPrivateWinformsVersion>9.0.0-rtm.24473.2</MicrosoftPrivateWinformsVersion>
+    <SystemDrawingCommonVersion>9.0.0-rtm.24473.2</SystemDrawingCommonVersion>
     <!-- wpf -->
-    <MicrosoftDotNetWpfGitHubVersion>9.0.0-rtm.24472.2</MicrosoftDotNetWpfGitHubVersion>
+    <MicrosoftDotNetWpfGitHubVersion>9.0.0-rtm.24474.2</MicrosoftDotNetWpfGitHubVersion>
   </PropertyGroup>
 </Project>
