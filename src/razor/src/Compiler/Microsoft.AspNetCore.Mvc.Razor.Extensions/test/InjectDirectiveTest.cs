@@ -179,6 +179,9 @@ public class InjectDirectiveTest : RazorProjectEngineTestBase
         // Notice we're not registering the InjectDirective.Pass here so we can run it on demand.
         builder.AddDirective(InjectDirective.Directive);
         builder.AddDirective(ModelDirective.Directive);
+
+        builder.Features.Add(new RazorPageDocumentClassifierPass());
+        builder.Features.Add(new MvcViewDocumentClassifierPass());
     }
 
     private DocumentIntermediateNode CreateIRDocument(RazorEngine engine, RazorCodeDocument codeDocument)
@@ -193,9 +196,7 @@ public class InjectDirectiveTest : RazorProjectEngineTestBase
             }
         }
 
-        var irDocument = codeDocument.GetDocumentIntermediateNode();
-        irDocument.DocumentKind = MvcViewDocumentClassifierPass.MvcViewDocumentKind;
-        return irDocument;
+        return codeDocument.GetDocumentIntermediateNode();
     }
 
     private class ClassNodeVisitor : IntermediateNodeWalker

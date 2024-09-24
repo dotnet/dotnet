@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -44,6 +43,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
             var razorSourceGeneratorOptions = analyzerConfigOptions
                 .Combine(parseOptions)
+                .Combine(metadataRefs.Collect())
                 .SuppressIfNeeded(isGeneratorSuppressed)
                 .Select(ComputeRazorSourceGeneratorOptions)
                 .ReportDiagnostics(context);
@@ -235,30 +235,16 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             var razorHostOutputsEnabled = analyzerConfigOptions.CheckGlobalFlagSet("EnableRazorHostOutputs");
             var withOptionsDesignTime = withOptions.EmptyOrCachedWhen(razorHostOutputsEnabled, false);
 
-            var isAddComponentParameterAvailable = metadataRefs
-                .Where(r => r.Display is { } display && display.EndsWith("Microsoft.AspNetCore.Components.dll", StringComparison.Ordinal))
-                .Collect()
-                .Select((refs, _) =>
-                {
-                    var compilation = CSharpCompilation.Create("components", references: refs);
-                    return compilation.GetTypesByMetadataName("Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder")
-                        .Any(static t =>
-                            t.DeclaredAccessibility == Accessibility.Public &&
-                            t.GetMembers("AddComponentParameter")
-                                .Any(static m => m.DeclaredAccessibility == Accessibility.Public));
-                });
-
             IncrementalValuesProvider<(string, SourceGeneratorRazorCodeDocument)> processed(bool designTime)
             {
                 return (designTime ? withOptionsDesignTime : withOptions)
-                    .Combine(isAddComponentParameterAvailable)
                     .Select((pair, _) =>
                     {
-                        var (((sourceItem, imports), razorSourceGeneratorOptions), isAddComponentParameterAvailable) = pair;
+                        var ((sourceItem, imports), razorSourceGeneratorOptions) = pair;
 
                         RazorSourceGeneratorEventSource.Log.ParseRazorDocumentStart(sourceItem.RelativePhysicalPath);
 
-                        var projectEngine = GetGenerationProjectEngine(sourceItem, imports, razorSourceGeneratorOptions, isAddComponentParameterAvailable);
+                        var projectEngine = GetGenerationProjectEngine(sourceItem, imports, razorSourceGeneratorOptions);
 
                         var document = projectEngine.ProcessInitialParse(sourceItem, designTime);
 

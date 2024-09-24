@@ -518,7 +518,12 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
 
             case CloseDocumentAction(var textLoader):
                 {
-                    documentState.AssumeNotNull();
+                    // If the document being closed has already been removed from the project then we no-op
+                    if (documentState is null)
+                    {
+                        return originalEntry;
+                    }
+
                     var state = originalEntry.State.WithChangedHostDocument(
                         documentState.HostDocument,
                         () => textLoader.LoadTextAndVersionAsync(s_loadTextOptions, cancellationToken: default));
@@ -562,7 +567,11 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
 
             case DocumentTextChangedAction(var sourceText):
                 {
-                    documentState.AssumeNotNull();
+                    // If the document being changed has already been removed from the project then we no-op
+                    if (documentState is null)
+                    {
+                        return originalEntry;
+                    }
 
                     if (documentState.TryGetText(out var olderText) &&
                         documentState.TryGetTextVersion(out var olderVersion))

@@ -1035,25 +1035,6 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     }
 
     [Fact]
-    public async Task UpdateDocument_ThrowsForUnknownDocument()
-    {
-        // Arrange
-        const string ProjectFilePath = "C:/path/to/project.csproj";
-        const string IntermediateOutputPath = "C:/path/to/obj";
-        const string RootNamespace = "TestRootNamespace";
-        const string DocumentFilePath = "C:/path/to/document.cshtml";
-
-        await _projectService.AddProjectAsync(
-            ProjectFilePath, IntermediateOutputPath, RazorConfiguration.Default, RootNamespace, displayName: null, DisposalToken);
-
-        // Act
-        await Assert.ThrowsAnyAsync<InvalidOperationException>(() =>
-        {
-            return _projectService.UpdateDocumentAsync(DocumentFilePath, s_emptyText.Replace(0, 0, "Hello World"), DisposalToken);
-        });
-    }
-
-    [Fact]
     public async Task AddProject_AddsProjectWithDefaultConfiguration()
     {
         // Arrange
