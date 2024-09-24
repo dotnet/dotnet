@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Text;
 
@@ -46,5 +45,5 @@ internal static partial class VsLspExtensions
         => new(text.GetTextSpan(edit.Range), edit.NewText);
 
     public static TextEdit GetTextEdit(this SourceText text, TextChange change)
-        => VsLspFactory.CreateTextEdit(text.GetRange(change.Span), change.NewText.AssumeNotNull());
+        => VsLspFactory.CreateTextEdit(text.GetRange(change.Span), change.NewText ?? "");
 }

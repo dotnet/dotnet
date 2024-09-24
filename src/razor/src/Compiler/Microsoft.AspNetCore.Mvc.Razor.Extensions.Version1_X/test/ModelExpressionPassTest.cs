@@ -156,6 +156,8 @@ public class ModelExpressionPassTest
         return RazorProjectEngine.Create(b =>
         {
             b.Features.Add(new TestTagHelperFeature(tagHelpers));
+            b.Features.Add(new RazorPageDocumentClassifierPass());
+            b.Features.Add(new MvcViewDocumentClassifierPass());
         }).Engine;
     }
 

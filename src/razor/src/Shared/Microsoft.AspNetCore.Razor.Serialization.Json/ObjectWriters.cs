@@ -35,6 +35,9 @@ internal static class ObjectWriters
 
         writer.Write(nameof(value.LanguageVersion), languageVersionText);
 
+        writer.WriteIfNotFalse(nameof(value.SuppressAddComponentParameter), value.SuppressAddComponentParameter);
+        writer.WriteIfNotTrue(nameof(value.UseConsolidatedMvcViews), value.UseConsolidatedMvcViews);
+
         writer.WriteArrayIfNotNullOrEmpty(nameof(value.Extensions), value.Extensions, static (w, v) => w.Write(v.ExtensionName));
     }
 

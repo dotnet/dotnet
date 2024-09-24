@@ -249,8 +249,8 @@ public class ModelDirectiveTest : RazorProjectEngineTestBase
     {
         return CreateProjectEngine(b =>
         {
-                // Notice we're not registering the ModelDirective.Pass here so we can run it on demand.
-                b.AddDirective(ModelDirective.Directive);
+            // Notice we're not registering the ModelDirective.Pass here so we can run it on demand.
+            b.AddDirective(ModelDirective.Directive);
 
             b.Features.Add(new RazorPageDocumentClassifierPass());
             b.Features.Add(new MvcViewDocumentClassifierPass());

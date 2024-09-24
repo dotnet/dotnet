@@ -118,6 +118,7 @@ namespace NuGet.Commands
         private const string AuditDurationTotal = "Audit.Duration.Total";
 
         private readonly bool _enableNewDependencyResolver;
+        private readonly bool _isLockFileEnabled;
 
         public RestoreCommand(RestoreRequest request)
         {
@@ -144,8 +145,8 @@ namespace NuGet.Commands
             ParentId = request.ParentId;
 
             _success = !request.AdditionalMessages?.Any(m => m.Level == LogLevel.Error) ?? true;
-
-            _enableNewDependencyResolver = _request.Project.RuntimeGraph.Supports.Count == 0 && !_request.Project.RestoreMetadata.UseLegacyDependencyResolver;
+            _isLockFileEnabled = PackagesLockFileUtilities.IsNuGetLockFileEnabled(_request.Project);
+            _enableNewDependencyResolver = _request.Project.RuntimeGraph.Supports.Count == 0 && !_isLockFileEnabled && !_request.Project.RestoreMetadata.UseLegacyDependencyResolver;
         }
 
         public Task<RestoreResult> ExecuteAsync()
@@ -166,8 +167,7 @@ namespace NuGet.Commands
                 telemetry.TelemetryEvent[HttpSourcesCount] = httpSourcesCount;
                 telemetry.TelemetryEvent[LocalSourcesCount] = _request.DependencyProviders.RemoteProviders.Count - httpSourcesCount;
                 telemetry.TelemetryEvent[FallbackFoldersCount] = _request.DependencyProviders.FallbackPackageFolders.Count;
-                bool isLockFileEnabled = PackagesLockFileUtilities.IsNuGetLockFileEnabled(_request.Project);
-                telemetry.TelemetryEvent[IsLockFileEnabled] = isLockFileEnabled;
+                telemetry.TelemetryEvent[IsLockFileEnabled] = _isLockFileEnabled;
                 telemetry.TelemetryEvent[UseLegacyDependencyResolver] = _request.Project.RestoreMetadata.UseLegacyDependencyResolver;
                 telemetry.TelemetryEvent[UsedLegacyDependencyResolver] = !_enableNewDependencyResolver;
 
@@ -436,7 +436,7 @@ namespace NuGet.Commands
                         // clear out the existing lock file so that we don't over-write the same file
                         packagesLockFile = null;
                     }
-                    else if (isLockFileEnabled)
+                    else if (_isLockFileEnabled)
                     {
                         if (regenerateLockFile)
                         {
