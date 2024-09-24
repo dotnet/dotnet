@@ -7,16 +7,16 @@
       "commitSha": "04b9022eba9c184a8036328af513c22e6949e8b6"
     },
     {
-      "packageVersion": "8.2.0-preview.1.24428.5",
+      "packageVersion": "8.2.1-preview.1.24473.4",
       "path": "aspire",
       "remoteUri": "https://github.com/dotnet/aspire",
-      "commitSha": "75fdcff28495bdd643f6323133a7d411df71ab70"
+      "commitSha": "137e8dcae0a7b22c05f48c4e7a5d36fe3f00a8d7"
     },
     {
-      "packageVersion": "9.0.0-rtm.24473.4",
+      "packageVersion": "9.0.0-rtm.24473.16",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "6bbc4f132a46f0ad5ec931708badb9b1256ecb51"
+      "commitSha": "91ef755ae08f27b395d73be00d245d8095f90143"
     },
     {
       "packageVersion": "0.11.5-alpha.24467.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "c9b26351af74ba0d830b2e359325081589a3157e"
+      "commitSha": "af906b0cf1d5a507b662bedeca1d26ae0b53ea11"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24467.1",
