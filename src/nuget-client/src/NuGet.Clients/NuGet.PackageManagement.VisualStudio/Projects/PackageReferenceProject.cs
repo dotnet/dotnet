@@ -220,23 +220,14 @@ namespace NuGet.PackageManagement.VisualStudio
                         }
 
                         // If the project has project references, we need to compute transitive origins for their packages
-                        List<LockFileTargetLibrary> projectReferences = targetsList.SelectMany(t => t.Libraries).Where(l => l.Type == LibraryType.Project).ToList();
-                        List<PackageReference> calculatedLibraryReferences = new List<PackageReference>(projectReferences.Count + calculatedInstalledPackages.Count);
-                        if (projectReferences.Count > 0)
-                        {
-                            foreach (var projectReference in projectReferences)
-                            {
-                                var packageReference = new PackageReference(
-                                    identity: new PackageIdentity(projectReference.Name, projectReference.Version),
-                                    targetFramework: new NuGetFramework(projectReference.Framework),
-                                    userInstalled: false,
-                                    developmentDependency: false,
-                                    requireReinstallation: false,
-                                    allowedVersions: new VersionRange(projectReference.Version));
-                                calculatedLibraryReferences.Add(packageReference);
-                            }
-                        }
+                        List<PackageReference> projectReferences = packageSpec
+                            .TargetFrameworks
+                            .SelectMany(f => GetProjectPackageReferences(f.FrameworkName, targetsList))
+                            .GroupBy(p => p.PackageIdentity)
+                            .Select(g => g.OrderBy(p => p.TargetFramework, FrameworkSorter).First())
+                            .ToList();
 
+                        List<PackageReference> calculatedLibraryReferences = new List<PackageReference>(projectReferences);
                         calculatedLibraryReferences.AddRange(calculatedInstalledPackages);
 
                         // Compute Transitive Origins
@@ -296,6 +287,24 @@ namespace NuGet.PackageManagement.VisualStudio
             IsInstalledAndTransitiveComputationNeeded = false;
 
             return new ProjectPackages(calculatedInstalledPackages, transitivePkgsResult);
+        }
+
+
+        private static IEnumerable<PackageReference> GetProjectPackageReferences(NuGetFramework nuGetFramework, IList<LockFileTarget> targetsList)
+        {
+            var packageReferences = targetsList
+                .Where(t => t.TargetFramework.Equals(nuGetFramework))
+                .SelectMany(lib => lib.Libraries)
+                .Where(l => l.Type == "project")
+                .Select(package => new PackageReference(
+                    new PackageIdentity(package.Name, package.Version),
+                    targetFramework: nuGetFramework,
+                    userInstalled: false,
+                    developmentDependency: false,
+                    requireReinstallation: false,
+                    allowedVersions: new VersionRange(package.Version)));
+
+            return packageReferences;
         }
 
         protected abstract IEnumerable<PackageReference> ResolvedInstalledPackagesList(IEnumerable<LibraryDependency> libraries, NuGetFramework targetFramework, IList<LockFileTarget> targets, T installedPackages);
