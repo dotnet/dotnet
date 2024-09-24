@@ -45,18 +45,19 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <BinaryenDir>$(ProjectDir)\binaryen\$(VersionPrefix)</BinaryenDir>
+    <!-- we're using major.minor.0 version here instead of VersionPrefix so we don't need to bump the versions in emsdk_manifest.json in servicing all the time -->
+    <BinaryenDir>$(ProjectDir)\binaryen\$(MajorVersion).$(MinorVersion).0</BinaryenDir>
     <HostBinaryenDir Condition="'$(BuildArchitecture)' == '$(TargetArchitecture)'">$(BinaryenDir)</HostBinaryenDir>
     <HostBinaryenDir Condition="'$(BuildArchitecture)' != '$(TargetArchitecture)' or '$(PackageTargetOS)' != '$(PackageHostOS)'">$(BaseIntermediateOutputPath)\host\binaryen\$(BuildArchitecture)</HostBinaryenDir>
-    <NodeDir>$(ProjectDir)\node\$(VersionPrefix)</NodeDir>
+    <NodeDir>$(ProjectDir)\node\$(MajorVersion).$(MinorVersion).0</NodeDir>
     <HostNodeDir Condition="'$(BuildArchitecture)' == '$(TargetArchitecture)'">$(NodeDir)</HostNodeDir>
     <HostNodeDir Condition="'$(BuildArchitecture)' != '$(TargetArchitecture)' or '$(PackageTargetOS)' != '$(PackageHostOS)'">$(BaseIntermediateOutputPath)\host\node\$(BuildArchitecture)</HostNodeDir>
-    <PythonDir>$(ProjectDir)\python\$(VersionPrefix)</PythonDir>
+    <PythonDir>$(ProjectDir)\python\$(MajorVersion).$(MinorVersion).0</PythonDir>
     <HostPythonDir Condition="'$(BuildArchitecture)' == '$(TargetArchitecture)'">$(PythonDir)</HostPythonDir>
     <HostPythonDir Condition="'$(BuildArchitecture)' != '$(TargetArchitecture)' or '$(PackageTargetOS)' != '$(PackageHostOS)'">$(BaseIntermediateOutputPath)\host\python\$(BuildArchitecture)</HostPythonDir>
-    <LLVMDir>$(ProjectDir)\llvm\$(VersionPrefix)</LLVMDir>
+    <LLVMDir>$(ProjectDir)\llvm\$(MajorVersion).$(MinorVersion).0</LLVMDir>
     <HostLLVMDir Condition="'$(BuildArchitecture)' == '$(TargetArchitecture)'">$(LLVMDir)</HostLLVMDir>
     <HostLLVMDir Condition="'$(BuildArchitecture)' != '$(TargetArchitecture)' or '$(PackageTargetOS)' != '$(PackageHostOS)'">$(BaseIntermediateOutputPath)\host\llvm\$(BuildArchitecture)</HostLLVMDir>
-    <EmscriptenDir>$(ProjectDir)\emscripten\$(VersionPrefix)</EmscriptenDir>
+    <EmscriptenDir>$(ProjectDir)\emscripten\$(MajorVersion).$(MinorVersion).0</EmscriptenDir>
   </PropertyGroup>
 </Project>
