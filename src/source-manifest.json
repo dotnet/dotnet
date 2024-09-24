@@ -43,10 +43,10 @@
       "commitSha": "5ce78f66d89ea529e459abddb129ab36cb5bd936"
     },
     {
-      "packageVersion": "8.0.9-servicing.24418.3",
+      "packageVersion": "8.0.10-servicing.24452.1",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "d6672570f0fde2a4a3c7e65d60cec9f8406b039c"
+      "commitSha": "91b783edc518e9ea0c0e883016b02261893389db"
     },
     {
       "packageVersion": "8.1.546807",
@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "e95e057c0586c1b35a67fb5fa34949678e7cf6b3"
+      "commitSha": "87a66bb3d1cd008e190519ec85fd3c14c8c7f667"
     },
     {
       "packageVersion": "17.8.5-preview-24055-02",
