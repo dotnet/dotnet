@@ -19,7 +19,7 @@ public class InjectTargetExtensionTest
     {
         // Arrange
         using var context = TestCodeRenderingContext.CreateRuntime();
-        var target = new InjectTargetExtension();
+        var target = new InjectTargetExtension(considerNullabilityEnforcement: true);
         var node = new InjectIntermediateNode()
         {
             TypeName = "PropertyType",
@@ -45,7 +45,7 @@ public class InjectTargetExtensionTest
     {
         // Arrange
         using var context = TestCodeRenderingContext.CreateRuntime();
-        var target = new InjectTargetExtension();
+        var target = new InjectTargetExtension(considerNullabilityEnforcement: true);
         var node = new InjectIntermediateNode()
         {
             TypeName = "PropertyType<ModelType>",

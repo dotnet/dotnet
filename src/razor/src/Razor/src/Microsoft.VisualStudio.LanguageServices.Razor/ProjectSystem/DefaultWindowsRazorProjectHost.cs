@@ -166,7 +166,7 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
             languageVersion,
             configurationItem.Key,
             extensions,
-            languageServerFlags);
+            LanguageServerFlags: languageServerFlags);
 
         return true;
     }

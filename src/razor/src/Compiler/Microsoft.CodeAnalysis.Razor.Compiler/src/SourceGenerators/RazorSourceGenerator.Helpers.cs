@@ -87,8 +87,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
         private static SourceGeneratorProjectEngine GetGenerationProjectEngine(
             SourceGeneratorProjectItem item,
             IEnumerable<SourceGeneratorProjectItem> imports,
-            RazorSourceGenerationOptions razorSourceGeneratorOptions,
-            bool isAddComponentParameterAvailable)
+            RazorSourceGenerationOptions razorSourceGeneratorOptions)
         {
             var fileSystem = new VirtualRazorProjectFileSystem();
             fileSystem.Add(item);
@@ -107,7 +106,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     options.SuppressMetadataSourceChecksumAttributes = !razorSourceGeneratorOptions.GenerateMetadataSourceChecksumAttributes;
                     options.SupportLocalizedComponentNames = razorSourceGeneratorOptions.SupportLocalizedComponentNames;
                     options.SuppressUniqueIds = razorSourceGeneratorOptions.TestSuppressUniqueIds;
-                    options.SuppressAddComponentParameter = !isAddComponentParameterAvailable;
+                    options.SuppressAddComponentParameter = razorSourceGeneratorOptions.Configuration.SuppressAddComponentParameter;
                 }));
 
                 CompilerFeatures.Register(b);

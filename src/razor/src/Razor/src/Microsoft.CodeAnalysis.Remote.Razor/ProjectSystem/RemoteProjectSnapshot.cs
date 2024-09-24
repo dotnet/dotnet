@@ -18,7 +18,9 @@ using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Compiler.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 
@@ -29,8 +31,8 @@ internal class RemoteProjectSnapshot : IProjectSnapshot
     private readonly Project _project;
     private readonly DocumentSnapshotFactory _documentSnapshotFactory;
     private readonly ITelemetryReporter _telemetryReporter;
-    private readonly Lazy<RazorConfiguration> _lazyConfiguration;
-    private readonly Lazy<RazorProjectEngine> _lazyProjectEngine;
+    private readonly AsyncLazy<RazorConfiguration> _lazyConfiguration;
+    private readonly AsyncLazy<RazorProjectEngine> _lazyProjectEngine;
 
     private ImmutableArray<TagHelperDescriptor> _tagHelpers;
 
@@ -41,11 +43,12 @@ internal class RemoteProjectSnapshot : IProjectSnapshot
         _telemetryReporter = telemetryReporter;
         Key = _project.ToProjectKey();
 
-        _lazyConfiguration = new Lazy<RazorConfiguration>(CreateRazorConfiguration);
-        _lazyProjectEngine = new Lazy<RazorProjectEngine>(() =>
+        _lazyConfiguration = new AsyncLazy<RazorConfiguration>(CreateRazorConfigurationAsync, joinableTaskFactory: null);
+        _lazyProjectEngine = new AsyncLazy<RazorProjectEngine>(async () =>
         {
+            var configuration = await _lazyConfiguration.GetValueAsync();
             return ProjectEngineFactories.DefaultProvider.Create(
-                _lazyConfiguration.Value,
+                configuration,
                 rootDirectoryPath: Path.GetDirectoryName(FilePath).AssumeNotNull(),
                 configure: builder =>
                 {
@@ -53,7 +56,8 @@ internal class RemoteProjectSnapshot : IProjectSnapshot
                     builder.SetCSharpLanguageVersion(CSharpLanguageVersion);
                     builder.SetSupportLocalizedComponentNames();
                 });
-        });
+        },
+        joinableTaskFactory: null);
     }
 
     public RazorConfiguration Configuration => throw new InvalidOperationException("Should not be called for cohosted projects.");
@@ -96,7 +100,8 @@ internal class RemoteProjectSnapshot : IProjectSnapshot
     {
         if (_tagHelpers.IsDefault)
         {
-            var computedTagHelpers = await ComputeTagHelpersAsync(_project, _lazyProjectEngine.Value, _telemetryReporter, cancellationToken);
+            var projectEngine = await _lazyProjectEngine.GetValueAsync(cancellationToken);
+            var computedTagHelpers = await ComputeTagHelpersAsync(_project, projectEngine, _telemetryReporter, cancellationToken);
             ImmutableInterlocked.InterlockedInitialize(ref _tagHelpers, computedTagHelpers);
         }
 
@@ -138,9 +143,9 @@ internal class RemoteProjectSnapshot : IProjectSnapshot
     /// NOTE: To be called only from CohostDocumentSnapshot.GetGeneratedOutputAsync(). Will be removed when that method uses the source generator directly.
     /// </summary>
     /// <returns></returns>
-    internal RazorProjectEngine GetProjectEngine_CohostOnly() => _lazyProjectEngine.Value;
+    internal Task<RazorProjectEngine> GetProjectEngine_CohostOnlyAsync(CancellationToken cancellationToken) => _lazyProjectEngine.GetValueAsync(cancellationToken);
 
-    private RazorConfiguration CreateRazorConfiguration()
+    private async Task<RazorConfiguration> CreateRazorConfigurationAsync()
     {
         // See RazorSourceGenerator.RazorProviders.cs
 
@@ -156,6 +161,17 @@ internal class RemoteProjectSnapshot : IProjectSnapshot
             razorLanguageVersion = RazorLanguageVersion.Latest;
         }
 
-        return new(razorLanguageVersion, configurationName, Extensions: [], UseConsolidatedMvcViews: true);
+        var compilation = await _project.GetCompilationAsync().ConfigureAwait(false);
+
+        var suppressAddComponentParameter = compilation is null
+            ? false
+            : !compilation.HasAddComponentParameter();
+
+        return new(
+            razorLanguageVersion,
+            configurationName,
+            Extensions: [],
+            UseConsolidatedMvcViews: true,
+            suppressAddComponentParameter);
     }
 }

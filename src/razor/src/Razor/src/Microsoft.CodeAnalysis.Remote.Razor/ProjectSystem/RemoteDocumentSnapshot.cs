@@ -64,7 +64,7 @@ internal class RemoteDocumentSnapshot(TextDocument textDocument, RemoteProjectSn
         // and simply compiles when asked, and if a new document snapshot comes in, we compile again. This is presumably worse for perf
         // but since we don't expect users to ever use cohosting without source generators, it's fine for now.
 
-        var projectEngine = _projectSnapshot.GetProjectEngine_CohostOnly();
+        var projectEngine = await _projectSnapshot.GetProjectEngine_CohostOnlyAsync(CancellationToken.None).ConfigureAwait(false);
         var tagHelpers = await _projectSnapshot.GetTagHelpersAsync(CancellationToken.None).ConfigureAwait(false);
         var imports = await DocumentState.GetImportsAsync(this, projectEngine).ConfigureAwait(false);
 

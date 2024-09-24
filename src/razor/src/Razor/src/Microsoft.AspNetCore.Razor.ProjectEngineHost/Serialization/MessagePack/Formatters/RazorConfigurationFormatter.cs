@@ -22,14 +22,10 @@ internal sealed class RazorConfigurationFormatter : ValueFormatter<RazorConfigur
 
         var configurationName = CachedStringFormatter.Instance.Deserialize(ref reader, options) ?? string.Empty;
         var languageVersionText = CachedStringFormatter.Instance.Deserialize(ref reader, options) ?? string.Empty;
+        var suppressAddComponentParameter = reader.ReadBoolean();
+        var useConsolidatedMvcViews = reader.ReadBoolean();
 
-        count -= 2;
-
-        if (reader.NextMessagePackType is MessagePackType.Boolean)
-        {
-            reader.ReadBoolean(); // forceRuntimeCodeGeneration
-            count -= 1;
-        }
+        count -= 4;
 
         using var builder = new PooledArrayBuilder<RazorExtension>();
 
@@ -45,14 +41,19 @@ internal sealed class RazorConfigurationFormatter : ValueFormatter<RazorConfigur
             ? version
             : RazorLanguageVersion.Version_2_1;
 
-        return new(languageVersion, configurationName, extensions);
+        return new(
+            languageVersion,
+            configurationName,
+            extensions,
+            UseConsolidatedMvcViews: useConsolidatedMvcViews,
+            SuppressAddComponentParameter: suppressAddComponentParameter);
     }
 
     public override void Serialize(ref MessagePackWriter writer, RazorConfiguration value, SerializerCachingOptions options)
     {
-        // Write 3 values + 1 value per extension.
+        // Write 4 values + 1 value per extension.
         var extensions = value.Extensions;
-        var count = extensions.Length + 2;
+        var count = extensions.Length + 4;
 
         writer.WriteArrayHeader(count);
 
@@ -67,7 +68,10 @@ internal sealed class RazorConfigurationFormatter : ValueFormatter<RazorConfigur
             CachedStringFormatter.Instance.Serialize(ref writer, value.LanguageVersion.ToString(), options);
         }
 
-        count -= 2;
+        writer.Write(value.SuppressAddComponentParameter);
+        writer.Write(value.UseConsolidatedMvcViews);
+
+        count -= 4;
 
         for (var i = 0; i < count; i++)
         {

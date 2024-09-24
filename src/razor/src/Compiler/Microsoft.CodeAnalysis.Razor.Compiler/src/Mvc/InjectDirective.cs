@@ -27,7 +27,7 @@ public static class InjectDirective
             builder.Description = RazorExtensionsResources.InjectDirective_Description;
         });
 
-    public static RazorProjectEngineBuilder Register(RazorProjectEngineBuilder builder)
+    public static RazorProjectEngineBuilder Register(RazorProjectEngineBuilder builder, bool considerNullabilityEnforcement)
     {
         if (builder == null)
         {
@@ -36,7 +36,7 @@ public static class InjectDirective
 
         builder.AddDirective(Directive);
         builder.Features.Add(new Pass());
-        builder.AddTargetExtension(new InjectTargetExtension());
+        builder.AddTargetExtension(new InjectTargetExtension(considerNullabilityEnforcement));
         return builder;
     }
 
