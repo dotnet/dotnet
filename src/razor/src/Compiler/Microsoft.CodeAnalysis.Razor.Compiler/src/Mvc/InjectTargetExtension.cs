@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Razor.Language.Extensions;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
-public class InjectTargetExtension : IInjectTargetExtension
+public class InjectTargetExtension(bool considerNullabilityEnforcement) : IInjectTargetExtension
 {
     private const string RazorInjectAttribute = "[global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]";
 
@@ -42,7 +42,7 @@ public class InjectTargetExtension : IInjectTargetExtension
         else if (!node.IsMalformed)
         {
             var property = $"public {node.TypeName} {node.MemberName} {{ get; private set; }}";
-            if (!context.Options.SuppressNullabilityEnforcement)
+            if (considerNullabilityEnforcement && !context.Options.SuppressNullabilityEnforcement)
             {
                 property += " = default!;";
             }
@@ -61,7 +61,7 @@ public class InjectTargetExtension : IInjectTargetExtension
 
             void WriteProperty()
             {
-                if (!context.Options.SuppressNullabilityEnforcement)
+                if (considerNullabilityEnforcement && !context.Options.SuppressNullabilityEnforcement)
                 {
                     context.CodeWriter.WriteLine("#nullable restore");
                 }
@@ -70,7 +70,7 @@ public class InjectTargetExtension : IInjectTargetExtension
                     .WriteLine(RazorInjectAttribute)
                     .WriteLine(property);
 
-                if (!context.Options.SuppressNullabilityEnforcement)
+                if (considerNullabilityEnforcement && !context.Options.SuppressNullabilityEnforcement)
                 {
                     context.CodeWriter.WriteLine("#nullable disable");
                 }

@@ -59,15 +59,16 @@ internal class ComponentPageDirectivePass : IntermediateNodePassBase, IRazorDire
             var pageDirective = (DirectiveIntermediateNode)directives[i].Node;
 
             // The parser also adds errors for invalid syntax, we just need to not crash.
-            var routeToken = pageDirective.Tokens.FirstOrDefault();
+            var routeToken = pageDirective.Tokens.First();
 
-            if (routeToken is { Content: ['"', '/', .., '"'] content })
-            {
-                @namespace.Children.Insert(index++, new RouteAttributeExtensionNode(content) { Source = routeToken.Source });
-            }
-            else
+            if (routeToken is not { Content: ['"', '/', .., '"'] })
             {
                 pageDirective.Diagnostics.Add(ComponentDiagnosticFactory.CreatePageDirective_MustSpecifyRoute(pageDirective.Source));
+            }
+
+            if (!codeDocument.GetCodeGenerationOptions().DesignTime || pageDirective.Diagnostics.Count == 0)
+            {
+                @namespace.Children.Insert(index++, new RouteAttributeExtensionNode(routeToken.Content) { Source = routeToken.Source });
             }
         }
     }
