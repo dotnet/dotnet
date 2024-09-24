@@ -16,10 +16,6 @@
     <SkipIndexCheck>true</SkipIndexCheck>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <WorkloadVersionSuffix Condition="'$(DotNetFinalVersionKind)' != 'release'">-$(PreReleaseVersionLabel).$(PreReleaseVersionIteration)</WorkloadVersionSuffix>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageIndex Include="$(PackageIndexFile)" />
   </ItemGroup>
