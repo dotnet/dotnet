@@ -149,6 +149,7 @@
       "description": "Select the SDK extensions profile when using MSTest Runner. More information at https://aka.ms/mstest/sdk/extensions-profile",
       "isEnabled": "TestRunner == MSTest",
       "defaultValue": "Default",
+      "replaces": "$(ExtensionsProfile)",
       "choices": [
         {
           "choice": "Default",
