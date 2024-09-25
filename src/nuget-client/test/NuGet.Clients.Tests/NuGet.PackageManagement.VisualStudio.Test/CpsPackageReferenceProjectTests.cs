@@ -4282,6 +4282,26 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
+        public async Task GetInstalledAndTransitivePackagesAsync_NoRestore_ReturnsOnlyTopLevelPackages()
+        {
+            using var rootDir = new SimpleTestPathContext();
+            await CreatePackagesAsync(rootDir, packageAVersion: "1.0.0"); // PackageA is top level package with a dependency on PackageB
+            IProjectSystemCache cache = new ProjectSystemCache();
+
+            // Arrange
+            PackageSpec initialProjectSpec = ProjectTestHelpers.GetPackageSpec("MyProject", rootDir.SolutionRoot, framework: "net472", dependencyName: "PackageA");
+
+            CpsPackageReferenceProject project = PrepareCpsRestoredProject(initialProjectSpec, cache);
+
+            // Act
+            ProjectPackages result = await project.GetInstalledAndTransitivePackagesAsync(true, true, CancellationToken.None);
+
+            // Assert
+            Assert.Equal(1, result.InstalledPackages.Count);
+            Assert.Empty(result.TransitivePackages);
+        }
+
+        [Fact]
         public async Task GetInstalledAndTransitivePackagesAsync_IncludeTransitiveSetToTrue_WhenCacheWasCleared_ReturnsExpectedTransitiveData()
         {
             using var rootDir = new SimpleTestPathContext();
