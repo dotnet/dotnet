@@ -8,11 +8,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@04b9022](https://github.com/dotnet/arcade/tree/04b9022eba9c184a8036328af513c22e6949e8b6)*
+*[dotnet/arcade@1230437](https://github.com/dotnet/arcade/tree/1230437de1ab7b3e15fe7cdfe7ffce2f65449959)*
 - `src/aspire`  
 *[dotnet/aspire@137e8dc](https://github.com/dotnet/aspire/tree/137e8dcae0a7b22c05f48c4e7a5d36fe3f00a8d7)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@91ef755](https://github.com/dotnet/aspnetcore/tree/91ef755ae08f27b395d73be00d245d8095f90143)*
+*[dotnet/aspnetcore@afe2857](https://github.com/dotnet/aspnetcore/tree/afe2857bffef08213d6f3c7688647c60d5d5e7bd)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@0953a17](https://github.com/google/googletest/tree/0953a17a4281fc26831da647ad3fcd5e21e6473b)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -26,7 +26,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@513150c](https://github.com/dotnet/diagnostics/tree/513150c2f25077b1fcb194407e53c433c975f39b)*
 - `src/efcore`  
-*[dotnet/efcore@59d16b6](https://github.com/dotnet/efcore/tree/59d16b6188ac6328130f6b299eeac828beb4ace1)*
+*[dotnet/efcore@c7035b3](https://github.com/dotnet/efcore/tree/c7035b3ccc485a63bd03a64da4d9f0ec18f27948)*
 - `src/emsdk`  
 *[dotnet/emsdk@8e660ff](https://github.com/dotnet/emsdk/tree/8e660ff41e91879977e3a9d837e068bd72234c26)*
 - `src/fsharp`  
@@ -40,7 +40,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@3e0da42](https://github.com/dotnet/razor/tree/3e0da42f82553178744daf61795b51326084251f)*
 - `src/roslyn`  
-*[dotnet/roslyn@54fd790](https://github.com/dotnet/roslyn/tree/54fd790788b03c256f736c917fc368daf0a643db)*
+*[dotnet/roslyn@5ef52ae](https://github.com/dotnet/roslyn/tree/5ef52ae33a88c3ae0d3a037054cb66ea7eaaf902)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@a7c74cf](https://github.com/dotnet/roslyn-analyzers/tree/a7c74cf887abe4a38240bc4ead0b221d9d42434f)*
 - `src/runtime`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@d92413b](https://github.com/dotnet/scenario-tests/tree/d92413b87d36250859d8cb51ff69a03b5f5c4cab)*
 - `src/sdk`  
-*[dotnet/sdk@7e21371](https://github.com/dotnet/sdk/tree/7e213716d9101544b20e8e675bc58cc3399dcf10)*
+*[dotnet/sdk@1e3e85c](https://github.com/dotnet/sdk/tree/1e3e85c75a6a2ad92df63a03ee863e935f6a7be6)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@4e60131](https://github.com/dotnet/source-build-externals/tree/4e60131607fd144eb86fe4487f1a37da940ca990)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -82,13 +82,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/source-build-reference-packages`  
 *[dotnet/source-build-reference-packages@6a1e863](https://github.com/dotnet/source-build-reference-packages/tree/6a1e86367923914589bda2244eb2321b97523c33)*
 - `src/sourcelink`  
-*[dotnet/sourcelink@662c0bb](https://github.com/dotnet/sourcelink/tree/662c0bb1272e078747775d549bbf45e27faa9030)*
+*[dotnet/sourcelink@402965a](https://github.com/dotnet/sourcelink/tree/402965a6a951fd19f0055ba8174deb3d0c17501f)*
 - `src/symreader`  
 *[dotnet/symreader@0710a78](https://github.com/dotnet/symreader/tree/0710a7892d89999956e8808c28e9dd0512bd53f3)*
 - `src/templating`  
 *[dotnet/templating@a23da1c](https://github.com/dotnet/templating/tree/a23da1c15c737b5e121650cfa5a86805e74e34fc)*
 - `src/test-templates`  
-*[dotnet/test-templates@2b8a55f](https://github.com/dotnet/test-templates/tree/2b8a55f3d3f380ae10d2c2f4d0974c92727ccc22)*
+*[dotnet/test-templates@743a517](https://github.com/dotnet/test-templates/tree/743a517a123a8616389eb6726ec9835a3a1a3876)*
 - `src/vstest`  
 *[microsoft/vstest@07acde2](https://github.com/microsoft/vstest/tree/07acde22b65497e72de145d57167b83609a7f7fb)*
 - `src/windowsdesktop`  
