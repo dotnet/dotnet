@@ -292,6 +292,11 @@ namespace NuGet.PackageManagement.VisualStudio
 
         private static IEnumerable<PackageReference> GetProjectPackageReferences(NuGetFramework nuGetFramework, IList<LockFileTarget> targetsList)
         {
+            if (targetsList is null)
+            {
+                return Enumerable.Empty<PackageReference>();
+            }
+
             var packageReferences = targetsList
                 .Where(t => t.TargetFramework.Equals(nuGetFramework))
                 .SelectMany(lib => lib.Libraries)
