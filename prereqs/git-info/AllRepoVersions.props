@@ -22,7 +22,7 @@
     <fsharpGitCommitHash>3044166cd923167204853d1d9f975bc26864f86f</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>9.0.100-beta.24466.6</fsharpOutputPackageVersion>
     <msbuildGitCommitHash>fea15fbd1fdb509ee69db79420c6cc10044b6b09</msbuildGitCommitHash>
-    <msbuildOutputPackageVersion>17.12.0-preview-24469-05</msbuildOutputPackageVersion>
+    <msbuildOutputPackageVersion>17.12.0-preview-24474-03</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>378e8d0ac789cb47df720849986bb26ce6690c66</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.12.0-rc.115</nugetclientOutputPackageVersion>
     <razorGitCommitHash>3e0da42f82553178744daf61795b51326084251f</razorGitCommitHash>
@@ -35,13 +35,13 @@
     <runtimeOutputPackageVersion>9.0.0-rc.1.24414.5</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>f1715bf842371d15ecb5fc52d7dc87ab2e47df30</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>10.0.0-preview.24423.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>6eea53c4ca27e193040825376719197ae46c0b3e</sdkGitCommitHash>
-    <sourcebuildexternalsGitCommitHash>771084d1612ff35d0b9943a5a0e639e8166b5ab6</sourcebuildexternalsGitCommitHash>
-    <sourcebuildexternalsOutputPackageVersion>10.0.0-alpha.1.24466.1</sourcebuildexternalsOutputPackageVersion>
+    <sdkGitCommitHash>0c5762b6002bdc4e3f2cc8923b03600ca0bd63f2</sdkGitCommitHash>
+    <sourcebuildexternalsGitCommitHash>bc43c328b4788e3cb68e9b4dc764443f2aa29a24</sourcebuildexternalsGitCommitHash>
+    <sourcebuildexternalsOutputPackageVersion>10.0.0-alpha.1.24473.2</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>dde12f4d0a8f1662209e3f8dfd00719f4c61af09</sourcebuildreferencepackagesGitCommitHash>
     <sourcebuildreferencepackagesOutputPackageVersion>10.0.0-alpha.1.24466.1</sourcebuildreferencepackagesOutputPackageVersion>
-    <sourcelinkGitCommitHash>662c0bb1272e078747775d549bbf45e27faa9030</sourcelinkGitCommitHash>
-    <sourcelinkOutputPackageVersion>9.0.0-beta.24468.2</sourcelinkOutputPackageVersion>
+    <sourcelinkGitCommitHash>402965a6a951fd19f0055ba8174deb3d0c17501f</sourcelinkGitCommitHash>
+    <sourcelinkOutputPackageVersion>9.0.0-beta.24473.2</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>0710a7892d89999956e8808c28e9dd0512bd53f3</symreaderGitCommitHash>
     <symreaderOutputPackageVersion>2.2.0-beta.24327.2</symreaderOutputPackageVersion>
     <templatingGitCommitHash>bf40ec00f3761436f9e503691191ed722575f1bb</templatingGitCommitHash>
