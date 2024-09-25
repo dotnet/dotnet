@@ -116,7 +116,8 @@
         }
       ],
       "defaultValue": "Default",
-      "description": "Select the SDK extensions profile. More information at https://aka.ms/mstest/sdk/extensions-profile"
+      "description": "Select the SDK extensions profile when using MSTest Runner. More information at https://aka.ms/mstest/sdk/extensions-profile",
+      "replaces": "$(ExtensionsProfile)"
     },
     "CoverageTool": {
       "type": "parameter",
