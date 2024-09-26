@@ -46,9 +46,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[dotnet/runtime@2c4266c](https://github.com/dotnet/runtime/tree/2c4266c134aa02718179818098a11e825c9d1362)*
 - `src/scenario-tests`  
-*[dotnet/scenario-tests@d92413b](https://github.com/dotnet/scenario-tests/tree/d92413b87d36250859d8cb51ff69a03b5f5c4cab)*
+*[dotnet/scenario-tests@76edac9](https://github.com/dotnet/scenario-tests/tree/76edac963b2c6296018c7bf1e04a03c8488076d3)*
 - `src/sdk`  
-*[dotnet/sdk@2bf4079](https://github.com/dotnet/sdk/tree/2bf4079c9b3b15b4a6abe43a472629edf6b1bfa8)*
+*[dotnet/sdk@f59e9ca](https://github.com/dotnet/sdk/tree/f59e9ca09cb4d5b903b276c0d3d7825b6ddbc3a0)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@4e60131](https://github.com/dotnet/source-build-externals/tree/4e60131607fd144eb86fe4487f1a37da940ca990)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -92,11 +92,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/vstest`  
 *[microsoft/vstest@07acde2](https://github.com/microsoft/vstest/tree/07acde22b65497e72de145d57167b83609a7f7fb)*
 - `src/windowsdesktop`  
-*[dotnet/windowsdesktop@8d5fdbe](https://github.com/dotnet/windowsdesktop/tree/8d5fdbe583bf7242d461de79b659d5e4d3140587)*
+*[dotnet/windowsdesktop@ea45fe7](https://github.com/dotnet/windowsdesktop/tree/ea45fe711f3747c51211a4580f402dc07de7f5fc)*
 - `src/winforms`  
-*[dotnet/winforms@aad987c](https://github.com/dotnet/winforms/tree/aad987c286a32e55b00ffc62387a2774f0f9fc3e)*
+*[dotnet/winforms@0749a97](https://github.com/dotnet/winforms/tree/0749a97fb592ed4a5d7ddc8d13acf9f5097f68f7)*
 - `src/wpf`  
-*[dotnet/wpf@72a1198](https://github.com/dotnet/wpf/tree/72a11989cac5121368087ae8bfac9c09d0a167d5)*
+*[dotnet/wpf@95b7cb7](https://github.com/dotnet/wpf/tree/95b7cb7c47cf28eb2cf855ff06f91cbe17735af4)*
 - `src/xdt`  
 *[dotnet/xdt@c2a9df9](https://github.com/dotnet/xdt/tree/c2a9df9c1867454039a1223cef1c090359e33646)*
 - `src/xliff-tasks`  
