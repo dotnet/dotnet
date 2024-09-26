@@ -13,14 +13,6 @@ namespace Microsoft.AspNetCore.StaticWebAssets.Tasks
     // is case insensitive.
     public class GenerateStaticWebAssetsDevelopmentManifest : Task
     {
-        // Since the manifest is only used at development time, it's ok for it to use the relaxed
-        // json escaping (which is also what MVC uses by default) and to produce indented output
-        // since that makes it easier to inspect the manifest when necessary.
-        private static readonly JsonSerializerOptions ManifestSerializationOptions = new()
-        {
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        };
-
         [Required]
         public string Source { get; set; }
 
@@ -33,8 +25,17 @@ namespace Microsoft.AspNetCore.StaticWebAssets.Tasks
         [Required]
         public string ManifestPath { get; set; }
 
+        [Required]
+        public string CacheFilePath { get; set; }
+
         public override bool Execute()
         {
+            if (File.Exists(ManifestPath) && File.GetLastWriteTimeUtc(ManifestPath) > File.GetLastWriteTimeUtc(CacheFilePath))
+            {
+                Log.LogMessage(MessageImportance.Low, "Skipping manifest generation because manifest file '{0}' is up to date.", ManifestPath);
+                return true;
+            }
+
             try
             {
                 if (Assets.Length == 0 && DiscoveryPatterns.Length == 0)
@@ -100,7 +101,7 @@ namespace Microsoft.AspNetCore.StaticWebAssets.Tasks
 
         private void PersistManifest(StaticWebAssetsDevelopmentManifest manifest)
         {
-            var data = JsonSerializer.SerializeToUtf8Bytes(manifest, ManifestSerializationOptions);
+            var data = JsonSerializer.SerializeToUtf8Bytes(manifest, StaticWebAssetsJsonSerializerContext.RelaxedEscaping.StaticWebAssetsDevelopmentManifest);
             using var sha256 = SHA256.Create();
             var currentHash = sha256.ComputeHash(data);
 
