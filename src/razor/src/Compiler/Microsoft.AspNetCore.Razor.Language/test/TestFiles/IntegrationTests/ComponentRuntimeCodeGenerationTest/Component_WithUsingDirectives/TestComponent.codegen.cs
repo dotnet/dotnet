@@ -9,7 +9,7 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line (3,2)-(4,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (3,2)-(3,13) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Test2
 
 #line default

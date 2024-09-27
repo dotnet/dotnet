@@ -232,8 +232,13 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 e => Assert.Equal(new PackageIdentity("packageA", new NuGetVersion("1.0.0")), e.Identity),
                 e => Assert.Equal(new PackageIdentity("packageB", new NuGetVersion("2.0.0")), e.Identity),
                 e => Assert.Equal(new PackageIdentity("packageC", new NuGetVersion("3.0.0")), e.Identity),
+                // Returns all the installed packages that are not the latest version
+                e => Assert.Equal(new PackageIdentity("packageB", new NuGetVersion("1.0.0")), e.Identity),
+                e => Assert.Equal(new PackageIdentity("packageC", new NuGetVersion("2.0.0")), e.Identity),
                 // Returns latest transitive package version
-                e => Assert.Equal(new PackageIdentity("transitivePackageC", new NuGetVersion("0.0.2")), e.Identity));
+                e => Assert.Equal(new PackageIdentity("transitivePackageC", new NuGetVersion("0.0.2")), e.Identity),
+                // Returns all the transtive packages that are not the latest verion
+                e => Assert.Equal(new PackageIdentity("transitivePackageC", new NuGetVersion("0.0.1")), e.Identity));
 
             IEnumerable<IPackageSearchMetadata> transitivePackagesResult = result.Where(r => r is TransitivePackageSearchMetadata).ToArray();
             IEnumerable<string> installedPackagesResult = result.Where(r => r is not TransitivePackageSearchMetadata).Select(pkg => pkg.Identity.Id).ToArray();

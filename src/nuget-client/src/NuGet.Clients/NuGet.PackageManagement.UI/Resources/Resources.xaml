@@ -40,8 +40,8 @@
     VisibilityIfFalse="Visible" />
   <vsui:BooleanToHiddenVisibilityConverter
     x:Key="BooleanToHiddenVisibilityConverter" />
-  <nuget:DownloadCountToVisibilityConverter
-    x:Key="DownloadCountToVisibilityConverter" />
+  <nuget:GreaterThanThresholdToVisibilityConverter
+    x:Key="GreaterThanThresholdToVisibilityConverter" />
   <nuget:FontSizeConverter
     Scale="122"
     x:Key="Font122PercentSizeConverter" />

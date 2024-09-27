@@ -2,11 +2,15 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Microsoft.VisualStudio.Telemetry;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.AspNetCore.Razor;
+using System.IO;
+
 
 #if DEBUG
 using System.Linq;
@@ -16,6 +20,16 @@ namespace Microsoft.VisualStudio.Razor.Telemetry;
 
 internal abstract class TelemetryReporter : ITelemetryReporter
 {
+    private const string CodeAnalysisNamespace = nameof(Microsoft) + "." + nameof(CodeAnalysis);
+    private const string AspNetCoreNamespace = nameof(Microsoft) + "." + nameof(AspNetCore);
+    private const string MicrosoftVSRazorNamespace = $"{nameof(Microsoft)}.{nameof(VisualStudio)}.{nameof(Razor)}";
+
+    // Types that will not contribute to fault bucketing. Fully qualified name is
+    // required in order to match correctly.
+    private static readonly FrozenSet<string> s_faultIgnoredTypeNames = new string[] {
+        "Microsoft.AspNetCore.Razor.NullableExtensions"
+    }.ToFrozenSet();
+
     protected ImmutableArray<TelemetrySession> TelemetrySessions { get; set; }
 
     protected TelemetryReporter(ImmutableArray<TelemetrySession> telemetrySessions = default)
@@ -163,60 +177,16 @@ internal abstract class TelemetryReporter : ITelemetryReporter
                     return 0;
                 });
 
+            var (moduleName, methodName) = GetModifiedFaultParameters(exception);
+            faultEvent.SetFailureParameters(
+                failureParameter1: moduleName,
+                failureParameter2: methodName);
+
             Report(faultEvent);
         }
         catch (Exception)
         {
         }
-    }
-
-    private static string GetExceptionDetails(Exception exception)
-    {
-        const string CodeAnalysisNamespace = nameof(Microsoft) + "." + nameof(CodeAnalysis);
-        const string AspNetCoreNamespace = nameof(Microsoft) + "." + nameof(AspNetCore);
-
-        // Be resilient to failing here.  If we can't get a suitable name, just fall back to the standard name we
-        // used to report.
-        try
-        {
-            // walk up the stack looking for the first call from a type that isn't in the ErrorReporting namespace.
-            var frames = new StackTrace(exception).GetFrames();
-
-            // On the .NET Framework, GetFrames() can return null even though it's not documented as such.
-            // At least one case here is if the exception's stack trace itself is null.
-            if (frames != null)
-            {
-                foreach (var frame in frames)
-                {
-                    var method = frame?.GetMethod();
-                    var methodName = method?.Name;
-                    if (methodName is null)
-                    {
-                        continue;
-                    }
-
-                    var declaringTypeName = method?.DeclaringType?.FullName;
-                    if (declaringTypeName == null)
-                    {
-                        continue;
-                    }
-
-                    if (!declaringTypeName.StartsWith(CodeAnalysisNamespace) &&
-                        !declaringTypeName.StartsWith(AspNetCoreNamespace))
-                    {
-                        continue;
-                    }
-
-                    return declaringTypeName + "." + methodName;
-                }
-            }
-        }
-        catch
-        {
-        }
-
-        // If we couldn't get a stack, do this
-        return exception.Message;
     }
 
     protected virtual void Report(TelemetryEvent telemetryEvent)
@@ -297,4 +267,123 @@ internal abstract class TelemetryReporter : ITelemetryReporter
             new("eventscope.languageservername", languageServerName),
             new("eventscope.correlationid", correlationId));
     }
+
+
+    /// <summary>
+    /// Returns values that should be set to (failureParameter1, failureParameter2) when reporting a fault.
+    /// Those values represent the blamed stackframe module and method name.
+    /// </summary>
+    internal static (string?, string?) GetModifiedFaultParameters(Exception exception)
+    {
+        var frame = FindFirstRazorStackFrame(exception, static (declaringTypeName, _) =>
+        {
+            if (s_faultIgnoredTypeNames.Contains(declaringTypeName))
+            {
+                return false;
+            }
+
+            return true;
+        });
+
+        var method = frame?.GetMethod();
+        if (method is null)
+        {
+            return (null, null);
+        }
+
+        var moduleName = Path.GetFileNameWithoutExtension(method.Module.Name);
+        return (moduleName, method.Name);
+    }
+
+    private static string GetExceptionDetails(Exception exception)
+    {
+        var frame = FindFirstRazorStackFrame(exception);
+
+        if (frame is null)
+        {
+            return exception.Message;
+        }
+
+        var method = frame.GetMethod();
+
+        // These are checked in FindFirstRazorStackFrame
+        method.AssumeNotNull();
+        method.DeclaringType.AssumeNotNull();
+
+        var declaringTypeName = method.DeclaringType.FullName;
+        var methodName = method.Name;
+
+        return declaringTypeName + "." + methodName;
+    }
+
+    /// <summary>
+    /// Finds the first stack frame in exception stack that originates from razor code based on namespace
+    /// </summary>
+    /// <param name="exception">The exception to get the stack from</param>
+    /// <param name="predicate">Optional predicate to filter by declaringTypeName and methodName</param>
+    /// <returns></returns>
+    private static StackFrame? FindFirstRazorStackFrame(
+        Exception exception,
+        Func<string, string, bool>? predicate = null)
+    {
+        // Be resilient to failing here.  If we can't get a suitable name, just fall back to the standard name we
+        // used to report.
+        try
+        {
+            // walk up the stack looking for the first call from a type that isn't in the ErrorReporting namespace.
+            var frames = new StackTrace(exception).GetFrames();
+
+            // On the .NET Framework, GetFrames() can return null even though it's not documented as such.
+            // At least one case here is if the exception's stack trace itself is null.
+            if (frames != null)
+            {
+                foreach (var frame in frames)
+                {
+                    if (frame is null)
+                    {
+                        continue;
+                    }
+
+                    var method = frame.GetMethod();
+                    var methodName = method?.Name;
+                    if (methodName is null)
+                    {
+                        continue;
+                    }
+
+                    var declaringTypeName = method?.DeclaringType?.FullName;
+                    if (declaringTypeName == null)
+                    {
+                        continue;
+                    }
+
+                    if (!IsInOwnedNamespace(declaringTypeName))
+                    {
+                        continue;
+                    }
+
+                    if (predicate is null)
+                    {
+                        return frame;
+                    }
+
+                    if (predicate(declaringTypeName, methodName))
+                    {
+                        return frame;
+                    }
+                }
+            }
+
+            return null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private static bool IsInOwnedNamespace(string declaringTypeName)
+        => declaringTypeName.StartsWith(CodeAnalysisNamespace) ||
+            declaringTypeName.StartsWith(AspNetCoreNamespace) ||
+            declaringTypeName.StartsWith(MicrosoftVSRazorNamespace);
 }

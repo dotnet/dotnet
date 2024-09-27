@@ -1621,6 +1621,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             PackageInstallationInfo firstProject = _testInstance.Projects.First();
             firstProject.IsSelected = true;
             firstProject.InstalledVersion = version;
+            firstProject.PackageLevel = PackageLevel.TopLevel;
 
             // Explicitly trigger PropertyChanged event.
             _testInstance.SetInstalledOrUpdateButtonIsEnabled();

@@ -2,7 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.VisualStudio.Editor.Razor.Test.Shared;
@@ -392,4 +394,33 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
         // Assert
         Assert.Empty(reporter.Events);
     }
+
+    [Theory, MemberData(nameof(s_throwFunctions))]
+    public void GetModifiedFaultParameters_FiltersCorrectly(Func<object> throwAction)
+    {
+        try
+        {
+            throwAction();
+        }
+        catch (Exception ex)
+        {
+            var (param1, param2) = TestTelemetryReporter.GetModifiedFaultParameters(ex);
+
+            Assert.Equal("Microsoft.VisualStudio.LanguageServices.Razor.Test", param1);
+            Assert.NotNull(param2);
+
+            // Depending on debug/release the stack can contain a constructor or
+            // a call to this method. We expect one or the other and both
+            // are valid
+#if DEBUG
+            Assert.StartsWith("<.cctor>", param2);
+#else 
+            Assert.Equal("GetModifiedFaultParameters_FiltersCorrectly", param2);
+#endif
+        }
+    }
+
+    public static readonly IEnumerable<object[]> s_throwFunctions = [
+        [() => ((object?)null).AssumeNotNull()]
+    ];
 }

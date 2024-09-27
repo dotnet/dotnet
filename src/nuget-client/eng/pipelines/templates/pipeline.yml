@@ -130,7 +130,7 @@ stages:
 
       - output: pipelineArtifact
         displayName: 'Publish NuGet.CommandLine.Test as artifact'
-        condition: "succeeded()"
+        condition: "and(succeeded(),ne(variables['RunMonoTestsOnMac'], 'false'))"
         targetPath: "$(Build.Repository.LocalPath)\\test\\NuGet.Clients.Tests\\NuGet.CommandLine.Test\\bin\\$(BuildConfiguration)\\net472"
         artifactName: "NuGet.CommandLine.Test"
 
@@ -167,7 +167,7 @@ stages:
         dropMetadataContainerName: 'DropMetadata-ProfilingInputs'
 
       - output: pipelineArtifact
-        displayName: 'Publish NuGet.exe VSIX and EndToEnd.zip as artifact'
+        displayName: 'Publish NuGet.exe and VSIX as artifact'
         targetPath: "$(Build.Repository.LocalPath)\\artifacts\\VS15"
         artifactName: "$(VsixPublishDir)"
 
@@ -252,7 +252,7 @@ stages:
         artifactName: "nupkgs - $(RtmLabel)"
 
       - output: pipelineArtifact
-        displayName: 'Publish NuGet.exe VSIX and EndToEnd.zip as artifact'
+        displayName: 'Publish NuGet.exe and VSIX as artifact'
         targetPath: "$(Build.Repository.LocalPath)\\artifacts\\VS15"
         artifactName: "$(VsixPublishDir)"
 
