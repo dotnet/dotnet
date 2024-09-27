@@ -1,7 +1,7 @@
 {
   "version": "1.0.0.0",
   "strings": {
-    "name": "MSTest 測試專案",
-    "description": "專案含有可在 Windows、Linux 及 MacOS 的 .NET 上執行的 MSTest 單元測試。"
+    "name": "MSTest Playwright Test Project",
+    "description": "A project that contains Playwright tests using MSTest test framework, that can run on .NET on Windows, Linux and MacOS."
   }
 }
