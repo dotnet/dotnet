@@ -14,9 +14,10 @@ public enum DotNetSdkActions
     Publish = 8,
     PublishComplex = 16,
     PublishR2R = 32,
-    Test = 64,
-    AddClassLibRef = 128,
-    FullWorkloadTest = 256,
-    WorkloadInstall = 512,
-    WorkloadUninstall = 1024,
+    PublishAot = 64,
+    Test = 128,
+    AddClassLibRef = 256,
+    FullWorkloadTest = 512,
+    WorkloadInstall = 1024,
+    WorkloadUninstall = 2048
 }

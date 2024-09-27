@@ -17,7 +17,6 @@ internal class DotNetSdkHelper
     public string? SdkVersion { get; set; }
     public string DotNetExecutablePath { get =>
             RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Path.Combine(DotNetRoot, "dotnet.exe") : Path.Combine(DotNetRoot, "dotnet"); }
-
     private ITestOutputHelper OutputHelper { get; }
 
     public DotNetSdkHelper(ITestOutputHelper outputHelper, string dotnetRoot, string? sdkVersion)
@@ -105,7 +104,7 @@ internal class DotNetSdkHelper
         return projectDirectory;
     }
 
-    public void ExecutePublish(string projectDirectory, bool? selfContained = null, string? rid = null, bool trimmed = false, bool readyToRun = false, string[]? frameworks = null)
+    public void ExecutePublish(string projectDirectory, string? rid = null, bool? selfContained = null, bool trimmed = false, bool readyToRun = false, bool? aot = false, string[]? frameworks = null)
     {
         string options = string.Empty;
         string binlogDifferentiator = string.Empty;
@@ -131,6 +130,15 @@ internal class DotNetSdkHelper
                     options += " /p:PublishReadyToRun=true";
                     binlogDifferentiator += "-R2R";
                 }
+            }
+        }
+
+        if (aot.HasValue)
+        {
+            options += $" /p:PublishAot={aot.Value.ToString().ToLowerInvariant()}";
+            if (aot.Value)
+            {
+                binlogDifferentiator += "-aot";
             }
         }
 

@@ -35,6 +35,11 @@ extends:
         name: $(DncEngInternalBuildPool)
         image: 1es-windows-2022
         os: windows
+      policheck:
+        enabled: true
+      tsa:
+        enabled: true
+        configFile: '$(Build.SourcesDirectory)\.config\tsaoptions.json'
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
