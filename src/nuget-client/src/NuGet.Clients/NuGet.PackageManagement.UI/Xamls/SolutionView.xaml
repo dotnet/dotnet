@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:NuGet.PackageManagement.UI"
+             xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+             xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
              mc:Ignorable="d"
              DataContextChanged="SolutionView_DataContextChanged"
              d:DesignHeight="300" d:DesignWidth="500">
@@ -18,13 +20,16 @@
         x:Key="TooltipConverter" />
       <local:NotNullToBooleanConverter
         x:Key="NotNullToBooleanConverter" />
+      <local:IntToVulnerabilitySeverityConverter
+        x:Key="IntToVulnerabilitySeverityConverter" />
+      <local:StringFormatConverter
+        x:Key="StringFormatConverter" />
       <ControlTemplate
         x:Key="SeparatorControlTemplate">
         <Separator
             HorizontalAlignment="Stretch"
             IsEnabled="False" />
       </ControlTemplate>
-
       <!-- style of the list view headers -->
       <Style x:Uid="Style_1" x:Key="GridViewColumnHeaderGripper" TargetType="{x:Type Thumb}">
         <Setter x:Uid="Setter_1" Property="Canvas.Right" Value="-8.5" />
@@ -178,11 +183,13 @@
       <RowDefinition Height="auto" />
     </Grid.RowDefinitions>
 
+    <!--Versions count-->
     <TextBlock
       x:Name="_installedVersionsCount"
-      Grid.Row="0"
+      Grid.Column="0"
       Text="{Binding InstalledVersionsCount, Converter={StaticResource InstalledVersionsCountConverter}}" />
 
+      <!--Projects list-->
     <local:ToggleableListView
       Grid.Row="1"
       x:Name="_projectList"
@@ -305,15 +312,83 @@
           <!-- the version column may be inserted here dynamically from code -->
 
           <!-- the installed column -->
-          <GridViewColumn
-            DisplayMemberBinding="{Binding InstalledVersion, Converter={StaticResource VersionToStringConverter}}">
+          <GridViewColumn>
             <GridViewColumn.Header>
               <GridViewColumnHeader
                 AutomationProperties.Name="{x:Static local:Resources.ColumnHeader_InstalledVersion}"
                 x:Name="_installedVersionColumnHeader"
                 Click="ColumnHeader_Clicked"
-                Content="{x:Static local:Resources.ColumnHeader_InstalledVersion}"
                 local:SortableColumnHeaderAttachedProperties.SortPropertyName="InstalledVersion"
+                HorizontalContentAlignment="Left"
+                SizeChanged="SortableColumnHeader_SizeChanged"
+                PreviewKeyUp="SortableColumnHeader_PreviewKeyUp"
+                Focusable="True"
+                IsTabStop="True"
+                FocusVisualStyle="{DynamicResource ControlsFocusVisualStyle}">
+                <StackPanel
+                  Orientation="Horizontal">
+                  <TextBlock
+                    Margin="2,0,0,0"
+                    VerticalAlignment="Bottom"
+                    Text="{x:Static local:Resources.ColumnHeader_InstalledVersion}" />
+                  <imaging:CrispImage
+                    Margin="2,0,0,0"
+                    x:Name="_warningIndicatorInstalledHeader"
+                    IsVisibleChanged="WarningIndicatorInstalledHeader_IsVisibleChanged"
+                    Visibility="{Binding InstalledVulnerabilitiesCount, Converter={StaticResource GreaterThanThresholdToVisibilityConverter}, ConverterParameter=0}"
+                    Moniker="{x:Static catalog:KnownMonikers.StatusWarning}">
+                    <imaging:CrispImage.ToolTip>
+                      <TextBlock>
+                        <TextBlock.Text>
+                          <MultiBinding Converter="{StaticResource StringFormatConverter}">
+                            <Binding Source="{x:Static local:Resources.Label_Installed_VulnerableWarning}" />
+                            <Binding Path="InstalledVulnerabilitiesCount" />
+                          </MultiBinding>
+                        </TextBlock.Text>
+                      </TextBlock>
+                    </imaging:CrispImage.ToolTip>
+                  </imaging:CrispImage>
+                </StackPanel>
+              </GridViewColumnHeader>
+            </GridViewColumn.Header>
+            <GridViewColumn.CellTemplate>
+              <DataTemplate>
+                <StackPanel
+                  VerticalAlignment="Bottom"
+                  Orientation="Horizontal">
+                  <TextBlock
+                    VerticalAlignment="Bottom"
+                    Text="{Binding InstalledVersion, Converter={StaticResource VersionToStringConverter}}" />
+                  <imaging:CrispImage
+                    Margin="2,0,0,0"
+                    x:Name="_warningIndicator"
+                    Visibility="{Binding IsInstalledVersionVulnerable, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Moniker="{x:Static catalog:KnownMonikers.StatusWarning}">
+                    <imaging:CrispImage.ToolTip>
+                      <TextBlock>
+                        <TextBlock.Text>
+                          <MultiBinding Converter="{StaticResource StringFormatConverter}">
+                            <Binding Source="{x:Static local:Resources.Label_PackageVulnerableToolTip}" />
+                            <Binding Path="InstalledVersionMaxVulnerability" Converter="{StaticResource IntToVulnerabilitySeverityConverter}" />
+                          </MultiBinding>
+                        </TextBlock.Text>
+                      </TextBlock>
+                    </imaging:CrispImage.ToolTip>
+                  </imaging:CrispImage>
+                </StackPanel>
+              </DataTemplate>
+            </GridViewColumn.CellTemplate>
+          </GridViewColumn>
+
+          <!-- the package level column -->
+          <GridViewColumn>
+            <GridViewColumn.Header>
+              <GridViewColumnHeader
+                AutomationProperties.Name="{x:Static local:Resources.ColumnHeader_PackageLevel}"
+                x:Name="_packageLevelColumnHeader"
+                Click="ColumnHeader_Clicked"
+                Content="{x:Static local:Resources.ColumnHeader_PackageLevel}"
+                local:SortableColumnHeaderAttachedProperties.SortPropertyName="PackageLevel"
                 HorizontalContentAlignment="Left"
                 SizeChanged="SortableColumnHeader_SizeChanged"
                 PreviewKeyUp="SortableColumnHeader_PreviewKeyUp"
@@ -321,7 +396,31 @@
                 IsTabStop="True"
                 FocusVisualStyle="{DynamicResource ControlsFocusVisualStyle}"/>
             </GridViewColumn.Header>
+            <GridViewColumn.CellTemplate>
+              <DataTemplate>
+                <StackPanel
+                  Orientation="Horizontal">
+                  <TextBlock>
+                    <Run>
+                      <Run.Style>
+                        <Style TargetType="Run">
+                          <Style.Triggers>
+                            <DataTrigger Binding="{Binding PackageLevel}" Value="TopLevel">
+                              <Setter Property="Text" Value="{x:Static local:Resources.Text_PackageLevelTopLevel}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding PackageLevel}" Value="Transitive">
+                              <Setter Property="Text" Value="{x:Static local:Resources.Text_PackageLevelTransitive}"/>
+                            </DataTrigger>
+                          </Style.Triggers>
+                        </Style>
+                      </Run.Style>
+                    </Run>                
+                  </TextBlock>
+                </StackPanel>
+              </DataTemplate>
+            </GridViewColumn.CellTemplate>
           </GridViewColumn>
+          
         </GridView>
       </ListView.View>
     </local:ToggleableListView>

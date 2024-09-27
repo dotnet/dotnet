@@ -26,6 +26,30 @@
       <nuget:NullToBooleanConverter
         x:Key="NullToBooleanConverter" />
 
+      <!--Style for warning tooltip text-->
+      <Style TargetType="TextBlock" x:Key="VulnerabilitiesCountText">
+        <Setter Property="Text">
+          <Setter.Value>
+            <MultiBinding Converter="{StaticResource StringFormatConverter}">
+              <Binding Source="{x:Static nuget:Resources.Label_MultiplePackageVulnerableVersionToolTip}" />
+              <Binding Path="VulnerableVersionsString" />
+            </MultiBinding>
+          </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding VulnerableVersions.Count}" Value="1">
+            <Setter Property="Text">
+              <Setter.Value>
+                <MultiBinding Converter="{StaticResource StringFormatConverter}">
+                  <Binding Source="{x:Static nuget:Resources.Label_PackageVulnerableToolTip}" />
+                  <Binding Path="VulnerabilityMaxSeverity" Converter="{StaticResource IntToVulnerabilitySeverityConverter}" />
+                </MultiBinding>
+              </Setter.Value>
+            </Setter>
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+      
       <!-- style for install, uninstall and update buttons -->
       <Style x:Key="buttonStyle" TargetType="{x:Type Button}">
         <Setter Property="Template">
@@ -62,6 +86,24 @@
             <Setter Property="Background" Value="{DynamicResource {x:Static nuget:Brushes.ToolWindowButtonDownKey}}" />
             <Setter Property="BorderBrush" Value="{DynamicResource {x:Static nuget:Brushes.ToolWindowButtonDownBorderKey}}" />
           </Trigger>
+        </Style.Triggers>
+      </Style>
+
+      <Style x:Key="PackageDescriptionToolTipStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource TooltipStyle}">
+        <Setter Property="Visibility" Value="Collapsed" />
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding Path=PackageLevel}" Value="TopLevel">
+            <Setter Property="Visibility" Value="Visible" />
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+
+      <Style x:Key="TransitiveInfoToolTipStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource TooltipStyle}">
+        <Setter Property="Visibility" Value="Visible" />
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding Path=TransitiveToolTipMessage, Converter={StaticResource NullToBooleanConverter}}" Value="True">
+            <Setter Property="Visibility" Value="Collapsed" />
+          </DataTrigger>
         </Style.Triggers>
       </Style>
     </ResourceDictionary>
@@ -210,77 +252,56 @@
         </Grid>
 
         <Grid.ToolTip>
-          <TextBlock
-                        Style="{StaticResource TooltipStyle}">
-                        <Run
-                          Text="{Binding Id}"
-                          FontWeight="Bold" /> <Run Text="{Binding ByOwnerOrAuthor, Mode=OneTime}"/>
-                        <LineBreak />
-                        <Run>
-                          <Run.Style>
-                            <Style TargetType="Run">
-                              <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=PackageLevel}" Value="TopLevel">
-                                  <Setter Property="Text" Value="{Binding Summary}"/>
-                                </DataTrigger>
-                              </Style.Triggers>
-                            </Style>
-                          </Run.Style>
-                        </Run><Run FontWeight="Bold">
-                          <Run.Style>
-                            <Style TargetType="Run">
-                              <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=PackageLevel}" Value="Transitive">
-                                  <Setter Property="Text" Value="{x:Static nuget:Resources.ToolTip_TransitiveDependency}"/>
-                                </DataTrigger>
-                              </Style.Triggers>
-                            </Style>
-                          </Run.Style>
-                        </Run>
-                        <Run>
-                          <Run.Style>
-                            <Style TargetType="Run">
-                              <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=PackageLevel}" Value="Transitive">
-                                  <Setter Property="Text" Value="{Binding TransitiveToolTipMessage}"/>
-                                </DataTrigger>
-                              </Style.Triggers>
-                            </Style>
-                          </Run.Style>
-                        </Run><Run>
-                          <Run.Style>
-                            <Style TargetType="Run">
-                              <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=PackageLevel}" Value="Transitive">
-                                  <Setter Property="Text" Value="&#x0a;&#x0a;" />
-                                </DataTrigger>
-                              </Style.Triggers>
-                            </Style>
-                          </Run.Style>
-                        </Run><Run>
-                          <Run.Style>
-                            <Style TargetType="Run">
-                              <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=PackageLevel}" Value="Transitive">
-                                  <Setter Property="Text" Value="{x:Static nuget:Resources.ToolTip_TransitivePathHelp}" />
-                                </DataTrigger>
-                              </Style.Triggers>
-                            </Style>
-                          </Run.Style>
-                        </Run>
-                        <Run>
-                          <Run.Style>
-                            <Style TargetType="Run">
-                              <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=PackageLevel}" Value="Transitive">
-                                  <Setter Property="Text" Value="aka.ms/dotnet/nuget/why"/>
-                                  <Setter Property="FontWeight" Value="Bold"/>
-                                </DataTrigger>
-                              </Style.Triggers>
-                            </Style>
-                          </Run.Style>
-                        </Run>
-          </TextBlock>
+          <StackPanel>
+            <TextBlock
+              Style="{StaticResource TooltipStyle}">
+              <Run
+                Text="{Binding Id}"
+                FontWeight="Bold" /> <Run Text="{Binding ByOwnerOrAuthor, Mode=OneTime}"/>
+            </TextBlock>
+            <TextBlock Style="{StaticResource PackageDescriptionToolTipStyle}">
+              <Run Text="{Binding Summary}" />
+            </TextBlock>
+            <TextBlock Style="{StaticResource TransitiveInfoToolTipStyle}">
+              <Run
+                Text="{x:Static nuget:Resources.ToolTip_TransitiveDependency}"
+                FontWeight="Bold" />
+              <Run Text="{Binding TransitiveToolTipMessage}" />
+              <Run>
+                <Run.Style>
+                  <Style TargetType="Run">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding Path=PackageLevel}" Value="Transitive">
+                        <Setter Property="Text" Value="&#x0a;&#x0a;" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </Run.Style>
+              </Run><Run>
+                <Run.Style>
+                  <Style TargetType="Run">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding Path=PackageLevel}" Value="Transitive">
+                        <Setter Property="Text" Value="{x:Static nuget:Resources.ToolTip_TransitivePathHelp}" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </Run.Style>
+              </Run>
+              <Run>
+                <Run.Style>
+                  <Style TargetType="Run">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding Path=PackageLevel}" Value="Transitive">
+                        <Setter Property="Text" Value="aka.ms/dotnet/nuget/why"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </Run.Style>
+              </Run>
+            </TextBlock>
+          </StackPanel>
         </Grid.ToolTip>
       </Grid>
 
@@ -322,14 +343,9 @@
             <imaging:CrispImage.ToolTip>
               <StackPanel>
                 <TextBlock
-                Margin="0, 0, 0, 8"
-                Visibility="{Binding IsPackageVulnerable,Converter={StaticResource BooleanToVisibilityConverter}}">
-                  <TextBlock.Text>
-                    <MultiBinding Converter="{StaticResource StringFormatConverter}">
-                      <Binding Source="{x:Static nuget:Resources.Label_PackageVulnerableToolTip}" />
-                      <Binding Path="VulnerabilityMaxSeverity" Converter="{StaticResource IntToVulnerabilitySeverityConverter}" />
-                    </MultiBinding>
-                  </TextBlock.Text>
+                  Margin="0, 0, 0, 8"
+                  Style="{StaticResource VulnerabilitiesCountText}"
+                  Visibility="{Binding IsPackageVulnerable,Converter={StaticResource BooleanToVisibilityConverter}}">
                 </TextBlock>
                 <TextBlock
                 Text="{x:Static nuget:Resources.Label_PackageDeprecatedToolTip}"

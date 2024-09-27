@@ -1063,4 +1063,17 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   <data name="ToolTip_TransitivePathHelp" xml:space="preserve">
     <value>To learn more about transitive paths, see</value>
   </data>
+  <data name="Text_PackageLevelTransitive" xml:space="preserve">
+    <value>Transitive</value>
+  </data>
+  <data name="Text_PackageLevelTopLevel" xml:space="preserve">
+    <value>Top-level</value>
+  </data>
+  <data name="Label_MultiplePackageVulnerableVersionToolTip" xml:space="preserve">
+    <value>These installed package versions contain vulnerabilities: {0}</value>
+    <comment>{0} are package versions</comment>
+  </data>
+  <data name="ColumnHeader_PackageLevel" xml:space="preserve">
+    <value>Package Level</value>
+  </data>
 </root>
