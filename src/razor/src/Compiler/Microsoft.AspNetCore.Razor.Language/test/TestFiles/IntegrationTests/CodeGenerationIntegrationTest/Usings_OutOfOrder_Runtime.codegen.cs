@@ -12,43 +12,43 @@ namespace AspNetCoreGeneratedDocument
     using global::Microsoft.AspNetCore.Mvc.Rendering;
     using global::Microsoft.AspNetCore.Mvc.ViewFeatures;
 #nullable restore
-#line (1,2)-(2,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+#line (1,2)-(1,17) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
 using System.IO
 
 #nullable disable
     ;
 #nullable restore
-#line (7,2)-(8,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+#line (7,2)-(7,34) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
 using Foo = System.Text.Encoding
 
 #nullable disable
     ;
 #nullable restore
-#line (13,2)-(14,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+#line (13,2)-(13,14) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
 using System
 
 #nullable disable
     ;
 #nullable restore
-#line (15,2)-(16,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+#line (15,2)-(15,21) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
 using static System
 
 #nullable disable
     ;
 #nullable restore
-#line (16,2)-(17,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+#line (16,2)-(16,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
 using static System.Console
 
 #nullable disable
     ;
 #nullable restore
-#line (22,2)-(23,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+#line (22,2)-(22,43) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
 using static global::System.Text.Encoding
 
 #nullable disable
     ;
 #nullable restore
-#line (32,2)-(33,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+#line (32,2)-(32,19) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
 using System.Text
 
 #line default

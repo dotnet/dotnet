@@ -3,15 +3,14 @@
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
         CSharpCodeBlock - [0..12)::12
-            RazorDirective - [0..12)::12
+            RazorDirective - [0..10)::10
                 CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
                     Transition;[@];
-                RazorDirectiveBody - [1..12)::11
-                    CSharpStatementLiteral - [1..12)::11 - [using FooLF] - Gen<Import: Foo;> - SpanEditHandler;Accepts:AnyExceptNewline
+                RazorDirectiveBody - [1..10)::9
+                    CSharpStatementLiteral - [1..10)::9 - [using Foo] - Gen<Import: Foo;> - SpanEditHandler;Accepts:AnyExceptNewline
                         Keyword;[using];
                         Whitespace;[ ];
                         Identifier;[Foo];
-                        NewLine;[LF];
-        MarkupTextLiteral - [12..12)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
-            Marker;[];
+            RazorMetaCode - [10..12)::2 - Gen<None> - SpanEditHandler;Accepts:Any
+                NewLine;[LF];
     EndOfFile;[];

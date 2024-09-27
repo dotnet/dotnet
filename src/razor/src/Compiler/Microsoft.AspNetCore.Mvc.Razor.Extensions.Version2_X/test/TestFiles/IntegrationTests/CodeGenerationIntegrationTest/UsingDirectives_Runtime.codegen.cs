@@ -12,15 +12,15 @@ namespace AspNetCore
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
-#line (1,2)-(2,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
+#line (1,2)-(1,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
 using System.ComponentModel
 
     ;
-#line (2,2)-(3,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
+#line (2,2)-(2,26) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
 using System.Collections
 
     ;
-#line (3,2)-(4,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
+#line (3,2)-(3,14) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
 using System
 
     ;
