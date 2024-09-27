@@ -5614,6 +5614,22 @@ namespace AnotherTest
         CompileToAssembly(generated);
     }
 
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/10863")]
+    public void UsingDirective()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using System.Collections
+
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
 
     #endregion
 
