@@ -209,6 +209,17 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     }
 
     [Fact]
+    [Trait("SkipIfBuild", "Portable")] // Portable builds don't bundle an AOT compiler.
+    [Trait("SkipIfBuild", "Mono")]     // Mono builds don't bundle an AOT compiler.
+    public void VerifyWebTemplatePublishBundledAot()
+    {
+        var newTest = new SdkTemplateTest(
+            nameof(SdkTemplateTests) + "Aot", DotNetLanguage.CSharp, _scenarioTestInput.TargetRid, DotNetSdkTemplate.Web,
+            DotNetSdkActions.PublishAot);
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
+    }
+
+    [Fact]
     [Trait("Category", "Workload")]
     public void VerifyWorkloadCmd()
     {
