@@ -28,5 +28,11 @@
       "id": "Fixture",
       "isVisible": true
     }
+  ],
+  "tags": [
+    {
+      "type": "platform",
+      "add": [ "Linux", "macOS", "Windows" ]
+    }
   ]
 }
