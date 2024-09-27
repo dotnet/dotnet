@@ -619,6 +619,15 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Package Level.
+        /// </summary>
+        public static string ColumnHeader_PackageLevel {
+            get {
+                return ResourceManager.GetString("ColumnHeader_PackageLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Project.
         /// </summary>
         public static string ColumnHeader_Project {
@@ -1164,6 +1173,15 @@ namespace NuGet.PackageManagement.UI {
         public static string Label_License {
             get {
                 return ResourceManager.GetString("Label_License", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to These installed package versions contain vulnerabilities: {0}.
+        /// </summary>
+        public static string Label_MultiplePackageVulnerableVersionToolTip {
+            get {
+                return ResourceManager.GetString("Label_MultiplePackageVulnerableVersionToolTip", resourceCulture);
             }
         }
         
@@ -2084,6 +2102,24 @@ namespace NuGet.PackageManagement.UI {
         public static string Text_PackageFormatApply {
             get {
                 return ResourceManager.GetString("Text_PackageFormatApply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Top-level.
+        /// </summary>
+        public static string Text_PackageLevelTopLevel {
+            get {
+                return ResourceManager.GetString("Text_PackageLevelTopLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transitive.
+        /// </summary>
+        public static string Text_PackageLevelTransitive {
+            get {
+                return ResourceManager.GetString("Text_PackageLevelTransitive", resourceCulture);
             }
         }
         

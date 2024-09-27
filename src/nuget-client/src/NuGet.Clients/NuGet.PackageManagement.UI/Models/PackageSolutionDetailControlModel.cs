@@ -25,6 +25,7 @@ namespace NuGet.PackageManagement.UI
         private INuGetSolutionManagerService _solutionManager;
         private string _installedVersions; // The text describing the installed versions information, such as "not installed", "multiple versions installed" etc.
         private int _installedVersionsCount; // the count of different installed versions
+        private int _installedVulnerabilitiesCount; // the count of distinct vulnerable installed versions
         private bool _canUninstall;
         private bool _canInstall;
         // Indicates whether the SelectCheckBoxState is being updated in code. True means the state is being updated by code, while false means the state is changed by user clicking the checkbox.
@@ -117,31 +118,59 @@ namespace NuGet.PackageManagement.UI
 
         public bool IsRequestedVisible { get; private set; }
 
+        private static void UpdateProjectInstallationInfo(PackageInstallationInfo project, IPackageReferenceContextInfo installedVersion, HashSet<NuGetVersion> installedVersionsSet)
+        {
+            project.InstalledVersion = installedVersion.Identity.Version;
+            installedVersionsSet.Add(installedVersion.Identity.Version);
+
+            if (project.PackageLevel == PackageLevel.TopLevel)
+            {
+                project.AutoReferenced = installedVersion.IsAutoReferenced;
+
+                if (project.NuGetProject.ProjectStyle.Equals(ProjectStyle.PackageReference))
+                {
+                    project.RequestedVersion = installedVersion?.AllowedVersions?.OriginalString;
+                }
+            }
+        }
+
         private async Task UpdateInstalledVersionsAsync(CancellationToken cancellationToken)
         {
-            var hash = new HashSet<NuGetVersion>();
+            var installedVersionsSet = new HashSet<NuGetVersion>();
+            var vulnerabilitiesSet = new HashSet<NuGetVersion>();
 
             foreach (var project in _projects)
             {
                 try
                 {
-                    IPackageReferenceContextInfo installedVersion = await GetInstalledPackageAsync(project.NuGetProject, Id, cancellationToken);
-                    if (installedVersion != null)
-                    {
-                        project.InstalledVersion = installedVersion.Identity.Version;
-                        hash.Add(installedVersion.Identity.Version);
-                        project.AutoReferenced = installedVersion.IsAutoReferenced;
+                    (IPackageReferenceContextInfo TopLevelPackage, IPackageReferenceContextInfo TransitivePackage) installedPackage = await GetInstalledAndTransitivePackagesAsync(project.NuGetProject, Id, cancellationToken);
+                    var topLevelPackageVersion = installedPackage.TopLevelPackage;
+                    var transitivePackageVersion = installedPackage.TransitivePackage;
 
-                        if (project.NuGetProject.ProjectStyle.Equals(ProjectStyle.PackageReference))
-                        {
-                            project.RequestedVersion = installedVersion?.AllowedVersions?.OriginalString;
-                        }
+                    project.InstalledVersionMaxVulnerability = -1;
+                    project.RequestedVersion = null;
+                    project.AutoReferenced = false;
+
+                    if (transitivePackageVersion != null)
+                    {
+                        project.PackageLevel = PackageLevel.Transitive;
+                        UpdateProjectInstallationInfo(project, transitivePackageVersion, installedVersionsSet);
+                    }
+                    else if (topLevelPackageVersion != null)
+                    {
+                        project.PackageLevel = PackageLevel.TopLevel;
+                        UpdateProjectInstallationInfo(project, topLevelPackageVersion, installedVersionsSet);
                     }
                     else
                     {
-                        project.RequestedVersion = null;
                         project.InstalledVersion = null;
-                        project.AutoReferenced = false;
+                        project.PackageLevel = null;
+                    }
+
+                    if (project?.InstalledVersion is not null && _searchResultPackage.VulnerableVersions.TryGetValue(project.InstalledVersion, out int vulnerable))
+                    {
+                        project.InstalledVersionMaxVulnerability = vulnerable;
+                        vulnerabilitiesSet.Add(project.InstalledVersion);
                     }
                 }
                 catch (Exception ex)
@@ -155,16 +184,17 @@ namespace NuGet.PackageManagement.UI
                 }
             }
 
-            InstalledVersionsCount = hash.Count;
+            InstalledVersionsCount = installedVersionsSet.Count;
+            InstalledVulnerabilitiesCount = vulnerabilitiesSet.Count;
 
-            if (hash.Count == 0)
+            if (installedVersionsSet.Count == 0)
             {
                 InstalledVersions = Resources.Text_NotInstalled;
             }
-            else if (hash.Count == 1)
+            else if (installedVersionsSet.Count == 1)
             {
                 var displayVersion = new DisplayVersion(
-                    hash.First(),
+                    installedVersionsSet.First(),
                     string.Empty);
                 InstalledVersions = displayVersion.ToString();
             }
@@ -181,18 +211,20 @@ namespace NuGet.PackageManagement.UI
         /// This method is called from several methods that are called from properties and LINQ queries
         /// It is likely not called more than once in an action.
         /// </summary>
-        private async Task<IPackageReferenceContextInfo> GetInstalledPackageAsync(
+        private async Task<(IPackageReferenceContextInfo TopLevelPackage, IPackageReferenceContextInfo TransitivePackage)> GetInstalledAndTransitivePackagesAsync(
             IProjectContextInfo project,
             string packageId,
             CancellationToken cancellationToken)
         {
-            IEnumerable<IPackageReferenceContextInfo> installedPackages = await project.GetInstalledPackagesAsync(
-                ServiceBroker,
-                cancellationToken);
-            IPackageReferenceContextInfo installedPackage = installedPackages
+            IInstalledAndTransitivePackages installedAndTransitivePackages = await project.GetInstalledAndTransitivePackagesAsync(ServiceBroker, cancellationToken);
+            IPackageReferenceContextInfo installedPackages = installedAndTransitivePackages.InstalledPackages
                 .Where(p => StringComparer.OrdinalIgnoreCase.Equals(p.Identity.Id, packageId))
                 .FirstOrDefault();
-            return installedPackage;
+
+            ITransitivePackageReferenceContextInfo transitivePackages = installedAndTransitivePackages.TransitivePackages
+                .Where(p => StringComparer.OrdinalIgnoreCase.Equals(p.Identity.Id, packageId))
+                .FirstOrDefault();
+            return (installedPackages, transitivePackages);
         }
 
         protected override async Task CreateVersionsAsync(CancellationToken cancellationToken)
@@ -273,6 +305,16 @@ namespace NuGet.PackageManagement.UI
             {
                 _installedVersionsCount = value;
                 OnPropertyChanged(nameof(InstalledVersionsCount));
+            }
+        }
+
+        public int InstalledVulnerabilitiesCount
+        {
+            get => _installedVulnerabilitiesCount;
+            set
+            {
+                _installedVulnerabilitiesCount = value;
+                OnPropertyChanged(nameof(InstalledVulnerabilitiesCount));
             }
         }
 
@@ -437,12 +479,13 @@ namespace NuGet.PackageManagement.UI
 
         private void UpdateCanInstallAndCanUninstall()
         {
-            CanUninstall = Projects.Any(project => project.IsSelected && project.InstalledVersion != null && !project.AutoReferenced);
+            CanUninstall = Projects.Any(project => project.IsSelected && project.PackageLevel.Equals(PackageLevel.TopLevel) && project.InstalledVersion != null && !project.AutoReferenced);
 
             CanInstall = SelectedVersion != null
                 && CanInstallWithPackageSourceMapping
                 && Projects.Any(project => project.IsSelected
-                    && VersionComparer.Default.Compare(SelectedVersion.Version, project.InstalledVersion) != 0);
+                    && (project.PackageLevel.Equals(PackageLevel.Transitive)
+                    || VersionComparer.Default.Compare(SelectedVersion.Version, project.InstalledVersion) != 0));
         }
 
         private async ValueTask<IEnumerable<ProjectVersionConstraint>> GetConstraintsForSelectedProjectsAsync(
@@ -531,17 +574,18 @@ namespace NuGet.PackageManagement.UI
                     // for install, the installed version can't be the same as the version to be installed.
                     // AutoReferenced packages should be ignored
                     if (!project.AutoReferenced &&
+                        (project.PackageLevel.Equals(PackageLevel.Transitive) ||
                         VersionComparer.Default.Compare(
                         project.InstalledVersion,
-                        action.Version) != 0)
+                        action.Version) != 0))
                     {
                         selectedProjects.Add(project.NuGetProject);
                     }
                 }
                 else
                 {
-                    // for uninstall, the package must be already installed
-                    if (project.InstalledVersion != null && !project.AutoReferenced)
+                    // for uninstall, the package must be already installed and be top level
+                    if (project.PackageLevel.Equals(PackageLevel.TopLevel) && project.InstalledVersion != null && !project.AutoReferenced)
                     {
                         selectedProjects.Add(project.NuGetProject);
                     }

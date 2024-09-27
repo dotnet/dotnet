@@ -379,7 +379,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         [Theory]
         [InlineData(ItemFilter.All, true, typeof(MultiSourcePackageFeed))]
         [InlineData(ItemFilter.All, false, typeof(MultiSourcePackageFeed))]
-        [InlineData(ItemFilter.Installed, true, typeof(InstalledPackageFeed))]
+        [InlineData(ItemFilter.Installed, true, typeof(InstalledAndTransitivePackageFeed))]
         [InlineData(ItemFilter.Installed, false, typeof(InstalledAndTransitivePackageFeed))]
         [InlineData(ItemFilter.UpdatesAvailable, true, typeof(UpdatePackageFeed))]
         [InlineData(ItemFilter.UpdatesAvailable, false, typeof(UpdatePackageFeed))]
