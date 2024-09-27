@@ -59,3 +59,5 @@ CSharpCode
 ```
 
 In this way we keep the whitespace as belonging to the overall CSharpCode node, but don't make it part of the directive itself, ensuring the editor sees the correct length for the directive.
+
+We apply a very similar fix to `@using` directives, to ensure that the newline is treated as metacode of the overall block, rather than being a part of the `using` itself.

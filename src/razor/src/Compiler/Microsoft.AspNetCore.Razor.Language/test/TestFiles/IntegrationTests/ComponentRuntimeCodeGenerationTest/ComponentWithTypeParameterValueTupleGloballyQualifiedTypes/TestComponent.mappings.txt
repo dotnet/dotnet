@@ -1,9 +1,7 @@
-﻿Source Location: (1:0,1 [9] x:\dir\subdir\Test\TestComponent.cshtml)
-|using N
-|
-Generated Location: (371:12,0 [9] )
-|using N
-|
+﻿Source Location: (1:0,1 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|using N|
+Generated Location: (371:12,0 [7] )
+|using N|
 
 Source Location: (21:1,11 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |TParam|

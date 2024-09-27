@@ -1,22 +1,20 @@
-﻿Source Location: (20:1,1 [12] x:\dir\subdir\Test\TestComponent.cshtml)
-|using Test
-|
-Generated Location: (371:12,0 [12] )
-|using Test
-|
+﻿Source Location: (20:1,1 [10] x:\dir\subdir\Test\TestComponent.cshtml)
+|using Test|
+Generated Location: (372:12,0 [10] )
+|using Test|
 
 Source Location: (11:0,11 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |TChild|
-Generated Location: (586:22,0 [6] )
+Generated Location: (587:22,0 [6] )
 |TChild|
 
 Source Location: (60:2,28 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |MyEvent|
-Generated Location: (1160:37,0 [7] )
+Generated Location: (1161:37,0 [7] )
 |MyEvent|
 
 Source Location: (69:2,37 [16] x:\dir\subdir\Test\TestComponent.cshtml)
 |(TChild x) => {}|
-Generated Location: (1546:45,0 [16] )
+Generated Location: (1547:45,0 [16] )
 |(TChild x) => {}|
 

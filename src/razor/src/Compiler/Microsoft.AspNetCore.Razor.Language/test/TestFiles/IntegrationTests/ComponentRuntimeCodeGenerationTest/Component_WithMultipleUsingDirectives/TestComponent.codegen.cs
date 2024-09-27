@@ -14,7 +14,7 @@ using System.IO
 #nullable disable
     ;
 #nullable restore
-#line (1,20)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,20)-(1,57) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Microsoft.AspNetCore.Components
 
 #nullable disable

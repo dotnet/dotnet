@@ -1059,7 +1059,7 @@ namespace MyApp.Pages
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line (2,2)-(3,1) ""Pages/Index.razor""
+#line (2,2)-(2,33) ""Pages/Index.razor""
 using SurveyPromptRootNamspace;
 
 #line default
@@ -1132,7 +1132,7 @@ namespace MyApp.Pages
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line (2,2)-(3,1) ""Pages/Index.razor""
+#line (2,2)-(2,33) ""Pages/Index.razor""
 using SurveyPromptRootNamspace;
 
 #line default

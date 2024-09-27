@@ -12,7 +12,7 @@ namespace AspNetCoreGeneratedDocument
     using global::Microsoft.AspNetCore.Mvc.Rendering;
     using global::Microsoft.AspNetCore.Mvc.ViewFeatures;
 #nullable restore
-#line (1,2)-(2,1) "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\_ViewImports.cshtml"
+#line (1,2)-(1,14) "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\_ViewImports.cshtml"
 using System
 
 #line default
