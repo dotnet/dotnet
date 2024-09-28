@@ -5,8 +5,8 @@
     <arcadeOutputPackageVersion>9.0.0-beta.24473.1</arcadeOutputPackageVersion>
     <aspireGitCommitHash>137e8dcae0a7b22c05f48c4e7a5d36fe3f00a8d7</aspireGitCommitHash>
     <aspireOutputPackageVersion>8.2.1-preview.1.24473.4</aspireOutputPackageVersion>
-    <aspnetcoreGitCommitHash>f4895d974359d1ffded1dd3ab3a6c0eeda5f7fd8</aspnetcoreGitCommitHash>
-    <aspnetcoreOutputPackageVersion>9.0.0-rtm.24476.2</aspnetcoreOutputPackageVersion>
+    <aspnetcoreGitCommitHash>9a34a6e3c7975f41300bd2550a089a85810cafd1</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>9.0.0-rtm.24477.5</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>526b22d829bc9b420dff6ef70877a67053b66e0f</cecilGitCommitHash>
     <cecilOutputPackageVersion>0.11.5-alpha.24467.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>803d8598f98fb4efd94604b32627ee9407f246db</commandlineapiGitCommitHash>
@@ -31,11 +31,11 @@
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.24454.1</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>926a1d540c510a105d5836ed2d7329dc0113be5d</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.13.0-1.24476.11</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>2c4266c134aa02718179818098a11e825c9d1362</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>9.0.0-rtm.24475.3</runtimeOutputPackageVersion>
+    <runtimeGitCommitHash>0d44aea3696bab80b11a12c6bdfdbf8de9c4e815</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>9.0.0-rtm.24476.4</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>76edac963b2c6296018c7bf1e04a03c8488076d3</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24475.2</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>34aa34113584307a040aed535522eefb5cda62a4</sdkGitCommitHash>
+    <sdkGitCommitHash>66eeda2e25a782e81e98719bc2f1ee3e577ce648</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>4e60131607fd144eb86fe4487f1a37da940ca990</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24467.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>6a1e86367923914589bda2244eb2321b97523c33</sourcebuildreferencepackagesGitCommitHash>
