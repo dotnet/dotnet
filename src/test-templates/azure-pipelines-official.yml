@@ -130,6 +130,14 @@ extends:
                 accessToken: $(dn-bot-devdiv-drop-rw-code-rw)
               condition: succeeded()
 
+      - ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
+        - template: /eng/common/templates-official/job/onelocbuild.yml@self
+          parameters:
+            GitHubOrg: dotnet
+            MirrorRepo: test-templates
+            LclSource: lclFilesfromPackage
+            LclPackageId: 'LCL-JUNO-PROD-TESTEMPLATE'
+
     - template: \eng\common\templates-official\post-build\post-build.yml@self
       parameters:
         enableSourceLinkValidation: false

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0.0",
   "strings": {
-    "name": "Projeto de Teste MSTest",
-    "description": "Um projeto que contém testes de unidade MSTest que podem ser executados no .NET no Windows, Linux e MacOS."
+    "name": "MSTest Playwright Test Project",
+    "description": "A project that contains Playwright tests using MSTest test framework, that can run on .NET on Windows, Linux and MacOS."
   }
 }

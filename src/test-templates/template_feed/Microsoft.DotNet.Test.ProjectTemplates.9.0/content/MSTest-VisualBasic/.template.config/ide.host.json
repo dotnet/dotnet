@@ -1,5 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/ide.host",
+  "icon": "ide/icon.ico",
   "symbolInfo": [
     {
       "id": "TestRunner",
@@ -27,6 +28,12 @@
     {
       "id": "Fixture",
       "isVisible": true
+    }
+  ],
+  "tags": [
+    {
+      "type": "platform",
+      "add": [ "Linux", "macOS", "Windows" ]
     }
   ]
 }
