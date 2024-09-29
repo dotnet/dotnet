@@ -61,10 +61,10 @@
       "commitSha": "6b652cd1d5c02d6f331818ef16479499161b5b6d"
     },
     {
-      "packageVersion": "17.12.0-preview-24474-03",
+      "packageVersion": "17.12.0-preview-24476-01",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "fea15fbd1fdb509ee69db79420c6cc10044b6b09"
+      "commitSha": "ab7c28995f198f717aa5fb823e6fc36cadf42254"
     },
     {
       "packageVersion": "6.12.0-rc.120",
@@ -79,16 +79,16 @@
       "commitSha": "4b1b541ed34e34b4b91202871f661879dabb4f55"
     },
     {
-      "packageVersion": "4.13.0-1.24476.11",
+      "packageVersion": "4.12.0-3.24477.6",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "926a1d540c510a105d5836ed2d7329dc0113be5d"
+      "commitSha": "ba2f19abe63a267dc9b2d082d0e1904cd91c1947"
     },
     {
-      "packageVersion": "3.11.0-beta1.24476.1",
+      "packageVersion": "3.11.0-beta1.24477.1",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "1d3c176f7c3ae64484f3d2bd6688505802850dfa"
+      "commitSha": "ef8dad384cded496879b6c40e6ce5b9ffa111134"
     },
     {
       "packageVersion": "9.0.0-rc.1.24414.5",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "3d6535d1fb605d38f2af6065c62d11201e0ddc7d"
+      "commitSha": "31cdb8caee788678dc5ab809287053a682e123cd"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24473.2",
@@ -139,10 +139,10 @@
       "commitSha": "bf40ec00f3761436f9e503691191ed722575f1bb"
     },
     {
-      "packageVersion": "1.1.0-rc.24477.4",
+      "packageVersion": "1.1.0-rc.24477.5",
       "path": "test-templates",
       "remoteUri": "https://github.com/dotnet/test-templates",
-      "commitSha": "a78f0dcb1aed49fabe0b40a1898eac76747bacd6"
+      "commitSha": "950cc4a13d0c3f7d84558aec0552e15a5e8559d4"
     },
     {
       "packageVersion": "17.12.0-preview-24453-04",
