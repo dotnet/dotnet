@@ -221,8 +221,6 @@ internal sealed partial class TerminalLogger : INodeLogger
     /// </summary>
     private bool _showCommandLine = false;
 
-    private uint? _originalConsoleMode;
-
     /// <summary>
     /// Default constructor, used by the MSBuild logger infra.
     /// </summary>
@@ -265,8 +263,6 @@ internal sealed partial class TerminalLogger : INodeLogger
     /// <inheritdoc/>
     public void Initialize(IEventSource eventSource)
     {
-        (_, _, _originalConsoleMode) = NativeMethodsShared.QueryIsScreenAndTryEnableAnsiColorCodes();
-
         ParseParameters();
 
         eventSource.BuildStarted += BuildStarted;
@@ -362,8 +358,6 @@ internal sealed partial class TerminalLogger : INodeLogger
     /// <inheritdoc/>
     public void Shutdown()
     {
-        NativeMethodsShared.RestoreConsoleMode(_originalConsoleMode);
-
         _cts.Cancel();
         _refresher?.Join();
         Terminal.Dispose();
