@@ -35,7 +35,8 @@
       "choices": [
         {
           "choice": "None",
-          "description": "No fixture methods"
+          "description": "No fixture methods",
+          "displayName": "None"
         },
         {
           "choice": "AssemblyInitialize",
