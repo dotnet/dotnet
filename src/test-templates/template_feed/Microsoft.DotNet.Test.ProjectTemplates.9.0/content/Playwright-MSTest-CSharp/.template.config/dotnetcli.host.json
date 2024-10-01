@@ -13,6 +13,10 @@
       "longName": "no-restore",
       "shortName": ""
     },
+    "UseMSTestSdk": {
+      "shortName": "",
+      "longName": "sdk"
+    },
     "TestRunner": {
       "shortName": "",
       "longName": "test-runner"

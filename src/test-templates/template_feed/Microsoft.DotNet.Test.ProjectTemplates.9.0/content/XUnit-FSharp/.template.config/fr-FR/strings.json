@@ -1,7 +1,0 @@
-{
-  "version": "1.0.0.0",
-  "strings": {
-    "name": "Projet de test xUnit",
-    "description": "Projet qui contient des tests xUnit.net pouvant s'exécuter sur .NET sur Windows, Linux et macOS."
-  }
-}
