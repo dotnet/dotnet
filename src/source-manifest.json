@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "8.0.0-beta.24463.3",
+      "packageVersion": "8.0.0-beta.24475.3",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "8c08d889b3c0b3f19398faceaccd74d0f184a3fb"
+      "commitSha": "69abe6b2063083c0b35fc3a5b16cb2bdbaf5e8b0"
     },
     {
       "packageVersion": "8.0.0-preview.1.23557.2",
@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "e8679c21003d89148da4eda35af0b89fe6f35450"
+      "commitSha": "b98c338da56828d8b9854bc24ff7fc8824816784"
     },
     {
       "packageVersion": "17.8.5-preview-24055-02",
