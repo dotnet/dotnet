@@ -19,10 +19,10 @@
       "commitSha": "9a34a6e3c7975f41300bd2550a089a85810cafd1"
     },
     {
-      "packageVersion": "0.11.5-alpha.24475.1",
+      "packageVersion": "0.11.5-alpha.24480.1",
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "0cb8de0eb8dfe676a449d080ed8c66b01faa6604"
+      "commitSha": "9c9443396f8deacceb8edb169890e52aac25f311"
     },
     {
       "packageVersion": "0.1.532403",
@@ -73,10 +73,10 @@
       "commitSha": "675e8a81acb53958e40dc21be5f562d00239a449"
     },
     {
-      "packageVersion": "9.0.0-preview.24476.3",
+      "packageVersion": "9.0.0-preview.24501.3",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "4b1b541ed34e34b4b91202871f661879dabb4f55"
+      "commitSha": "044a9ee045c4345dce0574ff75e0407c3eb486f6"
     },
     {
       "packageVersion": "4.12.0-3.24501.10",
@@ -91,10 +91,10 @@
       "commitSha": "2595aeb5e9a506f3f845c01be18d70ded045e33a"
     },
     {
-      "packageVersion": "9.0.0-rtm.24480.7",
+      "packageVersion": "9.0.0-rtm.24501.6",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "3d3a8ed3d52deed5d9eb4391aaead0d462f58caa"
+      "commitSha": "58801184a1f0300d193517a77a054f51752aa3b2"
     },
     {
       "packageVersion": "9.0.0-preview.24475.2",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "646e1d91cf045935f41ebd0a31e77201f5a7353f"
+      "commitSha": "bcb30e0db6ec1de24c15cd984fdc93881a3f3cf7"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24480.2",

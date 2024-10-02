@@ -124,6 +124,23 @@ public class CSharpStatementBlockOnTypeFormattingTest(HtmlFormattingFixture fixt
     }
 
     [Fact]
+    public async Task Semicolon_PropertyGet()
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+                    @code {
+                     private string Name {get;$$}
+                    }
+                    """,
+            expected: """
+                    @code {
+                        private string Name { get; }
+                    }
+                    """,
+            triggerCharacter: ';');
+    }
+
+    [Fact]
     public async Task Semicolon_AddsLineAtEndOfDocument()
     {
         await RunOnTypeFormattingTestAsync(
