@@ -97,10 +97,10 @@ internal sealed class RemoteFormattingService(in ServiceArgs args) : RazorDocume
         => RunServiceAsync(
             solutionInfo,
             documentId,
-            context => IsValidOnTypeFormattingTriggerAsync(context, linePosition, triggerCharacter, cancellationToken),
+            context => GetOnTypeFormattingTriggerKindAsync(context, linePosition, triggerCharacter, cancellationToken),
             cancellationToken);
 
-    private async ValueTask<Response> IsValidOnTypeFormattingTriggerAsync(RemoteDocumentContext context, LinePosition linePosition, string triggerCharacter, CancellationToken cancellationToken)
+    private async ValueTask<Response> GetOnTypeFormattingTriggerKindAsync(RemoteDocumentContext context, LinePosition linePosition, string triggerCharacter, CancellationToken cancellationToken)
     {
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var sourceText = codeDocument.Source.Text;

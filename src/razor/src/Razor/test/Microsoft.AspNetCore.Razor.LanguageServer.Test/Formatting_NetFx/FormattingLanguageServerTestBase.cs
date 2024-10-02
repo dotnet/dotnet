@@ -48,7 +48,8 @@ public abstract class FormattingLanguageServerTestBase(ITestOutputHelper testOut
 
         public Task<ImmutableArray<TextChange>> GetCSharpOnTypeFormattingChangesAsync(DocumentContext documentContext, RazorFormattingOptions options, int hostDocumentIndex, char triggerCharacter, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            Called = true;
+            return SpecializedTasks.EmptyImmutableArray<TextChange>();
         }
 
         public Task<TextChange?> TryGetCSharpSnippetFormattingEditAsync(DocumentContext documentContext, ImmutableArray<TextChange> edits, RazorFormattingOptions options, CancellationToken cancellationToken)
