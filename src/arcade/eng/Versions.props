@@ -72,6 +72,9 @@
     <MicrosoftNetSdkWorkloadManifestReaderVersion>8.0.100-preview.3.23178.3</MicrosoftNetSdkWorkloadManifestReaderVersion>
     <!-- symreader-converter -->
     <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbVersion>
+    <MicrosoftDiaSymReaderConverterVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterVersion>
+    <!-- diagnostics -->
+    <MicrosoftSymbolManifestGeneratorVersion>8.0.0-preview.24461.2</MicrosoftSymbolManifestGeneratorVersion>
     <!-- templating -->
     <MicrosoftTemplateEngineAuthoringTasksVersion>8.0.100-rtm.23479.1</MicrosoftTemplateEngineAuthoringTasksVersion>
     <!-- vstest -->
@@ -81,9 +84,9 @@
     <!-- xliff-tasks -->
     <MicrosoftDotNetXliffTasksVersion>1.0.0-beta.23475.1</MicrosoftDotNetXliffTasksVersion>
     <!-- external -->
-    <AzureCoreVersion>1.34.0</AzureCoreVersion>
-    <AzureIdentityVersion>1.11.4</AzureIdentityVersion>
-    <AzureStorageBlobsVersion>12.16.0</AzureStorageBlobsVersion>
+    <AzureCoreVersion>1.42.0</AzureCoreVersion>
+    <AzureIdentityVersion>1.12.0</AzureIdentityVersion>
+    <AzureStorageBlobsVersion>12.19.1</AzureStorageBlobsVersion>
     <CommandLineParserVersion>2.5.0</CommandLineParserVersion>
     <CoverletCollectorVersion>1.0.1</CoverletCollectorVersion>
     <FluentAssertionsVersion>5.10.3</FluentAssertionsVersion>
