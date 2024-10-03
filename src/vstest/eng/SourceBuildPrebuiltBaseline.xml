@@ -18,5 +18,6 @@
     <UsagePattern IdentityGlob="Microsoft.AspNetCore.App.Ref/8.0.*" />
     <UsagePattern IdentityGlob="Microsoft.NetCore.App.Ref/8.0.*" />
     <UsagePattern IdentityGlob="Microsoft.NETCore.App.Host.linux-x64/8.0.*" />
+    <UsagePattern IdentityGlob="Microsoft.Extensions.DependencyModel/3.1.0*" />
   </IgnorePatterns>
 </UsageData>

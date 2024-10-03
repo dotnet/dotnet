@@ -4,20 +4,44 @@ on:
   issues:
     types:
       [labeled] #, opened, edited, deleted, closed, reopened, labeled, unlabeled, assigned
+  issue_comment:
+    types: [created, edited, deleted]
+    
+concurrency:
+  group: issue-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+# Extra permissions needed to login with Entra ID service principal via federated identity
+permissions:
+  id-token: write
+  issues: write
 
 jobs:
   updateAzDO:
     if: github.event.label.name == 'sprint'
     runs-on: ubuntu-latest
+    environment: ado
     steps:
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.ENTRA_APP_CLIENT_ID }}
+          tenant-id: ${{ secrets.ENTRA_APP_TENANT_ID }}
+          allow-no-subscriptions: true
+      - name: Get Azure DevOps token
+        id: get_ado_token
+        run:
+          # The resource ID for Azure DevOps is always 499b84ac-1321-427f-aa17-267ca6975798
+          # https://learn.microsoft.com/azure/devops/integrate/get-started/authentication/service-principal-managed-identity
+          echo "ado_token=$(az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query "accessToken" --output tsv)" >> $GITHUB_ENV
       - uses: pavelhorak/github-actions-issue-to-work-item@main
         env:
-          ado_token: "${{ secrets.ADO_PERSONAL_ACCESS_TOKEN }}"
+          ado_token: "${{ env.ado_token }}"
           github_token: "${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}"
           ado_organization: "${{ secrets.ADO_ORGANIZATION }}"
           ado_project: "${{ secrets.ADO_PROJECT }}"
           ado_area_path: "${{ secrets.ADO_AREA_PATH }}"
-          ado_iteration_path: "${{ secrets.ADO_ITERATION_PATH }}" # this doesn't work: "@CurrentIteration('[DevDiv]\\.NET DevExp Prague')"
+          ado_iteration_path: "${{ secrets.ADO_ITERATION_PATH }}"
           ado_wit: "User Story"
           ado_new_state: "Committed"
           ado_active_state: "In Progress"

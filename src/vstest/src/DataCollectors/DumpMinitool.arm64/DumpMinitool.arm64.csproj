@@ -11,7 +11,7 @@
     so order here matters. -->
     <PlatformTarget Condition=" '$(RuntimeIdentifier)' == '' ">AnyCPU</PlatformTarget>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <!--
       NETSDK1201: For projects targeting .NET 8.0 and higher, specifying a RuntimeIdentifier will no longer produce a
       self contained app by default. To continue building self-contained apps, set the SelfContained property to true

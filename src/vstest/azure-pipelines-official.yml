@@ -55,7 +55,7 @@ parameters:
     image: 1es-ubuntu-2204
     os: linux
   - name: Azure Pipelines
-    image: macOS-12
+    image: macos-13
     os: macOS
 
 variables:
@@ -120,6 +120,9 @@ resources:
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
+    sdl:
+      policheck:
+        enabled: true
     pool:
       name: $(DncEngInternalBuildPool)
       image: 1es-windows-2022
