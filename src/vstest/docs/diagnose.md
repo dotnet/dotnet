@@ -139,3 +139,19 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 Starting test execution, please wait...
 Host debugging is enabled. Please attach debugger to testhost process to continue.
 ```
+
+## In Visual Studio
+
+Set test logging to trace: 
+
+![image](https://github.com/user-attachments/assets/0ee53d10-4f95-469a-91bd-8577d79b99bc)
+
+Run your tests. 
+
+Go to Output > Tests window: 
+
+Please provide all files from the listed folder, and complete content of the Tests window.
+
+![image](https://github.com/user-attachments/assets/c942642d-e10a-4bf3-9920-8ddd22d99ba8)
+
+
