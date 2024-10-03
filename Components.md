@@ -38,9 +38,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/tree/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@044a9ee](https://github.com/dotnet/razor/tree/044a9ee045c4345dce0574ff75e0407c3eb486f6)*
+*[dotnet/razor@f266ffb](https://github.com/dotnet/razor/tree/f266ffb956e3704b1473d572cd3015fc0ee8b3be)*
 - `src/roslyn`  
-*[dotnet/roslyn@1cf4941](https://github.com/dotnet/roslyn/tree/1cf4941a0b8270c8bdd0abc0051501c2416c7592)*
+*[dotnet/roslyn@dc30397](https://github.com/dotnet/roslyn/tree/dc303976c995da5871863b19d0f39e0e9b4c4654)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@2595aeb](https://github.com/dotnet/roslyn-analyzers/tree/2595aeb5e9a506f3f845c01be18d70ded045e33a)*
 - `src/runtime`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@76edac9](https://github.com/dotnet/scenario-tests/tree/76edac963b2c6296018c7bf1e04a03c8488076d3)*
 - `src/sdk`  
-*[dotnet/sdk@c041f72](https://github.com/dotnet/sdk/tree/c041f721054185fa9689c58e36a1cd59065f6c2d)*
+*[dotnet/sdk@5c6b8df](https://github.com/dotnet/sdk/tree/5c6b8df3b3f411987fbdb824b45ddabcc9048ffb)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@fbe8f0b](https://github.com/dotnet/source-build-externals/tree/fbe8f0b52ae0e083461d89db7229f6d70e874644)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -88,7 +88,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/templating`  
 *[dotnet/templating@a23da1c](https://github.com/dotnet/templating/tree/a23da1c15c737b5e121650cfa5a86805e74e34fc)*
 - `src/test-templates`  
-*[dotnet/test-templates@3275545](https://github.com/dotnet/test-templates/tree/327554524491ac457736c45c524eadb2e1171421)*
+*[dotnet/test-templates@8a94286](https://github.com/dotnet/test-templates/tree/8a94286429bf4ac8019689cb6a56f1173839977e)*
 - `src/vstest`  
 *[microsoft/vstest@07acde2](https://github.com/microsoft/vstest/tree/07acde22b65497e72de145d57167b83609a7f7fb)*
 - `src/windowsdesktop`  
