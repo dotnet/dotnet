@@ -92,7 +92,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/vstest`  
 *[microsoft/vstest@07acde2](https://github.com/microsoft/vstest/tree/07acde22b65497e72de145d57167b83609a7f7fb)*
 - `src/windowsdesktop`  
-*[dotnet/windowsdesktop@1e51d83](https://github.com/dotnet/windowsdesktop/tree/1e51d832ef830372fdf7f97e7c77a35e3fed368e)*
+*[dotnet/windowsdesktop@df03828](https://github.com/dotnet/windowsdesktop/tree/df0382842a58d4ef536472443a5b4ecc05c8cf90)*
 - `src/winforms`  
 *[dotnet/winforms@b40020d](https://github.com/dotnet/winforms/tree/b40020d58f624c6d280b25645160e0d44e9c9861)*
 - `src/wpf`  
