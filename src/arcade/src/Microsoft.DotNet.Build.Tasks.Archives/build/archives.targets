@@ -77,7 +77,18 @@
     <SymbolsArchiveName Condition="'$(SymbolsArchiveName)' == ''">$(ArchiveName)-symbols</SymbolsArchiveName>
   </PropertyGroup>
 
+  <Target Name="_CheckPigzAvailability" Condition="'$(_PigzFoundExitCode)' == ''">
+    <PropertyGroup>
+      <_CommandProbe>command -v</_CommandProbe>
+      <_CommandProbe Condition="'$(OS)' == 'Windows_NT'">where</_CommandProbe>
+    </PropertyGroup>
+    <Exec Command="$(_CommandProbe) pigz" IgnoreExitCode="true" StandardOutputImportance="Low">
+      <Output TaskParameter="ExitCode" PropertyName="_PigzFoundExitCode" />
+    </Exec>
+  </Target>
+
   <Target Name="_CreateArchive"
+          DependsOnTargets="_CheckPigzAvailability"
           Condition="'$(SkipArchivesBuild)' != 'true'">
     <PropertyGroup>
       <_OutputPathRoot>$(IntermediateOutputPath)output/</_OutputPathRoot>
@@ -94,15 +105,22 @@
                   Overwrite="true"
                   DestinationFile="$(_DestinationFileName)"
                   Condition="'$(ArchiveFormat)' == 'zip'"/>
-    <Exec Command="tar -C '$(_OutputPathRoot)' -czf $(_DestinationFileName) ."
+    <!-- use parallel gzip implementation when available -->
+    <Exec Command="tar -C '$(_OutputPathRoot)' -cf - . | pigz &gt; '$(_DestinationFileName)'"
           IgnoreExitCode="true"
           IgnoreStandardErrorWarningFormat="true"
-          Condition="'$(ArchiveFormat)' == 'tar.gz'"/>
+          Condition="'$(ArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' == '0'"/>
+    <!-- otherwise, use built-in gzip feature (-z) -->
+    <Exec Command="tar -C '$(_OutputPathRoot)' -czf '$(_DestinationFileName)' ."
+          IgnoreExitCode="true"
+          IgnoreStandardErrorWarningFormat="true"
+          Condition="'$(ArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' != '0'"/>
 
-    <Message Text="$(_OutputPathRoot) -> $(_DestinationFileName)" Importance="high" />
+    <Message Text="Successfully created archive -> '$(_DestinationFileName)' from '$(_OutputPathRoot)'" Importance="high" />
   </Target>
 
   <Target Name="_CreateSymbolsArchive"
+          DependsOnTargets="_CheckPigzAvailability"
           Condition="'$(CreateSymbolsArchive)' == 'true' and '$(SkipArchivesBuild)' != 'true'">
     <PropertyGroup>
       <_SymbolsOutputPathRoot>$(IntermediateOutputPath)symbols/</_SymbolsOutputPathRoot>
@@ -119,12 +137,18 @@
                   Overwrite="true"
                   DestinationFile="$(_DestinationFileName)"
                   Condition="'$(ArchiveFormat)' == 'zip'"/>
-    <Exec Command="tar -C '$(_SymbolsOutputPathRoot)' -czf $(_DestinationFileName) ."
+    <!-- use parallel gzip implementation when available -->
+    <Exec Command="tar -C '$(_OutputPathRoot)' -cf - . | pigz &gt; '$(_DestinationFileName)'"
           IgnoreExitCode="true"
           IgnoreStandardErrorWarningFormat="true"
-          Condition="'$(ArchiveFormat)' == 'tar.gz'"/>
+          Condition="'$(ArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' == '0'"/>
+    <!-- otherwise, use built-in gzip feature (-z) -->
+    <Exec Command="tar -C '$(_OutputPathRoot)' -czf '$(_DestinationFileName)' ."
+          IgnoreExitCode="true"
+          IgnoreStandardErrorWarningFormat="true"
+          Condition="'$(ArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' != '0'"/>
 
-    <Message Text="$(_SymbolsOutputPathRoot) -> $(_DestinationFileName)" Importance="high" />
+    <Message Text="Successfully created archive -> '$(_DestinationFileName)' from '$(_SymbolsOutputPathRoot)'" Importance="high" />
   </Target>
 
 </Project>

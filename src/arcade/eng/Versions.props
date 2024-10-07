@@ -12,8 +12,8 @@
     <!-- arcade -->
     <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>9.0.0-beta.24223.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- arcade-services -->
-    <MicrosoftDotNetMaestroClientVersion>1.1.0-beta.24422.1</MicrosoftDotNetMaestroClientVersion>
-    <MicrosoftDotNetMaestroTasksVersion>1.1.0-beta.24422.1</MicrosoftDotNetMaestroTasksVersion>
+    <MicrosoftDotNetMaestroClientVersion>1.1.0-beta.24474.1</MicrosoftDotNetMaestroClientVersion>
+    <MicrosoftDotNetMaestroTasksVersion>1.1.0-beta.24474.1</MicrosoftDotNetMaestroTasksVersion>
     <!-- command-line-api -->
     <SystemCommandLineVersion>2.0.0-beta4.24126.1</SystemCommandLineVersion>
     <!-- corefx -->
@@ -82,12 +82,12 @@
     <MicrosoftDiaSymReaderConverterVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterVersion>
     <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbVersion>
     <!-- diagnostics -->
-    <MicrosoftSymbolManifestGeneratorVersion>8.0.0-preview.24326.1</MicrosoftSymbolManifestGeneratorVersion>
+    <MicrosoftSymbolManifestGeneratorVersion>8.0.0-preview.24461.2</MicrosoftSymbolManifestGeneratorVersion>
     <!-- templating -->
-    <MicrosoftTemplateEngineAuthoringTasksVersion>10.0.100-alpha.1.24418.4</MicrosoftTemplateEngineAuthoringTasksVersion>
+    <MicrosoftTemplateEngineAuthoringTasksVersion>10.0.100-alpha.1.24468.1</MicrosoftTemplateEngineAuthoringTasksVersion>
     <!-- vstest -->
     <MicrosoftNetTestSdkVersion>17.5.0</MicrosoftNetTestSdkVersion>
     <!-- xharness -->
-    <MicrosoftDotNetXHarnessCLIVersion>9.0.0-prerelease.24405.1</MicrosoftDotNetXHarnessCLIVersion>
+    <MicrosoftDotNetXHarnessCLIVersion>10.0.0-prerelease.24459.1</MicrosoftDotNetXHarnessCLIVersion>
   </PropertyGroup>
 </Project>

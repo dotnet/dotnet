@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.DotNet.SignTool
 {
@@ -17,6 +18,7 @@ namespace Microsoft.DotNet.SignTool
     internal sealed class RealSignTool : SignTool
     {
         private readonly string _msbuildPath;
+        private readonly string _dotnetPath;
         private readonly string _logDir;
         private readonly string _snPath;
 
@@ -35,23 +37,32 @@ namespace Microsoft.DotNet.SignTool
         {
             TestSign = args.TestSign;
             _msbuildPath = args.MSBuildPath;
+            _dotnetPath = args.DotNetPath;
             _snPath = args.SNBinaryPath;
             _logDir = args.LogDir;
         }
 
         public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath)
         {
-            if (_msbuildPath == null)
+            if (_msbuildPath == null && _dotnetPath == null)
             {
                 return buildEngine.BuildProjectFile(projectFilePath, null, null, null);
             }
 
             Directory.CreateDirectory(_logDir);
 
+            string processFileName = _dotnetPath;
+            string processArguments = $@"build ""{projectFilePath}"" -bl:""{binLogPath}""";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                processFileName = _msbuildPath;
+                processArguments = $@"""{projectFilePath}"" /bl:""{binLogPath}""";
+            }
+
             var process = Process.Start(new ProcessStartInfo()
             {
-                FileName = _msbuildPath,
-                Arguments = $@"""{projectFilePath}"" /bl:""{binLogPath}""",
+                FileName = processFileName,
+                Arguments = processArguments,
                 UseShellExecute = false,
                 WorkingDirectory = TempDir,
             });

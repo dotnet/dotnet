@@ -155,8 +155,10 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(PlatformPackageType)' == 'TargetingPack'">
-      <!-- Targeting packs don't have symbol files. -->
-      <FilesToPackage Remove="@(FilesToPackage)" Condition="'%(FilesToPackage.IsSymbolFile)' == 'true'" />
+      <!-- Targeting packs don't have symbol files except for analyzer ones. -->
+      <FilesToPackage Remove="@(FilesToPackage)"
+                      Condition="'%(FilesToPackage.IsSymbolFile)' == 'true' and 
+                                  !$([System.String]::new('%(FilesToPackage.TargetPath)').StartsWith('analyzers/'))" />
     </ItemGroup>
 
     <ItemGroup>

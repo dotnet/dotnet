@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Resources;
+using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
 namespace Microsoft.DotNet.SignTool
@@ -126,9 +127,14 @@ namespace Microsoft.DotNet.SignTool
         public ITaskItem[] CertificatesSignInfo { get; set; }
 
         /// <summary>
-        /// Path to msbuild.exe. Required if <see cref="DryRun"/> is <c>false</c>.
+        /// Path to msbuild.exe. Required if <see cref="DryRun"/> is <c>false</c>, OS is <c>Windows_NT</c>, and project is using .NET Core.
         /// </summary>
         public string MSBuildPath { get; set; }
+
+        /// <summary>
+        /// Path to dotnet executable. Required if <see cref="DryRun"/> is <c>false</c> and OS is not <c>Windows_NT</c>.
+        /// </summary>
+        public string DotNetPath { get; set; }
 
         /// <summary>
         /// Path to sn.exe. Required if strong name signing files locally is needed.
@@ -180,12 +186,6 @@ namespace Microsoft.DotNet.SignTool
 
         public void ExecuteImpl()
         {
-            if (!DryRun && typeof(object).Assembly.GetName().Name != "mscorlib" && !File.Exists(MSBuildPath))
-            {
-                Log.LogError($"MSBuild was not found at this path: '{MSBuildPath}'.");
-                return;
-            }
-
             if (!AllowEmptySignList && ItemsToSign.Count() == 0)
             {
                 Log.LogWarning(subcategory: null,
@@ -201,6 +201,20 @@ namespace Microsoft.DotNet.SignTool
 
             if (!DryRun)
             {
+                bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+                if (isWindows && typeof(object).Assembly.GetName().Name != "mscorlib" && !File.Exists(MSBuildPath))
+                {
+                    // For Windows, desktop msbuild is required if running on .NET Core.
+                    Log.LogError($"MSBuild was not found at this path: '{MSBuildPath}'.");
+                    return;
+                }
+                else if (!isWindows && !File.Exists(DotNetPath))
+                {
+                    // For Mac and Linux, dotnet is required.
+                    Log.LogError($"DotNet was not found at this path: '{DotNetPath}'.");
+                    return;
+                }
+
                 if(!Path.IsPathRooted(TempDir))
                 {
                     Log.LogWarning($"TempDir ('{TempDir}' is not rooted, this can cause unexpected behavior in signtool.  Please provide a fully qualified 'TempDir' path.");
@@ -241,7 +255,7 @@ namespace Microsoft.DotNet.SignTool
 
             if (Log.HasLoggedErrors) return;
 
-            var signToolArgs = new SignToolArgs(TempDir, MicroBuildCorePath, TestSign, MSBuildPath, LogDir, enclosingDir, SNBinaryPath, WixToolsPath, TarToolPath);
+            var signToolArgs = new SignToolArgs(TempDir, MicroBuildCorePath, TestSign, MSBuildPath, DotNetPath, LogDir, enclosingDir, SNBinaryPath, WixToolsPath, TarToolPath);
             var signTool = DryRun ? new ValidationOnlySignTool(signToolArgs, Log) : (SignTool)new RealSignTool(signToolArgs, Log);
 
             Telemetry telemetry = new Telemetry();

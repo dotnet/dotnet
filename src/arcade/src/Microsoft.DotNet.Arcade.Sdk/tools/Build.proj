@@ -13,6 +13,7 @@
     DotNetBuildRepo                 Build the repo as part of the entire .NET stack.
     DotNetBuildInnerRepo            Build the repo as part of the entire .NET stack. This switch is used on the inner repo invocation and should not be passed by the user.
     DotNetBuildOrchestrator         Build the entire .NET stack.
+    DotNetBuildPass                 While building the repo as part of the entire .NET stack, this parameter specifies which build pass the current build is part of.
     DotNetBuildSourceOnly           Build the repo as part of the entire .NET stack with no external dependencies.
     DotNetBuildFromSource           Building the entire stack from source with no external dependencies.
     DotNetPublishUsingPipelines     Publish assets to Build Asset Registry.
@@ -46,6 +47,7 @@
     <ProjectToBuild>
       <RestoreInParallel>true</RestoreInParallel>
       <BuildInParallel>true</BuildInParallel>
+      <DotNetBuildPass>1</DotNetBuildPass>
     </ProjectToBuild>
   </ItemDefinitionGroup>
 
@@ -59,6 +61,9 @@
 
   <PropertyGroup>
     <_ProjectsPropertyWasUpdatedInBuildProps Condition="'$(_OriginalProjectsValue)' != '$(Projects)'">true</_ProjectsPropertyWasUpdatedInBuildProps>
+    <!-- An empty DotNetBuildPass refers to the 1st build pass. -->
+    <_DotNetBuildPassNormalized Condition="'$(DotNetBuildPass)' != ''">$(DotNetBuildPass)</_DotNetBuildPassNormalized>
+    <_DotNetBuildPassNormalized Condition="'$(DotNetBuildPass)' == ''">1</_DotNetBuildPassNormalized>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Projects)' != ''">
@@ -70,15 +75,27 @@
   </ItemGroup>
 
   <!--
-    Default values.
+    Filter out projects that are part of a different build pass in the inner build when doing a unified build.
+    Don't do this filtering in non-unified builds to allow repos to define how different build passes are handled
+    in their own repo-specific builds.
   -->
-  <!-- If Projects is unspecified and ProjectToBuild was not set via Build.props, fallback to building .sln files in the repo root. -->
-  <ItemGroup Condition="'@(ProjectToBuild)' == ''">
+  <ItemGroup Condition="'$(DotNetBuildInnerRepo)' == 'true'">
+    <_ProjectToBuildCurrentBuildPass Include="@(ProjectToBuild->WithMetadataValue('DotNetBuildPass', '$(_DotNetBuildPassNormalized)'))" />
+    <ProjectToBuild Remove="@(ProjectToBuild)" />
+    <ProjectToBuild Include="@(_ProjectToBuildCurrentBuildPass)" />
+  </ItemGroup>
+
+  <!--
+    Default values.
+    If Projects is unspecified and ProjectToBuild was not set via Build.props, fallback to building .sln files in the repo root.
+    For build passes after the first, build nothing by default.
+  -->
+  <ItemGroup Condition="'@(ProjectToBuild)' == '' and '$(_DotNetBuildPassNormalized)' == '1'">
     <ProjectToBuild Include="$(RepoRoot)*.sln" />
   </ItemGroup>
 
   <Target Name="Execute">
-    <Error Text="No projects were found to build. Either the 'Projects' property or 'ProjectToBuild' item group must be specified." Condition="'@(ProjectToBuild)' == ''"/>
+    <Error Text="No projects were found to build. Either the 'Projects' property or 'ProjectToBuild' item group must be specified." Condition="'@(ProjectToBuild)' == '' and '$(_DotNetBuildPassNormalized)' != '1'"/>
     <Error Text="Property 'RepoRoot' must be specified" Condition="'$(RepoRoot)' == ''"/>
     <Error Text="File 'global.json' must exist in directory specified by RepoRoot: '$(RepoRoot)'" Condition="'$(RepoRoot)' != '' and !Exists('$(RepoRoot)global.json')"/>
 

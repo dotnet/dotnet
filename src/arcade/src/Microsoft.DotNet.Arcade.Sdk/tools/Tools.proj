@@ -37,20 +37,14 @@
     <PackageReference Include="Microsoft.DotNet.NuGetRepack.Tasks" Version="$(MicrosoftDotnetNuGetRepackTasksVersion)" Condition="'$(UsingToolNuGetRepack)' == 'true'" IsImplicitlyDefined="true" />
   </ItemGroup>
 
-  <!-- These package references should only be excluded when doing inner builds, and outer-builds from the orchestrator in source only build
-       configurations. non-source only build configurations should always restore these packages.
-
-       Switches are separated by legacy vs. new.
-
-       This looks complicated right now, but will get simpler as legacy switches disappear:
-       - ArcadeInnerBuildFromSource/DotNetBuildFromSource disappear:
-         ('$(DotNetBuildSourceOnly)' != 'true' or ('$(DotNetBuildPhase)' == 'Repo' and '$(DotNetBuildOrchestrator)' != 'true')
+  <!-- These package references should only be included when:
+       - Not in source-only mode OR
+       - When in source-only mode in the outer repo build but not launched from the orchestrator.
   -->
 
   <PropertyGroup>
     <_ImportOrUseTooling>false</_ImportOrUseTooling>
-    <_ImportOrUseTooling Condition="('$(ArcadeInnerBuildFromSource)' != 'true' and '$(DotNetBuildFromSourceFlavor)' != 'Product') and 
-                                    ('$(DotNetBuildSourceOnly)' != 'true' or ('$(DotNetBuildPhase)' == 'Repo' and '$(DotNetBuildOrchestrator)' != 'true'))">true</_ImportOrUseTooling>
+    <_ImportOrUseTooling Condition="'$(DotNetBuildSourceOnly)' != 'true' or ('$(DotNetBuildPhase)' == 'Repo' and '$(DotNetBuildOrchestrator)' != 'true')">true</_ImportOrUseTooling>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(_ImportOrUseTooling)' == 'true'">
@@ -80,7 +74,13 @@
           Condition="'$(_ImportOrUseTooling)' == 'true' and Exists('$(_RepoToolManifest)')"
           BeforeTargets="Restore">
 
-    <Exec Command='"$(DotNetTool)" tool restore' WorkingDirectory="$(RepoRoot)" />
+    <!-- Respect a restore config file passed in via /p:RestoreConfigFile, common in VMR builds -->
+    <PropertyGroup>
+      <RestoreConfigFileOption></RestoreConfigFileOption>
+      <RestoreConfigFileOption Condition="'$(RestoreConfigFile)' != ''">--configfile $(RestoreConfigFile)</RestoreConfigFileOption>
+    </PropertyGroup>
+
+    <Exec Command='"$(DotNetTool)" tool restore $(RestoreConfigFileOption)' WorkingDirectory="$(RepoRoot)" />
   </Target>
 
   <!-- Set as DependsOnTargets when internal tools (e.g. IBC data, optprof) is required -->

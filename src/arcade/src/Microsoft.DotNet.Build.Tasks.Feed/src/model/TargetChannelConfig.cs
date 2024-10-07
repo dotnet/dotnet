@@ -38,7 +38,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
         /// <summary>
         /// Should publish to Msdl
         /// </summary>
-        public SymbolTargetType SymbolTargetType { get; }
+        public SymbolPublishVisibility SymbolTargetType { get; }
 
         public bool IsInternal { get; }
 
@@ -52,7 +52,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
             PublishingInfraVersion publishingInfraVersion,
             List<string> akaMSChannelNames,
             IEnumerable<TargetFeedSpecification> targetFeeds,
-            SymbolTargetType symbolTargetType,
+            SymbolPublishVisibility symbolTargetType,
             List<string> filenamesToExclude = null,
             bool flatten = true)
         {

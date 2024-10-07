@@ -80,7 +80,7 @@
              BuildInParallel="$(BuildInParallel)" />
   </Target>
 
-  <Target Name="GenerateDeb" DependsOnTargets="FindDebuild;CreateDeb" />
+  <Target Name="GenerateDeb" DependsOnTargets="CreateDeb" />
   <Target Name="GenerateRpm" DependsOnTargets="FindFPM;CreateRpm" />
   <Target Name="GenerateMsi" DependsOnTargets="CreateWixInstaller" />
   <Target Name="GenerateCrossArchMsi" DependsOnTargets="CreateCrossArchWixInstaller" />
@@ -169,29 +169,6 @@
       <_InstallerFileCblMariner2>$(PackageOutputPath)$(_InstallerFileNameWithoutExtensionCblMariner2)$(InstallerExtension)</_InstallerFileCblMariner2>
     </PropertyGroup>
   </Target>
-  
-  <!--
-    Check if the deb package build tool prereq is available.
-  -->
-  <Target Name="FindDebuild">
-    <!-- run Debuild -->
-    <Exec
-      Command="/usr/bin/env debuild -h > /dev/null 2>&amp;1"
-      ContinueOnError="true"
-      IgnoreExitCode="true"
-      IgnoreStandardErrorWarningFormat="true">
-      <Output TaskParameter="ExitCode" PropertyName="_DebuildSearchExitCode" />
-    </Exec>
-
-    <!-- Check if it successfully showed us a help message. -->
-    <PropertyGroup>
-      <_DebuildPresent>false</_DebuildPresent>
-      <_DebuildPresent Condition=" '$(_DebuildSearchExitCode)' == '0' ">true</_DebuildPresent>
-    </PropertyGroup>
-
-    <Error Condition=" '$(_DebuildPresent)'  != 'true' "
-             Text="Debuild Not found, Debian packages will not be built." />
-  </Target>
 
   <!--
     Check if the RPM package build tool prereq is available.
@@ -215,62 +192,122 @@
     <Error Condition=" '$(_FPMPresent)'  != 'true' "
              Text="FPM tool Not found, RPM packages will not be built." />
   </Target>
-  
-  <!--
-    Create Debian package.
-  -->
+
+  <!-- This target is kept for back-compat for targets that would hook it to add package info. -->
+  <Target Name="GetDebInstallerJsonProperties" />
+
   <Target Name="CreateDeb"
-          DependsOnTargets="
-            _GetInstallerProperties;
-            _CreateInstallerLayout;
-            GetDebInstallerJsonProperties"
-          Condition="'$(_DebuildPresent)' == 'true'"
+          DependsOnTargets="_GetInstallerProperties;_GetCommonJsonProperties;GetDebInstallerJsonProperties"
           Returns="$(_InstallerFile)">
     <PropertyGroup>
-      <_ConfigJsonFile>$(_LayoutDirectory)debian_config.json</_ConfigJsonFile>
-      <_DebIntermediatesDir>$(IntermediateOutputPath)out-deb</_DebIntermediatesDir>
-
-      <_DebToolArgs>-i $(_LayoutDirectory)</_DebToolArgs>
-      <_DebToolArgs>$(_DebToolArgs) -o $(_DebIntermediatesDir)</_DebToolArgs>
-      <_DebToolArgs>$(_DebToolArgs) -n $(VersionedInstallerName)</_DebToolArgs>
-      <_DebToolArgs>$(_DebToolArgs) -v $(InstallerPackageVersion)</_DebToolArgs>
+      <_LayoutDirectory>$(IntermediateOutputPath)installer/debLayout/</_LayoutDirectory>
+      <_LayoutDataRoot>$(_LayoutDirectory)root/</_LayoutDataRoot>
+      <_LayoutPackageRoot>$(_LayoutDataRoot)$(LinuxInstallRoot)</_LayoutPackageRoot>
+      <_LayoutControlRoot>$(_LayoutDirectory)control/</_LayoutControlRoot>
+      <_LayoutDocs>$(_LayoutDataRoot)/usr/share/doc</_LayoutDocs>
     </PropertyGroup>
 
-    <!-- Write the configuration JSON. -->
-    <GenerateJsonObjectString
-      Properties="@(_CommonLinuxPackageProperty);@(_DebJsonProperty)"
-      TargetFile="$(_ConfigJsonFile)" />
+    <RemoveDir Condition="Exists('$(_InstallerIntermediatesDir)')" Directories="$(_InstallerIntermediatesDir)" />
+    <MakeDir Directories="$(_InstallerIntermediatesDir)" />
 
-    <!-- Run deb tool in the directory of the consumer project. -->
-    <Exec
-      Command="/usr/bin/env bash $(MSBuildThisFileDirectory)deb-package-tool/package_tool.sh $(_DebToolArgs)"
-      IgnoreStandardErrorWarningFormat="true" />
+    <!-- Create empty layout. -->
+    <RemoveDir Condition="Exists('$(_LayoutDirectory)')" Directories="$(_LayoutDirectory)" />
+    <MakeDir Directories="$(_LayoutDirectory)" />
+    <MakeDir Directories="$(_LayoutPackageRoot)" />
+    <MakeDir Directories="$(_LayoutControlRoot)" />
+    <MakeDir Directories="$(_LayoutDocs)" />
 
-    <!-- Copy package to output. -->
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="PublishToDisk"
+             Properties="OutputPath=$([MSBuild]::EnsureTrailingSlash('$(_LayoutPackageRoot)'))"
+             RemoveProperties="@(_GlobalPropertiesToRemoveForPublish)"  />
+
+    <Copy
+      SourceFiles="@(Manpage)"
+      DestinationFiles="@(Manpage->'$(_LayoutDocs)/%(RecursiveDir)%(Filename)%(Extension)')" />
+
+    <!-- Write copyright file in the debian format. -->
     <ItemGroup>
-      <_GeneratedDebFiles Include="$(_DebIntermediatesDir)/*.deb" />
+      <_CopyrightLine Include="Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/" />
+      <_CopyrightLine Include="%0AFiles: *" />
+      <_CopyrightLine Include="Copyright: $(_PackageCopyright)" />
+      <_CopyrightLine Include="Comment: Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license." />
+      <_CopyrightLine Include="License: MIT and ASL 2.0 and BSD" />
+      <_CopyrightLine Include="%0ALicense: $([System.IO.File]::ReadAllText('$(LicenseFile)'))" />
     </ItemGroup>
 
-    <Error Text="@(_GeneratedDebFiles->Count()) .deb files generated." Condition="'@(_GeneratedDebFiles->Count())' != 1" />
+    <WriteLinesToFile File="$(_LayoutDocs)/$(VersionedInstallerName)/copyright" Lines="@(_CopyrightLine)" />
 
-    <Copy SourceFiles="@(_GeneratedDebFiles)"
-          DestinationFiles="$(_InstallerFile)"
-          OverwriteReadOnlyFiles="True"
-          SkipUnchangedFiles="False"
-          UseHardlinksIfPossible="False" />
+    <ItemGroup>
+      <_ChangelogFile Include="$(_LayoutDocs)/$(VersionedInstallerName)/changelog.Debian.gz" />
+    </ItemGroup>
+    
+    <CreateChangelogFile
+        ChangelogOutputPath="@(_ChangelogFile)"
+        MaintainerEmail="dotnetpackages@dotnetfoundation.org"
+        MaintainerName=".NET Team"
+        PackageName="$(VersionedInstallerName)"
+        PackageVersion="$(InstallerPackageVersion)_$(InstallerPackageRelease)"
+        ReleaseNotes="https://github.com/dotnet/core/tree/master/release-notes" />
+  
+    <ItemGroup>
+      <FileWrites Include="$(_ChangelogFile)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_MD5SumsFile Include="$(_LayoutControlRoot)/md5sums" />
+      <_MD5SourceFiles Include="$(_LayoutDataRoot)/**/*" />
+    </ItemGroup>
+
+    <CreateMD5SumsFile
+        OutputFile="@(_MD5SumsFile)"
+        RootDirectory="$(_LayoutDataRoot)"
+        Files="@(_MD5SourceFiles)">
+      <Output TaskParameter="InstalledSize" PropertyName="_InstalledSize" />
+    </CreateMD5SumsFile>
+
+    <ItemGroup>
+      <FileWrites Include="@(_MD5SumsFile)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ControlFile Include="$(_LayoutControlRoot)/control" />
+    </ItemGroup>
+
+    <CreateControlFile
+        ControlFileOutputPath="@(_ControlFile)"
+        PackageName="$(VersionedInstallerName)"
+        PackageVersion="$(InstallerPackageVersion)"
+        PackageArchitecture="$(LinuxPackageArchitecture)"
+        Maintainer=".NET Team &lt;dotnetpackages@dotnetfoundation.org&gt;"
+        Description="$(_ShortDescription)%0A $(_PackageLongDescription)"
+        InstalledSize="$(_InstalledSize)"
+        Depends="@(LinuxPackageDependency)"
+        Section="libs"
+        AdditionalProperties="@(DebControlProperty)" />
+
+    <ItemGroup>
+      <FileWrites Include="@(_ControlFile)" />
+    </ItemGroup>
+
+    <!-- Create any symlinks -->
+    <MakeDir Directories="$(_LayoutDataRoot)%(DebSymlink.RelativeDir)" Condition="'%(DebSymlink.Identity)' != ''" />
+    <Exec Command="ln -s %(DebSymlink.LinkTarget) %(DebSymlink.FileName)%(DebSymlink.Extension)" WorkingDirectory="$(_LayoutDataRoot)%(DebSymlink.RelativeDir)" Condition="'%(DebSymlink.Identity)' != ''" />
+    
+    <Exec Command="tar -C '$(_LayoutControlRoot)' -czf '$(_LayoutDirectory)/control.tar.gz' ."
+          IgnoreExitCode="true"
+          IgnoreStandardErrorWarningFormat="true" />
+    
+    <Exec Command="tar -C '$(_LayoutDataRoot)' -czf '$(_LayoutDirectory)/data.tar.gz' ."
+          IgnoreExitCode="true"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <CreateDebPackage
+      OutputDebPackagePath="$(_InstallerFile)"
+      ControlFile="$(_LayoutDirectory)/control.tar.gz"
+      DataFile="$(_LayoutDirectory)/data.tar.gz" />
 
     <Message Text="$(MSBuildProjectName) -> $(_InstallerFile)" Importance="high" />
-  </Target>
-
-  <Target Name="GetDebInstallerJsonProperties"
-          DependsOnTargets="_GetCommonJsonProperties">
-    <ItemGroup>
-      <_DebDependenciesJsonEntry Include="@(LinuxPackageDependency->'&quot;%(Identity)&quot; : { &quot;package_version&quot; : &quot;%(Version)&quot;}')" />
-    </ItemGroup>
-    <ItemGroup>
-      <_DebJsonProperty Include="debian_dependencies" Object="{@(_DebDependenciesJsonEntry, ', ')}" />
-      <_DebJsonProperty Include="@(DebJsonProperty)" />
-    </ItemGroup>
   </Target>
 
   <!--
@@ -485,6 +522,8 @@
       <LinuxPackageArchitecture>$(InstallerTargetArchitecture)</LinuxPackageArchitecture>
       <!-- Linux packaging requires 'amd64' for x64 packages -->
       <LinuxPackageArchitecture Condition="'$(LinuxPackageArchitecture)' == 'x64'">amd64</LinuxPackageArchitecture>
+      <_PackageCopyright>2017 Microsoft</_PackageCopyright>
+      <_PackageLongDescription>.NET is a development platform that you can use to build command-line applications, microservices and modern websites. It is open source, cross-platform and is supported by Microsoft. We hope you enjoy using it! If you do, please consider joining the active community of developers that are contributing to the project on GitHub (https://github.com/dotnet/core). We happily accept issues and PRs.</_PackageLongDescription>
     </PropertyGroup>
 
     <ItemGroup>
@@ -522,9 +561,9 @@
       <_CommonLinuxPackageProperty Include="maintainer_name" String=".NET Team" />
       <_CommonLinuxPackageProperty Include="maintainer_email" String="dotnetpackages@dotnetfoundation.org" />
       <_CommonLinuxPackageProperty Include="install_root" String="$(LinuxInstallRoot)" />
-      <_CommonLinuxPackageProperty Include="long_description" String=".NET is a development platform that you can use to build command-line applications, microservices and modern websites. It is open source, cross-platform and is supported by Microsoft. We hope you enjoy using it! If you do, please consider joining the active community of developers that are contributing to the project on GitHub (https://github.com/dotnet/core). We happily accept issues and PRs." />
+      <_CommonLinuxPackageProperty Include="long_description" String="$(_PackageLongDescription)" />
       <_CommonLinuxPackageProperty Include="homepage" String="https://github.com/dotnet/core" />
-      <_CommonLinuxPackageProperty Include="copyright" String="2017 Microsoft" />
+      <_CommonLinuxPackageProperty Include="copyright" String="$(_PackageCopyright)" />
       <_CommonLinuxPackageProperty Include="release" Object="$(_JsonReleaseObject)" />
       <_CommonLinuxPackageProperty Include="control" Object="$(_JsonControlObject)" />
       <_CommonLinuxPackageProperty Include="license" Object="$(_JsonLicenseObject)" />

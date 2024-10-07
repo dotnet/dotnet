@@ -198,8 +198,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         buildInformation,
                         buildAssets,
                         PdbArtifactsBasePath,
-                        MsdlToken,
-                        SymWebToken,
                         SymbolPublishingExclusionsFile,
                         PublishSpecialClrFiles,
                         clientThrottle)

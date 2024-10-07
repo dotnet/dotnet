@@ -20,8 +20,10 @@
       - PublishInstallersAndChecksums           : Whether installers & checksums should be published.
       - AzureDevOpsFeedsKey                     : Token used to publish to *any* AzDO feed in dnceng.
       - PublishSpecialClrFiles                  : If true, the special coreclr module indexed files like DBI, DAC and SOS are published
-      - MsdlToken                               : Token used to publish symbol blobs, dll and pdb to Msdl
-      - SymWebToken                             : Token used to publish symbol blobs, dll and pdb to Symweb
+      - TempSymbolsAzureDevOpsOrg               : Azure DevOps org to use as staging ground for publishing symbols
+      - TempSymbolsAzureDevOpsOrgToken          : Token for the Azure DevOps org to use as staging ground for publishing symbols. Must have symbol_manage scope.
+      - SymbolRequestProject                    : Project to use for symbol publishing requests. This must be created with symt team and will hold publishing policies for public servers.
+      - ManagedIdentityClientId                 : Client ID of the managed identity to use for symbolrequest and asset publishing.
       - SymbolPublishingExclusionsFile          : Files that have to be excluded from symbol publishing 
       - PdbArtifactsBasePath                    : Path to dlls and pdbs
       - AzdoApiToken                            : Token used to call the Azure Api to download artifacts and symbols
@@ -145,11 +147,12 @@
       AkaMSGroupOwner="$(AkaMSGroupOwner)"
       AkaMSCreatedBy="$(AkaMSCreatedBy)" 
       ManagedIdentityClientId="$(ManagedIdentityClientId)"
-      MsdlToken="$(MsdlToken)"
-      SymWebToken="$(SymWebToken)"
       SymbolPublishingExclusionsFile="$(SymbolPublishingExclusionsFile)"
       PdbArtifactsBasePath="$(PDBArtifactsBasePath)"
       PublishSpecialClrFiles="$(PublishSpecialClrFiles)"
+      TempSymbolsAzureDevOpsOrg="$(TempSymbolsAzureDevOpsOrg)"
+      TempSymbolsAzureDevOpsOrgToken="$(TempSymbolsAzureDevOpsOrgToken)"
+      SymbolRequestProject="$(SymbolRequestProject)"
       BuildQuality="$(BuildQuality)"
       AllowFeedOverrides="$(AllowFeedOverrides)"
       AzdoApiToken="$(AzdoApiToken)"

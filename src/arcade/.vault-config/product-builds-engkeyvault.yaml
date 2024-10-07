@@ -142,6 +142,17 @@ secrets:
       organizations: microsoft
       scopes: symbols_write
 
+  dnceng-symbol-server-pat:
+    type: azure-devops-access-token
+    parameters:
+      domainAccountName: dn-bot
+      domainAccountSecret:
+          location: helixkv
+          name: dn-bot-account-redmond
+      name: dn-bot-dnceng-symbol-server-pat
+      organizations: dnceng
+      scopes: symbols_manage
+
   #OneLocBuildVariables
   dn-bot-ceapex-package-r:
     type: azure-devops-access-token
