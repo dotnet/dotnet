@@ -5,7 +5,8 @@
     <DefineConstants Condition="'$(WeakEventTelemetry)'=='true'">$(DefineConstants);WeakEventTelemetry</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <EnablePInvokeAnalyzer>false</EnablePInvokeAnalyzer>
-    <NoWarn>$(NoWarn);0618;1058</NoWarn>
+    <!-- SYSLIB5005: System.Formats.Nrbf is experimental -->
+    <NoWarn>$(NoWarn);0618;1058;SYSLIB5005</NoWarn>
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
     <Platforms>AnyCPU;x64;arm64</Platforms>
     <GenerateDependencyFile>false</GenerateDependencyFile>
@@ -37,6 +38,9 @@
 
     <Compile Include="$(WpfCommonDir)src\System\SR.cs">
         <Link>Common\System\SR.cs</Link>
+    </Compile>
+    <Compile Include="$(WpfCommonDir)\src\MS\Internal\PixelUnit.cs">
+        <Link>MS\Internal\PixelUnit.cs</Link>
     </Compile>
     <Compile Include="$(WpfSharedDir)\MS\Internal\Xaml\Parser\SpecialBracketCharacters.cs" />
     <Compile Include="$(WpfSharedDir)\RefAssemblyAttrs.cs" />
