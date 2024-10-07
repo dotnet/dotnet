@@ -1057,9 +1057,9 @@ namespace SerializationTestTypes
         {
             get
             {
-                FieldInfo fieldInfo = MemberInfo as FieldInfo;
-                if (fieldInfo != null)
-                    return fieldInfo.FieldType;
+                FieldInfo field = MemberInfo as FieldInfo;
+                if (field != null)
+                    return field.FieldType;
                 return ((PropertyInfo)MemberInfo).PropertyType;
             }
         }
