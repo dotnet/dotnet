@@ -89,7 +89,8 @@ internal class DocumentOnTypeFormattingEndpoint(
             return null;
         }
 
-        if (_razorFormattingService.TryGetOnTypeFormattingTriggerKind(codeDocument, hostDocumentIndex, request.Character, out var triggerCharacterKind))
+        if (!_razorFormattingService.TryGetOnTypeFormattingTriggerKind(codeDocument, hostDocumentIndex, request.Character, out var triggerCharacterKind) ||
+            triggerCharacterKind == RazorLanguageKind.Razor)
         {
             return null;
         }
