@@ -34,6 +34,10 @@
     <PackageReference Include="System.Drawing.Common" />
     <PackageReference Include="System.IO.Packaging" />
     <PackageReference Include="System.IO.Ports" />
+    <!-- Use an empty project to replace the runtime.native.System.IO.Ports dependency and avoid 
+         downloading native packages from other runtimes.  Mark it private to avoid it showing up
+         in the final package. -->
+    <ProjectReference Include="..\package\runtime.native.System.IO.Ports.csproj" PrivateAssets="All"/>
     <PackageReference Include="System.Management" />
     <PackageReference Include="System.Reflection.Context" />
     <PackageReference Include="System.Runtime.Caching" />
