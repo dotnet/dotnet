@@ -491,25 +491,29 @@ namespace NuGet.DependencyResolver
 
         private static NuGetVersion GetReleaseLabelFreeVersion(VersionRange versionRange)
         {
-            if (versionRange.Float.FloatBehavior == NuGetVersionFloatBehavior.Major)
+            if (versionRange.Float.FloatBehavior == NuGetVersionFloatBehavior.Major || versionRange.Float.FloatBehavior == NuGetVersionFloatBehavior.PrereleaseMajor)
             {
                 return new NuGetVersion(int.MaxValue, int.MaxValue, int.MaxValue);
             }
-            else if (versionRange.Float.FloatBehavior == NuGetVersionFloatBehavior.Minor)
+            else if (versionRange.Float.FloatBehavior == NuGetVersionFloatBehavior.Minor || versionRange.Float.FloatBehavior == NuGetVersionFloatBehavior.PrereleaseMinor)
             {
                 return new NuGetVersion(versionRange.MinVersion.Major, int.MaxValue, int.MaxValue, int.MaxValue);
             }
-            else if (versionRange.Float.FloatBehavior == NuGetVersionFloatBehavior.Patch)
+            else if (versionRange.Float.FloatBehavior == NuGetVersionFloatBehavior.Patch || versionRange.Float.FloatBehavior == NuGetVersionFloatBehavior.PrereleasePatch)
             {
                 return new NuGetVersion(versionRange.MinVersion.Major, versionRange.MinVersion.Minor, int.MaxValue, int.MaxValue);
             }
-            else if (versionRange.Float.FloatBehavior == NuGetVersionFloatBehavior.Revision)
+            else if (versionRange.Float.FloatBehavior == NuGetVersionFloatBehavior.Revision || versionRange.Float.FloatBehavior == NuGetVersionFloatBehavior.PrereleaseRevision)
             {
                 return new NuGetVersion(
                     versionRange.MinVersion.Major,
                     versionRange.MinVersion.Minor,
                     versionRange.MinVersion.Patch,
                     int.MaxValue);
+            }
+            else if (versionRange.Float.FloatBehavior == NuGetVersionFloatBehavior.AbsoluteLatest)
+            {
+                return new NuGetVersion(int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue);
             }
             else
             {
