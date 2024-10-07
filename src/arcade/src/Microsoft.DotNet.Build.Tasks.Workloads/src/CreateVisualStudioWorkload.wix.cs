@@ -84,6 +84,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             set;
         }
 
+        /// <summary>
+        /// Overrides the default component prefix when generating component IDs.
+        /// </summary>
+        public string VisualStudioComponentPrefix
+        {
+            get;
+            set;
+        } = DefaultValues.VisualStudioComponentPrefix;
+
         public bool CreateWorkloadPackGroups
         {
             get;
@@ -125,6 +134,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         /// Allow VS workload generation to proceed if any nupkgs declared in the manifest are not found on disk.
         /// </summary>
         public bool AllowMissingPacks
+        {
+            get;
+            set;
+        } = false;
+
+        /// <summary>
+        /// Generate components using a fixed prefix that follow the Visual Studio component naming convention.
+        /// </summary>
+        public bool UseVisualStudioComponentPrefix
         {
             get;
             set;
@@ -307,12 +325,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                             }
                         }
 
+                        string prefix = UseVisualStudioComponentPrefix ? VisualStudioComponentPrefix : null;
+
                         // Finally, add a component for the workload in Visual Studio.
                         SwixComponent component = SwixComponent.Create(manifestPackage.SdkFeatureBand, workload, manifest, packGroupId,
-                            ComponentResources, ShortNames);
+                            ComponentResources, ShortNames, null, prefix);
                         // Create an additional component for shipping previews
                         SwixComponent previewComponent = SwixComponent.Create(manifestPackage.SdkFeatureBand, workload, manifest, packGroupId,
-                            ComponentResources, ShortNames, "pre");
+                            ComponentResources, ShortNames, "pre", prefix);
 
                         // Check for duplicates, e.g. manifests that were copied without changing workload definition IDs and
                         // provide a more usable error message so users can track down the duplication.

@@ -23,13 +23,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         {
             WorkloadManifest manifest = Create("WorkloadManifest.json");
             WorkloadDefinition workload = (WorkloadDefinition)manifest.Workloads.FirstOrDefault().Value;
-            SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null);
+            SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null,
+                componentPrefix: DefaultValues.VisualStudioComponentPrefix);
 
             ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
             string swixProj = project.Create();
 
             string componentSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.swr"));
-            Assert.Contains("package name=microsoft.net.sdk.blazorwebassembly.aot", componentSwr);
+            Assert.Contains("package name=Microsoft.NET.Component.sdk.blazorwebassembly.aot", componentSwr);
             Assert.Contains("version=1.0.0", componentSwr);
 
             string componentResSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.res.swr"));
@@ -52,13 +53,13 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             WorkloadManifest manifest = Create("WorkloadManifest.json");
             WorkloadDefinition workload = (WorkloadDefinition)manifest.Workloads.FirstOrDefault().Value;
             SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null,
-                componentResources);
+                componentResources, componentPrefix: DefaultValues.VisualStudioComponentPrefix);
 
             ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
             string swixProj = project.Create();
 
             string componentSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.swr"));
-            Assert.Contains("package name=microsoft.net.sdk.blazorwebassembly.aot", componentSwr);
+            Assert.Contains("package name=Microsoft.NET.Component.sdk.blazorwebassembly.aot", componentSwr);
             Assert.Contains("version=4.5.6", componentSwr);
             Assert.Contains("isAdvertisedPackage=yes", componentSwr);
 
@@ -81,13 +82,13 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             WorkloadManifest manifest = Create("WorkloadManifest.json");
             WorkloadDefinition workload = (WorkloadDefinition)manifest.Workloads.FirstOrDefault().Value;
             SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null,
-                componentResources);
+                componentResources, componentPrefix: DefaultValues.VisualStudioComponentPrefix);
 
             ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
             string swixProj = project.Create();
 
             string componentSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.swr"));
-            Assert.Contains("package name=microsoft.net.sdk.blazorwebassembly.aot", componentSwr);
+            Assert.Contains("package name=Microsoft.NET.Component.sdk.blazorwebassembly.aot", componentSwr);
             Assert.Contains("version=4.5.6", componentSwr);
             Assert.Contains("isAdvertisedPackage=no", componentSwr);
 
@@ -100,6 +101,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         [WindowsOnlyFact]
         public void ItShortensComponentIds()
         {
+            // Shortnames can trim out potential prefix values.
             ITaskItem[] shortNames = new TaskItem[]
             {
                 new TaskItem("Microsoft.NET.Runtime", new Dictionary<string, string> { { Metadata.Replacement, "MSFT" } })
@@ -107,7 +109,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 
             WorkloadManifest manifest = Create("WorkloadManifest.json");
             WorkloadDefinition workload = (WorkloadDefinition)manifest.Workloads.FirstOrDefault().Value;
-            SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null, shortNames: shortNames);
+            SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null, shortNames: shortNames,
+                componentPrefix: DefaultValues.VisualStudioComponentPrefix);
 
             ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
             string swixProj = project.Create();
@@ -121,19 +124,20 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         {
             WorkloadManifest manifest = Create("AbstractWorkloadsNonWindowsPacks.json");
             WorkloadDefinition workload = (WorkloadDefinition)manifest.Workloads.FirstOrDefault().Value;
-            SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null, null, null);
+            SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null, 
+                componentPrefix: DefaultValues.VisualStudioComponentPrefix);
 
             ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
             string swixProj = project.Create();
 
             string componentSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.swr"));
-            Assert.Contains(@"package name=microsoft.net.runtime.ios", componentSwr);
+            Assert.Contains(@"package name=Microsoft.NET.Component.runtime.ios", componentSwr);
             Assert.DoesNotContain(@"vs.dependency id=Microsoft.NETCore.App.Runtime.AOT.Cross.ios-arm", componentSwr);
             Assert.DoesNotContain(@"vs dependency id=Microsoft.NETCore.App.Runtime.AOT.Cross.ios-arm64", componentSwr);
             Assert.DoesNotContain(@"vs dependency id=Microsoft.NETCore.App.Runtime.AOT.Cross.iossimulator-arm64", componentSwr);
             Assert.DoesNotContain(@"vs dependency id=Microsoft.NETCore.App.Runtime.AOT.Cross.iossimulator-x64", componentSwr);
             Assert.DoesNotContain(@"vs dependency id=Microsoft.NETCore.App.Runtime.AOT.Cross.iossimulator-x86", componentSwr);
-            Assert.Contains(@"vs.dependency id=runtimes.ios", componentSwr);
+            Assert.Contains(@"vs.dependency id=Microsoft.NET.Component.runtimes.ios", componentSwr);
         }
 
         [WindowsOnlyFact]
@@ -151,7 +155,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 })
             };
 
-            SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null, componentResources);
+            SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null, componentResources,
+                componentPrefix: DefaultValues.VisualStudioComponentPrefix);
             ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
             string swixProj = project.Create();
 
@@ -170,8 +175,10 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             SwixComponent component = SwixComponent.Create(new ReleaseVersion("7.0.100"), workload, manifest, packGroupId: null);
             ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
             string swixProj = project.Create();
-
             string componentSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.swr"));
+
+            // Component prefix is defaults to null when creating a SWIX component, so these values remain
+            // unchanged.
             Assert.Contains(@"vs.dependency id=maui.mobile", componentSwr);
             Assert.Contains(@"vs.dependency id=maui.desktop", componentSwr);
         }
@@ -191,6 +198,16 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             //  Should have only one dependency, use string.Split to check how many times vs.dependency occurs in swr
             Assert.Equal(2, componentSwr.Split(new[] { "vs.dependency" }, StringSplitOptions.None).Length);
             Assert.Contains($"vs.dependency id={packGroupId}", componentSwr);
+        }
+
+        [Theory]
+        [InlineData("wasm-tools", "Microsoft.NET.Component.wasm.tools", DefaultValues.VisualStudioComponentPrefix)]
+        [InlineData("wasm-tools", "wasm.tools")]
+        [InlineData("microsoft-net-runtime-android", "Microsoft.NET.Component.runtime.android", DefaultValues.VisualStudioComponentPrefix)]
+        [InlineData("microsoft-net-runtime-android", "Foo.runtime.android", "Foo")]
+        public void ItGeneratesValidComponentIds(string workloadId, string expectedComponentId, string prefix = null)
+        {
+            Assert.Equal(expectedComponentId, Utils.ToSafeComponentId(workloadId, null, prefix));
         }
 
         private static WorkloadManifest Create(string filename)

@@ -9,6 +9,17 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
     internal static class DefaultValues
     {
         /// <summary>
+        /// Well-known prefixes used by some workloads that can be replaced when generating component IDs
+        /// using <see cref="VisualStudioComponentPrefix"/>.
+        /// </summary>
+        public static readonly string[] WellKnownWorkloadPrefixes = { "Microsoft.NET.", "Microsoft." };
+
+        /// <summary>
+        /// Default prefix to use for Visual Studio component and component group IDs.
+        /// </summary>
+        public const string VisualStudioComponentPrefix = "Microsoft.NET.Component";
+
+        /// <summary>
         /// Prefix used in Visual Studio for SWIX based package group.
         /// </summary>
         public const string PackageGroupPrefix = "PackageGroup";
