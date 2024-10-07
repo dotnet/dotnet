@@ -47,11 +47,6 @@
     <EnvironmentVariables Include="_DotNetInstallDir=$(DotNetCliToolDir)" />
     <EnvironmentVariables Include="_InitializeToolset=$(ProjectDir)Tools/source-built/Microsoft.DotNet.Arcade.Sdk/tools/Build.proj" Condition="'$(UseBootstrapArcade)' != 'true'" />
 
-    <EnvironmentVariables Include="DotNetUseShippingVersions=true" />
-
-    <EnvironmentVariables Include="PreReleaseVersionLabel=$(PreReleaseVersionLabel)" />
-    <EnvironmentVariables Include="PackageVersionStamp=$(PreReleaseVersionLabel)" />
-
     <!-- We pass '-ci', but also apply ci mode via env var for edge cases. (E.g. misbehaving inner builds.) -->
     <EnvironmentVariables Include="ContinuousIntegrationBuild=true" />
 

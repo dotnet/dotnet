@@ -31,12 +31,16 @@ extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
   parameters:
     sdl:
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)/.config/CredScanSuppressions.json
+      policheck:
+        enabled: true
       sourceAnalysisPool:
         name: $(DncEngInternalBuildPool)
         image: 1es-windows-2022
         os: windows
-      credscan:
-        suppressionsFile: $(Build.SourcesDirectory)/.config/CredScanSuppressions.json
+      tsa:
+        enabled: true
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
