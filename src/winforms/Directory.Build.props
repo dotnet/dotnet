@@ -12,7 +12,7 @@
     <Copyright>$(CopyrightNetFoundation)</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <LangVersion>preview</LangVersion>
+    <LangVersion Condition="'$(LangVersion)' == ''">preview</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 
@@ -24,6 +24,9 @@
                                      or $(MSBuildProjectName.EndsWith('.Analyzers.VisualBasic'))
                                      or $(MSBuildProjectName.EndsWith('.Analyzers.CSharp')))"
                                   >true</IsAnalyzerProject>
+
+    <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
+    <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
   </PropertyGroup>
 
   <!--

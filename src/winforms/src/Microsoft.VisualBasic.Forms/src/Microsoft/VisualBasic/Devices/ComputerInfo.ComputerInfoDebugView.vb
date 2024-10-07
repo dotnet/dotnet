@@ -2,10 +2,11 @@
 ' The .NET Foundation licenses this file to you under the MIT license.
 
 Namespace Microsoft.VisualBasic.Devices
+
     Partial Public Class ComputerInfo
 
         ''' <summary>
-        '''  Debugger proxy for the <see cref="ComputerInfo"/>  class. The problem
+        '''  Debugger proxy for the <see cref="ComputerInfo"/> class. The problem
         '''  is that OSFullName can time out the debugger so we offer a view
         '''  that doesn't have that field.
         ''' </summary>

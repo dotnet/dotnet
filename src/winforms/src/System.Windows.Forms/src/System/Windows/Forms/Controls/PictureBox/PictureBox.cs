@@ -88,7 +88,7 @@ public partial class PictureBox : Control, ISupportInitialize
     private const int InInitializationState = 0x00000040;
 
     // PERF: take all the bools and put them into a state variable
-    private BitVector32 _pictureBoxState; // see PICTUREBOXSTATE_ consts above
+    private BitVector32 _pictureBoxState; // see PICTUREBOXSTATE_ constants above
 
     /// <summary>
     ///  https://docs.microsoft.com/dotnet/api/system.drawing.image.fromstream#System_Drawing_Image_FromStream_System_IO_Stream_
@@ -113,7 +113,7 @@ public partial class PictureBox : Control, ISupportInitialize
 
 #pragma warning disable WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
         SetStyle(ControlStyles.ApplyThemingImplicitly, true);
-#pragma warning restore WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning restore WFO5001
 
         TabStop = false;
         _savedSize = Size;
@@ -593,7 +593,7 @@ public partial class PictureBox : Control, ISupportInitialize
     {
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
         WebRequest req = WebRequest.Create(CalculateUri(_imageLocation!));
-#pragma warning restore SYSLIB0014 // Type or member is obsolete
+#pragma warning restore SYSLIB0014
 
         Task.Run(() =>
         {

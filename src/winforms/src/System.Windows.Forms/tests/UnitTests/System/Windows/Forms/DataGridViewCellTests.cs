@@ -523,7 +523,9 @@ public partial class DataGridViewCellTests
     }
 
     // See https://github.com/dotnet/winforms/pull/6957
-    // Note if we fix this issue https://github.com/dotnet/winforms/issues/6930#issuecomment-1090213559 then we will have to edit this test.
+    // Note if we fix this issue
+    // https://github.com/dotnet/winforms/issues/6930#issuecomment-1090213559
+    // then we will have to edit this test.
     [WinFormsTheory]
     [MemberData(nameof(Displayed_GetWithSharedDataGridView_TestData))]
     public void DataGridViewCell_Displayed_GetWithSharedDataGridViewWithHandle_ReturnsExpected(bool gridVisible, bool rowHeadersVisible, bool columnHeadersVisible, bool columnVisible)
@@ -551,11 +553,12 @@ public partial class DataGridViewCellTests
         // While calling control.Handle we will create a new handle.
         // During this process DataGridView call MakeFirstDisplayedCellCurrentCell().
         // Where if we have cell to display (columnVisible) we will set it as CurrentCell.
-        // Which in turn will lead to unsharing of the raw in any case.
+        // Which in turn will lead to un-sharing of the raw in any case.
         // MakeFirstDisplayedCellCurrentCell() -> SetAndSelectCurrentCellAddress() -> SetCurrentCellAddressCore()
         //   -> OnCurrentCellChanged() -> CurrentCell.get() -> Rows[index]
         // See https://github.com/dotnet/winforms/issues/6930#issuecomment-1090213559.
-        // Note that the cell is Displayed (Displayed == true) only if the owning row IS NOT shared and Displayed and owning column is Displayed.
+        // Note that the cell is Displayed (Displayed == true) only if the owning row IS NOT shared and Displayed
+        //      and owning column is Displayed.
         // So we have these options:
         // 1. columnVisible == false - our row remain shared and therefore cell will not be Displayed;
         // 2. gridVisible == false - our row and column are not Displayed, so and the cell too.
@@ -573,15 +576,19 @@ public partial class DataGridViewCellTests
         // Test for shared row (if row.Index == -1 this is shared row).
         Assert.Equal(columnVisible, row.Index != -1);
         DataGridViewCell cell = row.Cells[0];
-        // 
-        // Here 3 our ways with previous implementation (prior #6957) in relation to the old test implementation (Assert.False(cell.Displayed)):
+        //
+        // Here 3 our ways with previous implementation (prior #6957) in relation to the old test implementation
+        // (Assert.False(cell.Displayed)):
         // 1. All correct - we have shared and therefore not Displayed row.
         // 2. All correct - we have not Displayed row.
-        // 3. control.Rows.SharedRow(0) unshared and Displayed BUT our stored row (LOST) still shared and therefore not Displayed.
+        // 3. control.Rows.SharedRow(0) unshared and Displayed BUT our stored row (LOST) still shared and
+        // therefore not Displayed.
         //    So test will pass of course.
         // Test must check: Assert.Equal(gridVisible && columnVisible, cell.Displayed);
         // And with new implementation it will work no mater where you put row = control.Rows.SharedRow(0);
-        Assert.Equal(gridVisible && columnVisible, cell.Displayed); // old test implementation: Assert.False(cell.Displayed);
+
+        // old test implementation: Assert.False(cell.Displayed);
+        Assert.Equal(gridVisible && columnVisible, cell.Displayed);
         Assert.True(control.IsHandleCreated);
         Assert.Equal(0, invalidatedCallCount);
         Assert.Equal(0, styleChangedCallCount);
@@ -3416,7 +3423,6 @@ public partial class DataGridViewCellTests
 
         public static IEnumerable<object[]> AccessibilityObject_CustomCreateAccessibilityInstance_TestData()
         {
-            yield return new object[] { null };
             yield return new object[] { new AccessibleObject() };
             yield return new object[] { new DataGridViewCell.DataGridViewCellAccessibleObject(null) };
             yield return new object[] { new DataGridViewCell.DataGridViewCellAccessibleObject(new SubDataGridViewCell()) };

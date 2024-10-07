@@ -42,7 +42,8 @@ public sealed class ResXDataNode : ISerializable
 
     // Callback function to get type name for multitargeting.
     // No public property to force using constructors for the following reasons:
-    // 1. one of the constructors needs this field (if used) to initialize the object, make it consistent with the other constructors to avoid errors.
+    // 1. one of the constructors needs this field (if used) to initialize the object, make it consistent with the
+    //    other constructors to avoid errors.
     // 2. once the object is constructed the delegate should not be changed to avoid getting inconsistent results.
     private Func<Type?, string>? _typeNameConverter;
 
@@ -430,7 +431,7 @@ public sealed class ResXDataNode : ISerializable
         try
         {
             SerializationRecord rootRecord = stream.Decode();
-            if (rootRecord.TryGetObject(out object? value))
+            if (rootRecord.TryGetResXObject(out object? value))
             {
                 return value;
             }
@@ -620,7 +621,7 @@ public sealed class ResXDataNode : ISerializable
             return _nodeInfo.MimeType == ResXResourceWriter.BinSerializedObjectMimeType
                 ? GenerateObjectFromBinaryDataNodeInfo(_nodeInfo, typeResolver)
                 : GenerateObjectFromDataNodeInfo(_nodeInfo, typeResolver);
-#pragma warning restore SYSLIB0051 // Type or member is obsolete
+#pragma warning restore SYSLIB0051
         }
 
         // Schema is wrong and says minOccur for Value is 0, but it's too late to change it.

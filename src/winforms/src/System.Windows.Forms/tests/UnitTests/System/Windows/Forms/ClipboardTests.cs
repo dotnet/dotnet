@@ -8,14 +8,15 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Formatters.Binary;
+using Windows.Win32.System.Ole;
 using Com = Windows.Win32.System.Com;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
 
 namespace System.Windows.Forms.Tests;
 
+// Note: each registered Clipboard format is an OS singleton
+// and we should not run this test at the same time as other tests using the same format.
 [Collection("Sequential")]
-[CollectionDefinition("Sequential", DisableParallelization = true)]
 public class ClipboardTests
 {
     [WinFormsFact]
@@ -481,29 +482,25 @@ public class ClipboardTests
     }
 
     [WinFormsFact]
-    public void Clipboard_SetData_CustomFormat_Color_BinaryFormatterDisabled_SerializesException()
+    public void Clipboard_SetData_CustomFormat_Color()
+    {
+        string format = nameof(Clipboard_SetData_CustomFormat_Color);
+        Clipboard.SetData(format, Color.Black);
+
+        Clipboard.ContainsData(format).Should().BeTrue();
+        Clipboard.GetData(format).Should().Be(Color.Black);
+    }
+
+    [WinFormsFact]
+    public void Clipboard_SetData_CustomFormat_Exception_BinaryFormatterDisabled_SerializesException()
     {
         using BinaryFormatterScope scope = new(enable: false);
-        string format = nameof(Clipboard_SetData_CustomFormat_Color_BinaryFormatterDisabled_SerializesException);
+        string format = nameof(Clipboard_SetData_CustomFormat_Exception_BinaryFormatterDisabled_SerializesException);
 
         // This will fail and NotSupportedException will be put on the Clipboard instead.
-        Clipboard.SetData(format, Color.Black);
+        Clipboard.SetData(format, new FileNotFoundException());
         Clipboard.ContainsData(format).Should().BeTrue();
-
-        using MemoryStream stream = new();
-#pragma warning disable SYSLIB0011 // Type or member is obsolete
-        BinaryFormatter formatter = new();
-#pragma warning restore SYSLIB0011
-        try
-        {
-            formatter.Serialize(stream, new object());
-        }
-        catch (NotSupportedException)
-        {
-            return;
-        }
-
-        Assert.Fail("Formatting should have failed.");
+        Clipboard.GetData(format).Should().BeOfType<NotSupportedException>();
     }
 
     [WinFormsFact]
@@ -596,5 +593,28 @@ public class ClipboardTests
         void IDataObject.SetData(Type format, object? data) => throw new NotImplementedException();
         void IDataObject.SetData(object? data) => throw new NotImplementedException();
         void ComTypes.IDataObject.SetData(ref ComTypes.FORMATETC formatIn, ref ComTypes.STGMEDIUM medium, bool release) => throw new NotImplementedException();
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool CloseClipboard();
+
+    [DllImport("user32.dll")]
+    private static extern bool OpenClipboard(HWND hWndNewOwner);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetClipboardData(uint uFormat, HANDLE data);
+
+    [WinFormsFact]
+    public unsafe void Clipboard_RawClipboard_SetClipboardData_ReturnsExpected()
+    {
+        Clipboard.Clear();
+
+        OpenClipboard(HWND.Null).Should().BeTrue();
+        string testString = "test";
+        SetClipboardData((uint)CLIPBOARD_FORMAT.CF_UNICODETEXT, (HANDLE)Marshal.StringToHGlobalUni(testString));
+        CloseClipboard().Should().BeTrue();
+
+        DataObject dataObject = Clipboard.GetDataObject().Should().BeOfType<DataObject>().Which;
+        dataObject.GetData(DataFormats.Text).Should().Be(testString);
     }
 }

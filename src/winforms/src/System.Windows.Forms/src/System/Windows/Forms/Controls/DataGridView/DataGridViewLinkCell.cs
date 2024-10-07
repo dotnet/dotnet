@@ -44,7 +44,7 @@ public partial class DataGridViewLinkCell : DataGridViewCell
     {
         get
         {
-            if (Properties.TryGetObject(s_propLinkCellActiveLinkColor, out Color color))
+            if (Properties.TryGetValue(s_propLinkCellActiveLinkColor, out Color color))
             {
                 return color;
             }
@@ -54,7 +54,7 @@ public partial class DataGridViewLinkCell : DataGridViewCell
             }
             else
             {
-                // return the default IE Color if cell is not not selected
+                // Return the default IE Color if cell is not not selected.
                 return Selected ? SystemColors.HighlightText : LinkUtilities.IEActiveLinkColor;
             }
         }
@@ -62,7 +62,7 @@ public partial class DataGridViewLinkCell : DataGridViewCell
         {
             if (!value.Equals(ActiveLinkColor))
             {
-                Properties.SetObject(s_propLinkCellActiveLinkColor, value);
+                Properties.AddValue(s_propLinkCellActiveLinkColor, value);
                 if (DataGridView is not null)
                 {
                     if (RowIndex != -1)
@@ -84,7 +84,7 @@ public partial class DataGridViewLinkCell : DataGridViewCell
         {
             if (!value.Equals(ActiveLinkColor))
             {
-                Properties.SetObject(s_propLinkCellActiveLinkColor, value);
+                Properties.AddValue(s_propLinkCellActiveLinkColor, value);
             }
         }
     }
@@ -117,11 +117,10 @@ public partial class DataGridViewLinkCell : DataGridViewCell
         get => Properties.GetValueOrDefault(s_propLinkCellLinkBehavior, LinkBehavior.SystemDefault);
         set
         {
-            // Sequential enum.  Valid values are 0x0 to 0x3
             SourceGenerated.EnumValidator.Validate(value);
             if (value != LinkBehavior)
             {
-                Properties.AddValue(s_propLinkCellLinkBehavior, value);
+                Properties.AddOrRemoveValue(s_propLinkCellLinkBehavior, value, defaultValue: LinkBehavior.SystemDefault);
                 if (DataGridView is not null)
                 {
                     if (RowIndex != -1)
@@ -144,7 +143,7 @@ public partial class DataGridViewLinkCell : DataGridViewCell
             Debug.Assert(value is >= LinkBehavior.SystemDefault and <= LinkBehavior.NeverUnderline);
             if (value != LinkBehavior)
             {
-                Properties.AddValue(s_propLinkCellLinkBehavior, value);
+                Properties.AddOrRemoveValue(s_propLinkCellLinkBehavior, value, defaultValue: LinkBehavior.SystemDefault);
             }
         }
     }
@@ -153,7 +152,7 @@ public partial class DataGridViewLinkCell : DataGridViewCell
     {
         get
         {
-            if (Properties.TryGetObject(s_propLinkCellLinkColor, out Color color))
+            if (Properties.TryGetValue(s_propLinkCellLinkColor, out Color color))
             {
                 return color;
             }
@@ -163,7 +162,7 @@ public partial class DataGridViewLinkCell : DataGridViewCell
             }
             else
             {
-                // return the default IE Color when cell is not selected
+                // Return the default IE Color when cell is not selected
                 return Selected ? SystemColors.HighlightText : LinkUtilities.IELinkColor;
             }
         }
@@ -171,7 +170,7 @@ public partial class DataGridViewLinkCell : DataGridViewCell
         {
             if (!value.Equals(LinkColor))
             {
-                Properties.SetObject(s_propLinkCellLinkColor, value);
+                Properties.AddValue(s_propLinkCellLinkColor, value);
                 if (DataGridView is not null)
                 {
                     if (RowIndex != -1)
@@ -193,61 +192,42 @@ public partial class DataGridViewLinkCell : DataGridViewCell
         {
             if (!value.Equals(LinkColor))
             {
-                Properties.SetObject(s_propLinkCellLinkColor, value);
+                Properties.AddValue(s_propLinkCellLinkColor, value);
             }
         }
     }
 
-    private bool ShouldSerializeLinkColor()
-    {
-        if (SystemInformation.HighContrast)
-        {
-            return !LinkColor.Equals(SystemColors.HotTrack);
-        }
-
-        return !LinkColor.Equals(LinkUtilities.IELinkColor);
-    }
+    private bool ShouldSerializeLinkColor() => SystemInformation.HighContrast
+        ? !LinkColor.Equals(SystemColors.HotTrack)
+        : !LinkColor.Equals(LinkUtilities.IELinkColor);
 
     private LinkState LinkState
     {
         get => Properties.GetValueOrDefault(s_propLinkCellLinkState, LinkState.Normal);
-        set
-        {
-            if (LinkState != value)
-            {
-                Properties.AddValue(s_propLinkCellLinkState, value);
-            }
-        }
+        set => Properties.AddOrRemoveValue(s_propLinkCellLinkState, value, defaultValue: LinkState.Normal);
     }
 
     public bool LinkVisited
     {
-        get
-        {
-            if (_linkVisitedSet)
-            {
-                return _linkVisited;
-            }
-
-            // the default is false
-            return false;
-        }
+        get => _linkVisitedSet && _linkVisited;
         set
         {
             _linkVisitedSet = true;
-            if (value != LinkVisited)
+            if (value == LinkVisited)
             {
-                _linkVisited = value;
-                if (DataGridView is not null)
+                return;
+            }
+
+            _linkVisited = value;
+            if (DataGridView is not null)
+            {
+                if (RowIndex != -1)
                 {
-                    if (RowIndex != -1)
-                    {
-                        DataGridView.InvalidateCell(this);
-                    }
-                    else
-                    {
-                        DataGridView.InvalidateColumnInternal(ColumnIndex);
-                    }
+                    DataGridView.InvalidateCell(this);
+                }
+                else
+                {
+                    DataGridView.InvalidateColumnInternal(ColumnIndex);
                 }
             }
         }
@@ -261,19 +241,21 @@ public partial class DataGridViewLinkCell : DataGridViewCell
         get => Properties.GetValueOrDefault(s_propLinkCellTrackVisitedState, true);
         set
         {
-            if (value != TrackVisitedState)
+            if (value == TrackVisitedState)
             {
-                Properties.AddValue(s_propLinkCellTrackVisitedState, value);
-                if (DataGridView is not null)
+                return;
+            }
+
+            Properties.AddOrRemoveValue(s_propLinkCellTrackVisitedState, value, defaultValue: true);
+            if (DataGridView is not null)
+            {
+                if (RowIndex != -1)
                 {
-                    if (RowIndex != -1)
-                    {
-                        DataGridView.InvalidateCell(this);
-                    }
-                    else
-                    {
-                        DataGridView.InvalidateColumnInternal(ColumnIndex);
-                    }
+                    DataGridView.InvalidateCell(this);
+                }
+                else
+                {
+                    DataGridView.InvalidateColumnInternal(ColumnIndex);
                 }
             }
         }
@@ -281,13 +263,7 @@ public partial class DataGridViewLinkCell : DataGridViewCell
 
     internal bool TrackVisitedStateInternal
     {
-        set
-        {
-            if (value != TrackVisitedState)
-            {
-                Properties.AddValue(s_propLinkCellTrackVisitedState, value);
-            }
-        }
+        set => Properties.AddOrRemoveValue(s_propLinkCellTrackVisitedState, value, defaultValue: true);
     }
 
     [DefaultValue(false)]
@@ -306,21 +282,14 @@ public partial class DataGridViewLinkCell : DataGridViewCell
 
     internal bool UseColumnTextForLinkValueInternal
     {
-        set
-        {
-            // Caller is responsible for invalidation
-            if (value != UseColumnTextForLinkValue)
-            {
-                Properties.AddValue(s_propLinkCellUseColumnTextForLinkValue, value);
-            }
-        }
+        set => Properties.AddOrRemoveValue(s_propLinkCellUseColumnTextForLinkValue, value, defaultValue: false);
     }
 
     public Color VisitedLinkColor
     {
         get
         {
-            if (Properties.TryGetObject(s_propLinkCellVisitedLinkColor, out Color color))
+            if (Properties.TryGetValue(s_propLinkCellVisitedLinkColor, out Color color))
             {
                 return color;
             }
@@ -330,25 +299,27 @@ public partial class DataGridViewLinkCell : DataGridViewCell
             }
             else
             {
-                // return the default IE Color if cell is not not selected
+                // Return the default IE Color if cell is not not selected
                 return Selected ? SystemColors.HighlightText : LinkUtilities.IEVisitedLinkColor;
             }
         }
         set
         {
-            if (!value.Equals(VisitedLinkColor))
+            if (value.Equals(VisitedLinkColor))
             {
-                Properties.SetObject(s_propLinkCellVisitedLinkColor, value);
-                if (DataGridView is not null)
+                return;
+            }
+
+            Properties.AddValue(s_propLinkCellVisitedLinkColor, value);
+            if (DataGridView is not null)
+            {
+                if (RowIndex != -1)
                 {
-                    if (RowIndex != -1)
-                    {
-                        DataGridView.InvalidateCell(this);
-                    }
-                    else
-                    {
-                        DataGridView.InvalidateColumnInternal(ColumnIndex);
-                    }
+                    DataGridView.InvalidateCell(this);
+                }
+                else
+                {
+                    DataGridView.InvalidateColumnInternal(ColumnIndex);
                 }
             }
         }
@@ -360,7 +331,7 @@ public partial class DataGridViewLinkCell : DataGridViewCell
         {
             if (!value.Equals(VisitedLinkColor))
             {
-                Properties.SetObject(s_propLinkCellVisitedLinkColor, value);
+                Properties.AddValue(s_propLinkCellVisitedLinkColor, value);
             }
         }
     }
@@ -386,19 +357,7 @@ public partial class DataGridViewLinkCell : DataGridViewCell
         }
     }
 
-    public override Type ValueType
-    {
-        get
-        {
-            Type? valueType = base.ValueType;
-            if (valueType is not null)
-            {
-                return valueType;
-            }
-
-            return s_defaultValueType;
-        }
-    }
+    public override Type ValueType => base.ValueType ?? s_defaultValueType;
 
     public override object Clone()
     {
@@ -454,17 +413,9 @@ public partial class DataGridViewLinkCell : DataGridViewCell
         return dataGridViewCell;
     }
 
-    private bool LinkBoundsContainPoint(int x, int y, int rowIndex)
-    {
-        Rectangle linkBounds = GetContentBounds(rowIndex);
+    private bool LinkBoundsContainPoint(int x, int y, int rowIndex) => GetContentBounds(rowIndex).Contains(x, y);
 
-        return linkBounds.Contains(x, y);
-    }
-
-    protected override AccessibleObject CreateAccessibilityInstance()
-    {
-        return new DataGridViewLinkCellAccessibleObject(this);
-    }
+    protected override AccessibleObject CreateAccessibilityInstance() => new DataGridViewLinkCellAccessibleObject(this);
 
     protected override Rectangle GetContentBounds(Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
     {

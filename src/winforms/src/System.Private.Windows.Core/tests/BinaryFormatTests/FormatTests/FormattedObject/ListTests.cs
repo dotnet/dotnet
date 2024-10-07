@@ -3,10 +3,10 @@
 
 using System.Collections;
 using System.Drawing;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Private.Windows.Core.BinaryFormat;
-using FormatTests.Common;
 using System.Formats.Nrbf;
+using System.Private.Windows.Core.BinaryFormat;
+using System.Runtime.Serialization.Formatters.Binary;
+using FormatTests.Common;
 using System.Windows.Forms.Nrbf;
 
 namespace FormatTests.FormattedObject;
@@ -78,7 +78,7 @@ public class ListTests : SerializationTest
 
     [Theory]
     [MemberData(nameof(PrimitiveLists_TestData))]
-    public void BinaryFormattedObjectExtensions_TryGetPrimitiveList(IList list)
+    public void SerializationRecordExtensions_TryGetPrimitiveList(IList list)
     {
         SerializationRecord rootRecord = NrbfDecoder.Decode(Serialize(list));
         rootRecord.TryGetPrimitiveList(out object? deserialized).Should().BeTrue();
@@ -88,12 +88,20 @@ public class ListTests : SerializationTest
     public static TheoryData<IList> PrimitiveLists_TestData => new()
     {
         new List<int>(),
+        new List<bool>() { true, false},
         new List<float>() { 3.14f },
         new List<float>() { float.NaN, float.PositiveInfinity, float.NegativeInfinity, float.NegativeZero },
-        new List<int>() { 1, 3, 4, 5, 6, 7 },
+        new List<int>() { 1, 3, -4, 5, 6, 7 },
+        new List<uint>() { 0, 2, uint.MaxValue, uint.MinValue },
+        new List<sbyte>() { 0, -2, sbyte.MaxValue, sbyte.MinValue },
         new List<byte>() { 0xDE, 0xAD, 0xBE, 0xEF },
-        new List<char>() { 'a', 'b',  'c', 'd', 'e', 'f', 'g', 'h' },
-        new List<char>() { 'a', '\0',  'c' },
+        new List<short>() { 0, -2, short.MinValue, short.MaxValue },
+        new List<ushort>() { 1, 2, ushort.MinValue, ushort.MaxValue },
+        new List<long>() { 0, -2, long.MinValue, long.MaxValue },
+        new List<ulong>() { 1, 2, ulong.MinValue, ulong.MaxValue },
+        new List<double>() { 3.14, double.NaN, double.PositiveInfinity, double.NegativeInfinity, double.NegativeZero },
+        new List<char>() { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' },
+        new List<char>() { 'a', '\0', 'c' },
         new List<string>() { "Believe", "it", "or", "not" },
         new List<decimal>() { 42m },
         new List<DateTime>() { new(2000, 1, 1) },

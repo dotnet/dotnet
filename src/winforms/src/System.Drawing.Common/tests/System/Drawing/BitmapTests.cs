@@ -1,7 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 //
-// (C) 2004 Ximian, Inc.  http://www.ximian.com
+// (C) 2004 Ximian, Inc. http://www.ximian.com
 // Copyright (C) 2004,2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -723,7 +723,7 @@ public class BitmapTests : FileCleanupTestBase
     }
 
     [Fact]
-    public void SaveWmfAsPngDoesntChangeImageBoundaries()
+    public void SaveWmfAsPngDoesNotChangeImageBoundaries()
     {
         if (PlatformDetection.IsWindows7)
         {
@@ -855,7 +855,7 @@ public class BitmapTests : FileCleanupTestBase
     }
 
     [Fact]
-    public void MakeTransparent_CustomColorDoesntExist_DoesNothing()
+    public void MakeTransparent_CustomColorDoesNotExist_DoesNothing()
     {
         using Bitmap bitmap = new(10, 10);
         for (int x = 0; x < bitmap.Width; x++)

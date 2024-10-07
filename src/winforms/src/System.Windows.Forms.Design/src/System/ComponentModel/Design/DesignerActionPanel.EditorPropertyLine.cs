@@ -76,7 +76,7 @@ internal sealed partial class DesignerActionPanel
                 // All measurement code borrowed from WinForms PropertyGridView.cs
                 int maxWidth = 0;
 
-                // The listbox draws with GDI, not GDI+.  So, we use a normal DC here.
+                // The listbox draws with GDI, not GDI+. So, we use a normal DC here.
                 using (GetDcScope hdc = new((HWND)listBox.Handle))
                 {
                     using ObjectScope hFont = new(listBox.Font.ToHFONT());
@@ -323,7 +323,7 @@ internal sealed partial class DesignerActionPanel
                     return true;
                 }
 
-                // Not passing Alt key event to base class to prevent  closing 'Combobox Tasks window'
+                // Not passing Alt key event to base class to prevent closing 'Combobox Tasks window'
                 else if ((keyData & Keys.Alt) == Keys.Alt)
                 {
                     return true;

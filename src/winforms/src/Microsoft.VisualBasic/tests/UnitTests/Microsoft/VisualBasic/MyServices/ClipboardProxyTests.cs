@@ -1,16 +1,18 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable enable
+
 using System.Drawing;
-using FluentAssertions;
 using Microsoft.VisualBasic.Devices;
 using DataFormats = System.Windows.Forms.DataFormats;
 using TextDataFormat = System.Windows.Forms.TextDataFormat;
 
 namespace Microsoft.VisualBasic.MyServices.Tests;
 
+// Each registered Clipboard format is an OS singleton,
+// and we should not run this test at the same time as other tests using the same format.
 [Collection("Sequential")]
-[CollectionDefinition("Sequential", DisableParallelization = true)]
 public class ClipboardProxyTests
 {
     private static string GetUniqueText() => Guid.NewGuid().ToString("D");
@@ -18,7 +20,7 @@ public class ClipboardProxyTests
     [WinFormsFact]
     public void Audio()
     {
-        var clipboard = (new Computer()).Clipboard;
+        var clipboard = new Computer().Clipboard;
         clipboard.ContainsAudio().Should().Be(System.Windows.Forms.Clipboard.ContainsAudio());
 
         // Not tested:
@@ -30,7 +32,7 @@ public class ClipboardProxyTests
     [WinFormsFact]
     public void Clear()
     {
-        var clipboard = (new Computer()).Clipboard;
+        var clipboard = new Computer().Clipboard;
         string text = GetUniqueText();
         clipboard.SetText(text);
         System.Windows.Forms.Clipboard.ContainsText().Should().BeTrue();
@@ -41,26 +43,26 @@ public class ClipboardProxyTests
     [WinFormsFact]
     public void Data()
     {
-        var clipboard = (new Computer()).Clipboard;
+        var clipboard = new Computer().Clipboard;
         object data = GetUniqueText();
-        Assert.Equal(System.Windows.Forms.Clipboard.ContainsData(DataFormats.UnicodeText), clipboard.ContainsData(DataFormats.UnicodeText));
-        Assert.Equal(System.Windows.Forms.Clipboard.GetData(DataFormats.UnicodeText), clipboard.GetData(DataFormats.UnicodeText));
         clipboard.SetData(DataFormats.UnicodeText, data);
+        clipboard.ContainsData(DataFormats.UnicodeText).Should().Be(System.Windows.Forms.Clipboard.ContainsData(DataFormats.UnicodeText));
+        clipboard.GetData(DataFormats.UnicodeText).Should().Be(System.Windows.Forms.Clipboard.GetData(DataFormats.UnicodeText));
     }
 
     [WinFormsFact]
     public void DataObject()
     {
-        var clipboard = (new Computer()).Clipboard;
+        var clipboard = new Computer().Clipboard;
         object data = GetUniqueText();
-        Assert.Equal(System.Windows.Forms.Clipboard.GetDataObject().GetData(DataFormats.UnicodeText), clipboard.GetDataObject().GetData(DataFormats.UnicodeText));
         clipboard.SetDataObject(new System.Windows.Forms.DataObject(data));
+        clipboard.GetDataObject().GetData(DataFormats.UnicodeText).Should().Be(System.Windows.Forms.Clipboard.GetDataObject()?.GetData(DataFormats.UnicodeText));
     }
 
     [WinFormsFact]
     public void FileDropList()
     {
-        var clipboard = (new Computer()).Clipboard;
+        var clipboard = new Computer().Clipboard;
         System.Windows.Forms.Clipboard.ContainsFileDropList().Should().Be(clipboard.ContainsFileDropList());
         // Not tested:
         //   Public Function GetFileDropList() As StringCollection
@@ -70,7 +72,7 @@ public class ClipboardProxyTests
     [WinFormsFact]
     public void Image()
     {
-        var clipboard = (new Computer()).Clipboard;
+        var clipboard = new Computer().Clipboard;
         using Bitmap image = new(2, 2);
         System.Windows.Forms.Clipboard.ContainsImage().Should().Be(clipboard.ContainsImage());
         System.Windows.Forms.Clipboard.GetImage().Should().Be(clipboard.GetImage());
@@ -80,7 +82,7 @@ public class ClipboardProxyTests
     [WinFormsFact]
     public void Text()
     {
-        var clipboard = (new Computer()).Clipboard;
+        var clipboard = new Computer().Clipboard;
         string text = GetUniqueText();
         clipboard.SetText(text, TextDataFormat.UnicodeText);
         System.Windows.Forms.Clipboard.ContainsText().Should().Be(clipboard.ContainsText());

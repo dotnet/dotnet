@@ -604,9 +604,6 @@ public class CollectionEditorTests
         Mock<DesignerTransaction> mockTransaction = new(MockBehavior.Strict);
         mockTransaction
             .Protected()
-            .Setup("Dispose", It.IsAny<bool>());
-        mockTransaction
-            .Protected()
             .Setup("OnCommit")
             .Verifiable();
 
@@ -652,9 +649,6 @@ public class CollectionEditorTests
             .Returns(mockEditorService.Object);
 
         Mock<DesignerTransaction> mockTransaction = new(MockBehavior.Strict);
-        mockTransaction
-            .Protected()
-            .Setup("Dispose", It.IsAny<bool>());
         mockTransaction
             .Protected()
             .Setup("OnCancel")
@@ -812,7 +806,7 @@ public class CollectionEditorTests
     }
 
     [Fact]
-    public void CollectionEditor_GetDisplayText_ValueDoesntMatchCollectionType_ThrowsTargetException()
+    public void CollectionEditor_GetDisplayText_ValueDoesNotMatchCollectionType_ThrowsTargetException()
     {
         SubCollectionEditor editor = new(typeof(ClassWithStringDefaultProperty));
         TargetInvocationException ex = Assert.Throws<TargetInvocationException>(() => editor.GetDisplayText(new ClassWithNonStringDefaultProperty()));

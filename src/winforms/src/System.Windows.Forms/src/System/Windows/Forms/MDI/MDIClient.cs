@@ -34,7 +34,7 @@ public sealed partial class MdiClient : Control
         SetStyle(ControlStyles.ApplyThemingImplicitly, true);
 
         BackColor = SystemColors.AppWorkspace;
-#pragma warning restore WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning restore WFO5001
 
         Dock = DockStyle.Fill;
     }
@@ -277,7 +277,7 @@ public sealed partial class MdiClient : Control
     /// <summary>
     ///  This code is required to set the correct window region during the resize of the Form at design time.
     ///  There is case when the form contains a MainMenu and also has IsMdiContainer property set, in which, the MdiClient fails to
-    ///  resize and hence draw the correct backcolor.
+    ///  resize and hence draw the correct BackColor.
     /// </summary>
     private void SetWindowRgn()
     {
