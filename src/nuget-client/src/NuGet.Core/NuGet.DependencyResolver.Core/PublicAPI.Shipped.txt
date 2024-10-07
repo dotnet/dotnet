@@ -38,6 +38,7 @@ NuGet.DependencyResolver.GraphNode<TItem>
 NuGet.DependencyResolver.GraphNode<TItem>.Disposition.get -> NuGet.DependencyResolver.Disposition
 NuGet.DependencyResolver.GraphNode<TItem>.Disposition.set -> void
 ~NuGet.DependencyResolver.GraphNode<TItem>.GraphNode(NuGet.LibraryModel.LibraryRange key) -> void
+~NuGet.DependencyResolver.GraphNode<TItem>.GraphNode(NuGet.LibraryModel.LibraryRange key, bool hasInnerNodes, bool hasParentNodes) -> void
 ~NuGet.DependencyResolver.GraphNode<TItem>.InnerNodes.get -> System.Collections.Generic.IList<NuGet.DependencyResolver.GraphNode<TItem>>
 ~NuGet.DependencyResolver.GraphNode<TItem>.InnerNodes.set -> void
 ~NuGet.DependencyResolver.GraphNode<TItem>.Item.get -> NuGet.DependencyResolver.GraphItem<TItem>
@@ -163,7 +164,9 @@ override NuGet.DependencyResolver.RemoteMatch.GetHashCode() -> int
 static NuGet.DependencyResolver.LibraryRangeCacheKey.operator !=(NuGet.DependencyResolver.LibraryRangeCacheKey left, NuGet.DependencyResolver.LibraryRangeCacheKey right) -> bool
 static NuGet.DependencyResolver.LibraryRangeCacheKey.operator ==(NuGet.DependencyResolver.LibraryRangeCacheKey left, NuGet.DependencyResolver.LibraryRangeCacheKey right) -> bool
 ~static NuGet.DependencyResolver.PackagingUtility.GetLibraryDependencyFromNuspec(NuGet.Packaging.Core.PackageDependency dependency) -> NuGet.LibraryModel.LibraryDependency
+~static NuGet.DependencyResolver.RemoteDependencyWalker.EvaluateRuntimeDependencies(ref NuGet.LibraryModel.LibraryRange libraryRange, string runtimeName, NuGet.RuntimeModel.RuntimeGraph runtimeGraph, ref System.Collections.Generic.HashSet<NuGet.LibraryModel.LibraryDependency> runtimeDependencies) -> bool
 ~static NuGet.DependencyResolver.RemoteDependencyWalker.IsGreaterThanOrEqualTo(NuGet.Versioning.VersionRange nearVersion, NuGet.Versioning.VersionRange farVersion) -> bool
+~static NuGet.DependencyResolver.RemoteDependencyWalker.MergeRuntimeDependencies(System.Collections.Generic.HashSet<NuGet.LibraryModel.LibraryDependency> runtimeDependencies, NuGet.DependencyResolver.GraphNode<NuGet.DependencyResolver.RemoteResolveResult> node) -> void
 static NuGet.DependencyResolver.ResolverUtility.FindLibraryByVersionAsync(NuGet.LibraryModel.LibraryRange! libraryRange, NuGet.Frameworks.NuGetFramework! framework, System.Collections.Generic.IEnumerable<NuGet.DependencyResolver.IRemoteDependencyProvider!>! providers, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.DependencyResolver.RemoteMatch?>!
 static NuGet.DependencyResolver.ResolverUtility.FindLibraryCachedAsync(NuGet.LibraryModel.LibraryRange! libraryRange, NuGet.Frameworks.NuGetFramework! framework, string? runtimeIdentifier, NuGet.DependencyResolver.RemoteWalkContext! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.DependencyResolver.GraphItem<NuGet.DependencyResolver.RemoteResolveResult!>!>!
 static NuGet.DependencyResolver.ResolverUtility.FindLibraryEntryAsync(NuGet.LibraryModel.LibraryRange! libraryRange, NuGet.Frameworks.NuGetFramework! framework, string? runtimeIdentifier, NuGet.DependencyResolver.RemoteWalkContext! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.DependencyResolver.GraphItem<NuGet.DependencyResolver.RemoteResolveResult!>!>!
