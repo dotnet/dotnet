@@ -4,7 +4,7 @@
   "classifications": ["Test", "MSTest"],
   "name": "MSTest Test Project",
   "generatorVersions": "[1.0.0.0-*)",
-  "description": "A project that contains MSTest unit tests that can run on .NET on Windows, Linux and MacOS.",
+  "description": "A project that contains MSTest tests that can run on .NET on Windows, Linux and MacOS.",
   "groupIdentity": "Microsoft.Test.MSTest",
   "precedence": "11000",
   "identity": "Microsoft.Test.MSTest.FSharp.9.0",
@@ -92,49 +92,6 @@
       "replaces": "net9.0",
       "defaultValue": "net9.0"
     },
-    "UseVSTest": {
-      "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "false",
-      "description": "Use VSTest platform instead of MSTest runner. More information at https://aka.ms/mstest/sdk/runner"
-    },
-    "ExtensionsProfile": {
-      "type": "parameter",
-      "datatype": "choice",
-      "choices": [
-        {
-          "choice": "Default",
-          "description": "Default extensions profile (recommended)"
-        },
-        {
-          "choice": "None",
-          "description": "No extensions are enabled"
-        },
-        {
-          "choice": "AllMicrosoft",
-          "description": "Enable all extensions shipped by Microsoft (including extensions with a restrictive license)"
-        }
-      ],
-      "defaultValue": "Default",
-      "description": "Select the SDK extensions profile when using MSTest Runner. More information at https://aka.ms/mstest/sdk/extensions-profile",
-      "replaces": "$(ExtensionsProfile)"
-    },
-    "CoverageTool": {
-      "type": "parameter",
-      "datatype": "choice",
-      "choices": [
-        {
-          "choice": "Microsoft.CodeCoverage",
-          "description": "Microsoft Code Coverage"
-        },
-        {
-          "choice": "coverlet",
-          "description": "coverlet"
-        }
-      ],
-      "defaultValue": "Microsoft.CodeCoverage",
-      "description": "The coverage tool to use for the project."
-    },
     "HostIdentifier": {
       "type": "bind",
       "binding": "host:HostIdentifier"
@@ -153,6 +110,73 @@
       "replaces": "$(ProjectLanguageVersion)",
       "displayName": "Language version"
     },
+    "UseMSTestSdk": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "Use MSTest.Sdk project style. More information at https://aka.ms/mstest/sdk",
+      "displayName": "Use MSTest.Sdk",
+      "defaultValue": "False"
+    },
+    "TestRunner": {
+      "type": "parameter",
+      "datatype": "choice",
+      "enableQuotelessLiterals": true,
+      "description": "Select the runner/platform. More information at https://aka.ms/mstest/sdk/extensions-profile",
+      "displayName": "Test runner",
+      "defaultValue": "MSTest",
+      "choices": [
+        {
+          "choice": "MSTest",
+          "description": "Use MSTest Runner (Microsoft.Testing.Platform)"
+        },
+        {
+          "choice": "VSTest",
+          "description": "Use VSTest platform"
+        }
+      ]
+    },
+    "CoverageTool": {
+      "type": "parameter",
+      "datatype": "choice",
+      "description": "The coverage tool to use for the project.",
+      "displayName": "Coverage tool",
+      "defaultValue": "Microsoft.CodeCoverage",
+      "choices": [
+        {
+          "choice": "Microsoft.CodeCoverage",
+          "description": "Microsoft Code Coverage"
+        },
+        {
+          "choice": "coverlet",
+          "description": "coverlet"
+        }
+      ]
+    },
+    "ExtensionsProfile": {
+      "type": "parameter",
+      "datatype": "choice",
+      "description": "Select the SDK extensions profile when using MSTest Runner. More information at https://aka.ms/mstest/sdk/extensions-profile",
+      "displayName": "Testing extensions profile",
+      "isEnabled": "UseMSTestSdk && (TestRunner == MSTest)",
+      "defaultValue": "Default",
+      "replaces": "$(ExtensionsProfile)",
+      "choices": [
+        {
+          "choice": "Default",
+          "description": "Default extensions profile (recommended)",
+          "displayName": "Default"
+        },
+        {
+          "choice": "None",
+          "description": "No extensions are enabled",
+          "displayName": "None"
+        },
+        {
+          "choice": "AllMicrosoft",
+          "description": "Enable all extensions shipped by Microsoft (including extensions with a restrictive license)"
+        }
+      ]
+    },
     "Fixture": {
       "type": "parameter",
       "datatype": "choice",
@@ -163,7 +187,8 @@
       "choices": [
         {
           "choice": "None",
-          "description": "No fixture methods"
+          "description": "No fixture methods",
+          "displayName": "None"
         },
         {
           "choice": "AssemblyInitialize",

@@ -79,7 +79,7 @@ public sealed partial class AcceptanceTests
         var result = DotnetUtils.InvokeDotnetTest(outputDirectory);
 
         // Verify the tests run as expected.
-        result.ValidateSummaryStatus(isTestingPlatform, 2, 0, 0);
+        result.ValidateSummaryStatus(isTestingPlatform, 2);
 
         Directory.Delete(outputDirectory, true);
     }
@@ -93,7 +93,8 @@ public sealed partial class AcceptanceTests
         string outputDirectory = Path.Combine(Constants.ArtifactsTempDirectory, testProjectName);
 
         // Create new test project: dotnet new <projectTemplate> -n <testProjectName> -f <targetFramework> -lang <language> -o <outputDirectory>
-        DotnetUtils.InvokeDotnetNew(projectTemplate, testProjectName, targetFramework, language, outputDirectory);
+        var dotnetNewResult = DotnetUtils.InvokeDotnetNew(projectTemplate, testProjectName, targetFramework, language, outputDirectory);
+        Assert.AreEqual(0, dotnetNewResult.ExitCode);
 
         if (runDotnetTest)
         {
@@ -101,7 +102,7 @@ public sealed partial class AcceptanceTests
             var result = DotnetUtils.InvokeDotnetTest(outputDirectory);
 
             // Verify the tests run as expected.
-            result.ValidateSummaryStatus(isTestingPlatform, 1, 0, 0);
+            result.ValidateSummaryStatus(isTestingPlatform, 1);
         }
 
         Directory.Delete(outputDirectory, true);

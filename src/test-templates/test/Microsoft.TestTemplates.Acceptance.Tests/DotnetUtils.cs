@@ -53,7 +53,7 @@ public static partial class DotnetUtils
     /// <param name="arguments">Arguments provided to <c>dotnet</c>.exe</param>
     private static ExecutionResult InvokeDotnet(string args, bool assertExecution = true)
     {
-        Execute(args, out var standardTestOutput, out var standardTestError, out var runnerExitCode);        
+        Execute(args, out var standardTestOutput, out var standardTestError, out var runnerExitCode);
 
         ExecutionResult executionResult = new(args, standardTestOutput, standardTestError, runnerExitCode);
         if (assertExecution)
@@ -62,7 +62,7 @@ public static partial class DotnetUtils
         }
 
         return executionResult;
-    }    
+    }
 
     private static void Execute(string args, out string stdOut, out string stdError, out int exitCode)
     {

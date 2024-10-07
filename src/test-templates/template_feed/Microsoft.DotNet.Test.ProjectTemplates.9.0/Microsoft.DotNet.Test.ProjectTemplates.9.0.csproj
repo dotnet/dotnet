@@ -19,6 +19,7 @@
         <CopyrightNetFoundation>© .NET Foundation and Contributors</CopyrightNetFoundation>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageType>Template</PackageType>
+        <UsingToolTemplateLocalizer>true</UsingToolTemplateLocalizer>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Remove="Microsoft.NETCore.App" />
