@@ -376,8 +376,11 @@ var_types Compiler::impImportCall(OPCODE                  opcode,
                 call = gtNewCallNode(CT_USER_FUNC, callInfo->hMethod, callRetTyp, di);
                 call->gtFlags |= GTF_CALL_VIRT_VTABLE;
 
-                // Mark this method to expand the virtual call target early in fgMorphCall
-                call->AsCall()->SetExpandedEarly();
+                if (opts.OptimizationEnabled())
+                {
+                    // Mark this method to expand the virtual call target early in fgMorphCall
+                    call->AsCall()->SetExpandedEarly();
+                }
                 break;
             }
 
@@ -2046,9 +2049,7 @@ void Compiler::impPopArgsForUnmanagedCall(GenTreeCall* call, CORINFO_SIG_INFO* s
 //    call - The call
 //
 // Remarks:
-//   This makes use of the fact that TYP_I_IMPL <-> TYP_BYREF casts are
-//   implicit in JIT IR, allowing us to change the types directly without
-//   inserting a cast node.
+//   Make the "casting away" of GC explicit here instead of retyping.
 //
 void Compiler::impRetypeUnmanagedCallArgs(GenTreeCall* call)
 {
@@ -2059,7 +2060,7 @@ void Compiler::impRetypeUnmanagedCallArgs(GenTreeCall* call)
         // We should not be passing gc typed args to an unmanaged call.
         if (varTypeIsGC(argNode->TypeGet()))
         {
-            // Tolerate byrefs by retyping to native int.
+            // Tolerate byrefs by casting to native int.
             //
             // This is needed or we'll generate inconsistent GC info
             // for this arg at the call site (gc info says byref,
@@ -2067,7 +2068,8 @@ void Compiler::impRetypeUnmanagedCallArgs(GenTreeCall* call)
             //
             if (argNode->TypeGet() == TYP_BYREF)
             {
-                argNode->ChangeType(TYP_I_IMPL);
+                GenTree* cast = gtNewCastNode(TYP_I_IMPL, argNode, false, TYP_I_IMPL);
+                arg.SetEarlyNode(cast);
             }
             else
             {
@@ -2908,12 +2910,9 @@ GenTree* Compiler::impCreateSpanIntrinsic(CORINFO_SIG_INFO* sig)
         return nullptr;
     }
 
-    CORINFO_CLASS_HANDLE fieldOwnerHnd = info.compCompHnd->getFieldClass(fieldToken);
-
     CORINFO_CLASS_HANDLE fieldClsHnd;
-    var_types            fieldElementType =
-        JITtype2varType(info.compCompHnd->getFieldType(fieldToken, &fieldClsHnd, fieldOwnerHnd));
-    unsigned totalFieldSize;
+    var_types            fieldElementType = JITtype2varType(info.compCompHnd->getFieldType(fieldToken, &fieldClsHnd));
+    unsigned             totalFieldSize;
 
     // Most static initialization data fields are of some structure, but it is possible for them to be of various
     // primitive types as well
@@ -3558,6 +3557,12 @@ GenTree* Compiler::impIntrinsic(CORINFO_CLASS_HANDLE    clsHnd,
 
                 bool refOrContains = varTypeIsGC(fromType) || (fromLayout != nullptr && fromLayout->HasGCPtr());
                 retNode            = refOrContains ? gtNewIconNode(1) : gtNewIconNode(0);
+                break;
+            }
+
+            case NI_System_Runtime_CompilerServices_RuntimeHelpers_GetMethodTable:
+            {
+                retNode = gtNewMethodTableLookup(impPopStack().val);
                 break;
             }
 
@@ -6184,6 +6189,18 @@ void Compiler::impPopCallArgs(CORINFO_SIG_INFO* sig, GenTreeCall* call)
             argNode = impImplicitR4orR8Cast(argNode, jitSigType);
             // insert any widening or narrowing casts for backwards compatibility
             argNode = impImplicitIorI4Cast(argNode, jitSigType);
+
+            if ((compAppleArm64Abi() || TargetArchitecture::IsArm32) && call->IsUnmanaged() &&
+                varTypeIsSmall(jitSigType))
+            {
+                // Apple arm64 and arm32 ABIs require arguments to be zero/sign
+                // extended up to 32 bit. The managed ABI does not require
+                // this.
+                if (fgCastNeeded(argNode, jitSigType))
+                {
+                    argNode = gtNewCastNode(TYP_INT, argNode, false, jitSigType);
+                }
+            }
         }
 
         NewCallArg arg;
@@ -10397,6 +10414,10 @@ NamedIntrinsic Compiler::lookupNamedIntrinsic(CORINFO_METHOD_HANDLE method)
                             {
                                 result =
                                     NI_System_Runtime_CompilerServices_RuntimeHelpers_IsReferenceOrContainsReferences;
+                            }
+                            else if (strcmp(methodName, "GetMethodTable") == 0)
+                            {
+                                result = NI_System_Runtime_CompilerServices_RuntimeHelpers_GetMethodTable;
                             }
                         }
                         else if (strcmp(className, "Unsafe") == 0)
