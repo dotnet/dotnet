@@ -25,10 +25,14 @@ extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
   parameters:
     sdl:
+      policheck:
+        enabled: true
       sourceAnalysisPool:
         name: $(DncEngInternalBuildPool)
         image: 1es-windows-2022
         os: windows
+      tsa:
+        enabled: true
     pool:
       name: $(DncEngInternalBuildPool)
       image: 1es-ubuntu-2204
