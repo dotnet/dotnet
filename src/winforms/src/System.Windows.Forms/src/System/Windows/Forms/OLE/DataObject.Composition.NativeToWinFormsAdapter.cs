@@ -1,14 +1,11 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters;
 using System.Text;
 using Com = Windows.Win32.System.Com;
-using System.Drawing;
-using System.Windows.Forms.Nrbf;
 
 namespace System.Windows.Forms;
 
@@ -115,44 +112,7 @@ public unsafe partial class DataObject
                 static object ReadObjectFromHGLOBAL(HGLOBAL hglobal, bool restrictDeserialization)
                 {
                     MemoryStream stream = ReadByteStreamFromHGLOBAL(hglobal, out bool isSerializedObject);
-                    return !isSerializedObject ? stream : ReadObjectFromHandleDeserializer(stream, restrictDeserialization);
-
-                    static object ReadObjectFromHandleDeserializer(Stream stream, bool restrictDeserialization)
-                    {
-                        long startPosition = stream.Position;
-                        try
-                        {
-                            if (stream.Decode().TryGetObject(out object? value))
-                            {
-                                return value;
-                            }
-                        }
-                        catch (Exception ex) when (!ex.IsCriticalException())
-                        {
-                            // Couldn't parse for some reason, let the BinaryFormatter try to handle it.
-                        }
-
-                        // This check is to help in trimming scenarios with a trim warning on a call to BinaryFormatter.Deserialize(), which has a RequiresUnreferencedCode annotation.
-                        // If the flag is false, the trimmer will not generate a warning, since BinaryFormatter.Deserialize() will not be called,
-                        // If the flag is true, the trimmer will generate a warning for calling a method that has a RequiresUnreferencedCode annotation.
-                        if (!EnableUnsafeBinaryFormatterInNativeObjectSerialization)
-                        {
-                            throw new NotSupportedException(SR.BinaryFormatterNotSupported);
-                        }
-
-                        stream.Position = startPosition;
-
-#pragma warning disable SYSLIB0011 // Type or member is obsolete
-#pragma warning disable SYSLIB0050 // Type or member is obsolete
-                        // cs/dangerous-binary-deserialization
-                        return new BinaryFormatter()
-                        {
-                            Binder = restrictDeserialization ? new BitmapBinder() : null,
-                            AssemblyFormat = FormatterAssemblyStyle.Simple
-                        }.Deserialize(stream); // CodeQL[SM03722] : BinaryFormatter is intended to be used as a fallback for unsupported types. Users must explicitly opt into this behavior
-#pragma warning restore SYSLIB0050
-#pragma warning restore SYSLIB0011
-                    }
+                    return !isSerializedObject ? stream : BinaryFormatUtilities.ReadObjectFromStream(stream, restrictDeserialization);
                 }
             }
 
@@ -515,17 +475,11 @@ public unsafe partial class DataObject
 
                 enumFORMATETC.Value->Reset();
 
-                Com.FORMATETC[] formatEtc = [default];
-                HRESULT hr;
+                Com.FORMATETC formatEtc = default;
 
-                fixed (Com.FORMATETC* pFormatEtc = formatEtc)
+                while (enumFORMATETC.Value->Next(1, &formatEtc) == HRESULT.S_OK)
                 {
-                    hr = enumFORMATETC.Value->Next(1, pFormatEtc);
-                }
-
-                if (hr == HRESULT.S_OK)
-                {
-                    string name = DataFormats.GetFormat(formatEtc[0].cfFormat).Name;
+                    string name = DataFormats.GetFormat(formatEtc.cfFormat).Name;
                     if (autoConvert)
                     {
                         string[] mappedFormats = GetMappedFormats(name)!;
@@ -538,6 +492,8 @@ public unsafe partial class DataObject
                     {
                         distinctFormats.Add(name);
                     }
+
+                    formatEtc = default;
                 }
 
                 return [.. distinctFormats];
@@ -564,7 +520,9 @@ public unsafe partial class DataObject
 
                 using var nativeDataObject = _nativeDataObject.GetInterface();
                 HRESULT hr = nativeDataObject.Value->QueryGetData(formatEtc);
-                return hr.Succeeded;
+
+                // APIs will return S_FALSE, which is "success"
+                return hr == HRESULT.S_OK;
             }
         }
     }

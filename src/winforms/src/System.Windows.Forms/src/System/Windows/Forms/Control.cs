@@ -11,10 +11,10 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms.Automation;
 using System.Windows.Forms.Layout;
 using System.Windows.Forms.Primitives;
+using Windows.Win32.Graphics.Dwm;
 using Windows.Win32.System.Ole;
 using Windows.Win32.UI.Accessibility;
 using Windows.Win32.UI.Input.KeyboardAndMouse;
-using Windows.Win32.Graphics.Dwm;
 using Com = Windows.Win32.System.Com;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
 using Encoding = System.Text.Encoding;
@@ -174,7 +174,9 @@ public unsafe partial class Control :
 
     private static Font? s_defaultFont;
 
-    // Property store keys for properties.  The property store allocates most efficiently
+    internal ControlCollection? ChildControls { get; private set; }
+
+    // Property store keys for properties. The property store allocates most efficiently
     // in groups of four, so we try to lump properties in groups of four based on how
     // likely they are going to be used in a group.
     private static readonly int s_namePropertyProperty = PropertyStore.CreateKey();
@@ -182,7 +184,6 @@ public unsafe partial class Control :
     private static readonly int s_fontHeightProperty = PropertyStore.CreateKey();
     private static readonly int s_currentAmbientFontProperty = PropertyStore.CreateKey();
 
-    private static readonly int s_controlsCollectionProperty = PropertyStore.CreateKey();
     private static readonly int s_backColorProperty = PropertyStore.CreateKey();
     private static readonly int s_foreColorProperty = PropertyStore.CreateKey();
     private static readonly int s_fontProperty = PropertyStore.CreateKey();
@@ -239,7 +240,7 @@ public unsafe partial class Control :
 
     // Resist the temptation to make this variable 'internal' rather than
     // private. Handle access should be tightly controlled, and is in this
-    // file.  Making it 'internal' makes controlling it quite difficult.
+    // file. Making it 'internal' makes controlling it quite difficult.
     private readonly ControlNativeWindow _window;
 
     private Control? _parent;
@@ -255,12 +256,14 @@ public unsafe partial class Control :
     private ExtendedStates _extendedState;
 
     /// <summary>
-    /// User supplied control style
+    ///  User supplied control style
     /// </summary>
     private ControlStyles _controlStyle;
     private int _tabIndex;
-    private string? _text;                       // See ControlStyles.CacheText for usage notes
-    private byte _requiredScaling;              // bits 0-4: BoundsSpecified stored in RequiredScaling property.  Bit 5: RequiredScalingEnabled property.
+    // See ControlStyles.CacheText for usage notes
+    private string? _text;
+    // bits 0-4: BoundsSpecified stored in RequiredScaling property. Bit 5: RequiredScalingEnabled property.
+    private byte _requiredScaling;
     private TRACKMOUSEEVENT _trackMouseEvent;
     private short _updateCount;
     private LayoutEventArgs? _cachedLayoutEventArgs;
@@ -284,10 +287,12 @@ public unsafe partial class Control :
     // Contains a collection of calculated fonts for various Dpi values of the control in the PerMonV2 mode.
     private Dictionary<int, Font>? _dpiFonts;
 
-    // Flag to signify whether any child controls necessitate the calculation of AnchorsInfo, particularly in cases involving nested containers.
+    // Flag to signify whether any child controls necessitate the calculation of AnchorsInfo,
+    // particularly in cases involving nested containers.
     internal bool _childControlsNeedAnchorLayout;
 
-    // Inform whether the AnchorsInfo needs to be reevaluated, especially when the control's bounds have been altered explicitly.
+    // Inform whether the AnchorsInfo needs to be reevaluated,
+    // especially when the control's bounds have been altered explicitly.
     internal bool _forceAnchorCalculations;
 
     internal byte LayoutSuspendCount { get; private set; }
@@ -323,7 +328,7 @@ public unsafe partial class Control :
             true);
 
         // We baked the "default default" margin and min size into CommonProperties
-        // so that in the common case the PropertyStore would be empty.  If, however,
+        // so that in the common case the PropertyStore would be empty. If, however,
         // someone overrides these Default* methods, we need to write the default
         // value into the PropertyStore in the ctor.
 
@@ -352,8 +357,8 @@ public unsafe partial class Control :
         _width = defaultSize.Width;
         _height = defaultSize.Height;
 
-        // DefaultSize may have hit GetPreferredSize causing a PreferredSize to be cached.  The
-        // PreferredSize may change as a result of the current size.  Since a  SetBoundsCore did
+        // DefaultSize may have hit GetPreferredSize causing a PreferredSize to be cached. The
+        // PreferredSize may change as a result of the current size. Since a  SetBoundsCore did
         // not happen, so we need to clear the preferredSize cache manually.
         CommonProperties.xClearPreferredSizeCache(this);
 
@@ -423,11 +428,10 @@ public unsafe partial class Control :
     {
         get
         {
-            AccessibleObject? accessibleObject = (AccessibleObject?)Properties.GetObject(s_accessibilityProperty);
-            if (accessibleObject is null)
+            if (!Properties.TryGetValue(s_accessibilityProperty, out AccessibleObject? accessibleObject))
             {
-                accessibleObject = CreateAccessibilityInstance();
-                Properties.SetObject(s_accessibilityProperty, accessibleObject);
+                accessibleObject = CreateAccessibilityInstance().OrThrowIfNull();
+                Properties.AddValue(s_accessibilityProperty, accessibleObject);
             }
 
             Debug.Assert(accessibleObject is not null, "Failed to create accessibility object");
@@ -443,11 +447,10 @@ public unsafe partial class Control :
     {
         get
         {
-            AccessibleObject? ncAccessibleObject = (AccessibleObject?)Properties.GetObject(s_ncAccessibilityProperty);
-            if (ncAccessibleObject is null)
+            if (!Properties.TryGetValue(s_ncAccessibilityProperty, out AccessibleObject? ncAccessibleObject))
             {
                 ncAccessibleObject = new ControlAccessibleObject(this, (int)OBJECT_IDENTIFIER.OBJID_WINDOW);
-                Properties.SetObject(s_ncAccessibilityProperty, ncAccessibleObject);
+                Properties.AddValue(s_ncAccessibilityProperty, ncAccessibleObject);
             }
 
             Debug.Assert(ncAccessibleObject is not null, "Failed to create NON-CLIENT accessibility object");
@@ -462,7 +465,7 @@ public unsafe partial class Control :
         this is IAutomationLiveRegion ? AccessibilityObject : null;
 
     /// <summary>
-    ///  The default action description of the control
+    ///  The default action description of the control.
     /// </summary>
     [SRCategory(nameof(SR.CatAccessibility))]
     [Browsable(false)]
@@ -471,12 +474,12 @@ public unsafe partial class Control :
     [SRDescription(nameof(SR.ControlAccessibleDefaultActionDescr))]
     public string? AccessibleDefaultActionDescription
     {
-        get => (string?)Properties.GetObject(s_accessibleDefaultActionProperty);
-        set => Properties.SetObject(s_accessibleDefaultActionProperty, value);
+        get => Properties.GetValueOrDefault<string>(s_accessibleDefaultActionProperty);
+        set => Properties.AddOrRemoveValue(s_accessibleDefaultActionProperty, value);
     }
 
     /// <summary>
-    ///  The accessible description of the control
+    ///  The accessible description of the control.
     /// </summary>
     [SRCategory(nameof(SR.CatAccessibility))]
     [DefaultValue(null)]
@@ -484,12 +487,12 @@ public unsafe partial class Control :
     [SRDescription(nameof(SR.ControlAccessibleDescriptionDescr))]
     public string? AccessibleDescription
     {
-        get => (string?)Properties.GetObject(s_accessibleDescriptionProperty);
-        set => Properties.SetObject(s_accessibleDescriptionProperty, value);
+        get => Properties.GetValueOrDefault<string>(s_accessibleDescriptionProperty);
+        set => Properties.AddOrRemoveValue(s_accessibleDescriptionProperty, value);
     }
 
     /// <summary>
-    ///  The accessible name of the control
+    ///  The accessible name of the control.
     /// </summary>
     [SRCategory(nameof(SR.CatAccessibility))]
     [DefaultValue(null)]
@@ -497,12 +500,12 @@ public unsafe partial class Control :
     [SRDescription(nameof(SR.ControlAccessibleNameDescr))]
     public string? AccessibleName
     {
-        get => (string?)Properties.GetObject(s_accessibleNameProperty);
-        set => Properties.SetObject(s_accessibleNameProperty, value);
+        get => Properties.GetValueOrDefault<string>(s_accessibleNameProperty);
+        set => Properties.AddOrRemoveValue(s_accessibleNameProperty, value);
     }
 
     /// <summary>
-    ///  The accessible role of the control
+    ///  The accessible role of the control.
     /// </summary>
     [SRCategory(nameof(SR.CatAccessibility))]
     [DefaultValue(AccessibleRole.Default)]
@@ -512,14 +515,13 @@ public unsafe partial class Control :
         get => Properties.GetValueOrDefault(s_accessibleRoleProperty, AccessibleRole.Default);
         set
         {
-            // valid values are -1 to 0x40
             SourceGenerated.EnumValidator.Validate(value);
-            Properties.AddValue(s_accessibleRoleProperty, value);
+            Properties.AddOrRemoveValue(s_accessibleRoleProperty, value, defaultValue: AccessibleRole.Default);
         }
     }
 
     /// <summary>
-    ///  The AllowDrop property. If AllowDrop is set to true then
+    ///  The AllowDrop property. If AllowDrop is set to <see langword="true"/> then
     ///  this control will allow drag and drop operations and events to be used.
     /// </summary>
     [SRCategory(nameof(SR.CatBehavior))]
@@ -555,18 +557,14 @@ public unsafe partial class Control :
         }
     }
 
-    // Queries the Site for AmbientProperties.  May return null.
+    // Queries the Site for AmbientProperties. May return null.
     // Do not confuse with inheritedProperties -- the service is turned to
     // after we've exhausted inheritedProperties.
     private AmbientProperties? AmbientPropertiesService
     {
         get
         {
-            AmbientProperties? ambientProperties = (AmbientProperties?)Properties.GetObject(
-                s_ambientPropertiesServiceProperty,
-                out bool found);
-
-            if (found)
+            if (Properties.TryGetValueOrNull(s_ambientPropertiesServiceProperty, out AmbientProperties? ambientProperties))
             {
                 return ambientProperties;
             }
@@ -582,7 +580,7 @@ public unsafe partial class Control :
 
             if (ambientProperties is not null)
             {
-                Properties.SetObject(s_ambientPropertiesServiceProperty, ambientProperties);
+                Properties.AddValue(s_ambientPropertiesServiceProperty, ambientProperties);
             }
 
             return ambientProperties;
@@ -625,7 +623,7 @@ public unsafe partial class Control :
             CommonProperties.SetAutoSize(this, value);
             if (ParentInternal is { } parent)
             {
-                // DefaultLayout does not keep anchor information until it needs to.  When
+                // DefaultLayout does not keep anchor information until it needs to. When
                 // AutoSize became a common property, we could no longer blindly call into
                 // DefaultLayout, so now we do a special InitLayout just for DefaultLayout.
                 if (value && parent.LayoutEngine == DefaultLayout.Instance)
@@ -659,16 +657,8 @@ public unsafe partial class Control :
     [DefaultValue(typeof(Point), "0, 0")]
     public virtual Point AutoScrollOffset
     {
-        get => Properties.TryGetObject(s_autoScrollOffsetProperty, out Point point)
-            ? point
-            : Point.Empty;
-        set
-        {
-            if (AutoScrollOffset != value)
-            {
-                Properties.SetObject(s_autoScrollOffsetProperty, value);
-            }
-        }
+        get => Properties.GetValueOrDefault(s_autoScrollOffsetProperty, Point.Empty);
+        set => Properties.AddOrRemoveValue(s_autoScrollOffsetProperty, value, defaultValue: Point.Empty);
     }
 
     protected void SetAutoSizeMode(AutoSizeMode mode) => CommonProperties.SetAutoSizeMode(this, mode);
@@ -691,13 +681,13 @@ public unsafe partial class Control :
         {
             if (Properties.TryGetValue(s_backBrushProperty, out HBRUSH customBackBrush))
             {
-                // We already have a valid brush.  Unbox, and return.
+                // We already have a valid brush. Unbox, and return.
                 return customBackBrush;
             }
 
             if (!Properties.ContainsKey(s_backColorProperty))
             {
-                // No custom back color.  See if we can get to our parent.
+                // No custom back color. See if we can get to our parent.
                 // The color check here is to account for parents and children who
                 // override the BackColor property.
                 if (ParentInternal is { } parent && parent.BackColor == BackColor)
@@ -706,7 +696,7 @@ public unsafe partial class Control :
                 }
             }
 
-            // No parent, or we have a custom back color.  Either way, we need to
+            // No parent, or we have a custom back color. Either way, we need to
             // create our own.
             Color color = BackColor;
             HBRUSH backBrush;
@@ -748,7 +738,7 @@ public unsafe partial class Control :
     [Bindable(true)]
     public virtual object? DataContext
     {
-        get => Properties.TryGetObject(s_dataContextProperty, out object? value)
+        get => Properties.TryGetValue(s_dataContextProperty, out object? value)
             ? value
             : ParentInternal?.DataContext;
         set
@@ -861,7 +851,7 @@ public unsafe partial class Control :
     [SRDescription(nameof(SR.ControlBackgroundImageDescr))]
     public virtual Image? BackgroundImage
     {
-        get => (Image?)Properties.GetObject(s_backgroundImageProperty);
+        get => Properties.GetValueOrDefault<Image>(s_backgroundImageProperty);
         set
         {
             if (BackgroundImage == value)
@@ -869,7 +859,7 @@ public unsafe partial class Control :
                 return;
             }
 
-            Properties.SetObject(s_backgroundImageProperty, value);
+            Properties.AddOrRemoveValue(s_backgroundImageProperty, value);
             OnBackgroundImageChanged(EventArgs.Empty);
         }
     }
@@ -891,9 +881,7 @@ public unsafe partial class Control :
     [SRDescription(nameof(SR.ControlBackgroundImageLayoutDescr))]
     public virtual ImageLayout BackgroundImageLayout
     {
-        get => Properties.TryGetObject(s_backgroundImageLayoutProperty, out ImageLayout imageLayout)
-            ? imageLayout
-            : ImageLayout.Tile;
+        get => Properties.GetValueOrDefault(s_backgroundImageLayoutProperty, ImageLayout.Tile);
         set
         {
             if (BackgroundImageLayout == value)
@@ -901,7 +889,6 @@ public unsafe partial class Control :
                 return;
             }
 
-            // Valid values are 0x0 to 0x4
             SourceGenerated.EnumValidator.Validate(value);
 
             // Check if the value is either center, stretch or zoom;
@@ -916,7 +903,7 @@ public unsafe partial class Control :
                 }
             }
 
-            Properties.SetObject(s_backgroundImageLayoutProperty, value);
+            Properties.AddOrRemoveValue(s_backgroundImageLayoutProperty, value, defaultValue: ImageLayout.Tile);
             OnBackgroundImageLayoutChanged(EventArgs.Empty);
         }
     }
@@ -937,7 +924,7 @@ public unsafe partial class Control :
         {
             if (value != BecomingActiveControl)
             {
-                Application.ThreadContext.FromCurrent().ActivatingControl = (value) ? this : null;
+                Application.ThreadContext.FromCurrent().ActivatingControl = value ? this : null;
                 SetExtendedState(ExtendedStates.BecomingActiveControl, value);
             }
         }
@@ -954,22 +941,20 @@ public unsafe partial class Control :
             return;
         }
 
-        ControlBindingsCollection? bindings = (ControlBindingsCollection?)Properties.GetObject(s_bindingsProperty);
-        bindings?.Clear();
+        Properties.GetValueOrDefault<ControlBindingsCollection>(s_bindingsProperty)?.Clear();
     }
 
     /// <summary>
     ///  BindingContextInternal provides a mechanism so that controls like SplitContainer that inherit from the
-    ///  ContainerControl can bypass the "containerControls" bindingContext property and do what the other simple controls
-    ///  do.
+    ///  ContainerControl can bypass the "containerControls" bindingContext property and do what the other simple
+    ///  controls do.
     /// </summary>
     internal BindingContext? BindingContextInternal
     {
         get
         {
             // See if we have locally overridden the binding manager.
-            BindingContext? context = (BindingContext?)Properties.GetObject(s_bindingManagerProperty);
-            if (context is not null)
+            if (Properties.TryGetValue(s_bindingManagerProperty, out BindingContext? context))
             {
                 return context;
             }
@@ -986,14 +971,11 @@ public unsafe partial class Control :
         }
         set
         {
-            BindingContext? oldContext = (BindingContext?)Properties.GetObject(s_bindingManagerProperty);
-            BindingContext? newContext = value;
+            BindingContext? oldContext = Properties.AddOrRemoveValue(s_bindingManagerProperty, value);
 
-            if (oldContext != newContext)
+            if (oldContext != value)
             {
-                Properties.SetObject(s_bindingManagerProperty, newContext);
-
-                // the property change will wire up the bindings.
+                // The property change will wire up the bindings.
                 OnBindingContextChanged(EventArgs.Empty);
             }
         }
@@ -1056,7 +1038,7 @@ public unsafe partial class Control :
     public bool CanFocus => IsHandleCreated && PInvoke.IsWindowVisible(this) && PInvoke.IsWindowEnabled(this);
 
     /// <summary>
-    ///  Determines if events can be fired on the control.  If this control is being
+    ///  Determines if events can be fired on the control. If this control is being
     ///  hosted as an ActiveX control, this property will return false if the ActiveX
     ///  control has its events frozen.
     /// </summary>
@@ -1174,7 +1156,7 @@ public unsafe partial class Control :
                 }
             }
 
-            Properties.AddValue(s_cacheTextCountProperty, cacheTextCounter);
+            Properties.AddOrRemoveValue(s_cacheTextCountProperty, cacheTextCounter);
         }
     }
 
@@ -1260,28 +1242,24 @@ public unsafe partial class Control :
     [SRDescription(nameof(SR.ControlContextMenuDescr))]
     public virtual ContextMenuStrip? ContextMenuStrip
     {
-        get => (ContextMenuStrip?)Properties.GetObject(s_contextMenuStripProperty);
+        get => Properties.GetValueOrDefault<ContextMenuStrip>(s_contextMenuStripProperty);
         set
         {
-            ContextMenuStrip? oldValue = Properties.GetObject(s_contextMenuStripProperty) as ContextMenuStrip;
+            ContextMenuStrip? oldValue = Properties.AddOrRemoveValue(s_contextMenuStripProperty, value);
 
             if (oldValue == value)
             {
                 return;
             }
 
-            EventHandler disposedHandler = new(DetachContextMenuStrip);
-
             if (oldValue is not null)
             {
-                oldValue.Disposed -= disposedHandler;
+                oldValue.Disposed -= DetachContextMenuStrip;
             }
-
-            Properties.SetObject(s_contextMenuStripProperty, value);
 
             if (value is not null)
             {
-                value.Disposed += disposedHandler;
+                value.Disposed += DetachContextMenuStrip;
             }
 
             OnContextMenuStripChanged(EventArgs.Empty);
@@ -1302,21 +1280,7 @@ public unsafe partial class Control :
     [Browsable(false)]
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
     [SRDescription(nameof(SR.ControlControlsDescr))]
-    public ControlCollection Controls
-    {
-        get
-        {
-            ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-
-            if (controlsCollection is null)
-            {
-                controlsCollection = CreateControlsInstance();
-                Properties.SetObject(s_controlsCollectionProperty, controlsCollection);
-            }
-
-            return controlsCollection;
-        }
-    }
+    public ControlCollection Controls => ChildControls ??= CreateControlsInstance();
 
     /// <summary>
     ///  Indicates whether the control has been created. This property is read-only.
@@ -1396,7 +1360,7 @@ public unsafe partial class Control :
                 cp.Style |= (int)WINDOW_STYLE.WS_VISIBLE;
             }
 
-            // Unlike Visible, Windows doesn't correctly inherit disabledness from its parent -- an enabled child
+            // Unlike Visible, Windows doesn't correctly inherit disabled state from its parent -- an enabled child
             // of a disabled parent will look enabled but not get mouse events
             if (!Enabled)
             {
@@ -1465,7 +1429,8 @@ public unsafe partial class Control :
     /// <summary>
     ///  returns bool indicating whether the Top MDI Window is closing.
     ///  This property is set in the MDI children in WmClose method in form.cs when the top window is closing.
-    ///  This property will be used in ActiveControl to determine if we want to skip set focus and window handle re-creation for the control.
+    ///  This property will be used in ActiveControl to determine if we want to skip set focus and
+    ///  window handle re-creation for the control.
     /// </summary>
     internal bool IsTopMdiWindowClosing
     {
@@ -1486,11 +1451,11 @@ public unsafe partial class Control :
     /// <summary>
     ///  Indicates whether or not this control has an accessible object associated with it.
     /// </summary>
-    internal bool IsAccessibilityObjectCreated => Properties.GetObject(s_accessibilityProperty) is ControlAccessibleObject;
+    internal bool IsAccessibilityObjectCreated => Properties.ContainsKey(s_accessibilityProperty);
 
     /// <summary>
     ///  Retrieves the Win32 thread ID of the thread that created the
-    ///  handle for this control.  If the control's handle hasn't been
+    ///  handle for this control. If the control's handle hasn't been
     ///  created yet, this method will return the current thread's ID.
     /// </summary>
     internal uint CreateThreadId => IsHandleCreated
@@ -1514,14 +1479,12 @@ public unsafe partial class Control :
                 return Cursors.WaitCursor;
             }
 
-            Cursor? cursor = (Cursor?)Properties.GetObject(s_cursorProperty);
-            if (cursor is not null)
+            if (Properties.TryGetValue(s_cursorProperty, out Cursor? cursor))
             {
                 return cursor;
             }
 
-            // We only do ambients for things with "Cursors.Default"
-            // as their default.
+            // We only do ambients for things with "Cursors.Default" as their default.
             Cursor localDefault = DefaultCursor;
             if (localDefault != Cursors.Default)
             {
@@ -1544,11 +1507,11 @@ public unsafe partial class Control :
         }
         set
         {
-            Cursor? localCursor = (Cursor?)Properties.GetObject(s_cursorProperty);
+            Cursor? localCursor = Properties.GetValueOrDefault<Cursor>(s_cursorProperty);
             Cursor resolvedCursor = Cursor;
             if (localCursor != value)
             {
-                Properties.SetObject(s_cursorProperty, value);
+                Properties.AddOrRemoveValue(s_cursorProperty, value);
             }
 
             // Other things can change the cursor. We always want to force the correct cursor.
@@ -1596,11 +1559,9 @@ public unsafe partial class Control :
                 throw new NotSupportedException(SR.BindingNotSupported);
             }
 
-            ControlBindingsCollection? bindings = (ControlBindingsCollection?)Properties.GetObject(s_bindingsProperty);
-            if (bindings is null)
+            if (!Properties.TryGetValue(s_bindingsProperty, out ControlBindingsCollection? bindings))
             {
-                bindings = new ControlBindingsCollection(this);
-                Properties.SetObject(s_bindingsProperty, bindings);
+                bindings = Properties.AddValue(s_bindingsProperty, new ControlBindingsCollection(this));
             }
 
             return bindings;
@@ -1608,7 +1569,7 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  The default BackColor of a generic top-level Control.  Subclasses may have
+    ///  The default BackColor of a generic top-level Control. Subclasses may have
     ///  different defaults.
     /// </summary>
     public static Color DefaultBackColor => SystemColors.Control;
@@ -1621,7 +1582,7 @@ public unsafe partial class Control :
     protected virtual Cursor DefaultCursor => Cursors.Default;
 
     /// <summary>
-    ///  The default Font of a generic top-level Control.  Subclasses may have
+    ///  The default Font of a generic top-level Control. Subclasses may have
     ///  different defaults.
     /// </summary>
     public static Font DefaultFont
@@ -1639,7 +1600,7 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  The default ForeColor of a generic top-level Control.  Subclasses may have
+    ///  The default ForeColor of a generic top-level Control. Subclasses may have
     ///  different defaults.
     /// </summary>
     public static Color DefaultForeColor => SystemColors.ControlText;
@@ -1673,7 +1634,7 @@ public unsafe partial class Control :
         // deviceDpi may change in WmDpiChangedBeforeParent in PmV2 scenarios, so we can't cache statically.
         => ScaleHelper.IsThreadPerMonitorV2Aware ? _deviceDpi : ScaleHelper.InitialSystemDpi;
 
-    // The color to use when drawing disabled text.  Normally we use BackColor,
+    // The color to use when drawing disabled text. Normally we use BackColor,
     // but that obviously won't work if we're transparent.
     internal Color DisabledColor
     {
@@ -1888,14 +1849,16 @@ public unsafe partial class Control :
         [param: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(ActiveXFontMarshaler))]
         set
         {
-            if (Equals((Font?)Properties.GetObject(s_fontProperty), value))
+            Font? previous = Properties.GetValueOrDefault<Font>(s_fontProperty);
+            if (Equals(previous, value))
             {
-                // Explicitly set font for this control is unchanged, do nothing.
+                // Explicitly set font for this control is unchanged, do nothing. Note that this is not
+                // reference equality, this is property value equality.
                 return;
             }
 
             Font currentFont = Font;
-            Properties.SetObject(s_fontProperty, value);
+            Properties.AddOrRemoveValue(s_fontProperty, value);
 
             // Clear the current cached HFONT, if any.
             DisposeFontHandle();
@@ -1925,8 +1888,8 @@ public unsafe partial class Control :
                 Properties.AddValue(s_fontHeightProperty, (value is null) ? -1 : value.Height);
             }
 
-            // Font is an ambient property.  We need to layout our parent because Font may
-            // change our size.  We need to layout ourselves because our children may change
+            // Font is an ambient property. We need to layout our parent because Font may
+            // change our size. We need to layout ourselves because our children may change
             // size by inheriting the new value.
             using (new LayoutTransaction(ParentInternal, this, PropertyNames.Font))
             {
@@ -1997,8 +1960,7 @@ public unsafe partial class Control :
             {
                 if (!Properties.TryGetValue(s_fontHandleWrapperProperty, out FontHandleWrapper? fontHandle))
                 {
-                    fontHandle = new FontHandleWrapper(font);
-                    Properties.AddValue(s_fontHandleWrapperProperty, fontHandle);
+                    fontHandle = Properties.AddValue(s_fontHandleWrapperProperty, new FontHandleWrapper(font));
                 }
 
                 return fontHandle.Handle;
@@ -2024,10 +1986,7 @@ public unsafe partial class Control :
 
                 if (fontHandle is null)
                 {
-                    font = ambientFont;
-                    fontHandle = new FontHandleWrapper(font);
-
-                    Properties.AddValue(s_fontHandleWrapperProperty, fontHandle);
+                    fontHandle = Properties.AddValue(s_fontHandleWrapperProperty, new FontHandleWrapper(ambientFont));
                 }
 
                 return fontHandle.Handle;
@@ -2049,9 +2008,7 @@ public unsafe partial class Control :
 
             if (TryGetExplicitlySetFont(out Font? font))
             {
-                fontHeight = font.Height;
-                Properties.AddValue(s_fontHeightProperty, fontHeight);
-                return fontHeight;
+                return Properties.AddValue(s_fontHeightProperty, font.Height);
             }
 
             // Ask the parent if it has the font height.
@@ -2142,7 +2099,7 @@ public unsafe partial class Control :
         // Switch Size.Empty to maximum possible values
         proposedSize = LayoutUtils.ConvertZeroToUnbounded(proposedSize);
 
-        // Force proposedSize to be within the elements constraints.  (This applies
+        // Force proposedSize to be within the elements constraints. (This applies
         // minimumSize, maximumSize, etc.)
         proposedSize = ApplySizeConstraints(proposedSize);
         if (GetExtendedState(ExtendedStates.UserPreferredSizeCache))
@@ -2219,7 +2176,7 @@ public unsafe partial class Control :
     internal HWND HWNDInternal => _window.HWND;
 
     /// <summary>
-    ///  True if this control has child controls in its collection.  This
+    ///  True if this control has child controls in its collection. This
     ///  is more efficient than checking for Controls.Count > 0, but has the
     ///  same effect.
     /// </summary>
@@ -2227,14 +2184,7 @@ public unsafe partial class Control :
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     [SRDescription(nameof(SR.ControlHasChildrenDescr))]
-    public bool HasChildren
-    {
-        get
-        {
-            ControlCollection? controls = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-            return controls is not null && controls.Count > 0;
-        }
-    }
+    public bool HasChildren => ChildControls is not null && ChildControls.Count > 0;
 
     /// <summary>
     ///  The height of this control
@@ -2362,16 +2312,16 @@ public unsafe partial class Control :
 
     /// <summary>
     ///  Determines if the caller must call invoke when making method
-    ///  calls to this control.  Controls in windows forms are bound to a specific thread,
-    ///  and are not thread safe.  Therefore, if you are calling a control's method
+    ///  calls to this control. Controls in windows forms are bound to a specific thread,
+    ///  and are not thread safe. Therefore, if you are calling a control's method
     ///  from a different thread, you must use the control's invoke method
-    ///  to marshal the call to the proper thread.  This function can be used to
+    ///  to marshal the call to the proper thread. This function can be used to
     ///  determine if you must call invoke, which can be handy if you don't know
     ///  what thread owns a control.
     ///
     ///  There are five functions on a control that are safe to call from any
     ///  thread:  GetInvokeRequired, Invoke, BeginInvoke, EndInvoke and
-    ///  CreateGraphics.  For all other method calls, you should use one of the
+    ///  CreateGraphics. For all other method calls, you should use one of the
     ///  invoke methods.
     /// </summary>
     [Browsable(false)]
@@ -2445,7 +2395,7 @@ public unsafe partial class Control :
     // If the control on which GetContainerControl( ) is called is a ContainerControl, then we don't return the parent
     // but return the same control. This is Everett behavior so we cannot change this since this would be a breaking change.
     // Hence we have a new internal property IsContainerControl which returns false for all Everett control, but
-    // this property is overidden in SplitContainer to return true so that we skip the SplitContainer
+    // this property is overridden in SplitContainer to return true so that we skip the SplitContainer
     // and the correct Parent ContainerControl is returned by GetContainerControl().
     internal virtual bool IsContainerControl => false;
 
@@ -2684,7 +2634,7 @@ public unsafe partial class Control :
 
     /// <summary>
     ///  Name of this control. The designer will set this to the same
-    ///  as the programatic Id "(name)" of the control.  The name can be
+    ///  as the programmatic Id "(name)" of the control. The name can be
     ///  used as a key into the ControlCollection.
     /// </summary>
     [Browsable(false)]
@@ -2693,30 +2643,15 @@ public unsafe partial class Control :
     {
         get
         {
-            string? name = (string?)Properties.GetObject(s_namePropertyProperty);
-            if (string.IsNullOrEmpty(name))
+            string? name = Properties.GetValueOrDefault<string>(s_namePropertyProperty);
+            if (string.IsNullOrEmpty(name) && Site is not null)
             {
-                if (Site is not null)
-                {
-                    name = Site.Name;
-                }
-
-                name ??= string.Empty;
+                name = Site.Name;
             }
 
-            return name;
+            return name ?? string.Empty;
         }
-        set
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                Properties.SetObject(s_namePropertyProperty, null);
-            }
-            else
-            {
-                Properties.SetObject(s_namePropertyProperty, value);
-            }
-        }
+        set => Properties.AddOrRemoveString(s_namePropertyProperty, value);
     }
 
     /// <summary>
@@ -2773,8 +2708,7 @@ public unsafe partial class Control :
 
     /// <summary>
     ///  Retrieves our internal property storage object. If you have a property
-    ///  whose value is not always set, you should store it in here to save
-    ///  space.
+    ///  whose value is not always set, you should store it in here to save space.
     /// </summary>
     internal PropertyStore Properties { get; }
 
@@ -2819,7 +2753,7 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  The Region associated with this control.  (defines the
+    ///  The Region associated with this control. (defines the
     ///  outline/silhouette/boundary of control)
     /// </summary>
     [SRCategory(nameof(SR.CatLayout))]
@@ -2829,33 +2763,32 @@ public unsafe partial class Control :
     [SRDescription(nameof(SR.ControlRegionDescr))]
     public Region? Region
     {
-        get => (Region?)Properties.GetObject(s_regionProperty);
+        get => Properties.GetValueOrDefault<Region>(s_regionProperty);
         set
         {
-            Region? oldRegion = Region;
+            Region? oldRegion = SetRegionInternal(value);
             if (oldRegion != value)
             {
                 oldRegion?.Dispose();
-                SetRegion(value);
                 OnRegionChanged(EventArgs.Empty);
             }
         }
     }
 
-    internal void SetRegion(Region? region)
+    private Region? SetRegionInternal(Region? region)
     {
-        Properties.SetObject(s_regionProperty, region);
+        Region? oldRegion = Properties.AddOrRemoveValue(s_regionProperty, region);
 
-        if (!IsHandleCreated)
+        if (oldRegion == region || !IsHandleCreated)
         {
             // We'll get called when OnHandleCreated runs.
-            return;
+            return oldRegion;
         }
 
         if (region is null)
         {
             PInvoke.SetWindowRgn(this, default, PInvoke.IsWindowVisible(this));
-            return;
+            return oldRegion;
         }
 
         // If we're an ActiveX control, clone the region so it can potentially be modified
@@ -2867,6 +2800,8 @@ public unsafe partial class Control :
             // Success, the window now owns the region
             regionHandle.RelinquishOwnership();
         }
+
+        return oldRegion;
     }
 
     /// <summary>
@@ -2895,13 +2830,14 @@ public unsafe partial class Control :
 
     /// <summary>
     ///  This property is required by certain controls (TabPage) to render its transparency using theming API.
-    ///  We don't want all controls (that are have transparent BackColor) to use theming API to render its background because it has  HUGE PERF cost.
+    ///  We don't want all controls (that are have transparent BackColor) to use theming API to render its background
+    ///  because it has  HUGE PERF cost.
     /// </summary>
     internal virtual bool RenderTransparencyWithVisualStyles => false;
 
     /// <summary>
-    ///  Represents the bounds of the control that need to be scaled.  Control bounds
-    ///  need to be scaled until ScaleControl is called.  They need to be scaled again
+    ///  Represents the bounds of the control that need to be scaled. Control bounds
+    ///  need to be scaled until ScaleControl is called. They need to be scaled again
     ///  if their bounds change after ScaleControl is called.
     /// </summary>
     internal BoundsSpecified RequiredScaling
@@ -2923,7 +2859,7 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  Determines if the required scaling property is enabled.  If not,
+    ///  Determines if the required scaling property is enabled. If not,
     ///  RequiredScaling always returns None.
     /// </summary>
     internal bool RequiredScalingEnabled
@@ -3014,19 +2950,19 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  This property controls the scaling of child controls.  If true child controls
-    ///  will be scaled when the Scale method on this control is called.  If false,
-    ///  child controls will not be scaled.  The default is true, and you must override
+    ///  This property controls the scaling of child controls. If true child controls
+    ///  will be scaled when the Scale method on this control is called. If false,
+    ///  child controls will not be scaled. The default is true, and you must override
     ///  this property to provide a different value.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     protected virtual bool ScaleChildren => true;
 
     /// <summary>
-    /// Stores scaled font from Dpi changed values. This is required to distinguish the Font change from
-    /// Dpi changed events and explicit Font change/assignment. Caching Font values for each Dpi is complex.
-    /// ToDo: Look into caching Dpi and control bounds for each Dpi to improve perf.
-    /// https://github.com/dotnet/winforms/issues/5047
+    ///  Stores scaled font from Dpi changed values. This is required to distinguish the Font change from
+    ///  Dpi changed events and explicit Font change/assignment. Caching Font values for each Dpi is complex.
+    ///  ToDo: Look into caching Dpi and control bounds for each Dpi to improve perf.
+    ///  https://github.com/dotnet/winforms/issues/5047
     /// </summary>
     internal Font? ScaledControlFont
     {
@@ -3091,7 +3027,7 @@ public unsafe partial class Control :
                     oldCursor = Cursor;
                 }
 
-                Properties.SetObject(s_ambientPropertiesServiceProperty, newAmbients);
+                Properties.AddValue(s_ambientPropertiesServiceProperty, newAmbients);
                 base.Site = value;
 
                 if (checkFont && !oldFont!.Equals(Font))
@@ -3227,8 +3163,8 @@ public unsafe partial class Control :
     [TypeConverter(typeof(StringConverter))]
     public object? Tag
     {
-        get => Properties.GetObject(s_userDataProperty);
-        set => Properties.SetObject(s_userDataProperty, value);
+        get => Properties.GetValueOrDefault<object>(s_userDataProperty);
+        set => Properties.AddOrRemoveValue(s_userDataProperty, value);
     }
 
     /// <summary>
@@ -3264,7 +3200,7 @@ public unsafe partial class Control :
             {
                 for (Control? control = this; control is not null; control = control.ParentInternal)
                 {
-                    if (control.IsActiveX && control.Properties.GetObject(s_activeXImplProperty) is ActiveXImpl activeX)
+                    if (control.IsActiveX && control.Properties.TryGetValue(s_activeXImplProperty, out ActiveXImpl? activeX))
                     {
                         activeX.UpdateAccelTable();
                         break;
@@ -3336,7 +3272,7 @@ public unsafe partial class Control :
         }
     }
 
-    // This auto upgraded v1 client to per-process doublebuffering logic
+    // This auto upgraded v1 client to per-process double buffering logic
     private static BufferedGraphicsContext BufferContext => BufferedGraphicsManager.Current;
 
     /// <summary>
@@ -3363,24 +3299,25 @@ public unsafe partial class Control :
 
             // uiCuesState contains this control's cached state of whether or not it thinks
             // accelerators/focus cues are turned on. the first 16 bits represent focus cues
-            // the second represent keyboard cues.  "F" is the UICuesStates.FocusMask,
+            // the second represent keyboard cues. "F" is the UICuesStates.FocusMask,
             // "F0" is the UICuesStates.KeyboardMask
 
-            // We check here if we have cached state.  If we don't, we need to initialize ourself.
+            // We check here if we have cached state. If we don't, we need to initialize ourself.
             // We do this by checking "MenuAccessKeysUnderlined" - we show if this returns true.
 
             // If MenuAccessKeysUnderlined returns false, we have to manually call CHANGEUISTATE on the topmost control
             // Why? Well the way the API seems to work is that it stores in a bit flag for the hidden
             // state.
 
-            // Details from the Menu keydown to changed value of _uiCuesState.
+            // Details from the Menu keyDown to changed value of _uiCuesState.
 
             // When someone does press the ALT (Menu)/F10 key we will
             //   Call ProcessUICues on the control that had focus at the time
             //          ProcessUICues will check the current state of the control using WM_QUERYUISTATE
             //          If WM_QUERYUISTATE indicates that the accelerators are hidden we will
             //                  either call WM_UPDATEUISTATE or WM_CHANGEUISTATE depending on whether we're hosted or not.
-            //          All controls in the heirarchy will be individually called back on WM_UPDATEUISTATE, which will go into WmUpdateUIState.
+            //          All controls in the hierarchy will be individually called back on WM_UPDATEUISTATE,
+            //          which will go into WmUpdateUIState.
             //   In WmUpdateUIState, we will update our uiCuesState cached value, which
             //   changes the public value of what we return here for ShowKeyboardCues/ShowFocusCues.
 
@@ -3475,16 +3412,12 @@ public unsafe partial class Control :
             if (GetState(States.UseWaitCursor) != value)
             {
                 SetState(States.UseWaitCursor, value);
-                ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
 
-                if (controlsCollection is not null)
+                if (ChildControls is { } children)
                 {
-                    // PERFNOTE: This is more efficient than using Foreach.  Foreach
-                    // forces the creation of an array subset enum each time we
-                    // enumerate
-                    for (int i = 0; i < controlsCollection.Count; i++)
+                    for (int i = 0; i < children.Count; i++)
                     {
-                        controlsCollection[i].UseWaitCursor = value;
+                        children[i].UseWaitCursor = value;
                     }
                 }
             }
@@ -3540,11 +3473,10 @@ public unsafe partial class Control :
     {
         get
         {
-            ControlVersionInfo? info = (ControlVersionInfo?)Properties.GetObject(s_controlVersionInfoProperty);
-            if (info is null)
+            if (!Properties.TryGetValue(s_controlVersionInfoProperty, out ControlVersionInfo? info))
             {
-                info = new ControlVersionInfo(this);
-                Properties.SetObject(s_controlVersionInfoProperty, info);
+                info = new(this);
+                Properties.AddValue(s_controlVersionInfoProperty, info);
             }
 
             return info;
@@ -3592,14 +3524,15 @@ public unsafe partial class Control :
         Application.ThreadContext? ctx = Application.ThreadContext.FromId(threadId);
         if (ctx is null)
         {
-            // Couldn't find the thread context, so we don't know the state.  We shouldn't throw.
+            // Couldn't find the thread context, so we don't know the state. We shouldn't throw.
             return;
         }
 
         HANDLE threadHandle = ctx.Handle;
         bool processed = false;
 
-        // setting default exitcode to 0, though it won't be accessed in current code below due to short-circuit logic in condition (returnValue will be false when exitCode is undefined)
+        // setting default exitcode to 0, though it won't be accessed in current code below due to short-circuit logic
+        // in condition (returnValue will be false when exitCode is undefined)
         uint exitCode = 0;
         bool returnValue = false;
         while (!processed)
@@ -3886,7 +3819,7 @@ public unsafe partial class Control :
 
                 if (GetState(States.LayoutIsDirty))
                 {
-                    // The above did not cause our layout to be refreshed.  We explicitly refresh our
+                    // The above did not cause our layout to be refreshed. We explicitly refresh our
                     // layout to ensure that any children are repositioned to account for the change
                     // in padding.
                     LayoutTransaction.DoLayout(this, this, PropertyNames.Padding);
@@ -4327,12 +4260,12 @@ public unsafe partial class Control :
                 OnRightToLeftChanged(EventArgs.Empty);
             }
 
-            if (!Properties.ContainsObjectThatIsNotNull(s_bindingManagerProperty) && Created)
+            if (!Properties.ContainsKey(s_bindingManagerProperty) && Created)
             {
                 // We do not want to call our parent's BindingContext property here.
                 // We have no idea if us or any of our children are using data binding,
                 // and invoking the property would just create the binding manager, which
-                // we don't need.  We just blindly notify that the binding manager has
+                // we don't need. We just blindly notify that the binding manager has
                 // changed, and if anyone cares, they will do the comparison at that time.
                 OnBindingContextChanged(EventArgs.Empty);
             }
@@ -4386,14 +4319,14 @@ public unsafe partial class Control :
 
     /// <summary>
     ///  Executes the given delegate on the thread that owns this Control's
-    ///  underlying window handle.  The delegate is called asynchronously and this
-    ///  method returns immediately.  You may call this from any thread, even the
-    ///  thread that owns the control's handle.  If the control's handle doesn't
+    ///  underlying window handle. The delegate is called asynchronously and this
+    ///  method returns immediately. You may call this from any thread, even the
+    ///  thread that owns the control's handle. If the control's handle doesn't
     ///  exist yet, this will follow up the control's parent chain until it finds a
-    ///  control or form that does have a window handle.  If no appropriate handle
-    ///  can be found, BeginInvoke will throw an exception.  Exceptions within the
-    ///  delegate method are considered untrapped and will be sent to the
-    ///  application's untrapped exception handler.
+    ///  control or form that does have a window handle. If no appropriate handle
+    ///  can be found, BeginInvoke will throw an exception. Exceptions within the
+    ///  delegate method are considered un-trapped and will be sent to the
+    ///  application's un-trapped exception handler.
     ///
     ///  There are five functions on a control that are safe to call from any
     ///  thread:  GetInvokeRequired, Invoke, BeginInvoke, EndInvoke and CreateGraphics.
@@ -4424,7 +4357,7 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  Brings this control to the front of the zorder.
+    ///  Brings this control to the front of the Z-order.
     /// </summary>
     public void BringToFront()
     {
@@ -4443,8 +4376,8 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  Specifies whether this control can process the mnemonic or not.  A condition to process a mnemonic is that
-    ///  all controls in the parent chain can do it too, but since the semantics for this function can be overriden,
+    ///  Specifies whether this control can process the mnemonic or not. A condition to process a mnemonic is that
+    ///  all controls in the parent chain can do it too, but since the semantics for this function can be overridden,
     ///  we need to call the method on the parent 'recursively' (not exactly since it is not necessarily the same method).
     /// </summary>
     internal virtual bool CanProcessMnemonic()
@@ -4579,7 +4512,7 @@ public unsafe partial class Control :
     ///  Creates a Graphics for this control. The control's brush, font, foreground
     ///  color and background color become the default values for the Graphics.
     ///  The returned Graphics must be disposed through a call to its dispose()
-    ///  method when it is no longer needed.  The Graphics Object is only valid for
+    ///  method when it is no longer needed. The Graphics Object is only valid for
     ///  the duration of the current window's message.
     /// </summary>
     public Graphics CreateGraphics()
@@ -4659,7 +4592,7 @@ public unsafe partial class Control :
         }
 
         // For certain controls (e.g., ComboBox) CreateWindowEx
-        // may cause the control to resize.  WM_SETWINDOWPOSCHANGED takes care of
+        // may cause the control to resize. WM_SETWINDOWPOSCHANGED takes care of
         // the control being resized, but our layout container may need a refresh as well.
         if (Bounds != originalBounds)
         {
@@ -4676,12 +4609,12 @@ public unsafe partial class Control :
         bool controlIsAlreadyCreated = Created;
         CreateControl(ignoreVisible: false);
 
-        if (!Properties.ContainsObjectThatIsNotNull(s_bindingManagerProperty) && ParentInternal is not null && !controlIsAlreadyCreated)
+        if (!Properties.ContainsKey(s_bindingManagerProperty) && ParentInternal is not null && !controlIsAlreadyCreated)
         {
             // We do not want to call our parent's BindingContext property here.
             // We have no idea if us or any of our children are using data binding,
             // and invoking the property would just create the binding manager, which
-            // we don't need.  We just blindly notify that the binding manager has
+            // we don't need. We just blindly notify that the binding manager has
             // changed, and if anyone cares, they will do the comparison at that time.
             OnBindingContextChanged(EventArgs.Empty);
         }
@@ -4712,11 +4645,11 @@ public unsafe partial class Control :
                 CreateHandle();
             }
 
-            if (Properties.GetObject(s_controlsCollectionProperty) is ControlCollection controlsCollection)
+            if (ChildControls is { } children)
             {
                 // Snapshot this array because z-order updates from Windows may rearrange it.
-                Control[] controlSnapshot = new Control[controlsCollection.Count];
-                controlsCollection.CopyTo(controlSnapshot, 0);
+                Control[] controlSnapshot = new Control[children.Count];
+                children.CopyTo(controlSnapshot, 0);
 
                 foreach (Control control in controlSnapshot)
                 {
@@ -4757,7 +4690,7 @@ public unsafe partial class Control :
     {
         if (RecreatingHandle && _threadCallbackList is not null)
         {
-            // See if we have a thread marshaling request pending.  If so, we will need to
+            // See if we have a thread marshaling request pending. If so, we will need to
             // re-post it after recreating the handle.
             lock (_threadCallbackList)
             {
@@ -4780,8 +4713,8 @@ public unsafe partial class Control :
         }
 
         // If we're not recreating the handle, then any items in the thread callback list will
-        // be orphaned.  An orphaned item is bad, because it will cause the thread to never
-        // wake up.  So, we put exceptions into all these items and wake up all threads.
+        // be orphaned. An orphaned item is bad, because it will cause the thread to never
+        // wake up. So, we put exceptions into all these items and wake up all threads.
         // If we are recreating the handle, then we're fine because recreation will re-post
         // the thread callback message to the new handle for us.
         if (!RecreatingHandle && _threadCallbackList is not null)
@@ -4851,10 +4784,10 @@ public unsafe partial class Control :
             SuspendLayout();
             try
             {
-                Properties.SetObject(s_ncAccessibilityProperty, value: null);
+                Properties.RemoveValue(s_ncAccessibilityProperty);
 
                 DisposeAxControls();
-                ((ActiveXImpl?)Properties.GetObject(s_activeXImplProperty))?.Dispose();
+                Properties.GetValueOrDefault<ActiveXImpl>(s_activeXImplProperty)?.Dispose();
 
                 ResetBindings();
 
@@ -4865,21 +4798,16 @@ public unsafe partial class Control :
 
                 _parent?.Controls.Remove(this);
 
-                ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-
-                if (controlsCollection is not null)
+                if (ChildControls is { } children)
                 {
-                    // PERFNOTE: This is more efficient than using Foreach.  Foreach
-                    // forces the creation of an array subset enum each time we
-                    // enumerate
-                    for (int i = 0; i < controlsCollection.Count; i++)
+                    for (int i = 0; i < children.Count; i++)
                     {
-                        Control ctl = controlsCollection[i];
-                        ctl._parent = null;
-                        ctl.Dispose();
+                        Control child = children[i];
+                        child._parent = null;
+                        child.Dispose();
                     }
 
-                    Properties.SetObject(s_controlsCollectionProperty, null);
+                    ChildControls = null;
                 }
 
                 ClearDpiFonts();
@@ -4905,16 +4833,11 @@ public unsafe partial class Control :
     // Package scope to allow AxHost to override.
     internal virtual void DisposeAxControls()
     {
-        ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-
-        if (controlsCollection is not null)
+        if (ChildControls is { } children)
         {
-            // PERFNOTE: This is more efficient than using Foreach.  Foreach
-            // forces the creation of an array subset enum each time we
-            // enumerate
-            for (int i = 0; i < controlsCollection.Count; i++)
+            for (int i = 0; i < children.Count; i++)
             {
-                controlsCollection[i].DisposeAxControls();
+                children[i].DisposeAxControls();
             }
         }
     }
@@ -4933,26 +4856,29 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  Begins a drag operation. The <paramref name="allowedEffects"/> determine which drag operations can occur. If the drag operation
-    ///  needs to interop with applications in another process, <paramref name="data"/> should either be a base managed class
-    ///  (<see cref="string"/>, <see cref="Bitmap"/>, or <see cref="Drawing.Imaging.Metafile"/>) or some <see cref="object"/> that implements
-    ///  <see cref="Runtime.Serialization.ISerializable"/>. <paramref name="data"/> can also be any <see cref="object"/> that implements
-    ///  <see cref="IDataObject"/>. <paramref name="dragImage"/> is the bitmap that will be displayed during the  drag operation and
-    ///  <paramref name="cursorOffset"/> specifies the location of the cursor within <paramref name="dragImage"/>, which is an offset from the
-    ///  upper-left corner. Specify <see langword="true"/> for <paramref name="useDefaultDragImage"/> to use a layered window drag image with a
-    ///  size of 96x96; otherwise <see langword="false"/>. Note the outer edges of <paramref name="dragImage"/> are blended out if the image width
-    ///  or height exceeds 300 pixels.
+    ///  Begins a drag operation. The <paramref name="allowedEffects"/> determine which drag operations can occur.
+    ///  If the drag operation needs to interop with applications in another process, <paramref name="data"/>
+    ///  should either be a base managed class (<see cref="string"/>, <see cref="Bitmap"/>,
+    ///  or <see cref="Drawing.Imaging.Metafile"/>) or some <see cref="object"/> that implements
+    ///  <see cref="Runtime.Serialization.ISerializable"/>. <paramref name="data"/> can also be any
+    ///  <see cref="object"/> that implements <see cref="IDataObject"/>. <paramref name="dragImage"/> is the bitmap
+    ///  that will be displayed during the  drag operation and <paramref name="cursorOffset"/> specifies the location
+    ///  of the cursor within <paramref name="dragImage"/>, which is an offset from the upper-left corner.
+    ///  Specify <see langword="true"/> for <paramref name="useDefaultDragImage"/> to use a layered window drag image
+    ///  with a size of 96x96; otherwise <see langword="false"/>. Note the outer edges of <paramref name="dragImage"/>
+    ///  are blended out if the image width or height exceeds 300 pixels.
     /// </summary>
     /// <returns>
-    ///  A value from the <see cref="DragDropEffects"/> enumeration that represents the final effect that was performed during the drag-and-drop
-    ///  operation.
+    ///  A value from the <see cref="DragDropEffects"/> enumeration that represents the final effect that was performed
+    ///  during the drag-and-drop operation.
     /// </returns>
     /// <remarks>
     ///  <para>
-    ///   Because <see cref="DoDragDrop(object, DragDropEffects, Bitmap, Point, bool)"/> always performs the RGB multiplication step in calculating
-    ///   the alpha value, you should always pass a <see cref="Bitmap"/> without premultiplied alpha blending. Note that no error will result from
-    ///   passing a <see cref="Bitmap"/> with premultiplied alpha blending, but this method will multiply it again, doubling the resulting alpha
-    ///   value.
+    ///   Because <see cref="DoDragDrop(object, DragDropEffects, Bitmap, Point, bool)"/> always performs the
+    ///   RGB multiplication step in calculating the alpha value, you should always pass a <see cref="Bitmap"/>
+    ///   without pre-multiplied alpha blending. Note that no error will result from passing a <see cref="Bitmap"/>
+    ///   with pre-multiplied alpha blending, but this method will multiply it again,
+    ///   doubling the resulting alpha value.
     ///  </para>
     /// </remarks>
     public DragDropEffects DoDragDrop(
@@ -5124,7 +5050,7 @@ public unsafe partial class Control :
 
     /// <summary>
     ///  Attempts to find a control Object that we can use to marshal
-    ///  calls.  We must marshal calls to a control with a window
+    ///  calls. We must marshal calls to a control with a window
     ///  handle, so we traverse up the parent chain until we find one.
     ///  Failing that, we just return ourselves.
     /// </summary>
@@ -5142,8 +5068,8 @@ public unsafe partial class Control :
 
             if (c is null)
             {
-                // No control with a created handle.  We
-                // just use our own control.  MarshaledInvoke
+                // No control with a created handle. We
+                // just use our own control. MarshaledInvoke
                 // will throw an exception because there
                 // is no handle.
                 c = this;
@@ -5292,7 +5218,7 @@ public unsafe partial class Control :
     internal virtual Rectangle ApplyBoundsConstraints(int suggestedX, int suggestedY, int proposedWidth, int proposedHeight)
     {
         // COMPAT: in Everett we would allow you to set negative values in pre-handle mode
-        // in Whidbey, if you've set Min/Max size we will constrain you to 0,0.  Everett apps didnt
+        // in Whidbey, if you've set Min/Max size we will constrain you to 0,0. Everett apps didnt
         // have min/max size on control, which is why this works.
         if (MaximumSize != Size.Empty || MinimumSize != Size.Empty)
         {
@@ -5366,17 +5292,18 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  This new Internal method checks the updateCount to signify that the control is within the "BeginUpdate" and "EndUpdate" cycle.
-    ///  Check out : for usage of this. The Treeview tries to ForceUpdate the scrollbars by calling "WM_SETREDRAW"
-    ///  even if the control in "Begin - End" update cycle. Using this Function we can guard against repetitively redrawing the control.
+    ///  This new Internal method checks the updateCount to signify that the control is within the "BeginUpdate"
+    ///  and "EndUpdate" cycle. Check out : for usage of this. The TreeView tries to ForceUpdate the scrollbars
+    ///  by calling "WM_SETREDRAW" even if the control in "Begin - End" update cycle. Using this Function we can guard
+    ///  against repetitively redrawing the control.
     /// </summary>
     internal bool IsUpdating() => _updateCount > 0;
 
     /// <summary>
     ///  This is a helper method that is called by ScaleControl to retrieve the bounds
-    ///  that the control should be scaled by.  You may override this method if you
+    ///  that the control should be scaled by. You may override this method if you
     ///  wish to reuse ScaleControl's scaling logic but you need to supply your own
-    ///  bounds.  The default implementation returns scaled bounds that take into
+    ///  bounds. The default implementation returns scaled bounds that take into
     ///  account the BoundsSpecified, whether the control is top level, and whether
     ///  the control is fixed width or auto size, and any adornments the control may have.
     /// </summary>
@@ -5389,7 +5316,7 @@ public unsafe partial class Control :
         int sx = bounds.X;
         int sy = bounds.Y;
 
-        // Don't reposition top level controls.  Also, if we're in
+        // Don't reposition top level controls. Also, if we're in
         // design mode, don't reposition the root component.
 
         if (!GetState(States.TopLevel) && !(
@@ -5430,7 +5357,7 @@ public unsafe partial class Control :
             adornmentsBeforeDpiChange = adornmentsAfterDpiChange;
         }
 
-        // Do this even for auto sized controls.  They'll "snap back", but it is important to size them in case
+        // Do this even for auto sized controls. They'll "snap back", but it is important to size them in case
         // they are anchored.
         if ((_controlStyle & ControlStyles.FixedWidth) != ControlStyles.FixedWidth && (specified & BoundsSpecified.Width) != 0)
         {
@@ -5536,9 +5463,7 @@ public unsafe partial class Control :
 
     internal virtual Control? GetFirstChildControlInTabOrder(bool forward)
     {
-        ControlCollection? controls = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-
-        if (controls is null)
+        if (ChildControls is not { } children)
         {
             return null;
         }
@@ -5546,11 +5471,11 @@ public unsafe partial class Control :
         Control? found = null;
         if (forward)
         {
-            for (int c = 0; c < controls.Count; c++)
+            for (int c = 0; c < children.Count; c++)
             {
-                if (found is null || found._tabIndex > controls[c]._tabIndex)
+                if (found is null || found._tabIndex > children[c]._tabIndex)
                 {
-                    found = controls[c];
+                    found = children[c];
                 }
             }
         }
@@ -5558,11 +5483,11 @@ public unsafe partial class Control :
         {
             // Cycle through the controls in reverse z-order looking for the one with the highest
             // tab index.
-            for (int c = controls.Count - 1; c >= 0; c--)
+            for (int c = children.Count - 1; c >= 0; c--)
             {
-                if (found is null || found._tabIndex < controls[c]._tabIndex)
+                if (found is null || found._tabIndex < children[c]._tabIndex)
                 {
-                    found = controls[c];
+                    found = children[c];
                 }
             }
         }
@@ -5628,9 +5553,7 @@ public unsafe partial class Control :
 
         if (forward)
         {
-            ControlCollection? controls = (ControlCollection?)ctl.Properties.GetObject(s_controlsCollectionProperty);
-
-            if (controls is not null && controls.Count > 0 && (ctl == this || !IsFocusManagingContainerControl(ctl)))
+            if (ChildControls is { } children && children.Count > 0 && (ctl == this || !IsFocusManagingContainerControl(ctl)))
             {
                 Control? found = ctl.GetFirstChildControlInTabOrder(forward: true);
                 if (found is not null)
@@ -5647,46 +5570,46 @@ public unsafe partial class Control :
                 Control? p = ctl._parent;
 
                 // Cycle through the controls in z-order looking for the one with the next highest
-                // tab index.  Because there can be dups, we have to start with the existing tab index and
+                // tab index. Because there can be dups, we have to start with the existing tab index and
                 // remember to exclude the current control.
-                int parentControlCount = 0;
+                int parentChildCount = 0;
 
-                ControlCollection? parentControls = (ControlCollection?)p?.Properties.GetObject(s_controlsCollectionProperty);
+                ControlCollection? parentChildren = p?.ChildControls;
 
-                if (parentControls is not null)
+                if (parentChildren is not null)
                 {
-                    parentControlCount = parentControls.Count;
+                    parentChildCount = parentChildren.Count;
                 }
 
-                for (int c = 0; c < parentControlCount; c++)
+                for (int c = 0; c < parentChildCount; c++)
                 {
                     // The logic for this is a bit lengthy, so I have broken it into separate
                     // clauses:
 
                     // We are not interested in ourself.
-                    if (parentControls![c] != ctl)
+                    if (parentChildren![c] != ctl)
                     {
-                        // We are interested in controls with >= tab indexes to ctl.  We must include those
+                        // We are interested in controls with >= tab indexes to ctl. We must include those
                         // controls with equal indexes to account for duplicate indexes.
-                        if (parentControls[c]._tabIndex >= targetIndex)
+                        if (parentChildren[c]._tabIndex >= targetIndex)
                         {
                             // Check to see if this control replaces the "best match" we've already
                             // found.
-                            if (found is null || found._tabIndex > parentControls[c]._tabIndex)
+                            if (found is null || found._tabIndex > parentChildren[c]._tabIndex)
                             {
                                 // Finally, check to make sure that if this tab index is the same as ctl,
-                                // that we've already encountered ctl in the z-order.  If it isn't the same,
+                                // that we've already encountered ctl in the z-order. If it isn't the same,
                                 // than we're more than happy with it.
-                                if (parentControls[c]._tabIndex != targetIndex || hitCtl)
+                                if (parentChildren[c]._tabIndex != targetIndex || hitCtl)
                                 {
-                                    found = parentControls[c];
+                                    found = parentChildren[c];
                                 }
                             }
                         }
                     }
                     else
                     {
-                        // We track when we have encountered "ctl".  We never want to select ctl again, but
+                        // We track when we have encountered "ctl". We never want to select ctl again, but
                         // we want to know when we've seen it in case we find another control with the same tab index.
                         hitCtl = true;
                     }
@@ -5710,7 +5633,7 @@ public unsafe partial class Control :
                 Control? parent = ctl._parent ?? throw new InvalidOperationException(
                     string.Format(SR.ParentPropertyNotSetInGetNextControl, nameof(Parent), ctl));
 
-                ControlCollection? siblings = GetControlCollection(parent) ?? throw new InvalidOperationException(
+                ControlCollection? siblings = parent.ChildControls ?? throw new InvalidOperationException(
                     string.Format(SR.ControlsPropertyNotSetInGetNextControl, nameof(Controls), parent));
 
                 int siblingCount = siblings.Count;
@@ -5723,7 +5646,7 @@ public unsafe partial class Control :
                         parent));
                 }
 
-                // Cycle through the controls in reverse z-order looking for the next lowest tab index.  We must
+                // Cycle through the controls in reverse z-order looking for the next lowest tab index. We must
                 // start with the same tab index as ctl, because there can be dups.
                 for (int c = siblingCount - 1; c >= 0; c--)
                 {
@@ -5734,7 +5657,7 @@ public unsafe partial class Control :
                     // We are not interested in ourself.
                     if (sibling != ctl)
                     {
-                        // We are interested in controls with <= tab indexes to ctl.  We must include those
+                        // We are interested in controls with <= tab indexes to ctl. We must include those
                         // controls with equal indexes to account for duplicate indexes.
                         if (sibling._tabIndex <= targetIndex)
                         {
@@ -5743,7 +5666,7 @@ public unsafe partial class Control :
                             if (found is null || found._tabIndex < sibling._tabIndex)
                             {
                                 // Finally, check to make sure that if this tab index is the same as ctl,
-                                // that we've already encountered ctl in the z-order.  If it isn't the same,
+                                // that we've already encountered ctl in the z-order. If it isn't the same,
                                 // than we're more than happy with it.
                                 if (sibling._tabIndex != targetIndex || hitCtl)
                                 {
@@ -5754,13 +5677,13 @@ public unsafe partial class Control :
                     }
                     else
                     {
-                        // We track when we have encountered "ctl".  We never want to select ctl again, but
+                        // We track when we have encountered "ctl". We never want to select ctl again, but
                         // we want to know when we've seen it in case we find another control with the same tab index.
                         hitCtl = true;
                     }
                 }
 
-                // If we were unable to find a control we should return the control's parent.  However, if that parent is us, return
+                // If we were unable to find a control we should return the control's parent. However, if that parent is us, return
                 // NULL.
                 if (found is not null)
                 {
@@ -5787,8 +5710,8 @@ public unsafe partial class Control :
                 }
             }
 
-            // We found a control.  Walk into this control to find the proper child control within it to select.
-            ControlCollection? children = GetControlCollection(ctl);
+            // We found a control. Walk into this control to find the proper child control within it to select.
+            ControlCollection? children = ctl.ChildControls;
 
             while (children is not null && children.Count > 0 && (ctl == this || !IsFocusManagingContainerControl(ctl)))
             {
@@ -5796,7 +5719,7 @@ public unsafe partial class Control :
                 if (found is not null)
                 {
                     ctl = found;
-                    children = GetControlCollection(ctl);
+                    children = ctl.ChildControls;
                 }
                 else
                 {
@@ -5806,9 +5729,6 @@ public unsafe partial class Control :
         }
 
         return ctl == this ? null : ctl;
-
-        static ControlCollection? GetControlCollection(Control control)
-           => (ControlCollection?)control.Properties.GetObject(s_controlsCollectionProperty);
     }
 
     /// <summary>
@@ -6064,11 +5984,11 @@ public unsafe partial class Control :
 
     /// <summary>
     ///  Executes the given delegate on the thread that owns this Control's
-    ///  underlying window handle.  It is an error to call this on the same thread that
-    ///  the control belongs to.  If the control's handle doesn't exist yet, this will
+    ///  underlying window handle. It is an error to call this on the same thread that
+    ///  the control belongs to. If the control's handle doesn't exist yet, this will
     ///  follow up the control's parent chain until it finds a control or form that does
-    ///  have a window handle.  If no appropriate handle can be found, invoke will throw
-    ///  an exception.  Exceptions that are raised during the call will be
+    ///  have a window handle. If no appropriate handle can be found, invoke will throw
+    ///  an exception. Exceptions that are raised during the call will be
     ///  propagated back to the caller.
     ///
     ///  There are five functions on a control that are safe to call from any
@@ -6080,11 +6000,11 @@ public unsafe partial class Control :
 
     /// <summary>
     ///  Executes the given delegate on the thread that owns this Control's
-    ///  underlying window handle.  It is an error to call this on the same thread that
-    ///  the control belongs to.  If the control's handle doesn't exist yet, this will
+    ///  underlying window handle. It is an error to call this on the same thread that
+    ///  the control belongs to. If the control's handle doesn't exist yet, this will
     ///  follow up the control's parent chain until it finds a control or form that does
-    ///  have a window handle.  If no appropriate handle can be found, invoke will throw
-    ///  an exception.  Exceptions that are raised during the call will be
+    ///  have a window handle. If no appropriate handle can be found, invoke will throw
+    ///  an exception. Exceptions that are raised during the call will be
     ///  propagated back to the caller.
     ///
     ///  There are five functions on a control that are safe to call from any
@@ -6127,7 +6047,7 @@ public unsafe partial class Control :
         {
             s_invokeMarshaledCallbackHelperDelegate ??= new ContextCallback(InvokeMarshaledCallbackHelper);
 
-            // If there's no ExecutionContext, make sure we have a SynchronizationContext.  There's no
+            // If there's no ExecutionContext, make sure we have a SynchronizationContext. There's no
             // direct check for ExecutionContext: this is as close as we can get.
             if (SynchronizationContext.Current is null)
             {
@@ -6245,7 +6165,7 @@ public unsafe partial class Control :
                 try
                 {
                     // If we are running under the debugger, don't wrap asynchronous
-                    // calls in a try catch.  It is much better to throw here than pop up
+                    // calls in a try catch. It is much better to throw here than pop up
                     // a thread exception dialog below.
                     if (NativeWindow.WndProcShouldBeDebuggable && !current._synchronous)
                     {
@@ -6267,8 +6187,8 @@ public unsafe partial class Control :
                 {
                     current.Complete();
 
-                    // This code matches the behavior above.  Basically, if we're debugging, don't
-                    // do this because the exception would have been handled above.  If we're
+                    // This code matches the behavior above. Basically, if we're debugging, don't
+                    // do this because the exception would have been handled above. If we're
                     // not debugging, raise the exception here.
                     if (!NativeWindow.WndProcShouldBeDebuggable
                         && current._exception is not null
@@ -6307,22 +6227,12 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  Determines whether the font is set.
+    ///  Determines whether the font is explicitly set.
     /// </summary>
-    internal bool IsFontSet()
-    {
-        if (Properties.ContainsObjectThatIsNotNull(s_fontProperty))
-        {
-            return true;
-        }
-
-        return false;
-    }
+    internal bool IsFontSet() => Properties.ContainsKey(s_fontProperty);
 
     /// <summary>
-    ///  WARNING! The meaning of this method is not what it appears.
-    ///  The method returns true if "descendant" (the argument) is a descendant
-    ///  of "this". I'd expect it to be the other way around, but oh well too late.
+    ///  Returns <see langword="true"/> if <paramref name="descendant"/> is a descendant of this <see cref="Control"/>.
     /// </summary>
     internal bool IsDescendant(Control? descendant)
     {
@@ -6341,7 +6251,7 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  This Function will return a Boolean as to whether the Key value passed in is Locked...
+    ///  Determines whether the CAPS LOCK, NUM LOCK, or SCROLL LOCK key is in effect.
     /// </summary>
     public static bool IsKeyLocked(Keys keyVal)
     {
@@ -6541,16 +6451,16 @@ public unsafe partial class Control :
     {
         // Marshaling an invoke occurs in three steps:
         //
-        // 1.  Create a ThreadMethodEntry that contains the packet of information
-        //     about this invoke.  This TME is placed on a linked list of entries because
+        // 1. Create a ThreadMethodEntry that contains the packet of information
+        //     about this invoke. This TME is placed on a linked list of entries because
         //     we have a gap between the time we PostMessage and the time it actually
-        //     gets processed, and this gap may allow other invokes to come in.  Access
+        //     gets processed, and this gap may allow other invokes to come in. Access
         //     to this linked list is always synchronized.
         //
-        // 2.  Post ourselves a message.  Our caller has already determined the
+        // 2. Post ourselves a message. Our caller has already determined the
         //     best control to call us on, and we should almost always have a handle.
         //
-        // 3.  If we're synchronous, wait for the message to get processed.  We don't do
+        // 3. If we're synchronous, wait for the message to get processed. We don't do
         //     a SendMessage here so we're compatible with OLE, which will abort many
         //     types of calls if we're within a SendMessage.
 
@@ -6628,9 +6538,9 @@ public unsafe partial class Control :
 
     /// <summary>
     ///  This method is used by WM_GETCONTROLNAME and WM_GETCONTROLTYPE
-    ///  to marshal a string to a message structure.  It handles
+    ///  to marshal a string to a message structure. It handles
     ///  two cases:  if no buffer was passed it returns the size of
-    ///  buffer needed.  If a buffer was passed, it fills the buffer.
+    ///  buffer needed. If a buffer was passed, it fills the buffer.
     ///  If the passed buffer is not long enough it will return -1.
     /// </summary>
     private static void MarshalStringToMessage(string value, ref Message m)
@@ -6751,15 +6661,11 @@ public unsafe partial class Control :
             eh(this, e);
         }
 
-        ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-        if (controlsCollection is not null)
+        if (ChildControls is { } children)
         {
-            // PERFNOTE: This is more efficient than using Foreach.  Foreach
-            // forces the creation of an array subset enum each time we
-            // enumerate
-            for (int i = 0; i < controlsCollection.Count; i++)
+            for (int i = 0; i < children.Count; i++)
             {
-                controlsCollection[i].OnParentBackColorChanged(e);
+                children[i].OnParentBackColorChanged(e);
             }
         }
     }
@@ -6779,15 +6685,11 @@ public unsafe partial class Control :
             eh(this, e);
         }
 
-        ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-        if (controlsCollection is not null)
+        if (ChildControls is { } children)
         {
-            // PERFNOTE: This is more efficient than using Foreach.  Foreach
-            // forces the creation of an array subset enum each time we
-            // enumerate
-            for (int i = 0; i < controlsCollection.Count; i++)
+            for (int i = 0; i < children.Count; i++)
             {
-                controlsCollection[i].OnParentBackgroundImageChanged(e);
+                children[i].OnParentBackgroundImageChanged(e);
             }
         }
     }
@@ -6811,7 +6713,7 @@ public unsafe partial class Control :
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     protected virtual void OnBindingContextChanged(EventArgs e)
     {
-        if (Properties.ContainsObjectThatIsNotNull(s_bindingsProperty))
+        if (Properties.ContainsKey(s_bindingsProperty))
         {
             if (!Binding.IsSupported)
             {
@@ -6826,15 +6728,11 @@ public unsafe partial class Control :
             eh(this, e);
         }
 
-        ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-        if (controlsCollection is not null)
+        if (ChildControls is { } children)
         {
-            // PERFNOTE: This is more efficient than using Foreach.  Foreach
-            // forces the creation of an array subset enum each time we
-            // enumerate
-            for (int i = 0; i < controlsCollection.Count; i++)
+            for (int i = 0; i < children.Count; i++)
             {
-                controlsCollection[i].OnParentBindingContextChanged(e);
+                children[i].OnParentBindingContextChanged(e);
             }
         }
     }
@@ -6849,7 +6747,7 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  Called when a child is about to resume its layout.  The default implementation
+    ///  Called when a child is about to resume its layout. The default implementation
     ///  calls OnChildLayoutResuming on the parent.
     /// </summary>
     internal virtual void OnChildLayoutResuming(Control child, bool performLayout)
@@ -6874,15 +6772,11 @@ public unsafe partial class Control :
             eh(this, e);
         }
 
-        ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-        if (controlsCollection is not null)
+        if (ChildControls is { } children)
         {
-            // PERFNOTE: This is more efficient than using Foreach.  Foreach
-            // forces the creation of an array subset enum each time we
-            // enumerate
-            for (int i = 0; i < controlsCollection.Count; i++)
+            for (int i = 0; i < children.Count; i++)
             {
-                controlsCollection[i].OnParentCursorChanged(e);
+                children[i].OnParentCursorChanged(e);
             }
         }
     }
@@ -6900,12 +6794,11 @@ public unsafe partial class Control :
             eventHandler(this, e);
         }
 
-        ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-        if (controlsCollection is not null)
+        if (ChildControls is { } children)
         {
-            for (int i = 0; i < controlsCollection.Count; i++)
+            for (int i = 0; i < children.Count; i++)
             {
-                controlsCollection[i].OnParentDataContextChanged(e);
+                children[i].OnParentDataContextChanged(e);
             }
         }
     }
@@ -6950,15 +6843,11 @@ public unsafe partial class Control :
             eh(this, e);
         }
 
-        ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-        if (controlsCollection is not null)
+        if (ChildControls is { } children)
         {
-            // PERFNOTE: This is more efficient than using Foreach.  Foreach
-            // forces the creation of an array subset enum each time we
-            // enumerate
-            for (int i = 0; i < controlsCollection.Count; i++)
+            for (int i = 0; i < children.Count; i++)
             {
-                controlsCollection[i].OnParentEnabledChanged(e);
+                children[i].OnParentEnabledChanged(e);
             }
         }
     }
@@ -6995,18 +6884,14 @@ public unsafe partial class Control :
             eh(this, e);
         }
 
-        ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-        using (new LayoutTransaction(this, this, PropertyNames.Font, false))
+        if (ChildControls is { } children)
         {
-            if (controlsCollection is not null)
+            using (new LayoutTransaction(this, this, PropertyNames.Font, resumeLayout: false))
             {
                 // This may have changed the sizes of our children.
-                // PERFNOTE: This is more efficient than using Foreach.  Foreach
-                // forces the creation of an array subset enum each time we
-                // enumerate
-                for (int i = 0; i < controlsCollection.Count; i++)
+                for (int i = 0; i < children.Count; i++)
                 {
-                    controlsCollection[i].OnParentFontChanged(e);
+                    children[i].OnParentFontChanged(e);
                 }
             }
         }
@@ -7029,15 +6914,11 @@ public unsafe partial class Control :
             eh(this, e);
         }
 
-        ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-        if (controlsCollection is not null)
+        if (ChildControls is { } children)
         {
-            // PERFNOTE: This is more efficient than using Foreach.  Foreach
-            // forces the creation of an array subset enum each time we
-            // enumerate
-            for (int i = 0; i < controlsCollection.Count; i++)
+            for (int i = 0; i < children.Count; i++)
             {
-                controlsCollection[i].OnParentForeColorChanged(e);
+                children[i].OnParentForeColorChanged(e);
             }
         }
     }
@@ -7061,15 +6942,11 @@ public unsafe partial class Control :
             eh(this, e);
         }
 
-        ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-        if (controlsCollection is not null)
+        if (ChildControls is { } children)
         {
-            // PERFNOTE: This is more efficient than using Foreach.  Foreach
-            // forces the creation of an array subset enum each time we
-            // enumerate
-            for (int i = 0; i < controlsCollection.Count; i++)
+            for (int i = 0; i < children.Count; i++)
             {
-                controlsCollection[i].OnParentRightToLeftChanged(e);
+                children[i].OnParentRightToLeftChanged(e);
             }
         }
     }
@@ -7103,7 +6980,7 @@ public unsafe partial class Control :
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     protected virtual void OnParentBindingContextChanged(EventArgs e)
     {
-        if (!Properties.ContainsObjectThatIsNotNull(s_bindingManagerProperty))
+        if (!Properties.ContainsKey(s_bindingManagerProperty))
         {
             OnBindingContextChanged(e);
         }
@@ -7112,7 +6989,7 @@ public unsafe partial class Control :
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     protected virtual void OnParentCursorChanged(EventArgs e)
     {
-        if (!Properties.ContainsObjectThatIsNotNull(s_cursorProperty))
+        if (!Properties.ContainsKey(s_cursorProperty))
         {
             OnCursorChanged(e);
         }
@@ -7123,10 +7000,9 @@ public unsafe partial class Control :
     {
         if (Properties.ContainsKey(s_dataContextProperty))
         {
-            // If this DataContext was the same as the Parent's just became,
             if (Equals(Properties.GetValueOrDefault<object>(s_dataContextProperty), Parent?.DataContext))
             {
-                // we need to make it ambient again by removing it.
+                // Same as the parent context, make it ambient by removing it.
                 Properties.RemoveValue(s_dataContextProperty);
 
                 // Even though internally we don't store it any longer, and the
@@ -7249,16 +7125,13 @@ public unsafe partial class Control :
     // OnVisibleChanged/OnParentVisibleChanged is not called when a parent becomes invisible
     internal virtual void OnParentBecameInvisible()
     {
-        if (DesiredVisibility)
+        if (DesiredVisibility && ChildControls is { } children)
         {
             // This control became invisible too - notify its children
-            ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-            if (controlsCollection is not null)
+
+            for (int i = 0; i < children.Count; i++)
             {
-                for (int i = 0; i < controlsCollection.Count; i++)
-                {
-                    controlsCollection[i].OnParentBecameInvisible();
-                }
+                children[i].OnParentBecameInvisible();
             }
         }
     }
@@ -7354,23 +7227,19 @@ public unsafe partial class Control :
             eh(this, e);
         }
 
-        ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-        if (controlsCollection is not null)
+        if (ChildControls is { } children)
         {
-            // PERFNOTE: This is more efficient than using Foreach.  Foreach
-            // forces the creation of an array subset enum each time we
-            // enumerate
-            for (int i = 0; i < controlsCollection.Count; i++)
+            for (int i = 0; i < children.Count; i++)
             {
-                Control ctl = controlsCollection[i];
-                if (ctl.Visible)
+                Control child = children[i];
+                if (child.Visible)
                 {
-                    ctl.OnParentVisibleChanged(e);
+                    child.OnParentVisibleChanged(e);
                 }
 
                 if (!visible)
                 {
-                    ctl.OnParentBecameInvisible();
+                    child.OnParentBecameInvisible();
                 }
             }
         }
@@ -7378,15 +7247,11 @@ public unsafe partial class Control :
 
     internal virtual void OnTopMostActiveXParentChanged(EventArgs e)
     {
-        ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-        if (controlsCollection is not null)
+        if (ChildControls is { } children)
         {
-            // PERFNOTE: This is more efficient than using Foreach.  Foreach
-            // forces the creation of an array subset enum each time we
-            // enumerate
-            for (int i = 0; i < controlsCollection.Count; i++)
+            for (int i = 0; i < children.Count; i++)
             {
-                controlsCollection[i].OnTopMostActiveXParentChanged(e);
+                children[i].OnTopMostActiveXParentChanged(e);
             }
         }
     }
@@ -7475,21 +7340,21 @@ public unsafe partial class Control :
             Region? region = Region;
             if (region is not null)
             {
-                SetRegion(region);
+                SetRegionInternal(region);
             }
 
             // Cache Handle in a local before asserting so we minimize code running under the Assert.
             IntPtr handle = Handle;
 
             // The Accessibility Object for this Control
-            if (Properties.GetObject(s_accessibilityProperty) is ControlAccessibleObject clientAccessibleObject)
+            if (Properties.TryGetValue(s_accessibilityProperty, out ControlAccessibleObject? clientAccessibleObject))
             {
                 clientAccessibleObject.Handle = handle;
             }
 
             // Private accessibility object for control, used to wrap the object that
             // OLEACC.DLL creates to represent the control's non-client (NC) region.
-            if (Properties.GetObject(s_ncAccessibilityProperty) is ControlAccessibleObject nonClientAccessibleObject)
+            if (Properties.TryGetValue(s_ncAccessibilityProperty, out ControlAccessibleObject? nonClientAccessibleObject))
             {
                 nonClientAccessibleObject.Handle = handle;
             }
@@ -7508,7 +7373,7 @@ public unsafe partial class Control :
                     pszSubAppName: $"{DarkModeIdentifier}_{ExplorerThemeIdentifier}",
                     pszSubIdList: null);
             }
-#pragma warning restore WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+#pragma warning restore WFO5001
 
             if (this is not ScrollableControl
                 && !IsMirrored
@@ -7629,32 +7494,26 @@ public unsafe partial class Control :
         ((EventHandler?)Events[s_handleDestroyedEvent])?.Invoke(this, e);
 
         // The Accessibility Object for this Control
-        if (Properties.GetObject(s_accessibilityProperty) is ControlAccessibleObject accObj)
+        if (Properties.TryGetValue(s_accessibilityProperty, out ControlAccessibleObject? accObj))
         {
             accObj.Handle = IntPtr.Zero;
         }
 
         // Private accessibility object for control, used to wrap the object that
         // OLEACC.DLL creates to represent the control's non-client (NC) region.
-        if (Properties.GetObject(s_ncAccessibilityProperty) is ControlAccessibleObject nonClientAccessibleObject)
+        if (Properties.TryGetValue(s_ncAccessibilityProperty, out ControlAccessibleObject? nonClientAccessibleObject))
         {
             nonClientAccessibleObject.Handle = IntPtr.Zero;
         }
 
         ReflectParent = null;
 
-        if (!RecreatingHandle)
+        if (!RecreatingHandle && GetState(States.OwnCtlBrush) && Properties.TryGetValue(s_backBrushProperty, out HBRUSH backBrush))
         {
-            if (GetState(States.OwnCtlBrush))
+            Properties.RemoveValue(s_backBrushProperty);
+            if (!backBrush.IsNull)
             {
-                if (Properties.TryGetValue(s_backBrushProperty, out HBRUSH backBrush))
-                {
-                    Properties.RemoveValue(s_backBrushProperty);
-                    if (!backBrush.IsNull)
-                    {
-                        PInvokeCore.DeleteObject(backBrush);
-                    }
-                }
+                PInvokeCore.DeleteObject(backBrush);
             }
         }
 
@@ -7815,22 +7674,18 @@ public unsafe partial class Control :
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     protected virtual void OnInvalidated(InvalidateEventArgs e)
     {
-        // Ask the site to change the view...
+        // Ask the site to change the view.
         if (IsActiveX)
         {
             ActiveXViewChanged();
         }
 
-        // Transparent control support
-        ControlCollection? controls = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-        if (controls is not null)
+        // Transparent control support.
+        if (ChildControls is { } children)
         {
-            // PERFNOTE: This is more efficient than using Foreach.  Foreach
-            // forces the creation of an array subset enum each time we
-            // enumerate
-            for (int i = 0; i < controls.Count; i++)
+            for (int i = 0; i < children.Count; i++)
             {
-                controls[i].OnParentInvalidated(e);
+                children[i].OnParentInvalidated(e);
             }
         }
 
@@ -8220,15 +8075,11 @@ public unsafe partial class Control :
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     protected virtual void OnSystemColorsChanged(EventArgs e)
     {
-        ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-        if (controlsCollection is not null)
+        if (ChildControls is { } children)
         {
-            // PERFNOTE: This is more efficient than using Foreach.  Foreach
-            // forces the creation of an array subset enum each time we
-            // enumerate
-            for (int i = 0; i < controlsCollection.Count; i++)
+            for (int i = 0; i < children.Count; i++)
             {
-                controlsCollection[i].OnSystemColorsChanged(EventArgs.Empty);
+                children[i].OnSystemColorsChanged(EventArgs.Empty);
             }
         }
 
@@ -8238,8 +8089,7 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  Raises the <see cref="Validating"/>
-    ///  event.
+    ///  Raises the <see cref="Validating"/> event.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     protected virtual void OnValidating(CancelEventArgs e)
@@ -8340,9 +8190,9 @@ public unsafe partial class Control :
 
     private static void PaintBackColor(PaintEventArgs e, Rectangle rectangle, Color backColor)
     {
-        // Common case of just painting the background.  For this, we
+        // Common case of just painting the background. For this, we
         // use GDI because it is faster for simple things than creating
-        // a graphics object, brush, etc.  Also, we may be able to
+        // a graphics object, brush, etc. Also, we may be able to
         // use a system brush, avoiding the brush create altogether.
 
         Color color = backColor;
@@ -8615,8 +8465,8 @@ public unsafe partial class Control :
             LayoutSuspendCount = 0;
 
             // LayoutEngine.Layout can return true to request that our parent resize us because
-            // we did not have enough room for our contents.  Now that we are unsuspended,
-            // see if this happened and layout parent if necessary.  (See also OnLayout)
+            // we did not have enough room for our contents. Now that we are unsuspended,
+            // see if this happened and layout parent if necessary. (See also OnLayout)
             if (ParentInternal is not null && ParentInternal.GetState(States.LayoutIsDirty))
             {
                 LayoutTransaction.DoLayout(ParentInternal, this, PropertyNames.PreferredSize);
@@ -8927,10 +8777,10 @@ public unsafe partial class Control :
         Debug.Assert((lParam & (long)PInvoke.PRF_CHILDREN) != 0,
             "PrintToMetaFile() called without PRF_CHILDREN.");
 
-        // Strip the PRF_CHILDREN flag.  We will manually walk our children and print them.
+        // Strip the PRF_CHILDREN flag. We will manually walk our children and print them.
         lParam = (nint)(lParam & (long)~PInvoke.PRF_CHILDREN);
 
-        // We're the root control, so we need to set up our clipping region.  Retrieve the
+        // We're the root control, so we need to set up our clipping region. Retrieve the
         // x-coordinates and y-coordinates of the viewport origin for the specified device context.
         Point viewportOrg = default;
         bool success = PInvokeCore.GetViewportOrgEx(hDC, &viewportOrg);
@@ -8997,7 +8847,7 @@ public unsafe partial class Control :
         {
             // If a system control has no children in the Controls collection we
             // restore the PRF_CHILDREN flag because it may internally
-            // have nested children we do not know about.  ComboBox is a
+            // have nested children we do not know about. ComboBox is a
             // good example.
             if (Controls.Count == 0)
             {
@@ -9005,7 +8855,7 @@ public unsafe partial class Control :
             }
 
             // System controls must be painted into a temporary bitmap
-            // which is then copied into the metafile.  (Old GDI line drawing
+            // which is then copied into the metafile. (Old GDI line drawing
             // is 1px thin, which causes borders to disappear, etc.)
             using MetafileDCWrapper dcWrapper = new(hDC, Size);
             PInvoke.SendMessage(this, PInvoke.WM_PRINT, (WPARAM)dcWrapper.HDC, (LPARAM)lParam);
@@ -9210,8 +9060,8 @@ public unsafe partial class Control :
 
         // if we are here, a key or tab has been pressed on this control.
         // now that we know the state of accelerators, check to see if we need
-        // to show them.  NOTE: due to the strangeness of the API we OR in
-        // the opposite of what we want to do.  So if we want to show accelerators,
+        // to show them. NOTE: due to the strangeness of the API we OR in
+        // the opposite of what we want to do. So if we want to show accelerators,
         // we OR in UISF_HIDEACCEL, then call UIS_CLEAR to clear the "hidden" state.
 
         if (keyCode is Keys.F10 or Keys.Menu)
@@ -9235,7 +9085,7 @@ public unsafe partial class Control :
         if (toClear != 0)
         {
             // We've detected some state we need to unset, usually clearing the hidden state of
-            // the accelerators.  We need to get the topmost parent and call CHANGEUISTATE so
+            // the accelerators. We need to get the topmost parent and call CHANGEUISTATE so
             // that the entire tree of controls is
             topMostParent ??= TopMostParent;
 
@@ -9402,14 +9252,12 @@ public unsafe partial class Control :
                 // SetParent back after the parent's handle has been recreated.
                 // This behavior can be overridden in OnParentHandleRecreat* and is in ListView.
 
-                // fish out control collection w/o demand creating one.
-                ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-                if (controlsCollection is not null && controlsCollection.Count > 0)
+                if (ChildControls is { } children && children.Count > 0)
                 {
-                    controlSnapshot = new Control[controlsCollection.Count];
-                    for (int i = 0; i < controlsCollection.Count; i++)
+                    controlSnapshot = new Control[children.Count];
+                    for (int i = 0; i < children.Count; i++)
                     {
-                        Control childControl = controlsCollection[i];
+                        Control childControl = children[i];
                         if (childControl is not null && childControl.IsHandleCreated)
                         {
                             // SetParent to parking window
@@ -9490,7 +9338,7 @@ public unsafe partial class Control :
             if (
                 // The window has a parent Win32 window before re-creation
                 !parentHandle.IsNull
-                // But the parent is not a managed WinForm Control, or this.Parent is null
+                // But the parent is not a managed WinForms Control, or this.Parent is null
                 && (FromHandle(parentHandle) is null || _parent is null)
                 // Still, parentHandle is a valid native Win32 window handle, e.g. the desktop window.
                 && PInvoke.IsWindow(parentHandle))
@@ -9587,14 +9435,11 @@ public unsafe partial class Control :
             PInvoke.UiaDisconnectProvider(accessibleObject, skipOSCheck: true);
         }
 
-        Properties.SetObject(s_accessibilityProperty, null);
+        Properties.RemoveValue(s_accessibilityProperty);
     }
 
-    private protected bool TryGetAccessibilityObject([NotNullWhen(true)] out AccessibleObject? accessibleObject)
-    {
-        accessibleObject = Properties.GetObject(s_accessibilityProperty) as AccessibleObject;
-        return accessibleObject is not null;
-    }
+    private protected bool TryGetAccessibilityObject([NotNullWhen(true)] out AccessibleObject? accessibleObject) =>
+        Properties.TryGetValue(s_accessibilityProperty, out accessibleObject);
 
     /// <summary>
     ///  Resets the mouse leave listeners.
@@ -9672,17 +9517,14 @@ public unsafe partial class Control :
         if (!performLayout)
         {
             CommonProperties.xClearPreferredSizeCache(this);
-            ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
 
-            // PERFNOTE: This is more efficient than using Foreach. Foreach forces the creation of an array subset
-            // enum each time we enumerate.
-            if (controlsCollection is not null)
+            if (ChildControls is { } children)
             {
-                for (int i = 0; i < controlsCollection.Count; i++)
+                for (int i = 0; i < children.Count; i++)
                 {
-                    Control control = controlsCollection[i];
-                    LayoutEngine.InitLayout(control, BoundsSpecified.All);
-                    CommonProperties.xClearPreferredSizeCache(control);
+                    Control child = children[i];
+                    LayoutEngine.InitLayout(child, BoundsSpecified.All);
+                    CommonProperties.xClearPreferredSizeCache(child);
                 }
             }
         }
@@ -9765,19 +9607,11 @@ public unsafe partial class Control :
         using (new LayoutTransaction(this, this, PropertyNames.Bounds, resumeLayout: false))
         {
             ScaleControl(factor, factor);
-            if (ScaleChildren)
+            if (ScaleChildren && ChildControls is { } children)
             {
-                ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-                if (controlsCollection is not null)
+                for (int i = 0; i < children.Count; i++)
                 {
-                    // PERFNOTE: This is more efficient than using Foreach.  Foreach
-                    // forces the creation of an array subset enum each time we
-                    // enumerate
-                    for (int i = 0; i < controlsCollection.Count; i++)
-                    {
-                        Control c = controlsCollection[i];
-                        c.Scale(factor);
-                    }
+                    children[i].Scale(factor);
                 }
             }
         }
@@ -9786,23 +9620,29 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    /// Scales control and its children given a pair of scaling factors.
-    /// IncludedFactor will be applied to the dimensions of controls based on
-    /// their <see cref="RequiredScaling"/> property.  For example, if a control's
-    /// RequiredScaling property returns Width, the width of the control will
-    /// be scaled according to the includedFactor value.
+    ///  Scales control and its children given a pair of scaling factors.
+    ///  IncludedFactor will be applied to the dimensions of controls based on
+    ///  their <see cref="RequiredScaling"/> property. For example, if a control's
+    ///  RequiredScaling property returns Width, the width of the control will
+    ///  be scaled according to the includedFactor value.
     /// </summary>
-    /// <param name="includedFactor">Control bounds that are included in <see cref="RequiredScaling"/>.
-    /// If the factor is empty, it indicates that no scaling of those control dimensions should be done.</param>
-    /// <param name="excludedFactor">Control bounds that are not included in <see cref="RequiredScaling"/>.
-    /// If the factor is empty, it indicates that no scaling of those control dimensions should be done.</param>
+    /// <param name="includedFactor">
+    ///  Control bounds that are included in <see cref="RequiredScaling"/>.
+    ///  If the factor is empty, it indicates that no scaling of those control dimensions should be done.
+    /// </param>
+    /// <param name="excludedFactor">
+    ///  Control bounds that are not included in <see cref="RequiredScaling"/>.
+    ///  If the factor is empty, it indicates that no scaling of those control dimensions should be done.
+    /// </param>
     /// <param name="requestingControl">Control that has requested the scaling function.</param>
-    /// <param name="causedByFontChanged">Indicates if it need to update Window font for controls
-    /// that need it, i.e. controls using default or inherited font, that are also not user-painted.</param>
+    /// <param name="causedByFontChanged">
+    ///  Indicates if it need to update Window font for controls that need it, i.e. controls using default or
+    ///  inherited font,that are also not user-painted.
+    /// </param>
     internal virtual void Scale(SizeF includedFactor, SizeF excludedFactor, Control requestingControl, bool causedByFontChanged = false)
     {
         // When we scale, we are establishing new baselines for the
-        // positions of all controls.  Therefore, we should resume(false).
+        // positions of all controls. Therefore, we should resume(false).
         using (new LayoutTransaction(this, this, PropertyNames.Bounds, false))
         {
             ScaleControl(includedFactor, excludedFactor);
@@ -9818,62 +9658,60 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    /// Scales control and its children given a pair of scaling factors.
-    /// IncludedFactor will be applied to the dimensions of controls based on
-    /// their <see cref="RequiredScaling"/> property.  For example, if a control's
-    /// RequiredScaling property returns Width, the width of the control will
-    /// be scaled according to the includedFactor value.
+    ///  Scales control and its children given a pair of scaling factors.
+    ///  IncludedFactor will be applied to the dimensions of controls based on
+    ///  their <see cref="RequiredScaling"/> property. For example, if a control's
+    ///  RequiredScaling property returns Width, the width of the control will
+    ///  be scaled according to the includedFactor value.
     /// </summary>
-    /// <param name="includedFactor">Control bounds that are included in <see cref="RequiredScaling"/>.
-    /// If the factor is empty, it indicates that no scaling of those control dimensions should be done.</param>
-    /// <param name="excludedFactor">Control bounds that are not included in <see cref="RequiredScaling"/>.
-    /// If the factor is empty, it indicates that no scaling of those control dimensions should be done.</param>
+    /// <param name="includedFactor">
+    ///  Control bounds that are included in <see cref="RequiredScaling"/>.
+    ///  If the factor is empty, it indicates that no scaling of those control dimensions should be done.
+    /// </param>
+    /// <param name="excludedFactor">
+    ///  Control bounds that are not included in <see cref="RequiredScaling"/>.
+    ///  If the factor is empty, it indicates that no scaling of those control dimensions should be done.
+    /// </param>
     /// <param name="requestingControl">Control that has requested the scaling function.</param>
     /// <param name="causedByFontChanged">Indicates if it need to update Window font for controls
-    /// that need it, i.e. controls using default or inherited font, that are also not user-painted.</param>
+    ///  that need it, i.e. controls using default or inherited font, that are also not user-painted.</param>
     internal void ScaleChildControls(SizeF includedFactor, SizeF excludedFactor, Control requestingControl, bool causedByFontChanged = false)
     {
-        if (ScaleChildren)
+        if (!ScaleChildren || ChildControls is not { } children)
         {
-            var controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
+            return;
+        }
 
-            if (controlsCollection is not null)
+        for (int i = 0; i < children.Count; i++)
+        {
+            Control child = children[i];
+
+            // ContainerControls get their own OnFontChanged Events and scale.
+            // If this scaling is caused by ResumeLayout instead of OnFontChanged,
+            // We would be scaling all container controls.
+            if (child is ContainerControl && causedByFontChanged)
             {
-                // PERFNOTE: This is more efficient than using Foreach.  Foreach
-                // forces the creation of an array subset enum each time we
-                // enumerate
-                for (int i = 0; i < controlsCollection.Count; i++)
+                continue;
+            }
+
+            // Update window font before scaling, as controls often use font metrics during scaling.
+            if (causedByFontChanged)
+            {
+                if (ScaleHelper.IsScalingRequirementMet && !GetStyle(ControlStyles.UserPaint) && !IsFontSet())
                 {
-                    Control control = controlsCollection[i];
-
-                    // ContainerControls get their own OnFontChanged Events and scale.
-                    // If this scaling is caused by ResumeLayout instead of OnFontChanged,
-                    // We would be scaling all container controls.
-                    if (control is ContainerControl && causedByFontChanged)
-                    {
-                        continue;
-                    }
-
-                    // Update window font before scaling, as controls often use font metrics during scaling.
-                    if (causedByFontChanged)
-                    {
-                        if (ScaleHelper.IsScalingRequirementMet && !GetStyle(ControlStyles.UserPaint) && !IsFontSet())
-                        {
-                            SetWindowFont();
-                        }
-                    }
-
-                    control.Scale(includedFactor, excludedFactor, requestingControl, causedByFontChanged);
+                    SetWindowFont();
                 }
             }
+
+            child.Scale(includedFactor, excludedFactor, requestingControl, causedByFontChanged);
         }
     }
 
     /// <summary>
-    ///  Scales the children of this control.  The default implementation walks the controls
+    ///  Scales the children of this control. The default implementation walks the controls
     ///  collection for the control and calls Scale on each control.
     ///  IncludedFactor will be applied to the dimensions of controls based on
-    ///  their RequiredScaling property.  For example, if a control's
+    ///  their RequiredScaling property. For example, if a control's
     ///  RequiredScaling property returns Width, the width of the control will
     ///  be scaled according to the includedFactor value.
     ///
@@ -9929,7 +9767,7 @@ public unsafe partial class Control :
     /// <summary>
     ///  Scales an individual control's location, size, padding and margin.
     ///  If the control is top level, this will not scale the control's location.
-    ///  This does not scale children or the size of auto sized controls.  You can
+    ///  This does not scale children or the size of auto sized controls. You can
     ///  omit scaling in any direction by changing BoundsSpecified.
     ///
     ///  After the control is scaled the RequiredScaling property is set to
@@ -9995,7 +9833,7 @@ public unsafe partial class Control :
         // Scale Min/Max size
         //
 
-        // make sure we consider the adornments as fixed.  rather than scaling the entire size,
+        // make sure we consider the adornments as fixed. rather than scaling the entire size,
         // we should pull out the fixed things such as the border, scale the rest, then apply the fixed
         // adornment size.
         Size adornmentSize = adornments.Size;
@@ -10061,17 +9899,12 @@ public unsafe partial class Control :
 
         SetBounds(sx, sy, sw, sh, BoundsSpecified.All);
 
-        ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-
-        if (controlsCollection is not null)
+        if (ChildControls is { } children)
         {
-            // PERFNOTE: This is more efficient than using Foreach.  Foreach
-            // forces the creation of an array subset enum each time we
-            // enumerate
-            for (int i = 0; i < controlsCollection.Count; i++)
+            for (int i = 0; i < children.Count; i++)
             {
 #pragma warning disable CS0618 // Type or member is obsolete - compat
-                controlsCollection[i].Scale(dx, dy);
+                children[i].Scale(dx, dy);
 #pragma warning restore CS0618
             }
         }
@@ -10233,7 +10066,7 @@ public unsafe partial class Control :
             }
 
             // WM_WINDOWPOSCHANGED will trickle down to an OnResize() which will
-            // have refreshed the interior layout.  We only need to layout the parent.
+            // have refreshed the interior layout. We only need to layout the parent.
             LayoutTransaction.DoLayout(ParentInternal, this, PropertyNames.Bounds);
         }
         else
@@ -10281,8 +10114,8 @@ public unsafe partial class Control :
             }
 
             // WM_WINDOWPOSCHANGED will trickle down to an OnResize() which will
-            // have refreshed the interior layout or the resized control.  We only need to layout
-            // the parent.  This happens after InitLayout has been invoked.
+            // have refreshed the interior layout or the resized control. We only need to layout
+            // the parent. This happens after InitLayout has been invoked.
             LayoutTransaction.DoLayout(ParentInternal, this, PropertyNames.Bounds);
         }
         else
@@ -10304,7 +10137,7 @@ public unsafe partial class Control :
     protected virtual void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
     {
         // SetWindowPos below sends a WmWindowPositionChanged (not posts) so we immediately
-        // end up in WmWindowPositionChanged which may cause the parent to layout.  We need to
+        // end up in WmWindowPositionChanged which may cause the parent to layout. We need to
         // suspend/resume to defer the parent from laying out until after InitLayout has been called
         // to update the layout engine's state with the new control bounds.
 
@@ -10368,13 +10201,13 @@ public unsafe partial class Control :
             if (ParentInternal is not null)
             {
                 // Some layout engines (DefaultLayout) base their PreferredSize on
-                // the bounds of their children.  If we change change the child bounds, we
-                // need to clear their PreferredSize cache.  The semantics of SetBoundsCore
+                // the bounds of their children. If we change change the child bounds, we
+                // need to clear their PreferredSize cache. The semantics of SetBoundsCore
                 // is that it does not cause a layout, so we just clear.
                 CommonProperties.xClearPreferredSizeCache(ParentInternal);
 
                 // Cause the current control to initialize its layout (e.g., Anchored controls
-                // memorize their distance from their parent's edges).  It is your parent's
+                // memorize their distance from their parent's edges). It is your parent's
                 // LayoutEngine which manages your layout, so we call into the parent's
                 // LayoutEngine.
                 ParentInternal.LayoutEngine.InitLayout(this, specified);
@@ -10567,7 +10400,9 @@ public unsafe partial class Control :
                 // bit and call CreateControl()
                 if (IsHandleCreated || value)
                 {
-                    if (value)
+                    // We shouldn't mess with the color mode if users haven't specifically set it.
+                    // https://github.com/dotnet/winforms/issues/12014
+                    if (value && Application.ColorModeSet)
                     {
                         PrepareDarkMode(HWND, Application.IsDarkModeEnabled);
                     }
@@ -10575,7 +10410,7 @@ public unsafe partial class Control :
                     PInvoke.ShowWindow(HWND, value ? ShowParams : SHOW_WINDOW_CMD.SW_HIDE);
                 }
             }
-#pragma warning restore WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+#pragma warning restore WFO5001
             else if (IsHandleCreated || (value && _parent?.Created == true))
             {
                 // We want to mark the control as visible so that CreateControl
@@ -10618,7 +10453,7 @@ public unsafe partial class Control :
             {
                 // We do not do this in the OnPropertyChanged event for visible
                 // Lots of things could cause us to become visible, including a
-                // parent window.  We do not want to indiscriminately layout
+                // parent window. We do not want to indiscriminately layout
                 // due to this, but we do want to layout if the user changed
                 // our visibility.
                 using (new LayoutTransaction(_parent, this, PropertyNames.Visible))
@@ -10721,38 +10556,25 @@ public unsafe partial class Control :
     ///  Returns true if the cursor should be persisted in code gen.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    internal virtual bool ShouldSerializeCursor()
-    {
-        return Properties.ContainsObjectThatIsNotNull(s_cursorProperty);
-    }
+    internal virtual bool ShouldSerializeCursor() => Properties.ContainsKey(s_cursorProperty);
 
     /// <summary>
     ///  Returns true if the enabled property should be persisted in code gen.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    private bool ShouldSerializeEnabled()
-    {
-        return (!GetState(States.Enabled));
-    }
+    private bool ShouldSerializeEnabled() => !GetState(States.Enabled);
 
     /// <summary>
     ///  Returns true if the foreColor should be persisted in code gen.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    internal virtual bool ShouldSerializeForeColor()
-    {
-        Color foreColor = Properties.GetValueOrDefault<Color>(s_foreColorProperty);
-        return !foreColor.IsEmpty;
-    }
+    internal virtual bool ShouldSerializeForeColor() => !Properties.GetValueOrDefault<Color>(s_foreColorProperty).IsEmpty;
 
     /// <summary>
     ///  Returns true if the font should be persisted in code gen.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    internal virtual bool ShouldSerializeFont()
-    {
-        return Properties.ContainsObjectThatIsNotNull(s_fontProperty);
-    }
+    internal virtual bool ShouldSerializeFont() => Properties.ContainsKey(s_fontProperty);
 
     /// <summary>
     ///  Returns true if the RightToLeft should be persisted in code gen.
@@ -10913,7 +10735,7 @@ public unsafe partial class Control :
     internal virtual bool ShouldSerializeSize()
     {
         // In Whidbey the ControlDesigner class will always serialize size as it replaces the Size
-        // property descriptor with its own.  This is here for compat.
+        // property descriptor with its own. This is here for compat.
         Size s = DefaultSize;
         return _width != s.Width || _height != s.Height;
     }
@@ -10944,11 +10766,8 @@ public unsafe partial class Control :
     /// <summary>
     ///  Retrieve Font from property bag. This is the Font that was explicitly set on control by the application.
     /// </summary>
-    private protected bool TryGetExplicitlySetFont([NotNullWhen(true)] out Font? font)
-    {
-        font = (Font?)Properties.GetObject(s_fontProperty);
-        return font is not null;
-    }
+    private protected bool TryGetExplicitlySetFont([NotNullWhen(true)] out Font? font) =>
+        Properties.TryGetValue(s_fontProperty, out font);
 
     /// <summary>
     ///  Sets the scaled font value with the option to control whether <see cref="OnFontChanged(EventArgs)"/> event is raised.
@@ -10957,8 +10776,10 @@ public unsafe partial class Control :
     /// <param name="raiseOnFontChangedEvent">Indicates whether to raise <see cref="OnFontChanged(EventArgs)"/> event.</param>
     private protected void SetScaledFont(Font scaledFont, bool raiseOnFontChangedEvent = true)
     {
+        Debug.Assert(scaledFont is not null);
+
         // Store new scaled value
-        Properties.SetObject(s_fontProperty, scaledFont);
+        Properties.AddOrRemoveValue(s_fontProperty, scaledFont);
 
         // Dispose old FontHandle.
         DisposeFontHandle();
@@ -10973,8 +10794,8 @@ public unsafe partial class Control :
             return;
         }
 
-        // Font is an ambient property.  We need to layout our parent because Font may
-        // change our size.  We need to layout ourselves because our children may change
+        // Font is an ambient property. We need to layout our parent because Font may
+        // change our size. We need to layout ourselves because our children may change
         // size by inheriting the new value.
         using (new LayoutTransaction(ParentInternal, this, PropertyNames.Font))
         {
@@ -11137,7 +10958,7 @@ public unsafe partial class Control :
         // WM_REFLECT messages (e.g. WM_NOTIFY, WM_DRAWITEM, etc) will always be sent to the original parent HWND. As
         // such, we need to track our parent HWND to see if it is changed so that we can recreate our own handle.
         //
-        // Scenario is when you've got a control in one parent, you move it to another, then destroy the first parent.  It'll stop
+        // Scenario is when you've got a control in one parent, you move it to another, then destroy the first parent. It'll stop
         // getting any reflected messages because Windows will send them to the original parent.
         //
         // See:
@@ -11161,7 +10982,7 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  Updates this control in it's parent's zorder.
+    ///  Updates this control in it's parent's Z-order.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     protected void UpdateZOrder()
@@ -11170,7 +10991,7 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  Syncs the ZOrder of child control to the index we want it to be.
+    ///  Syncs the Z-order of child control to the index we want it to be.
     /// </summary>
     private void UpdateChildZOrder(Control control)
     {
@@ -11359,33 +11180,31 @@ public unsafe partial class Control :
     /// </summary>
     internal void WmContextMenu(ref Message m, Control sourceControl)
     {
-        var contextMenuStrip = (ContextMenuStrip?)Properties.GetObject(s_contextMenuStripProperty);
-        if (contextMenuStrip is not null)
+        if (!Properties.TryGetValue(s_contextMenuStripProperty, out ContextMenuStrip? contextMenuStrip))
         {
-            int x = PARAM.SignedLOWORD(m.LParamInternal);
-            int y = PARAM.SignedHIWORD(m.LParamInternal);
-            Point client;
-            bool keyboardActivated = false;
+            DefWndProc(ref m);
+            return;
+        }
 
-            // lparam will be exactly -1 when the user invokes the context menu with the keyboard.
-            if (m.LParamInternal == -1)
-            {
-                keyboardActivated = true;
-                client = new Point(Width / 2, Height / 2);
-            }
-            else
-            {
-                client = PointToClient(new Point(x, y));
-            }
+        int x = PARAM.SignedLOWORD(m.LParamInternal);
+        int y = PARAM.SignedHIWORD(m.LParamInternal);
+        Point client;
+        bool keyboardActivated = false;
 
-            if (ClientRectangle.Contains(client))
-            {
-                contextMenuStrip.ShowInternal(sourceControl, client, keyboardActivated);
-            }
-            else
-            {
-                DefWndProc(ref m);
-            }
+        // lparam will be -1 when the user invokes the context menu with the keyboard.
+        if (m.LParamInternal == -1)
+        {
+            keyboardActivated = true;
+            client = new Point(Width / 2, Height / 2);
+        }
+        else
+        {
+            client = PointToClient(new Point(x, y));
+        }
+
+        if (ClientRectangle.Contains(client))
+        {
+            contextMenuStrip.ShowInternal(sourceControl, client, keyboardActivated);
         }
         else
         {
@@ -11908,7 +11727,7 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  Handles the WM_MOVE message.  We must do this in addition to WM_WINDOWPOSCHANGED because windows may
+    ///  Handles the WM_MOVE message. We must do this in addition to WM_WINDOWPOSCHANGED because windows may
     ///  send WM_MOVE directly.
     /// </summary>
     private void WmMove(ref Message m)
@@ -12166,7 +11985,7 @@ public unsafe partial class Control :
     private unsafe void WmWindowPosChanging(ref Message m)
     {
         // We let this fall through to defwndproc unless we are being surfaced as
-        // an ActiveX control.  In that case, we must let the ActiveX side of things
+        // an ActiveX control. In that case, we must let the ActiveX side of things
         // manipulate our bounds here.
         if (IsActiveX)
         {
@@ -12363,7 +12182,7 @@ public unsafe partial class Control :
         UICues UIcues = UICues.None;
         if ((m.WParamInternal.HIWORD & PInvoke.UISF_HIDEACCEL) != 0)
         {
-            // yes, clear means show.  nice api, guys.
+            // yes, clear means show. nice api, guys.
             bool showKeyboard = (cmd == PInvoke.UIS_CLEAR);
 
             if (showKeyboard != keyboard || !keyboardInitialized)
@@ -12443,7 +12262,9 @@ public unsafe partial class Control :
     ///  <para>
     ///   The <see cref="WndProc(ref Message)"/> method corresponds exactly to the Windows <c>WindowProc</c>
     ///   function. For more information about processing Windows messages see the
-    ///   <see href="https://go.microsoft.com/fwlink/?LinkId=181565">WindowProc function</see>.
+    ///   <see href="https://go.microsoft.com/fwlink/?LinkId=181565">
+    ///    WindowProc function.
+    ///   </see>
     ///  </para>
     /// </remarks>
     /// <notesToInheritors>
@@ -12588,10 +12409,10 @@ public unsafe partial class Control :
             case PInvoke.WM_CTLCOLORLISTBOX:
             case PInvoke.WM_CTLCOLORSTATIC:
 
-            // this is for the trinity guys.  The case is if you've got a windows
+            // this is for the trinity guys. The case is if you've got a windows
             // forms edit or something hosted as an AX control somewhere, there isn't anyone to reflect
-            // these back.  If they went ahead and just sent them back, some controls don't like that
-            // and end up recursing.  Our code handles it fine because we just pick the HWND out of the LPARAM.
+            // these back. If they went ahead and just sent them back, some controls don't like that
+            // and end up recursing. Our code handles it fine because we just pick the HWND out of the LPARAM.
             case MessageId.WM_REFLECT_CTLCOLOR:
             case MessageId.WM_REFLECT_CTLCOLORBTN:
             case MessageId.WM_REFLECT_CTLCOLORDLG:
@@ -12865,19 +12686,7 @@ public unsafe partial class Control :
         GC.KeepAlive(this);
     }
 
-    ArrangedElementCollection IArrangedElement.Children
-    {
-        get
-        {
-            ControlCollection? controlsCollection = (ControlCollection?)Properties.GetObject(s_controlsCollectionProperty);
-            if (controlsCollection is null)
-            {
-                return ArrangedElementCollection.Empty;
-            }
-
-            return controlsCollection;
-        }
-    }
+    ArrangedElementCollection IArrangedElement.Children => ChildControls ?? ArrangedElementCollection.Empty;
 
     IArrangedElement? IArrangedElement.Container
     {
@@ -12888,10 +12697,7 @@ public unsafe partial class Control :
         }
     }
 
-    bool IArrangedElement.ParticipatesInLayout
-    {
-        get { return GetState(States.Visible); }
-    }
+    bool IArrangedElement.ParticipatesInLayout => GetState(States.Visible);
 
     void IArrangedElement.PerformLayout(IArrangedElement affectedElement, string? affectedProperty)
     {

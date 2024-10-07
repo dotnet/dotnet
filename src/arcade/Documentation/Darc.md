@@ -77,7 +77,7 @@ service at the time of the installation.
 #### Step 1: Ensure you're part of the **dotnetes-maestro-users** CoreIdentity group:
 Go to https://coreidentity.microsoft.com/manage/Entitlement/entitlement/dotnetesmaes-z54r and request to join.
 
-#### Step 2: Install the darc client:
+#### Step 2: Install the darc client (from scripts in any arcadified repository):
 ```
 D:\repos\arcade> .\eng\common\darc-init.ps1
   Attempting to install 'sdk v9.0.100-preview.4.24267.66' from public location.
@@ -135,14 +135,20 @@ No verb selected.
 When executing most operations, the client needs to make some remote queries.
 These remote queries require authentication in most circumstances. There are 3
 PATs that may be used:
-- A GitHub PAT for downloading files from GitHub (e.g. `eng/Version.Details.xml` or
+- **[Required]** A GitHub PAT for downloading files from GitHub (e.g. `eng/Version.Details.xml` or
   arcade script files. No scopes required but token must be [SSO enabled](https://docs.github.com/en/enterprise-cloud@latest/authentication/authenticating-with-saml-single-sign-on/authorizing-a-personal-access-token-for-use-with-saml-single-sign-on) for all organizations for which repositories `darc` will be used.
-- An Azure DevOps PAT for downloading files from Azure DevOps. (e.g.
-  eng/Version.Details.xml)  Required scopes: Code-Read, Build-Read & Execute, Packaging Read.
+- **[Optional]** An Azure DevOps PAT for downloading files from Azure DevOps. (e.g.
+  eng/Version.Details.xml). When not provided, local system credentials are used. Required scopes: Code-Read, Build-Read & Execute, Packaging Read.
   The recommended way of generating the PAT is using the [PatGeneratorTool](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet-eng/NuGet/Microsoft.DncEng.PatGeneratorTool),
   with the `dotnet pat-generator --scopes build_execute code --organizations dnceng devdiv --expires-in 180` command
 - *[DEPRECATED] A Build Asset Registry (BAR) password for interacting with Maestro++/BAR (e.g.
   obtaining build information needed for a drop). This one is no longer needed and you can sign-in through browser when using darc.*
+
+> [!NOTE]
+>  [PatGeneratorTool](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet-eng/NuGet/Microsoft.DncEng.PatGeneratorTool) can be installed with the following command
+> ```
+> dotnet tool install --global Microsoft.DncEng.PatGeneratorTool --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json --prerelease
+> ```
 
 These tokens can either be passed on the command line using parameters (see [Common parameters](#common-parameters)), or
 cached locally on the machine using the [`darc authenticate`](#authenticate) command.

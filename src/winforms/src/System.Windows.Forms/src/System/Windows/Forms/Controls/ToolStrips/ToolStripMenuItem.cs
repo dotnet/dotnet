@@ -108,7 +108,7 @@ public partial class ToolStripMenuItem : ToolStripDropDownItem
     internal ToolStripMenuItem(Form mdiForm)
     {
         Initialize();
-        Properties.SetObject(s_propMdiForm, mdiForm);
+        Properties.AddOrRemoveValue(s_propMdiForm, mdiForm);
     }
 
     /// <summary>
@@ -125,7 +125,7 @@ public partial class ToolStripMenuItem : ToolStripDropDownItem
 
         // Since fetching the image and the text is an awful lot of work
         // we're going to just cache it and assume the native stuff
-        // doesnt update.
+        // doesn't update.
         // we'll only live-update enabled.
         // if this becomes a problem we can override Image and Text properties
         // to live-return the results.
@@ -299,7 +299,7 @@ public partial class ToolStripMenuItem : ToolStripDropDownItem
     [SRDescription(nameof(SR.CheckBoxCheckStateDescr))]
     public CheckState CheckState
     {
-        get => Properties.GetValueOrDefault<CheckState>(s_propCheckState, CheckState.Unchecked);
+        get => Properties.GetValueOrDefault(s_propCheckState, CheckState.Unchecked);
         set
         {
             // Valid values are 0x0 to 0x2
@@ -307,7 +307,7 @@ public partial class ToolStripMenuItem : ToolStripDropDownItem
 
             if (value != CheckState)
             {
-                Properties.AddValue(s_propCheckState, value);
+                Properties.AddOrRemoveValue(s_propCheckState, value, defaultValue: CheckState.Unchecked);
                 OnCheckedChanged(EventArgs.Empty);
                 OnCheckStateChanged(EventArgs.Empty);
             }
@@ -315,9 +315,7 @@ public partial class ToolStripMenuItem : ToolStripDropDownItem
     }
 
     /// <summary>
-    ///  Occurs when the
-    ///  value of the <see cref="CheckBox.Checked"/>
-    ///  property changes.
+    ///  Occurs when the value of the <see cref="CheckBox.Checked"/> property changes.
     /// </summary>
     [SRDescription(nameof(SR.CheckBoxOnCheckedChangedDescr))]
     public event EventHandler? CheckedChanged
@@ -327,9 +325,7 @@ public partial class ToolStripMenuItem : ToolStripDropDownItem
     }
 
     /// <summary>
-    ///  Occurs when the
-    ///  value of the <see cref="CheckBox.CheckState"/>
-    ///  property changes.
+    ///  Occurs when the value of the <see cref="CheckBox.CheckState"/> property changes.
     /// </summary>
     [SRDescription(nameof(SR.CheckBoxOnCheckStateChangedDescr))]
     public event EventHandler? CheckStateChanged
@@ -360,48 +356,50 @@ public partial class ToolStripMenuItem : ToolStripDropDownItem
     [SRDescription(nameof(SR.MenuItemShortCutDescr))]
     public Keys ShortcutKeys
     {
-        get => Properties.GetValueOrDefault<Keys>(s_propShortcutKeys, Keys.None);
+        get => Properties.GetValueOrDefault(s_propShortcutKeys, Keys.None);
         set
         {
             if ((value != Keys.None) && !ToolStripManager.IsValidShortcut(value))
             {
-                // prevent use of alt, ctrl, shift modifiers with no key code.
+                // Prevent use of alt, ctrl, shift modifiers with no key code.
                 throw new InvalidEnumArgumentException(nameof(value), (int)value, typeof(Keys));
             }
 
             Keys originalShortcut = ShortcutKeys;
-            if (originalShortcut != value)
+            if (originalShortcut == value)
             {
-                ClearShortcutCache();
-                ToolStrip? owner = Owner;
-                if (owner is not null)
-                {
-                    // add to the shortcut caching system.
-                    if (originalShortcut != Keys.None)
-                    {
-                        owner.Shortcuts.Remove(originalShortcut);
-                    }
+                return;
+            }
 
-                    if (owner.Shortcuts.ContainsKey(value))
-                    {
-                        // last one in wins.
-                        owner.Shortcuts[value] = this;
-                    }
-                    else
-                    {
-                        owner.Shortcuts.Add(value, this);
-                    }
+            ClearShortcutCache();
+            ToolStrip? owner = Owner;
+            if (owner is not null)
+            {
+                // Add to the shortcut caching system.
+                if (originalShortcut != Keys.None)
+                {
+                    owner.Shortcuts.Remove(originalShortcut);
                 }
 
-                Properties.AddValue(s_propShortcutKeys, value);
-
-                if (ShowShortcutKeys && IsOnDropDown)
+                if (owner.Shortcuts.ContainsKey(value))
                 {
-                    if (GetCurrentParentDropDown() is ToolStripDropDownMenu parent)
-                    {
-                        LayoutTransaction.DoLayout(ParentInternal, this, "ShortcutKeys");
-                        parent.AdjustSize();
-                    }
+                    // Last one in wins.
+                    owner.Shortcuts[value] = this;
+                }
+                else
+                {
+                    owner.Shortcuts.Add(value, this);
+                }
+            }
+
+            Properties.AddOrRemoveValue(s_propShortcutKeys, value, defaultValue: Keys.None);
+
+            if (ShowShortcutKeys && IsOnDropDown)
+            {
+                if (GetCurrentParentDropDown() is ToolStripDropDownMenu parent)
+                {
+                    LayoutTransaction.DoLayout(ParentInternal, this, "ShortcutKeys");
+                    parent.AdjustSize();
                 }
             }
         }
@@ -479,7 +477,7 @@ public partial class ToolStripMenuItem : ToolStripDropDownItem
     internal static MenuTimer MenuTimer => s_menuTimer;
 
     /// <summary> Tag property for internal use </summary>
-    internal Form? MdiForm => Properties.TryGetObject(s_propMdiForm, out Form? form) ? form : null;
+    internal Form? MdiForm => Properties.GetValueOrDefault<Form>(s_propMdiForm);
 
     internal ToolStripMenuItem Clone()
     {
@@ -575,10 +573,7 @@ public partial class ToolStripMenuItem : ToolStripDropDownItem
                 }
 
                 _lastOwner = null;
-                if (MdiForm is not null)
-                {
-                    Properties.SetObject(s_propMdiForm, null);
-                }
+                Properties.RemoveValue(s_propMdiForm);
             }
         }
 
@@ -885,7 +880,7 @@ public partial class ToolStripMenuItem : ToolStripDropDownItem
             }
             else if (!isMouseDown && !showDropDown)
             {
-                // closing should happen on mouse up.  ensure it's not the mouse
+                // closing should happen on mouse up. Ensure it's not the mouse
                 // up for the mouse down we opened with.
                 Debug.Assert(ParentInternal is not null, "Parent is null here, not going to get accurate ID");
                 byte closeMouseId = (ParentInternal is null) ? (byte)0 : ParentInternal.GetMouseId();
@@ -1071,7 +1066,7 @@ public partial class ToolStripMenuItem : ToolStripDropDownItem
     {
         if (InternalLayout is ToolStripMenuItemInternalLayout internalLayout && internalLayout.UseMenuLayout)
         {
-            // Scooch over by the padding amount.  The padding is added to
+            // Scooch over by the padding amount. The padding is added to
             // the ToolStripDropDownMenu to keep the non-menu item riffraff
             // aligned to the text rectangle. When flow layout comes through to set our position
             // via IArrangedElement DEFY IT!

@@ -700,6 +700,7 @@ public class Http3RequestTests : LoggedTest
 
     [ConditionalFact]
     [MsQuicSupported]
+    [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/57373")]
     public async Task POST_Expect100Continue_Get100Continue()
     {
         // Arrange
@@ -959,6 +960,7 @@ public class Http3RequestTests : LoggedTest
     [MsQuicSupported]
     [InlineData(HttpProtocols.Http3)]
     [InlineData(HttpProtocols.Http2)]
+    [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/38008")]
     public async Task POST_ClientCancellationBidirectional_RequestAbortRaised(HttpProtocols protocol)
     {
         // Arrange
@@ -1051,7 +1053,7 @@ public class Http3RequestTests : LoggedTest
         var badLogWrite = TestSink.Writes.FirstOrDefault(w => w.LogLevel == LogLevel.Critical);
         if (badLogWrite != null)
         {
-            Assert.True(false, "Bad log write: " + badLogWrite + Environment.NewLine + badLogWrite.Exception);
+            Assert.Fail("Bad log write: " + badLogWrite + Environment.NewLine + badLogWrite.Exception);
         }
     }
 
@@ -1137,7 +1139,7 @@ public class Http3RequestTests : LoggedTest
             var badLogWrite = TestSink.Writes.FirstOrDefault(w => w.LogLevel >= LogLevel.Critical);
             if (badLogWrite != null)
             {
-                Assert.True(false, "Bad log write: " + badLogWrite + Environment.NewLine + badLogWrite.Exception);
+                Assert.Fail("Bad log write: " + badLogWrite + Environment.NewLine + badLogWrite.Exception);
             }
 
             // Assert

@@ -195,7 +195,7 @@ public sealed unsafe partial class Graphics : MarshalByRefObject, IDisposable, I
     /// </summary>
     internal GpGraphics* NativeGraphics { get; private set; }
 
-    GpGraphics* IPointer<GpGraphics>.Pointer => NativeGraphics;
+    nint IPointer<GpGraphics>.Pointer => (nint)NativeGraphics;
 
     public Region Clip
     {
@@ -727,7 +727,8 @@ public sealed unsafe partial class Graphics : MarshalByRefObject, IDisposable, I
     ///  Draws the outline of the specified rounded rectangle.
     /// </summary>
     /// <param name="pen">The <see cref="Pen"/> to draw the outline with.</param>
-    /// <inheritdoc cref="FillRoundedRectangle(Brush, RectangleF, SizeF)"/>
+    /// <param name="rect">The bounds of the rounded rectangle.</param>
+    /// <param name="radius">The radius width and height used to round the corners of the rectangle.</param>
     public void DrawRoundedRectangle(Pen pen, RectangleF rect, SizeF radius)
     {
         using GraphicsPath path = new();
@@ -1404,9 +1405,17 @@ public sealed unsafe partial class Graphics : MarshalByRefObject, IDisposable, I
     ///  Fills the interior of a pie section defined by an ellipse and two radial lines.
     /// </summary>
     /// <param name="brush">A Brush that determines the characteristics of the fill.</param>
-    /// <param name="rect">A Rectangle structure that represents the bounding rectangle that defines the ellipse from which the pie section comes.</param>
-    /// <param name="startAngle">Angle in degrees measured clockwise from the x-axis to the first side of the pie section.</param>
-    /// <param name="sweepAngle">Angle in degrees measured clockwise from the <paramref name="startAngle"/> parameter to the second side of the pie section.</param>
+    /// <param name="rect">
+    ///  A Rectangle structure that represents the bounding rectangle that defines the ellipse from which
+    ///  the pie section comes.
+    /// </param>
+    /// <param name="startAngle">
+    ///  Angle in degrees measured clockwise from the x-axis to the first side of the pie section.
+    /// </param>
+    /// <param name="sweepAngle">
+    ///  Angle in degrees measured clockwise from the <paramref name="startAngle"/> parameter
+    ///  to the second side of the pie section.
+    /// </param>
     public void FillPie(Brush brush, RectangleF rect, float startAngle, float sweepAngle) =>
         FillPie(brush, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 
@@ -1834,8 +1843,12 @@ public sealed unsafe partial class Graphics : MarshalByRefObject, IDisposable, I
     public SizeF MeasureString(ReadOnlySpan<char> text, Font font, SizeF layoutArea) => MeasureString(text, font, layoutArea, null);
 #endif
 
-    /// <param name="stringFormat"><see cref="StringFormat"/> that represents formatting information, such as line spacing, for the text.</param>
-    /// <param name="layoutArea"><see cref="SizeF"/> structure that specifies the maximum layout area for the text.</param>
+    /// <param name="stringFormat">
+    ///  <see cref="StringFormat"/> that represents formatting information, such as line spacing, for the text.
+    /// </param>
+    /// <param name="layoutArea">
+    ///  <see cref="SizeF"/> structure that specifies the maximum layout area for the text.
+    /// </param>
     /// <inheritdoc cref="MeasureString(string?, Font, int, StringFormat?)"/>
     public SizeF MeasureString(string? text, Font font, SizeF layoutArea, StringFormat? stringFormat) =>
         MeasureStringInternal(text, font, new(default, layoutArea), stringFormat, out _, out _);
@@ -1887,7 +1900,9 @@ public sealed unsafe partial class Graphics : MarshalByRefObject, IDisposable, I
         MeasureString(text, font, new SizeF(width, 999999));
 #endif
 
-    /// <param name="format"><see cref="StringFormat"/> that represents formatting information, such as line spacing, for the text.</param>
+    /// <param name="format">
+    ///  <see cref="StringFormat"/> that represents formatting information, such as line spacing, for the text.
+    /// </param>
     /// <inheritdoc cref="MeasureString(string?, Font, int)"/>
     public SizeF MeasureString(string? text, Font font, int width, StringFormat? format) =>
         MeasureString(text, font, new SizeF(width, 999999), format);
@@ -1905,7 +1920,9 @@ public sealed unsafe partial class Graphics : MarshalByRefObject, IDisposable, I
     /// <param name="text">Text to measure.</param>
     /// <param name="font"><see cref="Font"/> that defines the text format.</param>
     /// <param name="layoutRect"><see cref="RectangleF"/> structure that specifies the layout rectangle for the text.</param>
-    /// <param name="stringFormat"><see cref="StringFormat"/> that represents formatting information, such as line spacing, for the text.</param>
+    /// <param name="stringFormat">
+    ///  <see cref="StringFormat"/> that represents formatting information, such as line spacing, for the text.
+    /// </param>
     /// <returns>
     ///  This method returns an array of <see cref="Region"/> objects, each of which bounds a range of character
     ///  positions within the specified text.

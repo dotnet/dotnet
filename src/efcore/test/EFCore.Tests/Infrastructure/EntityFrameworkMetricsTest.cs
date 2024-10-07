@@ -116,7 +116,7 @@ public class EntityFrameworkMetricsTest
             {
                 using var context = new SomeDbContext();
 
-                var query = context.Foos.Where(e => e.Id == Guids[0]);
+                var query = context.Foos.Where(e => e.Id == new Guid("BB833808-1ADC-4FC2-ACB2-AA6EA31A7DBF"));
 
                 _ = async ? await query.ToListAsync() : query.ToList();
 
@@ -142,8 +142,13 @@ public class EntityFrameworkMetricsTest
             {
                 using var context = new SomeDbContext();
 
-                var guid = Guids[^(i + 1)];
-                var query = context.Foos.Where(e => e.Id == EF.Constant(guid));
+                var query = i switch
+                {
+                    0 => context.Foos.Where(e => e.Id == new Guid("BB833808-1ADC-4FC2-ACB2-AA6EA31A7DBE")),
+                    1 => context.Foos.Where(e => e.Id == new Guid("BB833808-1ADC-4FC2-ACB2-AA6EA31A7DBD")),
+                    2 => context.Foos.Where(e => e.Id == new Guid("BB833808-1ADC-4FC2-ACB2-AA6EA31A7DBC")),
+                    _ => throw new UnreachableException(),
+                };
 
                 _ = async ? await query.ToListAsync() : query.ToList();
 
@@ -303,14 +308,6 @@ public class EntityFrameworkMetricsTest
         public Guid Id { get; set; }
         public int Token { get; set; }
     }
-
-    private static readonly Guid[] Guids =
-    [
-        new("BB833808-1ADC-4FC2-ACB2-AA6EA31A7DBF"),
-        new("BB833808-1ADC-4FC2-ACB2-AA6EA31A7DBE"),
-        new("BB833808-1ADC-4FC2-ACB2-AA6EA31A7DBD"),
-        new("BB833808-1ADC-4FC2-ACB2-AA6EA31A7DBC"),
-    ];
 }
 
 [CollectionDefinition(nameof(MetricsDataCollection), DisableParallelization = true)]

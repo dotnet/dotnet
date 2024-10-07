@@ -37,7 +37,7 @@ public abstract partial class UpDownBase
 
 #pragma warning disable WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
             SetStyle(ControlStyles.ApplyThemingImplicitly, true);
-#pragma warning restore WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning restore WFO5001
 
             _parent = parent;
         }
@@ -317,7 +317,7 @@ public abstract partial class UpDownBase
 
             if (half_height != (ClientSize.Height + 1) / 2)
             {
-                // When control has odd height, a line needs to be drawn below the buttons with the backcolor.
+                // When control has odd height, a line needs to be drawn below the buttons with the BackColor.
                 Color color = _parent.BackColor;
 
                 Rectangle clientRect = ClientRectangle;

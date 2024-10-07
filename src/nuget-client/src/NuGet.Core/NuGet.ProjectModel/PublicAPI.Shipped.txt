@@ -245,6 +245,15 @@ NuGet.ProjectModel.LockFileLibrary.LockFileLibrary() -> void
 ~NuGet.ProjectModel.LockFileLibrary.Type.set -> void
 ~NuGet.ProjectModel.LockFileLibrary.Version.get -> NuGet.Versioning.NuGetVersion
 ~NuGet.ProjectModel.LockFileLibrary.Version.set -> void
+NuGet.ProjectModel.LockFileReadFlags
+NuGet.ProjectModel.LockFileReadFlags.All = NuGet.ProjectModel.LockFileReadFlags.Libraries | NuGet.ProjectModel.LockFileReadFlags.Targets | NuGet.ProjectModel.LockFileReadFlags.ProjectFileDependencyGroups | NuGet.ProjectModel.LockFileReadFlags.PackageFolders | NuGet.ProjectModel.LockFileReadFlags.PackageSpec | NuGet.ProjectModel.LockFileReadFlags.CentralTransitiveDependencyGroups | NuGet.ProjectModel.LockFileReadFlags.LogMessages -> NuGet.ProjectModel.LockFileReadFlags
+NuGet.ProjectModel.LockFileReadFlags.CentralTransitiveDependencyGroups = 32 -> NuGet.ProjectModel.LockFileReadFlags
+NuGet.ProjectModel.LockFileReadFlags.Libraries = 1 -> NuGet.ProjectModel.LockFileReadFlags
+NuGet.ProjectModel.LockFileReadFlags.LogMessages = 64 -> NuGet.ProjectModel.LockFileReadFlags
+NuGet.ProjectModel.LockFileReadFlags.PackageFolders = 8 -> NuGet.ProjectModel.LockFileReadFlags
+NuGet.ProjectModel.LockFileReadFlags.PackageSpec = 16 -> NuGet.ProjectModel.LockFileReadFlags
+NuGet.ProjectModel.LockFileReadFlags.ProjectFileDependencyGroups = 4 -> NuGet.ProjectModel.LockFileReadFlags
+NuGet.ProjectModel.LockFileReadFlags.Targets = 2 -> NuGet.ProjectModel.LockFileReadFlags
 NuGet.ProjectModel.LockFileRuntimeTarget
 ~NuGet.ProjectModel.LockFileRuntimeTarget.AssetType.get -> string
 ~NuGet.ProjectModel.LockFileRuntimeTarget.AssetType.set -> void
@@ -386,6 +395,7 @@ NuGet.ProjectModel.PackageSpecOperations
 NuGet.ProjectModel.PackageSpecReferenceDependencyProvider
 ~NuGet.ProjectModel.PackageSpecReferenceDependencyProvider.GetLibrary(NuGet.LibraryModel.LibraryRange libraryRange, NuGet.Frameworks.NuGetFramework targetFramework) -> NuGet.LibraryModel.Library
 ~NuGet.ProjectModel.PackageSpecReferenceDependencyProvider.PackageSpecReferenceDependencyProvider(System.Collections.Generic.IEnumerable<NuGet.ProjectModel.ExternalProjectReference> externalProjects, NuGet.Common.ILogger logger) -> void
+~NuGet.ProjectModel.PackageSpecReferenceDependencyProvider.PackageSpecReferenceDependencyProvider(System.Collections.Generic.IEnumerable<NuGet.ProjectModel.ExternalProjectReference> externalProjects, NuGet.Common.ILogger logger, bool useLegacyDependencyGraphResolution) -> void
 NuGet.ProjectModel.PackageSpecReferenceDependencyProvider.SupportsType(NuGet.LibraryModel.LibraryDependencyTarget libraryType) -> bool
 NuGet.ProjectModel.PackageSpecUtility
 NuGet.ProjectModel.PackageSpecWriter
@@ -478,12 +488,18 @@ NuGet.ProjectModel.ProjectRestoreMetadata.ProjectStyle.set -> void
 ~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreAuditProperties.set -> void
 ~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreLockProperties.get -> NuGet.ProjectModel.RestoreLockProperties
 ~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreLockProperties.set -> void
+~NuGet.ProjectModel.ProjectRestoreMetadata.SdkAnalysisLevel.get -> NuGet.Versioning.NuGetVersion
+~NuGet.ProjectModel.ProjectRestoreMetadata.SdkAnalysisLevel.set -> void
 NuGet.ProjectModel.ProjectRestoreMetadata.SkipContentFileWrite.get -> bool
 NuGet.ProjectModel.ProjectRestoreMetadata.SkipContentFileWrite.set -> void
 ~NuGet.ProjectModel.ProjectRestoreMetadata.Sources.get -> System.Collections.Generic.IList<NuGet.Configuration.PackageSource>
 ~NuGet.ProjectModel.ProjectRestoreMetadata.Sources.set -> void
 ~NuGet.ProjectModel.ProjectRestoreMetadata.TargetFrameworks.get -> System.Collections.Generic.IList<NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo>
 ~NuGet.ProjectModel.ProjectRestoreMetadata.TargetFrameworks.set -> void
+NuGet.ProjectModel.ProjectRestoreMetadata.UseLegacyDependencyResolver.get -> bool
+NuGet.ProjectModel.ProjectRestoreMetadata.UseLegacyDependencyResolver.set -> void
+NuGet.ProjectModel.ProjectRestoreMetadata.UsingMicrosoftNETSdk.get -> bool
+NuGet.ProjectModel.ProjectRestoreMetadata.UsingMicrosoftNETSdk.set -> void
 NuGet.ProjectModel.ProjectRestoreMetadata.ValidateRuntimeAssets.get -> bool
 NuGet.ProjectModel.ProjectRestoreMetadata.ValidateRuntimeAssets.set -> void
 NuGet.ProjectModel.ProjectRestoreMetadataFile
@@ -683,6 +699,7 @@ static NuGet.ProjectModel.BuildAction.operator ==(NuGet.ProjectModel.BuildAction
 ~static NuGet.ProjectModel.LockFileExtensions.GetTargetLibrary(this NuGet.ProjectModel.LockFileTarget target, string libraryId) -> NuGet.ProjectModel.LockFileTargetLibrary
 ~static NuGet.ProjectModel.LockFileItem.implicit operator NuGet.ProjectModel.LockFileItem(string path) -> NuGet.ProjectModel.LockFileItem
 ~static NuGet.ProjectModel.LockFileUtilities.GetLockFile(string lockFilePath, NuGet.Common.ILogger logger) -> NuGet.ProjectModel.LockFile
+~static NuGet.ProjectModel.LockFileUtilities.GetLockFile(string lockFilePath, NuGet.Common.ILogger logger, NuGet.ProjectModel.LockFileReadFlags flags) -> NuGet.ProjectModel.LockFile
 ~static NuGet.ProjectModel.PackageSpecExtensions.GetRestoreMetadataFramework(this NuGet.ProjectModel.PackageSpec project, NuGet.Frameworks.NuGetFramework targetFramework) -> NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo
 ~static NuGet.ProjectModel.PackageSpecExtensions.GetTargetFramework(this NuGet.ProjectModel.PackageSpec project, NuGet.Frameworks.NuGetFramework targetFramework) -> NuGet.ProjectModel.TargetFrameworkInformation
 ~static NuGet.ProjectModel.PackageSpecOperations.AddOrUpdateDependency(NuGet.ProjectModel.PackageSpec spec, NuGet.Packaging.Core.PackageDependency dependency) -> void

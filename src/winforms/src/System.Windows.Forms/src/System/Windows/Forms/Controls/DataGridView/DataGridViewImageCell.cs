@@ -20,7 +20,7 @@ public partial class DataGridViewImageCell : DataGridViewCell
 
     private const byte CellValueIsIcon = 0x01;
 
-    private byte _flags;  // see DATAGRIDVIEWIMAGECELL_ consts above
+    private byte _flags;  // see DATAGRIDVIEWIMAGECELL_ constants above
 
     public DataGridViewImageCell()
         : this(valueIsIcon: false)
@@ -98,11 +98,11 @@ public partial class DataGridViewImageCell : DataGridViewCell
         get => Properties.GetValueOrDefault(s_propImageCellLayout, DataGridViewImageCellLayout.Normal);
         set
         {
-            // Sequential enum.  Valid values are 0x0 to 0x3
+            // Sequential enum. Valid values are 0x0 to 0x3
             SourceGenerated.EnumValidator.Validate(value);
             if (ImageLayout != value)
             {
-                Properties.AddValue(s_propImageCellLayout, value);
+                Properties.AddOrRemoveValue(s_propImageCellLayout, value, defaultValue: DataGridViewImageCellLayout.Normal);
                 OnCommonChange();
             }
         }
@@ -113,7 +113,7 @@ public partial class DataGridViewImageCell : DataGridViewCell
         set
         {
             Debug.Assert(value is >= DataGridViewImageCellLayout.NotSet and <= DataGridViewImageCellLayout.Zoom);
-            Properties.AddValue(s_propImageCellLayout, value);
+            Properties.AddOrRemoveValue(s_propImageCellLayout, value, defaultValue: DataGridViewImageCellLayout.Normal);
         }
     }
 

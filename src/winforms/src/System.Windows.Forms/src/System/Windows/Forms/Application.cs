@@ -15,8 +15,8 @@ using Directory = System.IO.Directory;
 namespace System.Windows.Forms;
 
 /// <summary>
-///  Provides <see langword="static"/> methods and properties to manage an application, such as methods to run and quit an application,
-///  to process Windows messages, and properties to get information about an application.
+///  Provides <see langword="static"/> methods and properties to manage an application, such as methods
+///  to run and quit an application, to process Windows messages, and properties to get information about an application.
 ///  This class cannot be inherited.
 /// </summary>
 public sealed partial class Application
@@ -46,7 +46,7 @@ public sealed partial class Application
 
 #pragma warning disable WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
     private static SystemColorMode? s_colorMode;
-#pragma warning restore WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning restore WFO5001
 
     private const string DarkModeKeyPath = "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
     private const string DarkModeKey = "AppsUseLightTheme";
@@ -75,8 +75,8 @@ public sealed partial class Application
     }
 
     /// <summary>
-    ///  Determines if the caller should be allowed to quit the application.  This will return false,
-    ///  for example, if being called from a windows forms control being hosted within a web browser.  The
+    ///  Determines if the caller should be allowed to quit the application. This will return false,
+    ///  for example, if being called from a windows forms control being hosted within a web browser. The
     ///  windows forms control should not attempt to quit the application.
     /// </summary>
     public static bool AllowQuit => ThreadContext.GetAllowQuit();
@@ -258,8 +258,12 @@ public sealed partial class Application
     ///  </para>
     /// </remarks>
     [Experimental(DiagnosticIDs.ExperimentalDarkMode, UrlFormat = DiagnosticIDs.UrlFormat)]
-    public static SystemColorMode ColorMode =>
-        s_colorMode ?? SystemColorMode.Classic;
+    public static SystemColorMode ColorMode => s_colorMode ?? SystemColorMode.Classic;
+
+    /// <summary>
+    ///  True if the <see cref="ColorMode"/> has been set at least once.
+    /// </summary>
+    internal static bool ColorModeSet => s_colorMode is not null;
 
     /// <summary>
     ///  Sets the default color mode (dark mode) for the application.
@@ -873,7 +877,7 @@ public sealed partial class Application
     }
 
     /// <summary>
-    ///  Occurs when an untrapped thread exception is thrown.
+    ///  Occurs when an un-trapped thread exception is thrown.
     /// </summary>
     public static event ThreadExceptionEventHandler? ThreadException
     {
@@ -896,7 +900,7 @@ public sealed partial class Application
     }
 
     /// <summary>
-    ///  Occurs when a thread is about to shut down.  When the main thread for an
+    ///  Occurs when a thread is about to shut down. When the main thread for an
     ///  application is about to be shut down, this event will be raised first,
     ///  followed by an <see cref="ApplicationExit"/> event.
     /// </summary>
@@ -1244,7 +1248,7 @@ public sealed partial class Application
         => ThreadContext.FromCurrent().OnThreadException(t);
 
     /// <summary>
-    ///  "Unparks" the given HWND to a temporary HWND.  This allows WS_CHILD windows to
+    ///  "Unparks" the given HWND to a temporary HWND. This allows WS_CHILD windows to
     ///  be parked.
     /// </summary>
     internal static void UnparkHandle(IHandle<HWND> handle, DPI_AWARENESS_CONTEXT context)
@@ -1330,8 +1334,8 @@ public sealed partial class Application
         => ThreadContext.FromCurrent().RunMessageLoop(msoloop.Main, context);
 
     /// <summary>
-    ///  Runs a modal dialog.  This starts a special type of message loop that runs until
-    ///  the dialog has a valid DialogResult.  This is called internally by a form
+    ///  Runs a modal dialog. This starts a special type of message loop that runs until
+    ///  the dialog has a valid DialogResult. This is called internally by a form
     ///  when an application calls System.Windows.Forms.Form.ShowDialog().
     /// </summary>
     internal static void RunDialog(Form form)
@@ -1452,15 +1456,15 @@ public sealed partial class Application
 
     /// <summary>
     ///  This method can be used to modify the exception handling behavior of
-    ///  NativeWindow.  By default, NativeWindow will detect if an application
+    ///  NativeWindow. By default, NativeWindow will detect if an application
     ///  is running under a debugger, or is running on a machine with a debugger
-    ///  installed.  In this case, an unhandled exception in the NativeWindow's
-    ///  WndProc method will remain unhandled so the debugger can trap it.  If
+    ///  installed. In this case, an unhandled exception in the NativeWindow's
+    ///  WndProc method will remain unhandled so the debugger can trap it. If
     ///  there is no debugger installed NativeWindow will trap the exception
     ///  and route it to the Application class's unhandled exception filter.
     ///
     ///  You can control this behavior via a config file, or directly through
-    ///  code using this method.  Setting the unhandled exception mode does
+    ///  code using this method. Setting the unhandled exception mode does
     ///  not change the behavior of any NativeWindow objects that are currently
     ///  connected to window handles; it only affects new handle connections.
     ///

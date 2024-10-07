@@ -75,7 +75,7 @@ public partial class TreeView : Control
     private const int TREEVIEWSTATE_doubleBufferedPropertySet = 0x00020000;
 
     // PERF: take all the bools and put them into a state variable
-    private Collections.Specialized.BitVector32 _treeViewState; // see TREEVIEWSTATE_ consts above
+    private Collections.Specialized.BitVector32 _treeViewState; // see TREEVIEWSTATE_ constants above
 
     private static bool s_isScalingInitialized;
     private static Size? s_stateImageSize;
@@ -172,7 +172,7 @@ public partial class TreeView : Control
         SetStyle(ControlStyles.UseTextForAccessibility, false);
 #pragma warning disable WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
         SetStyle(ControlStyles.ApplyThemingImplicitly, true);
-#pragma warning restore WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning restore WFO5001
     }
 
     internal override void ReleaseUiaProvider(HWND handle)
@@ -204,7 +204,7 @@ public partial class TreeView : Control
                 PInvoke.SendMessage(this, PInvoke.TVM_SETBKCOLOR, 0, BackColor.ToWin32());
 
                 // This is to get around a problem in the comctl control where the lines
-                // connecting nodes don't get the new BackColor.  This messages forces
+                // connecting nodes don't get the new BackColor. This messages forces
                 // reconstruction of the line bitmaps without changing anything else.
                 PInvoke.SendMessage(this, PInvoke.TVM_SETINDENT, (WPARAM)Indent);
             }
@@ -1111,7 +1111,7 @@ public partial class TreeView : Control
             if (IsHandleCreated && (value is null || value.TreeView == this))
             {
                 // This class invariant is not quite correct -- if the selected node does not belong to this TreeView,
-                // selectedNode is not null even though the handle is created.  We will call set_SelectedNode
+                // selectedNode is not null even though the handle is created. We will call set_SelectedNode
                 // to inform the handle that the selected node has been added to the TreeView.
                 Debug.Assert(_selectedNode is null || _selectedNode.TreeView != this, "handle is created, but we're still caching selectedNode");
 
@@ -1313,7 +1313,7 @@ public partial class TreeView : Control
             if (IsHandleCreated && (value is null || value.TreeView == this))
             {
                 // This class invariant is not quite correct -- if the selected node does not belong to this TreeView,
-                // selectedNode is not null even though the handle is created.  We will call set_SelectedNode
+                // selectedNode is not null even though the handle is created. We will call set_SelectedNode
                 // to inform the handle that the selected node has been added to the TreeView.
                 Debug.Assert(_topNode is null || _topNode.TreeView != this, "handle is created, but we're still caching selectedNode");
 
@@ -1329,7 +1329,7 @@ public partial class TreeView : Control
     }
 
     /// <summary>
-    ///  The count of fully visible nodes in the tree view.  This number
+    ///  The count of fully visible nodes in the tree view. This number
     ///  may be greater than the number of nodes in the control.
     ///  The control calculates this value by dividing the height of the
     ///  client window by the height of an item
@@ -1527,7 +1527,7 @@ public partial class TreeView : Control
     }
 
     /// <summary>
-    ///  Resets the imageList to null.  We wire this method up to the imageList's
+    ///  Resets the imageList to null. We wire this method up to the imageList's
     ///  Dispose event, so that we don't hang onto an imageList that's gone away.
     /// </summary>
     private void DetachImageList(object? sender, EventArgs e)
@@ -1536,7 +1536,7 @@ public partial class TreeView : Control
     }
 
     /// <summary>
-    ///  Resets the stateImageList to null.  We wire this method up to the stateImageList's
+    ///  Resets the stateImageList to null. We wire this method up to the stateImageList's
     ///  Dispose event, so that we don't hang onto an stateImageList that's gone away.
     /// </summary>
     private void DetachStateImageList(object? sender, EventArgs e)
@@ -1804,7 +1804,7 @@ public partial class TreeView : Control
     protected override bool IsInputKey(Keys keyData)
     {
         // If in edit mode, treat Return as an input key, so the form doesn't grab it
-        // and treat it as clicking the Form.AcceptButton.  Similarly for Escape
+        // and treat it as clicking the Form.AcceptButton. Similarly for Escape
         // and Form.CancelButton.
         if (_editNode is not null && (keyData & Keys.Alt) == 0)
         {
@@ -1893,7 +1893,7 @@ public partial class TreeView : Control
         {
             PInvoke.SendMessage(this, PInvoke.TVM_SETTEXTCOLOR, 0, c.ToWin32());
         }
-#pragma warning restore WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning restore WFO5001
 
         // Put the LineColor into the native control only if set.
         if (_lineColor != Color.Empty)
@@ -2625,7 +2625,7 @@ public partial class TreeView : Control
             if (StateImageList is not null)
             {
                 // Setting the TVS_CHECKBOXES window style also causes the TreeView to display the default checkbox
-                // images rather than the user specified StateImageList.  We send a TVM_SETIMAGELIST to restore the
+                // images rather than the user specified StateImageList. We send a TVM_SETIMAGELIST to restore the
                 // user's images.
                 if (_internalStateImageList is not null)
                 {
@@ -3119,7 +3119,8 @@ public partial class TreeView : Control
         }
     }
 
-    // Need to send TVM_SELECTITEM to reset the node-highlighting while the contextMenuStrip is being closed so that the treeView reselects the SelectedNode.
+    // Need to send TVM_SELECTITEM to reset the node-highlighting while the contextMenuStrip is being closed so that the
+    // treeView reselects the SelectedNode.
     private void ContextMenuStripClosing(object? sender, ToolStripDropDownClosingEventArgs e)
     {
         ContextMenuStrip strip = (ContextMenuStrip)sender!;
@@ -3437,7 +3438,7 @@ public partial class TreeView : Control
                     }
                     else
                     {
-                        // in this case we don't have a selected node.  The base
+                        // in this case we don't have a selected node. The base
                         // will ensure we're constrained to the client area.
                         base.WndProc(ref m);
                     }

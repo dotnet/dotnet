@@ -4,8 +4,10 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
@@ -81,7 +83,7 @@ public class DocumentOnTypeFormattingEndpointTest(ITestOutputHelper testOutput) 
         var uri = new Uri("file://path/test.razor");
 
         var documentContext = CreateDocumentContext(uri, codeDocument);
-        var formattingService = new DummyRazorFormattingService();
+        var formattingService = new DummyRazorFormattingService(RazorLanguageKind.CSharp);
 
         var optionsMonitor = GetOptionsMonitor(enableFormatting: true);
         var htmlFormatter = new TestHtmlFormatter();
@@ -183,7 +185,7 @@ public class DocumentOnTypeFormattingEndpointTest(ITestOutputHelper testOutput) 
         var uri = new Uri("file://path/test.razor");
 
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
-        var formattingService = new DummyRazorFormattingService();
+        var formattingService = new DummyRazorFormattingService(RazorLanguageKind.CSharp);
 
         var optionsMonitor = GetOptionsMonitor(enableFormatting: true);
         var htmlFormatter = new TestHtmlFormatter();
@@ -204,5 +206,42 @@ public class DocumentOnTypeFormattingEndpointTest(ITestOutputHelper testOutput) 
 
         // Assert
         Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task Handle_OnTypeFormatting_ExpectedTriggerCharacter_ReturnsNotNull()
+    {
+        // Arrange
+        TestCode content = """
+            @code {
+               private string Goo {get;$$}
+            }
+            """;
+        var codeDocument = CreateCodeDocument(content.Text, [new SourceMapping(new SourceSpan(17, 0), new SourceSpan(17, 0))]);
+        var sourceText = SourceText.From(content.Text);
+        var uri = new Uri("file://path/test.razor");
+
+        var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
+        var formattingService = new DummyRazorFormattingService(RazorLanguageKind.CSharp);
+
+        var optionsMonitor = GetOptionsMonitor(enableFormatting: true);
+        var htmlFormatter = new TestHtmlFormatter();
+        var endpoint = new DocumentOnTypeFormattingEndpoint(
+            formattingService, htmlFormatter, optionsMonitor, LoggerFactory);
+        var @params = new DocumentOnTypeFormattingParams()
+        {
+            TextDocument = new TextDocumentIdentifier { Uri = uri, },
+            Character = ";",
+            Position = sourceText.GetPosition(content.Position),
+            Options = new FormattingOptions { InsertSpaces = true, TabSize = 4 }
+        };
+        Assert.True(documentContextFactory.TryCreate(uri, out var documentContext));
+        var requestContext = CreateRazorRequestContext(documentContext);
+
+        // Act
+        await endpoint.HandleRequestAsync(@params, requestContext, DisposalToken);
+
+        // Assert
+        Assert.True(formattingService.Called);
     }
 }

@@ -2391,7 +2391,10 @@ public static class EntityFrameworkQueryableExtensions
     /// </remarks>
     /// <typeparam name="TSource">The type of the elements of <paramref name="source" />.</typeparam>
     /// <param name="source">An <see cref="IQueryable{T}" /> to create a set from.</param>
-    /// <param name="comparer">The <see cref="IEqualityComparer{T}"/> implementation to use when comparing values in the set, or null to use the default <see cref="EqualityComparer{T}"/> implementation for the set type.</param>
+    /// <param name="comparer">
+    ///     The <see cref="IEqualityComparer{T}" /> implementation to use when comparing values in the set, or null to use the
+    ///     default <see cref="EqualityComparer{T}" /> implementation for the set type.
+    /// </param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
     /// <returns>
     ///     A task that represents the asynchronous operation.
@@ -2565,29 +2568,23 @@ public static class EntityFrameworkQueryableExtensions
                         arguments: [source.Expression, Expression.Quote(navigationPropertyPath)]))
                 : source);
 
-    private sealed class IncludableQueryable<TEntity, TProperty> : IIncludableQueryable<TEntity, TProperty>, IAsyncEnumerable<TEntity>
+    private sealed class IncludableQueryable<TEntity, TProperty>(IQueryable<TEntity> queryable)
+        : IIncludableQueryable<TEntity, TProperty>, IAsyncEnumerable<TEntity>
     {
-        private readonly IQueryable<TEntity> _queryable;
-
-        public IncludableQueryable(IQueryable<TEntity> queryable)
-        {
-            _queryable = queryable;
-        }
-
         public Expression Expression
-            => _queryable.Expression;
+            => queryable.Expression;
 
         public Type ElementType
-            => _queryable.ElementType;
+            => queryable.ElementType;
 
         public IQueryProvider Provider
-            => _queryable.Provider;
+            => queryable.Provider;
 
         public IAsyncEnumerator<TEntity> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-            => ((IAsyncEnumerable<TEntity>)_queryable).GetAsyncEnumerator(cancellationToken);
+            => ((IAsyncEnumerable<TEntity>)queryable).GetAsyncEnumerator(cancellationToken);
 
         public IEnumerator<TEntity> GetEnumerator()
-            => _queryable.GetEnumerator();
+            => queryable.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
             => GetEnumerator();

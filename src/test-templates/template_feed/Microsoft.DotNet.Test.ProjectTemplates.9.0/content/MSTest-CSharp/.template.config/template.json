@@ -4,7 +4,7 @@
   "classifications": ["Test", "MSTest"],
   "name": "MSTest Test Project",
   "generatorVersions": "[1.0.0.0-*)",
-  "description": "A project that contains MSTest unit tests that can run on .NET on Windows, Linux and MacOS.",
+  "description": "A project that contains MSTest tests that can run on .NET on Windows, Linux and MacOS.",
   "groupIdentity": "Microsoft.Test.MSTest",
   "precedence": "11000",
   "identity": "Microsoft.Test.MSTest.CSharp.9.0",
@@ -110,11 +110,19 @@
       "replaces": "$(ProjectLanguageVersion)",
       "displayName": "Language version"
     },
+    "UseMSTestSdk": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "Use MSTest.Sdk project style. More information at https://aka.ms/mstest/sdk",
+      "displayName": "Use MSTest.Sdk",
+      "defaultValue": "False"
+    },
     "TestRunner": {
       "type": "parameter",
       "datatype": "choice",
       "enableQuotelessLiterals": true,
       "description": "Select the runner/platform. More information at https://aka.ms/mstest/sdk/extensions-profile",
+      "displayName": "Test runner",
       "defaultValue": "MSTest",
       "choices": [
         {
@@ -131,6 +139,7 @@
       "type": "parameter",
       "datatype": "choice",
       "description": "The coverage tool to use for the project.",
+      "displayName": "Coverage tool",
       "defaultValue": "Microsoft.CodeCoverage",
       "choices": [
         {
@@ -147,17 +156,20 @@
       "type": "parameter",
       "datatype": "choice",
       "description": "Select the SDK extensions profile when using MSTest Runner. More information at https://aka.ms/mstest/sdk/extensions-profile",
-      "isEnabled": "TestRunner == MSTest",
+      "displayName": "Testing extensions profile",
+      "isEnabled": "UseMSTestSdk && (TestRunner == MSTest)",
       "defaultValue": "Default",
       "replaces": "$(ExtensionsProfile)",
       "choices": [
         {
           "choice": "Default",
-          "description": "Default extensions profile (recommended)"
+          "description": "Default extensions profile (recommended)",
+          "displayName": "Default"
         },
         {
           "choice": "None",
-          "description": "No extensions are enabled"
+          "description": "No extensions are enabled",
+          "displayName": "None"
         },
         {
           "choice": "AllMicrosoft",
@@ -175,7 +187,8 @@
       "choices": [
         {
           "choice": "None",
-          "description": "No fixture methods"
+          "description": "No fixture methods",
+          "displayName": "Default"
         },
         {
           "choice": "AssemblyInitialize",
@@ -208,11 +221,11 @@
     { "path": "Company.TestProject1.csproj" },
     {
       "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
-      "path": "Test1.cs"
+      "path": "MSTestSettings.cs"
     },
     {
       "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
-      "path": "MSTestSettings.cs"
+      "path": "Test1.cs"
     }
   ],
   "defaultName": "TestProject1",

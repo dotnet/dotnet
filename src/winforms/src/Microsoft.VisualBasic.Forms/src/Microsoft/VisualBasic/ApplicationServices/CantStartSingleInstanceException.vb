@@ -3,7 +3,7 @@
 
 Imports System.ComponentModel
 
-Imports VbUtils = Microsoft.VisualBasic.CompilerServices.Utils
+Imports VbUtils = Microsoft.VisualBasic.CompilerServices.ExceptionUtils
 
 Namespace Microsoft.VisualBasic.ApplicationServices
 
@@ -29,10 +29,18 @@ Namespace Microsoft.VisualBasic.ApplicationServices
             MyBase.New(VbUtils.GetResourceString(SR.AppModel_SingleInstanceCantConnect))
         End Sub
 
+        ''' <summary>
+        '''  Creates a new <see cref="Exception"/>.
+        ''' </summary>
+        ''' <inheritdoc cref="Exception.New(String)"/>
         Public Sub New(message As String)
             MyBase.New(message)
         End Sub
 
+        ''' <summary>
+        '''  Creates a new <see cref="Exception"/>.
+        ''' </summary>
+        ''' <inheritdoc cref="Exception.New(String, Exception)"/>
         Public Sub New(message As String, inner As Exception)
             MyBase.New(message, inner)
         End Sub

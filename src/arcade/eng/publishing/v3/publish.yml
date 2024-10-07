@@ -112,9 +112,10 @@ stages:
           ${{ parameters.artifactsPublishingAdditionalParameters }} 
           /p:PDBArtifactsBasePath='$(Build.ArtifactStagingDirectory)/PDBArtifacts/'
           /p:SymbolPublishingExclusionsFile='$(Build.ArtifactStagingDirectory)/ReleaseConfigs/SymbolPublishingExclusionsFile.txt'
+          /p:TempSymbolsAzureDevOpsOrg='dnceng'
+          /p:TempSymbolsAzureDevOpsOrgToken='$(dnceng-symbol-server-pat)'
+          /p:SymbolRequestProject='dotnet'
           ${{ parameters.symbolPublishingAdditionalParameters}}
-          /p:MsdlToken=$(microsoft-symbol-server-pat)
-          /p:SymWebToken=$(symweb-symbol-server-pat)
           /p:BuildQuality='${{ parameters.buildQuality }}'
           /p:AzdoApiToken='$(dn-bot-all-orgs-build-rw-code-rw)'
           /p:ArtifactsBasePath='$(Build.ArtifactStagingDirectory)/'
@@ -130,3 +131,4 @@ stages:
         StageLabel: '${{ parameters.stageName }}'
         JobLabel: 'AssetsPublishing'
         BinlogToolVersion: $(BinlogToolVersion)
+        CustomSensitiveDataList: '$(AuthenticateMaestro.MaestroToken)'

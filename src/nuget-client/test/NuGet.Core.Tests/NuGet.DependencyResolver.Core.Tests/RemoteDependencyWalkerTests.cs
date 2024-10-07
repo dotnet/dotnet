@@ -778,6 +778,13 @@ namespace NuGet.DependencyResolver.Tests
         [InlineData("2.8.1-*", "1.8.3-*")]
         [InlineData("3.2.0-*", "3.1.0-beta-234")]
         [InlineData("3.*", "3.1.*")]
+        [InlineData("*", "*-*")]
+        [InlineData("3.0.0-preview.*", "3.0.0-preview.1")]
+        [InlineData("3.0.*", "3.0.1")]
+        [InlineData("*-preview.*", "3.0.1")]
+        [InlineData("3.*-preview.*", "3.0.1")]
+        [InlineData("3.0.*-preview.*", "3.0.1")]
+        [InlineData("3.0.1.*-preview.*", "3.0.1")]
         public void IsGreaterThanEqualTo_ReturnsTrue_IfRightVersionIsSmallerThanLeft(string leftVersionString, string rightVersionString)
         {
             // Arrange
@@ -807,6 +814,14 @@ namespace NuGet.DependencyResolver.Tests
         [InlineData("3.4.6-beta*", "3.4.6-betb*")]
         [InlineData("3.1.0-beta-234", "3.2.0-*")]
         [InlineData("3.0.0-*", "3.1.0-beta-234")]
+        [InlineData("6.8.0", "*-*")]
+        //[InlineData("3.0.0-preview.1", "3.0.0-preview.*")] // TODO: https://github.com/NuGet/Home/issues/13833
+        [InlineData("3.0.1", "3.0.*")]
+        [InlineData("3.0.1", "*-preview.*")]
+        [InlineData("3.0.1", "3.*-preview.*")]
+        [InlineData("3.0.1", "3.0.*-preview.*")]
+        [InlineData("3.0.1", "3.0.1.*-preview.*")]
+
         public void IsGreaterThanEqualTo_ReturnsFalse_IfRightVersionIsLargerThanLeft(string leftVersionString, string rightVersionString)
         {
             // Arrange

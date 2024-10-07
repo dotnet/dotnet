@@ -86,7 +86,8 @@ public class ApplicationTests
     [WinFormsFact(Skip = "Crash with AbandonedMutexException. See: https://github.com/dotnet/arcade/issues/5325")]
     public void Application_EnableVisualStyles_InvokeAfterGettingRenderWithVisualStyles_Success()
     {
-        // This is not a recommended scenario per https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.application.enablevisualstyles
+        // This is not a recommended scenario per
+        // https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.application.enablevisualstyles
         // EnableVisualStyles should be executed before any control-related code is.
         RemoteExecutor.Invoke(() =>
         {
@@ -174,8 +175,8 @@ public class ApplicationTests
         Assert.Equal(SystemColorMode.System, Application.ColorMode);
         Assert.False(SystemColors.UseAlternativeColorSet ^ systemColorMode == SystemColorMode.Dark);
     }
-#pragma warning restore WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-#pragma warning restore SYSLIB5002 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning restore WFO5001
+#pragma warning restore SYSLIB5002
 
     [WinFormsFact]
     public void Application_DefaultFont_ReturnsNull_IfNoFontSet()
@@ -327,9 +328,9 @@ public class ApplicationTests
 
             // Retrieve the text scale factor, which is set via Settings > Display > Make Text Bigger.
             using RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Accessibility");
-            int textScale = (int)(key?.GetValue("TextScaleFactor", 100) ?? 100);            
+            int textScale = (int)(key?.GetValue("TextScaleFactor", 100) ?? 100);
             if (textScale == 100) // Application.DefaultFont must be the same
-            {                
+            {
                 font.Should().BeNull("Because TextScaleFactor == 100.");
                 Application.DefaultFont.Should().BeSameAs(customFont, "Because TextScaleFactor == 100.");
             }
@@ -358,7 +359,7 @@ public class ApplicationTests
     }
 
     /// <summary>
-    /// Test <see cref="Application.Exit()"/> fire Closing events in correct order for MDI windows.
+    ///  Test <see cref="Application.Exit()"/> fire Closing events in correct order for MDI windows.
     /// </summary>
     /// <param name="mainMDIFormCountParam">Count of MdiContainers. If == 1 then main form is MdiContainer.</param>
     /// <param name="childFormCountParam">Count of MDI child.</param>
@@ -391,7 +392,7 @@ public class ApplicationTests
             Dictionary<object, int> formClosedProcessed = new(mainMDIFormCount);
             bool exitCalled = false;
 
-            if (mainMDIFormCount == 1) // main form is MdiContainer 
+            if (mainMDIFormCount == 1) // main form is MdiContainer
             {
                 AddMDI(mainForm);
             }
@@ -468,11 +469,15 @@ public class ApplicationTests
     }
 
     /// <summary>
-    /// Test <see cref="Application.Exit()"/> fire Closing events in which we close existing and open new forms.
+    ///  Test <see cref="Application.Exit()"/> fire Closing events in which we close existing and open new forms.
     /// </summary>
     /// <param name="childFormCountParam">Count of child forms.</param>
-    /// <param name="removedFormCountParam">Count of forms that we will remove during last form <see cref="Form.OnFormClosing(FormClosingEventArgs)"/>.</param>
-    /// <param name="addFormCountParam">Count of forms that we will add during last form <see cref="Form.OnFormClosing(FormClosingEventArgs)"/>.</param>
+    /// <param name="removedFormCountParam">
+    ///  Count of forms that we will remove during last form <see cref="Form.OnFormClosing(FormClosingEventArgs)"/>.
+    /// </param>
+    /// <param name="addFormCountParam">
+    ///  Count of forms that we will add during last form <see cref="Form.OnFormClosing(FormClosingEventArgs)"/>.
+    /// </param>
     /// <param name="cancelParam">If set to <see langword="true" /> we will cancel application exit process.</param>
     [WinFormsTheory]
     [InlineData(0, 0, 0, false)]

@@ -10,15 +10,9 @@ namespace Microsoft.EntityFrameworkCore.Query;
 // ReSharper disable ConvertToConstant.Local
 // ReSharper disable RedundantBoolCompare
 // ReSharper disable InconsistentNaming
-
-public abstract class NorthwindWhereQueryTestBase<TFixture> : QueryTestBase<TFixture>
+public abstract class NorthwindWhereQueryTestBase<TFixture>(TFixture fixture) : QueryTestBase<TFixture>(fixture)
     where TFixture : NorthwindQueryFixtureBase<NoopModelCustomizer>, new()
 {
-    protected NorthwindWhereQueryTestBase(TFixture fixture)
-        : base(fixture)
-    {
-    }
-
     protected NorthwindContext CreateContext()
         => Fixture.CreateContext();
 
@@ -1468,11 +1462,9 @@ public abstract class NorthwindWhereQueryTestBase<TFixture> : QueryTestBase<TFix
     [ConditionalTheory]
     [MemberData(nameof(IsAsyncData))]
     public virtual Task Where_ternary_boolean_condition_negated(bool async)
-    {
-        return AssertQuery(
+        => AssertQuery(
             async,
             ss => ss.Set<Product>().Where(p => !(p.UnitsInStock >= 20 ? false : true)));
-    }
 
     [ConditionalTheory]
     [MemberData(nameof(IsAsyncData))]
@@ -1561,7 +1553,7 @@ public abstract class NorthwindWhereQueryTestBase<TFixture> : QueryTestBase<TFix
     public virtual Task Where_compare_null_with_cast_to_object(bool async)
         => AssertQuery(
             async,
-            ss => ss.Set<Customer>().Where(c => (object)c.Region == null));
+            ss => ss.Set<Customer>().Where(c => c.Region == null));
 
     [ConditionalTheory]
     [MemberData(nameof(IsAsyncData))]
@@ -1658,7 +1650,6 @@ public abstract class NorthwindWhereQueryTestBase<TFixture> : QueryTestBase<TFix
             async,
             ss => ss.Set<Customer>().Where(
                 c => c.Orders.OrderBy(o => o.OrderID).FirstOrDefault() == new Order { OrderID = 10276 }),
-
             ss => ss.Set<Customer>().Where(
                 c => c.Orders.OrderBy(o => o.OrderID).FirstOrDefault().OrderID == 10276));
 

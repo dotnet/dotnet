@@ -655,24 +655,24 @@ namespace TestNamespace
                 index: 0,
                 originalValueIndex: -1,
                 shadowIndex: -1,
-                relationshipIndex: 3,
+                relationshipIndex: 2,
                 storeGenerationIndex: -1);
             return runtimeForeignKey;
         }
 
         public static void CreateAnnotations(RuntimeEntityType runtimeEntityType)
         {
-            var principalBaseId = runtimeEntityType.FindProperty("PrincipalBaseId")!;
-            var principalBaseAlternateId = runtimeEntityType.FindProperty("PrincipalBaseAlternateId")!;
-            var details = runtimeEntityType.FindProperty("Details")!;
-            var number = runtimeEntityType.FindProperty("Number")!;
-            var refTypeEnumerable = runtimeEntityType.FindProperty("RefTypeEnumerable")!;
-            var refTypeIList = runtimeEntityType.FindProperty("RefTypeIList")!;
-            var valueTypeArray = runtimeEntityType.FindProperty("ValueTypeArray")!;
-            var valueTypeEnumerable = runtimeEntityType.FindProperty("ValueTypeEnumerable")!;
-            var valueTypeIList = runtimeEntityType.FindProperty("ValueTypeIList")!;
-            var valueTypeList = runtimeEntityType.FindProperty("ValueTypeList")!;
-            var __jObject = runtimeEntityType.FindProperty("__jObject")!;
+            var principalBaseId = runtimeEntityType.FindProperty("PrincipalBaseId");
+            var principalBaseAlternateId = runtimeEntityType.FindProperty("PrincipalBaseAlternateId");
+            var details = runtimeEntityType.FindProperty("Details");
+            var number = runtimeEntityType.FindProperty("Number");
+            var refTypeEnumerable = runtimeEntityType.FindProperty("RefTypeEnumerable");
+            var refTypeIList = runtimeEntityType.FindProperty("RefTypeIList");
+            var valueTypeArray = runtimeEntityType.FindProperty("ValueTypeArray");
+            var valueTypeEnumerable = runtimeEntityType.FindProperty("ValueTypeEnumerable");
+            var valueTypeIList = runtimeEntityType.FindProperty("ValueTypeIList");
+            var valueTypeList = runtimeEntityType.FindProperty("ValueTypeList");
+            var __jObject = runtimeEntityType.FindProperty("__jObject");
             var key = runtimeEntityType.FindKey(new[] { principalBaseId, principalBaseAlternateId });
             key.SetPrincipalKeyValueFactory(KeyValueFactoryFactory.CreateCompositeFactory(key));
             key.SetIdentityMapFactory(IdentityMapFactoryFactory.CreateFactory<IReadOnlyList<object>>(key));

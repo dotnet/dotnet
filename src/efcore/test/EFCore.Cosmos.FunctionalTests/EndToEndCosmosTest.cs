@@ -197,12 +197,12 @@ public class EndToEndCosmosTest : NonSharedModelTestBase
 
             await context.AddAsync(customer);
 
-            storeId = entry.Property<string>(StoreKeyConvention.DefaultIdPropertyName).CurrentValue;
+            storeId = entry.Property<string>(CosmosJsonIdConvention.DefaultIdPropertyName).CurrentValue;
 
             Assert.DoesNotContain(ListLoggerFactory.Log, l => l.Id == CosmosEventId.SyncNotSupported);
         }
 
-        Assert.Equal("Customer|42", storeId);
+        Assert.Equal("42", storeId);
 
         using (var context = contextFactory.CreateContext())
         {
@@ -219,7 +219,8 @@ public class EndToEndCosmosTest : NonSharedModelTestBase
             customer.Name = "Theon Greyjoy";
 
             var entry = context.Entry(customer);
-            entry.Property<string>(StoreKeyConvention.DefaultIdPropertyName).CurrentValue = storeId;
+
+            entry.Property<string>(CosmosJsonIdConvention.DefaultIdPropertyName).CurrentValue = storeId;
 
             entry.State = EntityState.Modified;
 
@@ -241,7 +242,7 @@ public class EndToEndCosmosTest : NonSharedModelTestBase
         using (var context = contextFactory.CreateContext())
         {
             var entry = context.Entry(customer);
-            entry.Property<string>(StoreKeyConvention.DefaultIdPropertyName).CurrentValue = storeId;
+            entry.Property<string>(CosmosJsonIdConvention.DefaultIdPropertyName).CurrentValue = storeId;
             entry.State = EntityState.Deleted;
 
             await context.SaveChangesAsync();
@@ -543,7 +544,7 @@ public class EndToEndCosmosTest : NonSharedModelTestBase
 
             var entry = await context.AddAsync(customer);
 
-            Assert.Equal("CustomerDateTime|0001-01-01T00:00:00.0000000|Theon^2F^5C^23^5C^5C^3F", entry.CurrentValues["__id"]);
+            Assert.Equal("0001-01-01T00:00:00.0000000|Theon^2F^5C^23^5C^5C^3F", entry.CurrentValues["__id"]);
 
             await context.SaveChangesAsync();
 
@@ -699,12 +700,12 @@ public class EndToEndCosmosTest : NonSharedModelTestBase
 
         var entry = await context.AddAsync(item);
 
-        var id = entry.Property("__id").CurrentValue;
+        var id = entry.Property("Id").CurrentValue;
 
         Assert.NotNull(item.Id);
         Assert.NotNull(id);
 
-        Assert.Equal($"GItem|{item.Id}", id);
+        Assert.Equal(item.Id, id);
         Assert.Equal(EntityState.Added, entry.State);
     }
 
@@ -722,19 +723,19 @@ public class EndToEndCosmosTest : NonSharedModelTestBase
         var item = new Item { Id = 1337 };
         var entry = context.Attach(item);
 
-        Assert.Equal($"Item|{item.Id}", entry.Property("__id").CurrentValue);
+        Assert.Equal($"{item.Id}", entry.Property("__id").CurrentValue);
         Assert.Equal(EntityState.Unchanged, entry.State);
 
         entry.State = EntityState.Detached;
         entry = context.Update(item = new Item { Id = 71 });
 
-        Assert.Equal($"Item|{item.Id}", entry.Property("__id").CurrentValue);
+        Assert.Equal($"{item.Id}", entry.Property("__id").CurrentValue);
         Assert.Equal(EntityState.Modified, entry.State);
 
         entry.State = EntityState.Detached;
         entry = context.Remove(item = new Item { Id = 33 });
 
-        Assert.Equal($"Item|{item.Id}", entry.Property("__id").CurrentValue);
+        Assert.Equal($"{item.Id}", entry.Property("__id").CurrentValue);
         Assert.Equal(EntityState.Deleted, entry.State);
     }
 
@@ -932,8 +933,7 @@ public class EndToEndCosmosTest : NonSharedModelTestBase
         await Can_add_update_delete_with_collection<IReadOnlyDictionary<string, Dictionary<string, short?>>>(
             new Dictionary<string, Dictionary<string, short?>>
             {
-                { "2" , new Dictionary<string, short?> { { "value", 2 } } },
-                { "1" , new Dictionary<string, short?> { { "value", 1 } } }
+                { "2", new Dictionary<string, short?> { { "value", 2 } } }, { "1", new Dictionary<string, short?> { { "value", 1 } } }
             },
             c =>
             {
@@ -1063,8 +1063,8 @@ public class EndToEndCosmosTest : NonSharedModelTestBase
             await context.Database.EnsureCreatedAsync();
 
             Assert.Null(
-                context.Model.FindEntityType(typeof(CustomerWithResourceId))
-                    .FindProperty(StoreKeyConvention.DefaultIdPropertyName));
+                context.Model.FindEntityType(typeof(CustomerWithResourceId))!
+                    .FindProperty(CosmosJsonIdConvention.DefaultIdPropertyName));
 
             await context.AddAsync(customer);
             await context.AddAsync(
@@ -1349,7 +1349,7 @@ public class EndToEndCosmosTest : NonSharedModelTestBase
             context.Database.EnsureCreated();
 
             var customerEntry = context.Entry(customer);
-            customerEntry.Property(StoreKeyConvention.DefaultIdPropertyName).CurrentValue = "42";
+            customerEntry.Property(CosmosJsonIdConvention.DefaultIdPropertyName).CurrentValue = "42";
             customerEntry.State = EntityState.Added;
 
             context.SaveChanges();
@@ -1368,12 +1368,7 @@ public class EndToEndCosmosTest : NonSharedModelTestBase
             AssertSql(
                 context,
                 """
-@__p_3='42'
-
-SELECT VALUE c
-FROM root c
-WHERE (c["Id"] = @__p_3)
-OFFSET 0 LIMIT 1
+ReadItem([1.0,"One",true], 42)
 """);
 
             customerFromStore.Name = "Theon Greyjoy";
@@ -1426,7 +1421,7 @@ OFFSET 0 LIMIT 1
 
             Assert.Equal(42, customerFromStore.Id);
             Assert.Equal("Theon", customerFromStore.Name);
-            AssertSql(context, """ReadItem(None, Customer|42)""");
+            AssertSql(context, """ReadItem(None, 42)""");
         }
     }
 
@@ -1454,7 +1449,7 @@ OFFSET 0 LIMIT 1
 
             Assert.Equal(42, customerFromStore.Id);
             Assert.Equal("Theon", customerFromStore.Name);
-            AssertSql(context, @"ReadItem(None, CustomerNoPartitionKey|42)");
+            AssertSql(context, @"ReadItem(None, 42)");
         }
     }
 
@@ -1529,8 +1524,21 @@ OFFSET 0 LIMIT 1
             => modelBuilder.Entity<Customer>(
                 cb =>
                 {
-                    cb.HasPartitionKey(c => new { c.PartitionKey1, c.PartitionKey2, c.PartitionKey3 });
-                    cb.HasKey(c => new { c.Id, c.PartitionKey1, c.PartitionKey2, c.PartitionKey3 });
+                    cb.HasPartitionKey(
+                        c => new
+                        {
+                            c.PartitionKey1,
+                            c.PartitionKey2,
+                            c.PartitionKey3
+                        });
+                    cb.HasKey(
+                        c => new
+                        {
+                            c.Id,
+                            c.PartitionKey1,
+                            c.PartitionKey2,
+                            c.PartitionKey3
+                        });
                 });
     }
 
@@ -1543,15 +1551,31 @@ OFFSET 0 LIMIT 1
     private class PartitionKeyContextCustomValueGenerator(DbContextOptions dbContextOptions) : DbContext(dbContextOptions)
     {
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-            => modelBuilder.Entity<Customer>(
+        {
+            modelBuilder.HasDiscriminatorInJsonIds();
+
+            modelBuilder.Entity<Customer>(
                 cb =>
                 {
-                    cb.Property(StoreKeyConvention.DefaultIdPropertyName)
-                        .HasValueGeneratorFactory(typeof(CustomPartitionKeyIdValueGeneratorFactory));
+                    cb.HasShadowId();
 
-                    cb.HasPartitionKey(c => new { c.PartitionKey1, c.PartitionKey2, c.PartitionKey3 });
-                    cb.HasKey(c => new { c.PartitionKey1, c.Id, c.PartitionKey2, c.PartitionKey3 });
+                    cb.HasPartitionKey(
+                        c => new
+                        {
+                            c.PartitionKey1,
+                            c.PartitionKey2,
+                            c.PartitionKey3
+                        });
+                    cb.HasKey(
+                        c => new
+                        {
+                            c.PartitionKey1,
+                            c.Id,
+                            c.PartitionKey2,
+                            c.PartitionKey3
+                        });
                 });
+        }
     }
 
     private class PartitionKeyContextNoValueGenerator(DbContextOptions dbContextOptions) : DbContext(dbContextOptions)
@@ -1560,10 +1584,21 @@ OFFSET 0 LIMIT 1
             => modelBuilder.Entity<Customer>(
                 cb =>
                 {
-                    cb.Property(StoreKeyConvention.DefaultIdPropertyName).HasValueGenerator((Type)null);
-
-                    cb.HasPartitionKey(c => new { c.PartitionKey1, c.PartitionKey2, c.PartitionKey3 });
-                    cb.HasKey(c => new { c.PartitionKey1, c.PartitionKey2, c.PartitionKey3, c.Id });
+                    cb.HasPartitionKey(
+                        c => new
+                        {
+                            c.PartitionKey1,
+                            c.PartitionKey2,
+                            c.PartitionKey3
+                        });
+                    cb.HasKey(
+                        c => new
+                        {
+                            c.PartitionKey1,
+                            c.PartitionKey2,
+                            c.PartitionKey3,
+                            c.Id
+                        });
                 });
     }
 
@@ -1590,7 +1625,7 @@ OFFSET 0 LIMIT 1
             => modelBuilder.Entity<CustomerWithResourceId>(
                 cb =>
                 {
-                    cb.HasPartitionKey(c => new { c.PartitionKey1, c.PartitionKey2 } );
+                    cb.HasPartitionKey(c => new { c.PartitionKey1, c.PartitionKey2 });
                     cb.Property(c => c.id).HasConversion<string>();
                     cb.HasKey(c => new { c.id });
                 });
@@ -1602,8 +1637,14 @@ OFFSET 0 LIMIT 1
             => modelBuilder.Entity<CustomerWithResourceId>(
                 cb =>
                 {
-                    cb.HasPartitionKey(c => new { c.PartitionKey1, c.PartitionKey2 } );
-                    cb.HasKey(c => new { c.PartitionKey1, c.PartitionKey2, c.id });
+                    cb.HasPartitionKey(c => new { c.PartitionKey1, c.PartitionKey2 });
+                    cb.HasKey(
+                        c => new
+                        {
+                            c.PartitionKey1,
+                            c.PartitionKey2,
+                            c.id
+                        });
                 });
     }
 

@@ -26,7 +26,8 @@ This is a MSBuild custom task that provides batch signing and simple verificatio
 | FileExtensionSignInfo  | Array    | This is a mapping between extension (in the format ".ext") to default sign information for those kind of files. Overriding of the default sign info is done using the other parameters. |
 | CertificatesSignInfo   | Array    | List of certificate names that can be flagged using the `DualSigningAllowed` attribute as dual certificates. |
 | **MicroBuildCorePath** | Dir Path | Path to MicroBuild.Core package directory.                   |
-| MSBuildPath            | Exe path | Path to the MSBuild.exe binary used to run the signing process on MicroBuild. |
+| MSBuildPath            | Exe path | Path to the MSBuild.exe binary used to run the signing process on MicroBuild for Windows. |
+| DotNetPath             | Exe path | Path to the dotnet executable used to run the signing process on MicroBuild for Linux and Mac. |
 | SNBinaryPath           | Exe path | Path to the sn.exe binary used to strong-name sign / validate signature of managed files. |
 | **TempDir**            | Dir path | Used to store temporary files during the process of calling MicroBuild signing. |
 | LogDir                 | Dir path | MSBuild binary log information from the signing rounds will be stored in this directory. |
@@ -248,6 +249,18 @@ to use `MicrosoftDotNet500`. This approach must be used if some files still need
      <UseDotNetCertificate>f</UseDotNetCertificate>
    </PropertyGroup>
    ```
+
+#### 9. Certificate Subjects
+
+The authenticode certificates in use by .NET's core binaries have specific subjects that have meaning to various tools. These subjects are **not** expected to change. However, if they do, or if we introduce a new certificate for signing a specific .NET binary (e.g. a new DAC), .NET tactics and the Defender team should be contacted with this information. We want to ensure that the certificates are explicitly trusted by Defender.
+
+Examples of subjects that should be treated with special care:
+
+```
+CN=.NET, O=Microsoft Corporation, L=Redmond, S=Washington, C=US
+CN=.NET, O=Microsoft Corporat, L=Redmond, S=Washington, C=US
+CN=.NET DAC, O=Microsoft Corporation, L=Redmond, S=Washington, C=US
+```
 
 ## Logs & MicroBuild configuration files
 

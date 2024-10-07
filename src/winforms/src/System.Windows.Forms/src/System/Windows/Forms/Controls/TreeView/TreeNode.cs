@@ -203,7 +203,7 @@ public partial class TreeNode : MarshalByRefObject, ICloneable, ISerializable
                 return;
             }
 
-            // Not the default, so if necessary create a new propBag, and fill it with the backcolor
+            // Not the default, so if necessary create a new propBag, and fill it with the BackColor
 
             _propBag ??= new OwnerDrawPropertyBag();
 
@@ -466,7 +466,7 @@ public partial class TreeNode : MarshalByRefObject, ICloneable, ISerializable
     }
 
     /// <summary>
-    ///  The HTREEITEM handle associated with this node.  If the handle
+    ///  The HTREEITEM handle associated with this node. If the handle
     ///  has not yet been created, this will force handle creation.
     /// </summary>
     [Browsable(false)]
@@ -675,7 +675,7 @@ public partial class TreeNode : MarshalByRefObject, ICloneable, ISerializable
     }
 
     /// <summary>
-    ///  The next visible node.  It may be a child, sibling,
+    ///  The next visible node. It may be a child, sibling,
     ///  or a node from another branch.
     /// </summary>
     [Browsable(false)]
@@ -833,7 +833,7 @@ public partial class TreeNode : MarshalByRefObject, ICloneable, ISerializable
     }
 
     /// <summary>
-    ///  The next visible node.  It may be a parent, sibling,
+    ///  The next visible node. It may be a parent, sibling,
     ///  or a node from another branch.
     /// </summary>
     [Browsable(false)]
@@ -1288,12 +1288,12 @@ public partial class TreeNode : MarshalByRefObject, ICloneable, ISerializable
     }
 
     /// <summary>
-    ///  Called by the tree node collection to clear all nodes.  We optimize here if
+    ///  Called by the tree node collection to clear all nodes. We optimize here if
     ///  this is the root node.
     /// </summary>
     internal void Clear()
     {
-        // This is a node that is a child of some other node.  We have
+        // This is a node that is a child of some other node. We have
         // to selectively remove children here.
         bool isBulkOperation = false;
         TreeView? tv = TreeView;
@@ -1929,7 +1929,7 @@ public partial class TreeNode : MarshalByRefObject, ICloneable, ISerializable
     }
 
     /// <summary>
-    ///  Remove this node from the TreeView control.  Child nodes are also removed from the
+    ///  Remove this node from the TreeView control. Child nodes are also removed from the
     ///  TreeView, but are still attached to this node.
     /// </summary>
     public void Remove()
@@ -1958,7 +1958,7 @@ public partial class TreeNode : MarshalByRefObject, ICloneable, ISerializable
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             _parent._children[_parent._childCount - 1] = null;
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+#pragma warning restore CS8625
             _parent._childCount--;
 
             _parent = null;
@@ -2087,7 +2087,7 @@ public partial class TreeNode : MarshalByRefObject, ICloneable, ISerializable
         {
             si.AddValue("UserData", _userData, _userData.GetType());
         }
-#pragma warning restore SYSLIB0050 // Type or member is obsolete
+#pragma warning restore SYSLIB0050
     }
 
     /// <summary>

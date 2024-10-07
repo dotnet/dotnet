@@ -37,10 +37,10 @@ namespace TestNamespace
                 "Microsoft.EntityFrameworkCore.Scaffolding.CompiledModelTestBase+ManyTypes",
                 typeof(CompiledModelTestBase.ManyTypes),
                 baseEntityType,
-                discriminatorProperty: "Discriminator",
+                discriminatorProperty: "$type",
                 discriminatorValue: "ManyTypes",
                 propertyCount: 166,
-                keyCount: 2);
+                keyCount: 1);
 
             var id = runtimeEntityType.AddProperty(
                 "Id",
@@ -95,6 +95,39 @@ namespace TestNamespace
             id.SetCurrentValueComparer(new CurrentProviderValueComparer<CompiledModelTestBase.ManyTypesId, int>(id));
             id.SetSentinelFromProviderValue(0);
 
+            var type = runtimeEntityType.AddProperty(
+                "$type",
+                typeof(string),
+                afterSaveBehavior: PropertySaveBehavior.Throw,
+                valueGeneratorFactory: new DiscriminatorValueGeneratorFactory().Create);
+            type.SetAccessors(
+                string (InternalEntityEntry entry) => entry.ReadShadowValue<string>(0),
+                string (InternalEntityEntry entry) => entry.ReadShadowValue<string>(0),
+                string (InternalEntityEntry entry) => entry.ReadOriginalValue<string>(type, 1),
+                string (InternalEntityEntry entry) => entry.GetCurrentValue<string>(type),
+                object (ValueBuffer valueBuffer) => valueBuffer[1]);
+            type.SetPropertyIndexes(
+                index: 1,
+                originalValueIndex: 1,
+                shadowIndex: 0,
+                relationshipIndex: -1,
+                storeGenerationIndex: -1);
+            type.TypeMapping = CosmosTypeMapping.Default.Clone(
+                comparer: new ValueComparer<string>(
+                    bool (string v1, string v2) => v1 == v2,
+                    int (string v) => ((object)v).GetHashCode(),
+                    string (string v) => v),
+                keyComparer: new ValueComparer<string>(
+                    bool (string v1, string v2) => v1 == v2,
+                    int (string v) => ((object)v).GetHashCode(),
+                    string (string v) => v),
+                providerValueComparer: new ValueComparer<string>(
+                    bool (string v1, string v2) => v1 == v2,
+                    int (string v) => ((object)v).GetHashCode(),
+                    string (string v) => v),
+                clrType: typeof(string),
+                jsonValueReaderWriter: JsonStringReaderWriter.Instance);
+
             var @bool = runtimeEntityType.AddProperty(
                 "Bool",
                 typeof(bool),
@@ -113,12 +146,12 @@ namespace TestNamespace
             @bool.SetAccessors(
                 bool (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.Bool(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 bool (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.Bool(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                bool (InternalEntityEntry entry) => entry.ReadOriginalValue<bool>(@bool, 1),
+                bool (InternalEntityEntry entry) => entry.ReadOriginalValue<bool>(@bool, 2),
                 bool (InternalEntityEntry entry) => entry.GetCurrentValue<bool>(@bool),
-                object (ValueBuffer valueBuffer) => valueBuffer[1]);
+                object (ValueBuffer valueBuffer) => valueBuffer[2]);
             @bool.SetPropertyIndexes(
-                index: 1,
-                originalValueIndex: 1,
+                index: 2,
+                originalValueIndex: 2,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -155,12 +188,12 @@ namespace TestNamespace
             boolArray.SetAccessors(
                 bool[] (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.BoolArray(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 bool[] (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.BoolArray(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                bool[] (InternalEntityEntry entry) => entry.ReadOriginalValue<bool[]>(boolArray, 2),
+                bool[] (InternalEntityEntry entry) => entry.ReadOriginalValue<bool[]>(boolArray, 3),
                 bool[] (InternalEntityEntry entry) => entry.GetCurrentValue<bool[]>(boolArray),
-                object (ValueBuffer valueBuffer) => valueBuffer[2]);
+                object (ValueBuffer valueBuffer) => valueBuffer[3]);
             boolArray.SetPropertyIndexes(
-                index: 2,
-                originalValueIndex: 2,
+                index: 3,
+                originalValueIndex: 3,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -213,12 +246,12 @@ namespace TestNamespace
             boolNestedCollection.SetAccessors(
                 bool[][] (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.BoolNestedCollection(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 bool[][] (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.BoolNestedCollection(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                bool[][] (InternalEntityEntry entry) => entry.ReadOriginalValue<bool[][]>(boolNestedCollection, 3),
+                bool[][] (InternalEntityEntry entry) => entry.ReadOriginalValue<bool[][]>(boolNestedCollection, 4),
                 bool[][] (InternalEntityEntry entry) => entry.GetCurrentValue<bool[][]>(boolNestedCollection),
-                object (ValueBuffer valueBuffer) => valueBuffer[3]);
+                object (ValueBuffer valueBuffer) => valueBuffer[4]);
             boolNestedCollection.SetPropertyIndexes(
-                index: 3,
-                originalValueIndex: 3,
+                index: 4,
+                originalValueIndex: 4,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -288,12 +321,12 @@ namespace TestNamespace
             boolToStringConverterProperty.SetAccessors(
                 bool (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.BoolToStringConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 bool (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.BoolToStringConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                bool (InternalEntityEntry entry) => entry.ReadOriginalValue<bool>(boolToStringConverterProperty, 4),
+                bool (InternalEntityEntry entry) => entry.ReadOriginalValue<bool>(boolToStringConverterProperty, 5),
                 bool (InternalEntityEntry entry) => entry.GetCurrentValue<bool>(boolToStringConverterProperty),
-                object (ValueBuffer valueBuffer) => valueBuffer[4]);
+                object (ValueBuffer valueBuffer) => valueBuffer[5]);
             boolToStringConverterProperty.SetPropertyIndexes(
-                index: 4,
-                originalValueIndex: 4,
+                index: 5,
+                originalValueIndex: 5,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -337,12 +370,12 @@ namespace TestNamespace
             boolToTwoValuesConverterProperty.SetAccessors(
                 bool (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.BoolToTwoValuesConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 bool (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.BoolToTwoValuesConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                bool (InternalEntityEntry entry) => entry.ReadOriginalValue<bool>(boolToTwoValuesConverterProperty, 5),
+                bool (InternalEntityEntry entry) => entry.ReadOriginalValue<bool>(boolToTwoValuesConverterProperty, 6),
                 bool (InternalEntityEntry entry) => entry.GetCurrentValue<bool>(boolToTwoValuesConverterProperty),
-                object (ValueBuffer valueBuffer) => valueBuffer[5]);
+                object (ValueBuffer valueBuffer) => valueBuffer[6]);
             boolToTwoValuesConverterProperty.SetPropertyIndexes(
-                index: 5,
-                originalValueIndex: 5,
+                index: 6,
+                originalValueIndex: 6,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -387,12 +420,12 @@ namespace TestNamespace
             boolToZeroOneConverterProperty.SetAccessors(
                 bool (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.BoolToZeroOneConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 bool (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.BoolToZeroOneConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                bool (InternalEntityEntry entry) => entry.ReadOriginalValue<bool>(boolToZeroOneConverterProperty, 6),
+                bool (InternalEntityEntry entry) => entry.ReadOriginalValue<bool>(boolToZeroOneConverterProperty, 7),
                 bool (InternalEntityEntry entry) => entry.GetCurrentValue<bool>(boolToZeroOneConverterProperty),
-                object (ValueBuffer valueBuffer) => valueBuffer[6]);
+                object (ValueBuffer valueBuffer) => valueBuffer[7]);
             boolToZeroOneConverterProperty.SetPropertyIndexes(
-                index: 6,
-                originalValueIndex: 6,
+                index: 7,
+                originalValueIndex: 7,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -436,12 +469,12 @@ namespace TestNamespace
             bytes.SetAccessors(
                 byte[] (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.Bytes(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 byte[] (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.Bytes(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                byte[] (InternalEntityEntry entry) => entry.ReadOriginalValue<byte[]>(bytes, 7),
+                byte[] (InternalEntityEntry entry) => entry.ReadOriginalValue<byte[]>(bytes, 8),
                 byte[] (InternalEntityEntry entry) => entry.GetCurrentValue<byte[]>(bytes),
-                object (ValueBuffer valueBuffer) => valueBuffer[7]);
+                object (ValueBuffer valueBuffer) => valueBuffer[8]);
             bytes.SetPropertyIndexes(
-                index: 7,
-                originalValueIndex: 7,
+                index: 8,
+                originalValueIndex: 8,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -486,12 +519,12 @@ namespace TestNamespace
             bytesToStringConverterProperty.SetAccessors(
                 byte[] (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.BytesToStringConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 byte[] (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.BytesToStringConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                byte[] (InternalEntityEntry entry) => entry.ReadOriginalValue<byte[]>(bytesToStringConverterProperty, 8),
+                byte[] (InternalEntityEntry entry) => entry.ReadOriginalValue<byte[]>(bytesToStringConverterProperty, 9),
                 byte[] (InternalEntityEntry entry) => entry.GetCurrentValue<byte[]>(bytesToStringConverterProperty),
-                object (ValueBuffer valueBuffer) => valueBuffer[8]);
+                object (ValueBuffer valueBuffer) => valueBuffer[9]);
             bytesToStringConverterProperty.SetPropertyIndexes(
-                index: 8,
-                originalValueIndex: 8,
+                index: 9,
+                originalValueIndex: 9,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -535,12 +568,12 @@ namespace TestNamespace
             castingConverterProperty.SetAccessors(
                 int (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.CastingConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 int (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.CastingConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                int (InternalEntityEntry entry) => entry.ReadOriginalValue<int>(castingConverterProperty, 9),
+                int (InternalEntityEntry entry) => entry.ReadOriginalValue<int>(castingConverterProperty, 10),
                 int (InternalEntityEntry entry) => entry.GetCurrentValue<int>(castingConverterProperty),
-                object (ValueBuffer valueBuffer) => valueBuffer[9]);
+                object (ValueBuffer valueBuffer) => valueBuffer[10]);
             castingConverterProperty.SetPropertyIndexes(
-                index: 9,
-                originalValueIndex: 9,
+                index: 10,
+                originalValueIndex: 10,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -585,12 +618,12 @@ namespace TestNamespace
             @char.SetAccessors(
                 char (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.Char(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 char (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.Char(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                char (InternalEntityEntry entry) => entry.ReadOriginalValue<char>(@char, 10),
+                char (InternalEntityEntry entry) => entry.ReadOriginalValue<char>(@char, 11),
                 char (InternalEntityEntry entry) => entry.GetCurrentValue<char>(@char),
-                object (ValueBuffer valueBuffer) => valueBuffer[10]);
+                object (ValueBuffer valueBuffer) => valueBuffer[11]);
             @char.SetPropertyIndexes(
-                index: 10,
-                originalValueIndex: 10,
+                index: 11,
+                originalValueIndex: 11,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -627,12 +660,12 @@ namespace TestNamespace
             charArray.SetAccessors(
                 char[] (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.CharArray(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 char[] (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.CharArray(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                char[] (InternalEntityEntry entry) => entry.ReadOriginalValue<char[]>(charArray, 11),
+                char[] (InternalEntityEntry entry) => entry.ReadOriginalValue<char[]>(charArray, 12),
                 char[] (InternalEntityEntry entry) => entry.GetCurrentValue<char[]>(charArray),
-                object (ValueBuffer valueBuffer) => valueBuffer[11]);
+                object (ValueBuffer valueBuffer) => valueBuffer[12]);
             charArray.SetPropertyIndexes(
-                index: 11,
-                originalValueIndex: 11,
+                index: 12,
+                originalValueIndex: 12,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -685,12 +718,12 @@ namespace TestNamespace
             charNestedCollection.SetAccessors(
                 char[][] (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.CharNestedCollection(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 char[][] (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.CharNestedCollection(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                char[][] (InternalEntityEntry entry) => entry.ReadOriginalValue<char[][]>(charNestedCollection, 12),
+                char[][] (InternalEntityEntry entry) => entry.ReadOriginalValue<char[][]>(charNestedCollection, 13),
                 char[][] (InternalEntityEntry entry) => entry.GetCurrentValue<char[][]>(charNestedCollection),
-                object (ValueBuffer valueBuffer) => valueBuffer[12]);
+                object (ValueBuffer valueBuffer) => valueBuffer[13]);
             charNestedCollection.SetPropertyIndexes(
-                index: 12,
-                originalValueIndex: 12,
+                index: 13,
+                originalValueIndex: 13,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -761,12 +794,12 @@ namespace TestNamespace
             charToStringConverterProperty.SetAccessors(
                 char (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.CharToStringConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 char (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.CharToStringConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                char (InternalEntityEntry entry) => entry.ReadOriginalValue<char>(charToStringConverterProperty, 13),
+                char (InternalEntityEntry entry) => entry.ReadOriginalValue<char>(charToStringConverterProperty, 14),
                 char (InternalEntityEntry entry) => entry.GetCurrentValue<char>(charToStringConverterProperty),
-                object (ValueBuffer valueBuffer) => valueBuffer[13]);
+                object (ValueBuffer valueBuffer) => valueBuffer[14]);
             charToStringConverterProperty.SetPropertyIndexes(
-                index: 13,
-                originalValueIndex: 13,
+                index: 14,
+                originalValueIndex: 14,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -811,12 +844,12 @@ namespace TestNamespace
             dateOnly.SetAccessors(
                 DateOnly (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateOnly(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 DateOnly (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateOnly(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                DateOnly (InternalEntityEntry entry) => entry.ReadOriginalValue<DateOnly>(dateOnly, 14),
+                DateOnly (InternalEntityEntry entry) => entry.ReadOriginalValue<DateOnly>(dateOnly, 15),
                 DateOnly (InternalEntityEntry entry) => entry.GetCurrentValue<DateOnly>(dateOnly),
-                object (ValueBuffer valueBuffer) => valueBuffer[14]);
+                object (ValueBuffer valueBuffer) => valueBuffer[15]);
             dateOnly.SetPropertyIndexes(
-                index: 14,
-                originalValueIndex: 14,
+                index: 15,
+                originalValueIndex: 15,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -854,12 +887,12 @@ namespace TestNamespace
             dateOnlyToStringConverterProperty.SetAccessors(
                 DateOnly (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateOnlyToStringConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 DateOnly (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateOnlyToStringConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                DateOnly (InternalEntityEntry entry) => entry.ReadOriginalValue<DateOnly>(dateOnlyToStringConverterProperty, 15),
+                DateOnly (InternalEntityEntry entry) => entry.ReadOriginalValue<DateOnly>(dateOnlyToStringConverterProperty, 16),
                 DateOnly (InternalEntityEntry entry) => entry.GetCurrentValue<DateOnly>(dateOnlyToStringConverterProperty),
-                object (ValueBuffer valueBuffer) => valueBuffer[15]);
+                object (ValueBuffer valueBuffer) => valueBuffer[16]);
             dateOnlyToStringConverterProperty.SetPropertyIndexes(
-                index: 15,
-                originalValueIndex: 15,
+                index: 16,
+                originalValueIndex: 16,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -904,12 +937,12 @@ namespace TestNamespace
             dateTime.SetAccessors(
                 DateTime (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateTime(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 DateTime (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateTime(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                DateTime (InternalEntityEntry entry) => entry.ReadOriginalValue<DateTime>(dateTime, 16),
+                DateTime (InternalEntityEntry entry) => entry.ReadOriginalValue<DateTime>(dateTime, 17),
                 DateTime (InternalEntityEntry entry) => entry.GetCurrentValue<DateTime>(dateTime),
-                object (ValueBuffer valueBuffer) => valueBuffer[16]);
+                object (ValueBuffer valueBuffer) => valueBuffer[17]);
             dateTime.SetPropertyIndexes(
-                index: 16,
-                originalValueIndex: 16,
+                index: 17,
+                originalValueIndex: 17,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -947,12 +980,12 @@ namespace TestNamespace
             dateTimeOffsetToBinaryConverterProperty.SetAccessors(
                 DateTimeOffset (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateTimeOffsetToBinaryConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 DateTimeOffset (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateTimeOffsetToBinaryConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                DateTimeOffset (InternalEntityEntry entry) => entry.ReadOriginalValue<DateTimeOffset>(dateTimeOffsetToBinaryConverterProperty, 17),
+                DateTimeOffset (InternalEntityEntry entry) => entry.ReadOriginalValue<DateTimeOffset>(dateTimeOffsetToBinaryConverterProperty, 18),
                 DateTimeOffset (InternalEntityEntry entry) => entry.GetCurrentValue<DateTimeOffset>(dateTimeOffsetToBinaryConverterProperty),
-                object (ValueBuffer valueBuffer) => valueBuffer[17]);
+                object (ValueBuffer valueBuffer) => valueBuffer[18]);
             dateTimeOffsetToBinaryConverterProperty.SetPropertyIndexes(
-                index: 17,
-                originalValueIndex: 17,
+                index: 18,
+                originalValueIndex: 18,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -997,12 +1030,12 @@ namespace TestNamespace
             dateTimeOffsetToBytesConverterProperty.SetAccessors(
                 DateTimeOffset (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateTimeOffsetToBytesConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 DateTimeOffset (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateTimeOffsetToBytesConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                DateTimeOffset (InternalEntityEntry entry) => entry.ReadOriginalValue<DateTimeOffset>(dateTimeOffsetToBytesConverterProperty, 18),
+                DateTimeOffset (InternalEntityEntry entry) => entry.ReadOriginalValue<DateTimeOffset>(dateTimeOffsetToBytesConverterProperty, 19),
                 DateTimeOffset (InternalEntityEntry entry) => entry.GetCurrentValue<DateTimeOffset>(dateTimeOffsetToBytesConverterProperty),
-                object (ValueBuffer valueBuffer) => valueBuffer[18]);
+                object (ValueBuffer valueBuffer) => valueBuffer[19]);
             dateTimeOffsetToBytesConverterProperty.SetPropertyIndexes(
-                index: 18,
-                originalValueIndex: 18,
+                index: 19,
+                originalValueIndex: 19,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -1047,12 +1080,12 @@ namespace TestNamespace
             dateTimeOffsetToStringConverterProperty.SetAccessors(
                 DateTimeOffset (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateTimeOffsetToStringConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 DateTimeOffset (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateTimeOffsetToStringConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                DateTimeOffset (InternalEntityEntry entry) => entry.ReadOriginalValue<DateTimeOffset>(dateTimeOffsetToStringConverterProperty, 19),
+                DateTimeOffset (InternalEntityEntry entry) => entry.ReadOriginalValue<DateTimeOffset>(dateTimeOffsetToStringConverterProperty, 20),
                 DateTimeOffset (InternalEntityEntry entry) => entry.GetCurrentValue<DateTimeOffset>(dateTimeOffsetToStringConverterProperty),
-                object (ValueBuffer valueBuffer) => valueBuffer[19]);
+                object (ValueBuffer valueBuffer) => valueBuffer[20]);
             dateTimeOffsetToStringConverterProperty.SetPropertyIndexes(
-                index: 19,
-                originalValueIndex: 19,
+                index: 20,
+                originalValueIndex: 20,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -1097,12 +1130,12 @@ namespace TestNamespace
             dateTimeToBinaryConverterProperty.SetAccessors(
                 DateTime (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateTimeToBinaryConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 DateTime (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateTimeToBinaryConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                DateTime (InternalEntityEntry entry) => entry.ReadOriginalValue<DateTime>(dateTimeToBinaryConverterProperty, 20),
+                DateTime (InternalEntityEntry entry) => entry.ReadOriginalValue<DateTime>(dateTimeToBinaryConverterProperty, 21),
                 DateTime (InternalEntityEntry entry) => entry.GetCurrentValue<DateTime>(dateTimeToBinaryConverterProperty),
-                object (ValueBuffer valueBuffer) => valueBuffer[20]);
+                object (ValueBuffer valueBuffer) => valueBuffer[21]);
             dateTimeToBinaryConverterProperty.SetPropertyIndexes(
-                index: 20,
-                originalValueIndex: 20,
+                index: 21,
+                originalValueIndex: 21,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -1147,12 +1180,12 @@ namespace TestNamespace
             dateTimeToStringConverterProperty.SetAccessors(
                 DateTime (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateTimeToStringConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 DateTime (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateTimeToStringConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                DateTime (InternalEntityEntry entry) => entry.ReadOriginalValue<DateTime>(dateTimeToStringConverterProperty, 21),
+                DateTime (InternalEntityEntry entry) => entry.ReadOriginalValue<DateTime>(dateTimeToStringConverterProperty, 22),
                 DateTime (InternalEntityEntry entry) => entry.GetCurrentValue<DateTime>(dateTimeToStringConverterProperty),
-                object (ValueBuffer valueBuffer) => valueBuffer[21]);
+                object (ValueBuffer valueBuffer) => valueBuffer[22]);
             dateTimeToStringConverterProperty.SetPropertyIndexes(
-                index: 21,
-                originalValueIndex: 21,
+                index: 22,
+                originalValueIndex: 22,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -1197,12 +1230,12 @@ namespace TestNamespace
             dateTimeToTicksConverterProperty.SetAccessors(
                 DateTime (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateTimeToTicksConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 DateTime (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DateTimeToTicksConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                DateTime (InternalEntityEntry entry) => entry.ReadOriginalValue<DateTime>(dateTimeToTicksConverterProperty, 22),
+                DateTime (InternalEntityEntry entry) => entry.ReadOriginalValue<DateTime>(dateTimeToTicksConverterProperty, 23),
                 DateTime (InternalEntityEntry entry) => entry.GetCurrentValue<DateTime>(dateTimeToTicksConverterProperty),
-                object (ValueBuffer valueBuffer) => valueBuffer[22]);
+                object (ValueBuffer valueBuffer) => valueBuffer[23]);
             dateTimeToTicksConverterProperty.SetPropertyIndexes(
-                index: 22,
-                originalValueIndex: 22,
+                index: 23,
+                originalValueIndex: 23,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -1240,12 +1273,12 @@ namespace TestNamespace
             @decimal.SetAccessors(
                 decimal (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.Decimal(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 decimal (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.Decimal(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                decimal (InternalEntityEntry entry) => entry.ReadOriginalValue<decimal>(@decimal, 23),
+                decimal (InternalEntityEntry entry) => entry.ReadOriginalValue<decimal>(@decimal, 24),
                 decimal (InternalEntityEntry entry) => entry.GetCurrentValue<decimal>(@decimal),
-                object (ValueBuffer valueBuffer) => valueBuffer[23]);
+                object (ValueBuffer valueBuffer) => valueBuffer[24]);
             @decimal.SetPropertyIndexes(
-                index: 23,
-                originalValueIndex: 23,
+                index: 24,
+                originalValueIndex: 24,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -1282,12 +1315,12 @@ namespace TestNamespace
             decimalArray.SetAccessors(
                 decimal[] (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DecimalArray(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 decimal[] (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DecimalArray(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                decimal[] (InternalEntityEntry entry) => entry.ReadOriginalValue<decimal[]>(decimalArray, 24),
+                decimal[] (InternalEntityEntry entry) => entry.ReadOriginalValue<decimal[]>(decimalArray, 25),
                 decimal[] (InternalEntityEntry entry) => entry.GetCurrentValue<decimal[]>(decimalArray),
-                object (ValueBuffer valueBuffer) => valueBuffer[24]);
+                object (ValueBuffer valueBuffer) => valueBuffer[25]);
             decimalArray.SetPropertyIndexes(
-                index: 24,
-                originalValueIndex: 24,
+                index: 25,
+                originalValueIndex: 25,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -1341,12 +1374,12 @@ namespace TestNamespace
             decimalNumberToBytesConverterProperty.SetAccessors(
                 decimal (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DecimalNumberToBytesConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 decimal (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DecimalNumberToBytesConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                decimal (InternalEntityEntry entry) => entry.ReadOriginalValue<decimal>(decimalNumberToBytesConverterProperty, 25),
+                decimal (InternalEntityEntry entry) => entry.ReadOriginalValue<decimal>(decimalNumberToBytesConverterProperty, 26),
                 decimal (InternalEntityEntry entry) => entry.GetCurrentValue<decimal>(decimalNumberToBytesConverterProperty),
-                object (ValueBuffer valueBuffer) => valueBuffer[25]);
+                object (ValueBuffer valueBuffer) => valueBuffer[26]);
             decimalNumberToBytesConverterProperty.SetPropertyIndexes(
-                index: 25,
-                originalValueIndex: 25,
+                index: 26,
+                originalValueIndex: 26,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -1391,12 +1424,12 @@ namespace TestNamespace
             decimalNumberToStringConverterProperty.SetAccessors(
                 decimal (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DecimalNumberToStringConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
                 decimal (InternalEntityEntry entry) => ManyTypesUnsafeAccessors.DecimalNumberToStringConverterProperty(((CompiledModelTestBase.ManyTypes)(entry.Entity))),
-                decimal (InternalEntityEntry entry) => entry.ReadOriginalValue<decimal>(decimalNumberToStringConverterProperty, 26),
+                decimal (InternalEntityEntry entry) => entry.ReadOriginalValue<decimal>(decimalNumberToStringConverterProperty, 27),
                 decimal (InternalEntityEntry entry) => entry.GetCurrentValue<decimal>(decimalNumberToStringConverterProperty),
-                object (ValueBuffer valueBuffer) => valueBuffer[26]);
+                object (ValueBuffer valueBuffer) => valueBuffer[27]);
             decimalNumberToStringConverterProperty.SetPropertyIndexes(
-                index: 26,
-                originalValueIndex: 26,
+                index: 27,
+                originalValueIndex: 27,
                 shadowIndex: -1,
                 relationshipIndex: -1,
                 storeGenerationIndex: -1);
@@ -1422,39 +1455,6 @@ namespace TestNamespace
                         string (decimal v) => string.Format(CultureInfo.InvariantCulture, "{0}", ((object)(v))),
                         decimal (string v) => decimal.Parse(v, NumberStyles.Any, CultureInfo.InvariantCulture))));
             decimalNumberToStringConverterProperty.SetSentinelFromProviderValue("0");
-
-            var discriminator = runtimeEntityType.AddProperty(
-                "Discriminator",
-                typeof(string),
-                afterSaveBehavior: PropertySaveBehavior.Throw,
-                valueGeneratorFactory: new DiscriminatorValueGeneratorFactory().Create);
-            discriminator.SetAccessors(
-                string (InternalEntityEntry entry) => entry.ReadShadowValue<string>(0),
-                string (InternalEntityEntry entry) => entry.ReadShadowValue<string>(0),
-                string (InternalEntityEntry entry) => entry.ReadOriginalValue<string>(discriminator, 27),
-                string (InternalEntityEntry entry) => entry.GetCurrentValue<string>(discriminator),
-                object (ValueBuffer valueBuffer) => valueBuffer[27]);
-            discriminator.SetPropertyIndexes(
-                index: 27,
-                originalValueIndex: 27,
-                shadowIndex: 0,
-                relationshipIndex: -1,
-                storeGenerationIndex: -1);
-            discriminator.TypeMapping = CosmosTypeMapping.Default.Clone(
-                comparer: new ValueComparer<string>(
-                    bool (string v1, string v2) => v1 == v2,
-                    int (string v) => ((object)v).GetHashCode(),
-                    string (string v) => v),
-                keyComparer: new ValueComparer<string>(
-                    bool (string v1, string v2) => v1 == v2,
-                    int (string v) => ((object)v).GetHashCode(),
-                    string (string v) => v),
-                providerValueComparer: new ValueComparer<string>(
-                    bool (string v1, string v2) => v1 == v2,
-                    int (string v) => ((object)v).GetHashCode(),
-                    string (string v) => v),
-                clrType: typeof(string),
-                jsonValueReaderWriter: JsonStringReaderWriter.Instance);
 
             var @double = runtimeEntityType.AddProperty(
                 "Double",
@@ -3804,8 +3804,8 @@ namespace TestNamespace
                     bool (bool v) => v),
                 clrType: typeof(bool),
                 jsonValueReaderWriter: JsonBoolReaderWriter.Instance);
-            nullableBool.SetValueComparer(new NullableValueComparer<bool>(nullableBool.TypeMapping.Comparer));
-            nullableBool.SetKeyValueComparer(new NullableValueComparer<bool>(nullableBool.TypeMapping.KeyComparer));
+            nullableBool.SetComparer(new NullableValueComparer<bool>(nullableBool.TypeMapping.Comparer));
+            nullableBool.SetKeyComparer(new NullableValueComparer<bool>(nullableBool.TypeMapping.KeyComparer));
 
             var nullableBoolArray = runtimeEntityType.AddProperty(
                 "NullableBoolArray",
@@ -3956,8 +3956,8 @@ namespace TestNamespace
                     char (char v) => v),
                 clrType: typeof(char),
                 jsonValueReaderWriter: JsonCharReaderWriter.Instance);
-            nullableChar.SetValueComparer(new NullableValueComparer<char>(nullableChar.TypeMapping.Comparer));
-            nullableChar.SetKeyValueComparer(new NullableValueComparer<char>(nullableChar.TypeMapping.KeyComparer));
+            nullableChar.SetComparer(new NullableValueComparer<char>(nullableChar.TypeMapping.Comparer));
+            nullableChar.SetKeyComparer(new NullableValueComparer<char>(nullableChar.TypeMapping.KeyComparer));
 
             var nullableCharArray = runtimeEntityType.AddProperty(
                 "NullableCharArray",
@@ -4059,8 +4059,8 @@ namespace TestNamespace
                     DateOnly (DateOnly v) => v),
                 clrType: typeof(DateOnly),
                 jsonValueReaderWriter: JsonDateOnlyReaderWriter.Instance);
-            nullableDateOnly.SetValueComparer(new NullableValueComparer<DateOnly>(nullableDateOnly.TypeMapping.Comparer));
-            nullableDateOnly.SetKeyValueComparer(new NullableValueComparer<DateOnly>(nullableDateOnly.TypeMapping.KeyComparer));
+            nullableDateOnly.SetComparer(new NullableValueComparer<DateOnly>(nullableDateOnly.TypeMapping.Comparer));
+            nullableDateOnly.SetKeyComparer(new NullableValueComparer<DateOnly>(nullableDateOnly.TypeMapping.KeyComparer));
 
             var nullableDateTime = runtimeEntityType.AddProperty(
                 "NullableDateTime",
@@ -4104,8 +4104,8 @@ namespace TestNamespace
                     DateTime (DateTime v) => v),
                 clrType: typeof(DateTime),
                 jsonValueReaderWriter: JsonDateTimeReaderWriter.Instance);
-            nullableDateTime.SetValueComparer(new NullableValueComparer<DateTime>(nullableDateTime.TypeMapping.Comparer));
-            nullableDateTime.SetKeyValueComparer(new NullableValueComparer<DateTime>(nullableDateTime.TypeMapping.KeyComparer));
+            nullableDateTime.SetComparer(new NullableValueComparer<DateTime>(nullableDateTime.TypeMapping.Comparer));
+            nullableDateTime.SetKeyComparer(new NullableValueComparer<DateTime>(nullableDateTime.TypeMapping.KeyComparer));
 
             var nullableDecimal = runtimeEntityType.AddProperty(
                 "NullableDecimal",
@@ -4149,8 +4149,8 @@ namespace TestNamespace
                     decimal (decimal v) => v),
                 clrType: typeof(decimal),
                 jsonValueReaderWriter: JsonDecimalReaderWriter.Instance);
-            nullableDecimal.SetValueComparer(new NullableValueComparer<decimal>(nullableDecimal.TypeMapping.Comparer));
-            nullableDecimal.SetKeyValueComparer(new NullableValueComparer<decimal>(nullableDecimal.TypeMapping.KeyComparer));
+            nullableDecimal.SetComparer(new NullableValueComparer<decimal>(nullableDecimal.TypeMapping.Comparer));
+            nullableDecimal.SetKeyComparer(new NullableValueComparer<decimal>(nullableDecimal.TypeMapping.KeyComparer));
 
             var nullableDecimalArray = runtimeEntityType.AddProperty(
                 "NullableDecimalArray",
@@ -4252,8 +4252,8 @@ namespace TestNamespace
                     double (double v) => v),
                 clrType: typeof(double),
                 jsonValueReaderWriter: JsonDoubleReaderWriter.Instance);
-            nullableDouble.SetValueComparer(new NullableValueComparer<double>(nullableDouble.TypeMapping.Comparer));
-            nullableDouble.SetKeyValueComparer(new NullableValueComparer<double>(nullableDouble.TypeMapping.KeyComparer));
+            nullableDouble.SetComparer(new NullableValueComparer<double>(nullableDouble.TypeMapping.Comparer));
+            nullableDouble.SetKeyComparer(new NullableValueComparer<double>(nullableDouble.TypeMapping.KeyComparer));
 
             var nullableDoubleArray = runtimeEntityType.AddProperty(
                 "NullableDoubleArray",
@@ -4361,8 +4361,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.Enum16, short>(
                         short (CompiledModelTestBase.Enum16 value) => ((short)(value)),
                         CompiledModelTestBase.Enum16 (short value) => ((CompiledModelTestBase.Enum16)(value)))));
-            nullableEnum16.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum16>(nullableEnum16.TypeMapping.Comparer));
-            nullableEnum16.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum16>(nullableEnum16.TypeMapping.KeyComparer));
+            nullableEnum16.SetComparer(new NullableValueComparer<CompiledModelTestBase.Enum16>(nullableEnum16.TypeMapping.Comparer));
+            nullableEnum16.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.Enum16>(nullableEnum16.TypeMapping.KeyComparer));
 
             var nullableEnum16AsString = runtimeEntityType.AddProperty(
                 "NullableEnum16AsString",
@@ -4412,8 +4412,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.Enum16, short>(
                         short (CompiledModelTestBase.Enum16 value) => ((short)(value)),
                         CompiledModelTestBase.Enum16 (short value) => ((CompiledModelTestBase.Enum16)(value)))));
-            nullableEnum16AsString.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum16>(nullableEnum16AsString.TypeMapping.Comparer));
-            nullableEnum16AsString.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum16>(nullableEnum16AsString.TypeMapping.KeyComparer));
+            nullableEnum16AsString.SetComparer(new NullableValueComparer<CompiledModelTestBase.Enum16>(nullableEnum16AsString.TypeMapping.Comparer));
+            nullableEnum16AsString.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.Enum16>(nullableEnum16AsString.TypeMapping.KeyComparer));
 
             var nullableEnum32 = runtimeEntityType.AddProperty(
                 "NullableEnum32",
@@ -4463,8 +4463,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.Enum32, int>(
                         int (CompiledModelTestBase.Enum32 value) => ((int)(value)),
                         CompiledModelTestBase.Enum32 (int value) => ((CompiledModelTestBase.Enum32)(value)))));
-            nullableEnum32.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum32>(nullableEnum32.TypeMapping.Comparer));
-            nullableEnum32.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum32>(nullableEnum32.TypeMapping.KeyComparer));
+            nullableEnum32.SetComparer(new NullableValueComparer<CompiledModelTestBase.Enum32>(nullableEnum32.TypeMapping.Comparer));
+            nullableEnum32.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.Enum32>(nullableEnum32.TypeMapping.KeyComparer));
 
             var nullableEnum32AsString = runtimeEntityType.AddProperty(
                 "NullableEnum32AsString",
@@ -4514,8 +4514,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.Enum32, int>(
                         int (CompiledModelTestBase.Enum32 value) => ((int)(value)),
                         CompiledModelTestBase.Enum32 (int value) => ((CompiledModelTestBase.Enum32)(value)))));
-            nullableEnum32AsString.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum32>(nullableEnum32AsString.TypeMapping.Comparer));
-            nullableEnum32AsString.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum32>(nullableEnum32AsString.TypeMapping.KeyComparer));
+            nullableEnum32AsString.SetComparer(new NullableValueComparer<CompiledModelTestBase.Enum32>(nullableEnum32AsString.TypeMapping.Comparer));
+            nullableEnum32AsString.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.Enum32>(nullableEnum32AsString.TypeMapping.KeyComparer));
 
             var nullableEnum64 = runtimeEntityType.AddProperty(
                 "NullableEnum64",
@@ -4565,8 +4565,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.Enum64, long>(
                         long (CompiledModelTestBase.Enum64 value) => ((long)(value)),
                         CompiledModelTestBase.Enum64 (long value) => ((CompiledModelTestBase.Enum64)(value)))));
-            nullableEnum64.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum64>(nullableEnum64.TypeMapping.Comparer));
-            nullableEnum64.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum64>(nullableEnum64.TypeMapping.KeyComparer));
+            nullableEnum64.SetComparer(new NullableValueComparer<CompiledModelTestBase.Enum64>(nullableEnum64.TypeMapping.Comparer));
+            nullableEnum64.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.Enum64>(nullableEnum64.TypeMapping.KeyComparer));
 
             var nullableEnum64AsString = runtimeEntityType.AddProperty(
                 "NullableEnum64AsString",
@@ -4616,8 +4616,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.Enum64, long>(
                         long (CompiledModelTestBase.Enum64 value) => ((long)(value)),
                         CompiledModelTestBase.Enum64 (long value) => ((CompiledModelTestBase.Enum64)(value)))));
-            nullableEnum64AsString.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum64>(nullableEnum64AsString.TypeMapping.Comparer));
-            nullableEnum64AsString.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum64>(nullableEnum64AsString.TypeMapping.KeyComparer));
+            nullableEnum64AsString.SetComparer(new NullableValueComparer<CompiledModelTestBase.Enum64>(nullableEnum64AsString.TypeMapping.Comparer));
+            nullableEnum64AsString.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.Enum64>(nullableEnum64AsString.TypeMapping.KeyComparer));
 
             var nullableEnum8 = runtimeEntityType.AddProperty(
                 "NullableEnum8",
@@ -4667,8 +4667,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.Enum8, sbyte>(
                         sbyte (CompiledModelTestBase.Enum8 value) => ((sbyte)(value)),
                         CompiledModelTestBase.Enum8 (sbyte value) => ((CompiledModelTestBase.Enum8)(value)))));
-            nullableEnum8.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum8>(nullableEnum8.TypeMapping.Comparer));
-            nullableEnum8.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum8>(nullableEnum8.TypeMapping.KeyComparer));
+            nullableEnum8.SetComparer(new NullableValueComparer<CompiledModelTestBase.Enum8>(nullableEnum8.TypeMapping.Comparer));
+            nullableEnum8.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.Enum8>(nullableEnum8.TypeMapping.KeyComparer));
 
             var nullableEnum8AsString = runtimeEntityType.AddProperty(
                 "NullableEnum8AsString",
@@ -4718,8 +4718,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.Enum8, sbyte>(
                         sbyte (CompiledModelTestBase.Enum8 value) => ((sbyte)(value)),
                         CompiledModelTestBase.Enum8 (sbyte value) => ((CompiledModelTestBase.Enum8)(value)))));
-            nullableEnum8AsString.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum8>(nullableEnum8AsString.TypeMapping.Comparer));
-            nullableEnum8AsString.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.Enum8>(nullableEnum8AsString.TypeMapping.KeyComparer));
+            nullableEnum8AsString.SetComparer(new NullableValueComparer<CompiledModelTestBase.Enum8>(nullableEnum8AsString.TypeMapping.Comparer));
+            nullableEnum8AsString.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.Enum8>(nullableEnum8AsString.TypeMapping.KeyComparer));
 
             var nullableEnumU16 = runtimeEntityType.AddProperty(
                 "NullableEnumU16",
@@ -4769,8 +4769,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.EnumU16, ushort>(
                         ushort (CompiledModelTestBase.EnumU16 value) => ((ushort)(value)),
                         CompiledModelTestBase.EnumU16 (ushort value) => ((CompiledModelTestBase.EnumU16)(value)))));
-            nullableEnumU16.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU16>(nullableEnumU16.TypeMapping.Comparer));
-            nullableEnumU16.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU16>(nullableEnumU16.TypeMapping.KeyComparer));
+            nullableEnumU16.SetComparer(new NullableValueComparer<CompiledModelTestBase.EnumU16>(nullableEnumU16.TypeMapping.Comparer));
+            nullableEnumU16.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.EnumU16>(nullableEnumU16.TypeMapping.KeyComparer));
 
             var nullableEnumU16AsString = runtimeEntityType.AddProperty(
                 "NullableEnumU16AsString",
@@ -4820,8 +4820,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.EnumU16, ushort>(
                         ushort (CompiledModelTestBase.EnumU16 value) => ((ushort)(value)),
                         CompiledModelTestBase.EnumU16 (ushort value) => ((CompiledModelTestBase.EnumU16)(value)))));
-            nullableEnumU16AsString.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU16>(nullableEnumU16AsString.TypeMapping.Comparer));
-            nullableEnumU16AsString.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU16>(nullableEnumU16AsString.TypeMapping.KeyComparer));
+            nullableEnumU16AsString.SetComparer(new NullableValueComparer<CompiledModelTestBase.EnumU16>(nullableEnumU16AsString.TypeMapping.Comparer));
+            nullableEnumU16AsString.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.EnumU16>(nullableEnumU16AsString.TypeMapping.KeyComparer));
 
             var nullableEnumU32 = runtimeEntityType.AddProperty(
                 "NullableEnumU32",
@@ -4871,8 +4871,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.EnumU32, uint>(
                         uint (CompiledModelTestBase.EnumU32 value) => ((uint)(value)),
                         CompiledModelTestBase.EnumU32 (uint value) => ((CompiledModelTestBase.EnumU32)(value)))));
-            nullableEnumU32.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU32>(nullableEnumU32.TypeMapping.Comparer));
-            nullableEnumU32.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU32>(nullableEnumU32.TypeMapping.KeyComparer));
+            nullableEnumU32.SetComparer(new NullableValueComparer<CompiledModelTestBase.EnumU32>(nullableEnumU32.TypeMapping.Comparer));
+            nullableEnumU32.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.EnumU32>(nullableEnumU32.TypeMapping.KeyComparer));
 
             var nullableEnumU32AsString = runtimeEntityType.AddProperty(
                 "NullableEnumU32AsString",
@@ -4922,8 +4922,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.EnumU32, uint>(
                         uint (CompiledModelTestBase.EnumU32 value) => ((uint)(value)),
                         CompiledModelTestBase.EnumU32 (uint value) => ((CompiledModelTestBase.EnumU32)(value)))));
-            nullableEnumU32AsString.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU32>(nullableEnumU32AsString.TypeMapping.Comparer));
-            nullableEnumU32AsString.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU32>(nullableEnumU32AsString.TypeMapping.KeyComparer));
+            nullableEnumU32AsString.SetComparer(new NullableValueComparer<CompiledModelTestBase.EnumU32>(nullableEnumU32AsString.TypeMapping.Comparer));
+            nullableEnumU32AsString.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.EnumU32>(nullableEnumU32AsString.TypeMapping.KeyComparer));
 
             var nullableEnumU64 = runtimeEntityType.AddProperty(
                 "NullableEnumU64",
@@ -4973,8 +4973,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.EnumU64, ulong>(
                         ulong (CompiledModelTestBase.EnumU64 value) => ((ulong)(value)),
                         CompiledModelTestBase.EnumU64 (ulong value) => ((CompiledModelTestBase.EnumU64)(value)))));
-            nullableEnumU64.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU64>(nullableEnumU64.TypeMapping.Comparer));
-            nullableEnumU64.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU64>(nullableEnumU64.TypeMapping.KeyComparer));
+            nullableEnumU64.SetComparer(new NullableValueComparer<CompiledModelTestBase.EnumU64>(nullableEnumU64.TypeMapping.Comparer));
+            nullableEnumU64.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.EnumU64>(nullableEnumU64.TypeMapping.KeyComparer));
 
             var nullableEnumU64AsString = runtimeEntityType.AddProperty(
                 "NullableEnumU64AsString",
@@ -5024,8 +5024,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.EnumU64, ulong>(
                         ulong (CompiledModelTestBase.EnumU64 value) => ((ulong)(value)),
                         CompiledModelTestBase.EnumU64 (ulong value) => ((CompiledModelTestBase.EnumU64)(value)))));
-            nullableEnumU64AsString.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU64>(nullableEnumU64AsString.TypeMapping.Comparer));
-            nullableEnumU64AsString.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU64>(nullableEnumU64AsString.TypeMapping.KeyComparer));
+            nullableEnumU64AsString.SetComparer(new NullableValueComparer<CompiledModelTestBase.EnumU64>(nullableEnumU64AsString.TypeMapping.Comparer));
+            nullableEnumU64AsString.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.EnumU64>(nullableEnumU64AsString.TypeMapping.KeyComparer));
 
             var nullableEnumU8 = runtimeEntityType.AddProperty(
                 "NullableEnumU8",
@@ -5075,8 +5075,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.EnumU8, byte>(
                         byte (CompiledModelTestBase.EnumU8 value) => ((byte)(value)),
                         CompiledModelTestBase.EnumU8 (byte value) => ((CompiledModelTestBase.EnumU8)(value)))));
-            nullableEnumU8.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU8>(nullableEnumU8.TypeMapping.Comparer));
-            nullableEnumU8.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU8>(nullableEnumU8.TypeMapping.KeyComparer));
+            nullableEnumU8.SetComparer(new NullableValueComparer<CompiledModelTestBase.EnumU8>(nullableEnumU8.TypeMapping.Comparer));
+            nullableEnumU8.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.EnumU8>(nullableEnumU8.TypeMapping.KeyComparer));
 
             var nullableEnumU8AsString = runtimeEntityType.AddProperty(
                 "NullableEnumU8AsString",
@@ -5126,8 +5126,8 @@ namespace TestNamespace
                     new ValueConverter<CompiledModelTestBase.EnumU8, byte>(
                         byte (CompiledModelTestBase.EnumU8 value) => ((byte)(value)),
                         CompiledModelTestBase.EnumU8 (byte value) => ((CompiledModelTestBase.EnumU8)(value)))));
-            nullableEnumU8AsString.SetValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU8>(nullableEnumU8AsString.TypeMapping.Comparer));
-            nullableEnumU8AsString.SetKeyValueComparer(new NullableValueComparer<CompiledModelTestBase.EnumU8>(nullableEnumU8AsString.TypeMapping.KeyComparer));
+            nullableEnumU8AsString.SetComparer(new NullableValueComparer<CompiledModelTestBase.EnumU8>(nullableEnumU8AsString.TypeMapping.Comparer));
+            nullableEnumU8AsString.SetKeyComparer(new NullableValueComparer<CompiledModelTestBase.EnumU8>(nullableEnumU8AsString.TypeMapping.KeyComparer));
 
             var nullableFloat = runtimeEntityType.AddProperty(
                 "NullableFloat",
@@ -5171,8 +5171,8 @@ namespace TestNamespace
                     float (float v) => v),
                 clrType: typeof(float),
                 jsonValueReaderWriter: JsonFloatReaderWriter.Instance);
-            nullableFloat.SetValueComparer(new NullableValueComparer<float>(nullableFloat.TypeMapping.Comparer));
-            nullableFloat.SetKeyValueComparer(new NullableValueComparer<float>(nullableFloat.TypeMapping.KeyComparer));
+            nullableFloat.SetComparer(new NullableValueComparer<float>(nullableFloat.TypeMapping.Comparer));
+            nullableFloat.SetKeyComparer(new NullableValueComparer<float>(nullableFloat.TypeMapping.KeyComparer));
 
             var nullableFloatArray = runtimeEntityType.AddProperty(
                 "NullableFloatArray",
@@ -5280,8 +5280,8 @@ namespace TestNamespace
                     new ValueConverter<Guid, string>(
                         string (Guid v) => v.ToString("D"),
                         Guid (string v) => new Guid(v))));
-            nullableGuid.SetValueComparer(new NullableValueComparer<Guid>(nullableGuid.TypeMapping.Comparer));
-            nullableGuid.SetKeyValueComparer(new NullableValueComparer<Guid>(nullableGuid.TypeMapping.KeyComparer));
+            nullableGuid.SetComparer(new NullableValueComparer<Guid>(nullableGuid.TypeMapping.Comparer));
+            nullableGuid.SetKeyComparer(new NullableValueComparer<Guid>(nullableGuid.TypeMapping.KeyComparer));
 
             var nullableIPAddress = runtimeEntityType.AddProperty(
                 "NullableIPAddress",
@@ -5374,8 +5374,8 @@ namespace TestNamespace
                     short (short v) => v),
                 clrType: typeof(short),
                 jsonValueReaderWriter: JsonInt16ReaderWriter.Instance);
-            nullableInt16.SetValueComparer(new NullableValueComparer<short>(nullableInt16.TypeMapping.Comparer));
-            nullableInt16.SetKeyValueComparer(new NullableValueComparer<short>(nullableInt16.TypeMapping.KeyComparer));
+            nullableInt16.SetComparer(new NullableValueComparer<short>(nullableInt16.TypeMapping.Comparer));
+            nullableInt16.SetKeyComparer(new NullableValueComparer<short>(nullableInt16.TypeMapping.KeyComparer));
 
             var nullableInt16Array = runtimeEntityType.AddProperty(
                 "NullableInt16Array",
@@ -5477,8 +5477,8 @@ namespace TestNamespace
                     int (int v) => v),
                 clrType: typeof(int),
                 jsonValueReaderWriter: JsonInt32ReaderWriter.Instance);
-            nullableInt32.SetValueComparer(new NullableValueComparer<int>(nullableInt32.TypeMapping.Comparer));
-            nullableInt32.SetKeyValueComparer(new NullableValueComparer<int>(nullableInt32.TypeMapping.KeyComparer));
+            nullableInt32.SetComparer(new NullableValueComparer<int>(nullableInt32.TypeMapping.Comparer));
+            nullableInt32.SetKeyComparer(new NullableValueComparer<int>(nullableInt32.TypeMapping.KeyComparer));
 
             var nullableInt32Array = runtimeEntityType.AddProperty(
                 "NullableInt32Array",
@@ -5655,8 +5655,8 @@ namespace TestNamespace
                     long (long v) => v),
                 clrType: typeof(long),
                 jsonValueReaderWriter: JsonInt64ReaderWriter.Instance);
-            nullableInt64.SetValueComparer(new NullableValueComparer<long>(nullableInt64.TypeMapping.Comparer));
-            nullableInt64.SetKeyValueComparer(new NullableValueComparer<long>(nullableInt64.TypeMapping.KeyComparer));
+            nullableInt64.SetComparer(new NullableValueComparer<long>(nullableInt64.TypeMapping.Comparer));
+            nullableInt64.SetKeyComparer(new NullableValueComparer<long>(nullableInt64.TypeMapping.KeyComparer));
 
             var nullableInt64Array = runtimeEntityType.AddProperty(
                 "NullableInt64Array",
@@ -5851,8 +5851,8 @@ namespace TestNamespace
                     sbyte (sbyte v) => v),
                 clrType: typeof(sbyte),
                 jsonValueReaderWriter: JsonSByteReaderWriter.Instance);
-            nullableInt8.SetValueComparer(new NullableValueComparer<sbyte>(nullableInt8.TypeMapping.Comparer));
-            nullableInt8.SetKeyValueComparer(new NullableValueComparer<sbyte>(nullableInt8.TypeMapping.KeyComparer));
+            nullableInt8.SetComparer(new NullableValueComparer<sbyte>(nullableInt8.TypeMapping.Comparer));
+            nullableInt8.SetKeyComparer(new NullableValueComparer<sbyte>(nullableInt8.TypeMapping.KeyComparer));
 
             var nullableInt8Array = runtimeEntityType.AddProperty(
                 "NullableInt8Array",
@@ -6179,8 +6179,8 @@ namespace TestNamespace
                     TimeOnly (TimeOnly v) => v),
                 clrType: typeof(TimeOnly),
                 jsonValueReaderWriter: JsonTimeOnlyReaderWriter.Instance);
-            nullableTimeOnly.SetValueComparer(new NullableValueComparer<TimeOnly>(nullableTimeOnly.TypeMapping.Comparer));
-            nullableTimeOnly.SetKeyValueComparer(new NullableValueComparer<TimeOnly>(nullableTimeOnly.TypeMapping.KeyComparer));
+            nullableTimeOnly.SetComparer(new NullableValueComparer<TimeOnly>(nullableTimeOnly.TypeMapping.Comparer));
+            nullableTimeOnly.SetKeyComparer(new NullableValueComparer<TimeOnly>(nullableTimeOnly.TypeMapping.KeyComparer));
 
             var nullableTimeSpan = runtimeEntityType.AddProperty(
                 "NullableTimeSpan",
@@ -6224,8 +6224,8 @@ namespace TestNamespace
                     TimeSpan (TimeSpan v) => v),
                 clrType: typeof(TimeSpan),
                 jsonValueReaderWriter: JsonTimeSpanReaderWriter.Instance);
-            nullableTimeSpan.SetValueComparer(new NullableValueComparer<TimeSpan>(nullableTimeSpan.TypeMapping.Comparer));
-            nullableTimeSpan.SetKeyValueComparer(new NullableValueComparer<TimeSpan>(nullableTimeSpan.TypeMapping.KeyComparer));
+            nullableTimeSpan.SetComparer(new NullableValueComparer<TimeSpan>(nullableTimeSpan.TypeMapping.Comparer));
+            nullableTimeSpan.SetKeyComparer(new NullableValueComparer<TimeSpan>(nullableTimeSpan.TypeMapping.KeyComparer));
 
             var nullableUInt16 = runtimeEntityType.AddProperty(
                 "NullableUInt16",
@@ -6269,8 +6269,8 @@ namespace TestNamespace
                     ushort (ushort v) => v),
                 clrType: typeof(ushort),
                 jsonValueReaderWriter: JsonUInt16ReaderWriter.Instance);
-            nullableUInt16.SetValueComparer(new NullableValueComparer<ushort>(nullableUInt16.TypeMapping.Comparer));
-            nullableUInt16.SetKeyValueComparer(new NullableValueComparer<ushort>(nullableUInt16.TypeMapping.KeyComparer));
+            nullableUInt16.SetComparer(new NullableValueComparer<ushort>(nullableUInt16.TypeMapping.Comparer));
+            nullableUInt16.SetKeyComparer(new NullableValueComparer<ushort>(nullableUInt16.TypeMapping.KeyComparer));
 
             var nullableUInt16Array = runtimeEntityType.AddProperty(
                 "NullableUInt16Array",
@@ -6372,8 +6372,8 @@ namespace TestNamespace
                     uint (uint v) => v),
                 clrType: typeof(uint),
                 jsonValueReaderWriter: JsonUInt32ReaderWriter.Instance);
-            nullableUInt32.SetValueComparer(new NullableValueComparer<uint>(nullableUInt32.TypeMapping.Comparer));
-            nullableUInt32.SetKeyValueComparer(new NullableValueComparer<uint>(nullableUInt32.TypeMapping.KeyComparer));
+            nullableUInt32.SetComparer(new NullableValueComparer<uint>(nullableUInt32.TypeMapping.Comparer));
+            nullableUInt32.SetKeyComparer(new NullableValueComparer<uint>(nullableUInt32.TypeMapping.KeyComparer));
 
             var nullableUInt32Array = runtimeEntityType.AddProperty(
                 "NullableUInt32Array",
@@ -6475,8 +6475,8 @@ namespace TestNamespace
                     ulong (ulong v) => v),
                 clrType: typeof(ulong),
                 jsonValueReaderWriter: JsonUInt64ReaderWriter.Instance);
-            nullableUInt64.SetValueComparer(new NullableValueComparer<ulong>(nullableUInt64.TypeMapping.Comparer));
-            nullableUInt64.SetKeyValueComparer(new NullableValueComparer<ulong>(nullableUInt64.TypeMapping.KeyComparer));
+            nullableUInt64.SetComparer(new NullableValueComparer<ulong>(nullableUInt64.TypeMapping.Comparer));
+            nullableUInt64.SetKeyComparer(new NullableValueComparer<ulong>(nullableUInt64.TypeMapping.KeyComparer));
 
             var nullableUInt64Array = runtimeEntityType.AddProperty(
                 "NullableUInt64Array",
@@ -6578,8 +6578,8 @@ namespace TestNamespace
                     byte (byte v) => v),
                 clrType: typeof(byte),
                 jsonValueReaderWriter: JsonByteReaderWriter.Instance);
-            nullableUInt8.SetValueComparer(new NullableValueComparer<byte>(nullableUInt8.TypeMapping.Comparer));
-            nullableUInt8.SetKeyValueComparer(new NullableValueComparer<byte>(nullableUInt8.TypeMapping.KeyComparer));
+            nullableUInt8.SetComparer(new NullableValueComparer<byte>(nullableUInt8.TypeMapping.Comparer));
+            nullableUInt8.SetKeyComparer(new NullableValueComparer<byte>(nullableUInt8.TypeMapping.KeyComparer));
 
             var nullableUInt8Array = runtimeEntityType.AddProperty(
                 "NullableUInt8Array",
@@ -8474,13 +8474,13 @@ namespace TestNamespace
                 string (InternalEntityEntry entry) => entry.ReadShadowValue<string>(1),
                 string (InternalEntityEntry entry) => entry.ReadShadowValue<string>(1),
                 string (InternalEntityEntry entry) => entry.ReadOriginalValue<string>(__id, 164),
-                string (InternalEntityEntry entry) => entry.ReadRelationshipSnapshotValue<string>(__id, 1),
+                string (InternalEntityEntry entry) => entry.GetCurrentValue<string>(__id),
                 object (ValueBuffer valueBuffer) => valueBuffer[164]);
             __id.SetPropertyIndexes(
                 index: 164,
                 originalValueIndex: 164,
                 shadowIndex: 1,
-                relationshipIndex: 1,
+                relationshipIndex: -1,
                 storeGenerationIndex: -1);
             __id.TypeMapping = CosmosTypeMapping.Default.Clone(
                 comparer: new ValueComparer<string>(
@@ -8497,7 +8497,6 @@ namespace TestNamespace
                     string (string v) => v),
                 clrType: typeof(string),
                 jsonValueReaderWriter: JsonStringReaderWriter.Instance);
-            __id.SetCurrentValueComparer(new EntryCurrentValueComparer<string>(__id));
             __id.AddAnnotation("Cosmos:PropertyName", "id");
 
             var __jObject = runtimeEntityType.AddProperty(
@@ -8539,191 +8538,185 @@ namespace TestNamespace
                 new[] { id });
             runtimeEntityType.SetPrimaryKey(key);
 
-            var key0 = runtimeEntityType.AddKey(
-                new[] { __id });
-
             return runtimeEntityType;
         }
 
         public static void CreateAnnotations(RuntimeEntityType runtimeEntityType)
         {
-            var id = runtimeEntityType.FindProperty("Id")!;
-            var @bool = runtimeEntityType.FindProperty("Bool")!;
-            var boolArray = runtimeEntityType.FindProperty("BoolArray")!;
-            var boolNestedCollection = runtimeEntityType.FindProperty("BoolNestedCollection")!;
-            var boolToStringConverterProperty = runtimeEntityType.FindProperty("BoolToStringConverterProperty")!;
-            var boolToTwoValuesConverterProperty = runtimeEntityType.FindProperty("BoolToTwoValuesConverterProperty")!;
-            var boolToZeroOneConverterProperty = runtimeEntityType.FindProperty("BoolToZeroOneConverterProperty")!;
-            var bytes = runtimeEntityType.FindProperty("Bytes")!;
-            var bytesToStringConverterProperty = runtimeEntityType.FindProperty("BytesToStringConverterProperty")!;
-            var castingConverterProperty = runtimeEntityType.FindProperty("CastingConverterProperty")!;
-            var @char = runtimeEntityType.FindProperty("Char")!;
-            var charArray = runtimeEntityType.FindProperty("CharArray")!;
-            var charNestedCollection = runtimeEntityType.FindProperty("CharNestedCollection")!;
-            var charToStringConverterProperty = runtimeEntityType.FindProperty("CharToStringConverterProperty")!;
-            var dateOnly = runtimeEntityType.FindProperty("DateOnly")!;
-            var dateOnlyToStringConverterProperty = runtimeEntityType.FindProperty("DateOnlyToStringConverterProperty")!;
-            var dateTime = runtimeEntityType.FindProperty("DateTime")!;
-            var dateTimeOffsetToBinaryConverterProperty = runtimeEntityType.FindProperty("DateTimeOffsetToBinaryConverterProperty")!;
-            var dateTimeOffsetToBytesConverterProperty = runtimeEntityType.FindProperty("DateTimeOffsetToBytesConverterProperty")!;
-            var dateTimeOffsetToStringConverterProperty = runtimeEntityType.FindProperty("DateTimeOffsetToStringConverterProperty")!;
-            var dateTimeToBinaryConverterProperty = runtimeEntityType.FindProperty("DateTimeToBinaryConverterProperty")!;
-            var dateTimeToStringConverterProperty = runtimeEntityType.FindProperty("DateTimeToStringConverterProperty")!;
-            var dateTimeToTicksConverterProperty = runtimeEntityType.FindProperty("DateTimeToTicksConverterProperty")!;
-            var @decimal = runtimeEntityType.FindProperty("Decimal")!;
-            var decimalArray = runtimeEntityType.FindProperty("DecimalArray")!;
-            var decimalNumberToBytesConverterProperty = runtimeEntityType.FindProperty("DecimalNumberToBytesConverterProperty")!;
-            var decimalNumberToStringConverterProperty = runtimeEntityType.FindProperty("DecimalNumberToStringConverterProperty")!;
-            var discriminator = runtimeEntityType.FindProperty("Discriminator")!;
-            var @double = runtimeEntityType.FindProperty("Double")!;
-            var doubleArray = runtimeEntityType.FindProperty("DoubleArray")!;
-            var doubleNumberToBytesConverterProperty = runtimeEntityType.FindProperty("DoubleNumberToBytesConverterProperty")!;
-            var doubleNumberToStringConverterProperty = runtimeEntityType.FindProperty("DoubleNumberToStringConverterProperty")!;
-            var enum16 = runtimeEntityType.FindProperty("Enum16")!;
-            var enum16AsString = runtimeEntityType.FindProperty("Enum16AsString")!;
-            var enum32 = runtimeEntityType.FindProperty("Enum32")!;
-            var enum32AsString = runtimeEntityType.FindProperty("Enum32AsString")!;
-            var enum64 = runtimeEntityType.FindProperty("Enum64")!;
-            var enum64AsString = runtimeEntityType.FindProperty("Enum64AsString")!;
-            var enum8 = runtimeEntityType.FindProperty("Enum8")!;
-            var enum8AsString = runtimeEntityType.FindProperty("Enum8AsString")!;
-            var enumToNumberConverterProperty = runtimeEntityType.FindProperty("EnumToNumberConverterProperty")!;
-            var enumToStringConverterProperty = runtimeEntityType.FindProperty("EnumToStringConverterProperty")!;
-            var enumU16 = runtimeEntityType.FindProperty("EnumU16")!;
-            var enumU16AsString = runtimeEntityType.FindProperty("EnumU16AsString")!;
-            var enumU32 = runtimeEntityType.FindProperty("EnumU32")!;
-            var enumU32AsString = runtimeEntityType.FindProperty("EnumU32AsString")!;
-            var enumU64 = runtimeEntityType.FindProperty("EnumU64")!;
-            var enumU64AsString = runtimeEntityType.FindProperty("EnumU64AsString")!;
-            var enumU8 = runtimeEntityType.FindProperty("EnumU8")!;
-            var enumU8AsString = runtimeEntityType.FindProperty("EnumU8AsString")!;
-            var @float = runtimeEntityType.FindProperty("Float")!;
-            var floatArray = runtimeEntityType.FindProperty("FloatArray")!;
-            var guid = runtimeEntityType.FindProperty("Guid")!;
-            var guidToBytesConverterProperty = runtimeEntityType.FindProperty("GuidToBytesConverterProperty")!;
-            var guidToStringConverterProperty = runtimeEntityType.FindProperty("GuidToStringConverterProperty")!;
-            var iPAddress = runtimeEntityType.FindProperty("IPAddress")!;
-            var iPAddressToBytesConverterProperty = runtimeEntityType.FindProperty("IPAddressToBytesConverterProperty")!;
-            var iPAddressToStringConverterProperty = runtimeEntityType.FindProperty("IPAddressToStringConverterProperty")!;
-            var int16 = runtimeEntityType.FindProperty("Int16")!;
-            var int16Array = runtimeEntityType.FindProperty("Int16Array")!;
-            var int32 = runtimeEntityType.FindProperty("Int32")!;
-            var int32Array = runtimeEntityType.FindProperty("Int32Array")!;
-            var int32NestedCollection = runtimeEntityType.FindProperty("Int32NestedCollection")!;
-            var int64 = runtimeEntityType.FindProperty("Int64")!;
-            var int64Array = runtimeEntityType.FindProperty("Int64Array")!;
-            var int64NestedCollection = runtimeEntityType.FindProperty("Int64NestedCollection")!;
-            var int8 = runtimeEntityType.FindProperty("Int8")!;
-            var int8Array = runtimeEntityType.FindProperty("Int8Array")!;
-            var int8NestedCollection = runtimeEntityType.FindProperty("Int8NestedCollection")!;
-            var intNumberToBytesConverterProperty = runtimeEntityType.FindProperty("IntNumberToBytesConverterProperty")!;
-            var intNumberToStringConverterProperty = runtimeEntityType.FindProperty("IntNumberToStringConverterProperty")!;
-            var nullIntToNullStringConverterProperty = runtimeEntityType.FindProperty("NullIntToNullStringConverterProperty")!;
-            var nullableBool = runtimeEntityType.FindProperty("NullableBool")!;
-            var nullableBoolArray = runtimeEntityType.FindProperty("NullableBoolArray")!;
-            var nullableBytes = runtimeEntityType.FindProperty("NullableBytes")!;
-            var nullableChar = runtimeEntityType.FindProperty("NullableChar")!;
-            var nullableCharArray = runtimeEntityType.FindProperty("NullableCharArray")!;
-            var nullableDateOnly = runtimeEntityType.FindProperty("NullableDateOnly")!;
-            var nullableDateTime = runtimeEntityType.FindProperty("NullableDateTime")!;
-            var nullableDecimal = runtimeEntityType.FindProperty("NullableDecimal")!;
-            var nullableDecimalArray = runtimeEntityType.FindProperty("NullableDecimalArray")!;
-            var nullableDouble = runtimeEntityType.FindProperty("NullableDouble")!;
-            var nullableDoubleArray = runtimeEntityType.FindProperty("NullableDoubleArray")!;
-            var nullableEnum16 = runtimeEntityType.FindProperty("NullableEnum16")!;
-            var nullableEnum16AsString = runtimeEntityType.FindProperty("NullableEnum16AsString")!;
-            var nullableEnum32 = runtimeEntityType.FindProperty("NullableEnum32")!;
-            var nullableEnum32AsString = runtimeEntityType.FindProperty("NullableEnum32AsString")!;
-            var nullableEnum64 = runtimeEntityType.FindProperty("NullableEnum64")!;
-            var nullableEnum64AsString = runtimeEntityType.FindProperty("NullableEnum64AsString")!;
-            var nullableEnum8 = runtimeEntityType.FindProperty("NullableEnum8")!;
-            var nullableEnum8AsString = runtimeEntityType.FindProperty("NullableEnum8AsString")!;
-            var nullableEnumU16 = runtimeEntityType.FindProperty("NullableEnumU16")!;
-            var nullableEnumU16AsString = runtimeEntityType.FindProperty("NullableEnumU16AsString")!;
-            var nullableEnumU32 = runtimeEntityType.FindProperty("NullableEnumU32")!;
-            var nullableEnumU32AsString = runtimeEntityType.FindProperty("NullableEnumU32AsString")!;
-            var nullableEnumU64 = runtimeEntityType.FindProperty("NullableEnumU64")!;
-            var nullableEnumU64AsString = runtimeEntityType.FindProperty("NullableEnumU64AsString")!;
-            var nullableEnumU8 = runtimeEntityType.FindProperty("NullableEnumU8")!;
-            var nullableEnumU8AsString = runtimeEntityType.FindProperty("NullableEnumU8AsString")!;
-            var nullableFloat = runtimeEntityType.FindProperty("NullableFloat")!;
-            var nullableFloatArray = runtimeEntityType.FindProperty("NullableFloatArray")!;
-            var nullableGuid = runtimeEntityType.FindProperty("NullableGuid")!;
-            var nullableIPAddress = runtimeEntityType.FindProperty("NullableIPAddress")!;
-            var nullableInt16 = runtimeEntityType.FindProperty("NullableInt16")!;
-            var nullableInt16Array = runtimeEntityType.FindProperty("NullableInt16Array")!;
-            var nullableInt32 = runtimeEntityType.FindProperty("NullableInt32")!;
-            var nullableInt32Array = runtimeEntityType.FindProperty("NullableInt32Array")!;
-            var nullableInt32NestedCollection = runtimeEntityType.FindProperty("NullableInt32NestedCollection")!;
-            var nullableInt64 = runtimeEntityType.FindProperty("NullableInt64")!;
-            var nullableInt64Array = runtimeEntityType.FindProperty("NullableInt64Array")!;
-            var nullableInt64NestedCollection = runtimeEntityType.FindProperty("NullableInt64NestedCollection")!;
-            var nullableInt8 = runtimeEntityType.FindProperty("NullableInt8")!;
-            var nullableInt8Array = runtimeEntityType.FindProperty("NullableInt8Array")!;
-            var nullablePhysicalAddress = runtimeEntityType.FindProperty("NullablePhysicalAddress")!;
-            var nullableString = runtimeEntityType.FindProperty("NullableString")!;
-            var nullableStringArray = runtimeEntityType.FindProperty("NullableStringArray")!;
-            var nullableStringNestedCollection = runtimeEntityType.FindProperty("NullableStringNestedCollection")!;
-            var nullableTimeOnly = runtimeEntityType.FindProperty("NullableTimeOnly")!;
-            var nullableTimeSpan = runtimeEntityType.FindProperty("NullableTimeSpan")!;
-            var nullableUInt16 = runtimeEntityType.FindProperty("NullableUInt16")!;
-            var nullableUInt16Array = runtimeEntityType.FindProperty("NullableUInt16Array")!;
-            var nullableUInt32 = runtimeEntityType.FindProperty("NullableUInt32")!;
-            var nullableUInt32Array = runtimeEntityType.FindProperty("NullableUInt32Array")!;
-            var nullableUInt64 = runtimeEntityType.FindProperty("NullableUInt64")!;
-            var nullableUInt64Array = runtimeEntityType.FindProperty("NullableUInt64Array")!;
-            var nullableUInt8 = runtimeEntityType.FindProperty("NullableUInt8")!;
-            var nullableUInt8Array = runtimeEntityType.FindProperty("NullableUInt8Array")!;
-            var nullableUri = runtimeEntityType.FindProperty("NullableUri")!;
-            var physicalAddress = runtimeEntityType.FindProperty("PhysicalAddress")!;
-            var physicalAddressToBytesConverterProperty = runtimeEntityType.FindProperty("PhysicalAddressToBytesConverterProperty")!;
-            var physicalAddressToStringConverterProperty = runtimeEntityType.FindProperty("PhysicalAddressToStringConverterProperty")!;
-            var @string = runtimeEntityType.FindProperty("String")!;
-            var stringArray = runtimeEntityType.FindProperty("StringArray")!;
-            var stringNestedCollection = runtimeEntityType.FindProperty("StringNestedCollection")!;
-            var stringToBoolConverterProperty = runtimeEntityType.FindProperty("StringToBoolConverterProperty")!;
-            var stringToBytesConverterProperty = runtimeEntityType.FindProperty("StringToBytesConverterProperty")!;
-            var stringToCharConverterProperty = runtimeEntityType.FindProperty("StringToCharConverterProperty")!;
-            var stringToDateOnlyConverterProperty = runtimeEntityType.FindProperty("StringToDateOnlyConverterProperty")!;
-            var stringToDateTimeConverterProperty = runtimeEntityType.FindProperty("StringToDateTimeConverterProperty")!;
-            var stringToDateTimeOffsetConverterProperty = runtimeEntityType.FindProperty("StringToDateTimeOffsetConverterProperty")!;
-            var stringToDecimalNumberConverterProperty = runtimeEntityType.FindProperty("StringToDecimalNumberConverterProperty")!;
-            var stringToDoubleNumberConverterProperty = runtimeEntityType.FindProperty("StringToDoubleNumberConverterProperty")!;
-            var stringToEnumConverterProperty = runtimeEntityType.FindProperty("StringToEnumConverterProperty")!;
-            var stringToGuidConverterProperty = runtimeEntityType.FindProperty("StringToGuidConverterProperty")!;
-            var stringToIntNumberConverterProperty = runtimeEntityType.FindProperty("StringToIntNumberConverterProperty")!;
-            var stringToTimeOnlyConverterProperty = runtimeEntityType.FindProperty("StringToTimeOnlyConverterProperty")!;
-            var stringToTimeSpanConverterProperty = runtimeEntityType.FindProperty("StringToTimeSpanConverterProperty")!;
-            var stringToUriConverterProperty = runtimeEntityType.FindProperty("StringToUriConverterProperty")!;
-            var timeOnly = runtimeEntityType.FindProperty("TimeOnly")!;
-            var timeOnlyToStringConverterProperty = runtimeEntityType.FindProperty("TimeOnlyToStringConverterProperty")!;
-            var timeOnlyToTicksConverterProperty = runtimeEntityType.FindProperty("TimeOnlyToTicksConverterProperty")!;
-            var timeSpan = runtimeEntityType.FindProperty("TimeSpan")!;
-            var timeSpanToStringConverterProperty = runtimeEntityType.FindProperty("TimeSpanToStringConverterProperty")!;
-            var timeSpanToTicksConverterProperty = runtimeEntityType.FindProperty("TimeSpanToTicksConverterProperty")!;
-            var uInt16 = runtimeEntityType.FindProperty("UInt16")!;
-            var uInt16Array = runtimeEntityType.FindProperty("UInt16Array")!;
-            var uInt32 = runtimeEntityType.FindProperty("UInt32")!;
-            var uInt32Array = runtimeEntityType.FindProperty("UInt32Array")!;
-            var uInt64 = runtimeEntityType.FindProperty("UInt64")!;
-            var uInt64Array = runtimeEntityType.FindProperty("UInt64Array")!;
-            var uInt8 = runtimeEntityType.FindProperty("UInt8")!;
-            var uInt8Array = runtimeEntityType.FindProperty("UInt8Array")!;
-            var uri = runtimeEntityType.FindProperty("Uri")!;
-            var uriToStringConverterProperty = runtimeEntityType.FindProperty("UriToStringConverterProperty")!;
-            var __id = runtimeEntityType.FindProperty("__id")!;
-            var __jObject = runtimeEntityType.FindProperty("__jObject")!;
+            var id = runtimeEntityType.FindProperty("Id");
+            var type = runtimeEntityType.FindProperty("$type");
+            var @bool = runtimeEntityType.FindProperty("Bool");
+            var boolArray = runtimeEntityType.FindProperty("BoolArray");
+            var boolNestedCollection = runtimeEntityType.FindProperty("BoolNestedCollection");
+            var boolToStringConverterProperty = runtimeEntityType.FindProperty("BoolToStringConverterProperty");
+            var boolToTwoValuesConverterProperty = runtimeEntityType.FindProperty("BoolToTwoValuesConverterProperty");
+            var boolToZeroOneConverterProperty = runtimeEntityType.FindProperty("BoolToZeroOneConverterProperty");
+            var bytes = runtimeEntityType.FindProperty("Bytes");
+            var bytesToStringConverterProperty = runtimeEntityType.FindProperty("BytesToStringConverterProperty");
+            var castingConverterProperty = runtimeEntityType.FindProperty("CastingConverterProperty");
+            var @char = runtimeEntityType.FindProperty("Char");
+            var charArray = runtimeEntityType.FindProperty("CharArray");
+            var charNestedCollection = runtimeEntityType.FindProperty("CharNestedCollection");
+            var charToStringConverterProperty = runtimeEntityType.FindProperty("CharToStringConverterProperty");
+            var dateOnly = runtimeEntityType.FindProperty("DateOnly");
+            var dateOnlyToStringConverterProperty = runtimeEntityType.FindProperty("DateOnlyToStringConverterProperty");
+            var dateTime = runtimeEntityType.FindProperty("DateTime");
+            var dateTimeOffsetToBinaryConverterProperty = runtimeEntityType.FindProperty("DateTimeOffsetToBinaryConverterProperty");
+            var dateTimeOffsetToBytesConverterProperty = runtimeEntityType.FindProperty("DateTimeOffsetToBytesConverterProperty");
+            var dateTimeOffsetToStringConverterProperty = runtimeEntityType.FindProperty("DateTimeOffsetToStringConverterProperty");
+            var dateTimeToBinaryConverterProperty = runtimeEntityType.FindProperty("DateTimeToBinaryConverterProperty");
+            var dateTimeToStringConverterProperty = runtimeEntityType.FindProperty("DateTimeToStringConverterProperty");
+            var dateTimeToTicksConverterProperty = runtimeEntityType.FindProperty("DateTimeToTicksConverterProperty");
+            var @decimal = runtimeEntityType.FindProperty("Decimal");
+            var decimalArray = runtimeEntityType.FindProperty("DecimalArray");
+            var decimalNumberToBytesConverterProperty = runtimeEntityType.FindProperty("DecimalNumberToBytesConverterProperty");
+            var decimalNumberToStringConverterProperty = runtimeEntityType.FindProperty("DecimalNumberToStringConverterProperty");
+            var @double = runtimeEntityType.FindProperty("Double");
+            var doubleArray = runtimeEntityType.FindProperty("DoubleArray");
+            var doubleNumberToBytesConverterProperty = runtimeEntityType.FindProperty("DoubleNumberToBytesConverterProperty");
+            var doubleNumberToStringConverterProperty = runtimeEntityType.FindProperty("DoubleNumberToStringConverterProperty");
+            var enum16 = runtimeEntityType.FindProperty("Enum16");
+            var enum16AsString = runtimeEntityType.FindProperty("Enum16AsString");
+            var enum32 = runtimeEntityType.FindProperty("Enum32");
+            var enum32AsString = runtimeEntityType.FindProperty("Enum32AsString");
+            var enum64 = runtimeEntityType.FindProperty("Enum64");
+            var enum64AsString = runtimeEntityType.FindProperty("Enum64AsString");
+            var enum8 = runtimeEntityType.FindProperty("Enum8");
+            var enum8AsString = runtimeEntityType.FindProperty("Enum8AsString");
+            var enumToNumberConverterProperty = runtimeEntityType.FindProperty("EnumToNumberConverterProperty");
+            var enumToStringConverterProperty = runtimeEntityType.FindProperty("EnumToStringConverterProperty");
+            var enumU16 = runtimeEntityType.FindProperty("EnumU16");
+            var enumU16AsString = runtimeEntityType.FindProperty("EnumU16AsString");
+            var enumU32 = runtimeEntityType.FindProperty("EnumU32");
+            var enumU32AsString = runtimeEntityType.FindProperty("EnumU32AsString");
+            var enumU64 = runtimeEntityType.FindProperty("EnumU64");
+            var enumU64AsString = runtimeEntityType.FindProperty("EnumU64AsString");
+            var enumU8 = runtimeEntityType.FindProperty("EnumU8");
+            var enumU8AsString = runtimeEntityType.FindProperty("EnumU8AsString");
+            var @float = runtimeEntityType.FindProperty("Float");
+            var floatArray = runtimeEntityType.FindProperty("FloatArray");
+            var guid = runtimeEntityType.FindProperty("Guid");
+            var guidToBytesConverterProperty = runtimeEntityType.FindProperty("GuidToBytesConverterProperty");
+            var guidToStringConverterProperty = runtimeEntityType.FindProperty("GuidToStringConverterProperty");
+            var iPAddress = runtimeEntityType.FindProperty("IPAddress");
+            var iPAddressToBytesConverterProperty = runtimeEntityType.FindProperty("IPAddressToBytesConverterProperty");
+            var iPAddressToStringConverterProperty = runtimeEntityType.FindProperty("IPAddressToStringConverterProperty");
+            var int16 = runtimeEntityType.FindProperty("Int16");
+            var int16Array = runtimeEntityType.FindProperty("Int16Array");
+            var int32 = runtimeEntityType.FindProperty("Int32");
+            var int32Array = runtimeEntityType.FindProperty("Int32Array");
+            var int32NestedCollection = runtimeEntityType.FindProperty("Int32NestedCollection");
+            var int64 = runtimeEntityType.FindProperty("Int64");
+            var int64Array = runtimeEntityType.FindProperty("Int64Array");
+            var int64NestedCollection = runtimeEntityType.FindProperty("Int64NestedCollection");
+            var int8 = runtimeEntityType.FindProperty("Int8");
+            var int8Array = runtimeEntityType.FindProperty("Int8Array");
+            var int8NestedCollection = runtimeEntityType.FindProperty("Int8NestedCollection");
+            var intNumberToBytesConverterProperty = runtimeEntityType.FindProperty("IntNumberToBytesConverterProperty");
+            var intNumberToStringConverterProperty = runtimeEntityType.FindProperty("IntNumberToStringConverterProperty");
+            var nullIntToNullStringConverterProperty = runtimeEntityType.FindProperty("NullIntToNullStringConverterProperty");
+            var nullableBool = runtimeEntityType.FindProperty("NullableBool");
+            var nullableBoolArray = runtimeEntityType.FindProperty("NullableBoolArray");
+            var nullableBytes = runtimeEntityType.FindProperty("NullableBytes");
+            var nullableChar = runtimeEntityType.FindProperty("NullableChar");
+            var nullableCharArray = runtimeEntityType.FindProperty("NullableCharArray");
+            var nullableDateOnly = runtimeEntityType.FindProperty("NullableDateOnly");
+            var nullableDateTime = runtimeEntityType.FindProperty("NullableDateTime");
+            var nullableDecimal = runtimeEntityType.FindProperty("NullableDecimal");
+            var nullableDecimalArray = runtimeEntityType.FindProperty("NullableDecimalArray");
+            var nullableDouble = runtimeEntityType.FindProperty("NullableDouble");
+            var nullableDoubleArray = runtimeEntityType.FindProperty("NullableDoubleArray");
+            var nullableEnum16 = runtimeEntityType.FindProperty("NullableEnum16");
+            var nullableEnum16AsString = runtimeEntityType.FindProperty("NullableEnum16AsString");
+            var nullableEnum32 = runtimeEntityType.FindProperty("NullableEnum32");
+            var nullableEnum32AsString = runtimeEntityType.FindProperty("NullableEnum32AsString");
+            var nullableEnum64 = runtimeEntityType.FindProperty("NullableEnum64");
+            var nullableEnum64AsString = runtimeEntityType.FindProperty("NullableEnum64AsString");
+            var nullableEnum8 = runtimeEntityType.FindProperty("NullableEnum8");
+            var nullableEnum8AsString = runtimeEntityType.FindProperty("NullableEnum8AsString");
+            var nullableEnumU16 = runtimeEntityType.FindProperty("NullableEnumU16");
+            var nullableEnumU16AsString = runtimeEntityType.FindProperty("NullableEnumU16AsString");
+            var nullableEnumU32 = runtimeEntityType.FindProperty("NullableEnumU32");
+            var nullableEnumU32AsString = runtimeEntityType.FindProperty("NullableEnumU32AsString");
+            var nullableEnumU64 = runtimeEntityType.FindProperty("NullableEnumU64");
+            var nullableEnumU64AsString = runtimeEntityType.FindProperty("NullableEnumU64AsString");
+            var nullableEnumU8 = runtimeEntityType.FindProperty("NullableEnumU8");
+            var nullableEnumU8AsString = runtimeEntityType.FindProperty("NullableEnumU8AsString");
+            var nullableFloat = runtimeEntityType.FindProperty("NullableFloat");
+            var nullableFloatArray = runtimeEntityType.FindProperty("NullableFloatArray");
+            var nullableGuid = runtimeEntityType.FindProperty("NullableGuid");
+            var nullableIPAddress = runtimeEntityType.FindProperty("NullableIPAddress");
+            var nullableInt16 = runtimeEntityType.FindProperty("NullableInt16");
+            var nullableInt16Array = runtimeEntityType.FindProperty("NullableInt16Array");
+            var nullableInt32 = runtimeEntityType.FindProperty("NullableInt32");
+            var nullableInt32Array = runtimeEntityType.FindProperty("NullableInt32Array");
+            var nullableInt32NestedCollection = runtimeEntityType.FindProperty("NullableInt32NestedCollection");
+            var nullableInt64 = runtimeEntityType.FindProperty("NullableInt64");
+            var nullableInt64Array = runtimeEntityType.FindProperty("NullableInt64Array");
+            var nullableInt64NestedCollection = runtimeEntityType.FindProperty("NullableInt64NestedCollection");
+            var nullableInt8 = runtimeEntityType.FindProperty("NullableInt8");
+            var nullableInt8Array = runtimeEntityType.FindProperty("NullableInt8Array");
+            var nullablePhysicalAddress = runtimeEntityType.FindProperty("NullablePhysicalAddress");
+            var nullableString = runtimeEntityType.FindProperty("NullableString");
+            var nullableStringArray = runtimeEntityType.FindProperty("NullableStringArray");
+            var nullableStringNestedCollection = runtimeEntityType.FindProperty("NullableStringNestedCollection");
+            var nullableTimeOnly = runtimeEntityType.FindProperty("NullableTimeOnly");
+            var nullableTimeSpan = runtimeEntityType.FindProperty("NullableTimeSpan");
+            var nullableUInt16 = runtimeEntityType.FindProperty("NullableUInt16");
+            var nullableUInt16Array = runtimeEntityType.FindProperty("NullableUInt16Array");
+            var nullableUInt32 = runtimeEntityType.FindProperty("NullableUInt32");
+            var nullableUInt32Array = runtimeEntityType.FindProperty("NullableUInt32Array");
+            var nullableUInt64 = runtimeEntityType.FindProperty("NullableUInt64");
+            var nullableUInt64Array = runtimeEntityType.FindProperty("NullableUInt64Array");
+            var nullableUInt8 = runtimeEntityType.FindProperty("NullableUInt8");
+            var nullableUInt8Array = runtimeEntityType.FindProperty("NullableUInt8Array");
+            var nullableUri = runtimeEntityType.FindProperty("NullableUri");
+            var physicalAddress = runtimeEntityType.FindProperty("PhysicalAddress");
+            var physicalAddressToBytesConverterProperty = runtimeEntityType.FindProperty("PhysicalAddressToBytesConverterProperty");
+            var physicalAddressToStringConverterProperty = runtimeEntityType.FindProperty("PhysicalAddressToStringConverterProperty");
+            var @string = runtimeEntityType.FindProperty("String");
+            var stringArray = runtimeEntityType.FindProperty("StringArray");
+            var stringNestedCollection = runtimeEntityType.FindProperty("StringNestedCollection");
+            var stringToBoolConverterProperty = runtimeEntityType.FindProperty("StringToBoolConverterProperty");
+            var stringToBytesConverterProperty = runtimeEntityType.FindProperty("StringToBytesConverterProperty");
+            var stringToCharConverterProperty = runtimeEntityType.FindProperty("StringToCharConverterProperty");
+            var stringToDateOnlyConverterProperty = runtimeEntityType.FindProperty("StringToDateOnlyConverterProperty");
+            var stringToDateTimeConverterProperty = runtimeEntityType.FindProperty("StringToDateTimeConverterProperty");
+            var stringToDateTimeOffsetConverterProperty = runtimeEntityType.FindProperty("StringToDateTimeOffsetConverterProperty");
+            var stringToDecimalNumberConverterProperty = runtimeEntityType.FindProperty("StringToDecimalNumberConverterProperty");
+            var stringToDoubleNumberConverterProperty = runtimeEntityType.FindProperty("StringToDoubleNumberConverterProperty");
+            var stringToEnumConverterProperty = runtimeEntityType.FindProperty("StringToEnumConverterProperty");
+            var stringToGuidConverterProperty = runtimeEntityType.FindProperty("StringToGuidConverterProperty");
+            var stringToIntNumberConverterProperty = runtimeEntityType.FindProperty("StringToIntNumberConverterProperty");
+            var stringToTimeOnlyConverterProperty = runtimeEntityType.FindProperty("StringToTimeOnlyConverterProperty");
+            var stringToTimeSpanConverterProperty = runtimeEntityType.FindProperty("StringToTimeSpanConverterProperty");
+            var stringToUriConverterProperty = runtimeEntityType.FindProperty("StringToUriConverterProperty");
+            var timeOnly = runtimeEntityType.FindProperty("TimeOnly");
+            var timeOnlyToStringConverterProperty = runtimeEntityType.FindProperty("TimeOnlyToStringConverterProperty");
+            var timeOnlyToTicksConverterProperty = runtimeEntityType.FindProperty("TimeOnlyToTicksConverterProperty");
+            var timeSpan = runtimeEntityType.FindProperty("TimeSpan");
+            var timeSpanToStringConverterProperty = runtimeEntityType.FindProperty("TimeSpanToStringConverterProperty");
+            var timeSpanToTicksConverterProperty = runtimeEntityType.FindProperty("TimeSpanToTicksConverterProperty");
+            var uInt16 = runtimeEntityType.FindProperty("UInt16");
+            var uInt16Array = runtimeEntityType.FindProperty("UInt16Array");
+            var uInt32 = runtimeEntityType.FindProperty("UInt32");
+            var uInt32Array = runtimeEntityType.FindProperty("UInt32Array");
+            var uInt64 = runtimeEntityType.FindProperty("UInt64");
+            var uInt64Array = runtimeEntityType.FindProperty("UInt64Array");
+            var uInt8 = runtimeEntityType.FindProperty("UInt8");
+            var uInt8Array = runtimeEntityType.FindProperty("UInt8Array");
+            var uri = runtimeEntityType.FindProperty("Uri");
+            var uriToStringConverterProperty = runtimeEntityType.FindProperty("UriToStringConverterProperty");
+            var __id = runtimeEntityType.FindProperty("__id");
+            var __jObject = runtimeEntityType.FindProperty("__jObject");
             var key = runtimeEntityType.FindKey(new[] { id });
             key.SetPrincipalKeyValueFactory(KeyValueFactoryFactory.CreateSimpleNonNullableFactory<CompiledModelTestBase.ManyTypesId>(key));
             key.SetIdentityMapFactory(IdentityMapFactoryFactory.CreateFactory<CompiledModelTestBase.ManyTypesId>(key));
-            var key0 = runtimeEntityType.FindKey(new[] { __id });
-            key0.SetPrincipalKeyValueFactory(KeyValueFactoryFactory.CreateSimpleNullableFactory<string, int>(key0));
-            key0.SetIdentityMapFactory(IdentityMapFactoryFactory.CreateFactory<string>(key0));
             runtimeEntityType.SetOriginalValuesFactory(
                 ISnapshot (InternalEntityEntry source) =>
                 {
                     var entity = ((CompiledModelTestBase.ManyTypes)(source.Entity));
-                    var liftedArg = ((ISnapshot)(new Snapshot<CompiledModelTestBase.ManyTypesId, bool, bool[], bool[][], bool, bool, bool, byte[], byte[], int, char, char[], char[][], char, DateOnly, DateOnly, DateTime, DateTimeOffset, DateTimeOffset, DateTimeOffset, DateTime, DateTime, DateTime, decimal, decimal[], decimal, decimal, string, double, double[]>(((ValueComparer<CompiledModelTestBase.ManyTypesId>)(((IProperty)id).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.ManyTypesId>(id)), ((ValueComparer<bool>)(((IProperty)@bool).GetValueComparer())).Snapshot(source.GetCurrentValue<bool>(@bool)), (((IEnumerable<bool>)(source.GetCurrentValue<bool[]>(boolArray))) == null ? null : ((bool[])(((ValueComparer<IEnumerable<bool>>)(((IProperty)boolArray).GetValueComparer())).Snapshot(((IEnumerable<bool>)(source.GetCurrentValue<bool[]>(boolArray))))))), (((object)(source.GetCurrentValue<bool[][]>(boolNestedCollection))) == null ? null : ((bool[][])(((ValueComparer<object>)(((IProperty)boolNestedCollection).GetValueComparer())).Snapshot(((object)(source.GetCurrentValue<bool[][]>(boolNestedCollection))))))), ((ValueComparer<bool>)(((IProperty)boolToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<bool>(boolToStringConverterProperty)), ((ValueComparer<bool>)(((IProperty)boolToTwoValuesConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<bool>(boolToTwoValuesConverterProperty)), ((ValueComparer<bool>)(((IProperty)boolToZeroOneConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<bool>(boolToZeroOneConverterProperty)), (source.GetCurrentValue<byte[]>(bytes) == null ? null : ((ValueComparer<byte[]>)(((IProperty)bytes).GetValueComparer())).Snapshot(source.GetCurrentValue<byte[]>(bytes))), (source.GetCurrentValue<byte[]>(bytesToStringConverterProperty) == null ? null : ((ValueComparer<byte[]>)(((IProperty)bytesToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<byte[]>(bytesToStringConverterProperty))), ((ValueComparer<int>)(((IProperty)castingConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<int>(castingConverterProperty)), ((ValueComparer<char>)(((IProperty)@char).GetValueComparer())).Snapshot(source.GetCurrentValue<char>(@char)), (((IEnumerable<char>)(source.GetCurrentValue<char[]>(charArray))) == null ? null : ((char[])(((ValueComparer<IEnumerable<char>>)(((IProperty)charArray).GetValueComparer())).Snapshot(((IEnumerable<char>)(source.GetCurrentValue<char[]>(charArray))))))), (((object)(source.GetCurrentValue<char[][]>(charNestedCollection))) == null ? null : ((char[][])(((ValueComparer<object>)(((IProperty)charNestedCollection).GetValueComparer())).Snapshot(((object)(source.GetCurrentValue<char[][]>(charNestedCollection))))))), ((ValueComparer<char>)(((IProperty)charToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<char>(charToStringConverterProperty)), ((ValueComparer<DateOnly>)(((IProperty)dateOnly).GetValueComparer())).Snapshot(source.GetCurrentValue<DateOnly>(dateOnly)), ((ValueComparer<DateOnly>)(((IProperty)dateOnlyToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<DateOnly>(dateOnlyToStringConverterProperty)), ((ValueComparer<DateTime>)(((IProperty)dateTime).GetValueComparer())).Snapshot(source.GetCurrentValue<DateTime>(dateTime)), ((ValueComparer<DateTimeOffset>)(((IProperty)dateTimeOffsetToBinaryConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<DateTimeOffset>(dateTimeOffsetToBinaryConverterProperty)), ((ValueComparer<DateTimeOffset>)(((IProperty)dateTimeOffsetToBytesConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<DateTimeOffset>(dateTimeOffsetToBytesConverterProperty)), ((ValueComparer<DateTimeOffset>)(((IProperty)dateTimeOffsetToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<DateTimeOffset>(dateTimeOffsetToStringConverterProperty)), ((ValueComparer<DateTime>)(((IProperty)dateTimeToBinaryConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<DateTime>(dateTimeToBinaryConverterProperty)), ((ValueComparer<DateTime>)(((IProperty)dateTimeToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<DateTime>(dateTimeToStringConverterProperty)), ((ValueComparer<DateTime>)(((IProperty)dateTimeToTicksConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<DateTime>(dateTimeToTicksConverterProperty)), ((ValueComparer<decimal>)(((IProperty)@decimal).GetValueComparer())).Snapshot(source.GetCurrentValue<decimal>(@decimal)), (((IEnumerable<decimal>)(source.GetCurrentValue<decimal[]>(decimalArray))) == null ? null : ((decimal[])(((ValueComparer<IEnumerable<decimal>>)(((IProperty)decimalArray).GetValueComparer())).Snapshot(((IEnumerable<decimal>)(source.GetCurrentValue<decimal[]>(decimalArray))))))), ((ValueComparer<decimal>)(((IProperty)decimalNumberToBytesConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<decimal>(decimalNumberToBytesConverterProperty)), ((ValueComparer<decimal>)(((IProperty)decimalNumberToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<decimal>(decimalNumberToStringConverterProperty)), (source.GetCurrentValue<string>(discriminator) == null ? null : ((ValueComparer<string>)(((IProperty)discriminator).GetValueComparer())).Snapshot(source.GetCurrentValue<string>(discriminator))), ((ValueComparer<double>)(((IProperty)@double).GetValueComparer())).Snapshot(source.GetCurrentValue<double>(@double)), (((IEnumerable<double>)(source.GetCurrentValue<double[]>(doubleArray))) == null ? null : ((double[])(((ValueComparer<IEnumerable<double>>)(((IProperty)doubleArray).GetValueComparer())).Snapshot(((IEnumerable<double>)(source.GetCurrentValue<double[]>(doubleArray))))))))));
+                    var liftedArg = ((ISnapshot)(new Snapshot<CompiledModelTestBase.ManyTypesId, string, bool, bool[], bool[][], bool, bool, bool, byte[], byte[], int, char, char[], char[][], char, DateOnly, DateOnly, DateTime, DateTimeOffset, DateTimeOffset, DateTimeOffset, DateTime, DateTime, DateTime, decimal, decimal[], decimal, decimal, double, double[]>(((ValueComparer<CompiledModelTestBase.ManyTypesId>)(((IProperty)id).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.ManyTypesId>(id)), (source.GetCurrentValue<string>(type) == null ? null : ((ValueComparer<string>)(((IProperty)type).GetValueComparer())).Snapshot(source.GetCurrentValue<string>(type))), ((ValueComparer<bool>)(((IProperty)@bool).GetValueComparer())).Snapshot(source.GetCurrentValue<bool>(@bool)), (((IEnumerable<bool>)(source.GetCurrentValue<bool[]>(boolArray))) == null ? null : ((bool[])(((ValueComparer<IEnumerable<bool>>)(((IProperty)boolArray).GetValueComparer())).Snapshot(((IEnumerable<bool>)(source.GetCurrentValue<bool[]>(boolArray))))))), (((object)(source.GetCurrentValue<bool[][]>(boolNestedCollection))) == null ? null : ((bool[][])(((ValueComparer<object>)(((IProperty)boolNestedCollection).GetValueComparer())).Snapshot(((object)(source.GetCurrentValue<bool[][]>(boolNestedCollection))))))), ((ValueComparer<bool>)(((IProperty)boolToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<bool>(boolToStringConverterProperty)), ((ValueComparer<bool>)(((IProperty)boolToTwoValuesConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<bool>(boolToTwoValuesConverterProperty)), ((ValueComparer<bool>)(((IProperty)boolToZeroOneConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<bool>(boolToZeroOneConverterProperty)), (source.GetCurrentValue<byte[]>(bytes) == null ? null : ((ValueComparer<byte[]>)(((IProperty)bytes).GetValueComparer())).Snapshot(source.GetCurrentValue<byte[]>(bytes))), (source.GetCurrentValue<byte[]>(bytesToStringConverterProperty) == null ? null : ((ValueComparer<byte[]>)(((IProperty)bytesToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<byte[]>(bytesToStringConverterProperty))), ((ValueComparer<int>)(((IProperty)castingConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<int>(castingConverterProperty)), ((ValueComparer<char>)(((IProperty)@char).GetValueComparer())).Snapshot(source.GetCurrentValue<char>(@char)), (((IEnumerable<char>)(source.GetCurrentValue<char[]>(charArray))) == null ? null : ((char[])(((ValueComparer<IEnumerable<char>>)(((IProperty)charArray).GetValueComparer())).Snapshot(((IEnumerable<char>)(source.GetCurrentValue<char[]>(charArray))))))), (((object)(source.GetCurrentValue<char[][]>(charNestedCollection))) == null ? null : ((char[][])(((ValueComparer<object>)(((IProperty)charNestedCollection).GetValueComparer())).Snapshot(((object)(source.GetCurrentValue<char[][]>(charNestedCollection))))))), ((ValueComparer<char>)(((IProperty)charToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<char>(charToStringConverterProperty)), ((ValueComparer<DateOnly>)(((IProperty)dateOnly).GetValueComparer())).Snapshot(source.GetCurrentValue<DateOnly>(dateOnly)), ((ValueComparer<DateOnly>)(((IProperty)dateOnlyToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<DateOnly>(dateOnlyToStringConverterProperty)), ((ValueComparer<DateTime>)(((IProperty)dateTime).GetValueComparer())).Snapshot(source.GetCurrentValue<DateTime>(dateTime)), ((ValueComparer<DateTimeOffset>)(((IProperty)dateTimeOffsetToBinaryConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<DateTimeOffset>(dateTimeOffsetToBinaryConverterProperty)), ((ValueComparer<DateTimeOffset>)(((IProperty)dateTimeOffsetToBytesConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<DateTimeOffset>(dateTimeOffsetToBytesConverterProperty)), ((ValueComparer<DateTimeOffset>)(((IProperty)dateTimeOffsetToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<DateTimeOffset>(dateTimeOffsetToStringConverterProperty)), ((ValueComparer<DateTime>)(((IProperty)dateTimeToBinaryConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<DateTime>(dateTimeToBinaryConverterProperty)), ((ValueComparer<DateTime>)(((IProperty)dateTimeToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<DateTime>(dateTimeToStringConverterProperty)), ((ValueComparer<DateTime>)(((IProperty)dateTimeToTicksConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<DateTime>(dateTimeToTicksConverterProperty)), ((ValueComparer<decimal>)(((IProperty)@decimal).GetValueComparer())).Snapshot(source.GetCurrentValue<decimal>(@decimal)), (((IEnumerable<decimal>)(source.GetCurrentValue<decimal[]>(decimalArray))) == null ? null : ((decimal[])(((ValueComparer<IEnumerable<decimal>>)(((IProperty)decimalArray).GetValueComparer())).Snapshot(((IEnumerable<decimal>)(source.GetCurrentValue<decimal[]>(decimalArray))))))), ((ValueComparer<decimal>)(((IProperty)decimalNumberToBytesConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<decimal>(decimalNumberToBytesConverterProperty)), ((ValueComparer<decimal>)(((IProperty)decimalNumberToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<decimal>(decimalNumberToStringConverterProperty)), ((ValueComparer<double>)(((IProperty)@double).GetValueComparer())).Snapshot(source.GetCurrentValue<double>(@double)), (((IEnumerable<double>)(source.GetCurrentValue<double[]>(doubleArray))) == null ? null : ((double[])(((ValueComparer<IEnumerable<double>>)(((IProperty)doubleArray).GetValueComparer())).Snapshot(((IEnumerable<double>)(source.GetCurrentValue<double[]>(doubleArray))))))))));
                     var entity0 = ((CompiledModelTestBase.ManyTypes)(source.Entity));
                     var liftedArg0 = ((ISnapshot)(new Snapshot<double, double, CompiledModelTestBase.Enum16, CompiledModelTestBase.Enum16, CompiledModelTestBase.Enum32, CompiledModelTestBase.Enum32, CompiledModelTestBase.Enum64, CompiledModelTestBase.Enum64, CompiledModelTestBase.Enum8, CompiledModelTestBase.Enum8, CompiledModelTestBase.Enum32, CompiledModelTestBase.Enum32, CompiledModelTestBase.EnumU16, CompiledModelTestBase.EnumU16, CompiledModelTestBase.EnumU32, CompiledModelTestBase.EnumU32, CompiledModelTestBase.EnumU64, CompiledModelTestBase.EnumU64, CompiledModelTestBase.EnumU8, CompiledModelTestBase.EnumU8, float, float[], Guid, Guid, Guid, IPAddress, IPAddress, IPAddress, short, short[]>(((ValueComparer<double>)(((IProperty)doubleNumberToBytesConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<double>(doubleNumberToBytesConverterProperty)), ((ValueComparer<double>)(((IProperty)doubleNumberToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<double>(doubleNumberToStringConverterProperty)), ((ValueComparer<CompiledModelTestBase.Enum16>)(((IProperty)enum16).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.Enum16>(enum16)), ((ValueComparer<CompiledModelTestBase.Enum16>)(((IProperty)enum16AsString).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.Enum16>(enum16AsString)), ((ValueComparer<CompiledModelTestBase.Enum32>)(((IProperty)enum32).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.Enum32>(enum32)), ((ValueComparer<CompiledModelTestBase.Enum32>)(((IProperty)enum32AsString).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.Enum32>(enum32AsString)), ((ValueComparer<CompiledModelTestBase.Enum64>)(((IProperty)enum64).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.Enum64>(enum64)), ((ValueComparer<CompiledModelTestBase.Enum64>)(((IProperty)enum64AsString).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.Enum64>(enum64AsString)), ((ValueComparer<CompiledModelTestBase.Enum8>)(((IProperty)enum8).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.Enum8>(enum8)), ((ValueComparer<CompiledModelTestBase.Enum8>)(((IProperty)enum8AsString).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.Enum8>(enum8AsString)), ((ValueComparer<CompiledModelTestBase.Enum32>)(((IProperty)enumToNumberConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.Enum32>(enumToNumberConverterProperty)), ((ValueComparer<CompiledModelTestBase.Enum32>)(((IProperty)enumToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.Enum32>(enumToStringConverterProperty)), ((ValueComparer<CompiledModelTestBase.EnumU16>)(((IProperty)enumU16).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.EnumU16>(enumU16)), ((ValueComparer<CompiledModelTestBase.EnumU16>)(((IProperty)enumU16AsString).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.EnumU16>(enumU16AsString)), ((ValueComparer<CompiledModelTestBase.EnumU32>)(((IProperty)enumU32).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.EnumU32>(enumU32)), ((ValueComparer<CompiledModelTestBase.EnumU32>)(((IProperty)enumU32AsString).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.EnumU32>(enumU32AsString)), ((ValueComparer<CompiledModelTestBase.EnumU64>)(((IProperty)enumU64).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.EnumU64>(enumU64)), ((ValueComparer<CompiledModelTestBase.EnumU64>)(((IProperty)enumU64AsString).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.EnumU64>(enumU64AsString)), ((ValueComparer<CompiledModelTestBase.EnumU8>)(((IProperty)enumU8).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.EnumU8>(enumU8)), ((ValueComparer<CompiledModelTestBase.EnumU8>)(((IProperty)enumU8AsString).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.EnumU8>(enumU8AsString)), ((ValueComparer<float>)(((IProperty)@float).GetValueComparer())).Snapshot(source.GetCurrentValue<float>(@float)), (((IEnumerable<float>)(source.GetCurrentValue<float[]>(floatArray))) == null ? null : ((float[])(((ValueComparer<IEnumerable<float>>)(((IProperty)floatArray).GetValueComparer())).Snapshot(((IEnumerable<float>)(source.GetCurrentValue<float[]>(floatArray))))))), ((ValueComparer<Guid>)(((IProperty)guid).GetValueComparer())).Snapshot(source.GetCurrentValue<Guid>(guid)), ((ValueComparer<Guid>)(((IProperty)guidToBytesConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<Guid>(guidToBytesConverterProperty)), ((ValueComparer<Guid>)(((IProperty)guidToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<Guid>(guidToStringConverterProperty)), (source.GetCurrentValue<IPAddress>(iPAddress) == null ? null : ((ValueComparer<IPAddress>)(((IProperty)iPAddress).GetValueComparer())).Snapshot(source.GetCurrentValue<IPAddress>(iPAddress))), (source.GetCurrentValue<IPAddress>(iPAddressToBytesConverterProperty) == null ? null : ((ValueComparer<IPAddress>)(((IProperty)iPAddressToBytesConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<IPAddress>(iPAddressToBytesConverterProperty))), (source.GetCurrentValue<IPAddress>(iPAddressToStringConverterProperty) == null ? null : ((ValueComparer<IPAddress>)(((IProperty)iPAddressToStringConverterProperty).GetValueComparer())).Snapshot(source.GetCurrentValue<IPAddress>(iPAddressToStringConverterProperty))), ((ValueComparer<short>)(((IProperty)int16).GetValueComparer())).Snapshot(source.GetCurrentValue<short>(int16)), (((IEnumerable<short>)(source.GetCurrentValue<short[]>(int16Array))) == null ? null : ((short[])(((ValueComparer<IEnumerable<short>>)(((IProperty)int16Array).GetValueComparer())).Snapshot(((IEnumerable<short>)(source.GetCurrentValue<short[]>(int16Array))))))))));
                     var entity1 = ((CompiledModelTestBase.ManyTypes)(source.Entity));
@@ -8740,14 +8733,14 @@ namespace TestNamespace
             runtimeEntityType.SetTemporaryValuesFactory(
                 ISnapshot (InternalEntityEntry source) => ((ISnapshot)(new Snapshot<CompiledModelTestBase.ManyTypesId, JObject>(default(CompiledModelTestBase.ManyTypesId), default(JObject)))));
             runtimeEntityType.SetShadowValuesFactory(
-                ISnapshot (IDictionary<string, object> source) => ((ISnapshot)(new Snapshot<string, string, JObject>((source.ContainsKey("Discriminator") ? ((string)(source["Discriminator"])) : null), (source.ContainsKey("__id") ? ((string)(source["__id"])) : null), (source.ContainsKey("__jObject") ? ((JObject)(source["__jObject"])) : null)))));
+                ISnapshot (IDictionary<string, object> source) => ((ISnapshot)(new Snapshot<string, string, JObject>((source.ContainsKey("$type") ? ((string)(source["$type"])) : null), (source.ContainsKey("__id") ? ((string)(source["__id"])) : null), (source.ContainsKey("__jObject") ? ((JObject)(source["__jObject"])) : null)))));
             runtimeEntityType.SetEmptyShadowValuesFactory(
                 ISnapshot () => ((ISnapshot)(new Snapshot<string, string, JObject>(default(string), default(string), default(JObject)))));
             runtimeEntityType.SetRelationshipSnapshotFactory(
                 ISnapshot (InternalEntityEntry source) =>
                 {
                     var entity5 = ((CompiledModelTestBase.ManyTypes)(source.Entity));
-                    return ((ISnapshot)(new Snapshot<CompiledModelTestBase.ManyTypesId, string>(((ValueComparer<CompiledModelTestBase.ManyTypesId>)(((IProperty)id).GetKeyValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.ManyTypesId>(id)), (source.GetCurrentValue<string>(__id) == null ? null : ((ValueComparer<string>)(((IProperty)__id).GetKeyValueComparer())).Snapshot(source.GetCurrentValue<string>(__id))))));
+                    return ((ISnapshot)(new Snapshot<CompiledModelTestBase.ManyTypesId>(((ValueComparer<CompiledModelTestBase.ManyTypesId>)(((IProperty)id).GetKeyValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.ManyTypesId>(id)))));
                 });
             runtimeEntityType.Counts = new PropertyCounts(
                 propertyCount: 166,
@@ -8755,7 +8748,7 @@ namespace TestNamespace
                 complexPropertyCount: 0,
                 originalValueCount: 166,
                 shadowCount: 3,
-                relationshipCount: 2,
+                relationshipCount: 1,
                 storeGeneratedCount: 2);
 
             Customize(runtimeEntityType);

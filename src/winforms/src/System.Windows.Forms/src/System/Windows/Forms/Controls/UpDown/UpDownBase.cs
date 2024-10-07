@@ -70,7 +70,7 @@ public abstract partial class UpDownBase : ContainerControl
 
 #pragma warning disable WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
         SetStyle(ControlStyles.ApplyThemingImplicitly, true);
-#pragma warning restore WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning restore WFO5001
     }
 
     [Browsable(false)]
@@ -580,7 +580,7 @@ public abstract partial class UpDownBase : ContainerControl
             // Draws a grayed rectangle around the upDownEdit, since otherwise we will have a white
             // border around the upDownEdit, which is inconsistent with Windows' behavior
             // we only want to do this when BackColor is not serialized, since otherwise
-            // we should display the backcolor instead of the usual grayed textbox.
+            // we should display the BackColor instead of the usual grayed textbox.
             editBounds.Inflate(1, 1);
             ControlPaint.DrawBorderSimple(e, editBounds, SystemColors.Control);
         }

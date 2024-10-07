@@ -25,9 +25,9 @@ public partial class DataGridViewTextBoxCell : DataGridViewCell
     private const byte DATAGRIDVIEWTEXTBOXCELL_verticalTextMarginTopWithoutWrapping = 2;
     private const byte DATAGRIDVIEWTEXTBOXCELL_verticalTextMarginBottom = 1;
 
-    private const int DATAGRIDVIEWTEXTBOXCELL_maxInputLength = 32767;
+    private const int MaxInputLengthDefault = 32767;
 
-    private byte _flagsState;  // see DATAGRIDVIEWTEXTBOXCELL_ consts above
+    private byte _flagsState;  // see DATAGRIDVIEWTEXTBOXCELL_ constants above
 
     private static readonly Type s_defaultFormattedValueType = typeof(string);
     private static readonly Type s_defaultValueType = typeof(object);
@@ -61,15 +61,15 @@ public partial class DataGridViewTextBoxCell : DataGridViewCell
         }
     }
 
-    [DefaultValue(DATAGRIDVIEWTEXTBOXCELL_maxInputLength)]
+    [DefaultValue(MaxInputLengthDefault)]
     public virtual int MaxInputLength
     {
-        get => Properties.GetValueOrDefault(s_propTextBoxCellMaxInputLength, DATAGRIDVIEWTEXTBOXCELL_maxInputLength);
+        get => Properties.GetValueOrDefault(s_propTextBoxCellMaxInputLength, MaxInputLengthDefault);
         set
         {
             ArgumentOutOfRangeException.ThrowIfNegative(value);
 
-            Properties.AddValue(s_propTextBoxCellMaxInputLength, value);
+            Properties.AddOrRemoveValue(s_propTextBoxCellMaxInputLength, value, defaultValue: MaxInputLengthDefault);
             if (OwnsEditingTextBox(RowIndex))
             {
                 EditingTextBox.MaxLength = value;
@@ -91,7 +91,7 @@ public partial class DataGridViewTextBoxCell : DataGridViewCell
         }
     }
 
-    // Called when the row that owns the editing control gets unshared.
+    // Called when the row that owns the editing control gets un-shared.
     internal override void CacheEditingControl()
     {
         EditingTextBox = DataGridView!.EditingControl as DataGridViewTextBoxEditingControl;

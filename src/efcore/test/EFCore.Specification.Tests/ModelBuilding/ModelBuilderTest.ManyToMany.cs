@@ -9,13 +9,8 @@ namespace Microsoft.EntityFrameworkCore.ModelBuilding;
 
 public abstract partial class ModelBuilderTest
 {
-    public abstract class ManyToManyTestBase : ModelBuilderTestBase
+    public abstract class ManyToManyTestBase(ModelBuilderFixtureBase fixture) : ModelBuilderTestBase(fixture)
     {
-        protected ManyToManyTestBase(ModelBuilderFixtureBase fixture)
-            : base(fixture)
-        {
-        }
-
         [ConditionalFact]
         public virtual void Discovers_navigations()
         {
@@ -733,7 +728,8 @@ public abstract partial class ModelBuilderTest
 
             Assert.Equal(3, model.GetEntityTypes().Count());
 
-            Assert.Collection(model.GetEntityTypes(),
+            Assert.Collection(
+                model.GetEntityTypes(),
                 e =>
                 {
                     Assert.Equal("MotorArtMatching", e.ShortName());
@@ -753,7 +749,8 @@ public abstract partial class ModelBuilderTest
                 e =>
                 {
                     Assert.Equal("MotorArtXMotorBauartMatching", e.ShortName());
-                    Assert.Collection(e.GetForeignKeys(),
+                    Assert.Collection(
+                        e.GetForeignKeys(),
                         k =>
                         {
                             Assert.Equal("MotorArtMatching", k.PrincipalEntityType.ShortName());
@@ -805,7 +802,8 @@ public abstract partial class ModelBuilderTest
 
             Assert.Equal(3, model.GetEntityTypes().Count());
 
-            Assert.Collection(model.GetEntityTypes(),
+            Assert.Collection(
+                model.GetEntityTypes(),
                 e =>
                 {
                     Assert.Equal("MotorArtMismatching", e.ShortName());
@@ -825,7 +823,8 @@ public abstract partial class ModelBuilderTest
                 e =>
                 {
                     Assert.Equal("MotorArtXMotorBauartMismatching", e.ShortName());
-                    Assert.Collection(e.GetForeignKeys(),
+                    Assert.Collection(
+                        e.GetForeignKeys(),
                         k =>
                         {
                             Assert.Equal("MotorArtMismatching", k.PrincipalEntityType.ShortName());

@@ -1608,6 +1608,7 @@ static NuGet.Packaging.PackageExtraction.PackageExtractionBehavior.XmlDocFileSav
 ~static NuGet.Packaging.Signing.CertificateUtility.IsSelfIssued(System.Security.Cryptography.X509Certificates.X509Certificate2 certificate) -> bool
 ~static NuGet.Packaging.Signing.CertificateUtility.IsSignatureAlgorithmSupported(System.Security.Cryptography.X509Certificates.X509Certificate2 certificate) -> bool
 ~static NuGet.Packaging.Signing.CertificateUtility.IsValidForPurposeFast(System.Security.Cryptography.X509Certificates.X509Certificate2 certificate, string ekuOid) -> bool
+~static NuGet.Packaging.Signing.CertificateUtility.TryDeduceHashAlgorithm(string certificateFingerprint, out NuGet.Common.HashAlgorithmName hashAlgorithmName) -> bool
 ~static NuGet.Packaging.Signing.CertificateUtility.X509Certificate2CollectionToString(System.Security.Cryptography.X509Certificates.X509Certificate2Collection certCollection, NuGet.Common.HashAlgorithmName fingerprintAlgorithm) -> string
 ~static NuGet.Packaging.Signing.CertificateUtility.X509Certificate2ToString(System.Security.Cryptography.X509Certificates.X509Certificate2 cert, NuGet.Common.HashAlgorithmName fingerprintAlgorithm) -> string
 ~static NuGet.Packaging.Signing.CertificateUtility.X509ChainToString(System.Security.Cryptography.X509Certificates.X509Chain chain, NuGet.Common.HashAlgorithmName fingerprintAlgorithm) -> string

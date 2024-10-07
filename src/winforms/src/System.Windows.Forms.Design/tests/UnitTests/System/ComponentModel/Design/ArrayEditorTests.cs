@@ -124,7 +124,7 @@ public class ArrayEditorTests
     }
 
     [Fact]
-    public void ArrayEditor_GetDisplayText_ValueDoesntMatchCollectionType_ThrowsTargetException()
+    public void ArrayEditor_GetDisplayText_ValueDoesNotMatchCollectionType_ThrowsTargetException()
     {
         SubArrayEditor editor = new(typeof(ClassWithStringDefaultProperty));
         TargetInvocationException ex = Assert.Throws<TargetInvocationException>(() => editor.GetDisplayText(new ClassWithNonStringDefaultProperty()));
@@ -316,6 +316,6 @@ public class ArrayEditorTests
         public override string ToString() => nameof(ClassWithNoSuchDefaultProperty);
     }
 
-#pragma warning restore IDE0051 // Remove unused private members
+#pragma warning restore IDE0051
 
 }

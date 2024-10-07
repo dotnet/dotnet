@@ -37,7 +37,7 @@ public class NorthwindAggregateOperatorsQueryCosmosTest
                     """
 SELECT VALUE AVG((c["OrderID"] - 10248))
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = 10248))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] = 10248))
 """);
             });
 
@@ -65,7 +65,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = 10248))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__Select_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__Select_0, c["id"])
 """);
             });
 
@@ -81,7 +81,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__Select_0, c["Cust
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__Select_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__Select_0, c["id"])
 """,
                     //
                     """
@@ -89,7 +89,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__Select_0, c["Cust
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__Select_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__Select_0, c["id"])
 """);
             });
 
@@ -103,19 +103,19 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__Select_0, c["Cust
                     """
 SELECT VALUE COUNT(1)
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """,
                     //
                     """
 SELECT VALUE COUNT(1)
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """,
                     //
                     """
 SELECT VALUE COUNT(1)
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
             });
 
@@ -129,7 +129,6 @@ WHERE (c["Discriminator"] = "Order")
                     """
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 ORDER BY c["ContactName"]
 OFFSET 0 LIMIT 1
 """);
@@ -145,7 +144,7 @@ OFFSET 0 LIMIT 1
                     """
 SELECT VALUE MAX((c["OrderID"] - 10248))
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = 10248))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] = 10248))
 """);
             });
 
@@ -159,7 +158,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = 10248))
                     """
 SELECT VALUE MIN((c["OrderID"] - 10248))
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = 10248))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] = 10248))
 """);
             });
 
@@ -173,7 +172,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = 10248))
                     """
 SELECT VALUE SUM(c["OrderID"])
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = 42))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] = 42))
 """);
             });
 
@@ -187,7 +186,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = 42))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
+WHERE (c["City"] = "London")
 ORDER BY c["ContactName"]
 OFFSET 0 LIMIT 1
 """);
@@ -204,7 +203,6 @@ OFFSET 0 LIMIT 1
                 """
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 OFFSET 0 LIMIT 2
 """);
         }
@@ -220,7 +218,7 @@ OFFSET 0 LIMIT 2
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
+WHERE (c["City"] = "London")
 ORDER BY c["ContactName"]
 OFFSET 0 LIMIT 1
 """);
@@ -232,7 +230,7 @@ OFFSET 0 LIMIT 1
             {
                 await base.Where_Single(a);
 
-                AssertSql("ReadItem(None, Customer|ALFKI)");
+                AssertSql("ReadItem(None, ALFKI)");
             });
 
     public override Task FirstOrDefault(bool async)
@@ -245,7 +243,6 @@ OFFSET 0 LIMIT 1
                     """
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 ORDER BY c["ContactName"]
 OFFSET 0 LIMIT 1
 """);
@@ -261,7 +258,7 @@ OFFSET 0 LIMIT 1
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ALFKI", "WRONG"))
+WHERE c["id"] IN ("ALFKI", "WRONG")
 """);
             });
 
@@ -275,7 +272,7 @@ WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ALFKI", "WRONG
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
+WHERE (c["City"] = "London")
 ORDER BY c["ContactName"]
 OFFSET 0 LIMIT 1
 """);
@@ -287,7 +284,7 @@ OFFSET 0 LIMIT 1
             {
                 await base.SingleOrDefault_Predicate(a);
 
-                AssertSql("ReadItem(None, Customer|ALFKI)");
+                AssertSql("ReadItem(None, ALFKI)");
             });
 
     public override async Task SingleOrDefault_Throws(bool async)
@@ -301,7 +298,6 @@ OFFSET 0 LIMIT 1
                 """
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 OFFSET 0 LIMIT 2
 """);
         }
@@ -317,7 +313,7 @@ OFFSET 0 LIMIT 2
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
+WHERE (c["City"] = "London")
 ORDER BY c["ContactName"]
 OFFSET 0 LIMIT 1
 """);
@@ -329,7 +325,7 @@ OFFSET 0 LIMIT 1
             {
                 await base.Where_SingleOrDefault(a);
 
-                AssertSql("ReadItem(None, Customer|ALFKI)");
+                AssertSql("ReadItem(None, ALFKI)");
             });
 
     public override async Task Select_All(bool async)
@@ -354,7 +350,7 @@ OFFSET 0 LIMIT 1
                     """
 SELECT VALUE SUM(c["OrderID"])
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
             });
 
@@ -368,7 +364,7 @@ WHERE (c["Discriminator"] = "Order")
                     """
 SELECT VALUE SUM(c["OrderID"])
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] < 0))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] < 0))
 """);
             });
 
@@ -382,7 +378,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] < 0))
                     """
 SELECT VALUE SUM((c["OrderID"] * 2))
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
             });
 
@@ -396,7 +392,7 @@ WHERE (c["Discriminator"] = "Order")
                     """
 SELECT VALUE SUM(c["OrderID"])
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = 42))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] = 42))
 """);
             });
 
@@ -410,7 +406,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = 42))
                     """
 SELECT VALUE SUM(c["SupplierID"])
 FROM root c
-WHERE (c["Discriminator"] = "Product")
+WHERE (c["$type"] = "Product")
 """);
             });
 
@@ -424,7 +420,7 @@ WHERE (c["Discriminator"] = "Product")
                     """
 SELECT VALUE SUM(c["OrderID"])
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
             });
 
@@ -438,7 +434,7 @@ WHERE (c["Discriminator"] = "Order")
                     """
 SELECT VALUE SUM((c["OrderID"] + c["OrderID"]))
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
             });
 
@@ -469,7 +465,7 @@ WHERE (c["Discriminator"] = "Order")
                     """
 SELECT VALUE SUM(((c["UnitPrice"] != null) ? c["UnitPrice"] : 0.0))
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (c["ProductID"] < 40))
+WHERE ((c["$type"] = "Product") AND (c["ProductID"] < 40))
 """);
             });
 
@@ -531,7 +527,7 @@ WHERE ((c["Discriminator"] = "Product") AND (c["ProductID"] < 40))
                     """
 SELECT VALUE SUM(c["Discount"])
 FROM root c
-WHERE ((c["Discriminator"] = "OrderDetail") AND (c["ProductID"] = 1))
+WHERE ((c["$type"] = "OrderDetail") AND (c["ProductID"] = 1))
 """);
             });
 
@@ -554,7 +550,7 @@ WHERE ((c["Discriminator"] = "OrderDetail") AND (c["ProductID"] = 1))
                 """
 SELECT VALUE AVG(c["OrderID"])
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = -1))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] = -1))
 """);
         }
     }
@@ -575,7 +571,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = -1))
                         """
 SELECT VALUE AVG(c["SupplierID"])
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (c["SupplierID"] = -1))
+WHERE ((c["$type"] = "Product") AND (c["SupplierID"] = -1))
 """);
                 });
         }
@@ -597,7 +593,7 @@ WHERE ((c["Discriminator"] = "Product") AND (c["SupplierID"] = -1))
                         """
 SELECT VALUE AVG(c["OrderID"])
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = -1))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] = -1))
 """);
                 });
         }
@@ -614,7 +610,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = -1))
                 """
 SELECT VALUE MIN(c["OrderID"])
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = -1))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] = -1))
 """);
         }
     }
@@ -630,7 +626,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = -1))
                 """
 SELECT VALUE MAX(c["OrderID"])
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = -1))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] = -1))
 """);
         }
     }
@@ -667,7 +663,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = -1))
                         """
 SELECT VALUE MAX(c["SupplierID"])
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (c["SupplierID"] = -1))
+WHERE ((c["$type"] = "Product") AND (c["SupplierID"] = -1))
 """);
                 });
         }
@@ -689,7 +685,7 @@ WHERE ((c["Discriminator"] = "Product") AND (c["SupplierID"] = -1))
                         """
 SELECT VALUE MAX(c["OrderID"])
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = -1))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] = -1))
 """);
                 });
         }
@@ -715,7 +711,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = -1))
                 """
 SELECT VALUE AVG(c["OrderID"])
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
         }
     }
@@ -730,7 +726,7 @@ WHERE (c["Discriminator"] = "Order")
                     """
 SELECT VALUE AVG((c["OrderID"] * 2))
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
             });
 
@@ -746,7 +742,7 @@ WHERE (c["Discriminator"] = "Order")
                 """
 SELECT VALUE AVG(c["OrderID"])
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
         }
     }
@@ -761,7 +757,7 @@ WHERE (c["Discriminator"] = "Order")
                     """
 SELECT VALUE AVG((c["OrderID"] + c["OrderID"]))
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
             });
 
@@ -792,7 +788,7 @@ WHERE (c["Discriminator"] = "Order")
                     """
 SELECT VALUE AVG(((c["UnitPrice"] != null) ? c["UnitPrice"] : 0.0))
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (c["ProductID"] < 40))
+WHERE ((c["$type"] = "Product") AND (c["ProductID"] < 40))
 """);
             });
 
@@ -830,7 +826,7 @@ WHERE ((c["Discriminator"] = "Product") AND (c["ProductID"] < 40))
                     """
 SELECT VALUE AVG(c["Discount"])
 FROM root c
-WHERE ((c["Discriminator"] = "OrderDetail") AND (c["ProductID"] = 1))
+WHERE ((c["$type"] = "OrderDetail") AND (c["ProductID"] = 1))
 """);
             });
 
@@ -860,7 +856,7 @@ WHERE ((c["Discriminator"] = "OrderDetail") AND (c["ProductID"] = 1))
                     """
 SELECT VALUE MIN(c["OrderID"])
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
             });
 
@@ -874,7 +870,7 @@ WHERE (c["Discriminator"] = "Order")
                     """
 SELECT VALUE MIN(c["OrderID"])
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
             });
 
@@ -894,7 +890,7 @@ WHERE (c["Discriminator"] = "Order")
                         """
 SELECT VALUE MIN(c["SupplierID"])
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (c["SupplierID"] = -1))
+WHERE ((c["$type"] = "Product") AND (c["SupplierID"] = -1))
 """);
                 });
         }
@@ -916,7 +912,7 @@ WHERE ((c["Discriminator"] = "Product") AND (c["SupplierID"] = -1))
                         """
 SELECT VALUE MIN(c["OrderID"])
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = -1))
+WHERE ((c["$type"] = "Order") AND (c["OrderID"] = -1))
 """);
                 });
         }
@@ -932,7 +928,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["OrderID"] = -1))
                     """
 SELECT VALUE MIN(((c["UnitPrice"] != null) ? c["UnitPrice"] : 0.0))
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (c["ProductID"] < 40))
+WHERE ((c["$type"] = "Product") AND (c["ProductID"] < 40))
 """);
             });
 
@@ -970,7 +966,7 @@ WHERE ((c["Discriminator"] = "Product") AND (c["ProductID"] < 40))
                     """
 SELECT VALUE MAX(c["OrderID"])
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
             });
 
@@ -984,7 +980,7 @@ WHERE (c["Discriminator"] = "Order")
                     """
 SELECT VALUE MAX(c["OrderID"])
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
             });
 
@@ -998,7 +994,7 @@ WHERE (c["Discriminator"] = "Order")
                     """
 SELECT VALUE MAX(((c["UnitPrice"] != null) ? c["UnitPrice"] : 0.0))
 FROM root c
-WHERE ((c["Discriminator"] = "Product") AND (c["ProductID"] < 40))
+WHERE ((c["$type"] = "Product") AND (c["ProductID"] < 40))
 """);
             });
 
@@ -1036,7 +1032,7 @@ WHERE ((c["Discriminator"] = "Product") AND (c["ProductID"] < 40))
                     """
 SELECT VALUE COUNT(1)
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
             });
 
@@ -1050,7 +1046,7 @@ WHERE (c["Discriminator"] = "Order")
                     """
 SELECT VALUE COUNT(1)
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = "ALFKI"))
+WHERE ((c["$type"] = "Order") AND (c["CustomerID"] = "ALFKI"))
 """);
             });
 
@@ -1064,7 +1060,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = "ALFKI"))
                     """
 SELECT VALUE COUNT(1)
 FROM root c
-WHERE (c["Discriminator"] = "Order")
+WHERE (c["$type"] = "Order")
 """);
             });
 
@@ -1078,7 +1074,7 @@ WHERE (c["Discriminator"] = "Order")
                     """
 SELECT VALUE COUNT(1)
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = "ALFKI"))
+WHERE ((c["$type"] = "Order") AND (c["CustomerID"] = "ALFKI"))
 """);
             });
 
@@ -1092,7 +1088,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = "ALFKI"))
                     """
 SELECT VALUE COUNT(1)
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = "ALFKI"))
+WHERE ((c["$type"] = "Order") AND (c["CustomerID"] = "ALFKI"))
 """);
             });
 
@@ -1106,7 +1102,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = "ALFKI"))
                     """
 SELECT VALUE COUNT(1)
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = "ALFKI"))
+WHERE ((c["$type"] = "Order") AND (c["CustomerID"] = "ALFKI"))
 """);
             });
 
@@ -1120,7 +1116,7 @@ WHERE ((c["Discriminator"] = "Order") AND (c["CustomerID"] = "ALFKI"))
                     """
 SELECT VALUE COUNT(1)
 FROM root c
-WHERE (((c["Discriminator"] = "Order") AND (c["OrderID"] > 10)) AND (c["CustomerID"] != "ALFKI"))
+WHERE (((c["$type"] = "Order") AND (c["OrderID"] > 10)) AND (c["CustomerID"] != "ALFKI"))
 """);
             });
 
@@ -1203,7 +1199,6 @@ WHERE (((c["Discriminator"] = "Order") AND (c["OrderID"] > 10)) AND (c["Customer
 
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Employee")
 ORDER BY 42
 OFFSET 0 LIMIT @__p_0
 """);
@@ -1220,7 +1215,6 @@ OFFSET 0 LIMIT @__p_0
                     """
 SELECT DISTINCT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 """);
             });
 
@@ -1235,7 +1229,7 @@ WHERE (c["Discriminator"] = "Customer")
                     """
 SELECT DISTINCT c[""City""]
 FROM root c
-WHERE (c[""Discriminator""] = ""Customer"")
+WHERE (c[""$type""] = ""Customer"")
 """);
             });
 
@@ -1250,8 +1244,8 @@ WHERE (c[""Discriminator""] = ""Customer"")
                     """
 SELECT DISTINCT c["City"]
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
-ORDER BY c["CustomerID"]
+WHERE (c["$type"] = "Customer")
+ORDER BY c["id"]
 """);
             });
 
@@ -1299,7 +1293,7 @@ ORDER BY c["CustomerID"]
             {
                 await base.Single_Predicate(a);
 
-                AssertSql("ReadItem(None, Customer|ALFKI)");
+                AssertSql("ReadItem(None, ALFKI)");
             });
 
     public override async Task FirstOrDefault_inside_subquery_gets_server_evaluated(bool async)
@@ -1336,7 +1330,6 @@ ORDER BY c["CustomerID"]
                     """
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 ORDER BY c["ContactName"] DESC
 OFFSET 0 LIMIT 1
 """);
@@ -1348,7 +1341,7 @@ OFFSET 0 LIMIT 1
             {
                 await base.Last_when_no_order_by(a);
 
-                AssertSql("ReadItem(None, Customer|ALFKI)");
+                AssertSql("ReadItem(None, ALFKI)");
             });
 
     public override Task LastOrDefault_when_no_order_by(bool async)
@@ -1357,7 +1350,7 @@ OFFSET 0 LIMIT 1
             {
                 await base.LastOrDefault_when_no_order_by(a);
 
-                AssertSql("ReadItem(None, Customer|ALFKI)");
+                AssertSql("ReadItem(None, ALFKI)");
             });
 
     public override Task Last_Predicate(bool async)
@@ -1370,7 +1363,7 @@ OFFSET 0 LIMIT 1
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
+WHERE (c["City"] = "London")
 ORDER BY c["ContactName"] DESC
 OFFSET 0 LIMIT 1
 """);
@@ -1386,7 +1379,7 @@ OFFSET 0 LIMIT 1
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
+WHERE (c["City"] = "London")
 ORDER BY c["ContactName"] DESC
 OFFSET 0 LIMIT 1
 """);
@@ -1402,7 +1395,6 @@ OFFSET 0 LIMIT 1
                     """
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 ORDER BY c["ContactName"] DESC
 OFFSET 0 LIMIT 1
 """);
@@ -1418,7 +1410,7 @@ OFFSET 0 LIMIT 1
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
+WHERE (c["City"] = "London")
 ORDER BY c["ContactName"] DESC
 OFFSET 0 LIMIT 1
 """);
@@ -1434,7 +1426,7 @@ OFFSET 0 LIMIT 1
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["City"] = "London"))
+WHERE (c["City"] = "London")
 ORDER BY c["ContactName"] DESC
 OFFSET 0 LIMIT 1
 """);
@@ -1460,7 +1452,7 @@ OFFSET 0 LIMIT 1
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """,
                     //
                     """
@@ -1468,7 +1460,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -1492,7 +1484,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND ARRAY_CONTAINS(@__ids_0, c["EmployeeID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["EmployeeID"])
 """,
                     //
                     """
@@ -1500,7 +1492,7 @@ WHERE ((c["Discriminator"] = "Employee") AND ARRAY_CONTAINS(@__ids_0, c["Employe
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND ARRAY_CONTAINS(@__ids_0, c["EmployeeID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["EmployeeID"])
 """);
             });
 
@@ -1516,7 +1508,7 @@ WHERE ((c["Discriminator"] = "Employee") AND ARRAY_CONTAINS(@__ids_0, c["Employe
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND ARRAY_CONTAINS(@__ids_0, c["EmployeeID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["EmployeeID"])
 """,
                     //
                     """
@@ -1524,7 +1516,7 @@ WHERE ((c["Discriminator"] = "Employee") AND ARRAY_CONTAINS(@__ids_0, c["Employe
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Employee") AND ARRAY_CONTAINS(@__ids_0, c["EmployeeID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["EmployeeID"])
 """);
             });
 
@@ -1538,7 +1530,7 @@ WHERE ((c["Discriminator"] = "Employee") AND ARRAY_CONTAINS(@__ids_0, c["Employe
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ABCDE", "ALFKI"))
+WHERE c["id"] IN ("ABCDE", "ALFKI")
 """);
             });
 
@@ -1554,7 +1546,7 @@ WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ABCDE", "ALFKI
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -1570,7 +1562,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -1586,7 +1578,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -1600,7 +1592,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ABCDE", "ALFKI"))
+WHERE c["id"] IN ("ABCDE", "ALFKI")
 """);
             });
 
@@ -1616,7 +1608,7 @@ WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ABCDE", "ALFKI
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__p_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__p_0, c["id"])
 """,
                     //
                     """
@@ -1624,7 +1616,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__p_0, c["CustomerI
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__p_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__p_0, c["id"])
 """);
             });
 
@@ -1639,7 +1631,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__p_0, c["CustomerI
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """,
                     //
                     """
@@ -1647,7 +1639,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -1663,7 +1655,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -1679,7 +1671,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -1693,10 +1685,10 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND EXISTS (
+WHERE EXISTS (
     SELECT 1
     FROM a IN (SELECT VALUE ["ABCDE", "ALFKI"])
-    WHERE ((a != null) AND (a = c["CustomerID"]))))
+    WHERE ((a != null) AND (a = c["id"])))
 """);
             });
 
@@ -1712,10 +1704,10 @@ WHERE ((c["Discriminator"] = "Customer") AND EXISTS (
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND EXISTS (
+WHERE EXISTS (
     SELECT 1
     FROM p IN (SELECT VALUE @__p_0)
-    WHERE ((p != null) AND (p = c["CustomerID"]))))
+    WHERE ((p != null) AND (p = c["id"])))
 """,
                     //
                     """
@@ -1723,10 +1715,10 @@ WHERE ((c["Discriminator"] = "Customer") AND EXISTS (
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND EXISTS (
+WHERE EXISTS (
     SELECT 1
     FROM p IN (SELECT VALUE @__p_0)
-    WHERE ((p != null) AND (p = c["CustomerID"]))))
+    WHERE ((p != null) AND (p = c["id"])))
 """);
             });
 
@@ -1742,7 +1734,7 @@ WHERE ((c["Discriminator"] = "Customer") AND EXISTS (
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """,
                     //
                     """
@@ -1750,7 +1742,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -1766,7 +1758,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -1782,7 +1774,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -1796,7 +1788,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ABCDE", "ALFKI"))
+WHERE c["id"] IN ("ABCDE", "ALFKI")
 """);
             });
 
@@ -1812,7 +1804,7 @@ WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ABCDE", "ALFKI
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__Order_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__Order_0, c["id"])
 """,
                     //
                     """
@@ -1820,7 +1812,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__Order_0, c["Custo
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__Order_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__Order_0, c["id"])
 """);
             });
 
@@ -1836,7 +1828,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__Order_0, c["Custo
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """,
                     //
                     """
@@ -1844,7 +1836,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -1860,7 +1852,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -1876,7 +1868,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -1890,7 +1882,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ABCDE", "ALFKI"))
+WHERE c["id"] IN ("ABCDE", "ALFKI")
 """);
             });
 
@@ -1906,7 +1898,7 @@ WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ABCDE", "ALFKI
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__AsReadOnly_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__AsReadOnly_0, c["id"])
 """,
                     //
                     """
@@ -1914,7 +1906,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__AsReadOnly_0, c["
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__AsReadOnly_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__AsReadOnly_0, c["id"])
 """);
             });
 
@@ -1930,7 +1922,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__AsReadOnly_0, c["
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND NOT(ARRAY_CONTAINS(@__ids_0, c["CustomerID"])))
+WHERE NOT(ARRAY_CONTAINS(@__ids_0, c["id"]))
 """);
             });
 
@@ -1946,7 +1938,7 @@ WHERE ((c["Discriminator"] = "Customer") AND NOT(ARRAY_CONTAINS(@__ids_0, c["Cus
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (((c["CustomerID"] = "ALFKI") OR (c["CustomerID"] = "ABCDE")) AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"])))
+WHERE (((c["id"] = "ALFKI") OR (c["id"] = "ABCDE")) AND ARRAY_CONTAINS(@__ids_0, c["id"]))
 """);
             });
 
@@ -1962,7 +1954,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (((c["CustomerID"] = "ALFKI") OR (c
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (ARRAY_CONTAINS(@__ids_0, c["CustomerID"]) OR ((c["CustomerID"] = "ALFKI") OR (c["CustomerID"] = "ABCDE"))))
+WHERE (ARRAY_CONTAINS(@__ids_0, c["id"]) OR ((c["id"] = "ALFKI") OR (c["id"] = "ABCDE")))
 """);
             });
 
@@ -1978,7 +1970,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (ARRAY_CONTAINS(@__ids_0, c["Custom
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (((c["CustomerID"] = "ALFKI") OR (c["CustomerID"] = "ABCDE")) OR NOT(ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))))
+WHERE (((c["id"] = "ALFKI") OR (c["id"] = "ABCDE")) OR NOT(ARRAY_CONTAINS(@__ids_0, c["id"])))
 """);
             });
 
@@ -1994,7 +1986,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (((c["CustomerID"] = "ALFKI") OR (c
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (ARRAY_CONTAINS(@__ids_0, c["CustomerID"]) AND ((c["CustomerID"] != "ALFKI") AND (c["CustomerID"] != "ABCDE"))))
+WHERE (ARRAY_CONTAINS(@__ids_0, c["id"]) AND ((c["id"] != "ALFKI") AND (c["id"] != "ABCDE")))
 """);
             });
 
@@ -2010,7 +2002,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (ARRAY_CONTAINS(@__ids_0, c["Custom
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (ARRAY_CONTAINS(@__ids_0, c["CustomerID"]) OR ((c["CustomerID"] = "ALFKI") OR (c["CustomerID"] = "ABCDE"))))
+WHERE (ARRAY_CONTAINS(@__ids_0, c["id"]) OR ((c["id"] = "ALFKI") OR (c["id"] = "ABCDE")))
 """);
             });
 
@@ -2026,7 +2018,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (ARRAY_CONTAINS(@__ids_0, c["Custom
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -2040,7 +2032,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND NOT(false))
+WHERE NOT(false)
 """);
             });
 
@@ -2061,7 +2053,7 @@ WHERE ((c["Discriminator"] = "Customer") AND NOT(false))
 SELECT VALUE EXISTS (
     SELECT 1
     FROM root c
-    WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = @__p_0)))
+    WHERE (c["id"] = @__p_0))
 """);
         }
     }
@@ -2092,7 +2084,7 @@ SELECT VALUE EXISTS (
 
     public override async Task OfType_Select_OfType_Select(bool async)
     {
-        // Contains over subquery. Issue #17246.
+        // Contains over subquery. Issue #15937.
         await AssertTranslationFailed(() => base.OfType_Select_OfType_Select(async));
 
         AssertSql();
@@ -2186,7 +2178,7 @@ SELECT VALUE EXISTS (
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ALFKI", "ANATR"))
+WHERE c["id"] IN ("ALFKI", "ANATR")
 """);
             });
 
@@ -2200,7 +2192,7 @@ WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ALFKI", "ANATR
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ALFKI", "ANATR"))
+WHERE c["id"] IN ("ALFKI", "ANATR")
 """);
             });
 
@@ -2214,7 +2206,7 @@ WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ALFKI", "ANATR
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND c["OrderID"] IN (10248, 10249))
+WHERE ((c["$type"] = "Order") AND c["OrderID"] IN (10248, 10249))
 """);
             });
 
@@ -2228,7 +2220,7 @@ WHERE ((c["Discriminator"] = "Order") AND c["OrderID"] IN (10248, 10249))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Order") AND c["OrderID"] IN (10248, 10249))
+WHERE ((c["$type"] = "Order") AND c["OrderID"] IN (10248, 10249))
 """);
             });
 
@@ -2242,7 +2234,7 @@ WHERE ((c["Discriminator"] = "Order") AND c["OrderID"] IN (10248, 10249))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = "ALFKI"))
+WHERE (c["id"] = "ALFKI")
 """);
             });
 
@@ -2256,7 +2248,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = "ALFKI"))
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = "ALFKI"))
+WHERE (c["id"] = "ALFKI")
 """);
             });
 
@@ -2272,7 +2264,7 @@ WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = "ALFKI"))
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -2288,7 +2280,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -2310,7 +2302,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 SELECT VALUE EXISTS (
     SELECT 1
     FROM root c
-    WHERE (((c["Discriminator"] = "Order") AND (c["CustomerID"] = "VINET")) AND (c["OrderID"] = @__entity_equality_p_0_OrderID)))
+    WHERE (((c["$type"] = "Order") AND (c["CustomerID"] = "VINET")) AND (c["OrderID"] = @__entity_equality_p_0_OrderID)))
 """);
         }
     }
@@ -2331,9 +2323,8 @@ SELECT VALUE EXISTS (
 
                 AssertSql(
                     """
-SELECT VALUE LEFT(c["CustomerID"], 1)
+SELECT VALUE LEFT(c["id"], 1)
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 """);
             });
 
@@ -2347,7 +2338,6 @@ WHERE (c["Discriminator"] = "Customer")
                     """
 SELECT VALUE SUM(1)
 FROM root c
-WHERE (c["Discriminator"] = "Employee")
 """);
             });
 
@@ -2363,7 +2353,7 @@ WHERE (c["Discriminator"] = "Employee")
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -2377,7 +2367,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ABCDE", "ALFKI", "ANATR"))
+WHERE c["id"] IN ("ABCDE", "ALFKI", "ANATR")
 """);
             });
 
@@ -2393,7 +2383,7 @@ WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] IN ("ABCDE", "ALFKI
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ARRAY_CONTAINS(@__ids_0, c["id"])
 """);
             });
 
@@ -2409,7 +2399,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__ids_0, c["Custome
 
 SELECT VALUE c
 FROM root c
-WHERE (((c["Discriminator"] = "Customer") AND (c["City"] = "México D.F.")) AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ((c["City"] = "México D.F.") AND ARRAY_CONTAINS(@__ids_0, c["id"]))
 """,
                     //
                     """
@@ -2417,7 +2407,7 @@ WHERE (((c["Discriminator"] = "Customer") AND (c["City"] = "México D.F.")) AND 
 
 SELECT VALUE c
 FROM root c
-WHERE (((c["Discriminator"] = "Customer") AND (c["City"] = "México D.F.")) AND ARRAY_CONTAINS(@__ids_0, c["CustomerID"]))
+WHERE ((c["City"] = "México D.F.") AND ARRAY_CONTAINS(@__ids_0, c["id"]))
 """);
             });
 
@@ -2433,7 +2423,7 @@ WHERE (((c["Discriminator"] = "Customer") AND (c["City"] = "México D.F.")) AND 
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND NOT(ARRAY_CONTAINS(@__ids_0, c["CustomerID"])))
+WHERE NOT(ARRAY_CONTAINS(@__ids_0, c["id"]))
 """);
             });
 
@@ -2447,7 +2437,7 @@ WHERE ((c["Discriminator"] = "Customer") AND NOT(ARRAY_CONTAINS(@__ids_0, c["Cus
                     """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] NOT IN ("ABCDE", "ALFKI", "ANATR"))
+WHERE c["id"] NOT IN ("ABCDE", "ALFKI", "ANATR")
 """);
             });
 
@@ -2463,7 +2453,7 @@ WHERE ((c["Discriminator"] = "Customer") AND c["CustomerID"] NOT IN ("ABCDE", "A
 
 SELECT VALUE c
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND NOT(ARRAY_CONTAINS(@__ids_0, c["CustomerID"])))
+WHERE NOT(ARRAY_CONTAINS(@__ids_0, c["id"]))
 """);
             });
 
@@ -2479,7 +2469,7 @@ WHERE ((c["Discriminator"] = "Customer") AND NOT(ARRAY_CONTAINS(@__ids_0, c["Cus
 
 SELECT VALUE c
 FROM root c
-WHERE (((c["Discriminator"] = "Customer") AND (c["City"] = "México D.F.")) AND NOT(ARRAY_CONTAINS(@__ids_0, c["CustomerID"])))
+WHERE ((c["City"] = "México D.F.") AND NOT(ARRAY_CONTAINS(@__ids_0, c["id"])))
 """,
                     //
                     """
@@ -2487,7 +2477,7 @@ WHERE (((c["Discriminator"] = "Customer") AND (c["City"] = "México D.F.")) AND 
 
 SELECT VALUE c
 FROM root c
-WHERE (((c["Discriminator"] = "Customer") AND (c["City"] = "México D.F.")) AND NOT(ARRAY_CONTAINS(@__ids_0, c["CustomerID"])))
+WHERE ((c["City"] = "México D.F.") AND NOT(ARRAY_CONTAINS(@__ids_0, c["id"])))
 """);
             });
 
@@ -2501,7 +2491,6 @@ WHERE (((c["Discriminator"] = "Customer") AND (c["City"] = "México D.F.")) AND 
                     """
 SELECT VALUE COUNT(1)
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 """);
             });
 
@@ -2711,7 +2700,6 @@ WHERE (c["Discriminator"] = "Customer")
 
 SELECT VALUE AVG((ARRAY_CONTAINS(@__cities_0, c["City"]) ? 1.0 : 0.0))
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 """);
             });
 
@@ -2727,7 +2715,6 @@ WHERE (c["Discriminator"] = "Customer")
 
 SELECT VALUE SUM((ARRAY_CONTAINS(@__cities_0, c["City"]) ? 1 : 0))
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 """);
             });
 
@@ -2743,7 +2730,7 @@ WHERE (c["Discriminator"] = "Customer")
 
 SELECT VALUE COUNT(1)
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__cities_0, c["City"]))
+WHERE ARRAY_CONTAINS(@__cities_0, c["City"])
 """);
             });
 
@@ -2759,7 +2746,7 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__cities_0, c["City
 
 SELECT VALUE COUNT(1)
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__cities_0, c["City"]))
+WHERE ARRAY_CONTAINS(@__cities_0, c["City"])
 """);
             });
 
@@ -2775,7 +2762,6 @@ WHERE ((c["Discriminator"] = "Customer") AND ARRAY_CONTAINS(@__cities_0, c["City
 
 SELECT VALUE MAX((ARRAY_CONTAINS(@__cities_0, c["City"]) ? 1 : 0))
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 """);
             });
 
@@ -2791,7 +2777,6 @@ WHERE (c["Discriminator"] = "Customer")
 
 SELECT VALUE MIN((ARRAY_CONTAINS(@__cities_0, c["City"]) ? 1 : 0))
 FROM root c
-WHERE (c["Discriminator"] = "Customer")
 """);
             });
 
@@ -2803,46 +2788,46 @@ WHERE (c["Discriminator"] = "Customer")
 
                 AssertSql(
                     """
-SELECT c["CustomerID"], c["City"]
+SELECT c["id"], c["City"]
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = "ALFKI"))
+WHERE (c["id"] = "ALFKI")
 OFFSET 0 LIMIT 1
 """,
                     //
                     """
-SELECT c["CustomerID"], c["City"]
+SELECT c["id"], c["City"]
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = "ALFKI"))
+WHERE (c["id"] = "ALFKI")
 OFFSET 0 LIMIT 1
 """,
                     //
                     """
-SELECT c["CustomerID"], c["City"]
+SELECT c["id"], c["City"]
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = "ALFKI"))
+WHERE (c["id"] = "ALFKI")
 OFFSET 0 LIMIT 2
 """,
                     //
                     """
-SELECT c["CustomerID"], c["City"]
+SELECT c["id"], c["City"]
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND (c["CustomerID"] = "ALFKI"))
+WHERE (c["id"] = "ALFKI")
 OFFSET 0 LIMIT 2
 """,
                     //
                     """
-SELECT c["CustomerID"], c["City"]
+SELECT c["id"], c["City"]
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND STARTSWITH(c["CustomerID"], "A"))
-ORDER BY c["CustomerID"] DESC
+WHERE STARTSWITH(c["id"], "A")
+ORDER BY c["id"] DESC
 OFFSET 0 LIMIT 1
 """,
                     //
                     """
-SELECT c["CustomerID"], c["City"]
+SELECT c["id"], c["City"]
 FROM root c
-WHERE ((c["Discriminator"] = "Customer") AND STARTSWITH(c["CustomerID"], "A"))
-ORDER BY c["CustomerID"] DESC
+WHERE STARTSWITH(c["id"], "A")
+ORDER BY c["id"] DESC
 OFFSET 0 LIMIT 1
 """);
             });

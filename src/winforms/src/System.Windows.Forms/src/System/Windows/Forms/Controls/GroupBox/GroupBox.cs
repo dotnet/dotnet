@@ -95,7 +95,7 @@ public partial class GroupBox : Control
             SetAutoSizeMode(value);
             if (ParentInternal is not null)
             {
-                // DefaultLayout does not keep anchor information until it needs to.  When
+                // DefaultLayout does not keep anchor information until it needs to. When
                 // AutoSize became a common property, we could no longer blindly call into
                 // DefaultLayout, so now we do a special InitLayout just for DefaultLayout.
                 if (ParentInternal.LayoutEngine == DefaultLayout.Instance)
@@ -448,7 +448,7 @@ public partial class GroupBox : Control
                     textFlags,
                     gbState);
             }
-#pragma warning restore WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning restore WFO5001
         }
 
         base.OnPaint(e); // raise paint event

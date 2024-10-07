@@ -1493,6 +1493,9 @@ namespace Mono.Cecil {
 			if (type.HasNestedTypes)
 				AddNestedTypes (type);
 
+			if (symbol_writer != null && type.HasCustomDebugInformations)
+				symbol_writer.Write (type);
+
 			WindowsRuntimeProjections.ApplyProjection (type, treatment);
 		}
 

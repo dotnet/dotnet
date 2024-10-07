@@ -11,7 +11,7 @@
   <!-- VSIX -->
   <PropertyGroup>
     <!-- General properties -->
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <DeployExtension>false</DeployExtension>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>

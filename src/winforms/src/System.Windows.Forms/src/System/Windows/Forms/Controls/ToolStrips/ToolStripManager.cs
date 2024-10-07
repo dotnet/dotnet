@@ -560,7 +560,7 @@ public static partial class ToolStripManager
                 {
                     return new ToolStripProfessionalRenderer(new DarkProfessionalColors());
                 }
-#pragma warning restore WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning restore WFO5001
 
                 return new ToolStripProfessionalRenderer(isDefault: true);
 
@@ -881,7 +881,7 @@ public static partial class ToolStripManager
     /// <summary>
     ///  This function handles when Alt is pressed.
     ///  If it finds a menustrip to select, it returns true,
-    ///  If it doesnt it returns false.
+    ///  If it doesn't it returns false.
     ///  If it finds a win32 menu is already associated with the control it bails, returning false.
     /// </summary>
     internal static bool ProcessMenuKey(ref Message m)

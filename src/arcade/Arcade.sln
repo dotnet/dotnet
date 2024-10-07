@@ -149,6 +149,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.XliffTasks
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.Internal.SymbolHelper", "src\Microsoft.DotNet.Internal.SymbolHelper\Microsoft.DotNet.Internal.SymbolHelper.csproj", "{D2B5D28E-CC80-4468-A037-05C2385FA4C4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.ArcadeAzureIntegration", "src\Microsoft.DotNet.ArcadeAzureIntegration\Microsoft.DotNet.ArcadeAzureIntegration.csproj", "{CA159C84-CD7D-4364-9121-3842F97D4B60}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -935,6 +937,18 @@ Global
 		{D2B5D28E-CC80-4468-A037-05C2385FA4C4}.Release|x64.Build.0 = Release|Any CPU
 		{D2B5D28E-CC80-4468-A037-05C2385FA4C4}.Release|x86.ActiveCfg = Release|Any CPU
 		{D2B5D28E-CC80-4468-A037-05C2385FA4C4}.Release|x86.Build.0 = Release|Any CPU
+		{CA159C84-CD7D-4364-9121-3842F97D4B60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA159C84-CD7D-4364-9121-3842F97D4B60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA159C84-CD7D-4364-9121-3842F97D4B60}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CA159C84-CD7D-4364-9121-3842F97D4B60}.Debug|x64.Build.0 = Debug|Any CPU
+		{CA159C84-CD7D-4364-9121-3842F97D4B60}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CA159C84-CD7D-4364-9121-3842F97D4B60}.Debug|x86.Build.0 = Debug|Any CPU
+		{CA159C84-CD7D-4364-9121-3842F97D4B60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA159C84-CD7D-4364-9121-3842F97D4B60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA159C84-CD7D-4364-9121-3842F97D4B60}.Release|x64.ActiveCfg = Release|Any CPU
+		{CA159C84-CD7D-4364-9121-3842F97D4B60}.Release|x64.Build.0 = Release|Any CPU
+		{CA159C84-CD7D-4364-9121-3842F97D4B60}.Release|x86.ActiveCfg = Release|Any CPU
+		{CA159C84-CD7D-4364-9121-3842F97D4B60}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

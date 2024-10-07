@@ -8646,7 +8646,7 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
                         x.Property<string>("Name");
                         x.Property<int>("Discriminator");
 
-                        x.HasDiscriminator<int>("Discriminator")
+                        x.HasDiscriminator()
                             .HasValue(1)
                             .HasValue<Eagle>(2);
 
@@ -9811,12 +9811,7 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
 
     protected class ApplicationUser
     {
-        private readonly SomeOwnedEntity _ownedEntity;
-
-        public ApplicationUser()
-        {
-            _ownedEntity = null!;
-        }
+        private readonly SomeOwnedEntity _ownedEntity = null!;
 
         public virtual long Id { get; set; }
 
@@ -10060,13 +10055,8 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
             upOps => Assert.Empty(upOps),
             downOps => Assert.Empty(downOps));
 
-    private class RightmostValueComparer : ValueComparer<byte[]>
+    private class RightmostValueComparer() : ValueComparer<byte[]>(false)
     {
-        public RightmostValueComparer()
-            : base(false)
-        {
-        }
-
         public override bool Equals(byte[] left, byte[] right)
             => object.Equals(left[^1], right[^1]);
     }
@@ -11152,9 +11142,7 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
         }
 
         public Order(int secretId)
-        {
-            _secretId = secretId;
-        }
+            => _secretId = secretId;
 
         public int Id { get; set; }
 
@@ -11844,9 +11832,7 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
         }
 
         private Blog(Action<object, string> lazyLoader)
-        {
-            _loader = lazyLoader;
-        }
+            => _loader = lazyLoader;
 
         public int BlogId { get; set; }
         public string Url { get; set; }
@@ -11868,9 +11854,7 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
         }
 
         private Post(ILazyLoader loader)
-        {
-            _loader = loader;
-        }
+            => _loader = loader;
 
         public int PostId { get; set; }
         public string Title { get; set; }

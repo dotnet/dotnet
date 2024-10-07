@@ -14,5 +14,13 @@
   <UsingTask TaskName="GenerateJsonObjectString" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)"/>
   <UsingTask TaskName="GenerateMsiVersion" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
   <UsingTask TaskName="StabilizeWixFileId" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
+  <UsingTask TaskName="CreateChangelogFile"
+   AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
+  <UsingTask TaskName="CreateMD5SumsFile"
+   AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
+  <UsingTask TaskName="CreateControlFile"
+   AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
+  <UsingTask TaskName="CreateDebPackage"
+   AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
 
 </Project>

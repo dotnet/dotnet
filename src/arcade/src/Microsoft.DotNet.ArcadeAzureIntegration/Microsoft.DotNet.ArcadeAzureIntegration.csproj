@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Identity" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <Compile Remove="AzureCliCredentialWithAzNoUpdateWrapper.cs" />
+    <Compile Remove="DefaultIdentityTokenCredential.cs" />
+    <Compile Remove="DefaultIdentityTokenCredentialOptions.cs" />
+    <Compile Remove="TokenCredentialShortCache.cs" />
+  </ItemGroup>
+
+</Project>

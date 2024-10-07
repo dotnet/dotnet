@@ -24,6 +24,7 @@ using Microsoft.Arcade.Common;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
 #if !NET472_OR_GREATER
+using Azure.Identity;
 using Microsoft.DotNet.Maestro.Client;
 using Microsoft.DotNet.Maestro.Client.Models;
 using Microsoft.DotNet.Internal.SymbolHelper;
@@ -163,6 +164,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public string BuildId { get; set; }
 
         public string AzureDevOpsOrg { get; set; }
+
+        public string TempSymbolsAzureDevOpsOrg { get; set; }
+
+        public string TempSymbolsAzureDevOpsOrgToken { get; set; }
+
+        public string SymbolRequestProject { get; set; }
 
         private const string AzureDevOpsBaseUrl = $"https://dev.azure.com";
 
@@ -431,7 +438,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// <returns>true if all publishing operations were successful</returns>
         private async Task<bool> PublishSymbolsUsingStreamingAsync(
             string requestName,
-            SymbolUploadHelper[] helpers,
+            SymbolUploadHelper helper,
             string[] symbolAssetNames,
             SemaphoreSlim clientThrottle)
         {
@@ -468,15 +475,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     Log.LogMessage(MessageImportance.Normal, $"Time taken to download file to '{localSymbolPath}' is {gatherDownloadTime.ElapsedMilliseconds / 1000.0} (seconds)");
                     Log.LogMessage(MessageImportance.High, $"Successfully downloaded symbol : {symbolPackageName} to {localSymbolPath}");
 
-                    foreach (SymbolUploadHelper helper in helpers)
+                    int response = await helper.AddPackageToRequest(requestName, localSymbolPath);
+                    if (response != 0)
                     {
-                        int response = await helper.AddPackageToRequest(requestName, localSymbolPath);
-                        if (response != 0)
-                        {
-                            Log.LogError("Unable to publish {0} to symbol server with error {1}.", symbolPackageName, response);
-                            return false;
-                        }
+                        Log.LogError("Unable to publish {0} to symbol server with error {1}.", symbolPackageName, response);
+                        return false;
                     }
+
                     DeleteTemporaryDirectory(temporarySymbolsDirectory);
                     return true;
                 }
@@ -495,22 +500,15 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// <param name="symbolPackages">set of asset names of symbol packages.</param>
         private async Task<bool> PublishSymbolsFromBlobArtifactsAsync(
             string requestName,
-            SymbolUploadHelper[] helpers,
+            SymbolUploadHelper helper,
             string[] symbolPackages)
         {
-            int result;
-
-            foreach (SymbolUploadHelper helper in helpers)
+            int result = await helper.AddPackagesToRequest(requestName, symbolPackages.Select(x => Path.Combine(BlobAssetsBasePath, x)));
+            if (result != 0)
             {
-                result = await helper.AddPackagesToRequest(requestName, symbolPackages.Select(x => Path.Combine(BlobAssetsBasePath, x)));
-                if (result != 0)
-                {
-                    Log.LogError("Unable to upload packages to symbol server. Symbol client returned {0}.", result);
-                    return false;
-                }
+                Log.LogError("Unable to upload packages to symbol server. Symbol client returned {0}.", result);
             }
-
-            return true;
+            return result == 0;
         }
 
         /// <summary>
@@ -529,33 +527,37 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             Maestro.Client.Models.Build buildInfo,
             ReadOnlyDictionary<string, Asset> buildAssets,
             string pdbArtifactsBasePath,
-            string msdlToken,
-            string symWebToken,
             string symbolPublishingExclusionsFile,
             bool publishSpecialClrFiles,
             SemaphoreSlim clientThrottle = null,
-            bool dryRun = false)
+            bool dryRun = false,
+            SymbolPromotionHelper.Environment env = SymbolPromotionHelper.Environment.Prod)
         {
             ArgumentNullException.ThrowIfNull(buildInfo);
 
-            (string[] symbolPackageNames, string[] looseSymbolFiles) = GetSymbolAssetsToPublish(buildAssets, pdbArtifactsBasePath);
-            if (symbolPackageNames.Length == 0 && looseSymbolFiles.Length == 0)
+            (string[] symbolPackageNames, string looseSymbolFilesDirectory) = GetSymbolAssetsToPublish(buildAssets, pdbArtifactsBasePath);
+            int looseFileCount = Directory.EnumerateFiles(looseSymbolFilesDirectory, "*", SearchOption.AllDirectories).Count();
+
+            if (symbolPackageNames.Length == 0 && looseFileCount == 0)
             {
                 Log.LogMessage(MessageImportance.High, "No assets to publish to symbol server were found.");
                 return;
             }
 
-            // TODO (symbol-promotion): singleton when promoting.
-            SymbolUploadHelper[] helpers = await CreatePublishSymbolHelpers(msdlToken, symWebToken, symbolPublishingExclusionsFile, publishSpecialClrFiles, dryRun);
-            if (helpers.Length == 0)
+            HashSet<TargetFeedConfig> feedConfigsForSymbols = FeedConfigs[TargetFeedContentType.Symbols];
+            SymbolPublishVisibility publishVisibility = GetSymbolPublishingVisibility(feedConfigsForSymbols);
+
+            if (publishVisibility == SymbolPublishVisibility.None)
             {
                 Log.LogMessage(MessageImportance.High, "No target symbol servers match this promotion request.");
                 return;
             }
 
+            SymbolUploadHelper helper = await CreatePublishSymbolHelper(symbolPublishingExclusionsFile, publishSpecialClrFiles, dryRun);
+
             // There's a slight chance of optimization here. If a symbol is already published, it doesn't need to be published again.
             // We can check if the symbol is already published and skip the download/unwrap/conversion and just update the lifetime and send to
-            // the symbolrequest pipeline to promote to other tenants as needed. However this needs two things:
+            // the symbolrequest pipeline to promote to other orgs as needed. However this needs two things:
             // - Resilience against build agent shutdown. i.e. deal with unfinalized requests that might be incomplete.
             // - It assumes immutability of the BAR assets to ensure inputs are the same.
             // - We'd need to augment the name to include flags that are not encoded in the BAR build info (e.g. conversion).
@@ -565,9 +567,27 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
             Log.LogMessage(MessageImportance.High,
                 $"Publishing Symbols to Symbol server:" + Environment.NewLine +
+                    $"\tTemp symbol org: {TempSymbolsAzureDevOpsOrg}" + Environment.NewLine +
+                    $"\tFinal symbol visibility: {publishVisibility}" + Environment.NewLine +
                     $"\tRequest Name: {requestName}" + Environment.NewLine +
                     $"\tSymbol package count: {symbolPackageNames.Length}" + Environment.NewLine +
-                    $"\tLoose symbol file count: {looseSymbolFiles.Length}");
+                    $"\tLoose symbol file count: {looseFileCount}");
+
+            // The OIDC token that the AzureCLI task generates is short lived (10 mins). The operations below can take longer than that.
+            // So we send at least one request to symbolrequest to ensure the CLI caches a valid token. We will need to revisit this if we
+            // run this for over the token's validity period (1hr). At that point, we might need to inject OIDC refreshes to the task call site.
+            DefaultAzureCredential creds = new(new DefaultAzureCredentialOptions
+            {
+                ExcludeVisualStudioCodeCredential = true,
+                ExcludeVisualStudioCredential = true,
+                ExcludeAzureDeveloperCliCredential = true,
+                ExcludeInteractiveBrowserCredential = true,
+                ManagedIdentityClientId = ManagedIdentityClientId,
+                CredentialProcessTimeout = TimeSpan.FromSeconds(60.0)
+            });
+            TaskTracer tracer = new(Log, verbose: true);
+
+            _ = await SymbolPromotionHelper.CheckRequestRegistration(tracer, creds, env, SymbolRequestProject, requestName);
 
             // The general flow is:
             // 1. Create a request in the symbol servers that we are targeting.
@@ -577,42 +597,39 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             //    parallelism controlled by the throttle. In blob mode, they are published serially.
             // 4. If all uploads succeed, finalize the request in the symbol servers. This is the point of no return. The request is now immutable and will be
             //    the only two options onward is to modify the lifetime or to delete. If any of the uploads fail, we delete the request. A retry can be requested.
-            if (!await CreateSymbolRequest(requestName, helpers))
+            int result = await helper.CreateRequest(requestName);
+            if (result != 0)
             {
-                Log.LogError("Unable to create request in necessary symbol servers.");
+                Log.LogError("Unable to create request {0} in temporary symbol server: {1}.", requestName, result);
                 return;
             }
 
             bool symbolPublishingSucceeded = false;
             try
             {
-                foreach (SymbolUploadHelper helper in helpers)
+                result = await helper.AddDirectory(requestName, looseSymbolFilesDirectory);
+                if (result != 0)
                 {
-                    int result = await helper.AddFiles(requestName, looseSymbolFiles);
-                    if (result != 0)
-                    {
-                        symbolPublishingSucceeded = false;
-                        Log.LogError("Unable to upload files to symbol server. Symbol client returned {0}.", result);
-                        return;
-                    }
+                    Log.LogError("Unable to upload files to symbol server. Symbol client returned {0}.", result);
+                    return;
                 }
 
                 if (UseStreamingPublishing)
                 {
-                    symbolPublishingSucceeded = await PublishSymbolsUsingStreamingAsync(requestName, helpers,
+                    symbolPublishingSucceeded = await PublishSymbolsUsingStreamingAsync(requestName, helper,
                                                                                         symbolPackageNames,
                                                                                         clientThrottle);
                 }
                 else
                 {
-                    symbolPublishingSucceeded = await PublishSymbolsFromBlobArtifactsAsync(requestName, helpers,
+                    symbolPublishingSucceeded = await PublishSymbolsFromBlobArtifactsAsync(requestName, helper,
                                                                                            symbolPackageNames);
                 }
 
                 if (symbolPublishingSucceeded)
                 {
                     Log.LogMessage(MessageImportance.High, "Finalizing publishing to the appropriate symbol servers. Finalizing request with lifetime of {0} days", SymbolExpirationInDays);
-                    symbolPublishingSucceeded = await FinalizeSymbolRequest(requestName, helpers, SymbolExpirationInDays);
+                    symbolPublishingSucceeded = await helper.FinalizeRequest(requestName, SymbolExpirationInDays) == 0;
                 }
             }
             finally
@@ -620,64 +637,55 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 if (!symbolPublishingSucceeded)
                 {
                     Log.LogError("Unable to create create request in necessary symbol servers with all assets. Deleting all requests.");
-                    await DeleteSymbolRequest(requestName, helpers);
+                    result = await helper.DeleteRequest(requestName);
+                    Log.LogMessage(MessageImportance.High, "Deletion request {0} from symbol servers returned {1}.", requestName, result);
                 }
             }
 
-            if (symbolPublishingSucceeded)
+            if (!symbolPublishingSucceeded)
             {
-                // TODO (symbol-promotion)
-                Log.LogMessage(MessageImportance.High, "Finished publishing symbols.");
+                return;
             }
 
-            async Task<SymbolUploadHelper[]> CreatePublishSymbolHelpers(string msdlToken, string symWebToken, string symbolPublishingExclusionsFile, bool publishSpecialClrFiles, bool dryRun)
+            Log.LogMessage(MessageImportance.High, "Finished publishing symbols to temporary azdo org. Calling registration to SymbolRequest");
+
+            SymbolPromotionHelper.Visibility visibility = publishVisibility switch
             {
-                HashSet<TargetFeedConfig> feedConfigsForSymbols = FeedConfigs[TargetFeedContentType.Symbols];
+                SymbolPublishVisibility.Internal => SymbolPromotionHelper.Visibility.Internal,
+                SymbolPublishVisibility.Public => SymbolPromotionHelper.Visibility.Public,
+                _ => throw new ApplicationException()
+            };
 
-                List<(string AzdoOrg, string Token)> serversToPublish = GetTargetSymbolServers(feedConfigsForSymbols, msdlToken, symWebToken);
+            if (dryRun)
+            {
+                Log.LogMessage(MessageImportance.High, "Would register request {0} to project {1} in environment {2} with visibility {3} to last {4} days.", requestName, SymbolRequestProject, env, visibility, SymbolExpirationInDays);
+            }
+            else if (!await SymbolPromotionHelper.RegisterAndPublishRequest(tracer, creds, env, SymbolRequestProject, requestName, SymbolExpirationInDays, visibility))
+            {
+                Log.LogError("Unable to register and publish request to the requested symbol servers with the appropriate visibility.");
+                return;
+            }
 
-                if (serversToPublish.Count == 0)
-                {
-                    // Quick bail - avoid any downloads and allocations.
-                    return [];
-                }
-
+            Task<SymbolUploadHelper> CreatePublishSymbolHelper(string symbolPublishingExclusionsFile, bool publishSpecialClrFiles, bool dryRun)
+            {
                 FrozenSet<string> exclusions = LoadExclusions(symbolPublishingExclusionsFile);
-
-                Task<SymbolUploadHelper>[] downloadTasks = new Task<SymbolUploadHelper>[serversToPublish.Count];
+                PATCredential creds = new(TempSymbolsAzureDevOpsOrgToken);
                 TaskTracer tracer = new(Log, verbose: true);
 
-                for (int i = 0; i < serversToPublish.Count; i++)
-                {
-                    (string azdoOrg, string token) = serversToPublish[i];
-                    PATCredential creds = new(token);
+                SymbolPublisherOptions options = new(
+                    TempSymbolsAzureDevOpsOrg,
+                    creds,
+                    packageFileExcludeList: exclusions,
+                    convertPortablePdbs: false,
+                    treatPdbConversionIssuesAsInfo: false,
+                    pdbConversionTreatAsWarning: null,
+                    dotnetInternalPublishSpecialClrFiles: publishSpecialClrFiles,
+                    verboseClient: true,
+                    isDryRun: dryRun);
 
-                    SymbolPublisherOptions options = new(
-                        azdoOrg,
-                        creds,
-                        packageFileExcludeList: exclusions,
-                        convertPortablePdbs: false,
-                        treatPdbConversionIssuesAsInfo: false,
-                        pdbConversionTreatAsWarning: null,
-                        dotnetInternalPublishSpecialClrFiles: publishSpecialClrFiles,
-                        verboseClient: true,
-                        isDryRun: dryRun);
-
-                    // This is inefficient (downloads a client per tenant) but correct as a deployment may change client semantics.
-                    // When this path unifies, only one download is needed.
-                    if (dryRun)
-                    {
-                        // In dry run mode, we never hit the symbol server. Don't download symbol.exe in such scenario.
-                        SymbolUploadHelper symbolHelper = SymbolUploadHelperFactory.GetSymbolHelperFromLocalTool(tracer, options, ".");
-                        downloadTasks[i] = Task.FromResult(symbolHelper);
-                    }
-                    else
-                    {
-                        downloadTasks[i] = SymbolUploadHelperFactory.GetSymbolHelperWithDownloadAsync(tracer, options);
-                    }
-                }
-
-                return await Task.WhenAll(downloadTasks);
+                // In dry run mode, we never hit the symbol server. Don't download symbol.exe in such scenario.
+                return dryRun ? Task.FromResult(SymbolUploadHelperFactory.GetSymbolHelperFromLocalTool(tracer, options, ".")) 
+                    : SymbolUploadHelperFactory.GetSymbolHelperWithDownloadAsync(tracer, options);
 
                 FrozenSet<string> LoadExclusions(string symbolPublishingExclusionsFile)
                 {
@@ -716,47 +724,29 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
         }
 
-        private async Task<bool> OperationOnAllServers(SymbolUploadHelper[] helpers, Func<SymbolUploadHelper, Task<int>> operation, string friendlyName)
-        {
-            try
-            {
-                IEnumerable<Task<int>> operationRequests = helpers.Select(operation);
-                int[] results = await Task.WhenAll(operationRequests);
-                return results.All(r => r == 0);
-            }
-            catch (Exception ex)
-            {
-                Log.LogError("Unable to complete request '{0}' from all target servers: {1}", friendlyName, ex);
-            }
-            return false;
-        }
-
-        private Task<bool> CreateSymbolRequest(string requestName, SymbolUploadHelper[] helpers) => OperationOnAllServers(helpers, helper => helper.CreateRequest(requestName), nameof(CreateSymbolRequest));
-
-        private Task<bool> FinalizeSymbolRequest(string requestName, SymbolUploadHelper[] helpers, uint expirationInDays) => OperationOnAllServers(helpers, helper => helper.FinalizeRequest(requestName, expirationInDays), nameof(FinalizeSymbolRequest));
-
-        private Task<bool> DeleteSymbolRequest(string requestName, SymbolUploadHelper[] helpers) => OperationOnAllServers(helpers, helper => helper.DeleteRequest(requestName), nameof(DeleteSymbolRequest));
-
-        internal static (string[], string[]) GetSymbolAssetsToPublish(ReadOnlyDictionary<string, Asset> buildAssets, string pdbArtifactsBasePath)
+        internal (string[], string) GetSymbolAssetsToPublish(ReadOnlyDictionary<string, Asset> buildAssets, string pdbArtifactsBasePath)
         {
             string[] symbolPackagesAssetNames = buildAssets?.Keys.Where(x => IsSymbolPackage(x)).Distinct().ToArray() ?? [];
-            string[] filesToSymbolServer = [];
+            string pdbStagePath = CreateTemporaryDirectory();
 
             if (Directory.Exists(pdbArtifactsBasePath))
             {
-                IEnumerable<string> pdbEntries = System.IO.Directory.EnumerateFiles(
-                    pdbArtifactsBasePath,
-                    "*.pdb",
-                    SearchOption.AllDirectories);
-                IEnumerable<string> dllEntries = System.IO.Directory.EnumerateFiles(
-                    pdbArtifactsBasePath,
-                    "*.dll",
-                    SearchOption.AllDirectories);
-                filesToSymbolServer = pdbEntries.Concat(dllEntries).ToArray();
+                foreach (string looseFile in Directory.EnumerateFiles(pdbArtifactsBasePath, "*", SearchOption.AllDirectories))
+                {
+                    string extension = Path.GetExtension(looseFile);
+                    if (extension == ".pdb" || extension == ".dll")
+                    {
+                        string relativePath = Path.GetRelativePath(pdbArtifactsBasePath, looseFile);
+                        FileInfo looseFileStagePath = new(Path.Combine(pdbStagePath, relativePath));
+                        looseFileStagePath.Directory.Create();
+                        File.Copy(looseFile, looseFileStagePath.FullName);
+                    }
+                }
             }
 
-            return (symbolPackagesAssetNames, filesToSymbolServer);
+            return (symbolPackagesAssetNames, pdbStagePath);
         }
+
 
         /// <summary>
         /// Get the Symbol Server to publish
@@ -765,18 +755,16 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// <param name="msdlToken"></param>
         /// <param name="symWebToken"></param>
         /// <returns>A map of symbol server path => token to the symbol server</returns>
-        public List<(string AzdoOrg, string Token)> GetTargetSymbolServers(HashSet<TargetFeedConfig> feedConfigsForSymbols, string msdlToken, string symWebToken)
+        public SymbolPublishVisibility GetSymbolPublishingVisibility(HashSet<TargetFeedConfig> feedConfigsForSymbols)
         {
-            List<(string AzdoOrg, string Token)> targetSymbolTenants = new(2);
-            if (feedConfigsForSymbols.Any(x => x.SymbolTargetType.HasFlag(SymbolTargetType.Msdl)))
+            SymbolPublishVisibility highestVisibility = SymbolPublishVisibility.None;
+
+            foreach (var feedConfig in feedConfigsForSymbols)
             {
-                targetSymbolTenants.Add((MsdlAzdoOrg, msdlToken));
+                highestVisibility = feedConfig.SymbolPublishVisibility > highestVisibility ? feedConfig.SymbolPublishVisibility : highestVisibility;
             }
-            if (feedConfigsForSymbols.Any(x => x.SymbolTargetType.HasFlag(SymbolTargetType.SymWeb)))
-            {
-                targetSymbolTenants.Add((SymwebAzdoOrg, symWebToken));
-            }
-            return targetSymbolTenants;
+
+            return highestVisibility;
         }
 
         /// <summary>

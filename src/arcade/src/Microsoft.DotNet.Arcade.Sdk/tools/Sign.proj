@@ -50,7 +50,10 @@
       <_TestSign Condition="'$(DotNetSignType)' == 'test'">true</_TestSign>
 
       <_DesktopMSBuildRequired>false</_DesktopMSBuildRequired>
-      <_DesktopMSBuildRequired Condition="'$(_DryRun)' != 'true' and '$(MSBuildRuntimeType)' == 'Core'">true</_DesktopMSBuildRequired>
+      <_DesktopMSBuildRequired Condition="'$(_DryRun)' != 'true' and '$(MSBuildRuntimeType)' == 'Core'  and '$(OS)' == 'Windows_NT'">true</_DesktopMSBuildRequired>
+
+      <_DotNetCoreRequired>false</_DotNetCoreRequired>
+      <_DotNetCoreRequired Condition="'$(_DryRun)' != 'true' and '$(OS)' != 'Windows_NT'">true</_DotNetCoreRequired>
     </PropertyGroup>
 
     <Error Condition="'$(AllowEmptySignList)' != 'true' AND '@(ItemsToSign)' == ''" 
@@ -69,6 +72,10 @@
       <_DesktopMSBuildPath Condition="!Exists('$(_DesktopMSBuildPath)')">$(_VSInstallDir)\MSBuild\15.0\Bin\msbuild.exe</_DesktopMSBuildPath>
     </PropertyGroup>
 
+    <PropertyGroup Condition="$(_DotNetCoreRequired)">
+      <_DotNetCorePath>$(DotNetTool)</_DotNetCorePath>
+    </PropertyGroup>
+
     <Microsoft.DotNet.SignTool.SignToolTask
         DryRun="$(_DryRun)"
         TestSign="$(_TestSign)"
@@ -82,6 +89,7 @@
         TempDir="$(ArtifactsTmpDir)"
         LogDir="$(ArtifactsLogDir)"
         MSBuildPath="$(_DesktopMSBuildPath)"
+        DotNetPath="$(_DotNetCorePath)"
         SNBinaryPath="$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe"
         MicroBuildCorePath="$(NuGetPackageRoot)microbuild.core\$(MicroBuildCoreVersion)"
         WixToolsPath="$(WixInstallPath)"

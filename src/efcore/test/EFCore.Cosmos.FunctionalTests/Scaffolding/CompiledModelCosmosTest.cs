@@ -31,6 +31,7 @@ public class CompiledModelCosmosTest : CompiledModelTestBase
                         eb.ToContainer("DataContainer");
                         eb.Property<Dictionary<string, string[]>>("Map");
                         eb.Property<List<Dictionary<string, int>>>("List");
+                        eb.Property<ReadOnlyMemory<byte>>("Bytes");
                         eb.UseETagConcurrency();
                         eb.HasNoDiscriminator();
                         eb.Property(d => d.Blob).ToJsonProperty("JsonBlob");
@@ -59,7 +60,7 @@ public class CompiledModelCosmosTest : CompiledModelTestBase
                 Assert.Equal(ValueGenerated.Never, id.ValueGenerated);
                 Assert.Equal(PropertySaveBehavior.Throw, id.GetAfterSaveBehavior());
                 Assert.Equal(PropertySaveBehavior.Save, id.GetBeforeSaveBehavior());
-                Assert.Equal("Id", CosmosPropertyExtensions.GetJsonPropertyName(id));
+                Assert.Equal("Id", id.GetJsonPropertyName());
                 Assert.Null(id.GetValueGeneratorFactory());
                 Assert.Null(id.GetValueConverter());
                 Assert.NotNull(id.GetValueComparer());
@@ -74,7 +75,7 @@ public class CompiledModelCosmosTest : CompiledModelTestBase
                 Assert.Equal(ValueGenerated.Never, storeId.ValueGenerated);
                 Assert.Equal(PropertySaveBehavior.Throw, storeId.GetAfterSaveBehavior());
                 Assert.Equal(PropertySaveBehavior.Save, storeId.GetBeforeSaveBehavior());
-                Assert.Equal("id", CosmosPropertyExtensions.GetJsonPropertyName(storeId));
+                Assert.Equal("id", storeId.GetJsonPropertyName());
                 Assert.IsType<IdValueGenerator>(storeId.GetValueGeneratorFactory()!(storeId, dataEntity));
                 Assert.Null(storeId.GetValueConverter());
                 Assert.NotNull(storeId.GetValueComparer());
@@ -89,7 +90,7 @@ public class CompiledModelCosmosTest : CompiledModelTestBase
                 Assert.Equal(ValueGenerated.Never, partitionId.ValueGenerated);
                 Assert.Equal(PropertySaveBehavior.Throw, partitionId.GetAfterSaveBehavior());
                 Assert.Equal(PropertySaveBehavior.Save, partitionId.GetBeforeSaveBehavior());
-                Assert.Equal("PartitionId", CosmosPropertyExtensions.GetJsonPropertyName(partitionId));
+                Assert.Equal("PartitionId", partitionId.GetJsonPropertyName());
                 Assert.Null(partitionId.GetValueGeneratorFactory());
                 Assert.Null(partitionId.GetValueConverter());
                 Assert.Equal("1", partitionId.FindTypeMapping()!.Converter!.ConvertToProvider(1));
@@ -106,7 +107,7 @@ public class CompiledModelCosmosTest : CompiledModelTestBase
                 Assert.Equal(ValueGenerated.Never, map.ValueGenerated);
                 Assert.Equal(PropertySaveBehavior.Save, map.GetAfterSaveBehavior());
                 Assert.Equal(PropertySaveBehavior.Save, map.GetBeforeSaveBehavior());
-                Assert.Equal("Map", CosmosPropertyExtensions.GetJsonPropertyName(map));
+                Assert.Equal("Map", map.GetJsonPropertyName());
                 Assert.Null(map.GetValueGeneratorFactory());
                 Assert.Null(map.GetValueConverter());
                 Assert.NotNull(map.GetValueComparer());
@@ -122,11 +123,27 @@ public class CompiledModelCosmosTest : CompiledModelTestBase
                 Assert.Equal(ValueGenerated.Never, list.ValueGenerated);
                 Assert.Equal(PropertySaveBehavior.Save, list.GetAfterSaveBehavior());
                 Assert.Equal(PropertySaveBehavior.Save, list.GetBeforeSaveBehavior());
-                Assert.Equal("List", CosmosPropertyExtensions.GetJsonPropertyName(list));
+                Assert.Equal("List", list.GetJsonPropertyName());
                 Assert.Null(list.GetValueGeneratorFactory());
                 Assert.Null(list.GetValueConverter());
                 Assert.NotNull(list.GetValueComparer());
                 Assert.NotNull(list.GetKeyValueComparer());
+
+                var bytes = dataEntity.FindProperty("Bytes")!;
+                Assert.Equal(typeof(ReadOnlyMemory<byte>), bytes.ClrType);
+                Assert.Null(bytes.PropertyInfo);
+                Assert.Null(bytes.FieldInfo);
+                Assert.False(bytes.IsNullable);
+                Assert.False(bytes.IsConcurrencyToken);
+                Assert.False(bytes.IsPrimitiveCollection);
+                Assert.Equal(ValueGenerated.Never, bytes.ValueGenerated);
+                Assert.Equal(PropertySaveBehavior.Save, bytes.GetAfterSaveBehavior());
+                Assert.Equal(PropertySaveBehavior.Save, bytes.GetBeforeSaveBehavior());
+                Assert.Equal("Bytes", bytes.GetJsonPropertyName());
+                Assert.Null(bytes.GetValueGeneratorFactory());
+                Assert.Null(bytes.GetValueConverter());
+                Assert.NotNull(bytes.GetValueComparer());
+                Assert.NotNull(bytes.GetKeyValueComparer());
 
                 var eTag = dataEntity.FindProperty("_etag")!;
                 Assert.Equal(typeof(string), eTag.ClrType);
@@ -137,7 +154,7 @@ public class CompiledModelCosmosTest : CompiledModelTestBase
                 Assert.Equal(ValueGenerated.OnAddOrUpdate, eTag.ValueGenerated);
                 Assert.Equal(PropertySaveBehavior.Ignore, eTag.GetAfterSaveBehavior());
                 Assert.Equal(PropertySaveBehavior.Ignore, eTag.GetBeforeSaveBehavior());
-                Assert.Equal("_etag", CosmosPropertyExtensions.GetJsonPropertyName(eTag));
+                Assert.Equal("_etag", eTag.GetJsonPropertyName());
                 Assert.Null(eTag.GetValueGeneratorFactory());
                 Assert.Null(eTag.GetValueConverter());
                 Assert.NotNull(eTag.GetValueComparer());
@@ -154,7 +171,7 @@ public class CompiledModelCosmosTest : CompiledModelTestBase
                 Assert.Equal(ValueGenerated.Never, blob.ValueGenerated);
                 Assert.Equal(PropertySaveBehavior.Save, blob.GetAfterSaveBehavior());
                 Assert.Equal(PropertySaveBehavior.Save, blob.GetBeforeSaveBehavior());
-                Assert.Equal("JsonBlob", CosmosPropertyExtensions.GetJsonPropertyName(blob));
+                Assert.Equal("JsonBlob", blob.GetJsonPropertyName());
                 Assert.Null(blob.GetValueGeneratorFactory());
                 Assert.Null(blob.GetValueConverter());
                 Assert.NotNull(blob.GetValueComparer());
@@ -169,15 +186,15 @@ public class CompiledModelCosmosTest : CompiledModelTestBase
                 Assert.Equal(ValueGenerated.OnAddOrUpdate, jObject.ValueGenerated);
                 Assert.Equal(PropertySaveBehavior.Ignore, jObject.GetAfterSaveBehavior());
                 Assert.Equal(PropertySaveBehavior.Ignore, jObject.GetBeforeSaveBehavior());
-                Assert.Equal("", CosmosPropertyExtensions.GetJsonPropertyName(jObject));
+                Assert.Equal("", jObject.GetJsonPropertyName());
                 Assert.Null(jObject.GetValueGeneratorFactory());
                 Assert.Null(jObject.GetValueConverter());
                 Assert.NotNull(jObject.GetValueComparer());
                 Assert.NotNull(jObject.GetKeyValueComparer());
 
-                Assert.Equal(2, dataEntity.GetKeys().Count());
+                Assert.Equal(1, dataEntity.GetKeys().Count());
 
-                Assert.Equal([id, partitionId, blob, list, map, storeId, jObject, eTag], dataEntity.GetProperties());
+                Assert.Equal([id, partitionId, blob, bytes, list, map, storeId, jObject, eTag], dataEntity.GetProperties());
             });
 
     protected override void BuildBigModel(ModelBuilder modelBuilder, bool jsonColumns)
@@ -201,7 +218,6 @@ public class CompiledModelCosmosTest : CompiledModelTestBase
                         b.Ignore(e => e.RefTypeArray);
                         b.Ignore(e => e.RefTypeList);
                     });
-
             });
 
         modelBuilder.Entity<PrincipalDerived<DependentBase<byte?>>>(
@@ -333,13 +349,13 @@ public class CompiledModelCosmosTest : CompiledModelTestBase
                     {
                         b.Ignore(e => e.RefTypeArray);
                         b.Ignore(e => e.RefTypeList);
-                        b.ComplexProperty(c => c.Principal, b =>
-                        {
-                            b.Ignore(e => e.RefTypeList);
-                            b.Ignore(e => e.RefTypeArray);
-                        });
+                        b.ComplexProperty(
+                            c => c.Principal, b =>
+                            {
+                                b.Ignore(e => e.RefTypeList);
+                                b.Ignore(e => e.RefTypeArray);
+                            });
                     });
-
             });
     }
 
@@ -354,8 +370,11 @@ public class CompiledModelCosmosTest : CompiledModelTestBase
     protected override int ExpectedComplexTypeProperties
         => 12;
 
-    protected override TestHelpers TestHelpers => CosmosTestHelpers.Instance;
-    protected override ITestStoreFactory TestStoreFactory => CosmosTestStoreFactory.Instance;
+    protected override TestHelpers TestHelpers
+        => CosmosTestHelpers.Instance;
+
+    protected override ITestStoreFactory TestStoreFactory
+        => CosmosTestStoreFactory.Instance;
 
     protected override BuildSource AddReferences(BuildSource build, [CallerFilePath] string filePath = "")
     {
