@@ -67,7 +67,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 ShortNames = shortNames,
                 WixToolsetPath = TestBase.WixToolsetPath,
                 WorkloadManifestPackageFiles = manifestsPackages,
-                IsOutOfSupportInVisualStudio = true
+                IsOutOfSupportInVisualStudio = true,
+                UseVisualStudioComponentPrefix = true,
             };
 
             bool result = createWorkloadTask.Execute();
@@ -94,13 +95,13 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             string componentSwr = File.ReadAllText(
                 Path.Combine(Path.GetDirectoryName(
                     createWorkloadTask.SwixProjects.FirstOrDefault(
-                        i => i.ItemSpec.Contains("microsoft.net.sdk.emscripten.5.6.swixproj")).ItemSpec), "component.swr"));
-            Assert.Contains("package name=microsoft.net.sdk.emscripten", componentSwr);
+                        i => i.ItemSpec.Contains("Microsoft.NET.Component.sdk.emscripten.5.6.swixproj")).ItemSpec), "component.swr"));
+            Assert.Contains("package name=Microsoft.NET.Component.sdk.emscripten", componentSwr);
             string previewComponentSwr = File.ReadAllText(
                 Path.Combine(Path.GetDirectoryName(
                     createWorkloadTask.SwixProjects.FirstOrDefault(
-                        i => i.ItemSpec.Contains("microsoft.net.sdk.emscripten.pre.5.6.swixproj")).ItemSpec), "component.swr"));
-            Assert.Contains("package name=microsoft.net.sdk.emscripten.pre", previewComponentSwr);
+                        i => i.ItemSpec.Contains("Microsoft.NET.Component.sdk.emscripten.pre.5.6.swixproj")).ItemSpec), "component.swr"));
+            Assert.Contains("package name=Microsoft.NET.Component.sdk.emscripten.pre", previewComponentSwr);
 
             // Emscripten is an abstract workload so it should be a component group.
             Assert.Contains("vs.package.type=component", componentSwr);
@@ -204,6 +205,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 ShortNames = shortNames,
                 WixToolsetPath = TestBase.WixToolsetPath,
                 WorkloadManifestPackageFiles = manifestsPackages,
+                UseVisualStudioComponentPrefix = true,
             };
 
             bool result = createWorkloadTask.Execute();
@@ -229,8 +231,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             string componentSwr = File.ReadAllText(
                 Path.Combine(Path.GetDirectoryName(
                     createWorkloadTask.SwixProjects.FirstOrDefault(
-                        i => i.ItemSpec.Contains("microsoft.net.sdk.emscripten.5.6.swixproj")).ItemSpec), "component.swr"));
-            Assert.Contains("package name=microsoft.net.sdk.emscripten", componentSwr);
+                        i => i.ItemSpec.Contains("Microsoft.NET.Component.sdk.emscripten.5.6.swixproj")).ItemSpec), "component.swr"));
+            Assert.Contains("package name=Microsoft.NET.Component.sdk.emscripten", componentSwr);
 
             // Emscripten is an abstract workload so it should be a component group.
             Assert.Contains("vs.package.type=component", componentSwr);

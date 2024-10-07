@@ -51,10 +51,42 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         /// Generates a safe SWIX ID by replacing "-", " ", and "_" with ".".
         /// </summary>
         /// <param name="id">The identifier to convert to a safe identifier</param>
+        /// <param name="suffix">Optional suffix to add to the identifier.</param>
         /// <returns>The safe identifier.</returns>
         internal static string ToSafeId(string id, string suffix = null) =>
             id.Replace("-", ".").Replace(" ", ".").Replace("_", ".") +
             (string.IsNullOrWhiteSpace(suffix) ? null : $".{suffix}");
+
+        /// <summary>
+        /// Generates a safe SWIX ID that conforms with the Visual Studio naming convention.
+        /// Well-known prefixes (Microsoft. and Microsoft.NET.) are automatically removed.
+        /// </summary>
+        /// <param name="id">The identifier to convert to a safe identifier</param>
+        /// <param name="suffix">Optional suffix to add to the identifier.</param>
+        /// <param name="prefix">The component prefix to add.</param>
+        /// <returns>The safe component identifier.</returns>
+        internal static string ToSafeComponentId(string id, string suffix = null, string prefix = null)
+        {
+            // The suffix is always included in the safe ID.
+            string safeId = ToSafeId(id, suffix);
+
+            if (string.IsNullOrWhiteSpace(prefix))
+            {
+                return safeId;
+            }
+
+            foreach (string wellKnownPrefix in DefaultValues.WellKnownWorkloadPrefixes)
+            {
+                if (safeId.StartsWith(wellKnownPrefix, StringComparison.OrdinalIgnoreCase))
+                {
+                    safeId = safeId.Substring(wellKnownPrefix.Length);
+                    break;
+                }
+            }
+
+            // Trim well-known prefixes manually since net472 doesn't support all the string.Replace overloads
+            return prefix + '.' + safeId;
+        }
 
         /// <summary>
         /// Replaces all the tokens in a file using the provided dictionary. The dictionary keys define the tokens and
