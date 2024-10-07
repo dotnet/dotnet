@@ -16,6 +16,12 @@ namespace NuGet.Test.Utility
 {
     public static class TestDotnetCLiUtility
     {
+#if NET8_0 // This override allows us to test the next version of the CLI without making all the projects target that version.
+        private static NuGetFramework FrameworkOverride = new NuGetFramework("net9.0");
+#elif !IS_DESKTOP
+        private static NuGetFramework FrameworkOverride = null;
+#endif
+
         internal static string SdkVersion { get; private set; }
         internal static NuGetFramework SdkTfm { get; private set; }
         internal static string CliDirSource { get; private set; }
@@ -103,7 +109,7 @@ namespace NuGet.Test.Utility
         private static string GetSdkToTestByAssemblyPath(string testAssemblyPath)
         {
             // The TFM we're testing
-            var testTfm = AssemblyReader.GetTargetFramework(testAssemblyPath);
+            var testTfm = FrameworkOverride ?? AssemblyReader.GetTargetFramework(testAssemblyPath);
 
             var selectedVersion =
                 Directory.EnumerateDirectories(SdkDirSource) // get all directories in sdk folder

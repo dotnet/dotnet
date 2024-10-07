@@ -130,7 +130,7 @@ namespace NuGet.Test.Utility
                     return dotnetCli;
                 }
 
-                dotnetCli = Path.Combine(dir.FullName, dir.FullName, DotnetCliBinary);
+                dotnetCli = Path.Combine(dir.FullName, DotnetCliBinary);
                 if (File.Exists(dotnetCli))
                 {
                     return dotnetCli;
