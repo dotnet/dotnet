@@ -41,7 +41,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <_WorkloadManifestValues Include="NetVersion" Value="net9" />
+      <_WorkloadManifestValues Include="NetVersion" Value="net10" />
       <_WorkloadManifestValues Include="WorkloadVersion" Value="$(PackageVersion)" />
       <_WorkloadManifestValues Include="PackageVersion" Value="$(PackageVersion)" />
       <_WorkloadManifestValues Include="EmscriptenVersion" Value="$(EmscriptenVersion)" />

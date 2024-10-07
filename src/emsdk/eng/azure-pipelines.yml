@@ -11,9 +11,9 @@ variables:
 - template: /eng/common-variables.yml@self
 - template: /eng/common/templates-official/variables/pool-providers.yml@self
 - name: LinuxImage
-  value: 1es-ubuntu-2204
+  value: build.ubuntu.2204.amd64
 - name: WindowsImage
-  value: 1es-windows-2022
+  value: windows.vs2022.amd64
 - name: MacImage
   value: macOS-12
 - name: CheckNuGetSizesScript
@@ -32,6 +32,10 @@ extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
     sdl:
+      tsa:
+        enabled: true
+      policheck:
+        enabled: true
       binskim:
         scanOutputDirectoryOnly: true
       sourceAnalysisPool:
@@ -182,7 +186,7 @@ extends:
           ############ Windows BUILD ############
           - job: Build_win_x64
             displayName: Windows_x64
-            timeoutInMinutes: 150
+            timeoutInMinutes: 240
             pool:
               name: $(DncEngInternalBuildPool)
               image: $(WindowsImage)
@@ -213,7 +217,7 @@ extends:
 
           - job: Build_win_arm64
             displayName: Windows_arm64
-            timeoutInMinutes: 150
+            timeoutInMinutes: 240
             pool:
               name: $(DncEngInternalBuildPool)
               image: $(WindowsImage)
@@ -362,6 +366,6 @@ extends:
     - template: /eng/common/templates-official/post-build/post-build.yml@self
       parameters:
         enableSourceLinkValidation: false
-        enableSigningValidation: false
+        enableSigningValidation: true
         enableSymbolValidation: false
         enableNugetValidation: true

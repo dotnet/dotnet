@@ -12,12 +12,18 @@
     <FileExtensionSignInfo Include=".cat" CertificateName="MicrosoftDotNet500" />
 
     <!--
-      These files can't be dual-signed with 3PartySHA2, don't try to sign them.
+      Script files need to be signed with 3PartyScriptsSHA2 not the dual-signed certificate.
     -->
-    <FileExtensionSignInfo Update=".py" CertificateName="None" />
-    <FileExtensionSignInfo Update=".ps1" CertificateName="None" />
+    <FileExtensionSignInfo Update=".py" CertificateName="3PartyScriptsSHA2" />
+    <FileExtensionSignInfo Update=".ps1" CertificateName="3PartyScriptsSHA2" />
+    <!-- We don't need to code sign .js files because they are not used in Windows Script Host. -->
     <FileExtensionSignInfo Update=".js" CertificateName="None" />
-    <FileExtensionSignInfo Include=".vbs" CertificateName="None" />
+
+    <!--
+      Zero length files should not be signed because it breaks signing/ESRP.
+    -->
+    <FileSignInfo Include="__init__.py" CertificateName="None" />
+    <FileSignInfo Include="eggs.py" CertificateName="None" />
   </ItemGroup>
   
   <ItemGroup>
