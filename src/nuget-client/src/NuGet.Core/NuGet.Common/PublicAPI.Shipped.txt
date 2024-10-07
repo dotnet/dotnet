@@ -40,6 +40,7 @@ NuGet.Common.ExceptionLogger.ShowStack.get -> bool
 NuGet.Common.ExceptionUtilities
 NuGet.Common.FileUtility
 NuGet.Common.HashAlgorithmName
+NuGet.Common.HashAlgorithmName.SHA1 = 4 -> NuGet.Common.HashAlgorithmName
 NuGet.Common.HashAlgorithmName.SHA256 = 1 -> NuGet.Common.HashAlgorithmName
 NuGet.Common.HashAlgorithmName.SHA384 = 2 -> NuGet.Common.HashAlgorithmName
 NuGet.Common.HashAlgorithmName.SHA512 = 3 -> NuGet.Common.HashAlgorithmName
@@ -197,6 +198,7 @@ NuGet.Common.NuGetLogCode.NU1211 = 1211 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1212 = 1212 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1213 = 1213 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1301 = 1301 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU1302 = 1302 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1401 = 1401 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1402 = 1402 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1403 = 1403 -> NuGet.Common.NuGetLogCode
@@ -209,6 +211,7 @@ NuGet.Common.NuGetLogCode.NU1504 = 1504 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1505 = 1505 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1506 = 1506 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1507 = 1507 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU1508 = 1508 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1601 = 1601 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1602 = 1602 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1603 = 1603 -> NuGet.Common.NuGetLogCode
@@ -226,6 +229,7 @@ NuGet.Common.NuGetLogCode.NU1901 = 1901 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1902 = 1902 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1903 = 1903 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1904 = 1904 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU1905 = 1905 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU3000 = 3000 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU3001 = 3001 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU3002 = 3002 -> NuGet.Common.NuGetLogCode
@@ -269,6 +273,7 @@ NuGet.Common.NuGetLogCode.NU3039 = 3039 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU3040 = 3040 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU3041 = 3041 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU3042 = 3042 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU3043 = 3043 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU5000 = 5000 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU5001 = 5001 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU5002 = 5002 -> NuGet.Common.NuGetLogCode

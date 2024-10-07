@@ -25,6 +25,7 @@ NuGet.PackageManagement.AuditCheckResult
 NuGet.PackageManagement.AuditCheckResult.AddMetricsToTelemetry(NuGet.Common.TelemetryEvent! telemetryEvent) -> void
 NuGet.PackageManagement.AuditCheckResult.Warnings.get -> System.Collections.Generic.IReadOnlyList<NuGet.Common.ILogMessage!>!
 NuGet.PackageManagement.AuditChecker
+NuGet.PackageManagement.AuditChecker.AuditChecker(System.Collections.Generic.List<NuGet.Protocol.Core.Types.SourceRepository!>! packageSources, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository!>? auditSources, NuGet.Protocol.Core.Types.SourceCacheContext! sourceCacheContext, NuGet.Common.ILogger! logger) -> void
 NuGet.PackageManagement.AuditChecker.AuditChecker(System.Collections.Generic.List<NuGet.Protocol.Core.Types.SourceRepository!>! sourceRepositories, NuGet.Protocol.Core.Types.SourceCacheContext! sourceCacheContext, NuGet.Common.ILogger! logger) -> void
 NuGet.PackageManagement.AuditChecker.CheckPackageVulnerabilitiesAsync(System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData!>! packages, System.Collections.Generic.Dictionary<string!, NuGet.ProjectModel.RestoreAuditProperties!>! restoreAuditProperties, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.PackageManagement.AuditCheckResult!>!
 NuGet.PackageManagement.BuildIntegratedProjectAction
@@ -270,10 +271,12 @@ NuGet.PackageManagement.PackageRestoreConsent.IsGrantedInSettings.set -> void
 ~NuGet.PackageManagement.PackageRestoreConsent.PackageRestoreConsent(NuGet.Configuration.ISettings settings, NuGet.Common.IEnvironmentVariableReader environmentReader) -> void
 ~NuGet.PackageManagement.PackageRestoreConsent.PackageRestoreConsent(NuGet.Configuration.ISettings settings, NuGet.Common.IEnvironmentVariableReader environmentReader, NuGet.Configuration.ConfigurationDefaults configurationDefaults) -> void
 NuGet.PackageManagement.PackageRestoreContext
+~NuGet.PackageManagement.PackageRestoreContext.AuditSources.get -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository>
 NuGet.PackageManagement.PackageRestoreContext.EnableNuGetAudit.get -> bool
 ~NuGet.PackageManagement.PackageRestoreContext.Logger.get -> NuGet.Common.ILogger
 NuGet.PackageManagement.PackageRestoreContext.MaxNumberOfParallelTasks.get -> int
 ~NuGet.PackageManagement.PackageRestoreContext.PackageManager.get -> NuGet.PackageManagement.NuGetPackageManager
+~NuGet.PackageManagement.PackageRestoreContext.PackageRestoreContext(NuGet.PackageManagement.NuGetPackageManager nuGetPackageManager, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData> packages, System.Threading.CancellationToken token, System.EventHandler<NuGet.PackageManagement.PackageRestoredEventArgs> packageRestoredEvent, System.EventHandler<NuGet.PackageManagement.PackageRestoreFailedEventArgs> packageRestoreFailedEvent, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> auditSources, int maxNumberOfParallelTasks, bool enableNuGetAudit, System.Collections.Generic.Dictionary<string, NuGet.ProjectModel.RestoreAuditProperties> restoreAuditProperties, NuGet.Common.ILogger logger) -> void
 ~NuGet.PackageManagement.PackageRestoreContext.PackageRestoreContext(NuGet.PackageManagement.NuGetPackageManager nuGetPackageManager, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData> packages, System.Threading.CancellationToken token, System.EventHandler<NuGet.PackageManagement.PackageRestoredEventArgs> packageRestoredEvent, System.EventHandler<NuGet.PackageManagement.PackageRestoreFailedEventArgs> packageRestoreFailedEvent, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, int maxNumberOfParallelTasks, NuGet.Common.ILogger logger) -> void
 ~NuGet.PackageManagement.PackageRestoreContext.PackageRestoreContext(NuGet.PackageManagement.NuGetPackageManager nuGetPackageManager, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData> packages, System.Threading.CancellationToken token, System.EventHandler<NuGet.PackageManagement.PackageRestoredEventArgs> packageRestoredEvent, System.EventHandler<NuGet.PackageManagement.PackageRestoreFailedEventArgs> packageRestoreFailedEvent, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, int maxNumberOfParallelTasks, bool enableNuGetAudit, System.Collections.Generic.Dictionary<string, NuGet.ProjectModel.RestoreAuditProperties> restoreAuditProperties, NuGet.Common.ILogger logger) -> void
 ~NuGet.PackageManagement.PackageRestoreContext.PackageRestoreFailedEvent.get -> System.EventHandler<NuGet.PackageManagement.PackageRestoreFailedEventArgs>
@@ -539,6 +542,7 @@ NuGet.ProjectManagement.IProjectSystemCapabilities
 NuGet.ProjectManagement.IProjectSystemCapabilities.NominatesOnSolutionLoad.get -> bool
 NuGet.ProjectManagement.IProjectSystemCapabilities.SupportsPackageReferences.get -> bool
 NuGet.ProjectManagement.IProjectSystemReferencesReader
+~NuGet.ProjectManagement.IProjectSystemReferencesReader.GetItemsAsync(string itemTypeName, params string[] metadataNames) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<(string id, string[] metadata)>>
 ~NuGet.ProjectManagement.IProjectSystemReferencesReader.GetPackageReferencesAsync(NuGet.Frameworks.NuGetFramework targetFramework, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.LibraryModel.LibraryDependency>>
 ~NuGet.ProjectManagement.IProjectSystemReferencesReader.GetProjectReferencesAsync(NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.ProjectModel.ProjectRestoreReference>>
 NuGet.ProjectManagement.IProjectSystemReferencesService
@@ -715,10 +719,12 @@ NuGet.ProjectManagement.XmlUtility
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RestorePackagesWithLockFile = "RestorePackagesWithLockFile" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RestoreProjectStyle = "RestoreProjectStyle" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RestoreSources = "RestoreSources" -> string
+~const NuGet.ProjectManagement.ProjectBuildProperties.RestoreUseLegacyDependencyResolver = "RestoreUseLegacyDependencyResolver" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RuntimeIdentifier = "RuntimeIdentifier" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RuntimeIdentifierGraphPath = "RuntimeIdentifierGraphPath" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RuntimeIdentifiers = "RuntimeIdentifiers" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RuntimeSupports = "RuntimeSupports" -> string
+~const NuGet.ProjectManagement.ProjectBuildProperties.SdkAnalysisLevel = "SdkAnalysisLevel" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.TargetFramework = "TargetFramework" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.TargetFrameworkIdentifier = "TargetFrameworkIdentifier" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.TargetFrameworkMoniker = "TargetFrameworkMoniker" -> string
@@ -730,6 +736,7 @@ NuGet.ProjectManagement.XmlUtility
 ~const NuGet.ProjectManagement.ProjectBuildProperties.TargetPlatformMoniker = "TargetPlatformMoniker" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.TargetPlatformVersion = "TargetPlatformVersion" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.TreatWarningsAsErrors = "TreatWarningsAsErrors" -> string
+~const NuGet.ProjectManagement.ProjectBuildProperties.UsingMicrosoftNETSdk = "UsingMicrosoftNETSdk" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.Version = "Version" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.WarningsAsErrors = "WarningsAsErrors" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.WarningsNotAsErrors = "WarningsNotAsErrors" -> string

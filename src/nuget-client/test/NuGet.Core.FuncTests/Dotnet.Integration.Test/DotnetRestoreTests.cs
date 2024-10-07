@@ -1592,7 +1592,7 @@ EndGlobal";
         [InlineData("blazor")]
         [InlineData("blazorwasm")]
         [InlineData("grpc")]
-        [InlineData("mstest")]
+        // [InlineData("mstest")] Starting in .NET 9, this template uses a NuGet-based MSBuild project SDK which is only available via nuget.org, while these tests are supposed to be offline.
         [InlineData("mvc")]
         [InlineData("nunit")]
         [InlineData("web")]
