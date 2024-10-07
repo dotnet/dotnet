@@ -166,10 +166,6 @@
     <SharedHostVersion>$(MicrosoftNETCoreAppRuntimePackageVersion)</SharedHostVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <!-- This is the version of the zip archive for the WiX toolset and is different from the NuGet package version format. -->
-    <WixVersion>3.14.1.8722</WixVersion>
-  </PropertyGroup>
-  <PropertyGroup>
     <!-- 8.0 Template versions -->
     <MicrosoftDotnetWinFormsProjectTemplates80PackageVersion>$(MicrosoftDotnetWinFormsProjectTemplatesPackageVersion)</MicrosoftDotnetWinFormsProjectTemplates80PackageVersion>
     <MicrosoftDotNetWpfProjectTemplates80PackageVersion>$(MicrosoftDotNetWpfProjectTemplatesPackageVersion)</MicrosoftDotNetWpfProjectTemplates80PackageVersion>
