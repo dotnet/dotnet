@@ -19,7 +19,7 @@ public class SqlServerQuerySqlGenerator : QuerySqlGenerator
 {
     private readonly IRelationalTypeMappingSource _typeMappingSource;
     private readonly ISqlGenerationHelper _sqlGenerationHelper;
-    private readonly int _sqlServerCompatibilityLevel;
+    private readonly ISqlServerSingletonOptions _sqlServerSingletonOptions;
 
     private bool _withinTable;
 
@@ -37,7 +37,7 @@ public class SqlServerQuerySqlGenerator : QuerySqlGenerator
     {
         _typeMappingSource = typeMappingSource;
         _sqlGenerationHelper = dependencies.SqlGenerationHelper;
-        _sqlServerCompatibilityLevel = sqlServerSingletonOptions.CompatibilityLevel;
+        _sqlServerSingletonOptions = sqlServerSingletonOptions;
     }
 
     /// <summary>
@@ -210,6 +210,11 @@ public class SqlServerQuerySqlGenerator : QuerySqlGenerator
     /// </summary>
     protected override void GenerateValues(ValuesExpression valuesExpression)
     {
+        if (valuesExpression.RowValues is null)
+        {
+            throw new UnreachableException();
+        }
+
         if (valuesExpression.RowValues.Count == 0)
         {
             throw new InvalidOperationException(RelationalStrings.EmptyCollectionNotSupportedAsInlineQueryRoot);
@@ -470,7 +475,7 @@ public class SqlServerQuerySqlGenerator : QuerySqlGenerator
             return jsonScalarExpression;
         }
 
-        if (jsonScalarExpression.TypeMapping is SqlServerJsonTypeMapping
+        if (jsonScalarExpression.TypeMapping is SqlServerOwnedJsonTypeMapping
             || jsonScalarExpression.TypeMapping?.ElementTypeMapping is not null)
         {
             Sql.Append("JSON_QUERY(");
@@ -489,7 +494,7 @@ public class SqlServerQuerySqlGenerator : QuerySqlGenerator
         GenerateJsonPath(jsonScalarExpression.Path);
         Sql.Append(")");
 
-        if (jsonScalarExpression.TypeMapping is not SqlServerJsonTypeMapping and not StringTypeMapping)
+        if (jsonScalarExpression.TypeMapping is not SqlServerOwnedJsonTypeMapping and not StringTypeMapping)
         {
             Sql.Append(" AS ");
             Sql.Append(jsonScalarExpression.TypeMapping!.StoreType);
@@ -520,18 +525,28 @@ public class SqlServerQuerySqlGenerator : QuerySqlGenerator
                     {
                         Visit(arrayIndex);
                     }
-                    else if (_sqlServerCompatibilityLevel >= 140)
-                    {
-                        Sql.Append("' + CAST(");
-                        Visit(arrayIndex);
-                        Sql.Append(" AS ");
-                        Sql.Append(_typeMappingSource.GetMapping(typeof(string)).StoreType);
-                        Sql.Append(") + '");
-                    }
                     else
                     {
-                        throw new InvalidOperationException(
-                            SqlServerStrings.JsonValuePathExpressionsNotSupported(_sqlServerCompatibilityLevel));
+                        switch (_sqlServerSingletonOptions.EngineType)
+                        {
+                            case SqlServerEngineType.SqlServer when _sqlServerSingletonOptions.SqlServerCompatibilityLevel >= 140:
+                            case SqlServerEngineType.AzureSql when _sqlServerSingletonOptions.AzureSqlCompatibilityLevel >= 140:
+                            case SqlServerEngineType.AzureSynapse:
+                                Sql.Append("' + CAST(");
+                                Visit(arrayIndex);
+                                Sql.Append(" AS ");
+                                Sql.Append(_typeMappingSource.GetMapping(typeof(string)).StoreType);
+                                Sql.Append(") + '");
+                                break;
+                            case SqlServerEngineType.SqlServer:
+                                throw new InvalidOperationException(
+                                    SqlServerStrings.JsonValuePathExpressionsNotSupported(
+                                        _sqlServerSingletonOptions.SqlServerCompatibilityLevel));
+                            case SqlServerEngineType.AzureSql:
+                                throw new InvalidOperationException(
+                                    SqlServerStrings.JsonValuePathExpressionsNotSupported(
+                                        _sqlServerSingletonOptions.AzureSqlCompatibilityLevel));
+                        }
                     }
 
                     Sql.Append("]");

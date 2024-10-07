@@ -13,7 +13,25 @@ public class InheritanceQueryCosmosTest : InheritanceQueryTestBase<InheritanceQu
         : base(fixture)
     {
         ClearLog();
-        //TestLoggerFactory.TestOutputHelper = testOutputHelper;
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
+    }
+
+    [ConditionalFact]
+    public virtual void Check_all_tests_overridden()
+        => TestHelpers.AssertAllMethodsOverridden(GetType());
+
+    public override async Task Filter_on_property_inside_complex_type_on_derived_type(bool async)
+    {
+        await base.Filter_on_property_inside_complex_type_on_derived_type(async);
+
+        AssertSql();
+    }
+
+    public override async Task Using_OfType_on_multiple_type_with_no_result(bool async)
+    {
+        await base.Using_OfType_on_multiple_type_with_no_result(async);
+
+        AssertSql();
     }
 
     public override Task Can_query_when_shared_column(bool async)
@@ -154,7 +172,7 @@ WHERE c["Discriminator"] IN ("Eagle", "Kiwi")
                     """
 SELECT VALUE c
 FROM root c
-WHERE c["Discriminator"] IN ("Eagle", "Kiwi")
+WHERE (c["Discriminator"] IN ("Eagle", "Kiwi") AND c["Discriminator"] IN ("Eagle", "Kiwi"))
 ORDER BY c["Species"]
 """);
             });
@@ -184,7 +202,7 @@ ORDER BY c["Species"]
                     """
 SELECT VALUE c["EagleId"]
 FROM root c
-WHERE c["Discriminator"] IN ("Eagle", "Kiwi")
+WHERE (c["Discriminator"] IN ("Eagle", "Kiwi") AND c["Discriminator"] IN ("Eagle", "Kiwi"))
 """);
             });
 
@@ -198,7 +216,7 @@ WHERE c["Discriminator"] IN ("Eagle", "Kiwi")
                     """
 SELECT VALUE c
 FROM root c
-WHERE c["Discriminator"] IN ("Eagle", "Kiwi")
+WHERE (c["Discriminator"] IN ("Eagle", "Kiwi") AND c["Discriminator"] IN ("Eagle", "Kiwi"))
 ORDER BY c["Species"]
 OFFSET 0 LIMIT 1
 """);
@@ -242,7 +260,7 @@ WHERE (c["Discriminator"] = "Kiwi")
                     """
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] IN ("Daisy", "Rose") AND (c["Discriminator"] = "Rose"))
+WHERE (c["$type"] IN ("Daisy", "Rose") AND (c["$type"] = "Rose"))
 """);
             });
 
@@ -279,8 +297,8 @@ ORDER BY c["Species"]
                     """
 SELECT VALUE c
 FROM root c
-WHERE c["Discriminator"] IN ("Daisy", "Rose")
-ORDER BY c["Species"]
+WHERE c["$type"] IN ("Daisy", "Rose")
+ORDER BY c["id"]
 """);
             });
 
@@ -339,7 +357,7 @@ OFFSET 0 LIMIT 2
                     """
 SELECT VALUE c
 FROM root c
-WHERE (c["Discriminator"] = "Rose")
+WHERE (c["$type"] = "Rose")
 OFFSET 0 LIMIT 2
 """);
             });
@@ -571,7 +589,7 @@ WHERE c["Discriminator"] IN ("Eagle", "Kiwi")
                     """
 SELECT VALUE c
 FROM root c
-WHERE false
+WHERE (c["Discriminator"] IN ("Eagle", "Kiwi") AND false)
 """);
             });
 
@@ -585,7 +603,7 @@ WHERE false
                     """
 SELECT VALUE c
 FROM root c
-WHERE false
+WHERE (c["Discriminator"] IN ("Eagle", "Kiwi") AND false)
 """);
             });
 

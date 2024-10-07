@@ -36,7 +36,7 @@ public class ComplexNavigationsSharedTypeQuerySqlServerTest :
                           select l3).Distinct().Skip(1).OrderBy(e => e.Id).FirstOrDefault().Name);
 
         AssertSql(
-"""
+            """
 SELECT (
     SELECT TOP(1) [s0].[Level3_Name]
     FROM (
@@ -78,14 +78,14 @@ WHERE [l].[Id] < 3
     public virtual async Task Distinct_take_without_orderby(bool async)
     {
         await AssertQuery(
-                async,
-                ss => from l1 in ss.Set<Level1>()
-                      where l1.Id < 3
-                      select (from l3 in ss.Set<Level3>()
-                              select l3).Distinct().Take(1).OrderBy(e => e.Id).FirstOrDefault().Name);
+            async,
+            ss => from l1 in ss.Set<Level1>()
+                  where l1.Id < 3
+                  select (from l3 in ss.Set<Level3>()
+                          select l3).Distinct().Take(1).OrderBy(e => e.Id).FirstOrDefault().Name);
 
         AssertSql(
-"""
+            """
 SELECT (
     SELECT TOP(1) [s].[Level3_Name]
     FROM (
@@ -1020,7 +1020,7 @@ LEFT JOIN (
 """);
     }
 
-    [ConditionalTheory()]
+    [ConditionalTheory]
     public override async Task GroupBy_aggregate_where_required_relationship_2(bool async)
     {
         await base.GroupBy_aggregate_where_required_relationship_2(async);
@@ -1171,7 +1171,7 @@ WHERE [l5].[OneToOne_Required_PK_Date] IS NOT NULL AND [l5].[Level1_Required_Id]
 """);
     }
 
-    [ConditionalTheory()]
+    [ConditionalTheory]
     public override async Task GroupBy_aggregate_where_required_relationship(bool async)
     {
         await base.GroupBy_aggregate_where_required_relationship(async);
@@ -2119,7 +2119,7 @@ LEFT JOIN (
     WHERE [l0].[OneToOne_Required_PK_Date] IS NOT NULL AND [l0].[Level1_Required_Id] IS NOT NULL AND [l0].[OneToMany_Required_Inverse2Id] IS NOT NULL
 ) AS [l1] ON [l].[Id] = [l1].[Level1_Optional_Id]
 WHERE 5 IN (
-    SELECT DISTINCT CAST(LEN([l2].[Level3_Name]) AS int)
+    SELECT CAST(LEN([l2].[Level3_Name]) AS int)
     FROM [Level1] AS [l2]
     WHERE [l2].[Level2_Required_Id] IS NOT NULL AND [l2].[OneToMany_Required_Inverse3Id] IS NOT NULL AND CASE
         WHEN [l1].[OneToOne_Required_PK_Date] IS NOT NULL AND [l1].[Level1_Required_Id] IS NOT NULL AND [l1].[OneToMany_Required_Inverse2Id] IS NOT NULL THEN [l1].[Id]

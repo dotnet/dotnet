@@ -7,10 +7,11 @@ namespace Microsoft.EntityFrameworkCore.Query;
 
 #nullable disable
 
-public class JsonQuerySqliteFixture : JsonQueryFixtureBase
+public class JsonQuerySqliteFixture : JsonQueryRelationalFixture
 {
     protected override ITestStoreFactory TestStoreFactory
         => SqliteTestStoreFactory.Instance;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder, DbContext context)
     {
         base.OnModelCreating(modelBuilder, context);

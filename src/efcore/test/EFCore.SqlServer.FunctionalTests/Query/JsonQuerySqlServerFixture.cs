@@ -7,10 +7,13 @@ namespace Microsoft.EntityFrameworkCore.Query;
 
 #nullable disable
 
-public class JsonQuerySqlServerFixture : JsonQueryFixtureBase
+public class JsonQuerySqlServerFixture : JsonQueryRelationalFixture
 {
     protected override ITestStoreFactory TestStoreFactory
         => SqlServerTestStoreFactory.Instance;
+
+    public override DbContextOptionsBuilder AddOptions(DbContextOptionsBuilder builder)
+        => base.AddOptions(builder).ConfigureWarnings(e => e.Log(SqlServerEventId.JsonTypeExperimental));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder, DbContext context)
     {

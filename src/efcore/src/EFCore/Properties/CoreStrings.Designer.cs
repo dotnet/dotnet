@@ -115,6 +115,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 annotation, annotatable);
 
         /// <summary>
+        ///     The '{parameter}' value passed to '{methodName}' must be a constant.
+        /// </summary>
+        public static string ArgumentNotConstant(object? parameter, object? methodName)
+            => string.Format(
+                GetString("ArgumentNotConstant", nameof(parameter), nameof(methodName)),
+                parameter, methodName);
+
+        /// <summary>
         ///     The property '{property}' of the argument '{argument}' cannot be null.
         /// </summary>
         public static string ArgumentPropertyNull(object? property, object? argument)
@@ -995,6 +1003,12 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => GetString("EFConstantInvoked");
 
         /// <summary>
+        ///     'EF.Constant()' isn't supported your by provider.
+        /// </summary>
+        public static string EFConstantNotSupported
+            => GetString("EFConstantNotSupported");
+
+        /// <summary>
         ///     The EF.Constant&lt;T&gt; method is not supported when using precompiled queries.
         /// </summary>
         public static string EFConstantNotSupportedInPrecompiledQueries
@@ -1141,7 +1155,7 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 entityType, property, expectedType, actualType);
 
         /// <summary>
-        ///     The methods '{methodName}' and '{asyncMethodName}' are not supported by the current database provider. Please contact the publisher of the database provider for more information.
+        ///     The methods '{methodName}' and '{asyncMethodName}' are not supported by the current database provider. Please contact the publisher of the database provider for more information. 
         /// </summary>
         public static string ExecuteQueriesNotSupported(object? methodName, object? asyncMethodName)
             => string.Format(
@@ -1814,12 +1828,24 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => GetString("MemberMemberBindingNotSupported");
 
         /// <summary>
+        ///     An asynchronous store managment operation was performed and no asynchronous seed delegate has been provided, however a synchronous seed delegate was. Set 'UseAsyncSeeding' option with a delegate equivalent to the one supplied in 'UseSeeding'.
+        /// </summary>
+        public static string MissingAsyncSeeder
+            => GetString("MissingAsyncSeeder");
+
+        /// <summary>
         ///     The specified field '{field}' could not be found for property '{2_entityType}.{1_property}'.
         /// </summary>
         public static string MissingBackingField(object? field, object? property, object? entityType)
             => string.Format(
                 GetString("MissingBackingField", nameof(field), "1_property", "2_entityType"),
                 field, property, entityType);
+
+        /// <summary>
+        ///     A synchronous store managment operation was performed and no synchronous seed delegate has been provided, however an asynchronous seed delegate was. Set 'UseSeeding' option with a delegate equivalent to the one supplied in 'UseAsyncSeeding'.
+        /// </summary>
+        public static string MissingSeeder
+            => GetString("MissingSeeder");
 
         /// <summary>
         ///     Runtime metadata changes are not allowed when the model hasn't been marked as read-only.
@@ -2146,20 +2172,20 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 property, entityType, type);
 
         /// <summary>
-        ///     The LINQ expression '{expression}' could not be translated. Additional information: {details} See https://go.microsoft.com/fwlink/?linkid=2101038 for more information.
-        /// </summary>
-        public static string NonQueryTranslationFailedWithDetails(object? expression, object? details)
-            => string.Format(
-                GetString("NonQueryTranslationFailedWithDetails", nameof(expression), nameof(details)),
-                expression, details);
-
-        /// <summary>
         ///     The collection type '{2_collectionType}' being used for navigation '{1_entityType}.{0_navigation}' does not implement 'INotifyCollectionChanged'. Any entity type configured to use the '{changeTrackingStrategy}' change tracking strategy must use collections that implement 'INotifyCollectionChanged'. Consider using 'ObservableCollection&lt;T&gt;' for this.
         /// </summary>
         public static string NonNotifyingCollection(object? navigation, object? entityType, object? collectionType, object? changeTrackingStrategy)
             => string.Format(
                 GetString("NonNotifyingCollection", "0_navigation", "1_entityType", "2_collectionType", nameof(changeTrackingStrategy)),
                 navigation, entityType, collectionType, changeTrackingStrategy);
+
+        /// <summary>
+        ///     The LINQ expression '{expression}' could not be translated. Additional information: {details} See https://go.microsoft.com/fwlink/?linkid=2101038 for more information.
+        /// </summary>
+        public static string NonQueryTranslationFailedWithDetails(object? expression, object? details)
+            => string.Format(
+                GetString("NonQueryTranslationFailedWithDetails", nameof(expression), nameof(details)),
+                expression, details);
 
         /// <summary>
         ///     The foreign key {foreignKeyProperties} on the entity type '{declaringEntityType}' cannot have a required dependent end since it is not unique.

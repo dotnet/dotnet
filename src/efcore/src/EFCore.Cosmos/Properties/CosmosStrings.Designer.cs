@@ -40,10 +40,26 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
                 givenType, dictionaryType);
 
         /// <summary>
+        ///     The type '{clrType}' is being used as a vector, but the vector data type cannot be inferred. Only 'ReadOnlyMemory&lt;byte&gt;, ReadOnlyMemory&lt;sbyte&gt;, ReadOnlyMemory&lt;float&gt;, byte[], sbyte[], and float[] are supported.
+        /// </summary>
+        public static string BadVectorDataType(object? clrType)
+            => string.Format(
+                GetString("BadVectorDataType", nameof(clrType)),
+                clrType);
+
+        /// <summary>
         ///     The Cosmos database does not support 'CanConnect' or 'CanConnectAsync'.
         /// </summary>
         public static string CanConnectNotSupported
             => GetString("CanConnectNotSupported");
+
+        /// <summary>
+        ///     A vector index on '{entityType}' is defined over properties `{properties}`. A vector index can only target a single property.
+        /// </summary>
+        public static string CompositeVectorIndex(object? entityType, object? properties)
+            => string.Format(
+                GetString("CompositeVectorIndex", nameof(entityType), nameof(properties)),
+                entityType, properties);
 
         /// <summary>
         ///     Complex projections in subqueries are currently unsupported.
@@ -94,6 +110,14 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
                 ttl1, entityType1, entityType2, ttl2, container);
 
         /// <summary>
+        ///     'HasDiscriminatorInJsonId' or 'HasRootDiscriminatorInJsonId' was called on a non-root entity type '{entityType}'. Discriminator configuration for the JSON 'id' property can only be made on the document root.
+        /// </summary>
+        public static string DiscriminatorInKeyOnNonRoot(object? entityType)
+            => string.Format(
+                GetString("DiscriminatorInKeyOnNonRoot", nameof(entityType)),
+                entityType);
+
+        /// <summary>
         ///     The discriminator value for '{entityType1}' is '{discriminatorValue}' which is the same for '{entityType2}'. Every concrete entity type mapped to the container '{container}' must have a unique discriminator value.
         /// </summary>
         public static string DuplicateDiscriminatorValue(object? entityType1, object? discriminatorValue, object? entityType2, object? container)
@@ -124,20 +148,20 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
             => GetString("ExceptNotSupported");
 
         /// <summary>
+        ///     'HasShadowId' was called on a non-root entity type '{entityType}'. JSON 'id' configuration can only be made on the document root.
+        /// </summary>
+        public static string HasShadowIdOnNonRoot(object? entityType)
+            => string.Format(
+                GetString("HasShadowIdOnNonRoot", nameof(entityType)),
+                entityType);
+
+        /// <summary>
         ///     The type of the '{idProperty}' property on '{entityType}' is '{propertyType}'. All 'id' properties must be strings or have a string value converter.
         /// </summary>
         public static string IdNonStringStoreType(object? idProperty, object? entityType, object? propertyType)
             => string.Format(
                 GetString("IdNonStringStoreType", nameof(idProperty), nameof(entityType), nameof(propertyType)),
                 idProperty, entityType, propertyType);
-
-        /// <summary>
-        ///     {actual} partition key values were provided, but the entity type '{entityType}' has {expected} partition key values defined.
-        /// </summary>
-        public static string IncorrectPartitionKeyNumber(object? entityType, object? actual, object? expected)
-            => string.Format(
-                GetString("IncorrectPartitionKeyNumber", nameof(entityType), nameof(actual), nameof(expected)),
-                entityType, actual, expected);
 
         /// <summary>
         ///     The entity type '{entityType}' has an index defined over properties '{properties}'. The Azure Cosmos DB provider for EF Core currently does not support index definitions.
@@ -230,14 +254,6 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
                 entityType, container);
 
         /// <summary>
-        ///     The entity type '{entityType}' does not have a key declared on the '{idProperty}' property. Add a key to '{entityType}' that contains '{idProperty}'.
-        /// </summary>
-        public static string NoIdKey(object? entityType, object? idProperty)
-            => string.Format(
-                GetString("NoIdKey", nameof(entityType), nameof(idProperty)),
-                entityType, idProperty);
-
-        /// <summary>
         ///     The entity type '{entityType}' does not have a property mapped to the 'id' property in the database. Add a property mapped to 'id'.
         /// </summary>
         public static string NoIdProperty(object? entityType)
@@ -276,14 +292,6 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
                 entityType1, props1, entityType2, props2, containerName);
 
         /// <summary>
-        ///     The entity type '{entityType}' does not have a key declared on '{partitionKey}' and '{idProperty}' properties. Add a key to '{entityType}' that contains '{partitionKey}' and '{idProperty}'.
-        /// </summary>
-        public static string NoPartitionKeyKey(object? entityType, object? partitionKey, object? idProperty)
-            => string.Format(
-                GetString("NoPartitionKeyKey", nameof(entityType), nameof(partitionKey), nameof(idProperty)),
-                entityType, partitionKey, idProperty);
-
-        /// <summary>
         ///     There is no string-based representation of this query as it's executed using 'ReadItemQueryAsync({resourceId}, {partitionKey})'.
         /// </summary>
         public static string NoReadItemQueryString(object? resourceId, object? partitionKey)
@@ -296,6 +304,12 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
         /// </summary>
         public static string NoSubqueryPushdown
             => GetString("NoSubqueryPushdown");
+
+        /// <summary>
+        ///     Container configuration for embeddings is not yet supported by the Cosmos SDK. Instead, configure the container manually. See https://aka.ms/ef-cosmos-vectors for more information.
+        /// </summary>
+        public static string NoVectorContainerConfig
+            => GetString("NoVectorContainerConfig");
 
         /// <summary>
         ///     The expression '{sqlExpression}' in the SQL tree does not have a type mapping assigned.
@@ -468,6 +482,20 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
             => string.Format(
                 GetString("UpdateStoreException", nameof(itemId)),
                 itemId);
+
+        /// <summary>
+        ///     A vector index is defined for `{entityType}.{property}`, but this property has not been configured as a vector. Use 'IsVector()' in 'OnModelCreating' to configure the property as a vector.
+        /// </summary>
+        public static string VectorIndexOnNonVector(object? entityType, object? property)
+            => string.Format(
+                GetString("VectorIndexOnNonVector", nameof(entityType), nameof(property)),
+                entityType, property);
+
+        /// <summary>
+        ///     The 'VectorDistance' function can only be used with a property mapped as a vector. Use 'IsVector()' in 'OnModelCreating' to configure the property as a vector.
+        /// </summary>
+        public static string VectorSearchRequiresVector
+            => GetString("VectorSearchRequiresVector");
 
         /// <summary>
         ///     'VisitChildren' must be overridden in the class deriving from 'SqlExpression'.

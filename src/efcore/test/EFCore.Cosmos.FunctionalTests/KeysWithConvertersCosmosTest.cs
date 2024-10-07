@@ -5,7 +5,8 @@ namespace Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
-public class KeysWithConvertersCosmosTest(KeysWithConvertersCosmosTest.KeysWithConvertersCosmosFixture fixture) : KeysWithConvertersTestBase<KeysWithConvertersCosmosTest.KeysWithConvertersCosmosFixture>(fixture)
+public class KeysWithConvertersCosmosTest(KeysWithConvertersCosmosTest.KeysWithConvertersCosmosFixture fixture)
+    : KeysWithConvertersTestBase<KeysWithConvertersCosmosTest.KeysWithConvertersCosmosFixture>(fixture)
 {
     public class KeysWithConvertersCosmosFixture : KeysWithConvertersFixtureBase
     {
@@ -14,6 +15,13 @@ public class KeysWithConvertersCosmosTest(KeysWithConvertersCosmosTest.KeysWithC
 
         public override bool UseInclude
             => false;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder, DbContext context)
+        {
+            base.OnModelCreating(modelBuilder, context);
+
+            modelBuilder.HasRootDiscriminatorInJsonId();
+        }
 
         public override DbContextOptionsBuilder AddOptions(DbContextOptionsBuilder builder)
             => base.AddOptions(
