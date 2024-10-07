@@ -24,6 +24,11 @@
       </bal:Condition>
     <?endif?>
 
+    <!-- Search references for upgrade policy keys -->
+    <util:RegistrySearchRef Id="RemovePreviousVersionRegistryKeySearch"/>
+    <util:RegistrySearchRef Id="RemoveSpecificPreviousVersionRegistryKeyExistsSearch"/>
+    <util:RegistrySearchRef Id="RemoveSpecificPreviousVersionRegistryKeySearch"/>
+
     <!--
       List of bundles that this bundle is an upgrade for. Used to support upgrade from bundles
       that were produced before UpdateCode was standardized per major-minor channel.
