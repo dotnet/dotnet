@@ -71,6 +71,11 @@ extends:
         name: NetCore1ESPool-Publishing-Internal
         image: windows.vs2019.amd64
         os: windows
+    sdl:
+      policheck:
+        enabled: true
+      tsa:
+        enabled: true
 
     stages:
     - template: /eng/publishing/v3/publish.yml@self

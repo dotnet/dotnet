@@ -44,7 +44,8 @@
 
     <PropertyGroup>
       <_DryRun>true</_DryRun>
-      <_DryRun Condition="'$(OfficialBuild)' == 'true'">false</_DryRun>
+      <!-- Allow an official build to force dry run signing. This allows the VMR's build to test signing in CI without changing versions. -->
+      <_DryRun Condition="'$(OfficialBuild)' == 'true' and '$(ForceDryRunSigning)' != 'true'">false</_DryRun>
 
       <_TestSign>false</_TestSign>
       <_TestSign Condition="'$(DotNetSignType)' == 'test'">true</_TestSign>
