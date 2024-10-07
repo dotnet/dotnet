@@ -27,7 +27,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-      <WixVersion>3.14.1-9313.2537997</WixVersion>
+      <WixVersion>3.14.1-9323.2545153</WixVersion>
       <WixToolsDir>$(BaseIntermediateOutputPath)WixTools.$(WixVersion)/</WixToolsDir>
       <!-- Used in WiX targets to locate files. -->
       <WixInstallPath>$(WixToolsDir)</WixInstallPath>
