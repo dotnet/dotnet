@@ -126,7 +126,7 @@ internal class RazorFormattingService : IRazorFormattingService
             triggerCharacter,
             [_csharpOnTypeFormattingPass, .. _validationPasses],
             collapseChanges: false,
-            automaticallyAddUsings: false,
+            isCodeActionFormattingRequest: false,
             cancellationToken: cancellationToken);
 
     public Task<ImmutableArray<TextChange>> GetHtmlOnTypeFormattingChangesAsync(DocumentContext documentContext, ImmutableArray<TextChange> htmlChanges, RazorFormattingOptions options, int hostDocumentIndex, char triggerCharacter, CancellationToken cancellationToken)
@@ -138,7 +138,7 @@ internal class RazorFormattingService : IRazorFormattingService
             triggerCharacter,
             [_htmlOnTypeFormattingPass, .. _validationPasses],
             collapseChanges: false,
-            automaticallyAddUsings: false,
+            isCodeActionFormattingRequest: false,
             cancellationToken: cancellationToken);
 
     public async Task<TextChange?> TryGetSingleCSharpEditAsync(DocumentContext documentContext, TextChange csharpEdit, RazorFormattingOptions options, CancellationToken cancellationToken)
@@ -151,7 +151,7 @@ internal class RazorFormattingService : IRazorFormattingService
             triggerCharacter: '\0',
             [_csharpOnTypeFormattingPass, .. _validationPasses],
             collapseChanges: false,
-            automaticallyAddUsings: false,
+            isCodeActionFormattingRequest: false,
             cancellationToken: cancellationToken).ConfigureAwait(false);
         return razorChanges.SingleOrDefault();
     }
@@ -166,7 +166,7 @@ internal class RazorFormattingService : IRazorFormattingService
             triggerCharacter: '\0',
             [_csharpOnTypeFormattingPass],
             collapseChanges: true,
-            automaticallyAddUsings: true,
+            isCodeActionFormattingRequest: true,
             cancellationToken: cancellationToken).ConfigureAwait(false);
         return razorChanges.SingleOrDefault();
     }
@@ -183,7 +183,7 @@ internal class RazorFormattingService : IRazorFormattingService
             triggerCharacter: '\0',
             [_csharpOnTypeFormattingPass],
             collapseChanges: true,
-            automaticallyAddUsings: false,
+            isCodeActionFormattingRequest: false,
             cancellationToken: cancellationToken).ConfigureAwait(false);
 
         razorChanges = UnwrapCSharpSnippets(razorChanges);
@@ -211,7 +211,7 @@ internal class RazorFormattingService : IRazorFormattingService
         char triggerCharacter,
         ImmutableArray<IFormattingPass> formattingPasses,
         bool collapseChanges,
-        bool automaticallyAddUsings,
+        bool isCodeActionFormattingRequest,
         CancellationToken cancellationToken)
     {
         // If we only received a single edit, let's always return a single edit back.
@@ -219,13 +219,19 @@ internal class RazorFormattingService : IRazorFormattingService
         collapseChanges |= generatedDocumentChanges.Length == 1;
 
         var documentSnapshot = documentContext.Snapshot;
-        var codeDocument = await _codeDocumentProvider.GetCodeDocumentAsync(documentSnapshot).ConfigureAwait(false);
+
+        // Code actions were computed on the regular document, which with FUSE could be a runtime document. We have to make
+        // sure for code actions specifically we are formatting that same document, or TextChange spans may not line up
+        var codeDocument = isCodeActionFormattingRequest
+            ? await documentSnapshot.GetGeneratedOutputAsync(forceDesignTimeGeneratedOutput: false).ConfigureAwait(false)
+            : await _codeDocumentProvider.GetCodeDocumentAsync(documentSnapshot).ConfigureAwait(false);
+
         var context = FormattingContext.CreateForOnTypeFormatting(
             documentSnapshot,
             codeDocument,
             options,
             _codeDocumentProvider,
-            automaticallyAddUsings,
+            automaticallyAddUsings: isCodeActionFormattingRequest,
             hostDocumentIndex,
             triggerCharacter);
         var result = generatedDocumentChanges;
