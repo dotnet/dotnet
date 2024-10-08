@@ -5,7 +5,7 @@ using Aspire.Workload.Tests;
 using Microsoft.Playwright;
 using Xunit;
 
-namespace Aspire.Dashboard.Tests.Integration.Playwright.Infrastructure;
+namespace Aspire.Dashboard.Tests.Integration.Playwright;
 
 public class PlaywrightFixture : IAsyncLifetime
 {

@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Threading.Channels;
-using Aspire.Hosting.ConsoleLogs;
+using Aspire.Dashboard.Otlp.Storage;
 using Microsoft.Extensions.Logging;
 
 namespace Aspire.Hosting.ApplicationModel;
@@ -16,10 +16,8 @@ namespace Aspire.Hosting.ApplicationModel;
 /// </summary>
 public class ResourceLoggerService
 {
-    // Internal for testing.
-    internal TimeProvider TimeProvider { get; set; } = TimeProvider.System;
-
     private readonly ConcurrentDictionary<string, ResourceLoggerState> _loggers = new();
+
     private Action<(string, ResourceLoggerState)>? _loggerAdded;
     private event Action<(string, ResourceLoggerState)> LoggerAdded
     {
@@ -66,7 +64,7 @@ public class ResourceLoggerService
     /// The internal logger is used when adding logs from resource's stream logs.
     /// It allows the parsed date from text to be used as the log line date.
     /// </summary>
-    internal Action<DateTime?, string, bool> GetInternalLogger(string resourceName)
+    internal Action<DateTime, string, bool> GetInternalLogger(string resourceName)
     {
         ArgumentNullException.ThrowIfNull(resourceName);
 
@@ -178,11 +176,13 @@ public class ResourceLoggerService
     internal ResourceLoggerState GetResourceLoggerState(string resourceName) =>
         _loggers.GetOrAdd(resourceName, (name, context) =>
         {
-            var state = new ResourceLoggerState(TimeProvider);
+            var state = new ResourceLoggerState();
             context._loggerAdded?.Invoke((name, state));
             return state;
         },
         this);
+
+    internal sealed record InternalLogLine(DateTime DateTimeUtc, string Message, bool IsError);
 
     /// <summary>
     /// A logger for the resource to write to.
@@ -191,18 +191,17 @@ public class ResourceLoggerService
     {
         private readonly ResourceLogger _logger;
         private readonly CancellationTokenSource _logStreamCts = new();
-        private readonly object _lock = new();
 
-        private readonly LogEntries _backlog = new(10000) { BaseLineNumber = 0 };
-        private readonly TimeProvider _timeProvider;
+        private Task? _backlogReplayCompleteTask;
+        private long _lastLogReceivedTimestamp;
+        private readonly CircularBuffer<InternalLogLine> _backlog = new(10000);
 
         /// <summary>
         /// Creates a new <see cref="ResourceLoggerState"/>.
         /// </summary>
-        public ResourceLoggerState(TimeProvider timeProvider)
+        public ResourceLoggerState()
         {
             _logger = new ResourceLogger(this);
-            _timeProvider = timeProvider;
         }
 
         private Action<bool>? _onSubscribersChanged;
@@ -214,7 +213,7 @@ public class ResourceLoggerService
 
                 var hasSubscribers = false;
 
-                lock (_lock)
+                lock (this)
                 {
                     if (_onNewLog is not null) // we have subscribers
                     {
@@ -242,19 +241,31 @@ public class ResourceLoggerService
             // Line number always restarts from 1 when watching logs.
             // Note that this will need to be improved if the log source (DCP) is changed to return a maximum number of lines.
             var lineNumber = 1;
-            var channel = Channel.CreateUnbounded<LogEntry>();
+            var channel = Channel.CreateUnbounded<InternalLogLine>();
 
             using var _ = _logStreamCts.Token.Register(() => channel.Writer.TryComplete());
 
-            // No need to lock in the log method because TryWrite/TryComplete are already threadsafe.
-            void Log(LogEntry log) => channel.Writer.TryWrite(log);
-
-            LogEntry[] backlogSnapshot;
-            lock (_lock)
+            InternalLogLine[]? backlogSnapshot = null;
+            void Log(InternalLogLine log)
             {
-                // Get back
+                lock (_backlog)
+                {
+                    // Don't write to the channel until the backlog snapshot is accessed.
+                    // This prevents duplicate logs in result.
+                    if (backlogSnapshot != null)
+                    {
+                        channel.Writer.TryWrite(log);
+                    }
+                }
+            }
+            OnNewLog += Log;
+
+            // Add a small delay to ensure the backlog is replayed from DCP and ordered correctly.
+            await EnsureBacklogReplayAsync(cancellationToken).ConfigureAwait(false);
+
+            lock (_backlog)
+            {
                 backlogSnapshot = GetBacklogSnapshot();
-                OnNewLog += Log;
             }
 
             if (backlogSnapshot.Length > 0)
@@ -271,26 +282,17 @@ public class ResourceLoggerService
             }
             finally
             {
-                lock (_lock)
-                {
-                    OnNewLog -= Log;
-                    channel.Writer.TryComplete();
-                }
+                OnNewLog -= Log;
+
+                channel.Writer.TryComplete();
             }
 
-            static LogLine[] CreateLogLines(ref int lineNumber, IReadOnlyList<LogEntry> entries)
+            static LogLine[] CreateLogLines(ref int lineNumber, IReadOnlyList<InternalLogLine> entry)
             {
-                var logs = new LogLine[entries.Count];
-                for (var i = 0; i < entries.Count; i++)
+                var logs = new LogLine[entry.Count];
+                for (var i = 0; i < entry.Count; i++)
                 {
-                    var entry = entries[i];
-                    var content = entry.Content ?? string.Empty;
-                    if (entry.Timestamp != null)
-                    {
-                        content = entry.Timestamp.Value.ToString(KnownFormats.ConsoleLogsTimestampFormat, CultureInfo.InvariantCulture) + " " + content;
-                    }
-
-                    logs[i] = new LogLine(lineNumber, content, entry.Type == LogEntryType.Error);
+                    logs[i] = new LogLine(lineNumber, entry[i].Message, entry[i].IsError);
                     lineNumber++;
                 }
 
@@ -298,19 +300,47 @@ public class ResourceLoggerService
             }
         }
 
+        private Task EnsureBacklogReplayAsync(CancellationToken cancellationToken)
+        {
+            lock (_backlog)
+            {
+                _backlogReplayCompleteTask ??= StartBacklogReplayAsync(cancellationToken);
+                return _backlogReplayCompleteTask;
+            }
+
+            async Task StartBacklogReplayAsync(CancellationToken cancellationToken)
+            {
+                var delay = TimeSpan.FromMilliseconds(100);
+
+                // There could be an initial burst of logs as they're replayed. Give them the opportunity to be loaded
+                // into the backlog in the correct order and returned before streaming logs as they arrive.
+                for (var i = 0; i < 3; i++)
+                {
+                    await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
+                    lock (_backlog)
+                    {
+                        if (_lastLogReceivedTimestamp != 0 && Stopwatch.GetElapsedTime(_lastLogReceivedTimestamp) > delay)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         // This provides the fan out to multiple subscribers.
-        private Action<LogEntry>? _onNewLog;
-        private event Action<LogEntry> OnNewLog
+        private Action<InternalLogLine>? _onNewLog;
+        private event Action<InternalLogLine> OnNewLog
         {
             add
             {
-                Debug.Assert(Monitor.IsEntered(_lock));
+                bool raiseSubscribersChanged;
+                lock (this)
+                {
+                    raiseSubscribersChanged = _onNewLog is null; // is this the first subscriber?
 
-                // When this is the first subscriber, raise event so WatchAnySubscribersAsync publishes an update.
-                // Is this the first subscriber?
-                var raiseSubscribersChanged = _onNewLog is null;
-
-                _onNewLog += value;
+                    _onNewLog += value;
+                }
 
                 if (raiseSubscribersChanged)
                 {
@@ -319,20 +349,16 @@ public class ResourceLoggerService
             }
             remove
             {
-                Debug.Assert(Monitor.IsEntered(_lock));
+                bool raiseSubscribersChanged;
+                lock (this)
+                {
+                    _onNewLog -= value;
 
-                _onNewLog -= value;
+                    raiseSubscribersChanged = _onNewLog is null; // is this the last subscriber?
+                }
 
-                // When there are no more subscribers, raise event so WatchAnySubscribersAsync publishes an update.
-                // Is this the last subscriber?
-                var raiseSubscribersChanged = _onNewLog is null;
                 if (raiseSubscribersChanged)
                 {
-                    // Clear backlog immediately.
-                    // Avoids a race between message being subscription changed notification eventually clearing the
-                    // logs and someone else watching logs and getting the backlog + complete replay off all logs.
-                    ClearBacklog();
-
                     _onSubscribersChanged?.Invoke(false);
                 }
             }
@@ -354,30 +380,47 @@ public class ResourceLoggerService
 
         public void ClearBacklog()
         {
-            lock (_lock)
+            lock (_backlog)
             {
                 _backlog.Clear();
-                _backlog.BaseLineNumber = 0;
+                _backlogReplayCompleteTask = null;
             }
         }
 
-        internal LogEntry[] GetBacklogSnapshot()
+        internal InternalLogLine[] GetBacklogSnapshot()
         {
-            lock (_lock)
+            lock (_backlog)
             {
-                return [.. _backlog.GetEntries()];
+                return [.. _backlog];
             }
         }
 
-        public void AddLog(DateTime? timestamp, string logMessage, bool isErrorMessage)
+        public void AddLog(DateTime dateTimeUtc, string logMessage, bool isErrorMessage)
         {
-            var logEntry = new LogEntry { Timestamp = timestamp, Content = logMessage, Type = isErrorMessage ? LogEntryType.Error : LogEntryType.Default };
-            lock (_lock)
+            InternalLogLine logLine;
+            lock (_backlog)
             {
-                _backlog.InsertSorted(logEntry);
+                logLine = new InternalLogLine(dateTimeUtc, logMessage, isErrorMessage);
+
+                var added = false;
+                for (var i = _backlog.Count - 1; i >= 0; i--)
+                {
+                    if (dateTimeUtc >= _backlog[i].DateTimeUtc)
+                    {
+                        _backlog.Insert(i + 1, logLine);
+                        added = true;
+                        break;
+                    }
+                }
+                if (!added)
+                {
+                    _backlog.Insert(0, logLine);
+                }
+
+                _lastLogReceivedTimestamp = Stopwatch.GetTimestamp();
             }
 
-            _onNewLog?.Invoke(logEntry);
+            _onNewLog?.Invoke(logLine);
         }
 
         private sealed class ResourceLogger(ResourceLoggerState loggerState) : ILogger
@@ -394,14 +437,42 @@ public class ResourceLoggerService
                     return;
                 }
 
-                var logTime = loggerState._timeProvider.GetUtcNow().UtcDateTime;
-
                 var logMessage = formatter(state, exception) + (exception is null ? "" : $"\n{exception}");
                 var isErrorMessage = logLevel >= LogLevel.Error;
 
-                loggerState.AddLog(logTime, logMessage, isErrorMessage);
+                loggerState.AddLog(DateTime.UtcNow, logMessage, isErrorMessage);
             }
         }
+    }
+
+    internal static bool TryParseContentLineDate(string content, out DateTime value)
+    {
+        const int MinDateLength = 20; // Date + time without fractional seconds.
+        const int MaxDateLength = 30; // Date + time with fractional seconds.
+
+        if (content.Length >= MinDateLength)
+        {
+            var firstSpaceIndex = content.IndexOf(' ', StringComparison.Ordinal);
+            if (firstSpaceIndex > 0)
+            {
+                if (DateTimeOffset.TryParse(content.AsSpan(0, firstSpaceIndex), CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var dateTime))
+                {
+                    value = dateTime.UtcDateTime;
+                    return true;
+                }
+            }
+            else if (content.Length <= MaxDateLength)
+            {
+                if (DateTimeOffset.TryParse(content, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var dateTime))
+                {
+                    value = dateTime.UtcDateTime;
+                    return true;
+                }
+            }
+        }
+
+        value = default;
+        return false;
     }
 }
 

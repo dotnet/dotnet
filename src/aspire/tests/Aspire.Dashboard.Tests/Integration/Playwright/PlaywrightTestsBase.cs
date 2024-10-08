@@ -1,23 +1,22 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Playwright;
 using Xunit;
 
-namespace Aspire.Dashboard.Tests.Integration.Playwright.Infrastructure;
+namespace Aspire.Dashboard.Tests.Integration.Playwright;
 
-public class PlaywrightTestsBase<TDashboardServerFixture> : IClassFixture<TDashboardServerFixture>, IAsyncDisposable
-    where TDashboardServerFixture : DashboardServerFixture
+public class PlaywrightTestsBase : IClassFixture<DashboardServerFixture>, IClassFixture<PlaywrightFixture>, IAsyncDisposable
 {
     public DashboardServerFixture DashboardServerFixture { get; }
     public PlaywrightFixture PlaywrightFixture { get; }
 
     private IBrowserContext? _context;
 
-    public PlaywrightTestsBase(DashboardServerFixture dashboardServerFixture)
+    public PlaywrightTestsBase(DashboardServerFixture dashboardServerFixture, PlaywrightFixture playwrightFixture)
     {
         DashboardServerFixture = dashboardServerFixture;
-        PlaywrightFixture = dashboardServerFixture.PlaywrightFixture;
+        PlaywrightFixture = playwrightFixture;
     }
 
     public async Task RunTestAsync(Func<IPage, Task> test)
