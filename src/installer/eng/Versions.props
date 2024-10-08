@@ -56,7 +56,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Supported versions -->
-    <MicrosoftDotNetTestProjectTemplates60PackageVersion>1.1.0-rc.23410.2</MicrosoftDotNetTestProjectTemplates60PackageVersion>
     <MicrosoftDotNetTestProjectTemplates80PackageVersion>1.1.0-rc.23410.2</MicrosoftDotNetTestProjectTemplates80PackageVersion>
   </PropertyGroup>
   <PropertyGroup>
@@ -150,16 +149,6 @@
     <SubtractOneFromTemplateVersions Condition="'$(SYSTEM_TEAMPROJECT)' != 'internal'">true</SubtractOneFromTemplateVersions>
     <SubtractOneFromTemplateVersions Condition="$([MSBuild]::Subtract($(VersionFeature), $(MicrosoftNETSdkPatchVersion))) &gt;= 2">true</SubtractOneFromTemplateVersions>
     <SubtractOneFromTemplateVersions Condition="$(VersionFeature) &gt;= 1 AND ! $(MicrosoftNETSdkPackageVersion.Contains('rtm')) AND ! $(MicrosoftNETSdkPackageVersion.Contains('servicing'))">true</SubtractOneFromTemplateVersions>
-    <AspNetCoreTemplateFeature60>$([MSBuild]::Subtract($(VersionFeature60), 2))</AspNetCoreTemplateFeature60>
-    <AspNetCoreTemplateFeature60 Condition="$(MicrosoftNETSdkPackageVersion.Contains('preview'))">$(VersionFeature60)</AspNetCoreTemplateFeature60>
-    <AspNetCoreTemplateFeature60 Condition="'$(SubtractOneFromTemplateVersions)' == 'true'">$([MSBuild]::Subtract($(AspNetCoreTemplateFeature60), 1))</AspNetCoreTemplateFeature60>
-  </PropertyGroup>
-  <PropertyGroup>
-    <!-- Cross-release dependency versions -->
-    <MicrosoftDotNetCommonItemTemplates60PackageVersion>6.0.302</MicrosoftDotNetCommonItemTemplates60PackageVersion>
-    <MicrosoftAspNetCoreAppRuntime60PackageVersion>6.0.14</MicrosoftAspNetCoreAppRuntime60PackageVersion>
-    <MicrosoftWinFormsProjectTemplates60PackageVersion>6.0.7-servicing.22322.3</MicrosoftWinFormsProjectTemplates60PackageVersion>
-    <MicrosoftWPFProjectTemplates60PackageVersion>6.0.7-servicing.22322.2</MicrosoftWPFProjectTemplates60PackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <HostFxrVersion>$(MicrosoftNETCoreAppRuntimePackageVersion)</HostFxrVersion>
@@ -173,13 +162,6 @@
     <MicrosoftDotNetCommonItemTemplates80PackageVersion>$(MicrosoftDotNetCommonItemTemplatesPackageVersion)</MicrosoftDotNetCommonItemTemplates80PackageVersion>
     <MicrosoftDotNetCommonProjectTemplates80PackageVersion>$(MicrosoftDotNetCommonItemTemplatesPackageVersion)</MicrosoftDotNetCommonProjectTemplates80PackageVersion>
     <AspNetCorePackageVersionFor80Templates>$(MicrosoftAspNetCoreAppRuntimePackageVersion)</AspNetCorePackageVersionFor80Templates>
-    <!-- 6.0 Template versions -->
-    <MicrosoftDotnetWinFormsProjectTemplates60PackageVersion>$(MicrosoftWinFormsProjectTemplates60PackageVersion)</MicrosoftDotnetWinFormsProjectTemplates60PackageVersion>
-    <MicrosoftDotNetWpfProjectTemplates60PackageVersion>$(MicrosoftWPFProjectTemplates60PackageVersion)</MicrosoftDotNetWpfProjectTemplates60PackageVersion>
-    <NUnit3Templates60PackageVersion>$(NUnit3DotNetNewTemplatePackageVersion)</NUnit3Templates60PackageVersion>
-    <MicrosoftDotNetCommonItemTemplates60PackageVersion>$(MicrosoftDotNetCommonItemTemplates60PackageVersion)</MicrosoftDotNetCommonItemTemplates60PackageVersion>
-    <MicrosoftDotNetCommonProjectTemplates60PackageVersion>$(MicrosoftDotNetCommonItemTemplates60PackageVersion)</MicrosoftDotNetCommonProjectTemplates60PackageVersion>
-    <AspNetCorePackageVersionFor60Templates>6.0.$(AspNetCoreTemplateFeature60)</AspNetCorePackageVersionFor60Templates>
   </PropertyGroup>
   <!-- infrastructure and test only dependencies -->
   <PropertyGroup>
