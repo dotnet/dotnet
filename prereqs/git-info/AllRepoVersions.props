@@ -7,8 +7,8 @@
     <aspireOutputPackageVersion>8.2.1-preview.1.24473.4</aspireOutputPackageVersion>
     <aspnetcoreGitCommitHash>ea9196442528eb76098bcde2c5de32f74ab7404b</aspnetcoreGitCommitHash>
     <aspnetcoreOutputPackageVersion>10.0.0-alpha.2.24508.2</aspnetcoreOutputPackageVersion>
-    <cecilGitCommitHash>0cb8de0eb8dfe676a449d080ed8c66b01faa6604</cecilGitCommitHash>
-    <cecilOutputPackageVersion>0.11.5-alpha.24475.1</cecilOutputPackageVersion>
+    <cecilGitCommitHash>9c9443396f8deacceb8edb169890e52aac25f311</cecilGitCommitHash>
+    <cecilOutputPackageVersion>0.11.5-alpha.24480.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>803d8598f98fb4efd94604b32627ee9407f246db</commandlineapiGitCommitHash>
     <commandlineapiOutputPackageVersion>0.1.532403</commandlineapiOutputPackageVersion>
     <deploymenttoolsGitCommitHash>57d7baec5f331a145174d0e8f00d7bbfdf2b77d4</deploymenttoolsGitCommitHash>
