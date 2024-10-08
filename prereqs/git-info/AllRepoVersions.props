@@ -7,8 +7,8 @@
     <aspireOutputPackageVersion>8.2.1-preview.1.24473.4</aspireOutputPackageVersion>
     <aspnetcoreGitCommitHash>ea9196442528eb76098bcde2c5de32f74ab7404b</aspnetcoreGitCommitHash>
     <aspnetcoreOutputPackageVersion>10.0.0-alpha.2.24508.2</aspnetcoreOutputPackageVersion>
-    <cecilGitCommitHash>0cb8de0eb8dfe676a449d080ed8c66b01faa6604</cecilGitCommitHash>
-    <cecilOutputPackageVersion>0.11.5-alpha.24475.1</cecilOutputPackageVersion>
+    <cecilGitCommitHash>9c9443396f8deacceb8edb169890e52aac25f311</cecilGitCommitHash>
+    <cecilOutputPackageVersion>0.11.5-alpha.24480.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>803d8598f98fb4efd94604b32627ee9407f246db</commandlineapiGitCommitHash>
     <commandlineapiOutputPackageVersion>0.1.532403</commandlineapiOutputPackageVersion>
     <deploymenttoolsGitCommitHash>57d7baec5f331a145174d0e8f00d7bbfdf2b77d4</deploymenttoolsGitCommitHash>
@@ -31,11 +31,11 @@
     <roslynanalyzersOutputPackageVersion>3.12.0-beta1.24507.3</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>6a9d2b077973e31b213517579f674b461053ac1c</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.12.0-3.24504.7</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>0372b5080a4aec8d73d6861ad4b993d9d0fe3a11</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>10.0.0-alpha.1.24504.10</runtimeOutputPackageVersion>
+    <runtimeGitCommitHash>43295bb5378453d2ec4d9272cb44c6f50b4faa1f</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>10.0.0-alpha.1.24507.22</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>b7ce67571aff209313584ed0ee34f714270099dd</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>10.0.0-preview.24476.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>ea5575a04c052e6f11d963b00a42448493aeab7b</sdkGitCommitHash>
+    <sdkGitCommitHash>4e4fc5ca14065fc2f80f11993ae6228d26b7f904</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>13b08152f434be328df1228f29e79c8e70806ca3</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>10.0.0-alpha.1.24507.2</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>fd609e3b427601180d23633e2f1a4cdac6c42c20</sourcebuildreferencepackagesGitCommitHash>
