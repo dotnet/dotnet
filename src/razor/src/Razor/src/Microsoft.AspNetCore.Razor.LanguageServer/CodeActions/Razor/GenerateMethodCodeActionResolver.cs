@@ -215,7 +215,7 @@ internal sealed class GenerateMethodCodeActionResolver(
 
                 var formattedChange = await _razorFormattingService.TryGetCSharpCodeActionEditAsync(
                     documentContext,
-                    result.SelectAsArray(code.Source.Text.GetTextChange),
+                    result.SelectAsArray(code.GetCSharpSourceText().GetTextChange),
                     formattingOptions,
                     cancellationToken).ConfigureAwait(false);
 

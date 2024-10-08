@@ -10,8 +10,6 @@ using Microsoft.VisualStudio.Telemetry;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor;
 using System.IO;
-
-
 #if DEBUG
 using System.Linq;
 #endif
@@ -267,7 +265,6 @@ internal abstract class TelemetryReporter : ITelemetryReporter
             new("eventscope.languageservername", languageServerName),
             new("eventscope.correlationid", correlationId));
     }
-
 
     /// <summary>
     /// Returns values that should be set to (failureParameter1, failureParameter2) when reporting a fault.
