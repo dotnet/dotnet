@@ -20,7 +20,7 @@ public class DashboardLifecycleHookTests
 {
     [Theory]
     [MemberData(nameof(Data))]
-    public async Task WatchDashboardLogs_WrittenToHostLoggerFactory(DateTime? timestamp, string logMessage, string expectedMessage, string expectedCategory, LogLevel expectedLevel)
+    public async Task WatchDashboardLogs_WrittenToHostLoggerFactory(string logMessage, string expectedMessage, string expectedCategory, LogLevel expectedLevel)
     {
         // Arrange
         var testSink = new TestSink();
@@ -59,8 +59,8 @@ public class DashboardLifecycleHookTests
         }
 
         // Act
-        var dashboardLoggerState = resourceLoggerService.GetResourceLoggerState(KnownResourceNames.AspireDashboard);
-        dashboardLoggerState.AddLog(timestamp, logMessage, isErrorMessage: false);
+        var dashboardLogger = resourceLoggerService.GetLogger(KnownResourceNames.AspireDashboard);
+        dashboardLogger.LogError(logMessage);
 
         // Assert
         var logContext = await logChannel.Reader.ReadAsync();
@@ -69,7 +69,7 @@ public class DashboardLifecycleHookTests
         Assert.Equal(expectedLevel, logContext.LogLevel);
     }
 
-    public static IEnumerable<object?[]> Data()
+    public static IEnumerable<object[]> Data()
     {
         var timestamp = new DateTime(2001, 12, 29, 23, 59, 59, DateTimeKind.Utc);
         var message = new DashboardLogMessage
@@ -81,17 +81,22 @@ public class DashboardLifecycleHookTests
         };
         var messageJson = JsonSerializer.Serialize(message, DashboardLogMessageContext.Default.DashboardLogMessage);
 
-        yield return new object?[]
+        yield return new object[]
         {
-            DateTime.UtcNow,
-            messageJson,
+            $"{DateTime.UtcNow.ToString(KnownFormats.ConsoleLogsTimestampFormat, CultureInfo.InvariantCulture)} {messageJson}",
             "Hello world",
             "Aspire.Hosting.Dashboard.TestCategory",
             LogLevel.Error
         };
-        yield return new object?[]
+        yield return new object[]
         {
-            null,
+            $"{DateTime.UtcNow.ToString(KnownFormats.ConsoleLogsTimestampFormat, CultureInfo.InvariantCulture)}{messageJson}",
+            "Hello world",
+            "Aspire.Hosting.Dashboard.TestCategory",
+            LogLevel.Error
+        };
+        yield return new object[]
+        {
             messageJson,
             "Hello world",
             "Aspire.Hosting.Dashboard.TestCategory",
@@ -108,9 +113,8 @@ public class DashboardLifecycleHookTests
         };
         messageJson = JsonSerializer.Serialize(message, DashboardLogMessageContext.Default.DashboardLogMessage);
 
-        yield return new object?[]
+        yield return new object[]
         {
-            null,
             messageJson,
             $"Error message{Environment.NewLine}System.InvalidOperationException: Error!",
             "Aspire.Hosting.Dashboard.TestCategory.TestSubCategory",

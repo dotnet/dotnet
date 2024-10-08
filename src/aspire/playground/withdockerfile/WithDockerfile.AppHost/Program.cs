@@ -9,8 +9,7 @@ var secret = builder.AddParameter("secret", secret: true);
 
 builder.AddDockerfile("mycontainer", "qots")
        .WithBuildArg("GO_VERSION", goVersion)
-       .WithBuildSecret("SECRET_ASENV", secret)
-       .WithEnvironment("DOCKER_BUILDKIT", "1");
+       .WithBuildSecret("SECRET_ASENV", secret);
 
 #if !SKIP_DASHBOARD_REFERENCE
 // This project is only added in playground projects to support development/debugging
