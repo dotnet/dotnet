@@ -1303,7 +1303,12 @@ type internal TransparentCompiler
                 let diagnosticsLogger = errHandler.DiagnosticsLogger
 
                 let diagnosticsLogger =
-                    GetDiagnosticsLoggerFilteringByScopedPragmas(false, input.ScopedPragmas, tcConfig.diagnosticsOptions, diagnosticsLogger)
+                    GetDiagnosticsLoggerFilteringByScopedPragmas(
+                        tcConfig.langVersion,
+                        input.ScopedPragmas,
+                        tcConfig.diagnosticsOptions,
+                        diagnosticsLogger
+                    )
 
                 use _ = new CompilationGlobalsScope(diagnosticsLogger, BuildPhase.TypeCheck)
 
