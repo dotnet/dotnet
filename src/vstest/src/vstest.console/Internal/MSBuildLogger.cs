@@ -78,7 +78,15 @@ internal class MSBuildLogger : ITestLoggerWithParameters
                 SendMessage($"output-info", e.Message);
                 break;
             case TestMessageLevel.Warning:
-                SendMessage($"output-warning", e.Message);
+                // Downgrade xUnit skip warning to info, otherwise any skipped test will report warning, which is often upgraded to error.
+                if (e.Message.EndsWith("[SKIP]"))
+                {
+                    SendMessage($"output-info", e.Message);
+                }
+                else
+                {
+                    SendMessage($"output-warning", e.Message);
+                }
                 break;
             case TestMessageLevel.Error:
                 SendMessage($"output-error", e.Message);
