@@ -34,9 +34,8 @@ internal class DotnetWorkloadTest
             originalSource = dotNetHelper.ExecuteWorkloadList(projectDirectory, workloadID, false, firstRun: true);
             dotNetHelper.ExecuteWorkloadInstall(projectDirectory, workloadID);
             dotNetHelper.ExecuteWorkloadList(projectDirectory, workloadID, true, originalSource);
-            // Uninstall does not work on -rtm banded SDKs that are not stable. Additionally, uninstall is <.5% of usage of workload command so disabling for now
-            // dotNetHelper.ExecuteWorkloadUninstall(projectDirectory, workloadID);
-            // dotNetHelper.ExecuteWorkloadList(projectDirectory, workloadID, false, originalSource);
+            dotNetHelper.ExecuteWorkloadUninstall(projectDirectory, workloadID);
+            dotNetHelper.ExecuteWorkloadList(projectDirectory, workloadID, false, originalSource);
         }
         if (Commands.HasFlag(DotNetSdkActions.WorkloadInstall))
         {
