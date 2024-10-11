@@ -472,10 +472,10 @@ namespace Internal.TypeSystem
                 if (!this.IsEnum)
                     return this;
 
-                foreach (var fieldInfo in this.GetFields())
+                foreach (var field in this.GetFields())
                 {
-                    if (!fieldInfo.IsStatic)
-                        return fieldInfo.FieldType;
+                    if (!field.IsStatic)
+                        return field.FieldType;
                 }
 
                 ThrowHelper.ThrowTypeLoadException(ExceptionStringID.ClassLoadGeneral, this);

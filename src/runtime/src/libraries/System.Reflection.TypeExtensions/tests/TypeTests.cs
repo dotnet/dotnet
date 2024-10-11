@@ -792,8 +792,8 @@ namespace System.Reflection.Tests
 
         public T publicField
         {
-            get { return this.field; }
-            set { this.field = value; }
+            get { return field; }
+            set { field = value; }
         }
 
         public T ReturnAndSetField(T newFieldValue, params T[] moreFieldValues)
@@ -815,8 +815,8 @@ namespace System.Reflection.Tests
 
         public int publicField
         {
-            get { return this.field; }
-            set { this.field = value; }
+            get { return field; }
+            set { field = value; }
         }
 
         public int ReturnAndSetField(int newFieldValue, params int[] moreFieldValues)
