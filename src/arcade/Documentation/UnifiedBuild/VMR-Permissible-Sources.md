@@ -6,23 +6,22 @@ This document provides guidelines on the types of source code that are permissib
 
 ## Binaries
 
-### Policy
+### Binary Policy
 
 OSS licensed binaries are allowed in the VMR, but the inclusion status of all binaries that could be included in the VMR must be made explicit. Any binary not explicitly specified is considered "new" and is not allowed in the VMR for all build scenarios. In general, it is preferred to not have binaries in the VMR, but they can be included as long as they are not required to build the source-build product.
 
-To allow a binary into the VMR, you must add the binary or its file glob pattern to either [`allowed-sb-binaries.txt`](https://github.com/dotnet/dotnet/blob/main/src/installer/src/VirtualMonoRepo/allowed-sb-binaries.txt) or [`allowed-vmr-binaries.txt`](https://github.com/dotnet/dotnet/blob/main/src/installer/src/VirtualMonoRepo/allowed-vmr-binaries.txt). Which file to add the binary or its pattern to depends on whether or not the binary is allowed for source build. For help determining if the newly detected binary is allowed in the source-build context, please contact a member of the source-build team at [@dotnet/source-build-internal](https://github.com/orgs/dotnet/teams/source-build-internal).
+To allow a binary into the VMR, you must add the binary or its file glob pattern to either [`allowed-sb-binaries.txt`](https://github.com/dotnet/dotnet/blob/main/src/installer/src/VirtualMonoRepo/allowed-sb-binaries.txt) or [`allowed-vmr-binaries.txt`](https://github.com/dotnet/dotnet/blob/main/src/installer/src/VirtualMonoRepo/allowed-vmr-binaries.txt). Which file to add the binary or its pattern to depends on whether or not the binary is allowed for source build. For help determining if the newly detected binary is allowed in the source-build context, please contact a member of the source-build team at [@dotnet/source-build](https://github.com/orgs/dotnet/teams/source-build).
 
 If the binary is allowed for source-build, add it to `allowed-sb-binaries.txt`. This binary is now allowed in the VMR for source-build and non-source-build scenarios. The binary will not be removed during a build of the source-build product.
 
 If the binary is not allowed for source-build, add it to `allowed-vmr-binaries.txt`. This binary is now allowed in the VMR for non-source-build scenarios and will be removed during a build of the source-build product.
 
-> [!NOTE]  
-> `allowed-sb-binaries.txt` is a subset of `allowed-vmr-binaries.txt`, so is imported at the top of `allowed-vmr-binaries.txt`. This means that all binaries & exclusions in `allowed-sb-binaries.txt` are also included in `allowed-vmr-binaries.txt`.
+> [!NOTE]
+>
+> - `allowed-sb-binaries.txt` is a subset of `allowed-vmr-binaries.txt`, so is imported at the top of `allowed-vmr-binaries.txt`. This means that all binaries & exclusions in `allowed-sb-binaries.txt` are also included in `allowed-vmr-binaries.txt`.
+> - It is best to target a single file or use a specific pattern when adding to either `allowed-sb-binaries.txt` or `allowed-vmr-binaries.txt`. Otherwise, vague patterns may permit binaries into the VMR that were previously undetected. For example, avoid patterns such as `**/test/**` and instead use a more specific patterns like `src/arcade/test/**/*.png`.
 
-> [!IMPORTANT]  
-> It is best to target a single file or use a specific pattern when adding to either `allowed-sb-binaries.txt` or `allowed-vmr-binaries.txt`. Otherwise, vague patterns may permit binaries into the VMR that were previously undetected. For example, avoid patterns such as `**/test/**` and instead use a more specific patterns like `src/arcade/test/**/*.png`.
-
-When adding a binary or pattern to either `allowed-sb-binaries.txt` or `allowed-vmr-binaries.txt`, remember to include a link to the relevant issue and tag [@dotnet/source-build-internal](https://github.com/orgs/dotnet/teams/source-build-internal) as a reviewer.
+When adding a binary or pattern to either `allowed-sb-binaries.txt` or `allowed-vmr-binaries.txt`, remember to include a link to the relevant issue and tag [@dotnet/source-build](https://github.com/orgs/dotnet/teams/source-build) as a reviewer.
 
 ### Validation and Cleaning
 
@@ -30,7 +29,7 @@ The [BinaryTool](https://github.com/dotnet/dotnet/tree/main/eng/tools/BinaryTool
 
 #### Validation
 
-The tool flags all binaries not listed in `allowed-vmr-binaries.txt` and `allowed-sb-binaries.txt`. Note that the tool only uses `allowed-vmr-binaries.txt` as a baseline during validation, but, as noted above, `allowed-sb-binaries.txt` is imported at the top of `allowed-vmr-binaries.txt`, meaning that all binaries in `allowed-sb-binaries.txt` are also relevant. 
+The tool flags all binaries not listed in `allowed-vmr-binaries.txt` and `allowed-sb-binaries.txt`. Note that the tool only uses `allowed-vmr-binaries.txt` as a baseline during validation, but, as noted above, `allowed-sb-binaries.txt` is imported at the top of `allowed-vmr-binaries.txt`, meaning that all binaries in `allowed-sb-binaries.txt` are also relevant.
 
 To run default validation, execute `eng/detect-binaries.sh`.
 
@@ -48,14 +47,15 @@ An example output is as follows:
 ```
 
 In this example, the tool detected 2 new binaries:
-  - `src/wpf/src/Microsoft.DotNet.Wpf/src/Shared/Tracing/resources/MSG00001.bin`
-  - `src/wpf/src/Microsoft.DotNet.Wpf/src/Shared/Tracing/resources/wpf-etwTEMP.BIN`.
+
+- `src/wpf/src/Microsoft.DotNet.Wpf/src/Shared/Tracing/resources/MSG00001.bin`
+- `src/wpf/src/Microsoft.DotNet.Wpf/src/Shared/Tracing/resources/wpf-etwTEMP.BIN`.
 
 If these binaries are permitted for source-build, add the binaries and/or relevent file glob pattern(s), such as `src/wpf/src/Microsoft.DotNet.Wpf/src/Shared/Tracing/resources/*.bin`, to `allowed-sb-binaries.txt`. Otherwise, add the binaries or relevent file glob pattern(s) to `allowed-vmr-binaries.txt`.
 
 #### Cleaning
 
-The tool removes all binaries from the VMR that are not listed in `allowed-vmr-binaries.txt` and `allowed-sb-binaries.txt`. Again, note that the tool only uses `allowed-vmr-binaries.txt` as a baseline during validation, but, as noted above, `allowed-sb-binaries.txt` is imported at the top of `allowed-vmr-binaries.txt`, meaning that all binaries in `allowed-sb-binaries.txt` are also relevant. 
+The tool removes all binaries from the VMR that are not listed in `allowed-vmr-binaries.txt` and `allowed-sb-binaries.txt`. Again, note that the tool only uses `allowed-vmr-binaries.txt` as a baseline during validation, but, as noted above, `allowed-sb-binaries.txt` is imported at the top of `allowed-vmr-binaries.txt`, meaning that all binaries in `allowed-sb-binaries.txt` are also relevant.
 
 To run cleaning, execute `./eng/detect-binaries.sh --clean` or `./prep-source-build.sh`. Executing `./prep-source-build.sh` will build the tool using previously source-built artifacts and remove non-source-build allowed binaries from the VMR whereas executing `./eng/detect-binaries.sh --clean` will build the tool using online resources and remove new binaries from the VMR.
 
@@ -72,15 +72,16 @@ An example output is as follows:
 16:42:24 info: BinaryTool[0] Finished all binary tasks. Took 4.9003778 seconds.
 ```
 
-In this example, the tool removed 2 binaries: 
- - `src/wpf/src/Microsoft.DotNet.Wpf/src/Shared/Tracing/resources/MSG00001.bin`
- - `src/wpf/src/Microsoft.DotNet.Wpf/src/Shared/Tracing/resources/wpf-etwTEMP.BIN`.
- 
+In this example, the tool removed 2 binaries:
+
+- `src/wpf/src/Microsoft.DotNet.Wpf/src/Shared/Tracing/resources/MSG00001.bin`
+- `src/wpf/src/Microsoft.DotNet.Wpf/src/Shared/Tracing/resources/wpf-etwTEMP.BIN`.
+
 If these binaries are permitted for source-build, add the binaries and/or relevent file glob pattern(s), such as `src/wpf/src/Microsoft.DotNet.Wpf/src/Shared/Tracing/resources/*.bin`, to `allowed-sb-binaries.txt`. Otherwise, add the binaries or relevent file glob pattern(s) to `allowed-vmr-binaries.txt`.
 
 ## Licenses
 
-### Policy
+### License Policy
 
 The VMR does not permit code and binaries licensed under non-OSS licenses. For a list of approved OSS licenses, you can check out the [OSI-approved list of licenses](https://opensource.org/licenses/alphabetical).
 
@@ -92,4 +93,4 @@ Licenses are detected by the [license scan test](https://github.com/dotnet/dotne
 
 Common cases for adding a license to [`LicenseExclusions.txt`](https://github.com/dotnet/dotnet/blob/main/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/LicenseExclusions.txt) include false positives, licenses related to test data, or needing to get a clean scan result with a relevant backport issue to remove the offending license later.
 
-To have a license be added to the list of exclusions in [`LicenseExclusions.txt`](https://github.com/dotnet/dotnet/blob/main/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/LicenseExclusions.txt), open a PR, include a link to the relevant issue above the exclusion, and tag [@dotnet/source-build-internal](https://github.com/orgs/dotnet/teams/source-build-internal) as a reviewer.
+To have a license be added to the list of exclusions in [`LicenseExclusions.txt`](https://github.com/dotnet/dotnet/blob/main/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/LicenseExclusions.txt), open a PR, include a link to the relevant issue above the exclusion, and tag [@dotnet/source-build](https://github.com/orgs/dotnet/teams/source-build) as a reviewer.

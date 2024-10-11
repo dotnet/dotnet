@@ -457,43 +457,43 @@
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.0-alpha.1.24507.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="10.0.0-alpha.1.24510.2">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>fd609e3b427601180d23633e2f1a4cdac6c42c20</Sha>
+      <Sha>8f20d0d678ac2817ad1d7e3830479829c2db31d0</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="2.0.0-preview.1.24427.4">
       <Uri>https://github.com/dotnet/deployment-tools</Uri>
       <Sha>57d7baec5f331a145174d0e8f00d7bbfdf2b77d4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Tasks.Git" Version="9.0.0-beta.24507.2">
+    <Dependency Name="Microsoft.Build.Tasks.Git" Version="9.0.0-beta.24510.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>49b08e968e7e5edf282f068b4bce56b9909433b0</Sha>
+      <Sha>a050f42b3b16ed7219cc057babdc3358e7ed52e1</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Common" Version="9.0.0-beta.24507.2">
+    <Dependency Name="Microsoft.SourceLink.Common" Version="9.0.0-beta.24510.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>49b08e968e7e5edf282f068b4bce56b9909433b0</Sha>
+      <Sha>a050f42b3b16ed7219cc057babdc3358e7ed52e1</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="9.0.0-beta.24507.2">
+    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="9.0.0-beta.24510.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>49b08e968e7e5edf282f068b4bce56b9909433b0</Sha>
+      <Sha>a050f42b3b16ed7219cc057babdc3358e7ed52e1</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitHub" Version="9.0.0-beta.24507.2">
+    <Dependency Name="Microsoft.SourceLink.GitHub" Version="9.0.0-beta.24510.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>49b08e968e7e5edf282f068b4bce56b9909433b0</Sha>
+      <Sha>a050f42b3b16ed7219cc057babdc3358e7ed52e1</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitLab" Version="9.0.0-beta.24507.2">
+    <Dependency Name="Microsoft.SourceLink.GitLab" Version="9.0.0-beta.24510.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>49b08e968e7e5edf282f068b4bce56b9909433b0</Sha>
+      <Sha>a050f42b3b16ed7219cc057babdc3358e7ed52e1</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="9.0.0-beta.24507.2">
+    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="9.0.0-beta.24510.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>49b08e968e7e5edf282f068b4bce56b9909433b0</Sha>
+      <Sha>a050f42b3b16ed7219cc057babdc3358e7ed52e1</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.sourcelink" Version="9.0.0-beta.24507.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.sourcelink" Version="9.0.0-beta.24510.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>49b08e968e7e5edf282f068b4bce56b9909433b0</Sha>
+      <Sha>a050f42b3b16ed7219cc057babdc3358e7ed52e1</Sha>
       <SourceBuild RepoName="sourcelink" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
@@ -597,34 +597,34 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.24504.4">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.24510.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f209a925b15bc66ecb9a8825bd9595937bbe3aa1</Sha>
+      <Sha>f044058aaef59331bfc565f098d81a4e2e9092e3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="10.0.0-beta.24504.4">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="10.0.0-beta.24510.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f209a925b15bc66ecb9a8825bd9595937bbe3aa1</Sha>
+      <Sha>f044058aaef59331bfc565f098d81a4e2e9092e3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.24504.4">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.24510.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f209a925b15bc66ecb9a8825bd9595937bbe3aa1</Sha>
+      <Sha>f044058aaef59331bfc565f098d81a4e2e9092e3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.SignTool" Version="10.0.0-beta.24504.4">
+    <Dependency Name="Microsoft.DotNet.SignTool" Version="10.0.0-beta.24510.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f209a925b15bc66ecb9a8825bd9595937bbe3aa1</Sha>
+      <Sha>f044058aaef59331bfc565f098d81a4e2e9092e3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XUnitExtensions" Version="10.0.0-beta.24504.4">
+    <Dependency Name="Microsoft.DotNet.XUnitExtensions" Version="10.0.0-beta.24510.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f209a925b15bc66ecb9a8825bd9595937bbe3aa1</Sha>
+      <Sha>f044058aaef59331bfc565f098d81a4e2e9092e3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.24504.4">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.24510.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f209a925b15bc66ecb9a8825bd9595937bbe3aa1</Sha>
+      <Sha>f044058aaef59331bfc565f098d81a4e2e9092e3</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.24504.4">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.24510.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f209a925b15bc66ecb9a8825bd9595937bbe3aa1</Sha>
+      <Sha>f044058aaef59331bfc565f098d81a4e2e9092e3</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <!-- Temporarily pinned to a net9 supporting version until the SDK can target net10.

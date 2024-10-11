@@ -40,7 +40,9 @@ namespace Microsoft.DotNet.SignTool
             => Path.GetExtension(path).Equals(".zip", StringComparison.OrdinalIgnoreCase);
 
         internal static bool IsTarGZip(string path)
-            => Path.GetExtension(path).EndsWith(".tgz", StringComparison.OrdinalIgnoreCase);
+            => Path.GetExtension(path).Equals(".tgz", StringComparison.OrdinalIgnoreCase)
+                || (Path.GetExtension(path).Equals(".gz", StringComparison.OrdinalIgnoreCase)
+                    && Path.GetExtension(Path.GetFileNameWithoutExtension(path)).Equals(".tar", StringComparison.OrdinalIgnoreCase));
 
         internal static bool IsWix(string path)
             => (Path.GetExtension(path).Equals(".msi", StringComparison.OrdinalIgnoreCase)
