@@ -1,13 +1,13 @@
 ﻿{
-  "author": "Microsoft",
-  "name": "xUnit Test Project",
-  "description": "A project that contains xUnit.net tests that can run on .NET on Windows, Linux and macOS",
-  "symbols/TargetFrameworkOverride/description": "Overrides the target framework",
-  "symbols/Framework/description": "The target framework for the project.",
-  "symbols/Framework/choices/net9.0/description": "Target net9.0",
-  "symbols/EnablePack/description": "Whether or not to enable packaging (via \"dotnet pack\") for the project.",
-  "symbols/skipRestore/description": "If specified, skips the automatic restore of the project on create.",
-  "postActions/restoreNugetPackages/description": "Restore NuGet packages required by this project.",
-  "postActions/restoreNugetPackages/manualInstructions/default/text": "Run 'dotnet restore'",
-  "postActions/openInEditor/description": "Opens Tests.fs in the editor"
+  "author": "Майкрософт",
+  "name": "Тестовый проект xUnit",
+  "description": "Проект, содержащий тесты xUnit.net, которые могут работать на .NET в Windows, Linux и macOS.",
+  "symbols/TargetFrameworkOverride/description": "Переопределяет целевую платформу",
+  "symbols/Framework/description": "Целевая платформа для проекта.",
+  "symbols/Framework/choices/net9.0/description": "Целевая среда net9.0",
+  "symbols/EnablePack/description": "Следует ли включить упаковку (через \"dotnet pack\") для проекта.",
+  "symbols/skipRestore/description": "Позволяет пропускать автоматическое восстановление проекта при создании.",
+  "postActions/restoreNugetPackages/description": "Восстановление пакетов NuGet, необходимых для этого проекта.",
+  "postActions/restoreNugetPackages/manualInstructions/default/text": "Выполнить команду \"dotnet restore\"",
+  "postActions/openInEditor/description": "Открывает Tests.fs в редакторе"
 }
