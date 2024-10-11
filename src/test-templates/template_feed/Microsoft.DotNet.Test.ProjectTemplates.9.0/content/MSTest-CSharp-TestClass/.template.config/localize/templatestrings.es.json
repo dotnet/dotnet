@@ -1,15 +1,15 @@
 ﻿{
   "author": "Microsoft",
-  "name": "MSTest Test Class",
-  "description": "Creates a new MSTest test class",
-  "symbols/Fixture/description": "Select the fixture kinds to include in the project.",
-  "symbols/Fixture/choices/None/description": "No fixture methods",
-  "symbols/Fixture/choices/None/displayName": "None",
-  "symbols/Fixture/choices/AssemblyInitialize/description": "AssemblyInitialize fixture method",
-  "symbols/Fixture/choices/AssemblyCleanup/description": "AssemblyCleanup fixture method",
-  "symbols/Fixture/choices/ClassInitialize/description": "ClassInitialize fixture method",
-  "symbols/Fixture/choices/ClassCleanup/description": "ClassCleanup fixture method",
-  "symbols/Fixture/choices/TestInitialize/description": "TestInitialize fixture method",
-  "symbols/Fixture/choices/TestCleanup/description": "TestCleanup fixture method",
-  "postActions/openInEditor/description": "Opens Test1.cs in the editor."
+  "name": "Clase de prueba de MSTest",
+  "description": "Cree una nueva clase de prueba de MSTest",
+  "symbols/Fixture/description": "Seleccione los tipos de accesorio que desea incluir en el proyecto.",
+  "symbols/Fixture/choices/None/description": "No hay métodos de accesorio",
+  "symbols/Fixture/choices/None/displayName": "Ninguno",
+  "symbols/Fixture/choices/AssemblyInitialize/description": "Método de accesorio AssemblyInitialize",
+  "symbols/Fixture/choices/AssemblyCleanup/description": "Método de accesorio AssemblyCleanup",
+  "symbols/Fixture/choices/ClassInitialize/description": "Método de accesorio ClassInitialize",
+  "symbols/Fixture/choices/ClassCleanup/description": "Método de accesorio ClassCleanup",
+  "symbols/Fixture/choices/TestInitialize/description": "Método de accesorio TestInitialize",
+  "symbols/Fixture/choices/TestCleanup/description": "Método de accesorio TestCleanup",
+  "postActions/openInEditor/description": "Abrir Test1.cs en el editor."
 }

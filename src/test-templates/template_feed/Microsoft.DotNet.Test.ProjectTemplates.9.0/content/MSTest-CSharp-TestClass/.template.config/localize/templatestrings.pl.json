@@ -1,15 +1,15 @@
 ﻿{
   "author": "Microsoft",
-  "name": "MSTest Test Class",
-  "description": "Creates a new MSTest test class",
-  "symbols/Fixture/description": "Select the fixture kinds to include in the project.",
-  "symbols/Fixture/choices/None/description": "No fixture methods",
-  "symbols/Fixture/choices/None/displayName": "None",
-  "symbols/Fixture/choices/AssemblyInitialize/description": "AssemblyInitialize fixture method",
-  "symbols/Fixture/choices/AssemblyCleanup/description": "AssemblyCleanup fixture method",
-  "symbols/Fixture/choices/ClassInitialize/description": "ClassInitialize fixture method",
-  "symbols/Fixture/choices/ClassCleanup/description": "ClassCleanup fixture method",
-  "symbols/Fixture/choices/TestInitialize/description": "TestInitialize fixture method",
-  "symbols/Fixture/choices/TestCleanup/description": "TestCleanup fixture method",
-  "postActions/openInEditor/description": "Opens Test1.cs in the editor."
+  "name": "Klasa testowa MSTest",
+  "description": "Tworzy nową klasę testową MSTest",
+  "symbols/Fixture/description": "Wybierz rodzaje warunków początkowych do uwzględnienia w projekcie.",
+  "symbols/Fixture/choices/None/description": "Brak metod początkowych",
+  "symbols/Fixture/choices/None/displayName": "Brak",
+  "symbols/Fixture/choices/AssemblyInitialize/description": "AssemblyInitialize — metoda początkowa",
+  "symbols/Fixture/choices/AssemblyCleanup/description": "AssemblyCleanup — metoda początkowa",
+  "symbols/Fixture/choices/ClassInitialize/description": "ClassInitialize — metoda początkowa",
+  "symbols/Fixture/choices/ClassCleanup/description": "ClassCleanup — metoda początkowa",
+  "symbols/Fixture/choices/TestInitialize/description": "TestInitialize — metoda początkowa",
+  "symbols/Fixture/choices/TestCleanup/description": "TestCleanup — metoda początkowa",
+  "postActions/openInEditor/description": "Otwiera plik Test1.cs w edytorze."
 }
