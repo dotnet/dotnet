@@ -201,7 +201,6 @@ index ------------
 -./sdk/x.y.z/Containers/tasks/net472/Microsoft.Extensions.Options.dll
 -./sdk/x.y.z/Containers/tasks/net472/Microsoft.Extensions.Primitives.dll
 -./sdk/x.y.z/Containers/tasks/net472/Microsoft.IO.Redist.dll
--./sdk/x.y.z/Containers/tasks/net472/Microsoft.NET.Build.Containers.deps.json
 -./sdk/x.y.z/Containers/tasks/net472/Microsoft.NET.Build.Containers.dll
 -./sdk/x.y.z/Containers/tasks/net472/Microsoft.NET.Build.Containers.dll.config
 -./sdk/x.y.z/Containers/tasks/net472/Microsoft.NET.StringTools.dll
