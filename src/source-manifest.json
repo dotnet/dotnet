@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "44f555ceef2a2a33fc9488c243b6a05d1943aeb9"
+      "commitSha": "d7b9c48e644a874e72c0452f02e10a1b7f09c221"
     },
     {
       "packageVersion": "17.8.5-preview-24055-02",
