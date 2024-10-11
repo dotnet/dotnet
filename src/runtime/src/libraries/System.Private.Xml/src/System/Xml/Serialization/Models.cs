@@ -431,8 +431,8 @@ namespace System.Xml.Serialization
                     FieldInfo[] fields = Type.GetFields();
                     for (int i = 0; i < fields.Length; i++)
                     {
-                        FieldInfo fieldInfo = fields[i];
-                        ConstantModel? constant = GetConstantModel(fieldInfo);
+                        FieldInfo field = fields[i];
+                        ConstantModel? constant = GetConstantModel(field);
                         if (constant != null) list.Add(constant);
                     }
                     _constants = list.ToArray();
