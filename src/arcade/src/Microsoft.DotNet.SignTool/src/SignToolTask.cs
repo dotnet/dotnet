@@ -386,7 +386,9 @@ namespace Microsoft.DotNet.SignTool
                     var certificate = item.GetMetadata("CertificateName");
                     var collisionPriorityId = item.GetMetadata(SignToolConstants.CollisionPriorityId);
 
-                    if (!extension.Equals(Path.GetExtension(extension)))
+                    // Path.GetExtension will return .gz for .tar.gz files, so we need to handle that case separately
+                    var actualExtension = extension.Equals(".tar.gz", StringComparison.OrdinalIgnoreCase) ? ".tar.gz" : Path.GetExtension(extension);
+                    if (!extension.Equals(actualExtension))
                     {
                         Log.LogError($"Value of {nameof(FileExtensionSignInfo)} is invalid: '{extension}'");
                         continue;

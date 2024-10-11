@@ -44,13 +44,13 @@
     <MicrosoftCodeAnalysisCSharpVersion>4.8.0</MicrosoftCodeAnalysisCSharpVersion>
     <MicrosoftNetCompilersToolsetVersion>4.8.0</MicrosoftNetCompilersToolsetVersion>
     <!-- runtime -->
-    <MicrosoftBclAsyncInterfacesVersion>9.0.0-preview.6.24327.7</MicrosoftBclAsyncInterfacesVersion>
-    <MicrosoftExtensionsDependencyInjectionAbstractionsVersion>9.0.0-preview.6.24327.7</MicrosoftExtensionsDependencyInjectionAbstractionsVersion>
-    <MicrosoftExtensionsDependencyInjectionVersion>9.0.0-preview.6.24327.7</MicrosoftExtensionsDependencyInjectionVersion>
-    <MicrosoftExtensionsDependencyModelVersion>9.0.0-preview.6.24327.7</MicrosoftExtensionsDependencyModelVersion>
-    <MicrosoftExtensionsFileProvidersAbstractionsVersion>9.0.0-preview.6.24327.7</MicrosoftExtensionsFileProvidersAbstractionsVersion>
-    <MicrosoftExtensionsFileSystemGlobbingVersion>9.0.0-preview.6.24327.7</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftExtensionsLoggingConsoleVersion>9.0.0-preview.6.24327.7</MicrosoftExtensionsLoggingConsoleVersion>
+    <MicrosoftBclAsyncInterfacesVersion>9.0.0-rc.2.24473.5</MicrosoftBclAsyncInterfacesVersion>
+    <MicrosoftExtensionsDependencyInjectionAbstractionsVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsDependencyInjectionAbstractionsVersion>
+    <MicrosoftExtensionsDependencyInjectionVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsDependencyInjectionVersion>
+    <MicrosoftExtensionsDependencyModelVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsDependencyModelVersion>
+    <MicrosoftExtensionsFileProvidersAbstractionsVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsFileProvidersAbstractionsVersion>
+    <MicrosoftExtensionsFileSystemGlobbingVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsFileSystemGlobbingVersion>
+    <MicrosoftExtensionsLoggingConsoleVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsLoggingConsoleVersion>
     <MicrosoftNETCorePlatformsVersion>5.0.0</MicrosoftNETCorePlatformsVersion>
     <MicrosoftNETRuntimeEmscripten2023Nodewin_x64>6.0.4</MicrosoftNETRuntimeEmscripten2023Nodewin_x64>
     <MicrosoftNETRuntimeEmscripten2023Pythonwin_x64>6.0.4</MicrosoftNETRuntimeEmscripten2023Pythonwin_x64>
@@ -64,14 +64,15 @@
     <MicrosoftNETWorkloadMonoToolChainManifest_60300Version_6022>6.0.22</MicrosoftNETWorkloadMonoToolChainManifest_60300Version_6022>
     <MicrosoftiOSTemplatesVersion>15.2.302-preview.14.122</MicrosoftiOSTemplatesVersion>
     <MicrosoftiOSTemplatesVersion160527>16.0.527</MicrosoftiOSTemplatesVersion160527>
-    <SystemCollectionsImmutableVersion>9.0.0-preview.6.24327.7</SystemCollectionsImmutableVersion>
+    <SystemCollectionsImmutableVersion>9.0.0-rc.2.24473.5</SystemCollectionsImmutableVersion>
     <SystemCompositionVersion>9.0.0-preview.6.24327.7</SystemCompositionVersion>
-    <SystemIOPackagingVersion>9.0.0-preview.6.24327.7</SystemIOPackagingVersion>
-    <SystemReflectionMetadataVersion>9.0.0-preview.6.24327.7</SystemReflectionMetadataVersion>
-    <SystemSecurityCryptographyXmlVersion>9.0.0-preview.6.24327.7</SystemSecurityCryptographyXmlVersion>
-    <SystemTextEncodingsWebVersion>9.0.0-preview.6.24327.7</SystemTextEncodingsWebVersion>
-    <SystemTextJsonVersion>9.0.0-preview.6.24327.7</SystemTextJsonVersion>
-    <SystemFormatsAsn1Version>9.0.0-preview.6.24327.7</SystemFormatsAsn1Version>
+    <SystemIOPackagingVersion>9.0.0-rc.2.24473.5</SystemIOPackagingVersion>
+    <SystemReflectionMetadataVersion>9.0.0-rc.2.24473.5</SystemReflectionMetadataVersion>
+    <SystemSecurityCryptographyPkcsVersion>9.0.0-rc.2.24473.5</SystemSecurityCryptographyPkcsVersion>
+    <SystemSecurityCryptographyXmlVersion>9.0.0-rc.2.24473.5</SystemSecurityCryptographyXmlVersion>
+    <SystemTextEncodingsWebVersion>9.0.0-rc.2.24473.5</SystemTextEncodingsWebVersion>
+    <SystemTextJsonVersion>9.0.0-rc.2.24473.5</SystemTextJsonVersion>
+    <SystemFormatsAsn1Version>9.0.0-rc.2.24473.5</SystemFormatsAsn1Version>
     <!-- sdk -->
     <MicrosoftNETSdkWorkloadManifestReaderVersion>9.0.100-preview.6.24328.19</MicrosoftNETSdkWorkloadManifestReaderVersion>
     <!-- source-build-externals -->

@@ -13,17 +13,6 @@
   </Target>
 
   <!--
-    Workaround for failed signing of Non-Windows artifacts
-    due to strong-name signing.
-    https://github.com/dotnet/arcade/issues/15117
-  -->
-  <PropertyGroup Condition="'$(DotNetSignType)' == 'real' and '$(OS)' != 'Windows_NT'">
-    <SignAssembly>false</SignAssembly>
-    <PublicSign>false</PublicSign>
-    <DelaySign></DelaySign>
-  </PropertyGroup>
-
-  <!--
     WPF temp project sets OutDir, which makes the SDK create an empty directory for it,
     polluting the output dir. Avoid creating these directories.
     https://github.com/dotnet/sdk/issues/1367
