@@ -6,9 +6,9 @@ variables:
 - name: _BuildConfig
   value: Release
 - name: LinuxImage
-  value: 1es-ubuntu-2204
+  value: build.ubuntu.2204.amd64
 - name: WindowsImage
-  value: 1es-windows-2022
+  value: windows.vs2022.amd64
 - name: MacImage
   value: macOS-12
 - name: CheckNuGetSizesScript
@@ -38,6 +38,8 @@ extends:
     featureFlags:
       autoBaseline: true
     sdl:
+      policheck:
+        enabled: true
       binskim:
         enabled: true
         scanOutputDirectoryOnly: true
@@ -148,7 +150,7 @@ extends:
           ############ Windows BUILD ############
           - job: Build_win_x64
             displayName: Windows_x64
-            timeoutInMinutes: 120
+            timeoutInMinutes: 180
             pool:
               name: $(DncEngInternalBuildPool)
               image: $(WindowsImage)
@@ -179,7 +181,7 @@ extends:
 
           - job: Build_win_arm64
             displayName: Windows_arm64
-            timeoutInMinutes: 120
+            timeoutInMinutes: 180
             pool:
               name: $(DncEngInternalBuildPool)
               image: $(WindowsImage)
