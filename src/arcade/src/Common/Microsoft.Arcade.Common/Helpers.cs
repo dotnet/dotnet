@@ -12,9 +12,11 @@ namespace Microsoft.Arcade.Common
 {
     public class Helpers : IHelpers
     {
+        private static readonly char[] s_slashes = [ '/', '\\' ];
+
         public string RemoveTrailingSlash(string directoryPath)
         {
-            return directoryPath.TrimEnd('/', '\\');
+            return directoryPath.TrimEnd(s_slashes);
         }
 
         public string ComputeSha256Hash(string normalizedPath)

@@ -1,15 +1,15 @@
 ﻿{
   "author": "Microsoft",
-  "name": "MSTest Test Class",
-  "description": "Creates a new MSTest test class",
-  "symbols/Fixture/description": "Select the fixture kinds to include in the project.",
-  "symbols/Fixture/choices/None/description": "No fixture methods",
+  "name": "MSTest 測試類別",
+  "description": "建立新的 MSTest 測試類別",
+  "symbols/Fixture/description": "選取要併入專案中的固件類型。",
+  "symbols/Fixture/choices/None/description": "沒有固件方法",
   "symbols/Fixture/choices/None/displayName": "None",
-  "symbols/Fixture/choices/AssemblyInitialize/description": "AssemblyInitialize fixture method",
-  "symbols/Fixture/choices/AssemblyCleanup/description": "AssemblyCleanup fixture method",
-  "symbols/Fixture/choices/ClassInitialize/description": "ClassInitialize fixture method",
-  "symbols/Fixture/choices/ClassCleanup/description": "ClassCleanup fixture method",
-  "symbols/Fixture/choices/TestInitialize/description": "TestInitialize fixture method",
-  "symbols/Fixture/choices/TestCleanup/description": "TestCleanup fixture method",
-  "postActions/openInEditor/description": "Opens Test1.vb in the editor."
+  "symbols/Fixture/choices/AssemblyInitialize/description": "AssemblyInitialize 固件方法",
+  "symbols/Fixture/choices/AssemblyCleanup/description": "AssemblyCleanup 固件方法",
+  "symbols/Fixture/choices/ClassInitialize/description": "ClassInitialize 固件方法",
+  "symbols/Fixture/choices/ClassCleanup/description": "ClassCleanup 固件方法",
+  "symbols/Fixture/choices/TestInitialize/description": "TestInitialize 固件方法",
+  "symbols/Fixture/choices/TestCleanup/description": "TestCleanup 固件方法",
+  "postActions/openInEditor/description": "在編輯器中開啟 Test1.vb。"
 }

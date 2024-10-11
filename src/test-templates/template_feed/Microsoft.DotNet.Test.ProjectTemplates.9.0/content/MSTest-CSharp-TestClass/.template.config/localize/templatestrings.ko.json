@@ -1,15 +1,15 @@
 ﻿{
   "author": "Microsoft",
-  "name": "MSTest Test Class",
-  "description": "Creates a new MSTest test class",
-  "symbols/Fixture/description": "Select the fixture kinds to include in the project.",
-  "symbols/Fixture/choices/None/description": "No fixture methods",
+  "name": "MSTest 테스트 클래스",
+  "description": "새 MSTest 테스트 클래스를 만듭니다.",
+  "symbols/Fixture/description": "프로젝트에 포함할 픽스쳐 종류를 선택합니다.",
+  "symbols/Fixture/choices/None/description": "픽스쳐 메서드 없음",
   "symbols/Fixture/choices/None/displayName": "None",
-  "symbols/Fixture/choices/AssemblyInitialize/description": "AssemblyInitialize fixture method",
-  "symbols/Fixture/choices/AssemblyCleanup/description": "AssemblyCleanup fixture method",
-  "symbols/Fixture/choices/ClassInitialize/description": "ClassInitialize fixture method",
-  "symbols/Fixture/choices/ClassCleanup/description": "ClassCleanup fixture method",
-  "symbols/Fixture/choices/TestInitialize/description": "TestInitialize fixture method",
-  "symbols/Fixture/choices/TestCleanup/description": "TestCleanup fixture method",
-  "postActions/openInEditor/description": "Opens Test1.cs in the editor."
+  "symbols/Fixture/choices/AssemblyInitialize/description": "AssemblyInitialize fixture 메서드",
+  "symbols/Fixture/choices/AssemblyCleanup/description": "AssemblyCleanup fixture 메서드",
+  "symbols/Fixture/choices/ClassInitialize/description": "ClassInitialize fixture 메서드",
+  "symbols/Fixture/choices/ClassCleanup/description": "ClassCleanup fixture 메서드",
+  "symbols/Fixture/choices/TestInitialize/description": "TestInitialize fixture 메서드",
+  "symbols/Fixture/choices/TestCleanup/description": "TestCleanup fixture 메서드",
+  "postActions/openInEditor/description": "편집기에서 Test1.cs를 엽니다."
 }

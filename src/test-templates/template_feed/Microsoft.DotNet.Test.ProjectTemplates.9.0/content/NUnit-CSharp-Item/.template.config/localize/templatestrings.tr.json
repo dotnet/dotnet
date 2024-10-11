@@ -1,6 +1,6 @@
 ﻿{
-  "author": "Aleksei Kharlov aka halex2005 (codeofclimber.ru)",
-  "name": "NUnit 3 Test Item",
-  "description": "Creates a new NUnit test class",
-  "postActions/openInEditor/description": "Opens created test fixture class in the editor"
+  "author": "Aleksei Kharlov, halex2005 (codeofclimber.ru)",
+  "name": "NUnit 3 Test Öğesi",
+  "description": "Yeni bir NUnit test sınıfı oluşturur",
+  "postActions/openInEditor/description": "Oluşturulan test düzeni sınıfını düzenleyicide açar"
 }

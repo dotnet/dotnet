@@ -1,15 +1,15 @@
 ﻿{
-  "author": "Microsoft",
-  "name": "MSTest Test Class",
-  "description": "Creates a new MSTest test class",
-  "symbols/Fixture/description": "Select the fixture kinds to include in the project.",
-  "symbols/Fixture/choices/None/description": "No fixture methods",
-  "symbols/Fixture/choices/None/displayName": "None",
-  "symbols/Fixture/choices/AssemblyInitialize/description": "AssemblyInitialize fixture method",
-  "symbols/Fixture/choices/AssemblyCleanup/description": "AssemblyCleanup fixture method",
-  "symbols/Fixture/choices/ClassInitialize/description": "ClassInitialize fixture method",
-  "symbols/Fixture/choices/ClassCleanup/description": "ClassCleanup fixture method",
-  "symbols/Fixture/choices/TestInitialize/description": "TestInitialize fixture method",
-  "symbols/Fixture/choices/TestCleanup/description": "TestCleanup fixture method",
-  "postActions/openInEditor/description": "Opens Test1.cs in the editor."
+  "author": "Майкрософт",
+  "name": "Тестовый класс MSTest",
+  "description": "Создает новый тестовый класс MSTest",
+  "symbols/Fixture/description": "Выберите типы средств, которые необходимо включить в проект.",
+  "symbols/Fixture/choices/None/description": "Нет методов работы со средствами",
+  "symbols/Fixture/choices/None/displayName": "Отсутствует",
+  "symbols/Fixture/choices/AssemblyInitialize/description": "Метод работы со средствами AssemblyInitialize",
+  "symbols/Fixture/choices/AssemblyCleanup/description": "Метод работы со средствами AssemblyCleanup",
+  "symbols/Fixture/choices/ClassInitialize/description": "Метод работы со средствами ClassInitialize",
+  "symbols/Fixture/choices/ClassCleanup/description": "Метод работы со средствами ClassCleanup",
+  "symbols/Fixture/choices/TestInitialize/description": "Метод работы со средствами TestInitialize",
+  "symbols/Fixture/choices/TestCleanup/description": "Метод работы со средствами TestCleanup",
+  "postActions/openInEditor/description": "Открывает Test1.cs в редакторе."
 }

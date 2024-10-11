@@ -1,0 +1,10 @@
+{  
+    "instanceUrl": "https://devdiv.visualstudio.com/",
+    "template": "TFSDEVDIV",
+    "projectName": "DEVDIV",
+    "areaPath": "DevDiv\\Testing Platforms\\Test templates",
+    "iterationPath": "DevDiv",
+    "notificationAliases": [ "dotnetdevexprague@microsoft.com" ],
+    "repositoryName":"test-templates",
+    "codebaseName": "test-templates"
+}

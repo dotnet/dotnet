@@ -19,6 +19,8 @@ namespace XliffTasks.Model
     {
         private const string XliffTasksNs = "https://github.com/dotnet/xliff-tasks";
         private const string LocalizedPropertiesAttributeName = "LocalizedProperties";
+
+        private static readonly char[] s_attrValueTrimChars = [ ':', ' ', '\t' ];
         
         protected override IEnumerable<TranslatableNode> GetTranslatableNodes()
         {
@@ -197,7 +199,7 @@ namespace XliffTasks.Model
                 {
                     if (line.StartsWith(attributeName))
                     {
-                        return line.Substring(attributeName.Length).Trim(':', ' ', '\t');
+                        return line.Substring(attributeName.Length).Trim(s_attrValueTrimChars);
                     }
                 }
             }
