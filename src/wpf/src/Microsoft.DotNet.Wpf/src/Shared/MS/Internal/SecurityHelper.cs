@@ -63,7 +63,6 @@ using MS.Internal.AppModel;
     // a FontCache service, but over time other parts of WPF might
     // have started to depend on this, so we leave it as-is for 
     // compat. 
-    [FriendAccessAllowed] 
 #endif
 
 
@@ -220,16 +219,6 @@ internal static class SecurityHelper
             System.Windows.MessageBox.ShowCore(parentHwnd, text, title, buttons, image, MessageBoxResult.None, MessageBoxOptions.None);
         }
 #endif
-
-#if PRESENTATION_CORE || PRESENTATIONFRAMEWORK || WINDOWS_BASE
-
-        internal static bool AreStringTypesEqual(string m1, string m2)
-        {
-            return (string.Equals(m1, m2, StringComparison.OrdinalIgnoreCase));
-        }
-
-#endif //PRESENTATION_CORE || PRESENTATIONFRAMEWORK || WINDOWS_BASE
-
 
 #if WINDOWS_BASE
         ///

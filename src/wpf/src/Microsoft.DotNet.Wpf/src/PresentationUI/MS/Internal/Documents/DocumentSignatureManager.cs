@@ -20,14 +20,12 @@ using System.Windows.Interop;
 using System.Windows.Threading;
 
 using MS.Internal.Documents.Application;
-using MS.Internal.PresentationUI;
 
 namespace MS.Internal.Documents
 {
     /// <summary>
     /// DocumentSignatureManager is a internal Avalon class used to expose the DigSig Document API 
     /// </summary>
-    [FriendAccessAllowed]
     internal sealed class DocumentSignatureManager
     {
         #region Constructors
@@ -193,7 +191,7 @@ namespace MS.Internal.Documents
 
             //Fire the events.
             OnSignatureStatusChange(calcSigStatus);
-            _signaturePolicy.Value = calcSigPolicy;
+            _signaturePolicy = calcSigPolicy;
         }
 
         /// <summary>
@@ -1162,11 +1160,11 @@ namespace MS.Internal.Documents
 
             if ((args.RMPolicy & RightsManagementPolicy.AllowSign) == RightsManagementPolicy.AllowSign)
             {
-                _allowSign.Value = true;
+                _allowSign = true;
             }
             else
             {
-                _allowSign.Value = false;
+                _allowSign = false;
             }
         }
 
@@ -1297,12 +1295,12 @@ namespace MS.Internal.Documents
         {
             get
             {
-                return _digitalSignatureProvider.Value;
+                return _digitalSignatureProvider;
             }
 
             set
             {
-                _digitalSignatureProvider.Value = value;
+                _digitalSignatureProvider = value;
             }
         }
         
@@ -1315,7 +1313,7 @@ namespace MS.Internal.Documents
         {
             get
             {
-                return _allowSign.Value;
+                return _allowSign;
             }
         }
 
@@ -1327,7 +1325,7 @@ namespace MS.Internal.Documents
         {
             get
             {
-                return IsAllowedByPolicy(_signaturePolicy.Value, SignaturePolicy.AllowSigning);
+                return IsAllowedByPolicy(_signaturePolicy, SignaturePolicy.AllowSigning);
             }
         }
 
@@ -1346,12 +1344,12 @@ namespace MS.Internal.Documents
         /// The IDigitalSignatureProvider associated with this instance of the
         /// digital signature manager.
         /// </summary>
-        private SecurityCriticalDataForSet<IDigitalSignatureProvider> _digitalSignatureProvider;
+        private IDigitalSignatureProvider _digitalSignatureProvider;
 
         private IDictionary<SignatureResources, DigitalSignature> _digSigSigResources;
-        private SecurityCriticalDataForSet<bool> _allowSign;
+        private bool _allowSign;
 
-        private SecurityCriticalDataForSet<SignaturePolicy> _signaturePolicy;
+        private SignaturePolicy _signaturePolicy;
 
         /// <summary>
         /// The change log that is used to roll back signatures on failure.
