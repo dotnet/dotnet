@@ -163,11 +163,7 @@ namespace System.Windows.Media
                     break;
             }
 
-
-            // SECURITY NOTE: This constructor does not set a Uri because the profile comes from raw file
-            //                data. Thus, we don't set _isProfileUriNotFromUser to true because we
-            //                don't want get_ProfileUri to demand permission to return null.
-            Debug.Assert(_profileUri.Value == null);
+            Debug.Assert(_profileUri is null);
         }
 
         /// <summary>
@@ -256,13 +252,13 @@ namespace System.Windows.Media
         {
             get
             {
-                Uri uri = _profileUri.Value;
+                Uri uri = _profileUri;
 
                 //
                 // If the user didn't give us the uri value, then the uri has
                 // to be a file path because we got it from GetStandardColorSpaceProfile
                 //
-                if (_isProfileUriNotFromUser.Value)
+                if (_isProfileUriNotFromUser)
                 {
                     Invariant.Assert(uri.IsFile);
                 }
@@ -510,8 +506,8 @@ namespace System.Windows.Media
                 throw new ArgumentException(SR.UriNotAbsolute, "profileUri");
             }
 
-            _profileUri = new SecurityCriticalData<Uri>(profileUri);
-            _isProfileUriNotFromUser = new SecurityCriticalDataForSet<bool>(isStandardProfileUriNotFromUser);
+            _profileUri = profileUri;
+            _isProfileUriNotFromUser = isStandardProfileUriNotFromUser;
 
             Stream profileStream = null;
 
@@ -805,9 +801,9 @@ namespace System.Windows.Media
 
         private int _numChannels;
 
-        private SecurityCriticalData<Uri> _profileUri;
+        private Uri _profileUri;
         
-        private SecurityCriticalDataForSet<bool> _isProfileUriNotFromUser;
+        private bool _isProfileUriNotFromUser;
 
         private AbbreviatedPROFILEHEADER _profileHeader;
 

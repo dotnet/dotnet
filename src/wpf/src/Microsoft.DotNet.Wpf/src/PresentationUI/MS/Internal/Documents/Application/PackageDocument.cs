@@ -9,14 +9,11 @@ using System.IO;
 using System.IO.Packaging;
 using System.Security;
 
-using MS.Internal.PresentationUI;
-
 namespace MS.Internal.Documents.Application
 {
 /// <summary>
 /// Extends Document with a single member TrancationalPackage.
 /// </summary>
-[FriendAccessAllowed]
 internal class PackageDocument : Document
 {
     #region Constructors
@@ -75,9 +72,9 @@ internal class PackageDocument : Document
     /// </summary>
     internal TransactionalPackage Package
     {
-        get { return _package.Value; }
+        get { return _package; }
 
-        set { _package.Value = value; }
+        set { _package = value; }
     }
     #endregion Internal Properties
 
@@ -113,7 +110,7 @@ internal class PackageDocument : Document
     //--------------------------------------------------------------------------
     // Private Fields
     //--------------------------------------------------------------------------
-    private SecurityCriticalDataForSet<TransactionalPackage> _package;
+    private TransactionalPackage _package;
     #endregion Private Fields
 }
 }

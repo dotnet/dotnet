@@ -10,7 +10,6 @@
 
 using MS.Internal.Documents.Application;
 using MS.Internal.IO.Packaging;             // For PreloadedPackages
-using MS.Internal.PresentationUI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;                // For IValueConverter
@@ -36,7 +35,6 @@ using System.Windows.Media;                 // Visual Stuff
 
 namespace MS.Internal.Documents
 {
-    [FriendAccessAllowed]
     internal sealed class DocumentApplicationDocumentViewer : DocumentViewer
     {
         //------------------------------------------------------
@@ -181,7 +179,7 @@ namespace MS.Internal.Documents
         {
             get
             {
-                return _rightsManagementPolicy.Value;
+                return _rightsManagementPolicy;
             }
         }
 
@@ -244,7 +242,7 @@ namespace MS.Internal.Documents
             _docSigManager.SignatureStatusChange += new DocumentSignatureManager.SignatureStatusChangeHandler(_digSigInfoBar.OnStatusChange);
 
             //We disallow all RM-protected actions until the RM Manager tells us otherwise.
-            _rightsManagementPolicy.Value = RightsManagementPolicy.AllowNothing;
+            _rightsManagementPolicy = RightsManagementPolicy.AllowNothing;
             CommandEnforcer.Enforce();
 
             _rmManager = rmManager;
@@ -1071,7 +1069,7 @@ namespace MS.Internal.Documents
         {
             get
             {
-                return _commandEnforcer.Value;
+                return _commandEnforcer;
             }
         }
 
@@ -1632,7 +1630,7 @@ namespace MS.Internal.Documents
             ArgumentNullException.ThrowIfNull(args);
 
             //Invoke the CommandEnforcer to enable/disable commands as appropriate.
-            _rightsManagementPolicy.Value = args.RMPolicy;
+            _rightsManagementPolicy = args.RMPolicy;
             CommandEnforcer.Enforce();
         }
 
@@ -2168,7 +2166,7 @@ namespace MS.Internal.Documents
             enforcer.AddBinding(new PolicyBinding(DocumentApplicationDocumentViewer.Sign, RightsManagementPolicy.AllowSign));
             enforcer.AddBinding(new PolicyBinding(DocumentApplicationDocumentViewer.RequestSigners, RightsManagementPolicy.AllowSign));
 
-            _commandEnforcer.Value = enforcer;
+            _commandEnforcer = enforcer;
         }
 
         #endregion Commands
@@ -2199,11 +2197,11 @@ namespace MS.Internal.Documents
         private StatusInfoItem                                      _rmInfoBar;
         private DocumentApplicationState                            _state;
         private const int                                           _invalidPageNumber = -1;
-        private SecurityCriticalDataForSet<RightsManagementPolicy>  _rightsManagementPolicy;
+        private RightsManagementPolicy                              _rightsManagementPolicy;
         private RightsManagementStatus                              _rightsManagementStatus;
 
         // The enforcer for RM
-        private SecurityCriticalDataForSet<CommandEnforcer>         _commandEnforcer;
+        private CommandEnforcer                                     _commandEnforcer;
 
         // Declare commands that are located on DocumentApplicationDocumentViewer
         private static RoutedUICommand                _focusToolBarCommand;

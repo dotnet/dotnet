@@ -28,12 +28,10 @@
     <Compile Include="SR.cs" />
     <Compile Include="$(WpfSharedDir)\RefAssemblyAttrs.cs" />
     <Compile Include="$(WpfSharedDir)\MS\Internal\ResourceIDHelper.cs" />
-    <Compile Include="$(WpfSharedDir)\MS\Internal\SecurityCriticalDataForSet.cs" />
     <Compile Include="$(WpfSharedDir)\MS\Internal\SecurityHelper.cs" />
     <Compile Include="$(WpfSharedDir)\MS\Internal\SafeSecurityHelper.cs" />
     <Compile Include="$(WpfSharedDir)\MS\Internal\CulturePreservingExecutionContext.cs" />
     <Compile Include="$(WpfSharedDir)\MS\Internal\DoubleUtil.cs" />
-    <Compile Include="$(WpfSharedDir)\MS\Internal\FriendAccessAllowedAttribute.cs" />
     <Compile Include="$(WpfSharedDir)\MS\Internal\HashHelper.cs" />
     <Compile Include="$(WpfSharedDir)\MS\Internal\Invariant.cs" />
     <Compile Include="$(WpfSharedDir)\MS\Internal\MatrixUtil.cs" />
@@ -270,8 +268,6 @@
     <Compile Include="$(WpfSharedDir)\MS\Win32\HwndWrapperHook.cs" />
     <Compile Include="$(WpfSharedDir)\MS\Win32\ManagedWndProcTracker.cs" />
     <Compile Include="$(WpfSharedDir)\MS\Win32\MessageOnlyHwndWrapper.cs" />
-    <Compile Include="$(WpfSharedDir)\MS\Internal\SecurityCriticalData.cs" />
-    <Compile Include="$(WpfSharedDir)\MS\Internal\SecurityCriticalDataClass.cs" />
     <Compile Include="$(WpfSharedDir)\MS\Internal\TextServicesLoader.cs" />
     <Compile Include="MS\Internal\PriorityChain.cs" />
     <Compile Include="MS\Internal\PriorityItem.cs" />

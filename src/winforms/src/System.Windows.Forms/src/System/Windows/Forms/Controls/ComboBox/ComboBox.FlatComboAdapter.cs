@@ -178,12 +178,12 @@ public partial class ComboBox
 
             g.FillPolygon(
                 brush,
-                new Point[]
-                {
+                (ReadOnlySpan<Point>)
+                [
                     new(middle.X - s_offsetPixels, middle.Y - 1),
                     new(middle.X + s_offsetPixels + 1, middle.Y - 1),
                     new(middle.X, middle.Y + s_offsetPixels)
-                });
+                ]);
         }
 
         protected virtual Color GetOuterBorderColor(ComboBox comboBox)

@@ -24,9 +24,6 @@
     <Compile Include="$(WpfSharedDir)MS\Internal\SafeSecurityHelper.cs">
       <Link>Common\WPF\MS\Internal\SafeSecurityHelper.cs</Link>
     </Compile>
-    <Compile Include="$(WpfSharedDir)MS\Internal\SecurityCriticalDataForSet.cs">
-      <Link>Common\WPF\MS\Internal\SecurityCriticalDataForSet.cs</Link>
-    </Compile>
     <Compile Include="$(WpfSharedDir)MS\Internal\CriticalExceptions.cs">
       <Link>Common\WPF\MS\Internal\CriticalExceptions.cs</Link>
     </Compile>
@@ -44,9 +41,6 @@
     </Compile>
     <Compile Include="$(WpfSharedDir)System\Windows\Markup\XmlWrappingReader.cs">
       <Link>Common\WPF\System\Windows\Markup\XmlWrappingReader.cs</Link>
-    </Compile>
-    <Compile Include="$(WpfSharedDir)MS\Internal\FriendAccessAllowedAttribute.cs">
-      <Link>Common\WPF\MS\Internal\FriendAccessAllowedAttribute.cs</Link>
     </Compile>
     <Compile Include="$(WpfSharedDir)MS\Utility\FrugalList.cs">
       <Link>Common\WPF\MS\Utility\FrugalList.cs</Link>

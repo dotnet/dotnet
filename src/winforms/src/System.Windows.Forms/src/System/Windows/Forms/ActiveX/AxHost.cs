@@ -1263,7 +1263,7 @@ public abstract unsafe partial class AxHost : Control, ISupportInitialize, ICust
         }
 
         HWND handle = HWND;
-        IntPtr currentWndproc = PInvoke.GetWindowLong(this, WINDOW_LONG_PTR_INDEX.GWL_WNDPROC);
+        IntPtr currentWndproc = PInvokeCore.GetWindowLong(this, WINDOW_LONG_PTR_INDEX.GWL_WNDPROC);
         if (currentWndproc == _wndprocAddr)
         {
             return true;
@@ -1278,7 +1278,7 @@ public abstract unsafe partial class AxHost : Control, ISupportInitialize, ICust
         // We were resubclassed, we need to resublass ourselves.
         Debug.Assert(!OwnWindow(), "Why are we here if we own our window?");
         WindowReleaseHandle();
-        PInvoke.SetWindowLong(this, WINDOW_LONG_PTR_INDEX.GWL_WNDPROC, currentWndproc);
+        PInvokeCore.SetWindowLong(this, WINDOW_LONG_PTR_INDEX.GWL_WNDPROC, currentWndproc);
         WindowAssignHandle(handle, _axState[s_assignUniqueID]);
         InformOfNewHandle();
         _axState[s_manualUpdate] = true;
@@ -2278,13 +2278,13 @@ public abstract unsafe partial class AxHost : Control, ISupportInitialize, ICust
 
     private void CreateWithoutLicense(Guid clsid)
     {
-        IUnknown* unknown;
+        using ComScope<IUnknown> unknown = new(null);
         HRESULT hr = PInvokeCore.CoCreateInstance(
             &clsid,
             (IUnknown*)null,
             CLSCTX.CLSCTX_INPROC_SERVER,
             IID.Get<IUnknown>(),
-            (void**)&unknown);
+            unknown);
         hr.ThrowOnFailure();
 
         _instance = ComHelpers.GetObjectForIUnknown(unknown);
@@ -2305,8 +2305,8 @@ public abstract unsafe partial class AxHost : Control, ISupportInitialize, ICust
 
             if (hr.Succeeded)
             {
-                IUnknown* unknown;
-                hr = factory.Value->CreateInstanceLic(null, null, IID.Get<IUnknown>(), new BSTR(license), (void**)&unknown);
+                using ComScope<IUnknown> unknown = new(null);
+                hr = factory.Value->CreateInstanceLic(null, null, IID.Get<IUnknown>(), new BSTR(license), unknown);
                 hr.ThrowOnFailure();
 
                 _instance = ComHelpers.GetObjectForIUnknown(unknown);
@@ -3056,14 +3056,14 @@ public abstract unsafe partial class AxHost : Control, ISupportInitialize, ICust
             transaction = host?.CreateTransaction(SR.AXEditProperties);
 
             HWND handle = ContainingControl is null ? HWND.Null : ContainingControl.HWND;
-            IUnknown* unknown = ComHelpers.GetComPointer<IUnknown>(_instance);
+            using var unknown = ComHelpers.GetComScope<IUnknown>(_instance);
             PInvoke.OleCreatePropertyFrame(
                 handle,
                 0,
                 0,
                 (PCWSTR)null,
                 1,
-                &unknown,
+                unknown,
                 uuids.cElems,
                 uuids.pElems,
                 PInvokeCore.GetThreadLocale(),
@@ -3239,7 +3239,7 @@ public abstract unsafe partial class AxHost : Control, ISupportInitialize, ICust
         DetachWindow();
         if (IsHandleCreated)
         {
-            void* wndProc = (void*)PInvoke.GetWindowLong(this, WINDOW_LONG_PTR_INDEX.GWL_WNDPROC);
+            void* wndProc = (void*)PInvokeCore.GetWindowLong(this, WINDOW_LONG_PTR_INDEX.GWL_WNDPROC);
             m.ResultInternal = PInvoke.CallWindowProc(
                 (delegate* unmanaged[Stdcall]<HWND, uint, WPARAM, LPARAM, LRESULT>)wndProc,
                 HWND,
@@ -3263,7 +3263,7 @@ public abstract unsafe partial class AxHost : Control, ISupportInitialize, ICust
     private void InformOfNewHandle()
     {
         Debug.Assert(IsHandleCreated, "we got to have a handle to be here...");
-        _wndprocAddr = PInvoke.GetWindowLong(this, WINDOW_LONG_PTR_INDEX.GWL_WNDPROC);
+        _wndprocAddr = PInvokeCore.GetWindowLong(this, WINDOW_LONG_PTR_INDEX.GWL_WNDPROC);
     }
 
     private void AttachWindow(HWND hwnd)
