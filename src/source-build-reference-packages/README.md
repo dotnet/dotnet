@@ -38,7 +38,7 @@ When generating a package(s), the tooling will detect and generate all dependent
 
 **Note:** All new packages should be for released stable versions. Adding preview/release candidate
 packages are for exceptional cases only and require approval from
-[dotnet/source-build-internal](https://github.com/orgs/dotnet/teams/source-build-internal).
+[dotnet/source-build](https://github.com/orgs/dotnet/teams/source-build).
 
 **Note:** Reference packages should only be added to this repo if they are required during the product
 source build (e.g. a [VMR](https://github.com/dotnet/dotnet) build). Reference packages that are only
