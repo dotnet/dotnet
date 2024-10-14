@@ -4,7 +4,7 @@
   "description": "Cree una nueva clase de prueba de MSTest",
   "symbols/Fixture/description": "Seleccione los tipos de accesorio que desea incluir en el proyecto.",
   "symbols/Fixture/choices/None/description": "No hay métodos de accesorio",
-  "symbols/Fixture/choices/None/displayName": "None",
+  "symbols/Fixture/choices/None/displayName": "Ninguno",
   "symbols/Fixture/choices/AssemblyInitialize/description": "Método de accesorio AssemblyInitialize",
   "symbols/Fixture/choices/AssemblyCleanup/description": "Método de accesorio AssemblyCleanup",
   "symbols/Fixture/choices/ClassInitialize/description": "Método de accesorio ClassInitialize",
