@@ -9,18 +9,18 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.24504.4">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.24511.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f209a925b15bc66ecb9a8825bd9595937bbe3aa1</Sha>
+      <Sha>712dea25b14a59fe642f2d28e8a3f3c931c03759</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.24504.4">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.24511.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f209a925b15bc66ecb9a8825bd9595937bbe3aa1</Sha>
+      <Sha>712dea25b14a59fe642f2d28e8a3f3c931c03759</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.24504.4">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="10.0.0-beta.24511.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f209a925b15bc66ecb9a8825bd9595937bbe3aa1</Sha>
+      <Sha>712dea25b14a59fe642f2d28e8a3f3c931c03759</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
   </ToolsetDependencies>
