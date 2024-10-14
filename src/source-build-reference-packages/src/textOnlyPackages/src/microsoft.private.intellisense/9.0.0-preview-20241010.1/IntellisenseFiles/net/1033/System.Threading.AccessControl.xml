@@ -1,0 +1,919 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Threading.AccessControl</name>
+  </assembly>
+  <members>
+    <member name="T:System.Security.AccessControl.EventWaitHandleAccessRule">
+      <summary>Represents a set of access rights allowed or denied for a user or group. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleAccessRule.#ctor(System.Security.Principal.IdentityReference,System.Security.AccessControl.EventWaitHandleRights,System.Security.AccessControl.AccessControlType)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.AccessControl.EventWaitHandleAccessRule" /> class, specifying the user or group the rule applies to, the access rights, and whether the specified access rights are allowed or denied.</summary>
+      <param name="identity">The user or group the rule applies to. Must be of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> or a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</param>
+      <param name="eventRights">A bitwise combination of <see cref="T:System.Security.AccessControl.EventWaitHandleRights" /> values specifying the rights allowed or denied.</param>
+      <param name="type">One of the <see cref="T:System.Security.AccessControl.AccessControlType" /> values specifying whether the rights are allowed or denied.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="eventRights" /> specifies an invalid value.  
+  
+ -or-  
+  
+ <paramref name="type" /> specifies an invalid value.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="identity" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="eventRights" /> is zero.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="identity" /> is neither of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> nor of a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleAccessRule.#ctor(System.String,System.Security.AccessControl.EventWaitHandleRights,System.Security.AccessControl.AccessControlType)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.AccessControl.EventWaitHandleAccessRule" /> class, specifying the name of the user or group the rule applies to, the access rights, and whether the specified access rights are allowed or denied.</summary>
+      <param name="identity">The name of the user or group the rule applies to.</param>
+      <param name="eventRights">A bitwise combination of <see cref="T:System.Security.AccessControl.EventWaitHandleRights" /> values specifying the rights allowed or denied.</param>
+      <param name="type">One of the <see cref="T:System.Security.AccessControl.AccessControlType" /> values specifying whether the rights are allowed or denied.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="eventRights" /> specifies an invalid value.  
+  
+ -or-  
+  
+ <paramref name="type" /> specifies an invalid value.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="eventRights" /> is zero.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="identity" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="identity" /> is a zero-length string.  
+  
+ -or-  
+  
+ <paramref name="identity" /> is longer than 512 characters.</exception>
+    </member>
+    <member name="P:System.Security.AccessControl.EventWaitHandleAccessRule.EventWaitHandleRights">
+      <summary>Gets the rights allowed or denied by the access rule.</summary>
+      <returns>A bitwise combination of <see cref="T:System.Security.AccessControl.EventWaitHandleRights" /> values indicating the rights allowed or denied by the access rule.</returns>
+    </member>
+    <member name="T:System.Security.AccessControl.EventWaitHandleAuditRule">
+      <summary>Represents a set of access rights to be audited for a user or group. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleAuditRule.#ctor(System.Security.Principal.IdentityReference,System.Security.AccessControl.EventWaitHandleRights,System.Security.AccessControl.AuditFlags)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.AccessControl.EventWaitHandleAuditRule" /> class, specifying the user or group to audit, the rights to audit, and whether to audit success, failure, or both.</summary>
+      <param name="identity">The user or group the rule applies to. Must be of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> or a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</param>
+      <param name="eventRights">A bitwise combination of <see cref="T:System.Security.AccessControl.EventWaitHandleRights" /> values specifying the kinds of access to audit.</param>
+      <param name="flags">A bitwise combination of <see cref="T:System.Security.AccessControl.AuditFlags" /> values specifying whether to audit success, failure, or both.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="eventRights" /> specifies an invalid value.  
+  
+ -or-  
+  
+ <paramref name="flags" /> specifies an invalid value.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="identity" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="eventRights" /> is zero.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="identity" /> is neither of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> nor of a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</exception>
+    </member>
+    <member name="P:System.Security.AccessControl.EventWaitHandleAuditRule.EventWaitHandleRights">
+      <summary>Gets the access rights affected by the audit rule.</summary>
+      <returns>A bitwise combination of <see cref="T:System.Security.AccessControl.EventWaitHandleRights" /> values that indicates the rights affected by the audit rule.</returns>
+    </member>
+    <member name="T:System.Security.AccessControl.EventWaitHandleRights">
+      <summary>Specifies the access control rights that can be applied to named system event objects.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.EventWaitHandleRights.ChangePermissions">
+      <summary>The right to change the security and audit rules associated with a named event.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.EventWaitHandleRights.Delete">
+      <summary>The right to delete a named event.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.EventWaitHandleRights.FullControl">
+      <summary>The right to exert full control over a named event, and to modify its access rules and audit rules.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.EventWaitHandleRights.Modify">
+      <summary>The right to set or reset the signaled state of a named event.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.EventWaitHandleRights.ReadPermissions">
+      <summary>The right to open and copy the access rules and audit rules for a named event.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.EventWaitHandleRights.Synchronize">
+      <summary>The right to wait on a named event.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.EventWaitHandleRights.TakeOwnership">
+      <summary>The right to change the owner of a named event.</summary>
+    </member>
+    <member name="T:System.Security.AccessControl.EventWaitHandleSecurity">
+      <summary>Represents the Windows access control security applied to a named system wait handle. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleSecurity.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.AccessControl.EventWaitHandleSecurity" /> class with default values.</summary>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleSecurity.AccessRuleFactory(System.Security.Principal.IdentityReference,System.Int32,System.Boolean,System.Security.AccessControl.InheritanceFlags,System.Security.AccessControl.PropagationFlags,System.Security.AccessControl.AccessControlType)">
+      <summary>Creates a new access control rule for the specified user, with the specified access rights, access control, and flags.</summary>
+      <param name="identityReference">An <see cref="T:System.Security.Principal.IdentityReference" /> that identifies the user or group the rule applies to.</param>
+      <param name="accessMask">A bitwise combination of <see cref="T:System.Security.AccessControl.EventWaitHandleRights" /> values specifying the access rights to allow or deny, cast to an integer.</param>
+      <param name="isInherited">Meaningless for named wait handles, because they have no hierarchy.</param>
+      <param name="inheritanceFlags">Meaningless for named wait handles, because they have no hierarchy.</param>
+      <param name="propagationFlags">Meaningless for named wait handles, because they have no hierarchy.</param>
+      <param name="type">One of the <see cref="T:System.Security.AccessControl.AccessControlType" /> values specifying whether the rights are allowed or denied.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="accessMask" />, <paramref name="inheritanceFlags" />, <paramref name="propagationFlags" />, or <paramref name="type" /> specifies an invalid value.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="identityReference" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="accessMask" /> is zero.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="identityReference" /> is neither of type <see cref="T:System.Security.Principal.SecurityIdentifier" />, nor of a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</exception>
+      <returns>An <see cref="T:System.Security.AccessControl.EventWaitHandleAccessRule" /> object representing the specified rights for the specified user.</returns>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleSecurity.AddAccessRule(System.Security.AccessControl.EventWaitHandleAccessRule)">
+      <summary>Searches for a matching access control rule with which the new rule can be merged. If none are found, adds the new rule.</summary>
+      <param name="rule">The access control rule to add.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleSecurity.AddAuditRule(System.Security.AccessControl.EventWaitHandleAuditRule)">
+      <summary>Searches for an audit rule with which the new rule can be merged. If none are found, adds the new rule.</summary>
+      <param name="rule">The audit rule to add. The user specified by this rule determines the search.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleSecurity.AuditRuleFactory(System.Security.Principal.IdentityReference,System.Int32,System.Boolean,System.Security.AccessControl.InheritanceFlags,System.Security.AccessControl.PropagationFlags,System.Security.AccessControl.AuditFlags)">
+      <summary>Creates a new audit rule, specifying the user the rule applies to, the access rights to audit, and the outcome that triggers the audit rule.</summary>
+      <param name="identityReference">An <see cref="T:System.Security.Principal.IdentityReference" /> that identifies the user or group the rule applies to.</param>
+      <param name="accessMask">A bitwise combination of <see cref="T:System.Security.AccessControl.EventWaitHandleRights" /> values specifying the access rights to audit, cast to an integer.</param>
+      <param name="isInherited">Meaningless for named wait handles, because they have no hierarchy.</param>
+      <param name="inheritanceFlags">Meaningless for named wait handles, because they have no hierarchy.</param>
+      <param name="propagationFlags">Meaningless for named wait handles, because they have no hierarchy.</param>
+      <param name="flags">A bitwise combination of <see cref="T:System.Security.AccessControl.AuditFlags" /> values specifying whether to audit successful access, failed access, or both.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="accessMask" />, <paramref name="inheritanceFlags" />, <paramref name="propagationFlags" />, or <paramref name="flags" /> specifies an invalid value.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="identityReference" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="accessMask" /> is zero.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="identityReference" /> is neither of type <see cref="T:System.Security.Principal.SecurityIdentifier" />, nor of a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</exception>
+      <returns>An <see cref="T:System.Security.AccessControl.EventWaitHandleAuditRule" /> object representing the specified audit rule for the specified user. The return type of the method is the base class, <see cref="T:System.Security.AccessControl.AuditRule" />, but the return value can be cast safely to the derived class.</returns>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleSecurity.RemoveAccessRule(System.Security.AccessControl.EventWaitHandleAccessRule)">
+      <summary>Searches for an access control rule with the same user and <see cref="T:System.Security.AccessControl.AccessControlType" /> (allow or deny) as the specified access rule, and with compatible inheritance and propagation flags; if such a rule is found, the rights contained in the specified access rule are removed from it.</summary>
+      <param name="rule">An <see cref="T:System.Security.AccessControl.EventWaitHandleAccessRule" /> that specifies the user and <see cref="T:System.Security.AccessControl.AccessControlType" /> to search for, and a set of inheritance and propagation flags that a matching rule, if found, must be compatible with. Specifies the rights to remove from the compatible rule, if found.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+      <returns>
+        <see langword="true" /> if a compatible rule is found; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleSecurity.RemoveAccessRuleAll(System.Security.AccessControl.EventWaitHandleAccessRule)">
+      <summary>Searches for all access control rules with the same user and <see cref="T:System.Security.AccessControl.AccessControlType" /> (allow or deny) as the specified rule and, if found, removes them.</summary>
+      <param name="rule">An <see cref="T:System.Security.AccessControl.EventWaitHandleAccessRule" /> that specifies the user and <see cref="T:System.Security.AccessControl.AccessControlType" /> to search for. Any rights specified by this rule are ignored.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleSecurity.RemoveAccessRuleSpecific(System.Security.AccessControl.EventWaitHandleAccessRule)">
+      <summary>Searches for an access control rule that exactly matches the specified rule and, if found, removes it.</summary>
+      <param name="rule">The <see cref="T:System.Security.AccessControl.EventWaitHandleAccessRule" /> to remove.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleSecurity.RemoveAuditRule(System.Security.AccessControl.EventWaitHandleAuditRule)">
+      <summary>Searches for an audit rule with the same user as the specified rule, and with compatible inheritance and propagation flags; if a compatible rule is found, the rights contained in the specified rule are removed from it.</summary>
+      <param name="rule">An <see cref="T:System.Security.AccessControl.EventWaitHandleAuditRule" /> that specifies the user to search for and a set of inheritance and propagation flags that a matching rule, if found, must be compatible with. Specifies the rights to remove from the compatible rule, if found.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+      <returns>
+        <see langword="true" /> if a compatible rule is found; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleSecurity.RemoveAuditRuleAll(System.Security.AccessControl.EventWaitHandleAuditRule)">
+      <summary>Searches for all audit rules with the same user as the specified rule and, if found, removes them.</summary>
+      <param name="rule">An <see cref="T:System.Security.AccessControl.EventWaitHandleAuditRule" /> that specifies the user to search for. Any rights specified by this rule are ignored.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleSecurity.RemoveAuditRuleSpecific(System.Security.AccessControl.EventWaitHandleAuditRule)">
+      <summary>Searches for an audit rule that exactly matches the specified rule and, if found, removes it.</summary>
+      <param name="rule">The <see cref="T:System.Security.AccessControl.EventWaitHandleAuditRule" /> to remove.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleSecurity.ResetAccessRule(System.Security.AccessControl.EventWaitHandleAccessRule)">
+      <summary>Removes all access control rules with the same user as the specified rule, regardless of <see cref="T:System.Security.AccessControl.AccessControlType" />, and then adds the specified rule.</summary>
+      <param name="rule">The <see cref="T:System.Security.AccessControl.EventWaitHandleAccessRule" /> to add. The user specified by this rule determines the rules to remove before this rule is added.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleSecurity.SetAccessRule(System.Security.AccessControl.EventWaitHandleAccessRule)">
+      <summary>Removes all access control rules with the same user and <see cref="T:System.Security.AccessControl.AccessControlType" /> (allow or deny) as the specified rule, and then adds the specified rule.</summary>
+      <param name="rule">The <see cref="T:System.Security.AccessControl.EventWaitHandleAccessRule" /> to add. The user and <see cref="T:System.Security.AccessControl.AccessControlType" /> of this rule determine the rules to remove before this rule is added.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.EventWaitHandleSecurity.SetAuditRule(System.Security.AccessControl.EventWaitHandleAuditRule)">
+      <summary>Removes all audit rules with the same user as the specified rule, regardless of the <see cref="T:System.Security.AccessControl.AuditFlags" /> value, and then adds the specified rule.</summary>
+      <param name="rule">The <see cref="T:System.Security.AccessControl.EventWaitHandleAuditRule" /> to add. The user specified by this rule determines the rules to remove before this rule is added.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="P:System.Security.AccessControl.EventWaitHandleSecurity.AccessRightType">
+      <summary>Gets the enumeration type that the <see cref="T:System.Security.AccessControl.EventWaitHandleSecurity" /> class uses to represent access rights.</summary>
+      <returns>A <see cref="T:System.Type" /> object representing the <see cref="T:System.Security.AccessControl.EventWaitHandleRights" /> enumeration.</returns>
+    </member>
+    <member name="P:System.Security.AccessControl.EventWaitHandleSecurity.AccessRuleType">
+      <summary>Gets the type that the <see cref="T:System.Security.AccessControl.EventWaitHandleSecurity" /> class uses to represent access rules.</summary>
+      <returns>A <see cref="T:System.Type" /> object representing the <see cref="T:System.Security.AccessControl.EventWaitHandleAccessRule" /> class.</returns>
+    </member>
+    <member name="P:System.Security.AccessControl.EventWaitHandleSecurity.AuditRuleType">
+      <summary>Gets the type that the <see cref="T:System.Security.AccessControl.EventWaitHandleSecurity" /> class uses to represent audit rules.</summary>
+      <returns>A <see cref="T:System.Type" /> object representing the <see cref="T:System.Security.AccessControl.EventWaitHandleAuditRule" /> class.</returns>
+    </member>
+    <member name="T:System.Security.AccessControl.MutexAccessRule">
+      <summary>Represents a set of access rights allowed or denied for a user or group. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexAccessRule.#ctor(System.Security.Principal.IdentityReference,System.Security.AccessControl.MutexRights,System.Security.AccessControl.AccessControlType)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.AccessControl.MutexAccessRule" /> class, specifying the user or group the rule applies to, the access rights, and whether the specified access rights are allowed or denied.</summary>
+      <param name="identity">The user or group the rule applies to. Must be of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> or a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</param>
+      <param name="eventRights">A bitwise combination of <see cref="T:System.Security.AccessControl.MutexRights" /> values specifying the rights allowed or denied.</param>
+      <param name="type">One of the <see cref="T:System.Security.AccessControl.AccessControlType" /> values specifying whether the rights are allowed or denied.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="eventRights" /> specifies an invalid value.  
+  
+ -or-  
+  
+ <paramref name="type" /> specifies an invalid value.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="identity" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="eventRights" /> is zero.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="identity" /> is neither of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> nor of a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexAccessRule.#ctor(System.String,System.Security.AccessControl.MutexRights,System.Security.AccessControl.AccessControlType)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.AccessControl.MutexAccessRule" /> class, specifying the name of the user or group the rule applies to, the access rights, and whether the specified access rights are allowed or denied.</summary>
+      <param name="identity">The name of the user or group the rule applies to.</param>
+      <param name="eventRights">A bitwise combination of <see cref="T:System.Security.AccessControl.MutexRights" /> values specifying the rights allowed or denied.</param>
+      <param name="type">One of the <see cref="T:System.Security.AccessControl.AccessControlType" /> values specifying whether the rights are allowed or denied.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="eventRights" /> specifies an invalid value.  
+  
+ -or-  
+  
+ <paramref name="type" /> specifies an invalid value.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="eventRights" /> is zero.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="identity" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="identity" /> is a zero-length string.  
+  
+ -or-  
+  
+ <paramref name="identity" /> is longer than 512 characters.</exception>
+    </member>
+    <member name="P:System.Security.AccessControl.MutexAccessRule.MutexRights">
+      <summary>Gets the rights allowed or denied by the access rule.</summary>
+      <returns>A bitwise combination of <see cref="T:System.Security.AccessControl.MutexRights" /> values indicating the rights allowed or denied by the access rule.</returns>
+    </member>
+    <member name="T:System.Security.AccessControl.MutexAuditRule">
+      <summary>Represents a set of access rights to be audited for a user or group. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexAuditRule.#ctor(System.Security.Principal.IdentityReference,System.Security.AccessControl.MutexRights,System.Security.AccessControl.AuditFlags)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.AccessControl.MutexAuditRule" /> class, specifying the user or group to audit, the rights to audit, and whether to audit success, failure, or both.</summary>
+      <param name="identity">The user or group the rule applies to. Must be of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> or a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</param>
+      <param name="eventRights">A bitwise combination of <see cref="T:System.Security.AccessControl.MutexRights" /> values specifying the kinds of access to audit.</param>
+      <param name="flags">A bitwise combination of <see cref="T:System.Security.AccessControl.AuditFlags" /> values specifying whether to audit success, failure, or both.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="eventRights" /> specifies an invalid value.  
+  
+ -or-  
+  
+ <paramref name="flags" /> specifies an invalid value.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="identity" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="eventRights" /> is zero.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="identity" /> is neither of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> nor of a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be translated to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</exception>
+    </member>
+    <member name="P:System.Security.AccessControl.MutexAuditRule.MutexRights">
+      <summary>Gets the access rights affected by the audit rule.</summary>
+      <returns>A bitwise combination of <see cref="T:System.Security.AccessControl.MutexRights" /> values that indicates the rights affected by the audit rule.</returns>
+    </member>
+    <member name="T:System.Security.AccessControl.MutexRights">
+      <summary>Specifies the access control rights that can be applied to named system mutex objects.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.MutexRights.ChangePermissions">
+      <summary>The right to change the security and audit rules associated with a named mutex.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.MutexRights.Delete">
+      <summary>The right to delete a named mutex.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.MutexRights.FullControl">
+      <summary>The right to exert full control over a named mutex, and to modify its access rules and audit rules.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.MutexRights.Modify">
+      <summary>The right to release a named mutex.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.MutexRights.ReadPermissions">
+      <summary>The right to open and copy the access rules and audit rules for a named mutex.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.MutexRights.Synchronize">
+      <summary>The right to wait on a named mutex.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.MutexRights.TakeOwnership">
+      <summary>The right to change the owner of a named mutex.</summary>
+    </member>
+    <member name="T:System.Security.AccessControl.MutexSecurity">
+      <summary>Represents the Windows access control security for a named mutex. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexSecurity.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.AccessControl.MutexSecurity" /> class with default values.</summary>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexSecurity.#ctor(System.String,System.Security.AccessControl.AccessControlSections)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.AccessControl.MutexSecurity" /> class with the specified sections of the access control security rules from the system mutex with the specified name.</summary>
+      <param name="name">The name of the system mutex whose access control security rules are to be retrieved.</param>
+      <param name="includeSections">A combination of <see cref="T:System.Security.AccessControl.AccessControlSections" /> flags specifying the sections to retrieve.</param>
+      <exception cref="T:System.IO.FileNotFoundException">There is no system object with the specified name.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexSecurity.AccessRuleFactory(System.Security.Principal.IdentityReference,System.Int32,System.Boolean,System.Security.AccessControl.InheritanceFlags,System.Security.AccessControl.PropagationFlags,System.Security.AccessControl.AccessControlType)">
+      <summary>Creates a new access control rule for the specified user, with the specified access rights, access control, and flags.</summary>
+      <param name="identityReference">An <see cref="T:System.Security.Principal.IdentityReference" /> that identifies the user or group the rule applies to.</param>
+      <param name="accessMask">A bitwise combination of <see cref="T:System.Security.AccessControl.MutexRights" /> values specifying the access rights to allow or deny, cast to an integer.</param>
+      <param name="isInherited">Meaningless for named mutexes, because they have no hierarchy.</param>
+      <param name="inheritanceFlags">Meaningless for named mutexes, because they have no hierarchy.</param>
+      <param name="propagationFlags">Meaningless for named mutexes, because they have no hierarchy.</param>
+      <param name="type">One of the <see cref="T:System.Security.AccessControl.AccessControlType" /> values specifying whether the rights are allowed or denied.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="accessMask" />, <paramref name="inheritanceFlags" />, <paramref name="propagationFlags" />, or <paramref name="type" /> specifies an invalid value.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="identityReference" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="accessMask" /> is zero.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="identityReference" /> is neither of type <see cref="T:System.Security.Principal.SecurityIdentifier" />, nor of a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</exception>
+      <returns>A <see cref="T:System.Security.AccessControl.MutexAccessRule" /> object representing the specified rights for the specified user.</returns>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexSecurity.AddAccessRule(System.Security.AccessControl.MutexAccessRule)">
+      <summary>Searches for a matching access control rule with which the new rule can be merged. If none are found, adds the new rule.</summary>
+      <param name="rule">The access control rule to add.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.Security.Principal.IdentityNotMappedException">
+        <paramref name="rule" /> cannot be mapped to a known identity.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexSecurity.AddAuditRule(System.Security.AccessControl.MutexAuditRule)">
+      <summary>Searches for an audit rule with which the new rule can be merged. If none are found, adds the new rule.</summary>
+      <param name="rule">The audit rule to add. The user specified by this rule determines the search.</param>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexSecurity.AuditRuleFactory(System.Security.Principal.IdentityReference,System.Int32,System.Boolean,System.Security.AccessControl.InheritanceFlags,System.Security.AccessControl.PropagationFlags,System.Security.AccessControl.AuditFlags)">
+      <summary>Creates a new audit rule, specifying the user the rule applies to, the access rights to audit, and the outcome that triggers the audit rule.</summary>
+      <param name="identityReference">An <see cref="T:System.Security.Principal.IdentityReference" /> that identifies the user or group the rule applies to.</param>
+      <param name="accessMask">A bitwise combination of <see cref="T:System.Security.AccessControl.MutexRights" /> values specifying the access rights to audit, cast to an integer.</param>
+      <param name="isInherited">Meaningless for named wait handles, because they have no hierarchy.</param>
+      <param name="inheritanceFlags">Meaningless for named wait handles, because they have no hierarchy.</param>
+      <param name="propagationFlags">Meaningless for named wait handles, because they have no hierarchy.</param>
+      <param name="flags">A bitwise combination of <see cref="T:System.Security.AccessControl.AuditFlags" /> values that specify whether to audit successful access, failed access, or both.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="accessMask" />, <paramref name="inheritanceFlags" />, <paramref name="propagationFlags" />, or <paramref name="flags" /> specifies an invalid value.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="identityReference" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="accessMask" /> is zero.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="identityReference" /> is neither of type <see cref="T:System.Security.Principal.SecurityIdentifier" />, nor of a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</exception>
+      <returns>A <see cref="T:System.Security.AccessControl.MutexAuditRule" /> object representing the specified audit rule for the specified user. The return type of the method is the base class, <see cref="T:System.Security.AccessControl.AuditRule" />, but the return value can be cast safely to the derived class.</returns>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexSecurity.RemoveAccessRule(System.Security.AccessControl.MutexAccessRule)">
+      <summary>Searches for an access control rule with the same user and <see cref="T:System.Security.AccessControl.AccessControlType" /> (allow or deny) as the specified rule, and with compatible inheritance and propagation flags; if such a rule is found, the rights contained in the specified access rule are removed from it.</summary>
+      <param name="rule">A <see cref="T:System.Security.AccessControl.MutexAccessRule" /> that specifies the user and <see cref="T:System.Security.AccessControl.AccessControlType" /> to search for, and a set of inheritance and propagation flags that a matching rule, if found, must be compatible with. Specifies the rights to remove from the compatible rule, if found.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+      <returns>
+        <see langword="true" /> if a compatible rule is found; otherwise <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexSecurity.RemoveAccessRuleAll(System.Security.AccessControl.MutexAccessRule)">
+      <summary>Searches for all access control rules with the same user and <see cref="T:System.Security.AccessControl.AccessControlType" /> (allow or deny) as the specified rule and, if found, removes them.</summary>
+      <param name="rule">A <see cref="T:System.Security.AccessControl.MutexAccessRule" /> that specifies the user and <see cref="T:System.Security.AccessControl.AccessControlType" /> to search for. Any rights specified by this rule are ignored.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexSecurity.RemoveAccessRuleSpecific(System.Security.AccessControl.MutexAccessRule)">
+      <summary>Searches for an access control rule that exactly matches the specified rule and, if found, removes it.</summary>
+      <param name="rule">The <see cref="T:System.Security.AccessControl.MutexAccessRule" /> to remove.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexSecurity.RemoveAuditRule(System.Security.AccessControl.MutexAuditRule)">
+      <summary>Searches for an audit control rule with the same user as the specified rule, and with compatible inheritance and propagation flags; if a compatible rule is found, the rights contained in the specified rule are removed from it.</summary>
+      <param name="rule">A <see cref="T:System.Security.AccessControl.MutexAuditRule" /> that specifies the user to search for, and a set of inheritance and propagation flags that a matching rule, if found, must be compatible with. Specifies the rights to remove from the compatible rule, if found.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+      <returns>
+        <see langword="true" /> if a compatible rule is found; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexSecurity.RemoveAuditRuleAll(System.Security.AccessControl.MutexAuditRule)">
+      <summary>Searches for all audit rules with the same user as the specified rule and, if found, removes them.</summary>
+      <param name="rule">A <see cref="T:System.Security.AccessControl.MutexAuditRule" /> that specifies the user to search for. Any rights specified by this rule are ignored.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexSecurity.RemoveAuditRuleSpecific(System.Security.AccessControl.MutexAuditRule)">
+      <summary>Searches for an audit rule that exactly matches the specified rule and, if found, removes it.</summary>
+      <param name="rule">The <see cref="T:System.Security.AccessControl.MutexAuditRule" /> to be removed.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexSecurity.ResetAccessRule(System.Security.AccessControl.MutexAccessRule)">
+      <summary>Removes all access control rules with the same user as the specified rule, regardless of <see cref="T:System.Security.AccessControl.AccessControlType" />, and then adds the specified rule.</summary>
+      <param name="rule">The <see cref="T:System.Security.AccessControl.MutexAccessRule" /> to add. The user specified by this rule determines the rules to remove before this rule is added.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexSecurity.SetAccessRule(System.Security.AccessControl.MutexAccessRule)">
+      <summary>Removes all access control rules with the same user and <see cref="T:System.Security.AccessControl.AccessControlType" /> (allow or deny) as the specified rule, and then adds the specified rule.</summary>
+      <param name="rule">The <see cref="T:System.Security.AccessControl.MutexAccessRule" /> to add. The user and <see cref="T:System.Security.AccessControl.AccessControlType" /> of this rule determine the rules to remove before this rule is added.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.MutexSecurity.SetAuditRule(System.Security.AccessControl.MutexAuditRule)">
+      <summary>Removes all audit rules with the same user as the specified rule, regardless of the <see cref="T:System.Security.AccessControl.AuditFlags" /> value, and then adds the specified rule.</summary>
+      <param name="rule">The <see cref="T:System.Security.AccessControl.MutexAuditRule" /> to add. The user specified by this rule determines the rules to remove before this rule is added.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="P:System.Security.AccessControl.MutexSecurity.AccessRightType">
+      <summary>Gets the enumeration that the <see cref="T:System.Security.AccessControl.MutexSecurity" /> class uses to represent access rights.</summary>
+      <returns>A <see cref="T:System.Type" /> object representing the <see cref="T:System.Security.AccessControl.MutexRights" /> enumeration.</returns>
+    </member>
+    <member name="P:System.Security.AccessControl.MutexSecurity.AccessRuleType">
+      <summary>Gets the type that the <see cref="T:System.Security.AccessControl.MutexSecurity" /> class uses to represent access rules.</summary>
+      <returns>A <see cref="T:System.Type" /> object representing the <see cref="T:System.Security.AccessControl.MutexAccessRule" /> class.</returns>
+    </member>
+    <member name="P:System.Security.AccessControl.MutexSecurity.AuditRuleType">
+      <summary>Gets the type that the <see cref="T:System.Security.AccessControl.MutexSecurity" /> class uses to represent audit rules.</summary>
+      <returns>A <see cref="T:System.Type" /> object representing the <see cref="T:System.Security.AccessControl.MutexAuditRule" /> class.</returns>
+    </member>
+    <member name="T:System.Security.AccessControl.SemaphoreAccessRule">
+      <summary>Represents a set of access rights allowed or denied for a user or group. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreAccessRule.#ctor(System.Security.Principal.IdentityReference,System.Security.AccessControl.SemaphoreRights,System.Security.AccessControl.AccessControlType)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" /> class, specifying the user or group the rule applies to, the access rights, and whether the specified access rights are allowed or denied.</summary>
+      <param name="identity">The user or group the rule applies to. Must be of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> or a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</param>
+      <param name="eventRights">A bitwise combination of <see cref="T:System.Security.AccessControl.SemaphoreRights" /> values specifying the rights allowed or denied.</param>
+      <param name="type">One of the <see cref="T:System.Security.AccessControl.AccessControlType" /> values specifying whether the rights are allowed or denied.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="eventRights" /> specifies an invalid value.  
+  
+ -or-  
+  
+ <paramref name="type" /> specifies an invalid value.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="identity" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="eventRights" /> is zero.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="identity" /> is neither of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> nor of a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreAccessRule.#ctor(System.String,System.Security.AccessControl.SemaphoreRights,System.Security.AccessControl.AccessControlType)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" /> class, specifying the name of the user or group the rule applies to, the access rights, and whether the specified access rights are allowed or denied.</summary>
+      <param name="identity">The name of the user or group the rule applies to.</param>
+      <param name="eventRights">A bitwise combination of <see cref="T:System.Security.AccessControl.SemaphoreRights" /> values specifying the rights allowed or denied.</param>
+      <param name="type">One of the <see cref="T:System.Security.AccessControl.AccessControlType" /> values specifying whether the rights are allowed or denied.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="eventRights" /> specifies an invalid value.  
+  
+ -or-  
+  
+ <paramref name="type" /> specifies an invalid value.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="eventRights" /> is zero.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="identity" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="identity" /> is a zero-length string.  
+  
+ -or-  
+  
+ <paramref name="identity" /> is longer than 512 characters.</exception>
+    </member>
+    <member name="P:System.Security.AccessControl.SemaphoreAccessRule.SemaphoreRights">
+      <summary>Gets the rights allowed or denied by the access rule.</summary>
+      <returns>A bitwise combination of <see cref="T:System.Security.AccessControl.SemaphoreRights" /> values indicating the rights allowed or denied by the access rule.</returns>
+    </member>
+    <member name="T:System.Security.AccessControl.SemaphoreAuditRule">
+      <summary>Represents a set of access rights to be audited for a user or group. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreAuditRule.#ctor(System.Security.Principal.IdentityReference,System.Security.AccessControl.SemaphoreRights,System.Security.AccessControl.AuditFlags)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> class, specifying the user or group to audit, the rights to audit, and whether to audit success, failure, or both.</summary>
+      <param name="identity">The user or group the rule applies to. Must be of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> or a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</param>
+      <param name="eventRights">A bitwise combination of <see cref="T:System.Security.AccessControl.SemaphoreRights" /> values specifying the kinds of access to audit.</param>
+      <param name="flags">A bitwise combination of <see cref="T:System.Security.AccessControl.AuditFlags" /> values specifying whether to audit success, failure, or both.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="eventRights" /> specifies an invalid value.  
+  
+ -or-  
+  
+ <paramref name="flags" /> specifies an invalid value.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="identity" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="eventRights" /> is zero.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="identity" /> is neither of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> nor of a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</exception>
+    </member>
+    <member name="P:System.Security.AccessControl.SemaphoreAuditRule.SemaphoreRights">
+      <summary>Gets the access rights affected by the audit rule.</summary>
+      <returns>A bitwise combination of <see cref="T:System.Security.AccessControl.SemaphoreRights" /> values that indicates the rights affected by the audit rule.</returns>
+    </member>
+    <member name="T:System.Security.AccessControl.SemaphoreRights">
+      <summary>Specifies the access control rights that can be applied to named system semaphore objects.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.SemaphoreRights.ChangePermissions">
+      <summary>The right to change the security and audit rules associated with a named semaphore.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.SemaphoreRights.Delete">
+      <summary>The right to delete a named semaphore.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.SemaphoreRights.FullControl">
+      <summary>The right to exert full control over a named semaphore, and to modify its access rules and audit rules.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.SemaphoreRights.Modify">
+      <summary>The right to release a named semaphore.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.SemaphoreRights.ReadPermissions">
+      <summary>The right to open and copy the access rules and audit rules for a named semaphore.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.SemaphoreRights.Synchronize">
+      <summary>The right to wait on a named semaphore.</summary>
+    </member>
+    <member name="F:System.Security.AccessControl.SemaphoreRights.TakeOwnership">
+      <summary>The right to change the owner of a named semaphore.</summary>
+    </member>
+    <member name="T:System.Security.AccessControl.SemaphoreSecurity">
+      <summary>Represents the Windows access control security for a named semaphore. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreSecurity.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> class with default values.</summary>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreSecurity.#ctor(System.String,System.Security.AccessControl.AccessControlSections)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> class with the specified sections of the access control security rules from the system semaphore with the specified name.</summary>
+      <param name="name">The name of the system semaphore whose access control security rules are to be retrieved.</param>
+      <param name="includeSections">A combination of <see cref="T:System.Security.AccessControl.AccessControlSections" /> flags specifying the sections to retrieve.</param>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreSecurity.AccessRuleFactory(System.Security.Principal.IdentityReference,System.Int32,System.Boolean,System.Security.AccessControl.InheritanceFlags,System.Security.AccessControl.PropagationFlags,System.Security.AccessControl.AccessControlType)">
+      <summary>Creates a new access control rule for the specified user, with the specified access rights, access control, and flags.</summary>
+      <param name="identityReference">An <see cref="T:System.Security.Principal.IdentityReference" /> that identifies the user or group the rule applies to.</param>
+      <param name="accessMask">A bitwise combination of <see cref="T:System.Security.AccessControl.SemaphoreRights" /> values specifying the access rights to allow or deny, cast to an integer.</param>
+      <param name="isInherited">Meaningless for named semaphores, because they have no hierarchy.</param>
+      <param name="inheritanceFlags">Meaningless for named semaphores, because they have no hierarchy.</param>
+      <param name="propagationFlags">Meaningless for named semaphores, because they have no hierarchy.</param>
+      <param name="type">One of the <see cref="T:System.Security.AccessControl.AccessControlType" /> values specifying whether the rights are allowed or denied.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="accessMask" />, <paramref name="inheritanceFlags" />, <paramref name="propagationFlags" />, or <paramref name="type" /> specifies an invalid value.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="identityReference" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="accessMask" /> is zero.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="identityReference" /> is neither of type <see cref="T:System.Security.Principal.SecurityIdentifier" />, nor of a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</exception>
+      <returns>A <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" /> object representing the specified rights for the specified user.</returns>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreSecurity.AddAccessRule(System.Security.AccessControl.SemaphoreAccessRule)">
+      <summary>Searches for a matching rule with which the new rule can be merged. If none are found, adds the new rule.</summary>
+      <param name="rule">The access control rule to add.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreSecurity.AddAuditRule(System.Security.AccessControl.SemaphoreAuditRule)">
+      <summary>Searches for an audit rule with which the new rule can be merged. If none are found, adds the new rule.</summary>
+      <param name="rule">The audit rule to add. The user specified by this rule determines the search.</param>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreSecurity.AuditRuleFactory(System.Security.Principal.IdentityReference,System.Int32,System.Boolean,System.Security.AccessControl.InheritanceFlags,System.Security.AccessControl.PropagationFlags,System.Security.AccessControl.AuditFlags)">
+      <summary>Creates a new audit rule, specifying the user the rule applies to, the access rights to audit, and the outcome that triggers the audit rule.</summary>
+      <param name="identityReference">An <see cref="T:System.Security.Principal.IdentityReference" /> that identifies the user or group the rule applies to.</param>
+      <param name="accessMask">A bitwise combination of <see cref="T:System.Security.AccessControl.SemaphoreRights" /> values specifying the access rights to audit, cast to an integer.</param>
+      <param name="isInherited">Meaningless for named wait handles, because they have no hierarchy.</param>
+      <param name="inheritanceFlags">Meaningless for named wait handles, because they have no hierarchy.</param>
+      <param name="propagationFlags">Meaningless for named wait handles, because they have no hierarchy.</param>
+      <param name="flags">A bitwise combination of <see cref="T:System.Security.AccessControl.AuditFlags" /> values that specify whether to audit successful access, failed access, or both.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="accessMask" />, <paramref name="inheritanceFlags" />, <paramref name="propagationFlags" />, or <paramref name="flags" /> specifies an invalid value.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="identityReference" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="accessMask" /> is zero.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="identityReference" /> is neither of type <see cref="T:System.Security.Principal.SecurityIdentifier" />, nor of a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</exception>
+      <returns>A <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> object representing the specified audit rule for the specified user. The return type of the method is the base class, <see cref="T:System.Security.AccessControl.AuditRule" />, but the return value can be cast safely to the derived class.</returns>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRule(System.Security.AccessControl.SemaphoreAccessRule)">
+      <summary>Searches for an access control rule with the same user and <see cref="T:System.Security.AccessControl.AccessControlType" /> (allow or deny) as the specified rule, and with compatible inheritance and propagation flags; if such a rule is found, the rights contained in the specified access rule are removed from it.</summary>
+      <param name="rule">A <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" /> that specifies the user and <see cref="T:System.Security.AccessControl.AccessControlType" /> to search for, and a set of inheritance and propagation flags that a matching rule, if found, must be compatible with. Specifies the rights to remove from the compatible rule, if found.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+      <returns>
+        <see langword="true" /> if a compatible rule is found; otherwise <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleAll(System.Security.AccessControl.SemaphoreAccessRule)">
+      <summary>Searches for all access control rules with the same user and <see cref="T:System.Security.AccessControl.AccessControlType" /> (allow or deny) as the specified rule and, if found, removes them.</summary>
+      <param name="rule">A <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" /> that specifies the user and <see cref="T:System.Security.AccessControl.AccessControlType" /> to search for. Any rights specified by this rule are ignored.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleSpecific(System.Security.AccessControl.SemaphoreAccessRule)">
+      <summary>Searches for an access control rule that exactly matches the specified rule and, if found, removes it.</summary>
+      <param name="rule">The <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" /> to remove.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreSecurity.RemoveAuditRule(System.Security.AccessControl.SemaphoreAuditRule)">
+      <summary>Searches for an audit control rule with the same user as the specified rule, and with compatible inheritance and propagation flags; if a compatible rule is found, the rights contained in the specified rule are removed from it.</summary>
+      <param name="rule">A <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> that specifies the user to search for, and a set of inheritance and propagation flags that a matching rule, if found, must be compatible with. Specifies the rights to remove from the compatible rule, if found.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+      <returns>
+        <see langword="true" /> if a compatible rule is found; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreSecurity.RemoveAuditRuleAll(System.Security.AccessControl.SemaphoreAuditRule)">
+      <summary>Searches for all audit rules with the same user as the specified rule and, if found, removes them.</summary>
+      <param name="rule">A <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> that specifies the user to search for. Any rights specified by this rule are ignored.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreSecurity.RemoveAuditRuleSpecific(System.Security.AccessControl.SemaphoreAuditRule)">
+      <summary>Searches for an audit rule that exactly matches the specified rule and, if found, removes it.</summary>
+      <param name="rule">The <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> to remove.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreSecurity.ResetAccessRule(System.Security.AccessControl.SemaphoreAccessRule)">
+      <summary>Removes all access control rules with the same user as the specified rule, regardless of <see cref="T:System.Security.AccessControl.AccessControlType" />, and then adds the specified rule.</summary>
+      <param name="rule">The <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" /> to add. The user specified by this rule determines the rules to remove before this rule is added.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreSecurity.SetAccessRule(System.Security.AccessControl.SemaphoreAccessRule)">
+      <summary>Removes all access control rules with the same user and <see cref="T:System.Security.AccessControl.AccessControlType" /> (allow or deny) as the specified rule, and then adds the specified rule.</summary>
+      <param name="rule">The <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" /> to add. The user and <see cref="T:System.Security.AccessControl.AccessControlType" /> of this rule determine the rules to remove before this rule is added.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.AccessControl.SemaphoreSecurity.SetAuditRule(System.Security.AccessControl.SemaphoreAuditRule)">
+      <summary>Removes all audit rules with the same user as the specified rule, regardless of the <see cref="T:System.Security.AccessControl.AuditFlags" /> value, and then adds the specified rule.</summary>
+      <param name="rule">The <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> to add. The user specified by this rule determines the rules to remove before this rule is added.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="rule" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="P:System.Security.AccessControl.SemaphoreSecurity.AccessRightType">
+      <summary>Gets the enumeration that the <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> class uses to represent access rights.</summary>
+      <returns>A <see cref="T:System.Type" /> object representing the <see cref="T:System.Security.AccessControl.SemaphoreRights" /> enumeration.</returns>
+    </member>
+    <member name="P:System.Security.AccessControl.SemaphoreSecurity.AccessRuleType">
+      <summary>Gets the type that the <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> class uses to represent access rules.</summary>
+      <returns>A <see cref="T:System.Type" /> object representing the <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" /> class.</returns>
+    </member>
+    <member name="P:System.Security.AccessControl.SemaphoreSecurity.AuditRuleType">
+      <summary>Gets the type that the <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> class uses to represent audit rules.</summary>
+      <returns>A <see cref="T:System.Type" /> object representing the <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> class.</returns>
+    </member>
+    <member name="T:System.Threading.EventWaitHandleAcl">
+      <summary>Provides a Windows-specific extension method for creating <see cref="T:System.Threading.EventWaitHandle" /> objects with specific access control list (ACL) security.</summary>
+    </member>
+    <member name="M:System.Threading.EventWaitHandleAcl.Create(System.Boolean,System.Threading.EventResetMode,System.String,System.Boolean@,System.Security.AccessControl.EventWaitHandleSecurity)">
+      <summary>Gets or creates an <see cref="T:System.Threading.EventWaitHandle" /> instance, allowing a <see cref="T:System.Security.AccessControl.EventWaitHandleSecurity" /> instance to be optionally specified to set it during the event creation.</summary>
+      <param name="initialState">
+        <see langword="true" /> to set the initial state to signaled if the named event is created as a result of this call; <see langword="false" /> to set it to non-signaled.</param>
+      <param name="mode">One of the enum values that determines whether the event resets automatically or manually.</param>
+      <param name="name">The name, if the synchronization object is to be shared with other processes; otherwise, <see langword="null" /> or an empty string. The name is case-sensitive. The backslash character (\) is reserved and may only be used to specify a namespace. For more information on namespaces, see the remarks section. There may be further restrictions on the name depending on the operating system. For example, on Unix-based operating systems, the name after excluding the namespace must be a valid file name.</param>
+      <param name="createdNew">When this method returns, this argument is always set to <see langword="true" /> if a local event is created; that is, when <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" />. If <paramref name="name" /> has a valid, non-empty value, this argument is set to <see langword="true" /> when the system event is created, or it is set to <see langword="false" /> if an existing system event is found with that name.</param>
+      <param name="eventSecurity">The optional Windows access control security to apply.</param>
+      <exception cref="T:System.ArgumentException">
+          The <paramref name="mode" /> enum value was out of legal range.
+
+-or-
+
+.NET Framework only: <paramref name="name" /> is longer than MAX_PATH (260 characters).</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The <paramref name="mode" /> enum value was out of legal range. In some cases <see cref="T:System.ArgumentException" /> is thrown instead.</exception>
+      <exception cref="T:System.IO.IOException">
+        <paramref name="name" /> is invalid. This can be for various reasons, including some restrictions that may be placed by the operating system, such as an unknown prefix or invalid characters. Note that the name and common prefixes "Global\" and "Local\" are case-sensitive.
+
+-or-
+
+There was some other error. The HResult property may provide more information.</exception>
+      <exception cref="T:System.IO.DirectoryNotFoundException">Windows only: <paramref name="name" /> specified an unknown namespace. See Object Names for more information.</exception>
+      <exception cref="T:System.IO.PathTooLongException">The <paramref name="name" /> is too long. Length restrictions may depend on the operating system or configuration.</exception>
+      <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">A synchronization object with the provided <paramref name="name" /> cannot be created. A synchronization object of a different type might have the same name.</exception>
+      <exception cref="T:System.UnauthorizedAccessException">The named event exists, but the user does not have the desired security access.</exception>
+      <exception cref="T:System.ArgumentNullException">.NET Framework only: The <paramref name="name" /> length is beyond MAX_PATH (260 characters).</exception>
+      <returns>An object that represents an event wait handle as requested.</returns>
+    </member>
+    <member name="M:System.Threading.EventWaitHandleAcl.OpenExisting(System.String,System.Security.AccessControl.EventWaitHandleRights)">
+      <summary>Opens a specified named event wait handle, if it already exists, and applies the desired access rights.</summary>
+      <param name="name">The name of the event wait handle to be opened. If it's prefixed by "Global", it refers to a machine-wide event wait handle. If it's prefixed by "Local", or doesn't have a prefix, it refers to a session-wide event wait handle. Both prefix and name are case-sensitive.</param>
+      <param name="rights">The desired access rights to apply to the returned event wait handle.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="name" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="name" /> is an empty string.</exception>
+      <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">The named event wait handle does not exist or is invalid.</exception>
+      <exception cref="T:System.IO.DirectoryNotFoundException">The path was not found.</exception>
+      <exception cref="T:System.IO.IOException">A Win32 error occurred.</exception>
+      <exception cref="T:System.UnauthorizedAccessException">The named event wait handle exists, but the user does not have the security access required to use it.</exception>
+      <returns>An existing named event wait handle.</returns>
+    </member>
+    <member name="M:System.Threading.EventWaitHandleAcl.TryOpenExisting(System.String,System.Security.AccessControl.EventWaitHandleRights,System.Threading.EventWaitHandle@)">
+      <summary>Tries to open a specified named event wait handle, if it already exists, applies the desired access rights, and returns a value that indicates whether the operation succeeded.</summary>
+      <param name="name">The name of the event wait handle to be opened. If it's prefixed by "Global", it refers to a machine-wide event wait handle. If it's prefixed by "Local", or doesn't have a prefix, it refers to a session-wide event wait handle. Both prefix and name are case-sensitive.</param>
+      <param name="rights">The desired access rights to apply to the returned event wait handle.</param>
+      <param name="result">When this method returns <see langword="true" />, contains an object that represents the named event wait handle if the call succeeded, or <see langword="null" /> otherwise. This parameter is treated as uninitialized.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="name" /> is <see langword="null" /></exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="name" /> is an empty string.</exception>
+      <exception cref="T:System.IO.IOException">A Win32 error occurred.</exception>
+      <exception cref="T:System.UnauthorizedAccessException">The named event wait handle exists, but the user does not have the security access required to use it.</exception>
+      <returns>
+        <see langword="true" /> if the named event wait handle was opened successfully; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="T:System.Threading.MutexAcl">
+      <summary>Provides a Windows-specific extension method for creating <see cref="T:System.Threading.Mutex" /> objects with specific access control list (ACL) security.</summary>
+    </member>
+    <member name="M:System.Threading.MutexAcl.Create(System.Boolean,System.String,System.Boolean@,System.Security.AccessControl.MutexSecurity)">
+      <summary>Gets or creates <see cref="T:System.Threading.Mutex" /> instance, allowing a <see cref="T:System.Security.AccessControl.MutexSecurity" /> to be optionally specified to set it during the mutex creation.</summary>
+      <param name="initiallyOwned">
+        <see langword="true" /> to give the calling thread initial ownership of the named system mutex if the named system mutex is created as a result of this call; otherwise, <see langword="false" />.</param>
+      <param name="name">The name, if the synchronization object is to be shared with other processes; otherwise, <see langword="null" /> or an empty string. The name is case-sensitive. The backslash character (\) is reserved and may only be used to specify a namespace. For more information on namespaces, see the remarks section. There may be further restrictions on the name depending on the operating system. For example, on Unix-based operating systems, the name after excluding the namespace must be a valid file name.</param>
+      <param name="createdNew">When this method returns, this argument is always set to <see langword="true" /> if a local mutex is created; that is, when <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" />. If <paramref name="name" /> has a valid non-empty value, this argument is set to <see langword="true" /> when the system mutex is created, or it is set to <see langword="false" /> if an existing system mutex is found with that name. This parameter is passed uninitialized.</param>
+      <param name="mutexSecurity">The optional mutex access control security to apply.</param>
+      <exception cref="T:System.ArgumentException">
+          .NET Framework only: <paramref name="name" /> is longer than MAX_PATH (260 characters).</exception>
+      <exception cref="T:System.IO.IOException">
+        <paramref name="name" /> is invalid. This can be for various reasons, including some restrictions that may be placed by the operating system, such as an unknown prefix or invalid characters. Note that the name and common prefixes "Global\" and "Local\" are case-sensitive.
+
+-or-
+
+There was some other error. The HResult property may provide more information.</exception>
+      <exception cref="T:System.IO.DirectoryNotFoundException">Windows only: <paramref name="name" /> specified an unknown namespace. See Object Names for more information.</exception>
+      <exception cref="T:System.IO.PathTooLongException">The <paramref name="name" /> is too long. Length restrictions may depend on the operating system or configuration.</exception>
+      <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">A synchronization object with the provided <paramref name="name" /> cannot be created. A synchronization object of a different type might have the same name.</exception>
+      <returns>An object that represents a system mutex, if named, or a local mutex, if nameless.</returns>
+    </member>
+    <member name="M:System.Threading.MutexAcl.OpenExisting(System.String,System.Security.AccessControl.MutexRights)">
+      <summary>Opens a specified named mutex, if it already exists, and applies the desired access rights.</summary>
+      <param name="name">The name of the mutex to be opened. If it's prefixed by "Global", it refers to a machine-wide mutex. If it's prefixed by "Local", or doesn't have a prefix, it refers to a session-wide mutex. Both prefix and name are case-sensitive.</param>
+      <param name="rights">The desired access rights to apply to the returned mutex.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="name" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="name" /> is an empty string.</exception>
+      <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">The named mutex does not exist or is invalid.</exception>
+      <exception cref="T:System.IO.DirectoryNotFoundException">The path was not found.</exception>
+      <exception cref="T:System.IO.IOException">A Win32 error occurred.</exception>
+      <exception cref="T:System.UnauthorizedAccessException">The named mutex exists, but the user does not have the security access required to use it.</exception>
+      <returns>An existing named mutex.</returns>
+    </member>
+    <member name="M:System.Threading.MutexAcl.TryOpenExisting(System.String,System.Security.AccessControl.MutexRights,System.Threading.Mutex@)">
+      <summary>Tries to open a specified named mutex, if it already exists, applies the desired access rights, and returns a value that indicates whether the operation succeeded.</summary>
+      <param name="name">The name of the mutex to be opened. If it's prefixed by "Global", it refers to a machine-wide mutex. If it's prefixed by "Local", or doesn't have a prefix, it refers to a session-wide mutex. Both prefix and name are case-sensitive.</param>
+      <param name="rights">The desired access rights to apply to the returned mutex.</param>
+      <param name="result">When this method returns <see langword="true" />, contains an object that represents the named mutex if the call succeeded, or <see langword="null" /> otherwise. This parameter is treated as uninitialized.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="name" /> is <see langword="null" /></exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="name" /> is an empty string.</exception>
+      <exception cref="T:System.IO.IOException">A Win32 error occurred.</exception>
+      <exception cref="T:System.UnauthorizedAccessException">The named mutex exists, but the user does not have the security access required to use it.</exception>
+      <returns>
+        <see langword="true" /> if the named mutex was opened successfully; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="T:System.Threading.SemaphoreAcl">
+      <summary>Provides a Windows-specific extension method for creating <see cref="T:System.Threading.Semaphore" /> objects with specific access control list (ACL) security.</summary>
+    </member>
+    <member name="M:System.Threading.SemaphoreAcl.Create(System.Int32,System.Int32,System.String,System.Boolean@,System.Security.AccessControl.SemaphoreSecurity)">
+      <summary>Gets or creates an <see cref="T:System.Threading.Semaphore" /> instance, allowing a <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> instance to be optionally specified to set it during the event creation.</summary>
+      <param name="initialCount">The initial number of requests for the semaphore that can be satisfied concurrently.</param>
+      <param name="maximumCount">The maximum number of requests for the semaphore that can be satisfied concurrently.</param>
+      <param name="name">The name, if the synchronization object is to be shared with other processes; otherwise, <see langword="null" /> or an empty string. The name is case-sensitive. The backslash character (\) is reserved and may only be used to specify a namespace. For more information on namespaces, see the remarks section. There may be further restrictions on the name depending on the operating system. For example, on Unix-based operating systems, the name after excluding the namespace must be a valid file name.</param>
+      <param name="createdNew">When this method returns, this argument is always set to <see langword="true" /> if a local semaphore is created; that is, when <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" />. If <paramref name="name" /> has a valid, non-empty value, this argument is set to <see langword="true" /> when the system semaphore is created, or it is set to <see langword="false" /> if an existing system semaphore is found with that name. This parameter is passed uninitialized.</param>
+      <param name="semaphoreSecurity">The optional semaphore access control security to apply.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="initialCount" /> is a negative number.
+ -or-
+
+<paramref name="maximumCount" /> is not a positive number.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="initialCount" /> is greater than <paramref name="maximumCount" />.
+
+-or-
+
+.NET Framework only: <paramref name="name" /> is longer than MAX_PATH (260 characters).</exception>
+      <exception cref="T:System.IO.IOException">
+        <paramref name="name" /> is invalid. This can be for various reasons, including some restrictions that may be placed by the operating system, such as an unknown prefix or invalid characters. Note that the name and common prefixes "Global\" and "Local\" are case-sensitive.
+
+-or-
+
+There was some other error. The HResult property may provide more information.</exception>
+      <exception cref="T:System.IO.DirectoryNotFoundException">Windows only: <paramref name="name" /> specified an unknown namespace. See Object Names for more information.</exception>
+      <exception cref="T:System.IO.PathTooLongException">The <paramref name="name" /> is too long. Length restrictions may depend on the operating system or configuration.</exception>
+      <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">A synchronization object with the provided <paramref name="name" /> cannot be created. A synchronization object of a different type might have the same name.</exception>
+      <returns>An object that represents a system semaphore, if named, or a local semaphore, if nameless.</returns>
+    </member>
+    <member name="M:System.Threading.SemaphoreAcl.OpenExisting(System.String,System.Security.AccessControl.SemaphoreRights)">
+      <summary>Opens a specified named semaphore, if it already exists, and applies the desired access rights.</summary>
+      <param name="name">The name of the semaphore to be opened. If it's prefixed by "Global", it refers to a machine-wide semaphore. If it's prefixed by "Local", or doesn't have a prefix, it refers to a session-wide semaphore. Both prefix and name are case-sensitive.</param>
+      <param name="rights">The desired access rights to apply to the returned semaphore.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="name" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="name" /> is an empty string.</exception>
+      <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">The named semaphore does not exist or is invalid.</exception>
+      <exception cref="T:System.IO.IOException">The path was not found.
+
+-or-
+
+A Win32 error occurred.</exception>
+      <exception cref="T:System.UnauthorizedAccessException">The named semaphore exists, but the user does not have the security access required to use it.</exception>
+      <returns>An existing named semaphore.</returns>
+    </member>
+    <member name="M:System.Threading.SemaphoreAcl.TryOpenExisting(System.String,System.Security.AccessControl.SemaphoreRights,System.Threading.Semaphore@)">
+      <summary>Tries to open a specified named semaphore, if it already exists, applies the desired access rights, and returns a value that indicates whether the operation succeeded.</summary>
+      <param name="name">The name of the semaphore to be opened. If it's prefixed by "Global", it refers to a machine-wide semaphore. If it's prefixed by "Local", or doesn't have a prefix, it refers to a session-wide semaphore. Both prefix and name are case-sensitive.</param>
+      <param name="rights">The desired access rights to apply to the returned semaphore.</param>
+      <param name="result">When this method returns <see langword="true" />, contains an object that represents the named semaphore if the call succeeded, or <see langword="null" /> otherwise. This parameter is treated as uninitialized.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="name" /> is <see langword="null" /></exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="name" /> is an empty string.</exception>
+      <exception cref="T:System.IO.IOException">A Win32 error occurred.</exception>
+      <exception cref="T:System.UnauthorizedAccessException">The named semaphore exists, but the user does not have the security access required to use it.</exception>
+      <returns>
+        <see langword="true" /> if the named semaphore was opened successfully; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="T:System.Threading.ThreadingAclExtensions">
+      <summary>Provides Windows-specific extension methods for managing the access control list (ACL) security descriptors for <see cref="T:System.Threading.EventWaitHandle" />, <see cref="T:System.Threading.Mutex" />, and <see cref="T:System.Threading.Semaphore" />.</summary>
+    </member>
+    <member name="M:System.Threading.ThreadingAclExtensions.GetAccessControl(System.Threading.EventWaitHandle)">
+      <summary>Returns the security descriptors for the specified <paramref name="handle" />.</summary>
+      <param name="handle">The event wait handle from which the security descriptors should be returned.</param>
+      <returns>The security descriptors for the specified <paramref name="handle" />.</returns>
+    </member>
+    <member name="M:System.Threading.ThreadingAclExtensions.GetAccessControl(System.Threading.Mutex)">
+      <summary>Returns the security descriptors for the specified <paramref name="mutex" />.</summary>
+      <param name="mutex">The mutex from which the security descriptors should be returned.</param>
+      <returns>The security descriptors for the specified <paramref name="mutex" />.</returns>
+    </member>
+    <member name="M:System.Threading.ThreadingAclExtensions.GetAccessControl(System.Threading.Semaphore)">
+      <summary>Returns the security descriptors for the specified <paramref name="semaphore" />.</summary>
+      <param name="semaphore">The semaphore from which the security descriptors should be returned.</param>
+      <returns>The security descriptors for the specified semaphore.</returns>
+    </member>
+    <member name="M:System.Threading.ThreadingAclExtensions.SetAccessControl(System.Threading.EventWaitHandle,System.Security.AccessControl.EventWaitHandleSecurity)">
+      <summary>Sets the security descriptors for the specified event wait handle.</summary>
+      <param name="handle">The event wait handle onto which the <paramref name="eventSecurity" /> will be applied.</param>
+      <param name="eventSecurity">The security descriptors to apply to the specified <paramref name="handle" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="eventSecurity" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Threading.ThreadingAclExtensions.SetAccessControl(System.Threading.Mutex,System.Security.AccessControl.MutexSecurity)">
+      <summary>Sets the security descriptors for the specified mutex.</summary>
+      <param name="mutex">The mutex onto which the <paramref name="mutexSecurity" /> will be applied.</param>
+      <param name="mutexSecurity">The security descriptors to apply to the specified <paramref name="mutex" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="mutexSecurity" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Threading.ThreadingAclExtensions.SetAccessControl(System.Threading.Semaphore,System.Security.AccessControl.SemaphoreSecurity)">
+      <summary>Sets the security descriptors for the specified semaphore.</summary>
+      <param name="semaphore">The semaphore onto which the <paramref name="semaphoreSecurity" /> will be applied.</param>
+      <param name="semaphoreSecurity">The security descriptors to apply to the specified <paramref name="semaphore" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="semaphoreSecurity" /> is <see langword="null" />.</exception>
+    </member>
+  </members>
+</doc>
