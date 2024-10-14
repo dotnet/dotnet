@@ -4,7 +4,7 @@
   "description": "Создает новый тестовый класс MSTest",
   "symbols/Fixture/description": "Выберите типы средств, которые необходимо включить в проект.",
   "symbols/Fixture/choices/None/description": "Нет методов работы со средствами",
-  "symbols/Fixture/choices/None/displayName": "None",
+  "symbols/Fixture/choices/None/displayName": "Отсутствует",
   "symbols/Fixture/choices/AssemblyInitialize/description": "Метод работы со средствами AssemblyInitialize",
   "symbols/Fixture/choices/AssemblyCleanup/description": "Метод работы со средствами AssemblyCleanup",
   "symbols/Fixture/choices/ClassInitialize/description": "Метод работы со средствами ClassInitialize",
