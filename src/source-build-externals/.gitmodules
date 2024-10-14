@@ -31,3 +31,6 @@
 [submodule "src/spectre-console"]
 	path = src/spectre-console
 	url = https://github.com/spectreconsole/spectre.console
+[submodule "src/vs-solutionpersistence"]
+	path = src/vs-solutionpersistence
+	url = https://github.com/microsoft/vs-solutionpersistence.git

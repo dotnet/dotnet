@@ -13,10 +13,10 @@
       "commitSha": "a1f7880ae14703e747bf79d1e2e947bffea6a604"
     },
     {
-      "packageVersion": "10.0.0-alpha.2.24511.10",
+      "packageVersion": "10.0.0-alpha.2.24513.1",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "59260392fc4f31eba3ed6b97bc1b4375eeb8e0b9"
+      "commitSha": "049814ca468cad1ea1e29412e0aa3eea182a63c1"
     },
     {
       "packageVersion": "0.11.5-alpha.24480.1",
@@ -43,10 +43,10 @@
       "commitSha": "513150c2f25077b1fcb194407e53c433c975f39b"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24510.1",
+      "packageVersion": "10.0.0-alpha.1.24511.1",
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "a0d6550c421e8df2052a022498e4a6b72af7b455"
+      "commitSha": "9e652bdbd4a0b52da822b0b688615abb3d8ae2c5"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24474.1",
@@ -106,13 +106,13 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "43fe761eb39f90e9654812cc62c2cbfe19c8cdf7"
+      "commitSha": "8ed29abd515a6c375a1de15b23cff463a0f3cdae"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24507.2",
+      "packageVersion": "10.0.0-alpha.1.24511.4",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "13b08152f434be328df1228f29e79c8e70806ca3"
+      "commitSha": "61f719aea181a75790c5a3e954287ee938387656"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24511.4",
@@ -121,10 +121,10 @@
       "commitSha": "76c417253f5b3890997a3ef4b0613c2eab73d156"
     },
     {
-      "packageVersion": "9.0.0-beta.24510.2",
+      "packageVersion": "9.0.0-beta.24512.1",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "a050f42b3b16ed7219cc057babdc3358e7ed52e1"
+      "commitSha": "3f8465b450eef9f92ad9f8c6917195ab8c91fbc2"
     },
     {
       "packageVersion": "2.2.0-beta.24327.2",
@@ -246,6 +246,11 @@
       "path": "source-build-externals/src/spectre-console",
       "remoteUri": "https://github.com/spectreconsole/spectre.console",
       "commitSha": "7397169a2757dc3657598bdea4ac222c0f283425"
+    },
+    {
+      "path": "source-build-externals/src/vs-solutionpersistence",
+      "remoteUri": "https://github.com/microsoft/vs-solutionpersistence.git",
+      "commitSha": "f2b3e7d1b0b761cc183147533322f928b71182bc"
     },
     {
       "path": "source-build-externals/src/xunit",
