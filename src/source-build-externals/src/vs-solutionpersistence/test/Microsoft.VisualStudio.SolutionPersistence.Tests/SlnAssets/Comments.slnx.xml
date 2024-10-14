@@ -1,0 +1,80 @@
+<!-- Copyright info -->
+<Solution TopAttribute="Hi!">
+	<Configurations>
+		<Platform Name="Any CPU">
+			<ProjectMapping Type="CPP" Default="x86" />
+		</Platform>
+		<Platform Name="x64" />
+		<Platform Name="x86" />
+        <Platform Name="SpacesNotTabsHere" />
+
+
+		<!-- Try adding some other dimensions. -->
+		<TargetPlatform Name="net472" />
+		<TargetPlatform Name="net8" />
+        <ProjectType Name="Foo" TypeId="7a16ac8b-0b45-4206-8a34-0643d9545339" Extension=".fooproj" IsBuildable="false">
+            <AdditionalElement Name="ExtraInfo" />
+        </ProjectType>
+        <!-- Test lots of extensions -->
+        <ProjectType Name="Extensions" TypeId="{06C1EE8D-5375-4A57-ACEE-D22AC909EDA6}" Extension=".a;b;.c;.d;e;f;g;h;i;j;k;l;m;n;o;p" />
+    </Configurations>
+	<Folder Name="/SolutionFolder/">
+		<File Path="..\.editorconfig" />
+		<Properties Name="TestFolderProperties" Scope="PostLoad">
+			<Property Name="Fruit" Value="Apple" />
+			<Property Name="Vegetable" Value="Carrot" />
+			<Property Name="Mineral" Value="Salt" />
+		</Properties>
+	</Folder>
+	<Folder Name="/FolderForest/Spruce/" />
+	<Folder Name="/FolderForest/Pine/Cone/">
+		<File Path="PineCones.txt" />
+	</Folder>
+	<Folder Name="/FolderForest/Pine/" />
+	<Folder Name="/FolderForest/Oak/" />
+	<Folder Name="/FolderForest/Chestnut/" />
+	<Folder Name="/FolderForest/" />
+	<Folder Name="/Native/">
+		<Project Path="NativeShared\NativeShared.vcxitems" ExtraAttribute="Hello" />
+		<Project Path="NativeConsole\NativeConsole.vcxproj">
+			<BuildDependency Project="NativeStaticLib\NativeStaticLib.vcxproj" />
+			<SharedDependency Items="NativeShared\NativeShared.vcxitems" Type="4" />
+			<Configuration Solution="*|Any CPU" Project="*|Win32|NoBuild" />
+		</Project>
+		<Project Path="NativeStaticLib\NativeStaticLib.vcxproj">
+			<Configuration Solution="*|Any CPU" Project="*|Win32|NoBuild" />
+		</Project>
+	</Folder>
+
+	<!--Extra Whitespace after this-->
+
+	<!-- Here is a multi
+	   line comment -->
+	<Project Path="AnotherSharedProject\AnotherSharedProject.shproj" />
+	<Project Path="CoreConsole\CoreConsole.csproj" ExtraProjectProperty="Metadata" />
+	<Project Path="CoreWebApplication\CoreWebApplication.csproj" />
+	<Project Path="SharedCode\SharedCode.shproj">
+		<Properties Name="TestProjectProperty">
+			<Property Name="Fruit" Value="Pear" />
+			<Property Name="Vegetable" Value="Potato" />
+			<Property Name="Mineral" Value="Salt" />
+		</Properties>
+	</Project>
+	<Project Path="TestExtension\TestExtension.fooproj" />"
+	<Project Path="TestExtension\NoExtension" Type="Foo" />"
+	<!-- This is just for me -->
+	<SomethingElse>
+		<New Hello="there" />
+	</SomethingElse>
+	<Properties Name="ExtraProperties">
+		<Property Name="Fruit" Value="Orange" />
+		<Property Name="Vegetable" Value="Pepper" />
+		<Property Name="Character" Value="Space" />
+		<Property Name="Char" Value="Var" />
+		<Property Name="Foo" Value="Bar" />
+		<Property Name="Mineral" Value="Salt" />
+	</Properties>
+	<Properties Name="FileSettings">
+		<Property Name="AutoFormat" Value="false" />
+	</Properties>
+</Solution>

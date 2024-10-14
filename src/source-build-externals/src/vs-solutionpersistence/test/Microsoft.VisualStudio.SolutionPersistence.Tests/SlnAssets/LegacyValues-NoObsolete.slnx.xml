@@ -1,0 +1,12 @@
+<Solution>
+    <Folder Name="/Folder/" Id="cccccccc-77ac-4037-b5d2-cd3fb616a97c">
+        <Project Path="foo.csproj" Id="bbbbbbbb-77ac-4037-b5d2-cd3fb616a97c" />
+    </Folder>
+    <Properties Name="PostLoad" Scope="PostLoad">
+        <Property Name="name" Value="value" />
+    </Properties>
+    <Properties Name="Visual Studio">
+        <Property Name="OpenWith" Value="Visual Studio Version 17" />
+        <Property Name="SolutionId" Value="AAAAAAAA-BBBB-1111-4567-abcd01234567" />
+    </Properties>
+</Solution>

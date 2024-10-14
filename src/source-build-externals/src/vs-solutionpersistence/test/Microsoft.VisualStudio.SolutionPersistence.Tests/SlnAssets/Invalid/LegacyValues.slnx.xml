@@ -1,0 +1,17 @@
+<Solution>
+    <Folder Name="/Folder/" Id="cccccccc-77ac-4037-b5d2-cd3fb616a97c">
+        <Project Path="foo.csproj" Type="Common C#" Id="bbbbbbbb-77ac-4037-b5d2-cd3fb616a97c" />
+    </Folder>
+    <Properties Name="PostLoad" Scope="PostLoad">
+        <Property Name="name" Value="value" />
+    </Properties>
+    <Properties Name="SharedMSBuildProjectFiles">
+        <Property Name="Shared.projitems*{9f828cea-ff08-4819-8700-f0bfad9d56d8}*SharedItemsImports" Value="Questionable" />
+    </Properties>
+    <Properties Name="Visual Studio">
+        <Property Name="MinimumVersion" Value="17.10.0.0" />
+        <Property Name="OpenWith" Value="Visual Studio Version 17" />
+        <Property Name="SolutionId" Value="AAAAAAAA-BBBB-1111-4567-abcd01234567" />
+        <Property Name="Version" Value="17.10.34714.246" />
+    </Properties>
+</Solution>
