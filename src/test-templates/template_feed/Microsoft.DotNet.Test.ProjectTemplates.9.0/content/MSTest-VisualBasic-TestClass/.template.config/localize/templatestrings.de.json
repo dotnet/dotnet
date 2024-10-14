@@ -4,7 +4,7 @@
   "description": "Erstellt eine neue MSTest-Testklasse",
   "symbols/Fixture/description": "Wählen Sie die Fixturearten aus, die in das Projekt eingeschlossen werden sollen.",
   "symbols/Fixture/choices/None/description": "Keine Fixturemethoden",
-  "symbols/Fixture/choices/None/displayName": "None",
+  "symbols/Fixture/choices/None/displayName": "Keine",
   "symbols/Fixture/choices/AssemblyInitialize/description": "Fixturemethode \"AssemblyInitialize\"",
   "symbols/Fixture/choices/AssemblyCleanup/description": "Fixierungsmethode \"AssemblyCleanup\"",
   "symbols/Fixture/choices/ClassInitialize/description": "Fixturemethode \"ClassInitialize\"",
