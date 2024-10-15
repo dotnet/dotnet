@@ -1,0 +1,22 @@
+From 0ea8c4bf37ca4e700ed4adc9e588416dcf10f51c Mon Sep 17 00:00:00 2001
+From: Matt Thalman <mthalman@microsoft.com>
+Date: Tue, 15 Oct 2024 14:24:55 -0500
+Subject: [PATCH] Remove BuildXL feed
+
+Backport: https://github.com/dotnet/msbuild/pull/10765
+---
+ NuGet.config | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/NuGet.config b/NuGet.config
+index d7187b4d64..4e9907ea83 100644
+--- a/NuGet.config
++++ b/NuGet.config
+@@ -8,7 +8,6 @@
+     <add key="dotnet6" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet6/nuget/v3/index.json" />
+     <add key="dotnet8" value="https://dnceng.pkgs.visualstudio.com/public/_packaging/dotnet8/nuget/v3/index.json" />
+     <add key="dotnet8-transport" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet8-transport/nuget/v3/index.json" />
+-    <add key="BuildXL" value="https://pkgs.dev.azure.com/ms/BuildXL/_packaging/BuildXL/nuget/v3/index.json" />
+   </packageSources>
+   <disabledPackageSources />
+ </configuration>
