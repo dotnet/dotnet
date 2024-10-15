@@ -10,7 +10,7 @@ internal class DotnetWorkloadTest
     public DotNetLanguage Language { get; }
     public bool NoHttps { get => TargetRid.Contains("osx"); }
     public string TargetRid { get; set; }
-    public string TargetArchitecture { get => TargetRid.Split('-')[1]; }
+    public string TargetArchitecture { get => TargetRid.Split('-').Last(); }
     public string ScenarioName { get; }
 
     public DotnetWorkloadTest(string scenarioName, string targetRid,  DotNetSdkActions commands = DotNetSdkActions.None)
