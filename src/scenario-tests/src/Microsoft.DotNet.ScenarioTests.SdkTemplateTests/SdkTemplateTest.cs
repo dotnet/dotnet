@@ -10,7 +10,7 @@ public class SdkTemplateTest
     public DotNetLanguage Language { get; }
     public bool NoHttps { get => TargetRid.Contains("osx"); }
     public string TargetRid { get; set; }
-    public string TargetArchitecture { get => TargetRid.Split('-')[1]; }
+    public string TargetArchitecture { get => TargetRid.Split('-').Last(); }
     public string ScenarioName { get; }
     public DotNetSdkTemplate Template { get; }
 
@@ -86,12 +86,15 @@ public class SdkTemplateTest
         if (Commands.HasFlag(DotNetSdkActions.PublishComplex))
         {
             dotNetHelper.ExecutePublish(projectDirectory, selfContained: false);        
-            dotNetHelper.ExecutePublish(projectDirectory, selfContained: true, TargetRid);
-            dotNetHelper.ExecutePublish(projectDirectory, selfContained: true, $"linux-{TargetArchitecture}");
+            dotNetHelper.ExecutePublish(projectDirectory, TargetRid, selfContained: true);
         }
         if (Commands.HasFlag(DotNetSdkActions.PublishR2R))
         {
-            dotNetHelper.ExecutePublish(projectDirectory, selfContained: true, $"linux-{TargetArchitecture}", trimmed: true, readyToRun: true);
+            dotNetHelper.ExecutePublish(projectDirectory, TargetRid, selfContained: true, trimmed: true, readyToRun: true);
+        }
+        if (Commands.HasFlag(DotNetSdkActions.PublishAot))
+        {
+            dotNetHelper.ExecutePublish(projectDirectory, TargetRid, aot: true);
         }
         if (Commands.HasFlag(DotNetSdkActions.Test))
         {
