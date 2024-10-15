@@ -156,7 +156,7 @@ namespace ScenarioTests
             discoverer.Find(false, discoverySink, TestFrameworkOptions.ForDiscovery(assemblyConfig));
             discoverySink.Finished.WaitOne();
 
-            XunitFilters filters = CreateFilters(noTraits, traits, offlineOnly, platform);
+            XunitFilters filters = CreateFilters(noTraits, traits, offlineOnly, platform, dotnetRoot, targetRid);
 
             var filteredTestCases = discoverySink.TestCases.Where(filters.Filter).ToList();
 
@@ -217,7 +217,7 @@ namespace ScenarioTests
         }
 
 
-        private static XunitFilters CreateFilters(IList<string> excludedTraits, IList<string> includedTraits, bool offlineOnly, OSPlatform platform)
+        private static XunitFilters CreateFilters(IList<string> excludedTraits, IList<string> includedTraits, bool offlineOnly, OSPlatform platform, string dotnetRoot, string targetRid)
         {
             XunitFilters filters = new XunitFilters();
 
@@ -234,6 +234,8 @@ namespace ScenarioTests
 
             filters.ExcludedTraits.Add("SkipIfPlatform", new List<string>() {$"{platform}"});
 
+            filters.ExcludedTraits.Add("SkipIfBuild", CreateBuildTraits(dotnetRoot, targetRid));
+
             Dictionary<string, List<string>> includedTraitsMap = ParseTraitKeyValuePairs(includedTraits);
             foreach (KeyValuePair<string, List<string>> kvp in includedTraitsMap)
             {
@@ -241,6 +243,57 @@ namespace ScenarioTests
             }
 
             return filters;
+        }
+
+        private static List<string> CreateBuildTraits(string dotnetRoot, string targetRid)
+        {
+            List<string> buildTraits = new();
+
+            int archSeparatorPos = targetRid.LastIndexOf('-');
+            string ridWithoutArch = targetRid.Substring(0, archSeparatorPos != -1 ? archSeparatorPos : 0);
+            string arch = targetRid.Substring(archSeparatorPos + 1);
+
+            // Mono
+            if (DetermineIsMonoRuntime(dotnetRoot))
+            {
+                buildTraits.Add("Mono");
+            }
+
+            // Portable
+            string[] portableRids = [ "linux", "linux-musl" ];
+            if (Array.IndexOf(portableRids, ridWithoutArch) != -1)
+            {
+                buildTraits.Add("Portable");
+            }
+
+            // CommunityArchitecture
+            string[] communityArchitectures = [ "s390x", "ppc64le", "loongarch64", "riscv64" ];
+            if (Array.IndexOf(communityArchitectures, arch) != -1)
+            {
+                buildTraits.Add("CommunityArchitecture");
+            }
+
+            return buildTraits;
+        }
+
+        private static bool DetermineIsMonoRuntime(string dotnetRoot)
+        {
+            string sharedFrameworkRoot = Path.Combine(dotnetRoot, "shared", "Microsoft.NETCore.App");
+            if (!Directory.Exists(sharedFrameworkRoot))
+            {
+                return false;
+            }
+
+            string? version = Directory.GetDirectories(sharedFrameworkRoot).FirstOrDefault();
+            if (version is null)
+            {
+                return false;
+            }
+
+            string sharedFramework = Path.Combine(sharedFrameworkRoot, version);
+
+            // Check the presence of one of the mono header files.
+            return File.Exists(Path.Combine(sharedFramework, "mono-gc.h"));
         }
 
         private static Dictionary<string, List<string>> ParseTraitKeyValuePairs(IList<string> excludedTraits)
