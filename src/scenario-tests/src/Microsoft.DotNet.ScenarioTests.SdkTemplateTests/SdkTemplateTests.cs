@@ -28,6 +28,17 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     {
         var newTest = new SdkTemplateTest(
             nameof(SdkTemplateTests) + "Complex", language, _scenarioTestInput.TargetRid, DotNetSdkTemplate.Console,
+            DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.PublishComplex);
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetLanguages))]
+    [Trait("SkipIfBuild", "CommunityArchitecture")] // Portable assets are not available for community architectures.
+    public void VerifyConsoleTemplateComplexPortable(DotNetLanguage language)
+    {
+        var newTest = new SdkTemplateTest(
+            nameof(SdkTemplateTests) + "ComplexPortable", language, _scenarioTestInput.PortableRid, DotNetSdkTemplate.Console,
             DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.PublishComplex | DotNetSdkActions.PublishR2R);
         newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
     }
@@ -221,6 +232,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
 
     [Fact]
     [Trait("Category", "Workload")]
+    [Trait("SkipIfBuild", "CommunityArchitecture")]     // SDK has no workloads that support community architectures.
     public void VerifyWorkloadCmd()
     {
         var newTest = new DotnetWorkloadTest(

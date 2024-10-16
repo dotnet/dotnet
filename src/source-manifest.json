@@ -73,10 +73,10 @@
       "commitSha": "19756345139c45de23bd196e9b4be01d48e84fdd"
     },
     {
-      "packageVersion": "9.0.0-preview.24509.1",
+      "packageVersion": "9.0.0-preview.24515.11",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "a7648d0ddc50f60c651bc2a25f4f36bdc2b496d7"
+      "commitSha": "3094e2df9783ab0c966fafe5f51f148030686444"
     },
     {
       "packageVersion": "4.12.0-3.24510.2",
@@ -97,16 +97,16 @@
       "commitSha": "43295bb5378453d2ec4d9272cb44c6f50b4faa1f"
     },
     {
-      "packageVersion": "10.0.0-preview.24476.1",
+      "packageVersion": "10.0.0-preview.24515.1",
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "b7ce67571aff209313584ed0ee34f714270099dd"
+      "commitSha": "9ab92c12b6bf992abc84d52f5b42d86ca708255c"
     },
     {
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "28d5664850b92b028ac609c1b837e4e31bf6c24e"
+      "commitSha": "441cc1063a12b01e2f111288ea41bca63ede54e7"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24511.4",
@@ -151,10 +151,10 @@
       "commitSha": "bc9161306b23641b0364b8f93d546da4d48da1eb"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24514.2",
+      "packageVersion": "10.0.0-alpha.1.24515.4",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "eedb883b1a1f3b0b241ce5e4c8145734802aa4f4"
+      "commitSha": "19372fe078344546594740b5cf5f0b7860587ee8"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24512.4",
@@ -163,10 +163,10 @@
       "commitSha": "f73363f4cb56a3649c8039bd47c39de4f4db810f"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24513.3",
+      "packageVersion": "10.0.0-alpha.1.24515.1",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "c906ad6f35fa5ca135537c15470c274b34524829"
+      "commitSha": "ab6c13e933676fd6eecc223246d3a008fc0a6cb8"
     },
     {
       "packageVersion": "9.0.0-preview.24476.1",

@@ -249,6 +249,10 @@ namespace ScenarioTests
         {
             List<string> buildTraits = new();
 
+            int archSeparatorPos = targetRid.LastIndexOf('-');
+            string ridWithoutArch = targetRid.Substring(0, archSeparatorPos != -1 ? archSeparatorPos : 0);
+            string arch = targetRid.Substring(archSeparatorPos + 1);
+
             // Mono
             if (DetermineIsMonoRuntime(dotnetRoot))
             {
@@ -256,12 +260,17 @@ namespace ScenarioTests
             }
 
             // Portable
-            int archSeparatorPos = targetRid.LastIndexOf('-');
-            string ridWithoutArch = targetRid.Substring(0, archSeparatorPos != -1 ? archSeparatorPos : 0);
             string[] portableRids = [ "linux", "linux-musl" ];
             if (Array.IndexOf(portableRids, ridWithoutArch) != -1)
             {
                 buildTraits.Add("Portable");
+            }
+
+            // CommunityArchitecture
+            string[] communityArchitectures = [ "s390x", "ppc64le", "loongarch64", "riscv64" ];
+            if (Array.IndexOf(communityArchitectures, arch) != -1)
+            {
+                buildTraits.Add("CommunityArchitecture");
             }
 
             return buildTraits;
