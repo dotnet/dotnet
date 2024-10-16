@@ -70,17 +70,14 @@ internal sealed class SolutionAnalyzerConfigOptionsUpdater(IGlobalOptionService 
                             continue;
                         }
 
-                        if (lazyBuilder == null)
-                        {
-                            lazyBuilder = ImmutableDictionary.CreateBuilder<string, string>(AnalyzerConfigOptions.KeyComparer);
+                        lazyBuilder ??= ImmutableDictionary.CreateBuilder<string, string>(AnalyzerConfigOptions.KeyComparer);
 
-                            // copy existing option values:
-                            foreach (var oldKey in languageOptions.Keys)
+                        // copy existing option values:
+                        foreach (var oldKey in languageOptions.Keys)
+                        {
+                            if (languageOptions.TryGetValue(oldKey, out var oldValue))
                             {
-                                if (languageOptions.TryGetValue(oldKey, out var oldValue))
-                                {
-                                    lazyBuilder.Add(oldKey, oldValue);
-                                }
+                                lazyBuilder.Add(oldKey, oldValue);
                             }
                         }
 

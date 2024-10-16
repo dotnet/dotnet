@@ -10,24 +10,13 @@ namespace Microsoft.CodeAnalysis;
 /// <summary>
 /// Aggregate analyzer config options for a specific path.
 /// </summary>
-internal readonly struct AnalyzerConfigData
+internal readonly struct AnalyzerConfigData(AnalyzerConfigOptionsResult result, StructuredAnalyzerConfigOptions fallbackOptions)
 {
-    private readonly AnalyzerConfigOptions _dictionaryConfigOptions;
-
-    public readonly StructuredAnalyzerConfigOptions ConfigOptionsWithoutFallback;
-
-    public readonly StructuredAnalyzerConfigOptions ConfigOptionsWithFallback;
+    public readonly StructuredAnalyzerConfigOptions ConfigOptions = StructuredAnalyzerConfigOptions.Create(
+        new DictionaryAnalyzerConfigOptions(result.AnalyzerOptions), fallbackOptions);
 
     /// <summary>
     /// These options do not fall back.
     /// </summary>
-    public readonly ImmutableDictionary<string, ReportDiagnostic> TreeOptions;
-
-    public AnalyzerConfigData(AnalyzerConfigOptionsResult result, StructuredAnalyzerConfigOptions fallbackOptions)
-    {
-        _dictionaryConfigOptions = new DictionaryAnalyzerConfigOptions(result.AnalyzerOptions);
-        ConfigOptionsWithoutFallback = StructuredAnalyzerConfigOptions.Create(_dictionaryConfigOptions, StructuredAnalyzerConfigOptions.Empty);
-        ConfigOptionsWithFallback = StructuredAnalyzerConfigOptions.Create(_dictionaryConfigOptions, fallbackOptions);
-        TreeOptions = result.TreeOptions;
-    }
+    public readonly ImmutableDictionary<string, ReportDiagnostic> TreeOptions = result.TreeOptions;
 }

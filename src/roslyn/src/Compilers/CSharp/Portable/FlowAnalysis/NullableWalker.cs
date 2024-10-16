@@ -3480,12 +3480,17 @@ namespace Microsoft.CodeAnalysis.CSharp
             return null;
         }
 
-        protected override BoundExpression? VisitExpressionWithoutStackGuard(BoundExpression node)
+        protected override BoundNode? VisitExpressionOrPatternWithoutStackGuard(BoundNode node)
         {
+            Debug.Assert(node is BoundExpression or BoundPattern);
             Debug.Assert(!IsConditionalState);
             SetInvalidResult();
-            _ = base.VisitExpressionWithoutStackGuard(node);
-            VisitExpressionWithoutStackGuardEpilogue(node);
+            _ = base.VisitExpressionOrPatternWithoutStackGuard(node);
+            if (node is BoundExpression expr)
+            {
+                VisitExpressionWithoutStackGuardEpilogue(expr);
+            }
+
             return null;
         }
 
@@ -3656,7 +3661,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         SetUnknownResultNullability(initializer);
                         Debug.Assert(node.Placeholder is { });
                         SetUnknownResultNullability(node.Placeholder);
-                        Visit(initializer.Arguments[0]);
+                        VisitRvalue(initializer.Arguments[0]);
                         break;
                     case BoundCollectionExpressionSpreadElement spread:
                         // https://github.com/dotnet/roslyn/issues/68786: We should check the spread
@@ -7971,7 +7976,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     useExpression ? sourceExpression : null,
                     sourceType,
                     destinationType,
-                    ref discardedUseSiteInfo);
+                    ref discardedUseSiteInfo,
+                    isMethodGroupConversion: false);
             }
             return useExpression ?
                 (fromExplicitCast ?
@@ -8947,6 +8953,17 @@ namespace Microsoft.CodeAnalysis.CSharp
                     {
                         conversion = GenerateConversion(_conversions, conversionOperand, operandType.Type, targetType, fromExplicitCast, extensionMethodThisArgument, isChecked: conversionOpt?.Checked ?? false);
                         canConvertNestedNullability = conversion.Exists;
+                    }
+                    break;
+
+                case ConversionKind.ImplicitSpan:
+                case ConversionKind.ExplicitSpan:
+                    if (checkConversion)
+                    {
+                        var previousKind = conversion.Kind;
+                        conversion = GenerateConversion(_conversions, conversionOperand, operandType.Type, targetType, fromExplicitCast, extensionMethodThisArgument, isChecked: conversionOpt?.Checked ?? false);
+                        // We do not want user-defined conversions to relax nullability, so we consider only span conversions.
+                        canConvertNestedNullability = conversion.Exists && conversion.IsSpan;
                     }
                     break;
 
