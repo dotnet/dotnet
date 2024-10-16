@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using Xunit.Abstractions;
 
@@ -57,21 +58,10 @@ namespace Xunit
             this.configFileName = configFileName;
             this.shadowCopy = shadowCopy;
             this.shadowCopyFolder = shadowCopyFolder;
-            this.sourceInformationProvider = sourceInformationProvider;
+            this.sourceInformationProvider = sourceInformationProvider ?? new NullSourceInformationProvider();
             this.diagnosticMessageSink = diagnosticMessageSink ?? new NullMessageSink();
 
             Guard.FileExists("assemblyFileName", assemblyFileName);
-
-            if (this.sourceInformationProvider == null)
-            {
-#if NETSTANDARD
-                this.sourceInformationProvider = new NullSourceInformationProvider();
-#else
-                this.sourceInformationProvider = new VisualStudioSourceInformationProvider(assemblyFileName);
-#endif
-                toDispose.Push(this.sourceInformationProvider);
-            }
-
         }
 
         ITestCaseBulkDeserializer BulkDeserializer
@@ -139,7 +129,7 @@ namespace Xunit
             if (File.Exists(xunitPath))
                 return new Xunit1(appDomainSupport, sourceInformationProvider, assemblyFileName, configFileName, shadowCopy, shadowCopyFolder);
 
-            throw new InvalidOperationException($"Unknown test framework: could not find xunit.dll (v1) or xunit.execution.*.dll (v2) in {assemblyFolder}");
+            throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "Unknown test framework: could not find xunit.dll (v1) or xunit.execution.*.dll (v2) in {0}", assemblyFolder));
 #else
             return new Xunit2(appDomainSupport, sourceInformationProvider, assemblyFileName, configFileName, shadowCopy, shadowCopyFolder, diagnosticMessageSink);
 #endif

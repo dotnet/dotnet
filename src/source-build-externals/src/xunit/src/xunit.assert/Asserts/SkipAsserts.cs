@@ -1,11 +1,18 @@
-﻿#if XUNIT_SKIP
+#pragma warning disable CA1052 // Static holder types should be static
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
+#if XUNIT_SKIP
 
 #if XUNIT_NULLABLE
 #nullable enable
-using System.Diagnostics.CodeAnalysis;
 #endif
 
 using Xunit.Sdk;
+
+#if XUNIT_NULLABLE
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Xunit
 {
@@ -28,7 +35,7 @@ namespace Xunit
 		{
 			GuardArgumentNotNull(nameof(reason), reason);
 
-			throw new SkipException(reason);
+			throw SkipException.ForSkip(reason);
 		}
 
 		/// <summary>
@@ -37,16 +44,18 @@ namespace Xunit
 		/// <param name="condition">When <c>true</c>, the test will continue to run; when <c>false</c>,
 		/// the test will be skipped</param>
 		/// <param name="reason">The message to indicate why the test was skipped</param>
+		public static void SkipUnless(
 #if XUNIT_NULLABLE
-		public static void SkipUnless([DoesNotReturnIf(false)] bool condition, string reason)
+			[DoesNotReturnIf(false)] bool condition,
 #else
-		public static void SkipUnless(bool condition, string reason)
+			bool condition,
 #endif
+			string reason)
 		{
 			GuardArgumentNotNull(nameof(reason), reason);
 
 			if (!condition)
-				throw new SkipException(reason);
+				throw SkipException.ForSkip(reason);
 		}
 
 		/// <summary>
@@ -55,16 +64,18 @@ namespace Xunit
 		/// <param name="condition">When <c>true</c>, the test will be skipped; when <c>false</c>,
 		/// the test will continue to run</param>
 		/// <param name="reason">The message to indicate why the test was skipped</param>
+		public static void SkipWhen(
 #if XUNIT_NULLABLE
-		public static void SkipWhen([DoesNotReturnIf(true)] bool condition, string reason)
+			[DoesNotReturnIf(true)] bool condition,
 #else
-		public static void SkipWhen(bool condition, string reason)
+			bool condition,
 #endif
+			string reason)
 		{
 			GuardArgumentNotNull(nameof(reason), reason);
 
 			if (condition)
-				throw new SkipException(reason);
+				throw SkipException.ForSkip(reason);
 		}
 	}
 }

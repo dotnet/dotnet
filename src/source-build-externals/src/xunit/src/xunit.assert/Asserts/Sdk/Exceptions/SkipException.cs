@@ -1,26 +1,43 @@
-﻿#if XUNIT_NULLABLE
+#pragma warning disable CA1032 // Implement standard exception constructors
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
+#if XUNIT_NULLABLE
 #nullable enable
 #endif
+
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
 	/// <summary>
-	/// Exception thrown when a test should be skipped.
+	/// Exception thrown when Assert.Skip is called.
 	/// </summary>
 #if XUNIT_VISIBILITY_INTERNAL
 	internal
 #else
 	public
 #endif
-	class SkipException : XunitException
+	partial class SkipException : XunitException
 	{
-		/// <summary>
-		/// Creates a new instance of the <see cref="SkipException"/> class. This is a special
-		/// exception that, when thrown, will cause xUnit.net to mark your test as skipped
-		/// rather than failed.
-		/// </summary>
-		public SkipException(string message)
-			: base($"{DynamicSkipToken.Value}{message}")
+		SkipException(string message) :
+			base(message)
 		{ }
+
+		/// <summary>
+		/// Creates a new instance of the <see cref="SkipException"/> class to be thrown
+		/// when a user wants to dynamically skip a test. Note that this only works in
+		/// v3 and later of xUnit.net, as it requires runtime infrastructure changes.
+		/// </summary>
+		public static SkipException ForSkip(string message) =>
+			new SkipException(
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"{0}{1}",
+					DynamicSkipToken.Value,
+					Assert.GuardArgumentNotNull(nameof(message), message)
+				)
+			);
 	}
 }

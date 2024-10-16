@@ -1,226 +1,255 @@
-﻿#if XUNIT_NULLABLE
+#pragma warning disable CA1032 // Implement standard exception constructors
+#pragma warning disable IDE0018 // Inline variable declaration
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
+#if XUNIT_NULLABLE
 #nullable enable
+#else
+// In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
+#pragma warning disable CS8604
+#pragma warning disable CS8625
 #endif
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
+using Xunit.Internal;
 
 namespace Xunit.Sdk
 {
 	/// <summary>
-	/// Exception thrown when two values are unexpectedly not equal.
+	/// Exception thrown when Assert.Equal fails.
 	/// </summary>
 #if XUNIT_VISIBILITY_INTERNAL
 	internal
 #else
 	public
 #endif
-	class EqualException : AssertActualExpectedException
+	partial class EqualException : XunitException
 	{
-		static readonly Dictionary<char, string> Encodings = new Dictionary<char, string>
-		{
-			{ '\r', "\\r" },
-			{ '\n', "\\n" },
-			{ '\t', "\\t" },
-			{ '\0', "\\0" }
-		};
+		static readonly string newLineAndIndent = Environment.NewLine + new string(' ', 10);  // Length of "Expected: " and "Actual:   "
 
+		EqualException(
+			string message,
 #if XUNIT_NULLABLE
-		string? message;
+			Exception? innerException = null) :
 #else
-		string message;
+			Exception innerException = null) :
 #endif
-
-		/// <summary>
-		/// Creates a new instance of the <see cref="EqualException"/> class.
-		/// </summary>
-		/// <param name="expected">The expected object value</param>
-		/// <param name="actual">The actual object value</param>
-#if XUNIT_NULLABLE
-		public EqualException(object? expected, object? actual)
-#else
-		public EqualException(object expected, object actual)
-#endif
-			: base(expected, actual, "Assert.Equal() Failure")
-		{
-			ActualIndex = -1;
-			ExpectedIndex = -1;
-		}
-
-		/// <summary>
-		/// Creates a new instance of the <see cref="EqualException"/> class for string comparisons.
-		/// </summary>
-		/// <param name="expected">The expected string value</param>
-		/// <param name="actual">The actual string value</param>
-		/// <param name="expectedIndex">The first index in the expected string where the strings differ</param>
-		/// <param name="actualIndex">The first index in the actual string where the strings differ</param>
-#if XUNIT_NULLABLE
-		public EqualException(string? expected, string? actual, int expectedIndex, int actualIndex)
-#else
-		public EqualException(string expected, string actual, int expectedIndex, int actualIndex)
-#endif
-			: this(expected, actual, expectedIndex, actualIndex, null)
+				base(message, innerException)
 		{ }
 
+		/// <summary>
+		/// Creates a new instance of <see cref="EqualException"/> to be thrown when two collections
+		/// are not equal.
+		/// </summary>
+		/// <param name="mismatchedIndex">The index at which the collections differ</param>
+		/// <param name="expected">The expected collection</param>
+		/// <param name="expectedPointer">The spacing into the expected collection where the difference occurs</param>
+		/// <param name="expectedType">The type of the expected collection items, when they differ in type</param>
+		/// <param name="actual">The actual collection</param>
+		/// <param name="actualPointer">The spacing into the actual collection where the difference occurs</param>
+		/// <param name="actualType">The type of the actual collection items, when they differ in type</param>
+		/// <param name="collectionDisplay">The display name for the collection type (defaults to "Collections")</param>
+		public static EqualException ForMismatchedCollections(
+			int? mismatchedIndex,
+			string expected,
+			int? expectedPointer,
 #if XUNIT_NULLABLE
-		EqualException(string? expected, string? actual, int expectedIndex, int actualIndex, int? pointerPosition)
+			string? expectedType,
 #else
-		EqualException(string expected, string actual, int expectedIndex, int actualIndex, int? pointerPosition)
+			string expectedType,
 #endif
-			: base(expected, actual, "Assert.Equal() Failure")
+			string actual,
+			int? actualPointer,
+#if XUNIT_NULLABLE
+			string? actualType,
+			string? collectionDisplay = null) =>
+#else
+			string actualType,
+			string collectionDisplay = null) =>
+#endif
+				ForMismatchedCollectionsWithError(mismatchedIndex, expected, expectedPointer, expectedType, actual, actualPointer, actualType, null, collectionDisplay);
+
+		/// <summary>
+		/// Creates a new instance of <see cref="EqualException"/> to be thrown when two collections
+		/// are not equal, and an error has occurred during comparison.
+		/// </summary>
+		/// <param name="mismatchedIndex">The index at which the collections differ</param>
+		/// <param name="expected">The expected collection</param>
+		/// <param name="expectedPointer">The spacing into the expected collection where the difference occurs</param>
+		/// <param name="expectedType">The type of the expected collection items, when they differ in type</param>
+		/// <param name="actual">The actual collection</param>
+		/// <param name="actualPointer">The spacing into the actual collection where the difference occurs</param>
+		/// <param name="actualType">The type of the actual collection items, when they differ in type</param>
+		/// <param name="error">The optional exception that was thrown during comparison</param>
+		/// <param name="collectionDisplay">The display name for the collection type (defaults to "Collections")</param>
+		public static EqualException ForMismatchedCollectionsWithError(
+			int? mismatchedIndex,
+			string expected,
+			int? expectedPointer,
+#if XUNIT_NULLABLE
+			string? expectedType,
+#else
+			string expectedType,
+#endif
+			string actual,
+			int? actualPointer,
+#if XUNIT_NULLABLE
+			string? actualType,
+			Exception? error,
+			string? collectionDisplay = null)
+#else
+			string actualType,
+			Exception error,
+			string collectionDisplay = null)
+#endif
 		{
-			ActualIndex = actualIndex;
-			ExpectedIndex = expectedIndex;
-			PointerPosition = pointerPosition;
+			Assert.GuardArgumentNotNull(nameof(actual), actual);
+
+			error = ArgumentFormatter.UnwrapException(error);
+			if (error is AssertEqualityComparer.OperationalFailureException)
+				return new EqualException("Assert.Equal() Failure: " + error.Message);
+
+			var message =
+				error == null
+					? string.Format(CultureInfo.CurrentCulture, "Assert.Equal() Failure: {0} differ", collectionDisplay ?? "Collections")
+					: "Assert.Equal() Failure: Exception thrown during comparison";
+
+			var expectedTypeText = expectedType != null && actualType != null && expectedType != actualType ? string.Format(CultureInfo.CurrentCulture, ", type {0}", expectedType) : "";
+			var actualTypeText = expectedType != null && actualType != null && expectedType != actualType ? string.Format(CultureInfo.CurrentCulture, ", type {0}", actualType) : "";
+
+			if (expectedPointer.HasValue && mismatchedIndex.HasValue)
+				message += string.Format(CultureInfo.CurrentCulture, "{0}          {1}\u2193 (pos {2}{3})", Environment.NewLine, new string(' ', expectedPointer.Value), mismatchedIndex, expectedTypeText);
+
+			message += string.Format(CultureInfo.CurrentCulture, "{0}Expected: {1}{2}Actual:   {3}", Environment.NewLine, expected, Environment.NewLine, actual);
+
+			if (actualPointer.HasValue && mismatchedIndex.HasValue)
+				message += string.Format(CultureInfo.CurrentCulture, "{0}          {1}\u2191 (pos {2}{3})", Environment.NewLine, new string(' ', actualPointer.Value), mismatchedIndex, actualTypeText);
+
+			return new EqualException(message, error);
 		}
 
 		/// <summary>
-		/// Gets the index into the actual value where the values first differed.
-		/// Returns -1 if the difference index points were not provided.
+		/// Creates a new instance of <see cref="EqualException"/> to be thrown when two string
+		/// values are not equal.
 		/// </summary>
-		public int ActualIndex { get; }
-
-		/// <summary>
-		/// Gets the index into the expected value where the values first differed.
-		/// Returns -1 if the difference index points were not provided.
-		/// </summary>
-		public int ExpectedIndex { get; }
-
-		/// <inheritdoc/>
-		public override string Message
+		/// <param name="expected">The expected value</param>
+		/// <param name="actual">The actual value</param>
+		/// <param name="expectedIndex">The index point in the expected string where the values differ</param>
+		/// <param name="actualIndex">The index point in the actual string where the values differ</param>
+		public static EqualException ForMismatchedStrings(
+#if XUNIT_NULLABLE
+			string? expected,
+			string? actual,
+#else
+			string expected,
+			string actual,
+#endif
+			int expectedIndex,
+			int actualIndex)
 		{
-			get
-			{
-				if (message == null)
-					message = CreateMessage();
+			var message = "Assert.Equal() Failure: Strings differ";
 
-				return message;
-			}
+			int expectedPointer;
+			int actualPointer;
+
+			var formattedExpected = AssertHelper.ShortenAndEncodeString(expected, expectedIndex, out expectedPointer);
+			var formattedActual = AssertHelper.ShortenAndEncodeString(actual, actualIndex, out actualPointer);
+
+			if (expected != null && expectedIndex > -1 && expectedIndex < expected.Length)
+				message += string.Format(CultureInfo.CurrentCulture, "{0}{1}\u2193 (pos {2})", newLineAndIndent, new string(' ', expectedPointer), expectedIndex);
+
+			message += string.Format(CultureInfo.CurrentCulture, "{0}Expected: {1}{2}Actual:   {3}", Environment.NewLine, formattedExpected, Environment.NewLine, formattedActual);
+
+			if (actual != null && expectedIndex > -1 && actualIndex < actual.Length)
+				message += string.Format(CultureInfo.CurrentCulture, "{0}{1}\u2191 (pos {2})", newLineAndIndent, new string(' ', actualPointer), actualIndex);
+
+			return new EqualException(message);
 		}
 
 		/// <summary>
-		/// Gets the index of the difference between the IEunmerables when converted to a string.
+		/// Creates a new instance of <see cref="EqualException"/> to be thrown when two values
+		/// are not equal. This may be simple values (like intrinsics) or complex values (like
+		/// classes or structs).
 		/// </summary>
-		public int? PointerPosition { get; private set; }
+		/// <param name="expected">The expected value</param>
+		/// <param name="actual">The actual value</param>
+		/// <param name="banner">The banner to show; if <c>null</c>, then the standard
+		/// banner of "Values differ" will be used</param>
+		public static EqualException ForMismatchedValues(
+#if XUNIT_NULLABLE
+			object? expected,
+			object? actual,
+			string? banner = null) =>
+#else
+			object expected,
+			object actual,
+			string banner = null) =>
+#endif
+				ForMismatchedValuesWithError(expected, actual, null, banner);
 
-		string CreateMessage()
+		/// <summary>
+		/// Creates a new instance of <see cref="EqualException"/> to be thrown when two values
+		/// are not equal. This may be simple values (like intrinsics) or complex values (like
+		/// classes or structs). Used when an error has occurred during comparison.
+		/// </summary>
+		/// <param name="expected">The expected value</param>
+		/// <param name="actual">The actual value</param>
+		/// <param name="error">The optional exception that was thrown during comparison</param>
+		/// <param name="banner">The banner to show; if <c>null</c>, then the standard
+		/// banner of "Values differ" will be used. If <paramref name="error"/> is not <c>null</c>,
+		/// then the banner used will always be "Exception thrown during comparison", regardless
+		/// of the value passed here.</param>
+		public static EqualException ForMismatchedValuesWithError(
+#if XUNIT_NULLABLE
+			object? expected,
+			object? actual,
+			Exception? error = null,
+			string? banner = null)
+#else
+			object expected,
+			object actual,
+			Exception error = null,
+			string banner = null)
+#endif
 		{
-			if (ExpectedIndex == -1)
-				return base.Message;
+			// Strings normally come through ForMismatchedStrings, so we want to make sure any
+			// string value that comes through here isn't re-formatted/truncated. This is for
+			// two reasons: (a) to support Assert.Equal<object>(string1, string2) to get a full
+			// printout of the raw string values, which is useful when debugging; and (b) to
+			// allow the assertion functions to pre-format the value themselves, perhaps with
+			// additional information (like DateTime/DateTimeOffset when providing the precision
+			// of the comparison).
+			var expectedText = expected as string ?? ArgumentFormatter.Format(expected);
+			var actualText = actual as string ?? ArgumentFormatter.Format(actual);
 
-			var printedExpected = ShortenAndEncode(Expected, PointerPosition ?? ExpectedIndex, '↓', ExpectedIndex);
-			var printedActual = ShortenAndEncode(Actual, PointerPosition ?? ActualIndex, '↑', ActualIndex);
+			var message =
+				error == null
+					? string.Format(CultureInfo.CurrentCulture, "Assert.Equal() Failure: {0}", banner ?? "Values differ")
+					: "Assert.Equal() Failure: Exception thrown during comparison";
 
-			var sb = new StringBuilder();
-			sb.Append(UserMessage);
-
-			if (!string.IsNullOrWhiteSpace(printedExpected.Item2))
-				sb.AppendFormat(
+			return new EqualException(
+				string.Format(
 					CultureInfo.CurrentCulture,
-					"{0}          {1}",
+					"{0}{1}Expected: {2}{3}Actual:   {4}",
+					message,
 					Environment.NewLine,
-					printedExpected.Item2
-				);
-
-			sb.AppendFormat(
-				CultureInfo.CurrentCulture,
-				"{0}Expected: {1}{0}Actual:   {2}",
-				Environment.NewLine,
-				printedExpected.Item1,
-				printedActual.Item1
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+					expectedText.Replace(Environment.NewLine, newLineAndIndent, StringComparison.Ordinal),
+#else
+					expectedText.Replace(Environment.NewLine, newLineAndIndent),
+#endif
+					Environment.NewLine,
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+					actualText.Replace(Environment.NewLine, newLineAndIndent, StringComparison.Ordinal)
+#else
+					actualText.Replace(Environment.NewLine, newLineAndIndent)
+#endif
+				),
+				error
 			);
-
-			if (!string.IsNullOrWhiteSpace(printedActual.Item2))
-				sb.AppendFormat(
-					CultureInfo.CurrentCulture,
-					"{0}          {1}",
-					Environment.NewLine,
-					printedActual.Item2
-				);
-
-			return sb.ToString();
-		}
-
-		/// <summary>
-		/// Creates a new instance of the <see cref="EqualException"/> class for IEnumerable comparisons.
-		/// </summary>
-		/// <param name="expected">The expected object value</param>
-		/// <param name="actual">The actual object value</param>
-		/// <param name="mismatchIndex">The first index in the expected IEnumerable where the strings differ</param>
-#if XUNIT_NULLABLE
-		public static EqualException FromEnumerable(IEnumerable? expected, IEnumerable? actual, int mismatchIndex)
-#else
-		public static EqualException FromEnumerable(IEnumerable expected, IEnumerable actual, int mismatchIndex)
-#endif
-		{
-			int? pointerPositionExpected;
-			int? pointerPositionActual;
-
-			var expectedText = ArgumentFormatter.Format(expected, out pointerPositionExpected, mismatchIndex);
-			var actualText = ArgumentFormatter.Format(actual, out pointerPositionActual, mismatchIndex);
-			var pointerPosition = (pointerPositionExpected ?? -1) > (pointerPositionActual ?? -1) ? pointerPositionExpected : pointerPositionActual;
-
-			return new EqualException(expectedText, actualText, mismatchIndex, mismatchIndex, pointerPosition);
-		}
-
-
-#if XUNIT_NULLABLE
-		static Tuple<string, string> ShortenAndEncode(string? value, int position, char pointer, int? index = null)
-#else
-		static Tuple<string, string> ShortenAndEncode(string value, int position, char pointer, int? index = null)
-#endif
-		{
-			if (value == null)
-				return Tuple.Create("(null)", "");
-
-			index = index ?? position;
-
-			var start = Math.Max(position - 20, 0);
-			var end = Math.Min(position + 41, value.Length);
-			var printedValue = new StringBuilder(100);
-			var printedPointer = new StringBuilder(100);
-
-			if (start > 0)
-			{
-				printedValue.Append("···");
-				printedPointer.Append("   ");
-			}
-
-			for (var idx = start; idx < end; ++idx)
-			{
-				var c = value[idx];
-				var paddingLength = 1;
-
-#if XUNIT_NULLABLE
-				string? encoding;
-#else
-				string encoding;
-#endif
-
-				if (Encodings.TryGetValue(c, out encoding))
-				{
-					printedValue.Append(encoding);
-					paddingLength = encoding.Length;
-				}
-				else
-					printedValue.Append(c);
-
-				if (idx < position)
-					printedPointer.Append(' ', paddingLength);
-				else if (idx == position)
-					printedPointer.AppendFormat("{0} (pos {1})", pointer, index);
-			}
-
-			if (value.Length == position)
-				printedPointer.AppendFormat("{0} (pos {1})", pointer, index);
-
-			if (end < value.Length)
-				printedValue.Append("···");
-
-			return Tuple.Create(printedValue.ToString(), printedPointer.ToString());
 		}
 	}
 }

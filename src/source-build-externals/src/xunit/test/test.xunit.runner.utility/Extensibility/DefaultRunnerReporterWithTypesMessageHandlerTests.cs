@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using NSubstitute;
@@ -148,11 +148,20 @@ public class DefaultRunnerReporterWithTypesMessageHandlerTests
     public class OnMessage_ITestAssemblyExecutionStarting
     {
         [Theory]
-        [InlineData(false, "[Imp] =>   Starting:    testAssembly")]
-        [InlineData(true, "[Imp] =>   Starting:    testAssembly (parallel test collections = on, max threads = 42)")]
-        public static void LogsMessage(bool diagnosticMessages, string expectedResult)
+        [InlineData(false, null, null, null, "[Imp] =>   Starting:    testAssembly")]
+        [InlineData(true, false, null, null, "[Imp] =>   Starting:    testAssembly (parallel test collections = off, stop on fail = off)")]
+        [InlineData(true, null, -1, null, "[Imp] =>   Starting:    testAssembly (parallel test collections = on [unlimited threads], stop on fail = off)")]
+        [InlineData(true, null, 1, null, "[Imp] =>   Starting:    testAssembly (parallel test collections = on [1 thread], stop on fail = off)")]
+        [InlineData(true, null, null, true, "[Imp] =>   Starting:    testAssembly (parallel test collections = on [42 threads], stop on fail = on)")]
+        [InlineData(true, null, null, null, "[Imp] =>   Starting:    testAssembly (parallel test collections = on [42 threads], stop on fail = off)")]
+        public static void LogsMessage(bool diagnosticMessages, bool? parallelizeTestCollections, int? maxThreads, bool? stopOnFail, string expectedResult)
         {
-            var message = Mocks.TestAssemblyExecutionStarting(diagnosticMessages: diagnosticMessages);
+            var message = Mocks.TestAssemblyExecutionStarting(
+                diagnosticMessages: diagnosticMessages,
+                parallelizeTestCollections: parallelizeTestCollections,
+                maxParallelThreads: maxThreads ?? 42,
+                stopOnFail: stopOnFail
+            );
             var handler = TestableDefaultRunnerReporterWithTypesMessageHandler.Create();
 
             handler.OnMessageWithTypes(message, null);
@@ -164,7 +173,7 @@ public class DefaultRunnerReporterWithTypesMessageHandlerTests
 
     public class OnMessage_ITestExecutionSummary
     {
-        [CulturedFact("en-US")]
+        [CulturedFact]
         public void SingleAssembly()
         {
             var clockTime = TimeSpan.FromSeconds(12.3456);
@@ -175,12 +184,12 @@ public class DefaultRunnerReporterWithTypesMessageHandlerTests
             handler.OnMessageWithTypes(message, null);
 
             Assert.Collection(handler.Messages,
-                msg => Assert.Equal("[Imp] => === TEST EXECUTION SUMMARY ===", msg),
-                msg => Assert.Equal("[Imp] =>    assembly  Total: 2112, Errors: 6, Failed: 42, Skipped: 8, Time: 1.235s", msg)
+                msg => Assert.Equal($"[Imp] => === TEST EXECUTION SUMMARY ===", msg),
+                msg => Assert.Equal($"[Imp] =>    assembly  Total: 2112, Errors: 6, Failed: 42, Skipped: 8, Time: {1.235m}s", msg)
             );
         }
 
-        [CulturedFact("en-US")]
+        [CulturedFact]
         public void MultipleAssemblies()
         {
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -199,12 +208,12 @@ public class DefaultRunnerReporterWithTypesMessageHandlerTests
             handler.OnMessageWithTypes(message, null);
 
             Assert.Collection(handler.Messages,
-                msg => Assert.Equal("[Imp] => === TEST EXECUTION SUMMARY ===", msg),
-                msg => Assert.Equal("[Imp] =>    short       Total:  2112, Errors:  6, Failed:  42, Skipped:  8, Time: 1.235s", msg),
-                msg => Assert.Equal("[Imp] =>    nothing     Total:     0", msg),
-                msg => Assert.Equal("[Imp] =>    longerName  Total: 10240, Errors:  7, Failed:  96, Skipped:  4, Time: 3.457s", msg),
-                msg => Assert.Equal("[Imp] =>                       -----          --          ---           --        ------", msg),
-                msg => Assert.Equal("[Imp] =>          GRAND TOTAL: 12352          13          138           12        4.691s (12.346s)", msg)
+                msg => Assert.Equal($"[Imp] => === TEST EXECUTION SUMMARY ===", msg),
+                msg => Assert.Equal($"[Imp] =>    short       Total:  2112, Errors:  6, Failed:  42, Skipped:  8, Time: {1.235m}s", msg),
+                msg => Assert.Equal($"[Imp] =>    nothing     Total:     0", msg),
+                msg => Assert.Equal($"[Imp] =>    longerName  Total: 10240, Errors:  7, Failed:  96, Skipped:  4, Time: {3.457m}s", msg),
+                msg => Assert.Equal($"[Imp] =>                       -----          --          ---           --        ------", msg),
+                msg => Assert.Equal($"[Imp] =>          GRAND TOTAL: 12352          13          138           12        {4.691m}s ({12.346m}s)", msg)
             );
         }
     }
@@ -235,6 +244,40 @@ public class DefaultRunnerReporterWithTypesMessageHandlerTests
         }
     }
 
+    public class OnMessage_ITestOutput
+    {
+        [Fact]
+        public void WithoutFlag_LogsNothing()
+        {
+            var executionStartingMessage = Mocks.TestAssemblyExecutionStarting(assemblyFilename: "/path/to/assembly-path.dll", showLiveOutput: false);
+            var outputMessage = Mocks.TestOutput("assembly-path.DLL", "test-name", "This is test output");
+            var handler = TestableDefaultRunnerReporterWithTypesMessageHandler.Create();
+
+            handler.OnMessage(executionStartingMessage);
+            handler.OnMessage(outputMessage);
+
+            var msg = Assert.Single(handler.Messages);
+            Assert.Equal("[Imp] =>   Starting:    assembly-path", msg);
+        }
+
+        [Fact]
+        public void WithFlag_LogsOutput()
+        {
+            var executionStartingMessage = Mocks.TestAssemblyExecutionStarting(assemblyFilename: "/path/to/assembly-path.dll", showLiveOutput: true);
+            var outputMessage = Mocks.TestOutput("assembly-path.DLL", "test-name", "This is test output");
+            var handler = TestableDefaultRunnerReporterWithTypesMessageHandler.Create();
+
+            handler.OnMessage(executionStartingMessage);
+            handler.OnMessage(outputMessage);
+
+            Assert.Collection(handler.Messages,
+                msg => Assert.Equal("[Imp] =>   Starting:    assembly-path", msg),
+                msg => Assert.Equal("[---] =>     test-name [OUTPUT] This is test output", msg)
+            );
+        }
+    }
+
+    [Collection("Environment variable manipulation")]
     public class OnMessage_ITestPassed
     {
         [Fact]
@@ -242,6 +285,8 @@ public class DefaultRunnerReporterWithTypesMessageHandlerTests
         {
             var message = Mocks.TestPassed("This is my display name \t\r\n", output: "This is\t" + Environment.NewLine + "output");
             var handler = TestableDefaultRunnerReporterWithTypesMessageHandler.Create();
+            handler.OnMessage(Mocks.TestAssemblyExecutionStarting(diagnosticMessages: false));
+            handler.Messages.Clear();  // Ignore any output from the "assembly execution starting" message
 
             handler.OnMessageWithTypes(message, null);
 
@@ -264,6 +309,22 @@ public class DefaultRunnerReporterWithTypesMessageHandlerTests
                 msg => Assert.Equal("[Imp] =>         This is\t", msg),
                 msg => Assert.Equal("[Imp] =>         output", msg)
             );
+        }
+
+        [Fact]
+        [EnvironmentRestorer(DefaultRunnerReporterWithTypesMessageHandler.EnvVar_HidePassingOutput)]
+        public void DoesNotLogOutputWhenEnvVarIsSetupWithDiagnosticsEnabled()
+        {
+            Environment.SetEnvironmentVariable(DefaultRunnerReporterWithTypesMessageHandler.EnvVar_HidePassingOutput, "1");
+
+            var message = Mocks.TestPassed("This is my display name \t\r\n", output: "This is\t" + Environment.NewLine + "output");
+            var handler = TestableDefaultRunnerReporterWithTypesMessageHandler.Create();
+            handler.OnMessage(Mocks.TestAssemblyExecutionStarting(diagnosticMessages: true, assemblyFilename: message.TestAssembly.Assembly.AssemblyPath));
+            handler.Messages.Clear();  // Ignore any output from the "assembly execution starting" message
+
+            handler.OnMessage(message);
+
+            Assert.Empty(handler.Messages);
         }
     }
 

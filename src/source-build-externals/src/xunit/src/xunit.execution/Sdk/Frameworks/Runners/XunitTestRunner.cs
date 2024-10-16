@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
@@ -54,12 +54,15 @@ namespace Xunit.Sdk
             var output = string.Empty;
 
             TestOutputHelper testOutputHelper = null;
-            foreach (object obj in ConstructorArguments)
-            {
-                testOutputHelper = obj as TestOutputHelper;
-                if (testOutputHelper != null)
+            int testOutputHelperIdx = -1;
+            for (int idx = 0; idx < ConstructorArguments.Length; ++idx)
+                if (ConstructorArguments[idx] is Func<TestOutputHelper>)
+                {
+                    testOutputHelperIdx = idx;
+                    testOutputHelper = new TestOutputHelper();
+                    ConstructorArguments[idx] = testOutputHelper;
                     break;
-            }
+                }
 
             if (testOutputHelper != null)
                 testOutputHelper.Initialize(MessageBus, Test);
@@ -70,6 +73,7 @@ namespace Xunit.Sdk
             {
                 output = testOutputHelper.Output;
                 testOutputHelper.Uninitialize();
+                ConstructorArguments[testOutputHelperIdx] = () => new TestOutputHelper();
             }
 
             return Tuple.Create(executionTime, output);

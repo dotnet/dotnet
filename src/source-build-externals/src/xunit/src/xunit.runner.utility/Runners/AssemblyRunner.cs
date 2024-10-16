@@ -19,6 +19,7 @@ namespace Xunit.Runners
         readonly TestAssemblyConfiguration configuration;
         readonly IFrontController controller;
         readonly ManualResetEvent discoveryCompleteEvent = new ManualResetEvent(true);
+        readonly ManualResetEvent discoveryCompleteIntermediateEvent = new ManualResetEvent(true);
         readonly ManualResetEvent executionCompleteEvent = new ManualResetEvent(true);
         readonly object statusLock = new object();
         int testCasesDiscovered;
@@ -159,6 +160,7 @@ namespace Xunit.Runners
 
             controller.SafeDispose();
             discoveryCompleteEvent.SafeDispose();
+            discoveryCompleteIntermediateEvent.SafeDispose();
             executionCompleteEvent.SafeDispose();
         }
 
@@ -181,7 +183,7 @@ namespace Xunit.Runners
             return discoveryOptions;
         }
 
-        ITestFrameworkExecutionOptions GetExecutionOptions(bool? diagnosticMessages, bool? parallel, int? maxParallelThreads, bool? internalDiagnosticMessages)
+        ITestFrameworkExecutionOptions GetExecutionOptions(bool? diagnosticMessages, bool? parallel, ParallelAlgorithm? parallelAlgorithm, int? maxParallelThreads, bool? internalDiagnosticMessages)
         {
             var executionOptions = TestFrameworkOptions.ForExecution(configuration);
             executionOptions.SetSynchronousMessageReporting(true);
@@ -192,6 +194,8 @@ namespace Xunit.Runners
                 executionOptions.SetDiagnosticMessages(internalDiagnosticMessages);
             if (parallel.HasValue)
                 executionOptions.SetDisableParallelization(!parallel.GetValueOrDefault());
+            if (parallelAlgorithm.HasValue)
+                executionOptions.SetParallelAlgorithm(parallelAlgorithm);
             if (maxParallelThreads.HasValue)
                 executionOptions.SetMaxParallelThreads(maxParallelThreads);
 
@@ -199,35 +203,14 @@ namespace Xunit.Runners
         }
 
         /// <summary>
-        /// Starts running tests from a single type (if provided) or the whole assembly (if not). This call returns
-        /// immediately, and status results are dispatched to the Info>s on this class. Callers can check <see cref="Status"/>
-        /// to find out the current status.
+        /// Starts running tests. This call returns immediately, and status results are dispatched to the
+        /// events on this class. Callers can check <see cref="Status"/> to find out the current status.
         /// </summary>
-        /// <param name="typeName">The (optional) type name of the single test class to run</param>
-        /// <param name="diagnosticMessages">Set to <c>true</c> to enable diagnostic messages; set to <c>false</c> to disable them.
-        /// By default, uses the value from the assembly configuration file.</param>
-        /// <param name="methodDisplay">Set to choose the default display name style for test methods.
-        /// By default, uses the value from the assembly configuration file. (This parameter is ignored for xUnit.net v1 tests.)</param>
-        /// <param name="methodDisplayOptions">Set to choose the default display name style options for test methods.
-        /// By default, uses the value from the assembly configuration file. (This parameter is ignored for xUnit.net v1 tests.)</param>
-        /// <param name="preEnumerateTheories">Set to <c>true</c> to pre-enumerate individual theory tests; set to <c>false</c> to use
-        /// a single test case for the theory. By default, uses the value from the assembly configuration file. (This parameter is ignored
-        /// for xUnit.net v1 tests.)</param>
-        /// <param name="parallel">Set to <c>true</c> to run test collections in parallel; set to <c>false</c> to run them sequentially.
-        /// By default, uses the value from the assembly configuration file. (This parameter is ignored for xUnit.net v1 tests.)</param>
-        /// <param name="maxParallelThreads">Set to 0 to use unlimited threads; set to any other positive integer to limit to an exact number
-        /// of threads. By default, uses the value from the assembly configuration file. (This parameter is ignored for xUnit.net v1 tests.)</param>
-        /// <param name="internalDiagnosticMessages">Set to <c>true</c> to enable internal diagnostic messages; set to <c>false</c> to disable them.
-        /// By default, uses the value from the assembly configuration file.</param>
-        public void Start(string typeName = null,
-                          bool? diagnosticMessages = null,
-                          TestMethodDisplay? methodDisplay = null,
-                          TestMethodDisplayOptions? methodDisplayOptions = null,
-                          bool? preEnumerateTheories = null,
-                          bool? parallel = null,
-                          int? maxParallelThreads = null,
-                          bool? internalDiagnosticMessages = null)
+        /// <param name="startOptions">The optional start options.</param>
+        public void Start(AssemblyRunnerStartOptions startOptions = null)
         {
+            startOptions ??= AssemblyRunnerStartOptions.Empty;
+
             lock (statusLock)
             {
                 if (Status != AssemblyRunnerStatus.Idle)
@@ -242,22 +225,40 @@ namespace Xunit.Runners
 
             XunitWorkerThread.QueueUserWorkItem(() =>
             {
-                var discoveryOptions = GetDiscoveryOptions(diagnosticMessages, methodDisplay, methodDisplayOptions, preEnumerateTheories, internalDiagnosticMessages);
-                if (typeName != null)
-                    controller.Find(typeName, false, this, discoveryOptions);
-                else
+                var discoveryOptions = GetDiscoveryOptions(startOptions.DiagnosticMessages,
+                                                           startOptions.MethodDisplay,
+                                                           startOptions.MethodDisplayOptions,
+                                                           startOptions.PreEnumerateTheories,
+                                                           startOptions.InternalDiagnosticMessages);
+                if (startOptions.TypesToRun.Length == 0)
+                {
+                    discoveryCompleteIntermediateEvent.Reset();
                     controller.Find(false, this, discoveryOptions);
+                    discoveryCompleteIntermediateEvent.WaitOne();
+                }
+                else
+                    foreach (var typeName in startOptions.TypesToRun.Where(t => !string.IsNullOrEmpty(t)))
+                    {
+                        discoveryCompleteIntermediateEvent.Reset();
+                        controller.Find(typeName, false, this, discoveryOptions);
+                        discoveryCompleteIntermediateEvent.WaitOne();
+                    }
 
-                discoveryCompleteEvent.WaitOne();
+                OnDiscoveryComplete?.Invoke(new DiscoveryCompleteInfo(testCasesDiscovered, testCasesToRun.Count));
+                discoveryCompleteEvent.Set();
+
                 if (cancelled)
                 {
                     // Synthesize the execution complete message, since we're not going to run at all
-                    if (OnExecutionComplete != null)
-                        OnExecutionComplete(ExecutionCompleteInfo.Empty);
+                    OnExecutionComplete?.Invoke(ExecutionCompleteInfo.Empty);
                     return;
                 }
 
-                var executionOptions = GetExecutionOptions(diagnosticMessages, parallel, maxParallelThreads, internalDiagnosticMessages);
+                var executionOptions = GetExecutionOptions(startOptions.DiagnosticMessages,
+                                                           startOptions.Parallel,
+                                                           startOptions.ParallelAlgorithm,
+                                                           startOptions.MaxParallelThreads,
+                                                           startOptions.InternalDiagnosticMessages);
                 controller.RunTests(testCasesToRun, this, executionOptions);
                 executionCompleteEvent.WaitOne();
             });
@@ -278,7 +279,7 @@ namespace Xunit.Runners
                                                    bool shadowCopy = true,
                                                    string shadowCopyFolder = null)
         {
-            Guard.ArgumentValid(nameof(shadowCopyFolder), "Cannot set shadowCopyFolder if shadowCopy is false", shadowCopy == true || shadowCopyFolder == null);
+            Guard.ArgumentValid(nameof(shadowCopyFolder), shadowCopy == true || shadowCopyFolder == null, "Cannot set shadowCopyFolder if shadowCopy is false");
 
             return new AssemblyRunner(AppDomainSupport.Required, assemblyFileName, configFileName, shadowCopy, shadowCopyFolder);
         }
@@ -315,8 +316,7 @@ namespace Xunit.Runners
 
             if (DispatchMessage<IDiscoveryCompleteMessage>(message, messageTypes, discoveryComplete =>
             {
-                OnDiscoveryComplete?.Invoke(new DiscoveryCompleteInfo(testCasesDiscovered, testCasesToRun.Count));
-                discoveryCompleteEvent.Set();
+                discoveryCompleteIntermediateEvent.Set();
             }))
                 return !cancelled;
 

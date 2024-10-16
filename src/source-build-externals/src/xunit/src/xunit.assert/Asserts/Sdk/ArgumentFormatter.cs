@@ -1,5 +1,33 @@
+#pragma warning disable CA1031 // Do not catch general exception types
+#pragma warning disable CA1707 // Identifiers should not contain underscores
+#pragma warning disable CA1810 // Initialize reference type static fields inline
+#pragma warning disable CA1825 // Avoid zero-length array allocations
+#pragma warning disable CA2263 // Prefer generic overload when type is known
+#pragma warning disable IDE0018 // Inline variable declaration
+#pragma warning disable IDE0019 // Use pattern matching
+#pragma warning disable IDE0038 // Use pattern matching
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0045 // Convert to conditional expression
+#pragma warning disable IDE0046 // Convert to conditional expression
+#pragma warning disable IDE0057 // Use range operator
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0078 // Use pattern matching
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+#pragma warning disable IDE0300 // Simplify collection initialization
+
 #if XUNIT_NULLABLE
 #nullable enable
+#else
+// In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
+#pragma warning disable CS8600
+#pragma warning disable CS8601
+#pragma warning disable CS8602
+#pragma warning disable CS8603
+#pragma warning disable CS8604
+#pragma warning disable CS8605
+#pragma warning disable CS8618
+#pragma warning disable CS8625
 #endif
 
 using System;
@@ -8,25 +36,62 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
+#if XUNIT_ARGUMENTFORMATTER_PRIVATE
+namespace Xunit.Internal
+#else
 namespace Xunit.Sdk
+#endif
 {
 	/// <summary>
-	/// Formats arguments for display in theories.
+	/// Formats value for display in assertion messages and data-driven test display names.
 	/// </summary>
+#if XUNIT_VISIBILITY_INTERNAL || XUNIT_ARGUMENTFORMATTER_PRIVATE
+	internal
+#else
+	public
+#endif
 	static class ArgumentFormatter
 	{
-		const int MAX_DEPTH = 3;
-		const int MAX_ENUMERABLE_LENGTH = 5;
-		const int MAX_OBJECT_PARAMETER_COUNT = 5;
-		const int MAX_STRING_LENGTH = 50;
+		internal static readonly string EllipsisInBrackets = "[" + new string((char)0x00B7, 3) + "]";
+
+		/// <summary>
+		/// Gets the maximum printing depth, in terms of objects before truncation.
+		/// </summary>
+		public const int MAX_DEPTH = 3;
+
+		/// <summary>
+		/// Gets the maximum number of values printed for collections before truncation.
+		/// </summary>
+		public const int MAX_ENUMERABLE_LENGTH = 5;
+
+		/// <summary>
+		/// Gets the maximum number of items (properties or fields) printed in an object before truncation.
+		/// </summary>
+		public const int MAX_OBJECT_ITEM_COUNT = 5;
+
+		/// <summary>
+		/// Gets the maximum strength length before truncation.
+		/// </summary>
+		public const int MAX_STRING_LENGTH = 50;
 
 		static readonly object[] EmptyObjects = new object[0];
 		static readonly Type[] EmptyTypes = new Type[0];
 
-		// List of system types => C# type names
+#if XUNIT_NULLABLE
+		static readonly PropertyInfo? tupleIndexer;
+		static readonly Type? tupleInterfaceType;
+		static readonly PropertyInfo? tupleLength;
+#else
+		static readonly PropertyInfo tupleIndexer;
+		static readonly Type tupleInterfaceType;
+		static readonly PropertyInfo tupleLength;
+#endif
+
+		// List of intrinsic types => C# type names
 		static readonly Dictionary<TypeInfo, string> TypeMappings = new Dictionary<TypeInfo, string>
 		{
 			{ typeof(bool).GetTypeInfo(), "bool" },
@@ -44,177 +109,203 @@ namespace Xunit.Sdk
 			{ typeof(short).GetTypeInfo(), "short" },
 			{ typeof(ushort).GetTypeInfo(), "ushort" },
 			{ typeof(string).GetTypeInfo(), "string" },
+			{ typeof(IntPtr).GetTypeInfo(), "nint" },
+			{ typeof(UIntPtr).GetTypeInfo(), "nuint" },
 		};
 
-		/// <summary>
-		/// Format the value for presentation.
-		/// </summary>
-		/// <param name="value">The value to be formatted.</param>
-		/// <param name="pointerPosition"></param>
-		/// <param name="errorIndex"></param>
-		/// <returns>The formatted value.</returns>
-#if XUNIT_NULLABLE
-		public static string Format(object? value, out int? pointerPosition, int? errorIndex = null)
-#else
-		public static string Format(object value, out int? pointerPosition, int? errorIndex = null)
-#endif
+		static ArgumentFormatter()
 		{
-			return Format(value, 1, out pointerPosition, errorIndex);
+			tupleInterfaceType = Type.GetType("System.Runtime.CompilerServices.ITuple");
+
+			if (tupleInterfaceType != null)
+			{
+				tupleIndexer = tupleInterfaceType.GetRuntimeProperty("Item");
+				tupleLength = tupleInterfaceType.GetRuntimeProperty("Length");
+			}
+
+			if (tupleIndexer == null || tupleLength == null)
+				tupleInterfaceType = null;
 		}
 
 		/// <summary>
-		/// Format the value for presentation.
+		/// Gets the ellipsis value (three middle dots, aka U+00B7).
 		/// </summary>
-		/// <param name="value">The value to be formatted.</param>
-		/// <param name="errorIndex"></param>
-		/// <returns>The formatted value.</returns>
-#if XUNIT_NULLABLE
-		public static string Format(object? value, int? errorIndex = null)
-#else
-		public static string Format(object value, int? errorIndex = null)
-#endif
-		{
-			int? pointerPosition;
+		public static string Ellipsis { get; } = new string((char)0x00B7, 3);
 
-			return Format(value, 1, out pointerPosition, errorIndex);
+		/// <summary>
+		/// Escapes a string for printing, attempting to most closely model the value on how you would
+		/// enter the value in a C# string literal. That means control codes that are normally backslash
+		/// escaped (like "\n" for newline) are represented like that; all other control codes for ASCII
+		/// values under 32 are printed as "\xnn".
+		/// </summary>
+		/// <param name="s">The string value to be escaped</param>
+		public static string EscapeString(string s)
+		{
+#if NET6_0_OR_GREATER
+			ArgumentNullException.ThrowIfNull(s);
+#else
+			if (s == null)
+				throw new ArgumentNullException(nameof(s));
+#endif
+
+			var builder = new StringBuilder(s.Length);
+			for (var i = 0; i < s.Length; i++)
+			{
+				var ch = s[i];
+#if XUNIT_NULLABLE
+				string? escapeSequence;
+#else
+				string escapeSequence;
+#endif
+				if (TryGetEscapeSequence(ch, out escapeSequence))
+					builder.Append(escapeSequence);
+				else if (ch < 32) // C0 control char
+					builder.AppendFormat(CultureInfo.CurrentCulture, @"\x{0}", (+ch).ToString("x2", CultureInfo.CurrentCulture));
+				else if (char.IsSurrogatePair(s, i)) // should handle the case of ch being the last one
+				{
+					// For valid surrogates, append like normal
+					builder.Append(ch);
+					builder.Append(s[++i]);
+				}
+				// Check for stray surrogates/other invalid chars
+				else if (char.IsSurrogate(ch) || ch == '\uFFFE' || ch == '\uFFFF')
+				{
+					builder.AppendFormat(CultureInfo.CurrentCulture, @"\x{0}", (+ch).ToString("x4", CultureInfo.CurrentCulture));
+				}
+				else
+					builder.Append(ch); // Append the char like normal
+			}
+			return builder.ToString();
 		}
 
+		/// <summary>
+		/// Formats a value for display.
+		/// </summary>
+		/// <param name="value">The value to be formatted</param>
+		/// <param name="depth">The optional printing depth (1 indicates a top-level value)</param>
+		public static string Format(
 #if XUNIT_NULLABLE
-		static string FormatInner(object? value, int depth)
+			object? value,
 #else
-		static string FormatInner(object value, int depth)
+			object value,
 #endif
+			int depth = 1)
 		{
-			int? pointerPosition;
-
-			return Format(value, depth, out pointerPosition, null);
-		}
-
-#if XUNIT_NULLABLE
-		static string Format(object? value, int depth, out int? pointerPostion, int? errorIndex = null)
-#else
-		static string Format(object value, int depth, out int? pointerPostion, int? errorIndex = null)
-#endif
-		{
-			pointerPostion = null;
-
 			if (value == null)
 				return "null";
 
 			var valueAsType = value as Type;
 			if (valueAsType != null)
-				return $"typeof({FormatTypeName(valueAsType)})";
+				return string.Format(CultureInfo.CurrentCulture, "typeof({0})", FormatTypeName(valueAsType, fullTypeName: true));
 
 			try
 			{
 				if (value.GetType().GetTypeInfo().IsEnum)
-					return value.ToString()?.Replace(", ", " | ") ?? "null";
+					return FormatEnumValue(value);
 
 				if (value is char)
-				{
-					var charValue = (char)value;
+					return FormatCharValue((char)value);
 
-					if (charValue == '\'')
-						return @"'\''";
+				if (value is float)
+					return FormatFloatValue(value);
 
-					// Take care of all of the escape sequences
-#if XUNIT_NULLABLE
-					string? escapeSequence;
-#else
-					string escapeSequence;
-#endif
-					if (TryGetEscapeSequence(charValue, out escapeSequence))
-						return $"'{escapeSequence}'";
-
-					if (char.IsLetterOrDigit(charValue) || char.IsPunctuation(charValue) || char.IsSymbol(charValue) || charValue == ' ')
-						return $"'{charValue}'";
-
-					// Fallback to hex
-					return $"0x{(int)charValue:x4}";
-				}
+				if (value is double)
+					return FormatDoubleValue(value);
 
 				if (value is DateTime || value is DateTimeOffset)
-					return $"{value:o}";
+					return FormatDateTimeValue(value);
 
 				var stringParameter = value as string;
 				if (stringParameter != null)
-				{
-					stringParameter = EscapeString(stringParameter);
-					stringParameter = stringParameter.Replace(@"""", @"\"""); // escape double quotes
-					if (stringParameter.Length > MAX_STRING_LENGTH)
-					{
-						var displayed = stringParameter.Substring(0, MAX_STRING_LENGTH);
-						return $"\"{displayed}\"...";
-					}
+					return FormatStringValue(stringParameter);
 
-					return $"\"{stringParameter}\"";
-				}
+#if !XUNIT_ARGUMENTFORMATTER_PRIVATE
+				var tracker = value as CollectionTracker;
+				if (tracker != null)
+					return tracker.FormatStart(depth);
+#endif
 
-				try
-				{
-					var enumerable = value as IEnumerable;
-					if (enumerable != null)
-						return FormatEnumerable(enumerable.Cast<object>(), depth, errorIndex, out pointerPostion);
-				}
-				catch
-				{
-					// Sometimes enumerables cannot be enumerated when being, and instead thrown an exception.
-					// This could be, for example, because they require state that is not provided by Xunit.
-					// In these cases, just continue formatting.
-				}
-
-				if (value is float)
-					return $"{value:G9}";
-
-				if (value is double)
-					return $"{value:G17}";
+				var enumerable = value as IEnumerable;
+				if (enumerable != null)
+					return FormatEnumerableValue(enumerable, depth);
 
 				var type = value.GetType();
 				var typeInfo = type.GetTypeInfo();
+
+				if (tupleInterfaceType != null && type.GetTypeInfo().ImplementedInterfaces.Contains(tupleInterfaceType))
+					return FormatTupleValue(value, depth);
+
 				if (typeInfo.IsValueType)
-				{
-					if (typeInfo.IsGenericType && typeInfo.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
-					{
-						var k = typeInfo.GetDeclaredProperty("Key")?.GetValue(value, null);
-						var v = typeInfo.GetDeclaredProperty("Value")?.GetValue(value, null);
-
-						return $"[{Format(k)}] = {Format(v)}";
-					}
-
-					return Convert.ToString(value, CultureInfo.CurrentCulture) ?? "null";
-				}
+					return FormatValueTypeValue(value, typeInfo);
 
 				var task = value as Task;
 				if (task != null)
 				{
 					var typeParameters = typeInfo.GenericTypeArguments;
-					var typeName = typeParameters.Length == 0 ? "Task" : $"Task<{string.Join(",", typeParameters.Select(FormatTypeName))}>";
-					return $"{typeName} {{ Status = {task.Status} }}";
+					var typeName =
+						typeParameters.Length == 0
+							? "Task"
+							: string.Format(CultureInfo.CurrentCulture, "Task<{0}>", string.Join(",", typeParameters.Select(t => FormatTypeName(t))));
+
+					return string.Format(CultureInfo.CurrentCulture, "{0} {{ Status = {1} }}", typeName, task.Status);
 				}
 
-				var toString = type.GetRuntimeMethod("ToString", EmptyTypes);
+				// TODO: ValueTask?
 
-				if (toString != null && toString.DeclaringType != typeof(object))
+				var isAnonymousType = typeInfo.IsAnonymousType();
+				if (!isAnonymousType)
+				{
+					var toString = type.GetRuntimeMethod("ToString", EmptyTypes);
+
+					if (toString != null && toString.DeclaringType != typeof(object))
 #if XUNIT_NULLABLE
-					return ((string?)toString.Invoke(value, EmptyObjects)) ?? "null";
+						return ((string?)toString.Invoke(value, EmptyObjects)) ?? "null";
 #else
-					return ((string)toString.Invoke(value, EmptyObjects)) ?? "null";
+						return ((string)toString.Invoke(value, EmptyObjects)) ?? "null";
 #endif
+				}
 
-				return FormatComplexValue(value, depth, type);
+				return FormatComplexValue(value, depth, type, isAnonymousType);
 			}
 			catch (Exception ex)
 			{
 				// Sometimes an exception is thrown when formatting an argument, such as in ToString.
 				// In these cases, we don't want xunit to crash, as tests may have passed despite this.
-				return $"{ex.GetType().Name} was thrown formatting an object of type \"{value.GetType()}\"";
+				return string.Format(CultureInfo.CurrentCulture, "{0} was thrown formatting an object of type \"{1}\"", ex.GetType().Name, value.GetType());
 			}
 		}
 
-		static string FormatComplexValue(object value, int depth, Type type)
+		static string FormatCharValue(char value)
 		{
+			if (value == '\'')
+				return @"'\''";
+
+			// Take care of all of the escape sequences
+#if XUNIT_NULLABLE
+			string? escapeSequence;
+#else
+			string escapeSequence;
+#endif
+			if (TryGetEscapeSequence(value, out escapeSequence))
+				return string.Format(CultureInfo.CurrentCulture, "'{0}'", escapeSequence);
+
+			if (char.IsLetterOrDigit(value) || char.IsPunctuation(value) || char.IsSymbol(value) || value == ' ')
+				return string.Format(CultureInfo.CurrentCulture, "'{0}'", value);
+
+			// Fallback to hex
+			return string.Format(CultureInfo.CurrentCulture, "0x{0:x4}", (int)value);
+		}
+
+		static string FormatComplexValue(
+			object value,
+			int depth,
+			Type type,
+			bool isAnonymousType)
+		{
+			var typeName = isAnonymousType ? "" : type.Name + " ";
+
 			if (depth == MAX_DEPTH)
-				return $"{type.Name} {{ ... }}";
+				return string.Format(CultureInfo.CurrentCulture, "{0}{{ {1} }}", typeName, Ellipsis);
 
 			var fields =
 				type
@@ -232,74 +323,140 @@ namespace Xunit.Sdk
 				fields
 					.Concat(properties)
 					.OrderBy(p => p.name)
-					.Take(MAX_OBJECT_PARAMETER_COUNT + 1)
+					.Take(MAX_OBJECT_ITEM_COUNT + 1)
 					.ToList();
 
 			if (parameters.Count == 0)
-				return $"{type.Name} {{ }}";
+				return string.Format(CultureInfo.CurrentCulture, "{0}{{ }}", typeName);
 
-			var formattedParameters = string.Join(", ", parameters.Take(MAX_OBJECT_PARAMETER_COUNT).Select(p => $"{p.name} = {p.value}"));
+			var formattedParameters = string.Join(", ", parameters.Take(MAX_OBJECT_ITEM_COUNT).Select(p => string.Format(CultureInfo.CurrentCulture, "{0} = {1}", p.name, p.value)));
 
-			if (parameters.Count > MAX_OBJECT_PARAMETER_COUNT)
-				formattedParameters += ", ...";
+			if (parameters.Count > MAX_OBJECT_ITEM_COUNT)
+				formattedParameters += ", " + Ellipsis;
 
-			return $"{type.Name} {{ {formattedParameters} }}";
+			return string.Format(CultureInfo.CurrentCulture, "{0}{{ {1} }}", typeName, formattedParameters);
 		}
 
-		static string FormatEnumerable(IEnumerable<object> enumerableValues, int depth, int? neededIndex, out int? pointerPostion)
+		static string FormatDateTimeValue(object value) =>
+			string.Format(CultureInfo.CurrentCulture, "{0:o}", value);
+
+		static string FormatDoubleValue(object value) =>
+			string.Format(CultureInfo.CurrentCulture, "{0:G17}", value);
+
+		static string FormatEnumValue(object value) =>
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+			value.ToString()?.Replace(", ", " | ", StringComparison.Ordinal) ?? "null";
+#else
+			value.ToString()?.Replace(", ", " | ") ?? "null";
+#endif
+
+		static string FormatEnumerableValue(
+			IEnumerable enumerable,
+			int depth)
 		{
-			pointerPostion = null;
-
 			if (depth == MAX_DEPTH)
-				return "[...]";
+				return EllipsisInBrackets;
 
-			var printedValues = string.Empty;
+			var result = new StringBuilder();
 
-			if (neededIndex.HasValue)
+			var groupingTypes = GetGroupingTypes(enumerable);
+			if (groupingTypes != null)
 			{
-				var enumeratedValues = enumerableValues.ToList();
+				var groupingInterface = typeof(IGrouping<,>).MakeGenericType(groupingTypes);
+				var key = groupingInterface.GetRuntimeProperty("Key")?.GetValue(enumerable);
+				result.AppendFormat(CultureInfo.CurrentCulture, "[{0}] = ", key?.ToString() ?? "null");
+			}
+			else if (!SafeToMultiEnumerate(enumerable))
+				return EllipsisInBrackets;
 
-				var half = (int)Math.Floor(MAX_ENUMERABLE_LENGTH / 2m);
-				var startIndex = Math.Max(0, neededIndex.Value - half);
-				var endIndex = Math.Min(enumeratedValues.Count, startIndex + MAX_ENUMERABLE_LENGTH);
-				startIndex = Math.Max(0, endIndex - MAX_ENUMERABLE_LENGTH);
+			// This should only be used on values that are known to be re-enumerable
+			// safely, like collections that implement IDictionary or IList.
+			var idx = 0;
+			var enumerator = enumerable.GetEnumerator();
 
-				var leftCount = neededIndex.Value - startIndex;
+			result.Append('[');
 
-				if (startIndex != 0)
-					printedValues += "..., ";
+			while (enumerator.MoveNext())
+			{
+				if (idx != 0)
+					result.Append(", ");
 
-				var leftValues = enumeratedValues.Skip(startIndex).Take(leftCount).ToList();
-				var rightValues = enumeratedValues.Skip(startIndex + leftCount).Take(MAX_ENUMERABLE_LENGTH - leftCount + 1).ToList();
-
-				// Values to the left of the difference
-				if (leftValues.Count > 0)
+				if (idx == MAX_ENUMERABLE_LENGTH)
 				{
-					printedValues += string.Join(", ", leftValues.Select(x => FormatInner(x, depth + 1)));
-
-					if (rightValues.Count > 0)
-						printedValues += ", ";
+					result.Append(Ellipsis);
+					break;
 				}
 
-				pointerPostion = printedValues.Length + 1;
+				var current = enumerator.Current;
+				var nextDepth = current is IEnumerable ? depth + 1 : depth;
 
-				// Difference value and values to the right
-				printedValues += string.Join(", ", rightValues.Take(MAX_ENUMERABLE_LENGTH - leftCount).Select(x => FormatInner(x, depth + 1)));
-				if (leftValues.Count + rightValues.Count > MAX_ENUMERABLE_LENGTH)
-					printedValues += ", ...";
-			}
-			else
-			{
-				var values = enumerableValues.Take(MAX_ENUMERABLE_LENGTH + 1).ToList();
-				printedValues += string.Join(", ", values.Take(MAX_ENUMERABLE_LENGTH).Select(x => FormatInner(x, depth + 1)));
-				if (values.Count > MAX_ENUMERABLE_LENGTH)
-					printedValues += ", ...";
+				result.Append(Format(current, nextDepth));
+
+				++idx;
 			}
 
-			return $"[{printedValues}]";
+			result.Append(']');
+			return result.ToString();
 		}
 
-		static string FormatTypeName(Type type)
+		static string FormatFloatValue(object value) =>
+			string.Format(CultureInfo.CurrentCulture, "{0:G9}", value);
+
+		static string FormatStringValue(string value)
+		{
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+			value = EscapeString(value).Replace(@"""", @"\""", StringComparison.Ordinal); // escape double quotes
+#else
+			value = EscapeString(value).Replace(@"""", @"\"""); // escape double quotes
+#endif
+
+			if (value.Length > MAX_STRING_LENGTH)
+			{
+				var displayed = value.Substring(0, MAX_STRING_LENGTH);
+				return string.Format(CultureInfo.CurrentCulture, "\"{0}\"{1}", displayed, Ellipsis);
+			}
+
+			return string.Format(CultureInfo.CurrentCulture, "\"{0}\"", value);
+		}
+
+		static string FormatTupleValue(
+			object tupleParameter,
+			int depth)
+		{
+			var result = new StringBuilder("Tuple (");
+#if XUNIT_NULLABLE
+			var length = (int)tupleLength!.GetValue(tupleParameter)!;
+#else
+			var length = (int)tupleLength.GetValue(tupleParameter);
+#endif
+
+			for (var idx = 0; idx < length; ++idx)
+			{
+				if (idx != 0)
+					result.Append(", ");
+
+#if XUNIT_NULLABLE
+				var value = tupleIndexer!.GetValue(tupleParameter, new object[] { idx });
+#else
+				var value = tupleIndexer.GetValue(tupleParameter, new object[] { idx });
+#endif
+				result.Append(Format(value, depth + 1));
+			}
+
+			result.Append(')');
+
+			return result.ToString();
+		}
+
+		/// <summary>
+		/// Formats a type. This maps built-in C# types to their C# native name (e.g., printing "int" instead
+		/// of "Int32" or "System.Int32").
+		/// </summary>
+		/// <param name="type">The type to get the formatted name of</param>
+		/// <param name="fullTypeName">Set to <c>true</c> to include the namespace; set to <c>false</c> for just the simple type name</param>
+		public static string FormatTypeName(
+			Type type,
+			bool fullTypeName = false)
 		{
 			var typeInfo = type.GetTypeInfo();
 			var arraySuffix = "";
@@ -307,8 +464,17 @@ namespace Xunit.Sdk
 			// Deconstruct and re-construct array
 			while (typeInfo.IsArray)
 			{
-				var rank = typeInfo.GetArrayRank();
-				arraySuffix += $"[{new string(',', rank - 1)}]";
+				if (typeInfo.IsSZArrayType())
+					arraySuffix += "[]";
+				else
+				{
+					var rank = typeInfo.GetArrayRank();
+					if (rank == 1)
+						arraySuffix += "[*]";
+					else
+						arraySuffix += string.Format(CultureInfo.CurrentCulture, "[{0}]", new string(',', rank - 1));
+				}
+
 #if XUNIT_NULLABLE
 				typeInfo = typeInfo.GetElementType()!.GetTypeInfo();
 #else
@@ -322,97 +488,140 @@ namespace Xunit.Sdk
 #else
 			string result;
 #endif
-			if (TypeMappings.TryGetValue(typeInfo, out result))
-				return result + arraySuffix;
+			var shortTypeInfo = typeInfo.IsGenericType ? typeInfo.GetGenericTypeDefinition().GetTypeInfo() : typeInfo;
+			if (!TypeMappings.TryGetValue(shortTypeInfo, out result))
+				result = fullTypeName ? typeInfo.FullName : typeInfo.Name;
 
-			// Strip off generic suffix
-			var name = typeInfo.FullName;
-
-			// catch special case of generic parameters not being bound to a specific type:
-			if (name == null)
+			if (result == null)
 				return typeInfo.Name;
 
-			var tickIdx = name.IndexOf('`');
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+			var tickIdx = result.IndexOf('`', StringComparison.Ordinal);
+#else
+			var tickIdx = result.IndexOf('`');
+#endif
 			if (tickIdx > 0)
-				name = name.Substring(0, tickIdx);
+				result = result.Substring(0, tickIdx);
 
 			if (typeInfo.IsGenericTypeDefinition)
-				name = $"{name}<{new string(',', typeInfo.GenericTypeParameters.Length - 1)}>";
+				result = string.Format(CultureInfo.CurrentCulture, "{0}<{1}>", result, new string(',', typeInfo.GenericTypeParameters.Length - 1));
 			else if (typeInfo.IsGenericType)
 			{
 				if (typeInfo.GetGenericTypeDefinition() == typeof(Nullable<>))
-					name = FormatTypeName(typeInfo.GenericTypeArguments[0]) + "?";
+					result = FormatTypeName(typeInfo.GenericTypeArguments[0]) + "?";
 				else
-					name = $"{name}<{string.Join(", ", typeInfo.GenericTypeArguments.Select(FormatTypeName))}>";
+					result = string.Format(CultureInfo.CurrentCulture, "{0}<{1}>", result, string.Join(", ", typeInfo.GenericTypeArguments.Select(t => FormatTypeName(t))));
 			}
 
-			return name + arraySuffix;
+			return result + arraySuffix;
+		}
+
+		static string FormatValueTypeValue(
+			object value,
+			TypeInfo typeInfo)
+		{
+			if (typeInfo.IsGenericType && typeInfo.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
+			{
+				var k = typeInfo.GetDeclaredProperty("Key")?.GetValue(value, null);
+				var v = typeInfo.GetDeclaredProperty("Value")?.GetValue(value, null);
+
+				return string.Format(CultureInfo.CurrentCulture, "[{0}] = {1}", Format(k), Format(v));
+			}
+
+			return Convert.ToString(value, CultureInfo.CurrentCulture) ?? "null";
 		}
 
 #if XUNIT_NULLABLE
-		static string WrapAndGetFormattedValue(Func<object?> getter, int depth)
+		internal static Type[]? GetGroupingTypes(object? obj)
 #else
-		static string WrapAndGetFormattedValue(Func<object> getter, int depth)
+		internal static Type[] GetGroupingTypes(object obj)
 #endif
 		{
-			try
-			{
-				return FormatInner(getter(), depth + 1);
-			}
-			catch (Exception ex)
-			{
-				return $"(throws {UnwrapException(ex)?.GetType().Name})";
-			}
+			if (obj == null)
+				return null;
+
+			return
+				(from @interface in obj.GetType().GetTypeInfo().ImplementedInterfaces
+				 where @interface.GetTypeInfo().IsGenericType
+				 let genericTypeDefinition = @interface.GetGenericTypeDefinition()
+				 where genericTypeDefinition == typeof(IGrouping<,>)
+				 select @interface.GetTypeInfo()).FirstOrDefault()?.GenericTypeArguments;
 		}
 
-		static Exception UnwrapException(Exception ex)
-		{
-			while (true)
-			{
-				var tiex = ex as TargetInvocationException;
-				if (tiex == null || tiex.InnerException == null)
-					return ex;
-
-				ex = tiex.InnerException;
-			}
-		}
-
-		internal static string EscapeString(string s)
-		{
-			var builder = new StringBuilder(s.Length);
-			for (var i = 0; i < s.Length; i++)
-			{
-				var ch = s[i];
 #if XUNIT_NULLABLE
-				string? escapeSequence;
+		internal static Type? GetSetElementType(object? obj)
 #else
-				string escapeSequence;
+		internal static Type GetSetElementType(object obj)
 #endif
-				if (TryGetEscapeSequence(ch, out escapeSequence))
-					builder.Append(escapeSequence);
-				else if (ch < 32) // C0 control char
-					builder.AppendFormat(@"\x{0}", (+ch).ToString("x2"));
-				else if (char.IsSurrogatePair(s, i)) // should handle the case of ch being the last one
-				{
-					// For valid surrogates, append like normal
-					builder.Append(ch);
-					builder.Append(s[++i]);
-				}
-				// Check for stray surrogates/other invalid chars
-				else if (char.IsSurrogate(ch) || ch == '\uFFFE' || ch == '\uFFFF')
-				{
-					builder.AppendFormat(@"\x{0}", (+ch).ToString("x4"));
-				}
-				else
-					builder.Append(ch); // Append the char like normal
-			}
-			return builder.ToString();
+		{
+			if (obj == null)
+				return null;
+
+			return
+				(from @interface in obj.GetType().GetTypeInfo().ImplementedInterfaces
+				 where @interface.GetTypeInfo().IsGenericType
+				 let genericTypeDefinition = @interface.GetGenericTypeDefinition()
+				 where genericTypeDefinition == typeof(ISet<>)
+				 select @interface.GetTypeInfo()).FirstOrDefault()?.GenericTypeArguments[0];
 		}
 
-#if XUNIT_NULLABLE
-		static bool TryGetEscapeSequence(char ch, out string? value)
+		static bool IsAnonymousType(this TypeInfo typeInfo)
+		{
+			// There isn't a sanctioned way to do this, so we look for compiler-generated types that
+			// include "AnonymousType" in their names.
+			if (typeInfo.GetCustomAttribute(typeof(CompilerGeneratedAttribute)) == null)
+				return false;
+
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+			return typeInfo.Name.Contains("AnonymousType", StringComparison.Ordinal);
 #else
-		static bool TryGetEscapeSequence(char ch, out string value)
+			return typeInfo.Name.Contains("AnonymousType");
+#endif
+		}
+
+		static bool IsEnumerableOfGrouping(IEnumerable collection)
+		{
+			var genericEnumerableType =
+				(from @interface in collection.GetType().GetTypeInfo().ImplementedInterfaces
+				 where @interface.GetTypeInfo().IsGenericType
+				 let genericTypeDefinition = @interface.GetGenericTypeDefinition()
+				 where genericTypeDefinition == typeof(IEnumerable<>)
+				 select @interface.GetTypeInfo()).FirstOrDefault()?.GenericTypeArguments[0];
+
+			if (genericEnumerableType == null)
+				return false;
+
+			return
+				genericEnumerableType
+					.GetTypeInfo()
+					.ImplementedInterfaces
+					.Concat(new[] { genericEnumerableType })
+					.Any(i => i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(IGrouping<,>));
+		}
+
+		static bool IsSZArrayType(this TypeInfo typeInfo) =>
+#if NETCOREAPP2_0_OR_GREATER
+			typeInfo.IsSZArray;
+#elif XUNIT_NULLABLE
+			typeInfo == typeInfo.GetElementType()!.MakeArrayType().GetTypeInfo();
+#else
+			typeInfo == typeInfo.GetElementType().MakeArrayType().GetTypeInfo();
+#endif
+
+		static bool SafeToMultiEnumerate(IEnumerable collection) =>
+			collection is Array ||
+			collection is BitArray ||
+			collection is IList ||
+			collection is IDictionary ||
+			GetSetElementType(collection) != null ||
+			IsEnumerableOfGrouping(collection);
+
+		static bool TryGetEscapeSequence(
+			char ch,
+#if XUNIT_NULLABLE
+			out string? value)
+#else
+			out string value)
 #endif
 		{
 			value = null;
@@ -437,6 +646,43 @@ namespace Xunit.Sdk
 				value = @"\\";
 
 			return value != null;
+		}
+
+#if XUNIT_NULLABLE
+		internal static Exception? UnwrapException(Exception? ex)
+#else
+		internal static Exception UnwrapException(Exception ex)
+#endif
+		{
+			if (ex == null)
+				return null;
+
+			while (true)
+			{
+				var tiex = ex as TargetInvocationException;
+				if (tiex == null || tiex.InnerException == null)
+					return ex;
+
+				ex = tiex.InnerException;
+			}
+		}
+
+		static string WrapAndGetFormattedValue(
+#if XUNIT_NULLABLE
+			Func<object?> getter,
+#else
+			Func<object> getter,
+#endif
+			int depth)
+		{
+			try
+			{
+				return Format(getter(), depth + 1);
+			}
+			catch (Exception ex)
+			{
+				return string.Format(CultureInfo.CurrentCulture, "(throws {0})", UnwrapException(ex)?.GetType().Name);
+			}
 		}
 	}
 }

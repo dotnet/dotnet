@@ -1,10 +1,25 @@
-﻿#if XUNIT_NULLABLE
+#pragma warning disable CA1032 // Implement standard exception constructors
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+#pragma warning disable IDE0300 // Simplify collection initialization
+
+#if XUNIT_NULLABLE
 #nullable enable
+#else
+// In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
+#pragma warning disable CS8604
 #endif
 
 using System;
 using System.Globalization;
 using System.Linq;
+
+// An "ExceptionUtility" class exists in both xunit.assert (Xunit.Internal.ExceptionUtility) as well as xunit.execution.dotnet (Xunit.Sdk.ExceptionUtility)
+// This causes an compile-time error in projects that reference both the xunit.assert.source and xunit.core packages.
+// To resolve this issue, add an alias for the Xunit.Internal.ExceptionUtility to make sure, the xunit.assert core uses the right ExceptionUtility
+using ExceptionUtilityInternal = Xunit.Internal.ExceptionUtility;
 
 namespace Xunit.Sdk
 {
@@ -16,124 +31,82 @@ namespace Xunit.Sdk
 #else
 	public
 #endif
-	class CollectionException : XunitException
+	partial class CollectionException : XunitException
 	{
-#if XUNIT_NULLABLE
-		readonly string? innerException;
-		readonly string? innerStackTrace;
-#else
-		readonly string innerException;
-		readonly string innerStackTrace;
-#endif
+		static readonly char[] crlfSeparators = new[] { '\r', '\n' };
 
-		/// <summary>
-		/// Creates a new instance of the <see cref="CollectionException"/> class.
-		/// </summary>
-		/// <param name="collection">The collection that failed the test.</param>
-		/// <param name="expectedCount">The expected number of items in the collection.</param>
-		/// <param name="actualCount">The actual number of items in the collection.</param>
-		/// <param name="indexFailurePoint">The index of the position where the first comparison failure occurred.</param>
-		/// <param name="innerException">The exception that was thrown during the comparison failure.</param>
-#if XUNIT_NULLABLE
-		public CollectionException(object? collection, int expectedCount, int actualCount, int indexFailurePoint = -1, Exception? innerException = null)
-#else
-		public CollectionException(object collection, int expectedCount, int actualCount, int indexFailurePoint = -1, Exception innerException = null)
-#endif
-			: base("Assert.Collection() Failure")
-		{
-			Collection = collection;
-			ExpectedCount = expectedCount;
-			ActualCount = actualCount;
-			IndexFailurePoint = indexFailurePoint;
-			this.innerException = FormatInnerException(innerException);
-			innerStackTrace = innerException == null ? null : innerException.StackTrace;
-		}
+		CollectionException(string message) :
+			base(message)
+		{ }
 
-		/// <summary>
-		/// The collection that failed the test.
-		/// </summary>
-#if XUNIT_NULLABLE
-		public object? Collection { get; set; }
-#else
-		public object Collection { get; set; }
-#endif
-
-		/// <summary>
-		/// The actual number of items in the collection.
-		/// </summary>
-		public int ActualCount { get; set; }
-
-		/// <summary>
-		/// The expected number of items in the collection.
-		/// </summary>
-		public int ExpectedCount { get; set; }
-
-		/// <summary>
-		/// The index of the position where the first comparison failure occurred, or -1 if
-		/// comparisions did not occur (because the actual and expected counts differed).
-		/// </summary>
-		public int IndexFailurePoint { get; set; }
-
-		/// <inheritdoc/>
-		public override string Message
-		{
-			get
-			{
-				if (IndexFailurePoint >= 0)
-					return string.Format(
-						CultureInfo.CurrentCulture,
-						"{0}{4}Collection: {1}{4}Error during comparison of item at index {2}{4}Inner exception: {3}",
-						base.Message,
-						ArgumentFormatter.Format(Collection),
-						IndexFailurePoint,
-						innerException,
-						Environment.NewLine
-					);
-
-				return string.Format(
-					CultureInfo.CurrentCulture,
-					"{0}{4}Collection: {1}{4}Expected item count: {2}{4}Actual item count:   {3}",
-					base.Message,
-					ArgumentFormatter.Format(Collection),
-					ExpectedCount,
-					ActualCount,
-					Environment.NewLine
-				);
-			}
-		}
-
-		/// <inheritdoc/>
-#if XUNIT_NULLABLE
-		public override string? StackTrace
-#else
-		public override string StackTrace
-#endif
-		{
-			get
-			{
-				if (innerStackTrace == null)
-					return base.StackTrace;
-
-				return innerStackTrace + Environment.NewLine + base.StackTrace;
-			}
-		}
-
-#if XUNIT_NULLABLE
-		static string? FormatInnerException(Exception? innerException)
-#else
 		static string FormatInnerException(Exception innerException)
-#endif
 		{
-			if (innerException == null)
-				return null;
+			var text = innerException.Message;
+			var filteredStack = ExceptionUtilityInternal.TransformStackTrace(ExceptionUtilityInternal.FilterStackTrace(innerException.StackTrace), "  ");
+			if (!string.IsNullOrWhiteSpace(filteredStack))
+			{
+				if (text.Length != 0)
+					text += Environment.NewLine;
+
+				text += "Stack Trace:" + Environment.NewLine + filteredStack;
+			}
 
 			var lines =
-				innerException
-					.Message
-					.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-					.Select((value, idx) => idx > 0 ? "        " + value : value);
+				text
+					.Split(crlfSeparators, StringSplitOptions.RemoveEmptyEntries)
+					.Select((value, idx) => idx > 0 ? "            " + value : value);
 
 			return string.Join(Environment.NewLine, lines);
 		}
+
+		/// <summary>
+		/// Creates an instance of the <see cref="CollectionException"/> class to be thrown
+		/// when an item comparison failed
+		/// </summary>
+		/// <param name="exception">The exception that was thrown</param>
+		/// <param name="indexFailurePoint">The item index for the failed item</param>
+		/// <param name="failurePointerIndent">The number of spaces needed to indent the failure pointer</param>
+		/// <param name="formattedCollection">The formatted collection</param>
+		public static CollectionException ForMismatchedItem(
+			Exception exception,
+			int indexFailurePoint,
+			int? failurePointerIndent,
+			string formattedCollection)
+		{
+			Assert.GuardArgumentNotNull(nameof(exception), exception);
+
+			var message = "Assert.Collection() Failure: Item comparison failure";
+
+			if (failurePointerIndent.HasValue)
+				message += string.Format(CultureInfo.CurrentCulture, "{0}            {1}\u2193 (pos {2})", Environment.NewLine, new string(' ', failurePointerIndent.Value), indexFailurePoint);
+
+			message += string.Format(CultureInfo.CurrentCulture, "{0}Collection: {1}{2}Error:      {3}", Environment.NewLine, formattedCollection, Environment.NewLine, FormatInnerException(exception));
+
+			return new CollectionException(message);
+		}
+
+		/// <summary>
+		/// Creates an instance of the <see cref="CollectionException"/> class to be thrown
+		/// when the item count in a collection does not match the expected count.
+		/// </summary>
+		/// <param name="expectedCount">The expected item count</param>
+		/// <param name="actualCount">The actual item count</param>
+		/// <param name="formattedCollection">The formatted collection</param>
+		public static CollectionException ForMismatchedItemCount(
+			int expectedCount,
+			int actualCount,
+			string formattedCollection) =>
+				new CollectionException(
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.Collection() Failure: Mismatched item count{0}Collection:     {1}{2}Expected count: {3}{4}Actual count:   {5}",
+						Environment.NewLine,
+						Assert.GuardArgumentNotNull(nameof(formattedCollection), formattedCollection),
+						Environment.NewLine,
+						expectedCount,
+						Environment.NewLine,
+						actualCount
+					)
+				);
 	}
 }

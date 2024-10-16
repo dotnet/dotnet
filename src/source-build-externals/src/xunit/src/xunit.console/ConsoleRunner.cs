@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,6 +29,9 @@ namespace Xunit.ConsoleClient
         public int EntryPoint(string[] args)
         {
             commandLine = CommandLine.Parse(args);
+
+            if (commandLine.UseAnsiColor)
+                ConsoleHelper.UseAnsiColor();
 
             try
             {
@@ -76,7 +79,7 @@ namespace Xunit.ConsoleClient
                 if (commandLine.Debug)
                     Debugger.Launch();
 
-                logger = new ConsoleRunnerLogger(!commandLine.NoColor, consoleLock);
+                logger = new ConsoleRunnerLogger(!commandLine.NoColor, commandLine.UseAnsiColor, consoleLock);
                 reporterMessageHandler = MessageSinkWithTypesAdapter.Wrap(reporter.CreateMessageHandler(logger));
 
                 if (!commandLine.NoLogo)
@@ -85,7 +88,8 @@ namespace Xunit.ConsoleClient
                 var failCount = RunProject(commandLine.Project, commandLine.Serialize, commandLine.ParallelizeAssemblies,
                                            commandLine.ParallelizeTestCollections, commandLine.MaxParallelThreads,
                                            commandLine.DiagnosticMessages, commandLine.NoColor, commandLine.AppDomains,
-                                           commandLine.FailSkips, commandLine.StopOnFail, commandLine.InternalDiagnosticMessages);
+                                           commandLine.FailSkips, commandLine.StopOnFail, commandLine.InternalDiagnosticMessages,
+                                           commandLine.ParallelAlgorithm, commandLine.ShowLiveOutput);
 
                 if (cancel)
                     return -1073741510;    // 0xC000013A: The application terminated as a result of a CTRL+C
@@ -105,7 +109,7 @@ namespace Xunit.ConsoleClient
                 if (!commandLine.NoColor)
                     ConsoleHelper.SetForegroundColor(ConsoleColor.Red);
 
-                Console.WriteLine($"error: {ex.Message}");
+                Console.WriteLine("error: {0}", ex.Message);
 
                 if (commandLine.InternalDiagnosticMessages)
                 {
@@ -126,50 +130,23 @@ namespace Xunit.ConsoleClient
 
         List<IRunnerReporter> GetAvailableRunnerReporters()
         {
-            var result = new List<IRunnerReporter>();
+            var result = RunnerReporterUtility.GetAvailableRunnerReporters(Path.GetDirectoryName(typeof(Program).GetTypeInfo().Assembly.GetLocalCodeBase()), out var messages);
 
-            var runnerPath = Path.GetDirectoryName(typeof(Program).GetTypeInfo().Assembly.Location);
-
-            foreach (var dllFile in Directory.GetFiles(runnerPath, "*.dll").Select(f => Path.Combine(runnerPath, f)))
-            {
-                Type[] types = new Type[0];
-
-                try
+            if (messages.Count > 0)
+                lock (consoleLock)
                 {
-#if NETFRAMEWORK
-                    var assembly = Assembly.LoadFile(dllFile);
-#else
-                    var assembly = Assembly.Load(new AssemblyName(Path.GetFileNameWithoutExtension(dllFile)));
-#endif
-                    types = assembly.GetTypes();
-                }
-                catch (ReflectionTypeLoadException ex)
-                {
-                    types = ex.Types;
-                }
-                catch
-                {
-                    continue;
-                }
-
-                foreach (var type in types)
-                {
-#pragma warning disable CS0618
-                    if (type == null || type.GetTypeInfo().IsAbstract || type == typeof(DefaultRunnerReporter) || type == typeof(DefaultRunnerReporterWithTypes) || !type.GetInterfaces().Any(t => t == typeof(IRunnerReporter)))
-                        continue;
-#pragma warning restore CS0618
-                    var ctor = type.GetConstructor(new Type[0]);
-                    if (ctor == null)
-                    {
+                    if (!commandLine.NoColor)
                         ConsoleHelper.SetForegroundColor(ConsoleColor.Yellow);
-                        Console.WriteLine($"Type {type.FullName} in assembly {dllFile} appears to be a runner reporter, but does not have an empty constructor.");
-                        ConsoleHelper.ResetColor();
-                        continue;
+
+                    foreach (var message in messages)
+                    {
+                        Console.WriteLine(message);
+                        Console.WriteLine();
                     }
 
-                    result.Add((IRunnerReporter)ctor.Invoke(new object[0]));
+                    if (!commandLine.NoColor)
+                        ConsoleHelper.ResetColor();
                 }
-            }
 
             return result;
         }
@@ -189,19 +166,23 @@ namespace Xunit.ConsoleClient
         void PrintHeader()
         {
 #if NET452
-            var platform = $"Desktop .NET 4.5.2, runtime: {Environment.Version}";
+            var platform = ".NET Framework 4.5.2, runtime: " + Environment.Version;
 #elif NET46
-            var platform = $"Desktop .NET 4.6, runtime: {Environment.Version}";
+            var platform = ".NET Framework 4.6, runtime: " + Environment.Version;
 #elif NET461
-            var platform = $"Desktop .NET 4.6.1, runtime: {Environment.Version}";
+            var platform = ".NET Framework 4.6.1, runtime: " + Environment.Version;
 #elif NET462
-            var platform = $"Desktop .NET 4.6.2, runtime: {Environment.Version}";
+            var platform = ".NET Framework 4.6.2, runtime: " + Environment.Version;
 #elif NET47
-            var platform = $"Desktop .NET 4.7, runtime: {Environment.Version}";
+            var platform = ".NET Framework 4.7, runtime: " + Environment.Version;
 #elif NET471
-            var platform = $"Desktop .NET 4.7.1, runtime: {Environment.Version}";
+            var platform = ".NET Framework 4.7.1, runtime: " + Environment.Version;
 #elif NET472
-            var platform = $"Desktop .NET 4.7.2, runtime: {Environment.Version}";
+            var platform = ".NET Framework 4.7.2, runtime: " + Environment.Version;
+#elif NET48
+            var platform = ".NET Framework 4.8, runtime: " + Environment.Version;
+#elif NET481
+            var platform = ".NET Framework 4.8.1, runtime: " + Environment.Version;
 #elif NETCOREAPP
             var platform = System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription;
 #else
@@ -209,7 +190,7 @@ namespace Xunit.ConsoleClient
 #endif
             var versionAttribute = typeof(ConsoleRunner).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
 
-            Console.WriteLine($"xUnit.net Console Runner v{versionAttribute.InformationalVersion} ({IntPtr.Size * 8}-bit {platform})");
+            Console.WriteLine("xUnit.net Console Runner v{0} ({1}-bit {2})", versionAttribute.InformationalVersion, IntPtr.Size * 8, platform);
         }
 
         void PrintUsage(IReadOnlyList<IRunnerReporter> reporters)
@@ -222,7 +203,7 @@ namespace Xunit.ConsoleClient
 
             Console.WriteLine("Copyright (C) .NET Foundation.");
             Console.WriteLine();
-            Console.WriteLine($"usage: {executableName} <assemblyFile> [configFile] [assemblyFile [configFile]...] [options] [reporter] [resultFormat filename [...]]");
+            Console.WriteLine("usage: {0} <assemblyFile> [configFile] [assemblyFile [configFile]...] [options] [reporter] [resultFormat filename [...]]", executableName);
             Console.WriteLine();
 #if NETFRAMEWORK
             Console.WriteLine("Note: Configuration files must end in .json (for JSON) or .config (for XML)");
@@ -231,60 +212,66 @@ namespace Xunit.ConsoleClient
 #endif
             Console.WriteLine();
             Console.WriteLine("Valid options:");
-            Console.WriteLine("  -nologo                : do not show the copyright message");
-            Console.WriteLine("  -nocolor               : do not output results with colors");
-            Console.WriteLine("  -failskips             : convert skipped tests into failures");
-            Console.WriteLine("  -stoponfail            : stop on first test failure");
-            Console.WriteLine("  -parallel option       : set parallelization based on option");
-            Console.WriteLine("                         :   none        - turn off all parallelization");
-            Console.WriteLine("                         :   collections - only parallelize collections");
-            Console.WriteLine("                         :   assemblies  - only parallelize assemblies");
-            Console.WriteLine("                         :   all         - parallelize assemblies & collections");
-            Console.WriteLine("  -maxthreads count      : maximum thread count for collection parallelization");
-            Console.WriteLine("                         :   default   - run with default (1 thread per CPU thread)");
-            Console.WriteLine("                         :   unlimited - run with unbounded thread count");
-            Console.WriteLine("                         :   (number)  - limit task thread pool size to 'count'");
+            Console.WriteLine("  -nologo                   : do not show the copyright message");
+            Console.WriteLine("  -nocolor                  : do not output results with colors");
+            Console.WriteLine("  -failskips                : convert skipped tests into failures");
+            Console.WriteLine("  -stoponfail               : stop on first test failure");
+            Console.WriteLine("  -parallel option          : set parallelization based on option");
+            Console.WriteLine("                            :   none        - turn off all parallelization");
+            Console.WriteLine("                            :   collections - only parallelize collections");
+            Console.WriteLine("                            :   assemblies  - only parallelize assemblies");
+            Console.WriteLine("                            :   all         - parallelize assemblies & collections");
+            Console.WriteLine("  -parallelalgorithm option : set the parallelization algoritm");
+            Console.WriteLine("                            :   conservative - start the minimum number of tests (default)");
+            Console.WriteLine("                            :   aggressive   - start as many tests as possible");
+            Console.WriteLine("  -maxthreads count         : maximum thread count for collection parallelization");
+            Console.WriteLine("                            :   default   - run with default (1 thread per CPU thread)");
+            Console.WriteLine("                            :   unlimited - run with unbounded thread count");
+            Console.WriteLine("                            :   (integer) - use exactly this many threads (e.g., '2' = 2 threads)");
+            Console.WriteLine("                            :   (float)x  - use a multiple of CPU threads (e.g., '2.0x' = 2.0 * the number of CPU threads)");
 #if NETFRAMEWORK
-            Console.WriteLine("  -appdomains mode       : choose an app domain mode");
-            Console.WriteLine("                         :   ifavailable - choose based on library type");
-            Console.WriteLine("                         :   required    - force app domains on");
-            Console.WriteLine("                         :   denied      - force app domains off");
-            Console.WriteLine("  -noshadow              : do not shadow copy assemblies");
+            Console.WriteLine("  -appdomains mode          : choose an app domain mode");
+            Console.WriteLine("                            :   ifavailable - choose based on library type");
+            Console.WriteLine("                            :   required    - force app domains on");
+            Console.WriteLine("                            :   denied      - force app domains off");
+            Console.WriteLine("  -noshadow                 : do not shadow copy assemblies");
 #endif
-            Console.WriteLine("  -wait                  : wait for input after completion");
-            Console.WriteLine("  -diagnostics           : enable diagnostics messages for all test assemblies");
-            Console.WriteLine("  -internaldiagnostics   : enable internal diagnostics messages for all test assemblies");
+            Console.WriteLine("  -wait                     : wait for input after completion");
+            Console.WriteLine("  -diagnostics              : enable diagnostics messages for all test assemblies");
+            Console.WriteLine("  -internaldiagnostics      : enable internal diagnostics messages for all test assemblies");
+            Console.WriteLine("  -showliveoutput           : show output messages from tests live");
 #if DEBUG
-            Console.WriteLine("  -pause                 : pause before doing any work, to help attach a debugger");
+            Console.WriteLine("  -pause                    : pause before doing any work, to help attach a debugger");
 #endif
-            Console.WriteLine("  -debug                 : launch the debugger to debug the tests");
-            Console.WriteLine("  -serialize             : serialize all test cases (for diagnostic purposes only)");
-            Console.WriteLine("  -trait \"name=value\"    : only run tests with matching name/value traits");
-            Console.WriteLine("                         : if specified more than once, acts as an OR operation");
-            Console.WriteLine("  -notrait \"name=value\"  : do not run tests with matching name/value traits");
-            Console.WriteLine("                         : if specified more than once, acts as an AND operation");
-            Console.WriteLine("  -method \"name\"         : run a given test method (can be fully specified or use a wildcard;");
-            Console.WriteLine("                         : i.e., 'MyNamespace.MyClass.MyTestMethod' or '*.MyTestMethod')");
-            Console.WriteLine("                         : if specified more than once, acts as an OR operation");
-            Console.WriteLine("  -nomethod \"name\"       : do not run a given test method (can be fully specified or use a wildcard;");
-            Console.WriteLine("                         : i.e., 'MyNamespace.MyClass.MyTestMethod' or '*.MyTestMethod')");
-            Console.WriteLine("                         : if specified more than once, acts as an AND operation");
-            Console.WriteLine("  -class \"name\"          : run all methods in a given test class (should be fully");
-            Console.WriteLine("                         : specified; i.e., 'MyNamespace.MyClass')");
-            Console.WriteLine("                         : if specified more than once, acts as an OR operation");
-            Console.WriteLine("  -noclass \"name\"        : do not run any methods in a given test class (should be fully");
-            Console.WriteLine("                         : specified; i.e., 'MyNamespace.MyClass')");
-            Console.WriteLine("                         : if specified more than once, acts as an AND operation");
-            Console.WriteLine("  -namespace \"name\"      : run all methods in a given namespace (i.e.,");
-            Console.WriteLine("                         : 'MyNamespace.MySubNamespace')");
-            Console.WriteLine("                         : if specified more than once, acts as an OR operation");
-            Console.WriteLine("  -nonamespace \"name\"    : do not run any methods in a given namespace (i.e.,");
-            Console.WriteLine("                         : 'MyNamespace.MySubNamespace')");
-            Console.WriteLine("                         : if specified more than once, acts as an AND operation");
-            Console.WriteLine("  -noautoreporters       : do not allow reporters to be auto-enabled by environment");
-            Console.WriteLine("                         : (for example, auto-detecting TeamCity or AppVeyor)");
+            Console.WriteLine("  -debug                    : launch the debugger to debug the tests");
+            Console.WriteLine("  -useansicolor             : force using ANSI color output on Windows (non-Windows always uses ANSI colors)");
+            Console.WriteLine("  -serialize                : serialize all test cases (for diagnostic purposes only)");
+            Console.WriteLine("  -trait \"name=value\"       : only run tests with matching name/value traits");
+            Console.WriteLine("                            : if specified more than once, acts as an OR operation");
+            Console.WriteLine("  -notrait \"name=value\"     : do not run tests with matching name/value traits");
+            Console.WriteLine("                            : if specified more than once, acts as an AND operation");
+            Console.WriteLine("  -method \"name\"            : run a given test method (can be fully specified or use a wildcard;");
+            Console.WriteLine("                            : i.e., 'MyNamespace.MyClass.MyTestMethod' or '*.MyTestMethod')");
+            Console.WriteLine("                            : if specified more than once, acts as an OR operation");
+            Console.WriteLine("  -nomethod \"name\"          : do not run a given test method (can be fully specified or use a wildcard;");
+            Console.WriteLine("                            : i.e., 'MyNamespace.MyClass.MyTestMethod' or '*.MyTestMethod')");
+            Console.WriteLine("                            : if specified more than once, acts as an AND operation");
+            Console.WriteLine("  -class \"name\"             : run all methods in a given test class (should be fully");
+            Console.WriteLine("                            : specified; i.e., 'MyNamespace.MyClass')");
+            Console.WriteLine("                            : if specified more than once, acts as an OR operation");
+            Console.WriteLine("  -noclass \"name\"           : do not run any methods in a given test class (should be fully");
+            Console.WriteLine("                            : specified; i.e., 'MyNamespace.MyClass')");
+            Console.WriteLine("                            : if specified more than once, acts as an AND operation");
+            Console.WriteLine("  -namespace \"name\"         : run all methods in a given namespace (i.e.,");
+            Console.WriteLine("                            : 'MyNamespace.MySubNamespace')");
+            Console.WriteLine("                            : if specified more than once, acts as an OR operation");
+            Console.WriteLine("  -nonamespace \"name\"       : do not run any methods in a given namespace (i.e.,");
+            Console.WriteLine("                            : 'MyNamespace.MySubNamespace')");
+            Console.WriteLine("                            : if specified more than once, acts as an AND operation");
+            Console.WriteLine("  -noautoreporters          : do not allow reporters to be auto-enabled by environment");
+            Console.WriteLine("                            : (for example, auto-detecting TeamCity or AppVeyor)");
 #if NETCOREAPP
-            Console.WriteLine("  -framework \"name\"      : set the target framework");
+            Console.WriteLine("  -framework \"name\"         : set the target framework");
 #endif
             Console.WriteLine();
 
@@ -294,14 +281,14 @@ namespace Xunit.ConsoleClient
                 Console.WriteLine("Reporters: (optional, choose only one)");
 
                 foreach (var reporter in switchableReporters.OrderBy(r => r.RunnerSwitch))
-                    Console.WriteLine($"  -{reporter.RunnerSwitch.ToLowerInvariant().PadRight(21)} : {reporter.Description}");
+                    Console.WriteLine("  -{0} : {1}", reporter.RunnerSwitch.ToLowerInvariant().PadRight(24), reporter.Description);
 
                 Console.WriteLine();
             }
 
             Console.WriteLine("Result formats: (optional, choose one or more)");
             TransformFactory.AvailableTransforms.ForEach(
-                transform => Console.WriteLine($"  -{$"{transform.CommandLine} <filename>".PadRight(21).Substring(0, 21)} : {transform.Description}")
+                transform => Console.WriteLine("  -{0} : {1}", string.Format(CultureInfo.CurrentCulture, "{0} <filename>", transform.CommandLine).PadRight(24).Substring(0, 24), transform.Description)
             );
         }
 
@@ -315,7 +302,9 @@ namespace Xunit.ConsoleClient
                        AppDomainSupport? appDomains,
                        bool failSkips,
                        bool stopOnFail,
-                       bool internalDiagnosticMessages)
+                       bool internalDiagnosticMessages,
+                       ParallelAlgorithm? parallelAlgorithm,
+                       bool showLiveOutput)
         {
             XElement assembliesElement = null;
             var clockTime = Stopwatch.StartNew();
@@ -332,7 +321,7 @@ namespace Xunit.ConsoleClient
 
             if (parallelizeAssemblies.GetValueOrDefault())
             {
-                var tasks = project.Assemblies.Select(assembly => Task.Run(() => ExecuteAssembly(consoleLock, assembly, serialize, needsXml, parallelizeTestCollections, maxThreadCount, diagnosticMessages, noColor, appDomains, failSkips, stopOnFail, project.Filters, internalDiagnosticMessages)));
+                var tasks = project.Assemblies.Select(assembly => Task.Run(() => ExecuteAssembly(consoleLock, assembly, serialize, needsXml, parallelizeTestCollections, maxThreadCount, diagnosticMessages, noColor, appDomains, failSkips, stopOnFail, project.Filters, internalDiagnosticMessages, parallelAlgorithm, showLiveOutput)));
                 var results = Task.WhenAll(tasks).GetAwaiter().GetResult();
                 foreach (var assemblyElement in results.Where(result => result != null))
                     assembliesElement.Add(assemblyElement);
@@ -341,7 +330,7 @@ namespace Xunit.ConsoleClient
             {
                 foreach (var assembly in project.Assemblies)
                 {
-                    var assemblyElement = ExecuteAssembly(consoleLock, assembly, serialize, needsXml, parallelizeTestCollections, maxThreadCount, diagnosticMessages, noColor, appDomains, failSkips, stopOnFail, project.Filters, internalDiagnosticMessages);
+                    var assemblyElement = ExecuteAssembly(consoleLock, assembly, serialize, needsXml, parallelizeTestCollections, maxThreadCount, diagnosticMessages, noColor, appDomains, failSkips, stopOnFail, project.Filters, internalDiagnosticMessages, parallelAlgorithm, showLiveOutput);
                     if (assemblyElement != null)
                         assembliesElement.Add(assemblyElement);
                 }
@@ -359,7 +348,7 @@ namespace Xunit.ConsoleClient
 
             xmlTransformers.ForEach(transformer => transformer(assembliesElement));
 
-            return failed ? 1 : completionMessages.Values.Sum(summary => summary.Failed);
+            return failed ? 1 : completionMessages.Values.Sum(summary => summary.Failed + summary.Errors);
         }
 
         XElement ExecuteAssembly(object consoleLock,
@@ -374,10 +363,17 @@ namespace Xunit.ConsoleClient
                                  bool failSkips,
                                  bool stopOnFail,
                                  XunitFilters filters,
-                                 bool internalDiagnosticMessages)
+                                 bool internalDiagnosticMessages,
+                                 ParallelAlgorithm? parallelAlgorithm,
+                                 bool showLiveOutput)
         {
+            foreach (var warning in assembly.ConfigWarnings)
+                logger.LogWarning(warning);
+
             if (cancel)
                 return null;
+
+            failSkips = failSkips || assembly.Configuration.FailSkipsOrDefault;
 
             var assemblyElement = needsXml ? new XElement("assembly") : null;
 
@@ -397,11 +393,16 @@ namespace Xunit.ConsoleClient
                 // Setup discovery and execution options with command-line overrides
                 var discoveryOptions = TestFrameworkOptions.ForDiscovery(assembly.Configuration);
                 var executionOptions = TestFrameworkOptions.ForExecution(assembly.Configuration);
-                executionOptions.SetStopOnTestFail(stopOnFail);
                 if (maxThreadCount.HasValue)
                     executionOptions.SetMaxParallelThreads(maxThreadCount);
                 if (parallelizeTestCollections.HasValue)
                     executionOptions.SetDisableParallelization(!parallelizeTestCollections.GetValueOrDefault());
+                if (showLiveOutput)
+                    executionOptions.SetShowLiveOutput(showLiveOutput);
+                if (stopOnFail)
+                    executionOptions.SetStopOnTestFail(stopOnFail);
+                if (parallelAlgorithm.HasValue)
+                    executionOptions.SetParallelAlgorithm(parallelAlgorithm);
 
                 var assemblyDisplayName = Path.GetFileNameWithoutExtension(assembly.AssemblyFilename);
                 var diagnosticMessageSink = DiagnosticMessageSink.ForDiagnostics(consoleLock, assemblyDisplayName, assembly.Configuration.DiagnosticMessagesOrDefault, noColor);
@@ -436,19 +437,22 @@ namespace Xunit.ConsoleClient
 
                         reporterMessageHandler.OnMessage(new TestAssemblyExecutionStarting(assembly, executionOptions));
 
-                        IExecutionSink resultsSink = new DelegatingExecutionSummarySink(reporterMessageHandler, () => cancel, (path, summary) => completionMessages.TryAdd(path, summary));
-                        if (assemblyElement != null)
-                            resultsSink = new DelegatingXmlCreationSink(resultsSink, assemblyElement);
-                        if (longRunningSeconds > 0)
-                            resultsSink = new DelegatingLongRunningTestDetectionSink(resultsSink, TimeSpan.FromSeconds(longRunningSeconds), MessageSinkWithTypesAdapter.Wrap(diagnosticMessageSink));
-                        if (failSkips)
-                            resultsSink = new DelegatingFailSkipSink(resultsSink);
+                        var resultsOptions = new ExecutionSinkOptions
+                        {
+                            AssemblyElement = assemblyElement,
+                            CancelThunk = () => cancel,
+                            FinishedCallback = summary => completionMessages.TryAdd(assemblyDisplayName, summary),
+                            DiagnosticMessageSink = diagnosticMessageSink,
+                            FailSkips = failSkips,
+                            LongRunningTestTime = TimeSpan.FromSeconds(longRunningSeconds),
+                        };
+                        var resultsSink = new ExecutionSink(reporterMessageHandler, resultsOptions);
 
                         controller.RunTests(filteredTestCases, resultsSink, executionOptions);
                         resultsSink.Finished.WaitOne();
 
                         reporterMessageHandler.OnMessage(new TestAssemblyExecutionFinished(assembly, executionOptions, resultsSink.ExecutionSummary));
-                        if (stopOnFail && resultsSink.ExecutionSummary.Failed != 0)
+                        if ((resultsSink.ExecutionSummary.Failed != 0 || resultsSink.ExecutionSummary.Errors != 0) && executionOptions.GetStopOnTestFailOrDefault())
                         {
                             Console.WriteLine("Canceling due to test failure...");
                             cancel = true;
@@ -463,7 +467,7 @@ namespace Xunit.ConsoleClient
                 var e = ex;
                 while (e != null)
                 {
-                    Console.WriteLine($"{e.GetType().FullName}: {e.Message}");
+                    Console.WriteLine("{0}: {1}", e.GetType().FullName, e.Message);
 
                     if (internalDiagnosticMessages)
                         Console.WriteLine(e.StackTrace);
@@ -483,7 +487,7 @@ namespace Xunit.ConsoleClient
             lock (consoleLock)
             {
                 ConsoleHelper.SetForegroundColor(ConsoleColor.Red);
-                Console.WriteLine($"File not found: {fileName}");
+                Console.WriteLine("File not found: {0}", fileName);
                 ConsoleHelper.SetForegroundColor(ConsoleColor.Gray);
             }
 

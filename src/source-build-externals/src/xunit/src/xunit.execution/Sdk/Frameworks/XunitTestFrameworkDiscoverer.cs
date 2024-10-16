@@ -43,7 +43,7 @@ namespace Xunit.Sdk
             var testAssembly = new TestAssembly(assemblyInfo, config);
 
             TestCollectionFactory = collectionFactory ?? ExtensibilityPointFactory.GetXunitTestCollectionFactory(diagnosticMessageSink, collectionBehaviorAttribute, testAssembly);
-            TestFrameworkDisplayName = $"{DisplayName} [{TestCollectionFactory.DisplayName}, {(disableParallelization ? "non-parallel" : "parallel")}]";
+            TestFrameworkDisplayName = string.Format(CultureInfo.CurrentCulture, "{0} [{1}, {2}]", DisplayName, TestCollectionFactory.DisplayName, disableParallelization ? "non-parallel" : "parallel");
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Xunit.Sdk
             var factAttributes = testMethod.Method.GetCustomAttributes(typeof(FactAttribute)).CastOrToList();
             if (factAttributes.Count > 1)
             {
-                var message = $"Test method '{testMethod.TestClass.Class.Name}.{testMethod.Method.Name}' has multiple [Fact]-derived attributes";
+                var message = string.Format(CultureInfo.CurrentCulture, "Test method '{0}.{1}' has multiple [Fact]-derived attributes", testMethod.TestClass.Class.Name, testMethod.Method.Name);
                 var testCase = new ExecutionErrorTestCase(DiagnosticMessageSink, TestMethodDisplay.ClassAndMethod, TestMethodDisplayOptions.None, testMethod, message);
                 return ReportDiscoveredTestCase(testCase, includeSourceInformation, messageBus);
             }
@@ -129,8 +129,23 @@ namespace Xunit.Sdk
             foreach (var method in testClass.Class.GetMethods(true))
             {
                 var testMethod = new TestMethod(testClass, method);
-                if (!FindTestsForMethod(testMethod, includeSourceInformation, messageBus, discoveryOptions))
-                    return false;
+
+                try
+                {
+                    if (!FindTestsForMethod(testMethod, includeSourceInformation, messageBus, discoveryOptions))
+                        return false;
+                }
+                catch (Exception ex)
+                {
+                    var errorTestCase = new ExecutionErrorTestCase(
+                        DiagnosticMessageSink,
+                        discoveryOptions.MethodDisplayOrDefault(),
+                        discoveryOptions.MethodDisplayOptionsOrDefault(),
+                        testMethod,
+                        string.Format(CultureInfo.CurrentCulture, "Exception during discovery:{0}{1}", Environment.NewLine, ex)
+                    );
+                    ReportDiscoveredTestCase(errorTestCase, includeSourceInformation, messageBus);
+                }
             }
 
             return true;
@@ -150,7 +165,7 @@ namespace Xunit.Sdk
             }
             catch (Exception ex)
             {
-                DiagnosticMessageSink.OnMessage(new DiagnosticMessage($"Discoverer type '{discovererType.FullName}' could not be created or does not implement IXunitTestCaseDiscoverer: {ex.Unwrap()}"));
+                DiagnosticMessageSink.OnMessage(new DiagnosticMessage("Discoverer type '{0}' could not be created or does not implement IXunitTestCaseDiscoverer: {1}", discovererType.FullName, ex.Unwrap()));
                 return null;
             }
         }
@@ -163,8 +178,17 @@ namespace Xunit.Sdk
                 var xunitTestCase = (XunitTestCase)testCase;
                 var className = testCase.TestMethod?.TestClass?.Class?.Name;
                 var methodName = testCase.TestMethod?.Method?.Name;
+
                 if (className != null && methodName != null && (xunitTestCase.TestMethodArguments == null || xunitTestCase.TestMethodArguments.Length == 0))
-                    return $":F:{className.Replace(":", "::")}:{methodName.Replace(":", "::")}:{(int)xunitTestCase.DefaultMethodDisplay}:{(int)xunitTestCase.DefaultMethodDisplayOptions}:{testCase.TestMethod.TestClass.TestCollection.UniqueID.ToString("N")}";
+                    return string.Format(
+                        CultureInfo.InvariantCulture,
+                        ":F:{0}:{1}:{2}:{3}:{4:N}",
+                        className.Replace(":", "::"),
+                        methodName.Replace(":", "::"),
+                        (int)xunitTestCase.DefaultMethodDisplay,
+                        (int)xunitTestCase.DefaultMethodDisplayOptions,
+                        testCase.TestMethod.TestClass.TestCollection.UniqueID
+                    );
             }
 
             return base.Serialize(testCase);

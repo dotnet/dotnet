@@ -120,6 +120,24 @@ public static class TestFrameworkOptionsReadExtensions
     }
 
     /// <summary>
+    /// Gets the parallel algorithm to be used.
+    /// </summary>
+    public static ParallelAlgorithm? ParallelAlgorithm(this ITestFrameworkExecutionOptions executionOptions)
+    {
+        var parallelAlgorithmString = executionOptions.GetValue<string>(TestOptionsNames.Execution.ParallelAlgorithm);
+        return parallelAlgorithmString != null ? (ParallelAlgorithm?)Enum.Parse(typeof(ParallelAlgorithm), parallelAlgorithmString) : null;
+    }
+
+    /// <summary>
+    /// Gets the parallel algorithm to be used. If the flag is not present, return the default
+    /// value (<see cref="ParallelAlgorithm.Conservative"/>).
+    /// </summary>
+    public static ParallelAlgorithm ParallelAlgorithmOrDefault(this ITestFrameworkExecutionOptions executionOptions)
+    {
+        return executionOptions.ParallelAlgorithm() ?? Xunit.Sdk.ParallelAlgorithm.Conservative;
+    }
+
+    /// <summary>
     /// Gets a flag to disable parallelization.
     /// </summary>
     public static bool? DisableParallelization(this ITestFrameworkExecutionOptions executionOptions)
@@ -159,6 +177,25 @@ public static class TestFrameworkOptionsReadExtensions
     }
 
     /// <summary>
+    /// Gets a flag which indicates if the developer wishes to see output from <see cref="ITestOutputHelper"/>
+    /// live while it's being reported (in addition to seeing it collected together when the test is finished).
+    /// </summary>
+    public static bool? ShowLiveOutput(this ITestFrameworkExecutionOptions executionOptions)
+    {
+        return executionOptions.GetValue<bool?>(TestOptionsNames.Execution.ShowLiveOutput);
+    }
+
+    /// <summary>
+    /// Gets a flag which indicates if the developer wishes to see output from <see cref="ITestOutputHelper"/>
+    /// live while it's being reported (in addition to seeing it collected together when the test is finished).
+    /// If the flag is not present, returns the default value (<c>false</c>).
+    /// </summary>
+    public static bool ShowLiveOutputOrDefault(this ITestFrameworkExecutionOptions executionOptions)
+    {
+        return executionOptions.ShowLiveOutput() ?? false;
+    }
+
+    /// <summary>
     /// Gets a flag to stop testing on test failure.
     /// </summary>
     public static bool? StopOnTestFail(this ITestFrameworkExecutionOptions executionOptions)
@@ -167,7 +204,7 @@ public static class TestFrameworkOptionsReadExtensions
     }
 
     /// <summary>
-    /// Gets a flag to stop testing on test failure. If the flag is not present, returns the 
+    /// Gets a flag to stop testing on test failure. If the flag is not present, returns the
     /// default value (<c>false</c>).
     /// </summary>
     public static bool StopOnTestFailOrDefault(this ITestFrameworkExecutionOptions executionOptions)

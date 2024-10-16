@@ -1,4 +1,7 @@
-﻿#if XUNIT_NULLABLE
+#pragma warning disable CA1052 // Static holder types should be static
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
+#if XUNIT_NULLABLE
 #nullable enable
 #endif
 
@@ -19,14 +22,17 @@ namespace Xunit
 		/// <param name="expected">The expected object instance</param>
 		/// <param name="actual">The actual object instance</param>
 		/// <exception cref="NotSameException">Thrown when the objects are the same instance</exception>
+		public static void NotSame(
 #if XUNIT_NULLABLE
-		public static void NotSame(object? expected, object? actual)
+			object? expected,
+			object? actual)
 #else
-		public static void NotSame(object expected, object actual)
+			object expected,
+			object actual)
 #endif
 		{
 			if (object.ReferenceEquals(expected, actual))
-				throw new NotSameException();
+				throw NotSameException.ForSameValues();
 		}
 
 		/// <summary>
@@ -35,14 +41,20 @@ namespace Xunit
 		/// <param name="expected">The expected object instance</param>
 		/// <param name="actual">The actual object instance</param>
 		/// <exception cref="SameException">Thrown when the objects are not the same instance</exception>
+		public static void Same(
 #if XUNIT_NULLABLE
-		public static void Same(object? expected, object? actual)
+			object? expected,
+			object? actual)
 #else
-		public static void Same(object expected, object actual)
+			object expected,
+			object actual)
 #endif
 		{
 			if (!object.ReferenceEquals(expected, actual))
-				throw new SameException(expected, actual);
+				throw SameException.ForFailure(
+					ArgumentFormatter.Format(expected),
+					ArgumentFormatter.Format(actual)
+				);
 		}
 	}
 }

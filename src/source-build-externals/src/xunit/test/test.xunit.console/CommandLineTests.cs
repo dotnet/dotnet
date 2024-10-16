@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -206,14 +206,14 @@ public class CommandLineTests
             Assert.Equal("missing argument for -maxthreads", ex.Message);
         }
 
-        [Theory]
+        [CulturedTheory]
         [InlineData("0")]
         [InlineData("abc")]
         public static void InvalidValues(string value)
         {
             var ex = Assert.Throws<ArgumentException>(() => TestableCommandLine.Parse("assemblyName.dll", "-maxthreads", value));
 
-            Assert.Equal("incorrect argument value for -maxthreads (must be 'default', 'unlimited', or a positive number)", ex.Message);
+            Assert.Equal($"incorrect argument value for -maxthreads (must be 'default', 'unlimited', a positive number, or a multiplier in the form of '{0.0m}x')", ex.Message);
         }
 
         [Theory]
@@ -225,6 +225,16 @@ public class CommandLineTests
             var commandLine = TestableCommandLine.Parse("assemblyName.dll", "-maxthreads", value);
 
             Assert.Equal(expected, commandLine.MaxParallelThreads);
+        }
+
+        [CulturedTheory]
+        [InlineData("2.0x")]
+        [InlineData("2,0x")]
+        public static void MultiplierValue(string value)
+        {
+            var commandLine = TestableCommandLine.Parse("assemblyName.dll", "-maxthreads", value);
+
+            Assert.Equal(Environment.ProcessorCount * 2, commandLine.MaxParallelThreads);
         }
     }
 
@@ -340,6 +350,29 @@ public class CommandLineTests
             var commandLine = TestableCommandLine.Parse(arguments);
 
             Assert.True(commandLine.FailSkips);
+        }
+    }
+
+    public class ShowLiveOutputOption
+    {
+        [Fact]
+        public static void NotSetIsFalse()
+        {
+            var arguments = new[] { "assemblyName.dll" };
+
+            var commandLine = TestableCommandLine.Parse(arguments);
+
+            Assert.False(commandLine.ShowLiveOutput);
+        }
+
+        [Fact]
+        public static void SetIsTrue()
+        {
+            var arguments = new[] { "assemblyName.dll", "-showliveoutput" };
+
+            var commandLine = TestableCommandLine.Parse(arguments);
+
+            Assert.True(commandLine.ShowLiveOutput);
         }
     }
 

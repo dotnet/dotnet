@@ -243,6 +243,60 @@ public static class TestFrameworkOptionsReadWriteExtensions
     }
 
     /// <summary>
+    /// Gets the parallel algorithm to be used.
+    /// </summary>
+    public static ParallelAlgorithm? GetParallelAlgorithm(this ITestFrameworkExecutionOptions executionOptions)
+    {
+        var parallelAlgorithmString = executionOptions.GetValue<string>(TestOptionsNames.Execution.ParallelAlgorithm);
+        return parallelAlgorithmString != null ? (ParallelAlgorithm?)Enum.Parse(typeof(ParallelAlgorithm), parallelAlgorithmString) : null;
+    }
+
+    /// <summary>
+    /// Gets the parallel algorithm to be used. If the flag is not present, return the default
+    /// value (<see cref="ParallelAlgorithm.Conservative"/>).
+    /// </summary>
+    public static ParallelAlgorithm GetParallelAlgorithmOrDefault(this ITestFrameworkExecutionOptions executionOptions)
+    {
+        return executionOptions.GetParallelAlgorithm() ?? ParallelAlgorithm.Conservative;
+    }
+
+    /// <summary>
+    /// Gets a flag which indicates if the developer wishes to see output from <see cref="ITestOutputHelper"/>
+    /// live while it's being reported (in addition to seeing it collected together when the test is finished).
+    /// </summary>
+    public static bool? GetShowLiveOutput(this ITestFrameworkExecutionOptions executionOptions)
+    {
+        return executionOptions.GetValue<bool?>(TestOptionsNames.Execution.ShowLiveOutput);
+    }
+
+    /// <summary>
+    /// Gets a flag which indicates if the developer wishes to see output from <see cref="ITestOutputHelper"/>
+    /// live while it's being reported (in addition to seeing it collected together when the test is finished).
+    /// If the flag is not present, returns the default value (<c>false</c>).
+    /// </summary>
+    public static bool GetShowLiveOutputOrDefault(this ITestFrameworkExecutionOptions executionOptions)
+    {
+        return executionOptions.GetShowLiveOutput() ?? false;
+    }
+
+    /// <summary>
+    /// Gets a flag that determines whether xUnit.net stop testing when a test fails.
+    /// </summary>
+    public static bool? GetStopOnTestFail(this ITestFrameworkExecutionOptions executionOptions)
+    {
+        return executionOptions.GetValue<bool?>(TestOptionsNames.Execution.StopOnFail);
+    }
+
+    /// <summary>
+    /// Gets a flag that determines whether xUnit.net stop testing when a test fails. If the flag
+    /// is not set, returns the default value (<c>false</c>).
+    /// </summary>
+    public static bool GetStopOnTestFailOrDefault(this ITestFrameworkExecutionOptions executionOptions)
+    {
+        return executionOptions.GetStopOnTestFail() ?? false;
+    }
+
+    /// <summary>
     /// Gets a flag that determines whether xUnit.net should report test results synchronously.
     /// </summary>
     public static bool? GetSynchronousMessageReporting(this ITestFrameworkExecutionOptions executionOptions)
@@ -273,6 +327,23 @@ public static class TestFrameworkOptionsReadWriteExtensions
     public static void SetInternalDiagnosticMessages(this ITestFrameworkExecutionOptions executionOptions, bool? value)
     {
         executionOptions.SetValue(TestOptionsNames.Execution.InternalDiagnosticMessages, value);
+    }
+
+    /// <summary>
+    /// Sets the parallel algorith to be used.
+    /// </summary>
+    public static void SetParallelAlgorithm(this ITestFrameworkExecutionOptions executionOptions, ParallelAlgorithm? value)
+    {
+        executionOptions.SetValue(TestOptionsNames.Execution.ParallelAlgorithm, value.HasValue ? value.GetValueOrDefault().ToString() : null);
+    }
+
+    /// <summary>
+    /// Sets a flag which indicates if the developer wishes to see output from <see cref="ITestOutputHelper"/>
+    /// live while it's being reported (in addition to seeing it collected together when the test is finished).
+    /// </summary>
+    public static void SetShowLiveOutput(this ITestFrameworkExecutionOptions executionOptions, bool? value)
+    {
+        executionOptions.SetValue(TestOptionsNames.Execution.ShowLiveOutput, value);
     }
 
     /// <summary>

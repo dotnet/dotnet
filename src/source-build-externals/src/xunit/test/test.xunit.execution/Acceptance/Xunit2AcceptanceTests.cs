@@ -1,4 +1,4 @@
-﻿#if NETFRAMEWORK
+#if NETFRAMEWORK
 
 using System;
 using System.Collections.Generic;
@@ -76,6 +76,15 @@ public class Xunit2AcceptanceTests
                     var classConstructionFinished = Assert.IsAssignableFrom<ITestClassConstructionFinished>(message);
                     Assert.Equal(classConstructionFinished.TestCase.DisplayName, classConstructionFinished.Test.DisplayName);
                 },
+                message =>
+                {
+                    // From XunitTestCaseRunnerTests.BeforeAfterOnAssembly
+                    var beforeTestStarting = Assert.IsAssignableFrom<IBeforeTestStarting>(message);
+                    Assert.Equal("BeforeAfterOnAssembly", beforeTestStarting.AttributeName);
+                },
+                message => Assert.IsAssignableFrom<IBeforeTestFinished>(message),
+                message => Assert.IsAssignableFrom<IAfterTestStarting>(message),
+                message => Assert.IsAssignableFrom<IAfterTestFinished>(message),
                 message =>
                 {
                     var testPassed = Assert.IsAssignableFrom<ITestPassed>(message);
@@ -183,7 +192,7 @@ public class Xunit2AcceptanceTests
             public Task LongRunningTest() => Task.Delay(10000);
 
             [Fact(Timeout = 10000)]
-            public void ShortRunningTest() => Task.Delay(10);
+            public Task ShortRunningTest() => Task.Delay(10);
         }
     }
 
@@ -257,7 +266,7 @@ public class Xunit2AcceptanceTests
 
             var msg = Assert.Single(messages);
             Assert.Equal("System.AggregateException : One or more errors occurred." + Environment.NewLine +
-                         "---- Assert.Equal() Failure" + Environment.NewLine +
+                         "---- Assert.Equal() Failure: Values differ" + Environment.NewLine +
                          "Expected: 2" + Environment.NewLine +
                          "Actual:   3" + Environment.NewLine +
                          "---- System.DivideByZeroException : Attempted to divide by zero.", Xunit.ExceptionUtility.CombineMessages(msg));
@@ -525,6 +534,90 @@ public class Xunit2AcceptanceTests
             [Fact]
             [MyCustomFact]
             public void Passing() { }
+        }
+
+        // https://github.com/xunit/xunit/issues/2719
+        [Fact]
+        public void ClassWithBrokenFactShouldNotDisruptDiscovery()
+        {
+            var msgs = Run<ITestResultMessage>(new[] { typeof(ClassWithReadOnlySkipFactAttribute) }).OrderBy(x => x.Test.DisplayName).ToList();
+
+            Assert.Collection(msgs,
+                msg =>
+                {
+                    Assert.Equal("Xunit2AcceptanceTests+CustomFacts+ClassWithReadOnlySkipFactAttribute.Test1", msg.Test.DisplayName);
+                    var skip = Assert.IsAssignableFrom<ITestSkipped>(msg);
+                    Assert.Equal("Skipped with Fact", skip.Reason);
+                },
+                msg =>
+                {
+                    Assert.Equal("Xunit2AcceptanceTests+CustomFacts+ClassWithReadOnlySkipFactAttribute.Test2", msg.Test.DisplayName);
+                    var fail = Assert.IsAssignableFrom<ITestFailed>(msg);
+                    Assert.StartsWith(
+                        "Exception during discovery:" + Environment.NewLine +
+                        "System.ArgumentException: Could not set property named 'Skip' on instance of 'Xunit2AcceptanceTests+CustomFacts+ReadOnlySkipFact'" + Environment.NewLine +
+                        "Parameter name: attributeData",
+                        fail.Messages.Single()
+                    );
+                },
+                msg =>
+                {
+                    Assert.Equal("Xunit2AcceptanceTests+CustomFacts+ClassWithReadOnlySkipFactAttribute.Test3", msg.Test.DisplayName);
+                    Assert.IsAssignableFrom<ITestPassed>(msg);
+                }
+            );
+        }
+
+        class ClassWithReadOnlySkipFactAttribute
+        {
+            [Fact(Skip = "Skipped with Fact")]
+            public void Test1()
+            {
+                Assert.True(false);
+            }
+
+            [ReadOnlySkipFact(Skip = "Simple not run, not skipped")]
+            public void Test2()
+            {
+                Assert.True(false);
+            }
+
+            [Fact]
+            public void Test3()
+            { }
+        }
+
+        public class ReadOnlySkipFact : FactAttribute
+        {
+            // Property setter here is missing, so trying to use it with the overridden skip message will fail at runtime
+            public override string Skip => "Skipped";
+        }
+
+        // https://github.com/xunit/xunit/issues/2719
+        [Fact]
+        public void ClassWithThrowingSkipGetterShouldReportThatAsFailure()
+        {
+            var msgs = Run<ITestResultMessage>(new[] { typeof(ClassWithThrowingSkip) }).OrderBy(x => x.Test.DisplayName).ToList();
+
+            var msg = Assert.Single(msgs);
+            Assert.Equal("Xunit2AcceptanceTests+CustomFacts+ClassWithThrowingSkip.TestMethod", msg.Test.DisplayName);
+            var failed = Assert.IsAssignableFrom<ITestFailed>(msg);
+            var message = Assert.Single(failed.Messages);
+            Assert.StartsWith("Exception during initialization:" + Environment.NewLine + "System.DivideByZeroException: Attempted to divide by zero.", message);
+        }
+
+        class ClassWithThrowingSkip
+        {
+            [ThrowingSkipFact]
+            public void TestMethod()
+            {
+                Assert.True(false);
+            }
+        }
+
+        public class ThrowingSkipFactAttribute : FactAttribute
+        {
+            public override string Skip { get => throw new DivideByZeroException(); set => base.Skip = value; }
         }
     }
 

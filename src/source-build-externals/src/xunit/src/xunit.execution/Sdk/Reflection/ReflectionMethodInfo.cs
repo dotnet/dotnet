@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Xunit.Abstractions;
@@ -13,6 +12,8 @@ namespace Xunit.Sdk
     /// </summary>
     public class ReflectionMethodInfo : LongLivedMarshalByRefObject, IReflectionMethodInfo
     {
+        static readonly PropertyInfo methodInfoReflectedTypeProperty = typeof(MethodInfo).GetRuntimeProperty("ReflectedType");
+
         static readonly IEqualityComparer TypeComparer = new GenericTypeComparer();
         static readonly IEqualityComparer<IEnumerable<Type>> TypeListComparer = new AssertEqualityComparer<IEnumerable<Type>>(innerComparer: TypeComparer);
 
@@ -68,7 +69,14 @@ namespace Xunit.Sdk
         public ITypeInfo Type
         {
 #if NETSTANDARD1_1
-            get { throw new NotSupportedException(); }
+            get
+            {
+                if (methodInfoReflectedTypeProperty == null)
+                    throw new NotSupportedException();
+
+                var methodInfoReflectedType = (Type)methodInfoReflectedTypeProperty.GetValue(MethodInfo);
+                return Reflector.Wrap(methodInfoReflectedType);
+            }
 #else
             get { return Reflector.Wrap(MethodInfo.ReflectedType); }
 #endif
@@ -210,10 +218,11 @@ namespace Xunit.Sdk
                 return typeX == typeY;
             }
 
-            [SuppressMessage("Code Notifications", "RECS0083:Shows NotImplementedException throws in the quick task bar", Justification = "This class is not intended to be used in a hashed container")]
             int IEqualityComparer.GetHashCode(object obj)
             {
-                throw new NotImplementedException();
+                Guard.ArgumentNotNull(nameof(obj), obj);
+
+                return obj.GetHashCode();
             }
         }
     }

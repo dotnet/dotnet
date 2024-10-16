@@ -1,4 +1,4 @@
-﻿#if NETFRAMEWORK
+#if NETFRAMEWORK
 
 using System;
 using System.Collections.Generic;
@@ -7,6 +7,7 @@ using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 using IAttributeInfo = Xunit.Abstractions.IAttributeInfo;
+using SerializationHelper = Xunit.Sdk.SerializationHelper;
 using TestMethodDisplay = Xunit.Sdk.TestMethodDisplay;
 using TestMethodDisplayOptions = Xunit.Sdk.TestMethodDisplayOptions;
 
@@ -43,6 +44,28 @@ public class XunitTestCaseTests
 
         Assert.Equal(42, testCase.Timeout);
     }
+
+    [Fact]
+    public void SerializesBaseStaticMethodDecoratedWithFact()
+    {
+        var diagnosticMessageSink = new Xunit.NullMessageSink();
+        var testMethod = Mocks.TestMethod(typeof(ClassWithInheritedStaticMethodUnderTest), nameof(ClassWithInheritedStaticMethodUnderTest.Passing));
+        var testCase = new XunitTestCase(diagnosticMessageSink, TestMethodDisplay.ClassAndMethod, TestMethodDisplayOptions.None, testMethod);
+
+        var serialized = SerializationHelper.Serialize(testCase);
+        var deserialized = SerializationHelper.Deserialize<IXunitTestCase>(serialized);
+
+        Assert.NotNull(deserialized);
+    }
+
+    public abstract class BaseClassWithStaticMethodUnderTest
+    {
+        [Fact]
+        public static void Passing() { }
+    }
+
+    public class ClassWithInheritedStaticMethodUnderTest : BaseClassWithStaticMethodUnderTest
+    { }
 
     public class Traits : AcceptanceTestV2
     {

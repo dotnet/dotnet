@@ -1,221 +1,743 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Sdk;
 
 public class EventAssertsTests
 {
-	public class Raises_Generic
+	public class Raises_Action
 	{
 		[Fact]
-		public static void ExpectedEventButCodeDoesNotRaise()
+		public static void NoEventRaised()
 		{
-			var x = new RaisingClass();
+			var obj = new RaisingClass_ActionOfT();
 
-			var recorded = Record.Exception(() => Assert.Raises<object>(h => x.Completed += h, h => x.Completed -= h, () => { }));
-
-			var exception = Assert.IsType<RaisesException>(recorded);
-			Assert.Equal("(No event was raised)", exception.Actual);
-			Assert.Equal("Object", exception.Expected);
-		}
-
-		[Fact]
-		public static void ExpectedEventButRaisesEventWithDerivedObject()
-		{
-			var x = new RaisingClass();
-
-			var recorded = Record.Exception(() =>
-				Assert.Raises<object>(
-					h => x.Completed += h,
-					h => x.Completed -= h,
-					() => x.RaiseWithArgs(new DerivedObject())
+			var ex = Record.Exception(
+				() => Assert.Raises<object>(
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+					() => { }
 				)
 			);
 
-			var exception = Assert.IsType<RaisesException>(recorded);
-			Assert.Equal("DerivedObject", exception.Actual);
-			Assert.Equal("Object", exception.Expected);
-			Assert.Equal("(Raised event did not match expected event)", exception.UserMessage);
+			Assert.IsType<RaisesException>(ex);
+			Assert.Equal(
+				"Assert.Raises() Failure: No event was raised" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				"Actual:   No event was raised",
+				ex.Message
+			);
 		}
 
 		[Fact]
-		public static void GotExpectedEvent()
+		public static void NoEventRaised_NoData()
 		{
-			var x = new RaisingClass();
-			var genericObject = new object();
+			var obj = new RaisingClass_Action();
+
+			var ex = Record.Exception(
+				() => Assert.Raises(
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+					() => { }
+				)
+			);
+
+			Assert.IsType<RaisesException>(ex);
+			Assert.Equal("Assert.Raises() Failure: No event was raised", ex.Message);
+		}
+
+		[Fact]
+		public static void ExactTypeRaised()
+		{
+			var obj = new RaisingClass_ActionOfT();
+			var eventObj = new object();
 
 			var evt = Assert.Raises<object>(
-				h => x.Completed += h,
-				h => x.Completed -= h,
-				() => x.RaiseWithArgs(genericObject)
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+				() => obj.RaiseWithArgs(eventObj)
 			);
 
 			Assert.NotNull(evt);
-			Assert.Equal(x, evt.Sender);
-			Assert.Equal(genericObject, evt.Arguments);
+			Assert.Null(evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
+		}
+
+		[Fact]
+		public static void RaisingClass_ActionOfT()
+		{
+			var obj = new RaisingClass_EventHandlerOfT();
+			var eventObj = new DerivedObject();
+
+			var ex = Record.Exception(
+				() => Assert.Raises<object>(
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+					() => obj.RaiseWithArgs(eventObj)
+				)
+			);
+
+			Assert.IsType<RaisesException>(ex);
+			Assert.Equal(
+				"Assert.Raises() Failure: Wrong event type was raised" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				$"Actual:   typeof({typeof(DerivedObject).FullName})",
+				ex.Message
+			);
 		}
 	}
 
-	public class RaisesAny_Generic
+	public class Raises_EventHandler
 	{
 		[Fact]
-		public static void ExpectedEventButCodeDoesNotRaise()
+		public static void NoEventRaised()
 		{
-			var x = new RaisingClass();
+			var obj = new RaisingClass_EventHandlerOfT();
 
-			var recorded = Record.Exception(() => Assert.RaisesAny<object>(h => x.Completed += h, h => x.Completed -= h, () => { }));
+			var ex = Record.Exception(
+				() => Assert.Raises<object>(
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+					() => { }
+				)
+			);
 
-			var exception = Assert.IsType<RaisesException>(recorded);
-			Assert.Equal("(No event was raised)", exception.Actual);
-			Assert.Equal("Object", exception.Expected);
+			Assert.IsType<RaisesException>(ex);
+			Assert.Equal(
+				"Assert.Raises() Failure: No event was raised" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				"Actual:   No event was raised",
+				ex.Message
+			);
 		}
 
 		[Fact]
-		public static void GotExpectedEvent()
+		public static void ExactTypeRaised()
 		{
-			var x = new RaisingClass();
-			var genericObject = new object();
+			var obj = new RaisingClass_EventHandlerOfT();
+			var eventObj = new object();
 
-			var evt = Assert.RaisesAny<object>(
-				h => x.Completed += h,
-				h => x.Completed -= h,
-				() => x.RaiseWithArgs(genericObject)
+			var evt = Assert.Raises<object>(
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+				() => obj.RaiseWithArgs(eventObj)
 			);
 
 			Assert.NotNull(evt);
-			Assert.Equal(x, evt.Sender);
-			Assert.Equal(genericObject, evt.Arguments);
+			Assert.Equal(obj, evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
 		}
 
+		[Fact]
+		public static void DerivedTypeRaised()
+		{
+			var obj = new RaisingClass_EventHandlerOfT();
+			var eventObj = new DerivedObject();
+
+			var ex = Record.Exception(
+				() => Assert.Raises<object>(
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+					() => obj.RaiseWithArgs(eventObj)
+				)
+			);
+
+			Assert.IsType<RaisesException>(ex);
+			Assert.Equal(
+				"Assert.Raises() Failure: Wrong event type was raised" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				$"Actual:   typeof({typeof(DerivedObject).FullName})",
+				ex.Message
+			);
+		}
 
 		[Fact]
-		public static void GotDerivedEvent()
+		public static void CustomRaised()
 		{
-			var x = new RaisingClass();
-			var args = new DerivedObject();
+			var obj = new RaisingClass_CustomEventHandler();
+			var eventObj = new object();
+			Assert.RaisedEvent<object>? raisedEvent = null;
+			void handler(object? s, object args) => raisedEvent = new Assert.RaisedEvent<object>(s, args);
 
-			var evt = Assert.RaisesAny<object>(
-				h => x.Completed += h,
-				h => x.Completed -= h,
-				() => x.RaiseWithArgs(args)
+			var evt = Assert.Raises(
+				() => raisedEvent,
+				() => obj.Completed += handler,
+				() => obj.Completed -= handler,
+				() => obj.RaiseWithArgs(eventObj)
 			);
 
 			Assert.NotNull(evt);
-			Assert.Equal(x, evt.Sender);
-			Assert.Equal(args, evt.Arguments);
+			Assert.Equal(obj, evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
 		}
 	}
 
-	public class RaisesAnyAsync_Generic
+	public class RaisesAny_Action
 	{
 		[Fact]
-		public static async Task ExpectedEventButCodeDoesNotRaise()
+		public static void NoEventRaised()
 		{
-			var x = new RaisingClass();
+			var obj = new RaisingClass_ActionOfT();
 
-			var recorded = await Record.ExceptionAsync(
+			var ex = Record.Exception(
+				() => Assert.RaisesAny<object>(
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+					() => { }
+				)
+			);
+
+			Assert.IsType<RaisesAnyException>(ex);
+			Assert.Equal(
+				"Assert.RaisesAny() Failure: No event was raised" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				"Actual:   No event was raised",
+				ex.Message
+			);
+		}
+
+		[Fact]
+		public static void ExactTypeRaised()
+		{
+			var obj = new RaisingClass_ActionOfT();
+			var eventObj = new object();
+
+			var evt = Assert.RaisesAny<object>(
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+				() => obj.RaiseWithArgs(eventObj)
+			);
+
+			Assert.NotNull(evt);
+			Assert.Null(evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
+		}
+
+		[Fact]
+		public static void DerivedTypeRaised()
+		{
+			var obj = new RaisingClass_ActionOfT();
+			var eventObj = new DerivedObject();
+
+			var evt = Assert.RaisesAny<object>(
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+				() => obj.RaiseWithArgs(eventObj)
+			);
+
+			Assert.NotNull(evt);
+			Assert.Null(evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
+		}
+	}
+
+	public class RaisesAny_EventHandler
+	{
+		[Fact]
+		public static void NoEventRaised()
+		{
+			var obj = new RaisingClass_EventHandlerOfT();
+
+			var ex = Record.Exception(
+				() => Assert.RaisesAny<object>(
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+					() => { }
+				)
+			);
+
+			Assert.IsType<RaisesAnyException>(ex);
+			Assert.Equal(
+				"Assert.RaisesAny() Failure: No event was raised" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				"Actual:   No event was raised",
+				ex.Message
+			);
+		}
+
+		[Fact]
+		public static void NoEventRaised_NonGeneric()
+		{
+			var obj = new RaisingClass_EventHandler();
+
+			var ex = Record.Exception(
+				() => Assert.RaisesAny(
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+					() => { }
+				)
+			);
+
+			Assert.IsType<RaisesAnyException>(ex);
+			Assert.Equal(
+				"Assert.RaisesAny() Failure: No event was raised" + Environment.NewLine +
+				"Expected: typeof(System.EventArgs)" + Environment.NewLine +
+				"Actual:   No event was raised",
+				ex.Message
+			);
+		}
+
+		[Fact]
+		public static void ExactTypeRaised()
+		{
+			var obj = new RaisingClass_EventHandlerOfT();
+			var eventObj = new object();
+
+			var evt = Assert.RaisesAny<object>(
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+				() => obj.RaiseWithArgs(eventObj)
+			);
+
+			Assert.NotNull(evt);
+			Assert.Equal(obj, evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
+		}
+
+		[Fact]
+		public static void ExactTypeRaised_NonGeneric()
+		{
+			var obj = new RaisingClass_EventHandler();
+			var eventObj = new EventArgs();
+
+			var evt = Assert.RaisesAny(
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+				() => obj.RaiseWithArgs(eventObj)
+			);
+
+			Assert.NotNull(evt);
+			Assert.Equal(obj, evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
+		}
+
+		[Fact]
+		public static void DerivedTypeRaised()
+		{
+			var obj = new RaisingClass_EventHandlerOfT();
+			var eventObj = new DerivedObject();
+
+			var evt = Assert.RaisesAny<object>(
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+				() => obj.RaiseWithArgs(eventObj)
+			);
+
+			Assert.NotNull(evt);
+			Assert.Equal(obj, evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
+		}
+
+		[Fact]
+		public static void DerivedTypeRaised_NonGeneric()
+		{
+			var obj = new RaisingClass_EventHandler();
+			var eventObj = new DerivedEventArgs();
+
+			var evt = Assert.RaisesAny(
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+				() => obj.RaiseWithArgs(eventObj)
+			);
+
+			Assert.NotNull(evt);
+			Assert.Equal(obj, evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
+		}
+	}
+
+	public class RaisesAnyAsync_Action
+	{
+		[Fact]
+		public static async Task NoEventRaised()
+		{
+			var obj = new RaisingClass_ActionOfT();
+
+			var ex = await Record.ExceptionAsync(
 				() => Assert.RaisesAnyAsync<object>(
-					h => x.Completed += h, h => x.Completed -= h, () => Task.Run(() => { })
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+					() => Task.FromResult(0)
 				)
 			);
 
-			var exception = Assert.IsType<RaisesException>(recorded);
-			Assert.Equal("(No event was raised)", exception.Actual);
-			Assert.Equal("Object", exception.Expected);
+			Assert.IsType<RaisesAnyException>(ex);
+			Assert.Equal(
+				"Assert.RaisesAny() Failure: No event was raised" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				"Actual:   No event was raised",
+				ex.Message
+			);
 		}
 
 		[Fact]
-		public static async Task GotExpectedEvent()
+		public static async Task ExactTypeRaised()
 		{
-			var x = new RaisingClass();
-			var genericObject = new object();
+			var obj = new RaisingClass_ActionOfT();
+			var eventObj = new object();
 
 			var evt = await Assert.RaisesAnyAsync<object>(
-				h => x.Completed += h,
-				h => x.Completed -= h,
-				() => Task.Run(() => x.RaiseWithArgs(genericObject))
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+#if XUNIT_V2
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj))
+#else
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj), TestContext.Current.CancellationToken)
+#endif
 			);
 
 			Assert.NotNull(evt);
-			Assert.Equal(x, evt.Sender);
-			Assert.Equal(genericObject, evt.Arguments);
+			Assert.Null(evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
 		}
 
 		[Fact]
-		public static async Task GotDerivedEvent()
+		public static async Task DerivedTypeRaised()
 		{
-			var x = new RaisingClass();
-			var args = new DerivedObject();
+			var obj = new RaisingClass_ActionOfT();
+			var eventObj = new DerivedObject();
 
 			var evt = await Assert.RaisesAnyAsync<object>(
-				h => x.Completed += h,
-				h => x.Completed -= h,
-				() => Task.Run(() => x.RaiseWithArgs(args))
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+#if XUNIT_V2
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj))
+#else
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj), TestContext.Current.CancellationToken)
+#endif
 			);
 
 			Assert.NotNull(evt);
-			Assert.Equal(x, evt.Sender);
-			Assert.Equal(args, evt.Arguments);
+			Assert.Null(evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
 		}
 	}
 
-	public class RaisesAsync_Generic
+	public class RaisesAnyAsync_EventHandler
 	{
 		[Fact]
-		public static async Task ExpectedEventButCodeDoesNotRaise()
+		public static async Task NoEventRaised()
 		{
-			var x = new RaisingClass();
+			var obj = new RaisingClass_EventHandlerOfT();
 
-			var recorded = await Record.ExceptionAsync(
+			var ex = await Record.ExceptionAsync(
+				() => Assert.RaisesAnyAsync<object>(
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+					() => Task.FromResult(0)
+				)
+			);
+
+			Assert.IsType<RaisesAnyException>(ex);
+			Assert.Equal(
+				"Assert.RaisesAny() Failure: No event was raised" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				"Actual:   No event was raised",
+				ex.Message
+			);
+		}
+
+		[Fact]
+		public static async Task NoEventRaised_NonGeneric()
+		{
+			var obj = new RaisingClass_EventHandler();
+
+			var ex = await Record.ExceptionAsync(
+				() => Assert.RaisesAnyAsync(
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+					() => Task.FromResult(0)
+				)
+			);
+
+			Assert.IsType<RaisesAnyException>(ex);
+			Assert.Equal(
+				"Assert.RaisesAny() Failure: No event was raised" + Environment.NewLine +
+				"Expected: typeof(System.EventArgs)" + Environment.NewLine +
+				"Actual:   No event was raised",
+				ex.Message
+			);
+		}
+
+		[Fact]
+		public static async Task ExactTypeRaised()
+		{
+			var obj = new RaisingClass_EventHandlerOfT();
+			var eventObj = new object();
+
+			var evt = await Assert.RaisesAnyAsync<object>(
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+#if XUNIT_V2
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj))
+#else
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj), TestContext.Current.CancellationToken)
+#endif
+			);
+
+			Assert.NotNull(evt);
+			Assert.Equal(obj, evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
+		}
+
+		[Fact]
+		public static async Task ExactTypeRaised_NonGeneric()
+		{
+			var obj = new RaisingClass_EventHandler();
+			var eventObj = new EventArgs();
+
+			var evt = await Assert.RaisesAnyAsync(
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+#if XUNIT_V2
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj))
+#else
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj), TestContext.Current.CancellationToken)
+#endif
+			);
+
+			Assert.NotNull(evt);
+			Assert.Equal(obj, evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
+		}
+
+		[Fact]
+		public static async Task DerivedTypeRaised()
+		{
+			var obj = new RaisingClass_EventHandlerOfT();
+			var eventObj = new DerivedObject();
+
+			var evt = await Assert.RaisesAnyAsync<object>(
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+#if XUNIT_V2
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj))
+#else
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj), TestContext.Current.CancellationToken)
+#endif
+			);
+
+			Assert.NotNull(evt);
+			Assert.Equal(obj, evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
+		}
+
+		[Fact]
+		public static async Task DerivedTypeRaised_NonGeneric()
+		{
+			var obj = new RaisingClass_EventHandler();
+			var eventObj = new DerivedEventArgs();
+
+			var evt = await Assert.RaisesAnyAsync(
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+#if XUNIT_V2
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj))
+#else
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj), TestContext.Current.CancellationToken)
+#endif
+			);
+
+			Assert.NotNull(evt);
+			Assert.Equal(obj, evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
+		}
+	}
+
+	public class RaisesAsync_Action
+	{
+		[Fact]
+		public static async Task NoEventRaised()
+		{
+			var obj = new RaisingClass_ActionOfT();
+
+			var ex = await Record.ExceptionAsync(
 				() => Assert.RaisesAsync<object>(
-					h => x.Completed += h, h => x.Completed -= h, () => Task.Run(() => { })
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+					() => Task.FromResult(0)
 				)
 			);
 
-			var exception = Assert.IsType<RaisesException>(recorded);
-			Assert.Equal("(No event was raised)", exception.Actual);
-			Assert.Equal("Object", exception.Expected);
+			Assert.IsType<RaisesException>(ex);
+			Assert.Equal(
+				"Assert.Raises() Failure: No event was raised" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				"Actual:   No event was raised",
+				ex.Message
+			);
 		}
 
 		[Fact]
-		public static async Task ExpectedEventButRaisesEventWithDerivedObject()
+		public static async Task NoEventRaised_NoData()
 		{
-			var x = new RaisingClass();
+			var obj = new RaisingClass_Action();
 
-			var recorded = await Record.ExceptionAsync(() =>
-				Assert.RaisesAsync<object>(
-					h => x.Completed += h,
-					h => x.Completed -= h,
-					() => Task.Run(() => x.RaiseWithArgs(new DerivedObject()))
+			var ex = await Record.ExceptionAsync(
+				() => Assert.RaisesAsync(
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+					() => Task.CompletedTask
 				)
 			);
 
-			var exception = Assert.IsType<RaisesException>(recorded);
-			Assert.Equal("DerivedObject", exception.Actual);
-			Assert.Equal("Object", exception.Expected);
-			Assert.Equal("(Raised event did not match expected event)", exception.UserMessage);
+			Assert.IsType<RaisesException>(ex);
+			Assert.Equal("Assert.Raises() Failure: No event was raised", ex.Message);
 		}
 
 		[Fact]
-		public static async Task GotExpectedEvent()
+		public static async Task ExactTypeRaised()
 		{
-			var x = new RaisingClass();
-			var genericObject = new object();
+			var obj = new RaisingClass_ActionOfT();
+			var eventObj = new object();
 
 			var evt = await Assert.RaisesAsync<object>(
-				h => x.Completed += h,
-				h => x.Completed -= h,
-				() => Task.Run(() => x.RaiseWithArgs(genericObject))
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+#if XUNIT_V2
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj))
+#else
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj), TestContext.Current.CancellationToken)
+#endif
 			);
 
 			Assert.NotNull(evt);
-			Assert.Equal(x, evt.Sender);
-			Assert.Equal(genericObject, evt.Arguments);
+			Assert.Null(evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
 		}
 
+		[Fact]
+		public static async Task DerivedTypeRaised()
+		{
+			var obj = new RaisingClass_ActionOfT();
+			var eventObj = new DerivedObject();
+
+			var ex = await Record.ExceptionAsync(
+				() => Assert.RaisesAsync<object>(
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+#if XUNIT_V2
+					() => Task.Run(() => obj.RaiseWithArgs(eventObj))
+#else
+					() => Task.Run(() => obj.RaiseWithArgs(eventObj), TestContext.Current.CancellationToken)
+#endif
+				)
+			);
+
+			Assert.IsType<RaisesException>(ex);
+			Assert.Equal(
+				"Assert.Raises() Failure: Wrong event type was raised" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				$"Actual:   typeof({typeof(DerivedObject).FullName})",
+				ex.Message
+			);
+		}
 	}
 
-	private class RaisingClass
+	public class RaisesAsync_EventHandler
+	{
+		[Fact]
+		public static async Task NoEventRaised()
+		{
+			var obj = new RaisingClass_EventHandlerOfT();
+
+			var ex = await Record.ExceptionAsync(
+				() => Assert.RaisesAsync<object>(
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+					() => Task.FromResult(0)
+				)
+			);
+
+			Assert.IsType<RaisesException>(ex);
+			Assert.Equal(
+				"Assert.Raises() Failure: No event was raised" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				"Actual:   No event was raised",
+				ex.Message
+			);
+		}
+
+		[Fact]
+		public static async Task ExactTypeRaised()
+		{
+			var obj = new RaisingClass_EventHandlerOfT();
+			var eventObj = new object();
+
+			var evt = await Assert.RaisesAsync<object>(
+				h => obj.Completed += h,
+				h => obj.Completed -= h,
+#if XUNIT_V2
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj))
+#else
+				() => Task.Run(() => obj.RaiseWithArgs(eventObj), TestContext.Current.CancellationToken)
+#endif
+			);
+
+			Assert.NotNull(evt);
+			Assert.Equal(obj, evt.Sender);
+			Assert.Equal(eventObj, evt.Arguments);
+		}
+
+		[Fact]
+		public static async Task DerivedTypeRaised()
+		{
+			var obj = new RaisingClass_EventHandlerOfT();
+			var eventObj = new DerivedObject();
+
+			var ex = await Record.ExceptionAsync(
+				() => Assert.RaisesAsync<object>(
+					h => obj.Completed += h,
+					h => obj.Completed -= h,
+#if XUNIT_V2
+					() => Task.Run(() => obj.RaiseWithArgs(eventObj))
+#else
+					() => Task.Run(() => obj.RaiseWithArgs(eventObj), TestContext.Current.CancellationToken)
+#endif
+				)
+			);
+
+			Assert.IsType<RaisesException>(ex);
+			Assert.Equal(
+				"Assert.Raises() Failure: Wrong event type was raised" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				$"Actual:   typeof({typeof(DerivedObject).FullName})",
+				ex.Message
+			);
+		}
+	}
+
+	class RaisingClass_Action
+	{
+		public void Raise()
+		{
+			Completed!.Invoke();
+		}
+
+		public event Action? Completed;
+	}
+
+	class RaisingClass_ActionOfT
+	{
+		public void RaiseWithArgs(object args)
+		{
+			Completed!.Invoke(args);
+		}
+
+		public event Action<object>? Completed;
+	}
+
+	class RaisingClass_EventHandler
+	{
+		public void RaiseWithArgs(EventArgs args)
+		{
+			Completed!.Invoke(this, args);
+		}
+
+		public event EventHandler? Completed;
+	}
+
+	class RaisingClass_EventHandlerOfT
 	{
 		public void RaiseWithArgs(object args)
 		{
@@ -225,5 +747,19 @@ public class EventAssertsTests
 		public event EventHandler<object>? Completed;
 	}
 
-	private class DerivedObject : object { }
+	class RaisingClass_CustomEventHandler
+	{
+		public void RaiseWithArgs(object args)
+		{
+			Completed!.Invoke(this, args);
+		}
+
+		public event CustomEventHandler<object>? Completed;
+	}
+
+	class DerivedEventArgs : EventArgs { }
+
+	class DerivedObject : object { }
+
+	delegate void CustomEventHandler<TEventArgs>(object sender, TEventArgs e);
 }

@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit.Abstractions;
@@ -123,7 +123,7 @@ namespace Xunit.Sdk
                             unusedArguments.Add(Tuple.Create(idx, parameter));
                     }
 
-                    if (unusedArguments.Count > 0)
+                    if (unusedArguments.Count > 0 && !Aggregator.HasExceptions)
                         Aggregator.Add(new TestClassException(FormatConstructorArgsMissingMessage(ctor, unusedArguments)));
 
                     return constructorArguments;
@@ -137,7 +137,11 @@ namespace Xunit.Sdk
         /// Gets the message to be used when the constructor is missing arguments.
         /// </summary>
         protected virtual string FormatConstructorArgsMissingMessage(ConstructorInfo constructor, IReadOnlyList<Tuple<int, ParameterInfo>> unusedArguments)
-            => $"The following constructor parameters did not have matching arguments: {string.Join(", ", unusedArguments.Select(arg => $"{arg.Item2.ParameterType.Name} {arg.Item2.Name}"))}";
+            => string.Format(
+                CultureInfo.CurrentCulture,
+                "The following constructor parameters did not have matching arguments: {0}",
+                string.Join(", ", unusedArguments.Select(arg => string.Format(CultureInfo.CurrentCulture, "{0} {1}", arg.Item2.ParameterType.Name, arg.Item2.Name)))
+            );
 
         /// <summary>
         /// This method is called just after <see cref="ITestClassStarting"/> is sent, but before any test methods are run.
@@ -202,8 +206,18 @@ namespace Xunit.Sdk
             catch (Exception ex)
             {
                 var innerEx = ex.Unwrap();
-                DiagnosticMessageSink.OnMessage(new DiagnosticMessage($"Test case orderer '{TestCaseOrderer.GetType().FullName}' threw '{innerEx.GetType().FullName}' during ordering: {innerEx.Message}{Environment.NewLine}{innerEx.StackTrace}"));
-                orderedTestCases = TestCases.ToList();
+
+                MessageBus.QueueMessage(
+                    new ErrorMessage(
+                        TestCases.Cast<ITestCase>(),
+                        ["Xunit.Sdk.XunitException"],
+                        [string.Format(CultureInfo.CurrentCulture, "Test case orderer '{0}' threw '{1}' during ordering: {2}", TestCaseOrderer.GetType().FullName, innerEx.GetType().FullName, innerEx.Message)],
+                        [innerEx.StackTrace],
+                        [-1]
+                    )
+                );
+
+                orderedTestCases = [];
             }
 
             var constructorArguments = CreateTestClassConstructorArguments();

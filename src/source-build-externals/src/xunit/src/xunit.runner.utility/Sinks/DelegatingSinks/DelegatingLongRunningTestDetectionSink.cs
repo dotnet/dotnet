@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using Xunit.Abstractions;
@@ -11,6 +12,7 @@ namespace Xunit
     /// A delegating implementation of <see cref="IExecutionSink"/> which detects and reports when
     /// tests have become long-running (during otherwise idle time).
     /// </summary>
+    [Obsolete("This class has been obsoleted; please use ExecutionSink instead")]
     public class DelegatingLongRunningTestDetectionSink : LongLivedMarshalByRefObject, IExecutionSink
     {
         static readonly string[] DiagnosticMessageTypes = { typeof(IDiagnosticMessage).FullName };
@@ -52,7 +54,7 @@ namespace Xunit
                                                       Action<LongRunningTestsSummary> callback)
         {
             Guard.ArgumentNotNull(nameof(innerSink), innerSink);
-            Guard.ArgumentValid(nameof(longRunningTestTime), "Long running test time must be at least 1 second", longRunningTestTime >= TimeSpan.FromSeconds(1));
+            Guard.ArgumentValid(nameof(longRunningTestTime), longRunningTestTime >= TimeSpan.FromSeconds(1), "Long running test time must be at least 1 second");
             Guard.ArgumentNotNull(nameof(callback), callback);
 
             this.innerSink = innerSink;
@@ -78,7 +80,7 @@ namespace Xunit
 
         static void DispatchLongRunningTestsSummaryAsDiagnosticMessage(LongRunningTestsSummary summary, IMessageSinkWithTypes diagnosticMessageSink)
         {
-            var messages = summary.TestCases.Select(pair => $"[Long Running Test] '{pair.Key.DisplayName}', Elapsed: {pair.Value:hh\\:mm\\:ss}");
+            var messages = summary.TestCases.Select(pair => string.Format(CultureInfo.CurrentCulture, @"[Long Running Test] '{0}', Elapsed: {1:hh\:mm\:ss}", pair.Key.DisplayName, pair.Value));
             var message = string.Join(Environment.NewLine, messages.ToArray());
 
             diagnosticMessageSink.OnMessage(new DiagnosticMessage(message));

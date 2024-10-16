@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,12 +12,12 @@ using TestMethodDisplayOptions = Xunit.Sdk.TestMethodDisplayOptions;
 
 public static class Mocks
 {
-    public static IAssemblyInfo AssemblyInfo(ITypeInfo[] types = null, IReflectionAttributeInfo[] attributes = null, string assemblyFileName = null)
+    public static IAssemblyInfo AssemblyInfo(ITypeInfo[] types = null, IReflectionAttributeInfo[] attributes = null, string assemblyFileName = null, string assemblyName = null)
     {
         attributes = attributes ?? new IReflectionAttributeInfo[0];
 
         var result = Substitute.For<IAssemblyInfo, InterfaceProxy<IAssemblyInfo>>();
-        result.Name.Returns(assemblyFileName == null ? "assembly:" + Guid.NewGuid().ToString("n") : Path.GetFileNameWithoutExtension(assemblyFileName));
+        result.Name.Returns(assemblyName ?? (assemblyFileName == null ? "assembly:" + Guid.NewGuid().ToString("n") : Path.GetFileNameWithoutExtension(assemblyFileName)));
         result.AssemblyPath.Returns(assemblyFileName);
         result.GetType("").ReturnsForAnyArgs(types?.FirstOrDefault());
         result.GetTypes(true).ReturnsForAnyArgs(types ?? new ITypeInfo[0]);
@@ -33,7 +33,7 @@ public static class Mocks
         return result;
     }
 
-    public static IReflectionAttributeInfo CollectionBehaviorAttribute(CollectionBehavior? collectionBehavior = null, bool disableTestParallelization = false, int maxParallelThreads = 0)
+    public static IReflectionAttributeInfo CollectionBehaviorAttribute(CollectionBehavior? collectionBehavior = null, bool? disableTestParallelization = null, int? maxParallelThreads = null)
     {
         CollectionBehaviorAttribute attribute;
         var result = Substitute.For<IReflectionAttributeInfo, InterfaceProxy<IReflectionAttributeInfo>>();
@@ -49,27 +49,39 @@ public static class Mocks
             result.GetConstructorArguments().Returns(new object[0]);
         }
 
-        attribute.DisableTestParallelization = disableTestParallelization;
-        attribute.MaxParallelThreads = maxParallelThreads;
-
         result.Attribute.Returns(attribute);
-        result.GetNamedArgument<bool>("DisableTestParallelization").Returns(disableTestParallelization);
-        result.GetNamedArgument<int>("MaxParallelThreads").Returns(maxParallelThreads);
+
+        if (disableTestParallelization.HasValue)
+            attribute.DisableTestParallelization = disableTestParallelization.Value;
+        if (maxParallelThreads.HasValue)
+            attribute.MaxParallelThreads = maxParallelThreads.Value;
+
+        if (disableTestParallelization.HasValue)
+            result.GetNamedArgument<bool>("DisableTestParallelization").Returns(disableTestParallelization.Value);
+        if (maxParallelThreads.HasValue)
+            result.GetNamedArgument<int>("MaxParallelThreads").Returns(maxParallelThreads.Value);
+
         return result;
     }
 
-    public static IReflectionAttributeInfo CollectionBehaviorAttribute(string factoryTypeName, string factoryAssemblyName, bool disableTestParallelization = false, int maxParallelThreads = 0)
+    public static IReflectionAttributeInfo CollectionBehaviorAttribute(string factoryTypeName, string factoryAssemblyName, bool? disableTestParallelization = null, int? maxParallelThreads = null)
     {
-        var attribute = new CollectionBehaviorAttribute(factoryTypeName, factoryAssemblyName)
-        {
-            DisableTestParallelization = disableTestParallelization,
-            MaxParallelThreads = maxParallelThreads
-        };
+        var attribute = new CollectionBehaviorAttribute(factoryTypeName, factoryAssemblyName);
+
+        if (disableTestParallelization.HasValue)
+            attribute.DisableTestParallelization = disableTestParallelization.Value;
+        if (maxParallelThreads.HasValue)
+            attribute.MaxParallelThreads = maxParallelThreads.Value;
+
         var result = Substitute.For<IReflectionAttributeInfo, InterfaceProxy<IReflectionAttributeInfo>>();
         result.Attribute.Returns(attribute);
-        result.GetNamedArgument<bool>("DisableTestParallelization").Returns(disableTestParallelization);
-        result.GetNamedArgument<int>("MaxParallelThreads").Returns(maxParallelThreads);
         result.GetConstructorArguments().Returns(new object[] { factoryTypeName, factoryAssemblyName });
+
+        if (disableTestParallelization.HasValue)
+            result.GetNamedArgument<bool>("DisableTestParallelization").Returns(disableTestParallelization.Value);
+        if (maxParallelThreads.HasValue)
+            result.GetNamedArgument<int>("MaxParallelThreads").Returns(maxParallelThreads.Value);
+
         return result;
     }
 
@@ -192,9 +204,9 @@ public static class Mocks
         return result;
     }
 
-    public static ITestAssembly TestAssembly(string assemblyFileName, string configFileName = null, ITypeInfo[] types = null, IReflectionAttributeInfo[] attributes = null)
+    public static ITestAssembly TestAssembly(string assemblyFileName, string configFileName = null, ITypeInfo[] types = null, IReflectionAttributeInfo[] attributes = null, string assemblyName = null)
     {
-        var assemblyInfo = AssemblyInfo(types, attributes, assemblyFileName);
+        var assemblyInfo = AssemblyInfo(types, attributes, assemblyFileName, assemblyName);
 
         var result = Substitute.For<ITestAssembly, InterfaceProxy<ITestAssembly>>();
         result.Assembly.Returns(assemblyInfo);
@@ -247,19 +259,19 @@ public static class Mocks
         return result;
     }
 
-    public static ITestAssemblyExecutionStarting TestAssemblyExecutionStarting(bool diagnosticMessages = false, string assemblyFilename = null)
+    public static ITestAssemblyExecutionStarting TestAssemblyExecutionStarting(bool diagnosticMessages = false, string assemblyFilename = null, bool? parallelizeTestCollections = null, int maxParallelThreads = 42, bool? stopOnFail = null, Xunit.ParallelAlgorithm? parallelAlgorithm = null, bool? showLiveOutput = null)
     {
         var assembly = new XunitProjectAssembly { AssemblyFilename = assemblyFilename ?? "testAssembly.dll", ConfigFilename = "testAssembly.dll.config" };
-        var config = new TestAssemblyConfiguration { DiagnosticMessages = diagnosticMessages, MethodDisplay = Xunit.TestMethodDisplay.ClassAndMethod, MaxParallelThreads = 42, ParallelizeTestCollections = true, ShadowCopy = true };
+        var config = new TestAssemblyConfiguration { DiagnosticMessages = diagnosticMessages, MethodDisplay = Xunit.TestMethodDisplay.ClassAndMethod, MaxParallelThreads = maxParallelThreads, ParallelAlgorithm = parallelAlgorithm, ParallelizeTestCollections = parallelizeTestCollections, ShadowCopy = true, ShowLiveOutput = showLiveOutput, StopOnFail = stopOnFail };
         var result = Substitute.For<ITestAssemblyExecutionStarting, InterfaceProxy<ITestAssemblyExecutionStarting>>();
         result.Assembly.Returns(assembly);
         result.ExecutionOptions.Returns(TestFrameworkOptions.ForExecution(config));
         return result;
     }
 
-    public static ITestAssemblyFinished TestAssemblyFinished(int testsRun = 2112, int testsFailed = 42, int testsSkipped = 6, decimal executionTime = 123.4567M)
+    public static ITestAssemblyFinished TestAssemblyFinished(int testsRun = 2112, int testsFailed = 42, int testsSkipped = 6, decimal executionTime = 123.4567M, string assemblyFileName = "testAssembly.dll", string assemblyName = null)
     {
-        var testAssembly = TestAssembly("testAssembly.dll");
+        var testAssembly = TestAssembly(assemblyFileName, assemblyName: assemblyName);
         var result = Substitute.For<ITestAssemblyFinished, InterfaceProxy<ITestAssemblyFinished>>();
         result.TestAssembly.Returns(testAssembly);
         result.TestsRun.Returns(testsRun);
@@ -269,9 +281,9 @@ public static class Mocks
         return result;
     }
 
-    public static ITestAssemblyStarting TestAssemblyStarting()
+    public static ITestAssemblyStarting TestAssemblyStarting(string assemblyFileName = "testAssembly.dll", string assemblyName = null)
     {
-        var testAssembly = TestAssembly("testAssembly.dll");
+        var testAssembly = TestAssembly(assemblyFileName, assemblyName: assemblyName);
         var result = Substitute.For<ITestAssemblyStarting, InterfaceProxy<ITestAssemblyStarting>>();
         result.TestAssembly.Returns(testAssembly);
         return result;
@@ -346,19 +358,21 @@ public static class Mocks
         return new TestClass(collection, Reflector.Wrap(type));
     }
 
-    public static TestCollection TestCollection(Assembly assembly = null, ITypeInfo definition = null, string displayName = null)
+    public static TestCollection TestCollection(Assembly assembly = null, ITypeInfo definition = null, string displayName = null, Guid? uniqueID = null)
     {
         if (assembly == null)
             assembly = typeof(Mocks).GetTypeInfo().Assembly;
         if (displayName == null)
             displayName = "Mock test collection for " + assembly.CodeBase;
 
-        return new TestCollection(TestAssembly(assembly), definition, displayName);
+        return new TestCollection(TestAssembly(assembly), definition, displayName, uniqueID);
     }
 
-    public static ITestCollectionFinished TestCollectionFinished(string displayName = "Display Name", int testsRun = 2112, int testsFailed = 42, int testsSkipped = 6, decimal executionTime = 123.4567M)
+    public static ITestCollectionFinished TestCollectionFinished(string displayName = "Display Name", int testsRun = 2112, int testsFailed = 42, int testsSkipped = 6, decimal executionTime = 123.4567M, string assemblyFileName = null)
     {
+        var testAssembly = TestAssembly(assemblyFileName);
         var result = Substitute.For<ITestCollectionFinished, InterfaceProxy<ITestCollectionFinished>>();
+        result.TestAssembly.Returns(testAssembly);
         result.TestsRun.Returns(testsRun);
         result.TestsFailed.Returns(testsFailed);
         result.TestsSkipped.Returns(testsSkipped);
@@ -367,10 +381,12 @@ public static class Mocks
         return result;
     }
 
-    public static ITestCollectionStarting TestCollectionStarting()
+    public static ITestCollectionStarting TestCollectionStarting(string displayName = "Display Name", string assemblyFileName = null)
     {
+        var testAssembly = TestAssembly(assemblyFileName);
         var result = Substitute.For<ITestCollectionStarting, InterfaceProxy<ITestCollectionStarting>>();
-        result.TestCollection.DisplayName.Returns("Display Name");
+        result.TestAssembly.Returns(testAssembly);
+        result.TestCollection.DisplayName.Returns(displayName);
         return result;
     }
 
@@ -422,6 +438,18 @@ public static class Mocks
         return result;
     }
 
+    public static ITestFinished TestFinished(string displayName, string output = null, decimal executionTime = 0M)
+    {
+        var testCase = TestCase();
+        var test = Test(testCase, displayName);
+        var result = Substitute.For<ITestFinished, InterfaceProxy<ITestFinished>>();
+        result.ExecutionTime.Returns(executionTime);
+        result.Output.Returns(output);
+        result.TestCase.Returns(testCase);
+        result.Test.Returns(test);
+        return result;
+    }
+
     public static IReflectionAttributeInfo TestFrameworkAttribute(Type type)
     {
         var attribute = Activator.CreateInstance(type);
@@ -466,11 +494,20 @@ public static class Mocks
     public static TestMethod TestMethod(Type type, string methodName, ITestCollection collection = null)
     {
         var @class = TestClass(type, collection);
-        var methodInfo = type.GetMethod(methodName);
+        var methodInfo = type.GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy);
         if (methodInfo == null)
             throw new Exception($"Unknown method: {type.FullName}.{methodName}");
 
         return new TestMethod(@class, Reflector.Wrap(methodInfo));
+    }
+
+    public static ITestOutput TestOutput(string assemblyPath, string testDisplayName, string output)
+    {
+        var result = Substitute.For<ITestOutput, InterfaceProxy<ITestOutput>>();
+        result.Output.Returns(output);
+        result.Test.DisplayName.Returns(testDisplayName);
+        result.TestAssembly.Assembly.AssemblyPath.Returns(assemblyPath);
+        return result;
     }
 
     public static ITestPassed TestPassed(Type type, string methodName, string displayName = null, string output = null, decimal executionTime = 0M)

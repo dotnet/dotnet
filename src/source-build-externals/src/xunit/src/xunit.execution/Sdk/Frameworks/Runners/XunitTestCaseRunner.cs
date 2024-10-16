@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -130,6 +130,7 @@ namespace Xunit.Sdk
 
             return beforeAfterTestCollectionAttributes.Concat(TestClass.GetTypeInfo().GetCustomAttributes(typeof(BeforeAfterTestAttribute)))
                                                       .Concat(TestMethod.GetCustomAttributes(typeof(BeforeAfterTestAttribute)))
+                                                      .Concat(TestClass.GetAssembly().GetCustomAttributes(typeof(BeforeAfterTestAttribute)))
                                                       .Cast<BeforeAfterTestAttribute>()
                                                       .ToList();
         }

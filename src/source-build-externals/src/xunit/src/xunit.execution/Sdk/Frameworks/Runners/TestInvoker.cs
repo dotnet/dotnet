@@ -1,5 +1,6 @@
-﻿using System;
-using System.Linq;
+using System;
+using System.ComponentModel;
+using System.Globalization;
 using System.Reflection;
 using System.Security;
 using System.Threading;
@@ -18,8 +19,6 @@ namespace Xunit.Sdk
     public abstract class TestInvoker<TTestCase>
         where TTestCase : ITestCase
     {
-        static MethodInfo startAsTaskOpenGenericMethod;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="TestInvoker{TTestCase}"/> class.
         /// </summary>
@@ -41,7 +40,7 @@ namespace Xunit.Sdk
                               CancellationTokenSource cancellationTokenSource)
         {
             Guard.ArgumentNotNull("test", test);
-            Guard.ArgumentValid("test", "test.TestCase must implement " + typeof(TTestCase).FullName, test.TestCase is TTestCase);
+            Guard.ArgumentValid("test", test.TestCase is TTestCase, "test.TestCase must implement " + typeof(TTestCase).FullName);
 
             Test = test;
             MessageBus = messageBus;
@@ -149,35 +148,10 @@ namespace Xunit.Sdk
         protected virtual object CallTestMethod(object testClassInstance)
             => TestMethod.Invoke(testClassInstance, TestMethodArguments);
 
-        /// <summary>
-        /// Given an object, will determine if it is an instance of <see cref="Task"/> (in which case, it is
-        /// directly returned), or an instance of <see cref="T:Microsoft.FSharp.Control.FSharpAsync`1"/>
-        /// (in which case it is converted), or neither (in which case <c>null</c> is returned).
-        /// </summary>
-        /// <param name="obj">The object to convert</param>
-        public static Task GetTaskFromResult(object obj)
-        {
-            if (obj == null)
-                return null;
-
-            var task = obj as Task;
-            if (task != null)
-                return task;
-
-            var type = obj.GetType();
-            if (type.IsGenericType() && type.GetGenericTypeDefinition().FullName == "Microsoft.FSharp.Control.FSharpAsync`1")
-            {
-                if (startAsTaskOpenGenericMethod == null)
-                    startAsTaskOpenGenericMethod = type.GetAssembly().GetType("Microsoft.FSharp.Control.FSharpAsync")
-                                                                     .GetRuntimeMethods()
-                                                                     .FirstOrDefault(m => m.Name == "StartAsTask");
-
-                return startAsTaskOpenGenericMethod.MakeGenericMethod(type.GetGenericArguments()[0])
-                                                   .Invoke(null, new[] { obj, null, null }) as Task;
-            }
-
-            return null;
-        }
+        /// <summary/>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static Task GetTaskFromResult(object obj) =>
+            AsyncUtility.TryConvertToTask(obj);
 
         /// <summary>
         /// Creates the test class (if necessary), and invokes the test method.
@@ -232,42 +206,68 @@ namespace Xunit.Sdk
         protected virtual async Task<decimal> InvokeTestMethodAsync(object testClassInstance)
         {
             var oldSyncContext = SynchronizationContext.Current;
+            var asyncSyncContext = new AsyncTestSyncContext(oldSyncContext);
+            SetSynchronizationContext(asyncSyncContext);
 
             try
             {
-                var asyncSyncContext = new AsyncTestSyncContext(oldSyncContext);
-                SetSynchronizationContext(asyncSyncContext);
-
                 await Aggregator.RunAsync(
                     () => Timer.AggregateAsync(
                         async () =>
                         {
                             var parameterCount = TestMethod.GetParameters().Length;
                             var valueCount = TestMethodArguments == null ? 0 : TestMethodArguments.Length;
+
+                            // https://github.com/xunit/visualstudio.xunit/issues/371
+                            if (valueCount == 0 && parameterCount == 1)
+                            {
+                                var parameter = TestMethod.GetParameters()[0];
+                                if (parameter.GetCustomAttribute(typeof(ParamArrayAttribute)) != null)
+                                {
+                                    TestMethodArguments = new object[] { Array.CreateInstance(parameter.ParameterType.GetElementType(), 0) };
+                                    valueCount = 1;
+                                }
+                            }
+
                             if (parameterCount != valueCount)
                             {
                                 Aggregator.Add(
                                     new InvalidOperationException(
-                                        $"The test method expected {parameterCount} parameter value{(parameterCount == 1 ? "" : "s")}, but {valueCount} parameter value{(valueCount == 1 ? "" : "s")} {(valueCount == 1 ? "was" : "were")} provided."
+                                        string.Format(
+                                            CultureInfo.CurrentCulture,
+                                            "The test method expected {0} parameter value{1}, but {2} parameter value{3} {4} provided.",
+                                            parameterCount,
+                                            parameterCount == 1 ? "" : "s",
+                                            valueCount,
+                                            valueCount == 1 ? "" : "s",
+                                            valueCount == 1 ? "was" : "were"
+                                        )
                                     )
                                 );
                             }
                             else
                             {
-                                var result = CallTestMethod(testClassInstance);
-                                var task = GetTaskFromResult(result);
-                                if (task != null)
-                                {
-                                    if (task.Status == TaskStatus.Created)
-                                        throw new InvalidOperationException("Test method returned a non-started Task (tasks must be started before being returned)");
+                                var logEnabled = TestEventSource.Log.IsEnabled();
+                                if (logEnabled)
+                                    TestEventSource.Log.TestStart(Test.DisplayName);
 
-                                    await task;
-                                }
-                                else
+                                try
                                 {
-                                    var ex = await asyncSyncContext.WaitForCompletionAsync();
-                                    if (ex != null)
-                                        Aggregator.Add(ex);
+                                    var result = CallTestMethod(testClassInstance);
+                                    var task = AsyncUtility.TryConvertToTask(result);
+                                    if (task != null)
+                                        await task;
+                                    else if (asyncSyncContext != null)
+                                    {
+                                        var ex = await asyncSyncContext.WaitForCompletionAsync();
+                                        if (ex != null)
+                                            Aggregator.Add(ex);
+                                    }
+                                }
+                                finally
+                                {
+                                    if (logEnabled)
+                                        TestEventSource.Log.TestStop(Test.DisplayName);
                                 }
                             }
                         }

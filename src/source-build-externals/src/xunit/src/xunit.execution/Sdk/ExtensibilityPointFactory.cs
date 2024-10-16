@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
@@ -32,7 +32,13 @@ namespace Xunit.Sdk
                 }
                 catch (MissingMemberException)
                 {
-                    diagnosticMessageSink.OnMessage(new DiagnosticMessage($"Could not find constructor for '{type.FullName}' with arguments type(s): {(string.Join(", ", ctorArgs.Select(a => a == null ? "(unknown)" : a.GetType().FullName)))}"));
+                    diagnosticMessageSink.OnMessage(
+                        new DiagnosticMessage(
+                            "Could not find constructor for '{0}' with arguments type(s): {1}",
+                            type.FullName,
+                            string.Join(", ", ctorArgs.Select(a => a == null ? "(unknown)" : a.GetType().FullName))
+                        )
+                    );
                     throw;
                 }
             }
@@ -67,7 +73,7 @@ namespace Xunit.Sdk
         /// <returns>The instance of the type.</returns>
         public static TInterface Get<TInterface>(IMessageSink diagnosticMessageSink, Type type, object[] ctorArgs = null)
         {
-            return (TInterface)instances.AddOrGet(Tuple.Create(type, diagnosticMessageSink), () => CreateInstance(diagnosticMessageSink, type, ctorArgs));
+            return (TInterface)instances.GetOrAdd(Tuple.Create(type, diagnosticMessageSink), _ => CreateInstance(diagnosticMessageSink, type, ctorArgs));
         }
 
         /// <summary>
@@ -260,14 +266,14 @@ namespace Xunit.Sdk
             var result = SerializationHelper.GetType((string)ctorArgs[1], (string)ctorArgs[0]);
             if (result == null)
             {
-                diagnosticMessageSink.OnMessage(new DiagnosticMessage($"Unable to create test collection factory type '{ctorArgs[1]}, {ctorArgs[0]}'"));
+                diagnosticMessageSink.OnMessage(new DiagnosticMessage("Unable to create test collection factory type '{0}, {1}'", ctorArgs[1], ctorArgs[0]));
                 return typeof(CollectionPerClassTestCollectionFactory);
             }
 
             var resultTypeInfo = result.GetTypeInfo();
             if (!typeof(IXunitTestCollectionFactory).GetTypeInfo().IsAssignableFrom(resultTypeInfo))
             {
-                diagnosticMessageSink.OnMessage(new DiagnosticMessage($"Test collection factory type '{ctorArgs[1]}, {ctorArgs[0]}' does not implement IXunitTestCollectionFactory"));
+                diagnosticMessageSink.OnMessage(new DiagnosticMessage("Test collection factory type '{0}, {1}' does not implement IXunitTestCollectionFactory", ctorArgs[1], ctorArgs[0]));
                 return typeof(CollectionPerClassTestCollectionFactory);
             }
 

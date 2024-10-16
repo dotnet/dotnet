@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Xunit.Abstractions;
@@ -43,7 +44,7 @@ namespace Xunit.Sdk
                 if (valueAsEnumerable != null)
                     value = Convert(valueAsEnumerable).ToArray();
                 else if (value != null && value.GetType() != argument.ArgumentType && argument.ArgumentType.GetTypeInfo().IsEnum)
-                    value = Enum.Parse(argument.ArgumentType, value.ToString());
+                    value = Enum.ToObject(argument.ArgumentType, value);
 
                 if (value != null && value.GetType() != argument.ArgumentType && argument.ArgumentType.GetTypeInfo().IsArray)
                     value = Reflector.ConvertArgument(value, argument.ArgumentType);
@@ -119,7 +120,15 @@ namespace Xunit.Sdk
                 if (fieldInfo.Name == argumentName)
                     return (TValue)fieldInfo.GetValue(Attribute);
 
-            throw new ArgumentException($"Could not find property or field named '{argumentName}' on instance of '{Attribute.GetType().FullName}'", nameof(argumentName));
+            throw new ArgumentException(
+                string.Format(
+                    CultureInfo.CurrentCulture,
+                    "Could not find property or field named '{0}' on instance of '{1}'",
+                    argumentName,
+                    Attribute.GetType().FullName
+                ),
+                nameof(argumentName)
+            );
         }
 
         Attribute Instantiate(CustomAttributeData attributeData)
@@ -145,14 +154,52 @@ namespace Xunit.Sdk
 
                 var propInfo = ati.GetRuntimeProperty(memberName);
                 if (propInfo != null)
-                    propInfo.SetValue(attribute, typedValue);
+                    try
+                    {
+                        propInfo.SetValue(attribute, typedValue);
+                    }
+                    catch
+                    {
+                        throw new ArgumentException(
+                            string.Format(
+                                CultureInfo.CurrentCulture,
+                                "Could not set property named '{0}' on instance of '{1}'",
+                                memberName,
+                                ati.FullName
+                            ),
+                            nameof(attributeData)
+                        );
+                    }
                 else
                 {
                     var fieldInfo = ati.GetRuntimeField(memberName);
                     if (fieldInfo != null)
-                        fieldInfo.SetValue(attribute, typedValue);
+                        try
+                        {
+                            fieldInfo.SetValue(attribute, typedValue);
+                        }
+                        catch
+                        {
+                            throw new ArgumentException(
+                                string.Format(
+                                    CultureInfo.CurrentCulture,
+                                    "Could not set field named '{0}' on instance of '{1}'",
+                                    memberName,
+                                    ati.FullName
+                                ),
+                                nameof(attributeData)
+                            );
+                        }
                     else
-                        throw new ArgumentException($"Could not find property or field named '{memberName}' on instance of '{Attribute.GetType().FullName}'", nameof(attributeData));
+                        throw new ArgumentException(
+                            string.Format(
+                                CultureInfo.CurrentCulture,
+                                "Could not find property or field named '{0}' on instance of '{1}'",
+                                memberName,
+                                ati.FullName
+                            ),
+                            nameof(attributeData)
+                        );
                 }
             }
 

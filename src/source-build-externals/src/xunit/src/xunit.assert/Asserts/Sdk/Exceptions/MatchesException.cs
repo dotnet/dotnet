@@ -1,3 +1,8 @@
+#pragma warning disable CA1032 // Implement standard exception constructors
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
 #if XUNIT_NULLABLE
 #nullable enable
 #endif
@@ -8,34 +13,41 @@ using System.Globalization;
 namespace Xunit.Sdk
 {
 	/// <summary>
-	/// Exception thrown when a string does not match a regular expression.
+	/// Exception thrown when Assert.Matches fails.
 	/// </summary>
 #if XUNIT_VISIBILITY_INTERNAL
 	internal
 #else
 	public
 #endif
-	class MatchesException : XunitException
+	partial class MatchesException : XunitException
 	{
+		MatchesException(string message) :
+			base(message)
+		{ }
+
 		/// <summary>
-		/// Creates a new instance of the <see cref="MatchesException"/> class.
+		/// Creates a new instance of the <see cref="MatchesException"/> class to be thrown when
+		/// the regular expression pattern isn't found within the value.
 		/// </summary>
 		/// <param name="expectedRegexPattern">The expected regular expression pattern</param>
 		/// <param name="actual">The actual value</param>
+		public static MatchesException ForMatchNotFound(
+			string expectedRegexPattern,
 #if XUNIT_NULLABLE
-		public MatchesException(string? expectedRegexPattern, object? actual)
+			string? actual) =>
 #else
-		public MatchesException(string expectedRegexPattern, object actual)
+			string actual) =>
 #endif
-			: base(
-				string.Format(
-					CultureInfo.CurrentCulture,
-					"Assert.Matches() Failure:{2}Regex: {0}{2}Value: {1}",
-					expectedRegexPattern,
-					actual,
-					Environment.NewLine
-				)
-			)
-		{ }
+				new MatchesException(
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.Matches() Failure: Pattern not found in value{0}Regex: {1}{2}Value: {3}",
+						Environment.NewLine,
+						ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expectedRegexPattern), expectedRegexPattern)),
+						Environment.NewLine,
+						ArgumentFormatter.Format(actual)
+					)
+				);
 	}
 }

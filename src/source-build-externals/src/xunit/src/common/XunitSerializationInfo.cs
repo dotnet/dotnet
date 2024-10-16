@@ -1,10 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using Xunit.Abstractions;
+
+#if XUNIT_FRAMEWORK
 using Xunit.Sdk;
+#endif
+
+#if !NETFRAMEWORK
+using System.Numerics;
+#endif
+
+#if !NET35
+using System.Reflection;
+#endif
 
 namespace Xunit.Serialization
 {
@@ -14,6 +25,95 @@ namespace Xunit.Serialization
     class XunitSerializationInfo : IXunitSerializationInfo
     {
         readonly IDictionary<string, XunitSerializationTriple> data = new Dictionary<string, XunitSerializationTriple>();
+
+        // DateOnly and TimeOnly only exist in .NET 6+, so we must access them via reflection. There is no way for us to
+        // do this from .NET 3.5 (and doesn't matter, because those types would never exist there) so we have to get all
+        // this code away from .NET 3.5.
+#if !NET35
+        static readonly Type dateOnlyType = Type.GetType("System.DateOnly");
+        static readonly Type dateOnlyNullableType = dateOnlyType == null ? null : typeof(Nullable<>).MakeGenericType(dateOnlyType);
+        static readonly PropertyInfo dateOnlyDayNumber = dateOnlyType?.GetTypeInfo().GetDeclaredProperty("DayNumber");
+        static readonly MethodInfo dateOnlyFromDayNumber = dateOnlyType?.GetTypeInfo().GetDeclaredMethods("FromDayNumber").FirstOrDefault(m => m.IsPublic && m.IsStatic && m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType == typeof(int));
+
+        static readonly Type timeOnlyType = Type.GetType("System.TimeOnly");
+        static readonly Type timeOnlyNullableType = timeOnlyType == null ? null : typeof(Nullable<>).MakeGenericType(timeOnlyType);
+        static readonly PropertyInfo timeOnlyTicks = timeOnlyType?.GetTypeInfo().GetDeclaredProperty("Ticks");
+        static readonly ConstructorInfo timeOnlyCtor = timeOnlyType?.GetTypeInfo().DeclaredConstructors.FirstOrDefault(c => c.GetParameters().Length == 1 && c.GetParameters()[0].ParameterType == typeof(long));
+#endif
+
+        static readonly Dictionary<Type, bool> enumSignsByType = new()
+        {
+            // Signed
+            { typeof(sbyte), true },
+            { typeof(short), true },
+            { typeof(int), true },
+            { typeof(long), true },
+
+            // Unsigned
+            { typeof(byte), false },
+            { typeof(ushort), false },
+            { typeof(uint), false },
+            { typeof(ulong), false },
+        };
+
+        static List<Type> supportedSerializationTypes = new()
+        {
+            typeof(IXunitSerializable),
+            typeof(char),
+            typeof(char?),
+            typeof(string),
+            typeof(byte),
+            typeof(byte?),
+            typeof(sbyte),
+            typeof(sbyte?),
+            typeof(short),
+            typeof(short?),
+            typeof(ushort),
+            typeof(ushort?),
+            typeof(int),
+            typeof(int?),
+            typeof(uint),
+            typeof(uint?),
+            typeof(long),
+            typeof(long?),
+            typeof(ulong),
+            typeof(ulong?),
+            typeof(float),
+            typeof(float?),
+            typeof(double),
+            typeof(double?),
+            typeof(decimal),
+            typeof(decimal?),
+            typeof(bool),
+            typeof(bool?),
+            typeof(DateTime),
+            typeof(DateTime?),
+            typeof(DateTimeOffset),
+            typeof(DateTimeOffset?),
+#if !NETFRAMEWORK
+            typeof(BigInteger),
+            typeof(BigInteger?),
+#endif
+            typeof(TimeSpan),
+            typeof(TimeSpan?),
+        };
+
+#if !NET35
+        static XunitSerializationInfo()
+        {
+            if (dateOnlyType != null)
+            {
+                supportedSerializationTypes.Add(dateOnlyType);
+                supportedSerializationTypes.Add(dateOnlyNullableType);
+            }
+
+            if (timeOnlyType != null)
+            {
+                supportedSerializationTypes.Add(timeOnlyType);
+                supportedSerializationTypes.Add(timeOnlyNullableType);
+            }
+        }
+#endif
 
         /// <summary>
         /// Initializes a new instance of the <see cref="XunitSerializationInfo"/> class.
@@ -34,65 +134,41 @@ namespace Xunit.Serialization
             data[key] = new XunitSerializationTriple(key, value, type);
         }
 
-        /// <inheritdoc/>
-        public T GetValue<T>(string key)
+        internal static bool CanSerializeObject(object value)
         {
-            return (T)GetValue(key, typeof(T));
-        }
+            if (value == null)
+                return true;
 
-        /// <inheritdoc/>
-        public object GetValue(string key, Type type)
-        {
-            XunitSerializationTriple val;
+            var valueType = value.GetType();
 
-            if (data.TryGetValue(key, out val))
-                return val.Value;
+            if (valueType.IsArray)
+            {
+                var vector = value as object[];
+                if (vector != null)
+                {
+                    // Avoid enumerator allocation and bounds lookups that comes from enumerating a System.Array
+                    foreach (object obj in vector)
+                        if (!CanSerializeObject(obj))
+                            return false;
+                }
+                else
+                {
+                    foreach (object obj in ((Array)value))
+                        if (!CanSerializeObject(obj))
+                            return false;
+                }
+                return true;
+            }
 
-            if (type.IsValueType())
-                return Activator.CreateInstance(type);
+            foreach (Type supportedType in supportedSerializationTypes)
+                if (supportedType.IsAssignableFrom(valueType))
+                    return true;
 
-            return null;
-        }
+            Type typeToCheck = valueType;
+            if (valueType.IsEnum() || valueType.IsNullableEnum() || (typeToCheck = value as Type) != null)
+                return typeToCheck.FullName != null && typeToCheck.IsFromLocalAssembly();
 
-        /// <summary>
-        /// Returns BASE64 encoded string that represents the entirety of the data.
-        /// </summary>
-        public string ToSerializedString()
-        {
-            return ToBase64(string.Join("\n", data.Select(kvp => SerializeTriple(kvp.Value)).ToArray()));
-        }
-
-        /// <summary>
-        /// Returns a triple for a key/value pair of data in a complex object
-        /// </summary>
-        /// <param name="triple">The triple to be serialized</param>
-        /// <returns>The serialized version of the triple</returns>
-        public static string SerializeTriple(XunitSerializationTriple triple)
-        {
-            var serializedType = SerializationHelper.GetTypeNameForSerialization(triple.Type);
-            var serializedValue = Serialize(triple.Value);
-            // Leaving off the colon is how we indicate null-ness
-            if (serializedValue == null)
-                return $"{triple.Key}:{serializedType}";
-
-            return $"{triple.Key}:{serializedType}:{serializedValue}";
-        }
-
-        /// <summary>
-        /// Returns the triple values out of a serialized triple.
-        /// </summary>
-        /// <param name="value">The serialized triple</param>
-        /// <returns>The de-serialized triple</returns>
-        public static XunitSerializationTriple DeserializeTriple(string value)
-        {
-            var pieces = value.Split(new[] { ':' }, 3);
-            if (pieces.Length < 2)
-                throw new ArgumentException("Data does not appear to be a valid serialized triple: " + value);
-
-            var pieceType = SerializationHelper.GetType(pieces[1]);
-            var deserializedValue = pieces.Length == 3 ? Deserialize(pieceType, pieces[2]) : null;
-
-            return new XunitSerializationTriple(pieces[0], deserializedValue, pieceType);
+            return false;
         }
 
         /// <summary>
@@ -171,6 +247,22 @@ namespace Xunit.Serialization
                 return DateTimeOffset.Parse(serializedValue, CultureInfo.InvariantCulture, styles);
             }
 
+#if !NET35
+            if ((type == dateOnlyType || type == dateOnlyNullableType) && dateOnlyFromDayNumber != null)
+                return dateOnlyFromDayNumber.Invoke(null, new object[] { int.Parse(serializedValue, CultureInfo.InvariantCulture) });
+
+            if ((type == timeOnlyType || type == timeOnlyNullableType) && timeOnlyCtor != null)
+                return timeOnlyCtor.Invoke(new object[] { long.Parse(serializedValue, CultureInfo.InvariantCulture) });
+
+            if (type == typeof(TimeSpan?) || type == typeof(TimeSpan))
+                return TimeSpan.Parse(serializedValue, CultureInfo.InvariantCulture);
+#endif
+
+#if !NETFRAMEWORK
+            if (type == typeof(BigInteger?) || type == typeof(BigInteger))
+                return BigInteger.Parse(serializedValue, CultureInfo.InvariantCulture);
+#endif
+
             if (type == typeof(Type))
                 return SerializationHelper.GetType(serializedValue);
 
@@ -210,8 +302,51 @@ namespace Xunit.Serialization
             }
             catch (MissingMemberException)
             {
-                throw new InvalidOperationException($"Could not de-serialize type '{type.FullName}' because it lacks a parameterless constructor.");
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "Could not de-serialize type '{0}' because it lacks a parameterless constructor.", type.FullName));
             }
+        }
+
+        /// <summary>
+        /// Returns the triple values out of a serialized triple.
+        /// </summary>
+        /// <param name="value">The serialized triple</param>
+        /// <returns>The de-serialized triple</returns>
+        public static XunitSerializationTriple DeserializeTriple(string value)
+        {
+            var pieces = value.Split(new[] { ':' }, 3);
+            if (pieces.Length < 2)
+                throw new ArgumentException("Data does not appear to be a valid serialized triple: " + value);
+
+            var pieceType = SerializationHelper.GetType(pieces[1]);
+            var deserializedValue = pieces.Length == 3 ? Deserialize(pieceType, pieces[2]) : null;
+
+            return new XunitSerializationTriple(pieces[0], deserializedValue, pieceType);
+        }
+
+        static string FromBase64(string serializedValue)
+        {
+            var bytes = Convert.FromBase64String(serializedValue);
+            return Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+        }
+
+        /// <inheritdoc/>
+        public T GetValue<T>(string key)
+        {
+            return (T)GetValue(key, typeof(T));
+        }
+
+        /// <inheritdoc/>
+        public object GetValue(string key, Type type)
+        {
+            XunitSerializationTriple val;
+
+            if (data.TryGetValue(key, out val))
+                return val.Value;
+
+            if (type.IsValueType())
+                return Activator.CreateInstance(type);
+
+            return null;
         }
 
         /// <summary>
@@ -306,17 +441,37 @@ namespace Xunit.Serialization
             if (datetimeoffsetData != null)
                 return datetimeoffsetData.GetValueOrDefault().ToString("o", CultureInfo.InvariantCulture);  // Round-trippable format
 
+            var valueType = value.GetType();
+
+#if !NET35
+            if (valueType == dateOnlyType && dateOnlyDayNumber != null)
+                return (dateOnlyDayNumber.GetValue(value) as int?)?.ToString(CultureInfo.InvariantCulture)
+                    ?? throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "Could not call DayNumber on an instance of '{0}': {1}", dateOnlyType.FullName, value));
+
+            if (valueType == timeOnlyType && timeOnlyTicks != null)
+                return (timeOnlyTicks.GetValue(value) as long?)?.ToString(CultureInfo.InvariantCulture)
+                    ?? throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "Could not call Ticks on an instance of '{0}': {1}", timeOnlyType.FullName, value));
+
+            if (value is TimeSpan)
+                return ((TimeSpan)value).ToString("c", CultureInfo.InvariantCulture);
+#endif
+
+#if !NETFRAMEWORK
+            if (value is BigInteger)
+                return ((BigInteger)value).ToString(CultureInfo.InvariantCulture);
+#endif
+
             var typeData = value as Type;
             if (typeData != null)
-                return SerializationHelper.GetTypeNameForSerialization(typeData);
-
-            var valueType = value.GetType();
-            if (valueType.IsEnum())
             {
-                if (!valueType.IsFromLocalAssembly())
-                    throw new ArgumentException($"We cannot serialize enum {valueType.FullName}.{value} because it lives in the GAC", nameof(value));
-                return value.ToString();
+                if (typeData.FullName == null)
+                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "We don't know how to serialize value typeof({0}) (no full name)", typeData.Name), nameof(value));
+
+                return SerializationHelper.GetTypeNameForSerialization(typeData);
             }
+
+            if (valueType.IsEnum())
+                return SerializeEnum(value, valueType);
 
             var arrayData = value as Array;
             if (arrayData != null)
@@ -327,76 +482,62 @@ namespace Xunit.Serialization
                 return info.ToSerializedString();
             }
 
-            throw new ArgumentException($"We don't know how to serialize type {valueType.FullName}", nameof(value));
+            throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "We don't know how to serialize type {0}", valueType.FullName), nameof(value));
         }
 
-        static readonly Type[] supportedSerializationTypes = {
-            typeof(IXunitSerializable),
-            typeof(char),           typeof(char?),
-            typeof(string),
-            typeof(byte),           typeof(byte?),
-            typeof(sbyte),          typeof(sbyte?),
-            typeof(short),          typeof(short?),
-            typeof(ushort),         typeof(ushort?),
-            typeof(int),            typeof(int?),
-            typeof(uint),           typeof(uint?),
-            typeof(long),           typeof(long?),
-            typeof(ulong),          typeof(ulong?),
-            typeof(float),          typeof(float?),
-            typeof(double),         typeof(double?),
-            typeof(decimal),        typeof(decimal?),
-            typeof(bool),           typeof(bool?),
-            typeof(DateTime),       typeof(DateTime?),
-            typeof(DateTimeOffset), typeof(DateTimeOffset?),
-        };
-
-        internal static bool CanSerializeObject(object value)
+        static string SerializeEnum(object value, Type valueType)
         {
-            if (value == null)
-                return true;
+            if (!valueType.IsFromLocalAssembly())
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Cannot serialize enum {0}.{1} because it lives in the GAC", valueType.FullName, value), nameof(value));
 
-            var valueType = value.GetType();
+            Type underlyingType;
 
-            if (valueType.IsArray)
+            try
             {
-                var vector = value as object[];
-                if (vector != null)
-                {
-                    // Avoid enumerator allocation and bounds lookups that comes from enumerating a System.Array
-                    foreach (object obj in vector)
-                        if (!CanSerializeObject(obj))
-                            return false;
-                }
-                else
-                {
-                    foreach (object obj in ((Array)value))
-                        if (!CanSerializeObject(obj))
-                            return false;
-                }
-                return true;
+                underlyingType = Enum.GetUnderlyingType(value.GetType());
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Cannot serialize enum '{0}.{1}' because an exception was thrown getting its underlying type", valueType.FullName, value), ex);
             }
 
-            foreach (Type supportedType in supportedSerializationTypes)
-                if (supportedType.IsAssignableFrom(valueType))
-                    return true;
+            if (!enumSignsByType.TryGetValue(underlyingType, out var signed))
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Cannot serialize enum '{0}.{1}' because the underlying type '{2}' is not supported", valueType.FullName, value, underlyingType.FullName), nameof(value));
 
-            Type typeToCheck = valueType;
-            if (valueType.IsEnum() || valueType.IsNullableEnum() || (typeToCheck = value as Type) != null)
-                return typeToCheck.IsFromLocalAssembly();
-
-            return false;
+            return
+                signed
+                    ? Convert.ToInt64(value, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture)
+                    : Convert.ToUInt64(value, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture);
         }
 
-        static string FromBase64(string serializedValue)
+        /// <summary>
+        /// Returns a triple for a key/value pair of data in a complex object
+        /// </summary>
+        /// <param name="triple">The triple to be serialized</param>
+        /// <returns>The serialized version of the triple</returns>
+        public static string SerializeTriple(XunitSerializationTriple triple)
         {
-            var bytes = Convert.FromBase64String(serializedValue);
-            return Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+            var serializedType = SerializationHelper.GetTypeNameForSerialization(triple.Type);
+            var serializedValue = Serialize(triple.Value);
+            // Leaving off the colon is how we indicate null-ness
+            if (serializedValue == null)
+                return string.Format(CultureInfo.InvariantCulture, "{0}:{1}", triple.Key, serializedType);
+
+            return string.Format(CultureInfo.InvariantCulture, "{0}:{1}:{2}", triple.Key, serializedType, serializedValue);
         }
 
         static string ToBase64(string value)
         {
             var bytes = Encoding.UTF8.GetBytes(value);
             return Convert.ToBase64String(bytes);
+        }
+
+        /// <summary>
+        /// Returns BASE64 encoded string that represents the entirety of the data.
+        /// </summary>
+        public string ToSerializedString()
+        {
+            return ToBase64(string.Join("\n", data.Select(kvp => SerializeTriple(kvp.Value)).ToArray()));
         }
 
         internal class ArraySerializer : IXunitSerializable

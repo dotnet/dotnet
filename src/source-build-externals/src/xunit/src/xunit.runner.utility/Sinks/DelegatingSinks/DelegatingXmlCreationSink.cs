@@ -1,4 +1,4 @@
-﻿#if !NET35
+#if !NET35
 
 using System;
 using System.Collections.Generic;
@@ -16,6 +16,7 @@ namespace Xunit
     /// creating the xUnit.net v2 XML output from the execution test results. This class is
     /// not available in .NET 3.5 because it relies upon XML LINQ.
     /// </summary>
+    [Obsolete("This class has been obsoleted; please use ExecutionSink instead")]
     public class DelegatingXmlCreationSink : LongLivedMarshalByRefObject, IExecutionSink
     {
         readonly XElement assemblyElement;
@@ -260,7 +261,7 @@ namespace Xunit
             {
                 char ch = value[idx];
                 if (ch < 32)
-                    escapedValue.Append($@"\x{(+ch).ToString("x2")}");
+                    escapedValue.Append(string.Format(CultureInfo.InvariantCulture, @"\x{0:x2}", +ch));
                 else if (char.IsSurrogatePair(value, idx)) // Takes care of the case when idx + 1 == value.Length
                 {
                     escapedValue.Append(ch); // Append valid surrogate chars like normal
@@ -268,7 +269,7 @@ namespace Xunit
                 }
                 // Check for invalid chars and append them like \x----
                 else if (char.IsSurrogate(ch) || ch == '\uFFFE' || ch == '\uFFFF')
-                    escapedValue.Append($@"\x{(+ch).ToString("x4")}");
+                    escapedValue.Append(string.Format(CultureInfo.InvariantCulture, @"\x{0:x4}", +ch));
                 else
                     escapedValue.Append(ch);
             }

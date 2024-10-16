@@ -1,13 +1,17 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit.Abstractions;
+
+#if NETFRAMEWORK
+using System.IO;
+#endif
 
 namespace Xunit.Sdk
 {
@@ -96,7 +100,7 @@ namespace Xunit.Sdk
         /// placed into <see cref="ITestAssemblyStarting.TestEnvironment"/>.
         /// </summary>
         protected virtual string GetTestFrameworkEnvironment()
-            => $"{IntPtr.Size * 8}-bit .NET {GetVersion()}";
+            => string.Format(CultureInfo.CurrentCulture, "{0}-bit .NET {1}", IntPtr.Size * 8, GetVersion());
 
         static string GetVersion()
         {
@@ -134,7 +138,7 @@ namespace Xunit.Sdk
         protected virtual IMessageBus CreateMessageBus()
         {
             if (ExecutionOptions.SynchronousMessageReportingOrDefault())
-                return new SynchronousMessageBus(ExecutionMessageSink);
+                return new SynchronousMessageBus(ExecutionMessageSink, ExecutionOptions.StopOnTestFailOrDefault());
 
             return new MessageBus(ExecutionMessageSink, ExecutionOptions.StopOnTestFailOrDefault());
         }
@@ -158,8 +162,18 @@ namespace Xunit.Sdk
             catch (Exception ex)
             {
                 var innerEx = ex.Unwrap();
-                DiagnosticMessageSink.OnMessage(new DiagnosticMessage($"Test collection orderer '{TestCollectionOrderer.GetType().FullName}' threw '{innerEx.GetType().FullName}' during ordering: {innerEx.Message}{Environment.NewLine}{innerEx.StackTrace}"));
-                orderedTestCollections = testCasesByCollection.Keys.ToList();
+
+                ExecutionMessageSink.OnMessage(
+                    new ErrorMessage(
+                        TestCases.Cast<ITestCase>(),
+                        ["Xunit.Sdk.XunitException"],
+                        [string.Format(CultureInfo.CurrentCulture, "Test collection orderer '{0}' threw '{1}' during ordering: {2}", TestCollectionOrderer.GetType().FullName, innerEx.GetType().FullName, innerEx.Message)],
+                        [innerEx.StackTrace],
+                        [-1]
+                    )
+                );
+
+                return [];
             }
 
             return orderedTestCollections.Select(collection => Tuple.Create(collection, testCasesByCollection[collection]))

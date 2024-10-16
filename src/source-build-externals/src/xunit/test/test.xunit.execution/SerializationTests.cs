@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
+using SerializationHelper = Xunit.Sdk.SerializationHelper;
 
 public class SerializationTests
 {
@@ -15,6 +16,7 @@ public class SerializationTests
     [Fact]
     public static void CanSerializeAndDeserializeObjectsInATest()
     {
+#pragma warning disable SYSLIB0011
         var bf = new BinaryFormatter();
 
         using (var ms = new MemoryStream())
@@ -26,6 +28,7 @@ public class SerializationTests
             Assert.IsType(typeof(SerializableObject), o);
             var o2 = (SerializableObject)o;  // Should not throw
         }
+#pragma warning restore SYSLIB0011
     }
 
     [Fact]

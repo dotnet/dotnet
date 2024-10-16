@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);XUNIT_FRAMEWORK</DefineConstants>
+    <DefineConstants>$(DefineConstants);XUNIT_ARGUMENTFORMATTER_PRIVATE;XUNIT_FRAMEWORK</DefineConstants>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFramework>netstandard1.1</TargetFramework>
   </PropertyGroup>
@@ -12,8 +12,6 @@
     <Compile Include="..\common\TestMethodDisplay.cs" LinkBase="Common" />
     <Compile Include="..\common\TestMethodDisplayOptions.cs" LinkBase="Common" />
     <Compile Include="..\xunit.assert\Asserts\Sdk\ArgumentFormatter.cs" LinkBase="Common\Asserts" />
-    <Compile Include="..\xunit.assert\Asserts\Sdk\AssertEqualityComparer.cs" LinkBase="Common\Asserts" />
-    <Compile Include="..\xunit.assert\Asserts\Sdk\AssertEqualityComparerAdapter.cs" LinkBase="Common\Asserts" />
   </ItemGroup>
 
   <ItemGroup>
