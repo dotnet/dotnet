@@ -1,17 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>$(NetCurrent);$(NetFrameworkMinimum)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsTestUtilityProject>true</IsTestUtilityProject>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="xunit.assert" Version="$(XunitVersion)" />
-    <PackageReference Include="xunit.extensibility.core" Version="$(XunitVersion)" />
+    <PackageReference Include="xunit.assert" />
+    <PackageReference Include="xunit.extensibility.core" />
   </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersion)" />
+    <PackageReference Include="System.Collections.Immutable" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.DiaSymReader\Microsoft.DiaSymReader.csproj" />
   </ItemGroup>
+
 </Project>
