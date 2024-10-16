@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <GitCommitHash>f891f78ca7c995291aba23fd9a9bc941824274fa</GitCommitHash>
-    <OfficialBuildId>20241011.2</OfficialBuildId>
-    <OutputPackageVersion>9.0.0-rtm.24511.2</OutputPackageVersion>
+    <GitCommitHash>a1b12b341809b4edcec23a18c1320efbd70a0ef2</GitCommitHash>
+    <OfficialBuildId>20241014.2</OfficialBuildId>
+    <OutputPackageVersion>9.0.0-rtm.24514.2</OutputPackageVersion>
     <PreReleaseVersionLabel>rtm</PreReleaseVersionLabel>
     <IsStable>false</IsStable>
   </PropertyGroup>

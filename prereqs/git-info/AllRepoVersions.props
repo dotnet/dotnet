@@ -54,8 +54,8 @@
     <windowsdesktopOutputPackageVersion>9.0.0</windowsdesktopOutputPackageVersion>
     <winformsGitCommitHash>7735f31438f7743e2d5d9d951760c54d8d4c48ec</winformsGitCommitHash>
     <winformsOutputPackageVersion>9.0.0-rtm.24509.5</winformsOutputPackageVersion>
-    <wpfGitCommitHash>f891f78ca7c995291aba23fd9a9bc941824274fa</wpfGitCommitHash>
-    <wpfOutputPackageVersion>9.0.0-rtm.24511.2</wpfOutputPackageVersion>
+    <wpfGitCommitHash>a1b12b341809b4edcec23a18c1320efbd70a0ef2</wpfGitCommitHash>
+    <wpfOutputPackageVersion>9.0.0-rtm.24514.2</wpfOutputPackageVersion>
     <xdtGitCommitHash>4ddd8113a29852380b7b929117bfe67f401ac320</xdtGitCommitHash>
     <xdtOutputPackageVersion>9.0.0-preview.24476.1</xdtOutputPackageVersion>
     <xlifftasksGitCommitHash>73f0850939d96131c28cf6ea6ee5aacb4da0083a</xlifftasksGitCommitHash>
