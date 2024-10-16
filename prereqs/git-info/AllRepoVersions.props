@@ -27,19 +27,19 @@
     <nugetclientOutputPackageVersion>6.12.0-rc.127</nugetclientOutputPackageVersion>
     <razorGitCommitHash>3094e2df9783ab0c966fafe5f51f148030686444</razorGitCommitHash>
     <razorOutputPackageVersion>9.0.0-preview.24515.11</razorOutputPackageVersion>
-    <roslynanalyzersGitCommitHash>8c173ced8bb1545be6eb70a1a8a5dcff0a557457</roslynanalyzersGitCommitHash>
-    <roslynanalyzersOutputPackageVersion>3.12.0-beta1.24508.1</roslynanalyzersOutputPackageVersion>
+    <roslynanalyzersGitCommitHash>82cdc842be0600323632c3322f3fcf4feda29922</roslynanalyzersGitCommitHash>
+    <roslynanalyzersOutputPackageVersion>3.12.0-beta1.24515.1</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>3fd39c8f6c8db918e3184050599c2046997160f1</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.12.0-3.24510.2</roslynOutputPackageVersion>
     <runtimeGitCommitHash>43295bb5378453d2ec4d9272cb44c6f50b4faa1f</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>10.0.0-alpha.1.24507.22</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>9ab92c12b6bf992abc84d52f5b42d86ca708255c</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>10.0.0-preview.24515.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>3e1771de4d3281ac6d3b51c30263011e9b0574c6</sdkGitCommitHash>
+    <sdkGitCommitHash>4151fe592531c7422e16a8c492766bab16b8ce88</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>db3b363d646801c33c242fb230bf0c46e6019fb9</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>10.0.0-alpha.1.24514.2</sourcebuildexternalsOutputPackageVersion>
-    <sourcebuildreferencepackagesGitCommitHash>76c417253f5b3890997a3ef4b0613c2eab73d156</sourcebuildreferencepackagesGitCommitHash>
-    <sourcebuildreferencepackagesOutputPackageVersion>10.0.0-alpha.1.24511.4</sourcebuildreferencepackagesOutputPackageVersion>
+    <sourcebuildreferencepackagesGitCommitHash>f3889ab90d78377122a3e427fe9a74c03611a4bd</sourcebuildreferencepackagesGitCommitHash>
+    <sourcebuildreferencepackagesOutputPackageVersion>10.0.0-alpha.1.24514.1</sourcebuildreferencepackagesOutputPackageVersion>
     <sourcelinkGitCommitHash>45e357bb6d533ccadab99d77be6e8d79af10df7e</sourcelinkGitCommitHash>
     <sourcelinkOutputPackageVersion>9.0.0-beta.24514.3</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>0710a7892d89999956e8808c28e9dd0512bd53f3</symreaderGitCommitHash>
