@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <GitCommitHash>7509137af0f3ea589d85e66a0fd9fb02d966ea12</GitCommitHash>
-    <OfficialBuildId>20241011.2</OfficialBuildId>
-    <OutputPackageVersion>9.0.0-rtm.24511.2</OutputPackageVersion>
-    <PreReleaseVersionLabel>rtm</PreReleaseVersionLabel>
-    <IsStable>false</IsStable>
+    <GitCommitHash>047d8dc076167a16e9fa09f5bd3d348fc262f80a</GitCommitHash>
+    <OfficialBuildId>20241016.1</OfficialBuildId>
+    <OutputPackageVersion>9.0.0</OutputPackageVersion>
+    <PreReleaseVersionLabel></PreReleaseVersionLabel>
+    <IsStable>true</IsStable>
   </PropertyGroup>
 </Project>
