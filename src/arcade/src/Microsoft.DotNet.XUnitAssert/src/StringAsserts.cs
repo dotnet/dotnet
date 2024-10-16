@@ -1,3 +1,11 @@
+#pragma warning disable CA1052 // Static holder types should be static
+#pragma warning disable IDE0018 // Inline variable declaration
+#pragma warning disable IDE0028 // Simplify collection initialization
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
 #if XUNIT_NULLABLE
 #nullable enable
 #else
@@ -505,7 +513,7 @@ namespace Xunit
 		public static void DoesNotContain(
 			ReadOnlySpan<char> expectedSubstring,
 			ReadOnlySpan<char> actualString) =>
-				DoesNotContain((ReadOnlySpan<char>)expectedSubstring, (ReadOnlySpan<char>)actualString, StringComparison.CurrentCulture);
+				DoesNotContain(expectedSubstring, actualString, StringComparison.CurrentCulture);
 
 #endif
 

@@ -1,3 +1,10 @@
+#pragma warning disable CA1052 // Static holder types should be static
+#pragma warning disable IDE0018 // Inline variable declaration
+#pragma warning disable IDE0046 // Convert to conditional expression
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
 #if XUNIT_NULLABLE
 #nullable enable
 #else
@@ -113,9 +120,7 @@ namespace Xunit
 #if XUNIT_NULLABLE
 				where TKey : notnull
 #endif
-		{
-			return Contains(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
-		}
+					=> Contains(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
 
 		/// <summary>
 		/// Verifies that a dictionary contains a given key.
@@ -137,9 +142,7 @@ namespace Xunit
 #if XUNIT_NULLABLE
 				where TKey : notnull
 #endif
-		{
-			return Contains(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
-		}
+					=> Contains(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
 
 		/// <summary>
 		/// Verifies that a dictionary contains a given key.
@@ -161,9 +164,7 @@ namespace Xunit
 #if XUNIT_NULLABLE
 				where TKey : notnull
 #endif
-		{
-			return Contains(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
-		}
+					=> Contains(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
 
 #if XUNIT_IMMUTABLE_COLLECTIONS
 		/// <summary>
@@ -186,9 +187,7 @@ namespace Xunit
 #if XUNIT_NULLABLE
 				where TKey : notnull
 #endif
-		{
-			return Contains(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
-		}
+					=> Contains(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
 #endif
 
 		/// <summary>
@@ -262,9 +261,7 @@ namespace Xunit
 #if XUNIT_NULLABLE
 				where TKey : notnull
 #endif
-		{
-			DoesNotContain(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
-		}
+					=> DoesNotContain(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
 
 		/// <summary>
 		/// Verifies that a dictionary does not contain a given key.
@@ -280,9 +277,7 @@ namespace Xunit
 #if XUNIT_NULLABLE
 				where TKey : notnull
 #endif
-		{
-			DoesNotContain(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
-		}
+					=> DoesNotContain(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
 
 		/// <summary>
 		/// Verifies that a dictionary does not contain a given key.
@@ -298,9 +293,7 @@ namespace Xunit
 #if XUNIT_NULLABLE
 				where TKey : notnull
 #endif
-		{
-			DoesNotContain(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
-		}
+					=> DoesNotContain(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
 
 #if XUNIT_IMMUTABLE_COLLECTIONS
 		/// <summary>
@@ -322,9 +315,7 @@ namespace Xunit
 #if XUNIT_NULLABLE
 				where TKey : notnull
 #endif
-		{
-			DoesNotContain(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
-		}
+					=> DoesNotContain(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
 #endif
 	}
 }

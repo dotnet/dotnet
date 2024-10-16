@@ -55,6 +55,9 @@
 
       <_DotNetCoreRequired>false</_DotNetCoreRequired>
       <_DotNetCoreRequired Condition="'$(_DryRun)' != 'true' and '$(OS)' != 'Windows_NT'">true</_DotNetCoreRequired>
+
+      <!-- SN is only available on Windows -->
+      <SNBinaryPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe</SNBinaryPath>
     </PropertyGroup>
 
     <Error Condition="'$(AllowEmptySignList)' != 'true' AND '@(ItemsToSign)' == ''" 
@@ -91,7 +94,7 @@
         LogDir="$(ArtifactsLogDir)"
         MSBuildPath="$(_DesktopMSBuildPath)"
         DotNetPath="$(_DotNetCorePath)"
-        SNBinaryPath="$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe"
+        SNBinaryPath="$(SNBinaryPath)"
         MicroBuildCorePath="$(NuGetPackageRoot)microbuild.core\$(MicroBuildCoreVersion)"
         WixToolsPath="$(WixInstallPath)"
         TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetSignToolVersion)\tools\net9.0\any\Microsoft.Dotnet.Tar.dll"

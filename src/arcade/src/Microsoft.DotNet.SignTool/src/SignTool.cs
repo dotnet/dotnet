@@ -30,6 +30,8 @@ namespace Microsoft.DotNet.SignTool
 
         public abstract void RemovePublicSign(string assemblyPath);
 
+        public abstract bool LocalStrongNameSign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files);
+
         public abstract bool VerifySignedPEFile(Stream stream);
         public abstract bool VerifySignedPowerShellFile(string filePath);
         public abstract bool VerifySignedNugetFileMarker(string filePath);
@@ -43,42 +45,6 @@ namespace Microsoft.DotNet.SignTool
         {
             return LocalStrongNameSign(buildEngine, round, files)
                 && AuthenticodeSign(buildEngine, round, files);
-        }
-
-        private bool LocalStrongNameSign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files)
-        {
-            foreach (var file in files)
-            {
-                if (file.SignInfo.ShouldLocallyStrongNameSign)
-                {
-                    if (!File.Exists(_args.SNBinaryPath) || !_args.SNBinaryPath.EndsWith("sn.exe"))
-                    {
-                        _log.LogError($"Found file that need to be strong-name sign ({file.FullPath}) but path to 'sn.exe' wasn't specified.");
-                        return false;
-                    }
-
-                    _log.LogMessage($"Strong-name signing {file.FullPath} locally.");
-
-                    // sn -R <path_to_file> <path_to_snk>
-                    var process = Process.Start(new ProcessStartInfo()
-                    {
-                        FileName = _args.SNBinaryPath,
-                        Arguments = $@"-R ""{file.FullPath}"" ""{file.SignInfo.StrongName}""",
-                        UseShellExecute = false,
-                        WorkingDirectory = TempDir,
-                    });
-
-                    process.WaitForExit();
-
-                    if (process.ExitCode != 0)
-                    {
-                        _log.LogError($"Failed to strong-name sign file {file.FullPath}");
-                        return false;
-                    }
-                }
-            }
-
-            return true;
         }
 
         private bool AuthenticodeSign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> filesToSign)
@@ -216,6 +182,36 @@ namespace Microsoft.DotNet.SignTool
             }
 
             builder.AppendLine(text);
+        }
+
+        protected bool LocalStrongNameSign(FileSignInfo file)
+        {
+            if (!File.Exists(_args.SNBinaryPath) || !_args.SNBinaryPath.EndsWith("sn.exe"))
+            {
+                _log.LogError($"Found file that needs to be strong-name sign ({file.FullPath}), but path to 'sn.exe' wasn't specified.");
+                return false;
+            }
+
+            _log.LogMessage($"Strong-name signing {file.FullPath} locally.");
+
+            // sn -R <path_to_file> <path_to_snk>
+            var process = Process.Start(new ProcessStartInfo()
+            {
+                FileName = _args.SNBinaryPath,
+                Arguments = $@"-R ""{file.FullPath}"" ""{file.SignInfo.StrongName}""",
+                UseShellExecute = false,
+                WorkingDirectory = TempDir,
+            });
+
+            process.WaitForExit();
+
+            if (process.ExitCode != 0)
+            {
+                _log.LogError($"Failed to strong-name sign file {file.FullPath}");
+                return false;
+            }
+
+            return true;
         }
     }
 }

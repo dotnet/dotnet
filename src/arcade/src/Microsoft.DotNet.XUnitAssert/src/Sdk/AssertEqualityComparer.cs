@@ -1,3 +1,17 @@
+#pragma warning disable CA1031 // Do not catch general exception types
+#pragma warning disable CA1032 // Implement standard exception constructors
+#pragma warning disable IDE0016 // Use 'throw' expression
+#pragma warning disable IDE0019 // Use pattern matching
+#pragma warning disable IDE0022 // Use expression body for method
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0046 // Convert to conditional expression
+#pragma warning disable IDE0063 // Use simple 'using' statement
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+#pragma warning disable IDE0270 // Use coalesce expression
+#pragma warning disable IDE0290 // Use primary constructor
+#pragma warning disable IDE0300 // Simplify collection initialization
+
 #if XUNIT_NULLABLE
 #nullable enable
 #else
@@ -415,7 +429,9 @@ namespace Xunit.Sdk
 			public int GetHashCode(T obj)
 #endif
 			{
+#pragma warning disable CA1065  // This method should never be called, and this exception is a way to highlight if it does
 				throw AssertEqualityComparer.OperationalFailureException.ForIllegalGetHashCode();
+#pragma warning restore CA1065
 			}
 		}
 
@@ -460,7 +476,7 @@ namespace Xunit.Sdk
 				// If the objects are the same, great! If not, assume they are objects.
 				// This is more naive than the C# compiler which tries to see if they share any interfaces
 				// etc. but that's likely overkill here as AssertEqualityComparer<object> is smart enough.
-				Type objectType = x.GetType() == y.GetType() ? x.GetType() : typeof(object);
+				var objectType = x.GetType() == y.GetType() ? x.GetType() : typeof(object);
 
 				// Lazily initialize and cache the EqualsGeneric<U> method.
 				if (s_equalsMethod == null)

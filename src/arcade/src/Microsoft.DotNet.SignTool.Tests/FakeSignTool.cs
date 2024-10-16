@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Packaging;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using System.Collections.Generic;
 
 namespace Microsoft.DotNet.SignTool
 {
@@ -22,6 +23,8 @@ namespace Microsoft.DotNet.SignTool
         public override void RemovePublicSign(string assemblyPath)
         {
         }
+
+        public override bool LocalStrongNameSign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files) => true;
 
         public override bool VerifySignedPEFile(Stream stream)
         {

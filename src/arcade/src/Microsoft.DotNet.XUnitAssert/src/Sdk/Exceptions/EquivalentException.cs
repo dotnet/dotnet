@@ -1,3 +1,9 @@
+#pragma warning disable CA1032 // Implement standard exception constructors
+#pragma warning disable CA1200 // Avoid using cref tags with a prefix
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
 #if XUNIT_NULLABLE
 #nullable enable
 #else
@@ -70,6 +76,34 @@ namespace Xunit.Sdk
 						"Assert.Equivalent() Failure: Exceeded the maximum depth {0} with '{1}'; check for infinite recursion or circular references",
 						depth,
 						Assert.GuardArgumentNotNull(nameof(memberName), memberName)
+					)
+				);
+
+		/// <summary>
+		/// Creates a new instance of <see cref="EquivalentException"/> which shows a message that indicates
+		/// that the fault comes from an individual value mismatch one of the members.
+		/// </summary>
+		/// <param name="expected">The expected member value</param>
+		/// <param name="actual">The actual member value</param>
+		/// <param name="keyName">The name of the key with mismatched values</param>
+		public static EquivalentException ForGroupingWithMismatchedValues(
+#if XUNIT_NULLABLE
+			object? expected,
+			object? actual,
+#else
+			object expected,
+			object actual,
+#endif
+			string keyName) =>
+				new EquivalentException(
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.Equivalent() Failure: Grouping key [{0}] has mismatched values{1}Expected: {2}{3}Actual:   {4}",
+						keyName,
+						Environment.NewLine,
+						ArgumentFormatter.Format(expected),
+						Environment.NewLine,
+						ArgumentFormatter.Format(actual)
 					)
 				);
 

@@ -1,3 +1,7 @@
+#pragma warning disable CA1825 // Avoid zero-length array allocations
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+#pragma warning disable IDE0300 // Simplify collection initialization
+
 #if XUNIT_NULLABLE
 #nullable enable
 #endif
@@ -25,9 +29,7 @@ namespace System.Diagnostics.CodeAnalysis
 		public StringSyntaxAttribute(string syntax)
 		{
 			Syntax = syntax;
-#pragma warning disable CA1825  // Can't use Array.Empty here because it's not available in .NET Standard 1.1
 			Arguments = new object[0];
-#pragma warning restore CA1825
 		}
 
 		/// <summary>

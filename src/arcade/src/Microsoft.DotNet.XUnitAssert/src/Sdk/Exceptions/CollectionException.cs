@@ -1,3 +1,10 @@
+#pragma warning disable CA1032 // Implement standard exception constructors
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+#pragma warning disable IDE0300 // Simplify collection initialization
+
 #if XUNIT_NULLABLE
 #nullable enable
 #else
@@ -8,7 +15,6 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using Xunit.Internal;
 
 // An "ExceptionUtility" class exists in both xunit.assert (Xunit.Internal.ExceptionUtility) as well as xunit.execution.dotnet (Xunit.Sdk.ExceptionUtility)
 // This causes an compile-time error in projects that reference both the xunit.assert.source and xunit.core packages.

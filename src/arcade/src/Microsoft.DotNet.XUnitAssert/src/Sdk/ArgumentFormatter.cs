@@ -1,3 +1,21 @@
+#pragma warning disable CA1031 // Do not catch general exception types
+#pragma warning disable CA1707 // Identifiers should not contain underscores
+#pragma warning disable CA1810 // Initialize reference type static fields inline
+#pragma warning disable CA1825 // Avoid zero-length array allocations
+#pragma warning disable CA2263 // Prefer generic overload when type is known
+#pragma warning disable IDE0018 // Inline variable declaration
+#pragma warning disable IDE0019 // Use pattern matching
+#pragma warning disable IDE0038 // Use pattern matching
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0045 // Convert to conditional expression
+#pragma warning disable IDE0046 // Convert to conditional expression
+#pragma warning disable IDE0057 // Use range operator
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0078 // Use pattern matching
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+#pragma warning disable IDE0300 // Simplify collection initialization
+
 #if XUNIT_NULLABLE
 #nullable enable
 #else
@@ -61,10 +79,20 @@ namespace Xunit.Sdk
 		/// </summary>
 		public const int MAX_STRING_LENGTH = 50;
 
-#pragma warning disable CA1825  // Can't use Array.Empty here because it's not available in .NET Standard 1.1
 		static readonly object[] EmptyObjects = new object[0];
 		static readonly Type[] EmptyTypes = new Type[0];
-#pragma warning restore CA1825
+
+#if !XUNIT_AOT
+#if XUNIT_NULLABLE
+		static readonly PropertyInfo? tupleIndexer;
+		static readonly Type? tupleInterfaceType;
+		static readonly PropertyInfo? tupleLength;
+#else
+		static readonly PropertyInfo tupleIndexer;
+		static readonly Type tupleInterfaceType;
+		static readonly PropertyInfo tupleLength;
+#endif
+#endif
 
 		// List of intrinsic types => C# type names
 		static readonly Dictionary<TypeInfo, string> TypeMappings = new Dictionary<TypeInfo, string>
@@ -87,6 +115,22 @@ namespace Xunit.Sdk
 			{ typeof(IntPtr).GetTypeInfo(), "nint" },
 			{ typeof(UIntPtr).GetTypeInfo(), "nuint" },
 		};
+
+#if !XUNIT_AOT
+		static ArgumentFormatter()
+		{
+			tupleInterfaceType = Type.GetType("System.Runtime.CompilerServices.ITuple");
+
+			if (tupleInterfaceType != null)
+			{
+				tupleIndexer = tupleInterfaceType.GetRuntimeProperty("Item");
+				tupleLength = tupleInterfaceType.GetRuntimeProperty("Length");
+			}
+
+			if (tupleIndexer == null || tupleLength == null)
+				tupleInterfaceType = null;
+		}
+#endif
 
 		/// <summary>
 		/// Gets the ellipsis value (three middle dots, aka U+00B7).
@@ -333,14 +377,31 @@ namespace Xunit.Sdk
 			IEnumerable enumerable,
 			int depth)
 		{
-			if (depth == MAX_DEPTH || !SafeToMultiEnumerate(enumerable))
+			if (depth == MAX_DEPTH)
+				return EllipsisInBrackets;
+
+			var result = new StringBuilder();
+
+#if !XUNIT_AOT
+			var groupingTypes = GetGroupingTypes(enumerable);
+			if (groupingTypes != null)
+			{
+				var groupingInterface = typeof(IGrouping<,>).MakeGenericType(groupingTypes);
+				var key = groupingInterface.GetRuntimeProperty("Key")?.GetValue(enumerable);
+				result.AppendFormat(CultureInfo.CurrentCulture, "[{0}] = ", key?.ToString() ?? "null");
+			}
+			else if (!SafeToMultiEnumerate(enumerable))
+#else
+			if (!SafeToMultiEnumerate(enumerable))
+#endif
 				return EllipsisInBrackets;
 
 			// This should only be used on values that are known to be re-enumerable
 			// safely, like collections that implement IDictionary or IList.
 			var idx = 0;
-			var result = new StringBuilder("[");
 			var enumerator = enumerable.GetEnumerator();
+
+			result.Append('[');
 
 			while (enumerator.MoveNext())
 			{
@@ -492,6 +553,25 @@ namespace Xunit.Sdk
 			return Convert.ToString(value, CultureInfo.CurrentCulture) ?? "null";
 		}
 
+#if !XUNIT_AOT
+#if XUNIT_NULLABLE
+		internal static Type[]? GetGroupingTypes(object? obj)
+#else
+		internal static Type[] GetGroupingTypes(object obj)
+#endif
+		{
+			if (obj == null)
+				return null;
+
+			return
+				(from @interface in obj.GetType().GetTypeInfo().ImplementedInterfaces
+				 where @interface.GetTypeInfo().IsGenericType
+				 let genericTypeDefinition = @interface.GetGenericTypeDefinition()
+				 where genericTypeDefinition == typeof(IGrouping<,>)
+				 select @interface.GetTypeInfo()).FirstOrDefault()?.GenericTypeArguments;
+		}
+#endif
+
 		[DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ISet<>))]
 		[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2075", Justification = "We can't easily annotate callers of this type to require them to preserve interfaces, so just preserve the one interface that's checked for.")]
 #if XUNIT_NULLABLE
@@ -525,27 +605,47 @@ namespace Xunit.Sdk
 #endif
 		}
 
-		static bool IsSZArrayType(this TypeInfo typeInfo)
+
+		static bool IsEnumerableOfGrouping(IEnumerable collection)
 		{
-#if NETCOREAPP2_0_OR_GREATER
-			return typeInfo.IsSZArray;
-#elif XUNIT_NULLABLE
-			return typeInfo == typeInfo.GetElementType()!.MakeArrayType().GetTypeInfo();
+#if !XUNIT_AOT
+			var genericEnumerableType =
+				(from @interface in collection.GetType().GetTypeInfo().ImplementedInterfaces
+				 where @interface.GetTypeInfo().IsGenericType
+				 let genericTypeDefinition = @interface.GetGenericTypeDefinition()
+				 where genericTypeDefinition == typeof(IEnumerable<>)
+				 select @interface.GetTypeInfo()).FirstOrDefault()?.GenericTypeArguments[0];
+
+			if (genericEnumerableType == null)
+				return false;
+
+			return
+				genericEnumerableType
+					.GetTypeInfo()
+					.ImplementedInterfaces
+					.Concat(new[] { genericEnumerableType })
+					.Any(i => i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(IGrouping<,>));
 #else
-			return typeInfo == typeInfo.GetElementType().MakeArrayType().GetTypeInfo();
+			return false;
 #endif
 		}
 
-#if XUNIT_NULLABLE
-		static bool SafeToMultiEnumerate(IEnumerable? collection) =>
+		static bool IsSZArrayType(this TypeInfo typeInfo) =>
+#if NETCOREAPP2_0_OR_GREATER
+			typeInfo.IsSZArray;
+#elif XUNIT_NULLABLE
+			typeInfo == typeInfo.GetElementType()!.MakeArrayType().GetTypeInfo();
 #else
-		static bool SafeToMultiEnumerate(IEnumerable collection) =>
+			typeInfo == typeInfo.GetElementType().MakeArrayType().GetTypeInfo();
 #endif
+
+		static bool SafeToMultiEnumerate(IEnumerable collection) =>
 			collection is Array ||
 			collection is BitArray ||
 			collection is IList ||
 			collection is IDictionary ||
-			GetSetElementType(collection) != null;
+			GetSetElementType(collection) != null ||
+			IsEnumerableOfGrouping(collection);
 
 		static bool TryGetEscapeSequence(
 			char ch,

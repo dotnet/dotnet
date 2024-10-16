@@ -1,3 +1,8 @@
+#pragma warning disable CA1052 // Static holder types should be static
+#pragma warning disable IDE0022 // Use expression body for method
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
 #if XUNIT_NULLABLE
 #nullable enable
 #else
@@ -30,7 +35,7 @@ namespace Xunit
 		/// <summary>Do not call this method.</summary>
 		[Obsolete("This is an override of Object.Equals(). Call Assert.Equal() instead.", true)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new static bool Equals(
+		public static new bool Equals(
 			object a,
 			object b)
 		{
@@ -40,7 +45,7 @@ namespace Xunit
 		/// <summary>Do not call this method.</summary>
 		[Obsolete("This is an override of Object.ReferenceEquals(). Call Assert.Same() instead.", true)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new static bool ReferenceEquals(
+		public static new bool ReferenceEquals(
 			object a,
 			object b)
 		{
