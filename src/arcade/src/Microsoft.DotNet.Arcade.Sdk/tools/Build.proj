@@ -95,7 +95,7 @@
   </ItemGroup>
 
   <Target Name="Execute">
-    <Error Text="No projects were found to build. Either the 'Projects' property or 'ProjectToBuild' item group must be specified." Condition="'@(ProjectToBuild)' == '' and '$(_DotNetBuildPassNormalized)' != '1'"/>
+    <Error Text="No projects were found to build. Either the 'Projects' property or 'ProjectToBuild' item group must be specified." Condition="'@(ProjectToBuild)' == ''"/>
     <Error Text="Property 'RepoRoot' must be specified" Condition="'$(RepoRoot)' == ''"/>
     <Error Text="File 'global.json' must exist in directory specified by RepoRoot: '$(RepoRoot)'" Condition="'$(RepoRoot)' != '' and !Exists('$(RepoRoot)global.json')"/>
 

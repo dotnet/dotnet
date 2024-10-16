@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "10.0.0-beta.24514.3",
+      "packageVersion": "10.0.0-beta.24515.3",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "964e434191bd3ca5675743d08ff742ec0f1e79a9"
+      "commitSha": "31624193093a13f765ab5382509e693911264509"
     },
     {
       "packageVersion": "8.2.2-preview.1.24507.4",
@@ -13,10 +13,10 @@
       "commitSha": "a1f7880ae14703e747bf79d1e2e947bffea6a604"
     },
     {
-      "packageVersion": "10.0.0-alpha.2.24515.35",
+      "packageVersion": "10.0.0-alpha.2.24516.1",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "87d4d099c079dba45aa9c1490190b08882d9356e"
+      "commitSha": "839b1388bd28d29c00a4ae47e834a1d458bd043a"
     },
     {
       "packageVersion": "0.11.5-alpha.24480.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "dc03e5fad6acad5276a5fab82daa86f8b82284e9"
+      "commitSha": "a806b43ec20ab6be5b788f7f9480f6eb4ff8d29b"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24514.2",
@@ -151,22 +151,22 @@
       "commitSha": "bc9161306b23641b0364b8f93d546da4d48da1eb"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24515.4",
+      "packageVersion": "10.0.0-alpha.1.24516.2",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "19372fe078344546594740b5cf5f0b7860587ee8"
+      "commitSha": "44a1a4ff18c5d2aeaaa9bd17aedaaffb2f3c547f"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24512.4",
+      "packageVersion": "10.0.0-alpha.1.24515.12",
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "f73363f4cb56a3649c8039bd47c39de4f4db810f"
+      "commitSha": "572677b3d378e56a4f46b66bde7e2c31e347bd09"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24515.1",
+      "packageVersion": "10.0.0-alpha.1.24515.2",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "ab6c13e933676fd6eecc223246d3a008fc0a6cb8"
+      "commitSha": "f4fd180874894a06dc457734f52614da832a71d0"
     },
     {
       "packageVersion": "9.0.0-preview.24476.1",
