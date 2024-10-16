@@ -1,3 +1,14 @@
+#pragma warning disable CA1034 // Nested types should not be visible
+#pragma warning disable CA1052 // Static holder types should be static
+#pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
+#pragma warning disable IDE0039 // Use local function
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0046 // Convert to conditional expression
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+#pragma warning disable IDE0270 // Use coalesce expression
+#pragma warning disable IDE0290 // Use primary constructor
+
 #if XUNIT_NULLABLE
 #nullable enable
 #else

@@ -12,7 +12,9 @@
       DotNetSymbolServerTokenSymWeb     Personal access token for SymWeb symbol server. Available from variable group DotNet-Symbol-Server-Pats.
       DotNetSymbolExpirationInDays      Symbol expiration time in days (defaults to 10 years).
       SkipPackageChecks                 Skips package safety checks.
-      EnableDefaultArtifacts            Icludes packages under "/artifacts/packages/**" for publishing. Defaults to true.
+      EnableDefaultArtifacts            Includes packages under "/artifacts/packages/**" for publishing. Defaults to true.
+      DotNetBuildPass                   While building the repo as part of the entire .NET stack, this parameter specifies which build pass the current build is part of.
+                                          The build pass number gets added to the asset manifest file name to avoid collisions.
     
     Optional items:
       Artifact (with Metadata)          Path to the artifact to publish. Declare the item in Signing.props to sign and publish the artifact.
@@ -65,17 +67,24 @@
        ('$(DotNetBuildSourceOnly)' != 'true' or
        ('$(ArcadeInnerBuildFromSource)' == 'true' and '$(DotNetBuildFromSourceFlavor)' != 'Product'))">true</AutoGenerateSymbolPackages>
 
-    <AssetManifestOS Condition="'$(AssetManifestOS)' == ''">$(OS)</AssetManifestOS>
-
-    <AssetManifestFileName>$(AssetManifestOS)-$(PlatformName).xml</AssetManifestFileName>
-    <AssetManifestFilePath>$(ArtifactsLogDir)AssetManifest\$(AssetManifestFileName)</AssetManifestFilePath>
-
     <SymbolPackagesDir>$(ArtifactsTmpDir)SymbolPackages\</SymbolPackagesDir>
 
     <PublishDependsOnTargets Condition="$(PublishToSymbolServer)">$(PublishDependsOnTargets);PublishSymbols</PublishDependsOnTargets>
     <PublishDependsOnTargets Condition="$(DotNetPublishUsingPipelines)">$(PublishDependsOnTargets);PublishToAzureDevOpsArtifacts</PublishDependsOnTargets>
 
     <PublishDependsOnTargets>BeforePublish;$(PublishDependsOnTargets)</PublishDependsOnTargets>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Prefer TargetOS when set over OS -->
+    <AssetManifestOS Condition="'$(AssetManifestOS)' == ''">$([MSBuild]::ValueOrDefault('$(TargetOS)', '$(OS)'))</AssetManifestOS>
+    <!-- Prefer TargetArchitecture when set over PlatformName -->
+    <AssetManifestArch Condition="'$(AssetManifestArch)' == ''">$([MSBuild]::ValueOrDefault('$(TargetArchitecture)', '$(PlatformName)'))</AssetManifestArch>
+    <!-- Add the build pass number when DotNetBuildPass is set to a value other than 1. -->
+    <AssetManifestPass Condition="'$(DotNetBuildPass)' != '' and '$(DotNetBuildPass)' != '1'">-Pass$(DotNetBuildPass)</AssetManifestPass>
+
+    <AssetManifestFileName>$(AssetManifestOS)-$(AssetManifestArch)$(AssetManifestPass).xml</AssetManifestFileName>
+    <AssetManifestFilePath>$(ArtifactsLogDir)AssetManifest\$(AssetManifestFileName)</AssetManifestFilePath>
   </PropertyGroup>
 
   <Import Project="$(NuGetPackageRoot)microsoft.dotnet.build.tasks.feed\$(MicrosoftDotNetBuildTasksFeedVersion)\build\Microsoft.DotNet.Build.Tasks.Feed.targets"/>

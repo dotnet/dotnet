@@ -1,3 +1,16 @@
+#pragma warning disable CA1031 // Do not catch general exception types
+#pragma warning disable CA2263 // Prefer generic overload when type is known
+#pragma warning disable IDE0018 // Inline variable declaration
+#pragma warning disable IDE0019 // Use pattern matching
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0046 // Convert to conditional expression
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+#pragma warning disable IDE0270 // Null check can be simplified
+#pragma warning disable IDE0300 // Collection initialization can be simplified
+
 #if XUNIT_NULLABLE
 #nullable enable
 #else
@@ -47,9 +60,9 @@ namespace Xunit.Internal
 		};
 
 #if XUNIT_NULLABLE
-		static ConcurrentDictionary<Type, Dictionary<string, Func<object?, object?>>> gettersByType = new ConcurrentDictionary<Type, Dictionary<string, Func<object?, object?>>>();
+		static readonly ConcurrentDictionary<Type, Dictionary<string, Func<object?, object?>>> gettersByType = new ConcurrentDictionary<Type, Dictionary<string, Func<object?, object?>>>();
 #else
-		static ConcurrentDictionary<Type, Dictionary<string, Func<object, object>>> gettersByType = new ConcurrentDictionary<Type, Dictionary<string, Func<object, object>>>();
+		static readonly ConcurrentDictionary<Type, Dictionary<string, Func<object, object>>> gettersByType = new ConcurrentDictionary<Type, Dictionary<string, Func<object, object>>>();
 #endif
 
 		const string fileSystemInfoFqn = "System.IO.FileSystemInfo, System.Runtime";
@@ -60,6 +73,8 @@ namespace Xunit.Internal
 		static readonly Lazy<TypeInfo> fileSystemInfoTypeInfo = new Lazy<TypeInfo>(() => GetTypeInfo(fileSystemInfoFqn)?.GetTypeInfo());
 		static readonly Lazy<PropertyInfo> fileSystemInfoFullNameProperty = new Lazy<PropertyInfo>(() => fileSystemInfoTypeInfo.Value?.GetDeclaredProperty("FullName"));
 #endif
+
+#pragma warning disable IDE0200  // The lambda expression here is conditionally necessary, but the analyzer isn't smart enough to know that
 
 		static readonly Lazy<Assembly[]> getAssemblies = new Lazy<Assembly[]>(() =>
 		{
@@ -91,6 +106,12 @@ namespace Xunit.Internal
 #endif
 		});
 
+#pragma warning restore IDE0200 // Remove unnecessary lambda expression
+
+#if !XUNIT_AOT
+		static readonly Type objectType = typeof(object);
+		static readonly TypeInfo objectTypeInfo = objectType.GetTypeInfo();
+#endif
 		static readonly IEqualityComparer<object> referenceEqualityComparer = new ReferenceEqualityComparer();
 
 		[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2111: Method 'lambda expression' with parameters or return value with `DynamicallyAccessedMembersAttribute` is accessed via reflection. Trimmer can't guarantee availability of the requirements of the method.", Justification = "The lambda will only be called by the value in the type parameter, which has the same requirements.")]
@@ -307,6 +328,43 @@ namespace Xunit.Internal
 			}
 		}
 
+#if !XUNIT_AOT
+#if XUNIT_NULLABLE
+		static object? UnwrapLazy(
+			object? value,
+#else
+		static object UnwrapLazy(
+			object value,
+#endif
+			out Type valueType,
+			out TypeInfo valueTypeInfo)
+		{
+			if (value == null)
+			{
+				valueType = objectType;
+				valueTypeInfo = objectTypeInfo;
+
+				return null;
+			}
+
+			valueType = value.GetType();
+			valueTypeInfo = valueType.GetTypeInfo();
+
+			if (valueTypeInfo.IsGenericType && valueTypeInfo.GetGenericTypeDefinition() == typeof(Lazy<>))
+			{
+				var property = valueType.GetRuntimeProperty("Value");
+				if (property != null)
+				{
+					valueType = valueTypeInfo.GenericTypeArguments[0];
+					valueTypeInfo = valueType.GetTypeInfo();
+					return property.GetValue(value);
+				}
+			}
+
+			return value;
+		}
+#endif
+
 #if XUNIT_NULLABLE
 		public static EquivalentException? VerifyEquivalence(
 			object? expected,
@@ -316,10 +374,8 @@ namespace Xunit.Internal
 			object expected,
 			object actual,
 #endif
-			bool strict)
-		{
-			return VerifyEquivalence(expected, actual, strict, string.Empty, new HashSet<object>(referenceEqualityComparer), new HashSet<object>(referenceEqualityComparer), 1);
-		}
+			bool strict) =>
+				VerifyEquivalence(expected, actual, strict, string.Empty, new HashSet<object>(referenceEqualityComparer), new HashSet<object>(referenceEqualityComparer), 1);
 
 #if XUNIT_NULLABLE
 		static EquivalentException? VerifyEquivalence<[DynamicallyAccessedMembers(
@@ -358,6 +414,17 @@ namespace Xunit.Internal
 			if (depth == 50)
 				return EquivalentException.ForExceededDepth(50, prefix);
 
+#if !XUNIT_AOT
+			// Unwrap Lazy<T>
+			Type expectedType;
+			TypeInfo expectedTypeInfo;
+			expected = UnwrapLazy(expected, out expectedType, out expectedTypeInfo);
+
+			Type _;
+			TypeInfo actualTypeInfo;
+			actual = UnwrapLazy(actual, out _, out actualTypeInfo);
+#endif
+
 			// Check for null equivalence
 			if (expected == null)
 				return
@@ -379,18 +446,19 @@ namespace Xunit.Internal
 			if (actualRefs.Contains(actual))
 				return EquivalentException.ForCircularReference(string.Format(CultureInfo.CurrentCulture, "{0}.{1}", nameof(actual), prefix));
 
-			expectedRefs.Add(expected);
-			actualRefs.Add(actual);
-
 			try
 			{
+#if XUNIT_AOT
 				var expectedType = expected.GetType();
 				var expectedTypeInfo = expectedType.GetTypeInfo();
 				var actualType = actual.GetType();
 				var actualTypeInfo = actualType.GetTypeInfo();
+#endif
+				expectedRefs.Add(expected);
+				actualRefs.Add(actual);
 
 				// Primitive types, enums and strings should just fall back to their Equals implementation
-				if (expectedTypeInfo.IsPrimitive || expectedTypeInfo.IsEnum || expectedType == typeof(string) || expectedType == typeof(decimal))
+				if (expectedTypeInfo.IsPrimitive || expectedTypeInfo.IsEnum || expectedType == typeof(string) || expectedType == typeof(decimal) || expectedType == typeof(Guid))
 					return VerifyEquivalenceIntrinsics(expected, actual, prefix);
 
 				// DateTime and DateTimeOffset need to be compared via IComparable (because of a circular
@@ -402,6 +470,17 @@ namespace Xunit.Internal
 				if (fileSystemInfoTypeInfo.Value != null)
 					if (fileSystemInfoTypeInfo.Value.IsAssignableFrom(expectedTypeInfo) && fileSystemInfoTypeInfo.Value.IsAssignableFrom(actualTypeInfo))
 						return VerifyEquivalenceFileSystemInfo(expected, actual, strict, prefix, expectedRefs, actualRefs, depth);
+
+#if !XUNIT_AOT
+				// IGrouping<TKey,TValue> is special, since it implements IEnumerable<TValue>
+				var expectedGroupingTypes = ArgumentFormatter.GetGroupingTypes(expected);
+				if (expectedGroupingTypes != null)
+				{
+					var actualGroupingTypes = ArgumentFormatter.GetGroupingTypes(actual);
+					if (actualGroupingTypes != null)
+						return VerifyEquivalenceGroupings(expected, expectedGroupingTypes, actual, actualGroupingTypes, strict);
+				}
+#endif
 
 				// Enumerables? Check equivalence of individual members
 				var enumerableExpected = expected as IEnumerable;
@@ -491,6 +570,7 @@ namespace Xunit.Internal
 			foreach (var expectedValue in expectedValues)
 			{
 				var actualIdx = 0;
+
 				for (; actualIdx < actualValues.Count; ++actualIdx)
 					if (VerifyEquivalence(expectedValue, actualValues[actualIdx], strict, "", expectedRefs, actualRefs, depth) == null)
 						break;
@@ -534,6 +614,47 @@ namespace Xunit.Internal
 
 			return VerifyEquivalenceReference(expectedAnonymous, actual, strict, prefix, expectedRefs, actualRefs, depth);
 		}
+
+#if !XUNIT_AOT
+#if XUNIT_NULLABLE
+		static EquivalentException? VerifyEquivalenceGroupings(
+#else
+		static EquivalentException VerifyEquivalenceGroupings(
+#endif
+			object expected,
+			Type[] expectedGroupingTypes,
+			object actual,
+			Type[] actualGroupingTypes,
+			bool strict)
+		{
+			var expectedKey = typeof(IGrouping<,>).MakeGenericType(expectedGroupingTypes).GetRuntimeProperty("Key")?.GetValue(expected);
+			var actualKey = typeof(IGrouping<,>).MakeGenericType(actualGroupingTypes).GetRuntimeProperty("Key")?.GetValue(actual);
+
+			var keyException = VerifyEquivalence(expectedKey, actualKey, strict: false);
+			if (keyException != null)
+				return keyException;
+
+			var toArrayMethod =
+				typeof(Enumerable)
+					.GetRuntimeMethods()
+					.FirstOrDefault(m => m.IsStatic && m.IsPublic && m.Name == nameof(Enumerable.ToArray) && m.GetParameters().Length == 1);
+
+			if (toArrayMethod == null)
+				throw new InvalidOperationException("Could not find method Enumerable.ToArray<>");
+
+			// Convert everything to an array so it doesn't endlessly loop on the IGrouping<> test
+			var expectedToArrayMethod = toArrayMethod.MakeGenericMethod(expectedGroupingTypes[1]);
+			var expectedValues = expectedToArrayMethod.Invoke(null, new[] { expected });
+
+			var actualToArrayMethod = toArrayMethod.MakeGenericMethod(actualGroupingTypes[1]);
+			var actualValues = actualToArrayMethod.Invoke(null, new[] { actual });
+
+			if (VerifyEquivalence(expectedValues, actualValues, strict) != null)
+				throw EquivalentException.ForGroupingWithMismatchedValues(expectedValues, actualValues, ArgumentFormatter.Format(expectedKey));
+
+			return null;
+		}
+#endif
 
 #if XUNIT_NULLABLE
 		static EquivalentException? VerifyEquivalenceIntrinsics(

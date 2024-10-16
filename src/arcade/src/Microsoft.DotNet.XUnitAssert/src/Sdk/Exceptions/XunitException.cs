@@ -1,3 +1,9 @@
+#pragma warning disable CA1032 // Implement standard exception constructors
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+#pragma warning disable IDE0290 // Use primary constructor
+
 #if XUNIT_NULLABLE
 #nullable enable
 #else
@@ -55,12 +61,10 @@ namespace Xunit.Sdk
 		{
 			var className = GetType().ToString();
 			var message = Message;
-			string result;
-
-			if (message == null || message.Length <= 0)
-				result = className;
-			else
-				result = string.Format(CultureInfo.CurrentCulture, "{0}: {1}", className, message);
+			var result =
+				message == null || message.Length <= 0
+					? className
+					: string.Format(CultureInfo.CurrentCulture, "{0}: {1}", className, message);
 
 			var stackTrace = StackTrace;
 			if (stackTrace != null)

@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace Microsoft.DotNet.SignTool
 {
@@ -141,6 +142,19 @@ namespace Microsoft.DotNet.SignTool
         public override bool VerifySignedVSIXFileMarker(string filePath)
         {
             return VerifySignatures.VerifySignedVSIXByFileMarker(filePath);
+        }
+        
+        public override bool LocalStrongNameSign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files)
+        {
+            foreach (var file in files)
+            {
+                if (file.SignInfo.ShouldLocallyStrongNameSign)
+                {
+                    return LocalStrongNameSign(file);
+                }
+            }
+
+            return true;
         }
     }
 }

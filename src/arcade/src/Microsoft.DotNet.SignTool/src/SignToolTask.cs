@@ -226,17 +226,6 @@ namespace Microsoft.DotNet.SignTool
                     Log.LogError($"An incorrect full path to 'sn.exe' was specified: {SNBinaryPath}");
                     return;
                 }
-
-                var strongNameLocally = StrongNameSignInfo != null
-                    && StrongNameSignInfo
-                        .Where(ti => !string.IsNullOrEmpty(ti.ItemSpec) && ti.ItemSpec.EndsWith(".snk", StringComparison.OrdinalIgnoreCase))
-                        .Any();
-
-                if (!isValidSNPath && strongNameLocally)
-                {
-                    Log.LogError($"An incorrect full path to 'sn.exe' was specified: {SNBinaryPath}");
-                    return;
-                }
             }
             if(WixToolsPath != null && !Directory.Exists(WixToolsPath))
             {

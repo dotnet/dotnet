@@ -1,3 +1,9 @@
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0046 // Convert to conditional expression
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+#pragma warning disable IDE0305 // Simplify collection initialization
+
 #if XUNIT_NULLABLE
 #nullable enable
 #else
@@ -16,12 +22,7 @@ namespace Xunit.Internal
 	// Adapted from ExceptionUtility (xunit.v3.common) and StackFrameTransformer (xunit.v3.runner.common)
 	internal static class ExceptionUtility
 	{
-		static readonly Regex transformRegex;
-
-		static ExceptionUtility()
-		{
-			transformRegex = new Regex(@"^\s*at (?<method>.*) in (?<file>.*):(line )?(?<line>\d+)$");
-		}
+		static readonly Regex transformRegex = new Regex(@"^\s*at (?<method>.*) in (?<file>.*):(line )?(?<line>\d+)$");
 
 		static bool FilterStackFrame(string stackFrame)
 		{

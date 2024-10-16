@@ -1,3 +1,16 @@
+#pragma warning disable CA1031 // Do not catch general exception types
+#pragma warning disable CA1052 // Static holder types should be static
+#pragma warning disable CA1720 // Identifier contains type name
+#pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
+#pragma warning disable IDE0018 // Inline variable declaration
+#pragma warning disable IDE0019 // Use pattern matching
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0063 // Use simple 'using' statement
+#pragma warning disable IDE0066 // Convert switch statement to expression
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+#pragma warning disable IDE0305 // Simplify collection initialization
+
 #if XUNIT_NULLABLE
 #nullable enable
 #else

@@ -1,3 +1,8 @@
+#pragma warning disable CA1052 // Static holder types should be static
+#pragma warning disable IDE0018 // Inline variable declaration
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
 #if XUNIT_SPAN
 
 #if XUNIT_NULLABLE

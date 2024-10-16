@@ -4,6 +4,8 @@
 using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.DotNet.SignTool
 {
@@ -19,6 +21,28 @@ namespace Microsoft.DotNet.SignTool
             : base(args, log)
         {
             TestSign = args.TestSign;
+        }
+
+        public override bool LocalStrongNameSign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files)
+        {
+            // On non-Windows, we skip strong name signing because sn.exe is not available.
+            // We could skip it always in the validation sign tool, but it is useful to
+            // get some level of validation.
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return true;
+            }
+
+            foreach (var file in files)
+            {
+                if (file.SignInfo.ShouldLocallyStrongNameSign)
+                {
+                    return LocalStrongNameSign(file);
+                }
+            }
+
+            return true;
         }
 
         public override void RemovePublicSign(string assemblyPath)

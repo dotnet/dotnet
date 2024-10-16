@@ -1,3 +1,7 @@
+#pragma warning disable CA1052 // Static holder types should be static
+#pragma warning disable IDE0018 // Inline variable declaration
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
 #if XUNIT_SPAN
 
 #if XUNIT_NULLABLE
@@ -183,11 +187,24 @@ namespace Xunit
 		}
 
 		/// <summary>
-		/// Verifies that two spans are equivalent.
+		/// Verifies that a span and an array contain the same values in the same order.
+		/// </summary>
+		/// <param name="expectedSpan">The expected span value.</param>
+		/// <param name="actualArray">The actual array value.</param>
+		/// <exception cref="EqualException">Thrown when the collections are not equal.</exception>
+		// This overload exists per https://github.com/xunit/xunit/discussions/3021
+		public static void Equal<T>(
+			ReadOnlySpan<T> expectedSpan,
+			T[] actualArray)
+				where T : IEquatable<T> =>
+					Equal(expectedSpan, actualArray.AsSpan());
+
+		/// <summary>
+		/// Verifies that two spans contain the same values in the same order.
 		/// </summary>
 		/// <param name="expectedSpan">The expected span value.</param>
 		/// <param name="actualSpan">The actual span value.</param>
-		/// <exception cref="EqualException">Thrown when the spans are not equivalent.</exception>
+		/// <exception cref="EqualException">Thrown when the spans are not equal.</exception>
 		public static void Equal<T>(
 			Span<T> expectedSpan,
 			Span<T> actualSpan)
@@ -195,11 +212,11 @@ namespace Xunit
 					Equal((ReadOnlySpan<T>)expectedSpan, (ReadOnlySpan<T>)actualSpan);
 
 		/// <summary>
-		/// Verifies that two spans are equivalent.
+		/// Verifies that two spans contain the same values in the same order.
 		/// </summary>
 		/// <param name="expectedSpan">The expected span value.</param>
 		/// <param name="actualSpan">The actual span value.</param>
-		/// <exception cref="EqualException">Thrown when the spans are not equivalent.</exception>
+		/// <exception cref="EqualException">Thrown when the spans are not equal.</exception>
 		public static void Equal<T>(
 			Span<T> expectedSpan,
 			ReadOnlySpan<T> actualSpan)
@@ -207,11 +224,11 @@ namespace Xunit
 					Equal((ReadOnlySpan<T>)expectedSpan, actualSpan);
 
 		/// <summary>
-		/// Verifies that two spans are equivalent.
+		/// Verifies that two spans contain the same values in the same order.
 		/// </summary>
 		/// <param name="expectedSpan">The expected span value.</param>
 		/// <param name="actualSpan">The actual span value.</param>
-		/// <exception cref="EqualException">Thrown when the spans are not equivalent.</exception>
+		/// <exception cref="EqualException">Thrown when the spans are not equal.</exception>
 		public static void Equal<T>(
 			ReadOnlySpan<T> expectedSpan,
 			Span<T> actualSpan)
@@ -219,11 +236,11 @@ namespace Xunit
 					Equal(expectedSpan, (ReadOnlySpan<T>)actualSpan);
 
 		/// <summary>
-		/// Verifies that two spans are equivalent.
+		/// Verifies that two spans contain the same values in the same order.
 		/// </summary>
 		/// <param name="expectedSpan">The expected span value.</param>
 		/// <param name="actualSpan">The actual span value.</param>
-		/// <exception cref="EqualException">Thrown when the spans are not equivalent.</exception>
+		/// <exception cref="EqualException">Thrown when the spans are not equal.</exception>
 		public static void Equal<T>(
 			ReadOnlySpan<T> expectedSpan,
 			ReadOnlySpan<T> actualSpan)
