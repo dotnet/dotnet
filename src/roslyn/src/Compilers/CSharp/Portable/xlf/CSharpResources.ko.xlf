@@ -632,6 +632,11 @@
         <target state="translated">'else'로 문을 시작할 수 없습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_EncUpdateFailedMissingSymbol">
+        <source>Cannot emit update; {0} '{1}' is missing.</source>
+        <target state="new">Cannot emit update; {0} '{1}' is missing.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_EntryPointCannotBeUnmanagedCallersOnly">
         <source>Application entry points cannot be attributed with 'UnmanagedCallersOnly'.</source>
         <target state="translated">애플리케이션 진입점에는 'UnmanagedCallersOnly' 특성을 지정할 수 없습니다.</target>
@@ -1617,11 +1622,6 @@
         <target state="translated">'{0}' 메서드는 형식 매개 변수 '{1}'의 'struct' 제약 조건을 지정하지만 재정의되었거나 명시적으로 구현된 '{3}' 메서드의 해당 형식 매개 변수 '{2}'이(가) null을 허용하지 않는 값 형식이 아닙니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ERR_ParameterNullCheckingNotSupported">
-        <source>The 'parameter null-checking' feature is not supported.</source>
-        <target state="translated">'parameter null-checking' 기능은 지원되지 않습니다.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ERR_ParamsCollectionConstructorDoesntInitializeRequiredMember">
         <source>Constructor '{0}' leaves required member '{1}' uninitialized.</source>
         <target state="translated">생성자 '{0}'은(는) 필수 멤버 '{1}'을(를) 초기화되지 않은 상태로 둡니다.</target>
@@ -2417,6 +2417,11 @@
         <target state="translated">파일 형식</target>
         <note />
       </trans-unit>
+      <trans-unit id="IDS_FeatureFirstClassSpan">
+        <source>first-class Span types</source>
+        <target state="new">first-class Span types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="IDS_FeatureGenericAttributes">
         <source>generic attributes</source>
         <target state="translated">제네릭 특성</target>
@@ -2655,6 +2660,16 @@
       <trans-unit id="ISpreadOperationIsNotCSharpSpread">
         <source>{0} is not a valid C# spread operation</source>
         <target state="translated">{0}은(는) 유효한 C# 확산 작업이 아닙니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_AccessorDoesNotUseBackingField">
+        <source>The '{0}' accessor of property '{1}' should use 'field' because the other accessor is using it.</source>
+        <target state="new">The '{0}' accessor of property '{1}' should use 'field' because the other accessor is using it.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_AccessorDoesNotUseBackingField_Title">
+        <source>Property accessor should use 'field' because the other accessor is using it.</source>
+        <target state="new">Property accessor should use 'field' because the other accessor is using it.</target>
         <note />
       </trans-unit>
       <trans-unit id="WRN_AddressOfInAsync">
@@ -5213,6 +5228,16 @@
         <target state="translated">형식 매개 변수가 외부 메서드의 형식 매개 변수와 형식이 같습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="WRN_UnassignedInternalRefField">
+        <source>Field '{0}' is never ref-assigned to, and will always have its default value (null reference)</source>
+        <target state="new">Field '{0}' is never ref-assigned to, and will always have its default value (null reference)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_UnassignedInternalRefField_Title">
+        <source>Field is never ref-assigned to, and will always have its default value (null reference)</source>
+        <target state="new">Field is never ref-assigned to, and will always have its default value (null reference)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="WRN_UnassignedThisAutoPropertySupportedVersion">
         <source>Control is returned to caller before auto-implemented property '{0}' is explicitly assigned, causing a preceding implicit assignment of 'default'.</source>
         <target state="translated">자동 구현 속성 '{0}'이(가) 명시적으로 할당되기 전에 제어가 호출자에게 반환되어 'default'의 선행 암시적 할당이 발생합니다.</target>
@@ -7605,11 +7630,6 @@ If such a class is used as a base class and if the deriving class defines a dest
       <trans-unit id="ERR_DllImportOnInvalidMethod">
         <source>The DllImport attribute must be specified on a method marked 'static' and 'extern'</source>
         <target state="translated">DllImport 특성은 'static' 및 'extern'으로 표시된 메서드에만 지정할 수 있습니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ERR_EncUpdateFailedMissingAttribute">
-        <source>Cannot update '{0}'; attribute '{1}' is missing.</source>
-        <target state="translated">'{0}'을(를) 업데이트할 수 없습니다. 특성 '{1}'이(가) 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_DllImportOnGenericMethod">
@@ -12995,8 +13015,8 @@ To remove the warning, you can use /reference instead (set the Embed Interop Typ
         <note />
       </trans-unit>
       <trans-unit id="ERR_InvalidDebugInfo">
-        <source>Unable to read debug information of method '{0}' (token 0x{1:X8}) from assembly '{2}'</source>
-        <target state="translated">'{2}' 어셈블리에서 '{0}' 메서드(토큰 0x{1:X8})의 디버그 정보를 읽을 수 없습니다.</target>
+        <source>Unable to read debug information of method '{0}' (token 0x{1:X8}) from assembly '{2}': {3}</source>
+        <target state="new">Unable to read debug information of method '{0}' (token 0x{1:X8}) from assembly '{2}': {3}</target>
         <note />
       </trans-unit>
       <trans-unit id="IConversionExpressionIsNotCSharpConversion">

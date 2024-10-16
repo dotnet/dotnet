@@ -132,19 +132,18 @@ namespace Microsoft.CodeAnalysis.Diagnostics.EngineV2
 
             private static ImmutableDictionary<DiagnosticAnalyzer, StateSet> CreateStateSetMap(
                 string language,
-                IEnumerable<ImmutableArray<DiagnosticAnalyzer>> projectAnalyzerCollection,
-                IEnumerable<ImmutableArray<DiagnosticAnalyzer>> hostAnalyzerCollection,
+                IEnumerable<ImmutableArray<DiagnosticAnalyzer>> analyzerCollection,
                 bool includeWorkspacePlaceholderAnalyzers)
             {
                 var builder = ImmutableDictionary.CreateBuilder<DiagnosticAnalyzer, StateSet>();
 
                 if (includeWorkspacePlaceholderAnalyzers)
                 {
-                    builder.Add(FileContentLoadAnalyzer.Instance, new StateSet(language, FileContentLoadAnalyzer.Instance, isHostAnalyzer: true));
-                    builder.Add(GeneratorDiagnosticsPlaceholderAnalyzer.Instance, new StateSet(language, GeneratorDiagnosticsPlaceholderAnalyzer.Instance, isHostAnalyzer: true));
+                    builder.Add(FileContentLoadAnalyzer.Instance, new StateSet(language, FileContentLoadAnalyzer.Instance));
+                    builder.Add(GeneratorDiagnosticsPlaceholderAnalyzer.Instance, new StateSet(language, GeneratorDiagnosticsPlaceholderAnalyzer.Instance));
                 }
 
-                foreach (var analyzers in projectAnalyzerCollection)
+                foreach (var analyzers in analyzerCollection)
                 {
                     foreach (var analyzer in analyzers)
                     {
@@ -159,26 +158,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics.EngineV2
                             continue;
                         }
 
-                        builder.Add(analyzer, new StateSet(language, analyzer, isHostAnalyzer: false));
-                    }
-                }
-
-                foreach (var analyzers in hostAnalyzerCollection)
-                {
-                    foreach (var analyzer in analyzers)
-                    {
-                        Debug.Assert(analyzer != FileContentLoadAnalyzer.Instance && analyzer != GeneratorDiagnosticsPlaceholderAnalyzer.Instance);
-
-                        // TODO: 
-                        // #1, all de-duplication should move to DiagnosticAnalyzerInfoCache
-                        // #2, not sure whether de-duplication of analyzer itself makes sense. this can only happen
-                        //     if user deliberately put same analyzer twice.
-                        if (builder.ContainsKey(analyzer))
-                        {
-                            continue;
-                        }
-
-                        builder.Add(analyzer, new StateSet(language, analyzer, isHostAnalyzer: true));
+                        builder.Add(analyzer, new StateSet(language, analyzer));
                     }
                 }
 

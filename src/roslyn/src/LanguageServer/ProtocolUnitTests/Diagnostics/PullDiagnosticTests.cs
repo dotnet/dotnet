@@ -1031,7 +1031,7 @@ class C
         await using var testLspServer = await CreateTestLspServerAsync(["class C {}"], mutatingLspWorkspace,
             GetInitializationOptions(BackgroundAnalysisScope.FullSolution, CompilerDiagnosticsScope.FullSolution, useVSDiagnostics, enableDiagnosticsInSourceGeneratedFiles: enableDiagnosticsInSourceGeneratedFiles));
 
-        var generator = new TestSourceGenerator()
+        var generator = new Roslyn.Test.Utilities.TestGenerators.TestSourceGenerator()
         {
             ExecuteImpl = context => throw new InvalidOperationException("Source generator failed")
         };
@@ -2052,6 +2052,12 @@ class A {";
         var resultsTwo = await resultTaskTwo;
         Assert.NotEmpty(resultsOne);
         Assert.Empty(resultsTwo);
+
+        // For the mutating workspace, the change in the document can cause to change events
+        //    1.  LSP changed, which triggers immediately via the queue.
+        //    2.  Workspace changed, which can be delayed until after the requests complete.
+        // To ensure the workspace changed is processed, we need to wait for all workspace events.
+        await testLspServer.WaitForDiagnosticsAsync();
 
         // Make new requests - these requests should again wait for new changes.
         resultTaskOne = RunGetWorkspacePullDiagnosticsAsync(testLspServer, useVSDiagnostics, useProgress: true, category: PullDiagnosticCategories.WorkspaceDocumentsAndProject, triggerConnectionClose: false);

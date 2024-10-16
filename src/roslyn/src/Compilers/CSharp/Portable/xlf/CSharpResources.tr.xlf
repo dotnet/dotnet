@@ -632,6 +632,11 @@
         <target state="translated">'else' bir deyim başlatamaz.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_EncUpdateFailedMissingSymbol">
+        <source>Cannot emit update; {0} '{1}' is missing.</source>
+        <target state="new">Cannot emit update; {0} '{1}' is missing.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_EntryPointCannotBeUnmanagedCallersOnly">
         <source>Application entry points cannot be attributed with 'UnmanagedCallersOnly'.</source>
         <target state="translated">Uygulama giriş noktaları 'UnmanagedCallersOnly' ile ilişkilendirilemez.</target>
@@ -1617,11 +1622,6 @@
         <target state="translated">'{0}' yöntemi, '{1}' tür parametresi için bir 'struct' kısıtlaması belirtiyor, ancak geçersiz kılınan veya açıkça uygulanan '{3}' yönteminin karşılık gelen '{2}' tür parametresi boş değer atanamaz bir tip değil.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ERR_ParameterNullCheckingNotSupported">
-        <source>The 'parameter null-checking' feature is not supported.</source>
-        <target state="translated">'Parametre null denetimi' özelliği desteklenmiyor.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ERR_ParamsCollectionConstructorDoesntInitializeRequiredMember">
         <source>Constructor '{0}' leaves required member '{1}' uninitialized.</source>
         <target state="translated">Oluşturucu '{0}', gerekli '{1}' üyesinin başlatmasını geri alıyor.</target>
@@ -2417,6 +2417,11 @@
         <target state="translated">dosya türleri</target>
         <note />
       </trans-unit>
+      <trans-unit id="IDS_FeatureFirstClassSpan">
+        <source>first-class Span types</source>
+        <target state="new">first-class Span types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="IDS_FeatureGenericAttributes">
         <source>generic attributes</source>
         <target state="translated">genel öznitelikler</target>
@@ -2655,6 +2660,16 @@
       <trans-unit id="ISpreadOperationIsNotCSharpSpread">
         <source>{0} is not a valid C# spread operation</source>
         <target state="translated">{0}, geçerli bir C# yayma işlemi değil</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_AccessorDoesNotUseBackingField">
+        <source>The '{0}' accessor of property '{1}' should use 'field' because the other accessor is using it.</source>
+        <target state="new">The '{0}' accessor of property '{1}' should use 'field' because the other accessor is using it.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_AccessorDoesNotUseBackingField_Title">
+        <source>Property accessor should use 'field' because the other accessor is using it.</source>
+        <target state="new">Property accessor should use 'field' because the other accessor is using it.</target>
         <note />
       </trans-unit>
       <trans-unit id="WRN_AddressOfInAsync">
@@ -5213,6 +5228,16 @@
         <target state="translated">Tür parametresi dış metottaki tür parametresi ile aynı türe sahip</target>
         <note />
       </trans-unit>
+      <trans-unit id="WRN_UnassignedInternalRefField">
+        <source>Field '{0}' is never ref-assigned to, and will always have its default value (null reference)</source>
+        <target state="new">Field '{0}' is never ref-assigned to, and will always have its default value (null reference)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_UnassignedInternalRefField_Title">
+        <source>Field is never ref-assigned to, and will always have its default value (null reference)</source>
+        <target state="new">Field is never ref-assigned to, and will always have its default value (null reference)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="WRN_UnassignedThisAutoPropertySupportedVersion">
         <source>Control is returned to caller before auto-implemented property '{0}' is explicitly assigned, causing a preceding implicit assignment of 'default'.</source>
         <target state="translated">Denetim, otomatik uygulanan '{0}' özelliği açıkça atanmadan önce çağırana döndürülür ve bu da 'default' öğesinin önceki örtük ataması ile sonuçlanır.</target>
@@ -7605,11 +7630,6 @@ Bu sınıf temel sınıf olarak kullanılırsa ve türetilen sınıf bir yıkıc
       <trans-unit id="ERR_DllImportOnInvalidMethod">
         <source>The DllImport attribute must be specified on a method marked 'static' and 'extern'</source>
         <target state="translated">DllImport özniteliği 'static' ve 'extern' olarak işaretlenmiş bir yöntem üzerinde belirtilmelidir</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ERR_EncUpdateFailedMissingAttribute">
-        <source>Cannot update '{0}'; attribute '{1}' is missing.</source>
-        <target state="translated">'{0}' güncelleştirilemiyor; '{1}' özniteliği eksik.</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_DllImportOnGenericMethod">
@@ -12995,8 +13015,8 @@ Uyarıyı kaldırmak için, /reference kullanabilirsiniz (Birlikte Çalışma T�
         <note />
       </trans-unit>
       <trans-unit id="ERR_InvalidDebugInfo">
-        <source>Unable to read debug information of method '{0}' (token 0x{1:X8}) from assembly '{2}'</source>
-        <target state="translated">'{2}' bütünleştirilmiş kodundan '{0}' metodunun hata ayıklama bilgileri okunamıyor (belirteç 0x{1:X8}) </target>
+        <source>Unable to read debug information of method '{0}' (token 0x{1:X8}) from assembly '{2}': {3}</source>
+        <target state="new">Unable to read debug information of method '{0}' (token 0x{1:X8}) from assembly '{2}': {3}</target>
         <note />
       </trans-unit>
       <trans-unit id="IConversionExpressionIsNotCSharpConversion">

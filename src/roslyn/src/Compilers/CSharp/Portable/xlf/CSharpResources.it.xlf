@@ -632,6 +632,11 @@
         <target state="translated">Un'istruzione non può iniziare con 'else'.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_EncUpdateFailedMissingSymbol">
+        <source>Cannot emit update; {0} '{1}' is missing.</source>
+        <target state="new">Cannot emit update; {0} '{1}' is missing.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_EntryPointCannotBeUnmanagedCallersOnly">
         <source>Application entry points cannot be attributed with 'UnmanagedCallersOnly'.</source>
         <target state="translated">Non è possibile aggiungere ai punti di ingresso dell'applicazione l'attributo 'UnmanagedCallersOnly'.</target>
@@ -1617,11 +1622,6 @@
         <target state="translated">Il metodo '{0}' specifica un vincolo 'struct' per il parametro di tipo '{1}', ma il parametro di tipo corrispondente '{2}' del metodo '{3}' sottoposto a override o implementato in modo esplicito non è un tipo valore che non ammette valori Null.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ERR_ParameterNullCheckingNotSupported">
-        <source>The 'parameter null-checking' feature is not supported.</source>
-        <target state="translated">La funzionalità 'parameter null-checking' non è supportata.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ERR_ParamsCollectionConstructorDoesntInitializeRequiredMember">
         <source>Constructor '{0}' leaves required member '{1}' uninitialized.</source>
         <target state="translated">Il costruttore '{0}' lascia non inizializzato il membro richiesto '{1}'.</target>
@@ -2417,6 +2417,11 @@
         <target state="translated">tipi di file</target>
         <note />
       </trans-unit>
+      <trans-unit id="IDS_FeatureFirstClassSpan">
+        <source>first-class Span types</source>
+        <target state="new">first-class Span types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="IDS_FeatureGenericAttributes">
         <source>generic attributes</source>
         <target state="translated">attributi generici</target>
@@ -2655,6 +2660,16 @@
       <trans-unit id="ISpreadOperationIsNotCSharpSpread">
         <source>{0} is not a valid C# spread operation</source>
         <target state="translated">{0} non è un'operazione estensione C# valida</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_AccessorDoesNotUseBackingField">
+        <source>The '{0}' accessor of property '{1}' should use 'field' because the other accessor is using it.</source>
+        <target state="new">The '{0}' accessor of property '{1}' should use 'field' because the other accessor is using it.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_AccessorDoesNotUseBackingField_Title">
+        <source>Property accessor should use 'field' because the other accessor is using it.</source>
+        <target state="new">Property accessor should use 'field' because the other accessor is using it.</target>
         <note />
       </trans-unit>
       <trans-unit id="WRN_AddressOfInAsync">
@@ -5213,6 +5228,16 @@ target:module               Compila un modulo che può essere aggiunto ad altro
         <target state="translated">Il tipo del parametro di tipo è lo stesso del parametro di tipo del metodo esterno.</target>
         <note />
       </trans-unit>
+      <trans-unit id="WRN_UnassignedInternalRefField">
+        <source>Field '{0}' is never ref-assigned to, and will always have its default value (null reference)</source>
+        <target state="new">Field '{0}' is never ref-assigned to, and will always have its default value (null reference)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_UnassignedInternalRefField_Title">
+        <source>Field is never ref-assigned to, and will always have its default value (null reference)</source>
+        <target state="new">Field is never ref-assigned to, and will always have its default value (null reference)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="WRN_UnassignedThisAutoPropertySupportedVersion">
         <source>Control is returned to caller before auto-implemented property '{0}' is explicitly assigned, causing a preceding implicit assignment of 'default'.</source>
         <target state="translated">Il controllo viene restituito al chiamante prima che la proprietà implementata automaticamente '{0}' sia assegnata in modo esplicito, determinando un'assegnazione implicita precedente di 'default'.</target>
@@ -7605,11 +7630,6 @@ Se si usa tale classe come classe base e se la classe di derivazione definisce u
       <trans-unit id="ERR_DllImportOnInvalidMethod">
         <source>The DllImport attribute must be specified on a method marked 'static' and 'extern'</source>
         <target state="translated">L'attributo DllImport deve essere specificato in un metodo contrassegnato come 'static' ed 'extern'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ERR_EncUpdateFailedMissingAttribute">
-        <source>Cannot update '{0}'; attribute '{1}' is missing.</source>
-        <target state="translated">Non è possibile aggiornare '{0}'. Manca l'attributo '{1}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_DllImportOnGenericMethod">
@@ -12995,8 +13015,8 @@ Per rimuovere l'avviso, è invece possibile usare /reference (impostare la propr
         <note />
       </trans-unit>
       <trans-unit id="ERR_InvalidDebugInfo">
-        <source>Unable to read debug information of method '{0}' (token 0x{1:X8}) from assembly '{2}'</source>
-        <target state="translated">Non è possibile leggere le informazione di debug del metodo '{0}' (token 0x{1:X8}) dall'assembly '{2}'</target>
+        <source>Unable to read debug information of method '{0}' (token 0x{1:X8}) from assembly '{2}': {3}</source>
+        <target state="new">Unable to read debug information of method '{0}' (token 0x{1:X8}) from assembly '{2}': {3}</target>
         <note />
       </trans-unit>
       <trans-unit id="IConversionExpressionIsNotCSharpConversion">

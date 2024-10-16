@@ -632,6 +632,11 @@
         <target state="translated">'else' ne peut pas démarrer d'instruction.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_EncUpdateFailedMissingSymbol">
+        <source>Cannot emit update; {0} '{1}' is missing.</source>
+        <target state="new">Cannot emit update; {0} '{1}' is missing.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_EntryPointCannotBeUnmanagedCallersOnly">
         <source>Application entry points cannot be attributed with 'UnmanagedCallersOnly'.</source>
         <target state="translated">Les points d'entrée d'application ne peuvent pas être attribués avec 'UnmanagedCallersOnly'.</target>
@@ -1617,11 +1622,6 @@
         <target state="translated">La méthode '{0}' spécifie une contrainte 'struct' pour le paramètre de type '{1}', mais le paramètre de type '{2}' correspondant de la méthode substituée ou explicitement implémentée '{3}' n'est pas un type valeur non-nullable.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ERR_ParameterNullCheckingNotSupported">
-        <source>The 'parameter null-checking' feature is not supported.</source>
-        <target state="translated">La fonctionnalité « paramètre null-checking » n’est pas prise en charge.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ERR_ParamsCollectionConstructorDoesntInitializeRequiredMember">
         <source>Constructor '{0}' leaves required member '{1}' uninitialized.</source>
         <target state="translated">Le constructeur « {0} » laisse le membre « {1} » requis non initialisé.</target>
@@ -2417,6 +2417,11 @@
         <target state="translated">types de fichier</target>
         <note />
       </trans-unit>
+      <trans-unit id="IDS_FeatureFirstClassSpan">
+        <source>first-class Span types</source>
+        <target state="new">first-class Span types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="IDS_FeatureGenericAttributes">
         <source>generic attributes</source>
         <target state="translated">attributs génériques</target>
@@ -2655,6 +2660,16 @@
       <trans-unit id="ISpreadOperationIsNotCSharpSpread">
         <source>{0} is not a valid C# spread operation</source>
         <target state="translated">{0} n’est pas une opération de propagation C# valide</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_AccessorDoesNotUseBackingField">
+        <source>The '{0}' accessor of property '{1}' should use 'field' because the other accessor is using it.</source>
+        <target state="new">The '{0}' accessor of property '{1}' should use 'field' because the other accessor is using it.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_AccessorDoesNotUseBackingField_Title">
+        <source>Property accessor should use 'field' because the other accessor is using it.</source>
+        <target state="new">Property accessor should use 'field' because the other accessor is using it.</target>
         <note />
       </trans-unit>
       <trans-unit id="WRN_AddressOfInAsync">
@@ -5213,6 +5228,16 @@
         <target state="translated">Le paramètre de type a le même type que le paramètre de type de la méthode externe.</target>
         <note />
       </trans-unit>
+      <trans-unit id="WRN_UnassignedInternalRefField">
+        <source>Field '{0}' is never ref-assigned to, and will always have its default value (null reference)</source>
+        <target state="new">Field '{0}' is never ref-assigned to, and will always have its default value (null reference)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_UnassignedInternalRefField_Title">
+        <source>Field is never ref-assigned to, and will always have its default value (null reference)</source>
+        <target state="new">Field is never ref-assigned to, and will always have its default value (null reference)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="WRN_UnassignedThisAutoPropertySupportedVersion">
         <source>Control is returned to caller before auto-implemented property '{0}' is explicitly assigned, causing a preceding implicit assignment of 'default'.</source>
         <target state="translated">Le contrôle est retourné à l’appelant avant que la propriété implémentée automatiquement '{0}' soit explicitement affectée, ce qui provoque une attribution implicite précédente de 'default'.</target>
@@ -7605,11 +7630,6 @@ Si une telle classe est utilisée en tant que classe de base et si la classe dé
       <trans-unit id="ERR_DllImportOnInvalidMethod">
         <source>The DllImport attribute must be specified on a method marked 'static' and 'extern'</source>
         <target state="translated">L'attribut DllImport doit être spécifié sur une méthode marquée 'static' et 'extern'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ERR_EncUpdateFailedMissingAttribute">
-        <source>Cannot update '{0}'; attribute '{1}' is missing.</source>
-        <target state="translated">Impossible de mettre à jour '{0}' ; l'attribut '{1}' est manquant.</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_DllImportOnGenericMethod">
@@ -12995,8 +13015,8 @@ Pour supprimer l'avertissement, vous pouvez utiliser la commande /reference (dé
         <note />
       </trans-unit>
       <trans-unit id="ERR_InvalidDebugInfo">
-        <source>Unable to read debug information of method '{0}' (token 0x{1:X8}) from assembly '{2}'</source>
-        <target state="translated">Impossible de lire les informations de débogage de la méthode '{0}' (jeton 0x{1:X8}) dans l'assembly '{2}'</target>
+        <source>Unable to read debug information of method '{0}' (token 0x{1:X8}) from assembly '{2}': {3}</source>
+        <target state="new">Unable to read debug information of method '{0}' (token 0x{1:X8}) from assembly '{2}': {3}</target>
         <note />
       </trans-unit>
       <trans-unit id="IConversionExpressionIsNotCSharpConversion">
