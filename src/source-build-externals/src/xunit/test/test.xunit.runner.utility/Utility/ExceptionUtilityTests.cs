@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -162,7 +162,7 @@ public class ExceptionUtilityTests
         {
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
-            Action testCode = () => { throw new XunitException(); };
+            Action testCode = () => { throw new XunitException("Hello world"); };
             var ex = Record.Exception(testCode);
             var failureInfo = new FailureInformation { ex };
 

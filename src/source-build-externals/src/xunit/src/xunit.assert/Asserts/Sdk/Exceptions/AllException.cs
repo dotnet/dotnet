@@ -1,4 +1,8 @@
-﻿#if XUNIT_NULLABLE
+#pragma warning disable CA1032 // Implement standard exception constructors
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
+#if XUNIT_NULLABLE
 #nullable enable
 #endif
 
@@ -6,77 +10,76 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Xunit.Sdk
 {
 	/// <summary>
-	/// Exception thrown when an All assertion has one or more items fail an assertion.
+	/// Exception thrown when Assert.All fails.
 	/// </summary>
 #if XUNIT_VISIBILITY_INTERNAL
 	internal
 #else
 	public
 #endif
-	class AllException : XunitException
+	partial class AllException : XunitException
 	{
-#if XUNIT_NULLABLE
-		readonly IReadOnlyList<Tuple<int, object?, Exception>> errors;
-#else
-		readonly IReadOnlyList<Tuple<int, object, Exception>> errors;
-#endif
-		readonly int totalItems;
+		AllException(string message) :
+			base(message)
+		{ }
 
 		/// <summary>
-		/// Creates a new instance of the <see cref="AllException"/> class.
+		/// Creates a new instance of the <see cref="AllException"/> class to be thrown when one or
+		/// more items failed during <see cref="Assert.All{T}(IEnumerable{T}, Action{T})"/>
+		/// or <see cref="Assert.All{T}(IEnumerable{T}, Action{T, int})"/>,
+		/// <see cref="Assert.AllAsync{T}(IEnumerable{T}, Func{T, Task})"/>,
+		/// or <see cref="Assert.AllAsync{T}(IEnumerable{T}, Func{T, int, Task})"/>.
 		/// </summary>
-		/// <param name="totalItems">The total number of items that were in the collection.</param>
-		/// <param name="errors">The list of errors that occurred during the test pass.</param>
-#if XUNIT_NULLABLE
-		public AllException(int totalItems, Tuple<int, object?, Exception>[] errors)
-#else
-		public AllException(int totalItems, Tuple<int, object, Exception>[] errors)
-#endif
-			: base("Assert.All() Failure")
+		/// <param name="totalItems">The total number of items in the collection</param>
+		/// <param name="errors">The list of failures (as index, value, and exception)</param>
+		public static AllException ForFailures(
+			int totalItems,
+			IReadOnlyList<Tuple<int, string, Exception>> errors)
 		{
-			this.errors = errors;
-			this.totalItems = totalItems;
-		}
+			Assert.GuardArgumentNotNull(nameof(errors), errors);
 
-		/// <summary>
-		/// The errors that occurred during execution of the test.
-		/// </summary>
-		public IReadOnlyList<Exception> Failures => errors.Select(t => t.Item3).ToList();
+			var maxItemIndexLength = errors.Max(x => x.Item1).ToString(CultureInfo.CurrentCulture).Length + 4; // "[#]: "
+			var indexSpaces = new string(' ', maxItemIndexLength);
+			var maxWrapIndent = maxItemIndexLength + 7; // "Item:  " and "Error: "
+			var wrapSpaces = Environment.NewLine + new string(' ', maxWrapIndent);
 
-		/// <inheritdoc/>
-		public override string Message
-		{
-			get
-			{
-				var formattedErrors = errors.Select(error =>
-				{
-					var indexString = string.Format(CultureInfo.CurrentCulture, "[{0}]: ", error.Item1);
-					var spaces = Environment.NewLine + "".PadRight(indexString.Length);
-
-					return string.Format(
-						CultureInfo.CurrentCulture,
-						"{0}Item: {1}{2}{3}",
-						indexString,
-						error.Item2?.ToString()?.Replace(Environment.NewLine, spaces),
-						spaces,
-						error.Item3.ToString().Replace(Environment.NewLine, spaces)
-					);
-				});
-
-				return string.Format(
+			var message =
+				string.Format(
 					CultureInfo.CurrentCulture,
-					"{0}: {1} out of {2} items in the collection did not pass.{3}{4}",
-					base.Message,
+					"Assert.All() Failure: {0} out of {1} items in the collection did not pass.{2}{3}",
 					errors.Count,
 					totalItems,
 					Environment.NewLine,
-					string.Join(Environment.NewLine, formattedErrors)
+					string.Join(
+						Environment.NewLine,
+						errors.Select(error =>
+							string.Format(
+								CultureInfo.CurrentCulture,
+								"{0}Item:  {1}{2}{3}Error: {4}",
+								string.Format(CultureInfo.CurrentCulture, "[{0}]:", error.Item1).PadRight(maxItemIndexLength),
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+								error.Item2.Replace(Environment.NewLine, wrapSpaces, StringComparison.Ordinal),
+#else
+								error.Item2.Replace(Environment.NewLine, wrapSpaces),
+#endif
+								Environment.NewLine,
+								indexSpaces,
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+								error.Item3.Message.Replace(Environment.NewLine, wrapSpaces, StringComparison.Ordinal)
+#else
+								error.Item3.Message.Replace(Environment.NewLine, wrapSpaces)
+#endif
+							)
+						)
+					)
 				);
-			}
+
+			return new AllException(message);
 		}
 	}
 }

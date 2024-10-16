@@ -1,9 +1,19 @@
-﻿#if XUNIT_NULLABLE
+#pragma warning disable CA1052 // Static holder types should be static
+#pragma warning disable IDE0022 // Use expression body for method
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
+#if XUNIT_NULLABLE
 #nullable enable
-using System.Diagnostics.CodeAnalysis;
+#else
+// In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
+#pragma warning disable CS8625
 #endif
 
 using Xunit.Sdk;
+
+#if XUNIT_NULLABLE
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Xunit
 {
@@ -17,15 +27,15 @@ namespace Xunit
 		/// <summary>
 		/// Indicates that the test should immediately fail.
 		/// </summary>
-		/// <param name="message">The failure message</param>
+		/// <param name="message">The optional failure message</param>
 #if XUNIT_NULLABLE
 		[DoesNotReturn]
+		public static void Fail(string? message = null)
+#else
+		public static void Fail(string message = null)
 #endif
-		public static void Fail(string message)
 		{
-			GuardArgumentNotNull(nameof(message), message);
-
-			throw new FailException(message);
+			throw FailException.ForFailure(message);
 		}
 	}
 }

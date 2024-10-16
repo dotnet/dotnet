@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Xunit;
@@ -29,6 +29,11 @@ public class SpyRunnerLogger : IRunnerLogger
     public void LogMessage(StackFrameInfo stackFrame, string message)
     {
         AddMessage("---", stackFrame, message);
+    }
+
+    public void LogRaw(string message)
+    {
+        AddMessage("Raw", StackFrameInfo.None, message);
     }
 
     public void LogWarning(StackFrameInfo stackFrame, string message)

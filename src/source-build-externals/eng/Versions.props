@@ -16,7 +16,7 @@
     <MSBuildLocatorReleaseVersion>1.6.10</MSBuildLocatorReleaseVersion>
     <SolutionPersistenceVersion>1.0.6</SolutionPersistenceVersion>
     <SpectreConsoleReleaseVersion>0.48.0</SpectreConsoleReleaseVersion>
-    <XunitReleaseVersion>2.4.2</XunitReleaseVersion>
+    <XunitReleaseVersion>2.9.2</XunitReleaseVersion>
   </PropertyGroup>
   <PropertyGroup>
     <MicrosoftBuildVersion>17.8.3</MicrosoftBuildVersion>

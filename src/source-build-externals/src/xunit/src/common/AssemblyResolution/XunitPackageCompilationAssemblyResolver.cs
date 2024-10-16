@@ -1,9 +1,10 @@
-﻿#if NETCOREAPP
+#if NETCOREAPP
 
 // Adapted from https://github.com/dotnet/core-setup/blob/652b680dff6b1afb9cd26cc3c2e883a664c209fd/src/managed/Microsoft.Extensions.DependencyModel/Resolution/PackageCompilationAssemblyResolver.cs
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Internal.Microsoft.DotNet.PlatformAbstractions;
@@ -57,7 +58,12 @@ namespace Xunit
             }
 
             if (internalDiagnosticsMessageSink != null)
-                internalDiagnosticsMessageSink.OnMessage(new _DiagnosticMessage($"[XunitPackageCompilationAssemblyResolver.GetDefaultProbeDirectories] returns: [{string.Join(",", results.Select(x => $"'{x}'"))}]"));
+                internalDiagnosticsMessageSink.OnMessage(
+                    new _DiagnosticMessage(
+                        "[XunitPackageCompilationAssemblyResolver.GetDefaultProbeDirectories] returns: [{0}]",
+                        string.Join(",", results.Select(x => string.Format(CultureInfo.CurrentCulture, "'{0}'", x)))
+                    )
+                );
 
             return results;
         }

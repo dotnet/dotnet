@@ -1,6 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Security;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +19,9 @@ namespace Xunit.Sdk
         bool disableParallelization;
         bool initialized;
         int maxParallelThreads;
+        ParallelAlgorithm parallelAlgorithm;
         SynchronizationContext originalSyncContext;
+        SemaphoreSlim parallelSemaphore;
         MaxConcurrencySyncContext syncContext;
 
         /// <summary>
@@ -54,9 +58,22 @@ namespace Xunit.Sdk
             Initialize();
 
             var testCollectionFactory = ExtensibilityPointFactory.GetXunitTestCollectionFactory(DiagnosticMessageSink, collectionBehaviorAttribute, TestAssembly);
-            var threadCountText = maxParallelThreads < 0 ? "unlimited" : maxParallelThreads.ToString();
+            var threadCountText = maxParallelThreads < 0 ? "unlimited" : maxParallelThreads.ToString(CultureInfo.CurrentCulture);
+            threadCountText += " thread";
+            if (maxParallelThreads != 1)
+                threadCountText += 's';
+            if (maxParallelThreads > 0 && parallelAlgorithm == ParallelAlgorithm.Aggressive)
+                threadCountText += "/aggressive";
 
-            return $"{base.GetTestFrameworkEnvironment()} [{testCollectionFactory.DisplayName}, {(disableParallelization ? "non-parallel" : $"parallel ({threadCountText} threads)")}]";
+            return string.Format(
+                CultureInfo.CurrentCulture,
+                "{0} [{1}, {2}]",
+                base.GetTestFrameworkEnvironment(),
+                testCollectionFactory.DisplayName,
+                disableParallelization
+                    ? "non-parallel"
+                    : string.Format(CultureInfo.CurrentCulture, "parallel ({0})", threadCountText)
+            );
         }
 
         /// <summary>
@@ -95,6 +112,8 @@ namespace Xunit.Sdk
             if (maxParallelThreads == 0)
                 maxParallelThreads = Environment.ProcessorCount;
 
+            parallelAlgorithm = ExecutionOptions.ParallelAlgorithmOrDefault();
+
             var testCaseOrdererAttribute = TestAssembly.Assembly.GetCustomAttributes(typeof(TestCaseOrdererAttribute)).SingleOrDefault();
             if (testCaseOrdererAttribute != null)
             {
@@ -106,14 +125,36 @@ namespace Xunit.Sdk
                     else
                     {
                         var args = testCaseOrdererAttribute.GetConstructorArguments().Cast<string>().ToList();
-                        DiagnosticMessageSink.OnMessage(new DiagnosticMessage($"Could not find type '{args[0]}' in {args[1]} for assembly-level test case orderer"));
+
+                        ExecutionMessageSink.OnMessage(
+                            new ErrorMessage(
+                                TestCases,
+                                ["Xunit.Sdk.XunitException"],
+                                [string.Format(CultureInfo.CurrentCulture, "Could not find type '{0}' in '{1}' for assembly-level test case orderer", args[0], args[1])],
+                                [null],
+                                [-1]
+                            )
+                        );
+
+                        TestCases = [];
                     }
                 }
                 catch (Exception ex)
                 {
                     var innerEx = ex.Unwrap();
                     var args = testCaseOrdererAttribute.GetConstructorArguments().Cast<string>().ToList();
-                    DiagnosticMessageSink.OnMessage(new DiagnosticMessage($"Assembly-level test case orderer '{args[0]}' threw '{innerEx.GetType().FullName}' during construction: {innerEx.Message}{Environment.NewLine}{innerEx.StackTrace}"));
+
+                    ExecutionMessageSink.OnMessage(
+                        new ErrorMessage(
+                            TestCases,
+                            ["Xunit.Sdk.XunitException"],
+                            [string.Format(CultureInfo.CurrentCulture, "Assembly-level test case orderer '{0}' threw '{1}' during construction: {2}", args[0], innerEx.GetType().FullName, innerEx.Message)],
+                            [innerEx.StackTrace],
+                            [-1]
+                        )
+                    );
+
+                    TestCases = [];
                 }
             }
 
@@ -128,14 +169,36 @@ namespace Xunit.Sdk
                     else
                     {
                         var args = testCollectionOrdererAttribute.GetConstructorArguments().Cast<string>().ToList();
-                        DiagnosticMessageSink.OnMessage(new DiagnosticMessage($"Could not find type '{args[0]}' in {args[1]} for assembly-level test collection orderer"));
+
+                        ExecutionMessageSink.OnMessage(
+                            new ErrorMessage(
+                                TestCases,
+                                ["Xunit.Sdk.XunitException"],
+                                [string.Format(CultureInfo.CurrentCulture, "Could not find type '{0}' in '{1}' for assembly-level test collection orderer", args[0], args[1])],
+                                [null],
+                                [-1]
+                            )
+                        );
+
+                        TestCases = [];
                     }
                 }
                 catch (Exception ex)
                 {
                     var innerEx = ex.Unwrap();
                     var args = testCollectionOrdererAttribute.GetConstructorArguments().Cast<string>().ToList();
-                    DiagnosticMessageSink.OnMessage(new DiagnosticMessage($"Assembly-level test collection orderer '{args[0]}' threw '{innerEx.GetType().FullName}' during construction: {innerEx.Message}{Environment.NewLine}{innerEx.StackTrace}"));
+
+                    ExecutionMessageSink.OnMessage(
+                        new ErrorMessage(
+                            TestCases,
+                            ["Xunit.Sdk.XunitException"],
+                            [string.Format(CultureInfo.CurrentCulture, "Assembly-level test collection orderer '{0}' threw '{1}' during construction: {2}", args[0], innerEx.GetType().FullName, innerEx.Message)],
+                            [innerEx.StackTrace],
+                            [-1]
+                        )
+                    );
+
+                    TestCases = [];
                 }
             }
 
@@ -164,7 +227,10 @@ namespace Xunit.Sdk
             if (disableParallelization)
                 return await base.RunTestCollectionsAsync(messageBus, cancellationTokenSource);
 
-            SetupSyncContext(maxParallelThreads);
+            if (parallelAlgorithm == ParallelAlgorithm.Aggressive)
+                SetupSyncContext(maxParallelThreads);
+            else
+                SetupParallelSemaphore(maxParallelThreads);
 
             Func<Func<Task<RunSummary>>, Task<RunSummary>> taskRunner;
             if (SynchronizationContext.Current != null)
@@ -230,9 +296,60 @@ namespace Xunit.Sdk
             };
         }
 
+        private void SetupParallelSemaphore(int maxParallelThreads)
+        {
+            if (maxParallelThreads < 1)
+                return;
+
+            parallelSemaphore = new SemaphoreSlim(maxParallelThreads);
+
+#if NETSTANDARD
+            var type = Type.GetType("System.Threading.ThreadPool");
+            if (type is null)
+                throw new InvalidOperationException("Cannot find type: System.Threading.ThreadPool");
+
+            var getMethod = type.GetRuntimeMethod("GetMinThreads", new[] { typeof(int).MakeByRefType(), typeof(int).MakeByRefType() });
+            if (getMethod is null)
+                throw new InvalidOperationException("Cannot find method: System.Threading.ThreadPool.GetMinThreads");
+
+            var args = new object[] { 0, 0 };
+            getMethod.Invoke(null, args);
+
+            var minThreads = (int)args[0];
+            var minIOPorts = (int)args[1];
+
+            var threadFloor = Math.Min(4, maxParallelThreads);
+            if (minThreads < threadFloor)
+            {
+                var setMethod = type.GetRuntimeMethod("SetMinThreads", new[] { typeof(int), typeof(int) });
+                if (setMethod is null)
+                    throw new InvalidOperationException("Cannot find method: System.Threading.ThreadPool.SetMinThreads");
+
+                setMethod.Invoke(null, new object[] { threadFloor, minIOPorts });
+            }
+#else
+            ThreadPool.GetMinThreads(out var minThreads, out var minIOPorts);
+            var threadFloor = Math.Min(4, maxParallelThreads);
+            if (minThreads < threadFloor)
+                ThreadPool.SetMinThreads(threadFloor, minIOPorts);
+#endif
+        }
+
         /// <inheritdoc/>
-        protected override Task<RunSummary> RunTestCollectionAsync(IMessageBus messageBus, ITestCollection testCollection, IEnumerable<IXunitTestCase> testCases, CancellationTokenSource cancellationTokenSource)
-            => new XunitTestCollectionRunner(testCollection, testCases, DiagnosticMessageSink, messageBus, TestCaseOrderer, new ExceptionAggregator(Aggregator), cancellationTokenSource).RunAsync();
+        protected override async Task<RunSummary> RunTestCollectionAsync(IMessageBus messageBus, ITestCollection testCollection, IEnumerable<IXunitTestCase> testCases, CancellationTokenSource cancellationTokenSource)
+        {
+            if (parallelSemaphore is not null)
+                await parallelSemaphore.WaitAsync(cancellationTokenSource.Token);
+
+            try
+            {
+                return await new XunitTestCollectionRunner(testCollection, testCases, DiagnosticMessageSink, messageBus, TestCaseOrderer, new ExceptionAggregator(Aggregator), cancellationTokenSource).RunAsync();
+            }
+            finally
+            {
+                parallelSemaphore?.Release();
+            }
+        }
 
         [SecuritySafeCritical]
         static void SetSynchronizationContext(SynchronizationContext context)

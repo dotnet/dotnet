@@ -1,4 +1,5 @@
-﻿using Xunit.Abstractions;
+using System;
+using Xunit.Abstractions;
 
 namespace Xunit.Sdk
 {
@@ -7,12 +8,21 @@ namespace Xunit.Sdk
     /// </summary>
     public class SynchronousMessageBus : IMessageBus
     {
+        volatile bool continueRunning = true;
         readonly IMessageSink messageSink;
+        readonly bool stopOnFail;
 
         /// <summary/>
-        public SynchronousMessageBus(IMessageSink messageSink)
+        [Obsolete("Please use the overload with the stopOnFail boolean value")]
+        public SynchronousMessageBus(IMessageSink messageSink) :
+            this(messageSink, false)
+        { }
+
+        /// <summary/>
+        public SynchronousMessageBus(IMessageSink messageSink, bool stopOnFail)
         {
             this.messageSink = messageSink;
+            this.stopOnFail = stopOnFail;
         }
 
         /// <summary/>
@@ -21,7 +31,10 @@ namespace Xunit.Sdk
         /// <summary/>
         public bool QueueMessage(IMessageSinkMessage message)
         {
-            return messageSink.OnMessage(message);
+            if (stopOnFail && message is ITestFailed)
+                continueRunning = false;
+
+            return messageSink.OnMessage(message) && continueRunning;
         }
     }
 }

@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -45,13 +46,19 @@ namespace Xunit.ConsoleClient
 
         public XunitProject Project { get; protected set; }
 
+        public ParallelAlgorithm? ParallelAlgorithm { get; protected set; }
+
         public bool? ParallelizeAssemblies { get; protected set; }
 
         public bool? ParallelizeTestCollections { get; set; }
 
         public bool Serialize { get; protected set; }
 
+        public bool ShowLiveOutput { get; protected set; }
+
         public bool StopOnFail { get; protected set; }
+
+        public bool UseAnsiColor { get; protected set; }
 
         public bool Wait { get; protected set; }
 
@@ -61,7 +68,7 @@ namespace Xunit.ConsoleClient
 
             foreach (var unknownOption in unknownOptions)
             {
-                var reporter = reporters.FirstOrDefault(r => r.RunnerSwitch == unknownOption) ?? throw new ArgumentException($"unknown option: -{unknownOption}");
+                var reporter = reporters.FirstOrDefault(r => r.RunnerSwitch == unknownOption) ?? throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "unknown option: -{0}", unknownOption));
 
                 if (result != null)
                     throw new ArgumentException("only one reporter is allowed");
@@ -97,7 +104,7 @@ namespace Xunit.ConsoleClient
         static void GuardNoOptionValue(KeyValuePair<string, string> option)
         {
             if (option.Value != null)
-                throw new ArgumentException($"error: unknown command line option: {option.Value}");
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "error: unknown command line option: {0}", option.Value));
         }
 
         static bool IsConfigFile(string fileName)
@@ -120,9 +127,9 @@ namespace Xunit.ConsoleClient
 
                 var assemblyFile = arguments.Pop();
                 if (IsConfigFile(assemblyFile))
-                    throw new ArgumentException($"expecting assembly, got config file: {assemblyFile}");
+                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "expecting assembly, got config file: {0}", assemblyFile));
                 if (!fileExists(assemblyFile))
-                    throw new ArgumentException($"file not found: {assemblyFile}");
+                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "file not found: {0}", assemblyFile));
 
                 string configFile = null;
                 if (arguments.Count > 0)
@@ -132,7 +139,7 @@ namespace Xunit.ConsoleClient
                     {
                         configFile = arguments.Pop();
                         if (!fileExists(configFile))
-                            throw new ArgumentException($"config file not found: {configFile}");
+                            throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "config file not found: {0}", configFile));
                     }
                 }
 
@@ -147,7 +154,7 @@ namespace Xunit.ConsoleClient
                 var optionName = option.Key.ToLowerInvariant();
 
                 if (!optionName.StartsWith("-", StringComparison.Ordinal))
-                    throw new ArgumentException($"unknown command line option: {option.Key}");
+                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "unknown command line option: {0}", option.Key));
 
                 optionName = optionName.Substring(1);
 
@@ -160,6 +167,11 @@ namespace Xunit.ConsoleClient
                 {
                     GuardNoOptionValue(option);
                     FailSkips = true;
+                }
+                else if (optionName == "showliveoutput")
+                {
+                    GuardNoOptionValue(option);
+                    ShowLiveOutput = true;
                 }
                 else if (optionName == "stoponfail")
                 {
@@ -258,11 +270,17 @@ namespace Xunit.ConsoleClient
                             break;
 
                         default:
-                            int threadValue;
-                            if (!int.TryParse(option.Value, out threadValue) || threadValue < 1)
-                                throw new ArgumentException("incorrect argument value for -maxthreads (must be 'default', 'unlimited', or a positive number)");
+                            var match = ConfigUtility.MultiplierStyleMaxParallelThreadsRegex.Match(option.Value);
+                            // Use invariant format and convert ',' to '.' so we can always support both formats, regardless of locale
+                            // If we stick to locale-only parsing, we could break people when moving from one locale to another (for example,
+                            // from people running tests on their desktop in a comma locale vs. running them in CI with a decimal locale).
+                            if (match.Success && decimal.TryParse(match.Groups[1].Value.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var maxThreadMultiplier))
+                                MaxParallelThreads = (int)(maxThreadMultiplier * Environment.ProcessorCount);
+                            else if (int.TryParse(option.Value, out var threadValue) && threadValue > 0)
+                                MaxParallelThreads = threadValue;
+                            else
+                                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "incorrect argument value for -maxthreads (must be 'default', 'unlimited', a positive number, or a multiplier in the form of '{0}x')", 0.0m));
 
-                            MaxParallelThreads = threadValue;
                             break;
                     }
                 }
@@ -296,6 +314,16 @@ namespace Xunit.ConsoleClient
                             ParallelizeTestCollections = false;
                             break;
                     }
+                }
+                else if (optionName == "parallelalgorithm")
+                {
+                    if (option.Value == null)
+                        throw new ArgumentException("missing argument for -parallelAlgorithm");
+
+                    if (!Enum.TryParse(option.Value, ignoreCase: true, out ParallelAlgorithm parallelAlgorithm))
+                        throw new ArgumentException("incorrect argument value for -parallelAlgorithm");
+
+                    ParallelAlgorithm = parallelAlgorithm;
                 }
                 else if (optionName == "noshadow")
                 {
@@ -371,13 +399,18 @@ namespace Xunit.ConsoleClient
 
                     project.Filters.ExcludedNamespaces.Add(option.Value);
                 }
+                else if (optionName == "useansicolor")
+                {
+                    GuardNoOptionValue(option);
+                    UseAnsiColor = true;
+                }
                 else
                 {
                     // Might be a result output file...
                     if (TransformFactory.AvailableTransforms.Any(t => t.CommandLine.Equals(optionName, StringComparison.OrdinalIgnoreCase)))
                     {
                         if (option.Value == null)
-                            throw new ArgumentException($"missing filename for {option.Key}");
+                            throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "missing filename for {0}", option.Key));
 
                         EnsurePathExists(option.Value);
 

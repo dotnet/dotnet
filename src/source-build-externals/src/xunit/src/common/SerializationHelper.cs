@@ -1,17 +1,24 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using Xunit.Abstractions;
 using Xunit.Serialization;
 
+#if XUNIT_FRAMEWORK
 namespace Xunit.Sdk
+#else
+namespace Xunit
+#endif
 {
     /// <summary>
-    /// Serializes and de-serializes objects
+    /// Serializes and de-serializes objects. Serialization of objects is typically limited to supporting
+    /// the VSTest-based test runners (Visual Studio Test Explorer, Visual Studio Code, dotnet test, etc.).
+    /// Serializing values with this is not guaranteed to be cross-compatible and should not be used for
+    /// anything durable.
     /// </summary>
-    static class SerializationHelper
+    public static class SerializationHelper
     {
         static readonly ConcurrentDictionary<Type, string> typeToTypeNameMap = new ConcurrentDictionary<Type, string>();
 
@@ -32,47 +39,17 @@ namespace Xunit.Sdk
 
             var deserializedType = GetType(pieces[0]);
             if (deserializedType == null)
-                throw new ArgumentException($"Could not load type '{pieces[0]}' from serialization value '{serializedValue}'", nameof(serializedValue));
+                throw new ArgumentException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        "Could not load type '{0}' from serialization value '{1}'",
+                        pieces[0],
+                        serializedValue
+                    ),
+                    nameof(serializedValue)
+                );
 
-            if (!typeof(IXunitSerializable).IsAssignableFrom(deserializedType))
-                throw new ArgumentException("Cannot de-serialize an object that does not implement " + typeof(IXunitSerializable).FullName, nameof(serializedValue));
-
-            var obj = XunitSerializationInfo.Deserialize(deserializedType, pieces[1]);
-            var arraySerializer = obj as XunitSerializationInfo.ArraySerializer;
-            if (arraySerializer != null)
-                obj = arraySerializer.ArrayData;
-
-            return (T)obj;
-        }
-
-        /// <summary>
-        /// Serializes an object.
-        /// </summary>
-        /// <param name="value">The value to serialize</param>
-        /// <returns>The serialized value</returns>
-        public static string Serialize(object value)
-        {
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
-
-            var array = value as object[];
-            if (array != null)
-                value = new XunitSerializationInfo.ArraySerializer(array);
-
-            var serializable = value as IXunitSerializable;
-            if (serializable == null)
-                throw new ArgumentException("Cannot serialize an object that does not implement " + typeof(IXunitSerializable).FullName, nameof(value));
-
-            var serializationInfo = new XunitSerializationInfo(serializable);
-            return $"{GetTypeNameForSerialization(value.GetType())}:{serializationInfo.ToSerializedString()}";
-        }
-
-        /// <summary>Gets whether the specified <paramref name="value"/> is serializable with <see cref="Serialize"/>.</summary>
-        /// <param name="value">The object to test for serializability.</param>
-        /// <returns>true if the object can be serialized; otherwise, false.</returns>
-        public static bool IsSerializable(object value)
-        {
-            return XunitSerializationInfo.CanSerializeObject(value);
+            return (T)XunitSerializationInfo.Deserialize(deserializedType, pieces[1]);
         }
 
         /// <summary>
@@ -189,10 +166,16 @@ namespace Xunit.Sdk
             return assembly.GetType(typeName);
         }
 
+#if XUNIT_FRAMEWORK
         /// <summary>
-        /// Gets an assembly qualified type name for serialization, with special dispensation for types which
-        /// originate in the execution assembly.
+        /// Gets an assembly qualified type name for serialization, with special handling for types which
+        /// live in assembly decorated by <see cref="PlatformSpecificAssemblyAttribute"/>.
         /// </summary>
+#else
+        /// <summary>
+        /// Gets an assembly qualified type name for serialization.
+        /// </summary>
+#endif
         public static string GetTypeNameForSerialization(Type type)
         {
             // Use the abstract Type instead of concretes like RuntimeType
@@ -204,7 +187,7 @@ namespace Xunit.Sdk
             string GetTypeNameAsString(Type typeToMap)
             {
                 if (!type.IsFromLocalAssembly())
-                    throw new ArgumentException($"We cannot serialize type {type.FullName} because it lives in the GAC", nameof(type));
+                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "We cannot serialize type {0} because it lives in the GAC", type.FullName), nameof(type));
 
                 var typeName = typeToMap.FullName;
                 var assemblyName = typeToMap.GetAssembly().FullName.Split(',')[0];
@@ -220,9 +203,9 @@ namespace Xunit.Sdk
                 {
                     var typeDefinition = typeToMap.GetGenericTypeDefinition();
                     var innerTypes = typeToMap.GetGenericArguments()
-                                              .Select(t => $"[{GetTypeNameForSerialization(t)}]")
+                                              .Select(t => string.Format(CultureInfo.InvariantCulture, "[{0}]", GetTypeNameForSerialization(t)))
                                               .ToArray();
-                    typeName = $"{typeDefinition.FullName}[{string.Join(",", innerTypes)}]";
+                    typeName = string.Format(CultureInfo.InvariantCulture, "{0}[{1}]", typeDefinition.FullName, string.Join(",", innerTypes));
 
                     while (arrayRanks.Count > 0)
                     {
@@ -243,31 +226,31 @@ namespace Xunit.Sdk
                     assemblyName = assemblyName.Substring(0, assemblyName.LastIndexOf('.')) + ExecutionHelper.SubstitutionToken;
 #endif
 
-                return $"{typeName}, {assemblyName}";
+                return string.Format(CultureInfo.InvariantCulture, "{0}, {1}", typeName, assemblyName);
             }
         }
 
         /// <summary>
-        /// Retrieves a substring from the string, with whitespace trimmed on both ends.
+        /// Determines whether the given <paramref name="value"/> is serializable with <see cref="Serialize"/>.
         /// </summary>
-        /// <param name="str">The string.</param>
-        /// <param name="startIndex">The starting index.</param>
-        /// <param name="length">The length.</param>
-        /// <returns>
-        /// A substring starting no earlier than startIndex and ending no later
-        /// than startIndex + length.
-        /// </returns>
-        static string SubstringTrim(string str, int startIndex, int length)
+        /// <param name="value">The object to test for serializability.</param>
+        /// <returns>Returns <c>true</c> if the object can be serialized; <c>false</c>, otherwise.</returns>
+        public static bool IsSerializable(object value)
         {
-            int endIndex = startIndex + length;
+            return XunitSerializationInfo.CanSerializeObject(value);
+        }
 
-            while (startIndex < endIndex && char.IsWhiteSpace(str[startIndex]))
-                startIndex++;
+        /// <summary>
+        /// Serializes an object.
+        /// </summary>
+        /// <param name="value">The value to serialize</param>
+        /// <returns>The serialized value</returns>
+        public static string Serialize(object value)
+        {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
 
-            while (endIndex > startIndex && char.IsWhiteSpace(str[endIndex - 1]))
-                endIndex--;
-
-            return str.Substring(startIndex, endIndex - startIndex);
+            return string.Format(CultureInfo.InvariantCulture, "{0}:{1}", GetTypeNameForSerialization(value.GetType()), XunitSerializationInfo.Serialize(value));
         }
 
         static IList<string> SplitAtOuterCommas(string value, bool trimWhitespace = false)
@@ -308,6 +291,19 @@ namespace Xunit.Sdk
             }
 
             return results;
+        }
+
+        static string SubstringTrim(string str, int startIndex, int length)
+        {
+            int endIndex = startIndex + length;
+
+            while (startIndex < endIndex && char.IsWhiteSpace(str[startIndex]))
+                startIndex++;
+
+            while (endIndex > startIndex && char.IsWhiteSpace(str[endIndex - 1]))
+                endIndex--;
+
+            return str.Substring(startIndex, endIndex - startIndex);
         }
     }
 }

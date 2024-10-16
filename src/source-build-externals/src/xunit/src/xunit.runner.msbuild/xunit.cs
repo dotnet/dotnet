@@ -20,10 +20,12 @@ namespace Xunit.Runner.MSBuild
         XunitFilters filters;
         IRunnerLogger logger;
         int? maxThreadCount;
+        ParallelAlgorithm? parallelAlgorithm;
         bool? parallelizeAssemblies;
         bool? parallelizeTestCollections;
         IMessageSinkWithTypes reporterMessageHandler;
         bool? shadowCopy;
+        bool? showLiveOutput;
         bool? stopOnFail;
 
         public string AppDomains { get; set; }
@@ -75,6 +77,8 @@ namespace Xunit.Runner.MSBuild
 
         public ITaskItem NUnit { get; set; }
 
+        public ParallelAlgorithm ParallelAlgorithm { set { parallelAlgorithm = value; } }
+
         public bool ParallelizeAssemblies { set { parallelizeAssemblies = value; } }
 
         public bool ParallelizeTestCollections { set { parallelizeTestCollections = value; } }
@@ -85,6 +89,8 @@ namespace Xunit.Runner.MSBuild
         public bool SerializeTestCases { get; set; }
 
         public bool ShadowCopy { set { shadowCopy = value; } }
+
+        public bool ShowLiveOutput { set { showLiveOutput = value; } }
 
         public bool StopOnFail { set { stopOnFail = value; } }
 
@@ -106,7 +112,7 @@ namespace Xunit.Runner.MSBuild
             RemotingUtility.CleanUpRegisteredChannels();
 
             XElement assembliesElement = null;
-            var environment = $"{IntPtr.Size * 8}-bit {CrossPlatform.Version}";
+            var environment = string.Format(CultureInfo.CurrentCulture, "{0}-bit {1}", IntPtr.Size * 8, CrossPlatform.Version);
 
             if (NeedsXml)
                 assembliesElement = new XElement("assemblies");
@@ -147,14 +153,16 @@ namespace Xunit.Runner.MSBuild
                     break;
 
                 default:
-                    int threadValue;
-                    if (!int.TryParse(MaxParallelThreads, out threadValue) || threadValue < 1)
-                    {
-                        Log.LogError("MaxParallelThreads value '{0}' is invalid: must be 'default', 'unlimited', or a positive number", MaxParallelThreads);
-                        return false;
-                    }
-
-                    maxThreadCount = threadValue;
+                    var match = ConfigUtility.MultiplierStyleMaxParallelThreadsRegex.Match(MaxParallelThreads);
+                    // Use invariant format and convert ',' to '.' so we can always support both formats, regardless of locale
+                    // If we stick to locale-only parsing, we could break people when moving from one locale to another (for example,
+                    // from people running tests on their desktop in a comma locale vs. running them in CI with a decimal locale).
+                    if (match.Success && decimal.TryParse(match.Groups[1].Value.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var maxThreadMultiplier))
+                        maxThreadCount = (int)(maxThreadMultiplier * Environment.ProcessorCount);
+                    else if (int.TryParse(MaxParallelThreads, out var threadValue) && threadValue > 0)
+                        maxThreadCount = threadValue;
+                    else
+                        Log.LogError("MaxParallelThreads value '{0} is invalid: must be 'default', 'unlimited', a positive number, or a multiplier in the form of '{1}x')", MaxParallelThreads, 0.0m);
                     break;
             }
 
@@ -173,7 +181,7 @@ namespace Xunit.Runner.MSBuild
                 if (!NoLogo)
                 {
                     var versionAttribute = typeof(xunit).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
-                    Log.LogMessage(MessageImportance.High, $"xUnit.net MSBuild Runner v{versionAttribute.InformationalVersion} ({environment})");
+                    Log.LogMessage(MessageImportance.High, "xUnit.net MSBuild Runner v{0} ({1})", versionAttribute.InformationalVersion, environment);
                 }
 
                 var project = new XunitProject();
@@ -252,6 +260,9 @@ namespace Xunit.Runner.MSBuild
 
         protected virtual XElement ExecuteAssembly(XunitProjectAssembly assembly, AppDomainSupport? appDomains)
         {
+            foreach (var warning in assembly.ConfigWarnings)
+                logger.LogWarning(warning);
+
             if (cancel)
                 return null;
 
@@ -272,8 +283,12 @@ namespace Xunit.Runner.MSBuild
                 var executionOptions = TestFrameworkOptions.ForExecution(assembly.Configuration);
                 if (maxThreadCount.HasValue && maxThreadCount.Value > -1)
                     executionOptions.SetMaxParallelThreads(maxThreadCount);
+                if (parallelAlgorithm.HasValue)
+                    executionOptions.SetParallelAlgorithm(parallelAlgorithm);
                 if (parallelizeTestCollections.HasValue)
                     executionOptions.SetDisableParallelization(!parallelizeTestCollections);
+                if (showLiveOutput.HasValue)
+                    executionOptions.SetShowLiveOutput(showLiveOutput);
                 if (stopOnFail.HasValue)
                     executionOptions.SetStopOnTestFail(stopOnFail);
 
@@ -306,13 +321,16 @@ namespace Xunit.Runner.MSBuild
                         if (SerializeTestCases)
                             filteredTestCases = filteredTestCases.Select(controller.Serialize).Select(controller.Deserialize).ToList();
 
-                        IExecutionSink resultsSink = new DelegatingExecutionSummarySink(reporterMessageHandler, () => cancel, (path, summary) => completionMessages.TryAdd(path, summary));
-                        if (assemblyElement != null)
-                            resultsSink = new DelegatingXmlCreationSink(resultsSink, assemblyElement);
-                        if (longRunningSeconds > 0)
-                            resultsSink = new DelegatingLongRunningTestDetectionSink(resultsSink, TimeSpan.FromSeconds(longRunningSeconds), diagnosticMessageSink);
-                        if (FailSkips)
-                            resultsSink = new DelegatingFailSkipSink(resultsSink);
+                        var resultsOptions = new ExecutionSinkOptions
+                        {
+                            AssemblyElement = assemblyElement,
+                            CancelThunk = () => cancel,
+                            FinishedCallback = summary => completionMessages.TryAdd(assemblyDisplayName, summary),
+                            DiagnosticMessageSink = diagnosticMessageSink,
+                            FailSkips = FailSkips,
+                            LongRunningTestTime = TimeSpan.FromSeconds(longRunningSeconds),
+                        };
+                        var resultsSink = new ExecutionSink(reporterMessageHandler, resultsOptions);
 
                         reporterMessageHandler.OnMessage(new TestAssemblyExecutionStarting(assembly, executionOptions));
 
@@ -321,10 +339,10 @@ namespace Xunit.Runner.MSBuild
 
                         reporterMessageHandler.OnMessage(new TestAssemblyExecutionFinished(assembly, executionOptions, resultsSink.ExecutionSummary));
 
-                        if (resultsSink.ExecutionSummary.Failed != 0)
+                        if (resultsSink.ExecutionSummary.Failed != 0 || resultsSink.ExecutionSummary.Errors != 0)
                         {
                             ExitCode = 1;
-                            if (stopOnFail == true)
+                            if (executionOptions.GetStopOnTestFailOrDefault())
                             {
                                 Log.LogMessage(MessageImportance.High, "Canceling due to test failure...");
                                 Cancel();
@@ -355,44 +373,9 @@ namespace Xunit.Runner.MSBuild
 
         protected virtual List<IRunnerReporter> GetAvailableRunnerReporters()
         {
-            var result = new List<IRunnerReporter>();
-            var runnerPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetLocalCodeBase());
-
-            foreach (var dllFile in Directory.GetFiles(runnerPath, "*.dll").Select(f => Path.Combine(runnerPath, f)))
-            {
-                Type[] types;
-
-                try
-                {
-                    var assembly = CrossPlatform.LoadAssembly(dllFile);
-                    types = assembly.GetTypes();
-                }
-                catch (ReflectionTypeLoadException ex)
-                {
-                    types = ex.Types;
-                }
-                catch
-                {
-                    continue;
-                }
-
-                foreach (var type in types)
-                {
-#pragma warning disable CS0618
-                    if (type == null || type.GetTypeInfo().IsAbstract || type == typeof(DefaultRunnerReporter) || type == typeof(DefaultRunnerReporterWithTypes) || !type.GetInterfaces().Any(t => t == typeof(IRunnerReporter)))
-                        continue;
-#pragma warning restore CS0618
-
-                    var ctor = type.GetConstructor(new Type[0]);
-                    if (ctor == null)
-                    {
-                        Log.LogWarning("Type {0} in assembly {1} appears to be a runner reporter, but does not have an empty constructor.", type.FullName, dllFile);
-                        continue;
-                    }
-
-                    result.Add((IRunnerReporter)ctor.Invoke(new object[0]));
-                }
-            }
+            var result = RunnerReporterUtility.GetAvailableRunnerReporters(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetLocalCodeBase()), out var messages);
+            foreach (var message in messages)
+                Log.LogWarning(message);
 
             return result;
         }

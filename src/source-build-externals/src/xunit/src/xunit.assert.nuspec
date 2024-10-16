@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package>
   <metadata minClientVersion="2.12">
     <id>xunit.assert</id>
@@ -9,7 +9,9 @@
     <license type="expression">Apache-2.0</license>
     <licenseUrl>https://licenses.nuget.org/Apache-2.0</licenseUrl>
     <icon>_content/logo-128-transparent.png</icon>
-    <description>Includes the assertion library from xUnit.net (xunit.assert.dll). Supports .NET Standard 1.1.</description>
+    <readme>_content/README.md</readme>
+    <releaseNotes>https://xunit.net/releases/v2/$PackageVersion$</releaseNotes>
+    <description>Includes the assertion library from xUnit.net (xunit.assert.dll). Supports .NET Standard 1.1+ and .NET 6.0+.</description>
     <copyright>Copyright (C) .NET Foundation</copyright>
     <repository type="git" url="https://github.com/xunit/xunit" commit="$GitCommitId$" />
     <dependencies>
@@ -17,12 +19,19 @@
       <group targetFramework="netstandard1.1">
         <dependency id="NETStandard.Library" version="1.6.1" />
       </group>
+      <group targetFramework="netstandard2.0" />
+      <group targetFramework="net6.0" />
     </dependencies>
   </metadata>
+  <!-- Remember to update tools\builder\targets\SignAssemblies.cs when assemblies are added or removed -->
   <files>
     <file target="_content\" src="..\tools\media\logo-128-transparent.png" />
+    <file target="_content\" src="..\README.md" />
 
-    <file src="xunit.assert\bin\$Configuration$\netstandard1.1\xunit.assert.dll" target="lib\netstandard1.1\" />
-    <file src="xunit.assert\bin\$Configuration$\netstandard1.1\xunit.assert.xml" target="lib\netstandard1.1\" />
+    <file target="lib\netstandard1.1\" src="xunit.assert\bin\$Configuration$\netstandard1.1\$SignedPath$xunit.assert.dll" />
+    <file target="lib\netstandard1.1\" src="xunit.assert\bin\$Configuration$\netstandard1.1\xunit.assert.xml" />
+
+    <file target="lib\net6.0\" src="xunit.assert\bin\$Configuration$\net6.0\$SignedPath$xunit.assert.dll" />
+    <file target="lib\net6.0\" src="xunit.assert\bin\$Configuration$\net6.0\xunit.assert.xml" />
   </files>
 </package>

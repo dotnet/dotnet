@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -11,6 +11,7 @@ namespace Xunit
     /// A delegating implementation of <see cref="IExecutionSink"/> which provides the execution
     /// summary and finished events when appropriate and cancellation support.
     /// </summary>
+    [Obsolete("This class has been obsoleted; please use ExecutionSink instead")]
     public class DelegatingExecutionSummarySink : LongLivedMarshalByRefObject, IExecutionSink
     {
         readonly Func<bool> cancelThunk;

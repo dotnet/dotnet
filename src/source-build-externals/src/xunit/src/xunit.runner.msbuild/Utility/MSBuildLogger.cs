@@ -1,4 +1,4 @@
-﻿using Microsoft.Build.Framework;
+using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Xunit.Runner.MSBuild
@@ -28,6 +28,12 @@ namespace Xunit.Runner.MSBuild
         public void LogMessage(StackFrameInfo stackFrame, string message)
         {
             Log.LogMessage("{0}", message);
+        }
+
+        public void LogRaw(string message)
+        {
+            // We log with high importance, to make sure the message is always output.
+            Log.LogMessage(MessageImportance.High, "{0}", message);
         }
 
         public void LogWarning(StackFrameInfo stackFrame, string message)

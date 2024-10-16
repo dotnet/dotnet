@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Xunit.Abstractions;
@@ -138,9 +139,21 @@ namespace Xunit
 
             if (children.Count > 1)
                 for (var idx = 0; idx < children.Count; ++idx)
-                    result += $"{Environment.NewLine}----- Inner Stack Trace #{idx + 1} ({GetAt(failureInfo.ExceptionTypes, children[idx])}) -----{Environment.NewLine}{GetStackTrace(failureInfo, children[idx])}";
+                    result += string.Format(
+                        CultureInfo.CurrentCulture,
+                        "{0}----- Inner Stack Trace #{1} ({2}) -----{0}{3}",
+                        Environment.NewLine,
+                        idx + 1,
+                        GetAt(failureInfo.ExceptionTypes, children[idx]),
+                        GetStackTrace(failureInfo, children[idx])
+                    );
             else if (children.Count == 1)
-                result += $"{Environment.NewLine}----- Inner Stack Trace -----{Environment.NewLine}{GetStackTrace(failureInfo, children[0])}";
+                result += string.Format(
+                    CultureInfo.CurrentCulture,
+                    "{0}----- Inner Stack Trace -----{0}{1}",
+                    Environment.NewLine,
+                    GetStackTrace(failureInfo, children[0])
+                );
 
             return result;
         }
@@ -190,20 +203,48 @@ namespace Xunit
         {
             var myIndex = exceptionTypes.Count;
 
-            exceptionTypes.Add(ex.GetType().FullName);
-            messages.Add(ex.Message);
-            stackTraces.Add(ex.StackTrace);
+            try
+            {
+                exceptionTypes.Add(ex.GetType().FullName);
+            }
+            catch (Exception thrown)
+            {
+                exceptionTypes.Add(string.Format(CultureInfo.CurrentCulture, "<exception thrown while retrieving exception type: {0}>", thrown.Message));
+            }
+
+            try
+            {
+                messages.Add(ex.Message);
+            }
+            catch (Exception thrown)
+            {
+                messages.Add(string.Format(CultureInfo.CurrentCulture, "<exception thrown while retrieving exception message: {0}>", thrown.Message));
+            }
+
+            try
+            {
+                stackTraces.Add(ex.StackTrace);
+            }
+            catch (Exception thrown)
+            {
+                stackTraces.Add(string.Format(CultureInfo.CurrentCulture, "<exception thrown while retrieving exception stack trace: {0}>", thrown.Message));
+            }
+
             indices.Add(parentIndex);
 
+            try
+            {
 #if XUNIT_FRAMEWORK
-            var innerExceptions = GetInnerExceptions(ex);
-            if (innerExceptions != null)
-                foreach (var innerException in innerExceptions)
-                    ConvertExceptionToFailureInformation(innerException, myIndex, exceptionTypes, messages, stackTraces, indices);
-            else
+                var innerExceptions = GetInnerExceptions(ex);
+                if (innerExceptions != null)
+                    foreach (var innerException in innerExceptions)
+                        ConvertExceptionToFailureInformation(innerException, myIndex, exceptionTypes, messages, stackTraces, indices);
+                else
 #endif
-            if (ex.InnerException != null)
-                ConvertExceptionToFailureInformation(ex.InnerException, myIndex, exceptionTypes, messages, stackTraces, indices);
+                if (ex.InnerException != null)
+                    ConvertExceptionToFailureInformation(ex.InnerException, myIndex, exceptionTypes, messages, stackTraces, indices);
+            }
+            catch { }
         }
 
         class FailureInformation : IFailureInformation

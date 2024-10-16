@@ -109,10 +109,10 @@
       "commitSha": "46d3424775d091bc8d074d3bdb4d065d88c05c02"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24511.4",
+      "packageVersion": "10.0.0-alpha.1.24514.2",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "61f719aea181a75790c5a3e954287ee938387656"
+      "commitSha": "db3b363d646801c33c242fb230bf0c46e6019fb9"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24511.4",
@@ -255,17 +255,17 @@
     {
       "path": "source-build-externals/src/xunit",
       "remoteUri": "https://github.com/xunit/xunit",
-      "commitSha": "f110e5bee5dfd4c08339587c9c3df9292fcb597c"
+      "commitSha": "82543a6df6f5f13b5b70f8a9f9ccb41cd676084f"
     },
     {
       "path": "source-build-externals/src/xunit/src/xunit.assert/Asserts",
       "remoteUri": "https://github.com/xunit/assert.xunit",
-      "commitSha": "5c8c10e085eb42f39f2fe0b40c94bf56649eb0a4"
+      "commitSha": "cac8b688c193c0f244a0bedf3bb60feeb32d377a"
     },
     {
-      "path": "source-build-externals/src/xunit/tools/build",
-      "remoteUri": "https://github.com/xunit/build-tools",
-      "commitSha": "8e186b0f8e398796e75453f3f18952b06d29fdfd"
+      "path": "source-build-externals/src/xunit/tools/builder/common",
+      "remoteUri": "https://github.com/xunit/build-tools-v3",
+      "commitSha": "90dba1f5638a4f00d4978a73e23edde5b85061d9"
     },
     {
       "path": "source-build-externals/src/xunit/tools/media",

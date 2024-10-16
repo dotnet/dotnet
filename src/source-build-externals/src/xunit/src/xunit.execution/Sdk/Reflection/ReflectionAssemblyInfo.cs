@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -57,7 +57,7 @@ namespace Xunit.Sdk
         public IEnumerable<IAttributeInfo> GetCustomAttributes(string assemblyQualifiedAttributeTypeName)
         {
             var attributeType = ReflectionAttributeNameCache.GetType(assemblyQualifiedAttributeTypeName);
-            Guard.ArgumentValid("assemblyQualifiedAttributeTypeName", "Could not locate type name", attributeType != null);
+            Guard.ArgumentValid("assemblyQualifiedAttributeTypeName", attributeType != null, "Could not locate type name");
 
             return Assembly.CustomAttributes
                            .Where(attr => attributeType.GetTypeInfo().IsAssignableFrom(attr.AttributeType.GetTypeInfo()))

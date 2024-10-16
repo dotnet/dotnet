@@ -1,154 +1,187 @@
 using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
-using System.Threading;
 using Xunit.Abstractions;
 
 namespace Xunit.Runner.Reporters
 {
-    public class TeamCityReporterMessageHandler : TestMessageSink
+    public class TeamCityReporterMessageHandler : DefaultRunnerReporterWithTypesMessageHandler
     {
-        readonly TeamCityDisplayNameFormatter displayNameFormatter;
-        readonly Func<string, string> flowIdMapper;
-        readonly Dictionary<string, string> flowMappings = new Dictionary<string, string>();
-        readonly ReaderWriterLockSlim flowMappingsLock = new ReaderWriterLockSlim();
-        readonly IRunnerLogger logger;
+        readonly string rootFlowId;
 
-        public TeamCityReporterMessageHandler(IRunnerLogger logger,
-                                              Func<string, string> flowIdMapper = null,
-                                              TeamCityDisplayNameFormatter displayNameFormatter = null)
+        public TeamCityReporterMessageHandler(IRunnerLogger logger, string rootFlowId)
+            : base(logger)
         {
-            this.logger = logger;
-            this.flowIdMapper = flowIdMapper ?? (_ => Guid.NewGuid().ToString("N"));
-            this.displayNameFormatter = displayNameFormatter ?? new TeamCityDisplayNameFormatter();
+            this.rootFlowId = rootFlowId;
 
-            Diagnostics.ErrorMessageEvent += HandleErrorMessage;
-
-            Execution.TestAssemblyCleanupFailureEvent += HandleTestAssemblyCleanupFailure;
-            Execution.TestCaseCleanupFailureEvent += HandleTestCaseCleanupFailure;
-            Execution.TestClassCleanupFailureEvent += HandleTestCaseCleanupFailure;
-            Execution.TestCollectionCleanupFailureEvent += HandleTestCollectionCleanupFailure;
+            Execution.TestAssemblyFinishedEvent += HandleTestAssemblyFinished;
+            Execution.TestAssemblyStartingEvent += HandleTestAssemblyStarting;
             Execution.TestCollectionFinishedEvent += HandleTestCollectionFinished;
             Execution.TestCollectionStartingEvent += HandleTestCollectionStarting;
-            Execution.TestCleanupFailureEvent += HandleTestCleanupFailure;
-            Execution.TestFailedEvent += HandleTestFailed;
-            Execution.TestMethodCleanupFailureEvent += HandleTestMethodCleanupFailure;
-            Execution.TestPassedEvent += HandleTestPassed;
-            Execution.TestSkippedEvent += HandleTestSkipped;
+            Execution.TestFinishedEvent += HandleTestFinished;
             Execution.TestStartingEvent += HandleTestStarting;
         }
 
-        protected virtual void HandleErrorMessage(MessageHandlerArgs<IErrorMessage> args)
+        /// <summary>
+        /// Gets the current date &amp; time in UTC.
+        /// </summary>
+        protected virtual DateTimeOffset UtcNow =>
+            DateTimeOffset.UtcNow;
+
+        protected override void HandleErrorMessage(MessageHandlerArgs<IErrorMessage> args)
         {
+            base.HandleErrorMessage(args);
+
             var error = args.Message;
-            LogError("FATAL ERROR", error);
+
+            TeamCityLogError(error, "FATAL ERROR");
         }
 
-        protected virtual void HandleTestAssemblyCleanupFailure(MessageHandlerArgs<ITestAssemblyCleanupFailure> args)
+        protected override void HandleTestAssemblyCleanupFailure(MessageHandlerArgs<ITestAssemblyCleanupFailure> args)
         {
+            base.HandleTestAssemblyCleanupFailure(args);
+
             var cleanupFailure = args.Message;
-            LogError($"Test Assembly Cleanup Failure ({cleanupFailure.TestAssembly.Assembly.AssemblyPath})", cleanupFailure);
+
+            TeamCityLogError(ToAssemblyFlowId(cleanupFailure), cleanupFailure, "Test Assembly Cleanup Failure ({0})", ToAssemblyName(cleanupFailure));
         }
 
-        protected virtual void HandleTestCaseCleanupFailure(MessageHandlerArgs<ITestCaseCleanupFailure> args)
+        protected virtual void HandleTestAssemblyFinished(MessageHandlerArgs<ITestAssemblyFinished> args)
         {
-            var cleanupFailure = args.Message;
-            LogError($"Test Case Cleanup Failure ({cleanupFailure.TestCase.DisplayName})", cleanupFailure);
+            var assemblyFinished = args.Message;
+
+            TeamCityLogSuiteFinished(ToAssemblyFlowId(assemblyFinished), ToAssemblyName(assemblyFinished));
         }
 
-        protected virtual void HandleTestCaseCleanupFailure(MessageHandlerArgs<ITestClassCleanupFailure> args)
+        protected virtual void HandleTestAssemblyStarting(MessageHandlerArgs<ITestAssemblyStarting> args)
         {
-            var cleanupFailure = args.Message;
-            LogError($"Test Class Cleanup Failure ({cleanupFailure.TestClass.Class.Name})", cleanupFailure);
+            var assemblyStarting = args.Message;
+
+            TeamCityLogSuiteStarted(ToAssemblyFlowId(assemblyStarting), ToAssemblyName(assemblyStarting), rootFlowId);
         }
 
-        protected virtual void HandleTestCollectionCleanupFailure(MessageHandlerArgs<ITestCollectionCleanupFailure> args)
+        protected override void HandleTestCaseCleanupFailure(MessageHandlerArgs<ITestCaseCleanupFailure> args)
         {
+            base.HandleTestCaseCleanupFailure(args);
+
             var cleanupFailure = args.Message;
-            LogError($"Test Collection Cleanup Failure ({cleanupFailure.TestCollection.DisplayName})", cleanupFailure);
+
+            TeamCityLogError(ToCollectionFlowId(cleanupFailure), cleanupFailure, "Test Case Cleanup Failure ({0})", ToTestCaseName(cleanupFailure));
+        }
+
+        protected override void HandleTestClassCleanupFailure(MessageHandlerArgs<ITestClassCleanupFailure> args)
+        {
+            base.HandleTestClassCleanupFailure(args);
+
+            var cleanupFailure = args.Message;
+
+            TeamCityLogError(ToCollectionFlowId(cleanupFailure), cleanupFailure, "Test Class Cleanup Failure ({0})", ToTestClassName(cleanupFailure));
+        }
+
+        protected override void HandleTestCollectionCleanupFailure(MessageHandlerArgs<ITestCollectionCleanupFailure> args)
+        {
+            base.HandleTestCollectionCleanupFailure(args);
+
+            var cleanupFailure = args.Message;
+
+            TeamCityLogError(ToCollectionFlowId(cleanupFailure), cleanupFailure, "Test Collection Cleanup Failure ({0})", ToTestCollectionName(cleanupFailure));
         }
 
         protected virtual void HandleTestCollectionFinished(MessageHandlerArgs<ITestCollectionFinished> args)
         {
             var testCollectionFinished = args.Message;
-            logger.LogImportantMessage($"##teamcity[testSuiteFinished name='{Escape(displayNameFormatter.DisplayName(testCollectionFinished.TestCollection))}' flowId='{ToFlowId(testCollectionFinished.TestCollection.DisplayName)}']");
+
+            TeamCityLogSuiteFinished(ToCollectionFlowId(testCollectionFinished), ToTestCollectionName(testCollectionFinished));
         }
 
         protected virtual void HandleTestCollectionStarting(MessageHandlerArgs<ITestCollectionStarting> args)
         {
             var testCollectionStarting = args.Message;
-            logger.LogImportantMessage($"##teamcity[testSuiteStarted name='{Escape(displayNameFormatter.DisplayName(testCollectionStarting.TestCollection))}' flowId='{ToFlowId(testCollectionStarting.TestCollection.DisplayName)}']");
+
+            TeamCityLogSuiteStarted(ToCollectionFlowId(testCollectionStarting), ToTestCollectionName(testCollectionStarting), ToAssemblyFlowId(testCollectionStarting));
         }
 
-        protected virtual void HandleTestCleanupFailure(MessageHandlerArgs<ITestCleanupFailure> args)
+        protected override void HandleTestCleanupFailure(MessageHandlerArgs<ITestCleanupFailure> args)
         {
+            base.HandleTestCleanupFailure(args);
+
             var cleanupFailure = args.Message;
-            LogError($"Test Cleanup Failure ({cleanupFailure.Test.DisplayName})", cleanupFailure);
+
+            TeamCityLogError(ToCollectionFlowId(cleanupFailure), cleanupFailure, "Test Cleanup Failure ({0})", ToTestName(cleanupFailure));
         }
 
-        protected virtual void HandleTestFailed(MessageHandlerArgs<ITestFailed> args)
+        protected override void HandleTestFailed(MessageHandlerArgs<ITestFailed> args)
         {
+            base.HandleTestFailed(args);
+
             var testFailed = args.Message;
-            logger.LogImportantMessage($"##teamcity[testFailed name='{Escape(displayNameFormatter.DisplayName(testFailed.Test))}' details='{Escape(ExceptionUtility.CombineMessages(testFailed))}|r|n{Escape(ExceptionUtility.CombineStackTraces(testFailed))}' flowId='{ToFlowId(testFailed.TestCollection.DisplayName)}']");
-            LogFinish(testFailed);
+
+            TeamCityLogMessage(
+                ToCollectionFlowId(testFailed),
+                "testFailed",
+                "name='{0}' details='{1}|r|n{2}'",
+                TeamCityEscape(ToTestName(testFailed)),
+                TeamCityEscape(ExceptionUtility.CombineMessages(testFailed)),
+                TeamCityEscape(ExceptionUtility.CombineStackTraces(testFailed))
+            );
         }
 
-        protected virtual void HandleTestMethodCleanupFailure(MessageHandlerArgs<ITestMethodCleanupFailure> args)
+        protected virtual void HandleTestFinished(MessageHandlerArgs<ITestFinished> args)
         {
+            var testFinished = args.Message;
+
+            var formattedName = TeamCityEscape(ToTestName(testFinished));
+            var flowId = ToCollectionFlowId(testFinished);
+
+            if (!string.IsNullOrWhiteSpace(testFinished.Output))
+                TeamCityLogMessage(flowId, "testStdOut", "name='{0}' out='{1}' tc:tags='tc:parseServiceMessagesInside']", formattedName, TeamCityEscape(testFinished.Output));
+
+            TeamCityLogMessage(flowId, "testFinished", "name='{0}' duration='{1}'", formattedName, (int)(testFinished.ExecutionTime * 1000M));
+        }
+
+        protected override void HandleTestMethodCleanupFailure(MessageHandlerArgs<ITestMethodCleanupFailure> args)
+        {
+            base.HandleTestMethodCleanupFailure(args);
+
             var cleanupFailure = args.Message;
-            LogError($"Test Method Cleanup Failure ({cleanupFailure.TestMethod.Method.Name})", cleanupFailure);
+
+            TeamCityLogError(ToCollectionFlowId(cleanupFailure), cleanupFailure, "Test Method Cleanup Failure ({0})", ToTestMethodName(cleanupFailure));
         }
 
-        protected virtual void HandleTestPassed(MessageHandlerArgs<ITestPassed> args)
+        protected override void HandleTestSkipped(MessageHandlerArgs<ITestSkipped> args)
         {
-            var testPassed = args.Message;
-            LogFinish(testPassed);
-        }
+            base.HandleTestSkipped(args);
 
-        protected virtual void HandleTestSkipped(MessageHandlerArgs<ITestSkipped> args)
-        {
             var testSkipped = args.Message;
-            logger.LogImportantMessage($"##teamcity[testIgnored name='{Escape(displayNameFormatter.DisplayName(testSkipped.Test))}' message='{Escape(testSkipped.Reason)}' flowId='{ToFlowId(testSkipped.TestCollection.DisplayName)}']");
-            LogFinish(testSkipped);
+
+            TeamCityLogMessage(ToCollectionFlowId(testSkipped), "testIgnored", "name='{0}' message='{1}'", TeamCityEscape(ToTestName(testSkipped)), TeamCityEscape(testSkipped.Reason));
         }
 
         protected virtual void HandleTestStarting(MessageHandlerArgs<ITestStarting> args)
         {
             var testStarting = args.Message;
-            logger.LogImportantMessage($"##teamcity[testStarted name='{Escape(displayNameFormatter.DisplayName(testStarting.Test))}' flowId='{ToFlowId(testStarting.TestCollection.DisplayName)}']");
+
+            TeamCityLogMessage(ToCollectionFlowId(testStarting), "testStarted", "name='{0}'", TeamCityEscape(ToTestName(testStarting)));
         }
 
         // Helpers
 
-        void LogError(string messageType, IFailureInformation failureInfo)
+        static string TeamCityEscape(string value)
         {
-            var message = $"[{messageType}] {failureInfo.ExceptionTypes[0]}: {ExceptionUtility.CombineMessages(failureInfo)}";
-            var stack = ExceptionUtility.CombineStackTraces(failureInfo);
+            if (value == null)
+                return null;
 
-            logger.LogImportantMessage($"##teamcity[message text='{Escape(message)}' errorDetails='{Escape(stack)}' status='ERROR']");
-        }
-
-        void LogFinish(ITestResultMessage testResult)
-        {
-            var formattedName = Escape(displayNameFormatter.DisplayName(testResult.Test));
-
-            if (!string.IsNullOrWhiteSpace(testResult.Output))
-                logger.LogImportantMessage($"##teamcity[testStdOut name='{formattedName}' out='{Escape(testResult.Output)}' flowId='{ToFlowId(testResult.TestCollection.DisplayName)}' tc:tags='tc:parseServiceMessagesInside']");
-
-            logger.LogImportantMessage($"##teamcity[testFinished name='{formattedName}' duration='{(int)(testResult.ExecutionTime * 1000M)}' flowId='{ToFlowId(testResult.TestCollection.DisplayName)}']");
-        }
-
-        static bool IsAscii(char ch) => ch <= '\x007f';
-
-        static string Escape(string value)
-        {
             var sb = new StringBuilder(value.Length);
-            for (int i = 0; i < value.Length; i++)
+
+            for (var i = 0; i < value.Length; i++)
             {
                 var ch = value[i];
 
                 switch (ch)
                 {
+                    case '\\':
+                        sb.Append("|0x005C");
+                        break;
                     case '|':
                         sb.Append("||");
                         break;
@@ -168,51 +201,85 @@ namespace Xunit.Runner.Reporters
                         sb.Append("|]");
                         break;
                     default:
-                        if (IsAscii(ch))
+                        if (ch < '\x007f')
                             sb.Append(ch);
                         else
                         {
                             sb.Append("|0x");
-                            sb.Append(((int)ch).ToString("x4"));
+                            sb.Append(((int)ch).ToString("x4", CultureInfo.CurrentCulture));
                         }
                         break;
                 }
             }
+
             return sb.ToString();
         }
 
-        string ToFlowId(string testCollectionName)
+        void TeamCityLogError(IFailureInformation failure, string messageType) =>
+            TeamCityLogError(string.Empty, failure, "{0}", messageType);
+
+        void TeamCityLogError(string flowId, IFailureInformation failure, string messageTypeFormat, params object[] args)
         {
-            string result;
+            var message = string.Format(
+                CultureInfo.InvariantCulture,
+                "[{0}] {1}: {2}",
+                string.Format(CultureInfo.InvariantCulture, messageTypeFormat, args),
+                failure.ExceptionTypes[0],
+                ExceptionUtility.CombineMessages(failure)
+            );
+            var stackTrace = ExceptionUtility.CombineStackTraces(failure);
 
-            flowMappingsLock.EnterReadLock();
-
-            try
-            {
-                if (flowMappings.TryGetValue(testCollectionName, out result))
-                    return result;
-            }
-            finally
-            {
-                flowMappingsLock.ExitReadLock();
-            }
-
-            flowMappingsLock.EnterWriteLock();
-
-            try
-            {
-                if (!flowMappings.TryGetValue(testCollectionName, out result))
-                {
-                    result = flowIdMapper(testCollectionName);
-                    flowMappings[testCollectionName] = result;
-                }
-
-                return result;
-            }
-            finally
-            {
-                flowMappingsLock.ExitWriteLock();
-            }
+            TeamCityLogMessage(flowId, "message", "status='ERROR' text='{0}' errorDetails='{1}'", TeamCityEscape(message), TeamCityEscape(stackTrace));
         }
+
+        void TeamCityLogMessage(string flowId, string messageType, string extraMetadataFormat = "", params object[] args) =>
+            Logger.LogRaw(
+                "##teamcity[{0} timestamp='{1}+0000'{2}{3}]",
+                messageType,
+                TeamCityEscape(UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss.fff", CultureInfo.InvariantCulture)),
+                flowId.Length != 0 ? string.Format(CultureInfo.InvariantCulture, " flowId='{0}'", TeamCityEscape(flowId)) : "",
+                extraMetadataFormat.Length != 0 ? " " + string.Format(CultureInfo.InvariantCulture, extraMetadataFormat, args) : ""
+            );
+
+        void TeamCityLogSuiteFinished(
+            string flowId,
+            string name)
+        {
+            TeamCityLogMessage(flowId, "testSuiteFinished", "name='{0}'", TeamCityEscape(name));
+            TeamCityLogMessage(flowId: flowId, messageType: "flowFinished");
+        }
+
+        void TeamCityLogSuiteStarted(
+            string flowId,
+            string escapedName,
+            string parentFlowId = null)
+        {
+            TeamCityLogMessage(flowId, "flowStarted", parentFlowId == null ? "" : "parent='{0}'", TeamCityEscape(parentFlowId));
+            TeamCityLogMessage(flowId, "testSuiteStarted", "name='{0}'", TeamCityEscape(escapedName));
+        }
+
+        string ToAssemblyFlowId(ITestAssemblyMessage message) =>
+            ToAssemblyName(message);
+
+        string ToAssemblyName(ITestAssemblyMessage message) =>
+            message.TestAssembly.Assembly.AssemblyPath ?? message.TestAssembly.Assembly.SimpleAssemblyName();
+
+        string ToTestCaseName(ITestCaseMessage message) =>
+            message.TestCase.DisplayName;
+
+        string ToTestClassName(ITestClassMessage message) =>
+            message.TestClass.Class.Name;
+
+        string ToCollectionFlowId(ITestCollectionMessage message) =>
+            message.TestCollection.UniqueID.ToString("N");
+
+        string ToTestCollectionName(ITestCollectionMessage message) =>
+            string.Format(CultureInfo.InvariantCulture, "{0} ({1})", message.TestCollection.DisplayName, ToCollectionFlowId(message));
+
+        string ToTestMethodName(ITestMethodMessage message) =>
+            string.Format(CultureInfo.InvariantCulture, "{0}.{1}", message.TestMethod.Method.Type.Name, message.TestMethod.Method.Name);
+
+        string ToTestName(ITestMessage message) =>
+            message.Test.DisplayName;
     }
 }

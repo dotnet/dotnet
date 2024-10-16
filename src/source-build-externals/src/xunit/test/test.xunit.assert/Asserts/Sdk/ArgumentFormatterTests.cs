@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ public class ArgumentFormatterTests
 		[CulturedFact]
 		public static void NullValue()
 		{
-			Assert.Equal("null", ArgumentFormatter.Format(null!));
+			Assert.Equal("null", ArgumentFormatter.Format(null));
 		}
 
 		// NOTE: It's important that this stays as MemberData
@@ -58,7 +59,7 @@ public class ArgumentFormatterTests
 		[InlineData("Hello, world!", "\"Hello, world!\"")]
 		[InlineData(@"""", @"""\""""")] // quotes should be escaped
 		[InlineData("\uD800\uDFFF", "\"\uD800\uDFFF\"")] // valid surrogates should print normally
-		[InlineData("\uFFFE", @"""\xfffe""")] // same for U+FFFE...
+		[InlineData("\uFFFE", @"""\xfffe""")] // same for U+FFFE
 		[InlineData("\uFFFF", @"""\xffff""")] // and U+FFFF, which are non-characters
 		[InlineData("\u001F", @"""\x1f""")] // non-escaped C0 controls should be 2 digits
 											// Other escape sequences
@@ -71,11 +72,11 @@ public class ArgumentFormatterTests
 		[InlineData("\v", @"""\v""")] // vertical tab
 		[InlineData("\t", @"""\t""")] // tab
 		[InlineData("\f", @"""\f""")] // formfeed
-		[InlineData("----|----1----|----2----|----3----|----4----|----5-", "\"----|----1----|----2----|----3----|----4----|----5\"...")] // truncation
+		[InlineData("----|----1----|----2----|----3----|----4----|----5-", "\"----|----1----|----2----|----3----|----4----|----5\"$$ELLIPSIS$$")] // truncation
 		[MemberData(nameof(StringValue_TestData), DisableDiscoveryEnumeration = true)]
 		public static void StringValue(string value, string expected)
 		{
-			Assert.Equal(expected, ArgumentFormatter.Format(value));
+			Assert.Equal(expected.Replace("$$ELLIPSIS$$", ArgumentFormatter.Ellipsis), ArgumentFormatter.Format(value));
 		}
 
 		public static IEnumerable<object[]> CharValue_TestData()
@@ -158,7 +159,11 @@ public class ArgumentFormatterTests
 		[Fact]
 		public static async Task TaskValue()
 		{
+#if XUNIT_V2
 			var task = Task.Run(() => { });
+#else
+			var task = Task.Run(() => { }, TestContext.Current.CancellationToken);
+#endif
 			await task;
 
 			Assert.Equal("Task { Status = RanToCompletion }", ArgumentFormatter.Format(task));
@@ -177,15 +182,22 @@ public class ArgumentFormatterTests
 		{
 			{ typeof(string), "typeof(string)" },
 			{ typeof(int[]), "typeof(int[])" },
+			{ typeof(int).MakeArrayType(1), "typeof(int[*])" },
+			{ typeof(int).MakeArrayType(2), "typeof(int[,])" },
+			{ typeof(int).MakeArrayType(3), "typeof(int[,,])" },
 			{ typeof(DateTime[,]), "typeof(System.DateTime[,])" },
 			{ typeof(decimal[][,]), "typeof(decimal[][,])" },
 			{ typeof(IEnumerable<>), "typeof(System.Collections.Generic.IEnumerable<>)" },
 			{ typeof(IEnumerable<int>), "typeof(System.Collections.Generic.IEnumerable<int>)" },
 			{ typeof(IDictionary<,>), "typeof(System.Collections.Generic.IDictionary<,>)" },
-			{ typeof(IDictionary<string, DateTime>), "typeof(System.Collections.Generic.IDictionary<string, System.DateTime>)" },
-			{ typeof(IDictionary<string[,], DateTime[,][]>), "typeof(System.Collections.Generic.IDictionary<string[,], System.DateTime[,][]>)" },
+			{ typeof(IDictionary<string, DateTime>), "typeof(System.Collections.Generic.IDictionary<string, DateTime>)" },
+			{ typeof(IDictionary<string[,], DateTime[,][]>), "typeof(System.Collections.Generic.IDictionary<string[,], DateTime[,][]>)" },
 			{ typeof(bool?), "typeof(bool?)" },
-			{ typeof(bool?[]), "typeof(bool?[])" }
+			{ typeof(bool?[]), "typeof(bool?[])" },
+			{ typeof(nint), "typeof(nint)" },
+			{ typeof(IntPtr), "typeof(nint)" },
+			{ typeof(nuint), "typeof(nuint)" },
+			{ typeof(UIntPtr), "typeof(nuint)" },
 		};
 
 		[Theory]
@@ -205,9 +217,11 @@ public class ArgumentFormatterTests
 		}
 
 		[CulturedTheory]
+#pragma warning disable xUnit1010 // The value is not convertible to the method parameter type
 		[InlineData(0, "Value0")]
 		[InlineData(1, "Value1")]
 		[InlineData(42, "42")]
+#pragma warning restore xUnit1010 // The value is not convertible to the method parameter type
 		public static void NonFlags(NonFlagsEnum enumValue, string expected)
 		{
 			var actual = ArgumentFormatter.Format(enumValue);
@@ -224,11 +238,13 @@ public class ArgumentFormatterTests
 		}
 
 		[CulturedTheory]
+#pragma warning disable xUnit1010 // The value is not convertible to the method parameter type
 		[InlineData(0, "Nothing")]
 		[InlineData(1, "Value1")]
 		[InlineData(3, "Value1 | Value2")]
 		// This is expected, not "Value1 | Value2 | 4"
 		[InlineData(7, "7")]
+#pragma warning restore xUnit1010 // The value is not convertible to the method parameter type
 		public static void Flags(FlagsEnum enumValue, string expected)
 		{
 			var actual = ArgumentFormatter.Format(enumValue);
@@ -251,12 +267,28 @@ public class ArgumentFormatterTests
 
 	public class Enumerables
 	{
-		[CulturedFact]
-		public static void EnumerableValue()
+		// Both tracked and untracked should be the same
+#if XUNIT_V2
+		public static TheoryData<IEnumerable> Collections = new()
+		{
+			new object[] { 1, 2.3M, "Hello, world!" },
+			new object[] { 1, 2.3M, "Hello, world!" }.AsTracker(),
+		};
+#else
+		public static TheoryData<IEnumerable<object>> Collections =
+		[
+			new TheoryDataRow<IEnumerable<object>>([1, 2.3M, "Hello, world!"]),
+			new TheoryDataRow<IEnumerable<object>>(CollectionTracker<object>.Wrap([1, 2.3M, "Hello, world!"])),
+		];
+#endif
+
+		[CulturedTheory]
+		[MemberData(nameof(Collections), DisableDiscoveryEnumeration = true)]
+		public static void EnumerableValue(IEnumerable collection)
 		{
 			var expected = $"[1, {2.3M}, \"Hello, world!\"]";
 
-			Assert.Equal(expected, ArgumentFormatter.Format(new object[] { 1, 2.3M, "Hello, world!" }));
+			Assert.Equal(expected, ArgumentFormatter.Format(collection));
 		}
 
 		[CulturedFact]
@@ -272,10 +304,25 @@ public class ArgumentFormatterTests
 			Assert.Equal(expected, ArgumentFormatter.Format(value));
 		}
 
-		[CulturedFact]
-		public static void OnlyFirstFewValuesOfEnumerableAreRendered()
+#if XUNIT_V2
+		public static TheoryData<IEnumerable> LongCollections = new()
 		{
-			Assert.Equal("[0, 1, 2, 3, 4, ...]", ArgumentFormatter.Format(Enumerable.Range(0, int.MaxValue)));
+			new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
+			new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }.AsTracker(),
+		};
+#else
+		public static TheoryData<IEnumerable<object>> LongCollections =
+		[
+			new TheoryDataRow<IEnumerable<object>>([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+			new TheoryDataRow<IEnumerable<object>>(CollectionTracker<object>.Wrap([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])),
+		];
+#endif
+
+		[CulturedTheory]
+		[MemberData(nameof(LongCollections), DisableDiscoveryEnumeration = true)]
+		public static void OnlyFirstFewValuesOfEnumerableAreRendered(IEnumerable collection)
+		{
+			Assert.Equal($"[0, 1, 2, 3, 4, {ArgumentFormatter.Ellipsis}]", ArgumentFormatter.Format(collection));
 		}
 
 		[CulturedFact]
@@ -285,7 +332,23 @@ public class ArgumentFormatterTests
 			looping[0] = 42;
 			looping[1] = looping;
 
-			Assert.Equal("[42, [42, [...]]]", ArgumentFormatter.Format(looping));
+			Assert.Equal($"[42, [42, [{ArgumentFormatter.Ellipsis}]]]", ArgumentFormatter.Format(looping));
+		}
+
+		[Fact]
+		public static void GroupingIsRenderedAsCollectionsOfKeysLinkedToCollectionsOfValues()
+		{
+			var grouping = Enumerable.Range(0, 10).GroupBy(i => i % 2 == 0).FirstOrDefault(g => g.Key == true);
+
+			Assert.Equal("[True] = [0, 2, 4, 6, 8]", ArgumentFormatter.Format(grouping));
+		}
+
+		[Fact]
+		public static void GroupingsAreRenderedAsCollectionsOfKeysLinkedToCollectionsOfValues()
+		{
+			var grouping = Enumerable.Range(0, 10).GroupBy(i => i % 2 == 0);
+
+			Assert.Equal("[[True] = [0, 2, 4, 6, 8], [False] = [1, 3, 5, 7, 9]]", ArgumentFormatter.Format(grouping));
 		}
 	}
 
@@ -352,7 +415,7 @@ public class ArgumentFormatterTests
 		[CulturedFact]
 		public static void LimitsOutputToFirstFewValues()
 		{
-			var expected = $@"Big {{ MyField1 = 42, MyField2 = ""Hello, world!"", MyProp1 = {21.12}, MyProp2 = typeof(ArgumentFormatterTests+ComplexTypes+Big), MyProp3 = 2014-04-17T07:45:23.0000000+00:00, ... }}";
+			var expected = $@"Big {{ MyField1 = 42, MyField2 = ""Hello, world!"", MyProp1 = {21.12}, MyProp2 = typeof(ArgumentFormatterTests+ComplexTypes+Big), MyProp3 = 2014-04-17T07:45:23.0000000+00:00, {ArgumentFormatter.Ellipsis} }}";
 
 			Assert.Equal(expected, ArgumentFormatter.Format(new Big()));
 		}
@@ -383,7 +446,7 @@ public class ArgumentFormatterTests
 		[CulturedFact]
 		public static void TypesAreRenderedWithMaximumDepthToPreventInfiniteRecursion()
 		{
-			Assert.Equal("Looping { Me = Looping { Me = Looping { ... } } }", ArgumentFormatter.Format(new Looping()));
+			Assert.Equal($"Looping {{ Me = Looping {{ Me = Looping {{ {ArgumentFormatter.Ellipsis} }} }} }}", ArgumentFormatter.Format(new Looping()));
 		}
 
 		public class Looping

@@ -1,9 +1,16 @@
-﻿#if XUNIT_NULLABLE
+#pragma warning disable CA1052 // Static holder types should be static
+#pragma warning disable IDE0046 // Convert to conditional expression
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
+#if XUNIT_NULLABLE
 #nullable enable
-using System.Diagnostics.CodeAnalysis;
 #endif
 
 using System;
+
+#if XUNIT_NULLABLE
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Xunit
 {
@@ -16,13 +23,20 @@ namespace Xunit
 	{
 		/// <summary/>
 #if XUNIT_NULLABLE
-		internal static void GuardArgumentNotNull(string argName, [NotNull] object? argValue)
+		[return: NotNull]
+#endif
+		internal static T GuardArgumentNotNull<T>(
+			string argName,
+#if XUNIT_NULLABLE
+			[NotNull] T? argValue)
 #else
-		internal static void GuardArgumentNotNull(string argName, object argValue)
+			T argValue)
 #endif
 		{
 			if (argValue == null)
-				throw new ArgumentNullException(argName);
+				throw new ArgumentNullException(argName.TrimStart('@'));
+
+			return argValue;
 		}
 	}
 }

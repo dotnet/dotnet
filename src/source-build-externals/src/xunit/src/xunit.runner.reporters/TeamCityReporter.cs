@@ -1,4 +1,4 @@
-﻿using Xunit.Abstractions;
+using Xunit.Abstractions;
 
 namespace Xunit.Runner.Reporters
 {
@@ -14,6 +14,6 @@ namespace Xunit.Runner.Reporters
             => "teamcity";
 
         public IMessageSink CreateMessageHandler(IRunnerLogger logger)
-            => new TeamCityReporterMessageHandler(logger);
+            => new TeamCityReporterMessageHandler(logger, EnvironmentHelper.GetEnvironmentVariable("TEAMCITY_PROCESS_FLOW_ID"));
     }
 }

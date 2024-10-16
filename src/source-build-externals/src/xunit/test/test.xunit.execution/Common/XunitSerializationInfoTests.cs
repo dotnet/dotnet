@@ -1,9 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Xml;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Serialization;
+
+#if NETFRAMEWORK
+using System.Xml;
+#endif
+
+#if NETCOREAPP
+using System.Numerics;
+#endif
 
 public class XunitSerializationInfoTests
 {
@@ -55,6 +62,11 @@ public class XunitSerializationInfoTests
             yield return new object[] { typeof(decimal), decimal.MaxValue };
             yield return new object[] { typeof(decimal?), decimal.MinValue };
             yield return new object[] { typeof(decimal?), null };
+#if !NETFRAMEWORK
+            yield return new object[] { typeof(BigInteger), BigInteger.One };
+            yield return new object[] { typeof(BigInteger?), BigInteger.MinusOne };
+            yield return new object[] { typeof(BigInteger?), null };
+#endif
             yield return new object[] { typeof(bool), true };
             yield return new object[] { typeof(bool?), false };
             yield return new object[] { typeof(bool?), null };
@@ -67,6 +79,17 @@ public class XunitSerializationInfoTests
             yield return new object[] { typeof(DateTimeOffset), DateTimeOffset.Now };
             yield return new object[] { typeof(DateTimeOffset?), DateTimeOffset.UtcNow };
             yield return new object[] { typeof(DateTimeOffset?), null };
+            yield return new object[] { typeof(TimeSpan), TimeSpan.Zero };
+            yield return new object[] { typeof(TimeSpan?), new TimeSpan(1, 2, 3) };
+            yield return new object[] { typeof(TimeSpan?), null };
+#if NET6_0
+            yield return new object[] { typeof(DateOnly), DateOnly.MinValue };
+            yield return new object[] { typeof(DateOnly?), DateOnly.FromDateTime(DateTime.UtcNow) };
+            yield return new object[] { typeof(DateOnly?), null };
+            yield return new object[] { typeof(TimeOnly), TimeOnly.MinValue };
+            yield return new object[] { typeof(TimeOnly?), TimeOnly.FromDateTime(DateTime.UtcNow) };
+            yield return new object[] { typeof(TimeOnly?), null };
+#endif
             yield return new object[] { typeof(Type), typeof(object) };
             yield return new object[] { typeof(Type), null };
             yield return new object[] { typeof(MyEnum[]), new MyEnum[] { MyEnum.SomeValue, MyEnum.OtherValue } };
@@ -83,7 +106,7 @@ public class XunitSerializationInfoTests
         }
     }
 
-    enum MyEnum { SomeValue, OtherValue }
+    enum MyEnum { SomeValue, OtherValue = -1 }
 
     public class Serialize
     {
@@ -183,17 +206,17 @@ public class XunitSerializationInfoTests
 
             var result = XunitSerializationInfo.Serialize(data);
 
-            Assert.Equal("InsertLineBreaks", result);
+            Assert.Equal("1", result);
         }
 
-        [Fact]
+        [CulturedFact("en-US", "fo-FO")]
         public static void CanSerializeEnumFromLocalAssembly()
         {
-            var data = MyEnum.SomeValue;
+            var data = MyEnum.OtherValue;
 
             var result = XunitSerializationInfo.Serialize(data);
 
-            Assert.Equal("SomeValue", result);
+            Assert.Equal("-1", result);
         }
 
 #if NETFRAMEWORK
@@ -206,7 +229,7 @@ public class XunitSerializationInfoTests
 
             var argEx = Assert.IsType<ArgumentException>(ex);
             Assert.Equal("value", argEx.ParamName);
-            Assert.StartsWith("We cannot serialize enum System.Xml.ConformanceLevel.Auto because it lives in the GAC", argEx.Message);
+            Assert.StartsWith("Cannot serialize enum System.Xml.ConformanceLevel.Auto because it lives in the GAC", argEx.Message);
         }
 #endif
 

@@ -1,4 +1,5 @@
 using System;
+using Xunit.Abstractions;
 
 namespace Xunit
 {
@@ -33,6 +34,17 @@ namespace Xunit
         public bool DiagnosticMessagesOrDefault { get { return DiagnosticMessages ?? false; } }
 
         /// <summary>
+        /// Gets or sets a flag indicating whether skipped tests should be turned into failures.
+        /// </summary>
+        public bool? FailSkips { get; set; }
+
+        /// <summary>
+        /// Gets a flag indicating whether skipped tests should be turned into failures. If the flag
+        /// is not set, returns the default value (<c>false</c>).
+        /// </summary>
+        public bool FailSkipsOrDefault { get { return FailSkips ?? false; } }
+
+        /// <summary>
         /// Gets or sets a flag indicating that the end user wants internal diagnostic messages
         /// from the test framework.
         /// </summary>
@@ -63,10 +75,19 @@ namespace Xunit
         public int? MaxParallelThreads { get; set; }
 
         /// <summary>
-        /// Gets the maximum number of thread to use when parallelizing this assembly.
-        /// If the value is not set, returns the default value (<see cref="Environment.ProcessorCount"/>).
+        /// Gets the maximum number of thread to use when parallelizing this assembly. If the value is not set (or set
+        /// to 0), returns the default value (<see cref="Environment.ProcessorCount"/>).
         /// </summary>
-        public int MaxParallelThreadsOrDefault { get { return MaxParallelThreads ?? Environment.ProcessorCount; } }
+        public int MaxParallelThreadsOrDefault
+        {
+            get
+            {
+                if (!MaxParallelThreads.HasValue || MaxParallelThreads == 0)
+                    return Environment.ProcessorCount;
+
+                return MaxParallelThreads.Value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the default display name for test methods.
@@ -89,6 +110,16 @@ namespace Xunit
         /// the default value (<see cref="TestMethodDisplayOptions.None"/>).
         /// </summary>
         public TestMethodDisplayOptions MethodDisplayOptionsOrDefault { get { return MethodDisplayOptions ?? TestMethodDisplayOptions.None; } }
+
+        /// <summary>
+        /// Gets or sets the algorithm to be used for parallelization.
+        /// </summary>
+        public ParallelAlgorithm? ParallelAlgorithm { get; set; }
+
+        /// <summary>
+        /// Gets or sets the algorithm to be used for parallelization.
+        /// </summary>
+        public ParallelAlgorithm ParallelAlgorithmOrDefault { get { return ParallelAlgorithm ?? Xunit.ParallelAlgorithm.Conservative; } }
 
         /// <summary>
         /// Gets or sets a flag indicating that this assembly is safe to parallelize against
@@ -137,6 +168,19 @@ namespace Xunit
         /// returns the default value (<c>true</c>).
         /// </summary>
         public bool ShadowCopyOrDefault { get { return ShadowCopy ?? true; } }
+
+        /// <summary>
+        /// Gets or sets a flag indicating whether output from <see cref="ITestOutputHelper"/> should be
+        /// shown live as they're logged (in addition to being collected together after the test finishes).
+        /// </summary>
+        public bool? ShowLiveOutput { get; set; }
+
+        /// <summary>
+        /// Gets a flag indicating whether output from <see cref="ITestOutputHelper"/> should be
+        /// shown live as they're logged (in addition to being collected together after the test finishes).
+        /// If the flag is not set, returns the default value (<c>false</c>).
+        /// </summary>
+        public bool ShowLiveOutputOrDefault { get { return ShowLiveOutput ?? false; } }
 
         /// <summary>
         /// Gets or sets a flag indicating whether testing should stop on a failure.

@@ -1,106 +1,72 @@
-﻿#if XUNIT_NULLABLE
+#pragma warning disable CA1032 // Implement standard exception constructors
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
+#if XUNIT_NULLABLE
 #nullable enable
 #endif
 
 using System;
 using System.Globalization;
-using System.Linq;
-using System.Reflection;
 
 namespace Xunit.Sdk
 {
 	/// <summary>
-	/// Exception thrown when code unexpectedly fails to raise an event.
+	/// Exception thrown when Assert.Raises fails.
 	/// </summary>
 #if XUNIT_VISIBILITY_INTERNAL
 	internal
 #else
 	public
 #endif
-	class RaisesException : XunitException
+	partial class RaisesException : XunitException
 	{
-#if XUNIT_NULLABLE
-		readonly string? stackTrace = null;
-#else
-		readonly string stackTrace = null;
-#endif
+		RaisesException(string message) :
+			base(message)
+		{ }
 
 		/// <summary>
-		/// Creates a new instance of the <see cref="RaisesException" /> class. Call this constructor
-		/// when no event was raised.
+		/// Creates a new instance of the <see cref="RaisesException" /> class to be thrown when
+		/// the raised event wasn't the expected type.
 		/// </summary>
 		/// <param name="expected">The type of the event args that was expected</param>
-		public RaisesException(Type expected)
-			: base("(No event was raised)")
-		{
-			Expected = ConvertToSimpleTypeName(expected.GetTypeInfo());
-			Actual = "(No event was raised)";
-		}
-
-		/// <summary>
-		/// Creates a new instance of the <see cref="RaisesException" /> class. Call this constructor
-		/// when an
-		/// </summary>
-		/// <param name="expected"></param>
-		/// <param name="actual"></param>
-		public RaisesException(Type expected, Type actual)
-			: base("(Raised event did not match expected event)")
-		{
-			Expected = ConvertToSimpleTypeName(expected.GetTypeInfo());
-			Actual = ConvertToSimpleTypeName(actual.GetTypeInfo());
-		}
-
-		/// <summary>
-		/// Gets the actual value.
-		/// </summary>
-		public string Actual { get; }
-
-		/// <summary>
-		/// Gets the expected value.
-		/// </summary>
-		public string Expected { get; }
-
-		/// <summary>
-		/// Gets a message that describes the current exception. Includes the expected and actual values.
-		/// </summary>
-		/// <returns>The error message that explains the reason for the exception, or an empty string("").</returns>
-		/// <filterpriority>1</filterpriority>
-		public override string Message
-		{
-			get
-			{
-				return string.Format(
-					CultureInfo.CurrentCulture,
-					"{0}{3}{1}{3}{2}",
-					base.Message,
-					Expected ?? "(null)",
-					Actual ?? "(null)",
-					Environment.NewLine
+		/// <param name="actual">The type of the event args that was actually raised</param>
+		public static RaisesException ForIncorrectType(
+			Type expected,
+			Type actual) =>
+				new RaisesException(
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.Raises() Failure: Wrong event type was raised{0}Expected: {1}{2}Actual:   {3}",
+						Environment.NewLine,
+						ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected)),
+						Environment.NewLine,
+						ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(actual), actual))
+					)
 				);
-			}
-		}
 
 		/// <summary>
-		/// Gets a string representation of the frames on the call stack at the time the current exception was thrown.
+		/// Creates a new instance of the <see cref="RaisesException" /> class to be thrown when
+		/// no event (without data) was raised.
 		/// </summary>
-		/// <returns>A string that describes the contents of the call stack, with the most recent method call appearing first.</returns>
-#if XUNIT_NULLABLE
-		public override string? StackTrace => stackTrace ?? base.StackTrace;
-#else
-		public override string StackTrace => stackTrace ?? base.StackTrace;
-#endif
+		public static RaisesException ForNoEvent() =>
+			new RaisesException("Assert.Raises() Failure: No event was raised");
 
-		static string ConvertToSimpleTypeName(TypeInfo typeInfo)
-		{
-			if (!typeInfo.IsGenericType)
-				return typeInfo.Name;
-
-			var simpleNames = typeInfo.GenericTypeArguments.Select(type => ConvertToSimpleTypeName(type.GetTypeInfo()));
-			var backTickIdx = typeInfo.Name.IndexOf('`');
-			if (backTickIdx < 0)
-				backTickIdx = typeInfo.Name.Length;  // F# doesn't use backticks for generic type names
-
-			return string.Format("{0}<{1}>", typeInfo.Name.Substring(0, backTickIdx), string.Join(", ", simpleNames));
-		}
+		/// <summary>
+		/// Creates a new instance of the <see cref="RaisesException" /> class to be thrown when
+		/// no event (with data) was raised.
+		/// </summary>
+		/// <param name="expected">The type of the event args that was expected</param>
+		public static RaisesException ForNoEvent(Type expected) =>
+			new RaisesException(
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"Assert.Raises() Failure: No event was raised{0}Expected: {1}{2}Actual:   No event was raised",
+					Environment.NewLine,
+					ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected)),
+					Environment.NewLine
+				)
+			);
 	}
 }

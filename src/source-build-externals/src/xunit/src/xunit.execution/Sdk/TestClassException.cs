@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Xunit.Sdk
 {
@@ -18,6 +18,15 @@ namespace Xunit.Sdk
         /// <param name="message">The exception message.</param>
         public TestClassException(string message)
             : base(message)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TestClassException"/> class.
+        /// </summary>
+        /// <param name="message">The exception message.</param>
+        /// <param name="innerException">The inner exception.</param>
+        public TestClassException(string message, Exception innerException)
+            : base(message, innerException)
         { }
 
 #if NETFRAMEWORK

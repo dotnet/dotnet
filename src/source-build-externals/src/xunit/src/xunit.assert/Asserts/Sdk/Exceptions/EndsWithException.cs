@@ -1,65 +1,56 @@
-﻿#if XUNIT_NULLABLE
+#pragma warning disable CA1032 // Implement standard exception constructors
+#pragma warning disable IDE0040 // Add accessibility modifiers
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
+#if XUNIT_NULLABLE
 #nullable enable
 #endif
 
 using System;
 using System.Globalization;
+using Xunit.Internal;
 
 namespace Xunit.Sdk
 {
 	/// <summary>
-	/// Exception thrown when a string does not end with the expected value.
+	/// Exception thrown when Assert.EndsWith fails.
 	/// </summary>
 #if XUNIT_VISIBILITY_INTERNAL
 	internal
 #else
 	public
 #endif
-	class EndsWithException : XunitException
+	partial class EndsWithException : XunitException
 	{
-		/// <summary>
-		/// Creates a new instance of the <see cref="EndsWithException"/> class.
-		/// </summary>
-		/// <param name="expected">The expected string value</param>
-		/// <param name="actual">The actual value</param>
-#if XUNIT_NULLABLE
-		public EndsWithException(string? expected, string? actual)
-#else
-		public EndsWithException(string expected, string actual)
-#endif
-			: base(
-				string.Format(
-					CultureInfo.CurrentCulture,
-					"Assert.EndsWith() Failure:{2}Expected: {0}{2}Actual:   {1}",
-					ShortenExpected(expected, actual) ?? "(null)",
-					ShortenActual(expected, actual) ?? "(null)",
-					Environment.NewLine
-				)
-			)
+		EndsWithException(string message) :
+			base(message)
 		{ }
 
+		/// <summary>
+		/// Creates an instance of the <see cref="EndsWithException"/> class to be thrown
+		/// when a string does not end with the given value.
+		/// </summary>
+		/// <param name="expected">The expected ending</param>
+		/// <param name="actual">The actual value</param>
+		/// <returns></returns>
+		public static EndsWithException ForStringNotFound(
 #if XUNIT_NULLABLE
-		static string? ShortenExpected(string? expected, string? actual)
+			string? expected,
+			string? actual) =>
 #else
-		static string ShortenExpected(string expected, string actual)
+			string expected,
+			string actual) =>
 #endif
-		{
-			if (expected == null || actual == null || actual.Length <= expected.Length)
-				return expected;
-
-			return "   " + expected;
-		}
-
-#if XUNIT_NULLABLE
-		static string? ShortenActual(string? expected, string? actual)
-#else
-		static string ShortenActual(string expected, string actual)
-#endif
-		{
-			if (expected == null || actual == null || actual.Length <= expected.Length)
-				return actual;
-
-			return "···" + actual.Substring(actual.Length - expected.Length);
-		}
+				new EndsWithException(
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.EndsWith() Failure: String end does not match{0}String:       {1}{2}Expected end: {3}",
+						Environment.NewLine,
+						AssertHelper.ShortenAndEncodeStringEnd(actual),
+						Environment.NewLine,
+						AssertHelper.ShortenAndEncodeString(expected)
+					)
+				);
 	}
 }

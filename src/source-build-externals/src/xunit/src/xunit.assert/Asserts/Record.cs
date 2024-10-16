@@ -1,9 +1,22 @@
+#pragma warning disable CA1031 // Do not catch general exception types
+#pragma warning disable CA1052 // Static holder types should be static
+#pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
+#pragma warning disable IDE0022 // Use expression body for method
+#pragma warning disable IDE0046 // Convert to conditional expression
+#pragma warning disable IDE0058 // Expression value is never used
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
 #if XUNIT_NULLABLE
 #nullable enable
+#else
+// In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
+#pragma warning disable CS8603
 #endif
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace Xunit
@@ -44,27 +57,33 @@ namespace Xunit
 		/// a return value. Generally used for testing property accessors.
 		/// </summary>
 		/// <param name="testCode">The code which may thrown an exception.</param>
+		/// <param name="asyncMethodName">The name of the async method the user should've called if they accidentally
+		/// passed in an async function</param>
 		/// <returns>Returns the exception that was thrown by the code; null, otherwise.</returns>
 #if XUNIT_NULLABLE
-		protected static Exception? RecordException(Func<object?> testCode)
+		protected static Exception? RecordException(
+			Func<object?> testCode,
 #else
-		protected static Exception RecordException(Func<object> testCode)
+		protected static Exception RecordException(
+			Func<object> testCode,
 #endif
+			string asyncMethodName)
 		{
 			GuardArgumentNotNull(nameof(testCode), testCode);
-			var task = default(Task);
+
+			var result = default(object);
 
 			try
 			{
-				task = testCode() as Task;
+				result = testCode();
 			}
 			catch (Exception ex)
 			{
 				return ex;
 			}
 
-			if (task != null)
-				throw new InvalidOperationException("You must call Assert.ThrowsAsync, Assert.DoesNotThrowAsync, or Record.ExceptionAsync when testing async code.");
+			if (result is Task)
+				throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "You must call Assert.{0} when testing async code", asyncMethodName));
 
 			return null;
 		}
@@ -72,19 +91,10 @@ namespace Xunit
 		/// <summary/>
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		[Obsolete("You must call Assert.RecordExceptionAsync (and await the result) when testing async code.", true)]
-		protected static Exception RecordException(Func<Task> testCode) { throw new NotImplementedException(); }
-
-#if XUNIT_VALUETASK
-		/// <summary/>
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		[Obsolete("You must call Assert.RecordExceptionAsync (and await the result) when testing async code.", true)]
-		protected static Exception RecordException(Func<ValueTask> testCode) { throw new NotImplementedException(); }
-
-		/// <summary/>
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		[Obsolete("You must call Assert.RecordExceptionAsync (and await the result) when testing async code.", true)]
-		protected static Exception RecordException<T>(Func<ValueTask<T>> testCode) { throw new NotImplementedException(); }
-#endif
+		protected static Exception RecordException(Func<Task> testCode)
+		{
+			throw new NotImplementedException("You must call Assert.RecordExceptionAsync (and await the result) when testing async code.");
+		}
 
 		/// <summary>
 		/// Records any exception which is thrown by the given task.
@@ -109,56 +119,5 @@ namespace Xunit
 				return ex;
 			}
 		}
-
-#if XUNIT_VALUETASK
-		/// <summary>
-		/// Records any exception which is thrown by the given task.
-		/// </summary>
-		/// <param name="testCode">The task which may thrown an exception.</param>
-		/// <returns>Returns the exception that was thrown by the code; null, otherwise.</returns>
-#if XUNIT_NULLABLE
-		protected static async ValueTask<Exception?> RecordExceptionAsync(Func<ValueTask> testCode)
-#else
-		protected static async ValueTask<Exception> RecordExceptionAsync(Func<ValueTask> testCode)
-#endif
-		{
-			GuardArgumentNotNull(nameof(testCode), testCode);
-
-			try
-			{
-				await testCode();
-				return null;
-			}
-			catch (Exception ex)
-			{
-				return ex;
-			}
-		}
-
-		/// <summary>
-		/// Records any exception which is thrown by the given task.
-		/// </summary>
-		/// <param name="testCode">The task which may thrown an exception.</param>
-		/// <typeparam name="T">The type of the ValueTask return value.</typeparam>
-		/// <returns>Returns the exception that was thrown by the code; null, otherwise.</returns>
-#if XUNIT_NULLABLE
-		protected static async ValueTask<Exception?> RecordExceptionAsync<T>(Func<ValueTask<T>> testCode)
-#else
-		protected static async ValueTask<Exception> RecordExceptionAsync<T>(Func<ValueTask<T>> testCode)
-#endif
-		{
-			GuardArgumentNotNull(nameof(testCode), testCode);
-
-			try
-			{
-				await testCode();
-				return null;
-			}
-			catch (Exception ex)
-			{
-				return ex;
-			}
-		}
-#endif
 	}
 }

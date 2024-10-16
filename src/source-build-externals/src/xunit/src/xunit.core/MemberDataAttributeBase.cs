@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Xunit.Sdk;
@@ -58,20 +59,29 @@ namespace Xunit
             var type = MemberType ?? testMethod.DeclaringType;
             var accessor = GetPropertyAccessor(type) ?? GetFieldAccessor(type) ?? GetMethodAccessor(type);
             if (accessor == null)
-            {
-                var parameterText = Parameters?.Length > 0 ? $" with parameter types: {string.Join(", ", Parameters.Select(p => p?.GetType().FullName ?? "(null)"))}" : "";
-                throw new ArgumentException($"Could not find public static member (property, field, or method) named '{MemberName}' on {type.FullName}{parameterText}");
-            }
+                throw new ArgumentException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        "Could not find public static member (property, field, or method) named '{0}' on {1}{2}",
+                        MemberName,
+                        type.FullName,
+                        Parameters?.Length > 0
+                            ? string.Format(CultureInfo.CurrentCulture, " with parameter types: {0}", string.Join(", ", Parameters.Select(p => p?.GetType().FullName ?? "(null)")))
+                            : ""
+                    )
+                );
 
             var obj = accessor();
             if (obj == null)
                 return null;
+            if (obj is ITheoryData theoryData)
+                return theoryData.GetData();
+            if (obj is IEnumerable<object[]> arrayEnumerable)
+                return arrayEnumerable;
+            if (obj is not IEnumerable enumerable)
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Property {0} on {1} did not return IEnumerable", MemberName, type.FullName));
 
-            var dataItems = obj as IEnumerable;
-            if (dataItems == null)
-                throw new ArgumentException($"Property {MemberName} on {type.FullName} did not return IEnumerable");
-
-            return dataItems.Cast<object>().Select(item => ConvertDataItem(testMethod, item));
+            return enumerable.Cast<object>().Select(item => ConvertDataItem(testMethod, item));
         }
 
         /// <summary>
@@ -104,10 +114,23 @@ namespace Xunit
             var parameterTypes = Parameters == null ? new Type[0] : Parameters.Select(p => p?.GetType()).ToArray();
             for (var reflectionType = type; reflectionType != null; reflectionType = reflectionType.GetTypeInfo().BaseType)
             {
-                methodInfo = reflectionType.GetRuntimeMethods()
-                                           .FirstOrDefault(m => m.Name == MemberName && ParameterTypesCompatible(m.GetParameters(), parameterTypes));
+                var runtimeMethodsWithGivenName = reflectionType.GetRuntimeMethods()
+                                                                .Where(m => m.Name == MemberName)
+                                                                .ToArray();
+                methodInfo = runtimeMethodsWithGivenName.FirstOrDefault(m => ParameterTypesCompatible(m.GetParameters(), parameterTypes));
+
                 if (methodInfo != null)
                     break;
+
+                if (runtimeMethodsWithGivenName.Any(m => m.GetParameters().Any(p => p.IsOptional)))
+                    throw new ArgumentException(
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            "Method '{0}.{1}' contains optional parameters, which are not currently supported. Please use overloads if necessary.",
+                            type.FullName,
+                            MemberName
+                        )
+                    );
             }
 
             if (methodInfo == null || !methodInfo.IsStatic)
