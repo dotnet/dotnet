@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <arcadeGitCommitHash>05c72bb3c9b38138276a8029017f2ef905dcc7fa</arcadeGitCommitHash>
-    <arcadeOutputPackageVersion>9.0.0-beta.24509.3</arcadeOutputPackageVersion>
+    <arcadeGitCommitHash>3c393bbd85ae16ddddba20d0b75035b0c6f1a52d</arcadeGitCommitHash>
+    <arcadeOutputPackageVersion>9.0.0-beta.24516.2</arcadeOutputPackageVersion>
     <aspireGitCommitHash>137e8dcae0a7b22c05f48c4e7a5d36fe3f00a8d7</aspireGitCommitHash>
     <aspireOutputPackageVersion>8.2.1-preview.1.24473.4</aspireOutputPackageVersion>
     <aspnetcoreGitCommitHash>228b9ea237f21b19647f11c98e342efdb9a1f3f1</aspnetcoreGitCommitHash>
@@ -31,11 +31,11 @@
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.24508.2</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>3fd39c8f6c8db918e3184050599c2046997160f1</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.12.0-3.24510.2</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>b8f5d2538d402d4714b4567af4b05b98aac94d2d</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>9.0.0-rtm.24515.15</runtimeOutputPackageVersion>
+    <runtimeGitCommitHash>9305d7f71d73c1d1edeb2a06478c998e40deda8d</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>9.0.0-rtm.24516.5</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>1009e3b6d23e049de56b91de82fe975fe84444f8</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24514.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>8a5970fe6615a0e74937712ca882fdbeab746e03</sdkGitCommitHash>
+    <sdkGitCommitHash>48930a204b798650d1e027f79c09ffcfc8107d4c</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>b11ed370b79aa475535a5803856b7c7d0977235e</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24510.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>c43ee853e96528e2f2eb0f6d8c151ddc07b6a844</sourcebuildreferencepackagesGitCommitHash>
