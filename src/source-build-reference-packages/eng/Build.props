@@ -34,6 +34,7 @@
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Nuget.Credentials.6.11.0.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Nuget.ProjectModel.6.11.0.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Nuget.Commands.6.11.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Text.Json.8.0.5.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\textOnlyPackages\src\**\Microsoft.NetCore.Platforms.3.1.0.csproj" />
   </ItemGroup>
 
