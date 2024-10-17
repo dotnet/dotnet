@@ -58,7 +58,7 @@ extends:
         - task: GitHubRelease@1
           displayName: 📢 GitHub release (create)
           inputs:
-            gitHubConnection: # TODO: fill in service connection here
+            gitHubConnection: github.com_richardstanton # service connection
             repositoryName: $(Build.Repository.Name)
             target: $(resources.pipeline.CI.sourceCommit)
             tagSource: userSpecifiedTag

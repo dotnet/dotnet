@@ -28,7 +28,7 @@
     <!-- Local builds should embed PDBs so we never lose them when a subsequent build occurs. -->
     <DebugType Condition=" '$(CI)' != 'true' and '$(TF_BUILD)' != 'true' ">embedded</DebugType>
 
-    <!-- <PackageProjectUrl>https://github.com/ORG/REPO</PackageProjectUrl> -->
+    <PackageProjectUrl>https://github.com/microsoft/vs-solutionpersistence</PackageProjectUrl>
     <Company>Microsoft</Company>
     <Authors>Microsoft</Authors>
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>

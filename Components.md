@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@b09020a](https://github.com/dotnet/sdk/tree/b09020a852afe38a1633a2e02e5637ea9eb3b401)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@db3b363](https://github.com/dotnet/source-build-externals/tree/db3b363d646801c33c242fb230bf0c46e6019fb9)*
+*[dotnet/source-build-externals@cecf0ad](https://github.com/dotnet/source-build-externals/tree/cecf0ad2dd98f7416340f0f99632eb4028df525e)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  
@@ -59,9 +59,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     *[AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet@e67b25b](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/tree/e67b25be77532af9ba405670b34b4d263d505fde)*
     - `src/source-build-externals/src/cssparser`  
     *[dotnet/cssparser@0d59611](https://github.com/dotnet/cssparser/tree/0d59611784841735a7778a67aa6e9d8d000c861f)*
-    - `src/source-build-externals/src/docker-creds-provider-2.2.0`  
-    *[mthalman/docker-creds-provider@5701f66](https://github.com/mthalman/docker-creds-provider/tree/5701f6667c1fbd805684857baaa860383bbdfed7)*
-    - `src/source-build-externals/src/docker-creds-provider-2.2.1`  
+    - `src/source-build-externals/src/docker-creds-provider`  
     *[mthalman/docker-creds-provider@6c73fa4](https://github.com/mthalman/docker-creds-provider/tree/6c73fa4784795ae07f49305a057abf5c473d2adb)*
     - `src/source-build-externals/src/humanizer`  
     *[Humanizr/Humanizer@3ebc38d](https://github.com/Humanizr/Humanizer/tree/3ebc38de585fc641a04b0e78ed69468453b0f8a1)*
@@ -72,7 +70,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/spectre-console`  
     *[spectreconsole/spectre.console@7397169](https://github.com/spectreconsole/spectre.console/tree/7397169a2757dc3657598bdea4ac222c0f283425)*
     - `src/source-build-externals/src/vs-solutionpersistence`  
-    *[microsoft/vs-solutionpersistence@f2b3e7d](https://github.com/microsoft/vs-solutionpersistence/tree/f2b3e7d1b0b761cc183147533322f928b71182bc)*
+    *[microsoft/vs-solutionpersistence@3489af8](https://github.com/microsoft/vs-solutionpersistence/tree/3489af847b089e729a641a6051a02990245e8716)*
     - `src/source-build-externals/src/xunit`  
     *[xunit/xunit@82543a6](https://github.com/xunit/xunit/tree/82543a6df6f5f13b5b70f8a9f9ccb41cd676084f)*
     - `src/source-build-externals/src/xunit/src/xunit.assert/Asserts`  
