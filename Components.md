@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@9ab92c1](https://github.com/dotnet/scenario-tests/tree/9ab92c12b6bf992abc84d52f5b42d86ca708255c)*
 - `src/sdk`  
-*[dotnet/sdk@dcf3b0c](https://github.com/dotnet/sdk/tree/dcf3b0cb2457ccaa174d8b775ef8f3bc84b179aa)*
+*[dotnet/sdk@588f0ff](https://github.com/dotnet/sdk/tree/588f0ff841057e7e80cfa349a715e2318d7db668)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@db3b363](https://github.com/dotnet/source-build-externals/tree/db3b363d646801c33c242fb230bf0c46e6019fb9)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -82,15 +82,15 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/xunit/tools/media`  
     *[xunit/media@5738b6e](https://github.com/xunit/media/tree/5738b6e86f08e0389c4392b939c20e3eca2d9822)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@f3889ab](https://github.com/dotnet/source-build-reference-packages/tree/f3889ab90d78377122a3e427fe9a74c03611a4bd)*
+*[dotnet/source-build-reference-packages@4660d88](https://github.com/dotnet/source-build-reference-packages/tree/4660d88cf953fbbd14192c787053a20246ce1aeb)*
 - `src/sourcelink`  
-*[dotnet/sourcelink@45e357b](https://github.com/dotnet/sourcelink/tree/45e357bb6d533ccadab99d77be6e8d79af10df7e)*
+*[dotnet/sourcelink@c490a5f](https://github.com/dotnet/sourcelink/tree/c490a5fbdc76f8f6870f0a6f6efb74a84e957a8e)*
 - `src/symreader`  
 *[dotnet/symreader@2edd33f](https://github.com/dotnet/symreader/tree/2edd33f08a7dd1f4ce28df21e4f8f68ae6d020eb)*
 - `src/templating`  
 *[dotnet/templating@bf40ec0](https://github.com/dotnet/templating/tree/bf40ec00f3761436f9e503691191ed722575f1bb)*
 - `src/test-templates`  
-*[dotnet/test-templates@910c7f7](https://github.com/dotnet/test-templates/tree/910c7f7096eab524c87a8954a28d28ff2e0fd7ac)*
+*[dotnet/test-templates@6f21abe](https://github.com/dotnet/test-templates/tree/6f21abef9eda75bcf8e7f4cea899ebf616f4090a)*
 - `src/vstest`  
 *[microsoft/vstest@bc91613](https://github.com/microsoft/vstest/tree/bc9161306b23641b0364b8f93d546da4d48da1eb)*
 - `src/windowsdesktop`  
