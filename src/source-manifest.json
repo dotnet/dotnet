@@ -106,13 +106,13 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "3197d779bd06f55ce821a232a64fdcaadfbdf9d5"
+      "commitSha": "1d3eb2b0ee83c5aab60cf351395e709367fb1153"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24510.1",
+      "packageVersion": "9.0.0-alpha.1.24515.2",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "b11ed370b79aa475535a5803856b7c7d0977235e"
+      "commitSha": "659bf534d9fbf673493b821be99df12032277549"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24511.3",
@@ -121,10 +121,10 @@
       "commitSha": "c43ee853e96528e2f2eb0f6d8c151ddc07b6a844"
     },
     {
-      "packageVersion": "9.0.0-beta.24514.3",
+      "packageVersion": "9.0.0-beta.24515.3",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "45e357bb6d533ccadab99d77be6e8d79af10df7e"
+      "commitSha": "c490a5fbdc76f8f6870f0a6f6efb74a84e957a8e"
     },
     {
       "packageVersion": "2.2.0-beta.24327.2",
@@ -139,10 +139,10 @@
       "commitSha": "a23da1c15c737b5e121650cfa5a86805e74e34fc"
     },
     {
-      "packageVersion": "1.1.0-rtm.24514.4",
+      "packageVersion": "1.1.0-rtm.24516.3",
       "path": "test-templates",
       "remoteUri": "https://github.com/dotnet/test-templates",
-      "commitSha": "910c7f7096eab524c87a8954a28d28ff2e0fd7ac"
+      "commitSha": "6f21abef9eda75bcf8e7f4cea899ebf616f4090a"
     },
     {
       "packageVersion": "17.12.0-release-24508-01",
@@ -154,19 +154,19 @@
       "packageVersion": "9.0.0",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "047d8dc076167a16e9fa09f5bd3d348fc262f80a"
+      "commitSha": "5307f2abc4387e29964c6f46cb1f63cfdc218602"
     },
     {
-      "packageVersion": "9.0.0-rtm.24512.2",
+      "packageVersion": "9.0.0-rtm.24515.14",
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "9b822fd70005bf5632d12fe76811b97b3dd044e4"
+      "commitSha": "5f03f3d8a99d8094fd0067e2497c4ea9b440e324"
     },
     {
-      "packageVersion": "9.0.0-rtm.24514.2",
+      "packageVersion": "9.0.0-rtm.24515.3",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "a1b12b341809b4edcec23a18c1320efbd70a0ef2"
+      "commitSha": "375aed28c289639ec572af58067a31c3d7742ef9"
     },
     {
       "packageVersion": "9.0.0-preview.24476.1",
@@ -218,12 +218,7 @@
       "commitSha": "0d59611784841735a7778a67aa6e9d8d000c861f"
     },
     {
-      "path": "source-build-externals/src/docker-creds-provider-2.2.0",
-      "remoteUri": "https://github.com/mthalman/docker-creds-provider",
-      "commitSha": "5701f6667c1fbd805684857baaa860383bbdfed7"
-    },
-    {
-      "path": "source-build-externals/src/docker-creds-provider-2.2.1",
+      "path": "source-build-externals/src/docker-creds-provider",
       "remoteUri": "https://github.com/mthalman/docker-creds-provider",
       "commitSha": "6c73fa4784795ae07f49305a057abf5c473d2adb"
     },
