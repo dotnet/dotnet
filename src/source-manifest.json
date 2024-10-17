@@ -109,10 +109,10 @@
       "commitSha": "1d3eb2b0ee83c5aab60cf351395e709367fb1153"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24510.1",
+      "packageVersion": "9.0.0-alpha.1.24515.2",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "b11ed370b79aa475535a5803856b7c7d0977235e"
+      "commitSha": "659bf534d9fbf673493b821be99df12032277549"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24511.3",
@@ -218,12 +218,7 @@
       "commitSha": "0d59611784841735a7778a67aa6e9d8d000c861f"
     },
     {
-      "path": "source-build-externals/src/docker-creds-provider-2.2.0",
-      "remoteUri": "https://github.com/mthalman/docker-creds-provider",
-      "commitSha": "5701f6667c1fbd805684857baaa860383bbdfed7"
-    },
-    {
-      "path": "source-build-externals/src/docker-creds-provider-2.2.1",
+      "path": "source-build-externals/src/docker-creds-provider",
       "remoteUri": "https://github.com/mthalman/docker-creds-provider",
       "commitSha": "6c73fa4784795ae07f49305a057abf5c473d2adb"
     },
