@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@a1f7880](https://github.com/dotnet/aspire/tree/a1f7880ae14703e747bf79d1e2e947bffea6a604)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@21e8836](https://github.com/dotnet/aspnetcore/tree/21e8836755b8be5f7fc7bf35d9f5b87ae60b62a0)*
+*[dotnet/aspnetcore@080c909](https://github.com/dotnet/aspnetcore/tree/080c909ed688f619befdceeb936a7eeb97c665a4)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@71815bb](https://github.com/google/googletest/tree/71815bbf7de6e10c11821d654a2fae2cf42de0f7)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@9ab92c1](https://github.com/dotnet/scenario-tests/tree/9ab92c12b6bf992abc84d52f5b42d86ca708255c)*
 - `src/sdk`  
-*[dotnet/sdk@56a5bbc](https://github.com/dotnet/sdk/tree/56a5bbce6a9cd0da2342cc79a33da26f7169359e)*
+*[dotnet/sdk@7efbff5](https://github.com/dotnet/sdk/tree/7efbff5d8bf017142c0edf2077f2aadf37f4e9ed)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@d22c9e8](https://github.com/dotnet/source-build-externals/tree/d22c9e818d40d0b36874f8db31550b1ea7f66c72)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -82,7 +82,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/source-build-reference-packages`  
 *[dotnet/source-build-reference-packages@4660d88](https://github.com/dotnet/source-build-reference-packages/tree/4660d88cf953fbbd14192c787053a20246ce1aeb)*
 - `src/sourcelink`  
-*[dotnet/sourcelink@c490a5f](https://github.com/dotnet/sourcelink/tree/c490a5fbdc76f8f6870f0a6f6efb74a84e957a8e)*
+*[dotnet/sourcelink@24760f9](https://github.com/dotnet/sourcelink/tree/24760f9b1ed7478863d699b7f6634e82d1b25bd1)*
 - `src/symreader`  
 *[dotnet/symreader@2edd33f](https://github.com/dotnet/symreader/tree/2edd33f08a7dd1f4ce28df21e4f8f68ae6d020eb)*
 - `src/templating`  

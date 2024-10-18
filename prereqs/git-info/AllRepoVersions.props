@@ -5,8 +5,8 @@
     <arcadeOutputPackageVersion>10.0.0-beta.24515.3</arcadeOutputPackageVersion>
     <aspireGitCommitHash>a1f7880ae14703e747bf79d1e2e947bffea6a604</aspireGitCommitHash>
     <aspireOutputPackageVersion>8.2.2-preview.1.24507.4</aspireOutputPackageVersion>
-    <aspnetcoreGitCommitHash>21e8836755b8be5f7fc7bf35d9f5b87ae60b62a0</aspnetcoreGitCommitHash>
-    <aspnetcoreOutputPackageVersion>10.0.0-alpha.2.24516.22</aspnetcoreOutputPackageVersion>
+    <aspnetcoreGitCommitHash>080c909ed688f619befdceeb936a7eeb97c665a4</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>10.0.0-alpha.2.24517.2</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>9c9443396f8deacceb8edb169890e52aac25f311</cecilGitCommitHash>
     <cecilOutputPackageVersion>0.11.5-alpha.24480.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>803d8598f98fb4efd94604b32627ee9407f246db</commandlineapiGitCommitHash>
@@ -35,13 +35,13 @@
     <runtimeOutputPackageVersion>10.0.0-alpha.1.24507.22</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>9ab92c12b6bf992abc84d52f5b42d86ca708255c</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>10.0.0-preview.24515.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>56a5bbce6a9cd0da2342cc79a33da26f7169359e</sdkGitCommitHash>
+    <sdkGitCommitHash>7efbff5d8bf017142c0edf2077f2aadf37f4e9ed</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>d22c9e818d40d0b36874f8db31550b1ea7f66c72</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>10.0.0-alpha.1.24516.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>4660d88cf953fbbd14192c787053a20246ce1aeb</sourcebuildreferencepackagesGitCommitHash>
     <sourcebuildreferencepackagesOutputPackageVersion>10.0.0-alpha.1.24515.1</sourcebuildreferencepackagesOutputPackageVersion>
-    <sourcelinkGitCommitHash>c490a5fbdc76f8f6870f0a6f6efb74a84e957a8e</sourcelinkGitCommitHash>
-    <sourcelinkOutputPackageVersion>9.0.0-beta.24515.3</sourcelinkOutputPackageVersion>
+    <sourcelinkGitCommitHash>24760f9b1ed7478863d699b7f6634e82d1b25bd1</sourcelinkGitCommitHash>
+    <sourcelinkOutputPackageVersion>9.0.0-beta.24516.2</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>2edd33f08a7dd1f4ce28df21e4f8f68ae6d020eb</symreaderGitCommitHash>
     <symreaderOutputPackageVersion>2.2.0-beta.24511.1</symreaderOutputPackageVersion>
     <templatingGitCommitHash>bf40ec00f3761436f9e503691191ed722575f1bb</templatingGitCommitHash>
