@@ -92,7 +92,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/windowsdesktop`  
 *[_git/dotnet-windowsdesktop@6621e32](https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop/?version=GC6621e3204f9fd1b1b636602a4822da334b6954da)*
 - `src/winforms`  
-*[_git/dotnet-winforms@d23e6a3](https://dev.azure.com/dnceng/internal/_git/dotnet-winforms/?version=GCd23e6a34d404b5feffbd13c121b13d3f1963eb2f)*
+*[_git/dotnet-winforms@90c08cb](https://dev.azure.com/dnceng/internal/_git/dotnet-winforms/?version=GC90c08cb77d1bdbbf0c8230a59876a85a1a265ef6)*
 - `src/wpf`  
 *[_git/dotnet-wpf@3050beb](https://dev.azure.com/dnceng/internal/_git/dotnet-wpf/?version=GC3050beb7a5bafd5f6f7e2257fda5fcf64dcb11cb)*
 - `src/xdt`  
