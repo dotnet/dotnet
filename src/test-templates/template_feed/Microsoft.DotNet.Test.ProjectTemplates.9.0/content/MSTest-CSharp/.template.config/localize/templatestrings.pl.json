@@ -41,7 +41,7 @@
   "symbols/ExtensionsProfile/choices/AllMicrosoft/description": "Włącz wszystkie rozszerzenia dostarczane przez firmę Microsoft (w tym rozszerzenia z restrykcyjną licencją)",
   "symbols/Fixture/description": "Wybierz rodzaje warunków początkowych do uwzględnienia w projekcie.",
   "symbols/Fixture/choices/None/description": "Brak metod początkowych",
-  "symbols/Fixture/choices/None/displayName": "Wartość domyślna",
+  "symbols/Fixture/choices/None/displayName": "None",
   "symbols/Fixture/choices/AssemblyInitialize/description": "AssemblyInitialize — metoda początkowa",
   "symbols/Fixture/choices/AssemblyCleanup/description": "AssemblyCleanup — metoda początkowa",
   "symbols/Fixture/choices/ClassInitialize/description": "ClassInitialize — metoda początkowa",
