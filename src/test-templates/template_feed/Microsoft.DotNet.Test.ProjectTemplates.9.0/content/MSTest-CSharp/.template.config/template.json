@@ -188,7 +188,7 @@
         {
           "choice": "None",
           "description": "No fixture methods",
-          "displayName": "Default"
+          "displayName": "None"
         },
         {
           "choice": "AssemblyInitialize",
