@@ -122,13 +122,17 @@ namespace ScenarioTests
             var diagnosticSink = new ConsoleDiagnosticMessageSink();
             var testsFinished = new TaskCompletionSource();
             var testSink = new TestMessageSink();
+#pragma warning disable CS0618 // Delegating*Sink types are marked obsolete, but we can't move to ExecutionSink yet: https://github.com/dotnet/arcade/issues/14375
             var summarySink = new DelegatingExecutionSummarySink(testSink,
                 () => false,
                 (completed, summary) => Console.WriteLine($"Tests run: {summary.Total}, Errors: {summary.Errors}, Failures: {summary.Failed}, Skipped: {summary.Skipped}. Time: {TimeSpan.FromSeconds((double)summary.Time).TotalSeconds}s"));
+#pragma warning restore CS0618
             var resultsXmlAssemblies = new XElement("assemblies");
             var resultsXmlAssembly = new XElement("assembly");
             resultsXmlAssemblies.Add(resultsXmlAssembly);
+#pragma warning disable CS0618 // Delegating*Sink types are marked obsolete, but we can't move to ExecutionSink yet: https://github.com/dotnet/arcade/issues/14375
             var resultsSink = new DelegatingXmlCreationSink(summarySink, resultsXmlAssembly);
+#pragma warning restore CS0618
             var platform = OperatingSystemFinder.GetPlatform();
 
             testSink.Execution.TestSkippedEvent += args => { Console.WriteLine($"[SKIP] {args.Message.Test.DisplayName}"); };
