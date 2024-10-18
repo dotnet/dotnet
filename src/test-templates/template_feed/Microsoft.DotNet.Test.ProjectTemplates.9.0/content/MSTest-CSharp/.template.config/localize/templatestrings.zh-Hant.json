@@ -41,7 +41,7 @@
   "symbols/ExtensionsProfile/choices/AllMicrosoft/description": "啟用由 Microsoft 提供的所有延伸模組 (包括具有有限制授權的延伸模組)",
   "symbols/Fixture/description": "選取要併入專案中的固件類型。",
   "symbols/Fixture/choices/None/description": "沒有固件方法",
-  "symbols/Fixture/choices/None/displayName": "預設",
+  "symbols/Fixture/choices/None/displayName": "None",
   "symbols/Fixture/choices/AssemblyInitialize/description": "AssemblyInitialize 固件方法",
   "symbols/Fixture/choices/AssemblyCleanup/description": "AssemblyCleanup 固件方法",
   "symbols/Fixture/choices/ClassInitialize/description": "ClassInitialize 固件方法",

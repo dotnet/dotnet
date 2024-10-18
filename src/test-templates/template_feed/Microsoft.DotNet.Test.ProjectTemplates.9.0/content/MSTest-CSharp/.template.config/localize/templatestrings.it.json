@@ -41,7 +41,7 @@
   "symbols/ExtensionsProfile/choices/AllMicrosoft/description": "Abilita tutte le estensioni spedite da Microsoft (incluse le estensioni con una licenza restrittiva)",
   "symbols/Fixture/description": "Selezionare i tipi di fixture da includere nel progetto.",
   "symbols/Fixture/choices/None/description": "Nessun metodo di fixture",
-  "symbols/Fixture/choices/None/displayName": "Impostazione predefinita",
+  "symbols/Fixture/choices/None/displayName": "None",
   "symbols/Fixture/choices/AssemblyInitialize/description": "Metodo fixture AssemblyInitialize",
   "symbols/Fixture/choices/AssemblyCleanup/description": "Metodo fixture AssemblyCleanup",
   "symbols/Fixture/choices/ClassInitialize/description": "Metodo fixture ClassInitialize",
