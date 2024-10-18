@@ -41,7 +41,7 @@
   "symbols/ExtensionsProfile/choices/AllMicrosoft/description": "Microsoft'un gönderdiği tüm uzantıları etkinleştir (kısıtlayıcı lisansı olan uzantılar dahil)",
   "symbols/Fixture/description": "Projeye dahil edilecek düzen türlerini seçin.",
   "symbols/Fixture/choices/None/description": "Düzen yöntemi yok",
-  "symbols/Fixture/choices/None/displayName": "Varsayılan",
+  "symbols/Fixture/choices/None/displayName": "None",
   "symbols/Fixture/choices/AssemblyInitialize/description": "AssemblyInitialize düzen yöntemi",
   "symbols/Fixture/choices/AssemblyCleanup/description": "AssemblyCleanup düzen yöntemi",
   "symbols/Fixture/choices/ClassInitialize/description": "ClassInitialize düzen yöntemi",

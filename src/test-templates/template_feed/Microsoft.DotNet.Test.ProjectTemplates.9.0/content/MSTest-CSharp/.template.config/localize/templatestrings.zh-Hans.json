@@ -41,7 +41,7 @@
   "symbols/ExtensionsProfile/choices/AllMicrosoft/description": "启用 Microsoft 提供的所有扩展(包括具有限制性许可证的扩展)",
   "symbols/Fixture/description": "选择要包含在项目中的固定例程类型。",
   "symbols/Fixture/choices/None/description": "无固定例程方法",
-  "symbols/Fixture/choices/None/displayName": "默认",
+  "symbols/Fixture/choices/None/displayName": "None",
   "symbols/Fixture/choices/AssemblyInitialize/description": "AssemblyInitialize 固定例程方法",
   "symbols/Fixture/choices/AssemblyCleanup/description": "AssemblyCleanup 固定例程方法",
   "symbols/Fixture/choices/ClassInitialize/description": "ClassInitialize 固定例程方法",
