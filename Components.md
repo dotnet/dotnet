@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@137e8dc](https://github.com/dotnet/aspire/tree/137e8dcae0a7b22c05f48c4e7a5d36fe3f00a8d7)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@1e7a7af](https://github.com/dotnet/aspnetcore/tree/1e7a7af6d2417242b244d2a0f4f23fcce8e88d2f)*
+*[_git/dotnet-aspnetcore@64b6ae8](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC64b6ae8cbc37f69c202d64f0dc8c64718892d67b)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@6dae7eb](https://github.com/google/googletest/tree/6dae7eb4a5c3a169f3e298392bff4680224aa94a)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -26,7 +26,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@513150c](https://github.com/dotnet/diagnostics/tree/513150c2f25077b1fcb194407e53c433c975f39b)*
 - `src/efcore`  
-*[dotnet/efcore@dfc53da](https://github.com/dotnet/efcore/tree/dfc53da799c9dd97d87649b1d19242e56e5576cc)*
+*[_git/dotnet-efcore@bb8107e](https://dev.azure.com/dnceng/internal/_git/dotnet-efcore/?version=GCbb8107e01f8111145b63c5a176706716aaaa75c9)*
 - `src/emsdk`  
 *[dotnet/emsdk@5054dd3](https://github.com/dotnet/emsdk/tree/5054dd35a56010d8f6232408e56e31ad8ccc987a)*
 - `src/fsharp`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@1009e3b](https://github.com/dotnet/scenario-tests/tree/1009e3b6d23e049de56b91de82fe975fe84444f8)*
 - `src/sdk`  
-*[dotnet/sdk@aafadc0](https://github.com/dotnet/sdk/tree/aafadc0f277b2676d6acfca24c71c29eea50503a)*
+*[dotnet/sdk@5f8fcb1](https://github.com/dotnet/sdk/tree/5f8fcb160bf5b02b4228009a2b2b53c57da46704)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@4df883d](https://github.com/dotnet/source-build-externals/tree/4df883d781a4290873b3b968afc0ff0df7132507)*
     - `src/source-build-externals/src/abstractions-xunit`  
