@@ -13,10 +13,10 @@
       "commitSha": "48e42f59d64d84b404e904996a9ed61f2a17a569"
     },
     {
-      "packageVersion": "8.0.10-servicing.24468.4",
+      "packageVersion": "8.0.11-servicing.24521.4",
       "path": "aspnetcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
-      "commitSha": "c2a442982e736e17ae6bcadbfd8ccba278ee1be6"
+      "commitSha": "8e8ededd851fffe2166dd41bf850caabf833d13a"
     },
     {
       "packageVersion": "0.11.4-alpha.23509.2",
@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "9f628d3ca6e1f09b401f6d647cd6b79aa62ae435"
+      "commitSha": "748a21cad2c0a6d9983be09712cb2e80c222594a"
     },
     {
       "packageVersion": "17.8.5-preview-24055-02",
@@ -97,16 +97,16 @@
       "commitSha": "223fa62ea09457588b4b0f88ee8ac62ea5ab5db5"
     },
     {
-      "packageVersion": "8.0.10-servicing.24474.4",
+      "packageVersion": "8.0.11-servicing.24517.7",
       "path": "runtime",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
-      "commitSha": "81cabf2857a01351e5ab578947c7403a5b128ad1"
+      "commitSha": "9cb3b725e3ad2b57ddc9fb2dd48d2d170563a8f5"
     },
     {
-      "packageVersion": "8.0.111-servicing.24517.19",
+      "packageVersion": "8.0.111-servicing.24521.9",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "d3aaf791c99e383d77b011cfb94089c3de0fb782"
+      "commitSha": "4f203daf7190965f627f57e44f89c90694b5da82"
     },
     {
       "packageVersion": "8.0.0-alpha.1.24516.2",
@@ -167,12 +167,12 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "ff233bdd4cac0a0bf6e5cd45bda3406814cb2796"
+      "commitSha": "6dae7eb4a5c3a169f3e298392bff4680224aa94a"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
       "remoteUri": "https://github.com/aspnet/MessagePack-CSharp.git",
-      "commitSha": "ecc4e18ad7a0c7db51cd7e3d2997a291ed01444d"
+      "commitSha": "95119056ee8f4da1714b055a4f16893afaa73af7"
     },
     {
       "path": "nuget-client/submodules/NuGet.Build.Localization",
