@@ -41,7 +41,7 @@
   "symbols/ExtensionsProfile/choices/AllMicrosoft/description": "Habilitar todas las extensiones enviadas por Microsoft (incluidas las extensiones con una licencia restrictiva)",
   "symbols/Fixture/description": "Seleccione los tipos de accesorio que desea incluir en el proyecto.",
   "symbols/Fixture/choices/None/description": "No hay métodos de accesorio",
-  "symbols/Fixture/choices/None/displayName": "None",
+  "symbols/Fixture/choices/None/displayName": "Ninguno",
   "symbols/Fixture/choices/AssemblyInitialize/description": "Método de accesorio AssemblyInitialize",
   "symbols/Fixture/choices/AssemblyCleanup/description": "Método de accesorio AssemblyCleanup",
   "symbols/Fixture/choices/ClassInitialize/description": "Método de accesorio ClassInitialize",
