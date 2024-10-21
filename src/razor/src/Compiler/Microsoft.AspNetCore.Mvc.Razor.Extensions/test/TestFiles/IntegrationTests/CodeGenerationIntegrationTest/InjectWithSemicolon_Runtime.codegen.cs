@@ -18,7 +18,15 @@ namespace AspNetCoreGeneratedDocument
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("Identifier", "/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml")]
     [global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdateAttribute]
     #nullable restore
-    internal sealed class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_InjectWithSemicolon : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<MyModel>
+    internal sealed class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_InjectWithSemicolon : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<
+#nullable restore
+#line (1,8)-(1,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
+MyModel
+
+#line default
+#line hidden
+#nullable disable
+    >
     #nullable disable
     {
         #pragma warning disable 1998

@@ -879,6 +879,31 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         AssertCSharpDocumentMatchesBaseline(csharp);
         CompileToAssembly(generated);
     }
+
+    [Fact]
+    public void InheritsDirective_RazorPages_Runtime()
+    {
+        // Arrange
+        AddCSharpSyntaxTree("""
+            public abstract class MyBase : global::Microsoft.AspNetCore.Mvc.RazorPages.Page {
+
+            }
+            """);
+
+        // Act
+        var generated = CompileToCSharp("""
+            @page
+            @inherits MyBase
+            """);
+
+        // Assert
+        var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
+        var csharp = generated.CodeDocument.GetCSharpDocument();
+        AssertDocumentNodeMatchesBaseline(intermediate);
+        AssertCSharpDocumentMatchesBaseline(csharp);
+        CompileToAssembly(generated);
+    }
+
     #endregion
 
     #region DesignTime
@@ -1465,6 +1490,30 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         var diagnotics = compiled.CodeDocument.GetCSharpDocument().Diagnostics;
         Assert.Equal("RZ3906", Assert.Single(diagnotics).Id);
+    }
+
+    [Fact]
+    public void InheritsDirective_RazorPages_DesignTime()
+    {
+        // Arrange
+        AddCSharpSyntaxTree("""
+            public abstract class MyBase : global::Microsoft.AspNetCore.Mvc.RazorPages.Page {
+
+            }
+            """);
+
+        // Act
+        var generated = CompileToCSharp("""
+            @page
+            @inherits MyBase
+            """, designTime: true);
+
+        // Assert
+        var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
+        var csharp = generated.CodeDocument.GetCSharpDocument();
+        AssertDocumentNodeMatchesBaseline(intermediate);
+        AssertCSharpDocumentMatchesBaseline(csharp);
+        CompileToAssembly(generated);
     }
 
     #endregion

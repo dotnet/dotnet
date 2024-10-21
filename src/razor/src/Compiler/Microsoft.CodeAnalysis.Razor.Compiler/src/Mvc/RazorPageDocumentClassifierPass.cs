@@ -79,7 +79,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
             @class.ClassName = className;
         }
 
-        @class.BaseType = "global::Microsoft.AspNetCore.Mvc.RazorPages.Page";
+        @class.BaseType = new BaseTypeWithModel("global::Microsoft.AspNetCore.Mvc.RazorPages.Page");
         @class.Modifiers.Clear();
         if (_useConsolidatedMvcViews)
         {

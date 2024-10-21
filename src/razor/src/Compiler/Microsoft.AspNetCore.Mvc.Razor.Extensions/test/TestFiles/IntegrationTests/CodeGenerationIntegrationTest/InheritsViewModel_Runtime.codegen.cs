@@ -18,7 +18,36 @@ namespace AspNetCoreGeneratedDocument
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("Identifier", "/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsViewModel.cshtml")]
     [global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdateAttribute]
     #nullable restore
-    internal sealed class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_InheritsViewModel : MyBasePageForViews<MyModel>
+    internal sealed class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_InheritsViewModel : 
+#nullable restore
+#line (1,11)-(1,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsViewModel.cshtml"
+MyBasePageForViews
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line (1,29)-(1,30) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsViewModel.cshtml"
+<
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line (2,8)-(2,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsViewModel.cshtml"
+MyModel
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line (1,36)-(1,37) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsViewModel.cshtml"
+>
+
+#line default
+#line hidden
+#nullable disable
+
     #nullable disable
     {
         #pragma warning disable 1998

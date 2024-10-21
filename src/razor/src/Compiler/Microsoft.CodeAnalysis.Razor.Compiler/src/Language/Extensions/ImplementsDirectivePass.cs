@@ -19,17 +19,13 @@ internal class ImplementsDirectivePass : IntermediateNodePassBase, IRazorDirecti
             return;
         }
 
-        if (@class.Interfaces == null)
-        {
-            @class.Interfaces = new List<string>();
-        }
-
         foreach (var implements in documentNode.FindDirectiveReferences(ImplementsDirective.Directive))
         {
             var token = ((DirectiveIntermediateNode)implements.Node).Tokens.FirstOrDefault();
             if (token != null)
             {
-                @class.Interfaces.Add(token.Content);
+                var source = codeDocument.GetParserOptions()?.DesignTime == true ? null : token.Source;
+                @class.Interfaces.Add(IntermediateToken.CreateCSharpToken(token.Content, source));
             }
         }
     }
