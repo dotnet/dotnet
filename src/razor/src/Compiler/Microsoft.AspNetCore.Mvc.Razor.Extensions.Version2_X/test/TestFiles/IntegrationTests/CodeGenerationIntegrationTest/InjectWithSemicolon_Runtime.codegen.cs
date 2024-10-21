@@ -16,7 +16,13 @@ namespace AspNetCore
     #line default
     #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"771acb56660727ab6e4ca50e95bde0cf2a72af8de3e9ec1cd4b72969645cb9af", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml")]
-    public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_InjectWithSemicolon : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<MyModel>
+    public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_InjectWithSemicolon : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<
+#line (1,8)-(1,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
+MyModel
+
+#line default
+#line hidden
+    >
     {
         #pragma warning disable 1998
         public async override global::System.Threading.Tasks.Task ExecuteAsync()

@@ -18,7 +18,15 @@ namespace AspNetCoreGeneratedDocument
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("Identifier", "/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml")]
     [global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdateAttribute]
     #nullable restore
-    internal sealed class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Inherits : foo.bar<baz<biz>>.boz
+    internal sealed class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Inherits : 
+#nullable restore
+#line (1,11)-(1,32) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml"
+foo.bar<baz<biz>>.boz
+
+#line default
+#line hidden
+#nullable disable
+
     #nullable disable
     {
         #pragma warning disable 1998

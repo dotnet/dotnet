@@ -4,6 +4,7 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
@@ -53,7 +54,7 @@ public class MvcViewDocumentClassifierPass : DocumentClassifierPassBase
         {
             @class.ClassName = className;
         }
-        @class.BaseType = "global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>";
+        @class.BaseType = new BaseTypeWithModel("global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>", location: null);
         @class.Modifiers.Clear();
         if (_useConsolidatedMvcViews)
         {

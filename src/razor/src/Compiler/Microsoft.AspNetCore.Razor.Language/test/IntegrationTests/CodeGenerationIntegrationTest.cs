@@ -277,6 +277,9 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
     public void Implements() => RunTest();
 
     [IntegrationTestFact]
+    public void Implements_Multiple() => RunTest();
+
+    [IntegrationTestFact]
     public void AttributeDirective() => RunTest();
 
     [IntegrationTestFact]
