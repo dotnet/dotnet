@@ -12,7 +12,15 @@ namespace TestFiles.IntegrationTests.CodeGenerationIntegrationTest
     #line default
     #line hidden
     #nullable restore
-    public partial class BasicComponent : global::Microsoft.AspNetCore.Components.ComponentBase, IDisposable
+    public partial class BasicComponent : global::Microsoft.AspNetCore.Components.ComponentBase, 
+#nullable restore
+#line (1,13)-(1,24) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicComponent.cshtml"
+IDisposable
+
+#line default
+#line hidden
+#nullable disable
+
     #nullable disable
     {
         #pragma warning disable 1998

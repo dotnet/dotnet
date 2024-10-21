@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
+using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
@@ -68,7 +69,7 @@ internal class ViewComponentTagHelperTargetExtension : IViewComponentTagHelperTa
         using (context.CodeWriter.BuildClassDeclaration(
             PublicModifiers,
             node.ClassName,
-            TagHelperTypeName,
+            new BaseTypeWithModel(TagHelperTypeName),
             interfaces: null,
             typeParameters: null,
             context))

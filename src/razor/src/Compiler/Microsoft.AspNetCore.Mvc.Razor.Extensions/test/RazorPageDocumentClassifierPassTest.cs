@@ -224,7 +224,7 @@ public class RazorPageDocumentClassifierPassTest : RazorProjectEngineTestBase
         visitor.Visit(irDocument);
 
         // Assert
-        Assert.Equal("global::Microsoft.AspNetCore.Mvc.RazorPages.Page", visitor.Class.BaseType);
+        Assert.Equal("global::Microsoft.AspNetCore.Mvc.RazorPages.Page", visitor.Class.BaseType.BaseType.Content);
         Assert.Equal(new[] { "public" }, visitor.Class.Modifiers);
         Assert.Equal("Test", visitor.Class.ClassName);
     }
@@ -249,7 +249,7 @@ public class RazorPageDocumentClassifierPassTest : RazorProjectEngineTestBase
         visitor.Visit(irDocument);
 
         // Assert
-        Assert.Equal("global::Microsoft.AspNetCore.Mvc.RazorPages.Page", visitor.Class.BaseType);
+        Assert.Equal("global::Microsoft.AspNetCore.Mvc.RazorPages.Page", visitor.Class.BaseType.BaseType.Content);
         Assert.Equal(new[] { "public" }, visitor.Class.Modifiers);
         AssertEx.Equal("AspNetCore_c3b458108610c1a2aa6eede0a5685ede853e036732db515609b2a23ca15359e1", visitor.Class.ClassName);
     }

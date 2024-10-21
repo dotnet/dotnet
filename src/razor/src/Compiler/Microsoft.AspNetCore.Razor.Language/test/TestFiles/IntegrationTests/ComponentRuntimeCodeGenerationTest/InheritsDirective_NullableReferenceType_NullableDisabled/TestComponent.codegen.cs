@@ -11,7 +11,15 @@ namespace Test
     #line default
     #line hidden
     #nullable restore
-    public partial class TestComponent : BaseComponent<string?>
+    public partial class TestComponent : 
+#nullable restore
+#line (1,11)-(1,33) "x:\dir\subdir\Test\TestComponent.cshtml"
+BaseComponent<string?>
+
+#line default
+#line hidden
+#nullable disable
+
     #nullable disable
     {
         #pragma warning disable 1998

@@ -86,7 +86,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
         visitor.Visit(irDocument);
 
         // Assert
-        Assert.Equal($"global::{ComponentsApi.ComponentBase.FullTypeName}", visitor.Class.BaseType);
+        Assert.Equal($"global::{ComponentsApi.ComponentBase.FullTypeName}",visitor.Class.BaseType.BaseType.Content);
         Assert.Equal(new[] { "public", "partial" }, visitor.Class.Modifiers);
         Assert.Equal("Test", visitor.Class.ClassName);
     }
