@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@1009e3b](https://github.com/dotnet/scenario-tests/tree/1009e3b6d23e049de56b91de82fe975fe84444f8)*
 - `src/sdk`  
-*[dotnet/sdk@5bcd402](https://github.com/dotnet/sdk/tree/5bcd402409e5dad4bb595d6b9916a3282153d8ef)*
+*[dotnet/sdk@71adf55](https://github.com/dotnet/sdk/tree/71adf5539c16f3f80d93ebb4f6c855bf6fdd7243)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@4df883d](https://github.com/dotnet/source-build-externals/tree/4df883d781a4290873b3b968afc0ff0df7132507)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -90,11 +90,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/vstest`  
 *[microsoft/vstest@bc91613](https://github.com/microsoft/vstest/tree/bc9161306b23641b0364b8f93d546da4d48da1eb)*
 - `src/windowsdesktop`  
-*[_git/dotnet-windowsdesktop@6621e32](https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop/?version=GC6621e3204f9fd1b1b636602a4822da334b6954da)*
+*[_git/dotnet-windowsdesktop@d3c3947](https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop/?version=GCd3c394733377a409bfdea569a088c2e22c8a2965)*
 - `src/winforms`  
-*[_git/dotnet-winforms@90c08cb](https://dev.azure.com/dnceng/internal/_git/dotnet-winforms/?version=GC90c08cb77d1bdbbf0c8230a59876a85a1a265ef6)*
+*[_git/dotnet-winforms@3fe741b](https://dev.azure.com/dnceng/internal/_git/dotnet-winforms/?version=GC3fe741b12b6b0d5b000232def507a39247f972ba)*
 - `src/wpf`  
-*[_git/dotnet-wpf@3050beb](https://dev.azure.com/dnceng/internal/_git/dotnet-wpf/?version=GC3050beb7a5bafd5f6f7e2257fda5fcf64dcb11cb)*
+*[_git/dotnet-wpf@1534d6c](https://dev.azure.com/dnceng/internal/_git/dotnet-wpf/?version=GC1534d6c1ae447b5dcc661d08f2abaa334b045140)*
 - `src/xdt`  
 *[dotnet/xdt@4ddd811](https://github.com/dotnet/xdt/tree/4ddd8113a29852380b7b929117bfe67f401ac320)*
 - `src/xliff-tasks`  
