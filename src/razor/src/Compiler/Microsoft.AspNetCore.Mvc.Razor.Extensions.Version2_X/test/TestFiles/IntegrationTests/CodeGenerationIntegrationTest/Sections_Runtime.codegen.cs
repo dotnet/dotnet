@@ -16,7 +16,13 @@ namespace AspNetCore
     #line default
     #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"1ed96a957fe000fd0c80cc511def19ab692563eb64f3349a4c87c524e2ecbd60", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml")]
-    public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Sections : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<DateTime>
+    public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Sections : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<
+#line (1,8)-(1,16) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
+DateTime
+
+#line default
+#line hidden
+    >
     {
         #line hidden
         #pragma warning disable 0649

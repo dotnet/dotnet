@@ -16,7 +16,13 @@ namespace AspNetCore
     #line default
     #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"319d5fa6f848e64d19bf7eab2f5e3339cdfc75b02a9bc6f2773eed1a40f5e9d0", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithModel.cshtml")]
-    public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_InjectWithModel : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<MyModel>
+    public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_InjectWithModel : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<
+#line (1,8)-(1,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithModel.cshtml"
+MyModel
+
+#line default
+#line hidden
+    >
     {
         #pragma warning disable 1998
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
