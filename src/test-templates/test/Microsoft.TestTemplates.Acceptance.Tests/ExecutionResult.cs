@@ -48,7 +48,7 @@ public static class ExecutionResultExtensions
     {
         StringAssert.Contains(
             executionResult.StandardOutput,
-            "Tests succeeded",
+            "Test Run Successful",
             "The Test summary does not match.{2}Test Output: {0}{2}Standard Error: {1}{2}Arguments: {3}{2}",
             executionResult.StandardOutput,
             executionResult.StandardError,
