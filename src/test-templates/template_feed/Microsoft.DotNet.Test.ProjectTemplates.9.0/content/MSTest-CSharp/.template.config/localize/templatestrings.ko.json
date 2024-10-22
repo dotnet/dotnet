@@ -41,7 +41,7 @@
   "symbols/ExtensionsProfile/choices/AllMicrosoft/description": "Microsoft에서 제공하는 모든 확장 사용(제한 라이선스가 있는 확장 포함)",
   "symbols/Fixture/description": "프로젝트에 포함할 픽스쳐 종류를 선택합니다.",
   "symbols/Fixture/choices/None/description": "픽스쳐 메서드 없음",
-  "symbols/Fixture/choices/None/displayName": "None",
+  "symbols/Fixture/choices/None/displayName": "없음",
   "symbols/Fixture/choices/AssemblyInitialize/description": "AssemblyInitialize fixture 메서드",
   "symbols/Fixture/choices/AssemblyCleanup/description": "AssemblyCleanup fixture 메서드",
   "symbols/Fixture/choices/ClassInitialize/description": "ClassInitialize fixture 메서드",
