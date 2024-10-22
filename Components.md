@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[_git/dotnet-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/dotnet-aspire/?version=GC48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@8e8eded](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC8e8ededd851fffe2166dd41bf850caabf833d13a)*
+*[_git/dotnet-aspnetcore@4757647](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC47576478939fdd59b4400ad135f47938af486ab3)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@6dae7eb](https://github.com/google/googletest/tree/6dae7eb4a5c3a169f3e298392bff4680224aa94a)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@327fc18](https://github.com/dotnet/installer/tree/327fc188d437e0027e31acd15adc5533b0441989)*
+*[dotnet/installer@fe6a861](https://github.com/dotnet/installer/tree/fe6a861d95193e88655b4057d949cda606076739)*
 - `src/msbuild`  
 *[dotnet/msbuild@b5265ef](https://github.com/dotnet/msbuild/tree/b5265ef370a651f8c3458110b804e5cbf869eeb5)*
 - `src/nuget-client`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@9cb3b72](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC9cb3b725e3ad2b57ddc9fb2dd48d2d170563a8f5)*
 - `src/sdk`  
-*[_git/dotnet-sdk@4f203da](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC4f203daf7190965f627f57e44f89c90694b5da82)*
+*[_git/dotnet-sdk@f3835a7](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GCf3835a7fb45497f53fc92ca7dd4a06793884b1cd)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@3b85d08](https://github.com/dotnet/source-build-externals/tree/3b85d089311e89b47758ba6a84eeb79374476dc8)*
     - `src/source-build-externals/src/abstractions-xunit`  
