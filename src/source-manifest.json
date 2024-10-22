@@ -7,10 +7,10 @@
       "commitSha": "31624193093a13f765ab5382509e693911264509"
     },
     {
-      "packageVersion": "8.2.2-preview.1.24507.4",
+      "packageVersion": "8.2.2-preview.1.24519.4",
       "path": "aspire",
       "remoteUri": "https://github.com/dotnet/aspire",
-      "commitSha": "a1f7880ae14703e747bf79d1e2e947bffea6a604"
+      "commitSha": "2c38f6c884b5026a7f278cdfe6e1f816810093f9"
     },
     {
       "packageVersion": "10.0.0-alpha.2.24520.2",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "690b260943e4b2a99dac67415f45e24d077cb737"
+      "commitSha": "10a75165d5661fe2ba1209c4b227902388cd3d07"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24516.1",
