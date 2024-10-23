@@ -14,13 +14,8 @@
 #include <windows.h>
 #include <winternl.h>
 
-#if defined(_MSC_VER)
-#pragma warning(disable:4245)   // signed/unsigned mismatch
-#pragma warning(disable:4100)   // unreferenced formal parameter
-#pragma warning(disable:4201)   // nonstandard extension used : nameless struct/union
-#pragma warning(disable:4127)   // conditional expression is constant
-#pragma warning(disable:4430)   // missing type specifier: C++ doesn't support default-int
-#endif
+#undef CreateProcess
+
 #include "strike.h"
 #include <wdbgexts.h>
 #include <dbgeng.h>
@@ -33,6 +28,10 @@
 // system that use the StackTrace identifier
 #ifdef StackTrace 
 #undef StackTrace
+#endif
+
+#ifndef FEATURE_PAL
+#include "dbgengservices.h"
 #endif
 
 #include "platformspecific.h"
@@ -55,14 +54,6 @@
 // equivalent ULONG64 value to the original TADDR. Useful when 
 // printing CDA values.
 #define CDA_TO_UL64(cda) ((ULONG64)(TO_TADDR(cda)))
-
-#ifndef IMAGE_FILE_MACHINE_RISCV64
-#define IMAGE_FILE_MACHINE_RISCV64        0x5064  // RISCV64
-#endif // !IMAGE_FILE_MACHINE_RISCV64
-
-#ifndef IMAGE_FILE_MACHINE_LOONGARCH64
-#define IMAGE_FILE_MACHINE_LOONGARCH64        0x6264  // LOONGARCH64
-#endif // !IMAGE_FILE_MACHINE_LOONGARCH64
 
 typedef struct _TADDR_RANGE
 {
@@ -159,6 +150,9 @@ ExtQuery(PDEBUG_CLIENT client);
 
 HRESULT
 ExtInit(PDEBUG_CLIENT client);
+
+const char*
+GetProcessorName(ULONG type);
 
 HRESULT 
 ArchQuery(void);

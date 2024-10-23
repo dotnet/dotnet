@@ -85,9 +85,18 @@
 #include <stddef.h>
 #include <stdexcept>
 #include <deque>
-
+#include <set>
+#include <vector>
+#include <map>
+#include <tuple>
+#include <memory>
+#include <functional>
+#include <algorithm>
 #include <iostream>
 #include <sstream>
+#ifdef HOST_UNIX
+#include <dlfcn.h>
+#endif
 
 #include "strike.h"
 #include "sos.h"
@@ -148,14 +157,6 @@ const PROCESSINFOCLASS ProcessVmCounters = static_cast<PROCESSINFOCLASS>(3);
 // Max number of methods that !dumpmodule -prof will print
 const UINT kcMaxMethodDescsForProfiler = 100;
 
-#include <set>
-#include <vector>
-#include <map>
-#include <tuple>
-#include <memory>
-#include <functional>
-#include <algorithm>
-
 BOOL ControlC = FALSE;
 WCHAR g_mdName[mdNameLen];
 
@@ -191,9 +192,8 @@ extern const char* g_sosPrefix;
 #include "ntinfo.h"
 #endif // FEATURE_PAL
 
-#ifndef IfFailRet
+#undef IfFailRet
 #define IfFailRet(EXPR) do { Status = (EXPR); if(FAILED(Status)) { return (Status); } } while (0)
-#endif
 
 #ifdef FEATURE_PAL
 
@@ -575,8 +575,8 @@ DECLARE_API (EEStack)
             ULONG64 IP;
             g_ExtRegisters->GetInstructionOffset (&IP);
             JITTypes jitType;
-            TADDR methodDesc;
-            TADDR gcinfoAddr;
+            DWORD_PTR methodDesc;
+            DWORD_PTR gcinfoAddr;
             IP2MethodDesc (TO_TADDR(IP), methodDesc, jitType, gcinfoAddr);
             if (methodDesc)
             {
@@ -651,7 +651,11 @@ BOOL GatherDynamicInfo(TADDR DynamicMethodObj, DacpObjectData *codeArray,
 
     iOffset = GetObjFieldOffset(TO_CDADDR(DynamicMethodObj), objData.MethodTable, W("m_resolver"));
     if (iOffset <= 0)
-        return bRet;
+    {
+        iOffset = GetObjFieldOffset(TO_CDADDR(DynamicMethodObj), objData.MethodTable, W("_resolver"));
+        if (iOffset <= 0)
+            return bRet;
+    }
 
     TADDR resolverPtr;
     if (FAILED(MOVE(resolverPtr, DynamicMethodObj + iOffset)))
@@ -804,7 +808,7 @@ DECLARE_API(DumpIL)
         // We have a DynamicMethod managed object, let us visit the town and paint.
         DacpObjectData codeArray;
         DacpObjectData tokenArray;
-        DWORD_PTR tokenArrayAddr;
+        TADDR tokenArrayAddr;
         if (!GatherDynamicInfo (dwDynamicMethodObj, &codeArray, &tokenArray, &tokenArrayAddr))
         {
             DMLOut("Error gathering dynamic info from object at %s.\n", DMLObject(dwDynamicMethodObj));
@@ -1980,14 +1984,14 @@ HRESULT PrintArray(DacpObjectData& objData, DumpArrayFlags& flags, BOOL isPermSe
     }
 
     DWORD *lowerBounds = (DWORD *)alloca(dwRankAllocSize);
-    if (!SafeReadMemory(objData.ArrayLowerBoundsPtr, lowerBounds, dwRankAllocSize, NULL))
+    if (!SafeReadMemory(TO_TADDR(objData.ArrayLowerBoundsPtr), lowerBounds, dwRankAllocSize, NULL))
     {
         ExtOut("Failed to read lower bounds info from the array\n");
         return S_OK;
     }
 
     DWORD *bounds = (DWORD *)alloca(dwRankAllocSize);
-    if (!SafeReadMemory (objData.ArrayBoundsPtr, bounds, dwRankAllocSize, NULL))
+    if (!SafeReadMemory(TO_TADDR(objData.ArrayBoundsPtr), bounds, dwRankAllocSize, NULL))
     {
         ExtOut("Failed to read bounds info from the array\n");
         return S_OK;
@@ -4039,7 +4043,7 @@ DECLARE_API(DumpModule)
     DMLOut("Assembly:                %s\n", DMLAssembly(module.Assembly));
 
     ExtOut("BaseAddress:             %p\n", SOS_PTR(module.ilBase));
-    ExtOut("LoaderHeap:              %p\n", SOS_PTR(module.pLookupTableHeap));
+    ExtOut("LoaderHeap:              %p\n", SOS_PTR(module.LoaderAllocator));
     ExtOut("TypeDefToMethodTableMap: %p\n", SOS_PTR(module.TypeDefToMethodTableMap));
     ExtOut("TypeRefToMethodTableMap: %p\n", SOS_PTR(module.TypeRefToMethodTableMap));
     ExtOut("MethodDefToDescMap:      %p\n", SOS_PTR(module.MethodDefToDescMap));
@@ -4452,12 +4456,12 @@ HRESULT PrintThreadsFromThreadStore(BOOL bMiniDump, BOOL bPrintLiveThreadsOnly)
 #ifndef FEATURE_PAL
         DWORD_PTR OleTlsDataAddr;
         if (IsWindowsTarget() && !bSwitchedOutFiber
-                && SafeReadMemory(Thread.teb + offsetof(TEB, ReservedForOle),
+                && SafeReadMemory(TO_TADDR(Thread.teb + offsetof(TEB, ReservedForOle)),
                             &OleTlsDataAddr,
                             sizeof(OleTlsDataAddr), NULL) && OleTlsDataAddr != 0)
         {
             DWORD AptState;
-            if (SafeReadMemory(OleTlsDataAddr+offsetof(SOleTlsData,dwFlags),
+            if (SafeReadMemory(TO_TADDR(OleTlsDataAddr+offsetof(SOleTlsData,dwFlags)),
                                &AptState,
                                sizeof(AptState), NULL))
             {
@@ -6713,8 +6717,8 @@ DECLARE_API(GCInfo)
     if (!IsMethodDesc(taStartAddr))
     {
         JITTypes jitType;
-        TADDR methodDesc;
-        TADDR gcinfoAddr;
+        DWORD_PTR methodDesc;
+        DWORD_PTR gcinfoAddr;
         IP2MethodDesc(taStartAddr, methodDesc, jitType, gcinfoAddr);
         tmpAddr = methodDesc;
     }
@@ -8233,8 +8237,8 @@ DECLARE_API (ProcInfo)
             if (FAILED(g_ExtData->ReadVirtual(UL64_TO_CDA(addr), &buffer, readBytes, NULL)))
                 break;
             addr += readBytes;
-            WCHAR *pt = buffer;
-            WCHAR *end = pt;
+            const WCHAR *pt = buffer;
+            const WCHAR *end = pt;
             while (pt < &buffer[DT_OS_PAGE_SIZE/2]) {
                 end = _wcschr (pt, L'\0');
                 if (end == NULL) {
@@ -8484,7 +8488,7 @@ DECLARE_API(Token2EE)
             FileNameForModule(dwAddr, FileName);
 
             // We'd like a short form for this output
-            LPWSTR pszFilename = _wcsrchr (FileName, GetTargetDirectorySeparatorW());
+            LPCWSTR pszFilename = _wcsrchr (FileName, GetTargetDirectorySeparatorW());
             if (pszFilename == NULL)
             {
                 pszFilename = FileName;
@@ -8612,7 +8616,7 @@ DECLARE_API(Name2EE)
             FileNameForModule (dwAddr, FileName);
 
             // We'd like a short form for this output
-            LPWSTR pszFilename = _wcsrchr (FileName, GetTargetDirectorySeparatorW());
+            LPCWSTR pszFilename = _wcsrchr (FileName, GetTargetDirectorySeparatorW());
             if (pszFilename == NULL)
             {
                 pszFilename = FileName;
@@ -8887,6 +8891,8 @@ public:
                 mType = HNDTYPE_DEPENDENT;
             else if (_stricmp(type, "WeakWinRT") == 0)
                 mType = HNDTYPE_WEAK_WINRT;
+            else if (_stricmp(type, "WeakInteriorPointer") == 0)
+                mType = HNDTYPE_WEAK_INTERIOR_POINTER;
             else
                 sos::Throw<sos::Exception>("Unknown handle type '%s'.", type.GetPtr());
         }
@@ -9055,6 +9061,10 @@ private:
                     type = "WeakWinRT";
                     if (pStats) pStats->weakWinRTHandleCount++;
                     break;
+                case HNDTYPE_WEAK_INTERIOR_POINTER:
+                    type = "WeakInteriorPointer";
+                    if (pStats) pStats->weakInteriorPointerHandleCount++;
+                    break;
                 default:
                     DebugBreak();
                     type = "Unknown";
@@ -9073,6 +9083,8 @@ private:
                 else if (data[i].Type == HNDTYPE_DEPENDENT)
                     mOut.WriteRow(data[i].Handle, type, ObjectPtr(objAddr), Decimal(size), ObjectPtr(data[i].Secondary), mtName);
                 else if (data[i].Type == HNDTYPE_WEAK_WINRT)
+                    mOut.WriteRow(data[i].Handle, type, ObjectPtr(objAddr), Decimal(size), Pointer(data[i].Secondary), mtName);
+                else if (data[i].Type == HNDTYPE_WEAK_INTERIOR_POINTER)
                     mOut.WriteRow(data[i].Handle, type, ObjectPtr(objAddr), Decimal(size), Pointer(data[i].Secondary), mtName);
                 else
                     mOut.WriteRow(data[i].Handle, type, ObjectPtr(objAddr), Decimal(size), "", mtName);
@@ -9098,6 +9110,7 @@ private:
         PrintHandleRow("Weak Long Handles:", pStats->weakLongHandleCount);
         PrintHandleRow("Weak Short Handles:", pStats->weakShortHandleCount);
         PrintHandleRow("Weak WinRT Handles:", pStats->weakWinRTHandleCount);
+        PrintHandleRow("Weak Interior Pointer Handles:", pStats->weakInteriorPointerHandleCount);
         PrintHandleRow("Variable Handles:", pStats->variableCount);
         PrintHandleRow("SizedRef Handles:", pStats->sizedRefCount);
         PrintHandleRow("Dependent Handles:", pStats->dependentCount);
@@ -9430,7 +9443,7 @@ DECLARE_API(StopOnException)
     }
 
     TADDR taLTOH;
-    if (!SafeReadMemory(Thread.lastThrownObjectHandle,
+    if (!SafeReadMemory(TO_TADDR(Thread.lastThrownObjectHandle),
                         &taLTOH,
                         sizeof(taLTOH), NULL))
     {
@@ -12074,7 +12087,7 @@ static HRESULT DumpMDInfoBuffer(DWORD_PTR dwStartAddr, DWORD Flags, ULONG64 Esp,
         }
         if (wszNameBuffer[0] != W('\0'))
         {
-            WCHAR *pJustName = _wcsrchr(wszNameBuffer, GetTargetDirectorySeparatorW());
+            const WCHAR *pJustName = _wcsrchr(wszNameBuffer, GetTargetDirectorySeparatorW());
             if (pJustName == NULL)
                 pJustName = wszNameBuffer - 1;
 
@@ -12087,7 +12100,7 @@ static HRESULT DumpMDInfoBuffer(DWORD_PTR dwStartAddr, DWORD Flags, ULONG64 Esp,
     //   returns a module qualified method name
     HRESULT hr = g_sos->GetMethodDescName(dwStartAddr, MAX_LONGPATH, wszNameBuffer, NULL);
 
-    WCHAR* pwszMethNameBegin = (hr != S_OK ? NULL : _wcschr(wszNameBuffer, L'!'));
+    const WCHAR* pwszMethNameBegin = (hr != S_OK ? NULL : _wcschr(wszNameBuffer, L'!'));
     if (!bModuleNameWorked && hr == S_OK && pwszMethNameBegin != NULL)
     {
         // if we weren't able to get the module name, but GetMethodDescName returned
@@ -12529,14 +12542,14 @@ BOOL FormatFromRemoteString(DWORD_PTR strObjPointer, __out_ecount(cchString) PWS
     UINT Length = 0;
     while(1)
     {
-        if (_wcsncmp(pwszPointer, PSZSEP, ARRAY_SIZE(PSZSEP)-1) != 0)
+        if (wcsncmp(pwszPointer, PSZSEP, ARRAY_SIZE(PSZSEP)-1) != 0)
         {
             delete [] pwszBuf;
             return bRet;
         }
 
-        pwszPointer += _wcslen(PSZSEP);
-        LPWSTR nextPos = _wcsstr(pwszPointer, PSZSEP);
+        pwszPointer += wcslen(PSZSEP);
+        LPWSTR nextPos = (LPWSTR)wcsstr(pwszPointer, PSZSEP);
         if (nextPos == NULL)
         {
             // Done! Note that we are leaving the function before we add the last
@@ -12553,7 +12566,7 @@ BOOL FormatFromRemoteString(DWORD_PTR strObjPointer, __out_ecount(cchString) PWS
 
         // Note that we don't add a newline because we have this embedded in wszLineBuffer
         swprintf_s(wszLineBuffer, ARRAY_SIZE(wszLineBuffer), W("    %p %p %s"), SOS_PTR(-1), SOS_PTR(-1), pwszPointer);
-        Length += (UINT)_wcslen(wszLineBuffer);
+        Length += (UINT)wcslen(wszLineBuffer);
 
         if (wszBuffer)
         {
@@ -13605,6 +13618,27 @@ exit:
     return S_OK;
 }
 
+DECLARE_API(processor)
+{
+    INIT_API_EXT();
+    ULONG executingType;
+    if (SUCCEEDED(g_ExtControl->GetExecutingProcessorType(&executingType)))
+    {
+        ExtOut("Executing processor type: %04x '%s'\n", executingType, GetProcessorName(executingType));
+    }
+    ULONG actualType;
+    if (SUCCEEDED(g_ExtControl->GetActualProcessorType(&actualType)))
+    {
+        ExtOut("Actual processor type:    %04x '%s'\n", actualType, GetProcessorName(actualType));
+    }
+    ULONG effectiveType;
+    if (SUCCEEDED(g_ExtControl->GetEffectiveProcessorType(&effectiveType)))
+    {
+        ExtOut("Effective processor type: %04x '%s'\n", effectiveType, GetProcessorName(effectiveType));
+    }
+    return S_OK;
+}
+
 #endif // FEATURE_PAL
 
 //
@@ -13686,6 +13720,19 @@ DECLARE_API(runtimes)
     return Status;
 }
 
+const std::string
+GetDirectory(const std::string& fileName)
+{
+    size_t last = fileName.rfind(DIRECTORY_SEPARATOR_STR_A);
+    if (last != std::string::npos) {
+        last++;
+    }
+    else {
+        last = 0;
+    }
+    return fileName.substr(0, last);
+}
+
 void PrintHelp (__in_z LPCSTR pszCmdName)
 {
     static LPSTR pText = NULL;
@@ -13693,24 +13740,23 @@ void PrintHelp (__in_z LPCSTR pszCmdName)
     if (pText == NULL) {
 #ifndef FEATURE_PAL
         HGLOBAL hResource = NULL;
-        HRSRC hResInfo = FindResource (g_hInstance, TEXT ("DOCUMENTATION"), TEXT ("TEXT"));
-        if (hResInfo) hResource = LoadResource (g_hInstance, hResInfo);
-        if (hResource) pText = (LPSTR) LockResource (hResource);
+        HRSRC hResInfo = FindResourceW(g_hInstance, TEXT ("DOCUMENTATION"), TEXT ("TEXT"));
+        if (hResInfo) hResource = LoadResource(g_hInstance, hResInfo);
+        if (hResource) pText = (LPSTR)LockResource(hResource);
         if (pText == NULL)
         {
             ExtErr("Error loading documentation resource\n");
             return;
         }
 #else
-        ArrayHolder<char> szSOSModulePath = new char[MAX_LONGPATH + 1];
-        UINT cch = MAX_LONGPATH;
-        if (!PAL_GetPALDirectoryA(szSOSModulePath, &cch)) {
+        Dl_info info;
+        if (dladdr((PVOID)&PrintHelp, &info) == 0)
+        {
             ExtErr("Error: Failed to get SOS module directory\n");
             return;
         }
-
         char lpFilename[MAX_LONGPATH + 12]; // + 12 to make enough room for strcat function.
-        strcpy_s(lpFilename, ARRAY_SIZE(lpFilename), szSOSModulePath);
+        strcpy_s(lpFilename, ARRAY_SIZE(lpFilename), GetDirectory(info.dli_fname).c_str());
         strcat_s(lpFilename, ARRAY_SIZE(lpFilename), "sosdocsunix.txt");
 
         HANDLE hSosDocFile = CreateFileA(lpFilename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);

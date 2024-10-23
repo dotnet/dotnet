@@ -269,7 +269,8 @@ ClrmaThread::Frame(
     *pDisplacement = 0;
 
     UINT nCount = 0;
-    if (HRESULT hr = get_FrameCount(&nCount))
+    HRESULT hr;
+    if (FAILED(hr= get_FrameCount(&nCount)))
     {
         return hr;
     }
@@ -402,7 +403,7 @@ ClrmaThread::NestedException(
 
     HRESULT hr;
     USHORT nCount = 0;
-    if (hr = get_NestedExceptionCount(&nCount))
+    if (FAILED(hr = get_NestedExceptionCount(&nCount)))
     {
         return hr;
     }
