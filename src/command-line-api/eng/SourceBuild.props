@@ -1,4 +1,4 @@
-<!-- Whenever altering this or other Source Build files, please include @dotnet/source-build-internal as a reviewer. -->
+<!-- When altering this file, include @dotnet/product-construction as a reviewer. -->
 
 <Project>
 
@@ -9,7 +9,7 @@
 
   <Target Name="ConfigureInnerBuildArg"
           BeforeTargets="GetSourceBuildCommandConfiguration"
-          Condition="'$(ArcadeBuildFromSource)' == 'true'">
+          Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(DotNetBuild)' == 'true'">
     <PropertyGroup>
       <InnerBuildArgs>$(InnerBuildArgs) /p:Projects="$(InnerSourceBuildRepoRoot)sourcebuild.slnf"</InnerBuildArgs>
     </PropertyGroup>
