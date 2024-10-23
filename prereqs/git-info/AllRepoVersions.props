@@ -13,8 +13,8 @@
     <commandlineapiOutputPackageVersion>0.1.551701</commandlineapiOutputPackageVersion>
     <deploymenttoolsGitCommitHash>57d7baec5f331a145174d0e8f00d7bbfdf2b77d4</deploymenttoolsGitCommitHash>
     <deploymenttoolsOutputPackageVersion>9.0.0-preview.1.24427.4</deploymenttoolsOutputPackageVersion>
-    <diagnosticsGitCommitHash>513150c2f25077b1fcb194407e53c433c975f39b</diagnosticsGitCommitHash>
-    <diagnosticsOutputPackageVersion>8.0.0-preview.24416.1</diagnosticsOutputPackageVersion>
+    <diagnosticsGitCommitHash>335c0c013c3a761792bfa83c0dbaadd1f0545f07</diagnosticsGitCommitHash>
+    <diagnosticsOutputPackageVersion>8.0.0-preview.24520.1</diagnosticsOutputPackageVersion>
     <efcoreGitCommitHash>802b45e33b3b53ebfd7adb457e5e73ac9fe19606</efcoreGitCommitHash>
     <efcoreOutputPackageVersion>10.0.0-alpha.1.24522.1</efcoreOutputPackageVersion>
     <emsdkGitCommitHash>4ea46baeaf74d5a99cb93593362b6d8263b10550</emsdkGitCommitHash>
@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>10.0.0-alpha.1.24507.22</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>39284fbc776975659af4fd377b683b11be053cbb</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>10.0.0-preview.24517.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>606b58fcdab85e0bb16b17e7ad0688272845633b</sdkGitCommitHash>
+    <sdkGitCommitHash>69c89efdaacc5f41050dcb032d9aac586237833a</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>152bd2a5bc0d0f19033b42f48a026339d50101ad</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>10.0.0-alpha.1.24521.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>ccd0927e3823fb178c7151594f5d2eaba81bba81</sourcebuildreferencepackagesGitCommitHash>
@@ -48,8 +48,8 @@
     <templatingOutputPackageVersion>10.0.100-alpha.1.24468.1</templatingOutputPackageVersion>
     <testtemplatesGitCommitHash>6be1945e663153cd1db4ccd31f6ca38e7f35330d</testtemplatesGitCommitHash>
     <testtemplatesOutputPackageVersion>1.1.0-rtm.24523.2</testtemplatesOutputPackageVersion>
-    <vstestGitCommitHash>bc9161306b23641b0364b8f93d546da4d48da1eb</vstestGitCommitHash>
-    <vstestOutputPackageVersion>17.12.0-release-24508-01</vstestOutputPackageVersion>
+    <vstestGitCommitHash>eb00b269d6b8734597b8ea888219e105144e7794</vstestGitCommitHash>
+    <vstestOutputPackageVersion>17.13.0-preview-24523-01</vstestOutputPackageVersion>
     <windowsdesktopGitCommitHash>b129065033fb5f50629df44fc38fbbb6cdcc7202</windowsdesktopGitCommitHash>
     <windowsdesktopOutputPackageVersion>10.0.0-alpha.1.24523.3</windowsdesktopOutputPackageVersion>
     <winformsGitCommitHash>1d963e9d2168a60d37159b967b1899e2540a98f1</winformsGitCommitHash>
