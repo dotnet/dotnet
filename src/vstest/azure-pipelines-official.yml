@@ -55,7 +55,7 @@ parameters:
     image: 1es-ubuntu-2204
     os: linux
   - name: Azure Pipelines
-    image: macos-13
+    image: macOS-12
     os: macOS
 
 variables:
@@ -122,6 +122,8 @@ extends:
   parameters:
     sdl:
       policheck:
+        enabled: true
+      tsa:
         enabled: true
     pool:
       name: $(DncEngInternalBuildPool)
