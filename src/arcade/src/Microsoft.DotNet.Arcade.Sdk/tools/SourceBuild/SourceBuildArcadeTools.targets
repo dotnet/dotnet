@@ -19,9 +19,8 @@
         - Building in DotNetBuild mode and we're in the inner repo and this is a source-only build -->
   <Target Name="CollectSourceBuildIntermediateNupkgDependencies"
           Condition="
-            '$(DotNetBuildFromSourceFlavor)' != 'Product' and '$(DotNetBuildOrchestrator)' != 'true' and
+            '$(DotNetBuildOrchestrator)' != 'true' and
             ('$(SetUpSourceBuildIntermediateNupkgCache)' == 'true' or
-            ('$(ArcadeBuildFromSource)' == 'true' and '$(ArcadeInnerBuildFromSource)' == 'true') or
             ('$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildSourceOnly)' == 'true'))"
           DependsOnTargets="GetSourceBuildIntermediateNupkgNameConvention"
           BeforeTargets="CollectPackageReferences">
@@ -45,11 +44,9 @@
          - If building in DotNetBuild mode and we're in the inner repo and this is a source-only build -->
   <Target Name="SetUpSourceBuildIntermediateNupkgCache"
           Condition="
-            '$(DotNetBuildFromSourceFlavor)' != 'Product' and '$(DotNetBuildOrchestrator)' != 'true' and
+            '$(DotNetBuildOrchestrator)' != 'true' and
             ('$(SetUpSourceBuildIntermediateNupkgCache)' == 'true' or
-              ('@(SourceBuildIntermediateNupkgReference)' != '' and
-                (('$(ArcadeBuildFromSource)' == 'true' and '$(ArcadeInnerBuildFromSource)' == 'true') or
-                 ('$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildSourceOnly)' == 'true'))))"
+              ('@(SourceBuildIntermediateNupkgReference)' != '' and '$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildSourceOnly)' == 'true'))"
           AfterTargets="Restore">
     <ItemGroup>
       <IntermediateNupkgSourceDir Include="$([MSBuild]::NormalizeDirectory(

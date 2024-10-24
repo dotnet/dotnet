@@ -28,14 +28,14 @@
 
 
   <!-- TemplateLocalizer for localizing 'dotnet new' templates -->
-  <PropertyGroup Condition="'$(UsingToolTemplateLocalizer)' == 'true' and '$(DotNetBuildFromSource)' != 'true' and '$(DotNetBuildSourceOnly)' != 'true'">
+  <PropertyGroup Condition="'$(UsingToolTemplateLocalizer)' == 'true' and '$(DotNetBuildSourceOnly)' != 'true'">
     <!-- Run localizer when building on dev machine. -->
     <LocalizeTemplates Condition="'$(ContinuousIntegrationBuild)' != 'true'">true</LocalizeTemplates>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.TemplateEngine.Authoring.Tasks" Version="$(MicrosoftTemplateEngineAuthoringTasksVersion)" PrivateAssets="all"
-      IsImplicitlyDefined="true" Condition="'$(UsingToolTemplateLocalizer)' == 'true' and '$(DotNetBuildFromSource)' != 'true' and '$(DotNetBuildSourceOnly)' != 'true'" />
+      IsImplicitlyDefined="true" Condition="'$(UsingToolTemplateLocalizer)' == 'true' and '$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
 
 </Project>

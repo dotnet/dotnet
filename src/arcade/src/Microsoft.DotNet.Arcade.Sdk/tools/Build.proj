@@ -15,7 +15,6 @@
     DotNetBuildOrchestrator         Build the entire .NET stack.
     DotNetBuildPass                 While building the repo as part of the entire .NET stack, this parameter specifies which build pass the current build is part of.
     DotNetBuildSourceOnly           Build the repo as part of the entire .NET stack with no external dependencies.
-    DotNetBuildFromSource           Building the entire stack from source with no external dependencies.
     DotNetPublishUsingPipelines     Publish assets to Build Asset Registry.
     DotNetSymbolServerTokenMsdl     Personal access token for MSDL symbol server. Available from variable group DotNet-Symbol-Server-Pats.	
     DotNetSymbolServerTokenSymWeb   Personal access token for SymWeb symbol server. Available from variable group DotNet-Symbol-Server-Pats.	
@@ -54,7 +53,7 @@
   <Import Project="RepoDefaults.props"/>
   <Import Project="RepoLayout.props"/>
 
-  <Import Project="SourceBuild/SourceBuildArcadeBuild.targets" Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(DotNetBuildRepo)' == 'true'" />
+  <Import Project="SourceBuild/SourceBuildArcadeBuild.targets" Condition="'$(DotNetBuildRepo)' == 'true'" />
 
   <!-- Allow for repo specific Build properties such as the list of Projects to build -->
   <Import Project="$(RepositoryEngineeringDir)Build.props" Condition="Exists('$(RepositoryEngineeringDir)Build.props')" />
@@ -141,7 +140,7 @@
         When building in source-only or product scenarios, some projects may have set ExcludeFromSourceBuild=true or ExcludeFromDotNetBuild.
         NuGet Restore task reports a warning for such projects, which we suppress here.
       -->
-      <_CommonProps Include="DisableWarnForInvalidRestoreProjects=true" Condition="'$(DotNetBuildFromSource)' == 'true' or '$(DotNetBuild)' == 'true'"/>
+      <_CommonProps Include="DisableWarnForInvalidRestoreProjects=true" Condition="'$(DotNetBuild)' == 'true'"/>
 
       <!--
         C++ projects expect VCTargetsPath property to be set. MSBuild generates this property to solution
@@ -314,7 +313,7 @@
     -->
     <MSBuild Projects="SourceBuild\AfterSourceBuild.proj"
              Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=AfterSourceBuild"
-             Condition="'@(_SolutionBuildTargets)' != '' and ('$(ArcadeBuildFromSource)' == 'true' or '$(DotNetBuildRepo)' == 'true')"/>
+             Condition="'@(_SolutionBuildTargets)' != '' and '$(DotNetBuildRepo)' == 'true'"/>
 
     <!--
       Publish artifacts. This should run in the following situations:
@@ -329,10 +328,9 @@
     -->
 
     <PropertyGroup>
-      <_VmrBuild Condition="'$(DotNetBuildFromSourceFlavor)' == 'Product' or '$(DotNetBuildOrchestrator)' == 'true'">true</_VmrBuild>
-      <_InnerRepoBuild Condition="'$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildPhase)' == 'InnerRepo'">true</_InnerRepoBuild>
-      <_ShouldRunPublish Condition="'$(_InnerRepoBuild)' == 'true' and '$(_VmrBuild)' == 'true'">true</_ShouldRunPublish>
-      <_ShouldRunPublish Condition="'$(_InnerRepoBuild)' != 'true' and '$(_VmrBuild)' != 'true'">true</_ShouldRunPublish>
+      <!-- Run publish in inner VMR builds, or outer non-VMR builds. -->
+      <_ShouldRunPublish Condition="'$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildOrchestrator)' == 'true'">true</_ShouldRunPublish>
+      <_ShouldRunPublish Condition="'$(DotNetBuildPhase)' != 'InnerRepo' and '$(DotNetBuildOrchestrator)' != 'true'">true</_ShouldRunPublish>
     </PropertyGroup>
 
       <!-- Make sure we always publish in VMR build - working around runtime repo which sets Publish to false. -->

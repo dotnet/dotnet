@@ -12,7 +12,7 @@
   <Import Project="$(MicrosoftDotNetSourceBuildTasksBuildDir)Microsoft.DotNet.SourceBuild.Tasks.props" />
 
   <Target Name="AfterSourceBuildInnerBuild"
-          Condition="('$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildInnerRepo)' == 'true') and
+          Condition="'$(DotNetBuildInnerRepo)' == 'true' and
                      '$(DotNetBuildOrchestrator)' == 'true'"
           DependsOnTargets="CopyRepoSymbolsToIntermediates;ClearPreviousSBRP" />
 
@@ -24,7 +24,7 @@
   </Target>
 
   <Target Name="AfterSourceBuild"
-          Condition="'$(ArcadeInnerBuildFromSource)' != 'true' and '$(DotNetBuildInnerRepo)' != 'true'"
+          Condition="'$(DotNetBuildInnerRepo)' != 'true'"
           DependsOnTargets="
             ReportPrebuiltUsage;
             PackSourceBuildIntermediateNupkgs" />
@@ -85,8 +85,7 @@
       OutputBaselineFile="$(SourceBuildSelfPrebuiltReportDir)generated-new-baseline.xml"
       OutputReportFile="$(SourceBuildSelfPrebuiltReportDir)baseline-comparison.xml"
       ContinueOnError="$(ContinueOnPrebuiltBaselineError)"
-      Condition="'$(DotNetBuildFromSourceFlavor)' != 'Product' and '$(DotNetBuildOrchestrator)' != 'true' and
-        ('$(ArcadeBuildFromSource)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true')" />
+      Condition="'$(DotNetBuildOrchestrator)' != 'true' and '$(DotNetBuildSourceOnly)' == 'true'" />
   </Target>
 
   <!--
