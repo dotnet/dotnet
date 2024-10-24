@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@5fa9337](https://github.com/dotnet/aspire/tree/5fa9337a84a52e9bd185d04d156eccbdcf592f74)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@282167d](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC282167d92299fc4dc1972edfc69193397a4114ad)*
+*[_git/dotnet-aspnetcore@592ca7f](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC592ca7fd80495bc6625c8b9d309355b6a8609861)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@6dae7eb](https://github.com/google/googletest/tree/6dae7eb4a5c3a169f3e298392bff4680224aa94a)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -26,7 +26,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@513150c](https://github.com/dotnet/diagnostics/tree/513150c2f25077b1fcb194407e53c433c975f39b)*
 - `src/efcore`  
-*[_git/dotnet-efcore@2247e40](https://dev.azure.com/dnceng/internal/_git/dotnet-efcore/?version=GC2247e4090da6e2312ff02deb00b984ce859b3060)*
+*[_git/dotnet-efcore@2d64559](https://dev.azure.com/dnceng/internal/_git/dotnet-efcore/?version=GC2d645599724b698f50cd2f4d94d4f1fe592649de)*
 - `src/emsdk`  
 *[dotnet/emsdk@cd2146c](https://github.com/dotnet/emsdk/tree/cd2146c90fc68d5ff2db715337e696229c74651e)*
 - `src/fsharp`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@1009e3b](https://github.com/dotnet/scenario-tests/tree/1009e3b6d23e049de56b91de82fe975fe84444f8)*
 - `src/sdk`  
-*[dotnet/sdk@54ace90](https://github.com/dotnet/sdk/tree/54ace90988cc13b29cd609f3851e014654c1da0c)*
+*[dotnet/sdk@625837c](https://github.com/dotnet/sdk/tree/625837c0f0a57aef44e2fddc7d0dba0158029c76)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@4df883d](https://github.com/dotnet/source-build-externals/tree/4df883d781a4290873b3b968afc0ff0df7132507)*
     - `src/source-build-externals/src/abstractions-xunit`  
