@@ -1,14 +1,14 @@
-# Running source-build
+# Running source only builds
 
-These args control parts of source-build:
+These args control parts of source only build:
 
-* `/p:ArcadeBuildFromSource=true` - Enable simple developer machine repro defaults.
+* `-sb` - Enable simple developer machine repro defaults.
 * Not implemented but recognized as potentially useful:
   * Disable Git repo isolation (slightly faster, but not recommended for dev machines). We may want to use this for CI.
   * Clone and build upstreams from source rather than using intermediate nupkgs.
     * Not as useful as it sounds: this is only the "production" build so building this way is still not appropriate for a typical Linux distro archive.
 
-*All* source-build functionality is brought in only when `ArcadeBuildFromSource`
+*All* vmr-build functionality is brought in only when `DotNetBuild`
 is set to true, to ensure the new MSBuild props/targets don't introduce bugs
 into ordinary builds.
 

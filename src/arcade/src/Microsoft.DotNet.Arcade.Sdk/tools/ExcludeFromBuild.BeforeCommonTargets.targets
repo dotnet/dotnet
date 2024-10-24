@@ -47,8 +47,6 @@
   -->
   <PropertyGroup>
     <_SuppressAllTargets>false</_SuppressAllTargets>
-    <!-- Legacy switches-->
-    <_SuppressAllTargets Condition="'$(DotNetBuildFromSource)' == 'true' and '$(ExcludeFromSourceBuild)' == 'true'">true</_SuppressAllTargets>
     <!-- New .NET build switches -->
     <_SuppressAllTargets Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(ExcludeFromSourceOnlyBuild)' == 'true'">true</_SuppressAllTargets>
     <_SuppressAllTargets Condition="'$(DotNetBuild)' == 'true' and '$(ExcludeFromDotNetBuild)' == 'true'">true</_SuppressAllTargets>

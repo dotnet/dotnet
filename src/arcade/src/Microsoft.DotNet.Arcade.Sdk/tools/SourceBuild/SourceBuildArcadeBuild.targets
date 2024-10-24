@@ -25,9 +25,7 @@
           DependsOnTargets="
             GetSourceBuildCommandConfiguration;
             RunInnerSourceBuildCommand"
-          Condition="
-            ('$(ArcadeBuildFromSource)' == 'true' and '$(ArcadeInnerBuildFromSource)' != 'true') or 
-            '$(DotNetBuildPhase)' == 'Repo'"
+          Condition="'$(DotNetBuildPhase)' == 'Repo'"
           BeforeTargets="Execute" />
 
   <!--
@@ -41,9 +39,7 @@
     even if the condition isn't met, so we need this indirection.
   -->
   <Target Name="HookExecuteInnerSourceBuild"
-          Condition="
-            ('$(ArcadeBuildFromSource)' == 'true' and '$(ArcadeInnerBuildFromSource)' == 'true') or
-            '$(DotNetBuildPhase)' == 'InnerRepo'"
+          Condition="'$(DotNetBuildPhase)' == 'InnerRepo'"
           DependsOnTargets="ExecuteInnerSourceBuild"
           BeforeTargets="Execute"/>
 
@@ -56,15 +52,11 @@
   <Target Name="GetSourceBuildCommandConfiguration">
     <PropertyGroup>
       <!-- Based on the build mode, turn on the appropriate switches in the inner build:
-           ArcadeBuildFromSource
-           - ArcadeInnerBuildFromSource - Mark inner build, turn on key inner build infra.
-           - DotNetBuildFromSource - Build from source only.
            DotNetBuildRepo
            - DotNetBuildInnerRepo - Mark inner build, turn on key inner build infra.
            - DotNetBuildSourceOnly - Build from source only. Pass through outer build value if present. -->
       <InnerBuildArgs Condition="'$(DotNetBuildRepo)' == 'true'">$(InnerBuildArgs) /p:DotNetBuildInnerRepo=true</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(DotNetBuildSourceOnly)' != ''">$(InnerBuildArgs) /p:DotNetBuildSourceOnly=$(DotNetBuildSourceOnly)</InnerBuildArgs>
-      <InnerBuildArgs Condition="'$(ArcadeBuildFromSource)' == 'true'">$(InnerBuildArgs) /p:ArcadeInnerBuildFromSource=true /p:DotNetBuildFromSource=true</InnerBuildArgs>
       <!-- Use a fresh clone of the repo so that source-build modifications are isolated. -->
       <InnerBuildArgs>$(InnerBuildArgs) /p:RepoRoot="$(InnerSourceBuildRepoRoot)$(_DirSeparatorEscapedCharForExecArg)"</InnerBuildArgs>
       <!-- Override the artifacts dir to cleanly separate the inner build from outer build. -->
@@ -90,7 +82,7 @@
     <ItemGroup>
       <!-- Override package cache to separate source-built packages from upstream. -->
       <InnerBuildEnv Include="NUGET_PACKAGES=$(CurrentRepoSourceBuildPackageCache)" />
-      <InnerBuildEnv Include="DotNetTargetFrameworkFilter=$(SourceBuildTargetFrameworkFilter)" Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true'" />
+      <InnerBuildEnv Include="DotNetTargetFrameworkFilter=$(SourceBuildTargetFrameworkFilter)" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
     </ItemGroup>
   </Target>
 

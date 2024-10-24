@@ -92,8 +92,7 @@
         Condition="'$(Restore)' == 'true'"/>
   </Target>
 
-  <Import Project="SourceBuild/SourceBuildArcadeTools.targets" Condition="'$(ArcadeBuildFromSource)' == 'true' or
-                                                                          '$(DotNetBuildRepo)' == 'true' or
+  <Import Project="SourceBuild/SourceBuildArcadeTools.targets" Condition="'$(DotNetBuildRepo)' == 'true' or
                                                                           '$(SetUpSourceBuildIntermediateNupkgCache)' == 'true'" />
 
   <!-- Repository extensibility point -->
