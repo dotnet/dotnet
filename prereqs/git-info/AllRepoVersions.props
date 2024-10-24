@@ -15,7 +15,7 @@
     <deploymenttoolsOutputPackageVersion>9.0.0-preview.1.24406.1</deploymenttoolsOutputPackageVersion>
     <diagnosticsGitCommitHash>513150c2f25077b1fcb194407e53c433c975f39b</diagnosticsGitCommitHash>
     <diagnosticsOutputPackageVersion>8.0.0-preview.24416.1</diagnosticsOutputPackageVersion>
-    <efcoreGitCommitHash>2247e4090da6e2312ff02deb00b984ce859b3060</efcoreGitCommitHash>
+    <efcoreGitCommitHash>2d645599724b698f50cd2f4d94d4f1fe592649de</efcoreGitCommitHash>
     <efcoreOutputPackageVersion>9.0.0</efcoreOutputPackageVersion>
     <emsdkGitCommitHash>cd2146c90fc68d5ff2db715337e696229c74651e</emsdkGitCommitHash>
     <emsdkOutputPackageVersion>9.0.0-rtm.24519.2</emsdkOutputPackageVersion>

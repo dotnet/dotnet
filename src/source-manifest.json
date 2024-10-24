@@ -46,7 +46,7 @@
       "packageVersion": "9.0.0",
       "path": "efcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-efcore",
-      "commitSha": "2247e4090da6e2312ff02deb00b984ce859b3060"
+      "commitSha": "2d645599724b698f50cd2f4d94d4f1fe592649de"
     },
     {
       "packageVersion": "9.0.0-rtm.24519.2",
