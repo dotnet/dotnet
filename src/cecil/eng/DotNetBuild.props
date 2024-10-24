@@ -1,0 +1,10 @@
+<!-- When altering this file, include @dotnet/product-construction as a reviewer. -->
+
+<Project>
+
+  <PropertyGroup>
+    <GitHubRepositoryName>cecil</GitHubRepositoryName>
+    <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
+  </PropertyGroup>
+
+</Project>
