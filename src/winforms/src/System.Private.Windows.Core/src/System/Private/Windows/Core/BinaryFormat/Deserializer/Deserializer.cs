@@ -99,12 +99,11 @@ internal sealed partial class Deserializer : IDeserializer
     private Deserializer(
         SerializationRecordId rootId,
         IReadOnlyDictionary<SerializationRecordId, SerializationRecord> recordMap,
-        ITypeResolver typeResolver,
         DeserializationOptions options)
     {
         _rootId = rootId;
         _recordMap = recordMap;
-        _typeResolver = typeResolver;
+        _typeResolver = options.TypeResolver ?? new DefaultTypeResolver(options);
         Options = options;
 
         if (Options.SurrogateSelector is not null)
@@ -120,10 +119,9 @@ internal sealed partial class Deserializer : IDeserializer
     internal static object Deserialize(
         SerializationRecordId rootId,
         IReadOnlyDictionary<SerializationRecordId, SerializationRecord> recordMap,
-        ITypeResolver typeResolver,
         DeserializationOptions options)
     {
-        var deserializer = new Deserializer(rootId, recordMap, typeResolver, options);
+        var deserializer = new Deserializer(rootId, recordMap, options);
         return deserializer.Deserialize();
     }
 
@@ -227,7 +225,7 @@ internal sealed partial class Deserializer : IDeserializer
                 SerializationRecordType.MemberPrimitiveTyped => ((PrimitiveTypeRecord)record).Value,
                 SerializationRecordType.ArraySingleString => ((SZArrayRecord<string>)record).GetArray(),
                 SerializationRecordType.ArraySinglePrimitive => ArrayRecordDeserializer.GetArraySinglePrimitive(record),
-                SerializationRecordType.BinaryArray => ArrayRecordDeserializer.GetSimpleBinaryArray((System.Formats.Nrbf.ArrayRecord)record, _typeResolver),
+                SerializationRecordType.BinaryArray => ArrayRecordDeserializer.GetSimpleBinaryArray((ArrayRecord)record, _typeResolver),
                 _ => null
             };
 
@@ -331,7 +329,7 @@ internal sealed partial class Deserializer : IDeserializer
                 completed = default;
             }
 
-            if (_recordMap[completedId] is System.Formats.Nrbf.ClassRecord classRecord
+            if (_recordMap[completedId] is ClassRecord classRecord
                 && (_incompleteDependencies is null || !_incompleteDependencies.ContainsKey(completedId)))
             {
                 // There are no remaining dependencies. Hook any finished events for this object.

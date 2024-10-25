@@ -7,6 +7,7 @@ function Test-FilesUseTelemetryOutput {
         'eng/common/native/init-compiler.sh'
         'eng/common/native/init-distro-rid.sh'
         'eng/common/native/init-os-and-arch.sh'
+        'eng/common/native/install-dependencies.sh'
         'eng/common/cross/tizen-build-rootfs.sh'
         'eng/common/cross/tizen-fetch.sh'
         'eng/common/cross/build-android-rootfs.sh'
