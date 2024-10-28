@@ -121,7 +121,7 @@
       "commitSha": "ccd0927e3823fb178c7151594f5d2eaba81bba81"
     },
     {
-      "packageVersion": "9.0.0-beta.24522.2",
+      "packageVersion": "9.0.0-beta.24527.1",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
       "commitSha": "1f252d795c563515fe55a228f499e399b915363f"
