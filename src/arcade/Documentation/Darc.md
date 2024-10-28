@@ -35,7 +35,7 @@ use darc to achieve them, as well as a general reference guide to darc commands.
   - [default-channel-status](#default-channel-status) - Enables or disables a default channel association.
   - [delete-channel](#delete-channel) - Deletes an existing channel.
   - [delete-default-channel](#delete-default-channel) - Remove a default channel association.
-  - [delete-subscription](#delete-subscription) - Remove a subscription.
+  - [delete-subscriptions](#delete-subscriptions) - Remove a subscription.
   - [gather-drop](#gather-drop) - Gather a drop of the outputs for a build.
   - [get-asset](#get-asset) - Get information about an asset.
   - [get-build](#get-build) - Retrieves a specific build of a repository,
@@ -732,7 +732,7 @@ darc and Maestro++ have a few mechanisms to enable such scenarios:
                      ]
   - Last Build: N/A
 
-  PS C:\enlistments\arcade> darc delete-subscription --id 21e611eb-ab71-410e-ca98-08d61f236c94
+  PS C:\enlistments\arcade> darc delete-subscriptions --id 21e611eb-ab71-410e-ca98-08d61f236c94
   Successfully deleted subscription with id '21e611eb-ab71-410e-ca98-08d61f236c94'
   ```
 
@@ -1307,7 +1307,7 @@ Successfully created new subscription with id '4f300f68-8800-4b14-328e-08d68308f
   ```
 
 **See also**:
-- [delete-subscription](#delete-subscription)
+- [delete-subscriptions](#delete-subscriptions)
 - [get-subscriptions](#get-subscriptions)
 - [trigger-subscriptions](#trigger-subscriptions)
 - [get-channels](#get-channels)
@@ -1534,7 +1534,7 @@ PS D:\enlistments\arcade> darc delete-default-channel --channel ".Net 5 Dev" --b
 - [add-default-channel](#add-default-channel)
 - [get-default-channels](#get-default-channels)
 
-### **`delete-subscription`**
+### **`delete-subscriptions`**
 
 Deletes a specified subscription by its id. This removes the subscription from
 Maestro and no new updates based on the subscription will be created. Any
@@ -1543,7 +1543,7 @@ obtain the id of a subscription to be deleted, see [get-subscriptions](#get-subs
 
 **Sample**:
 ```
-PS D:\enlistments\arcade-services> darc delete-subscription --id 4f300f68-8800-4b14-328e-08d68308fe30
+PS D:\enlistments\arcade-services> darc delete-subscriptions --id 4f300f68-8800-4b14-328e-08d68308fe30
 
 Successfully deleted subscription with id '4f300f68-8800-4b14-328e-08d68308fe30'
 ```
@@ -2672,7 +2672,7 @@ https://github.com/aspnet/Extensions @ release/3.0-preview6
 Retrieves information about existing subscriptions. This command is generally
 useful to determine what kind of dependency flow will happen on new builds, or
 to obtain the id of a subscription for use in
-[delete-subscription](#delete-subscription).
+[delete-subscriptions](#delete-subscriptions).
 
 The top line of the listing shows the subscription mapping and is read:
 ```
