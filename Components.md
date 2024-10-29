@@ -20,7 +20,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/cecil`  
 *[dotnet/cecil@b897087](https://github.com/dotnet/cecil/tree/b897087e8b76481a9213ae422f5dc16f64a124b5)*
 - `src/command-line-api`  
-*[dotnet/command-line-api@31ab507](https://github.com/dotnet/command-line-api/tree/31ab5077b28e4ebe8229e7d2ba8ae1307b1ce360)*
+*[dotnet/command-line-api@feb61c7](https://github.com/dotnet/command-line-api/tree/feb61c7f328a2401d74f4317b39d02126cfdfe24)*
 - `src/deployment-tools`  
 *[dotnet/deployment-tools@57d7bae](https://github.com/dotnet/deployment-tools/tree/57d7baec5f331a145174d0e8f00d7bbfdf2b77d4)*
 - `src/diagnostics`  
