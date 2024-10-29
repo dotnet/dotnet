@@ -55,10 +55,10 @@
       "commitSha": "e965cbbf7eae80e2a62e46f0fcf68ab8f47792c4"
     },
     {
-      "packageVersion": "9.0.100-beta.24522.2",
+      "packageVersion": "9.0.200-beta.24529.1",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "f07a91420bec3f657153e16c9f047cf151c1179f"
+      "commitSha": "974c7cf1aeae3dcbed1b8c4484e2cf2ba864acba"
     },
     {
       "packageVersion": "17.13.0-preview-24529-04",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "ded76b9f2e3cb8bc29509f022e9bf6d2abe2e3eb"
+      "commitSha": "6cd53a32cfc8464f62841f0a828106ad8eba1970"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24528.1",
@@ -127,7 +127,7 @@
       "commitSha": "cbfd26c30805b7b005f8fab4bc25186e8f8aa1ed"
     },
     {
-      "packageVersion": "2.2.0-beta.24515.1",
+      "packageVersion": "2.2.0-beta.24527.1",
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",
       "commitSha": "878352351804a2339d595c1f74f9e6b32c6c6e6b"

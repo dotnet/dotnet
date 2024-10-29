@@ -19,8 +19,8 @@
     <efcoreOutputPackageVersion>10.0.0-alpha.1.24522.1</efcoreOutputPackageVersion>
     <emsdkGitCommitHash>e965cbbf7eae80e2a62e46f0fcf68ab8f47792c4</emsdkGitCommitHash>
     <emsdkOutputPackageVersion>10.0.0-alpha.1.24524.3</emsdkOutputPackageVersion>
-    <fsharpGitCommitHash>f07a91420bec3f657153e16c9f047cf151c1179f</fsharpGitCommitHash>
-    <fsharpOutputPackageVersion>9.0.100-beta.24522.2</fsharpOutputPackageVersion>
+    <fsharpGitCommitHash>974c7cf1aeae3dcbed1b8c4484e2cf2ba864acba</fsharpGitCommitHash>
+    <fsharpOutputPackageVersion>9.0.200-beta.24529.1</fsharpOutputPackageVersion>
     <msbuildGitCommitHash>0c2c2ce93d0c4b47dd0213867f543877157bc34f</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.13.0-preview-24529-04</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>19756345139c45de23bd196e9b4be01d48e84fdd</nugetclientGitCommitHash>
@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>10.0.0-alpha.1.24528.7</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>39284fbc776975659af4fd377b683b11be053cbb</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>10.0.0-preview.24517.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>ded76b9f2e3cb8bc29509f022e9bf6d2abe2e3eb</sdkGitCommitHash>
+    <sdkGitCommitHash>6cd53a32cfc8464f62841f0a828106ad8eba1970</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>a1ca5c7e17a24e3a55c911cc42f51881c1990dac</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>10.0.0-alpha.1.24528.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>ed0d2d18003162e01c244e5b7f97a3f8fd695d5f</sourcebuildreferencepackagesGitCommitHash>
@@ -43,7 +43,7 @@
     <sourcelinkGitCommitHash>cbfd26c30805b7b005f8fab4bc25186e8f8aa1ed</sourcelinkGitCommitHash>
     <sourcelinkOutputPackageVersion>9.0.0-beta.24529.1</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>878352351804a2339d595c1f74f9e6b32c6c6e6b</symreaderGitCommitHash>
-    <symreaderOutputPackageVersion>2.2.0-beta.24515.1</symreaderOutputPackageVersion>
+    <symreaderOutputPackageVersion>2.2.0-beta.24527.1</symreaderOutputPackageVersion>
     <templatingGitCommitHash>16541f5334bf8f1a9a376a0d3828c0ee69147902</templatingGitCommitHash>
     <templatingOutputPackageVersion>10.0.100-alpha.1.24527.1</templatingOutputPackageVersion>
     <testtemplatesGitCommitHash>66b263ffecee032b2d5071076b42b9614fcf7013</testtemplatesGitCommitHash>
