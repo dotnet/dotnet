@@ -25,10 +25,10 @@
       "commitSha": "b897087e8b76481a9213ae422f5dc16f64a124b5"
     },
     {
-      "packageVersion": "0.1.551701",
+      "packageVersion": "0.1.552801",
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "31ab5077b28e4ebe8229e7d2ba8ae1307b1ce360"
+      "commitSha": "feb61c7f328a2401d74f4317b39d02126cfdfe24"
     },
     {
       "packageVersion": "9.0.0-preview.1.24427.4",
@@ -91,10 +91,10 @@
       "commitSha": "d6e7d82e631f0b4c2519284a1c12ed9eb945a388"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24527.3",
+      "packageVersion": "10.0.0-alpha.1.24528.7",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "6bc04bfdb1f86bec39ddbb6213f8fdffa1715751"
+      "commitSha": "cca022b6212f33adc982630ab91469882250256c"
     },
     {
       "packageVersion": "10.0.0-preview.24517.1",
@@ -106,25 +106,25 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "6ef0f9ea80ce267d37dda64383fb0f5c91c30a11"
+      "commitSha": "60ef04b47d041097155ff0b9dd03835a3bb1d171"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24521.1",
+      "packageVersion": "10.0.0-alpha.1.24528.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "152bd2a5bc0d0f19033b42f48a026339d50101ad"
+      "commitSha": "a1ca5c7e17a24e3a55c911cc42f51881c1990dac"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24521.1",
+      "packageVersion": "10.0.0-alpha.1.24528.1",
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "ccd0927e3823fb178c7151594f5d2eaba81bba81"
+      "commitSha": "ed0d2d18003162e01c244e5b7f97a3f8fd695d5f"
     },
     {
-      "packageVersion": "9.0.0-beta.24527.1",
+      "packageVersion": "9.0.0-beta.24529.1",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "1f252d795c563515fe55a228f499e399b915363f"
+      "commitSha": "cbfd26c30805b7b005f8fab4bc25186e8f8aa1ed"
     },
     {
       "packageVersion": "2.2.0-beta.24515.1",
