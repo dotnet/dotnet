@@ -26,7 +26,7 @@
          and because this target executes before Execute, the build will infinitely recurse. This probably could be fixed in other ways, but
          given that SBRP is slated at some point to get proper support for project refs as a replacement for this invocation, this isn't really worth doing. -->
     <Exec
-      Command="./build.sh --configuration $(Configuration) /bl:$(ArtifactsDir)sourcebuild-dependency-projects.binlog /p:LocalNuGetPackageCacheDirectory=$(LocalNuGetPackageCacheDirectory) /p:SourceBuildOutputDir=$(SourceBuildOutputDir) /p:BuildDependencyPackageProjects=true /p:SetUpSourceBuildIntermediateNupkgCache=true /p:DotNetBuildSourceOnly=true /p:DotNetBuildInnerRepo=true /p:MicrosoftNetCoreIlasmPackageRuntimeId=$(MicrosoftNetCoreIlasmPackageRuntimeId) $(_AdditionalDependencyProjectsBuildArgs)"
+      Command="./build.sh --configuration $(Configuration) /bl:$(ArtifactsDir)sourcebuild-dependency-projects.binlog /p:LocalNuGetPackageCacheDirectory=$(LocalNuGetPackageCacheDirectory) /p:SourceBuildOutputDir=$(SourceBuildOutputDir) /p:BuildDependencyPackageProjects=true /p:SetUpSourceBuildIntermediateNupkgCache=true /p:DotNetBuildOrchestrator=$(DotNetBuildOrchestrator) /p:DotNetBuildSourceOnly=true /p:DotNetBuildInnerRepo=true /p:MicrosoftNetCoreIlasmPackageRuntimeId=$(MicrosoftNetCoreIlasmPackageRuntimeId) $(_AdditionalDependencyProjectsBuildArgs)"
       WorkingDirectory="$(InnerSourceBuildRepoRoot)"
       EnvironmentVariables="@(InnerBuildEnv)" />
   </Target>
