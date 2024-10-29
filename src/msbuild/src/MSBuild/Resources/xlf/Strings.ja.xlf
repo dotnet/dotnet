@@ -17,11 +17,12 @@
       </trans-unit>
       <trans-unit id="BuildFinished">
         <source>Build {0} in {1}s</source>
-        <target state="translated">{1} 秒後に {0} をビルド</target>
+        <target state="needs-review-translation">{1} 秒後に {0} をビルド</target>
         <note>
       Overall build summary
       {0}: BuildResult_X (below)
       {1}: duration in seconds with 1 decimal point
+      's' should reflect the localized abbreviation for seconds
     </note>
       </trans-unit>
       <trans-unit id="BuildResult_Failed">
@@ -86,9 +87,10 @@
       </trans-unit>
       <trans-unit id="DurationDisplay">
         <source>({0:F1}s)</source>
-        <target state="translated">({0:F1}s)</target>
+        <target state="needs-review-translation">({0:F1}s)</target>
         <note>
         {0}: duration in seconds with 1 decimal point
+        's' should reflect the localized abbreviation for seconds
       </note>
       </trans-unit>
       <trans-unit id="HelpMessage_41_QuestionSwitch">
@@ -269,9 +271,9 @@
                         -tlp:default=auto;verbosity=diag;shownCommandLine
     </source>
         <target state="translated">  -terminalLoggerParameters: &lt;parameters&gt;
-                    ターミナル ロガーへのパラメーター。(短い形式: -tlp) 
+                    ターミナル ロガーへのパラメーター。(短い形式: -tlp)
                     使用可能なパラメーター。
-                       default -- ターミナル 
+                       default -- ターミナル
  の既定の動作を指定します
                        ロガー。次のいずれかの値が必要です:
                           - `on`、`true` は TerminalLogger を強制的に使用します
@@ -285,7 +287,7 @@
                        logger
                        showCommandLine -- TaskCommandLineEvent メッセージを表示します
 
-                     例: 
+                     例:
                        -tlp:default=auto;verbosity=diag;shownCommandLine
    </target>
         <note>
@@ -304,7 +306,7 @@
         <target state="translated">  -getResultOutputFile:file
                     get* からの出力をファイルにリダイレクトします。
 
-                    例: 
+                    例:
                     -getProperty:Bar -getResultOutputFile:Biz.txt
                     これにより、プロパティ Bar の値が Biz.txt に書き込まれます。
    </target>
@@ -316,14 +318,13 @@
       <trans-unit id="HelpMessage_52_BuildCheckSwitch">
         <source>  -check
                      Enables BuildChecks during the build.
-                     BuildCheck enables evaluating rules to ensure properties 
+                     BuildCheck enables evaluating rules to ensure properties
                      of the build. For more info see aka.ms/buildcheck
 	</source>
-        <target state="translated">  -check
-                     ビルド中に BuildChecks を有効にします。
-                     BuildCheck を使用すると、ビルドのプロパティ 
- を保証するための
-                     ルールを評価できます。詳細については、aka.ms/buildcheck を参照してください
+        <target state="new">  -check
+                     Enables BuildChecks during the build.
+                     BuildCheck enables evaluating rules to ensure properties
+                     of the build. For more info see aka.ms/buildcheck
 	</target>
         <note>
     {Locked="-check"}{Locked="BuildChecks"}{Locked="BuildCheck"}
@@ -575,7 +576,7 @@
     </source>
         <target state="translated">  -targets[:file]
                      使用可能なターゲットの一覧を、実際のビルド処理を
-                     実行せずに出力します。既定では、出力はコンソール 
+                     実行せずに出力します。既定では、出力はコンソール
                      ウィンドウに書き込まれます。出力ファイルへのパスを
                      指定した場合は、代わりにそのファイルが使用されます。
                      (短い形式:-ts)
@@ -835,7 +836,7 @@
         <target state="translated">  -verbosity:&lt;level&gt; この量の情報をイベント ログに表示します。
                      利用可能な詳細レベル: q[uiet], m[inimal]、
                      n[ormal], d[etailed]、および diag[nostic]。(短縮形: -v)
-                     例: 
+                     例:
                        -verbosity:quiet
 
                      注意: ファイル ロガーの詳細度は
@@ -891,7 +892,7 @@
 </source>
         <target state="translated">  -consoleLoggerParameters:&lt;parameters&gt;
                      コンソール ロガーへのパラメーターです。(短縮形: -clp)
-                     利用可能なパラメーター: 
+                     利用可能なパラメーター:
                         PerformanceSummary--タスク、ターゲット、プロジェクトにかかった時間を
                             表示します。
                         Summary--最後にエラーと警告の概要を表示します。
@@ -1730,13 +1731,14 @@
       </trans-unit>
       <trans-unit id="ProjectFinished_NoTF">
         <source>{0}{1} {2} ({3}s)</source>
-        <target state="translated">{0}{1} {2} ({3} 秒)</target>
+        <target state="needs-review-translation">{0}{1} {2} ({3} 秒)</target>
         <note>
       Project finished summary.
       {0}: indentation - few spaces to visually indent row
       {1}: project name
       {2}: BuildResult_{X}
       {3}: duration in seconds with 1 decimal point
+      's' should reflect the localized abbreviation for seconds
     </note>
       </trans-unit>
       <trans-unit id="ProjectFinished_OutputPath">
@@ -1749,7 +1751,7 @@
       </trans-unit>
       <trans-unit id="ProjectFinished_WithTF">
         <source>{0}{1} {2} {3} ({4}s)</source>
-        <target state="translated">{0}{1} {2} {3} ({4} 秒)</target>
+        <target state="needs-review-translation">{0}{1} {2} {3} ({4} 秒)</target>
         <note>
       Project finished summary including target framework information.
       {0}: indentation - few spaces to visually indent row
@@ -1757,6 +1759,7 @@
       {2}: target framework
       {3}: BuildResult_{X}
       {4}: duration in seconds with 1 decimal point
+      's' should reflect the localized abbreviation for seconds
     </note>
       </trans-unit>
       <trans-unit id="ProjectNotFoundError">
@@ -1808,18 +1811,20 @@
       </trans-unit>
       <trans-unit id="RestoreComplete">
         <source>Restore complete ({0}s)</source>
-        <target state="translated">復元が完了しました ({0} 秒)</target>
+        <target state="needs-review-translation">復元が完了しました ({0} 秒)</target>
         <note>
       {0}: duration in seconds with 1 decimal point
+      's' should reflect the localized abbreviation for seconds
     </note>
       </trans-unit>
       <trans-unit id="RestoreCompleteWithMessage">
         <source>Restore {0} in {1}s</source>
-        <target state="translated">{1} 秒後に {0} を復元する</target>
+        <target state="needs-review-translation">{1} 秒後に {0} を復元する</target>
         <note>
       Restore summary when finished with warning or error
       {0}: BuildResult_X (below)
       {1}: duration in seconds with 1 decimal point
+      's' should reflect the localized abbreviation for seconds
     </note>
       </trans-unit>
       <trans-unit id="SAC">
@@ -1908,18 +1913,19 @@
       </trans-unit>
       <trans-unit id="TestProjectFinished_NoTF">
         <source>{0}{1} test {2} ({3}s)</source>
-        <target state="translated">{0}{1} テスト {2} ({3} 秒)</target>
+        <target state="needs-review-translation">{0}{1} テスト {2} ({3} 秒)</target>
         <note>
       Project finished summary.
       {0}: indentation - few spaces to visually indent row
       {1}: project name
       {2}: BuildResult_{X}
       {3}: duration in seconds with 1 decimal point
+      's' should reflect the localized abbreviation for seconds
     </note>
       </trans-unit>
       <trans-unit id="TestProjectFinished_WithTF">
         <source>{0}{1} test {2} {3} ({4}s)</source>
-        <target state="translated">{0}{1} テスト {2} {3} ({4} 秒)</target>
+        <target state="needs-review-translation">{0}{1} テスト {2} {3} ({4} 秒)</target>
         <note>
       Project finished summary including target framework information.
       {0}: indentation - few spaces to visually indent row
@@ -1927,6 +1933,7 @@
       {2}: target framework
       {3}: BuildResult_{X}
       {4}: duration in seconds with 1 decimal point
+      's' should reflect the localized abbreviation for seconds
     </note>
       </trans-unit>
       <trans-unit id="TestSummary_BannerAndTotal">
@@ -1936,8 +1943,11 @@
       </trans-unit>
       <trans-unit id="TestSummary_Duration">
         <source>duration: {0}s</source>
-        <target state="translated">期間: {0} 秒</target>
-        <note>{0} whole number</note>
+        <target state="needs-review-translation">期間: {0} 秒</target>
+        <note>
+      {0} whole number
+      's' should reflect the localized abbreviation for seconds
+    </note>
       </trans-unit>
       <trans-unit id="TestSummary_Failed">
         <source>failed: {0}</source>
@@ -2267,7 +2277,7 @@
                      (Short form: -r)
     </source>
         <target state="translated">  -restore[:True|False]
-                     他のターゲットをビルドする前に Restore 
+                     他のターゲットをビルドする前に Restore
                      という名前のターゲットを実行し、これらのターゲットのビルドが
                      最新の復元ビルド ロジックを使用するようにします。
                      これは、パッケージ ツリーでパッケージをビルド

@@ -21,8 +21,8 @@
     <emsdkOutputPackageVersion>10.0.0-alpha.1.24524.3</emsdkOutputPackageVersion>
     <fsharpGitCommitHash>f07a91420bec3f657153e16c9f047cf151c1179f</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>9.0.100-beta.24522.2</fsharpOutputPackageVersion>
-    <msbuildGitCommitHash>ad8cb5d6dc7e850d362caf1566849f27b9850484</msbuildGitCommitHash>
-    <msbuildOutputPackageVersion>17.13.0-preview-24524-23</msbuildOutputPackageVersion>
+    <msbuildGitCommitHash>0c2c2ce93d0c4b47dd0213867f543877157bc34f</msbuildGitCommitHash>
+    <msbuildOutputPackageVersion>17.13.0-preview-24529-04</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>19756345139c45de23bd196e9b4be01d48e84fdd</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.12.0-rc.127</nugetclientOutputPackageVersion>
     <razorGitCommitHash>8bf9ad1ce4cfc0d77916f8db993e2d7f29b22665</razorGitCommitHash>
@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>10.0.0-alpha.1.24528.7</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>39284fbc776975659af4fd377b683b11be053cbb</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>10.0.0-preview.24517.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>60ef04b47d041097155ff0b9dd03835a3bb1d171</sdkGitCommitHash>
+    <sdkGitCommitHash>8584c262d4d2e1a0af388271ae0715db3c53a2b6</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>a1ca5c7e17a24e3a55c911cc42f51881c1990dac</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>10.0.0-alpha.1.24528.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>ed0d2d18003162e01c244e5b7f97a3f8fd695d5f</sourcebuildreferencepackagesGitCommitHash>
