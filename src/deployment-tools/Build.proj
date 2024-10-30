@@ -3,11 +3,14 @@
   <PropertyGroup>
     <!-- Disable target framework filtering for top level projects -->
     <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
+
+    <!-- Disable native projects - see https://github.com/dotnet/deployment-tools/issues/398 -->
+    <DisableNativeProjects>true</DisableNativeProjects>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(DotNetBuild)' != 'true'">
     <ClickOnceProjectToBuild Include="src/clickonce/**/*.csproj" Pack="true" />
-    <ClickOnceProjectToBuild Include="src/clickonce/native/build-native.proj" Pack="false" />
+    <ClickOnceProjectToBuild Include="src/clickonce/native/build-native.proj" Pack="false" Condition="'$(DisableNativeProjects)' != 'true'"/>
     <ProjectReference Include="@(ClickOnceProjectToBuild)"
                       BuildInParallel="true"
                       Test="false">
@@ -18,7 +21,7 @@
                       Pack="true"
                       Test="false"
                       BuildInParallel="false"
-                      Condition="'$(TargetOS)' == 'windows'">
+                      Condition="'$(TargetOS)' == 'windows' and '$(DisableNativeProjects)' != 'true'">
       <AdditionalProperties Condition="'$(ClickOnceConfiguration)' != ''">Configuration=$(ClickOnceConfiguration)</AdditionalProperties>
     </ProjectReference>
   </ItemGroup>
