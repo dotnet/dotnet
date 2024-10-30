@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="10.0.100-alpha.1.24527.1">
+    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="10.0.100-alpha.1.24529.1">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>16541f5334bf8f1a9a376a0d3828c0ee69147902</Sha>
+      <Sha>9b4a701787b1a51ebfdc5cf222ea8511f58b5411</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Mocks" Version="10.0.100-alpha.1.24527.1">
+    <Dependency Name="Microsoft.TemplateEngine.Mocks" Version="10.0.100-alpha.1.24529.1">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>16541f5334bf8f1a9a376a0d3828c0ee69147902</Sha>
+      <Sha>9b4a701787b1a51ebfdc5cf222ea8511f58b5411</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.templating" Version="10.0.100-alpha.1.24527.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.templating" Version="10.0.100-alpha.1.24529.1">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>16541f5334bf8f1a9a376a0d3828c0ee69147902</Sha>
+      <Sha>9b4a701787b1a51ebfdc5cf222ea8511f58b5411</Sha>
       <SourceBuild RepoName="templating" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Ref" Version="10.0.0-alpha.1.24528.7">
@@ -87,14 +87,14 @@
       <Sha>0c2c2ce93d0c4b47dd0213867f543877157bc34f</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.FSharp.Compiler" Version="13.9.200-beta.24529.1">
+    <Dependency Name="Microsoft.FSharp.Compiler" Version="13.9.200-beta.24529.3">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>974c7cf1aeae3dcbed1b8c4484e2cf2ba864acba</Sha>
+      <Sha>02f6bb08e742b0bb1cfd8cd7c104c5ddbcc4cbf8</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="9.0.200-beta.24529.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="9.0.200-beta.24529.3">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>974c7cf1aeae3dcbed1b8c4484e2cf2ba864acba</Sha>
+      <Sha>02f6bb08e742b0bb1cfd8cd7c104c5ddbcc4cbf8</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.13.0-2.24528.6">
