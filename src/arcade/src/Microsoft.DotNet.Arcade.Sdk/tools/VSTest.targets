@@ -23,7 +23,7 @@
       <_TestResultHtmlFileName>$([System.IO.Path]::GetFileName('%(TestToRun.ResultsHtmlPath)'))</_TestResultHtmlFileName>
 
       <_TestRunnerCommand>&quot;$(DotNetTool)&quot; test $(_TestAssembly) --logger:"console%3Bverbosity=normal" --logger:"trx%3BLogFileName=$(_TestResultTrxFileName)" --logger:"html%3BLogFileName=$(_TestResultHtmlFileName)" "--ResultsDirectory:$(_TestResultDirectory)" "--Framework:%(TestToRun.TargetFrameworkIdentifier),Version=%(TestToRun.TargetFrameworkVersion)"</_TestRunnerCommand>
-      <_TestRunnerCommand Condition="'$(VSTestRunSettingsFile)' != ''">$(_TestRunnerCommand) "--settings:$(VSTestRunSettingsFile)"</_TestRunnerCommand>
+      <_TestRunnerCommand Condition="'%(TestToRun.TestRunSettingsFile)' != ''">$(_TestRunnerCommand) "--settings:%(TestToRun.TestRunSettingsFile)"</_TestRunnerCommand>
       <_TestRunnerCommand Condition="'$(_TestRunnerAdditionalArguments)' != ''">$(_TestRunnerCommand) $(_TestRunnerAdditionalArguments)</_TestRunnerCommand>
 
       <!-- 
@@ -76,6 +76,13 @@
     <ItemGroup>
       <FileWrites Include="@(_OutputFiles)"/>
     </ItemGroup>
+  </Target>
+
+  <!-- Set VSTest specific settings in a target so that the TestToRun item can read from it and customers can set it at any time during evaluation. -->
+  <Target Name="_AddVSTestSpecificSettingsToInnerBuild" BeforeTargets="_InnerGetTestsToRun">
+    <PropertyGroup>
+      <TestRunSettingsFile Condition="'$(TestRunSettingsFile)' == ''">$(VSTestRunSettingsFile)</TestRunSettingsFile>
+    </PropertyGroup>
   </Target>
 
 </Project>

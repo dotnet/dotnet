@@ -69,6 +69,7 @@
         <ResultsTrxPath>$(ArtifactsTestResultsDir)$(_ResultFileNameNoExt).trx</ResultsTrxPath>
         <ResultsHtmlPath>$(ArtifactsTestResultsDir)$(_ResultFileNameNoExt).html</ResultsHtmlPath>
         <ResultsStdOutPath>$(TestResultsLogDir)$(_ResultFileNameNoExt).log</ResultsStdOutPath>
+        <TestRunSettingsFile>$(TestRunSettingsFile)</TestRunSettingsFile>
         <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments)</TestRunnerAdditionalArguments>
       </TestToRun>
     </ItemGroup>
