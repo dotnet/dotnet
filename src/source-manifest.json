@@ -13,10 +13,10 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-alpha.2.24530.2",
+      "packageVersion": "10.0.0-alpha.2.24531.2",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "4a3a99d044d345d7bbf7c279a1bd1776da1144c1"
+      "commitSha": "fd40e5a76c6593b306c60b38692cace064740b46"
     },
     {
       "packageVersion": "0.11.5-alpha.24521.1",
@@ -43,10 +43,10 @@
       "commitSha": "335c0c013c3a761792bfa83c0dbaadd1f0545f07"
     },
     {
-      "packageVersion": "10.0.0-alpha.1.24529.3",
+      "packageVersion": "10.0.0-alpha.1.24531.1",
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "17ed217ebb494392e08d8f5634db7eb3bb4ab5ed"
+      "commitSha": "507e7f196a11aebaf26d1cf34e5d6a3e7044bb52"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24524.3",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "938abcfc473c63174fbb4f7909be7f54ea764916"
+      "commitSha": "e548f4f82a3423a48a43add9f14fd6058fa92ecf"
     },
     {
       "packageVersion": "10.0.0-alpha.1.24528.1",
@@ -121,10 +121,10 @@
       "commitSha": "136e43e45e20bd58bf86eeabba0a0fa7e1a4b3ae"
     },
     {
-      "packageVersion": "9.0.0-beta.24529.3",
+      "packageVersion": "9.0.0-beta.24530.2",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "196983c6e97621b051c67cd898c4db630168cd81"
+      "commitSha": "ed7498ee2384633831a44285ea5c124465b438c1"
     },
     {
       "packageVersion": "2.2.0-beta.24527.1",
@@ -139,10 +139,10 @@
       "commitSha": "3f2837cb8b9390ff62c1e413a4fc0f65d196cb10"
     },
     {
-      "packageVersion": "1.1.0-rtm.24530.3",
+      "packageVersion": "1.1.0-rtm.24531.1",
       "path": "test-templates",
       "remoteUri": "https://github.com/dotnet/test-templates",
-      "commitSha": "764e98851850e9ebdf7c3ff556f893068bc5871d"
+      "commitSha": "1cd8415746cd9b3eeddab3bcb277cada16c1576a"
     },
     {
       "packageVersion": "17.13.0-preview-24523-01",
