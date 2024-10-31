@@ -8,7 +8,7 @@
   "symbols/Framework/displayName": "フレームワーク",
   "symbols/Framework/choices/net9.0/description": "ターゲット net9.0",
   "symbols/EnablePack/description": "(\"dotnet pack\" を使用して) プロジェクトのパッケージ化を有効にするかどうか。",
-  "symbols/EnablePack/displayName": "Enable pack",
+  "symbols/EnablePack/displayName": "パックを有効にする",
   "symbols/skipRestore/description": "指定した場合、作成時にプロジェクトの自動復元がスキップされます。",
   "symbols/skipRestore/displayName": "復元のスキップ",
   "symbols/langVersion/description": "作成されたプロジェクト ファイルで LangVersion プロパティを設定します",
