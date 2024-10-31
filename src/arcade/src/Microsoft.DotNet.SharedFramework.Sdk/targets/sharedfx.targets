@@ -582,7 +582,7 @@
     </ItemGroup>
     <ItemGroup Condition="'$(PlatformPackageType)' == 'RuntimePack'">
       <FilesToPublish Include="@(_PackagedFilesToPublish)"
-                       Condition="$([System.String]::new('%(_PackagedFilesToPublish.TargetPath)').StartsWith('runtimes/'))"
+                       Condition="$([System.String]::new('%(_PackagedFilesToPublish.TargetPath)').StartsWith('runtimes/')) or '%(_PackagedFilesToPublish.PublishOnly)' == 'true'"
                        TargetPath="shared/$(SharedFrameworkName)/$(Version)/" />
     </ItemGroup>
     <ItemGroup Condition="'$(PlatformPackageType)' == 'TargetingPack' or '$(PlatformPackageType)' == 'AppHostPack'">
