@@ -100,6 +100,7 @@
                             ResolveFrameworkReferences;
                             ResolveLockFileCopyLocalFiles;
                             ResolveReferences;
+                            FindReferenceAssembliesForReferences;
                             _ReadyToRunSharedFramework;
                             _FindSymbolFilesForSharedFrameworkFiles"
           Returns="@(FilesToPackage)">
@@ -122,12 +123,18 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(PlatformPackageType)' == 'TargetingPack'">
-      <FilesToPackage Include="@(ReferencePath)" Condition="'%(ReferencePath.FrameworkReferenceName)' == ''">
+      <!-- include all doc files from explicitly added files to package -->
+      <DocFilesToPackage Include="%(FilesToPackage.RootDir)%(FilesToPackage.Directory)**\%(FilesToPackage.FileName).xml" />
+
+      <FilesToPackage Include="@(ReferencePath->Metadata('ReferenceAssembly'))" Condition="'%(ReferencePath.FrameworkReferenceName)' == ''">
         <TargetPath>ref/$(TargetFramework)</TargetPath>
       </FilesToPackage>
 
-      <!-- include all doc files -->
-      <DocFilesToPackage Include="%(FilesToPackage.RootDir)%(FilesToPackage.Directory)**\%(FilesToPackage.FileName).xml" />
+      <!--
+        Include all doc files from referenced assemblies.
+        We need to do this separately as the Roslyn-generated ref assembly is in the wrong folder, so we wouldn't find doc files in that case.
+      -->
+      <DocFilesToPackage Include="%(ReferencePath.RootDir)%(ReferencePath.Directory)**\%(ReferencePath.FileName).xml" />
 
       <FilesToPackage Include="@(DocFilesToPackage)">
         <TargetPath>ref/$(TargetFramework)/%(RecursiveDir)</TargetPath>

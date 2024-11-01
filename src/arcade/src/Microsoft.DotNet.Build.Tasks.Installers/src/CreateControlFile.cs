@@ -73,7 +73,11 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             {
                 writer.WriteLine($"{property.ItemSpec}: {property.GetMetadata("Value")}");
             }
-            writer.WriteLine($"Description: {Description}");
+
+            // As per the control spec, multiline descriptions must have leading spaces
+            // for each line after the first.
+            // Two spaces represents a verbatim line break (as compared to one for package authoring that will not be preserved).
+            writer.WriteLine($"Description: {Description.Replace("\n", "\n  ")}");
             return true;
         }
     }
