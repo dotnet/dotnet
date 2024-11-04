@@ -360,7 +360,7 @@ public partial class Control
                         HWND hwndMap = hwnd.IsNull ? hwndParent : hwnd;
                         Point pt = new(PARAM.LOWORD(lpmsg->lParam), PARAM.HIWORD(lpmsg->lParam));
 
-                        PInvoke.MapWindowPoints(hwndMap, _control, ref pt);
+                        PInvokeCore.MapWindowPoints(hwndMap, _control, ref pt);
 
                         // Check to see if this message should really go to a child control, and if so, map the
                         // point into that child's window coordinates.
@@ -460,7 +460,7 @@ public partial class Control
                 Point p2 = new(rc.right - rc.left, rc.bottom - rc.top);
                 PInvoke.LPtoDP(hdcDraw, [p1, p2]);
 
-                iMode = (HDC_MAP_MODE)PInvoke.SetMapMode(hdcDraw, HDC_MAP_MODE.MM_ANISOTROPIC);
+                iMode = (HDC_MAP_MODE)PInvokeCore.SetMapMode(hdcDraw, HDC_MAP_MODE.MM_ANISOTROPIC);
                 PInvoke.SetWindowOrgEx(hdcDraw, 0, 0, &pW);
                 PInvoke.SetWindowExtEx(hdcDraw, _control.Width, _control.Height, (SIZE*)&sWindowExt);
                 PInvoke.SetViewportOrgEx(hdcDraw, p1.X, p1.Y, &pVp);
@@ -489,7 +489,7 @@ public partial class Control
                     PInvoke.SetWindowExtEx(hdcDraw, sWindowExt.Width, sWindowExt.Height, lpsz: null);
                     PInvoke.SetViewportOrgEx(hdcDraw, pVp.X, pVp.Y, lppt: null);
                     PInvoke.SetViewportExtEx(hdcDraw, sViewportExt.Width, sViewportExt.Height, lpsz: null);
-                    PInvoke.SetMapMode(hdcDraw, iMode);
+                    PInvokeCore.SetMapMode(hdcDraw, iMode);
                 }
             }
 
@@ -1812,7 +1812,7 @@ public partial class Control
                     RECT rcIntersect = intersect;
                     HWND hWndParent = PInvoke.GetParent(_control);
 
-                    PInvoke.MapWindowPoints(hWndParent, _control, ref rcIntersect);
+                    PInvokeCore.MapWindowPoints(hWndParent, _control, ref rcIntersect);
 
                     _lastClipRect = rcIntersect;
                     setRegion = true;
