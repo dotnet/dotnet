@@ -80,8 +80,13 @@
              BuildInParallel="$(BuildInParallel)" />
   </Target>
 
+  <PropertyGroup>
+    <_CreateRpmTargets Condition="'$(UseArcadeRpmTooling)' != 'true'">FindFPM;CreateRpmUsingFpm</_CreateRpmTargets>
+    <_CreateRpmTargets Condition="'$(UseArcadeRpmTooling)' == 'true'">CreateRpm</_CreateRpmTargets>
+  </PropertyGroup>
+
   <Target Name="GenerateDeb" DependsOnTargets="CreateDeb" />
-  <Target Name="GenerateRpm" DependsOnTargets="FindFPM;CreateRpm" />
+  <Target Name="GenerateRpm" DependsOnTargets="$(_CreateRpmTargets)" />
   <Target Name="GenerateMsi" DependsOnTargets="CreateWixInstaller" />
   <Target Name="GenerateCrossArchMsi" DependsOnTargets="CreateCrossArchWixInstaller" />
   <Target Name="GeneratePkg" DependsOnTargets="CreatePkg" />
@@ -292,7 +297,7 @@
 
     <!-- Create any symlinks -->
     <MakeDir Directories="$(_LayoutDataRoot)%(DebSymlink.RelativeDir)" Condition="'%(DebSymlink.Identity)' != ''" />
-    <Exec Command="ln -s %(DebSymlink.LinkTarget) %(DebSymlink.FileName)%(DebSymlink.Extension)" WorkingDirectory="$(_LayoutDataRoot)%(DebSymlink.RelativeDir)" Condition="'%(DebSymlink.Identity)' != ''" />
+    <Exec Command="ln -sf %(DebSymlink.LinkTarget) %(DebSymlink.FileName)%(DebSymlink.Extension)" WorkingDirectory="$(_LayoutDataRoot)%(DebSymlink.RelativeDir)" Condition="'%(DebSymlink.Identity)' != ''" />
     
     <Exec Command="tar -C '$(_LayoutControlRoot)' -czf '$(_LayoutDirectory)/control.tar.gz' ."
           IgnoreExitCode="true"
@@ -314,6 +319,104 @@
     Create RPM package.
   -->
   <Target Name="CreateRpm"
+          DependsOnTargets="
+            _GetInstallerProperties;
+            _CreateInstallerLayout;
+            GetRpmInstallerJsonProperties"
+          Returns="$(_InstallerFile)">
+    
+    <PropertyGroup>
+      <_LayoutDirectory>$(IntermediateOutputPath)installer/rpmLayout/</_LayoutDirectory>
+      <_LayoutDataRoot>$(_LayoutDirectory)root/</_LayoutDataRoot>
+      <_LayoutPackageRoot>$(_LayoutDataRoot)$(LinuxInstallRoot)</_LayoutPackageRoot>
+      <_LayoutDocs>$(_LayoutDataRoot)/usr/share/doc</_LayoutDocs>
+    </PropertyGroup>
+
+    <RemoveDir Condition="Exists('$(_InstallerIntermediatesDir)')" Directories="$(_InstallerIntermediatesDir)" />
+    <MakeDir Directories="$(_InstallerIntermediatesDir)" />
+
+    <!-- Create empty layout. -->
+    <RemoveDir Condition="Exists('$(_LayoutDirectory)')" Directories="$(_LayoutDirectory)" />
+    <MakeDir Directories="$(_LayoutDirectory)" />
+    <MakeDir Directories="$(_LayoutPackageRoot)" />
+    <MakeDir Directories="$(_LayoutDocs)" />
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="PublishToDisk"
+             Properties="OutputPath=$([MSBuild]::EnsureTrailingSlash('$(_LayoutPackageRoot)'))"
+             RemoveProperties="@(_GlobalPropertiesToRemoveForPublish)"  />
+
+    <Copy
+      SourceFiles="@(Manpage)"
+      DestinationFiles="@(Manpage->'$(_LayoutDocs)/%(RecursiveDir)%(Filename)%(Extension)')" />
+
+    <!-- Write copyright file in the debian format. There's no defined format for RPM copyright files. -->
+    <ItemGroup>
+      <_CopyrightLine Include="Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/" />
+      <_CopyrightLine Include="%0AFiles: *" />
+      <_CopyrightLine Include="Copyright: $(_PackageCopyright)" />
+      <_CopyrightLine Include="Comment: Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license." />
+      <_CopyrightLine Include="License: MIT and ASL 2.0 and BSD" />
+      <_CopyrightLine Include="%0ALicense: $([System.IO.File]::ReadAllText('$(LicenseFile)'))" />
+    </ItemGroup>
+
+    <WriteLinesToFile File="$(_LayoutDocs)/$(VersionedInstallerName)/copyright" Lines="@(_CopyrightLine)" />
+
+    <!-- We always own the directory for the copyright file. -->
+    <ItemGroup>
+      <_GeneratedFileOwnedDirectory Include="$(_LayoutDocs)/$(VersionedInstallerName)" />
+    </ItemGroup>
+
+    <!-- Create any symlinks -->
+    <MakeDir Directories="$(_LayoutDataRoot)%(DebSymlink.RelativeDir)" Condition="'%(DebSymlink.Identity)' != ''" />
+    <Exec Command="ln -sf %(DebSymlink.LinkTarget) %(DebSymlink.FileName)%(DebSymlink.Extension)" WorkingDirectory="$(_LayoutDataRoot)%(DebSymlink.RelativeDir)" Condition="'%(DebSymlink.Identity)' != ''" />
+    
+    <!--
+      Compress all files and directories that we output.
+      We'll filter out any directories we don't own in CreateRpmPackage.
+    -->
+    <PropertyGroup>
+      <_FindAllPayloadFilesCommand>find . -depth ! -wholename '.'</_FindAllPayloadFilesCommand>
+    </PropertyGroup>
+    <Exec Command="$(_FindAllPayloadFilesCommand) -print  | cpio -H newc -o --quiet > '$(_LayoutDirectory)/payload.cpio'"
+          WorkingDirectory="$(_LayoutDataRoot)"
+          EchoOff="true"
+          StandardOutputImportance="Low" />
+
+    <!-- For each filesystem entry, execute the 'file' command. We need to both shell-escape and MSBuild-escape the semicolon -->
+    <Exec Command="$(_FindAllPayloadFilesCommand) -exec file {} \%3B"
+          ConsoleToMsBuild="true"
+          EchoOff="true"
+          StandardOutputImportance="Low"
+          WorkingDirectory="$(_LayoutDataRoot)">
+      <Output TaskParameter="ConsoleOutput" ItemName="_RawFileKindInfo" />
+    </Exec>
+
+    <CreateRpmPackage
+      OutputRpmPackagePath="$(_InstallerFile)"
+      Vendor=".NET Foundation"
+      Packager=".NET Team &lt;dotnetpackages@dotnetfoundation.org&gt;"
+      PackageName="$(VersionedInstallerName)"
+      PackageVersion="$(InstallerPackageVersion)"
+      PackageRelease="$(InstallerPackageRelease)"
+      PackageOS="$(TargetRuntimeOS)"
+      PackageArchitecture="$(InstallerTargetArchitecture)"
+      Payload="$(_LayoutDirectory)/payload.cpio"
+      RawPayloadFileKinds="@(_RawFileKindInfo)"
+      Requires="@(LinuxPackageDependency)"
+      Conflicts="@(RpmConflicts)"
+      OwnedDirectories="@(RpmOwnedDirectory);@(_GeneratedFileOwnedDirectory)"
+      ChangelogLines="- https://github.com/dotnet/core/tree/master/release-notes"
+      License="MIT and ASL 2.0 and BSD"
+      Summary="$(_ShortDescription)"
+      Description="$(_PackageLongDescription)"
+      PackageUrl="https://github.com/dotnet/core"
+       />
+
+    <Message Text="$(MSBuildProjectName) -> $(_InstallerFile)" Importance="high" />
+  </Target>
+
+  <Target Name="CreateRpmUsingFpm"
           DependsOnTargets="
             _GetInstallerProperties;
             _CreateInstallerLayout;
@@ -367,10 +470,13 @@
           UseHardlinksIfPossible="False" />
 
     <Message Text="$(MSBuildProjectName) -> $(_InstallerFile)" Importance="high" />
+  </Target>
 
+  <Target Name="_BuildMarinerRpms"
+          AfterTargets="GenerateRpm"
+          Condition="'$(CreateRPMForCblMariner)' == 'true'">
     <!-- CBL-Mariner 1.0 -->
-    <Copy Condition="'$(CreateRPMForCblMariner)' == 'true'"
-          SourceFiles="@(GeneratedRpmFiles)"
+    <Copy SourceFiles="$(_InstallerFile)"
           DestinationFiles="$(_InstallerFileCblMariner)"
           OverwriteReadOnlyFiles="True"
           SkipUnchangedFiles="False"
@@ -379,8 +485,7 @@
     <Message Text="$(MSBuildProjectName) -> $(_InstallerFileCblMariner)" Importance="high" />
 
     <!-- CBL-Mariner 2.0 -->
-    <Copy Condition="'$(CreateRPMForCblMariner)' == 'true'"
-          SourceFiles="@(GeneratedRpmFiles)"
+    <Copy SourceFiles="$(_InstallerFile)"
           DestinationFiles="$(_InstallerFileCblMariner2)"
           OverwriteReadOnlyFiles="True"
           SkipUnchangedFiles="False"

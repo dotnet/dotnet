@@ -21,6 +21,8 @@
   <UsingTask TaskName="CreateControlFile"
    AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
   <UsingTask TaskName="CreateDebPackage"
-   AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
+  AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
+  <UsingTask TaskName="CreateRpmPackage"
+    AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
 
 </Project>
