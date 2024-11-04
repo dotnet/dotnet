@@ -31,11 +31,11 @@
     <roslynanalyzersOutputPackageVersion>3.12.0-beta1.24527.1</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>cbb2d124058fc80051c9d5e9d798d22e8d5aaab3</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.13.0-2.24551.4</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>1e4140457df4a5d3c647ecf263b0057d84dbc210</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>10.0.0-alpha.1.24552.1</runtimeOutputPackageVersion>
+    <runtimeGitCommitHash>408caa4e28c74d95c2af00401615a0931de4facf</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>10.0.0-alpha.1.24552.2</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>39284fbc776975659af4fd377b683b11be053cbb</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>10.0.0-preview.24517.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>c99aec2a6ea1d28924a41c83944d4124055fc8b9</sdkGitCommitHash>
+    <sdkGitCommitHash>8e29df2c37578a31d6a23317afd4ba4504463783</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>a1ca5c7e17a24e3a55c911cc42f51881c1990dac</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>10.0.0-alpha.1.24528.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>136e43e45e20bd58bf86eeabba0a0fa7e1a4b3ae</sourcebuildreferencepackagesGitCommitHash>
@@ -44,8 +44,8 @@
     <sourcelinkOutputPackageVersion>9.0.0-beta.24531.2</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>878352351804a2339d595c1f74f9e6b32c6c6e6b</symreaderGitCommitHash>
     <symreaderOutputPackageVersion>2.2.0-beta.24527.1</symreaderOutputPackageVersion>
-    <templatingGitCommitHash>37d334efe0b1f814dbf32838414d84f1cbe1a007</templatingGitCommitHash>
-    <templatingOutputPackageVersion>10.0.100-alpha.1.24551.1</templatingOutputPackageVersion>
+    <templatingGitCommitHash>8aae0b239e10a9cc26fd6ead99420ea2b9e2fda6</templatingGitCommitHash>
+    <templatingOutputPackageVersion>10.0.100-alpha.1.24553.1</templatingOutputPackageVersion>
     <testtemplatesGitCommitHash>ba61a1355016f1ef13f6c7b6e8c23b8d9160d004</testtemplatesGitCommitHash>
     <testtemplatesOutputPackageVersion>1.1.0-rtm.24551.1</testtemplatesOutputPackageVersion>
     <vstestGitCommitHash>eb00b269d6b8734597b8ea888219e105144e7794</vstestGitCommitHash>
