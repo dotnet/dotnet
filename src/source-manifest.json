@@ -139,10 +139,10 @@
       "commitSha": "8aae0b239e10a9cc26fd6ead99420ea2b9e2fda6"
     },
     {
-      "packageVersion": "1.1.0-rtm.24551.1",
+      "packageVersion": "1.1.0-rtm.24554.1",
       "path": "test-templates",
       "remoteUri": "https://github.com/dotnet/test-templates",
-      "commitSha": "ba61a1355016f1ef13f6c7b6e8c23b8d9160d004"
+      "commitSha": "cfb55bfa45eea729ab2ac64f44d47b7547dc979c"
     },
     {
       "packageVersion": "17.13.0-preview-24523-01",
