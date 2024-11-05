@@ -26,7 +26,7 @@
     <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
     <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
 
-    <!-- Temporary, reove when arcade NetCurrent to net10. This requires a net10 targeting SDK -->
+    <!-- Temporary, remove when arcade NetCurrent to net10. This requires a net10 targeting SDK. -->
     <NetCurrent>net10.0</NetCurrent>
   </PropertyGroup>
 
