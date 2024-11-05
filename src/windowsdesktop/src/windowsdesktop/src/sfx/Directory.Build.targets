@@ -3,6 +3,18 @@
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory).., Directory.Build.targets))\Directory.Build.targets" />
 
   <ItemGroup>
+    <KnownFrameworkReference
+      Update="Microsoft.NETCore.App"
+      DefaultRuntimeFrameworkVersion="$(MicrosoftNETCoreAppRefVersion)"
+      LatestRuntimeFrameworkVersion="$(MicrosoftNETCoreAppRefVersion)"
+      TargetingPackVersion="$(MicrosoftNETCoreAppRefVersion)" />
+    <KnownFrameworkReference Remove="Microsoft.AspNetCore.App" />
+    <KnownFrameworkReference Remove="Microsoft.WindowsDesktop.App" />
+    <KnownFrameworkReference Remove="Microsoft.WindowsDesktop.App.WindowsForms" />
+    <KnownFrameworkReference Remove="Microsoft.WindowsDesktop.App.WPF" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.Archives" />
   </ItemGroup>
 
