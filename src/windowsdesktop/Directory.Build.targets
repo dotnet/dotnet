@@ -10,22 +10,4 @@
     <NETCoreAppMaximumVersion>$(MajorVersion).$(MinorVersion)</NETCoreAppMaximumVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!-- After the net10 SDK is available, this should change back to an Update without the TargetFramework property. -->
-    <KnownFrameworkReference
-      Include="@(KnownFrameworkReference->WithMetadataValue('TargetFramework', 'net9.0'))"
-      DefaultRuntimeFrameworkVersion="$(MicrosoftNETCoreAppRefVersion)"
-      LatestRuntimeFrameworkVersion="$(MicrosoftNETCoreAppRefVersion)"
-      TargetingPackVersion="$(MicrosoftNETCoreAppRefVersion)"
-      TargetFramework="net10.0" />
-    <KnownFrameworkReference Remove="Microsoft.AspNetCore.App" />
-    <KnownFrameworkReference Remove="Microsoft.WindowsDesktop.App" />
-    <KnownFrameworkReference Remove="Microsoft.WindowsDesktop.App.WindowsForms" />
-    <KnownFrameworkReference Remove="Microsoft.WindowsDesktop.App.WPF" />
-
-    <KnownCrossgen2Pack Include="@(KnownCrossgen2Pack->WithMetadataValue('TargetFramework', 'net9.0'))"
-      Crossgen2PackVersion="$(MicrosoftNETCoreAppRefVersion)"
-      TargetFramework="net10.0" />
-  </ItemGroup>
-
 </Project>
