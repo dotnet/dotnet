@@ -3,11 +3,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
+using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -22,25 +22,27 @@ internal class CompletionListProvider
     {
         _razorCompletionListProvider = razorCompletionListProvider;
         _delegatedCompletionListProvider = delegatedCompletionListProvider;
-
-        var allTriggerCharacters = razorCompletionListProvider.TriggerCharacters.Concat(delegatedCompletionListProvider.TriggerCharacters);
-        var distinctTriggerCharacters = new HashSet<string>(allTriggerCharacters);
-        AggregateTriggerCharacters = distinctTriggerCharacters.ToImmutableHashSet();
     }
-
-    public ImmutableHashSet<string> AggregateTriggerCharacters { get; }
 
     public async Task<VSInternalCompletionList?> GetCompletionListAsync(
         int absoluteIndex,
         VSInternalCompletionContext completionContext,
         DocumentContext documentContext,
         VSInternalClientCapabilities clientCapabilities,
+        RazorCompletionOptions razorCompletionOptions,
         Guid correlationId,
         CancellationToken cancellationToken)
     {
         // First we delegate to get completion items from the individual language server
-        var delegatedCompletionList = IsValidTrigger(_delegatedCompletionListProvider.TriggerCharacters, completionContext)
-            ? await _delegatedCompletionListProvider.GetCompletionListAsync(absoluteIndex, completionContext, documentContext, clientCapabilities, correlationId, cancellationToken).ConfigureAwait(false)
+        var delegatedCompletionList = CompletionTriggerAndCommitCharacters.IsValidTrigger(_delegatedCompletionListProvider.TriggerCharacters, completionContext)
+            ? await _delegatedCompletionListProvider.GetCompletionListAsync(
+                absoluteIndex,
+                completionContext,
+                documentContext,
+                clientCapabilities,
+                razorCompletionOptions,
+                correlationId,
+                cancellationToken).ConfigureAwait(false)
             : null;
 
         // Extract the items we got back from the delegated server, to inform tag helper completion
@@ -49,17 +51,19 @@ internal class CompletionListProvider
             : null;
 
         // Now we get the Razor completion list, using information from the actual language server if necessary
-        var razorCompletionList = IsValidTrigger(_razorCompletionListProvider.TriggerCharacters, completionContext)
-            ? await _razorCompletionListProvider.GetCompletionListAsync(absoluteIndex, completionContext, documentContext, clientCapabilities, existingItems, cancellationToken).ConfigureAwait(false)
+        var razorCompletionList = CompletionTriggerAndCommitCharacters.IsValidTrigger(_razorCompletionListProvider.TriggerCharacters, completionContext)
+            ? await _razorCompletionListProvider.GetCompletionListAsync(
+                absoluteIndex,
+                completionContext,
+                documentContext,
+                clientCapabilities,
+                existingItems,
+                razorCompletionOptions,
+                cancellationToken).ConfigureAwait(false)
             : null;
 
         var finalCompletionList = CompletionListMerger.Merge(razorCompletionList, delegatedCompletionList);
 
         return finalCompletionList;
     }
-
-    private bool IsValidTrigger(ImmutableHashSet<string> triggerCharacters, VSInternalCompletionContext completionContext)
-        => completionContext.TriggerKind != CompletionTriggerKind.TriggerCharacter ||
-           completionContext.TriggerCharacter is null ||
-           triggerCharacters.Contains(completionContext.TriggerCharacter);
 }

@@ -20,7 +20,7 @@ public class ProxyAccessorTest(ITestOutputHelper testOutput) : ToolingTestBase(t
 
         var collaborationSessionMock = new StrictMock<CollaborationSession>();
         collaborationSessionMock
-            .Setup(x => x.GetRemoteServiceAsync<IProjectHierarchyProxy>(typeof(IProjectHierarchyProxy).Name, CancellationToken.None))
+            .Setup(x => x.GetRemoteServiceAsync<IProjectHierarchyProxy>(typeof(IProjectHierarchyProxy).Name, It.IsAny<CancellationToken>()))
             .ReturnsAsync(projectHierarchyProxy);
 
         var liveShareSessionAccessorMock = new StrictMock<ILiveShareSessionAccessor>();

@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -12,21 +11,12 @@ using StreamJsonRpc;
 namespace Microsoft.VisualStudio.Razor.Telemetry;
 
 [Export(typeof(ITelemetryReporter))]
-internal class VSTelemetryReporter : TelemetryReporter
+[method:ImportingConstructor]
+internal class VSTelemetryReporter(ILoggerFactory loggerFactory) : TelemetryReporter(TelemetryService.DefaultSession)
 {
-    private readonly ILogger _logger;
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<VSTelemetryReporter>();
 
-    [ImportingConstructor]
-    public VSTelemetryReporter(ILoggerFactory loggerFactory)
-        // Get the DefaultSession for telemetry. This is set by VS with
-        // TelemetryService.SetDefaultSession and provides the correct
-        // appinsights keys etc
-        : base(ImmutableArray.Create(TelemetryService.DefaultSession))
-    {
-        _logger = loggerFactory.GetOrCreateLogger<VSTelemetryReporter>();
-    }
-
-    protected override bool HandleException(Exception exception, string? message, params object?[] @params)
+    protected override bool HandleException(Exception exception, string? message, params ReadOnlySpan<object?> @params)
     {
         if (exception is RemoteInvocationException remoteInvocationException)
         {
@@ -39,7 +29,7 @@ internal class VSTelemetryReporter : TelemetryReporter
         return false;
     }
 
-    private bool ReportRemoteInvocationException(RemoteInvocationException remoteInvocationException, object?[] @params)
+    private bool ReportRemoteInvocationException(RemoteInvocationException remoteInvocationException, ReadOnlySpan<object?> @params)
     {
         if (remoteInvocationException.InnerException is Exception innerException)
         {

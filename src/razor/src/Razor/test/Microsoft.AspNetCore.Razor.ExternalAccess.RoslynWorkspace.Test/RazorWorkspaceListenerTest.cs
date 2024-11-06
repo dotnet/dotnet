@@ -238,7 +238,7 @@ public class RazorWorkspaceListenerTest(ITestOutputHelper testOutputHelper) : To
         var action = readerStream.ReadProjectInfoAction();
         Assert.Equal(ProjectInfoAction.Update, action);
 
-        var deserializedProjectInfo = await readerStream.ReadProjectInfoAsync(CancellationToken.None);
+        var deserializedProjectInfo = await readerStream.ReadProjectInfoAsync(DisposalToken);
         Assert.NotNull(deserializedProjectInfo);
         Assert.Single(deserializedProjectInfo.Documents);
         Assert.Equal("TestProject", deserializedProjectInfo.DisplayName);
@@ -253,7 +253,7 @@ public class RazorWorkspaceListenerTest(ITestOutputHelper testOutputHelper) : To
         action = readerStream.ReadProjectInfoAction();
         Assert.Equal(ProjectInfoAction.Remove, action);
 
-        Assert.Equal(intermediateDirectory, await readerStream.ReadProjectInfoRemovalAsync(CancellationToken.None));
+        Assert.Equal(intermediateDirectory, await readerStream.ReadProjectInfoRemovalAsync(DisposalToken));
     }
 
     private class TestRazorWorkspaceListener : RazorWorkspaceListenerBase

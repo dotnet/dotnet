@@ -1188,11 +1188,6 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
     private static void WriteCSharpToken(CodeRenderingContext context, IntermediateToken token)
     {
-        if (string.IsNullOrWhiteSpace(token.Content))
-        {
-            return;
-        }
-
         if (token.Source?.FilePath == null)
         {
             context.CodeWriter.Write(token.Content);

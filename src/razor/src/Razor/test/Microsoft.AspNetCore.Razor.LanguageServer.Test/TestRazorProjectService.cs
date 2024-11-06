@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Utilities;
@@ -52,8 +53,8 @@ internal class TestRazorProjectService(
                 .Select(d => new DocumentSnapshotHandle(d, d, FileKinds.GetFileKindFromFilePath(d)))
                 .ToImmutableArray();
 
-            await this.UpdateProjectAsync(projectSnapshot.Key, projectSnapshot.Configuration, projectSnapshot.RootNamespace, projectSnapshot.DisplayName, projectSnapshot.ProjectWorkspaceState,
-                documents, cancellationToken).ConfigureAwait(false);
+            await ((IRazorProjectInfoListener)this).UpdatedAsync(new RazorProjectInfo(projectSnapshot.Key, projectSnapshot.FilePath, projectSnapshot.Configuration, projectSnapshot.RootNamespace, projectSnapshot.DisplayName, projectSnapshot.ProjectWorkspaceState,
+                documents), cancellationToken).ConfigureAwait(false);
         }
     }
 }

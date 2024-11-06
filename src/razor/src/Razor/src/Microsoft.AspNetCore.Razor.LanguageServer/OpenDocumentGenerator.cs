@@ -75,7 +75,7 @@ internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
                 return;
             }
 
-            var codeDocument = await document.GetGeneratedOutputAsync().ConfigureAwait(false);
+            var codeDocument = await document.GetGeneratedOutputAsync(token).ConfigureAwait(false);
 
             foreach (var listener in _listeners)
             {
@@ -175,7 +175,7 @@ internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
                 return;
             }
 
-            _logger.LogDebug($"Enqueuing generation of {document.FilePath} in {document.Project.Key.Id}");
+            _logger.LogDebug($"Enqueuing generation of {document.FilePath} in {document.Project.Key.Id} at version {document.Version}");
 
             _workQueue.AddWork(document);
         }

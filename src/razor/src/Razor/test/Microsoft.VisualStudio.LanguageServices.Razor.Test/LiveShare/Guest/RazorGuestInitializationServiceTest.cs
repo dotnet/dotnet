@@ -29,7 +29,7 @@ public class RazorGuestInitializationServiceTest(ITestOutputHelper testOutput) :
             .Verifiable();
 
         // Act
-        await service.CreateServiceAsync(session.Object, default);
+        await service.CreateServiceAsync(session.Object, DisposalToken);
 
         // Assert
         Assert.NotNull(serviceAccessor.ViewImportsCopyTask);

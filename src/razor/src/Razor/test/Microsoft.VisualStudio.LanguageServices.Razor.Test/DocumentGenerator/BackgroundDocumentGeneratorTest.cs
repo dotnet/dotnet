@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
@@ -32,17 +33,8 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
 {
     private static readonly HostDocument[] s_documents = [TestProjectData.SomeProjectFile1, TestProjectData.AnotherProjectFile1];
 
-    private static readonly HostProject s_hostProject1 = new(
-        TestProjectData.SomeProject.FilePath,
-        TestProjectData.SomeProject.IntermediateOutputPath,
-        FallbackRazorConfiguration.MVC_1_0,
-        TestProjectData.SomeProject.RootNamespace);
-
-    private static readonly HostProject s_hostProject2 = new(
-        TestProjectData.AnotherProject.FilePath,
-        TestProjectData.AnotherProject.IntermediateOutputPath,
-        FallbackRazorConfiguration.MVC_1_0,
-        TestProjectData.AnotherProject.RootNamespace);
+    private static readonly HostProject s_hostProject1 = TestProjectData.SomeProject with { Configuration = FallbackRazorConfiguration.MVC_1_0 };
+    private static readonly HostProject s_hostProject2 = TestProjectData.AnotherProject with { Configuration = FallbackRazorConfiguration.MVC_1_0 };
 
     private readonly TestDynamicFileInfoProvider _dynamicFileInfoProvider = new();
 
@@ -195,8 +187,8 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         {
             updater.ProjectAdded(s_hostProject1);
             updater.ProjectAdded(s_hostProject2);
-            updater.DocumentAdded(s_hostProject1.Key, s_documents[0], null!);
-            updater.DocumentAdded(s_hostProject1.Key, s_documents[1], null!);
+            updater.DocumentAdded(s_hostProject1.Key, s_documents[0], s_documents[0].CreateEmptyTextLoader());
+            updater.DocumentAdded(s_hostProject1.Key, s_documents[1], s_documents[1].CreateEmptyTextLoader());
         });
 
         var project = projectManager.GetLoadedProject(s_hostProject1.Key);
@@ -234,8 +226,8 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         {
             updater.ProjectAdded(hostProject1);
             updater.ProjectAdded(hostProject2);
-            updater.DocumentAdded(hostProject1.Key, hostDocument1, null!);
-            updater.DocumentAdded(hostProject1.Key, hostDocument2, null!);
+            updater.DocumentAdded(hostProject1.Key, hostDocument1, hostDocument1.CreateEmptyTextLoader());
+            updater.DocumentAdded(hostProject1.Key, hostDocument2, hostDocument2.CreateEmptyTextLoader());
         });
 
         var project = projectManager.GetLoadedProject(hostProject1.Key);
@@ -283,7 +275,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             updater.ProjectAdded(s_hostProject1);
             for (var i = 0; i < documents.Length; i++)
             {
-                updater.DocumentAdded(s_hostProject1.Key, documents[i], null!);
+                updater.DocumentAdded(s_hostProject1.Key, documents[i], documents[i].CreateEmptyTextLoader());
             }
         });
 
@@ -327,8 +319,8 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         await projectManager.UpdateAsync(updater =>
         {
             updater.ProjectAdded(s_hostProject1);
-            updater.DocumentAdded(s_hostProject1.Key, TestProjectData.SomeProjectComponentFile1, null!);
-            updater.DocumentAdded(s_hostProject1.Key, TestProjectData.SomeProjectImportFile, null!);
+            updater.DocumentAdded(s_hostProject1.Key, TestProjectData.SomeProjectComponentFile1, TestProjectData.SomeProjectComponentFile1.CreateEmptyTextLoader());
+            updater.DocumentAdded(s_hostProject1.Key, TestProjectData.SomeProjectImportFile, TestProjectData.SomeProjectImportFile.CreateEmptyTextLoader());
         });
 
         using var generator = new TestBackgroundDocumentGenerator(projectManager, _dynamicFileInfoProvider, LoggerFactory)
@@ -416,12 +408,12 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             base.Enqueue(project, document);
         }
 
-        protected override Task ProcessDocumentAsync(IProjectSnapshot project, IDocumentSnapshot document)
+        protected override Task ProcessDocumentAsync(IProjectSnapshot project, IDocumentSnapshot document, CancellationToken cancellationToken)
         {
             var key = GetKey(project, document);
             PendingWork.Remove(key);
 
-            var task = base.ProcessDocumentAsync(project, document);
+            var task = base.ProcessDocumentAsync(project, document, cancellationToken);
 
             CompletedWork.Add(key);
 

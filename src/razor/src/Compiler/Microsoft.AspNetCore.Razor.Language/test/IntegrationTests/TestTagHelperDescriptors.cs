@@ -215,7 +215,7 @@ public class TestTagHelperDescriptors
                             .Name("catch-all")
                             .Metadata(PropertyName("CatchAll"))
                             .AsEnum()
-                            .TypeName($"{typeof(TestTagHelperDescriptors).FullName}.{nameof(MyEnum)}"),
+                            .TypeName("Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestTagHelperDescriptors.MyEnum"),
                     }),
                 CreateTagHelperDescriptor(
                     tagName: "input",
@@ -227,7 +227,7 @@ public class TestTagHelperDescriptors
                             .Name("value")
                             .Metadata(PropertyName("Value"))
                             .AsEnum()
-                            .TypeName($"{typeof(TestTagHelperDescriptors).FullName}.{nameof(MyEnum)}"),
+                            .TypeName("Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestTagHelperDescriptors.MyEnum"),
                     }),
             };
         }
@@ -644,9 +644,17 @@ public class TestTagHelperDescriptors
         public string BoundProperty { get; set; }
     }
 
-    public enum MyEnum
-    {
-        MyValue,
-        MySecondValue
-    }
+    public static readonly string Code = """
+        namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests
+        {
+            public class TestTagHelperDescriptors
+            {
+                public enum MyEnum
+                {
+                    MyValue,
+                    MySecondValue
+                }
+            }
+        }
+        """;
 }

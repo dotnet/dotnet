@@ -1,13 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
@@ -16,7 +12,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
-internal static class IProjectSnapshotManagerExtensions
+internal static partial class IProjectSnapshotManagerExtensions
 {
     public static IProjectSnapshot GetMiscellaneousProject(this IProjectSnapshotManager projectManager)
     {
@@ -61,7 +57,7 @@ internal static class IProjectSnapshotManagerExtensions
 
         foreach (var project in potentialProjects)
         {
-            if (project.GetDocument(documentFilePath) is not null)
+            if (project.ContainsDocument(documentFilePath))
             {
                 builder.Add(project);
             }
@@ -69,7 +65,7 @@ internal static class IProjectSnapshotManagerExtensions
 
         var normalizedDocumentPath = FilePathNormalizer.Normalize(documentFilePath);
         var miscProject = projectManager.GetMiscellaneousProject();
-        if (miscProject.GetDocument(normalizedDocumentPath) is not null)
+        if (miscProject.ContainsDocument(normalizedDocumentPath))
         {
             builder.Add(miscProject);
         }
@@ -91,10 +87,9 @@ internal static class IProjectSnapshotManagerExtensions
 
         foreach (var project in potentialProjects)
         {
-            if (project.GetDocument(normalizedDocumentPath) is { } projectDocument)
+            if (project.TryGetDocument(normalizedDocumentPath, out document))
             {
                 logger.LogTrace($"Found {documentFilePath} in {project.FilePath}");
-                document = projectDocument;
                 return true;
             }
         }
@@ -102,10 +97,9 @@ internal static class IProjectSnapshotManagerExtensions
         logger.LogTrace($"Looking for {documentFilePath} in miscellaneous project.");
         var miscellaneousProject = projectManager.GetMiscellaneousProject();
 
-        if (miscellaneousProject.GetDocument(normalizedDocumentPath) is { } miscDocument)
+        if (miscellaneousProject.TryGetDocument(normalizedDocumentPath, out document))
         {
             logger.LogTrace($"Found {documentFilePath} in miscellaneous project.");
-            document = miscDocument;
             return true;
         }
 
@@ -114,4 +108,7 @@ internal static class IProjectSnapshotManagerExtensions
         document = null;
         return false;
     }
+
+    public static ISolutionQueryOperations GetQueryOperations(this IProjectSnapshotManager projectManager)
+        => new SolutionQueryOperations(projectManager);
 }

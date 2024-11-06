@@ -48,12 +48,12 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
     [UIFact]
     public async Task DynamicFileAdded_KnownProject_DoesNothing()
     {
-        var hostProject = new HostProject(
-            SomeProject.FilePath,
-            SomeProject.IntermediateOutputPath,
-            RazorConfiguration.Default,
-            "RootNamespace",
-            "DisplayName");
+        var hostProject = SomeProject with
+        {
+            Configuration = RazorConfiguration.Default,
+            RootNamespace = "RootNamespace",
+            DisplayName = "DisplayName"
+        };
 
         await _projectManager.UpdateAsync(updater =>
         {
@@ -134,12 +134,12 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         var project = Assert.Single(_projectManager.GetProjects());
         Assert.IsType<FallbackHostProject>(((ProjectSnapshot)project).HostProject);
 
-        var hostProject = new HostProject(
-            SomeProject.FilePath,
-            SomeProject.IntermediateOutputPath,
-            RazorConfiguration.Default,
-            "RootNamespace",
-            "DisplayName");
+        var hostProject = SomeProject with
+        {
+            Configuration = RazorConfiguration.Default,
+            RootNamespace = "RootNamespace",
+            DisplayName = "DisplayName"
+        };
 
         await _projectManager.UpdateAsync(updater =>
         {

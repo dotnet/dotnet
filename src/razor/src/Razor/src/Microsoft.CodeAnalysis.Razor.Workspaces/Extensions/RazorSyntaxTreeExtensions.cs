@@ -17,6 +17,9 @@ internal static class RazorSyntaxTreeExtensions
     public static ImmutableArray<RazorDirectiveSyntax> GetCodeBlockDirectives(this RazorSyntaxTree syntaxTree)
         => GetDirectives(syntaxTree, static d => d.DirectiveDescriptor?.Kind == DirectiveKind.CodeBlock);
 
+    public static ImmutableArray<RazorDirectiveSyntax> GetUsingDirectives(this RazorSyntaxTree syntaxTree)
+        => GetDirectives(syntaxTree, static d => d.IsUsingDirective(out var _));
+
     private static ImmutableArray<RazorDirectiveSyntax> GetDirectives(RazorSyntaxTree syntaxTree, Func<RazorDirectiveSyntax, bool> predicate)
     {
         using var builder = new PooledArrayBuilder<RazorDirectiveSyntax>();

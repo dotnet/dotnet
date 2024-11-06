@@ -76,7 +76,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
             if (previouslyPublishedData.HostDocumentVersion > hostDocumentVersion)
             {
                 // We've already published a newer version of this document. No-op.
-                _logger.LogWarning($"Skipping publish of C# for {filePath} because we've already published version {previouslyPublishedData.HostDocumentVersion}, and this request is for {hostDocumentVersion}.");
+                _logger.LogWarning($"Skipping publish of C# for {documentKey.ProjectKey}/{filePath} because we've already published version {previouslyPublishedData.HostDocumentVersion}, and this request is for {hostDocumentVersion} (and {projectKey}).");
                 return;
             }
 
@@ -161,6 +161,27 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
 
         switch (args.Kind)
         {
+            case ProjectChangeKind.DocumentRemoved:
+                {
+                    if (!_options.IncludeProjectKeyInGeneratedFilePath)
+                    {
+                        break;
+                    }
+
+                    // When a C# document is removed we remove it from the publishing, because it could come back with the same name
+                    var key = new DocumentKey(args.ProjectKey, args.DocumentFilePath.AssumeNotNull());
+
+                    lock (_publishedCSharpData)
+                    {
+                        if (_publishedCSharpData.Remove(key))
+                        {
+                            _logger.LogDebug($"Removing previous C# publish data for {key.ProjectKey}/{key.DocumentFilePath}");
+                        }
+                    }
+
+                    break;
+                }
+
             case ProjectChangeKind.DocumentChanged:
                 var documentFilePath = args.DocumentFilePath.AssumeNotNull();
 
@@ -180,27 +201,17 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
 
                     lock (_publishedCSharpData)
                     {
-                        if (_publishedCSharpData.ContainsKey(documentKey))
+                        if (_publishedCSharpData.Remove(documentKey))
                         {
-                            var removed = _publishedCSharpData.Remove(documentKey);
-                            if (!removed)
-                            {
-                                _logger.LogError($"Published data should be protected by the project snapshot manager's thread and should never fail to remove.");
-                                Debug.Fail("Published data should be protected by the project snapshot manager's thread and should never fail to remove.");
-                            }
+                            _logger.LogDebug($"Removing previous C# publish data for {documentKey.ProjectKey}/{documentKey.DocumentFilePath}");
                         }
                     }
 
                     lock (_publishedHtmlData)
                     {
-                        if (_publishedHtmlData.ContainsKey(documentFilePath))
+                        if (_publishedHtmlData.Remove(documentFilePath))
                         {
-                            var removed = _publishedHtmlData.Remove(documentFilePath);
-                            if (!removed)
-                            {
-                                _logger.LogError($"Published data should be protected by the project snapshot manager's thread and should never fail to remove.");
-                                Debug.Fail("Published data should be protected by the project snapshot manager's thread and should never fail to remove.");
-                            }
+                            _logger.LogDebug($"Removing previous Html publish data for {documentKey.ProjectKey}/{documentKey.DocumentFilePath}");
                         }
                     }
                 }
@@ -231,7 +242,10 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
 
                         foreach (var key in keysToRemove)
                         {
-                            _publishedCSharpData.Remove(key);
+                            if (_publishedCSharpData.Remove(key))
+                            {
+                                _logger.LogDebug($"Removing previous C# publish data for {key.ProjectKey}/{key.DocumentFilePath}");
+                            }
                         }
                     }
 

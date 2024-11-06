@@ -8,7 +8,7 @@
             CSharpStatementLiteral - [1..36)::35 - [foreach(var c in db.Categories) {LF] - Gen<Stmt>
                 Keyword;[foreach];
                 LeftParenthesis;[(];
-                Identifier;[var];
+                Keyword;[var];
                 Whitespace;[ ];
                 Identifier;[c];
                 Whitespace;[ ];
@@ -72,7 +72,7 @@
                             CSharpStatementLiteral - [132..164)::32 - [foreach(var p in c.Products) {LF] - Gen<Stmt>
                                 Keyword;[foreach];
                                 LeftParenthesis;[(];
-                                Identifier;[var];
+                                Keyword;[var];
                                 Whitespace;[ ];
                                 Identifier;[p];
                                 Whitespace;[ ];

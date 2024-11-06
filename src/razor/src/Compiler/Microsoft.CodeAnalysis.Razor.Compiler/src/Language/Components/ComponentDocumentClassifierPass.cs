@@ -99,7 +99,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
         {
             // We don't want component imports to be considered as real component.
             // But we still want to generate code for it so we can get diagnostics.
-            @class.BaseType = new BaseTypeWithModel(typeof(object).FullName);
+            @class.BaseType = new BaseTypeWithModel("object");
 
             method.ReturnType = "void";
             method.MethodName = "Execute";

@@ -2,8 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.IO;
-using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common;
@@ -18,7 +18,7 @@ internal static class TestProjectData
 {
     static TestProjectData()
     {
-        var baseDirectory = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "c:\\users\\example\\src" : "/home/example";
+        var baseDirectory = PlatformInformation.IsWindows ? @"c:\users\example\src" : "/home/example";
         SomeProjectPath = Path.Combine(baseDirectory, "SomeProject");
         var someProjectObjPath = Path.Combine(SomeProjectPath, "obj");
 

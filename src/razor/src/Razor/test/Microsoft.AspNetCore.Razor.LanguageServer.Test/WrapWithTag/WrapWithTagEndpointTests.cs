@@ -3,13 +3,11 @@
 
 using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
-using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -302,7 +300,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
         };
 
         var htmlSourceText = await context.GetHtmlSourceTextAsync(DisposalToken);
-        var edits = HtmlFormatter.FixHtmlTextEdits(htmlSourceText, computedEdits);
+        var edits = FormattingUtilities.FixHtmlTextEdits(htmlSourceText, computedEdits);
         Assert.Same(computedEdits, edits);
 
         var finalText = inputSourceText.WithChanges(edits.Select(inputSourceText.GetTextChange));
@@ -342,7 +340,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
         };
 
         var htmlSourceText = await context.GetHtmlSourceTextAsync(DisposalToken);
-        var edits = HtmlFormatter.FixHtmlTextEdits(htmlSourceText, computedEdits);
+        var edits = FormattingUtilities.FixHtmlTextEdits(htmlSourceText, computedEdits);
         Assert.NotSame(computedEdits, edits);
 
         var finalText = inputSourceText.WithChanges(edits.Select(inputSourceText.GetTextChange));
@@ -382,7 +380,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
         };
 
         var htmlSourceText = await context.GetHtmlSourceTextAsync(DisposalToken);
-        var edits = HtmlFormatter.FixHtmlTextEdits(htmlSourceText, computedEdits);
+        var edits = FormattingUtilities.FixHtmlTextEdits(htmlSourceText, computedEdits);
         Assert.NotSame(computedEdits, edits);
 
         var finalText = inputSourceText.WithChanges(edits.Select(inputSourceText.GetTextChange));

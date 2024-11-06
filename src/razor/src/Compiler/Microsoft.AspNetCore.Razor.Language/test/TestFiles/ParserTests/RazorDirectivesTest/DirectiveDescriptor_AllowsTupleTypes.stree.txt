@@ -150,7 +150,7 @@
                             RightParenthesis;[)];
                             Comma;[,];
                             Whitespace;[ ];
-                            Identifier;[global];
+                            Keyword;[global];
                             DoubleColon;[::];
                             Identifier;[System];
                             Dot;[.];

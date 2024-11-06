@@ -12,6 +12,8 @@ For a new copy of the project, run:
 git clone https://github.com/dotnet/razor.git
 ```
 
+> On a windows based machine, you might to allow for [long paths](https://stackoverflow.com/questions/22575662/filename-too-long-in-git-for-windows): `git config --global core.longpaths true` in order to clone/build the repo, successfully.
+
 ## Install pre-requisites
 
 ### Windows
@@ -53,7 +55,11 @@ Before opening the `Razor.sln` file in Visual Studio or VS Code, you need to per
    > You can do so by running the `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` command
    > in PowerShell. For more information on execution policies, you can read the [execution policy docs](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy).
 
-2. Use the `.\startvs.cmd Razor.sln` script to open Visual Studio with the Razor solution. This script first sets the required
+2. Use the
+   ```ps1
+   .\startvs.cmd
+   ```
+   script to open Visual Studio with the Razor solution. This script first sets the required
    environment variables. In addition, the following switches can be specified:
 
    - `-chooseVS`: When specified, displays a list of the installed Visual Studio instances and prompts to
@@ -63,6 +69,12 @@ Before opening the `Razor.sln` file in Visual Studio or VS Code, you need to per
      of Razor to be deployed. This can be useful if the latest Razor bits depend on a breaking change in
      Roslyn that isn't available in the version of Visual Studio being targeted. If you encounter errors
      when debugging the Razor bits that you've built and deployed, setting this switch _might_ fix them.
+    > :bulb: Windows tip: if you encounter errors pointing to `path-too-long` errors, like `The fully qualified file name must be less than 260 characters.`, consider shortening your local path with `subst`, where `R` is a free drive-letter, e.g.
+    >> ```ps1
+    >> $dir = pwd
+    >> subst R: $dir
+    >> cd R:\
+   >> ```
 
 3. Set `Microsoft.VisualStudio.RazorExtension` as the startup project.
 

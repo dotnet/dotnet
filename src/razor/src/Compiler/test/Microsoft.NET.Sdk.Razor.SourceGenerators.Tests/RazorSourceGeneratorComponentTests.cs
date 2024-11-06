@@ -13,6 +13,91 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators;
 
 public sealed class RazorSourceGeneratorComponentTests : RazorSourceGeneratorTestsBase
 {
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10991")]
+    public async Task ImportsRazor()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Folder1/_Imports.razor"] = """
+                @using MyApp.MyNamespace.AndAnother
+                """,
+            ["Folder1/Component1.razor"] = """
+                @{ var c = new Class1(); }
+                """,
+            ["Folder2/Component2.razor"] = """
+                @{ var c = new Class1(); }
+                """,
+        }, new()
+        {
+            ["Class1.cs"] = """
+                namespace MyApp.MyNamespace.AndAnother;
+
+                public class Class1 { }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver,
+            // Folder2/Component2.razor(1,16): error CS0246: The type or namespace name 'Class1' could not be found (are you missing a using directive or an assembly reference?)
+            //  var c = new Class1(); 
+            Diagnostic(ErrorCode.ERR_SingleTypeNameNotFound, "Class1").WithArguments("Class1").WithLocation(1, 16));
+
+        // Assert
+        result.Diagnostics.Verify();
+        Assert.Equal(3, result.GeneratedSources.Length);
+        result.VerifyOutputsMatchBaseline();
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/10991")]
+    public async Task ImportsRazor_WithMarkup()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["_Imports.razor"] = """
+                @using System.Net.Http
+                <p>test</p>
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver);
+
+        // Assert
+        result.Diagnostics.Verify(
+            // _Imports.razor(2,1): error RZ10003: Markup, code and block directives are not valid in component imports.
+            Diagnostic("RZ10003").WithLocation(2, 1));
+        Assert.Single(result.GeneratedSources);
+        result.VerifyOutputsMatchBaseline();
+    }
+
+    [Fact]
+    public async Task ImportsRazor_SystemInNamespace()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["System/_Imports.razor"] = """
+                @using global::System.Net.Http
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver);
+
+        // Assert
+        result.Diagnostics.Verify();
+        Assert.Single(result.GeneratedSources);
+        result.VerifyOutputsMatchBaseline();
+    }
+
     [Fact, WorkItem("https://github.com/dotnet/razor/issues/8718")]
     public async Task PartialClass()
     {

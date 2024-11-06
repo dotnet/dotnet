@@ -8,6 +8,7 @@ using System.Text;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -32,7 +33,7 @@ internal class SyntaxTreeVerifier
             var sourceString = builder.ToString();
 
             // Make sure the syntax tree contains all of the text in the document.
-            Assert.Equal(sourceString, syntaxTreeString);
+            AssertEx.Equal(sourceString, syntaxTreeString);
         }
 
         // Verify that NextToken/PreviousToken/FirstToken/LastToken work correctly

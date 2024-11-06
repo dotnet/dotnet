@@ -62,7 +62,10 @@ internal sealed class RemoteGoToDefinitionService(in ServiceArgs args) : RazorDo
         if (positionInfo.LanguageKind is RazorLanguageKind.Html or RazorLanguageKind.Razor)
         {
             // First, see if this is a Razor component. We ignore attributes here, because they're better served by the C# handler.
-            var componentLocation = await _componentDefinitionService.GetDefinitionAsync(context.Snapshot, positionInfo, ignoreAttributes: true, cancellationToken).ConfigureAwait(false);
+            var componentLocation = await _componentDefinitionService
+                .GetDefinitionAsync(context.Snapshot, positionInfo, context.GetSolutionQueryOperations(), ignoreAttributes: true, cancellationToken)
+                .ConfigureAwait(false);
+
             if (componentLocation is not null)
             {
                 // Convert from VS LSP Location to Roslyn. This can be removed when Razor moves fully onto Roslyn's LSP types.
@@ -80,7 +83,9 @@ internal sealed class RemoteGoToDefinitionService(in ServiceArgs args) : RazorDo
         }
 
         // Finally, call into C#.
-        var generatedDocument = await context.Snapshot.GetGeneratedDocumentAsync().ConfigureAwait(false);
+        var generatedDocument = await context.Snapshot
+            .GetGeneratedDocumentAsync(cancellationToken)
+            .ConfigureAwait(false);
 
         var locations = await ExternalHandlers.GoToDefinition
             .GetDefinitionsAsync(

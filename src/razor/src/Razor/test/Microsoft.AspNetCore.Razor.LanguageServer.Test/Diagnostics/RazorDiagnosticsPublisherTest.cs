@@ -93,9 +93,8 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
     {
         // Arrange
         Assert.NotNull(_openedDocument.FilePath);
-        var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath);
         var codeDocument = CreateCodeDocument(s_singleRazorDiagnostic);
-        processedOpenDocument.With(codeDocument);
+        var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath, codeDocument);
 
         var clientConnectionMock = new StrictMock<IClientConnection>();
         clientConnectionMock
@@ -163,9 +162,9 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
         };
 
         Assert.NotNull(_openedDocument.FilePath);
-        var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath);
         var codeDocument = CreateCodeDocument(shouldContainRazorDiagnostic ? s_singleRazorDiagnostic : []);
-        processedOpenDocument.With(codeDocument);
+        var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath, codeDocument);
+        Assert.NotNull(processedOpenDocument.FilePath);
 
         var clientConnectionMock = new StrictMock<IClientConnection>();
         var requestResult = new FullDocumentDiagnosticReport();
@@ -239,9 +238,10 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
     {
         // Arrange
         Assert.NotNull(_openedDocument.FilePath);
-        var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath);
         var codeDocument = CreateCodeDocument(s_singleRazorDiagnostic);
-        processedOpenDocument.With(codeDocument);
+        var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath, codeDocument);
+        Assert.NotNull(processedOpenDocument.FilePath);
+
         var clientConnectionMock = new StrictMock<IClientConnection>();
         clientConnectionMock
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
@@ -296,9 +296,10 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
     {
         // Arrange
         Assert.NotNull(_openedDocument.FilePath);
-        var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath);
         var codeDocument = CreateCodeDocument([]);
-        processedOpenDocument.With(codeDocument);
+        var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath, codeDocument);
+        Assert.NotNull(processedOpenDocument.FilePath);
+
         var arranging = true;
         var clientConnectionMock = new StrictMock<IClientConnection>();
         clientConnectionMock
@@ -366,10 +367,11 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
                 Assert.Equal(_openedDocumentUri, @params.TextDocument.Uri);
             })
             .Returns(Task.FromResult(new SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?(new FullDocumentDiagnosticReport())));
+
         Assert.NotNull(_openedDocument.FilePath);
-        var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath);
         var codeDocument = CreateCodeDocument(s_singleRazorDiagnostic);
-        processedOpenDocument.With(codeDocument);
+        var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath, codeDocument);
+        Assert.NotNull(processedOpenDocument.FilePath);
 
         var documentContextFactory = new TestDocumentContextFactory(_openedDocument.FilePath, codeDocument);
         var filePathService = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
@@ -389,9 +391,10 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
     {
         // Arrange
         Assert.NotNull(_openedDocument.FilePath);
-        var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath);
         var codeDocument = CreateCodeDocument([]);
-        processedOpenDocument.With(codeDocument);
+        var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath, codeDocument);
+        Assert.NotNull(processedOpenDocument.FilePath);
+
         var clientConnectionMock = new StrictMock<IClientConnection>();
         var arranging = true;
 

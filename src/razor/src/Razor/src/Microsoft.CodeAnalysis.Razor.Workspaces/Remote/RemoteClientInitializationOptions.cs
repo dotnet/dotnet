@@ -1,28 +1,30 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.CodeAnalysis.Razor.Remote;
 
-[DataContract]
 internal struct RemoteClientInitializationOptions
 {
-    [DataMember(Order = 0)]
-    internal required bool UseRazorCohostServer;
+    [JsonPropertyName("useRazorCohostServer")]
+    public required bool UseRazorCohostServer { get; set; }
 
-    [DataMember(Order = 1)]
-    internal required bool UsePreciseSemanticTokenRanges;
+    [JsonPropertyName("usePreciseSemanticTokenRanges")]
+    public required bool UsePreciseSemanticTokenRanges { get; set; }
 
-    [DataMember(Order = 2)]
-    internal required string CSharpVirtualDocumentSuffix;
+    [JsonPropertyName("csharpVirtualDocumentSuffix")]
+    public required string CSharpVirtualDocumentSuffix { get; set; }
 
-    [DataMember(Order = 3)]
-    internal required string HtmlVirtualDocumentSuffix;
+    [JsonPropertyName("htmlVirtualDocumentSuffix")]
+    public required string HtmlVirtualDocumentSuffix { get; set; }
 
-    [DataMember(Order = 4)]
-    internal required bool IncludeProjectKeyInGeneratedFilePath;
+    [JsonPropertyName("includeProjectKeyInGeneratedFilePath")]
+    public required bool IncludeProjectKeyInGeneratedFilePath { get; set; }
 
-    [DataMember(Order = 5)]
-    internal required bool ReturnCodeActionAndRenamePathsWithPrefixedSlash;
+    [JsonPropertyName("returnCodeActionAndRenamePathsWithPrefixedSlash")]
+    public required bool ReturnCodeActionAndRenamePathsWithPrefixedSlash { get; set; }
+
+    [JsonPropertyName("forceRuntimeCodeGeneration")]
+    public required bool ForceRuntimeCodeGeneration { get; set; }
 }

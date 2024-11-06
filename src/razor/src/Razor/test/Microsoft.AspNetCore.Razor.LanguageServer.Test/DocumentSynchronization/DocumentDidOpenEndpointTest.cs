@@ -45,7 +45,7 @@ public class DocumentDidOpenEndpointTest(ITestOutputHelper testOutput) : Languag
         var requestContext = CreateRazorRequestContext(documentContext: null);
 
         // Act
-        await endpoint.HandleNotificationAsync(request, requestContext, default);
+        await endpoint.HandleNotificationAsync(request, requestContext, DisposalToken);
 
         // Assert
         projectService.VerifyAll();

@@ -73,8 +73,8 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
 
                 """,
             toolTipMap: new Dictionary<string, string>
-                {
-                },
+            {
+            },
             output: """
 
                 <div>
@@ -84,6 +84,42 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
                 </div>
 
                 """);
+
+    [Theory]
+    [InlineData(0, 0, 0, 20)]
+    [InlineData(0, 0, 2, 0)]
+    [InlineData(2, 0, 4, 0)]
+    public async Task InlayHints_InvalidRange(int startLine, int starChar, int endLine, int endChar)
+    {
+        var input = """
+            <div></div>
+            """;
+        var razorFilePath = "C:/path/to/file.razor";
+        var codeDocument = CreateCodeDocument(input, filePath: razorFilePath);
+
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
+
+        var service = new InlayHintService(DocumentMappingService);
+
+        var endpoint = new InlayHintEndpoint(service, languageServer);
+
+        var request = new InlayHintParams()
+        {
+            TextDocument = new VSTextDocumentIdentifier
+            {
+                Uri = new Uri(razorFilePath)
+            },
+            Range = VsLspFactory.CreateRange(startLine, starChar, endLine, endChar)
+        };
+        Assert.True(DocumentContextFactory.TryCreate(request.TextDocument, out var documentContext));
+        var requestContext = CreateRazorRequestContext(documentContext);
+
+        // Act
+        var hints = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
+
+        // Assert
+        Assert.Null(hints);
+    }
 
     private async Task VerifyInlayHintsAsync(string input, Dictionary<string, string> toolTipMap, string output)
     {

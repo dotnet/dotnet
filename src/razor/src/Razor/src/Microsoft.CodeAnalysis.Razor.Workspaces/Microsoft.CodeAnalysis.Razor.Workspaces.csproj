@@ -7,18 +7,12 @@
     <IsShippingPackage>false</IsShippingPackage>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <IsPackable Condition="'$(OS)' != 'Windows_NT'">false</IsPackable>
-    <!--
-      The NonCapturingTimer package is a source package, and the source files in there don't conform to our header
-      poilcy, so we have to ignore that error code for this project.
-    -->
-    <NoWarn>$(NoWarn);IDE0073</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" />
-    <PackageReference Include="Microsoft.Extensions.NonCapturingTimer.Sources" PrivateAssets="all" />
     <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" />
     <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Extensions" />
     <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Internal" />

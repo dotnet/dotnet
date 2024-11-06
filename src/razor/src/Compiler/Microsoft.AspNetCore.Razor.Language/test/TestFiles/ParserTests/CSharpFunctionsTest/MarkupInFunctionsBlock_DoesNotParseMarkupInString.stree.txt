@@ -27,7 +27,7 @@
                                 Identifier;[message];
                                 RightParenthesis;[)];
                                 Whitespace;[ ];
-                                GreaterThanEqual;[=>];
+                                CSharpOperator;[=>];
                                 Whitespace;[ ];
                                 StringLiteral;["<h3>@message</h3>"];
                                 Semicolon;[;];

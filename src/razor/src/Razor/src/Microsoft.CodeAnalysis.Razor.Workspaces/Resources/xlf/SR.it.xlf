@@ -7,6 +7,16 @@
         <target state="translated">Il valore non può essere null o una stringa vuota.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Create_Component_FromTag_Title">
+        <source>Create component from tag</source>
+        <target state="translated">Crea componente da tag</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Blazor_directive_attributes">
+        <source>Blazor directive attributes</source>
+        <target state="new">Blazor directive attributes</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Diagnostics_after">
         <source>Diagnostics after:</source>
         <target state="translated">Diagnostica dopo:</target>
@@ -39,6 +49,16 @@
         <target state="translated">La modifica in {0} elimina contenuti diversi da spazi vuoti '{1}'.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ExtractTo_CodeBehind_Title">
+        <source>Extract block to code behind</source>
+        <target state="translated">Estrai il blocco in code-behind</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExtractTo_Component_Title">
+        <source>Extract element to new component</source>
+        <target state="translated">Estrarre elemento nel nuovo componente</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Format_operation_changed_diagnostics">
         <source>A format operation is being abandoned because it would introduce or remove one of more diagnostics.</source>
         <target state="translated">È in corso l'abbandono di un'operazione di formato perché comporterebbe l'introduzione o la rimozione di una o più operazioni di diagnostica.</target>
@@ -47,6 +67,16 @@
       <trans-unit id="Format_operation_changed_nonwhitespace">
         <source>A format operation is being abandoned because it would add or delete non-whitespace content.</source>
         <target state="translated">È in corso l'abbandono di un'operazione di formattazione perché aggiungerebbe o eliminerebbe contenuto diverso da spazi vuoti.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Generate_Async_Event_Handler_Title">
+        <source>Generate Async Event Handler '{0}'</source>
+        <target state="translated">Genera gestore dell'evento '{0}' asincrono</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Generate_Event_Handler_Title">
+        <source>Generate Event Handler '{0}'</source>
+        <target state="translated">Genera gestore dell'evento '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="Invalid_Offset">
@@ -59,6 +89,11 @@
         <target state="translated">I servizi di linguaggio Razor non sono configurati correttamente. Manca il servizio di linguaggio '{0}'.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Not_Available_In">
+        <source>Not available in</source>
+        <target state="translated">Non disponibili in</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PositionCharacter_Outside_Range">
         <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
         <target state="translated">È stata eseguita una query sul carattere '{0}' non compresa nell'intervallo {1} di '{2}'. Il documento potrebbe non essere aggiornato.</target>
@@ -67,6 +102,26 @@
       <trans-unit id="PositionLine_Outside_Range">
         <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
         <target state="translated">È stata eseguita una query sulla riga '{0}' non compresa nell'intervallo {1} di '{2}'. Il documento potrebbe non essere aggiornato.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Statement">
+        <source>statement</source>
+        <target state="new">statement</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TagHelper_Attribute_Glyph">
+        <source>Razor TagHelper Attribute Glyph</source>
+        <target state="translated">Glifo attributo TagHelper Razor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TagHelper_Element_Glyph">
+        <source>Razor TagHelper Element Glyph</source>
+        <target state="translated">Glifo elemento TagHelper Razor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReTrigger_Completions_Title">
+        <source>"Re-trigger completions..."</source>
+        <target state="new">"Re-trigger completions..."</target>
         <note />
       </trans-unit>
       <trans-unit id="Unknown_RazorMetaCode">

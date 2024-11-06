@@ -14,7 +14,7 @@
                     CSharpCodeBlock - [3..36)::33
                         CSharpStatementLiteral - [3..34)::31 - [ var validationMessage = new { ] - Gen<Stmt>
                             Whitespace;[ ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[validationMessage];
                             Whitespace;[ ];

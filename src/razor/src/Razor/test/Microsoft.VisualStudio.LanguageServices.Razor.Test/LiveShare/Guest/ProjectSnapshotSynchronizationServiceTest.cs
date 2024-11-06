@@ -66,7 +66,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         Assert.Equal("/guest/path/project.csproj", project.FilePath);
         Assert.Same(RazorConfiguration.Default, project.Configuration);
 
-        var tagHelpers = await project.GetTagHelpersAsync(CancellationToken.None);
+        var tagHelpers = await project.GetTagHelpersAsync(DisposalToken);
         Assert.Equal(_projectWorkspaceStateWithTagHelpers.TagHelpers.Length, tagHelpers.Length);
         for (var i = 0; i < _projectWorkspaceStateWithTagHelpers.TagHelpers.Length; i++)
         {
@@ -101,7 +101,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         Assert.Equal("/guest/path/project.csproj", project.FilePath);
         Assert.Same(RazorConfiguration.Default, project.Configuration);
 
-        var tagHelpers = await project.GetTagHelpersAsync(CancellationToken.None);
+        var tagHelpers = await project.GetTagHelpersAsync(DisposalToken);
         Assert.Equal(_projectWorkspaceStateWithTagHelpers.TagHelpers.Length, tagHelpers.Length);
         for (var i = 0; i < _projectWorkspaceStateWithTagHelpers.TagHelpers.Length; i++)
         {
@@ -183,7 +183,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         var project = Assert.Single(projects);
         Assert.Equal("/guest/path/project.csproj", project.FilePath);
         Assert.Same(newConfiguration, project.Configuration);
-        Assert.Empty(await project.GetTagHelpersAsync(CancellationToken.None));
+        Assert.Empty(await project.GetTagHelpersAsync(DisposalToken));
     }
 
     [UIFact]
@@ -228,7 +228,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         Assert.Equal("/guest/path/project.csproj", project.FilePath);
         Assert.Same(RazorConfiguration.Default, project.Configuration);
 
-        var tagHelpers = await project.GetTagHelpersAsync(CancellationToken.None);
+        var tagHelpers = await project.GetTagHelpersAsync(DisposalToken);
         Assert.Equal(_projectWorkspaceStateWithTagHelpers.TagHelpers.Length, tagHelpers.Length);
         for (var i = 0; i < _projectWorkspaceStateWithTagHelpers.TagHelpers.Length; i++)
         {

@@ -36,7 +36,7 @@ public class DirectiveHtmlTokenizerTest : HtmlTokenizerTestBase
             SyntaxFactory.Token(SyntaxKind.OpenAngle, "<"));
     }
 
-    internal override object CreateTokenizer(SeekableTextReader source)
+    internal override object CreateTokenizer(SeekableTextReader source, object o)
     {
         return new DirectiveHtmlTokenizer(source);
     }

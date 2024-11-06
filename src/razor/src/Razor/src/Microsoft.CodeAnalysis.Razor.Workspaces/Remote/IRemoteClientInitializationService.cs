@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.CodeAnalysis.Razor.Remote;
 
-internal interface IRemoteClientInitializationService
+internal interface IRemoteClientInitializationService : IRemoteJsonService
 {
     ValueTask InitializeAsync(RemoteClientInitializationOptions initializationOptions, CancellationToken cancellationToken);
 

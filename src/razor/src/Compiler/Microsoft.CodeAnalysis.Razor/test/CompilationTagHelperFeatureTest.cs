@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Moq;
 using Xunit;
 
@@ -76,6 +77,7 @@ public class CompilationTagHelperFeatureTest
         var engine = RazorProjectEngine.Create(
             configure =>
             {
+                configure.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions.Default));
                 configure.Features.Add(new DefaultMetadataReferenceFeature());
                 configure.Features.Add(provider.Object);
                 configure.Features.Add(new CompilationTagHelperFeature());
@@ -111,6 +113,7 @@ public class CompilationTagHelperFeatureTest
         var engine = RazorProjectEngine.Create(
             configure =>
             {
+                configure.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions.Default));
                 configure.Features.Add(new DefaultMetadataReferenceFeature { References = references });
                 configure.Features.Add(provider.Object);
                 configure.Features.Add(new CompilationTagHelperFeature());

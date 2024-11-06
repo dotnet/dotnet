@@ -44,7 +44,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await languageEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await languageEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.NotNull(response);
@@ -70,7 +70,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await languageEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await languageEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.NotNull(response);
@@ -98,7 +98,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await languageEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await languageEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.NotNull(response);
@@ -129,7 +129,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await languageEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await languageEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.NotNull(response);

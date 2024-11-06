@@ -4,6 +4,8 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Xunit;
 using static Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeAssert;
 
@@ -83,6 +85,7 @@ public class SectionDirectivePassTest
         return RazorProjectEngine.Create(b =>
         {
             SectionDirective.Register(b);
+            b.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions.Default));
         });
     }
 

@@ -34,7 +34,15 @@ using Microsoft.AspNetCore.Components.Web
 #line hidden
 #nullable disable
             ));
-            string __formName = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>();
+            string __formName = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>(
+#nullable restore
+#line (2,56)-(2,57) "x:\dir\subdir\Test\TestComponent.cshtml"
+ 
+
+#line default
+#line hidden
+#nullable disable
+            );
             __builder.AddNamedEvent("onsubmit", __formName);
             __builder.CloseElement();
         }

@@ -23,7 +23,7 @@ namespace Microsoft.VisualStudio.Razor.Documents;
 public class EditorDocumentManagerListenerTest(ITestOutputHelper testOutput) : VisualStudioTestBase(testOutput)
 {
     private static readonly HostProject s_hostProject = new(
-        projectFilePath: "/path/to/project.csproj",
+        filePath: "/path/to/project.csproj",
         intermediateOutputPath: "/path/to/obj",
         RazorConfiguration.Default,
         rootNamespace: null);

@@ -40,7 +40,7 @@ public class ProjectKeyTests : WorkspaceTestBase
         Assert.False(!key1.Equals((object)key2));
     }
 
-    [OSSkipConditionTheory(new[] { "OSX", "Linux" })]
+    [ConditionalTheory(Is.Windows)]
     [InlineData(@"/c:/path/to/dir/", @"c:\path\to\dir")]
     [InlineData(@"/c:\path/to\dir/", @"c:\path\to\dir")]
     [InlineData(@"\path\to\dir\", @"path\to\dir")]

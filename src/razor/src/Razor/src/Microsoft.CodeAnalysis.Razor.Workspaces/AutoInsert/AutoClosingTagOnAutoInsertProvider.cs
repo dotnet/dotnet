@@ -207,27 +207,34 @@ internal class AutoClosingTagOnAutoInsertProvider : IOnAutoInsertProvider
                 endTag = parentElement.EndTag;
             }
 
-            var isNonTagStructure = potentialStartTagName is null;
-            if (isNonTagStructure)
-            {
-                // We don't want to look outside of our immediate parent for potential parents that we could auto-close because
-                // auto-closing one of those parents wouldn't actually auto-close them. For instance:
-                //
-                // <div>
-                //     @if (true)
-                //     {
-                //         <div>|</div>
-                //     }
-                //
-                // If we re-type the `>` in the inner-div we don't want to add another </div> because it would be out of scope
-                // for the parent <div>
-                return false;
-            }
+            // Note - potentialStartTagName can be null for cases when markup element is contained in markup
+            // or another non-tag structure.We skip non-tag structures and keep going up the tree.
+            // In cases where a tag is surrounded by a C# statement MarkupElementSyntax will be a child of a
+            // MarkupBlock, but might still be "stealing" the closing tag of an enclosing element with the
+            // same tag name. E.g.
+            //
+            // <div>
+            //     @if (true)
+            //     {
+            //         <div>|
+            //     }
+            // </div>
+            // 
+            // In this case, inner <div> will be parsed as a complete tag with closing </div>,
+            // and the outer <div> will be missing closing tag. We need to keep going up the tree
+            // until we find either tree root or a tag with the same name missing closing tag.
 
             if (string.Equals(potentialStartTagName, currentTagName, StringComparison.Ordinal))
             {
-                // Tag names equal, if the parent is missing an end-tag it could apply to that
-                // i.e. <div><div>|</div>
+                // If we find a parent tag with the same name that's missing closing tag, 
+                // it's likely the case above where inner "unbalanced" tag is "stealing" end tag from the
+                // parent "balanced" tag. So in reality the end tag for the inner tag is likely missing,
+                // thus we should insert it. E.g. in the example below
+                // <div>
+                //   <div>
+                // </div>
+                // the closing tag will be parsed as belonging to the inner <div> rather than outer, parent <div>
+                // and the outer dive will be unbalanced/missing end tag. 
                 if (endTag is null)
                 {
                     return true;
@@ -235,11 +242,15 @@ internal class AutoClosingTagOnAutoInsertProvider : IOnAutoInsertProvider
 
                 // Has an end-tag; however, it could be another level of parent which is OK lets keep going up
             }
-            else
-            {
-                // Different tag name, can't apply
-                return false;
-            }
+
+            // Don't stop if encountering a different tag name. When there is an unclosed inner tag
+            // (normal case for auto-insert) syntax tree is pretty strange and wrapping tag with different name
+            // should not stop us from going up the tree. E.g. continue going up for this case
+            // <div>
+            //     <blockquote>
+            //         <div>|
+            //     </blockquote>
+            // </div>
 
             node = node.Parent;
         } while (node is not null);

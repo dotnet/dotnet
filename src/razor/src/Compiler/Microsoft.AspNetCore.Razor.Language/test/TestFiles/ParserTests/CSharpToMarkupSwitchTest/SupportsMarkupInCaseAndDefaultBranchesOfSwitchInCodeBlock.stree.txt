@@ -22,7 +22,7 @@
                             Whitespace;[    ];
                             Keyword;[case];
                             Whitespace;[ ];
-                            IntegerLiteral;[0];
+                            NumericLiteral;[0];
                             Colon;[:];
                             NewLine;[LF];
                         MarkupBlock - [31..51)::20
@@ -50,7 +50,7 @@
                             Whitespace;[    ];
                             Keyword;[case];
                             Whitespace;[ ];
-                            IntegerLiteral;[1];
+                            NumericLiteral;[1];
                             Colon;[:];
                             NewLine;[LF];
                         MarkupBlock - [80..100)::20
@@ -78,7 +78,7 @@
                             Whitespace;[    ];
                             Keyword;[case];
                             Whitespace;[ ];
-                            IntegerLiteral;[2];
+                            NumericLiteral;[2];
                             Colon;[:];
                             NewLine;[LF];
                             Whitespace;[        ];

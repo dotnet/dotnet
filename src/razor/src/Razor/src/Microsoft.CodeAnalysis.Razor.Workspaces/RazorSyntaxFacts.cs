@@ -131,4 +131,7 @@ internal static class RazorSyntaxFacts
 
     public static bool IsAnyEndTag(RazorSyntaxNode n)
         => n.Kind is SyntaxKind.MarkupEndTag or SyntaxKind.MarkupTagHelperEndTag;
+
+    public static bool IsInCodeBlock(RazorSyntaxNode n)
+        => n.FirstAncestorOrSelf<RazorSyntaxNode>(n => n is RazorDirectiveSyntax { DirectiveDescriptor.Directive: "code" }) is not null;
 }

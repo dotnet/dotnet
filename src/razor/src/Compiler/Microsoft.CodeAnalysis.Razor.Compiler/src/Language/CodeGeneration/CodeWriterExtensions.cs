@@ -8,8 +8,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
@@ -661,7 +661,7 @@ internal static class CodeWriterExtensions
 
     private static SourceSpan RemapFilePathIfNecessary(SourceSpan sourceSpan, CodeRenderingContext context)
     {
-        if (context.Options.RemapLinePragmaPathsOnWindows && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (context.Options.RemapLinePragmaPathsOnWindows && PlatformInformation.IsWindows)
         {
             // ISSUE: https://github.com/dotnet/razor/issues/9108
             // The razor tooling normalizes paths to be forward slash based, regardless of OS.

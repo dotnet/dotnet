@@ -41,17 +41,17 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
     {
         EnsureServicesInitialized();
 
-        var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "ComponentApp");
+        var projectRoot = Path.Combine(Helpers.GetTestAppsPath(), "ComponentApp");
         ProjectFilePath = Path.Combine(projectRoot, "ComponentApp.csproj");
         PagesDirectory = Path.Combine(projectRoot, "Components", "Pages");
-        var filePath = Path.Combine(PagesDirectory, $"FormattingTest.razor");
+        var filePath = Path.Combine(PagesDirectory, "FormattingTest.razor");
         TargetPath = "/Components/Pages/FormattingTest.razor";
 
         var documentUri = new Uri(filePath);
         var documentSnapshot = await GetDocumentSnapshotAsync(ProjectFilePath, filePath, TargetPath);
         DocumentContext = new DocumentContext(documentUri, documentSnapshot, projectContext: null);
 
-        var text = await DocumentSnapshot.GetTextAsync().ConfigureAwait(false);
+        var text = await DocumentSnapshot.GetTextAsync(CancellationToken.None).ConfigureAwait(false);
         Range = VsLspFactory.CreateRange(
             start: (0, 0),
             end: (text.Lines.Count - 1, 0));

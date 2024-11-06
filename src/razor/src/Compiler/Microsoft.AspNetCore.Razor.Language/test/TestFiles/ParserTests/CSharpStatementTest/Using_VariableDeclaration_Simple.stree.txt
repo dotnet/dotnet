@@ -14,7 +14,7 @@
                             Whitespace;[ ];
                             Keyword;[using];
                             Whitespace;[ ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[foo];
                             Whitespace;[ ];

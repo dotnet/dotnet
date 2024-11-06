@@ -1,10 +1,10 @@
 {
   "properties": {
     /*
-    * Migration works by using the previous path that we stored in the VsUserSettingsRegister. This comes
-    * from the OptionsStorage strings related to the option with the form of "{collection}\{name}".
-    * Names much match exactly for the setting to work.
-    */
+     * Migration works by using the previous path that we stored in the VsUserSettingsRegister. This comes
+     * from the OptionsStorage strings related to the option with the form of "{collection}\{name}".
+     * Names much match exactly for the setting to work.
+     */
     "textEditor.razor.advanced.formatOnType": {
       "type": "boolean",
       "default": true,
@@ -15,6 +15,20 @@
           "input": {
             "store": "VsUserSettingsRegistry",
             "path": "Razor\\FormatOnType"
+          }
+        }
+      }
+    },
+    "textEditor.razor.advanced.formatOnPaste": {
+      "type": "boolean",
+      "default": true,
+      "title": "@Setting_FormattingOnPasteDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "description": "@Setting_FormattingOnPasteDescription;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "migration": {
+        "pass": {
+          "input": {
+            "store": "VsUserSettingsRegistry",
+            "path": "Razor\\FormatOnPaste"
           }
         }
       }
@@ -92,11 +106,7 @@
     "textEditor.razor.advanced.snippets": {
       "type": "string",
       "default": "all",
-      "enum": [
-        "all",
-        "custom",
-        "none"
-      ],
+      "enum": ["all", "custom", "none"],
       "enumItemLabels": [
         "@Setting_SnippetsAll;{13b72f58-279e-49e0-a56d-296be02f0805}",
         "@Setting_SnippetsCustom;{13b72f58-279e-49e0-a56d-296be02f0805}",

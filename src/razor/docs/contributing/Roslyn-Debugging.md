@@ -8,18 +8,24 @@ Sometimes it may be necessary to make changes in [`dotnet/roslyn`](https://githu
 2. `./Restore.cmd`
 3. Make the desired changes in `dotnet/roslyn`.
 4. `./Build.cmd -pack`. The `-pack` option causes the creation of NuGet packages.
-5. You should see the generated packages in the `<PATH_TO_ROSLYN_REPO>\artifacts\packages\Debug\Debug` directory. Take note of the package versions (ie. `Microsoft.CodeAnalysis.Workspaces.Common.3.8.0-dev.nupkg` => `3.8.0-dev`).
-6. Open `NuGet.config` and add the local package source `<add key="Roslyn Local Package source" value="<PATH_TO_ROSLYN_REPO>\artifacts\packages\Debug\Debug" />` and package source below under the `packageSourceMapping` tag:
+5. You should see the generated packages in the `<PATH_TO_ROSLYN_REPO>\artifacts\packages\Debug` directory. Take note of the package versions (ie. `Microsoft.CodeAnalysis.Workspaces.Common.3.8.0-dev.nupkg` => `3.8.0-dev`).
+6. In the Razor repo, open `NuGet.config` and add two local package sources:
+    * `<add key="Roslyn" value="<PATH_TO_ROSLYN_REPO>\artifacts\packages\Debug\Shipping" />`
+    * `<add key="RoslynNS" value="<PATH_TO_ROSLYN_REPO>\artifacts\packages\Debug\NonShipping" />`
+7. Add the package source mappings below under the `packageSourceMapping` tag:
 
 ```xml
-    <packageSource key="Roslyn Local Package source">
+    <packageSource key="Roslyn">
       <package pattern="microsoft.*" />
-      <package pattern="microsoft.commonlanguageserverProtocol.*" />
+    </packageSource>
+    <packageSource key="RoslynNS">
+      <package pattern="microsoft.*" />
     </packageSource>
 ```
 
-7. Open `eng/Versions.props` and update `RoslynPackageVersion` to the version noted in step 5.
-8. To get the end-to-end local debugging working, running `./Build.cmd -deploy` script from roslyn repository. this will copy over the right binaries from roslyn to the shared local roslyn/razor hive.
+7. Open `eng/Versions.props` and find the `MicrosoftCodeAnalysisExternalAccessRazorPackageVersion` property.
+8. Grab the value of that property, and replace all instances of that value in the file to be the version noted in step 5.
+9. To get the end-to-end local debugging working, running `./Build.cmd -deployExtensions` script from roslyn repository. this will copy over the right binaries from roslyn to the shared local roslyn/razor hive.
 
 ## Troubleshooting
 

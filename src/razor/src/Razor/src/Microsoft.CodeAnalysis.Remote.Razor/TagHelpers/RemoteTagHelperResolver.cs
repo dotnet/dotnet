@@ -7,7 +7,6 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Telemetry;
@@ -23,7 +22,7 @@ internal class RemoteTagHelperResolver(ITelemetryReporter telemetryReporter)
     /// </summary>
     private static readonly Dictionary<string, IProjectEngineFactory> s_configurationNameToFactoryMap = CreateConfigurationNameToFactoryMap();
 
-    private readonly CompilationTagHelperResolver _compilationTagHelperResolver = new(telemetryReporter);
+    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
     private static Dictionary<string, IProjectEngineFactory> CreateConfigurationNameToFactoryMap()
     {
@@ -41,17 +40,9 @@ internal class RemoteTagHelperResolver(ITelemetryReporter telemetryReporter)
         Project workspaceProject,
         RazorConfiguration? configuration,
         CancellationToken cancellationToken)
-    {
-        if (configuration is null)
-        {
-            return new(ImmutableArray<TagHelperDescriptor>.Empty);
-        }
-
-        return _compilationTagHelperResolver.GetTagHelpersAsync(
-            workspaceProject,
-            CreateProjectEngine(configuration),
-            cancellationToken);
-    }
+        => configuration is not null
+            ? workspaceProject.GetTagHelpersAsync(CreateProjectEngine(configuration), _telemetryReporter, cancellationToken)
+            : new([]);
 
     private RazorProjectEngine CreateProjectEngine(RazorConfiguration configuration)
     {

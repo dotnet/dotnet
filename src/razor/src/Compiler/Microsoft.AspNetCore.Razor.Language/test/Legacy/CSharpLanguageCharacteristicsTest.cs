@@ -13,7 +13,7 @@ public class CSharpLanguageCharacteristicsTest
     public void GetSample_RightShiftAssign_ReturnsCorrectToken()
     {
         // Arrange & Act
-        var token = CSharpLanguageCharacteristics.Instance.GetSample(SyntaxKind.RightShiftAssign);
+        var token = NativeCSharpLanguageCharacteristics.Instance.GetSample(SyntaxKind.RightShiftAssign);
 
         // Assert
         Assert.Equal(">>=", token);

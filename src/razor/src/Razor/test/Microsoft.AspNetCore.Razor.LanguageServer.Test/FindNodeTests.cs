@@ -1,10 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -63,7 +63,7 @@ public class FindNodeTests(ITestOutputHelper testOutput) : ToolingTestBase(testO
             }
             """;
 
-    private static readonly string s_fetchDataContents = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+    private static readonly string s_fetchDataContents = PlatformInformation.IsWindows
         ? FetchDataContents
         : FetchDataContents.Replace("\n", "\r\n");
 

@@ -180,6 +180,12 @@
   <data name="Setting_CommitElementsWithSpaceDisplayName" xml:space="preserve">
     <value>Commit elements with space</value>
   </data>
+  <data name="Setting_FormattingOnPasteDisplayName" xml:space="preserve">
+    <value>Format on paste</value>
+  </data>
+  <data name="Setting_FormattingOnPasteDescription" xml:space="preserve">
+    <value>If true, formatting will be enabled when pasting content</value>
+  </data>
   <data name="Setting_FormattingOnTypeDescription" xml:space="preserve">
     <value>If true, formatting will be enabled while typing</value>
   </data>

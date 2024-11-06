@@ -13,7 +13,7 @@
                         CSharpStatementLiteral - [2..42)::40 - [LF    var @string = "string test";LF    ] - Gen<Stmt>
                             NewLine;[LF];
                             Whitespace;[    ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[@string];
                             Whitespace;[ ];

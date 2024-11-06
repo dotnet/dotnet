@@ -9,8 +9,6 @@ namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 [Export(typeof(IRazorComponentSearchEngine)), Shared]
 [method: ImportingConstructor]
-internal sealed class RemoteRazorComponentSearchEngine(
-    IProjectCollectionResolver projectCollectionResolver,
-    ILoggerFactory loggerFactory) : RazorComponentSearchEngine(projectCollectionResolver, loggerFactory)
+internal sealed class RemoteRazorComponentSearchEngine(ILoggerFactory loggerFactory) : RazorComponentSearchEngine(loggerFactory)
 {
 }

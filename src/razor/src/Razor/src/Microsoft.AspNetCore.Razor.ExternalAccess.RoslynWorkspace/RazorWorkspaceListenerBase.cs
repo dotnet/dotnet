@@ -195,7 +195,7 @@ public abstract class RazorWorkspaceListenerBase : IDisposable
         {
             // Remove project is called from Workspace.Changed, while other notifications of _projectsWithDynamicFile
             // are handled with NotifyDynamicFile. Use ImmutableInterlocked here to be sure the updates happen
-            // in a thread safe manner since those are not assumed to be the same thread. 
+            // in a thread safe manner since those are not assumed to be the same thread.
             if (ImmutableInterlocked.TryRemove(ref _projectsWithDynamicFile, project.Id, out var _))
             {
                 var intermediateOutputPath = Path.GetDirectoryName(project.CompilationOutputInfo.AssemblyPath);
@@ -227,7 +227,7 @@ public abstract class RazorWorkspaceListenerBase : IDisposable
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        // Early bail check for if we are disposed or somewhere in the middle of disposal 
+        // Early bail check for if we are disposed or somewhere in the middle of disposal
         if (_disposed || stream is null || solution is null)
         {
             _logger.LogTrace("Skipping work due to disposal");
@@ -279,15 +279,15 @@ public abstract class RazorWorkspaceListenerBase : IDisposable
     private static async Task ReportUpdateProjectAsync(Stream stream, Project project, ILogger logger, CancellationToken cancellationToken)
     {
         logger.LogTrace("Serializing information for {projectId}", project.Id);
-        var projectInfo = await RazorProjectInfoFactory.ConvertAsync(project, cancellationToken).ConfigureAwait(false);
-        if (projectInfo is null)
+        var result = await RazorProjectInfoFactory.ConvertAsync(project, cancellationToken).ConfigureAwait(false);
+        if (!result.Succeeded)
         {
-            logger.LogTrace("Skipped writing data for {projectId}", project.Id);
+            logger.LogTrace("Skipped writing data for {projectId} because of '{reason}'", project.Id, result.Reason);
             return;
         }
 
         stream.WriteProjectInfoAction(ProjectInfoAction.Update);
-        await stream.WriteProjectInfoAsync(projectInfo, cancellationToken).ConfigureAwait(false);
+        await stream.WriteProjectInfoAsync(result.ProjectInfo, cancellationToken).ConfigureAwait(false);
     }
 
     private static Task ReportRemovalAsync(Stream stream, RemovalWork unit, ILogger logger, CancellationToken cancellationToken)

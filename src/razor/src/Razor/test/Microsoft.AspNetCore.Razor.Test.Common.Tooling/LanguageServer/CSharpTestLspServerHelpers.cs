@@ -60,11 +60,12 @@ internal static class CSharpTestLspServerHelpers
         var csharpFiles = files.Select(f => new CSharpFile(f.Uri, f.SourceText));
 
         var exportProvider = TestComposition.Roslyn.ExportProviderFactory.CreateExportProvider();
-        var metadataReferences = (await ReferenceAssemblies.Default.ResolveAsync(language: LanguageNames.CSharp, cancellationToken))
-            // ComponentBase here comes from our ComponentShim project, not the real ASP.NET libraries. It's enough for the generated C#
-            // in tests to at least compile better.
-            .Add(ReferenceUtil.AspNetLatestComponents);
+
+        var metadataReferences = await ReferenceAssemblies.Default.ResolveAsync(language: LanguageNames.CSharp, cancellationToken);
+        metadataReferences = metadataReferences.Add(ReferenceUtil.AspNetLatestComponents);
+
         var workspace = CreateCSharpTestWorkspace(csharpFiles, exportProvider, metadataReferences, razorSpanMappingService, multiTargetProject);
+
         var clientCapabilities = new VSInternalClientCapabilities
         {
             SupportsVisualStudioExtensions = true,

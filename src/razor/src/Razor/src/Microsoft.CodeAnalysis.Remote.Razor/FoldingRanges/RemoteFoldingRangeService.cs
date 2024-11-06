@@ -41,7 +41,9 @@ internal sealed class RemoteFoldingRangeService(in ServiceArgs args) : RazorDocu
         ImmutableArray<RemoteFoldingRange> htmlRanges,
         CancellationToken cancellationToken)
     {
-        var generatedDocument = await context.Snapshot.GetGeneratedDocumentAsync().ConfigureAwait(false);
+        var generatedDocument = await context.Snapshot
+            .GetGeneratedDocumentAsync(cancellationToken)
+            .ConfigureAwait(false);
 
         var csharpRanges = await ExternalHandlers.FoldingRanges.GetFoldingRangesAsync(generatedDocument, cancellationToken).ConfigureAwait(false);
 

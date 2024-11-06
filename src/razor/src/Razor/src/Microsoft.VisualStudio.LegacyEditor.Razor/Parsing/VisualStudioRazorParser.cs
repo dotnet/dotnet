@@ -494,7 +494,7 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
         var projectSnapshot = _documentTracker.ProjectSnapshot;
         if (projectSnapshot != null)
         {
-            builder.SetCSharpLanguageVersion(projectSnapshot.CSharpLanguageVersion);
+            builder.SetCSharpLanguageVersion(projectSnapshot.Configuration.CSharpLanguageVersion);
         }
 
         builder.SetRootNamespace(projectSnapshot?.RootNamespace);
@@ -614,6 +614,7 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
         public void Configure(RazorParserOptionsBuilder options)
         {
             options.EnableSpanEditHandlers = true;
+            options.UseRoslynTokenizer = false;
         }
     }
 

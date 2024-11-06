@@ -92,6 +92,16 @@
         <target state="translated">Zatwierdź elementy za pomocą klawisza Spacja</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDescription">
+        <source>If true, formatting will be enabled when pasting content</source>
+        <target state="translated">Jeśli wartość jest równa true, formatowanie będzie włączane podczas wklejania zawartości</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDisplayName">
+        <source>Format on paste</source>
+        <target state="translated">Formatuj przy wklejeniu</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
         <source>If true, formatting will be enabled while typing</source>
         <target state="translated">Jeśli ma wartość „prawda”, formatowanie będzie włączone podczas pisania</target>

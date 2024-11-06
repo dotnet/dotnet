@@ -22,7 +22,7 @@ using System.Reflection;
 #nullable disable
     [global::Microsoft.AspNetCore.Components.LayoutAttribute(typeof(MainLayout))]
     #nullable restore
-    public partial class _Imports : System.Object
+    public partial class _Imports : object
     #nullable disable
     {
         #pragma warning disable 219

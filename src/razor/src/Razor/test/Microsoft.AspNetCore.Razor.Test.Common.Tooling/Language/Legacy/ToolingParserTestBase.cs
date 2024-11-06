@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis.CSharp;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -187,8 +188,8 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
         var options = CreateParserOptions(version, directives, designTime, EnableSpanEditHandlers, featureFlags, fileKind);
 
         using var context = new ParserContext(source, options);
-        var codeParser = new CSharpCodeParser(directives, context);
-        var markupParser = new HtmlMarkupParser(context);
+        using var codeParser = new CSharpCodeParser(directives, context);
+        using var markupParser = new HtmlMarkupParser(context);
 
         codeParser.HtmlParser = markupParser;
         markupParser.CodeParser = codeParser;
@@ -253,9 +254,11 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
             directives.ToArray(),
             designTime,
             parseLeadingDirectives: false,
+            useRoslynTokenizer: true,
             version: version,
             fileKind: fileKind,
-            enableSpanEditHandlers)
+            enableSpanEditHandlers,
+            csharpParseOptions: CSharpParseOptions.Default)
             {
                 FeatureFlags = featureFlags ?? RazorParserFeatureFlags.Create(version, fileKind)
             };

@@ -92,6 +92,16 @@
         <target state="translated">Elemente durch Drücken der LEERTASTE committen</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDescription">
+        <source>If true, formatting will be enabled when pasting content</source>
+        <target state="translated">„True“ gibt an, dass die Formatierung beim Einfügen von Inhalten aktiviert wird.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDisplayName">
+        <source>Format on paste</source>
+        <target state="translated">Beim Einfügen formatieren</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
         <source>If true, formatting will be enabled while typing</source>
         <target state="translated">Bei "true" wird die Formatierung während der Eingabe aktiviert.</target>

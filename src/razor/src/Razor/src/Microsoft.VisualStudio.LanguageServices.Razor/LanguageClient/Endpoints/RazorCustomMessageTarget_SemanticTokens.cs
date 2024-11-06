@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol.SemanticTokens;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Telemetry;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using StreamJsonRpc;
 
@@ -84,7 +85,7 @@ internal partial class RazorCustomMessageTarget
         var languageServerName = RazorLSPConstants.RazorCSharpLanguageServerName;
 
         SemanticTokens? response;
-        using (var disposable = _telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, semanticTokensParams.CorrelationId))
+        using (var disposable = _telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, TelemetryThresholds.SemanticTokensSubLSPTelemetryThreshold, semanticTokensParams.CorrelationId))
         {
             try
             {

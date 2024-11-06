@@ -5,17 +5,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.GoToDefinition;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using DefinitionResult = Microsoft.VisualStudio.LanguageServer.Protocol.SumType<
+using DefinitionResult = System.Nullable<Microsoft.VisualStudio.LanguageServer.Protocol.SumType<
     Microsoft.VisualStudio.LanguageServer.Protocol.Location,
     Microsoft.VisualStudio.LanguageServer.Protocol.Location[],
-    Microsoft.VisualStudio.LanguageServer.Protocol.DocumentLink[]>;
+    Microsoft.VisualStudio.LanguageServer.Protocol.DocumentLink[]>>;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Definition;
 
@@ -23,10 +25,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Definition;
 internal sealed class DefinitionEndpoint(
     IRazorComponentDefinitionService componentDefinitionService,
     IDocumentMappingService documentMappingService,
+    IProjectSnapshotManager projectManager,
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IClientConnection clientConnection,
     ILoggerFactory loggerFactory)
-    : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, DefinitionResult?>(
+    : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, DefinitionResult>(
         languageServerFeatureOptions,
         documentMappingService,
         clientConnection,
@@ -34,6 +37,7 @@ internal sealed class DefinitionEndpoint(
 {
     private readonly IRazorComponentDefinitionService _componentDefinitionService = componentDefinitionService;
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly IProjectSnapshotManager _projectManager = projectManager;
 
     protected override bool PreferCSharpOverHtmlIfPossible => true;
 
@@ -46,7 +50,7 @@ internal sealed class DefinitionEndpoint(
         serverCapabilities.DefinitionProvider = new DefinitionOptions();
     }
 
-    protected async override Task<DefinitionResult?> TryHandleAsync(
+    protected async override Task<DefinitionResult> TryHandleAsync(
         TextDocumentPositionParams request,
         RazorRequestContext requestContext,
         DocumentPositionInfo positionInfo,
@@ -62,7 +66,7 @@ internal sealed class DefinitionEndpoint(
 
         // If single server support is on, then we ignore attributes, as they are better handled by delegating to Roslyn
         return await _componentDefinitionService
-            .GetDefinitionAsync(documentContext.Snapshot, positionInfo, ignoreAttributes: SingleServerSupport, cancellationToken)
+            .GetDefinitionAsync(documentContext.Snapshot, positionInfo, _projectManager.GetQueryOperations(), ignoreAttributes: SingleServerSupport, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -84,30 +88,28 @@ internal sealed class DefinitionEndpoint(
             positionInfo.LanguageKind));
     }
 
-    protected async override Task<DefinitionResult?> HandleDelegatedResponseAsync(
-        DefinitionResult? response,
+    protected async override Task<DefinitionResult> HandleDelegatedResponseAsync(
+        DefinitionResult response,
         TextDocumentPositionParams originalRequest,
         RazorRequestContext requestContext,
         DocumentPositionInfo positionInfo,
         CancellationToken cancellationToken)
     {
-        if (response is not DefinitionResult result)
-        {
-            return null;
-        }
+        var result = response.GetValueOrDefault().Value;
 
-        if (result.TryGetFirst(out var location))
+        // Not using .TryGetXXX because this does the null check for us too
+        if (result is Location location)
         {
             (location.Uri, location.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(location.Uri, location.Range, cancellationToken).ConfigureAwait(false);
         }
-        else if (result.TryGetSecond(out var locations))
+        else if (result is Location[] locations)
         {
             foreach (var loc in locations)
             {
                 (loc.Uri, loc.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(loc.Uri, loc.Range, cancellationToken).ConfigureAwait(false);
             }
         }
-        else if (result.TryGetThird(out var links))
+        else if (result is DocumentLink[] links)
         {
             foreach (var link in links)
             {
@@ -118,6 +120,6 @@ internal sealed class DefinitionEndpoint(
             }
         }
 
-        return result;
+        return response;
     }
 }

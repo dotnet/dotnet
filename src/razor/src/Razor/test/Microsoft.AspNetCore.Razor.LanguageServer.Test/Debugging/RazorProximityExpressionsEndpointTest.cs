@@ -46,7 +46,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Null(response);
@@ -71,7 +71,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await endpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Contains("abc", response!.Expressions);
@@ -97,7 +97,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await endpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Contains("abc", response!.Expressions);
@@ -123,7 +123,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Null(response);
@@ -151,7 +151,7 @@ public class RazorProximityExpressionsEndpointTest : LanguageServerTestBase
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
-        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default);
+        var response = await diagnosticsEndpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
         Assert.Null(response);

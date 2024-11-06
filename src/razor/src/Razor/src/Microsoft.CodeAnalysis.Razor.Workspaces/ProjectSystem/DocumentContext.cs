@@ -51,9 +51,9 @@ internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectCon
 
         async ValueTask<RazorCodeDocument> GetCodeDocumentCoreAsync(CancellationToken cancellationToken)
         {
-            var codeDocument = await Snapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
-
-            cancellationToken.ThrowIfCancellationRequested();
+            var codeDocument = await Snapshot
+                .GetGeneratedOutputAsync(cancellationToken)
+                .ConfigureAwait(false);
 
             // Interlock to ensure that we only ever return one instance of RazorCodeDocument.
             // In race scenarios, when more than one RazorCodeDocument is produced, we want to
@@ -70,9 +70,7 @@ internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectCon
 
         async ValueTask<SourceText> GetSourceTextCoreAsync(CancellationToken cancellationToken)
         {
-            var sourceText = await Snapshot.GetTextAsync().ConfigureAwait(false);
-
-            cancellationToken.ThrowIfCancellationRequested();
+            var sourceText = await Snapshot.GetTextAsync(cancellationToken).ConfigureAwait(false);
 
             // Interlock to ensure that we only ever return one instance of RazorCodeDocument.
             // In race scenarios, when more than one RazorCodeDocument is produced, we want to

@@ -3,11 +3,12 @@
 
 #nullable disable
 
+using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-public abstract class HtmlTokenizerTestBase : TokenizerTestBase
+public abstract class HtmlTokenizerTestBase : TokenizerTestBase<object>
 {
     private static readonly SyntaxToken _ignoreRemaining = SyntaxFactory.Token(SyntaxKind.Marker, string.Empty);
 
@@ -16,8 +17,11 @@ public abstract class HtmlTokenizerTestBase : TokenizerTestBase
         get { return _ignoreRemaining; }
     }
 
-    internal override object CreateTokenizer(SeekableTextReader source)
+    internal override object DefaultTokenizerArg => null;
+
+    internal override object CreateTokenizer(SeekableTextReader source, object tokenizerArg)
     {
+        Debug.Assert(tokenizerArg == null);
         return new HtmlTokenizer(source);
     }
 

@@ -64,7 +64,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
             TestLanguageServerFeatureOptions.Instance,
             StrictMock.Of<IProjectSnapshotManager>(),
-            new SnippetCache(),
+            new SnippetCompletionItemProvider(new SnippetCache()),
             StrictMock.Of<IWorkspaceProvider>(),
             StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
@@ -75,7 +75,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         };
 
         // Act & Assert
-        await target.UpdateCSharpBufferCoreAsync(request, CancellationToken.None);
+        await target.UpdateCSharpBufferCoreAsync(request, DisposalToken);
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
             TestLanguageServerFeatureOptions.Instance,
             StrictMock.Of<IProjectSnapshotManager>(),
-            new SnippetCache(),
+            new SnippetCompletionItemProvider(new SnippetCache()),
             StrictMock.Of<IWorkspaceProvider>(),
             StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
@@ -118,7 +118,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         };
 
         // Act
-        await target.UpdateCSharpBufferCoreAsync(request, CancellationToken.None);
+        await target.UpdateCSharpBufferCoreAsync(request, DisposalToken);
 
         // Assert
         documentManager.VerifyAll();
@@ -159,7 +159,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
             new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true),
             StrictMock.Of<IProjectSnapshotManager>(),
-            new SnippetCache(),
+            new SnippetCompletionItemProvider(new SnippetCache()),
             StrictMock.Of<IWorkspaceProvider>(),
             StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
@@ -172,7 +172,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         };
 
         // Act
-        await target.UpdateCSharpBufferCoreAsync(request, CancellationToken.None);
+        await target.UpdateCSharpBufferCoreAsync(request, DisposalToken);
 
         // Assert
         documentManager.VerifyAll();
@@ -200,7 +200,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
             TestLanguageServerFeatureOptions.Instance,
             StrictMock.Of<IProjectSnapshotManager>(),
-            new SnippetCache(),
+            new SnippetCompletionItemProvider(new SnippetCache()),
             StrictMock.Of<IWorkspaceProvider>(),
             StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
@@ -266,7 +266,9 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
 
         var documentSynchronizer = GetDocumentSynchronizer(GetCSharpSnapshot());
         var telemetryReporter = new Mock<ITelemetryReporter>(MockBehavior.Strict);
-        telemetryReporter.Setup(r => r.TrackLspRequest(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>())).Returns(TelemetryScope.Null);
+        telemetryReporter.Setup(r => r.TrackLspRequest(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>(), It.IsAny<Guid>()))
+            .Callback<string, string, TimeSpan, Guid>((s1, s2, ts, g) => Assert.NotEqual(TimeSpan.Zero, ts))
+            .Returns(TelemetryScope.Null);
         var csharpVirtualDocumentAddListener = new CSharpVirtualDocumentAddListener(LoggerFactory);
 
         var target = new RazorCustomMessageTarget(
@@ -280,7 +282,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             telemetryReporter.Object,
             TestLanguageServerFeatureOptions.Instance,
             StrictMock.Of<IProjectSnapshotManager>(),
-            new SnippetCache(),
+            new SnippetCompletionItemProvider(new SnippetCache()),
             StrictMock.Of<IWorkspaceProvider>(),
             StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
@@ -367,7 +369,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             telemetryReporter.Object,
             TestLanguageServerFeatureOptions.Instance,
             StrictMock.Of<IProjectSnapshotManager>(),
-            new SnippetCache(),
+            new SnippetCompletionItemProvider(new SnippetCache()),
             StrictMock.Of<IWorkspaceProvider>(),
             StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
@@ -409,7 +411,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
             TestLanguageServerFeatureOptions.Instance,
             StrictMock.Of<IProjectSnapshotManager>(),
-            new SnippetCache(),
+            new SnippetCompletionItemProvider(new SnippetCache()),
             StrictMock.Of<IWorkspaceProvider>(),
             StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
@@ -458,7 +460,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
             TestLanguageServerFeatureOptions.Instance,
             StrictMock.Of<IProjectSnapshotManager>(),
-            new SnippetCache(),
+            new SnippetCompletionItemProvider(new SnippetCache()),
             StrictMock.Of<IWorkspaceProvider>(),
             StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
@@ -520,8 +522,13 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new DefaultLSPDocumentSynchronizer.SynchronizedResult<CSharpVirtualDocumentSnapshot>(true, csharpVirtualDocument));
         var telemetryReporter = new Mock<ITelemetryReporter>(MockBehavior.Strict);
-        telemetryReporter.Setup(r => r.BeginBlock(It.IsAny<string>(), It.IsAny<Severity>(), It.IsAny<Property[]>())).Returns(TelemetryScope.Null);
-        telemetryReporter.Setup(r => r.TrackLspRequest(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>())).Returns(TelemetryScope.Null);
+        telemetryReporter.Setup(r => r.BeginBlock(It.IsAny<string>(), It.IsAny<Severity>(), It.IsAny<TimeSpan>(), It.IsAny<Property>()))
+            .Callback<string, Severity, TimeSpan, Property>((s1, s2, ts, g) => Assert.NotEqual(TimeSpan.Zero, ts))
+            .Returns(TelemetryScope.Null);
+
+        telemetryReporter.Setup(r => r.TrackLspRequest(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>(), It.IsAny<Guid>()))
+            .Callback<string, string, TimeSpan, Guid>((s1, s2, ts, g) => Assert.NotEqual(TimeSpan.Zero, ts))
+            .Returns(TelemetryScope.Null);
         var csharpVirtualDocumentAddListener = new CSharpVirtualDocumentAddListener(LoggerFactory);
 
         var target = new RazorCustomMessageTarget(
@@ -535,7 +542,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             telemetryReporter.Object,
             TestLanguageServerFeatureOptions.Instance,
             StrictMock.Of<IProjectSnapshotManager>(),
-            new SnippetCache(),
+            new SnippetCompletionItemProvider(new SnippetCache()),
             StrictMock.Of<IWorkspaceProvider>(),
             StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);
@@ -598,8 +605,13 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new DefaultLSPDocumentSynchronizer.SynchronizedResult<CSharpVirtualDocumentSnapshot>(true, csharpVirtualDocument));
         var telemetryReporter = new Mock<ITelemetryReporter>(MockBehavior.Strict);
-        telemetryReporter.Setup(r => r.BeginBlock(It.IsAny<string>(), It.IsAny<Severity>(), It.IsAny<Property[]>())).Returns(TelemetryScope.Null);
-        telemetryReporter.Setup(r => r.TrackLspRequest(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>())).Returns(TelemetryScope.Null);
+        telemetryReporter.Setup(r => r.BeginBlock(It.IsAny<string>(), It.IsAny<Severity>(), It.IsAny<TimeSpan>(), It.IsAny<Property>()))
+            .Callback<string, Severity, TimeSpan, Property>((s, sev, ts, p) => Assert.NotEqual(TimeSpan.Zero, ts))
+            .Returns(TelemetryScope.Null);
+
+        telemetryReporter.Setup(r => r.TrackLspRequest(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>(), It.IsAny<Guid>()))
+            .Callback<string, string, TimeSpan, Guid>((s1, s2, ts, g) => Assert.NotEqual(TimeSpan.Zero, ts))
+            .Returns(TelemetryScope.Null);
         var csharpVirtualDocumentAddListener = new CSharpVirtualDocumentAddListener(LoggerFactory);
 
         var target = new RazorCustomMessageTarget(
@@ -613,7 +625,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             telemetryReporter.Object,
             TestLanguageServerFeatureOptions.Instance,
             StrictMock.Of<IProjectSnapshotManager>(),
-            new SnippetCache(),
+            new SnippetCompletionItemProvider(new SnippetCache()),
             StrictMock.Of<IWorkspaceProvider>(),
             StrictMock.Of<IHtmlDocumentSynchronizer>(),
             LoggerFactory);

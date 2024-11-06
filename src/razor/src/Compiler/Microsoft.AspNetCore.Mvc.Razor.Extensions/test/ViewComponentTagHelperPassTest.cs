@@ -7,6 +7,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Xunit;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
@@ -217,8 +219,8 @@ public class ViewComponentTagHelperPassTest
         return RazorProjectEngine.Create(b =>
         {
             b.Features.Add(new MvcViewDocumentClassifierPass());
-
             b.Features.Add(new TestTagHelperFeature(tagHelpers));
+            b.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions.Default));
         });
     }
 

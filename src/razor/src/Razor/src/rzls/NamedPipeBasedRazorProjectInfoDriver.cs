@@ -46,15 +46,34 @@ internal sealed class NamedPipeBasedRazorProjectInfoDriver : AbstractRazorProjec
     private async Task ReadFromStreamAsync(CancellationToken cancellationToken)
     {
         Logger.LogTrace($"Starting read from named pipe.");
+        var failedActionReads = 0;
 
         while (
             _namedPipe is { IsConnected: true } &&
             !cancellationToken.IsCancellationRequested)
         {
+            ProjectInfoAction? projectInfoAction;
+            try
+            {
+                projectInfoAction = _namedPipe.ReadProjectInfoAction();
+            }
+            catch
+            {
+                if (failedActionReads++ > 0)
+                {
+                    throw;
+                }
+
+                Logger.LogError("Failed to read ProjectInfoAction from stream");
+                continue;
+            }
+
+            Logger.LogInformation($"Failed {failedActionReads} times but things may be back on track");
+            failedActionReads = 0;
 
             try
             {
-                switch (_namedPipe.ReadProjectInfoAction())
+                switch (projectInfoAction)
                 {
                     case ProjectInfoAction.Remove:
                         Logger.LogTrace($"Attempting to read project id for removal");
@@ -72,9 +91,6 @@ internal sealed class NamedPipeBasedRazorProjectInfoDriver : AbstractRazorProjec
                         }
 
                         break;
-
-                    default:
-                        throw Assumes.NotReachable();
                 }
             }
             catch (Exception ex)

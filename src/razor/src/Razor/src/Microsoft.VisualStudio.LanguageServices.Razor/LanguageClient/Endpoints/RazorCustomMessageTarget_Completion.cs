@@ -3,12 +3,12 @@
 
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Telemetry;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Snippets;
@@ -121,7 +121,7 @@ internal partial class RazorCustomMessageTarget
             var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
             var lspMethodName = Methods.TextDocumentCompletion.Name;
             ReinvocationResponse<VSInternalCompletionList?>? response;
-            using (_telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, request.CorrelationId))
+            using (_telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, TelemetryThresholds.CompletionSubLSPTelemetryThreshold, request.CorrelationId))
             {
                 response = await _requestInvoker.ReinvokeRequestOnServerAsync<CompletionParams, VSInternalCompletionList?>(
                     textBuffer,
@@ -150,7 +150,7 @@ internal partial class RazorCustomMessageTarget
                 };
             }
 
-            AddSnippetCompletions(request, ref builder.AsRef());
+            _snippetCompletionItemProvider.AddSnippetCompletions(request.ProjectedKind, request.Context.InvokeKind, request.Context.TriggerCharacter, ref builder.AsRef());
             completionList.Items = builder.ToArray();
 
             completionList.Data = JsonHelpers.TryConvertFromJObject(completionList.Data);
@@ -238,7 +238,7 @@ internal partial class RazorCustomMessageTarget
     {
         // Check if we're completing a snippet item that we provided
         if (SnippetCompletionData.TryParse(request.CompletionItem.Data, out var snippetCompletionData) &&
-            _snippetCache.TryResolveSnippetString(snippetCompletionData) is { } snippetInsertText)
+            _snippetCompletionItemProvider.SnippetCache.TryResolveSnippetString(snippetCompletionData) is { } snippetInsertText)
         {
             request.CompletionItem.InsertText = snippetInsertText;
             return request.CompletionItem;
@@ -314,60 +314,4 @@ internal partial class RazorCustomMessageTarget
         var formattingOptions = _formattingOptionsProvider.GetOptions(document.TextDocumentIdentifier.Uri);
         return Task.FromResult(formattingOptions);
     }
-
-    private void AddSnippetCompletions(DelegatedCompletionParams request, ref PooledArrayBuilder<CompletionItem> builder)
-    {
-        if (!request.ShouldIncludeSnippets)
-        {
-            return;
-        }
-
-        // Temporary fix: snippets are broken in CSharp. We're investigating
-        // but this is very disruptive. This quick fix unblocks things.
-        // TODO: Add an option to enable this.
-        if (request.ProjectedKind != RazorLanguageKind.Html)
-        {
-            return;
-        }
-
-        // Don't add snippets for deletion of a character
-        if (request.Context.InvokeKind == VSInternalCompletionInvokeKind.Deletion)
-        {
-            return;
-        }
-
-        // Don't add snippets if the trigger characters contain whitespace
-        if (request.Context.TriggerCharacter is not null
-            && request.Context.TriggerCharacter.Contains(' '))
-        {
-            return;
-        }
-
-        var snippets = _snippetCache.GetSnippets(ConvertLanguageKind(request.ProjectedKind));
-        if (snippets.IsDefaultOrEmpty)
-        {
-            return;
-        }
-
-        builder.AddRange(snippets
-            .Select(s => new CompletionItem()
-            {
-                Label = s.Shortcut,
-                Detail = s.Description,
-                InsertTextFormat = InsertTextFormat.Snippet,
-                InsertText = s.Shortcut,
-                Data = s.CompletionData,
-                Kind = CompletionItemKind.Snippet,
-                CommitCharacters = []
-            }));
-    }
-
-    private static SnippetLanguage ConvertLanguageKind(RazorLanguageKind languageKind)
-        => languageKind switch
-        {
-            RazorLanguageKind.CSharp => SnippetLanguage.CSharp,
-            RazorLanguageKind.Html => SnippetLanguage.Html,
-            RazorLanguageKind.Razor => SnippetLanguage.Razor,
-            _ => throw new InvalidOperationException($"Unexpected value {languageKind}")
-        };
 }

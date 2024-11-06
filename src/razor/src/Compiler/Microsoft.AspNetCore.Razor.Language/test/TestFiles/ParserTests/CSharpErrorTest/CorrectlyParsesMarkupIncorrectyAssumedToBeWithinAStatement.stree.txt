@@ -14,7 +14,7 @@
                 LeftBrace;[{];
                 NewLine;[LF];
                 Whitespace;[    ];
-                Identifier;[var];
+                Keyword;[var];
                 Whitespace;[ ];
                 Identifier;[foo];
                 Whitespace;[ ];
@@ -32,7 +32,7 @@
                 Whitespace;[ ];
                 Identifier;[@foo];
                 LessThan;[<];
-                Slash;[/];
+                CSharpOperator;[/];
                 Identifier;[p];
                 GreaterThan;[>];
                 NewLine;[LF];

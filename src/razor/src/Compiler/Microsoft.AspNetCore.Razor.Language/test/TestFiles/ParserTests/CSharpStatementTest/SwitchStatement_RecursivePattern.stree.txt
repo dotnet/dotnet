@@ -24,7 +24,7 @@
                 Identifier;[Year];
                 Colon;[:];
                 Whitespace;[ ];
-                IntegerLiteral;[2022];
+                NumericLiteral;[2022];
                 Whitespace;[ ];
                 RightBrace;[}];
                 Colon;[:];

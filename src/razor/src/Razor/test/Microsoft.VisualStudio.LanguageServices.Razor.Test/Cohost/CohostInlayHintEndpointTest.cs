@@ -128,6 +128,30 @@ public class CohostInlayHintEndpointTest(ITestOutputHelper testOutputHelper) : C
 
                 """);
 
+    [Theory]
+    [InlineData(0, 0, 0, 20)]
+    [InlineData(0, 0, 2, 0)]
+    [InlineData(2, 0, 4, 0)]
+    public async Task InlayHints_InvalidRange(int startLine, int starChar, int endLine, int endChar)
+    {
+        var input = """
+            <div></div>
+            """;
+        var document = await CreateProjectAndRazorDocumentAsync(input);
+        var endpoint = new CohostInlayHintEndpoint(RemoteServiceInvoker);
+
+        var request = new InlayHintParams()
+        {
+            TextDocument = new TextDocumentIdentifier() { Uri = document.CreateUri() },
+            Range = RoslynLspFactory.CreateRange(startLine, starChar, endLine, endChar)
+        };
+
+        var hints = await endpoint.GetTestAccessor().HandleRequestAsync(request, document, displayAllOverride: false, DisposalToken);
+
+        // Assert
+        Assert.Null(hints);
+    }
+
     private async Task VerifyInlayHintsAsync(string input, Dictionary<string, string> toolTipMap, string output, bool displayAllOverride = false)
     {
         TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spansDict);

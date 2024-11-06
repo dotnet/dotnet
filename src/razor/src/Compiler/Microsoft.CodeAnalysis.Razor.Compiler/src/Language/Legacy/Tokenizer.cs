@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,7 +9,7 @@ using Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-internal abstract class Tokenizer : ITokenizer
+internal abstract class Tokenizer : IDisposable
 {
     protected Tokenizer(SeekableTextReader source)
     {
@@ -32,7 +30,7 @@ internal abstract class Tokenizer : ITokenizer
 
     protected int? CurrentState { get; set; }
 
-    protected SyntaxToken CurrentSyntaxToken { get; private set; }
+    protected SyntaxToken? CurrentSyntaxToken { get; private set; }
 
     public SeekableTextReader Source { get; private set; }
 
@@ -69,12 +67,11 @@ internal abstract class Tokenizer : ITokenizer
 
     protected abstract StateResult Dispatch();
 
-    SyntaxToken ITokenizer.NextToken()
-    {
-        return NextToken();
-    }
+    internal virtual void StartingBlock() { }
 
-    public virtual SyntaxToken NextToken()
+    internal virtual void EndingBlock() { }
+
+    public virtual SyntaxToken? NextToken()
     {
         // Post-Condition: Buffer should be empty at the start of Next()
         Debug.Assert(Buffer.Length == 0);
@@ -96,7 +93,7 @@ internal abstract class Tokenizer : ITokenizer
         return token;
     }
 
-    protected virtual SyntaxToken Turn()
+    protected virtual SyntaxToken? Turn()
     {
         if (CurrentState != null)
         {
@@ -121,7 +118,7 @@ internal abstract class Tokenizer : ITokenizer
         return default(SyntaxToken);
     }
 
-    public void Reset()
+    public virtual void Reset(int position)
     {
         CurrentState = StartState;
     }
@@ -150,7 +147,7 @@ internal abstract class Tokenizer : ITokenizer
     /// Returns a result containing the specified output and indicating that the next call to
     /// <see cref="Turn"/> should invoke the provided state.
     /// </summary>
-    protected StateResult Transition(int state, SyntaxToken result)
+    protected StateResult Transition(int state, SyntaxToken? result)
     {
         return new StateResult(state, result);
     }
@@ -160,7 +157,7 @@ internal abstract class Tokenizer : ITokenizer
         return new StateResult((int)state, result: null);
     }
 
-    protected StateResult Transition(RazorCommentTokenizerState state, SyntaxToken result)
+    protected StateResult Transition(RazorCommentTokenizerState state, SyntaxToken? result)
     {
         return new StateResult((int)state, result);
     }
@@ -181,12 +178,12 @@ internal abstract class Tokenizer : ITokenizer
     /// Returns a result containing the specified output and indicating that the next call to
     /// <see cref="Turn"/> should re-invoke the current state.
     /// </summary>
-    protected StateResult Stay(SyntaxToken result)
+    protected StateResult Stay(SyntaxToken? result)
     {
         return new StateResult(CurrentState, result);
     }
 
-    protected SyntaxToken Single(SyntaxKind type)
+    protected SyntaxToken? Single(SyntaxKind type)
     {
         TakeCurrent();
         return EndToken(type);
@@ -200,10 +197,24 @@ internal abstract class Tokenizer : ITokenizer
         CurrentStart = CurrentLocation;
     }
 
-    protected SyntaxToken EndToken(SyntaxKind type)
+    protected SyntaxToken? EndToken(SyntaxKind type)
     {
-        SyntaxToken token = null;
+        SyntaxToken? token = null;
         if (HaveContent)
+        {
+            var tokenContent = GetTokenContent(type);
+            Debug.Assert(tokenContent == Buffer.ToString(), $"Token content mismatch: '{tokenContent}' != '{Buffer}'. Token Type: '{type}'.");
+            token = EndToken(tokenContent, type);
+            Buffer.Clear();
+        }
+
+        return token;
+    }
+
+    protected SyntaxToken? EndToken(string tokenContent, SyntaxKind type)
+    {
+        SyntaxToken? token = null;
+        if (tokenContent != null)
         {
             // Perf: Don't allocate a new errors array unless necessary.
             var errors = CurrentErrors.Count == 0 ? Array.Empty<RazorDiagnostic>() : new RazorDiagnostic[CurrentErrors.Count];
@@ -212,11 +223,8 @@ internal abstract class Tokenizer : ITokenizer
                 errors[i] = CurrentErrors[i];
             }
 
-            var tokenContent = GetTokenContent(type);
-            Debug.Assert(string.Equals(tokenContent, Buffer.ToString(), StringComparison.Ordinal), $"Token content mismatch: '{tokenContent}' != '{Buffer}'. Token Type: '{type}'.");
             token = CreateToken(tokenContent, type, errors);
 
-            Buffer.Clear();
             CurrentErrors.Clear();
         }
 
@@ -260,13 +268,14 @@ internal abstract class Tokenizer : ITokenizer
         return Lookahead(expected, takeIfMatch: true, caseSensitive: caseSensitive);
     }
 
-    protected char Peek()
+    protected char Peek(int charactersAhead = 1)
     {
-        using (var lookahead = BeginLookahead(Source))
+        using var lookahead = BeginLookahead(Source);
+        for (var i = 0; i < charactersAhead; i++)
         {
             MoveNext();
-            return CurrentCharacter;
         }
+        return CurrentCharacter;
     }
 
     protected StateResult AfterRazorCommentTransition()
@@ -279,7 +288,7 @@ internal abstract class Tokenizer : ITokenizer
 
         AssertCurrent('*');
         TakeCurrent();
-        return Transition(1002, EndToken(RazorCommentStarKind));
+        return Transition(RazorCommentTokenizerState.RazorCommentBody, EndToken(RazorCommentStarKind));
     }
 
     protected StateResult RazorCommentBody()
@@ -319,11 +328,11 @@ internal abstract class Tokenizer : ITokenizer
             EndToken(RazorCommentStarKind));
     }
 
-    protected StateResult AtTokenAfterRazorCommentBody()
+    protected StateResult AtTokenAfterRazorCommentBody(int nextState)
     {
         AssertCurrent('@');
         TakeCurrent();
-        return Transition(StartState, EndToken(RazorCommentTransitionKind));
+        return Transition(nextState, EndToken(RazorCommentTransitionKind));
     }
 
     /// <summary>
@@ -343,7 +352,7 @@ internal abstract class Tokenizer : ITokenizer
         }
 
         // Capture the current buffer content in case we have to backtrack
-        string oldBuffer = null;
+        string? oldBuffer = null;
         if (takeIfMatch)
         {
             oldBuffer = Buffer.ToString();
@@ -387,26 +396,21 @@ internal abstract class Tokenizer : ITokenizer
         Debug.Assert(CurrentCharacter == current, "CurrentCharacter Assumption violated", "Assumed that the current character would be {0}, but it is actually {1}", current, CurrentCharacter);
     }
 
+    public virtual void Dispose() { }
+
     protected enum RazorCommentTokenizerState
     {
         AfterRazorCommentTransition = 1000,
-        EscapedRazorCommentTransition,
         RazorCommentBody,
         StarAfterRazorCommentBody,
         AtTokenAfterRazorCommentBody,
     }
 
-    protected struct StateResult
+    protected readonly struct StateResult(int? state, SyntaxToken? result)
     {
-        public StateResult(int? state, SyntaxToken result)
-        {
-            State = state;
-            Result = result;
-        }
+        public int? State { get; } = state;
 
-        public int? State { get; }
-
-        public SyntaxToken Result { get; }
+        public SyntaxToken? Result { get; } = result;
     }
 
     private static LookaheadToken BeginLookahead(SeekableTextReader buffer)

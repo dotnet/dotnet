@@ -37,6 +37,8 @@ internal static class LanguageServerConstants
 
         public const string ExtractToCodeBehindAction = "ExtractToCodeBehind";
 
+        public const string ExtractToNewComponentAction = "ExtractToNewComponent";
+
         public const string CreateComponentFromTag = "CreateComponentFromTag";
 
         public const string AddUsing = "AddUsing";
@@ -52,14 +54,5 @@ internal static class LanguageServerConstants
         /// Remaps and formats the resolved code action edit
         /// </summary>
         public const string Default = "Default";
-
-        public static class Languages
-        {
-            public const string CSharp = "CSharp";
-
-            public const string Razor = "Razor";
-
-            public const string Html = "Html";
-        }
     }
 }

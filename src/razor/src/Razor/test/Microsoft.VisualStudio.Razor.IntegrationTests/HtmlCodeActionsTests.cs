@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -21,8 +22,7 @@ public class HtmlCodeActionsTests(ITestOutputHelper testOutputHelper) : Abstract
         var codeActions = await TestServices.Editor.InvokeCodeActionListAsync(ControlledHangMitigatingCancellationToken);
 
         // Assert
-        var codeActionSet = Assert.Single(codeActions);
-        var codeAction = Assert.Single(codeActionSet.Actions, a => a.DisplayText.Equals("Remove <h1> tag and leave contents"));
+        var codeAction = Assert.Single(codeActions.SelectMany(s => s.Actions), a => a.DisplayText.Equals("Remove <h1> tag and leave contents"));
 
         await TestServices.Editor.InvokeCodeActionAsync(codeAction, ControlledHangMitigatingCancellationToken);
 
@@ -41,8 +41,7 @@ public class HtmlCodeActionsTests(ITestOutputHelper testOutputHelper) : Abstract
         var codeActions = await TestServices.Editor.InvokeCodeActionListAsync(ControlledHangMitigatingCancellationToken);
 
         // Assert
-        var codeActionSet = Assert.Single(codeActions);
-        var codeAction = Assert.Single(codeActionSet.Actions, a => a.DisplayText.Equals("Remove <body> tag and leave contents"));
+        var codeAction = Assert.Single(codeActions.SelectMany(s => s.Actions), a => a.DisplayText.Equals("Remove <body> tag and leave contents"));
 
         await TestServices.Editor.InvokeCodeActionAsync(codeAction, ControlledHangMitigatingCancellationToken);
 

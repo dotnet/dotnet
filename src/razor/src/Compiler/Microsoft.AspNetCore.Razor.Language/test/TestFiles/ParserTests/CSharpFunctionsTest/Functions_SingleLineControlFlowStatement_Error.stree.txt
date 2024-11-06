@@ -40,7 +40,7 @@
                                 Whitespace;[ ];
                                 GreaterThan;[>];
                                 Whitespace;[ ];
-                                IntegerLiteral;[0];
+                                NumericLiteral;[0];
                                 RightParenthesis;[)];
                                 Whitespace;[ ];
                             MarkupBlock - [102..128)::26
@@ -75,7 +75,7 @@
                                 LeftParenthesis;[(];
                                 Identifier;[message];
                                 Whitespace;[ ];
-                                Equals;[==];
+                                CSharpOperator;[==];
                                 Whitespace;[ ];
                                 Keyword;[null];
                                 RightParenthesis;[)];
@@ -117,13 +117,13 @@
                                 LeftParenthesis;[(];
                                 RightParenthesis;[)];
                                 Whitespace;[ ];
-                                Modulo;[%];
+                                CSharpOperator;[%];
                                 Whitespace;[ ];
-                                IntegerLiteral;[2];
+                                NumericLiteral;[2];
                                 Whitespace;[ ];
-                                Equals;[==];
+                                CSharpOperator;[==];
                                 Whitespace;[ ];
-                                IntegerLiteral;[0];
+                                NumericLiteral;[0];
                                 RightParenthesis;[)];
                                 NewLine;[LF];
                                 Whitespace;[            ];
@@ -163,7 +163,7 @@
                                 LeftParenthesis;[(];
                                 Identifier;[message];
                                 Whitespace;[ ];
-                                NotEqual;[!=];
+                                CSharpOperator;[!=];
                                 Whitespace;[ ];
                                 Keyword;[null];
                                 RightParenthesis;[)];
@@ -179,7 +179,7 @@
                                 GreaterThan;[>];
                                 Identifier;[@message];
                                 LessThan;[<];
-                                Slash;[/];
+                                CSharpOperator;[/];
                                 Identifier;[strong];
                                 GreaterThan;[>];
                                 NewLine;[LF];

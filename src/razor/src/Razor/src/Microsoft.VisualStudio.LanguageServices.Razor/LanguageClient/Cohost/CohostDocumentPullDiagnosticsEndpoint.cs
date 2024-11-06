@@ -50,22 +50,21 @@ internal class CohostDocumentPullDiagnosticsEndpoint(
 
     protected override bool RequiresLSPSolution => true;
 
-    public Registration? GetRegistration(VSInternalClientCapabilities clientCapabilities, DocumentFilter[] filter, RazorCohostRequestContext requestContext)
+    public ImmutableArray<Registration> GetRegistrations(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext)
     {
         // TODO: if (clientCapabilities.TextDocument?.Diagnostic?.DynamicRegistration is true)
         {
-            return new Registration()
+            return [new Registration()
             {
                 Method = VSInternalMethods.DocumentPullDiagnosticName,
                 RegisterOptions = new VSInternalDiagnosticRegistrationOptions()
                 {
-                    DocumentSelector = filter,
                     DiagnosticKinds = [VSInternalDiagnosticKind.Syntax]
                 }
-            };
+            }];
         }
 
-        // return null;
+        // return [];
     }
 
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(VSInternalDocumentDiagnosticsParams request)

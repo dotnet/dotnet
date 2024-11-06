@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -22,14 +21,14 @@ public class ProjectStateTest : WorkspaceTestBase
     private readonly HostProject _hostProject;
     private readonly HostProject _hostProjectWithConfigurationChange;
     private readonly ProjectWorkspaceState _projectWorkspaceState;
-    private readonly Func<Task<TextAndVersion>> _textLoader;
+    private readonly TextLoader _textLoader;
     private readonly SourceText _text;
 
     public ProjectStateTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _hostProject = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, TestProjectData.SomeProject.RootNamespace);
-        _hostProjectWithConfigurationChange = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.SomeProject.RootNamespace);
+        _hostProject = TestProjectData.SomeProject with { Configuration = FallbackRazorConfiguration.MVC_2_0 };
+        _hostProjectWithConfigurationChange = TestProjectData.SomeProject with { Configuration = FallbackRazorConfiguration.MVC_1_0 };
         _projectWorkspaceState = ProjectWorkspaceState.Create(
             ImmutableArray.Create(
                 TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()));
@@ -44,7 +43,7 @@ public class ProjectStateTest : WorkspaceTestBase
         };
 
         _text = SourceText.From("Hello, world!");
-        _textLoader = () => Task.FromResult(TextAndVersion.Create(_text, VersionStamp.Create()));
+        _textLoader = TestMocks.CreateTextLoader(_text, VersionStamp.Create());
     }
 
     protected override void ConfigureProjectEngine(RazorProjectEngineBuilder builder)
@@ -106,7 +105,7 @@ public class ProjectStateTest : WorkspaceTestBase
         var state = original.WithAddedHostDocument(_documents[0], DocumentState.EmptyLoader);
 
         // Assert
-        var text = await state.Documents[_documents[0].FilePath].GetTextAsync();
+        var text = await state.Documents[_documents[0].FilePath].GetTextAsync(DisposalToken);
         Assert.Equal(0, text.Length);
     }
 
@@ -278,7 +277,7 @@ public class ProjectStateTest : WorkspaceTestBase
         // Assert
         Assert.NotEqual(original.Version, state.Version);
 
-        var text = await state.Documents[_documents[1].FilePath].GetTextAsync();
+        var text = await state.Documents[_documents[1].FilePath].GetTextAsync(DisposalToken);
         Assert.Same(_text, text);
 
         Assert.Equal(original.DocumentCollectionVersion, state.DocumentCollectionVersion);
@@ -298,7 +297,7 @@ public class ProjectStateTest : WorkspaceTestBase
         // Assert
         Assert.NotEqual(original.Version, state.Version);
 
-        var text = await state.Documents[_documents[1].FilePath].GetTextAsync();
+        var text = await state.Documents[_documents[1].FilePath].GetTextAsync(DisposalToken);
         Assert.Same(_text, text);
 
         Assert.Equal(original.DocumentCollectionVersion, state.DocumentCollectionVersion);
@@ -573,11 +572,7 @@ public class ProjectStateTest : WorkspaceTestBase
         var original = ProjectState.Create(ProjectEngineFactoryProvider, _hostProject, _projectWorkspaceState)
             .WithAddedHostDocument(_documents[2], DocumentState.EmptyLoader)
             .WithAddedHostDocument(_documents[1], DocumentState.EmptyLoader);
-        var hostProjectWithRootNamespaceChange = new HostProject(
-            original.HostProject.FilePath,
-            original.HostProject.IntermediateOutputPath,
-            original.HostProject.Configuration,
-            "ChangedRootNamespace");
+        var hostProjectWithRootNamespaceChange = original.HostProject with { RootNamespace = "ChangedRootNamespace" };
 
         // Force init
         _ = original.TagHelpers;
@@ -647,45 +642,6 @@ public class ProjectStateTest : WorkspaceTestBase
     }
 
     [Fact]
-    public void ProjectState_WithProjectWorkspaceState_Changed()
-    {
-        // Arrange
-        var original = ProjectState.Create(ProjectEngineFactoryProvider, _hostProject, _projectWorkspaceState)
-            .WithAddedHostDocument(_documents[2], DocumentState.EmptyLoader)
-            .WithAddedHostDocument(_documents[1], DocumentState.EmptyLoader);
-
-        // Force init
-        var originalTagHelpers = original.TagHelpers;
-        var originalProjectWorkspaceStateVersion = original.ProjectWorkspaceStateVersion;
-
-        var changed = ProjectWorkspaceState.Create(_projectWorkspaceState.TagHelpers, LanguageVersion.CSharp6);
-
-        // Act
-        var state = original.WithProjectWorkspaceState(changed);
-
-        // Assert
-        Assert.NotEqual(original.Version, state.Version);
-        Assert.Same(changed, state.ProjectWorkspaceState);
-
-        var actualTagHelpers = state.TagHelpers;
-        var actualProjectWorkspaceStateVersion = state.ProjectWorkspaceStateVersion;
-
-        // The C# language version changed, and the tag helpers didn't change
-        Assert.NotSame(original.ProjectEngine, state.ProjectEngine);
-
-        Assert.Equal(originalTagHelpers.Length, actualTagHelpers.Length);
-        for (var i = 0; i < originalTagHelpers.Length; i++)
-        {
-            Assert.Same(originalTagHelpers[i], actualTagHelpers[i]);
-        }
-
-        Assert.NotEqual(originalProjectWorkspaceStateVersion, actualProjectWorkspaceStateVersion);
-
-        Assert.NotSame(original.Documents[_documents[1].FilePath], state.Documents[_documents[1].FilePath]);
-        Assert.NotSame(original.Documents[_documents[2].FilePath], state.Documents[_documents[2].FilePath]);
-    }
-
-    [Fact]
     public void ProjectState_WithProjectWorkspaceState_Changed_TagHelpersChanged()
     {
         // Arrange
@@ -731,7 +687,7 @@ public class ProjectStateTest : WorkspaceTestBase
         _ = original.TagHelpers;
         _ = original.ProjectWorkspaceStateVersion;
 
-        var changed = ProjectWorkspaceState.Create(original.TagHelpers, original.CSharpLanguageVersion);
+        var changed = ProjectWorkspaceState.Create(original.TagHelpers);
 
         // Act
         var state = original.WithProjectWorkspaceState(changed);
@@ -991,7 +947,7 @@ public class ProjectStateTest : WorkspaceTestBase
     {
         public static TestDocumentState Create(
             HostDocument hostDocument,
-            Func<Task<TextAndVersion>>? loader = null,
+            TextLoader? loader = null,
             Action? onTextChange = null,
             Action? onTextLoaderChange = null,
             Action? onConfigurationChange = null,
@@ -1016,13 +972,13 @@ public class ProjectStateTest : WorkspaceTestBase
 
         private TestDocumentState(
             HostDocument hostDocument,
-            Func<Task<TextAndVersion>>? loader,
+            TextLoader? loader,
             Action? onTextChange,
             Action? onTextLoaderChange,
             Action? onConfigurationChange,
             Action? onImportsChange,
             Action? onProjectWorkspaceStateChange)
-            : base(hostDocument, text: null, textVersion: null, version: 1, loader)
+            : base(hostDocument, version: 1, loader ?? EmptyLoader)
         {
             _onTextChange = onTextChange;
             _onTextLoaderChange = onTextLoaderChange;
@@ -1037,7 +993,7 @@ public class ProjectStateTest : WorkspaceTestBase
             return base.WithText(sourceText, textVersion);
         }
 
-        public override DocumentState WithTextLoader(Func<Task<TextAndVersion>> loader)
+        public override DocumentState WithTextLoader(TextLoader loader)
         {
             _onTextLoaderChange?.Invoke();
             return base.WithTextLoader(loader);

@@ -210,9 +210,10 @@ public class TokenizerLookaheadTest : HtmlTokenizerTestBase
         {
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             Context.Dispose();
+            base.Dispose();
         }
 
         internal new bool LookaheadUntil(Func<SyntaxToken, IEnumerable<SyntaxToken>, bool> condition)

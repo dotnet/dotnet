@@ -20,10 +20,7 @@ internal sealed class RemoteSemanticTokensLegendService : ISemanticTokensLegendS
 
     public void SetLegend(string[] tokenTypes, string[] tokenModifiers)
     {
-        if (_tokenTypes is null)
-        {
-            _tokenTypes = new SemanticTokenTypes(tokenTypes);
-            _tokenModifiers = new SemanticTokenModifiers(tokenModifiers);
-        }
+        _tokenTypes = new SemanticTokenTypes(tokenTypes);
+        _tokenModifiers = new SemanticTokenModifiers(tokenModifiers);
     }
 }

@@ -20,7 +20,7 @@ internal static class IProjectSnapshotExtensions
 
         foreach (var documentFilePath in project.DocumentFilePaths)
         {
-            if (project.GetDocument(documentFilePath) is { } document)
+            if (project.TryGetDocument(documentFilePath, out var document))
             {
                 var documentHandle = document.ToHandle();
 

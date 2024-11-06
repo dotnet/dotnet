@@ -39,8 +39,6 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
             VsMocks.ContentTypes.Create(RazorConstants.LegacyCoreContentType, RazorLanguage.CoreContentType));
 
         _filePath = TestProjectData.SomeProjectFile1.FilePath;
-        var projectPath = TestProjectData.SomeProject.FilePath;
-        var rootNamespace = TestProjectData.SomeProject.RootNamespace;
 
         var importDocumentManagerMock = StrictMock.Of<IImportDocumentManager>();
         Mock.Get(importDocumentManagerMock)
@@ -54,14 +52,14 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
 
         _projectManager = CreateProjectSnapshotManager();
 
-        _hostProject = new HostProject(projectPath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_1, rootNamespace);
-        _updatedHostProject = new HostProject(projectPath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, rootNamespace);
-        _otherHostProject = new HostProject(TestProjectData.AnotherProject.FilePath, TestProjectData.AnotherProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, TestProjectData.AnotherProject.RootNamespace);
+        _hostProject = TestProjectData.SomeProject with { Configuration = FallbackRazorConfiguration.MVC_2_1 };
+        _updatedHostProject = TestProjectData.SomeProject with { Configuration = FallbackRazorConfiguration.MVC_2_0 };
+        _otherHostProject = TestProjectData.AnotherProject with { Configuration = FallbackRazorConfiguration.MVC_2_0 };
 
         _documentTracker = new VisualStudioDocumentTracker(
             JoinableTaskFactory.Context,
             _filePath,
-            projectPath,
+            _hostProject.FilePath,
             _projectManager,
             workspaceEditorSettings,
             ProjectEngineFactoryProvider,

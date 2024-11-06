@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -44,11 +45,16 @@ public class RazorLanguageServerTest(ITestOutputHelper testOutput) : ToolingTest
         await queue.ExecuteAsync(initializeParams, Methods.InitializeName, server.GetLspServices(), DisposalToken);
 
         // We have to send one more request, because culture is set before any request starts, but the first initialize request has to
-        // be started in order to set the culture.
-        // The request isn't actually valid, so we wrap it in a try catch, but we don't care for this test
+        // be started in order to set the culture. The request must be valid because the culture is set in `BeforeRequest` but it doesn't
+        // have to succeed.
         try
         {
-            await queue.ExecuteAsync(JsonSerializer.SerializeToElement(new object()), VSInternalMethods.DocumentPullDiagnosticName, server.GetLspServices(), DisposalToken);
+            var namedPipeParams = new RazorNamedPipeConnectParams()
+            {
+                PipeName = ""
+            };
+
+            await queue.ExecuteAsync(JsonSerializer.SerializeToElement(namedPipeParams), CustomMessageNames.RazorNamedPipeConnectEndpointName, server.GetLspServices(), DisposalToken);
         }
         catch { }
 

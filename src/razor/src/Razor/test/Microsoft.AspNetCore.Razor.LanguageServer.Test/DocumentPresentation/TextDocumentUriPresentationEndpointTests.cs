@@ -23,19 +23,22 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 
 public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    [OSSkipConditionFact(["OSX", "Linux"])]
+    [ConditionalFact(Is.Windows)]
     public async Task Handle_SimpleComponent_ReturnsResult()
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        var project = await projectManager.UpdateAsync(updater =>
-        {
-            return updater.CreateAndAddProject("c:/path/project.csproj");
-        });
+        var hostProject = TestHostProject.Create("c:/path/project.csproj");
+        var hostDocument1 = TestHostDocument.Create(hostProject, "c:/path/index.razor");
+        var hostDocument2 = TestHostDocument.Create(hostProject, "c:/path/MyTagHelper.razor");
 
-        await projectManager.CreateAndAddDocumentAsync(project, "c:/path/index.razor");
-        await projectManager.CreateAndAddDocumentAsync(project, "c:/path/MyTagHelper.razor");
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectAdded(hostProject);
+            updater.DocumentAdded(hostProject.Key, hostDocument1, hostDocument1.CreateEmptyTextLoader());
+            updater.DocumentAdded(hostProject.Key, hostDocument2, hostDocument2.CreateEmptyTextLoader());
+        });
 
         var droppedUri = new Uri("file:///c:/path/MyTagHelper.razor");
         var builder = TagHelperDescriptorBuilder.Create("MyTagHelper", "MyAssembly");
@@ -43,15 +46,14 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectWorkspaceStateChanged(project.Key, ProjectWorkspaceState.Create([builder.Build()]));
+            updater.ProjectWorkspaceStateChanged(hostProject.Key, ProjectWorkspaceState.Create([builder.Build()]));
         });
 
-        var razorFilePath = "c:/path/index.razor";
-        var uri = new Uri(razorFilePath);
+        var uri = new Uri(hostDocument1.FilePath);
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.DocumentOpened(project.Key, razorFilePath, SourceText.From("<div></div>"));
+            updater.DocumentOpened(hostProject.Key, hostDocument1.FilePath, SourceText.From("<div></div>"));
         });
 
         var documentContextFactory = new DocumentContextFactory(projectManager, LoggerFactory);
@@ -81,19 +83,22 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         Assert.Equal("<MyTagHelper />", documentEdits[0].Edits[0].NewText);
     }
 
-    [OSSkipConditionFact(["OSX", "Linux"])]
+    [ConditionalFact(Is.Windows)]
     public async Task Handle_SimpleComponentWithChildFile_ReturnsResult()
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        var project = await projectManager.UpdateAsync(updater =>
-        {
-            return updater.CreateAndAddProject("c:/path/project.csproj");
-        });
+        var hostProject = TestHostProject.Create("c:/path/project.csproj");
+        var hostDocument1 = TestHostDocument.Create(hostProject, "c:/path/index.razor");
+        var hostDocument2 = TestHostDocument.Create(hostProject, "c:/path/MyTagHelper.razor");
 
-        await projectManager.CreateAndAddDocumentAsync(project, "c:/path/index.razor");
-        await projectManager.CreateAndAddDocumentAsync(project, "c:/path/MyTagHelper.razor");
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectAdded(hostProject);
+            updater.DocumentAdded(hostProject.Key, hostDocument1, hostDocument1.CreateEmptyTextLoader());
+            updater.DocumentAdded(hostProject.Key, hostDocument2, hostDocument2.CreateEmptyTextLoader());
+        });
 
         var droppedUri = new Uri("file:///c:/path/MyTagHelper.razor");
         var builder = TagHelperDescriptorBuilder.Create("MyTagHelper", "MyAssembly");
@@ -101,15 +106,14 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectWorkspaceStateChanged(project.Key, ProjectWorkspaceState.Create([builder.Build()]));
+            updater.ProjectWorkspaceStateChanged(hostProject.Key, ProjectWorkspaceState.Create([builder.Build()]));
         });
 
-        var razorFilePath = "c:/path/index.razor";
-        var uri = new Uri(razorFilePath);
+        var uri = new Uri(hostDocument1.FilePath);
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.DocumentOpened(project.Key, razorFilePath, SourceText.From("<div></div>"));
+            updater.DocumentOpened(hostProject.Key, hostDocument1.FilePath, SourceText.From("<div></div>"));
         });
 
         var documentContextFactory = new DocumentContextFactory(projectManager, LoggerFactory);
@@ -144,19 +148,22 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         Assert.Equal("<MyTagHelper />", documentEdits[0].Edits[0].NewText);
     }
 
-    [OSSkipConditionFact(["OSX", "Linux"])]
+    [ConditionalFact(Is.Windows)]
     public async Task Handle_ComponentWithRequiredAttribute_ReturnsResult()
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        var project = await projectManager.UpdateAsync(updater =>
-        {
-            return updater.CreateAndAddProject("c:/path/project.csproj");
-        });
+        var hostProject = TestHostProject.Create("c:/path/project.csproj");
+        var hostDocument1 = TestHostDocument.Create(hostProject, "c:/path/index.razor");
+        var hostDocument2 = TestHostDocument.Create(hostProject, "c:/path/fetchdata.razor");
 
-        await projectManager.CreateAndAddDocumentAsync(project, "c:/path/index.razor");
-        await projectManager.CreateAndAddDocumentAsync(project, "c:/path/fetchdata.razor");
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectAdded(hostProject);
+            updater.DocumentAdded(hostProject.Key, hostDocument1, hostDocument1.CreateEmptyTextLoader());
+            updater.DocumentAdded(hostProject.Key, hostDocument2, hostDocument2.CreateEmptyTextLoader());
+        });
 
         var droppedUri = new Uri("file:///c:/path/fetchdata.razor");
         var builder = TagHelperDescriptorBuilder.Create("FetchData", "MyAssembly");
@@ -170,15 +177,14 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectWorkspaceStateChanged(project.Key, ProjectWorkspaceState.Create([builder.Build()]));
+            updater.ProjectWorkspaceStateChanged(hostProject.Key, ProjectWorkspaceState.Create([builder.Build()]));
         });
 
-        var razorFilePath = "c:/path/index.razor";
-        var uri = new Uri(razorFilePath);
+        var uri = new Uri(hostDocument1.FilePath);
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.DocumentOpened(project.Key, razorFilePath, SourceText.From("<div></div>"));
+            updater.DocumentOpened(hostProject.Key, hostDocument1.FilePath, SourceText.From("<div></div>"));
         });
 
         var documentContextFactory = new DocumentContextFactory(projectManager, LoggerFactory);
@@ -302,19 +308,22 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         Assert.Null(result);
     }
 
-    [OSSkipConditionFact(["OSX", "Linux"])]
+    [ConditionalFact(Is.Windows)]
     public async Task Handle_ComponentWithNestedFiles_ReturnsResult()
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        var project = await projectManager.UpdateAsync(updater =>
-        {
-            return updater.CreateAndAddProject("c:/path/project.csproj");
-        });
+        var hostProject = TestHostProject.Create("c:/path/project.csproj");
+        var hostDocument1 = TestHostDocument.Create(hostProject, "c:/path/index.razor");
+        var hostDocument2 = TestHostDocument.Create(hostProject, "c:/path/fetchdata.razor");
 
-        await projectManager.CreateAndAddDocumentAsync(project, "c:/path/index.razor");
-        await projectManager.CreateAndAddDocumentAsync(project, "c:/path/fetchdata.razor");
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectAdded(hostProject);
+            updater.DocumentAdded(hostProject.Key, hostDocument1, hostDocument1.CreateEmptyTextLoader());
+            updater.DocumentAdded(hostProject.Key, hostDocument2, hostDocument2.CreateEmptyTextLoader());
+        });
 
         var droppedUri1 = new Uri("file:///c:/path/fetchdata.razor.cs");
         var droppedUri2 = new Uri("file:///c:/path/fetchdata.razor");
@@ -323,20 +332,19 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectWorkspaceStateChanged(project.Key, ProjectWorkspaceState.Create([builder.Build()]));
+            updater.ProjectWorkspaceStateChanged(hostProject.Key, ProjectWorkspaceState.Create([builder.Build()]));
         });
 
-        var razorFilePath = "c:/path/index.razor";
-        var uri = new Uri(razorFilePath);
+        var uri = new Uri(hostDocument1.FilePath);
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.DocumentOpened(project.Key, razorFilePath, SourceText.From("<div></div>"));
+            updater.DocumentOpened(hostProject.Key, hostDocument1.FilePath, SourceText.From("<div></div>"));
         });
 
         var documentSnapshot = projectManager
-            .GetLoadedProject(project.Key)
-            .GetDocument(razorFilePath);
+            .GetLoadedProject(hostProject.Key)
+            .GetDocument(hostDocument1.FilePath);
         Assert.NotNull(documentSnapshot);
 
         var documentContextFactory = new DocumentContextFactory(projectManager, LoggerFactory);

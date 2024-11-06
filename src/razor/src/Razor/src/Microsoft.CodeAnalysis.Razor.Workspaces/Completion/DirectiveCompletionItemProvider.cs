@@ -31,7 +31,6 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
         CSharpCodeParser.UsingDirectiveDescriptor
     };
 
-
     // Test accessor
     internal static IEnumerable<DirectiveDescriptor> MvcDefaultDirectives => s_mvcDefaultDirectives;
     internal static IEnumerable<DirectiveDescriptor> ComponentDefaultDirectives => s_componentDefaultDirectives;

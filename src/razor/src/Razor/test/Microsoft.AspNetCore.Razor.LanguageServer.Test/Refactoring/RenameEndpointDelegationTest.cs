@@ -57,21 +57,22 @@ public class RenameEndpointDelegationTest(ITestOutputHelper testOutput) : Single
         await projectManager.UpdateAsync(updater =>
         {
             updater.ProjectAdded(new(
-                projectFilePath: "C:/path/to/project.csproj",
+                filePath: "C:/path/to/project.csproj",
                 intermediateOutputPath: "C:/path/to/obj",
-                razorConfiguration: RazorConfiguration.Default,
+                configuration: RazorConfiguration.Default,
                 rootNamespace: "project"));
         });
 
-        var searchEngine = new RazorComponentSearchEngine(projectManager, LoggerFactory);
+        var searchEngine = new RazorComponentSearchEngine(LoggerFactory);
 
-        var renameService = new RenameService(searchEngine, projectManager, LanguageServerFeatureOptions);
+        var renameService = new RenameService(searchEngine, LanguageServerFeatureOptions);
 
         var endpoint = new RenameEndpoint(
             renameService,
             LanguageServerFeatureOptions,
             DocumentMappingService,
             EditMappingService,
+            projectManager,
             languageServer,
             LoggerFactory);
 

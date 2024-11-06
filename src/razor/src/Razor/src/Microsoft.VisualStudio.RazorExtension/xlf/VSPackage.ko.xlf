@@ -92,6 +92,16 @@
         <target state="translated">공백을 사용하여 요소 커밋</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDescription">
+        <source>If true, formatting will be enabled when pasting content</source>
+        <target state="translated">true이면 콘텐츠를 붙여넣을 때 서식을 사용할 수 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDisplayName">
+        <source>Format on paste</source>
+        <target state="translated">붙여넣기 시 서식 지정</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
         <source>If true, formatting will be enabled while typing</source>
         <target state="translated">true이면 입력하는 동안 서식을 사용할 수 있습니다.</target>

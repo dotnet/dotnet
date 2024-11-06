@@ -6,6 +6,8 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
@@ -128,6 +130,7 @@ public class PageDirectiveTest
         return RazorProjectEngine.Create(b =>
         {
             PageDirective.Register(b);
+            b.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions.Default));
         }).Engine;
     }
 

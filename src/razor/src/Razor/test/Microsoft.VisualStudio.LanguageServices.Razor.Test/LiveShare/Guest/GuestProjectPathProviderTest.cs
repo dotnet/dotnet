@@ -98,7 +98,7 @@ public class GuestProjectPathProviderTest(ITestOutputHelper testOutput) : Toolin
 
         var proxy = new StrictMock<IProjectHierarchyProxy>();
         proxy
-            .Setup(x => x.GetProjectPathAsync(documentFilePathUri, CancellationToken.None))
+            .Setup(x => x.GetProjectPathAsync(documentFilePathUri, It.IsAny<CancellationToken>()))
             .ReturnsAsync((Uri?)null);
 
         var proxyAccessor = StrictMock.Of<IProxyAccessor>(a =>
@@ -147,7 +147,7 @@ public class GuestProjectPathProviderTest(ITestOutputHelper testOutput) : Toolin
 
         var proxy = new StrictMock<IProjectHierarchyProxy>();
         proxy
-            .Setup(x => x.GetProjectPathAsync(documentFilePathUri, CancellationToken.None))
+            .Setup(x => x.GetProjectPathAsync(documentFilePathUri, It.IsAny<CancellationToken>()))
             .ReturnsAsync(projectFilePathUri)
             .Verifiable();
 

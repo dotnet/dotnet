@@ -19,9 +19,9 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 public class CodeDocumentReferenceHolderTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
     private static readonly HostProject s_hostProject = new(
-        projectFilePath: "C:/path/to/project.csproj",
+        filePath: "C:/path/to/project.csproj",
         intermediateOutputPath: "C:/path/to/obj",
-        razorConfiguration: RazorConfiguration.Default,
+        configuration: RazorConfiguration.Default,
         rootNamespace: "TestNamespace");
 
     private static readonly HostDocument s_hostDocument = new("C:/path/to/file.razor", "file.razor");
@@ -44,7 +44,7 @@ public class CodeDocumentReferenceHolderTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var documentSnapshot = await CreateDocumentSnapshotAsync();
-        var codeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(documentSnapshot);
+        var codeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(documentSnapshot, DisposalToken);
 
         // Act
         PerformFullGC();
@@ -70,8 +70,8 @@ public class CodeDocumentReferenceHolderTest(ITestOutputHelper testOutput) : Lan
 
         Assert.NotNull(unrelatedDocumentSnapshot);
 
-        var mainCodeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(documentSnapshot);
-        var unrelatedCodeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(unrelatedDocumentSnapshot);
+        var mainCodeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(documentSnapshot, DisposalToken);
+        var unrelatedCodeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(unrelatedDocumentSnapshot, DisposalToken);
 
         // Act
         await _projectManager.UpdateAsync(updater =>
@@ -91,7 +91,7 @@ public class CodeDocumentReferenceHolderTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var documentSnapshot = await CreateDocumentSnapshotAsync();
-        var codeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(documentSnapshot);
+        var codeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(documentSnapshot, DisposalToken);
 
         // Act
 
@@ -111,7 +111,7 @@ public class CodeDocumentReferenceHolderTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var documentSnapshot = await CreateDocumentSnapshotAsync();
-        var codeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(documentSnapshot);
+        var codeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(documentSnapshot, DisposalToken);
 
         // Act
         await _projectManager.UpdateAsync(updater =>
@@ -130,12 +130,12 @@ public class CodeDocumentReferenceHolderTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var documentSnapshot = await CreateDocumentSnapshotAsync();
-        var codeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(documentSnapshot);
+        var codeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(documentSnapshot, DisposalToken);
 
         // Act
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectConfigurationChanged(new HostProject(s_hostProject.FilePath, s_hostProject.IntermediateOutputPath, RazorConfiguration.Default, rootNamespace: "NewRootNamespace"));
+            updater.ProjectConfigurationChanged(s_hostProject with { Configuration = RazorConfiguration.Default, RootNamespace = "NewRootNamespace" });
         });
 
         PerformFullGC();
@@ -149,7 +149,7 @@ public class CodeDocumentReferenceHolderTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var documentSnapshot = await CreateDocumentSnapshotAsync();
-        var codeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(documentSnapshot);
+        var codeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(documentSnapshot, DisposalToken);
 
         // Act
         await _projectManager.UpdateAsync(updater =>
@@ -176,9 +176,9 @@ public class CodeDocumentReferenceHolderTest(ITestOutputHelper testOutput) : Lan
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private async Task<WeakReference<RazorCodeDocument>> ProcessDocumentAndRetrieveOutputAsync(IDocumentSnapshot documentSnapshot)
+    private async Task<WeakReference<RazorCodeDocument>> ProcessDocumentAndRetrieveOutputAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
     {
-        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync();
+        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken);
 
         _referenceHolder.DocumentProcessed(codeDocument, documentSnapshot);
 

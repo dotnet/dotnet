@@ -66,6 +66,8 @@ extends:
         name: NetCore1ESPool-Svc-Internal
         image: 1es-windows-2022
         os: windows
+      policheck:
+        enabled: true
       tsa:
         enabled: true
         configFile: '$(Build.SourcesDirectory)/eng/TSAConfig.gdntsa'
@@ -286,7 +288,7 @@ extends:
           - job: macOS
             pool:
               name: Azure Pipelines
-              image: macOS-12
+              image: macOS-14
               os: macOS
             strategy:
               matrix:

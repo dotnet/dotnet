@@ -30,7 +30,7 @@ internal sealed class RazorFormattingPass : IFormattingPass
         if (changes.Length > 0)
         {
             changedText = changedText.WithChanges(changes);
-            changedContext = await context.WithTextAsync(changedText).ConfigureAwait(false);
+            changedContext = await context.WithTextAsync(changedText, cancellationToken).ConfigureAwait(false);
 
             cancellationToken.ThrowIfCancellationRequested();
         }

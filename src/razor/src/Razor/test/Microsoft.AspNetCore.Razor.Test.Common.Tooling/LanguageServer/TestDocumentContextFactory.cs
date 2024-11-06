@@ -35,7 +35,7 @@ internal class TestDocumentContextFactory : IDocumentContextFactory
             return false;
         }
 
-        context = TestDocumentContext.From(FilePath, CodeDocument);
+        context = TestDocumentContext.Create(FilePath, CodeDocument);
         return true;
     }
 }

@@ -143,7 +143,7 @@ internal class OnAutoInsertEndpoint(
             // Therefore we are just going to no-op if the user has turned off on type formatting. Maybe one day we can make this
             // smarter, but at least the user can always turn the setting back on, type their "///", and turn it back off, without
             // having to restart VS. Not the worst compromise (hopefully!)
-            if (!_optionsMonitor.CurrentValue.FormatOnType)
+            if (!_optionsMonitor.CurrentValue.Formatting.IsOnTypeEnabled())
             {
                 Logger.LogInformation($"Formatting on type disabled, so auto insert is a no-op for C#.");
                 return SpecializedTasks.Null<IDelegatedParams>();

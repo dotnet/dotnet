@@ -54,6 +54,139 @@ public sealed class RazorSourceGeneratorTagHelperTests : RazorSourceGeneratorTes
         await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
     }
 
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/8460")]
+    public async Task VoidTagName()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.cshtml"] = """
+                @addTagHelper *, TestProject
+                <col>markup</col>
+                @{ <col>code</col> }
+                """,
+        }, new()
+        {
+            ["ColTagHelper.cs"] = """
+                using Microsoft.AspNetCore.Razor.TagHelpers;
+                public class ColTagHelper : TagHelper { }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver, out _, verify: static compilation =>
+        {
+            // Malformed C# is generated due to everything after the <col> tag being considered C#.
+            Assert.Contains(compilation.GetDiagnostics(), static d => d.Severity == DiagnosticSeverity.Error);
+        });
+
+        // Assert
+        result.Diagnostics.Verify(
+            // Views/Home/Index.cshtml(3,5): error RZ1042: Component or tag helper 'col' must be self-closing because it's named like an HTML void element. To use child content, qualify such components with their namespace or use prefixes with such tag helpers.
+            Diagnostic("RZ1042").WithLocation(3, 5));
+        result.VerifyOutputsMatchBaseline();
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/8460")]
+    public async Task VoidTagName_Prefixed()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.cshtml"] = """
+                @tagHelperPrefix th:
+                @addTagHelper *, TestProject
+                <th:col>markup</th:col>
+                @{ <th:col>code</th:col> }
+                """,
+        }, new()
+        {
+            ["ColTagHelper.cs"] = """
+                using Microsoft.AspNetCore.Razor.TagHelpers;
+                public class ColTagHelper : TagHelper
+                {
+                    public override void Process(TagHelperContext context, TagHelperOutput output)
+                    {
+                        output.TagName = "my-col";
+                    }
+                }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver, out compilation);
+
+        // Assert
+        result.Diagnostics.Verify();
+        await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/8460")]
+    public async Task VoidTagName_SelfClosing()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.cshtml"] = """
+                @addTagHelper *, TestProject
+                <col />
+                @{ <col /> }
+                """,
+        }, new()
+        {
+            ["ColTagHelper.cs"] = """
+                using Microsoft.AspNetCore.Razor.TagHelpers;
+                public class ColTagHelper : TagHelper
+                {
+                    public override void Process(TagHelperContext context, TagHelperOutput output)
+                    {
+                        output.TagName = "my-col";
+                    }
+                }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver, out compilation);
+
+        // Assert
+        result.Diagnostics.Verify();
+        await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/8460")]
+    public async Task VoidTagName_NoMatchingTagHelper()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.cshtml"] = """
+                @addTagHelper *, TestProject
+                <col>markup</col>
+                @{ <col>code</col> }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver, out _, verify: static compilation =>
+        {
+            // Malformed C# is generated due to everything after the <col> tag being considered C#.
+            Assert.Contains(compilation.GetDiagnostics(), static d => d.Severity == DiagnosticSeverity.Error);
+        });
+
+        // Assert
+        result.Diagnostics.Verify();
+        result.VerifyOutputsMatchBaseline();
+    }
+
     [Theory]
     [InlineData("Index")]
     [InlineData("CustomEncoder")]

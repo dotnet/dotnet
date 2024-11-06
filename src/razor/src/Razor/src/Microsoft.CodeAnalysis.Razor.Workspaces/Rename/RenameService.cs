@@ -26,14 +26,17 @@ namespace Microsoft.CodeAnalysis.Razor.Rename;
 
 internal class RenameService(
     IRazorComponentSearchEngine componentSearchEngine,
-    IProjectCollectionResolver projectCollectionResolver,
     LanguageServerFeatureOptions languageServerFeatureOptions) : IRenameService
 {
     private readonly IRazorComponentSearchEngine _componentSearchEngine = componentSearchEngine;
-    private readonly IProjectCollectionResolver _projectCollectionResolver = projectCollectionResolver;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
 
-    public async Task<WorkspaceEdit?> TryGetRazorRenameEditsAsync(DocumentContext documentContext, DocumentPositionInfo positionInfo, string newName, CancellationToken cancellationToken)
+    public async Task<WorkspaceEdit?> TryGetRazorRenameEditsAsync(
+        DocumentContext documentContext,
+        DocumentPositionInfo positionInfo,
+        string newName,
+        ISolutionQueryOperations solutionQueryOperations,
+        CancellationToken cancellationToken)
     {
         // We only support renaming of .razor components, not .cshtml tag helpers
         if (!FileKinds.IsComponent(documentContext.FileKind))
@@ -55,7 +58,9 @@ internal class RenameService(
             return null;
         }
 
-        var originComponentDocumentSnapshot = await _componentSearchEngine.TryLocateComponentAsync(documentContext.Snapshot, originTagHelpers.First()).ConfigureAwait(false);
+        var originComponentDocumentSnapshot = await _componentSearchEngine
+            .TryLocateComponentAsync(originTagHelpers.First(), solutionQueryOperations, cancellationToken)
+            .ConfigureAwait(false);
         if (originComponentDocumentSnapshot is null)
         {
             return null;
@@ -73,11 +78,11 @@ internal class RenameService(
         documentChanges.Add(fileRename);
         AddEditsForCodeDocument(documentChanges, originTagHelpers, newName, documentContext.Uri, codeDocument);
 
-        var documentSnapshots = GetAllDocumentSnapshots(documentContext);
+        var documentSnapshots = GetAllDocumentSnapshots(documentContext.FilePath, solutionQueryOperations);
 
         foreach (var documentSnapshot in documentSnapshots)
         {
-            await AddEditsForCodeDocumentAsync(documentChanges, originTagHelpers, newName, documentSnapshot).ConfigureAwait(false);
+            await AddEditsForCodeDocumentAsync(documentChanges, originTagHelpers, newName, documentSnapshot, cancellationToken).ConfigureAwait(false);
         }
 
         foreach (var documentChange in documentChanges)
@@ -95,17 +100,17 @@ internal class RenameService(
         };
     }
 
-    private ImmutableArray<IDocumentSnapshot> GetAllDocumentSnapshots(DocumentContext skipDocumentContext)
+    private static ImmutableArray<IDocumentSnapshot> GetAllDocumentSnapshots(string filePath, ISolutionQueryOperations solutionQueryOperations)
     {
         using var documentSnapshots = new PooledArrayBuilder<IDocumentSnapshot>();
         using var _ = StringHashSetPool.GetPooledObject(out var documentPaths);
 
-        foreach (var project in _projectCollectionResolver.EnumerateProjects(skipDocumentContext.Snapshot))
+        foreach (var project in solutionQueryOperations.GetProjects())
         {
             foreach (var documentPath in project.DocumentFilePaths)
             {
                 // We've already added refactoring edits for our document snapshot
-                if (string.Equals(documentPath, skipDocumentContext.FilePath, FilePathComparison.Instance))
+                if (FilePathComparer.Instance.Equals(documentPath, filePath))
                 {
                     continue;
                 }
@@ -117,7 +122,7 @@ internal class RenameService(
                 }
 
                 // Add to the list and add the path to the set
-                if (project.GetDocument(documentPath) is not { } snapshot)
+                if (!project.TryGetDocument(documentPath, out var snapshot))
                 {
                     throw new InvalidOperationException($"{documentPath} in project {project.FilePath} but not retrievable");
                 }
@@ -162,14 +167,15 @@ internal class RenameService(
         List<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>> documentChanges,
         ImmutableArray<TagHelperDescriptor> originTagHelpers,
         string newName,
-        IDocumentSnapshot documentSnapshot)
+        IDocumentSnapshot documentSnapshot,
+        CancellationToken cancellationToken)
     {
         if (!FileKinds.IsComponent(documentSnapshot.FileKind))
         {
             return;
         }
 
-        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
+        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
         if (codeDocument.IsUnsupported())
         {
             return;

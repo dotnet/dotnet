@@ -22,10 +22,8 @@ public class CompletionListSerializationBenchmark
 
     public CompletionListSerializationBenchmark()
     {
-        var completionService = new LspTagHelperCompletionService();
-        var configurationService = new BenchmarkConfigurationSyncService();
-        var optionsMonitor = new RazorLSPOptionsMonitor(configurationService, RazorLSPOptions.Default);
-        var tagHelperCompletionProvider = new TagHelperCompletionProvider(completionService, optionsMonitor);
+        var completionService = new TagHelperCompletionService();
+        var tagHelperCompletionProvider = new TagHelperCompletionProvider(completionService);
 
         var documentContent = "<";
         var queryIndex = 1;

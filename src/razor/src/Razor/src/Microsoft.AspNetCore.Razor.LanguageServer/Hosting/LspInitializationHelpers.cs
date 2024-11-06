@@ -20,6 +20,24 @@ internal static class LspInitializationHelpers
         };
     }
 
+    public static void EnableCodeActions(this VSInternalServerCapabilities serverCapabilities)
+    {
+        serverCapabilities.CodeActionProvider = new CodeActionOptions().EnableCodeActions();
+    }
+
+    public static CodeActionOptions EnableCodeActions(this CodeActionOptions options)
+    {
+        options.CodeActionKinds =
+        [
+            CodeActionKind.RefactorExtract,
+            CodeActionKind.QuickFix,
+            CodeActionKind.Refactor
+        ];
+        options.ResolveProvider = true;
+
+        return options;
+    }
+
     public static void EnableSemanticTokens(this VSInternalServerCapabilities serverCapabilities, ISemanticTokensLegendService legend)
     {
         serverCapabilities.SemanticTokensOptions = new SemanticTokensOptions().EnableSemanticTokens(legend);

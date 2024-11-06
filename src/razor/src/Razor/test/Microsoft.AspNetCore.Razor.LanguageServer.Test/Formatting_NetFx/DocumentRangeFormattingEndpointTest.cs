@@ -79,7 +79,7 @@ public class DocumentRangeFormattingEndpointTest(ITestOutputHelper testOutput) :
         var endpoint = new DocumentRangeFormattingEndpoint(formattingService, htmlFormatter, optionsMonitor);
         var @params = new DocumentRangeFormattingParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, }
+            TextDocument = new TextDocumentIdentifier { Uri = uri, },
         };
         var requestContext = CreateRazorRequestContext(documentContext);
 
@@ -99,6 +99,34 @@ public class DocumentRangeFormattingEndpointTest(ITestOutputHelper testOutput) :
         var htmlFormatter = new TestHtmlFormatter();
         var endpoint = new DocumentRangeFormattingEndpoint(formattingService, htmlFormatter, optionsMonitor);
         var @params = new DocumentRangeFormattingParams();
+        var requestContext = CreateRazorRequestContext(documentContext: null);
+
+        // Act
+        var result = await endpoint.HandleRequestAsync(@params, requestContext, DisposalToken);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task Handle_FormattingOnPasteDisabled_ReturnsNull()
+    {
+        // Arrange
+        var formattingService = new DummyRazorFormattingService();
+        var optionsMonitor = GetOptionsMonitor(formatOnPaste: false);
+        var htmlFormatter = new TestHtmlFormatter();
+        var endpoint = new DocumentRangeFormattingEndpoint(formattingService, htmlFormatter, optionsMonitor);
+        var @params = new DocumentRangeFormattingParams()
+        {
+            Options = new()
+            {
+                OtherOptions = new()
+                {
+                    { "fromPaste", true }
+                }
+            }
+        };
+
         var requestContext = CreateRazorRequestContext(documentContext: null);
 
         // Act

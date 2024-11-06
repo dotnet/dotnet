@@ -7,9 +7,10 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.CodeActions;
+using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
@@ -18,8 +19,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    private readonly IDocumentContextFactory _emptyDocumentContextFactory = new TestDocumentContextFactory();
-
     [Fact]
     public void GetNamespaceFromFQN_Invalid_ReturnsEmpty()
     {
@@ -51,7 +50,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var fqn = "Abc.Xyz";
-        var docUri = new Uri("c:/path");
+        var docUri = new VSTextDocumentIdentifier { Uri = new Uri("c:/path") };
 
         // Act
         var result = AddUsingsCodeActionResolver.TryCreateAddUsingResolutionParams(fqn, docUri, additionalEdit: null, out var @namespace, out var resolutionParams);
@@ -63,24 +62,6 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     }
 
     [Fact]
-    public async Task Handle_MissingFile()
-    {
-        // Arrange
-        var resolver = new AddUsingsCodeActionResolver(_emptyDocumentContextFactory);
-        var data = JsonSerializer.SerializeToElement(new AddUsingsCodeActionParams()
-        {
-            Uri = new Uri("c:/Test.razor"),
-            Namespace = "System",
-        });
-
-        // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
-
-        // Assert
-        Assert.Null(workspaceEdit);
-    }
-
-    [Fact]
     public async Task Handle_Unsupported()
     {
         // Arrange
@@ -89,15 +70,15 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var codeDocument = CreateCodeDocument(contents);
         codeDocument.SetUnsupported();
 
-        var resolver = new AddUsingsCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument));
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var resolver = new AddUsingsCodeActionResolver();
         var data = JsonSerializer.SerializeToElement(new AddUsingsCodeActionParams()
         {
-            Uri = documentPath,
             Namespace = "System",
         });
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.Null(workspaceEdit);
@@ -111,16 +92,16 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var contents = string.Empty;
         var codeDocument = CreateCodeDocument(contents);
 
-        var resolver = new AddUsingsCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument));
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var resolver = new AddUsingsCodeActionResolver();
         var actionParams = new AddUsingsCodeActionParams
         {
-            Uri = documentPath,
             Namespace = "System",
         };
         var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
@@ -132,7 +113,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         Assert.Single(textDocumentEdit.Edits);
         var firstEdit = textDocumentEdit.Edits.First();
         Assert.Equal(0, firstEdit.Range.Start.Line);
-        Assert.Equal($"""
+        Assert.Equal("""
             @using System
 
             """, firstEdit.NewText);
@@ -143,22 +124,22 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var documentPath = new Uri("c:/Test.razor");
-        var contents = $"""
+        var contents = """
             @page "/"
 
             """;
         var codeDocument = CreateCodeDocument(contents);
 
-        var resolver = new AddUsingsCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument));
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var resolver = new AddUsingsCodeActionResolver();
         var actionParams = new AddUsingsCodeActionParams
         {
-            Uri = documentPath,
             Namespace = "System",
         };
         var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
@@ -169,7 +150,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
         Assert.Equal(1, firstEdit.Range.Start.Line);
-        Assert.Equal($"""
+        Assert.Equal("""
             @using System
 
             """, firstEdit.NewText);
@@ -180,7 +161,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var documentPath = new Uri("c:/Test.cshtml");
-        var contents = $"""
+        var contents = """
             @page
             @model IndexModel
             """;
@@ -194,16 +175,16 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var codeDocument = projectEngine.Process(projectItem);
         codeDocument.SetFileKind(FileKinds.Legacy);
 
-        var resolver = new AddUsingsCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument));
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var resolver = new AddUsingsCodeActionResolver();
         var actionParams = new AddUsingsCodeActionParams
         {
-            Uri = documentPath,
             Namespace = "System",
         };
         var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
@@ -214,7 +195,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
         Assert.Equal(1, firstEdit.Range.Start.Line);
-        Assert.Equal($"""
+        Assert.Equal("""
             @using System
 
             """, firstEdit.NewText);
@@ -225,7 +206,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var documentPath = new Uri("c:/Test.razor");
-        var contents = $"""
+        var contents = """
             <table>
             <tr>
             </tr>
@@ -233,16 +214,16 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
             """;
         var codeDocument = CreateCodeDocument(contents);
 
-        var resolver = new AddUsingsCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument));
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var resolver = new AddUsingsCodeActionResolver();
         var actionParams = new AddUsingsCodeActionParams
         {
-            Uri = documentPath,
             Namespace = "System",
         };
         var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
@@ -253,7 +234,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
         Assert.Equal(0, firstEdit.Range.Start.Line);
-        Assert.Equal($"""
+        Assert.Equal("""
             @using System
 
             """, firstEdit.NewText);
@@ -264,22 +245,22 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var documentPath = new Uri("c:/Test.razor");
-        var contents = $"""
+        var contents = """
             @namespace Testing
 
             """;
         var codeDocument = CreateCodeDocument(contents);
 
-        var resolver = new AddUsingsCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument));
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var resolver = new AddUsingsCodeActionResolver();
         var actionParams = new AddUsingsCodeActionParams
         {
-            Uri = documentPath,
             Namespace = "System",
         };
         var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
@@ -290,7 +271,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
         Assert.Equal(1, firstEdit.Range.Start.Line);
-        Assert.Equal($"""
+        Assert.Equal("""
             @using System
 
             """, firstEdit.NewText);
@@ -301,23 +282,23 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var documentPath = new Uri("c:/Test.razor");
-        var contents = $"""
+        var contents = """
             @page "/"
             @namespace Testing
 
             """;
         var codeDocument = CreateCodeDocument(contents);
 
-        var resolver = new AddUsingsCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument));
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var resolver = new AddUsingsCodeActionResolver();
         var actionParams = new AddUsingsCodeActionParams
         {
-            Uri = documentPath,
             Namespace = "System",
         };
         var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
@@ -328,7 +309,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
         Assert.Equal(2, firstEdit.Range.Start.Line);
-        Assert.Equal($"""
+        Assert.Equal("""
             @using System
 
             """, firstEdit.NewText);
@@ -339,19 +320,19 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var documentPath = new Uri("c:/Test.razor");
-        var contents = $"@using System";
+        var contents = "@using System";
         var codeDocument = CreateCodeDocument(contents);
 
-        var resolver = new AddUsingsCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument));
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var resolver = new AddUsingsCodeActionResolver();
         var actionParams = new AddUsingsCodeActionParams
         {
-            Uri = documentPath,
             Namespace = "System.Linq",
         };
         var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
@@ -362,7 +343,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
         Assert.Equal(1, firstEdit.Range.Start.Line);
-        Assert.Equal($"""
+        Assert.Equal("""
             @using System.Linq
 
             """, firstEdit.NewText);
@@ -373,23 +354,23 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var documentPath = new Uri("c:/Test.razor");
-        var contents = $"""
+        var contents = """
             @using System
             @using System.Linq
 
             """;
         var codeDocument = CreateCodeDocument(contents);
 
-        var resolver = new AddUsingsCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument));
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var resolver = new AddUsingsCodeActionResolver();
         var actionParams = new AddUsingsCodeActionParams
         {
-            Uri = documentPath,
             Namespace = "Microsoft.AspNetCore.Razor.Language",
         };
         var data = JsonSerializer.SerializeToElement(actionParams);
 
         // Act
-        var workspaceEdit = await resolver.ResolveAsync(data, default);
+        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
 
         // Assert
         Assert.NotNull(workspaceEdit);
@@ -400,7 +381,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         Assert.True(addUsingsChange.TryGetFirst(out var textDocumentEdit));
         var firstEdit = Assert.Single(textDocumentEdit.Edits);
         Assert.Equal(2, firstEdit.Range.Start.Line);
-        Assert.Equal($"""
+        Assert.Equal("""
             @using Microsoft.AspNetCore.Razor.Language
 
             """, firstEdit.NewText);
@@ -409,7 +390,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     private static RazorCodeDocument CreateCodeDocument(string text)
     {
         var fileName = "Test.razor";
-        var filePath = $"c:/{fileName}";
+        var filePath = "c:/{fileName}";
         var projectItem = new TestRazorProjectItem(filePath, filePath, fileName) { Content = text };
         var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, (builder) => PageDirective.Register(builder));
         var codeDocument = projectEngine.Process(projectItem);

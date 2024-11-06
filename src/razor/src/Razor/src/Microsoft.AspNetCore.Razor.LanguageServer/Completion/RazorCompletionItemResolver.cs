@@ -5,26 +5,19 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text.Adornments;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
-internal class RazorCompletionItemResolver : CompletionItemResolver
+internal class RazorCompletionItemResolver(IProjectSnapshotManager projectManager) : CompletionItemResolver
 {
-    private readonly LSPTagHelperTooltipFactory _lspTagHelperTooltipFactory;
-    private readonly VSLSPTagHelperTooltipFactory _vsLspTagHelperTooltipFactory;
-
-    public RazorCompletionItemResolver(
-        LSPTagHelperTooltipFactory lspTagHelperTooltipFactory,
-        VSLSPTagHelperTooltipFactory vsLspTagHelperTooltipFactory)
-    {
-        _lspTagHelperTooltipFactory = lspTagHelperTooltipFactory;
-        _vsLspTagHelperTooltipFactory = vsLspTagHelperTooltipFactory;
-    }
+    private readonly IProjectSnapshotManager _projectManager = projectManager;
 
     public override async Task<VSInternalCompletionItem?> ResolveAsync(
         VSInternalCompletionItem completionItem,
@@ -109,11 +102,11 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
 
                     if (useDescriptionProperty)
                     {
-                        _vsLspTagHelperTooltipFactory.TryCreateTooltip(descriptionInfo, out tagHelperClassifiedTextTooltip);
+                        ClassifiedTagHelperTooltipFactory.TryCreateTooltip(descriptionInfo, out tagHelperClassifiedTextTooltip);
                     }
                     else
                     {
-                        _lspTagHelperTooltipFactory.TryCreateTooltip(descriptionInfo, documentationKind, out tagHelperMarkupTooltip);
+                        MarkupTagHelperTooltipFactory.TryCreateTooltip(descriptionInfo, documentationKind, out tagHelperMarkupTooltip);
                     }
 
                     break;
@@ -128,11 +121,15 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
 
                     if (useDescriptionProperty)
                     {
-                        tagHelperClassifiedTextTooltip = await _vsLspTagHelperTooltipFactory.TryCreateTooltipAsync(razorCompletionResolveContext.FilePath, descriptionInfo, cancellationToken).ConfigureAwait(false);
+                        tagHelperClassifiedTextTooltip = await ClassifiedTagHelperTooltipFactory
+                            .TryCreateTooltipAsync(razorCompletionResolveContext.FilePath, descriptionInfo, _projectManager.GetQueryOperations(), cancellationToken)
+                            .ConfigureAwait(false);
                     }
                     else
                     {
-                        tagHelperMarkupTooltip = await _lspTagHelperTooltipFactory.TryCreateTooltipAsync(razorCompletionResolveContext.FilePath, descriptionInfo, documentationKind, cancellationToken).ConfigureAwait(false);
+                        tagHelperMarkupTooltip = await MarkupTagHelperTooltipFactory
+                            .TryCreateTooltipAsync(razorCompletionResolveContext.FilePath, descriptionInfo, _projectManager.GetQueryOperations(), documentationKind, cancellationToken)
+                            .ConfigureAwait(false);
                     }
 
                     break;

@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Text.Json;
 using System.Threading;
@@ -13,6 +14,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Telemetry;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Razor.Settings;
@@ -41,7 +43,7 @@ internal sealed class CohostSemanticTokensRangeEndpoint(
     protected override bool MutatesSolutionState => false;
     protected override bool RequiresLSPSolution => true;
 
-    public Registration? GetRegistration(VSInternalClientCapabilities clientCapabilities, DocumentFilter[] filter, RazorCohostRequestContext requestContext)
+    public ImmutableArray<Registration> GetRegistrations(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext)
     {
         if (clientCapabilities.TextDocument?.SemanticTokens?.DynamicRegistration == true)
         {
@@ -49,17 +51,15 @@ internal sealed class CohostSemanticTokensRangeEndpoint(
             var clientCapabilitiesString = JsonSerializer.Serialize(clientCapabilities);
             semanticTokensRefreshQueue.Initialize(clientCapabilitiesString);
 
-            return new Registration()
+            return [new Registration()
             {
                 Method = Methods.TextDocumentSemanticTokensRangeName,
                 RegisterOptions = new SemanticTokensRegistrationOptions()
-                {
-                    DocumentSelector = filter,
-                }.EnableSemanticTokens(_semanticTokensLegendService)
-            };
+                    .EnableSemanticTokens(_semanticTokensLegendService)
+            }];
         }
 
-        return null;
+        return [];
     }
 
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(SemanticTokensRangeParams request)
@@ -78,7 +78,7 @@ internal sealed class CohostSemanticTokensRangeEndpoint(
         var colorBackground = _clientSettingsManager.GetClientSettings().AdvancedSettings.ColorBackground;
 
         var correlationId = Guid.NewGuid();
-        using var _ = _telemetryReporter.TrackLspRequest(Methods.TextDocumentSemanticTokensRangeName, RazorLSPConstants.CohostLanguageServerName, correlationId);
+        using var _ = _telemetryReporter.TrackLspRequest(Methods.TextDocumentSemanticTokensRangeName, RazorLSPConstants.CohostLanguageServerName, TelemetryThresholds.SemanticTokensRazorTelemetryThreshold, correlationId);
 
         var tokens = await _remoteServiceInvoker.TryInvokeAsync<IRemoteSemanticTokensService, int[]?>(
             razorDocument.Project.Solution,

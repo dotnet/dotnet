@@ -19,17 +19,17 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.ProjectSystem;
 public class RazorProjectInfoDriverTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
     private static readonly HostProject s_hostProject1 = new(
-        projectFilePath: "C:/path/to/project1/project1.csproj",
+        filePath: "C:/path/to/project1/project1.csproj",
         intermediateOutputPath: "C:/path/to/project1/obj",
-        razorConfiguration: RazorConfiguration.Default,
+        configuration: RazorConfiguration.Default,
         rootNamespace: "TestNamespace");
 
     private static readonly HostDocument s_hostDocument1 = new("C:/path/to/project1/file.razor", "file.razor");
 
     private static readonly HostProject s_hostProject2 = new(
-        projectFilePath: "C:/path/to/project2/project2.csproj",
+        filePath: "C:/path/to/project2/project2.csproj",
         intermediateOutputPath: "C:/path/to/project2/obj",
-        razorConfiguration: RazorConfiguration.Default,
+        configuration: RazorConfiguration.Default,
         rootNamespace: "TestNamespace");
 
     private static readonly HostDocument s_hostDocument2 = new("C:/path/to/project2/file.razor", "file.razor");

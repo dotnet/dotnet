@@ -113,10 +113,10 @@ internal partial class RazorDiagnosticsPublisher : IDocumentProcessedListener, I
         }
     }
 
-    private async Task PublishDiagnosticsAsync(IDocumentSnapshot document, CancellationToken token)
+    private async Task PublishDiagnosticsAsync(IDocumentSnapshot document, CancellationToken cancellationToken)
     {
-        var result = await document.GetGeneratedOutputAsync().ConfigureAwait(false);
-        var csharpDiagnostics = await GetCSharpDiagnosticsAsync(document, token).ConfigureAwait(false);
+        var result = await document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
+        var csharpDiagnostics = await GetCSharpDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false);
         var razorDiagnostics = result.GetCSharpDocument().Diagnostics;
 
         lock (_publishedDiagnostics)
@@ -188,7 +188,7 @@ internal partial class RazorDiagnosticsPublisher : IDocumentProcessedListener, I
                     if (_documentContextFactory.Value.TryCreate(delegatedParams.TextDocument.Uri, projectContext: null, out var documentContext))
                     {
                         return await _translateDiagnosticsService.Value
-                            .TranslateAsync(RazorLanguageKind.CSharp, fullDiagnostics.Items, documentContext.Snapshot)
+                            .TranslateAsync(RazorLanguageKind.CSharp, fullDiagnostics.Items, documentContext.Snapshot, cancellationToken)
                             .ConfigureAwait(false);
                     }
                 }

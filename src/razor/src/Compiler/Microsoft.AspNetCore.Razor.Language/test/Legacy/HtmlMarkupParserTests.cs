@@ -203,9 +203,10 @@ public class HtmlMarkupParserTests
             EnsureCurrent();
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             Context.Dispose();
+            base.Dispose();
         }
 
         public new SyntaxToken PreviousToken

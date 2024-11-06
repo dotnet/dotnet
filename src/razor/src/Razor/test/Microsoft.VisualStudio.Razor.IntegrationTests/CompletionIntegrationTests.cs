@@ -97,7 +97,8 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
                 }
                 """,
             search: "<button",
-            stringsToType: [" ", "d", "i", "s"]);
+            stringsToType: [" ", "d", "i", "s"],
+            expectedSelectedItemLabel: "disabled");
     }
 
     [IdeFact]
@@ -137,7 +138,8 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
                 }
                 """,
             search: "<button",
-            stringsToType: [" ", "s", "t", "y"]);
+            stringsToType: [" ", "s", "t", "y"],
+            expectedSelectedItemLabel: "style");
     }
 
     [IdeFact]
@@ -176,7 +178,6 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
                 """,
             search: "</PageTitle>",
             stringsToType: ["{ENTER}", "{ENTER}", "<", "s", "p", "a"],
-            commitChar: null,
             expectedSelectedItemLabel: "span");
     }
 
@@ -255,7 +256,8 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
                 }
                 """,
             search: "myCurrentCount++;",
-            stringsToType: ["{ENTER}", "{ENTER}", "m", "y", "C", "u", "r"]);
+            stringsToType: ["{ENTER}", "{ENTER}", "m", "y", "C", "u", "r"],
+            expectedSelectedItemLabel: "myCurrentCount");
     }
 
     private async Task VerifyTypeAndCommitCompletionAsync(string input, string output, string search, string[] stringsToType, char? commitChar = null, string? expectedSelectedItemLabel = null)

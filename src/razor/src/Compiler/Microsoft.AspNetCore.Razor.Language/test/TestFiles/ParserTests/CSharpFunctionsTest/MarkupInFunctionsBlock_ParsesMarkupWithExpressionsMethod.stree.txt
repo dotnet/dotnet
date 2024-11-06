@@ -27,14 +27,14 @@
                                 Identifier;[message];
                                 RightParenthesis;[)];
                                 Whitespace;[ ];
-                                GreaterThanEqual;[=>];
+                                CSharpOperator;[=>];
                                 Whitespace;[ ];
                                 LessThan;[<];
                                 Identifier;[h3];
                                 GreaterThan;[>];
                                 Identifier;[@message];
                                 LessThan;[<];
-                                Slash;[/];
+                                CSharpOperator;[/];
                                 Identifier;[h3];
                                 GreaterThan;[>];
                                 NewLine;[LF];

@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -13,6 +12,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -37,13 +37,12 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
     {
         var razorCompletionListProvider = RazorLanguageServerHost.GetRequiredService<RazorCompletionListProvider>();
         var lspServices = RazorLanguageServerHost.GetRequiredService<ILspServices>();
-        var responseRewriters = lspServices.GetRequiredServices<DelegatedCompletionResponseRewriter>();
         var documentMappingService = lspServices.GetRequiredService<IDocumentMappingService>();
         var clientConnection = lspServices.GetRequiredService<IClientConnection>();
         var completionListCache = lspServices.GetRequiredService<CompletionListCache>();
         var loggerFactory = lspServices.GetRequiredService<ILoggerFactory>();
 
-        var delegatedCompletionListProvider = new TestDelegatedCompletionListProvider(responseRewriters, documentMappingService, clientConnection, completionListCache);
+        var delegatedCompletionListProvider = new TestDelegatedCompletionListProvider(documentMappingService, clientConnection, completionListCache);
         var completionListProvider = new CompletionListProvider(razorCompletionListProvider, delegatedCompletionListProvider);
         var configurationService = new DefaultRazorConfigurationService(clientConnection, loggerFactory);
         var optionsMonitor = new RazorLSPOptionsMonitor(configurationService, RazorLSPOptions.Default);
@@ -60,9 +59,9 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
             },
         };
         CompletionEndpoint.ApplyCapabilities(new(), clientCapabilities);
-        var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "ComponentApp");
+        var projectRoot = Path.Combine(Helpers.GetTestAppsPath(), "ComponentApp");
         var projectFilePath = Path.Combine(projectRoot, "ComponentApp.csproj");
-        _filePath = Path.Combine(projectRoot, "Components", "Pages", $"Generated.razor");
+        _filePath = Path.Combine(projectRoot, "Components", "Pages", "Generated.razor");
 
         var content = GetFileContents();
 
@@ -75,7 +74,7 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
 
         DocumentUri = new Uri(_filePath);
         DocumentSnapshot = await GetDocumentSnapshotAsync(projectFilePath, _filePath, targetPath);
-        DocumentText = await DocumentSnapshot.GetTextAsync();
+        DocumentText = await DocumentSnapshot.GetTextAsync(CancellationToken.None);
 
         RazorPosition = DocumentText.GetPosition(razorCodeActionIndex);
 
@@ -141,12 +140,19 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
 
     private class TestDelegatedCompletionListProvider : DelegatedCompletionListProvider
     {
-        public TestDelegatedCompletionListProvider(IEnumerable<DelegatedCompletionResponseRewriter> responseRewriters, IDocumentMappingService documentMappingService, IClientConnection clientConnection, CompletionListCache completionListCache)
-            : base(responseRewriters, documentMappingService, clientConnection, completionListCache)
+        public TestDelegatedCompletionListProvider(IDocumentMappingService documentMappingService, IClientConnection clientConnection, CompletionListCache completionListCache)
+            : base(documentMappingService, clientConnection, completionListCache)
         {
         }
 
-        public override Task<VSInternalCompletionList?> GetCompletionListAsync(int absoluteIndex, VSInternalCompletionContext completionContext, DocumentContext documentContext, VSInternalClientCapabilities clientCapabilities, Guid correlationId, CancellationToken cancellationToken)
+        public override Task<VSInternalCompletionList?> GetCompletionListAsync(
+            int absoluteIndex,
+            VSInternalCompletionContext completionContext,
+            DocumentContext documentContext,
+            VSInternalClientCapabilities clientCapabilities,
+            RazorCompletionOptions completionOptions,
+            Guid correlationId,
+            CancellationToken cancellationToken)
         {
             return Task.FromResult<VSInternalCompletionList?>(
                 new VSInternalCompletionList

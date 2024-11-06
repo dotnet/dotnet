@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
@@ -122,7 +123,7 @@ internal class WrapWithTagEndpoint(IClientConnection clientConnection, ILoggerFa
         if (htmlResponse.TextEdits is not null)
         {
             var htmlSourceText = await documentContext.GetHtmlSourceTextAsync(cancellationToken).ConfigureAwait(false);
-            htmlResponse.TextEdits = HtmlFormatter.FixHtmlTextEdits(htmlSourceText, htmlResponse.TextEdits);
+            htmlResponse.TextEdits = FormattingUtilities.FixHtmlTextEdits(htmlSourceText, htmlResponse.TextEdits);
         }
 
         return htmlResponse;

@@ -20,11 +20,11 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.DocumentMapping;
 [method: ImportingConstructor]
 internal sealed class RemoteDocumentMappingService(
     IFilePathService filePathService,
-    DocumentSnapshotFactory documentSnapshotFactory,
+    RemoteSnapshotManager snapshotManager,
     ILoggerFactory loggerFactory)
     : AbstractDocumentMappingService(filePathService, loggerFactory.GetOrCreateLogger<RemoteDocumentMappingService>())
 {
-    private readonly DocumentSnapshotFactory _documentSnapshotFactory = documentSnapshotFactory;
+    private readonly RemoteSnapshotManager _snapshotManager = snapshotManager;
 
     public async Task<(Uri MappedDocumentUri, LinePositionSpan MappedRange)> MapToHostDocumentUriAndRangeAsync(
         RemoteDocumentSnapshot originSnapshot,
@@ -52,10 +52,11 @@ internal sealed class RemoteDocumentMappingService(
             return (generatedDocumentUri, generatedDocumentRange);
         }
 
-        var razorDocumentSnapshot = _documentSnapshotFactory.GetOrCreate(razorDocument);
+        var razorDocumentSnapshot = _snapshotManager.GetSnapshot(razorDocument);
 
-        var razorCodeDocument = await razorDocumentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
-        cancellationToken.ThrowIfCancellationRequested();
+        var razorCodeDocument = await razorDocumentSnapshot
+            .GetGeneratedOutputAsync(cancellationToken)
+            .ConfigureAwait(false);
 
         if (razorCodeDocument is null)
         {

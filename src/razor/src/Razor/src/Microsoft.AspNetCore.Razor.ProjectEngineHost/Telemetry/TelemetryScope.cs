@@ -16,6 +16,7 @@ internal sealed class TelemetryScope : IDisposable
     private readonly Severity _severity;
     private readonly Property[] _properties;
     private readonly Stopwatch _stopwatch;
+    private readonly TimeSpan _minTimeToReport;
     private bool _disposed;
 
     private TelemetryScope()
@@ -32,6 +33,7 @@ internal sealed class TelemetryScope : IDisposable
     private TelemetryScope(
         ITelemetryReporter reporter,
         string name,
+        TimeSpan minTimeToReport,
         Severity severity,
         Property[] properties)
     {
@@ -45,6 +47,7 @@ internal sealed class TelemetryScope : IDisposable
         _properties = properties;
 
         _stopwatch = StopwatchPool.Default.Get();
+        _minTimeToReport = minTimeToReport;
         _stopwatch.Restart();
     }
 
@@ -59,54 +62,57 @@ internal sealed class TelemetryScope : IDisposable
 
         _stopwatch.Stop();
 
-        // We know that we were created with an array of at least length one.
-        _properties[^1] = new("eventscope.ellapsedms", _stopwatch.ElapsedMilliseconds);
+        var elapsed = _stopwatch.Elapsed;
+        if (elapsed >= _minTimeToReport)
+        {
+            // We know that we were created with an array of at least length one.
+            _properties[^1] = new("eventscope.ellapsedms", _stopwatch.ElapsedMilliseconds);
 
-        _reporter.ReportEvent(_name, _severity, _properties);
+            _reporter.ReportEvent(_name, _severity, _properties);
+        }
 
         StopwatchPool.Default.Return(_stopwatch);
     }
 
-    public static TelemetryScope Create(ITelemetryReporter reporter, string name, Severity severity)
+    public static TelemetryScope Create(ITelemetryReporter reporter, string name, Severity severity, TimeSpan minTimeToReport)
     {
         var array = new Property[1];
 
-        return new(reporter, name, severity, array);
+        return new(reporter, name, minTimeToReport, severity, array);
     }
 
-    public static TelemetryScope Create(ITelemetryReporter reporter, string name, Severity severity, Property property)
+    public static TelemetryScope Create(ITelemetryReporter reporter, string name, Severity severity, TimeSpan minTimeToReport, Property property)
     {
         var array = new Property[2];
         array[0] = property;
 
-        return new(reporter, name, severity, array);
+        return new(reporter, name, minTimeToReport, severity, array);
     }
 
-    public static TelemetryScope Create(ITelemetryReporter reporter, string name, Severity severity, Property property1, Property property2)
+    public static TelemetryScope Create(ITelemetryReporter reporter, string name, Severity severity, TimeSpan minTimeToReport, Property property1, Property property2)
     {
         var array = new Property[3];
         array[0] = property1;
         array[1] = property2;
 
-        return new(reporter, name, severity, array);
+        return new(reporter, name, minTimeToReport, severity,  array);
     }
 
-    public static TelemetryScope Create(ITelemetryReporter reporter, string name, Severity severity, Property property1, Property property2, Property property3)
+    public static TelemetryScope Create(ITelemetryReporter reporter, string name, Severity severity, TimeSpan minTimeToReport, Property property1, Property property2, Property property3)
     {
         var array = new Property[4];
         array[0] = property1;
         array[1] = property2;
         array[2] = property3;
 
-        return new(reporter, name, severity, array);
+        return new(reporter, name, minTimeToReport, severity, array);
     }
 
-    public static TelemetryScope Create(ITelemetryReporter reporter, string name, Severity severity, Property[] properties)
+    public static TelemetryScope Create(ITelemetryReporter reporter, string name, Severity severity, TimeSpan minTimeToReport, ReadOnlySpan<Property> properties)
     {
         var array = new Property[properties.Length + 1];
-
-        Array.Copy(properties, array, properties.Length);
-
-        return new(reporter, name, severity, array);
+        properties.CopyTo(array);
+        
+        return new(reporter, name, minTimeToReport, severity, array);
     }
 }

@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Collections.Immutable;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,8 +38,9 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
             NoOpTelemetryReporter.Instance,
             configureServices: (collection) =>
             {
-                collection.AddSingleton<IOnInitialized, NoopClientNotifierService>();
-                collection.AddSingleton<IClientConnection, NoopClientNotifierService>();
+                collection.AddSingleton<IOnInitialized, NoOpClientNotifierService>();
+                collection.AddSingleton<IClientConnection, NoOpClientNotifierService>();
+                collection.AddSingleton<IRazorProjectInfoDriver, NoOpRazorProjectInfoDriver>();
                 Builder(collection);
             },
             featureOptions: BuildFeatureOptions());
@@ -73,7 +75,7 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
             {
                 updater.ProjectAdded(hostProject);
                 var tagHelpers = CommonResources.LegacyTagHelpers;
-                var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.CSharp11);
+                var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
                 updater.ProjectWorkspaceStateChanged(hostProject.Key, projectWorkspaceState);
                 updater.DocumentAdded(hostProject.Key, hostDocument, textLoader);
             },
@@ -84,7 +86,7 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
         return projectSnapshot.GetDocument(filePath);
     }
 
-    private class NoopClientNotifierService : IClientConnection, IOnInitialized
+    private sealed class NoOpClientNotifierService : IClientConnection, IOnInitialized
     {
         public Task OnInitializedAsync(ILspServices services, CancellationToken cancellationToken)
         {
@@ -105,5 +107,18 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
         {
             throw new NotImplementedException();
         }
+    }
+
+    private sealed class NoOpRazorProjectInfoDriver : IRazorProjectInfoDriver
+    {
+        public void AddListener(IRazorProjectInfoListener listener)
+        {
+        }
+
+        public ImmutableArray<RazorProjectInfo> GetLatestProjectInfo()
+            => [];
+
+        public Task WaitForInitializationAsync()
+            => Task.CompletedTask;
     }
 }

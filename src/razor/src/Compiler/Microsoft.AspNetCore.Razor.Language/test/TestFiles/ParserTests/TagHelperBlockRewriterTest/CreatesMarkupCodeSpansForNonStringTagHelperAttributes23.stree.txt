@@ -14,7 +14,7 @@
                             Whitespace;[ ];
                             NewLine;[LF];
                             Whitespace;[    ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[item];
                             Whitespace;[ ];

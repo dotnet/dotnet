@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -42,13 +43,17 @@ public sealed class RazorParserOptionsBuilder
 
     public bool ParseLeadingDirectives { get; set; }
 
+    public bool UseRoslynTokenizer { get; set; }
+
+    public CSharpParseOptions CSharpParseOptions { get; set; }
+
     public RazorLanguageVersion LanguageVersion { get; }
 
     internal bool EnableSpanEditHandlers { get; set; }
 
     public RazorParserOptions Build()
     {
-        return new RazorParserOptions(Directives.ToArray(), DesignTime, ParseLeadingDirectives, LanguageVersion, FileKind ?? FileKinds.Legacy, EnableSpanEditHandlers);
+        return new RazorParserOptions(Directives.ToArray(), DesignTime, ParseLeadingDirectives, UseRoslynTokenizer, LanguageVersion, FileKind ?? FileKinds.Legacy, EnableSpanEditHandlers, CSharpParseOptions);
     }
 
     public void SetDesignTime(bool designTime)

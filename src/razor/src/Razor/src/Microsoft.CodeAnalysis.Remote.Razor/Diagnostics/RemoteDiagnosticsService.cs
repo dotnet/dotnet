@@ -49,8 +49,8 @@ internal sealed class RemoteDiagnosticsService(in ServiceArgs args) : RazorDocum
 
         return [
             .. RazorDiagnosticConverter.Convert(razorDiagnostics, codeDocument.Source.Text, context.Snapshot),
-            .. await _translateDiagnosticsService.TranslateAsync(RazorLanguageKind.CSharp, csharpDiagnostics, context.Snapshot),
-            .. await _translateDiagnosticsService.TranslateAsync(RazorLanguageKind.Html, htmlDiagnostics, context.Snapshot)
+            .. await _translateDiagnosticsService.TranslateAsync(RazorLanguageKind.CSharp, csharpDiagnostics, context.Snapshot, cancellationToken),
+            .. await _translateDiagnosticsService.TranslateAsync(RazorLanguageKind.Html, htmlDiagnostics, context.Snapshot, cancellationToken)
         ];
     }
 }
