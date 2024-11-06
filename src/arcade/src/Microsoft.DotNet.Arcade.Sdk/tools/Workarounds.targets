@@ -197,7 +197,7 @@
 <![CDATA[
 try
 {
-    System.Reflection.Assembly.LoadFrom(@"$(MicrosoftNETBuildTasksDirectoryRoot)\..\..\..\Sdks\Microsoft.NET.Sdk.StaticWebAssets\tasks\net472\System.Text.Json.dll");
+    System.Reflection.Assembly.LoadFrom(@"$(MicrosoftNETBuildTasksDirectoryRoot)\..\..\..\DotnetTools\dotnet-format\BuildHost-net472\System.Text.Json.dll");
 }
 catch
 {
