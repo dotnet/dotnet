@@ -44,7 +44,7 @@
   "symbols/ExtensionsProfile/choices/AllMicrosoft/description": "Включить все расширения, поставляемые Майкрософт (включая расширения с ограничительной лицензией)",
   "symbols/ExtensionsProfile/choices/AllMicrosoft/displayName": "AllMicrosoft",
   "symbols/Fixture/description": "Выберите типы средств, которые необходимо включить в проект.",
-  "symbols/Fixture/displayName": "Fixture",
+  "symbols/Fixture/displayName": "Средство",
   "symbols/Fixture/choices/None/description": "Нет методов работы со средствами",
   "symbols/Fixture/choices/None/displayName": "Отсутствует",
   "symbols/Fixture/choices/AssemblyInitialize/description": "Метод работы со средствами AssemblyInitialize",
