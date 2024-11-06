@@ -40,7 +40,7 @@
                                                 Identifier;[Name];
                                                 Not;[!];
                                                 LeftBracket;[[];
-                                                IntegerLiteral;[0];
+                                                NumericLiteral;[0];
                                                 RightBracket;[]];
                                                 Not;[!];
                                                 QuestionMark;[?];

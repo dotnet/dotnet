@@ -14,8 +14,8 @@ public class GenericTypeNameRewriterTest
     [Theory]
     [InlineData("TItem2", "Type2")]
 
-    // Unspecified argument -> System.Object
-    [InlineData("TItem3", "System.Object")]
+    // Unspecified argument -> object
+    [InlineData("TItem3", "object")]
 
     // Not a type parameter
     [InlineData("TItem4", "TItem4")]
@@ -24,8 +24,8 @@ public class GenericTypeNameRewriterTest
     [InlineData("TItem1.TItem2", "TItem1.TItem2")]
 
     // Type parameters can't have type parameters
-    [InlineData("TItem1.TItem2<TItem1, TItem2, TItem3>", "TItem1.TItem2<Type1, Type2, System.Object>")]
-    [InlineData("TItem2<TItem1<TItem3>, System.TItem2, RenderFragment<List<TItem1>>", "TItem2<TItem1<System.Object>, System.TItem2, RenderFragment<List<Type1>>")]
+    [InlineData("TItem1.TItem2<TItem1, TItem2, TItem3>", "TItem1.TItem2<Type1, Type2, object>")]
+    [InlineData("TItem2<TItem1<TItem3>, System.TItem2, RenderFragment<List<TItem1>>", "TItem2<TItem1<object>, System.TItem2, RenderFragment<List<Type1>>")]
 
     // Tuples
     [InlineData("List<(TItem1 X, TItem2 Y)>", "List<(Type1 X, Type2 Y)>")]

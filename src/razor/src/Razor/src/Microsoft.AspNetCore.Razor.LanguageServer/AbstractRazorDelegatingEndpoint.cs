@@ -18,26 +18,17 @@ using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : IRazorRequestHandler<TRequest, TResponse?>
-   where TRequest : ITextDocumentPositionParams
+internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse>(
+    LanguageServerFeatureOptions languageServerFeatureOptions,
+    IDocumentMappingService documentMappingService,
+    IClientConnection clientConnection,
+    ILogger logger)
+    : IRazorRequestHandler<TRequest, TResponse?> where TRequest : ITextDocumentPositionParams
 {
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly IDocumentMappingService _documentMappingService;
-    private readonly IClientConnection _clientConnection;
-    protected readonly ILogger Logger;
-
-    protected AbstractRazorDelegatingEndpoint(
-        LanguageServerFeatureOptions languageServerFeatureOptions,
-        IDocumentMappingService documentMappingService,
-        IClientConnection clientConnection,
-        ILogger logger)
-    {
-        _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-        _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
-        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-
-        Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
+    protected readonly IDocumentMappingService DocumentMappingService = documentMappingService;
+    private readonly IClientConnection _clientConnection = clientConnection;
+    protected readonly ILogger Logger = logger;
 
     /// <summary>
     /// The strategy to use to project the incoming caret position onto the generated C#/Html document
@@ -119,7 +110,7 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
             return default;
         }
 
-        var positionInfo = DocumentPositionInfoStrategy.GetPositionInfo(_documentMappingService, codeDocument, absoluteIndex);
+        var positionInfo = DocumentPositionInfoStrategy.GetPositionInfo(DocumentMappingService, codeDocument, absoluteIndex);
 
         var response = await TryHandleAsync(request, requestContext, positionInfo, cancellationToken).ConfigureAwait(false);
         if (response is not null && response is not ISumType { Value: null })
@@ -143,7 +134,7 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
             // Sometimes Html can actually be mapped to C#, like for example component attributes, which map to
             // C# properties, even though they appear entirely in a Html context. Since remapping is pretty cheap
             // it's easier to just try mapping, and see what happens, rather than checking for specific syntax nodes.
-            if (_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), positionInfo.HostDocumentIndex, out Position? csharpPosition, out _))
+            if (DocumentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), positionInfo.HostDocumentIndex, out Position? csharpPosition, out _))
             {
                 // We're just gonna pretend this mapped perfectly normally onto C#. Moving this logic to the actual position info
                 // calculating code is possible, but could have untold effects, so opt-in is better (for now?)

@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using Microsoft.AspNetCore.Razor.Language.Components;
 using Roslyn.Test.Utilities;
 using Xunit;
 
@@ -857,7 +858,7 @@ catch(bar) { baz(); }");
                 [Parameter]
                 public Func<int, int> ChildContent { get; set; } = (context) => 1 < @context;
             }
-            """);
+            """, directives: [ComponentCodeDirective.Directive]);
     }
 
     [Fact]
@@ -903,6 +904,30 @@ catch(bar) { baz(); }");
     {
         ParseDocumentTest("""
              @{ var validationMessage = new { @@
+            """);
+    }
+
+    [Fact]
+    public void Usings()
+    {
+        ParseDocumentTest("""
+            {
+            @using global::System
+            @using global::System.Collections.Generic
+            @using global::System.Linq
+            @using global::System.Threading.Tasks
+            @using global::Microsoft.AspNetCore.Components
+            }
+            """);
+    }
+
+    [Fact]
+    public void CommentOnSameLineAsHtml()
+    {
+        ParseDocumentTest("""
+            @{
+                @* comment *@<div></div>
+            }
             """);
     }
 

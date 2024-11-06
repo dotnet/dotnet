@@ -13,7 +13,7 @@
                 Whitespace;[ ];
                 Keyword;[int];
                 LeftBracket;[[];
-                IntegerLiteral;[0];
+                NumericLiteral;[0];
                 RightBracket;[]];
                 RightParenthesis;[)];
                 NewLine;[LF];
@@ -23,14 +23,13 @@
                 Keyword;[case];
                 Whitespace;[ ];
                 LeftBracket;[[];
-                Dot;[.];
-                Dot;[.];
+                CSharpOperator;[..];
                 Comma;[,];
                 Whitespace;[ ];
-                IntegerLiteral;[3];
+                NumericLiteral;[3];
                 Comma;[,];
                 Whitespace;[ ];
-                IntegerLiteral;[4];
+                NumericLiteral;[4];
                 RightBracket;[]];
                 Colon;[:];
                 NewLine;[LF];

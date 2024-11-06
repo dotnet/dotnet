@@ -163,4 +163,37 @@
   <data name="Language_Services_Missing_Service" xml:space="preserve">
     <value>Razor language services not configured properly, missing language service '{0}'.</value>
   </data>
+  <data name="Not_Available_In" xml:space="preserve">
+    <value>Not available in</value>
+  </data>
+  <data name="TagHelper_Attribute_Glyph" xml:space="preserve">
+    <value>Razor TagHelper Attribute Glyph</value>
+  </data>
+  <data name="TagHelper_Element_Glyph" xml:space="preserve">
+    <value>Razor TagHelper Element Glyph</value>
+  </data>
+  <data name="Create_Component_FromTag_Title" xml:space="preserve">
+    <value>Create component from tag</value>
+  </data>
+  <data name="ExtractTo_CodeBehind_Title" xml:space="preserve">
+    <value>Extract block to code behind</value>
+  </data>
+  <data name="ExtractTo_Component_Title" xml:space="preserve">
+    <value>Extract element to new component</value>
+  </data>
+  <data name="Generate_Async_Event_Handler_Title" xml:space="preserve">
+    <value>Generate Async Event Handler '{0}'</value>
+  </data>
+  <data name="Generate_Event_Handler_Title" xml:space="preserve">
+    <value>Generate Event Handler '{0}'</value>
+  </data>
+  <data name="ReTrigger_Completions_Title" xml:space="preserve">
+    <value>"Re-trigger completions..."</value>
+  </data>
+  <data name="Blazor_directive_attributes" xml:space="preserve">
+    <value>Blazor directive attributes</value>
+  </data>
+  <data name="Statement" xml:space="preserve">
+    <value>statement</value>
+  </data>
 </root>

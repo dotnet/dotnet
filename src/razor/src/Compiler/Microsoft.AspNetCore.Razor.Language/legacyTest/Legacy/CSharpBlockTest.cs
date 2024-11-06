@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-public class CSharpBlockTest() : ParserTestBase(layer: TestProject.Layer.Compiler, validateSpanEditHandlers: true)
+public class CSharpBlockTest() : ParserTestBase(layer: TestProject.Layer.Compiler, validateSpanEditHandlers: true, useLegacyTokenizer: true)
 {
     [Fact]
     public void CSharpBlock_SingleLineControlFlowStatement_Error()

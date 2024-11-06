@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 
 public class TextEditResponseRewriterTest(ITestOutputHelper testOutput)
-    : ResponseRewriterTestBase(new TextEditResponseRewriter(), testOutput)
+    : ResponseRewriterTestBase(testOutput)
 {
     [Fact]
     public async Task RewriteAsync_NotCSharp_Noops()
@@ -79,6 +79,7 @@ public class TextEditResponseRewriterTest(ITestOutputHelper testOutput)
             Items = [
                 new VSInternalCompletionItem()
                 {
+                    Label = string.Empty, // label string is non-nullable
                     TextEdit = VsLspFactory.CreateTextEdit(textEditRange, "Hello")
                 }
             ]

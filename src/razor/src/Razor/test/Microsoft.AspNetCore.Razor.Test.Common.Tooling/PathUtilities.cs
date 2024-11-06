@@ -3,7 +3,6 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Xunit;
 
@@ -17,7 +16,7 @@ public static class PathUtilities
 
         if (!Path.IsPathRooted(result))
         {
-            result = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            result = PlatformInformation.IsWindows
                 ? @"C:\" + result
                 : "/" + result;
         }

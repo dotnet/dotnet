@@ -71,9 +71,9 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
     protected Task WaitUntilCurrentBatchCompletesAsync()
         => _workQueue.WaitUntilCurrentBatchCompletesAsync();
 
-    protected virtual async Task ProcessDocumentAsync(IProjectSnapshot project, IDocumentSnapshot document)
+    protected virtual async Task ProcessDocumentAsync(IProjectSnapshot project, IDocumentSnapshot document, CancellationToken cancellationToken)
     {
-        await document.GetGeneratedOutputAsync().ConfigureAwait(false);
+        await document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
         UpdateFileInfo(project, document);
     }
@@ -116,7 +116,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
 
             try
             {
-                await ProcessDocumentAsync(project, document).ConfigureAwait(false);
+                await ProcessDocumentAsync(project, document, token).ConfigureAwait(false);
             }
             catch (UnauthorizedAccessException)
             {

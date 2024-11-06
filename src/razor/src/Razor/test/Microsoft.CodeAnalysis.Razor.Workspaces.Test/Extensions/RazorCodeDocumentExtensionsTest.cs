@@ -1,15 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
@@ -333,7 +330,10 @@ public class RazorCodeDocumentExtensionsTest(ITestOutputHelper testOutput) : Too
         tagHelpers = tagHelpers.NullToEmpty();
 
         var sourceDocument = TestRazorSourceDocument.Create(code.Text);
-        var projectEngine = RazorProjectEngine.Create(builder => { });
+        var projectEngine = RazorProjectEngine.Create(builder =>
+        {
+            builder.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions.Default));
+        });
 
         return projectEngine.ProcessDesignTime(sourceDocument, "mvc", importSources: default, tagHelpers);
     }

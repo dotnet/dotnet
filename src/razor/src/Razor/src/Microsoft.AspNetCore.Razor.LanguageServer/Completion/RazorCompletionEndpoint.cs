@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Telemetry;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -35,12 +37,8 @@ internal class RazorCompletionEndpoint(
         serverCapabilities.CompletionProvider = new CompletionOptions()
         {
             ResolveProvider = true,
-            TriggerCharacters = _completionListProvider.AggregateTriggerCharacters.ToArray(),
-            // This is the intersection of C# and HTML commit characters.
-            // We need to specify it so that platform can correctly calculate ApplicableToSpan in
-            // https://devdiv.visualstudio.com/DevDiv/_git/VSLanguageServerClient?path=/src/product/RemoteLanguage/Impl/Features/Completion/AsyncCompletionSource.cs&version=GBdevelop&line=855&lineEnd=855&lineStartColumn=9&lineEndColumn=49&lineStyle=plain&_a=contents
-            // This is needed to fix https://github.com/dotnet/razor/issues/10787 in particular
-            AllCommitCharacters = [" ", ">", ";", "="]
+            TriggerCharacters = CompletionTriggerAndCommitCharacters.AllTriggerCharacters,
+            AllCommitCharacters = CompletionTriggerAndCommitCharacters.AllCommitCharacters
         };
     }
 
@@ -77,12 +75,18 @@ internal class RazorCompletionEndpoint(
         }
 
         var correlationId = Guid.NewGuid();
-        using var _ = _telemetryReporter?.TrackLspRequest(Methods.TextDocumentCompletionName, LanguageServerConstants.RazorLanguageServerName, correlationId);
+        using var _ = _telemetryReporter?.TrackLspRequest(Methods.TextDocumentCompletionName, LanguageServerConstants.RazorLanguageServerName, TelemetryThresholds.CompletionRazorTelemetryThreshold, correlationId);
+
+        var razorCompletionOptions = new RazorCompletionOptions(
+            SnippetsSupported: true,
+            AutoInsertAttributeQuotes: _optionsMonitor.CurrentValue.AutoInsertAttributeQuotes,
+            CommitElementsWithSpace: _optionsMonitor.CurrentValue.CommitElementsWithSpace);
         var completionList = await _completionListProvider.GetCompletionListAsync(
             hostDocumentIndex,
             completionContext,
             documentContext,
             _clientCapabilities!,
+            razorCompletionOptions,
             correlationId,
             cancellationToken).ConfigureAwait(false);
         return completionList;

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.ServiceHub.Framework;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -17,6 +18,7 @@ internal abstract partial class RazorBrokeredServiceBase : IDisposable
     private readonly ServiceRpcDescriptor.RpcConnection? _serverConnection;
     private readonly IRazorBrokeredServiceInterceptor? _interceptor;
 
+    protected readonly RemoteSnapshotManager SnapshotManager;
     protected readonly ILogger Logger;
 
     protected RazorBrokeredServiceBase(in ServiceArgs args)
@@ -24,6 +26,7 @@ internal abstract partial class RazorBrokeredServiceBase : IDisposable
         _serviceBrokerClient = new ServiceBrokerClient(args.ServiceBroker, joinableTaskFactory: null);
         _serverConnection = args.ServerConnection;
         _interceptor = args.Interceptor;
+        SnapshotManager = args.ExportProvider.GetExportedValue<RemoteSnapshotManager>();
 
         Logger = args.ServiceLoggerFactory.GetOrCreateLogger(GetType());
     }

@@ -13,40 +13,46 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Compiler.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 
-internal class RemoteProjectSnapshot : IProjectSnapshot
+internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 {
+    public RemoteSolutionSnapshot SolutionSnapshot { get; }
+
     public ProjectKey Key { get; }
 
     private readonly Project _project;
-    private readonly DocumentSnapshotFactory _documentSnapshotFactory;
-    private readonly ITelemetryReporter _telemetryReporter;
     private readonly AsyncLazy<RazorConfiguration> _lazyConfiguration;
     private readonly AsyncLazy<RazorProjectEngine> _lazyProjectEngine;
+    private readonly Dictionary<TextDocument, RemoteDocumentSnapshot> _documentMap = [];
 
     private ImmutableArray<TagHelperDescriptor> _tagHelpers;
 
-    public RemoteProjectSnapshot(Project project, DocumentSnapshotFactory documentSnapshotFactory, ITelemetryReporter telemetryReporter)
+    public RemoteProjectSnapshot(Project project, RemoteSolutionSnapshot solutionSnapshot)
     {
+        if (!project.ContainsRazorDocuments())
+        {
+            throw new ArgumentException(SR.Project_does_not_contain_any_Razor_documents, nameof(project));
+        }
+
         _project = project;
-        _documentSnapshotFactory = documentSnapshotFactory;
-        _telemetryReporter = telemetryReporter;
+        SolutionSnapshot = solutionSnapshot;
         Key = _project.ToProjectKey();
 
         _lazyConfiguration = new AsyncLazy<RazorConfiguration>(CreateRazorConfigurationAsync, joinableTaskFactory: null);
         _lazyProjectEngine = new AsyncLazy<RazorProjectEngine>(async () =>
         {
             var configuration = await _lazyConfiguration.GetValueAsync();
+            var csharpParseOptions = project.ParseOptions as CSharpParseOptions ?? CSharpParseOptions.Default;
             return ProjectEngineFactories.DefaultProvider.Create(
                 configuration,
                 rootDirectoryPath: Path.GetDirectoryName(FilePath).AssumeNotNull(),
@@ -55,6 +61,7 @@ internal class RemoteProjectSnapshot : IProjectSnapshot
                     builder.SetRootNamespace(RootNamespace);
                     builder.SetCSharpLanguageVersion(CSharpLanguageVersion);
                     builder.SetSupportLocalizedComponentNames();
+                    builder.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: csharpParseOptions.UseRoslynTokenizer(), csharpParseOptions));
                 });
         },
         joinableTaskFactory: null);
@@ -63,28 +70,11 @@ internal class RemoteProjectSnapshot : IProjectSnapshot
     public RazorConfiguration Configuration => throw new InvalidOperationException("Should not be called for cohosted projects.");
 
     public IEnumerable<string> DocumentFilePaths
-    {
-        get
-        {
-            foreach (var additionalDocument in _project.AdditionalDocuments)
-            {
-                if (additionalDocument.FilePath is not string filePath)
-                {
-                    continue;
-                }
+        => _project.AdditionalDocuments
+            .Where(static d => d.IsRazorDocument())
+            .Select(static d => d.FilePath.AssumeNotNull());
 
-                if (!filePath.EndsWith(".razor", StringComparison.OrdinalIgnoreCase) &&
-                    !filePath.EndsWith(".cshtml", StringComparison.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
-
-                yield return filePath;
-            }
-        }
-    }
-
-    public string FilePath => _project.FilePath!;
+    public string FilePath => _project.FilePath.AssumeNotNull();
 
     public string IntermediateOutputPath => FilePathNormalizer.GetNormalizedDirectoryName(_project.CompilationOutputInfo.AssemblyPath);
 
@@ -94,47 +84,110 @@ internal class RemoteProjectSnapshot : IProjectSnapshot
 
     public VersionStamp Version => _project.Version;
 
-    public LanguageVersion CSharpLanguageVersion => ((CSharpParseOptions)_project.ParseOptions!).LanguageVersion;
+    public LanguageVersion CSharpLanguageVersion => ((CSharpParseOptions)_project.ParseOptions.AssumeNotNull()).LanguageVersion;
 
-    public async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken)
+    public ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken)
     {
-        if (_tagHelpers.IsDefault)
+        return !_tagHelpers.IsDefault
+            ? new(_tagHelpers)
+            : GetTagHelpersCoreAsync(cancellationToken);
+
+        async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersCoreAsync(CancellationToken cancellationToken)
         {
             var projectEngine = await _lazyProjectEngine.GetValueAsync(cancellationToken);
-            var computedTagHelpers = await ComputeTagHelpersAsync(_project, projectEngine, _telemetryReporter, cancellationToken);
+            var telemetryReporter = SolutionSnapshot.SnapshotManager.TelemetryReporter;
+            var computedTagHelpers = await _project.GetTagHelpersAsync(projectEngine, telemetryReporter, cancellationToken);
+
             ImmutableInterlocked.InterlockedInitialize(ref _tagHelpers, computedTagHelpers);
-        }
 
-        return _tagHelpers;
-
-        static ValueTask<ImmutableArray<TagHelperDescriptor>> ComputeTagHelpersAsync(
-            Project project,
-            RazorProjectEngine projectEngine,
-            ITelemetryReporter telemetryReporter,
-            CancellationToken cancellationToken)
-        {
-            var resolver = new CompilationTagHelperResolver(telemetryReporter);
-            return resolver.GetTagHelpersAsync(project, projectEngine, cancellationToken);
+            return _tagHelpers;
         }
     }
 
     public ProjectWorkspaceState ProjectWorkspaceState => throw new InvalidOperationException("Should not be called for cohosted projects.");
 
-    public IDocumentSnapshot? GetDocument(string filePath)
+    public RemoteDocumentSnapshot GetDocument(DocumentId documentId)
     {
-        var textDocument = _project.AdditionalDocuments.FirstOrDefault(d => d.FilePath == filePath);
-        if (textDocument is null)
+        var document = _project.GetRequiredDocument(documentId);
+        return GetDocument(document);
+    }
+
+    public RemoteDocumentSnapshot GetDocument(TextDocument document)
+    {
+        if (document.Project != _project)
         {
-            return null;
+            throw new ArgumentException(SR.Document_does_not_belong_to_this_project, nameof(document));
         }
 
-        return _documentSnapshotFactory.GetOrCreate(textDocument);
+        if (!document.IsRazorDocument())
+        {
+            throw new ArgumentException(SR.Document_is_not_a_Razor_document);
+        }
+
+        return GetDocumentCore(document);
     }
+
+    private RemoteDocumentSnapshot GetDocumentCore(TextDocument document)
+    {
+        lock (_documentMap)
+        {
+            if (!_documentMap.TryGetValue(document, out var snapshot))
+            {
+                snapshot = new RemoteDocumentSnapshot(document, this);
+                _documentMap.Add(document, snapshot);
+            }
+
+            return snapshot;
+        }
+    }
+
+    public bool ContainsDocument(string filePath)
+    {
+        if (!filePath.IsRazorFilePath())
+        {
+            throw new ArgumentException(SR.Format0_is_not_a_Razor_file_path(filePath), nameof(filePath));
+        }
+
+        var documentIds = _project.Solution.GetDocumentIdsWithFilePath(filePath);
+
+        foreach (var documentId in documentIds)
+        {
+            if (_project.Id == documentId.ProjectId &&
+                _project.ContainsAdditionalDocument(documentId))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public IDocumentSnapshot? GetDocument(string filePath)
+        => TryGetDocument(filePath, out var document)
+            ? document
+            : null;
 
     public bool TryGetDocument(string filePath, [NotNullWhen(true)] out IDocumentSnapshot? document)
     {
-        document = GetDocument(filePath);
-        return document is not null;
+        if (!filePath.IsRazorFilePath())
+        {
+            throw new ArgumentException(SR.Format0_is_not_a_Razor_file_path(filePath), nameof(filePath));
+        }
+
+        var documentIds = _project.Solution.GetDocumentIdsWithFilePath(filePath);
+
+        foreach (var documentId in documentIds)
+        {
+            if (_project.Id == documentId.ProjectId &&
+                _project.GetAdditionalDocument(documentId) is { } doc)
+            {
+                document = GetDocumentCore(doc);
+                return true;
+            }
+        }
+
+        document = null;
+        return false;
     }
 
     public RazorProjectEngine GetProjectEngine() => throw new InvalidOperationException("Should not be called for cohosted projects.");
@@ -163,9 +216,7 @@ internal class RemoteProjectSnapshot : IProjectSnapshot
 
         var compilation = await _project.GetCompilationAsync().ConfigureAwait(false);
 
-        var suppressAddComponentParameter = compilation is null
-            ? false
-            : !compilation.HasAddComponentParameter();
+        var suppressAddComponentParameter = compilation is not null && !compilation.HasAddComponentParameter();
 
         return new(
             razorLanguageVersion,

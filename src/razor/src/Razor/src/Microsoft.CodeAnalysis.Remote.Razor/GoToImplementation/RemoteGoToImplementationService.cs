@@ -73,7 +73,9 @@ internal sealed class RemoteGoToImplementationService(in ServiceArgs args) : Raz
         }
 
         // Finally, call into C#.
-        var generatedDocument = await context.Snapshot.GetGeneratedDocumentAsync().ConfigureAwait(false);
+        var generatedDocument = await context.Snapshot
+            .GetGeneratedDocumentAsync(cancellationToken)
+            .ConfigureAwait(false);
 
         var locations = await ExternalHandlers.GoToImplementation
             .FindImplementationsAsync(

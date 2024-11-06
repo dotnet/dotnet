@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Test.Common.Logging;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.Threading;
 using Xunit;
@@ -214,4 +216,13 @@ public abstract partial class ToolingTestBase : IAsyncLifetime
     /// </summary>
     protected void AddDisposables(params IAsyncDisposable[] disposables)
         => AddDisposables((IEnumerable<IAsyncDisposable>)disposables);
+
+    private protected virtual TestProjectSnapshotManager CreateProjectSnapshotManager()
+        => CreateProjectSnapshotManager(ProjectEngineFactories.DefaultProvider);
+
+    private protected virtual TestProjectSnapshotManager CreateProjectSnapshotManager(IProjectEngineFactoryProvider projectEngineFactoryProvider)
+        => new(
+            projectEngineFactoryProvider,
+            LoggerFactory,
+            DisposalToken);
 }

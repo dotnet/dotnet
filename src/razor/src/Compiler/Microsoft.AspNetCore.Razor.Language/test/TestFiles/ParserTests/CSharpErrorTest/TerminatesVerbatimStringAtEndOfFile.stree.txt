@@ -13,11 +13,11 @@
                 Whitespace;[ ];
                 LeftBrace;[{];
                 Whitespace;[ ];
-                Identifier;[var];
+                Keyword;[var];
                 Whitespace;[ ];
                 Identifier;[foo];
                 Whitespace;[ ];
                 Assign;[=];
                 Whitespace;[ ];
-                StringLiteral;[@"blah LFblah; LF<p>Foo</p>LFblah LFblah];RZ1000(21:0,21 [1] )
+                StringLiteral;[@"blah LFblah; LF<p>Foo</p>LFblah LFblah];RZ1000(21:0,21 [2] )
     EndOfFile;[];

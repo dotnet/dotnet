@@ -57,11 +57,8 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
         }
     }
 
-    private protected TestProjectSnapshotManager CreateProjectSnapshotManager()
+    private protected override TestProjectSnapshotManager CreateProjectSnapshotManager()
         => CreateProjectSnapshotManager(ProjectEngineFactoryProvider);
-
-    private protected TestProjectSnapshotManager CreateProjectSnapshotManager(IProjectEngineFactoryProvider projectEngineFactoryProvider)
-        => new(projectEngineFactoryProvider, LoggerFactory, DisposalToken);
 
     protected virtual void ConfigureWorkspace(AdhocWorkspace workspace)
     {

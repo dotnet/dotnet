@@ -9,13 +9,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
-using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Razor.CodeActions;
+using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
-using Microsoft.CodeAnalysis.Text;
+using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
@@ -42,8 +44,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
             },
         };
 
-        var location = new SourceLocation(0, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(0, 0));
+        var context = CreateRazorCodeActionContext(request, absoluteIndex: 0, documentPath, contents, new SourceSpan(0, 0));
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new TypeAccessibilityCodeActionProvider();
@@ -56,7 +57,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         ];
 
         // Act
-        var results = await provider.ProvideAsync(context, csharpCodeActions, default);
+        var results = await provider.ProvideAsync(context, csharpCodeActions, DisposalToken);
 
         // Assert
         Assert.Empty(results);
@@ -97,8 +98,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
             }
         };
 
-        var location = new SourceLocation(0, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(0, 0), supportsCodeActionResolve: false);
+        var context = CreateRazorCodeActionContext(request, absoluteIndex: 0, documentPath, contents, new SourceSpan(0, 0), supportsCodeActionResolve: false);
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new TypeAccessibilityCodeActionProvider();
@@ -111,7 +111,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         ];
 
         // Act
-        var results = await provider.ProvideAsync(context, csharpCodeActions, default);
+        var results = await provider.ProvideAsync(context, csharpCodeActions, DisposalToken);
 
         // Assert
         Assert.Empty(results);
@@ -139,15 +139,14 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
             }
         };
 
-        var location = new SourceLocation(0, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(0, 0));
+        var context = CreateRazorCodeActionContext(request, absoluteIndex: 0, documentPath, contents, new SourceSpan(0, 0));
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new TypeAccessibilityCodeActionProvider();
         var csharpCodeActions = ImmutableArray<RazorVSInternalCodeAction>.Empty;
 
         // Act
-        var results = await provider.ProvideAsync(context, csharpCodeActions, default);
+        var results = await provider.ProvideAsync(context, csharpCodeActions, DisposalToken);
 
         // Assert
         Assert.Empty(results);
@@ -190,8 +189,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
             }
         };
 
-        var location = new SourceLocation(0, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: false);
+        var context = CreateRazorCodeActionContext(request, absoluteIndex: 0, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: false);
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new TypeAccessibilityCodeActionProvider();
@@ -210,7 +208,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         ];
 
         // Act
-        var results = await provider.ProvideAsync(context, csharpCodeActions, default);
+        var results = await provider.ProvideAsync(context, csharpCodeActions, DisposalToken);
 
         // Assert
         Assert.Collection(results,
@@ -249,8 +247,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
             }
         };
 
-        var location = new SourceLocation(8, 0, 8);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: true);
+        var context = CreateRazorCodeActionContext(request, absoluteIndex: 8, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: true);
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new TypeAccessibilityCodeActionProvider();
@@ -269,7 +266,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         ];
 
         // Act
-        var results = await provider.ProvideAsync(context, csharpCodeActions, default);
+        var results = await provider.ProvideAsync(context, csharpCodeActions, DisposalToken);
 
         // Assert
         Assert.Collection(results,
@@ -301,8 +298,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
             }
         };
 
-        var location = new SourceLocation(0, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: true);
+        var context = CreateRazorCodeActionContext(request, absoluteIndex: 0, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: true);
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new TypeAccessibilityCodeActionProvider();
@@ -321,7 +317,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         ];
 
         // Act
-        var results = await provider.ProvideAsync(context, csharpCodeActions, default);
+        var results = await provider.ProvideAsync(context, csharpCodeActions, DisposalToken);
 
         // Assert
         Assert.Collection(results,
@@ -376,8 +372,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
             }
         };
 
-        var location = new SourceLocation(0, -1, -1);
-        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: false);
+        var context = CreateRazorCodeActionContext(request, absoluteIndex: 0, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: false);
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
         var provider = new TypeAccessibilityCodeActionProvider();
@@ -396,7 +391,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         ];
 
         // Act
-        var results = await provider.ProvideAsync(context, csharpCodeActions, default);
+        var results = await provider.ProvideAsync(context, csharpCodeActions, DisposalToken);
 
         // Assert
         Assert.Collection(results,
@@ -435,7 +430,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
 
     private static RazorCodeActionContext CreateRazorCodeActionContext(
         VSCodeActionParams request,
-        SourceLocation location,
+        int absoluteIndex,
         string filePath,
         string text,
         SourceSpan componentSourceSpan,
@@ -454,6 +449,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         {
             builder.AddTagHelpers(tagHelpers);
             builder.AddDirective(InjectDirective.Directive);
+            builder.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions.Default));
         });
         var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, FileKinds.Component, importSources: default, tagHelpers);
 
@@ -463,15 +459,26 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var csharpDocumentWithDiagnostic = new RazorCSharpDocument(codeDocument, csharpDocument.GeneratedCode, csharpDocument.Options, [diagnostic]);
         codeDocument.SetCSharpDocument(csharpDocumentWithDiagnostic);
 
-        var documentSnapshot = Mock.Of<IDocumentSnapshot>(document =>
-            document.GetGeneratedOutputAsync(It.IsAny<bool>()) == Task.FromResult(codeDocument) &&
-            document.GetTextAsync() == Task.FromResult(codeDocument.Source.Text) &&
-            document.Project.GetTagHelpersAsync(It.IsAny<CancellationToken>()) == new ValueTask<ImmutableArray<TagHelperDescriptor>>(tagHelpers), MockBehavior.Strict);
+        var documentSnapshotMock = new StrictMock<IDocumentSnapshot>();
+        documentSnapshotMock
+            .Setup(x => x.GetGeneratedOutputAsync(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(codeDocument);
+        documentSnapshotMock
+            .Setup(x => x.GetTextAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(codeDocument.Source.Text);
+        documentSnapshotMock
+            .Setup(x => x.Project.GetTagHelpersAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(tagHelpers);
 
-        var sourceText = SourceText.From(text);
-
-        var context = new RazorCodeActionContext(request, documentSnapshot, codeDocument, location, sourceText, supportsFileCreation, supportsCodeActionResolve);
-
-        return context;
+        return new RazorCodeActionContext(
+            request,
+            documentSnapshotMock.Object,
+            codeDocument,
+            StartAbsoluteIndex: absoluteIndex,
+            EndAbsoluteIndex: absoluteIndex,
+            RazorLanguageKind.Razor,
+            codeDocument.Source.Text,
+            supportsFileCreation,
+            supportsCodeActionResolve);
     }
 }

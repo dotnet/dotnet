@@ -45,21 +45,18 @@ internal sealed class CohostRangeFormattingEndpoint(
 
     protected override bool RequiresLSPSolution => true;
 
-    public Registration? GetRegistration(VSInternalClientCapabilities clientCapabilities, DocumentFilter[] filter, RazorCohostRequestContext requestContext)
+    public ImmutableArray<Registration> GetRegistrations(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext)
     {
         if (clientCapabilities.TextDocument?.Formatting?.DynamicRegistration is true)
         {
-            return new Registration()
+            return [new Registration()
             {
                 Method = Methods.TextDocumentRangeFormattingName,
                 RegisterOptions = new DocumentRangeFormattingRegistrationOptions()
-                {
-                    DocumentSelector = filter
-                }
-            };
+            }];
         }
 
-        return null;
+        return [];
     }
 
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(DocumentRangeFormattingParams request)
@@ -70,6 +67,14 @@ internal sealed class CohostRangeFormattingEndpoint(
 
     private async Task<TextEdit[]?> HandleRequestAsync(DocumentRangeFormattingParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
+        if (request.Options.OtherOptions is not null && request.Options.OtherOptions.TryGetValue("fromPaste", out var fromPasteObj) && fromPasteObj is bool fromPaste)
+        {
+            if (fromPaste && !_clientSettingsManager.GetClientSettings().AdvancedSettings.FormatOnPaste)
+            {
+                return null;
+            }
+        }
+
         _logger.LogDebug($"Getting Html formatting changes for {razorDocument.FilePath}");
         var htmlResult = await TryGetHtmlFormattingEditsAsync(request, razorDocument, cancellationToken).ConfigureAwait(false);
 

@@ -6,6 +6,7 @@ using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
@@ -45,18 +46,27 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
     ]).ToFrozenSet();
 
     /// <summary>
-    /// Translates code diagnostics from one representation into another.
+    ///  Translates code diagnostics from one representation into another.
     /// </summary>
-    /// <param name="diagnosticKind">The `RazorLanguageKind` of the `Diagnostic` objects included in `diagnostics`.</param>
-    /// <param name="diagnostics">An array of `Diagnostic` objects to translate.</param>
-    /// <param name="documentSnapshot">The `DocumentContext` for the code document associated with the diagnostics.</param>
+    /// <param name="diagnosticKind">
+    ///  The <see cref="RazorLanguageKind"/> of the <see cref="Diagnostic"/> objects
+    ///  included in <paramref name="diagnostics"/>.
+    /// </param>
+    /// <param name="diagnostics">
+    ///  An array of <see cref="Diagnostic"/> objects to translate.
+    /// </param>
+    /// <param name="documentSnapshot">
+    ///  The <see cref="IDocumentSnapshot"/> for the code document associated with the diagnostics.
+    /// </param>
+    /// <param name="cancellationToken">A token that can be checked to cancel work.</param>
     /// <returns>An array of translated diagnostics</returns>
     internal async Task<LspDiagnostic[]> TranslateAsync(
         RazorLanguageKind diagnosticKind,
         LspDiagnostic[] diagnostics,
-        IDocumentSnapshot documentSnapshot)
+        IDocumentSnapshot documentSnapshot,
+        CancellationToken cancellationToken)
     {
-        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
+        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
         if (codeDocument.IsUnsupported() != false)
         {
             _logger.LogInformation($"Unsupported code document.");

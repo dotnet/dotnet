@@ -367,8 +367,8 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
 
     [IdeTheory]
     [InlineData("MyProperty:get")]
-    [InlineData("MyProperty:set")]
-    [InlineData("MyProperty:after")]
+    [InlineData("MyProperty:set", Skip = "https://github.com/dotnet/razor/issues/10966")]
+    [InlineData("MyProperty:after", Skip = "https://github.com/dotnet/razor/issues/10966")]
     public async Task GoToDefinition_ComponentAttribute_BindSet(string attribute)
     {
         // Create the file

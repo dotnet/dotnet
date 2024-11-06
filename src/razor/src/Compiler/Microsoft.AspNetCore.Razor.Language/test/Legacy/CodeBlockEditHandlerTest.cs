@@ -283,7 +283,7 @@ public class CodeBlockEditHandlerTest
     {
         using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var builder);
 
-        var tokens = CSharpLanguageCharacteristics.Instance.TokenizeString(content).ToArray();
+        var tokens = NativeCSharpLanguageCharacteristics.Instance.TokenizeString(content).ToArray();
         foreach (var token in tokens)
         {
             builder.Add((SyntaxToken)token.CreateRed());

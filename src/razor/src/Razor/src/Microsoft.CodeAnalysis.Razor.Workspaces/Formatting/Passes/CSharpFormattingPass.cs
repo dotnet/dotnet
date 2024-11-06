@@ -37,7 +37,7 @@ internal sealed class CSharpFormattingPass(
         if (changes.Length > 0)
         {
             changedText = changedText.WithChanges(changes);
-            changedContext = await context.WithTextAsync(changedText).ConfigureAwait(false);
+            changedContext = await context.WithTextAsync(changedText, cancellationToken).ConfigureAwait(false);
         }
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -48,7 +48,7 @@ internal sealed class CSharpFormattingPass(
         if (csharpChanges.Length > 0)
         {
             changedText = changedText.WithChanges(csharpChanges);
-            changedContext = await changedContext.WithTextAsync(changedText).ConfigureAwait(false);
+            changedContext = await changedContext.WithTextAsync(changedText, cancellationToken).ConfigureAwait(false);
 
             _logger.LogTestOnly($"After FormatCSharpAsync:\r\n{changedText}");
         }

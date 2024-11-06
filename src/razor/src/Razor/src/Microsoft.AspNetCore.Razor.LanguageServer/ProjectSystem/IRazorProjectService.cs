@@ -18,31 +18,4 @@ internal interface IRazorProjectService
     Task UpdateDocumentAsync(string filePath, SourceText sourceText, CancellationToken cancellationToken);
     Task CloseDocumentAsync(string filePath, CancellationToken cancellationToken);
     Task RemoveDocumentAsync(string filePath, CancellationToken cancellationToken);
-
-    Task<ProjectKey> AddProjectAsync(
-        string filePath,
-        string intermediateOutputPath,
-        RazorConfiguration? configuration,
-        string? rootNamespace,
-        string? displayName,
-        CancellationToken cancellationToken);
-
-    Task UpdateProjectAsync(
-        ProjectKey projectKey,
-        RazorConfiguration? configuration,
-        string? rootNamespace,
-        string displayName,
-        ProjectWorkspaceState projectWorkspaceState,
-        ImmutableArray<DocumentSnapshotHandle> documents,
-        CancellationToken cancellationToken);
-
-    Task AddOrUpdateProjectAsync(
-        ProjectKey projectKey,
-        string filePath,
-        RazorConfiguration? configuration,
-        string? rootNamespace,
-        string displayName,
-        ProjectWorkspaceState projectWorkspaceState,
-        ImmutableArray<DocumentSnapshotHandle> documents,
-        CancellationToken cancellationToken);
 }

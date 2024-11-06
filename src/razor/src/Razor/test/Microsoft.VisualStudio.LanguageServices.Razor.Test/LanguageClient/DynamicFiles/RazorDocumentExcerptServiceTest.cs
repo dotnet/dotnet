@@ -28,7 +28,7 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
 </html>
 ";
 
-        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource);
+        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource, DisposalToken);
 
         var service = CreateExcerptService(primary);
 
@@ -106,7 +106,7 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
 </html>
 ";
 
-        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource);
+        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource, DisposalToken);
 
         var service = CreateExcerptService(primary);
 
@@ -159,7 +159,7 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
 </html>
 ";
 
-        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource);
+        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource, DisposalToken);
 
         var service = CreateExcerptService(primary);
 
@@ -266,7 +266,7 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
             </html>
             """;
 
-        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource);
+        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource, DisposalToken);
 
         var service = CreateExcerptService(primary);
 
@@ -370,7 +370,7 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
             </html>
             """;
 
-        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource);
+        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource, DisposalToken);
 
         var service = CreateExcerptService(primary);
 
@@ -444,7 +444,7 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
 </html>
 ";
 
-        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource);
+        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource, DisposalToken);
 
         var service = CreateExcerptService(primary);
 
@@ -553,7 +553,7 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
         // Arrange
         var razorSource = @"@{ var [|foo|] = ""Hello, World!""; }";
 
-        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource);
+        var (primary, secondary, secondarySpan) = await InitializeWithSnapshotAsync(razorSource, DisposalToken);
 
         var service = CreateExcerptService(primary);
 

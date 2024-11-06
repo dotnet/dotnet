@@ -128,10 +128,11 @@ internal static class TagHelperParseTreeRewriter
                     else if (node.EndTag == null)
                     {
                         // Start tag helper with no corresponding end tag.
+                        var source = new SourceSpan(SourceLocationTracker.Advance(startTag.GetSourceLocation(_source), "<"), tagName.Length);
                         _errorSink.OnError(
-                            RazorDiagnosticFactory.CreateParsing_TagHelperFoundMalformedTagHelper(
-                                new SourceSpan(SourceLocationTracker.Advance(startTag.GetSourceLocation(_source), "<"), tagName.Length),
-                                tagName));
+                            node.StartTag.IsVoidElement()
+                                ? RazorDiagnosticFactory.CreateParsing_VoidElement(source, tagName)
+                                : RazorDiagnosticFactory.CreateParsing_TagHelperFoundMalformedTagHelper(source, tagName));
                     }
                     else
                     {

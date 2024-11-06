@@ -3,9 +3,10 @@
 
 #nullable disable
 
-using System.Text;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
@@ -180,6 +181,7 @@ public class InjectDirectiveTest
             // Notice we're not registering the InjectDirective.Pass here so we can run it on demand.
             b.AddDirective(InjectDirective.Directive);
             b.AddDirective(ModelDirective.Directive);
+            b.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions.Default));
 
             b.Features.Add(new RazorPageDocumentClassifierPass());
             b.Features.Add(new MvcViewDocumentClassifierPass());

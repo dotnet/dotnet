@@ -92,6 +92,16 @@
         <target state="translated">スペースを含む要素のコミット</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDescription">
+        <source>If true, formatting will be enabled when pasting content</source>
+        <target state="translated">true の場合、コンテンツを貼り付けたときに書式設定が有効になります</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDisplayName">
+        <source>Format on paste</source>
+        <target state="translated">貼り付け時に書式設定する</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
         <source>If true, formatting will be enabled while typing</source>
         <target state="translated">true の場合、入力中に書式設定が有効になります</target>

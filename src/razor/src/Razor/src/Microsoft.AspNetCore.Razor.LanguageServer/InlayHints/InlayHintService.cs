@@ -29,6 +29,16 @@ internal sealed class InlayHintService(IDocumentMappingService documentMappingSe
 
         var span = range.ToLinePositionSpan();
 
+        cancellationToken.ThrowIfCancellationRequested();
+
+        // Sometimes the client sends us a request that doesn't match the file contents. Could be a bug with old requests
+        // not being cancelled, but no harm in being defensive
+        if (!codeDocument.Source.Text.TryGetAbsoluteIndex(span.Start, out var startIndex) ||
+            !codeDocument.Source.Text.TryGetAbsoluteIndex(span.End, out var endIndex))
+        {
+            return null;
+        }
+
         // We are given a range by the client, but our mapping only succeeds if the start and end of the range can both be mapped
         // to C#. Since that doesn't logically match what we want from inlay hints, we instead get the minimum range of mappable
         // C# to get hints for. We'll filter that later, to remove the sections that can't be mapped back.

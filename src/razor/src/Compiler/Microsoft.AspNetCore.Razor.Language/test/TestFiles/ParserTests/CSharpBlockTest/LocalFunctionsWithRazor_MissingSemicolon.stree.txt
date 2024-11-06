@@ -23,7 +23,7 @@
                             LeftBrace;[{];
                             NewLine;[LF];
                             Whitespace;[        ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[time];
                             Whitespace;[ ];
@@ -47,7 +47,7 @@
                             Whitespace;[ ];
                             Identifier;[@time];
                             LessThan;[<];
-                            Slash;[/];
+                            CSharpOperator;[/];
                             Identifier;[strong];
                             GreaterThan;[>];
                             NewLine;[LF];

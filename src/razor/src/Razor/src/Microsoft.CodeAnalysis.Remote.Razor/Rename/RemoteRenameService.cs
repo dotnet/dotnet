@@ -52,9 +52,14 @@ internal sealed class RemoteRenameService(in ServiceArgs args) : RazorDocumentSe
             return NoFurtherHandling;
         }
 
-        var generatedDocument = await context.Snapshot.GetGeneratedDocumentAsync().ConfigureAwait(false);
+        var generatedDocument = await context.Snapshot
+            .GetGeneratedDocumentAsync(cancellationToken)
+            .ConfigureAwait(false);
 
-        var razorEdit = await _renameService.TryGetRazorRenameEditsAsync(context, positionInfo, newName, cancellationToken).ConfigureAwait(false);
+        var razorEdit = await _renameService
+            .TryGetRazorRenameEditsAsync(context, positionInfo, newName, context.GetSolutionQueryOperations(), cancellationToken)
+            .ConfigureAwait(false);
+
         if (razorEdit is not null)
         {
             return Results(razorEdit);
@@ -65,7 +70,10 @@ internal sealed class RemoteRenameService(in ServiceArgs args) : RazorDocumentSe
             return CallHtml;
         }
 
-        var csharpEdit = await ExternalHandlers.Rename.GetRenameEditAsync(generatedDocument, positionInfo.Position.ToLinePosition(), newName, cancellationToken).ConfigureAwait(false);
+        var csharpEdit = await ExternalHandlers.Rename
+            .GetRenameEditAsync(generatedDocument, positionInfo.Position.ToLinePosition(), newName, cancellationToken)
+            .ConfigureAwait(false);
+
         if (csharpEdit is null)
         {
             return NoFurtherHandling;

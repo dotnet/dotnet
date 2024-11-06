@@ -3,7 +3,6 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
-using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
@@ -19,9 +18,11 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Mapping;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.AspNetCore.Razor.LanguageServer.SpellCheck;
-using Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
+using Microsoft.CodeAnalysis.Razor.CodeActions;
+using Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Formatting;
@@ -82,15 +83,11 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<CompletionListProvider>();
         services.AddSingleton<DelegatedCompletionListProvider>();
         services.AddSingleton<RazorCompletionListProvider>();
-        services.AddSingleton<DelegatedCompletionResponseRewriter, TextEditResponseRewriter>();
-        services.AddSingleton<DelegatedCompletionResponseRewriter, DesignTimeHelperResponseRewriter>();
-        services.AddSingleton<DelegatedCompletionResponseRewriter, HtmlCommitCharacterResponseRewriter>();
-        services.AddSingleton<DelegatedCompletionResponseRewriter, SnippetResponseRewriter>();
 
         services.AddSingleton<AggregateCompletionItemResolver>();
         services.AddSingleton<CompletionItemResolver, RazorCompletionItemResolver>();
         services.AddSingleton<CompletionItemResolver, DelegatedCompletionItemResolver>();
-        services.AddSingleton<ITagHelperCompletionService, LspTagHelperCompletionService>();
+        services.AddSingleton<ITagHelperCompletionService, TagHelperCompletionService>();
         services.AddSingleton<IRazorCompletionFactsService, LspRazorCompletionFactsService>();
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeCompletionItemProvider>();
@@ -105,13 +102,12 @@ internal static class IServiceCollectionExtensions
         services.AddHandlerWithCapabilities<DocumentPullDiagnosticsEndpoint>();
         services.AddSingleton<RazorTranslateDiagnosticsService>();
         services.AddSingleton(sp => new Lazy<RazorTranslateDiagnosticsService>(sp.GetRequiredService<RazorTranslateDiagnosticsService>));
+        services.AddSingleton<IRazorStartupService, WorkspaceDiagnosticsRefresher>();
     }
 
     public static void AddHoverServices(this IServiceCollection services)
     {
         services.AddHandlerWithCapabilities<HoverEndpoint>();
-
-        services.AddSingleton<IHoverService, HoverService>();
     }
 
     public static void AddSemanticTokensServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
@@ -137,15 +133,23 @@ internal static class IServiceCollectionExtensions
         services.AddHandlerWithCapabilities<CodeActionEndpoint>();
         services.AddHandler<CodeActionResolveEndpoint>();
 
+        services.AddSingleton<ICodeActionsService, CodeActionsService>();
+        services.AddSingleton<ICodeActionResolveService, CodeActionResolveService>();
+        services.AddSingleton<IDelegatedCodeActionsProvider, DelegatedCodeActionsProvider>();
+        services.AddSingleton<IDelegatedCodeActionResolver, DelegatedCodeActionResolver>();
+        services.AddSingleton<IRoslynCodeActionHelpers, RoslynCodeActionHelpers>();
+
         // CSharp Code actions
         services.AddSingleton<ICSharpCodeActionProvider, TypeAccessibilityCodeActionProvider>();
-        services.AddSingleton<ICSharpCodeActionProvider, DefaultCSharpCodeActionProvider>();
-        services.AddSingleton<CSharpCodeActionResolver, DefaultCSharpCodeActionResolver>();
-        services.AddSingleton<CSharpCodeActionResolver, UnformattedRemappingCSharpCodeActionResolver>();
+        services.AddSingleton<ICSharpCodeActionProvider, CSharpCodeActionProvider>();
+        services.AddSingleton<ICSharpCodeActionResolver, CSharpCodeActionResolver>();
+        services.AddSingleton<ICSharpCodeActionResolver, UnformattedRemappingCSharpCodeActionResolver>();
 
         // Razor Code actions
         services.AddSingleton<IRazorCodeActionProvider, ExtractToCodeBehindCodeActionProvider>();
         services.AddSingleton<IRazorCodeActionResolver, ExtractToCodeBehindCodeActionResolver>();
+        services.AddSingleton<IRazorCodeActionProvider, ExtractToComponentCodeActionProvider>();
+        services.AddSingleton<IRazorCodeActionResolver, ExtractToComponentCodeActionResolver>();
         services.AddSingleton<IRazorCodeActionProvider, ComponentAccessibilityCodeActionProvider>();
         services.AddSingleton<IRazorCodeActionResolver, CreateComponentCodeActionResolver>();
         services.AddSingleton<IRazorCodeActionResolver, AddUsingsCodeActionResolver>();
@@ -153,8 +157,8 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IRazorCodeActionResolver, GenerateMethodCodeActionResolver>();
 
         // Html Code actions
-        services.AddSingleton<IHtmlCodeActionProvider, DefaultHtmlCodeActionProvider>();
-        services.AddSingleton<HtmlCodeActionResolver, DefaultHtmlCodeActionResolver>();
+        services.AddSingleton<IHtmlCodeActionProvider, HtmlCodeActionProvider>();
+        services.AddSingleton<IHtmlCodeActionResolver, HtmlCodeActionResolver>();
     }
 
     public static void AddTextDocumentServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
@@ -220,13 +224,9 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IDocumentProcessedListener, GeneratedDocumentSynchronizer>();
         services.AddSingleton<IDocumentProcessedListener, CodeDocumentReferenceHolder>();
 
-        services.AddSingleton<LSPTagHelperTooltipFactory, DefaultLSPTagHelperTooltipFactory>();
-        services.AddSingleton<VSLSPTagHelperTooltipFactory, DefaultVSLSPTagHelperTooltipFactory>();
-
         // Add project snapshot manager
         services.AddSingleton<IProjectEngineFactoryProvider, LspProjectEngineFactoryProvider>();
         services.AddSingleton<IProjectSnapshotManager, LspProjectSnapshotManager>();
-        services.AddSingleton<IProjectCollectionResolver>(sp => (LspProjectSnapshotManager)sp.GetRequiredService<IProjectSnapshotManager>());
     }
 
     public static void AddHandlerWithCapabilities<T>(this IServiceCollection services)

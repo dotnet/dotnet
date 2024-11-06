@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Serialization;
@@ -20,6 +19,11 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudio.Razor.Remote;
 
+/// <summary>
+///  Retrieves <see cref="TagHelperDescriptor">tag helpers</see> for a given <see cref="Project"/>
+///  using an out-of-process service. If the service isn't available, this falls back to
+///  retrieving tag helpers in-process.
+/// </summary>
 [Export(typeof(ITagHelperResolver))]
 [method: ImportingConstructor]
 internal class OutOfProcTagHelperResolver(
@@ -29,11 +33,11 @@ internal class OutOfProcTagHelperResolver(
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<OutOfProcTagHelperResolver>();
-    private readonly CompilationTagHelperResolver _innerResolver = new(telemetryReporter);
+    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
     private readonly TagHelperResultCache _resultCache = new();
 
     public async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(
-        Project workspaceProject,
+        Project project,
         IProjectSnapshot projectSnapshot,
         CancellationToken cancellationToken)
     {
@@ -41,7 +45,7 @@ internal class OutOfProcTagHelperResolver(
 
         try
         {
-            var result = await ResolveTagHelpersOutOfProcessAsync(workspaceProject, projectSnapshot, cancellationToken).ConfigureAwait(false);
+            var result = await ResolveTagHelpersOutOfProcessAsync(project, projectSnapshot, cancellationToken).ConfigureAwait(false);
 
             // We received tag helpers, so we're done.
             if (!result.IsDefault)
@@ -57,7 +61,7 @@ internal class OutOfProcTagHelperResolver(
 
         try
         {
-            return await ResolveTagHelpersInProcessAsync(workspaceProject, projectSnapshot, cancellationToken).ConfigureAwait(false);
+            return await ResolveTagHelpersInProcessAsync(project, projectSnapshot, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -66,17 +70,17 @@ internal class OutOfProcTagHelperResolver(
         }
     }
 
-    protected virtual async ValueTask<ImmutableArray<TagHelperDescriptor>> ResolveTagHelpersOutOfProcessAsync(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+    protected virtual async ValueTask<ImmutableArray<TagHelperDescriptor>> ResolveTagHelpersOutOfProcessAsync(Project project, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
-        if (!_resultCache.TryGetId(workspaceProject.Id, out var lastResultId))
+        if (!_resultCache.TryGetId(project.Id, out var lastResultId))
         {
             lastResultId = -1;
         }
 
-        var projectHandle = new ProjectSnapshotHandle(workspaceProject.Id, projectSnapshot.Configuration, projectSnapshot.RootNamespace);
+        var projectHandle = new ProjectSnapshotHandle(project.Id, projectSnapshot.Configuration, projectSnapshot.RootNamespace);
 
         var deltaResult = await _remoteServiceInvoker.TryInvokeAsync<IRemoteTagHelperProviderService, TagHelperDeltaResult>(
-            workspaceProject.Solution,
+            project.Solution,
             (service, solutionInfo, innerCancellationToken) =>
                 service.GetTagHelpersDeltaAsync(solutionInfo, projectHandle, lastResultId, innerCancellationToken),
             cancellationToken);
@@ -87,12 +91,10 @@ internal class OutOfProcTagHelperResolver(
         }
 
         // Apply the delta we received to any cached checksums for the current project.
-        var checksums = ProduceChecksumsFromDelta(workspaceProject.Id, lastResultId, deltaResult);
+        var checksums = ProduceChecksumsFromDelta(project.Id, lastResultId, deltaResult);
 
-        using var _1 = ArrayBuilderPool<TagHelperDescriptor>.GetPooledObject(out var tagHelpers);
-        using var _2 = ArrayBuilderPool<Checksum>.GetPooledObject(out var checksumsToFetch);
-
-        tagHelpers.SetCapacityIfLarger(checksums.Length);
+        using var tagHelpers = new PooledArrayBuilder<TagHelperDescriptor>(capacity: checksums.Length);
+        using var checksumsToFetch = new PooledArrayBuilder<Checksum>(capacity: checksums.Length);
 
         foreach (var checksum in checksums)
         {
@@ -111,7 +113,7 @@ internal class OutOfProcTagHelperResolver(
         {
             // There are checksums that we don't have cached tag helpers for, so we need to fetch them from OOP.
             var fetchResult = await _remoteServiceInvoker.TryInvokeAsync<IRemoteTagHelperProviderService, FetchTagHelpersResult>(
-                workspaceProject.Solution,
+                project.Solution,
                 (service, solutionInfo, innerCancellationToken) =>
                     service.FetchTagHelpersAsync(solutionInfo, projectHandle, checksumsToFetch.DrainToImmutable(), innerCancellationToken),
                 cancellationToken);
@@ -142,12 +144,12 @@ internal class OutOfProcTagHelperResolver(
     }
 
     // Protected virtual for testing
-    protected virtual ImmutableArray<Checksum> ProduceChecksumsFromDelta(ProjectId projectId, int lastResultId, TagHelperDeltaResult deltaResult)
+    protected ImmutableArray<Checksum> ProduceChecksumsFromDelta(ProjectId projectId, int lastResultId, TagHelperDeltaResult deltaResult)
     {
         if (!_resultCache.TryGet(projectId, lastResultId, out var checksums))
         {
             // We most likely haven't made a request to the server yet so there's no delta to apply
-            checksums = ImmutableArray<Checksum>.Empty;
+            checksums = [];
 
             if (deltaResult.IsDelta)
             {
@@ -159,7 +161,7 @@ internal class OutOfProcTagHelperResolver(
         else if (!deltaResult.IsDelta)
         {
             // Not a delta based response, we should treat it as a "refresh"
-            checksums = ImmutableArray<Checksum>.Empty;
+            checksums = [];
         }
 
         if (deltaResult.ResultId != lastResultId)
@@ -173,8 +175,8 @@ internal class OutOfProcTagHelperResolver(
     }
 
     protected virtual ValueTask<ImmutableArray<TagHelperDescriptor>> ResolveTagHelpersInProcessAsync(
-        Project workspaceProject,
+        Project project,
         IProjectSnapshot projectSnapshot,
         CancellationToken cancellationToken)
-        => _innerResolver.GetTagHelpersAsync(workspaceProject, projectSnapshot.GetProjectEngine(), cancellationToken);
+        => project.GetTagHelpersAsync(projectSnapshot.GetProjectEngine(), _telemetryReporter, cancellationToken);
 }

@@ -19,7 +19,6 @@ namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 internal abstract class RazorDocumentServiceBase(in ServiceArgs args) : RazorBrokeredServiceBase(in args)
 {
-    protected DocumentSnapshotFactory DocumentSnapshotFactory { get; } = args.ExportProvider.GetExportedValue<DocumentSnapshotFactory>();
     protected IDocumentMappingService DocumentMappingService { get; } = args.ExportProvider.GetExportedValue<IDocumentMappingService>();
 
     protected virtual IDocumentPositionInfoStrategy DocumentPositionInfoStrategy { get; } = DefaultDocumentPositionInfoStrategy.Instance;
@@ -108,7 +107,7 @@ internal abstract class RazorDocumentServiceBase(in ServiceArgs args) : RazorBro
             return null;
         }
 
-        var documentSnapshot = DocumentSnapshotFactory.GetOrCreate(razorDocument);
+        var documentSnapshot = SnapshotManager.GetSnapshot(razorDocument);
 
         return new RemoteDocumentContext(razorDocument.CreateUri(), documentSnapshot);
     }

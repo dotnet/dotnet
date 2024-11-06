@@ -40,14 +40,14 @@
                                 Whitespace;[ ];
                                 GreaterThan;[>];
                                 Whitespace;[ ];
-                                IntegerLiteral;[0];
+                                NumericLiteral;[0];
                                 RightParenthesis;[)];
                                 Whitespace;[ ];
                                 Keyword;[return];
                                 Whitespace;[ ];
                                 StringLiteral;["Anouncement: "];
                                 Whitespace;[ ];
-                                Plus;[+];
+                                CSharpOperator;[+];
                                 Whitespace;[ ];
                                 Identifier;[message];
                                 Semicolon;[;];

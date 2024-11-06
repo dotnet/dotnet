@@ -92,6 +92,16 @@
         <target state="translated">使用空格键提交元素</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDescription">
+        <source>If true, formatting will be enabled when pasting content</source>
+        <target state="translated">如果为 true，则粘贴内容时将启用格式设置</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDisplayName">
+        <source>Format on paste</source>
+        <target state="translated">粘贴时设置格式</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
         <source>If true, formatting will be enabled while typing</source>
         <target state="translated">如果为 true，则在键入时将启用格式设置</target>

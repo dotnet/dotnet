@@ -14,7 +14,7 @@
                     CSharpCodeBlock - [3..117)::114
                         CSharpStatementLiteral - [3..77)::74 - [ var validationMessage = @Html.ValidationMessage(Model.Binding, "", new { ] - Gen<Stmt>
                             Whitespace;[ ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[validationMessage];
                             Whitespace;[ ];

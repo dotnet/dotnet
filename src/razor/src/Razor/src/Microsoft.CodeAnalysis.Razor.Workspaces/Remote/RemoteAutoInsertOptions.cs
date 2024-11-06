@@ -1,4 +1,7 @@
-﻿using System.Runtime.Serialization;
+﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the MIT license. See License.txt in the project root for license information.
+
+using System.Runtime.Serialization;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Settings;
 

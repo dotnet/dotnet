@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -18,7 +17,6 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -28,7 +26,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.InlineCompletion;
 internal sealed class InlineCompletionEndpoint(
     IDocumentMappingService documentMappingService,
     IClientConnection clientConnection,
-    IFormattingCodeDocumentProvider formattingCodeDocumentProvider,
     RazorLSPOptionsMonitor optionsMonitor,
     ILoggerFactory loggerFactory)
     : IRazorRequestHandler<VSInternalInlineCompletionRequest, VSInternalInlineCompletionList?>, ICapabilitiesProvider
@@ -40,7 +37,6 @@ internal sealed class InlineCompletionEndpoint(
 
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
     private readonly IClientConnection _clientConnection = clientConnection;
-    private readonly IFormattingCodeDocumentProvider _formattingCodeDocumentProvider = formattingCodeDocumentProvider;
     private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<InlineCompletionEndpoint>();
 
@@ -125,8 +121,7 @@ internal sealed class InlineCompletionEndpoint(
             var formattingContext = FormattingContext.Create(
                 documentContext.Snapshot,
                 codeDocument,
-                options,
-                _formattingCodeDocumentProvider);
+                options);
             if (!TryGetSnippetWithAdjustedIndentation(formattingContext, item.Text, hostDocumentIndex, out var newSnippetText))
             {
                 continue;

@@ -14,13 +14,13 @@
                             Whitespace;[ ];
                             NewLine;[LF];
                             Whitespace;[    ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[count];
                             Whitespace;[ ];
                             Assign;[=];
                             Whitespace;[ ];
-                            IntegerLiteral;[1];
+                            NumericLiteral;[1];
                             Semicolon;[;];
                             NewLine;[LF];
                     RazorMetaCode - [25..26)::1 - Gen<None>

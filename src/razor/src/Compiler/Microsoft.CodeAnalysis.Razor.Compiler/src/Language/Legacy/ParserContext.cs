@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
@@ -59,6 +60,10 @@ internal sealed partial class ParserContext : IDisposable
     public HashSet<string> SeenDirectives => _seenDirectivesSet;
 
     public bool DesignTimeMode => _options.DesignTime;
+
+    public bool UseRoslynTokenizer => _options.UseRoslynTokenizer;
+
+    public CSharpParseOptions CSharpParseOptions => _options.CSharpParseOptions;
 
     public bool ParseLeadingDirectives => _options.ParseLeadingDirectives;
 

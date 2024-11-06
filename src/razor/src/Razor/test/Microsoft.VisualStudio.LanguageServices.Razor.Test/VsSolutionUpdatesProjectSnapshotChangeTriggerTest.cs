@@ -22,16 +22,15 @@ namespace Microsoft.VisualStudio.Razor;
 
 public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTestBase
 {
-    private static readonly HostProject s_someProject = new(
-        TestProjectData.SomeProject.FilePath,
-        TestProjectData.SomeProject.IntermediateOutputPath,
-        FallbackRazorConfiguration.MVC_1_0,
-        TestProjectData.SomeProject.RootNamespace);
-    private static readonly HostProject s_someOtherProject = new(
-        TestProjectData.AnotherProject.FilePath,
-        TestProjectData.AnotherProject.IntermediateOutputPath,
-        FallbackRazorConfiguration.MVC_2_0,
-        TestProjectData.AnotherProject.RootNamespace);
+    private static readonly HostProject s_someProject = TestProjectData.SomeProject with
+    {
+        Configuration = FallbackRazorConfiguration.MVC_1_0
+    };
+
+    private static readonly HostProject s_someOtherProject = TestProjectData.AnotherProject with
+    {
+        Configuration = FallbackRazorConfiguration.MVC_2_0
+    };
 
     private readonly Project _someWorkspaceProject;
     private readonly IWorkspaceProvider _workspaceProvider;
@@ -90,7 +89,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         using (var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
             serviceProvider,
             projectManager,
-            StrictMock.Of<IProjectWorkspaceStateGenerator>(),
+            StrictMock.Of<IRoslynProjectChangeProcessor>(),
             _workspaceProvider,
             JoinableTaskContext))
         {
@@ -129,7 +128,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         using var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
             serviceProvider,
             projectManager,
-            StrictMock.Of<IProjectWorkspaceStateGenerator>(),
+            StrictMock.Of<IRoslynProjectChangeProcessor>(),
             _workspaceProvider,
             JoinableTaskContext);
 
@@ -159,7 +158,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         });
 
         var serviceProvider = VsMocks.CreateServiceProvider();
-        var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
+        var roslynProjectChangeProcessor = new TestRoslynProjectChangeProcessor();
 
         var vsHierarchyMock = new StrictMock<IVsHierarchy>();
         var vsProjectMock = vsHierarchyMock.As<IVsProject>();
@@ -170,7 +169,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         using var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
             serviceProvider,
             projectManager,
-            workspaceStateGenerator,
+            roslynProjectChangeProcessor,
             _workspaceProvider,
             JoinableTaskContext);
 
@@ -188,7 +187,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
             updater.ProjectRemoved(s_someProject.Key);
         });
 
-        var update = Assert.Single(workspaceStateGenerator.Updates);
+        var update = Assert.Single(roslynProjectChangeProcessor.Updates);
         Assert.NotNull(update.WorkspaceProject);
         Assert.Equal(update.WorkspaceProject.Id, _someWorkspaceProject.Id);
         Assert.Same(expectedProjectSnapshot, update.ProjectSnapshot);
@@ -212,12 +211,12 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         });
 
         var serviceProvider = VsMocks.CreateServiceProvider();
-        var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
+        var roslynProjectChangeProcessor = new TestRoslynProjectChangeProcessor();
 
         using var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
             serviceProvider,
             projectManager,
-            workspaceStateGenerator,
+            roslynProjectChangeProcessor,
             _workspaceProvider,
             JoinableTaskContext);
 
@@ -233,7 +232,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         await testAccessor.OnProjectBuiltAsync(vsHierarchyMock.Object, DisposalToken);
 
         // Assert
-        var update = Assert.Single(workspaceStateGenerator.Updates);
+        var update = Assert.Single(roslynProjectChangeProcessor.Updates);
         Assert.NotNull(update.WorkspaceProject);
         Assert.Equal(update.WorkspaceProject.Id, _someWorkspaceProject.Id);
         Assert.Same(expectedProjectSnapshot, update.ProjectSnapshot);
@@ -263,12 +262,12 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
                 new HostProject("/Some/Unknown/Path.csproj", "/Some/Unknown/obj", RazorConfiguration.Default, "Path"));
         });
 
-        var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
+        var roslynProjectChangeProcessor = new TestRoslynProjectChangeProcessor();
 
         using var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
             serviceProvider,
             projectManager,
-            workspaceStateGenerator,
+            roslynProjectChangeProcessor,
             _workspaceProvider,
             JoinableTaskContext);
 
@@ -278,7 +277,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         await testAccessor.OnProjectBuiltAsync(StrictMock.Of<IVsHierarchy>(), DisposalToken);
 
         // Assert
-        Assert.Empty(workspaceStateGenerator.Updates);
+        Assert.Empty(roslynProjectChangeProcessor.Updates);
     }
 
     [UIFact]
@@ -299,12 +298,12 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
 
         var projectManager = CreateProjectSnapshotManager();
 
-        var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
+        var roslynProjectChangeProcessor = new TestRoslynProjectChangeProcessor();
 
         using var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
             serviceProvider,
             projectManager,
-            workspaceStateGenerator,
+            roslynProjectChangeProcessor,
             _workspaceProvider,
             JoinableTaskContext);
 
@@ -314,6 +313,6 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         await testAccessor.OnProjectBuiltAsync(StrictMock.Of<IVsHierarchy>(), DisposalToken);
 
         // Assert
-        Assert.Empty(workspaceStateGenerator.Updates);
+        Assert.Empty(roslynProjectChangeProcessor.Updates);
     }
 }

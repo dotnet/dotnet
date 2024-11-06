@@ -1,0 +1,21 @@
+﻿RazorDocument - [0..63)::63 - [@{#if false }LF<div>LF    <p>Content</p>LF</div>LF@{LF#endifLF}]
+    MarkupBlock - [0..63)::63
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
+            Marker;[];
+        CSharpCodeBlock - [0..63)::63
+            CSharpStatement - [0..63)::63
+                CSharpTransition - [0..1)::1 - Gen<None>
+                    Transition;[@];
+                CSharpStatementBody - [1..63)::62
+                    RazorMetaCode - [1..2)::1 - Gen<None>
+                        LeftBrace;[{];
+                    CSharpCodeBlock - [2..62)::60
+                        CSharpStatementLiteral - [2..62)::60 - [#if false }LF<div>LF    <p>Content</p>LF</div>LF@{LF#endifLF] - Gen<Stmt>
+                            CSharpDirective;[#if false }LF];RZ1043(2:0,2 [13] )
+                            CSharpDisabledText;[<div>LF    <p>Content</p>LF</div>LF@{LF];
+                            CSharpDirective;[#endifLF];
+                    RazorMetaCode - [62..63)::1 - Gen<None>
+                        RightBrace;[}];
+        MarkupTextLiteral - [63..63)::0 - [] - Gen<Markup>
+            Marker;[];
+    EndOfFile;[];

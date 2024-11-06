@@ -2,16 +2,12 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -38,13 +34,6 @@ internal sealed class DocumentContextFactory(
             return false;
         }
 
-        if (documentSnapshot is null)
-        {
-            Debug.Fail($"Document snapshot should never be null here for '{filePath}'. This indicates that our acquisition of documents / versions did not behave as expected.");
-            context = null;
-            return false;
-        }
-
         context = new DocumentContext(documentUri, documentSnapshot, projectContext);
         return true;
     }
@@ -60,9 +49,8 @@ internal sealed class DocumentContextFactory(
         }
 
         if (_projectManager.TryGetLoadedProject(projectContext.ToProjectKey(), out var project) &&
-            project.GetDocument(filePath) is { } document)
+            project.TryGetDocument(filePath, out documentSnapshot))
         {
-            documentSnapshot = document;
             return true;
         }
 
@@ -71,10 +59,9 @@ internal sealed class DocumentContextFactory(
         // move it to the real project when/if we find out about it.
         var miscellaneousProject = _projectManager.GetMiscellaneousProject();
         var normalizedDocumentPath = FilePathNormalizer.Normalize(filePath);
-        if (miscellaneousProject.GetDocument(normalizedDocumentPath) is { } miscDocument)
+        if (miscellaneousProject.TryGetDocument(normalizedDocumentPath, out documentSnapshot))
         {
             _logger.LogDebug($"Found document {filePath} in the misc files project, but was asked for project context {projectContext.Id}");
-            documentSnapshot = miscDocument;
             return true;
         }
 

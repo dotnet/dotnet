@@ -12,19 +12,25 @@ using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-public abstract class TokenizerTestBase
+public abstract class TokenizerTestBase<TTokenizerArg> where TTokenizerArg : class
 {
     internal abstract object IgnoreRemaining { get; }
-    internal abstract object CreateTokenizer(SeekableTextReader source);
+    internal abstract object CreateTokenizer(SeekableTextReader source, TTokenizerArg tokenizerArg);
+    internal abstract TTokenizerArg DefaultTokenizerArg { get; }
 
     internal void TestTokenizer(string input, params SyntaxToken[] expectedSymbols)
+    {
+        TestTokenizer(input, DefaultTokenizerArg, expectedSymbols);
+    }
+
+    internal void TestTokenizer(string input, TTokenizerArg tokenizerArg, params SyntaxToken[] expectedSymbols)
     {
         // Arrange
         var success = true;
         var output = new StringBuilder();
         using (var source = new SeekableTextReader(input, filePath: null))
         {
-            var tokenizer = (Tokenizer)CreateTokenizer(source);
+            var tokenizer = (Tokenizer)CreateTokenizer(source, tokenizerArg);
             var counter = 0;
             SyntaxToken current = null;
             while ((current = tokenizer.NextToken()) != null)

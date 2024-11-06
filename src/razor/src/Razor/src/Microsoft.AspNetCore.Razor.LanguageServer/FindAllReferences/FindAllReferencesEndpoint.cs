@@ -20,7 +20,7 @@ using Microsoft.VisualStudio.Text.Adornments;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.FindAllReferences;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentReferencesName)]
-internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoint<ReferenceParams, VSInternalReferenceItem[]>, ICapabilitiesProvider
+internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoint<ReferenceParams, VSInternalReferenceItem[]?>, ICapabilitiesProvider
 {
     private readonly IFilePathService _filePathService;
     private readonly IDocumentMappingService _documentMappingService;
@@ -72,8 +72,18 @@ internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoin
             positionInfo.LanguageKind));
     }
 
-    protected override async Task<VSInternalReferenceItem[]> HandleDelegatedResponseAsync(VSInternalReferenceItem[] delegatedResponse, ReferenceParams originalRequest, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
+    protected override async Task<VSInternalReferenceItem[]?> HandleDelegatedResponseAsync(
+        VSInternalReferenceItem[]? delegatedResponse,
+        ReferenceParams originalRequest,
+        RazorRequestContext requestContext,
+        DocumentPositionInfo positionInfo,
+        CancellationToken cancellationToken)
     {
+        if (delegatedResponse is null)
+        {
+            return null;
+        }
+
         using var remappedLocations = new PooledArrayBuilder<VSInternalReferenceItem>();
 
         foreach (var referenceItem in delegatedResponse)

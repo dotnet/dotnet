@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,18 +45,18 @@ internal sealed class CohostGoToDefinitionEndpoint(
 
     protected override bool RequiresLSPSolution => true;
 
-    public Registration? GetRegistration(VSInternalClientCapabilities clientCapabilities, DocumentFilter[] filter, RazorCohostRequestContext requestContext)
+    public ImmutableArray<Registration> GetRegistrations(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext)
     {
         if (clientCapabilities.TextDocument?.Definition?.DynamicRegistration == true)
         {
-            return new Registration
+            return [new Registration
             {
                 Method = Methods.TextDocumentDefinitionName,
-                RegisterOptions = new DefinitionOptions()
-            };
+                RegisterOptions = new DefinitionRegistrationOptions()
+            }];
         }
 
-        return null;
+        return [];
     }
 
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(TextDocumentPositionParams request)
@@ -151,7 +152,6 @@ internal sealed class CohostGoToDefinitionEndpoint(
 
         return uri;
     }
-
 
     internal TestAccessor GetTestAccessor() => new(this);
 

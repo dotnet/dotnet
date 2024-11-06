@@ -81,11 +81,31 @@ internal sealed class RemoteServiceInvoker(
 
     private async Task<RazorRemoteHostClient?> TryGetClientAsync(CancellationToken cancellationToken)
     {
+        // Even if we're getting a service that wants to use MessagePack, we still have to initialize the OOP client
+        // so we get the JSON client too and use it to call initialization service
+        if (!_fullyInitialized)
+        {
+            _ = await TryGetJsonClientAsync(cancellationToken).ConfigureAwait(false);
+        }
+
         var workspace = _workspaceProvider.GetWorkspace();
 
         var remoteClient = await RazorRemoteHostClient.TryGetClientAsync(
             workspace.Services,
             RazorServices.Descriptors,
+            RazorRemoteServiceCallbackDispatcherRegistry.Empty,
+            cancellationToken).ConfigureAwait(false);
+
+        return remoteClient;
+    }
+
+    private async Task<RazorRemoteHostClient?> TryGetJsonClientAsync(CancellationToken cancellationToken)
+    {
+        var workspace = _workspaceProvider.GetWorkspace();
+
+        var remoteClient = await RazorRemoteHostClient.TryGetClientAsync(
+            workspace.Services,
+            RazorServices.JsonDescriptors,
             RazorRemoteServiceCallbackDispatcherRegistry.Empty,
             cancellationToken).ConfigureAwait(false);
 
@@ -97,24 +117,6 @@ internal sealed class RemoteServiceInvoker(
         await InitializeRemoteClientAsync(remoteClient, cancellationToken).ConfigureAwait(false);
 
         return remoteClient;
-    }
-
-    private async Task<RazorRemoteHostClient?> TryGetJsonClientAsync(CancellationToken cancellationToken)
-    {
-        // Even if we're getting a service that wants to use Json, we still have to initialize the OOP client
-        // so we get the regular (MessagePack) client too.
-        if (!_fullyInitialized)
-        {
-            _ = await TryGetClientAsync(cancellationToken).ConfigureAwait(false);
-        }
-
-        var workspace = _workspaceProvider.GetWorkspace();
-
-        return await RazorRemoteHostClient.TryGetClientAsync(
-            workspace.Services,
-            RazorServices.JsonDescriptors,
-            RazorRemoteServiceCallbackDispatcherRegistry.Empty,
-            cancellationToken).ConfigureAwait(false);
     }
 
     private async Task InitializeRemoteClientAsync(RazorRemoteHostClient remoteClient, CancellationToken cancellationToken)
@@ -136,6 +138,7 @@ internal sealed class RemoteServiceInvoker(
                     HtmlVirtualDocumentSuffix = _languageServerFeatureOptions.HtmlVirtualDocumentSuffix,
                     IncludeProjectKeyInGeneratedFilePath = _languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath,
                     ReturnCodeActionAndRenamePathsWithPrefixedSlash = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash,
+                    ForceRuntimeCodeGeneration = _languageServerFeatureOptions.ForceRuntimeCodeGeneration
                 };
 
                 _logger.LogDebug($"First OOP call, so initializing OOP service.");
@@ -156,6 +159,7 @@ internal sealed class RemoteServiceInvoker(
                 {
                     var initParams = new RemoteClientLSPInitializationOptions
                     {
+                        ClientCapabilities = _clientCapabilitiesService.ClientCapabilities,
                         TokenTypes = _semanticTokensLegendService.TokenTypes.All,
                         TokenModifiers = _semanticTokensLegendService.TokenModifiers.All,
                     };

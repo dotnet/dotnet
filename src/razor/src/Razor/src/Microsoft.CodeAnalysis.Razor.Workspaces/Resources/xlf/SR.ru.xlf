@@ -7,6 +7,16 @@
         <target state="translated">Значение не может быть NULL или пустой строкой.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Create_Component_FromTag_Title">
+        <source>Create component from tag</source>
+        <target state="translated">Создание компонента из тега</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Blazor_directive_attributes">
+        <source>Blazor directive attributes</source>
+        <target state="new">Blazor directive attributes</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Diagnostics_after">
         <source>Diagnostics after:</source>
         <target state="translated">Диагностика после:</target>
@@ -39,6 +49,16 @@
         <target state="translated">Редактирование {0} удаляет содержимое, не являющееся пробелами "{1}".</target>
         <note />
       </trans-unit>
+      <trans-unit id="ExtractTo_CodeBehind_Title">
+        <source>Extract block to code behind</source>
+        <target state="translated">Извлечь блок в код программной части</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExtractTo_Component_Title">
+        <source>Extract element to new component</source>
+        <target state="translated">Извлечь элемент в новый компонент</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Format_operation_changed_diagnostics">
         <source>A format operation is being abandoned because it would introduce or remove one of more diagnostics.</source>
         <target state="translated">Операция форматирования отменяется, поскольку она вводит или удаляет одну или несколько диагностик.</target>
@@ -47,6 +67,16 @@
       <trans-unit id="Format_operation_changed_nonwhitespace">
         <source>A format operation is being abandoned because it would add or delete non-whitespace content.</source>
         <target state="translated">Операция форматирования отменяется, поскольку она может добавить или удалить содержимое, отличное от пробелов.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Generate_Async_Event_Handler_Title">
+        <source>Generate Async Event Handler '{0}'</source>
+        <target state="translated">Создать обработчик асинхронных событий "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Generate_Event_Handler_Title">
+        <source>Generate Event Handler '{0}'</source>
+        <target state="translated">Создать обработчик событий "{0}"</target>
         <note />
       </trans-unit>
       <trans-unit id="Invalid_Offset">
@@ -59,6 +89,11 @@
         <target state="translated">Языковые службы Razor настроены неправильно, отсутствует языковая служба "{0}".</target>
         <note />
       </trans-unit>
+      <trans-unit id="Not_Available_In">
+        <source>Not available in</source>
+        <target state="translated">Недоступно в</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PositionCharacter_Outside_Range">
         <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
         <target state="translated">Запрошен символ "{0}" за пределами диапазона {1} "{2}". Возможно, документ не обновлен.</target>
@@ -67,6 +102,26 @@
       <trans-unit id="PositionLine_Outside_Range">
         <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
         <target state="translated">Запрошена строка "{0}" за пределами диапазона {1} "{2}". Возможно, документ не обновлен.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Statement">
+        <source>statement</source>
+        <target state="new">statement</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TagHelper_Attribute_Glyph">
+        <source>Razor TagHelper Attribute Glyph</source>
+        <target state="translated">Глиф атрибута TagHelper Razor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TagHelper_Element_Glyph">
+        <source>Razor TagHelper Element Glyph</source>
+        <target state="translated">Глиф элемента TagHelper Razor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReTrigger_Completions_Title">
+        <source>"Re-trigger completions..."</source>
+        <target state="new">"Re-trigger completions..."</target>
         <note />
       </trans-unit>
       <trans-unit id="Unknown_RazorMetaCode">

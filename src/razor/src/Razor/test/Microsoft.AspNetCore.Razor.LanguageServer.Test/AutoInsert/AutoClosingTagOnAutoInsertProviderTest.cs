@@ -169,7 +169,7 @@ public class AutoClosingTagOnAutoInsertProviderTest(ITestOutputHelper testOutput
 
     [Fact]
     [WorkItem("https://github.com/dotnet/aspnetcore/issues/36125")]
-    public void OnTypeCloseAngle_TagDoesNotAutoCloseOutOfScope()
+    public void OnTypeCloseAngle_TagDoesAutoCloseOutOfScope()
     {
         RunAutoInsertTest(
             input: """
@@ -183,8 +183,58 @@ public class AutoClosingTagOnAutoInsertProviderTest(ITestOutputHelper testOutput
                 <div>
                     @if (true)
                     {
-                        <div></div>
+                        <div>$0</div></div>
                     }
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://devdiv.visualstudio.com/DevDiv/_workitems/edit/2251322")]
+    public void OnTypeCloseAngle_TagDoesAutoCloseInsideCSharpStatement()
+    {
+        RunAutoInsertTest(
+            input: """
+                <div>
+                    @if (true)
+                    {
+                        <div>$$
+                    }
+                </div>
+                """,
+            expected: """
+                <div>
+                    @if (true)
+                    {
+                        <div>$0</div>
+                    }
+                </div>
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://devdiv.visualstudio.com/DevDiv/_workitems/edit/2251322")]
+    public void OnTypeCloseAngle_TagDoesAutoCloseInsideDifferentTag()
+    {
+        RunAutoInsertTest(
+            input: """
+                <div>
+                    <blockquote>
+                        @if (true)
+                        {
+                            <div>$$
+                        }
+                    </blockquote>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <blockquote>
+                        @if (true)
+                        {
+                            <div>$0</div>
+                        }
+                    </blockquote>
+                </div>
                 """);
     }
 

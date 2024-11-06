@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="es" original="../SR.resx">
+    <body>
+      <trans-unit id="0_is_not_a_Razor_file_path">
+        <source>'{0}' is not a Razor file path.</source>
+        <target state="translated">"{0}" no es una ruta de acceso de archivo de Razor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Document_does_not_belong_to_this_project">
+        <source>Document does not belong to this project.</source>
+        <target state="translated">El documento no pertenece a este proyecto.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Document_is_not_a_Razor_document">
+        <source>Document is not a Razor document.</source>
+        <target state="translated">El documento no es un documento de Razor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Project_does_not_belong_to_this_solution">
+        <source>Project does not belong to this solution.</source>
+        <target state="translated">El proyecto no pertenece a esta solución.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Project_does_not_contain_any_Razor_documents">
+        <source>Project does not contain any Razor documents.</source>
+        <target state="translated">El proyecto no contiene ningún documento de Razor.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

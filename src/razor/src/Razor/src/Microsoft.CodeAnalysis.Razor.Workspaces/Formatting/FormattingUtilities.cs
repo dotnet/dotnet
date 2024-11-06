@@ -1,7 +1,14 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
@@ -135,5 +142,141 @@ internal static class FormattingUtilities
 
         var combined = string.Concat(tabPrefix, spaceSuffix);
         return combined;
+    }
+
+    /// <summary>
+    /// Unindents a span of text with a few caveats:
+    ///
+    /// 1. This assumes consistency in tabs/spaces for starting whitespace per line
+    /// 2. This doesn't format the text, just attempts to remove leading whitespace in a uniform way
+    /// 3. It will never remove non-whitespace
+    ///
+    /// This was made with extracting code into a new file in mind because it's not trivial to format that text and make
+    /// sure the indentation is right. Use with caution.
+    /// </summary>
+    public static void NaivelyUnindentSubstring(SourceText text, TextSpan extractionSpan, System.Text.StringBuilder builder)
+    {
+        var extractedText = text.GetSubTextString(extractionSpan);
+        var range = text.GetRange(extractionSpan);
+        if (range.Start.Line == range.End.Line)
+        {
+            builder.Append(extractedText);
+            return;
+        }
+
+        var extractedTextSpan = extractedText.AsSpan();
+        var indentation = GetNormalizedIndentation(text, extractionSpan);
+
+        foreach (var lineRange in GetLineRanges(extractedText))
+        {
+            var lineSpan = extractedTextSpan[lineRange];
+            lineSpan = UnindentLine(lineSpan, indentation);
+
+            foreach (var c in lineSpan)
+            {
+                builder.Append(c);
+            }
+        }
+
+        //
+        // Local Methods
+        //
+
+        static ReadOnlySpan<char> UnindentLine(ReadOnlySpan<char> line, int indentation)
+        {
+            var startCharacter = 0;
+            while (startCharacter < indentation && IsWhitespace(line[startCharacter]))
+            {
+                startCharacter++;
+            }
+
+            return line[startCharacter..];
+        }
+
+        // Gets the smallest indentation of all the lines in a given span
+        static int GetNormalizedIndentation(SourceText sourceText, TextSpan span)
+        {
+            var indentation = int.MaxValue;
+            foreach (var line in sourceText.Lines)
+            {
+                if (!span.OverlapsWith(line.Span))
+                {
+                    continue;
+                }
+
+                indentation = Math.Min(indentation, GetIndentation(line));
+            }
+
+            return indentation;
+        }
+
+        static int GetIndentation(TextLine line)
+        {
+            if (line.Text is null)
+            {
+                return 0;
+            }
+
+            var indentation = 0;
+            for (var position = line.Span.Start; position < line.Span.End; position++)
+            {
+                var c = line.Text[position];
+                if (!IsWhitespace(c))
+                {
+                    break;
+                }
+
+                indentation++;
+            }
+
+            return indentation;
+        }
+
+        static bool IsWhitespace(char c)
+            => c == ' ' || c == '\t';
+
+        static ImmutableArray<System.Range> GetLineRanges(string text)
+        {
+            using var builder = new PooledArrayBuilder<System.Range>();
+            var start = 0;
+            var end = text.IndexOf('\n');
+            while (true)
+            {
+                if (end == -1)
+                {
+                    builder.Add(new(start, text.Length));
+                    break;
+                }
+
+                // end + 1 to include the new line
+                builder.Add(new(start, end + 1));
+                start = end + 1;
+                if (start == text.Length)
+                {
+                    break;
+                }
+
+                end = text.IndexOf('\n', start);
+            }
+
+            return builder.DrainToImmutable();
+        }
+    }
+
+    /// <summary>
+    /// Sometimes the Html language server will send back an edit that contains a tilde, because the generated
+    /// document we send them has lots of tildes. In those cases, we need to do some extra work to compute the
+    /// minimal text edits
+    /// </summary>
+    public static TextEdit[] FixHtmlTextEdits(SourceText htmlSourceText, TextEdit[] edits)
+    {
+        // Avoid computing a minimal diff if we don't need to
+        if (!edits.Any(static e => e.NewText.Contains("~")))
+            return edits;
+
+        var changes = edits.SelectAsArray(htmlSourceText.GetTextChange);
+
+        var fixedChanges = htmlSourceText.MinimizeTextChanges(changes);
+        return [.. fixedChanges.Select(htmlSourceText.GetTextEdit)];
     }
 }

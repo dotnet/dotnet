@@ -29,7 +29,7 @@ public class TagHelperCompletionBenchmark
     [Benchmark]
     public object GetAttributeCompletions()
     {
-        var tagHelperCompletionService = new LspTagHelperCompletionService();
+        var tagHelperCompletionService = new TagHelperCompletionService();
         var context = new AttributeCompletionContext(
             TagHelperDocumentContext.Create(prefix: null, CommonResources.TelerikTagHelpers),
             existingCompletions: [],
@@ -46,7 +46,7 @@ public class TagHelperCompletionBenchmark
     [Benchmark]
     public object GetElementCompletions()
     {
-        var tagHelperCompletionService = new LspTagHelperCompletionService();
+        var tagHelperCompletionService = new TagHelperCompletionService();
         var context = new ElementCompletionContext(
             TagHelperDocumentContext.Create(prefix: null, CommonResources.TelerikTagHelpers),
             existingCompletions: s_existingElementCompletions,

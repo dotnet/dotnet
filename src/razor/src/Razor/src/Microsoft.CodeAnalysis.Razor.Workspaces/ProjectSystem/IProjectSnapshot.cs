@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -32,11 +31,12 @@ internal interface IProjectSnapshot
     string? RootNamespace { get; }
     string DisplayName { get; }
     VersionStamp Version { get; }
-    LanguageVersion CSharpLanguageVersion { get; }
-    ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken);
     ProjectWorkspaceState ProjectWorkspaceState { get; }
 
     RazorProjectEngine GetProjectEngine();
+    ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken);
+
+    bool ContainsDocument(string filePath);
     IDocumentSnapshot? GetDocument(string filePath);
     bool TryGetDocument(string filePath, [NotNullWhen(true)] out IDocumentSnapshot? document);
 }

@@ -6,7 +6,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -261,15 +260,10 @@ public class DefaultRazorProjectFileSystemTest
         Assert.Equal(Path.Combine("Views", "About", "About.cshtml"), item.RelativePhysicalPath);
     }
 
-    [Fact]
+    // "This test does not makes sense for case sensitive Operating Systems."
+    [ConditionalFact(Is.Windows)]
     public void GetItem_MismatchedCase_ReturnsFileFromDisk()
     {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            // "This test does not makes sense for case sensitive Operating Systems."
-            return;
-        }
-
         // Arrange
         var filePath = "/Views/About/About.cshtml";
         var lowerCaseTestFolder = TestFolder.ToLowerInvariant();

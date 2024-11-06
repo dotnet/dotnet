@@ -22,7 +22,7 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
     {
         // Arrange
         var expectedOptions = new RazorLSPOptions(
-            EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: true, CommitElementsWithSpace: false);
+            FormattingFlags.Disabled, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: true, CommitElementsWithSpace: false);
         var razorJsonString =
             """
 
@@ -94,7 +94,7 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
     {
         // Arrange - purposely choosing options opposite of default
         var expectedOptions = new RazorLSPOptions(
-            EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: true, CommitElementsWithSpace: false);
+            FormattingFlags.Disabled, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: true, CommitElementsWithSpace: false);
         var razorJsonString = """
             {
               "format": {
@@ -131,7 +131,7 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
     {
         // Arrange - purposely choosing options opposite of default
         var expectedOptions = new RazorLSPOptions(
-            EnableFormatting: true, AutoClosingTags: false, InsertSpaces: false, TabSize: 8, AutoShowCompletion: true, AutoListParams: true, FormatOnType: false, AutoInsertAttributeQuotes: false, ColorBackground: false, CodeBlockBraceOnNextLine: false, CommitElementsWithSpace: false);
+            FormattingFlags.Enabled, AutoClosingTags: false, InsertSpaces: false, TabSize: 8, AutoShowCompletion: true, AutoListParams: true, AutoInsertAttributeQuotes: false, ColorBackground: false, CodeBlockBraceOnNextLine: false, CommitElementsWithSpace: false);
         var razorJsonString = """
             {
             }

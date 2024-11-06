@@ -45,21 +45,18 @@ internal sealed class CohostDocumentFormattingEndpoint(
 
     protected override bool RequiresLSPSolution => true;
 
-    public Registration? GetRegistration(VSInternalClientCapabilities clientCapabilities, DocumentFilter[] filter, RazorCohostRequestContext requestContext)
+    public ImmutableArray<Registration> GetRegistrations(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext)
     {
         if (clientCapabilities.TextDocument?.Formatting?.DynamicRegistration is true)
         {
-            return new Registration()
+            return [new Registration()
             {
                 Method = Methods.TextDocumentFormattingName,
                 RegisterOptions = new DocumentFormattingRegistrationOptions()
-                {
-                    DocumentSelector = filter
-                }
-            };
+            }];
         }
 
-        return null;
+        return [];
     }
 
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(DocumentFormattingParams request)

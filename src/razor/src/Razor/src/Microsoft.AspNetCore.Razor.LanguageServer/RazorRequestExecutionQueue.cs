@@ -19,12 +19,10 @@ internal class RazorRequestExecutionQueue : RequestExecutionQueue<RazorRequestCo
         _capabilitiesManager = languageServer.GetLspServices().GetRequiredService<CapabilitiesManager>();
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "VSTHRD003:Avoid awaiting foreign Tasks", Justification = "<Pending>")]
-    public override Task WrapStartRequestTaskAsync(Task nonMutatingRequestTask, bool rethrowExceptions)
+    protected internal override void BeforeRequest<TRequest>(TRequest request)
     {
+        // Update the locale for this request to the desired LSP locale.
         CultureInfo.CurrentUICulture = GetCultureForRequest();
-
-        return nonMutatingRequestTask;
     }
 
     private CultureInfo GetCultureForRequest()

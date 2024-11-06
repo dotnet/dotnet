@@ -1,6 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
+
 namespace Microsoft.CodeAnalysis.Text;
 
 internal static class LinePositionSpanExtensions
@@ -46,4 +48,16 @@ internal static class LinePositionSpanExtensions
     {
         return span.Start <= other.Start && span.End >= other.End;
     }
+
+    public static LinePositionSpan WithStart(this LinePositionSpan span, LinePosition newStart)
+        => new(newStart, span.End);
+
+    public static LinePositionSpan WithStart(this LinePositionSpan span, Func<LinePosition, LinePosition> computeNewStart)
+        => new(computeNewStart(span.Start), span.End);
+
+    public static LinePositionSpan WithEnd(this LinePositionSpan span, LinePosition newEnd)
+        => new(span.Start, newEnd);
+
+    public static LinePositionSpan WithEnd(this LinePositionSpan span, Func<LinePosition, LinePosition> computeNewEnd)
+        => new(span.Start, computeNewEnd(span.End));
 }

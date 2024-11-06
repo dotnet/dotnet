@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Basic.Reference.Assemblies;
 using Microsoft.AspNetCore.Razor;
@@ -16,8 +17,10 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Composition;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -28,11 +31,14 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
     private ExportProvider? _exportProvider;
     private TestRemoteServiceInvoker? _remoteServiceInvoker;
     private RemoteClientInitializationOptions _clientInitializationOptions;
+    private RemoteClientLSPInitializationOptions _clientLSPInitializationOptions;
     private IFilePathService? _filePathService;
 
     private protected TestRemoteServiceInvoker RemoteServiceInvoker => _remoteServiceInvoker.AssumeNotNull();
     private protected IFilePathService FilePathService => _filePathService.AssumeNotNull();
     private protected RemoteLanguageServerFeatureOptions FeatureOptions => OOPExportProvider.GetExportedValue<RemoteLanguageServerFeatureOptions>();
+    private protected RemoteClientCapabilitiesService ClientCapabilities => OOPExportProvider.GetExportedValue<RemoteClientCapabilitiesService>();
+    private protected RemoteSemanticTokensLegendService SemanticTokensLegendService => OOPExportProvider.GetExportedValue<RemoteSemanticTokensLegendService>();
 
     /// <summary>
     /// The export provider for Razor OOP services (not Roslyn)
@@ -59,8 +65,39 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
             UsePreciseSemanticTokenRanges = false,
             UseRazorCohostServer = true,
             ReturnCodeActionAndRenamePathsWithPrefixedSlash = false,
+            ForceRuntimeCodeGeneration = false
         };
         UpdateClientInitializationOptions(c => c);
+
+        var completionSetting = new CompletionSetting
+        {
+            CompletionItem = new CompletionItemSetting(),
+            CompletionItemKind = new CompletionItemKindSetting()
+            {
+                ValueSet = (CompletionItemKind[])Enum.GetValues(typeof(CompletionItemKind)),
+            },
+            CompletionListSetting = new CompletionListSetting()
+            {
+                ItemDefaults = ["commitCharacters", "editRange", "insertTextFormat"]
+            },
+            ContextSupport = false,
+            InsertTextMode = InsertTextMode.AsIs,
+        };
+
+        _clientLSPInitializationOptions = new()
+        {
+            ClientCapabilities = new VSInternalClientCapabilities()
+            {
+                SupportsVisualStudioExtensions = true,
+                TextDocument = new TextDocumentClientCapabilities
+                {
+                    Completion = completionSetting
+                }
+            },
+            TokenTypes = [],
+            TokenModifiers = []
+        };
+        UpdateClientLSPInitializationOptions(c => c);
 
         _filePathService = new RemoteFilePathService(FeatureOptions);
     }
@@ -71,7 +108,18 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         FeatureOptions.SetOptions(_clientInitializationOptions);
     }
 
-    protected Task<TextDocument> CreateProjectAndRazorDocumentAsync(string contents, string? fileKind = null, (string fileName, string contents)[]? additionalFiles = null, bool createSeparateRemoteAndLocalWorkspaces = false)
+    private protected void UpdateClientLSPInitializationOptions(Func<RemoteClientLSPInitializationOptions, RemoteClientLSPInitializationOptions> mutation)
+    {
+        _clientLSPInitializationOptions = mutation(_clientLSPInitializationOptions);
+        ClientCapabilities.SetCapabilities(_clientLSPInitializationOptions.ClientCapabilities);
+        SemanticTokensLegendService.SetLegend(_clientLSPInitializationOptions.TokenTypes, _clientLSPInitializationOptions.TokenModifiers);
+    }
+
+    protected Task<TextDocument> CreateProjectAndRazorDocumentAsync(
+        string contents,
+        string? fileKind = null,
+        (string fileName, string contents)[]? additionalFiles = null,
+        bool createSeparateRemoteAndLocalWorkspaces = false)
     {
         // Using IsLegacy means null == component, so easier for test authors
         var isComponent = !FileKinds.IsLegacy(fileKind);
@@ -95,7 +143,14 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
             // actual solution syncing set up for testing, and don't really use a service broker, but since we also would
             // expect to never make changes to a workspace, it should be fine to simply create duplicated solutions as part
             // of test setup.
-            return CreateLocalProjectAndRazorDocumentAsync(remoteDocument.Project.Solution, projectId, projectName, documentId, documentFilePath, contents, additionalFiles);
+            return CreateLocalProjectAndRazorDocumentAsync(
+                remoteDocument.Project.Solution,
+                projectId,
+                projectName,
+                documentId,
+                documentFilePath,
+                contents,
+                additionalFiles);
         }
 
         // If we're just creating one workspace, then its the remote one and we just return the remote document
@@ -104,7 +159,14 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         return Task.FromResult(remoteDocument);
     }
 
-    private async Task<TextDocument> CreateLocalProjectAndRazorDocumentAsync(Solution remoteSolution, ProjectId projectId, string projectName, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles)
+    private async Task<TextDocument> CreateLocalProjectAndRazorDocumentAsync(
+        Solution remoteSolution,
+        ProjectId projectId,
+        string projectName,
+        DocumentId documentId,
+        string documentFilePath,
+        string contents,
+        (string fileName, string contents)[]? additionalFiles)
     {
         var exportProvider = TestComposition.Roslyn.ExportProviderFactory.CreateExportProvider();
         AddDisposable(exportProvider);
@@ -117,10 +179,10 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         // to actually compile the Razor to C#, so we just do it now at creation
         var solution = razorDocument.Project.Solution;
         // We're cheating a bit here and using the remote export provider to get something to do the compilation
-        var factory = _exportProvider.AssumeNotNull().GetExportedValue<DocumentSnapshotFactory>();
-        var snapshot = factory.GetOrCreate(razorDocument);
+        var snapshotManager = _exportProvider.AssumeNotNull().GetExportedValue<RemoteSnapshotManager>();
+        var snapshot = snapshotManager.GetSnapshot(razorDocument);
         // Compile the Razor file
-        var codeDocument = await snapshot.GetGeneratedOutputAsync(false);
+        var codeDocument = await snapshot.GetGeneratedOutputAsync(forceDesignTimeGeneratedOutput: false, DisposalToken);
         // Update the generated doc contents
         var generatedDocumentIds = solution.GetDocumentIdsWithFilePath(documentFilePath + CSharpVirtualDocumentSuffix);
         solution = solution.WithDocumentText(generatedDocumentIds, codeDocument.GetCSharpSourceText());

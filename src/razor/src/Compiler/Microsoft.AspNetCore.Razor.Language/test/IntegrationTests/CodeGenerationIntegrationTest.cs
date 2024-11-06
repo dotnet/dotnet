@@ -10,6 +10,8 @@ using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Test.Utilities;
 using Roslyn.Test.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
@@ -22,8 +24,15 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         : base(layer: TestProject.Layer.Compiler)
     {
         this.designTime = designTime;
-        BaseCompilation = BaseCompilation.AddReferences(
-            MetadataReference.CreateFromFile(typeof(TestTagHelperDescriptors).Assembly.Location));
+        var testTagHelpers = CSharpCompilation.Create(
+            assemblyName: "Microsoft.AspNetCore.Razor.Language.Test",
+            syntaxTrees:
+            [
+                CSharpSyntaxTree.ParseText(TestTagHelperDescriptors.Code),
+            ],
+            references: ReferenceUtil.AspNetLatestAll,
+            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+        BaseCompilation = BaseCompilation.AddReferences(testTagHelpers.VerifyDiagnostics().EmitToImageReference());
     }
 
     [IntegrationTestFact]

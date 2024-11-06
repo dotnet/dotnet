@@ -388,6 +388,31 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
     }
 
     [Fact]
+    public async Task ProjectSnapshotManager_DocumentRemoved_ClearsContent()
+    {
+        // Arrange
+        var options = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);
+        var publisher = new GeneratedDocumentPublisher(_projectManager, _serverClient, options, LoggerFactory);
+        var sourceTextContent = "// The content";
+        var initialSourceText = SourceText.From(sourceTextContent);
+
+        publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
+
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
+        });
+
+        // Act
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.DocumentRemoved(s_hostProject.Key, s_hostDocument);
+        });
+
+        Assert.Equal(0, publisher.GetTestAccessor().PublishedCSharpDataCount);
+    }
+
+    [Fact]
     public async Task ProjectSnapshotManager_ProjectRemoved_ClearsContent()
     {
         // Arrange

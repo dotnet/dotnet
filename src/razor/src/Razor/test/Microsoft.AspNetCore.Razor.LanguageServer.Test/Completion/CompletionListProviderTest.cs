@@ -4,12 +4,13 @@
 #nullable disable
 
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -29,6 +30,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
     private readonly VSInternalCompletionContext _completionContext;
     private readonly DocumentContext _documentContext;
     private readonly VSInternalClientCapabilities _clientCapabilities;
+    private readonly RazorCompletionOptions _razorCompletionOptions;
 
     public CompletionListProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -38,8 +40,9 @@ public class CompletionListProviderTest : LanguageServerTestBase
         _razorCompletionProvider = new TestRazorCompletionListProvider(_completionList1, new[] { SharedTriggerCharacter, }, LoggerFactory);
         _delegatedCompletionProvider = new TestDelegatedCompletionListProvider(_completionList2, new[] { SharedTriggerCharacter, CompletionList2OnlyTriggerCharacter });
         _completionContext = new VSInternalCompletionContext();
-        _documentContext = TestDocumentContext.From("C:/path/to/file.cshtml");
+        _documentContext = TestDocumentContext.Create("C:/path/to/file.cshtml");
         _clientCapabilities = new VSInternalClientCapabilities();
+        _razorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true);
     }
 
     [Fact]
@@ -50,7 +53,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
 
         // Act
         var completionList = await provider.GetCompletionListAsync(
-            absoluteIndex: 0, _completionContext, _documentContext, _clientCapabilities, correlationId: Guid.Empty, cancellationToken: DisposalToken);
+            absoluteIndex: 0, _completionContext, _documentContext, _clientCapabilities, _razorCompletionOptions, correlationId: Guid.Empty, cancellationToken: DisposalToken);
 
         // Assert
         Assert.NotSame(_completionList1, completionList);
@@ -67,7 +70,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
 
         // Act
         var completionList = await provider.GetCompletionListAsync(
-            absoluteIndex: 0, _completionContext, _documentContext, _clientCapabilities, correlationId: Guid.Empty, cancellationToken: DisposalToken);
+            absoluteIndex: 0, _completionContext, _documentContext, _clientCapabilities, _razorCompletionOptions, correlationId: Guid.Empty, cancellationToken: DisposalToken);
 
         // Assert
         Assert.Same(_completionList2, completionList);
@@ -78,19 +81,20 @@ public class CompletionListProviderTest : LanguageServerTestBase
         private readonly VSInternalCompletionList _completionList;
 
         public TestDelegatedCompletionListProvider(VSInternalCompletionList completionList, IEnumerable<string> triggerCharacters)
-            : base(Array.Empty<DelegatedCompletionResponseRewriter>(), null, null, null)
+            : base(null, null, null)
         {
             _completionList = completionList;
-            TriggerCharacters = triggerCharacters.ToImmutableHashSet();
+            TriggerCharacters = triggerCharacters.ToFrozenSet();
         }
 
-        public override ImmutableHashSet<string> TriggerCharacters { get; }
+        public override FrozenSet<string> TriggerCharacters { get; }
 
         public override Task<VSInternalCompletionList> GetCompletionListAsync(
             int absoluteIndex,
             VSInternalCompletionContext completionContext,
             DocumentContext documentContext,
             VSInternalClientCapabilities clientCapabilities,
+            RazorCompletionOptions completionOptions,
             Guid correlationId,
             CancellationToken cancellationToken)
         {
@@ -109,10 +113,10 @@ public class CompletionListProviderTest : LanguageServerTestBase
             : base(completionFactsService: null, completionListCache: null, loggerFactory)
         {
             _completionList = completionList;
-            TriggerCharacters = triggerCharacters.ToImmutableHashSet();
+            TriggerCharacters = triggerCharacters.ToFrozenSet();
         }
 
-        public override ImmutableHashSet<string> TriggerCharacters { get; }
+        public override FrozenSet<string> TriggerCharacters { get; }
 
         public override Task<VSInternalCompletionList> GetCompletionListAsync(
             int absoluteIndex,
@@ -120,6 +124,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
             DocumentContext documentContext,
             VSInternalClientCapabilities clientCapabilities,
             HashSet<string> existingCompletions,
+            RazorCompletionOptions razorCompletionOptions,
             CancellationToken cancellationToken)
         {
             return Task.FromResult(_completionList);

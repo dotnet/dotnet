@@ -13,18 +13,18 @@
                         CSharpStatementLiteral - [2..48)::46 - [LF    var @@class = 1;LF    var y = @@class;LF] - Gen<Stmt>
                             NewLine;[LF];
                             Whitespace;[    ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Transition;[@];
                             Identifier;[@class];
                             Whitespace;[ ];
                             Assign;[=];
                             Whitespace;[ ];
-                            IntegerLiteral;[1];
+                            NumericLiteral;[1];
                             Semicolon;[;];
                             NewLine;[LF];
                             Whitespace;[    ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[y];
                             Whitespace;[ ];

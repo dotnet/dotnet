@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
@@ -18,18 +17,10 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
     internal HostProject HostProject { get; }
     internal ImmutableArray<HostDocument> Documents { get; }
     internal ImmutableArray<TextLoader> TextLoaders { get; }
-    protected string RepoRoot { get; }
 
     protected ProjectSnapshotManagerBenchmarkBase(int documentCount = 100)
     {
-        var current = new DirectoryInfo(AppContext.BaseDirectory);
-        while (current is not null && !File.Exists(Path.Combine(current.FullName, "Razor.sln")))
-        {
-            current = current.Parent;
-        }
-
-        RepoRoot = current?.FullName ?? throw new InvalidOperationException("Could not find Razor.sln");
-        var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "LargeProject");
+        var projectRoot = Path.Combine(Helpers.GetTestAppsPath(), "LargeProject");
 
         HostProject = new HostProject(Path.Combine(projectRoot, "LargeProject.csproj"), Path.Combine(projectRoot, "obj"), FallbackRazorConfiguration.MVC_2_1, rootNamespace: null);
 

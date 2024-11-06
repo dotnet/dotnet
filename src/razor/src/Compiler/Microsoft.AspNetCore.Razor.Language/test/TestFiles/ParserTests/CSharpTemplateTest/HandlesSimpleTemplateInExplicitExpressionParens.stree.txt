@@ -15,7 +15,7 @@
                             Dot;[.];
                             Identifier;[Repeat];
                             LeftParenthesis;[(];
-                            IntegerLiteral;[10];
+                            NumericLiteral;[10];
                             Comma;[,];
                             Whitespace;[ ];
                         CSharpTemplateBlock - [18..36)::18

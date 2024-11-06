@@ -92,6 +92,16 @@
         <target state="translated">Valider des éléments avec de l’espace</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDescription">
+        <source>If true, formatting will be enabled when pasting content</source>
+        <target state="translated">Si la valeur est true, la mise en forme sera activée lors du collage du contenu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDisplayName">
+        <source>Format on paste</source>
+        <target state="translated">Mettre en forme lors du collage</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
         <source>If true, formatting will be enabled while typing</source>
         <target state="translated">Si la valeur est true, la mise en forme est activée lors de la saisie</target>

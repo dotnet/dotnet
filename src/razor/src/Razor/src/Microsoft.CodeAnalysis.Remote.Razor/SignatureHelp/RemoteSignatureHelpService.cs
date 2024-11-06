@@ -35,7 +35,9 @@ internal sealed class RemoteSignatureHelpService(in ServiceArgs args) : RazorDoc
         var linePosition = new LinePosition(position.Line, position.Character);
         var absoluteIndex = codeDocument.Source.Text.GetRequiredAbsoluteIndex(linePosition);
 
-        var generatedDocument = await context.Snapshot.GetGeneratedDocumentAsync().ConfigureAwait(false);
+        var generatedDocument = await context.Snapshot
+            .GetGeneratedDocumentAsync(cancellationToken)
+            .ConfigureAwait(false);
 
         if (DocumentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), absoluteIndex, out var mappedPosition, out _))
         {

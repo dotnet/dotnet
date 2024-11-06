@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -19,6 +18,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -48,13 +48,13 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         }
     };
 
-    private static readonly Regex s_matchNewLines = MyRegex();
+    private static readonly Regex s_matchNewLines = NewLineRegex();
 
 #if NET
     [GeneratedRegex("\r\n")]
-    private static partial Regex MyRegex();
+    private static partial Regex NewLineRegex();
 #else
-    private static Regex MyRegex() => new Regex("\r\n|\r|\n");
+    private static Regex NewLineRegex() => new Regex("\r\n|\r|\n");
 #endif
 
     [Theory]
@@ -656,6 +656,26 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
 
     [Theory]
     [CombinatorialData]
+    public async Task GetSemanticTokens_Legacy_Model(bool precise)
+    {
+        var documentText = """
+            @using System
+            @model SampleApp.Pages.ErrorModel
+
+            <div>
+
+                @{
+                    @Model.ToString();
+                }
+
+            </div>
+            """;
+
+        await VerifySemanticTokensAsync(documentText, precise, isRazorFile: false);
+    }
+
+    [Theory]
+    [CombinatorialData]
     public async Task GetSemanticTokens_CSharp_LargeFile(bool precise)
     {
         var start = """
@@ -883,7 +903,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         else
         {
             // Note that the expected lengths are different on Windows vs. Unix.
-            var expectedCsharpRangeLength = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? 945 : 911;
+            var expectedCsharpRangeLength = PlatformInformation.IsWindows ? 945 : 911;
             Assert.True(codeDocument.TryGetMinimalCSharpRange(razorRange, out var csharpRange));
             var textSpan = csharpSourceText.GetTextSpan(csharpRange);
             Assert.Equal(expectedCsharpRangeLength, textSpan.Length);
@@ -935,10 +955,10 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             .SetupGet(x => x.Project)
             .Returns(projectSnapshot.Object);
         documentSnapshotMock
-            .Setup(x => x.GetGeneratedOutputAsync(It.IsAny<bool>()))
+            .Setup(x => x.GetGeneratedOutputAsync(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(document);
         documentSnapshotMock
-            .Setup(x => x.GetTextAsync())
+            .Setup(x => x.GetTextAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(document.Source.Text);
         documentSnapshotMock
             .SetupGet(x => x.Version)
@@ -986,7 +1006,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create(
             configurationSyncService.Object);
 
-        await optionsMonitor.UpdateAsync(CancellationToken.None);
+        await optionsMonitor.UpdateAsync(DisposalToken);
 
         var featureOptions = Mock.Of<LanguageServerFeatureOptions>(options =>
             options.DelegateToCSharpOnDiagnosticPublish == true &&
@@ -1100,7 +1120,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
 
         var baselineContents = semanticFile.ReadAllText();
 
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (!PlatformInformation.IsWindows)
         {
             baselineContents = s_matchNewLines.Replace(baselineContents, "\n");
         }

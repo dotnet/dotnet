@@ -14,6 +14,8 @@
 
   <ItemGroup>
     <Compile Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Telemetry\TelemetryReporter.cs" Link="Telemetry\TelemetryReporter.cs" />
+    <Compile Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Telemetry\AggregatingTelemetryLog.cs" Link="Telemetry\AggregatingTelemetryLog.cs" />
+    <Compile Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Telemetry\AggregatingTelemetryLogManager.cs" Link="Telemetry\AggregatingTelemetryLogManager.cs" />
   </ItemGroup>
 
   <!--

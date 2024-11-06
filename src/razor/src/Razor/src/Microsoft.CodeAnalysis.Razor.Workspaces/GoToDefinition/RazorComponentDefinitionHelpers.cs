@@ -150,7 +150,7 @@ internal static class RazorComponentDefinitionHelpers
 
         var csharpSyntaxTree = await documentSnapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
         var root = await csharpSyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
-        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
+        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
         // Since we know how the compiler generates the C# source we can be a little specific here, and avoid
         // long tree walks. If the compiler ever changes how they generate their code, the tests for this will break

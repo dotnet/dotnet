@@ -11,7 +11,9 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal static class IDocumentSnapshotExtensions
 {
-    public static async Task<TagHelperDescriptor?> TryGetTagHelperDescriptorAsync(this IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
+    public static async Task<TagHelperDescriptor?> TryGetTagHelperDescriptorAsync(
+        this IDocumentSnapshot documentSnapshot,
+        CancellationToken cancellationToken)
     {
         // No point doing anything if its not a component
         if (documentSnapshot.FileKind != FileKinds.Component)
@@ -19,7 +21,7 @@ internal static class IDocumentSnapshotExtensions
             return null;
         }
 
-        var razorCodeDocument = await documentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
+        var razorCodeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
         if (razorCodeDocument is null)
         {
             return null;
@@ -53,9 +55,10 @@ internal static class IDocumentSnapshotExtensions
         return fileName.AsSpan().Equals(path.Span, FilePathComparison.Instance);
     }
 
-    public static Task<RazorCodeDocument> GetGeneratedOutputAsync(this IDocumentSnapshot documentSnapshot)
+    public static ValueTask<RazorCodeDocument> GetGeneratedOutputAsync(
+        this IDocumentSnapshot documentSnapshot,
+        CancellationToken cancellationToken)
     {
-        return documentSnapshot.GetGeneratedOutputAsync(forceDesignTimeGeneratedOutput: false);
+        return documentSnapshot.GetGeneratedOutputAsync(forceDesignTimeGeneratedOutput: false, cancellationToken);
     }
-
 }

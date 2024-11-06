@@ -9,7 +9,7 @@
                 CSharpImplicitExpressionBody - [1..13)::12
                     CSharpCodeBlock - [1..13)::12
                         CSharpExpressionLiteral - [1..13)::12 - [module.foo()] - Gen<Expr>
-                            Identifier;[module];
+                            Keyword;[module];
                             Dot;[.];
                             Identifier;[foo];
                             LeftParenthesis;[(];

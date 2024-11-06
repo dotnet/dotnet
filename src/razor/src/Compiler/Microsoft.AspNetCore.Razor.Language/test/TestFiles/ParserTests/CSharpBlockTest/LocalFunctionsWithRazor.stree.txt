@@ -23,7 +23,7 @@
                             LeftBrace;[{];
                             NewLine;[LF];
                             Whitespace;[        ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[time];
                             Whitespace;[ ];

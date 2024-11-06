@@ -42,8 +42,8 @@ internal class RazorSpanMappingService(IDocumentSnapshot document) : IRazorSpanM
             return ImmutableArray<RazorMappedSpanResult>.Empty;
         }
 
-        var source = await _document.GetTextAsync().ConfigureAwait(false);
-        var output = await _document.GetGeneratedOutputAsync().ConfigureAwait(false);
+        var output = await _document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
+        var source = output.Source.Text;
 
         var csharpDocument = output.GetCSharpDocument();
         var filePath = output.Source.FilePath.AssumeNotNull();

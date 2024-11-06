@@ -11,7 +11,7 @@
                         CSharpExpressionLiteral - [1..17)::16 - [Repeat(10,LF    ] - Gen<Expr>
                             Identifier;[Repeat];
                             LeftParenthesis;[(];
-                            IntegerLiteral;[10];
+                            NumericLiteral;[10];
                             Comma;[,];
                             NewLine;[LF];
                             Whitespace;[    ];

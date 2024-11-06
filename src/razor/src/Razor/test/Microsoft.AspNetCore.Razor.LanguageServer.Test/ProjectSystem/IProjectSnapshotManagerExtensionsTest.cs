@@ -39,12 +39,10 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
 
         await projectManager.UpdateAsync(updater =>
         {
-            var miscProject = projectManager.GetMiscellaneousProject();
-            var hostProject = new HostProject(miscProject.FilePath, miscProject.IntermediateOutputPath, FallbackRazorConfiguration.Latest, miscProject.RootNamespace);
-            updater.DocumentAdded(
-                hostProject.Key,
-                new HostDocument(normalizedFilePath, "document.cshtml"),
-                new EmptyTextLoader(normalizedFilePath));
+            var hostProject = MiscFilesHostProject.Instance with { Configuration = FallbackRazorConfiguration.Latest };
+            var hostDocument = new HostDocument(normalizedFilePath, targetPath: "document.cshtml");
+
+            updater.DocumentAdded(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
         });
 
         // Act
@@ -110,11 +108,13 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
+        var hostProject = TestHostProject.Create("C:/other/path/to/project.csproj");
+
         var projectManager = CreateProjectSnapshotManager();
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectAdded(TestProjectSnapshot.Create("C:/other/path/to/project.csproj").HostProject);
+            updater.ProjectAdded(hostProject);
         });
 
         // Act
@@ -125,20 +125,23 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
     public async Task TryResolveAllProjects_OwnerProjectWithOthers_ReturnsTrue()
     {
         // Arrange
-        var documentFilePath = "C:/path/to/document.cshtml";
+        var hostProject = TestHostProject.Create("C:/path/to/project.csproj");
+        var hostDocument = TestHostDocument.Create(hostProject, "C:/path/to/document.cshtml");
+        var otherHostProject = TestHostProject.Create("C:/path/to/other/project.csproj");
+
         var projectManager = CreateProjectSnapshotManager();
 
         var expectedProject = await projectManager.UpdateAsync(updater =>
         {
-            var expectedProject = updater.CreateAndAddProject("C:/path/to/project.csproj");
-            updater.CreateAndAddProject("C:/path/to/other/project.csproj");
-            updater.CreateAndAddDocument(expectedProject, documentFilePath);
+            updater.ProjectAdded(hostProject);
+            updater.ProjectAdded(otherHostProject);
+            updater.DocumentAdded(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
 
-            return expectedProject;
+            return updater.GetLoadedProject(hostProject.Key);
         });
 
         // Act
-        Assert.True(projectManager.TryResolveAllProjects(documentFilePath, out var projects));
+        Assert.True(projectManager.TryResolveAllProjects(hostDocument.FilePath, out var projects));
 
         // Assert
         var project = Assert.Single(projects);
@@ -149,18 +152,21 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
     public async Task TryResolveAllProjects_MiscellaneousOwnerProjectWithOthers_ReturnsTrue()
     {
         // Arrange
-        var documentFilePath = Path.Combine(MiscFilesHostProject.Instance.DirectoryPath, "file.cshtml");
+        var miscFilesHostProject = MiscFilesHostProject.Instance;
+        var documentFilePath = Path.Combine(miscFilesHostProject.DirectoryPath, "file.cshtml");
         documentFilePath = FilePathNormalizer.Normalize(documentFilePath);
+
+        var hostDocument = TestHostDocument.Create(miscFilesHostProject, documentFilePath);
+        var hostProject = TestHostProject.Create("C:/path/to/project.csproj");
 
         var projectManager = CreateProjectSnapshotManager();
 
         var miscProject = await projectManager.UpdateAsync(updater =>
         {
-            var miscProject = (ProjectSnapshot)projectManager.GetMiscellaneousProject();
-            updater.CreateAndAddDocument(miscProject, documentFilePath);
-            updater.CreateAndAddProject("C:/path/to/project.csproj");
+            updater.DocumentAdded(miscFilesHostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
+            updater.ProjectAdded(hostProject);
 
-            return miscProject;
+            return updater.GetLoadedProject(miscFilesHostProject.Key);
         });
 
         // Act
@@ -171,23 +177,25 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
         AssertSnapshotsEqual(miscProject, project);
     }
 
-    [OSSkipConditionFact(["OSX", "Linux"])]
+    [ConditionalFact(Is.Windows)]
     public async Task TryResolveAllProjects_OwnerProjectDifferentCasing_ReturnsTrue()
     {
         // Arrange
-        var documentFilePath = "c:/path/to/document.cshtml";
+        var hostProject = TestHostProject.Create("C:/Path/To/project.csproj");
+        var hostDocument = TestHostDocument.Create(hostProject, "c:/path/to/document.cshtml");
+
         var projectManager = CreateProjectSnapshotManager();
 
         var ownerProject = await projectManager.UpdateAsync(updater =>
         {
-            var ownerProject = updater.CreateAndAddProject("C:/Path/To/project.csproj");
-            updater.CreateAndAddDocument(ownerProject, documentFilePath);
+            updater.ProjectAdded(hostProject);
+            updater.DocumentAdded(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
 
-            return ownerProject;
+            return updater.GetLoadedProject(hostProject.Key);
         });
 
         // Act
-        Assert.True(projectManager.TryResolveAllProjects(documentFilePath, out var projects));
+        Assert.True(projectManager.TryResolveAllProjects(hostDocument.FilePath, out var projects));
 
         // Assert
         var project = Assert.Single(projects);
@@ -222,31 +230,35 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
         Assert.Equal(MiscFilesHostProject.Instance.FilePath, project.FilePath);
     }
 
-    private async Task<TestProjectSnapshotManager> CreateProjectManagerAsync(string filePath, bool addToMiscellaneous = false)
+    private async Task<TestProjectSnapshotManager> CreateProjectManagerAsync(string documentFilePath, bool addToMiscellaneous = false)
     {
-        filePath = FilePathNormalizer.Normalize(filePath);
+        documentFilePath = FilePathNormalizer.Normalize(documentFilePath);
 
         var projectManager = CreateProjectSnapshotManager();
 
+        HostProject hostProject;
+
         if (addToMiscellaneous)
         {
-            await projectManager.UpdateAsync(updater =>
-            {
-                var miscProject = (ProjectSnapshot)projectManager.GetMiscellaneousProject();
-                updater.CreateAndAddDocument(miscProject, filePath);
-            });
+            hostProject = MiscFilesHostProject.Instance;
         }
         else
         {
-            var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(filePath);
-            var projectSnapshot = TestProjectSnapshot.Create(Path.Combine(projectDirectory, "proj.csproj"));
+            var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(documentFilePath);
+            hostProject = TestHostProject.Create(Path.Combine(projectDirectory, "proj.csproj"));
 
             await projectManager.UpdateAsync(updater =>
             {
-                updater.ProjectAdded(projectSnapshot.HostProject);
-                updater.CreateAndAddDocument(projectSnapshot, filePath);
+                updater.ProjectAdded(hostProject);
             });
         }
+
+        var hostDocument = TestHostDocument.Create(hostProject, documentFilePath);
+
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.DocumentAdded(hostProject.Key, hostDocument, hostDocument.CreateEmptyTextLoader());
+        });
 
         return projectManager;
     }
@@ -254,7 +266,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
     private static void AssertSnapshotsEqual(IProjectSnapshot first, IProjectSnapshot second)
     {
         Assert.Equal(first.FilePath, second.FilePath);
-        Assert.Equal(first.CSharpLanguageVersion, second.CSharpLanguageVersion);
+        Assert.Equal(first.Configuration, second.Configuration);
         Assert.Equal(first.RootNamespace, second.RootNamespace);
     }
 }

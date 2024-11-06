@@ -1,16 +1,19 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Remote;
 
-[DataContract]
 internal struct RemoteClientLSPInitializationOptions
 {
-    [DataMember(Order = 0)]
-    internal required string[] TokenTypes;
+    [JsonPropertyName("tokenTypes")]
+    public required string[] TokenTypes { get; set; }
 
-    [DataMember(Order = 1)]
-    internal required string[] TokenModifiers;
+    [JsonPropertyName("tokenModifiers")]
+    public required string[] TokenModifiers { get; set; }
+
+    [JsonPropertyName("clientCapabilities")]
+    public required VSInternalClientCapabilities ClientCapabilities { get; set; }
 }

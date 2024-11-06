@@ -16,7 +16,7 @@
                             RightBracket;[]];
                             Not;[!];
                             LeftBracket;[[];
-                            IntegerLiteral;[2];
+                            NumericLiteral;[2];
                             RightBracket;[]];
         MarkupTextLiteral - [14..14)::0 - [] - Gen<Markup>
             Marker;[];

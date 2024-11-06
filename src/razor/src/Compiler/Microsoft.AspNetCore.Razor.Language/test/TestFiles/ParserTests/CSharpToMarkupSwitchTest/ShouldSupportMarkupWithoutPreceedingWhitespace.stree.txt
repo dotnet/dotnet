@@ -8,9 +8,9 @@
             CSharpStatementLiteral - [1..34)::33 - [foreach(var file in files){LFLFLF] - Gen<Stmt>
                 Keyword;[foreach];
                 LeftParenthesis;[(];
-                Identifier;[var];
+                Keyword;[var];
                 Whitespace;[ ];
-                Identifier;[file];
+                Keyword;[file];
                 Whitespace;[ ];
                 Keyword;[in];
                 Whitespace;[ ];

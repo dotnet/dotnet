@@ -35,7 +35,7 @@ public class CSharpDocumentExcerptServiceTest : DocumentExcerptServiceTestBase
 </html>
 ";
 
-        var (generatedDocument, razorSourceText, primarySpan, generatedSpan) = await InitializeAsync(razorSource);
+        var (generatedDocument, razorSourceText, primarySpan, generatedSpan) = await InitializeAsync(razorSource, DisposalToken);
 
 #pragma warning disable CS0618 // Type or member is obsolete
         var excerptService = new CSharpDocumentExcerptService();
@@ -123,7 +123,7 @@ public class CSharpDocumentExcerptServiceTest : DocumentExcerptServiceTestBase
 </html>
 ";
 
-        var (generatedDocument, razorSourceText, primarySpan, generatedSpan) = await InitializeAsync(razorSource);
+        var (generatedDocument, razorSourceText, primarySpan, generatedSpan) = await InitializeAsync(razorSource, DisposalToken);
 
 #pragma warning disable CS0618 // Type or member is obsolete
         var excerptService = new CSharpDocumentExcerptService();
@@ -169,7 +169,7 @@ public class CSharpDocumentExcerptServiceTest : DocumentExcerptServiceTestBase
 </html>
 ";
 
-        var (generatedDocument, razorSourceText, primarySpan, generatedSpan) = await InitializeAsync(razorSource);
+        var (generatedDocument, razorSourceText, primarySpan, generatedSpan) = await InitializeAsync(razorSource, DisposalToken);
 
 #pragma warning disable CS0618 // Type or member is obsolete
         var excerptService = new CSharpDocumentExcerptService();
@@ -216,7 +216,7 @@ public class CSharpDocumentExcerptServiceTest : DocumentExcerptServiceTestBase
 </html>
 ";
 
-        var (generatedDocument, razorSourceText, primarySpan, generatedSpan) = await InitializeAsync(razorSource);
+        var (generatedDocument, razorSourceText, primarySpan, generatedSpan) = await InitializeAsync(razorSource, DisposalToken);
 
 #pragma warning disable CS0618 // Type or member is obsolete
         var excerptService = new CSharpDocumentExcerptService();
@@ -262,7 +262,7 @@ public class CSharpDocumentExcerptServiceTest : DocumentExcerptServiceTestBase
         // Arrange
         var razorSource = @"@{ var [|foo|] = ""Hello, World!""; }";
 
-        var (generatedDocument, razorSourceText, primarySpan, generatedSpan) = await InitializeAsync(razorSource);
+        var (generatedDocument, razorSourceText, primarySpan, generatedSpan) = await InitializeAsync(razorSource, DisposalToken);
 
 #pragma warning disable CS0618 // Type or member is obsolete
         var excerptService = new CSharpDocumentExcerptService();

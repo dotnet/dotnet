@@ -86,6 +86,19 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
         Assert.False(_publisher.PublishedHtml);
     }
 
+    [Fact]
+    public void DocumentProcessed_RemovedDocument_DoesntPublish()
+    {
+        var document = TestDocumentSnapshot.Create("/path/to/non.existent.file.razor");
+
+        // Act
+        _synchronizer.DocumentProcessed(_codeDocument, document);
+
+        // Assert
+        Assert.False(_publisher.PublishedCSharp);
+        Assert.False(_publisher.PublishedHtml);
+    }
+
     private class TestGeneratedDocumentPublisher : IGeneratedDocumentPublisher
     {
         public bool PublishedCSharp { get; private set; }

@@ -20,7 +20,7 @@
                             Whitespace;[ ];
                             LeftBrace;[{];
                             Whitespace;[ ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[val];
                             Whitespace;[ ];
@@ -34,9 +34,9 @@
                             LeftParenthesis;[(];
                             Identifier;[val];
                             Whitespace;[ ];
-                            NotEqual;[!=];
+                            CSharpOperator;[!=];
                             Whitespace;[ ];
-                            IntegerLiteral;[3];
+                            NumericLiteral;[3];
                             RightParenthesis;[)];
                             Whitespace;[ ];
                             LeftBrace;[{];

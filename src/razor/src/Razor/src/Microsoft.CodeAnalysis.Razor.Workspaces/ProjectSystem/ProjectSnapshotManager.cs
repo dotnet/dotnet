@@ -26,8 +26,6 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 // The implementation will create a ProjectSnapshot for each HostProject.
 internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDisposable
 {
-    private static readonly LoadTextOptions s_loadTextOptions = new(SourceHashAlgorithm.Sha256);
-
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
     private readonly Dispatcher _dispatcher;
     private readonly bool _initialized;
@@ -511,7 +509,7 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
         switch (action)
         {
             case AddDocumentAction(var newDocument, var textLoader):
-                return new Entry(originalEntry.State.WithAddedHostDocument(newDocument, CreateTextAndVersionFunc(textLoader)));
+                return new Entry(originalEntry.State.WithAddedHostDocument(newDocument, textLoader));
 
             case RemoveDocumentAction(var originalDocument):
                 return new Entry(originalEntry.State.WithRemovedHostDocument(originalDocument));
@@ -526,7 +524,8 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
 
                     var state = originalEntry.State.WithChangedHostDocument(
                         documentState.HostDocument,
-                        () => textLoader.LoadTextAndVersionAsync(s_loadTextOptions, cancellationToken: default));
+                        textLoader);
+
                     return new Entry(state);
                 }
 
@@ -543,14 +542,9 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
                     }
                     else
                     {
-                        var newState = originalEntry.State.WithChangedHostDocument(documentState.HostDocument, async () =>
-                        {
-                            olderText = await documentState.GetTextAsync().ConfigureAwait(false);
-                            olderVersion = await documentState.GetTextVersionAsync().ConfigureAwait(false);
-
-                            var version = sourceText.ContentEquals(olderText) ? olderVersion : olderVersion.GetNewerVersion();
-                            return TextAndVersion.Create(sourceText, version, documentState.HostDocument.FilePath);
-                        });
+                        var newState = originalEntry.State.WithChangedHostDocument(
+                            documentState.HostDocument,
+                            new UpdatedTextLoader(documentState, sourceText));
 
                         return new Entry(newState);
                     }
@@ -560,7 +554,7 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
                 {
                     var newState = originalEntry.State.WithChangedHostDocument(
                         documentState.AssumeNotNull().HostDocument,
-                        CreateTextAndVersionFunc(textLoader));
+                        textLoader);
 
                     return new Entry(newState);
                 }
@@ -583,14 +577,9 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
                     }
                     else
                     {
-                        var state = originalEntry.State.WithChangedHostDocument(documentState.HostDocument, async () =>
-                        {
-                            olderText = await documentState.GetTextAsync().ConfigureAwait(false);
-                            olderVersion = await documentState.GetTextVersionAsync().ConfigureAwait(false);
-
-                            var version = sourceText.ContentEquals(olderText) ? olderVersion : olderVersion.GetNewerVersion();
-                            return TextAndVersion.Create(sourceText, version, documentState.HostDocument.FilePath);
-                        });
+                        var state = originalEntry.State.WithChangedHostDocument(
+                            documentState.HostDocument,
+                            new UpdatedTextLoader(documentState, sourceText));
 
                         return new Entry(state);
                     }
@@ -605,12 +594,19 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
             default:
                 throw new InvalidOperationException($"Unexpected action type {action.GetType()}");
         }
+    }
 
-        static Func<Task<TextAndVersion>> CreateTextAndVersionFunc(TextLoader textLoader)
+    private sealed class UpdatedTextLoader(DocumentState oldState, SourceText newSourceText) : TextLoader
+    {
+        public override async Task<TextAndVersion> LoadTextAndVersionAsync(LoadTextOptions options, CancellationToken cancellationToken)
         {
-            return textLoader is null
-                ? DocumentState.EmptyLoader
-                : (() => textLoader.LoadTextAndVersionAsync(s_loadTextOptions, CancellationToken.None));
+            var oldTextAndVersion = await oldState.GetTextAndVersionAsync(cancellationToken).ConfigureAwait(false);
+
+            var version = newSourceText.ContentEquals(oldTextAndVersion.Text)
+                ? oldTextAndVersion.Version
+                : oldTextAndVersion.Version.GetNewerVersion();
+
+            return TextAndVersion.Create(newSourceText, version);
         }
     }
 

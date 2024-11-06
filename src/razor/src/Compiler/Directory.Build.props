@@ -39,7 +39,6 @@
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" NoWarn="NU1608" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" PrivateAssets="All" />
     <PackageReference Include="Roslyn.Diagnostics.Analyzers" PrivateAssets="All" />
 
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\Analyzers\Razor.Diagnostics.Analyzers\Razor.Diagnostics.Analyzers.csproj"

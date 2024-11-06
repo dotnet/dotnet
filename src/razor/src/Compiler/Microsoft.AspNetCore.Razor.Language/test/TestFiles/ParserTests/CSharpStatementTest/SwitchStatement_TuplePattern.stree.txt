@@ -10,10 +10,10 @@
                 Whitespace;[ ];
                 LeftParenthesis;[(];
                 LeftParenthesis;[(];
-                IntegerLiteral;[1];
+                NumericLiteral;[1];
                 Comma;[,];
                 Whitespace;[ ];
-                IntegerLiteral;[2];
+                NumericLiteral;[2];
                 RightParenthesis;[)];
                 RightParenthesis;[)];
                 NewLine;[LF];
@@ -25,10 +25,10 @@
                 Identifier;[ITuple];
                 Whitespace;[ ];
                 LeftParenthesis;[(];
-                IntegerLiteral;[1];
+                NumericLiteral;[1];
                 Comma;[,];
                 Whitespace;[ ];
-                IntegerLiteral;[2];
+                NumericLiteral;[2];
                 RightParenthesis;[)];
                 Colon;[:];
                 NewLine;[LF];

@@ -25,7 +25,7 @@ public class EmptyTextLoaderTest : ToolingTestBase
         var loader = new EmptyTextLoader("file.cshtml");
 
         // Act
-        var textAndVersion = await loader.LoadTextAndVersionAsync(default, default);
+        var textAndVersion = await loader.LoadTextAndVersionAsync(default, DisposalToken);
 
         // Assert
         Assert.True(textAndVersion.Text.CanBeEmbedded);

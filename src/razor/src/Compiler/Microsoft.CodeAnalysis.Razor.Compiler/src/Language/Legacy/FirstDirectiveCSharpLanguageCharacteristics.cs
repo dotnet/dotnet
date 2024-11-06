@@ -5,7 +5,7 @@
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-internal class FirstDirectiveCSharpLanguageCharacteristics : CSharpLanguageCharacteristics
+internal class FirstDirectiveCSharpLanguageCharacteristics : NativeCSharpLanguageCharacteristics
 {
     private FirstDirectiveCSharpLanguageCharacteristics()
     {

@@ -38,9 +38,8 @@ internal static class TestRazorFormattingService
             await optionsMonitor.UpdateAsync(CancellationToken.None);
         }
 
-        var formattingCodeDocumentProvider = new LspFormattingCodeDocumentProvider();
         var hostServicesProvider = new DefaultHostServicesProvider();
 
-        return new RazorFormattingService(formattingCodeDocumentProvider, mappingService, hostServicesProvider, loggerFactory);
+        return new RazorFormattingService(mappingService, hostServicesProvider, loggerFactory);
     }
 }

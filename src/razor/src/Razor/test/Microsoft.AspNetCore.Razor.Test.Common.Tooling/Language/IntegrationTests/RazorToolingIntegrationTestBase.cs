@@ -8,13 +8,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -54,7 +54,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
         Configuration = RazorConfiguration.Default;
         FileSystem = new VirtualRazorProjectFileSystem();
         PathSeparator = Path.DirectorySeparatorChar.ToString();
-        WorkingDirectory = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ArbitraryWindowsPath : ArbitraryMacLinuxPath;
+        WorkingDirectory = PlatformInformation.IsWindows ? ArbitraryWindowsPath : ArbitraryMacLinuxPath;
 
         DefaultRootNamespace = "Test"; // Matches the default working directory
         DefaultFileName = "TestComponent.cshtml";
@@ -126,6 +126,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
             });
 
             b.SetCSharpLanguageVersion(CSharpParseOptions.LanguageVersion);
+            b.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions));
 
             CompilerFeatures.Register(b);
         });
@@ -305,32 +306,6 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
         }
     }
 
-    protected IComponent CompileToComponent(string cshtmlSource)
-    {
-        var assemblyResult = CompileToAssembly(DefaultFileName, cshtmlSource);
-
-        var componentFullTypeName = $"{DefaultRootNamespace}.{Path.GetFileNameWithoutExtension(DefaultFileName)}";
-        return CompileToComponent(assemblyResult, componentFullTypeName);
-    }
-
-    protected static IComponent CompileToComponent(CompileToCSharpResult cSharpResult, string fullTypeName)
-    {
-        return CompileToComponent(CompileToAssembly(cSharpResult), fullTypeName);
-    }
-
-    protected static IComponent CompileToComponent(CompileToAssemblyResult assemblyResult, string fullTypeName)
-    {
-        var componentType = assemblyResult.Assembly.GetType(fullTypeName);
-        if (componentType is null)
-        {
-            throw new XunitException(
-                $"Failed to find component type '{fullTypeName}'. Found types:" + Environment.NewLine +
-                string.Join(Environment.NewLine, assemblyResult.Assembly.ExportedTypes.Select(t => t.FullName)));
-        }
-
-        return (IComponent)Activator.CreateInstance(componentType);
-    }
-
     protected static CSharpSyntaxTree Parse(string text, string path = null)
     {
         return (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(text, CSharpParseOptions, path: path);
@@ -341,7 +316,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
     protected static void AssertSourceEquals(string expected, CompileToCSharpResult generated)
     {
         // Normalize the paths inside the expected result to match the OS paths
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (!PlatformInformation.IsWindows)
         {
             var windowsPath = Path.Combine(ArbitraryWindowsPath, generated.CodeDocument.Source.RelativePath).Replace('/', '\\');
             expected = expected.Replace(windowsPath, generated.CodeDocument.Source.FilePath);

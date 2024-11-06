@@ -64,7 +64,7 @@ public class MultiTargetProjectTests(ITestOutputHelper testOutputHelper) : Abstr
 
         // Open SurveyPrompt and make sure its all up and running
         await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.ErrorCshtmlFile, ControlledHangMitigatingCancellationToken);
-        await TestServices.Editor.WaitForSemanticClassificationAsync("class name", ControlledHangMitigatingCancellationToken, count: 1);
+        await TestServices.Editor.WaitForSemanticClassificationAsync("RazorTagHelperElement", ControlledHangMitigatingCancellationToken, count: 1);
 
         await TestServices.SolutionExplorer.CloseSolutionAsync(ControlledHangMitigatingCancellationToken);
 
@@ -73,7 +73,7 @@ public class MultiTargetProjectTests(ITestOutputHelper testOutputHelper) : Abstr
 
         await TestServices.Workspace.WaitForProjectSystemAsync(ControlledHangMitigatingCancellationToken);
 
-        await TestServices.Editor.WaitForSemanticClassificationAsync("class name", ControlledHangMitigatingCancellationToken, count: 1);
+        await TestServices.Editor.WaitForSemanticClassificationAsync("RazorTagHelperElement", ControlledHangMitigatingCancellationToken, count: 1);
 
         TestServices.Input.Send("1");
 

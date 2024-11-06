@@ -1,9 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Roslyn.Test.Utilities;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,8 +24,7 @@ public class CSharpCodeActionsTests(ITestOutputHelper testOutputHelper) : Abstra
         var codeActions = await TestServices.Editor.InvokeCodeActionListAsync(ControlledHangMitigatingCancellationToken);
 
         // Assert
-        var codeActionSet = Assert.Single(codeActions);
-        var codeAction = Assert.Single(codeActionSet.Actions, a => a.DisplayText.Equals("Use expression body for method"));
+        var codeAction = VerifyAndGetFirst(codeActions, "Use expression body for method");
 
         await TestServices.Editor.InvokeCodeActionAsync(codeAction, ControlledHangMitigatingCancellationToken);
 
@@ -50,11 +50,9 @@ public class CSharpCodeActionsTests(ITestOutputHelper testOutputHelper) : Abstra
         var codeActions = await TestServices.Editor.InvokeCodeActionListAsync(ControlledHangMitigatingCancellationToken);
 
         // Assert
-        Assert.Collection(codeActions,
-            a => AssertEx.EqualOrDiff("@using System.Data", a.Actions.Single().DisplayText),
-            a => AssertEx.EqualOrDiff("System.Data.ConflictOption", a.Actions.Single().DisplayText));
-
-        var codeAction = codeActions.ElementAt(1).Actions.First();
+        var codeAction = VerifyAndGetFirst(codeActions,
+            "System.Data.ConflictOption",
+            "@using System.Data");
 
         await TestServices.Editor.InvokeCodeActionAsync(codeAction, ControlledHangMitigatingCancellationToken);
 
@@ -80,11 +78,9 @@ public class CSharpCodeActionsTests(ITestOutputHelper testOutputHelper) : Abstra
         var codeActions = await TestServices.Editor.InvokeCodeActionListAsync(ControlledHangMitigatingCancellationToken);
 
         // Assert
-        Assert.Collection(codeActions,
-            a => AssertEx.EqualOrDiff("@using System.Data", a.Actions.Single().DisplayText),
-            a => AssertEx.EqualOrDiff("System.Data.ConflictOption", a.Actions.Single().DisplayText));
-
-        var codeAction = codeActions.First().Actions.First();
+        var codeAction = VerifyAndGetFirst(codeActions,
+            "@using System.Data",
+            "System.Data.ConflictOption");
 
         await TestServices.Editor.InvokeCodeActionAsync(codeAction, ControlledHangMitigatingCancellationToken);
 
@@ -117,10 +113,8 @@ public class CSharpCodeActionsTests(ITestOutputHelper testOutputHelper) : Abstra
         var codeActions = await TestServices.Editor.InvokeCodeActionListAsync(ControlledHangMitigatingCancellationToken);
 
         // Assert
-        Assert.Collection(codeActions,
-            a => Assert.Equal("ConflictOption - @using System.Data", a.Actions.Single().DisplayText));
-
-        var codeAction = codeActions.First().Actions.First();
+        var codeAction = VerifyAndGetFirst(codeActions,
+            "ConflictOption - @using System.Data");
 
         await TestServices.Editor.InvokeCodeActionAsync(codeAction, ControlledHangMitigatingCancellationToken);
 
@@ -160,10 +154,7 @@ public class CSharpCodeActionsTests(ITestOutputHelper testOutputHelper) : Abstra
         var codeActions = await TestServices.Editor.InvokeCodeActionListAsync(ControlledHangMitigatingCancellationToken);
 
         // Assert
-        var introduceLocal = codeActions.FirstOrDefault(a => a.Actions.Single().DisplayText.Equals("Introduce local"));
-        Assert.NotNull(introduceLocal);
-
-        var codeAction = introduceLocal.Actions.First();
+        var codeAction = VerifyAndGetFirst(codeActions, "Introduce local");
 
         Assert.True(codeAction.HasActionSets);
 
@@ -214,10 +205,7 @@ public class CSharpCodeActionsTests(ITestOutputHelper testOutputHelper) : Abstra
         var codeActions = await TestServices.Editor.InvokeCodeActionListAsync(ControlledHangMitigatingCancellationToken);
 
         // Assert
-        var introduceLocal = codeActions.FirstOrDefault(a => a.Actions.Single().DisplayText.Equals("Introduce local"));
-        Assert.NotNull(introduceLocal);
-
-        var codeAction = introduceLocal.Actions.First();
+        var codeAction = VerifyAndGetFirst(codeActions, "Introduce local");
 
         Assert.True(codeAction.HasActionSets);
 
@@ -240,5 +228,15 @@ public class CSharpCodeActionsTests(ITestOutputHelper testOutputHelper) : Abstra
                     }
                 }
                 """, ControlledHangMitigatingCancellationToken);
+    }
+
+    private ISuggestedAction VerifyAndGetFirst(IEnumerable<SuggestedActionSet> codeActions, params string[] expected)
+    {
+        foreach (var title in expected)
+        {
+            Assert.Contains(codeActions, a => a.Actions.Single().DisplayText == title);
+        }
+
+        return codeActions.First(a => a.Actions.Single().DisplayText == expected[0]).Actions.Single();
     }
 }

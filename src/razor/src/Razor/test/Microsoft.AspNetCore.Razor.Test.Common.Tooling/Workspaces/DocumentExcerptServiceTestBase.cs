@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
@@ -40,9 +41,11 @@ public abstract class DocumentExcerptServiceTestBase(ITestOutputHelper testOutpu
     // Adds the text to a ProjectSnapshot, generates code, and updates the workspace.
     private (IDocumentSnapshot primary, Document secondary) InitializeDocument(SourceText sourceText)
     {
-        var project = new ProjectSnapshot(
-            ProjectState.Create(ProjectEngineFactoryProvider, _hostProject, ProjectWorkspaceState.Default)
-            .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
+        var state = ProjectState
+            .Create(ProjectEngineFactoryProvider, _hostProject, ProjectWorkspaceState.Default)
+            .WithAddedHostDocument(_hostDocument, TestMocks.CreateTextLoader(sourceText, VersionStamp.Create()));
+
+        var project = new ProjectSnapshot(state);
 
         var primary = project.GetDocument(_hostDocument.FilePath).AssumeNotNull();
 
@@ -66,9 +69,9 @@ public abstract class DocumentExcerptServiceTestBase(ITestOutputHelper testOutpu
 
     // Maps a span in the primary buffer to the secondary buffer. This is only valid for C# code
     // that appears in the primary buffer.
-    private static async Task<TextSpan> GetSecondarySpanAsync(IDocumentSnapshot primary, TextSpan primarySpan, Document secondary)
+    private static async Task<TextSpan> GetSecondarySpanAsync(IDocumentSnapshot primary, TextSpan primarySpan, Document secondary, CancellationToken cancellationToken)
     {
-        var output = await primary.GetGeneratedOutputAsync();
+        var output = await primary.GetGeneratedOutputAsync(cancellationToken);
 
         foreach (var mapping in output.GetCSharpDocument().SourceMappings)
         {
@@ -78,8 +81,8 @@ public abstract class DocumentExcerptServiceTestBase(ITestOutputHelper testOutpu
                 var offset = mapping.GeneratedSpan.AbsoluteIndex - mapping.OriginalSpan.AbsoluteIndex;
                 var secondarySpan = new TextSpan(primarySpan.Start + offset, primarySpan.Length);
                 Assert.Equal(
-                    (await primary.GetTextAsync()).GetSubText(primarySpan).ToString(),
-                    (await secondary.GetTextAsync()).GetSubText(secondarySpan).ToString());
+                    (await primary.GetTextAsync(cancellationToken)).ToString(primarySpan),
+                    (await secondary.GetTextAsync(cancellationToken)).ToString(secondarySpan));
                 return secondarySpan;
             }
         }
@@ -87,19 +90,19 @@ public abstract class DocumentExcerptServiceTestBase(ITestOutputHelper testOutpu
         throw new InvalidOperationException("Could not map the primary span to the generated code.");
     }
 
-    public async Task<(Document generatedDocument, SourceText razorSourceText, TextSpan primarySpan, TextSpan generatedSpan)> InitializeAsync(string razorSource)
+    public async Task<(Document generatedDocument, SourceText razorSourceText, TextSpan primarySpan, TextSpan generatedSpan)> InitializeAsync(string razorSource, CancellationToken cancellationToken)
     {
         var (razorSourceText, primarySpan) = CreateText(razorSource);
         var (primary, generatedDocument) = InitializeDocument(razorSourceText);
-        var generatedSpan = await GetSecondarySpanAsync(primary, primarySpan, generatedDocument);
+        var generatedSpan = await GetSecondarySpanAsync(primary, primarySpan, generatedDocument, cancellationToken);
         return (generatedDocument, razorSourceText, primarySpan, generatedSpan);
     }
 
-    internal async Task<(IDocumentSnapshot primary, Document generatedDocument, TextSpan generatedSpan)> InitializeWithSnapshotAsync(string razorSource)
+    internal async Task<(IDocumentSnapshot primary, Document generatedDocument, TextSpan generatedSpan)> InitializeWithSnapshotAsync(string razorSource, CancellationToken cancellationToken)
     {
         var (razorSourceText, primarySpan) = CreateText(razorSource);
         var (primary, generatedDocument) = InitializeDocument(razorSourceText);
-        var generatedSpan = await GetSecondarySpanAsync(primary, primarySpan, generatedDocument);
+        var generatedSpan = await GetSecondarySpanAsync(primary, primarySpan, generatedDocument, cancellationToken);
         return (primary, generatedDocument, generatedSpan);
     }
 }

@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
@@ -39,7 +39,7 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         {
             updater.ProjectAdded(_hostProject1);
             updater.ProjectAdded(_hostProject2);
-            updater.DocumentAdded(_hostProject1.Key, _documents[0], null!);
+            updater.DocumentAdded(_hostProject1.Key, _documents[0], _documents[0].CreateEmptyTextLoader());
             updater.DocumentOpened(_hostProject1.Key, _documents[0].FilePath, SourceText.From(string.Empty));
         });
 
@@ -49,7 +49,7 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         await projectManager.UpdateAsync(updater =>
         {
             updater.DocumentRemoved(_hostProject1.Key, _documents[0]);
-            updater.DocumentAdded(_hostProject2.Key, _documents[0], null!);
+            updater.DocumentAdded(_hostProject2.Key, _documents[0], _documents[0].CreateEmptyTextLoader());
         });
 
         // Assert
@@ -72,7 +72,7 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
             updater.ProjectAdded(_hostProject2);
 
             // Act
-            updater.DocumentAdded(_hostProject1.Key, _documents[0], null!);
+            updater.DocumentAdded(_hostProject1.Key, _documents[0], _documents[0].CreateEmptyTextLoader());
         });
 
         // Assert
@@ -91,7 +91,7 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         {
             updater.ProjectAdded(_hostProject1);
             updater.ProjectAdded(_hostProject2);
-            updater.DocumentAdded(_hostProject1.Key, _documents[0], null!);
+            updater.DocumentAdded(_hostProject1.Key, _documents[0], _documents[0].CreateEmptyTextLoader());
 
             // Act
             updater.DocumentChanged(_hostProject1.Key, _documents[0].FilePath, SourceText.From("new"));
@@ -113,7 +113,7 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         {
             updater.ProjectAdded(_hostProject1);
             updater.ProjectAdded(_hostProject2);
-            updater.DocumentAdded(_hostProject1.Key, _documents[0], null!);
+            updater.DocumentAdded(_hostProject1.Key, _documents[0], _documents[0].CreateEmptyTextLoader());
             updater.DocumentOpened(_hostProject1.Key, _documents[0].FilePath, SourceText.From(string.Empty));
 
             // Act
@@ -138,11 +138,17 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         {
             updater.ProjectAdded(_hostProject1);
             updater.ProjectAdded(_hostProject2);
-            updater.DocumentAdded(_hostProject1.Key, _documents[0], null!);
+            updater.DocumentAdded(_hostProject1.Key, _documents[0], _documents[0].CreateEmptyTextLoader());
 
             // Act
-            updater.ProjectWorkspaceStateChanged(_hostProject1.Key,
-                ProjectWorkspaceState.Create(LanguageVersion.CSharp8));
+            var changed = _hostProject1 with
+            {
+                Configuration = _hostProject1.Configuration with
+                {
+                    CSharpLanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8
+                }
+            };
+            updater.ProjectConfigurationChanged(changed);
         });
 
         // Assert
@@ -161,12 +167,18 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         {
             updater.ProjectAdded(_hostProject1);
             updater.ProjectAdded(_hostProject2);
-            updater.DocumentAdded(_hostProject1.Key, _documents[0], null!);
+            updater.DocumentAdded(_hostProject1.Key, _documents[0], _documents[0].CreateEmptyTextLoader());
             updater.DocumentOpened(_hostProject1.Key, _documents[0].FilePath, SourceText.From(string.Empty));
 
             // Act
-            updater.ProjectWorkspaceStateChanged(_hostProject1.Key,
-                ProjectWorkspaceState.Create(LanguageVersion.CSharp8));
+            var changed = _hostProject1 with
+            {
+                Configuration = _hostProject1.Configuration with
+                {
+                    CSharpLanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8
+                }
+            };
+            updater.ProjectConfigurationChanged(changed);
         });
 
         // Assert

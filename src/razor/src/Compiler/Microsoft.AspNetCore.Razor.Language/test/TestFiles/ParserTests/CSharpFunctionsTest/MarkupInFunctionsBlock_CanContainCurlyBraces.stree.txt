@@ -55,7 +55,7 @@
                                             Whitespace;[ ];
                                             GreaterThan;[>];
                                             Whitespace;[ ];
-                                            IntegerLiteral;[0];
+                                            NumericLiteral;[0];
                                             RightParenthesis;[)];
                                             NewLine;[LF];
                                             Whitespace;[            ];

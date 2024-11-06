@@ -50,7 +50,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateColumn_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq)
         {
-        __builder.OpenComponent<global::Test.Column<System.Object>>(seq);
+        __builder.OpenComponent<global::Test.Column<object>>(seq);
         __builder.CloseComponent();
         }
     }

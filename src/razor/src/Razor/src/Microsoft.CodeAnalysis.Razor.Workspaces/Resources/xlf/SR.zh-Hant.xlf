@@ -7,6 +7,16 @@
         <target state="translated">值不能為 Null 或空字串。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Create_Component_FromTag_Title">
+        <source>Create component from tag</source>
+        <target state="translated">從標籤建立元件</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Blazor_directive_attributes">
+        <source>Blazor directive attributes</source>
+        <target state="new">Blazor directive attributes</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Diagnostics_after">
         <source>Diagnostics after:</source>
         <target state="translated">在以下事項之後的診斷:</target>
@@ -39,6 +49,16 @@
         <target state="translated">在 {0} 處編輯將刪除非空白內容 '{1}'。</target>
         <note />
       </trans-unit>
+      <trans-unit id="ExtractTo_CodeBehind_Title">
+        <source>Extract block to code behind</source>
+        <target state="translated">擷取區塊以在後方編碼</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExtractTo_Component_Title">
+        <source>Extract element to new component</source>
+        <target state="translated">將元素擷取至新元件</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Format_operation_changed_diagnostics">
         <source>A format operation is being abandoned because it would introduce or remove one of more diagnostics.</source>
         <target state="translated">將放棄格式化作業，因為它將引入或移除一個或多個診斷。</target>
@@ -47,6 +67,16 @@
       <trans-unit id="Format_operation_changed_nonwhitespace">
         <source>A format operation is being abandoned because it would add or delete non-whitespace content.</source>
         <target state="translated">將放棄格式化作業，因為它將新增或删除非空白內容。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Generate_Async_Event_Handler_Title">
+        <source>Generate Async Event Handler '{0}'</source>
+        <target state="translated">產生非同步事件處理常式 '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Generate_Event_Handler_Title">
+        <source>Generate Event Handler '{0}'</source>
+        <target state="translated">產生事件處理常式 '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="Invalid_Offset">
@@ -59,6 +89,11 @@
         <target state="translated">未正確設定 Razor 語言服務，遺漏語言服務 '{0}'。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Not_Available_In">
+        <source>Not available in</source>
+        <target state="translated">無法使用於</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PositionCharacter_Outside_Range">
         <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
         <target state="translated">已查詢 '{2}' 的 {1} 範圍以外的字元 '{0}'。文件可能不是最新。</target>
@@ -67,6 +102,26 @@
       <trans-unit id="PositionLine_Outside_Range">
         <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
         <target state="translated">已查詢 '{2}' 之 {1} 範圍以外的行 '{0}'。文件可能不是最新狀態。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Statement">
+        <source>statement</source>
+        <target state="new">statement</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TagHelper_Attribute_Glyph">
+        <source>Razor TagHelper Attribute Glyph</source>
+        <target state="translated">Razor TagHelper 屬性字元</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TagHelper_Element_Glyph">
+        <source>Razor TagHelper Element Glyph</source>
+        <target state="translated">Razor TagHelper 元素字符</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReTrigger_Completions_Title">
+        <source>"Re-trigger completions..."</source>
+        <target state="new">"Re-trigger completions..."</target>
         <note />
       </trans-unit>
       <trans-unit id="Unknown_RazorMetaCode">

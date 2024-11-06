@@ -18,7 +18,7 @@
                                     CSharpExpressionLiteral - [5..10)::5 - [x + y] - Gen<Expr>
                                         Identifier;[x];
                                         Whitespace;[ ];
-                                        Plus;[+];
+                                        CSharpOperator;[+];
                                         Whitespace;[ ];
                                         Identifier;[y];
                                 RazorMetaCode - [10..11)::1 - Gen<None>

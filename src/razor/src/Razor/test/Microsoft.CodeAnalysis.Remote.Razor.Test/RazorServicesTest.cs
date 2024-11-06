@@ -45,7 +45,6 @@ public class RazorServicesTest(ITestOutputHelper testOutputHelper) : ToolingTest
     {
         Assert.True(typeof(IRemoteJsonService).IsAssignableFrom(serviceType));
 
-        var found = false;
         foreach (var method in serviceType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
         {
             if (method.Name != "RunServiceAsync" &&
@@ -55,14 +54,9 @@ public class RazorServicesTest(ITestOutputHelper testOutputHelper) : ToolingTest
                 {
                     Assert.Fail($"Method {method.Name} in a Json service has a pinned solution info wrapper parameter that isn't Json serializable");
                 }
-                else if (typeof(JsonSerializableRazorPinnedSolutionInfoWrapper).IsAssignableFrom(parameterType))
-                {
-                    found = true;
-                }
+
             }
         }
-
-        Assert.True(found, "Didn't find a method to validate, which means maybe this test is invalid");
     }
 
     [Fact]

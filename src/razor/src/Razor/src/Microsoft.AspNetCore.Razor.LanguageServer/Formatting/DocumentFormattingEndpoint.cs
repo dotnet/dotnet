@@ -37,7 +37,7 @@ internal class DocumentFormattingEndpoint(
 
     public async Task<TextEdit[]?> HandleRequestAsync(DocumentFormattingParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        if (!_optionsMonitor.CurrentValue.EnableFormatting)
+        if (!_optionsMonitor.CurrentValue.Formatting.IsEnabled())
         {
             return null;
         }

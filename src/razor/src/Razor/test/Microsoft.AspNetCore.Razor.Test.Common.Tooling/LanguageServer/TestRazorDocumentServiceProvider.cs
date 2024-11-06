@@ -14,18 +14,23 @@ internal class TestRazorDocumentServiceProvider(IRazorSpanMappingService spanMap
 
     public bool SupportDiagnostics => true;
 
-    TService IRazorDocumentServiceProvider.GetService<TService>()
+    TService? IRazorDocumentServiceProvider.GetService<TService>() where TService : class
     {
         var serviceType = typeof(TService);
 
         if (serviceType == typeof(IRazorSpanMappingService))
         {
-            return (TService)_spanMappingService;
+            return (TService?)_spanMappingService;
         }
 
         if (serviceType == typeof(IRazorDocumentPropertiesService))
         {
-            return (TService)(IRazorDocumentPropertiesService)new TestRazorDocumentPropertiesService();
+            return (TService?)(IRazorDocumentPropertiesService)new TestRazorDocumentPropertiesService();
+        }
+
+        if (serviceType == typeof(IRazorMappingService))
+        {
+            return null;
         }
 
         return (this as TService).AssumeNotNull();

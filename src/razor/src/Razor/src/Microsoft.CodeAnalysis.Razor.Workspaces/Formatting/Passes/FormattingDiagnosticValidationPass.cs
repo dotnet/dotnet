@@ -27,7 +27,7 @@ internal sealed class FormattingDiagnosticValidationPass(ILoggerFactory loggerFa
 
         var text = context.SourceText;
         var changedText = text.WithChanges(changes);
-        var changedContext = await context.WithTextAsync(changedText).ConfigureAwait(false);
+        var changedContext = await context.WithTextAsync(changedText, cancellationToken).ConfigureAwait(false);
         var changedDiagnostics = changedContext.CodeDocument.GetSyntaxTree().Diagnostics;
 
         // We want to ensure diagnostics didn't change, but since we're formatting things, its expected

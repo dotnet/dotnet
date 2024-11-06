@@ -150,4 +150,4 @@ src/Razor/benchmarks/Microsoft.AspNetCore.Razor.Microbenchmarks/BenchmarkDotNet.
 *.vsix
 
 # testapp modifications
-src/Razor/test/testapps/ComponentApp/Components/Pages/Generated.razor
+src/Razor/benchmarks/testapps/ComponentApp/Components/Pages/Generated.razor

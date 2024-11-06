@@ -4,15 +4,16 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.Composition;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -30,10 +31,10 @@ public class Program
             if (args[i].Contains("debug", StringComparison.OrdinalIgnoreCase))
             {
                 await Console.Error.WriteLineAsync($"Server started with process ID {Environment.ProcessId}").ConfigureAwait(true);
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                if (PlatformInformation.IsWindows)
                 {
                     // Debugger.Launch() only works on Windows.
-                    _ = Debugger.Launch();
+                    Debugger.Launch();
                 }
                 else
                 {
@@ -77,7 +78,7 @@ public class Program
 
         var languageServerFeatureOptions = new ConfigurableLanguageServerFeatureOptions(args);
 
-        var devKitTelemetryReporter = await TryGetTelemetryReporterAsync(telemetryLevel, sessionId, telemetryExtensionPath).ConfigureAwait(true);
+        using var telemetryContext = await TryGetTelemetryReporterAsync(telemetryLevel, sessionId, telemetryExtensionPath).ConfigureAwait(true);
 
         // Have to create a logger factory to give to the server, but can't create any logger providers until we have
         // a server.
@@ -87,7 +88,7 @@ public class Program
             Console.OpenStandardInput(),
             Console.OpenStandardOutput(),
             loggerFactory,
-            devKitTelemetryReporter ?? NoOpTelemetryReporter.Instance,
+            telemetryContext?.TelemetryReporter ?? NoOpTelemetryReporter.Instance,
             featureOptions: languageServerFeatureOptions,
             configureServices: static services =>
             {
@@ -105,32 +106,48 @@ public class Program
         await host.WaitForExitAsync().ConfigureAwait(true);
     }
 
-    private static async Task<ITelemetryReporter?> TryGetTelemetryReporterAsync(string telemetryLevel, string sessionId, string telemetryExtensionPath)
+    private static async Task<TelemetryContext?> TryGetTelemetryReporterAsync(string telemetryLevel, string sessionId, string telemetryExtensionPath)
     {
-        ITelemetryReporter? devKitTelemetryReporter = null;
+        ExportProvider? exportProvider = null;
         if (!telemetryExtensionPath.IsNullOrEmpty())
         {
             try
             {
-                using var exportProvider = await ExportProviderBuilder
+                exportProvider = await ExportProviderBuilder
                     .CreateExportProviderAsync(telemetryExtensionPath)
                     .ConfigureAwait(true);
 
                 // Initialize the telemetry reporter if available
-                devKitTelemetryReporter = exportProvider.GetExports<ITelemetryReporter>().SingleOrDefault()?.Value;
+                var devKitTelemetryReporter = exportProvider.GetExports<ITelemetryReporter>().SingleOrDefault()?.Value;
 
                 if (devKitTelemetryReporter is ITelemetryReporterInitializer initializer)
                 {
                     initializer.InitializeSession(telemetryLevel, sessionId, isDefaultSession: true);
+                    return new TelemetryContext(exportProvider, devKitTelemetryReporter);
+                }
+                else
+                {
+                    exportProvider.Dispose();
                 }
             }
             catch (Exception ex)
             {
                 await Console.Error.WriteLineAsync($"Failed to load telemetry extension in {telemetryExtensionPath}.").ConfigureAwait(true);
                 await Console.Error.WriteLineAsync(ex.ToString()).ConfigureAwait(true);
+                exportProvider?.Dispose();
             }
         }
 
-        return devKitTelemetryReporter;
+        return null;
+    }
+
+    private readonly record struct TelemetryContext(IDisposable ExportProvider, ITelemetryReporter TelemetryReporter) : IDisposable
+    {
+        public void Dispose()
+        {
+            // No need to explicitly dispose of the telemetry reporter. The lifetime
+            // is managed by the ExportProvider and will be disposed with it.
+            ExportProvider.Dispose();
+        }
     }
 }

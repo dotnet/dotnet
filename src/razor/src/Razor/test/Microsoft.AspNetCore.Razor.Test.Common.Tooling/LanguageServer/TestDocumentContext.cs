@@ -19,30 +19,27 @@ internal static class TestDocumentContext
         return new DocumentContext(uri, snapshot, projectContext: null);
     }
 
-    public static DocumentContext From(string filePath, RazorCodeDocument codeDocument, int hostDocumentVersion)
+    public static DocumentContext Create(string filePath, RazorCodeDocument codeDocument, int hostDocumentVersion)
     {
-        var content = codeDocument.Source.Text.ToString();
-        var documentSnapshot = TestDocumentSnapshot.Create(filePath, content, hostDocumentVersion);
-        documentSnapshot.With(codeDocument);
+        var documentSnapshot = TestDocumentSnapshot.Create(filePath, codeDocument, hostDocumentVersion);
         var uri = new Uri(filePath);
         return new DocumentContext(uri, documentSnapshot, projectContext: null);
     }
 
-    public static DocumentContext From(string filePath, RazorCodeDocument codeDocument)
+    public static DocumentContext Create(string filePath, RazorCodeDocument codeDocument)
     {
-        var content = codeDocument.Source.Text.ToString();
-        var documentSnapshot = TestDocumentSnapshot.Create(filePath, content);
-        documentSnapshot.With(codeDocument);
+        var documentSnapshot = TestDocumentSnapshot.Create(filePath, codeDocument);
         var uri = new Uri(filePath);
         return new DocumentContext(uri, documentSnapshot, projectContext: null);
     }
 
-    public static DocumentContext From(string filePath)
+    public static DocumentContext Create(string filePath)
     {
         var properties = RazorSourceDocumentProperties.Create(filePath, filePath);
         var sourceDocument = RazorSourceDocument.Create(content: string.Empty, properties);
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        return From(filePath, codeDocument);
+
+        return Create(filePath, codeDocument);
     }
 
     public static DocumentContext From(string filePath, int hostDocumentVersion)
@@ -50,6 +47,7 @@ internal static class TestDocumentContext
         var properties = RazorSourceDocumentProperties.Create(filePath, filePath);
         var sourceDocument = RazorSourceDocument.Create(content: string.Empty, properties);
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
-        return From(filePath, codeDocument, hostDocumentVersion);
+
+        return Create(filePath, codeDocument, hostDocumentVersion);
     }
 }

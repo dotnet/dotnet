@@ -17,12 +17,14 @@ using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit.Abstractions;
 
@@ -46,10 +48,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         FilePathService = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
     }
 
-    private protected TestProjectSnapshotManager CreateProjectSnapshotManager()
-        => CreateProjectSnapshotManager(ProjectEngineFactories.DefaultProvider);
-
-    private protected TestProjectSnapshotManager CreateProjectSnapshotManager(
+    private protected override TestProjectSnapshotManager CreateProjectSnapshotManager(
         IProjectEngineFactoryProvider projectEngineFactoryProvider)
         => new(
             projectEngineFactoryProvider,
@@ -83,6 +82,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
             }
 
             RazorExtensions.Register(b);
+            b.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: true, CSharpParseOptions.Default));
         });
         var importDocumentName = fileKind == FileKinds.Legacy ? "_ViewImports.cshtml" : "_Imports.razor";
         var defaultImportDocument = TestRazorSourceDocument.Create(
@@ -110,7 +110,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
 
     private protected static DocumentContext CreateDocumentContext(Uri documentPath, RazorCodeDocument codeDocument)
     {
-        return TestDocumentContext.From(documentPath.GetAbsoluteOrUNCPath(), codeDocument);
+        return TestDocumentContext.Create(documentPath.GetAbsoluteOrUNCPath(), codeDocument);
     }
 
     private protected static IDocumentContextFactory CreateDocumentContextFactory(
@@ -130,13 +130,54 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         return new DocumentContext(uri, snapshot, projectContext: null);
     }
 
-    private protected static RazorLSPOptionsMonitor GetOptionsMonitor(bool enableFormatting = true, bool autoShowCompletion = true, bool autoListParams = true, bool formatOnType = true, bool autoInsertAttributeQuotes = true, bool colorBackground = false, bool codeBlockBraceOnNextLine = false, bool commitElementsWithSpace = true)
+    private protected static RazorLSPOptionsMonitor GetOptionsMonitor(
+        bool enableFormatting = true,
+        bool autoShowCompletion = true,
+        bool autoListParams = true,
+        bool formatOnType = true,
+        bool autoInsertAttributeQuotes = true,
+        bool colorBackground = false,
+        bool codeBlockBraceOnNextLine = false,
+        bool commitElementsWithSpace = true,
+        bool formatOnPaste = true)
     {
         var configService = StrictMock.Of<IConfigurationSyncService>();
 
-        var options = new RazorLSPOptions(enableFormatting, true, InsertSpaces: true, TabSize: 4, autoShowCompletion, autoListParams, formatOnType, autoInsertAttributeQuotes, colorBackground, codeBlockBraceOnNextLine, commitElementsWithSpace);
+        var options = new RazorLSPOptions(
+            GetFormattingFlags(enableFormatting, formatOnType, formatOnPaste),
+            true,
+            InsertSpaces: true,
+            TabSize: 4,
+            autoShowCompletion,
+            autoListParams,
+            autoInsertAttributeQuotes,
+            colorBackground,
+            codeBlockBraceOnNextLine,
+            commitElementsWithSpace);
         var optionsMonitor = new RazorLSPOptionsMonitor(configService, options);
         return optionsMonitor;
+    }
+
+    private static FormattingFlags GetFormattingFlags(bool enableFormatting, bool formatOnType, bool formatOnPaste)
+    {
+        var flags = FormattingFlags.Disabled;
+
+        if (enableFormatting)
+        {
+            flags |= FormattingFlags.Enabled;
+        }
+
+        if (formatOnType)
+        {
+            flags |= FormattingFlags.OnType;
+        }
+
+        if (formatOnPaste)
+        {
+            flags |= FormattingFlags.OnPaste;
+        }
+
+        return flags;
     }
 
     private class ThrowingRazorSpanMappingService : IRazorSpanMappingService

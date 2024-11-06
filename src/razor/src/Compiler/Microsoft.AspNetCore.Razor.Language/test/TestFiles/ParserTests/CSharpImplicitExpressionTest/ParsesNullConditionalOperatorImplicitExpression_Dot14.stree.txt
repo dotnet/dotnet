@@ -16,7 +16,7 @@
                             LeftParenthesis;[(];
                             Keyword;[null];
                             Whitespace;[ ];
-                            NullCoalesce;[??];
+                            CSharpOperator;[??];
                             Whitespace;[ ];
                             Keyword;[true];
                             RightParenthesis;[)];

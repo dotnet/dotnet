@@ -41,13 +41,12 @@ internal class RazorDocumentExcerptService(
         }
 
         var project = _document.Project;
-        var razorDocument = project.GetDocument(mappedSpans[0].FilePath);
-        if (razorDocument is null)
+        if (!project.TryGetDocument(mappedSpans[0].FilePath, out var razorDocument))
         {
             return null;
         }
 
-        var razorDocumentText = await razorDocument.GetTextAsync().ConfigureAwait(false);
+        var razorDocumentText = await razorDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
         var razorDocumentSpan = razorDocumentText.Lines.GetTextSpan(mappedSpans[0].LinePositionSpan);
 
         var generatedDocument = document;
@@ -57,7 +56,7 @@ internal class RazorDocumentExcerptService(
 
         // Then we'll classify the spans based on the primary document, since that's the coordinate
         // space that our output mappings use.
-        var output = await _document.GetGeneratedOutputAsync().ConfigureAwait(false);
+        var output = await _document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
         var mappings = output.GetCSharpDocument().SourceMappings;
         var classifiedSpans = await ClassifyPreviewAsync(
             excerptSpan,

@@ -14,11 +14,11 @@
                 Whitespace;[ ];
                 Assign;[=];
                 Whitespace;[ ];
-                IntegerLiteral;[0];
+                NumericLiteral;[0];
                 Semicolon;[;];
                 Whitespace;[ ];
                 Identifier;[i];
-                Increment;[++];
+                CSharpOperator;[++];
                 Semicolon;[;];
                 Whitespace;[ ];
                 Identifier;[i];

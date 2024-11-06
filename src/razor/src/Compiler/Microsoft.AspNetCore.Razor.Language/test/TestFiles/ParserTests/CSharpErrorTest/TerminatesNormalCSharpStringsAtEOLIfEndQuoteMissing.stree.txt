@@ -14,7 +14,7 @@
                 LeftBrace;[{];
                 NewLine;[LF];
                 Whitespace;[    ];
-                Identifier;[var];
+                Keyword;[var];
                 Whitespace;[ ];
                 Identifier;[p];
                 Whitespace;[ ];

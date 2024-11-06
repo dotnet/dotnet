@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-public class HtmlAttributeTest() : ParserTestBase(layer: TestProject.Layer.Compiler, validateSpanEditHandlers: true)
+public class HtmlAttributeTest() : ParserTestBase(layer: TestProject.Layer.Compiler, validateSpanEditHandlers: true, useLegacyTokenizer: true)
 {
     [Fact]
     public void SymbolBoundAttributes_BeforeEqualWhitespace1()

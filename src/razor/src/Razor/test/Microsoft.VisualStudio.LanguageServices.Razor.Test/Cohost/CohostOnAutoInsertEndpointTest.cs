@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServices.Razor.LanguageClient.Cohost;
+using Microsoft.VisualStudio.LicenseManagement.Interop;
 using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
 using Xunit;
@@ -84,8 +85,9 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
             delegatedResponseText: "\"$0\"");
     }
 
-    [Fact]
-    public async Task CSharp_OnForwardSlash()
+    [Theory]
+    [CombinatorialData]
+    public async Task CSharp_OnForwardSlash(bool fuse)
     {
         await VerifyOnAutoInsertAsync(
             input: """
@@ -102,7 +104,8 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
                     void TestMethod() {}
                 }
                 """,
-            triggerCharacter: "/");
+            triggerCharacter: "/",
+            fuse: fuse);
     }
 
     [Fact]
@@ -120,17 +123,36 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
             formatOnType: false);
     }
 
-    [Fact]
-    public async Task CSharp_OnEnter()
+    [Theory]
+    [CombinatorialData]
+    public async Task CSharp_OnEnter(bool fuse)
     {
         await VerifyOnAutoInsertAsync(
             input: """
+                Hello
+                <div>
+                    Hello
+                    <p>Hello</p>
+                    <p class="@DateTime.Now.DayOfWeek">Hello</p>
+                </div>
+
+                Hello
+
                 @code {
                     void TestMethod() {
                 $$}
                 }
                 """,
             output: """
+                Hello
+                <div>
+                    Hello
+                    <p>Hello</p>
+                    <p class="@DateTime.Now.DayOfWeek">Hello</p>
+                </div>
+
+                Hello
+                
                 @code {
                     void TestMethod()
                     {
@@ -138,11 +160,13 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
                     }
                 }
                 """,
-            triggerCharacter: "\n");
+            triggerCharacter: "\n",
+            fuse: fuse);
     }
 
-    [Fact]
-    public async Task CSharp_OnEnter_TwoSpaceIndent()
+    [Theory]
+    [CombinatorialData]
+    public async Task CSharp_OnEnter_TwoSpaceIndent(bool fuse)
     {
         await VerifyOnAutoInsertAsync(
             input: """
@@ -160,11 +184,13 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
                 }
                 """,
             triggerCharacter: "\n",
-            tabSize: 2);
+            tabSize: 2,
+            fuse: fuse);
     }
 
-    [Fact]
-    public async Task CSharp_OnEnter_UseTabs()
+    [Theory]
+    [CombinatorialData]
+    public async Task CSharp_OnEnter_UseTabs(bool fuse)
     {
         const char tab = '\t';
         await VerifyOnAutoInsertAsync(
@@ -183,7 +209,8 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
                 }
                 """,
             triggerCharacter: "\n",
-            insertSpaces: false);
+            insertSpaces: false,
+            fuse: fuse);
     }
 
     private async Task VerifyOnAutoInsertAsync(
@@ -194,8 +221,11 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
         bool insertSpaces = true,
         int tabSize = 4,
         bool formatOnType = true,
-        bool autoClosingTags = true)
-    {     
+        bool autoClosingTags = true,
+        bool fuse = false)
+    {
+        UpdateClientInitializationOptions(opt => opt with { ForceRuntimeCodeGeneration = fuse });
+
         var document = await CreateProjectAndRazorDocumentAsync(input.Text);
         var sourceText = await document.GetTextAsync(DisposalToken);
 

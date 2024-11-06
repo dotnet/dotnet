@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit.Abstractions;
 
@@ -13,24 +14,44 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 
 public abstract class ResponseRewriterTestBase : LanguageServerTestBase
 {
-    private protected DelegatedCompletionResponseRewriter Rewriter { get; }
-
     private protected ResponseRewriterTestBase(
-        DelegatedCompletionResponseRewriter rewriter,
         ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        Rewriter = rewriter;
     }
 
-    private protected async Task<VSInternalCompletionList> GetRewrittenCompletionListAsync(int absoluteIndex, string documentContent, VSInternalCompletionList initialCompletionList, DelegatedCompletionResponseRewriter rewriter = null)
+    private protected Task<VSInternalCompletionList> GetRewrittenCompletionListAsync(
+        int absoluteIndex,
+        string documentContent,
+        VSInternalCompletionList initialCompletionList)
+    {
+        var razorCompletionOptions = new RazorCompletionOptions(
+                SnippetsSupported: true,
+                AutoInsertAttributeQuotes: true,
+                CommitElementsWithSpace: true);
+
+        return GetRewrittenCompletionListAsync(absoluteIndex, documentContent, initialCompletionList, razorCompletionOptions);
+    }
+
+    private protected async Task<VSInternalCompletionList> GetRewrittenCompletionListAsync(
+        int absoluteIndex,
+        string documentContent,
+        VSInternalCompletionList initialCompletionList,
+        RazorCompletionOptions razorCompletionOptions)
     {
         var completionContext = new VSInternalCompletionContext();
         var codeDocument = CreateCodeDocument(documentContent);
-        var documentContext = TestDocumentContext.From("C:/path/to/file.cshtml", codeDocument);
-        var provider = TestDelegatedCompletionListProvider.Create(initialCompletionList, LoggerFactory, rewriter ?? Rewriter);
+        var documentContext = TestDocumentContext.Create("C:/path/to/file.cshtml", codeDocument);
+        var provider = TestDelegatedCompletionListProvider.Create(initialCompletionList, LoggerFactory);
         var clientCapabilities = new VSInternalClientCapabilities();
-        var completionList = await provider.GetCompletionListAsync(absoluteIndex, completionContext, documentContext, clientCapabilities, correlationId: Guid.Empty, cancellationToken: DisposalToken);
+        var completionList = await provider.GetCompletionListAsync(
+            absoluteIndex,
+            completionContext,
+            documentContext,
+            clientCapabilities,
+            razorCompletionOptions,
+            correlationId: Guid.Empty,
+            cancellationToken: DisposalToken);
 
         return completionList;
     }

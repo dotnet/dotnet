@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
@@ -14,6 +13,7 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.NET.Sdk.Razor.SourceGenerators;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -152,14 +152,6 @@ internal class ProjectState
         {
             ProjectWorkspaceStateVersion = Version;
         }
-
-        if ((difference & ClearProjectWorkspaceStateVersionMask) != 0 &&
-            CSharpLanguageVersion != older.CSharpLanguageVersion)
-        {
-            // C# language version changed. This impacts the ProjectEngine, reset it.
-            _projectEngine = null;
-            ConfigurationVersion = Version;
-        }
     }
 
     // Internal set for testing.
@@ -173,8 +165,6 @@ internal class ProjectState
     public ProjectWorkspaceState ProjectWorkspaceState { get; }
 
     public ImmutableArray<TagHelperDescriptor> TagHelpers => ProjectWorkspaceState.TagHelpers;
-
-    public LanguageVersion CSharpLanguageVersion => ProjectWorkspaceState.CSharpLanguageVersion;
 
     /// <summary>
     /// Gets the version of this project, INCLUDING content changes. The <see cref="Version"/> is
@@ -208,8 +198,9 @@ internal class ProjectState
                 return _projectEngineFactoryProvider.Create(configuration, rootDirectoryPath, builder =>
                 {
                     builder.SetRootNamespace(HostProject.RootNamespace);
-                    builder.SetCSharpLanguageVersion(CSharpLanguageVersion);
+                    builder.SetCSharpLanguageVersion(configuration.CSharpLanguageVersion);
                     builder.SetSupportLocalizedComponentNames();
+                    builder.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer: configuration.UseRoslynTokenizer, CSharpParseOptions.Default));
                 });
             }
         }
@@ -224,7 +215,7 @@ internal class ProjectState
 
     public VersionStamp ConfigurationVersion { get; }
 
-    public ProjectState WithAddedHostDocument(HostDocument hostDocument, Func<Task<TextAndVersion>> loader)
+    public ProjectState WithAddedHostDocument(HostDocument hostDocument, TextLoader loader)
     {
         if (hostDocument is null)
         {
@@ -321,7 +312,7 @@ internal class ProjectState
         return state;
     }
 
-    public ProjectState WithChangedHostDocument(HostDocument hostDocument, Func<Task<TextAndVersion>> loader)
+    public ProjectState WithChangedHostDocument(HostDocument hostDocument, TextLoader loader)
     {
         if (hostDocument is null)
         {

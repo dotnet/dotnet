@@ -92,6 +92,16 @@
         <target state="translated">Confirmar elementos com espaço</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDescription">
+        <source>If true, formatting will be enabled when pasting content</source>
+        <target state="translated">Se for true, a formatação será habilitada ao colar conteúdo</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_FormattingOnPasteDisplayName">
+        <source>Format on paste</source>
+        <target state="translated">Formatar ao colar</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
         <source>If true, formatting will be enabled while typing</source>
         <target state="translated">Se verdadeiro, a formatação será habilitada durante a digitação</target>

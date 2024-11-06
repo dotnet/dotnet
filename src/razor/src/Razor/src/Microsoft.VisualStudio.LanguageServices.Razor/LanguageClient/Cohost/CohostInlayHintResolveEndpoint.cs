@@ -13,19 +13,17 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol.InlayHints;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Roslyn.LanguageServer.Protocol;
-using VSLSP = Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 #pragma warning disable RS0030 // Do not use banned APIs
 [Shared]
 [CohostEndpoint(Methods.InlayHintResolveName)]
-[Export(typeof(IDynamicRegistrationProvider))]
 [ExportCohostStatelessLspService(typeof(CohostInlayHintResolveEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal class CohostInlayHintResolveEndpoint(IRemoteServiceInvoker remoteServiceInvoker, ILoggerFactory loggerFactory)
-    : AbstractRazorCohostDocumentRequestHandler<InlayHint, InlayHint?>, IDynamicRegistrationProvider
+    : AbstractRazorCohostDocumentRequestHandler<InlayHint, InlayHint?>
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostInlayHintResolveEndpoint>();
@@ -33,23 +31,6 @@ internal class CohostInlayHintResolveEndpoint(IRemoteServiceInvoker remoteServic
     protected override bool MutatesSolutionState => false;
 
     protected override bool RequiresLSPSolution => true;
-
-    public VSLSP.Registration? GetRegistration(VSLSP.VSInternalClientCapabilities clientCapabilities, VSLSP.DocumentFilter[] filter, RazorCohostRequestContext requestContext)
-    {
-        if (clientCapabilities.TextDocument?.InlayHint?.DynamicRegistration == true)
-        {
-            return new VSLSP.Registration
-            {
-                Method = Methods.TextDocumentInlayHintName,
-                RegisterOptions = new VSLSP.InlayHintRegistrationOptions()
-                {
-                    DocumentSelector = filter
-                }
-            };
-        }
-
-        return null;
-    }
 
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(InlayHint request)
         => GetTextDocumentIdentifier(request)?.ToRazorTextDocumentIdentifier() ?? null;

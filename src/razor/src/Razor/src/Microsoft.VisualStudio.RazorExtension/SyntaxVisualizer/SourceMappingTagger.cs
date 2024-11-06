@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.VisualStudio.Razor.Documents;
 using Microsoft.VisualStudio.Shell;
@@ -39,21 +39,22 @@ internal sealed class SourceMappingTagger : ITagger<SourceMappingTag>
     {
         if (!Enabled || spans.Count == 0)
         {
-            return Enumerable.Empty<ITagSpan<SourceMappingTag>>();
+            return [];
         }
 
         var snapshot = spans[0].Snapshot;
 
         if (!_textDocumentFactoryService.TryGetTextDocument(_buffer, out var textDocument))
         {
-            return Enumerable.Empty<ITagSpan<SourceMappingTag>>();
+            return [];
         }
 
-        var codeDocument = ThreadHelper.JoinableTaskFactory.Run(() => _sourceMappingProjectChangeTrigger.Value.GetRazorCodeDocumentAsync(textDocument.FilePath));
+        var codeDocument = ThreadHelper.JoinableTaskFactory.Run(
+            () => _sourceMappingProjectChangeTrigger.Value.GetRazorCodeDocumentAsync(textDocument.FilePath, CancellationToken.None));
 
         if (codeDocument is null)
         {
-            return Enumerable.Empty<ITagSpan<SourceMappingTag>>();
+            return [];
         }
 
         return GetTagsWorker(codeDocument, snapshot);

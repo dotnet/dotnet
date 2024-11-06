@@ -3,10 +3,10 @@
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
+using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.CodeAnalysis.Razor.GoToDefinition;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -390,7 +390,7 @@ public class RazorComponentDefinitionHelpersTest(ITestOutputHelper testOutput) :
 
         var codeDocument = CreateCodeDocument(content);
         var expectedRange = codeDocument.Source.Text.GetRange(selection);
-        var snapshot = TestDocumentSnapshot.Create("test.razor", content).With(codeDocument);
+        var snapshot = TestDocumentSnapshot.Create("test.razor", codeDocument);
 
         var documentMappingService = new LspDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory);
 

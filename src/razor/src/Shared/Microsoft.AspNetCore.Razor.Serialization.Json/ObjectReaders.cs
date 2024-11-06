@@ -44,6 +44,8 @@ internal static partial class ObjectReaders
         var languageVersionText = reader.ReadNonNullString(nameof(RazorConfiguration.LanguageVersion));
         var suppressAddComponentParameter = reader.ReadBooleanOrFalse(nameof(RazorConfiguration.SuppressAddComponentParameter));
         var useConsolidatedMvcViews = reader.ReadBooleanOrTrue(nameof(RazorConfiguration.UseConsolidatedMvcViews));
+        var useRoslynTokenizer = reader.ReadBooleanOrFalse(nameof(RazorConfiguration.UseRoslynTokenizer));
+        var csharpLanguageVersion = (LanguageVersion)reader.ReadInt32OrZero(nameof(RazorConfiguration.CSharpLanguageVersion));
         var extensions = reader.ReadImmutableArrayOrEmpty(nameof(RazorConfiguration.Extensions),
             static r =>
             {
@@ -55,7 +57,7 @@ internal static partial class ObjectReaders
             ? version
             : RazorLanguageVersion.Version_2_1;
 
-        return new(languageVersion, configurationName, extensions, SuppressAddComponentParameter: suppressAddComponentParameter);
+        return new(languageVersion, configurationName, extensions, SuppressAddComponentParameter: suppressAddComponentParameter, UseRoslynTokenizer: useRoslynTokenizer);
     }
 
     public static RazorDiagnostic ReadDiagnostic(JsonDataReader reader)
@@ -102,9 +104,8 @@ internal static partial class ObjectReaders
     public static ProjectWorkspaceState ReadProjectWorkspaceStateFromProperties(JsonDataReader reader)
     {
         var tagHelpers = reader.ReadImmutableArrayOrEmpty(nameof(ProjectWorkspaceState.TagHelpers), static r => ReadTagHelper(r, useCache: true));
-        var csharpLanguageVersion = (LanguageVersion)reader.ReadInt32OrZero(nameof(ProjectWorkspaceState.CSharpLanguageVersion));
 
-        return ProjectWorkspaceState.Create(tagHelpers, csharpLanguageVersion);
+        return ProjectWorkspaceState.Create(tagHelpers);
     }
 
     public static TagHelperDescriptor ReadTagHelper(JsonDataReader reader, bool useCache)

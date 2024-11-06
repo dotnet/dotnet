@@ -13,7 +13,7 @@
                         CSharpStatementLiteral - [2..68)::66 - [LF    var time = DateTime.Now;LF    if (time.ToBinary() % 2 == 0) ] - Gen<Stmt>
                             NewLine;[LF];
                             Whitespace;[    ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[time];
                             Whitespace;[ ];
@@ -34,13 +34,13 @@
                             LeftParenthesis;[(];
                             RightParenthesis;[)];
                             Whitespace;[ ];
-                            Modulo;[%];
+                            CSharpOperator;[%];
                             Whitespace;[ ];
-                            IntegerLiteral;[2];
+                            NumericLiteral;[2];
                             Whitespace;[ ];
-                            Equals;[==];
+                            CSharpOperator;[==];
                             Whitespace;[ ];
-                            IntegerLiteral;[0];
+                            NumericLiteral;[0];
                             RightParenthesis;[)];
                             Whitespace;[ ];
                         MarkupBlock - [68..92)::24
@@ -81,12 +81,12 @@
                             LeftParenthesis;[(];
                             RightParenthesis;[)];
                             Whitespace;[ ];
-                            Modulo;[%];
-                            IntegerLiteral;[3];
+                            CSharpOperator;[%];
+                            NumericLiteral;[3];
                             Whitespace;[ ];
-                            Equals;[==];
+                            CSharpOperator;[==];
                             Whitespace;[ ];
-                            IntegerLiteral;[0];
+                            NumericLiteral;[0];
                             RightParenthesis;[)];
                             NewLine;[LF];
                             Whitespace;[        ];
@@ -133,13 +133,13 @@
                             LeftParenthesis;[(];
                             RightParenthesis;[)];
                             Whitespace;[ ];
-                            Modulo;[%];
+                            CSharpOperator;[%];
                             Whitespace;[ ];
-                            IntegerLiteral;[4];
+                            NumericLiteral;[4];
                             Whitespace;[ ];
-                            Equals;[==];
+                            CSharpOperator;[==];
                             Whitespace;[ ];
-                            IntegerLiteral;[0];
+                            NumericLiteral;[0];
                             RightParenthesis;[)];
                             NewLine;[LF];
                             Whitespace;[        ];
@@ -183,13 +183,13 @@
                             LeftParenthesis;[(];
                             RightParenthesis;[)];
                             Whitespace;[ ];
-                            Modulo;[%];
+                            CSharpOperator;[%];
                             Whitespace;[ ];
-                            IntegerLiteral;[5];
+                            NumericLiteral;[5];
                             Whitespace;[ ];
-                            Equals;[==];
+                            CSharpOperator;[==];
                             Whitespace;[ ];
-                            IntegerLiteral;[0];
+                            NumericLiteral;[0];
                             RightParenthesis;[)];
                             Whitespace;[ ];
                         CSharpEphemeralTextLiteral - [338..339)::1 - [@] - Gen<None>
@@ -204,7 +204,7 @@
                             Identifier;[Hi];
                             Not;[!];
                             LessThan;[<];
-                            Slash;[/];
+                            CSharpOperator;[/];
                             Identifier;[strong];
                             GreaterThan;[>];
                             NewLine;[LF];

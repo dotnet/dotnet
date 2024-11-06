@@ -27,14 +27,14 @@ namespace Microsoft.VisualStudio.Razor.Remote;
 public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
 {
     private static readonly HostProject s_hostProject_For_2_0 = new(
-        projectFilePath: "Test.csproj",
+        filePath: "Test.csproj",
         intermediateOutputPath: "/obj",
-        razorConfiguration: FallbackRazorConfiguration.MVC_2_0,
+        configuration: FallbackRazorConfiguration.MVC_2_0,
         rootNamespace: null);
     private static readonly HostProject s_hostProject_For_NonSerializableConfiguration = new(
-        projectFilePath: "Test.csproj",
+        filePath: "Test.csproj",
         intermediateOutputPath: "/obj",
-        razorConfiguration: new(RazorLanguageVersion.Version_2_1, "Random-0.1", Extensions: []),
+        configuration: new(RazorLanguageVersion.Version_2_1, "Random-0.1", Extensions: []),
         rootNamespace: null);
 
     private readonly Project _workspaceProject;

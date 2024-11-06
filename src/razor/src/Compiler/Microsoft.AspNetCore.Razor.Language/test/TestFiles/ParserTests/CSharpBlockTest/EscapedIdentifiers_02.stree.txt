@@ -34,17 +34,17 @@
                         CSharpStatementLiteral - [44..83)::39 - [LF    var x = 1;LF    var y = @x;LF    ] - Gen<Stmt>
                             NewLine;[LF];
                             Whitespace;[    ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[x];
                             Whitespace;[ ];
                             Assign;[=];
                             Whitespace;[ ];
-                            IntegerLiteral;[1];
+                            NumericLiteral;[1];
                             Semicolon;[;];
                             NewLine;[LF];
                             Whitespace;[    ];
-                            Identifier;[var];
+                            Keyword;[var];
                             Whitespace;[ ];
                             Identifier;[y];
                             Whitespace;[ ];

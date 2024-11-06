@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
@@ -38,9 +39,9 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
     {
         EnsureServicesInitialized();
 
-        var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "ComponentApp");
+        var projectRoot = Path.Combine(Helpers.GetTestAppsPath(), "ComponentApp");
         var projectFilePath = Path.Combine(projectRoot, "ComponentApp.csproj");
-        _filePath = Path.Combine(projectRoot, "Components", "Pages", $"Generated.razor");
+        _filePath = Path.Combine(projectRoot, "Components", "Pages", "Generated.razor");
 
         WriteSampleFile(_filePath, Blocks, out var indexes);
 
@@ -50,7 +51,7 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
 
         DocumentSnapshot = await GetDocumentSnapshotAsync(projectFilePath, _filePath, targetPath);
 
-        var codeDocument = await DocumentSnapshot.GetGeneratedOutputAsync();
+        var codeDocument = await DocumentSnapshot.GetGeneratedOutputAsync(CancellationToken.None);
         CSharpDocument = codeDocument.GetCSharpDocument();
     }
 

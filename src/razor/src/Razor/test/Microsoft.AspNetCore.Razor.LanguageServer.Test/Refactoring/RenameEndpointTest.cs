@@ -654,7 +654,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
                 projectManager,
                 LoggerFactory));
 
-        var projectKey1 = await projectService.AddProjectAsync(
+        var projectKey1 = await projectService.GetTestAccessor().AddProjectAsync(
             s_projectFilePath1, s_intermediateOutputPath1, RazorConfiguration.Default, RootNamespace1, displayName: null, DisposalToken);
 
         await projectManager.UpdateAsync(updater =>
@@ -676,7 +676,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         await projectService.UpdateDocumentAsync(s_componentFilePath1337, SourceText.From(ComponentText1337), DisposalToken);
         await projectService.UpdateDocumentAsync(s_indexFilePath1, SourceText.From(IndexText1), DisposalToken);
 
-        var projectKey2 = await projectService.AddProjectAsync(
+        var projectKey2 = await projectService.GetTestAccessor().AddProjectAsync(
             s_projectFilePath2, s_intermediateOutputPath2, RazorConfiguration.Default, RootNamespace2, displayName: null, DisposalToken);
 
         await projectManager.UpdateAsync(updater =>
@@ -692,7 +692,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         await projectService.UpdateDocumentAsync(s_componentFilePath4, SourceText.From(ComponentText4), DisposalToken);
         await projectService.UpdateDocumentAsync(s_componentWithParamFilePath, SourceText.From(ComponentWithParamText), DisposalToken);
 
-        var searchEngine = new RazorComponentSearchEngine(projectManager, LoggerFactory);
+        var searchEngine = new RazorComponentSearchEngine(LoggerFactory);
         options ??= StrictMock.Of<LanguageServerFeatureOptions>(static o =>
             o.SupportsFileManipulation == true &&
             o.SingleServerSupport == false &&
@@ -714,12 +714,13 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
 
         clientConnection ??= StrictMock.Of<IClientConnection>();
 
-        var renameService = new RenameService(searchEngine, projectManager, options);
+        var renameService = new RenameService(searchEngine, options);
         var endpoint = new RenameEndpoint(
             renameService,
             options,
             documentMappingService,
             editMappingService,
+            projectManager,
             clientConnection,
             LoggerFactory);
 

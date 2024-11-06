@@ -26,8 +26,9 @@ public class CohostDocumentFormattingEndpointTest(HtmlFormattingFixture htmlForm
     // and provide regression prevention. The tests here are not exhaustive, but they validate the the cohost endpoints
     // call into the formatting engine at least, and handles C#, Html and Razor formatting changes correctly.
 
-    [Fact]
-    public Task Formatting()
+    [Theory]
+    [CombinatorialData]
+    public Task Formatting(bool fuse)
         => VerifyDocumentFormattingAsync(
             input: """
             @preservewhitespace    true
@@ -104,10 +105,13 @@ public class CohostDocumentFormattingEndpointTest(HtmlFormattingFixture htmlForm
                 }
             }
 
-            """);
+            """,
+            fuse: fuse);
 
-    private async Task VerifyDocumentFormattingAsync(string input, string expected)
+    private async Task VerifyDocumentFormattingAsync(string input, string expected, bool fuse)
     {
+        UpdateClientInitializationOptions(opt => opt with { ForceRuntimeCodeGeneration = fuse });
+
         var document = await CreateProjectAndRazorDocumentAsync(input);
         var inputText = await document.GetTextAsync(DisposalToken);
 

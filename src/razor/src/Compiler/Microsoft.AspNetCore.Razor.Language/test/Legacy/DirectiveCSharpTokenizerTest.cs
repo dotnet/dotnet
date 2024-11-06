@@ -42,7 +42,7 @@ public class DirectiveCSharpTokenizerTest : CSharpTokenizerTestBase
             SyntaxFactory.Token(SyntaxKind.NewLine, "\r\n"));
     }
 
-    internal override object CreateTokenizer(SeekableTextReader source)
+    internal override object CreateTokenizer(SeekableTextReader source, CodeAnalysis.CSharp.CSharpParseOptions parseOptions)
     {
         return new DirectiveCSharpTokenizer(source);
     }

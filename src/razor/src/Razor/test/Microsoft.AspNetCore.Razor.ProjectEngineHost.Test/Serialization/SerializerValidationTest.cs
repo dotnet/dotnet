@@ -3,7 +3,6 @@
 
 using System.Collections.Immutable;
 using System.IO;
-using System.Reflection;
 using MessagePack;
 using MessagePack.Resolvers;
 using Microsoft.AspNetCore.Razor.Language;
@@ -12,10 +11,8 @@ using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Serialization.Json;
 using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Xunit;
 using Xunit.Abstractions;
-using MessagePackSerializationFormat = Microsoft.AspNetCore.Razor.Serialization.MessagePack.SerializationFormat;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test.Serialization;
 

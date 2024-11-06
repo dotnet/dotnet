@@ -4,6 +4,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Telemetry;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using StreamJsonRpc;
 
@@ -39,7 +40,7 @@ internal partial class RazorCustomMessageTarget
         var textBuffer = delegationDetails.Value.TextBuffer;
         var lspMethodName = VSInternalMethods.WorkspaceMapCodeName;
         var languageServerName = delegationDetails.Value.LanguageServerName;
-        using var _ = _telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, request.MapCodeCorrelationId);
+        using var _ = _telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, TelemetryThresholds.MapCodeSubLSPTelemetryThreshold, request.MapCodeCorrelationId);
 
         var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalMapCodeParams, WorkspaceEdit?>(
             textBuffer,

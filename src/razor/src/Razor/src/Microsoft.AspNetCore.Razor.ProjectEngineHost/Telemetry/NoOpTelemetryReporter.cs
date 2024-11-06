@@ -13,19 +13,19 @@ internal class NoOpTelemetryReporter : ITelemetryReporter
     {
     }
 
-    public TelemetryScope BeginBlock(string name, Severity severity)
+    public TelemetryScope BeginBlock(string name, Severity severity, TimeSpan minTimeToReport)
         => TelemetryScope.Null;
 
-    public TelemetryScope BeginBlock(string name, Severity severity, Property property)
+    public TelemetryScope BeginBlock(string name, Severity severity, TimeSpan minTimeToReport, Property property)
         => TelemetryScope.Null;
 
-    public TelemetryScope BeginBlock(string name, Severity severity, Property property1, Property property2)
+    public TelemetryScope BeginBlock(string name, Severity severity, TimeSpan minTimeToReport, Property property1, Property property2)
         => TelemetryScope.Null;
 
-    public TelemetryScope BeginBlock(string name, Severity severity, Property property1, Property property2, Property property3)
+    public TelemetryScope BeginBlock(string name, Severity severity, TimeSpan minTimeToReport, Property property1, Property property2, Property property3)
         => TelemetryScope.Null;
 
-    public TelemetryScope BeginBlock(string name, Severity severity, params Property[] properties)
+    public TelemetryScope BeginBlock(string name, Severity severity, TimeSpan minTimeToReport, params ReadOnlySpan<Property> properties)
         => TelemetryScope.Null;
 
     public void ReportEvent(string name, Severity severity)
@@ -52,6 +52,10 @@ internal class NoOpTelemetryReporter : ITelemetryReporter
     {
     }
 
-    public TelemetryScope TrackLspRequest(string lspMethodName, string lspServerName, Guid correlationId)
+    public TelemetryScope TrackLspRequest(string lspMethodName, string lspServerName, TimeSpan minTimeToReport, Guid correlationId)
         => TelemetryScope.Null;
+
+    public void ReportRequestTiming(string name, string? language, TimeSpan queuedDuration, TimeSpan requestDuration, TelemetryResult result)
+    {
+    }
 }

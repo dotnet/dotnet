@@ -14,7 +14,7 @@
                 LeftBrace;[{];
                 NewLine;[LF];
                 Whitespace;[    ];
-                Identifier;[var];
+                Keyword;[var];
                 Whitespace;[ ];
                 Identifier;[foo];
                 Whitespace;[ ];
@@ -70,7 +70,7 @@
                     NewLine;[LF];
             CSharpStatementLiteral - [141..162)::21 - [    var biz = boz;LF}] - Gen<Stmt>
                 Whitespace;[    ];
-                Identifier;[var];
+                Keyword;[var];
                 Whitespace;[ ];
                 Identifier;[biz];
                 Whitespace;[ ];
