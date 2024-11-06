@@ -19,7 +19,7 @@
   <Import Project="..\Version.BeforeCommonTargets.targets" />
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>$(NetFrameworkToolCurrent)</TargetFramework>
     <NETCORE_ENGINEERING_TELEMETRY>Publish</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>
 

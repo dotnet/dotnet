@@ -2,8 +2,8 @@
 <Project>
 
   <PropertyGroup>
-    <MicrosoftDotNetVersionToolsTasksAssembly Condition="'$(MSBuildRuntimeType)' == 'core'">$(MSBuildThisFileDirectory)..\tools\net9.0\$(MSBuildThisFileName).dll</MicrosoftDotNetVersionToolsTasksAssembly>
-    <MicrosoftDotNetVersionToolsTasksAssembly Condition="'$(MSBuildRuntimeType)' != 'core'">$(MSBuildThisFileDirectory)..\tools\net472\$(MSBuildThisFileName).dll</MicrosoftDotNetVersionToolsTasksAssembly>
+    <MicrosoftDotNetVersionToolsTasksAssembly Condition="'$(MSBuildRuntimeType)' == 'core'">$(MSBuildThisFileDirectory)..\tools\net\$(MSBuildThisFileName).dll</MicrosoftDotNetVersionToolsTasksAssembly>
+    <MicrosoftDotNetVersionToolsTasksAssembly Condition="'$(MSBuildRuntimeType)' != 'core'">$(MSBuildThisFileDirectory)..\tools\netframework\$(MSBuildThisFileName).dll</MicrosoftDotNetVersionToolsTasksAssembly>
   </PropertyGroup>
 
   <UsingTask TaskName="LocalUpdatePublishedVersions" AssemblyFile="$(MicrosoftDotNetVersionToolsTasksAssembly)" />

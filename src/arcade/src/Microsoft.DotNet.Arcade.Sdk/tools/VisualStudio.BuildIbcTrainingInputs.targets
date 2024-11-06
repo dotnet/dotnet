@@ -8,7 +8,7 @@
   -->
   
   <PropertyGroup>
-    <_VisualStudioBuildTasksAssembly>$(NuGetPackageRoot)microsoft.dotnet.build.tasks.visualstudio\$(MicrosoftDotNetBuildTasksVisualStudioVersion)\tools\net472\Microsoft.DotNet.Build.Tasks.VisualStudio.dll</_VisualStudioBuildTasksAssembly>
+    <_VisualStudioBuildTasksAssembly>$(NuGetPackageRoot)microsoft.dotnet.build.tasks.visualstudio\$(MicrosoftDotNetBuildTasksVisualStudioVersion)\tools\netframework\Microsoft.DotNet.Build.Tasks.VisualStudio.dll</_VisualStudioBuildTasksAssembly>
   </PropertyGroup>
 
   <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.VisualStudio.GenerateTrainingInputFiles" AssemblyFile="$(_VisualStudioBuildTasksAssembly)" />

@@ -11,9 +11,6 @@
     <RootNamespace>XliffTasks</RootNamespace>
     <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-
-    <BuildTaskTargetTfmSpecificFolder>net</BuildTaskTargetTfmSpecificFolder>
-    <BuildTaskTargetTfmSpecificFolder Condition="'$(TargetFramework)' == '$(NetFrameworkToolCurrent)'">netframework</BuildTaskTargetTfmSpecificFolder>
   </PropertyGroup>
 
   <ItemGroup>

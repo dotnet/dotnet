@@ -94,7 +94,7 @@
   <!-- Publish .NET Core assets and include them in the package under $(BuildTaskTargetFolder) directory. -->
   <Target Name="_AddBuildOutputToPackageCore" DependsOnTargets="Publish" Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
     <PropertyGroup>
-      <BuildTaskTargetTfmSpecificFolder Condition="'$(BuildTaskTargetTfmSpecificFolder)' == ''">$(TargetFramework)</BuildTaskTargetTfmSpecificFolder>
+      <BuildTaskTargetTfmSpecificFolder Condition="'$(BuildTaskTargetTfmSpecificFolder)' == ''">net</BuildTaskTargetTfmSpecificFolder>
     </PropertyGroup>
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(PublishDir)**"
@@ -103,9 +103,9 @@
   </Target>
 
   <!-- Include .NET Framework build outputs in the package under $(BuildTaskTargetFolder) directory. -->
-  <Target Name="_AddBuildOutputToPackageDesktop" Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
+  <Target Name="_AddBuildOutputToPackageDesktop" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
     <PropertyGroup>
-      <BuildTaskTargetTfmSpecificFolder Condition="'$(BuildTaskTargetTfmSpecificFolder)' == ''">$(TargetFramework)</BuildTaskTargetTfmSpecificFolder>
+      <BuildTaskTargetTfmSpecificFolder Condition="'$(BuildTaskTargetTfmSpecificFolder)' == ''">netframework</BuildTaskTargetTfmSpecificFolder>
     </PropertyGroup>
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(OutputPath)**" PackagePath="$(BuildTaskTargetFolder)/$(BuildTaskTargetTfmSpecificFolder)/%(RecursiveDir)%(FileName)%(Extension)"/>

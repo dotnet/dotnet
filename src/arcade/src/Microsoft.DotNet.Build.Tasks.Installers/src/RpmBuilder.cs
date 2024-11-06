@@ -171,6 +171,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             {
                 entries.Add(new(RpmHeaderTag.ConflictName, RpmHeaderEntryType.StringArray, _conflicts.ToArray()));
                 entries.Add(new(RpmHeaderTag.ConflictFlags, RpmHeaderEntryType.Int32, _conflicts.Select(_ => 0).ToArray()));
+                entries.Add(new(RpmHeaderTag.ConflictVersion, RpmHeaderEntryType.StringArray, _conflicts.Select(_ => "").ToArray()));
             }
             if (_requires.Count != 0)
             {
