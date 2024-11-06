@@ -2,7 +2,7 @@
 <Project>
 
   <PropertyGroup>
-    <ArcadeVisualStudioBuildTasksAssembly>$(NuGetPackageRoot)microsoft.dotnet.build.tasks.visualstudio\$(MicrosoftDotNetBuildTasksVisualStudioVersion)\tools\net472\Microsoft.DotNet.Build.Tasks.VisualStudio.dll</ArcadeVisualStudioBuildTasksAssembly>
+    <ArcadeVisualStudioBuildTasksAssembly>$(NuGetPackageRoot)microsoft.dotnet.build.tasks.visualstudio\$(MicrosoftDotNetBuildTasksVisualStudioVersion)\tools\netframework\Microsoft.DotNet.Build.Tasks.VisualStudio.dll</ArcadeVisualStudioBuildTasksAssembly>
   </PropertyGroup>
 
   <!-- Default settings for VSIX projects -->
