@@ -21,7 +21,7 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IProjectSnapshotManager _projectManager;
-    private readonly IRoslynProjectChangeProcessor _projectChangeProcessor;
+    private readonly IProjectWorkspaceStateGenerator _workspaceStateGenerator;
     private readonly IWorkspaceProvider _workspaceProvider;
     private readonly JoinableTaskFactory _jtf;
     private readonly CancellationTokenSource _disposeTokenSource;
@@ -36,13 +36,13 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
     public VsSolutionUpdatesProjectSnapshotChangeTrigger(
         [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
         IProjectSnapshotManager projectManager,
-        IRoslynProjectChangeProcessor projectChangeProcessor,
+        IProjectWorkspaceStateGenerator workspaceStateGenerator,
         IWorkspaceProvider workspaceProvider,
         JoinableTaskContext joinableTaskContext)
     {
         _serviceProvider = serviceProvider;
         _projectManager = projectManager;
-        _projectChangeProcessor = projectChangeProcessor;
+        _workspaceStateGenerator = workspaceStateGenerator;
         _workspaceProvider = workspaceProvider;
         _jtf = joinableTaskContext.Factory;
 
@@ -110,7 +110,7 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
         if (args.SolutionIsClosing)
         {
             // If the solution is closing, cancel all existing updates.
-            _projectChangeProcessor.CancelUpdates();
+            _workspaceStateGenerator.CancelUpdates();
         }
     }
 
@@ -133,7 +133,7 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupServ
                 {
                     // Trigger a tag helper update by forcing the project manager to see the workspace Project
                     // from the current solution.
-                    _projectChangeProcessor.EnqueueUpdate(workspaceProject, projectSnapshot);
+                    _workspaceStateGenerator.EnqueueUpdate(workspaceProject, projectSnapshot);
                 }
             }
         }

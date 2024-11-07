@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -31,6 +32,7 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot
     public string? RootNamespace => _state.HostProject.RootNamespace;
     public string DisplayName => _state.HostProject.DisplayName;
     public VersionStamp Version => _state.Version;
+    public LanguageVersion CSharpLanguageVersion => _state.CSharpLanguageVersion;
     public ProjectWorkspaceState ProjectWorkspaceState => _state.ProjectWorkspaceState;
 
     public int DocumentCount => _state.Documents.Count;

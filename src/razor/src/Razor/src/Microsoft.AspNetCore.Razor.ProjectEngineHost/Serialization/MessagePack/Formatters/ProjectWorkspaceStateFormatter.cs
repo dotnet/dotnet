@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters.TagHelpers;
 using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
 
@@ -21,7 +22,7 @@ internal sealed class ProjectWorkspaceStateFormatter : ValueFormatter<ProjectWor
 
     public override ProjectWorkspaceState Deserialize(ref MessagePackReader reader, SerializerCachingOptions options)
     {
-        reader.ReadArrayHeaderAndVerify(2);
+        reader.ReadArrayHeaderAndVerify(3);
 
         var checksums = reader.Deserialize<ImmutableArray<Checksum>>(options);
 
@@ -46,17 +47,19 @@ internal sealed class ProjectWorkspaceStateFormatter : ValueFormatter<ProjectWor
         }
 
         var tagHelpers = builder.DrainToImmutable();
+        var csharpLanguageVersion = (LanguageVersion)reader.ReadInt32();
 
-        return ProjectWorkspaceState.Create(tagHelpers);
+        return ProjectWorkspaceState.Create(tagHelpers, csharpLanguageVersion);
     }
 
     public override void Serialize(ref MessagePackWriter writer, ProjectWorkspaceState value, SerializerCachingOptions options)
     {
-        writer.WriteArrayHeader(2);
+        writer.WriteArrayHeader(3);
 
         var checksums = value.TagHelpers.SelectAsArray(x => x.Checksum);
 
         writer.Serialize(checksums, options);
         writer.Serialize(value.TagHelpers, options);
+        writer.Write((int)value.CSharpLanguageVersion);
     }
 }

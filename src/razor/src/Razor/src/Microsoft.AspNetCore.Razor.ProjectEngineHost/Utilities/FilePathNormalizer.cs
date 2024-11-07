@@ -12,7 +12,7 @@ namespace Microsoft.AspNetCore.Razor.Utilities;
 
 internal static class FilePathNormalizer
 {
-    private static readonly Func<char, char> s_charConverter = PlatformInformation.IsLinux
+    private static readonly Func<char, char> s_charConverter = RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
         ? c => c
         : char.ToLowerInvariant;
 
@@ -223,7 +223,7 @@ internal static class FilePathNormalizer
         // Replace slashes in our normalized span.
         NormalizeAndDedupeSlashes(destination, ref charsWritten);
 
-        if (PlatformInformation.IsWindows &&
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
             charsWritten > 1 &&
             destination is ['/', ..] and not ['/', '/', ..])
         {

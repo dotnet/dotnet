@@ -37,8 +37,6 @@ internal static class ObjectWriters
 
         writer.WriteIfNotFalse(nameof(value.SuppressAddComponentParameter), value.SuppressAddComponentParameter);
         writer.WriteIfNotTrue(nameof(value.UseConsolidatedMvcViews), value.UseConsolidatedMvcViews);
-        writer.WriteIfNotFalse(nameof(value.UseRoslynTokenizer), value.UseRoslynTokenizer);
-        writer.WriteIfNotZero(nameof(value.CSharpLanguageVersion), (int)value.CSharpLanguageVersion);
 
         writer.WriteArrayIfNotNullOrEmpty(nameof(value.Extensions), value.Extensions, static (w, v) => w.Write(v.ExtensionName));
     }
@@ -86,6 +84,7 @@ internal static class ObjectWriters
     public static void WriteProperties(JsonDataWriter writer, ProjectWorkspaceState value)
     {
         writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.TagHelpers), value.TagHelpers, Write);
+        writer.WriteIfNotZero(nameof(value.CSharpLanguageVersion), (int)value.CSharpLanguageVersion);
     }
 
     public static void Write(JsonDataWriter writer, TagHelperDescriptor? value)

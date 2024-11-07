@@ -493,7 +493,7 @@ Render Children
             ignoreLineEndingDifferences: true);
     }
 
-    [ConditionalTheory(Is.Windows)]
+    [OSSkipConditionTheory(new[] { "Linux", "OSX" })]
     [InlineData(@"test.cshtml",                     @"test.cshtml")]
     [InlineData(@"pages/test.cshtml",               @"pages\test.cshtml")]
     [InlineData(@"pages\test.cshtml",               @"pages\test.cshtml")]
@@ -540,7 +540,7 @@ Render Children
             ignoreLineEndingDifferences: true);
     }
 
-    [ConditionalTheory(Is.Windows)]
+    [OSSkipConditionTheory(new[] { "Linux", "OSX" })]
     [InlineData(@"test.cshtml",                     @"test.cshtml")]
     [InlineData(@"pages/test.cshtml",               @"pages\test.cshtml")]
     [InlineData(@"pages\test.cshtml",               @"pages\test.cshtml")]

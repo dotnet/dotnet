@@ -16,7 +16,7 @@ public class UriExtensionsTest : ToolingTestBase
     {
     }
 
-    [ConditionalFact(Is.Windows)]
+    [OSSkipConditionFact(new[] { "OSX", "Linux" })]
     public void GetAbsoluteOrUNCPath_AbsolutePath_ReturnsAbsolutePath()
     {
         // Arrange
@@ -29,7 +29,7 @@ public class UriExtensionsTest : ToolingTestBase
         Assert.Equal(uri.AbsolutePath, path);
     }
 
-    [ConditionalFact(Is.Windows)]
+    [OSSkipConditionFact(new[] { "OSX", "Linux" })]
     public void GetAbsoluteOrUNCPath_AbsolutePath_HandlesPlusPaths()
     {
         // Arrange
@@ -42,7 +42,7 @@ public class UriExtensionsTest : ToolingTestBase
         Assert.Equal(uri.AbsolutePath, path);
     }
 
-    [ConditionalFact(Is.Windows)]
+    [OSSkipConditionFact(new[] { "OSX", "Linux" })]
     public void GetAbsoluteOrUNCPath_AbsolutePath_HandlesSpacePaths()
     {
         // Arrange
@@ -55,8 +55,7 @@ public class UriExtensionsTest : ToolingTestBase
         Assert.Equal("c:/Some/path/to/file path.cshtml", path);
     }
 
-    [ConditionalTheory(Is.Windows)]
-    [WorkItem("https://github.com/dotnet/razor/issues/9365")]
+    [OSSkipConditionTheory(new[] { "OSX", "Linux" }), WorkItem("https://github.com/dotnet/razor/issues/9365")]
     [InlineData(@"git:/c%3A/path/to/dir/Index.cshtml", @"c:/_git_/path/to/dir/Index.cshtml")]
     [InlineData(@"git:/c:/path%2Fto/dir/Index.cshtml?%7B%22p", @"c:/_git_/path/to/dir/Index.cshtml")]
     [InlineData(@"git:/c:/path/to/dir/Index.cshtml", @"c:/_git_/path/to/dir/Index.cshtml")]
@@ -72,7 +71,7 @@ public class UriExtensionsTest : ToolingTestBase
         Assert.Equal(expected, path);
     }
 
-    [ConditionalTheory(Is.Windows)]
+    [OSSkipConditionTheory(new[] { "OSX", "Linux" })]
     [InlineData(@"file:///c:/path/to/dir/Index.cshtml", @"c:/path/to/dir/Index.cshtml")]
     [InlineData(@"file:///c:\path/to\dir/Index.cshtml", @"c:/path/to/dir/Index.cshtml")]
     [InlineData(@"file:///C:\path\to\dir\Index.cshtml", @"C:/path/to/dir/Index.cshtml")]
@@ -130,8 +129,7 @@ public class UriExtensionsTest : ToolingTestBase
         Assert.Equal(@"\\some\path\to\file path.cshtml", path);
     }
 
-    [ConditionalTheory(Is.Not.Windows)]
-    [WorkItem("https://github.com/dotnet/razor/issues/9365")]
+    [OSSkipConditionTheory(new[] { "Windows" }), WorkItem("https://github.com/dotnet/razor/issues/9365")]
     [InlineData("git:///path/to/dir/Index.cshtml", "/_git_/path/to/dir/Index.cshtml")]
     [InlineData("git:///path%2Fto/dir/Index.cshtml", "/_git_/path/to/dir/Index.cshtml")]
     [InlineData("file:///path/to/dir/Index.cshtml", @"/path/to/dir/Index.cshtml")]

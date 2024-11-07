@@ -2,7 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using Microsoft.AspNetCore.Razor.Utilities;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -14,7 +14,7 @@ internal static class FilePathComparison
     {
         get
         {
-            return _instance ??= PlatformInformation.IsLinux
+            return _instance ??= RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
                 ? StringComparison.Ordinal
                 : StringComparison.OrdinalIgnoreCase;
         }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -175,6 +176,30 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
 
         // Act
         var state = original.WithProjectWorkspaceState(changed);
+
+        // Assert
+        var (actualOutput, actualInputVersion) = await GetOutputAsync(state, _hostDocument, DisposalToken);
+        Assert.NotSame(originalOutput, actualOutput);
+        Assert.NotEqual(originalInputVersion, actualInputVersion);
+        Assert.Equal(state.ProjectWorkspaceStateVersion, actualInputVersion);
+    }
+
+    [Fact]
+    public async Task ProjectWorkspaceStateChange_WithProjectWorkspaceState_CSharpLanguageVersionChange_DoesNotCacheOutput()
+    {
+        // Arrange
+        var csharp8ValidConfiguration = new RazorConfiguration(RazorLanguageVersion.Version_3_0, _hostProject.Configuration.ConfigurationName, _hostProject.Configuration.Extensions);
+        var hostProject = TestProjectData.SomeProject with { Configuration = csharp8ValidConfiguration };
+        var originalWorkspaceState = ProjectWorkspaceState.Create(_someTagHelpers, LanguageVersion.CSharp7);
+        var original =
+            ProjectState.Create(ProjectEngineFactoryProvider, hostProject, originalWorkspaceState)
+            .WithAddedHostDocument(_hostDocument, TestMocks.CreateTextLoader("@DateTime.Now", VersionStamp.Default));
+        var changedWorkspaceState = ProjectWorkspaceState.Create(_someTagHelpers, LanguageVersion.CSharp8);
+
+        var (originalOutput, originalInputVersion) = await GetOutputAsync(original, _hostDocument, DisposalToken);
+
+        // Act
+        var state = original.WithProjectWorkspaceState(changedWorkspaceState);
 
         // Assert
         var (actualOutput, actualInputVersion) = await GetOutputAsync(state, _hostDocument, DisposalToken);
