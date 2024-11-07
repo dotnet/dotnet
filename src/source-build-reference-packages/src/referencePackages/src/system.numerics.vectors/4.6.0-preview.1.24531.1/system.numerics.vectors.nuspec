@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>System.Numerics.Vectors</id>
-    <version>4.6.0-preview.1.24529.4</version>
+    <version>4.6.0-preview.1.24531.1</version>
     <authors>Microsoft</authors>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <license type="expression">MIT</license>
@@ -11,7 +11,7 @@
     <description>System.Numerics.Vectors</description>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <serviceable>true</serviceable>
-    <repository type="git" url="https://github.com/dotnet/maintenance-packages" commit="c217b3e67dea4a77c604440fdf5ee9197565fbee" />
+    <repository type="git" url="https://github.com/dotnet/maintenance-packages" commit="b092e938107048016e45bc35fca3edf49fc9f407" />
     <dependencies>
       <group targetFramework=".NETStandard2.0" />
     </dependencies>
