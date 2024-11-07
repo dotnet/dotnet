@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -642,6 +643,45 @@ public class ProjectStateTest : WorkspaceTestBase
     }
 
     [Fact]
+    public void ProjectState_WithProjectWorkspaceState_Changed()
+    {
+        // Arrange
+        var original = ProjectState.Create(ProjectEngineFactoryProvider, _hostProject, _projectWorkspaceState)
+            .WithAddedHostDocument(_documents[2], DocumentState.EmptyLoader)
+            .WithAddedHostDocument(_documents[1], DocumentState.EmptyLoader);
+
+        // Force init
+        var originalTagHelpers = original.TagHelpers;
+        var originalProjectWorkspaceStateVersion = original.ProjectWorkspaceStateVersion;
+
+        var changed = ProjectWorkspaceState.Create(_projectWorkspaceState.TagHelpers, LanguageVersion.CSharp6);
+
+        // Act
+        var state = original.WithProjectWorkspaceState(changed);
+
+        // Assert
+        Assert.NotEqual(original.Version, state.Version);
+        Assert.Same(changed, state.ProjectWorkspaceState);
+
+        var actualTagHelpers = state.TagHelpers;
+        var actualProjectWorkspaceStateVersion = state.ProjectWorkspaceStateVersion;
+
+        // The C# language version changed, and the tag helpers didn't change
+        Assert.NotSame(original.ProjectEngine, state.ProjectEngine);
+
+        Assert.Equal(originalTagHelpers.Length, actualTagHelpers.Length);
+        for (var i = 0; i < originalTagHelpers.Length; i++)
+        {
+            Assert.Same(originalTagHelpers[i], actualTagHelpers[i]);
+        }
+
+        Assert.NotEqual(originalProjectWorkspaceStateVersion, actualProjectWorkspaceStateVersion);
+
+        Assert.NotSame(original.Documents[_documents[1].FilePath], state.Documents[_documents[1].FilePath]);
+        Assert.NotSame(original.Documents[_documents[2].FilePath], state.Documents[_documents[2].FilePath]);
+    }
+
+    [Fact]
     public void ProjectState_WithProjectWorkspaceState_Changed_TagHelpersChanged()
     {
         // Arrange
@@ -687,7 +727,7 @@ public class ProjectStateTest : WorkspaceTestBase
         _ = original.TagHelpers;
         _ = original.ProjectWorkspaceStateVersion;
 
-        var changed = ProjectWorkspaceState.Create(original.TagHelpers);
+        var changed = ProjectWorkspaceState.Create(original.TagHelpers, original.CSharpLanguageVersion);
 
         // Act
         var state = original.WithProjectWorkspaceState(changed);

@@ -494,7 +494,7 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
         var projectSnapshot = _documentTracker.ProjectSnapshot;
         if (projectSnapshot != null)
         {
-            builder.SetCSharpLanguageVersion(projectSnapshot.Configuration.CSharpLanguageVersion);
+            builder.SetCSharpLanguageVersion(projectSnapshot.CSharpLanguageVersion);
         }
 
         builder.SetRootNamespace(projectSnapshot?.RootNamespace);

@@ -121,6 +121,8 @@ internal static class TestMocks
         {
             mock.SetupGet(x => x.ProjectWorkspaceState)
                 .Returns(projectWorkspaceState);
+            mock.SetupGet(x => x.CSharpLanguageVersion)
+                .Returns(projectWorkspaceState.CSharpLanguageVersion);
             mock.Setup(x => x.GetTagHelpersAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(projectWorkspaceState.TagHelpers);
         }

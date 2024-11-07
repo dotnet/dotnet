@@ -17,7 +17,7 @@ public class UriExtensionsTest : ToolingTestBase
     {
     }
 
-    [ConditionalFact(Is.Windows)]
+    [OSSkipConditionFact(new[] { "OSX", "Linux" })]
     public void GetAbsoluteOrUNCPath_AbsolutePath_ReturnsAbsolutePath()
     {
         // Arrange
@@ -30,7 +30,7 @@ public class UriExtensionsTest : ToolingTestBase
         Assert.Equal(uri.AbsolutePath, path);
     }
 
-    [ConditionalFact(Is.Windows)]
+    [OSSkipConditionFact(new[] { "OSX", "Linux" })]
     public void GetAbsoluteOrUNCPath_AbsolutePath_HandlesPlusPaths()
     {
         // Arrange
@@ -43,7 +43,7 @@ public class UriExtensionsTest : ToolingTestBase
         Assert.Equal(uri.AbsolutePath, path);
     }
 
-    [ConditionalFact(Is.Windows)]
+    [OSSkipConditionFact(new[] { "OSX", "Linux" })]
     public void GetAbsoluteOrUNCPath_AbsolutePath_HandlesSpacePaths()
     {
         // Arrange

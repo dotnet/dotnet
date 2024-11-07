@@ -290,6 +290,29 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
              snippetLabels: ["snippet1", "snippet2"]);
     }
 
+    [Fact]
+    public async Task HtmlSnippetsCompletion_NotInStartTag()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                <div $$></div>
+
+                The end.
+                """,
+             completionContext: new RoslynVSInternalCompletionContext()
+             {
+                 InvokeKind = RoslynVSInternalCompletionInvokeKind.Typing,
+                 TriggerCharacter = " ",
+                 TriggerKind = RoslynCompletionTriggerKind.TriggerCharacter
+             },
+             expectedItemLabels: ["style", "dir"],
+             unexpectedItemLabels: ["snippet1", "snippet2"],
+             delegatedItemLabels: ["style", "dir"],
+             snippetLabels: ["snippet1", "snippet2"]);
+    }
+
     // Tests HTML attributes and DirectiveAttributeTransitionCompletionItemProvider
     [Fact]
     public async Task HtmlAndDirectiveAttributeTransitionNamesCompletion()
@@ -402,6 +425,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         TestCode input,
         RoslynVSInternalCompletionContext completionContext,
         string[] expectedItemLabels,
+        string[]? unexpectedItemLabels = null,
         string[]? delegatedItemLabels = null,
         string[]? delegatedItemCommitCharacters = null,
         string[]? snippetLabels = null,
@@ -467,6 +491,14 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         foreach (var expectedItemLabel in expectedItemLabels)
         {
             Assert.Contains(expectedItemLabel, labelSet);
+        }
+
+        if (unexpectedItemLabels is not null)
+        {
+            foreach (var unexpectedItemLabel in unexpectedItemLabels)
+            {
+                Assert.DoesNotContain(unexpectedItemLabel, labelSet);
+            }
         }
 
         if (!commitElementsWithSpace)

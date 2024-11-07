@@ -177,7 +177,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
         AssertSnapshotsEqual(miscProject, project);
     }
 
-    [ConditionalFact(Is.Windows)]
+    [OSSkipConditionFact(["OSX", "Linux"])]
     public async Task TryResolveAllProjects_OwnerProjectDifferentCasing_ReturnsTrue()
     {
         // Arrange
@@ -266,7 +266,7 @@ public class IProjectSnapshotManagerExtensionsTest(ITestOutputHelper testOutput)
     private static void AssertSnapshotsEqual(IProjectSnapshot first, IProjectSnapshot second)
     {
         Assert.Equal(first.FilePath, second.FilePath);
-        Assert.Equal(first.Configuration, second.Configuration);
+        Assert.Equal(first.CSharpLanguageVersion, second.CSharpLanguageVersion);
         Assert.Equal(first.RootNamespace, second.RootNamespace);
     }
 }

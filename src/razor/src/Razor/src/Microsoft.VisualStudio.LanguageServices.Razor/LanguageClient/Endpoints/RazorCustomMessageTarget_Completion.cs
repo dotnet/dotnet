@@ -150,7 +150,11 @@ internal partial class RazorCustomMessageTarget
                 };
             }
 
-            _snippetCompletionItemProvider.AddSnippetCompletions(request.ProjectedKind, request.Context.InvokeKind, request.Context.TriggerCharacter, ref builder.AsRef());
+            if (request.ShouldIncludeSnippets)
+            {
+                _snippetCompletionItemProvider.AddSnippetCompletions(request.ProjectedKind, request.Context.InvokeKind, request.Context.TriggerCharacter, ref builder.AsRef());
+            }
+
             completionList.Items = builder.ToArray();
 
             completionList.Data = JsonHelpers.TryConvertFromJObject(completionList.Data);

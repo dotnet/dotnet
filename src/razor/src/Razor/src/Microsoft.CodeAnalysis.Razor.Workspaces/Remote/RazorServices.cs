@@ -30,6 +30,7 @@ internal static class RazorServices
         [
             (typeof(IRemoteClientInitializationService), null),
             (typeof(IRemoteGoToDefinitionService), null),
+            (typeof(IRemoteHoverService), null),
             (typeof(IRemoteSignatureHelpService), null),
             (typeof(IRemoteInlayHintService), null),
             (typeof(IRemoteDocumentSymbolService), null),

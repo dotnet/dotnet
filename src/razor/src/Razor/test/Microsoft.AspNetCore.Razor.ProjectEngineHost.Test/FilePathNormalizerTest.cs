@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test;
 
 public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    [ConditionalFact(Is.Windows)]
+    [OSSkipConditionFact(["OSX", "Linux"])]
     public void Normalize_Windows_StripsPrecedingSlash()
     {
         // Arrange
@@ -24,7 +24,7 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestB
         Assert.Equal("c:/path/to/something", path);
     }
 
-    [ConditionalFact(Is.Windows)]
+    [OSSkipConditionFact(["OSX", "Linux"])]
     public void Normalize_Windows_StripsPrecedingSlash_ShortPath()
     {
         // Arrange
@@ -141,7 +141,7 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestB
         Assert.Equal("C:/path/to/directory/", normalized);
     }
 
-    [ConditionalFact(Is.Windows)]
+    [OSSkipConditionFact(["OSX", "Linux"])]
     public void NormalizeDirectory_Windows_HandlesSingleSlashDirectory()
     {
         // Arrange
@@ -261,7 +261,7 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestB
         Assert.Equal("/", normalized);
     }
 
-    [ConditionalFact(Is.Not.Windows)]
+    [OSSkipConditionFact(["Windows"])]
     public void Normalize_NonWindows_AddsLeadingForwardSlash()
     {
         // Arrange
@@ -314,7 +314,7 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestB
         Assert.Equal("C:/path/to/document.cshtml", normalized);
     }
 
-    [ConditionalTheory(Is.Windows)]
+    [OSSkipConditionTheory(["OSX", "Linux"])]
     [InlineData(@"C:\path\to\document.cshtml")]
     [InlineData(@"c:\path\to\document.cshtml")]
     [InlineData("C:/path/to/document.cshtml")]

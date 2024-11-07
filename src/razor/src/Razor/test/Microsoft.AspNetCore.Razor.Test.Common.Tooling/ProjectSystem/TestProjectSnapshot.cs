@@ -44,6 +44,7 @@ internal sealed class TestProjectSnapshot : IProjectSnapshot
     public string IntermediateOutputPath => RealSnapshot.IntermediateOutputPath;
     public string? RootNamespace => RealSnapshot.RootNamespace;
     public string DisplayName => RealSnapshot.DisplayName;
+    public LanguageVersion CSharpLanguageVersion => RealSnapshot.CSharpLanguageVersion;
     public ProjectWorkspaceState ProjectWorkspaceState => RealSnapshot.ProjectWorkspaceState;
     public VersionStamp Version => RealSnapshot.Version;
 
