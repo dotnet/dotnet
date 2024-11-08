@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "f0f05505aac00996fbabea7bb243d12d68f99206"
+      "commitSha": "94955784f30cf867f39e2c6f982a1ef3bdda55fc"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24516.3",
@@ -121,10 +121,10 @@
       "commitSha": "a2ad736b86ce484df4d2dfc967bd29cd9d1b5de9"
     },
     {
-      "packageVersion": "9.0.0-beta.24556.2",
+      "packageVersion": "9.0.0-beta.24557.2",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "474ceee2ae8a35d35692586f1a8a0f84fe55f572"
+      "commitSha": "02c795c78776db6051730c33d80324228d602255"
     },
     {
       "packageVersion": "2.2.0-beta.24327.2",
