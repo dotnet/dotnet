@@ -89,7 +89,13 @@ internal sealed class CodeActionEndpoint(
             _ => []
         };
 
-        return await _codeActionsService.GetCodeActionsAsync(request, documentSnapshot, delegatedCodeActions, _supportsCodeActionResolve, cancellationToken).ConfigureAwait(false);
+        return await _codeActionsService.GetCodeActionsAsync(
+            request,
+            documentSnapshot,
+            delegatedCodeActions,
+            delegatedDocumentUri: null, // We don't use delegatedDocumentUri in the LSP server, as we can trivially recalculate it
+            _supportsCodeActionResolve,
+            cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<RazorVSInternalCodeAction[]> GetHtmlCodeActionsAsync(IDocumentSnapshot documentSnapshot, VSCodeActionParams request, Guid correlationId, CancellationToken cancellationToken)

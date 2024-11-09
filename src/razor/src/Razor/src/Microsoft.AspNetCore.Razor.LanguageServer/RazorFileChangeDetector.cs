@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -30,13 +32,15 @@ internal partial class RazorFileChangeDetector : IFileChangeDetector, IDisposabl
     private readonly Dictionary<string, (RazorFileChangeKind kind, int index)> _filePathToChangeMap;
     private readonly HashSet<int> _indicesToSkip;
     private readonly List<FileSystemWatcher> _watchers;
+    private readonly IFileSystem _fileSystem;
+    private readonly ILogger _logger;
 
-    public RazorFileChangeDetector(IEnumerable<IRazorFileChangeListener> listeners)
-        : this(listeners, s_delay)
+    public RazorFileChangeDetector(IEnumerable<IRazorFileChangeListener> listeners, IFileSystem fileSystem, ILoggerFactory loggerFactory)
+        : this(listeners, fileSystem, loggerFactory, s_delay)
     {
     }
 
-    protected RazorFileChangeDetector(IEnumerable<IRazorFileChangeListener> listeners, TimeSpan delay)
+    protected RazorFileChangeDetector(IEnumerable<IRazorFileChangeListener> listeners, IFileSystem fileSystem, ILoggerFactory loggerFactory, TimeSpan delay)
     {
         _listeners = listeners.ToImmutableArray();
 
@@ -45,6 +49,8 @@ internal partial class RazorFileChangeDetector : IFileChangeDetector, IDisposabl
         _filePathToChangeMap = new(FilePathComparer.Instance);
         _indicesToSkip = [];
         _watchers = new List<FileSystemWatcher>(s_razorFileExtensions.Length);
+        _fileSystem = fileSystem;
+        _logger = loggerFactory.GetOrCreateLogger<RazorFileChangeDetector>();
     }
 
     public void Dispose()
@@ -218,7 +224,7 @@ internal partial class RazorFileChangeDetector : IFileChangeDetector, IDisposabl
 
         foreach (var extension in s_razorFileExtensions)
         {
-            var existingFiles = DirectoryHelper.GetFilteredFiles(workspaceDirectory, "*" + extension, s_ignoredDirectories);
+            var existingFiles = _fileSystem.GetFilteredFiles(workspaceDirectory, "*" + extension, s_ignoredDirectories, _logger);
             result.AddRange(existingFiles);
         }
 

@@ -171,6 +171,7 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : Language
             request,
             documentSnapshotMock.Object,
             codeDocument,
+            DelegatedDocumentUri: null,
             StartAbsoluteIndex: absoluteIndex,
             EndAbsoluteIndex: absoluteIndex,
             RazorLanguageKind.Html,

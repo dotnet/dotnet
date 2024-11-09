@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -23,8 +22,8 @@ internal partial class BackgroundDocumentGenerator
             var (projectX, documentX) = x;
             var (projectY, documentY) = y;
 
-            var documentKeyX = new DocumentKey(projectX.Key, documentX.FilePath.AssumeNotNull());
-            var documentKeyY = new DocumentKey(projectY.Key, documentY.FilePath.AssumeNotNull());
+            var documentKeyX = new DocumentKey(projectX.Key, documentX.FilePath);
+            var documentKeyY = new DocumentKey(projectY.Key, documentY.FilePath);
 
             return documentKeyX.Equals(documentKeyY);
         }
@@ -32,7 +31,7 @@ internal partial class BackgroundDocumentGenerator
         public int GetHashCode((IProjectSnapshot, IDocumentSnapshot) obj)
         {
             var (project, document) = obj;
-            var documentKey = new DocumentKey(project.Key, document.FilePath.AssumeNotNull());
+            var documentKey = new DocumentKey(project.Key, document.FilePath);
 
             return documentKey.GetHashCode();
         }

@@ -20,7 +20,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
-internal sealed class ExtractToCodeBehindCodeActionProvider(ILoggerFactory loggerFactory) : IRazorCodeActionProvider
+internal class ExtractToCodeBehindCodeActionProvider(ILoggerFactory loggerFactory) : IRazorCodeActionProvider
 {
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<ExtractToCodeBehindCodeActionProvider>();
 
@@ -113,6 +113,7 @@ internal sealed class ExtractToCodeBehindCodeActionProvider(ILoggerFactory logge
             TextDocument = context.Request.TextDocument,
             Action = LanguageServerConstants.CodeActions.ExtractToCodeBehindAction,
             Language = RazorLanguageKind.Razor,
+            DelegatedDocumentUri = context.DelegatedDocumentUri,
             Data = actionParams,
         };
 

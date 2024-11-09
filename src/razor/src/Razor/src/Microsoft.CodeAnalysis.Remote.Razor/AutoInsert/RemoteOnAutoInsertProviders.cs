@@ -4,7 +4,7 @@
 using System.Composition;
 using Microsoft.CodeAnalysis.Razor.AutoInsert;
 
-namespace Microsoft.CodBeAnalysis.Remote.Razor.AutoInsert;
+namespace Microsoft.CodeAnalysis.Remote.Razor.AutoInsert;
 
 [Shared]
 [Export(typeof(IOnAutoInsertProvider))]

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -27,6 +28,7 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDisposable
 {
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly Dispatcher _dispatcher;
     private readonly bool _initialized;
 
@@ -64,16 +66,19 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
     /// </summary>
     /// <param name="projectEngineFactoryProvider">The <see cref="IProjectEngineFactoryProvider"/> to
     /// use when creating <see cref="ProjectState"/>.</param>
+    /// <param name="languageServerFeatureOptions">The options that were used to start the language server</param>
     /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> to use.</param>
     /// <param name="initializer">An optional callback to set up the initial set of projects and documents.
     /// Note that this is called during construction, so it does not run on the dispatcher and notifications
     /// will not be sent.</param>
     public ProjectSnapshotManager(
         IProjectEngineFactoryProvider projectEngineFactoryProvider,
+        LanguageServerFeatureOptions languageServerFeatureOptions,
         ILoggerFactory loggerFactory,
         Action<Updater>? initializer = null)
     {
         _projectEngineFactoryProvider = projectEngineFactoryProvider;
+        _languageServerFeatureOptions = languageServerFeatureOptions;
         _dispatcher = new(loggerFactory);
 
         initializer?.Invoke(new(this));
@@ -437,6 +442,7 @@ internal partial class ProjectSnapshotManager : IProjectSnapshotManager, IDispos
 
             var state = ProjectState.Create(
                 _projectEngineFactoryProvider,
+                _languageServerFeatureOptions,
                 hostProject,
                 ProjectWorkspaceState.Default);
 

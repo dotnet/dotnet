@@ -27,7 +27,7 @@ namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
 using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
-internal sealed class TypeAccessibilityCodeActionProvider : ICSharpCodeActionProvider
+internal class TypeAccessibilityCodeActionProvider : ICSharpCodeActionProvider
 {
     private static readonly IEnumerable<string> s_supportedDiagnostics = new[]
     {
@@ -144,7 +144,7 @@ internal sealed class TypeAccessibilityCodeActionProvider : ICSharpCodeActionPro
                 var fqnCodeAction = CreateFQNCodeAction(context, diagnostic, codeAction, fqn);
                 typeAccessibilityCodeActions.Add(fqnCodeAction);
 
-                if (AddUsingsCodeActionResolver.TryCreateAddUsingResolutionParams(fqn, context.Request.TextDocument, additionalEdit: null, out var @namespace, out var resolutionParams))
+                if (AddUsingsCodeActionResolver.TryCreateAddUsingResolutionParams(fqn, context.Request.TextDocument, additionalEdit: null, context.DelegatedDocumentUri, out var @namespace, out var resolutionParams))
                 {
                     var addUsingCodeAction = RazorCodeActionFactory.CreateAddComponentUsing(@namespace, newTagName: null, resolutionParams);
                     typeAccessibilityCodeActions.Add(addUsingCodeAction);

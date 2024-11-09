@@ -136,7 +136,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
 
     private bool Suppressed(IProjectSnapshot project, IDocumentSnapshot document)
     {
-        var filePath = document.FilePath.AssumeNotNull();
+        var filePath = document.FilePath;
 
         if (_projectManager.IsDocumentOpen(filePath))
         {
@@ -151,7 +151,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
 
     private void UpdateFileInfo(IProjectSnapshot project, IDocumentSnapshot document)
     {
-        var filePath = document.FilePath.AssumeNotNull();
+        var filePath = document.FilePath;
 
         if (!_suppressedDocuments.Contains(filePath))
         {

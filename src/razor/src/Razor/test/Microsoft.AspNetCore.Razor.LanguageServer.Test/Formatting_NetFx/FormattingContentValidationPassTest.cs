@@ -92,7 +92,7 @@ public class FormattingContentValidationPassTest(ITestOutputHelper testOutput) :
         return context;
     }
 
-    private static (RazorCodeDocument, IDocumentSnapshot) CreateCodeDocumentAndSnapshot(SourceText text, string path, ImmutableArray<TagHelperDescriptor> tagHelpers = default, string? fileKind = default)
+    private static (RazorCodeDocument, IDocumentSnapshot) CreateCodeDocumentAndSnapshot(SourceText text, string path, ImmutableArray<TagHelperDescriptor> tagHelpers = default, string? fileKind = null)
     {
         fileKind ??= FileKinds.Component;
         tagHelpers = tagHelpers.NullToEmpty();
@@ -113,7 +113,7 @@ public class FormattingContentValidationPassTest(ITestOutputHelper testOutput) :
             .Returns(path);
         documentSnapshot
             .Setup(d => d.Project.GetTagHelpersAsync(It.IsAny<CancellationToken>()))
-            .Returns(new ValueTask<ImmutableArray<TagHelperDescriptor>>(tagHelpers));
+            .ReturnsAsync(tagHelpers);
         documentSnapshot
             .Setup(d => d.FileKind)
             .Returns(fileKind);

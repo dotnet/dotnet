@@ -5,6 +5,7 @@ using System.ComponentModel.Composition;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
@@ -12,7 +13,8 @@ namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 [method: ImportingConstructor]
 internal sealed class VisualStudioProjectSnapshotManager(
     IProjectEngineFactoryProvider projectEngineFactoryProvider,
+    LanguageServerFeatureOptions languageServerFeatureOptions,
     ILoggerFactory loggerFactory)
-    : ProjectSnapshotManager(projectEngineFactoryProvider, loggerFactory)
+    : ProjectSnapshotManager(projectEngineFactoryProvider, languageServerFeatureOptions, loggerFactory)
 {
 }

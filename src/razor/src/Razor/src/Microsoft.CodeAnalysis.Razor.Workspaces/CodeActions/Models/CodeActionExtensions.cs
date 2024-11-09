@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -12,7 +13,7 @@ namespace Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 
 internal static class CodeActionExtensions
 {
-    public static SumType<Command, CodeAction> AsVSCodeCommandOrCodeAction(this VSInternalCodeAction razorCodeAction, VSTextDocumentIdentifier textDocument)
+    public static SumType<Command, CodeAction> AsVSCodeCommandOrCodeAction(this VSInternalCodeAction razorCodeAction, VSTextDocumentIdentifier textDocument, Uri? delegatedDocumentUri)
     {
         if (razorCodeAction.Data is null)
         {
@@ -23,6 +24,7 @@ internal static class CodeActionExtensions
                 TextDocument = textDocument,
                 Action = LanguageServerConstants.CodeActions.EditBasedCodeActionCommand,
                 Language = RazorLanguageKind.Razor,
+                DelegatedDocumentUri = delegatedDocumentUri,
                 Data = razorCodeAction.Edit ?? new WorkspaceEdit(),
             };
 
@@ -57,6 +59,7 @@ internal static class CodeActionExtensions
             TextDocument = context.Request.TextDocument,
             Action = action,
             Language = language,
+            DelegatedDocumentUri = context.DelegatedDocumentUri,
             Data = razorCodeAction.Data
         };
         razorCodeAction.Data = JsonSerializer.SerializeToElement(resolutionParams);
@@ -89,6 +92,7 @@ internal static class CodeActionExtensions
             TextDocument = context.Request.TextDocument,
             Action = action,
             Language = language,
+            DelegatedDocumentUri = context.DelegatedDocumentUri,
             Data = razorCodeAction.Data
         };
         razorCodeAction.Data = JsonSerializer.SerializeToElement(resolutionParams);

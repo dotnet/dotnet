@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -38,7 +40,8 @@ public class RazorFileChangeDetectorTest(ITestOutputHelper testOutput) : Languag
         ImmutableArray<string> existingRazorFiles = ["c:/path/to/index.razor", "c:/other/path/_Host.cshtml"];
         using var detector = new InitializationSkippingRazorFileChangeDetector(
             [listenerMock1.Object, listenerMock2.Object],
-            existingRazorFiles);
+            existingRazorFiles,
+            LoggerFactory);
 
         // Act
         await detector.StartAsync("/some/workspacedirectory", DisposalToken);
@@ -79,7 +82,7 @@ public class RazorFileChangeDetectorTest(ITestOutputHelper testOutput) : Languag
             .Returns(Task.CompletedTask)
             .Callback((string filePath, RazorFileChangeKind kind, CancellationToken _) => actual.Add((filePath, kind)));
 
-        using var detector = new TestRazorFileChangeDetector([listenerMock.Object], TimeSpan.FromMilliseconds(1));
+        using var detector = new TestRazorFileChangeDetector([listenerMock.Object], TimeSpan.FromMilliseconds(1), LoggerFactory);
         var detectorAccessor = detector.GetTestAccessor();
 
         detectorAccessor.AddWork(work);
@@ -114,14 +117,17 @@ public class RazorFileChangeDetectorTest(ITestOutputHelper testOutput) : Languag
 
     private class TestRazorFileChangeDetector(
         IEnumerable<IRazorFileChangeListener> listeners,
-        TimeSpan delay)
-        : RazorFileChangeDetector(listeners, delay)
+        TimeSpan delay,
+        ILoggerFactory loggerFactory)
+        : RazorFileChangeDetector(listeners, new FileSystem(), loggerFactory, delay)
     {
     }
 
     private class InitializationSkippingRazorFileChangeDetector(
         IEnumerable<IRazorFileChangeListener> listeners,
-        ImmutableArray<string> existingProjectFiles) : RazorFileChangeDetector(listeners)
+        ImmutableArray<string> existingProjectFiles,
+        ILoggerFactory loggerFactory)
+        : RazorFileChangeDetector(listeners, new FileSystem(), loggerFactory)
     {
         private readonly ImmutableArray<string> _existingProjectFiles = existingProjectFiles;
 

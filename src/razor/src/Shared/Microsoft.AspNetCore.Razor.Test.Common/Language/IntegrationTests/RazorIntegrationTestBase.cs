@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
@@ -51,7 +51,7 @@ public class RazorIntegrationTestBase
         Configuration = RazorConfiguration.Default;
         FileSystem = new VirtualRazorProjectFileSystem();
         PathSeparator = Path.DirectorySeparatorChar.ToString();
-        WorkingDirectory = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ArbitraryWindowsPath : ArbitraryMacLinuxPath;
+        WorkingDirectory = PlatformInformation.IsWindows ? ArbitraryWindowsPath : ArbitraryMacLinuxPath;
 
         DefaultRootNamespace = "Test"; // Matches the default working directory
         DefaultFileName = "TestComponent.cshtml";
@@ -404,7 +404,7 @@ public class RazorIntegrationTestBase
     protected static void AssertSourceEquals(string expected, CompileToCSharpResult generated)
     {
         // Normalize the paths inside the expected result to match the OS paths
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (!PlatformInformation.IsWindows)
         {
             var windowsPath = Path.Combine(ArbitraryWindowsPath, generated.CodeDocument.Source.RelativePath ?? "").Replace('/', '\\');
             expected = expected.Replace(windowsPath, generated.CodeDocument.Source.FilePath);

@@ -1,20 +1,18 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.LanguageServer.DirectoryHelper;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
-public class DirectoryHelperTest(ITestOutputHelper testOutput) : TagHelperServiceTestBase(testOutput)
+public class IFileSystemExtensionsTest(ITestOutputHelper testOutput) : TagHelperServiceTestBase(testOutput)
 {
     [Fact]
     public void GetFilteredFiles_FindsFiles()
@@ -26,24 +24,22 @@ public class DirectoryHelperTest(ITestOutputHelper testOutput) : TagHelperServic
         var workspaceDirectory = Path.Combine("LowerDirectory");
         var searchPattern = "project.razor.bin";
         var ignoredDirectories = new[] { "node_modules" };
-        var fileResults = new Dictionary<string, IEnumerable<string>>() {
-            { "HigherDirectory", new []{ firstProjectRazorJson } },
-            { "RealDirectory", new []{ secondProjectRazorJson } },
-            { "LongDirectory", new[]{ "LONGPATH", "LONGPATH\\project.razor.bin" } },
+        var fileResults = new Dictionary<string, string[]?>() {
+            { "HigherDirectory", [firstProjectRazorJson] },
+            { "RealDirectory", [secondProjectRazorJson] },
+            { "LongDirectory", ["LONGPATH", "LONGPATH\\project.razor.bin"] },
             { "node_modules", null },
         };
-        var directoryResults = new Dictionary<string, IEnumerable<string>>() {
-            { "LowerDirectory", new[]{ "HigherDirectory" } },
-            { "HigherDirectory", new[]{ "node_modules", "RealDirectory", "FakeDirectory", "LongDirectory" } },
+        var directoryResults = new Dictionary<string, string[]?>() {
+            { "LowerDirectory", ["HigherDirectory"] },
+            { "HigherDirectory", ["node_modules", "RealDirectory", "FakeDirectory", "LongDirectory"] },
             { "node_modules", null },
         };
 
-#pragma warning disable CS0612 // Type or member is obsolete
         var fileSystem = new TestFileSystem(fileResults, directoryResults);
-#pragma warning restore CS0612 // Type or member is obsolete
 
         // Act
-        var files = DirectoryHelper.GetFilteredFiles(workspaceDirectory, searchPattern, ignoredDirectories, fileSystem);
+        var files = fileSystem.GetFilteredFiles(workspaceDirectory, searchPattern, ignoredDirectories, Logger);
 
         // Assert
         Assert.Collection(files,
@@ -52,23 +48,13 @@ public class DirectoryHelperTest(ITestOutputHelper testOutput) : TagHelperServic
         );
     }
 
-    [Obsolete]
-    private class TestFileSystem : IFileSystem
+    private class TestFileSystem(
+        Dictionary<string, string[]?> fileResults,
+        Dictionary<string, string[]?> directoryResults) : IFileSystem
     {
-        private readonly IDictionary<string, IEnumerable<string>> _fileResults;
-        private readonly IDictionary<string, IEnumerable<string>> _directoryResults;
-
-        public TestFileSystem(
-            IDictionary<string, IEnumerable<string>> fileResults,
-            IDictionary<string, IEnumerable<string>> directoryResults)
-        {
-            _fileResults = fileResults;
-            _directoryResults = directoryResults;
-        }
-
         public IEnumerable<string> GetDirectories(string workspaceDirectory)
         {
-            var success = _directoryResults.TryGetValue(workspaceDirectory, out var results);
+            var success = directoryResults.TryGetValue(workspaceDirectory, out var results);
             if (success)
             {
                 if (results is null)
@@ -91,7 +77,7 @@ public class DirectoryHelperTest(ITestOutputHelper testOutput) : TagHelperServic
 
         public IEnumerable<string> GetFiles(string workspaceDirectory, string searchPattern, SearchOption searchOption)
         {
-            var success = _fileResults.TryGetValue(workspaceDirectory, out var results);
+            var success = fileResults.TryGetValue(workspaceDirectory, out var results);
             if (success)
             {
                 if (results is null)
@@ -111,5 +97,11 @@ public class DirectoryHelperTest(ITestOutputHelper testOutput) : TagHelperServic
                 throw new DirectoryNotFoundException();
             }
         }
+
+        public bool FileExists(string filePath)
+            => throw new NotImplementedException();
+
+        public string ReadFile(string filePath)
+            => throw new NotImplementedException();
     }
 }

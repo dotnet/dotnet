@@ -53,7 +53,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
         var docUri = new VSTextDocumentIdentifier { Uri = new Uri("c:/path") };
 
         // Act
-        var result = AddUsingsCodeActionResolver.TryCreateAddUsingResolutionParams(fqn, docUri, additionalEdit: null, out var @namespace, out var resolutionParams);
+        var result = AddUsingsCodeActionResolver.TryCreateAddUsingResolutionParams(fqn, docUri, additionalEdit: null, delegatedDocumentUri: null, out var @namespace, out var resolutionParams);
 
         // Assert
         Assert.True(result);

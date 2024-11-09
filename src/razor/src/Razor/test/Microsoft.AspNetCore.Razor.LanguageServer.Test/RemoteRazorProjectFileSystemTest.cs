@@ -3,8 +3,8 @@
 
 #nullable disable
 
-using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -54,7 +54,7 @@ public class RemoteRazorProjectFileSystemTest : ToolingTestBase
         RemoteRazorProjectFileSystem fileSystem;
         string documentFilePath;
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (PlatformInformation.IsWindows)
         {
             fileSystem = new RemoteRazorProjectFileSystem(@"C:\path\to");
             documentFilePath = @"C:\otherpath\to\file.cshtml";

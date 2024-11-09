@@ -19,19 +19,22 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using CSharpSyntaxFactory = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 
-internal sealed class GenerateMethodCodeActionResolver(
+internal class GenerateMethodCodeActionResolver(
     IRoslynCodeActionHelpers roslynCodeActionHelpers,
     IDocumentMappingService documentMappingService,
-    IRazorFormattingService razorFormattingService) : IRazorCodeActionResolver
+    IRazorFormattingService razorFormattingService,
+    IFileSystem fileSystem) : IRazorCodeActionResolver
 {
     private readonly IRoslynCodeActionHelpers _roslynCodeActionHelpers = roslynCodeActionHelpers;
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
     private readonly IRazorFormattingService _razorFormattingService = razorFormattingService;
+    private readonly IFileSystem _fileSystem = fileSystem;
 
     private const string ReturnType = "$$ReturnType$$";
     private const string MethodName = "$$MethodName$$";
@@ -58,7 +61,7 @@ internal sealed class GenerateMethodCodeActionResolver(
         var razorClassName = Path.GetFileNameWithoutExtension(uriPath);
         var codeBehindPath = $"{uriPath}.cs";
 
-        if (!File.Exists(codeBehindPath) ||
+        if (!_fileSystem.FileExists(codeBehindPath) ||
             razorClassName is null ||
             !code.TryComputeNamespace(fallbackToRootNamespace: true, out var razorNamespace))
         {
@@ -72,7 +75,7 @@ internal sealed class GenerateMethodCodeActionResolver(
                 cancellationToken).ConfigureAwait(false);
         }
 
-        var content = File.ReadAllText(codeBehindPath);
+        var content = _fileSystem.ReadFile(codeBehindPath);
         if (GetCSharpClassDeclarationSyntax(content, razorNamespace, razorClassName) is not { } @class)
         {
             // The code behind file is malformed, generate the code in the razor file instead.
@@ -110,7 +113,7 @@ internal sealed class GenerateMethodCodeActionResolver(
             character: 0,
             $"{formattedMethod}{Environment.NewLine}");
 
-        var result = await _roslynCodeActionHelpers.GetSimplifiedTextEditsAsync(codeBehindUri, edit, requiresVirtualDocument: false, cancellationToken).ConfigureAwait(false);
+        var result = await _roslynCodeActionHelpers.GetSimplifiedTextEditsAsync(documentContext, codeBehindUri, edit, cancellationToken).ConfigureAwait(false);
 
         var codeBehindTextDocEdit = new TextDocumentEdit()
         {
@@ -152,7 +155,7 @@ internal sealed class GenerateMethodCodeActionResolver(
                 character: 0,
                 editToSendToRoslyn.NewText);
 
-            var result = await _roslynCodeActionHelpers.GetSimplifiedTextEditsAsync(documentContext.Uri, tempTextEdit, requiresVirtualDocument: true, cancellationToken).ConfigureAwait(false);
+            var result = await _roslynCodeActionHelpers.GetSimplifiedTextEditsAsync(documentContext, codeBehindUri: null, tempTextEdit, cancellationToken).ConfigureAwait(false);
 
             // Roslyn should have passed back 2 edits. One that contains the simplified method stub and the other that contains the new
             // location for the class end brace since we had asked to insert the method stub at the original class end brace location.
@@ -175,7 +178,7 @@ internal sealed class GenerateMethodCodeActionResolver(
                 .Replace(FormattingUtilities.Indent, string.Empty);
 
             var remappedEdit = VsLspFactory.CreateTextEdit(remappedRange, unformattedMethodSignature);
-            var result = await _roslynCodeActionHelpers.GetSimplifiedTextEditsAsync(documentContext.Uri, remappedEdit, requiresVirtualDocument: true, cancellationToken).ConfigureAwait(false);
+            var result = await _roslynCodeActionHelpers.GetSimplifiedTextEditsAsync(documentContext, codeBehindUri: null, remappedEdit, cancellationToken).ConfigureAwait(false);
 
             if (result is not null)
             {

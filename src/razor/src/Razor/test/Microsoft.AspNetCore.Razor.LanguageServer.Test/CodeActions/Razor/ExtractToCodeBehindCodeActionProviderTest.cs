@@ -401,6 +401,7 @@ public class ExtractToCodeBehindCodeActionProviderTest(ITestOutputHelper testOut
             request,
             documentSnapshotMock.Object,
             codeDocument,
+            DelegatedDocumentUri: null,
             StartAbsoluteIndex: absoluteIndex,
             EndAbsoluteIndex: absoluteIndex,
             RazorLanguageKind.Razor,

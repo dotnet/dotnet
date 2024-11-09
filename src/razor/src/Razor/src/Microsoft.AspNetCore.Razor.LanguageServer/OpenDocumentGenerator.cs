@@ -148,7 +148,7 @@ internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
                     {
                         foreach (var relatedDocument in oldProject.GetRelatedDocuments(document))
                         {
-                            var relatedDocumentFilePath = relatedDocument.FilePath.AssumeNotNull();
+                            var relatedDocumentFilePath = relatedDocument.FilePath;
 
                             if (newProject.TryGetDocument(relatedDocumentFilePath, out var newRelatedDocument))
                             {
@@ -169,7 +169,7 @@ internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
 
         void EnqueueIfNecessary(IDocumentSnapshot document)
         {
-            if (!_projectManager.IsDocumentOpen(document.FilePath.AssumeNotNull()) &&
+            if (!_projectManager.IsDocumentOpen(document.FilePath) &&
                 !_options.UpdateBuffersForClosedDocuments)
             {
                 return;

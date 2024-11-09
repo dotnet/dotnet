@@ -26,13 +26,11 @@ namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 [method: ImportingConstructor]
 internal sealed class FallbackProjectManager(
     [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-    LanguageServerFeatureOptions languageServerFeatureOptions,
     IProjectSnapshotManager projectManager,
     IWorkspaceProvider workspaceProvider,
     ITelemetryReporter telemetryReporter)
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IProjectSnapshotManager _projectManager = projectManager;
     private readonly IWorkspaceProvider _workspaceProvider = workspaceProvider;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
@@ -108,7 +106,7 @@ internal sealed class FallbackProjectManager(
 
         var rootNamespace = project.DefaultNamespace;
 
-        var configuration = FallbackRazorConfiguration.Latest with { LanguageServerFlags = _languageServerFeatureOptions.ToLanguageServerFlags() };
+        var configuration = FallbackRazorConfiguration.Latest;
 
         // We create this as a fallback project so that other parts of the system can reason about them - eg we don't do code
         // generation for closed files for documents in these projects. If these projects become "real", either because capabilities

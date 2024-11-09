@@ -99,11 +99,9 @@ internal sealed class RemoteDocumentSnapshot : IDocumentSnapshot
             // but since we don't expect users to ever use cohosting without source generators, it's fine for now.
 
             var projectEngine = await ProjectSnapshot.GetProjectEngine_CohostOnlyAsync(cancellationToken).ConfigureAwait(false);
-            var tagHelpers = await ProjectSnapshot.GetTagHelpersAsync(cancellationToken).ConfigureAwait(false);
-            var imports = await DocumentState.GetImportsAsync(this, projectEngine, cancellationToken).ConfigureAwait(false);
 
             return await DocumentState
-                .GenerateCodeDocumentAsync(this, projectEngine, imports, tagHelpers, forceRuntimeCodeGeneration: forceRuntimeCodeGeneration, cancellationToken)
+                .GenerateCodeDocumentAsync(this, projectEngine, forceRuntimeCodeGeneration, cancellationToken)
                 .ConfigureAwait(false);
         }
     }
@@ -151,7 +149,7 @@ internal sealed class RemoteDocumentSnapshot : IDocumentSnapshot
 
         var solution = TextDocument.Project.Solution;
         var filePathService = ProjectSnapshot.SolutionSnapshot.SnapshotManager.FilePathService;
-        var generatedFilePath = filePathService.GetRazorCSharpFilePath(Project.Key, FilePath.AssumeNotNull());
+        var generatedFilePath = filePathService.GetRazorCSharpFilePath(Project.Key, FilePath);
         var projectId = TextDocument.Project.Id;
         var generatedDocumentId = solution.GetDocumentIdsWithFilePath(generatedFilePath).First(d => d.ProjectId == projectId);
         var generatedDocument = solution.GetRequiredDocument(generatedDocumentId);

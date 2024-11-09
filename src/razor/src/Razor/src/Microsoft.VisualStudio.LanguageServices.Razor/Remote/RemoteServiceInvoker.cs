@@ -138,7 +138,9 @@ internal sealed class RemoteServiceInvoker(
                     HtmlVirtualDocumentSuffix = _languageServerFeatureOptions.HtmlVirtualDocumentSuffix,
                     IncludeProjectKeyInGeneratedFilePath = _languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath,
                     ReturnCodeActionAndRenamePathsWithPrefixedSlash = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash,
-                    ForceRuntimeCodeGeneration = _languageServerFeatureOptions.ForceRuntimeCodeGeneration
+                    ForceRuntimeCodeGeneration = _languageServerFeatureOptions.ForceRuntimeCodeGeneration,
+                    SupportsFileManipulation = _languageServerFeatureOptions.SupportsFileManipulation,
+                    ShowAllCSharpCodeActions = _languageServerFeatureOptions.ShowAllCSharpCodeActions,
                 };
 
                 _logger.LogDebug($"First OOP call, so initializing OOP service.");

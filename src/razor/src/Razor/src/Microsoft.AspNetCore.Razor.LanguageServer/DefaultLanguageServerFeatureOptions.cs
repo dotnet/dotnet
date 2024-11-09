@@ -1,7 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -25,8 +25,7 @@ internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOption
 
     // Code action and rename paths in Windows VS Code need to be prefixed with '/':
     // https://github.com/dotnet/razor/issues/8131
-    public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash
-        => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+    public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => PlatformInformation.IsWindows;
 
     public override bool ShowAllCSharpCodeActions => false;
 

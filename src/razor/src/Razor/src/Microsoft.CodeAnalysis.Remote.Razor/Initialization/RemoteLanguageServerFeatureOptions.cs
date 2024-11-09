@@ -17,7 +17,7 @@ internal class RemoteLanguageServerFeatureOptions : LanguageServerFeatureOptions
 
     public void SetOptions(RemoteClientInitializationOptions options) => _options = options;
 
-    public override bool SupportsFileManipulation => throw new InvalidOperationException("This option has not been synced to OOP.");
+    public override bool SupportsFileManipulation => _options.SupportsFileManipulation;
 
     public override string CSharpVirtualDocumentSuffix => _options.CSharpVirtualDocumentSuffix;
 
@@ -29,7 +29,7 @@ internal class RemoteLanguageServerFeatureOptions : LanguageServerFeatureOptions
 
     public override bool UsePreciseSemanticTokenRanges => _options.UsePreciseSemanticTokenRanges;
 
-    public override bool ShowAllCSharpCodeActions => throw new InvalidOperationException("This option has not been synced to OOP.");
+    public override bool ShowAllCSharpCodeActions => _options.ShowAllCSharpCodeActions;
 
     public override bool UpdateBuffersForClosedDocuments => throw new InvalidOperationException("This option has not been synced to OOP.");
 

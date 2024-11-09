@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
-internal sealed class CSharpCodeActionResolver(IRazorFormattingService razorFormattingService) : ICSharpCodeActionResolver
+internal class CSharpCodeActionResolver(IRazorFormattingService razorFormattingService) : ICSharpCodeActionResolver
 {
     private readonly IRazorFormattingService _razorFormattingService = razorFormattingService;
 

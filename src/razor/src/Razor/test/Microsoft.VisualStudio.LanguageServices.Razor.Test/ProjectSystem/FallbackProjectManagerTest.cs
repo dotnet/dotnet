@@ -39,7 +39,6 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
 
         _fallbackProjectManger = new FallbackProjectManager(
             serviceProvider,
-            languageServerFeatureOptions,
             _projectManager,
             WorkspaceProvider,
             NoOpTelemetryReporter.Instance);

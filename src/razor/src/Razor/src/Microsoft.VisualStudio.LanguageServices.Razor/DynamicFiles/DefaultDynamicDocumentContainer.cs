@@ -19,7 +19,7 @@ internal sealed class DefaultDynamicDocumentContainer(IDocumentSnapshot document
     private RazorDocumentExcerptService? _excerptService;
     private RazorSpanMappingService? _mappingService;
 
-    public string FilePath => _documentSnapshot.FilePath.AssumeNotNull();
+    public string FilePath => _documentSnapshot.FilePath;
 
     public bool SupportsDiagnostics => false;
 

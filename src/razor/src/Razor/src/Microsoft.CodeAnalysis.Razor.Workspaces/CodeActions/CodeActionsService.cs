@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -22,7 +23,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
-internal sealed class CodeActionsService(
+internal class CodeActionsService(
     IDocumentMappingService documentMappingService,
     IEnumerable<IRazorCodeActionProvider> razorCodeActionProviders,
     IEnumerable<ICSharpCodeActionProvider> csharpCodeActionProviders,
@@ -37,9 +38,9 @@ internal sealed class CodeActionsService(
     private readonly IEnumerable<IHtmlCodeActionProvider> _htmlCodeActionProviders = htmlCodeActionProviders;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
 
-    public async Task<SumType<Command, CodeAction>[]?> GetCodeActionsAsync(VSCodeActionParams request, IDocumentSnapshot documentSnapshot, RazorVSInternalCodeAction[] delegatedCodeActions, bool supportsCodeActionResolve, CancellationToken cancellationToken)
+    public async Task<SumType<Command, CodeAction>[]?> GetCodeActionsAsync(VSCodeActionParams request, IDocumentSnapshot documentSnapshot, RazorVSInternalCodeAction[] delegatedCodeActions, Uri? delegatedDocumentUri, bool supportsCodeActionResolve, CancellationToken cancellationToken)
     {
-        var razorCodeActionContext = await GenerateRazorCodeActionContextAsync(request, documentSnapshot, supportsCodeActionResolve, cancellationToken).ConfigureAwait(false);
+        var razorCodeActionContext = await GenerateRazorCodeActionContextAsync(request, documentSnapshot, delegatedDocumentUri, supportsCodeActionResolve, cancellationToken).ConfigureAwait(false);
         if (razorCodeActionContext is null)
         {
             return null;
@@ -64,12 +65,12 @@ internal sealed class CodeActionsService(
         // Grouping the code actions causes VS to sort them into groups, rather than just alphabetically sorting them
         // by title. The latter is bad for us because it can put "Remove <div>" at the top in some locales, and our fully
         // qualify component code action at the bottom, depending on the users namespace.
-        ConvertCodeActionsToSumType(request.TextDocument, razorCodeActions, "A-Razor");
-        ConvertCodeActionsToSumType(request.TextDocument, filteredCodeActions, "B-Delegated");
+        ConvertCodeActionsToSumType(razorCodeActions, "A-Razor");
+        ConvertCodeActionsToSumType(filteredCodeActions, "B-Delegated");
 
         return commandsOrCodeActions.ToArray();
 
-        void ConvertCodeActionsToSumType(VSTextDocumentIdentifier textDocument, ImmutableArray<RazorVSInternalCodeAction> codeActions, string groupName)
+        void ConvertCodeActionsToSumType(ImmutableArray<RazorVSInternalCodeAction> codeActions, string groupName)
         {
             // We must cast the RazorCodeAction into a platform compliant code action
             // For VS (SupportsCodeActionResolve = true) this means just encapsulating the RazorCodeAction in the `CommandOrCodeAction` struct
@@ -87,7 +88,7 @@ internal sealed class CodeActionsService(
             {
                 foreach (var action in codeActions)
                 {
-                    commandsOrCodeActions.Add(action.AsVSCodeCommandOrCodeAction(textDocument));
+                    commandsOrCodeActions.Add(action.AsVSCodeCommandOrCodeAction(request.TextDocument, delegatedDocumentUri));
                 }
             }
         }
@@ -96,6 +97,7 @@ internal sealed class CodeActionsService(
     private async Task<RazorCodeActionContext?> GenerateRazorCodeActionContextAsync(
         VSCodeActionParams request,
         IDocumentSnapshot documentSnapshot,
+        Uri? delegatedDocumentUri,
         bool supportsCodeActionResolve,
         CancellationToken cancellationToken)
     {
@@ -122,6 +124,7 @@ internal sealed class CodeActionsService(
             request,
             documentSnapshot,
             codeDocument,
+            delegatedDocumentUri,
             startLocation,
             endLocation,
             languageKind,

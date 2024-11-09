@@ -92,7 +92,6 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
     public async Task DocumentProcessed_NewWorkQueued_RestartsTimer()
     {
         // Arrange
-        Assert.NotNull(_openedDocument.FilePath);
         var codeDocument = CreateCodeDocument(s_singleRazorDiagnostic);
         var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath, codeDocument);
 
@@ -161,10 +160,8 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
             }
         };
 
-        Assert.NotNull(_openedDocument.FilePath);
         var codeDocument = CreateCodeDocument(shouldContainRazorDiagnostic ? s_singleRazorDiagnostic : []);
         var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath, codeDocument);
-        Assert.NotNull(processedOpenDocument.FilePath);
 
         var clientConnectionMock = new StrictMock<IClientConnection>();
         var requestResult = new FullDocumentDiagnosticReport();
@@ -237,10 +234,8 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
     public async Task PublishDiagnosticsAsync_NewRazorDiagnosticsGetPublished()
     {
         // Arrange
-        Assert.NotNull(_openedDocument.FilePath);
         var codeDocument = CreateCodeDocument(s_singleRazorDiagnostic);
         var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath, codeDocument);
-        Assert.NotNull(processedOpenDocument.FilePath);
 
         var clientConnectionMock = new StrictMock<IClientConnection>();
         clientConnectionMock
@@ -295,10 +290,8 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
     public async Task PublishDiagnosticsAsync_NewCSharpDiagnosticsGetPublished()
     {
         // Arrange
-        Assert.NotNull(_openedDocument.FilePath);
         var codeDocument = CreateCodeDocument([]);
         var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath, codeDocument);
-        Assert.NotNull(processedOpenDocument.FilePath);
 
         var arranging = true;
         var clientConnectionMock = new StrictMock<IClientConnection>();
@@ -368,10 +361,8 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
             })
             .Returns(Task.FromResult(new SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?(new FullDocumentDiagnosticReport())));
 
-        Assert.NotNull(_openedDocument.FilePath);
         var codeDocument = CreateCodeDocument(s_singleRazorDiagnostic);
         var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath, codeDocument);
-        Assert.NotNull(processedOpenDocument.FilePath);
 
         var documentContextFactory = new TestDocumentContextFactory(_openedDocument.FilePath, codeDocument);
         var filePathService = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
@@ -390,10 +381,8 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
     public async Task PublishDiagnosticsAsync_NoopsIfCSharpDiagnosticsAreSameAsPreviousPublish()
     {
         // Arrange
-        Assert.NotNull(_openedDocument.FilePath);
         var codeDocument = CreateCodeDocument([]);
         var processedOpenDocument = TestDocumentSnapshot.Create(_openedDocument.FilePath, codeDocument);
-        Assert.NotNull(processedOpenDocument.FilePath);
 
         var clientConnectionMock = new StrictMock<IClientConnection>();
         var arranging = true;
@@ -452,7 +441,6 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
                 It.IsAny<CancellationToken>()))
             .Callback((string method, PublishDiagnosticParams @params, CancellationToken cancellationToken) =>
             {
-                Assert.NotNull(_closedDocument.FilePath);
                 Assert.Equal(_closedDocument.FilePath.TrimStart('/'), @params.Uri.AbsolutePath);
                 Assert.Empty(@params.Diagnostics);
             })
@@ -463,7 +451,6 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
 
         using var publisher = new TestRazorDiagnosticsPublisher(_projectManager, clientConnectionMock.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
         var publisherAccessor = publisher.GetTestAccessor();
-        Assert.NotNull(_closedDocument.FilePath);
         publisherAccessor.SetPublishedDiagnostics(_closedDocument.FilePath, s_singleRazorDiagnostic, s_singleCSharpDiagnostic);
 
         // Act
@@ -483,7 +470,6 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
 
         using var publisher = new TestRazorDiagnosticsPublisher(_projectManager, clientConnectionMock.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
         var publisherAccessor = publisher.GetTestAccessor();
-        Assert.NotNull(_openedDocument.FilePath);
         publisherAccessor.SetPublishedDiagnostics(_openedDocument.FilePath, s_singleRazorDiagnostic, s_singleCSharpDiagnostic);
 
         // Act & Assert
@@ -500,7 +486,6 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
 
         using var publisher = new TestRazorDiagnosticsPublisher(_projectManager, clientConnectionMock.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
         var publisherAccessor = publisher.GetTestAccessor();
-        Assert.NotNull(_closedDocument.FilePath);
         publisherAccessor.SetPublishedDiagnostics(_closedDocument.FilePath, razorDiagnostics: [], csharpDiagnostics: []);
 
         // Act & Assert
@@ -517,8 +502,6 @@ public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : Langu
 
         using var publisher = new TestRazorDiagnosticsPublisher(_projectManager, clientConnectionMock.Object, TestLanguageServerFeatureOptions.Instance, translateDiagnosticsService, documentContextFactory, LoggerFactory);
         var publisherAccessor = publisher.GetTestAccessor();
-        Assert.NotNull(_closedDocument.FilePath);
-        Assert.NotNull(_openedDocument.FilePath);
         publisherAccessor.SetPublishedDiagnostics(_closedDocument.FilePath, razorDiagnostics: [], csharpDiagnostics: []);
         publisherAccessor.SetPublishedDiagnostics(_openedDocument.FilePath, razorDiagnostics: [], csharpDiagnostics: []);
 

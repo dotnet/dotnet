@@ -4,13 +4,15 @@
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
 internal class LspProjectSnapshotManager(
     IProjectEngineFactoryProvider projectEngineFactoryProvider,
+    LanguageServerFeatureOptions languageServerFeatureOptions,
     ILoggerFactory loggerFactory)
-    : ProjectSnapshotManager(projectEngineFactoryProvider, loggerFactory, initializer: AddMiscFilesProject)
+    : ProjectSnapshotManager(projectEngineFactoryProvider, languageServerFeatureOptions, loggerFactory, initializer: AddMiscFilesProject)
 {
     private static void AddMiscFilesProject(Updater updater)
     {

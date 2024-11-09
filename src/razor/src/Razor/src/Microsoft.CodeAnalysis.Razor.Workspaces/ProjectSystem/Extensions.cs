@@ -6,7 +6,6 @@ using System;
 #endif
 
 using System.Diagnostics;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Utilities;
@@ -16,7 +15,7 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 internal static class Extensions
 {
     public static DocumentSnapshotHandle ToHandle(this IDocumentSnapshot snapshot)
-        => new(snapshot.FilePath.AssumeNotNull(), snapshot.TargetPath.AssumeNotNull(), snapshot.FileKind.AssumeNotNull());
+        => new(snapshot.FilePath, snapshot.TargetPath, snapshot.FileKind);
 
     public static ProjectKey ToProjectKey(this Project project)
     {

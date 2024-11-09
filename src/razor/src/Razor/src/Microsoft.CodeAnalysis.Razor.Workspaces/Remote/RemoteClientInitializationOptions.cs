@@ -27,4 +27,10 @@ internal struct RemoteClientInitializationOptions
 
     [JsonPropertyName("forceRuntimeCodeGeneration")]
     public required bool ForceRuntimeCodeGeneration { get; set; }
+
+    [JsonPropertyName("supportsFileManipulation")]
+    public required bool SupportsFileManipulation { get; set; }
+
+    [JsonPropertyName("showAllCSharpCodeActions")]
+    public required bool ShowAllCSharpCodeActions { get; set; }
 }

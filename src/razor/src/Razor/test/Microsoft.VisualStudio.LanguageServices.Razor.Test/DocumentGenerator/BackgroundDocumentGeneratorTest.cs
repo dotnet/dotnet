@@ -383,7 +383,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         }
 
         private static DocumentKey GetKey(IProjectSnapshot project, IDocumentSnapshot document)
-            => new(project.Key, document.FilePath.AssumeNotNull());
+            => new(project.Key, document.FilePath);
 
         protected override async ValueTask ProcessBatchAsync(ImmutableArray<(IProjectSnapshot, IDocumentSnapshot)> items, CancellationToken token)
         {

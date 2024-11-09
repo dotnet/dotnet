@@ -40,6 +40,7 @@ public class CodeActionResolutionEndpointTest(ITestOutputHelper testOutput) : La
             TextDocument = (VSTextDocumentIdentifier)documentContext.GetTextDocumentIdentifier(),
             Action = "Test",
             Language = RazorLanguageKind.Razor,
+            DelegatedDocumentUri = null,
             Data = new AddUsingsCodeActionParams()
             {
                 Namespace = "Test",
@@ -78,6 +79,7 @@ public class CodeActionResolutionEndpointTest(ITestOutputHelper testOutput) : La
             TextDocument = (VSTextDocumentIdentifier)documentContext.GetTextDocumentIdentifier(),
             Action = "Test",
             Language = RazorLanguageKind.CSharp,
+            DelegatedDocumentUri = null,
         };
         var request = new CodeAction()
         {
@@ -112,6 +114,7 @@ public class CodeActionResolutionEndpointTest(ITestOutputHelper testOutput) : La
             TextDocument = (VSTextDocumentIdentifier)documentContext.GetTextDocumentIdentifier(),
             Action = "TestCSharp",
             Language = RazorLanguageKind.CSharp,
+            DelegatedDocumentUri = null,
         };
         var request = new CodeAction()
         {
@@ -146,6 +149,7 @@ public class CodeActionResolutionEndpointTest(ITestOutputHelper testOutput) : La
             TextDocument = (VSTextDocumentIdentifier)documentContext.GetTextDocumentIdentifier(),
             Action = "Test",
             Language = RazorLanguageKind.Razor,
+            DelegatedDocumentUri = null,
             Data = new AddUsingsCodeActionParams()
             {
                 Namespace = "Test",
@@ -189,6 +193,7 @@ public class CodeActionResolutionEndpointTest(ITestOutputHelper testOutput) : La
             TextDocument = (VSTextDocumentIdentifier)documentContext.GetTextDocumentIdentifier(),
             Action = "Test",
             Language = RazorLanguageKind.CSharp,
+            DelegatedDocumentUri = null,
         };
         var request = new CodeAction()
         {
@@ -228,6 +233,7 @@ public class CodeActionResolutionEndpointTest(ITestOutputHelper testOutput) : La
             TextDocument = (VSTextDocumentIdentifier)documentContext.GetTextDocumentIdentifier(),
             Action = "Test",
             Language = RazorLanguageKind.Razor,
+            DelegatedDocumentUri = null,
             Data = new AddUsingsCodeActionParams()
             {
                 Namespace = "Test",
@@ -271,6 +277,7 @@ public class CodeActionResolutionEndpointTest(ITestOutputHelper testOutput) : La
             TextDocument = (VSTextDocumentIdentifier)documentContext.GetTextDocumentIdentifier(),
             Action = "Test",
             Language = RazorLanguageKind.CSharp,
+            DelegatedDocumentUri = null,
         };
         var request = new CodeAction()
         {
@@ -310,6 +317,7 @@ public class CodeActionResolutionEndpointTest(ITestOutputHelper testOutput) : La
             TextDocument = (VSTextDocumentIdentifier)documentContext.GetTextDocumentIdentifier(),
             Action = "A",
             Language = RazorLanguageKind.Razor,
+            DelegatedDocumentUri = null,
             Data = JsonSerializer.SerializeToElement(new AddUsingsCodeActionParams()
             {
                 Namespace = "Test",
@@ -342,6 +350,7 @@ public class CodeActionResolutionEndpointTest(ITestOutputHelper testOutput) : La
             TextDocument = (VSTextDocumentIdentifier)documentContext.GetTextDocumentIdentifier(),
             Action = "B",
             Language = RazorLanguageKind.Razor,
+            DelegatedDocumentUri = null,
             Data = JsonSerializer.SerializeToElement(new AddUsingsCodeActionParams()
             {
                 Namespace = "Test",
@@ -374,6 +383,7 @@ public class CodeActionResolutionEndpointTest(ITestOutputHelper testOutput) : La
             TextDocument = (VSTextDocumentIdentifier)documentContext.GetTextDocumentIdentifier(),
             Action = "A",
             Language = RazorLanguageKind.CSharp,
+            DelegatedDocumentUri = null,
         };
 
         // Act
@@ -402,6 +412,7 @@ public class CodeActionResolutionEndpointTest(ITestOutputHelper testOutput) : La
             TextDocument = (VSTextDocumentIdentifier)documentContext.GetTextDocumentIdentifier(),
             Action = "B",
             Language = RazorLanguageKind.Razor,
+            DelegatedDocumentUri = null,
         };
 
         // Act
@@ -433,6 +444,7 @@ public class CodeActionResolutionEndpointTest(ITestOutputHelper testOutput) : La
             TextDocument = (VSTextDocumentIdentifier)documentContext.GetTextDocumentIdentifier(),
             Action = "D",
             Language = RazorLanguageKind.CSharp,
+            DelegatedDocumentUri = null,
         };
 
         // Act
@@ -461,6 +473,7 @@ public class CodeActionResolutionEndpointTest(ITestOutputHelper testOutput) : La
             TextDocument = (VSTextDocumentIdentifier)documentContext.GetTextDocumentIdentifier(),
             Action = LanguageServerConstants.CodeActions.EditBasedCodeActionCommand,
             Language = RazorLanguageKind.Razor,
+            DelegatedDocumentUri = null,
             Data = JsonSerializer.SerializeToElement(new WorkspaceEdit())
         };
 

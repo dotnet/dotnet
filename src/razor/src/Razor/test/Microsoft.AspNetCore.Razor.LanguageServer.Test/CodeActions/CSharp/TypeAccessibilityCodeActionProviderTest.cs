@@ -474,6 +474,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
             request,
             documentSnapshotMock.Object,
             codeDocument,
+            DelegatedDocumentUri: null,
             StartAbsoluteIndex: absoluteIndex,
             EndAbsoluteIndex: absoluteIndex,
             RazorLanguageKind.Razor,

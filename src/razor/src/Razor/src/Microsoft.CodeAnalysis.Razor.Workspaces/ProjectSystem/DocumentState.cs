@@ -193,98 +193,113 @@ internal partial class DocumentState
         return new DocumentState(HostDocument, Version + 1, textAndVersion: null, textLoader);
     }
 
-    // Internal, because we are temporarily sharing code with CohostDocumentSnapshot
-    internal static ImmutableArray<IDocumentSnapshot> GetImportsCore(IProjectSnapshot project, RazorProjectEngine projectEngine, string filePath, string fileKind)
+    internal static async Task<RazorCodeDocument> GenerateCodeDocumentAsync(
+        IDocumentSnapshot document,
+        RazorProjectEngine projectEngine,
+        bool forceRuntimeCodeGeneration,
+        CancellationToken cancellationToken)
     {
-        var projectItem = projectEngine.FileSystem.GetItem(filePath, fileKind);
+        var importItems = await GetImportItemsAsync(document, projectEngine, cancellationToken).ConfigureAwait(false);
 
-        using var importItems = new PooledArrayBuilder<RazorProjectItem>();
+        return await GenerateCodeDocumentAsync(
+            document, projectEngine, importItems, forceRuntimeCodeGeneration, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task<RazorCodeDocument> GenerateCodeDocumentAsync(
+        IDocumentSnapshot document,
+        RazorProjectEngine projectEngine,
+        ImmutableArray<ImportItem> imports,
+        bool forceRuntimeCodeGeneration,
+        CancellationToken cancellationToken)
+    {
+        var importSources = GetImportSources(imports, projectEngine);
+        var tagHelpers = await document.Project.GetTagHelpersAsync(cancellationToken).ConfigureAwait(false);
+        var source = await GetSourceAsync(document, projectEngine, cancellationToken).ConfigureAwait(false);
+
+        return forceRuntimeCodeGeneration
+            ? projectEngine.Process(source, document.FileKind, importSources, tagHelpers)
+            : projectEngine.ProcessDesignTime(source, document.FileKind, importSources, tagHelpers);
+    }
+
+    private static async Task<ImmutableArray<ImportItem>> GetImportItemsAsync(IDocumentSnapshot document, RazorProjectEngine projectEngine, CancellationToken cancellationToken)
+    {
+        var projectItem = projectEngine.FileSystem.GetItem(document.FilePath, document.FileKind);
+
+        using var importProjectItems = new PooledArrayBuilder<RazorProjectItem>();
 
         foreach (var feature in projectEngine.ProjectFeatures.OfType<IImportProjectFeature>())
         {
             if (feature.GetImports(projectItem) is { } featureImports)
             {
-                importItems.AddRange(featureImports);
+                importProjectItems.AddRange(featureImports);
             }
         }
 
-        if (importItems.Count == 0)
+        if (importProjectItems.Count == 0)
         {
             return [];
         }
 
-        using var imports = new PooledArrayBuilder<IDocumentSnapshot>(capacity: importItems.Count);
+        var project = document.Project;
 
-        foreach (var item in importItems)
+        using var importItems = new PooledArrayBuilder<ImportItem>(capacity: importProjectItems.Count);
+
+        foreach (var importProjectItem in importProjectItems)
         {
-            if (item is NotFoundProjectItem)
+            if (importProjectItem is NotFoundProjectItem)
             {
                 continue;
             }
 
-            if (item.PhysicalPath is null)
+            if (importProjectItem.PhysicalPath is null)
             {
                 // This is a default import.
-                var defaultImport = new ImportDocumentSnapshot(project, item);
-                imports.Add(defaultImport);
+                using var stream = importProjectItem.Read();
+                var text = SourceText.From(stream);
+                var defaultImport = ImportItem.CreateDefault(text);
+
+                importItems.Add(defaultImport);
             }
-            else if (project.TryGetDocument(item.PhysicalPath, out var import))
+            else if (project.TryGetDocument(importProjectItem.PhysicalPath, out var importDocument))
             {
-                imports.Add(import);
+                var text = await importDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
+                var versionStamp = await importDocument.GetTextVersionAsync(cancellationToken).ConfigureAwait(false);
+                var importItem = new ImportItem(importDocument.FilePath, importDocument.FileKind, text, versionStamp);
+
+                importItems.Add(importItem);
             }
         }
 
-        return imports.DrainToImmutable();
+        return importItems.DrainToImmutable();
     }
 
-    internal static async Task<RazorCodeDocument> GenerateCodeDocumentAsync(
-        IDocumentSnapshot document,
-        RazorProjectEngine projectEngine,
-        ImmutableArray<ImportItem> imports,
-        ImmutableArray<TagHelperDescriptor> tagHelpers,
-        bool forceRuntimeCodeGeneration,
-        CancellationToken cancellationToken)
+    private static ImmutableArray<RazorSourceDocument> GetImportSources(ImmutableArray<ImportItem> importItems, RazorProjectEngine projectEngine)
     {
-        // OK we have to generate the code.
-        using var importSources = new PooledArrayBuilder<RazorSourceDocument>(imports.Length);
-        foreach (var item in imports)
+        using var importSources = new PooledArrayBuilder<RazorSourceDocument>(importItems.Length);
+
+        foreach (var importItem in importItems)
         {
-            var importProjectItem = item.FilePath is null ? null : projectEngine.FileSystem.GetItem(item.FilePath, item.FileKind);
-            var sourceDocument = await GetRazorSourceDocumentAsync(item.Document, importProjectItem, cancellationToken).ConfigureAwait(false);
-            importSources.Add(sourceDocument);
+            var importProjectItem = importItem is { FilePath: string filePath, FileKind: var fileKind }
+                ? projectEngine.FileSystem.GetItem(filePath, fileKind)
+                : null;
+
+            var properties = RazorSourceDocumentProperties.Create(importItem.FilePath, importProjectItem?.RelativePhysicalPath);
+            var importSource = RazorSourceDocument.Create(importItem.Text, properties);
+
+            importSources.Add(importSource);
         }
 
-        var projectItem = document.FilePath is null ? null : projectEngine.FileSystem.GetItem(document.FilePath, document.FileKind);
-        var documentSource = await GetRazorSourceDocumentAsync(document, projectItem, cancellationToken).ConfigureAwait(false);
-
-        if (forceRuntimeCodeGeneration)
-        {
-            return projectEngine.Process(documentSource, fileKind: document.FileKind, importSources.DrainToImmutable(), tagHelpers);
-        }
-
-        return projectEngine.ProcessDesignTime(documentSource, fileKind: document.FileKind, importSources.DrainToImmutable(), tagHelpers);
+        return importSources.DrainToImmutable();
     }
 
-    internal static async Task<ImmutableArray<ImportItem>> GetImportsAsync(IDocumentSnapshot document, RazorProjectEngine projectEngine, CancellationToken cancellationToken)
+    private static async Task<RazorSourceDocument> GetSourceAsync(IDocumentSnapshot document, RazorProjectEngine projectEngine, CancellationToken cancellationToken)
     {
-        var imports = GetImportsCore(document.Project, projectEngine, document.FilePath.AssumeNotNull(), document.FileKind.AssumeNotNull());
-        using var result = new PooledArrayBuilder<ImportItem>(imports.Length);
+        var projectItem = document is { FilePath: string filePath, FileKind: var fileKind }
+            ? projectEngine.FileSystem.GetItem(filePath, fileKind)
+            : null;
 
-        foreach (var snapshot in imports)
-        {
-            var versionStamp = await snapshot.GetTextVersionAsync(cancellationToken).ConfigureAwait(false);
-            result.Add(new ImportItem(snapshot.FilePath, versionStamp, snapshot));
-        }
-
-        return result.DrainToImmutable();
-    }
-
-    private static async Task<RazorSourceDocument> GetRazorSourceDocumentAsync(
-        IDocumentSnapshot document,
-        RazorProjectItem? projectItem,
-        CancellationToken cancellationToken)
-    {
-        var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-        return RazorSourceDocument.Create(sourceText, RazorSourceDocumentProperties.Create(document.FilePath, projectItem?.RelativePhysicalPath));
+        var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+        var properties = RazorSourceDocumentProperties.Create(document.FilePath, projectItem?.RelativePhysicalPath);
+        return RazorSourceDocument.Create(text, properties);
     }
 }
