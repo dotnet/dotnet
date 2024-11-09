@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -19,6 +18,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -903,7 +903,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         else
         {
             // Note that the expected lengths are different on Windows vs. Unix.
-            var expectedCsharpRangeLength = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? 945 : 911;
+            var expectedCsharpRangeLength = PlatformInformation.IsWindows ? 945 : 911;
             Assert.True(codeDocument.TryGetMinimalCSharpRange(razorRange, out var csharpRange));
             var textSpan = csharpSourceText.GetTextSpan(csharpRange);
             Assert.Equal(expectedCsharpRangeLength, textSpan.Length);
@@ -1120,7 +1120,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
 
         var baselineContents = semanticFile.ReadAllText();
 
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (!PlatformInformation.IsWindows)
         {
             baselineContents = s_matchNewLines.Replace(baselineContents, "\n");
         }

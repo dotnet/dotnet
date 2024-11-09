@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
@@ -49,12 +50,12 @@ public class ProjectEngineFactoryProviderTest : ToolingTestBase
             projectFilePath, intermediateOutputPath,
             new(RazorLanguageVersion.Version_2_1, "Random-0.1", Extensions: []), rootNamespace: null);
 
-        _snapshot_For_1_0 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject_For_1_0, ProjectWorkspaceState.Default));
-        _snapshot_For_1_1 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject_For_1_1, ProjectWorkspaceState.Default));
-        _snapshot_For_2_0 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject_For_2_0, ProjectWorkspaceState.Default));
-        _snapshot_For_2_1 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject_For_2_1, ProjectWorkspaceState.Default));
-        _snapshot_For_3_0 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject_For_3_0, ProjectWorkspaceState.Default));
-        _snapshot_For_UnknownConfiguration = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject_For_UnknownConfiguration, ProjectWorkspaceState.Default));
+        _snapshot_For_1_0 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, TestLanguageServerFeatureOptions.Instance, hostProject_For_1_0, ProjectWorkspaceState.Default));
+        _snapshot_For_1_1 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, TestLanguageServerFeatureOptions.Instance, hostProject_For_1_1, ProjectWorkspaceState.Default));
+        _snapshot_For_2_0 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, TestLanguageServerFeatureOptions.Instance, hostProject_For_2_0, ProjectWorkspaceState.Default));
+        _snapshot_For_2_1 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, TestLanguageServerFeatureOptions.Instance, hostProject_For_2_1, ProjectWorkspaceState.Default));
+        _snapshot_For_3_0 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, TestLanguageServerFeatureOptions.Instance, hostProject_For_3_0, ProjectWorkspaceState.Default));
+        _snapshot_For_UnknownConfiguration = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, TestLanguageServerFeatureOptions.Instance, hostProject_For_UnknownConfiguration, ProjectWorkspaceState.Default));
 
         _customFactories =
         [

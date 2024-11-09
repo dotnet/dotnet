@@ -20,6 +20,7 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
     private Workspace? _workspace;
     private IWorkspaceProvider? _workspaceProvider;
     private IProjectEngineFactoryProvider? _projectEngineFactoryProvider;
+    private LanguageServerFeatureOptions? _languageServerFeatureOptions;
 
     protected HostServices HostServices
     {
@@ -57,8 +58,20 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
         }
     }
 
+    private protected LanguageServerFeatureOptions LanguageServerFeatureOptions
+    {
+        get
+        {
+            EnsureInitialized();
+            return _languageServerFeatureOptions;
+        }
+    }
+
     private protected override TestProjectSnapshotManager CreateProjectSnapshotManager()
-        => CreateProjectSnapshotManager(ProjectEngineFactoryProvider);
+        => CreateProjectSnapshotManager(ProjectEngineFactoryProvider, LanguageServerFeatureOptions);
+
+    private protected override TestProjectSnapshotManager CreateProjectSnapshotManager(IProjectEngineFactoryProvider projectEngineFactoryProvider)
+        => base.CreateProjectSnapshotManager(projectEngineFactoryProvider, LanguageServerFeatureOptions);
 
     protected virtual void ConfigureWorkspace(AdhocWorkspace workspace)
     {
@@ -68,7 +81,7 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
     {
     }
 
-    [MemberNotNull(nameof(_hostServices), nameof(_workspace), nameof(_workspaceProvider), nameof(_projectEngineFactoryProvider))]
+    [MemberNotNull(nameof(_hostServices), nameof(_workspace), nameof(_workspaceProvider), nameof(_projectEngineFactoryProvider), nameof(_languageServerFeatureOptions))]
     private void EnsureInitialized()
     {
         if (_initialized)
@@ -77,6 +90,7 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
             _workspace.AssumeNotNull();
             _workspaceProvider.AssumeNotNull();
             _projectEngineFactoryProvider.AssumeNotNull();
+            _languageServerFeatureOptions.AssumeNotNull();
             return;
         }
 
@@ -89,6 +103,7 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
         _workspace = TestWorkspace.Create(_hostServices, ConfigureWorkspace);
         AddDisposable(_workspace);
         _workspaceProvider = new TestWorkspaceProvider(_workspace);
+        _languageServerFeatureOptions = TestLanguageServerFeatureOptions.Instance;
         _initialized = true;
     }
 

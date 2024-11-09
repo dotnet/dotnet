@@ -30,7 +30,7 @@ internal class CodeDocumentReferenceHolder : IDocumentProcessedListener
         // multiple parses/regenerations across LSP requests that are all for the same document version.
         lock (_codeDocumentCache)
         {
-            var key = new DocumentKey(documentSnapshot.Project.Key, documentSnapshot.FilePath.AssumeNotNull());
+            var key = new DocumentKey(documentSnapshot.Project.Key, documentSnapshot.FilePath);
             _codeDocumentCache[key] = codeDocument;
         }
     }

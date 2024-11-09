@@ -20,7 +20,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 
-internal sealed class ExtractToComponentCodeActionResolver(
+internal class ExtractToComponentCodeActionResolver(
     LanguageServerFeatureOptions languageServerFeatureOptions) : IRazorCodeActionResolver
 {
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;

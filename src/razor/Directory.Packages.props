@@ -88,7 +88,7 @@
     <PackageVersion Include="Microsoft.VisualStudio.RpcContracts" Version="17.11.8" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.Framework" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
-    <PackageVersion Include="Microsoft.VisualStudio.Telemetry" Version="17.11.8" />
+    <PackageVersion Include="Microsoft.VisualStudio.Telemetry" Version="17.13.14" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Data" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Implementation" Version="$(_MicrosoftVisualStudioPackagesVersion)" NoWarn="NU1701" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Logic" Version="$(_MicrosoftVisualStudioPackagesVersion)" />

@@ -20,7 +20,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
-internal sealed class CodeActionResolveService(
+internal class CodeActionResolveService(
     IEnumerable<IRazorCodeActionResolver> razorCodeActionResolvers,
     IEnumerable<ICSharpCodeActionResolver> csharpCodeActionResolvers,
     IEnumerable<IHtmlCodeActionResolver> htmlCodeActionResolvers,

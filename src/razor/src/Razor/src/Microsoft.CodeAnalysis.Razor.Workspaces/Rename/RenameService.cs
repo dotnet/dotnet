@@ -66,7 +66,7 @@ internal class RenameService(
             return null;
         }
 
-        var originComponentDocumentFilePath = originComponentDocumentSnapshot.FilePath.AssumeNotNull();
+        var originComponentDocumentFilePath = originComponentDocumentSnapshot.FilePath;
         var newPath = MakeNewPath(originComponentDocumentFilePath, newName);
         if (File.Exists(newPath))
         {
@@ -137,7 +137,7 @@ internal class RenameService(
     private RenameFile GetFileRenameForComponent(IDocumentSnapshot documentSnapshot, string newPath)
         => new RenameFile
         {
-            OldUri = BuildUri(documentSnapshot.FilePath.AssumeNotNull()),
+            OldUri = BuildUri(documentSnapshot.FilePath),
             NewUri = BuildUri(newPath),
         };
 
@@ -182,7 +182,7 @@ internal class RenameService(
         }
 
         // VS Code in Windows expects path to start with '/'
-        var uri = BuildUri(documentSnapshot.FilePath.AssumeNotNull());
+        var uri = BuildUri(documentSnapshot.FilePath);
 
         AddEditsForCodeDocument(documentChanges, originTagHelpers, newName, uri, codeDocument);
     }

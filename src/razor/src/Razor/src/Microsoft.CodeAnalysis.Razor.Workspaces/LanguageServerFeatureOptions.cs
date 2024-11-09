@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using Microsoft.AspNetCore.Razor.Language;
-
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
 internal abstract class LanguageServerFeatureOptions
@@ -41,7 +39,4 @@ internal abstract class LanguageServerFeatureOptions
     /// When enabled, design time code will not be generated. All tooling will be using runtime code generation.
     /// </summary>
     public abstract bool ForceRuntimeCodeGeneration { get; }
-
-    public LanguageServerFlags ToLanguageServerFlags()
-        => new(ForceRuntimeCodeGeneration);
 }

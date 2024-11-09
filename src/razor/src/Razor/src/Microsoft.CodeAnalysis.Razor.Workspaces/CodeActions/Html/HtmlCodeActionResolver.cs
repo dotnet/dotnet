@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
-internal sealed class HtmlCodeActionResolver(IEditMappingService editMappingService) : IHtmlCodeActionResolver
+internal class HtmlCodeActionResolver(IEditMappingService editMappingService) : IHtmlCodeActionResolver
 {
     private readonly IEditMappingService _editMappingService = editMappingService;
 

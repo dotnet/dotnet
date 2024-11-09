@@ -121,7 +121,7 @@ internal partial class RazorDiagnosticsPublisher : IDocumentProcessedListener, I
 
         lock (_publishedDiagnostics)
         {
-            var filePath = document.FilePath.AssumeNotNull();
+            var filePath = document.FilePath;
 
             // See if these are the same diagnostics as last time. If so, we don't need to publish.
             if (_publishedDiagnostics.TryGetValue(filePath, out var previousDiagnostics))

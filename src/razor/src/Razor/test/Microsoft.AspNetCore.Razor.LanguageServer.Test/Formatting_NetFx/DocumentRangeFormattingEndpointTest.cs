@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -116,13 +118,15 @@ public class DocumentRangeFormattingEndpointTest(ITestOutputHelper testOutput) :
         var optionsMonitor = GetOptionsMonitor(formatOnPaste: false);
         var htmlFormatter = new TestHtmlFormatter();
         var endpoint = new DocumentRangeFormattingEndpoint(formattingService, htmlFormatter, optionsMonitor);
+        var bytes = Encoding.UTF8.GetBytes("\"True\"");
+        var reader = new Utf8JsonReader(bytes);
         var @params = new DocumentRangeFormattingParams()
         {
             Options = new()
             {
                 OtherOptions = new()
                 {
-                    { "fromPaste", true }
+                    { "fromPaste", JsonElement.ParseValue(ref reader) }
                 }
             }
         };

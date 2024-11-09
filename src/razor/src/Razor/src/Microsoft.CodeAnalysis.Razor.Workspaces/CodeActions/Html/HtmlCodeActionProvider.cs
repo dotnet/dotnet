@@ -15,7 +15,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
-internal sealed class HtmlCodeActionProvider(IEditMappingService editMappingService) : IHtmlCodeActionProvider
+internal class HtmlCodeActionProvider(IEditMappingService editMappingService) : IHtmlCodeActionProvider
 {
     private readonly IEditMappingService _editMappingService = editMappingService;
 

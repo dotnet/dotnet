@@ -17,7 +17,7 @@ namespace Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 
 using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
-internal sealed class ExtractToComponentCodeActionProvider() : IRazorCodeActionProvider
+internal class ExtractToComponentCodeActionProvider() : IRazorCodeActionProvider
 {
     public Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
     {
@@ -73,6 +73,7 @@ internal sealed class ExtractToComponentCodeActionProvider() : IRazorCodeActionP
             TextDocument = context.Request.TextDocument,
             Action = LanguageServerConstants.CodeActions.ExtractToNewComponentAction,
             Language = RazorLanguageKind.Razor,
+            DelegatedDocumentUri = context.DelegatedDocumentUri,
             Data = actionParams,
         };
 

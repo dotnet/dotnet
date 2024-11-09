@@ -333,6 +333,7 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
                 new GenerateMethodCodeActionResolver(
                         roslynCodeActionHelpers,
                         new LspDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory),
-                        razorFormattingService)
+                        razorFormattingService,
+                        new FileSystem())
             ];
 }

@@ -12,23 +12,20 @@ public sealed record class RazorConfiguration(
     string ConfigurationName,
     ImmutableArray<RazorExtension> Extensions,
     bool UseConsolidatedMvcViews = true,
-    bool SuppressAddComponentParameter = false,
-    LanguageServerFlags? LanguageServerFlags = null)
+    bool SuppressAddComponentParameter = false)
 {
     public static readonly RazorConfiguration Default = new(
         RazorLanguageVersion.Latest,
         ConfigurationName: "unnamed",
         Extensions: [],
         UseConsolidatedMvcViews: true,
-        SuppressAddComponentParameter: false,
-        LanguageServerFlags: null);
+        SuppressAddComponentParameter: false);
 
     public bool Equals(RazorConfiguration? other)
         => other is not null &&
            LanguageVersion == other.LanguageVersion &&
            ConfigurationName == other.ConfigurationName &&
            SuppressAddComponentParameter == other.SuppressAddComponentParameter &&
-           LanguageServerFlags == other.LanguageServerFlags &&
            UseConsolidatedMvcViews == other.UseConsolidatedMvcViews &&
            Extensions.SequenceEqual(other.Extensions);
 
@@ -40,7 +37,6 @@ public sealed record class RazorConfiguration(
         hash.Add(Extensions);
         hash.Add(SuppressAddComponentParameter);
         hash.Add(UseConsolidatedMvcViews);
-        hash.Add(LanguageServerFlags);
         return hash;
     }
 }

@@ -20,7 +20,7 @@ namespace Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 
 using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
-internal sealed class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
+internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
 {
     public Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
     {
@@ -38,8 +38,8 @@ internal sealed class GenerateMethodCodeActionProvider : IRazorCodeActionProvide
             var textDocument = context.Request.TextDocument;
             return Task.FromResult<ImmutableArray<RazorVSInternalCodeAction>>(
                 [
-                    RazorCodeActionFactory.CreateGenerateMethod(textDocument, methodName, eventName),
-                    RazorCodeActionFactory.CreateAsyncGenerateMethod(textDocument, methodName, eventName)
+                    RazorCodeActionFactory.CreateGenerateMethod(textDocument, context.DelegatedDocumentUri, methodName, eventName),
+                    RazorCodeActionFactory.CreateAsyncGenerateMethod(textDocument, context.DelegatedDocumentUri, methodName, eventName)
                 ]);
         }
 

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -35,37 +36,26 @@ internal class ProjectState
     private readonly object _lock;
 
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private RazorProjectEngine? _projectEngine;
 
     public static ProjectState Create(
         IProjectEngineFactoryProvider projectEngineFactoryProvider,
+        LanguageServerFeatureOptions languageServerFeatureOptions,
         HostProject hostProject,
         ProjectWorkspaceState projectWorkspaceState)
     {
-        if (projectEngineFactoryProvider is null)
-        {
-            throw new ArgumentNullException(nameof(projectEngineFactoryProvider));
-        }
-
-        if (hostProject is null)
-        {
-            throw new ArgumentNullException(nameof(hostProject));
-        }
-
-        if (projectWorkspaceState is null)
-        {
-            throw new ArgumentNullException(nameof(projectWorkspaceState));
-        }
-
-        return new ProjectState(projectEngineFactoryProvider, hostProject, projectWorkspaceState);
+        return new ProjectState(projectEngineFactoryProvider, languageServerFeatureOptions, hostProject, projectWorkspaceState);
     }
 
     private ProjectState(
         IProjectEngineFactoryProvider projectEngineFactoryProvider,
+        LanguageServerFeatureOptions languageServerFeatureOptions,
         HostProject hostProject,
         ProjectWorkspaceState projectWorkspaceState)
     {
         _projectEngineFactoryProvider = projectEngineFactoryProvider;
+        _languageServerFeatureOptions = languageServerFeatureOptions;
         HostProject = hostProject;
         ProjectWorkspaceState = projectWorkspaceState;
         Documents = s_emptyDocuments;
@@ -85,32 +75,8 @@ internal class ProjectState
         ImmutableDictionary<string, DocumentState> documents,
         ImmutableDictionary<string, ImmutableArray<string>> importsToRelatedDocuments)
     {
-        if (older is null)
-        {
-            throw new ArgumentNullException(nameof(older));
-        }
-
-        if (hostProject is null)
-        {
-            throw new ArgumentNullException(nameof(hostProject));
-        }
-
-        if (documents is null)
-        {
-            throw new ArgumentNullException(nameof(documents));
-        }
-
-        if (importsToRelatedDocuments is null)
-        {
-            throw new ArgumentNullException(nameof(importsToRelatedDocuments));
-        }
-
-        if (projectWorkspaceState is null)
-        {
-            throw new ArgumentNullException(nameof(projectWorkspaceState));
-        }
-
         _projectEngineFactoryProvider = older._projectEngineFactoryProvider;
+        _languageServerFeatureOptions = older._languageServerFeatureOptions;
         Version = older.Version.GetNewerVersion();
 
         HostProject = hostProject;
@@ -168,6 +134,8 @@ internal class ProjectState
     public ImmutableDictionary<string, ImmutableArray<string>> ImportsToRelatedDocuments { get; internal set; }
 
     public HostProject HostProject { get; }
+
+    internal LanguageServerFeatureOptions LanguageServerFeatureOptions => _languageServerFeatureOptions;
 
     public ProjectWorkspaceState ProjectWorkspaceState { get; }
 

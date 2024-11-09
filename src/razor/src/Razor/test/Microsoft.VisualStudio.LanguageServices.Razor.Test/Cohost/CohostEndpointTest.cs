@@ -16,15 +16,13 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.Razor;
-using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.VisualStudio.LanguageServices.Razor.Test.Cohost;
+namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostEndpointTest(ITestOutputHelper testOutputHelper) : ToolingTestBase(testOutputHelper)
 {

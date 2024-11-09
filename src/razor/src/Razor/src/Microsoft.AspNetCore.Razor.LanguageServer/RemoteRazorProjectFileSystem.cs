@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
@@ -82,7 +81,7 @@ internal class RemoteRazorProjectFileSystem : RazorProjectFileSystem
 
         static bool IsPathRootedForPlatform(string path)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && path == "/")
+            if (PlatformInformation.IsWindows && path == "/")
             {
                 // We have to special case windows and "/" because for some reason Path.IsPathRooted returns true on windows for a single "/" path.
                 return false;

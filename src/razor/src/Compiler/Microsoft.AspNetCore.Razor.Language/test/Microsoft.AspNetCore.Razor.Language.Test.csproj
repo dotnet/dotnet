@@ -30,7 +30,6 @@
     <Compile Include="..\..\shared\JsonReaderExtensions.cs" LinkBase="Shared" />
     <Compile Include="..\..\shared\RazorDiagnosticJsonConverter.cs" LinkBase="Shared" />
     <Compile Include="..\..\shared\TagHelperDescriptorJsonConverter.cs" LinkBase="Shared" />
-    <Compile Include="..\..\..\Razor\test\OSSkipConditionFactAttribute.cs" LinkBase="Shared" />
   </ItemGroup>
 
   <ItemGroup>

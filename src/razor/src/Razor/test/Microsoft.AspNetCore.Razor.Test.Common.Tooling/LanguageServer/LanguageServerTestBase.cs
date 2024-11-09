@@ -49,9 +49,10 @@ public abstract class LanguageServerTestBase : ToolingTestBase
     }
 
     private protected override TestProjectSnapshotManager CreateProjectSnapshotManager(
-        IProjectEngineFactoryProvider projectEngineFactoryProvider)
+        IProjectEngineFactoryProvider projectEngineFactoryProvider, LanguageServerFeatureOptions languageServerFeatureOptions)
         => new(
             projectEngineFactoryProvider,
+            languageServerFeatureOptions,
             LoggerFactory,
             DisposalToken,
             initializer: static updater => updater.ProjectAdded(MiscFilesHostProject.Instance));

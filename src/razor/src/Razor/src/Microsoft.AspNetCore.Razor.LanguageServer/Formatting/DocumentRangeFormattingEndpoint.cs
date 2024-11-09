@@ -1,8 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -56,8 +58,9 @@ internal class DocumentRangeFormattingEndpoint(
 
         if (request.Options.OtherOptions is not null &&
             request.Options.OtherOptions.TryGetValue("fromPaste", out var fromPasteObj) &&
-            fromPasteObj is bool fromPaste)
+            fromPasteObj is JsonElement fromPasteElement)
         {
+            var fromPaste = fromPasteElement.Deserialize<bool>();
             if (fromPaste && !_optionsMonitor.CurrentValue.Formatting.IsOnPasteEnabled())
             {
                 return null;

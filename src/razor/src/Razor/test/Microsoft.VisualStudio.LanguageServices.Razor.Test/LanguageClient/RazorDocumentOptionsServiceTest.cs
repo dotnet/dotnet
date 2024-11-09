@@ -3,12 +3,12 @@
 
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Options;
@@ -90,14 +90,14 @@ public class RazorDocumentOptionsServiceTest(ITestOutputHelper testOutput) : Wor
     // Adds the text to a ProjectSnapshot, generates code, and updates the workspace.
     private Document InitializeDocument(SourceText sourceText)
     {
-        var baseDirectory = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "c:\\users\\example\\src" : "/home/example";
+        var baseDirectory = PlatformInformation.IsWindows ? @"c:\users\example\src" : "/home/example";
         var hostProject = new HostProject(
             Path.Combine(baseDirectory, "SomeProject", "SomeProject.csproj"), Path.Combine(baseDirectory, "SomeProject", "obj"), RazorConfiguration.Default, "SomeProject");
         var hostDocument = new HostDocument(
             Path.Combine(baseDirectory, "SomeProject", "File1.cshtml"), "File1.cshtml", FileKinds.Legacy);
 
         var project = new ProjectSnapshot(ProjectState
-            .Create(ProjectEngineFactoryProvider, hostProject, ProjectWorkspaceState.Default)
+            .Create(ProjectEngineFactoryProvider, LanguageServerFeatureOptions, hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(hostDocument, TestMocks.CreateTextLoader(sourceText, VersionStamp.Create())));
 
         var documentSnapshot = project.GetDocument(hostDocument.FilePath);

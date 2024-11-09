@@ -1,10 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -45,12 +42,6 @@ public class CohostTextPresentationEndpointTest(ITestOutputHelper testOutputHelp
             },
             expected: "Hello World");
     }
-
-    private static Uri FileUri(string projectRelativeFileName)
-        => new(File(projectRelativeFileName));
-
-    private static string File(string projectRelativeFileName)
-        => Path.Combine(TestProjectData.SomeProjectPath, projectRelativeFileName);
 
     private async Task VerifyUriPresentationAsync(string input, string text, string? expected, WorkspaceEdit? htmlResponse = null)
     {

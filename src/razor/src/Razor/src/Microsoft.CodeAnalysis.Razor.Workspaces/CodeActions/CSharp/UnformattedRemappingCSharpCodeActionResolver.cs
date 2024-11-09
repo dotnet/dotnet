@@ -16,7 +16,7 @@ namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 /// <summary>
 /// Resolves and remaps the code action, without running formatting passes.
 /// </summary>
-internal sealed class UnformattedRemappingCSharpCodeActionResolver(IDocumentMappingService documentMappingService) : ICSharpCodeActionResolver
+internal class UnformattedRemappingCSharpCodeActionResolver(IDocumentMappingService documentMappingService) : ICSharpCodeActionResolver
 {
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
 

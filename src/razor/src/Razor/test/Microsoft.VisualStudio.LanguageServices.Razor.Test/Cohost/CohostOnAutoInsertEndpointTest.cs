@@ -3,14 +3,13 @@
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodBeAnalysis.Remote.Razor.AutoInsert;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.AutoInsert;
 using Microsoft.CodeAnalysis.Razor.Settings;
+using Microsoft.CodeAnalysis.Remote.Razor.AutoInsert;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServices.Razor.LanguageClient.Cohost;
-using Microsoft.VisualStudio.LicenseManagement.Interop;
 using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
 using Xunit;

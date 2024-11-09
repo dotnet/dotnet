@@ -81,6 +81,8 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
     public VersionStamp Version => _project.Version;
 
+    public Project Project => _project;
+
     public LanguageVersion CSharpLanguageVersion => ((CSharpParseOptions)_project.ParseOptions.AssumeNotNull()).LanguageVersion;
 
     public ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken)

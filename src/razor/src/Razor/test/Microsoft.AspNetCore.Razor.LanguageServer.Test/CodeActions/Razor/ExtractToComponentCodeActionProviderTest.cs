@@ -502,6 +502,7 @@ public class ExtractToComponentCodeActionProviderTest(ITestOutputHelper testOutp
             request,
             documentSnapshot.Object,
             codeDocument,
+            DelegatedDocumentUri: null,
             selectionSpan.Start,
             selectionSpan.End,
             RazorLanguageKind.Razor,

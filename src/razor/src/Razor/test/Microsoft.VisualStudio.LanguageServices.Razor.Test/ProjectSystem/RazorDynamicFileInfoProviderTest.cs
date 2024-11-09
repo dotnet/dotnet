@@ -73,7 +73,6 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
 
         var fallbackProjectManager = new FallbackProjectManager(
             serviceProvider,
-            languageServerFeatureOptions,
             _projectManager,
             WorkspaceProvider,
             NoOpTelemetryReporter.Instance);
@@ -114,7 +113,7 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
     public async Task GetDynamicFileInfoAsync_IncludesProjectToken()
     {
         // Arrange
-        var info = await _testAccessor.GetDynamicFileInfoAsync(_projectId, _document1.FilePath.AssumeNotNull(), DisposalToken);
+        var info = await _testAccessor.GetDynamicFileInfoAsync(_projectId, _document1.FilePath, DisposalToken);
         Assert.NotNull(info);
 
         Assert.Equal(@"C:\document1.razor.fJcYlbdqjCXiWYY1.ide.g.cs", info.FilePath);
@@ -124,7 +123,7 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
     public async Task UpdateLSPFileInfo_Updates()
     {
         // Arrange
-        await _testAccessor.GetDynamicFileInfoAsync(_projectId, _document1.FilePath.AssumeNotNull(), DisposalToken);
+        await _testAccessor.GetDynamicFileInfoAsync(_projectId, _document1.FilePath, DisposalToken);
         var called = false;
         _provider.Updated += (sender, args) => called = true;
 
@@ -139,7 +138,7 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
     public async Task UpdateLSPFileInfo_ProjectRemoved_Noops()
     {
         // Arrange
-        await _testAccessor.GetDynamicFileInfoAsync(_projectId, _document1.FilePath.AssumeNotNull(), DisposalToken);
+        await _testAccessor.GetDynamicFileInfoAsync(_projectId, _document1.FilePath, DisposalToken);
         var called = false;
         _provider.Updated += (sender, args) => called = true;
 
@@ -159,8 +158,8 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
     public async Task UpdateLSPFileInfo_SolutionClosing_ClearsAllDocuments()
     {
         // Arrange
-        await _testAccessor.GetDynamicFileInfoAsync(_projectId, _document1.FilePath.AssumeNotNull(), DisposalToken);
-        await _testAccessor.GetDynamicFileInfoAsync(_projectId, _document2.FilePath.AssumeNotNull(), DisposalToken);
+        await _testAccessor.GetDynamicFileInfoAsync(_projectId, _document1.FilePath, DisposalToken);
+        await _testAccessor.GetDynamicFileInfoAsync(_projectId, _document2.FilePath, DisposalToken);
         _provider.Updated += (sender, documentFilePath) => throw new InvalidOperationException("Should not have been called!");
 
         await _projectManager.UpdateAsync(updater =>
