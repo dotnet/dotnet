@@ -73,18 +73,18 @@
       <Sha>e965cbbf7eae80e2a62e46f0fcf68ab8f47792c4</Sha>
       <SourceBuild RepoName="emsdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Build" Version="17.13.0-preview-24558-03">
+    <Dependency Name="Microsoft.Build" Version="17.13.0-preview-24561-03">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>77312bc7f9ae339b9d7a0c5ed750fa9effd82111</Sha>
+      <Sha>f637dede2974bf9eccca61551349b6bf50c8b510</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Localization" Version="17.13.0-preview-24558-03">
+    <Dependency Name="Microsoft.Build.Localization" Version="17.13.0-preview-24561-03">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>77312bc7f9ae339b9d7a0c5ed750fa9effd82111</Sha>
+      <Sha>f637dede2974bf9eccca61551349b6bf50c8b510</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.13.0-preview-24558-03">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.13.0-preview-24561-03">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>77312bc7f9ae339b9d7a0c5ed750fa9effd82111</Sha>
+      <Sha>f637dede2974bf9eccca61551349b6bf50c8b510</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.FSharp.Compiler" Version="13.9.200-beta.24558.3">
@@ -97,43 +97,43 @@
       <Sha>28c439568b9cfd9978c8c0a91e05eaf0e0d39396</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.13.0-2.24558.12">
+    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.13.0-2.24561.1">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>c0b2f366d0fb54cf49040a82f0d044bb959a9e73</Sha>
+      <Sha>543cb4568f28b0d2f2cfecdf2d56365b9252e848</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.roslyn" Version="4.13.0-2.24558.12">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.roslyn" Version="4.13.0-2.24561.1">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>c0b2f366d0fb54cf49040a82f0d044bb959a9e73</Sha>
+      <Sha>543cb4568f28b0d2f2cfecdf2d56365b9252e848</Sha>
       <SourceBuild RepoName="roslyn" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Net.Compilers.Toolset.Framework" Version="4.13.0-2.24558.12">
+    <Dependency Name="Microsoft.Net.Compilers.Toolset.Framework" Version="4.13.0-2.24561.1">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>c0b2f366d0fb54cf49040a82f0d044bb959a9e73</Sha>
+      <Sha>543cb4568f28b0d2f2cfecdf2d56365b9252e848</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis" Version="4.13.0-2.24558.12">
+    <Dependency Name="Microsoft.CodeAnalysis" Version="4.13.0-2.24561.1">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>c0b2f366d0fb54cf49040a82f0d044bb959a9e73</Sha>
+      <Sha>543cb4568f28b0d2f2cfecdf2d56365b9252e848</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp" Version="4.13.0-2.24558.12">
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp" Version="4.13.0-2.24561.1">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>c0b2f366d0fb54cf49040a82f0d044bb959a9e73</Sha>
+      <Sha>543cb4568f28b0d2f2cfecdf2d56365b9252e848</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="4.13.0-2.24558.12">
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="4.13.0-2.24561.1">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>c0b2f366d0fb54cf49040a82f0d044bb959a9e73</Sha>
+      <Sha>543cb4568f28b0d2f2cfecdf2d56365b9252e848</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp.Features" Version="4.13.0-2.24558.12">
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp.Features" Version="4.13.0-2.24561.1">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>c0b2f366d0fb54cf49040a82f0d044bb959a9e73</Sha>
+      <Sha>543cb4568f28b0d2f2cfecdf2d56365b9252e848</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.13.0-2.24558.12">
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.13.0-2.24561.1">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>c0b2f366d0fb54cf49040a82f0d044bb959a9e73</Sha>
+      <Sha>543cb4568f28b0d2f2cfecdf2d56365b9252e848</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.13.0-2.24558.12">
+    <Dependency Name="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.13.0-2.24561.1">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>c0b2f366d0fb54cf49040a82f0d044bb959a9e73</Sha>
+      <Sha>543cb4568f28b0d2f2cfecdf2d56365b9252e848</Sha>
     </Dependency>
     <!-- Temporarily pinned to a net9 supporting version until the SDK can target net10.
          See https://github.com/dotnet/sdk/issues/42920. -->
@@ -383,14 +383,14 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>49c9ad01f057b3c6352bbec12b117acc2224493c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rtm.24558.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rtm.24561.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>37e5097eeb9196aadfbbde131f58a5df63476f93</Sha>
+      <Sha>282a2113ba98fd9c9dc18021d5c79d446ef7d45d</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.test-templates" Version="1.1.0-rtm.24558.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.test-templates" Version="1.1.0-rtm.24561.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>37e5097eeb9196aadfbbde131f58a5df63476f93</Sha>
+      <Sha>282a2113ba98fd9c9dc18021d5c79d446ef7d45d</Sha>
       <SourceBuild RepoName="test-templates" ManagedOnly="true" />
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
