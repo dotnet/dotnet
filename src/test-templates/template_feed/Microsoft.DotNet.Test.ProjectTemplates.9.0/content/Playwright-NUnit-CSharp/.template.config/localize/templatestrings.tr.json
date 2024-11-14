@@ -8,7 +8,7 @@
   "symbols/Framework/displayName": "Çerçeve",
   "symbols/Framework/choices/net9.0/description": "Hedef net9.0",
   "symbols/EnablePack/description": "Proje için paketlemeyi etkinleştirip etkinleştirmeme ayarı ( \"dotnet pack\" üzerinden).",
-  "symbols/EnablePack/displayName": "Enable pack",
+  "symbols/EnablePack/displayName": "Paketi etkinleştir",
   "symbols/skipRestore/description": "Belirtilmişse, oluşturma anında projenin otomatik geri yüklenmesini atlar.",
   "symbols/skipRestore/displayName": "Geri yüklemeyi atla",
   "symbols/langVersion/description": "Oluşturulan proje dosyasında LangVersion özelliğini ayarlar",
