@@ -14,7 +14,7 @@
     <!-- when changing any of the NuGetVersion props below, run tools-local\ship-public-apis -->
     <MajorNuGetVersion Condition="'$(MajorNuGetVersion)' == ''">6</MajorNuGetVersion>
     <MinorNuGetVersion Condition="'$(MinorNuGetVersion)' == ''">12</MinorNuGetVersion>
-    <PatchNuGetVersion Condition="'$(PatchNuGetVersion)' == ''">0</PatchNuGetVersion>
+    <PatchNuGetVersion Condition="'$(PatchNuGetVersion)' == ''">1</PatchNuGetVersion>
     <SemanticVersion Condition=" '$(SemanticVersion)' == '' ">$(MajorNuGetVersion).$(MinorNuGetVersion).$(PatchNuGetVersion)</SemanticVersion>
 
     <!-- ** Change for each new preview/rc -->
