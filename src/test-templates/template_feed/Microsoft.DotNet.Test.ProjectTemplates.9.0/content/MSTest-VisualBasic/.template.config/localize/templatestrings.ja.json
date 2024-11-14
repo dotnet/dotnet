@@ -44,7 +44,7 @@
   "symbols/ExtensionsProfile/choices/AllMicrosoft/description": "Microsoft が出荷するすべての拡張機能を有効にする (制限付きライセンスを持つ拡張機能を含む)",
   "symbols/ExtensionsProfile/choices/AllMicrosoft/displayName": "AllMicrosoft",
   "symbols/Fixture/description": "プロジェクトに含めるフィクスチャの種類を選択します。",
-  "symbols/Fixture/displayName": "Fixture",
+  "symbols/Fixture/displayName": "フィクスチャ",
   "symbols/Fixture/choices/None/description": "フィクスチャ メソッドがありません",
   "symbols/Fixture/choices/None/displayName": "なし",
   "symbols/Fixture/choices/AssemblyInitialize/description": "AssemblyInitialize フィクスチャ メソッド",
