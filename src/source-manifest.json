@@ -157,10 +157,10 @@
       "commitSha": "308dc7955704be60afc72ec00902cc18e028c3c2"
     },
     {
-      "packageVersion": "9.0.0-rtm.24515.14",
+      "packageVersion": "9.0.0-rtm.24529.1",
       "path": "winforms",
-      "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "5f03f3d8a99d8094fd0067e2497c4ea9b440e324"
+      "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-winforms",
+      "commitSha": "62ebdb4b0d5cc7e163b8dc9331dc196e576bf162"
     },
     {
       "packageVersion": "9.0.0-rtm.24529.2",
