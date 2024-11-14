@@ -1,9 +1,9 @@
 {
   "sdk": {
-    "version": "9.0.100-rc.2.24474.11"
+    "version": "9.0.100-rc.1.24452.12"
   },
   "tools": {
-    "dotnet": "9.0.100-rc.2.24474.11",
+    "dotnet": "9.0.100-rc.1.24452.12",
     "runtimes": {
       "dotnet/x86": [
         "$(MicrosoftNETCoreBrowserDebugHostTransportVersion)"
@@ -24,7 +24,7 @@
     "xcopy-msbuild": "17.1.0"
   },
   "native-tools": {
-    "jdk": "11"
+    "jdk": "11.0.24"
   },
   "msbuild-sdks": {
     "Microsoft.DotNet.Arcade.Sdk": "9.0.0-beta.24516.2",
