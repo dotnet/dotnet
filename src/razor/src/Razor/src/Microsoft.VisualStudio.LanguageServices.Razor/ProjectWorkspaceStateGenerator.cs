@@ -157,17 +157,18 @@ internal sealed partial class ProjectWorkspaceStateGenerator(
                 .UpdateAsync(
                     static (updater, state) =>
                     {
-                        var (projectKey, workspaceState, logger, cancellationToken) = state;
+                        var (projectSnapshot, workspaceState, logger, cancellationToken) = state;
 
                         if (cancellationToken.IsCancellationRequested)
                         {
                             return;
                         }
 
-                        logger.LogTrace($"Updating project with {workspaceState.TagHelpers.Length} tag helper(s) for '{projectKey}'");
-                        updater.ProjectWorkspaceStateChanged(projectKey, workspaceState);
+                        logger.LogTrace($"Updating project with {workspaceState.TagHelpers.Length} tag helper(s) for '{projectSnapshot.Key}'");
+                        var hostProject = new HostProject(projectSnapshot.FilePath, projectSnapshot.IntermediateOutputPath, projectSnapshot.Configuration, projectSnapshot.RootNamespace);
+                        updater.ProjectChanged(hostProject, workspaceState);
                     },
-                    state: (projectKey, workspaceState, _logger, cancellationToken),
+                    state: (projectSnapshot, workspaceState, _logger, cancellationToken),
                     cancellationToken)
                 .ConfigureAwait(false);
         }

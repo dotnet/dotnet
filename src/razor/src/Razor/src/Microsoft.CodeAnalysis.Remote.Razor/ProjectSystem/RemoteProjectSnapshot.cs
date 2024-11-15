@@ -19,6 +19,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Compiler.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
@@ -51,6 +52,7 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
         _lazyProjectEngine = new AsyncLazy<RazorProjectEngine>(async () =>
         {
             var configuration = await _lazyConfiguration.GetValueAsync();
+            var useRoslynTokenizer = SolutionSnapshot.SnapshotManager.LanguageServerFeatureOptions.UseRoslynTokenizer;
             return ProjectEngineFactories.DefaultProvider.Create(
                 configuration,
                 rootDirectoryPath: Path.GetDirectoryName(FilePath).AssumeNotNull(),
@@ -59,6 +61,7 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
                     builder.SetRootNamespace(RootNamespace);
                     builder.SetCSharpLanguageVersion(CSharpLanguageVersion);
                     builder.SetSupportLocalizedComponentNames();
+                    builder.Features.Add(new ConfigureRazorParserOptions(useRoslynTokenizer, CSharpParseOptions.Default));
                 });
         },
         joinableTaskFactory: null);

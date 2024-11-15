@@ -13,6 +13,7 @@ internal class RazorDocumentServiceProvider(IDynamicDocumentContainer? documentC
     private IRazorSpanMappingService? _spanMappingService;
     private IRazorDocumentExcerptServiceImplementation? _documentExcerptService;
     private IRazorDocumentPropertiesService? _documentPropertiesService;
+    private IRazorMappingService? _mappingService;
 
     public RazorDocumentServiceProvider()
         : this(null)
@@ -38,7 +39,7 @@ internal class RazorDocumentServiceProvider(IDynamicDocumentContainer? documentC
             {
                 lock (_lock)
                 {
-                    _spanMappingService ??= _documentContainer.GetMappingService();
+                    _spanMappingService ??= _documentContainer.GetSpanMappingService();
                 }
             }
 
@@ -69,6 +70,19 @@ internal class RazorDocumentServiceProvider(IDynamicDocumentContainer? documentC
             }
 
             return (TService?)_documentPropertiesService;
+        }
+
+        if (serviceType == typeof(IRazorMappingService))
+        {
+            if (_mappingService is null)
+            {
+                lock (_lock)
+                {
+                    _mappingService ??= _documentContainer.GetMappingService();
+                }
+            }
+
+            return (TService?)_mappingService;
         }
 
         return this as TService;

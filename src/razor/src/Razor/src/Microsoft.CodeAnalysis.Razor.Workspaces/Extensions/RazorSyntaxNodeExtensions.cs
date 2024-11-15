@@ -80,6 +80,27 @@ internal static class RazorSyntaxNodeExtensions
         return false;
     }
 
+    /// <summary>
+    /// Determines if <paramref name="firstNode"/> is immediately followed by <paramref name="secondNode"/> in the source text ignoring whitespace.
+    /// </summary>
+    public static bool IsNextTo(this RazorSyntaxNode firstNode, RazorSyntaxNode secondNode, SourceText text)
+    {
+        var index = firstNode.Span.End;
+        var end = secondNode.Span.Start - 1;
+        var c = text[index];
+        while (char.IsWhiteSpace(c))
+        {
+            if (index == end)
+            {
+                return true;
+            }
+
+            c = text[++index];
+        }
+
+        return false;
+    }
+
     public static bool ContainsOnlyWhitespace(this SyntaxNode node, bool includingNewLines = true)
     {
         foreach (var token in node.GetTokens())

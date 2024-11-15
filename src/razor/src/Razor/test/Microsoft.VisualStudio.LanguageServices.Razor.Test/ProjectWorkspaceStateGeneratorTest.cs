@@ -120,7 +120,7 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
         await _projectManager.UpdateAsync(updater =>
         {
             updater.ProjectAdded(_projectSnapshot.HostProject);
-            updater.ProjectWorkspaceStateChanged(_projectSnapshot.Key, _projectWorkspaceStateWithTagHelpers);
+            updater.ProjectChanged(_projectSnapshot.HostProject, _projectWorkspaceStateWithTagHelpers);
         });
 
         // Act

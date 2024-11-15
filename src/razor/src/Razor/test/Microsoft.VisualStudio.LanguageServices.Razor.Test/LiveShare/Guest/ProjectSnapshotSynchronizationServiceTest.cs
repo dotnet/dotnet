@@ -170,7 +170,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         await _projectManager.UpdateAsync(updater =>
         {
             updater.ProjectAdded(hostProject);
-            updater.ProjectConfigurationChanged(hostProject);
+            updater.ProjectChanged(hostProject, newHandle.ProjectWorkspaceState);
         });
 
         var args = new ProjectChangeEventProxyArgs(oldHandle, newHandle, ProjectProxyChangeKind.ProjectChanged);
@@ -214,7 +214,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         await _projectManager.UpdateAsync(updater =>
         {
             updater.ProjectAdded(hostProject);
-            updater.ProjectWorkspaceStateChanged(hostProject.Key, oldHandle.ProjectWorkspaceState);
+            updater.ProjectChanged(hostProject, oldHandle.ProjectWorkspaceState);
         });
 
         var args = new ProjectChangeEventProxyArgs(oldHandle, newHandle, ProjectProxyChangeKind.ProjectChanged);

@@ -80,6 +80,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
             ForceRuntimeCodeGeneration = false,
             SupportsFileManipulation = true,
             ShowAllCSharpCodeActions = false,
+            UseRoslynTokenizer = false,
         };
         UpdateClientInitializationOptions(c => c);
 

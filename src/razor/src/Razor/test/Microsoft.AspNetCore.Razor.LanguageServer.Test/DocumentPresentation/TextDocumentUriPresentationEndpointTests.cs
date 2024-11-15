@@ -46,7 +46,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectWorkspaceStateChanged(hostProject.Key, ProjectWorkspaceState.Create([builder.Build()]));
+            updater.ProjectChanged(hostProject, ProjectWorkspaceState.Create([builder.Build()]));
         });
 
         var uri = new Uri(hostDocument1.FilePath);
@@ -106,7 +106,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectWorkspaceStateChanged(hostProject.Key, ProjectWorkspaceState.Create([builder.Build()]));
+            updater.ProjectChanged(hostProject, ProjectWorkspaceState.Create([builder.Build()]));
         });
 
         var uri = new Uri(hostDocument1.FilePath);
@@ -177,7 +177,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectWorkspaceStateChanged(hostProject.Key, ProjectWorkspaceState.Create([builder.Build()]));
+            updater.ProjectChanged(hostProject, ProjectWorkspaceState.Create([builder.Build()]));
         });
 
         var uri = new Uri(hostDocument1.FilePath);
@@ -332,7 +332,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         await projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectWorkspaceStateChanged(hostProject.Key, ProjectWorkspaceState.Create([builder.Build()]));
+            updater.ProjectChanged(hostProject, ProjectWorkspaceState.Create([builder.Build()]));
         });
 
         var uri = new Uri(hostDocument1.FilePath);

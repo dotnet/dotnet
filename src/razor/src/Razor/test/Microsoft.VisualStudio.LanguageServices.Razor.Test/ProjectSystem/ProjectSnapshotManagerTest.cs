@@ -268,7 +268,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         await _projectManager.UpdateAsync(updater =>
         {
             updater.ProjectAdded(s_hostProject);
-            updater.ProjectWorkspaceStateChanged(s_hostProject.Key, _projectWorkspaceStateWithTagHelpers);
+            updater.ProjectChanged(s_hostProject, _projectWorkspaceStateWithTagHelpers);
         });
 
         var originalTagHelpers = await _projectManager.GetLoadedProject(s_hostProject.Key).GetTagHelpersAsync(DisposalToken);
@@ -390,7 +390,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         await _projectManager.UpdateAsync(updater =>
         {
             updater.ProjectAdded(s_hostProject);
-            updater.ProjectWorkspaceStateChanged(s_hostProject.Key, _projectWorkspaceStateWithTagHelpers);
+            updater.ProjectChanged(s_hostProject, _projectWorkspaceStateWithTagHelpers);
             updater.DocumentAdded(s_hostProject.Key, s_documents[0], s_documents[0].CreateEmptyTextLoader());
             updater.DocumentAdded(s_hostProject.Key, s_documents[1], s_documents[1].CreateEmptyTextLoader());
             updater.DocumentAdded(s_hostProject.Key, s_documents[2], s_documents[2].CreateEmptyTextLoader());
@@ -640,7 +640,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         // Act
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectConfigurationChanged(s_hostProjectWithConfigurationChange);
+            updater.ProjectChanged(s_hostProjectWithConfigurationChange, ProjectWorkspaceState.Default);
         });
 
         // Assert
@@ -655,7 +655,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         await _projectManager.UpdateAsync(updater =>
         {
             updater.ProjectAdded(s_hostProject);
-            updater.ProjectWorkspaceStateChanged(s_hostProject.Key, _projectWorkspaceStateWithTagHelpers);
+            updater.ProjectChanged(s_hostProject, _projectWorkspaceStateWithTagHelpers);
         });
 
         using var listener = _projectManager.ListenToNotifications();
@@ -663,7 +663,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         // Act
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectConfigurationChanged(s_hostProjectWithConfigurationChange);
+            updater.ProjectChanged(s_hostProjectWithConfigurationChange, _projectWorkspaceStateWithTagHelpers);
         });
 
         // Assert
@@ -686,7 +686,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         // Act
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectConfigurationChanged(s_hostProjectWithConfigurationChange);
+            updater.ProjectChanged(s_hostProjectWithConfigurationChange, ProjectWorkspaceState.Default);
         });
 
         // Assert
@@ -703,7 +703,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         // Act
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectConfigurationChanged(s_hostProject);
+            updater.ProjectChanged(s_hostProject, ProjectWorkspaceState.Default);
         });
 
         // Assert
@@ -745,7 +745,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         // Act
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectWorkspaceStateChanged(s_hostProject.Key, _projectWorkspaceStateWithTagHelpers);
+            updater.ProjectChanged(s_hostProject, _projectWorkspaceStateWithTagHelpers);
         });
 
         // Assert
@@ -767,7 +767,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         // Act
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectWorkspaceStateChanged(s_hostProject.Key, _projectWorkspaceStateWithTagHelpers);
+            updater.ProjectChanged(s_hostProject, _projectWorkspaceStateWithTagHelpers);
         });
 
         // Assert
@@ -791,7 +791,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         // Act
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectWorkspaceStateChanged(s_hostProject.Key, _projectWorkspaceStateWithTagHelpers);
+            updater.ProjectChanged(s_hostProject, _projectWorkspaceStateWithTagHelpers);
         });
 
         // Assert
@@ -806,7 +806,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         await _projectManager.UpdateAsync(updater =>
         {
             updater.ProjectAdded(s_hostProject);
-            updater.ProjectWorkspaceStateChanged(s_hostProject.Key, ProjectWorkspaceState.Default);
+            updater.ProjectChanged(s_hostProject, ProjectWorkspaceState.Default);
         });
 
         using var listener = _projectManager.ListenToNotifications();
@@ -814,7 +814,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         // Act
         await _projectManager.UpdateAsync(updater =>
         {
-            updater.ProjectWorkspaceStateChanged(s_hostProject.Key, _projectWorkspaceStateWithTagHelpers);
+            updater.ProjectChanged(s_hostProject, _projectWorkspaceStateWithTagHelpers);
         });
 
         // Assert

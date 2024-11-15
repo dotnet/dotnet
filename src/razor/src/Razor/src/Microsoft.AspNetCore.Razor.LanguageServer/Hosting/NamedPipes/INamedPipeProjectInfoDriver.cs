@@ -3,8 +3,9 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.Hosting.NamedPipes;
 
 internal interface INamedPipeProjectInfoDriver : IRazorProjectInfoDriver
 {

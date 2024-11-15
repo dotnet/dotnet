@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
@@ -28,8 +29,10 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         _completionListCache = new CompletionListCache();
         _endpoint = new RazorCompletionResolveEndpoint(
             new AggregateCompletionItemResolver(
-                new[] { new TestCompletionItemResolver() }, LoggerFactory),
-            _completionListCache);
+                new[] { new TestCompletionItemResolver() },
+                LoggerFactory),
+            _completionListCache,
+            CreateProjectSnapshotManager());
         _clientCapabilities = new VSInternalClientCapabilities()
         {
             TextDocument = new TextDocumentClientCapabilities()
@@ -160,6 +163,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
             VSInternalCompletionList containingCompletionList,
             object originalRequestContext,
             VSInternalClientCapabilities clientCapabilities,
+            ISolutionQueryOperations solutionQueryOperations,
             CancellationToken cancellationToken)
         {
             var completionSupportedKinds = clientCapabilities?.TextDocument?.Completion?.CompletionItem?.DocumentationFormat;

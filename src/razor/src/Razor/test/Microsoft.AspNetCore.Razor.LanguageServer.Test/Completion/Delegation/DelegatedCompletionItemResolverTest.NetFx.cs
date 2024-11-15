@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.Completion;
@@ -34,6 +35,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
     private readonly IDocumentContextFactory _documentContextFactory;
     private readonly AsyncLazy<IRazorFormattingService> _formattingService;
     private readonly RazorCompletionOptions _defaultRazorCompletionOptions;
+    private readonly ISolutionQueryOperations _solutionQueryOperations;
 
     public DelegatedCompletionItemResolverTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -77,6 +79,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
             SnippetsSupported: true,
             AutoInsertAttributeQuotes: true,
             CommitElementsWithSpace: true);
+        _solutionQueryOperations = CreateProjectSnapshotManager().GetQueryOperations();
     }
 
     [Fact]
@@ -92,7 +95,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
 
         // Act
         var resolvedItem = await resolver.ResolveAsync(
-            item, notContainingCompletionList, originalRequestContext, _clientCapabilities, DisposalToken);
+            item, notContainingCompletionList, originalRequestContext, _clientCapabilities, _solutionQueryOperations, DisposalToken);
 
         // Assert
         Assert.Null(resolvedItem);
@@ -111,7 +114,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
 
         // Act
         var resolvedItem = await resolver.ResolveAsync(
-            item, containingCompletionList, originalRequestContext, _clientCapabilities, DisposalToken);
+            item, containingCompletionList, originalRequestContext, _clientCapabilities, _solutionQueryOperations, DisposalToken);
 
         // Assert
         Assert.Null(resolvedItem);
@@ -134,7 +137,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
 
         // Act
         await resolver.ResolveAsync(
-            item, containingCompletionList, originalRequestContext, _clientCapabilities, DisposalToken);
+            item, containingCompletionList, originalRequestContext, _clientCapabilities, _solutionQueryOperations, DisposalToken);
 
         // Assert
         Assert.Same(expectedData, server.DelegatedParams.CompletionItem.Data);
@@ -153,7 +156,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         var originalRequestContext = new DelegatedCompletionResolutionContext(_csharpCompletionParams, expectedData);
 
         // Act
-        await resolver.ResolveAsync(item, containingCompletionList, originalRequestContext, _clientCapabilities, DisposalToken);
+        await resolver.ResolveAsync(item, containingCompletionList, originalRequestContext, _clientCapabilities, _solutionQueryOperations, DisposalToken);
 
         // Assert
         Assert.Same(expectedData, server.DelegatedParams.CompletionItem.Data);
@@ -217,7 +220,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
 
         // Act
         var resolvedItem = await resolver.ResolveAsync(
-            item, containingCompletionList, originalRequestContext, _clientCapabilities, DisposalToken);
+            item, containingCompletionList, originalRequestContext, _clientCapabilities, _solutionQueryOperations, DisposalToken);
 
         // Assert
         Assert.Same(_htmlCompletionParams.Identifier, server.DelegatedParams.Identifier);
@@ -247,7 +250,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         }
 
         var resolvedItem = await resolver.ResolveAsync(
-            item, containingCompletionList, originalRequestContext, _clientCapabilities, cancellationToken);
+            item, containingCompletionList, originalRequestContext, _clientCapabilities, _solutionQueryOperations, cancellationToken);
 
         return resolvedItem;
     }

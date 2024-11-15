@@ -3,7 +3,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Microsoft.CodeAnalysis.Razor.Protocol;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.Hosting.NamedPipes;
 
 internal class RazorNamedPipeConnectParams
 {

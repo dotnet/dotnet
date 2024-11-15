@@ -475,13 +475,13 @@ internal abstract partial class TelemetryReporter : ITelemetryReporter, IDisposa
         public void LogRequestTelemetry(string name, string? language, TimeSpan queuedDuration, TimeSpan requestDuration, TelemetryResult result)
         {
             LogAggregated("LSP_TimeInQueue",
+                "TimeInQueue",  // All time in queue events use the same histogram, no need for separate keys
                 (int)queuedDuration.TotalMilliseconds,
-                "TimeInQueue",
                 name);
 
             LogAggregated("LSP_RequestDuration",
+                name, // RequestDuration requests are histogrammed by their unique name
                 (int)requestDuration.TotalMilliseconds,
-                "RequestDuration",
                 name);
 
             _requestCounters.GetOrAdd((name, language), (_) => new Counter()).IncrementCount(result);
@@ -503,13 +503,13 @@ internal abstract partial class TelemetryReporter : ITelemetryReporter, IDisposa
         }
 
         private void LogAggregated(
-            string name,
+            string managerKey,
+            string histogramKey,
             int value,
-            string metricName,
             string method)
         {
-            var aggregatingLog = _aggregatingManager?.GetLog(name);
-            aggregatingLog?.Log(name, value, metricName, method);
+            var aggregatingLog = _aggregatingManager?.GetLog(managerKey);
+            aggregatingLog?.Log(histogramKey, value, method);
         }
 
         private sealed class Counter
