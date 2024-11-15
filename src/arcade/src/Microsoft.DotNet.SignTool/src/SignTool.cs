@@ -32,6 +32,7 @@ namespace Microsoft.DotNet.SignTool
 
         public abstract bool LocalStrongNameSign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files);
 
+        public abstract bool VerifySignedDeb(TaskLoggingHelper log, string filePath);
         public abstract bool VerifySignedPEFile(Stream stream);
         public abstract bool VerifySignedPowerShellFile(string filePath);
         public abstract bool VerifySignedNugetFileMarker(string filePath);

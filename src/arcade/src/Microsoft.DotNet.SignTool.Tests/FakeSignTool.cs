@@ -60,6 +60,11 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
+        public override bool VerifySignedDeb(TaskLoggingHelper log, string filePath)
+        {
+            return true;
+        }
+
         public override bool VerifySignedPowerShellFile(string filePath)
         {
             return true;

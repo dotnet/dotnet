@@ -1331,7 +1331,6 @@ parameters:
 
 - `--id` - **(Required)**. BAR id of build to assign to channel.
 - `--channel` - **(Required)**. Channel to assign build to.
-- `--publish-installers-and-checksums` **(Required)** Whether installers and checksums should be published. All the installers and checksums usually go to the same storage account. By setting this to true we are agreeing to republish them everytime a new channel is added. This has to be set to true at all times.
 - `--publishing-infra-version` - Version of publishing, for single stage [publishing infrastructure use 3](https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Publishing.md#what-is-v3-publishing-how-is-it-different-from-v2) else for multi stage publishing infra with each stage representing available channel(s) use 2. Default is 2. 
 - `--signing-validation-parameters` - Additional (MSBuild) properties to be passed to signing validation
 - `--symbol-publishing-parameters` -Additional (MSBuild) properties to be passed to symbol publishing
@@ -1353,7 +1352,7 @@ parameters:
 **If using --publishing-infra-version 2**
 ```
 
-darc add-build-to-channel --id 13078 --channel ".NET Core 3 Release" --publish-installers-and-checksums
+darc add-build-to-channel --id 13078 --channel ".NET Core 3 Release"
 Assigning the following build to channel '.NET Core 3 Release':
 
 Repository:    https://github.com/dotnet/core-setup
@@ -1380,7 +1379,7 @@ If the above example build doesn't happen to be the latest in a channel but you 
 **If using --publishing-infra-version 3**
 ```
 
-darc add-build-to-channel --id 65256 --channel ".NET 6 Dev" --publishing-infra-version 3 --publish-installers-and-checksums
+darc add-build-to-channel --id 65256 --channel ".NET 6 Dev" --publishing-infra-version 3
 
 Waiting '60' seconds for promotion build to complete.
 

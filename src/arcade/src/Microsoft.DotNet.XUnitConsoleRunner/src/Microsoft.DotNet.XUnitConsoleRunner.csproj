@@ -42,7 +42,7 @@
   <Target Name="_AddBuildOutputToPackage" DependsOnTargets="Publish">
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(PublishDir)**" 
-                              PackagePath="tools/$(TargetFramework)/%(RecursiveDir)%(FileName)%(Extension)"/>
+                              PackagePath="tools/net/%(RecursiveDir)%(FileName)%(Extension)"/>
     </ItemGroup>
   </Target>
 

@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using TaskLoggingHelper = Microsoft.Build.Utilities.TaskLoggingHelper;
 
@@ -84,7 +85,7 @@ namespace Microsoft.DotNet.SignTool
             // This is a recursive process since we process nested containers.
             foreach (var file in _batchData.FilesToSign)
             {
-                VerifyAfterSign(file);
+                VerifyAfterSign(_log, file);
             }
 
             if (_log.HasLoggedErrors)
@@ -495,6 +496,17 @@ namespace Microsoft.DotNet.SignTool
                         log.LogError($"VSIX {fileName} cannot be strong name signed.");
                     }
                 }
+                else if (fileName.IsDeb())
+                {
+                    if (isInvalidEmptyCertificate)
+                    {
+                        log.LogError($"Deb package {fileName} should have a certificate name.");
+                    }
+                    if (!IsLinuxSignCertificate(fileName.SignInfo.Certificate))
+                    {
+                        log.LogError($"Deb package {fileName} must be signed with a LinuxSign certificate.");
+                    }
+                }
                 else if (fileName.IsNupkg())
                 {
                     if(isInvalidEmptyCertificate)
@@ -534,7 +546,7 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-        private void VerifyAfterSign(FileSignInfo file)
+        private void VerifyAfterSign(TaskLoggingHelper log, FileSignInfo file)
         {
             if (file.IsPEFile())
             {
@@ -548,6 +560,17 @@ namespace Microsoft.DotNet.SignTool
                     {
                         _log.LogMessage(MessageImportance.Low, $"Assembly {file.FullPath} is signed properly");
                     }
+                }
+            }
+            else if (file.IsDeb())
+            {
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    _log.LogMessage(MessageImportance.Low, $"Skipping signature verification of {file.FullPath} on non-Linux platform.");
+                }
+                else if (!_signTool.VerifySignedDeb(log, file.FullPath))
+                {
+                    _log.LogError($"Deb package {file.FullPath} is not signed properly.");
                 }
             }
             else if (file.IsPowerShellScript())
@@ -582,7 +605,7 @@ namespace Microsoft.DotNet.SignTool
                         continue;
                     }
 
-                    VerifyAfterSign(zipPart.Value.FileSignInfo);
+                    VerifyAfterSign(_log, zipPart.Value.FileSignInfo);
                 }
 
                 if (!SkipZipContainerSignatureMarkerCheck)
@@ -621,5 +644,7 @@ namespace Microsoft.DotNet.SignTool
         }
 
         private static bool IsVsixCertificate(string certificate) => certificate.StartsWith("Vsix", StringComparison.OrdinalIgnoreCase);
+
+        private static bool IsLinuxSignCertificate(string certificate) => certificate.StartsWith("LinuxSign", StringComparison.OrdinalIgnoreCase);
     }
 }

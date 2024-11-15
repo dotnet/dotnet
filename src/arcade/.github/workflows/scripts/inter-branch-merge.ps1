@@ -300,9 +300,11 @@ git push
 ## Instructions for updating this pull request
 
 Contributors to this repo have permission update this pull request by pushing to the branch '$mergeBranchName'. This can be done to resolve conflicts or make other changes to this pull request before it is merged.
+The provided examples assume that the remote is named 'origin'. If you have a different remote name, please replace 'origin' with the name of your remote.
 
 ``````
-git checkout -b ${mergeBranchName} $MergeToBranch
+git fetch
+git checkout -b ${mergeBranchName} origin/$MergeToBranch
 git pull https://github.com/$prOwnerName/$prRepoName ${mergeBranchName}
 (make changes)
 git commit -m "Updated PR with my changes"
@@ -313,7 +315,8 @@ git push https://github.com/$prOwnerName/$prRepoName HEAD:${mergeBranchName}
     <summary>or if you are using SSH</summary>
 
 ``````
-git checkout -b ${mergeBranchName} $MergeToBranch
+git fetch
+git checkout -b ${mergeBranchName} origin/$MergeToBranch
 git pull git@github.com:$prOwnerName/$prRepoName ${mergeBranchName}
 (make changes)
 git commit -m "Updated PR with my changes"

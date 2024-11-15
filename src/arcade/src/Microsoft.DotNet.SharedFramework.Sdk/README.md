@@ -1,6 +1,8 @@
 # Microsoft.DotNet.SharedFramework.Sdk
 
-This package provides a common set of tools for authoring framework packs, shared frameworks, and packages and installers for packs and frameworks.
+This package provides a common set of tools for authoring framework packs, shared frameworks, apphost packs, and other packs that can be installed into or downloaded by the .NET SDK.
+
+It also integrates with `Microsoft.DotNet.Build.Tasks.Installers` and `Microsoft.DotNet.Build.Tasks.Archives` to provide an easy mechanism to produce installers and archives for these components.
 
 ## Building Framework Packs
 
@@ -13,7 +15,7 @@ An example project is included below:
   <Sdk Name="Microsoft.DotNet.SharedFramework.Sdk" />
   <PropertyGroup>
      <!-- Required properties -->
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SharedFrameworkName>Microsoft.Banana.App</SharedFrameworkName>
     <PlatformPackageType>RuntimePack</PlatformPackageType>
@@ -21,7 +23,7 @@ An example project is included below:
   </PropertyGroup>
   
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.NETCore.App" RuntimeFrameworkVersion="3.0.0" />
+    <FrameworkReference Include="Microsoft.NETCore.App" RuntimeFrameworkVersion="10.0.0" />
     
     <ProjectReference Include="..\..\MyAssembly1\MyAssembly1.csproj" />
     <ProjectReference Include="..\..\MyAssembly2\MyAssembly2.csproj" />
@@ -38,7 +40,7 @@ This example project shows some of the basic options provided by the SDK. The `S
 - `RuntimePack`: RID-specific runtime packages
 - `TargetingPack`: Packs of reference assemblies
 - `AppHostPack`: Pack containing the app hosts
-- `ToolPack`: This pack option allows you to have completely custom scripting for what files are included where in your pack. It also enables creating installer-only projects with this SDK.
+- `ToolPack`: This pack option allows you to have completely custom scripting for what files are included where in your pack.
 
 This SDK uses the standard mechanisms in the .NET SDK for referencing packages, projects, and other frameworks to resolve its dependencies and collect the files that are a part of the pack. To include native files, add them to the `NativeRuntimeAsset` item group.
 
@@ -139,6 +141,6 @@ This SDK provides a custom target named `PublishToDisk` that publishes the gener
 
 ## Build Skip Support for Unsupported Platforms and Servicing
 
-This SDK also supports automatically skipping builds on unsupported platforms or in servicing releases. If a project with a list of provided RIDs in `RuntimeIdentifiers` is built with the `RuntimeIdentifier` property set to a RID that is not in the `RuntimeIdentifiers` list, the build will be skipped. This enables cleanly skipping optional packs, installers, or bundles that only exist on specific platforms. 
+This SDK also supports automatically skipping builds on unsupported platforms or in servicing releases. If a project with a list of provided RIDs in `RuntimeIdentifiers` is built with the `RuntimeIdentifier` property set to a RID that is not in the `RuntimeIdentifiers` list, the build will be skipped. This enables cleanly skipping optional packs that only exist on specific platforms. 
 
 Additionally, if a `ProjectServicingConfiguration` item is provided with the identity of the project name and the `PatchVersion` metadata on the item is not equal to the current `PatchVersion`, the build will be skipped. This support enables a repository to disable building targeting packs in servicing releases if that is desired.

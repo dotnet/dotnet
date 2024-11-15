@@ -146,6 +146,13 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             _files.Add((file, fileKind));
         }
 
+        private readonly Dictionary<string, string> _scripts = [];
+
+        public void AddScript(string kind, string script)
+        {
+            _scripts.Add(kind, script);
+        }
+
         public string Url { get; set; } = "";
         public string Vendor { get; set; } = "";
         public string License { get; set; } = "";
@@ -194,6 +201,12 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             entries.Add(new(RpmHeaderTag.Url, RpmHeaderEntryType.String, Url));
             entries.Add(new(RpmHeaderTag.Summary, RpmHeaderEntryType.I18NString, Summary));
             entries.Add(new(RpmHeaderTag.Description, RpmHeaderEntryType.I18NString, Description));
+
+            foreach (var script in _scripts)
+            {
+                entries.Add(new((RpmHeaderTag)Enum.Parse(typeof(RpmHeaderTag), script.Key), RpmHeaderEntryType.String, "/bin/sh"));
+                entries.Add(new((RpmHeaderTag)Enum.Parse(typeof(RpmHeaderTag), $"{script.Key}prog"), RpmHeaderEntryType.String, script.Value));
+            }
 
             MemoryStream cpioArchive = new();
             using (CpioWriter writer = new(cpioArchive, leaveOpen: true))
