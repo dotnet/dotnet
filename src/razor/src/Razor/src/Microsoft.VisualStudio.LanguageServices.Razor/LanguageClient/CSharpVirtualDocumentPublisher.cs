@@ -78,7 +78,8 @@ internal class CSharpVirtualDocumentPublisher : LSPDocumentChangeListener
         private readonly LSPDocumentSnapshot _documentSnapshot = documentSnapshot;
         private readonly ITextSnapshot _textSnapshot = textSnapshot;
 
-        private IRazorSpanMappingService? _mappingService;
+        private IRazorSpanMappingService? _spanMappingService;
+        private IRazorMappingService? _mappingService;
         private IRazorDocumentExcerptServiceImplementation? _excerptService;
 
         public string FilePath => _documentSnapshot.Uri.LocalPath;
@@ -92,10 +93,10 @@ internal class CSharpVirtualDocumentPublisher : LSPDocumentChangeListener
 
         public IRazorDocumentExcerptServiceImplementation GetExcerptService()
             => _excerptService ?? InterlockedOperations.Initialize(ref _excerptService,
-                new CSharpDocumentExcerptService(GetMappingService(), _documentSnapshot));
+                new CSharpDocumentExcerptService(GetSpanMappingService(), _documentSnapshot));
 
-        public IRazorSpanMappingService GetMappingService()
-            => _mappingService ?? InterlockedOperations.Initialize(ref _mappingService,
+        public IRazorSpanMappingService GetSpanMappingService()
+            => _spanMappingService ?? InterlockedOperations.Initialize(ref _spanMappingService,
                 new RazorLSPSpanMappingService(_lspDocumentMappingProvider, _documentSnapshot, _textSnapshot));
 
         public IRazorDocumentPropertiesService GetDocumentPropertiesService()
@@ -103,6 +104,10 @@ internal class CSharpVirtualDocumentPublisher : LSPDocumentChangeListener
 
         public TextLoader GetTextLoader(string filePath)
             => new SourceTextLoader(_textSnapshot.AsText(), filePath);
+
+        public IRazorMappingService? GetMappingService()
+            => _mappingService ?? InterlockedOperations.Initialize(ref _mappingService,
+                new RazorLSPMappingService(_lspDocumentMappingProvider, _documentSnapshot, _textSnapshot));
 
         private sealed class SourceTextLoader(SourceText sourceText, string filePath) : TextLoader
         {

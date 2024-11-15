@@ -33,4 +33,7 @@ internal struct RemoteClientInitializationOptions
 
     [JsonPropertyName("showAllCSharpCodeActions")]
     public required bool ShowAllCSharpCodeActions { get; set; }
+
+    [JsonPropertyName("useRoslynTokenizer")]
+    public required bool UseRoslynTokenizer { get; set; }
 }

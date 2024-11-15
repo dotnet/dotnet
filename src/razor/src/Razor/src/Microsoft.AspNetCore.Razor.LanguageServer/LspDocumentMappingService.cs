@@ -17,8 +17,9 @@ internal sealed class LspDocumentMappingService(
     IFilePathService filePathService,
     IDocumentContextFactory documentContextFactory,
     ILoggerFactory loggerFactory)
-    : AbstractDocumentMappingService(filePathService, loggerFactory.GetOrCreateLogger<LspDocumentMappingService>())
+    : AbstractDocumentMappingService(loggerFactory.GetOrCreateLogger<LspDocumentMappingService>())
 {
+    private readonly IFilePathService _filePathService = filePathService;
     private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
 
     public async Task<(Uri MappedDocumentUri, LinePositionSpan MappedRange)> MapToHostDocumentUriAndRangeAsync(
@@ -26,16 +27,16 @@ internal sealed class LspDocumentMappingService(
         LinePositionSpan generatedDocumentRange,
         CancellationToken cancellationToken)
     {
-        var razorDocumentUri = FilePathService.GetRazorDocumentUri(generatedDocumentUri);
+        var razorDocumentUri = _filePathService.GetRazorDocumentUri(generatedDocumentUri);
 
         // For Html we just map the Uri, the range will be the same
-        if (FilePathService.IsVirtualHtmlFile(generatedDocumentUri))
+        if (_filePathService.IsVirtualHtmlFile(generatedDocumentUri))
         {
             return (razorDocumentUri, generatedDocumentRange);
         }
 
         // We only map from C# files
-        if (!FilePathService.IsVirtualCSharpFile(generatedDocumentUri))
+        if (!_filePathService.IsVirtualCSharpFile(generatedDocumentUri))
         {
             return (generatedDocumentUri, generatedDocumentRange);
         }
@@ -47,7 +48,7 @@ internal sealed class LspDocumentMappingService(
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        if (!codeDocument.TryGetGeneratedDocument(generatedDocumentUri, FilePathService, out var generatedDocument))
+        if (!codeDocument.TryGetGeneratedDocument(generatedDocumentUri, _filePathService, out var generatedDocument))
         {
             return Assumed.Unreachable<(Uri, LinePositionSpan)>();
         }

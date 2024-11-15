@@ -19,6 +19,7 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
     private readonly Lazy<bool> _useRazorCohostServer;
     private readonly Lazy<bool> _disableRazorLanguageServer;
     private readonly Lazy<bool> _forceRuntimeCodeGeneration;
+    private readonly Lazy<bool> _useRoslynTokenizer;
 
     [ImportingConstructor]
     public VisualStudioLanguageServerFeatureOptions(ILspEditorFeatureDetector lspEditorFeatureDetector)
@@ -71,11 +72,17 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
             var forceRuntimeCodeGeneration = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.ForceRuntimeCodeGeneration, defaultValue: false);
             return forceRuntimeCodeGeneration;
         });
+
+        _useRoslynTokenizer = new Lazy<bool>(() =>
+        {
+            var featureFlags = (IVsFeatureFlags)Package.GetGlobalService(typeof(SVsFeatureFlags));
+            var useRoslynTokenizer = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.UseRoslynTokenizer, defaultValue: false);
+            return useRoslynTokenizer;
+        });
     }
 
     // We don't currently support file creation operations on VS Codespaces or VS Liveshare
     public override bool SupportsFileManipulation => !IsCodespacesOrLiveshare;
-
 
     public override string CSharpVirtualDocumentSuffix => ".ide.g.cs";
 
@@ -103,4 +110,6 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
 
     /// <inheritdoc />
     public override bool ForceRuntimeCodeGeneration => _forceRuntimeCodeGeneration.Value;
+
+    public override bool UseRoslynTokenizer => _useRoslynTokenizer.Value;
 }

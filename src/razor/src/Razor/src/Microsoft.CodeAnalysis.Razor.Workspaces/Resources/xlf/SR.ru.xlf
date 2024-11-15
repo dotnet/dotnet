@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="Blazor_directive_attributes">
         <source>Blazor directive attributes</source>
-        <target state="new">Blazor directive attributes</target>
+        <target state="translated">Атрибуты директивы Blazor</target>
         <note />
       </trans-unit>
       <trans-unit id="Diagnostics_after">
@@ -106,7 +106,7 @@
       </trans-unit>
       <trans-unit id="Statement">
         <source>statement</source>
-        <target state="new">statement</target>
+        <target state="translated">инструкция</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">
@@ -121,7 +121,7 @@
       </trans-unit>
       <trans-unit id="ReTrigger_Completions_Title">
         <source>"Re-trigger completions..."</source>
-        <target state="new">"Re-trigger completions..."</target>
+        <target state="translated">"Повторный запуск завершений..."</target>
         <note />
       </trans-unit>
       <trans-unit id="Unknown_RazorMetaCode">

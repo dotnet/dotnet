@@ -18,18 +18,22 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient;
 
 public class CSharpVirtualDocumentPublisherTest : ToolingTestBase
 {
+    private readonly LSPDocumentMappingProvider _documentMappingProvider;
+
     public CSharpVirtualDocumentPublisherTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
+        var requestInvoker = new StrictMock<LSPRequestInvoker>();
+        var lazyDocumentManager = new Lazy<LSPDocumentManager>(() => (new StrictMock<LSPDocumentManager>()).Object);
+        _documentMappingProvider = new(requestInvoker.Object, lazyDocumentManager);
     }
 
     [Fact]
     public void DocumentManager_Changed_Added_Noops()
     {
         // Arrange
-        var lspDocumentMappingProvider = new Mock<LSPDocumentMappingProvider>(MockBehavior.Strict);
-        var fileInfoProvider = new Mock<IRazorDynamicFileInfoProviderInternal>(MockBehavior.Strict);
-        var publisher = new CSharpVirtualDocumentPublisher(fileInfoProvider.Object, lspDocumentMappingProvider.Object);
+        var fileInfoProvider = new StrictMock<IRazorDynamicFileInfoProviderInternal>();
+        var publisher = new CSharpVirtualDocumentPublisher(fileInfoProvider.Object, _documentMappingProvider);
 
         // Act & Assert
         publisher.Changed(old: null, @new: Mock.Of<LSPDocumentSnapshot>(MockBehavior.Strict), virtualOld: null, virtualNew: null, LSPDocumentChangeKind.Added);
@@ -39,9 +43,8 @@ public class CSharpVirtualDocumentPublisherTest : ToolingTestBase
     public void DocumentManager_Changed_Removed_Noops()
     {
         // Arrange
-        var lspDocumentMappingProvider = new Mock<LSPDocumentMappingProvider>(MockBehavior.Strict);
-        var fileInfoProvider = new Mock<IRazorDynamicFileInfoProviderInternal>(MockBehavior.Strict);
-        var publisher = new CSharpVirtualDocumentPublisher(fileInfoProvider.Object, lspDocumentMappingProvider.Object);
+        var fileInfoProvider = new StrictMock<IRazorDynamicFileInfoProviderInternal>();
+        var publisher = new CSharpVirtualDocumentPublisher(fileInfoProvider.Object, _documentMappingProvider);
 
         // Act & Assert
         publisher.Changed(old: Mock.Of<LSPDocumentSnapshot>(MockBehavior.Strict), @new: null, virtualOld: null, virtualNew: null, LSPDocumentChangeKind.Removed);
@@ -51,15 +54,14 @@ public class CSharpVirtualDocumentPublisherTest : ToolingTestBase
     public void DocumentManager_Changed_VirtualDocumentChanged_NonCSharp_Noops()
     {
         // Arrange
-        var lspDocumentMappingProvider = new Mock<LSPDocumentMappingProvider>(MockBehavior.Strict);
-        var fileInfoProvider = new Mock<IRazorDynamicFileInfoProviderInternal>(MockBehavior.Strict);
-        var publisher = new CSharpVirtualDocumentPublisher(fileInfoProvider.Object, lspDocumentMappingProvider.Object);
+        var fileInfoProvider = new StrictMock<IRazorDynamicFileInfoProviderInternal>();
+        var publisher = new CSharpVirtualDocumentPublisher(fileInfoProvider.Object, _documentMappingProvider);
 
         // Act & Assert
-        publisher.Changed(old: Mock.Of<LSPDocumentSnapshot>(MockBehavior.Strict),
-                          @new: Mock.Of<LSPDocumentSnapshot>(MockBehavior.Strict),
-                          virtualOld: Mock.Of<VirtualDocumentSnapshot>(MockBehavior.Strict),
-                          virtualNew: Mock.Of<VirtualDocumentSnapshot>(MockBehavior.Strict),
+        publisher.Changed(old: StrictMock.Of<LSPDocumentSnapshot>(),
+                          @new: StrictMock.Of<LSPDocumentSnapshot>(),
+                          virtualOld: StrictMock.Of<VirtualDocumentSnapshot>(),
+                          virtualNew: StrictMock.Of<VirtualDocumentSnapshot>(),
                           LSPDocumentChangeKind.VirtualDocumentChanged);
     }
 
@@ -70,10 +72,9 @@ public class CSharpVirtualDocumentPublisherTest : ToolingTestBase
         var csharpSnapshot = new CSharpVirtualDocumentSnapshot(projectKey: default, new Uri("C:/path/to/something.razor.g.cs"), Mock.Of<ITextSnapshot>(MockBehavior.Strict), hostDocumentSyncVersion: 1337);
         var lspDocument = new TestLSPDocumentSnapshot(new Uri("C:/path/to/something.razor"), 1337, csharpSnapshot);
         var fileInfoProvider = new Mock<IRazorDynamicFileInfoProviderInternal>(MockBehavior.Strict);
-        var lspDocumentMappingProvider = new Mock<LSPDocumentMappingProvider>(MockBehavior.Strict);
         fileInfoProvider.Setup(provider => provider.UpdateLSPFileInfo(lspDocument.Uri, It.IsAny<IDynamicDocumentContainer>()))
             .Verifiable();
-        var publisher = new CSharpVirtualDocumentPublisher(fileInfoProvider.Object, lspDocumentMappingProvider.Object);
+        var publisher = new CSharpVirtualDocumentPublisher(fileInfoProvider.Object, _documentMappingProvider);
 
         // Act
         publisher.Changed(old: Mock.Of<LSPDocumentSnapshot>(MockBehavior.Strict),

@@ -70,17 +70,9 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
     public ClientSpaceSettings EditorSettings => _workspaceEditorSettings.Current.ClientSpaceSettings;
 
     public ImmutableArray<TagHelperDescriptor> TagHelpers
-    {
-        get
-        {
-            if (ProjectSnapshot is null)
-            {
-                return ImmutableArray<TagHelperDescriptor>.Empty;
-            }
-
-            return ProjectSnapshot.GetTagHelpersSynchronously();
-        }
-    }
+        => _projectSnapshot is { ProjectWorkspaceState.TagHelpers: var tagHelpers }
+            ? tagHelpers
+            : [];
 
     public bool IsSupportedProject => _isSupportedProject;
 
@@ -231,7 +223,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
                     _ = OnContextChangedAsync(ContextChangeKind.ProjectChanged);
 
                     if (e.Older is null ||
-                        !e.Older.GetTagHelpersSynchronously().SequenceEqual(e.Newer!.GetTagHelpersSynchronously()))
+                        !e.Older.ProjectWorkspaceState.TagHelpers.SequenceEqual(e.Newer!.ProjectWorkspaceState.TagHelpers))
                     {
                         _ = OnContextChangedAsync(ContextChangeKind.TagHelpersChanged);
                     }

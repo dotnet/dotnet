@@ -11,15 +11,13 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
-internal abstract class AbstractDocumentMappingService(IFilePathService filePathService, ILogger logger) : IDocumentMappingService
+internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocumentMappingService
 {
-    protected readonly IFilePathService FilePathService = filePathService;
     protected readonly ILogger Logger = logger;
 
     public IEnumerable<TextChange> GetHostDocumentEdits(IRazorGeneratedDocument generatedDocument, ImmutableArray<TextChange> generatedDocumentChanges)

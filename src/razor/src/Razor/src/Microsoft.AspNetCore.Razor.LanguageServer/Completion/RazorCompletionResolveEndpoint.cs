@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
@@ -17,14 +19,17 @@ internal class RazorCompletionResolveEndpoint
 {
     private readonly AggregateCompletionItemResolver _completionItemResolver;
     private readonly CompletionListCache _completionListCache;
+    private readonly IProjectSnapshotManager _projectSnapshotManager;
     private VSInternalClientCapabilities? _clientCapabilities;
 
     public RazorCompletionResolveEndpoint(
         AggregateCompletionItemResolver completionItemResolver,
-        CompletionListCache completionListCache)
+        CompletionListCache completionListCache,
+        IProjectSnapshotManager projectSnapshotManager)
     {
         _completionItemResolver = completionItemResolver;
         _completionListCache = completionListCache;
+        _projectSnapshotManager = projectSnapshotManager;
     }
 
     public bool MutatesSolutionState => false;
@@ -74,6 +79,7 @@ internal class RazorCompletionResolveEndpoint
             containingCompletionList,
             originalRequestContext,
             _clientCapabilities,
+            _projectSnapshotManager.GetQueryOperations(),
             cancellationToken).ConfigureAwait(false);
         resolvedCompletionItem ??= completionItem;
 

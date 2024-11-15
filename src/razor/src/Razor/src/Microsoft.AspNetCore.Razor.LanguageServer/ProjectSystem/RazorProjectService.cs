@@ -369,34 +369,21 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
                     _logger.LogInformation($"Updating project '{project.Key}' TagHelpers ({projectWorkspaceState.TagHelpers.Length}) and C# Language Version ({projectWorkspaceState.CSharpLanguageVersion}).");
                 }
 
-                updater.ProjectWorkspaceStateChanged(project.Key, projectWorkspaceState);
-
                 var currentConfiguration = project.Configuration;
                 var currentRootNamespace = project.RootNamespace;
-                if (currentConfiguration.ConfigurationName == configuration?.ConfigurationName &&
-                    currentRootNamespace == rootNamespace)
-                {
-                    _logger.LogTrace($"Updating project '{project.Key}'. The project is already using configuration '{configuration.ConfigurationName}' and root namespace '{rootNamespace}'.");
-                    return;
-                }
-
                 if (configuration is null)
                 {
                     configuration = FallbackRazorConfiguration.Latest;
                     _logger.LogInformation($"Updating project '{project.Key}' to use the latest configuration ('{configuration.ConfigurationName}')'.");
                 }
-                else if (currentConfiguration.ConfigurationName != configuration.ConfigurationName)
+                else if (currentConfiguration == configuration &&
+                    currentRootNamespace == rootNamespace)
                 {
-                    _logger.LogInformation($"Updating project '{project.Key}' to Razor configuration '{configuration.ConfigurationName}' with language version '{configuration.LanguageVersion}'.");
-                }
-
-                if (currentRootNamespace != rootNamespace)
-                {
-                    _logger.LogInformation($"Updating project '{project.Key}''s root namespace to '{rootNamespace}'.");
+                    _logger.LogTrace($"Updating project '{project.Key}'. The project is already using configuration '{configuration.ConfigurationName}' and root namespace '{rootNamespace}'.");
                 }
 
                 var hostProject = new HostProject(project.FilePath, project.IntermediateOutputPath, configuration, rootNamespace, displayName);
-                updater.ProjectConfigurationChanged(hostProject);
+                updater.ProjectChanged(hostProject, projectWorkspaceState);
             },
             cancellationToken);
     }

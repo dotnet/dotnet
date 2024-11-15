@@ -24,6 +24,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
 
     private readonly IProjectSnapshotManager _projectManager;
     private readonly IRazorDynamicFileInfoProviderInternal _infoProvider;
+    private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger _logger;
 
     private readonly CancellationTokenSource _disposeTokenSource;
@@ -49,6 +50,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
     {
         _projectManager = projectManager;
         _infoProvider = infoProvider;
+        _loggerFactory = loggerFactory;
         _logger = loggerFactory.GetOrCreateLogger<BackgroundDocumentGenerator>();
 
         _disposeTokenSource = new();
@@ -155,7 +157,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
 
         if (!_suppressedDocuments.Contains(filePath))
         {
-            var container = new DefaultDynamicDocumentContainer(document);
+            var container = new DefaultDynamicDocumentContainer(document, _loggerFactory);
             _infoProvider.UpdateFileInfo(project.Key, container);
         }
     }

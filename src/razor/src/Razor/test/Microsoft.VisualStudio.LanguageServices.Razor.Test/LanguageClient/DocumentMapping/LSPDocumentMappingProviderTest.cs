@@ -19,7 +19,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.DocumentMapping;
 
-public class DefaultLSPDocumentMappingProviderTest : ToolingTestBase
+public class LSPDocumentMappingProviderTest : ToolingTestBase
 {
     private static readonly Uri s_razorFile = new("file:///some/folder/to/file.razor");
     private static readonly Uri s_razorVirtualCSharpFile = new("file:///some/folder/to/file.razor.ide.g.cs");
@@ -27,7 +27,7 @@ public class DefaultLSPDocumentMappingProviderTest : ToolingTestBase
 
     private readonly Lazy<LSPDocumentManager> _documentManager;
 
-    public DefaultLSPDocumentMappingProviderTest(ITestOutputHelper testOutput)
+    public LSPDocumentMappingProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
         var csharpVirtualDocumentSnapshot = new CSharpVirtualDocumentSnapshot(projectKey: default, s_razorVirtualCSharpFile, new StringTextSnapshot(string.Empty), hostDocumentSyncVersion: 0);
@@ -60,7 +60,7 @@ public class DefaultLSPDocumentMappingProviderTest : ToolingTestBase
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ReinvocationResponse<RazorMapToDocumentRangesResponse>("TestLanguageClient", response));
 
-        var mappingProvider = new DefaultLSPDocumentMappingProvider(requestInvoker.Object, _documentManager);
+        var mappingProvider = new LSPDocumentMappingProvider(requestInvoker.Object, _documentManager);
         var projectedRange = VsLspFactory.CreateRange(10, 10, 15, 15);
 
         // Act

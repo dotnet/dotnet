@@ -23,6 +23,7 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
     private readonly bool? _useRazorCohostServer;
     private readonly bool? _disableRazorLanguageServer;
     private readonly bool? _forceRuntimeCodeGeneration;
+    private readonly bool? _useRoslynTokenizer;
 
     public override bool SupportsFileManipulation => _supportsFileManipulation ?? _defaults.SupportsFileManipulation;
     public override string CSharpVirtualDocumentSuffix => _csharpVirtualDocumentSuffix ?? DefaultLanguageServerFeatureOptions.DefaultCSharpVirtualDocumentSuffix;
@@ -37,6 +38,7 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
     public override bool UseRazorCohostServer => _useRazorCohostServer ?? _defaults.UseRazorCohostServer;
     public override bool DisableRazorLanguageServer => _disableRazorLanguageServer ?? _defaults.DisableRazorLanguageServer;
     public override bool ForceRuntimeCodeGeneration => _forceRuntimeCodeGeneration ?? _defaults.ForceRuntimeCodeGeneration;
+    public override bool UseRoslynTokenizer => _useRoslynTokenizer ?? _defaults.UseRoslynTokenizer;
 
     public ConfigurableLanguageServerFeatureOptions(string[] args)
     {
@@ -60,6 +62,7 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
             TryProcessBoolOption(nameof(UseRazorCohostServer), ref _useRazorCohostServer, option, args, i);
             TryProcessBoolOption(nameof(DisableRazorLanguageServer), ref _disableRazorLanguageServer, option, args, i);
             TryProcessBoolOption(nameof(ForceRuntimeCodeGeneration), ref _forceRuntimeCodeGeneration, option, args, i);
+            TryProcessBoolOption(nameof(UseRoslynTokenizer), ref _useRoslynTokenizer, option, args, i);
         }
     }
 

@@ -1,4 +1,11 @@
-﻿# Breaking changes in Razor after .NET 8.0.100 through .NET 9.0.100
+﻿---
+title: Razor compiler breaking changes since .NET 8
+description: Learn about any breaking changes since the initial release of .NET 8.
+author: rick-anderson
+ms.author: riande
+ms.date: 11/12/2024
+---
+# Breaking changes in Razor after .NET 8.0.100 through .NET 9.0.100
 
 This document lists known breaking changes in Razor after .NET 8 general release (.NET SDK version 8.0.100) through .NET 9 general release (.NET SDK version 9.0.100).
 

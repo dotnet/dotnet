@@ -141,6 +141,7 @@ internal sealed class RemoteServiceInvoker(
                     ForceRuntimeCodeGeneration = _languageServerFeatureOptions.ForceRuntimeCodeGeneration,
                     SupportsFileManipulation = _languageServerFeatureOptions.SupportsFileManipulation,
                     ShowAllCSharpCodeActions = _languageServerFeatureOptions.ShowAllCSharpCodeActions,
+                    UseRoslynTokenizer = _languageServerFeatureOptions.UseRoslynTokenizer,
                 };
 
                 _logger.LogDebug($"First OOP call, so initializing OOP service.");

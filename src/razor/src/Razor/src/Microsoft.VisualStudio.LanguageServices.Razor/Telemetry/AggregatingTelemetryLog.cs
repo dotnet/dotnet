@@ -51,23 +51,24 @@ internal sealed class AggregatingTelemetryLog
     }
 
     /// <summary>
-    /// Adds aggregated information for the metric and value passed in via <paramref name="name"/>. The Name/Value properties
-    /// are used as the metric name and value to record.
+    /// Adds aggregated information for the <paramref name="histogramKey"/> and <paramref name="value"/>. Method name is tacked onto
+    /// to the first <paramref name="histogramKey"/> used for convenience.
     /// </summary>
-    public void Log(string name,
+    public void Log(
+        string histogramKey,
         int value,
-        string metricName,
         string method)
     {
         if (!IsEnabled)
             return;
 
-        (var histogram, _, var histogramLock) = ImmutableInterlocked.GetOrAdd(ref _histograms, name, name =>
+        (var histogram, _, var histogramLock) = ImmutableInterlocked.GetOrAdd(ref _histograms, histogramKey, histogramKey =>
         {
             var telemetryEvent = new TelemetryEvent(_eventName);
+
             TelemetryReporter.AddToProperties(telemetryEvent.Properties, new Property("method", method));
 
-            var histogram = _meter.CreateHistogram<long>(metricName, _histogramConfiguration);
+            var histogram = _meter.CreateHistogram<long>(histogramKey, _histogramConfiguration);
             var histogramLock = new object();
 
             return (histogram, telemetryEvent, histogramLock);

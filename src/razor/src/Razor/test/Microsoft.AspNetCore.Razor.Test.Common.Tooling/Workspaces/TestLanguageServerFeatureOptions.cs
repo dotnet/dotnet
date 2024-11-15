@@ -37,4 +37,6 @@ internal class TestLanguageServerFeatureOptions(
     public override bool DisableRazorLanguageServer => false;
 
     public override bool ForceRuntimeCodeGeneration => forceRuntimeCodeGeneration;
+
+    public override bool UseRoslynTokenizer => false;
 }

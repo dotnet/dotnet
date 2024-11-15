@@ -85,7 +85,7 @@ internal class ProjectSnapshotSynchronizationService(
 
                     if (state.projectWorkspaceState != null)
                     {
-                        updater.ProjectWorkspaceStateChanged(state.hostProject.Key, state.projectWorkspaceState);
+                        updater.ProjectChanged(state.hostProject, state.projectWorkspaceState);
                     }
                 },
                 state: (hostProject, projectWorkspaceState: args.Newer.ProjectWorkspaceState),
@@ -108,31 +108,16 @@ internal class ProjectSnapshotSynchronizationService(
         }
         else if (args.Kind == ProjectProxyChangeKind.ProjectChanged)
         {
-            if (!args.Older!.Configuration.Equals(args.Newer!.Configuration))
+            if (!args.Older!.Configuration.Equals(args.Newer!.Configuration) ||
+                !args.Older.ProjectWorkspaceState.Equals(args.Newer.ProjectWorkspaceState))
             {
                 var guestPath = ResolveGuestPath(args.Newer.FilePath);
                 var guestIntermediateOutputPath = ResolveGuestPath(args.Newer.IntermediateOutputPath);
                 var hostProject = new HostProject(guestPath, guestIntermediateOutputPath, args.Newer.Configuration, args.Newer.RootNamespace);
+                var projectWorkspaceState = args.Newer.ProjectWorkspaceState;
                 await _projectManager.UpdateAsync(
-                    static (updater, hostProject) => updater.ProjectConfigurationChanged(hostProject),
-                    state: hostProject,
-                    CancellationToken.None);
-            }
-            else if (args.Older.ProjectWorkspaceState != args.Newer.ProjectWorkspaceState ||
-                args.Older.ProjectWorkspaceState?.Equals(args.Newer.ProjectWorkspaceState) == false)
-            {
-                var guestPath = ResolveGuestPath(args.Newer.FilePath);
-                await _projectManager.UpdateAsync(
-                    static (updater, state) =>
-                    {
-                        var projectKeys = updater.GetAllProjectKeys(state.guestPath);
-
-                        foreach (var projectKey in projectKeys)
-                        {
-                            updater.ProjectWorkspaceStateChanged(projectKey, state.projectWorkspaceState);
-                        }
-                    },
-                    state: (guestPath, projectWorkspaceState: args.Newer.ProjectWorkspaceState),
+                    static (updater, state) => updater.ProjectChanged(state.hostProject, state.projectWorkspaceState),
+                    state: (hostProject, projectWorkspaceState),
                     CancellationToken.None);
             }
         }
@@ -152,7 +137,7 @@ internal class ProjectSnapshotSynchronizationService(
 
                     if (state.projectWorkspaceState is not null)
                     {
-                        updater.ProjectWorkspaceStateChanged(state.hostProject.Key, state.projectWorkspaceState);
+                        updater.ProjectChanged(state.hostProject, state.projectWorkspaceState);
                     }
                 },
                 state: (hostProject, projectWorkspaceState: projectHandle.ProjectWorkspaceState),

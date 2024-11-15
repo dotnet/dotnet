@@ -32,6 +32,7 @@ internal class DelegatedCompletionItemResolver(
         VSInternalCompletionList containingCompletionList,
         object? originalRequestContext,
         VSInternalClientCapabilities? clientCapabilities,
+        ISolutionQueryOperations solutionQueryOperations,
         CancellationToken cancellationToken)
     {
         if (originalRequestContext is not DelegatedCompletionResolutionContext resolutionContext)

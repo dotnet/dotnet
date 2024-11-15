@@ -9,9 +9,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
+namespace Microsoft.CodeAnalysis.Razor.Completion;
 
 internal class AggregateCompletionItemResolver
 {
@@ -29,6 +30,7 @@ internal class AggregateCompletionItemResolver
         VSInternalCompletionList containingCompletionList,
         object? originalRequestContext,
         VSInternalClientCapabilities? clientCapabilities,
+        ISolutionQueryOperations solutionQueryOperations,
         CancellationToken cancellationToken)
     {
         using var completionItemResolverTasks = new PooledArrayBuilder<Task<VSInternalCompletionItem?>>(_completionItemResolvers.Count);
@@ -37,7 +39,7 @@ internal class AggregateCompletionItemResolver
         {
             try
             {
-                var task = completionItemResolver.ResolveAsync(item, containingCompletionList, originalRequestContext, clientCapabilities, cancellationToken);
+                var task = completionItemResolver.ResolveAsync(item, containingCompletionList, originalRequestContext, clientCapabilities, solutionQueryOperations, cancellationToken);
                 completionItemResolverTasks.Add(task);
             }
             catch (Exception ex) when (ex is not TaskCanceledException)

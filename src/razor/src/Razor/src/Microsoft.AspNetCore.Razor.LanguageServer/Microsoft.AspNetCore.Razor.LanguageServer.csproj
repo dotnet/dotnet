@@ -74,7 +74,6 @@
     <InternalsVisibleTo Include="rzls" Key="$(RazorKey)" />
 
     <RestrictedInternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServices.Razor" Namespace="Microsoft.AspNetCore.Razor.LanguageServer.Hosting" Key="$(RazorKey)" />
-    <RestrictedInternalsVisibleTo Include="rzls" Namespace="Microsoft.AspNetCore.Razor.LanguageServer.Extensions" Key="$(RazorKey)" />
     <RestrictedInternalsVisibleTo Include="rzls" Namespace="Microsoft.AspNetCore.Razor.LanguageServer.Hosting" Key="$(RazorKey)" />
   </ItemGroup>
 

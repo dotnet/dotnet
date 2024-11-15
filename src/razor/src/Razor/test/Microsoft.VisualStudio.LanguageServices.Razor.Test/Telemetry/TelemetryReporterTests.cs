@@ -415,6 +415,27 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
             TimeSpan.FromMilliseconds(300),
             AspNetCore.Razor.Telemetry.TelemetryResult.Failed);
 
+        reporter.ReportRequestTiming(
+            Methods.TextDocumentCompletionName,
+             WellKnownLspServerKinds.RazorLspServer.GetContractName(),
+            TimeSpan.FromMilliseconds(100),
+            TimeSpan.FromMilliseconds(100),
+            AspNetCore.Razor.Telemetry.TelemetryResult.Succeeded);
+
+        reporter.ReportRequestTiming(
+            Methods.TextDocumentCompletionName,
+             WellKnownLspServerKinds.RazorLspServer.GetContractName(),
+            TimeSpan.FromMilliseconds(200),
+            TimeSpan.FromMilliseconds(200),
+            AspNetCore.Razor.Telemetry.TelemetryResult.Cancelled);
+
+        reporter.ReportRequestTiming(
+            Methods.TextDocumentCompletionName,
+             WellKnownLspServerKinds.RazorLspServer.GetContractName(),
+            TimeSpan.FromMilliseconds(300),
+            TimeSpan.FromMilliseconds(300),
+            AspNetCore.Razor.Telemetry.TelemetryResult.Failed);
+
         reporter.Dispose();
 
         // Assert
@@ -436,7 +457,7 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
             static evt =>
             {
                 var histogram = Assert.IsAssignableFrom<IHistogram<long>>(evt.Instrument);
-                Assert.Equal("RequestDuration", histogram.Name);
+                Assert.Equal(Methods.TextDocumentCodeActionName, histogram.Name);
 
                 var telemetryEvent = evt.Event;
                 Assert.Equal("dotnet/razor/lsp_requestduration", telemetryEvent.Name);
@@ -445,6 +466,20 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
                     {
                         Assert.Equal("dotnet.razor.method", prop.Key);
                         Assert.Equal(Methods.TextDocumentCodeActionName, prop.Value);
+                    });
+            },
+            static evt =>
+            {
+                var histogram = Assert.IsAssignableFrom<IHistogram<long>>(evt.Instrument);
+                Assert.Equal(Methods.TextDocumentCompletionName, histogram.Name);
+
+                var telemetryEvent = evt.Event;
+                Assert.Equal("dotnet/razor/lsp_requestduration", telemetryEvent.Name);
+                Assert.Collection(telemetryEvent.Properties,
+                    static prop =>
+                    {
+                        Assert.Equal("dotnet.razor.method", prop.Key);
+                        Assert.Equal(Methods.TextDocumentCompletionName, prop.Value);
                     });
             });
 
@@ -457,6 +492,31 @@ public class TelemetryReporterTests(ITestOutputHelper testOutput) : ToolingTestB
                     {
                         Assert.Equal("dotnet.razor.method", prop.Key);
                         Assert.Equal(Methods.TextDocumentCodeActionName, prop.Value);
+                    },
+                    static prop =>
+                    {
+                        Assert.Equal("dotnet.razor.successful", prop.Key);
+                        Assert.Equal(1, prop.Value);
+                    },
+                    static prop =>
+                    {
+                        Assert.Equal("dotnet.razor.failed", prop.Key);
+                        Assert.Equal(1, prop.Value);
+                    },
+                    static prop =>
+                    {
+                        Assert.Equal("dotnet.razor.cancelled", prop.Key);
+                        Assert.Equal(1, prop.Value);
+                    });
+            },
+            static evt =>
+            {
+                Assert.Equal("dotnet/razor/lsp_requestcounter", evt.Name);
+                Assert.Collection(evt.Properties,
+                    static prop =>
+                    {
+                        Assert.Equal("dotnet.razor.method", prop.Key);
+                        Assert.Equal(Methods.TextDocumentCompletionName, prop.Value);
                     },
                     static prop =>
                     {
